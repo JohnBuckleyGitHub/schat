@@ -18,9 +18,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   splitter->setStretchFactor(1, 1);
   lineEdit_2->setText(defaultNick());
   listView->setModel(&model);
+  tabWidget->setElideMode(Qt::ElideRight);
   
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
   connect(pushButton, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
+  connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   
   clientSocket = new ClientSocket(this);
   
@@ -58,8 +60,30 @@ void SChatWindow::createActions()
 void SChatWindow::addTab()
 {
   qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new QWidget(), "Новое подключение"));
+  tabWidget->setCurrentIndex(tabWidget->addTab(new QWidget(), "Новое подключение"));  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::addTab(const QModelIndex &index)
+{
+  int count = tabWidget->count();
+  int tab = -1;
+  QString nick = model.itemFromIndex(index)->text();
   
+  if (count > 1)
+    for (int i = 1; i <= count; ++i)
+      if (tabWidget->tabText(i) == nick) {
+        tab = i;
+        break;
+      }
+  
+  if (tab == -1)
+    tab = tabWidget->addTab(new QWidget(), nick);
+  
+  tabWidget->setCurrentIndex(tab);
 }
 
 
