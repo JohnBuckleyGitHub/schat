@@ -5,12 +5,12 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH  += . \
-               ..\common \
-               ..\schatd
+               ../common \
+               ../schatd
                
 INCLUDEPATH += . \
-               ..\common \
-               ..\schatd
+               ../common \
+               ../schatd
                 
 
 QT += network
@@ -31,14 +31,12 @@ SOURCES += clientsocket.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
-    UI_DIR = ../../tmp/schat/debug/ui
     MOC_DIR = ../../tmp/schat/debug/moc
     OBJECTS_DIR = ../../tmp/schat/debug/obj
     DESTDIR = ../../out/debug
 }
 CONFIG(release, debug|release) { 
     RCC_DIR = ../../tmp/schat/release/rcc
-    UI_DIR = ../../tmp/schat/release/ui
     MOC_DIR = ../../tmp/schat/release/moc
     OBJECTS_DIR = ../../tmp/schat/release/obj
     DESTDIR = ../../out/release

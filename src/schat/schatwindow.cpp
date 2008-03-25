@@ -104,7 +104,7 @@ void SChatWindow::newParticipant(const QString &p, bool echo)
   model.sort(0);
   
   if (echo)
-    textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(p));
+    textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p)));
   
   scroll();
   
@@ -119,7 +119,7 @@ void SChatWindow::newMessage(const QString &nick, const QString &message)
 {
   qDebug() << "SChatWindow::newMessage(const QString &nick, const QString &message)";
   
-  textBrowser->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>").arg(currentTime()).arg(nick).arg(message));
+  textBrowser->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>").arg(currentTime()).arg(Qt::escape(nick)).arg(message));
   scroll();
 }
 
@@ -138,6 +138,6 @@ void SChatWindow::participantLeft(const QString &nick)
     model.removeRow(index.row());
   }
   
-  textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(nick));
+  textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   scroll();
 }
