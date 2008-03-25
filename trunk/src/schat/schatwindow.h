@@ -1,3 +1,8 @@
+/* $Id$
+ * Simple Chat
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ */
+
 #ifndef SCHATWINDOW_H_
 #define SCHATWINDOW_H_
 

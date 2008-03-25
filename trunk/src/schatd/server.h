@@ -1,3 +1,8 @@
+/* $Id$
+ * Simple Chat
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ */
+
 #ifndef SERVER_H_
 #define SERVER_H_
 

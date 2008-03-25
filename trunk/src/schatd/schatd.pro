@@ -1,3 +1,7 @@
+# $Id$
+# Simple Chat
+# Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+
 TEMPLATE = app
 QT += network
 CONFIG += console
