@@ -15,7 +15,7 @@ class ClientSocket : public QTcpSocket
 
 public:
   ClientSocket(QObject *parent = 0);
-  void setNick(const QString &n);
+  void setNick(const QString &n) { nick = n; }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &s);
 

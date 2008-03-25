@@ -30,11 +30,6 @@ ClientSocket::ClientSocket(QObject *parent)
   nextBlockSize = 0;
 }
 
-void ClientSocket::setNick(const QString &n)
-{
-  nick = Qt::escape(n);
-}
-
 
 /** [private slots]
  * Посылаем серверу приветствие

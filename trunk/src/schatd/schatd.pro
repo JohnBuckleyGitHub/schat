@@ -13,21 +13,19 @@ SOURCES = serversocket.cpp \
     main.cpp
     
 DEPENDPATH  += . \
-               ..\common
+               ../common
                 
 INCLUDEPATH += . \
-               ..\common
+               ../common
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schatd/debug/rcc
-    UI_DIR = ../../tmp/schatd/debug/ui
     MOC_DIR = ../../tmp/schatd/debug/moc
     OBJECTS_DIR = ../../tmp/schatd/debug/obj
     DESTDIR = ../../out/debug
 }
 CONFIG(release, debug|release) { 
     RCC_DIR = ../../tmp/schatd/release/rcc
-    UI_DIR = ../../tmp/schatd/release/ui
     MOC_DIR = ../../tmp/schatd/release/moc
     OBJECTS_DIR = ../../tmp/schatd/release/obj
     DESTDIR = ../../out/release
