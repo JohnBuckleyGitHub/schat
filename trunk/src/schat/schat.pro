@@ -16,6 +16,8 @@ INCLUDEPATH += . \
 QT += network
 CONFIG += console
 
+RESOURCES += ../../data/schat.qrc
+
 # Input
 HEADERS += clientsocket.h \
            schatwindow.h \
