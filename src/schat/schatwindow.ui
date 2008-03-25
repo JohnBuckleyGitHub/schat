@@ -97,58 +97,6 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_2" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>388</width>
-            <height>254</height>
-           </rect>
-          </property>
-          <attribute name="title" >
-           <string>Tab 2</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tab_3" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>388</width>
-            <height>254</height>
-           </rect>
-          </property>
-          <attribute name="title" >
-           <string>Page</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tab_4" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>388</width>
-            <height>254</height>
-           </rect>
-          </property>
-          <attribute name="title" >
-           <string>Page</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tab_5" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>388</width>
-            <height>254</height>
-           </rect>
-          </property>
-          <attribute name="title" >
-           <string>Page</string>
-          </attribute>
-         </widget>
         </widget>
         <widget class="QWidget" name="layoutWidget" >
          <layout class="QVBoxLayout" name="verticalLayout" >

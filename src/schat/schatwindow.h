@@ -10,6 +10,8 @@
 #include <QTcpSocket>
 #include <QStandardItemModel>
 
+class QAction;
+
 #include "clientsocket.h"
 #include "ui_schatwindow.h"
 
@@ -30,15 +32,20 @@ private slots:
   void newConnection();
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
+  void addTab();
+  void closeTab();
 
 private:
   void removeConnection(ClientSocket *socket);
-  ClientSocket *clientSocket;
+  void createActions();
   void scroll();
+  
+  ClientSocket *clientSocket;
   QString currentTime();
   QString defaultNick();
   QStandardItemModel model;
-
+  QAction *addTabAction;
+  QAction *closeTabAction;
 };
 
 #endif /*SCHATWINDOW_H_*/

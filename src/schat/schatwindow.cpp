@@ -23,9 +23,62 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(pushButton, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
   
   clientSocket = new ClientSocket(this);
+  
+  createActions();
 }
 
 
+/** [private]
+ * 
+ */
+void SChatWindow::createActions()
+{
+  QToolButton *addTabButton = new QToolButton;
+  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение"), this);
+  addTabAction->setShortcut(tr("Ctrl+N"));
+  addTabButton->setDefaultAction(addTabAction);
+  addTabButton->setAutoRaise(true);
+  addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
+  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
+  
+  QToolButton *closeTabButton = new QToolButton;
+  closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
+  closeTabButton->setDefaultAction(closeTabAction);
+  closeTabButton->setAutoRaise(true);
+  closeTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
+  connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::addTab()
+{
+  qDebug() << "SChatWindow::addTab()";
+  tabWidget->setCurrentIndex(tabWidget->addTab(new QWidget(), "Новое подключение"));
+  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::closeTab()
+{
+  qDebug() << "SChatWindow::closeTab()" << tabWidget->currentIndex();
+  int index = tabWidget->currentIndex();
+  if (index)
+    tabWidget->removeTab(index);
+  
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::returnPressed()
 {
   QString text = lineEdit->text();
