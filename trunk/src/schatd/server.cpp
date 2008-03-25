@@ -62,8 +62,10 @@ void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
 {
   qDebug() << "Server::connectionError(QAbstractSocket::SocketError /* socketError */)";
   
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    qDebug() << "ERROR:" << socket->errorString();
     removeConnection(socket);
+  }
 }
 
 
