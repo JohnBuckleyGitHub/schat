@@ -1,3 +1,8 @@
+/* $Id$
+ * Simple Chat
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ */
+
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 

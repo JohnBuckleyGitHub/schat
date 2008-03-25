@@ -1,3 +1,8 @@
+/* $Id$
+ * Simple Chat
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ */
+
 #ifndef CLIENTSOCKET_H_
 #define CLIENTSOCKET_H_
 
