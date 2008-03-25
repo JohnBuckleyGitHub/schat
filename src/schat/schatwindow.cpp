@@ -141,3 +141,43 @@ void SChatWindow::participantLeft(const QString &nick)
   textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   scroll();
 }
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::disconnected()
+{
+  qDebug() << "SChatWindow::disconnected()";
+  
+  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender())) {
+    textBrowser->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
+    removeConnection(socket);
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)
+{
+  qDebug() << "SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  
+  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender())) {
+    qDebug() << "ERROR:" << socket->errorString();
+    removeConnection(socket);
+  }
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::removeConnection(ClientSocket *socket)
+{
+  qDebug() << "SChatWindow::removeConnection(ClientSocket *socket)";
+  model.clear();
+  
+//  socket->deleteLater();
+}

@@ -14,7 +14,7 @@ INCLUDEPATH += . \
                 
 
 QT += network
-#CONFIG += console
+CONFIG += console
 
 # Input
 HEADERS += clientsocket.h \

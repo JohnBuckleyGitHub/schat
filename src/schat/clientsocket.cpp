@@ -24,10 +24,11 @@ ClientSocket::ClientSocket(QObject *parent)
   
   connect(this, SIGNAL(connected()), this, SLOT(sendGreeting()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
-  connect(this, SIGNAL(disconnected()), this, SLOT(disconnected()));
-  connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
+  connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
+  connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
 
   nextBlockSize = 0;
+  _protocolError = 0;
 }
 
 
@@ -66,7 +67,9 @@ void ClientSocket::sendGreeting()
 }
 
 
-//
+/** [private slots]
+ * 
+ */
 void ClientSocket::readyRead()
 {
   qDebug() << "ClientSocket::readyRead()" << (int) state() ;
@@ -77,13 +80,12 @@ void ClientSocket::readyRead()
   if (currentState == SCHAT_STATE_WAITING_FOR_GREETING) {
     if (!readBlock())
       return;
-    if (currentCommand == SCHAT_GREETING_OK)
+    if (currentCommand == sChatOpcodeGreetingOk)
       currentState = SCHAT_STATE_READY_FOR_USE;
     else {
-      if (currentCommand == SCHAT_PROTOCOL_ERROR) {
-        quint16 err;
-        currentBlock >> err;
-        qDebug() << err;
+      if (currentCommand == sChatOpcodeError) {
+        currentBlock >> _protocolError;
+        qDebug() << "_protocolError:" << _protocolError;
       }
       abort();
       return;
@@ -191,7 +193,9 @@ void ClientSocket::send(quint16 opcode, const QString &s)
 }
 
 
-// Читаем блок данных
+/** [private]
+ * 
+ */
 bool ClientSocket::readBlock()
 {
   qDebug() << "ServerSocket::readBlock()";
@@ -209,19 +213,4 @@ bool ClientSocket::readBlock()
   
   nextBlockSize = 0;
   return true;
-}
-
-void ClientSocket::error()
-{
-  currentState = SCHAT_STATE_DISCONNECTED;
-  qDebug() << "ClientSocket::error()" << errorString();
-  
-  abort();
-}
-
-void ClientSocket::disconnected()
-{
-  currentState = SCHAT_STATE_DISCONNECTED;
-  qDebug() << "ClientSocket::disconnected()" << errorString();
-//  deleteLater();
 }

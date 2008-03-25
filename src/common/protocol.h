@@ -34,6 +34,7 @@ static const quint8  sChatProtocolVersion           = 0;
 static const quint16 sChatStateWaitingForGreeting   = 2000;
 
 static const quint16 sChatOpcodeGreeting            = 100;
+static const quint16 sChatOpcodeGreetingOk          = 101;
 static const quint16 sChatOpcodeSendMessage         = 200;
 static const quint16 sChatOpcodeNeedParticipantList = 300;
 static const quint16 sChatOpcodeNewParticipant      = 301;

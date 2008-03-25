@@ -28,8 +28,11 @@ public slots:
 private slots:
   void returnPressed();
   void newConnection();
+  void connectionError(QAbstractSocket::SocketError socketError);
+  void disconnected();
 
 private:
+  void removeConnection(ClientSocket *socket);
   ClientSocket *clientSocket;
   void scroll();
   QString currentTime();

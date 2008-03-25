@@ -18,6 +18,7 @@ public:
   void setNick(const QString &n) { nick = n; }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &s);
+  quint16 protocolError() { return _protocolError; }
 
 signals:
   void newParticipant(const QString &p, bool echo = true);
@@ -27,8 +28,6 @@ signals:
 private slots:
   void readyRead();
   void sendGreeting();
-  void error();
-  void disconnected();
   
 private:
   bool readBlock();
@@ -40,6 +39,7 @@ private:
   QString userMask;
   QString message;
   
+  quint16 _protocolError;
   quint16 currentCommand;
   quint16 currentState;
   quint16 nextBlockSize;
