@@ -33,6 +33,7 @@ private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
   void addTab();
+  void addTab(const QModelIndex &index);
   void closeTab();
 
 private:
