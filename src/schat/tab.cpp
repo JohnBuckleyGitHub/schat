@@ -18,3 +18,22 @@ Tab::Tab(QWidget *parent)
   mainLayout->setMargin(0);
   setLayout(mainLayout);
 }
+
+
+/** [public]
+ * 
+ */
+void Tab::append(const QString &message)
+{
+  chatText.append(message);
+  scroll();
+}
+
+/** [private]
+ * 
+ */
+void Tab::scroll()
+{
+  QScrollBar *bar = chatText.verticalScrollBar(); 
+  bar->setValue(bar->maximum());
+}

@@ -18,6 +18,7 @@ class QSplitter;
 class QStatusBar;
 class QTabWidget;
 class QVBoxLayout;
+class Tab;
 
 #include "clientsocket.h"
 
@@ -47,8 +48,8 @@ private:
   QString currentTime();
   void createActions();
   void removeConnection(ClientSocket *socket);
-  void scroll();
-   
+  
+  Tab *mainChannel;
   ClientSocket *clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;

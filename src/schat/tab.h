@@ -14,9 +14,11 @@ class Tab : public QWidget {
 
 public:
   Tab(QWidget *parent = 0);
-
+  void append(const QString &message);
+  
 private:
   QTextBrowser chatText;
+  void scroll();
 };
 
 #endif /*TAB_H_*/
