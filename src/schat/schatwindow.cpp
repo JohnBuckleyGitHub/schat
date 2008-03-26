@@ -13,12 +13,42 @@
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  setupUi(this);
+  resize(680, 460);
   
+  centralWidget = new QWidget(this);  
+  splitter      = new QSplitter(centralWidget);
+  lineEdit      = new QLineEdit(centralWidget);
+  tabWidget     = new QTabWidget(splitter);
+  rightWidget   = new QWidget(splitter);
+  listView      = new QListView(rightWidget);  
+  rightLayout   = new QVBoxLayout(rightWidget);
+  mainLayout    = new QVBoxLayout(centralWidget);
+  statusbar     = new QStatusBar(this);
+  
+  splitter->addWidget(tabWidget);
+  splitter->addWidget(rightWidget);
   splitter->setStretchFactor(0, 4);
   splitter->setStretchFactor(1, 1);
-  listView->setModel(&model);
+  
+  rightLayout->addWidget(listView);
+  rightLayout->setMargin(0);
+  
+  mainLayout->addWidget(splitter);
+  mainLayout->addWidget(lineEdit);
+  mainLayout->setMargin(4);
+  
+  setCentralWidget(centralWidget);
+  setStatusBar(statusbar);
+  
+  setWindowTitle(tr("Simple Chat"));
+  
   tabWidget->setElideMode(Qt::ElideRight);
+  listView->setFocusPolicy(Qt::NoFocus);
+  listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  listView->setModel(&model);
+  
+
+
   
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
@@ -27,6 +57,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   createActions();
   
+  tabWidget->clear();
   tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), "Общий"));
   
   bool ok;
@@ -129,10 +160,10 @@ void SChatWindow::returnPressed()
     return;
 
   if (text.startsWith(QChar('/'))) {
-    QColor color = textBrowser->textColor();
-    textBrowser->setTextColor(Qt::red);
-    textBrowser->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
-    textBrowser->setTextColor(color);
+//    QColor color = textBrowser->textColor();
+//    textBrowser->setTextColor(Qt::red);
+//    textBrowser->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+//    textBrowser->setTextColor(color);
   }
   else {
     clientSocket->send(sChatOpcodeSendMessage, text);
@@ -148,8 +179,8 @@ void SChatWindow::returnPressed()
  */
 void SChatWindow::scroll()
 {
-  QScrollBar *bar = textBrowser->verticalScrollBar(); 
-  bar->setValue(bar->maximum());
+//  QScrollBar *bar = textBrowser->verticalScrollBar(); 
+//  bar->setValue(bar->maximum());
 }
 
 
@@ -178,8 +209,8 @@ void SChatWindow::newParticipant(const QString &p, bool echo)
   model.sort(0);
   
   if (echo)
-    textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p)));
-  
+//    textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p)));
+//  
   scroll();
   
   qDebug() << "SChatWindow::newParticipant(QString &p, bool echo)" << p;
@@ -193,7 +224,7 @@ void SChatWindow::newMessage(const QString &nick, const QString &message)
 {
   qDebug() << "SChatWindow::newMessage(const QString &nick, const QString &message)";
   
-  textBrowser->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>").arg(currentTime()).arg(Qt::escape(nick)).arg(message));
+//  textBrowser->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>").arg(currentTime()).arg(Qt::escape(nick)).arg(message));
   scroll();
 }
 
@@ -212,7 +243,7 @@ void SChatWindow::participantLeft(const QString &nick)
     model.removeRow(index.row());
   }
   
-  textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+//  textBrowser->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   scroll();
 }
 
@@ -225,7 +256,7 @@ void SChatWindow::disconnected()
   qDebug() << "SChatWindow::disconnected()";
   
   if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender())) {
-    textBrowser->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
+//    textBrowser->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
     removeConnection(socket);
   }
 }
