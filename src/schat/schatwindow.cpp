@@ -6,8 +6,9 @@
 #include <QtGui>
 #include <QtNetwork>
 
-#include "schatwindow.h"
 #include "protocol.h"
+#include "schatwindow.h"
+#include "tab.h"
 
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -60,7 +61,7 @@ void SChatWindow::createActions()
 void SChatWindow::addTab()
 {
   qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new QTextBrowser(this), "Новое подключение"));  
+  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), "Новое подключение"));  
 }
 
 
@@ -73,7 +74,7 @@ void SChatWindow::addTab(const QModelIndex &index)
   int tab = tabIndex(nick);
   
   if (tab == -1)
-    tab = tabWidget->addTab(new QTextBrowser(this), nick);
+    tab = tabWidget->addTab(new Tab(this), nick);
   
   tabWidget->setCurrentIndex(tab);
 }
