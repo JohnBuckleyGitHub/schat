@@ -14,7 +14,7 @@ ClientSocket::ClientSocket(QObject *parent)
 {
   qDebug() << "ClientSocket::ClientSocket(QObject *parent)";
   
-  currentState = SCHAT_STATE_DISCONNECTED;
+  currentState = sChatStateDisconnected;
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
   
@@ -46,7 +46,7 @@ ClientSocket::ClientSocket(QObject *parent)
  */
 void ClientSocket::sendGreeting()
 {
-  currentState = SCHAT_STATE_WAITING_FOR_GREETING;
+  currentState = sChatStateWaitingForGreeting;
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -77,11 +77,11 @@ void ClientSocket::readyRead()
   // Если ещё не получили подтверждения приветствия (состояние SCHAT_STATE_WAITING_FOR_GREETING)
   // пытаемся прочитать блок, и если послана команда SCHAT_GREETING_OK
   // устанавливаем состояние SCHAT_STATE_READY_FOR_USE
-  if (currentState == SCHAT_STATE_WAITING_FOR_GREETING) {
+  if (currentState == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
     if (currentCommand == sChatOpcodeGreetingOk)
-      currentState = SCHAT_STATE_READY_FOR_USE;
+      currentState = sChatStateReadyForUse;
     else {
       if (currentCommand == sChatOpcodeError) {
         currentBlock >> _protocolError;
