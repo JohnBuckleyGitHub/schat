@@ -19,13 +19,15 @@ CONFIG += console
 RESOURCES += ../../data/schat.qrc
 
 # Input
-HEADERS += clientsocket.h \
+HEADERS += tab.h \
+           clientsocket.h \
            schatwindow.h \
            protocol.h \
            server.h \
            serversocket.h
-FORMS += schatwindow.ui
-SOURCES += clientsocket.cpp \
+FORMS   += schatwindow.ui
+SOURCES += tab.cpp \ 
+           clientsocket.cpp \
            main.cpp \
            schatwindow.cpp \
            server.cpp \
