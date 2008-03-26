@@ -104,13 +104,6 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QLineEdit" name="lineEdit_2" >
-            <property name="text" >
-             <string>Newbie</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QListView" name="listView" >
             <property name="focusPolicy" >
              <enum>Qt::NoFocus</enum>
@@ -131,13 +124,6 @@
        <layout class="QHBoxLayout" name="horizontalLayout" >
         <item>
          <widget class="QLineEdit" name="lineEdit" />
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton" >
-          <property name="text" >
-           <string>Подключится</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -163,8 +149,6 @@
  </widget>
  <tabstops>
   <tabstop>lineEdit</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>lineEdit_2</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>

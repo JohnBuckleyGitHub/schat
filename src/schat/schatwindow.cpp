@@ -17,17 +17,24 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   splitter->setStretchFactor(0, 4);
   splitter->setStretchFactor(1, 1);
-  lineEdit_2->setText(defaultNick());
   listView->setModel(&model);
   tabWidget->setElideMode(Qt::ElideRight);
   
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-  connect(pushButton, SIGNAL(clicked(bool)), this, SLOT(newConnection()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   
   clientSocket = new ClientSocket(this);
   
   createActions();
+  
+  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), "Общий"));
+  
+  bool ok;
+  nick = QInputDialog::getText(this, tr("Ваше имя"),
+                                           tr("Введите ваше имя:"), QLineEdit::Normal,
+                                           QDir::home().dirName(), &ok);
+  if (ok && !nick.isEmpty())
+    newConnection();
 }
 
 
@@ -156,30 +163,8 @@ QString SChatWindow::currentTime()
 
 void SChatWindow::newConnection()
 {
-  clientSocket->setNick(lineEdit_2->text());
+  clientSocket->setNick(nick);
   clientSocket->connectToHost("192.168.5.134", 7666);
-}
-
-
-/** [private]
- * 
- */
-QString SChatWindow::defaultNick()
-{
-  QString nick;
-  QStringList environment = QProcess::systemEnvironment();
-  int index = environment.indexOf(QRegExp("USERNAME.*"));
-
-  if (index != -1) {
-    QStringList stringList = environment.at(index).split("=");
-    if (stringList.size() == 2)
-      nick = stringList.at(1).toUtf8();
-  }
-
-  if (nick.isEmpty())
-    nick = "Newbie";
-  
-  return nick;
 }
 
 
