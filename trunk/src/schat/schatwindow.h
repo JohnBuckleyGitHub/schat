@@ -40,6 +40,7 @@ private:
   void removeConnection(ClientSocket *socket);
   void createActions();
   void scroll();
+  int tabIndex(const QString &s, int start = 1);
   
   ClientSocket *clientSocket;
   QString currentTime();

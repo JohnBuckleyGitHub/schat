@@ -60,7 +60,7 @@ void SChatWindow::createActions()
 void SChatWindow::addTab()
 {
   qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new QWidget(), "Новое подключение"));  
+  tabWidget->setCurrentIndex(tabWidget->addTab(new QTextBrowser(this), "Новое подключение"));  
 }
 
 
@@ -69,21 +69,32 @@ void SChatWindow::addTab()
  */
 void SChatWindow::addTab(const QModelIndex &index)
 {
+  QString nick = model.itemFromIndex(index)->text();
+  int tab = tabIndex(nick);
+  
+  if (tab == -1)
+    tab = tabWidget->addTab(new QTextBrowser(this), nick);
+  
+  tabWidget->setCurrentIndex(tab);
+}
+
+
+/** [private]
+ * 
+ */
+int SChatWindow::tabIndex(const QString &s, int start)
+{
   int count = tabWidget->count();
   int tab = -1;
-  QString nick = model.itemFromIndex(index)->text();
   
-  if (count > 1)
-    for (int i = 1; i <= count; ++i)
-      if (tabWidget->tabText(i) == nick) {
+  if (count > start)
+    for (int i = start; i <= count; ++i)
+      if (tabWidget->tabText(i) == s) {
         tab = i;
         break;
       }
   
-  if (tab == -1)
-    tab = tabWidget->addTab(new QWidget(), nick);
-  
-  tabWidget->setCurrentIndex(tab);
+  return tab;
 }
 
 
