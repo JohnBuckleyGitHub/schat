@@ -14,7 +14,7 @@ ServerSocket::ServerSocket(QObject *parent)
 {
   qDebug() << "ServerSocket::ServerSocket(QObject *parent)";
   
-  currentState = SCHAT_STATE_WAITING_FOR_GREETING;
+  currentState = sChatStateWaitingForGreeting;
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
   protocolError = 0;
@@ -38,18 +38,18 @@ void ServerSocket::readyRead()
   // Если ещё не получили команду приветствия (состояние SCHAT_STATE_WAITING_FOR_GREETING)
   // пытаемся прочитать блок, и если послана команда SCHAT_GREETING
   // устанавливаем состояние SCHAT_STATE_READING_GREETING
-  if (currentState == SCHAT_STATE_WAITING_FOR_GREETING) {
+  if (currentState == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
     if (currentCommand != sChatOpcodeGreeting) {
       abort();
       return;
     }
-    currentState = SCHAT_STATE_READING_GREETING;
+    currentState = sChatStateReadingGreeting;
   }
   
   // Пытаемся извлечь данные из приветственного сообщения
-  if (currentState == SCHAT_STATE_READING_GREETING)
+  if (currentState == sChatStateReadingGreeting)
     readGreeting();
     
   
@@ -104,7 +104,7 @@ void ServerSocket::readGreeting()
   
   emit appendParticipant(nick);
   
-  currentState = SCHAT_STATE_WAITING_FOR_CHECKING;
+  currentState = sChatStateWaitingForChecking;
 }
 
 // Читаем блок данных
@@ -142,12 +142,12 @@ void ServerSocket::sendGreeting()
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(SCHAT_DATA_STREAM_VERSION);
+  out.setVersion(sChatStreamVersion);
   
   if (!protocolError)
-    out << quint16(0) << quint16(SCHAT_GREETING_OK);
+    out << quint16(0) << quint16(sChatOpcodeGreetingOk);
   else
-    out << quint16(0) << quint16(SCHAT_PROTOCOL_ERROR) << protocolError;
+    out << quint16(0) << quint16(sChatOpcodeError) << protocolError;
 
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));
@@ -155,7 +155,7 @@ void ServerSocket::sendGreeting()
   write(block);
   
   if (!protocolError)
-    currentState = SCHAT_STATE_READY_FOR_USE;
+    currentState = sChatStateReadyForUse;
 }
 
 
