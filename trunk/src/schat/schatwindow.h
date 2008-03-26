@@ -42,9 +42,9 @@ private:
   void scroll();
   int tabIndex(const QString &s, int start = 1);
   
+  QString nick;
   ClientSocket *clientSocket;
   QString currentTime();
-  QString defaultNick();
   QStandardItemModel model;
   QAction *addTabAction;
   QAction *closeTabAction;
