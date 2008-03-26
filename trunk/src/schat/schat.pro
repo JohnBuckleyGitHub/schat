@@ -25,7 +25,6 @@ HEADERS += tab.h \
            protocol.h \
            server.h \
            serversocket.h
-FORMS   += schatwindow.ui
 SOURCES += tab.cpp \ 
            clientsocket.cpp \
            main.cpp \
