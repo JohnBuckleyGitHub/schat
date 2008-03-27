@@ -31,6 +31,7 @@ public:
   
 public slots:
   void newMessage(const QString &nick, const QString &message);
+  void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void newParticipant(const QString &p, bool echo = true);
   void participantLeft(const QString &nick);
   
@@ -50,6 +51,7 @@ private:
   void removeConnection(ClientSocket *socket);
   
   Tab *mainChannel;
+  Tab *currentChannel;
   ClientSocket *clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;

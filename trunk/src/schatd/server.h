@@ -20,7 +20,7 @@ public:
 public slots:
   void appendParticipant(const QString &p);
   void needParticipantList();
-  void relayMessage(const QString &nick, const QString &message);
+  void relayMessage(const QString &channel, const QString &nick, const QString &message);
   
 private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
