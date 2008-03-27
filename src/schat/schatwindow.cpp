@@ -139,11 +139,9 @@ int SChatWindow::tabIndex(const QString &s, int start)
  */
 void SChatWindow::closeTab()
 {
-  qDebug() << "SChatWindow::closeTab()" << tabWidget->currentIndex();
   int index = tabWidget->currentIndex();
   if (index)
-    tabWidget->removeTab(index);
-  
+    tabWidget->removeTab(index); 
 }
 
 
@@ -155,11 +153,11 @@ void SChatWindow::returnPressed()
   QString text = lineEdit->text();
   if (text.isEmpty())
     return;
-  
-  Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget());
 
-  if (text.startsWith(QChar('/')))
-    tab->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+  if (text.startsWith(QChar('/'))) {
+    if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
+      tab->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+  }
   else
     if (tabWidget->currentIndex() == 0)
       clientSocket->send(sChatOpcodeSendMessage, "#main", text);
@@ -193,11 +191,16 @@ void SChatWindow::newParticipant(const QString &p, bool echo)
   QStandardItem *item = new QStandardItem(p);
   model.appendRow(item);
   model.sort(0);
-  
-  if (echo)
-    mainChannel->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p)));
-  
-  qDebug() << "SChatWindow::newParticipant(QString &p, bool echo)" << p;
+
+  if (echo) {
+    QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p));
+    int index = tabIndex(p);
+    if (index != -1) 
+      if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
+        tab->append(line);
+    
+    mainChannel->append(line);
+  }
 }
 
 
@@ -228,10 +231,11 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
   else 
     tab = qobject_cast<Tab *>(tabWidget->widget(index));
   
-  tab->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-      .arg(currentTime())
-      .arg(Qt::escape(sender))
-      .arg(message));
+  if (tab)
+    tab->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+        .arg(currentTime())
+        .arg(Qt::escape(sender))
+        .arg(message));
 }
 
 
@@ -249,7 +253,13 @@ void SChatWindow::participantLeft(const QString &nick)
     model.removeRow(index.row());
   }
   
-  mainChannel->append(tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+  QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
+  int index = tabIndex(nick);
+  if (index != -1) 
+    if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
+      tab->append(line);
+  
+  mainChannel->append(line);
 }
 
 

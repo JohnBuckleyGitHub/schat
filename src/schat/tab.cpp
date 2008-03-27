@@ -10,6 +10,8 @@
 Tab::Tab(QWidget *parent)
   : QWidget(parent)
 {
+  setAttribute(Qt::WA_DeleteOnClose);
+  
   chatText.setFocusPolicy(Qt::NoFocus);
   chatText.setOpenExternalLinks(true);
   
