@@ -125,13 +125,24 @@ void Server::participantLeft(const QString &nick)
 /** [private]
  * 
  */
-void Server::relayMessage(const QString &nick, const QString &message)
+void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
 {
-  qDebug() << "Server::relayMessage(const QString &nick, const QString &message)";
+  qDebug() << "Server::relayMessage(const QString &channel, const QString &nick, const QString &message)" << channel << nick << message;
   
-  QHashIterator<QString, ServerSocket *> i(peers);
-  while (i.hasNext()) {
-    i.next();
-    i.value()->send(sChatOpcodeSendMessage, nick, message);
-  }
+  if (channel == "#main") {
+    QHashIterator<QString, ServerSocket *> i(peers);
+    while (i.hasNext()) {
+      i.next();
+      i.value()->send(sChatOpcodeSendMessage, nick, message);
+    }
+  } else
+    if (peers.contains(channel)) {
+      if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+        socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);
+      peers[channel]->send(sChatOpcodeSendPrivateMessage, nick, message);
+    }
+    else
+      if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+        socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);
+  
 }

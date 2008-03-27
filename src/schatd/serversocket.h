@@ -28,7 +28,7 @@ public:
 signals:
   void appendParticipant(const QString &p);
   void needParticipantList();
-  void relayMessage(const QString &nick, const QString &message);
+  void relayMessage(const QString &channel, const QString &nick, const QString &message);
 
 private slots:
   void readyRead();
@@ -42,6 +42,7 @@ private:
   QString userAgent;
   QString userMask;
   QString message;
+  QString channel;
   
   quint16 protocolError;
   quint16 currentCommand;

@@ -21,6 +21,8 @@ ClientSocket::ClientSocket(QObject *parent)
   connect(this, SIGNAL(newParticipant(const QString &, bool)), parent, SLOT(newParticipant(const QString &, bool)));
   connect(this, SIGNAL(participantLeft(const QString &)), parent, SLOT(participantLeft(const QString &)));
   connect(this, SIGNAL(newMessage(const QString &, const QString &)), parent, SLOT(newMessage(const QString &, const QString &)));
+  connect(this, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)),
+          parent, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
   
   connect(this, SIGNAL(connected()), this, SLOT(sendGreeting()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
@@ -94,13 +96,24 @@ void ClientSocket::readyRead()
   }
   
   QString textBlock;
+  quint16 err;
   
   while (readBlock()) {
     
     switch (currentCommand) {
-      case sChatOpcodeSendMessage:
+      case sChatOpcodeSendMessage:      
         currentBlock >> textBlock >> message;
         emit newMessage(textBlock, message);
+        break;
+      
+      case sChatOpcodeSendPrivateMessage:
+        currentBlock >> textBlock >> message;
+        emit newPrivateMessage(textBlock, message, textBlock);
+        break;
+        
+      case sChatOpcodeSendPrvMessageEcho:
+        currentBlock >> textBlock >> message;
+        emit newPrivateMessage(textBlock, message, nick);
         break;
       
       case sChatOpcodeNewParticipant:
@@ -114,6 +127,11 @@ void ClientSocket::readyRead()
       case sChatOpcodeParticipantLeft:
         currentBlock >> textBlock;
         emit participantLeft(textBlock);
+        break;
+        
+      case sChatOpcodeError:
+        currentBlock >> err;
+        qDebug() << "PROTOCOL ERROR:" << err;
         break;
         
       default:
@@ -178,17 +196,26 @@ void ClientSocket::send(quint16 opcode, const QString &s)
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
-  out << quint16(0) << quint16(opcode);
-  
-  switch (opcode) {
-    case sChatOpcodeSendMessage:
-      out << s;      
-      break;
-  }
-  
+  out << quint16(0) << opcode << s;
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-      
+  out << quint16(block.size() - sizeof(quint16));  
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
+{
+  qDebug() << "ClientSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode << n << m;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << n << m;  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
   write(block);  
 }
 

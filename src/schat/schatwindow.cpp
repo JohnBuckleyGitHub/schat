@@ -155,11 +155,16 @@ void SChatWindow::returnPressed()
   QString text = lineEdit->text();
   if (text.isEmpty())
     return;
+  
+  Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget());
 
   if (text.startsWith(QChar('/')))
-    mainChannel->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+    tab->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
   else
-    clientSocket->send(sChatOpcodeSendMessage, text);
+    if (tabWidget->currentIndex() == 0)
+      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+    else
+      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
   
   lineEdit->clear();  
 }
@@ -201,9 +206,32 @@ void SChatWindow::newParticipant(const QString &p, bool echo)
  */
 void SChatWindow::newMessage(const QString &nick, const QString &message)
 {
-  qDebug() << "SChatWindow::newMessage(const QString &nick, const QString &message)";
+  mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+      .arg(currentTime())
+      .arg(Qt::escape(nick))
+      .arg(message));
+}
+
+
+/** [public slots]
+ * 
+ */
+void SChatWindow::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
+{
+  Tab *tab;
+  int index = tabIndex(nick);
   
-  mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>").arg(currentTime()).arg(Qt::escape(nick)).arg(message));
+  if (index == -1 ) {
+    tab = new Tab(this);
+    tabWidget->setCurrentIndex(tabWidget->addTab(tab, nick));
+  }
+  else 
+    tab = qobject_cast<Tab *>(tabWidget->widget(index));
+  
+  tab->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+      .arg(currentTime())
+      .arg(Qt::escape(sender))
+      .arg(message));
 }
 
 

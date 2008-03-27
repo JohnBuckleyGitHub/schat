@@ -21,7 +21,8 @@ ServerSocket::ServerSocket(QObject *parent)
   
   connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
   connect(this, SIGNAL(needParticipantList()), parent, SLOT(needParticipantList()));
-  connect(this, SIGNAL(relayMessage(const QString &, const QString &)), parent, SLOT(relayMessage(const QString &, const QString &)));
+  connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)),
+          parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
   
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
@@ -51,15 +52,13 @@ void ServerSocket::readyRead()
   // Пытаемся извлечь данные из приветственного сообщения
   if (currentState == sChatStateReadingGreeting)
     readGreeting();
-    
-  
-  
+
   while (readBlock()) {
     
     switch (currentCommand) {
       case sChatOpcodeSendMessage:
-        currentBlock >> message;
-        emit relayMessage(nick, message);
+        currentBlock >> channel >> message;
+        emit relayMessage(channel, nick, message);
         break;
       
       case sChatOpcodeNeedParticipantList:
@@ -197,11 +196,9 @@ void ServerSocket::send(quint16 opcode, const QString &s)
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << s;
-  
+  out << quint16(0) << opcode << s;  
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-      
+  out << quint16(block.size() - sizeof(quint16));      
   write(block);  
 }
 
@@ -235,7 +232,6 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
   out.setVersion(sChatStreamVersion);
   out << quint16(0) << opcode << n << m;  
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-      
+  out << quint16(block.size() - sizeof(quint16));      
   write(block);  
 }

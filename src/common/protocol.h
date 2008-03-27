@@ -19,6 +19,8 @@ static const quint16 sChatStateSendingGreeting      = 2000;
 static const quint16 sChatOpcodeGreeting            = 100;
 static const quint16 sChatOpcodeGreetingOk          = 101;
 static const quint16 sChatOpcodeSendMessage         = 200;
+static const quint16 sChatOpcodeSendPrivateMessage  = 201;
+static const quint16 sChatOpcodeSendPrvMessageEcho  = 202;
 static const quint16 sChatOpcodeNeedParticipantList = 300;
 static const quint16 sChatOpcodeNewParticipant      = 301;
 static const quint16 sChatOpcodeParticipantLeft     = 302;
@@ -31,5 +33,6 @@ static const quint16 sChatErrorBadGreetingFlag      = 101;
 static const quint16 sChatErrorBadNickName          = 102;
 static const quint16 sChatErrorBadUserAgent         = 103;
 static const quint16 sChatErrorInvalidConnection    = 110;
+static const quint16 sChatErrorNoSuchChannel        = 300;
 
 #endif /*PROTOCOL_H_*/
