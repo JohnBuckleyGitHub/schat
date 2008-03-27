@@ -12,11 +12,13 @@
 
 class QAction;
 class QHBoxLayout;
+class QHBoxLayout;
 class QLineEdit;
 class QListView;
 class QSplitter;
 class QStatusBar;
 class QTabWidget;
+class QToolButton;
 class QVBoxLayout;
 class Tab;
 
@@ -50,11 +52,11 @@ private:
   void createActions();
   void removeConnection(ClientSocket *socket);
   
-  Tab *mainChannel;
-  Tab *currentChannel;
   ClientSocket *clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;
+  QAction *sendAction;
+  QHBoxLayout *sendLayout;
   QLineEdit *lineEdit;  
   QListView *listView;
   QSplitter *splitter;
@@ -62,10 +64,13 @@ private:
   QStatusBar *statusbar;
   QString nick;
   QTabWidget *tabWidget;
+  QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
+  Tab *currentChannel;
+  Tab *mainChannel;
 };
 
 #endif /*SCHATWINDOW_H_*/

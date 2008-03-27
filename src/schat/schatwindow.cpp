@@ -23,7 +23,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView      = new QListView(rightWidget);  
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
+  sendLayout    = new QHBoxLayout(centralWidget);
   statusbar     = new QStatusBar(this);
+  sendButton    = new QToolButton(centralWidget);
   
   splitter->addWidget(tabWidget);
   splitter->addWidget(rightWidget);
@@ -33,8 +35,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   rightLayout->addWidget(listView);
   rightLayout->setMargin(0);
   
+  sendLayout->addWidget(lineEdit);
+  sendLayout->addWidget(sendButton);
+  
   mainLayout->addWidget(splitter);
-  mainLayout->addWidget(lineEdit);
+  mainLayout->addLayout(sendLayout);
   mainLayout->setMargin(4);
   
   setCentralWidget(centralWidget);
@@ -72,11 +77,10 @@ SChatWindow::SChatWindow(QWidget *parent)
 void SChatWindow::createActions()
 {
   QToolButton *addTabButton = new QToolButton;
-  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение"), this);
+  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
   addTabButton->setDefaultAction(addTabAction);
   addTabButton->setAutoRaise(true);
-  addTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
   tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
   connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
@@ -84,9 +88,12 @@ void SChatWindow::createActions()
   closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
   closeTabButton->setDefaultAction(closeTabAction);
   closeTabButton->setAutoRaise(true);
-  closeTabButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
   tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+  
+  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
+  sendButton->setDefaultAction(sendAction);
+  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
 }
 
 
