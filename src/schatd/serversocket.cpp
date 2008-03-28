@@ -20,7 +20,7 @@ ServerSocket::ServerSocket(QObject *parent)
   protocolError = 0;
   
   connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
-  connect(this, SIGNAL(needParticipantList()), parent, SLOT(needParticipantList()));
+//  connect(this, SIGNAL(needParticipantList()), parent, SLOT(needParticipantList()));
   connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)),
           parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
   
@@ -31,14 +31,20 @@ ServerSocket::ServerSocket(QObject *parent)
   nextBlockSize = 0;
 }
 
-//
+
+/** [private slots]
+ * Слот вызывается сигналом `readyRead()`
+ * т.е. слот вызывается тогда когда сокет готов
+ * прочитать новые данные. 
+ */
 void ServerSocket::readyRead()
 {
   qDebug() << "ServerSocket::readyRead()" << (int) state() ;
   
-  // Если ещё не получили команду приветствия (состояние SCHAT_STATE_WAITING_FOR_GREETING)
-  // пытаемся прочитать блок, и если послана команда SCHAT_GREETING
-  // устанавливаем состояние SCHAT_STATE_READING_GREETING
+  // Состояние `sChatStateWaitingForGreeting`
+  // Ожидаем пакет с опкодом `sChatOpcodeGreeting`
+  // Если пришёл другой пакет, рвём соединение `abort()`
+  // Если получен нужный пакет устанавливаем состояние `sChatStateReadingGreeting`
   if (currentState == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
@@ -49,7 +55,8 @@ void ServerSocket::readyRead()
     currentState = sChatStateReadingGreeting;
   }
   
-  // Пытаемся извлечь данные из приветственного сообщения
+  // Состояние `sChatStateReadingGreeting`
+  // Вызываем функцию `readGreeting()` для чтения пакета `sChatOpcodeGreeting`
   if (currentState == sChatStateReadingGreeting)
     readGreeting();
 
@@ -61,9 +68,9 @@ void ServerSocket::readyRead()
         emit relayMessage(channel, nick, message);
         break;
       
-      case sChatOpcodeNeedParticipantList:
-        emit needParticipantList();
-        break;
+//      case sChatOpcodeNeedParticipantList:
+//        emit needParticipantList();
+//        break;
         
       default:
         qDebug() << "Invalid Opcode";
@@ -74,13 +81,23 @@ void ServerSocket::readyRead()
 }
 
 
+/** [private]
+ * Функция для чтения пакета `sChatOpcodeGreeting`
+ * Проверяем корректность данных, в случае ошибки
+ * посылаем пакет `sChatOpcodeError`
+ * и рвём соединение `disconnectFromHost()`
+ * 
+ * В случае успеха вызываем сигнал `appendParticipant(const QString &p)`
+ * и устанавливаем состояние `sChatStateWaitingForChecking`
+ * т.е. сервер должен проверить имя на дубликат.
+ */
 void ServerSocket::readGreeting()
 {
   quint8 version;
   quint8 flag;
   quint16 err = 0;
   
-  currentBlock >> version >> flag >> nick >> userAgent;
+  currentBlock >> version >> flag >> sex >> nick >> fullName >> userAgent;
   
   if (version != sChatProtocolVersion)
     err = sChatErrorBadProtocolVersion;
@@ -134,28 +151,28 @@ bool ServerSocket::readBlock()
  * Формат пакета:
  * quint16 - размер пакета
  * quint16 - опкод SCHAT_GREETING_OK
- */
-void ServerSocket::sendGreeting()
-{
-  qDebug() << "ServerSocket::sendGreeting()";
-  
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  
-  if (!protocolError)
-    out << quint16(0) << quint16(sChatOpcodeGreetingOk);
-  else
-    out << quint16(0) << quint16(sChatOpcodeError) << protocolError;
-
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-  
-  write(block);
-  
-  if (!protocolError)
-    currentState = sChatStateReadyForUse;
-}
+// */
+//void ServerSocket::sendGreeting()
+//{
+//  qDebug() << "ServerSocket::sendGreeting()";
+//  
+//  QByteArray block;
+//  QDataStream out(&block, QIODevice::WriteOnly);
+//  out.setVersion(sChatStreamVersion);
+//  
+//  if (!protocolError)
+//    out << quint16(0) << quint16(sChatOpcodeGreetingOk);
+//  else
+//    out << quint16(0) << quint16(sChatOpcodeError) << protocolError;
+//
+//  out.device()->seek(0);
+//  out << quint16(block.size() - sizeof(quint16));
+//  
+//  write(block);
+//  
+//  if (!protocolError)
+//    currentState = sChatStateReadyForUse;
+//}
 
 
 
@@ -164,26 +181,16 @@ void ServerSocket::sendGreeting()
 /** [public]
  * 
  */
-//void ServerSocket::send(quint16 opcode)
-//{
-//  qDebug() << "ServerSocket::send(quint16 opcode)" << opcode;
-//  
-//  QByteArray block;
-//  QDataStream out(&block, QIODevice::WriteOnly);
-//  out.setVersion(sChatStreamVersion);
-//  out << quint16(0) << quint16(opcode);
-//  
-//  switch (opcode) {
-//    case sChatOpcodeSendMessage:
-//      out << nick << message;      
-//      break;
-//  }
-//  
-//  out.device()->seek(0);
-//  out << quint16(block.size() - sizeof(quint16));
-//      
-//  write(block);
-//}
+void ServerSocket::send(quint16 opcode)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode;
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);
+}
 
 
 /** [public]
@@ -234,4 +241,38 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
   write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << s;
+  
+  for (int i = 0; i < list.size(); ++i)
+    out << list.at(i);
+  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+QStringList ServerSocket::participantInfo()
+{
+  QStringList stringList;
+  stringList << nick
+             << fullName
+             << userAgent
+             << peerAddress().toString();
+  
+  return stringList;  
 }

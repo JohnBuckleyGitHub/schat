@@ -19,7 +19,7 @@ public:
 
 public slots:
   void appendParticipant(const QString &p);
-  void needParticipantList();
+  void relayParticipantList(ServerSocket *socket);
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   
 private slots:

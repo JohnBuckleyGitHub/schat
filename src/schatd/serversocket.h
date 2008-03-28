@@ -17,13 +17,17 @@ class ServerSocket : public QTcpSocket
 public:  
   ServerSocket(QObject *parent = 0);
   void setProtocolError(quint16 e) { protocolError = e; }
-  void sendGreeting();
-//  void send(quint16 opcode);
+//  void sendGreeting();
+  void send(quint16 opcode);
   void send(quint16 opcode, quint16 err);
   void send(quint16 opcode, const QString &s);
   void send(quint16 opcode, const QString &n, const QString &m);
+  void send(quint16 opcode, quint16 s, const QStringList &list);
   QString nickname() { return nick; }
   void setNick(const QString &n) { nick = n; }
+  void setState(quint16 state) { currentState = state; }
+  QStringList participantInfo();
+  quint16 participantSex() { return sex; }  
 
 signals:
   void appendParticipant(const QString &p);
@@ -39,6 +43,8 @@ private:
   
   QDataStream currentBlock;
   QString nick;
+  QString fullName;
+  quint8 sex;
   QString userAgent;
   QString userMask;
   QString message;

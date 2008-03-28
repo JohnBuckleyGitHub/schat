@@ -21,6 +21,7 @@ class QTabWidget;
 class QToolButton;
 class QVBoxLayout;
 class Tab;
+class WelcomeDialog;
 
 #include "clientsocket.h"
 
@@ -30,11 +31,12 @@ class SChatWindow : public QMainWindow
 
 public:
   SChatWindow(QWidget *parent = 0);
+  void setNick(const QString &n) { nick = n; }
   
 public slots:
   void newMessage(const QString &nick, const QString &message);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
-  void newParticipant(const QString &p, bool echo = true);
+  void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void participantLeft(const QString &nick);
   
 private slots:
@@ -45,6 +47,7 @@ private slots:
   void disconnected();
   void newConnection();
   void returnPressed();
+  void welcomeOk();
 
 private:
   int tabIndex(const QString &s, int start = 1);
@@ -63,6 +66,8 @@ private:
   QStandardItemModel model;
   QStatusBar *statusbar;
   QString nick;
+  QString fullName;
+  quint8 sex;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
   QVBoxLayout *mainLayout;
@@ -71,6 +76,7 @@ private:
   QWidget *rightWidget;
   Tab *currentChannel;
   Tab *mainChannel;
+  WelcomeDialog *welcomeDialog;
 };
 
 #endif /*SCHATWINDOW_H_*/
