@@ -61,6 +61,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   mainChannel = new Tab(this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, "Общий"));
+  tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
+  tabWidget->setContentsMargins(0,0,0,0);
   
   bool ok;
   nick = QInputDialog::getText(this, tr("Ваше имя"),
@@ -195,7 +197,7 @@ void SChatWindow::newConnection()
  */
 void SChatWindow::newParticipant(const QString &p, bool echo)
 {
-  QStandardItem *item = new QStandardItem(p);
+  QStandardItem *item = new QStandardItem(QIcon(":/images/male.png"), p);
   model.appendRow(item);
   model.sort(0);
 

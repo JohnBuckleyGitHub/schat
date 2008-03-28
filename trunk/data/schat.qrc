@@ -1,5 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>images/female.png</file>
+  <file>images/main.png</file>
+  <file>images/male.png</file>
   <file>images/send.png</file>
   <file>images/tab_new.png</file>
   <file>images/tab_close.png</file>
