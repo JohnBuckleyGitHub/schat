@@ -18,7 +18,8 @@ ClientSocket::ClientSocket(QObject *parent)
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
   
-  connect(this, SIGNAL(newParticipant(const QString &, bool)), parent, SLOT(newParticipant(const QString &, bool)));
+  connect(this, SIGNAL(newParticipant(quint16, const QStringList &, bool)),
+          parent, SLOT(newParticipant(quint16, const QStringList &, bool)));
   connect(this, SIGNAL(participantLeft(const QString &)), parent, SLOT(participantLeft(const QString &)));
   connect(this, SIGNAL(newMessage(const QString &, const QString &)), parent, SLOT(newMessage(const QString &, const QString &)));
   connect(this, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)),
@@ -35,15 +36,20 @@ ClientSocket::ClientSocket(QObject *parent)
 
 
 /** [private slots]
- * Посылаем серверу приветствие
- * Опкод SCHAT_GREETING
- * Вызывается сигналом connected()
- * Устанавливает состояние соединения в SCHAT_STATE_SENDING_GREETING
+ * Отправляем пакет с опкодом `sChatOpcodeGreeting`
+ * Пакет является приветственным сообщением.
+ * До начала отправки устанавливаем состояние
+ * сокета `sChatStateWaitingForGreeting` вместо `sChatStateDisconnected`
+ * Слот вызывается сигналом `connected()`
  **
  * Формат пакета:
  * quint16 - размер пакета
- * quint16 - опкод SCHAT_GREETING
- * QString - Ник
+ * quint16 - опкод `sChatOpcodeGreeting`
+ * quint8  - версия протокола `sChatProtocolVersion`
+ * quint8  - флаг, в данное время всегда `0`
+ * QString - ник участника
+ * QString - полное имя участника
+ * quint8  - пол участника (мужской: `0`, женский: `1`)
  * QString - строка с названием и версией клиента (разделитель '/')
  */
 void ClientSocket::sendGreeting()
@@ -57,20 +63,21 @@ void ClientSocket::sendGreeting()
       << quint16(sChatOpcodeGreeting)
       << quint8(sChatProtocolVersion)
       << quint8(0)
+      << sex
       << nick
-      << QString("IMPOMEZIA Simple Chat/0.0.0.0 Alpha");
+      << fullName
+      << QString("Simple Chat/0.0.0.0 Alpha");
     
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));
-    
-  qDebug() << "ClientSocket::sendGreeting()" << block.size();
-    
   write(block);
 }
 
 
 /** [private slots]
- * 
+ * Слот вызывается сигналом `readyRead()`
+ * т.е. слот вызывается тогда когда сокет готов
+ * прочитать новые данные. 
  */
 void ClientSocket::readyRead()
 {
@@ -92,7 +99,6 @@ void ClientSocket::readyRead()
       abort();
       return;
     }
-    send(sChatOpcodeNeedParticipantList);
   }
   
   QString textBlock;
@@ -149,15 +155,26 @@ void ClientSocket::readyRead()
  */
 void ClientSocket::newParticipant(bool echo)
 {
-  QString participant;
-  currentBlock >> participant;
+  qDebug() << "void ClientSocket::newParticipant(bool echo)" << echo;
+  
+  quint16 sex;
+  QStringList info;
+  currentBlock >> sex;
+  
+  for (int i = 0; i < 4; ++i) {
+    QString s;
+    currentBlock >> s;
+    info << s;
+  }
+  
+  for (int i = 0; i < info.size(); ++i)
+    qDebug() << "::" << info.at(i);
   
   if (echo)
-    emit newParticipant(participant);
+    emit newParticipant(sex, info);
   else
-    emit newParticipant(participant, false);
-    
-  qDebug() << "ClientSocket::newParticipant()" << participant;
+    emit newParticipant(sex, info, false);
+
 }
 
 

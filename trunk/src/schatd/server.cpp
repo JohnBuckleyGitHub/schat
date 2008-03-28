@@ -22,27 +22,6 @@ void Server::incomingConnection(int socketId)
 }
 
 
-/** [public slots]
- * Вызывается для добавления нового участника (с проверкой на дубликат)
- */
-void Server::appendParticipant(const QString &p)
-{
-  qDebug() << "Server::appendParticipant(const QString &p)";
-  
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
-    if (!peers.contains(p)) {
-      peers.insert(p, socket);
-      socket->sendGreeting();
-    }
-    else {
-      socket->setNick("#DUBLICATE");
-      socket->send(sChatOpcodeError, sChatErrorNickAlreadyUse);
-      socket->disconnectFromHost();
-    }
-  }  
-}
-
-
 /** [private slots]
  * 
  */
@@ -87,22 +66,52 @@ void Server::removeConnection(ServerSocket *socket)
 
 
 /** [public slots]
+ * Слот вызывается сигналом, отправленным из `ServerSocket::readGreeting()`
+ * В случае если участник с таким именем не подключен к серверу,
+ * то всё в порядке отправляем подтверждение приветствия `sChatOpcodeGreetingOk`
+ * и устанавливаем состояние сокета `sChatStateWaitingForGetPList`
+ * для ожидания пакета `sChatOpcodeNeedParticipantList`
+ * 
+ * В случае ошибки меняем, ник на специальное значение "#DUBLICATE"
+ * Отсылаем пакет `sChatOpcodeError` с кодом ошибки `sChatErrorNickAlreadyUse`
+ * и разрываем соединение `disconnectFromHost()`
+ */
+void Server::appendParticipant(const QString &p)
+{
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    if (!peers.contains(p)) {
+      peers.insert(p, socket);
+      socket->send(sChatOpcodeGreetingOk);
+      socket->setState(sChatStateReadyForUse);
+      relayParticipantList(socket);
+    }
+    else {
+      socket->setNick("#DUBLICATE");
+      socket->send(sChatOpcodeError, sChatErrorNickAlreadyUse);
+      socket->disconnectFromHost();
+    }
+  }  
+}
+
+
+/** [public slots]
  * Отправляем имена участников, по одному имени на запрос
  * В конце посылаем команду завершения передачи списка.
  */
-void Server::needParticipantList()
+void Server::relayParticipantList(ServerSocket *socket)
 {
-  qDebug() << "Server::needParticipantList()";
+  quint16 sex = socket->participantSex();
+  QStringList info = socket->participantInfo();
   
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
-    QString nick = socket->nickname();
-    QHashIterator<QString, ServerSocket *> i(peers);
-    while (i.hasNext()) {
-      i.next();
-      socket->send(sChatOpcodeNewParticipantQuiet, i.key());
-      if (socket != i.value())
-        i.value()->send(sChatOpcodeNewParticipant, nick);
-    }
+  QHashIterator<QString, ServerSocket *> i(peers);
+  while (i.hasNext()) {
+    i.next();
+    // Отсылаем новому участнику список участников
+    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->participantSex(), i.value()->participantInfo());
+    
+    // Отсылаем существующим участникам, профиль нового
+    if (socket != i.value())
+      i.value()->send(sChatOpcodeNewParticipant, sex, info);
   }
 }
 
@@ -143,6 +152,5 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
     }
     else
       if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
-        socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);
-  
+        socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);  
 }

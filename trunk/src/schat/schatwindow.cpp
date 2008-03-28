@@ -9,6 +9,7 @@
 #include "protocol.h"
 #include "schatwindow.h"
 #include "tab.h"
+#include "welcomedialog.h"
 
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -23,7 +24,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView      = new QListView(rightWidget);  
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
-  sendLayout    = new QHBoxLayout(centralWidget);
+  sendLayout    = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   sendButton    = new QToolButton(centralWidget);
   
@@ -64,12 +65,19 @@ SChatWindow::SChatWindow(QWidget *parent)
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   tabWidget->setContentsMargins(0,0,0,0);
   
-  bool ok;
-  nick = QInputDialog::getText(this, tr("Ваше имя"),
-                                           tr("Введите ваше имя:"), QLineEdit::Normal,
-                                           QDir::home().dirName(), &ok);
-  if (ok && !nick.isEmpty())
-    newConnection();
+  welcomeDialog = new WelcomeDialog(this);
+  connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
+  welcomeDialog->exec();
+    
+
+  
+  
+//  bool ok;
+//  nick = QInputDialog::getText(this, tr("Ваше имя"),
+//                                           tr("Введите ваше имя:"), QLineEdit::Normal,
+//                                           QDir::home().dirName(), &ok);
+//  if (ok && !nick.isEmpty())
+//    newConnection();
 }
 
 
@@ -185,9 +193,29 @@ QString SChatWindow::currentTime()
   return QTime::currentTime().toString("hh:mm:ss");
 }
 
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::welcomeOk()
+{
+  nick = welcomeDialog->nick();
+  fullName = welcomeDialog->fullName();
+  sex = welcomeDialog->sex();
+  welcomeDialog->deleteLater();
+  
+  newConnection();
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::newConnection()
 {
   clientSocket->setNick(nick);
+  clientSocket->setFullName(fullName);
+  clientSocket->setSex(sex);
   clientSocket->connectToHost("192.168.5.134", 7666);
 }
 
@@ -195,15 +223,34 @@ void SChatWindow::newConnection()
 /** [public slots]
  * 
  */
-void SChatWindow::newParticipant(const QString &p, bool echo)
+void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
-  QStandardItem *item = new QStandardItem(QIcon(":/images/male.png"), p);
+  QString icon;
+  if (sex)
+    icon = ":/images/female.png";
+  else
+    icon = ":/images/male.png";
+  
+  QString name = info.at(1);
+  if (name.isEmpty())
+    name = tr("&lt;не указано&gt;");
+  
+  QString userAgent = info.at(2);
+  userAgent.replace('/', ' ');
+  
+  QStandardItem *item = new QStandardItem(QIcon(icon), info.at(0));
+  item->setToolTip(tr("<h3><img src='%1' align='left'> %2</h3>"
+                      "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
+                      "<tr><td>Клиент:</td><td>%4</td></tr>"
+                      "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
+                      .arg(icon).arg(info.at(0)).arg(name).arg(userAgent).arg(info.at(3)));  
+  
   model.appendRow(item);
   model.sort(0);
 
   if (echo) {
-    QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(p));
-    int index = tabIndex(p);
+    QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
+    int index = tabIndex(info.at(0));
     if (index != -1) 
       if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
         tab->append(line);

@@ -21,7 +21,6 @@ static const quint16 sChatOpcodeGreetingOk          = 101;
 static const quint16 sChatOpcodeSendMessage         = 200;
 static const quint16 sChatOpcodeSendPrivateMessage  = 201;
 static const quint16 sChatOpcodeSendPrvMessageEcho  = 202;
-static const quint16 sChatOpcodeNeedParticipantList = 300;
 static const quint16 sChatOpcodeNewParticipant      = 301;
 static const quint16 sChatOpcodeParticipantLeft     = 302;
 static const quint16 sChatOpcodeNewParticipantQuiet = 303;

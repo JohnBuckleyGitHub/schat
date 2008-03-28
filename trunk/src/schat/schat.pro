@@ -6,13 +6,10 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH  += . \
                ../common \
-               ../schatd
-               
+               ../schatd               
 INCLUDEPATH += . \
                ../common \
                ../schatd
-                
-
 QT += network
 #CONFIG += console
 
@@ -24,13 +21,15 @@ HEADERS += tab.h \
            schatwindow.h \
            protocol.h \
            server.h \
-           serversocket.h
+           serversocket.h \
+           welcomedialog.h
 SOURCES += tab.cpp \ 
            clientsocket.cpp \
            main.cpp \
            schatwindow.cpp \
            server.cpp \
-           serversocket.cpp
+           serversocket.cpp \
+           welcomedialog.cpp
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
@@ -44,3 +43,4 @@ CONFIG(release, debug|release) {
     OBJECTS_DIR = ../../tmp/schat/release/obj
     DESTDIR = ../../out/release
 }
+FORMS = welcomedialog.ui
