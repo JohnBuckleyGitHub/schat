@@ -68,16 +68,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   welcomeDialog = new WelcomeDialog(this);
   connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
   welcomeDialog->exec();
-    
-
-  
-  
-//  bool ok;
-//  nick = QInputDialog::getText(this, tr("Ваше имя"),
-//                                           tr("Введите ваше имя:"), QLineEdit::Normal,
-//                                           QDir::home().dirName(), &ok);
-//  if (ok && !nick.isEmpty())
-//    newConnection();
 }
 
 
@@ -239,6 +229,7 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
   userAgent.replace('/', ' ');
   
   QStandardItem *item = new QStandardItem(QIcon(icon), info.at(0));
+  item->setData(sex, Qt::UserRole + 1);
   item->setToolTip(tr("<h3><img src='%1' align='left'> %2</h3>"
                       "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
                       "<tr><td>Клиент:</td><td>%4</td></tr>"
@@ -249,7 +240,11 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
   model.sort(0);
 
   if (echo) {
-    QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> заходит в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
+    QString line;
+    if (sex)
+      line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашла в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
+    else
+      line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашёл в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
     int index = tabIndex(info.at(0));
     if (index != -1) 
       if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
@@ -300,16 +295,21 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
  */
 void SChatWindow::participantLeft(const QString &nick)
 {
-  qDebug() << "SChatWindow::participantLeft(const QString &nick)";
+  unsigned int sex = 0;
   
   QList<QStandardItem *> items;
   items = model.findItems(nick, Qt::MatchFixedString);
   if (items.size() == 1) {
+    sex = items[0]->data(Qt::UserRole + 1).toUInt();
     QModelIndex index = model.indexFromItem(items[0]);
     model.removeRow(index.row());
   }
   
-  QString line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> выходит из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
+  QString line;
+  if (sex)
+    line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> вышла из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
+  else
+    line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> вышел из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
   int index = tabIndex(nick);
   if (index != -1) 
     if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
