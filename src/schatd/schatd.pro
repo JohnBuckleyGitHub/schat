@@ -6,11 +6,12 @@ TEMPLATE = app
 QT += network
 CONFIG += console
 HEADERS = protocol.h \
-    serversocket.h \
-    server.h
+          serversocket.h \
+          server.h \
+          version.h
 SOURCES = serversocket.cpp \
-    server.cpp \
-    main.cpp
+          server.cpp \
+          main.cpp
     
 DEPENDPATH  += . \
                ../common
@@ -30,3 +31,4 @@ CONFIG(release, debug|release) {
     OBJECTS_DIR = ../../tmp/schatd/release/obj
     DESTDIR = ../../out/release
 }
+win32:RC_FILE = schatd.rc
