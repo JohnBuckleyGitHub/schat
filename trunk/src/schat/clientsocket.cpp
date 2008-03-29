@@ -21,13 +21,16 @@ ClientSocket::ClientSocket(QObject *parent)
   
   connect(this, SIGNAL(newParticipant(quint16, const QStringList &, bool)),
           parent, SLOT(newParticipant(quint16, const QStringList &, bool)));
-  connect(this, SIGNAL(participantLeft(const QString &)), parent, SLOT(participantLeft(const QString &)));
-  connect(this, SIGNAL(newMessage(const QString &, const QString &)), parent, SLOT(newMessage(const QString &, const QString &)));
+  connect(this, SIGNAL(participantLeft(const QString &)),
+          parent, SLOT(participantLeft(const QString &)));
+  connect(this, SIGNAL(newMessage(const QString &, const QString &)),
+          parent, SLOT(newMessage(const QString &, const QString &)));
   connect(this, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)),
           parent, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
   
   connect(this, SIGNAL(connected()), this, SLOT(sendGreeting()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
+  connect(this, SIGNAL(readyForUse()), parent, SLOT(readyForUse()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
 
@@ -84,14 +87,15 @@ void ClientSocket::readyRead()
 {
   qDebug() << "ClientSocket::readyRead()" << (int) state() ;
   
-  // Если ещё не получили подтверждения приветствия (состояние SCHAT_STATE_WAITING_FOR_GREETING)
-  // пытаемся прочитать блок, и если послана команда SCHAT_GREETING_OK
-  // устанавливаем состояние SCHAT_STATE_READY_FOR_USE
+  // Состояние `sChatStateWaitingForGreeting`
+  // Ожидаем пакет `sChatOpcodeGreetingOk`
   if (currentState == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
-    if (currentCommand == sChatOpcodeGreetingOk)
+    if (currentCommand == sChatOpcodeGreetingOk) {
       currentState = sChatStateReadyForUse;
+      emit readyForUse();
+    }
     else {
       if (currentCommand == sChatOpcodeError) {
         currentBlock >> _protocolError;
@@ -123,19 +127,26 @@ void ClientSocket::readyRead()
         emit newPrivateMessage(textBlock, message, nick);
         break;
       
+      // Опкод `sChatOpcodeNewParticipant` - новый участник вошёл в чат
       case sChatOpcodeNewParticipant:
         newParticipant();
         break;
       
+      // Опкод `sChatOpcodeNewParticipantQuiet` - аналогичен `sChatOpcodeNewParticipant`
+      // но участник добавляется тихо, без уведомления в окне чата.
+      // Данные команды отправляются сразу после `sChatOpcodeGreetingOk`
+      // и служат для получения списка участников (один пакет - один участник)
       case sChatOpcodeNewParticipantQuiet:
         newParticipant(false);
         break;
       
+      // Опкод `sChatOpcodeParticipantLeft` - Уведомляет в выходе из чата участника
       case sChatOpcodeParticipantLeft:
         currentBlock >> textBlock;
         emit participantLeft(textBlock);
         break;
         
+      // Опкод `sChatOpcodeError` - Сервер вернул ошибку
       case sChatOpcodeError:
         currentBlock >> err;
         qDebug() << "PROTOCOL ERROR:" << err;

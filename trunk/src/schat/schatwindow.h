@@ -9,10 +9,12 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QTcpSocket>
+#include <QPointer>
 
 class QAction;
 class QHBoxLayout;
 class QHBoxLayout;
+class QLabel;
 class QLineEdit;
 class QListView;
 class QSplitter;
@@ -30,6 +32,13 @@ class SChatWindow : public QMainWindow
   Q_OBJECT
 
 public:
+  enum ConnectionState {
+    Disconnected,
+    WaitingForConnected,
+    Connected,
+    CriticalError
+  };
+  
   SChatWindow(QWidget *parent = 0);
   void setNick(const QString &n) { nick = n; }
   
@@ -38,6 +47,7 @@ public slots:
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void participantLeft(const QString &nick);
+  void readyForUse();
   
 private slots:
   void addTab();
@@ -55,21 +65,23 @@ private:
   void createActions();
   void removeConnection(ClientSocket *socket);
   
-  ClientSocket *clientSocket;
+  ConnectionState state;
+  QPointer<ClientSocket> clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;
   QAction *sendAction;
   QHBoxLayout *sendLayout;
+  QLabel *statusLabel;
   QLineEdit *lineEdit;  
   QListView *listView;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
-  QString nick;
   QString fullName;
-  quint8 sex;
+  QString nick;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
+  quint8 sex;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;

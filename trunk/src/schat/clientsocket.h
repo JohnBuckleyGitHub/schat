@@ -28,6 +28,7 @@ signals:
   void participantLeft(const QString &nick);
   void newMessage(const QString &nick, const QString &message);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
+  void readyForUse();
   
 private slots:
   void readyRead();
