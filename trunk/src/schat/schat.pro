@@ -22,7 +22,8 @@ HEADERS += tab.h \
            protocol.h \
            server.h \
            serversocket.h \
-           welcomedialog.h
+           welcomedialog.h \
+           version.h
 SOURCES += tab.cpp \ 
            clientsocket.cpp \
            main.cpp \
@@ -44,3 +45,4 @@ CONFIG(release, debug|release) {
     DESTDIR = ../../out/release
 }
 FORMS = welcomedialog.ui
+win32:RC_FILE = schat.rc

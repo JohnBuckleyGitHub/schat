@@ -8,6 +8,7 @@
 
 #include "clientsocket.h"
 #include "protocol.h"
+#include "version.h"
 
 ClientSocket::ClientSocket(QObject *parent)
   : QTcpSocket(parent)
@@ -66,7 +67,7 @@ void ClientSocket::sendGreeting()
       << sex
       << nick
       << fullName
-      << QString("Simple Chat/0.0.0.0 Alpha");
+      << QString("Simple Chat/%1").arg(SCHAT_VERSION);
     
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));
