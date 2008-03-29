@@ -11,6 +11,8 @@
 #include "tab.h"
 #include "welcomedialog.h"
 
+static const int reconnectTimeout = 4 * 1000;
+
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
@@ -27,6 +29,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   sendLayout    = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   sendButton    = new QToolButton(centralWidget);
+  statusLabel   = new QLabel;
+ 
+  state = Disconnected;
   
   splitter->addWidget(tabWidget);
   splitter->addWidget(rightWidget);
@@ -42,9 +47,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   mainLayout->addWidget(splitter);
   mainLayout->addLayout(sendLayout);
   mainLayout->setMargin(4);
+  mainLayout->setSpacing(3);
   
   setCentralWidget(centralWidget);
   setStatusBar(statusbar);
+  statusbar->addWidget(statusLabel, 1);
+  statusLabel->setText(tr("Не подключено"));
   
   setWindowTitle(tr("Simple Chat"));
   
@@ -56,14 +64,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   
-  clientSocket = new ClientSocket(this);
-  
   createActions();
   
   mainChannel = new Tab(this);
-  tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, "Общий"));
+  tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
-  tabWidget->setContentsMargins(0,0,0,0);
   
   welcomeDialog = new WelcomeDialog(this);
   connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
@@ -79,6 +84,7 @@ void SChatWindow::createActions()
   QToolButton *addTabButton = new QToolButton;
   addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
+  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового подключения"));
   addTabButton->setDefaultAction(addTabAction);
   addTabButton->setAutoRaise(true);
   tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
@@ -103,7 +109,7 @@ void SChatWindow::createActions()
 void SChatWindow::addTab()
 {
   qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), "Новое подключение"));  
+  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), tr("Новое подключение")));  
 }
 
 
@@ -163,7 +169,7 @@ void SChatWindow::returnPressed()
 
   if (text.startsWith(QChar('/'))) {
     if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
-      tab->append(tr("<div style='color:#da251d;'>! Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+      tab->append(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
   }
   else
     if (tabWidget->currentIndex() == 0)
@@ -203,10 +209,26 @@ void SChatWindow::welcomeOk()
  */
 void SChatWindow::newConnection()
 {
+  state = WaitingForConnected;
+  statusLabel->setText(tr("Подключение..."));
+  
+  if (!clientSocket)
+    clientSocket = new ClientSocket(this);
+  
   clientSocket->setNick(nick);
   clientSocket->setFullName(fullName);
   clientSocket->setSex(sex);
   clientSocket->connectToHost("192.168.5.134", 7666);
+}
+
+
+/** [public slots]
+ * 
+ */
+void SChatWindow::readyForUse()
+{
+  state = Connected;
+  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
 }
 
 
@@ -326,10 +348,8 @@ void SChatWindow::disconnected()
 {
   qDebug() << "SChatWindow::disconnected()";
   
-  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender())) {
-    mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
+  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender()))
     removeConnection(socket);
-  }
 }
 
 
@@ -352,8 +372,14 @@ void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */
  */
 void SChatWindow::removeConnection(ClientSocket *socket)
 {
-  qDebug() << "SChatWindow::removeConnection(ClientSocket *socket)";
-  model.clear();
+  if (state == Connected)
+    mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
   
+  model.clear();
   socket->deleteLater();
+  
+  state = WaitingForConnected;
+  statusLabel->setText(tr("Не подключено"));
+  
+  QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
 }
