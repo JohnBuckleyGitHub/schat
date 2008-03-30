@@ -17,9 +17,10 @@ class WelcomeDialog : public QDialog, public Ui::WelcomeDialog
   Q_OBJECT
 
 public:
-  WelcomeDialog(QWidget *parent = 0);
-  QString nick();
+  WelcomeDialog(const QString &nick, const QString &name, quint8 sex, QWidget *parent = 0);
+  bool welcome();
   QString fullName();
+  QString nick();
   quint8 sex();
 };
 

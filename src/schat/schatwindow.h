@@ -49,45 +49,50 @@ protected:
   
 public slots:
   void newMessage(const QString &nick, const QString &message);
-  void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
+  void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void participantLeft(const QString &nick);
   void readyForUse();
   
 private slots:
   void addTab();
   void addTab(const QModelIndex &index);
+  void closeChat();
   void closeTab();
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void newConnection();
   void returnPressed();
   void welcomeOk();
-  void closeChat();
-  void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
   int tabIndex(const QString &s, int start = 1);
   QString currentTime();
   void createActions();
-  void removeConnection(ClientSocket *socket);
   void createTrayIcon();
+  void readSettings();
+  void removeConnection(ClientSocket *socket);
+  void writeSettings();
   
+  bool welcome;
   ConnectionState state;
-  QPointer<ClientSocket> clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;
-  QAction *sendAction;
   QAction *quitAction;
+  QAction *sendAction;
   QHBoxLayout *sendLayout;
   QLabel *statusLabel;
   QLineEdit *lineEdit;  
   QListView *listView;
+  QMenu *trayIconMenu;
+  QPointer<ClientSocket> clientSocket;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
   QString fullName;
   QString nick;
+  QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
   quint8 sex;
@@ -98,8 +103,6 @@ private:
   Tab *currentChannel;
   Tab *mainChannel;
   WelcomeDialog *welcomeDialog;
-  QSystemTrayIcon *trayIcon;
-  QMenu *trayIconMenu;
 };
 
 #endif /*SCHATWINDOW_H_*/
