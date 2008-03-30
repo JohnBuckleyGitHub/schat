@@ -12,35 +12,42 @@
 /** [public]
  * Конструктор
  */
-WelcomeDialog::WelcomeDialog(QWidget *parent)
+WelcomeDialog::WelcomeDialog(const QString &nick, const QString &name, quint8 sex, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
   setupUi(this);
   
-  nickEdit->setText(QDir::home().dirName());
   sexBox->addItem(QIcon(":/images/male.png"), tr("Мужской"));
   sexBox->addItem(QIcon(":/images/female.png"), tr("Женский"));
+  
+  nickEdit->setText(nick);
+  nameEdit->setText(name);
+  
+  if (sex)
+    sexBox->setCurrentIndex(1);
+  else
+    sexBox->setCurrentIndex(0);
 }
 
 
 /** [public]
  *
  */
-QString WelcomeDialog::nick()
-{
-  return nickEdit->text();
-}
+QString WelcomeDialog::nick() { return nickEdit->text(); }
 
 
 /** [public]
  *
  */
-QString WelcomeDialog::fullName()
-{
-  return nameEdit->text();
-}
+QString WelcomeDialog::fullName() { return nameEdit->text(); }
+
+
+/** [public]
+ *
+ */
+bool WelcomeDialog::welcome() { return !askCheckBox->isChecked(); }
 
 
 /** [public]
@@ -53,4 +60,3 @@ quint8 WelcomeDialog::sex()
   else
     return 1;
 }
-

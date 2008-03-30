@@ -11,7 +11,7 @@ INCLUDEPATH += . \
                ../common \
                ../schatd
 QT += network
-CONFIG += console
+#CONFIG += console
 
 RESOURCES += ../../data/schat.qrc
 
