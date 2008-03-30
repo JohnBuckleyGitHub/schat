@@ -6,8 +6,9 @@
 #ifndef CLIENTSOCKET_H_
 #define CLIENTSOCKET_H_
 
-#include <QTcpSocket>
 #include <QListWidgetItem>
+#include <QTcpSocket>
+#include <QTimer>
 
 class ClientSocket : public QTcpSocket
 {
@@ -33,23 +34,25 @@ signals:
 private slots:
   void readyRead();
   void sendGreeting();
+  void sendPing();
   
 private:
   bool readBlock();
   void newParticipant(bool echo = true);
   
+  int failurePongs;
   QDataStream currentBlock;
-  QString nick;
   QString fullName;
-  quint8 sex;
+  QString message;  
+  QString nick;
   QString userAgent;
   QString userMask;
-  QString message;
-  
+  QTimer pingTimeout;
   quint16 _protocolError;
   quint16 currentCommand;
   quint16 currentState;
   quint16 nextBlockSize;
+  quint8 sex;
 };
 
 #endif /*CLIENTSOCKET_H_*/

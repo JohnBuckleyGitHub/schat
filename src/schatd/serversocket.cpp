@@ -5,6 +5,7 @@
 
 #include <QtCore>
 #include <QtNetwork>
+#include <stdlib.h>
 
 #include "serversocket.h"
 #include "protocol.h"
@@ -18,17 +19,21 @@ ServerSocket::ServerSocket(QObject *parent)
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
   protocolError = 0;
+  failurePongs = 0;
   
-  connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
-//  connect(this, SIGNAL(needParticipantList()), parent, SLOT(needParticipantList()));
+  connect(this, SIGNAL(appendParticipant(const QString &)),
+          parent, SLOT(appendParticipant(const QString &)));
   connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)),
           parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
   
-  connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
+  connect(this, SIGNAL(disconnected()), &pingTimer, SLOT(stop()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
+  connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
+  connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
 
   nextBlockSize = 0;
+  qsrand(time(NULL));
 }
 
 
@@ -59,7 +64,7 @@ void ServerSocket::readyRead()
   // Вызываем функцию `readGreeting()` для чтения пакета `sChatOpcodeGreeting`
   if (currentState == sChatStateReadingGreeting)
     readGreeting();
-
+  
   while (readBlock()) {
     
     switch (currentCommand) {
@@ -68,9 +73,15 @@ void ServerSocket::readyRead()
         emit relayMessage(channel, nick, message);
         break;
       
-//      case sChatOpcodeNeedParticipantList:
-//        emit needParticipantList();
-//        break;
+      case sChatOpcodePong:
+        failurePongs = 0;
+        break;
+      
+      // Опкод `sChatOpcodePing`
+      // В ответ отсылаем `sChatOpcodePong`
+      case sChatOpcodePing:
+        send(sChatOpcodePong);
+        break;
         
       default:
         qDebug() << "Invalid Opcode";
@@ -78,6 +89,13 @@ void ServerSocket::readyRead()
         break;
     }    
   }
+  
+  // После чтения данных запускаем Ping таймер.
+  // Время срабатывания таймера выбирается случайно
+  // в диапазоне от `PingMinInterval` до `PingMinInterval + PingMutator`
+  // т.е. c настройками по умолчанию от 4 до 6 секунд.
+  // Сигнал `timeout()` таймера вызывает слот `sendPing()`
+  pingTimer.start(PingMinInterval + rand() % PingMutator);
 }
 
 
@@ -142,40 +160,6 @@ bool ServerSocket::readBlock()
   nextBlockSize = 0;
   return true;
 }
-
-
-/**
- * Посылаем подтверждение приветствия
- * Опкод SCHAT_GREETING_OK
- **
- * Формат пакета:
- * quint16 - размер пакета
- * quint16 - опкод SCHAT_GREETING_OK
-// */
-//void ServerSocket::sendGreeting()
-//{
-//  qDebug() << "ServerSocket::sendGreeting()";
-//  
-//  QByteArray block;
-//  QDataStream out(&block, QIODevice::WriteOnly);
-//  out.setVersion(sChatStreamVersion);
-//  
-//  if (!protocolError)
-//    out << quint16(0) << quint16(sChatOpcodeGreetingOk);
-//  else
-//    out << quint16(0) << quint16(sChatOpcodeError) << protocolError;
-//
-//  out.device()->seek(0);
-//  out << quint16(block.size() - sizeof(quint16));
-//  
-//  write(block);
-//  
-//  if (!protocolError)
-//    currentState = sChatStateReadyForUse;
-//}
-
-
-
 
 
 /** [public]
@@ -260,6 +244,27 @@ void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
   write(block);  
+}
+
+
+/** [private slots]
+ * Отправляем пакет с опкодом `sChatOpcodePing`
+ * и увеличиваем счётчик `failurePongs` на 1
+ * ответный пакет `sChatOpcodePong` сбрасывает этот счётчик.
+ * В случае если отправка двух пакетов завершилась неудачей,
+ * т.е. не получено подтверждение `sChatOpcodePong`,
+ * то разрываем соединение.
+ */
+void ServerSocket::sendPing()
+{
+  qDebug() << "ServerSocket::sendPing()" << failurePongs;
+  
+  if (failurePongs < 2) {
+    send(sChatOpcodePing);
+    ++failurePongs;
+  }
+  else
+    abort();
 }
 
 

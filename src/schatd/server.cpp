@@ -82,6 +82,7 @@ void Server::appendParticipant(const QString &p)
     if (!peers.contains(p)) {
       peers.insert(p, socket);
       socket->send(sChatOpcodeGreetingOk);
+      socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
       socket->setState(sChatStateReadyForUse);
       relayParticipantList(socket);
     }

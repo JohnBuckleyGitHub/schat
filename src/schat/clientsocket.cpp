@@ -33,9 +33,12 @@ ClientSocket::ClientSocket(QObject *parent)
   connect(this, SIGNAL(readyForUse()), parent, SLOT(readyForUse()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
+  connect(&pingTimeout, SIGNAL(timeout()), this, SLOT(sendPing()));
 
   nextBlockSize = 0;
   _protocolError = 0;
+  failurePongs = 0;
+  pingTimeout.setInterval((PingMinInterval + PingMutator) * 2);
 }
 
 
@@ -112,6 +115,11 @@ void ClientSocket::readyRead()
   while (readBlock()) {
     
     switch (currentCommand) {
+      case sChatOpcodeMaxDoublePingTimeout:
+        currentBlock >> err;
+        pingTimeout.setInterval(err * 1000);
+        break;
+      
       case sChatOpcodeSendMessage:      
         currentBlock >> textBlock >> message;
         emit newMessage(textBlock, message);
@@ -152,13 +160,24 @@ void ClientSocket::readyRead()
         qDebug() << "PROTOCOL ERROR:" << err;
         break;
         
+      case sChatOpcodePong:
+        failurePongs = 0;
+        break;
+      
+      // Опкод `sChatOpcodePing`
+      // В ответ отсылаем `sChatOpcodePong`
+      case sChatOpcodePing:
+        send(sChatOpcodePong);
+        pingTimeout.start();
+        break;
+        
       default:
         qDebug() << "Invalid Opcode";
         abort();
         break;
     }    
   }  
-
+  pingTimeout.start();
 }
 
 
@@ -269,4 +288,20 @@ bool ClientSocket::readBlock()
   
   nextBlockSize = 0;
   return true;
+}
+
+
+/** [private slots]
+ * 
+ */
+void ClientSocket::sendPing()
+{
+  qDebug() << "ClientSocket::sendPing()";
+  
+  if (failurePongs < 1) {
+    send(sChatOpcodePing);
+    ++failurePongs;
+  }
+  else
+    abort();
 }
