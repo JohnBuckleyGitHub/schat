@@ -6,9 +6,9 @@
 #ifndef SERVERSOCKET_H_
 #define SERVERSOCKET_H_
 
-#include <QTcpSocket>
 #include <QDataStream>
-#include <QString>
+#include <QTcpSocket>
+#include <QTimer>
 
 class ServerSocket : public QTcpSocket
 {
@@ -17,7 +17,6 @@ class ServerSocket : public QTcpSocket
 public:  
   ServerSocket(QObject *parent = 0);
   void setProtocolError(quint16 e) { protocolError = e; }
-//  void sendGreeting();
   void send(quint16 opcode);
   void send(quint16 opcode, quint16 err);
   void send(quint16 opcode, const QString &s);
@@ -36,11 +35,13 @@ signals:
 
 private slots:
   void readyRead();
+  void sendPing();
 
 private:
   bool readBlock();
   void readGreeting();
   
+  int failurePongs;
   QDataStream currentBlock;
   QString nick;
   QString fullName;
@@ -49,7 +50,7 @@ private:
   QString userMask;
   QString message;
   QString channel;
-  
+  QTimer pingTimer;
   quint16 protocolError;
   quint16 currentCommand;
   quint16 currentState;

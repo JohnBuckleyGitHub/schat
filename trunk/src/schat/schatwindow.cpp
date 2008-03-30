@@ -11,7 +11,7 @@
 #include "tab.h"
 #include "welcomedialog.h"
 
-static const int reconnectTimeout = 4 * 1000;
+static const int reconnectTimeout = 3 * 1000;
 
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
