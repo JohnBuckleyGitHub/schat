@@ -10,6 +10,7 @@
 #include <QStandardItemModel>
 #include <QTcpSocket>
 #include <QPointer>
+#include <QSystemTrayIcon>
 
 class QAction;
 class QHBoxLayout;
@@ -24,6 +25,7 @@ class QToolButton;
 class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
+class QMenu;
 
 #include "clientsocket.h"
 
@@ -42,6 +44,9 @@ public:
   SChatWindow(QWidget *parent = 0);
   void setNick(const QString &n) { nick = n; }
   
+protected:
+  void closeEvent(QCloseEvent *event);
+  
 public slots:
   void newMessage(const QString &nick, const QString &message);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
@@ -58,18 +63,22 @@ private slots:
   void newConnection();
   void returnPressed();
   void welcomeOk();
+  void closeChat();
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
   int tabIndex(const QString &s, int start = 1);
   QString currentTime();
   void createActions();
   void removeConnection(ClientSocket *socket);
+  void createTrayIcon();
   
   ConnectionState state;
   QPointer<ClientSocket> clientSocket;
   QAction *addTabAction;
   QAction *closeTabAction;
   QAction *sendAction;
+  QAction *quitAction;
   QHBoxLayout *sendLayout;
   QLabel *statusLabel;
   QLineEdit *lineEdit;  
@@ -89,6 +98,8 @@ private:
   Tab *currentChannel;
   Tab *mainChannel;
   WelcomeDialog *welcomeDialog;
+  QSystemTrayIcon *trayIcon;
+  QMenu *trayIconMenu;
 };
 
 #endif /*SCHATWINDOW_H_*/

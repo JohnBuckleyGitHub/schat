@@ -10,6 +10,7 @@
 #include "schatwindow.h"
 #include "tab.h"
 #include "welcomedialog.h"
+#include "version.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -61,10 +62,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
 
+  createActions();
+  createTrayIcon();
+  
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
-  
-  createActions();
+  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   
   mainChannel = new Tab(this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
@@ -80,7 +83,8 @@ SChatWindow::SChatWindow(QWidget *parent)
  * 
  */
 void SChatWindow::createActions()
-{
+{ 
+  // Открытие новой вкладки, для создания нового подключения
   QToolButton *addTabButton = new QToolButton;
   addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
@@ -100,6 +104,9 @@ void SChatWindow::createActions()
   sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
   sendButton->setDefaultAction(sendAction);
   connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
+  
+  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
+  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
 }
 
 
@@ -383,3 +390,62 @@ void SChatWindow::removeConnection(ClientSocket *socket)
   
   QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
 }
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createTrayIcon()
+{
+  trayIconMenu = new QMenu(this);
+  trayIconMenu->addAction(quitAction);
+  
+  trayIcon = new QSystemTrayIcon(this);
+  trayIcon->setIcon(QIcon(":/images/logo16.png"));
+  trayIcon->setToolTip(tr("Simple Chat %1").arg(SCHAT_VERSION));
+  trayIcon->setContextMenu(trayIconMenu);
+  trayIcon->show();
+}
+
+
+/** [protected]
+ * 
+ */
+void SChatWindow::closeEvent(QCloseEvent *event)
+{ 
+  if (trayIcon->isVisible()) {
+    hide();
+    event->ignore();
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::closeChat()
+{
+  qApp->quit();
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+  switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::MiddleClick:
+      if (isHidden()) {
+        show();
+        activateWindow();
+      }
+      else
+        hide();
+      
+    default:
+      break;
+  }
+}
+
