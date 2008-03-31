@@ -18,10 +18,11 @@ class WelcomeDialog : public QDialog, public Ui::WelcomeDialog
 
 public:
   WelcomeDialog(const QString &nick, const QString &name, quint8 sex, QWidget *parent = 0);
-  bool welcome();
+  bool hideWelcome();
   QString fullName();
   QString nick();
   quint8 sex();
+  void setHideWelcome(bool w);
 };
 
 #endif /*WELCOMEDIALOG_H_*/

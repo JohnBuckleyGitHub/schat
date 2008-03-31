@@ -35,6 +35,12 @@ WelcomeDialog::WelcomeDialog(const QString &nick, const QString &name, quint8 se
 /** [public]
  *
  */
+void WelcomeDialog::setHideWelcome(bool w) { askCheckBox->setChecked(w); }
+
+
+/** [public]
+ *
+ */
 QString WelcomeDialog::nick() { return nickEdit->text(); }
 
 
@@ -47,7 +53,7 @@ QString WelcomeDialog::fullName() { return nameEdit->text(); }
 /** [public]
  *
  */
-bool WelcomeDialog::welcome() { return !askCheckBox->isChecked(); }
+bool WelcomeDialog::hideWelcome() { return askCheckBox->isChecked(); }
 
 
 /** [public]
