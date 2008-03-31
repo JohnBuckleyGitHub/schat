@@ -77,6 +77,8 @@ private:
   
   bool firstRun;
   bool hideWelcome;
+  QString server;
+  quint16 serverPort;
   ConnectionState state;
   QAction *addTabAction;
   QAction *closeTabAction;

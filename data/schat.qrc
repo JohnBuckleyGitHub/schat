@@ -1,12 +1,15 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>images/down.png</file>
   <file>images/female.png</file>
   <file>images/logo16.png</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
+  <file>images/ok.png</file>
   <file>images/quit.png</file>
   <file>images/send.png</file>
   <file>images/tab_new.png</file>
   <file>images/tab_close.png</file>
+  <file>images/up.png</file>
 </qresource>
 </RCC>

@@ -231,7 +231,7 @@ void SChatWindow::newConnection()
   clientSocket->setNick(nick);
   clientSocket->setFullName(fullName);
   clientSocket->setSex(sex);
-  clientSocket->connectToHost("192.168.5.134", 7666);
+  clientSocket->connectToHost(server, serverPort);
 }
 
 
@@ -474,6 +474,8 @@ void SChatWindow::readSettings()
   splitter->restoreState(settings.value("Splitter").toByteArray());
   hideWelcome = settings.value("HideWelcome", false).toBool();
   firstRun = settings.value("FirstRun", true).toBool();
+  server = settings.value("Server", "192.168.5.134").toString();
+  serverPort = quint16(settings.value("ServerPort", 7666).toUInt()); 
   
   resize(size);
   if (pos.x() != -999 && pos.y() != -999)
@@ -494,14 +496,16 @@ void SChatWindow::writeSettings()
 {
   QSettings settings(qApp->applicationDirPath() + "/schat.ini", QSettings::IniFormat, this);
   
-  settings.setValue("size", size());
-  settings.setValue("pos", pos());
-  settings.setValue("splitter", splitter->saveState());
-  settings.setValue("hideWelcome", hideWelcome);
+  settings.setValue("Size", size());
+  settings.setValue("Pos", pos());
+  settings.setValue("Splitter", splitter->saveState());
+  settings.setValue("HideWelcome", hideWelcome);
   settings.setValue("FirstRun", false);
+  settings.setValue("Server", server);
+  settings.setValue("ServerPort", serverPort);
   
   settings.beginGroup("Profile");
-  settings.setValue("nick", nick);
-  settings.setValue("name", fullName);
-  settings.setValue("sex", sex);  
+  settings.setValue("Nick", nick);
+  settings.setValue("Name", fullName);
+  settings.setValue("Sex", sex);  
 }
