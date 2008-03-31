@@ -75,7 +75,8 @@ private:
   void removeConnection(ClientSocket *socket);
   void writeSettings();
   
-  bool welcome;
+  bool firstRun;
+  bool hideWelcome;
   ConnectionState state;
   QAction *addTabAction;
   QAction *closeTabAction;

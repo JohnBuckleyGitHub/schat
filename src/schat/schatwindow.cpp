@@ -72,8 +72,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
-  if (welcome) {
+  if (!hideWelcome || firstRun) {
     welcomeDialog = new WelcomeDialog(nick, fullName, sex, this);
+    if (!firstRun)
+      welcomeDialog->setHideWelcome(hideWelcome);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     welcomeDialog->exec();
   }
@@ -208,7 +210,7 @@ void SChatWindow::welcomeOk()
   nick = welcomeDialog->nick();
   fullName = welcomeDialog->fullName();
   sex = welcomeDialog->sex();
-  welcome = welcomeDialog->welcome();
+  hideWelcome = welcomeDialog->hideWelcome();
   welcomeDialog->deleteLater();
   
   newConnection();
@@ -416,8 +418,13 @@ void SChatWindow::createTrayIcon()
  * 
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
-{ 
-  if (trayIcon->isVisible()) {
+{ // TODO Разобраться с корректным завершением программы.
+  writeSettings(); 
+  
+  if (isHidden()) {
+    event->accept();
+  }
+  else {
     hide();
     event->ignore();
   }
@@ -462,19 +469,20 @@ void SChatWindow::readSettings()
 {
   QSettings settings(qApp->applicationDirPath() + "/schat.ini", QSettings::IniFormat, this);
   
-  QPoint pos = settings.value("pos", QPoint(-999, -999)).toPoint();
-  QSize size = settings.value("size", QSize(680, 460)).toSize();
-  splitter->restoreState(settings.value("splitter").toByteArray());
-  welcome = settings.value("welcome", true).toBool();
+  QPoint pos = settings.value("Pos", QPoint(-999, -999)).toPoint();
+  QSize size = settings.value("Size", QSize(680, 460)).toSize();
+  splitter->restoreState(settings.value("Splitter").toByteArray());
+  hideWelcome = settings.value("HideWelcome", false).toBool();
+  firstRun = settings.value("FirstRun", true).toBool();
   
   resize(size);
   if (pos.x() != -999 && pos.y() != -999)
     move(pos);
   
   settings.beginGroup("Profile");
-  nick = settings.value("nick", QDir::home().dirName()).toString();
-  fullName = settings.value("name", "").toString();
-  sex = quint8(settings.value("sex", 0).toUInt());
+  nick = settings.value("Nick", QDir::home().dirName()).toString();
+  fullName = settings.value("Name", "").toString();
+  sex = quint8(settings.value("Sex", 0).toUInt());
 
 }
 
@@ -489,7 +497,8 @@ void SChatWindow::writeSettings()
   settings.setValue("size", size());
   settings.setValue("pos", pos());
   settings.setValue("splitter", splitter->saveState());
-  settings.setValue("welcome", welcome);
+  settings.setValue("hideWelcome", hideWelcome);
+  settings.setValue("FirstRun", false);
   
   settings.beginGroup("Profile");
   settings.setValue("nick", nick);
