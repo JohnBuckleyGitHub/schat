@@ -7,13 +7,13 @@
 
 #include "mainchannel.h"
 
-MainChannel::MainChannel(QWidget *parent)
+MainChannel::MainChannel(const QString &server, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
   serverLabel = new QLabel(tr("Адрес сервера:"), this);
-  serverEdit  = new QLineEdit(this);
+  serverEdit  = new QLineEdit(server, this);
   
   serverLabel->setVisible(false);
   serverEdit->setVisible(false);  
@@ -32,6 +32,8 @@ MainChannel::MainChannel(QWidget *parent)
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
+  
+  connect(serverEdit, SIGNAL(returnPressed()), parent, SLOT(serverChanged()));
 }
 
 

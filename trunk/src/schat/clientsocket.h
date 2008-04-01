@@ -35,6 +35,7 @@ private slots:
   void readyRead();
   void sendGreeting();
   void sendPing();
+  void initTimeout();
   
 private:
   bool readBlock();

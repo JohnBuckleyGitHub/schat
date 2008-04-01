@@ -10,6 +10,8 @@
 #include "protocol.h"
 #include "version.h"
 
+static const int InitTimeout = 5 * 1000;
+
 ClientSocket::ClientSocket(QObject *parent)
   : QTcpSocket(parent)
 {
@@ -39,6 +41,8 @@ ClientSocket::ClientSocket(QObject *parent)
   _protocolError = 0;
   failurePongs = 0;
   pingTimeout.setInterval((PingMinInterval + PingMutator) * 2);
+  
+  QTimer::singleShot(InitTimeout, this, SLOT(initTimeout()));
 }
 
 
@@ -61,6 +65,8 @@ ClientSocket::ClientSocket(QObject *parent)
  */
 void ClientSocket::sendGreeting()
 {
+  qDebug() << "ClientSocket::sendGreeting()";
+  
   currentState = sChatStateWaitingForGreeting;
   
   QByteArray block;
@@ -304,4 +310,17 @@ void ClientSocket::sendPing()
   }
   else
     abort();
+}
+
+
+/** [private slots]
+ * Если спустя `InitTimeout` секунд состояние
+ * всё еще равно `QAbstractSocket::ConnectingState`
+ * то возможно пытаемся подключится к несуществующему ip
+ * таким образом экономим 25 секунд на каждой попытки подключения.
+ */
+void ClientSocket::initTimeout()
+{
+  if (state() == QAbstractSocket::ConnectingState)
+    emit disconnected();
 }
