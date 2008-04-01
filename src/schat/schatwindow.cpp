@@ -69,7 +69,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   
-  mainChannel = new MainChannel(this);
+  mainChannel = new MainChannel(server, this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
@@ -79,7 +79,8 @@ SChatWindow::SChatWindow(QWidget *parent)
     if (!firstRun)
       welcomeDialog->setHideWelcome(hideWelcome);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
-    welcomeDialog->exec();
+    if (!welcomeDialog->exec())
+      mainChannel->displayChoiceServer(true);
   }
   else
     newConnection();
@@ -214,6 +215,7 @@ void SChatWindow::welcomeOk()
   sex = welcomeDialog->sex();
   hideWelcome = welcomeDialog->hideWelcome();
   server = welcomeDialog->server();
+  mainChannel->setServer(server);
   welcomeDialog->deleteLater();
   
   newConnection();
@@ -515,4 +517,14 @@ void SChatWindow::writeSettings()
   settings.setValue("Nick", nick);
   settings.setValue("Name", fullName);
   settings.setValue("Sex", sex);  
+}
+
+
+void SChatWindow::serverChanged()
+{
+  if (clientSocket)
+    clientSocket->abort();
+  
+  server = mainChannel->server();
+  newConnection();
 }

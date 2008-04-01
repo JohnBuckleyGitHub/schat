@@ -8,19 +8,21 @@
 
 #include <QTextBrowser>
 #include <QWidget>
+#include <QLineEdit>
 
 class QHBoxLayout;
 class QLabel;
-class QLineEdit;
 class QVBoxLayout;
 
 class MainChannel : public QWidget {
   Q_OBJECT
 
 public:
-  MainChannel(QWidget *parent = 0);
+  MainChannel(const QString &server, QWidget *parent = 0);
   void append(const QString &message);
   void displayChoiceServer(bool display);  
+  void setServer(const QString &server) { serverEdit->setText(server); }
+  QString server() { return serverEdit->text(); }
   
 private:
   void scroll();
