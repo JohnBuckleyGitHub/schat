@@ -5,14 +5,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>134</height>
+    <width>333</width>
+    <height>157</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Simple Chat - Выбор ника</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
+   <property name="sizeConstraint" >
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
+   <property name="margin" >
+    <number>6</number>
+   </property>
    <item>
     <layout class="QGridLayout" name="gridLayout" >
      <item row="0" column="0" >
@@ -76,7 +82,7 @@
        </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>40</width>
+         <width>20</width>
          <height>20</height>
         </size>
        </property>
@@ -97,7 +103,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton" >
+      <widget class="QPushButton" name="moreButton" >
        <property name="text" >
         <string/>
        </property>
@@ -112,6 +118,23 @@
         <bool>false</bool>
        </property>
       </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="serverLabel" >
+       <property name="text" >
+        <string>Адрес сервера:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="serverEdit" />
      </item>
     </layout>
    </item>
@@ -135,12 +158,44 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>239</x>
-     <y>133</y>
+     <x>294</x>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel" >
      <x>169</x>
      <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>serverLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>324</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>57</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>serverEdit</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>317</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>309</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>
