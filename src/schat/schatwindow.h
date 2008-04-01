@@ -26,6 +26,7 @@ class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
 class QMenu;
+class MainChannel;
 
 #include "clientsocket.h"
 
@@ -103,8 +104,7 @@ private:
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
-  Tab *currentChannel;
-  Tab *mainChannel;
+  MainChannel *mainChannel;
   WelcomeDialog *welcomeDialog;
 };
 
