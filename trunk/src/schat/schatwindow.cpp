@@ -11,6 +11,7 @@
 #include "tab.h"
 #include "welcomedialog.h"
 #include "version.h"
+#include "mainchannel.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -68,7 +69,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   
-  mainChannel = new Tab(this);
+  mainChannel = new MainChannel(this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
@@ -244,6 +245,7 @@ void SChatWindow::readyForUse()
 {
   state = Connected;
   statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
+  mainChannel->displayChoiceServer(false);
 }
 
 
@@ -387,8 +389,11 @@ void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */
  */
 void SChatWindow::removeConnection(ClientSocket *socket)
 {
-  if (state == Connected)
+  mainChannel->displayChoiceServer(true);
+  
+  if (state == Connected) {
     mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
+  }
   
   model.clear();
   socket->deleteLater();

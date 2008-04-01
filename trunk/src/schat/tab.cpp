@@ -14,8 +14,8 @@ Tab::Tab(QWidget *parent)
   
   chatText.setFocusPolicy(Qt::NoFocus);
   chatText.setOpenExternalLinks(true);
-  
-  QVBoxLayout *mainLayout = new QVBoxLayout;
+ 
+  mainLayout = new QVBoxLayout;
   mainLayout->addWidget(&chatText);
   mainLayout->setMargin(0);
   setLayout(mainLayout);
@@ -30,6 +30,7 @@ void Tab::append(const QString &message)
   chatText.append(message);
   scroll();
 }
+
 
 /** [private]
  * 

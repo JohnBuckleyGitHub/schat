@@ -6,8 +6,10 @@
 #ifndef TAB_H_
 #define TAB_H_
 
-#include <QWidget>
 #include <QTextBrowser>
+#include <QWidget>
+
+class QVBoxLayout;
 
 class Tab : public QWidget {
   Q_OBJECT
@@ -17,8 +19,10 @@ public:
   void append(const QString &message);
   
 private:
-  QTextBrowser chatText;
   void scroll();
+  
+  QTextBrowser chatText;
+  QVBoxLayout *mainLayout;
 };
 
 #endif /*TAB_H_*/
