@@ -74,6 +74,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   if (!hideWelcome || firstRun) {
     welcomeDialog = new WelcomeDialog(nick, fullName, sex, this);
+    welcomeDialog->setServer(server);
     if (!firstRun)
       welcomeDialog->setHideWelcome(hideWelcome);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
@@ -211,6 +212,7 @@ void SChatWindow::welcomeOk()
   fullName = welcomeDialog->fullName();
   sex = welcomeDialog->sex();
   hideWelcome = welcomeDialog->hideWelcome();
+  server = welcomeDialog->server();
   welcomeDialog->deleteLater();
   
   newConnection();

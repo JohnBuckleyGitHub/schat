@@ -19,6 +19,9 @@ WelcomeDialog::WelcomeDialog(const QString &nick, const QString &name, quint8 se
   
   setupUi(this);
   
+  serverLabel->setVisible(false);
+  serverEdit->setVisible(false);
+  
   sexBox->addItem(QIcon(":/images/male.png"), tr("Мужской"));
   sexBox->addItem(QIcon(":/images/female.png"), tr("Женский"));
   
@@ -29,31 +32,9 @@ WelcomeDialog::WelcomeDialog(const QString &nick, const QString &name, quint8 se
     sexBox->setCurrentIndex(1);
   else
     sexBox->setCurrentIndex(0);
+  
+  connect(moreButton, SIGNAL(toggled(bool)), this, SLOT(changeIcon(bool)));
 }
-
-
-/** [public]
- *
- */
-void WelcomeDialog::setHideWelcome(bool w) { askCheckBox->setChecked(w); }
-
-
-/** [public]
- *
- */
-QString WelcomeDialog::nick() { return nickEdit->text(); }
-
-
-/** [public]
- *
- */
-QString WelcomeDialog::fullName() { return nameEdit->text(); }
-
-
-/** [public]
- *
- */
-bool WelcomeDialog::hideWelcome() { return askCheckBox->isChecked(); }
 
 
 /** [public]
@@ -65,4 +46,16 @@ quint8 WelcomeDialog::sex()
     return 0;
   else
     return 1;
+}
+
+
+/** [private slots]
+ *
+ */
+void WelcomeDialog::changeIcon(bool s)
+{
+  if (s)
+    moreButton->setIcon(QIcon(":/images/up.png"));
+  else
+    moreButton->setIcon(QIcon(":/images/down.png"));
 }
