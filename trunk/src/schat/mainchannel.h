@@ -6,9 +6,9 @@
 #ifndef MAINCHANNEL_H_
 #define MAINCHANNEL_H_
 
+#include <QLineEdit>
 #include <QTextBrowser>
 #include <QWidget>
-#include <QLineEdit>
 
 class QHBoxLayout;
 class QLabel;
@@ -19,10 +19,10 @@ class MainChannel : public QWidget {
 
 public:
   MainChannel(const QString &server, QWidget *parent = 0);
+  QString server() { return serverEdit->text(); }
   void append(const QString &message);
   void displayChoiceServer(bool display);  
   void setServer(const QString &server) { serverEdit->setText(server); }
-  QString server() { return serverEdit->text(); }
   
 private:
   void scroll();

@@ -16,26 +16,26 @@ class ClientSocket : public QTcpSocket
 
 public:
   ClientSocket(QObject *parent = 0);
-  void setNick(const QString &n) { nick = n; }
-  void setFullName(const QString &n) { fullName = n; }
-  void setSex(quint8 s) { sex = s; }
-  void send(quint16 opcode);
-  void send(quint16 opcode, const QString &s);
-  void send(quint16 opcode, const QString &n, const QString &m);
   quint16 protocolError() { return _protocolError; }
+  void send(quint16 opcode);
+  void send(quint16 opcode, const QString &n, const QString &m);
+  void send(quint16 opcode, const QString &s);
+  void setFullName(const QString &n) { fullName = n; }
+  void setNick(const QString &n) { nick = n; }
+  void setSex(quint8 s) { sex = s; }
 
 signals:
-  void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
-  void participantLeft(const QString &nick);
   void newMessage(const QString &nick, const QString &message);
+  void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
+  void participantLeft(const QString &nick);
   void readyForUse();
   
 private slots:
+  void initTimeout();
   void readyRead();
   void sendGreeting();
   void sendPing();
-  void initTimeout();
   
 private:
   bool readBlock();

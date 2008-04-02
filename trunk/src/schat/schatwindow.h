@@ -7,17 +7,20 @@
 #define SCHATWINDOW_H_
 
 #include <QMainWindow>
-#include <QStandardItemModel>
-#include <QTcpSocket>
 #include <QPointer>
+#include <QStandardItemModel>
 #include <QSystemTrayIcon>
+#include <QTcpSocket>
+#include <QTime>
 
+class MainChannel;
 class QAction;
 class QHBoxLayout;
 class QHBoxLayout;
 class QLabel;
 class QLineEdit;
 class QListView;
+class QMenu;
 class QSplitter;
 class QStatusBar;
 class QTabWidget;
@@ -25,8 +28,6 @@ class QToolButton;
 class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
-class QMenu;
-class MainChannel;
 
 #include "clientsocket.h"
 
@@ -70,7 +71,7 @@ private slots:
 
 private:
   int tabIndex(const QString &s, int start = 1);
-  QString currentTime();
+  QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
   void createActions();
   void createTrayIcon();
   void readSettings();
@@ -79,9 +80,8 @@ private:
   
   bool firstRun;
   bool hideWelcome;
-  QString server;
-  quint16 serverPort;
   ConnectionState state;
+  MainChannel *mainChannel;
   QAction *addTabAction;
   QAction *closeTabAction;
   QAction *quitAction;
@@ -97,15 +97,16 @@ private:
   QStatusBar *statusbar;
   QString fullName;
   QString nick;
+  QString server;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
+  quint16 serverPort;
   quint8 sex;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
-  MainChannel *mainChannel;
   WelcomeDialog *welcomeDialog;
 };
 
