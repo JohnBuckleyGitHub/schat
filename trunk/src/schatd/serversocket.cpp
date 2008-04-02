@@ -182,6 +182,13 @@ void ServerSocket::readyRead()
       case sChatOpcodePing:
         send(sChatOpcodePong);
         break;
+      
+      // Опкод `sChatOpcodeClientQuit`
+      // Клиент выходит из часа
+      case sChatOpcodeClientQuit:
+        qDebug() << "sChatOpcodeClientQuit";
+        abort();
+        break;
         
       default:
         qDebug() << "Invalid Opcode";

@@ -28,6 +28,7 @@ static const quint16 sChatOpcodeError                = 9000;
 static const quint16 sChatOpcodePing                 = 400;
 static const quint16 sChatOpcodePong                 = 401;
 static const quint16 sChatOpcodeMaxDoublePingTimeout = 402;
+static const quint16 sChatOpcodeClientQuit           = 500;
 
 static const quint16 sChatErrorNickAlreadyUse        = 200;
 static const quint16 sChatErrorBadProtocolVersion    = 100;

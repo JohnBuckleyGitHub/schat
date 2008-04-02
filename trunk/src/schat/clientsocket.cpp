@@ -49,6 +49,22 @@ ClientSocket::ClientSocket(QObject *parent)
 /** [public]
  * 
  */
+void ClientSocket::quit()
+{
+  qDebug() << "ClientSocket::quit()" << state();
+  
+  if (state() == QAbstractSocket::ConnectedState) {
+    send(sChatOpcodeClientQuit);
+    disconnectFromHost();
+    waitForDisconnected(1000);
+  }
+}
+
+
+
+/** [public]
+ * 
+ */
 void ClientSocket::send(quint16 opcode)
 {
   qDebug() << "ClientSocket::send(quint16 opcode)" << opcode;

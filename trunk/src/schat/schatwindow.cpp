@@ -274,6 +274,11 @@ void SChatWindow::addTab(const QModelIndex &index)
  */
 void SChatWindow::closeChat()
 {
+  qDebug() << "SChatWindow::closeChat()";
+  
+  if (clientSocket)
+    clientSocket->quit();
+  
   writeSettings();
   qApp->quit();
 }
