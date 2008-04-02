@@ -222,8 +222,11 @@ void SChatWindow::participantLeft(const QString &nick)
  */
 void SChatWindow::readyForUse()
 {
+  QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
+  
   state = Connected;
-  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
+  mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
+  statusLabel->setText(statusText);
   mainChannel->displayChoiceServer(false);
 }
 
@@ -492,9 +495,8 @@ void SChatWindow::removeConnection(ClientSocket *socket)
 {
   mainChannel->displayChoiceServer(true);
   
-  if (state == Connected) {
-    mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
-  }
+  if (state == Connected)
+    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
   
   model.clear();
   socket->deleteLater();
