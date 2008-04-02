@@ -10,58 +10,13 @@
 #include "server.h"
 #include "protocol.h"
 
+
+/** [public]
+ * 
+ */
 Server::Server(QObject *parent)
   : QTcpServer(parent)
 {
-}
-
-void Server::incomingConnection(int socketId)
-{
-  ServerSocket *socket = new ServerSocket(this);
-  socket->setSocketDescriptor(socketId);
-}
-
-
-/** [private slots]
- * 
- */
-void Server::disconnected()
-{
-  qDebug() << "Server::disconnected()";
-  
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
-    removeConnection(socket);
-}
-
-
-/** [private slots]
- * 
- */
-void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
-{
-  qDebug() << "Server::connectionError(QAbstractSocket::SocketError /* socketError */)";
-  
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
-    qDebug() << "ERROR:" << socket->errorString();
-    removeConnection(socket);
-  }
-}
-
-
-/** [private]
- * 
- */
-void Server::removeConnection(ServerSocket *socket)
-{
-  qDebug() << "Server::removeConnection(ServerSocket *socket)";
-  
-  QString nick = socket->nickname();
-  
-  if (peers.contains(nick)) {
-    peers.remove(nick);
-    participantLeft(nick);
-  }
-  socket->deleteLater();
 }
 
 
@@ -95,43 +50,6 @@ void Server::appendParticipant(const QString &p)
 }
 
 
-/** [public slots]
- * Отправляем имена участников, по одному имени на запрос
- * В конце посылаем команду завершения передачи списка.
- */
-void Server::relayParticipantList(ServerSocket *socket)
-{
-  quint16 sex = socket->participantSex();
-  QStringList info = socket->participantInfo();
-  
-  QHashIterator<QString, ServerSocket *> i(peers);
-  while (i.hasNext()) {
-    i.next();
-    // Отсылаем новому участнику список участников
-    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->participantSex(), i.value()->participantInfo());
-    
-    // Отсылаем существующим участникам, профиль нового
-    if (socket != i.value())
-      i.value()->send(sChatOpcodeNewParticipant, sex, info);
-  }
-}
-
-
-/** [private]
- * 
- */
-void Server::participantLeft(const QString &nick)
-{
-  qDebug() << "Server::participantLeft(const QString &nick)";
-  
-  QHashIterator<QString, ServerSocket *> i(peers);
-  while (i.hasNext()) {
-    i.next();
-    i.value()->send(sChatOpcodeParticipantLeft, nick);
-  }
-}
-
-
 /** [private]
  * 
  */
@@ -154,4 +72,93 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
     else
       if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
         socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);  
+}
+
+
+/** [public slots]
+ * Отправляем имена участников, по одному имени на запрос
+ * В конце посылаем команду завершения передачи списка.
+ */
+void Server::relayParticipantList(ServerSocket *socket)
+{
+  quint16 sex = socket->participantSex();
+  QStringList info = socket->participantInfo();
+  
+  QHashIterator<QString, ServerSocket *> i(peers);
+  while (i.hasNext()) {
+    i.next();
+    // Отсылаем новому участнику список участников
+    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->participantSex(), i.value()->participantInfo());
+    
+    // Отсылаем существующим участникам, профиль нового
+    if (socket != i.value())
+      i.value()->send(sChatOpcodeNewParticipant, sex, info);
+  }
+}
+
+/** [private slots]
+ * 
+ */
+void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
+{
+  qDebug() << "Server::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    qDebug() << "ERROR:" << socket->errorString();
+    removeConnection(socket);
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Server::disconnected()
+{
+  qDebug() << "Server::disconnected()";
+  
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+    removeConnection(socket);
+}
+
+
+/** [private]
+ * 
+ */
+void Server::incomingConnection(int socketId)
+{
+  ServerSocket *socket = new ServerSocket(this);
+  socket->setSocketDescriptor(socketId);
+}
+
+
+/** [private]
+ * 
+ */
+void Server::participantLeft(const QString &nick)
+{
+  qDebug() << "Server::participantLeft(const QString &nick)";
+  
+  QHashIterator<QString, ServerSocket *> i(peers);
+  while (i.hasNext()) {
+    i.next();
+    i.value()->send(sChatOpcodeParticipantLeft, nick);
+  }
+}
+
+
+/** [private]
+ * 
+ */
+void Server::removeConnection(ServerSocket *socket)
+{
+  qDebug() << "Server::removeConnection(ServerSocket *socket)";
+  
+  QString nick = socket->nickname();
+  
+  if (peers.contains(nick)) {
+    peers.remove(nick);
+    participantLeft(nick);
+  }
+  socket->deleteLater();
 }

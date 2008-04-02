@@ -6,15 +6,19 @@
 #include <QtGui>
 #include <QtNetwork>
 
+#include "mainchannel.h"
 #include "protocol.h"
 #include "schatwindow.h"
 #include "tab.h"
-#include "welcomedialog.h"
 #include "version.h"
-#include "mainchannel.h"
+#include "welcomedialog.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
+
+/** [public]
+ * 
+ */
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
@@ -87,167 +91,32 @@ SChatWindow::SChatWindow(QWidget *parent)
 }
 
 
-/** [private]
+/** [protected]
  * 
  */
-void SChatWindow::createActions()
-{ 
-  // Открытие новой вкладки, для создания нового подключения
-  QToolButton *addTabButton = new QToolButton;
-  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
-  addTabAction->setShortcut(tr("Ctrl+N"));
-  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового подключения"));
-  addTabButton->setDefaultAction(addTabAction);
-  addTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
-  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
+void SChatWindow::closeEvent(QCloseEvent *event)
+{ // TODO Разобраться с корректным завершением программы.
+  writeSettings(); 
   
-  QToolButton *closeTabButton = new QToolButton;
-  closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
-  closeTabButton->setDefaultAction(closeTabAction);
-  closeTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
-  connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
-  
-  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
-  sendButton->setDefaultAction(sendAction);
-  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
-  
-  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
-  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::addTab()
-{
-  qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), tr("Новое подключение")));  
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::addTab(const QModelIndex &index)
-{
-  QString nick = model.itemFromIndex(index)->text();
-  int tab = tabIndex(nick);
-  
-  if (tab == -1)
-    tab = tabWidget->addTab(new Tab(this), nick);
-  
-  tabWidget->setCurrentIndex(tab);
-}
-
-
-/** [private]
- * 
- */
-int SChatWindow::tabIndex(const QString &s, int start)
-{
-  int count = tabWidget->count();
-  int tab = -1;
-  
-  if (count > start)
-    for (int i = start; i <= count; ++i)
-      if (tabWidget->tabText(i) == s) {
-        tab = i;
-        break;
-      }
-  
-  return tab;
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::closeTab()
-{
-  int index = tabWidget->currentIndex();
-  if (index)
-    tabWidget->removeTab(index); 
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::returnPressed()
-{
-  QString text = lineEdit->text();
-  if (text.isEmpty())
-    return;
-
-  if (text.startsWith(QChar('/'))) {
-    if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
-      tab->append(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+  if (isHidden()) {
+    event->accept();
   }
-  else
-    if (tabWidget->currentIndex() == 0)
-      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
-    else
-      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
-  
-  lineEdit->clear();  
-}
-
-
-/** [private]
- * 
- */
-QString SChatWindow::currentTime()
-{
-  return QTime::currentTime().toString("hh:mm:ss");
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::welcomeOk()
-{
-  nick = welcomeDialog->nick();
-  fullName = welcomeDialog->fullName();
-  sex = welcomeDialog->sex();
-  hideWelcome = welcomeDialog->hideWelcome();
-  server = welcomeDialog->server();
-  mainChannel->setServer(server);
-  welcomeDialog->deleteLater();
-  
-  newConnection();
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::newConnection()
-{
-  state = WaitingForConnected;
-  statusLabel->setText(tr("Подключение..."));
-  
-  if (!clientSocket)
-    clientSocket = new ClientSocket(this);
-  
-  clientSocket->setNick(nick);
-  clientSocket->setFullName(fullName);
-  clientSocket->setSex(sex);
-  clientSocket->connectToHost(server, serverPort);
+  else {
+    hide();
+    event->ignore();
+  }
 }
 
 
 /** [public slots]
  * 
  */
-void SChatWindow::readyForUse()
+void SChatWindow::newMessage(const QString &nick, const QString &message)
 {
-  state = Connected;
-  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
-  mainChannel->displayChoiceServer(false);
+  mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+      .arg(currentTime())
+      .arg(Qt::escape(nick))
+      .arg(message));
 }
 
 
@@ -293,18 +162,6 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
     
     mainChannel->append(line);
   }
-}
-
-
-/** [public slots]
- * 
- */
-void SChatWindow::newMessage(const QString &nick, const QString &message)
-{
-  mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-      .arg(currentTime())
-      .arg(Qt::escape(nick))
-      .arg(message));
 }
 
 
@@ -360,15 +217,73 @@ void SChatWindow::participantLeft(const QString &nick)
 }
 
 
+/** [public slots]
+ * 
+ */
+void SChatWindow::readyForUse()
+{
+  state = Connected;
+  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
+  mainChannel->displayChoiceServer(false);
+}
+
+
+/** [public slots]
+ * 
+ */
+void SChatWindow::serverChanged()
+{
+  if (clientSocket)
+    clientSocket->abort();
+  
+  server = mainChannel->server();
+  newConnection();
+}
+
+
 /** [private slots]
  * 
  */
-void SChatWindow::disconnected()
+void SChatWindow::addTab()
 {
-  qDebug() << "SChatWindow::disconnected()";
+  qDebug() << "SChatWindow::addTab()";
+  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), tr("Новое подключение")));  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::addTab(const QModelIndex &index)
+{
+  QString nick = model.itemFromIndex(index)->text();
+  int tab = tabIndex(nick);
   
-  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender()))
-    removeConnection(socket);
+  if (tab == -1)
+    tab = tabWidget->addTab(new Tab(this), nick);
+  
+  tabWidget->setCurrentIndex(tab);
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::closeChat()
+{
+  writeSettings();
+  qApp->quit();
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::closeTab()
+{
+  int index = tabWidget->currentIndex();
+  if (index)
+    tabWidget->removeTab(index); 
 }
 
 
@@ -386,67 +301,15 @@ void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */
 }
 
 
-/** [private]
- * 
- */
-void SChatWindow::removeConnection(ClientSocket *socket)
-{
-  mainChannel->displayChoiceServer(true);
-  
-  if (state == Connected) {
-    mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
-  }
-  
-  model.clear();
-  socket->deleteLater();
-  
-  state = WaitingForConnected;
-  statusLabel->setText(tr("Не подключено"));
-  
-  QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
-}
-
-
-/** [private]
- * 
- */
-void SChatWindow::createTrayIcon()
-{
-  trayIconMenu = new QMenu(this);
-  trayIconMenu->addAction(quitAction);
-  
-  trayIcon = new QSystemTrayIcon(this);
-  trayIcon->setIcon(QIcon(":/images/logo16.png"));
-  trayIcon->setToolTip(tr("Simple Chat %1").arg(SCHAT_VERSION));
-  trayIcon->setContextMenu(trayIconMenu);
-  trayIcon->show();
-}
-
-
-/** [protected]
- * 
- */
-void SChatWindow::closeEvent(QCloseEvent *event)
-{ // TODO Разобраться с корректным завершением программы.
-  writeSettings(); 
-  
-  if (isHidden()) {
-    event->accept();
-  }
-  else {
-    hide();
-    event->ignore();
-  }
-}
-
-
 /** [private slots]
  * 
  */
-void SChatWindow::closeChat()
+void SChatWindow::disconnected()
 {
-  writeSettings();
-  qApp->quit();
+  qDebug() << "SChatWindow::disconnected()";
+  
+  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender()))
+    removeConnection(socket);
 }
 
 
@@ -468,6 +331,130 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     default:
       break;
   }
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::newConnection()
+{
+  state = WaitingForConnected;
+  statusLabel->setText(tr("Подключение..."));
+  
+  if (!clientSocket)
+    clientSocket = new ClientSocket(this);
+  
+  clientSocket->setNick(nick);
+  clientSocket->setFullName(fullName);
+  clientSocket->setSex(sex);
+  clientSocket->connectToHost(server, serverPort);
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::returnPressed()
+{
+  QString text = lineEdit->text();
+  if (text.isEmpty())
+    return;
+
+  if (text.startsWith(QChar('/'))) {
+    if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
+      tab->append(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+  }
+  else
+    if (tabWidget->currentIndex() == 0)
+      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+    else
+      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
+  
+  lineEdit->clear();  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::welcomeOk()
+{
+  nick = welcomeDialog->nick();
+  fullName = welcomeDialog->fullName();
+  sex = welcomeDialog->sex();
+  hideWelcome = welcomeDialog->hideWelcome();
+  server = welcomeDialog->server();
+  mainChannel->setServer(server);
+  welcomeDialog->deleteLater();
+  
+  newConnection();
+}
+
+
+/** [private]
+ * 
+ */
+int SChatWindow::tabIndex(const QString &s, int start)
+{
+  int count = tabWidget->count();
+  int tab = -1;
+  
+  if (count > start)
+    for (int i = start; i <= count; ++i)
+      if (tabWidget->tabText(i) == s) {
+        tab = i;
+        break;
+      }
+  
+  return tab;
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createActions()
+{ 
+  // Открытие новой вкладки, для создания нового подключения
+  QToolButton *addTabButton = new QToolButton;
+  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
+  addTabAction->setShortcut(tr("Ctrl+N"));
+  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового подключения"));
+  addTabButton->setDefaultAction(addTabAction);
+  addTabButton->setAutoRaise(true);
+  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
+  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
+  
+  QToolButton *closeTabButton = new QToolButton;
+  closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
+  closeTabButton->setDefaultAction(closeTabAction);
+  closeTabButton->setAutoRaise(true);
+  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
+  connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+  
+  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
+  sendButton->setDefaultAction(sendAction);
+  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
+  
+  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
+  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createTrayIcon()
+{
+  trayIconMenu = new QMenu(this);
+  trayIconMenu->addAction(quitAction);
+  
+  trayIcon = new QSystemTrayIcon(this);
+  trayIcon->setIcon(QIcon(":/images/logo16.png"));
+  trayIcon->setToolTip(tr("Simple Chat %1").arg(SCHAT_VERSION));
+  trayIcon->setContextMenu(trayIconMenu);
+  trayIcon->show();
 }
 
 
@@ -501,6 +488,27 @@ void SChatWindow::readSettings()
 /** [private]
  * 
  */
+void SChatWindow::removeConnection(ClientSocket *socket)
+{
+  mainChannel->displayChoiceServer(true);
+  
+  if (state == Connected) {
+    mainChannel->append(tr("<div style='color:#da251d;'>[%1] <i>Соединение разорвано</i></div>").arg(currentTime()));
+  }
+  
+  model.clear();
+  socket->deleteLater();
+  
+  state = WaitingForConnected;
+  statusLabel->setText(tr("Не подключено"));
+  
+  QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+}
+
+
+/** [private]
+ * 
+ */
 void SChatWindow::writeSettings()
 {
   QSettings settings(qApp->applicationDirPath() + "/schat.ini", QSettings::IniFormat, this);
@@ -517,14 +525,4 @@ void SChatWindow::writeSettings()
   settings.setValue("Nick", nick);
   settings.setValue("Name", fullName);
   settings.setValue("Sex", sex);  
-}
-
-
-void SChatWindow::serverChanged()
-{
-  if (clientSocket)
-    clientSocket->abort();
-  
-  server = mainChannel->server();
-  newConnection();
 }

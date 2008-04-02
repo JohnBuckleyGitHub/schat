@@ -46,44 +46,67 @@ ClientSocket::ClientSocket(QObject *parent)
 }
 
 
-/** [private slots]
- * Отправляем пакет с опкодом `sChatOpcodeGreeting`
- * Пакет является приветственным сообщением.
- * До начала отправки устанавливаем состояние
- * сокета `sChatStateWaitingForGreeting` вместо `sChatStateDisconnected`
- * Слот вызывается сигналом `connected()`
- **
- * Формат пакета:
- * quint16 - размер пакета
- * quint16 - опкод `sChatOpcodeGreeting`
- * quint8  - версия протокола `sChatProtocolVersion`
- * quint8  - флаг, в данное время всегда `0`
- * QString - ник участника
- * QString - полное имя участника
- * quint8  - пол участника (мужской: `0`, женский: `1`)
- * QString - строка с названием и версией клиента (разделитель '/')
+/** [public]
+ * 
  */
-void ClientSocket::sendGreeting()
+void ClientSocket::send(quint16 opcode)
 {
-  qDebug() << "ClientSocket::sendGreeting()";
-  
-  currentState = sChatStateWaitingForGreeting;
+  qDebug() << "ClientSocket::send(quint16 opcode)" << opcode;
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
-  out << quint16(0)
-      << quint16(sChatOpcodeGreeting)
-      << quint8(sChatProtocolVersion)
-      << quint8(0)
-      << sex
-      << nick
-      << fullName
-      << QString("Simple Chat/%1").arg(SCHAT_VERSION);
-    
+  out << quint16(0) << opcode;
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-  write(block);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
+{
+  qDebug() << "ClientSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode << n << m;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << n << m;  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ClientSocket::send(quint16 opcode, const QString &s)
+{
+  qDebug() << "ClientSocket::send(quint16 opcode, const QString &s)" << opcode;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << s;
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));  
+  write(block);  
+}
+
+
+/** [private slots]
+ * Если спустя `InitTimeout` секунд состояние
+ * всё еще равно `QAbstractSocket::ConnectingState`
+ * то возможно пытаемся подключится к несуществующему ip
+ * таким образом экономим 25 секунд на каждой попытки подключения.
+ */
+void ClientSocket::initTimeout()
+{
+  if (state() == QAbstractSocket::ConnectingState)
+    emit disconnected();
 }
 
 
@@ -187,90 +210,60 @@ void ClientSocket::readyRead()
 }
 
 
-/** [private]
- * 
+/** [private slots]
+ * Отправляем пакет с опкодом `sChatOpcodeGreeting`
+ * Пакет является приветственным сообщением.
+ * До начала отправки устанавливаем состояние
+ * сокета `sChatStateWaitingForGreeting` вместо `sChatStateDisconnected`
+ * Слот вызывается сигналом `connected()`
+ **
+ * Формат пакета:
+ * quint16 - размер пакета
+ * quint16 - опкод `sChatOpcodeGreeting`
+ * quint8  - версия протокола `sChatProtocolVersion`
+ * quint8  - флаг, в данное время всегда `0`
+ * QString - ник участника
+ * QString - полное имя участника
+ * quint8  - пол участника (мужской: `0`, женский: `1`)
+ * QString - строка с названием и версией клиента (разделитель '/')
  */
-void ClientSocket::newParticipant(bool echo)
+void ClientSocket::sendGreeting()
 {
-  qDebug() << "void ClientSocket::newParticipant(bool echo)" << echo;
+  qDebug() << "ClientSocket::sendGreeting()";
   
-  quint16 sex;
-  QStringList info;
-  currentBlock >> sex;
-  
-  for (int i = 0; i < 4; ++i) {
-    QString s;
-    currentBlock >> s;
-    info << s;
-  }
-  
-  for (int i = 0; i < info.size(); ++i)
-    qDebug() << "::" << info.at(i);
-  
-  if (echo)
-    emit newParticipant(sex, info);
-  else
-    emit newParticipant(sex, info, false);
-
-}
-
-
-/** [public]
- * 
- */
-void ClientSocket::send(quint16 opcode)
-{
-  qDebug() << "ClientSocket::send(quint16 opcode)" << opcode;
+  currentState = sChatStateWaitingForGreeting;
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
-  out << quint16(0) << quint16(opcode);
-  
-//  switch (opcode) {
-//    case sChatOpcodeSendMessage:
-//      out << nick << message;      
-//      break;
-//  }
-  
+  out << quint16(0)
+      << quint16(sChatOpcodeGreeting)
+      << quint8(sChatProtocolVersion)
+      << quint8(0)
+      << sex
+      << nick
+      << fullName
+      << QString("Simple Chat/%1").arg(SCHAT_VERSION);
+    
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));
-      
-  write(block);  
+  write(block);
 }
 
 
-/** [public]
+/** [private slots]
  * 
  */
-void ClientSocket::send(quint16 opcode, const QString &s)
+void ClientSocket::sendPing()
 {
-  qDebug() << "ClientSocket::send(quint16 opcode, const QString &s)" << opcode;
+  qDebug() << "ClientSocket::sendPing()";
   
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << s;
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));  
-  write(block);  
-}
-
-
-/** [public]
- * 
- */
-void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
-{
-  qDebug() << "ClientSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode << n << m;
-  
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << n << m;  
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
-  write(block);  
+  if (failurePongs < 1) {
+    send(sChatOpcodePing);
+    ++failurePongs;
+  }
+  else
+    abort();
 }
 
 
@@ -297,30 +290,25 @@ bool ClientSocket::readBlock()
 }
 
 
-/** [private slots]
+/** [private]
  * 
  */
-void ClientSocket::sendPing()
+void ClientSocket::newParticipant(bool echo)
 {
-  qDebug() << "ClientSocket::sendPing()";
+  qDebug() << "void ClientSocket::newParticipant(bool echo)" << echo;
   
-  if (failurePongs < 1) {
-    send(sChatOpcodePing);
-    ++failurePongs;
+  quint16 sex;
+  QStringList info;
+  currentBlock >> sex;
+  
+  for (int i = 0; i < 4; ++i) {
+    QString s;
+    currentBlock >> s;
+    info << s;
   }
+  
+  if (echo)
+    emit newParticipant(sex, info);
   else
-    abort();
-}
-
-
-/** [private slots]
- * Если спустя `InitTimeout` секунд состояние
- * всё еще равно `QAbstractSocket::ConnectingState`
- * то возможно пытаемся подключится к несуществующему ip
- * таким образом экономим 25 секунд на каждой попытки подключения.
- */
-void ClientSocket::initTimeout()
-{
-  if (state() == QAbstractSocket::ConnectingState)
-    emit disconnected();
+    emit newParticipant(sex, info, false);
 }

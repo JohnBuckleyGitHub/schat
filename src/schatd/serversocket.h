@@ -16,17 +16,17 @@ class ServerSocket : public QTcpSocket
 
 public:  
   ServerSocket(QObject *parent = 0);
-  void setProtocolError(quint16 e) { protocolError = e; }
-  void send(quint16 opcode);
-  void send(quint16 opcode, quint16 err);
-  void send(quint16 opcode, const QString &s);
-  void send(quint16 opcode, const QString &n, const QString &m);
-  void send(quint16 opcode, quint16 s, const QStringList &list);
   QString nickname() { return nick; }
-  void setNick(const QString &n) { nick = n; }
-  void setState(quint16 state) { currentState = state; }
   QStringList participantInfo();
-  quint16 participantSex() { return sex; }  
+  quint16 participantSex() { return sex; } 
+  void send(quint16 opcode);
+  void send(quint16 opcode, const QString &n, const QString &m);
+  void send(quint16 opcode, const QString &s);
+  void send(quint16 opcode, quint16 err);
+  void send(quint16 opcode, quint16 s, const QStringList &list);
+  void setNick(const QString &n) { nick = n; }
+  void setProtocolError(quint16 e) { protocolError = e; }
+  void setState(quint16 state) { currentState = state; }
 
 signals:
   void appendParticipant(const QString &p);
@@ -43,18 +43,18 @@ private:
   
   int failurePongs;
   QDataStream currentBlock;
-  QString nick;
+  QString channel;
   QString fullName;
-  quint8 sex;
+  QString message;
+  QString nick;
   QString userAgent;
   QString userMask;
-  QString message;
-  QString channel;
   QTimer pingTimer;
-  quint16 protocolError;
   quint16 currentCommand;
   quint16 currentState;
   quint16 nextBlockSize;
+  quint16 protocolError;
+  quint8 sex;
 };
 
 #endif /*SERVERSOCKET_H_*/

@@ -37,6 +37,106 @@ ServerSocket::ServerSocket(QObject *parent)
 }
 
 
+/** [public]
+ * 
+ */
+QStringList ServerSocket::participantInfo()
+{
+  QStringList stringList;
+  stringList << nick
+             << fullName
+             << userAgent
+             << peerAddress().toString();
+  
+  return stringList;  
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode;
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
+{
+  qDebug() << "ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << n << m;  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode, const QString &s)
+{
+  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << s;  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode, quint16 err)
+{
+  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << err; 
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));
+  write(block);  
+}
+
+
+/** [public]
+ * 
+ */
+void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << s;
+  
+  for (int i = 0; i < list.size(); ++i)
+    out << list.at(i);
+  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
 /** [private slots]
  * Слот вызывается сигналом `readyRead()`
  * т.е. слот вызывается тогда когда сокет готов
@@ -99,6 +199,50 @@ void ServerSocket::readyRead()
 }
 
 
+/** [private slots]
+ * Отправляем пакет с опкодом `sChatOpcodePing`
+ * и увеличиваем счётчик `failurePongs` на 1
+ * ответный пакет `sChatOpcodePong` сбрасывает этот счётчик.
+ * В случае если отправка двух пакетов завершилась неудачей,
+ * т.е. не получено подтверждение `sChatOpcodePong`,
+ * то разрываем соединение.
+ */
+void ServerSocket::sendPing()
+{
+  qDebug() << "ServerSocket::sendPing()" << failurePongs;
+  
+  if (failurePongs < 2) {
+    send(sChatOpcodePing);
+    ++failurePongs;
+  }
+  else
+    abort();
+}
+
+
+/** [private]
+ * Читаем блок данных
+ */
+bool ServerSocket::readBlock()
+{
+  qDebug() << "ServerSocket::readBlock()";
+  
+  if (nextBlockSize == 0) {
+    if (bytesAvailable() < sizeof(quint16))
+      return false;
+    currentBlock >> nextBlockSize;
+  }
+
+  if (bytesAvailable() < nextBlockSize)
+    return false;
+
+  currentBlock >> currentCommand;
+  
+  nextBlockSize = 0;
+  return true;
+}
+
+
 /** [private]
  * Функция для чтения пакета `sChatOpcodeGreeting`
  * Проверяем корректность данных, в случае ошибки
@@ -139,145 +283,4 @@ void ServerSocket::readGreeting()
   emit appendParticipant(nick);
   
   currentState = sChatStateWaitingForChecking;
-}
-
-// Читаем блок данных
-bool ServerSocket::readBlock()
-{
-  qDebug() << "ServerSocket::readBlock()";
-  
-  if (nextBlockSize == 0) {
-    if (bytesAvailable() < sizeof(quint16))
-      return false;
-    currentBlock >> nextBlockSize;
-  }
-
-  if (bytesAvailable() < nextBlockSize)
-    return false;
-
-  currentBlock >> currentCommand;
-  
-  nextBlockSize = 0;
-  return true;
-}
-
-
-/** [public]
- * 
- */
-void ServerSocket::send(quint16 opcode)
-{
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode;
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
-  write(block);
-}
-
-
-/** [public]
- * 
- */
-void ServerSocket::send(quint16 opcode, const QString &s)
-{
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
-  
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << s;  
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
-  write(block);  
-}
-
-
-/** [public]
- * 
- */
-void ServerSocket::send(quint16 opcode, quint16 err)
-{
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
-  
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << err; 
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
-  write(block);  
-}
-
-
-/** [public]
- * 
- */
-void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
-{
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
-  
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << n << m;  
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
-  write(block);  
-}
-
-
-/** [public]
- * 
- */
-void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
-{
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << opcode << s;
-  
-  for (int i = 0; i < list.size(); ++i)
-    out << list.at(i);
-  
-  out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
-  write(block);  
-}
-
-
-/** [private slots]
- * Отправляем пакет с опкодом `sChatOpcodePing`
- * и увеличиваем счётчик `failurePongs` на 1
- * ответный пакет `sChatOpcodePong` сбрасывает этот счётчик.
- * В случае если отправка двух пакетов завершилась неудачей,
- * т.е. не получено подтверждение `sChatOpcodePong`,
- * то разрываем соединение.
- */
-void ServerSocket::sendPing()
-{
-  qDebug() << "ServerSocket::sendPing()" << failurePongs;
-  
-  if (failurePongs < 2) {
-    send(sChatOpcodePing);
-    ++failurePongs;
-  }
-  else
-    abort();
-}
-
-
-/** [public]
- * 
- */
-QStringList ServerSocket::participantInfo()
-{
-  QStringList stringList;
-  stringList << nick
-             << fullName
-             << userAgent
-             << peerAddress().toString();
-  
-  return stringList;  
 }
