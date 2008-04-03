@@ -13,8 +13,8 @@
 class QAction;
 class QHBoxLayout;
 class QLabel;
-class QVBoxLayout;
 class QToolButton;
+class QVBoxLayout;
 
 class MainChannel : public QWidget {
   Q_OBJECT
