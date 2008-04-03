@@ -232,12 +232,15 @@ void SChatWindow::readyForUse()
 
 
 /** [public slots]
- * 
+ * Слот вызывается из `mainChannel` при необходимости
+ * сменить адрес сервера.
  */
 void SChatWindow::serverChanged()
 {
+  statusLabel->setText(tr("Подключение..."));
+  
   if (clientSocket)
-    clientSocket->abort();
+    clientSocket->quit();
   
   server = mainChannel->server();
   newConnection();
@@ -291,7 +294,13 @@ void SChatWindow::closeTab()
 {
   int index = tabWidget->currentIndex();
   if (index)
-    tabWidget->removeTab(index); 
+    tabWidget->removeTab(index);
+  else {
+    if (state == Connected) {
+      state = Stopped;
+      clientSocket->quit();
+    }
+  }
 }
 
 
@@ -373,7 +382,7 @@ void SChatWindow::returnPressed()
     if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
       tab->append(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
   }
-  else
+  else if (state == Connected)
     if (tabWidget->currentIndex() == 0)
       clientSocket->send(sChatOpcodeSendMessage, "#main", text);
     else
@@ -425,7 +434,7 @@ int SChatWindow::tabIndex(const QString &s, int start)
 void SChatWindow::createActions()
 { 
   // Открытие новой вкладки, для создания нового подключения
-  QToolButton *addTabButton = new QToolButton;
+  QToolButton *addTabButton = new QToolButton(this);
   addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
   addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового подключения"));
@@ -434,17 +443,22 @@ void SChatWindow::createActions()
   tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
   connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
-  QToolButton *closeTabButton = new QToolButton;
+  // Разорвать текущее соединение
+  QToolButton *closeTabButton = new QToolButton(this);
   closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
+  closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
   closeTabButton->setDefaultAction(closeTabAction);
   closeTabButton->setAutoRaise(true);
   tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
+  // Отправить сообщение в чат
   sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
+  sendAction->setStatusTip(tr("Отправить сообщение в чат"));
   sendButton->setDefaultAction(sendAction);
   connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
   
+  // Выход из программы
   quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
 }
@@ -500,16 +514,18 @@ void SChatWindow::removeConnection(ClientSocket *socket)
 {
   mainChannel->displayChoiceServer(true);
   
-  if (state == Connected)
+  if (state == Connected || state == Stopped)
     mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
   
   model.clear();
   socket->deleteLater();
-  
-  state = WaitingForConnected;
+
   statusLabel->setText(tr("Не подключено"));
   
-  QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+  if (state != Stopped) {
+    state = WaitingForConnected;
+    QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+  }
 }
 
 

@@ -40,7 +40,7 @@ public:
     Disconnected,
     WaitingForConnected,
     Connected,
-    CriticalError
+    Stopped
   };
   
   SChatWindow(QWidget *parent = 0);
