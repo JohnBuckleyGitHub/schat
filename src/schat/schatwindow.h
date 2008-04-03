@@ -44,7 +44,7 @@ public:
   };
   
   SChatWindow(QWidget *parent = 0);
-  void setNick(const QString &n) { nick = n; }
+//  void setNick(const QString &n) { nick = n; }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -76,6 +76,7 @@ private:
   void createTrayIcon();
   void readSettings();
   void removeConnection(ClientSocket *socket);
+  void uniqueNick();
   void writeSettings();
   
   bool firstRun;
