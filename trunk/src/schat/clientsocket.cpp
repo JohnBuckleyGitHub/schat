@@ -38,7 +38,7 @@ ClientSocket::ClientSocket(QObject *parent)
   connect(&pingTimeout, SIGNAL(timeout()), this, SLOT(sendPing()));
 
   nextBlockSize = 0;
-  _protocolError = 0;
+  pError = 0;
   failurePongs = 0;
   pingTimeout.setInterval((PingMinInterval + PingMutator) * 2);
   
@@ -146,8 +146,8 @@ void ClientSocket::readyRead()
     }
     else {
       if (currentCommand == sChatOpcodeError) {
-        currentBlock >> _protocolError;
-        qDebug() << "_protocolError:" << _protocolError;
+        currentBlock >> pError;
+        qDebug() << "PROTOCOL ERROR:" << pError;
       }
       abort();
       return;
@@ -201,8 +201,8 @@ void ClientSocket::readyRead()
         
       // Опкод `sChatOpcodeError` - Сервер вернул ошибку
       case sChatOpcodeError:
-        currentBlock >> err;
-        qDebug() << "PROTOCOL ERROR:" << err;
+        currentBlock >> pError;
+        qDebug() << "PROTOCOL ERROR:" << pError;
         break;
         
       case sChatOpcodePong:

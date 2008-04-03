@@ -33,7 +33,7 @@ ServerSocket::ServerSocket(QObject *parent)
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
 
   nextBlockSize = 0;
-  qsrand(time(NULL));
+  srand(time(NULL));
 }
 
 
@@ -272,7 +272,7 @@ void ServerSocket::readGreeting()
     err = sChatErrorBadProtocolVersion;
   else if (flag != 0)
     err = sChatErrorBadGreetingFlag;
-  else if (nick.isEmpty() || nick == "#DUBLICATE")
+  else if (nick.isEmpty() || nick == "#DUBLICATE" || nick == "#main")
     err = sChatErrorBadNickName;
   else if (userAgent.isEmpty())
     err = sChatErrorBadUserAgent;

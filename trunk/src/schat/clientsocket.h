@@ -16,7 +16,7 @@ class ClientSocket : public QTcpSocket
 
 public:
   ClientSocket(QObject *parent = 0);
-  quint16 protocolError() { return _protocolError; }
+  quint16 protocolError() { return pError; }
   void quit();
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
@@ -50,10 +50,10 @@ private:
   QString userAgent;
   QString userMask;
   QTimer pingTimeout;
-  quint16 _protocolError;
   quint16 currentCommand;
   quint16 currentState;
   quint16 nextBlockSize;
+  quint16 pError;
   quint8 sex;
 };
 

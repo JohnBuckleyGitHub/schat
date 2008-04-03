@@ -5,6 +5,7 @@
 
 #include <QtGui>
 #include <QtNetwork>
+#include <stdlib.h>
 
 #include "mainchannel.h"
 #include "protocol.h"
@@ -88,6 +89,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   }
   else
     newConnection();
+  
+  srand(time(NULL));
 }
 
 
@@ -519,20 +522,47 @@ void SChatWindow::readSettings()
  */
 void SChatWindow::removeConnection(ClientSocket *socket)
 {
+  quint16 err = socket->protocolError();
+  
   mainChannel->displayChoiceServer(true);
+  model.clear();
   
   if (state == Connected || state == Stopped)
     mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
   
-  model.clear();
+  // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
+  if (err == sChatErrorBadNickName) {
+    state = Stopped;
+    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Ник <b>%2</b> не допустим в чате, выберите другой</i></div>")
+        .arg(currentTime())
+        .arg(nick));
+  }
+  // Если выбранный ник уже занят, то генерируем новый уникальный ник.
+  else if (err == sChatErrorNickAlreadyUse) {
+    uniqueNick();
+  }
+  
   socket->deleteLater();
 
   statusLabel->setText(tr("Не подключено"));
   
   if (state != Stopped) {
     state = WaitingForConnected;
-    QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+    
+    if (err == sChatErrorNickAlreadyUse)
+      QTimer::singleShot(1000, this, SLOT(newConnection()));
+    else
+      QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
   }
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::uniqueNick()
+{
+  nick += QString().setNum(rand() % 99);
 }
 
 
