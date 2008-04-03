@@ -10,9 +10,11 @@
 #include <QTextBrowser>
 #include <QWidget>
 
+class QAction;
 class QHBoxLayout;
 class QLabel;
 class QVBoxLayout;
+class QToolButton;
 
 class MainChannel : public QWidget {
   Q_OBJECT
@@ -25,8 +27,11 @@ public:
   void setServer(const QString &server) { serverEdit->setText(server); }
   
 private:
+  void createActions();
   void scroll();
   
+  QAction *connectCreateAction;
+  QToolButton *connectCreateButton;
   QHBoxLayout *topLayout;
   QLabel *serverLabel;
   QLineEdit *serverEdit;
