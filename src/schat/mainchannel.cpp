@@ -58,10 +58,10 @@ void MainChannel::append(const QString &message)
 void MainChannel::displayChoiceServer(bool display)
 {
   if (display) {
+    topLayout->setContentsMargins(2, 2, 2, 0);
     serverLabel->setVisible(true);
     serverEdit->setVisible(true);
     connectCreateButton->setVisible(true);
-    topLayout->setContentsMargins(2, 2, 2, 0);
   }
   else {
     serverLabel->setVisible(false);

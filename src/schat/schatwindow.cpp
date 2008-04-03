@@ -144,7 +144,14 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
                       "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
                       "<tr><td>Клиент:</td><td>%4</td></tr>"
                       "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-                      .arg(icon).arg(info.at(0)).arg(name).arg(userAgent).arg(info.at(3)));  
+                      .arg(icon).arg(info.at(0)).arg(name).arg(userAgent).arg(info.at(3)));
+  
+  // Свой ник выделяем жирным шрифтом
+  if (info.at(0) == nick) {
+    QFont font;
+    font.setBold(true);
+    item->setFont(font);
+  }
   
   model.appendRow(item);
   model.sort(0);
