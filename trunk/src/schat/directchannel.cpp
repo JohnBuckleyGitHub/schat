@@ -4,28 +4,37 @@
  */
 
 #include <QtGui>
+#include <QtNetwork>
 
 #include "directchannel.h"
+#include "schatwindow.h"
+
+static const int reconnectTimeout = 3 * 1000;
 
 DirectChannel::DirectChannel(QWidget *parent)
   : QWidget(parent)
 {
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::DirectChannel(QWidget *parent)";
+  #endif
+  
   setAttribute(Qt::WA_DeleteOnClose);
   
-  serverLabel = new QLabel(tr("Адрес:"), this);
-  serverEdit  = new QLineEdit(this);
+  chat = qobject_cast<SChatWindow *>(parent);
+  
+  adrLabel    = new QLabel(tr("Адрес:"), this);
+  remoteEdit  = new QLineEdit(this);
+  
+  state = Disconnected;
   
   createActions();
   
-//  serverLabel->setVisible(false);
-//  serverEdit->setVisible(false);
-//  connectCreateButton->setVisible(false);
   chatText.setFocusPolicy(Qt::NoFocus);
   chatText.setOpenExternalLinks(true);
   
   topLayout = new QHBoxLayout;
-  topLayout->addWidget(serverLabel);
-  topLayout->addWidget(serverEdit);
+  topLayout->addWidget(adrLabel);
+  topLayout->addWidget(remoteEdit);
   topLayout->addWidget(connectCreateButton);
   topLayout->addStretch();
   topLayout->setContentsMargins(4, 2, 4, 0);
@@ -37,8 +46,9 @@ DirectChannel::DirectChannel(QWidget *parent)
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
   
-//  connect(serverEdit, SIGNAL(returnPressed()), parent, SLOT(serverChanged()));
-//  connect(connectCreateAction, SIGNAL(triggered()), parent, SLOT(serverChanged()));
+  connect(remoteEdit, SIGNAL(returnPressed()), this, SLOT(newConnection()));
+  connect(connectCreateAction, SIGNAL(triggered()), this, SLOT(newConnection()));
+  
 }
 
 
@@ -52,23 +62,71 @@ void DirectChannel::append(const QString &message)
 }
 
 
-/** [public]
+/** [private slots]
  * 
  */
-void DirectChannel::displayChoiceServer(bool display)
+void DirectChannel::connectionError(QAbstractSocket::SocketError /* socketError */)
 {
-  if (display) {
-    topLayout->setContentsMargins(4, 2, 4, 0);
-    serverLabel->setVisible(true);
-    serverEdit->setVisible(true);
-    connectCreateButton->setVisible(true);
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  qDebug() << "SOCKET ERROR:" << clientSocket->errorString();
+  #endif
+
+  removeConnection();
+}
+
+
+/** [private slots]
+ * 
+ */
+void DirectChannel::disconnected()
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::disconnected()";
+  #endif
+  
+  removeConnection();
+}
+
+
+/** [public slots]
+ * 
+ */
+void DirectChannel::readyForUse()
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::readyForUse()" << clientSocket->peerAddress().toString();
+  #endif
+  
+  QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
+  
+  state = Connected;
+  append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
+}
+
+
+/** [private slots]
+ * 
+ */
+void DirectChannel::newConnection()
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::newConnection()" << remoteEdit->text() << chat->getNick() << chat->getFullName() << chat->getSex();
+  #endif
+
+  state = WaitingForConnected;
+
+  if (!clientSocket) {
+    clientSocket = new ClientSocket(this);
+    connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
+    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
   }
-  else {
-    serverLabel->setVisible(false);
-    serverEdit->setVisible(false);
-    connectCreateButton->setVisible(false);
-    topLayout->setMargin(0);
-  }
+  
+  clientSocket->setNick('#' + chat->getNick());
+  clientSocket->setFullName(chat->getFullName());
+  clientSocket->setSex(chat->getSex());
+  clientSocket->connectToHost(remoteEdit->text(), 7666);
 }
 
 
@@ -77,11 +135,33 @@ void DirectChannel::displayChoiceServer(bool display)
  */
 void DirectChannel::createActions()
 {
-
   connectCreateButton = new QToolButton(this);
   connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится к серверу"), this);
   connectCreateButton->setDefaultAction(connectCreateAction);
   connectCreateButton->setAutoRaise(true);
+}
+
+
+/** [private]
+ * 
+ */
+void DirectChannel::removeConnection()
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::removeConnection(ClientSocket *socket)" << state;
+  #endif
+  
+//  quint16 err = socket->protocolError();
+  
+  if (state == Connected || state == Stopped)
+    append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
+  
+  clientSocket->deleteLater();
+  
+  if (state != Stopped) {
+    state = WaitingForConnected;
+    QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+  }
 }
 
 
