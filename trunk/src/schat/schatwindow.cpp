@@ -399,23 +399,39 @@ void SChatWindow::newConnection()
 
 
 /** [private slots]
- * 
+ * Отправка сообщения в чат
  */
 void SChatWindow::returnPressed()
 {
-  QString text = lineEdit->text();
+  // Получаем текст и удаляем пустые символы по краям
+  // Выходим если текс пустой.
+  QString text = lineEdit->text().trimmed();
   if (text.isEmpty())
     return;
-
+  
+  // Текст, начинающийся с символа '/' считаем командой.
+  // т.к. команды пока не поддерживаются, сообщаем о неизвестной команде.
   if (text.startsWith(QChar('/'))) {
-    if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
-      tab->append(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
+    QString unknownCmd = tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' ')));
+    
+    if (MainChannel *tab = qobject_cast<MainChannel *>(tabWidget->currentWidget()))
+      tab->append(unknownCmd);
+    else if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
+      tab->append(unknownCmd);
+    else if (DirectChannel *tab = qobject_cast<DirectChannel *>(tabWidget->currentWidget()))
+      tab->append(unknownCmd);
   }
-  else if (state == Connected)
-    if (tabWidget->currentIndex() == 0)
-      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
-    else
-      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
+  else if (state == Connected) {
+    
+    if (DirectChannel *tab = qobject_cast<DirectChannel *>(tabWidget->currentWidget())) {
+      tab->sendText(text);
+    }
+    else if (state == Connected)    
+      if (tabWidget->currentIndex() == 0)
+        clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+      else
+        clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
+  }
   
   lineEdit->clear();  
 }

@@ -7,6 +7,7 @@
 #include <QtNetwork>
 
 #include "directchannel.h"
+#include "protocol.h"
 #include "schatwindow.h"
 
 static const int reconnectTimeout = 3 * 1000;
@@ -62,6 +63,21 @@ void DirectChannel::append(const QString &message)
 }
 
 
+/** [public]
+ * 
+ */
+void DirectChannel::sendText(const QString &text)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::sendText(const QString &text)" << text;
+  #endif
+  
+  if (state == Connected)
+    clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+  
+}
+
+
 /** [private slots]
  * 
  */
@@ -86,6 +102,18 @@ void DirectChannel::disconnected()
   #endif
   
   removeConnection();
+}
+
+
+/** [public slots]
+ * 
+ */
+void DirectChannel::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
+{
+  append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+        .arg(currentTime())
+        .arg(Qt::escape(sender))
+        .arg(message));
 }
 
 
@@ -118,6 +146,7 @@ void DirectChannel::newConnection()
 
   if (!clientSocket) {
     clientSocket = new ClientSocket(this);
+    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
@@ -150,8 +179,6 @@ void DirectChannel::removeConnection()
   #ifdef SCHAT_DEBUG
   qDebug() << "DirectChannel::removeConnection(ClientSocket *socket)" << state;
   #endif
-  
-//  quint16 err = socket->protocolError();
   
   if (state == Connected || state == Stopped)
     append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
