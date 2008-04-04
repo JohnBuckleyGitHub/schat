@@ -262,8 +262,13 @@ void SChatWindow::serverChanged()
  */
 void SChatWindow::addTab()
 {
-  qDebug() << "SChatWindow::addTab()";
-  tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), tr("Новое подключение")));  
+  QString label = tr("Новое подключение");
+  int index = tabIndex(label);
+  
+  if (index > 0)
+    tabWidget->setCurrentIndex(index);
+  else
+    tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), label));  
 }
 
 
