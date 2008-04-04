@@ -34,10 +34,12 @@ public:
   
   DirectChannel(QWidget *parent = 0);
   void append(const QString &message);
+  void sendText(const QString &text);
 
 public slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
+  void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void readyForUse();
   
 private slots:
