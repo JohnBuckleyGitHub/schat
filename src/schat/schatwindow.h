@@ -13,6 +13,8 @@
 #include <QTcpSocket>
 #include <QTime>
 
+#include "clientsocket.h"
+
 class MainChannel;
 class QAction;
 class QHBoxLayout;
@@ -29,8 +31,6 @@ class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
 
-#include "clientsocket.h"
-
 class SChatWindow : public QMainWindow
 {
   Q_OBJECT
@@ -44,7 +44,9 @@ public:
   };
   
   SChatWindow(QWidget *parent = 0);
-//  void setNick(const QString &n) { nick = n; }
+  QString getNick() { return nick; }
+  QString getFullName() { return fullName; }
+  quint8 getSex() { return sex; }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -71,11 +73,11 @@ private slots:
 
 private:
   int tabIndex(const QString &s, int start = 1);
-  QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
+  QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
   void createActions();
   void createTrayIcon();
   void readSettings();
-  void removeConnection(ClientSocket *socket);
+  void removeConnection();
   void uniqueNick();
   void writeSettings();
   

@@ -21,20 +21,8 @@ ClientSocket::ClientSocket(QObject *parent)
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
   
-  connect(this, SIGNAL(newParticipant(quint16, const QStringList &, bool)),
-          parent, SLOT(newParticipant(quint16, const QStringList &, bool)));
-  connect(this, SIGNAL(participantLeft(const QString &)),
-          parent, SLOT(participantLeft(const QString &)));
-  connect(this, SIGNAL(newMessage(const QString &, const QString &)),
-          parent, SLOT(newMessage(const QString &, const QString &)));
-  connect(this, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)),
-          parent, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
-  
   connect(this, SIGNAL(connected()), this, SLOT(sendGreeting()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
-  connect(this, SIGNAL(readyForUse()), parent, SLOT(readyForUse()));
-  connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
-  connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
   connect(&pingTimeout, SIGNAL(timeout()), this, SLOT(sendPing()));
 
   nextBlockSize = 0;

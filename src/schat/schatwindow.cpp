@@ -325,12 +325,12 @@ void SChatWindow::closeTab()
  */
 void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)
 {
-  qDebug() << "SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  #ifdef SCHAT_DEBUG
+  qDebug() << "DirectChannel::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  qDebug() << "SOCKET ERROR:" << clientSocket->errorString();
+  #endif
   
-  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender())) {
-    qDebug() << "ERROR:" << socket->errorString();
-    removeConnection(socket);
-  }
+  removeConnection();
 }
 
 
@@ -339,10 +339,11 @@ void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */
  */
 void SChatWindow::disconnected()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "SChatWindow::disconnected()";
+  #endif
   
-  if (ClientSocket *socket = qobject_cast<ClientSocket *>(sender()))
-    removeConnection(socket);
+  removeConnection();
 }
 
 
@@ -372,11 +373,23 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
  */
 void SChatWindow::newConnection()
 {
+  #ifdef SCHAT_DEBUG
+  qDebug() << "SChatWindow::newConnection()";
+  #endif
+  
   state = WaitingForConnected;
   statusLabel->setText(tr("Подключение..."));
   
-  if (!clientSocket)
+  if (!clientSocket) {
     clientSocket = new ClientSocket(this);
+    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
+    connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
+    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
+    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
+  }
   
   clientSocket->setNick(nick);
   clientSocket->setFullName(fullName);
@@ -526,9 +539,9 @@ void SChatWindow::readSettings()
 /** [private]
  * 
  */
-void SChatWindow::removeConnection(ClientSocket *socket)
+void SChatWindow::removeConnection()
 {
-  quint16 err = socket->protocolError();
+  quint16 err = clientSocket->protocolError();
   
   mainChannel->displayChoiceServer(true);
   model.clear();
@@ -548,7 +561,7 @@ void SChatWindow::removeConnection(ClientSocket *socket)
     uniqueNick();
   }
   
-  socket->deleteLater();
+  clientSocket->deleteLater();
 
   statusLabel->setText(tr("Не подключено"));
   
