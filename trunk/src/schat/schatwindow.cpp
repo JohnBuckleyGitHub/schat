@@ -13,6 +13,7 @@
 #include "tab.h"
 #include "version.h"
 #include "welcomedialog.h"
+#include "directchannel.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -268,7 +269,7 @@ void SChatWindow::addTab()
   if (index > 0)
     tabWidget->setCurrentIndex(index);
   else
-    tabWidget->setCurrentIndex(tabWidget->addTab(new Tab(this), label));  
+    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(this), label));  
 }
 
 
@@ -450,9 +451,9 @@ void SChatWindow::createActions()
 { 
   // Открытие новой вкладки, для создания нового подключения
   QToolButton *addTabButton = new QToolButton(this);
-  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое подключение, Ctrl+N"), this);
+  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
-  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового подключения"));
+  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
   addTabButton->setDefaultAction(addTabAction);
   addTabButton->setAutoRaise(true);
   tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
