@@ -24,10 +24,5 @@ int main(int argc, char *argv[])
   SChatWindow window;
   window.show();
   
-  Server *server = new Server;
-  if (!server->listen(QHostAddress::Any, 7666)) {
-    delete server;
-  }
-  
   return app.exec();
 }

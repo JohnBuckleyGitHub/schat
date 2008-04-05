@@ -32,3 +32,4 @@ CONFIG(release, debug|release) {
     DESTDIR = ../../out/release
 }
 win32:RC_FILE = schatd.rc
+#DEFINES += SCHAT_DEBUG
