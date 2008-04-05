@@ -17,6 +17,7 @@ class Server : public QTcpServer
 
 public:
   Server(QObject *parent = 0);
+  bool start();
 
 public slots:
   void appendParticipant(const QString &p);
@@ -30,7 +31,10 @@ private slots:
 private:
   void incomingConnection(int socketId);
   void participantLeft(const QString &nick);
+  void readSettings();
   void removeConnection(ServerSocket *socket);
+  QString listenAddress;
+  quint16 listenPort;
   
   QHash<QString, ServerSocket *> peers;
 };
