@@ -95,9 +95,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
   daemon = new Server(this);
-  if (!daemon->listen(QHostAddress::Any, 7666)) {
+  if (!daemon->start())
     delete daemon;
-  }
 }
 
 
@@ -538,7 +537,7 @@ void SChatWindow::createTrayIcon()
  */
 void SChatWindow::readSettings()
 {
-  QSettings settings(qApp->applicationDirPath() + "/schat.ini", QSettings::IniFormat, this);
+  QSettings settings(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
   
   QPoint pos = settings.value("Pos", QPoint(-999, -999)).toPoint();
   QSize size = settings.value("Size", QSize(680, 460)).toSize();
@@ -614,7 +613,7 @@ void SChatWindow::uniqueNick()
  */
 void SChatWindow::writeSettings()
 {
-  QSettings settings(qApp->applicationDirPath() + "/schat.ini", QSettings::IniFormat, this);
+  QSettings settings(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
   
   settings.setValue("Size", size());
   settings.setValue("Pos", pos());

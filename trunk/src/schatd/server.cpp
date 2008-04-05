@@ -20,6 +20,21 @@ Server::Server(QObject *parent)
 }
 
 
+/** [public]
+ * 
+ */
+bool Server::start()
+{
+  readSettings();
+  
+  #ifdef SCHAT_DEBUG
+  qDebug() << "Server::start()" << listenAddress << listenPort;
+  #endif
+  
+  return listen(QHostAddress(listenAddress), listenPort);
+}
+
+
 /** [public slots]
  * Слот вызывается сигналом, отправленным из `ServerSocket::readGreeting()`
  * В случае если участник с таким именем не подключен к серверу,
@@ -154,6 +169,18 @@ void Server::participantLeft(const QString &nick)
     i.next();
     i.value()->send(sChatOpcodeParticipantLeft, nick);
   }
+}
+
+
+/** [private]
+ * 
+ */
+void Server::readSettings()
+{
+  QSettings settings(qApp->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
+  
+  listenAddress = settings.value("ListenAddress", "0.0.0.0").toString();
+  listenPort    = quint16(settings.value("ListenPort", 7666).toUInt());
 }
 
 
