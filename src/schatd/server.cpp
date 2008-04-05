@@ -177,7 +177,7 @@ void Server::participantLeft(const QString &nick)
  */
 void Server::readSettings()
 {
-  QSettings settings(qApp->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
+  QSettings settings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
   
   listenAddress = settings.value("ListenAddress", "0.0.0.0").toString();
   listenPort    = quint16(settings.value("ListenPort", 7666).toUInt());
