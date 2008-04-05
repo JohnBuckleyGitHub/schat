@@ -13,7 +13,9 @@
 ServerSocket::ServerSocket(QObject *parent)
   : QTcpSocket(parent)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::ServerSocket(QObject *parent)";
+  #endif
   
   currentState = sChatStateWaitingForGreeting;
   currentBlock.setDevice(this);
@@ -72,7 +74,9 @@ void ServerSocket::send(quint16 opcode)
  */
 void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -89,7 +93,9 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
  */
 void ServerSocket::send(quint16 opcode, const QString &s)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -106,7 +112,9 @@ void ServerSocket::send(quint16 opcode, const QString &s)
  */
 void ServerSocket::send(quint16 opcode, quint16 err)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -144,7 +152,9 @@ void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
  */
 void ServerSocket::readyRead()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::readyRead()" << (int) state() ;
+  #endif
   
   // Состояние `sChatStateWaitingForGreeting`
   // Ожидаем пакет с опкодом `sChatOpcodeGreeting`
@@ -186,12 +196,13 @@ void ServerSocket::readyRead()
       // Опкод `sChatOpcodeClientQuit`
       // Клиент выходит из часа
       case sChatOpcodeClientQuit:
-        qDebug() << "sChatOpcodeClientQuit";
         abort();
         break;
         
       default:
+        #ifdef SCHAT_DEBUG
         qDebug() << "Invalid Opcode";
+        #endif
         abort();
         break;
     }    
@@ -216,7 +227,9 @@ void ServerSocket::readyRead()
  */
 void ServerSocket::sendPing()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::sendPing()" << failurePongs;
+  #endif
   
   if (failurePongs < 2) {
     send(sChatOpcodePing);
@@ -232,7 +245,9 @@ void ServerSocket::sendPing()
  */
 bool ServerSocket::readBlock()
 {
-  qDebug() << "ServerSocket::readBlock()";
+  #ifdef SCHAT_DEBUG
+  //qDebug() << "ServerSocket::readBlock()";
+  #endif
   
   if (nextBlockSize == 0) {
     if (bytesAvailable() < sizeof(quint16))
@@ -285,7 +300,10 @@ void ServerSocket::readGreeting()
   }
   
   userMask = nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort());
+  
+  #ifdef SCHAT_DEBUG
   qDebug() << userMask << userAgent;
+  #endif
   
   emit appendParticipant(nick);
   

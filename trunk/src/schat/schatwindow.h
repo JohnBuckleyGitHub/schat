@@ -14,6 +14,7 @@
 #include <QTime>
 
 #include "clientsocket.h"
+#include "server.h"
 
 class MainChannel;
 class QAction;
@@ -95,6 +96,7 @@ private:
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<ClientSocket> clientSocket;
+  QPointer<Server> daemon;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;

@@ -55,7 +55,9 @@ void Server::appendParticipant(const QString &p)
  */
 void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
 {
+  #ifdef SCHAT_DEBUG 
   qDebug() << "Server::relayMessage(const QString &channel, const QString &nick, const QString &message)" << channel << nick << message;
+  #endif
   
   if (channel == "#main") {
     QHashIterator<QString, ServerSocket *> i(peers);
@@ -101,10 +103,14 @@ void Server::relayParticipantList(ServerSocket *socket)
  */
 void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "Server::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    #ifdef SCHAT_DEBUG
     qDebug() << "ERROR:" << socket->errorString();
+    #endif
     removeConnection(socket);
   }
 }
@@ -115,7 +121,9 @@ void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
  */
 void Server::disconnected()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "Server::disconnected()";
+  #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
     removeConnection(socket);
@@ -137,7 +145,9 @@ void Server::incomingConnection(int socketId)
  */
 void Server::participantLeft(const QString &nick)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "Server::participantLeft(const QString &nick)";
+  #endif
   
   QHashIterator<QString, ServerSocket *> i(peers);
   while (i.hasNext()) {
@@ -152,7 +162,9 @@ void Server::participantLeft(const QString &nick)
  */
 void Server::removeConnection(ServerSocket *socket)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "Server::removeConnection(ServerSocket *socket)";
+  #endif
   
   QString nick = socket->nickname();
   

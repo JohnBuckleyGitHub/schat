@@ -15,7 +15,9 @@ static const int InitTimeout = 5 * 1000;
 ClientSocket::ClientSocket(QObject *parent)
   : QTcpSocket(parent)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::ClientSocket(QObject *parent)";
+  #endif  
   
   currentState = sChatStateDisconnected;
   currentBlock.setDevice(this);
@@ -39,7 +41,9 @@ ClientSocket::ClientSocket(QObject *parent)
  */
 void ClientSocket::quit()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::quit()" << state();
+  #endif
   
   if (state() == QAbstractSocket::ConnectedState) {
     send(sChatOpcodeClientQuit);
@@ -55,7 +59,9 @@ void ClientSocket::quit()
  */
 void ClientSocket::send(quint16 opcode)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::send(quint16 opcode)" << opcode;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -72,7 +78,9 @@ void ClientSocket::send(quint16 opcode)
  */
 void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
+  #ifdef SCHAT_DEBUG 
   qDebug() << "ClientSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode << n << m;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -89,7 +97,9 @@ void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
  */
 void ClientSocket::send(quint16 opcode, const QString &s)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::send(quint16 opcode, const QString &s)" << opcode;
+  #endif
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -121,7 +131,9 @@ void ClientSocket::initTimeout()
  */
 void ClientSocket::readyRead()
 {
-  qDebug() << "ClientSocket::readyRead()" << (int) state() ;
+  #ifdef SCHAT_DEBUG
+  qDebug() << "ClientSocket::readyRead()" << (int) state();
+  #endif
   
   // Состояние `sChatStateWaitingForGreeting`
   // Ожидаем пакет `sChatOpcodeGreetingOk`
@@ -135,7 +147,9 @@ void ClientSocket::readyRead()
     else {
       if (currentCommand == sChatOpcodeError) {
         currentBlock >> pError;
+        #ifdef SCHAT_DEBUG
         qDebug() << "PROTOCOL ERROR:" << pError;
+        #endif
       }
       abort();
       return;
@@ -190,7 +204,9 @@ void ClientSocket::readyRead()
       // Опкод `sChatOpcodeError` - Сервер вернул ошибку
       case sChatOpcodeError:
         currentBlock >> pError;
+        #ifdef SCHAT_DEBUG
         qDebug() << "PROTOCOL ERROR:" << pError;
+        #endif
         break;
         
       case sChatOpcodePong:
@@ -205,7 +221,9 @@ void ClientSocket::readyRead()
         break;
         
       default:
+        #ifdef SCHAT_DEBUG
         qDebug() << "Invalid Opcode";
+        #endif
         abort();
         break;
     }    
@@ -233,7 +251,9 @@ void ClientSocket::readyRead()
  */
 void ClientSocket::sendGreeting()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::sendGreeting()";
+  #endif
   
   currentState = sChatStateWaitingForGreeting;
   
@@ -260,7 +280,9 @@ void ClientSocket::sendGreeting()
  */
 void ClientSocket::sendPing()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ClientSocket::sendPing()";
+  #endif
   
   if (failurePongs < 1) {
     send(sChatOpcodePing);
@@ -276,7 +298,9 @@ void ClientSocket::sendPing()
  */
 bool ClientSocket::readBlock()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "ServerSocket::readBlock()";
+  #endif
   
   if (nextBlockSize == 0) {
     if (bytesAvailable() < sizeof(quint16))
@@ -299,7 +323,9 @@ bool ClientSocket::readBlock()
  */
 void ClientSocket::newParticipant(bool echo)
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "void ClientSocket::newParticipant(bool echo)" << echo;
+  #endif
   
   quint16 sex;
   QStringList info;

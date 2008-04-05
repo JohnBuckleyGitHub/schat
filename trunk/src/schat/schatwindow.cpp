@@ -92,6 +92,12 @@ SChatWindow::SChatWindow(QWidget *parent)
     newConnection();
   
   srand(time(NULL));
+  
+  // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
+  daemon = new Server(this);
+  if (!daemon->listen(QHostAddress::Any, 7666)) {
+    delete daemon;
+  }
 }
 
 
@@ -293,7 +299,9 @@ void SChatWindow::addTab(const QModelIndex &index)
  */
 void SChatWindow::closeChat()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "SChatWindow::closeChat()";
+  #endif
   
   if (clientSocket)
     clientSocket->quit();
