@@ -97,6 +97,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   daemon = new Server(this);
   if (!daemon->start())
     delete daemon;
+  else {
+    daemon->setLocalNick(nick);
+    daemon->setLocalFullName(fullName);
+    daemon->setLocalSex(sex);
+  }
 }
 
 
@@ -120,6 +125,25 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 /** [public slots]
  * 
  */
+void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)" << sex << info;
+  #endif
+  
+  if (DirectChannel *channel  = qobject_cast<DirectChannel *>(sender())) {
+    int index = tabWidget->indexOf(channel);
+    tabWidget->setTabText(index, info.at(0));
+    tabWidget->setTabToolTip(index, participantToolTip(sex, info));
+    tabWidget->setTabIcon(index, QIcon(sexIconString(sex)));
+  }
+  
+}
+
+
+/** [public slots]
+ * 
+ */
 void SChatWindow::newMessage(const QString &nick, const QString &message)
 {
   mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
@@ -134,26 +158,9 @@ void SChatWindow::newMessage(const QString &nick, const QString &message)
  */
 void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
-  QString icon;
-  if (sex)
-    icon = ":/images/female.png";
-  else
-    icon = ":/images/male.png";
-  
-  QString name = info.at(1);
-  if (name.isEmpty())
-    name = tr("&lt;не указано&gt;");
-  
-  QString userAgent = info.at(2);
-  userAgent.replace('/', ' ');
-  
-  QStandardItem *item = new QStandardItem(QIcon(icon), info.at(0));
+  QStandardItem *item = new QStandardItem(QIcon(sexIconString(sex)), info.at(0));
   item->setData(sex, Qt::UserRole + 1);
-  item->setToolTip(tr("<h3><img src='%1' align='left'> %2</h3>"
-                      "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
-                      "<tr><td>Клиент:</td><td>%4</td></tr>"
-                      "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-                      .arg(icon).arg(info.at(0)).arg(name).arg(userAgent).arg(info.at(3)));
+  item->setToolTip(participantToolTip(sex, info));
   
   // Свой ник выделяем жирным шрифтом
   if (info.at(0) == nick) {
@@ -483,6 +490,38 @@ int SChatWindow::tabIndex(const QString &s, int start)
 /** [private]
  * 
  */
+QString SChatWindow::participantToolTip(quint16 sex, const QStringList &list) const
+{
+  QString name = list.at(1);
+  if (name.isEmpty())
+    name = tr("&lt;не указано&gt;");
+  
+  QString userAgent = list.at(2);
+  userAgent.replace('/', ' ');
+  
+  return tr("<h3><img src='%1' align='left'> %2</h3>"
+            "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
+            "<tr><td>Клиент:</td><td>%4</td></tr>"
+            "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
+            .arg(sexIconString(sex)).arg(list.at(0)).arg(name).arg(userAgent).arg(list.at(3));  
+}
+
+
+/** [private]
+ * 
+ */
+QString SChatWindow::sexIconString(quint16 sex) const
+{
+  if (sex)
+    return ":/images/female.png";
+  else
+    return ":/images/male.png";
+}
+
+
+/** [private]
+ * 
+ */
 void SChatWindow::createActions()
 { 
   // Открытие новой вкладки, для создания нового подключения
@@ -544,7 +583,7 @@ void SChatWindow::readSettings()
   splitter->restoreState(settings.value("Splitter").toByteArray());
   hideWelcome = settings.value("HideWelcome", false).toBool();
   firstRun = settings.value("FirstRun", true).toBool();
-  server = settings.value("Server", "192.168.5.134").toString();
+  server = settings.value("Server", "192.168.5.130").toString();
   serverPort = quint16(settings.value("ServerPort", 7666).toUInt()); 
   
   resize(size);

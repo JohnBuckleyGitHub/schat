@@ -7,8 +7,9 @@
 #include <QtNetwork>
 #include <stdlib.h>
 
-#include "serversocket.h"
 #include "protocol.h"
+#include "serversocket.h"
+#include "version.h"
 
 ServerSocket::ServerSocket(QObject *parent)
   : QTcpSocket(parent)
@@ -42,15 +43,15 @@ ServerSocket::ServerSocket(QObject *parent)
 /** [public]
  * 
  */
-QStringList ServerSocket::participantInfo()
+QStringList ServerSocket::participantInfo() const
 {
-  QStringList stringList;
-  stringList << nick
-             << fullName
-             << userAgent
-             << peerAddress().toString();
+  QStringList list;
+  list << nick
+       << fullName
+       << userAgent
+       << peerAddress().toString();
   
-  return stringList;  
+  return list;  
 }
 
 
@@ -180,7 +181,12 @@ void ServerSocket::readyRead()
     switch (currentCommand) {
       case sChatOpcodeSendMessage:
         currentBlock >> channel >> message;
-        emit relayMessage(channel, nick, message);
+        
+        if (pFlag == sChatFlagDirect) { // FIXME добавить #define ...
+          send(sChatOpcodeSendPrvMessageEcho, channel, message);
+        }
+        else
+          emit relayMessage(channel, nick, message);
         break;
       
       case sChatOpcodePong:
@@ -245,10 +251,6 @@ void ServerSocket::sendPing()
  */
 bool ServerSocket::readBlock()
 {
-  #ifdef SCHAT_DEBUG
-  //qDebug() << "ServerSocket::readBlock()";
-  #endif
-  
   if (nextBlockSize == 0) {
     if (bytesAvailable() < sizeof(quint16))
       return false;
@@ -278,14 +280,15 @@ bool ServerSocket::readBlock()
 void ServerSocket::readGreeting()
 {
   quint8 version;
-  quint8 flag;
   quint16 err = 0;
   
-  currentBlock >> version >> flag >> sex >> nick >> fullName >> userAgent;
+  currentBlock >> version >> pFlag >> sex >> nick >> fullName >> userAgent;
+  
+  nick = nick.trimmed();
   
   if (version != sChatProtocolVersion)
     err = sChatErrorBadProtocolVersion;
-  else if (flag != 0)
+  else if (!(pFlag == sChatFlagNone || pFlag == sChatFlagDirect))
     err = sChatErrorBadGreetingFlag;
   else if (nick.isEmpty() || nick == "#DUBLICATE" || nick == "#main")
     err = sChatErrorBadNickName;
@@ -299,13 +302,36 @@ void ServerSocket::readGreeting()
     disconnectFromHost();
   }
   
-  userMask = nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort());
-  
   #ifdef SCHAT_DEBUG
-  qDebug() << userMask << userAgent;
+  qDebug() << (nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort())) << userAgent;
   #endif
   
-  emit appendParticipant(nick);
+  // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
+  // и не отсылаем его в общий список.
+  if (pFlag == sChatFlagDirect) { // FIXME добавить #define ...
+    send(sChatOpcodeGreetingOk);
+    send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
+    sendLocalProfile();
+    currentState = sChatStateReadyForUse;
+  }
+  else
+    emit appendParticipant(nick);
   
   currentState = sChatStateWaitingForChecking;
+}
+
+
+/** [private]
+ * FIXME добавить #define ...
+ */
+void ServerSocket::sendLocalProfile()
+{
+  QStringList list;
+  list << localNick
+       << localFullName
+       << QString("Simple Chat/%1").arg(SCHAT_VERSION)
+       << localAddress().toString();
+  
+  send(sChatOpcodeNewParticipantQuiet, localSex, list);
+  
 }

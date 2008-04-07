@@ -152,6 +152,11 @@ void Server::incomingConnection(int socketId)
 {
   ServerSocket *socket = new ServerSocket(this);
   socket->setSocketDescriptor(socketId);
+  
+  // FIXME добавить #define ...
+  socket->setLocalNick(localNick);
+  socket->setLocalFullName(localFullName);
+  socket->setLocalSex(localSex);
 }
 
 

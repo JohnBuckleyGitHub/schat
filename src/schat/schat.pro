@@ -12,7 +12,8 @@ INCLUDEPATH += . \
                ../schatd
 QT += network
 #CONFIG += console
-#DEFINES += SCHAT_DEBUG
+#DEFINES += SCHAT_DEBUG SCHAT_CLIENT
+DEFINES += SCHAT_CLIENT
 
 RESOURCES += ../../data/schat.qrc
 

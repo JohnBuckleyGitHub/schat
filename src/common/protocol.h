@@ -16,6 +16,9 @@ static const quint16 sChatStateDisconnected          = 2003;
 static const quint16 sChatStateWaitingForChecking    = 2004;
 static const quint16 sChatStateSendingGreeting       = 2000;
 
+static const quint8 sChatFlagNone                    = 0;
+static const quint8 sChatFlagDirect                  = 1;
+
 static const quint16 sChatOpcodeGreeting             = 100;
 static const quint16 sChatOpcodeGreetingOk           = 101;
 static const quint16 sChatOpcodeSendMessage          = 200;
