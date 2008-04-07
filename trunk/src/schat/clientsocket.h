@@ -21,6 +21,7 @@ public:
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
+  void setDirect(bool d) { direct = d; }
   void setFullName(const QString &n) { fullName = n; }
   void setNick(const QString &n) { nick = n; }
   void setSex(quint8 s) { sex = s; }
@@ -42,11 +43,13 @@ private:
   bool readBlock();
   void newParticipant(bool echo = true);
   
+  bool direct;
   int failurePongs;
   QDataStream currentBlock;
   QString fullName;
   QString message;  
   QString nick;
+  QString remoteNick;
   QString userAgent;
   QString userMask;
   QTimer pingTimeout;

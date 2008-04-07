@@ -49,6 +49,7 @@ DirectChannel::DirectChannel(QWidget *parent)
   
   connect(remoteEdit, SIGNAL(returnPressed()), this, SLOT(newConnection()));
   connect(connectCreateAction, SIGNAL(triggered()), this, SLOT(newConnection()));
+  connect(this, SIGNAL(newDirectParticipant(quint16, const QStringList &)), parent, SLOT(newDirectParticipant(quint16, const QStringList &)));
   
 }
 
@@ -73,7 +74,7 @@ void DirectChannel::sendText(const QString &text)
   #endif
   
   if (state == Connected)
-    clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+    clientSocket->send(sChatOpcodeSendMessage, remoteNick, text);
   
 }
 
@@ -102,6 +103,15 @@ void DirectChannel::disconnected()
   #endif
   
   removeConnection();
+}
+
+
+/** [public slots]
+ * 
+ */
+void DirectChannel::newParticipant(quint16 sex, const QStringList &info, bool echo)
+{
+  remoteNick = info.at(0);
 }
 
 
@@ -146,12 +156,15 @@ void DirectChannel::newConnection()
 
   if (!clientSocket) {
     clientSocket = new ClientSocket(this);
+    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SIGNAL(newDirectParticipant(quint16, const QStringList &)));
+    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
   }
   
+  clientSocket->setDirect(true);
   clientSocket->setNick('#' + chat->getNick());
   clientSocket->setFullName(chat->getFullName());
   clientSocket->setSex(chat->getSex());

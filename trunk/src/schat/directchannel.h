@@ -35,10 +35,14 @@ public:
   DirectChannel(QWidget *parent = 0);
   void append(const QString &message);
   void sendText(const QString &text);
+  
+signals:
+  void newDirectParticipant(quint16 sex, const QStringList &info);
 
 public slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
+  void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void readyForUse();
   
@@ -57,6 +61,7 @@ private:
   QLabel *adrLabel;
   QLineEdit *remoteEdit;
   QPointer<ClientSocket> clientSocket;
+  QString remoteNick;
   QTextBrowser chatText;
   QToolButton *connectCreateButton;
   QVBoxLayout *mainLayout;

@@ -53,6 +53,7 @@ protected:
   void closeEvent(QCloseEvent *event);
   
 public slots:
+  void newDirectParticipant(quint16 sex, const QStringList &info);
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
@@ -75,6 +76,8 @@ private slots:
 private:
   int tabIndex(const QString &s, int start = 1);
   QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
+  QString participantToolTip(quint16 sex, const QStringList &list) const;
+  QString sexIconString(quint16 sex) const;
   void createActions();
   void createTrayIcon();
   void readSettings();

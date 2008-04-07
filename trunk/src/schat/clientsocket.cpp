@@ -30,6 +30,7 @@ ClientSocket::ClientSocket(QObject *parent)
   nextBlockSize = 0;
   pError = 0;
   failurePongs = 0;
+  direct = false;
   pingTimeout.setInterval((PingMinInterval + PingMutator) * 2);
   
   QTimer::singleShot(InitTimeout, this, SLOT(initTimeout()));
@@ -261,10 +262,15 @@ void ClientSocket::sendGreeting()
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
   out << quint16(0)
-      << quint16(sChatOpcodeGreeting)
-      << quint8(sChatProtocolVersion)
-      << quint8(0)
-      << sex
+      << sChatOpcodeGreeting
+      << sChatProtocolVersion;
+  
+  if (direct)
+    out << sChatFlagDirect;
+  else
+    out << sChatFlagNone;
+  
+  out << sex
       << nick
       << fullName
       << QString("Simple Chat/%1").arg(SCHAT_VERSION);
@@ -337,6 +343,9 @@ void ClientSocket::newParticipant(bool echo)
     info << s;
   }
   
+  if (direct)
+    remoteNick = info.at(0);
+    
   if (echo)
     emit newParticipant(sex, info);
   else
