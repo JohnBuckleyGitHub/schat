@@ -12,7 +12,7 @@
 
 static const int reconnectTimeout = 3 * 1000;
 
-DirectChannel::DirectChannel(QWidget *parent)
+DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   : QWidget(parent)
 {
   #ifdef SCHAT_DEBUG
@@ -22,6 +22,7 @@ DirectChannel::DirectChannel(QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
   
   chat = qobject_cast<SChatWindow *>(parent);
+  profile = p;
   
   adrLabel    = new QLabel(tr("Адрес:"), this);
   remoteEdit  = new QLineEdit(this);
@@ -148,9 +149,9 @@ void DirectChannel::readyForUse()
  */
 void DirectChannel::newConnection()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::newConnection()" << remoteEdit->text() << chat->getNick() << chat->getFullName() << chat->getSex();
-  #endif
+//  #ifdef SCHAT_DEBUG
+//  qDebug() << "DirectChannel::newConnection()" << remoteEdit->text() << chat->getNick() << chat->getFullName() << chat->getSex();
+//  #endif
 
   state = WaitingForConnected;
 
@@ -165,9 +166,7 @@ void DirectChannel::newConnection()
   }
   
   clientSocket->setDirect(true);
-  clientSocket->setNick('#' + chat->getNick());
-  clientSocket->setFullName(chat->getFullName());
-  clientSocket->setSex(chat->getSex());
+  clientSocket->setProfile(profile);
   clientSocket->connectToHost(remoteEdit->text(), 7666);
 }
 

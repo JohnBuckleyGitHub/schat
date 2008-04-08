@@ -13,6 +13,7 @@
 #include <QWidget>
 
 #include "clientsocket.h"
+#include "profile.h"
 
 class QAction;
 class QHBoxLayout;
@@ -32,7 +33,7 @@ public:
     Stopped
   };
   
-  DirectChannel(QWidget *parent = 0);
+  DirectChannel(Profile *p, QWidget *parent = 0);
   void append(const QString &message);
   void sendText(const QString &text);
   
@@ -55,6 +56,7 @@ private:
   void removeConnection();
   void scroll();
   
+  Profile *profile;
   ConnectionState state;
   QAction *connectCreateAction;
   QHBoxLayout *topLayout;

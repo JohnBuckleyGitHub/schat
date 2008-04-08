@@ -8,6 +8,7 @@
 
 #include <QDialog>
 
+#include "profile.h"
 #include "ui_welcomedialog.h"
 
 class SChatWindow;
@@ -17,17 +18,18 @@ class WelcomeDialog : public QDialog, public Ui::WelcomeDialog
   Q_OBJECT
 
 public:
-  WelcomeDialog(const QString &nick, const QString &name, quint8 sex, QWidget *parent = 0);
+  WelcomeDialog(Profile *p, QWidget *parent = 0);
   bool hideWelcome() { return askCheckBox->isChecked(); }
-  QString fullName() { return nameEdit->text(); }
-  QString nick() { return nickEdit->text(); }
   QString server() { return serverEdit->text(); }
-  quint8 sex();
+  void accept();  
   void setHideWelcome(bool w) { askCheckBox->setChecked(w); }
   void setServer(const QString &s) { serverEdit->setText(s); }
 
 private slots:
   void changeIcon(bool s);
+  
+private:
+  Profile *profile;
 };
 
 #endif /*WELCOMEDIALOG_H_*/

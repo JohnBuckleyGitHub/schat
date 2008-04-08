@@ -98,14 +98,14 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
  */
 void Server::relayParticipantList(ServerSocket *socket)
 {
-  quint16 sex = socket->participantSex();
+  quint16 sex = socket->sex();
   QStringList info = socket->participantInfo();
   
   QHashIterator<QString, ServerSocket *> i(peers);
   while (i.hasNext()) {
     i.next();
     // Отсылаем новому участнику список участников
-    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->participantSex(), i.value()->participantInfo());
+    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->sex(), i.value()->participantInfo());
     
     // Отсылаем существующим участникам, профиль нового
     if (socket != i.value())
@@ -154,9 +154,7 @@ void Server::incomingConnection(int socketId)
   socket->setSocketDescriptor(socketId);
   
   // FIXME добавить #define ...
-  socket->setLocalNick(localNick);
-  socket->setLocalFullName(localFullName);
-  socket->setLocalSex(localSex);
+  socket->setLocalProfile(localProfile);
 }
 
 
@@ -198,7 +196,7 @@ void Server::removeConnection(ServerSocket *socket)
   qDebug() << "Server::removeConnection(ServerSocket *socket)";
   #endif
   
-  QString nick = socket->nickname();
+  QString nick = socket->nick();
   
   if (peers.contains(nick)) {
     peers.remove(nick);

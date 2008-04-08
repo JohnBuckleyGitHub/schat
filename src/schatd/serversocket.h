@@ -10,33 +10,36 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "profile.h"
+
 class ServerSocket : public QTcpSocket
 {
   Q_OBJECT
 
 public:  
   ServerSocket(QObject *parent = 0);
-  QString nickname() { return nick; }
-  QStringList participantInfo() const;
-  quint16 participantSex() { return sex; } 
+  QString nick()                              { return profile->nick(); }
+  QStringList participantInfo() const         { return profile->toList(); }
+  quint16 sex()                               { return profile->sex(); }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
   void send(quint16 opcode, quint16 err);
   void send(quint16 opcode, quint16 s, const QStringList &list);
-  void setNick(const QString &n) { nick = n; }
-  void setProtocolError(quint16 e) { protocolError = e; }
-  void setState(quint16 state) { currentState = state; }
+  void setNick(const QString &n)              { profile->setNick(n); }
+  void setProtocolError(quint16 e)            { protocolError = e; }
+  void setState(quint16 state)                { currentState = state; }
   
   // FIXME добавить #define ...
-  void setLocalFullName(const QString &name) { localFullName = name; }
-  void setLocalNick(const QString &nick) { localNick = QChar('#') + nick; } 
-  void setLocalSex(quint8 s) { localSex = s; }
+  void setLocalProfile(Profile *p)            { localProfile = p; }
 
 signals:
   void appendParticipant(const QString &p);
   void needParticipantList();
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
+  
+  // FIXME добавить #define ...
+  void appendParticipant(const QString &p, ServerSocket *socket);
 
 private slots:
   void readyRead();
@@ -47,25 +50,20 @@ private:
   void readGreeting();
   
   int failurePongs;
+  Profile *profile;
   QDataStream currentBlock;
   QString channel;
-  QString fullName;
   QString message;
-  QString nick;
-  QString userAgent;
   QTimer pingTimer;
   quint16 currentCommand;
   quint16 currentState;
   quint16 nextBlockSize;
   quint16 protocolError;
   quint8 pFlag;
-  quint8 sex;
   
   // FIXME добавить #define ...
+  Profile *localProfile;
   void sendLocalProfile();
-  QString localFullName;
-  QString localNick; 
-  quint8 localSex;
 };
 
 #endif /*SERVERSOCKET_H_*/

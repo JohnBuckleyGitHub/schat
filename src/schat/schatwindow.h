@@ -31,6 +31,7 @@ class QToolButton;
 class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
+class Profile;
 
 class SChatWindow : public QMainWindow
 {
@@ -45,9 +46,6 @@ public:
   };
   
   SChatWindow(QWidget *parent = 0);
-  QString getNick() { return nick; }
-  QString getFullName() { return fullName; }
-  quint8 getSex() { return sex; }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -76,8 +74,6 @@ private slots:
 private:
   int tabIndex(const QString &s, int start = 1);
   QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
-  QString participantToolTip(quint16 sex, const QStringList &list) const;
-  QString sexIconString(quint16 sex) const;
   void createActions();
   void createTrayIcon();
   void readSettings();
@@ -89,6 +85,7 @@ private:
   bool hideWelcome;
   ConnectionState state;
   MainChannel *mainChannel;
+  Profile *profile;
   QAction *addTabAction;
   QAction *closeTabAction;
   QAction *quitAction;
@@ -103,14 +100,11 @@ private:
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
-  QString fullName;
-  QString nick;
   QString server;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
   quint16 serverPort;
-  quint8 sex;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
