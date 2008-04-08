@@ -10,6 +10,7 @@
 #include "protocol.h"
 #include "serversocket.h"
 #include "version.h"
+#include "profile.h"
 
 ServerSocket::ServerSocket(QObject *parent)
   : QTcpSocket(parent)
@@ -37,21 +38,6 @@ ServerSocket::ServerSocket(QObject *parent)
 
   nextBlockSize = 0;
   srand(time(NULL));
-}
-
-
-/** [public]
- * 
- */
-QStringList ServerSocket::participantInfo() const
-{
-  QStringList list;
-  list << nick
-       << fullName
-       << userAgent
-       << peerAddress().toString();
-  
-  return list;  
 }
 
 
@@ -186,7 +172,7 @@ void ServerSocket::readyRead()
           send(sChatOpcodeSendPrvMessageEcho, channel, message);
         }
         else
-          emit relayMessage(channel, nick, message);
+          emit relayMessage(channel, profile->nick(), message);
         break;
       
       case sChatOpcodePong:
@@ -279,20 +265,26 @@ bool ServerSocket::readBlock()
  */
 void ServerSocket::readGreeting()
 {
-  quint8 version;
+  QString FullName;
+  QString Nick;
+  QString UserAgent;
   quint16 err = 0;
+  quint8 Sex;
+  quint8 version;
   
-  currentBlock >> version >> pFlag >> sex >> nick >> fullName >> userAgent;
+  currentBlock >> version >> pFlag >> Sex >> Nick >> FullName >> UserAgent;
   
-  nick = nick.trimmed();
+  profile = new Profile(Nick, FullName, Sex, this);
+  profile->setUserAgent(UserAgent);
+  profile->setHost(peerAddress().toString());
   
   if (version != sChatProtocolVersion)
     err = sChatErrorBadProtocolVersion;
   else if (!(pFlag == sChatFlagNone || pFlag == sChatFlagDirect))
     err = sChatErrorBadGreetingFlag;
-  else if (nick.isEmpty() || nick == "#DUBLICATE" || nick == "#main")
+  else if (!profile->isValidNick())
     err = sChatErrorBadNickName;
-  else if (userAgent.isEmpty())
+  else if (!profile->isValidUserAgent())
     err = sChatErrorBadUserAgent;
   else if (!isValid())
     err = sChatErrorInvalidConnection;
@@ -303,7 +295,7 @@ void ServerSocket::readGreeting()
   }
   
   #ifdef SCHAT_DEBUG
-  qDebug() << (nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort())) << userAgent;
+//  qDebug() << (nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort())) << userAgent;
   #endif
   
   // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
@@ -312,10 +304,11 @@ void ServerSocket::readGreeting()
     send(sChatOpcodeGreetingOk);
     send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
     sendLocalProfile();
+//    emit appendParticipant(profile->nick(), this);
     currentState = sChatStateReadyForUse;
   }
   else
-    emit appendParticipant(nick);
+    emit appendParticipant(profile->nick());
   
   currentState = sChatStateWaitingForChecking;
 }
@@ -326,12 +319,6 @@ void ServerSocket::readGreeting()
  */
 void ServerSocket::sendLocalProfile()
 {
-  QStringList list;
-  list << localNick
-       << localFullName
-       << QString("Simple Chat/%1").arg(SCHAT_VERSION)
-       << localAddress().toString();
-  
-  send(sChatOpcodeNewParticipantQuiet, localSex, list);
-  
+  localProfile->setHost(localAddress().toString());  
+  send(sChatOpcodeNewParticipantQuiet, localProfile->sex(), localProfile->toList());  
 }

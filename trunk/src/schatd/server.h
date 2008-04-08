@@ -10,6 +10,7 @@
 #include <QTcpServer>
 
 #include "serversocket.h"
+#include "profile.h"
 
 class Server : public QTcpServer
 {
@@ -20,9 +21,7 @@ public:
   bool start();
   
   // FIXME добавить #define ...
-  void setLocalFullName(const QString &name) { localFullName = name; }
-  void setLocalNick(const QString &nick) { localNick = nick; }
-  void setLocalSex(quint8 s) { localSex = s; }
+  void setLocalProfile(Profile *p) { localProfile = p; }
 
 public slots:
   void appendParticipant(const QString &p);
@@ -44,9 +43,7 @@ private:
   quint16 listenPort;
   
   // FIXME добавить #define ...
-  QString localFullName;
-  QString localNick; 
-  quint8 localSex;
+  Profile *localProfile;
 };
 
 #endif /*SERVER_H_*/

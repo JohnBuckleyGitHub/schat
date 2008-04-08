@@ -27,6 +27,7 @@ HEADERS += tab.h \
            server.h \
            serversocket.h \
            welcomedialog.h \
+           profile.h \
            version.h
 SOURCES += tab.cpp \
            directchannel.cpp \
@@ -36,6 +37,7 @@ SOURCES += tab.cpp \
            schatwindow.cpp \
            server.cpp \
            serversocket.cpp \
+           profile.cpp \
            welcomedialog.cpp
 
 CONFIG(debug, debug|release) { 

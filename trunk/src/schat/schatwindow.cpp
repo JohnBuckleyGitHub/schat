@@ -14,6 +14,7 @@
 #include "version.h"
 #include "welcomedialog.h"
 #include "directchannel.h"
+#include "profile.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -80,7 +81,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
   if (!hideWelcome || firstRun) {
-    welcomeDialog = new WelcomeDialog(nick, fullName, sex, this);
+    welcomeDialog = new WelcomeDialog(profile, this);
     welcomeDialog->setServer(server);
     if (!firstRun)
       welcomeDialog->setHideWelcome(hideWelcome);
@@ -97,11 +98,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   daemon = new Server(this);
   if (!daemon->start())
     delete daemon;
-  else {
-    daemon->setLocalNick(nick);
-    daemon->setLocalFullName(fullName);
-    daemon->setLocalSex(sex);
-  }
+  else
+    daemon->setLocalProfile(profile);
 }
 
 
@@ -132,12 +130,15 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
   #endif
   
   if (DirectChannel *channel  = qobject_cast<DirectChannel *>(sender())) {
+    Profile *p = new Profile(this);
+    p->setSex(sex);
+    p->fromList(info);
     int index = tabWidget->indexOf(channel);
     tabWidget->setTabText(index, info.at(0));
-    tabWidget->setTabToolTip(index, participantToolTip(sex, info));
-    tabWidget->setTabIcon(index, QIcon(sexIconString(sex)));
-  }
-  
+    tabWidget->setTabToolTip(index, p->toolTip());
+    tabWidget->setTabIcon(index, QIcon(Profile::sexIconString(sex)));
+    p->deleteLater();
+  }  
 }
 
 
@@ -158,12 +159,16 @@ void SChatWindow::newMessage(const QString &nick, const QString &message)
  */
 void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
-  QStandardItem *item = new QStandardItem(QIcon(sexIconString(sex)), info.at(0));
+  QStandardItem *item = new QStandardItem(QIcon(Profile::sexIconString(sex)), info.at(0));
+  Profile *p = new Profile(this);
+  p->setSex(sex);
+  p->fromList(info);  
   item->setData(sex, Qt::UserRole + 1);
-  item->setToolTip(participantToolTip(sex, info));
+  item->setToolTip(p->toolTip());  
+  p->deleteLater();
   
   // Свой ник выделяем жирным шрифтом
-  if (info.at(0) == nick) {
+  if (info.at(0) == profile->nick()) {
     QFont font;
     font.setBold(true);
     item->setFont(font);
@@ -171,13 +176,15 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
   
   model.appendRow(item);
   model.sort(0);
-
+  
+  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
   if (echo) {
     QString line;
     if (sex)
       line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашла в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
     else
       line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашёл в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
+    
     int index = tabIndex(info.at(0));
     if (index != -1) 
       if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
@@ -281,7 +288,7 @@ void SChatWindow::addTab()
   if (index > 0)
     tabWidget->setCurrentIndex(index);
   else
-    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(this), label));  
+    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), label));  
 }
 
 
@@ -405,9 +412,7 @@ void SChatWindow::newConnection()
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
   }
   
-  clientSocket->setNick(nick);
-  clientSocket->setFullName(fullName);
-  clientSocket->setSex(sex);
+  clientSocket->setProfile(profile);
   clientSocket->connectToHost(server, serverPort);
 }
 
@@ -456,9 +461,6 @@ void SChatWindow::returnPressed()
  */
 void SChatWindow::welcomeOk()
 {
-  nick = welcomeDialog->nick();
-  fullName = welcomeDialog->fullName();
-  sex = welcomeDialog->sex();
   hideWelcome = welcomeDialog->hideWelcome();
   server = welcomeDialog->server();
   mainChannel->setServer(server);
@@ -484,38 +486,6 @@ int SChatWindow::tabIndex(const QString &s, int start)
       }
   
   return tab;
-}
-
-
-/** [private]
- * 
- */
-QString SChatWindow::participantToolTip(quint16 sex, const QStringList &list) const
-{
-  QString name = list.at(1);
-  if (name.isEmpty())
-    name = tr("&lt;не указано&gt;");
-  
-  QString userAgent = list.at(2);
-  userAgent.replace('/', ' ');
-  
-  return tr("<h3><img src='%1' align='left'> %2</h3>"
-            "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
-            "<tr><td>Клиент:</td><td>%4</td></tr>"
-            "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-            .arg(sexIconString(sex)).arg(list.at(0)).arg(name).arg(userAgent).arg(list.at(3));  
-}
-
-
-/** [private]
- * 
- */
-QString SChatWindow::sexIconString(quint16 sex) const
-{
-  if (sex)
-    return ":/images/female.png";
-  else
-    return ":/images/male.png";
 }
 
 
@@ -591,10 +561,13 @@ void SChatWindow::readSettings()
     move(pos);
   
   settings.beginGroup("Profile");
-  nick = settings.value("Nick", QDir::home().dirName()).toString();
-  fullName = settings.value("Name", "").toString();
-  sex = quint8(settings.value("Sex", 0).toUInt());
-
+//  nick = settings.value("Nick", QDir::home().dirName()).toString();
+//  fullName = settings.value("Name", "").toString();
+//  sex = quint8(settings.value("Sex", 0).toUInt());
+  profile = new Profile(this);
+  profile->setNick(settings.value("Nick", QDir::home().dirName()).toString());
+  profile->setFullName(settings.value("Name", "").toString());
+  profile->setSex(quint8(settings.value("Sex", 0).toUInt()));
 }
 
 
@@ -614,9 +587,9 @@ void SChatWindow::removeConnection()
   // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
   if (err == sChatErrorBadNickName) {
     state = Stopped;
-    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Ник <b>%2</b> не допустим в чате, выберите другой</i></div>")
+    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
         .arg(currentTime())
-        .arg(nick));
+        .arg(profile->nick()));
   }
   // Если выбранный ник уже занят, то генерируем новый уникальный ник.
   else if (err == sChatErrorNickAlreadyUse) {
@@ -643,7 +616,7 @@ void SChatWindow::removeConnection()
  */
 void SChatWindow::uniqueNick()
 {
-  nick += QString().setNum(rand() % 99);
+  profile->setNick(profile->nick() + QString().setNum(rand() % 99));
 }
 
 
@@ -663,7 +636,7 @@ void SChatWindow::writeSettings()
   settings.setValue("ServerPort", serverPort);
   
   settings.beginGroup("Profile");
-  settings.setValue("Nick", nick);
-  settings.setValue("Name", fullName);
-  settings.setValue("Sex", sex);  
+  settings.setValue("Nick", profile->nick());
+  settings.setValue("Name", profile->fullName());
+  settings.setValue("Sex", profile->sex());  
 }

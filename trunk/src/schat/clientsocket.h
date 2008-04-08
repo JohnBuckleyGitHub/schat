@@ -10,6 +10,8 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "profile.h"
+
 class ClientSocket : public QTcpSocket
 {
   Q_OBJECT
@@ -22,9 +24,7 @@ public:
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
   void setDirect(bool d) { direct = d; }
-  void setFullName(const QString &n) { fullName = n; }
-  void setNick(const QString &n) { nick = n; }
-  void setSex(quint8 s) { sex = s; }
+  void setProfile(Profile *p) { profile = p; }
 
 signals:
   void newMessage(const QString &nick, const QString &message);
@@ -45,10 +45,9 @@ private:
   
   bool direct;
   int failurePongs;
+  Profile *profile;
   QDataStream currentBlock;
-  QString fullName;
   QString message;  
-  QString nick;
   QString remoteNick;
   QString userAgent;
   QString userMask;
@@ -57,7 +56,6 @@ private:
   quint16 currentState;
   quint16 nextBlockSize;
   quint16 pError;
-  quint8 sex;
 };
 
 #endif /*CLIENTSOCKET_H_*/

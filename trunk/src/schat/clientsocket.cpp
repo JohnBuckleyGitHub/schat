@@ -180,7 +180,7 @@ void ClientSocket::readyRead()
         
       case sChatOpcodeSendPrvMessageEcho:
         currentBlock >> textBlock >> message;
-        emit newPrivateMessage(textBlock, message, nick);
+        emit newPrivateMessage(textBlock, message, profile->nick());
         break;
       
       // Опкод `sChatOpcodeNewParticipant` - новый участник вошёл в чат
@@ -270,10 +270,7 @@ void ClientSocket::sendGreeting()
   else
     out << sChatFlagNone;
   
-  out << sex
-      << nick
-      << fullName
-      << QString("Simple Chat/%1").arg(SCHAT_VERSION);
+  profile->toStream(out); // Записываем профиль в поток
     
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));

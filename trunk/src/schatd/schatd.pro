@@ -8,9 +8,11 @@ CONFIG += console
 HEADERS = protocol.h \
           serversocket.h \
           server.h \
+          profile.h \
           version.h
 SOURCES = serversocket.cpp \
           server.cpp \
+          profile.cpp \
           main.cpp
     
 DEPENDPATH  += . \
