@@ -7,7 +7,6 @@
 #include <QtNetwork>
 #include <stdlib.h>
 
-#include "protocol.h"
 #include "serversocket.h"
 #include "version.h"
 #include "profile.h"
@@ -25,10 +24,10 @@ ServerSocket::ServerSocket(QObject *parent)
   protocolError = 0;
   failurePongs = 0;
   
-  connect(this, SIGNAL(appendParticipant(const QString &)),
-          parent, SLOT(appendParticipant(const QString &)));
-  connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)),
-          parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
+  connect(this, SIGNAL(appendDirectParticipant(const QString &)), parent, SLOT(appendDirectParticipant(const QString &))); // FIXME добавить #define ...
+  
+  connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
+  connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
   
   connect(this, SIGNAL(disconnected()), &pingTimer, SLOT(stop()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
@@ -300,13 +299,8 @@ void ServerSocket::readGreeting()
   
   // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
   // и не отсылаем его в общий список.
-  if (pFlag == sChatFlagDirect) { // FIXME добавить #define ...
-    send(sChatOpcodeGreetingOk);
-    send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
-    sendLocalProfile();
-//    emit appendParticipant(profile->nick(), this);
-    currentState = sChatStateReadyForUse;
-  }
+  if (pFlag == sChatFlagDirect) // FIXME добавить #define ...
+    emit appendDirectParticipant(profile->nick());
   else
     emit appendParticipant(profile->nick());
   

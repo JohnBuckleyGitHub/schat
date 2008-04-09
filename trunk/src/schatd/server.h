@@ -28,6 +28,9 @@ public slots:
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   void relayParticipantList(ServerSocket *socket);
   
+  // FIXME добавить #define ...
+  void appendDirectParticipant(const QString &p);
+  
 private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
@@ -43,7 +46,9 @@ private:
   quint16 listenPort;
   
   // FIXME добавить #define ...
+  void removeDirectConnection(ServerSocket *socket);
   Profile *localProfile;
+  QHash<QString, ServerSocket *> directPeers;
 };
 
 #endif /*SERVER_H_*/

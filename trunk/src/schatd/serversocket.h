@@ -11,6 +11,7 @@
 #include <QTimer>
 
 #include "profile.h"
+#include "protocol.h"
 
 class ServerSocket : public QTcpSocket
 {
@@ -32,6 +33,8 @@ public:
   
   // FIXME добавить #define ...
   void setLocalProfile(Profile *p)            { localProfile = p; }
+  void sendLocalProfile();
+  bool isDirect() { if (pFlag == sChatFlagDirect) return true; else return false; }
 
 signals:
   void appendParticipant(const QString &p);
@@ -39,7 +42,7 @@ signals:
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   
   // FIXME добавить #define ...
-  void appendParticipant(const QString &p, ServerSocket *socket);
+  void appendDirectParticipant(const QString &p);
 
 private slots:
   void readyRead();
@@ -63,7 +66,6 @@ private:
   
   // FIXME добавить #define ...
   Profile *localProfile;
-  void sendLocalProfile();
 };
 
 #endif /*SERVERSOCKET_H_*/
