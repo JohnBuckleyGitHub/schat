@@ -20,8 +20,6 @@ MainChannel::MainChannel(const QString &server, QWidget *parent)
   serverLabel->setVisible(false);
   serverEdit->setVisible(false);
   connectCreateButton->setVisible(false);
-  chatText.setFocusPolicy(Qt::NoFocus);
-  chatText.setOpenExternalLinks(true);
   
   topLayout = new QHBoxLayout;
   topLayout->addWidget(serverLabel);
@@ -32,23 +30,13 @@ MainChannel::MainChannel(const QString &server, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(&chatText);
+  mainLayout->addWidget(&chatBrowser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
   
   connect(serverEdit, SIGNAL(returnPressed()), parent, SLOT(serverChanged()));
   connect(connectCreateAction, SIGNAL(triggered()), parent, SLOT(serverChanged()));
-}
-
-
-/** [public]
- * 
- */
-void MainChannel::append(const QString &message)
-{
-  chatText.append(message);
-  scroll();
 }
 
 
@@ -77,19 +65,8 @@ void MainChannel::displayChoiceServer(bool display)
  */
 void MainChannel::createActions()
 {
-
   connectCreateButton = new QToolButton(this);
   connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится к серверу"), this);
   connectCreateButton->setDefaultAction(connectCreateAction);
   connectCreateButton->setAutoRaise(true);
-}
-
-
-/** [private]
- * 
- */
-void MainChannel::scroll()
-{
-  QScrollBar *bar = chatText.verticalScrollBar(); 
-  bar->setValue(bar->maximum());
 }

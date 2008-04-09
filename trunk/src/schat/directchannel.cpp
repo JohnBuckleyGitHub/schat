@@ -31,9 +31,6 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   createActions();
   
-  chatText.setFocusPolicy(Qt::NoFocus);
-  chatText.setOpenExternalLinks(true);
-  
   topLayout = new QHBoxLayout;
   topLayout->addWidget(adrLabel);
   topLayout->addWidget(remoteEdit);
@@ -43,7 +40,7 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(&chatText);
+  mainLayout->addWidget(&chatBrowser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
@@ -58,16 +55,6 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
 /** [public]
  * 
  */
-void DirectChannel::append(const QString &message)
-{
-  chatText.append(message);
-  scroll();
-}
-
-
-/** [public]
- * 
- */
 void DirectChannel::sendText(const QString &text)
 {
   #ifdef SCHAT_DEBUG
@@ -75,8 +62,7 @@ void DirectChannel::sendText(const QString &text)
   #endif
   
   if (state == Connected)
-    clientSocket->send(sChatOpcodeSendMessage, remoteNick, text);
-  
+    clientSocket->send(sChatOpcodeSendMessage, remoteNick, text);  
 }
 
 
@@ -121,10 +107,10 @@ void DirectChannel::newParticipant(quint16 sex, const QStringList &info, bool ec
  */
 void DirectChannel::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
 {
-  append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-        .arg(currentTime())
-        .arg(Qt::escape(sender))
-        .arg(message));
+  chatBrowser.add(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
+      .arg(currentTime())
+      .arg(Qt::escape(sender))
+      .arg(message));
 }
 
 
@@ -140,7 +126,7 @@ void DirectChannel::readyForUse()
   QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
   
   state = Connected;
-  append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
+  chatBrowser.add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
 }
 
 
@@ -193,7 +179,7 @@ void DirectChannel::removeConnection()
   #endif
   
   if (state == Connected || state == Stopped)
-    append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
+    chatBrowser.add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
   
   clientSocket->deleteLater();
   
@@ -201,14 +187,4 @@ void DirectChannel::removeConnection()
     state = WaitingForConnected;
     QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
   }
-}
-
-
-/** [private]
- * 
- */
-void DirectChannel::scroll()
-{
-  QScrollBar *bar = chatText.verticalScrollBar(); 
-  bar->setValue(bar->maximum());
 }

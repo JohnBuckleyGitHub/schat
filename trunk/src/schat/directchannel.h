@@ -12,6 +12,7 @@
 #include <QTime>
 #include <QWidget>
 
+#include "chatbrowser.h"
 #include "clientsocket.h"
 #include "profile.h"
 
@@ -34,7 +35,7 @@ public:
   };
   
   DirectChannel(Profile *p, QWidget *parent = 0);
-  void append(const QString &message);
+  inline void append(const QString &message) { chatBrowser.add(message); }
   void sendText(const QString &text);
   
 signals:
@@ -51,20 +52,19 @@ private slots:
   void newConnection();
   
 private:
-  QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
+  inline QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
   void createActions();
   void removeConnection();
-  void scroll();
   
-  Profile *profile;
+  ChatBrowser chatBrowser;
   ConnectionState state;
+  Profile *profile;
   QAction *connectCreateAction;
   QHBoxLayout *topLayout;
   QLabel *adrLabel;
   QLineEdit *remoteEdit;
   QPointer<ClientSocket> clientSocket;
   QString remoteNick;
-  QTextBrowser chatText;
   QToolButton *connectCreateButton;
   QVBoxLayout *mainLayout;
   SChatWindow *chat;

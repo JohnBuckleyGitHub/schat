@@ -10,6 +10,8 @@
 #include <QTextBrowser>
 #include <QWidget>
 
+#include "chatbrowser.h"
+
 class QAction;
 class QHBoxLayout;
 class QLabel;
@@ -20,22 +22,21 @@ class MainChannel : public QWidget {
   Q_OBJECT
 
 public:
-  MainChannel(const QString &server, QWidget *parent = 0);
-  QString server() { return serverEdit->text(); }
-  void append(const QString &message);
-  void displayChoiceServer(bool display);  
-  void setServer(const QString &server) { serverEdit->setText(server); }
+  MainChannel(const QString &server, QWidget *parent = 0);  
+  inline QString server()                      { return serverEdit->text(); }
+  inline void append(const QString &message)   { chatBrowser.add(message); }
+  inline void setServer(const QString &server) { serverEdit->setText(server); }
+  void displayChoiceServer(bool display);
   
 private:
   void createActions();
-  void scroll();
   
+  ChatBrowser chatBrowser;
   QAction *connectCreateAction;
-  QToolButton *connectCreateButton;
   QHBoxLayout *topLayout;
   QLabel *serverLabel;
   QLineEdit *serverEdit;
-  QTextBrowser chatText;
+  QToolButton *connectCreateButton;
   QVBoxLayout *mainLayout;
 };
 
