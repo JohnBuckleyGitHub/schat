@@ -134,7 +134,7 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
     p->setSex(sex);
     p->fromList(info);
     int index = tabWidget->indexOf(channel);
-    tabWidget->setTabText(index, info.at(0));
+    tabWidget->setTabText(index, QChar('#') + info.at(0));
     tabWidget->setTabToolTip(index, p->toolTip());
     tabWidget->setTabIcon(index, QIcon(Profile::sexIconString(sex)));
     p->deleteLater();

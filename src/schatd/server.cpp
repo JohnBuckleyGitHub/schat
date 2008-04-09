@@ -113,6 +113,33 @@ void Server::relayParticipantList(ServerSocket *socket)
   }
 }
 
+
+/** [public slots]
+ * 
+ */
+void Server::appendDirectParticipant(const QString &p)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "Server::appendDirectParticipant(const QString &p)";
+  #endif
+  
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    if (!directPeers.contains(p)) {
+      directPeers.insert(p, socket);
+      socket->send(sChatOpcodeGreetingOk);
+      socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
+      socket->sendLocalProfile();
+      socket->setState(sChatStateReadyForUse);
+    }
+    else {
+      socket->setNick("#DUBLICATE");
+      socket->send(sChatOpcodeError, sChatErrorNickAlreadyUse);
+      socket->disconnectFromHost();
+    }
+  }  
+}
+
+
 /** [private slots]
  * 
  */
@@ -126,7 +153,10 @@ void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
     #ifdef SCHAT_DEBUG
     qDebug() << "ERROR:" << socket->errorString();
     #endif
-    removeConnection(socket);
+    if (socket->isDirect()) // FIXME добавить #define ...
+      removeDirectConnection(socket);
+    else
+      removeConnection(socket);
   }
 }
 
@@ -141,7 +171,10 @@ void Server::disconnected()
   #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
-    removeConnection(socket);
+    if (socket->isDirect()) // FIXME добавить #define ...
+      removeDirectConnection(socket);
+    else
+      removeConnection(socket);
 }
 
 
@@ -201,6 +234,24 @@ void Server::removeConnection(ServerSocket *socket)
   if (peers.contains(nick)) {
     peers.remove(nick);
     participantLeft(nick);
+  }
+  socket->deleteLater();
+}
+
+
+/** [private]
+ * 
+ */
+void Server::removeDirectConnection(ServerSocket *socket)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "Server::removeDirectConnection(ServerSocket *socket)";
+  #endif
+  
+  QString nick = socket->nick();
+  
+  if (directPeers.contains(nick)) {
+    directPeers.remove(nick);
   }
   socket->deleteLater();
 }

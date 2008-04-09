@@ -16,7 +16,7 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   : QWidget(parent)
 {
   #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::DirectChannel(QWidget *parent)";
+  qDebug() << "DirectChannel::DirectChannel(Profile *p, QWidget *parent)";
   #endif
   
   setAttribute(Qt::WA_DeleteOnClose);
