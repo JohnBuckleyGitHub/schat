@@ -19,11 +19,11 @@ class WelcomeDialog : public QDialog, public Ui::WelcomeDialog
 
 public:
   WelcomeDialog(Profile *p, QWidget *parent = 0);
-  bool hideWelcome() { return askCheckBox->isChecked(); }
-  QString server() { return serverEdit->text(); }
-  void accept();  
-  void setHideWelcome(bool w) { askCheckBox->setChecked(w); }
-  void setServer(const QString &s) { serverEdit->setText(s); }
+  inline bool hideWelcome()               { return askCheckBox->isChecked(); }
+  inline QString server()                 { return serverEdit->text(); }
+  inline void setHideWelcome(bool w)      { askCheckBox->setChecked(w); }
+  inline void setServer(const QString &s) { serverEdit->setText(s); }
+  void accept();
 
 private slots:
   void changeIcon(bool s);

@@ -15,6 +15,7 @@
 #include "welcomedialog.h"
 #include "directchannel.h"
 #include "profile.h"
+#include "directchannelserver.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -96,10 +97,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
   daemon = new Server(this);
-  if (!daemon->start())
-    delete daemon;
-  else
+  if (daemon->start()) {
     daemon->setLocalProfile(profile);
+    connect(daemon, SIGNAL(incomingDirectConnection(const QString &, ServerSocket *)), this, SLOT(incomingDirectConnection(const QString &, ServerSocket *)));
+  }
+  else
+    delete daemon;
 }
 
 
@@ -117,6 +120,30 @@ void SChatWindow::closeEvent(QCloseEvent *event)
     hide();
     event->ignore();
   }
+}
+
+
+/** [public slots]
+ * 
+ */
+void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)" << n;
+  #endif
+  
+  int tab = tabIndex(n);
+  
+  if (tab == -1) {
+    Profile *p = new Profile(this);
+    p->setSex(socket->sex());
+    p->fromList(socket->participantInfo());
+    tab = tabWidget->addTab(new DirectChannelServer(socket, this), QIcon(Profile::sexIconString(socket->sex())), QChar('#') + n);
+    tabWidget->setTabToolTip(tab, p->toolTip());
+    p->deleteLater();    
+  }
+  
+  tabWidget->setCurrentIndex(tab);
 }
 
 
