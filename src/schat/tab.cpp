@@ -12,31 +12,8 @@ Tab::Tab(QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
-  chatText.setFocusPolicy(Qt::NoFocus);
-  chatText.setOpenExternalLinks(true);
- 
   mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(&chatText);
+  mainLayout->addWidget(&chatBrowser);
   mainLayout->setMargin(0);
   setLayout(mainLayout);
-}
-
-
-/** [public]
- * 
- */
-void Tab::append(const QString &message)
-{
-  chatText.append(message);
-  scroll();
-}
-
-
-/** [private]
- * 
- */
-void Tab::scroll()
-{
-  QScrollBar *bar = chatText.verticalScrollBar(); 
-  bar->setValue(bar->maximum());
 }

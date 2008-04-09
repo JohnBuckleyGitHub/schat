@@ -9,6 +9,8 @@
 #include <QTextBrowser>
 #include <QWidget>
 
+#include "chatbrowser.h"
+
 class QVBoxLayout;
 
 class Tab : public QWidget {
@@ -16,12 +18,10 @@ class Tab : public QWidget {
 
 public:
   Tab(QWidget *parent = 0);
-  void append(const QString &message);
+  inline void append(const QString &message) { chatBrowser.add(message); }
   
 private:
-  void scroll();
-  
-  QTextBrowser chatText;
+  ChatBrowser chatBrowser;
   QVBoxLayout *mainLayout;
 };
 

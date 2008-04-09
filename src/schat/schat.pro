@@ -20,6 +20,7 @@ RESOURCES += ../../data/schat.qrc
 # Input
 HEADERS += tab.h \
            directchannel.h \
+           chatbrowser.h \
            clientsocket.h \
            mainchannel.h \
            schatwindow.h \
@@ -31,6 +32,7 @@ HEADERS += tab.h \
            version.h
 SOURCES += tab.cpp \
            directchannel.cpp \
+           chatbrowser.cpp \
            clientsocket.cpp \
            mainchannel.cpp \
            main.cpp \
