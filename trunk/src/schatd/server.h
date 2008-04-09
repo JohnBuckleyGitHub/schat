@@ -22,6 +22,9 @@ public:
   
   // FIXME добавить #define ...
   void setLocalProfile(Profile *p) { localProfile = p; }
+  
+signals:
+  void incomingDirectConnection(const QString &p, ServerSocket *socket);
 
 public slots:
   void appendParticipant(const QString &p);

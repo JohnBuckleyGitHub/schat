@@ -130,6 +130,7 @@ void Server::appendDirectParticipant(const QString &p)
       socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
       socket->sendLocalProfile();
       socket->setState(sChatStateReadyForUse);
+      emit incomingDirectConnection(p, socket);
     }
     else {
       socket->setNick("#DUBLICATE");

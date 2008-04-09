@@ -19,22 +19,22 @@ class ServerSocket : public QTcpSocket
 
 public:  
   ServerSocket(QObject *parent = 0);
-  QString nick()                              { return profile->nick(); }
-  QStringList participantInfo() const         { return profile->toList(); }
-  quint16 sex()                               { return profile->sex(); }
+  inline QString nick()                              { return profile->nick(); }
+  inline QStringList participantInfo() const         { return profile->toList(); }
+  inline quint16 sex()                               { return profile->sex(); }
+  inline void setNick(const QString &n)              { profile->setNick(n); }
+  inline void setProtocolError(quint16 e)            { protocolError = e; }
+  inline void setState(quint16 state)                { currentState = state; }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
   void send(quint16 opcode, quint16 err);
   void send(quint16 opcode, quint16 s, const QStringList &list);
-  void setNick(const QString &n)              { profile->setNick(n); }
-  void setProtocolError(quint16 e)            { protocolError = e; }
-  void setState(quint16 state)                { currentState = state; }
   
   // FIXME добавить #define ...
-  void setLocalProfile(Profile *p)            { localProfile = p; }
+  inline bool isDirect()                             { if (pFlag == sChatFlagDirect) return true; else return false; }
+  inline void setLocalProfile(Profile *p)            { localProfile = p; }
   void sendLocalProfile();
-  bool isDirect() { if (pFlag == sChatFlagDirect) return true; else return false; }
 
 signals:
   void appendParticipant(const QString &p);

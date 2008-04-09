@@ -11,6 +11,10 @@
 #include "version.h"
 #include "profile.h"
 
+
+/** [public]
+ * 
+ */
 ServerSocket::ServerSocket(QObject *parent)
   : QTcpSocket(parent)
 {
@@ -288,9 +292,15 @@ void ServerSocket::readGreeting()
   else if (!isValid())
     err = sChatErrorInvalidConnection;
   
+  #ifndef SCHAT_CLIENT
+  if (pFlag == sChatFlagDirect)
+    err = sChatErrorDirectNotAllow;
+  #endif
+  
   if (err) {
     send(sChatOpcodeError, err);
     disconnectFromHost();
+    return;
   }
   
   #ifdef SCHAT_DEBUG

@@ -51,6 +51,7 @@ protected:
   void closeEvent(QCloseEvent *event);
   
 public slots:
+  void incomingDirectConnection(const QString &n, ServerSocket *socket);
   void newDirectParticipant(quint16 sex, const QStringList &info);
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
@@ -72,8 +73,8 @@ private slots:
   void welcomeOk();
 
 private:
+  inline QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
   int tabIndex(const QString &s, int start = 1);
-  QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
   void createActions();
   void createTrayIcon();
   void readSettings();
