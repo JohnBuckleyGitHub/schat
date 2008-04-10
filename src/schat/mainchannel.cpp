@@ -12,6 +12,8 @@ MainChannel::MainChannel(const QString &server, QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
+  chatBrowser = new ChatBrowser(this);
+  
   serverLabel = new QLabel(tr("Адрес сервера:"), this);
   serverEdit  = new QLineEdit(server, this);
   
@@ -30,7 +32,7 @@ MainChannel::MainChannel(const QString &server, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(&chatBrowser);
+  mainLayout->addWidget(chatBrowser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);

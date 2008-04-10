@@ -19,10 +19,10 @@ class DirectChannelServer : public QWidget {
 
 public:
   DirectChannelServer(ServerSocket *s, QWidget *parent = 0);
-  inline void append(const QString &message) { chatBrowser.add(message); }
+  inline void append(const QString &message) { chatBrowser->add(message); }
   
 private:
-  ChatBrowser chatBrowser;
+  ChatBrowser *chatBrowser;
   QVBoxLayout *mainLayout;
 };
 

@@ -16,9 +16,6 @@ ChatBrowser::ChatBrowser(QWidget *parent)
 {
   setFocusPolicy(Qt::NoFocus);
   setOpenExternalLinks(true);
-  
-//  document()->setDefaultStyleSheet("dd");
-//  document()->setMaximumBlockCount(10);
 }
 
 

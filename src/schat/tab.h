@@ -18,7 +18,6 @@ class Tab : public QWidget {
 
 public:
   Tab(QWidget *parent = 0);
-  ~Tab();
   inline void append(const QString &message) { chatBrowser->add(message); }
   
 public slots:

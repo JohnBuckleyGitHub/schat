@@ -21,6 +21,8 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   setAttribute(Qt::WA_DeleteOnClose);
   
+  chatBrowser = new ChatBrowser(this);
+  
   chat = qobject_cast<SChatWindow *>(parent);
   profile = p;
   
@@ -40,7 +42,7 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(&chatBrowser);
+  mainLayout->addWidget(chatBrowser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
@@ -105,12 +107,9 @@ void DirectChannel::newParticipant(quint16 sex, const QStringList &info, bool ec
 /** [public slots]
  * 
  */
-void DirectChannel::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
+void DirectChannel::newPrivateMessage(const QString  &/*nick*/, const QString &message, const QString &sender)
 {
-  chatBrowser.add(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-      .arg(currentTime())
-      .arg(Qt::escape(sender))
-      .arg(message));
+  chatBrowser->newMessage(sender, message);
 }
 
 
@@ -126,7 +125,7 @@ void DirectChannel::readyForUse()
   QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
   
   state = Connected;
-  chatBrowser.add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
+  chatBrowser->add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
 }
 
 
@@ -179,7 +178,7 @@ void DirectChannel::removeConnection()
   #endif
   
   if (state == Connected || state == Stopped)
-    chatBrowser.add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
+    chatBrowser->add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
   
   clientSocket->deleteLater();
   
