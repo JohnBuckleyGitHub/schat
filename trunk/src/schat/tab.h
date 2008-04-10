@@ -18,12 +18,12 @@ class Tab : public QWidget {
 
 public:
   Tab(QWidget *parent = 0);
-  inline void append(const QString &message) { chatBrowser->add(message); }
+  inline void append(const QString &message)                             { chatBrowser->add(message); }
   
 public slots:
-  inline void newMessage(const QString &nick, const QString &message) { chatBrowser->newMessage(nick, message); }
-  inline void newParticipant(quint8 sex, const QString &nick)         { chatBrowser->newParticipant(sex, nick); }
-  inline void participantLeft(quint8 sex, const QString &nick)        { chatBrowser->participantLeft(sex, nick); }
+  inline void msgNewMessage(const QString &nick, const QString &message) { chatBrowser->msgNewMessage(nick, message); }
+  inline void msgNewParticipant(quint8 sex, const QString &nick)         { chatBrowser->msgNewParticipant(sex, nick); }
+  inline void msgParticipantLeft(quint8 sex, const QString &nick)        { chatBrowser->msgParticipantLeft(sex, nick); }
   
 private:
   ChatBrowser *chatBrowser;

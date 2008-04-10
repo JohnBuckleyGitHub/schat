@@ -15,9 +15,13 @@ class ChatBrowser : public QTextBrowser {
 public:
   ChatBrowser(QWidget *parent = 0);
   void add(const QString &message);
-  void newMessage(const QString &nick, const QString &message);
-  void newParticipant(quint8 sex, const QString &nick);
-  void participantLeft(quint8 sex, const QString &nick);
+  void msgDisconnect();
+  void msgNewParticipant(quint8 sex, const QString &nick);
+  void msgParticipantLeft(quint8 sex, const QString &nick);
+  void msgReadyForUse(const QString &s);
+  
+public slots:
+  void msgNewMessage(const QString &nick, const QString &message);
   
 private:
   static inline QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }

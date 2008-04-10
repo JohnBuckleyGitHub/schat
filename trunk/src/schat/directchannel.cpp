@@ -109,7 +109,7 @@ void DirectChannel::newParticipant(quint16 sex, const QStringList &info, bool ec
  */
 void DirectChannel::newPrivateMessage(const QString  &/*nick*/, const QString &message, const QString &sender)
 {
-  chatBrowser->newMessage(sender, message);
+  chatBrowser->msgNewMessage(sender, message);
 }
 
 
@@ -122,10 +122,8 @@ void DirectChannel::readyForUse()
   qDebug() << "DirectChannel::readyForUse()" << clientSocket->peerAddress().toString();
   #endif
   
-  QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
-  
   state = Connected;
-  chatBrowser->add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
+  chatBrowser->msgReadyForUse(clientSocket->peerAddress().toString());
 }
 
 
@@ -178,7 +176,7 @@ void DirectChannel::removeConnection()
   #endif
   
   if (state == Connected || state == Stopped)
-    chatBrowser->add(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
+    chatBrowser->msgDisconnect();
   
   clientSocket->deleteLater();
   

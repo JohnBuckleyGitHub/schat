@@ -197,9 +197,9 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
     int index = tabIndex(info.at(0));
     if (index != -1) 
       if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-        tab->newParticipant(sex, info.at(0));
+        tab->msgNewParticipant(sex, info.at(0));
     
-    mainChannel->newParticipant(sex, info.at(0));
+    mainChannel->msgNewParticipant(sex, info.at(0));
   }
 }
 
@@ -220,7 +220,7 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
     tab = qobject_cast<Tab *>(tabWidget->widget(index));
   
   if (tab)
-    tab->newMessage(sender, message);
+    tab->msgNewMessage(sender, message);
 }
 
 
@@ -242,9 +242,9 @@ void SChatWindow::participantLeft(const QString &nick)
   int index = tabIndex(nick);
   if (index != -1) 
     if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-      tab->participantLeft(sex, nick);
+      tab->msgParticipantLeft(sex, nick);
   
-  mainChannel->participantLeft(sex, nick);
+  mainChannel->msgParticipantLeft(sex, nick);
 }
 
 
@@ -253,11 +253,9 @@ void SChatWindow::participantLeft(const QString &nick)
  */
 void SChatWindow::readyForUse()
 {
-  QString statusText = tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString());
-  
   state = Connected;
-  mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#6bb521;'>%2</i></div>").arg(currentTime()).arg(statusText));
-  statusLabel->setText(statusText);
+  mainChannel->msgReadyForUse(clientSocket->peerAddress().toString());
+  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
   mainChannel->displayChoiceServer(false);
 }
 
@@ -410,7 +408,7 @@ void SChatWindow::newConnection()
     clientSocket = new ClientSocket(this);
     connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
-    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(newMessage(const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
@@ -587,12 +585,12 @@ void SChatWindow::removeConnection()
   model.clear();
   
   if (state == Connected || state == Stopped)
-    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Соединение разорвано</i></div>").arg(currentTime()));
+    mainChannel->msgDisconnect();
   
   // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
   if (err == sChatErrorBadNickName) {
     state = Stopped;
-    mainChannel->append(tr("<div><span style='color:#909090'>[%1]</span> <i style='color:#da251d;'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
+    mainChannel->append(tr("<div class='nb'>(%1) <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
         .arg(currentTime())
         .arg(profile->nick()));
   }

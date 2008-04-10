@@ -173,6 +173,7 @@ void ServerSocket::readyRead()
         
         if (pFlag == sChatFlagDirect) { // FIXME добавить #define ...
           send(sChatOpcodeSendPrvMessageEcho, channel, message);
+          emit newMessage(profile->nick(), message);
         }
         else
           emit relayMessage(channel, profile->nick(), message);
