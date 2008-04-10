@@ -8,6 +8,7 @@
 
 #include <QTextBrowser>
 #include <QWidget>
+#include <QPointer>
 
 #include "chatbrowser.h"
 #include "serversocket.h"
@@ -22,6 +23,7 @@ public:
   inline void append(const QString &message) { chatBrowser->add(message); }
   
 private:
+  QPointer<ServerSocket> socket;
   ChatBrowser *chatBrowser;
   QVBoxLayout *mainLayout;
 };

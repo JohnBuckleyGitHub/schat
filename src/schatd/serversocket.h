@@ -43,6 +43,7 @@ signals:
   
   // FIXME добавить #define ...
   void appendDirectParticipant(const QString &p);
+  void newMessage(const QString &nick, const QString &message);
 
 private slots:
   void readyRead();

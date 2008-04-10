@@ -22,16 +22,18 @@ class MainChannel : public QWidget {
   Q_OBJECT
 
 public:
-  MainChannel(const QString &server, QWidget *parent = 0);  
-  inline QString server()                                             { return serverEdit->text(); }
-  inline void append(const QString &message)                          { chatBrowser->add(message); }
-  inline void setServer(const QString &server)                        { serverEdit->setText(server); }
+  MainChannel(const QString &server, QWidget *parent = 0);
+  inline QString server()                                                { return serverEdit->text(); }
+  inline void append(const QString &message)                             { chatBrowser->add(message); }
+  inline void msgDisconnect()                                            { chatBrowser->msgDisconnect(); }
+  inline void msgReadyForUse(const QString &s)                           { chatBrowser->msgReadyForUse(s); }
+  inline void setServer(const QString &server)                           { serverEdit->setText(server); }
   void displayChoiceServer(bool display);
   
 public slots:
-  inline void newMessage(const QString &nick, const QString &message) { chatBrowser->newMessage(nick, message); }
-  inline void newParticipant(quint8 sex, const QString &nick)         { chatBrowser->newParticipant(sex, nick); }
-  inline void participantLeft(quint8 sex, const QString &nick)        { chatBrowser->participantLeft(sex, nick); }
+  inline void msgNewMessage(const QString &nick, const QString &message) { chatBrowser->msgNewMessage(nick, message); }
+  inline void msgNewParticipant(quint8 sex, const QString &nick)         { chatBrowser->msgNewParticipant(sex, nick); }
+  inline void msgParticipantLeft(quint8 sex, const QString &nick)        { chatBrowser->msgParticipantLeft(sex, nick); }
   
 private:
   void createActions();
