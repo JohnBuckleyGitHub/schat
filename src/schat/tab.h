@@ -18,10 +18,16 @@ class Tab : public QWidget {
 
 public:
   Tab(QWidget *parent = 0);
-  inline void append(const QString &message) { chatBrowser.add(message); }
+  ~Tab();
+  inline void append(const QString &message) { chatBrowser->add(message); }
+  
+public slots:
+  inline void newMessage(const QString &nick, const QString &message) { chatBrowser->newMessage(nick, message); }
+  inline void newParticipant(quint8 sex, const QString &nick)         { chatBrowser->newParticipant(sex, nick); }
+  inline void participantLeft(quint8 sex, const QString &nick)        { chatBrowser->participantLeft(sex, nick); }
   
 private:
-  ChatBrowser chatBrowser;
+  ChatBrowser *chatBrowser;
   QVBoxLayout *mainLayout;
 };
 
