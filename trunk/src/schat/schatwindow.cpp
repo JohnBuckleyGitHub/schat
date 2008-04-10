@@ -172,18 +172,6 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
 /** [public slots]
  * 
  */
-void SChatWindow::newMessage(const QString &nick, const QString &message)
-{
-  mainChannel->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-      .arg(currentTime())
-      .arg(Qt::escape(nick))
-      .arg(message));
-}
-
-
-/** [public slots]
- * 
- */
 void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
   QStandardItem *item = new QStandardItem(QIcon(Profile::sexIconString(sex)), info.at(0));
@@ -206,18 +194,12 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
   
   // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
   if (echo) {
-    QString line;
-    if (sex)
-      line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашла в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
-    else
-      line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> зашёл в чат</i></div>").arg(currentTime()).arg(Qt::escape(info.at(0)));
-    
     int index = tabIndex(info.at(0));
     if (index != -1) 
       if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-        tab->append(line);
+        tab->newParticipant(sex, info.at(0));
     
-    mainChannel->append(line);
+    mainChannel->newParticipant(sex, info.at(0));
   }
 }
 
@@ -238,10 +220,7 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
     tab = qobject_cast<Tab *>(tabWidget->widget(index));
   
   if (tab)
-    tab->append(tr("<div><span style='color:#909090'>[%1] &lt;<b>%2</b>&gt;</span> %3</div>")
-        .arg(currentTime())
-        .arg(Qt::escape(sender))
-        .arg(message));
+    tab->newMessage(sender, message);
 }
 
 
@@ -260,17 +239,12 @@ void SChatWindow::participantLeft(const QString &nick)
     model.removeRow(index.row());
   }
   
-  QString line;
-  if (sex)
-    line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> вышла из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
-  else
-    line = tr("<div style='color:#909090'>[%1] <i><b>%2</b> вышел из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick));
   int index = tabIndex(nick);
   if (index != -1) 
     if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-      tab->append(line);
+      tab->participantLeft(sex, nick);
   
-  mainChannel->append(line);
+  mainChannel->participantLeft(sex, nick);
 }
 
 
@@ -357,8 +331,12 @@ void SChatWindow::closeChat()
 void SChatWindow::closeTab()
 {
   int index = tabWidget->currentIndex();
-  if (index)
+  if (index) {
+    QWidget *widget = tabWidget->widget(index);
     tabWidget->removeTab(index);
+    Tab *tab = static_cast<Tab *>(widget);
+    tab->deleteLater();
+  }
   else {
     if (state == Connected) {
       state = Stopped;
@@ -432,7 +410,7 @@ void SChatWindow::newConnection()
     clientSocket = new ClientSocket(this);
     connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
-    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(newMessage(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));

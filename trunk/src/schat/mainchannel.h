@@ -23,10 +23,15 @@ class MainChannel : public QWidget {
 
 public:
   MainChannel(const QString &server, QWidget *parent = 0);  
-  inline QString server()                      { return serverEdit->text(); }
-  inline void append(const QString &message)   { chatBrowser.add(message); }
-  inline void setServer(const QString &server) { serverEdit->setText(server); }
+  inline QString server()                                             { return serverEdit->text(); }
+  inline void append(const QString &message)                          { chatBrowser.add(message); }
+  inline void setServer(const QString &server)                        { serverEdit->setText(server); }
   void displayChoiceServer(bool display);
+  
+public slots:
+  inline void newMessage(const QString &nick, const QString &message) { chatBrowser.newMessage(nick, message); }
+  inline void newParticipant(quint8 sex, const QString &nick)         { chatBrowser.newParticipant(sex, nick); }
+  inline void participantLeft(quint8 sex, const QString &nick)        { chatBrowser.participantLeft(sex, nick); }
   
 private:
   void createActions();
