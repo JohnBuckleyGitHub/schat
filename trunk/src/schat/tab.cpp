@@ -19,8 +19,3 @@ Tab::Tab(QWidget *parent)
   mainLayout->setMargin(0);
   setLayout(mainLayout);
 }
-
-Tab::~Tab()
-{
-  delete chatBrowser;
-}

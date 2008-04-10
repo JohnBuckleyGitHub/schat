@@ -35,7 +35,7 @@ public:
   };
   
   DirectChannel(Profile *p, QWidget *parent = 0);
-  inline void append(const QString &message) { chatBrowser.add(message); }
+  inline void append(const QString &message) { chatBrowser->add(message); }
   void sendText(const QString &text);
   
 signals:
@@ -56,7 +56,7 @@ private:
   void createActions();
   void removeConnection();
   
-  ChatBrowser chatBrowser;
+  ChatBrowser *chatBrowser;
   ConnectionState state;
   Profile *profile;
   QAction *connectCreateAction;

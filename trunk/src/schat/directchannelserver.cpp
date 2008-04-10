@@ -12,8 +12,10 @@ DirectChannelServer::DirectChannelServer(ServerSocket *s, QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
+  chatBrowser = new ChatBrowser(this);
+  
   mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(&chatBrowser);
+  mainLayout->addWidget(chatBrowser);
   mainLayout->setMargin(0);
   setLayout(mainLayout);
 }
