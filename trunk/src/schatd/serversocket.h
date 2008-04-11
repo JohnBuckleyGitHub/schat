@@ -31,19 +31,21 @@ public:
   void send(quint16 opcode, quint16 err);
   void send(quint16 opcode, quint16 s, const QStringList &list);
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   inline bool isDirect()                             { if (pFlag == sChatFlagDirect) return true; else return false; }
   inline void setLocalProfile(Profile *p)            { localProfile = p; }
   void sendLocalProfile();
-
+  #endif
+  
 signals:
   void appendParticipant(const QString &p);
   void needParticipantList();
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   void appendDirectParticipant(const QString &p);
   void newMessage(const QString &nick, const QString &message);
+  #endif
 
 private slots:
   void readyRead();
@@ -65,8 +67,9 @@ private:
   quint16 protocolError;
   quint8 pFlag;
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   Profile *localProfile;
+  #endif
 };
 
 #endif /*SERVERSOCKET_H_*/

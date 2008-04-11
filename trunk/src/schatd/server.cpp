@@ -117,6 +117,7 @@ void Server::relayParticipantList(ServerSocket *socket)
 /** [public slots]
  * 
  */
+#ifdef SCHAT_CLIENT
 void Server::appendDirectParticipant(const QString &p)
 {
   #ifdef SCHAT_DEBUG
@@ -139,6 +140,7 @@ void Server::appendDirectParticipant(const QString &p)
     }
   }  
 }
+#endif
 
 
 /** [private slots]
@@ -151,12 +153,11 @@ void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
   #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
-    #ifdef SCHAT_DEBUG
-    qDebug() << "ERROR:" << socket->errorString();
-    #endif
-    if (socket->isDirect()) // FIXME добавить #define ...
+    #ifdef SCHAT_CLIENT
+    if (socket->isDirect())
       removeDirectConnection(socket);
     else
+    #endif
       removeConnection(socket);
   }
 }
@@ -172,9 +173,11 @@ void Server::disconnected()
   #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
-    if (socket->isDirect()) // FIXME добавить #define ...
+    #ifdef SCHAT_CLIENT
+    if (socket->isDirect())
       removeDirectConnection(socket);
     else
+    #endif
       removeConnection(socket);
 }
 
@@ -187,8 +190,9 @@ void Server::incomingConnection(int socketId)
   ServerSocket *socket = new ServerSocket(this);
   socket->setSocketDescriptor(socketId);
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   socket->setLocalProfile(localProfile);
+  #endif
 }
 
 
@@ -241,8 +245,9 @@ void Server::removeConnection(ServerSocket *socket)
 
 
 /** [private]
- * // FIXME добавить #define ...
+ * 
  */
+#ifdef SCHAT_CLIENT
 void Server::removeDirectConnection(ServerSocket *socket)
 {
   #ifdef SCHAT_DEBUG
@@ -256,3 +261,4 @@ void Server::removeDirectConnection(ServerSocket *socket)
   }
   socket->deleteLater();
 }
+#endif
