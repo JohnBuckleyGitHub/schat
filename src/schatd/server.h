@@ -20,8 +20,9 @@ public:
   Server(QObject *parent = 0);
   bool start();
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   void setLocalProfile(Profile *p) { localProfile = p; }
+  #endif
   
 signals:
   void incomingDirectConnection(const QString &p, ServerSocket *socket);
@@ -31,8 +32,9 @@ public slots:
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   void relayParticipantList(ServerSocket *socket);
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   void appendDirectParticipant(const QString &p);
+  #endif
   
 private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
@@ -48,10 +50,11 @@ private:
   QString listenAddress;
   quint16 listenPort;
   
-  // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
   void removeDirectConnection(ServerSocket *socket);
   Profile *localProfile;
   QHash<QString, ServerSocket *> directPeers;
+  #endif
 };
 
 #endif /*SERVER_H_*/

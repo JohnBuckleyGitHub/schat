@@ -28,7 +28,9 @@ ServerSocket::ServerSocket(QObject *parent)
   protocolError = 0;
   failurePongs = 0;
   
-  connect(this, SIGNAL(appendDirectParticipant(const QString &)), parent, SLOT(appendDirectParticipant(const QString &))); // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
+  connect(this, SIGNAL(appendDirectParticipant(const QString &)), parent, SLOT(appendDirectParticipant(const QString &)));
+  #endif
   
   connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
   connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
@@ -171,11 +173,13 @@ void ServerSocket::readyRead()
       case sChatOpcodeSendMessage:
         currentBlock >> channel >> message;
         
-        if (pFlag == sChatFlagDirect) { // FIXME добавить #define ...
+        #ifdef SCHAT_CLIENT
+        if (pFlag == sChatFlagDirect) {
           send(sChatOpcodeSendPrvMessageEcho, channel, message);
           emit newMessage(profile->nick(), message);
         }
         else
+        #endif
           emit relayMessage(channel, profile->nick(), message);
         break;
       
@@ -310,9 +314,11 @@ void ServerSocket::readGreeting()
   
   // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
   // и не отсылаем его в общий список.
-  if (pFlag == sChatFlagDirect) // FIXME добавить #define ...
+  #ifdef SCHAT_CLIENT
+  if (pFlag == sChatFlagDirect)
     emit appendDirectParticipant(profile->nick());
   else
+  #endif
     emit appendParticipant(profile->nick());
   
   currentState = sChatStateWaitingForChecking;
@@ -320,10 +326,12 @@ void ServerSocket::readGreeting()
 
 
 /** [private]
- * FIXME добавить #define ...
+ * 
  */
+#ifdef SCHAT_CLIENT
 void ServerSocket::sendLocalProfile()
 {
   localProfile->setHost(localAddress().toString());  
   send(sChatOpcodeNewParticipantQuiet, localProfile->sex(), localProfile->toList());  
 }
+#endif
