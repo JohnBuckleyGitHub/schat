@@ -52,7 +52,6 @@ private slots:
   void newConnection();
   
 private:
-  inline QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
   void createActions();
   void removeConnection();
   

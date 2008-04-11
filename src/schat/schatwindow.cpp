@@ -132,13 +132,13 @@ void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socke
   qDebug() << "SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)" << n;
   #endif
   
-  int tab = tabIndex(n);
+  int tab = tabIndex(QChar('#') + n);
   
   if (tab == -1) {
     Profile *p = new Profile(this);
     p->setSex(socket->sex());
     p->fromList(socket->participantInfo());
-    tab = tabWidget->addTab(new DirectChannelServer(socket, this), QIcon(Profile::sexIconString(socket->sex())), QChar('#') + n);
+    tab = tabWidget->addTab(new DirectChannelServer(profile, socket, this), QIcon(Profile::sexIconString(socket->sex())), QChar('#') + n);
     tabWidget->setTabToolTip(tab, p->toolTip());
     p->deleteLater();    
   }
@@ -431,23 +431,25 @@ void SChatWindow::returnPressed()
   if (text.isEmpty())
     return;
   
+  QWidget *widget = tabWidget->currentWidget();
+  
   // Текст, начинающийся с символа '/' считаем командой.
   // т.к. команды пока не поддерживаются, сообщаем о неизвестной команде.
   if (text.startsWith(QChar('/'))) {
     QString unknownCmd = tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' ')));
     
-    if (MainChannel *tab = qobject_cast<MainChannel *>(tabWidget->currentWidget()))
+    if (MainChannel *tab = qobject_cast<MainChannel *>(widget))
       tab->append(unknownCmd);
-    else if (Tab *tab = qobject_cast<Tab *>(tabWidget->currentWidget()))
+    else if (Tab *tab = qobject_cast<Tab *>(widget))
       tab->append(unknownCmd);
-    else if (DirectChannel *tab = qobject_cast<DirectChannel *>(tabWidget->currentWidget()))
+    else if (DirectChannel *tab = qobject_cast<DirectChannel *>(widget))
       tab->append(unknownCmd);
   }
-  else if (state == Connected) {
-    
-    if (DirectChannel *tab = qobject_cast<DirectChannel *>(tabWidget->currentWidget())) {
+  else {    
+    if (DirectChannel *tab = qobject_cast<DirectChannel *>(widget))
       tab->sendText(text);
-    }
+    else if (DirectChannelServer *tab = qobject_cast<DirectChannelServer *>(widget))
+      tab->sendText(text);    
     else if (state == Connected)    
       if (tabWidget->currentIndex() == 0)
         clientSocket->send(sChatOpcodeSendMessage, "#main", text);
@@ -564,9 +566,6 @@ void SChatWindow::readSettings()
     move(pos);
   
   settings.beginGroup("Profile");
-//  nick = settings.value("Nick", QDir::home().dirName()).toString();
-//  fullName = settings.value("Name", "").toString();
-//  sex = quint8(settings.value("Sex", 0).toUInt());
   profile = new Profile(this);
   profile->setNick(settings.value("Nick", QDir::home().dirName()).toString());
   profile->setFullName(settings.value("Name", "").toString());
