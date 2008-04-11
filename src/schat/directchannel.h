@@ -42,18 +42,16 @@ signals:
   void newDirectParticipant(quint16 sex, const QStringList &info);
 
 public slots:
-  void connectionError(QAbstractSocket::SocketError socketError);
-  void disconnected();
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void readyForUse();
   
 private slots:
   void newConnection();
+  void removeConnection();
   
 private:
   void createActions();
-  void removeConnection();
   
   ChatBrowser *chatBrowser;
   ConnectionState state;

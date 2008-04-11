@@ -33,6 +33,17 @@ DirectChannelServer::DirectChannelServer(Profile *p, ServerSocket *s, QWidget *p
 
 
 /** [public]
+ * Если сокет активен, то отключимся от хоста.
+ * Сокет будет удалён в объекте `Server`.
+ */
+DirectChannelServer::~DirectChannelServer()
+{
+  if (socket)
+    socket->disconnectFromHost();
+}
+
+
+/** [public]
  * 
  */
 void DirectChannelServer::sendText(const QString &text)
