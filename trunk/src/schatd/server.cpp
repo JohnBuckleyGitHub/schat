@@ -241,7 +241,7 @@ void Server::removeConnection(ServerSocket *socket)
 
 
 /** [private]
- * 
+ * // FIXME добавить #define ...
  */
 void Server::removeDirectConnection(ServerSocket *socket)
 {
