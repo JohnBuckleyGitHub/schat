@@ -142,7 +142,9 @@ void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socke
     tabWidget->setTabToolTip(tab, p->toolTip());
     p->deleteLater();    
   }
-  
+  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(tab)))
+    channel->changeSocket(socket);  
+    
   tabWidget->setCurrentIndex(tab);
 }
 

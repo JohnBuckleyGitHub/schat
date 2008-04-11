@@ -27,12 +27,15 @@ public:
   DirectChannelServer(Profile *p, ServerSocket *s, QWidget *parent = 0);
   virtual ~DirectChannelServer();
   inline void append(const QString &message) { chatBrowser->add(message); }
+  void changeSocket(ServerSocket *s);
   void sendText(const QString &text);
   
 private slots:
   void removeConnection();
   
 private:
+  void initSocket();
+  
   ChatBrowser *chatBrowser;
   ConnectionState state;
   Profile *profile;
