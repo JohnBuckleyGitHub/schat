@@ -19,11 +19,9 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   setAttribute(Qt::WA_DeleteOnClose);
   
-  chatBrowser = new ChatBrowser(this);
-  
-  chat = qobject_cast<SChatWindow *>(parent);
-  profile = p;
-  
+  chatBrowser = new ChatBrowser(this);  
+  chat        = qobject_cast<SChatWindow *>(parent);
+  profile     = p;  
   adrLabel    = new QLabel(tr("Адрес:"), this);
   remoteEdit  = new QLineEdit(this);
   
@@ -36,7 +34,6 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   topLayout->addWidget(remoteEdit);
   topLayout->addWidget(connectCreateButton);
   topLayout->addStretch();
-  topLayout->setContentsMargins(4, 2, 4, 0);
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
@@ -49,6 +46,27 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   connect(connectCreateAction, SIGNAL(triggered()), this, SLOT(newConnection()));
   connect(this, SIGNAL(newDirectParticipant(quint16, const QStringList &)), parent, SLOT(newDirectParticipant(quint16, const QStringList &)));
   
+  displayChoiceServer(true);
+}
+
+
+/** [public]
+ * 
+ */
+void DirectChannel::displayChoiceServer(bool display)
+{
+  if (display) {
+    topLayout->setContentsMargins(4, 2, 4, 0);
+    adrLabel->setVisible(true);
+    remoteEdit->setVisible(true);
+    connectCreateButton->setVisible(true);
+  }
+  else {
+    adrLabel->setVisible(false);
+    remoteEdit->setVisible(false);
+    connectCreateButton->setVisible(false);
+    topLayout->setMargin(0);
+  }
 }
 
 
@@ -89,8 +107,11 @@ void DirectChannel::newPrivateMessage(const QString  &/*nick*/, const QString &m
  */
 void DirectChannel::readyForUse()
 {
+  displayChoiceServer(false);
   state = Connected;
-  chatBrowser->msgReadyForUse(clientSocket->peerAddress().toString());
+  chatBrowser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b></i></div>")
+          .arg(ChatBrowser::currentTime())
+          .arg(clientSocket->peerAddress().toString()));
 }
 
 
@@ -130,11 +151,11 @@ void DirectChannel::removeConnection()
   qDebug() << "DirectChannel::removeConnection(ClientSocket *socket)" << state;
   #endif
   
-  if (state == Connected || state == Stopped)
+  if (state == Connected || state == Stopped) {
     chatBrowser->msgDisconnect();
-  
-  clientSocket->deleteLater();
-  
+    displayChoiceServer(true);
+  }  
+  clientSocket->deleteLater();  
   state = WaitingForConnected;
 }
 

@@ -124,7 +124,7 @@ void Server::appendDirectParticipant(const QString &p)
   #endif
   
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
-    if (!directPeers.contains(p)) {
+    if (!directPeers.contains(p) && localProfile->nick() != p) {
       directPeers.insert(p, socket);
       socket->send(sChatOpcodeGreetingOk);
       socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);

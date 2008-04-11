@@ -36,6 +36,7 @@ public:
   
   DirectChannel(Profile *p, QWidget *parent = 0);
   inline void append(const QString &message) { chatBrowser->add(message); }
+  void displayChoiceServer(bool display);
   void sendText(const QString &text);
   
 signals:
