@@ -19,12 +19,23 @@ class DirectChannelServer : public QWidget {
   Q_OBJECT
 
 public:
-  DirectChannelServer(ServerSocket *s, QWidget *parent = 0);
+  enum ConnectionState {
+    Disconnected,
+    Connected,
+  };
+  
+  DirectChannelServer(Profile *p, ServerSocket *s, QWidget *parent = 0);
   inline void append(const QString &message) { chatBrowser->add(message); }
+  void sendText(const QString &text);
+  
+private slots:
+  void removeConnection();
   
 private:
-  QPointer<ServerSocket> socket;
   ChatBrowser *chatBrowser;
+  ConnectionState state;
+  Profile *profile;
+  QPointer<ServerSocket> socket;
   QVBoxLayout *mainLayout;
 };
 
