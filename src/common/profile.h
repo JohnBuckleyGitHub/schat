@@ -16,23 +16,24 @@ class Profile : public QObject {
 public:
   Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent = 0);
   Profile(QObject *parent = 0);
+  Profile(quint8 sex, const QStringList &list, QObject *parent = 0);
   
   bool fromList(const QStringList &list);
   bool isValidNick() const;
   bool isValidUserAgent() const;
-  QString fullName() const                  { return FullName; } 
-  QString host()                            { return Host; }
-  QString nick() const                      { return Nick; } 
+  inline QString fullName() const                  { return FullName; } 
+  inline QString host()                            { return Host; }
+  inline QString nick() const                      { return Nick; } 
+  inline QString userAgent() const                 { return UserAgent; }
+  inline quint8 sex() const                        { return Sex; } 
+  inline void setFullName(const QString &fullName) { FullName = fullName.simplified(); }
+  inline void setHost(const QString &host)         { Host = host; }
+  inline void setNick(const QString &nick)         { Nick = nick.simplified(); }
+  inline void setSex(const quint8 sex = 0)         { sex ? Sex = 1 : Sex = 0; }
+  inline void setUserAgent(const QString &agent)   { UserAgent = agent.simplified(); }
   QString toolTip();
-  QString userAgent() const                 { return UserAgent; }
   QStringList toList() const;
-  quint8 sex() const                        { return Sex; } 
   static QString sexIconString(quint8 sex);
-  void setFullName(const QString &fullName) { FullName = fullName.simplified(); }
-  void setHost(const QString &host)         { Host = host; }
-  void setNick(const QString &nick)         { Nick = nick.simplified(); }
-  void setSex(const quint8 sex = 0)         { sex ? Sex = 1 : Sex = 0; }
-  void setUserAgent(const QString &agent)   { UserAgent = agent.simplified(); }
   void toStream(QDataStream &stream) const;
   
 private:

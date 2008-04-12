@@ -135,9 +135,7 @@ void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socke
   int tab = tabIndex(QChar('#') + n);
   
   if (tab == -1) {
-    Profile *p = new Profile(this);
-    p->setSex(socket->sex());
-    p->fromList(socket->participantInfo());
+    Profile *p = new Profile(socket->sex(), socket->participantInfo(), this);
     tab = tabWidget->addTab(new DirectChannelServer(profile, socket, this), QIcon(Profile::sexIconString(socket->sex())), QChar('#') + n);
     tabWidget->setTabToolTip(tab, p->toolTip());
     p->deleteLater();    
@@ -159,9 +157,7 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
   #endif
   
   if (DirectChannel *channel  = qobject_cast<DirectChannel *>(sender())) {
-    Profile *p = new Profile(this);
-    p->setSex(sex);
-    p->fromList(info);
+    Profile *p = new Profile(sex, info, this);
     int index = tabWidget->indexOf(channel);
     tabWidget->setTabText(index, QChar('#') + info.at(0));
     tabWidget->setTabToolTip(index, p->toolTip());
@@ -177,10 +173,9 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
 void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
   QStandardItem *item = new QStandardItem(QIcon(Profile::sexIconString(sex)), info.at(0));
-  Profile *p = new Profile(this);
-  p->setSex(sex);
-  p->fromList(info);  
+  Profile *p = new Profile(sex, info, this);
   item->setData(sex, Qt::UserRole + 1);
+  item->setData(info, Qt::UserRole + 2);
   item->setToolTip(p->toolTip());  
   p->deleteLater();
   
@@ -289,7 +284,7 @@ void SChatWindow::addTab()
   if (index > 0)
     tabWidget->setCurrentIndex(index);
   else
-    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), label));  
+    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
 }
 
 
@@ -298,13 +293,19 @@ void SChatWindow::addTab()
  */
 void SChatWindow::addTab(const QModelIndex &index)
 {
-  QString nick = model.itemFromIndex(index)->text();
-  int tab = tabIndex(nick);
+  QStandardItem *item = model.itemFromIndex(index);
+  QString nick        = item->text();
+  int ti              = tabIndex(nick);
   
-  if (tab == -1)
-    tab = tabWidget->addTab(new Tab(this), nick);
+  if (ti == -1) {
+    quint8 sex = quint8(item->data(Qt::UserRole + 1).toUInt());
+    Profile *p = new Profile(sex, item->data(Qt::UserRole + 2).toStringList(), this);
+    ti = tabWidget->addTab(new Tab(this), QIcon(Profile::sexIconString(sex)), nick);
+    tabWidget->setTabToolTip(ti, p->toolTip());
+    p->deleteLater();
+  }
   
-  tabWidget->setCurrentIndex(tab);
+  tabWidget->setCurrentIndex(ti);
 }
 
 

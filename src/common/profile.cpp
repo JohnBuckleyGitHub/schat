@@ -12,6 +12,19 @@
 /** [public]
  * 
  */
+Profile::Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent)
+  : QObject(parent)
+{
+  Nick = nick;
+  FullName = fullName;
+  Sex = sex;
+  UserAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
+}
+
+
+/** [public]
+ * 
+ */
 Profile::Profile(QObject *parent)
   : QObject(parent)
 {
@@ -24,13 +37,11 @@ Profile::Profile(QObject *parent)
 /** [public]
  * 
  */
-Profile::Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent)
+Profile::Profile(quint8 sex, const QStringList &list, QObject *parent)
   : QObject(parent)
 {
-  Nick = nick;
-  FullName = fullName;
   Sex = sex;
-  UserAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
+  fromList(list);
 }
 
 
