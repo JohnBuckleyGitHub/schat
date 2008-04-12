@@ -49,8 +49,6 @@ private:
   QDataStream currentBlock;
   QString message;  
   QString remoteNick;
-  QString userAgent;
-  QString userMask;
   QTimer pingTimeout;
   quint16 currentCommand;
   quint16 currentState;
