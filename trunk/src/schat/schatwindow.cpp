@@ -592,7 +592,7 @@ void SChatWindow::removeConnection()
   if (err == sChatErrorBadNickName) {
     state = Stopped;
     mainChannel->append(tr("<div class='nb'>(%1) <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
-        .arg(currentTime())
+        .arg(ChatBrowser::currentTime())
         .arg(profile->nick()));
   }
   // Если выбранный ник уже занят, то генерируем новый уникальный ник.
