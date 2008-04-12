@@ -72,7 +72,6 @@ private slots:
   void welcomeOk();
 
 private:
-  inline QString currentTime() const { return QTime::currentTime().toString("hh:mm:ss"); }
   int tabIndex(const QString &s, int start = 1);
   void createActions();
   void createTrayIcon();

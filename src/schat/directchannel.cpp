@@ -154,9 +154,12 @@ void DirectChannel::removeConnection()
   if (state == Connected || state == Stopped) {
     chatBrowser->msgDisconnect();
     displayChoiceServer(true);
-  }  
+  }
+  else
+    chatBrowser->add(tr("<div class='np'>(%1) <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
+  
   clientSocket->deleteLater();  
-  state = WaitingForConnected;
+  state = Disconnected;
 }
 
 
