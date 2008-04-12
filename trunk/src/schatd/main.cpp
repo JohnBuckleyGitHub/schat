@@ -4,6 +4,7 @@
  */
 
 #include <QtCore>
+#include <unistd.h>
 
 #include "server.h"
 
@@ -16,7 +17,15 @@ int main(int argc, char *argv[])
   Server server;
   
   if (!server.start())
-    return 1;
+    return 3;
+  
+  // Создаём PID-файл
+  QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
+  if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&pidfile);
+    out << getpid();
+    pidfile.close();
+  }
 
   return app.exec();
 }
