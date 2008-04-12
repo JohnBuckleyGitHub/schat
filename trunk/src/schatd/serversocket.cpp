@@ -298,8 +298,10 @@ void ServerSocket::readGreeting()
     err = sChatErrorInvalidConnection;
   
   #ifndef SCHAT_CLIENT
-  if (pFlag == sChatFlagDirect)
+  if (pFlag == sChatFlagDirect) {
     err = sChatErrorDirectNotAllow;
+    profile->setNick("#DUBLICATE");
+  }
   #endif
   
   if (err) {

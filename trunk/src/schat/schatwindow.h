@@ -73,6 +73,7 @@ private slots:
 
 private:
   int tabIndex(const QString &s, int start = 1);
+  Profile* profileFromItem(const QStandardItem *item);
   void createActions();
   void createTrayIcon();
   void readSettings();
