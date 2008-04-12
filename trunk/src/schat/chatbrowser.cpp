@@ -83,6 +83,17 @@ void ChatBrowser::msgReadyForUse(const QString &s)
 }
 
 
+/** [protected]
+ * 
+ */
+void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = createStandardContextMenu();
+  menu->exec(event->globalPos());
+  delete menu;
+}
+
+
 /** [public slots]
  * Новое сообщение `const QString &message`,
  * от участника `const QString &nick`.

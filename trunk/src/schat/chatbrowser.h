@@ -21,6 +21,9 @@ public:
   void msgParticipantLeft(quint8 sex, const QString &nick);
   void msgReadyForUse(const QString &s);
   
+protected:
+  void contextMenuEvent(QContextMenuEvent *event);
+  
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
   
