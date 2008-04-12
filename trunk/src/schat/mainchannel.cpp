@@ -68,7 +68,7 @@ void MainChannel::displayChoiceServer(bool display)
 void MainChannel::createActions()
 {
   connectCreateButton = new QToolButton(this);
-  connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Создать новое прямое подключение"), this);
+  connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится к серверу"), this);
   connectCreateButton->setDefaultAction(connectCreateAction);
   connectCreateButton->setAutoRaise(true);
 }

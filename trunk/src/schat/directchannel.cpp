@@ -155,7 +155,7 @@ void DirectChannel::removeConnection()
     chatBrowser->msgDisconnect();
     displayChoiceServer(true);
   }
-  else
+  else if (state == WaitingForConnected)
     chatBrowser->add(tr("<div class='np'>(%1) <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
   
   clientSocket->deleteLater();  
@@ -169,7 +169,7 @@ void DirectChannel::removeConnection()
 void DirectChannel::createActions()
 {
   connectCreateButton = new QToolButton(this);
-  connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится к серверу"), this);
+  connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Создать новое прямое подключение"), this);
   connectCreateButton->setDefaultAction(connectCreateAction);
   connectCreateButton->setAutoRaise(true);
 }
