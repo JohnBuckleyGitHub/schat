@@ -13,5 +13,6 @@
   <file>images/tab_new.png</file>
   <file>images/tab_close.png</file>
   <file>images/up.png</file>
+  <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>
