@@ -33,25 +33,7 @@
 </buildTargets>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
-<storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtCore" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtGui" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtXml" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtNetwork" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtTest" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtScript" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtSql" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtSvg" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="Qt3Support" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtDBus" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtDesigner" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtAssistant" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtOpenGL" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtUiTools" kind="inc" path="" system="true"/>
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
-</storageModule>
+
 <storageModule moduleId="scannerConfiguration">
 <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
@@ -134,6 +116,25 @@
 <parser enabled="true"/>
 </scannerInfoProvider>
 </profile>
+</storageModule>
+<storageModule moduleId="org.eclipse.cdt.core.pathentry">
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtCore" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtGui" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtXml" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtNetwork" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtTest" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtScript" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtSql" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtSvg" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="Qt3Support" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtDBus" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtDesigner" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtAssistant" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtOpenGL" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.4.0-beta1/include" include="QtUiTools" kind="inc" path="" system="true"/>
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
 </storageModule>
 </cconfiguration>
 </storageModule>

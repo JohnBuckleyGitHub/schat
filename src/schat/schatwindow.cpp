@@ -35,6 +35,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
   sendLayout    = new QHBoxLayout;
+  toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   sendButton    = new QToolButton(centralWidget);
   statusLabel   = new QLabel;
@@ -46,8 +47,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   splitter->setStretchFactor(0, 4);
   splitter->setStretchFactor(1, 1);
   
+  rightLayout->addLayout(toolsLayout);
   rightLayout->addWidget(listView);
   rightLayout->setMargin(0);
+  rightLayout->setSpacing(4);
   
   sendLayout->addWidget(lineEdit);
   sendLayout->addWidget(sendButton);
@@ -71,6 +74,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   readSettings();
   createActions();
+  createCornerWidgets();
+  createToolButtons();
   createTrayIcon();
   
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
@@ -524,23 +529,19 @@ Profile* SChatWindow::profileFromItem(const QStandardItem *item)
 void SChatWindow::createActions()
 { 
   // Открытие новой вкладки, для создания нового подключения
-  QToolButton *addTabButton = new QToolButton(this);
   addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
   addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
-  addTabButton->setDefaultAction(addTabAction);
-  addTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
   connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
   // Разорвать текущее соединение
-  QToolButton *closeTabButton = new QToolButton(this);
   closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
   closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
-  closeTabButton->setDefaultAction(closeTabAction);
-  closeTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+  
+  // Выход из программы
+  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
+  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
   
   // Отправить сообщение в чат
   sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
@@ -548,9 +549,50 @@ void SChatWindow::createActions()
   sendButton->setDefaultAction(sendAction);
   connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
   
-  // Выход из программы
-  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
-  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
+  // Настройка
+  settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка, Ctrl+P"), this);
+  settingsAction->setShortcut(tr("Ctrl+P"));
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createCornerWidgets()
+{
+  QToolButton *addTabButton = new QToolButton(this);
+  addTabButton->setDefaultAction(addTabAction);
+  addTabButton->setAutoRaise(true);
+  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
+  
+  QToolButton *closeTabButton = new QToolButton(this);
+  closeTabButton->setDefaultAction(closeTabAction);
+  closeTabButton->setAutoRaise(true);
+  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);  
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createToolButtons()
+{
+  QMenu *iconMenu = new QMenu(this);
+  iconMenu->addAction(quitAction);
+  
+  QToolButton *settingsButton = new QToolButton(this);
+  settingsButton->setDefaultAction(settingsAction);
+  settingsButton->setAutoRaise(true);
+  settingsButton->setMenu(iconMenu);
+  
+  QFrame *line = new QFrame(this);
+  line->setFrameShape(QFrame::VLine);
+  line->setFrameShadow(QFrame::Sunken);
+  
+  toolsLayout->addWidget(line);
+  toolsLayout->addWidget(settingsButton);
+  toolsLayout->addStretch();
+  toolsLayout->setSpacing(0);  
 }
 
 
