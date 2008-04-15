@@ -75,6 +75,8 @@ private:
   int tabIndex(const QString &s, int start = 1);
   Profile* profileFromItem(const QStandardItem *item);
   void createActions();
+  void createCornerWidgets();
+  void createToolButtons();
   void createTrayIcon();
   void readSettings();
   void removeConnection();
@@ -90,7 +92,9 @@ private:
   QAction *closeTabAction;
   QAction *quitAction;
   QAction *sendAction;
+  QAction *settingsAction;
   QHBoxLayout *sendLayout;
+  QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
   QLineEdit *lineEdit;  
   QListView *listView;
