@@ -31,6 +31,7 @@ class QStatusBar;
 class QTabWidget;
 class QToolButton;
 class QVBoxLayout;
+class SettingsDialog;
 class Tab;
 class WelcomeDialog;
 
@@ -61,6 +62,7 @@ public slots:
   void serverChanged();
   
 private slots:
+  inline void settings() { settingsPage(); }
   void about();
   void addTab();
   void addTab(const QModelIndex &index);
@@ -82,6 +84,7 @@ private:
   void createTrayIcon();
   void readSettings();
   void removeConnection();
+  void settingsPage(int page = 0);
   void uniqueNick();
   void writeSettings();
   
@@ -105,6 +108,7 @@ private:
   QPointer<AboutDialog> aboutDialog;
   QPointer<ClientSocket> clientSocket;
   QPointer<Server> daemon;
+  QPointer<SettingsDialog> settingsDialog;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;

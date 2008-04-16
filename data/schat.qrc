@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>images/cancel.png</file>
   <file>images/connect_creating.png</file>
   <file>images/down.png</file>
   <file>images/female.png</file>
@@ -8,14 +9,17 @@
   <file>images/logo.png</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
+  <file>images/network.png</file>
   <file>images/new.png</file>
   <file>images/ok.png</file>
+  <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
   <file>images/quit.png</file>
   <file>images/send.png</file>
   <file>images/settings.png</file>
   <file>images/tab_new.png</file>
   <file>images/tab_close.png</file>
+  <file>images/undo.png</file>
   <file>images/up.png</file>
   <file>translations/qt_ru.qm</file>
 </qresource>

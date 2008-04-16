@@ -14,6 +14,7 @@
 #include "profile.h"
 #include "protocol.h"
 #include "schatwindow.h"
+#include "settingsdialog.h"
 #include "tab.h"
 #include "version.h"
 #include "welcomedialog.h"
@@ -299,6 +300,9 @@ void SChatWindow::serverChanged()
  */
 void SChatWindow::about()
 {
+  if (isHidden())
+    show();
+  
   if (!aboutDialog) {
     aboutDialog = new AboutDialog(this);
     aboutDialog->show();
@@ -506,6 +510,23 @@ void SChatWindow::returnPressed()
 /** [private slots]
  * 
  */
+void SChatWindow::settingsPage(int page)
+{
+  if (isHidden())
+    show();
+  
+  if (!settingsDialog) {
+    settingsDialog = new SettingsDialog(this);
+    settingsDialog->show();
+  }
+   
+  settingsDialog->activateWindow();
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::welcomeOk()
 {
   hideWelcome = welcomeDialog->hideWelcome();
@@ -578,6 +599,7 @@ void SChatWindow::createActions()
   // Настройка
   settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
   settingsAction->setShortcut(tr("Ctrl+P"));
+  connect(settingsAction, SIGNAL(triggered()), this, SLOT(settings()));
 }
 
 
