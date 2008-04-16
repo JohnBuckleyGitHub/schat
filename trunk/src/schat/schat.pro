@@ -17,34 +17,38 @@ DEFINES += SCHAT_CLIENT
 
 RESOURCES += ../../data/schat.qrc
 
-# Input
-HEADERS += aboutdialog.h \
-           tab.h \
-           directchannel.h \
-           chatbrowser.h \
-           clientsocket.h \
-           mainchannel.h \
-           schatwindow.h \
-           protocol.h \
-           server.h \
-           serversocket.h \
-           welcomedialog.h \
-           profile.h \
-           directchannelserver.h \
-           version.h
-SOURCES += aboutdialog.cpp \
-           tab.cpp \
-           directchannel.cpp \
-           chatbrowser.cpp \
-           clientsocket.cpp \
-           mainchannel.cpp \
-           main.cpp \
-           schatwindow.cpp \
-           server.cpp \
-           serversocket.cpp \
-           profile.cpp \
-           directchannelserver.cpp \
-           welcomedialog.cpp
+HEADERS += \
+    aboutdialog.h \
+    chatbrowser.h \
+    clientsocket.h \
+    directchannel.h \
+    directchannelserver.h \
+    mainchannel.h \
+    profile.h \
+    protocol.h \
+    schatwindow.h \
+    server.h \
+    serversocket.h \
+    settingsdialog.h \
+    tab.h \
+    version.h \
+    welcomedialog.h
+
+SOURCES += \
+    aboutdialog.cpp \
+    chatbrowser.cpp \
+    clientsocket.cpp \
+    directchannel.cpp \
+    directchannelserver.cpp \
+    main.cpp \
+    mainchannel.cpp \
+    profile.cpp \
+    schatwindow.cpp \
+    server.cpp \
+    serversocket.cpp \
+    settingsdialog.cpp \
+    tab.cpp \
+    welcomedialog.cpp
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
@@ -52,11 +56,13 @@ CONFIG(debug, debug|release) {
     OBJECTS_DIR = ../../tmp/schat/debug/obj
     DESTDIR = ../../out/debug
 }
+
 CONFIG(release, debug|release) { 
     RCC_DIR = ../../tmp/schat/release/rcc
     MOC_DIR = ../../tmp/schat/release/moc
     OBJECTS_DIR = ../../tmp/schat/release/obj
     DESTDIR = ../../out/release
 }
+
 FORMS = welcomedialog.ui
 win32:RC_FILE = schat.rc
