@@ -7,15 +7,16 @@
 #include <QtNetwork>
 #include <stdlib.h>
 
+#include "aboutdialog.h"
+#include "directchannel.h"
+#include "directchannelserver.h"
 #include "mainchannel.h"
+#include "profile.h"
 #include "protocol.h"
 #include "schatwindow.h"
 #include "tab.h"
 #include "version.h"
 #include "welcomedialog.h"
-#include "directchannel.h"
-#include "profile.h"
-#include "directchannelserver.h"
 
 static const int reconnectTimeout = 3 * 1000;
 
@@ -122,6 +123,8 @@ void SChatWindow::closeEvent(QCloseEvent *event)
     event->accept();
   }
   else {
+    if (aboutDialog)
+      aboutDialog->hide();
     hide();
     event->ignore();
   }
@@ -294,6 +297,20 @@ void SChatWindow::serverChanged()
 /** [private slots]
  * 
  */
+void SChatWindow::about()
+{
+  if (!aboutDialog) {
+    aboutDialog = new AboutDialog(this);
+    aboutDialog->show();
+  }
+   
+  aboutDialog->activateWindow();
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::addTab()
 {
   QString label = tr("Новое подключение");
@@ -402,9 +419,14 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
       if (isHidden()) {
         show();
         activateWindow();
+        if (aboutDialog)
+          aboutDialog->show();
       }
-      else
+      else {
+        if (aboutDialog)
+          aboutDialog->hide();
         hide();
+      }
       
     default:
       break;
@@ -527,7 +549,11 @@ Profile* SChatWindow::profileFromItem(const QStandardItem *item)
  * 
  */
 void SChatWindow::createActions()
-{ 
+{
+  // О Программе...
+  aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
+  connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+  
   // Открытие новой вкладки, для создания нового подключения
   addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение, Ctrl+N"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
@@ -550,7 +576,7 @@ void SChatWindow::createActions()
   connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
   
   // Настройка
-  settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка, Ctrl+P"), this);
+  settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
   settingsAction->setShortcut(tr("Ctrl+P"));
 }
 
@@ -585,12 +611,17 @@ void SChatWindow::createToolButtons()
   settingsButton->setAutoRaise(true);
   settingsButton->setMenu(iconMenu);
   
+  QToolButton *aboutButton = new QToolButton(this);
+  aboutButton->setDefaultAction(aboutAction);
+  aboutButton->setAutoRaise(true);
+  
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::VLine);
   line->setFrameShadow(QFrame::Sunken);
   
   toolsLayout->addWidget(line);
   toolsLayout->addWidget(settingsButton);
+  toolsLayout->addWidget(aboutButton);
   toolsLayout->addStretch();
   toolsLayout->setSpacing(0);  
 }
@@ -602,6 +633,9 @@ void SChatWindow::createToolButtons()
 void SChatWindow::createTrayIcon()
 {
   trayIconMenu = new QMenu(this);
+  trayIconMenu->addAction(aboutAction);
+  trayIconMenu->addAction(settingsAction);
+  trayIconMenu->addSeparator();
   trayIconMenu->addAction(quitAction);
   
   trayIcon = new QSystemTrayIcon(this);
