@@ -18,7 +18,8 @@ DEFINES += SCHAT_CLIENT
 RESOURCES += ../../data/schat.qrc
 
 # Input
-HEADERS += tab.h \
+HEADERS += aboutdialog.h \
+           tab.h \
            directchannel.h \
            chatbrowser.h \
            clientsocket.h \
@@ -31,7 +32,8 @@ HEADERS += tab.h \
            profile.h \
            directchannelserver.h \
            version.h
-SOURCES += tab.cpp \
+SOURCES += aboutdialog.cpp \
+           tab.cpp \
            directchannel.cpp \
            chatbrowser.cpp \
            clientsocket.cpp \

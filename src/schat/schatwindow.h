@@ -16,7 +16,9 @@
 #include "clientsocket.h"
 #include "server.h"
 
+class AboutDialog;
 class MainChannel;
+class Profile;
 class QAction;
 class QHBoxLayout;
 class QHBoxLayout;
@@ -31,7 +33,6 @@ class QToolButton;
 class QVBoxLayout;
 class Tab;
 class WelcomeDialog;
-class Profile;
 
 class SChatWindow : public QMainWindow
 {
@@ -60,6 +61,7 @@ public slots:
   void serverChanged();
   
 private slots:
+  void about();
   void addTab();
   void addTab(const QModelIndex &index);
   void closeChat();
@@ -88,6 +90,7 @@ private:
   ConnectionState state;
   MainChannel *mainChannel;
   Profile *profile;
+  QAction *aboutAction;
   QAction *addTabAction;
   QAction *closeTabAction;
   QAction *quitAction;
@@ -99,6 +102,7 @@ private:
   QLineEdit *lineEdit;  
   QListView *listView;
   QMenu *trayIconMenu;
+  QPointer<AboutDialog> aboutDialog;
   QPointer<ClientSocket> clientSocket;
   QPointer<Server> daemon;
   QSplitter *splitter;
