@@ -15,6 +15,7 @@
 
 #include "clientsocket.h"
 #include "server.h"
+#include "settingsdialog.h"
 
 class AboutDialog;
 class MainChannel;
@@ -31,7 +32,6 @@ class QStatusBar;
 class QTabWidget;
 class QToolButton;
 class QVBoxLayout;
-class SettingsDialog;
 class Tab;
 class WelcomeDialog;
 
@@ -62,7 +62,8 @@ public slots:
   void serverChanged();
   
 private slots:
-  inline void settings() { settingsPage(); }
+  inline void settingsNetwork() { settingsPage(SettingsDialog::NetworkPage); }
+  inline void settingsProfile() { settingsPage(SettingsDialog::ProfilePage); }
   void about();
   void addTab();
   void addTab(const QModelIndex &index);
@@ -96,6 +97,8 @@ private:
   QAction *aboutAction;
   QAction *addTabAction;
   QAction *closeTabAction;
+  QAction *networkSetAction;
+  QAction *profileSetAction;
   QAction *quitAction;
   QAction *sendAction;
   QAction *settingsAction;

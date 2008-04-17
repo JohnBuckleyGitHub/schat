@@ -31,10 +31,12 @@ public:
   };
   
   SettingsDialog(QWidget *parent = 0);
+  void setPage(int page = 0);
 
 public slots:
   void accept();
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
+  void reset();
   
 private:
   NetworkSettings *networkPage;
@@ -57,6 +59,7 @@ class ProfileSettings : public QWidget
   
 public:
   ProfileSettings(QWidget *parent = 0);
+  void reset();
   void save();
 };
 
@@ -70,6 +73,7 @@ class NetworkSettings : public QWidget
   
 public:
   NetworkSettings(QWidget *parent = 0);
+  void reset();
   void save();
 };
 
