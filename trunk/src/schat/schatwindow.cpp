@@ -519,7 +519,8 @@ void SChatWindow::settingsPage(int page)
     settingsDialog = new SettingsDialog(this);
     settingsDialog->show();
   }
-   
+  
+  settingsDialog->setPage(page);
   settingsDialog->activateWindow();
 }
 
@@ -586,6 +587,14 @@ void SChatWindow::createActions()
   closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
+  // Сеть...
+  networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
+  connect(networkSetAction, SIGNAL(triggered()), this, SLOT(settingsNetwork()));
+  
+  // Личные данные...
+  profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
+  connect(profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
+  
   // Выход из программы
   quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
@@ -599,7 +608,7 @@ void SChatWindow::createActions()
   // Настройка
   settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
   settingsAction->setShortcut(tr("Ctrl+P"));
-  connect(settingsAction, SIGNAL(triggered()), this, SLOT(settings()));
+  connect(settingsAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
 }
 
 
@@ -626,7 +635,8 @@ void SChatWindow::createCornerWidgets()
 void SChatWindow::createToolButtons()
 {
   QMenu *iconMenu = new QMenu(this);
-  iconMenu->addAction(quitAction);
+  iconMenu->addAction(profileSetAction);
+  iconMenu->addAction(networkSetAction);
   
   QToolButton *settingsButton = new QToolButton(this);
   settingsButton->setDefaultAction(settingsAction);

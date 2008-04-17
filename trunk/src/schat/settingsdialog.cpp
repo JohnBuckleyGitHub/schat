@@ -9,7 +9,7 @@
 #include "schatwindow.h"
 
 
-/** public
+/** [SettingsDialog/public]
  * Конструктор SettingsDialog
  */
 SettingsDialog::SettingsDialog(QWidget *parent)
@@ -44,6 +44,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   connect(contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
   connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
   
   contentsWidget->setCurrentRow(ProfilePage);
   
@@ -68,7 +69,17 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 }
 
 
-/** public slot
+/** [SettingsDialog/public]
+ * 
+ */
+void SettingsDialog::setPage(int page)
+{
+  contentsWidget->setCurrentRow(page);
+  pagesWidget->setCurrentIndex(page);
+}
+
+
+/** [SettingsDialog/public slots]
  * Вызаваем сохранение настроек и закрываем диалог
  */
 void SettingsDialog::accept()
@@ -79,7 +90,7 @@ void SettingsDialog::accept()
 }
 
 
-/** [public slots]
+/** [SettingsDialog/public slots]
  * 
  */
 void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
@@ -91,7 +102,25 @@ void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previ
 }
 
 
-/** [public]
+/** [SettingsDialog/public slots]
+ * 
+ */
+void SettingsDialog::reset()
+{
+  switch (pagesWidget->currentIndex()) {
+    case ProfilePage:
+      profilePage->reset();      
+      break;
+      
+    case NetworkPage:
+      networkPage->reset();
+      break;
+  }  
+}
+
+
+
+/** [ProfileSettings/public]
  * Конструктор `ProfileSettings`
  */
 ProfileSettings::ProfileSettings(QWidget *parent)
@@ -107,7 +136,16 @@ ProfileSettings::ProfileSettings(QWidget *parent)
 }
 
 
-/** [public]
+/** [ProfileSettings/public]
+ * 
+ */
+void ProfileSettings::reset()
+{
+  QMessageBox::information(this, "d", "void ProfileSettings::reset()");
+}
+
+
+/** [ProfileSettings/public]
  * Сохраняем настройки
  */
 void ProfileSettings::save()
@@ -115,7 +153,7 @@ void ProfileSettings::save()
 }
 
 
-/** public
+/** [NetworkSettings/public]
  * Конструктор `NetSettingsPage`
  */
 NetworkSettings::NetworkSettings(QWidget *parent)
@@ -131,7 +169,16 @@ NetworkSettings::NetworkSettings(QWidget *parent)
 }
 
 
-/** [public]
+/** [NetworkSettings/public]
+ * 
+ */
+void NetworkSettings::reset()
+{
+  QMessageBox::information(this, "d", "void NetworkSettings::reset()");
+}
+
+
+/** [NetworkSettings/public]
  * Сохраняем настройки
  */
 void NetworkSettings::save()
