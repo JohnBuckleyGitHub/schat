@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>images/appearance.png</file>
   <file>images/cancel.png</file>
   <file>images/connect_creating.png</file>
   <file>images/down.png</file>

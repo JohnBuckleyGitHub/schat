@@ -587,6 +587,10 @@ void SChatWindow::createActions()
   closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
+  // Интерфейс...
+  interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
+  connect(interfaceSetAction, SIGNAL(triggered()), this, SLOT(settingsInterface()));
+  
   // Сеть...
   networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
   connect(networkSetAction, SIGNAL(triggered()), this, SLOT(settingsNetwork()));
@@ -637,6 +641,7 @@ void SChatWindow::createToolButtons()
   QMenu *iconMenu = new QMenu(this);
   iconMenu->addAction(profileSetAction);
   iconMenu->addAction(networkSetAction);
+  iconMenu->addAction(interfaceSetAction);
   
   QToolButton *settingsButton = new QToolButton(this);
   settingsButton->setDefaultAction(settingsAction);

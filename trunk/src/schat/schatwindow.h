@@ -62,8 +62,9 @@ public slots:
   void serverChanged();
   
 private slots:
-  inline void settingsNetwork() { settingsPage(SettingsDialog::NetworkPage); }
-  inline void settingsProfile() { settingsPage(SettingsDialog::ProfilePage); }
+  inline void settingsNetwork()   { settingsPage(SettingsDialog::NetworkPage); }
+  inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
+  inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
   void about();
   void addTab();
   void addTab(const QModelIndex &index);
@@ -97,6 +98,7 @@ private:
   QAction *aboutAction;
   QAction *addTabAction;
   QAction *closeTabAction;
+  QAction *interfaceSetAction;
   QAction *networkSetAction;
   QAction *profileSetAction;
   QAction *quitAction;

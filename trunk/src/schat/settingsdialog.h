@@ -8,6 +8,7 @@
 
 #include <QDialog>
 
+class InterfaceSettings;
 class NetworkSettings;
 class ProfileSettings;
 class QListWidget;
@@ -27,7 +28,8 @@ class SettingsDialog : public QDialog
 public:
   enum {
     ProfilePage,
-    NetworkPage
+    NetworkPage,
+    InterfacePage
   };
   
   SettingsDialog(QWidget *parent = 0);
@@ -39,6 +41,7 @@ public slots:
   void reset();
   
 private:
+  InterfaceSettings *interfaceSettings;
   NetworkSettings *networkPage;
   ProfileSettings *profilePage;
   QListWidget *contentsWidget;
@@ -73,6 +76,20 @@ class NetworkSettings : public QWidget
   
 public:
   NetworkSettings(QWidget *parent = 0);
+  void reset();
+  void save();
+};
+
+
+/**
+ * Класс `InterfaceSettings`
+ */
+class InterfaceSettings : public QWidget
+{
+  Q_OBJECT
+  
+public:
+  InterfaceSettings(QWidget *parent = 0);
   void reset();
   void save();
 };

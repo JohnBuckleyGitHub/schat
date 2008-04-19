@@ -27,12 +27,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   contentsWidget = new QListWidget(this);
   pagesWidget    = new QStackedWidget;
 
-  profilePage = new ProfileSettings(this);
-  networkPage = new NetworkSettings(this);
+  profilePage       = new ProfileSettings(this);
+  networkPage       = new NetworkSettings(this);
+  interfaceSettings = new InterfaceSettings(this);
   
   resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   pagesWidget->addWidget(profilePage);
   pagesWidget->addWidget(networkPage);
+  pagesWidget->addWidget(interfaceSettings);
   
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
@@ -40,6 +42,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   
   new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), contentsWidget);
   new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), contentsWidget);
+  new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), contentsWidget);
   
   connect(contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
   connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -86,6 +89,7 @@ void SettingsDialog::accept()
 {
   profilePage->save();
   networkPage->save();
+  interfaceSettings->save();
   close();
 }
 
@@ -114,6 +118,10 @@ void SettingsDialog::reset()
       
     case NetworkPage:
       networkPage->reset();
+      break;
+      
+    case InterfacePage:
+      interfaceSettings->reset();
       break;
   }  
 }
@@ -153,6 +161,8 @@ void ProfileSettings::save()
 }
 
 
+
+
 /** [NetworkSettings/public]
  * Конструктор `NetSettingsPage`
  */
@@ -182,5 +192,40 @@ void NetworkSettings::reset()
  * Сохраняем настройки
  */
 void NetworkSettings::save()
+{
+}
+
+
+
+
+/** [InterfaceSettings/public]
+ * Конструктор `InterfaceSettings`
+ */
+InterfaceSettings::InterfaceSettings(QWidget *parent)
+  : QWidget(parent)
+{
+  setAttribute(Qt::WA_DeleteOnClose);
+  
+  QLabel *label = new QLabel(tr("Cтраница `InterfaceSettings` пока не реализована."));
+  
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(label);
+  mainLayout->addStretch();
+}
+
+
+/** [InterfaceSettings/public]
+ * 
+ */
+void InterfaceSettings::reset()
+{
+  QMessageBox::information(this, "d", "void InterfaceSettings::reset()");
+}
+
+
+/** [InterfaceSettings/public]
+ * Сохраняем настройки
+ */
+void InterfaceSettings::save()
 {
 }
