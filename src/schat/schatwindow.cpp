@@ -14,6 +14,7 @@
 #include "profile.h"
 #include "protocol.h"
 #include "schatwindow.h"
+#include "settings.h"
 #include "settingsdialog.h"
 #include "tab.h"
 #include "version.h"
@@ -40,7 +41,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   sendButton    = new QToolButton(centralWidget);
-  statusLabel   = new QLabel;
+  statusLabel   = new QLabel(this);
+  profile       = new Profile(this);
+  settings      = new Settings(profile, this);
  
   state = Disconnected;
   
@@ -73,8 +76,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setFocusPolicy(Qt::NoFocus);
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
+  settings->read();
   
-  readSettings();
   createActions();
   createCornerWidgets();
   createToolButtons();
@@ -84,15 +87,15 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   
-  mainChannel = new MainChannel(server, this);
+  mainChannel = new MainChannel(settings->server, this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
-  if (!hideWelcome || firstRun) {
+  if (!settings->hideWelcome || settings->firstRun) {
     welcomeDialog = new WelcomeDialog(profile, this);
-    welcomeDialog->setServer(server);
-    if (!firstRun)
-      welcomeDialog->setHideWelcome(hideWelcome);
+    welcomeDialog->setServer(settings->server);
+    if (!settings->firstRun)
+      welcomeDialog->setHideWelcome(settings->hideWelcome);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!welcomeDialog->exec())
       mainChannel->displayChoiceServer(true);
@@ -118,7 +121,7 @@ SChatWindow::SChatWindow(QWidget *parent)
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
 { // TODO Разобраться с корректным завершением программы.
-  writeSettings(); 
+  settings->write();
   
   if (isHidden()) {
     event->accept();
@@ -290,7 +293,7 @@ void SChatWindow::serverChanged()
   if (clientSocket)
     clientSocket->quit();
   
-  server = mainChannel->server();
+  settings->server = mainChannel->server();
   newConnection();
 }
 
@@ -359,7 +362,7 @@ void SChatWindow::closeChat()
   if (clientSocket)
     clientSocket->quit();
   
-  writeSettings();
+  settings->write();
   qApp->quit();
 }
 
@@ -462,7 +465,7 @@ void SChatWindow::newConnection()
   }
   
   clientSocket->setProfile(profile);
-  clientSocket->connectToHost(server, serverPort);
+  clientSocket->connectToHost(settings->server, settings->serverPort);
 }
 
 
@@ -529,10 +532,10 @@ void SChatWindow::settingsPage(int page)
  * 
  */
 void SChatWindow::welcomeOk()
-{
-  hideWelcome = welcomeDialog->hideWelcome();
-  server = welcomeDialog->server();
-  mainChannel->setServer(server);
+{ // TODO добавить прямую запись настроек
+  settings->hideWelcome = welcomeDialog->hideWelcome();
+  settings->server = welcomeDialog->server();
+  mainChannel->setServer(settings->server);
   welcomeDialog->deleteLater();
   
   newConnection();
@@ -686,33 +689,6 @@ void SChatWindow::createTrayIcon()
 /** [private]
  * 
  */
-void SChatWindow::readSettings()
-{
-  QSettings settings(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  
-  QPoint pos = settings.value("Pos", QPoint(-999, -999)).toPoint();
-  QSize size = settings.value("Size", QSize(680, 460)).toSize();
-  splitter->restoreState(settings.value("Splitter").toByteArray());
-  hideWelcome = settings.value("HideWelcome", false).toBool();
-  firstRun = settings.value("FirstRun", true).toBool();
-  server = settings.value("Server", "192.168.5.130").toString();
-  serverPort = quint16(settings.value("ServerPort", 7666).toUInt()); 
-  
-  resize(size);
-  if (pos.x() != -999 && pos.y() != -999)
-    move(pos);
-  
-  settings.beginGroup("Profile");
-  profile = new Profile(this);
-  profile->setNick(settings.value("Nick", QDir::home().dirName()).toString());
-  profile->setFullName(settings.value("Name", "").toString());
-  profile->setSex(quint8(settings.value("Sex", 0).toUInt()));
-}
-
-
-/** [private]
- * 
- */
 void SChatWindow::removeConnection()
 {
   quint16 err = clientSocket->protocolError();
@@ -756,26 +732,4 @@ void SChatWindow::removeConnection()
 void SChatWindow::uniqueNick()
 {
   profile->setNick(profile->nick() + QString().setNum(rand() % 99));
-}
-
-
-/** [private]
- * 
- */
-void SChatWindow::writeSettings()
-{
-  QSettings settings(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  
-  settings.setValue("Size", size());
-  settings.setValue("Pos", pos());
-  settings.setValue("Splitter", splitter->saveState());
-  settings.setValue("HideWelcome", hideWelcome);
-  settings.setValue("FirstRun", false);
-  settings.setValue("Server", server);
-  settings.setValue("ServerPort", serverPort);
-  
-  settings.beginGroup("Profile");
-  settings.setValue("Nick", profile->nick());
-  settings.setValue("Name", profile->fullName());
-  settings.setValue("Sex", profile->sex());  
 }

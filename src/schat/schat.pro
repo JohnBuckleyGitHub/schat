@@ -29,6 +29,7 @@ HEADERS += \
     schatwindow.h \
     server.h \
     serversocket.h \
+    settings.h \
     settingsdialog.h \
     tab.h \
     version.h \
@@ -46,6 +47,7 @@ SOURCES += \
     schatwindow.cpp \
     server.cpp \
     serversocket.cpp \
+    settings.cpp \
     settingsdialog.cpp \
     tab.cpp \
     welcomedialog.cpp
