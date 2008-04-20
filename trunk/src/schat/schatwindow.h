@@ -8,6 +8,7 @@
 
 #include <QMainWindow>
 #include <QPointer>
+#include <QSplitter>
 #include <QStandardItemModel>
 #include <QSystemTrayIcon>
 #include <QTcpSocket>
@@ -27,11 +28,11 @@ class QLabel;
 class QLineEdit;
 class QListView;
 class QMenu;
-class QSplitter;
 class QStatusBar;
 class QTabWidget;
 class QToolButton;
 class QVBoxLayout;
+class Settings;
 class Tab;
 class WelcomeDialog;
 
@@ -48,6 +49,8 @@ public:
   };
   
   SChatWindow(QWidget *parent = 0);
+  inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
+  inline QByteArray saveSplitter()              { return splitter->saveState(); }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -84,14 +87,10 @@ private:
   void createCornerWidgets();
   void createToolButtons();
   void createTrayIcon();
-  void readSettings();
   void removeConnection();
   void settingsPage(int page = 0);
   void uniqueNick();
-  void writeSettings();
   
-  bool firstRun;
-  bool hideWelcome;
   ConnectionState state;
   MainChannel *mainChannel;
   Profile *profile;
@@ -117,15 +116,14 @@ private:
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
-  QString server;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
   QToolButton *sendButton;
-  quint16 serverPort;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
+  Settings *settings;
   WelcomeDialog *welcomeDialog;
 };
 
