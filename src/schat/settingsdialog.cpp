@@ -5,14 +5,15 @@
 
 #include <QtGui>
 
-#include "settingsdialog.h"
 #include "schatwindow.h"
+#include "settings.h"
+#include "settingsdialog.h"
 
 
 /** [SettingsDialog/public]
  * Конструктор SettingsDialog
  */
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -21,6 +22,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   resize(500, 256);
   
   chat           = static_cast<SChatWindow *>(parent);
+  profile        = p;
+  settings       = s;
   okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
   cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
   resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
@@ -29,7 +32,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
   profilePage       = new ProfileSettings(this);
   networkPage       = new NetworkSettings(this);
-  interfaceSettings = new InterfaceSettings(this);
+  interfaceSettings = new InterfaceSettings(settings, this);
   
   resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   pagesWidget->addWidget(profilePage);
@@ -201,15 +204,23 @@ void NetworkSettings::save()
 /** [InterfaceSettings/public]
  * Конструктор `InterfaceSettings`
  */
-InterfaceSettings::InterfaceSettings(QWidget *parent)
+InterfaceSettings::InterfaceSettings(Settings *s, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
+  settings = s;
   
-  QLabel *label = new QLabel(tr("Cтраница `InterfaceSettings` пока не реализована."));
+  styleComboBox = new QComboBox(this);
+  styleComboBox->addItems(QStyleFactory::keys());  
+  styleComboBox->setCurrentIndex(styleComboBox->findText(settings->style));
+  
+  QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
+  QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
+  styleGroupLayout->addWidget(styleComboBox);
+  styleGroupLayout->addStretch();
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(label);
+  mainLayout->addWidget(styleGroupBox);
   mainLayout->addStretch();
 }
 
@@ -219,7 +230,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
  */
 void InterfaceSettings::reset()
 {
-  QMessageBox::information(this, "d", "void InterfaceSettings::reset()");
+  styleComboBox->setCurrentIndex(styleComboBox->findText("Plastique"));
 }
 
 
@@ -228,4 +239,8 @@ void InterfaceSettings::reset()
  */
 void InterfaceSettings::save()
 {
+  if (styleComboBox->currentIndex() != -1) {
+    settings->style = styleComboBox->currentText();
+    qApp->setStyle(settings->style);
+  }
 }

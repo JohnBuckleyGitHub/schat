@@ -3,7 +3,7 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-#include <QtCore>
+#include <QtGui>
 
 #include "settings.h"
 #include "schatwindow.h"
@@ -39,6 +39,8 @@ void Settings::read()
   firstRun    = s.value("FirstRun", true).toBool();            // Первый запуск
   server      = s.value("Server", "192.168.5.130").toString(); // Адрес сервера
   serverPort  = quint16(s.value("ServerPort", 7666).toUInt()); // Порт сервера
+  style       = s.value("Style", "Plastique").toString();      // Внешний вид
+  qApp->setStyle(style);
   
   s.beginGroup("Profile");
   profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
@@ -61,6 +63,7 @@ void Settings::write()
   s.setValue("FirstRun", false);
   s.setValue("Server", server);
   s.setValue("ServerPort", serverPort);
+  s.setValue("Style", style);
   
   s.beginGroup("Profile");
   s.setValue("Nick", profile->nick());
