@@ -116,6 +116,22 @@ SChatWindow::SChatWindow(QWidget *parent)
 }
 
 
+/** [public]
+ * 
+ */
+void SChatWindow::reconnect()
+{
+  mainChannel->setServer(settings->server);
+  if (state == Connected) {
+    mainChannel->msgDisconnect();
+    mainChannel->append(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
+    state = WaitingForConnected;
+    clientSocket->quit();
+  }
+  
+}
+
+
 /** [protected]
  * 
  */

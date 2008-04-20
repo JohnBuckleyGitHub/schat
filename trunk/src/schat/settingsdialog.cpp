@@ -31,7 +31,7 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   pagesWidget    = new QStackedWidget;
 
   profilePage       = new ProfileSettings(this);
-  networkPage       = new NetworkSettings(this);
+  networkPage       = new NetworkSettings(chat, settings, this);
   interfaceSettings = new InterfaceSettings(settings, this);
   
   resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
@@ -169,15 +169,40 @@ void ProfileSettings::save()
 /** [NetworkSettings/public]
  * Конструктор `NetSettingsPage`
  */
-NetworkSettings::NetworkSettings(QWidget *parent)
+NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
-  QLabel *label = new QLabel(tr("Cтраница `NetworkSettings` пока не реализована."));
+  chat              = w;
+  settings          = s;
+  QLabel *addrLabel = new QLabel(tr("Адрес:"), this);
+  QLabel *portLabel = new QLabel(tr("Порт:"), this);
+  serverEdit        = new QLineEdit(settings->server, this);
+  port              = new QSpinBox(this);
+  welcomeCheckBox   = new QCheckBox(tr("Всегда использовать этот сервер"), this);
+  
+  serverEdit->setToolTip(tr("Адрес сервера"));
+  port->setRange(1, 65536);
+  port->setValue(settings->serverPort);
+  port->setToolTip(tr("Порт сервера, по умолчанию <b>7666</b>"));
+  welcomeCheckBox->setChecked(settings->hideWelcome);
+  welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
+  
+  QHBoxLayout *serverLayout = new QHBoxLayout;
+  serverLayout->addWidget(addrLabel);
+  serverLayout->addWidget(serverEdit);
+  serverLayout->addWidget(portLabel);
+  serverLayout->addWidget(port);
+  serverLayout->addStretch();
+  
+  QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
+  QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
+  serverGroupLayout->addLayout(serverLayout);
+  serverGroupLayout->addWidget(welcomeCheckBox);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(label);
+  mainLayout->addWidget(serverGroupBox);
   mainLayout->addStretch();
 }
 
@@ -187,7 +212,9 @@ NetworkSettings::NetworkSettings(QWidget *parent)
  */
 void NetworkSettings::reset()
 {
-  QMessageBox::information(this, "d", "void NetworkSettings::reset()");
+  serverEdit->setText("192.168.5.130");
+  port->setValue(7666);
+  welcomeCheckBox->setChecked(true);
 }
 
 
@@ -196,6 +223,12 @@ void NetworkSettings::reset()
  */
 void NetworkSettings::save()
 {
+  if ((settings->server != serverEdit->text()) || (settings->serverPort != quint16(port->value()))) {
+    settings->server = serverEdit->text();
+    settings->serverPort = quint16(port->value());
+    chat->reconnect();
+  }
+  welcomeCheckBox->isChecked() ? settings->hideWelcome = true : settings->hideWelcome = false;
 }
 
 

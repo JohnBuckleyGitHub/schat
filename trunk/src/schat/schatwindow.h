@@ -51,6 +51,7 @@ public:
   SChatWindow(QWidget *parent = 0);
   inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
   inline QByteArray saveSplitter()              { return splitter->saveState(); }
+  void reconnect();
   
 protected:
   void closeEvent(QCloseEvent *event);
