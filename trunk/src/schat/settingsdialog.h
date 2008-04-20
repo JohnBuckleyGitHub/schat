@@ -10,12 +10,15 @@
 
 class InterfaceSettings;
 class NetworkSettings;
+class Profile;
 class ProfileSettings;
+class QComboBox;
 class QListWidget;
 class QListWidgetItem;
 class QPushButton;
 class QStackedWidget;
 class SChatWindow;
+class Settings;
 
 
 /**
@@ -32,7 +35,7 @@ public:
     InterfacePage
   };
   
-  SettingsDialog(QWidget *parent = 0);
+  SettingsDialog(Profile *p, Settings *s, QWidget *parent = 0);
   void setPage(int page = 0);
 
 public slots:
@@ -41,6 +44,8 @@ public slots:
   void reset();
   
 private:
+  Profile *profile;
+  Settings *settings;
   InterfaceSettings *interfaceSettings;
   NetworkSettings *networkPage;
   ProfileSettings *profilePage;
@@ -89,9 +94,13 @@ class InterfaceSettings : public QWidget
   Q_OBJECT
   
 public:
-  InterfaceSettings(QWidget *parent = 0);
+  InterfaceSettings(Settings *s, QWidget *parent = 0);
   void reset();
   void save();
+  
+private:
+  Settings *settings;
+  QComboBox *styleComboBox;
 };
 
 #endif /*SETTINGSDIALOG_H_*/

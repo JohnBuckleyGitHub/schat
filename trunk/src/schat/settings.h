@@ -22,6 +22,7 @@ public:
   bool firstRun;
   bool hideWelcome;
   QString server;
+  QString style;
   quint16 serverPort;
   
 private:
