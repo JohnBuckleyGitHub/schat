@@ -12,10 +12,13 @@ class InterfaceSettings;
 class NetworkSettings;
 class Profile;
 class ProfileSettings;
+class QCheckBox;
 class QComboBox;
+class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
 class QPushButton;
+class QSpinBox;
 class QStackedWidget;
 class SChatWindow;
 class Settings;
@@ -80,9 +83,16 @@ class NetworkSettings : public QWidget
   Q_OBJECT
   
 public:
-  NetworkSettings(QWidget *parent = 0);
+  NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent = 0);
   void reset();
   void save();
+  
+private:
+  QCheckBox *welcomeCheckBox;
+  QLineEdit *serverEdit;
+  QSpinBox *port;
+  SChatWindow *chat;
+  Settings *settings;
 };
 
 
@@ -99,8 +109,8 @@ public:
   void save();
   
 private:
-  Settings *settings;
   QComboBox *styleComboBox;
+  Settings *settings;
 };
 
 #endif /*SETTINGSDIALOG_H_*/

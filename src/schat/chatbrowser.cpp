@@ -21,7 +21,8 @@ ChatBrowser::ChatBrowser(QWidget *parent)
       "div.nb i { font-size:medium; }"
       ".gr { color:#909090; }"
       ".green { color:#6bb521; }"
-      ".err { color:#da251d; }");
+      ".err { color:#da251d; }"
+      ".info { color:#003399; }");
 }
 
 
