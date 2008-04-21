@@ -7,6 +7,7 @@
 #define SETTINGSDIALOG_H_
 
 #include <QDialog>
+#include <QPushButton>
 
 class InterfaceSettings;
 class NetworkSettings;
@@ -17,11 +18,11 @@ class QComboBox;
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
-class QPushButton;
 class QSpinBox;
 class QStackedWidget;
 class SChatWindow;
 class Settings;
+class ProfileWidget;
 
 
 /**
@@ -45,6 +46,9 @@ public slots:
   void accept();
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
   void reset();
+
+private slots:
+  inline void validNick(bool b) { okButton->setEnabled(b); }
   
 private:
   Profile *profile;
@@ -69,9 +73,16 @@ class ProfileSettings : public QWidget
   Q_OBJECT
   
 public:
-  ProfileSettings(QWidget *parent = 0);
+  ProfileSettings(SChatWindow *w, Profile *p, QWidget *parent = 0);
   void reset();
   void save();
+  
+signals:
+  void validNick(bool b);
+  
+private:
+  ProfileWidget *profileWidget;
+  SChatWindow *chat;
 };
 
 

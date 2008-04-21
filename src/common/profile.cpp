@@ -64,18 +64,6 @@ bool Profile::fromList(const QStringList &list)
 /** [public]
  * 
  */
-bool Profile::isValidNick() const
-{
-  if (Nick.isEmpty() || Nick == "#DUBLICATE" || Nick == "#main")
-    return false;
-  else
-    return true;
-}
-
-
-/** [public]
- * 
- */
 bool Profile::isValidUserAgent() const
 {
   if (UserAgent.isEmpty())
@@ -112,6 +100,22 @@ QString Profile::toolTip()
 QStringList Profile::toList() const
 {
   return QStringList() << Nick << FullName << UserAgent << Host;
+}
+
+
+/** [public]
+ * 
+ */
+bool Profile::isValidNick(const QString &n)
+{
+  QString nick = n.simplified();
+  
+  if (nick.isEmpty())
+    return false;
+  if (nick.startsWith('#'))
+    return false;
+  
+  return true;
 }
 
 

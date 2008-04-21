@@ -25,6 +25,7 @@ HEADERS += \
     directchannelserver.h \
     mainchannel.h \
     profile.h \
+    profilewidget.h \
     protocol.h \
     schatwindow.h \
     server.h \
@@ -44,6 +45,7 @@ SOURCES += \
     main.cpp \
     mainchannel.cpp \
     profile.cpp \
+    profilewidget.cpp \
     schatwindow.cpp \
     server.cpp \
     serversocket.cpp \

@@ -19,8 +19,8 @@ public:
   Profile(quint8 sex, const QStringList &list, QObject *parent = 0);
   
   bool fromList(const QStringList &list);
-  bool isValidNick() const;
   bool isValidUserAgent() const;
+  inline bool isValidNick() const                  { return isValidNick(Nick); }
   inline QString fullName() const                  { return FullName; } 
   inline QString host()                            { return Host; }
   inline QString nick() const                      { return Nick; } 
@@ -33,6 +33,7 @@ public:
   inline void setUserAgent(const QString &agent)   { UserAgent = agent.simplified(); }
   QString toolTip();
   QStringList toList() const;
+  static bool isValidNick(const QString &n);
   static QString sexIconString(quint8 sex);
   void toStream(QDataStream &stream) const;
   
