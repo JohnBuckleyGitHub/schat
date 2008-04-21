@@ -92,10 +92,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
   
   if (!settings->hideWelcome || settings->firstRun) {
-    welcomeDialog = new WelcomeDialog(profile, this);
-    welcomeDialog->setServer(settings->server);
-    if (!settings->firstRun)
-      welcomeDialog->setHideWelcome(settings->hideWelcome);
+    welcomeDialog = new WelcomeDialog(settings, profile, this);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!welcomeDialog->exec())
       mainChannel->displayChoiceServer(true);
@@ -548,9 +545,7 @@ void SChatWindow::settingsPage(int page)
  * 
  */
 void SChatWindow::welcomeOk()
-{ // TODO добавить прямую запись настроек
-  settings->hideWelcome = welcomeDialog->hideWelcome();
-  settings->server = welcomeDialog->server();
+{
   mainChannel->setServer(settings->server);
   welcomeDialog->deleteLater();
   
