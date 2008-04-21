@@ -7,29 +7,37 @@
 #define WELCOMEDIALOG_H_
 
 #include <QDialog>
+#include <QPushButton>
 
-#include "profile.h"
-#include "ui_welcomedialog.h"
-
+class Profile;
+class ProfileWidget;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
 class SChatWindow;
+class Settings;
 
-class WelcomeDialog : public QDialog, public Ui::WelcomeDialog
+class WelcomeDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  WelcomeDialog(Profile *p, QWidget *parent = 0);
-  inline bool hideWelcome()               { return askCheckBox->isChecked(); }
-  inline QString server()                 { return serverEdit->text(); }
-  inline void setHideWelcome(bool w)      { askCheckBox->setChecked(w); }
-  inline void setServer(const QString &s) { serverEdit->setText(s); }
+  WelcomeDialog(Settings *s, Profile *p, QWidget *parent = 0);
   void accept();
 
 private slots:
-  void changeIcon(bool s);
+  inline void validNick(bool b) { okButton->setEnabled(b); }
+  void changeIcon(bool s);  
   
 private:
   Profile *profile;
+  ProfileWidget *profileWidget;
+  QCheckBox *askCheckBox;
+  QLabel *serverLabel;
+  QLineEdit *serverEdit;
+  QPushButton *moreButton;
+  QPushButton *okButton;
+  Settings *settings;
 };
 
 #endif /*WELCOMEDIALOG_H_*/

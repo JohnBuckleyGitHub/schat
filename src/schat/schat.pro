@@ -68,5 +68,4 @@ CONFIG(release, debug|release) {
     DESTDIR = ../../out/release
 }
 
-FORMS = welcomedialog.ui
 win32:RC_FILE = schat.rc
