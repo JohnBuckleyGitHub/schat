@@ -5,6 +5,7 @@
 
 #include <QtGui>
 
+#include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"
 #include "settingsdialog.h"
@@ -30,7 +31,7 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   contentsWidget = new QListWidget(this);
   pagesWidget    = new QStackedWidget;
 
-  profilePage       = new ProfileSettings(this);
+  profilePage       = new ProfileSettings(chat, profile, this);
   networkPage       = new NetworkSettings(chat, settings, this);
   interfaceSettings = new InterfaceSettings(settings, this);
   
@@ -51,6 +52,7 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+  connect(profilePage, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
   
   contentsWidget->setCurrentRow(ProfilePage);
   
@@ -134,15 +136,21 @@ void SettingsDialog::reset()
 /** [ProfileSettings/public]
  * Конструктор `ProfileSettings`
  */
-ProfileSettings::ProfileSettings(QWidget *parent)
+ProfileSettings::ProfileSettings(SChatWindow *w, Profile *p, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
-  QLabel *label = new QLabel(tr("Cтраница `ProfileSettings` пока не реализована."));
+  chat          = w;
+  profileWidget = new ProfileWidget(p, this);
+  connect(profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
+  
+  QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
+  QVBoxLayout *profileGroupLayout = new QVBoxLayout(profileGroupBox);
+  profileGroupLayout->addWidget(profileWidget);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(label);
+  mainLayout->addWidget(profileGroupBox);
   mainLayout->addStretch();
 }
 
@@ -152,7 +160,7 @@ ProfileSettings::ProfileSettings(QWidget *parent)
  */
 void ProfileSettings::reset()
 {
-  QMessageBox::information(this, "d", "void ProfileSettings::reset()");
+  profileWidget->reset();
 }
 
 
@@ -161,6 +169,10 @@ void ProfileSettings::reset()
  */
 void ProfileSettings::save()
 {
+  profileWidget->save();
+  
+  if (profileWidget->isModifiled())
+    chat->reconnect();
 }
 
 
