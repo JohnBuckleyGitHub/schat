@@ -74,7 +74,7 @@ private slots:
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
   void about();
   void addTab();
-  void addTab(const QModelIndex &index);
+  void addTab(const QModelIndex &i);
   void closeChat();
   void closeTab();
   void connectionError(QAbstractSocket::SocketError socketError);
