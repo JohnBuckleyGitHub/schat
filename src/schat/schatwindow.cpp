@@ -44,6 +44,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   statusLabel   = new QLabel(this);
   profile       = new Profile(this);
   settings      = new Settings(profile, this);
+  noticeTimer   = new QTimer(this);
+  noticeTimer->setInterval(1000);
  
   state = Disconnected;
   
@@ -86,6 +88,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   
   mainChannel = new MainChannel(settings->server, this);
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
@@ -292,6 +295,7 @@ void SChatWindow::readyForUse()
   mainChannel->msgReadyForUse(clientSocket->peerAddress().toString());
   statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
   mainChannel->displayChoiceServer(false);
+//  noticeTimer->start();
 }
 
 
@@ -479,6 +483,22 @@ void SChatWindow::newConnection()
   
   clientSocket->setProfile(profile);
   clientSocket->connectToHost(settings->server, settings->serverPort);
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::notice()
+{
+  if (currentTrayIcon) {
+    trayIcon->setIcon(QIcon(":/images/notice.png"));
+    currentTrayIcon = false;
+  }
+  else {
+    trayIcon->setIcon(QIcon(":/images/logo16.png"));
+    currentTrayIcon = true;
+  }
 }
 
 
@@ -694,6 +714,7 @@ void SChatWindow::createTrayIcon()
   trayIcon->setToolTip(tr("Simple Chat %1").arg(SCHAT_VERSION));
   trayIcon->setContextMenu(trayIconMenu);
   trayIcon->show();
+  currentTrayIcon = true;
 }
 
 

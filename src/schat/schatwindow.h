@@ -35,6 +35,7 @@ class QVBoxLayout;
 class Settings;
 class Tab;
 class WelcomeDialog;
+class QTimer;
 
 class SChatWindow : public QMainWindow
 {
@@ -66,9 +67,9 @@ public slots:
   void serverChanged();
   
 private slots:
+  inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
   inline void settingsNetwork()   { settingsPage(SettingsDialog::NetworkPage); }
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
-  inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
   void about();
   void addTab();
   void addTab(const QModelIndex &index);
@@ -78,6 +79,7 @@ private slots:
   void disconnected();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void newConnection();
+  void notice();
   void returnPressed();
   void welcomeOk();
 
@@ -92,6 +94,7 @@ private:
   void settingsPage(int page = 0);
   void uniqueNick();
   
+  bool currentTrayIcon;
   ConnectionState state;
   MainChannel *mainChannel;
   Profile *profile;
@@ -119,6 +122,7 @@ private:
   QStatusBar *statusbar;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
+  QTimer *noticeTimer;
   QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
