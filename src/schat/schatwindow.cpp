@@ -45,7 +45,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   profile       = new Profile(this);
   settings      = new Settings(profile, this);
   noticeTimer   = new QTimer(this);
-  noticeTimer->setInterval(1000);
+  noticeTimer->setInterval(800);
  
   state = Disconnected;
   
@@ -89,10 +89,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
+  connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   
   mainChannel = new MainChannel(settings->server, this);
+  mainChannel->icon.addFile(":/images/main.png");
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
-  tabWidget->setTabIcon(0, QIcon(":/images/main.png"));
+  tabWidget->setTabIcon(0, mainChannel->icon);
   
   if (!settings->hideWelcome || settings->firstRun) {
     welcomeDialog = new WelcomeDialog(settings, profile, this);
@@ -151,6 +153,18 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 }
 
 
+/** [protected]
+ * 
+ */
+bool SChatWindow::event(QEvent *event)
+{
+  if (event->type() == QEvent::WindowActivate)
+    resetTabNotice(tabWidget->currentIndex());
+
+  return QMainWindow::event(event);
+}
+
+
 /** [public slots]
  * 
  */
@@ -192,6 +206,16 @@ void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
     tabWidget->setTabIcon(index, QIcon(Profile::sexIconString(sex)));
     p->deleteLater();
   }  
+}
+
+
+/** [public slots]
+ * 
+ */
+void SChatWindow::newMessage(const QString &/*nick*/, const QString &/*message*/)
+{
+  if ((tabWidget->currentIndex() != 0) || (!isActiveWindow()))
+    startNotice(0);
 }
 
 
@@ -479,6 +503,7 @@ void SChatWindow::newConnection()
     connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
     connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
@@ -502,6 +527,35 @@ void SChatWindow::notice()
   else {
     trayIcon->setIcon(QIcon(":/images/logo16.png"));
     currentTrayIcon = true;
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::resetTabNotice(int index)
+{
+  if (index == -1)
+    return;
+    
+  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+  if (tab->notice) {
+    tabWidget->setTabIcon(index, tab->icon);
+    tab->notice = false;
+  }
+  
+  int count = tabWidget->count();
+  for (int i = 0; i < count; ++i) {
+    AbstractTab *t = static_cast<AbstractTab *>(tabWidget->widget(i));
+    if (t->notice)
+      return;
+  }
+  
+  if (noticeTimer->isActive()) {
+    noticeTimer->stop();
+    currentTrayIcon = true;
+    trayIcon->setIcon(QIcon(":/images/logo16.png"));
   }
 }
 
@@ -753,6 +807,25 @@ void SChatWindow::removeConnection()
       QTimer::singleShot(1000, this, SLOT(newConnection()));
     else
       QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+  }
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::startNotice(int index)
+{
+  if (index == -1)
+    return;
+  
+  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+  tab->notice = true;
+  tabWidget->setTabIcon(index, QIcon(":/images/notice.png"));
+  if (!noticeTimer->isActive()) {
+    currentTrayIcon = false;
+    trayIcon->setIcon(QIcon(":/images/notice.png"));
+    noticeTimer->start();
   }
 }
 

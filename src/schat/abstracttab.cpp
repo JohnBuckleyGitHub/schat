@@ -12,6 +12,7 @@ AbstractTab::AbstractTab(QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
+  notice = false;
   browser = new ChatBrowser(this);
   type = Unknown;
 }
