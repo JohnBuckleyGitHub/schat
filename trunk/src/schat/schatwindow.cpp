@@ -123,8 +123,8 @@ void SChatWindow::reconnect()
 {
   mainChannel->setServer(settings->server);
   if (state == Connected) {
-    mainChannel->msgDisconnect();
-    mainChannel->append(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
+    mainChannel->browser->msgDisconnect();
+    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
     state = WaitingForConnected;
     clientSocket->quit();
   }
@@ -220,11 +220,13 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
   // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
   if (echo) {
     int index = tabIndex(info.at(0));
-    if (index != -1) 
-      if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-        tab->msgNewParticipant(sex, info.at(0));
+    if (index != -1) {
+      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      if (tab->type == AbstractTab::Private)
+        tab->browser->msgNewParticipant(sex, info.at(0));
+    }
     
-    mainChannel->msgNewParticipant(sex, info.at(0));
+    mainChannel->browser->msgNewParticipant(sex, info.at(0));
   }
 }
 
@@ -258,7 +260,7 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
     tab = qobject_cast<Tab *>(tabWidget->widget(ti));
   
   if (tab)
-    tab->msgNewMessage(sender, message);
+    tab->browser->msgNewMessage(sender, message);
 }
 
 
@@ -278,11 +280,13 @@ void SChatWindow::participantLeft(const QString &nick)
   }
   
   int index = tabIndex(nick);
-  if (index != -1) 
-    if (Tab *tab = qobject_cast<Tab *>(tabWidget->widget(index)))
-      tab->msgParticipantLeft(sex, nick);
+  if (index != -1) {
+    AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+    if (tab->type == AbstractTab::Private)
+      tab->browser->msgParticipantLeft(sex, nick);
+  }
   
-  mainChannel->msgParticipantLeft(sex, nick);
+  mainChannel->browser->msgParticipantLeft(sex, nick);
 }
 
 
@@ -292,7 +296,7 @@ void SChatWindow::participantLeft(const QString &nick)
 void SChatWindow::readyForUse()
 {
   state = Connected;
-  mainChannel->msgReadyForUse(clientSocket->peerAddress().toString());
+  mainChannel->browser->msgReadyForUse(clientSocket->peerAddress().toString());
   statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
   mainChannel->displayChoiceServer(false);
 //  noticeTimer->start();
@@ -513,31 +517,26 @@ void SChatWindow::returnPressed()
   if (text.isEmpty())
     return;
   
-  QWidget *widget = tabWidget->currentWidget();
+  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->currentWidget());
   
   // Текст, начинающийся с символа '/' считаем командой.
   // т.к. команды пока не поддерживаются, сообщаем о неизвестной команде.
   if (text.startsWith(QChar('/'))) {
-    QString unknownCmd = tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' ')));
-    
-    if (MainChannel *tab = qobject_cast<MainChannel *>(widget))
-      tab->append(unknownCmd);
-    else if (Tab *tab = qobject_cast<Tab *>(widget))
-      tab->append(unknownCmd);
-    else if (DirectChannel *tab = qobject_cast<DirectChannel *>(widget))
-      tab->append(unknownCmd);
+    tab->browser->add(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
   }
-  else {    
-    if (DirectChannel *tab = qobject_cast<DirectChannel *>(widget))
-      tab->sendText(text);
-    else if (DirectChannelServer *tab = qobject_cast<DirectChannelServer *>(widget))
-      tab->sendText(text);    
-    else if (state == Connected)    
-      if (tabWidget->currentIndex() == 0)
-        clientSocket->send(sChatOpcodeSendMessage, "#main", text);
-      else
-        clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
+  else if (tab->type == AbstractTab::Direct) {
+    DirectChannel *ch = static_cast<DirectChannel *>(tab);
+    ch->sendText(text);
   }
+  else if (tab->type == AbstractTab::DirectServer) {
+    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
+    ch->sendText(text);
+  }
+  else if (state == Connected)
+    if (tabWidget->currentIndex() == 0)
+      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
+    else
+      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
   
   lineEdit->clear();  
 }
@@ -729,12 +728,12 @@ void SChatWindow::removeConnection()
   model.clear();
   
   if (state == Connected || state == Stopped)
-    mainChannel->msgDisconnect();
+    mainChannel->browser->msgDisconnect();
   
   // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
   if (err == sChatErrorBadNickName) {
     state = Stopped;
-    mainChannel->append(tr("<div class='nb'>(%1) <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
+    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
         .arg(ChatBrowser::currentTime())
         .arg(profile->nick()));
   }

@@ -8,11 +8,10 @@
 #include "mainchannel.h"
 
 MainChannel::MainChannel(const QString &server, QWidget *parent)
-  : QWidget(parent)
+  : AbstractTab(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  
-  chatBrowser = new ChatBrowser(this);
+  type = Main;
   
   serverLabel = new QLabel(tr("Адрес сервера:"), this);
   serverEdit  = new QLineEdit(server, this);
@@ -32,7 +31,7 @@ MainChannel::MainChannel(const QString &server, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(chatBrowser);
+  mainLayout->addWidget(browser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
@@ -59,6 +58,7 @@ void MainChannel::displayChoiceServer(bool display)
     connectCreateButton->setVisible(false);
     topLayout->setMargin(0);
   }
+  browser->scroll();
 }
 
 

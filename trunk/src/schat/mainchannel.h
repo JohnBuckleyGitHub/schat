@@ -7,10 +7,9 @@
 #define MAINCHANNEL_H_
 
 #include <QLineEdit>
-#include <QTextBrowser>
 #include <QWidget>
 
-#include "chatbrowser.h"
+#include "abstracttab.h"
 
 class QAction;
 class QHBoxLayout;
@@ -18,27 +17,21 @@ class QLabel;
 class QToolButton;
 class QVBoxLayout;
 
-class MainChannel : public QWidget {
+class MainChannel : public AbstractTab {
   Q_OBJECT
 
 public:
   MainChannel(const QString &server, QWidget *parent = 0);
-  inline QString server()                                                { return serverEdit->text(); }
-  inline void append(const QString &message)                             { chatBrowser->add(message); }
-  inline void msgDisconnect()                                            { chatBrowser->msgDisconnect(); }
-  inline void msgReadyForUse(const QString &s)                           { chatBrowser->msgReadyForUse(s); }
+  inline QString server()                                                { return serverEdit->text(); } // TODO Использовать профиль
   inline void setServer(const QString &server)                           { serverEdit->setText(server); }
   void displayChoiceServer(bool display);
   
 public slots:
-  inline void msgNewMessage(const QString &nick, const QString &message) { chatBrowser->msgNewMessage(nick, message); }
-  inline void msgNewParticipant(quint8 sex, const QString &nick)         { chatBrowser->msgNewParticipant(sex, nick); }
-  inline void msgParticipantLeft(quint8 sex, const QString &nick)        { chatBrowser->msgParticipantLeft(sex, nick); }
+  inline void msgNewMessage(const QString &nick, const QString &message) { browser->msgNewMessage(nick, message); }
   
 private:
   void createActions();
   
-  ChatBrowser *chatBrowser;
   QAction *connectCreateAction;
   QHBoxLayout *topLayout;
   QLabel *serverLabel;

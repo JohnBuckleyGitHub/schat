@@ -84,6 +84,16 @@ void ChatBrowser::msgReadyForUse(const QString &s)
 }
 
 
+/** [public]
+ * Принудительно скролит текст
+ */
+void ChatBrowser::scroll()
+{
+  QScrollBar *bar = verticalScrollBar();
+  bar->setValue(bar->maximum());
+}
+
+
 /** [protected]
  * 
  */
@@ -107,14 +117,4 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
       .arg(Qt::escape(message)));
   
   scroll();
-}
-
-
-/** [private]
- * Принудительно скролит текст
- */
-void ChatBrowser::scroll()
-{
-  QScrollBar *bar = verticalScrollBar();
-  bar->setValue(bar->maximum());
 }

@@ -20,16 +20,13 @@ public:
   void msgNewParticipant(quint8 sex, const QString &nick);
   void msgParticipantLeft(quint8 sex, const QString &nick);
   void msgReadyForUse(const QString &s);
+  void scroll();
   
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
   
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
-  
-private:
-  void scroll();
-  
 };
 
 #endif /*CHATBROWSER_H_*/

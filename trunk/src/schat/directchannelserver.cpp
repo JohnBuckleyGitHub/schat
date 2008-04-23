@@ -9,16 +9,16 @@
 #include "directchannelserver.h"
 
 DirectChannelServer::DirectChannelServer(Profile *p, ServerSocket *s, QWidget *parent)
-  : QWidget(parent)
+  : AbstractTab(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
+  type = DirectServer;
   
-  chatBrowser = new ChatBrowser(this);
   socket = s;
   profile = p;
   
   mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(chatBrowser);
+  mainLayout->addWidget(browser);
   mainLayout->setMargin(0);
   setLayout(mainLayout);
   
@@ -59,7 +59,7 @@ void DirectChannelServer::sendText(const QString &text)
   #endif
   
   if (socket) {
-    chatBrowser->msgNewMessage(profile->nick(), text);
+    browser->msgNewMessage(profile->nick(), text);
     socket->send(sChatOpcodeSendPrivateMessage, profile->nick(), text);
   }
 }
@@ -71,7 +71,7 @@ void DirectChannelServer::sendText(const QString &text)
 void DirectChannelServer::removeConnection()
 {
   if (state == Connected) {
-    chatBrowser->msgDisconnect();
+    browser->msgDisconnect();
     if (socket)
       socket->deleteLater();
   }
@@ -87,11 +87,11 @@ void DirectChannelServer::initSocket()
 {
   if (socket) {
     state = Connected;
-    chatBrowser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b>, адрес <b>%3</b></i></div>")
+    browser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b>, адрес <b>%3</b></i></div>")
         .arg(ChatBrowser::currentTime())
         .arg(socket->nick())
         .arg(socket->peerAddress().toString()));
-    connect(socket, SIGNAL(newMessage(const QString &, const QString &)), chatBrowser, SLOT(msgNewMessage(const QString &, const QString &)));
+    connect(socket, SIGNAL(newMessage(const QString &, const QString &)), browser, SLOT(msgNewMessage(const QString &, const QString &)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(removeConnection()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(removeConnection()));
   }

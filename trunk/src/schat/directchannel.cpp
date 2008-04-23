@@ -11,15 +11,15 @@
 #include "schatwindow.h"
 
 DirectChannel::DirectChannel(Profile *p, QWidget *parent)
-  : QWidget(parent)
+  : AbstractTab(parent)
 {
   #ifdef SCHAT_DEBUG
   qDebug() << "DirectChannel::DirectChannel(Profile *p, QWidget *parent)";
   #endif
   
   setAttribute(Qt::WA_DeleteOnClose);
+  type = Direct;
   
-  chatBrowser = new ChatBrowser(this);  
   chat        = qobject_cast<SChatWindow *>(parent);
   profile     = p;  
   adrLabel    = new QLabel(tr("Адрес:"), this);
@@ -37,7 +37,7 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   mainLayout = new QVBoxLayout;
   mainLayout->addLayout(topLayout);
-  mainLayout->addWidget(chatBrowser);
+  mainLayout->addWidget(browser);
   mainLayout->setMargin(0);
   mainLayout->setSpacing(2);
   setLayout(mainLayout);
@@ -67,6 +67,7 @@ void DirectChannel::displayChoiceServer(bool display)
     connectCreateButton->setVisible(false);
     topLayout->setMargin(0);
   }
+  browser->scroll();
 }
 
 
@@ -98,7 +99,7 @@ void DirectChannel::newParticipant(quint16 /*sex*/, const QStringList &info, boo
  */
 void DirectChannel::newPrivateMessage(const QString  &/*nick*/, const QString &message, const QString &sender)
 {
-  chatBrowser->msgNewMessage(sender, message);
+  browser->msgNewMessage(sender, message);
 }
 
 
@@ -109,7 +110,7 @@ void DirectChannel::readyForUse()
 {
   displayChoiceServer(false);
   state = Connected;
-  chatBrowser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b></i></div>")
+  browser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b></i></div>")
           .arg(ChatBrowser::currentTime())
           .arg(clientSocket->peerAddress().toString()));
 }
@@ -152,11 +153,11 @@ void DirectChannel::removeConnection()
   #endif
   
   if (state == Connected || state == Stopped) {
-    chatBrowser->msgDisconnect();
+    browser->msgDisconnect();
     displayChoiceServer(true);
   }
   else if (state == WaitingForConnected)
-    chatBrowser->add(tr("<div class='np'>(%1) <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
+    browser->add(tr("<div class='np'>(%1) <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
   
   clientSocket->deleteLater();  
   state = Disconnected;
