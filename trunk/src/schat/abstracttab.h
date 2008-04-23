@@ -6,6 +6,7 @@
 #ifndef ABSTRACTTAB_H_
 #define ABSTRACTTAB_H_
 
+#include <QIcon>
 #include <QWidget>
 
 #include "chatbrowser.h"
@@ -26,7 +27,9 @@ public:
   
   AbstractTab(QWidget *parent = 0);
   
+  bool notice;
   ChatBrowser *browser;
+  QIcon icon;
   Type type;
 };
 

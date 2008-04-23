@@ -56,10 +56,12 @@ public:
   
 protected:
   void closeEvent(QCloseEvent *event);
+  bool event(QEvent *event);
   
 public slots:
   void incomingDirectConnection(const QString &n, ServerSocket *socket);
   void newDirectParticipant(quint16 sex, const QStringList &info);
+  void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void participantLeft(const QString &nick);
@@ -80,6 +82,7 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void newConnection();
   void notice();
+  void resetTabNotice(int index);
   void returnPressed();
   void welcomeOk();
 
@@ -92,6 +95,7 @@ private:
   void createTrayIcon();
   void removeConnection();
   void settingsPage(int page = 0);
+  void startNotice(int index);
   void uniqueNick();
   
   bool currentTrayIcon;
