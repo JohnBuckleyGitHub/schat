@@ -8,14 +8,12 @@
 #include "tab.h"
 
 Tab::Tab(QWidget *parent)
-  : QWidget(parent)
+  : AbstractTab(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
+  type = Private;
   
-  chatBrowser = new ChatBrowser(this);
-  
-  mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(chatBrowser);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(browser);
   mainLayout->setMargin(0);
-  setLayout(mainLayout);
 }

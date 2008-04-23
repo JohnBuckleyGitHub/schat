@@ -19,6 +19,7 @@ RESOURCES += ../../data/schat.qrc
 
 HEADERS += \
     aboutdialog.h \
+    abstracttab.h \
     chatbrowser.h \
     clientsocket.h \
     directchannel.h \
@@ -38,6 +39,7 @@ HEADERS += \
 
 SOURCES += \
     aboutdialog.cpp \
+    abstracttab.cpp \
     chatbrowser.cpp \
     clientsocket.cpp \
     directchannel.cpp \

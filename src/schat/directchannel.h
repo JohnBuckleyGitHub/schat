@@ -8,11 +8,10 @@
 
 #include <QLineEdit>
 #include <QPointer>
-#include <QTextBrowser>
 #include <QTime>
 #include <QWidget>
 
-#include "chatbrowser.h"
+#include "abstracttab.h"
 #include "clientsocket.h"
 #include "profile.h"
 
@@ -23,7 +22,7 @@ class QToolButton;
 class QVBoxLayout;
 class SChatWindow;
 
-class DirectChannel : public QWidget {
+class DirectChannel : public AbstractTab {
   Q_OBJECT
 
 public:
@@ -35,7 +34,6 @@ public:
   };
   
   DirectChannel(Profile *p, QWidget *parent = 0);
-  inline void append(const QString &message) { chatBrowser->add(message); }
   void displayChoiceServer(bool display);
   void sendText(const QString &text);
   
@@ -54,7 +52,6 @@ private slots:
 private:
   void createActions();
   
-  ChatBrowser *chatBrowser;
   ConnectionState state;
   Profile *profile;
   QAction *connectCreateAction;
