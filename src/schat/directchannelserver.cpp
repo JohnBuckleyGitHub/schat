@@ -23,6 +23,8 @@ DirectChannelServer::DirectChannelServer(Profile *p, ServerSocket *s, QWidget *p
   setLayout(mainLayout);
   
   initSocket();
+  
+  connect(this, SIGNAL(newDirectMessage()), parent, SLOT(newDirectMessage()));
 }
 
 
@@ -68,6 +70,16 @@ void DirectChannelServer::sendText(const QString &text)
 /** [private slots]
  * 
  */
+void DirectChannelServer::newMessage(const QString &nick, const QString &message)
+{
+  browser->msgNewMessage(nick, message);
+  emit newDirectMessage();
+}
+
+
+/** [private slots]
+ * 
+ */
 void DirectChannelServer::removeConnection()
 {
   if (state == Connected) {
@@ -91,7 +103,7 @@ void DirectChannelServer::initSocket()
         .arg(ChatBrowser::currentTime())
         .arg(socket->nick())
         .arg(socket->peerAddress().toString()));
-    connect(socket, SIGNAL(newMessage(const QString &, const QString &)), browser, SLOT(msgNewMessage(const QString &, const QString &)));
+    connect(socket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(removeConnection()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(removeConnection()));
   }

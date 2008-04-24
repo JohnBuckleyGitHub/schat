@@ -60,6 +60,7 @@ protected:
   
 public slots:
   void incomingDirectConnection(const QString &n, ServerSocket *socket);
+  void newDirectMessage();
   void newDirectParticipant(quint16 sex, const QStringList &info);
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);

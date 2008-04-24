@@ -28,7 +28,11 @@ public:
   void changeSocket(ServerSocket *s);
   void sendText(const QString &text);
   
+signals:
+  void newDirectMessage();
+  
 private slots:
+  void newMessage(const QString &nick, const QString &message);
   void removeConnection();
   
 private:

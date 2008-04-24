@@ -174,38 +174,56 @@ void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socke
   qDebug() << "SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)" << n;
   #endif
   
-  int tab = tabIndex(QChar('#') + n);
+  int index = tabIndex(QChar('#') + n);
   
-  if (tab == -1) {
+  if (index == -1) {
     Profile *p = new Profile(socket->sex(), socket->participantInfo(), this);
-    tab = tabWidget->addTab(new DirectChannelServer(profile, socket, this), QIcon(Profile::sexIconString(socket->sex())), QChar('#') + n);
-    tabWidget->setTabToolTip(tab, p->toolTip());
+    DirectChannelServer *ch = new DirectChannelServer(profile, socket, this);
+    ch->icon.addFile(Profile::sexIconString(socket->sex()));
+    index = tabWidget->addTab(ch, ch->icon, QChar('#') + n);
+    tabWidget->setTabToolTip(index, p->toolTip());
     p->deleteLater();    
   }
-  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(tab)))
+  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(index)))
     channel->changeSocket(socket);  
     
-  tabWidget->setCurrentIndex(tab);
+  tabWidget->setCurrentIndex(index);
 }
 
 
 /** [public slots]
- * 
+ * Уведомление от классов `DirectChannel` и `DirectChannelServer` о новом сообщении
+ * Слот при необходимости запускает механизм уведомления о новом сообщении.
+ */
+void SChatWindow::newDirectMessage()
+{
+  AbstractTab *channel = static_cast<AbstractTab *>(sender());
+  int index = tabWidget->indexOf(channel);
+  
+  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
+    startNotice(index);
+}
+
+
+/** [public slots]
+ * Слот вызывается из класса `DirectChannel` когда инкапсулированный в него
+ * `ClientSocket` отправляет сигнал `newParticipant()`.
+ * Слот переименовывает вкладку в соответствии с ником ('#' + ник),
+ * устанавливает всплывающую подсказку и устанавливает иконку.
+ * *
+ * quint16 sex             - пол участника.
+ * const QStringList &info - унифицированный список для создания профиля.
  */
 void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)" << sex << info;
-  #endif
-  
-  if (DirectChannel *channel  = qobject_cast<DirectChannel *>(sender())) {
-    Profile *p = new Profile(sex, info, this);
-    int index = tabWidget->indexOf(channel);
-    tabWidget->setTabText(index, QChar('#') + info.at(0));
-    tabWidget->setTabToolTip(index, p->toolTip());
-    tabWidget->setTabIcon(index, QIcon(Profile::sexIconString(sex)));
-    p->deleteLater();
-  }  
+  AbstractTab *channel = static_cast<AbstractTab *>(sender());
+  Profile *p = new Profile(sex, info, this);
+  int index = tabWidget->indexOf(channel);
+  channel->icon.addFile(Profile::sexIconString(sex));
+  tabWidget->setTabText(index, QChar('#') + info.at(0));
+  tabWidget->setTabToolTip(index, p->toolTip());
+  tabWidget->setTabIcon(index, channel->icon);
+  p->deleteLater();  
 }
 
 
