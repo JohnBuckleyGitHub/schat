@@ -44,6 +44,7 @@ DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   
   connect(remoteEdit, SIGNAL(returnPressed()), this, SLOT(newConnection()));
   connect(connectCreateAction, SIGNAL(triggered()), this, SLOT(newConnection()));
+  connect(this, SIGNAL(newDirectMessage()), parent, SLOT(newDirectMessage()));
   connect(this, SIGNAL(newDirectParticipant(quint16, const QStringList &)), parent, SLOT(newDirectParticipant(quint16, const QStringList &)));
   
   displayChoiceServer(true);
@@ -100,6 +101,9 @@ void DirectChannel::newParticipant(quint16 /*sex*/, const QStringList &info, boo
 void DirectChannel::newPrivateMessage(const QString  &/*nick*/, const QString &message, const QString &sender)
 {
   browser->msgNewMessage(sender, message);
+  
+  if (profile->nick() != sender)
+    emit newDirectMessage();
 }
 
 
@@ -121,10 +125,6 @@ void DirectChannel::readyForUse()
  */
 void DirectChannel::newConnection()
 {
-//  #ifdef SCHAT_DEBUG
-//  qDebug() << "DirectChannel::newConnection()" << remoteEdit->text() << chat->getNick() << chat->getFullName() << chat->getSex();
-//  #endif
-
   state = WaitingForConnected;
 
   if (!clientSocket) {

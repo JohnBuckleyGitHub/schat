@@ -38,6 +38,7 @@ public:
   void sendText(const QString &text);
   
 signals:
+  void newDirectMessage();
   void newDirectParticipant(quint16 sex, const QStringList &info);
 
 public slots:
