@@ -61,8 +61,8 @@ WelcomeDialog::WelcomeDialog(Settings *s, Profile *p, QWidget *parent)
   mainLayout->setSpacing(6);
   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
   
-  if (!settings->firstRun)
-    askCheckBox->setChecked(settings->hideWelcome);
+  if (settings->firstRun)
+    askCheckBox->setChecked(true);
   
   connect(moreButton, SIGNAL(toggled(bool)), this, SLOT(changeIcon(bool)));
   connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
