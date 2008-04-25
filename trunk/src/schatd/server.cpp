@@ -52,7 +52,7 @@ void Server::appendParticipant(const QString &p)
     if (!peers.contains(p)) {
       peers.insert(p, socket);
       socket->send(sChatOpcodeGreetingOk);
-      socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
+      socket->send(sChatOpcodeMaxDoublePingTimeout, PingInterval / 1000 * 2);
       socket->setState(sChatStateReadyForUse);
       relayParticipantList(socket);
     }
@@ -128,7 +128,7 @@ void Server::appendDirectParticipant(const QString &p)
     if (!directPeers.contains(p) && localProfile->nick() != p) {
       directPeers.insert(p, socket);
       socket->send(sChatOpcodeGreetingOk);
-      socket->send(sChatOpcodeMaxDoublePingTimeout, ((PingMinInterval + PingMutator) / 1000) * 2);
+      socket->send(sChatOpcodeMaxDoublePingTimeout, PingInterval / 1000 * 2);
       socket->sendLocalProfile();
       socket->setState(sChatStateReadyForUse);
       emit incomingDirectConnection(p, socket);

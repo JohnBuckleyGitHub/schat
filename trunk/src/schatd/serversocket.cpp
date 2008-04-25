@@ -42,7 +42,7 @@ ServerSocket::ServerSocket(QObject *parent)
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
 
   nextBlockSize = 0;
-  srand(time(NULL));
+  pingTimer.setInterval(PingInterval);
 }
 
 
@@ -144,10 +144,6 @@ void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
  */
 void ServerSocket::readyRead()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::readyRead()" << (int) state() ;
-  #endif
-  
   // Состояние `sChatStateWaitingForGreeting`
   // Ожидаем пакет с опкодом `sChatOpcodeGreeting`
   // Если пришёл другой пакет, рвём соединение `abort()`
@@ -213,7 +209,8 @@ void ServerSocket::readyRead()
   // в диапазоне от `PingMinInterval` до `PingMinInterval + PingMutator`
   // т.е. c настройками по умолчанию от 4 до 6 секунд.
   // Сигнал `timeout()` таймера вызывает слот `sendPing()`
-  pingTimer.start(PingMinInterval + rand() % PingMutator);
+  if (!pingTimer.isActive())
+    pingTimer.start();
 }
 
 

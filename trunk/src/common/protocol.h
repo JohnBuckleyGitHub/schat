@@ -42,7 +42,6 @@ static const quint16 sChatErrorInvalidConnection     = 110;
 static const quint16 sChatErrorNoSuchChannel         = 300;
 static const quint16 sChatErrorDirectNotAllow        = 400;
 
-static const int PingMinInterval                     = 4 * 1000;
-static const int PingMutator                         = 2 * 1000;
+static const int PingInterval                        = 6 * 1000;
 
 #endif /*PROTOCOL_H_*/
