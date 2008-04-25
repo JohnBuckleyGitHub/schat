@@ -31,7 +31,7 @@ ClientSocket::ClientSocket(QObject *parent)
   pError = 0;
   failurePongs = 0;
   direct = false;
-  pingTimeout.setInterval((PingMinInterval + PingMutator) * 2);
+  pingTimeout.setInterval(PingInterval * 2);
   
   QTimer::singleShot(InitTimeout, this, SLOT(initTimeout()));
 }
