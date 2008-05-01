@@ -81,11 +81,43 @@ Page custom SettingsPage SettingsPageLeave
  */
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
+  call findRunningChat
 FunctionEnd
 
 
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
+  call un.findRunningChat
+FunctionEnd
+
+
+/**
+ * Выводим `MessageBox` если чат запущен.
+ */
+Function findRunningChat
+    Push $0
+  newcheck:
+    FindWindow $0 "QWidget" "${SCHAT_NAME}" 0
+    IntCmp $0 0 done
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
+    Quit
+  done:
+    Pop $0
+FunctionEnd
+
+
+/**
+ * Функция аналогичная `findRunningChat`.
+ */
+Function un.findRunningChat
+    Push $0
+  newcheck:
+    FindWindow $0 "QWidget" "${SCHAT_NAME}" 0
+    IntCmp $0 0 done
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
+    Quit
+  done:
+    Pop $0
 FunctionEnd
 
 !insertmacro SETTINGS_PAGE
