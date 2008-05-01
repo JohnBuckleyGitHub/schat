@@ -29,18 +29,19 @@ Function SettingsPage
   
   ${NSD_CreateCheckbox} 10 20 90% 18 "$(STR101)"
   Pop $DesktopCheckBox
+  ${NSD_SetState} $DesktopCheckBox $settings.Desktop
   
   ${NSD_CreateCheckbox} 10 42 90% 18 "$(STR102)"
   Pop $QuickLaunchCheckBox
-  ${NSD_Check} $QuickLaunchCheckBox
+  ${NSD_SetState} $QuickLaunchCheckBox $settings.QuickLaunch
   
   ${NSD_CreateCheckbox} 10 64 90% 18 "$(STR103)"
   Pop $AllProgramsCheckBox
-  ${NSD_Check} $AllProgramsCheckBox
+  ${NSD_SetState} $AllProgramsCheckBox $settings.AllPrograms
   
   ${NSD_CreateCheckbox} 10 94 90% 18 "$(STR104)"
   Pop $AutostartCheckBox
-  ${NSD_Check} $AutoStartCheckBox
+  ${NSD_SetState} $AutoStartCheckBox $settings.AutoStart
   
   nsDialogs::Show
 
@@ -54,6 +55,10 @@ Function SettingsPageLeave
 FunctionEnd
 !macroend
 
+
+/**
+ * Результирующая обработка опций
+ */
 !macro SECTION_OPTIONS
 Section
   ${If} $settings.Desktop == ${BST_CHECKED}
@@ -75,6 +80,27 @@ Section
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat.exe"
   ${EndIf}  
 SectionEnd
+!macroend
+
+
+/**
+ * Управляет состоянием опций в странице `SettingsPage`
+ */
+!define Option "!insertmacro Option"
+!macro Option _KEY _DEF _VAR
+  Push $0
+  ClearErrors
+  ReadIniStr $0 "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}"
+  ${Unless} ${Errors}
+    ${If} $0 == ${BST_CHECKED}
+      StrCpy ${_VAR} $0
+    ${Else}
+      StrCpy ${_VAR} ${BST_UNCHECKED}
+    ${EndIf}
+  ${Else}
+    StrCpy ${_VAR} ${_DEF}
+  ${EndUnless}
+  Pop $0
 !macroend
 
 !endif /* PAGEOPTIONS_NSH_ */

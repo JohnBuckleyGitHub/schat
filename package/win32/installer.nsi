@@ -3,15 +3,18 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-!define SCHAT_NAME      "Simple Chat" 
-!define SCHAT_VERSION   "0.0.1.81"
-!define SCHAT_REGKEY    "Software\IMPOMEZIA\${SCHAT_NAME}"
-!define SCHAT_QTDIR     "C:\qt\4.4.0-beta1"
-!define SCHAT_WEB_SITE  "http://impomezia.net.ru/"
-!define SCHAT_COPYRIGHT "Copyright © 2008 IMPOMEZIA"
+!define SCHAT_NAME       "Simple Chat" 
+!define SCHAT_VERSION    "0.0.1.81"
+!define SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME}"
+!define SCHAT_QTDIR      "C:\qt\4.4.0-beta1"
+!define SCHAT_WEB_SITE   "http://impomezia.net.ru/"
+!define SCHAT_COPYRIGHT  "Copyright © 2008 IMPOMEZIA"
+!define SCHAT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME}"
 
 !include "MUI2.nsh"
+!include "Sections.nsh"
 !include "include\sections.nsh"
+!include "include\schat.nsh"
 !include "include\translations.nsh"
 !include "include\page-options.nsh"
 
@@ -77,11 +80,48 @@ Page custom SettingsPage SettingsPageLeave
 
 
 /**
+ * Завершающие действия
+ */
+Section
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version"     "${SCHAT_VERSION}"
+  
+  !ifdef SECTION_SERVER
+  ${If} ${SectionIsSelected} ${SecServer}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Server" 1
+  ${Else}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Server" 0
+  ${EndIf}
+  !endif
+  
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"     "$settings.Desktop"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch" "$settings.QuickLaunch"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AllPrograms" "$settings.AllPrograms"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoStart"   "$settings.AutoStart"
+  
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME} ${SCHAT_VERSION}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schat.exe"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "IMPOMEZIA"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLInfoAbout"    "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayVersion"  "${SCHAT_VERSION}"
+SectionEnd
+
+
+/**
  * Инициализация
  */
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
   call findRunningChat
+  
+  ${Option} "Desktop"     0 $settings.Desktop
+  ${Option} "QuickLaunch" 1 $settings.QuickLaunch
+  ${Option} "AllPrograms" 1 $settings.AllPrograms
+  ${Option} "AutoStart"   1 $settings.AutoStart
+  
+  ${SectionState} "Server" 0 ${SecServer}
 FunctionEnd
 
 
@@ -91,33 +131,6 @@ Function un.onInit
 FunctionEnd
 
 
-/**
- * Выводим `MessageBox` если чат запущен.
- */
-Function findRunningChat
-    Push $0
-  newcheck:
-    FindWindow $0 "QWidget" "${SCHAT_NAME}" 0
-    IntCmp $0 0 done
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
-    Quit
-  done:
-    Pop $0
-FunctionEnd
-
-
-/**
- * Функция аналогичная `findRunningChat`.
- */
-Function un.findRunningChat
-    Push $0
-  newcheck:
-    FindWindow $0 "QWidget" "${SCHAT_NAME}" 0
-    IntCmp $0 0 done
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
-    Quit
-  done:
-    Pop $0
-FunctionEnd
-
+!insertmacro findRunningChat
+!insertmacro un.findRunningChat
 !insertmacro SETTINGS_PAGE

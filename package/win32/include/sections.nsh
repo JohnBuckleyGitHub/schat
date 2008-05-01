@@ -54,8 +54,9 @@ Section "Uninstall"
   Delete "$INSTDIR\QtNetwork4.dll"
 
   RMDir  "$INSTDIR"
-
-  DeleteRegKey /ifempty HKCU "${SCHAT_REGKEY}"
+  
+  DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
+  DeleteRegKey HKCU "${SCHAT_REGKEY}"
   
 SectionEnd
 !macroend
