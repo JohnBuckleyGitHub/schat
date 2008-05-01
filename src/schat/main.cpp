@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
   
   QApplication app(argc, argv);
   app.setStyle(new QPlastiqueStyle);
+  QStringList arguments = app.arguments();
+  arguments.takeFirst();
   
   QTranslator qtTranslator;
   qtTranslator.load("qt_ru", ":/translations");
@@ -26,7 +28,10 @@ int main(int argc, char *argv[])
   }
   
   SChatWindow window;
-  window.show();
+  if (arguments.contains("-hide"))
+    window.hide();
+  else
+    window.show();
   
   return app.exec();
 }

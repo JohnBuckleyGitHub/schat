@@ -77,7 +77,7 @@ Section
   ${EndIf}
   
   ${If} $settings.AutoStart == ${BST_CHECKED}
-    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat.exe"
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat.exe -hide"
   ${EndIf}  
 SectionEnd
 !macroend
