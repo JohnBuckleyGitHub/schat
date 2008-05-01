@@ -1,5 +1,6 @@
-#Mon Apr 28 17:47:38 MSD 2008
+#Thu May 01 00:18:07 MSD 2008
 eclipse.preferences.version=1
+encoding//package/win32/include/page-options.nsh=WINDOWS-1251
 encoding//package/win32/include/sections.nsh=WINDOWS-1251
 encoding//package/win32/include/translations.nsh=WINDOWS-1251
 encoding//package/win32/include/translations/english.nsh=WINDOWS-1251
