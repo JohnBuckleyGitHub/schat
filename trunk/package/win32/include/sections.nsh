@@ -38,6 +38,12 @@ SectionEnd
 
 !macro SECTION_UNINSTALL
 Section "Uninstall"
+
+  Delete "$DESKTOP\${SCHAT_NAME}.lnk"
+  Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
+  Delete "${SCHAT_PROGRAMGROUP}\*.lnk"
+  RMDir  "${SCHAT_PROGRAMGROUP}"
+  
   Delete "$INSTDIR\uninstall.exe"
   Delete "$INSTDIR\schat.exe"
   Delete "$INSTDIR\schatd.exe"
@@ -47,7 +53,7 @@ Section "Uninstall"
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
 
-  RMDir "$INSTDIR"
+  RMDir  "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "${SCHAT_REGKEY}"
   

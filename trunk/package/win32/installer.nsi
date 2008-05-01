@@ -3,15 +3,17 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-!define SCHAT_NAME     "Simple Chat" 
-!define SCHAT_VERSION  "0.0.1.81"
-!define SCHAT_REGKEY   "Software\IMPOMEZIA\${SCHAT_NAME}"
-!define SCHAT_QTDIR    "C:\qt\4.4.0-beta1"
-!define SCHAT_WEB_SITE "http://impomezia.net.ru/"
+!define SCHAT_NAME      "Simple Chat" 
+!define SCHAT_VERSION   "0.0.1.81"
+!define SCHAT_REGKEY    "Software\IMPOMEZIA\${SCHAT_NAME}"
+!define SCHAT_QTDIR     "C:\qt\4.4.0-beta1"
+!define SCHAT_WEB_SITE  "http://impomezia.net.ru/"
+!define SCHAT_COPYRIGHT "Copyright © 2008 IMPOMEZIA"
 
 !include "MUI2.nsh"
 !include "include\sections.nsh"
 !include "include\translations.nsh"
+!include "include\page-options.nsh"
 
 Name "${SCHAT_NAME} ${SCHAT_VERSION}"
 OutFile "out\schat-${SCHAT_VERSION}.exe"
@@ -22,12 +24,13 @@ InstType "$(STR1)"
 SetCompressor /SOLID lzma
 SetCompressorDictSize 12
 ;SetCompress off
+BrandingText "${SCHAT_COPYRIGHT}"
 
 VIProductVersion "${SCHAT_VERSION}"
 VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
 VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
-VIAddVersionKey  "LegalCopyright"   "Copyright © 2008 IMPOMEZIA"
+VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
 VIAddVersionKey  "OriginalFilename" "schat-${SCHAT_VERSION}.exe"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
@@ -53,6 +56,7 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_PAGE_LICENSE "license.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+Page custom SettingsPage SettingsPageLeave
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -67,6 +71,7 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
  */
 !insertmacro SECTION_CORE
 !insertmacro SECTION_SERVER
+!insertmacro SECTION_OPTIONS
 !insertmacro SECTION_DESC
 !insertmacro SECTION_UNINSTALL
 
@@ -82,3 +87,5 @@ FunctionEnd
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
 FunctionEnd
+
+!insertmacro SETTINGS_PAGE
