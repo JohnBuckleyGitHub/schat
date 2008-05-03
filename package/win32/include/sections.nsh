@@ -18,6 +18,9 @@ Section "$(STR1000)" SecCore
   File "${SCHAT_QTDIR}\bin\QtGui4.dll"
   File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
   
+  SetOutPath "$INSTDIR\networks"
+  File "..\..\data\networks\*.xml"
+  
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
 

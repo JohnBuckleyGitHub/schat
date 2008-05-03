@@ -61,6 +61,8 @@ FunctionEnd
  */
 !macro SECTION_OPTIONS
 Section
+  SetOutPath "$INSTDIR"
+  
   ${If} $settings.Desktop == ${BST_CHECKED}
     CreateShortCut "$DESKTOP\${SCHAT_NAME}.lnk" "$INSTDIR\schat.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
   ${EndIf}
