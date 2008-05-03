@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<network version="1.0">
+  <meta>
+    <name>Achim Network</name>
+    <site>http://impomezia.net.ru</site>
+    <description>Achim Game Network</description>
+  </meta>
+  <servers>
+    <ip>192.168.5.130</ip>
+    <ip>192.168.5.134</ip>
+  </servers>
+</network>

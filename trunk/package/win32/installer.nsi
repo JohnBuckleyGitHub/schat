@@ -4,7 +4,7 @@
  */
 
 !define SCHAT_NAME       "Simple Chat" 
-!define SCHAT_VERSION    "0.0.2.88"
+!define SCHAT_VERSION    "0.0.2.89"
 !define SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME}"
 !define SCHAT_QTDIR      "C:\qt\440"
 !define SCHAT_WEB_SITE   "http://impomezia.net.ru/"

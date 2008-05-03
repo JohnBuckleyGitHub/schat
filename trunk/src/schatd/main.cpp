@@ -23,7 +23,11 @@ int main(int argc, char *argv[])
   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
   if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream out(&pidfile);
-    out << getpid();
+    #if QT_VERSION >= 0x040400
+      out << QCoreApplication::instance()->applicationPid();
+    #else
+      out << getpid();
+    #endif
     pidfile.close();
   }
 
