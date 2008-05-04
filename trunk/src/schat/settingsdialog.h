@@ -11,8 +11,10 @@
 
 class InterfaceSettings;
 class NetworkSettings;
+class NetworkWidget;
 class Profile;
 class ProfileSettings;
+class ProfileWidget;
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
@@ -22,7 +24,6 @@ class QSpinBox;
 class QStackedWidget;
 class SChatWindow;
 class Settings;
-class ProfileWidget;
 
 
 /**
@@ -99,6 +100,7 @@ public:
   void save();
   
 private:
+  NetworkWidget *m_networkWidget;
   QCheckBox *welcomeCheckBox;
   QLineEdit *serverEdit;
   QSpinBox *port;

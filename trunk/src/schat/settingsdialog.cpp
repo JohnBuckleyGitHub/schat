@@ -5,6 +5,7 @@
 
 #include <QtGui>
 
+#include "networkwidget.h"
 #include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"
@@ -201,6 +202,13 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   welcomeCheckBox->setChecked(settings->hideWelcome);
   welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
   
+  m_networkWidget = new NetworkWidget(&settings->networksModel, this);
+  
+  QHBoxLayout *networkLayout = new QHBoxLayout;
+  networkLayout->addWidget(m_networkWidget);
+  networkLayout->addStretch();
+  networkLayout->setMargin(0);
+  
   QHBoxLayout *serverLayout = new QHBoxLayout;
   serverLayout->addWidget(addrLabel);
   serverLayout->addWidget(serverEdit);
@@ -210,6 +218,7 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   
   QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
   QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
+  serverGroupLayout->addLayout(networkLayout);
   serverGroupLayout->addLayout(serverLayout);
   serverGroupLayout->addWidget(welcomeCheckBox);
   
