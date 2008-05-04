@@ -10,7 +10,7 @@ DEPENDPATH  += . \
 INCLUDEPATH += . \
                ../common \
                ../schatd
-QT += network
+QT += network xml
 #CONFIG += console
 #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
 DEFINES += SCHAT_CLIENT
@@ -25,6 +25,8 @@ HEADERS += \
     directchannel.h \
     directchannelserver.h \
     mainchannel.h \
+    networkreader.h \
+    networkwidget.h \
     profile.h \
     profilewidget.h \
     protocol.h \
@@ -46,6 +48,8 @@ SOURCES += \
     directchannelserver.cpp \
     main.cpp \
     mainchannel.cpp \
+    networkreader.cpp \
+    networkwidget.cpp \
     profile.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
