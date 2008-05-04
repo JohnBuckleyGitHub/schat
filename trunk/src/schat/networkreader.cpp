@@ -19,10 +19,8 @@ NetworkReader::NetworkReader()
 bool NetworkReader::readFile(const QString &fileName)
 {
   QFile file(fileName);
-  if (!file.open(QFile::ReadOnly | QFile::Text)) {
-      qDebug()  << "Error: Cannot read file " << fileName << ": " << file.errorString();
-      return false;
-  }
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+    return false;
   
   setDevice(&file);
 
@@ -46,8 +44,6 @@ bool NetworkReader::readFile(const QString &fileName)
  */
 void NetworkReader::readMeta()
 {
-  qDebug() << "void Network::readMeta()";
-  
   while (!atEnd()) {
     readNext();
 
@@ -73,8 +69,6 @@ void NetworkReader::readMeta()
  */
 void NetworkReader::readNetwork()
 {
-  qDebug() << "void Network::readNetwork()";
-  
   while (!atEnd()) {
     readNext();
 
@@ -98,8 +92,6 @@ void NetworkReader::readNetwork()
  */
 void NetworkReader::readServers()
 {
-  qDebug() << "void Network::readServers()";
-  
   while (!atEnd()) {
     readNext();
 
@@ -121,8 +113,6 @@ void NetworkReader::readServers()
  */
 void NetworkReader::readUnknownElement()
 {
-  qDebug() << "void Network::readUnknownElement()";
-  
   while (!atEnd()) {
     readNext();
 

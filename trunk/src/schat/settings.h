@@ -7,6 +7,7 @@
 #define SETTINGS_H_
 
 #include <QObject>
+#include <QStandardItemModel>
 
 class SChatWindow;
 class Profile;
@@ -21,6 +22,7 @@ public:
   
   bool firstRun;
   bool hideWelcome;
+  QStandardItemModel networksModel;
   QString server;
   QString style;
   quint16 serverPort;
