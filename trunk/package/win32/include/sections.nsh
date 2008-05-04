@@ -17,6 +17,7 @@ Section "$(STR1000)" SecCore
   File "${SCHAT_QTDIR}\bin\QtCore4.dll"
   File "${SCHAT_QTDIR}\bin\QtGui4.dll"
   File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+  File "${SCHAT_QTDIR}\bin\QtXml4.dll"
   
   SetOutPath "$INSTDIR\networks"
   File "..\..\data\networks\*.xml"
