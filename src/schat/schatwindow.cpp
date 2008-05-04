@@ -91,7 +91,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   
-  mainChannel = new MainChannel(settings->server, this);
+  mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
   tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
   tabWidget->setTabIcon(0, mainChannel->icon);
