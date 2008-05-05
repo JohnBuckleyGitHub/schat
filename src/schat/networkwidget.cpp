@@ -62,8 +62,6 @@ void NetworkWidget::init()
     if (network.readFile(m_networkPath + file))
       m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
   }
-  
-  qDebug() << m_model->rowCount();
 }
 
 
@@ -72,7 +70,6 @@ void NetworkWidget::init()
  */
 void NetworkWidget::activated(int index)
 {
-  qDebug() << "void NetworkWidget::activated(int index)" << index;
 }
 
 
@@ -81,7 +78,6 @@ void NetworkWidget::activated(int index)
  */
 void NetworkWidget::currentIndexChanged(int index)
 {
-  qDebug() << "void NetworkWidget::currentIndexChanged(int index)" << index;
   QVariant data = m_selectCombo->itemData(index);
   if (data.type() == QVariant::String) {
     m_portBox->setEnabled(false);

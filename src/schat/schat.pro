@@ -25,6 +25,7 @@ HEADERS += \
     directchannel.h \
     directchannelserver.h \
     mainchannel.h \
+    network.h \
     networkreader.h \
     networkwidget.h \
     profile.h \
@@ -48,6 +49,7 @@ SOURCES += \
     directchannelserver.cpp \
     main.cpp \
     mainchannel.cpp \
+    network.cpp \
     networkreader.cpp \
     networkwidget.cpp \
     profile.cpp \

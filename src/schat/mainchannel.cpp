@@ -18,7 +18,7 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
   m_settings = settings;
   
   m_serverLabel = new QLabel(tr("Адрес сервера:"), this);
-  m_serverEdit  = new QLineEdit(m_settings->server, this);
+  m_serverEdit  = new QLineEdit(m_settings->network.server(), this);
   
   createActions();
   

@@ -100,7 +100,7 @@ void NetworkReader::readServers()
 
     if (isStartElement()) {
       if (name() == "ip")
-        m_servers << readElementText();
+        m_servers << (readElementText() + ":7666");
       else
         readUnknownElement();
     }

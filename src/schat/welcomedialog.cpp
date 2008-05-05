@@ -30,7 +30,7 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
   m_moreButton  = new QPushButton(QIcon(":/images/down.png"), tr(""), this);
   m_moreButton->setCheckable(true);
   m_serverLabel = new QLabel(tr("Адрес сервера:"), this);
-  m_serverEdit = new QLineEdit(m_settings->server, this);
+  m_serverEdit = new QLineEdit(m_settings->network.server(), this);
   m_networkWidget = new NetworkWidget(&m_settings->networksModel, this);
   m_networkWidget->init();
   m_networkWidget->setVisible(false);
@@ -86,7 +86,7 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
 void WelcomeDialog::accept()
 {
   m_profileWidget->save();
-  m_settings->server = m_serverEdit->text();
+//  m_settings->server = m_serverEdit->text(); // FIXME ЭТО не РАБОТ
   m_settings->hideWelcome = m_askCheckBox->isChecked();
   
   QDialog::accept();
