@@ -24,11 +24,10 @@ public:
   
   bool firstRun;
   bool hideWelcome;
+  bool needInitNetworkList;  
   Network network;
   QStandardItemModel networksModel;
-//  QString server;
   QString style;
-//  quint16 serverPort;
   
 private:
   Profile *profile;

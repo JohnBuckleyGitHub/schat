@@ -29,10 +29,9 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
   m_okButton    = new QPushButton(QIcon(":/images/ok.png"), tr("ОК"), this);
   m_moreButton  = new QPushButton(QIcon(":/images/down.png"), tr(""), this);
   m_moreButton->setCheckable(true);
-  m_serverLabel = new QLabel(tr("Адрес сервера:"), this);
-  m_serverEdit = new QLineEdit(m_settings->network.server(), this);
-  m_networkWidget = new NetworkWidget(&m_settings->networksModel, this);
-  m_networkWidget->init();
+//  m_serverLabel = new QLabel(tr("Адрес сервера:"), this);
+//  m_serverEdit = new QLineEdit(m_settings->network.server(), this);
+  m_networkWidget = new NetworkWidget(m_settings, this);
   m_networkWidget->setVisible(false);
   
   QFrame *line = new QFrame(this);
@@ -40,8 +39,8 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   
-  m_serverLabel->setVisible(false); // TODO: Удалить
-  m_serverEdit->setVisible(false);
+//  m_serverLabel->setVisible(false); // TODO: Удалить
+//  m_serverEdit->setVisible(false);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(m_profileWidget);
@@ -54,12 +53,12 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
   buttonsLayout->addWidget(m_moreButton);
   buttonsLayout->setSpacing(3);
   
-  QHBoxLayout *serverLayout = new QHBoxLayout; // TODO: Удалить
-  serverLayout->addWidget(m_serverLabel);
-  serverLayout->addWidget(m_serverEdit);
+//  QHBoxLayout *serverLayout = new QHBoxLayout; // TODO: Удалить
+//  serverLayout->addWidget(m_serverLabel);
+//  serverLayout->addWidget(m_serverEdit);
   
   mainLayout->addLayout(buttonsLayout);
-  mainLayout->addLayout(serverLayout);
+//  mainLayout->addLayout(serverLayout);
   mainLayout->addWidget(m_networkWidget);
   mainLayout->setMargin(6);
   mainLayout->setSpacing(6);
@@ -80,7 +79,7 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
 }
 
 
-/** [public]
+/** [public slots]
  *
  */
 void WelcomeDialog::accept()

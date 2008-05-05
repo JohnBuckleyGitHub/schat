@@ -26,7 +26,7 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
   m_serverEdit->setVisible(false);
   m_connectCreateButton->setVisible(false);
   
-  m_networkWidget = new NetworkWidget(&settings->networksModel, this);
+  m_networkWidget = new NetworkWidget(settings, this);
   m_networkWidget->setVisible(false);
   
   m_topLayout = new QHBoxLayout;
