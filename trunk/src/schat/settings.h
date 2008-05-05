@@ -9,6 +9,8 @@
 #include <QObject>
 #include <QStandardItemModel>
 
+#include "network.h"
+
 class SChatWindow;
 class Profile;
 
@@ -22,10 +24,11 @@ public:
   
   bool firstRun;
   bool hideWelcome;
+  Network network;
   QStandardItemModel networksModel;
-  QString server;
+//  QString server;
   QString style;
-  quint16 serverPort;
+//  quint16 serverPort;
   
 private:
   Profile *profile;

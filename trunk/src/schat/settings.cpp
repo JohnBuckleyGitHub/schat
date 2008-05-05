@@ -34,12 +34,13 @@ void Settings::read()
   if (pos.x() != -999 && pos.y() != -999)
     chat->move(pos);
   
-  chat->restoreSplitter((s.value("Splitter").toByteArray()));  // Состояние сплитера
-  hideWelcome = s.value("HideWelcome", false).toBool();        // Показ окна для выбора ника и сервера при старте
-  firstRun    = s.value("FirstRun", true).toBool();            // Первый запуск
-  server      = s.value("Server", "192.168.5.130").toString(); // Адрес сервера
-  serverPort  = quint16(s.value("ServerPort", 7666).toUInt()); // Порт сервера
-  style       = s.value("Style", "Plastique").toString();      // Внешний вид
+  chat->restoreSplitter((s.value("Splitter").toByteArray()));        // Состояние сплитера
+  hideWelcome = s.value("HideWelcome", false).toBool();              // Показ окна для выбора ника и сервера при старте
+  firstRun    = s.value("FirstRun", true).toBool();                  // Первый запуск
+//  server      = s.value("Server", "192.168.5.130").toString();       // Адрес сервера
+//  serverPort  = quint16(s.value("ServerPort", 7666).toUInt());       // Порт сервера
+  style       = s.value("Style", "Plastique").toString();            // Внешний вид
+  network.fromConfig(s.value("Network", "AchimNet.xml").toString());
   qApp->setStyle(style);
   
   s.beginGroup("Profile");
@@ -61,9 +62,10 @@ void Settings::write()
   s.setValue("Splitter", chat->saveSplitter());
   s.setValue("HideWelcome", hideWelcome);
   s.setValue("FirstRun", false);
-  s.setValue("Server", server);
-  s.setValue("ServerPort", serverPort);
+//  s.setValue("Server", server);
+//  s.setValue("ServerPort", serverPort);
   s.setValue("Style", style);
+  s.setValue("Network", network.config());
   
   s.beginGroup("Profile");
   s.setValue("Nick", profile->nick());

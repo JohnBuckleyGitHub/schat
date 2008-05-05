@@ -191,13 +191,13 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   settings          = s;
   QLabel *addrLabel = new QLabel(tr("Адрес:"), this);
   QLabel *portLabel = new QLabel(tr("Порт:"), this);
-  serverEdit        = new QLineEdit(settings->server, this);
+  serverEdit        = new QLineEdit(settings->network.server(), this);
   port              = new QSpinBox(this);
   welcomeCheckBox   = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   
   serverEdit->setToolTip(tr("Адрес сервера"));
   port->setRange(1, 65536);
-  port->setValue(settings->serverPort);
+  port->setValue(settings->network.port());
   port->setToolTip(tr("Порт сервера, по умолчанию <b>7666</b>"));
   welcomeCheckBox->setChecked(settings->hideWelcome);
   welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
@@ -244,9 +244,9 @@ void NetworkSettings::reset()
  */
 void NetworkSettings::save()
 {
-  if ((settings->server != serverEdit->text()) || (settings->serverPort != quint16(port->value()))) {
-    settings->server = serverEdit->text();
-    settings->serverPort = quint16(port->value());
+  if ((settings->network.server() != serverEdit->text()) || (settings->network.port() != quint16(port->value()))) {
+//    settings->server = serverEdit->text(); // ЭТО НЕ РАБОТАЕТ
+//    settings->serverPort = quint16(port->value());
     chat->reconnect();
   }
   welcomeCheckBox->isChecked() ? settings->hideWelcome = true : settings->hideWelcome = false;

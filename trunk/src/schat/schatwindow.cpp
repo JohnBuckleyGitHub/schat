@@ -123,7 +123,7 @@ SChatWindow::SChatWindow(QWidget *parent)
  */
 void SChatWindow::reconnect()
 {
-  mainChannel->setServer(settings->server);
+  mainChannel->setServer(settings->network.server());
   if (state == Connected) {
     mainChannel->browser->msgDisconnect();
     mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
@@ -360,7 +360,7 @@ void SChatWindow::serverChanged()
   if (clientSocket)
     clientSocket->quit();
   
-  settings->server = mainChannel->server();
+//  settings->network.server() = mainChannel->server(); // FIXME Исправить переключение сервераю
   newConnection();
 }
 
@@ -535,7 +535,7 @@ void SChatWindow::newConnection()
   }
   
   clientSocket->setProfile(profile);
-  clientSocket->connectToHost(settings->server, settings->serverPort);
+  clientSocket->connectToHost(settings->network.server(), settings->network.port());
 }
 
 
@@ -643,7 +643,7 @@ void SChatWindow::settingsPage(int page)
  */
 void SChatWindow::welcomeOk()
 {
-  mainChannel->setServer(settings->server);
+  mainChannel->setServer(settings->network.server()); // FIXME Использовать класс Сеттингз напрямую
   welcomeDialog->deleteLater();
   
   newConnection();
