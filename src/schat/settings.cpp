@@ -17,6 +17,7 @@ Settings::Settings(Profile *p, QObject *parent)
 {
   profile = p;
   chat    = static_cast<SChatWindow *>(parent);
+  needInitNetworkList = true;
 }
 
 

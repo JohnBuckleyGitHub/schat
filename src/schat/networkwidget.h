@@ -13,25 +13,27 @@ class QComboBox;
 class QLabel;
 class QSpinBox;
 class QStandardItemModel;
+class Settings;
 
 class NetworkWidget : public QWidget {
   Q_OBJECT
 
 public:
-  NetworkWidget(QStandardItemModel *model, QWidget *parent = 0);
-  void init();
+  NetworkWidget(Settings *settings, QWidget *parent = 0);
 
 private slots:
   void activated(int index);
   void currentIndexChanged(int index);
  
 private:
+  void init();
+  
   QComboBox *m_selectCombo;
   QLabel *m_infoLabel;
   QLabel *m_portLabel;
   QSpinBox *m_portBox;
-  QStandardItemModel *m_model;
-  QString m_networkPath;  
+  QString m_networkPath;
+  Settings *m_settings;
 };
 
 #endif /*NETWORKWIDGET_H_*/

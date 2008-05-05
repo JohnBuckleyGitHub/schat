@@ -13,6 +13,7 @@ class Network {
   
 public:
   Network();
+  inline bool isNetwork() const      { return m_network; }
   inline QString description() const { return m_description; }
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }

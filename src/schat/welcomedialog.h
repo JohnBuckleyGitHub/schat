@@ -24,6 +24,8 @@ class WelcomeDialog : public QDialog
 
 public:
   WelcomeDialog(Settings *settings, Profile *profile, QWidget *parent = 0);
+
+public slots:
   void accept();
 
 private slots:
@@ -34,8 +36,8 @@ private:
   NetworkWidget *m_networkWidget;
   ProfileWidget *m_profileWidget;
   QCheckBox *m_askCheckBox;
-  QLabel *m_serverLabel;
-  QLineEdit *m_serverEdit;
+//  QLabel *m_serverLabel;
+//  QLineEdit *m_serverEdit;
   QPushButton *m_moreButton;
   QPushButton *m_okButton;
   Settings *m_settings;

@@ -7,17 +7,19 @@
 
 #include "networkwidget.h"
 #include "networkreader.h"
+#include "settings.h"
 
-NetworkWidget::NetworkWidget(QStandardItemModel *model, QWidget *parent)
+NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
-  m_model = model;
+  setAttribute(Qt::WA_DeleteOnClose);
+  m_settings = settings;
   
   m_selectCombo = new QComboBox(this);
   m_selectCombo->setEditable(true);
   m_selectCombo->setDuplicatesEnabled(false);
   m_selectCombo->setIconSize(QSize(18, 18));
-  m_selectCombo->setModel(m_model);
+  m_selectCombo->setModel(&m_settings->networksModel);
   
   m_infoLabel = new QLabel(tr("&Сервер/Сеть:"), this);
   m_infoLabel->setBuddy(m_selectCombo);
@@ -45,23 +47,8 @@ NetworkWidget::NetworkWidget(QStandardItemModel *model, QWidget *parent)
   
   connect(m_selectCombo, SIGNAL(activated(int)), this, SLOT(activated(int)));
   connect(m_selectCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
-}
-
-
-/** [public]
- * 
- */
-void NetworkWidget::init()
-{
-  QDir directory(m_networkPath);
-  directory.setNameFilters(QStringList() << "*.xml");
-  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
-  NetworkReader network;
   
-  foreach (QString file, files) {
-    if (network.readFile(m_networkPath + file))
-      m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
-  }
+  init();
 }
 
 
@@ -93,4 +80,44 @@ void NetworkWidget::currentIndexChanged(int index)
     icon.addFile(":/images/host.png");
     m_selectCombo->setItemIcon(index, icon);
   }
+}
+
+
+/** [private]
+ * 
+ */
+void NetworkWidget::init()
+{
+  if (m_settings->needInitNetworkList) {
+    QDir directory(m_networkPath);
+    directory.setNameFilters(QStringList() << "*.xml");
+    QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
+    NetworkReader network;
+    
+    foreach (QString file, files) {
+      if (network.readFile(m_networkPath + file))
+        m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
+    }
+    m_settings->needInitNetworkList = false;
+  }
+  
+  // Устанавливаем индекс на основе текущего выбора
+  if (m_settings->network.isNetwork()) {
+    m_selectCombo->setCurrentIndex(m_selectCombo->findText(m_settings->network.name()));
+    m_portLabel->setEnabled(false);
+    m_portBox->setEnabled(false);
+  }
+  else {
+    QString server = m_settings->network.server();
+    int i = m_selectCombo->findText(server);
+    
+    if (i == -1)
+      m_selectCombo->addItem(QIcon(":/images/host.png"), server);
+    
+    m_selectCombo->setCurrentIndex(m_selectCombo->findText(server));
+    m_portBox->setValue(m_settings->network.port());
+    m_portLabel->setEnabled(true);
+    m_portBox->setEnabled(true);
+  }
+    
 }

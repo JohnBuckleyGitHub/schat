@@ -202,7 +202,7 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   welcomeCheckBox->setChecked(settings->hideWelcome);
   welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
   
-  m_networkWidget = new NetworkWidget(&settings->networksModel, this);
+  m_networkWidget = new NetworkWidget(settings, this);
   
   QHBoxLayout *networkLayout = new QHBoxLayout;
   networkLayout->addWidget(m_networkWidget);
