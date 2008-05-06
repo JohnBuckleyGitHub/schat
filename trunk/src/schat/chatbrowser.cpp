@@ -78,11 +78,19 @@ void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick)
 /** [public]
  * 
  */
-void ChatBrowser::msgReadyForUse(const QString &s)
+void ChatBrowser::msgReadyForUse(const QString &addr)
 {
-  append(tr("<div class='np'>(%1) <i class='green'>Успешно подключены к %2</i></div>").arg(currentTime()).arg(s));
+  append(tr("<div class='np'>(%1) <i class='green'>Успешно подключены к %2</i></div>").arg(currentTime()).arg(addr));
 }
 
+
+/** [public]
+ * 
+ */
+void ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
+{
+  append(tr("<div class='np'>(%1) <i class='green'>Успешно подключены к сети <b>%2</b> (%3)</i></div>").arg(currentTime()).arg(network).arg(addr));
+}
 
 /** [public]
  * Принудительно скролит текст

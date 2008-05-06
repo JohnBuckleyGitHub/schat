@@ -342,10 +342,22 @@ void SChatWindow::participantLeft(const QString &nick)
 void SChatWindow::readyForUse()
 {
   state = Connected;
-  mainChannel->browser->msgReadyForUse(clientSocket->peerAddress().toString());
-  statusLabel->setText(tr("Успешно подключены к %1").arg(clientSocket->peerAddress().toString()));
+  QString peerAddress = clientSocket->peerAddress().toString();
+  
+  // Различные сообщения при подключении к сети и одиночному серверу
+  if (settings->network.isNetwork()) {
+    QString networkName = settings->network.name();
+    mainChannel->browser->msgReadyForUse(networkName, peerAddress);
+    statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(networkName).arg(peerAddress));
+    setWindowTitle(tr("Simple Chat - %1").arg(networkName));
+  }
+  else {
+    mainChannel->browser->msgReadyForUse(peerAddress);
+    statusLabel->setText(tr("Успешно подключены к %1").arg(peerAddress));
+    setWindowTitle(tr("Simple Chat"));
+  }
+  
   mainChannel->displayChoiceServer(false);
-//  noticeTimer->start();
 }
 
 
