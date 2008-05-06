@@ -19,7 +19,8 @@ public:
   void msgDisconnect();
   void msgNewParticipant(quint8 sex, const QString &nick);
   void msgParticipantLeft(quint8 sex, const QString &nick);
-  void msgReadyForUse(const QString &s);
+  void msgReadyForUse(const QString &addr);
+  void msgReadyForUse(const QString &network, const QString &addr);
   void scroll();
   
 protected:
