@@ -189,16 +189,8 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   
   chat              = w;
   settings          = s;
-  QLabel *addrLabel = new QLabel(tr("Адрес:"), this);
-  QLabel *portLabel = new QLabel(tr("Порт:"), this);
-  serverEdit        = new QLineEdit(settings->network.server(), this);
-  port              = new QSpinBox(this);
   welcomeCheckBox   = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   
-  serverEdit->setToolTip(tr("Адрес сервера"));
-  port->setRange(1, 65536);
-  port->setValue(settings->network.port());
-  port->setToolTip(tr("Порт сервера, по умолчанию <b>7666</b>"));
   welcomeCheckBox->setChecked(settings->hideWelcome);
   welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
   
@@ -209,17 +201,9 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   networkLayout->addStretch();
   networkLayout->setMargin(0);
   
-  QHBoxLayout *serverLayout = new QHBoxLayout;
-  serverLayout->addWidget(addrLabel);
-  serverLayout->addWidget(serverEdit);
-  serverLayout->addWidget(portLabel);
-  serverLayout->addWidget(port);
-  serverLayout->addStretch();
-  
   QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
   QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
   serverGroupLayout->addLayout(networkLayout);
-  serverGroupLayout->addLayout(serverLayout);
   serverGroupLayout->addWidget(welcomeCheckBox);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -233,8 +217,6 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
  */
 void NetworkSettings::reset()
 {
-  serverEdit->setText("192.168.5.130");
-  port->setValue(7666);
   welcomeCheckBox->setChecked(true);
 }
 
@@ -244,11 +226,6 @@ void NetworkSettings::reset()
  */
 void NetworkSettings::save()
 {
-  if ((settings->network.server() != serverEdit->text()) || (settings->network.port() != quint16(port->value()))) {
-//    settings->server = serverEdit->text(); // ЭТО НЕ РАБОТАЕТ
-//    settings->serverPort = quint16(port->value());
-    chat->reconnect();
-  }
   welcomeCheckBox->isChecked() ? settings->hideWelcome = true : settings->hideWelcome = false;
 }
 
