@@ -27,7 +27,7 @@ QString Network::config() const
       return m_server + ':' + QString().setNum(m_port);
   }
   else
-    return "localhost:7666";
+    return FailBackServer + ':' + QString().setNum(FailBackPort);
 }
 
 
@@ -47,7 +47,7 @@ QString Network::server()
     return m_server;
   }
   else
-    return "localhost";
+    return FailBackServer;
 }
 
 
@@ -59,7 +59,7 @@ quint16 Network::port()
   if (m_valid)
     return m_port;
   else
-    return 7666;
+    return FailBackPort;
 }
 
 
@@ -73,7 +73,7 @@ QString Network::server(const QString &s)
     return list.at(0);
   }
   else
-    return "";    
+    return FailBackServer;    
 }
 
 
@@ -87,7 +87,7 @@ quint16 Network::port(const QString &s)
     return quint16(list.at(1).toUInt());
   }
   else
-    return 0; 
+    return FailBackPort; 
 }
 
 
