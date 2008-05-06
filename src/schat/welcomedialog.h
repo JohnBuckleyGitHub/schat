@@ -36,8 +36,6 @@ private:
   NetworkWidget *m_networkWidget;
   ProfileWidget *m_profileWidget;
   QCheckBox *m_askCheckBox;
-//  QLabel *m_serverLabel;
-//  QLineEdit *m_serverEdit;
   QPushButton *m_moreButton;
   QPushButton *m_okButton;
   Settings *m_settings;

@@ -24,15 +24,17 @@ public:
 private slots:
   void activated(int index);
   void currentIndexChanged(int index);
+  void editTextChanged(const QString &text);
  
 private:
+  void createList();
   void init();
   
   QComboBox *m_selectCombo;
   QLabel *m_infoLabel;
   QLabel *m_portLabel;
   QSpinBox *m_portBox;
-  QString m_networkPath;
+  QString m_networksPath;
   Settings *m_settings;
 };
 

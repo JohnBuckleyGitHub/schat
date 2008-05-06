@@ -102,8 +102,8 @@ public:
 private:
   NetworkWidget *m_networkWidget;
   QCheckBox *welcomeCheckBox;
-  QLineEdit *serverEdit;
-  QSpinBox *port;
+//  QLineEdit *serverEdit;
+//  QSpinBox *port;
   SChatWindow *chat;
   Settings *settings;
 };

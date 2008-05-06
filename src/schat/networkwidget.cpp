@@ -34,7 +34,7 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
   m_portLabel = new QLabel(tr("&Порт:"), this);
   m_portLabel->setBuddy(m_portBox);
   
-  m_networkPath = qApp->applicationDirPath() + "/networks/";
+  m_networksPath = qApp->applicationDirPath() + "/networks/";
   
   QHBoxLayout *mainLayout = new QHBoxLayout(this);
   mainLayout->addWidget(m_infoLabel);
@@ -47,6 +47,10 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
   
   connect(m_selectCombo, SIGNAL(activated(int)), this, SLOT(activated(int)));
   connect(m_selectCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
+  connect(m_selectCombo, SIGNAL(editTextChanged(const QString &)), this, SLOT(editTextChanged(const QString &)));
+  
+  if (m_settings->needCreateNetworkList)
+    createList();
   
   init();
 }
@@ -57,6 +61,19 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
  */
 void NetworkWidget::activated(int index)
 {
+  qDebug() << "void NetworkWidget::activated(int index)";
+  
+  QVariant data = m_selectCombo->itemData(index);
+  if (data.type() == QVariant::String) {
+    m_settings->network.fromFile(data.toString());
+    m_portBox->setEnabled(false);
+    m_portLabel->setEnabled(false);
+  }
+  else {
+    m_settings->network.fromString(m_selectCombo->itemText(index) + ':' + QString().setNum(m_portBox->value()));
+    m_portBox->setEnabled(true);
+    m_portLabel->setEnabled(true);
+  }
 }
 
 
@@ -65,15 +82,7 @@ void NetworkWidget::activated(int index)
  */
 void NetworkWidget::currentIndexChanged(int index)
 {
-  QVariant data = m_selectCombo->itemData(index);
-  if (data.type() == QVariant::String) {
-    m_portBox->setEnabled(false);
-    m_portLabel->setEnabled(false);
-  }
-  else {
-    m_portBox->setEnabled(true);
-    m_portLabel->setEnabled(true);
-  }
+  qDebug() << "void NetworkWidget::currentIndexChanged(int index)";
   
   QIcon icon = m_selectCombo->itemIcon(index);
   if (icon.isNull()) {
@@ -83,23 +92,40 @@ void NetworkWidget::currentIndexChanged(int index)
 }
 
 
+/** [private slots]
+ * 
+ */
+void NetworkWidget::editTextChanged(const QString &text)
+{
+  m_portLabel->setEnabled(true);
+  m_portBox->setEnabled(true);
+}
+
+
+/** [private]
+ * 
+ */
+void NetworkWidget::createList()
+{ 
+  QDir directory(m_networksPath);
+  directory.setNameFilters(QStringList() << "*.xml");
+  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
+  NetworkReader network;
+  
+  foreach (QString file, files) {
+    if (network.readFile(m_networksPath + file))
+      m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
+  }
+  m_settings->needCreateNetworkList = false;
+}
+
+
 /** [private]
  * 
  */
 void NetworkWidget::init()
 {
-  if (m_settings->needInitNetworkList) {
-    QDir directory(m_networkPath);
-    directory.setNameFilters(QStringList() << "*.xml");
-    QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
-    NetworkReader network;
-    
-    foreach (QString file, files) {
-      if (network.readFile(m_networkPath + file))
-        m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
-    }
-    m_settings->needInitNetworkList = false;
-  }
+
   
   // Устанавливаем индекс на основе текущего выбора
   if (m_settings->network.isNetwork()) {
@@ -119,5 +145,4 @@ void NetworkWidget::init()
     m_portLabel->setEnabled(true);
     m_portBox->setEnabled(true);
   }
-    
 }

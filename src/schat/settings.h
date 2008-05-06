@@ -24,7 +24,7 @@ public:
   
   bool firstRun;
   bool hideWelcome;
-  bool needInitNetworkList;  
+  bool needCreateNetworkList;  
   Network network;
   QStandardItemModel networksModel;
   QString style;
