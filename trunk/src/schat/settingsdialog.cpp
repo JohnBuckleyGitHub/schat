@@ -217,6 +217,7 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
  */
 void NetworkSettings::reset()
 {
+  m_networkWidget->reset();
   welcomeCheckBox->setChecked(true);
 }
 
