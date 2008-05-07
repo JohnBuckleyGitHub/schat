@@ -48,6 +48,7 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
   connect(m_selectCombo, SIGNAL(activated(int)), this, SLOT(activated(int)));
   connect(m_selectCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   connect(m_selectCombo, SIGNAL(editTextChanged(const QString &)), this, SLOT(editTextChanged(const QString &)));
+  connect(m_settings, SIGNAL(networksModelIndexChanged(int)), this, SLOT(setCurrentIndex(int)));
   
   if (m_settings->needCreateNetworkList)
     createList();
@@ -74,6 +75,8 @@ void NetworkWidget::activated(int index)
     m_portBox->setEnabled(true);
     m_portLabel->setEnabled(true);
   }
+  
+  m_settings->notify(Settings::NetworksModelIndexChanged, index);
 }
 
 
@@ -102,6 +105,25 @@ void NetworkWidget::editTextChanged(const QString &text)
 }
 
 
+/** [private slots]
+ * 
+ */
+void NetworkWidget::setCurrentIndex(int index)
+{
+  m_selectCombo->setCurrentIndex(index);
+  
+  if (m_settings->network.isNetwork()) {
+    m_portLabel->setEnabled(false);
+    m_portBox->setEnabled(false);
+  }
+  else {
+    m_portLabel->setEnabled(true);
+    m_portBox->setEnabled(true);
+  }
+    
+}
+
+
 /** [private]
  * 
  */
@@ -125,8 +147,6 @@ void NetworkWidget::createList()
  */
 void NetworkWidget::init()
 {
-
-  
   // Устанавливаем индекс на основе текущего выбора
   if (m_settings->network.isNetwork()) {
     m_selectCombo->setCurrentIndex(m_selectCombo->findText(m_settings->network.name()));
