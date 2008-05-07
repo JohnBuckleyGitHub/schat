@@ -21,6 +21,7 @@ class NetworkWidget : public QWidget {
 public:
   NetworkWidget(Settings *settings, QWidget *parent = 0);
   bool save();
+  void reset();
 
 private slots:
   void activated(int index);

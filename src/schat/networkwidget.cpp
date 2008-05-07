@@ -93,6 +93,17 @@ bool NetworkWidget::save()
 }
 
 
+/** [public]
+ * 
+ */
+void NetworkWidget::reset()
+{
+  m_selectCombo->setCurrentIndex(m_selectCombo->findText("Achim Network"));
+  m_portLabel->setEnabled(false);
+  m_portBox->setEnabled(false);
+}
+
+
 /** [private slots]
  * 
  */
