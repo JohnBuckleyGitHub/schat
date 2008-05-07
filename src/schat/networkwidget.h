@@ -20,6 +20,7 @@ class NetworkWidget : public QWidget {
 
 public:
   NetworkWidget(Settings *settings, QWidget *parent = 0);
+  bool save();
 
 private slots:
   void activated(int index);
@@ -35,6 +36,7 @@ private:
   QLabel *m_infoLabel;
   QLabel *m_portLabel;
   QSpinBox *m_portBox;
+  QString m_initItemText;
   QString m_networksPath;
   Settings *m_settings;
 };

@@ -24,6 +24,22 @@ Settings::Settings(Profile *p, QObject *parent)
 /** [public]
  * 
  */
+void Settings::notify(int notify)
+{
+  switch (notify) {
+    case ServerChanged:
+      emit serverChanged();
+      break;
+      
+    default:
+      break;
+  }  
+}
+
+
+/** [public]
+ * 
+ */
 void Settings::notify(int notify, int index)
 {
   switch (notify) {

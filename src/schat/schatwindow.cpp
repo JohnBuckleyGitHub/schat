@@ -90,6 +90,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
+  connect(settings, SIGNAL(serverChanged()), this, SLOT(serverChanged()));
   
   mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
@@ -129,8 +130,7 @@ void SChatWindow::reconnect()
     mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
     state = WaitingForConnected;
     clientSocket->quit();
-  }
-  
+  }  
 }
 
 
@@ -358,22 +358,6 @@ void SChatWindow::readyForUse()
   }
   
   mainChannel->displayChoiceServer(false);
-}
-
-
-/** [public slots]
- * Слот вызывается из `mainChannel` при необходимости
- * сменить адрес сервера.
- */
-void SChatWindow::serverChanged()
-{
-  statusLabel->setText(tr("Подключение..."));
-  
-  if (clientSocket)
-    clientSocket->quit();
-  
-//  settings->network.server() = mainChannel->server(); // FIXME Исправить переключение сервераю
-  newConnection();
 }
 
 
@@ -630,6 +614,20 @@ void SChatWindow::returnPressed()
       clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
   
   lineEdit->clear();  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::serverChanged()
+{
+  statusLabel->setText(tr("Подключение..."));
+  
+  if (clientSocket)
+    clientSocket->quit();
+  
+  newConnection();
 }
 
 

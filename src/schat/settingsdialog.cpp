@@ -180,7 +180,7 @@ void ProfileSettings::save()
 
 
 /** [NetworkSettings/public]
- * Конструктор `NetSettingsPage`
+ * Конструктор `NetworkSettings`
  */
 NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   : QWidget(parent)
@@ -226,7 +226,10 @@ void NetworkSettings::reset()
  */
 void NetworkSettings::save()
 {
-  welcomeCheckBox->isChecked() ? settings->hideWelcome = true : settings->hideWelcome = false;
+  if (m_networkWidget->save())
+    chat->reconnect();
+  
+  settings->hideWelcome = welcomeCheckBox->isChecked();
 }
 
 

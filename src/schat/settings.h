@@ -19,10 +19,12 @@ class Settings : public QObject {
   
 public:
   enum {
-    NetworksModelIndexChanged
+    NetworksModelIndexChanged,
+    ServerChanged
   };
   
   Settings(Profile *p, QObject *parent);
+  void notify(int notify);
   void notify(int notify, int index);
   void read();
   void write();
@@ -36,6 +38,7 @@ public:
 
 signals:
   void networksModelIndexChanged(int index);
+  void serverChanged();
  
 private:
   Profile *profile;

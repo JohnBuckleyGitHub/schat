@@ -36,8 +36,6 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
-  
-  connect(m_connectCreateAction, SIGNAL(triggered()), parent, SLOT(serverChanged()));
 }
 
 
@@ -60,6 +58,16 @@ void MainChannel::displayChoiceServer(bool display)
 }
 
 
+/** [private slots]
+ * 
+ */
+void MainChannel::serverChanged()
+{
+  m_networkWidget->save();
+  m_settings->notify(Settings::ServerChanged);
+}
+
+
 /** [private]
  * 
  */
@@ -69,4 +77,5 @@ void MainChannel::createActions()
   m_connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится к сети или одиночному серверу"), this);
   m_connectCreateButton->setDefaultAction(m_connectCreateAction);
   m_connectCreateButton->setAutoRaise(true);
+  connect(m_connectCreateAction, SIGNAL(triggered()), this, SLOT(serverChanged()));
 }

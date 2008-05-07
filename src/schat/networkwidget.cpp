@@ -57,26 +57,56 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
 }
 
 
+/** [public]
+ * 
+ */
+bool NetworkWidget::save()
+{
+  QString currentText = m_selectCombo->currentText();
+  
+  // Если нынешний текущей текст отличается от предыдущего значит изменены настройки
+  // TODO не учитывается изменение порта
+  if (m_initItemText != currentText) {
+    
+    // В случае если не существует итема с текущим текстом, создаём итем
+    int index = m_selectCombo->findText(currentText);
+    if (index == -1)
+      m_selectCombo->addItem(QIcon(":/images/host.png"), currentText);
+    
+    index = m_selectCombo->findText(currentText);
+    
+    // Если данные итема содержат строку, значит, выбрана сеть, иначе одиночный сервер.
+    // В данных хранится имя XML файла сети.
+    QVariant data = m_selectCombo->itemData(index);
+    if (data.type() == QVariant::String)
+      m_settings->network.fromFile(data.toString());
+    else
+      m_settings->network.fromString(currentText + ':' + QString().setNum(m_portBox->value()));
+    
+    // Уведомление об изменении индекса
+    m_settings->notify(Settings::NetworksModelIndexChanged, index);
+    
+    return true;
+  }
+  else
+    return false;
+}
+
+
 /** [private slots]
  * 
  */
 void NetworkWidget::activated(int index)
 {
-  qDebug() << "void NetworkWidget::activated(int index)";
-  
   QVariant data = m_selectCombo->itemData(index);
   if (data.type() == QVariant::String) {
-    m_settings->network.fromFile(data.toString());
     m_portBox->setEnabled(false);
     m_portLabel->setEnabled(false);
   }
   else {
-    m_settings->network.fromString(m_selectCombo->itemText(index) + ':' + QString().setNum(m_portBox->value()));
     m_portBox->setEnabled(true);
     m_portLabel->setEnabled(true);
   }
-  
-  m_settings->notify(Settings::NetworksModelIndexChanged, index);
 }
 
 
@@ -85,8 +115,6 @@ void NetworkWidget::activated(int index)
  */
 void NetworkWidget::currentIndexChanged(int index)
 {
-  qDebug() << "void NetworkWidget::currentIndexChanged(int index)";
-  
   QIcon icon = m_selectCombo->itemIcon(index);
   if (icon.isNull()) {
     icon.addFile(":/images/host.png");
@@ -111,6 +139,7 @@ void NetworkWidget::editTextChanged(const QString &text)
 void NetworkWidget::setCurrentIndex(int index)
 {
   m_selectCombo->setCurrentIndex(index);
+  m_initItemText = m_selectCombo->currentText();
   
   if (m_settings->network.isNetwork()) {
     m_portLabel->setEnabled(false);
@@ -165,4 +194,6 @@ void NetworkWidget::init()
     m_portLabel->setEnabled(true);
     m_portBox->setEnabled(true);
   }
+  
+  m_initItemText = m_selectCombo->currentText();
 }
