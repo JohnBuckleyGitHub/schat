@@ -25,6 +25,7 @@ private slots:
   void activated(int index);
   void currentIndexChanged(int index);
   void editTextChanged(const QString &text);
+  void setCurrentIndex(int index);
  
 private:
   void createList();
