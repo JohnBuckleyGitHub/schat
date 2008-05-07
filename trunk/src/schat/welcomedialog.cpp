@@ -72,9 +72,8 @@ WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *pare
  */
 void WelcomeDialog::accept()
 {
-  qDebug() << "void WelcomeDialog::accept()";
-  
   m_profileWidget->save();
+  m_networkWidget->save();
   m_settings->hideWelcome = m_askCheckBox->isChecked();
   
   QDialog::accept();

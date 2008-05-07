@@ -28,6 +28,9 @@ public:
   
 public slots:
   inline void msgNewMessage(const QString &nick, const QString &message) { browser->msgNewMessage(nick, message); }
+
+private slots:
+  void serverChanged();
   
 private:
   void createActions();

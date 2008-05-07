@@ -67,7 +67,6 @@ public slots:
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void participantLeft(const QString &nick);
   void readyForUse();
-  void serverChanged();
   
 private slots:
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
@@ -85,6 +84,7 @@ private slots:
   void notice();
   void resetTabNotice(int index);
   void returnPressed();
+  void serverChanged();
   void welcomeOk();
 
 private:
