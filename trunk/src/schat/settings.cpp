@@ -105,9 +105,22 @@ void Settings::write()
 
 
 /** [private]
- * 
+ * Функция проходится по модели `networksModel` и выделяет из неё одиночные серверы,
+ * для записи в файл настроек (ключ "RecentServers").
  */
 void Settings::saveRecentServers(QSettings &s)
 {
+  QStringList list;
+  
+  for (int row = 0; row < networksModel.rowCount(); ++row) {
+    QStandardItem *item = networksModel.item(row);
+    if (item->data(Qt::UserRole).type() == QVariant::Int)
+      list << (item->text() + ':' + item->data(Qt::UserRole).toString());
+  }
+  
+  if (list.isEmpty())
+    list << "empty";
+  
+  s.setValue("RecentServers", list);
 }
 
