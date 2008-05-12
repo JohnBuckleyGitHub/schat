@@ -7,6 +7,7 @@
 #define SETTINGS_H_
 
 #include <QObject>
+#include <QSettings>
 #include <QStandardItemModel>
 
 #include "network.h"
@@ -41,6 +42,8 @@ signals:
   void serverChanged();
  
 private:
+  void saveRecentServers(QSettings &s);
+  
   Profile *profile;
   SChatWindow *chat;
 };
