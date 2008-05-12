@@ -6,7 +6,7 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION    "0.0.2.101 Alpha"
-#define SCHAT_VERSION_RC 0,0,2,101
+#define SCHAT_VERSION    "0.0.2.102 Alpha"
+#define SCHAT_VERSION_RC 0,0,2,102
 
 #endif /*VERSION_H_*/

@@ -95,9 +95,19 @@ void Settings::write()
   s.setValue("FirstRun", false);
   s.setValue("Style", style);
   s.setValue("Network", network.config());
+  saveRecentServers(s);
   
   s.beginGroup("Profile");
   s.setValue("Nick", profile->nick());
   s.setValue("Name", profile->fullName());
   s.setValue("Sex", profile->sex());
 }
+
+
+/** [private]
+ * 
+ */
+void Settings::saveRecentServers(QSettings &s)
+{
+}
+

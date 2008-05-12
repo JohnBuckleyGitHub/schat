@@ -33,6 +33,7 @@ private:
   void createList();
   void init();
   
+  int m_initPort;
   QComboBox *m_selectCombo;
   QLabel *m_infoLabel;
   QLabel *m_portLabel;
