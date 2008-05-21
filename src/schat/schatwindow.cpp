@@ -5,7 +5,6 @@
 
 #include <QtGui>
 #include <QtNetwork>
-#include <stdlib.h>
 
 #include "aboutdialog.h"
 #include "directchannel.h"
@@ -106,7 +105,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   else
     newConnection();
   
-  srand(time(NULL));
+  qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
   
   // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
   daemon = new Server(this);
@@ -870,5 +869,5 @@ void SChatWindow::startNotice(int index)
  */
 void SChatWindow::uniqueNick()
 {
-  profile->setNick(profile->nick() + QString().setNum(rand() % 99));
+  profile->setNick(profile->nick() + QString().setNum(qrand() % 99));
 }

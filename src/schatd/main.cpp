@@ -4,7 +4,6 @@
  */
 
 #include <QtCore>
-#include <unistd.h>
 
 #include "server.h"
 
@@ -23,11 +22,7 @@ int main(int argc, char *argv[])
   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
   if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream out(&pidfile);
-    #if QT_VERSION >= 0x040400
-      out << QCoreApplication::instance()->applicationPid();
-    #else
-      out << getpid();
-    #endif
+    out << QCoreApplication::instance()->applicationPid();
     pidfile.close();
   }
 
