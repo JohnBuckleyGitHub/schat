@@ -74,7 +74,7 @@ class ProfileSettings : public QWidget
   Q_OBJECT
   
 public:
-  ProfileSettings(SChatWindow *w, Profile *p, QWidget *parent = 0);
+  ProfileSettings(Settings *settings, Profile *p, QWidget *parent = 0);
   void reset();
   void save();
   
@@ -82,8 +82,8 @@ signals:
   void validNick(bool b);
   
 private:
-  ProfileWidget *profileWidget;
-  SChatWindow *chat;
+  ProfileWidget *m_profileWidget;
+  Settings *m_settings;
 };
 
 

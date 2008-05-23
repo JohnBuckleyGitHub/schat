@@ -21,7 +21,9 @@ class Settings : public QObject {
 public:
   enum {
     NetworksModelIndexChanged,
-    ServerChanged
+    NetworkSettingsChanged,
+    ServerChanged,
+    ProfileSettingsChanged
   };
   
   Settings(Profile *p, QObject *parent);
@@ -39,6 +41,7 @@ public:
 
 signals:
   void networksModelIndexChanged(int index);
+  void profileSettingsChanged();
   void serverChanged();
  
 private:

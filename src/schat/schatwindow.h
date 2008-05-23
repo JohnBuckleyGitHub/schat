@@ -82,9 +82,9 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void newConnection();
   void notice();
+  void profileSettingsChanged();
   void resetTabNotice(int index);
   void returnPressed();
-  void serverChanged();
   void welcomeOk();
 
 private:

@@ -32,7 +32,7 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   contentsWidget = new QListWidget(this);
   pagesWidget    = new QStackedWidget;
 
-  profilePage       = new ProfileSettings(chat, profile, this);
+  profilePage       = new ProfileSettings(settings, profile, this);
   networkPage       = new NetworkSettings(chat, settings, this);
   interfaceSettings = new InterfaceSettings(settings, this);
   
@@ -137,18 +137,18 @@ void SettingsDialog::reset()
 /** [ProfileSettings/public]
  * Конструктор `ProfileSettings`
  */
-ProfileSettings::ProfileSettings(SChatWindow *w, Profile *p, QWidget *parent)
+ProfileSettings::ProfileSettings(Settings *settings, Profile *profile, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
-  chat          = w;
-  profileWidget = new ProfileWidget(p, this);
-  connect(profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
+  m_settings = settings;
+  m_profileWidget = new ProfileWidget(profile, this);
+  connect(m_profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
   
   QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
   QVBoxLayout *profileGroupLayout = new QVBoxLayout(profileGroupBox);
-  profileGroupLayout->addWidget(profileWidget);
+  profileGroupLayout->addWidget(m_profileWidget);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(profileGroupBox);
@@ -161,7 +161,7 @@ ProfileSettings::ProfileSettings(SChatWindow *w, Profile *p, QWidget *parent)
  */
 void ProfileSettings::reset()
 {
-  profileWidget->reset();
+  m_profileWidget->reset();
 }
 
 
@@ -170,10 +170,10 @@ void ProfileSettings::reset()
  */
 void ProfileSettings::save()
 {
-  profileWidget->save();
+  m_profileWidget->save();
   
-  if (profileWidget->isModifiled())
-    chat->reconnect();
+  if (m_profileWidget->isModifiled())
+    m_settings->notify(Settings::ProfileSettingsChanged);
 }
 
 
