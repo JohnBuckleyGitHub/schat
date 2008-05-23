@@ -89,7 +89,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
-  connect(settings, SIGNAL(serverChanged()), this, SLOT(serverChanged()));
+  connect(settings, SIGNAL(serverChanged()), this, SLOT(newConnection()));
+  connect(settings, SIGNAL(profileSettingsChanged()), this, SLOT(profileSettingsChanged()));
   
   mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
@@ -123,7 +124,6 @@ SChatWindow::SChatWindow(QWidget *parent)
  */
 void SChatWindow::reconnect()
 {
-//  mainChannel->setServer(settings->network.server()); // 
   if (state == Connected) {
     mainChannel->browser->msgDisconnect();
     mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
@@ -506,14 +506,11 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 
 /** [private slots]
- * 
+ * Инициаторы:
+ *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
 void SChatWindow::newConnection()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::newConnection()";
-  #endif
-  
   state = WaitingForConnected;
   statusLabel->setText(tr("Подключение..."));
   
@@ -548,6 +545,18 @@ void SChatWindow::notice()
     trayIcon->setIcon(QIcon(":/images/logo16.png"));
     currentTrayIcon = true;
   }
+}
+
+
+/** [private slots]
+ * Слот вызывается при изменении профиля в настройках.
+ * Инициаторы:
+ *   ProfileSettings::save()
+ */
+void SChatWindow::profileSettingsChanged()
+{
+  qDebug() << "void SChatWindow::profileSettingsChanged()";
+  
 }
 
 
@@ -619,20 +628,6 @@ void SChatWindow::returnPressed()
 /** [private slots]
  * 
  */
-void SChatWindow::serverChanged()
-{
-  statusLabel->setText(tr("Подключение..."));
-  
-  if (clientSocket)
-    clientSocket->quit();
-  
-  newConnection();
-}
-
-
-/** [private slots]
- * 
- */
 void SChatWindow::settingsPage(int page)
 {
   if (isHidden())
@@ -653,7 +648,6 @@ void SChatWindow::settingsPage(int page)
  */
 void SChatWindow::welcomeOk()
 {
-//  mainChannel->setServer(settings->network.server()); // FIXME Использовать класс Сеттингз напрямую
   welcomeDialog->deleteLater();
   
   newConnection();

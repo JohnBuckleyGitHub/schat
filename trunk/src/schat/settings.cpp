@@ -32,6 +32,10 @@ void Settings::notify(int notify)
       emit serverChanged();
       break;
       
+    case ProfileSettingsChanged:
+      emit profileSettingsChanged();
+      break;
+      
     default:
       break;
   }  
