@@ -42,6 +42,7 @@ signals:
   void serverChanged();
  
 private:
+  void createServerList(QSettings &s);
   void saveRecentServers(QSettings &s);
   
   Profile *profile;

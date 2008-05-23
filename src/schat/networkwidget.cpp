@@ -50,9 +50,6 @@ NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
   connect(m_selectCombo, SIGNAL(editTextChanged(const QString &)), this, SLOT(editTextChanged(const QString &)));
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), this, SLOT(setCurrentIndex(int)));
   
-  if (m_settings->needCreateNetworkList)
-    createList();
-  
   init();
 }
 
@@ -79,8 +76,10 @@ bool NetworkWidget::save()
     QVariant data = m_selectCombo->itemData(index);
     if (data.type() == QVariant::String)
       m_settings->network.fromFile(data.toString());
-    else
+    else {
       m_settings->network.fromString(currentText + ':' + QString().setNum(m_portBox->value()));
+      m_selectCombo->setItemData(index, m_portBox->value());
+    }
     
     // Уведомление об изменении индекса
     m_settings->notify(Settings::NetworksModelIndexChanged, index);
@@ -149,7 +148,7 @@ void NetworkWidget::currentIndexChanged(int index)
  * Слот вызывается при изменении текста в `m_selectCombo`.
  * Разрешаем выбор порта.
  */
-void NetworkWidget::editTextChanged(const QString &text)
+void NetworkWidget::editTextChanged(const QString &/*text*/)
 {
   m_portLabel->setEnabled(true);
   m_portBox->setEnabled(true);
@@ -176,24 +175,6 @@ void NetworkWidget::setCurrentIndex(int index)
   }
   
   m_initPort = m_portBox->value();
-}
-
-
-/** [private]
- * 
- */
-void NetworkWidget::createList()
-{ 
-  QDir directory(m_networksPath);
-  directory.setNameFilters(QStringList() << "*.xml");
-  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
-  NetworkReader network;
-  
-  foreach (QString file, files) {
-    if (network.readFile(m_networksPath + file))
-      m_selectCombo->addItem(QIcon(":/images/network.png"), network.networkName(), file);
-  }
-  m_settings->needCreateNetworkList = false;
 }
 
 

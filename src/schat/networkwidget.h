@@ -30,7 +30,6 @@ private slots:
   void setCurrentIndex(int index);
  
 private:
-  void createList();
   void init();
   
   int m_initPort;
