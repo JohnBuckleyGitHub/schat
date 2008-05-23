@@ -108,7 +108,7 @@ void Settings::write()
 
 
 /** [private]
- * 
+ * Создаёт список сетей и одиночных серверов. 
  */
 void Settings::createServerList(QSettings &s)
 {
