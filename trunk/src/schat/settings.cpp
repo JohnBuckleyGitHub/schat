@@ -5,8 +5,9 @@
 
 #include <QtGui>
 
-#include "settings.h"
+#include "networkreader.h"
 #include "schatwindow.h"
+#include "settings.h"
 
 
 /** [public]
@@ -74,6 +75,8 @@ void Settings::read()
   network.fromConfig(s.value("Network", "AchimNet.xml").toString());
   qApp->setStyle(style);
   
+  createServerList(s);
+  
   s.beginGroup("Profile");
   profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
   profile->setFullName(s.value("Name", "").toString());                 // Настоящие имя
@@ -105,6 +108,37 @@ void Settings::write()
 
 
 /** [private]
+ * 
+ */
+void Settings::createServerList(QSettings &s)
+{
+  QDir directory(qApp->applicationDirPath() + "/networks/");
+  directory.setNameFilters(QStringList() << "*.xml");
+  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
+  NetworkReader network;
+  
+  foreach (QString file, files)
+    if (network.readFile(qApp->applicationDirPath() + "/networks/" + file)) {
+      QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
+      item->setData(file, Qt::UserRole);
+      networksModel.appendRow(item);
+    }
+  
+  QStringList recent = s.value("RecentServers", "empty").toStringList();
+  
+  if (recent.at(0) != "empty")
+    foreach (QString server, recent) {
+      QStringList list = server.split(':');
+      if (list.size() == 2) {
+        QStandardItem *item = new QStandardItem(QIcon(":/images/host.png"), list.at(0));
+        item->setData(list.at(1).toInt(), Qt::UserRole);
+        networksModel.appendRow(item);
+      }
+    }
+}
+
+
+/** [private]
  * Функция проходится по модели `networksModel` и выделяет из неё одиночные серверы,
  * для записи в файл настроек (ключ "RecentServers").
  */
@@ -123,4 +157,3 @@ void Settings::saveRecentServers(QSettings &s)
   
   s.setValue("RecentServers", list);
 }
-
