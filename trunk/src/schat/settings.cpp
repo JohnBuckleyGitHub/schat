@@ -28,14 +28,18 @@ Settings::Settings(Profile *p, QObject *parent)
 void Settings::notify(int notify)
 {
   switch (notify) {
-    case ServerChanged:
-      emit serverChanged();
+    case NetworkSettingsChanged:
+      emit networkSettingsChanged();
       break;
-      
+    
     case ProfileSettingsChanged:
       emit profileSettingsChanged();
       break;
       
+    case ServerChanged:
+      emit serverChanged();
+      break;
+            
     default:
       break;
   }  

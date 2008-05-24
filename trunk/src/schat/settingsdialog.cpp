@@ -15,7 +15,7 @@
 /** [SettingsDialog/public]
  * Конструктор SettingsDialog
  */
-SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
+SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -23,52 +23,49 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
   
   resize(500, 256);
   
-  chat           = static_cast<SChatWindow *>(parent);
-  profile        = p;
-  settings       = s;
-  okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
-  cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
-  resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
-  contentsWidget = new QListWidget(this);
-  pagesWidget    = new QStackedWidget;
+  m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
+  m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
+  m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
+  m_contentsWidget = new QListWidget(this);
+  m_pagesWidget    = new QStackedWidget;
 
-  profilePage       = new ProfileSettings(settings, profile, this);
-  networkPage       = new NetworkSettings(chat, settings, this);
-  interfaceSettings = new InterfaceSettings(settings, this);
+  m_profilePage       = new ProfileSettings(settings, profile, this);
+  m_networkPage       = new NetworkSettings(settings, this);
+  m_interfaceSettings = new InterfaceSettings(settings, this);
   
-  resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
-  pagesWidget->addWidget(profilePage);
-  pagesWidget->addWidget(networkPage);
-  pagesWidget->addWidget(interfaceSettings);
+  m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
+  m_pagesWidget->addWidget(m_profilePage);
+  m_pagesWidget->addWidget(m_networkPage);
+  m_pagesWidget->addWidget(m_interfaceSettings);
   
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   
-  new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), contentsWidget);
-  new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), contentsWidget);
-  new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), contentsWidget);
+  new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), m_contentsWidget);
+  new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), m_contentsWidget);
+  new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_contentsWidget);
   
-  connect(contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
-  connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
-  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-  connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
-  connect(profilePage, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
+  connect(m_contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
+  connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(m_resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+  connect(m_profilePage, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
   
-  contentsWidget->setCurrentRow(ProfilePage);
+  m_contentsWidget->setCurrentRow(ProfilePage);
   
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addStretch();
-  buttonLayout->addWidget(resetButton);
-  buttonLayout->addWidget(okButton);
-  buttonLayout->addWidget(cancelButton);
+  buttonLayout->addWidget(m_resetButton);
+  buttonLayout->addWidget(m_okButton);
+  buttonLayout->addWidget(m_cancelButton);
   buttonLayout->setSpacing(3);
   
   QGridLayout *mainLayout = new QGridLayout(this);
   mainLayout->setColumnStretch(0, 1);
   mainLayout->setColumnStretch(1, 3);
-  mainLayout->addWidget(contentsWidget, 0, 0);
-  mainLayout->addWidget(pagesWidget, 0, 1);
+  mainLayout->addWidget(m_contentsWidget, 0, 0);
+  mainLayout->addWidget(m_pagesWidget, 0, 1);
   mainLayout->addWidget(line, 1, 0, 1, 2);
   mainLayout->addLayout(buttonLayout, 2, 0, 1, 2);
   mainLayout->setMargin(3);
@@ -83,8 +80,8 @@ SettingsDialog::SettingsDialog(Profile *p, Settings *s, QWidget *parent)
  */
 void SettingsDialog::setPage(int page)
 {
-  contentsWidget->setCurrentRow(page);
-  pagesWidget->setCurrentIndex(page);
+  m_contentsWidget->setCurrentRow(page);
+  m_pagesWidget->setCurrentIndex(page);
 }
 
 
@@ -93,9 +90,9 @@ void SettingsDialog::setPage(int page)
  */
 void SettingsDialog::accept()
 {
-  profilePage->save();
-  networkPage->save();
-  interfaceSettings->save();
+  m_profilePage->save();
+  m_networkPage->save();
+  m_interfaceSettings->save();
   close();
 }
 
@@ -108,7 +105,7 @@ void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previ
   if (!current)
     current = previous;
 
-  pagesWidget->setCurrentIndex(contentsWidget->row(current));
+  m_pagesWidget->setCurrentIndex(m_contentsWidget->row(current));
 }
 
 
@@ -117,17 +114,17 @@ void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previ
  */
 void SettingsDialog::reset()
 {
-  switch (pagesWidget->currentIndex()) {
+  switch (m_pagesWidget->currentIndex()) {
     case ProfilePage:
-      profilePage->reset();      
+      m_profilePage->reset();      
       break;
       
     case NetworkPage:
-      networkPage->reset();
+      m_networkPage->reset();
       break;
       
     case InterfacePage:
-      interfaceSettings->reset();
+      m_interfaceSettings->reset();
       break;
   }  
 }
@@ -182,19 +179,18 @@ void ProfileSettings::save()
 /** [NetworkSettings/public]
  * Конструктор `NetworkSettings`
  */
-NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
+NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
-  chat              = w;
-  settings          = s;
-  welcomeCheckBox   = new QCheckBox(tr("Всегда использовать этот сервер"), this);
+  m_settings = settings;
   
-  welcomeCheckBox->setChecked(settings->hideWelcome);
-  welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
+  m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
+  m_welcomeCheckBox->setChecked(m_settings->hideWelcome);
+  m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
   
-  m_networkWidget = new NetworkWidget(settings, this);
+  m_networkWidget = new NetworkWidget(m_settings, this);
   
   QHBoxLayout *networkLayout = new QHBoxLayout;
   networkLayout->addWidget(m_networkWidget);
@@ -204,7 +200,7 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
   QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
   QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
   serverGroupLayout->addLayout(networkLayout);
-  serverGroupLayout->addWidget(welcomeCheckBox);
+  serverGroupLayout->addWidget(m_welcomeCheckBox);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(serverGroupBox);
@@ -218,7 +214,7 @@ NetworkSettings::NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent)
 void NetworkSettings::reset()
 {
   m_networkWidget->reset();
-  welcomeCheckBox->setChecked(true);
+  m_welcomeCheckBox->setChecked(true);
 }
 
 
@@ -228,9 +224,9 @@ void NetworkSettings::reset()
 void NetworkSettings::save()
 {
   if (m_networkWidget->save())
-    chat->reconnect();
+    m_settings->notify(Settings::NetworkSettingsChanged);
   
-  settings->hideWelcome = welcomeCheckBox->isChecked();
+  m_settings->hideWelcome = m_welcomeCheckBox->isChecked();
 }
 
 
@@ -239,19 +235,19 @@ void NetworkSettings::save()
 /** [InterfaceSettings/public]
  * Конструктор `InterfaceSettings`
  */
-InterfaceSettings::InterfaceSettings(Settings *s, QWidget *parent)
+InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  settings = s;
+  m_settings = settings;
   
-  styleComboBox = new QComboBox(this);
-  styleComboBox->addItems(QStyleFactory::keys());  
-  styleComboBox->setCurrentIndex(styleComboBox->findText(settings->style));
+  m_styleComboBox = new QComboBox(this);
+  m_styleComboBox->addItems(QStyleFactory::keys());  
+  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->style));
   
   QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
   QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
-  styleGroupLayout->addWidget(styleComboBox);
+  styleGroupLayout->addWidget(m_styleComboBox);
   styleGroupLayout->addStretch();
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -265,7 +261,7 @@ InterfaceSettings::InterfaceSettings(Settings *s, QWidget *parent)
  */
 void InterfaceSettings::reset()
 {
-  styleComboBox->setCurrentIndex(styleComboBox->findText("Plastique"));
+  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
 }
 
 
@@ -274,8 +270,8 @@ void InterfaceSettings::reset()
  */
 void InterfaceSettings::save()
 {
-  if (styleComboBox->currentIndex() != -1) {
-    settings->style = styleComboBox->currentText();
-    qApp->setStyle(settings->style);
+  if (m_styleComboBox->currentIndex() != -1) {
+    m_settings->style = m_styleComboBox->currentText();
+    qApp->setStyle(m_settings->style);
   }
 }

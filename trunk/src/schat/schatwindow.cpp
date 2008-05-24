@@ -45,6 +45,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   settings      = new Settings(profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
+  
+  m_reconnectTimer = new QTimer(this);
+  m_reconnectTimer->setInterval(reconnectTimeout);
  
   state = Disconnected;
   
@@ -88,9 +91,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
+  connect(m_reconnectTimer, SIGNAL(timeout()), this, SLOT(newConnection()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
-  connect(settings, SIGNAL(serverChanged()), this, SLOT(newConnection()));
+  
+  connect(settings, SIGNAL(networkSettingsChanged()), this, SLOT(networkSettingsChanged()));
   connect(settings, SIGNAL(profileSettingsChanged()), this, SLOT(profileSettingsChanged()));
+  connect(settings, SIGNAL(serverChanged()), this, SLOT(newConnection()));
   
   mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
@@ -340,6 +346,9 @@ void SChatWindow::participantLeft(const QString &nick)
  */
 void SChatWindow::readyForUse()
 {
+  if (m_reconnectTimer->isActive())
+    m_reconnectTimer->stop();
+  
   state = Connected;
   QString peerAddress = clientSocket->peerAddress().toString();
   
@@ -506,16 +515,30 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 
 /** [private slots]
+ * Слот вызывается при изменении сетевых настроек.
+ * Инициаторы:
+ *   void NetworkSettings::save() (через `Settings::notify(int)`)
+ */
+void SChatWindow::networkSettingsChanged()
+{
+  if (state == Connected) {
+    mainChannel->browser->msgDisconnect();
+    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Изменены настройки сети, пытаемся подключится...</i></div>").arg(ChatBrowser::currentTime()));
+  }
+  
+  newConnection();
+}
+
+
+/** [private slots]
  * Инициаторы:
  *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
 void SChatWindow::newConnection()
 {
-  state = WaitingForConnected;
-  statusLabel->setText(tr("Подключение..."));
-  
   if (!clientSocket) {
     clientSocket = new ClientSocket(this);
+    clientSocket->setProfile(profile);
     connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
     connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
@@ -525,9 +548,19 @@ void SChatWindow::newConnection()
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
   }
+  else {
+    state = Ignore;
+    clientSocket->quit();
+  }
   
+  state = WaitingForConnected;
   QString server = settings->network.server();
-  clientSocket->setProfile(profile);
+  
+  if (settings->network.isNetwork())
+    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(settings->network.name()));
+  else
+    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+  
   clientSocket->connectToHost(server, settings->network.port());
 }
 
@@ -805,9 +838,12 @@ void SChatWindow::createTrayIcon()
 void SChatWindow::removeConnection()
 {
   quint16 err = clientSocket->protocolError();
-  
-  mainChannel->displayChoiceServer(true);
   model.clear();
+  
+  // Если ник уже используется, то не показываем выбор сервера
+  // и переподключаемся с новым ником, с нулевым интервалом.
+  if (err != sChatErrorNickAlreadyUse)
+    mainChannel->displayChoiceServer(true);
   
   if (state == Connected || state == Stopped)
     mainChannel->browser->msgDisconnect();
@@ -823,18 +859,16 @@ void SChatWindow::removeConnection()
   else if (err == sChatErrorNickAlreadyUse) {
     uniqueNick();
   }
-  
-  clientSocket->deleteLater();
 
   statusLabel->setText(tr("Не подключено"));
   
-  if (state != Stopped) {
+  if (!(state == Stopped || state == Ignore)) {
     state = WaitingForConnected;
     
     if (err == sChatErrorNickAlreadyUse)
-      QTimer::singleShot(1000, this, SLOT(newConnection()));
+      newConnection();
     else
-      QTimer::singleShot(reconnectTimeout, this, SLOT(newConnection()));
+      m_reconnectTimer->start();
   }
 }
 
