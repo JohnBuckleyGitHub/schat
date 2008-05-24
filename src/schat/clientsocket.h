@@ -18,13 +18,14 @@ class ClientSocket : public QTcpSocket
 
 public:
   ClientSocket(QObject *parent = 0);
+  inline void setDirect(bool d)      { direct = d; }
+  inline void setProfile(Profile *p) { profile = p; }
   quint16 protocolError() { return pError; }
   void quit();
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
-  void setDirect(bool d) { direct = d; }
-  void setProfile(Profile *p) { profile = p; }
+  void send(quint16 opcode, quint16 s, const QStringList &list);
 
 signals:
   void newMessage(const QString &nick, const QString &message);

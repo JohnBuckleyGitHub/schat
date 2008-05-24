@@ -39,6 +39,7 @@ public:
   
 signals:
   void appendParticipant(const QString &p);
+  void clientSendNewProfile(quint16 sex, const QString &nick, const QString &name);
   void needParticipantList();
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   
@@ -53,6 +54,7 @@ private slots:
 
 private:
   bool readBlock();
+  void clientSendNewProfile();
   void readGreeting();
   
   int failurePongs;

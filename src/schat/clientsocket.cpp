@@ -117,6 +117,30 @@ void ClientSocket::send(quint16 opcode, const QString &s)
 }
 
 
+/** [public]
+ * ОПКОДЫ:
+ *   sChatOpcodeNewProfile
+ */
+void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)
+{
+  #ifdef SCHAT_DEBUG
+  qDebug() << "void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)" << opcode << s << list;
+  #endif
+  
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << s;
+  
+  foreach (QString str, list)
+    out << str;
+  
+  out.device()->seek(0);
+  out << quint16(block.size() - sizeof(quint16));      
+  write(block);  
+}
+
+
 /** [private slots]
  * Если спустя `InitTimeout` секунд состояние
  * всё еще равно `QAbstractSocket::ConnectingState`

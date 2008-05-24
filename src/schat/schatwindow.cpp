@@ -588,8 +588,15 @@ void SChatWindow::notice()
  */
 void SChatWindow::profileSettingsChanged()
 {
+  #ifdef SCHAT_DEBUG
   qDebug() << "void SChatWindow::profileSettingsChanged()";
+  #endif
   
+  if (state == Connected) {
+    QStringList list;
+    list << profile->nick() << profile->fullName();
+    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
+  }  
 }
 
 

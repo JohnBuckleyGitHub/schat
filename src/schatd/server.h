@@ -29,6 +29,7 @@ signals:
 
 public slots:
   void appendParticipant(const QString &p);
+  void clientSendNewProfile(quint16 sex, const QString &nick, const QString &name);
   void relayMessage(const QString &channel, const QString &nick, const QString &message);
   void relayParticipantList(ServerSocket *socket);
   

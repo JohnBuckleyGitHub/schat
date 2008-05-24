@@ -40,6 +40,7 @@ ServerSocket::ServerSocket(QObject *parent)
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
   connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
+  connect(this, SIGNAL(clientSendNewProfile(quint16, const QString &, const QString &)), parent, SLOT(clientSendNewProfile(quint16, const QString &, const QString &)));
 
   nextBlockSize = 0;
   pingTimer.setInterval(PingInterval);
@@ -143,8 +144,8 @@ void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
   out.setVersion(sChatStreamVersion);
   out << quint16(0) << opcode << s;
   
-  for (int i = 0; i < list.size(); ++i)
-    out << list.at(i);
+  foreach (QString str, list)
+    out << str;
   
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
@@ -193,6 +194,10 @@ void ServerSocket::readyRead()
         #endif
           emit relayMessage(channel, profile->nick(), message);
         break;
+        
+      case sChatOpcodeNewProfile:
+        clientSendNewProfile();
+        break;
       
       case sChatOpcodePong:
         failurePongs = 0;
@@ -239,10 +244,6 @@ void ServerSocket::readyRead()
  */
 void ServerSocket::sendPing()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::sendPing()" << failurePongs;
-  #endif
-  
   if (failurePongs < 2) {
     send(sChatOpcodePing);
     ++failurePongs;
@@ -270,6 +271,24 @@ bool ServerSocket::readBlock()
   
   nextBlockSize = 0;
   return true;
+}
+
+
+/** [private]
+ * 
+ */
+void ServerSocket::clientSendNewProfile()
+{
+  qDebug() << "void ServerSocket::clientSendNewProfile()";
+  
+  quint16 sex;
+  QString nick;
+  QString name;
+  
+  currentBlock >> sex >> nick >> name;
+  
+  if (Profile::isValidNick(nick))
+    emit clientSendNewProfile(sex, nick, name);
 }
 
 

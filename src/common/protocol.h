@@ -47,6 +47,19 @@ static const quint16 sChatOpcodePong                 = 401;
 static const quint16 sChatOpcodeMaxDoublePingTimeout = 402;
 static const quint16 sChatOpcodeClientQuit           = 500;
 
+/**
+ * Смена профиля.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> пол участника: 0 - мужской, 1 - женский
+ * QString -> ник участника
+ * QString -> полное имя участника, может быть пустой строкой
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент
+ */
+static const quint16 sChatOpcodeNewProfile           = 600;
+
 static const quint16 sChatErrorNickAlreadyUse        = 200;
 static const quint16 sChatErrorBadProtocolVersion    = 100;
 static const quint16 sChatErrorBadGreetingFlag       = 101;
