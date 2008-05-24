@@ -65,7 +65,16 @@ void Server::appendParticipant(const QString &p)
 }
 
 
-/** [private]
+/** [public slots]
+ * 
+ */
+void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)
+{
+  qDebug() << "void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)" << sex << nick << name;
+}
+
+
+/** [public slots]
  * 
  */
 void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
