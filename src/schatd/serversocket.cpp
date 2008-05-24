@@ -47,10 +47,15 @@ ServerSocket::ServerSocket(QObject *parent)
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeGreetingOk
  */
 void ServerSocket::send(quint16 opcode)
 {
+  #ifdef SCHAT_DEBUG
+  qDebug() << "void ServerSocket::send(quint16 opcode)" << opcode;
+  #endif
+  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -62,12 +67,13 @@ void ServerSocket::send(quint16 opcode)
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeSendPrivateMessage
  */
 void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
   #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
+  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
   #endif
   
   QByteArray block;
@@ -81,12 +87,13 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeParticipantLeft
  */
 void ServerSocket::send(quint16 opcode, const QString &s)
 {
   #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
   #endif
   
   QByteArray block;
@@ -100,12 +107,14 @@ void ServerSocket::send(quint16 opcode, const QString &s)
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeError
+ *   sChatOpcodeMaxDoublePingTimeout
  */
 void ServerSocket::send(quint16 opcode, quint16 err)
 {
   #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
+  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &s)" << opcode << err;
   #endif
   
   QByteArray block;
@@ -119,10 +128,16 @@ void ServerSocket::send(quint16 opcode, quint16 err)
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeNewParticipant
+ *   sChatOpcodeNewParticipantQuiet
  */
 void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
 {
+  #ifdef SCHAT_DEBUG
+  qDebug() << "void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)" << opcode << s << list;
+  #endif
+  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);

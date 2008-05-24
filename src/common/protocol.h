@@ -19,6 +19,20 @@ static const quint16 sChatStateSendingGreeting       = 2000;
 static const quint8 sChatFlagNone                    = 0;
 static const quint8 sChatFlagDirect                  = 1;
 
+/**
+ * Приветственное сообщение.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint8  -> версия протокола `sChatProtocolVersion`
+ * quint8  -> флаг `sChatFlag*`
+ * quint8  -> пол участника: 0 - мужской, 1 - женский
+ * QString -> ник участника
+ * QString -> полное имя участника, может быть пустой строкой
+ * QString -> строка идентифицирующая агент участника, формат: UserAgent/Version
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент
+ */
 static const quint16 sChatOpcodeGreeting             = 100;
 static const quint16 sChatOpcodeGreetingOk           = 101;
 static const quint16 sChatOpcodeSendMessage          = 200;
