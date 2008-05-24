@@ -56,12 +56,15 @@ void ClientSocket::quit()
 
 
 /** [public]
- * 
+ * ОПКОДЫ:
+ *   sChatOpcodeClientQuit
+ *   sChatOpcodePing
+ *   sChatOpcodePong
  */
 void ClientSocket::send(quint16 opcode)
 {
   #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::send(quint16 opcode)" << opcode;
+  qDebug() << "void ClientSocket::send(quint16 opcode)" << opcode;
   #endif
   
   QByteArray block;
@@ -75,6 +78,8 @@ void ClientSocket::send(quint16 opcode)
 
 
 /** [public]
+ * ОПКОДЫ:
+ *   sChatOpcodeSendMessage
  * 
  */
 void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
@@ -240,16 +245,6 @@ void ClientSocket::readyRead()
  * До начала отправки устанавливаем состояние
  * сокета `sChatStateWaitingForGreeting` вместо `sChatStateDisconnected`
  * Слот вызывается сигналом `connected()`
- **
- * Формат пакета:
- * quint16 - размер пакета
- * quint16 - опкод `sChatOpcodeGreeting`
- * quint8  - версия протокола `sChatProtocolVersion`
- * quint8  - флаг, в данное время всегда `0`
- * QString - ник участника
- * QString - полное имя участника
- * quint8  - пол участника (мужской: `0`, женский: `1`)
- * QString - строка с названием и версией клиента (разделитель '/')
  */
 void ClientSocket::sendGreeting()
 {
