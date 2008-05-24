@@ -20,10 +20,10 @@ class Settings : public QObject {
   
 public:
   enum {
-    NetworksModelIndexChanged,
     NetworkSettingsChanged,
+    NetworksModelIndexChanged,
+    ProfileSettingsChanged,
     ServerChanged,
-    ProfileSettingsChanged
   };
   
   Settings(Profile *p, QObject *parent);
@@ -40,10 +40,11 @@ public:
   QString style;
 
 signals:
+  void networkSettingsChanged();
   void networksModelIndexChanged(int index);
   void profileSettingsChanged();
   void serverChanged();
- 
+
 private:
   void createServerList(QSettings &s);
   void saveRecentServers(QSettings &s);

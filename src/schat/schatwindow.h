@@ -46,7 +46,8 @@ public:
     Disconnected,
     WaitingForConnected,
     Connected,
-    Stopped
+    Stopped,
+    Ignore
   };
   
   SChatWindow(QWidget *parent = 0);
@@ -80,12 +81,14 @@ private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void networkSettingsChanged();
   void newConnection();
   void notice();
   void profileSettingsChanged();
   void resetTabNotice(int index);
   void returnPressed();
   void welcomeOk();
+
 
 private:
   int tabIndex(const QString &s, int start = 1);
@@ -128,6 +131,7 @@ private:
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
   QTimer *noticeTimer;
+  QTimer *m_reconnectTimer;
   QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;

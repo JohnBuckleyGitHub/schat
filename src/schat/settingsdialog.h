@@ -49,20 +49,17 @@ public slots:
   void reset();
 
 private slots:
-  inline void validNick(bool b) { okButton->setEnabled(b); }
+  inline void validNick(bool b) { m_okButton->setEnabled(b); }
   
 private:
-  Profile *profile;
-  Settings *settings;
-  InterfaceSettings *interfaceSettings;
-  NetworkSettings *networkPage;
-  ProfileSettings *profilePage;
-  QListWidget *contentsWidget;
-  QPushButton *cancelButton;
-  QPushButton *okButton;
-  QPushButton *resetButton;
-  QStackedWidget *pagesWidget;
-  SChatWindow *chat;
+  InterfaceSettings *m_interfaceSettings;
+  NetworkSettings *m_networkPage;
+  ProfileSettings *m_profilePage;
+  QListWidget *m_contentsWidget;
+  QPushButton *m_cancelButton;
+  QPushButton *m_okButton;
+  QPushButton *m_resetButton;
+  QStackedWidget *m_pagesWidget;
 };
 
 
@@ -74,7 +71,7 @@ class ProfileSettings : public QWidget
   Q_OBJECT
   
 public:
-  ProfileSettings(Settings *settings, Profile *p, QWidget *parent = 0);
+  ProfileSettings(Settings *settings, Profile *profile, QWidget *parent = 0);
   void reset();
   void save();
   
@@ -95,15 +92,14 @@ class NetworkSettings : public QWidget
   Q_OBJECT
   
 public:
-  NetworkSettings(SChatWindow *w, Settings *s, QWidget *parent = 0);
+  NetworkSettings(Settings *settings, QWidget *parent = 0);
   void reset();
   void save();
   
 private:
   NetworkWidget *m_networkWidget;
-  QCheckBox *welcomeCheckBox;
-  SChatWindow *chat;
-  Settings *settings;
+  QCheckBox *m_welcomeCheckBox;
+  Settings *m_settings;
 };
 
 
@@ -115,13 +111,13 @@ class InterfaceSettings : public QWidget
   Q_OBJECT
   
 public:
-  InterfaceSettings(Settings *s, QWidget *parent = 0);
+  InterfaceSettings(Settings *settings, QWidget *parent = 0);
   void reset();
   void save();
   
 private:
-  QComboBox *styleComboBox;
-  Settings *settings;
+  QComboBox *m_styleComboBox;
+  Settings *m_settings;
 };
 
 #endif /*SETTINGSDIALOG_H_*/
