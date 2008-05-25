@@ -66,11 +66,56 @@ void Server::appendParticipant(const QString &p)
 
 
 /** [public slots]
- * 
+ * Слот вызывается при получении пакета с опкодом `sChatOpcodeNewProfile`.
+ * Варианты действий:
+ *  1. ник, не изменился, рассылаем уведомление `sChatOpcodeChangedProfile`.
+ *  2. новый ник уже есть в списке участников, разрываем соединение.
+ *  3. ник изменился, меняем ник в списке участников и рассылаем `sChatOpcodeChangedNick`.
+ * ПАРАМЕТРЫ:
+ *  quint16 sex         -> новый пол
+ *  const QString &nick -> новый ник
+ *  const QString &name -> новое полное имя * 
  */
 void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)
 {
   qDebug() << "void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)" << sex << nick << name;
+  
+
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    if (socket->nick() == nick) {
+      qDebug() << "PROFILE";
+      socket->setSex(sex);
+      socket->setFullName(name);
+      QStringList list;
+      list << nick << name;
+      
+      QHashIterator<QString, ServerSocket *> i(peers);
+      while (i.hasNext()) {
+        i.next();
+        i.value()->send(sChatOpcodeChangedProfile, sex, list);
+      }
+    }
+    else if (peers.contains(nick)) {
+      socket->abort();
+      return;
+    }
+    else {
+      qDebug() << "NICK";
+      peers.remove(socket->nick());
+      peers.insert(nick, socket);
+      QStringList list;
+      list << socket->nick() << nick << name;
+      socket->setNick(nick);
+      socket->setSex(sex);
+      socket->setFullName(name);
+      
+      QHashIterator<QString, ServerSocket *> i(peers);
+      while (i.hasNext()) {
+        i.next();
+        i.value()->send(sChatOpcodeChangedNick, sex, list);
+      }
+    }
+  }
 }
 
 
