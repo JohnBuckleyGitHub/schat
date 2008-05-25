@@ -22,8 +22,10 @@ public:
   inline QString nick()                              { return profile->nick(); }
   inline QStringList participantInfo() const         { return profile->toList(); }
   inline quint16 sex()                               { return profile->sex(); }
+  inline void setFullName(const QString &fullName)   { profile->setFullName(fullName); }
   inline void setNick(const QString &n)              { profile->setNick(n); }
   inline void setProtocolError(quint16 e)            { protocolError = e; }
+  inline void setSex(const quint16 sex = 0)          { profile->setSex(sex); }
   inline void setState(quint16 state)                { currentState = state; }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);

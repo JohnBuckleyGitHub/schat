@@ -60,6 +60,37 @@ static const quint16 sChatOpcodeClientQuit           = 500;
  */
 static const quint16 sChatOpcodeNewProfile           = 600;
 
+/**
+ * Уведомление о смене участником профиля
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> новый пол участника: 0 - мужской, 1 - женский
+ * QString -> старый ник участника
+ * QString -> новое полное имя участника, может быть пустой строкой
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 sChatOpcodeChangedProfile       = 601;
+
+/**
+ * Уведомление о смене участником профиля
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> новый пол участника: 0 - мужской, 1 - женский
+ * QString -> старый ник участника
+ * QString -> новый ник участника
+ * QString -> новое полное имя участника, может быть пустой строкой
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 sChatOpcodeChangedNick          = 602;
+
+
+/**
+ * КОДЫ ОШИБОК
+ */
 static const quint16 sChatErrorNickAlreadyUse        = 200;
 static const quint16 sChatErrorBadProtocolVersion    = 100;
 static const quint16 sChatErrorBadGreetingFlag       = 101;
