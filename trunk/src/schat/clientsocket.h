@@ -28,6 +28,8 @@ public:
   void send(quint16 opcode, quint16 s, const QStringList &list);
 
 signals:
+  void changedNick(quint16 sex, const QStringList &list);
+  void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
@@ -43,6 +45,8 @@ private slots:
 private:
   bool readBlock();
   void newParticipant(bool echo = true);
+  void readChangedNick();
+  void readChangedProfile();
   
   bool direct;
   int failurePongs;
