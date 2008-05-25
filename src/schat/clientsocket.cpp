@@ -250,6 +250,14 @@ void ClientSocket::readyRead()
         send(sChatOpcodePong);
         pingTimeout.start();
         break;
+
+      case sChatOpcodeChangedNick:
+        readChangedNick();
+        break;
+        
+      case sChatOpcodeChangedProfile:
+        readChangedProfile();
+        break;
         
       default:
         #ifdef SCHAT_DEBUG
@@ -367,4 +375,43 @@ void ClientSocket::newParticipant(bool echo)
     emit newParticipant(sex, info);
   else
     emit newParticipant(sex, info, false);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientSocket::readChangedNick()
+{
+  qDebug() << "void ClientSocket::readChangedNick()";
+  
+  QString newName;
+  QString newNick;
+  QString oldNick;
+  quint16 newSex;
+  
+  currentBlock >> newSex >> oldNick >> newNick >> newName;
+  
+  emit changedNick(newSex, QStringList() << oldNick << newNick << newName);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientSocket::readChangedProfile()
+{
+  qDebug() << "void ClientSocket::readChangedProfile()";
+  
+  bool echo = true;
+  QString newName;
+  QString oldNick;
+  quint16 newSex;
+  
+  currentBlock >> newSex >> oldNick >> newName;
+  
+  if (oldNick == profile->nick())
+    echo = false;
+  
+  emit changedProfile(newSex, QStringList() << oldNick << newName, echo);
 }

@@ -76,6 +76,8 @@ private slots:
   void about();
   void addTab();
   void addTab(const QModelIndex &i);
+  void changedNick(quint16 sex, const QStringList &list);
+  void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
   void closeChat();
   void closeTab();
   void connectionError(QAbstractSocket::SocketError socketError);
@@ -88,7 +90,6 @@ private slots:
   void resetTabNotice(int index);
   void returnPressed();
   void welcomeOk();
-
 
 private:
   int tabIndex(const QString &s, int start = 1);

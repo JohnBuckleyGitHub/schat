@@ -404,6 +404,26 @@ void SChatWindow::addTab()
 /** [private slots]
  * 
  */
+void SChatWindow::changedNick(quint16 sex, const QStringList &list)
+{
+  qDebug() << "void SChatWindow::changedNick(quint16 sex, const QStringList list)" << sex << list;
+  
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo)
+{
+  qDebug() << "void SChatWindow::changedProfile(quint16 sex, const QStringList list, bool echo)" << sex << list << echo;
+  
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::addTab(const QModelIndex &i)
 {
   QStandardItem *item = model.itemFromIndex(i);
@@ -547,6 +567,8 @@ void SChatWindow::newConnection()
     connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
+    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), this, SLOT(changedNick(quint16, const QStringList &)));
+    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), this, SLOT(changedProfile(quint16, const QStringList &, bool)));
   }
   else {
     state = Ignore;
