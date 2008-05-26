@@ -279,8 +279,6 @@ bool ServerSocket::readBlock()
  */
 void ServerSocket::clientSendNewProfile()
 {
-  qDebug() << "void ServerSocket::clientSendNewProfile()";
-  
   quint16 sex;
   QString nick;
   QString name;

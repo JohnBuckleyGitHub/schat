@@ -422,8 +422,26 @@ void SChatWindow::addTab(const QModelIndex &i)
  */
 void SChatWindow::changedNick(quint16 sex, const QStringList &list)
 {
-  qDebug() << "void SChatWindow::changedNick(quint16 sex, const QStringList list)" << sex << list;
+  QString oldNick = list.at(0);
+  QString nick = list.at(1);
+  QString name = list.at(2);
+  QStandardItem *item = findItem(oldNick);
   
+  if (item) {
+    item->setText(nick);
+    model.sort(0);
+    
+    int index = tabIndex(oldNick);
+    if (index != -1) {
+      tabWidget->setTabText(index, nick);
+      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      tab->browser->msgChangedNick(sex, oldNick, nick);
+    }
+    
+    changedProfile(sex, QStringList() << nick << name, false);
+    
+    mainChannel->browser->msgChangedNick(sex, oldNick, nick);
+  }  
 }
 
 

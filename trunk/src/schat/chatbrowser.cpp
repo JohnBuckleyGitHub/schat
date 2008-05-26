@@ -22,7 +22,7 @@ ChatBrowser::ChatBrowser(QWidget *parent)
       ".gr { color:#909090; }"
       ".green { color:#6bb521; }"
       ".err { color:#da251d; }"
-      ".info { color:#003399; }");
+      ".info { color:#5096cf; }");
 }
 
 
@@ -33,6 +33,20 @@ void ChatBrowser::add(const QString &message)
 {
   append(message);
   scroll();
+}
+
+
+/** [public]
+ * 
+ */
+void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
+{
+  if (sex)
+    append(tr("<div class='nb'>(%1) <i class='info'><b>%2</b> теперь известна как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+  else
+    append(tr("<div class='nb'>(%1) <i class='info'><b>%2</b> теперь известен как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+  
+  scroll(); 
 }
 
 
