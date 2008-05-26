@@ -383,8 +383,6 @@ void ClientSocket::newParticipant(bool echo)
  */
 void ClientSocket::readChangedNick()
 {
-  qDebug() << "void ClientSocket::readChangedNick()";
-  
   QString newName;
   QString newNick;
   QString oldNick;
@@ -401,8 +399,6 @@ void ClientSocket::readChangedNick()
  */
 void ClientSocket::readChangedProfile()
 {
-  qDebug() << "void ClientSocket::readChangedProfile()";
-  
   bool echo = true;
   QString newName;
   QString oldNick;
