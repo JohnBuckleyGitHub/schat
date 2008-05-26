@@ -99,8 +99,15 @@ void NetworkReader::readServers()
       break;
 
     if (isStartElement()) {
-      if (name() == "ip")
-        m_servers << (readElementText() + ":7666");
+      if (name() == "host") {
+        QString t = readElementText();
+        QStringList list = t.split(':');
+        
+        if (list.size() == 2)
+          m_servers << t;
+        else
+          m_servers << (t + ":7666");
+      }
       else
         readUnknownElement();
     }
