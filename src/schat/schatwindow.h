@@ -28,14 +28,15 @@ class QLabel;
 class QLineEdit;
 class QListView;
 class QMenu;
+class QStandardItem;
 class QStatusBar;
 class QTabWidget;
+class QTimer;
 class QToolButton;
 class QVBoxLayout;
 class Settings;
 class Tab;
 class WelcomeDialog;
-class QTimer;
 
 class SChatWindow : public QMainWindow
 {
@@ -92,8 +93,9 @@ private slots:
   void welcomeOk();
 
 private:
-  int tabIndex(const QString &s, int start = 1);
+  int tabIndex(const QString &s, int start = 1) const;
   Profile* profileFromItem(const QStandardItem *item);
+  QStandardItem* findItem(const QString &nick) const;
   void createActions();
   void createCornerWidgets();
   void createToolButtons();

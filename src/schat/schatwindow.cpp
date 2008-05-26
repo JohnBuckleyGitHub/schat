@@ -283,15 +283,9 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
  */
 void SChatWindow::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
 {
-  QList<QStandardItem *> items;
-  QStandardItem *item = 0;
-  
-  items = model.findItems(nick, Qt::MatchFixedString);
-  if (items.size() == 1)
-    item = items[0];
-  
-  Tab *tab = 0;
   int index = tabIndex(nick);
+  QStandardItem *item = findItem(nick);
+  Tab *tab = 0;
   
   if (index == -1 ) {
     if (item) {
@@ -404,6 +398,28 @@ void SChatWindow::addTab()
 /** [private slots]
  * 
  */
+void SChatWindow::addTab(const QModelIndex &i)
+{
+  QStandardItem *item = model.itemFromIndex(i);
+  QString nick        = item->text();
+  int index           = tabIndex(nick);
+  
+  if (index == -1) {
+    Profile *p = profileFromItem(item);
+    Tab *tab = new Tab(this);
+    tab->icon.addFile(Profile::sexIconString(p->sex()));
+    index = tabWidget->addTab(tab, tab->icon, nick);
+    tabWidget->setTabToolTip(index, p->toolTip());
+    p->deleteLater();
+  }
+  
+  tabWidget->setCurrentIndex(index);
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::changedNick(quint16 sex, const QStringList &list)
 {
   qDebug() << "void SChatWindow::changedNick(quint16 sex, const QStringList list)" << sex << list;
@@ -416,30 +432,38 @@ void SChatWindow::changedNick(quint16 sex, const QStringList &list)
  */
 void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo)
 {
-  qDebug() << "void SChatWindow::changedProfile(quint16 sex, const QStringList list, bool echo)" << sex << list << echo;
+  Profile *p = 0;
+  QString nick = list.at(0);
+  QString name = list.at(1);
+  QStandardItem *item = findItem(nick);
   
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::addTab(const QModelIndex &i)
-{
-  QStandardItem *item = model.itemFromIndex(i);
-  QString nick        = item->text();
-  int index           = tabIndex(nick);
-  
-  if (index == -1) {
-    Profile *p = profileFromItem(item);
-    Tab *tab = new Tab(this);
-    tab->icon.addFile(Profile::sexIconString(profile->sex()));
-    index = tabWidget->addTab(tab, tab->icon, nick);
-    tabWidget->setTabToolTip(index, p->toolTip());
-    p->deleteLater();
+  if (item) {
+    p = profileFromItem(item);
+    p->setSex(sex);
+    p->setNick(nick);
+    p->setFullName(name);
+    item->setIcon(QIcon(Profile::sexIconString(sex)));
+    item->setToolTip(p->toolTip());
+    item->setData(sex, Qt::UserRole + 1);
+    item->setData(p->toList(), Qt::UserRole + 2);
+    
+    int index = tabIndex(nick);
+    if (index != -1) {
+      tabWidget->setTabToolTip(index, p->toolTip());
+      
+      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      tab->icon.addFile(Profile::sexIconString(sex));
+      
+      if (!tab->notice)
+        tabWidget->setTabIcon(index, tab->icon);
+      
+      if (echo)
+        tab->browser->msgChangedProfile(sex, nick);
+    }
+    
+    if (echo)
+      mainChannel->browser->msgChangedProfile(sex, nick);
   }
-  
-  tabWidget->setCurrentIndex(index);
 }
 
 
@@ -719,7 +743,7 @@ void SChatWindow::welcomeOk()
 /** [private]
  * 
  */
-int SChatWindow::tabIndex(const QString &s, int start)
+int SChatWindow::tabIndex(const QString &s, int start) const
 {
   int count = tabWidget->count();
   int tab = -1;
@@ -741,6 +765,21 @@ int SChatWindow::tabIndex(const QString &s, int start)
 Profile* SChatWindow::profileFromItem(const QStandardItem *item)
 {
   return new Profile(quint8(item->data(Qt::UserRole + 1).toUInt()), item->data(Qt::UserRole + 2).toStringList(), this);
+}
+
+
+/** [private]
+ * 
+ */
+QStandardItem* SChatWindow::findItem(const QString &nick) const
+{
+  QList<QStandardItem *> items;
+  
+  items = model.findItems(nick, Qt::MatchFixedString);
+  if (items.size() == 1)
+    return items[0];
+  else
+    return 0;  
 }
 
 

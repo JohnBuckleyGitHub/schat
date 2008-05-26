@@ -39,6 +39,20 @@ void ChatBrowser::add(const QString &message)
 /** [public]
  * 
  */
+void ChatBrowser::msgChangedProfile(quint16 sex, const QString &nick)
+{
+  if (sex)
+    append(tr("<div class='np'>(%1) <i><b>%2</b> изменила свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+  else
+    append(tr("<div class='np'>(%1) <i><b>%2</b> изменил свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+  
+  scroll();  
+}
+
+
+/** [public]
+ * 
+ */
 void ChatBrowser::msgDisconnect()
 {
   append(tr("<div class='np'>(%1) <i class='err'>Соединение разорвано</i></div>").arg(currentTime()));
