@@ -78,12 +78,12 @@ void Server::appendParticipant(const QString &p)
  */
 void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)
 {
+  #ifdef SCHAT_DEBUG 
   qDebug() << "void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)" << sex << nick << name;
-  
+  #endif
 
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
     if (socket->nick() == nick) {
-      qDebug() << "PROFILE";
       socket->setSex(sex);
       socket->setFullName(name);
       QStringList list;
@@ -100,7 +100,6 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
       return;
     }
     else {
-      qDebug() << "NICK";
       peers.remove(socket->nick());
       peers.insert(nick, socket);
       QStringList list;
