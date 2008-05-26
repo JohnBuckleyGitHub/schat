@@ -811,7 +811,7 @@ void SChatWindow::createActions()
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
   
   // Открытие новой вкладки, для создания нового подключения
-  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение, Ctrl+N"), this);
+  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение"), this);
   addTabAction->setShortcut(tr("Ctrl+N"));
   addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
   connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
@@ -845,7 +845,7 @@ void SChatWindow::createActions()
   
   // Настройка
   settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
-  settingsAction->setShortcut(tr("Ctrl+P"));
+  settingsAction->setShortcut(tr("Ctrl+F12"));
   connect(settingsAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
 }
 
