@@ -11,7 +11,7 @@ INCLUDEPATH += . \
                ../common \
                ../schatd
 QT += network xml
-#CONFIG += console
+CONFIG += console
 #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
 DEFINES += SCHAT_CLIENT
 

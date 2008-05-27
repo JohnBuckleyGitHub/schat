@@ -21,6 +21,7 @@ AboutDialog::AboutDialog(QWidget *parent)
   resize(400, 280);
   tabWidget = new QTabWidget(this);
   tabWidget->addTab(new MainTab(this), tr("О Программе"));
+  tabWidget->addTab(new ChangeLogTab(this), tr("История версий"));
   tabWidget->addTab(new LicenseTab(this), tr("Лицензия"));
   
   closeButton = new QPushButton(tr("Закрыть"), this);
@@ -87,6 +88,31 @@ MainTab::MainTab(QWidget *parent)
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addLayout(topLayout);
   mainLayout->addLayout(bottomLayout);
+}
+
+
+
+/**
+ * Конструктор класса ChangeLogTab
+ */
+ChangeLogTab::ChangeLogTab(QWidget *parent)
+  : QWidget(parent)
+{
+  QTextBrowser *textBrowser = new QTextBrowser(this);
+  textBrowser->setOpenExternalLinks(true);
+  
+  QString file = qApp->applicationDirPath() + "/doc/ChangeLog.html";
+  if (QFile::exists(file)) {
+    textBrowser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
+    textBrowser->setSource(QUrl("ChangeLog.html"));
+  }
+  else
+    textBrowser->setText(tr("<h3 style='color:#da251d;'>ОШИБКА</h3>"
+                            "<p style='color:#da251d;'>Файл <b>%1</b> не найден!</p>").arg(file));
+  
+  QHBoxLayout *mainLayout = new QHBoxLayout(this);
+  mainLayout->addWidget(textBrowser);
+  mainLayout->setMargin(0);
 }
 
 
