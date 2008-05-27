@@ -41,6 +41,18 @@ public:
 
 
 /**
+ * Класс ChangeLogTab
+ */
+class ChangeLogTab : public QWidget
+{
+  Q_OBJECT
+
+public:
+  ChangeLogTab(QWidget *parent = 0); 
+};
+
+
+/**
  * Класс LicenseTab
  */
 class LicenseTab : public QWidget
