@@ -19,8 +19,16 @@ Section "$(STR1000)" SecCore
   File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
   File "${SCHAT_QTDIR}\bin\QtXml4.dll"
   
+  !ifdef VC90
+    File "${VC90_REDIST_DIR}\msvcr90.dll"
+    File "contrib\Microsoft.VC90.CRT.manifest"
+  !endif
+  
   SetOutPath "$INSTDIR\networks"
   File "..\..\data\networks\*.xml"
+  
+  SetOutPath "$INSTDIR\doc"
+  File "..\..\data\doc\*.html"
   
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
