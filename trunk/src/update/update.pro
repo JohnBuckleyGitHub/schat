@@ -1,7 +1,6 @@
-/* $Id$
- * Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
- */
+# $Id$
+# Simple Chat
+# Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
 
 TEMPLATE = app
 TARGET = schat-update 
