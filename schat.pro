@@ -4,4 +4,5 @@
 
 TEMPLATE      = subdirs
 SUBDIRS       = src/schat \
-                src/schatd
+                src/schatd \
+                src/update
