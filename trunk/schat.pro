@@ -4,5 +4,6 @@
 
 TEMPLATE      = subdirs
 SUBDIRS       = src/schat \
-                src/schatd \
-                src/update
+                src/schatd
+
+win32:SUBDIRS +=  src/update

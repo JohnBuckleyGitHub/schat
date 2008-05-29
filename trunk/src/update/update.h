@@ -8,6 +8,8 @@
 
 #include <QObject>
 
+#include "updatexmlreader.h"
+
 class Download;
 
 static const QString DefaultUpdateXmlUrl = "http://achim.net/schat/updates/update.xml";
@@ -33,6 +35,7 @@ private slots:
 private:
   Download *m_download;
   State m_state;
+  UpdateXmlReader m_reader;
 };
 
 #endif /*UPDATE_H_*/
