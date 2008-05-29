@@ -4,7 +4,8 @@
  */
 
 #include <QtCore>
-#include "downloadmanager.h"
+
+#include "update.h"
 
 int main(int argc, char **argv)
 {
@@ -12,12 +13,11 @@ int main(int argc, char **argv)
   QStringList arguments = app.arguments();
   arguments.takeFirst();
 
-  if (arguments.isEmpty())
-    return 1;
+//  if (arguments.isEmpty())
+//    return 1;
 
-  DownloadManager manager;
-  manager.append(arguments);
-
-  QObject::connect(&manager, SIGNAL(finished()), &app, SLOT(quit()));
+  Update update;
+  QTimer::singleShot(0, &update, SLOT(execute()));
+      
   app.exec();
 }

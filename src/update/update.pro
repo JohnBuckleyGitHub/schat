@@ -7,8 +7,13 @@ TARGET = schat-update
 QT = core network
 CONFIG += console
 
-HEADERS += downloadmanager.h
-SOURCES += downloadmanager.cpp main.cpp
+HEADERS += \
+    download.h \
+    update.h
+SOURCES += \
+    download.cpp \
+    main.cpp \
+    update.cpp    
 
 DEPENDPATH  += . \
                ../common
