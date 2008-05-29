@@ -9,11 +9,13 @@ CONFIG += console
 
 HEADERS += \
     download.h \
-    update.h
+    update.h \
+    updatexmlreader.h
 SOURCES += \
     download.cpp \
     main.cpp \
-    update.cpp    
+    update.cpp \
+    updatexmlreader.cpp
 
 DEPENDPATH  += . \
                ../common

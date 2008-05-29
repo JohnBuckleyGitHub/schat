@@ -38,5 +38,12 @@ void Update::saved(const QString &filename)
 {
   if (m_state == GettingUpdateXml) {
     m_state = ReadingUpdateXml;
+    
+    if (!m_reader.readFile(filename)) {
+      QCoreApplication::instance()->exit(16);
+      return;
+    }
+    
+      qDebug() << "READ OK";
   }
 }
