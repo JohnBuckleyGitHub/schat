@@ -7,6 +7,7 @@
 #define UPDATE_H_
 
 #include <QObject>
+#include <QQueue>
 
 #include "updatexmlreader.h"
 
@@ -30,10 +31,12 @@ public slots:
   void execute();
   
 private slots:
+  void error();
   void saved(const QString &filename);
   
 private:
   Download *m_download;
+  QQueue<QString> m_queue;
   State m_state;
   UpdateXmlReader m_reader;
 };

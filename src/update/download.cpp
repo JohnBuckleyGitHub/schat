@@ -34,7 +34,9 @@ void Download::get(const QUrl &url)
 void Download::downloadFinished(QNetworkReply *reply)
 {
   QUrl url = reply->url();
-  if (!reply->error())
+  if (reply->error())
+    emit error();
+  else
     saveToDisk(saveFileName(url), reply);
 
   reply->deleteLater();

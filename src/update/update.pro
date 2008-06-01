@@ -9,6 +9,7 @@ CONFIG += console
 
 HEADERS += \
     download.h \
+    version.h \
     update.h \
     updatexmlreader.h
 SOURCES += \
