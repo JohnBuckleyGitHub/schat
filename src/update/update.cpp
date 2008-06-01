@@ -12,9 +12,10 @@
 /** [public]
  * 
  */
-Update::Update(QObject *parent)
+Update::Update(const QUrl &url, QObject *parent)
   : QObject(parent)
 {
+  m_url = url;
   m_updatesPath = qApp->applicationDirPath() + "/updates";
   m_download = new Download(this);
   m_download->setBasePath(m_updatesPath);
@@ -71,6 +72,16 @@ void Update::saved(const QString &filename)
   }
   else if (m_state == GettingUpdates) {
     if (m_queue.isEmpty()) {
+      QString newName = qApp->applicationDirPath() + "/updates/schat-install.exe";
+      
+      if (QFile::exists(newName))
+        QFile::remove(newName);
+      
+      if (!QFile::copy(qApp->applicationDirPath() + "/schat-update.exe", newName)) {
+        qApp->exit(4); // Ошибка создания копии
+        return;
+      }
+        
       qApp->exit(0); // обновления успешно скачаны
     }
     else
