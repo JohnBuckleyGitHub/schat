@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include <QQueue>
+#include <QUrl>
 
 #include "updatexmlreader.h"
 
@@ -24,7 +25,7 @@ public:
     GettingUpdates
   };
   
-  Update(QObject *parent = 0);
+  Update(const QUrl &url, QObject *parent = 0);
   
 public slots:
   void execute();
@@ -37,6 +38,7 @@ private:
   Download *m_download;
   QQueue<QString> m_queue;
   QString m_updatesPath;
+  QUrl m_url;
   State m_state;
   UpdateXmlReader m_reader;
 };
