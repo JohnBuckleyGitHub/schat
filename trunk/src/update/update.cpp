@@ -39,7 +39,7 @@ void Update::execute()
  */
 void Update::error()
 {
-  QCoreApplication::instance()->exit(32); // ошибка закачки
+  qApp->exit(32); // ошибка закачки
 }
 
 
@@ -51,12 +51,12 @@ void Update::saved(const QString &filename)
   if (m_state == GettingUpdateXml) {
     
     if (!m_reader.readFile(filename)) {
-      QCoreApplication::instance()->exit(16); // не удалось прочитать update.xml
+      qApp->exit(16); // не удалось прочитать update.xml
       return;
     }
     
     if (!m_reader.isUpdateAvailable()) {
-      QCoreApplication::instance()->exit(8); // нет доступных обновлений
+      qApp->exit(8); // нет доступных обновлений
       return;
     }
     
@@ -65,8 +65,9 @@ void Update::saved(const QString &filename)
     m_download->get(QUrl(m_queue.dequeue()));
   }
   else if (m_state == GettingUpdates) {
-    if (!m_queue.isEmpty()) {
+    if (m_queue.isEmpty())
+      qApp->exit(0); // обновления успешно скачаны
+    else
       m_download->get(QUrl(m_queue.dequeue()));
-    }
   }
 }

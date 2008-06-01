@@ -4,7 +4,7 @@
 
 TEMPLATE = app
 TARGET = schat-update 
-QT = core network
+QT += network
 CONFIG += console
 
 HEADERS += \
