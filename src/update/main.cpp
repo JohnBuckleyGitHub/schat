@@ -3,13 +3,13 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-#include <QtCore>
+#include <QtGui>
 
 #include "update.h"
 
 int main(int argc, char **argv)
 {
-  QCoreApplication app(argc, argv);
+  QApplication app(argc, argv);
   QStringList arguments = app.arguments();
   arguments.takeFirst();
 

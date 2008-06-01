@@ -10,7 +10,7 @@ DEPENDPATH  += . \
 INCLUDEPATH += . \
                ../common \
                ../schatd
-QT += network xml
+QT += network
 #CONFIG += console
 #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
 DEFINES += SCHAT_CLIENT
