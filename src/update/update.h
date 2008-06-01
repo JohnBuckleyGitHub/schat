@@ -21,7 +21,6 @@ class Update : public QObject {
 public:
   enum State {
     GettingUpdateXml,
-    ReadingUpdateXml,
     GettingUpdates
   };
   
@@ -37,6 +36,7 @@ private slots:
 private:
   Download *m_download;
   QQueue<QString> m_queue;
+  QString m_updatesPath;
   State m_state;
   UpdateXmlReader m_reader;
 };
