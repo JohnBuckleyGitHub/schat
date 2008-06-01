@@ -6,6 +6,7 @@
 #include <QtCore>
 
 #include "updatexmlreader.h"
+#include "version.h"
 
 
 /** [public]
@@ -13,7 +14,26 @@
  */
 UpdateXmlReader::UpdateXmlReader()
 {
+  m_coreLevel = -1;
+  m_qtLevel = -1;
+}
 
+
+/** [public]
+ * 
+ */
+bool UpdateXmlReader::isUpdateAvailable() const
+{
+  if (m_queue.isEmpty())
+    return false;
+  
+  if (m_qtLevel > UpdateLevelQt)
+    return true;
+  
+  if (m_coreLevel > UpdateLevelCore)
+    return true;
+  
+  return false;
 }
 
 
@@ -35,7 +55,7 @@ bool UpdateXmlReader::readFile(const QString &fileName)
       if (name() == "updates" && attributes().value("version") == "1.0")
         readUpdates();
       else
-        raiseError(QObject::tr("BAD FILE FORMAT"));
+        raiseError(QObject::tr("BAD FILE FORMAT OR VERSION"));
     }
   }
 
@@ -55,8 +75,12 @@ void UpdateXmlReader::readCumulative()
       break;
 
     if (isStartElement()) {
-      if (name() == "file")
-        qDebug() << readElementText();
+      if (name() == "file") {
+        if ((attributes().value("type") == "qt") && (attributes().value("level").toString().toInt() == m_qtLevel))
+          m_queue.enqueue(m_path + "/win32/" + readElementText());
+        else if ((attributes().value("type") == "core") && (attributes().value("level").toString().toInt() == m_coreLevel))
+          m_queue.enqueue(m_path + "/win32/" + readElementText());
+      }
       else
         readUnknownElement();
     }
@@ -97,12 +121,14 @@ void UpdateXmlReader::readMeta()
       break;
 
     if (isStartElement()) {
-      if (name() == "latest")
-        qDebug() << readElementText();
-      else if (name() == "level")
-        qDebug() << readElementText();
-      else if (name() == "order")
-        qDebug() << readElementText();
+      if (name() == "core") {
+        m_coreLevel = attributes().value("level").toString().toInt();
+        m_core = readElementText();
+      }
+      else if (name() == "qt") {
+        m_qtLevel = attributes().value("level").toString().toInt();
+        m_qt = readElementText();
+      }
       else
         readUnknownElement();
     }
@@ -141,7 +167,7 @@ void UpdateXmlReader::readUpdates()
     if (isStartElement()) {
       if (name() == "meta")
         readMeta();
-      else if (name() == "files")
+      else if (name() == "files" && attributes().value("platform") == "win32") 
         readFiles();
       else
         readUnknownElement();

@@ -19,6 +19,7 @@ public:
   void get(const QUrl &url);
   
 signals:
+  void error();
   void saved(const QString &filename);
 
 private slots:
