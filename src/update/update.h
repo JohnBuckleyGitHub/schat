@@ -37,7 +37,9 @@ private slots:
 private:
   Download *m_download;
   QQueue<QString> m_queue;
+  QString m_appPath;
   QString m_updatesPath;
+  QStringList m_files;
   QUrl m_url;
   State m_state;
   UpdateXmlReader m_reader;
