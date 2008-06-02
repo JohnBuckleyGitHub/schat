@@ -87,6 +87,8 @@ void Update::saved(const QString &filename)
         return;
       }
       
+      writeSettings();
+      
 //      QProcess::startDetached(m_appPath + "/schat-install.exe", QStringList() << "-install", m_appPath);
          
       qApp->exit(0); // обновления успешно скачаны
@@ -95,4 +97,15 @@ void Update::saved(const QString &filename)
     else
       m_download->get(QUrl(m_queue.dequeue()));
   }
+}
+
+
+/** [private]
+ * 
+ */
+void Update::writeSettings()
+{
+  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat, this);
+  s.beginGroup("Updates");
+  s.setValue("Files", m_files);  
 }
