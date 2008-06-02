@@ -35,6 +35,8 @@ private slots:
   void saved(const QString &filename);
   
 private:
+  void writeSettings();
+  
   Download *m_download;
   QQueue<QString> m_queue;
   QString m_appPath;
