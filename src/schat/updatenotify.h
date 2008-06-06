@@ -6,7 +6,7 @@
 #ifndef UPDATENOTIFY_H_
 #define UPDATENOTIFY_H_
 
-#include <QObject>
+#include <QProcess>
 
 class UpdateNotify : public QObject {
   Q_OBJECT
@@ -14,8 +14,19 @@ class UpdateNotify : public QObject {
 public:
   UpdateNotify(QObject *parent = 0);
   
+signals:
+  void done(int code);
+  
 public slots:
   void execute();
+  
+private slots:
+  void error(QProcess::ProcessError error);
+  void finished(int exitCode, QProcess::ExitStatus exitStatus);
+  
+private:
+  QString m_appPath;
+  QProcess m_process;
 
 };
 

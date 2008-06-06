@@ -45,10 +45,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   settings      = new Settings(profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
-  
   m_updateTimer = new QTimer(this);
   m_updateTimer->setInterval(60 * 1000);
-  QTimer::singleShot(0, this, SLOT(update()));
   
   m_reconnectTimer = new QTimer(this);
   m_reconnectTimer->setInterval(reconnectTimeout);
@@ -127,6 +125,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   }
   else
     delete daemon;
+  
+  QTimer::singleShot(0, this, SLOT(update()));
 }
 
 
