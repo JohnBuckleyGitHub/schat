@@ -20,6 +20,7 @@ Update::Update(const QUrl &url, QObject *parent)
   m_updatesPath = m_appPath + "/updates";
   m_download = new Download(this);
   m_download->setBasePath(m_updatesPath);
+  m_urlPath = QFileInfo(m_url.toString()).path();
   
   connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
   connect(m_download, SIGNAL(error()), SLOT(error()));
@@ -37,7 +38,7 @@ void Update::execute()
   
   m_state = GettingUpdateXml;
   m_download->get(m_url);
-  m_reader.setPath(QFileInfo(m_url.toString()).path());
+  m_reader.setPath(m_urlPath);
 }
 
 
@@ -70,10 +71,11 @@ void Update::saved(const QString &filename)
     m_state = GettingUpdates;
     m_queue = m_reader.queue();
     
-    foreach (QString url, m_queue)
-      m_files << QFileInfo(url).fileName();
+    foreach (FileInfo fileInfo, m_queue)
+      m_files << fileInfo.name;
     
-    m_download->get(QUrl(m_queue.dequeue()));
+    FileInfo fileInfo = m_queue.dequeue();    
+    m_download->get(QUrl(m_urlPath + "/win32/" + fileInfo.name));
   }
   else if (m_state == GettingUpdates) {
     if (m_queue.isEmpty()) {
@@ -94,8 +96,10 @@ void Update::saved(const QString &filename)
       qApp->exit(0); // обновления успешно скачаны
 
     }
-    else
-      m_download->get(QUrl(m_queue.dequeue()));
+    else {
+      FileInfo fileInfo = m_queue.dequeue();    
+      m_download->get(QUrl(m_urlPath + "/win32/" + fileInfo.name));
+    }
   }
 }
 

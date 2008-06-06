@@ -38,9 +38,10 @@ private:
   void writeSettings();
   
   Download *m_download;
-  QQueue<QString> m_queue;
+  QQueue<FileInfo> m_queue;
   QString m_appPath;
   QString m_updatesPath;
+  QString m_urlPath;
   QStringList m_files;
   QUrl m_url;
   State m_state;

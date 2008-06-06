@@ -76,10 +76,16 @@ void UpdateXmlReader::readCumulative()
 
     if (isStartElement()) {
       if (name() == "file") {
-        if ((attributes().value("type") == "qt") && (attributes().value("level").toString().toInt() == m_qtLevel))
-          m_queue.enqueue(m_path + "/win32/" + readElementText());
-        else if ((attributes().value("type") == "core") && (attributes().value("level").toString().toInt() == m_coreLevel))
-          m_queue.enqueue(m_path + "/win32/" + readElementText());
+        FileInfo fileInfo;
+        fileInfo.type  = attributes().value("type").toString();
+        fileInfo.level = attributes().value("level").toString().toInt();
+        
+        if ((fileInfo.type == "qt" && fileInfo.level == m_qtLevel) || (fileInfo.type == "core" && fileInfo.level == m_coreLevel)) {
+          fileInfo.size = attributes().value("size").toString().toULongLong();
+          fileInfo.md5  = attributes().value("md5").toString();
+          fileInfo.name = readElementText();
+          m_queue.enqueue(fileInfo);
+        }         
       }
       else
         readUnknownElement();
