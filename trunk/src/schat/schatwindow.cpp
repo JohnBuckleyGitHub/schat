@@ -46,6 +46,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
   
+  m_updateTimer = new QTimer(this);
+  m_updateTimer->setInterval(60 * 1000);
+  QTimer::singleShot(0, this, SLOT(update()));
+  
   m_reconnectTimer = new QTimer(this);
   m_reconnectTimer->setInterval(reconnectTimeout);
  
@@ -92,6 +96,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   connect(m_reconnectTimer, SIGNAL(timeout()), this, SLOT(newConnection()));
+  connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   
   connect(settings, SIGNAL(networkSettingsChanged()), this, SLOT(networkSettingsChanged()));
@@ -726,6 +731,23 @@ void SChatWindow::returnPressed()
       clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
   
   lineEdit->clear();  
+}
+
+
+/** [private slots]
+ * TODO сделать обвёртку
+ */
+void SChatWindow::update()
+{
+  qDebug() << "void SChatWindow::update()";
+  
+  if (!m_updateTimer->isActive())
+    m_updateTimer->start();
+  
+  if (!m_updateNotify)
+    m_updateNotify = new UpdateNotify(this);
+  
+  m_updateNotify->execute();  
 }
 
 
