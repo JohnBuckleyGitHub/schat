@@ -17,6 +17,7 @@
 #include "clientsocket.h"
 #include "server.h"
 #include "settingsdialog.h"
+#include "updatenotify.h"
 
 class AboutDialog;
 class MainChannel;
@@ -90,6 +91,7 @@ private slots:
   void profileSettingsChanged();
   void resetTabNotice(int index);
   void returnPressed();
+  void update();
   void welcomeOk();
 
 private:
@@ -128,13 +130,15 @@ private:
   QPointer<ClientSocket> clientSocket;
   QPointer<Server> daemon;
   QPointer<SettingsDialog> settingsDialog;
+  QPointer<UpdateNotify> m_updateNotify;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
-  QTimer *noticeTimer;
   QTimer *m_reconnectTimer;
+  QTimer *m_updateTimer;
+  QTimer *noticeTimer;
   QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
