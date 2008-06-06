@@ -76,7 +76,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   statusbar->addWidget(statusLabel, 1);
   statusLabel->setText(tr("Не подключено"));
   
-  setWindowTitle(tr("Simple Chat"));
+  setWindowTitle(tr("IMPOMEZIA Simple Chat"));
   
   tabWidget->setElideMode(Qt::ElideRight);
   listView->setFocusPolicy(Qt::NoFocus);
@@ -96,6 +96,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_reconnectTimer, SIGNAL(timeout()), this, SLOT(newConnection()));
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
+  connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
   
   connect(settings, SIGNAL(networkSettingsChanged()), this, SLOT(networkSettingsChanged()));
   connect(settings, SIGNAL(profileSettingsChanged()), this, SLOT(profileSettingsChanged()));
@@ -582,6 +583,17 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 
 /** [private slots]
+ * 
+ */
+void SChatWindow::messageClicked()
+{
+  qDebug() << "SChatWindow::messageClicked()";
+  
+  closeChat();
+}
+
+
+/** [private slots]
  * Слот вызывается при изменении сетевых настроек.
  * Инициаторы:
  *   void NetworkSettings::save() (через `Settings::notify(int)`)
@@ -744,10 +756,27 @@ void SChatWindow::update()
   if (!m_updateTimer->isActive())
     m_updateTimer->start();
   
-  if (!m_updateNotify)
+  if (!m_updateNotify) {
     m_updateNotify = new UpdateNotify(this);
+    connect(m_updateNotify, SIGNAL(done(int)), SLOT(updateGetDone(int)));
+  }
   
-  m_updateNotify->execute();  
+  m_updateNotify->execute();
+}
+
+
+/** [private slots]
+ * Слот вызывается при завершении работы программы обновления
+ */
+void SChatWindow::updateGetDone(int code)
+{
+  qDebug() << "SChatWindow::updateGetDone" << code;
+  
+  if (!m_updateNotify)
+    m_updateNotify->deleteLater();
+  
+  if (code == 0)
+    trayIcon->showMessage(tr("Доступно обновление до версии %1"), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."));
 }
 
 

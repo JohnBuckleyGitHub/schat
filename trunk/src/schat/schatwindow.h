@@ -85,6 +85,7 @@ private slots:
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void messageClicked();
   void networkSettingsChanged();
   void newConnection();
   void notice();
@@ -92,6 +93,7 @@ private slots:
   void resetTabNotice(int index);
   void returnPressed();
   void update();
+  void updateGetDone(int code);
   void welcomeOk();
 
 private:
