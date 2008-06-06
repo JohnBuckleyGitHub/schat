@@ -37,8 +37,9 @@ HEADERS += \
     settings.h \
     settingsdialog.h \
     tab.h \
+    updatenotify.h \
     version.h \
-    welcomedialog.h
+    welcomedialog.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -60,6 +61,7 @@ SOURCES += \
     settings.cpp \
     settingsdialog.cpp \
     tab.cpp \
+    updatenotify.cpp \
     welcomedialog.cpp
 
 CONFIG(debug, debug|release) { 
@@ -76,4 +78,6 @@ CONFIG(release, debug|release) {
     DESTDIR = ../../out/release
 }
 
-win32:RC_FILE = schat.rc
+win32 {
+    RC_FILE = schat.rc
+}

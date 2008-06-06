@@ -10,6 +10,14 @@
 #include <QStringList>
 #include <QXmlStreamReader>
 
+struct FileInfo {
+  QString name;
+  quint64 size;
+  QString md5;
+  QString type;
+  int level;
+};
+
 class UpdateXmlReader : public QXmlStreamReader {
   
 public:
@@ -20,7 +28,7 @@ public:
   inline int qtLevel() const               { return m_qtLevel; }
   inline QString core() const              { return m_core; }
   inline QString qt() const                { return m_qt; }
-  inline QQueue<QString> queue() const     { return m_queue; }
+  inline QQueue<FileInfo> queue() const     { return m_queue; }
   inline void setPath(const QString &path) { m_path = path; }
   
 private:
@@ -32,7 +40,7 @@ private:
   
   int m_coreLevel;
   int m_qtLevel;
-  QQueue<QString> m_queue;
+  QQueue<FileInfo> m_queue;
   QString m_core;
   QString m_path;
   QString m_qt;
