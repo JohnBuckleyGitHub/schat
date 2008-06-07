@@ -15,12 +15,11 @@
 Update::Update(const QUrl &url, QObject *parent)
   : QObject(parent)
 {
-  m_url = url;
-  m_appPath = qApp->applicationDirPath();
-  m_updatesPath = m_appPath + "/updates";
-  m_download = new Download(this);
-  m_download->setBasePath(m_updatesPath);
-  m_urlPath = QFileInfo(m_url.toString()).path();
+  m_url        = url;
+  m_appPath    = qApp->applicationDirPath();
+  m_targetPath = m_appPath + "/updates";
+  m_download   = new Download(m_targetPath, this);
+  m_urlPath    = QFileInfo(m_url.toString()).path();
   
   connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
   connect(m_download, SIGNAL(error()), SLOT(error()));
@@ -32,13 +31,12 @@ Update::Update(const QUrl &url, QObject *parent)
  */
 void Update::execute()
 {
-  if (!QDir().exists(m_updatesPath))
-    if (!QDir().mkdir(m_updatesPath))
-      qApp->exit(64); // не удалось создать папку для обновлений
+  if (!QDir().exists(m_targetPath))
+    if (!QDir().mkdir(m_targetPath))
+      qApp->exit(400); // не удалось создать папку для обновлений
   
   m_state = GettingUpdateXml;
   m_download->get(m_url);
-  m_reader.setPath(m_urlPath);
 }
 
 

@@ -40,7 +40,7 @@ private:
   Download *m_download;
   QQueue<FileInfo> m_queue;
   QString m_appPath;
-  QString m_updatesPath;
+  QString m_targetPath;
   QString m_urlPath;
   QStringList m_files;
   QUrl m_url;

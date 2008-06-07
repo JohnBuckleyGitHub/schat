@@ -14,8 +14,7 @@ class Download: public QObject
   Q_OBJECT
 
 public:
-  Download(QObject *parent = 0);  
-  inline void setBasePath(const QString &path) { m_basePath = path; }
+  Download(const QString &targetPath, QObject *parent = 0);  
   void get(const QUrl &url);
   
 signals:
@@ -30,7 +29,7 @@ private:
   QString saveFileName(const QUrl &url);
   
   QNetworkAccessManager m_manager;
-  QString m_basePath;
+  QString m_targetPath;
 };
 
 #endif /*DOWNLOAD_H_*/

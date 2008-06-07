@@ -3,6 +3,11 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
+/**
+ * КОДЫ ВОЗВРВТА
+ * 0 => Обновления успешно скачаны/проверены.
+ */
+
 #include <QtGui>
 
 #include "update.h"
