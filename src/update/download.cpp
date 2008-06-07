@@ -11,9 +11,10 @@
 /** [public]
  * 
  */
-Download::Download(QObject *parent)
+Download::Download(const QString &targetPath, QObject *parent)
   : QObject(parent)
 {
+  m_targetPath = targetPath;
   connect(&m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
 }
 
@@ -72,7 +73,7 @@ QString Download::saveFileName(const QUrl &url)
   if (basename.isEmpty())
     return basename;
   
-  basename = m_basePath + '/' + basename;
+  basename = m_targetPath + '/' + basename;
 
   if (QFile::exists(basename))
     QFile::remove(basename);

@@ -28,8 +28,7 @@ public:
   inline int qtLevel() const               { return m_qtLevel; }
   inline QString core() const              { return m_core; }
   inline QString qt() const                { return m_qt; }
-  inline QQueue<FileInfo> queue() const     { return m_queue; }
-  inline void setPath(const QString &path) { m_path = path; }
+  inline QQueue<FileInfo> queue() const    { return m_queue; }
   
 private:
   void readCumulative();
@@ -42,7 +41,6 @@ private:
   int m_qtLevel;
   QQueue<FileInfo> m_queue;
   QString m_core;
-  QString m_path;
   QString m_qt;
 };
 
