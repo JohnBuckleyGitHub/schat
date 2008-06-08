@@ -33,7 +33,7 @@ void Update::execute()
 {
   if (!QDir().exists(m_targetPath))
     if (!QDir().mkdir(m_targetPath))
-      qApp->exit(400); // не удалось создать папку для обновлений
+      qApp->exit(400);
   
   m_state = GettingUpdateXml;
   m_download->get(m_url);
@@ -56,48 +56,15 @@ void Update::saved(const QString &filename)
 {
   if (m_state == GettingUpdateXml) {
     
-    if (!m_reader.readFile(filename)) {
-      qApp->exit(16); // не удалось прочитать update.xml
-      return;
-    }
-    
-    if (!m_reader.isUpdateAvailable()) {
-      qApp->exit(8); // нет доступных обновлений
-      return;
-    }
-    
+    createQueue(filename);
     m_state = GettingUpdates;
-    m_queue = m_reader.queue();
-    
-    foreach (FileInfo fileInfo, m_queue)
-      m_files << fileInfo.name;
-    
-    FileInfo fileInfo = m_queue.dequeue();    
-    m_download->get(QUrl(m_urlPath + "/win32/" + fileInfo.name));
+    downloadNext();
   }
   else if (m_state == GettingUpdates) {
-    if (m_queue.isEmpty()) {
-      QString newName = m_appPath + "/schat-install.exe";
-      
-      if (QFile::exists(newName))
-        QFile::remove(newName);
-      
-      if (!QFile::copy(m_appPath + "/schat-update.exe", newName)) {
-        qApp->exit(4); // Ошибка создания копии
-        return;
-      }
-      
-      writeSettings();
-      
-//      QProcess::startDetached(m_appPath + "/schat-install.exe", QStringList() << "-install", m_appPath);
-         
-      qApp->exit(0); // обновления успешно скачаны
-
-    }
-    else {
-      FileInfo fileInfo = m_queue.dequeue();    
-      m_download->get(QUrl(m_urlPath + "/win32/" + fileInfo.name));
-    }
+    if (m_queue.isEmpty())
+      finished();
+    else
+      downloadNext();
   }
 }
 
@@ -105,9 +72,72 @@ void Update::saved(const QString &filename)
 /** [private]
  * 
  */
-void Update::writeSettings()
+void Update::createQueue(const QString &filename)
 {
-  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat, this);
+  if (!m_reader.readFile(filename)) {
+    qApp->exit(401);
+    return;
+  }
+  
+  if (!m_reader.isUpdateAvailable()) {
+    qApp->exit(100);
+    return;
+  }
+  
+  QList<FileInfo> list = m_reader.list();
+  
+  foreach (FileInfo fileInfo, list) {
+    m_files << fileInfo.name;
+    m_queue.enqueue(fileInfo);
+  }
+  
+  if (m_queue.isEmpty())
+    finished();
+}
+
+
+/** [private]
+ * 
+ */
+void Update::downloadNext()
+{
+  currentFile = m_queue.dequeue();
+  m_download->get(QUrl(m_urlPath + "/win32/" + currentFile.name));
+}
+
+
+/** [private]
+ * 
+ */
+void Update::finished()
+{
+  QString newName = m_appPath + "/schat-install.exe";
+  
+  if (QFile::exists(newName))
+    QFile::remove(newName);
+  
+  if (!QFile::copy(m_appPath + "/schat-update.exe", newName)) {
+    qApp->exit(402);
+    return;
+  }
+  
+  writeSettings();
+     
+  qApp->exit(0);
+}
+
+
+/** [private]
+ * 
+ */
+void Update::writeSettings() const
+{
+  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
   s.beginGroup("Updates");
-  s.setValue("Files", m_files);  
+  s.setValue("ReadyToInstall", true);
+  s.setValue("Files", m_files);
+  s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
+  s.setValue("LastDownloadedQtVersion", m_reader.qt());
+  s.setValue("LastDownloadedCoreLevel", m_reader.coreLevel());
+  s.setValue("LastDownloadedCoreVersion", m_reader.core());
 }
