@@ -6,7 +6,7 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
-static const int     sChatStreamVersion              = QDataStream::Qt_4_4;
+static const int     sChatStreamVersion              = QDataStream::Qt_4_3;
 static const quint8  sChatProtocolVersion            = 0;
 
 static const quint16 sChatStateWaitingForGreeting    = 2000;

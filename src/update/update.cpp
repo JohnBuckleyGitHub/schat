@@ -64,8 +64,20 @@ void Update::saved(const QString &filename)
     if (m_queue.isEmpty())
       finished();
     else
-      downloadNext();
+      if (verifyFile())
+        downloadNext();
+      else
+        qApp->exit(32);
   }
+}
+
+
+/** [private]
+ * 
+ */
+bool Update::verifyFile()
+{
+  return true;
 }
 
 
