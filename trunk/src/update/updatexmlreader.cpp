@@ -24,7 +24,7 @@ UpdateXmlReader::UpdateXmlReader()
  */
 bool UpdateXmlReader::isUpdateAvailable() const
 {
-  if (m_queue.isEmpty())
+  if (m_list.isEmpty())
     return false;
   
   if (m_qtLevel > UpdateLevelQt)
@@ -84,7 +84,7 @@ void UpdateXmlReader::readCumulative()
           fileInfo.size = attributes().value("size").toString().toULongLong();
           fileInfo.md5  = attributes().value("md5").toString();
           fileInfo.name = readElementText();
-          m_queue.enqueue(fileInfo);
+          m_list << fileInfo;
         }         
       }
       else
