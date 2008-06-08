@@ -3,7 +3,7 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-#include <QtCore>
+#include <QtGui>
 
 #include "network.h"
 #include "networkreader.h"
