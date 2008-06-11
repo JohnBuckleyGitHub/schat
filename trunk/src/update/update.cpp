@@ -86,6 +86,18 @@ bool Update::verifyFile(const FileInfo &fileInfo)
   if (file.size() != fileInfo.size)
     return false;
   
+  QCryptographicHash hash(QCryptographicHash::Md5);
+  QByteArray result;
+
+  if(!file.open(QIODevice::ReadOnly))
+    return false;
+
+  hash.addData(file.readAll());
+  result = hash.result();
+  
+  if (result.toHex() != fileInfo.md5)
+    return false;
+   
   return true;
 }
 
