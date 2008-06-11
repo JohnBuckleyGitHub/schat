@@ -35,7 +35,8 @@ private slots:
   void saved(const QString &filename);
   
 private:
-  bool verifyFile();
+  bool verifyFile(const FileInfo &fileInfo);
+  inline bool verifyFile() { return verifyFile(currentFile); };
   void createQueue(const QString &filename);
   void downloadNext();
   void finished();

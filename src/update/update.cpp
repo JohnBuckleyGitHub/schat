@@ -23,6 +23,7 @@ Update::Update(const QUrl &url, QObject *parent)
   
   connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
   connect(m_download, SIGNAL(error()), SLOT(error()));
+  m_queue.isEmpty();
 }
 
 
@@ -61,13 +62,10 @@ void Update::saved(const QString &filename)
     downloadNext();
   }
   else if (m_state == GettingUpdates) {
-    if (m_queue.isEmpty())
-      finished();
+    if (verifyFile())
+      downloadNext();
     else
-      if (verifyFile())
-        downloadNext();
-      else
-        qApp->exit(32);
+      qApp->exit(32);
   }
 }
 
@@ -75,8 +73,19 @@ void Update::saved(const QString &filename)
 /** [private]
  * 
  */
-bool Update::verifyFile()
+bool Update::verifyFile(const FileInfo &fileInfo)
 {
+  qDebug() << "Update::verifyFile(const FileInfo &)" << fileInfo.name;
+  
+  QString fileName = m_targetPath + '/' + fileInfo.name;
+  QFile file(fileName);
+  
+  if (!file.exists())
+    return false;
+  
+  if (file.size() != fileInfo.size)
+    return false;
+  
   return true;
 }
 
@@ -100,11 +109,9 @@ void Update::createQueue(const QString &filename)
   
   foreach (FileInfo fileInfo, list) {
     m_files << fileInfo.name;
-    m_queue.enqueue(fileInfo);
+    if (!verifyFile(fileInfo))
+      m_queue.enqueue(fileInfo);
   }
-  
-  if (m_queue.isEmpty())
-    finished();
 }
 
 
@@ -113,8 +120,12 @@ void Update::createQueue(const QString &filename)
  */
 void Update::downloadNext()
 {
-  currentFile = m_queue.dequeue();
-  m_download->get(QUrl(m_urlPath + "/win32/" + currentFile.name));
+  if (!m_queue.isEmpty()) {
+    currentFile = m_queue.dequeue();
+    m_download->get(QUrl(m_urlPath + "/win32/" + currentFile.name));
+  }
+  else
+    finished();
 }
 
 

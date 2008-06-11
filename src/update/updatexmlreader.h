@@ -12,7 +12,7 @@
 
 struct FileInfo {
   QString name;
-  quint64 size;
+  qint64 size;
   QString md5;
   QString type;
   int level;
