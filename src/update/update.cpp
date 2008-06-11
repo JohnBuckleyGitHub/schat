@@ -75,8 +75,6 @@ void Update::saved(const QString &filename)
  */
 bool Update::verifyFile(const FileInfo &fileInfo)
 {
-  qDebug() << "Update::verifyFile(const FileInfo &)" << fileInfo.name;
-  
   QString fileName = m_targetPath + '/' + fileInfo.name;
   QFile file(fileName);
   
