@@ -751,8 +751,6 @@ void SChatWindow::returnPressed()
  */
 void SChatWindow::update()
 {
-  qDebug() << "void SChatWindow::update()";
-  
   if (!m_updateTimer->isActive())
     m_updateTimer->start();
   
@@ -770,13 +768,14 @@ void SChatWindow::update()
  */
 void SChatWindow::updateGetDone(int code)
 {
-  qDebug() << "SChatWindow::updateGetDone" << code;
-  
   if (!m_updateNotify)
     m_updateNotify->deleteLater();
   
-  if (code == 0)
-    trayIcon->showMessage(tr("Доступно обновление до версии %1"), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."));
+  if (code == 0) {
+    QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+    QString version = s.value("Updates/LastDownloadedCoreVersion", "").toString(); 
+    trayIcon->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."));
+  }
 }
 
 
