@@ -14,12 +14,18 @@ Section "$(STR1000)" SecCore
   SectionIn RO
   
   File "..\..\out\release\schat.exe"
-  File "${SCHAT_QTDIR}\bin\QtCore4.dll"
-  File "${SCHAT_QTDIR}\bin\QtGui4.dll"
-  File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+  File "..\..\out\release\schat-update.exe"
+  
+  !ifndef INSTALLER_CORE
+    File "${SCHAT_QTDIR}\bin\QtCore4.dll"
+    File "${SCHAT_QTDIR}\bin\QtGui4.dll"
+    File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+    !ifdef VC90
+      File "${VC90_REDIST_DIR}\msvcr90.dll"
+    !endif    
+  !endif
   
   !ifdef VC90
-    File "${VC90_REDIST_DIR}\msvcr90.dll"
     File "contrib\Microsoft.VC90.CRT.manifest"
   !endif
   
@@ -58,13 +64,21 @@ Section "Uninstall"
   Delete "$INSTDIR\uninstall.exe"
   Delete "$INSTDIR\schat.exe"
   Delete "$INSTDIR\schatd.exe"
-  Delete "$INSTDIR\schat.conf"
-  Delete "$INSTDIR\schatd.conf"
+  Delete "$INSTDIR\schat-update.exe"
   Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
-
-  RMDir  "$INSTDIR"
+  Delete "$INSTDIR\networks\*.xml"
+  Delete "$INSTDIR\doc\*.html"
+  
+  !ifdef VC90
+    Delete "$INSTDIR\msvcr90.dll"
+    Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
+  !endif
+  
+  RMDir "$INSTDIR\networks"
+  RMDir "$INSTDIR\doc"
+  RMDir "$INSTDIR"
   
   DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
   DeleteRegKey HKCU "${SCHAT_REGKEY}"

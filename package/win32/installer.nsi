@@ -3,28 +3,30 @@
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
 
-!define SCHAT_NAME       "Simple Chat" 
-!define SCHAT_VERSION    "0.0.2.119"
-!define SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME}"
-!define SCHAT_QTDIR      "C:\qt\440"
-!define SCHAT_WEB_SITE   "http://impomezia.net.ru/"
-!define SCHAT_COPYRIGHT  "Copyright © 2008 IMPOMEZIA"
-!define SCHAT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME}"
-!define VC90
-!ifdef VC90
-  !define VC90_REDIST_DIR "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
-!endif
-
 !include "MUI2.nsh"
 !include "Sections.nsh"
+!include "include\common.nsh"
 !include "include\sections.nsh"
 !include "include\schat.nsh"
 !include "include\translations.nsh"
 !include "include\page-options.nsh"
 
-Name "${SCHAT_NAME} ${SCHAT_VERSION}"
-OutFile "out\schat-${SCHAT_VERSION}.exe"
-InstallDir "$LOCALAPPDATA\${SCHAT_NAME}"
+!ifdef INSTALLER_CORE
+  !define SCHAT_OUT_FILENAME "schat-core-${SCHAT_VERSION}.exe"
+!else
+  !define SCHAT_OUT_FILENAME "schat-${SCHAT_VERSION}.exe"
+!endif
+
+Name "${SCHAT_NAME}"
+Caption "${SCHAT_NAME} ${SCHAT_VERSION}"
+
+!ifdef INSTALLER_CORE
+  OutFile "out\updates\win32\${SCHAT_OUT_FILENAME}"
+!else
+  OutFile "out\${SCHAT_OUT_FILENAME}"
+!endif
+
+InstallDir "${SCHAT_INSTALLDIR}"
 InstallDirRegKey HKCU "${SCHAT_REGKEY}" ""
 RequestExecutionLevel user
 InstType "$(STR1)"
@@ -38,25 +40,11 @@ VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
 VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
 VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
-VIAddVersionKey  "OriginalFilename" "schat-${SCHAT_VERSION}.exe"
+VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
-!define MUI_ABORTWARNING
-!define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_FINISHPAGE_LINK            "${SCHAT_WEB_SITE}"
-!define MUI_FINISHPAGE_LINK_LOCATION   "${SCHAT_WEB_SITE}"
-!define MUI_FINISHPAGE_RUN             "$INSTDIR\schat.exe"
-!define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP         "contrib\header.bmp"
-!define MUI_HEADERIMAGE_RIGHT
-!define MUI_ICON                       "contrib\install.ico"
-!define MUI_UNICON                     "contrib\uninstall.ico"
-!define MUI_WELCOMEFINISHPAGE_BITMAP   "contrib\wizard.bmp"
-!define MUI_LANGDLL_REGISTRY_ROOT      "HKCU"
-!define MUI_LANGDLL_REGISTRY_KEY       "${SCHAT_REGKEY}"
-!define MUI_LANGDLL_REGISTRY_VALUENAME "language"
-!define MUI_LANGDLL_ALWAYSSHOW
+!define MUI_FINISHPAGE_RUN "$INSTDIR\schat.exe"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
 !insertmacro MUI_PAGE_WELCOME
