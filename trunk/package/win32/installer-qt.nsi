@@ -31,6 +31,8 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
 !insertmacro MUI_PAGE_LICENSE "license.txt"
 !insertmacro MUI_PAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "Russian"
 !insertmacro MUI_LANGUAGE "English"
 
 Section
