@@ -28,7 +28,7 @@ UpdateNotify::UpdateNotify(QObject *parent)
 void UpdateNotify::execute()
 {
   qDebug() << "void UpdateNotify::execute()";
-  m_process.start(m_appPath + "/schat-update.exe -get");
+  m_process.start("\"" + m_appPath + "/schat-update.exe\" -get");
   
 }
 
