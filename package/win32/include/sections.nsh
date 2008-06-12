@@ -5,6 +5,19 @@
 
 !ifndef SECTIONS_NSH_
 !define SECTIONS_NSH_
+
+!macro RUNTIME_FILES
+  !ifndef INSTALLER_CORE
+    SetOutPath "$INSTDIR"
+    File "${SCHAT_QTDIR}\bin\QtCore4.dll"
+    File "${SCHAT_QTDIR}\bin\QtGui4.dll"
+    File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+    !ifdef VC90
+      File "${VC90_REDIST_DIR}\msvcr90.dll"
+    !endif    
+  !endif
+!macroend
+
  
 !macro  SECTION_CORE
 !define SECTION_CORE
@@ -16,18 +29,11 @@ Section "$(STR1000)" SecCore
   File "..\..\out\release\schat.exe"
   File "..\..\out\release\schat-update.exe"
   
-  !ifndef INSTALLER_CORE
-    File "${SCHAT_QTDIR}\bin\QtCore4.dll"
-    File "${SCHAT_QTDIR}\bin\QtGui4.dll"
-    File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
-    !ifdef VC90
-      File "${VC90_REDIST_DIR}\msvcr90.dll"
-    !endif    
-  !endif
-  
   !ifdef VC90
     File "contrib\Microsoft.VC90.CRT.manifest"
   !endif
+
+  !insertmacro RUNTIME_FILES
   
   SetOutPath "$INSTDIR\networks"
   File "..\..\data\networks\*.xml"
