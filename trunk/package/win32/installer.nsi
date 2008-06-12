@@ -31,7 +31,7 @@ InstallDirRegKey HKCU "${SCHAT_REGKEY}" ""
 RequestExecutionLevel user
 InstType "$(STR1)"
 SetCompressor /SOLID lzma
-SetCompressorDictSize 12
+SetCompressorDictSize 10
 ;SetCompress off
 BrandingText "${SCHAT_COPYRIGHT}"
 
