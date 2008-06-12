@@ -26,8 +26,8 @@ Section "$(STR1000)" SecCore
   SetOutPath "$INSTDIR"
   SectionIn RO
   
-  File "..\..\out\release\schat.exe"
-  File "..\..\out\release\schat-update.exe"
+  #File "..\..\out\release\schat.exe"
+  #File "..\..\out\release\schat-update.exe"
   
   !ifdef VC90
     File "contrib\Microsoft.VC90.CRT.manifest"
