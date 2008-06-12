@@ -771,11 +771,14 @@ void SChatWindow::updateGetDone(int code)
   if (!m_updateNotify)
     m_updateNotify->deleteLater();
   
+  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  
   if (code == 0) {
-    QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
     QString version = s.value("Updates/LastDownloadedCoreVersion", "").toString(); 
     trayIcon->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."));
   }
+  else
+    s.setValue("Updates/ReadyToInstall", false);
 }
 
 
