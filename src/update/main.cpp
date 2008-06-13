@@ -15,6 +15,7 @@
 
 #include <QtGui>
 
+#include "install.h"
 #include "update.h"
 
 int main(int argc, char **argv)
@@ -28,9 +29,14 @@ int main(int argc, char **argv)
   arguments.takeFirst();
   
   Update *update = 0;
+  Install *install;
   
   if (arguments.contains("-install")) {
-    QMessageBox::information(0, "INSTALL", "INSTALL");
+    QSplashScreen *splash = new QSplashScreen(QPixmap(":/images/splash.png"));
+    splash->show();
+    splash->showMessage("Гы Гы Гы");
+    install = new Install;
+    QTimer::singleShot(0, install, SLOT(execute()));
   }
   else if (arguments.contains("-get")) {
     QUrl url;
