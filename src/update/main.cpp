@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   if (arguments.contains("-install")) {
     QSplashScreen *splash = new QSplashScreen(QPixmap(":/images/splash.png"));
     splash->show();
-    splash->showMessage("Гы Гы Гы");
+    splash->showMessage(QObject::tr("Идёт обновление..."), Qt::AlignRight | Qt::AlignBottom, Qt::white);
     install = new Install;
     QTimer::singleShot(0, install, SLOT(execute()));
   }
