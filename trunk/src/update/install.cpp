@@ -34,8 +34,10 @@ Install::Install(QObject *parent)
  */
 void Install::execute()
 {
-  if (!m_ready)
+  if (!m_ready) {
     fail();
+    return;
+  }
   
   if (!m_queue.isEmpty())
     m_process.start('"' + m_appPath + "/updates/" + m_queue.dequeue() + '"', QStringList() << "/S" << ("/D=" + m_appPath));
@@ -57,11 +59,10 @@ void Install::fail()
  */
 void Install::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if (exitStatus == QProcess::CrashExit)
+  if (exitStatus == QProcess::CrashExit || exitCode != 0) {
     fail();
-  
-  if (exitCode != 0)
-    fail();
+    return;
+  }
   
   if (m_queue.isEmpty())
     done();
