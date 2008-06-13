@@ -14,7 +14,7 @@
 Install::Install(QObject *parent)
   : QObject(parent)
 {
-  m_appPath = qApp->applicationDirPath();
+  m_appPath = QDir::toNativeSeparators(qApp->applicationDirPath());
   m_s = new QSettings(m_appPath + "/schat.conf", QSettings::IniFormat, this);
   m_ready = m_s->value("Updates/ReadyToInstall", false).toBool();
   QStringList list = m_s->value("Updates/Files", QStringList()).toStringList();
@@ -38,7 +38,7 @@ void Install::execute()
     fail();
   
   if (!m_queue.isEmpty())
-    m_process.start(m_appPath + "/updates/" + m_queue.dequeue(), QStringList() << "/S" << ("/D=" + m_appPath));
+    m_process.start('"' + m_appPath + "/updates/" + m_queue.dequeue() + '"', QStringList() << "/S" << ("/D=" + m_appPath));
 }
 
 
