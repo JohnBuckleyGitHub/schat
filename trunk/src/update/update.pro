@@ -6,17 +6,20 @@ TEMPLATE = app
 TARGET = schat-update 
 QT += network
 CONFIG += console
+RESOURCES += ../../data/update.qrc
 
 HEADERS += \
     download.h \
-    version.h \
+    install.h \
     update.h \
-    updatexmlreader.h
+    updatexmlreader.h \
+    version.h
 SOURCES += \
     download.cpp \
+    install.cpp \
     main.cpp \
     update.cpp \
-    updatexmlreader.cpp
+    updatexmlreader.cpp \
 
 DEPENDPATH  += . \
                ../common
