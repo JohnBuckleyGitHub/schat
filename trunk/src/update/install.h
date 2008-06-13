@@ -25,10 +25,13 @@ private slots:
   void finished(int exitCode, QProcess::ExitStatus exitStatus);
   
 private:
+  void done();
+  
   bool m_ready;
   QProcess m_process;
   QQueue<QString> m_queue;
   QSettings *m_s;
+  QString m_appPath;
 };
 
 #endif /*INSTALL_H_*/

@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = schat-update 
 QT += network
-CONFIG += console
+#CONFIG += console
 RESOURCES += ../../data/update.qrc
 
 HEADERS += \

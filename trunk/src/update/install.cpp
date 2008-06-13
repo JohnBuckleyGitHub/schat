@@ -14,7 +14,8 @@
 Install::Install(QObject *parent)
   : QObject(parent)
 {
-  m_s = new QSettings(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  m_appPath = qApp->applicationDirPath();
+  m_s = new QSettings(m_appPath + "/schat.conf", QSettings::IniFormat, this);
   m_ready = m_s->value("Updates/ReadyToInstall", false).toBool();
   QStringList list = m_s->value("Updates/Files", QStringList()).toStringList();
   if (list.isEmpty())
@@ -22,6 +23,9 @@ Install::Install(QObject *parent)
   else
     foreach (QString str, list)
       m_queue.enqueue(str);
+  
+  connect(&m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(fail()));
+  connect(&m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(finished(int, QProcess::ExitStatus)));
 }
 
 
@@ -30,11 +34,11 @@ Install::Install(QObject *parent)
  */
 void Install::execute()
 {
-  qDebug() << "Install::execute()" << m_ready;
-  
   if (!m_ready)
     fail();
   
+  if (!m_queue.isEmpty())
+    m_process.start(m_appPath + "/updates/" + m_queue.dequeue(), QStringList() << "/S" << ("/D=" + m_appPath));
 }
 
 
@@ -43,9 +47,8 @@ void Install::execute()
  */
 void Install::fail()
 {
-  qDebug() << "Install::fail()";
-  
   m_s->setValue("Updates/ReadyToInstall", false);
+  qApp->exit(1);
 }
 
 
@@ -54,5 +57,24 @@ void Install::fail()
  */
 void Install::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+  if (exitStatus == QProcess::CrashExit)
+    fail();
+  
+  if (exitCode != 0)
+    fail();
+  
+  if (m_queue.isEmpty())
+    done();
+  else
+    execute();
+}
 
+
+/** [private]
+ * 
+ */
+void Install::done()
+{
+  m_s->setValue("Updates/ReadyToInstall", false);
+  qApp->quit();
 }
