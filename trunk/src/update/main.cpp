@@ -36,6 +36,8 @@ int main(int argc, char **argv)
     splash->show();
     splash->showMessage(QObject::tr("Идёт обновление..."), Qt::AlignRight | Qt::AlignBottom, Qt::white);
     install = new Install;
+    install->setClean(arguments.contains("-clean"));
+    install->setRun(arguments.contains("-run"));
     QTimer::singleShot(0, install, SLOT(execute()));
   }
   else if (arguments.contains("-get")) {

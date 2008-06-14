@@ -16,6 +16,8 @@ class Install : public QObject {
   
 public:
   Install(QObject *parent = 0);
+  inline void setClean(bool clean) { m_clean = clean; }
+  inline void setRun(bool run)     { m_run = run; }
   
 public slots:
   void execute();
@@ -27,11 +29,14 @@ private slots:
 private:
   void done();
   
+  bool m_clean;
   bool m_ready;
+  bool m_run;
   QProcess m_process;
   QQueue<QString> m_queue;
   QSettings *m_s;
   QString m_appPath;
+  QStringList m_list;
 };
 
 #endif /*INSTALL_H_*/
