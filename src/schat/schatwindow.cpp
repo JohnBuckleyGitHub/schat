@@ -587,7 +587,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
  */
 void SChatWindow::messageClicked()
 {
-  qDebug() << "SChatWindow::messageClicked()";
+  QProcess::startDetached('"' + qApp->applicationDirPath() + "/schat.exe\"");
   
   closeChat();
 }
