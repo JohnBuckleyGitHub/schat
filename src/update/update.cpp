@@ -34,7 +34,7 @@ void Update::execute()
 {
   if (!QDir().exists(m_targetPath))
     if (!QDir().mkdir(m_targetPath))
-      qApp->exit(400);
+      error(400);
   
   m_state = GettingUpdateXml;
   m_download->get(m_url);
@@ -42,22 +42,16 @@ void Update::execute()
 
 
 /** [private slots]
- * 
- */
-void Update::error()
-{
-  qApp->exit(32); // ошибка закачки
-}
-
-
-/** [private slots]
- * 
+ * Слот вызывается при успешном сохранении файла.
+ * Инициатор: `Download::saveToDisk(const QString &, QIODevice *)`
  */
 void Update::saved(const QString &filename)
 {
   if (m_state == GettingUpdateXml) {
     
-    createQueue(filename);
+    if (!createQueue(filename))
+      return;
+      
     m_state = GettingUpdates;
     downloadNext();
   }
@@ -65,8 +59,35 @@ void Update::saved(const QString &filename)
     if (verifyFile())
       downloadNext();
     else
-      qApp->exit(32);
+      error(405);
   }
+}
+
+
+/** [private]
+ * 
+ */
+bool Update::createQueue(const QString &filename)
+{
+  if (!m_reader.readFile(filename)) {
+    error(401);
+    return false;
+  }
+  
+  if (!m_reader.isUpdateAvailable()) {
+    error(400);
+    return false;
+  }
+  
+  QList<FileInfo> list = m_reader.list();
+  
+  foreach (FileInfo fileInfo, list) {
+    m_files << fileInfo.name;
+    if (!verifyFile(fileInfo))
+      m_queue.enqueue(fileInfo);
+  }
+  
+  return true;
 }
 
 
@@ -103,31 +124,6 @@ bool Update::verifyFile(const FileInfo &fileInfo)
 /** [private]
  * 
  */
-void Update::createQueue(const QString &filename)
-{
-  if (!m_reader.readFile(filename)) {
-    qApp->exit(401);
-    return;
-  }
-  
-  if (!m_reader.isUpdateAvailable()) {
-    qApp->exit(100);
-    return;
-  }
-  
-  QList<FileInfo> list = m_reader.list();
-  
-  foreach (FileInfo fileInfo, list) {
-    m_files << fileInfo.name;
-    if (!verifyFile(fileInfo))
-      m_queue.enqueue(fileInfo);
-  }
-}
-
-
-/** [private]
- * 
- */
 void Update::downloadNext()
 {
   if (!m_queue.isEmpty()) {
@@ -142,6 +138,16 @@ void Update::downloadNext()
 /** [private]
  * 
  */
+void Update::error(int err)
+{
+  writeSettings(true);
+  qApp->exit(err);
+}
+
+
+/** [private]
+ * 
+ */
 void Update::finished()
 {
   QString newName = m_appPath + "/schat-install.exe";
@@ -150,7 +156,7 @@ void Update::finished()
     QFile::remove(newName);
   
   if (!QFile::copy(m_appPath + "/schat-update.exe", newName)) {
-    qApp->exit(402);
+    error(402);
     return;
   }
   
@@ -163,12 +169,20 @@ void Update::finished()
 /** [private]
  * 
  */
-void Update::writeSettings() const
+void Update::writeSettings(bool err) const
 {
   QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
   s.beginGroup("Updates");
-  s.setValue("ReadyToInstall", true);
-  s.setValue("Files", m_files);
+  
+  if (!err) { 
+    s.setValue("ReadyToInstall", true);
+    s.setValue("Files", m_files);
+  }
+  else {
+    s.setValue("ReadyToInstall", false);
+    return;
+  }
+    
   s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
   s.setValue("LastDownloadedQtVersion", m_reader.qt());
   s.setValue("LastDownloadedCoreLevel", m_reader.coreLevel());
