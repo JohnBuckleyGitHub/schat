@@ -27,9 +27,7 @@ UpdateNotify::UpdateNotify(QObject *parent)
  */
 void UpdateNotify::execute()
 {
-  qDebug() << "void UpdateNotify::execute()";
-  m_process.start("\"" + m_appPath + "/schat-update.exe\" -get");
-  
+  m_process.start('"' + m_appPath + "/schat-update.exe\" -get"); 
 }
 
 
@@ -38,9 +36,7 @@ void UpdateNotify::execute()
  */
 void UpdateNotify::error(QProcess::ProcessError error)
 {
-  qDebug() << "UpdateNotify::error()" << error;
-  emit done(-1);
-  
+  emit done(-1);  
 }
 
 
@@ -49,6 +45,5 @@ void UpdateNotify::error(QProcess::ProcessError error)
  */
 void UpdateNotify::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  qDebug() << "UpdateNotify::finished()" << exitCode << exitStatus;
   emit done(exitCode);  
 }

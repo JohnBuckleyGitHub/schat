@@ -87,7 +87,7 @@ void Install::done()
   }
   
   if (m_run)
-    QProcess::startDetached(m_appPath + "/schat.exe");
+    QProcess::startDetached('"' + m_appPath + "/schat.exe\"");
   
   qApp->quit();
 }
