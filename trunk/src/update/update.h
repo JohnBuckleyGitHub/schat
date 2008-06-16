@@ -31,16 +31,17 @@ public slots:
   void execute();
   
 private slots:
-  void error();
+  inline void error() { error(404); }
   void saved(const QString &filename);
   
 private:
+  bool createQueue(const QString &filename);
   bool verifyFile(const FileInfo &fileInfo);
   inline bool verifyFile() { return verifyFile(currentFile); };
-  void createQueue(const QString &filename);
   void downloadNext();
+  void error(int err);
   void finished();
-  void writeSettings() const;
+  void writeSettings(bool err = false) const;
   
   Download *m_download;
   FileInfo currentFile;
