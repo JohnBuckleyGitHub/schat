@@ -68,6 +68,7 @@ Section "Uninstall"
   RMDir  "${SCHAT_PROGRAMGROUP}"
   
   Delete "$INSTDIR\uninstall.exe"
+  Delete "$INSTDIR\uninstall.ini"
   Delete "$INSTDIR\schat.exe"
   Delete "$INSTDIR\schatd.exe"
   Delete "$INSTDIR\schat-update.exe"
