@@ -27,7 +27,7 @@ public:
   };
   
   Settings(Profile *p, QObject *parent);
-  void notify(int notify);
+  inline void notify(int notify) { emit changed(notify); }
   void notify(int notify, int index);
   void read();
   void write();
@@ -35,15 +35,15 @@ public:
   bool firstRun;
   bool hideWelcome;
   bool needCreateNetworkList;
+  bool updateAutoClean;
+  int updateCheckInterval;
   Network network;
   QStandardItemModel networksModel;
   QString style;
 
 signals:
-  void networkSettingsChanged();
+  void changed(int notify);
   void networksModelIndexChanged(int index);
-  void profileSettingsChanged();
-  void serverChanged();
 
 private:
   void createServerList(QSettings &s);

@@ -25,30 +25,6 @@ Settings::Settings(Profile *p, QObject *parent)
 /** [public]
  * 
  */
-void Settings::notify(int notify)
-{
-  switch (notify) {
-    case NetworkSettingsChanged:
-      emit networkSettingsChanged();
-      break;
-    
-    case ProfileSettingsChanged:
-      emit profileSettingsChanged();
-      break;
-      
-    case ServerChanged:
-      emit serverChanged();
-      break;
-            
-    default:
-      break;
-  }  
-}
-
-
-/** [public]
- * 
- */
 void Settings::notify(int notify, int index)
 {
   switch (notify) {
@@ -70,18 +46,18 @@ void Settings::read()
   QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
   
   // Позиция и размер окна
-  QPoint pos = s.value("Pos", QPoint(-999, -999)).toPoint();
-  QSize size = s.value("Size", QSize(680, 460)).toSize();
+  QPoint pos = s.value("Pos", QPoint(-999, -999)).toPoint();         // Позиция окна
+  QSize size = s.value("Size", QSize(680, 460)).toSize();            // Размер окна
   chat->resize(size);
   if (pos.x() != -999 && pos.y() != -999)
     chat->move(pos);
   
-  chat->restoreSplitter((s.value("Splitter").toByteArray()));        // Состояние сплитера
-  hideWelcome = s.value("HideWelcome", false).toBool();              // Показ окна для выбора ника и сервера при старте
-  firstRun    = s.value("FirstRun", true).toBool();                  // Первый запуск
-  style       = s.value("Style", "Plastique").toString();            // Внешний вид
-  network.fromConfig(s.value("Network", "AchimNet.xml").toString());
+  chat->restoreSplitter((s.value("Splitter").toByteArray()));          // Состояние сплитера
+  hideWelcome = s.value("HideWelcome", false).toBool();                // Показ окна для выбора ника и сервера при старте
+  firstRun    = s.value("FirstRun", true).toBool();                    // Первый запуск
+  style       = s.value("Style", "Plastique").toString();              // Внешний вид
   qApp->setStyle(style);
+  network.fromConfig(s.value("Network", "AchimNet.xml").toString());   // Файл сети, или адрес одиночного сервера
   
   createServerList(s);
   
@@ -89,6 +65,16 @@ void Settings::read()
   profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
   profile->setFullName(s.value("Name", "").toString());                 // Настоящие имя
   profile->setSex(quint8(s.value("Sex", 0).toUInt()));                  // Пол
+  s.endGroup();
+  
+  s.beginGroup("Updates");
+  updateCheckInterval = s.value("CheckInterval", 60).toInt();           // Интервал проверки обновлений (от 5 до 1440 (1 сутки) минут)
+  if (updateCheckInterval < 5)
+    updateCheckInterval = 5;
+  if (updateCheckInterval > 1440)
+    updateCheckInterval = 1440;
+  
+  updateAutoClean = s.value("AutoClean", true).toBool();                // Автоматически удалять обновления
 }
 
 
@@ -112,6 +98,12 @@ void Settings::write()
   s.setValue("Nick", profile->nick());
   s.setValue("Name", profile->fullName());
   s.setValue("Sex", profile->sex());
+  s.endGroup();
+  
+  s.beginGroup("Updates");
+  s.setValue("CheckInterval", updateCheckInterval);
+  s.setValue("AutoClean", updateAutoClean);
+  s.endGroup();
 }
 
 
