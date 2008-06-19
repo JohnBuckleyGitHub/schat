@@ -904,6 +904,10 @@ void SChatWindow::createActions()
   profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
   connect(profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
   
+  // Обновления...
+  updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
+  connect(updateSetAction, SIGNAL(triggered()), this, SLOT(settingsUpdate()));
+  
   // Выход из программы
   quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
@@ -947,6 +951,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(profileSetAction);
   iconMenu->addAction(networkSetAction);
   iconMenu->addAction(interfaceSetAction);
+  iconMenu->addAction(updateSetAction);
   
   QToolButton *settingsButton = new QToolButton(this);
   settingsButton->setDefaultAction(settingsAction);

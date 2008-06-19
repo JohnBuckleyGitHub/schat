@@ -75,6 +75,7 @@ private slots:
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
   inline void settingsNetwork()   { settingsPage(SettingsDialog::NetworkPage); }
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
+  inline void settingsUpdate()    { settingsPage(SettingsDialog::UpdatePage); }
   void about();
   void addTab();
   void addTab(const QModelIndex &i);
@@ -123,6 +124,7 @@ private:
   QAction *quitAction;
   QAction *sendAction;
   QAction *settingsAction;
+  QAction *updateSetAction;
   QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
@@ -149,6 +151,7 @@ private:
   QWidget *rightWidget;
   Settings *settings;
   WelcomeDialog *welcomeDialog;
+
 };
 
 #endif /*SCHATWINDOW_H_*/
