@@ -24,6 +24,7 @@ class QSpinBox;
 class QStackedWidget;
 class SChatWindow;
 class Settings;
+class UpdateSettings;
 
 
 /**
@@ -37,7 +38,8 @@ public:
   enum {
     ProfilePage,
     NetworkPage,
-    InterfacePage
+    InterfacePage,
+    UpdatePage
   };
   
   SettingsDialog(Profile *p, Settings *s, QWidget *parent = 0);
@@ -52,7 +54,7 @@ private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
   
 private:
-  InterfaceSettings *m_interfaceSettings;
+  InterfaceSettings *m_interfacePage;
   NetworkSettings *m_networkPage;
   ProfileSettings *m_profilePage;
   QListWidget *m_contentsWidget;
@@ -60,6 +62,7 @@ private:
   QPushButton *m_okButton;
   QPushButton *m_resetButton;
   QStackedWidget *m_pagesWidget;
+  UpdateSettings *m_updatePage;
 };
 
 
@@ -117,6 +120,23 @@ public:
   
 private:
   QComboBox *m_styleComboBox;
+  Settings *m_settings;
+};
+
+
+/**
+ * Класс `UpdateSettings`
+ */
+class UpdateSettings : public QWidget
+{
+  Q_OBJECT
+  
+public:
+  UpdateSettings(Settings *settings, QWidget *parent = 0);
+  void reset();
+  void save();
+  
+private:
   Settings *m_settings;
 };
 

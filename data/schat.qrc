@@ -24,6 +24,7 @@
   <file>images/tab_new.png</file>
   <file>images/undo.png</file>
   <file>images/up.png</file>
+  <file>images/update.png</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>

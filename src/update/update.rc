@@ -6,6 +6,8 @@
 #include <windows.h>
 #include "../common/version.h"
 
+IDI_ICON1    ICON    DISCARDABLE    "../../data/images/update.ico"
+
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION SCHAT_VERSION_RC
   PRODUCTVERSION SCHAT_VERSION_RC

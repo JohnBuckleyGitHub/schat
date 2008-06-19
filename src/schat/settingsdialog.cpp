@@ -29,14 +29,16 @@ SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *pa
   m_contentsWidget = new QListWidget(this);
   m_pagesWidget    = new QStackedWidget;
 
-  m_profilePage       = new ProfileSettings(settings, profile, this);
-  m_networkPage       = new NetworkSettings(settings, this);
-  m_interfaceSettings = new InterfaceSettings(settings, this);
+  m_profilePage   = new ProfileSettings(settings, profile, this);
+  m_networkPage   = new NetworkSettings(settings, this);
+  m_interfacePage = new InterfaceSettings(settings, this);
+  m_updatePage    = new UpdateSettings(settings, this);
   
   m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_pagesWidget->addWidget(m_profilePage);
   m_pagesWidget->addWidget(m_networkPage);
-  m_pagesWidget->addWidget(m_interfaceSettings);
+  m_pagesWidget->addWidget(m_interfacePage);
+  m_pagesWidget->addWidget(m_updatePage);
   
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
@@ -45,6 +47,7 @@ SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *pa
   new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_contentsWidget);
+  new QListWidgetItem(QIcon(":/images/update.png"), tr("Обновления"), m_contentsWidget);
   
   connect(m_contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
   connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -92,7 +95,8 @@ void SettingsDialog::accept()
 {
   m_profilePage->save();
   m_networkPage->save();
-  m_interfaceSettings->save();
+  m_interfacePage->save();
+  m_updatePage->save();
   close();
 }
 
@@ -124,7 +128,11 @@ void SettingsDialog::reset()
       break;
       
     case InterfacePage:
-      m_interfaceSettings->reset();
+      m_interfacePage->reset();
+      break;
+      
+    case UpdatePage:
+      m_updatePage->reset();
       break;
   }  
 }
@@ -274,4 +282,48 @@ void InterfaceSettings::save()
     m_settings->style = m_styleComboBox->currentText();
     qApp->setStyle(m_settings->style);
   }
+}
+
+
+
+
+/** [UpdateSettings/public]
+ * Конструктор `InterfaceSettings`
+ */
+UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
+  : QWidget(parent)
+{
+  setAttribute(Qt::WA_DeleteOnClose);
+  m_settings = settings;
+  
+  QLabel *test = new QLabel(tr("Тест"));
+  
+  QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
+  QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
+  styleGroupLayout->addWidget(test);
+  styleGroupLayout->addStretch();
+  
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(styleGroupBox);
+  mainLayout->addStretch();
+}
+
+
+/** [UpdateSettings/public]
+ * 
+ */
+void UpdateSettings::reset()
+{
+
+}
+
+
+
+
+/** [UpdateSettings/public]
+ * Сохраняем настройки
+ */
+void UpdateSettings::save()
+{
+
 }
