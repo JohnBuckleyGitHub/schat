@@ -45,8 +45,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   settings      = new Settings(profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
-  m_updateTimer = new QTimer(this);
-  m_updateTimer->setInterval(60 * 1000);
   
   m_reconnectTimer = new QTimer(this);
   m_reconnectTimer->setInterval(reconnectTimeout);
@@ -84,6 +82,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setModel(&model);
   settings->read();
   
+  m_updateTimer = new QTimer(this);
+  m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
+  
   createActions();
   createCornerWidgets();
   createToolButtons();
@@ -97,10 +98,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
-  
-  connect(settings, SIGNAL(networkSettingsChanged()), this, SLOT(networkSettingsChanged()));
-  connect(settings, SIGNAL(profileSettingsChanged()), this, SLOT(profileSettingsChanged()));
-  connect(settings, SIGNAL(serverChanged()), this, SLOT(newConnection()));
+  connect(settings, SIGNAL(changed(int)), this, SLOT(settingsChanged(int)));
   
   mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
@@ -357,12 +355,12 @@ void SChatWindow::readyForUse()
     QString networkName = settings->network.name();
     mainChannel->browser->msgReadyForUse(networkName, peerAddress);
     statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(networkName).arg(peerAddress));
-    setWindowTitle(tr("Simple Chat - %1").arg(networkName));
+    setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(networkName));
   }
   else {
     mainChannel->browser->msgReadyForUse(peerAddress);
     statusLabel->setText(tr("Успешно подключены к %1").arg(peerAddress));
-    setWindowTitle(tr("Simple Chat"));
+    setWindowTitle(tr("IMPOMEZIA Simple Chat"));
   }
   
   mainChannel->displayChoiceServer(false);
@@ -594,22 +592,6 @@ void SChatWindow::messageClicked()
 
 
 /** [private slots]
- * Слот вызывается при изменении сетевых настроек.
- * Инициаторы:
- *   void NetworkSettings::save() (через `Settings::notify(int)`)
- */
-void SChatWindow::networkSettingsChanged()
-{
-  if (state == Connected) {
-    mainChannel->browser->msgDisconnect();
-    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Изменены настройки сети, пытаемся подключится...</i></div>").arg(ChatBrowser::currentTime()));
-  }
-  
-  newConnection();
-}
-
-
-/** [private slots]
  * Инициаторы:
  *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
@@ -659,25 +641,6 @@ void SChatWindow::notice()
     trayIcon->setIcon(QIcon(":/images/logo16.png"));
     currentTrayIcon = true;
   }
-}
-
-
-/** [private slots]
- * Слот вызывается при изменении профиля в настройках.
- * Инициаторы:
- *   ProfileSettings::save()
- */
-void SChatWindow::profileSettingsChanged()
-{
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void SChatWindow::profileSettingsChanged()";
-  #endif
-  
-  if (state == Connected) {
-    QStringList list;
-    list << profile->nick() << profile->fullName();
-    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
-  }  
 }
 
 
@@ -760,6 +723,30 @@ void SChatWindow::update()
   }
   
   m_updateNotify->execute();
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::settingsChanged(int notify)
+{
+  switch (notify) {
+    case Settings::NetworkSettingsChanged:
+      changedNetworkSettings();
+      break;
+    
+    case Settings::ProfileSettingsChanged:
+      changedProfileSettings();
+      break;
+      
+    case Settings::ServerChanged:
+      newConnection();
+      break;
+            
+    default:
+      break;
+  }
 }
 
 
@@ -851,6 +838,37 @@ QStandardItem* SChatWindow::findItem(const QString &nick) const
     return items[0];
   else
     return 0;  
+}
+
+
+/** [private]
+ * Вызывается при изменении сетевых настроек.
+ * Инициаторы:
+ *   void NetworkSettings::save() (через `Settings::notify(int)`)
+ */
+void SChatWindow::changedNetworkSettings()
+{
+  if (state == Connected) {
+    mainChannel->browser->msgDisconnect();
+    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Изменены настройки сети, пытаемся подключится...</i></div>").arg(ChatBrowser::currentTime()));
+  }
+  
+  newConnection();
+}
+
+
+/** [private]
+ * Вызывается при изменении профиля в настройках.
+ * Инициаторы:
+ *   ProfileSettings::save()
+ */
+void SChatWindow::changedProfileSettings()
+{
+  if (state == Connected) {
+    QStringList list;
+    list << profile->nick() << profile->fullName();
+    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
+  }  
 }
 
 
@@ -964,7 +982,7 @@ void SChatWindow::createTrayIcon()
   
   trayIcon = new QSystemTrayIcon(this);
   trayIcon->setIcon(QIcon(":/images/logo16.png"));
-  trayIcon->setToolTip(tr("Simple Chat %1").arg(SCHAT_VERSION));
+  trayIcon->setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
   trayIcon->setContextMenu(trayIconMenu);
   trayIcon->show();
   currentTrayIcon = true;

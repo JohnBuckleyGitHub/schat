@@ -27,7 +27,8 @@ UpdateNotify::UpdateNotify(QObject *parent)
  */
 void UpdateNotify::execute()
 {
-  m_process.start('"' + m_appPath + "/schat-update.exe\" -get"); 
+  if (m_process.state() == QProcess::NotRunning)
+    m_process.start('"' + m_appPath + "/schat-update.exe\" -get"); 
 }
 
 

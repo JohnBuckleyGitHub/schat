@@ -86,12 +86,11 @@ private slots:
   void disconnected();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void messageClicked();
-  void networkSettingsChanged();
   void newConnection();
   void notice();
-  void profileSettingsChanged();
   void resetTabNotice(int index);
   void returnPressed();
+  void settingsChanged(int notify);
   void update();
   void updateGetDone(int code);
   void welcomeOk();
@@ -100,6 +99,8 @@ private:
   int tabIndex(const QString &s, int start = 1) const;
   Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
+  void changedNetworkSettings();
+  void changedProfileSettings();
   void createActions();
   void createCornerWidgets();
   void createToolButtons();
