@@ -129,20 +129,6 @@ SChatWindow::SChatWindow(QWidget *parent)
 }
 
 
-/** [public]
- * 
- */
-void SChatWindow::reconnect()
-{
-  if (state == Connected) {
-    mainChannel->browser->msgDisconnect();
-    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Пытаемся подключится к сети с новыми настройками</i></div>").arg(ChatBrowser::currentTime()));
-    state = WaitingForConnected;
-    clientSocket->quit();
-  }  
-}
-
-
 /** [protected]
  * 
  */
@@ -902,6 +888,7 @@ void SChatWindow::createActions()
   
   // Личные данные...
   profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
+  profileSetAction->setShortcut(tr("Ctrl+F12"));
   connect(profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
   
   // Обновления...
@@ -919,9 +906,9 @@ void SChatWindow::createActions()
   connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
   
   // Настройка
+  m_settingsButton = new QToolButton(this);
   settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
-  settingsAction->setShortcut(tr("Ctrl+F12"));
-  connect(settingsAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
+  connect(settingsAction, SIGNAL(triggered()), m_settingsButton, SLOT(showMenu()));
 }
 
 
@@ -953,10 +940,9 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(interfaceSetAction);
   iconMenu->addAction(updateSetAction);
   
-  QToolButton *settingsButton = new QToolButton(this);
-  settingsButton->setDefaultAction(settingsAction);
-  settingsButton->setAutoRaise(true);
-  settingsButton->setMenu(iconMenu);
+  m_settingsButton->setDefaultAction(settingsAction);
+  m_settingsButton->setAutoRaise(true);
+  m_settingsButton->setMenu(iconMenu);
   
   QToolButton *aboutButton = new QToolButton(this);
   aboutButton->setDefaultAction(aboutAction);
@@ -967,7 +953,7 @@ void SChatWindow::createToolButtons()
   line->setFrameShadow(QFrame::Sunken);
   
   toolsLayout->addWidget(line);
-  toolsLayout->addWidget(settingsButton);
+  toolsLayout->addWidget(m_settingsButton);
   toolsLayout->addWidget(aboutButton);
   toolsLayout->addStretch();
   toolsLayout->setSpacing(0);  
