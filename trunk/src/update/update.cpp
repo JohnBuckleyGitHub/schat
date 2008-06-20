@@ -23,7 +23,6 @@ Update::Update(const QUrl &url, QObject *parent)
   
   connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
   connect(m_download, SIGNAL(error()), SLOT(error()));
-  m_queue.isEmpty();
 }
 
 
