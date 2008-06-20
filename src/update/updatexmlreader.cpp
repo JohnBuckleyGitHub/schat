@@ -79,13 +79,15 @@ void UpdateXmlReader::readCumulative()
         FileInfo fileInfo;
         fileInfo.type  = attributes().value("type").toString();
         fileInfo.level = attributes().value("level").toString().toInt();
+        fileInfo.size = attributes().value("size").toString().toULongLong();
+        fileInfo.md5  = attributes().value("md5").toString();
+        fileInfo.name = readElementText();
         
-        if ((fileInfo.type == "qt" && fileInfo.level == m_qtLevel) || (fileInfo.type == "core" && fileInfo.level == m_coreLevel)) {
-          fileInfo.size = attributes().value("size").toString().toULongLong();
-          fileInfo.md5  = attributes().value("md5").toString();
-          fileInfo.name = readElementText();
+        if (fileInfo.type == "qt" && fileInfo.level == m_qtLevel && m_qtLevel > UpdateLevelQt)
           m_list << fileInfo;
-        }         
+        
+        if (fileInfo.type == "core" && fileInfo.level == m_coreLevel && m_coreLevel > UpdateLevelCore)
+          m_list << fileInfo;
       }
       else
         readUnknownElement();
