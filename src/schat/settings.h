@@ -24,6 +24,7 @@ public:
     NetworksModelIndexChanged,
     ProfileSettingsChanged,
     ServerChanged,
+    UpdateSettingsChanged
   };
   
   Settings(Profile *p, QObject *parent);
@@ -36,10 +37,12 @@ public:
   bool hideWelcome;
   bool needCreateNetworkList;
   bool updateAutoClean;
+  bool updateAutoDownload;
   int updateCheckInterval;
   Network network;
   QStandardItemModel networksModel;
   QString style;
+  QString updateUrl;
 
 signals:
   void changed(int notify);

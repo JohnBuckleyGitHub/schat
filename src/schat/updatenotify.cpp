@@ -5,15 +5,17 @@
 
 #include <QtGui>
 
+#include "settings.h"
 #include "updatenotify.h"
 
 
 /** [public]
  * 
  */
-UpdateNotify::UpdateNotify(QObject *parent)
+UpdateNotify::UpdateNotify(Settings *settings, QObject *parent)
   : QObject(parent)
 {
+  m_settings = settings;
   m_appPath = qApp->applicationDirPath();
   m_process.setWorkingDirectory(m_appPath);
   
@@ -28,7 +30,7 @@ UpdateNotify::UpdateNotify(QObject *parent)
 void UpdateNotify::execute()
 {
   if (m_process.state() == QProcess::NotRunning)
-    m_process.start('"' + m_appPath + "/schat-update.exe\" -get"); 
+    m_process.start('"' + m_appPath + "/schat-update.exe\" -get " + m_settings->updateUrl); 
 }
 
 

@@ -75,6 +75,8 @@ void Settings::read()
     updateCheckInterval = 1440;
   
   updateAutoClean = s.value("AutoClean", true).toBool();                // Автоматически удалять обновления
+  updateAutoDownload = s.value("AutoDownload", true).toBool();          // Автоматически скачивать обновления
+  updateUrl = s.value("Url", "http://192.168.5.130/schat/updates/update.xml").toString();  
 }
 
 

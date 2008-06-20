@@ -8,11 +8,13 @@
 
 #include <QProcess>
 
+class Settings;
+
 class UpdateNotify : public QObject {
   Q_OBJECT
   
 public:
-  UpdateNotify(QObject *parent = 0);
+  UpdateNotify(Settings *settings, QObject *parent = 0);
   
 signals:
   void done(int code);
@@ -25,9 +27,9 @@ private slots:
   void finished(int exitCode, QProcess::ExitStatus exitStatus);
   
 private:
-  QString m_appPath;
   QProcess m_process;
-
+  QString m_appPath;
+  Settings *m_settings;
 };
 
 #endif /*UPDATENOTIFY_H_*/
