@@ -55,7 +55,6 @@ public:
   SChatWindow(QWidget *parent = 0);
   inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
   inline QByteArray saveSplitter()              { return splitter->saveState(); }
-  void reconnect();
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -144,6 +143,7 @@ private:
   QTimer *m_reconnectTimer;
   QTimer *m_updateTimer;
   QTimer *noticeTimer;
+  QToolButton *m_settingsButton;
   QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
@@ -151,7 +151,6 @@ private:
   QWidget *rightWidget;
   Settings *settings;
   WelcomeDialog *welcomeDialog;
-
 };
 
 #endif /*SCHATWINDOW_H_*/
