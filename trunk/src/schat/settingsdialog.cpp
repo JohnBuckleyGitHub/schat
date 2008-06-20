@@ -296,12 +296,29 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
   m_settings = settings;
   
-  QLabel *test = new QLabel(tr("Тест"));
+  m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
+  m_autoDownload->setChecked(m_settings->updateAutoDownload);
+  m_autoDownload->setEnabled(false);
   
-  QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
-  QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
-  styleGroupLayout->addWidget(test);
-  styleGroupLayout->addStretch();
+  m_autoClean = new QCheckBox(tr("Удалять обновления после установки"), this);
+  m_autoClean->setChecked(m_settings->updateAutoClean);
+  
+  QLabel *interval = new QLabel(tr("Интервал проверки обновлений:"));
+  QHBoxLayout *intervalLayout = new QHBoxLayout;
+  
+  m_interval = new QSpinBox(this);
+  m_interval->setValue(m_settings->updateCheckInterval);
+  m_interval->setRange(5, 1440);
+  m_interval->setSuffix(tr(" мин"));
+  
+  QGroupBox *styleGroupBox = new QGroupBox(tr("Автоматические обновления"), this);
+  QVBoxLayout *styleGroupLayout = new QVBoxLayout(styleGroupBox);
+  styleGroupLayout->addWidget(m_autoDownload);
+  styleGroupLayout->addWidget(m_autoClean);
+  intervalLayout->addWidget(interval);
+  intervalLayout->addWidget(m_interval);
+  intervalLayout->addStretch();
+  styleGroupLayout->addLayout(intervalLayout);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(styleGroupBox);
@@ -314,7 +331,9 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
  */
 void UpdateSettings::reset()
 {
-
+  m_autoDownload->setChecked(true);
+  m_autoClean->setChecked(true);
+  m_interval->setValue(60);
 }
 
 
@@ -325,5 +344,8 @@ void UpdateSettings::reset()
  */
 void UpdateSettings::save()
 {
-
+  m_settings->updateAutoDownload = m_autoDownload->isChecked();
+  m_settings->updateAutoClean = m_autoClean->isChecked();
+  m_settings->updateCheckInterval = m_interval->value();
+  m_settings->notify(Settings::UpdateSettingsChanged);
 }

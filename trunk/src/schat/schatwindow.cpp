@@ -704,7 +704,7 @@ void SChatWindow::update()
     m_updateTimer->start();
   
   if (!m_updateNotify) {
-    m_updateNotify = new UpdateNotify(this);
+    m_updateNotify = new UpdateNotify(settings, this);
     connect(m_updateNotify, SIGNAL(done(int)), SLOT(updateGetDone(int)));
   }
   
@@ -728,6 +728,10 @@ void SChatWindow::settingsChanged(int notify)
       
     case Settings::ServerChanged:
       newConnection();
+      break;
+      
+    case Settings::UpdateSettingsChanged:
+      m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
       break;
             
     default:

@@ -137,6 +137,9 @@ public:
   void save();
   
 private:
+  QCheckBox *m_autoClean;
+  QCheckBox *m_autoDownload;
+  QSpinBox *m_interval;
   Settings *m_settings;
 };
 
