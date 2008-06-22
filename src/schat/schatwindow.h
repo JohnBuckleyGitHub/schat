@@ -17,7 +17,10 @@
 #include "clientsocket.h"
 #include "server.h"
 #include "settingsdialog.h"
+
+#ifdef SCHAT_UPDATE
 #include "win32/updatenotify.h"
+#endif
 
 class AboutDialog;
 class MainChannel;
@@ -91,10 +94,13 @@ private slots:
   void resetTabNotice(int index);
   void returnPressed();
   void settingsChanged(int notify);
+  void welcomeOk();
+  
+  #ifdef SCHAT_UPDATE  
   void update();
   void updateGetDone(int code);
-  void welcomeOk();
-
+  #endif
+  
 private:
   int tabIndex(const QString &s, int start = 1) const;
   Profile* profileFromItem(const QStandardItem *item);
@@ -123,7 +129,6 @@ private:
   QAction *quitAction;
   QAction *sendAction;
   QAction *settingsAction;
-  QAction *updateSetAction;
   QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
@@ -134,7 +139,6 @@ private:
   QPointer<ClientSocket> clientSocket;
   QPointer<Server> daemon;
   QPointer<SettingsDialog> settingsDialog;
-  QPointer<UpdateNotify> m_updateNotify;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
@@ -151,6 +155,11 @@ private:
   QWidget *rightWidget;
   Settings *settings;
   WelcomeDialog *welcomeDialog;
+  
+  #ifdef SCHAT_UPDATE
+  QAction *updateSetAction;
+  QPointer<UpdateNotify> m_updateNotify;
+  #endif
 };
 
 #endif /*SCHATWINDOW_H_*/

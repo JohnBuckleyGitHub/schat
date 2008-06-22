@@ -36,13 +36,16 @@ public:
   bool firstRun;
   bool hideWelcome;
   bool needCreateNetworkList;
-  bool updateAutoClean;
-  bool updateAutoDownload;
-  int updateCheckInterval;
   Network network;
   QStandardItemModel networksModel;
   QString style;
+  
+  #ifdef SCHAT_UPDATE
+  bool updateAutoClean;
+  bool updateAutoDownload;
+  int updateCheckInterval;  
   QString updateUrl;
+  #endif
 
 signals:
   void changed(int notify);

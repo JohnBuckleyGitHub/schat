@@ -29,16 +29,19 @@ SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *pa
   m_contentsWidget = new QListWidget(this);
   m_pagesWidget    = new QStackedWidget;
 
-  m_profilePage   = new ProfileSettings(settings, profile, this);
-  m_networkPage   = new NetworkSettings(settings, this);
-  m_interfacePage = new InterfaceSettings(settings, this);
-  m_updatePage    = new UpdateSettings(settings, this);
+  m_profilePage    = new ProfileSettings(settings, profile, this);
+  m_networkPage    = new NetworkSettings(settings, this);
+  m_interfacePage  = new InterfaceSettings(settings, this);
   
   m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_pagesWidget->addWidget(m_profilePage);
   m_pagesWidget->addWidget(m_networkPage);
   m_pagesWidget->addWidget(m_interfacePage);
+
+  #ifdef SCHAT_UPDATE
+  m_updatePage = new UpdateSettings(settings, this);
   m_pagesWidget->addWidget(m_updatePage);
+  #endif
   
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
@@ -47,7 +50,10 @@ SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *pa
   new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_contentsWidget);
+  
+  #ifdef SCHAT_UPDATE
   new QListWidgetItem(QIcon(":/images/update.png"), tr("Обновления"), m_contentsWidget);
+  #endif
   
   connect(m_contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
   connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -96,7 +102,10 @@ void SettingsDialog::accept()
   m_profilePage->save();
   m_networkPage->save();
   m_interfacePage->save();
+  
+  #ifdef SCHAT_UPDATE
   m_updatePage->save();
+  #endif
   close();
 }
 
@@ -130,10 +139,12 @@ void SettingsDialog::reset()
     case InterfacePage:
       m_interfacePage->reset();
       break;
-      
+    
+    #ifdef SCHAT_UPDATE
     case UpdatePage:
       m_updatePage->reset();
       break;
+    #endif
   }  
 }
 
@@ -290,6 +301,7 @@ void InterfaceSettings::save()
 /** [UpdateSettings/public]
  * Конструктор `InterfaceSettings`
  */
+#ifdef SCHAT_UPDATE
 UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
@@ -349,3 +361,4 @@ void UpdateSettings::save()
   m_settings->updateCheckInterval = m_interval->value();
   m_settings->notify(Settings::UpdateSettingsChanged);
 }
+#endif

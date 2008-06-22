@@ -24,7 +24,10 @@ class QSpinBox;
 class QStackedWidget;
 class SChatWindow;
 class Settings;
+
+#ifdef SCHAT_UPDATE
 class UpdateSettings;
+#endif
 
 
 /**
@@ -62,7 +65,10 @@ private:
   QPushButton *m_okButton;
   QPushButton *m_resetButton;
   QStackedWidget *m_pagesWidget;
+  
+  #ifdef SCHAT_UPDATE
   UpdateSettings *m_updatePage;
+  #endif
 };
 
 
@@ -127,6 +133,7 @@ private:
 /**
  * Класс `UpdateSettings`
  */
+#ifdef SCHAT_UPDATE
 class UpdateSettings : public QWidget
 {
   Q_OBJECT
@@ -142,5 +149,6 @@ private:
   QSpinBox *m_interval;
   Settings *m_settings;
 };
+#endif
 
 #endif /*SETTINGSDIALOG_H_*/

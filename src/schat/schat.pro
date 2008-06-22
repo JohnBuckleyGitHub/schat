@@ -80,4 +80,5 @@ win32 {
     RC_FILE = schat.rc
     HEADERS += win32/updatenotify.h
     SOURCES += win32/updatenotify.cpp
+    DEFINES += SCHAT_UPDATE
 }
