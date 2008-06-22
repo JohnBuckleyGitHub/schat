@@ -82,8 +82,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setModel(&model);
   settings->read();
   
+  #ifdef SCHAT_UPDATE
   m_updateTimer = new QTimer(this);
   m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
+  connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
+  #endif
   
   createActions();
   createCornerWidgets();
@@ -95,7 +98,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
   connect(m_reconnectTimer, SIGNAL(timeout()), this, SLOT(newConnection()));
-  connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(settings, SIGNAL(changed(int)), this, SLOT(settingsChanged(int)));
@@ -125,7 +127,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   else
     delete daemon;
   
+  #ifdef SCHAT_UPDATE
   QTimer::singleShot(0, this, SLOT(update()));
+  #endif
 }
 
 
@@ -696,8 +700,9 @@ void SChatWindow::returnPressed()
 
 
 /** [private slots]
- * TODO сделать обвёртку
+ * 
  */
+#ifdef SCHAT_UPDATE
 void SChatWindow::update()
 {
   if (!m_updateTimer->isActive())
@@ -710,7 +715,7 @@ void SChatWindow::update()
   
   m_updateNotify->execute();
 }
-
+#endif
 
 /** [private slots]
  * 
@@ -729,10 +734,12 @@ void SChatWindow::settingsChanged(int notify)
     case Settings::ServerChanged:
       newConnection();
       break;
-      
+
+    #ifdef SCHAT_UPDATE
     case Settings::UpdateSettingsChanged:
       m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
       break;
+    #endif
             
     default:
       break;
@@ -743,6 +750,7 @@ void SChatWindow::settingsChanged(int notify)
 /** [private slots]
  * Слот вызывается при завершении работы программы обновления
  */
+#ifdef SCHAT_UPDATE
 void SChatWindow::updateGetDone(int code)
 {
   if (!m_updateNotify)
@@ -757,6 +765,7 @@ void SChatWindow::updateGetDone(int code)
   else
     s.setValue("Updates/ReadyToInstall", false);
 }
+#endif
 
 
 /** [private slots]
@@ -896,8 +905,10 @@ void SChatWindow::createActions()
   connect(profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
   
   // Обновления...
+  #ifdef SCHAT_UPDATE
   updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
   connect(updateSetAction, SIGNAL(triggered()), this, SLOT(settingsUpdate()));
+  #endif
   
   // Выход из программы
   quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
@@ -942,7 +953,10 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(profileSetAction);
   iconMenu->addAction(networkSetAction);
   iconMenu->addAction(interfaceSetAction);
+  
+  #ifdef SCHAT_UPDATE
   iconMenu->addAction(updateSetAction);
+  #endif
   
   m_settingsButton->setDefaultAction(settingsAction);
   m_settingsButton->setAutoRaise(true);

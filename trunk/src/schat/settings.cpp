@@ -67,6 +67,7 @@ void Settings::read()
   profile->setSex(quint8(s.value("Sex", 0).toUInt()));                  // Пол
   s.endGroup();
   
+  #ifdef SCHAT_UPDATE
   s.beginGroup("Updates");
   updateCheckInterval = s.value("CheckInterval", 60).toInt();           // Интервал проверки обновлений (от 5 до 1440 (1 сутки) минут)
   if (updateCheckInterval < 5)
@@ -76,7 +77,8 @@ void Settings::read()
   
   updateAutoClean = s.value("AutoClean", true).toBool();                // Автоматически удалять обновления
   updateAutoDownload = s.value("AutoDownload", true).toBool();          // Автоматически скачивать обновления
-  updateUrl = s.value("Url", "http://192.168.5.130/schat/updates/update.xml").toString();  
+  updateUrl = s.value("Url", "http://192.168.5.130/schat/updates/update.xml").toString();
+  #endif
 }
 
 
@@ -102,10 +104,12 @@ void Settings::write()
   s.setValue("Sex", profile->sex());
   s.endGroup();
   
+  #ifdef SCHAT_UPDATE
   s.beginGroup("Updates");
   s.setValue("CheckInterval", updateCheckInterval);
   s.setValue("AutoClean", updateAutoClean);
   s.endGroup();
+  #endif
 }
 
 
