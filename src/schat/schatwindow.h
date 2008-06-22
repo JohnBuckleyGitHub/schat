@@ -17,7 +17,7 @@
 #include "clientsocket.h"
 #include "server.h"
 #include "settingsdialog.h"
-#include "updatenotify.h"
+#include "win32/updatenotify.h"
 
 class AboutDialog;
 class MainChannel;
