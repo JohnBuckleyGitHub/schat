@@ -308,24 +308,21 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
  */
 void SChatWindow::participantLeft(const QString &nick)
 {
-  quint8 sex = 0;
+  QStandardItem *item = findItem(nick);
   
-  QList<QStandardItem *> items;
-  items = model.findItems(nick, Qt::MatchFixedString);
-  if (items.size() == 1) {
-    sex = quint8(items[0]->data(Qt::UserRole + 1).toUInt());
-    QModelIndex index = model.indexFromItem(items[0]);
-    model.removeRow(index.row());
+  if (item) {
+    quint8 sex = quint8(item->data(Qt::UserRole + 1).toUInt());
+    model.removeRow(model.indexFromItem(item).row());
+    
+    int index = tabIndex(nick);
+    if (index != -1) {
+      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      if (tab->type == AbstractTab::Private)
+        tab->browser->msgParticipantLeft(sex, nick);
+    }
+  
+    mainChannel->browser->msgParticipantLeft(sex, nick);
   }
-  
-  int index = tabIndex(nick);
-  if (index != -1) {
-    AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-    if (tab->type == AbstractTab::Private)
-      tab->browser->msgParticipantLeft(sex, nick);
-  }
-  
-  mainChannel->browser->msgParticipantLeft(sex, nick);
 }
 
 
@@ -832,7 +829,7 @@ QStandardItem* SChatWindow::findItem(const QString &nick) const
 {
   QList<QStandardItem *> items;
   
-  items = model.findItems(nick, Qt::MatchFixedString);
+  items = model.findItems(nick, Qt::MatchCaseSensitive);
   if (items.size() == 1)
     return items[0];
   else
