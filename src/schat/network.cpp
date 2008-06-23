@@ -139,12 +139,6 @@ void Network::fromString(const QString &s)
     m_server  = list.at(0);
     m_port    = quint16(list.at(1).toUInt());
   }
-  else if (list.size() == 1) {
-    m_valid   = true;
-    m_network = false;
-    m_server  = list.at(0);
-    m_port    = quint16(7666);
-  }    
   else {
     m_valid   = false;
     m_network = false;
