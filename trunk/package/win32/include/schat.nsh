@@ -2,20 +2,24 @@
  * Simple Chat
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
  */
- 
+
+!AddPluginDir "contrib\plugins"
 
 /**
 * Выводим `MessageBox` если чат запущен.
 */
 !macro _findRunningChat
-    Push $0
-  newcheck:
-    FindWindow $0 "QWidget" "${SCHAT_NAME}" 0
-    IntCmp $0 0 done
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
-    Quit
-  done:
-    Pop $0
+  ${Unless} ${Silent}
+    newcheck:
+    FindProcDLL::FindProc "schat.exe"
+    Pop $R0
+    ${If} $R0 == 1 
+      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
+    ${EndIf}
+  ${Else}
+     !insertmacro KILL_ALL "schat.exe"
+     !insertmacro KILL_ALL "schatd.exe"
+  ${EndUnless}
 !macroend
 
 !macro findRunningChat
@@ -55,4 +59,19 @@ FunctionEnd
   ${EndIf}
   
   Pop $0
+!macroend
+
+/**
+ * Завершает все процессы с указаным именем
+ */
+!macro KILL_ALL _NAME
+  Push $0
+  StrCpy $R0 1
+  ${While} $R0 == 1
+    KillProcDLL::KillProc "${_NAME}"
+    Pop $R0
+    FindProcDLL::FindProc "${_NAME}"
+    Pop $R0
+  ${EndWhile}
+  Pop $R0 
 !macroend
