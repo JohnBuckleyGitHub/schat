@@ -61,6 +61,7 @@ FunctionEnd
   Pop $0
 !macroend
 
+
 /**
  * Завершает все процессы с указаным именем
  */
@@ -74,4 +75,17 @@ FunctionEnd
     Pop $R0
   ${EndWhile}
   Pop $R0 
+!macroend
+
+
+/**
+ * Обработка ключа командной строки "-update"
+ */
+!macro UPDATE_CMD
+  ${GetParameters} $R0
+  ${GetOptionsS} $R0 "-update" $R0
+  ${Unless} ${Errors}
+    ${GetParent} "$EXEDIR" $R0
+    StrCpy $INSTDIR $R0
+  ${EndUnless}
 !macroend

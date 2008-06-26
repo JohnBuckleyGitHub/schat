@@ -42,7 +42,7 @@ void Install::execute()
   }
   
   if (!m_queue.isEmpty())
-    m_process.start('"' + m_appPath + "/updates/" + m_queue.dequeue() + "\" /S /D=" + m_appPath);
+    m_process.start('"' + m_appPath + "/updates/" + m_queue.dequeue() + '"', QStringList() << "/S" << "-update");
 }
 
 
