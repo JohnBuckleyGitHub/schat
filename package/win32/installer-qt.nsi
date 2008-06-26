@@ -4,7 +4,9 @@
  */
 
 !include "MUI2.nsh"
+!include "FileFunc.nsh"
 !include "include\common.nsh"
+!include "include\schat.nsh"
 !include "include\sections.nsh"
 
 !define SCHAT_OUT_FILENAME "schat-runtime-${SCHAT_VERSION}.exe"
@@ -38,3 +40,11 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 Section
   !insertmacro RUNTIME_FILES
 SectionEnd
+
+!insertmacro GetParameters
+!insertmacro GetOptionsS
+!insertmacro GetParent
+
+Function .onInit
+  !insertmacro UPDATE_CMD
+FunctionEnd

@@ -4,6 +4,7 @@
  */
 
 !include "MUI2.nsh"
+!include "FileFunc.nsh"
 !include "Sections.nsh"
 !include "include\common.nsh"
 !include "include\sections.nsh"
@@ -43,6 +44,9 @@ VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
 VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
+
+ReserveFile "contrib\plugins\FindProcDLL.dll"
+ReserveFile "contrib\plugins\KillProcDLL.dll"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\schat.exe"
 
@@ -104,10 +108,16 @@ SectionEnd
 /**
  * Инициализация
  */
+!insertmacro GetParameters
+!insertmacro GetOptionsS
+!insertmacro GetParent
+
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
   call findRunningChat
   
+  !insertmacro UPDATE_CMD
+    
   ${Option} "Desktop"     0 $settings.Desktop
   ${Option} "QuickLaunch" 1 $settings.QuickLaunch
   ${Option} "AllPrograms" 1 $settings.AllPrograms
