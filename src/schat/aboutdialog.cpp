@@ -18,7 +18,6 @@ AboutDialog::AboutDialog(QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
   
-  resize(400, 280);
   tabWidget = new QTabWidget(this);
   tabWidget->addTab(new MainTab(this), tr("О Программе"));
   tabWidget->addTab(new ChangeLogTab(this), tr("История версий"));

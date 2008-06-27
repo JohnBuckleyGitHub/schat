@@ -21,8 +21,6 @@ SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *pa
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
   
-  resize(500, 256);
-  
   m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
   m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
   m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
@@ -213,7 +211,6 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   
   QHBoxLayout *networkLayout = new QHBoxLayout;
   networkLayout->addWidget(m_networkWidget);
-  networkLayout->addStretch();
   networkLayout->setMargin(0);
   
   QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
