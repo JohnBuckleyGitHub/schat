@@ -757,7 +757,7 @@ void SChatWindow::updateGetDone(int code)
   
   if (code == 0) {
     QString version = s.value("Updates/LastDownloadedCoreVersion", "").toString(); 
-    trayIcon->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."));
+    trayIcon->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."), QSystemTrayIcon::Information, 60000);
   }
   else
     s.setValue("Updates/ReadyToInstall", false);

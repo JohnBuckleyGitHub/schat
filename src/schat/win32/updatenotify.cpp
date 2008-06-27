@@ -37,7 +37,7 @@ void UpdateNotify::execute()
 /** [private slots]
  * 
  */
-void UpdateNotify::error(QProcess::ProcessError error)
+void UpdateNotify::error(QProcess::ProcessError /*error*/)
 {
   emit done(-1);  
 }
@@ -46,7 +46,7 @@ void UpdateNotify::error(QProcess::ProcessError error)
 /** [private slots]
  * 
  */
-void UpdateNotify::finished(int exitCode, QProcess::ExitStatus exitStatus)
+void UpdateNotify::finished(int exitCode, QProcess::ExitStatus /*exitStatus*/)
 {
   emit done(exitCode);  
 }
