@@ -6,6 +6,7 @@ TEMPLATE = app
 QT += network
 CONFIG += console
 HEADERS = \
+    daemonsettings.h \
     log.h \
     profile.h \
     protocol.h \
@@ -13,11 +14,12 @@ HEADERS = \
     serversocket.h \
     version.h
 SOURCES = \
+    daemonsettings.cpp \
     log.cpp \
     main.cpp \
     profile.cpp \
     server.cpp \
-    serversocket.cpp \ 
+    serversocket.cpp 
     
 DEPENDPATH  += . \
                ../common

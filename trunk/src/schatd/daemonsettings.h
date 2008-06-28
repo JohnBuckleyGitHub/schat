@@ -16,19 +16,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LOG_H_
-#define LOG_H_
+#ifndef DAEMONSETTINGS_H_
+#define DAEMONSETTINGS_H_
 
 #include <QObject>
 
-class Log : public QObject {
+class DaemonSettings : public QObject {
   Q_OBJECT
   
 public:
-  Log(QObject *parent = 0);
-  
-private:
-  QString m_appPath;
+  DaemonSettings(QObject *parent);
+
 };
 
-#endif /*LOG_H_*/
+#endif /*DAEMONSETTINGS_H_*/

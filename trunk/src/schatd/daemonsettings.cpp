@@ -16,20 +16,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <QtGui>
 
-#include "log.h"
+#include "daemonsettings.h"
 
 
 /** [public]
  * 
  */
-Log::Log(QObject *parent)
+DaemonSettings::DaemonSettings(QObject *parent)
   : QObject(parent)
 {
-  m_appPath = qApp->applicationDirPath();
-  
-  if (QDir().exists(m_appPath + "/log"))
-    QDir().mkdir(m_appPath + "/log");
+
 }
