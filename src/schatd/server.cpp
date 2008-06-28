@@ -20,9 +20,10 @@
 #include <QtNetwork>
 
 #include "daemonsettings.h"
-#include "serversocket.h"
-#include "server.h"
+#include "log.h"
 #include "protocol.h"
+#include "server.h"
+#include "serversocket.h"
 
 
 /** [public]
@@ -41,7 +42,19 @@ Server::Server(QObject *parent)
 bool Server::start()
 {
   m_settings->read();
-  return listen(QHostAddress(m_settings->listenAddress), m_settings->listenPort);
+  
+  QString address = m_settings->listenAddress;
+  quint16 port    = m_settings->listenPort;  
+  bool result     = listen(QHostAddress(address), port);
+  
+  if (result) {
+    LOG(0, tr("Simple Chat Daemon успешно запущен, адрес %1, порт %2").arg(address).arg(port));
+  }
+  else {
+    LOG(0, tr("Ошибка запуска Simple Chat Daemon, %1").arg(errorString()));
+  }
+  
+  return result;
 }
 
 
@@ -65,6 +78,15 @@ void Server::appendParticipant(const QString &p)
       socket->send(sChatOpcodeMaxDoublePingTimeout, PingInterval / 1000 * 2);
       socket->setState(sChatStateReadyForUse);
       relayParticipantList(socket);
+      
+      QStringList info = socket->participantInfo();
+      QString fullName;
+      if (info.at(1).isEmpty())
+        fullName = "empty";
+      else
+        fullName = info.at(1);
+      
+      LOG(0, tr("Новый участник: %1, %2, %3, %4").arg(info.at(3)).arg(info.at(0)).arg(fullName).arg(info.at(2)));
     }
     else {
       socket->setNick("#DUBLICATE");
@@ -88,10 +110,6 @@ void Server::appendParticipant(const QString &p)
  */
 void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)
 {
-  #ifdef SCHAT_DEBUG 
-  qDebug() << "void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QString &name)" << sex << nick << name;
-  #endif
-
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
     if (socket->nick() == nick) {
       socket->setSex(sex);
@@ -133,10 +151,6 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
  */
 void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
 {
-  #ifdef SCHAT_DEBUG 
-  qDebug() << "Server::relayMessage(const QString &channel, const QString &nick, const QString &message)" << channel << nick << message;
-  #endif
-  
   if (channel == "#main") {
     QHashIterator<QString, ServerSocket *> i(peers);
     while (i.hasNext()) {
@@ -183,10 +197,6 @@ void Server::relayParticipantList(ServerSocket *socket)
 #ifdef SCHAT_CLIENT
 void Server::appendDirectParticipant(const QString &p)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::appendDirectParticipant(const QString &p)";
-  #endif
-  
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
     if (!directPeers.contains(p) && localProfile->nick() != p) {
       directPeers.insert(p, socket);

@@ -19,7 +19,9 @@
 #ifndef LOG_H_
 #define LOG_H_
 
+#include <QFile>
 #include <QObject>
+#include <QTextStream>
 
 class Log : public QObject {
   Q_OBJECT
@@ -28,9 +30,12 @@ public:
   Log(QObject *parent = 0);
   
   bool init();
+  void append(const QString &text);
   
 private:
+  QFile m_file;
   QString m_appPath;
+  QTextStream m_stream;
 };
 
 #endif /*LOG_H_*/
