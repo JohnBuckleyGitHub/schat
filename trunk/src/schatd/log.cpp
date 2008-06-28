@@ -41,5 +41,28 @@ bool Log::init()
   if (!dir.exists())
     dir.mkdir(m_appPath + "/log");
   
+  bool bom = false;
+  
+  m_file.setFileName(m_appPath + "/log/schatd.log");
+  if (!m_file.exists())
+    bom = true;
+  
+  if (!m_file.open(QIODevice::Append))
+    return false;
+  else {
+    m_stream.setDevice(&m_file);
+    m_stream.setGenerateByteOrderMark(bom);
+    m_stream.setCodec("UTF-8");
+  }   
+  
   return true;
+}
+
+
+/** [public]
+ * 
+ */
+void Log::append(const QString &text)
+{
+  m_stream << QDateTime(QDateTime::currentDateTime()).toString("(yyyy.MM.dd hh:mm:ss) ") << text << endl;
 }
