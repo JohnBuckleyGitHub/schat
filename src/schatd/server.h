@@ -22,8 +22,10 @@
 #include <QHash>
 #include <QTcpServer>
 
-#include "serversocket.h"
 #include "profile.h"
+#include "serversocket.h"
+
+class DaemonSettings;
 
 class Server : public QTcpServer
 {
@@ -57,12 +59,10 @@ private slots:
 private:
   void incomingConnection(int socketId);
   void participantLeft(const QString &nick);
-  void readSettings();
   void removeConnection(ServerSocket *socket);
   
+  DaemonSettings *m_settings;
   QHash<QString, ServerSocket *> peers;
-  QString listenAddress;
-  quint16 listenPort;
   
   #ifdef SCHAT_CLIENT
   void removeDirectConnection(ServerSocket *socket);

@@ -16,9 +16,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QtCore>
 
 #include "daemonsettings.h"
+#include "log.h"
 
 
 /** [public]
@@ -28,4 +29,24 @@ DaemonSettings::DaemonSettings(QObject *parent)
   : QObject(parent)
 {
 
+}
+
+
+/** [public]
+ * 
+ */
+void DaemonSettings::read()
+{
+  QSettings s(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
+  
+  listenAddress = s.value("ListenAddress", "0.0.0.0").toString();
+  listenPort    = quint16(s.value("ListenPort", 7666).toUInt());
+  logLevel      = s.value("LogLevel", 0).toInt();
+  if (logLevel > -1) {
+    log = new Log(this);
+    if (!log->init()) {
+      log->deleteLater();
+      logLevel = -1;
+    }
+  }
 }
