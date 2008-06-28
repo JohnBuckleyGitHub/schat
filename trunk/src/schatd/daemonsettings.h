@@ -21,12 +21,20 @@
 
 #include <QObject>
 
+class Log;
+
 class DaemonSettings : public QObject {
   Q_OBJECT
   
 public:
-  DaemonSettings(QObject *parent);
-
+  DaemonSettings(QObject *parent = 0);
+  
+  void read();
+  
+  int logLevel;
+  Log *log;
+  QString listenAddress;
+  quint16 listenPort;
 };
 
 #endif /*DAEMONSETTINGS_H_*/

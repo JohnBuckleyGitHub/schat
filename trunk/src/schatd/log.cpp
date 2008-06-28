@@ -29,7 +29,17 @@ Log::Log(QObject *parent)
   : QObject(parent)
 {
   m_appPath = qApp->applicationDirPath();
+}
+
+
+/** [public]
+ * 
+ */
+bool Log::init()
+{
+  QDir dir(m_appPath + "/log");
+  if (!dir.exists())
+    dir.mkdir(m_appPath + "/log");
   
-  if (QDir().exists(m_appPath + "/log"))
-    QDir().mkdir(m_appPath + "/log");
+  return true;
 }

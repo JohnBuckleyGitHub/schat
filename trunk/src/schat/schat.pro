@@ -22,8 +22,10 @@ HEADERS += \
     abstracttab.h \
     chatbrowser.h \
     clientsocket.h \
+    daemonsettings.h \
     directchannel.h \
     directchannelserver.h \
+    log.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -38,15 +40,17 @@ HEADERS += \
     settingsdialog.h \
     tab.h \
     version.h \
-    welcomedialog.h \
+    welcomedialog.h
 
 SOURCES += \
     aboutdialog.cpp \
     abstracttab.cpp \
     chatbrowser.cpp \
     clientsocket.cpp \
+    daemonsettings.cpp \
     directchannel.cpp \
     directchannelserver.cpp \
+    log.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \

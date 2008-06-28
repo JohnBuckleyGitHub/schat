@@ -19,6 +19,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
+#include "daemonsettings.h"
 #include "serversocket.h"
 #include "server.h"
 #include "protocol.h"
@@ -30,6 +31,7 @@
 Server::Server(QObject *parent)
   : QTcpServer(parent)
 {
+  m_settings = new DaemonSettings(this);
 }
 
 
@@ -38,13 +40,8 @@ Server::Server(QObject *parent)
  */
 bool Server::start()
 {
-  readSettings();
-  
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::start()" << listenAddress << listenPort;
-  #endif
-  
-  return listen(QHostAddress(listenAddress), listenPort);
+  m_settings->read();
+  return listen(QHostAddress(m_settings->listenAddress), m_settings->listenPort);
 }
 
 
@@ -276,18 +273,6 @@ void Server::participantLeft(const QString &nick)
     i.next();
     i.value()->send(sChatOpcodeParticipantLeft, nick);
   }
-}
-
-
-/** [private]
- * 
- */
-void Server::readSettings()
-{
-  QSettings settings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
-  
-  listenAddress = settings.value("ListenAddress", "0.0.0.0").toString();
-  listenPort    = quint16(settings.value("ListenPort", 7666).toUInt());
 }
 
 

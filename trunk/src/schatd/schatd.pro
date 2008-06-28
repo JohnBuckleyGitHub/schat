@@ -19,7 +19,7 @@ SOURCES = \
     main.cpp \
     profile.cpp \
     server.cpp \
-    serversocket.cpp 
+    serversocket.cpp
     
 DEPENDPATH  += . \
                ../common

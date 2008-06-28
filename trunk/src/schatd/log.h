@@ -27,6 +27,8 @@ class Log : public QObject {
 public:
   Log(QObject *parent = 0);
   
+  bool init();
+  
 private:
   QString m_appPath;
 };
