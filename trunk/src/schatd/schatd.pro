@@ -5,15 +5,19 @@
 TEMPLATE = app
 QT += network
 CONFIG += console
-HEADERS = protocol.h \
-          serversocket.h \
-          server.h \
-          profile.h \
-          version.h
-SOURCES = serversocket.cpp \
-          server.cpp \
-          profile.cpp \
-          main.cpp
+HEADERS = \
+    log.h \
+    profile.h \
+    protocol.h \
+    server.h \
+    serversocket.h \
+    version.h
+SOURCES = \
+    log.cpp \
+    main.cpp \
+    profile.cpp \
+    server.cpp \
+    serversocket.cpp \ 
     
 DEPENDPATH  += . \
                ../common
