@@ -114,7 +114,7 @@ void DirectChannel::readyForUse()
 {
   displayChoiceServer(false);
   state = Connected;
-  browser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b></i></div>")
+  browser->add(tr("<div><small class='gr'>(%1)</small> <i class='green'>Установлено прямое соединение с <b>%2</b></i></div>")
           .arg(ChatBrowser::currentTime())
           .arg(clientSocket->peerAddress().toString()));
 }
@@ -157,7 +157,7 @@ void DirectChannel::removeConnection()
     displayChoiceServer(true);
   }
   else if (state == WaitingForConnected)
-    browser->add(tr("<div class='np'>(%1) <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
+    browser->add(tr("<div><small class='gr'>(%1)</small> <i class='err'>Не удалось подключится</i></div>").arg(ChatBrowser::currentTime()));
   
   clientSocket->deleteLater();  
   state = Disconnected;
