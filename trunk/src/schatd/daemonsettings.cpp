@@ -41,7 +41,12 @@ void DaemonSettings::read()
   
   listenAddress = s.value("ListenAddress", "0.0.0.0").toString();
   listenPort    = quint16(s.value("ListenPort", 7666).toUInt());
-  logLevel      = s.value("LogLevel", 0).toInt();
+  
+  #ifdef SCHAT_CLIENT
+  logLevel = s.value("LogLevel", -1).toInt();
+  #else
+  logLevel = s.value("LogLevel", 0).toInt();
+  #endif
   if (logLevel > -1) {
     log = new Log(this);
     if (!log->init()) {
