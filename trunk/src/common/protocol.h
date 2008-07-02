@@ -35,6 +35,17 @@ static const quint8 sChatFlagDirect                  = 1;
  */
 static const quint16 sChatOpcodeGreeting             = 100;
 static const quint16 sChatOpcodeGreetingOk           = 101;
+
+/**
+ * Отправка сообщения
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> канал/ник для кого предназначено сообщение (#main - главный канал)
+ * QString -> Сообщение
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент
+ */
 static const quint16 sChatOpcodeSendMessage          = 200;
 static const quint16 sChatOpcodeSendPrivateMessage   = 201;
 static const quint16 sChatOpcodeSendPrvMessageEcho   = 202;

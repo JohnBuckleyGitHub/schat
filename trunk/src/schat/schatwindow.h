@@ -23,6 +23,7 @@
 #endif
 
 class AboutDialog;
+class AbstractTab;
 class MainChannel;
 class Profile;
 class QAction;
@@ -111,6 +112,7 @@ private:
   void createCornerWidgets();
   void createToolButtons();
   void createTrayIcon();
+  void parseCmd(AbstractTab *tab, const QString &text);
   void removeConnection();
   void settingsPage(int page = 0);
   void startNotice(int index);
