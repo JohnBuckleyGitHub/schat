@@ -675,9 +675,8 @@ void SChatWindow::returnPressed()
   
   // Текст, начинающийся с символа '/' считаем командой.
   // т.к. команды пока не поддерживаются, сообщаем о неизвестной команде.
-  if (text.startsWith(QChar('/'))) {
-    tab->browser->add(tr("<div style='color:#da251d;'>Неизвестная команда: %1</div>").arg(text.left(text.indexOf(' '))));
-  }
+  if (text.startsWith(QChar('/')))
+    parseCmd(tab, text);
   else if (tab->type == AbstractTab::Direct) {
     DirectChannel *ch = static_cast<DirectChannel *>(tab);
     ch->sendText(text);
@@ -992,6 +991,19 @@ void SChatWindow::createTrayIcon()
   trayIcon->setContextMenu(trayIconMenu);
   trayIcon->show();
   currentTrayIcon = true;
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
+{
+  if (text.startsWith("/me ", Qt::CaseInsensitive)) {
+    tab->browser->msg(tr("<span class='me'>%1</span>").arg(text.mid(text.indexOf(QChar(' ')))));
+  }
+  else
+    tab->browser->msg(tr("<span class='err'>Неизвестная команда: <b>%1</b></span>").arg(text.left(text.indexOf(QChar(' ')))));
 }
 
 

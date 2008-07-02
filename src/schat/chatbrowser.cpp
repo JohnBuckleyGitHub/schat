@@ -20,7 +20,8 @@ ChatBrowser::ChatBrowser(QWidget *parent)
       ".gr    { color:#909090; }"
       ".green { color:#6bb521; }"
       ".err   { color:#da251d; }"
-      ".info  { color:#5096cf; }");
+      ".info  { color:#5096cf; }"
+      ".me    { color:#f3f; }");
 }
 
 
@@ -30,6 +31,16 @@ ChatBrowser::ChatBrowser(QWidget *parent)
 void ChatBrowser::add(const QString &message)
 {
   append(message);
+  scroll();
+}
+
+
+/** [public]
+ * 
+ */
+void ChatBrowser::msg(const QString &text)
+{
+  append(tr("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
   scroll();
 }
 
