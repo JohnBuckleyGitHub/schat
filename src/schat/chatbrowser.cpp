@@ -17,12 +17,10 @@ ChatBrowser::ChatBrowser(QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
   setOpenExternalLinks(true);
   document()->setDefaultStyleSheet(
-      "div.np, div.nb { color:#909090; font-size:small; }"
-      "div.nb i { font-size:medium; }"
-      ".gr { color:#909090; }"
+      ".gr    { color:#909090; }"
       ".green { color:#6bb521; }"
-      ".err { color:#da251d; }"
-      ".info { color:#5096cf; }");
+      ".err   { color:#da251d; }"
+      ".info  { color:#5096cf; }");
 }
 
 
@@ -42,9 +40,9 @@ void ChatBrowser::add(const QString &message)
 void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
   if (sex)
-    append(tr("<div class='nb'>(%1) <i class='info'><b>%2</b> теперь известна как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+    append(tr("<div><small class='gr'>(%1)</small> <i class='info'><b>%2</b> теперь известна как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
   else
-    append(tr("<div class='nb'>(%1) <i class='info'><b>%2</b> теперь известен как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+    append(tr("<div><small class='gr'>(%1)</small> <i class='info'><b>%2</b> теперь известен как <b>%3</b></i></div>").arg(currentTime()).arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
   
   scroll(); 
 }
@@ -56,9 +54,9 @@ void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QStr
 void ChatBrowser::msgChangedProfile(quint16 sex, const QString &nick)
 {
   if (sex)
-    append(tr("<div class='np'>(%1) <i><b>%2</b> изменила свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> изменила свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   else
-    append(tr("<div class='np'>(%1) <i><b>%2</b> изменил свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> изменил свой профиль</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   
   scroll();  
 }
@@ -69,7 +67,7 @@ void ChatBrowser::msgChangedProfile(quint16 sex, const QString &nick)
  */
 void ChatBrowser::msgDisconnect()
 {
-  append(tr("<div class='np'>(%1) <i class='err'>Соединение разорвано</i></div>").arg(currentTime()));
+  append(tr("<div><small class='gr'>(%1)</small> <i class='err'>Соединение разорвано</i></div>").arg(currentTime()));
 }
 
 
@@ -80,9 +78,9 @@ void ChatBrowser::msgDisconnect()
 void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
 {
   if (sex)
-    append(tr("<div class='np'>(%1) <i><b>%2</b> зашла в чат</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> зашла в чат</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   else
-    append(tr("<div class='np'>(%1) <i><b>%2</b> зашёл в чат</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> зашёл в чат</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   
   scroll();
 }
@@ -95,9 +93,9 @@ void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
 void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick)
 {
   if (sex)
-    append(tr("<div class='np'>(%1) <i><b>%2</b> вышла из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> вышла из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   else
-    append(tr("<div class='np'>(%1) <i><b>%2</b> вышел из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
+    append(tr("<div class='gr'><small>(%1)</small> <i><b>%2</b> вышел из чата</i></div>").arg(currentTime()).arg(Qt::escape(nick)));
   
   scroll();
 }
@@ -108,7 +106,7 @@ void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick)
  */
 void ChatBrowser::msgReadyForUse(const QString &addr)
 {
-  append(tr("<div class='np'>(%1) <i class='green'>Успешно подключены к %2</i></div>").arg(currentTime()).arg(addr));
+  append(tr("<div><small class='gr'>(%1)</small> <i class='green'>Успешно подключены к %2</i></div>").arg(currentTime()).arg(addr));
 }
 
 
@@ -117,7 +115,7 @@ void ChatBrowser::msgReadyForUse(const QString &addr)
  */
 void ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
 {
-  append(tr("<div class='np'>(%1) <i class='green'>Успешно подключены к сети <b>%2</b> (%3)</i></div>").arg(currentTime()).arg(network).arg(addr));
+  append(tr("<div><small class='gr'>(%1)</small> <i class='green'>Успешно подключены к сети <b>%2</b> (%3)</i></div>").arg(currentTime()).arg(network).arg(addr));
 }
 
 /** [public]
@@ -147,7 +145,7 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
  */
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
-  append(tr("<div><small class='gr'>(%1) <b>%2</b>:</small> %3</div>")
+  append(tr("<div><small class='gr'>(%1)</small> <b class='gr'>%2:</b> %3</div>")
       .arg(currentTime())
       .arg(Qt::escape(nick))
       .arg(Qt::escape(message)));

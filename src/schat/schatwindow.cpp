@@ -846,7 +846,7 @@ void SChatWindow::changedNetworkSettings()
 {
   if (state == Connected) {
     mainChannel->browser->msgDisconnect();
-    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='info'>Изменены настройки сети, пытаемся подключится...</i></div>").arg(ChatBrowser::currentTime()));
+    mainChannel->browser->add(tr("<div><small class='gr'>(%1)</small> <i class='info'>Изменены настройки сети, пытаемся подключится...</i></div>").arg(ChatBrowser::currentTime()));
   }
   
   newConnection();
@@ -1014,7 +1014,7 @@ void SChatWindow::removeConnection()
   // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
   if (err == sChatErrorBadNickName) {
     state = Stopped;
-    mainChannel->browser->add(tr("<div class='nb'>(%1) <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
+    mainChannel->browser->add(tr("<div><small class='gr'>(%1)</small> <i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i></div>")
         .arg(ChatBrowser::currentTime())
         .arg(profile->nick()));
   }

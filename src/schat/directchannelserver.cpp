@@ -99,7 +99,7 @@ void DirectChannelServer::initSocket()
 {
   if (socket) {
     state = Connected;
-    browser->add(tr("<div class='np'>(%1) <i class='green'>Установлено прямое соединение с <b>%2</b>, адрес <b>%3</b></i></div>")
+    browser->add(tr("<div><small class='gr'>(%1)</small> <i class='green'>Установлено прямое соединение с <b>%2</b>, адрес <b>%3</b></i></div>")
         .arg(ChatBrowser::currentTime())
         .arg(socket->nick())
         .arg(socket->peerAddress().toString()));
