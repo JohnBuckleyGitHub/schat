@@ -220,12 +220,10 @@ void Server::appendDirectParticipant(const QString &p)
  * 
  */
 void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
-{
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::connectionError(QAbstractSocket::SocketError /* socketError */)";
-  #endif
-  
+{  
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    LOG(0, tr("Участник %1 вышел в результате ошибки соединения: %2").arg(socket->nick()).arg(socket->errorString()));
+    
     #ifdef SCHAT_CLIENT
     if (socket->isDirect())
       removeDirectConnection(socket);
@@ -241,17 +239,16 @@ void Server::connectionError(QAbstractSocket::SocketError /* socketError */)
  */
 void Server::disconnected()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::disconnected()";
-  #endif
-  
-  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+  if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
+    LOG(0, tr("Соединение с участником %1 (%2) разорвано").arg(socket->nick()).arg(socket->peerAddress().toString()));
+    
     #ifdef SCHAT_CLIENT
     if (socket->isDirect())
       removeDirectConnection(socket);
     else
     #endif
       removeConnection(socket);
+  }
 }
 
 

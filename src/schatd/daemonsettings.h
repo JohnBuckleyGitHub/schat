@@ -23,7 +23,7 @@
 
 class Log;
 
-#define LOG(x, y) if (m_settings->logLevel >= x) m_settings->log->append(y);
+#define LOG(x, y) if (m_settings->logLevel >= x) m_settings->log->append(y)
 
 class DaemonSettings : public QObject {
   Q_OBJECT
