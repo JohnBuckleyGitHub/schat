@@ -148,6 +148,9 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
 
 /** [public slots]
  * 
+ * channel -> получатель сообщения
+ * nick    -> отправитель сообщения
+ * message -> сообщение
  */
 void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
 {
@@ -157,15 +160,17 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
       i.next();
       i.value()->send(sChatOpcodeSendMessage, nick, message);
     }
-  } else
+  } else {
+    ServerSocket *socket = qobject_cast<ServerSocket *>(sender());
+    
     if (peers.contains(channel)) {
-      if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
+      if (socket)
         socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);
       peers[channel]->send(sChatOpcodeSendPrivateMessage, nick, message);
     }
-    else
-      if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender()))
-        socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);  
+    else if (socket)
+      socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);
+  }
 }
 
 

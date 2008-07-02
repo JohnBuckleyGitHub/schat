@@ -685,11 +685,11 @@ void SChatWindow::returnPressed()
     DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
     ch->sendText(text);
   }
-  else if (state == Connected)
-    if (tabWidget->currentIndex() == 0)
-      clientSocket->send(sChatOpcodeSendMessage, "#main", text);
-    else
-      clientSocket->send(sChatOpcodeSendMessage, tabWidget->tabText(tabWidget->currentIndex()), text);
+  else if (state == Connected) {
+    QString channel;
+    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
+    clientSocket->send(sChatOpcodeSendMessage, channel, text);
+  }
   
   lineEdit->clear();  
 }
@@ -1000,7 +1000,12 @@ void SChatWindow::createTrayIcon()
 void SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
   if (text.startsWith("/me ", Qt::CaseInsensitive)) {
-    tab->browser->msg(tr("<span class='me'>%1</span>").arg(text.mid(text.indexOf(QChar(' ')))));
+//    tab->browser->msg(tr("<span class='me'>%1</span>").arg(text.mid(text.indexOf(QChar(' ')))));
+    if (state == Connected) {
+      QString channel;
+      tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
+      clientSocket->send(sChatOpcodeSendMessage, channel, text.mid(text.indexOf(QChar(' '))));
+    }
   }
   else
     tab->browser->msg(tr("<span class='err'>Неизвестная команда: <b>%1</b></span>").arg(text.left(text.indexOf(QChar(' ')))));
