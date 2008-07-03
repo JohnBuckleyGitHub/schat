@@ -673,10 +673,8 @@ void SChatWindow::returnPressed()
   
   AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->currentWidget());
   
-  // Текст, начинающийся с символа '/' считаем командой.
-  // т.к. команды пока не поддерживаются, сообщаем о неизвестной команде.
-  if (text.startsWith(QChar('/')))
-    parseCmd(tab, text);
+  if (parseCmd(tab, text))
+    return;
   else if (tab->type == AbstractTab::Direct) {
     DirectChannel *ch = static_cast<DirectChannel *>(tab);
     ch->sendText(text);
@@ -790,6 +788,21 @@ void SChatWindow::welcomeOk()
   welcomeDialog->deleteLater();
   
   newConnection();
+}
+
+
+/** [private]
+ * 
+ */
+bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
+{
+  if (text.startsWith("/help", Qt::CaseInsensitive)) {
+    tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
+    lineEdit->clear();
+    return true;
+  }
+  else
+    return false;
 }
 
 
@@ -991,24 +1004,6 @@ void SChatWindow::createTrayIcon()
   trayIcon->setContextMenu(trayIconMenu);
   trayIcon->show();
   currentTrayIcon = true;
-}
-
-
-/** [private]
- * 
- */
-void SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
-{
-  if (text.startsWith("/me ", Qt::CaseInsensitive)) {
-//    tab->browser->msg(tr("<span class='me'>%1</span>").arg(text.mid(text.indexOf(QChar(' ')))));
-    if (state == Connected) {
-      QString channel;
-      tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
-      clientSocket->send(sChatOpcodeSendMessage, channel, text.mid(text.indexOf(QChar(' '))));
-    }
-  }
-  else
-    tab->browser->msg(tr("<span class='err'>Неизвестная команда: <b>%1</b></span>").arg(text.left(text.indexOf(QChar(' ')))));
 }
 
 
