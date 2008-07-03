@@ -19,10 +19,10 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION    "0.0.4.185 Alpha"
-#define SCHAT_VERSION_RC 0,0,4,185
+#define SCHAT_VERSION    "0.0.4.186 Alpha"
+#define SCHAT_VERSION_RC 0,0,4,186
 
 static const int UpdateLevelQt   = 2;
-static const int UpdateLevelCore = 17;
+static const int UpdateLevelCore = 18;
 
 #endif /*VERSION_H_*/

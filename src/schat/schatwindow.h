@@ -103,6 +103,7 @@ private slots:
   #endif
   
 private:
+  bool parseCmd(AbstractTab *tab, const QString &text);
   int tabIndex(const QString &s, int start = 1) const;
   Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
@@ -112,7 +113,6 @@ private:
   void createCornerWidgets();
   void createToolButtons();
   void createTrayIcon();
-  void parseCmd(AbstractTab *tab, const QString &text);
   void removeConnection();
   void settingsPage(int page = 0);
   void startNotice(int index);
