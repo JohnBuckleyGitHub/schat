@@ -32,14 +32,13 @@ class ServerSocket : public QTcpSocket
 
 public:  
   ServerSocket(QObject *parent = 0);
-  inline QString nick()                              { return profile->nick(); }
-  inline QStringList participantInfo() const         { return profile->toList(); }
-  inline quint16 sex()                               { return profile->sex(); }
-  inline void setFullName(const QString &fullName)   { profile->setFullName(fullName); }
-  inline void setNick(const QString &n)              { profile->setNick(n); }
-  inline void setProtocolError(quint16 e)            { protocolError = e; }
-  inline void setSex(const quint16 sex = 0)          { profile->setSex(sex); }
-  inline void setState(quint16 state)                { currentState = state; }
+  inline QString nick()                              { return m_profile->nick(); }
+  inline QStringList participantInfo() const         { return m_profile->toList(); }
+  inline quint16 sex()                               { return m_profile->sex(); }
+  inline void setFullName(const QString &fullName)   { m_profile->setFullName(fullName); }
+  inline void setNick(const QString &n)              { m_profile->setNick(n); }
+  inline void setSex(const quint16 sex = 0)          { m_profile->setSex(sex); }
+  inline void setState(quint16 state)                { m_state = state; }
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
   void send(quint16 opcode, const QString &s);
@@ -47,7 +46,7 @@ public:
   void send(quint16 opcode, quint16 s, const QStringList &list);
   
   #ifdef SCHAT_CLIENT
-  inline bool isDirect()                             { if (pFlag == sChatFlagDirect) return true; else return false; }
+  inline bool isDirect()                             { if (m_flag == sChatFlagDirect) return true; else return false; }
   inline void setLocalProfile(Profile *p)            { localProfile = p; }
   void sendLocalProfile();
   #endif
@@ -70,19 +69,17 @@ private slots:
 private:
   bool readBlock();
   void clientSendNewProfile();
+  void opSendMessage();
   void readGreeting();
   
-  int failurePongs;
-  Profile *profile;
-  QDataStream currentBlock;
-  QString channel;
-  QString message;
-  QTimer pingTimer;
-  quint16 currentCommand;
-  quint16 currentState;
-  quint16 nextBlockSize;
-  quint16 protocolError;
-  quint8 pFlag;
+  int m_failurePongs;
+  Profile *m_profile;
+  QDataStream m_stream;
+  QTimer m_pingTimer;
+  quint16 m_command;
+  quint16 m_nextBlockSize;
+  quint16 m_state;
+  quint8 m_flag;
   
   #ifdef SCHAT_CLIENT
   Profile *localProfile;

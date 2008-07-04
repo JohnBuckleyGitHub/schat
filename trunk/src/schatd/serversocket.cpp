@@ -35,11 +35,10 @@ ServerSocket::ServerSocket(QObject *parent)
   qDebug() << "ServerSocket::ServerSocket(QObject *parent)";
   #endif
   
-  currentState = sChatStateWaitingForGreeting;
-  currentBlock.setDevice(this);
-  currentBlock.setVersion(sChatStreamVersion);
-  protocolError = 0;
-  failurePongs = 0;
+  m_state = sChatStateWaitingForGreeting;
+  m_stream.setDevice(this);
+  m_stream.setVersion(sChatStreamVersion);
+  m_failurePongs = 0;
   
   #ifdef SCHAT_CLIENT
   connect(this, SIGNAL(appendDirectParticipant(const QString &)), parent, SLOT(appendDirectParticipant(const QString &)));
@@ -48,15 +47,15 @@ ServerSocket::ServerSocket(QObject *parent)
   connect(this, SIGNAL(appendParticipant(const QString &)), parent, SLOT(appendParticipant(const QString &)));
   connect(this, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), parent, SLOT(relayMessage(const QString &, const QString &, const QString &)));
   
-  connect(this, SIGNAL(disconnected()), &pingTimer, SLOT(stop()));
+  connect(this, SIGNAL(disconnected()), &m_pingTimer, SLOT(stop()));
   connect(this, SIGNAL(disconnected()), parent, SLOT(disconnected()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
-  connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
+  connect(&m_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), parent, SLOT(connectionError(QAbstractSocket::SocketError)));
   connect(this, SIGNAL(clientSendNewProfile(quint16, const QString &, const QString &)), parent, SLOT(clientSendNewProfile(quint16, const QString &, const QString &)));
 
-  nextBlockSize = 0;
-  pingTimer.setInterval(PingInterval);
+  m_nextBlockSize = 0;
+  m_pingTimer.setInterval(PingInterval);
 }
 
 
@@ -177,35 +176,26 @@ void ServerSocket::readyRead()
   // Ожидаем пакет с опкодом `sChatOpcodeGreeting`
   // Если пришёл другой пакет, рвём соединение `abort()`
   // Если получен нужный пакет устанавливаем состояние `sChatStateReadingGreeting`
-  if (currentState == sChatStateWaitingForGreeting) {
+  if (m_state == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
-    if (currentCommand != sChatOpcodeGreeting) {
+    if (m_command != sChatOpcodeGreeting) {
       abort();
       return;
     }
-    currentState = sChatStateReadingGreeting;
+    m_state = sChatStateReadingGreeting;
   }
   
   // Состояние `sChatStateReadingGreeting`
   // Вызываем функцию `readGreeting()` для чтения пакета `sChatOpcodeGreeting`
-  if (currentState == sChatStateReadingGreeting)
+  if (m_state == sChatStateReadingGreeting)
     readGreeting();
   
   while (readBlock()) {
     
-    switch (currentCommand) {
+    switch (m_command) {
       case sChatOpcodeSendMessage:
-        currentBlock >> channel >> message;
-        
-        #ifdef SCHAT_CLIENT
-        if (pFlag == sChatFlagDirect) {
-          send(sChatOpcodeSendPrvMessageEcho, channel, message);
-          emit newMessage(profile->nick(), message);
-        }
-        else
-        #endif
-          emit relayMessage(channel, profile->nick(), message);
+        opSendMessage();
         break;
         
       case sChatOpcodeNewProfile:
@@ -213,7 +203,7 @@ void ServerSocket::readyRead()
         break;
       
       case sChatOpcodePong:
-        failurePongs = 0;
+        m_failurePongs = 0;
         break;
       
       // Опкод `sChatOpcodePing`
@@ -226,30 +216,26 @@ void ServerSocket::readyRead()
       // Клиент выходит из часа
       case sChatOpcodeClientQuit:
         abort();
-        break;
+        return;
         
       default:
         #ifdef SCHAT_DEBUG
         qDebug() << "Invalid Opcode";
         #endif
         abort();
-        break;
-    }    
+        return;
+    }
   }
   
-  // После чтения данных запускаем Ping таймер.
-  // Время срабатывания таймера выбирается случайно
-  // в диапазоне от `PingMinInterval` до `PingMinInterval + PingMutator`
-  // т.е. c настройками по умолчанию от 4 до 6 секунд.
-  // Сигнал `timeout()` таймера вызывает слот `sendPing()`
-  if (!pingTimer.isActive())
-    pingTimer.start();
+  // Запускаем в случае необходимости ping таймер
+  if (!m_pingTimer.isActive())
+    m_pingTimer.start();
 }
 
 
 /** [private slots]
  * Отправляем пакет с опкодом `sChatOpcodePing`
- * и увеличиваем счётчик `failurePongs` на 1
+ * и увеличиваем счётчик `m_failurePongs` на 1
  * ответный пакет `sChatOpcodePong` сбрасывает этот счётчик.
  * В случае если отправка двух пакетов завершилась неудачей,
  * т.е. не получено подтверждение `sChatOpcodePong`,
@@ -257,9 +243,9 @@ void ServerSocket::readyRead()
  */
 void ServerSocket::sendPing()
 {
-  if (failurePongs < 2) {
+  if (m_failurePongs < 2) {
     send(sChatOpcodePing);
-    ++failurePongs;
+    ++m_failurePongs;
   }
   else
     abort();
@@ -271,18 +257,18 @@ void ServerSocket::sendPing()
  */
 bool ServerSocket::readBlock()
 {
-  if (nextBlockSize == 0) {
+  if (m_nextBlockSize == 0) {
     if (bytesAvailable() < 2)
       return false;
-    currentBlock >> nextBlockSize;
+    m_stream >> m_nextBlockSize;
   }
 
-  if (bytesAvailable() < nextBlockSize)
+  if (bytesAvailable() < m_nextBlockSize)
     return false;
 
-  currentBlock >> currentCommand;
+  m_stream >> m_command;
   
-  nextBlockSize = 0;
+  m_nextBlockSize = 0;
   return true;
 }
 
@@ -296,10 +282,36 @@ void ServerSocket::clientSendNewProfile()
   QString nick;
   QString name;
   
-  currentBlock >> sex >> nick >> name;
+  m_stream >> sex >> nick >> name;
   
   if (Profile::isValidNick(nick))
     emit clientSendNewProfile(sex, nick, name);
+}
+
+
+/** [private]
+ * Опкод `sChatOpcodeSendMessage`
+ */
+void ServerSocket::opSendMessage()
+{
+  QString channel;
+  QString message;
+  
+  m_stream >> channel >> message;
+  
+  if (channel.isEmpty() || message.isEmpty()) {
+    abort();
+    return;
+  }
+  
+  #ifdef SCHAT_CLIENT
+  if (m_flag == sChatFlagDirect) {
+    send(sChatOpcodeSendPrvMessageEcho, channel, message);
+    emit newMessage(m_profile->nick(), message);
+  }
+  else
+  #endif
+    emit relayMessage(channel, m_profile->nick(), message);
 }
 
 
@@ -322,27 +334,27 @@ void ServerSocket::readGreeting()
   quint8 Sex;
   quint8 version;
   
-  currentBlock >> version >> pFlag >> Sex >> Nick >> FullName >> UserAgent;
+  m_stream >> version >> m_flag >> Sex >> Nick >> FullName >> UserAgent;
   
-  profile = new Profile(Nick, FullName, Sex, this);
-  profile->setUserAgent(UserAgent);
-  profile->setHost(peerAddress().toString());
+  m_profile = new Profile(Nick, FullName, Sex, this);
+  m_profile->setUserAgent(UserAgent);
+  m_profile->setHost(peerAddress().toString());
   
   if (version != sChatProtocolVersion)
     err = sChatErrorBadProtocolVersion;
-  else if (!(pFlag == sChatFlagNone || pFlag == sChatFlagDirect))
+  else if (!(m_flag == sChatFlagNone || m_flag == sChatFlagDirect))
     err = sChatErrorBadGreetingFlag;
-  else if (!profile->isValidNick())
+  else if (!m_profile->isValidNick())
     err = sChatErrorBadNickName;
-  else if (!profile->isValidUserAgent())
+  else if (!m_profile->isValidUserAgent())
     err = sChatErrorBadUserAgent;
   else if (!isValid())
     err = sChatErrorInvalidConnection;
   
   #ifndef SCHAT_CLIENT
-  if (pFlag == sChatFlagDirect) {
+  if (m_flag == sChatFlagDirect) {
     err = sChatErrorDirectNotAllow;
-    profile->setNick("#DUBLICATE");
+    m_profile->setNick("#DUBLICATE");
   }
   #endif
   
@@ -359,13 +371,13 @@ void ServerSocket::readGreeting()
   // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
   // и не отсылаем его в общий список.
   #ifdef SCHAT_CLIENT
-  if (pFlag == sChatFlagDirect)
-    emit appendDirectParticipant(profile->nick());
+  if (m_flag == sChatFlagDirect)
+    emit appendDirectParticipant(m_profile->nick());
   else
   #endif
-    emit appendParticipant(profile->nick());
+    emit appendParticipant(m_profile->nick());
   
-  currentState = sChatStateWaitingForChecking;
+  m_state = sChatStateWaitingForChecking;
 }
 
 

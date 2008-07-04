@@ -21,6 +21,7 @@ public:
   inline void setDirect(bool d)      { direct = d; }
   inline void setProfile(Profile *p) { profile = p; }
   quint16 protocolError() { return pError; }
+  void devSend();
   void quit();
   void send(quint16 opcode);
   void send(quint16 opcode, const QString &n, const QString &m);
