@@ -40,6 +40,22 @@ ClientSocket::ClientSocket(QObject *parent)
 /** [public]
  * 
  */
+void ClientSocket::devSend()
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << quint16(200); // << QString("#main"); // << QString("Тест");
+  out.device()->seek(0);
+  out << quint16(block.size() - 2);      
+  write(block);
+  
+}
+
+
+/** [public]
+ * 
+ */
 void ClientSocket::quit()
 {
   #ifdef SCHAT_DEBUG
@@ -63,16 +79,12 @@ void ClientSocket::quit()
  */
 void ClientSocket::send(quint16 opcode)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ClientSocket::send(quint16 opcode)" << opcode;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
   out << quint16(0) << opcode;
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
+  out << quint16(block.size() - 2);      
   write(block);  
 }
 
@@ -93,7 +105,7 @@ void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
   out.setVersion(sChatStreamVersion);
   out << quint16(0) << opcode << n << m;  
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
+  out << quint16(block.size() - 2);      
   write(block);  
 }
 
@@ -112,7 +124,7 @@ void ClientSocket::send(quint16 opcode, const QString &s)
   out.setVersion(sChatStreamVersion);
   out << quint16(0) << opcode << s;
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));  
+  out << quint16(block.size() - 2);  
   write(block);  
 }
 
@@ -136,7 +148,7 @@ void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)
     out << str;
   
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));      
+  out << quint16(block.size() - 2);      
   write(block);  
 }
 

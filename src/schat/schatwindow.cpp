@@ -798,11 +798,16 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
   if (text.startsWith("/help", Qt::CaseInsensitive)) {
     tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
-    lineEdit->clear();
-    return true;
+  }
+  else if (text.startsWith("/devel", Qt::CaseInsensitive)) {
+    tab->browser->msg(tr("<span class='err'>/devel</span>"));
+    clientSocket->devSend();
   }
   else
     return false;
+  
+  lineEdit->clear();
+  return true;
 }
 
 
