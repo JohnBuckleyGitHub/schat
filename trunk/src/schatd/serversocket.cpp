@@ -217,7 +217,13 @@ void ServerSocket::readyRead()
       case sChatOpcodeClientQuit:
         abort();
         return;
-        
+      
+      // Опкод `sChatOpcodeSendByeMsg`
+      // Клиент отправил текст сообщения при выходе
+      case sChatOpcodeSendByeMsg:
+        opSendByeMsg();
+        break;  
+      
       default:
         #ifdef SCHAT_DEBUG
         qDebug() << "Invalid Opcode";
@@ -278,14 +284,25 @@ bool ServerSocket::readBlock()
  */
 void ServerSocket::clientSendNewProfile()
 {
-  quint16 sex;
-  QString nick;
-  QString name;
+  quint16 Sex;
+  QString Nick;
+  QString Name;
   
-  m_stream >> sex >> nick >> name;
+  m_stream >> Sex >> Nick >> Name;
   
-  if (Profile::isValidNick(nick))
-    emit clientSendNewProfile(sex, nick, name);
+  if (Profile::isValidNick(Nick))
+    emit clientSendNewProfile(Sex, Nick, Name);
+}
+
+
+/** [private]
+ * Опкод `sChatOpcodeSendByeMsg`
+ */
+void ServerSocket::opSendByeMsg()
+{
+  QString ByeMsg;
+  m_stream >> ByeMsg;
+  m_profile->setByeMsg(ByeMsg);
 }
 
 
@@ -327,17 +344,17 @@ void ServerSocket::opSendMessage()
  */
 void ServerSocket::readGreeting()
 {
-  QString FullName;
-  QString Nick;
-  QString UserAgent;
+  QString fullName;
+  QString nick;
+  QString userAgent;
   quint16 err = 0;
-  quint8 Sex;
-  quint8 version;
+  quint8  sex;
+  quint16 version;
   
-  m_stream >> version >> m_flag >> Sex >> Nick >> FullName >> UserAgent;
+  m_stream >> version >> m_flag >> sex >> nick >> fullName >> userAgent;
   
-  m_profile = new Profile(Nick, FullName, Sex, this);
-  m_profile->setUserAgent(UserAgent);
+  m_profile = new Profile(nick, fullName, sex, this);
+  m_profile->setUserAgent(userAgent);
   m_profile->setHost(peerAddress().toString());
   
   if (version != sChatProtocolVersion)
@@ -363,10 +380,6 @@ void ServerSocket::readGreeting()
     disconnectFromHost();
     return;
   }
-  
-  #ifdef SCHAT_DEBUG
-//  qDebug() << (nick + "@" + peerAddress().toString() + ":" + QString::number(peerPort())) << userAgent;
-  #endif
   
   // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
   // и не отсылаем его в общий список.

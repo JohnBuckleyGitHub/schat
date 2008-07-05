@@ -274,16 +274,12 @@ void Server::incomingConnection(int socketId)
 /** [private]
  * 
  */
-void Server::participantLeft(const QString &nick)
+void Server::participantLeft(const QString &nick, const QString &bye)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::participantLeft(const QString &nick)";
-  #endif
-  
   QHashIterator<QString, ServerSocket *> i(peers);
   while (i.hasNext()) {
     i.next();
-    i.value()->send(sChatOpcodeParticipantLeft, nick);
+    i.value()->send(sChatOpcodeParticipantLeft, nick, bye);
   }
 }
 
@@ -293,15 +289,12 @@ void Server::participantLeft(const QString &nick)
  */
 void Server::removeConnection(ServerSocket *socket)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::removeConnection(ServerSocket *socket)";
-  #endif
-  
   QString nick = socket->nick();
+  QString bye  = socket->byeMsg();
   
   if (peers.contains(nick)) {
     peers.remove(nick);
-    participantLeft(nick);
+    participantLeft(nick, bye);
   }
   socket->deleteLater();
 }

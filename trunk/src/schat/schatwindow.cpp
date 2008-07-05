@@ -306,7 +306,7 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
 /** [public slots]
  * 
  */
-void SChatWindow::participantLeft(const QString &nick)
+void SChatWindow::participantLeft(const QString &nick, const QString &bye)
 {
   QStandardItem *item = findItem(nick);
   
@@ -318,10 +318,10 @@ void SChatWindow::participantLeft(const QString &nick)
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
       if (tab->type == AbstractTab::Private)
-        tab->browser->msgParticipantLeft(sex, nick);
+        tab->browser->msgParticipantLeft(sex, nick, bye);
     }
   
-    mainChannel->browser->msgParticipantLeft(sex, nick);
+    mainChannel->browser->msgParticipantLeft(sex, nick, bye);
   }
 }
 
@@ -588,7 +588,7 @@ void SChatWindow::newConnection()
     clientSocket = new ClientSocket(this);
     clientSocket->setProfile(profile);
     connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
-    connect(clientSocket, SIGNAL(participantLeft(const QString &)), this, SLOT(participantLeft(const QString &)));
+    connect(clientSocket, SIGNAL(participantLeft(const QString &, const QString &)), SLOT(participantLeft(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));

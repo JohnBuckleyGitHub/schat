@@ -71,7 +71,7 @@ public slots:
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
-  void participantLeft(const QString &nick);
+  void participantLeft(const QString &nick, const QString &bye);
   void readyForUse();
   
 private slots:
