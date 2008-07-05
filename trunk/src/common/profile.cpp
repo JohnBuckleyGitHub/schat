@@ -15,10 +15,10 @@
 Profile::Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent)
   : QObject(parent)
 {
-  Nick = nick;
-  FullName = fullName;
-  Sex = sex;
-  UserAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
+  m_nick = nick;
+  m_fullName = fullName;
+  m_sex = sex;
+  m_userAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
 }
 
 
@@ -28,9 +28,9 @@ Profile::Profile(const QString &nick, const QString &fullName, quint8 sex, QObje
 Profile::Profile(QObject *parent)
   : QObject(parent)
 {
-  Sex = 0;
-  Nick = QDir::home().dirName();
-  UserAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
+  m_sex = 0;
+  m_nick = QDir::home().dirName();
+  m_userAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
 }
 
 
@@ -40,7 +40,7 @@ Profile::Profile(QObject *parent)
 Profile::Profile(quint8 sex, const QStringList &list, QObject *parent)
   : QObject(parent)
 {
-  Sex = sex;
+  m_sex = sex;
   fromList(list);
 }
 
@@ -53,10 +53,10 @@ bool Profile::fromList(const QStringList &list)
   if (list.size() != 4)
     return false;
   
-  Nick      = list.at(0);
-  FullName  = list.at(1);
-  UserAgent = list.at(2);
-  Host      = list.at(3);
+  m_nick      = list.at(0);
+  m_fullName  = list.at(1);
+  m_userAgent = list.at(2);
+  m_host      = list.at(3);
   return true;
 }
 
@@ -66,10 +66,10 @@ bool Profile::fromList(const QStringList &list)
  */
 bool Profile::isValidUserAgent() const
 {
-  if (UserAgent.isEmpty())
+  if (m_userAgent.isEmpty())
     return false;
   
-  QStringList list = UserAgent.split('/');
+  QStringList list = m_userAgent.split(QChar('/'));
   if (list.size() == 2)
     return true;
   else
@@ -82,16 +82,16 @@ bool Profile::isValidUserAgent() const
  */
 QString Profile::toolTip()
 {
-  QString a = UserAgent;
+  QString a = m_userAgent;
   QString n;
-  FullName.isEmpty() ? n = tr("&lt;не указано&gt;") : n = FullName;
-  a.replace('/', ' ');
+  m_fullName.isEmpty() ? n = tr("&lt;не указано&gt;") : n = m_fullName;
+  a.replace(QChar('/'), QChar(' '));
   
   return tr("<h3><img src='%1' align='left'> %2</h3>"
             "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
             "<tr><td>Клиент:</td><td>%4</td></tr>"
             "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-            .arg(sexIconString(Sex)).arg(Nick).arg(n).arg(a).arg(Host); 
+            .arg(sexIconString(m_sex)).arg(m_nick).arg(n).arg(a).arg(m_host); 
 }
 
 /** [public]
@@ -99,7 +99,7 @@ QString Profile::toolTip()
  */
 QStringList Profile::toList() const
 {
-  return QStringList() << Nick << FullName << UserAgent << Host;
+  return QStringList() << m_nick << m_fullName << m_userAgent << m_host;
 }
 
 
@@ -112,7 +112,7 @@ bool Profile::isValidNick(const QString &n)
   
   if (nick.isEmpty())
     return false;
-  if (nick.startsWith('#'))
+  if (nick.startsWith(QChar('#')))
     return false;
   
   return true;
@@ -136,5 +136,5 @@ QString Profile::sexIconString(quint8 sex)
  */
 void Profile::toStream(QDataStream &stream) const
 {
-  stream << Sex << Nick << FullName << UserAgent;
+  stream << m_sex << m_nick << m_fullName << m_userAgent;
 }

@@ -20,17 +20,19 @@ public:
   
   bool fromList(const QStringList &list);
   bool isValidUserAgent() const;
-  inline bool isValidNick() const                  { return isValidNick(Nick); }
-  inline QString fullName() const                  { return FullName; } 
-  inline QString host()                            { return Host; }
-  inline QString nick() const                      { return Nick; } 
-  inline QString userAgent() const                 { return UserAgent; }
-  inline quint8 sex() const                        { return Sex; } 
-  inline void setFullName(const QString &fullName) { FullName = fullName.simplified(); }
-  inline void setHost(const QString &host)         { Host = host; }
-  inline void setNick(const QString &nick)         { Nick = nick.simplified(); }
-  inline void setSex(const quint8 sex = 0)         { sex ? Sex = 1 : Sex = 0; }
-  inline void setUserAgent(const QString &agent)   { UserAgent = agent.simplified(); }
+  inline bool isValidNick() const                  { return isValidNick(m_nick); }
+  inline QString byeMsg()                          { return m_byeMsg; }
+  inline QString fullName() const                  { return m_fullName; } 
+  inline QString host()                            { return m_host; }
+  inline QString nick() const                      { return m_nick; } 
+  inline QString userAgent() const                 { return m_userAgent; }
+  inline quint8 sex() const                        { return m_sex; } 
+  inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified(); }
+  inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified(); }
+  inline void setHost(const QString &host)         { m_host = host; }
+  inline void setNick(const QString &nick)         { m_nick = nick.simplified(); }
+  inline void setSex(const quint8 sex = 0)         { sex ? m_sex = 1 : m_sex = 0; }
+  inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QString toolTip();
   QStringList toList() const;
   static bool isValidNick(const QString &n);
@@ -38,11 +40,12 @@ public:
   void toStream(QDataStream &stream) const;
   
 private:
-  QString FullName;
-  QString Host;
-  QString Nick;
-  QString UserAgent;
-  quint8 Sex;
+  QString m_byeMsg;
+  QString m_fullName;
+  QString m_host;
+  QString m_nick;
+  QString m_userAgent;
+  quint8 m_sex;
 };
 
 #endif /*PROFILE_H_*/
