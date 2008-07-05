@@ -163,6 +163,7 @@ ProfileSettings::ProfileSettings(Settings *settings, Profile *profile, QWidget *
   
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
   m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
+  m_byeMsgEdit->setMaxLength(255);
   m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие участники если вы выйдете из чата"));
   
   QHBoxLayout *byeMsgLayout = new QHBoxLayout;
