@@ -8,6 +8,7 @@
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
+#include "version.h"
 
 
 /** [public]
@@ -65,6 +66,7 @@ void Settings::read()
   profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
   profile->setFullName(s.value("Name", "").toString());                 // Настоящие имя
   profile->setSex(quint8(s.value("Sex", 0).toUInt()));                  // Пол
+  profile->setByeMsg(s.value("Bye", "IMPOMEZIA Simple Chat").toString());
   s.endGroup();
   
   #ifdef SCHAT_UPDATE
@@ -102,6 +104,7 @@ void Settings::write()
   s.setValue("Nick", profile->nick());
   s.setValue("Name", profile->fullName());
   s.setValue("Sex", profile->sex());
+  s.setValue("Bye", profile->byeMsg());
   s.endGroup();
   
   #ifdef SCHAT_UPDATE

@@ -38,6 +38,7 @@ public:
   bool needCreateNetworkList;
   Network network;
   QStandardItemModel networksModel;
+  QString byeMsg;
   QString style;
   
   #ifdef SCHAT_UPDATE
