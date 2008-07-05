@@ -728,6 +728,10 @@ void SChatWindow::settingsChanged(int notify)
     case Settings::ServerChanged:
       newConnection();
       break;
+      
+    case Settings::ByeMsgChanged:
+      clientSocket->send(sChatOpcodeSendByeMsg, profile->byeMsg());
+      break;
 
     #ifdef SCHAT_UPDATE
     case Settings::UpdateSettingsChanged:
