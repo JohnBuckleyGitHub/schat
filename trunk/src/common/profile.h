@@ -27,10 +27,10 @@ public:
   inline QString nick() const                      { return m_nick; } 
   inline QString userAgent() const                 { return m_userAgent; }
   inline quint8 sex() const                        { return m_sex; } 
-  inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified(); }
-  inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified(); }
+  inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified().left(255); }
+  inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(255); }
   inline void setHost(const QString &host)         { m_host = host; }
-  inline void setNick(const QString &nick)         { m_nick = nick.simplified(); }
+  inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(64); }
   inline void setSex(const quint8 sex = 0)         { sex ? m_sex = 1 : m_sex = 0; }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QString toolTip();
