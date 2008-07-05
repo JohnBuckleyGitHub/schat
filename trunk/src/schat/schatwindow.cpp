@@ -502,7 +502,7 @@ void SChatWindow::closeTab()
   if (index) {
     QWidget *widget = tabWidget->widget(index);
     tabWidget->removeTab(index);
-    Tab *tab = static_cast<Tab *>(widget);
+    AbstractTab *tab = static_cast<AbstractTab *>(widget);
     tab->deleteLater();
   }
   else {
@@ -800,12 +800,19 @@ void SChatWindow::welcomeOk()
  */
 bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
-  if (text.startsWith("/help", Qt::CaseInsensitive)) {
-    tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
+  if (text.startsWith("/bye", Qt::CaseInsensitive)) {
+    if (state == Connected) {      
+      if (text.startsWith("/bye ", Qt::CaseInsensitive))
+        clientSocket->send(sChatOpcodeSendByeMsg, text.mid(text.indexOf(QChar(' '))));
+      
+      state = Stopped;
+      clientSocket->quit();
+    }
+    else
+      tab->browser->msg(tr("<span class='err'>Нет активного подключения к серверу/сети</span>"));
   }
-  else if (text.startsWith("/devel", Qt::CaseInsensitive)) {
-    tab->browser->msg(tr("<span class='err'>/devel</span>"));
-    clientSocket->devSend();
+  else if (text.startsWith("/help", Qt::CaseInsensitive)) {
+    tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
   }
   else
     return false;

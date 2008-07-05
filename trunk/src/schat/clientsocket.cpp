@@ -40,32 +40,12 @@ ClientSocket::ClientSocket(QObject *parent)
 /** [public]
  * 
  */
-void ClientSocket::devSend()
-{
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
-  out << quint16(0) << quint16(200); // << QString("#main"); // << QString("Тест");
-  out.device()->seek(0);
-  out << quint16(block.size() - 2);      
-  write(block);
-  
-}
-
-
-/** [public]
- * 
- */
 void ClientSocket::quit()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::quit()" << state();
-  #endif
-  
   if (state() == QAbstractSocket::ConnectedState) {
     send(sChatOpcodeClientQuit);
     disconnectFromHost();
-    waitForDisconnected(1000);
+    waitForDisconnected(5000);
   }
 }
 
