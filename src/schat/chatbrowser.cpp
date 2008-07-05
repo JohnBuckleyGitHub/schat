@@ -17,7 +17,7 @@ ChatBrowser::ChatBrowser(QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
   setOpenExternalLinks(true);
   document()->setDefaultStyleSheet(
-      ".gr    { color:#909090; }"
+      ".gr    { color:#90a4b3; }"
       ".green { color:#6bb521; }"
       ".err   { color:#da251d; }"
       ".info  { color:#5096cf; }"
@@ -95,12 +95,16 @@ void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
  * Уведомление о выходе участнике `const QString &nick`,
  * используются различные сообщения в зависимости от пола `quint8 sex`.
  */
-void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick)
+void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick, const QString &bye)
 {
+  QString byeMsg;
+  if (!bye.isEmpty())
+    byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
+  
   if (sex)
-    msg(tr("<i class='gr'><b>%2</b> вышла из чата</i>").arg(Qt::escape(nick)));
+    msg(tr("<i class='gr'><b>%1</b> вышла из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg));
   else
-    msg(tr("<i class='gr'><b>%2</b> вышел из чата</i>").arg(Qt::escape(nick)));
+    msg(tr("<i class='gr'><b>%1</b> вышел из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg));
 }
 
 

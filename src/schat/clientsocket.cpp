@@ -96,10 +96,6 @@ void ClientSocket::send(quint16 opcode)
  */
 void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
-  #ifdef SCHAT_DEBUG 
-  qDebug() << "ClientSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode << n << m;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -115,10 +111,6 @@ void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
  */
 void ClientSocket::send(quint16 opcode, const QString &s)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::send(quint16 opcode, const QString &s)" << opcode;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -135,10 +127,6 @@ void ClientSocket::send(quint16 opcode, const QString &s)
  */
 void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)" << opcode << s << list;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -173,10 +161,6 @@ void ClientSocket::initTimeout()
  */
 void ClientSocket::readyRead()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::readyRead()" << (int) state();
-  #endif
-  
   // Состояние `sChatStateWaitingForGreeting`
   // Ожидаем пакет `sChatOpcodeGreetingOk`
   if (currentState == sChatStateWaitingForGreeting) {
@@ -185,6 +169,7 @@ void ClientSocket::readyRead()
     if (currentCommand == sChatOpcodeGreetingOk) {
       currentState = sChatStateReadyForUse;
       emit readyForUse();
+      send(sChatOpcodeSendByeMsg, profile->byeMsg());
     }
     else {
       if (currentCommand == sChatOpcodeError) {
@@ -240,8 +225,7 @@ void ClientSocket::readyRead()
       
       // Опкод `sChatOpcodeParticipantLeft` - Уведомляет в выходе из чата участника
       case sChatOpcodeParticipantLeft:
-        currentBlock >> textBlock;
-        emit participantLeft(textBlock);
+        opParticipantLeft();
         break;
         
       // Опкод `sChatOpcodeError` - Сервер вернул ошибку
@@ -292,10 +276,6 @@ void ClientSocket::readyRead()
  */
 void ClientSocket::sendGreeting()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::sendGreeting()";
-  #endif
-  
   currentState = sChatStateWaitingForGreeting;
   
   QByteArray block;
@@ -313,7 +293,7 @@ void ClientSocket::sendGreeting()
   profile->toStream(out); // Записываем профиль в поток
     
   out.device()->seek(0);
-  out << quint16(block.size() - sizeof(quint16));
+  out << quint16(block.size() - 2);
   write(block);
 }
 
@@ -323,10 +303,6 @@ void ClientSocket::sendGreeting()
  */
 void ClientSocket::sendPing()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::sendPing()";
-  #endif
-  
   if (failurePongs < 1) {
     send(sChatOpcodePing);
     ++failurePongs;
@@ -358,6 +334,19 @@ bool ClientSocket::readBlock()
   
   nextBlockSize = 0;
   return true;
+}
+
+
+/** [private]
+ * Опкод `sChatOpcodeParticipantLeft`
+ */
+void ClientSocket::opParticipantLeft()
+{
+  QString Bye;
+  QString Nick;
+  
+  currentBlock >> Nick >> Bye;
+  emit participantLeft(Nick, Bye);
 }
 
 

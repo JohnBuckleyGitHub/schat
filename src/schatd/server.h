@@ -58,7 +58,7 @@ private slots:
 
 private:
   void incomingConnection(int socketId);
-  void participantLeft(const QString &nick);
+  void participantLeft(const QString &nick, const QString &bye);
   void removeConnection(ServerSocket *socket);
   
   DaemonSettings *m_settings;

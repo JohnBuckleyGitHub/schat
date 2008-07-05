@@ -32,6 +32,7 @@ class ServerSocket : public QTcpSocket
 
 public:  
   ServerSocket(QObject *parent = 0);
+  inline QString byeMsg()                            { return m_profile->byeMsg(); }
   inline QString nick()                              { return m_profile->nick(); }
   inline QStringList participantInfo() const         { return m_profile->toList(); }
   inline quint16 sex()                               { return m_profile->sex(); }
@@ -69,6 +70,7 @@ private slots:
 private:
   bool readBlock();
   void clientSendNewProfile();
+  void opSendByeMsg();
   void opSendMessage();
   void readGreeting();
   

@@ -7,7 +7,7 @@
 #define PROTOCOL_H_
 
 static const int     sChatStreamVersion              = QDataStream::Qt_4_3;
-static const quint8  sChatProtocolVersion            = 0;
+static const quint16 sChatProtocolVersion            = 0;
 
 static const quint16 sChatStateWaitingForGreeting    = 2000;
 static const quint16 sChatStateReadingGreeting       = 2001;
@@ -97,6 +97,18 @@ static const quint16 sChatOpcodeChangedProfile       = 601;
  * Сервер
  */
 static const quint16 sChatOpcodeChangedNick          = 602;
+
+
+/**
+ * Отправка клиентом сообщения о выходе.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> Текст сообщения о выходе
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент
+ */
+static const quint16 sChatOpcodeSendByeMsg           = 603;
 
 
 /**
