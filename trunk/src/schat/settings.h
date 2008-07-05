@@ -24,7 +24,8 @@ public:
     NetworksModelIndexChanged,
     ProfileSettingsChanged,
     ServerChanged,
-    UpdateSettingsChanged
+    UpdateSettingsChanged,
+    ByeMsgChanged
   };
   
   Settings(Profile *p, QObject *parent);
@@ -38,7 +39,6 @@ public:
   bool needCreateNetworkList;
   Network network;
   QStandardItemModel networksModel;
-  QString byeMsg;
   QString style;
   
   #ifdef SCHAT_UPDATE

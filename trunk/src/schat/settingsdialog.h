@@ -89,7 +89,9 @@ signals:
   
 private:
   ProfileWidget *m_profileWidget;
+  QLineEdit *m_byeMsgEdit;
   Settings *m_settings;
+  Profile *m_profile;
 };
 
 

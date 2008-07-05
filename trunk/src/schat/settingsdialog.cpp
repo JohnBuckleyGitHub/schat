@@ -157,12 +157,22 @@ ProfileSettings::ProfileSettings(Settings *settings, Profile *profile, QWidget *
   setAttribute(Qt::WA_DeleteOnClose);
   
   m_settings = settings;
+  m_profile  = profile;
   m_profileWidget = new ProfileWidget(profile, this);
   connect(m_profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
+  
+  QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
+  m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
+  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие участники если вы выйдете из чата"));
+  
+  QHBoxLayout *byeMsgLayout = new QHBoxLayout;
+  byeMsgLayout->addWidget(byeMsgLabel);
+  byeMsgLayout->addWidget(m_byeMsgEdit);
   
   QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
   QVBoxLayout *profileGroupLayout = new QVBoxLayout(profileGroupBox);
   profileGroupLayout->addWidget(m_profileWidget);
+  profileGroupLayout->addLayout(byeMsgLayout);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(profileGroupBox);
@@ -176,6 +186,7 @@ ProfileSettings::ProfileSettings(Settings *settings, Profile *profile, QWidget *
 void ProfileSettings::reset()
 {
   m_profileWidget->reset();
+  m_byeMsgEdit->setText("IMPOMEZIA Simple Chat");
 }
 
 
@@ -188,6 +199,11 @@ void ProfileSettings::save()
   
   if (m_profileWidget->isModifiled())
     m_settings->notify(Settings::ProfileSettingsChanged);
+  
+  if (m_profile->byeMsg() != m_byeMsgEdit->text()) {
+    m_profile->setByeMsg(m_byeMsgEdit->text());
+    m_settings->notify(Settings::ByeMsgChanged);
+  }
 }
 
 
