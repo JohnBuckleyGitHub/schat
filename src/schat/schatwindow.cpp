@@ -481,10 +481,6 @@ void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo
  */
 void SChatWindow::closeChat()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::closeChat()";
-  #endif
-  
   if (clientSocket)
     clientSocket->quit();
   
@@ -800,6 +796,7 @@ void SChatWindow::welcomeOk()
  */
 bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
+  // команда /bye
   if (text.startsWith("/bye", Qt::CaseInsensitive)) {
     if (state == Connected) {      
       if (text.startsWith("/bye ", Qt::CaseInsensitive))
@@ -811,8 +808,21 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
     else
       tab->browser->msg(tr("<span class='err'>Нет активного подключения к серверу/сети</span>"));
   }
+  // команда /exit
+  else if (text.startsWith("/exit", Qt::CaseInsensitive)) {
+    closeChat();
+  }
+  // команда /help
   else if (text.startsWith("/help", Qt::CaseInsensitive)) {
     tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
+  }
+  // команда /nick
+  else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
+    QString newNick = text.mid(text.indexOf(QChar(' ')));
+    if (profile->nick() != newNick) {
+      profile->setNick(newNick);
+      changedProfileSettings();
+    }
   }
   else
     return false;
