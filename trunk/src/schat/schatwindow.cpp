@@ -814,7 +814,14 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   }
   // команда /help
   else if (text.startsWith("/help", Qt::CaseInsensitive)) {
-    tab->browser->msg(tr("<span class='info'>Справка по командам не реализована</span>"));
+    tab->browser->msg(tr(
+        "<b class='info'>Доступные команды:</b><br />"
+        "<b>/bye [текст сообщения]</b><span class='info'> - Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span><br />"
+        "<b>/exit</b><span class='info'> - Выход из чата.</span><br />"
+        "<b>/help</b><span class='info'> - Отображает подсказу о командах.</span><br />"
+        "<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span><br />"
+        "<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span><br />"
+        ));
   }
   // команда /nick
   else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {

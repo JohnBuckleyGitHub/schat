@@ -14,6 +14,12 @@ class Profile : public QObject {
   Q_OBJECT
   
 public:
+  enum {
+    MaxNickLength = 64,
+    MaxNameLength = 255,
+    MaxByeMsgLength = 255
+  };  
+  
   Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent = 0);
   Profile(QObject *parent = 0);
   Profile(quint8 sex, const QStringList &list, QObject *parent = 0);
@@ -27,10 +33,10 @@ public:
   inline QString nick() const                      { return m_nick; } 
   inline QString userAgent() const                 { return m_userAgent; }
   inline quint8 sex() const                        { return m_sex; } 
-  inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified().left(255); }
-  inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(255); }
+  inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified().left(MaxByeMsgLength); }
+  inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(MaxNameLength); }
   inline void setHost(const QString &host)         { m_host = host; }
-  inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(64); }
+  inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(MaxNickLength); }
   inline void setSex(const quint8 sex = 0)         { sex ? m_sex = 1 : m_sex = 0; }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QString toolTip();
