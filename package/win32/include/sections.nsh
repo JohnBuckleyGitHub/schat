@@ -40,6 +40,7 @@ Section "$(STR1000)" SecCore
   
   SetOutPath "$INSTDIR\doc"
   File "..\..\data\doc\*.html"
+  File "..\..\data\doc\*.example"
   
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"

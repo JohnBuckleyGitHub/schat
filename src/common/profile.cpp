@@ -15,8 +15,8 @@
 Profile::Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent)
   : QObject(parent)
 {
-  m_nick = nick.simplified().left(64);
-  m_fullName = fullName.simplified().left(255);
+  m_nick = nick.simplified().left(MaxNickLength);
+  m_fullName = fullName.simplified().left(MaxNameLength);
   m_sex = sex;
   m_userAgent = QString("Simple Chat/%1").arg(SCHAT_VERSION);
 }
@@ -53,8 +53,8 @@ bool Profile::fromList(const QStringList &list)
   if (list.size() != 4)
     return false;
   
-  m_nick      = list.at(0).simplified().left(64);
-  m_fullName  = list.at(1).simplified().left(255);
+  m_nick      = list.at(0).simplified().left(MaxNickLength);
+  m_fullName  = list.at(1).simplified().left(MaxNameLength);
   m_userAgent = list.at(2);
   m_host      = list.at(3);
   return true;
