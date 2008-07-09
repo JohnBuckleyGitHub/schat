@@ -16,13 +16,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CHANNELLOG_H_
+#define CHANNELLOG_H_
 
-#define SCHAT_VERSION    "0.0.5.199 Alpha"
-#define SCHAT_VERSION_RC 0,0,5,199
+#include <QObject>
 
-static const int UpdateLevelQt   = 2;
-static const int UpdateLevelCore = 22;
+class ChannelLog : public QObject {
+  Q_OBJECT
+  
+public:
+  ChannelLog(QObject *parent = 0);
+};
 
-#endif /*VERSION_H_*/
+#endif /*CHANNELLOG_H_*/
