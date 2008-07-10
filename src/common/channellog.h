@@ -26,6 +26,11 @@ class ChannelLog : public QObject {
   
 public:
   ChannelLog(QObject *parent = 0);
+  inline QString channel() { return m_channel; }
+  inline void setChannel(const QString &channel) { m_channel = channel; }
+  
+private:
+  QString m_channel;
 };
 
 #endif /*CHANNELLOG_H_*/

@@ -9,12 +9,16 @@
 #include <QTextBrowser>
 #include <QTime>
 
+#include "channellog.h"
+
 class ChatBrowser : public QTextBrowser {
   Q_OBJECT
   
 public:
   ChatBrowser(QWidget *parent = 0);
-  static inline QString currentTime() { return QTime::currentTime().toString("hh:mm:ss"); }
+  inline QString channel()                       { return m_channelLog->channel(); }
+  inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
+  static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
   void add(const QString &message);
   void msg(const QString &text);
   void msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
@@ -31,6 +35,9 @@ protected:
   
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
+  
+private:
+  ChannelLog *m_channelLog;
 };
 
 #endif /*CHATBROWSER_H_*/

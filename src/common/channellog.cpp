@@ -18,11 +18,11 @@
 
 #include "channellog.h"
 
+
 /** [public]
  * 
  */
 ChannelLog::ChannelLog(QObject *parent)
   : QObject(parent)
 {
-
 }

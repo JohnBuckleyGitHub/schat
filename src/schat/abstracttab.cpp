@@ -6,7 +6,12 @@
 #include <QtGui>
 
 #include "abstracttab.h"
+#include "channellog.h"
 
+
+/** [public]
+ * 
+ */
 AbstractTab::AbstractTab(QWidget *parent)
   : QWidget(parent)
 {

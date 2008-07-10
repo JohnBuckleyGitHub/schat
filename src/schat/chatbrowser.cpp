@@ -14,6 +14,7 @@
 ChatBrowser::ChatBrowser(QWidget *parent)
   : QTextBrowser(parent)
 {
+  m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);
   setOpenExternalLinks(true);
   document()->setDefaultStyleSheet(
