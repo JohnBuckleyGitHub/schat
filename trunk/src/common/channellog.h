@@ -19,18 +19,38 @@
 #ifndef CHANNELLOG_H_
 #define CHANNELLOG_H_
 
+#include <QFile>
 #include <QObject>
+#include <QTextStream>
+#include <QDateTime>
 
 class ChannelLog : public QObject {
   Q_OBJECT
   
 public:
+  enum Mode {
+    Html,
+    Plain
+  };
+  
   ChannelLog(QObject *parent = 0);
-  inline QString channel() { return m_channel; }
+  inline QString channel()                       { return m_channel; }
   inline void setChannel(const QString &channel) { m_channel = channel; }
+  inline void setMode(Mode mode)                 { m_mode = mode; }
+  void msg(const QString &text);
   
 private:
+  bool openFile();
+  inline static QString dateStamp()              { return QDate::currentDate().toString("yyyy_MM_dd"); }
+  inline static QString dateTimeStamp()          { return QDateTime::currentDateTime().toString("(dd.MM.yyyy hh:mm:ss)"); }
+  void closeFile();
+  
+  Mode m_mode;
+  QFile m_file;
+  QString m_appPath;
   QString m_channel;
+  QString m_date;
+  QTextStream m_stream;
 };
 
 #endif /*CHANNELLOG_H_*/
