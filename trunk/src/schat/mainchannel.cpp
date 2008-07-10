@@ -9,6 +9,10 @@
 #include "networkwidget.h"
 #include "settings.h"
 
+
+/** [public]
+ * 
+ */
 MainChannel::MainChannel(Settings *settings, QWidget *parent)
   : AbstractTab(parent)
 {
@@ -16,6 +20,7 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
   type = Main;
   
   m_settings = settings;
+  browser->setChannel("#main");
   
   createActions();
   
