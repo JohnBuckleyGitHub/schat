@@ -1,6 +1,19 @@
 /* $Id$
- * Simple Chat
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -169,10 +182,6 @@ bool SChatWindow::event(QEvent *event)
  */
 void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)" << n;
-  #endif
-  
   int index = tabIndex(QChar('#') + n);
   
   if (index == -1) {
@@ -286,6 +295,7 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
       Profile *p = profileFromItem(item);
       tab = new Tab(this);
       tab->icon.addFile(Profile::sexIconString(profile->sex()));
+      tab->browser->setChannel(nick);
       index = tabWidget->addTab(tab, tab->icon, nick);
       tabWidget->setCurrentIndex(index);
       tabWidget->setTabToolTip(index, p->toolTip());
@@ -392,13 +402,17 @@ void SChatWindow::addTab()
 void SChatWindow::addTab(const QModelIndex &i)
 {
   QStandardItem *item = model.itemFromIndex(i);
-  QString nick        = item->text();
-  int index           = tabIndex(nick);
+  QString nick = item->text();
+  if (nick == profile->nick())
+    return;
+  
+  int index = tabIndex(nick);
   
   if (index == -1) {
     Profile *p = profileFromItem(item);
     Tab *tab = new Tab(this);
     tab->icon.addFile(Profile::sexIconString(p->sex()));
+    tab->browser->setChannel(nick);
     index = tabWidget->addTab(tab, tab->icon, nick);
     tabWidget->setTabToolTip(index, p->toolTip());
     p->deleteLater();
