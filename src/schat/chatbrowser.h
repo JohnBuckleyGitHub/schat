@@ -19,7 +19,6 @@ public:
   inline QString channel()                       { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
-  void add(const QString &message);
   void msg(const QString &text);
   void msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
   void msgChangedProfile(quint16 sex, const QString &nick);

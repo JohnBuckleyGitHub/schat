@@ -27,20 +27,11 @@ ChatBrowser::ChatBrowser(QWidget *parent)
 
 
 /** [public]
- * Добавляет строку.
- */
-void ChatBrowser::add(const QString &message)
-{
-  append(message);
-  scroll();
-}
-
-
-/** [public]
  * 
  */
 void ChatBrowser::msg(const QString &text)
 {
+  m_channelLog->msg(text);
   append(tr("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
   scroll();
 }
