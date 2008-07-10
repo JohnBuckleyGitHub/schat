@@ -1,6 +1,19 @@
 /* $Id$
- * Simple Chat
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -13,10 +26,6 @@
 DirectChannel::DirectChannel(Profile *p, QWidget *parent)
   : AbstractTab(parent)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::DirectChannel(Profile *p, QWidget *parent)";
-  #endif
-  
   setAttribute(Qt::WA_DeleteOnClose);
   type = Direct;
   
@@ -77,10 +86,6 @@ void DirectChannel::displayChoiceServer(bool display)
  */
 void DirectChannel::sendText(const QString &text)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::sendText(const QString &text)" << text;
-  #endif
-  
   if (state == Connected)
     clientSocket->send(sChatOpcodeSendMessage, remoteNick, text);  
 }
@@ -92,6 +97,10 @@ void DirectChannel::sendText(const QString &text)
 void DirectChannel::newParticipant(quint16 /*sex*/, const QStringList &info, bool /*echo*/)
 {
   remoteNick = info.at(0);
+  browser->setChannel(QChar('#') + remoteNick);
+  browser->msg(tr("<i class='green'>Установлено прямое соединение с <b>%2</b>, адрес <b>%3</b></i>")
+          .arg(remoteNick)
+          .arg(clientSocket->peerAddress().toString()));
 }
 
 
@@ -114,7 +123,6 @@ void DirectChannel::readyForUse()
 {
   displayChoiceServer(false);
   state = Connected;
-  browser->msg(tr("<i class='green'>Установлено прямое соединение с <b>%2</b></i>").arg(clientSocket->peerAddress().toString()));
 }
 
 
@@ -146,10 +154,6 @@ void DirectChannel::newConnection()
  */
 void DirectChannel::removeConnection()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::removeConnection(ClientSocket *socket)" << state;
-  #endif
-  
   if (state == Connected || state == Stopped) {
     browser->msgDisconnect();
     displayChoiceServer(true);
