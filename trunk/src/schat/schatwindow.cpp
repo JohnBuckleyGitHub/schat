@@ -841,7 +841,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   }
   // команда /log
   else if (text.startsWith("/log", Qt::CaseInsensitive)) {
-    QDesktopServices::openUrl(qApp->applicationDirPath() + "/log");
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath() + "/log"));
   }
   // команда /nick
   else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
