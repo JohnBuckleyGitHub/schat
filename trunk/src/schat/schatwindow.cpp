@@ -440,6 +440,7 @@ void SChatWindow::changedNick(quint16 sex, const QStringList &list)
     if (index != -1) {
       tabWidget->setTabText(index, nick);
       AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      tab->browser->setChannel(nick);
       tab->browser->msgChangedNick(sex, oldNick, nick);
     }
     
