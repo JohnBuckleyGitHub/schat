@@ -1,6 +1,6 @@
 Index: src/schat/schat.pro
 ===================================================================
---- src/schat/schat.pro	(revision 139)
+--- src/schat/schat.pro	(revision 199)
 +++ src/schat/schat.pro	(working copy)
 @@ -10,7 +10,7 @@
  INCLUDEPATH += . \
@@ -13,9 +13,9 @@ Index: src/schat/schat.pro
  DEFINES += SCHAT_CLIENT
 Index: src/schatd/main.cpp
 ===================================================================
---- src/schatd/main.cpp	(revision 104)
+--- src/schatd/main.cpp	(revision 187)
 +++ src/schatd/main.cpp	(working copy)
-@@ -4,6 +4,7 @@
+@@ -17,6 +17,7 @@
   */
  
  #include <QtCore>
@@ -23,7 +23,7 @@ Index: src/schatd/main.cpp
  
  #include "server.h"
  
-@@ -22,7 +23,7 @@
+@@ -35,7 +36,7 @@
    QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
    if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
      QTextStream out(&pidfile);
