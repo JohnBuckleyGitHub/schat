@@ -834,9 +834,14 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
         "<b>/bye [текст сообщения]</b><span class='info'> - Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span><br />"
         "<b>/exit</b><span class='info'> - Выход из чата.</span><br />"
         "<b>/help</b><span class='info'> - Отображает подсказу о командах.</span><br />"
+        "<b>/log</b><span class='info'> - Открывает папку с файлами журнала чата.</span><br />"
         "<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span><br />"
         "<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span><br />"
         ));
+  }
+  // команда /log
+  else if (text.startsWith("/log", Qt::CaseInsensitive)) {
+    QDesktopServices::openUrl(qApp->applicationDirPath() + "/log");
   }
   // команда /nick
   else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
