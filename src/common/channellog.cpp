@@ -58,6 +58,19 @@ void ChannelLog::msg(const QString &text)
 }
 
 
+/** [public]
+ * 
+ */
+void ChannelLog::setChannel(const QString &channel)
+{
+  if (m_channel != channel) {
+    if (m_file.isOpen())
+      m_file.close();
+    m_channel = channel;
+  }  
+}
+
+
 /** [private]
  * 
  */

@@ -35,9 +35,9 @@ public:
   
   ChannelLog(QObject *parent = 0);
   inline QString channel()                       { return m_channel; }
-  inline void setChannel(const QString &channel) { m_channel = channel; }
   inline void setMode(Mode mode)                 { m_mode = mode; }
   void msg(const QString &text);
+  void setChannel(const QString &channel);
   
 private:
   bool openFile();
