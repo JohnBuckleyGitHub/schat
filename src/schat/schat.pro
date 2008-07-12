@@ -91,5 +91,5 @@ win32 {
 
 INCLUDEPATH += ../3rdparty/singleapplication/include
 SINGLEAPPLICATION_LIBCONFIG = staticlib
-unix:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
-win32:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
+win32-msvc*:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
+else:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
