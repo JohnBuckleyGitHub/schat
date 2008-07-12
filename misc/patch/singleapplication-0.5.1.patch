@@ -1,0 +1,53 @@
+Index: src/3rdparty/singleapplication/singleapplication.pro
+===================================================================
+--- src/3rdparty/singleapplication/singleapplication.pro	(revision 207)
++++ src/3rdparty/singleapplication/singleapplication.pro	(working copy)
+@@ -1,4 +1,3 @@
+ TEMPLATE	= subdirs
+ CONFIG		+= ordered
+-SUBDIRS		+= src \
+-		examples
++SUBDIRS		+= src
+Index: src/3rdparty/singleapplication/src/singleapplication.cpp
+===================================================================
+--- src/3rdparty/singleapplication/src/singleapplication.cpp	(revision 207)
++++ src/3rdparty/singleapplication/src/singleapplication.cpp	(working copy)
+@@ -23,15 +23,14 @@
+ #include <QtCore/QByteArray>
+ #include <QtCore/QCoreApplication>
+ #include <QtCore/QDataStream>
++#include <QtCore/QDir>
+ #include <QtCore/QHash>
+ #include <QtCore/QRegExp>
+ #include <QtCore/QString>
+ 
+ #include <QtNetwork/QLocalSocket>
+ 
+-#ifdef Q_OS_WIN
+-#include <qt_windows.h>
+-#else
++#ifndef Q_OS_WIN
+ #include <sys/types.h>
+ #include <unistd.h>
+ #endif
+@@ -226,19 +225,7 @@
+ 	if(struid.isEmpty())
+ 	{
+ #ifdef Q_OS_WIN
+-
+-		QT_WA({
+-			wchar_t buffer[256];
+-			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
+-			GetUserNameW(buffer, &bufferSize);
+-			struid = QString::fromUtf16((ushort*)buffer);
+-		},
+-		{
+-			char buffer[256];
+-			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
+-			GetUserNameA(buffer, &bufferSize);
+-			struid = QString::fromLocal8Bit(buffer);
+-		});
++	  struid = QDir::home().dirName();
+ #else
+ 		struid = QString::number(getuid());
+ #endif
