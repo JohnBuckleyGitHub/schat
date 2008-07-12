@@ -88,3 +88,8 @@ win32 {
     SOURCES += win32/updatenotify.cpp
     DEFINES += SCHAT_UPDATE
 }
+
+INCLUDEPATH += ../3rdparty/singleapplication/include
+SINGLEAPPLICATION_LIBCONFIG = staticlib
+unix:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
+win32:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib

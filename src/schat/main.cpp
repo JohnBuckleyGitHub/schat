@@ -8,6 +8,7 @@
 #include "schatwindow.h"
 #include "server.h"
 #include "version.h"
+#include "singleapplication.h"
 
 bool install();
 
@@ -34,6 +35,16 @@ int main(int argc, char *argv[])
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
     QMessageBox::critical(0, QObject::tr("Systray"), QObject::tr("I couldn't detect any system tray on this system."));
     return 1;
+  }
+  
+  // Допускаем запуск только одной копии из одной папки
+  SingleApplication instance("SimpleChat", app.applicationDirPath(), &app);
+  if(instance.isRunning())
+  {
+    QString message = "Hello! Did You hear other Trivial Example instance? :)\n"
+              "PID: " + QString::number(app.applicationPid());
+    if(instance.sendMessage(message))
+      return 0;
   }
   
   SChatWindow window;
