@@ -1,0 +1,16 @@
+The SingleApplication component provides support for applications that can be 
+only started once per user.
+
+For some applications it is useful or even critical that they are started only once by any user. 
+Future attempts to start the application should activate any already running instance, 
+and possibly perform requested actions, e.g. loading a file, in that instance.
+
+The SingleApplication class provides an crossplatform interface to detect a running instance, 
+and to send command strings to that instance.
+
+The SingleApplication component is basically imitating QtSingleApplication commercial class.
+Unlike QtSingleApplication the SingleApplication implementation uses so-called "Local Sockets" 
+to detect a running instance, open a connection with it and then
+send a message and expects a correct answer, if it's correct then we can talk to it.
+
+Licence: LGPLv2
