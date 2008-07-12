@@ -180,6 +180,15 @@ bool SChatWindow::event(QEvent *event)
 /** [public slots]
  * 
  */
+void SChatWindow::handleMessage(const QString &/*message*/)
+{
+  showChat();
+}
+
+
+/** [public slots]
+ * 
+ */
 void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
 {
   int index = tabIndex(QChar('#') + n);
@@ -544,10 +553,6 @@ void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */
  */
 void SChatWindow::disconnected()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::disconnected()";
-  #endif
-  
   removeConnection();
 }
 
@@ -560,17 +565,10 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
   switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::MiddleClick:
-      if (isHidden()) {
-        show();
-        activateWindow();
-        if (aboutDialog)
-          aboutDialog->show();
-      }
-      else {
-        if (aboutDialog)
-          aboutDialog->hide();
-        hide();
-      }
+      if (isHidden())
+        showChat();
+      else
+        hideChat();
       
     default:
       break;
@@ -1063,6 +1061,21 @@ void SChatWindow::createTrayIcon()
 /** [private]
  * 
  */
+void SChatWindow::hideChat()
+{
+  if (settingsDialog)
+    settingsDialog->hide();
+          
+  if (aboutDialog)
+    aboutDialog->hide();
+        
+  hide();
+}
+
+
+/** [private]
+ * 
+ */
 void SChatWindow::removeConnection()
 {
   quint16 err = clientSocket->protocolError();
@@ -1096,6 +1109,22 @@ void SChatWindow::removeConnection()
     else
       m_reconnectTimer->start();
   }
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::showChat()
+{
+  show();
+  activateWindow();
+  
+  if (aboutDialog)
+    aboutDialog->show();
+  
+  if (settingsDialog)
+    settingsDialog->show();
 }
 
 

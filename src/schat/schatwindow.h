@@ -78,6 +78,7 @@ protected:
   bool event(QEvent *event);
   
 public slots:
+  void handleMessage(const QString& message);
   void incomingDirectConnection(const QString &n, ServerSocket *socket);
   void newDirectMessage();
   void newDirectParticipant(quint16 sex, const QStringList &info);
@@ -126,8 +127,10 @@ private:
   void createCornerWidgets();
   void createToolButtons();
   void createTrayIcon();
+  void hideChat();
   void removeConnection();
   void settingsPage(int page = 0);
+  void showChat();
   void startNotice(int index);
   void uniqueNick();
   
