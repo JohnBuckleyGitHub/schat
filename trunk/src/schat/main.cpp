@@ -1,14 +1,27 @@
 /* $Id$
- * Simple Chat
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
 
 #include "schatwindow.h"
 #include "server.h"
-#include "version.h"
 #include "singleapplication.h"
+#include "version.h"
 
 bool install();
 
@@ -32,6 +45,7 @@ int main(int argc, char *argv[])
   qtTranslator.load("qt_ru", ":/translations");
   app.installTranslator(&qtTranslator);
   
+  // Требуем поддержку System Tray
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
     QMessageBox::critical(0, QObject::tr("Systray"), QObject::tr("I couldn't detect any system tray on this system."));
     return 1;
@@ -39,11 +53,9 @@ int main(int argc, char *argv[])
   
   // Допускаем запуск только одной копии из одной папки
   SingleApplication instance("SimpleChat", app.applicationDirPath(), &app);
-  if(instance.isRunning())
-  {
-    QString message = "Hello! Did You hear other Trivial Example instance? :)\n"
-              "PID: " + QString::number(app.applicationPid());
-    if(instance.sendMessage(message))
+  if (instance.isRunning()) {
+    QString message = "SimpleChat";
+    if (instance.sendMessage(message))
       return 0;
   }
   
@@ -52,6 +64,8 @@ int main(int argc, char *argv[])
     window.hide();
   else
     window.show();
+  
+  QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &window, SLOT(handleMessage(const QString &)));
   
   return app.exec();
 }
