@@ -23,15 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
+#include <QtCore/QDir>
 #include <QtCore/QHash>
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
 #include <QtNetwork/QLocalSocket>
 
-#ifdef Q_OS_WIN
-#include <qt_windows.h>
-#else
+#ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <unistd.h>
 #endif
@@ -226,19 +225,7 @@ void SingleApplicationPrivate::init()
 	if(struid.isEmpty())
 	{
 #ifdef Q_OS_WIN
-
-		QT_WA({
-			wchar_t buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
-			GetUserNameW(buffer, &bufferSize);
-			struid = QString::fromUtf16((ushort*)buffer);
-		},
-		{
-			char buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
-			GetUserNameA(buffer, &bufferSize);
-			struid = QString::fromLocal8Bit(buffer);
-		});
+	  struid = QDir::home().dirName();
 #else
 		struid = QString::number(getuid());
 #endif
