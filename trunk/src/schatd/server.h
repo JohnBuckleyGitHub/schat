@@ -63,6 +63,7 @@ private:
   void removeConnection(ServerSocket *socket);
   
   ChannelLog *m_channelLog;
+  ChannelLog *m_privateLog; // FIXME PRIVATE
   DaemonSettings *m_settings;
   QHash<QString, ServerSocket *> peers;
   
