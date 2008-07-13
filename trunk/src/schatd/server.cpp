@@ -49,11 +49,13 @@ bool Server::start()
     m_channelLog->setMode(ChannelLog::Plain);
   }
   
-  if (m_settings->privateLog) { // FIXME PRIVATE
+  #ifdef SCHAT_PRIVATE_LOG
+  if (m_settings->privateLog) {
     m_privateLog = new ChannelLog(this);
     m_privateLog->setChannel("#private");
     m_privateLog->setMode(ChannelLog::Plain);
   }
+  #endif
   
   QString address = m_settings->listenAddress;
   quint16 port    = m_settings->listenPort;  
@@ -200,8 +202,10 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
     
     if (peers.contains(channel)) {
       
-      if (m_settings->privateLog) // FIXME PRIVATE
+      #ifdef SCHAT_PRIVATE_LOG
+      if (m_settings->privateLog)
         m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(message));
+      #endif
       
       if (socket)
         socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);

@@ -1,4 +1,6 @@
 [General]
+ChannelLog=false
 ListenAddress=0.0.0.0
 ListenPort=7666
 LogLevel=0
+

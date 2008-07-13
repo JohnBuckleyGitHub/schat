@@ -63,9 +63,12 @@ private:
   void removeConnection(ServerSocket *socket);
   
   ChannelLog *m_channelLog;
-  ChannelLog *m_privateLog; // FIXME PRIVATE
   DaemonSettings *m_settings;
   QHash<QString, ServerSocket *> peers;
+
+  #ifdef SCHAT_PRIVATE_LOG
+  ChannelLog *m_privateLog;
+  #endif
   
   #ifdef SCHAT_CLIENT
   void removeDirectConnection(ServerSocket *socket);
