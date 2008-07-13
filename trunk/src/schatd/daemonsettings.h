@@ -33,6 +33,8 @@ public:
   
   void read();
   
+  bool channelLog;
+  bool privateLog;
   int logLevel;
   Log *log;
   QString listenAddress;

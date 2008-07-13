@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QTcpServer>
 
+#include "channellog.h"
 #include "profile.h"
 #include "serversocket.h"
 
@@ -58,9 +59,10 @@ private slots:
 
 private:
   void incomingConnection(int socketId);
-  void participantLeft(const QString &nick, const QString &bye);
+  void participantLeft(quint16 sex, const QString &nick, const QString &bye);
   void removeConnection(ServerSocket *socket);
   
+  ChannelLog *m_channelLog;
   DaemonSettings *m_settings;
   QHash<QString, ServerSocket *> peers;
   

@@ -6,6 +6,7 @@ TEMPLATE = app
 QT += network
 CONFIG += console
 HEADERS = \
+    channellog.h \
     daemonsettings.h \
     log.h \
     profile.h \
@@ -13,7 +14,9 @@ HEADERS = \
     server.h \
     serversocket.h \
     version.h
+    
 SOURCES = \
+    channellog.cpp \
     daemonsettings.cpp \
     log.cpp \
     main.cpp \
