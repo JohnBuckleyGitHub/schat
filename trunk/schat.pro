@@ -6,6 +6,6 @@ TEMPLATE      = subdirs
 SUBDIRS       = \
     src/schatd \
     src/3rdparty/singleapplication \
-    src/schat \
+    src/schat
 
 win32:SUBDIRS +=  src/update
