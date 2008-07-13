@@ -1045,7 +1045,7 @@ void SChatWindow::createTrayIcon()
 {
   trayIconMenu = new QMenu(this);
   trayIconMenu->addAction(aboutAction);
-  trayIconMenu->addAction(settingsAction);
+  trayIconMenu->addAction(profileSetAction);
   trayIconMenu->addSeparator();
   trayIconMenu->addAction(quitAction);
   

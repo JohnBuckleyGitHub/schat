@@ -114,6 +114,12 @@ bool Profile::isValidNick(const QString &n)
     return false;
   if (nick.startsWith(QChar('#')))
     return false;
+  else if (nick == "COM1" || nick == "COM2" || nick == "COM3" || nick == "COM4" || nick == "COM5" || nick == "COM6" || nick == "COM7" || nick == "COM8" || nick == "COM9" || nick == "AUX")
+    return false;
+  else if (nick == "LPT1" || nick == "LPT2" || nick == "LPT3" || nick == "LPT4" || nick == "LPT5" || nick == "LPT6" || nick == "LPT7" || nick == "LPT8" || nick == "LPT9" || nick == "PRN")
+    return false;
+  else if (nick == "CON" || nick == "NUL")
+    return false;
   
   return true;
 }
