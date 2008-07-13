@@ -43,6 +43,12 @@ bool Server::start()
 {
   m_settings->read();
   
+  if (m_settings->channelLog) {
+    m_channelLog = new ChannelLog(this);
+    m_channelLog->setChannel("#main");
+    m_channelLog->setMode(ChannelLog::Plain);
+  }
+  
   QString address = m_settings->listenAddress;
   quint16 port    = m_settings->listenPort;  
   bool result     = listen(QHostAddress(address), port);
@@ -87,6 +93,12 @@ void Server::appendParticipant(const QString &p)
         fullName = info.at(1);
       
       LOG(0, tr("Новый участник: %1, %2, %3, %4").arg(info.at(3)).arg(info.at(0)).arg(fullName).arg(info.at(2)));
+      
+      if (m_settings->channelLog)
+        if (socket->sex())
+          m_channelLog->msg(tr("`%1` зашла в чат").arg(info.at(0)));
+        else
+          m_channelLog->msg(tr("`%1` зашёл в чат").arg(info.at(0)));
     }
     else {
       socket->setNick("#DUBLICATE");
@@ -117,6 +129,12 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
       QStringList list;
       list << nick << name;
       
+      if (m_settings->channelLog)
+        if (sex)
+          m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
+        else
+          m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
+      
       QHashIterator<QString, ServerSocket *> i(peers);
       while (i.hasNext()) {
         i.next();
@@ -130,6 +148,13 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
     else {
       peers.remove(socket->nick());
       peers.insert(nick, socket);
+      
+      if (m_settings->channelLog)
+        if (sex)
+          m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(socket->nick()).arg(nick));
+        else
+          m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(socket->nick()).arg(nick));
+      
       QStringList list;
       list << socket->nick() << nick << name;
       socket->setNick(nick);
@@ -155,6 +180,10 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
 void Server::relayMessage(const QString &channel, const QString &nick, const QString &message)
 {
   if (channel == "#main") {
+    
+    if (m_settings->channelLog)
+      m_channelLog->msg(tr("%1: %2").arg(nick).arg(message));
+    
     QHashIterator<QString, ServerSocket *> i(peers);
     while (i.hasNext()) {
       i.next();
@@ -274,8 +303,14 @@ void Server::incomingConnection(int socketId)
 /** [private]
  * 
  */
-void Server::participantLeft(const QString &nick, const QString &bye)
+void Server::participantLeft(quint16 sex, const QString &nick, const QString &bye)
 {
+  if (m_settings->channelLog)
+    if (sex)
+      m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
+    else
+      m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
+  
   QHashIterator<QString, ServerSocket *> i(peers);
   while (i.hasNext()) {
     i.next();
@@ -294,7 +329,7 @@ void Server::removeConnection(ServerSocket *socket)
   
   if (peers.contains(nick)) {
     peers.remove(nick);
-    participantLeft(nick, bye);
+    participantLeft(socket->sex(), nick, bye);
   }
   socket->deleteLater();
 }
@@ -306,10 +341,6 @@ void Server::removeConnection(ServerSocket *socket)
 #ifdef SCHAT_CLIENT
 void Server::removeDirectConnection(ServerSocket *socket)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "Server::removeDirectConnection(ServerSocket *socket)";
-  #endif
-  
   QString nick = socket->nick();
   
   if (directPeers.contains(nick)) {
