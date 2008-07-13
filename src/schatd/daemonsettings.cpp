@@ -42,7 +42,10 @@ void DaemonSettings::read()
   listenAddress = s.value("ListenAddress", "0.0.0.0").toString();
   listenPort    = quint16(s.value("ListenPort", 7666).toUInt());
   channelLog    = s.value("ChannelLog", false).toBool();
-  privateLog    = s.value("PrivateLog", false).toBool(); // FIXME PRIVATE
+  
+  #ifdef SCHAT_PRIVATE_LOG
+  privateLog    = s.value("PrivateLog", false).toBool();
+  #endif
   
   #ifdef SCHAT_CLIENT
   logLevel = s.value("LogLevel", -1).toInt();

@@ -44,3 +44,4 @@ CONFIG(release, debug|release) {
 }
 win32:RC_FILE = schatd.rc
 #DEFINES += SCHAT_DEBUG
+#DEFINES += SCHAT_PRIVATE_LOG
