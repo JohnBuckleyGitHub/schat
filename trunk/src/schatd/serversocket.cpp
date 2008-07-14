@@ -31,10 +31,6 @@
 ServerSocket::ServerSocket(QObject *parent)
   : QTcpSocket(parent)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::ServerSocket(QObject *parent)";
-  #endif
-  
   m_state = sChatStateWaitingForGreeting;
   m_stream.setDevice(this);
   m_stream.setVersion(sChatStreamVersion);
@@ -65,10 +61,6 @@ ServerSocket::ServerSocket(QObject *parent)
  */
 void ServerSocket::send(quint16 opcode)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ServerSocket::send(quint16 opcode)" << opcode;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -85,10 +77,6 @@ void ServerSocket::send(quint16 opcode)
  */
 void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)" << opcode;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -105,10 +93,6 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
  */
 void ServerSocket::send(quint16 opcode, const QString &s)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &s)" << opcode;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -126,10 +110,6 @@ void ServerSocket::send(quint16 opcode, const QString &s)
  */
 void ServerSocket::send(quint16 opcode, quint16 err)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ServerSocket::send(quint16 opcode, const QString &s)" << opcode << err;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -147,10 +127,6 @@ void ServerSocket::send(quint16 opcode, quint16 err)
  */
 void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)" << opcode << s << list;
-  #endif
-  
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(sChatStreamVersion);
@@ -282,6 +258,35 @@ bool ServerSocket::readBlock()
 /** [private]
  * 
  */
+quint16 ServerSocket::verifyGreeting(quint16 version)
+{
+  if (version < sChatProtocolVersion)
+    return sChatErrorOldClientProtocol;
+  else if (version > sChatProtocolVersion)
+    return sChatErrorOldServerProtocol;
+  else if (!(m_flag == sChatFlagNone || m_flag == sChatFlagDirect))
+    return sChatErrorBadGreetingFlag;
+  else if (!m_profile->isValidNick())
+    return sChatErrorBadNickName;
+  else if (!m_profile->isValidUserAgent())
+    return sChatErrorBadUserAgent;
+  else if (!isValid())
+    return sChatErrorInvalidConnection;
+  
+  #ifndef SCHAT_CLIENT
+  if (m_flag == sChatFlagDirect) {
+    return sChatErrorDirectNotAllow;
+    m_profile->setNick("#DUBLICATE");
+  }
+  #endif
+  
+  return 0;
+}
+
+
+/** [private]
+ * 
+ */
 void ServerSocket::clientSendNewProfile()
 {
   quint16 Sex;
@@ -357,23 +362,7 @@ void ServerSocket::readGreeting()
   m_profile->setUserAgent(userAgent);
   m_profile->setHost(peerAddress().toString());
   
-  if (version != sChatProtocolVersion)
-    err = sChatErrorBadProtocolVersion;
-  else if (!(m_flag == sChatFlagNone || m_flag == sChatFlagDirect))
-    err = sChatErrorBadGreetingFlag;
-  else if (!m_profile->isValidNick())
-    err = sChatErrorBadNickName;
-  else if (!m_profile->isValidUserAgent())
-    err = sChatErrorBadUserAgent;
-  else if (!isValid())
-    err = sChatErrorInvalidConnection;
-  
-  #ifndef SCHAT_CLIENT
-  if (m_flag == sChatFlagDirect) {
-    err = sChatErrorDirectNotAllow;
-    m_profile->setNick("#DUBLICATE");
-  }
-  #endif
+  err = verifyGreeting(version);
   
   if (err) {
     send(sChatOpcodeError, err);

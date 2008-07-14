@@ -20,10 +20,13 @@ public:
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
   void msg(const QString &text);
+  void msgBadNickName(const QString &nick);
   void msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
   void msgChangedProfile(quint16 sex, const QString &nick);
   void msgDisconnect();
   void msgNewParticipant(quint8 sex, const QString &nick);
+  void msgOldClientProtocol();
+  void msgOldServerProtocol();
   void msgParticipantLeft(quint8 sex, const QString &nick, const QString &bye);
   void msgReadyForUse(const QString &addr);
   void msgReadyForUse(const QString &network, const QString &addr);

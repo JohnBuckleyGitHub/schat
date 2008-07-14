@@ -844,7 +844,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   // команда /nick
   else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
     QString newNick = text.mid(text.indexOf(QChar(' ')));
-    if (profile->nick() != newNick) {
+    if (Profile::isValidNick(newNick) && profile->nick() != newNick) {
       profile->setNick(newNick);
       changedProfileSettings();
     }
@@ -1089,14 +1089,28 @@ void SChatWindow::removeConnection()
   if (state == Connected || state == Stopped)
     mainChannel->browser->msgDisconnect();
   
-  // Если ник отвергнут сервером сообщаем об этом и отключаем авто переподключение.
-  if (err == sChatErrorBadNickName) {
-    state = Stopped;
-    mainChannel->browser->msg(tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(profile->nick()));
-  }
-  // Если выбранный ник уже занят, то генерируем новый уникальный ник.
-  else if (err == sChatErrorNickAlreadyUse) {
-    uniqueNick();
+  switch (err) {
+    case sChatErrorBadNickName:
+      state = Stopped;
+      mainChannel->browser->msgBadNickName(profile->nick());
+      break;
+      
+    case sChatErrorNickAlreadyUse:
+      uniqueNick();
+      break;
+      
+    case sChatErrorOldClientProtocol:
+      state = Stopped;
+      mainChannel->browser->msgOldClientProtocol();
+      break;
+      
+    case sChatErrorOldServerProtocol:
+      state = Stopped;
+      mainChannel->browser->msgOldServerProtocol();
+      break;
+      
+    default:
+      break;
   }
 
   statusLabel->setText(tr("Не подключено"));
