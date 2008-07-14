@@ -40,6 +40,15 @@ void ChatBrowser::msg(const QString &text)
 /** [public]
  * 
  */
+void ChatBrowser::msgBadNickName(const QString &nick)
+{
+  msg(tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(nick));
+}
+
+
+/** [public]
+ * 
+ */
 void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
   if (sex)
@@ -80,6 +89,24 @@ void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
     msg(tr("<i class='gr'><b>%1</b> зашла в чат</i>").arg(Qt::escape(nick)));
   else
     msg(tr("<i class='gr'><b>%1</b> зашёл в чат</i>").arg(Qt::escape(nick)));
+}
+
+
+/** [public]
+ * 
+ */
+void ChatBrowser::msgOldClientProtocol()
+{
+  msg(tr("<span class='err'>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.</span>"));
+}
+
+
+/** [public]
+ * 
+ */
+void ChatBrowser::msgOldServerProtocol()
+{
+  msg(tr("<span class='err'>Сервер использует устаревшую версию протокола, подключение не возможно.</span>"));
 }
 
 

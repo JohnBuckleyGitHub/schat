@@ -69,6 +69,7 @@ private slots:
 
 private:
   bool readBlock();
+  quint16 verifyGreeting(quint16 version);
   void clientSendNewProfile();
   void opSendByeMsg();
   void opSendMessage();
