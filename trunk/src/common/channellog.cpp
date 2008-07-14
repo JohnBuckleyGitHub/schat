@@ -63,10 +63,21 @@ void ChannelLog::msg(const QString &text)
  */
 void ChannelLog::setChannel(const QString &channel)
 {
-  if (m_channel != channel) {
+  QString _channel = channel;
+  #ifdef Q_OS_WIN
+  _channel.replace(QRegExp("COM[1-9]"), "COM_");
+  _channel.replace(QRegExp("LPT[1-9]"), "LPT_");
+  _channel.replace("CON", "CO_");
+  _channel.replace("NUL", "NU_");
+  _channel.replace("AUX", "AU_");
+  _channel.replace("PRN", "PR_");
+  #endif
+  _channel.replace(QRegExp("[?\"/\\\\<>*|:]"), "_");
+  
+  if (m_channel != _channel) {
     if (m_file.isOpen())
       m_file.close();
-    m_channel = channel;
+    m_channel = _channel;
   }  
 }
 
