@@ -71,6 +71,7 @@ private:
   bool readBlock();
   quint16 verifyGreeting(quint16 version);
   void clientSendNewProfile();
+  void opGetServerInfo();
   void opSendByeMsg();
   void opSendMessage();
   void readGreeting();

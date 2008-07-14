@@ -560,6 +560,15 @@ void SChatWindow::disconnected()
 /** [private slots]
  * 
  */
+void SChatWindow::genericMessage(const QString &info)
+{
+  mainChannel->browser->msg(info);
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason) {
@@ -596,16 +605,17 @@ void SChatWindow::newConnection()
   if (!clientSocket) {
     clientSocket = new ClientSocket(this);
     clientSocket->setProfile(profile);
-    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), this, SLOT(newParticipant(quint16, const QStringList &, bool)));
+    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), SLOT(newParticipant(quint16, const QStringList &, bool)));
     connect(clientSocket, SIGNAL(participantLeft(const QString &, const QString &)), SLOT(participantLeft(const QString &, const QString &)));
     connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), this, SLOT(newMessage(const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), this, SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(readyForUse()), this, SLOT(readyForUse()));
-    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectionError(QAbstractSocket::SocketError)));
-    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), this, SLOT(changedNick(quint16, const QStringList &)));
-    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), this, SLOT(changedProfile(quint16, const QStringList &, bool)));
+    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), SLOT(newMessage(const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
+    connect(clientSocket, SIGNAL(readyForUse()), SLOT(readyForUse()));
+    connect(clientSocket, SIGNAL(disconnected()), SLOT(disconnected()));
+    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(connectionError(QAbstractSocket::SocketError)));
+    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), SLOT(changedNick(quint16, const QStringList &)));
+    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), SLOT(changedProfile(quint16, const QStringList &, bool)));
+    connect(clientSocket, SIGNAL(genericMessage(const QString &)), SLOT(genericMessage(const QString &)));
   }
   else {
     state = Ignore;
@@ -835,6 +845,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
         "<b>/log</b><span class='info'> - Открывает папку с файлами журнала чата.</span><br />"
         "<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span><br />"
         "<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span><br />"
+        "<b>/server info</b><span class='info'> - Просмотр информации о сервере</span>"
         ));
   }
   // команда /log
@@ -848,6 +859,11 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
       profile->setNick(newNick);
       changedProfileSettings();
     }
+  }
+  // команда /server info
+  else if (text.startsWith("/server info", Qt::CaseInsensitive)) {
+    if (state == Connected)
+      clientSocket->send(sChatOpcodeGetServerInfo);
   }
   else
     return false;

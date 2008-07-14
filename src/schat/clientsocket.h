@@ -30,6 +30,7 @@ public:
 signals:
   void changedNick(quint16 sex, const QStringList &list);
   void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
+  void genericMessage(const QString &info);
   void newMessage(const QString &nick, const QString &message);
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
@@ -46,6 +47,7 @@ private:
   bool readBlock();
   void newParticipant(bool echo = true);
   void opParticipantLeft();
+  void opServerInfo();
   void readChangedNick();
   void readChangedProfile();
   

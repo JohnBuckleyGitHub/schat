@@ -15,10 +15,6 @@ static const int InitTimeout = 5 * 1000;
 ClientSocket::ClientSocket(QObject *parent)
   : QTcpSocket(parent)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ClientSocket::ClientSocket(QObject *parent)";
-  #endif  
-  
   currentState = sChatStateDisconnected;
   currentBlock.setDevice(this);
   currentBlock.setVersion(sChatStreamVersion);
@@ -235,6 +231,10 @@ void ClientSocket::readyRead()
         readChangedProfile();
         break;
         
+      case sChatOpcodeServerInfo:
+        opServerInfo();
+        break;
+        
       default:
         #ifdef SCHAT_DEBUG
         qDebug() << "Invalid Opcode";
@@ -327,6 +327,17 @@ void ClientSocket::opParticipantLeft()
   
   currentBlock >> Nick >> Bye;
   emit participantLeft(Nick, Bye);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientSocket::opServerInfo()
+{
+  QString info;
+  currentBlock >> info;
+  emit genericMessage(info);
 }
 
 

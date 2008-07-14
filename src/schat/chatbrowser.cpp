@@ -22,7 +22,7 @@ ChatBrowser::ChatBrowser(QWidget *parent)
       ".green { color:#6bb521; }"
       ".err   { color:#da251d; }"
       ".info  { color:#5096cf; }"
-      ".me    { color:#f3f; }");
+      ".me    { color:#cd00cd; }");
 }
 
 
