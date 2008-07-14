@@ -198,7 +198,11 @@ void ServerSocket::readyRead()
       // Клиент отправил текст сообщения при выходе
       case sChatOpcodeSendByeMsg:
         opSendByeMsg();
-        break;  
+        break;
+        
+      case sChatOpcodeGetServerInfo:
+        opGetServerInfo();
+        break;
       
       default:
         #ifdef SCHAT_DEBUG
@@ -297,6 +301,74 @@ void ServerSocket::clientSendNewProfile()
   
   if (Profile::isValidNick(Nick))
     emit clientSendNewProfile(Sex, Nick, Name);
+}
+
+
+/** [private]
+ * 
+ */
+void ServerSocket::opGetServerInfo()
+{
+  QString info = QString("<b><a href='http://impomezia.net.ru'>IMPOMEZIA</a> Simple Chat Daemon %1</b>, ").arg(SCHAT_VERSION);
+  
+#if   defined(Q_OS_AIX)
+  info += "AIX";
+#elif defined(Q_OS_BSD4)
+  info += "BSD 4.4 ";
+#elif defined(Q_OS_BSDI)
+  info += "BSD/OS";
+#elif defined(Q_OS_CYGWIN)
+  info += "Cygwin";
+#elif defined(Q_OS_DARWIN)
+  info += "Darwin OS";
+#elif defined(Q_OS_DGUX)
+  info += "DG/UX";
+#elif defined(Q_OS_DYNIX)
+  info += "DYNIX/ptx";
+#elif defined(Q_OS_FREEBSD)
+  info += "FreeBSD";
+#elif defined(Q_OS_HPUX)
+  info += "HP-UX";
+#elif defined(Q_OS_HURD)
+  info += "GNU Hurd";
+#elif defined(Q_OS_IRIX)
+  info += "SGI Irix";
+#elif defined(Q_OS_LINUX)
+  info += "Linux";
+#elif defined(Q_OS_LYNX)
+  info += "LynxOS";
+#elif defined(Q_OS_MSDOS)
+  info += "Windows";
+#elif defined(Q_OS_NETBSD)
+  info += "NetBSD";
+#elif defined(Q_OS_OS2)
+  info += "OS/2";
+#elif defined(Q_OS_OPENBSD)
+  info += "OpenBSD";
+#elif defined(Q_OS_OS2EMX)
+  info += "XFree86 on OS/2 (not PM)";
+#elif defined(Q_OS_OSF)
+  info += "HP Tru64 UNIX";
+#elif defined(Q_OS_QNX6)
+  info += "QNX RTP 6.1";
+#elif defined(Q_OS_QNX)
+  info += "QNX";
+#elif defined(Q_OS_RELIANT)
+  info += "Reliant UNIX";
+#elif defined(Q_OS_SCO)
+  info += "SCO OpenServer 5";
+#elif defined(Q_OS_SOLARIS)
+  info += "Sun Solaris";
+#elif defined(Q_OS_ULTRIX)
+  info += "DEC Ultrix";
+#elif defined(Q_OS_UNIXWARE)
+  info += "UnixWare";
+#elif defined(Q_OS_WIN32)
+  info += "Windows";
+#elif defined(Q_OS_WINCE)
+  info += "Windows CE";
+#endif
+  send(sChatOpcodeServerInfo, info);
 }
 
 

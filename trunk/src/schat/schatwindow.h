@@ -102,6 +102,7 @@ private slots:
   void closeTab();
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
+  void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void messageClicked();
   void newConnection();
