@@ -38,11 +38,13 @@ ClientSocket::ClientSocket(QObject *parent)
  */
 void ClientSocket::quit()
 {
+  pError = 0;
   if (state() == QAbstractSocket::ConnectedState) {
     send(sChatOpcodeClientQuit);
     disconnectFromHost();
-    waitForDisconnected(5000);
+    waitForDisconnected(1000);
   }
+  abort();
 }
 
 
@@ -297,10 +299,6 @@ void ClientSocket::sendPing()
  */
 bool ClientSocket::readBlock()
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "ServerSocket::readBlock()";
-  #endif
-  
   if (nextBlockSize == 0) {
     if (bytesAvailable() < sizeof(quint16))
       return false;
@@ -346,10 +344,6 @@ void ClientSocket::opServerInfo()
  */
 void ClientSocket::newParticipant(bool echo)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "void ClientSocket::newParticipant(bool echo)" << echo;
-  #endif
-  
   quint16 sex;
   QStringList info;
   currentBlock >> sex;

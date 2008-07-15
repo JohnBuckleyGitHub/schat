@@ -526,6 +526,9 @@ void SChatWindow::closeTab()
     tab->deleteLater();
   }
   else {
+    if (m_reconnectTimer->isActive())
+      m_reconnectTimer->stop();
+    
     if (state == Connected) {
       state = Stopped;
       clientSocket->quit();
@@ -1139,6 +1142,8 @@ void SChatWindow::removeConnection()
     else
       m_reconnectTimer->start();
   }
+  else if (m_reconnectTimer->isActive())
+    m_reconnectTimer->stop();
 }
 
 
