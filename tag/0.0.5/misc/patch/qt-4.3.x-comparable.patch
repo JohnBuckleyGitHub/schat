@@ -1,0 +1,121 @@
+Index: schat.pro
+===================================================================
+--- schat.pro	(revision 211)
++++ schat.pro	(working copy)
+@@ -5,7 +5,6 @@
+ TEMPLATE      = subdirs
+ SUBDIRS       = \
+     src/schatd \
+-    src/3rdparty/singleapplication \
+     src/schat
+ 
+ win32:SUBDIRS +=  src/update
+Index: src/schat/main.cpp
+===================================================================
+--- src/schat/main.cpp	(revision 210)
++++ src/schat/main.cpp	(working copy)
+@@ -20,7 +20,6 @@
+ 
+ #include "schatwindow.h"
+ #include "server.h"
+-#include "singleapplication.h"
+ #include "version.h"
+ 
+ bool install();
+@@ -51,22 +50,12 @@
+     return 1;
+   }
+   
+-  // Допускаем запуск только одной копии из одной папки
+-  SingleApplication instance("SimpleChat", app.applicationDirPath(), &app);
+-  if (instance.isRunning()) {
+-    QString message = "SimpleChat";
+-    if (instance.sendMessage(message))
+-      return 0;
+-  }
+-  
+   SChatWindow window;
+   if (arguments.contains("-hide"))
+     window.hide();
+   else
+     window.show();
+   
+-  QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &window, SLOT(handleMessage(const QString &)));
+-  
+   return app.exec();
+ }
+ 
+Index: src/schat/schat.pro
+===================================================================
+--- src/schat/schat.pro	(revision 211)
++++ src/schat/schat.pro	(working copy)
+@@ -10,7 +10,7 @@
+ INCLUDEPATH += . \
+                ../common \
+                ../schatd
+-QT += network
++QT += network xml
+ #CONFIG += console
+ #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
+ DEFINES += SCHAT_CLIENT
+@@ -89,7 +89,3 @@
+     DEFINES += SCHAT_UPDATE
+ }
+ 
+-INCLUDEPATH += ../3rdparty/singleapplication/include
+-SINGLEAPPLICATION_LIBCONFIG = staticlib
+-win32-msvc*:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
+-else:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
+Index: src/schat/schatwindow.cpp
+===================================================================
+--- src/schat/schatwindow.cpp	(revision 210)
++++ src/schat/schatwindow.cpp	(working copy)
+@@ -180,15 +180,6 @@
+ /** [public slots]
+  * 
+  */
+-void SChatWindow::handleMessage(const QString &/*message*/)
+-{
+-  showChat();
+-}
+-
+-
+-/** [public slots]
+- * 
+- */
+ void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
+ {
+   int index = tabIndex(QChar('#') + n);
+Index: src/schat/schatwindow.h
+===================================================================
+--- src/schat/schatwindow.h	(revision 210)
++++ src/schat/schatwindow.h	(working copy)
+@@ -78,7 +78,6 @@
+   bool event(QEvent *event);
+   
+ public slots:
+-  void handleMessage(const QString& message);
+   void incomingDirectConnection(const QString &n, ServerSocket *socket);
+   void newDirectMessage();
+   void newDirectParticipant(quint16 sex, const QStringList &info);
+Index: src/schatd/main.cpp
+===================================================================
+--- src/schatd/main.cpp	(revision 187)
++++ src/schatd/main.cpp	(working copy)
+@@ -17,6 +17,7 @@
+  */
+ 
+ #include <QtCore>
++#include <unistd.h>
+ 
+ #include "server.h"
+ 
+@@ -35,7 +36,7 @@
+   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
+   if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+     QTextStream out(&pidfile);
+-    out << QCoreApplication::instance()->applicationPid();
++    out << getpid();
+     pidfile.close();
+   }
+ 

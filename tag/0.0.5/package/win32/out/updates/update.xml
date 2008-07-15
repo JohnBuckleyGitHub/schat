@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<updates version="1.0">
+  <meta>
+    <core level="28">0.0.5.221 Alpha</core>
+    <qt level="2">4.4.0</qt>
+  </meta>
+  <files platform="win32">
+    <cumulative>
+      <file size="3022623" md5="10b06d2569f332be7ead290316553e96" type="qt" level="2">schat-runtime-0.0.4.194.exe</file>
+      <file size="181382" md5="4d72907b5798ca5adcf1ba08ea756eac" type="core" level="28">schat-core-0.0.5.221.exe</file>
+    </cumulative>
+  </files>
+</updates>
