@@ -19,10 +19,14 @@ TEMPLATE = app
 QT += network
 CONFIG += console
 HEADERS = \
-    version.h
+    version.h \
+    daemon.h \
+    daemonthread.h
     
 SOURCES = \
-    main.cpp
+    main.cpp \
+    daemon.cpp \
+    daemonthread.cpp     
     
 DEPENDPATH  += . \
                ../common
