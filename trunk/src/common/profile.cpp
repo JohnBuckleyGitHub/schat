@@ -61,6 +61,15 @@ Profile::Profile(quint8 sex, const QStringList &list, QObject *parent)
 /** [public]
  * 
  */
+Profile::~Profile()
+{
+  qDebug() << "Profile::~Profile()";
+}
+
+
+/** [public]
+ * 
+ */
 bool Profile::fromList(const QStringList &list)
 {
   if (list.size() != 4)

@@ -23,28 +23,44 @@
 #include <QTcpSocket>
 #include <QThread>
 
+class Profile;
+
 class DaemonThread : public QThread
 {
   Q_OBJECT
 
 public:
+  enum State {
+    WaitingGreeting,
+    Accepted
+  };
+  
   DaemonThread(int socketDescriptor, QObject *parent = 0);
   ~DaemonThread();
   void run();
+  void send(quint16 opcode);
 
 signals:
-  void error(QTcpSocket::SocketError socketError);
+//  void error(QTcpSocket::SocketError socketError);
   
 private slots:
+  void disconnected();
   void readyRead();
 
 private:
+  bool opcodeGreeting();
+  quint16 verifyGreeting(quint16 version);
+  void leave();
+  
   bool m_quit;
   int m_descriptor;
+  Profile *m_profile;
   QDataStream m_stream;
   QTcpSocket *m_socket;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
+  quint8 m_flag;
+  State m_state;
 };
 
 #endif /*DAEMONTHREAD_H_*/
