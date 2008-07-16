@@ -16,28 +16,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#ifndef DAEMON_H_
+#define DAEMON_H_
 
-#include "daemon.h"
+#include <QTcpServer>
 
-int main(int argc, char *argv[])
+class Daemon : public QTcpServer
 {
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-    
-  QCoreApplication app(argc, argv);
-  Daemon daemon;
-  
-  if (!daemon.listen(QHostAddress("0.0.0.0"), 7667))
-    return 3;
-  
-  // Создаём PID-файл
-  QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
-  if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    QTextStream out(&pidfile);
-    out << QCoreApplication::instance()->applicationPid();
-    pidfile.close();
-  }
+  Q_OBJECT
 
-  return app.exec();
-}
+public:
+  Daemon(QObject *parent = 0);
+
+protected:
+  void incomingConnection(int socketDescriptor);
+
+private:
+
+};
+
+#endif /*DAEMON_H_*/
