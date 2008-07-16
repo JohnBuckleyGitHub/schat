@@ -36,6 +36,7 @@ public:
   Profile(const QString &nick, const QString &fullName, quint8 sex, QObject *parent = 0);
   Profile(QObject *parent = 0);
   Profile(quint8 sex, const QStringList &list, QObject *parent = 0);
+  ~Profile();
   
   bool fromList(const QStringList &list);
   bool isValidUserAgent() const;

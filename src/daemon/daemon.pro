@@ -21,12 +21,15 @@ CONFIG += console
 HEADERS = \
     version.h \
     daemon.h \
-    daemonthread.h
+    daemonthread.h \
+    protocol.h \
+    profile.h    
     
 SOURCES = \
     main.cpp \
     daemon.cpp \
-    daemonthread.cpp     
+    daemonthread.cpp \
+    profile.cpp   
     
 DEPENDPATH  += . \
                ../common
