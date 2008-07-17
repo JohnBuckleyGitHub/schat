@@ -16,24 +16,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DAEMON_H_
-#define DAEMON_H_
+#ifndef DAEMONSERVICE_H_
+#define DAEMONSERVICE_H_
 
-#include <QTcpServer>
+#include <QTcpSocket>
 
-class Daemon : public QObject
+class DaemonService : public QObject
 {
   Q_OBJECT
 
 public:
-  Daemon(QObject *parent = 0);
-  bool start();
-
+  DaemonService(QTcpSocket *socket, QObject *parent = 0);
+  ~DaemonService();
+  
 public slots:
-  void incomingConnection();
+  void readyRead();
+  void disconnected();
 
 private:
-  QTcpServer m_server;
+  QTcpSocket *m_socket;
 };
 
-#endif /*DAEMON_H_*/
+#endif /*DAEMONSERVICE_H_*/
