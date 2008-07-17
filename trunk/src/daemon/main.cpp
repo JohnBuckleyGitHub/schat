@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   QCoreApplication app(argc, argv);
   Daemon daemon;
   
-  if (!daemon.listen(QHostAddress("0.0.0.0"), 7667))
+  if (!daemon.start())
     return 3;
   
   // Создаём PID-файл

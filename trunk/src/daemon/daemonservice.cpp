@@ -16,38 +16,53 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "daemon.h"
 #include "daemonservice.h"
 
 
 /** [public]
  * 
  */
-Daemon::Daemon(QObject *parent)
-  : QObject(parent)
+DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
+: QObject(parent), m_socket(socket)
 {
-  connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
+  qDebug() << "DaemonService::KONSTRUCTOR";
+  
+  if (m_socket) {
+    connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
+    connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+  }
+  else
+    deleteLater();
 }
 
 
 /** [public]
  * 
  */
-bool Daemon::start()
+DaemonService::~DaemonService()
 {
-  QString address = "0.0.0.0"; // FIXME эти данные должны браться из реестра
-  quint16 port    = 7667;  
-  bool result     = m_server.listen(QHostAddress(address), port);
+  qDebug() << "DaemonService::~DESTRUCTOR";
   
-  return result;
+  if (m_socket)
+    delete m_socket;
+}
+
+
+
+/** [public slots]
+ * 
+ */
+void DaemonService::disconnected()
+{
+  qDebug() << "DaemonService::disconnected()";
+  deleteLater();
 }
 
 
 /** [public slots]
  * 
  */
-void Daemon::incomingConnection()
+void DaemonService::readyRead()
 {
-  if (m_server.hasPendingConnections())
-    new DaemonService(m_server.nextPendingConnection(), this);
+  qDebug() << "DaemonService::readyRead()";
 }
