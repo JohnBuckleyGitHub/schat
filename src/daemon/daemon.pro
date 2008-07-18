@@ -23,13 +23,15 @@ HEADERS = \
     daemon.h \
     daemonservice.h \
     protocol.h \
-    profile.h    
+    profile.h \
+    abstractprofile.h \    
     
 SOURCES = \
     main.cpp \
     daemon.cpp \
     daemonservice.cpp \
-    profile.cpp   
+    profile.cpp \
+    abstractprofile.cpp \
     
 DEPENDPATH  += . \
                ../common
