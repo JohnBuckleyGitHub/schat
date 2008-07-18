@@ -19,7 +19,10 @@
 #ifndef DAEMONSERVICE_H_
 #define DAEMONSERVICE_H_
 
+#include <QDataStream>
 #include <QTcpSocket>
+
+class Profile;
 
 class DaemonService : public QObject
 {
@@ -28,13 +31,23 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
+  void send(quint16 opcode);
   
 public slots:
   void readyRead();
   void disconnected();
 
 private:
+  bool opcodeGreeting();
+  quint16 verifyGreeting(quint16 version);
+  
+  bool m_accepted;
+  Profile *m_profile;
+  QDataStream m_stream;
   QTcpSocket *m_socket;
+  quint16 m_nextBlockSize;
+  quint16 m_opcode;
+  quint8 m_flag;
 };
 
 #endif /*DAEMONSERVICE_H_*/
