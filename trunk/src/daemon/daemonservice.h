@@ -22,7 +22,7 @@
 #include <QDataStream>
 #include <QTcpSocket>
 
-class Profile;
+class AbstractProfile;
 
 class DaemonService : public QObject
 {
@@ -32,6 +32,10 @@ public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
   void send(quint16 opcode);
+  void send(quint16 opcode, quint16 err);
+  
+signals:
+  void greeting(const QStringList &list);
   
 public slots:
   void readyRead();
@@ -41,8 +45,8 @@ private:
   bool opcodeGreeting();
   quint16 verifyGreeting(quint16 version);
   
+  AbstractProfile *m_profile;
   bool m_accepted;
-  Profile *m_profile;
   QDataStream m_stream;
   QTcpSocket *m_socket;
   quint16 m_nextBlockSize;

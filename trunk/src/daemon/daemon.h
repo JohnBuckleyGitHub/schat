@@ -31,6 +31,9 @@ public:
 
 public slots:
   void incomingConnection();
+  
+private slots:
+  void greeting(const QStringList &list);
 
 private:
   QTcpServer m_server;

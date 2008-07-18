@@ -16,6 +16,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtCore>
+
 #include "daemon.h"
 #include "daemonservice.h"
 
@@ -35,7 +37,7 @@ Daemon::Daemon(QObject *parent)
  */
 bool Daemon::start()
 {
-  QString address = "0.0.0.0"; // FIXME эти данные должны браться из реестра
+  QString address = "0.0.0.0"; // FIXME эти данные должны браться из настроек
   quint16 port    = 7667;  
   bool result     = m_server.listen(QHostAddress(address), port);
   
@@ -48,6 +50,18 @@ bool Daemon::start()
  */
 void Daemon::incomingConnection()
 {
-  if (m_server.hasPendingConnections())
-    new DaemonService(m_server.nextPendingConnection(), this);
+  if (m_server.hasPendingConnections()) {
+    DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
+    connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::greeting(const QStringList &list)
+{
+  qDebug() << "Daemon::greeting(const QStringList &)" << list;
+  
 }

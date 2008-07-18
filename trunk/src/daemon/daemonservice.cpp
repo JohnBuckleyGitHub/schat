@@ -20,7 +20,7 @@
 #include <QtNetwork>
 
 #include "daemonservice.h"
-#include "profile.h"
+#include "abstractprofile.h"
 #include "protocol.h"
 
 
@@ -70,6 +70,23 @@ void DaemonService::send(quint16 opcode)
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
   m_socket->write(block);
+}
+
+
+/** [public]
+ * ОПКОДЫ:
+ *   sChatOpcodeError
+ *   sChatOpcodeMaxDoublePingTimeout
+ */
+void DaemonService::send(quint16 opcode, quint16 err)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(sChatStreamVersion);
+  out << quint16(0) << opcode << err; 
+  out.device()->seek(0);
+  out << quint16(block.size() - (int) sizeof(quint16));
+  m_socket->write(block);  
 }
 
 
@@ -138,19 +155,18 @@ bool DaemonService::opcodeGreeting()
   quint8  f_sex;
   quint16 f_version;
   
-  m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent;
-  
+  m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent;  
   m_nextBlockSize = 0;
   
-  m_profile = new Profile(f_nick, f_fullName, f_sex, this); // TODO оптимизировать
-  m_profile->setUserAgent(f_userAgent);
-  m_profile->setHost(m_socket->peerAddress().toString());
+  QStringList profile; // TODO возможно следует отправлять `byeMsg` в приветственном сообщении.
+  profile << f_nick << f_fullName << "" << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
+  m_profile = new AbstractProfile(profile, this);
   
   f_err = verifyGreeting(f_version);
   
-  if (f_err) {
-//    send(sChatOpcodeError, f_err);
-//    disconnectFromHost();
+  if (f_err) { // TODO изменить опкод
+    send(sChatOpcodeError, f_err);
+    m_socket->disconnectFromHost();
     return false;
   }
   
@@ -161,7 +177,7 @@ bool DaemonService::opcodeGreeting()
     emit appendDirectParticipant(m_profile->nick());
   else
   #endif
-//    emit appendParticipant(m_profile->nick());
+  emit greeting(profile);
     
   send(sChatOpcodeGreetingOk); // FIXME поместить в положеное место.
   
