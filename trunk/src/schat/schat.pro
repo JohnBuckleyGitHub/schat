@@ -11,7 +11,7 @@ INCLUDEPATH += . \
                ../common \
                ../schatd
 QT += network
-#CONFIG += console
+CONFIG += console
 #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
 DEFINES += SCHAT_CLIENT
 
@@ -41,7 +41,9 @@ HEADERS += \
     settingsdialog.h \
     tab.h \
     version.h \
-    welcomedialog.h
+    welcomedialog.h \
+    clientservice.h \
+    clientthread.h
 
 SOURCES += \
     aboutdialog.cpp \
@@ -66,7 +68,9 @@ SOURCES += \
     settings.cpp \
     settingsdialog.cpp \
     tab.cpp \
-    welcomedialog.cpp
+    welcomedialog.cpp \
+    clientservice.cpp \
+    clientthread.cpp
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc

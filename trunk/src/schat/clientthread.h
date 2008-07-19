@@ -16,13 +16,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CLIENTTHREAD_H_
+#define CLIENTTHREAD_H_
 
-#define SCHAT_VERSION    "0.1.0.233 TRUNK"
-#define SCHAT_VERSION_RC 0,1,0,233
+#include <QThread>
 
-static const int UpdateLevelQt   = 2;
-static const int UpdateLevelCore = 30;
+class ClientThread : public QThread
+{
+  Q_OBJECT
 
-#endif /*VERSION_H_*/
+public:
+  ClientThread(QObject *parent = 0);
+  ~ClientThread();
+  void run();
+};
+
+#endif /*CLIENTTHREAD_H_*/
