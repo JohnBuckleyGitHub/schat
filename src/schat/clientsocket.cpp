@@ -272,7 +272,7 @@ void ClientSocket::sendGreeting()
   else
     out << sChatFlagNone;
   
-  profile->toStream(out); // Записываем профиль в поток
+//  profile->toStream(out); // Записываем профиль в поток
     
   out.device()->seek(0);
   out << quint16(block.size() - 2);

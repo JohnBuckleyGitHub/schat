@@ -19,7 +19,7 @@
 #include <QtGui>
 
 #include "schatwindow.h"
-#include "server.h"
+//#include "server.h"
 #include "singleapplication.h"
 #include "version.h"
 

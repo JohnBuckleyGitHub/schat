@@ -28,7 +28,7 @@
 #include <QTime>
 
 #include "clientsocket.h"
-#include "server.h"
+//#include "server.h"
 #include "settingsdialog.h"
 
 #ifdef SCHAT_UPDATE
@@ -36,6 +36,7 @@
 #endif
 
 class AboutDialog;
+class AbstractProfile;
 class AbstractTab;
 class MainChannel;
 class Profile;
@@ -79,7 +80,7 @@ protected:
   
 public slots:
   void handleMessage(const QString& message);
-  void incomingDirectConnection(const QString &n, ServerSocket *socket);
+//  void incomingDirectConnection(const QString &n, ServerSocket *socket);
   void newDirectMessage();
   void newDirectParticipant(quint16 sex, const QStringList &info);
   void newMessage(const QString &nick, const QString &message);
@@ -135,10 +136,11 @@ private:
   void startNotice(int index);
   void uniqueNick();
   
+  AbstractProfile *m_profile;
   bool currentTrayIcon;
   ConnectionState state;
   MainChannel *mainChannel;
-  Profile *profile;
+//  Profile *profile;
   QAction *aboutAction;
   QAction *addTabAction;
   QAction *closeTabAction;
@@ -156,7 +158,7 @@ private:
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
   QPointer<ClientSocket> clientSocket;
-  QPointer<Server> daemon;
+//  QPointer<Server> daemon;
   QPointer<SettingsDialog> settingsDialog;
   QSplitter *splitter;
   QStandardItemModel model;

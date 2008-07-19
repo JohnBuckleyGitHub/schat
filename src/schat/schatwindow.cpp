@@ -20,8 +20,9 @@
 #include <QtNetwork>
 
 #include "aboutdialog.h"
+#include "abstractprofile.h"
 #include "directchannel.h"
-#include "directchannelserver.h"
+//#include "directchannelserver.h"
 #include "mainchannel.h"
 #include "profile.h"
 #include "protocol.h"
@@ -54,8 +55,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   statusbar     = new QStatusBar(this);
   sendButton    = new QToolButton(centralWidget);
   statusLabel   = new QLabel(this);
-  profile       = new Profile(this);
-  settings      = new Settings(profile, this);
+  m_profile     = new AbstractProfile(this);
+  settings      = new Settings(m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
   
@@ -121,7 +122,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   tabWidget->setTabIcon(0, mainChannel->icon);
   
   if (!settings->hideWelcome || settings->firstRun) {
-    welcomeDialog = new WelcomeDialog(settings, profile, this);
+    welcomeDialog = new WelcomeDialog(settings, m_profile, this);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!welcomeDialog->exec())
       mainChannel->displayChoiceServer(true);
@@ -132,13 +133,13 @@ SChatWindow::SChatWindow(QWidget *parent)
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
   
   // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
-  daemon = new Server(this);
-  if (daemon->start()) {
-    daemon->setLocalProfile(profile);
-    connect(daemon, SIGNAL(incomingDirectConnection(const QString &, ServerSocket *)), this, SLOT(incomingDirectConnection(const QString &, ServerSocket *)));
-  }
-  else
-    delete daemon;
+//  daemon = new Server(this);
+//  if (daemon->start()) {
+//    daemon->setLocalProfile(profile);
+//    connect(daemon, SIGNAL(incomingDirectConnection(const QString &, ServerSocket *)), this, SLOT(incomingDirectConnection(const QString &, ServerSocket *)));
+//  }
+//  else
+//    delete daemon;
   
   #ifdef SCHAT_UPDATE
   QTimer::singleShot(0, this, SLOT(update()));
@@ -189,23 +190,23 @@ void SChatWindow::handleMessage(const QString &/*message*/)
 /** [public slots]
  * 
  */
-void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
-{
-  int index = tabIndex(QChar('#') + n);
-  
-  if (index == -1) {
-    Profile *p = new Profile(socket->sex(), socket->participantInfo(), this);
-    DirectChannelServer *ch = new DirectChannelServer(profile, socket, this);
-    ch->icon.addFile(Profile::sexIconString(socket->sex()));
-    index = tabWidget->addTab(ch, ch->icon, QChar('#') + n);
-    tabWidget->setTabToolTip(index, p->toolTip());
-    p->deleteLater();    
-  }
-  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(index)))
-    channel->changeSocket(socket);  
-    
-  tabWidget->setCurrentIndex(index);
-}
+//void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
+//{
+////  int index = tabIndex(QChar('#') + n); FIXME Восстановить работу `DirectChannelServer`
+////  
+////  if (index == -1) {
+////    Profile *p = new Profile(socket->sex(), socket->participantInfo(), this);
+////    DirectChannelServer *ch = new DirectChannelServer(profile, socket, this);
+////    ch->icon.addFile(Profile::sexIconString(socket->sex()));
+////    index = tabWidget->addTab(ch, ch->icon, QChar('#') + n);
+////    tabWidget->setTabToolTip(index, p->toolTip());
+////    p->deleteLater();    
+////  }
+////  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(index)))
+////    channel->changeSocket(socket);  
+////    
+////  tabWidget->setCurrentIndex(index);
+//}
 
 
 /** [public slots]
@@ -233,14 +234,14 @@ void SChatWindow::newDirectMessage()
  */
 void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
 {
-  AbstractTab *channel = static_cast<AbstractTab *>(sender());
-  Profile *p = new Profile(sex, info, this);
-  int index = tabWidget->indexOf(channel);
-  channel->icon.addFile(Profile::sexIconString(sex));
-  tabWidget->setTabText(index, QChar('#') + info.at(0));
-  tabWidget->setTabToolTip(index, p->toolTip());
-  tabWidget->setTabIcon(index, channel->icon);
-  p->deleteLater();  
+//  AbstractTab *channel = static_cast<AbstractTab *>(sender());
+//  Profile *p = new Profile(sex, info, this);
+//  int index = tabWidget->indexOf(channel);
+//  channel->icon.addFile(":/images/" + m_profile->gender(quint8(sex)) + ".png");
+//  tabWidget->setTabText(index, QChar('#') + info.at(0));
+//  tabWidget->setTabToolTip(index, p->toolTip());
+//  tabWidget->setTabIcon(index, channel->icon);
+//  p->deleteLater();  
 }
 
 
@@ -259,34 +260,34 @@ void SChatWindow::newMessage(const QString &/*nick*/, const QString &/*message*/
  */
 void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
 {
-  QStandardItem *item = new QStandardItem(QIcon(Profile::sexIconString(sex)), info.at(0));
-  Profile *p = new Profile(sex, info, this);
-  item->setData(sex, Qt::UserRole + 1);
-  item->setData(info, Qt::UserRole + 2);
-  item->setToolTip(p->toolTip());  
-  p->deleteLater();
-  
-  // Свой ник выделяем жирным шрифтом
-  if (info.at(0) == profile->nick()) {
-    QFont font;
-    font.setBold(true);
-    item->setFont(font);
-  }
-  
-  model.appendRow(item);
-  model.sort(0);
-  
-  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
-  if (echo) {
-    int index = tabIndex(info.at(0));
-    if (index != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-      if (tab->type == AbstractTab::Private)
-        tab->browser->msgNewParticipant(sex, info.at(0));
-    }
-    
-    mainChannel->browser->msgNewParticipant(sex, info.at(0));
-  }
+//  QStandardItem *item = new QStandardItem(QIcon(":/images/" + m_profile->gender() + ".png"), info.at(0));
+//  Profile *p = new Profile(sex, info, this);
+//  item->setData(sex, Qt::UserRole + 1);
+//  item->setData(info, Qt::UserRole + 2);
+//  item->setToolTip(p->toolTip());  
+//  p->deleteLater();
+//  
+//  // Свой ник выделяем жирным шрифтом
+//  if (info.at(0) == m_profile->nick()) {
+//    QFont font;
+//    font.setBold(true);
+//    item->setFont(font);
+//  }
+//  
+//  model.appendRow(item);
+//  model.sort(0);
+//  
+//  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
+//  if (echo) {
+//    int index = tabIndex(info.at(0));
+//    if (index != -1) {
+//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+//      if (tab->type == AbstractTab::Private)
+//        tab->browser->msgNewParticipant(sex, info.at(0));
+//    }
+//    
+//    mainChannel->browser->msgNewParticipant(sex, info.at(0));
+//  }
 }
 
 
@@ -295,30 +296,30 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
  */
 void SChatWindow::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
 {
-  int index = tabIndex(nick);
-  QStandardItem *item = findItem(nick);
-  Tab *tab = 0;
-  
-  if (index == -1 ) {
-    if (item) {
-      Profile *p = profileFromItem(item);
-      tab = new Tab(this);
-      tab->icon.addFile(Profile::sexIconString(profile->sex()));
-      tab->browser->setChannel(nick);
-      index = tabWidget->addTab(tab, tab->icon, nick);
-      tabWidget->setCurrentIndex(index);
-      tabWidget->setTabToolTip(index, p->toolTip());
-      p->deleteLater();
-    }
-  }
-  else 
-    tab = qobject_cast<Tab *>(tabWidget->widget(index));
-  
-  if (tab)
-    tab->browser->msgNewMessage(sender, message);
-  
-  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
-    startNotice(index);
+//  int index = tabIndex(nick);
+//  QStandardItem *item = findItem(nick);
+//  Tab *tab = 0;
+//  
+//  if (index == -1 ) {
+//    if (item) {
+//      Profile *p = profileFromItem(item);
+//      tab = new Tab(this);
+//      tab->icon.addFile(":/images/" + m_profile->gender() + ".png");
+//      tab->browser->setChannel(nick);
+//      index = tabWidget->addTab(tab, tab->icon, nick);
+//      tabWidget->setCurrentIndex(index);
+//      tabWidget->setTabToolTip(index, p->toolTip());
+//      p->deleteLater();
+//    }
+//  }
+//  else 
+//    tab = qobject_cast<Tab *>(tabWidget->widget(index));
+//  
+//  if (tab)
+//    tab->browser->msgNewMessage(sender, message);
+//  
+//  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
+//    startNotice(index);
 }
 
 
@@ -400,8 +401,8 @@ void SChatWindow::addTab()
   
   if (index > 0)
     tabWidget->setCurrentIndex(index);
-  else
-    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
+//  else FIXME восстановить работоспособность
+//    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
 }
 
 
@@ -410,24 +411,24 @@ void SChatWindow::addTab()
  */
 void SChatWindow::addTab(const QModelIndex &i)
 {
-  QStandardItem *item = model.itemFromIndex(i);
-  QString nick = item->text();
-  if (nick == profile->nick())
-    return;
-  
-  int index = tabIndex(nick);
-  
-  if (index == -1) {
-    Profile *p = profileFromItem(item);
-    Tab *tab = new Tab(this);
-    tab->icon.addFile(Profile::sexIconString(p->sex()));
-    tab->browser->setChannel(nick);
-    index = tabWidget->addTab(tab, tab->icon, nick);
-    tabWidget->setTabToolTip(index, p->toolTip());
-    p->deleteLater();
-  }
-  
-  tabWidget->setCurrentIndex(index);
+//  QStandardItem *item = model.itemFromIndex(i);
+//  QString nick = item->text();
+//  if (nick == m_profile->nick())
+//    return;
+//  
+//  int index = tabIndex(nick);
+//  
+//  if (index == -1) {
+//    Profile *p = profileFromItem(item);
+//    Tab *tab = new Tab(this);
+//    tab->icon.addFile(":/images/" + m_profile->gender(quint8(p->sex())) + ".png");
+//    tab->browser->setChannel(nick);
+//    index = tabWidget->addTab(tab, tab->icon, nick);
+//    tabWidget->setTabToolTip(index, p->toolTip());
+//    p->deleteLater();
+//  }
+//  
+//  tabWidget->setCurrentIndex(index);
 }
 
 
@@ -465,38 +466,38 @@ void SChatWindow::changedNick(quint16 sex, const QStringList &list)
  */
 void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo)
 {
-  Profile *p = 0;
-  QString nick = list.at(0);
-  QString name = list.at(1);
-  QStandardItem *item = findItem(nick);
-  
-  if (item) {
-    p = profileFromItem(item);
-    p->setSex(sex);
-    p->setNick(nick);
-    p->setFullName(name);
-    item->setIcon(QIcon(Profile::sexIconString(sex)));
-    item->setToolTip(p->toolTip());
-    item->setData(sex, Qt::UserRole + 1);
-    item->setData(p->toList(), Qt::UserRole + 2);
-    
-    int index = tabIndex(nick);
-    if (index != -1) {
-      tabWidget->setTabToolTip(index, p->toolTip());
-      
-      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-      tab->icon.addFile(Profile::sexIconString(sex));
-      
-      if (!tab->notice)
-        tabWidget->setTabIcon(index, tab->icon);
-      
-      if (echo)
-        tab->browser->msgChangedProfile(sex, nick);
-    }
-    
-    if (echo)
-      mainChannel->browser->msgChangedProfile(sex, nick);
-  }
+//  Profile *p = 0;
+//  QString nick = list.at(0);
+//  QString name = list.at(1);
+//  QStandardItem *item = findItem(nick);
+//  
+//  if (item) {
+//    p = profileFromItem(item);
+//    p->setSex(sex);
+//    p->setNick(nick);
+//    p->setFullName(name);
+//    item->setIcon(QIcon(":/images/" + AbstractProfile::gender(quint8(sex)) + ".png"));
+//    item->setToolTip(p->toolTip());
+//    item->setData(sex, Qt::UserRole + 1);
+//    item->setData(p->toList(), Qt::UserRole + 2);
+//    
+//    int index = tabIndex(nick);
+//    if (index != -1) {
+//      tabWidget->setTabToolTip(index, p->toolTip());
+//      
+//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+////      tab->icon.addFile(Profile::sexIconString(sex));
+//      
+//      if (!tab->notice)
+//        tabWidget->setTabIcon(index, tab->icon);
+//      
+//      if (echo)
+//        tab->browser->msgChangedProfile(sex, nick);
+//    }
+//    
+//    if (echo)
+//      mainChannel->browser->msgChangedProfile(sex, nick);
+//  }
 }
 
 
@@ -604,36 +605,36 @@ void SChatWindow::messageClicked()
  *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
 void SChatWindow::newConnection()
-{
-  if (!clientSocket) {
-    clientSocket = new ClientSocket(this);
-    clientSocket->setProfile(profile);
-    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), SLOT(newParticipant(quint16, const QStringList &, bool)));
-    connect(clientSocket, SIGNAL(participantLeft(const QString &, const QString &)), SLOT(participantLeft(const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), SLOT(newMessage(const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
-    connect(clientSocket, SIGNAL(readyForUse()), SLOT(readyForUse()));
-    connect(clientSocket, SIGNAL(disconnected()), SLOT(disconnected()));
-    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(connectionError(QAbstractSocket::SocketError)));
-    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), SLOT(changedNick(quint16, const QStringList &)));
-    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), SLOT(changedProfile(quint16, const QStringList &, bool)));
-    connect(clientSocket, SIGNAL(genericMessage(const QString &)), SLOT(genericMessage(const QString &)));
-  }
-  else {
-    state = Ignore;
-    clientSocket->quit();
-  }
-  
-  state = WaitingForConnected;
-  QString server = settings->network.server();
-  
-  if (settings->network.isNetwork())
-    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(settings->network.name()));
-  else
-    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
-  
-  clientSocket->connectToHost(server, settings->network.port());
+{ // FIXME добавить поток
+//  if (!clientSocket) {
+//    clientSocket = new ClientSocket(this);
+//    clientSocket->setProfile(profile);
+//    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), SLOT(newParticipant(quint16, const QStringList &, bool)));
+//    connect(clientSocket, SIGNAL(participantLeft(const QString &, const QString &)), SLOT(participantLeft(const QString &, const QString &)));
+//    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
+//    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), SLOT(newMessage(const QString &, const QString &)));
+//    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
+//    connect(clientSocket, SIGNAL(readyForUse()), SLOT(readyForUse()));
+//    connect(clientSocket, SIGNAL(disconnected()), SLOT(disconnected()));
+//    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(connectionError(QAbstractSocket::SocketError)));
+//    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), SLOT(changedNick(quint16, const QStringList &)));
+//    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), SLOT(changedProfile(quint16, const QStringList &, bool)));
+//    connect(clientSocket, SIGNAL(genericMessage(const QString &)), SLOT(genericMessage(const QString &)));
+//  }
+//  else {
+//    state = Ignore;
+//    clientSocket->quit();
+//  }
+//  
+//  state = WaitingForConnected;
+//  QString server = settings->network.server();
+//  
+//  if (settings->network.isNetwork())
+//    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(settings->network.name()));
+//  else
+//    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+//  
+//  clientSocket->connectToHost(server, settings->network.port());
 }
 
 
@@ -702,8 +703,9 @@ void SChatWindow::returnPressed()
     ch->sendText(text);
   }
   else if (tab->type == AbstractTab::DirectServer) {
-    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
-    ch->sendText(text);
+//    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
+//    ch->sendText(text);
+    ;
   }
   else if (state == Connected) {
     QString channel;
@@ -752,7 +754,7 @@ void SChatWindow::settingsChanged(int notify)
       break;
       
     case Settings::ByeMsgChanged:
-      clientSocket->send(sChatOpcodeSendByeMsg, profile->byeMsg());
+      clientSocket->send(sChatOpcodeSendByeMsg, m_profile->byeMsg());
       break;
 
     #ifdef SCHAT_UPDATE
@@ -797,7 +799,7 @@ void SChatWindow::settingsPage(int page)
     show();
   
   if (!settingsDialog) {
-    settingsDialog = new SettingsDialog(profile, settings, this);
+    settingsDialog = new SettingsDialog(m_profile, settings, this);
     settingsDialog->show();
   }
   
@@ -858,8 +860,8 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   // команда /nick
   else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
     QString newNick = text.mid(text.indexOf(QChar(' ')));
-    if (Profile::isValidNick(newNick) && profile->nick() != newNick) {
-      profile->setNick(newNick);
+    if (AbstractProfile::isValidNick(newNick) && m_profile->nick() != newNick) {
+      m_profile->setNick(newNick);
       changedProfileSettings();
     }
   }
@@ -898,10 +900,10 @@ int SChatWindow::tabIndex(const QString &s, int start) const
 /** [private]
  * 
  */
-Profile* SChatWindow::profileFromItem(const QStandardItem *item)
-{
-  return new Profile(quint8(item->data(Qt::UserRole + 1).toUInt()), item->data(Qt::UserRole + 2).toStringList(), this);
-}
+//Profile* SChatWindow::profileFromItem(const QStandardItem *item)
+//{
+//  return new Profile(quint8(item->data(Qt::UserRole + 1).toUInt()), item->data(Qt::UserRole + 2).toStringList(), this);
+//}
 
 
 /** [private]
@@ -942,11 +944,11 @@ void SChatWindow::changedNetworkSettings()
  */
 void SChatWindow::changedProfileSettings()
 {
-  if (state == Connected) {
-    QStringList list;
-    list << profile->nick() << profile->fullName();
-    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
-  }  
+//  if (state == Connected) { FIXME восстановить изменение профиля в настройках
+//    QStringList list;
+//    list << profile->nick() << profile->fullName();
+//    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
+//  }  
 }
 
 
@@ -1111,7 +1113,7 @@ void SChatWindow::removeConnection()
   switch (err) {
     case sChatErrorBadNickName:
       state = Stopped;
-      mainChannel->browser->msgBadNickName(profile->nick());
+      mainChannel->browser->msgBadNickName(m_profile->nick());
       break;
       
     case sChatErrorNickAlreadyUse:
@@ -1187,5 +1189,5 @@ void SChatWindow::startNotice(int index)
  */
 void SChatWindow::uniqueNick()
 {
-  profile->setNick(profile->nick() + QString().setNum(qrand() % 99));
+  m_profile->setNick(m_profile->nick() + QString().setNum(qrand() % 99));
 }
