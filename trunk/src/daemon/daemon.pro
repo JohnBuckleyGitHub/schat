@@ -25,7 +25,10 @@ HEADERS = \
     protocol.h \
     profile.h \
     abstractprofile.h \
-    userunit.h \    
+    userunit.h \
+    daemonsettings.h \
+    log.h \
+    channellog.h \
     
 SOURCES = \
     main.cpp \
@@ -34,12 +37,17 @@ SOURCES = \
     profile.cpp \
     abstractprofile.cpp \
     userunit.cpp \
+    daemonsettings.cpp \
+    log.cpp \
+    channellog.cpp \
     
 DEPENDPATH  += . \
-               ../common
+               ../common \
+               ../schatd
                 
 INCLUDEPATH += . \
-               ../common
+               ../common \
+               ../schatd
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/daemon/debug/rcc
