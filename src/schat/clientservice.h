@@ -16,13 +16,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CLIENTSERVICE_H_
+#define CLIENTSERVICE_H_
 
-#define SCHAT_VERSION    "0.1.0.233 TRUNK"
-#define SCHAT_VERSION_RC 0,1,0,233
+#include <QObject>
+#include <QTcpSocket>
 
-static const int UpdateLevelQt   = 2;
-static const int UpdateLevelCore = 30;
+class ClientService : public QObject
+{
+  Q_OBJECT
 
-#endif /*VERSION_H_*/
+public:
+  ClientService(QObject *parent = 0);
+  ~ClientService();
+   
+//public slots:
+//   void readyRead();
+//   void connected();
+//   void bytesWritten(qint64);
+
+private:
+  QTcpSocket m_socket;
+};
+
+#endif /*CLIENTSERVICE_H_*/
