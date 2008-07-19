@@ -17,14 +17,15 @@
 
 TEMPLATE = app
 QT += network
-CONFIG += console
+CONFIG += console warn_on
 HEADERS = \
     version.h \
     daemon.h \
     daemonservice.h \
     protocol.h \
     profile.h \
-    abstractprofile.h \    
+    abstractprofile.h \
+    userunit.h \    
     
 SOURCES = \
     main.cpp \
@@ -32,6 +33,7 @@ SOURCES = \
     daemonservice.cpp \
     profile.cpp \
     abstractprofile.cpp \
+    userunit.cpp \
     
 DEPENDPATH  += . \
                ../common

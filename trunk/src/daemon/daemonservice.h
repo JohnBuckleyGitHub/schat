@@ -31,15 +31,19 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
+  void accessDenied(quint16 reason = 0);
+  void accessGraded();
   void send(quint16 opcode);
   void send(quint16 opcode, quint16 err);
   
 signals:
   void greeting(const QStringList &list);
+  void leave(const QString &nick);
   
 public slots:
-  void readyRead();
   void disconnected();
+  void newUser(const QStringList &list);
+  void readyRead();
 
 private:
   bool opcodeGreeting();

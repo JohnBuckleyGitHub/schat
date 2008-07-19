@@ -76,7 +76,4 @@ private:
   bool m_male;
 };
 
-
-
-
 #endif /*ABSTRACTPROFILE_H_*/
