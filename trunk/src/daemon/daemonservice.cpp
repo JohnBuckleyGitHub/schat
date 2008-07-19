@@ -39,6 +39,8 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
     m_stream.setVersion(sChatStreamVersion);
+    QTimer::singleShot(16000, this, SLOT(check()));
+    
   }
   else
     deleteLater();
@@ -173,6 +175,22 @@ void DaemonService::readyRead()
       m_socket->disconnectFromHost();
       return;
     }
+  }
+}
+
+
+/** [private slots]
+ * Слот вызывается спустя 16 секунд после вызова конструктора,
+ * если за это время `m_accepted` не равен `true`, разрываем соединение,
+ * т.к. не произошло рукопожатия за отведённое время.
+ */
+void DaemonService::check()
+{
+  if (!m_accepted) {
+    if (m_socket->state() == QAbstractSocket::ConnectedState)
+      m_socket->disconnectFromHost();
+    else
+      deleteLater();
   }
 }
 

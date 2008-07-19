@@ -606,6 +606,13 @@ void SChatWindow::messageClicked()
  */
 void SChatWindow::newConnection()
 { // FIXME добавить поток
+  
+  if (!m_clientThread) {
+    QString server = settings->network.server();
+    QStringList profile = m_profile->pack();
+    m_clientThread = new ClientThread(profile, server, settings->network.port());
+    m_clientThread->start();
+  }
 //  if (!clientSocket) {
 //    clientSocket = new ClientSocket(this);
 //    clientSocket->setProfile(profile);

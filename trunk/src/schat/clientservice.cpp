@@ -27,9 +27,9 @@
  * 
  */
 ClientService::ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent)
-  :QObject(parent)
+  :QObject(parent), m_server(server), m_port(port)
 {
-
+  m_profile = new AbstractProfile(profile, this);
 }
 
 
@@ -39,4 +39,19 @@ ClientService::ClientService(const QStringList &profile, const QString &server, 
 ClientService::~ClientService()
 {
   qDebug() << "ClientService::~ClientService()";
+}
+
+
+/** [public]
+ * 
+ */
+bool ClientService::connectToHost()
+{
+  qDebug() << "ClientService::access()";
+  
+  m_socket.connectToHost(m_server, m_port);
+  if (!m_socket.waitForConnected(5000))
+    return false;
+  
+  return true;
 }
