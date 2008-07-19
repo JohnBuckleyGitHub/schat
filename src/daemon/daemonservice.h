@@ -44,6 +44,9 @@ public slots:
   void disconnected();
   void newUser(const QStringList &list);
   void readyRead();
+  
+private slots:
+  void check();
 
 private:
   bool opcodeGreeting();

@@ -31,6 +31,7 @@ class ClientService : public QObject
 public:
   ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent = 0);
   ~ClientService();
+  bool connectToHost();
    
 //public slots:
 //   void readyRead();
@@ -39,7 +40,9 @@ public:
 
 private:
   AbstractProfile *m_profile;
+  QString m_server;
   QTcpSocket m_socket;
+  quint16 m_port;
 };
 
 #endif /*CLIENTSERVICE_H_*/

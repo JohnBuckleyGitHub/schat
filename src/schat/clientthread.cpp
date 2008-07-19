@@ -51,5 +51,8 @@ ClientThread::~ClientThread()
  */
 void ClientThread::run()
 {
+  qDebug() << "ClientThread::run()";
+  m_service->connectToHost();
+  
   exec();
 }
