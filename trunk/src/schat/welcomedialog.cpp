@@ -16,7 +16,7 @@
 /** [public]
  * Конструктор
  */
-WelcomeDialog::WelcomeDialog(Settings *settings, Profile *profile, QWidget *parent)
+WelcomeDialog::WelcomeDialog(Settings *settings, AbstractProfile *profile, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);

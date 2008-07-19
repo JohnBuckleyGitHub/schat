@@ -20,20 +20,27 @@
 #include <QtNetwork>
 
 #include "clientthread.h"
+#include "clientservice.h"
 
 
 /** [public]
  * 
  */
-ClientThread::ClientThread(QObject *_parent) : QThread(_parent){
-
-};
+ClientThread::ClientThread(const QStringList &profile, const QString &server, quint16 port, QObject *parent)
+  : QThread(parent)
+{
+  m_service = new ClientService(profile, server, port);
+}
 
 
 /** [public]
  * 
  */
-ClientThread::~ClientThread(){
+ClientThread::~ClientThread()
+{
+  if (m_service)
+    delete m_service;
+  
    exit();
    wait();
 }
@@ -42,6 +49,7 @@ ClientThread::~ClientThread(){
 /** [public]
  * 
  */
-void ClientThread::run(){
-   exec();
+void ClientThread::run()
+{
+  exec();
 }

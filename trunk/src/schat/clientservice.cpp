@@ -19,13 +19,14 @@
 #include <QtCore>
 #include <QtNetwork>
 
+#include "abstractprofile.h"
 #include "clientservice.h"
 
 
 /** [public]
  * 
  */
-ClientService::ClientService(QObject *parent)
+ClientService::ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent)
   :QObject(parent)
 {
 
@@ -37,5 +38,5 @@ ClientService::ClientService(QObject *parent)
  */
 ClientService::~ClientService()
 {
-
+  qDebug() << "ClientService::~ClientService()";
 }

@@ -12,7 +12,7 @@
 class InterfaceSettings;
 class NetworkSettings;
 class NetworkWidget;
-class Profile;
+class AbstractProfile;
 class ProfileSettings;
 class ProfileWidget;
 class QCheckBox;
@@ -45,7 +45,7 @@ public:
     UpdatePage
   };
   
-  SettingsDialog(Profile *p, Settings *s, QWidget *parent = 0);
+  SettingsDialog(AbstractProfile *p, Settings *s, QWidget *parent = 0);
   void setPage(int page = 0);
 
 public slots:
@@ -80,7 +80,7 @@ class ProfileSettings : public QWidget
   Q_OBJECT
   
 public:
-  ProfileSettings(Settings *settings, Profile *profile, QWidget *parent = 0);
+  ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent = 0);
   void reset();
   void save();
   
@@ -91,7 +91,7 @@ private:
   ProfileWidget *m_profileWidget;
   QLineEdit *m_byeMsgEdit;
   Settings *m_settings;
-  Profile *m_profile;
+  AbstractProfile *m_profile;
 };
 
 

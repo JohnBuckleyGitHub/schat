@@ -21,14 +21,19 @@
 
 #include <QThread>
 
+class ClientService;
+
 class ClientThread : public QThread
 {
   Q_OBJECT
 
 public:
-  ClientThread(QObject *parent = 0);
+  ClientThread(const QStringList &profile, const QString &server, quint16 port, QObject *parent = 0);
   ~ClientThread();
   void run();
+  
+private:
+  ClientService *m_service;
 };
 
 #endif /*CLIENTTHREAD_H_*/

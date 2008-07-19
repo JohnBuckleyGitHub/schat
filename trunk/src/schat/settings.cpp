@@ -5,6 +5,7 @@
 
 #include <QtGui>
 
+#include "abstractprofile.h"
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
@@ -14,10 +15,10 @@
 /** [public]
  * 
  */
-Settings::Settings(Profile *p, QObject *parent)
+Settings::Settings(AbstractProfile *p, QObject *parent)
   : QObject(parent)
 {
-  profile = p;
+  m_profile = p;
   chat    = static_cast<SChatWindow *>(parent);
   needCreateNetworkList = true;
 }
@@ -63,10 +64,10 @@ void Settings::read()
   createServerList(s);
   
   s.beginGroup("Profile");
-  profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
-  profile->setFullName(s.value("Name", "").toString());                 // Настоящие имя
-  profile->setSex(quint8(s.value("Sex", 0).toUInt()));                  // Пол
-  profile->setByeMsg(s.value("Bye", "IMPOMEZIA Simple Chat").toString());
+  m_profile->setNick(s.value("Nick", QDir::home().dirName()).toString()); // Ник
+  m_profile->setFullName(s.value("Name", "").toString());                 // Настоящие имя
+  m_profile->setGender(s.value("Gender", "male").toString());             // Пол
+  m_profile->setByeMsg(s.value("Bye", "IMPOMEZIA Simple Chat").toString());
   s.endGroup();
   
   #ifdef SCHAT_UPDATE
@@ -101,10 +102,10 @@ void Settings::write()
   saveRecentServers(s);
   
   s.beginGroup("Profile");
-  s.setValue("Nick", profile->nick());
-  s.setValue("Name", profile->fullName());
-  s.setValue("Sex", profile->sex());
-  s.setValue("Bye", profile->byeMsg());
+  s.setValue("Nick", m_profile->nick());
+  s.setValue("Name", m_profile->fullName());
+  s.setValue("Gender", m_profile->gender());
+  s.setValue("Bye", m_profile->byeMsg());
   s.endGroup();
   
   #ifdef SCHAT_UPDATE

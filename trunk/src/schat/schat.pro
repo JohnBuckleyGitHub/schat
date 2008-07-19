@@ -6,10 +6,10 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH  += . \
                ../common \
-               ../schatd               
+                            
 INCLUDEPATH += . \
                ../common \
-               ../schatd
+               
 QT += network
 CONFIG += console
 #DEFINES += SCHAT_DEBUG SCHAT_CLIENT
@@ -23,20 +23,15 @@ HEADERS += \
     channellog.h \
     chatbrowser.h \
     clientsocket.h \
-    daemonsettings.h \
     directchannel.h \
-    directchannelserver.h \
-    log.h \
     mainchannel.h \
     network.h \
     networkreader.h \
     networkwidget.h \
-    profile.h \
+    abstractprofile.h \
     profilewidget.h \
     protocol.h \
     schatwindow.h \
-    server.h \
-    serversocket.h \
     settings.h \
     settingsdialog.h \
     tab.h \
@@ -51,20 +46,15 @@ SOURCES += \
     channellog.cpp \
     chatbrowser.cpp \
     clientsocket.cpp \
-    daemonsettings.cpp \
     directchannel.cpp \
-    directchannelserver.cpp \
-    log.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \
     networkreader.cpp \
     networkwidget.cpp \
-    profile.cpp \
+    abstractprofile.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
-    server.cpp \
-    serversocket.cpp \
     settings.cpp \
     settingsdialog.cpp \
     tab.cpp \

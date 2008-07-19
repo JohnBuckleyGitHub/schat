@@ -8,7 +8,7 @@
 
 #include <QWidget>
 
-class Profile;
+class AbstractProfile;
 class QComboBox;
 class QLabel;
 class QLineEdit;
@@ -17,7 +17,7 @@ class ProfileWidget : public QWidget {
   Q_OBJECT
 
 public:
-  ProfileWidget(Profile *p, QWidget *parent = 0);
+  ProfileWidget(AbstractProfile *p, QWidget *parent = 0);
   inline bool isModifiled() { return modifiled; }
   void reset();
   void save();
@@ -30,7 +30,7 @@ private slots:
   
 private:
   bool modifiled;
-  Profile *profile;
+  AbstractProfile *profile;
   QComboBox *sexBox;
   QLabel *nameLabel;
   QLabel *nickLabel;

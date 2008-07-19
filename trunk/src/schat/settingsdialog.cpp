@@ -10,12 +10,13 @@
 #include "schatwindow.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "abstractprofile.h"
 
 
 /** [SettingsDialog/public]
  * Конструктор SettingsDialog
  */
-SettingsDialog::SettingsDialog(Profile *profile, Settings *settings, QWidget *parent)
+SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -151,7 +152,7 @@ void SettingsDialog::reset()
 /** [ProfileSettings/public]
  * Конструктор `ProfileSettings`
  */
-ProfileSettings::ProfileSettings(Settings *settings, Profile *profile, QWidget *parent)
+ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);

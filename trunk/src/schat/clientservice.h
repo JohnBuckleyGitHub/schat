@@ -22,12 +22,14 @@
 #include <QObject>
 #include <QTcpSocket>
 
+class AbstractProfile;
+
 class ClientService : public QObject
 {
   Q_OBJECT
 
 public:
-  ClientService(QObject *parent = 0);
+  ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent = 0);
   ~ClientService();
    
 //public slots:
@@ -36,6 +38,7 @@ public:
 //   void bytesWritten(qint64);
 
 private:
+  AbstractProfile *m_profile;
   QTcpSocket m_socket;
 };
 

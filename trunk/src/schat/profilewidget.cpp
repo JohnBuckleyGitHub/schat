@@ -5,11 +5,11 @@
 
 #include <QtGui>
 
-#include "profile.h"
+#include "abstractprofile.h"
 #include "profilewidget.h"
 
 
-ProfileWidget::ProfileWidget(Profile *p, QWidget *parent)
+ProfileWidget::ProfileWidget(AbstractProfile *p, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -24,10 +24,14 @@ ProfileWidget::ProfileWidget(Profile *p, QWidget *parent)
   QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
   
   sexBox->addItem(QIcon(":/images/male.png"), tr("Мужской"));
-  sexBox->addItem(QIcon(":/images/female.png"), tr("Женский"));  
-  sexBox->setCurrentIndex(profile->sex());
-  nickEdit->setMaxLength(64);
-  nameEdit->setMaxLength(255);
+  sexBox->addItem(QIcon(":/images/female.png"), tr("Женский"));
+  if (profile->isMale())
+    sexBox->setCurrentIndex(0);
+  else
+    sexBox->setCurrentIndex(1);
+  
+  nickEdit->setMaxLength(AbstractProfile::MaxNickLength);
+  nameEdit->setMaxLength(AbstractProfile::MaxNameLength);
   
   connect(nickEdit, SIGNAL(textChanged(const QString &)), this, SLOT(validateNick(const QString &)));
   
@@ -71,10 +75,10 @@ void ProfileWidget::save()
     modifiled = true;
   }
     
-  if (profile->sex() != quint8(sexBox->currentIndex())) {
-    profile->setSex(quint8(sexBox->currentIndex()));
-    modifiled = true;
-  }
+//  if (profile->sex() != quint8(sexBox->currentIndex())) {
+//    profile->setSex(quint8(sexBox->currentIndex()));
+//    modifiled = true;
+//  } // FIXME восстановить функциональность выбора пола
 }
 
 
@@ -84,7 +88,7 @@ void ProfileWidget::save()
 void ProfileWidget::validateNick(const QString &text)
 {
   QPalette p = nickEdit->palette();
-  bool b     = Profile::isValidNick(text);
+  bool b     = AbstractProfile::isValidNick(text);
   
   if (b) {
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);

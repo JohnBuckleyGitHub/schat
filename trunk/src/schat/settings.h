@@ -13,7 +13,7 @@
 #include "network.h"
 
 class SChatWindow;
-class Profile;
+class AbstractProfile;
 
 class Settings : public QObject {
   Q_OBJECT
@@ -28,7 +28,7 @@ public:
     ByeMsgChanged
   };
   
-  Settings(Profile *p, QObject *parent);
+  Settings(AbstractProfile *p, QObject *parent);
   inline void notify(int notify) { emit changed(notify); }
   void notify(int notify, int index);
   void read();
@@ -56,7 +56,7 @@ private:
   void createServerList(QSettings &s);
   void saveRecentServers(QSettings &s);
   
-  Profile *profile;
+  AbstractProfile *m_profile;
   SChatWindow *chat;
 };
 
