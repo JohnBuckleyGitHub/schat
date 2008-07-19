@@ -58,6 +58,30 @@ DaemonService::~DaemonService()
 
 
 /** [public]
+ * Клиент получил отказ в доступе, `quint16 reason` - причина отказа.
+ * Отсылаем ошибку и разрываем соединение.
+ */
+void DaemonService::accessDenied(quint16 reason)
+{
+  send(sChatOpcodeError, reason);
+  m_socket->disconnectFromHost();
+}
+
+
+/** [public]
+ * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
+ * и устанавливаем флаг `m_accepted` в `true`.
+ */
+void DaemonService::accessGraded()
+{
+  if (!m_accepted) {
+    send(sChatOpcodeGreetingOk);
+    m_accepted = true;
+  }
+}
+
+
+/** [public]
  * ОПКОДЫ:
  *   sChatOpcodeGreetingOk
  */
@@ -96,7 +120,21 @@ void DaemonService::send(quint16 opcode, quint16 err)
 void DaemonService::disconnected()
 {
   qDebug() << "DaemonService::disconnected()";
+  
+  if (m_accepted)
+    emit leave(m_profile->nick());
+  
   deleteLater();
+}
+
+
+/** [public slots]
+ * 
+ */
+void DaemonService::newUser(const QStringList &list)
+{
+  qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
+  
 }
 
 
@@ -126,9 +164,7 @@ void DaemonService::readyRead()
       ;
     }
     else if (m_opcode == sChatOpcodeGreeting) {
-      if (opcodeGreeting())
-        m_accepted = true;
-      else {
+      if (!opcodeGreeting()) {
         m_socket->disconnectFromHost();
         return;
       }
@@ -177,9 +213,7 @@ bool DaemonService::opcodeGreeting()
     emit appendDirectParticipant(m_profile->nick());
   else
   #endif
-  emit greeting(profile);
-    
-  send(sChatOpcodeGreetingOk); // FIXME поместить в положеное место.
+  emit greeting(m_profile->pack());
   
   return true;
 }

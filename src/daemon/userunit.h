@@ -16,35 +16,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DAEMON_H_
-#define DAEMON_H_
+#ifndef USERUNIT_H_
+#define USERUNIT_H_
 
-#include <QTcpServer>
-#include <QHash>
+class AbstractProfile;
+class DaemonService;
 
-class UserUnit;
-
-class Daemon : public QObject
-{
-  Q_OBJECT
-
+class UserUnit {
+  
 public:
-  Daemon(QObject *parent = 0);
-  bool start();
+  UserUnit();
+  UserUnit(const QStringList &list, DaemonService *service = 0);
+  ~UserUnit();
+  inline AbstractProfile* profile() { return m_profile; }
+  inline DaemonService* service()   { return m_service; }
   
-signals:
-  void newUser(const QStringList &list);
-
-public slots:
-  void incomingConnection();
-  
-private slots:
-  void greeting(const QStringList &list);
-  void userLeave(const QString &nick);
-
 private:
-  QTcpServer m_server;
-  QHash<QString, UserUnit *> m_users;
+  AbstractProfile *m_profile;
+  DaemonService *m_service;
 };
 
-#endif /*DAEMON_H_*/
+#endif /*USERUNIT_H_*/
