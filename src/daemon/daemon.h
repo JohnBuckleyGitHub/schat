@@ -22,6 +22,8 @@
 #include <QTcpServer>
 #include <QHash>
 
+class ChannelLog;
+class DaemonSettings;
 class UserUnit;
 
 class Daemon : public QObject
@@ -43,8 +45,11 @@ private slots:
   void userLeave(const QString &nick);
 
 private:
-  QTcpServer m_server;
+  ChannelLog *m_channelLog;
+  ChannelLog *m_privateLog;
+  DaemonSettings *m_settings;
   QHash<QString, UserUnit *> m_users;
+  QTcpServer m_server;
 };
 
 #endif /*DAEMON_H_*/
