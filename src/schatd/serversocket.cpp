@@ -33,7 +33,7 @@ ServerSocket::ServerSocket(QObject *parent)
 {
   m_state = sChatStateWaitingForGreeting;
   m_stream.setDevice(this);
-  m_stream.setVersion(sChatStreamVersion);
+  m_stream.setVersion(StreamVersion);
   m_failurePongs = 0;
   
   #ifdef SCHAT_CLIENT
@@ -63,7 +63,7 @@ void ServerSocket::send(quint16 opcode)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode;
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
@@ -79,7 +79,7 @@ void ServerSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << n << m;  
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
@@ -95,7 +95,7 @@ void ServerSocket::send(quint16 opcode, const QString &s)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << s;  
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));      
@@ -112,7 +112,7 @@ void ServerSocket::send(quint16 opcode, quint16 err)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << err; 
   out.device()->seek(0);
   out << quint16(block.size() - sizeof(quint16));
@@ -129,7 +129,7 @@ void ServerSocket::send(quint16 opcode, quint16 s, const QStringList &list)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << s;
   
   foreach (QString str, list)
@@ -155,7 +155,7 @@ void ServerSocket::readyRead()
   if (m_state == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
-    if (m_command != sChatOpcodeGreeting) {
+    if (m_command != OpcodeGreeting) {
       abort();
       return;
     }
@@ -264,11 +264,11 @@ bool ServerSocket::readBlock()
  */
 quint16 ServerSocket::verifyGreeting(quint16 version)
 {
-  if (version < sChatProtocolVersion)
+  if (version < ProtocolVersion)
     return sChatErrorOldClientProtocol;
-  else if (version > sChatProtocolVersion)
+  else if (version > ProtocolVersion)
     return sChatErrorOldServerProtocol;
-  else if (!(m_flag == sChatFlagNone || m_flag == sChatFlagDirect))
+  else if (!(m_flag == FlagNone || m_flag == FlagDirect))
     return sChatErrorBadGreetingFlag;
   else if (!m_profile->isValidNick())
     return sChatErrorBadNickName;
@@ -278,7 +278,7 @@ quint16 ServerSocket::verifyGreeting(quint16 version)
     return sChatErrorInvalidConnection;
   
   #ifndef SCHAT_CLIENT
-  if (m_flag == sChatFlagDirect) {
+  if (m_flag == FlagDirect) {
     return sChatErrorDirectNotAllow;
     m_profile->setNick("#DUBLICATE");
   }

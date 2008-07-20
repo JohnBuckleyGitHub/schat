@@ -38,7 +38,6 @@ HEADERS += \
     version.h \
     welcomedialog.h \
     clientservice.h \
-    clientthread.h
 
 SOURCES += \
     aboutdialog.cpp \
@@ -60,7 +59,6 @@ SOURCES += \
     tab.cpp \
     welcomedialog.cpp \
     clientservice.cpp \
-    clientthread.cpp
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc

@@ -28,9 +28,8 @@
 #include <QTime>
 
 #include "clientsocket.h"
-//#include "server.h"
 #include "settingsdialog.h"
-#include "clientthread.h"
+#include "clientservice.h"
 
 #ifdef SCHAT_UPDATE
 #include "win32/updatenotify.h"
@@ -161,7 +160,7 @@ private:
   QPointer<ClientSocket> clientSocket;
 //  QPointer<Server> daemon;
   QPointer<SettingsDialog> settingsDialog;
-  QPointer<ClientThread> m_clientThread;
+  QPointer<ClientService> m_clientService;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;

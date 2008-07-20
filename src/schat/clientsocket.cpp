@@ -17,7 +17,7 @@ ClientSocket::ClientSocket(QObject *parent)
 {
   currentState = sChatStateDisconnected;
   currentBlock.setDevice(this);
-  currentBlock.setVersion(sChatStreamVersion);
+  currentBlock.setVersion(StreamVersion);
   
   connect(this, SIGNAL(connected()), this, SLOT(sendGreeting()));
   connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
@@ -59,7 +59,7 @@ void ClientSocket::send(quint16 opcode)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode;
   out.device()->seek(0);
   out << quint16(block.size() - 2);      
@@ -76,7 +76,7 @@ void ClientSocket::send(quint16 opcode, const QString &n, const QString &m)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << n << m;  
   out.device()->seek(0);
   out << quint16(block.size() - 2);      
@@ -91,7 +91,7 @@ void ClientSocket::send(quint16 opcode, const QString &s)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << s;
   out.device()->seek(0);
   out << quint16(block.size() - 2);  
@@ -107,7 +107,7 @@ void ClientSocket::send(quint16 opcode, quint16 s, const QStringList &list)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << s;
   
   foreach (QString str, list)
@@ -262,15 +262,15 @@ void ClientSocket::sendGreeting()
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0)
-      << sChatOpcodeGreeting
-      << sChatProtocolVersion;
+      << OpcodeGreeting
+      << ProtocolVersion;
   
   if (direct)
-    out << sChatFlagDirect;
+    out << FlagDirect;
   else
-    out << sChatFlagNone;
+    out << FlagNone;
   
 //  profile->toStream(out); // Записываем профиль в поток
     
