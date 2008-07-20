@@ -19,8 +19,8 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
-static const int     sChatStreamVersion              = QDataStream::Qt_4_3;
-static const quint16 sChatProtocolVersion            = 1;
+static const int     StreamVersion                   = QDataStream::Qt_4_3;
+static const quint16 ProtocolVersion                 = 2;
 
 static const quint16 sChatStateWaitingForGreeting    = 2000;
 static const quint16 sChatStateReadingGreeting       = 2001;
@@ -29,8 +29,8 @@ static const quint16 sChatStateDisconnected          = 2003;
 static const quint16 sChatStateWaitingForChecking    = 2004;
 static const quint16 sChatStateSendingGreeting       = 2000;
 
-static const quint8 sChatFlagNone                    = 0;
-static const quint8 sChatFlagDirect                  = 1;
+static const quint8 FlagNone                    = 0;
+static const quint8 FlagDirect                  = 1;
 
 /**
  * Приветственное сообщение.
@@ -46,7 +46,7 @@ static const quint8 sChatFlagDirect                  = 1;
  * ОТПРАВИТЕЛЬ: ---------------
  * Клиент
  */
-static const quint16 sChatOpcodeGreeting             = 100;
+static const quint16 OpcodeGreeting                  = 100;
 static const quint16 sChatOpcodeGreetingOk           = 101;
 
 /**

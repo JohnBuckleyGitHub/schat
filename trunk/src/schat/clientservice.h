@@ -31,17 +31,22 @@ class ClientService : public QObject
 public:
   ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent = 0);
   ~ClientService();
-  bool connectToHost();
+  void connectToHost();
+  
+signals:
+  void connecting(const QString &server);
    
-//public slots:
-//   void readyRead();
-//   void connected();
-//   void bytesWritten(qint64);
+private slots:
+  void connected();
+  void disconnected();
+  void readyRead();
 
 private:
+  void createSocket();
+  
   AbstractProfile *m_profile;
   QString m_server;
-  QTcpSocket m_socket;
+  QTcpSocket *m_socket;
   quint16 m_port;
 };
 

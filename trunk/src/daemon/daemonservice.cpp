@@ -38,9 +38,8 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_accepted = false;
     m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
-    m_stream.setVersion(sChatStreamVersion);
+    m_stream.setVersion(StreamVersion);
     QTimer::singleShot(16000, this, SLOT(check()));
-    
   }
   else
     deleteLater();
@@ -91,7 +90,7 @@ void DaemonService::send(quint16 opcode)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode;
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
@@ -108,7 +107,7 @@ void DaemonService::send(quint16 opcode, quint16 err)
 {
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(sChatStreamVersion);
+  out.setVersion(StreamVersion);
   out << quint16(0) << opcode << err; 
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
@@ -165,7 +164,7 @@ void DaemonService::readyRead()
     if (m_accepted) {
       ;
     }
-    else if (m_opcode == sChatOpcodeGreeting) {
+    else if (m_opcode == OpcodeGreeting) {
       if (!opcodeGreeting()) {
         m_socket->disconnectFromHost();
         return;
@@ -205,15 +204,16 @@ bool DaemonService::opcodeGreeting()
   QString f_fullName;
   QString f_nick;
   QString f_userAgent;
+  QString f_byeMsg;
   quint16 f_err = 0;
   quint8  f_sex;
   quint16 f_version;
   
-  m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent;  
+  m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
   m_nextBlockSize = 0;
   
   QStringList profile; // TODO возможно следует отправлять `byeMsg` в приветственном сообщении.
-  profile << f_nick << f_fullName << "" << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
+  profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
   m_profile = new AbstractProfile(profile, this);
   
   f_err = verifyGreeting(f_version);
@@ -243,11 +243,11 @@ bool DaemonService::opcodeGreeting()
  */
 quint16 DaemonService::verifyGreeting(quint16 version)
 {
-  if (version < sChatProtocolVersion)
+  if (version < ProtocolVersion)
     return sChatErrorOldClientProtocol;
-  else if (version > sChatProtocolVersion)
+  else if (version > ProtocolVersion)
     return sChatErrorOldServerProtocol;
-  else if (!(m_flag == sChatFlagNone || m_flag == sChatFlagDirect))
+  else if (!(m_flag == FlagNone || m_flag == FlagDirect))
     return sChatErrorBadGreetingFlag;
   else if (!m_profile->isValidNick())
     return sChatErrorBadNickName;
@@ -257,7 +257,7 @@ quint16 DaemonService::verifyGreeting(quint16 version)
     return sChatErrorInvalidConnection;
   
   #ifndef SCHAT_CLIENT
-  if (m_flag == sChatFlagDirect) {
+  if (m_flag == FlagDirect) {
     return sChatErrorDirectNotAllow;
     m_profile->setNick("#DUBLICATE");
   }
