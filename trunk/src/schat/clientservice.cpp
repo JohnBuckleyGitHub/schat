@@ -28,7 +28,7 @@
 /** [public]
  * 
  */
-ClientService::ClientService(const AbstractProfile *profile, Network *network, QObject *parent)
+ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
   : QObject(parent), m_profile(profile), m_network(network)
 {
   m_socket = 0;
@@ -56,12 +56,12 @@ void ClientService::connectToHost()
     createSocket();
   
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
-    QString server = m_network->server();
-    m_socket->connectToHost(server, m_network->port());
+    ServerInfo info = m_network->server();
+    m_socket->connectToHost(info.address, info.port);
     if (m_network->isNetwork())
       emit connecting(m_network->name(), true);
     else
-      emit connecting(server, false);
+      emit connecting(info.address, false);
   }
 }
 
