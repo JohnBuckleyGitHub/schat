@@ -212,7 +212,7 @@ bool DaemonService::opcodeGreeting()
   m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
   m_nextBlockSize = 0;
   
-  QStringList profile; // TODO возможно следует отправлять `byeMsg` в приветственном сообщении.
+  QStringList profile;
   profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
   m_profile = new AbstractProfile(profile, this);
   

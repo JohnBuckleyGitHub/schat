@@ -21,16 +21,16 @@
 
 #include "abstractprofile.h"
 #include "clientservice.h"
+#include "network.h"
 #include "protocol.h"
 
 
 /** [public]
  * 
  */
-ClientService::ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent)
-  : QObject(parent), m_server(server), m_port(port)
+ClientService::ClientService(const AbstractProfile *profile, Network *network, QObject *parent)
+  : QObject(parent), m_profile(profile), m_network(network)
 {
-  m_profile = new AbstractProfile(profile, this);
   m_socket = 0;
 }
 
@@ -45,9 +45,8 @@ ClientService::~ClientService()
 
 
 /** [public]
- * Подключение к хосту, в качестве адреса сервера используются
- * приватные мемберы `m_server` и `m_port`.
- * В случае попытки подключения высылается сигнал `void connecting(const QString &server)`.
+ * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
+ * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
  */
 void ClientService::connectToHost()
 {
@@ -57,8 +56,12 @@ void ClientService::connectToHost()
     createSocket();
   
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
-    m_socket->connectToHost(m_server, m_port);
-    emit connecting(m_server);
+    QString server = m_network->server();
+    m_socket->connectToHost(server, m_network->port());
+    if (m_network->isNetwork())
+      emit connecting(m_network->name(), true);
+    else
+      emit connecting(server, false);
   }
 }
 

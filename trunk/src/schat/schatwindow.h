@@ -101,6 +101,7 @@ private slots:
   void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
   void closeChat();
   void closeTab();
+  void connecting(const QString &server, bool network);
   void connectionError(QAbstractSocket::SocketError socketError);
   void disconnected();
   void genericMessage(const QString &info);
