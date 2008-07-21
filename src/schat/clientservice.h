@@ -23,18 +23,19 @@
 #include <QTcpSocket>
 
 class AbstractProfile;
+class Network;
 
 class ClientService : public QObject
 {
   Q_OBJECT
 
 public:
-  ClientService(const QStringList &profile, const QString &server, quint16 port, QObject *parent = 0);
+  ClientService(const AbstractProfile *profile, Network *settings, QObject *parent = 0);
   ~ClientService();
   void connectToHost();
   
 signals:
-  void connecting(const QString &server);
+  void connecting(const QString &server, bool network);
    
 private slots:
   void connected();
@@ -44,10 +45,9 @@ private slots:
 private:
   void createSocket();
   
-  AbstractProfile *m_profile;
-  QString m_server;
+  const AbstractProfile *m_profile;
+  Network *m_network;
   QTcpSocket *m_socket;
-  quint16 m_port;
 };
 
 #endif /*CLIENTSERVICE_H_*/

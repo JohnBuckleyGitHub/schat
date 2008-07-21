@@ -9,6 +9,8 @@
 #include <QString>
 #include <QStringList>
 
+// TODO реализовать возможность константного использования и специальную структуры для пары адрес/порт.
+
 static const QString FailBackServer = "192.168.5.130"; // TODO в публичных релизах заменить на `localhost`.
 static const quint16 FailBackPort   = 7666;
 

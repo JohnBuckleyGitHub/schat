@@ -541,6 +541,18 @@ void SChatWindow::closeTab()
 /** [private slots]
  * 
  */
+void SChatWindow::connecting(const QString &server, bool network)
+{
+  if (network)
+    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
+  else
+    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)
 {
   #ifdef SCHAT_DEBUG
@@ -607,12 +619,13 @@ void SChatWindow::messageClicked()
 void SChatWindow::newConnection()
 { // FIXME добавить поток
   
-  QString     server  = settings->network.server();
-  QStringList profile = m_profile->pack();
-  quint16     port    = settings->network.port();
+//  QString     server  = settings->network.server();
+//  QStringList profile = m_profile->pack();
+//  quint16     port    = settings->network.port();
   
   if (!m_clientService) {
-    m_clientService = new ClientService(profile, server, port);
+    m_clientService = new ClientService(m_profile, &settings->network, this);
+    connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
     m_clientService->connectToHost();
   }
 //  if (!clientSocket) {
