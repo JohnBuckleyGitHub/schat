@@ -30,7 +30,7 @@ class ClientService : public QObject
   Q_OBJECT
 
 public:
-  ClientService(const AbstractProfile *profile, Network *settings, QObject *parent = 0);
+  ClientService(const AbstractProfile *profile, const Network *settings, QObject *parent = 0);
   ~ClientService();
   void connectToHost();
   
@@ -46,7 +46,7 @@ private:
   void createSocket();
   
   const AbstractProfile *m_profile;
-  Network *m_network;
+  const Network *m_network;
   QTcpSocket *m_socket;
 };
 

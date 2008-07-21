@@ -191,14 +191,13 @@ void NetworkWidget::init()
     m_portBox->setValue(7666);
   }
   else {
-    QString server = m_settings->network.server();
-    int i = m_selectCombo->findText(server);
+    ServerInfo info = m_settings->network.server();
     
-    if (i == -1)
-      m_selectCombo->addItem(QIcon(":/images/host.png"), server, m_settings->network.port());
+    if (m_selectCombo->findText(info.address) == -1)
+      m_selectCombo->addItem(QIcon(":/images/host.png"), info.address, info.port);
     
-    m_selectCombo->setCurrentIndex(m_selectCombo->findText(server));
-    m_portBox->setValue(m_settings->network.port());
+    m_selectCombo->setCurrentIndex(m_selectCombo->findText(info.address));
+    m_portBox->setValue(info.port);
     m_portLabel->setEnabled(true);
     m_portBox->setEnabled(true);
   }

@@ -7,9 +7,12 @@
 
 #include "networkreader.h"
 
+
+/** [public]
+ * 
+ */
 NetworkReader::NetworkReader()
 {
-
 }
 
 
@@ -88,7 +91,9 @@ void NetworkReader::readNetwork()
 
 
 /** [private]
- * 
+ * Функция читает список серверов сети (элемент <host>) в список `m_servers`.
+ * Адрес сервера может быть вида: "адрес:порт",
+ * если порт не указан, используется стандартный 7666.
  */
 void NetworkReader::readServers()
 {
@@ -101,12 +106,17 @@ void NetworkReader::readServers()
     if (isStartElement()) {
       if (name() == "host") {
         QString t = readElementText();
-        QStringList list = t.split(':');
+        QStringList list = t.split(QChar(':'));
+        ServerInfo serverInfo;
         
-        if (list.size() == 2)
-          m_servers << t;
-        else
-          m_servers << (t + ":7666");
+        if (list.size() == 2) {
+          serverInfo.address = list.at(0);
+          serverInfo.port = quint16(list.at(1).toUInt());
+        } else {
+          serverInfo.address = t;
+          serverInfo.port = 7666;
+        }
+        m_servers << serverInfo;
       }
       else
         readUnknownElement();

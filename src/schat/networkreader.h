@@ -8,16 +8,21 @@
 
 #include <QXmlStreamReader>
 
+struct ServerInfo {
+  QString address;
+  quint16 port;
+};
+
 class NetworkReader : public QXmlStreamReader {
   
 public:
   NetworkReader();
   
   bool readFile(const QString &fileName);
-  inline QString description() const { return m_description; }
-  inline QString networkName() const { return m_name; }
-  inline QString site() const        { return m_site; }
-  inline QStringList servers() const { return m_servers; }
+  inline QString description() const       { return m_description; }
+  inline QString networkName() const       { return m_name; }
+  inline QString site() const              { return m_site; }
+  inline QList<ServerInfo> servers() const { return m_servers; }
   
 private:
   void readMeta();
@@ -25,10 +30,10 @@ private:
   void readServers();
   void readUnknownElement();
   
+  QList<ServerInfo> m_servers;
   QString m_description;
   QString m_name;
   QString m_site;
-  QStringList m_servers;
 };
 
 #endif /*NETWORKREADER_H_*/
