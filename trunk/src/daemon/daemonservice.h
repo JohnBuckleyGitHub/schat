@@ -32,7 +32,7 @@ public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
   void accessDenied(quint16 reason = 0);
-  void accessGraded();
+  void accessGranted(quint16 level = 0);
   void send(quint16 opcode);
   void send(quint16 opcode, quint16 err);
   

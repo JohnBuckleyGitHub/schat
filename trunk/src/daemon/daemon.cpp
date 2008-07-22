@@ -92,8 +92,9 @@ void Daemon::incomingConnection()
 /** [private slots]
  * Слот вызывается сигналом `greeting(const QStringList &)` от сервиса ожидающего
  * проверки приветствия (проверка на дубдикат ников).
- * В случае успеха сервис уведомляется об этом, добавляется в список пользователей
+ * В случае успеха сервис уведомляется (`accessGranted()`) об этом, добавляется в список пользователей
  * и высылается сигнал `newUser(const QStringList &list)`.
+ * В случае дубликата ников высылается код ошибки `ErrorNickAlreadyUse`.
  */
 void Daemon::greeting(const QStringList &list)
 {
@@ -104,7 +105,7 @@ void Daemon::greeting(const QStringList &list)
     
     if (!m_users.contains(nick)) {
       m_users.insert(nick, new UserUnit(list, service));
-      service->accessGraded();
+      service->accessGranted();
       emit newUser(list);
       
       LOG(0, tr(">>> (%1), %2, %3, %4, %5")
@@ -121,7 +122,7 @@ void Daemon::greeting(const QStringList &list)
           m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
     }
     else
-      service->accessDenied(sChatErrorNickAlreadyUse);
+      service->accessDenied(ErrorNickAlreadyUse);
   }  
 }
  

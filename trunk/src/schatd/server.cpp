@@ -88,7 +88,7 @@ void Server::appendParticipant(const QString &p)
   if (ServerSocket *socket = qobject_cast<ServerSocket *>(sender())) {
     if (!peers.contains(p)) {
       peers.insert(p, socket);
-      socket->send(sChatOpcodeGreetingOk);
+      socket->send(OpcodeAccessGranted);
       socket->send(sChatOpcodeMaxDoublePingTimeout, PingInterval / 1000 * 2);
       socket->setState(sChatStateReadyForUse);
       relayParticipantList(socket);
@@ -110,7 +110,7 @@ void Server::appendParticipant(const QString &p)
     }
     else {
       socket->setNick("#DUBLICATE");
-      socket->send(sChatOpcodeError, sChatErrorNickAlreadyUse);
+      socket->send(OpcodeAccessDenied, ErrorNickAlreadyUse);
       socket->disconnectFromHost();
     }
   }  
@@ -212,7 +212,7 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
       peers[channel]->send(sChatOpcodeSendPrivateMessage, nick, message);
     }
     else if (socket)
-      socket->send(sChatOpcodeError, sChatErrorNoSuchChannel);
+      socket->send(OpcodeAccessDenied, sChatErrorNoSuchChannel);
   }
 }
 

@@ -144,13 +144,13 @@ void ClientSocket::readyRead()
   if (currentState == sChatStateWaitingForGreeting) {
     if (!readBlock())
       return;
-    if (currentCommand == sChatOpcodeGreetingOk) {
+    if (currentCommand == OpcodeAccessGranted) {
       currentState = sChatStateReadyForUse;
       emit readyForUse();
       send(sChatOpcodeSendByeMsg, profile->byeMsg());
     }
     else {
-      if (currentCommand == sChatOpcodeError) {
+      if (currentCommand == OpcodeAccessDenied) {
         currentBlock >> pError;
         #ifdef SCHAT_DEBUG
         qDebug() << "PROTOCOL ERROR:" << pError;
@@ -207,7 +207,7 @@ void ClientSocket::readyRead()
         break;
         
       // Опкод `sChatOpcodeError` - Сервер вернул ошибку
-      case sChatOpcodeError:
+      case OpcodeAccessDenied:
         currentBlock >> pError;
         #ifdef SCHAT_DEBUG
         qDebug() << "PROTOCOL ERROR:" << pError;

@@ -539,7 +539,10 @@ void SChatWindow::closeTab()
 
 
 /** [private slots]
- * 
+ * Слот вызывается когда m_clientService пытается подключится к серверу.
+ * ПАРАМЕТРЫ:
+ *   server  -> название сети если network = true, либо адрес сервера.
+ *   network -> подключение к сети (true) либо к серверу (false).
  */
 void SChatWindow::connecting(const QString &server, bool network)
 {
@@ -626,6 +629,7 @@ void SChatWindow::newConnection()
   if (!m_clientService) {
     m_clientService = new ClientService(m_profile, &settings->network, this);
     connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
+    connect(m_clientService, SIGNAL(unconnected()), SLOT(unconnected()));
     m_clientService->connectToHost();
   }
 //  if (!clientSocket) {
@@ -757,6 +761,7 @@ void SChatWindow::update()
 }
 #endif
 
+
 /** [private slots]
  * 
  */
@@ -788,6 +793,15 @@ void SChatWindow::settingsChanged(int notify)
     default:
       break;
   }
+}
+
+
+/** [private slots]
+ * Слот вызывается когда в `m_clientService` нет активного подключения.
+ */
+void SChatWindow::unconnected()
+{
+  statusLabel->setText(tr("Не подключено"));
 }
 
 
@@ -1126,7 +1140,7 @@ void SChatWindow::removeConnection()
   
   // Если ник уже используется, то не показываем выбор сервера
   // и переподключаемся с новым ником, с нулевым интервалом.
-  if (err != sChatErrorNickAlreadyUse)
+  if (err != ErrorNickAlreadyUse)
     mainChannel->displayChoiceServer(true);
   
   if (state == Connected || state == Stopped)
@@ -1138,7 +1152,7 @@ void SChatWindow::removeConnection()
       mainChannel->browser->msgBadNickName(m_profile->nick());
       break;
       
-    case sChatErrorNickAlreadyUse:
+    case ErrorNickAlreadyUse:
       uniqueNick();
       break;
       
@@ -1156,12 +1170,12 @@ void SChatWindow::removeConnection()
       break;
   }
 
-  statusLabel->setText(tr("Не подключено"));
+//  statusLabel->setText(tr("Не подключено"));
   
   if (!(state == Stopped || state == Ignore)) {
     state = WaitingForConnected;
     
-    if (err == sChatErrorNickAlreadyUse)
+    if (err == ErrorNickAlreadyUse)
       newConnection();
     else
       m_reconnectTimer->start();
