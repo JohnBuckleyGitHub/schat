@@ -32,6 +32,8 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   : QObject(parent), m_profile(profile), m_network(network)
 {
   m_socket = 0;
+  m_nextBlockSize = 0;
+  m_stream.setVersion(StreamVersion);
 }
 
 
@@ -95,6 +97,7 @@ void ClientService::connected()
 
 /** [private slots]
  * Слот вызывается при разрыве соединения сокетом `m_socket`.
+ * Высылается сигнал `unconnected()`.
  */
 void ClientService::disconnected()
 {
@@ -103,6 +106,7 @@ void ClientService::disconnected()
     m_socket->deleteLater();
     m_socket = 0;
   }
+  emit unconnected();
 }
 
 
@@ -112,6 +116,40 @@ void ClientService::disconnected()
 void ClientService::readyRead()
 {
   qDebug() << "ClientService::readyRead()";
+  
+  forever {
+    if (!m_nextBlockSize) {
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+        
+      m_stream >> m_nextBlockSize;
+    }
+
+    if (m_socket->bytesAvailable() < m_nextBlockSize)
+      break;
+    
+    m_stream >> m_opcode;
+    
+    qDebug() << "op" << m_opcode;
+    
+    if (m_accepted) {
+      ;
+    }
+    else if (m_opcode == OpcodeAccessGranted) {
+      quint16 level;
+      m_stream >> level;
+      qDebug() << "level" << level;
+    }
+    else if (m_opcode == OpcodeAccessDenied) {
+      quint16 reason;
+      m_stream >> reason;
+      qDebug() << "reason" << reason;;
+    }
+    else {
+      m_socket->disconnectFromHost();
+      return;
+    }
+  }
   
 }
 
@@ -123,6 +161,7 @@ void ClientService::readyRead()
 void ClientService::createSocket()
 {
   m_socket = new QTcpSocket(this);
+  m_stream.setDevice(m_socket);
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
   connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));

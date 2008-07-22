@@ -36,6 +36,7 @@ public:
   
 signals:
   void connecting(const QString &server, bool network);
+  void unconnected();
    
 private slots:
   void connected();
@@ -45,9 +46,13 @@ private slots:
 private:
   void createSocket();
   
+  bool m_accepted;
   const AbstractProfile *m_profile;
   const Network *m_network;
+  QDataStream m_stream;
   QTcpSocket *m_socket;
+  quint16 m_nextBlockSize;
+  quint16 m_opcode;
 };
 
 #endif /*CLIENTSERVICE_H_*/

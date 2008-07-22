@@ -33,7 +33,8 @@ static const quint8 FlagNone                    = 0;
 static const quint8 FlagDirect                  = 1;
 
 /**
- * Приветственное сообщение.
+ * Приветственное сообщение. Сервер отвечает на этот пакет
+ * опкодом `OpcodeAccessGranted` если доступ получен либо `OpcodeAccessDenied`.
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -47,7 +48,17 @@ static const quint8 FlagDirect                  = 1;
  * Клиент
  */
 static const quint16 OpcodeGreeting                  = 100;
-static const quint16 sChatOpcodeGreetingOk           = 101;
+
+/**
+ * Ответ на успешное рукопожатие.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> полученный уровень доступа, в настоящие время всегда `0`.
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeAccessGranted             = 101;
 
 /**
  * Отправка сообщения
@@ -65,7 +76,17 @@ static const quint16 sChatOpcodeSendPrvMessageEcho   = 202;
 static const quint16 sChatOpcodeNewParticipant       = 301;
 static const quint16 sChatOpcodeParticipantLeft      = 302;
 static const quint16 sChatOpcodeNewParticipantQuiet  = 303;
-static const quint16 sChatOpcodeError                = 9000;
+
+/**
+ * Отказ в подключении
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> причина отказа.
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeAccessDenied              = 9000;
 static const quint16 sChatOpcodePing                 = 400;
 static const quint16 sChatOpcodePong                 = 401;
 static const quint16 sChatOpcodeMaxDoublePingTimeout = 402;
@@ -150,7 +171,7 @@ static const quint16 sChatOpcodeServerInfo           = 701;
 /**
  * КОДЫ ОШИБОК
  */
-static const quint16 sChatErrorNickAlreadyUse        = 200;
+static const quint16 ErrorNickAlreadyUse             = 200;
 static const quint16 sChatErrorOldClientProtocol     = 100;
 static const quint16 sChatErrorOldServerProtocol     = 104;
 static const quint16 sChatErrorBadGreetingFlag       = 101;

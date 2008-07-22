@@ -64,7 +64,7 @@ DaemonService::~DaemonService()
  */
 void DaemonService::accessDenied(quint16 reason)
 {
-  send(sChatOpcodeError, reason);
+  send(OpcodeAccessDenied, reason);
   m_socket->disconnectFromHost();
 }
 
@@ -73,10 +73,10 @@ void DaemonService::accessDenied(quint16 reason)
  * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
  * и устанавливаем флаг `m_accepted` в `true`.
  */
-void DaemonService::accessGraded()
+void DaemonService::accessGranted(quint16 level)
 {
   if (!m_accepted) {
-    send(sChatOpcodeGreetingOk);
+    send(OpcodeAccessGranted, level);
     m_accepted = true;
   }
 }
@@ -84,7 +84,7 @@ void DaemonService::accessGraded()
 
 /** [public]
  * ОПКОДЫ:
- *   sChatOpcodeGreetingOk
+ *   
  */
 void DaemonService::send(quint16 opcode)
 {
@@ -218,9 +218,8 @@ bool DaemonService::opcodeGreeting()
   
   f_err = verifyGreeting(f_version);
   
-  if (f_err) { // TODO изменить опкод
-    send(sChatOpcodeError, f_err);
-    m_socket->disconnectFromHost();
+  if (f_err) {
+    accessDenied(f_err);
     return false;
   }
   

@@ -112,6 +112,7 @@ private slots:
   void resetTabNotice(int index);
   void returnPressed();
   void settingsChanged(int notify);
+  void unconnected();
   void welcomeOk();
   
   #ifdef SCHAT_UPDATE  
@@ -141,7 +142,6 @@ private:
   bool currentTrayIcon;
   ConnectionState state;
   MainChannel *mainChannel;
-//  Profile *profile;
   QAction *aboutAction;
   QAction *addTabAction;
   QAction *closeTabAction;
@@ -159,7 +159,6 @@ private:
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
   QPointer<ClientSocket> clientSocket;
-//  QPointer<Server> daemon;
   QPointer<SettingsDialog> settingsDialog;
   QPointer<ClientService> m_clientService;
   QSplitter *splitter;

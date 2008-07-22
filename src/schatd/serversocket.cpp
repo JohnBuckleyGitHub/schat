@@ -437,7 +437,7 @@ void ServerSocket::readGreeting()
   err = verifyGreeting(version);
   
   if (err) {
-    send(sChatOpcodeError, err);
+    send(OpcodeAccessDenied, err);
     disconnectFromHost();
     return;
   }
