@@ -22,6 +22,8 @@
 #include <QObject>
 #include <QTcpSocket>
 
+#include "network.h"
+
 class AbstractProfile;
 class Network;
 
@@ -35,6 +37,7 @@ public:
   void connectToHost();
   
 signals:
+  void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
   void unconnected();
    
@@ -45,6 +48,7 @@ private slots:
 
 private:
   void createSocket();
+  void opcodeAccessGranted();
   
   bool m_accepted;
   const AbstractProfile *m_profile;
@@ -53,6 +57,7 @@ private:
   QTcpSocket *m_socket;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
+  ServerInfo m_server;
 };
 
 #endif /*CLIENTSERVICE_H_*/

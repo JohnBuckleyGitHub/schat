@@ -21,7 +21,6 @@
 
 #include "abstractprofile.h"
 #include "clientservice.h"
-#include "network.h"
 #include "protocol.h"
 
 
@@ -34,6 +33,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_socket = 0;
   m_nextBlockSize = 0;
   m_stream.setVersion(StreamVersion);
+  m_accepted = false;
 }
 
 
@@ -58,12 +58,12 @@ void ClientService::connectToHost()
     createSocket();
   
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
-    ServerInfo info = m_network->server();
-    m_socket->connectToHost(info.address, info.port);
+    m_server = m_network->server();
+    m_socket->connectToHost(m_server.address, m_server.port);
     if (m_network->isNetwork())
       emit connecting(m_network->name(), true);
     else
-      emit connecting(info.address, false);
+      emit connecting(m_server.address, false);
   }
 }
 
@@ -136,9 +136,7 @@ void ClientService::readyRead()
       ;
     }
     else if (m_opcode == OpcodeAccessGranted) {
-      quint16 level;
-      m_stream >> level;
-      qDebug() << "level" << level;
+      opcodeAccessGranted();
     }
     else if (m_opcode == OpcodeAccessDenied) {
       quint16 reason;
@@ -165,4 +163,25 @@ void ClientService::createSocket()
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
   connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+}
+
+
+/** [private]
+ * Обработка опкода `OpcodeAccessGranted`.
+ * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
+ * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
+ */
+void ClientService::opcodeAccessGranted()
+{
+  quint16 level;
+  m_stream >> level;
+  m_accepted = true;
+  
+  QString network;
+  if (m_network->isNetwork())
+    network = m_network->name();
+  else
+    network = "";
+  
+  emit accessGranted(network, m_server.address, level);
 }

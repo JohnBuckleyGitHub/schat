@@ -95,6 +95,7 @@ private slots:
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
   inline void settingsUpdate()    { settingsPage(SettingsDialog::UpdatePage); }
   void about();
+  void accessGranted(const QString &network, const QString &server, quint16 level);
   void addTab();
   void addTab(const QModelIndex &i);
   void changedNick(quint16 sex, const QStringList &list);

@@ -349,7 +349,7 @@ void SChatWindow::participantLeft(const QString &nick, const QString &bye)
 /** [public slots]
  * 
  */
-void SChatWindow::readyForUse()
+void SChatWindow::readyForUse() // FIXME фунция больше не нужна
 {
   if (m_reconnectTimer->isActive())
     m_reconnectTimer->stop();
@@ -388,6 +388,27 @@ void SChatWindow::about()
   }
    
   aboutDialog->activateWindow();
+}
+
+
+/** [private slots]
+ * Слот вызывается кода `m_clientService` получает пакет с опкодом `OpcodeAccessGranted`,
+ * что означает успешное подключение к серверу/сети.
+ */
+void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
+{
+  if (network.isEmpty()) {
+    mainChannel->browser->msgReadyForUse(server);
+    statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
+    setWindowTitle(tr("IMPOMEZIA Simple Chat"));
+  }
+  else {
+    mainChannel->browser->msgReadyForUse(network, server);
+    statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
+    setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
+  }
+  
+  mainChannel->displayChoiceServer(false);  
 }
 
 
@@ -630,6 +651,7 @@ void SChatWindow::newConnection()
     m_clientService = new ClientService(m_profile, &settings->network, this);
     connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
     connect(m_clientService, SIGNAL(unconnected()), SLOT(unconnected()));
+    connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     m_clientService->connectToHost();
   }
 //  if (!clientSocket) {
