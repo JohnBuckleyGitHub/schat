@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QTimer>
 
 #include "network.h"
 
@@ -42,6 +43,7 @@ signals:
   void unconnected();
    
 private slots:
+  void check();
   void connected();
   void disconnected();
   void readyRead();
@@ -55,6 +57,7 @@ private:
   const Network *m_network;
   QDataStream m_stream;
   QTcpSocket *m_socket;
+  QTimer m_checkTimer;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
   ServerInfo m_server;
