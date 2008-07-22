@@ -24,6 +24,9 @@
 #include "protocol.h"
 
 
+static const int CheckTimeout = 6000;
+
+
 /** [public]
  * 
  */
@@ -34,6 +37,8 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_nextBlockSize = 0;
   m_stream.setVersion(StreamVersion);
   m_accepted = false;
+  m_checkTimer.setInterval(CheckTimeout);
+  connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
 }
 
 
@@ -64,7 +69,29 @@ void ClientService::connectToHost()
       emit connecting(m_network->name(), true);
     else
       emit connecting(m_server.address, false);
+    
+    m_checkTimer.start();
   }
+}
+
+
+/** [private slots]
+ * Слот вызывается по истечению `CheckTimeout` после попытки установить соединение.
+ * Если за это время неустановлено активного соединения, например при попытке подключения
+ * к несуществующему ip-адресу, то сокет будет удалён и будет произведена новая попытка подключения.
+ * В многосерверных сетях, это уменьшает задержки при подключении если один или несколько серверов не доступны.
+ */
+void ClientService::check()
+{
+  qDebug() << "ClientService::check()";
+  
+  if (m_socket && m_socket->state() != QAbstractSocket::ConnectedState) {
+    m_socket->deleteLater();
+    m_socket = 0;
+    connectToHost();
+  }
+  else
+    m_checkTimer.stop();
 }
 
 
