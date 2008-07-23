@@ -47,20 +47,24 @@ private slots:
   void connected();
   void disconnected();
   void readyRead();
+  void reconnect();
 
 private:
   void createSocket();
   void opcodeAccessGranted();
   
   bool m_accepted;
+  bool m_fatal;
   const AbstractProfile *m_profile;
   const Network *m_network;
   QDataStream m_stream;
   QTcpSocket *m_socket;
   QTimer m_checkTimer;
+  QTimer m_reconnectTimer;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
   ServerInfo m_server;
+  int m_reconnects;
 };
 
 #endif /*CLIENTSERVICE_H_*/
