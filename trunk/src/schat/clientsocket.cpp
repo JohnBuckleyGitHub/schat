@@ -189,7 +189,7 @@ void ClientSocket::readyRead()
         break;
       
       // Опкод `sChatOpcodeNewParticipant` - новый участник вошёл в чат
-      case sChatOpcodeNewParticipant:
+      case OpcodeNewUser:
         newParticipant();
         break;
       

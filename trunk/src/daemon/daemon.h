@@ -35,7 +35,7 @@ public:
   bool start();
   
 signals:
-  void newUser(const QStringList &list);
+  void newUser(const QStringList &list, bool echo);
 
 public slots:
   void incomingConnection();

@@ -234,7 +234,7 @@ void Server::relayParticipantList(ServerSocket *socket)
     
     // Отсылаем существующим участникам, профиль нового
     if (socket != i.value())
-      i.value()->send(sChatOpcodeNewParticipant, sex, info);
+      i.value()->send(OpcodeNewUser, sex, info);
   }
 }
 
