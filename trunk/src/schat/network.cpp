@@ -56,7 +56,7 @@ QString Network::config() const
  */
 ServerInfo Network::server() const
 {
-  if (m_servers.count() == -1)
+  if (m_servers.count() == 0)
     return failBack();
   
   if (m_servers.count() == 1)

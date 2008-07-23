@@ -57,6 +57,7 @@ private:
   bool m_fatal;
   const AbstractProfile *m_profile;
   const Network *m_network;
+  int m_reconnects;
   QDataStream m_stream;
   QTcpSocket *m_socket;
   QTimer m_checkTimer;
@@ -64,7 +65,6 @@ private:
   quint16 m_nextBlockSize;
   quint16 m_opcode;
   ServerInfo m_server;
-  int m_reconnects;
 };
 
 #endif /*CLIENTSERVICE_H_*/
