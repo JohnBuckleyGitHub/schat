@@ -24,7 +24,9 @@
 #include "protocol.h"
 
 
-static const int CheckTimeout = 6000;
+static const int CheckTimeout         = 6000;
+static const int ReconnectTimeout     = 3000;
+static const int ReconnectFailTimeout = 20000;
 
 
 /** [public]
@@ -35,10 +37,14 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
 {
   m_socket = 0;
   m_nextBlockSize = 0;
+  m_reconnects = 0;
   m_stream.setVersion(StreamVersion);
   m_accepted = false;
+  m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
+  
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
+  connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
 }
 
 
@@ -76,20 +82,21 @@ void ClientService::connectToHost()
 
 
 /** [private slots]
- * Слот вызывается по истечению `CheckTimeout` после попытки установить соединение.
- * Если за это время неустановлено активного соединения, например при попытке подключения
- * к несуществующему ip-адресу, то сокет будет удалён и будет произведена новая попытка подключения.
- * В многосерверных сетях, это уменьшает задержки при подключении если один или несколько серверов не доступны.
+ * Разрыв соединения или переподключение если после `CheckTimeout` миллисекунд не удалось установить действующие соединение.
  */
 void ClientService::check()
 {
   qDebug() << "ClientService::check()";
+  if (m_socket)
+    qDebug() << m_socket->state();
   
-  if (m_socket && m_socket->state() != QAbstractSocket::ConnectedState) {
+  if (m_socket && m_socket->state() != QTcpSocket::ConnectedState) {
     m_socket->deleteLater();
     m_socket = 0;
     connectToHost();
   }
+  else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
+    m_socket->disconnectFromHost();
   else
     m_checkTimer.stop();
 }
@@ -98,10 +105,15 @@ void ClientService::check()
 /** [private slots]
  * Слот вызывается при успешном подключении сокета `m_socket` к серверу.
  * Слот отправляет приветственное сообщение серверу (OpcodeGreeting).
+ * Таймер переподключения `m_reconnectTimer` отстанавливается.
  */
 void ClientService::connected()
 {
   qDebug() << "ClientService::connected()";
+  
+  m_nextBlockSize = 0;
+  m_reconnectTimer.stop();
+  m_reconnectTimer.setInterval(ReconnectTimeout);
   
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -134,6 +146,14 @@ void ClientService::disconnected()
     m_socket = 0;
   }
   emit unconnected();
+  m_accepted = false;
+  
+  if (!m_fatal) {
+    if ((m_reconnects < m_network->count() * 2))
+      reconnect();
+
+    m_reconnectTimer.start();
+  }
 }
 
 
@@ -168,14 +188,31 @@ void ClientService::readyRead()
     else if (m_opcode == OpcodeAccessDenied) {
       quint16 reason;
       m_stream >> reason;
+      m_nextBlockSize = 0;
       qDebug() << "reason" << reason;;
     }
     else {
       m_socket->disconnectFromHost();
       return;
     }
-  }
+  } 
+}
+
+
+/** [private slots]
+ * 
+ */
+void ClientService::reconnect()
+{
+  qDebug() << "ClientService::reconnect()" << m_reconnectTimer.interval() << m_reconnects;
   
+  if (m_fatal)
+    return;
+  
+  m_reconnects++;
+  
+  if (!m_socket)
+    connectToHost();
 }
 
 
@@ -202,7 +239,9 @@ void ClientService::opcodeAccessGranted()
 {
   quint16 level;
   m_stream >> level;
+  m_nextBlockSize = 0;
   m_accepted = true;
+  m_reconnects = 0;
   
   QString network;
   if (m_network->isNetwork())
