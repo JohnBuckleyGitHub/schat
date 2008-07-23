@@ -124,6 +124,7 @@ private:
   int tabIndex(const QString &s, int start = 1) const;
   Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
+  static QString userToolTip(const AbstractProfile &profile);
   void changedNetworkSettings();
   void changedProfileSettings();
   void createActions();
@@ -131,7 +132,6 @@ private:
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
-//  void removeConnection();
   void settingsPage(int page = 0);
   void showChat();
   void startNotice(int index);
