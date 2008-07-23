@@ -262,7 +262,8 @@ void ClientService::opcodeAccessGranted()
 
 
 /** [private]
- * 
+ * Разбор пакета с опкодом `OpcodeNewUser`.
+ * В конце разбора высылается сигнал `void newUser(const QStringList &, bool)`.
  */
 void ClientService::opcodeNewUser()
 {
@@ -284,7 +285,6 @@ void ClientService::opcodeNewUser()
     echo = false;
   else
     echo = true;
-  
-  qDebug() << profile;
+
   emit newUser(profile, echo);  
 }
