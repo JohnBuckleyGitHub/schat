@@ -180,7 +180,15 @@ void ClientService::readyRead()
     qDebug() << "op" << m_opcode;
     
     if (m_accepted) {
-      ;
+      switch (m_opcode) {
+        case OpcodeNewUser:
+          opcodeNewUser();
+          break;
+          
+        default:
+          m_socket->disconnectFromHost();
+          break;
+      };
     }
     else if (m_opcode == OpcodeAccessGranted) {
       opcodeAccessGranted();
@@ -250,4 +258,33 @@ void ClientService::opcodeAccessGranted()
     network = "";
   
   emit accessGranted(network, m_server.address, level);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientService::opcodeNewUser()
+{
+  qDebug() << "ClientService::opcodeNewUser()";
+  bool echo;
+  quint8 p_flag;
+  quint8 p_gender;
+  QString p_nick;
+  QString p_name;
+  QString p_agent;
+  QString p_host;
+  
+  m_stream >> p_flag >> p_gender >> p_nick >> p_name >> p_agent >> p_host;
+  m_nextBlockSize = 0;
+  QStringList profile;
+  profile << p_nick << p_name << "" << p_agent << p_host << AbstractProfile::gender(p_gender);
+  
+  if (p_nick == m_profile->nick() || p_flag == 0)
+    echo = false;
+  else
+    echo = true;
+  
+  qDebug() << profile;
+  emit newUser(profile, echo);  
 }

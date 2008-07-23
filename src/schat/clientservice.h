@@ -40,6 +40,7 @@ public:
 signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
+  void newUser(const QStringList &list, bool echo);
   void unconnected();
    
 private slots:
@@ -52,6 +53,7 @@ private slots:
 private:
   void createSocket();
   void opcodeAccessGranted();
+  void opcodeNewUser();
   
   bool m_accepted;
   bool m_fatal;
