@@ -258,8 +258,8 @@ void SChatWindow::newMessage(const QString &/*nick*/, const QString &/*message*/
 /** [public slots]
  * 
  */
-void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
-{
+//void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
+//{
 //  QStandardItem *item = new QStandardItem(QIcon(":/images/" + m_profile->gender() + ".png"), info.at(0));
 //  Profile *p = new Profile(sex, info, this);
 //  item->setData(sex, Qt::UserRole + 1);
@@ -288,7 +288,7 @@ void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo
 //    
 //    mainChannel->browser->msgNewParticipant(sex, info.at(0));
 //  }
-}
+//}
 
 
 /** [public slots]
@@ -651,9 +651,10 @@ void SChatWindow::newConnection()
     m_clientService = new ClientService(m_profile, &settings->network, this);
     connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
     connect(m_clientService, SIGNAL(unconnected()), SLOT(unconnected()));
+    connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
     connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
-    m_clientService->connectToHost();
   }
+  m_clientService->connectToHost();
 //  if (!clientSocket) {
 //    clientSocket = new ClientSocket(this);
 //    clientSocket->setProfile(profile);
@@ -683,6 +684,48 @@ void SChatWindow::newConnection()
 //    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
 //  
 //  clientSocket->connectToHost(server, settings->network.port());
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::newUser(const QStringList &list, bool echo)
+{
+  qDebug() << "SChatWindow::newUser(const QStringList &, bool)";
+  
+  AbstractProfile profile(list);
+  QString nick = profile.nick();
+  
+  if (nick == m_profile->nick())
+    if (findItem(profile.nick()))
+      return;
+  
+  QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
+  item->setData(profile.pack(), Qt::UserRole + 1);
+//  item->setToolTip(p->toolTip());
+
+  // Свой ник выделяем жирным шрифтом
+  if (nick == m_profile->nick()) {
+    QFont font;
+    font.setBold(true);
+    item->setFont(font);
+  }
+
+  model.appendRow(item);
+  model.sort(0);
+
+  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
+  if (echo) {
+    int index = tabIndex(nick);
+    if (index != -1) {
+      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      if (tab->type == AbstractTab::Private)
+        tab->browser->msgNewParticipant(profile.genderNum(), nick);
+    }
+    
+    mainChannel->browser->msgNewParticipant(profile.genderNum(), nick);
+  }
 }
 
 
@@ -824,6 +867,8 @@ void SChatWindow::settingsChanged(int notify)
 void SChatWindow::unconnected()
 {
   statusLabel->setText(tr("Не подключено"));
+  model.clear();
+  mainChannel->browser->msgDisconnect();
 }
 
 
