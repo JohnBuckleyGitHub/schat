@@ -126,6 +126,41 @@ bool DaemonService::send(quint16 opcode, quint16 err)
 
 
 /** [public slots]
+ * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
+ */
+bool DaemonService::newUser(const QStringList &list, bool echo)
+{
+  qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
+  
+  if (m_socket->state() == QTcpSocket::ConnectedState) {
+    AbstractProfile profile(list);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeNewUser;
+    
+    if (echo)
+      out << quint8(1);
+    else
+      out << quint8(0);
+    
+    out << profile.genderNum()
+        << profile.nick()
+        << profile.fullName()
+        << profile.userAgent()
+        << profile.host();
+
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;  
+}
+
+
+/** [public slots]
  * 
  */
 void DaemonService::disconnected()
@@ -136,16 +171,6 @@ void DaemonService::disconnected()
     emit leave(m_profile->nick());
   
   deleteLater();
-}
-
-
-/** [public slots]
- * 
- */
-void DaemonService::newUser(const QStringList &list)
-{
-  qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
-  
 }
 
 

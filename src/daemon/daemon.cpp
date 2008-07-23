@@ -84,7 +84,7 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
     connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
-    connect(this, SIGNAL(newUser(const QStringList &)), service, SLOT(newUser(const QStringList &)));
+    connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
   }
 }
 
@@ -106,7 +106,7 @@ void Daemon::greeting(const QStringList &list)
     if (!m_users.contains(nick)) {
       m_users.insert(nick, new UserUnit(list, service));
       service->accessGranted();
-      emit newUser(list);
+      emit newUser(list, true);
       
       LOG(0, tr(">>> (%1), %2, %3, %4, %5")
           .arg(list.at(AbstractProfile::Host))

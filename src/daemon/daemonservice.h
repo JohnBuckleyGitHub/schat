@@ -41,8 +41,8 @@ signals:
   void leave(const QString &nick);
   
 public slots:
+  bool newUser(const QStringList &list, bool echo);
   void disconnected();
-  void newUser(const QStringList &list);
   void readyRead();
   
 private slots:
