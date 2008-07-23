@@ -68,12 +68,12 @@ ServerInfo Network::server() const
   
   if (init) {
     do {
-      index = qrand() % (m_servers.size() - 1);
+      index = qrand() % m_servers.count();
     } while (index == prevIndex);
   }
   else {
     init = true;
-    index = qrand() % (m_servers.size() - 1);
+    index = qrand() % m_servers.count();
   }
   
   prevIndex = index;
