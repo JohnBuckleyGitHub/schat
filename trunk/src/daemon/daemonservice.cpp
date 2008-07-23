@@ -86,15 +86,20 @@ void DaemonService::accessGranted(quint16 level)
  * ОПКОДЫ:
  *   
  */
-void DaemonService::send(quint16 opcode)
+bool DaemonService::send(quint16 opcode)
 {
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(StreamVersion);
-  out << quint16(0) << opcode;
-  out.device()->seek(0);
-  out << quint16(block.size() - (int) sizeof(quint16));
-  m_socket->write(block);
+  if (m_socket->state() == QTcpSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+  return true;
+  }
+  else
+    return false;
 }
 
 
@@ -103,15 +108,20 @@ void DaemonService::send(quint16 opcode)
  *   sChatOpcodeError
  *   sChatOpcodeMaxDoublePingTimeout
  */
-void DaemonService::send(quint16 opcode, quint16 err)
+bool DaemonService::send(quint16 opcode, quint16 err)
 {
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(StreamVersion);
-  out << quint16(0) << opcode << err; 
-  out.device()->seek(0);
-  out << quint16(block.size() - (int) sizeof(quint16));
-  m_socket->write(block);  
+  if (m_socket->state() == QTcpSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << err; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+  return true;
+  }
+  else
+    return false;
 }
 
 
