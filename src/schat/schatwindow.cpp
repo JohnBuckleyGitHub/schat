@@ -703,7 +703,7 @@ void SChatWindow::newUser(const QStringList &list, bool echo)
   
   QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
   item->setData(profile.pack(), Qt::UserRole + 1);
-//  item->setToolTip(p->toolTip());
+  item->setToolTip(userToolTip(profile));
 
   // Свой ник выделяем жирным шрифтом
   if (nick == m_profile->nick()) {
@@ -1021,6 +1021,24 @@ QStandardItem* SChatWindow::findItem(const QString &nick) const
     return items[0];
   else
     return 0;  
+}
+
+
+/** [private] static
+ * 
+ */
+QString SChatWindow::userToolTip(const AbstractProfile &profile)
+{
+  QString p_agent = profile.userAgent();
+  p_agent.replace(QChar('/'), QChar(' '));
+  QString p_name;
+  profile.fullName().isEmpty() ? p_name = tr("&lt;не указано&gt;") : p_name = profile.fullName();
+  
+  return tr("<h3><img src='%1' align='left'> %2</h3>"
+            "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
+            "<tr><td>Клиент:</td><td>%4</td></tr>"
+            "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
+            .arg(":/images/" + profile.gender() + ".png").arg(profile.nick()).arg(p_name).arg(p_agent).arg(profile.host());
 }
 
 
