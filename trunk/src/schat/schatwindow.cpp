@@ -1169,7 +1169,7 @@ void SChatWindow::removeConnection()
     mainChannel->browser->msgDisconnect();
   
   switch (err) {
-    case sChatErrorBadNickName:
+    case ErrorBadNickName:
       state = Stopped;
       mainChannel->browser->msgBadNickName(m_profile->nick());
       break;
@@ -1178,12 +1178,12 @@ void SChatWindow::removeConnection()
       uniqueNick();
       break;
       
-    case sChatErrorOldClientProtocol:
+    case ErrorOldClientProtocol:
       state = Stopped;
       mainChannel->browser->msgOldClientProtocol();
       break;
       
-    case sChatErrorOldServerProtocol:
+    case ErrorOldServerProtocol:
       state = Stopped;
       mainChannel->browser->msgOldServerProtocol();
       break;

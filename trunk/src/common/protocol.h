@@ -171,13 +171,12 @@ static const quint16 sChatOpcodeServerInfo           = 701;
 /**
  * КОДЫ ОШИБОК
  */
-static const quint16 ErrorNickAlreadyUse             = 200;
-static const quint16 sChatErrorOldClientProtocol     = 100;
-static const quint16 sChatErrorOldServerProtocol     = 104;
-static const quint16 sChatErrorBadGreetingFlag       = 101;
-static const quint16 sChatErrorBadNickName           = 102;
-static const quint16 sChatErrorBadUserAgent          = 103;
-static const quint16 sChatErrorInvalidConnection     = 110;
+static const quint16 ErrorNickAlreadyUse             = 200; // Выбранный ник уже занят.
+static const quint16 ErrorOldClientProtocol          = 100; // Клиент использует устаревшую версию протокола.
+static const quint16 ErrorOldServerProtocol          = 104; // Сервер использует устаревшую версию протокола.
+static const quint16 ErrorBadGreetingFlag            = 101; // Клиент отправил неподдерживаемый флаг приветствия.
+static const quint16 ErrorBadNickName                = 102; // Выбранный клиентом ник, не допустим в чате.
+static const quint16 ErrorBadUserAgent               = 103; // Клиент отправил недопустимый UserAgent.
 static const quint16 sChatErrorNoSuchChannel         = 300;
 static const quint16 sChatErrorDirectNotAllow        = 400;
 

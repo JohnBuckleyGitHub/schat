@@ -265,17 +265,15 @@ bool ServerSocket::readBlock()
 quint16 ServerSocket::verifyGreeting(quint16 version)
 {
   if (version < ProtocolVersion)
-    return sChatErrorOldClientProtocol;
+    return ErrorOldClientProtocol;
   else if (version > ProtocolVersion)
-    return sChatErrorOldServerProtocol;
+    return ErrorOldServerProtocol;
   else if (!(m_flag == FlagNone || m_flag == FlagDirect))
-    return sChatErrorBadGreetingFlag;
+    return ErrorBadGreetingFlag;
   else if (!m_profile->isValidNick())
-    return sChatErrorBadNickName;
+    return ErrorBadNickName;
   else if (!m_profile->isValidUserAgent())
-    return sChatErrorBadUserAgent;
-  else if (!isValid())
-    return sChatErrorInvalidConnection;
+    return ErrorBadUserAgent;
   
   #ifndef SCHAT_CLIENT
   if (m_flag == FlagDirect) {
