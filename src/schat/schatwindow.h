@@ -87,7 +87,7 @@ public slots:
   void newParticipant(quint16 sex, const QStringList &info, bool echo = true);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   void participantLeft(const QString &nick, const QString &bye);
-  void readyForUse();
+//  void readyForUse();
   
 private slots:
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
@@ -103,8 +103,8 @@ private slots:
   void closeChat();
   void closeTab();
   void connecting(const QString &server, bool network);
-  void connectionError(QAbstractSocket::SocketError socketError);
-  void disconnected();
+//  void connectionError(QAbstractSocket::SocketError socketError);
+//  void disconnected();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void messageClicked();
@@ -133,7 +133,7 @@ private:
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
-  void removeConnection();
+//  void removeConnection();
   void settingsPage(int page = 0);
   void showChat();
   void startNotice(int index);
@@ -159,7 +159,7 @@ private:
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
-  QPointer<ClientSocket> clientSocket;
+//  QPointer<ClientSocket> clientSocket;
   QPointer<SettingsDialog> settingsDialog;
   QPointer<ClientService> m_clientService;
   QSplitter *splitter;

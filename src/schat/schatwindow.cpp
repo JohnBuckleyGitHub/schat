@@ -348,8 +348,8 @@ void SChatWindow::participantLeft(const QString &nick, const QString &bye)
 
 /** [public slots]
  * 
- */
-void SChatWindow::readyForUse() // FIXME фунция больше не нужна
+ *//*
+void SChatWindow::readyForUse() // FIXME remove SChatWindow::readyForUse()
 {
   if (m_reconnectTimer->isActive())
     m_reconnectTimer->stop();
@@ -371,7 +371,7 @@ void SChatWindow::readyForUse() // FIXME фунция больше не нужн
   }
   
   mainChannel->displayChoiceServer(false);
-}
+}*/
 
 
 /** [private slots]
@@ -527,8 +527,8 @@ void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo
  */
 void SChatWindow::closeChat()
 {
-  if (clientSocket)
-    clientSocket->quit();
+//  if (clientSocket)
+//    clientSocket->quit();
   
   settings->write();
   qApp->quit();
@@ -553,7 +553,7 @@ void SChatWindow::closeTab()
     
     if (state == Connected) {
       state = Stopped;
-      clientSocket->quit();
+//      clientSocket->quit();
     }
   }
 }
@@ -576,25 +576,25 @@ void SChatWindow::connecting(const QString &server, bool network)
 
 /** [private slots]
  * 
- */
-void SChatWindow::connectionError(QAbstractSocket::SocketError /* socketError */)
+ *//*
+void SChatWindow::connectionError(QAbstractSocket::SocketError) // FIXME remove SChatWindow::connectionError(QAbstractSocket::SocketError)
 {
-  #ifdef SCHAT_DEBUG
-  qDebug() << "DirectChannel::connectionError(QAbstractSocket::SocketError /* socketError */)";
+  #ifdef SCHAT_DEBU
+  qDebug() << "DirectChannel::connectionError(QAbstractSocket::SocketError)";
   qDebug() << "SOCKET ERROR:" << clientSocket->errorString();
   #endif
   
   removeConnection();
-}
+}*/
 
 
 /** [private slots]
  * 
  */
-void SChatWindow::disconnected()
-{
-  removeConnection();
-}
+//void SChatWindow::disconnected()
+//{
+//  removeConnection();
+//}
 
 
 /** [private slots]
@@ -758,7 +758,7 @@ void SChatWindow::returnPressed()
   else if (state == Connected) {
     QString channel;
     tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
-    clientSocket->send(sChatOpcodeSendMessage, channel, text);
+//    clientSocket->send(sChatOpcodeSendMessage, channel, text);
   }
   
   lineEdit->clear();  
@@ -803,7 +803,7 @@ void SChatWindow::settingsChanged(int notify)
       break;
       
     case Settings::ByeMsgChanged:
-      clientSocket->send(sChatOpcodeSendByeMsg, m_profile->byeMsg());
+//      clientSocket->send(sChatOpcodeSendByeMsg, m_profile->byeMsg());
       break;
 
     #ifdef SCHAT_UPDATE
@@ -884,15 +884,15 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
   // команда /bye
   if (text.startsWith("/bye", Qt::CaseInsensitive)) {
-    if (state == Connected) {      
-      if (text.startsWith("/bye ", Qt::CaseInsensitive))
-        clientSocket->send(sChatOpcodeSendByeMsg, text.mid(text.indexOf(QChar(' '))));
-      
-      state = Stopped;
-      clientSocket->quit();
-    }
-    else
-      tab->browser->msg(tr("<span class='err'>Нет активного подключения к серверу/сети</span>"));
+//    if (state == Connected) {      
+//      if (text.startsWith("/bye ", Qt::CaseInsensitive))
+//        clientSocket->send(sChatOpcodeSendByeMsg, text.mid(text.indexOf(QChar(' '))));
+//      
+//      state = Stopped;
+//      clientSocket->quit();
+//    }
+//    else
+//      tab->browser->msg(tr("<span class='err'>Нет активного подключения к серверу/сети</span>"));
   }
   // команда /exit
   else if (text.startsWith("/exit", Qt::CaseInsensitive)) {
@@ -925,8 +925,8 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   }
   // команда /server info
   else if (text.startsWith("/server info", Qt::CaseInsensitive)) {
-    if (state == Connected)
-      clientSocket->send(sChatOpcodeGetServerInfo);
+//    if (state == Connected)
+//      clientSocket->send(sChatOpcodeGetServerInfo);
   }
   else
     return false;
@@ -1154,8 +1154,8 @@ void SChatWindow::hideChat()
 
 /** [private]
  * 
- */
-void SChatWindow::removeConnection()
+ *//*
+void SChatWindow::removeConnection() // FIXME remove SChatWindow::removeConnection()
 {
   quint16 err = clientSocket->protocolError();
   model.clear();
@@ -1204,7 +1204,7 @@ void SChatWindow::removeConnection()
   }
   else if (m_reconnectTimer->isActive())
     m_reconnectTimer->stop();
-}
+}*/
 
 
 /** [private]
