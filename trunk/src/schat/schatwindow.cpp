@@ -326,24 +326,24 @@ void SChatWindow::newPrivateMessage(const QString &nick, const QString &message,
 /** [public slots]
  * 
  */
-void SChatWindow::participantLeft(const QString &nick, const QString &bye)
-{
-  QStandardItem *item = findItem(nick);
-  
-  if (item) {
-    quint8 sex = quint8(item->data(Qt::UserRole + 1).toUInt());
-    model.removeRow(model.indexFromItem(item).row());
-    
-    int index = tabIndex(nick);
-    if (index != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-      if (tab->type == AbstractTab::Private)
-        tab->browser->msgParticipantLeft(sex, nick, bye);
-    }
-  
-    mainChannel->browser->msgParticipantLeft(sex, nick, bye);
-  }
-}
+//void SChatWindow::participantLeft(const QString &nick, const QString &bye)
+//{
+//  QStandardItem *item = findItem(nick);
+//  
+//  if (item) {
+//    quint8 sex = quint8(item->data(Qt::UserRole + 1).toUInt());
+//    model.removeRow(model.indexFromItem(item).row());
+//    
+//    int index = tabIndex(nick);
+//    if (index != -1) {
+//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+//      if (tab->type == AbstractTab::Private)
+//        tab->browser->msgParticipantLeft(sex, nick, bye);
+//    }
+//  
+//    mainChannel->browser->msgParticipantLeft(sex, nick, bye);
+//  }
+//}
 
 
 /** [public slots]
@@ -575,6 +575,17 @@ void SChatWindow::connecting(const QString &server, bool network)
 
 
 /** [private slots]
+ * Обработка ошибки с кодом `ErrorNickAlreadyUse`.
+ * Генерируем новый уникальный ник и пытаемся переподключится.
+ */
+void SChatWindow::errorNickAlreadyUse()
+{
+  uniqueNick();
+  newConnection();
+}
+
+
+/** [private slots]
  * 
  *//*
 void SChatWindow::connectionError(QAbstractSocket::SocketError) // FIXME remove SChatWindow::connectionError(QAbstractSocket::SocketError)
@@ -654,6 +665,7 @@ void SChatWindow::newConnection()
     connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
     connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
+    connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
   }
   m_clientService->connectToHost();
 //  if (!clientSocket) {

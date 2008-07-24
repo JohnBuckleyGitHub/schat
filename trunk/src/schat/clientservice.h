@@ -40,6 +40,7 @@ public:
 signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
+  void errorNickAlreadyUse();
   void newUser(const QStringList &list, bool echo);
   void unconnected();
   void userLeave(const QString &nick, const QString &bye, bool echo);
