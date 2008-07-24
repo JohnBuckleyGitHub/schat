@@ -90,8 +90,7 @@ static const quint16 sChatOpcodeSendPrvMessageEcho   = 202;
  * Сервер
  */
 static const quint16 OpcodeNewUser                   = 301;
-static const quint16 sChatOpcodeParticipantLeft      = 302;
-static const quint16 sChatOpcodeNewParticipantQuiet  = 303;
+static const quint16 OpcodeUserLeave                 = 302;
 
 /**
  * Отказ в подключении

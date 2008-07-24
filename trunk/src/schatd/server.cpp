@@ -230,7 +230,7 @@ void Server::relayParticipantList(ServerSocket *socket)
   while (i.hasNext()) {
     i.next();
     // Отсылаем новому участнику список участников
-    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->sex(), i.value()->participantInfo());
+//    socket->send(sChatOpcodeNewParticipantQuiet, i.value()->sex(), i.value()->participantInfo());
     
     // Отсылаем существующим участникам, профиль нового
     if (socket != i.value())
@@ -328,7 +328,7 @@ void Server::participantLeft(quint16 sex, const QString &nick, const QString &by
   QHashIterator<QString, ServerSocket *> i(peers);
   while (i.hasNext()) {
     i.next();
-    i.value()->send(sChatOpcodeParticipantLeft, nick, bye);
+    i.value()->send(OpcodeUserLeave, nick, bye);
   }
 }
 

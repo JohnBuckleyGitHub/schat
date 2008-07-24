@@ -197,12 +197,12 @@ void ClientSocket::readyRead()
       // но участник добавляется тихо, без уведомления в окне чата.
       // Данные команды отправляются сразу после `sChatOpcodeGreetingOk`
       // и служат для получения списка участников (один пакет - один участник)
-      case sChatOpcodeNewParticipantQuiet:
-        newParticipant(false);
-        break;
+//      case sChatOpcodeNewParticipantQuiet:
+//        newParticipant(false);
+//        break;
       
       // Опкод `sChatOpcodeParticipantLeft` - Уведомляет в выходе из чата участника
-      case sChatOpcodeParticipantLeft:
+      case OpcodeUserLeave:
         opParticipantLeft();
         break;
         

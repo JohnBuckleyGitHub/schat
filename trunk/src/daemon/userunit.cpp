@@ -19,7 +19,6 @@
 #include <QtCore>
 
 #include "abstractprofile.h"
-#include "daemonservice.h"
 #include "userunit.h"
 
 
@@ -29,7 +28,6 @@
 UserUnit::UserUnit()
 {
   m_profile = 0;
-  m_service = 0;
 }
 
 
