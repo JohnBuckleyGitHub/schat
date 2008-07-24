@@ -36,6 +36,7 @@ public:
   
 signals:
   void newUser(const QStringList &list, bool echo);
+  void userLeave(const QString &nick, const QString &bye, bool echo);
 
 public slots:
   void incomingConnection();

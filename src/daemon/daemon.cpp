@@ -85,6 +85,7 @@ void Daemon::incomingConnection()
     connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
     connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
+    connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
   }
 }
 
@@ -142,12 +143,15 @@ void Daemon::userLeave(const QString &nick)
     
     LOG(0, tr("<<< (%1), %2").arg(unit->profile()->host()).arg(nick));
     
+    QString bye = unit->profile()->byeMsg();
     if (m_settings->channelLog)
       if (unit->profile()->isMale())
-        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(unit->profile()->byeMsg()));
+        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
       else
-        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(unit->profile()->byeMsg()));
+        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
     
     delete unit;
+    
+    emit userLeave(nick, bye, true);
   }
 }
