@@ -80,13 +80,10 @@ protected:
   
 public slots:
   void handleMessage(const QString& message);
-//  void incomingDirectConnection(const QString &n, ServerSocket *socket);
   void newDirectMessage();
   void newDirectParticipant(quint16 sex, const QStringList &info);
   void newMessage(const QString &nick, const QString &message);
   void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
-  void participantLeft(const QString &nick, const QString &bye);
-//  void readyForUse();
   
 private slots:
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
@@ -102,6 +99,7 @@ private slots:
   void closeChat();
   void closeTab();
   void connecting(const QString &server, bool network);
+  void errorNickAlreadyUse();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void messageClicked();

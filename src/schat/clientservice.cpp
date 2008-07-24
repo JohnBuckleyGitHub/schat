@@ -78,6 +78,11 @@ void ClientService::connectToHost()
     
     m_checkTimer.start();
   }
+  else if (m_socket->state() == QAbstractSocket::ConnectedState) {
+    m_reconnects = 0;
+    m_fatal = false;
+    m_socket->disconnectFromHost();
+  }
 }
 
 
@@ -96,6 +101,8 @@ void ClientService::check()
     }
     else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
       m_socket->disconnectFromHost();
+    else
+      m_checkTimer.stop();
   }
   else
     m_checkTimer.stop();
@@ -255,6 +262,7 @@ void ClientService::opcodeAccessDenied()
   switch (p_reason) {
     case ErrorNickAlreadyUse:
       m_fatal = true;
+      emit errorNickAlreadyUse();
       break;
       
     default:
