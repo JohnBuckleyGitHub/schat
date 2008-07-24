@@ -653,6 +653,7 @@ void SChatWindow::newConnection()
     connect(m_clientService, SIGNAL(unconnected()), SLOT(unconnected()));
     connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
     connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
+    connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
   }
   m_clientService->connectToHost();
 //  if (!clientSocket) {
@@ -869,6 +870,32 @@ void SChatWindow::unconnected()
   statusLabel->setText(tr("Не подключено"));
   model.clear();
   mainChannel->browser->msgDisconnect();
+}
+
+
+/** [private slots]
+ * Выход удалённого пользователя из чата, опкод `OpcodeUserLeave`.
+ */
+void SChatWindow::userLeave(const QString &nick, const QString &bye, bool echo)
+{
+  QStandardItem *item = findItem(nick);
+  
+  if (item) {
+    QStringList list = item->data(Qt::UserRole + 1).toStringList();
+    model.removeRow(model.indexFromItem(item).row());
+    
+    if (echo) {
+      AbstractProfile profile(list);
+      int index = tabIndex(nick);
+      if (index != -1) {
+        AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+        if (tab->type == AbstractTab::Private)
+          tab->browser->msgParticipantLeft(profile.genderNum(), nick, bye);
+      }
+    
+      mainChannel->browser->msgParticipantLeft(profile.genderNum(), nick, bye);
+    }
+  }  
 }
 
 

@@ -112,6 +112,7 @@ private slots:
   void returnPressed();
   void settingsChanged(int notify);
   void unconnected();
+  void userLeave(const QString &nick, const QString &bye, bool echo);
   void welcomeOk();
   
   #ifdef SCHAT_UPDATE  

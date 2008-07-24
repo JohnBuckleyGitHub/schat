@@ -42,6 +42,7 @@ signals:
   void connecting(const QString &server, bool network);
   void newUser(const QStringList &list, bool echo);
   void unconnected();
+  void userLeave(const QString &nick, const QString &bye, bool echo);
    
 private slots:
   void check();
@@ -54,6 +55,7 @@ private:
   void createSocket();
   void opcodeAccessGranted();
   void opcodeNewUser();
+  void opcodeUserLeave();
   
   bool m_accepted;
   bool m_fatal;
