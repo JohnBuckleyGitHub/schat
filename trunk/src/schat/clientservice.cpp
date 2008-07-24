@@ -185,6 +185,10 @@ void ClientService::readyRead()
           opcodeNewUser();
           break;
           
+        case OpcodeUserLeave:
+          opcodeUserLeave();
+          break;
+          
         default:
           m_socket->disconnectFromHost();
           break;
@@ -263,7 +267,7 @@ void ClientService::opcodeAccessGranted()
 
 /** [private]
  * Разбор пакета с опкодом `OpcodeNewUser`.
- * В конце разбора высылается сигнал `void newUser(const QStringList &, bool)`.
+ * В конце разбора высылается сигнал `newUser(const QStringList &, bool)`.
  */
 void ClientService::opcodeNewUser()
 {
@@ -287,4 +291,26 @@ void ClientService::opcodeNewUser()
     echo = true;
 
   emit newUser(profile, echo);  
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeUserLeave`.
+ * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
+ */
+void ClientService::opcodeUserLeave()
+{
+  bool echo;
+  quint8 p_flag;
+  QString p_nick;
+  QString p_bye;
+  m_stream >> p_flag >> p_nick >> p_bye;
+  m_nextBlockSize = 0;
+  
+  if (p_flag)
+    echo = true;
+  else
+    echo = false;
+  
+  emit userLeave(p_nick, p_bye, echo);
 }
