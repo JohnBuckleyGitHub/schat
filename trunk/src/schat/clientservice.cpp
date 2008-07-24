@@ -87,16 +87,16 @@ void ClientService::connectToHost()
 void ClientService::check()
 {
   qDebug() << "ClientService::check()";
-  if (m_socket)
-    qDebug() << m_socket->state();
   
-  if (m_socket && m_socket->state() != QTcpSocket::ConnectedState) {
-    m_socket->deleteLater();
-    m_socket = 0;
-    connectToHost();
+  if (m_socket) {
+    if (m_socket->state() != QTcpSocket::ConnectedState) {
+      m_socket->deleteLater();
+      m_socket = 0;
+      connectToHost();
+    }
+    else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
+      m_socket->disconnectFromHost();
   }
-  else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
-    m_socket->disconnectFromHost();
   else
     m_checkTimer.stop();
 }
@@ -145,8 +145,11 @@ void ClientService::disconnected()
     m_socket->deleteLater();
     m_socket = 0;
   }
-  emit unconnected();
-  m_accepted = false;
+  
+  if (m_accepted) {
+    emit unconnected();
+    m_accepted = false;
+  }
   
   if (!m_fatal) {
     if ((m_reconnects < m_network->count() * 2))
@@ -198,10 +201,7 @@ void ClientService::readyRead()
       opcodeAccessGranted();
     }
     else if (m_opcode == OpcodeAccessDenied) {
-      quint16 reason;
-      m_stream >> reason;
-      m_nextBlockSize = 0;
-      qDebug() << "reason" << reason;;
+      opcodeAccessDenied();
     }
     else {
       m_socket->disconnectFromHost();
@@ -243,17 +243,40 @@ void ClientService::createSocket()
 
 
 /** [private]
- * Обработка опкода `OpcodeAccessGranted`.
+ * Разбор пакета с опкодом `OpcodeAccessDenied`.
+ */
+void ClientService::opcodeAccessDenied()
+{
+  quint16 p_reason;
+  m_stream >> p_reason;
+  m_nextBlockSize = 0;
+  qDebug() << "reason" << p_reason;
+  
+  switch (p_reason) {
+    case ErrorNickAlreadyUse:
+      m_fatal = true;
+      break;
+      
+    default:
+      m_fatal = true;
+      break;
+  }
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeAccessGranted`.
  * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
  * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
  */
 void ClientService::opcodeAccessGranted()
 {
-  quint16 level;
-  m_stream >> level;
+  quint16 p_level;
+  m_stream >> p_level;
   m_nextBlockSize = 0;
   m_accepted = true;
   m_reconnects = 0;
+  m_fatal = false;
   
   QString network;
   if (m_network->isNetwork())
@@ -261,7 +284,7 @@ void ClientService::opcodeAccessGranted()
   else
     network = "";
   
-  emit accessGranted(network, m_server.address, level);
+  emit accessGranted(network, m_server.address, p_level);
 }
 
 
