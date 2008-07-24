@@ -161,6 +161,35 @@ bool DaemonService::newUser(const QStringList &list, bool echo)
 
 
 /** [public slots]
+ * Формирует и отправляет пакет с опкодом `OpcodeUserLeave`.
+ */
+bool DaemonService::userLeave(const QString &nick, const QString &bye, bool echo)
+{
+  if (m_socket->state() == QTcpSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUserLeave;
+    
+    if (echo)
+      out << quint8(1);
+    else
+      out << quint8(0);
+    
+    out << nick
+        << bye;
+    
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);    
+    return true;
+  }
+  else
+    return false;  
+}
+
+
+/** [public slots]
  * 
  */
 void DaemonService::disconnected()

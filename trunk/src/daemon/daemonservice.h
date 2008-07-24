@@ -42,6 +42,7 @@ signals:
   
 public slots:
   bool newUser(const QStringList &list, bool echo);
+  bool userLeave(const QString &nick, const QString &bye, bool echo);
   void disconnected();
   void readyRead();
   
