@@ -53,6 +53,7 @@ private slots:
 
 private:
   void createSocket();
+  void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeNewUser();
   void opcodeUserLeave();
