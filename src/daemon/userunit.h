@@ -19,8 +19,11 @@
 #ifndef USERUNIT_H_
 #define USERUNIT_H_
 
+#include <QPointer>
+
+#include "daemonservice.h"
+
 class AbstractProfile;
-class DaemonService;
 
 class UserUnit {
   
@@ -33,7 +36,7 @@ public:
   
 private:
   AbstractProfile *m_profile;
-  DaemonService *m_service;
+  QPointer<DaemonService> m_service;
 };
 
 #endif /*USERUNIT_H_*/
