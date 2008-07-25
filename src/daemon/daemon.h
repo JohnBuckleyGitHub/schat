@@ -23,6 +23,7 @@
 #include <QHash>
 
 class ChannelLog;
+class DaemonService;
 class DaemonSettings;
 class UserUnit;
 
@@ -46,6 +47,8 @@ private slots:
   void userLeave(const QString &nick);
 
 private:
+  void sendAllUsers(DaemonService *service);
+  
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
   DaemonSettings *m_settings;
