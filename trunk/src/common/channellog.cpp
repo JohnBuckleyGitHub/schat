@@ -121,7 +121,7 @@ bool ChannelLog::openFile()
     m_stream << "  .green { color:#6bb521; }" << endl;
     m_stream << "  .err { color:#da251d; }" << endl;
     m_stream << "  .info { color:#5096cf; }" << endl;
-    m_stream << "  .me { color:#f3f; }" << endl;
+    m_stream << "  .me { color:#cd00cd; }" << endl;
     m_stream << "</style></head><body>" << endl;
   }
   
