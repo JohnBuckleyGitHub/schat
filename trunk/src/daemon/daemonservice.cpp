@@ -134,6 +134,10 @@ bool DaemonService::newUser(const QStringList &list, bool echo)
   
   if (m_socket->state() == QTcpSocket::ConnectedState) {
     AbstractProfile profile(list);
+    
+    if (profile.nick() == m_profile->nick() && echo)
+      return true;
+    
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);

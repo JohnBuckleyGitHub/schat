@@ -121,6 +121,8 @@ void Daemon::greeting(const QStringList &list)
           m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
         else
           m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
+      
+      sendAllUsers(service);
     }
     else
       service->accessDenied(ErrorNickAlreadyUse);
@@ -153,5 +155,22 @@ void Daemon::userLeave(const QString &nick)
     delete unit;
     
     emit userLeave(nick, bye, true);
+  }
+}
+
+
+/** [private]
+ * Отправка подключившемуся клиенту списка всех пользователей.
+ */
+void Daemon::sendAllUsers(DaemonService *service)
+{
+  if (service) {
+    QHashIterator<QString, UserUnit *> i(m_users);
+    while (i.hasNext()) {
+      i.next();
+      
+      if (i.value()->service())
+        service->newUser(i.value()->profile()->pack(), false);
+    }
   }
 }
