@@ -132,17 +132,20 @@ bool DaemonService::newUser(const QStringList &list, bool echo)
 {
   qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
   
+  if (!m_accepted)
+    return false;
+  
   if (m_socket->state() == QTcpSocket::ConnectedState) {
     AbstractProfile profile(list);
     
-    if (profile.nick() == m_profile->nick() && echo)
+    if (profile.nick() == m_profile->nick() && !echo)
       return true;
     
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << OpcodeNewUser;
-    
+
     if (echo)
       out << quint8(1);
     else
