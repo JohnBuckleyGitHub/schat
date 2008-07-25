@@ -141,7 +141,7 @@ private:
   ConnectionState state;
   MainChannel *mainChannel;
   QAction *aboutAction;
-  QAction *addTabAction;
+//  QAction *addTabAction;
   QAction *closeTabAction;
   QAction *interfaceSetAction;
   QAction *networkSetAction;

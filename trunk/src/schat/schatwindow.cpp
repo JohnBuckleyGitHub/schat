@@ -651,7 +651,7 @@ void SChatWindow::messageClicked()
  *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
 void SChatWindow::newConnection()
-{ // FIXME добавить поток
+{ 
   
 //  QString     server  = settings->network.server();
 //  QStringList profile = m_profile->pack();
@@ -1121,10 +1121,10 @@ void SChatWindow::createActions()
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
   
   // Открытие новой вкладки, для создания нового подключения
-  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение"), this);
-  addTabAction->setShortcut(tr("Ctrl+N"));
-  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
-  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
+//  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение"), this);
+//  addTabAction->setShortcut(tr("Ctrl+N"));
+//  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
+//  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
   // Разорвать текущее соединение
   closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
@@ -1172,10 +1172,10 @@ void SChatWindow::createActions()
  */
 void SChatWindow::createCornerWidgets()
 {
-  QToolButton *addTabButton = new QToolButton(this);
-  addTabButton->setDefaultAction(addTabAction);
-  addTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
+//  QToolButton *addTabButton = new QToolButton(this);
+//  addTabButton->setDefaultAction(addTabAction);
+//  addTabButton->setAutoRaise(true);
+//  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
   
   QToolButton *closeTabButton = new QToolButton(this);
   closeTabButton->setDefaultAction(closeTabAction);
