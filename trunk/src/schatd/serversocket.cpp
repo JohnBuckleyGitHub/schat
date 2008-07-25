@@ -170,7 +170,7 @@ void ServerSocket::readyRead()
   while (readBlock()) {
     
     switch (m_command) {
-      case sChatOpcodeSendMessage:
+      case OpcodeMessage:
         opSendMessage();
         break;
         

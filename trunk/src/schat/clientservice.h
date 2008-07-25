@@ -35,6 +35,8 @@ class ClientService : public QObject
 public:
   ClientService(const AbstractProfile *profile, const Network *settings, QObject *parent = 0);
   ~ClientService();
+  bool isReady();
+  bool sendMessage(const QString &channel, const QString &message);
   void connectToHost();
   
 signals:

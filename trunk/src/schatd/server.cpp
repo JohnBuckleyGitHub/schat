@@ -195,7 +195,7 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
     QHashIterator<QString, ServerSocket *> i(peers);
     while (i.hasNext()) {
       i.next();
-      i.value()->send(sChatOpcodeSendMessage, nick, message);
+      i.value()->send(OpcodeMessage, nick, message);
     }
   } else {
     ServerSocket *socket = qobject_cast<ServerSocket *>(sender());

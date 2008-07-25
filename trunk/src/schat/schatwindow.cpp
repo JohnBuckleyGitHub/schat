@@ -790,22 +790,13 @@ void SChatWindow::returnPressed()
   
   if (parseCmd(tab, text))
     return;
-//  else if (tab->type == AbstractTab::Direct) {
-//    DirectChannel *ch = static_cast<DirectChannel *>(tab);
-//    ch->sendText(text);
-//  }
-//  else if (tab->type == AbstractTab::DirectServer) {
-////    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
-////    ch->sendText(text);
-//    ;
-//  }
-//  else if (state == Connected) {
-//    QString channel;
-//    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
-////    clientSocket->send(sChatOpcodeSendMessage, channel, text);
-//  }
   
-  lineEdit->clear();  
+  if (m_clientService) {
+    QString channel;
+    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
+    if (m_clientService->sendMessage(channel, text))
+      lineEdit->clear();
+  }
 }
 
 
