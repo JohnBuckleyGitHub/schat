@@ -432,24 +432,23 @@ void SChatWindow::addTab()
  */
 void SChatWindow::addTab(const QModelIndex &i)
 {
-//  QStandardItem *item = model.itemFromIndex(i);
-//  QString nick = item->text();
-//  if (nick == m_profile->nick())
-//    return;
-//  
-//  int index = tabIndex(nick);
-//  
-//  if (index == -1) {
-//    Profile *p = profileFromItem(item);
-//    Tab *tab = new Tab(this);
-//    tab->icon.addFile(":/images/" + m_profile->gender(quint8(p->sex())) + ".png");
-//    tab->browser->setChannel(nick);
-//    index = tabWidget->addTab(tab, tab->icon, nick);
-//    tabWidget->setTabToolTip(index, p->toolTip());
-//    p->deleteLater();
-//  }
-//  
-//  tabWidget->setCurrentIndex(index);
+  QStandardItem *item = model.itemFromIndex(i);
+  QString nick = item->text();
+  if (nick == m_profile->nick())
+    return;
+  
+  int index = tabIndex(nick);
+  
+  if (index == -1) {
+    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+    Tab *tab = new Tab(this);
+    tab->icon.addFile(":/images/" + profile.gender() + ".png");
+    tab->browser->setChannel(nick);
+    index = tabWidget->addTab(tab, tab->icon, nick);
+    tabWidget->setTabToolTip(index, userToolTip(profile));
+  }
+  
+  tabWidget->setCurrentIndex(index);
 }
 
 
