@@ -60,6 +60,7 @@ private:
   void opcodeAccessGranted();
   void opcodeNewUser();
   void opcodeUserLeave();
+  void unknownOpcode();
   
   bool m_accepted;
   bool m_fatal;

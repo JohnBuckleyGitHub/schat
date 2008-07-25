@@ -241,7 +241,7 @@ void ClientService::readyRead()
           break;
           
         default:
-          m_socket->disconnectFromHost();
+          unknownOpcode();
           break;
       };
     }
@@ -385,4 +385,16 @@ void ClientService::opcodeUserLeave()
     echo = false;
   
   emit userLeave(p_nick, p_bye, echo);
+}
+
+
+/** [private]
+ * Функция читает пакет с неизвестным опкодом.
+ */
+void ClientService::unknownOpcode()
+{
+  qDebug() << "DaemonService::unknownOpcode()";
+  qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  m_nextBlockSize = 0;
 }
