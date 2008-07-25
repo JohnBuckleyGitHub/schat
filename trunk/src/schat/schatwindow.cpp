@@ -21,8 +21,6 @@
 
 #include "aboutdialog.h"
 #include "abstractprofile.h"
-#include "directchannel.h"
-//#include "directchannelserver.h"
 #include "mainchannel.h"
 #include "profile.h"
 #include "protocol.h"
@@ -32,8 +30,6 @@
 #include "tab.h"
 #include "version.h"
 #include "welcomedialog.h"
-
-static const int reconnectTimeout = 3 * 1000;
 
 
 /** [public]
@@ -59,9 +55,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   settings      = new Settings(m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
-  
-  m_reconnectTimer = new QTimer(this);
-  m_reconnectTimer->setInterval(reconnectTimeout);
  
   state = Disconnected;
   
@@ -111,7 +104,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
-  connect(m_reconnectTimer, SIGNAL(timeout()), this, SLOT(newConnection()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
   connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(settings, SIGNAL(changed(int)), this, SLOT(settingsChanged(int)));
@@ -543,12 +535,9 @@ void SChatWindow::closeTab()
   if (index) {
     QWidget *widget = tabWidget->widget(index);
     tabWidget->removeTab(index);
-    AbstractTab *tab = static_cast<AbstractTab *>(widget);
-    tab->deleteLater();
+    widget->deleteLater();
   }
   else {
-    if (m_reconnectTimer->isActive())
-      m_reconnectTimer->stop();
     
     if (state == Connected) {
       state = Stopped;
@@ -801,20 +790,20 @@ void SChatWindow::returnPressed()
   
   if (parseCmd(tab, text))
     return;
-  else if (tab->type == AbstractTab::Direct) {
-    DirectChannel *ch = static_cast<DirectChannel *>(tab);
-    ch->sendText(text);
-  }
-  else if (tab->type == AbstractTab::DirectServer) {
-//    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
+//  else if (tab->type == AbstractTab::Direct) {
+//    DirectChannel *ch = static_cast<DirectChannel *>(tab);
 //    ch->sendText(text);
-    ;
-  }
-  else if (state == Connected) {
-    QString channel;
-    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
-//    clientSocket->send(sChatOpcodeSendMessage, channel, text);
-  }
+//  }
+//  else if (tab->type == AbstractTab::DirectServer) {
+////    DirectChannelServer *ch = static_cast<DirectChannelServer *>(tab);
+////    ch->sendText(text);
+//    ;
+//  }
+//  else if (state == Connected) {
+//    QString channel;
+//    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
+////    clientSocket->send(sChatOpcodeSendMessage, channel, text);
+//  }
   
   lineEdit->clear();  
 }

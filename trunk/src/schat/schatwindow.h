@@ -164,7 +164,6 @@ private:
   QStatusBar *statusbar;
   QSystemTrayIcon *trayIcon;
   QTabWidget *tabWidget;
-  QTimer *m_reconnectTimer;
   QTimer *m_updateTimer;
   QTimer *noticeTimer;
   QToolButton *m_settingsButton;
