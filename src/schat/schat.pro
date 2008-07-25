@@ -23,7 +23,6 @@ HEADERS += \
     channellog.h \
     chatbrowser.h \
     clientsocket.h \
-    directchannel.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -45,7 +44,6 @@ SOURCES += \
     channellog.cpp \
     chatbrowser.cpp \
     clientsocket.cpp \
-    directchannel.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \
