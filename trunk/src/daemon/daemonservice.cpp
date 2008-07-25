@@ -233,7 +233,14 @@ void DaemonService::readyRead()
     qDebug() << "op" << m_opcode;
     
     if (m_accepted) {
-      ;
+      switch (m_opcode) {
+//        case value:
+//          
+//          break;
+        default:
+          unknownOpcode();
+          break;
+      };
     }
     else if (m_opcode == OpcodeGreeting) {
       if (!opcodeGreeting()) {
@@ -332,4 +339,16 @@ quint16 DaemonService::verifyGreeting(quint16 version)
   #endif
   
   return 0;
+}
+
+
+/** [private]
+ * Функция читает пакет с неизвестным опкодом.
+ */
+void DaemonService::unknownOpcode()
+{
+  qDebug() << "DaemonService::unknownOpcode()";
+  qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  m_nextBlockSize = 0;
 }

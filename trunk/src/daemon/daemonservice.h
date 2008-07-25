@@ -52,6 +52,7 @@ private slots:
 private:
   bool opcodeGreeting();
   quint16 verifyGreeting(quint16 version);
+  void unknownOpcode();
   
   AbstractProfile *m_profile;
   bool m_accepted;
