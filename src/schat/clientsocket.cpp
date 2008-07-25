@@ -173,7 +173,7 @@ void ClientSocket::readyRead()
         pingTimeout.setInterval(err * 1000);
         break;
       
-      case sChatOpcodeSendMessage:      
+      case OpcodeMessage:      
         currentBlock >> textBlock >> message;
         emit newMessage(textBlock, message);
         break;

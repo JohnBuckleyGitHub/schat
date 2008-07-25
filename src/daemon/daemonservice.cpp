@@ -96,7 +96,7 @@ bool DaemonService::send(quint16 opcode)
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
-  return true;
+    return true;
   }
   else
     return false;
@@ -118,7 +118,7 @@ bool DaemonService::send(quint16 opcode, quint16 err)
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
-  return true;
+    return true;
   }
   else
     return false;

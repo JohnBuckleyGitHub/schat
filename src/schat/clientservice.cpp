@@ -58,6 +58,47 @@ ClientService::~ClientService()
 
 
 /** [public]
+ * Возвращает `true` если сервис находится в активном состоянии.
+ */
+bool ClientService::isReady()
+{
+  if (m_socket) {
+    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+
+/** [public]
+ * 
+ */
+bool ClientService::sendMessage(const QString &channel, const QString &message)
+{
+  qDebug() << "ClientService::sendMessage(const QString &, const QString &)" << channel << message;
+  
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0)
+        << OpcodeMessage
+        << channel
+        << message;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;  
+}
+
+
+/** [public]
  * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
  * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
  */

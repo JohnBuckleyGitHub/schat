@@ -71,7 +71,7 @@ static const quint16 OpcodeAccessGranted             = 101;
  * ОТПРАВИТЕЛЬ: ---------------
  * Клиент
  */
-static const quint16 sChatOpcodeSendMessage          = 200;
+static const quint16 OpcodeMessage                   = 200;
 static const quint16 sChatOpcodeSendPrivateMessage   = 201;
 static const quint16 sChatOpcodeSendPrvMessageEcho   = 202;
 
