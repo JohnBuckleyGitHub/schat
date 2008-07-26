@@ -55,6 +55,7 @@ private:
   bool opcodeGreeting();
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint16 err);
+  bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   quint16 verifyGreeting(quint16 version);
   void opcodeMessage();
   void unknownOpcode();

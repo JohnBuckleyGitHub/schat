@@ -99,11 +99,11 @@ void DaemonService::accessGranted(quint16 level)
 
 
 /** [public]
- * 
+ * Отправка пакета с опкодом `OpcodePrivateMessage`.
  */
 void DaemonService::privateMessage(quint8 flag, const QString &nick, const QString &message)
 {
-  qDebug() << "DaemonService::privateMessage()" << flag << nick << message;
+  send(OpcodePrivateMessage, flag, nick, message);
 }
 
 
@@ -313,6 +313,7 @@ bool DaemonService::opcodeGreeting()
  * QString ->
  * QString ->
  * ОПКОДЫ:
+ *   `OpcodeMessage`.
  */
 bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str2)
 {
@@ -346,6 +347,33 @@ bool DaemonService::send(quint16 opcode, quint16 err)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode << err; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint8  ->
+ * QString ->
+ * QString ->
+ * ОПКОДЫ:
+ *   `OpcodePrivateMessage`.
+ */
+bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const QString &message)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << flag << nick << message; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
