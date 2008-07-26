@@ -80,10 +80,6 @@ protected:
   
 public slots:
   void handleMessage(const QString& message);
-  void newDirectMessage();
-  void newDirectParticipant(quint16 sex, const QStringList &info);
-  void newMessage(const QString &nick, const QString &message);
-  void newPrivateMessage(const QString &nick, const QString &message, const QString &sender);
   
 private slots:
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
@@ -92,7 +88,6 @@ private slots:
   inline void settingsUpdate()    { settingsPage(SettingsDialog::UpdatePage); }
   void about();
   void accessGranted(const QString &network, const QString &server, quint16 level);
-  void addTab();
   void addTab(const QModelIndex &i);
   void changedNick(quint16 sex, const QStringList &list);
   void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
@@ -107,6 +102,7 @@ private slots:
   void newConnection();
   void newUser(const QStringList &list, bool echo);
   void notice();
+  void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void resetTabNotice(int index);
   void returnPressed();
   void settingsChanged(int notify);
