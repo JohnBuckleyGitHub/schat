@@ -793,7 +793,7 @@ void SChatWindow::returnPressed()
   
   if (m_clientService) {
     QString channel;
-    tabWidget->currentIndex() == 0 ? channel = "#main" : channel = tabWidget->tabText(tabWidget->currentIndex());
+    tabWidget->currentIndex() == 0 ? channel = "" : channel = tabWidget->tabText(tabWidget->currentIndex());
     if (m_clientService->sendMessage(channel, text))
       lineEdit->clear();
   }
