@@ -207,9 +207,9 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
         m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(message));
       #endif
       
-      if (socket)
-        socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);
-      peers[channel]->send(sChatOpcodeSendPrivateMessage, nick, message);
+//      if (socket)
+//        socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);
+      peers[channel]->send(OpcodePrivateMessage, nick, message);
     }
     else if (socket)
       socket->send(OpcodeAccessDenied, sChatErrorNoSuchChannel);

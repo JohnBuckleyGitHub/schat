@@ -135,19 +135,27 @@ void Daemon::greeting(const QStringList &list)
 /** [private slots]
  * 
  */
-void Daemon::message(const QString &channel, const QString &sender, const QString &msg)
+void Daemon::message(const QString &channel, const QString &_sender, const QString &msg)
 {
-  qDebug() << "Daemon::message()" << channel << sender << msg;
+  qDebug() << "Daemon::message()" << channel << _sender << msg;
   
   if (channel.isEmpty()) {
     if (m_settings->channelLog)
-      m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
+      m_channelLog->msg(tr("%1: %2").arg(_sender).arg(msg));
     
-    emit message(sender, msg);
+    emit message(_sender, msg);
   }
   else if (m_users.contains(channel)) {
     if (m_settings->privateLog)
-      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
+      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(_sender).arg(channel).arg(msg));
+    
+    DaemonService *senderService = qobject_cast<DaemonService *>(sender());
+    if (senderService)
+      senderService->privateMessage(1, channel, msg);
+    
+    DaemonService *service = m_users.value(channel)->service();
+    if (service)
+      service->privateMessage(0, _sender, msg);
   }
 }
 
