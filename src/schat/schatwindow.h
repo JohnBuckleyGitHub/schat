@@ -62,13 +62,13 @@ class SChatWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  enum ConnectionState {
-    Disconnected,
-    WaitingForConnected,
-    Connected,
-    Stopped,
-    Ignore
-  };
+//  enum ConnectionState {
+//    Disconnected,
+//    WaitingForConnected,
+//    Connected,
+//    Stopped,
+//    Ignore
+//  };
   
   SChatWindow(QWidget *parent = 0);
   inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
@@ -135,10 +135,9 @@ private:
   
   AbstractProfile *m_profile;
   bool currentTrayIcon;
-  ConnectionState state;
+//  ConnectionState state;
   MainChannel *mainChannel;
   QAction *aboutAction;
-//  QAction *addTabAction;
   QAction *closeTabAction;
   QAction *interfaceSetAction;
   QAction *networkSetAction;
@@ -153,14 +152,13 @@ private:
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
-//  QPointer<ClientSocket> clientSocket;
-  QPointer<SettingsDialog> settingsDialog;
   QPointer<ClientService> m_clientService;
+  QPointer<SettingsDialog> settingsDialog;
   QSplitter *splitter;
   QStandardItemModel model;
   QStatusBar *statusbar;
   QSystemTrayIcon *trayIcon;
-  QTabWidget *tabWidget;
+  QTabWidget *m_tabs;
   QTimer *m_updateTimer;
   QTimer *noticeTimer;
   QToolButton *m_settingsButton;
