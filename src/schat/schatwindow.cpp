@@ -652,6 +652,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     tab->browser->setChannel(nick);
     index = tabWidget->addTab(tab, tab->icon, nick);
     tabWidget->setTabToolTip(index, userToolTip(profile));
+    tabWidget->setCurrentIndex(index);
   }
   else
     tab = qobject_cast<Tab *>(tabWidget->widget(index));
