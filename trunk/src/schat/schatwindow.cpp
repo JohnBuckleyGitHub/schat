@@ -627,6 +627,18 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 /** [private slots]
  * 
  */
+void SChatWindow::message(const QString &sender, const QString &message)
+{
+  if ((tabWidget->currentIndex() != 0) || (!isActiveWindow()))
+    startNotice(0);
+  
+  mainChannel->msgNewMessage(sender, message);  
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::messageClicked()
 {
   QProcess::startDetached('"' + qApp->applicationDirPath() + "/schat.exe\"");
@@ -654,9 +666,10 @@ void SChatWindow::newConnection()
     connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
     connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
+    connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   }
   m_clientService->connectToHost();
-//  if (!clientSocket) {
+//  if (!clientSocket) { 
 //    clientSocket = new ClientSocket(this);
 //    clientSocket->setProfile(profile);
 //    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), SLOT(newParticipant(quint16, const QStringList &, bool)));

@@ -102,6 +102,7 @@ private slots:
   void errorNickAlreadyUse();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void message(const QString &sender, const QString &message);
   void messageClicked();
   void newConnection();
   void newUser(const QStringList &list, bool echo);
