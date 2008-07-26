@@ -36,6 +36,7 @@ public:
   bool start();
   
 signals:
+  void message(const QString &sender, const QString &message);
   void newUser(const QStringList &list, bool echo);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 
@@ -44,6 +45,7 @@ public slots:
   
 private slots:
   void greeting(const QStringList &list);
+  void message(const QString &channel, const QString &sender, const QString &message);
   void userLeave(const QString &nick);
 
 private:

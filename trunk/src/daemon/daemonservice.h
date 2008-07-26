@@ -31,10 +31,9 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
+  bool isReady() const;
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 level = 0);
-  bool send(quint16 opcode);
-  bool send(quint16 opcode, quint16 err);
   
 signals:
   void greeting(const QStringList &list);
@@ -45,6 +44,7 @@ public slots:
   bool newUser(const QStringList &list, bool echo);
   bool userLeave(const QString &nick, const QString &bye, bool echo);
   void disconnected();
+  void message(const QString &sender, const QString &message);
   void readyRead();
   
 private slots:
@@ -52,6 +52,8 @@ private slots:
 
 private:
   bool opcodeGreeting();
+  bool send(quint16 opcode, const QString &str1, const QString &str2);
+  bool send(quint16 opcode, quint16 err);
   quint16 verifyGreeting(quint16 version);
   void opcodeMessage();
   void unknownOpcode();

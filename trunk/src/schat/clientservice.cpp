@@ -60,7 +60,7 @@ ClientService::~ClientService()
 /** [public]
  * Возвращает `true` если сервис находится в активном состоянии.
  */
-bool ClientService::isReady()
+bool ClientService::isReady() const
 {
   if (m_socket) {
     if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
