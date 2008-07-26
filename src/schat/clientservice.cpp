@@ -240,6 +240,10 @@ void ClientService::readyRead()
           opcodeUserLeave();
           break;
           
+        case OpcodeMessage:
+          opcodeMessage();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -334,6 +338,20 @@ void ClientService::opcodeAccessGranted()
     network = "";
   
   emit accessGranted(network, m_server.address, p_level);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeMessage`.
+ * В конце разбора высылается сигнал `message(const QString &, const QString &)`.
+ */
+void ClientService::opcodeMessage()
+{
+  QString p_sender;
+  QString p_message;
+  m_stream >> p_sender >> p_message;
+  m_nextBlockSize = 0;
+  emit message(p_sender, p_message);
 }
 
 
