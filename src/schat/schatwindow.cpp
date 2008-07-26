@@ -205,14 +205,14 @@ void SChatWindow::handleMessage(const QString &/*message*/)
  * Уведомление от классов `DirectChannel` и `DirectChannelServer` о новом сообщении
  * Слот при необходимости запускает механизм уведомления о новом сообщении.
  */
-void SChatWindow::newDirectMessage()
-{
-  AbstractTab *channel = static_cast<AbstractTab *>(sender());
-  int index = tabWidget->indexOf(channel);
-  
-  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
-    startNotice(index);
-}
+//void SChatWindow::newDirectMessage()
+//{
+//  AbstractTab *channel = static_cast<AbstractTab *>(sender());
+//  int index = tabWidget->indexOf(channel);
+//  
+//  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
+//    startNotice(index);
+//}
 
 
 /** [public slots]
@@ -224,146 +224,17 @@ void SChatWindow::newDirectMessage()
  * quint16 sex             - пол участника.
  * const QStringList &info - унифицированный список для создания профиля.
  */
-void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
-{
-//  AbstractTab *channel = static_cast<AbstractTab *>(sender());
-//  Profile *p = new Profile(sex, info, this);
-//  int index = tabWidget->indexOf(channel);
-//  channel->icon.addFile(":/images/" + m_profile->gender(quint8(sex)) + ".png");
-//  tabWidget->setTabText(index, QChar('#') + info.at(0));
-//  tabWidget->setTabToolTip(index, p->toolTip());
-//  tabWidget->setTabIcon(index, channel->icon);
-//  p->deleteLater();  
-}
-
-
-/** [public slots]
- * 
- */
-void SChatWindow::newMessage(const QString &/*nick*/, const QString &/*message*/)
-{
-  if ((tabWidget->currentIndex() != 0) || (!isActiveWindow()))
-    startNotice(0);
-}
-
-
-/** [public slots]
- * 
- */
-//void SChatWindow::newParticipant(quint16 sex, const QStringList &info, bool echo)
+//void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
 //{
-//  QStandardItem *item = new QStandardItem(QIcon(":/images/" + m_profile->gender() + ".png"), info.at(0));
-//  Profile *p = new Profile(sex, info, this);
-//  item->setData(sex, Qt::UserRole + 1);
-//  item->setData(info, Qt::UserRole + 2);
-//  item->setToolTip(p->toolTip());  
-//  p->deleteLater();
-//  
-//  // Свой ник выделяем жирным шрифтом
-//  if (info.at(0) == m_profile->nick()) {
-//    QFont font;
-//    font.setBold(true);
-//    item->setFont(font);
-//  }
-//  
-//  model.appendRow(item);
-//  model.sort(0);
-//  
-//  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
-//  if (echo) {
-//    int index = tabIndex(info.at(0));
-//    if (index != -1) {
-//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-//      if (tab->type == AbstractTab::Private)
-//        tab->browser->msgNewParticipant(sex, info.at(0));
-//    }
-//    
-//    mainChannel->browser->msgNewParticipant(sex, info.at(0));
-//  }
+////  AbstractTab *channel = static_cast<AbstractTab *>(sender());
+////  Profile *p = new Profile(sex, info, this);
+////  int index = tabWidget->indexOf(channel);
+////  channel->icon.addFile(":/images/" + m_profile->gender(quint8(sex)) + ".png");
+////  tabWidget->setTabText(index, QChar('#') + info.at(0));
+////  tabWidget->setTabToolTip(index, p->toolTip());
+////  tabWidget->setTabIcon(index, channel->icon);
+////  p->deleteLater();  
 //}
-
-
-/** [public slots]
- * 
- */
-void SChatWindow::newPrivateMessage(const QString &nick, const QString &message, const QString &sender)
-{
-//  int index = tabIndex(nick);
-//  QStandardItem *item = findItem(nick);
-//  Tab *tab = 0;
-//  
-//  if (index == -1 ) {
-//    if (item) {
-//      Profile *p = profileFromItem(item);
-//      tab = new Tab(this);
-//      tab->icon.addFile(":/images/" + m_profile->gender() + ".png");
-//      tab->browser->setChannel(nick);
-//      index = tabWidget->addTab(tab, tab->icon, nick);
-//      tabWidget->setCurrentIndex(index);
-//      tabWidget->setTabToolTip(index, p->toolTip());
-//      p->deleteLater();
-//    }
-//  }
-//  else 
-//    tab = qobject_cast<Tab *>(tabWidget->widget(index));
-//  
-//  if (tab)
-//    tab->browser->msgNewMessage(sender, message);
-//  
-//  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
-//    startNotice(index);
-}
-
-
-/** [public slots]
- * 
- */
-//void SChatWindow::participantLeft(const QString &nick, const QString &bye)
-//{
-//  QStandardItem *item = findItem(nick);
-//  
-//  if (item) {
-//    quint8 sex = quint8(item->data(Qt::UserRole + 1).toUInt());
-//    model.removeRow(model.indexFromItem(item).row());
-//    
-//    int index = tabIndex(nick);
-//    if (index != -1) {
-//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-//      if (tab->type == AbstractTab::Private)
-//        tab->browser->msgParticipantLeft(sex, nick, bye);
-//    }
-//  
-//    mainChannel->browser->msgParticipantLeft(sex, nick, bye);
-//  }
-//}
-
-
-/** [public slots]
- * 
- *//*
-void SChatWindow::readyForUse() // FIXME remove SChatWindow::readyForUse()
-{
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
-  
-  state = Connected;
-  QString peerAddress = clientSocket->peerAddress().toString();
-  
-  // Различные сообщения при подключении к сети и одиночному серверу
-  if (settings->network.isNetwork()) {
-    QString networkName = settings->network.name();
-    mainChannel->browser->msgReadyForUse(networkName, peerAddress);
-    statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(networkName).arg(peerAddress));
-    setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(networkName));
-  }
-  else {
-    mainChannel->browser->msgReadyForUse(peerAddress);
-    statusLabel->setText(tr("Успешно подключены к %1").arg(peerAddress));
-    setWindowTitle(tr("IMPOMEZIA Simple Chat"));
-  }
-  
-  mainChannel->displayChoiceServer(false);
-}*/
 
 
 /** [private slots]
@@ -407,16 +278,16 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 /** [private slots]
  * 
  */
-void SChatWindow::addTab()
-{
-  QString label = tr("Новое подключение");
-  int index = tabIndex(label);
-  
-  if (index > 0)
-    tabWidget->setCurrentIndex(index);
-//  else FIXME восстановить работоспособность
-//    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
-}
+//void SChatWindow::addTab()
+//{
+//  QString label = tr("Новое подключение");
+//  int index = tabIndex(label);
+//  
+//  if (index > 0)
+//    tabWidget->setCurrentIndex(index);
+////  else FIXME восстановить работоспособность
+////    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
+//}
 
 
 /** [private slots]
@@ -667,6 +538,7 @@ void SChatWindow::newConnection()
     connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
     connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
     connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
+    connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   }
   m_clientService->connectToHost();
 //  if (!clientSocket) { 
@@ -756,6 +628,42 @@ void SChatWindow::notice()
     trayIcon->setIcon(QIcon(":/images/logo16.png"));
     currentTrayIcon = true;
   }
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &message)
+{
+  qDebug() << "SChatWindow::privateMessage()" << flag << nick << message;
+  
+  QStandardItem *item = findItem(nick);
+  if (!item)
+    return;
+  
+  Tab *tab = 0;
+  int index = tabIndex(nick);
+  
+  if (index == -1) {
+    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+    tab = new Tab(this);
+    tab->icon.addFile(":/images/" + profile.gender() + ".png");
+    tab->browser->setChannel(nick);
+    index = tabWidget->addTab(tab, tab->icon, nick);
+    tabWidget->setTabToolTip(index, userToolTip(profile));
+  }
+  else
+    tab = qobject_cast<Tab *>(tabWidget->widget(index));
+
+  if (tab)
+    if (flag == 1)
+      tab->browser->msgNewMessage(m_profile->nick(), message);
+    else
+      tab->browser->msgNewMessage(nick, message);
+  
+  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
+    startNotice(index);
 }
 
 

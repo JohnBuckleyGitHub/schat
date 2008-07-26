@@ -244,6 +244,10 @@ void ClientService::readyRead()
           opcodeMessage();
           break;
           
+        case OpcodePrivateMessage:
+          opcodePrivateMessage();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -381,6 +385,21 @@ void ClientService::opcodeNewUser()
     echo = true;
 
   emit newUser(profile, echo);  
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodePrivateMessage`.
+ * В конце разбора высылается сигнал `privateMessage(quint8, const QString &, const QString &)`.
+ */
+void ClientService::opcodePrivateMessage()
+{
+  quint8 p_flag;
+  QString p_nick;
+  QString p_message;
+  m_stream >> p_flag >> p_nick >> p_message;
+  m_nextBlockSize = 0;
+  emit privateMessage(p_flag, p_nick, p_message);
 }
 
 
