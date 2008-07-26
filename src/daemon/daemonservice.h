@@ -39,6 +39,7 @@ public:
 signals:
   void greeting(const QStringList &list);
   void leave(const QString &nick);
+  void message(const QString &channel, const QString &sender, const QString &message);
   
 public slots:
   bool newUser(const QStringList &list, bool echo);
@@ -52,6 +53,7 @@ private slots:
 private:
   bool opcodeGreeting();
   quint16 verifyGreeting(quint16 version);
+  void opcodeMessage();
   void unknownOpcode();
   
   AbstractProfile *m_profile;

@@ -234,9 +234,10 @@ void DaemonService::readyRead()
     
     if (m_accepted) {
       switch (m_opcode) {
-//        case value:
-//          
-//          break;
+        case OpcodeMessage:
+          opcodeMessage();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -339,6 +340,24 @@ quint16 DaemonService::verifyGreeting(quint16 version)
   #endif
   
   return 0;
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeMessage`.
+ * В конце разбора высылается сигнал `message(const QString &, const QString &, const QString &)`.
+ */
+void DaemonService::opcodeMessage()
+{
+  qDebug() << "DaemonService::opcodeMessage()";
+  QString p_channel;
+  QString p_message;
+  m_stream >> p_channel >> p_message;
+  m_nextBlockSize = 0;
+  qDebug() << "CHANNEL:" << p_channel;
+  qDebug() << "SENDER: " << m_profile->nick();
+  qDebug() << "MESSAGE:" << p_message;
+  emit message(p_channel, m_profile->nick(), p_message);
 }
 
 
