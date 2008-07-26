@@ -41,7 +41,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   centralWidget = new QWidget(this);  
   splitter      = new QSplitter(centralWidget);
   lineEdit      = new QLineEdit(centralWidget);
-  tabWidget     = new QTabWidget(splitter);
+  m_tabs        = new QTabWidget(splitter);
   rightWidget   = new QWidget(splitter);
   listView      = new QListView(rightWidget);  
   rightLayout   = new QVBoxLayout(rightWidget);
@@ -55,10 +55,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   settings      = new Settings(m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
- 
-  state = Disconnected;
   
-  splitter->addWidget(tabWidget);
+  splitter->addWidget(m_tabs);
   splitter->addWidget(rightWidget);
   splitter->setStretchFactor(0, 4);
   splitter->setStretchFactor(1, 1);
@@ -83,7 +81,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   
   setWindowTitle(tr("IMPOMEZIA Simple Chat"));
   
-  tabWidget->setElideMode(Qt::ElideRight);
+  m_tabs->setElideMode(Qt::ElideRight);
   listView->setFocusPolicy(Qt::NoFocus);
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
@@ -100,18 +98,18 @@ SChatWindow::SChatWindow(QWidget *parent)
   createToolButtons();
   createTrayIcon();
   
-  connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-  connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(addTab(const QModelIndex &)));
-  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(noticeTimer, SIGNAL(timeout()), this, SLOT(notice()));
-  connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(resetTabNotice(int)));
+  connect(lineEdit, SIGNAL(returnPressed()), SLOT(returnPressed()));
+  connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
+  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
+  connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
   connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
-  connect(settings, SIGNAL(changed(int)), this, SLOT(settingsChanged(int)));
+  connect(settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
   
   mainChannel = new MainChannel(settings, this);
   mainChannel->icon.addFile(":/images/main.png");
-  tabWidget->setCurrentIndex(tabWidget->addTab(mainChannel, tr("Общий")));
-  tabWidget->setTabIcon(0, mainChannel->icon);
+  m_tabs->setCurrentIndex(m_tabs->addTab(mainChannel, tr("Общий")));
+  m_tabs->setTabIcon(0, mainChannel->icon);
   
   if (!settings->hideWelcome || settings->firstRun) {
     welcomeDialog = new WelcomeDialog(settings, m_profile, this);
@@ -164,7 +162,7 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 bool SChatWindow::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
-    resetTabNotice(tabWidget->currentIndex());
+    resetTabNotice(m_tabs->currentIndex());
 
   return QMainWindow::event(event);
 }
@@ -307,11 +305,11 @@ void SChatWindow::addTab(const QModelIndex &i)
     Tab *tab = new Tab(this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
-    index = tabWidget->addTab(tab, tab->icon, nick);
-    tabWidget->setTabToolTip(index, userToolTip(profile));
+    index = m_tabs->addTab(tab, tab->icon, nick);
+    m_tabs->setTabToolTip(index, userToolTip(profile));
   }
   
-  tabWidget->setCurrentIndex(index);
+  m_tabs->setCurrentIndex(index);
 }
 
 
@@ -331,8 +329,8 @@ void SChatWindow::changedNick(quint16 sex, const QStringList &list)
     
     int index = tabIndex(oldNick);
     if (index != -1) {
-      tabWidget->setTabText(index, nick);
-      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      m_tabs->setTabText(index, nick);
+      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       tab->browser->setChannel(nick);
       tab->browser->msgChangedNick(sex, oldNick, nick);
     }
@@ -402,18 +400,18 @@ void SChatWindow::closeChat()
  */
 void SChatWindow::closeTab()
 {
-  int index = tabWidget->currentIndex();
+  int index = m_tabs->currentIndex();
   if (index) {
-    QWidget *widget = tabWidget->widget(index);
-    tabWidget->removeTab(index);
+    QWidget *widget = m_tabs->widget(index);
+    m_tabs->removeTab(index);
     widget->deleteLater();
   }
   else {
     
-    if (state == Connected) {
-      state = Stopped;
+//    if (state == Connected) {
+//      state = Stopped;
 //      clientSocket->quit();
-    }
+//    }
   }
 }
 
@@ -500,7 +498,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
  */
 void SChatWindow::message(const QString &sender, const QString &message)
 {
-  if ((tabWidget->currentIndex() != 0) || (!isActiveWindow()))
+  if ((m_tabs->currentIndex() != 0) || (!isActiveWindow()))
     startNotice(0);
   
   mainChannel->msgNewMessage(sender, message);  
@@ -605,7 +603,7 @@ void SChatWindow::newUser(const QStringList &list, bool echo)
   if (echo) {
     int index = tabIndex(nick);
     if (index != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       if (tab->type == AbstractTab::Private)
         tab->browser->msgNewParticipant(profile.genderNum(), nick);
     }
@@ -650,12 +648,12 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     tab = new Tab(this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
-    index = tabWidget->addTab(tab, tab->icon, nick);
-    tabWidget->setTabToolTip(index, userToolTip(profile));
-    tabWidget->setCurrentIndex(index);
+    index = m_tabs->addTab(tab, tab->icon, nick);
+    m_tabs->setTabToolTip(index, userToolTip(profile));
+    m_tabs->setCurrentIndex(index);
   }
   else
-    tab = qobject_cast<Tab *>(tabWidget->widget(index));
+    tab = qobject_cast<Tab *>(m_tabs->widget(index));
 
   if (tab)
     if (flag == 1)
@@ -663,7 +661,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     else
       tab->browser->msgNewMessage(nick, message);
   
-  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
+  if ((m_tabs->currentIndex() != index) || (!isActiveWindow()))
     startNotice(index);
 }
 
@@ -676,15 +674,15 @@ void SChatWindow::resetTabNotice(int index)
   if (index == -1)
     return;
     
-  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
   if (tab->notice) {
-    tabWidget->setTabIcon(index, tab->icon);
+    m_tabs->setTabIcon(index, tab->icon);
     tab->notice = false;
   }
   
-  int count = tabWidget->count();
+  int count = m_tabs->count();
   for (int i = 0; i < count; ++i) {
-    AbstractTab *t = static_cast<AbstractTab *>(tabWidget->widget(i));
+    AbstractTab *t = static_cast<AbstractTab *>(m_tabs->widget(i));
     if (t->notice)
       return;
   }
@@ -708,14 +706,14 @@ void SChatWindow::returnPressed()
   if (text.isEmpty())
     return;
   
-  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->currentWidget());
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
   
   if (parseCmd(tab, text))
     return;
   
   if (m_clientService) {
     QString channel;
-    tabWidget->currentIndex() == 0 ? channel = "" : channel = tabWidget->tabText(tabWidget->currentIndex());
+    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
     if (m_clientService->sendMessage(channel, text))
       lineEdit->clear();
   }
@@ -801,7 +799,7 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, bool echo)
       AbstractProfile profile(list);
       int index = tabIndex(nick);
       if (index != -1) {
-        AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+        AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
         if (tab->type == AbstractTab::Private)
           tab->browser->msgParticipantLeft(profile.genderNum(), nick, bye);
       }
@@ -926,12 +924,12 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
  */
 int SChatWindow::tabIndex(const QString &s, int start) const
 {
-  int count = tabWidget->count();
+  int count = m_tabs->count();
   int tab = -1;
   
   if (count > start)
     for (int i = start; i <= count; ++i)
-      if (tabWidget->tabText(i) == s) {
+      if (m_tabs->tabText(i) == s) {
         tab = i;
         break;
       }
@@ -989,10 +987,10 @@ QString SChatWindow::userToolTip(const AbstractProfile &profile)
  */
 void SChatWindow::changedNetworkSettings()
 {
-  if (state == Connected) {
-    mainChannel->browser->msgDisconnect();
-    mainChannel->browser->msg(tr("<i class='info'>Изменены настройки сети, пытаемся подключится...</i>"));
-  }
+//  if (state == Connected) {
+//    mainChannel->browser->msgDisconnect();
+//    mainChannel->browser->msg(tr("<i class='info'>Изменены настройки сети, пытаемся подключится...</i>"));
+//  }
   
   newConnection();
 }
@@ -1082,7 +1080,7 @@ void SChatWindow::createCornerWidgets()
   QToolButton *closeTabButton = new QToolButton(this);
   closeTabButton->setDefaultAction(closeTabAction);
   closeTabButton->setAutoRaise(true);
-  tabWidget->setCornerWidget(closeTabButton, Qt::TopRightCorner);  
+  m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);  
 }
 
 
@@ -1234,9 +1232,9 @@ void SChatWindow::startNotice(int index)
   if (index == -1)
     return;
   
-  AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
   tab->notice = true;
-  tabWidget->setTabIcon(index, QIcon(":/images/notice.png"));
+  m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
   if (!noticeTimer->isActive()) {
     currentTrayIcon = false;
     trayIcon->setIcon(QIcon(":/images/notice.png"));
