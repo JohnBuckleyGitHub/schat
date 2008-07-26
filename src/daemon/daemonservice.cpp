@@ -59,6 +59,22 @@ DaemonService::~DaemonService()
 
 
 /** [public]
+ * Возвращает `true` если сервис находится в активном состоянии.
+ */
+bool DaemonService::isReady() const
+{
+  if (m_socket) {
+    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+
+/** [public]
  * Клиент получил отказ в доступе, `quint16 reason` - причина отказа.
  * Отсылаем ошибку и разрываем соединение.
  */
@@ -79,49 +95,6 @@ void DaemonService::accessGranted(quint16 level)
     send(OpcodeAccessGranted, level);
     m_accepted = true;
   }
-}
-
-
-/** [public]
- * ОПКОДЫ:
- *   
- */
-bool DaemonService::send(quint16 opcode)
-{
-  if (m_socket->state() == QTcpSocket::ConnectedState) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [public]
- * ОПКОДЫ:
- *   sChatOpcodeError
- *   sChatOpcodeMaxDoublePingTimeout
- */
-bool DaemonService::send(quint16 opcode, quint16 err)
-{
-  if (m_socket->state() == QTcpSocket::ConnectedState) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << err; 
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
 }
 
 
@@ -207,6 +180,15 @@ void DaemonService::disconnected()
     emit leave(m_profile->nick());
   
   deleteLater();
+}
+
+
+/** [public slots]
+ * Отправка пакета с опкодом `OpcodeMessage`.
+ */
+void DaemonService::message(const QString &sender, const QString &message)
+{
+  send(OpcodeMessage, sender, message);
 }
 
 
@@ -314,6 +296,55 @@ bool DaemonService::opcodeGreeting()
   return true;
 }
 
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString ->
+ * QString ->
+ * ОПКОДЫ:
+ */
+bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str2)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << str1 << str2; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 ->
+ * ОПКОДЫ:
+ *   `OpcodeAccessGranted`, `OpcodeAccessDenied`.
+ */
+bool DaemonService::send(quint16 opcode, quint16 err)
+{
+  if (m_socket->state() == QTcpSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << err; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
 
 
 /** [private]

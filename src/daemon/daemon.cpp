@@ -84,8 +84,10 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
     connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
+    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
+    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
   }
 }
 
@@ -128,7 +130,27 @@ void Daemon::greeting(const QStringList &list)
       service->accessDenied(ErrorNickAlreadyUse);
   }  
 }
- 
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::message(const QString &channel, const QString &sender, const QString &msg)
+{
+  qDebug() << "Daemon::message()" << channel << sender << msg;
+  
+  if (channel.isEmpty()) {
+    if (m_settings->channelLog)
+      m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
+    
+    emit message(sender, msg);
+  }
+  else if (m_users.contains(channel)) {
+    if (m_settings->privateLog)
+      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
+  }
+}
+
 
 /** [private slots]
  * Слот вызывается сигналом `leave(const QString &)` из сервиса получившего авторизацию
