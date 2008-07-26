@@ -34,6 +34,7 @@ public:
   bool isReady() const;
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 level = 0);
+  void privateMessage(quint8 flag, const QString &nick, const QString &message);
   
 signals:
   void greeting(const QStringList &list);

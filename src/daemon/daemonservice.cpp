@@ -98,6 +98,15 @@ void DaemonService::accessGranted(quint16 level)
 }
 
 
+/** [public]
+ * 
+ */
+void DaemonService::privateMessage(quint8 flag, const QString &nick, const QString &message)
+{
+  qDebug() << "DaemonService::privateMessage()" << flag << nick << message;
+}
+
+
 /** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */

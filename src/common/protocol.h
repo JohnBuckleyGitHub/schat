@@ -72,8 +72,19 @@ static const quint16 OpcodeAccessGranted             = 101;
  * Клиент, Сервер
  */
 static const quint16 OpcodeMessage                   = 200;
-static const quint16 sChatOpcodeSendPrivateMessage   = 201;
-static const quint16 sChatOpcodeSendPrvMessageEcho   = 202;
+
+/**
+ * Отправка приватного сообщения
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint16 -> флаг эха, если 1 то это подтверждение отправки сообщения.
+ * QString -> ник, отправившего сообщение (flag = 0), ник того кому предназначается сообщение (flag = 1).
+ * QString -> Сообщение
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodePrivateMessage            = 201;
 
 /**
  * Отправка клиенту профиля участника

@@ -178,15 +178,15 @@ void ClientSocket::readyRead()
         emit newMessage(textBlock, message);
         break;
       
-      case sChatOpcodeSendPrivateMessage:
+      case OpcodePrivateMessage:
         currentBlock >> textBlock >> message;
         emit newPrivateMessage(textBlock, message, textBlock);
         break;
         
-      case sChatOpcodeSendPrvMessageEcho:
-        currentBlock >> textBlock >> message;
-        emit newPrivateMessage(textBlock, message, profile->nick());
-        break;
+//      case sChatOpcodeSendPrvMessageEcho:
+//        currentBlock >> textBlock >> message;
+//        emit newPrivateMessage(textBlock, message, profile->nick());
+//        break;
       
       // Опкод `sChatOpcodeNewParticipant` - новый участник вошёл в чат
       case OpcodeNewUser:
