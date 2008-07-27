@@ -145,7 +145,6 @@ static const quint16 OpcodePing                      = 400;
  * Клиент, Сервер
  */
 static const quint16 OpcodePong                      = 401;
-static const quint16 sChatOpcodeClientQuit           = 500;
 
 /**
  * Смена профиля.

@@ -40,7 +40,7 @@ void ClientSocket::quit()
 {
   pError = 0;
   if (state() == QAbstractSocket::ConnectedState) {
-    send(sChatOpcodeClientQuit);
+//    send(sChatOpcodeClientQuit);
     disconnectFromHost();
     waitForDisconnected(1000);
   }
