@@ -111,6 +111,8 @@ void ClientService::connectToHost()
   if (!m_socket)
     createSocket();
   
+  m_fatal = false;
+  
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
     m_server = m_network->server();
     m_socket->connectToHost(m_server.address, m_server.port);
@@ -123,8 +125,36 @@ void ClientService::connectToHost()
   }
   else if (m_socket->state() == QAbstractSocket::ConnectedState) {
     m_reconnects = 0;
-    m_fatal = false;
     m_socket->disconnectFromHost();
+  }
+}
+
+
+/** [public]
+ * 
+ */
+void ClientService::quit(bool end)
+{
+  qDebug() << "ClientService::quit(bool)" << end;
+  
+  if (m_socket) {
+    qDebug() << "HAVE SOCKET";
+    if (m_socket->state() == QTcpSocket::ConnectedState) {
+      m_fatal = end;
+      m_socket->disconnectFromHost(); // TODO заменить на отправку пакета
+    }
+    else {
+      m_socket->deleteLater();
+      m_socket = 0;
+    }      
+  }
+
+  m_fatal = end;
+  if (end) {
+    emit unconnected(false);
+    emit fatal();
+    m_checkTimer.stop();
+    m_reconnectTimer.stop();
   }
 }
 
@@ -211,6 +241,8 @@ void ClientService::disconnected()
 
     m_reconnectTimer.start();
   }
+  else
+    emit fatal();
 }
 
 
@@ -293,7 +325,7 @@ void ClientService::readyRead()
  */
 void ClientService::reconnect()
 {
-  qDebug() << "ClientService::reconnect()" << m_reconnectTimer.interval() << m_reconnects;
+  qDebug() << "ClientService::reconnect()" << m_reconnectTimer.interval() << m_reconnects << m_fatal;
   
   if (m_fatal)
     return;
