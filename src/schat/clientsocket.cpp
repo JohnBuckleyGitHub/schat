@@ -162,7 +162,6 @@ void ClientSocket::readyRead()
   }
   
   QString textBlock;
-  quint16 err;
   pError = 0;
   
   while (readBlock()) {

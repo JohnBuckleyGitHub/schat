@@ -38,15 +38,17 @@ public:
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
   void connectToHost();
+  void quit(bool end = true);
   
 signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
   void errorNickAlreadyUse();
+  void fatal();
   void message(const QString &sender, const QString &message);
   void newUser(const QStringList &list, bool echo);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
-  void unconnected();
+  void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
    
 private slots:

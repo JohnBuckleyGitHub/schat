@@ -62,14 +62,6 @@ class SChatWindow : public QMainWindow
   Q_OBJECT
 
 public:
-//  enum ConnectionState {
-//    Disconnected,
-//    WaitingForConnected,
-//    Connected,
-//    Stopped,
-//    Ignore
-//  };
-  
   SChatWindow(QWidget *parent = 0);
   inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
   inline QByteArray saveSplitter()              { return splitter->saveState(); }
@@ -95,6 +87,7 @@ private slots:
   void closeTab();
   void connecting(const QString &server, bool network);
   void errorNickAlreadyUse();
+  void fatal();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void message(const QString &sender, const QString &message);
@@ -106,7 +99,7 @@ private slots:
   void resetTabNotice(int index);
   void returnPressed();
   void settingsChanged(int notify);
-  void unconnected();
+  void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
   void welcomeOk();
   

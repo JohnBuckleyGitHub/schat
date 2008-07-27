@@ -267,9 +267,7 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
     mainChannel->browser->msgReadyForUse(network, server);
     statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
-  }
-  
-  mainChannel->displayChoiceServer(false);  
+  } 
 }
 
 
@@ -406,13 +404,8 @@ void SChatWindow::closeTab()
     m_tabs->removeTab(index);
     widget->deleteLater();
   }
-  else {
-    
-//    if (state == Connected) {
-//      state = Stopped;
-//      clientSocket->quit();
-//    }
-  }
+  else
+    m_clientService->quit();
 }
 
 
@@ -428,6 +421,8 @@ void SChatWindow::connecting(const QString &server, bool network)
     statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
   else
     statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+  
+  mainChannel->displayChoiceServer(false);
 }
 
 
@@ -439,6 +434,15 @@ void SChatWindow::errorNickAlreadyUse()
 {
   uniqueNick();
   newConnection();
+}
+
+
+/** [private slots]
+ * 
+ */
+void SChatWindow::fatal()
+{
+  mainChannel->displayChoiceServer(true);
 }
 
 
@@ -530,13 +534,14 @@ void SChatWindow::newConnection()
   if (!m_clientService) {
     m_clientService = new ClientService(m_profile, &settings->network, this);
     connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
-    connect(m_clientService, SIGNAL(unconnected()), SLOT(unconnected()));
+    connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
     connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
     connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
     connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
     connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
     connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
+    connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
   }
   m_clientService->connectToHost();
 //  if (!clientSocket) { 
@@ -776,11 +781,13 @@ void SChatWindow::settingsChanged(int notify)
 /** [private slots]
  * Слот вызывается когда в `m_clientService` нет активного подключения.
  */
-void SChatWindow::unconnected()
+void SChatWindow::unconnected(bool echo)
 {
   statusLabel->setText(tr("Не подключено"));
   model.clear();
-  mainChannel->browser->msgDisconnect();
+  
+  if (echo)
+    mainChannel->browser->msgDisconnect();
 }
 
 
