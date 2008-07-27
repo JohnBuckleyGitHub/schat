@@ -168,10 +168,10 @@ void ClientSocket::readyRead()
   while (readBlock()) {
     
     switch (currentCommand) {
-      case sChatOpcodeMaxDoublePingTimeout:
-        currentBlock >> err;
-        pingTimeout.setInterval(err * 1000);
-        break;
+//      case sChatOpcodeMaxDoublePingTimeout:
+//        currentBlock >> err;
+//        pingTimeout.setInterval(err * 1000);
+//        break;
       
       case OpcodeMessage:      
         currentBlock >> textBlock >> message;
