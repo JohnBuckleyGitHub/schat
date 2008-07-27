@@ -97,6 +97,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   createCornerWidgets();
   createToolButtons();
   createTrayIcon();
+  createService();
   
   connect(lineEdit, SIGNAL(returnPressed()), SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
@@ -118,7 +119,7 @@ SChatWindow::SChatWindow(QWidget *parent)
       mainChannel->displayChoiceServer(true);
   }
   else
-    newConnection();
+    m_clientService->connectToHost();
   
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
   
@@ -433,7 +434,7 @@ void SChatWindow::connecting(const QString &server, bool network)
 void SChatWindow::errorNickAlreadyUse()
 {
   uniqueNick();
-  newConnection();
+  m_clientService->connectToHost();
 }
 
 
@@ -524,26 +525,17 @@ void SChatWindow::messageClicked()
  * Инициаторы:
  *   MainChannel::serverChanged() (через `Settings::notify(int)`)
  */
-void SChatWindow::newConnection()
-{ 
+//void SChatWindow::newConnection()
+//{ 
   
 //  QString     server  = settings->network.server();
 //  QStringList profile = m_profile->pack();
 //  quint16     port    = settings->network.port();
   
-  if (!m_clientService) {
-    m_clientService = new ClientService(m_profile, &settings->network, this);
-    connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
-    connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
-    connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
-    connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
-    connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
-    connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
-    connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
-    connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
-    connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
-  }
-  m_clientService->connectToHost();
+//  if (!m_clientService) {
+//
+//  }
+//  m_clientService->connectToHost();
 //  if (!clientSocket) { 
 //    clientSocket = new ClientSocket(this);
 //    clientSocket->setProfile(profile);
@@ -573,7 +565,7 @@ void SChatWindow::newConnection()
 //    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
 //  
 //  clientSocket->connectToHost(server, settings->network.port());
-}
+//}
 
 
 /** [private slots]
@@ -751,15 +743,12 @@ void SChatWindow::settingsChanged(int notify)
 {
   switch (notify) {
     case Settings::NetworkSettingsChanged:
-      changedNetworkSettings();
+    case Settings::ServerChanged:
+      m_clientService->connectToHost();
       break;
     
     case Settings::ProfileSettingsChanged:
       changedProfileSettings();
-      break;
-      
-    case Settings::ServerChanged:
-      newConnection();
       break;
       
     case Settings::ByeMsgChanged:
@@ -863,7 +852,7 @@ void SChatWindow::welcomeOk()
 {
   welcomeDialog->deleteLater();
   
-  newConnection();
+  m_clientService->connectToHost();
 }
 
 
@@ -988,22 +977,6 @@ QString SChatWindow::userToolTip(const AbstractProfile &profile)
 
 
 /** [private]
- * Вызывается при изменении сетевых настроек.
- * Инициаторы:
- *   void NetworkSettings::save() (через `Settings::notify(int)`)
- */
-void SChatWindow::changedNetworkSettings()
-{
-//  if (state == Connected) {
-//    mainChannel->browser->msgDisconnect();
-//    mainChannel->browser->msg(tr("<i class='info'>Изменены настройки сети, пытаемся подключится...</i>"));
-//  }
-  
-  newConnection();
-}
-
-
-/** [private]
  * Вызывается при изменении профиля в настройках.
  * Инициаторы:
  *   ProfileSettings::save()
@@ -1088,6 +1061,24 @@ void SChatWindow::createCornerWidgets()
   closeTabButton->setDefaultAction(closeTabAction);
   closeTabButton->setAutoRaise(true);
   m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);  
+}
+
+
+/** [private]
+ * 
+ */
+void SChatWindow::createService()
+{
+  m_clientService = new ClientService(m_profile, &settings->network, this);
+  connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
+  connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
+  connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
+  connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
+  connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
+  connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
+  connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
+  connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
+  connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
 }
 
 
