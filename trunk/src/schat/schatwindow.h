@@ -64,7 +64,7 @@ class SChatWindow : public QMainWindow
 public:
   SChatWindow(QWidget *parent = 0);
   inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
-  inline QByteArray saveSplitter()              { return splitter->saveState(); }
+  inline QByteArray saveSplitter() const        { return splitter->saveState(); }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -92,7 +92,6 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void message(const QString &sender, const QString &message);
   void messageClicked();
-  void newConnection();
   void newUser(const QStringList &list, bool echo);
   void notice();
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
@@ -114,10 +113,10 @@ private:
   Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
-  void changedNetworkSettings();
   void changedProfileSettings();
   void createActions();
   void createCornerWidgets();
+  void createService();
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
@@ -128,7 +127,7 @@ private:
   
   AbstractProfile *m_profile;
   bool currentTrayIcon;
-//  ConnectionState state;
+  ClientService *m_clientService;
   MainChannel *mainChannel;
   QAction *aboutAction;
   QAction *closeTabAction;
@@ -145,7 +144,6 @@ private:
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
-  QPointer<ClientService> m_clientService;
   QPointer<SettingsDialog> settingsDialog;
   QSplitter *splitter;
   QStandardItemModel model;
