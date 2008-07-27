@@ -190,9 +190,9 @@ void ServerSocket::readyRead()
       
       // Опкод `sChatOpcodeClientQuit`
       // Клиент выходит из часа
-      case sChatOpcodeClientQuit:
-        abort();
-        return;
+//      case sChatOpcodeClientQuit:
+//        abort();
+//        return;
       
       // Опкод `sChatOpcodeSendByeMsg`
       // Клиент отправил текст сообщения при выходе
