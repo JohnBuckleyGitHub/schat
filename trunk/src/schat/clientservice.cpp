@@ -42,9 +42,11 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_accepted = false;
   m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
+  m_ping.setInterval(8000);
   
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
+  connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
 }
 
 
@@ -189,6 +191,10 @@ void ClientService::connected()
 void ClientService::disconnected()
 {
   qDebug() << "ClientService::disconnected()";
+  
+  if (m_ping.isActive())
+    m_ping.stop();
+  
   if (m_socket) {
     m_socket->deleteLater();
     m_socket = 0;
@@ -205,6 +211,17 @@ void ClientService::disconnected()
 
     m_reconnectTimer.start();
   }
+}
+
+
+/** [private slots]
+ * 
+ */
+void ClientService::ping()
+{
+  qDebug() << "ClientService::ping()";
+  if (isReady())
+    m_socket->disconnectFromHost();
 }
 
 
@@ -423,6 +440,7 @@ void ClientService::opcodeNewUser()
 void ClientService::opcodePing()
 {
   m_nextBlockSize = 0;
+  m_ping.start(); 
   send(OpcodePong);
 }
 
