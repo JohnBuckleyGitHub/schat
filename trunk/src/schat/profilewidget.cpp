@@ -13,35 +13,32 @@ ProfileWidget::ProfileWidget(AbstractProfile *p, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  profile = p;
+  m_profile = p;
   
-  nickLabel = new QLabel(tr("Ник:"), this);
-  nameLabel = new QLabel(tr("ФИO:"), this);
-  sexLabel  = new QLabel(tr("Пол:"), this);
-  nickEdit  = new QLineEdit(profile->nick(), this);
-  nameEdit  = new QLineEdit(profile->fullName(), this);
-  sexBox    = new QComboBox(this);
+  m_nickLabel   = new QLabel(tr("Ник:"), this);
+  m_nameLabel   = new QLabel(tr("ФИO:"), this);
+  m_genderLabel = new QLabel(tr("Пол:"), this);
+  m_nick        = new QLineEdit(m_profile->nick(), this);
+  m_name        = new QLineEdit(m_profile->fullName(), this);
+  m_gender      = new QComboBox(this);
   QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
   
-  sexBox->addItem(QIcon(":/images/male.png"), tr("Мужской"));
-  sexBox->addItem(QIcon(":/images/female.png"), tr("Женский"));
-  if (profile->isMale())
-    sexBox->setCurrentIndex(0);
-  else
-    sexBox->setCurrentIndex(1);
+  m_gender->addItem(QIcon(":/images/male.png"), tr("Мужской"));
+  m_gender->addItem(QIcon(":/images/female.png"), tr("Женский"));
+  m_gender->setCurrentIndex(m_profile->genderNum());
   
-  nickEdit->setMaxLength(AbstractProfile::MaxNickLength);
-  nameEdit->setMaxLength(AbstractProfile::MaxNameLength);
+  m_nick->setMaxLength(AbstractProfile::MaxNickLength);
+  m_name->setMaxLength(AbstractProfile::MaxNameLength);
   
-  connect(nickEdit, SIGNAL(textChanged(const QString &)), this, SLOT(validateNick(const QString &)));
+  connect(m_nick, SIGNAL(textChanged(const QString &)), this, SLOT(validateNick(const QString &)));
   
   QGridLayout *mainLayout = new QGridLayout(this);
-  mainLayout->addWidget(nickLabel, 0, 0);
-  mainLayout->addWidget(nickEdit, 0, 1, 1, 2);
-  mainLayout->addWidget(nameLabel, 1, 0);
-  mainLayout->addWidget(nameEdit, 1, 1, 1, 2);
-  mainLayout->addWidget(sexLabel, 2, 0);
-  mainLayout->addWidget(sexBox, 2, 1);
+  mainLayout->addWidget(m_nickLabel, 0, 0);
+  mainLayout->addWidget(m_nick, 0, 1, 1, 2);
+  mainLayout->addWidget(m_nameLabel, 1, 0);
+  mainLayout->addWidget(m_name, 1, 1, 1, 2);
+  mainLayout->addWidget(m_genderLabel, 2, 0);
+  mainLayout->addWidget(m_gender, 2, 1);
   mainLayout->addItem(spacer, 2, 2);
   mainLayout->setMargin(0);
 }
@@ -52,9 +49,9 @@ ProfileWidget::ProfileWidget(AbstractProfile *p, QWidget *parent)
  */
 void ProfileWidget::reset()
 {
-  nickEdit->setText(QDir::home().dirName());
-  nameEdit->setText("");
-  sexBox->setCurrentIndex(0);
+  m_nick->setText(QDir::home().dirName());
+  m_name->setText("");
+  m_gender->setCurrentIndex(0);
 }
 
 
@@ -63,22 +60,22 @@ void ProfileWidget::reset()
  */
 void ProfileWidget::save()
 {
-  modifiled = false;
+  m_modifiled = false;
   
-  if (profile->nick() != nickEdit->text()) {
-    profile->setNick(nickEdit->text());
-    modifiled = true;
+  if (m_profile->nick() != m_nick->text()) {
+    m_profile->setNick(m_nick->text());
+    m_modifiled = true;
   }
   
-  if (profile->fullName() != nameEdit->text()) {
-    profile->setFullName(nameEdit->text());
-    modifiled = true;
+  if (m_profile->fullName() != m_name->text()) {
+    m_profile->setFullName(m_name->text());
+    m_modifiled = true;
   }
     
-//  if (profile->sex() != quint8(sexBox->currentIndex())) {
-//    profile->setSex(quint8(sexBox->currentIndex()));
-//    modifiled = true;
-//  } // FIXME восстановить функциональность выбора пола
+  if (m_profile->genderNum() != quint8(m_gender->currentIndex())) {
+    m_profile->setGender(quint8(m_gender->currentIndex()));
+    m_modifiled = true;
+  }
 }
 
 
@@ -87,16 +84,14 @@ void ProfileWidget::save()
  */
 void ProfileWidget::validateNick(const QString &text)
 {
-  QPalette p = nickEdit->palette();
+  QPalette p = m_nick->palette();
   bool b     = AbstractProfile::isValidNick(text);
   
-  if (b) {
+  if (b)
     p.setColor(QPalette::Active, QPalette::Base, Qt::white);
-  }
-  else {
+  else
     p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-  }
   
   emit validNick(b);
-  nickEdit->setPalette(p);
+  m_nick->setPalette(p);
 }

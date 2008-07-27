@@ -60,6 +60,7 @@ public:
   inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(MaxNameLength); }
   inline void setGender(bool male)                 { m_male = male; }
   inline void setGender(const QString &gender)     { if (gender == "female") m_male = false; else m_male = true; }
+  inline void setGender(quint8 _gender)            { setGender(gender(_gender)); }
   inline void setHost(const QString &host)         { m_host = host; }
   inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(MaxNickLength); }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
@@ -67,7 +68,7 @@ public:
   static bool isValidNick(const QString &nick);
   static bool isValidUserAgent(const QString &a);
   void unpack(const QStringList &list);
-  
+
 private:
   QString m_byeMsg;
   QString m_fullName;
