@@ -21,6 +21,7 @@
 
 #include <QDataStream>
 #include <QTcpSocket>
+#include <QTimer>
 
 class AbstractProfile;
 
@@ -49,21 +50,25 @@ public slots:
   void readyRead();
   
 private slots:
-  void check();
+  void ping();
 
 private:
   bool opcodeGreeting();
+  bool send(quint16 opcode);
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   quint16 verifyGreeting(quint16 version);
   void opcodeMessage();
+  void opcodePong();
   void unknownOpcode();
   
   AbstractProfile *m_profile;
   bool m_accepted;
+  int m_pings;
   QDataStream m_stream;
   QTcpSocket *m_socket;
+  QTimer m_ping;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
   quint8 m_flag;

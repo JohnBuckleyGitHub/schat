@@ -57,11 +57,13 @@ private slots:
   void reconnect();
 
 private:
+  bool send(quint16 opcode);
   void createSocket();
   void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeMessage();
   void opcodeNewUser();
+  void opcodePing();
   void opcodePrivateMessage();
   void opcodeUserLeave();
   void unknownOpcode();

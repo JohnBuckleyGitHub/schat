@@ -39,7 +39,9 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
-    QTimer::singleShot(16000, this, SLOT(check()));
+    m_pings = 0;
+    m_ping.start(6000);
+    connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
     deleteLater();
@@ -229,6 +231,10 @@ void DaemonService::readyRead()
           opcodeMessage();
           break;
           
+        case OpcodePong:
+          opcodePong();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -249,13 +255,23 @@ void DaemonService::readyRead()
 
 
 /** [private slots]
- * Слот вызывается спустя 16 секунд после вызова конструктора,
- * если за это время `m_accepted` не равен `true`, разрываем соединение,
+ * Если `m_accepted` не равен `true`, разрываем соединение,
  * т.к. не произошло рукопожатия за отведённое время.
  */
-void DaemonService::check()
+void DaemonService::ping()
 {
-  if (!m_accepted) {
+  qDebug() << "DaemonService::ping()";
+  
+  if (m_accepted) {
+    qDebug() << "m_pings = " << m_pings;
+    if (m_pings < 1) {
+      send(OpcodePing);
+      ++m_pings;
+    }
+    else
+      m_socket->disconnectFromHost();
+  }
+  else {
     if (m_socket->state() == QAbstractSocket::ConnectedState)
       m_socket->disconnectFromHost();
     else
@@ -304,6 +320,31 @@ bool DaemonService::opcodeGreeting()
   
   return true;
 }
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * ОПКОДЫ:
+ *   `OpcodePing`.
+ */
+bool DaemonService::send(quint16 opcode)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
 
 
 /** [private]
@@ -426,6 +467,17 @@ void DaemonService::opcodeMessage()
   qDebug() << "SENDER: " << m_profile->nick();
   qDebug() << "MESSAGE:" << p_message;
   emit message(p_channel, m_profile->nick(), p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodePong`.
+ * Функция сбрасывает счётчик `OpcodePong`.
+ */
+void DaemonService::opcodePong()
+{
+  m_nextBlockSize = 0;
+  m_pings = 0;
 }
 
 
