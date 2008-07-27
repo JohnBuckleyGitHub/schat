@@ -18,7 +18,7 @@ class ProfileWidget : public QWidget {
 
 public:
   ProfileWidget(AbstractProfile *p, QWidget *parent = 0);
-  inline bool isModifiled() { return modifiled; }
+  inline bool isModifiled() { return m_modifiled; }
   void reset();
   void save();
   
@@ -29,14 +29,14 @@ private slots:
   void validateNick(const QString &text);
   
 private:
-  bool modifiled;
-  AbstractProfile *profile;
-  QComboBox *sexBox;
-  QLabel *nameLabel;
-  QLabel *nickLabel;
-  QLabel *sexLabel;
-  QLineEdit *nameEdit;
-  QLineEdit *nickEdit;
+  AbstractProfile *m_profile;
+  bool m_modifiled;
+  QComboBox *m_gender;
+  QLabel *m_genderLabel;
+  QLabel *m_nameLabel;
+  QLabel *m_nickLabel;
+  QLineEdit *m_name;
+  QLineEdit *m_nick;
 };
 
 #endif /*PROFILEWIDGET_H_*/
