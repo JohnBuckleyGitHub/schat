@@ -53,6 +53,7 @@ private slots:
   void check();
   void connected();
   void disconnected();
+  void ping();
   void readyRead();
   void reconnect();
 
@@ -76,6 +77,7 @@ private:
   QDataStream m_stream;
   QTcpSocket *m_socket;
   QTimer m_checkTimer;
+  QTimer m_ping;
   QTimer m_reconnectTimer;
   quint16 m_nextBlockSize;
   quint16 m_opcode;
