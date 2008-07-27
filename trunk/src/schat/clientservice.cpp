@@ -178,7 +178,7 @@ void ClientService::connected()
     
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
-  m_socket->write(block);  
+  m_socket->write(block);
 }
 
 
@@ -248,6 +248,10 @@ void ClientService::readyRead()
           opcodePrivateMessage();
           break;
           
+        case OpcodePing:
+          opcodePing();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -281,6 +285,30 @@ void ClientService::reconnect()
   
   if (!m_socket)
     connectToHost();
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * ОПКОДЫ:
+ *   `OpcodePong`.
+ */
+bool ClientService::send(quint16 opcode)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
 }
 
 
@@ -385,6 +413,17 @@ void ClientService::opcodeNewUser()
     echo = true;
 
   emit newUser(profile, echo);  
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodePing`.
+ * В ответ высылается пакет `OpcodePong`.
+ */
+void ClientService::opcodePing()
+{
+  m_nextBlockSize = 0;
+  send(OpcodePong);
 }
 
 
