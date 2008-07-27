@@ -178,14 +178,14 @@ void ServerSocket::readyRead()
         clientSendNewProfile();
         break;
       
-      case sChatOpcodePong:
+      case OpcodePong:
         m_failurePongs = 0;
         break;
       
       // Опкод `sChatOpcodePing`
       // В ответ отсылаем `sChatOpcodePong`
-      case sChatOpcodePing:
-        send(sChatOpcodePong);
+      case OpcodePing:
+        send(OpcodePong);
         break;
       
       // Опкод `sChatOpcodeClientQuit`
@@ -230,7 +230,7 @@ void ServerSocket::readyRead()
 void ServerSocket::sendPing()
 {
   if (m_failurePongs < 2) {
-    send(sChatOpcodePing);
+    send(OpcodePing);
     ++m_failurePongs;
   }
   else
