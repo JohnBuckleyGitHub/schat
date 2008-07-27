@@ -125,8 +125,26 @@ static const quint16 OpcodeUserLeave                 = 302;
  * Сервер
  */
 static const quint16 OpcodeAccessDenied              = 9000;
-static const quint16 sChatOpcodePing                 = 400;
-static const quint16 sChatOpcodePong                 = 401;
+
+/**
+ * Отправка ping пакета для проверки работоспособности соединения.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент, Сервер
+ */
+static const quint16 OpcodePing                      = 400;
+
+/**
+ * Ответ на пакет `OpcodePing`.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Клиент, Сервер
+ */
+static const quint16 OpcodePong                      = 401;
 static const quint16 sChatOpcodeMaxDoublePingTimeout = 402;
 static const quint16 sChatOpcodeClientQuit           = 500;
 

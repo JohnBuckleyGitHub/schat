@@ -214,14 +214,14 @@ void ClientSocket::readyRead()
         #endif
         break;
         
-      case sChatOpcodePong:
+      case OpcodePong:
         failurePongs = 0;
         break;
       
       // Опкод `sChatOpcodePing`
       // В ответ отсылаем `sChatOpcodePong`
-      case sChatOpcodePing:
-        send(sChatOpcodePong);
+      case OpcodePing:
+        send(OpcodePong);
         pingTimeout.start();
         break;
 
@@ -286,7 +286,7 @@ void ClientSocket::sendGreeting()
 void ClientSocket::sendPing()
 {
   if (failurePongs < 1) {
-    send(sChatOpcodePing);
+    send(OpcodePing);
     ++failurePongs;
   }
   else
