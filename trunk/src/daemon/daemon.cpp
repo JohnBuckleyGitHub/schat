@@ -85,6 +85,8 @@ void Daemon::incomingConnection()
     connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
     connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
+    connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
+    connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
@@ -157,6 +159,42 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
     if (service)
       service->privateMessage(0, _sender, msg);
   }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
+{
+  qDebug() << "Daemon::newNick()";
+  
+  if (!m_users.contains(nick))
+    return;
+  
+  if (m_settings->channelLog)
+    if (gender)
+      m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(newNick));
+    else
+      m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(newNick));
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
+{
+  qDebug() << "Daemon::newProfile()";
+  
+  if (!m_users.contains(nick))
+    return;
+  
+  if (m_settings->channelLog)
+    if (gender)
+      m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
+    else
+      m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
 }
 
 

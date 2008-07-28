@@ -41,6 +41,8 @@ signals:
   void greeting(const QStringList &list);
   void leave(const QString &nick);
   void message(const QString &channel, const QString &sender, const QString &message);
+  void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  void newProfile(quint8 gender, const QString &nick, const QString &name);
   
 public slots:
   bool newUser(const QStringList &list, bool echo);
@@ -60,6 +62,7 @@ private:
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   quint16 verifyGreeting(quint16 version);
   void opcodeMessage();
+  void opcodeNewProfile();
   void opcodePong();
   void unknownOpcode();
   
