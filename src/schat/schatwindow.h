@@ -92,6 +92,7 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void message(const QString &sender, const QString &message);
   void messageClicked();
+  void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
   void notice();
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
@@ -110,7 +111,6 @@ private slots:
 private:
   bool parseCmd(AbstractTab *tab, const QString &text);
   int tabIndex(const QString &s, int start = 1) const;
-  Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
   void createActions();
