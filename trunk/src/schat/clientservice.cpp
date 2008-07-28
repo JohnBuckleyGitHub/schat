@@ -159,6 +159,15 @@ void ClientService::quit(bool end)
 }
 
 
+/** [public]
+ * Отправка пакета с опкодом `OpcodeNewProfile`.
+ */
+void ClientService::sendNewProfile()
+{
+  send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName());
+}
+
+
 /** [private slots]
  * Разрыв соединения или переподключение если после `CheckTimeout` миллисекунд не удалось установить действующие соединение.
  */
@@ -351,6 +360,33 @@ bool ClientService::send(quint16 opcode)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint8  ->
+ * QString ->
+ * QString ->
+ * ОПКОДЫ:
+ *   `OpcodeNewProfile`.
+ */
+bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &name)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << gender << nick << name; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
