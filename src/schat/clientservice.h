@@ -39,6 +39,7 @@ public:
   bool sendMessage(const QString &channel, const QString &message);
   void connectToHost();
   void quit(bool end = true);
+  void sendNewProfile();
   
 signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
@@ -61,6 +62,7 @@ private slots:
 
 private:
   bool send(quint16 opcode);
+  bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   void createSocket();
   void opcodeAccessDenied();
   void opcodeAccessGranted();

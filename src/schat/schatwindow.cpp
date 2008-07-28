@@ -748,7 +748,7 @@ void SChatWindow::settingsChanged(int notify)
       break;
     
     case Settings::ProfileSettingsChanged:
-      changedProfileSettings();
+      m_clientService->sendNewProfile();
       break;
       
     case Settings::ByeMsgChanged:
@@ -899,7 +899,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
     QString newNick = text.mid(text.indexOf(QChar(' ')));
     if (AbstractProfile::isValidNick(newNick) && m_profile->nick() != newNick) {
       m_profile->setNick(newNick);
-      changedProfileSettings();
+      m_clientService->sendNewProfile();
     }
   }
   // команда /server info
@@ -973,21 +973,6 @@ QString SChatWindow::userToolTip(const AbstractProfile &profile)
             "<tr><td>Клиент:</td><td>%4</td></tr>"
             "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
             .arg(":/images/" + profile.gender() + ".png").arg(profile.nick()).arg(p_name).arg(p_agent).arg(profile.host());
-}
-
-
-/** [private]
- * Вызывается при изменении профиля в настройках.
- * Инициаторы:
- *   ProfileSettings::save()
- */
-void SChatWindow::changedProfileSettings()
-{
-//  if (state == Connected) { FIXME восстановить изменение профиля в настройках
-//    QStringList list;
-//    list << profile->nick() << profile->fullName();
-//    clientSocket->send(sChatOpcodeNewProfile, profile->sex(), list);
-//  }  
 }
 
 

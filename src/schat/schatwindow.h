@@ -113,7 +113,6 @@ private:
   Profile* profileFromItem(const QStandardItem *item);
   QStandardItem* findItem(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
-  void changedProfileSettings();
   void createActions();
   void createCornerWidgets();
   void createService();
