@@ -81,8 +81,6 @@ private slots:
   void about();
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void addTab(const QModelIndex &i);
-  void changedNick(quint16 sex, const QStringList &list);
-  void changedProfile(quint16 sex, const QStringList &list, bool echo = true);
   void closeChat();
   void closeTab();
   void connecting(const QString &server, bool network);
