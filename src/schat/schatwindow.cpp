@@ -315,79 +315,9 @@ void SChatWindow::addTab(const QModelIndex &i)
 /** [private slots]
  * 
  */
-void SChatWindow::changedNick(quint16 sex, const QStringList &list)
-{
-  QString oldNick = list.at(0);
-  QString nick = list.at(1);
-  QString name = list.at(2);
-  QStandardItem *item = findItem(oldNick);
-  
-  if (item) {
-    item->setText(nick);
-    model.sort(0);
-    
-    int index = tabIndex(oldNick);
-    if (index != -1) {
-      m_tabs->setTabText(index, nick);
-      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-      tab->browser->setChannel(nick);
-      tab->browser->msgChangedNick(sex, oldNick, nick);
-    }
-    
-    changedProfile(sex, QStringList() << nick << name, false);
-    
-    mainChannel->browser->msgChangedNick(sex, oldNick, nick);
-  }  
-}
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::changedProfile(quint16 sex, const QStringList &list, bool echo)
-{
-//  Profile *p = 0;
-//  QString nick = list.at(0);
-//  QString name = list.at(1);
-//  QStandardItem *item = findItem(nick);
-//  
-//  if (item) {
-//    p = profileFromItem(item);
-//    p->setSex(sex);
-//    p->setNick(nick);
-//    p->setFullName(name);
-//    item->setIcon(QIcon(":/images/" + AbstractProfile::gender(quint8(sex)) + ".png"));
-//    item->setToolTip(p->toolTip());
-//    item->setData(sex, Qt::UserRole + 1);
-//    item->setData(p->toList(), Qt::UserRole + 2);
-//    
-//    int index = tabIndex(nick);
-//    if (index != -1) {
-//      tabWidget->setTabToolTip(index, p->toolTip());
-//      
-//      AbstractTab *tab = static_cast<AbstractTab *>(tabWidget->widget(index));
-////      tab->icon.addFile(Profile::sexIconString(sex));
-//      
-//      if (!tab->notice)
-//        tabWidget->setTabIcon(index, tab->icon);
-//      
-//      if (echo)
-//        tab->browser->msgChangedProfile(sex, nick);
-//    }
-//    
-//    if (echo)
-//      mainChannel->browser->msgChangedProfile(sex, nick);
-//  }
-}
-
-
-/** [private slots]
- * 
- */
 void SChatWindow::closeChat()
 {
-//  if (clientSocket)
-//    clientSocket->quit();
+  m_clientService->quit();
   
   settings->write();
   qApp->quit();
@@ -526,7 +456,6 @@ void SChatWindow::messageClicked()
  */
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  qDebug() << "SChatWindow::newNick()";
   QStandardItem *item = findItem(nick);
   
   if (item) {
@@ -553,8 +482,6 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
  */
 void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name, bool echo)
 {
-  qDebug() << "SChatWindow::newProfile()";
-  
   QStandardItem *item = findItem(nick);
   
   if (item) {
