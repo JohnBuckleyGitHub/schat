@@ -92,6 +92,7 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void message(const QString &sender, const QString &message);
   void messageClicked();
+  void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
   void notice();
