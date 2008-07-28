@@ -90,6 +90,8 @@ void Daemon::incomingConnection()
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
+    connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
+    connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
   }
 }
 
@@ -195,6 +197,11 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
       m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
     else
       m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
+  
+  UserUnit *unit = m_users.value(nick);
+  unit->profile()->setGender(gender);
+  unit->profile()->setFullName(name);
+  emit sendNewProfile(gender, nick, name);
 }
 
 
