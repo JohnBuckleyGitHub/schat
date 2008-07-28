@@ -146,7 +146,7 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
       QHashIterator<QString, ServerSocket *> i(peers);
       while (i.hasNext()) {
         i.next();
-        i.value()->send(sChatOpcodeChangedProfile, sex, list);
+        i.value()->send(OpcodeNewProfile, sex, list);
       }
     }
     else if (peers.contains(nick)) {
@@ -172,7 +172,7 @@ void Server::clientSendNewProfile(quint16 sex, const QString &nick, const QStrin
       QHashIterator<QString, ServerSocket *> i(peers);
       while (i.hasNext()) {
         i.next();
-        i.value()->send(sChatOpcodeChangedNick, sex, list);
+        i.value()->send(OpcodeNewNick, sex, list);
       }
     }
   }

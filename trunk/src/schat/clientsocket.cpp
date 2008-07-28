@@ -224,11 +224,11 @@ void ClientSocket::readyRead()
         pingTimeout.start();
         break;
 
-      case sChatOpcodeChangedNick:
+      case OpcodeNewNick:
         readChangedNick();
         break;
         
-      case sChatOpcodeChangedProfile:
+      case OpcodeNewProfile:
         readChangedProfile();
         break;
         

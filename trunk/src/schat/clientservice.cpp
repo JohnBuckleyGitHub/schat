@@ -141,7 +141,7 @@ void ClientService::quit(bool end)
     qDebug() << "HAVE SOCKET";
     if (m_socket->state() == QTcpSocket::ConnectedState) {
       m_fatal = end;
-      m_socket->disconnectFromHost(); // TODO заменить на отправку пакета
+      m_socket->disconnectFromHost();
     }
     else {
       m_socket->deleteLater();

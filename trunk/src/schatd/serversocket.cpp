@@ -174,7 +174,7 @@ void ServerSocket::readyRead()
         opSendMessage();
         break;
         
-      case sChatOpcodeNewProfile:
+      case OpcodeNewProfile: 
         clientSendNewProfile();
         break;
       
