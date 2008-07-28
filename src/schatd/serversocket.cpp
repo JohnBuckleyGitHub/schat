@@ -196,7 +196,7 @@ void ServerSocket::readyRead()
       
       // Опкод `sChatOpcodeSendByeMsg`
       // Клиент отправил текст сообщения при выходе
-      case sChatOpcodeSendByeMsg:
+      case OpcodeByeMsg:
         opSendByeMsg();
         break;
         

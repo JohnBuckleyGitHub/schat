@@ -147,7 +147,7 @@ void ClientSocket::readyRead()
     if (currentCommand == OpcodeAccessGranted) {
       currentState = sChatStateReadyForUse;
       emit readyForUse();
-      send(sChatOpcodeSendByeMsg, profile->byeMsg());
+      send(OpcodeByeMsg, profile->byeMsg());
     }
     else {
       if (currentCommand == OpcodeAccessDenied) {

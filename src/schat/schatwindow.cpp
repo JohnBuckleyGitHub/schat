@@ -379,29 +379,6 @@ void SChatWindow::fatal()
 
 /** [private slots]
  * 
- *//*
-void SChatWindow::connectionError(QAbstractSocket::SocketError) // FIXME remove SChatWindow::connectionError(QAbstractSocket::SocketError)
-{
-  #ifdef SCHAT_DEBU
-  qDebug() << "DirectChannel::connectionError(QAbstractSocket::SocketError)";
-  qDebug() << "SOCKET ERROR:" << clientSocket->errorString();
-  #endif
-  
-  removeConnection();
-}*/
-
-
-/** [private slots]
- * 
- */
-//void SChatWindow::disconnected()
-//{
-//  removeConnection();
-//}
-
-
-/** [private slots]
- * 
  */
 void SChatWindow::genericMessage(const QString &info)
 {

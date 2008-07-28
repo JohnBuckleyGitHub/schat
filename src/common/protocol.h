@@ -183,7 +183,7 @@ static const quint16 OpcodeNewNick                  = 602;
  * ОТПРАВИТЕЛЬ: ---------------
  * Клиент
  */
-static const quint16 sChatOpcodeSendByeMsg           = 603;
+static const quint16 OpcodeByeMsg                    = 603;
 
 
 /**
