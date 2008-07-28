@@ -19,14 +19,10 @@
 #include <QtCore>
 #include <QtNetwork>
 
-#include "abstractprofile.h"
 #include "clientservice.h"
-#include "protocol.h"
-
 
 static const int CheckTimeout         = 6000;
 static const int ReconnectTimeout     = 3000;
-static const int ReconnectFailTimeout = 20000;
 
 
 /** [public]
@@ -156,15 +152,6 @@ void ClientService::quit(bool end)
     m_checkTimer.stop();
     m_reconnectTimer.stop();
   }
-}
-
-
-/** [public]
- * Отправка пакета с опкодом `OpcodeNewProfile`.
- */
-void ClientService::sendNewProfile()
-{
-  send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName());
 }
 
 
@@ -368,6 +355,31 @@ bool ClientService::send(quint16 opcode)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString ->
+ * ОПКОДЫ:
+ *   `OpcodeByeMsg`.
+ */
+bool ClientService::send(quint16 opcode, const QString &msg)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << msg; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);

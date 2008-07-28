@@ -23,7 +23,9 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "abstractprofile.h"
 #include "network.h"
+#include "protocol.h"
 
 class AbstractProfile;
 class Network;
@@ -37,9 +39,11 @@ public:
   ~ClientService();
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
+  inline void sendByeMsg()                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
+  inline void sendByeMsg(const QString &msg) { send(OpcodeByeMsg, msg); }
+  inline void sendNewProfile()               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   void connectToHost();
   void quit(bool end = true);
-  void sendNewProfile();
   
 signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
@@ -64,6 +68,7 @@ private slots:
 
 private:
   bool send(quint16 opcode);
+  bool send(quint16 opcode, const QString &msg);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   void createSocket();
   void opcodeAccessDenied();
