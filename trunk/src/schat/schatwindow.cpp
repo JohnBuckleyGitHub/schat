@@ -672,7 +672,7 @@ void SChatWindow::settingsChanged(int notify)
       break;
       
     case Settings::ByeMsgChanged:
-//      clientSocket->send(sChatOpcodeSendByeMsg, m_profile->byeMsg());
+      m_clientService->sendByeMsg();
       break;
 
     #ifdef SCHAT_UPDATE
@@ -782,16 +782,11 @@ void SChatWindow::welcomeOk()
 bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
 {
   // команда /bye
-  if (text.startsWith("/bye", Qt::CaseInsensitive)) {
-//    if (state == Connected) {      
-//      if (text.startsWith("/bye ", Qt::CaseInsensitive))
-//        clientSocket->send(sChatOpcodeSendByeMsg, text.mid(text.indexOf(QChar(' '))));
-//      
-//      state = Stopped;
-//      clientSocket->quit();
-//    }
-//    else
-//      tab->browser->msg(tr("<span class='err'>Нет активного подключения к серверу/сети</span>"));
+  if (text.startsWith("/bye", Qt::CaseInsensitive)) {   
+    if (text.startsWith("/bye ", Qt::CaseInsensitive))
+      m_clientService->sendByeMsg(text.mid(text.indexOf(QChar(' '))));
+
+    m_clientService->quit();
   }
   // команда /exit
   else if (text.startsWith("/exit", Qt::CaseInsensitive)) {
