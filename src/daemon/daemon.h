@@ -38,6 +38,8 @@ public:
 signals:
   void message(const QString &sender, const QString &message);
   void newUser(const QStringList &list, bool echo);
+  void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 
 public slots:

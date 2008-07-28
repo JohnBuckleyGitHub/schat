@@ -50,6 +50,8 @@ public slots:
   void disconnected();
   void message(const QString &sender, const QString &message);
   void readyRead();
+  void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   
 private slots:
   void ping();

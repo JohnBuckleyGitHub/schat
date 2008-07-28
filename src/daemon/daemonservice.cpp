@@ -258,6 +258,29 @@ void DaemonService::readyRead()
 }
 
 
+/** [public slots]
+ * 
+ */
+void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
+{
+  qDebug() << "DaemonService::sendNewNick()";
+}
+
+
+/** [public slots]
+ * 
+ */
+void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QString &name)
+{
+  qDebug() << "DaemonService::sendNewProfile()";
+  if (m_profile->nick() == nick) {
+    m_profile->setGender(gender);
+    m_profile->setFullName(name);
+  }
+  send(OpcodeNewProfile, gender, nick, name);
+}
+
+
 /** [private slots]
  * Если `m_accepted` не равен `true`, разрываем соединение,
  * т.к. не произошло рукопожатия за отведённое время.
