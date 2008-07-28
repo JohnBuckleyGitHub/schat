@@ -524,6 +524,33 @@ void SChatWindow::messageClicked()
 /** [private slots]
  * 
  */
+void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
+{
+  qDebug() << "SChatWindow::newNick()";
+  QStandardItem *item = findItem(nick);
+  
+  if (item) {
+    item->setText(newNick);
+    model.sort(0);
+    
+    int index = tabIndex(nick);
+    if (index != -1) {
+      m_tabs->setTabText(index, newNick);
+      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+      tab->browser->setChannel(newNick);
+      tab->browser->msgChangedNick(gender, nick, newNick);
+    }
+    
+    newProfile(gender, newNick, name, false);
+    
+    mainChannel->browser->msgChangedNick(gender, nick, newNick);
+  }  
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name, bool echo)
 {
   qDebug() << "SChatWindow::newProfile()";
@@ -533,6 +560,7 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
   if (item) {
     AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
     profile.setGender(gender);
+    profile.setNick(nick);
     profile.setFullName(name);
     item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
     item->setToolTip(userToolTip(profile));
@@ -1052,6 +1080,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
+  connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
 }
 

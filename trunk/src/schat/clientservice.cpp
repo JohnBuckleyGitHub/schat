@@ -314,6 +314,10 @@ void ClientService::readyRead()
           opcodeNewProfile();
           break;
           
+        case OpcodeNewNick:
+          opcodeNewNick();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -473,6 +477,21 @@ void ClientService::opcodeMessage()
   m_stream >> p_sender >> p_message;
   m_nextBlockSize = 0;
   emit message(p_sender, p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeNewNick`.
+ */
+void ClientService::opcodeNewNick()
+{
+  quint8 p_gender;
+  QString p_nick;
+  QString p_newNick;
+  QString p_name;
+  m_stream >> p_gender >> p_nick >> p_newNick >> p_name;
+  m_nextBlockSize = 0;
+  emit newNick(p_gender, p_nick, p_newNick, p_name);
 }
 
 
