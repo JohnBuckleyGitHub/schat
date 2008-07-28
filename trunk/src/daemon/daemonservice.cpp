@@ -109,6 +109,16 @@ void DaemonService::privateMessage(quint8 flag, const QString &nick, const QStri
 }
 
 
+/** [public]
+ * 
+ */
+void DaemonService::quit()
+{
+  if (isReady())
+    m_socket->disconnectFromHost();
+}
+
+
 /** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
@@ -264,6 +274,12 @@ void DaemonService::readyRead()
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   qDebug() << "DaemonService::sendNewNick()";
+  if (m_profile->nick() == nick) {
+    m_profile->setGender(gender);
+    m_profile->setNick(newNick);
+    m_profile->setFullName(name);
+  }
+  send(OpcodeNewNick, gender, nick, newNick, name);
 }
 
 
@@ -442,6 +458,34 @@ bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode << flag << nick << message; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * quint8  ->
+ * QString ->
+ * QString ->
+ * QString ->
+ * ОПКОДЫ:
+ *   `OpcodeNewNick`.
+ */
+bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << gender << nick << newNick << name; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);

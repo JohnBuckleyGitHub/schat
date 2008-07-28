@@ -36,6 +36,7 @@ public:
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 level = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
+  void quit();
   
 signals:
   void greeting(const QStringList &list);
@@ -62,6 +63,7 @@ private:
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
+  bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   quint16 verifyGreeting(quint16 version);
   void opcodeMessage();
   void opcodeNewProfile();

@@ -174,11 +174,27 @@ void Daemon::newNick(quint8 gender, const QString &nick, const QString &newNick,
   if (!m_users.contains(nick))
     return;
   
-  if (m_settings->channelLog)
-    if (gender)
-      m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(newNick));
-    else
-      m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(newNick));
+  if (m_users.contains(newNick)) {
+    DaemonService *service = qobject_cast<DaemonService *>(sender());
+    if (service)
+      service->quit();
+  }
+  else { 
+    if (m_settings->channelLog)
+      if (gender)
+        m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(newNick));
+      else
+        m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(newNick));
+    
+    UserUnit *unit = m_users.value(nick);
+    m_users.remove(nick);
+    m_users.insert(newNick, unit);
+    unit->profile()->setGender(gender);
+    unit->profile()->setNick(newNick);
+    unit->profile()->setFullName(name);
+    
+    emit sendNewNick(gender, nick, newNick, name);
+  }
 }
 
 
