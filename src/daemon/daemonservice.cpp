@@ -235,6 +235,10 @@ void DaemonService::readyRead()
           opcodePong();
           break;
           
+        case OpcodeNewProfile:
+          opcodeNewProfile();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -467,6 +471,26 @@ void DaemonService::opcodeMessage()
   qDebug() << "SENDER: " << m_profile->nick();
   qDebug() << "MESSAGE:" << p_message;
   emit message(p_channel, m_profile->nick(), p_message);
+}
+
+
+/** [private]
+ * 
+ */
+void DaemonService::opcodeNewProfile()
+{
+  qDebug() << "DaemonService::opcodeNewProfile()";
+  
+  quint8 p_gender;
+  QString p_nick;
+  QString p_name;
+  m_stream >> p_gender >> p_nick >> p_name;
+  m_nextBlockSize = 0;
+  
+  if (m_profile->nick() == p_nick)
+    emit newProfile(p_gender, m_profile->nick(), p_name);
+  else
+    emit newNick(p_gender, m_profile->nick(), p_nick, p_name);
 }
 
 
