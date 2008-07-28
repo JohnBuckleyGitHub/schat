@@ -522,50 +522,38 @@ void SChatWindow::messageClicked()
 
 
 /** [private slots]
- * Инициаторы:
- *   MainChannel::serverChanged() (через `Settings::notify(int)`)
+ * 
  */
-//void SChatWindow::newConnection()
-//{ 
+void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name, bool echo)
+{
+  qDebug() << "SChatWindow::newProfile()";
   
-//  QString     server  = settings->network.server();
-//  QStringList profile = m_profile->pack();
-//  quint16     port    = settings->network.port();
+  QStandardItem *item = findItem(nick);
   
-//  if (!m_clientService) {
-//
-//  }
-//  m_clientService->connectToHost();
-//  if (!clientSocket) { 
-//    clientSocket = new ClientSocket(this);
-//    clientSocket->setProfile(profile);
-//    connect(clientSocket, SIGNAL(newParticipant(quint16, const QStringList &, bool)), SLOT(newParticipant(quint16, const QStringList &, bool)));
-//    connect(clientSocket, SIGNAL(participantLeft(const QString &, const QString &)), SLOT(participantLeft(const QString &, const QString &)));
-//    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), mainChannel, SLOT(msgNewMessage(const QString &, const QString &)));
-//    connect(clientSocket, SIGNAL(newMessage(const QString &, const QString &)), SLOT(newMessage(const QString &, const QString &)));
-//    connect(clientSocket, SIGNAL(newPrivateMessage(const QString &, const QString &, const QString &)), SLOT(newPrivateMessage(const QString &, const QString &, const QString &)));
-//    connect(clientSocket, SIGNAL(readyForUse()), SLOT(readyForUse()));
-//    connect(clientSocket, SIGNAL(disconnected()), SLOT(disconnected()));
-//    connect(clientSocket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(connectionError(QAbstractSocket::SocketError)));
-//    connect(clientSocket, SIGNAL(changedNick(quint16, const QStringList &)), SLOT(changedNick(quint16, const QStringList &)));
-//    connect(clientSocket, SIGNAL(changedProfile(quint16, const QStringList &, bool)), SLOT(changedProfile(quint16, const QStringList &, bool)));
-//    connect(clientSocket, SIGNAL(genericMessage(const QString &)), SLOT(genericMessage(const QString &)));
-//  }
-//  else {
-//    state = Ignore;
-//    clientSocket->quit();
-//  }
-//  
-//  state = WaitingForConnected;
-//  QString server = settings->network.server();
-//  
-//  if (settings->network.isNetwork())
-//    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(settings->network.name()));
-//  else
-//    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
-//  
-//  clientSocket->connectToHost(server, settings->network.port());
-//}
+  if (item) {
+    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+    profile.setGender(gender);
+    profile.setFullName(name);
+    item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
+    item->setToolTip(userToolTip(profile));
+    item->setData(profile.pack(), Qt::UserRole + 1);
+    
+    int index = tabIndex(nick);
+    if (index != -1) {
+      m_tabs->setTabToolTip(index, userToolTip(profile));
+      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+      tab->icon.addFile(":/images/" + profile.gender() + ".png");
+      
+      if (!tab->notice)
+        m_tabs->setTabIcon(index, tab->icon);
+      
+      if (echo)
+        tab->browser->msgChangedProfile(profile.genderNum(), nick);
+    }
+    if (echo)
+      mainChannel->browser->msgChangedProfile(profile.genderNum(), nick);
+  }
+}
 
 
 /** [private slots]
@@ -1064,6 +1052,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
+  connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
 }
 
 

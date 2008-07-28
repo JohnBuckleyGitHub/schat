@@ -310,6 +310,10 @@ void ClientService::readyRead()
           opcodePing();
           break;
           
+        case OpcodeNewProfile:
+          opcodeNewProfile();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -469,6 +473,27 @@ void ClientService::opcodeMessage()
   m_stream >> p_sender >> p_message;
   m_nextBlockSize = 0;
   emit message(p_sender, p_message);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientService::opcodeNewProfile()
+{
+  qDebug() << "ClientService::opcodeNewProfile()";
+  
+  quint8 p_gender;
+  QString p_nick;
+  QString p_name;
+  m_stream >> p_gender >> p_nick >> p_name;
+  m_nextBlockSize = 0;
+  
+  bool echo = true;
+  if (m_profile->nick() == p_nick)
+    echo = false;
+  
+  emit newProfile(p_gender, p_nick, p_name, echo);
 }
 
 

@@ -47,6 +47,7 @@ signals:
   void errorNickAlreadyUse();
   void fatal();
   void message(const QString &sender, const QString &message);
+  void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void unconnected(bool echo = true);
@@ -67,6 +68,7 @@ private:
   void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeMessage();
+  void opcodeNewProfile();
   void opcodeNewUser();
   void opcodePing();
   void opcodePrivateMessage();
