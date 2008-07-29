@@ -16,28 +16,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#ifndef USERUNIT_H_
+#define USERUNIT_H_
 
-#include "daemon.h"
+#include <QPointer>
 
-int main(int argc, char *argv[])
-{
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-    
-  QCoreApplication app(argc, argv);
-  Daemon daemon;
+#include "daemonservice.h"
+
+class AbstractProfile;
+
+class UserUnit {
   
-  if (!daemon.start())
-    return 3;
+public:
+  UserUnit();
+  UserUnit(const QStringList &list, DaemonService *service = 0);
+  ~UserUnit();
+  inline AbstractProfile* profile() { return m_profile; }
+  inline DaemonService* service()   { return m_service; }
   
-  // Создаём PID-файл
-  QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
-  if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    QTextStream out(&pidfile);
-    out << QCoreApplication::instance()->applicationPid();
-    pidfile.close();
-  }
+private:
+  AbstractProfile *m_profile;
+  QPointer<DaemonService> m_service;
+};
 
-  return app.exec();
-}
+#endif /*USERUNIT_H_*/

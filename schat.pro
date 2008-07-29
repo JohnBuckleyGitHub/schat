@@ -4,7 +4,6 @@
 
 TEMPLATE      = subdirs
 SUBDIRS       = \
-    src/daemon \
     src/schatd \
     src/3rdparty/singleapplication \
     src/schat
