@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   if (install())
     return 0;
   else
-    QFile::remove(qApp->applicationDirPath() + "/schat-install.exe");
+    QFile::remove(qApp->applicationDirPath() + "/install.exe");
   
   QStringList arguments = app.arguments();
   arguments.takeFirst();
