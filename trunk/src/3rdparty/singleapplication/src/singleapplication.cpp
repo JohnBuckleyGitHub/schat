@@ -23,15 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
+#include <QtCore/QDir>
 #include <QtCore/QHash>
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
 #include <QtNetwork/QLocalSocket>
 
-#ifdef Q_OS_WIN
-#include <qt_windows.h>
-#else
+#ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -226,19 +225,7 @@ void SingleApplicationPrivate::init()
 	if(login.isEmpty())
 	{
 #ifdef Q_OS_WIN
-
-		QT_WA({
-			wchar_t buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
-			GetUserNameW(buffer, &bufferSize);
-			login = QString::fromUtf16((ushort*)buffer);
-		},
-		{
-			char buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
-			GetUserNameA(buffer, &bufferSize);
-			login = QString::fromLocal8Bit(buffer);
-		});
+	  login = QDir::home().dirName();
 #else
 		struct passwd* pwd = getpwuid(getuid());
 		if(pwd)
