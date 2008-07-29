@@ -249,6 +249,10 @@ void DaemonService::readyRead()
           opcodeNewProfile();
           break;
           
+        case OpcodeByeMsg:
+          opcodeByeMsg();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -520,6 +524,21 @@ quint16 DaemonService::verifyGreeting(quint16 version)
   #endif
   
   return 0;
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeByeMsg`.
+ */
+void DaemonService::opcodeByeMsg()
+{
+  qDebug() << "DaemonService::opcodeByeMsg()";
+  
+  QString p_bye;
+  m_stream >> p_bye;
+  m_nextBlockSize = 0;
+  m_profile->setByeMsg(p_bye);
+  emit newBye(m_profile->nick(), p_bye);
 }
 
 

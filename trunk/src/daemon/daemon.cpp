@@ -87,6 +87,7 @@ void Daemon::incomingConnection()
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
+    connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
@@ -160,6 +161,17 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
     DaemonService *service = m_users.value(channel)->service();
     if (service)
       service->privateMessage(0, _sender, msg);
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::newBye(const QString &nick, const QString &bye)
+{
+  if (m_users.contains(nick)) {
+    m_users.value(nick)->profile()->setByeMsg(bye);
   }
 }
 
