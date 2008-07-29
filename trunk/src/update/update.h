@@ -27,7 +27,7 @@
 
 class Download;
 
-static const QString DefaultUpdateXmlUrl = "http://192.168.5.130/schat/updates/update.xml";
+static const QString DefaultUpdateXmlUrl = "http://192.168.5.1/schat/updates/update.xml";
 
 class Update : public QObject {
   Q_OBJECT
