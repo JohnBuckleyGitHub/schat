@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
   }
   
   // Допускаем запуск только одной копии из одной папки
-  SingleApplication instance("SimpleChat", app.applicationDirPath(), &app);
+  QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
+  SingleApplication instance("SimpleChat", serverName, &app);
   if (instance.isRunning()) {
     QString message = "SimpleChat";
     if (instance.sendMessage(message))
