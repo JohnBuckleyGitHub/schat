@@ -43,7 +43,7 @@ class SINGLEAPPLICATION_EXPORT SingleApplication : public QObject
 public:
 	explicit SingleApplication(const QString& id, QObject* parent = 0);
 	explicit SingleApplication(const QString& id, const QString& serverName, QObject* parent = 0);
-	virtual ~SingleApplication();
+	~SingleApplication();
 
 public:
 	QString id() const;

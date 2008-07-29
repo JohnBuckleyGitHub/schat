@@ -23,15 +23,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
-#include <QtCore/QDir>
 #include <QtCore/QHash>
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
 
 #include <QtNetwork/QLocalSocket>
 
-#ifndef Q_OS_WIN
+#ifdef Q_OS_WIN
+#include <qt_windows.h>
+#else
 #include <sys/types.h>
+#include <pwd.h>
 #include <unistd.h>
 #endif
 
@@ -147,8 +149,11 @@ typedef QHash<QString, QLocalServer*> ServerDict;
 class SingleApplicationPrivate
 {
 public:
-	SingleApplicationPrivate(SingleApplication* parent);
-	~SingleApplicationPrivate();
+	SingleApplicationPrivate(SingleApplication* parent)
+		: q(parent), server(0), socket(0)
+	{}
+	~SingleApplicationPrivate()
+	{ delete socket; }
 
 	void init();
 	bool isRunning() const;
@@ -159,6 +164,9 @@ public:
 
 	QString id;
 	QString serverName;
+
+	QString allowedId;
+	QString allowedServerName;
 
 	QLocalServer* server;
 	QLocalSocket* socket;
@@ -207,48 +215,53 @@ ServerDict& SingleApplicationPrivate::serverDict()
 	return dict;
 }
 
-SingleApplicationPrivate::SingleApplicationPrivate(SingleApplication* parent) :
-	q(parent), server(0), socket(0)
-{
-}
-
-SingleApplicationPrivate::~SingleApplicationPrivate()
-{
-	if(socket)
-		socket->abort();
-	delete socket;
-}
-
 void SingleApplicationPrivate::init()
 {
-	static QString struid;
-	if(struid.isEmpty())
-	{
-#ifdef Q_OS_WIN
-	  struid = QDir::home().dirName();
-#else
-		struid = QString::number(getuid());
-#endif
-	}
 	if(id.isEmpty())
 		id = QLatin1String("SA");
-	id.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString()); 
 	if(serverName.isEmpty())
 		serverName = QLatin1String("SingleApplication");
-	serverName.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString()); 
-	serverName.prepend(struid).append(id);
+
+	static QString login;
+	if(login.isEmpty())
+	{
+#ifdef Q_OS_WIN
+
+		QT_WA({
+			wchar_t buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
+			GetUserNameW(buffer, &bufferSize);
+			login = QString::fromUtf16((ushort*)buffer);
+		},
+		{
+			char buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
+			GetUserNameA(buffer, &bufferSize);
+			login = QString::fromLocal8Bit(buffer);
+		});
+#else
+		struct passwd* pwd = getpwuid(getuid());
+		if(pwd)
+			login = QString(pwd->pw_name);
+#endif
+	}
+	allowedId = id;
+	allowedServerName = serverName;
+	allowedId.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
+	allowedServerName.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
+	allowedServerName.prepend(login).append(allowedId);
 
 	if(!isRunning())
 	{
-		server = serverDict().value(serverName, 0);
+		server = serverDict().value(allowedServerName, 0);
 		if(!server)
 		{
-			server = new ThreadedLocalServer(id);
-			serverDict().insert(serverName, server);
+			server = new ThreadedLocalServer(allowedId);
+			serverDict().insert(allowedServerName, server);
 		}
-		if(!server->isListening() && !server->listen(serverName))
+		if(!server->isListening() && !server->listen(allowedServerName))
 		{
-			delete serverDict().take(serverName);
+			delete serverDict().take(allowedServerName);
 			server = 0;
 			return;
 		}
@@ -260,14 +273,14 @@ void SingleApplicationPrivate::init()
 
 bool SingleApplicationPrivate::isRunning() const
 {
-	SystemSemaphore* semaphore = semaphoreDict().value(serverName, 0);
+	SystemSemaphore* semaphore = semaphoreDict().value(allowedServerName, 0);
 	if(semaphore)
 		return false;
 
-	semaphore = new SystemSemaphore(serverName, 1);
+	semaphore = new SystemSemaphore(allowedServerName, 1);
 	if(semaphore->tryAcquire(i_timeout_sem))
 	{
-		semaphoreDict().insert(serverName, semaphore);
+		semaphoreDict().insert(allowedServerName, semaphore);
 		return false;
 	}
 	delete semaphore;
@@ -282,13 +295,13 @@ bool SingleApplicationPrivate::connectToServer()
 
 	if(!socket)
 		socket = new QLocalSocket(q);
-	socket->connectToServer(serverName);
+	socket->connectToServer(allowedServerName);
 	if(socket->waitForConnected(i_timeout_connect))
 	{
 		bool ok;
 		const QString message = readMessage(socket, &ok);
 		// now compare received bytes with id
-		if(ok && message.compare(id) == 0)
+		if(ok && message.compare(allowedId) == 0)
 			return true;
 	}
 	socket->abort();
@@ -303,19 +316,29 @@ bool SingleApplicationPrivate::sendMessage(const QString& message, int timeout)
 	if(!isRunning() || !connectToServer())
 		return false;
 
-	const QString magic = id + QLatin1Char(':');
+	const QString magic = allowedId + QLatin1Char(':');
 	if(!writeMessage(socket, magic + message, timeout))
 		return false;
 
 	bool ok;
 	QString response = readMessage(socket, &ok);
 
-	return ok && response.compare(id) == 0;
+	return ok && response.compare(allowedId) == 0;
 }
 
 
 /*!
-	Creates a SingleApplication object with the identifier \a id.
+  \class SingleApplication
+  \brief The SingleApplication class provides an crossplatform interface to detect a running
+  instance, and to send command strings to that instance.
+
+  The SingleApplication component is basically imitating QtSingleApplication commercial class.
+  Unlike QtSingleApplication the SingleApplication implementation uses System Semaphore
+  to detect a running instance and so-called "Local Sockets" to communicate with it.
+*/
+
+/*!
+  Creates a SingleApplication object with the parent \a parent and the identifier \a id.
 */
 
 SingleApplication::SingleApplication(const QString& id, QObject* parent) :
@@ -326,10 +349,8 @@ SingleApplication::SingleApplication(const QString& id, QObject* parent) :
 }
 
 /*!
-	Creates a SingleApplication object with the identifier \a id.
-	\a serverName specifies name (or path) for internal local socket.
-	
-	sa\ QLocalServer::serverName()
+  Creates a SingleApplication object with the parent \a parent and the identifier \a id.
+  \a serverName specifies name for internal local socket.
 */
 
 SingleApplication::SingleApplication(const QString& id, const QString& serverName, QObject* parent) :
@@ -341,10 +362,11 @@ SingleApplication::SingleApplication(const QString& id, const QString& serverNam
 }
 
 /*!
-	Destroys the object, freeing all allocated resources.
+  The destructor destroys the SingleApplication object, but the
+  underlying system semaphore and local server are not removed from the system
+  unless application exit.
 
-	If the same application is started again it will not find this
-	instance.
+  Note: If the same application is started again it WILL find this instance.
 */
 
 SingleApplication::~SingleApplication()
@@ -353,7 +375,7 @@ SingleApplication::~SingleApplication()
 }
 
 /*!
-	Returns the identifier of this singleton object.
+  Returns the identifier of this singleton object.
 */
 
 QString SingleApplication::id() const
@@ -361,18 +383,21 @@ QString SingleApplication::id() const
 	return d->id;
 }
 
+/*!
+  Returns the name of internal local server or socket.
+*/
+
 QString SingleApplication::serverName() const
 {
 	return d->serverName;
 }
 
-/*! \fn bool SingleApplication::isRunning() const
+/*!
+  Returns true if another instance of this application has started;
+  otherwise returns false.
 
-	Returns true if another instance of this application has started;
-	otherwise returns false.
-
-	This function does not find instances of this application that are
-	being run by a different user.
+  This function does not find instances of this application that are
+  being run by a different user.
 */
 
 bool SingleApplication::isRunning() const
@@ -380,34 +405,29 @@ bool SingleApplication::isRunning() const
 	return d->isRunning();
 }
 
+/*!
+  This is an overloaded static member function, provided for convenience.
+
+  Returns true if another instance of this application has started;
+  otherwise returns false.
+*/
+
 bool SingleApplication::isRunning(const QString& id)
 {
 	return SingleApplication(id).isRunning();
 }
 
 /*!
-	\fn bool SingleApplication::sendMessage(const QString& message, int timeout)
+  Tries to send the text \a message to the currently running instance.
+  The SingleApplication object in the running instance
+  will emit the messageReceived() signal when it receives the message.
 
-	Tries to send the text \a message to the currently running
-	instance. The SingleApplication object in the running instance
-	will emit the messageReceived() signal when it receives the
-	message.
+  This function returns true if the message has been sent to, and
+  processed by, the current instance. If there is no instance
+  currently running, or if the running instance fails to process the
+  message within \a timeout milliseconds this function return false.
 
-	This function returns true if the message has been sent to, and
-	processed by, the current instance. If there is no instance
-	currently running, or if the running instance fails to process the
-	message within \a timeout milliseconds this function return false.
-
-	\sa messageReceived()
-*/
-
-/*!
-	\fn void SingleApplication::messageReceived(const QString& message)
-
-	This signal is emitted when the current instance receives a \a
-	message from another instance of this application.
-
-	\sa sendMessage()
+  \sa messageReceived()
 */
 
 bool SingleApplication::sendMessage(const QString& message, int timeout)
@@ -415,9 +435,24 @@ bool SingleApplication::sendMessage(const QString& message, int timeout)
 	return d->sendMessage(message, timeout);
 }
 
+/*!
+  This is an overloaded static member function, provided for convenience.
+
+  Tries to send the text \a message to the currently running instance.
+*/
+
 bool SingleApplication::sendMessage(const QString& id, const QString& message, int timeout)
 {
 	return SingleApplication(id).sendMessage(message, timeout);
 }
+
+/*!
+  \fn void SingleApplication::messageReceived(const QString& message)
+
+  This signal is emitted when the current instance receives a \a
+  message from another instance of this application.
+
+  \sa sendMessage()
+*/
 
 #include "moc_singleapplication.cpp"

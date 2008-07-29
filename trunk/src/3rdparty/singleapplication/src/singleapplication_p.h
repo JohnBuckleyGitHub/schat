@@ -32,7 +32,7 @@ class LocalThread : public QThread
 
 public:
 	LocalThread(quintptr socketDescriptor, const QString& id, QObject* parent = 0);
-	virtual ~LocalThread();
+	~LocalThread();
 
 signals:
 	void messageReceived(const QString& message);
@@ -55,8 +55,6 @@ class ThreadedLocalServer : public QLocalServer
 public:
 	ThreadedLocalServer(const QString& id, QObject* parent = 0) : QLocalServer(parent)
 	{ this->id = id; }
-	virtual ~ThreadedLocalServer()
-	{}
 
 signals:
 	void messageReceived(const QString& message);

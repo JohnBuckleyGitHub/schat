@@ -86,7 +86,7 @@ bool SystemSemaphorePrivate::modifySemaphore(int count, int timeout)
 	}
 	else
 	{
-		DWORD dwMilliseconds = timeout > 0 ? timeout : INFINITE;
+		DWORD dwMilliseconds = (timeout < 0 ? INFINITE : (timeout == 0 ? 1 : timeout));
 		DWORD dwWaitResult = WaitForSingleObject(semaphore, dwMilliseconds);
 		if(dwWaitResult == WAIT_TIMEOUT)
 			return false;

@@ -1,6 +1,7 @@
 #MAJOR_VERSION	= 0
 
-QT		*= network
+CONFIG		*= qt
+QT		*= core network
 
 DEPENDPATH	*= $$PWD/include
 INCLUDEPATH	*= $$PWD/include

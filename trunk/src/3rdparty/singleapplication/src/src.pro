@@ -1,4 +1,4 @@
-#!win32:VERSION	= 0.5.1
+#!win32:VERSION	= 0.6
 
 TEMPLATE	= lib
 LANGUAGE	= C++

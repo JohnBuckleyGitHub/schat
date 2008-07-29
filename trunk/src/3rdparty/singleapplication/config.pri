@@ -1,17 +1,13 @@
 LICENSE		= LGPLv2
 
-# Chose one of the following two lines to configure the build
-#SINGLEAPPLICATION_LIBCONFIG = dll
-SINGLEAPPLICATION_LIBCONFIG = staticlib
-
 SINGLEAPPLICATION_LIBNAME = singleapplication
 
+# Uncomment the following line if you want to build a shared library
+#SINGLEAPPLICATION_LIBCONFIG = dll
+
 CONFIG		+= debug_and_release
-
-
 CONFIG		*= qt thread warn_on
 CONFIG		-= exceptions rtti
-QT		*= core gui
 
 DESTDIR		= $$PWD/bin
 
@@ -21,9 +17,9 @@ LIBS		+= -L$$DESTDIR
 # Configuration for MacOS X
 macx {
 	# Using gcc
-	QMAKESPEC=macx-g++
-	# uncoment this line if you want use xcode
-	# QMAKESPEC=macx-xcode
+	QMAKESPEC = macx-g++
+	# uncoment the following line if you want to use xcode
+	# QMAKESPEC = macx-xcode
 }
 
 BUILDDIR	= .build/
@@ -42,6 +38,6 @@ else:OBJECTS_DIR = $$join(OBJECTS_DIR,,,/debug)
 *-g++ {
 	QMAKE_CFLAGS_DEBUG	= -O0 -g
 	QMAKE_CXXFLAGS_DEBUG	= -O0 -g
-	QMAKE_CFLAGS_RELEASE	= -O3 -fomit-frame-pointer
-	QMAKE_CXXFLAGS_RELEASE	= -O3 -fomit-frame-pointer
+	QMAKE_CFLAGS_RELEASE	= -O3 -fomit-frame-pointer -pipe
+	QMAKE_CXXFLAGS_RELEASE	= -O3 -fomit-frame-pointer -pipe
 }

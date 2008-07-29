@@ -42,8 +42,8 @@ public:
 	QString key() const;
 
 	bool acquire();
-	bool release(int n = 1);
 	bool tryAcquire(int timeout);
+	bool release(int n = 1);
 
 	SystemSemaphoreError error() const;
 	QString errorString() const;
