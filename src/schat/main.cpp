@@ -83,13 +83,13 @@ bool install()
     
     if (qtLevel <= UpdateLevelQt && coreLevel <= UpdateLevelCore)
       return false;
-    else if (QFile::exists(appPath + "/schat-install.exe")) {
+    else if (QFile::exists(appPath + "/install.exe")) {
       QStringList args;
       args << "-install" << "-run";
       if (s.value("AutoClean", true).toBool())
         args << "-clean";
       
-      QProcess::startDetached('"' + appPath + "/schat-install.exe\"", args, appPath);
+      QProcess::startDetached('"' + appPath + "/install.exe\"", args, appPath);
       return true;
     }    
   }
