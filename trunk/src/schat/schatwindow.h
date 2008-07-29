@@ -27,9 +27,8 @@
 #include <QTcpSocket>
 #include <QTime>
 
-#include "clientsocket.h"
-#include "settingsdialog.h"
 #include "clientservice.h"
+#include "settingsdialog.h"
 
 #ifdef SCHAT_UPDATE
 #include "win32/updatenotify.h"
@@ -139,7 +138,7 @@ private:
   QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
-  QLineEdit *lineEdit;  
+  QLineEdit *lineEdit;
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
