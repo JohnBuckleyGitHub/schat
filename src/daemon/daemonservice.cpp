@@ -509,19 +509,12 @@ quint16 DaemonService::verifyGreeting(quint16 version)
     return ErrorOldClientProtocol;
   else if (version > ProtocolVersion)
     return ErrorOldServerProtocol;
-  else if (!(m_flag == FlagNone || m_flag == FlagDirect))
+  else if (m_flag != FlagNone)
     return ErrorBadGreetingFlag;
   else if (!m_profile->isValidNick())
     return ErrorBadNickName;
   else if (!m_profile->isValidUserAgent())
     return ErrorBadUserAgent;
-  
-  #ifndef SCHAT_CLIENT
-  if (m_flag == FlagDirect) {
-    return sChatErrorDirectNotAllow;
-    m_profile->setNick("#DUBLICATE");
-  }
-  #endif
   
   return 0;
 }

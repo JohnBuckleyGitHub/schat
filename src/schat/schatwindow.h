@@ -79,12 +79,12 @@ private slots:
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
   inline void settingsUpdate()    { settingsPage(SettingsDialog::UpdatePage); }
   void about();
+  void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void addTab(const QModelIndex &i);
   void closeChat();
   void closeTab();
   void connecting(const QString &server, bool network);
-  void errorNickAlreadyUse();
   void fatal();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -101,7 +101,7 @@ private slots:
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
   void welcomeOk();
-  
+
   #ifdef SCHAT_UPDATE  
   void update();
   void updateGetDone(int code);

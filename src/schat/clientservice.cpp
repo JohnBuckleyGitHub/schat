@@ -440,17 +440,8 @@ void ClientService::opcodeAccessDenied()
   m_stream >> p_reason;
   m_nextBlockSize = 0;
   qDebug() << "reason" << p_reason;
-  
-  switch (p_reason) {
-    case ErrorNickAlreadyUse:
-      m_fatal = true;
-      emit errorNickAlreadyUse();
-      break;
-      
-    default:
-      m_fatal = true;
-      break;
-  }
+  m_fatal = true;
+  emit accessDenied(p_reason);
 }
 
 
