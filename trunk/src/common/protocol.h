@@ -87,6 +87,17 @@ static const quint16 OpcodeMessage                   = 200;
 static const quint16 OpcodePrivateMessage            = 201;
 
 /**
+ * Отправка сервером сообщения для клиента
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> Сообщение
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeServerMessage             = 202;
+
+/**
  * Отправка клиенту профиля участника
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета

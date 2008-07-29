@@ -37,6 +37,7 @@ public:
   void accessGranted(quint16 level = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
+  void sendServerMessage(const QString &msg);
 
 signals:
   void greeting(const QStringList &list);
@@ -61,6 +62,7 @@ private slots:
 private:
   bool opcodeGreeting();
   bool send(quint16 opcode);
+  bool send(quint16 opcode, const QString &msg);
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);

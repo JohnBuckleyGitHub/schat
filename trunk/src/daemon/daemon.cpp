@@ -27,6 +27,7 @@
 #include "log.h"
 #include "protocol.h"
 #include "userunit.h"
+#include "version.h"
 
 
 /** [public]
@@ -148,19 +149,22 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
     if (m_settings->channelLog)
       m_channelLog->msg(tr("%1: %2").arg(_sender).arg(msg));
     
-    emit message(_sender, msg);
+    if (!parseCmd(_sender, msg))
+      emit message(_sender, msg);
   }
   else if (m_users.contains(channel)) {
     if (m_settings->privateLog)
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(_sender).arg(channel).arg(msg));
     
-    DaemonService *senderService = qobject_cast<DaemonService *>(sender());
-    if (senderService)
-      senderService->privateMessage(1, channel, msg);
-    
-    DaemonService *service = m_users.value(channel)->service();
-    if (service)
-      service->privateMessage(0, _sender, msg);
+    if (!parseCmd(_sender, msg)) {
+      DaemonService *senderService = qobject_cast<DaemonService *>(sender());
+      if (senderService)
+        senderService->privateMessage(1, channel, msg);
+      
+      DaemonService *service = m_users.value(channel)->service();
+      if (service)
+        service->privateMessage(0, _sender, msg);
+    }
   }
 }
 
@@ -259,6 +263,103 @@ void Daemon::userLeave(const QString &nick)
     
     emit userLeave(nick, bye, true);
   }
+}
+
+
+/** [private]
+ * 
+ */
+bool Daemon::parseCmd(const QString &nick, const QString &msg)
+{
+  qDebug() << "Daemon::parseCmd()" << msg;
+  
+  if (!m_users.contains(nick))
+    return false;
+  
+  // Команда "/server info"
+  if (msg.startsWith("/server info", Qt::CaseInsensitive)) {
+    DaemonService *service = m_users.value(nick)->service();
+    if (service) {
+      service->sendServerMessage(serverInfo());
+      return true;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+
+/** [private]
+ * 
+ */
+QString Daemon::serverInfo() const
+{
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, ").arg(SCHAT_VERSION);
+  
+#if   defined(Q_OS_AIX)
+  info += "AIX";
+#elif defined(Q_OS_BSD4)
+  info += "BSD 4.4 ";
+#elif defined(Q_OS_BSDI)
+  info += "BSD/OS";
+#elif defined(Q_OS_CYGWIN)
+  info += "Cygwin";
+#elif defined(Q_OS_DARWIN)
+  info += "Darwin OS";
+#elif defined(Q_OS_DGUX)
+  info += "DG/UX";
+#elif defined(Q_OS_DYNIX)
+  info += "DYNIX/ptx";
+#elif defined(Q_OS_FREEBSD)
+  info += "FreeBSD";
+#elif defined(Q_OS_HPUX)
+  info += "HP-UX";
+#elif defined(Q_OS_HURD)
+  info += "GNU Hurd";
+#elif defined(Q_OS_IRIX)
+  info += "SGI Irix";
+#elif defined(Q_OS_LINUX)
+  info += "Linux";
+#elif defined(Q_OS_LYNX)
+  info += "LynxOS";
+#elif defined(Q_OS_MSDOS)
+  info += "Windows";
+#elif defined(Q_OS_NETBSD)
+  info += "NetBSD";
+#elif defined(Q_OS_OS2)
+  info += "OS/2";
+#elif defined(Q_OS_OPENBSD)
+  info += "OpenBSD";
+#elif defined(Q_OS_OS2EMX)
+  info += "XFree86 on OS/2 (not PM)";
+#elif defined(Q_OS_OSF)
+  info += "HP Tru64 UNIX";
+#elif defined(Q_OS_QNX6)
+  info += "QNX RTP 6.1";
+#elif defined(Q_OS_QNX)
+  info += "QNX";
+#elif defined(Q_OS_RELIANT)
+  info += "Reliant UNIX";
+#elif defined(Q_OS_SCO)
+  info += "SCO OpenServer 5";
+#elif defined(Q_OS_SOLARIS)
+  info += "Sun Solaris";
+#elif defined(Q_OS_ULTRIX)
+  info += "DEC Ultrix";
+#elif defined(Q_OS_UNIXWARE)
+  info += "UnixWare";
+#elif defined(Q_OS_WIN32)
+  info += "Windows";
+#elif defined(Q_OS_WINCE)
+  info += "Windows CE";
+#endif
+  
+  info += ", <a href='http://impomezia.net.ru'>http://impomezia.net.ru</a><br />";
+  info += tr("Пользователей в сети: <b>%1</b>").arg(m_users.count());
+  
+  return info;
 }
 
 

@@ -305,6 +305,10 @@ void ClientService::readyRead()
           opcodeNewNick();
           break;
           
+        case OpcodeServerMessage:
+          opcodeServerMessage();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -572,6 +576,18 @@ void ClientService::opcodePrivateMessage()
   m_stream >> p_flag >> p_nick >> p_message;
   m_nextBlockSize = 0;
   emit privateMessage(p_flag, p_nick, p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeServerMessage`.
+ */
+void ClientService::opcodeServerMessage()
+{
+  QString p_message;
+  m_stream >> p_message;
+  m_nextBlockSize = 0;
+  emit serverMessage(p_message);
 }
 
 

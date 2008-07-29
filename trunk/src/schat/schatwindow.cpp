@@ -660,6 +660,15 @@ void SChatWindow::returnPressed()
 /** [private slots]
  * 
  */
+void SChatWindow::serverMessage(const QString &msg)
+{
+  mainChannel->browser->msg(msg);
+}
+
+
+/** [private slots]
+ * 
+ */
 #ifdef SCHAT_UPDATE
 void SChatWindow::update()
 {
@@ -837,11 +846,6 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
       m_clientService->sendNewProfile();
     }
   }
-  // команда /server info
-  else if (text.startsWith("/server info", Qt::CaseInsensitive)) {
-//    if (state == Connected)
-//      clientSocket->send(sChatOpcodeGetServerInfo);
-  }
   else
     return false;
   
@@ -999,6 +1003,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
+  connect(m_clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
   connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
 }

@@ -119,6 +119,15 @@ void DaemonService::quit()
 }
 
 
+/** [public]
+ * 
+ */
+void DaemonService::sendServerMessage(const QString &msg)
+{
+  send(OpcodeServerMessage, msg);
+}
+
+
 /** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
@@ -392,6 +401,30 @@ bool DaemonService::send(quint16 opcode)
     return false;
 }
 
+
+/** [private]
+ * Отправка стандартного пакета:
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString ->
+ * ОПКОДЫ:
+ *   `OpcodeServerMessage`.
+ */
+bool DaemonService::send(quint16 opcode, const QString &msg)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << msg; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
 
 
 /** [private]

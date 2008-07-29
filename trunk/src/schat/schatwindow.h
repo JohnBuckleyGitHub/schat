@@ -97,6 +97,7 @@ private slots:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void resetTabNotice(int index);
   void returnPressed();
+  void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);

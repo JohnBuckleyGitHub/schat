@@ -55,10 +55,10 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
+  void serverMessage(const QString &msg);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 
-   
 private slots:
   void check();
   void connected();
@@ -80,6 +80,7 @@ private:
   void opcodeNewUser();
   void opcodePing();
   void opcodePrivateMessage();
+  void opcodeServerMessage();
   void opcodeUserLeave();
   void unknownOpcode();
   
