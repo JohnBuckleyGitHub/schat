@@ -1,28 +1,42 @@
+version 0.6: 2008-07-17
+	[+] The code is documented. Added doxygen project file.
+	[*] SingleApplication::id() and SingleApplication::serverName() now returns 
+		original values, not values that used internally.
+	[*] Fixed SystemSemaphore::tryAcquire(0) under Win (calling tryAcquire() 
+		with timeout 0 must behave just like calling acquire()).
+
 version 0.5.1: 2008-07-11
-	[*] Fixed bug (sometimes connection was not open).
+	[*] Fixed regression from 0.4.1 (sometimes connection was not open).
 	[*] Code cleanups.
+
 version 0.5: 2008-07-04
 	[+] Introduced really "one instance per user" through new public SystemSemaphore 
 		class. SystemSemaphore is a slightly improved QSystemSemaphore class.
 		If You don't care about interprocess communication, You can use 
 		SystemSemaphore instead of SingleApplication.
 	[*] Code cleanups.
+
 version 0.4.1: 2008-06-28
 	[*] Improved Loader example.
+
 version 0.4: 2008-06-27
 	[+] Relicensed under LGPL Version 2.
-	[*] SingleApplication::name() renamed to SingleApplication::id().
+	[*] SingleApplication::name() method renamed to SingleApplication::id().
 	[+] Added internal singleton helper. Now it's possible to create instances 
 		in stack if your goal is only checking for other running instance.
 	[*] Fixed issue with a static members (isRunning, sendMessage).
 	[+] From now sendMessage() will return true only if delivery is confirmed.
+
 version 0.3.1: 2008-06-25
 	[*] Fixed stupid bug (staticlib never builded).
+
 version 0.3: 2008-06-24
 	[+] Added loader example.
+
 version 0.2: 2008-06-23
 	[*] Fixed QThread destroyed while thread is still running
 	[*] Fixed some build issues.
 	[+] Added convenience headers.
+
 version 0.1: 2008-05-14
 	[*] Initial release version 0.1.
