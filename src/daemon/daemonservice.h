@@ -37,14 +37,15 @@ public:
   void accessGranted(quint16 level = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
-  
+
 signals:
   void greeting(const QStringList &list);
   void leave(const QString &nick);
   void message(const QString &channel, const QString &sender, const QString &message);
+  void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
-  
+
 public slots:
   bool newUser(const QStringList &list, bool echo);
   bool userLeave(const QString &nick, const QString &bye, bool echo);
@@ -53,7 +54,7 @@ public slots:
   void readyRead();
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
-  
+
 private slots:
   void ping();
 
@@ -65,11 +66,12 @@ private:
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   quint16 verifyGreeting(quint16 version);
+  void opcodeByeMsg();
   void opcodeMessage();
   void opcodeNewProfile();
   void opcodePong();
   void unknownOpcode();
-  
+
   AbstractProfile *m_profile;
   bool m_accepted;
   int m_pings;
