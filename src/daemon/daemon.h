@@ -54,6 +54,8 @@ private slots:
   void userLeave(const QString &nick);
 
 private:
+  bool parseCmd(const QString &nick, const QString &msg);
+  QString serverInfo() const;
   void sendAllUsers(DaemonService *service);
   
   ChannelLog *m_channelLog;
