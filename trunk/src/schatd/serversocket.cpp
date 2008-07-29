@@ -51,7 +51,7 @@ ServerSocket::ServerSocket(QObject *parent)
   connect(this, SIGNAL(clientSendNewProfile(quint16, const QString &, const QString &)), parent, SLOT(clientSendNewProfile(quint16, const QString &, const QString &)));
 
   m_nextBlockSize = 0;
-  m_pingTimer.setInterval(PingInterval);
+  m_pingTimer.setInterval(6000);
 }
 
 
@@ -275,13 +275,13 @@ quint16 ServerSocket::verifyGreeting(quint16 version)
   else if (!m_profile->isValidUserAgent())
     return ErrorBadUserAgent;
   
-  #ifndef SCHAT_CLIENT
-  if (m_flag == FlagDirect) {
-    return sChatErrorDirectNotAllow;
-    m_profile->setNick("#DUBLICATE");
-  }
-  #endif
-  
+//  #ifndef SCHAT_CLIENT
+//  if (m_flag == FlagDirect) {
+//    return sChatErrorDirectNotAllow;
+//    m_profile->setNick("#DUBLICATE");
+//  }
+//  #endif
+//  
   return 0;
 }
 

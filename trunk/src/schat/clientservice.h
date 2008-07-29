@@ -46,9 +46,9 @@ public:
   void quit(bool end = true);
   
 signals:
+  void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
-  void errorNickAlreadyUse();
   void fatal();
   void message(const QString &sender, const QString &message);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
@@ -57,6 +57,7 @@ signals:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
+
    
 private slots:
   void check();

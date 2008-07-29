@@ -197,8 +197,8 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
       i.next();
       i.value()->send(OpcodeMessage, nick, message);
     }
-  } else {
-    ServerSocket *socket = qobject_cast<ServerSocket *>(sender());
+  } //else {
+    //ServerSocket *socket = qobject_cast<ServerSocket *>(sender());
     
     if (peers.contains(channel)) {
       
@@ -211,9 +211,9 @@ void Server::relayMessage(const QString &channel, const QString &nick, const QSt
 //        socket->send(sChatOpcodeSendPrvMessageEcho, channel, message);
       peers[channel]->send(OpcodePrivateMessage, nick, message);
     }
-    else if (socket)
-      socket->send(OpcodeAccessDenied, sChatErrorNoSuchChannel);
-  }
+//    else if (socket)
+//      socket->send(OpcodeAccessDenied, sChatErrorNoSuchChannel);
+//  }
 }
 
 

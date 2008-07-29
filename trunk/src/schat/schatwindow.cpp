@@ -254,6 +254,37 @@ void SChatWindow::about()
 
 
 /** [private slots]
+ * 
+ */
+void SChatWindow::accessDenied(quint16 reason)
+{
+  switch (reason) {
+    case ErrorNickAlreadyUse:
+      uniqueNick();
+      m_clientService->connectToHost();
+      break;
+      
+    case ErrorOldClientProtocol:
+      mainChannel->browser->msgOldClientProtocol();
+      break;
+      
+    case ErrorOldServerProtocol:
+      mainChannel->browser->msgOldServerProtocol();
+      break;
+      
+    case ErrorBadNickName:
+      mainChannel->browser->msgBadNickName(m_profile->nick());
+      break;
+      
+    default:
+      mainChannel->browser->msg(tr("<i class='err'>При подключении произошла критическая ошибка с кодом: <b>%1</b></i>").arg(reason));
+      break;
+  }
+  unconnected(false);
+}
+
+
+/** [private slots]
  * Слот вызывается кода `m_clientService` получает пакет с опкодом `OpcodeAccessGranted`,
  * что означает успешное подключение к серверу/сети.
  */
@@ -354,17 +385,6 @@ void SChatWindow::connecting(const QString &server, bool network)
     statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
   
   mainChannel->displayChoiceServer(false);
-}
-
-
-/** [private slots]
- * Обработка ошибки с кодом `ErrorNickAlreadyUse`.
- * Генерируем новый уникальный ник и пытаемся переподключится.
- */
-void SChatWindow::errorNickAlreadyUse()
-{
-  uniqueNick();
-  m_clientService->connectToHost();
 }
 
 
@@ -975,7 +995,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
   connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
   connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
-  connect(m_clientService, SIGNAL(errorNickAlreadyUse()), SLOT(errorNickAlreadyUse()));
+  connect(m_clientService, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
   connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
