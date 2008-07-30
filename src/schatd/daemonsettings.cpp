@@ -38,22 +38,10 @@ DaemonSettings::DaemonSettings(QObject *parent)
 void DaemonSettings::read()
 {
   QSettings s(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
-  
-  listenAddress = s.value("ListenAddress", "0.0.0.0").toString();
-  listenPort    = quint16(s.value("ListenPort", 7666).toUInt());
-  channelLog    = s.value("ChannelLog", false).toBool();
-  privateLog    = s.value("PrivateLog", false).toBool();
-  
-  #ifdef SCHAT_CLIENT
-  logLevel = s.value("LogLevel", -1).toInt();
-  #else
-  logLevel = s.value("LogLevel", 0).toInt();
-  #endif
-  if (logLevel > -1) {
-    log = new Log(this);
-    if (!log->init()) {
-      log->deleteLater();
-      logLevel = -1;
-    }
-  }
+
+  setBool("ChannelLog", false, s);
+  setBool("PrivateLog", false, s);
+  setInt("ListenPort", 7666, s);
+  setInt("LogLevel", 0, s);
+  setString("ListenAddress", "0.0.0.0", s);
 }

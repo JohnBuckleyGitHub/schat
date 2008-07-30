@@ -48,27 +48,35 @@ bool Daemon::start()
 {
   m_settings->read();
   
-  if (m_settings->channelLog) {
+  if (m_settings->getInt("LogLevel") > -1) {
+    m_log = new Log(this);
+    if (!m_log->init()) {
+      m_log->deleteLater();
+      m_settings->setInt("LogLevel", -1);
+    }
+  }
+  
+  if (m_settings->getBool("ChannelLog")) {
     m_channelLog = new ChannelLog(this);
     m_channelLog->setChannel("#main");
     m_channelLog->setMode(ChannelLog::Plain);
   }
   
-  if (m_settings->privateLog) {
+  if (m_settings->getBool("PrivateLog")) {
     m_privateLog = new ChannelLog(this);
     m_privateLog->setChannel("#private");
     m_privateLog->setMode(ChannelLog::Plain);
   }
   
-  QString address = m_settings->listenAddress;
-  quint16 port    = m_settings->listenPort;
+  QString address = m_settings->getString("ListenAddress");
+  quint16 port    = quint16(m_settings->getInt("ListenPort"));
   bool result     = m_server.listen(QHostAddress(address), port);
   
   if (result) {
-    LOG(0, tr("Simple Chat Daemon успешно запущен, адрес %1, порт %2").arg(address).arg(port));
+    LOG(0, tr("IMPOMEZIA Simple Chat Daemon успешно запущен, адрес %1, порт %2").arg(address).arg(port));
   }
   else {
-    LOG(0, tr("Ошибка запуска Simple Chat Daemon, %1").arg(m_server.errorString()));
+    LOG(0, tr("Ошибка запуска IMPOMEZIA Simple Chat Daemon, %1").arg(m_server.errorString()));
   }
   
   return result;
@@ -124,7 +132,7 @@ void Daemon::greeting(const QStringList &list)
           .arg(list.at(AbstractProfile::Gender))
           .arg(list.at(AbstractProfile::UserAgent)));
       
-      if (m_settings->channelLog)
+      if (m_settings->getBool("ChannelLog"))
         if (list.at(AbstractProfile::Gender) == "male")
           m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
         else
@@ -146,14 +154,14 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
   qDebug() << "Daemon::message()" << channel << _sender << msg;
   
   if (channel.isEmpty()) {
-    if (m_settings->channelLog)
+    if (m_settings->getBool("ChannelLog"))
       m_channelLog->msg(tr("%1: %2").arg(_sender).arg(msg));
     
     if (!parseCmd(_sender, msg))
       emit message(_sender, msg);
   }
   else if (m_users.contains(channel)) {
-    if (m_settings->privateLog)
+    if (m_settings->getBool("PrivateLog"))
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(_sender).arg(channel).arg(msg));
     
     if (!parseCmd(_sender, msg)) {
@@ -196,7 +204,7 @@ void Daemon::newNick(quint8 gender, const QString &nick, const QString &newNick,
       service->quit();
   }
   else { 
-    if (m_settings->channelLog)
+    if (m_settings->getBool("ChannelLog"))
       if (gender)
         m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(newNick));
       else
@@ -224,7 +232,7 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
   if (!m_users.contains(nick))
     return;
   
-  if (m_settings->channelLog)
+  if (m_settings->getBool("ChannelLog"))
     if (gender)
       m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
     else
@@ -253,7 +261,7 @@ void Daemon::userLeave(const QString &nick)
     LOG(0, tr("<<< (%1), %2").arg(unit->profile()->host()).arg(nick));
     
     QString bye = unit->profile()->byeMsg();
-    if (m_settings->channelLog)
+    if (m_settings->getBool("ChannelLog"))
       if (unit->profile()->isMale())
         m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
       else
