@@ -21,10 +21,13 @@ CONFIG += console warn_on
 HEADERS = \
     abstractprofile.h \
     channellog.h \
+    clientservice.h \
     daemon.h \
     daemonservice.h \
     daemonsettings.h \
     log.h \
+    network.h \
+    networkreader.h \
     profile.h \
     protocol.h \
     userunit.h \
@@ -33,11 +36,14 @@ HEADERS = \
 SOURCES = \
     abstractprofile.cpp \
     channellog.cpp \
+    clientservice.cpp \
     daemon.cpp \
     daemonservice.cpp \
     daemonsettings.cpp \
     log.cpp \
     main.cpp \
+    network.cpp \
+    networkreader.cpp \
     profile.cpp \
     userunit.cpp \
     

@@ -22,10 +22,13 @@
 #include <QTcpServer>
 #include <QHash>
 
+class AbstractProfile;
 class ChannelLog;
+class ClientService;
 class DaemonService;
 class DaemonSettings;
 class Log;
+class Network;
 class UserUnit;
 
 #define LOG(x, y) if (m_settings->getInt("LogLevel") >= x) m_log->append(y)
@@ -59,12 +62,16 @@ private slots:
 private:
   bool parseCmd(const QString &nick, const QString &msg);
   QString serverInfo() const;
+  void link();
   void sendAllUsers(DaemonService *service);
-  
+
+  AbstractProfile *m_profile;
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
+  ClientService *m_link;
   DaemonSettings *m_settings;
   Log *m_log;
+  Network *m_network;
   QHash<QString, UserUnit *> m_users;
   QTcpServer m_server;
 };

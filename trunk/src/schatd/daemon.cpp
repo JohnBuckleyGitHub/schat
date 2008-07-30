@@ -21,6 +21,7 @@
 
 #include "abstractprofile.h"
 #include "channellog.h"
+#include "clientservice.h"
 #include "daemon.h"
 #include "daemonservice.h"
 #include "daemonsettings.h"
@@ -28,7 +29,6 @@
 #include "protocol.h"
 #include "userunit.h"
 #include "version.h"
-
 
 /** [public]
  * 
@@ -74,6 +74,7 @@ bool Daemon::start()
   
   if (result) {
     LOG(0, tr("IMPOMEZIA Simple Chat Daemon успешно запущен, адрес %1, порт %2").arg(address).arg(port));
+    link();
   }
   else {
     LOG(0, tr("Ошибка запуска IMPOMEZIA Simple Chat Daemon, %1").arg(m_server.errorString()));
@@ -368,6 +369,15 @@ QString Daemon::serverInfo() const
   info += tr("Пользователей в сети: <b>%1</b>").arg(m_users.count());
   
   return info;
+}
+
+
+/** [private]
+ * 
+ */
+void Daemon::link()
+{
+  m_network = new Network(QCoreApplication::instance()->applicationDirPath() + '/');
 }
 
 

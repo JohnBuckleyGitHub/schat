@@ -26,7 +26,16 @@
  */
 Network::Network()
 {
-  m_networksPath = qApp->applicationDirPath() + "/networks/";
+  Network(qApp->applicationDirPath() + "/networks/");
+}
+
+
+/** [public]
+ * 
+ */
+Network::Network(const QString &network)
+  : m_networksPath(network)
+{
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 }
 
