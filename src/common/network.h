@@ -23,6 +23,7 @@
 #include <QStringList>
 
 #include "networkreader.h"
+#include "network.h"
 
 static const QString FailBackServer = "192.168.5.130"; // TODO в публичных релизах заменить на `localhost`.
 static const quint16 FailBackPort   = 7666;
@@ -31,6 +32,7 @@ class Network {
   
 public:
   Network();
+  Network(const QString &network);
   inline bool isNetwork() const      { return m_network; }
   inline int count() const           { return m_servers.count(); }
   inline QString description() const { return m_description; }
