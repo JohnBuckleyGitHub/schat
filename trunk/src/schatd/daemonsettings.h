@@ -20,6 +20,8 @@
 #define DAEMONSETTINGS_H_
 
 #include <QObject>
+#include <QMap>
+#include <QSettings>
 
 class Log;
 
@@ -30,7 +32,15 @@ class DaemonSettings : public QObject {
   
 public:
   DaemonSettings(QObject *parent = 0);
-  
+  inline bool getBool(const QString &key)                                                       { return m_bool.value(key); }
+  inline int getInt(const QString &key)                                                         { return m_int.value(key); }
+  inline QString getString(const QString &key)                                                  { return m_string.value(key); }
+  inline void setBool(const QString &key, bool defValue, const QSettings &settings)             { m_bool[key] = settings.value(key, defValue).toBool(); }
+  inline void setBool(const QString &key, bool value)                                           { m_bool[key] = value; }
+  inline void setInt(const QString &key, int defValue, const QSettings &settings)               { m_int[key] = settings.value(key, defValue).toInt(); }
+  inline void setInt(const QString &key, int value)                                             { m_int[key] = value; }
+  inline void setString(const QString &key, const QString &defValue, const QSettings &settings) { m_string[key] = settings.value(key, defValue).toString(); }
+  inline void setString(const QString &key, const QString &value)                               { m_string[key] = value; }
   void read();
   
   bool channelLog;
@@ -39,6 +49,11 @@ public:
   Log *log;
   QString listenAddress;
   quint16 listenPort;
+  
+private:
+  QMap<QString, bool> m_bool;
+  QMap<QString, int> m_int;
+  QMap<QString, QString> m_string;
 };
 
 #endif /*DAEMONSETTINGS_H_*/
