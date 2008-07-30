@@ -25,7 +25,10 @@
 class ChannelLog;
 class DaemonService;
 class DaemonSettings;
+class Log;
 class UserUnit;
+
+#define LOG(x, y) if (m_settings->getInt("LogLevel") >= x) m_log->append(y)
 
 class Daemon : public QObject
 {
@@ -61,6 +64,7 @@ private:
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
   DaemonSettings *m_settings;
+  Log *m_log;
   QHash<QString, UserUnit *> m_users;
   QTcpServer m_server;
 };
