@@ -383,7 +383,11 @@ void Daemon::link()
     m_network = 0;
   }
   else {
-    qDebug() << "VALID NETWORK FILE";
+    m_profile = new AbstractProfile(this);
+    m_profile->setNick(m_network->key());
+
+    m_link = new ClientService(m_profile, m_network, this);
+    m_link->connectToHost();
   }
 }
 
