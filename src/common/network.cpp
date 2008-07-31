@@ -26,16 +26,17 @@
  */
 Network::Network()
 {
-  Network(qApp->applicationDirPath() + "/networks/");
+  m_networksPath = qApp->applicationDirPath() + "/networks";
+  qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 }
 
 
 /** [public]
  * 
  */
-Network::Network(const QString &network)
-  : m_networksPath(network)
+Network::Network(const QString &path)
 {
+  m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 }
 
@@ -142,7 +143,7 @@ ServerInfo Network::serverInfo(const QString &s)
  */
 void Network::fromConfig(const QString &s)
 {
-  if (QFile::exists(m_networksPath + s))
+  if (QFile::exists(m_networksPath + '/' + s))
     fromFile(s);
   else
     fromString(s);  
@@ -157,7 +158,7 @@ void Network::fromFile(const QString &file)
   NetworkReader reader;
   m_servers.clear();
   
-  if (reader.readFile(m_networksPath + file)) {
+  if (reader.readFile(m_networksPath + '/' + file)) {
     m_valid       = true;
     m_network     = true;
     m_description = reader.description();
@@ -178,6 +179,8 @@ void Network::fromFile(const QString &file)
  */
 void Network::fromString(const QString &s)
 {
+  qDebug() << "Network::fromString(const QString &)" << s;
+  
   m_servers.clear();
   
   QStringList list = s.split(QChar(':'));

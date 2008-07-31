@@ -20,6 +20,7 @@
 #define CLIENTSERVICE_H_
 
 #include <QObject>
+#include <QPointer>
 #include <QTcpSocket>
 #include <QTimer>
 
@@ -90,7 +91,7 @@ private:
   const Network *m_network;
   int m_reconnects;
   QDataStream m_stream;
-  QTcpSocket *m_socket;
+  QPointer<QTcpSocket> m_socket;
   QTimer m_checkTimer;
   QTimer m_ping;
   QTimer m_reconnectTimer;
