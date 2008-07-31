@@ -32,9 +32,13 @@ class Network {
 public:
   Network();
   Network(const QString &path);
+  bool fromConfig(const QString &s);
+  bool fromFile(const QString &file);
+  bool fromString(const QString &s);
   inline bool isNetwork() const      { return m_network; }
   inline int count() const           { return m_servers.count(); }
   inline QString description() const { return m_description; }
+  inline QString key() const         { return m_key; }
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }
   QString config() const;
@@ -42,16 +46,14 @@ public:
   ServerInfo server() const;
   static ServerInfo failBack();
   static ServerInfo serverInfo(const QString &s);
-  void fromConfig(const QString &s);
-  void fromFile(const QString &file);
-  void fromString(const QString &s);
-  
+
 private:
   bool m_network;
   bool m_valid;
   QList<ServerInfo> m_servers;
   QString m_description;
   QString m_file;
+  QString m_key;
   QString m_name;
   QString m_networksPath;
   QString m_site;

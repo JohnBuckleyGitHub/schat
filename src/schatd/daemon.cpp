@@ -377,7 +377,14 @@ QString Daemon::serverInfo() const
  */
 void Daemon::link()
 {
-  m_network = new Network(QCoreApplication::instance()->applicationDirPath() + '/');
+  m_network = new Network(QCoreApplication::instance()->applicationDirPath());
+  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
+    delete m_network;
+    m_network = 0;
+  }
+  else {
+    qDebug() << "VALID NETWORK FILE";
+  }
 }
 
 

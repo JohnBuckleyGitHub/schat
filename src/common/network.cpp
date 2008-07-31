@@ -42,6 +42,71 @@ Network::Network(const QString &path)
 
 
 /** [public]
+ * Получение списка сервером, входная строка является записью в конфигурационном файле,
+ * если файл найден, вызывается функция `fromFile()` если нет `fromString()`.
+ */
+bool Network::fromConfig(const QString &s)
+{
+  if (QFile::exists(m_networksPath + '/' + s))
+    return fromFile(s);
+  else
+    return fromString(s);  
+}
+
+
+/** [public]
+ * Парсинг файла сети.
+ */
+bool Network::fromFile(const QString &file)
+{
+  NetworkReader reader;
+  m_servers.clear();
+  
+  if (reader.readFile(m_networksPath + '/' + file)) {
+    m_valid       = true;
+    m_network     = true;
+    m_description = reader.description();
+    m_name        = reader.networkName();
+    m_site        = reader.site();
+    m_key         = reader.key();
+    m_servers     = reader.servers();
+    m_file        = file;
+  }
+  else {
+    m_valid   = false;
+    m_network = false;
+  }
+  return m_valid;
+}
+
+
+/** [public]
+ * Получение адреса и порта сервера из строки.
+ */
+bool Network::fromString(const QString &s)
+{
+  qDebug() << "Network::fromString(const QString &)" << s;
+  
+  m_servers.clear();
+  
+  QStringList list = s.split(QChar(':'));
+  if (list.size() == 2) {
+    m_valid   = true;
+    m_network = false;
+    ServerInfo info;
+    info.address = list.at(0);
+    info.port    = quint16(list.at(1).toUInt());
+    m_servers << info;
+  }
+  else {
+    m_valid   = false;
+    m_network = false;
+  }
+  return m_valid;
+}
+
+
+/** [public]
  * Возвращает строку для записи в конфигурационный файл,
  * это может быть именем файла сети либо в случае одиночного сервера,
  * парой "адрес:порт".
@@ -134,66 +199,4 @@ ServerInfo Network::serverInfo(const QString &s)
     return info;
   } else
     return failBack();
-}
-
-
-/** [public]
- * Получение списка сервером, входная строка является записью в конфигурационном файле,
- * если файл найден, вызывается функция `fromFile()` если нет `fromString()`.
- */
-void Network::fromConfig(const QString &s)
-{
-  if (QFile::exists(m_networksPath + '/' + s))
-    fromFile(s);
-  else
-    fromString(s);  
-}
-
-
-/** [public]
- * Парсинг файла сети.
- */
-void Network::fromFile(const QString &file)
-{
-  NetworkReader reader;
-  m_servers.clear();
-  
-  if (reader.readFile(m_networksPath + '/' + file)) {
-    m_valid       = true;
-    m_network     = true;
-    m_description = reader.description();
-    m_name        = reader.networkName();
-    m_site        = reader.site();
-    m_servers     = reader.servers();
-    m_file        = file;
-  }
-  else {
-    m_valid   = false;
-    m_network = false;
-  }
-}
-
-
-/** [public]
- * Получение адреса и порта сервера из строки.
- */
-void Network::fromString(const QString &s)
-{
-  qDebug() << "Network::fromString(const QString &)" << s;
-  
-  m_servers.clear();
-  
-  QStringList list = s.split(QChar(':'));
-  if (list.size() == 2) {
-    m_valid   = true;
-    m_network = false;
-    ServerInfo info;
-    info.address = list.at(0);
-    info.port    = quint16(list.at(1).toUInt());
-    m_servers << info;
-  }
-  else {
-    m_valid   = false;
-    m_network = false;
-  }
 }
