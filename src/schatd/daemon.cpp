@@ -126,7 +126,7 @@ void Daemon::greeting(const QStringList &list)
       service->accessGranted();
       emit newUser(list, true);
       
-      LOG(0, tr(">>> (%1), %2, %3, %4, %5")
+      LOG(0, tr("--> (%1), %2, %3, %4, %5")
           .arg(list.at(AbstractProfile::Host))
           .arg(list.at(AbstractProfile::Nick))
           .arg(list.at(AbstractProfile::FullName))
@@ -259,7 +259,7 @@ void Daemon::userLeave(const QString &nick)
     UserUnit *unit = m_users.value(nick);
     m_users.remove(nick);
     
-    LOG(0, tr("<<< (%1), %2").arg(unit->profile()->host()).arg(nick));
+    LOG(0, tr("<-- (%1), %2").arg(unit->profile()->host()).arg(nick));
     
     QString bye = unit->profile()->byeMsg();
     if (m_settings->getBool("ChannelLog"))

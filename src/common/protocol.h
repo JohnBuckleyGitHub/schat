@@ -31,6 +31,7 @@ static const quint16 sChatStateSendingGreeting       = 2000;
 
 static const quint8 FlagNone                         = 0;
 static const quint8 FlagDirect                       = 1;
+static const quint8 FlagLink                         = 2;
 
 /**
  * Приветственное сообщение. Сервер отвечает на этот пакет
