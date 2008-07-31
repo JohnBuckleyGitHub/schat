@@ -102,7 +102,11 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
  */
 void ClientService::connectToHost()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::connectToHost()";
+  if (m_socket)
+    qDebug() << m_socket->state();
+#endif
   
   if (!m_socket)
     createSocket();
@@ -216,24 +220,24 @@ void ClientService::connected()
  */
 void ClientService::disconnected()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::disconnected()";
-  
+#endif
+
   if (m_ping.isActive())
     m_ping.stop();
-  
-  if (m_socket) {
+
+  if (m_socket)
     m_socket->deleteLater();
-    m_socket = 0;
-  }
-  
+
   if (m_accepted) {
     emit unconnected();
     m_accepted = false;
   }
-  
+
   if (!m_fatal) {
-    if ((m_reconnects < m_network->count() * 2))
-      reconnect();
+    if ((m_reconnects < (m_network->count() * 2)))
+      QTimer::singleShot(0, this, SLOT(reconnect()));
 
     m_reconnectTimer.start();
   }
@@ -333,8 +337,10 @@ void ClientService::readyRead()
  */
 void ClientService::reconnect()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::reconnect()" << m_reconnectTimer.interval() << m_reconnects << m_fatal;
-  
+#endif
+
   if (m_fatal)
     return;
   
@@ -427,6 +433,10 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
  */
 void ClientService::createSocket()
 {
+#ifdef SCHAT_DEBUG
+  qDebug() << "ClientService::createSocket()";
+#endif
+  
   m_socket = new QTcpSocket(this);
   m_stream.setDevice(m_socket);
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
