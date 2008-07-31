@@ -201,7 +201,11 @@ void ClientService::connected()
   out << quint16(0)
       << OpcodeGreeting
       << ProtocolVersion
-      << FlagNone
+      #ifdef SCHAT_CLIENT
+       << FlagNone
+      #else
+       << FlagLink
+      #endif
       << m_profile->genderNum()
       << m_profile->nick()
       << m_profile->fullName()
