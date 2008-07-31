@@ -44,4 +44,5 @@ void DaemonSettings::read()
   setInt("ListenPort", 7666, s);
   setInt("LogLevel", 0, s);
   setString("ListenAddress", "0.0.0.0", s);
+  setString("NetworkFile", "network.xml", s);
 }
