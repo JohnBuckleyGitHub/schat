@@ -122,7 +122,10 @@
 </target>
 </buildTargets>
 </storageModule>
+
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
 <pathentry base-path="C:/qt/441/include" include="" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/441/include" include="QtCore" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/441/include" include="QtGui" kind="inc" path="" system="true"/>
@@ -138,8 +141,6 @@
 <pathentry base-path="C:/qt/441/include" include="QtAssistant" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/441/include" include="QtOpenGL" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/441/include" include="QtUiTools" kind="inc" path="" system="true"/>
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
 </storageModule>
 </cconfiguration>
 </storageModule>
