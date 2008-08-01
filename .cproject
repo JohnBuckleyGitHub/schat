@@ -99,6 +99,9 @@
 </profile>
 </storageModule>
 
+
+
+
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
 <target name="Qt Release Build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -119,23 +122,22 @@
 </target>
 </buildTargets>
 </storageModule>
-
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry base-path="C:/qt/440/include" include="" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtCore" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtGui" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtXml" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtNetwork" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtTest" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtScript" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtSql" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtSvg" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="Qt3Support" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtDBus" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtDesigner" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtAssistant" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtOpenGL" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/440/include" include="QtUiTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtCore" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtGui" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtXml" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtNetwork" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtTest" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtScript" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtSql" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtSvg" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="Qt3Support" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtDBus" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtDesigner" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtAssistant" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtOpenGL" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/441/include" include="QtUiTools" kind="inc" path="" system="true"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>
