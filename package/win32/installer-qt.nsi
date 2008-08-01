@@ -21,6 +21,7 @@
 !include "include\common.nsh"
 !include "include\schat.nsh"
 !include "include\sections.nsh"
+!include "include\translations.nsh"
 
 !define SCHAT_OUT_FILENAME "schat-runtime-${SCHAT_VERSION}.exe"
 
@@ -59,5 +60,9 @@ SectionEnd
 !insertmacro GetParent
 
 Function .onInit
+  call findRunningChat
   !insertmacro UPDATE_CMD
 FunctionEnd
+
+!insertmacro findRunningChat
+!insertmacro INSERT_TRANSLATIONS
