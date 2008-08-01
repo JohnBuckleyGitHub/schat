@@ -47,7 +47,6 @@ Var files
     
     ReadIniStr $files "$INSTDIR\schat.conf" "Updates" "Files"
     ${If} $files == ""
-      MessageBox MB_OK `files == ""`
       !insertmacro UPDATE_ENGINE_FAIL
     ${EndIf}
     
