@@ -35,8 +35,6 @@ int main(int argc, char *argv[])
   
   if (install())
     return 0;
-  else
-    QFile::remove(qApp->applicationDirPath() + "/install.exe");
   
   QStringList arguments = app.arguments();
   arguments.takeFirst();
@@ -84,13 +82,13 @@ bool install()
     
     if (qtLevel <= UpdateLevelQt && coreLevel <= UpdateLevelCore)
       return false;
-    else if (QFile::exists(appPath + "/install.exe")) {
+    else if (QFile::exists(appPath + "/uninstall.exe")) {
       QStringList args;
-      args << "-install" << "-run";
+      args << "-update" << "-run";
       if (s.value("AutoClean", true).toBool())
         args << "-clean";
       
-      QProcess::startDetached('"' + appPath + "/install.exe\"", args, appPath);
+      QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
       return true;
     }    
   }

@@ -18,17 +18,14 @@
 TEMPLATE = app
 QT += network
 #CONFIG += console
-RESOURCES += ../../data/update.qrc
 
 HEADERS += \
     download.h \
-    install.h \
     update.h \
     updatexmlreader.h \
     version.h
 SOURCES += \
     download.cpp \
-    install.cpp \
     main.cpp \
     update.cpp \
     updatexmlreader.cpp \

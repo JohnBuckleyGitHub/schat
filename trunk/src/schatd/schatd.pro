@@ -28,7 +28,6 @@ HEADERS = \
     log.h \
     network.h \
     networkreader.h \
-    profile.h \
     protocol.h \
     userunit.h \
     version.h \
@@ -44,7 +43,6 @@ SOURCES = \
     main.cpp \
     network.cpp \
     networkreader.cpp \
-    profile.cpp \
     userunit.cpp \
     
 DEPENDPATH  += . \

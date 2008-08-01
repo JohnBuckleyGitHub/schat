@@ -162,16 +162,6 @@ void Update::error(int err)
  */
 void Update::finished()
 {
-  QString newName = m_appPath + "/install.exe";
-  
-  if (QFile::exists(newName))
-    QFile::remove(newName);
-  
-  if (!QFile::copy(m_appPath + "/update.exe", newName)) {
-    error(402);
-    return;
-  }
-  
   writeSettings();
      
   qApp->exit(0);
