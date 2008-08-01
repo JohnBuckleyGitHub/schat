@@ -22,7 +22,6 @@
 #include "aboutdialog.h"
 #include "abstractprofile.h"
 #include "mainchannel.h"
-#include "profile.h"
 #include "protocol.h"
 #include "schatwindow.h"
 #include "settings.h"
