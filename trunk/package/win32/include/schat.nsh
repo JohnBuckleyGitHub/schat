@@ -21,32 +21,32 @@
 /**
 * Выводим `MessageBox` если чат запущен.
 */
-!macro _findRunningChat
-  ${Unless} ${Silent}
-    newcheck:
-    FindProcDLL::FindProc "schat.exe"
-    Pop $R0
-    ${If} $R0 == 1 
-      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
-      Quit
-    ${EndIf}
-  ${Else}
-     !insertmacro KILL_ALL "schat.exe"
-     !insertmacro KILL_ALL "schatd.exe"
-  ${EndUnless}
-!macroend
-
-!macro findRunningChat
-Function findRunningChat
-  !insertmacro _findRunningChat
-FunctionEnd
-!macroend
-
-!macro un.findRunningChat
-Function un.findRunningChat
-  !insertmacro _findRunningChat
-FunctionEnd
-!macroend
+;!macro _findRunningChat
+;  ${Unless} ${Silent}
+;    newcheck:
+;    FindProcDLL::FindProc "schat.exe"
+;    Pop $R0
+;    ${If} $R0 == 1 
+;      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
+;      Quit
+;    ${EndIf}
+;  ${Else}
+;     !insertmacro KILL_ALL "schat.exe"
+;     !insertmacro KILL_ALL "schatd.exe"
+;  ${EndUnless}
+;!macroend
+;
+;!macro findRunningChat
+;Function findRunningChat
+;  !insertmacro _findRunningChat
+;FunctionEnd
+;!macroend
+;
+;!macro un.findRunningChat
+;Function un.findRunningChat
+;  !insertmacro _findRunningChat
+;FunctionEnd
+;!macroend
 
 
 /**

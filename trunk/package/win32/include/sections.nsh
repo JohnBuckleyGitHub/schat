@@ -76,9 +76,7 @@ SectionEnd
 !macro SECTION_UNINSTALL
 Section "Uninstall"
   
-  ${If} $mode == "update"
-    !insertmacro UPDATE_ENGINE_EXEC
-  ${Else}
+  ${If} $mode == "normal"
     Delete "$DESKTOP\${SCHAT_NAME}.lnk"
     Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
     Delete "${SCHAT_PROGRAMGROUP}\*.lnk"
