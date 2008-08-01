@@ -16,14 +16,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-!include "MUI2.nsh"
 !include "FileFunc.nsh"
+!include "MUI2.nsh"
 !include "Sections.nsh"
 !include "include\common.nsh"
-!include "include\sections.nsh"
-!include "include\schat.nsh"
-!include "include\translations.nsh"
 !include "include\page-options.nsh"
+!include "include\schat.nsh"
+!include "include\sections.nsh"
+!include "include\translations.nsh"
+!include "include\update.nsh"
 
 !ifdef INSTALLER_CORE
   !define SCHAT_OUT_FILENAME "schat-core-${SCHAT_VERSION}.exe"
@@ -124,6 +125,7 @@ SectionEnd
 !insertmacro GetParameters
 !insertmacro GetOptionsS
 !insertmacro GetParent
+!insertmacro UPDATE_ENGINE_FUNCTIONS
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
@@ -143,6 +145,7 @@ FunctionEnd
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
   call un.findRunningChat
+  !insertmacro UPDATE_ENGINE_INIT
 FunctionEnd
 
 

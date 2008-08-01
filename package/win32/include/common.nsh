@@ -20,7 +20,7 @@
 !define SCHAT_NAME_SHORT "Simple Chat"
 !define SCHAT_VERSION    "0.1.0.319"
 !define SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-!define SCHAT_QTDIR      "C:\qt\441"
+!define SCHAT_QTDIR      "C:\qt\440"
 !define SCHAT_WEB_SITE   "http://impomezia.net.ru/"
 !define SCHAT_COPYRIGHT  "Copyright © 2008 IMPOMEZIA"
 !define SCHAT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
@@ -38,7 +38,7 @@
 !define MUI_HEADERIMAGE_BITMAP         "contrib\header.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_ICON                       "contrib\install.ico"
-!define MUI_UNICON                     "contrib\uninstall.ico"
+!define MUI_UNICON                     "contrib\install.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP   "contrib\wizard.bmp"
 !define MUI_LANGDLL_REGISTRY_ROOT      "HKCU"
 !define MUI_LANGDLL_REGISTRY_KEY       "${SCHAT_REGKEY}"

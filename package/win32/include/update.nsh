@@ -19,6 +19,42 @@
 !ifndef UPDATE_NSH_
 !define UPDATE_NSH_
 
+!include "FileFunc.nsh"
 
+Var mode
+Var cmdparams
+
+/**
+ * Инициализация
+ */
+!macro UPDATE_ENGINE_INIT
+  ${un.GetParameters} $cmdparams
+  ${un.GetOptionsS} $cmdparams "-update" $R0
+  ${Unless} ${Errors}
+    StrCpy $mode "update"
+    Banner::show /NOUNLOAD /set 76 "${SCHAT_NAME} ${SCHAT_VERSION}" "Processing Update..."
+    Sleep 4000
+    Banner::destroy
+  ${Else}
+    StrCpy $mode "normal"
+  ${EndUnless}
+!macroend
+
+
+/**
+ * Запуск
+ */
+!macro UPDATE_ENGINE_EXEC
+
+!macroend
+
+
+/**
+ * Функции
+ */
+!macro UPDATE_ENGINE_FUNCTIONS
+  !insertmacro un.GetParameters
+  !insertmacro un.GetOptionsS
+!macroend
 
 !endif /* UPDATE_NSH_ */

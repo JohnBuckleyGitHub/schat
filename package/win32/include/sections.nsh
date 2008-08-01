@@ -75,35 +75,39 @@ SectionEnd
 
 !macro SECTION_UNINSTALL
 Section "Uninstall"
-
-  Delete "$DESKTOP\${SCHAT_NAME}.lnk"
-  Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
-  Delete "${SCHAT_PROGRAMGROUP}\*.lnk"
-  RMDir  "${SCHAT_PROGRAMGROUP}"
   
-  Delete "$INSTDIR\uninstall.exe"
-  Delete "$INSTDIR\uninstall.ini"
-  Delete "$INSTDIR\schat.exe"
-  Delete "$INSTDIR\schatd.exe"
-  Delete "$INSTDIR\update.exe"
-  Delete "$INSTDIR\QtCore4.dll"
-  Delete "$INSTDIR\QtGui4.dll"
-  Delete "$INSTDIR\QtNetwork4.dll"
-  Delete "$INSTDIR\networks\*.xml"
-  Delete "$INSTDIR\doc\*.html"
-  Delete "$INSTDIR\doc\*.example"
-  
-  !ifdef VC90
-    Delete "$INSTDIR\msvcr90.dll"
-    Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
-  !endif
-  
-  RMDir "$INSTDIR\networks"
-  RMDir "$INSTDIR\doc"
-  RMDir "$INSTDIR"
-  
-  DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
-  DeleteRegKey HKCU "${SCHAT_REGKEY}"
+  ${If} $mode == "update"
+    !insertmacro UPDATE_ENGINE_EXEC
+  ${Else}
+    Delete "$DESKTOP\${SCHAT_NAME}.lnk"
+    Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
+    Delete "${SCHAT_PROGRAMGROUP}\*.lnk"
+    RMDir  "${SCHAT_PROGRAMGROUP}"
+    
+    Delete "$INSTDIR\uninstall.exe"
+    Delete "$INSTDIR\uninstall.ini"
+    Delete "$INSTDIR\schat.exe"
+    Delete "$INSTDIR\schatd.exe"
+    Delete "$INSTDIR\update.exe"
+    Delete "$INSTDIR\QtCore4.dll"
+    Delete "$INSTDIR\QtGui4.dll"
+    Delete "$INSTDIR\QtNetwork4.dll"
+    Delete "$INSTDIR\networks\*.xml"
+    Delete "$INSTDIR\doc\*.html"
+    Delete "$INSTDIR\doc\*.example"
+    
+    !ifdef VC90
+      Delete "$INSTDIR\msvcr90.dll"
+      Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
+    !endif
+    
+    RMDir "$INSTDIR\networks"
+    RMDir "$INSTDIR\doc"
+    RMDir "$INSTDIR"
+    
+    DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
+    DeleteRegKey HKCU "${SCHAT_REGKEY}"
+  ${EndIf}
   
 SectionEnd
 !macroend
