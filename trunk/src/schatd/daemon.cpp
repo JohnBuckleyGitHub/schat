@@ -103,6 +103,7 @@ void Daemon::incomingConnection()
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
+    connect(this, SIGNAL(sendNewLink(const QString &, const QString &)), service, SLOT(sendNewLink(const QString &, const QString &)));
   }
 }
 
@@ -367,6 +368,8 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
       if (!m_links.contains(host)) {
         m_links.insert(host, new UserUnit(list, service));
         service->accessGranted();
+        
+        emit sendNewLink(m_network->name(), host);
       }
       else
         service->accessDenied(ErrorAddressAlreadyUse);
@@ -376,7 +379,6 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
   }
   else
     service->accessDenied(ErrorNotNetworkConfigured);
-  
 }
 
 
