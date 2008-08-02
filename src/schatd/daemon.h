@@ -72,6 +72,7 @@ private:
   DaemonSettings *m_settings;
   Log *m_log;
   Network *m_network;
+  QHash<QString, UserUnit *> m_links;
   QHash<QString, UserUnit *> m_users;
   QTcpServer m_server;
 };

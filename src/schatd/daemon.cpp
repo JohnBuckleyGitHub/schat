@@ -128,7 +128,11 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
       qDebug() << "LINK" << list.at(AbstractProfile::Host);
       if (m_network) {
         if (m_network->key() == nick) {
-          qDebug() << "OKAY LINK";
+          if (!m_users.contains(nick)) {
+            qDebug() << "OKAY LINK";
+          }
+          else
+            service->accessDenied(ErrorBadNetworkKey);
         }
         else
           service->accessDenied(ErrorBadNetworkKey);
