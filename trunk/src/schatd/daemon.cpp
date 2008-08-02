@@ -92,7 +92,7 @@ void Daemon::incomingConnection()
 {
   if (m_server.hasPendingConnections()) {
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
-    connect(service, SIGNAL(greeting(const QStringList &)), SLOT(greeting(const QStringList &)));
+    connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
@@ -114,9 +114,11 @@ void Daemon::incomingConnection()
  * и высылается сигнал `newUser(const QStringList &list)`.
  * В случае дубликата ников высылается код ошибки `ErrorNickAlreadyUse`.
  */
-void Daemon::greeting(const QStringList &list)
+void Daemon::greeting(const QStringList &list, quint8 flag)
 {
-  qDebug() << "Daemon::greeting(const QStringList &)" << list.at(AbstractProfile::Nick);
+#ifdef SCHAT_DEBUG
+  qDebug() << "Daemon::greeting(const QStringList &)" << list.at(AbstractProfile::Nick) << flag;
+#endif
   
   if (DaemonService *service = qobject_cast<DaemonService *>(sender())) {
     QString nick = list.at(AbstractProfile::Nick);

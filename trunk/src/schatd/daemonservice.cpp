@@ -341,7 +341,9 @@ void DaemonService::ping()
  */
 bool DaemonService::opcodeGreeting()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeGreeting()";
+#endif
   
   QString f_fullName;
   QString f_nick;
@@ -372,7 +374,7 @@ bool DaemonService::opcodeGreeting()
     emit appendDirectParticipant(m_profile->nick());
   else
   #endif
-  emit greeting(m_profile->pack());
+  emit greeting(m_profile->pack(), m_flag);
   
   return true;
 }
@@ -534,7 +536,7 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
 
 
 /** [private]
- * 
+ * Верификация пакета `OpcodeGreeting`.
  */
 quint16 DaemonService::verifyGreeting(quint16 version)
 {
@@ -542,7 +544,7 @@ quint16 DaemonService::verifyGreeting(quint16 version)
     return ErrorOldClientProtocol;
   else if (version > ProtocolVersion)
     return ErrorOldServerProtocol;
-  else if (m_flag != FlagNone)
+  else if (!(m_flag == FlagNone || m_flag == FlagLink))
     return ErrorBadGreetingFlag;
   else if (!m_profile->isValidNick())
     return ErrorBadNickName;
