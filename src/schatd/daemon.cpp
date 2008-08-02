@@ -132,7 +132,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
             qDebug() << "OKAY LINK";
           }
           else
-            service->accessDenied(ErrorBadNetworkKey);
+            service->accessDenied(ErrorAddressAlreadyUse);
         }
         else
           service->accessDenied(ErrorBadNetworkKey);
