@@ -284,9 +284,25 @@ void DaemonService::readyRead()
 /** [public slots]
  * 
  */
+void DaemonService::sendNewLink(const QString &network, const QString &ip)
+{
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::sendNewLink()" << network << ip;
+#endif
+  
+  send(OpcodeNewLink, network, ip);
+}
+
+
+/** [public slots]
+ * 
+ */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::sendNewNick()";
+#endif
+  
   if (m_profile->nick() == nick) {
     m_profile->setGender(gender);
     m_profile->setNick(newNick);
@@ -301,7 +317,10 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
  */
 void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QString &name)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::sendNewProfile()";
+#endif
+  
   if (m_profile->nick() == nick) {
     m_profile->setGender(gender);
     m_profile->setFullName(name);

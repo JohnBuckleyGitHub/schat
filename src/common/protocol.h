@@ -199,6 +199,19 @@ static const quint16 OpcodeByeMsg                    = 603;
 
 
 /**
+ * Уведомление о подключении к сети нового сервера
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> Название сети
+ * QString -> Адрес сервера
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeNewLink                   = 500;
+
+
+/**
  * КОДЫ ОШИБОК
  */
 static const quint16 ErrorNickAlreadyUse             = 200; // Выбранный ник уже занят.
