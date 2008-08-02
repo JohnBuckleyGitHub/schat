@@ -62,6 +62,8 @@ private slots:
 private:
   bool parseCmd(const QString &nick, const QString &msg);
   QString serverInfo() const;
+  void greetingLink(const QStringList &list, DaemonService *service);
+  void greetingUser(const QStringList &list, DaemonService *service);
   void link();
   void sendAllUsers(DaemonService *service);
 
