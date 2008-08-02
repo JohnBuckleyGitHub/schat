@@ -129,7 +129,7 @@ SectionEnd
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
-;  call findRunningChat ; FIXME восстановить закрытие чата
+  call findRunningChat
   
   !insertmacro UPDATE_CMD
     
@@ -144,11 +144,11 @@ FunctionEnd
 
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
-;  call un.findRunningChat ; FIXME восстановить закрытие чата
+  call un.findRunningChat
   !insertmacro UPDATE_ENGINE_INIT
 FunctionEnd
 
 
-;!insertmacro findRunningChat ; FIXME восстановить закрытие чата
-;!insertmacro un.findRunningChat
+!insertmacro findRunningChat
+!insertmacro un.findRunningChat
 !insertmacro SETTINGS_PAGE
