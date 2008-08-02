@@ -40,7 +40,7 @@ public:
   void sendServerMessage(const QString &msg);
 
 signals:
-  void greeting(const QStringList &list);
+  void greeting(const QStringList &list, quint8 flag);
   void leave(const QString &nick);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
