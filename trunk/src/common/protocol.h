@@ -230,5 +230,7 @@ static const quint16 ErrorOldServerProtocol          = 104; // Сервер ис
 static const quint16 ErrorBadGreetingFlag            = 101; // Клиент отправил неподдерживаемый флаг приветствия.
 static const quint16 ErrorBadNickName                = 102; // Выбранный клиентом ник, не допустим в чате.
 static const quint16 ErrorBadUserAgent               = 103; // Клиент отправил недопустимый UserAgent.
+static const quint16 ErrorNotNetworkConfigured       = 400; // На сервере, к которому пытается слинковаться другой сервер, не настроена сеть.
+static const quint16 ErrorBadNetworkKey              = 401; // Ошибка проверки ключа сети.
 
 #endif /*PROTOCOL_H_*/

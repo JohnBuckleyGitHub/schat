@@ -120,31 +120,46 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
   qDebug() << "Daemon::greeting(const QStringList &)" << list.at(AbstractProfile::Nick) << flag;
 #endif
   
-  if (DaemonService *service = qobject_cast<DaemonService *>(sender())) {
+  DaemonService *service = qobject_cast<DaemonService *>(sender());
+  if (service) {
     QString nick = list.at(AbstractProfile::Nick);
     
-    if (!m_users.contains(nick)) {
-      m_users.insert(nick, new UserUnit(list, service));
-      service->accessGranted();
-      emit newUser(list, true);
-      
-      LOG(0, tr("--> (%1), %2, %3, %4, %5")
-          .arg(list.at(AbstractProfile::Host))
-          .arg(list.at(AbstractProfile::Nick))
-          .arg(list.at(AbstractProfile::FullName))
-          .arg(list.at(AbstractProfile::Gender))
-          .arg(list.at(AbstractProfile::UserAgent)));
-      
-      if (m_settings->getBool("ChannelLog"))
-        if (list.at(AbstractProfile::Gender) == "male")
-          m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
+    if (flag == FlagLink) {
+      qDebug() << "LINK" << list.at(AbstractProfile::Host);
+      if (m_network) {
+        if (m_network->key() == nick) {
+          qDebug() << "OKAY LINK";
+        }
         else
-          m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
-      
-      sendAllUsers(service);
+          service->accessDenied(ErrorBadNetworkKey);
+      }
+      else
+        service->accessDenied(ErrorNotNetworkConfigured);
     }
-    else
-      service->accessDenied(ErrorNickAlreadyUse);
+    else {    
+      if (!m_users.contains(nick)) {
+        m_users.insert(nick, new UserUnit(list, service));
+        service->accessGranted();
+        emit newUser(list, true);
+        
+        LOG(0, tr("--> (%1), %2, %3, %4, %5")
+            .arg(list.at(AbstractProfile::Host))
+            .arg(list.at(AbstractProfile::Nick))
+            .arg(list.at(AbstractProfile::FullName))
+            .arg(list.at(AbstractProfile::Gender))
+            .arg(list.at(AbstractProfile::UserAgent)));
+        
+        if (m_settings->getBool("ChannelLog"))
+          if (list.at(AbstractProfile::Gender) == "male")
+            m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
+          else
+            m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
+        
+        sendAllUsers(service);
+      }
+      else
+        service->accessDenied(ErrorNickAlreadyUse);
+    }
   }  
 }
 
@@ -387,9 +402,11 @@ void Daemon::link()
   else {
     m_profile = new AbstractProfile(this);
     m_profile->setNick(m_network->key());
-
-    m_link = new ClientService(m_profile, m_network, this);
-    m_link->connectToHost();
+        
+    if (m_network->count() > 0) {
+      m_link = new ClientService(m_profile, m_network, this);
+      m_link->connectToHost();
+    }
   }
 }
 
