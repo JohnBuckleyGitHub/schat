@@ -45,9 +45,9 @@ InstallDir "${SCHAT_INSTALLDIR}"
 InstallDirRegKey HKCU "${SCHAT_REGKEY}" ""
 RequestExecutionLevel user
 InstType "$(STR1)"
-;SetCompressor /SOLID lzma
-;SetCompressorDictSize 10
-SetCompress off
+SetCompressor /SOLID lzma
+SetCompressorDictSize 10
+;SetCompress off
 BrandingText "${SCHAT_COPYRIGHT}"
 
 VIProductVersion "${SCHAT_VERSION}"
