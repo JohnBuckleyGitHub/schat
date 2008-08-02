@@ -199,29 +199,6 @@ static const quint16 OpcodeByeMsg                    = 603;
 
 
 /**
- * Запрос информации о сервере.
- * ФОРМАТ: --------------------
- * quint16 -> размер пакета
- * quint16 -> опкод
- * ОТПРАВИТЕЛЬ: ---------------
- * Клиент
- */
-static const quint16 sChatOpcodeGetServerInfo        = 700;
-
-
-/**
- * Отправка информации о сервере.
- * ФОРМАТ: --------------------
- * quint16 -> размер пакета
- * quint16 -> опкод
- * QString -> Информация
- * ОТПРАВИТЕЛЬ: ---------------
- * Сервер
- */
-static const quint16 sChatOpcodeServerInfo           = 701;
-
-
-/**
  * КОДЫ ОШИБОК
  */
 static const quint16 ErrorNickAlreadyUse             = 200; // Выбранный ник уже занят.
