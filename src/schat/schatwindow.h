@@ -89,6 +89,7 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void message(const QString &sender, const QString &message);
   void messageClicked();
+  void newLink(const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
@@ -106,7 +107,7 @@ private slots:
   void update();
   void updateGetDone(int code);
   #endif
-  
+
 private:
   bool parseCmd(AbstractTab *tab, const QString &text);
   int tabIndex(const QString &s, int start = 1) const;
@@ -122,7 +123,7 @@ private:
   void showChat();
   void startNotice(int index);
   void uniqueNick();
-  
+
   AbstractProfile *m_profile;
   bool currentTrayIcon;
   ClientService *m_clientService;
@@ -158,7 +159,7 @@ private:
   QWidget *rightWidget;
   Settings *settings;
   WelcomeDialog *welcomeDialog;
-  
+
   #ifdef SCHAT_UPDATE
   QAction *updateSetAction;
   QPointer<UpdateNotify> m_updateNotify;

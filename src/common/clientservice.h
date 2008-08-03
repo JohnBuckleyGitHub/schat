@@ -52,6 +52,7 @@ signals:
   void connecting(const QString &server, bool network);
   void fatal();
   void message(const QString &sender, const QString &message);
+  void newLink(const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
@@ -76,6 +77,7 @@ private:
   void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeMessage();
+  void opcodeNewLink();
   void opcodeNewNick();
   void opcodeNewProfile();
   void opcodeNewUser();
