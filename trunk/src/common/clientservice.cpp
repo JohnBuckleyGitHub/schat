@@ -323,6 +323,10 @@ void ClientService::readyRead()
           opcodeNewLink();
           break;
           
+        case OpcodeLinkLeave:
+          opcodeLinkLeave();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -490,6 +494,19 @@ void ClientService::opcodeAccessGranted()
     network = "";
   
   emit accessGranted(network, m_server.address, p_level);
+}
+
+
+/** [private]
+ * 
+ */
+void ClientService::opcodeLinkLeave()
+{
+  QString p_network;
+  QString p_ip;
+  m_stream >> p_network >> p_ip;
+  m_nextBlockSize = 0;
+  emit linkLeave(p_network, p_ip);
 }
 
 
