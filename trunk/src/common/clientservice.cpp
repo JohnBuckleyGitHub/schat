@@ -317,6 +317,10 @@ void ClientService::readyRead()
           opcodeServerMessage();
           break;
           
+        case OpcodeNewLink:
+          opcodeNewLink();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -498,6 +502,19 @@ void ClientService::opcodeMessage()
   m_stream >> p_sender >> p_message;
   m_nextBlockSize = 0;
   emit message(p_sender, p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeNewLink`.
+ */
+void ClientService::opcodeNewLink()
+{
+  QString p_network;
+  QString p_ip;
+  m_stream >> p_network >> p_ip;
+  m_nextBlockSize = 0;
+  emit newLink(p_network, p_ip);
 }
 
 
