@@ -427,6 +427,15 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 /** [private slots]
  * 
  */
+void SChatWindow::linkLeave(const QString &network, const QString &ip)
+{
+  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b></i>").arg(ip).arg(network));
+}
+
+
+/** [private slots]
+ * 
+ */
 void SChatWindow::message(const QString &sender, const QString &message)
 {
   if ((m_tabs->currentIndex() != 0) || (!isActiveWindow()))
@@ -1015,6 +1024,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
   connect(m_clientService, SIGNAL(newLink(const QString &, const QString &)), SLOT(newLink(const QString &, const QString &)));
+  connect(m_clientService, SIGNAL(linkLeave(const QString &, const QString &)), SLOT(linkLeave(const QString &, const QString &)));
 }
 
 
