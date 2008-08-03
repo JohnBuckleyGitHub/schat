@@ -93,7 +93,7 @@ void Daemon::incomingConnection()
   if (m_server.hasPendingConnections()) {
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
-    connect(service, SIGNAL(leave(const QString &)), SLOT(userLeave(const QString &)));
+    connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
@@ -235,33 +235,16 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
  * перед удалением.
  * Пользователь удаляется из списка пользователей и объект `UserUnit` уничтожается.
  */
-void Daemon::userLeave(const QString &nick)
+void Daemon::serviceLeave(const QString &nick, quint8 flag)
 {
-  qDebug() << "Daemon::userLeave(const QString &)" << nick;
-  
-//  if (m_network) {
-//    if (m_network->key() == nick) {
-//      
-//    }
-//  }
-//  
-  if (m_users.contains(nick)) {
-    UserUnit *unit = m_users.value(nick);
-    m_users.remove(nick);
-    
-    LOG(0, tr("<-- (%1), %2").arg(unit->profile()->host()).arg(nick));
-    
-    QString bye = unit->profile()->byeMsg();
-    if (m_settings->getBool("ChannelLog"))
-      if (unit->profile()->isMale())
-        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
-      else
-        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
-    
-    delete unit;
-    
-    emit userLeave(nick, bye, true);
-  }
+#ifdef SCHAT_DEBUG
+  qDebug() << "Daemon::serviceLeave(const QString &)" << nick << flag;
+#endif
+
+  if (flag == FlagLink)
+    linkLeave(nick);
+  else
+    userLeave(nick);
 }
 
 
@@ -444,6 +427,21 @@ void Daemon::link()
 
 
 /** [private]
+ * 
+ */
+void Daemon::linkLeave(const QString &nick)
+{
+  if (m_network) {
+    if (m_links.contains(nick)) {
+      UserUnit *unit = m_links.value(nick);
+      m_links.remove(nick);
+      delete unit;
+    }
+  }
+}
+
+
+/** [private]
  * Отправка подключившемуся клиенту списка всех пользователей.
  */
 void Daemon::sendAllUsers(DaemonService *service)
@@ -458,3 +456,29 @@ void Daemon::sendAllUsers(DaemonService *service)
     }
   }
 }
+
+
+/** [private]
+ * 
+ */
+void Daemon::userLeave(const QString &nick)
+{
+  if (m_users.contains(nick)) {
+    UserUnit *unit = m_users.value(nick);
+    m_users.remove(nick);
+
+    LOG(0, tr("<-- (%1), %2").arg(unit->profile()->host()).arg(nick));
+
+    QString bye = unit->profile()->byeMsg();
+    if (m_settings->getBool("ChannelLog"))
+      if (unit->profile()->isMale())
+        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
+      else
+        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
+
+    delete unit;
+
+    emit userLeave(nick, bye, true);
+  }
+}
+

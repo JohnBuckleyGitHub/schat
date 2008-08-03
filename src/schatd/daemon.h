@@ -58,7 +58,7 @@ private slots:
   void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
-  void userLeave(const QString &nick);
+  void serviceLeave(const QString &nick, quint8 flag);
 
 private:
   bool parseCmd(const QString &nick, const QString &msg);
@@ -66,7 +66,9 @@ private:
   void greetingLink(const QStringList &list, DaemonService *service);
   void greetingUser(const QStringList &list, DaemonService *service);
   void link();
+  void linkLeave(const QString &nick);
   void sendAllUsers(DaemonService *service);
+  void userLeave(const QString &nick);
 
   AbstractProfile *m_profile;
   ChannelLog *m_channelLog;
