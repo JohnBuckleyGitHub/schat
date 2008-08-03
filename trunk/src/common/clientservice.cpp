@@ -189,7 +189,9 @@ void ClientService::check()
  */
 void ClientService::connected()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::connected()";
+#endif
   
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();

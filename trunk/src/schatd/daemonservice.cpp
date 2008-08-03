@@ -363,7 +363,7 @@ bool DaemonService::opcodeGreeting()
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeGreeting()";
 #endif
-  
+
   QString f_fullName;
   QString f_nick;
   QString f_userAgent;
@@ -371,30 +371,26 @@ bool DaemonService::opcodeGreeting()
   quint16 f_err = 0;
   quint8  f_sex;
   quint16 f_version;
-  
+
   m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
   m_nextBlockSize = 0;
-  
+
+  if (m_flag == FlagLink)
+    f_nick == m_socket->peerAddress().toString();
+
   QStringList profile;
   profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
   m_profile = new AbstractProfile(profile, this);
-  
+
   f_err = verifyGreeting(f_version);
-  
+
   if (f_err) {
     accessDenied(f_err);
     return false;
   }
-  
-  // При прямом подключении `sChatFlagDirect` не проверяем имя на дубликаты
-  // и не отсылаем его в общий список.
-  #ifdef SCHAT_CLIENT
-  if (m_flag == sChatFlagDirect)
-    emit appendDirectParticipant(m_profile->nick());
-  else
-  #endif
+
   emit greeting(m_profile->pack(), m_flag);
-  
+
   return true;
 }
 
@@ -561,15 +557,19 @@ quint16 DaemonService::verifyGreeting(quint16 version)
 {
   if (version < ProtocolVersion)
     return ErrorOldClientProtocol;
-  else if (version > ProtocolVersion)
+
+  if (version > ProtocolVersion)
     return ErrorOldServerProtocol;
-  else if (!(m_flag == FlagNone || m_flag == FlagLink))
+
+  if (!(m_flag == FlagNone || m_flag == FlagLink))
     return ErrorBadGreetingFlag;
-  else if (!m_profile->isValidNick())
+
+  if (!m_profile->isValidNick() && m_flag == FlagNone)
     return ErrorBadNickName;
-  else if (!m_profile->isValidUserAgent())
+
+  if (!m_profile->isValidUserAgent())
     return ErrorBadUserAgent;
-  
+
   return 0;
 }
 
