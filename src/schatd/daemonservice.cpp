@@ -284,6 +284,15 @@ void DaemonService::readyRead()
 /** [public slots]
  * 
  */
+void DaemonService::sendLinkLeave(const QString &network, const QString &ip)
+{
+  send(OpcodeLinkLeave, network, ip);
+}
+
+
+/** [public slots]
+ * 
+ */
 void DaemonService::sendNewLink(const QString &network, const QString &ip)
 {
 #ifdef SCHAT_DEBUG

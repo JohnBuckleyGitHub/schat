@@ -185,7 +185,6 @@ static const quint16 OpcodeNewProfile                = 600;
  */
 static const quint16 OpcodeNewNick                  = 602;
 
-
 /**
  * Отправка клиентом сообщения о выходе.
  * ФОРМАТ: --------------------
@@ -196,7 +195,6 @@ static const quint16 OpcodeNewNick                  = 602;
  * Клиент
  */
 static const quint16 OpcodeByeMsg                    = 603;
-
 
 /**
  * Уведомление о подключении к сети нового сервера
@@ -209,6 +207,18 @@ static const quint16 OpcodeByeMsg                    = 603;
  * Сервер
  */
 static const quint16 OpcodeNewLink                   = 500;
+
+/**
+ * Уведомление о выходе их сети нового сервера
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> Название сети
+ * QString -> Адрес сервера
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeLinkLeave                 = 501;
 
 
 /**
