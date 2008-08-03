@@ -104,6 +104,7 @@ void Daemon::incomingConnection()
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewLink(const QString &, const QString &)), service, SLOT(sendNewLink(const QString &, const QString &)));
+    connect(this, SIGNAL(sendLinkLeave(const QString &, const QString &)), service, SLOT(sendLinkLeave(const QString &, const QString &)));
   }
 }
 
@@ -435,6 +436,7 @@ void Daemon::linkLeave(const QString &nick)
     if (m_links.contains(nick)) {
       UserUnit *unit = m_links.value(nick);
       m_links.remove(nick);
+      emit sendLinkLeave(m_network->name(), nick);
       delete unit;
     }
   }
