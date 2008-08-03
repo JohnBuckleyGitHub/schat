@@ -239,6 +239,12 @@ void Daemon::userLeave(const QString &nick)
 {
   qDebug() << "Daemon::userLeave(const QString &)" << nick;
   
+//  if (m_network) {
+//    if (m_network->key() == nick) {
+//      
+//    }
+//  }
+//  
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
     m_users.remove(nick);
@@ -362,7 +368,7 @@ QString Daemon::serverInfo() const
 void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
   if (m_network) {
-    if (m_network->key() == list.at(AbstractProfile::Nick)) {
+    if (m_network->key() == list.at(AbstractProfile::FullName)) {
       QString host = list.at(AbstractProfile::Host);
       
       if (!m_links.contains(host)) {
@@ -426,7 +432,8 @@ void Daemon::link()
   }
   else {
     m_profile = new AbstractProfile(this);
-    m_profile->setNick(m_network->key());
+    m_profile->setNick("");
+    m_profile->setFullName(m_network->key());
         
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);
