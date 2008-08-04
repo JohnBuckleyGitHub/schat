@@ -25,6 +25,7 @@ HEADERS = \
     daemon.h \
     daemonservice.h \
     daemonsettings.h \
+    linkunit.h \
     log.h \
     network.h \
     networkreader.h \
@@ -39,6 +40,7 @@ SOURCES = \
     daemon.cpp \
     daemonservice.cpp \
     daemonsettings.cpp \
+    linkunit.cpp \
     log.cpp \
     main.cpp \
     network.cpp \
