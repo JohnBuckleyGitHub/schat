@@ -25,6 +25,7 @@
 #include "daemon.h"
 #include "daemonservice.h"
 #include "daemonsettings.h"
+#include "linkunit.h"
 #include "log.h"
 #include "protocol.h"
 #include "userunit.h"
@@ -104,7 +105,7 @@ void Daemon::incomingConnection()
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
-    connect(this, SIGNAL(sendLinkLeave(const QString &, const QString &)), service, SLOT(sendLinkLeave(const QString &, const QString &)));
+    connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
   }
 }
 
@@ -356,10 +357,11 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
       QString host = list.at(AbstractProfile::Host);
   
       if (!m_links.contains(host)) {
-        m_links.insert(host, new UserUnit(list, service));
+        quint8 numeric = quint8(QString(list.at(AbstractProfile::Gender)).toInt());
+        m_links.insert(host, new LinkUnit(numeric, service));
         service->accessGranted();
 
-        emit sendNewLink(quint8(QString(list.at(AbstractProfile::Gender)).toInt()), m_network->name(), host);
+        emit sendNewLink(numeric, m_network->name(), host);
       }
       else
         service->accessDenied(ErrorAddressAlreadyUse);
@@ -431,13 +433,13 @@ void Daemon::link()
 /** [private]
  * 
  */
-void Daemon::linkLeave(const QString &nick)
+void Daemon::linkLeave(const QString &ip)
 {
   if (m_network) {
-    if (m_links.contains(nick)) {
-      UserUnit *unit = m_links.value(nick);
-      m_links.remove(nick);
-      emit sendLinkLeave(m_network->name(), nick);
+    if (m_links.contains(ip)) {
+      LinkUnit *unit = m_links.value(ip);
+      m_links.remove(ip);
+      emit sendLinkLeave(unit->numeric(), m_network->name(), ip);
       delete unit;
     }
   }

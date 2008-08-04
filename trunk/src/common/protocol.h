@@ -207,12 +207,13 @@ static const quint16 OpcodeNewLink                   = 502;
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
+ * quint8  -> numeric сервера
  * QString -> Название сети
  * QString -> Адрес сервера
  * ОТПРАВИТЕЛЬ: ---------------
  * Сервер
  */
-static const quint16 OpcodeLinkLeave                 = 501;
+static const quint16 OpcodeLinkLeave                 = 503;
 
 
 /**

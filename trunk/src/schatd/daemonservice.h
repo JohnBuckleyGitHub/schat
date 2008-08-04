@@ -53,7 +53,7 @@ public slots:
   void disconnected();
   void message(const QString &sender, const QString &message);
   void readyRead();
-  void sendLinkLeave(const QString &network, const QString &ip);
+  void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
