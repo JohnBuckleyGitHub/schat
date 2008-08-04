@@ -22,13 +22,6 @@
 static const int     StreamVersion                   = QDataStream::Qt_4_4;
 static const quint16 ProtocolVersion                 = 2;
 
-static const quint16 sChatStateWaitingForGreeting    = 2000;
-static const quint16 sChatStateReadingGreeting       = 2001;
-static const quint16 sChatStateReadyForUse           = 2002;
-static const quint16 sChatStateDisconnected          = 2003;
-static const quint16 sChatStateWaitingForChecking    = 2004;
-static const quint16 sChatStateSendingGreeting       = 2000;
-
 static const quint8 FlagNone                         = 0;
 static const quint8 FlagDirect                       = 1;
 static const quint8 FlagLink                         = 2;
