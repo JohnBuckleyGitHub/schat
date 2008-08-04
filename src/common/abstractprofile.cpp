@@ -28,7 +28,7 @@
 AbstractProfile::AbstractProfile(QObject *parent)
   : QObject(parent)
 {
-  m_male = true;
+  m_gender = 0;
   m_nick = QDir::home().dirName();
 #ifdef SCHAT_CLIENT
   m_userAgent = QString("IMPOMEZIA Simple Chat/%1").arg(SCHAT_VERSION);
