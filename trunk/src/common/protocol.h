@@ -194,12 +194,13 @@ static const quint16 OpcodeByeMsg                    = 603;
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
+ * quint8  -> numeric сервера
  * QString -> Название сети
  * QString -> Адрес сервера
  * ОТПРАВИТЕЛЬ: ---------------
  * Сервер
  */
-static const quint16 OpcodeNewLink                   = 500;
+static const quint16 OpcodeNewLink                   = 502;
 
 /**
  * Уведомление о выходе их сети нового сервера

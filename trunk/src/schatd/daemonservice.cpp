@@ -293,13 +293,13 @@ void DaemonService::sendLinkLeave(const QString &network, const QString &ip)
 /** [public slots]
  * 
  */
-void DaemonService::sendNewLink(const QString &network, const QString &ip)
+void DaemonService::sendNewLink(quint8 numeric, const QString &network, const QString &ip)
 {
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::sendNewLink()" << network << ip;
 #endif
   
-  send(OpcodeNewLink, network, ip);
+  send(OpcodeNewLink, numeric, network, ip);
 }
 
 

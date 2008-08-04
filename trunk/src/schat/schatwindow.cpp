@@ -459,7 +459,7 @@ void SChatWindow::messageClicked()
 /** [private slots]
  * 
  */
-void SChatWindow::newLink(const QString &network, const QString &ip)
+void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &ip)
 {
   mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(ip).arg(network));
 }
@@ -1023,7 +1023,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
   connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
-  connect(m_clientService, SIGNAL(newLink(const QString &, const QString &)), SLOT(newLink(const QString &, const QString &)));
+  connect(m_clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(linkLeave(const QString &, const QString &)), SLOT(linkLeave(const QString &, const QString &)));
 }
 

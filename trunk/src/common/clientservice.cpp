@@ -529,11 +529,19 @@ void ClientService::opcodeMessage()
  */
 void ClientService::opcodeNewLink()
 {
+  quint8 p_numeric;
   QString p_network;
   QString p_ip;
-  m_stream >> p_network >> p_ip;
+  m_stream >> p_numeric >> p_network >> p_ip;
   m_nextBlockSize = 0;
-  emit newLink(p_network, p_ip);
+  
+  if (p_network.isEmpty())
+    return;
+  
+  if (p_ip.isEmpty())
+    return;
+  
+  emit newLink(p_numeric, p_network, p_ip);
 }
 
 
