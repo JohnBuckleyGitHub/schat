@@ -87,7 +87,7 @@ private slots:
   void fatal();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
-  void linkLeave(const QString &network, const QString &ip);
+  void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void message(const QString &sender, const QString &message);
   void messageClicked();
   void newLink(quint8 numeric, const QString &network, const QString &ip);

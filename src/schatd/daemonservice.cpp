@@ -284,9 +284,9 @@ void DaemonService::readyRead()
 /** [public slots]
  * 
  */
-void DaemonService::sendLinkLeave(const QString &network, const QString &ip)
+void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
 {
-  send(OpcodeLinkLeave, network, ip);
+  send(OpcodeLinkLeave, numeric, network, ip);
 }
 
 

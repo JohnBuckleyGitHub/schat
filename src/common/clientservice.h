@@ -51,7 +51,7 @@ signals:
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void connecting(const QString &server, bool network);
   void fatal();
-  void linkLeave(const QString &network, const QString &ip);
+  void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void message(const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);

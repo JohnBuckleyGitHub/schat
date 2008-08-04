@@ -27,6 +27,7 @@ class ChannelLog;
 class ClientService;
 class DaemonService;
 class DaemonSettings;
+class LinkUnit;
 class Log;
 class Network;
 class UserUnit;
@@ -44,7 +45,7 @@ public:
 signals:
   void message(const QString &sender, const QString &message);
   void newUser(const QStringList &list, bool echo);
-  void sendLinkLeave(const QString &network, const QString &ip);
+  void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
@@ -67,7 +68,7 @@ private:
   void greetingLink(const QStringList &list, DaemonService *service);
   void greetingUser(const QStringList &list, DaemonService *service);
   void link();
-  void linkLeave(const QString &nick);
+  void linkLeave(const QString &ip);
   void sendAllUsers(DaemonService *service);
   void userLeave(const QString &nick);
 
@@ -78,7 +79,7 @@ private:
   DaemonSettings *m_settings;
   Log *m_log;
   Network *m_network;
-  QHash<QString, UserUnit *> m_links;
+  QHash<QString, LinkUnit *> m_links;
   QHash<QString, UserUnit *> m_users;
   QTcpServer m_server;
 };
