@@ -354,7 +354,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
       QString host = list.at(AbstractProfile::Host);
-      
+  
       if (!m_links.contains(host)) {
         m_links.insert(host, new UserUnit(list, service));
         service->accessGranted();
@@ -418,6 +418,7 @@ void Daemon::link()
     m_profile = new AbstractProfile(this);
     m_profile->setNick("");
     m_profile->setFullName(m_network->key());
+    m_profile->setRawGender(quint8(m_settings->getInt("Numeric")));
         
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);

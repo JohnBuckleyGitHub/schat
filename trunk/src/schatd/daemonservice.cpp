@@ -377,18 +377,23 @@ bool DaemonService::opcodeGreeting()
   QString f_nick;
   QString f_userAgent;
   QString f_byeMsg;
+  QString gender;
   quint16 f_err = 0;
-  quint8  f_sex;
+  quint8  f_gender;
   quint16 f_version;
 
-  m_stream >> f_version >> m_flag >> f_sex >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
+  m_stream >> f_version >> m_flag >> f_gender >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
   m_nextBlockSize = 0;
 
-  if (m_flag == FlagLink)
+  if (m_flag == FlagLink) {
     f_nick = m_socket->peerAddress().toString();
+    gender = QString().number(f_gender);
+  }
+  else
+    gender = AbstractProfile::gender(f_gender); // male/female
 
   QStringList profile;
-  profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(f_sex); 
+  profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << gender; 
   m_profile = new AbstractProfile(profile, this);
 
   f_err = verifyGreeting(f_version);
