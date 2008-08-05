@@ -68,7 +68,7 @@ private:
   void greetingLink(const QStringList &list, DaemonService *service);
   void greetingUser(const QStringList &list, DaemonService *service);
   void link();
-  void linkLeave(const QString &ip);
+  void linkLeave(const QString &nick);
   void sendAllUsers(DaemonService *service);
   void userLeave(const QString &nick);
 
@@ -79,7 +79,7 @@ private:
   DaemonSettings *m_settings;
   Log *m_log;
   Network *m_network;
-  QHash<QString, LinkUnit *> m_links;
+  QHash<quint8, LinkUnit *> m_links;
   QHash<QString, UserUnit *> m_users;
   QTcpServer m_server;
 };

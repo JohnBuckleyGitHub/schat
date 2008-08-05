@@ -24,9 +24,9 @@
 /** [public]
  * 
  */
-LinkUnit::LinkUnit(quint8 numeric, DaemonService *service)
+LinkUnit::LinkUnit(const QString &host, DaemonService *service)
 {
-  m_numeric = numeric;
+  m_host = host;
   m_service = service;
 }
 

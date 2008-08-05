@@ -373,33 +373,25 @@ bool DaemonService::opcodeGreeting()
   qDebug() << "DaemonService::opcodeGreeting()";
 #endif
 
-  QString f_fullName;
-  QString f_nick;
-  QString f_userAgent;
-  QString f_byeMsg;
-  QString gender;
-  quint16 f_err = 0;
-  quint8  f_gender;
-  quint16 f_version;
+  quint16 p_version;
+  quint8  p_gender;
+  QString p_nick;
+  QString p_name;
+  QString p_userAgent;
+  QString p_byeMsg;
+  quint16 err;
 
-  m_stream >> f_version >> m_flag >> f_gender >> f_nick >> f_fullName >> f_userAgent >> f_byeMsg;
+  m_stream >> p_version >> m_flag >> p_gender >> p_nick >> p_name >> p_userAgent >> p_byeMsg;
   m_nextBlockSize = 0;
 
-  if (m_flag == FlagLink) {
-    f_nick = m_socket->peerAddress().toString();
-    gender = QString().number(f_gender);
-  }
-  else
-    gender = AbstractProfile::gender(f_gender); // male/female
-
   QStringList profile;
-  profile << f_nick << f_fullName << f_byeMsg << f_userAgent << m_socket->peerAddress().toString() << gender; 
+  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);; 
   m_profile = new AbstractProfile(profile, this);
 
-  f_err = verifyGreeting(f_version);
+  err = verifyGreeting(p_version);
 
-  if (f_err) {
-    accessDenied(f_err);
+  if (err) {
+    accessDenied(err);
     return false;
   }
 

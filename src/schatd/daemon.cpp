@@ -354,14 +354,13 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
-      QString host = list.at(AbstractProfile::Host);
+      quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
   
-      if (!m_links.contains(host)) {
-        quint8 numeric = quint8(QString(list.at(AbstractProfile::Gender)).toInt());
-        m_links.insert(host, new LinkUnit(numeric, service));
+      if (!m_links.contains(numeric)) {
+        m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         service->accessGranted();
 
-        emit sendNewLink(numeric, m_network->name(), host);
+        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
       }
       else
         service->accessDenied(ErrorAddressAlreadyUse);
@@ -418,9 +417,8 @@ void Daemon::link()
   }
   else {
     m_profile = new AbstractProfile(this);
-    m_profile->setNick("");
+    m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
-    m_profile->setRawGender(quint8(m_settings->getInt("Numeric")));
         
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);
@@ -433,13 +431,15 @@ void Daemon::link()
 /** [private]
  * 
  */
-void Daemon::linkLeave(const QString &ip)
+void Daemon::linkLeave(const QString &nick)
 {
   if (m_network) {
-    if (m_links.contains(ip)) {
-      LinkUnit *unit = m_links.value(ip);
-      m_links.remove(ip);
-      emit sendLinkLeave(unit->numeric(), m_network->name(), ip);
+    quint8 numeric = quint8(nick.toInt());
+    
+    if (m_links.contains(numeric)) {
+      LinkUnit *unit = m_links.value(numeric);
+      m_links.remove(numeric);
+      emit sendLinkLeave(numeric, m_network->name(), unit->host());
       delete unit;
     }
   }
