@@ -31,7 +31,7 @@ public:
   LinkUnit(const QString &host, DaemonService *service = 0);
   ~LinkUnit();
   inline DaemonService* service() { return m_service; }
-  inline QString host() const     { return m_host; } 
+  inline QString host() const     { return m_host; }
 
 private:
   QPointer<DaemonService> m_service;

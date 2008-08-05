@@ -363,7 +363,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
       }
       else
-        service->accessDenied(ErrorAddressAlreadyUse);
+        service->accessDenied(ErrorNumericAlreadyUse);
     }
     else
       service->accessDenied(ErrorBadNetworkKey);
