@@ -79,9 +79,10 @@ private:
   DaemonSettings *m_settings;
   Log *m_log;
   Network *m_network;
-  QHash<quint8, LinkUnit *> m_links;
   QHash<QString, UserUnit *> m_users;
+  QHash<quint8, LinkUnit *> m_links;
   QTcpServer m_server;
+  quint8 m_numeric;
 };
 
 #endif /*DAEMON_H_*/

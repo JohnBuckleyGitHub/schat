@@ -360,7 +360,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         service->accessGranted();
 
-        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
+        emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
       }
       else
         service->accessDenied(ErrorNumericAlreadyUse);
@@ -416,6 +416,7 @@ void Daemon::link()
     m_network = 0;
   }
   else {
+    m_numeric = quint8(m_settings->getInt("Numeric"));
     m_profile = new AbstractProfile(this);
     m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
@@ -439,7 +440,7 @@ void Daemon::linkLeave(const QString &nick)
     if (m_links.contains(numeric)) {
       LinkUnit *unit = m_links.value(numeric);
       m_links.remove(numeric);
-      emit sendLinkLeave(numeric, m_network->name(), unit->host());
+      emit sendLinkLeave(m_numeric, m_network->name(), unit->host());
       delete unit;
     }
   }
