@@ -28,14 +28,14 @@ class AbstractProfile;
 class LinkUnit {
   
 public:
-  LinkUnit(quint8 numeric, DaemonService *service = 0);
+  LinkUnit(const QString &host, DaemonService *service = 0);
   ~LinkUnit();
   inline DaemonService* service() { return m_service; }
-  inline quint8 numeric() const   { return m_numeric; } 
+  inline QString host() const     { return m_host; } 
 
 private:
   QPointer<DaemonService> m_service;
-  quint8 m_numeric;
+  QString m_host;
 };
 
 #endif /*LINKUNIT_H_*/

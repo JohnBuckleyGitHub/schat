@@ -40,32 +40,29 @@ public:
     Gender
   };
   
-  ~AbstractProfile();
-  AbstractProfile(const QStringList &list, QObject *parent = 0);
   AbstractProfile(QObject *parent = 0);
-  inline bool isFemale() const                     { if (m_gender) return true; }
-  inline bool isLink()                             { return m_link; }
-  inline bool isMale() const                       { if (m_gender == 0) return true; }
+  AbstractProfile(const QStringList &list, QObject *parent = 0);
+  ~AbstractProfile();
+  inline bool isFemale() const                     { return !m_male; }
+  inline bool isMale() const                       { return m_male; }
   inline bool isValidNick() const                  { return isValidNick(m_nick); }
   inline bool isValidUserAgent() const             { return isValidUserAgent(m_userAgent); }
   inline QString byeMsg() const                    { return m_byeMsg; }
   inline QString fullName() const                  { return m_fullName; } 
-  inline QString gender() const                    { if (m_gender) return "female"; else return "male"; }
+  inline QString gender() const                    { if (m_male) return "male"; else return "female"; }
   inline QString host() const                      { return m_host; }
   inline QString nick() const                      { return m_nick; } 
   inline QString userAgent() const                 { return m_userAgent; }
-  inline quint8 genderNum() const                  { return m_gender; }
+  inline quint8 genderNum() const                  { if (m_male) return 0; else return 1; }
   inline static QString gender(bool male)          { if (male) return "male"; else return "female"; }
   inline static QString gender(quint8 g)           { if (g) return "female"; else return "male"; }
   inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified().left(MaxByeMsgLength); }
   inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(MaxNameLength); }
-  inline void setGender(bool male)                 { if (male) m_gender = 0; else m_gender = 1; }
-  inline void setGender(const QString &gender)     { if (gender == "female") m_gender = 1; else m_gender = 0; }
+  inline void setGender(bool male)                 { m_male = male; }
+  inline void setGender(const QString &gender)     { if (gender == "female") m_male = false; else m_male = true; }
   inline void setGender(quint8 _gender)            { setGender(gender(_gender)); }
   inline void setHost(const QString &host)         { m_host = host; }
-  inline void setLink(bool link)                   { m_link = link; }
   inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(MaxNickLength); }
-  inline void setRawGender(quint8 gender)          { m_gender = gender; }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QStringList pack() const;
   static bool isValidNick(const QString &nick);
@@ -73,13 +70,12 @@ public:
   void unpack(const QStringList &list);
 
 private:
-  bool m_link;
   QString m_byeMsg;
   QString m_fullName;
   QString m_host;
   QString m_nick;
   QString m_userAgent;
-  quint8 m_gender;
+  bool m_male;
 };
 
 #endif /*ABSTRACTPROFILE_H_*/

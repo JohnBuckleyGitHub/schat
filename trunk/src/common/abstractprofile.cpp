@@ -25,27 +25,26 @@
 /** [public]
  * 
  */
-AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
-  : QObject(parent)
-{
-  unpack(list);
-}
-
-
-/** [public]
- * 
- */
 AbstractProfile::AbstractProfile(QObject *parent)
   : QObject(parent)
 {
-  m_gender = 0;
-  m_link   = false;
+  m_male = true;
   m_nick = QDir::home().dirName();
 #ifdef SCHAT_CLIENT
   m_userAgent = QString("IMPOMEZIA Simple Chat/%1").arg(SCHAT_VERSION);
 #else
   m_userAgent = QString("IMPOMEZIA Simple Chat Daemon/%1").arg(SCHAT_VERSION);
 #endif
+}
+
+
+/** [public]
+ * 
+ */
+AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
+  : QObject(parent)
+{
+  unpack(list);
 }
 
 
@@ -100,11 +99,7 @@ bool AbstractProfile::isValidUserAgent(const QString &a)
 QStringList AbstractProfile::pack() const
 {
   QStringList list;
-  list << m_nick << m_fullName << m_byeMsg << m_userAgent << m_host;
-  if (m_link)
-    list << QString().number(m_gender);
-  else
-    list << gender();
+  list << m_nick << m_fullName << m_byeMsg << m_userAgent << m_host << gender();
   return list;
 }
 
@@ -119,14 +114,5 @@ void AbstractProfile::unpack(const QStringList &list)
   setByeMsg(list.at(ByeMsg));
   setUserAgent(list.at(UserAgent));
   setHost(list.at(Host));
-  
-  QString gender = list.at(Gender);
-  if (gender == "male" || gender == "female") {
-    setGender(gender);
-    m_link = false;
-  }
-  else {
-    m_gender = quint8(list.at(Gender).toUInt());
-    m_link = true;
-  }
+  setGender(list.at(Gender));
 }
