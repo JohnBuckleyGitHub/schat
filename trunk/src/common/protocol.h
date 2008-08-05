@@ -227,6 +227,7 @@ static const quint16 ErrorBadNickName                = 102; // Выбранны�
 static const quint16 ErrorBadUserAgent               = 103; // Клиент отправил недопустимый UserAgent.
 static const quint16 ErrorNotNetworkConfigured       = 400; // На сервере, к которому пытается слинковаться другой сервер, не настроена сеть.
 static const quint16 ErrorBadNetworkKey              = 401; // Ошибка проверки ключа сети.
-static const quint16 ErrorAddressAlreadyUse          = 402; // Ошибка линковки адрес подключаемого сервера уже используется.
+static const quint16 ErrorNumericAlreadyUse          = 403; // Ошибка линковки numeric подключаемого сервера уже используется.
+static const quint16 ErrorBadNumeric                 = 404; // Ошибка линковки, неверный/некорректный numeric.
 
 #endif /*PROTOCOL_H_*/

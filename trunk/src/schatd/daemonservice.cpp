@@ -576,6 +576,17 @@ quint16 DaemonService::verifyGreeting(quint16 version)
   if (!m_profile->isValidUserAgent())
     return ErrorBadUserAgent;
 
+  if (m_flag == FlagLink) {
+    bool ok;
+    int numeric = m_profile->nick().toInt(&ok);
+    if (ok) {
+      if ((numeric < 1) || (numeric > 255))
+        return ErrorBadNumeric;
+    }
+    else
+      return ErrorBadNumeric;
+  }
+
   return 0;
 }
 
