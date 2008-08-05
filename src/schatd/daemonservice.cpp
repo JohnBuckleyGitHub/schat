@@ -41,6 +41,7 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_stream.setVersion(StreamVersion);
     m_pings = 0;
     m_ping.start(6000);
+    m_numeric = 0;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
@@ -296,8 +297,11 @@ void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const 
 void DaemonService::sendNewLink(quint8 numeric, const QString &network, const QString &ip)
 {
 #ifdef SCHAT_DEBUG
-  qDebug() << "DaemonService::sendNewLink()" << network << ip;
+  qDebug() << "DaemonService::sendNewLink()" << numeric << network << ip;
 #endif
+  
+  if (m_flag == FlagLink && numeric == m_numeric)
+    return;
   
   send(OpcodeNewLink, numeric, network, ip);
 }
@@ -578,9 +582,9 @@ quint16 DaemonService::verifyGreeting(quint16 version)
 
   if (m_flag == FlagLink) {
     bool ok;
-    int numeric = m_profile->nick().toInt(&ok);
+    m_numeric = quint8(m_profile->nick().toInt(&ok));
     if (ok) {
-      if ((numeric < 1) || (numeric > 255))
+      if (!m_numeric)
         return ErrorBadNumeric;
     }
     else
