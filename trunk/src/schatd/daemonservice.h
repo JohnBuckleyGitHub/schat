@@ -85,6 +85,7 @@ private:
   quint16 m_nextBlockSize;
   quint16 m_opcode;
   quint8 m_flag;
+  quint8 m_numeric;
 };
 
 #endif /*DAEMONSERVICE_H_*/
