@@ -58,6 +58,7 @@ private slots:
   void greeting(const QStringList &list, quint8 flag);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
+  void newLink(quint8 numeric, const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void serviceLeave(const QString &nick, quint8 flag);

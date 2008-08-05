@@ -178,6 +178,18 @@ void Daemon::newBye(const QString &nick, const QString &bye)
 /** [private slots]
  * 
  */
+void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
+{
+#ifdef SCHAT_DEBUG
+  qDebug() << "Daemon::newLink()" << numeric << network << ip;
+#endif
+  emit sendNewLink(numeric, network, ip);
+}
+
+
+/** [private slots]
+ * 
+ */
 void Daemon::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   qDebug() << "Daemon::newNick()";
@@ -423,6 +435,7 @@ void Daemon::link()
         
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);
+      connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       m_link->connectToHost();
     }
   }
