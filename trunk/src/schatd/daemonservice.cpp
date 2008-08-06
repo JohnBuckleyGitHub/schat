@@ -263,6 +263,10 @@ void DaemonService::readyRead()
           opcodeByeMsg();
           break;
           
+        case OpcodeRelayMessage:
+          opcodeRelayMessage();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -658,6 +662,26 @@ void DaemonService::opcodePong()
 {
   m_nextBlockSize = 0;
   m_pings = 0;
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeRelayMessage`.
+ */
+void DaemonService::opcodeRelayMessage()
+{
+  QString p_channel;
+  QString p_sender;
+  QString p_message;
+  m_stream >> p_channel >> p_sender >> p_message;
+  m_nextBlockSize = 0;
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeRelayMessage()";
+  qDebug() << "  CHANNEL:" << p_channel;
+  qDebug() << "  SENDER: " << p_sender;
+  qDebug() << "  MESSAGE:" << p_message;
+#endif
+  emit message(p_channel, p_sender, p_message);
 }
 
 
