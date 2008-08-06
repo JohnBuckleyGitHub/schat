@@ -616,14 +616,16 @@ void DaemonService::opcodeByeMsg()
  */
 void DaemonService::opcodeMessage()
 {
-  qDebug() << "DaemonService::opcodeMessage()";
   QString p_channel;
   QString p_message;
   m_stream >> p_channel >> p_message;
   m_nextBlockSize = 0;
-  qDebug() << "CHANNEL:" << p_channel;
-  qDebug() << "SENDER: " << m_profile->nick();
-  qDebug() << "MESSAGE:" << p_message;
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeMessage()";
+  qDebug() << "  CHANNEL:" << p_channel;
+  qDebug() << "  SENDER: " << m_profile->nick();
+  qDebug() << "  MESSAGE:" << p_message;
+#endif
   emit message(p_channel, m_profile->nick(), p_message);
 }
 
