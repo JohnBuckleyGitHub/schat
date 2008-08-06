@@ -96,16 +96,9 @@ void Daemon::incomingConnection()
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
-    connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
-    connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
-    connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
-    connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
-    connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
-    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
-    connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
-    connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
+    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
   }
 }
 
@@ -146,6 +139,20 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
 
 
 /** [private slots]
+ * Ретрансляция пакета `OpcodeMessage`, полученного через клиентское подключение `m_link`.
+ */
+void Daemon::linkMessage(const QString &sender, const QString &msg)
+{
+#ifdef SCHAT_DEBUG
+  qDebug() << "Daemon::linkMessage()" << sender << msg;
+#endif
+  if (m_settings->getBool("ChannelLog"))
+    m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
+
+  emit message(sender, msg);
+}
+
+/** [private slots]
  * 
  */
 void Daemon::message(const QString &channel, const QString &_sender, const QString &msg)
@@ -174,6 +181,9 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
     }
   }
 }
+
+
+
 
 
 /** [private slots]
@@ -406,6 +416,13 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
   
   if (!m_users.contains(nick)) {
     m_users.insert(nick, new UserUnit(list, service));
+    connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
+    connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
+    connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
+    connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
+    connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
+    connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
+    connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     service->accessGranted();
     emit newUser(list, true);
   
@@ -449,6 +466,7 @@ void Daemon::link()
       m_link = new ClientService(m_profile, m_network, this);
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
+      connect(m_link, SIGNAL(message(const QString &, const QString &)), SLOT(linkMessage(const QString &, const QString &)));
       m_link->connectToHost();
     }
   }
