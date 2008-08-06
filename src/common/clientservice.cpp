@@ -72,11 +72,17 @@ bool ClientService::isReady() const
 
 
 /** [public]
- * 
+ * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
+ * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * const QString &message -> сообщение.
+ * ----
+ * Возвращает `true` в случае успешной отправки (без подтверждения сервером).
  */
 bool ClientService::sendMessage(const QString &channel, const QString &message)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::sendMessage(const QString &, const QString &)" << channel << message;
+#endif
   
   if (isReady()) {
     QByteArray block;
