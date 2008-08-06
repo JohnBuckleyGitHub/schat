@@ -74,6 +74,7 @@ private:
   void opcodeMessage();
   void opcodeNewProfile();
   void opcodePong();
+  void opcodeRelayMessage();
   void unknownOpcode();
 
   AbstractProfile *m_profile;

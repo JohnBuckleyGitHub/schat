@@ -72,6 +72,34 @@ bool ClientService::isReady() const
 
 
 /** [public]
+ * 
+ */
+bool ClientService::relayMessage(const QString &channel, const QString &sender, const QString &message)
+{
+#ifdef SCHAT_DEBUG
+  qDebug() << "ClientService::relayMessage(const QString &, const QString &, const QString &)" << channel << sender << message;
+#endif
+  
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0)
+        << OpcodeRelayMessage
+        << channel
+        << sender
+        << message;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/** [public]
  * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
  * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * const QString &message -> сообщение.
@@ -98,7 +126,7 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
     return true;
   }
   else
-    return false;  
+    return false;
 }
 
 
