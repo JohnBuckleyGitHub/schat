@@ -95,7 +95,6 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
-    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
@@ -152,12 +151,15 @@ void Daemon::linkMessage(const QString &sender, const QString &msg)
   emit message(sender, msg);
 }
 
+
 /** [private slots]
  * 
  */
 void Daemon::message(const QString &channel, const QString &_sender, const QString &msg)
 {
-  qDebug() << "Daemon::message()" << channel << _sender << msg;
+#ifdef SCHAT_DEBUG
+  qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << _sender << msg;
+#endif
   
   if (channel.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
@@ -419,6 +421,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
+    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
