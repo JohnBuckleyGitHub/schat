@@ -227,9 +227,7 @@ void DaemonService::message(const QString &sender, const QString &message)
  * 
  */
 void DaemonService::readyRead()
-{
-  qDebug() << "DaemonService::readyRead()";
-  
+{  
   forever {
     if (!m_nextBlockSize) {
       if (m_socket->bytesAvailable() < (int) sizeof(quint16))
@@ -243,7 +241,8 @@ void DaemonService::readyRead()
     
     m_stream >> m_opcode;
     
-    qDebug() << "op" << m_opcode;
+    if (m_opcode != 401)
+      qDebug() << "op" << m_opcode;
     
     if (m_accepted) {
       switch (m_opcode) {
@@ -346,16 +345,39 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
 }
 
 
+/** [public slots]
+ * 
+ */
+void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric)
+{
+  if (numeric == m_numeric)
+    return;
+  
+  qDebug() << "-----------------" << numeric << m_numeric;
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0)
+        << OpcodeRelayMessage
+        << numeric
+        << channel
+        << sender
+        << message;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+  }
+}
+
+
 /** [private slots]
  * Если `m_accepted` не равен `true`, разрываем соединение,
  * т.к. не произошло рукопожатия за отведённое время.
  */
 void DaemonService::ping()
-{
-  qDebug() << "DaemonService::ping()";
-  
+{ 
   if (m_accepted) {
-    qDebug() << "m_pings = " << m_pings;
     if (m_pings < 1) {
       send(OpcodePing);
       ++m_pings;
@@ -670,10 +692,11 @@ void DaemonService::opcodePong()
  */
 void DaemonService::opcodeRelayMessage()
 {
+  quint8 p_numeric;
   QString p_channel;
   QString p_sender;
   QString p_message;
-  m_stream >> p_channel >> p_sender >> p_message;
+  m_stream >> p_numeric >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeRelayMessage()";
@@ -681,7 +704,7 @@ void DaemonService::opcodeRelayMessage()
   qDebug() << "  SENDER: " << p_sender;
   qDebug() << "  MESSAGE:" << p_message;
 #endif
-  emit message(p_channel, p_sender, p_message);
+  emit relayMessage(p_channel, p_sender, p_message, p_numeric);
 }
 
 

@@ -95,10 +95,8 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
-    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
-    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
   }
 }
 
@@ -168,9 +166,11 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
     
     if (!parseCmd(_sender, msg)) {
       emit message(_sender, msg);
-      if (m_network)
+      if (m_network) {
+        emit sendRelayMessage("", _sender, msg, m_numeric);
         if (m_network->count() > 0)
-          m_link->relayMessage(channel, _sender, msg);
+          m_link->sendRelayMessage(channel, _sender, msg, m_numeric);
+      }
     }
   }
   else if (m_users.contains(channel)) {
@@ -269,6 +269,30 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
   emit sendNewProfile(gender, nick, name);
 }
 
+
+/** [private slots]
+ * 
+ */
+void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric)
+{
+  qDebug() << "Daemon::relayMessage()" << channel << sender << msg << numeric;
+  if (!m_network)
+    return;
+  
+  if (channel.isEmpty()) {
+    if (m_settings->getBool("ChannelLog"))
+      m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
+    
+    emit message(sender, msg);
+    emit sendRelayMessage("", sender, msg, numeric);
+//    if (m_network) {
+//        emit sendRelayMessage("", _sender, msg, m_numeric);
+//        if (m_network->count() > 0)
+//          m_link->relayMessage(channel, _sender, msg, m_numeric);
+//      }
+//    }
+  }
+}
 
 /** [private slots]
  * Слот вызывается сигналом `leave(const QString &)` из сервиса получившего авторизацию
@@ -396,6 +420,8 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
   
       if (!m_links.contains(numeric)) {
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
+        connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
+        connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted();
 
         emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
@@ -423,10 +449,12 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
+    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
+    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
     service->accessGranted();
     emit newUser(list, true);
   
@@ -470,7 +498,8 @@ void Daemon::link()
       m_link = new ClientService(m_profile, m_network, this);
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
-      connect(m_link, SIGNAL(message(const QString &, const QString &)), SLOT(linkMessage(const QString &, const QString &)));
+      connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
+//      connect(m_link, SIGNAL(message(const QString &, const QString &)), SLOT(linkMessage(const QString &, const QString &)));
       m_link->connectToHost();
     }
   }

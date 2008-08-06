@@ -49,6 +49,7 @@ signals:
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
+  void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 
 public slots:
@@ -63,6 +64,7 @@ private slots:
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
+  void relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric = 0);
   void serviceLeave(const QString &nick, quint8 flag);
 
 private:

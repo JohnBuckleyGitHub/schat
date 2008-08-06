@@ -39,8 +39,8 @@ public:
   ClientService(const AbstractProfile *profile, const Network *settings, QObject *parent = 0);
   ~ClientService();
   bool isReady() const;
-  bool relayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendMessage(const QString &channel, const QString &message);
+  bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   inline void sendByeMsg()                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg) { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
@@ -59,6 +59,7 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, bool echo);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
+  void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   void serverMessage(const QString &msg);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
@@ -86,10 +87,11 @@ private:
   void opcodeNewUser();
   void opcodePing();
   void opcodePrivateMessage();
+  void opcodeRelayMessage();
   void opcodeServerMessage();
   void opcodeUserLeave();
   void unknownOpcode();
-  
+
   bool m_accepted;
   bool m_fatal;
   const AbstractProfile *m_profile;
