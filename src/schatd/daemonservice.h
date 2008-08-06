@@ -46,6 +46,7 @@ signals:
   void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
+  void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
 
 public slots:
   bool newUser(const QStringList &list, bool echo);
@@ -57,6 +58,7 @@ public slots:
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
+  void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
 
 private slots:
   void ping();

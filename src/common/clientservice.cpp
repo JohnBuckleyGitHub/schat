@@ -74,10 +74,10 @@ bool ClientService::isReady() const
 /** [public]
  * 
  */
-bool ClientService::relayMessage(const QString &channel, const QString &sender, const QString &message)
+bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric)
 {
 #ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::relayMessage(const QString &, const QString &, const QString &)" << channel << sender << message;
+  qDebug() << "ClientService::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message << numeric;
 #endif
   
   if (isReady()) {
@@ -86,6 +86,7 @@ bool ClientService::relayMessage(const QString &channel, const QString &sender, 
     out.setVersion(StreamVersion);
     out << quint16(0)
         << OpcodeRelayMessage
+        << numeric
         << channel
         << sender
         << message;
@@ -291,7 +292,6 @@ void ClientService::disconnected()
  */
 void ClientService::ping()
 {
-  qDebug() << "ClientService::ping()";
   if (isReady())
     m_socket->disconnectFromHost();
 }
@@ -301,9 +301,7 @@ void ClientService::ping()
  * Слот вызывается когда поступила новая порция данных для чтения из сокета `m_socket`.
  */
 void ClientService::readyRead()
-{
-  qDebug() << "ClientService::readyRead()";
-  
+{  
   forever {
     if (!m_nextBlockSize) {
       if (m_socket->bytesAvailable() < (int) sizeof(quint16))
@@ -317,7 +315,8 @@ void ClientService::readyRead()
     
     m_stream >> m_opcode;
     
-    qDebug() << "op" << m_opcode;
+    if (m_opcode != 400)
+      qDebug() << "op" << m_opcode;
     
     if (m_accepted) {
       switch (m_opcode) {
@@ -359,6 +358,10 @@ void ClientService::readyRead()
           
         case OpcodeLinkLeave:
           opcodeLinkLeave();
+          break;
+          
+        case OpcodeRelayMessage:
+          opcodeRelayMessage();
           break;
           
         default:
@@ -676,6 +679,28 @@ void ClientService::opcodePrivateMessage()
   m_stream >> p_flag >> p_nick >> p_message;
   m_nextBlockSize = 0;
   emit privateMessage(p_flag, p_nick, p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeRelayMessage`.
+ */
+void ClientService::opcodeRelayMessage()
+{
+  quint8 p_numeric;
+  QString p_channel;
+  QString p_sender;
+  QString p_message;
+  m_stream >> p_numeric >> p_channel >> p_sender >> p_message;
+  m_nextBlockSize = 0;
+#ifdef SCHAT_DEBUG
+  qDebug() << "ClientService::opcodeRelayMessage()";
+  qDebug() << "  CHANNEL:" << p_channel;
+  qDebug() << "  SENDER: " << p_sender;
+  qDebug() << "  MESSAGE:" << p_message;
+  qDebug() << "  NUMERIC:" << p_numeric;
+#endif
+  emit relayMessage(p_channel, p_sender, p_message, p_numeric);
 }
 
 

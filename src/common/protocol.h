@@ -96,13 +96,14 @@ static const quint16 OpcodeServerMessage             = 202;
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
+ * quint8  -> numeric сервера к которому подключен отправитель
  * QString -> канал/ник для кого предназначено сообщение (пустая строка - главный канал)
  * QString -> ник отправителся
  * QString -> сообщение
  * ОТПРАВИТЕЛЬ: ---------------
  * Клиент
  */
-static const quint16 OpcodeRelayMessage              = 203;
+static const quint16 OpcodeRelayMessage              = 204;
 
 /**
  * Отправка клиенту профиля участника
