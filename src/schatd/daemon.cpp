@@ -271,18 +271,27 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
 
 
 /** [private slots]
- * 
+ * Слот вызывается при получении пакета `OpcodeRelayMessage` в клиентском сервисе `m_link` (вышестоящий сервер)
+ * либо от одного из линков (нижестоящий сервер).
+ *  ---
+ * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * const QString &sender  -> ник отправителся.
+ * const QString &msg     -> сообщение.
+ * quint8 numeric         -> numeric сервера на котором находится пользователь отправивший сообщение.
  */
 void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "Daemon::relayMessage()" << channel << sender << msg << numeric;
+#endif
+
   if (!m_network)
     return;
-  
+
   if (channel.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
-    
+
     emit message(sender, msg);
     emit sendRelayMessage("", sender, msg, numeric);
 //    if (m_network) {
@@ -479,7 +488,10 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 
 
 /** [private]
- * 
+ * Инициализирует файл сети "NetworkFile".
+ * В случае успеха устанавливает numeric сервера "Numeric", создаёт профиль `m_profile`
+ * И если указан адрес вышестоящего сервера, то производится попытка подключения.
+ * Если инициализация сети прошла с ошибкой `m_network` устанавливается в `0`.
  */
 void Daemon::link()
 {
@@ -499,7 +511,6 @@ void Daemon::link()
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
-//      connect(m_link, SIGNAL(message(const QString &, const QString &)), SLOT(linkMessage(const QString &, const QString &)));
       m_link->connectToHost();
     }
   }
