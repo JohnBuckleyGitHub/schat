@@ -48,7 +48,7 @@ Daemon::Daemon(QObject *parent)
 bool Daemon::start()
 {
   m_settings->read();
-  
+
   if (m_settings->getInt("LogLevel") > -1) {
     m_log = new Log(this);
     if (!m_log->init()) {
@@ -56,31 +56,31 @@ bool Daemon::start()
       m_settings->setInt("LogLevel", -1);
     }
   }
-  
+
   if (m_settings->getBool("ChannelLog")) {
     m_channelLog = new ChannelLog(this);
     m_channelLog->setChannel("#main");
     m_channelLog->setMode(ChannelLog::Plain);
   }
-  
+
   if (m_settings->getBool("PrivateLog")) {
     m_privateLog = new ChannelLog(this);
     m_privateLog->setChannel("#private");
     m_privateLog->setMode(ChannelLog::Plain);
   }
-  
+
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
   bool result     = m_server.listen(QHostAddress(address), port);
-  
+
   if (result) {
-    LOG(0, tr("IMPOMEZIA Simple Chat Daemon успешно запущен, адрес %1, порт %2").arg(address).arg(port));
+    LOG(0, tr("- Notice - `IMPOMEZIA Simple Chat Daemon` успешно запущен, адрес %1, порт %2").arg(address).arg(port));
     link();
   }
   else {
-    LOG(0, tr("Ошибка запуска IMPOMEZIA Simple Chat Daemon, %1").arg(m_server.errorString()));
+    LOG(0, tr("- Error - Ошибка запуска `IMPOMEZIA Simple Chat Daemon`, [%1]").arg(m_server.errorString()));
   }
-  
+
   return result;
 }
 
@@ -326,11 +326,9 @@ void Daemon::serviceLeave(const QString &nick, quint8 flag)
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
-  qDebug() << "Daemon::parseCmd()" << msg;
-  
   if (!m_users.contains(nick))
     return false;
-  
+
   // Команда "/server info"
   if (msg.startsWith("/server info", Qt::CaseInsensitive)) {
     DaemonService *service = m_users.value(nick)->service();
@@ -423,6 +421,8 @@ QString Daemon::serverInfo() const
  */
 void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
+  quint16 err = 0;
+  
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
       quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
@@ -434,15 +434,22 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->accessGranted();
 
         emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
+        
+        LOG(0, tr("- Notice - Connect Link: (%1) numeric: %2, %3").arg(list.at(AbstractProfile::Host)).arg(numeric).arg(list.at(AbstractProfile::UserAgent)));
       }
       else
-        service->accessDenied(ErrorNumericAlreadyUse);
+        err = ErrorNumericAlreadyUse;
     }
     else
-      service->accessDenied(ErrorBadNetworkKey);
+      err = ErrorBadNetworkKey;
   }
   else
-    service->accessDenied(ErrorNotNetworkConfigured);
+    err = ErrorNotNetworkConfigured;
+  
+  if (err) {
+    service->accessDenied(err);
+  }
+    
 }
 
 
@@ -467,9 +474,9 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     service->accessGranted();
     emit newUser(list, true);
   
-    LOG(0, tr("--> (%1), %2, %3, %4, %5")
-        .arg(list.at(AbstractProfile::Host))
+    LOG(0, tr("- Notice - Connect: %1@%2, %3, %4, %5")
         .arg(list.at(AbstractProfile::Nick))
+        .arg(list.at(AbstractProfile::Host))
         .arg(list.at(AbstractProfile::FullName))
         .arg(list.at(AbstractProfile::Gender))
         .arg(list.at(AbstractProfile::UserAgent)));
@@ -561,7 +568,7 @@ void Daemon::userLeave(const QString &nick)
     UserUnit *unit = m_users.value(nick);
     m_users.remove(nick);
 
-    LOG(0, tr("<-- (%1), %2").arg(unit->profile()->host()).arg(nick));
+    LOG(0, tr("- Notice - Disconnect: %1@%2").arg(nick).arg(unit->profile()->host()));
 
     QString bye = unit->profile()->byeMsg();
     if (m_settings->getBool("ChannelLog"))
