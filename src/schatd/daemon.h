@@ -86,6 +86,7 @@ private:
   Network *m_network;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
+  QList<quint8> m_numerics;
   QTcpServer m_server;
   quint8 m_numeric;
 };

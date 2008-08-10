@@ -426,15 +426,19 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
 
-      if (!m_links.contains(numeric)) { // BUG данный механизм не работает когда к серверу подключается другой сервер с тем же numeric.
+      if (!m_numerics.contains(numeric)) {
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
+        m_numerics << numeric;
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted();
+        
+        qDebug() << "m_numerics:" << m_numerics;
 
         emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
 
-        LOG(0, tr("- Notice - Connect Link: (%1) numeric: %2, %3").arg(list.at(AbstractProfile::Host)).arg(numeric).arg(list.at(AbstractProfile::UserAgent)));
+        LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
+        // TODO добавить запись в канальный лог
       }
       else
         err = ErrorNumericAlreadyUse;
@@ -446,7 +450,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
     err = ErrorNotNetworkConfigured;
 
   if (err) {
-    LOG(0, tr("- Warning - Отказ в доступе серверу: %1, numeric: %2, код ошибки: %3").arg(list.at(AbstractProfile::Host)).arg(numeric).arg(err));
+    LOG(0, tr("- Warning - Отказ в доступе серверу: %1@%2, код ошибки: %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(err));
     service->accessDenied(err);
   }
 }
@@ -511,6 +515,7 @@ void Daemon::link()
     m_profile = new AbstractProfile(this);
     m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
+    m_numerics << m_numeric;
         
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);
@@ -530,10 +535,14 @@ void Daemon::linkLeave(const QString &nick)
 {
   if (m_network) {
     quint8 numeric = quint8(nick.toInt());
-    
+
     if (m_links.contains(numeric)) {
       LinkUnit *unit = m_links.value(numeric);
       m_links.remove(numeric);
+      m_numerics.removeAll(numeric);
+
+      LOG(0, tr("- Notice - Disconnect Link: %1@%2").arg(nick).arg(unit->host()));
+
       emit sendLinkLeave(m_numeric, m_network->name(), unit->host());
       delete unit;
     }
