@@ -195,9 +195,8 @@ void Daemon::message(const QString &channel, const QString &_sender, const QStri
  */
 void Daemon::newBye(const QString &nick, const QString &bye)
 {
-  if (m_users.contains(nick)) {
+  if (m_users.contains(nick))
     m_users.value(nick)->profile()->setByeMsg(bye);
-  }
 }
 
 
@@ -422,19 +421,19 @@ QString Daemon::serverInfo() const
 void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
   quint16 err = 0;
+  quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
   
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
-      quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
-  
-      if (!m_links.contains(numeric)) {
+
+      if (!m_links.contains(numeric)) { // BUG данный механизм не работает когда к серверу подключается другой сервер с тем же numeric.
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted();
 
         emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
-        
+
         LOG(0, tr("- Notice - Connect Link: (%1) numeric: %2, %3").arg(list.at(AbstractProfile::Host)).arg(numeric).arg(list.at(AbstractProfile::UserAgent)));
       }
       else
@@ -445,11 +444,11 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
   }
   else
     err = ErrorNotNetworkConfigured;
-  
+
   if (err) {
+    LOG(0, tr("- Warning - Отказ в доступе серверу: %1, numeric: %2, код ошибки: %3").arg(list.at(AbstractProfile::Host)).arg(numeric).arg(err));
     service->accessDenied(err);
   }
-    
 }
 
 
