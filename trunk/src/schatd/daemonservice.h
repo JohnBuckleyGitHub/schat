@@ -37,6 +37,7 @@ public:
   void accessGranted(quint16 level = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
+  void sendNumerics(const QList<quint8> &numerics);
   void sendServerMessage(const QString &msg);
 
 signals:
