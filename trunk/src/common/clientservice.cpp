@@ -728,7 +728,6 @@ void ClientService::opcodeSyncNumerics()
   QList<quint8> p_numerics;
   m_stream >> p_numerics;
   m_nextBlockSize = 0;
-  qDebug() << "ClientService::opcodeSyncNumerics()" << p_numerics;
   emit syncNumerics(p_numerics);
 }
 
