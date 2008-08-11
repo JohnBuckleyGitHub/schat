@@ -29,14 +29,17 @@ class UserUnit {
   
 public:
   UserUnit();
-  UserUnit(const QStringList &list, DaemonService *service = 0);
+  UserUnit(const QStringList &list, DaemonService *service = 0, quint8 numeric = 0);
   ~UserUnit();
-  inline AbstractProfile* profile() { return m_profile; }
-  inline DaemonService* service()   { return m_service; }
-  
+  inline AbstractProfile* profile()      { return m_profile; }
+  inline DaemonService* service()        { return m_service; }
+  inline quint8 numeric()                { return m_numeric; }
+  inline void setNumeric(quint8 numeric) { m_numeric = numeric; }
+
 private:
   AbstractProfile *m_profile;
   QPointer<DaemonService> m_service;
+  quint8 m_numeric;
 };
 
 #endif /*USERUNIT_H_*/

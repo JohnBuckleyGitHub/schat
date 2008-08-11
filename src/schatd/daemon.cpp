@@ -445,7 +445,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->accessGranted();
         service->sendNumerics(m_numerics);
 
-        emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
+        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
         // TODO добавить запись в канальный лог
@@ -474,7 +474,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
   QString nick = list.at(AbstractProfile::Nick);
   
   if (!m_users.contains(nick)) {
-    m_users.insert(nick, new UserUnit(list, service));
+    m_users.insert(nick, new UserUnit(list, service, m_numeric));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
@@ -554,7 +554,7 @@ void Daemon::linkLeave(const QString &nick)
 
       LOG(0, tr("- Notice - Disconnect Link: %1@%2").arg(nick).arg(unit->host()));
 
-      emit sendLinkLeave(m_numeric, m_network->name(), unit->host());
+      emit sendLinkLeave(numeric, m_network->name(), unit->host());
       delete unit;
     }
   }

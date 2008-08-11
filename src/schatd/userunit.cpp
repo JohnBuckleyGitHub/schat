@@ -28,16 +28,18 @@
 UserUnit::UserUnit()
 {
   m_profile = 0;
+  m_numeric = 0;
 }
 
 
 /** [public]
  * 
  */
-UserUnit::UserUnit(const QStringList &list, DaemonService *service)
+UserUnit::UserUnit(const QStringList &list, DaemonService *service, quint8 numeric)
 {
   m_profile = new AbstractProfile(list);
   m_service = service;
+  m_numeric = numeric;
 }
 
 
