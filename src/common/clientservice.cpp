@@ -637,25 +637,21 @@ void ClientService::opcodeNewProfile()
 void ClientService::opcodeNewUser()
 {
   qDebug() << "ClientService::opcodeNewUser()";
-  bool echo;
+
   quint8 p_flag;
+  quint8 p_numeric;
   quint8 p_gender;
   QString p_nick;
   QString p_name;
   QString p_agent;
   QString p_host;
   
-  m_stream >> p_flag >> p_gender >> p_nick >> p_name >> p_agent >> p_host;
+  m_stream >> p_flag >> p_numeric >> p_gender >> p_nick >> p_name >> p_agent >> p_host;
   m_nextBlockSize = 0;
   QStringList profile;
   profile << p_nick << p_name << "" << p_agent << p_host << AbstractProfile::gender(p_gender);
-  
-  if (p_nick == m_profile->nick() || p_flag == 0)
-    echo = false;
-  else
-    echo = true;
 
-  emit newUser(profile, echo);  
+  emit newUser(profile, p_flag, p_numeric);  
 }
 
 

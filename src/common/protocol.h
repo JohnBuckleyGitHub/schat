@@ -111,6 +111,7 @@ static const quint16 OpcodeRelayMessage              = 204;
  * quint16 -> размер пакета
  * quint16 -> опкод
  * quint8  -> флаг пакетной передачи профилей (0 - пакетная передача, 1 - обычная)
+ * quint8  -> numeric сервера к которому физически подключен клиент
  * quint8  -> пол участника: 0 - мужской, 1 - женский
  * QString -> ник участника
  * QString -> полное имя участника, может быть пустой строкой
@@ -119,7 +120,7 @@ static const quint16 OpcodeRelayMessage              = 204;
  * ОТПРАВИТЕЛЬ: ---------------
  * Сервер
  */
-static const quint16 OpcodeNewUser                   = 301;
+static const quint16 OpcodeNewUser                   = 303;
 
 /**
  * Выход пользователя из чата

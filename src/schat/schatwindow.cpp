@@ -528,9 +528,9 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
 /** [private slots]
  * 
  */
-void SChatWindow::newUser(const QStringList &list, bool echo)
+void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric*/)
 {
-  qDebug() << "SChatWindow::newUser(const QStringList &, bool)";
+  qDebug() << "SChatWindow::newUser(const QStringList &, quint8, quint8)" << echo ;
   
   AbstractProfile profile(list);
   QString nick = profile.nick();
@@ -552,9 +552,12 @@ void SChatWindow::newUser(const QStringList &list, bool echo)
 
   model.appendRow(item);
   model.sort(0);
+  
+  if (m_profile->nick() == nick)
+    echo = 0;
 
   // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
-  if (echo) {
+  if (echo == 1) {
     int index = tabIndex(nick);
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
@@ -1013,7 +1016,7 @@ void SChatWindow::createService()
   m_clientService = new ClientService(m_profile, &settings->network, this);
   connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
   connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
-  connect(m_clientService, SIGNAL(newUser(const QStringList &, bool)), SLOT(newUser(const QStringList &, bool)));
+  connect(m_clientService, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(newUser(const QStringList &, quint8, quint8)));
   connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
   connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
   connect(m_clientService, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
