@@ -364,6 +364,10 @@ void ClientService::readyRead()
           opcodeRelayMessage();
           break;
           
+        case OpcodeSyncNumerics:
+          opcodeSyncNumerics();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -713,6 +717,19 @@ void ClientService::opcodeServerMessage()
   m_stream >> p_message;
   m_nextBlockSize = 0;
   emit serverMessage(p_message);
+}
+
+
+/** [private]
+ * Разбор пакета с опкодом `OpcodeSyncNumerics`.
+ */
+void ClientService::opcodeSyncNumerics()
+{
+  QList<quint8> p_numerics;
+  m_stream >> p_numerics;
+  m_nextBlockSize = 0;
+  qDebug() << "ClientService::opcodeSyncNumerics()" << p_numerics;
+  emit syncNumerics(p_numerics);
 }
 
 

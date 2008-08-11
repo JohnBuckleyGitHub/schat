@@ -61,6 +61,7 @@ signals:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   void serverMessage(const QString &msg);
+  void syncNumerics(const QList<quint8> &numerics);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 
@@ -89,6 +90,7 @@ private:
   void opcodePrivateMessage();
   void opcodeRelayMessage();
   void opcodeServerMessage();
+  void opcodeSyncNumerics();
   void opcodeUserLeave();
   void unknownOpcode();
 
