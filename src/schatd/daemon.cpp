@@ -294,12 +294,9 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
 
     emit message(sender, msg);
     emit sendRelayMessage("", sender, msg, numeric);
-//    if (m_network) {
-//        emit sendRelayMessage("", _sender, msg, m_numeric);
-//        if (m_network->count() > 0)
-//          m_link->relayMessage(channel, _sender, msg, m_numeric);
-//      }
-//    }
+//    if (m_network)
+//      if (m_network->count() > 0 && m_links.contains(numeric))
+//        m_link->sendRelayMessage("", sender, msg, numeric);
   }
 }
 
@@ -318,6 +315,19 @@ void Daemon::serviceLeave(const QString &nick, quint8 flag)
     linkLeave(nick);
   else
     userLeave(nick);
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::syncNumerics(const QList<quint8> &numerics)
+{
+  qDebug() << "Daemon::syncNumerics()" << numerics;
+  foreach (quint8 numeric, numerics) {
+    if (!m_numerics.contains(numeric))
+      m_numerics << numeric;
+  }
 }
 
 
@@ -522,6 +532,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
+      connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
       m_link->connectToHost();
     }
   }

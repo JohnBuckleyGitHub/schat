@@ -66,6 +66,7 @@ private slots:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric = 0);
   void serviceLeave(const QString &nick, quint8 flag);
+  void syncNumerics(const QList<quint8> &numerics);
 
 private:
   bool parseCmd(const QString &nick, const QString &msg);
