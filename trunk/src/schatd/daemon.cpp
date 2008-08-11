@@ -446,6 +446,8 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->sendNumerics(m_numerics);
 
         emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
+        
+//        sendAllUsers(service);
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
         // TODO добавить запись в канальный лог
@@ -479,13 +481,13 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
-    connect(this, SIGNAL(newUser(const QStringList &, bool)), service, SLOT(newUser(const QStringList &, bool)));
+    connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(newUser(const QStringList &, quint8, quint8)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
     service->accessGranted();
-    emit newUser(list, true);
+    emit newUser(list, 1, m_numeric);
   
     LOG(0, tr("- Notice - Connect: %1@%2, %3, %4, %5")
         .arg(list.at(AbstractProfile::Nick))
@@ -570,9 +572,9 @@ void Daemon::sendAllUsers(DaemonService *service)
     QHashIterator<QString, UserUnit *> i(m_users);
     while (i.hasNext()) {
       i.next();
-      
+
       if (i.value()->service())
-        service->newUser(i.value()->profile()->pack(), false);
+        service->newUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
   }
 }

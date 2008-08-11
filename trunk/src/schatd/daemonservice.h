@@ -50,7 +50,7 @@ signals:
   void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
 
 public slots:
-  bool newUser(const QStringList &list, bool echo);
+  bool newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   bool userLeave(const QString &nick, const QString &bye, bool echo);
   void disconnected();
   void message(const QString &sender, const QString &message);

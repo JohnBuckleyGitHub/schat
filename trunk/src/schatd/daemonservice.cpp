@@ -149,14 +149,11 @@ void DaemonService::sendServerMessage(const QString &msg)
 /** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
-bool DaemonService::newUser(const QStringList &list, bool echo)
+bool DaemonService::newUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
   qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
   
-  if (!m_accepted)
-    return false;
-  
-  if (m_socket->state() == QTcpSocket::ConnectedState) {
+  if (isReady()) {
     AbstractProfile profile(list);
     
     if (profile.nick() == m_profile->nick() && !echo)
@@ -165,14 +162,11 @@ bool DaemonService::newUser(const QStringList &list, bool echo)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeNewUser;
-
-    if (echo)
-      out << quint8(1);
-    else
-      out << quint8(0);
-    
-    out << profile.genderNum()
+    out << quint16(0) 
+        << OpcodeNewUser
+        << echo
+        << numeric
+        << profile.genderNum()
         << profile.nick()
         << profile.fullName()
         << profile.userAgent()

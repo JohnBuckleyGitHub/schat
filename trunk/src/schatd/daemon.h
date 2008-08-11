@@ -44,7 +44,7 @@ public:
   
 signals:
   void message(const QString &sender, const QString &message);
-  void newUser(const QStringList &list, bool echo);
+  void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
