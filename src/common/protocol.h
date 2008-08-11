@@ -229,6 +229,17 @@ static const quint16 OpcodeNewLink                   = 502;
  */
 static const quint16 OpcodeLinkLeave                 = 503;
 
+/**
+ * Список номеров серверов сети
+ * ФОРМАТ: --------------------
+ * quint16       -> размер пакета
+ * quint16       -> опкод
+ * QList<quint8> -> список
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeSyncNumerics              = 1100;
+
 
 /**
  * КОДЫ ОШИБОК

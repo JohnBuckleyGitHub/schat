@@ -121,6 +121,23 @@ void DaemonService::quit()
 
 
 /** [public]
+ * Пакет `OpcodeSyncNumerics`.
+ */
+void DaemonService::sendNumerics(const QList<quint8> &numerics)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeSyncNumerics << numerics; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+  }
+}
+
+
+/** [public]
  * 
  */
 void DaemonService::sendServerMessage(const QString &msg)
@@ -352,8 +369,7 @@ void DaemonService::sendRelayMessage(const QString &channel, const QString &send
 {
   if (numeric == m_numeric)
     return;
-  
-  qDebug() << "-----------------" << numeric << m_numeric;
+
   if (isReady()) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);

@@ -31,6 +31,7 @@
 #include "userunit.h"
 #include "version.h"
 
+
 /** [public]
  * 
  */
@@ -432,8 +433,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted();
-        
-        qDebug() << "m_numerics:" << m_numerics;
+        service->sendNumerics(m_numerics);
 
         emit sendNewLink(m_numeric, m_network->name(), list.at(AbstractProfile::Host));
 
