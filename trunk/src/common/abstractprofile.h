@@ -56,6 +56,7 @@ public:
   inline quint8 genderNum() const                  { if (m_male) return 0; else return 1; }
   inline static QString gender(bool male)          { if (male) return "male"; else return "female"; }
   inline static QString gender(quint8 g)           { if (g) return "female"; else return "male"; }
+  inline static quint8 genderNum(const QString &gender) { if (gender == "female") return 1; else return 0; }
   inline void setByeMsg(const QString &msg)        { m_byeMsg = msg.simplified().left(MaxByeMsgLength); }
   inline void setFullName(const QString &fullName) { m_fullName = fullName.simplified().left(MaxNameLength); }
   inline void setGender(bool male)                 { m_male = male; }
