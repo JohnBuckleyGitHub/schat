@@ -67,6 +67,7 @@ private slots:
   void relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric = 0);
   void serviceLeave(const QString &nick, quint8 flag);
   void syncNumerics(const QList<quint8> &numerics);
+  void syncUsers(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
 
 private:
   bool parseCmd(const QString &nick, const QString &msg);

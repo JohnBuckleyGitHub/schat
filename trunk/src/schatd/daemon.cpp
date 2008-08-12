@@ -331,6 +331,20 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
+/** [private slots]
+ * Слот вызывается когда клиентский сокет получает пакет `OpcodeNewUser`.
+ */
+void Daemon::syncUsers(const QStringList &list, quint8 echo, quint8 numeric)
+{
+  QString nick = list.at(AbstractProfile::Nick);
+
+  if (!m_users.contains(nick)) {
+    m_users.insert(nick, new UserUnit(list, 0, numeric));
+    emit newUser(list, echo, numeric);
+  }
+}
+
+
 /** [private]
  * 
  */
@@ -447,7 +461,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 
         emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
         
-//        sendAllUsers(service);
+        sendAllUsers(service);
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
         // TODO добавить запись в канальный лог
@@ -535,6 +549,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
       connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
+      connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(syncUsers(const QStringList &, quint8, quint8)));
       m_link->connectToHost();
     }
   }
@@ -572,9 +587,7 @@ void Daemon::sendAllUsers(DaemonService *service)
     QHashIterator<QString, UserUnit *> i(m_users);
     while (i.hasNext()) {
       i.next();
-
-      if (i.value()->service())
-        service->newUser(i.value()->profile()->pack(), 0, i.value()->numeric());
+      service->newUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
   }
 }
