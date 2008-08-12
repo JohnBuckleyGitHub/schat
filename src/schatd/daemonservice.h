@@ -23,6 +23,8 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "protocol.h"
+
 class AbstractProfile;
 
 class DaemonService : public QObject
@@ -33,12 +35,13 @@ public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
   bool isReady() const;
+  inline void sendServerMessage(const QString &msg) { send(OpcodeServerMessage, msg); }
+  inline void sendSyncUsersEnd()                    { send(OpcodeSyncUsersEnd); }
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
   void sendNumerics(const QList<quint8> &numerics);
-  void sendServerMessage(const QString &msg);
 
 signals:
   void greeting(const QStringList &list, quint8 flag);

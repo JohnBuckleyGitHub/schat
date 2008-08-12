@@ -368,6 +368,10 @@ void ClientService::readyRead()
           opcodeSyncNumerics();
           break;
           
+        case OpcodeSyncUsersEnd:
+          emit syncUsersEnd();
+          break;
+          
         default:
           unknownOpcode();
           break;
