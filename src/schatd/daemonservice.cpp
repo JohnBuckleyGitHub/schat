@@ -92,10 +92,10 @@ void DaemonService::accessDenied(quint16 reason)
  * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
  * и устанавливаем флаг `m_accepted` в `true`.
  */
-void DaemonService::accessGranted(quint16 level)
+void DaemonService::accessGranted(quint16 numeric)
 {
   if (!m_accepted) {
-    send(OpcodeAccessGranted, level);
+    send(OpcodeAccessGranted, numeric);
     m_accepted = true;
   }
 }

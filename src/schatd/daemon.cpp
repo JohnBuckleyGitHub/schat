@@ -39,6 +39,7 @@ Daemon::Daemon(QObject *parent)
   : QObject(parent)
 {
   m_settings = new DaemonSettings(this);
+  m_remoteNumeric = 0;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
 }
 
@@ -122,6 +123,16 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
     else
       greetingUser(list, service);
 
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::linkAccessGranted(const QString &/*network*/, const QString &/*server*/, quint16 numeric)
+{
+  m_remoteNumeric = numeric;
+  m_numerics << numeric;
 }
 
 
@@ -456,7 +467,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         m_numerics << numeric;
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
-        service->accessGranted();
+        service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
         emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
@@ -500,7 +511,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
-    service->accessGranted();
+    service->accessGranted(m_numeric);
     emit newUser(list, 1, m_numeric);
   
     LOG(0, tr("- Notice - Connect: %1@%2, %3, %4, %5")
@@ -531,13 +542,18 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
  */
 void Daemon::link()
 {
+  m_numeric = quint8(m_settings->getInt("Numeric"));
+  if (!m_numeric) {
+    m_network = 0;
+    return;
+  }
+
   m_network = new Network(QCoreApplication::instance()->applicationDirPath());
   if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
     delete m_network;
     m_network = 0;
   }
   else {
-    m_numeric = quint8(m_settings->getInt("Numeric"));
     m_profile = new AbstractProfile(this);
     m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
@@ -550,6 +566,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
       connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
       connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(syncUsers(const QStringList &, quint8, quint8)));
+      connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
       m_link->connectToHost();
     }
   }
