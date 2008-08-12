@@ -606,6 +606,7 @@ void Daemon::sendAllUsers(DaemonService *service)
       i.next();
       service->newUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
+    service->sendSyncUsersEnd();
   }
 }
 

@@ -241,6 +241,16 @@ static const quint16 OpcodeLinkLeave                 = 503;
  */
 static const quint16 OpcodeSyncNumerics              = 1100;
 
+/**
+ * Уведомление о завершении отправки пользователей
+ * ФОРМАТ: --------------------
+ * quint16       -> размер пакета
+ * quint16       -> опкод
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер
+ */
+static const quint16 OpcodeSyncUsersEnd              = 1110;
+
 
 /**
  * КОДЫ ОШИБОК

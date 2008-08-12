@@ -62,6 +62,7 @@ signals:
   void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   void serverMessage(const QString &msg);
   void syncNumerics(const QList<quint8> &numerics);
+  void syncUsersEnd();
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, bool echo);
 

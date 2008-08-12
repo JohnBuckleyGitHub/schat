@@ -21,7 +21,6 @@
 
 #include "daemonservice.h"
 #include "abstractprofile.h"
-#include "protocol.h"
 
 
 /** [public]
@@ -134,15 +133,6 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
   }
-}
-
-
-/** [public]
- * 
- */
-void DaemonService::sendServerMessage(const QString &msg)
-{
-  send(OpcodeServerMessage, msg);
 }
 
 
