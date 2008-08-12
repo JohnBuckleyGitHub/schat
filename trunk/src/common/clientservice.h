@@ -46,6 +46,7 @@ public:
   inline void sendNewProfile()               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   void connectToHost();
   void quit(bool end = true);
+  void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
 
 signals:
   void accessDenied(quint16 reason);

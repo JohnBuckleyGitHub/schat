@@ -104,6 +104,29 @@ void Daemon::incomingConnection()
 
 
 /** [private slots]
+ * Слот вызывается когда клиентский сокет получает пакет `OpcodeNewUser`.
+ */
+void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
+{
+  QString nick = list.at(AbstractProfile::Nick);
+
+  if (!m_users.contains(nick)) {
+    m_users.insert(nick, new UserUnit(list, 0, numeric));
+    emit newUser(list, 1, numeric);
+  }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::clientSyncUsersEnd()
+{
+  qDebug() << "Daemon::clientSyncUsersEnd()";
+}
+
+
+/** [private slots]
  * Слот вызывается сигналом `greeting(const QStringList &)` от сервиса ожидающего
  * проверки приветствия (проверка на дубдикат ников).
  * В случае успеха сервис уведомляется (`accessGranted()`) об этом, добавляется в список пользователей
@@ -342,20 +365,6 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
-/** [private slots]
- * Слот вызывается когда клиентский сокет получает пакет `OpcodeNewUser`.
- */
-void Daemon::syncUsers(const QStringList &list, quint8 echo, quint8 numeric)
-{
-  QString nick = list.at(AbstractProfile::Nick);
-
-  if (!m_users.contains(nick)) {
-    m_users.insert(nick, new UserUnit(list, 0, numeric));
-    emit newUser(list, echo, numeric);
-  }
-}
-
-
 /** [private]
  * 
  */
@@ -565,8 +574,9 @@ void Daemon::link()
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
       connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
-      connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(syncUsers(const QStringList &, quint8, quint8)));
+      connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
+      connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
       m_link->connectToHost();
     }
   }

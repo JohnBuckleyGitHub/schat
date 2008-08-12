@@ -194,6 +194,34 @@ void ClientService::quit(bool end)
 }
 
 
+/** [public]
+ * 
+ */
+void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
+{
+  if (isReady()) {
+    AbstractProfile profile(list);
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) 
+        << OpcodeNewUser
+        << echo
+        << numeric
+        << profile.genderNum()
+        << profile.nick()
+        << profile.fullName()
+        << profile.userAgent()
+        << profile.host();
+
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+  }
+}
+
+
 /** [private slots]
  * Разрыв соединения или переподключение если после `CheckTimeout` миллисекунд не удалось установить действующие соединение.
  */
@@ -369,6 +397,7 @@ void ClientService::readyRead()
           break;
           
         case OpcodeSyncUsersEnd:
+          m_nextBlockSize = 0;
           emit syncUsersEnd();
           break;
           
