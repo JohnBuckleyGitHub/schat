@@ -140,9 +140,7 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 bool DaemonService::newUser(const QStringList &list, quint8 echo, quint8 numeric)
-{
-  qDebug() << "DaemonService::newUser(const QStringList &)" << list.at(AbstractProfile::Nick);
-  
+{  
   if (isReady()) {
     AbstractProfile profile(list);
     

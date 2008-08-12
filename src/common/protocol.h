@@ -118,7 +118,7 @@ static const quint16 OpcodeRelayMessage              = 204;
  * QString -> строка идентифицирующая агент участника, формат: UserAgent/Version
  * QString -> адрес участника
  * ОТПРАВИТЕЛЬ: ---------------
- * Сервер
+ * Сервер, Клиент
  */
 static const quint16 OpcodeNewUser                   = 303;
 
