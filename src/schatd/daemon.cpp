@@ -614,7 +614,7 @@ void Daemon::sendAllUsers(DaemonService *service)
     QHashIterator<QString, UserUnit *> i(m_users);
     while (i.hasNext()) {
       i.next();
-      service->newUser(i.value()->profile()->pack(), 0, i.value()->numeric());
+      service->sendNewUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
     service->sendSyncUsersEnd();
   }

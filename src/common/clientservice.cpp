@@ -200,8 +200,6 @@ void ClientService::quit(bool end)
 void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
   if (isReady()) {
-    AbstractProfile profile(list);
-
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
@@ -209,16 +207,17 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
         << OpcodeNewUser
         << echo
         << numeric
-        << profile.genderNum()
-        << profile.nick()
-        << profile.fullName()
-        << profile.userAgent()
-        << profile.host();
+        << AbstractProfile::genderNum(list.at(AbstractProfile::Gender))
+        << list.at(AbstractProfile::Nick)
+        << list.at(AbstractProfile::FullName)
+        << list.at(AbstractProfile::ByeMsg)
+        << list.at(AbstractProfile::UserAgent)
+        << list.at(AbstractProfile::Host);
 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
-  }
+  } 
 }
 
 
@@ -669,20 +668,19 @@ void ClientService::opcodeNewProfile()
  */
 void ClientService::opcodeNewUser()
 {
-  qDebug() << "ClientService::opcodeNewUser()";
-
   quint8 p_flag;
   quint8 p_numeric;
   quint8 p_gender;
   QString p_nick;
   QString p_name;
+  QString p_bye;
   QString p_agent;
   QString p_host;
-  
-  m_stream >> p_flag >> p_numeric >> p_gender >> p_nick >> p_name >> p_agent >> p_host;
+
+  m_stream >> p_flag >> p_numeric >> p_gender >> p_nick >> p_name >> p_bye >> p_agent >> p_host;
   m_nextBlockSize = 0;
   QStringList profile;
-  profile << p_nick << p_name << "" << p_agent << p_host << AbstractProfile::gender(p_gender);
+  profile << p_nick << p_name << p_bye << p_agent << p_host << AbstractProfile::gender(p_gender);
 
   emit newUser(profile, p_flag, p_numeric);  
 }

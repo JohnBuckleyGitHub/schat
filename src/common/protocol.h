@@ -106,7 +106,7 @@ static const quint16 OpcodeServerMessage             = 202;
 static const quint16 OpcodeRelayMessage              = 204;
 
 /**
- * Отправка клиенту профиля участника
+ * Унифицированный пакет содержащий в себе полную информацию о пользователе
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -115,12 +115,13 @@ static const quint16 OpcodeRelayMessage              = 204;
  * quint8  -> пол участника: 0 - мужской, 1 - женский
  * QString -> ник участника
  * QString -> полное имя участника, может быть пустой строкой
+ * QString -> сообщение о выходе
  * QString -> строка идентифицирующая агент участника, формат: UserAgent/Version
  * QString -> адрес участника
  * ОТПРАВИТЕЛЬ: ---------------
  * Сервер, Клиент
  */
-static const quint16 OpcodeNewUser                   = 303;
+static const quint16 OpcodeNewUser                   = 310;
 
 /**
  * Выход пользователя из чата
