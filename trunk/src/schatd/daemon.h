@@ -57,6 +57,7 @@ public slots:
   
 private slots:
   void greeting(const QStringList &list, quint8 flag);
+  void linkAccessGranted(const QString &network, const QString &server, quint16 numeric);
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void linkMessage(const QString &sender, const QString &message);
   void message(const QString &channel, const QString &sender, const QString &message);
@@ -91,6 +92,7 @@ private:
   QList<quint8> m_numerics;
   QTcpServer m_server;
   quint8 m_numeric;
+  quint8 m_remoteNumeric;
 };
 
 #endif /*DAEMON_H_*/

@@ -34,7 +34,7 @@ public:
   ~DaemonService();
   bool isReady() const;
   void accessDenied(quint16 reason = 0);
-  void accessGranted(quint16 level = 0);
+  void accessGranted(quint16 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
   void sendNumerics(const QList<quint8> &numerics);
