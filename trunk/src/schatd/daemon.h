@@ -59,6 +59,7 @@ private slots:
   void clientServiceLeave(bool echo = true);
   void clientSyncUsers(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void clientSyncUsersEnd();
+  void clientUserLeave(const QString &nick, const QString &bye, bool echo);
   void greeting(const QStringList &list, quint8 flag);
   void linkAccessGranted(const QString &network, const QString &server, quint16 numeric);
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
