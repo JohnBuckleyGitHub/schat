@@ -97,6 +97,7 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
+    connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
   }
@@ -512,7 +513,6 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(linkSyncUsers(const QStringList &, quint8, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
-        connect(this, SIGNAL(sendSyncUsers(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
@@ -552,7 +552,6 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
-    connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
@@ -574,7 +573,6 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
         m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
 
     sendAllUsers(service);
-    emit sendSyncUsers(list, 1, m_numeric);
     if (m_remoteNumeric)
       m_link->sendNewUser(list, 1, m_numeric);
   }
