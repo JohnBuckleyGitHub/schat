@@ -97,6 +97,7 @@ void Daemon::incomingConnection()
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
     connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
+    connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
@@ -107,7 +108,7 @@ void Daemon::incomingConnection()
 /** [private slots]
  * Слот вызывается когда клиентский сервис теряет соединение с сервером.
  */
-void Daemon::clientServiceLeave(bool echo)
+void Daemon::clientServiceLeave(bool /*echo*/)
 {
   m_remoteNumeric = 0;
   m_numerics.clear();
@@ -145,6 +146,18 @@ void Daemon::clientSyncUsersEnd()
 {
   qDebug() << "Daemon::clientSyncUsersEnd()";
   sendAllUsers();
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::clientUserLeave(const QString &nick, const QString &bye, bool /*echo*/)
+{
+  if (m_users.contains(nick))
+    m_users.value(nick)->profile()->setByeMsg(bye);
+
+  userLeave(nick);
 }
 
 
@@ -552,7 +565,6 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
-    connect(this, SIGNAL(userLeave(const QString &, const QString &, bool)), service, SLOT(userLeave(const QString &, const QString &, bool)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
@@ -616,6 +628,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
       connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
       connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
+      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(clientUserLeave(const QString &, const QString &, bool)));
       m_link->connectToHost();
     }
   }
