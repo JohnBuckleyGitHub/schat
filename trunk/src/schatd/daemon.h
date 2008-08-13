@@ -62,6 +62,7 @@ private slots:
   void linkAccessGranted(const QString &network, const QString &server, quint16 numeric);
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void linkMessage(const QString &sender, const QString &message);
+  void linkSyncUsers(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
@@ -78,6 +79,7 @@ private:
   void greetingUser(const QStringList &list, DaemonService *service);
   void link();
   void linkLeave(const QString &nick);
+  void sendAllUsers();
   void sendAllUsers(DaemonService *service);
   void userLeave(const QString &nick);
 
