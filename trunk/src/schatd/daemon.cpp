@@ -104,7 +104,25 @@ void Daemon::incomingConnection()
 
 
 /** [private slots]
- * Слот вызывается когда клиентский сокет получает пакет `OpcodeNewUser`.
+ * Слот вызывается когда клиентский сервис теряет соединение с сервером.
+ */
+void Daemon::clientServiceLeave(bool echo)
+{
+  m_numerics.clear();
+  m_numerics << m_numeric;
+  m_numerics += m_links.keys();
+  
+  QHashIterator<QString, UserUnit *> i(m_users);
+  while (i.hasNext()) {
+    i.next();
+    if (!m_numerics.contains(i.value()->numeric()))
+      userLeave(i.value()->profile()->nick());
+  }
+}
+
+
+/** [private slots]
+ * Слот вызывается когда клиентский сервис получает пакет `OpcodeNewUser`.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
 {
@@ -595,6 +613,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
       connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
+      connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
       m_link->connectToHost();
     }
   }
@@ -680,4 +699,3 @@ void Daemon::userLeave(const QString &nick)
     emit userLeave(nick, bye, true);
   }
 }
-
