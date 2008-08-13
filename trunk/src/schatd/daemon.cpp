@@ -108,6 +108,7 @@ void Daemon::incomingConnection()
  */
 void Daemon::clientServiceLeave(bool echo)
 {
+  m_remoteNumeric = 0;
   m_numerics.clear();
   m_numerics << m_numeric;
   m_numerics += m_links.keys();
@@ -165,7 +166,6 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
       greetingLink(list, service);
     else
       greetingUser(list, service);
-
 }
 
 
@@ -512,6 +512,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(linkSyncUsers(const QStringList &, quint8, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
+        connect(this, SIGNAL(sendSyncUsers(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
@@ -573,6 +574,9 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
         m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
 
     sendAllUsers(service);
+    emit sendSyncUsers(list, 1, m_numeric);
+    if (m_remoteNumeric)
+      m_link->sendNewUser(list, 1, m_numeric);
   }
   else
     service->accessDenied(ErrorNickAlreadyUse);
