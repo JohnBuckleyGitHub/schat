@@ -56,6 +56,7 @@ public slots:
   void incomingConnection();
   
 private slots:
+  void clientServiceLeave(bool echo = true);
   void clientSyncUsers(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void clientSyncUsersEnd();
   void greeting(const QStringList &list, quint8 flag);
