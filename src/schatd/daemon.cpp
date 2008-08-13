@@ -636,6 +636,14 @@ void Daemon::linkLeave(const QString &nick)
       LOG(0, tr("- Notice - Disconnect Link: %1@%2").arg(nick).arg(unit->host()));
 
       emit sendLinkLeave(numeric, m_network->name(), unit->host());
+
+      QHashIterator<QString, UserUnit *> i(m_users);
+      while (i.hasNext()) {
+        i.next();
+        if (i.value()->numeric() == numeric)
+          userLeave(i.value()->profile()->nick());
+      }
+
       delete unit;
     }
   }
