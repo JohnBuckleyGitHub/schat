@@ -152,7 +152,7 @@ void Daemon::clientSyncUsersEnd()
 /** [private slots]
  * 
  */
-void Daemon::clientUserLeave(const QString &nick, const QString &bye, bool /*echo*/)
+void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
 {
   if (m_users.contains(nick))
     m_users.value(nick)->profile()->setByeMsg(bye);
@@ -232,6 +232,18 @@ void Daemon::linkSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 nume
     m_users.insert(nick, new UserUnit(list, 0, numeric));
     emit newUser(list, 1, numeric);
   }
+}
+
+
+/** [private slots]
+ * 
+ */
+void Daemon::linkUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
+{
+  if (m_users.contains(nick))
+    m_users.value(nick)->profile()->setByeMsg(bye);
+
+  userLeave(nick);
 }
 
 
@@ -525,6 +537,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         m_numerics << numeric;
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(linkSyncUsers(const QStringList &, quint8, quint8)));
+        connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(linkUserLeave(const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
@@ -585,7 +598,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
         m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
 
     sendAllUsers(service);
-    if (m_remoteNumeric)
+    if (m_network && m_remoteNumeric)
       m_link->sendNewUser(list, 1, m_numeric);
   }
   else
@@ -628,7 +641,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
       connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
       connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
-      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(clientUserLeave(const QString &, const QString &, bool)));
+      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));      
       m_link->connectToHost();
     }
   }
@@ -720,5 +733,8 @@ void Daemon::userLeave(const QString &nick)
     delete unit;
 
     emit userLeave(nick, bye, 1);
+    
+    if (m_network && m_remoteNumeric)
+      m_link->sendUserLeave(nick, bye, 1);
   }
 }

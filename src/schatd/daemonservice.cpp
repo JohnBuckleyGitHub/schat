@@ -176,10 +176,12 @@ void DaemonService::readyRead()
       break;
     
     m_stream >> m_opcode;
-    
+
+#ifdef SCHAT_DEBUG
     if (m_opcode != 401)
-      qDebug() << "op" << m_opcode;
-    
+      qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
+
     if (m_accepted) {
       switch (m_opcode) {
         case OpcodeMessage:
@@ -204,6 +206,10 @@ void DaemonService::readyRead()
           
         case OpcodeNewUser:
           opcodeNewUser();
+          break;
+          
+        case OpcodeUserLeave:
+          opcodeUserLeave();
           break;
           
         default:
@@ -703,12 +709,30 @@ void DaemonService::opcodeRelayMessage()
 
 
 /** [private]
+ * Разбор пакета с опкодом `OpcodeUserLeave`.
+ * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
+ */
+void DaemonService::opcodeUserLeave()
+{
+  quint8 p_flag;
+  QString p_nick;
+  QString p_bye;
+  m_stream >> p_flag >> p_nick >> p_bye;
+  m_nextBlockSize = 0;
+  
+  emit userLeave(p_nick, p_bye, p_flag);
+}
+
+
+/** [private]
  * Функция читает пакет с неизвестным опкодом.
  */
 void DaemonService::unknownOpcode()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::unknownOpcode()";
   qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
 }

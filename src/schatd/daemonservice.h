@@ -52,6 +52,7 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
+  void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag) { send(OpcodeUserLeave, flag, nick, bye); }
@@ -83,6 +84,7 @@ private:
   void opcodeNewUser();
   void opcodePong();
   void opcodeRelayMessage();
+  void opcodeUserLeave();
   void unknownOpcode();
 
   AbstractProfile *m_profile;
