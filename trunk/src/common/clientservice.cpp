@@ -341,10 +341,12 @@ void ClientService::readyRead()
       break;
     
     m_stream >> m_opcode;
-    
+
+#ifdef SCHAT_DEBUG
     if (m_opcode != 400)
-      qDebug() << "op" << m_opcode;
-    
+      qDebug() << "client opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
+
     if (m_accepted) {
       switch (m_opcode) {
         case OpcodeNewUser:
@@ -780,8 +782,10 @@ void ClientService::opcodeUserLeave()
  */
 void ClientService::unknownOpcode()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::unknownOpcode()";
   qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
 }
