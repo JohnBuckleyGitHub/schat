@@ -132,7 +132,7 @@ static const quint16 OpcodeNewUser                   = 310;
  * QString -> ник участника
  * QString -> сообщение о выходе
  * ОТПРАВИТЕЛЬ: ---------------
- * Сервер
+ * Сервер, Клиент
  */
 static const quint16 OpcodeUserLeave                 = 302;
 
