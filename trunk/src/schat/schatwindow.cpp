@@ -752,7 +752,7 @@ void SChatWindow::unconnected(bool echo)
 /** [private slots]
  * Выход удалённого пользователя из чата, опкод `OpcodeUserLeave`.
  */
-void SChatWindow::userLeave(const QString &nick, const QString &bye, bool echo)
+void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
 {
   QStandardItem *item = findItem(nick);
   
@@ -760,7 +760,7 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, bool echo)
     QStringList list = item->data(Qt::UserRole + 1).toStringList();
     model.removeRow(model.indexFromItem(item).row());
     
-    if (echo) {
+    if (flag == 1) {
       AbstractProfile profile(list);
       int index = tabIndex(nick);
       if (index != -1) {
@@ -1018,7 +1018,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
   connect(m_clientService, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(newUser(const QStringList &, quint8, quint8)));
   connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
-  connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, bool)), SLOT(userLeave(const QString &, const QString &, bool)));
+  connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(userLeave(const QString &, const QString &, quint8)));
   connect(m_clientService, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
   connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
