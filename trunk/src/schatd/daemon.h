@@ -50,7 +50,7 @@ signals:
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
-  void userLeave(const QString &nick, const QString &bye, bool echo);
+  void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
   void incomingConnection();

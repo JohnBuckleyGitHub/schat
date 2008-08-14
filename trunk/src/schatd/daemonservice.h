@@ -54,8 +54,7 @@ signals:
   void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
 
 public slots:
-  bool sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
-  bool userLeave(const QString &nick, const QString &bye, bool echo);
+  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag) { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
   void message(const QString &sender, const QString &message);
   void readyRead();
@@ -63,6 +62,7 @@ public slots:
   void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
+  void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
 
 private slots:
