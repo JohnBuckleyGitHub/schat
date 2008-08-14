@@ -44,6 +44,7 @@ public:
   inline void sendByeMsg()                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg) { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
+  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag) { send(OpcodeUserLeave, flag, nick, bye); }
   void connectToHost();
   void quit(bool end = true);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
@@ -65,7 +66,7 @@ signals:
   void syncNumerics(const QList<quint8> &numerics);
   void syncUsersEnd();
   void unconnected(bool echo = true);
-  void userLeave(const QString &nick, const QString &bye, bool echo);
+  void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 private slots:
   void check();

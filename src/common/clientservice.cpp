@@ -217,7 +217,7 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
-  } 
+  }
 }
 
 
@@ -765,19 +765,13 @@ void ClientService::opcodeSyncNumerics()
  */
 void ClientService::opcodeUserLeave()
 {
-  bool echo;
   quint8 p_flag;
   QString p_nick;
   QString p_bye;
   m_stream >> p_flag >> p_nick >> p_bye;
   m_nextBlockSize = 0;
   
-  if (p_flag)
-    echo = true;
-  else
-    echo = false;
-  
-  emit userLeave(p_nick, p_bye, echo);
+  emit userLeave(p_nick, p_bye, p_flag);
 }
 
 

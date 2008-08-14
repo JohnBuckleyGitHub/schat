@@ -510,7 +510,7 @@ bool DaemonService::send(quint16 opcode, quint16 err)
  * QString ->
  * QString ->
  * ОПКОДЫ:
- *   `OpcodePrivateMessage`.
+ *   `OpcodePrivateMessage`, `OpcodeUserLeave`.
  */
 bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const QString &message)
 {
