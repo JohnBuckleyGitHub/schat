@@ -130,7 +130,6 @@ void Daemon::clientServiceLeave(bool /*echo*/)
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
 {
   QString nick = list.at(AbstractProfile::Nick);
-  qDebug() << "Daemon::clientSyncUsers()" << nick;
 
   if (!m_users.contains(nick)) {
     m_users.insert(nick, new UserUnit(list, 0, numeric));
@@ -150,6 +149,9 @@ void Daemon::clientSyncUsersEnd()
 
 
 /** [private slots]
+ * Сигналы:
+ * `ClientService m_link`  SIGNAL(userLeave(const QString &, const QString &, quint8))
+ * `DaemonService service` SIGNAL(userLeave(const QString &, const QString &, quint8))
  * 
  */
 void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
@@ -217,33 +219,6 @@ void Daemon::linkMessage(const QString &sender, const QString &msg)
     m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
   emit message(sender, msg);
-}
-
-
-/** [private slots]
- * 
- */
-void Daemon::linkSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
-{
-  QString nick = list.at(AbstractProfile::Nick);
-  qDebug() << "Daemon::linkSyncUsers()" << nick;
-
-  if (!m_users.contains(nick)) {
-    m_users.insert(nick, new UserUnit(list, 0, numeric));
-    emit newUser(list, 1, numeric);
-  }
-}
-
-
-/** [private slots]
- * 
- */
-void Daemon::linkUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
-{
-  if (m_users.contains(nick))
-    m_users.value(nick)->profile()->setByeMsg(bye);
-
-  userLeave(nick);
 }
 
 
@@ -536,8 +511,8 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         m_numerics << numeric;
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
-        connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(linkSyncUsers(const QStringList &, quint8, quint8)));
-        connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(linkUserLeave(const QString &, const QString &, quint8)));
+        connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
+        connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
@@ -608,8 +583,9 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 
 /** [private]
  * Инициализирует файл сети "NetworkFile".
- * В случае успеха устанавливает numeric сервера "Numeric", создаёт профиль `m_profile`
- * И если указан адрес вышестоящего сервера, то производится попытка подключения.
+ * Если "Numeric" этого сервера равен `0`, то выходим из функции, без создания соединения.
+ * В случае успешной инициализации сети, создаём локальный профиль `m_profile` и
+ * если указан адрес вышестоящего сервера, то производится попытка подключения.
  * Если инициализация сети прошла с ошибкой `m_network` устанавливается в `0`.
  */
 void Daemon::link()
@@ -630,7 +606,7 @@ void Daemon::link()
     m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
     m_numerics << m_numeric;
-        
+
     if (m_network->count() > 0) {
       m_link = new ClientService(m_profile, m_network, this);
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
