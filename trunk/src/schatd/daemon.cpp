@@ -40,6 +40,7 @@
 
 /*!
  * \brief Конструктор класса Daemon.
+ * \param parent Указатель на родительский объект.
  */
 Daemon::Daemon(QObject *parent)
   : QObject(parent)
@@ -541,8 +542,21 @@ QString Daemon::serverInfo() const
 }
 
 
-/** [private]
+/*!
+ * \brief Обработка приветствия от удалённого сервера.
  * 
+ * Для успешного подключения должны быть соблюдены следующие условия:
+ *  - Сконфигурированная сеть \a m_network.
+ *  - Должны совпадать ключи сети.
+ *  - Удалённый сервер должен иметь уникальный номер.
+ * 
+ * При успешном подключении сервис уведомляется об этом, также производится синхронизация номеров сети и пользователей.
+ * Функция устанавливает соединения сигнал/слот специфичные для данного типа соединения.
+ * 
+ * Факт подключения записывается в журнал.
+ * 
+ * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param service Указатель на сервис.
  */
 void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
@@ -567,7 +581,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         sendAllUsers(service);
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
-        // TODO добавить запись в канальный лог
+        /// \todo Необходимо добавить запись в канальный лог
       }
       else
         err = ErrorNumericAlreadyUse;
@@ -585,8 +599,11 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 }
 
 
-/** [private]
+/*!
+ * \brief Обработка приветствия от клиента.
  * 
+ * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param service Указатель на сервис.
  */
 void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {

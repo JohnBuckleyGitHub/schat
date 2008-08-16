@@ -55,12 +55,12 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
-  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag) { send(OpcodeUserLeave, flag, nick, bye); }
+  inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeNewLink, numeric, network, ip); }
+  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)        { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
   void message(const QString &sender, const QString &message);
   void readyRead();
   void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
-  void sendNewLink(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);

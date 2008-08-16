@@ -141,13 +141,15 @@ SChatWindow::SChatWindow(QWidget *parent)
 }
 
 
-/** [protected]
+/*!
+ * \brief Обработка события закрытия чата.
  * 
+ * \todo Исправить, проблему с препятствием завершению программы обычным путём.
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
-{ // TODO Разобраться с корректным завершением программы.
+{
   settings->write();
-  
+
   if (isHidden()) {
     event->accept();
   }

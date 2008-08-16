@@ -163,8 +163,10 @@ ServerInfo Network::server() const
 }
 
 
-/** [public] static
- * Статическая функция возвращающая структуру `ServerInfo` по умолчанию.
+/*!
+ * \brief Статическая функция возвращающая структуру \a ServerInfo по умолчанию.
+ * 
+ * \todo В будущем эта функция должна возвращать реальный адрес сервера в интернете.
  */
 ServerInfo Network::failBack()
 {
