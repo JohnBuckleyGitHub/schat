@@ -55,12 +55,12 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
+  inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)   { send(OpcodeLinkLeave, numeric, network, ip); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeNewLink, numeric, network, ip); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)        { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
   void message(const QString &sender, const QString &message);
   void readyRead();
-  void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
@@ -98,5 +98,21 @@ private:
   quint8 m_flag;
   quint8 m_numeric;
 };
+
+/*! \fn void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
+ * \brief Отправка пакета \b OpcodeLinkLeave.
+ * 
+ * \param numeric Номер сервера подключившегося к сети.
+ * \param network Название сети.
+ * \param ip Адрес сервера
+ */
+
+/*! \fn void DaemonService::sendNewLink(quint8 numeric, const QString &network, const QString &ip)
+ * \brief Отправка пакета \b OpcodeNewLink.
+ * 
+ * \param numeric Номер сервера подключившегося к сети.
+ * \param network Название сети.
+ * \param ip Адрес сервера
+ */
 
 #endif /*DAEMONSERVICE_H_*/

@@ -238,14 +238,19 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
 }
 
 
-/** [private slots]
+/*!
+ * \brief Уведомление об отключении от удалённого сервера другого сервера.
  * 
+ * Номер сервера удаляется из списка серверов и высылается соответствующие уведомление. 
+ * \param numeric Номер сервера подключившегося к сети.
+ * \param network Название сети.
+ * \param ip Адрес сервера
+ * \sa newLink(quint8 numeric, const QString &network, const QString &ip)
  */
 void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::linkLeave()" << numeric << network << ip;
-#endif
+  m_numerics.removeAll(numeric);
+
   emit sendLinkLeave(numeric, network, ip);
 }
 
@@ -314,14 +319,20 @@ void Daemon::newBye(const QString &nick, const QString &bye)
 }
 
 
-/** [private slots]
+/*!
+ * \brief Уведомление о подключении к удалённому серверу другого сервера.
  * 
+ * Номер нового сервера добавляется в список серверов и высылается уведомление о новом сервере. 
+ * \param numeric Номер сервера подключившегося к сети.
+ * \param network Название сети.
+ * \param ip Адрес сервера
+ * \sa linkLeave(quint8 numeric, const QString &network, const QString &ip)
  */
 void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::newLink()" << numeric << network << ip;
-#endif
+  if (!m_numerics.contains(numeric))
+    m_numerics << numeric;
+
   emit sendNewLink(numeric, network, ip);
 }
 
@@ -686,8 +697,10 @@ void Daemon::link()
 }
 
 
-/** [private]
+/*!
+ * \brief Обработка отключения нижестоящего сервера.
  * 
+ * \param nick Номер сервера в виде строки.
  */
 void Daemon::linkLeave(const QString &nick)
 {

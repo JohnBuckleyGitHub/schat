@@ -242,15 +242,6 @@ void DaemonService::readyRead()
 /** [public slots]
  * 
  */
-void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
-{
-  send(OpcodeLinkLeave, numeric, network, ip);
-}
-
-
-/** [public slots]
- * 
- */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
 #ifdef SCHAT_DEBUG
