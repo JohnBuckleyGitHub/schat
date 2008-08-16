@@ -21,9 +21,15 @@
 #include "abstractprofile.h"
 #include "version.h"
 
-
-/** [public]
+/*!
+ * \class AbstractProfile
+ * \brief Абстрактный класс, хранящий информацию о пользователе.
  * 
+ * Класс хранит в себе всю информацию о пользователе и предоставляет все необходимые методы для манипуляций с профилем.
+ */
+
+/*!
+ * \brief Конструктор класса AbstractProfile.
  */
 AbstractProfile::AbstractProfile(QObject *parent)
   : QObject(parent)

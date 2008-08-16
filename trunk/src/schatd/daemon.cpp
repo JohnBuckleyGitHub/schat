@@ -31,7 +31,6 @@
 #include "userunit.h"
 #include "version.h"
 
-
 /*!
  * \class Daemon
  * \brief Сервер чата
@@ -40,7 +39,7 @@
  */
 
 /*!
- * Создаёт класс Daemon.
+ * \brief Конструктор класса Daemon.
  */
 Daemon::Daemon(QObject *parent)
   : QObject(parent)
