@@ -20,7 +20,7 @@
 #define PROTOCOL_H_
 
 static const int     StreamVersion                   = QDataStream::Qt_4_4;
-static const quint16 ProtocolVersion                 = 2;
+static const quint16 ProtocolVersion                 = 3;
 
 static const quint8 FlagNone                         = 0;
 static const quint8 FlagDirect                       = 1;
