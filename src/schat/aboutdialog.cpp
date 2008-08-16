@@ -21,7 +21,6 @@
 #include "aboutdialog.h"
 #include "version.h"
 
-
 /*!
  * \class AboutDialog
  * \brief Диалог "О Программе"
@@ -30,7 +29,7 @@
  */
 
 /*!
- * Создаёт класс AboutDialog. 
+ * \brief Конструктор класса AboutDialog.
  */
 AboutDialog::AboutDialog(QWidget *parent)
   : QDialog(parent)
@@ -63,8 +62,13 @@ AboutDialog::AboutDialog(QWidget *parent)
 }
 
 
-/**
- * Конструктор класса AboutTab
+/*!
+ * \class MainTab
+ * \brief Диалог "О Программе", Главная страница
+ */
+
+/*!
+ * \brief Конструктор класса MainTab.
  */
 MainTab::MainTab(QWidget *parent)
   : QWidget(parent)
@@ -110,9 +114,13 @@ MainTab::MainTab(QWidget *parent)
 }
 
 
+/*!
+ * \class ChangeLogTab
+ * \brief Диалог "О Программе", Страница истории версий.
+ */
 
-/**
- * Конструктор класса ChangeLogTab
+/*!
+ * \brief Конструктор класса ChangeLogTab.
  */
 ChangeLogTab::ChangeLogTab(QWidget *parent)
   : QWidget(parent)
@@ -135,8 +143,13 @@ ChangeLogTab::ChangeLogTab(QWidget *parent)
 }
 
 
-/**
- * Конструктор класса LicenseTab
+/*!
+ * \class LicenseTab
+ * \brief Диалог "О Программе", Лицензия.
+ */
+
+/*!
+ * \brief Конструктор класса LicenseTab.
  */
 LicenseTab::LicenseTab(QWidget *parent)
   : QWidget(parent)
@@ -156,11 +169,10 @@ LicenseTab::LicenseTab(QWidget *parent)
       "<p>You should have received a copy of the GNU General Public License "
       "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
   ).arg(SCHAT_VERSION));
-  
+
   textBrowser->setOpenExternalLinks(true);
-  
+
   QHBoxLayout *mainLayout = new QHBoxLayout(this);
   mainLayout->addWidget(textBrowser);
   mainLayout->setMargin(0);
-
 }

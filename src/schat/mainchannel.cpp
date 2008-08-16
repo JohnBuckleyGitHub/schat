@@ -9,9 +9,13 @@
 #include "networkwidget.h"
 #include "settings.h"
 
+/*!
+ * \class MainChannel
+ * \brief Обеспечивает поддержку главного канала чата.
+ */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса MainChannel.
  */
 MainChannel::MainChannel(Settings *settings, QWidget *parent)
   : AbstractTab(parent)

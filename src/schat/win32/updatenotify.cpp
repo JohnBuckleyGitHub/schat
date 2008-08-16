@@ -21,9 +21,13 @@
 #include "settings.h"
 #include "updatenotify.h"
 
+/*!
+ * \class UpdateNotify
+ * \brief Класс запускает внешнюю программу для проверки обновлений.
+ */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса UpdateNotify.
  */
 UpdateNotify::UpdateNotify(Settings *settings, QObject *parent)
   : QObject(parent)

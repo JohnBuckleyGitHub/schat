@@ -37,9 +37,7 @@ private:
 };
 
 
-/**
- * Класс MainTab
- */
+
 class MainTab : public QWidget
 {
   Q_OBJECT
@@ -49,9 +47,7 @@ public:
 };
 
 
-/**
- * Класс ChangeLogTab
- */
+
 class ChangeLogTab : public QWidget
 {
   Q_OBJECT
@@ -61,9 +57,7 @@ public:
 };
 
 
-/**
- * Класс LicenseTab
- */
+
 class LicenseTab : public QWidget
 {
   Q_OBJECT

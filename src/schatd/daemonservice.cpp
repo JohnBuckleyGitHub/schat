@@ -29,8 +29,8 @@
  * При наличии валидного сокета, инициализируется сокет.
  */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 : QObject(parent), m_socket(socket)

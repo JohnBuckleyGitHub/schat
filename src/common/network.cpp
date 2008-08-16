@@ -20,9 +20,15 @@
 
 #include "network.h"
 
-
-/** [public]
+/*!
+ * \class Network
+ * \brief Класс читает xml-файл сети.
  * 
+ * \sa NetworkReader
+ */
+
+/*!
+ * \brief Конструктор класса Network.
  */
 Network::Network()
 {
@@ -31,8 +37,8 @@ Network::Network()
 }
 
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса Network.
  */
 Network::Network(const QString &path)
 {

@@ -24,9 +24,15 @@
 static const int CheckTimeout         = 6000;
 static const int ReconnectTimeout     = 3000;
 
-
-/** [public]
+/*!
+ * \class ClientService
+ * \brief Универсальный сервис клиента чата.
  * 
+ * Класс устанавливает и поддерживает соединение.
+ */
+
+/*!
+ * \brief Конструктор класса ClientService.
  */
 ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
   : QObject(parent), m_profile(profile), m_network(network)

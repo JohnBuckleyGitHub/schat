@@ -22,8 +22,16 @@
 #include "userunit.h"
 
 
-/** [public]
+/*!
+ * \class UserUnit
+ * \brief Базовый класс хранящий информацию о пользователе.
  * 
+ * Хранит безопасный указатель на сервис \a DaemonService, номер сервера, и профиль.
+ * \sa LinkUnit
+ */
+
+/*!
+ * \brief Конструктор класса UserUnit.
  */
 UserUnit::UserUnit()
 {
@@ -32,8 +40,11 @@ UserUnit::UserUnit()
 }
 
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса UserUnit, полностью инициализирующий данные.
+ * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param service Указатель на сервис клиента.
+ * \param numeric номер сервера к которому подключен клиент.
  */
 UserUnit::UserUnit(const QStringList &list, DaemonService *service, quint8 numeric)
 {

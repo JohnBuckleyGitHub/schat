@@ -20,9 +20,16 @@
 
 #include "linkunit.h"
 
-
-/** [public]
+/*!
+ * \class LinkUnit
+ * \brief Базовый класс хранящий информацию о сервере.
  * 
+ * Хранит безопасный указатель на сервис \a DaemonService и адрес сервера.
+ * \sa UserUnit
+ */
+
+/*!
+ * \brief Конструктор класса LinkUnit.
  */
 LinkUnit::LinkUnit(const QString &host, DaemonService *service)
 {

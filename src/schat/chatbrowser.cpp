@@ -20,9 +20,13 @@
 
 #include "chatbrowser.h"
 
+/*!
+ * \class ChatBrowser
+ * \brief Обеспечивает отображение текста в чате.
+ */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса ChatBrowser.
  */
 ChatBrowser::ChatBrowser(QWidget *parent)
   : QTextBrowser(parent)

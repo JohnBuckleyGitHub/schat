@@ -21,9 +21,14 @@
 
 #include "log.h"
 
-
-/** [public]
+/*!
+ * \class Log
+ * \brief Предоставляет возможность записи в лог.
  * 
+ */
+
+/*!
+ * \brief Конструктор класса Log.
  */
 Log::Log(QObject *parent)
   : QObject(parent)

@@ -21,8 +21,15 @@
 #include "networkreader.h"
 
 
-/** [public]
+/*!
+ * \class NetworkReader
+ * \brief Низкоуровневый класс для чтения xml-файла сети.
  * 
+ * \sa Network
+ */
+
+/*!
+ * \brief Конструктор класса NetworkReader.
  */
 NetworkReader::NetworkReader()
 {
@@ -106,7 +113,7 @@ void NetworkReader::readNetwork()
 
 
 /** [private]
- * Функция читает список серверов сети (элемент <host>) в список `m_servers`.
+ * Функция читает список серверов сети (элемент host) в список `m_servers`.
  * Адрес сервера может быть вида: "адрес:порт",
  * если порт не указан, используется стандартный 7666.
  */
