@@ -251,22 +251,6 @@ void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const 
 /** [public slots]
  * 
  */
-void DaemonService::sendNewLink(quint8 numeric, const QString &network, const QString &ip)
-{
-#ifdef SCHAT_DEBUG
-  qDebug() << "DaemonService::sendNewLink()" << numeric << network << ip;
-#endif
-  
-  if (m_flag == FlagLink && numeric == m_numeric)
-    return;
-  
-  send(OpcodeNewLink, numeric, network, ip);
-}
-
-
-/** [public slots]
- * 
- */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
 #ifdef SCHAT_DEBUG
