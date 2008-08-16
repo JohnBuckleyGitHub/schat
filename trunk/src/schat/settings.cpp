@@ -24,9 +24,13 @@
 #include "settings.h"
 #include "version.h"
 
+/*!
+ * \class Settings
+ * \brief Класс читает и записывает настройки клиента.
+ */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса Settings.
  */
 Settings::Settings(AbstractProfile *p, QObject *parent)
   : QObject(parent)

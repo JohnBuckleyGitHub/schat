@@ -25,8 +25,13 @@
 #include "welcomedialog.h"
 
 
-/** [public]
- * Конструктор
+/*!
+ * \class WelcomeDialog
+ * \brief Диалог приветствия.
+ */
+
+/*!
+ * \brief Конструктор класса WelcomeDialog.
  */
 WelcomeDialog::WelcomeDialog(Settings *settings, AbstractProfile *profile, QWidget *parent)
   : QDialog(parent)
