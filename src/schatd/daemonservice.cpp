@@ -22,6 +22,12 @@
 #include "daemonservice.h"
 #include "abstractprofile.h"
 
+/*!
+ * \class DaemonService
+ * \brief Универсальный класс, обслуживающий клиентов.
+ * 
+ * При наличии валидного сокета, инициализируется сокет.
+ */
 
 /** [public]
  * 
@@ -29,8 +35,10 @@
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 : QObject(parent), m_socket(socket)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::KONSTRUCTOR";
-  
+#endif
+
   if (m_socket) {
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
