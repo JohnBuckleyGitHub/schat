@@ -47,7 +47,7 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
     m_pings = 0;
-    m_ping.start(6000);
+    m_ping.start(5000);
     m_numeric = 0;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
@@ -363,7 +363,7 @@ void DaemonService::sendRelayMessage(const QString &channel, const QString &send
 void DaemonService::ping()
 { 
   if (m_accepted) {
-    if (m_pings < 1) {
+    if (m_pings < 2) {
       send(OpcodePing);
       ++m_pings;
     }

@@ -38,7 +38,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_accepted = false;
   m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
-  m_ping.setInterval(8000);
+  m_ping.setInterval(15000);
   
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));

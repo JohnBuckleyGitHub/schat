@@ -429,7 +429,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
  */
 void SChatWindow::linkLeave(quint8 numeric, const QString &network, const QString &ip)
 {
-  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b>, numeric: %3</i>").arg(ip).arg(network).arg(numeric));
+  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b></i>").arg(ip).arg(network));
 }
 
 
@@ -461,7 +461,7 @@ void SChatWindow::messageClicked()
  */
 void SChatWindow::newLink(quint8 numeric, const QString &network, const QString &ip)
 {
-  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b>, numeric: %3</i>").arg(ip).arg(network).arg(numeric)); // FIXME убрать numeric
+  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(ip).arg(network)); // FIXME убрать numeric
 }
 
 
