@@ -21,7 +21,14 @@
 #include "abstractprofile.h"
 #include "profilewidget.h"
 
+/*!
+ * \class ProfileWidget
+ * \brief Виджет обеспечивающий редактирование собственного профиля.
+ */
 
+/*!
+ * \brief Конструктор класса ProfileWidget.
+ */
 ProfileWidget::ProfileWidget(AbstractProfile *p, QWidget *parent)
   : QWidget(parent)
 {

@@ -30,9 +30,13 @@
 #include "version.h"
 #include "welcomedialog.h"
 
+/*!
+ * \class SChatWindow
+ * \brief Главное окно чата.
+ */
 
-/** [public]
- * 
+/*!
+ * \brief Конструктор класса SChatWindow.
  */
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)

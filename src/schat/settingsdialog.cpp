@@ -1,8 +1,20 @@
 /* $Id$
- * Simple Chat
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include <QtGui>
 
 #include "networkwidget.h"
@@ -12,9 +24,8 @@
 #include "settingsdialog.h"
 #include "abstractprofile.h"
 
-
-/** [SettingsDialog/public]
- * Конструктор SettingsDialog
+/*!
+ * \brief Конструктор класса SettingsDialog.
  */
 SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
   : QDialog(parent)
@@ -149,8 +160,8 @@ void SettingsDialog::reset()
 
 
 
-/** [ProfileSettings/public]
- * Конструктор `ProfileSettings`
+/*!
+ * \brief Конструктор класса ProfileSettings.
  */
 ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent)
   : QWidget(parent)
@@ -211,8 +222,8 @@ void ProfileSettings::save()
 
 
 
-/** [NetworkSettings/public]
- * Конструктор `NetworkSettings`
+/*!
+ * \brief Конструктор класса NetworkSettings.
  */
 NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   : QWidget(parent)
@@ -266,8 +277,8 @@ void NetworkSettings::save()
 
 
 
-/** [InterfaceSettings/public]
- * Конструктор `InterfaceSettings`
+/*!
+ * \brief Конструктор класса InterfaceSettings.
  */
 InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
   : QWidget(parent)
@@ -313,8 +324,8 @@ void InterfaceSettings::save()
 
 
 
-/** [UpdateSettings/public]
- * Конструктор `InterfaceSettings`
+/*!
+ * \brief Конструктор класса UpdateSettings.
  */
 #ifdef SCHAT_UPDATE
 UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
