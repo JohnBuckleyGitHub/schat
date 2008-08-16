@@ -98,6 +98,14 @@ private:
   quint8 m_remoteNumeric;
 };
 
+/*! \fn void Daemon::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
+ * \brief Уведомление об отключении от данного сервера другого сервера.
+ * 
+ * \param numeric Номер сервера подключившегося к сети.
+ * \param network Название сети.
+ * \param ip Адрес сервера
+ */
+
 /*! \fn void Daemon::sendNewLink(quint8 numeric, const QString &network, const QString &ip)
  * \brief Уведомление о подключении к данному серверу другого сервера.
  * 
