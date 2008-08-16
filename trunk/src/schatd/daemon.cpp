@@ -32,8 +32,15 @@
 #include "version.h"
 
 
-/** [public]
+/*!
+ * \class Daemon
+ * \brief Сервер чата
  * 
+ * Класс полностью включает в себя функциональность сервера чата.
+ */
+
+/*!
+ * Создаёт класс Daemon.
  */
 Daemon::Daemon(QObject *parent)
   : QObject(parent)
@@ -44,8 +51,13 @@ Daemon::Daemon(QObject *parent)
 }
 
 
-/** [public]
- * Запуск демона, возвращает `true` в случае успешного запуска, и `false` не успешного.
+/*!
+ * \brief Запуск сервера.
+ * 
+ * Функция читает настройки сервера, устанавливает параметры логирования каналов
+ * и производит запуск сервера \a m_server.
+ * Данные о попытке запуска заносятся в лог файл.
+ * \return \a true в случае успешного запуска, и \a false при возникновении любой ошибки.
  */
 bool Daemon::start()
 {
@@ -87,9 +99,11 @@ bool Daemon::start()
 }
 
 
-/** [public slots]
- * Слот вызывается сигналом `newConnection()` от объекта `QTcpServer m_server`.
- * При наличии ожидающих соединений создаётся сервис `DaemonService` для обслуживания клинета. * 
+/*!
+ * \brief Обслуживание нового входящего соединения.
+ * 
+ * При наличии ожидающего соединения создаётся класс DaemonService получающий указатель на \a QTcpSocket.
+ * Функция также создаёт базовые соединения сигнал/слот, общие для клиентского и межсерверного соединения.
  */
 void Daemon::incomingConnection()
 {
@@ -105,8 +119,27 @@ void Daemon::incomingConnection()
 }
 
 
-/** [private slots]
- * Слот вызывается когда клиентский сервис теряет соединение с сервером.
+/*!
+ * \brief Уведомление об успешном установлении связи с вышестоящим сервером.
+ * 
+ * Функция устанавливает номер вышестоящего сервера и добавляет его номер в список номеров.
+ * \param network Параметр игнорируется и не используется.
+ * \param server Параметр игнорируется и не используется.
+ * \param numeric Номер вышестоящего сервера.
+ */
+void Daemon::clientAccessGranted(const QString &/*network*/, const QString &/*server*/, quint16 numeric)
+{
+  m_remoteNumeric = numeric;
+  m_numerics << numeric;
+}
+
+
+/*!
+ * \brief Обработка потери соединения с вышестоящим сервером.
+ * 
+ * Функция сбрасывает \a m_remoteNumeric, удаляет не существующие больше номера серверов из \a m_numerics
+ * и пользователей, которые были к ним подключены из \a m_users с рассылкой сигнала об отключении пользователя.
+ * \param echo Параметр игнорируется и не используется.
  */
 void Daemon::clientServiceLeave(bool /*echo*/)
 {
@@ -114,7 +147,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
   m_numerics.clear();
   m_numerics << m_numeric;
   m_numerics += m_links.keys();
-  
+
   QHashIterator<QString, UserUnit *> i(m_users);
   while (i.hasNext()) {
     i.next();
@@ -124,8 +157,14 @@ void Daemon::clientServiceLeave(bool /*echo*/)
 }
 
 
-/** [private slots]
- * Слот вызывается когда клиентский сервис получает пакет `OpcodeNewUser`.
+/*!
+ * \brief Синхронизация события подключения к удалённому серверу нового пользователя.
+ * 
+ * Слот вызывается при получении пакета \b OpcodeNewUser от локального клиентского подключения либо от удалённого сервера.
+ * Функция вносит нового пользователя в список \a m_users и высылает уведомление.
+ * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param echo Параметр игнорируется и не используется.
+ * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
 {
@@ -138,21 +177,33 @@ void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 nu
 }
 
 
-/** [private slots]
+/*!
+ * \brief Уведомление о завершении передачи списка пользователей от вышестоящего сервера.
  * 
+ * Функция высылает в ответ список локальных пользователей.
  */
 void Daemon::clientSyncUsersEnd()
 {
-  qDebug() << "Daemon::clientSyncUsersEnd()";
-  sendAllUsers();
+  if (m_remoteNumeric) {
+    QHashIterator<QString, UserUnit *> i(m_users);
+    while (i.hasNext()) {
+      i.next();
+      quint8 numeric = i.value()->numeric();
+      if (numeric == m_numeric || m_links.contains(numeric))
+        m_link->sendNewUser(i.value()->profile()->pack(), 0, numeric);
+    }
+  }
 }
 
 
-/** [private slots]
- * Сигналы:
- * `ClientService m_link`  SIGNAL(userLeave(const QString &, const QString &, quint8))
- * `DaemonService service` SIGNAL(userLeave(const QString &, const QString &, quint8))
+/*!
+ * \brief Синхронизация события отключения пользователя от удалённого сервера.
  * 
+ * Функция устанавливает в профиле пользователя новое сообщение о выходе и вызывает функцию userLeave(const QString &nick).
+ * \param nick Ник пользователя.
+ * \param bye Сообщение о выходе.
+ * \param flag Параметр игнорируется и не используется.
+ * \sa userLeave(const QString &nick)
  */
 void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
 {
@@ -163,12 +214,14 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
 }
 
 
-/** [private slots]
- * Слот вызывается сигналом `greeting(const QStringList &)` от сервиса ожидающего
- * проверки приветствия (проверка на дубдикат ников).
- * В случае успеха сервис уведомляется (`accessGranted()`) об этом, добавляется в список пользователей
- * и высылается сигнал `newUser(const QStringList &list)`.
- * В случае дубликата ников высылается код ошибки `ErrorNickAlreadyUse`.
+/*!
+ * \brief Обработка приветствия от подключенного клиента.
+ * 
+ * В зависимости от значения \a flag вызывается функция greetingLink(const QStringList &list, DaemonService *service) для сервера
+ * либо greetingUser(const QStringList &list, DaemonService *service) для клиента.
+ * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param flag Флаг подключения.
+ * \sa greetingLink(const QStringList &list, DaemonService *service), greetingUser(const QStringList &list, DaemonService *service)
  */
 void Daemon::greeting(const QStringList &list, quint8 flag)
 {
@@ -182,16 +235,6 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
       greetingLink(list, service);
     else
       greetingUser(list, service);
-}
-
-
-/** [private slots]
- * 
- */
-void Daemon::linkAccessGranted(const QString &/*network*/, const QString &/*server*/, quint16 numeric)
-{
-  m_remoteNumeric = numeric;
-  m_numerics << numeric;
 }
 
 
@@ -370,10 +413,13 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   }
 }
 
-/** [private slots]
- * Слот вызывается сигналом `leave(const QString &)` из сервиса получившего авторизацию
- * перед удалением.
- * Пользователь удаляется из списка пользователей и объект `UserUnit` уничтожается.
+/*!
+ * \brief Обработка отключения авторизированного клиента.
+ * 
+ * В зависимости от значения flag вызывается функция linkLeave(const QString &nick) для сервера либо userLeave(const QString &nick) для клиента.
+ * \param nick Ник пользователя.
+ * \param flag Флаг подключения.
+ * \sa linkLeave(const QString &nick), userLeave(const QString &nick)
  */
 void Daemon::serviceLeave(const QString &nick, quint8 flag)
 {
@@ -614,7 +660,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
       connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
       connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
-      connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(linkAccessGranted(const QString &, const QString &, quint16)));
+      connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(clientAccessGranted(const QString &, const QString &, quint16)));
       connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
       connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
       connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));      
@@ -650,24 +696,6 @@ void Daemon::linkLeave(const QString &nick)
 
       delete unit;
     }
-  }
-}
-
-
-/** [private]
- * 
- */
-void Daemon::sendAllUsers()
-{
-  if (m_remoteNumeric) {
-    QHashIterator<QString, UserUnit *> i(m_users);
-    while (i.hasNext()) {
-      i.next();
-      quint8 numeric = i.value()->numeric();
-      if (numeric == m_numeric || m_links.contains(numeric))
-        m_link->sendNewUser(i.value()->profile()->pack(), 0, numeric);
-    }
-//    service->sendSyncUsersEnd();
   }
 }
 
@@ -709,7 +737,7 @@ void Daemon::userLeave(const QString &nick)
     delete unit;
 
     emit userLeave(nick, bye, 1);
-    
+
     if (m_network && m_remoteNumeric)
       m_link->sendUserLeave(nick, bye, 1);
   }
