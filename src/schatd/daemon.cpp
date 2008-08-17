@@ -167,7 +167,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
-{
+{ /// \todo сделать проверку на коллизию ников.
   QString nick = list.at(AbstractProfile::Nick);
 
   if (!m_users.contains(nick)) {
@@ -266,44 +266,51 @@ void Daemon::linkMessage(const QString &sender, const QString &msg)
   if (m_settings->getBool("ChannelLog"))
     m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
-  emit message(sender, msg);
+  emit sendMessage(sender, msg); /// \test Вспомнить зачем нужна эта функция.
 }
 
 
-/** [private slots]
+/*!
+ * \brief Обработка нового сообщения от пользователя.
  * 
+ * Для всех сообщений проверяется наличие в них команды для сервера.
+ * 
+ * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * \param nick Ник отправителя сообщения.
+ * \param msg Сообщение.
+ * \sa parseCmd(const QString &nick, const QString &msg).
  */
-void Daemon::message(const QString &channel, const QString &_sender, const QString &msg)
+void Daemon::message(const QString &channel, const QString &nick, const QString &msg)
 {
 #ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << _sender << msg;
+  qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << nick << msg;
 #endif
-  
+
   if (channel.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
-      m_channelLog->msg(tr("%1: %2").arg(_sender).arg(msg));
-    
-    if (!parseCmd(_sender, msg)) {
-      emit message(_sender, msg);
+      m_channelLog->msg(tr("%1: %2").arg(nick).arg(msg));
+
+    if (!parseCmd(nick, msg)) {
+      emit sendMessage(nick, msg);
       if (m_network) {
-        emit sendRelayMessage("", _sender, msg, m_numeric);
-        if (m_network->count() > 0)
-          m_link->sendRelayMessage(channel, _sender, msg, m_numeric);
+        emit sendRelayMessage(channel, nick, msg, m_numeric);
+        if (m_remoteNumeric)
+          m_link->sendRelayMessage(channel, nick, msg, m_numeric);
       }
     }
   }
   else if (m_users.contains(channel)) {
     if (m_settings->getBool("PrivateLog"))
-      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(_sender).arg(channel).arg(msg));
+      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
     
-    if (!parseCmd(_sender, msg)) {
+    if (!parseCmd(nick, msg)) {
       DaemonService *senderService = qobject_cast<DaemonService *>(sender());
       if (senderService)
         senderService->privateMessage(1, channel, msg);
       
       DaemonService *service = m_users.value(channel)->service();
       if (service)
-        service->privateMessage(0, _sender, msg);
+        service->privateMessage(0, nick, msg);
     }
   }
 }
@@ -416,7 +423,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
     if (m_settings->getBool("ChannelLog"))
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
-    emit message(sender, msg);
+    emit sendMessage(sender, msg);
     emit sendRelayMessage("", sender, msg, numeric);
 //    if (m_network)
 //      if (m_network->count() > 0 && m_links.contains(numeric))
@@ -458,8 +465,12 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
-/** [private]
+/*!
+ * \brief Обработка команд предназначенных для сервера.
  * 
+ * \param nick Ник пользователя отправившего сообщение.
+ * \param msg Сообщение.
+ * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
@@ -628,7 +639,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
-    connect(this, SIGNAL(message(const QString &, const QString &)), service, SLOT(message(const QString &, const QString &)));
+    connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
     service->accessGranted(m_numeric);
     emit newUser(list, 1, m_numeric);
   
