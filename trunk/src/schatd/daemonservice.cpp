@@ -161,10 +161,10 @@ void DaemonService::disconnected()
 /** [public slots]
  * Отправка пакета с опкодом `OpcodeMessage`.
  */
-void DaemonService::message(const QString &sender, const QString &message)
-{
-  send(OpcodeMessage, sender, message);
-}
+//void DaemonService::message(const QString &sender, const QString &message)
+//{
+//  send(OpcodeMessage, sender, message);
+//}
 
 
 /** [public slots]
@@ -596,9 +596,10 @@ void DaemonService::opcodeByeMsg()
 }
 
 
-/** [private]
- * Разбор пакета с опкодом `OpcodeMessage`.
- * В конце разбора высылается сигнал `message(const QString &, const QString &, const QString &)`.
+/*!
+ * \brief Разбор пакета \b OpcodeMessage, полученного от клиента.
+ * 
+ * В случае успеха высылается сигнал message(const QString &channel, const QString &sender, const QString &message).
  */
 void DaemonService::opcodeMessage()
 {
@@ -606,12 +607,16 @@ void DaemonService::opcodeMessage()
   QString p_message;
   m_stream >> p_channel >> p_message;
   m_nextBlockSize = 0;
+
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeMessage()";
   qDebug() << "  CHANNEL:" << p_channel;
   qDebug() << "  SENDER: " << m_profile->nick();
   qDebug() << "  MESSAGE:" << p_message;
 #endif
+  if (p_message.isEmpty())
+    return;
+
   emit message(p_channel, m_profile->nick(), p_message);
 }
 

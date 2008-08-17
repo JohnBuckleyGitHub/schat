@@ -56,10 +56,10 @@ signals:
 
 public slots:
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)   { send(OpcodeLinkLeave, numeric, network, ip); }
+  inline void sendMessage(const QString &sender, const QString &message)                 { send(OpcodeMessage, sender, message); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeNewLink, numeric, network, ip); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)        { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
-  void message(const QString &sender, const QString &message);
   void readyRead();
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
@@ -98,6 +98,14 @@ private:
   quint8 m_flag;
   quint8 m_numeric;
 };
+
+/*! \fn void DaemonService::message(const QString &channel, const QString &sender, const QString &message)
+ * \brief Уведомление о новом сообщении от пользователя.
+ * 
+ * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * \param sender Ник отправителя сообщения.
+ * \param message Сообщение.
+ */
 
 /*! \fn void DaemonService::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
  * \brief Отправка пакета \b OpcodeLinkLeave.
