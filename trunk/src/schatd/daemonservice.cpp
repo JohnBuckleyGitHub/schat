@@ -109,15 +109,6 @@ void DaemonService::accessGranted(quint16 numeric)
 
 
 /** [public]
- * Отправка пакета с опкодом `OpcodePrivateMessage`.
- */
-void DaemonService::privateMessage(quint8 flag, const QString &nick, const QString &message)
-{
-  send(OpcodePrivateMessage, flag, nick, message);
-}
-
-
-/** [public]
  * 
  */
 void DaemonService::quit()
@@ -156,15 +147,6 @@ void DaemonService::disconnected()
   
   deleteLater();
 }
-
-
-/** [public slots]
- * Отправка пакета с опкодом `OpcodeMessage`.
- */
-//void DaemonService::message(const QString &sender, const QString &message)
-//{
-//  send(OpcodeMessage, sender, message);
-//}
 
 
 /** [public slots]

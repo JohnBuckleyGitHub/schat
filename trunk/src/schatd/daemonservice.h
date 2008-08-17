@@ -35,11 +35,11 @@ public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   ~DaemonService();
   bool isReady() const;
-  inline void sendServerMessage(const QString &msg) { send(OpcodeServerMessage, msg); }
-  inline void sendSyncUsersEnd()                    { send(OpcodeSyncUsersEnd); }
+  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
+  inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
+  inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
-  void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void quit();
   void sendNumerics(const QList<quint8> &numerics);
 
@@ -55,10 +55,10 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
-  inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)   { send(OpcodeLinkLeave, numeric, network, ip); }
-  inline void sendMessage(const QString &sender, const QString &message)                 { send(OpcodeMessage, sender, message); }
-  inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeNewLink, numeric, network, ip); }
-  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)        { send(OpcodeUserLeave, flag, nick, bye); }
+  inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
+  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, message); }
+  inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
+  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
   void readyRead();
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
@@ -98,6 +98,14 @@ private:
   quint8 m_flag;
   quint8 m_numeric;
 };
+
+/*! \fn void DaemonService::sendPrivateMessage(quint8 flag, const QString &nick, const QString &message)
+ * \brief Отправка пакета \b OpcodePrivateMessage.
+ * 
+ * \param flag Флаг эха, если 1 то это подтверждение отправки сообщения.
+ * \param nick Ник, отправившего сообщение (flag = 0), ник того кому предназначается сообщение (flag = 1).
+ * \param message Сообщение.
+ */
 
 /*! \fn void DaemonService::message(const QString &channel, const QString &sender, const QString &message)
  * \brief Уведомление о новом сообщении от пользователя.
