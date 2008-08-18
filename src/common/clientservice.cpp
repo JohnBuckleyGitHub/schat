@@ -80,19 +80,18 @@ bool ClientService::isReady() const
 /** [public]
  * 
  */
-bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric)
+bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
 #ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message << numeric;
+  qDebug() << "ClientService::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message;
 #endif
-  
+
   if (isReady()) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0)
         << OpcodeRelayMessage
-        << numeric
         << channel
         << sender
         << message;
@@ -726,20 +725,18 @@ void ClientService::opcodePrivateMessage()
  */
 void ClientService::opcodeRelayMessage()
 {
-  quint8 p_numeric;
   QString p_channel;
   QString p_sender;
   QString p_message;
-  m_stream >> p_numeric >> p_channel >> p_sender >> p_message;
+  m_stream >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
 #ifdef SCHAT_DEBUG
   qDebug() << "ClientService::opcodeRelayMessage()";
   qDebug() << "  CHANNEL:" << p_channel;
   qDebug() << "  SENDER: " << p_sender;
   qDebug() << "  MESSAGE:" << p_message;
-  qDebug() << "  NUMERIC:" << p_numeric;
 #endif
-  emit relayMessage(p_channel, p_sender, p_message, p_numeric);
+  emit relayMessage(p_channel, p_sender, p_message);
 }
 
 

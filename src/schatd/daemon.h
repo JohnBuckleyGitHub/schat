@@ -68,7 +68,7 @@ private slots:
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
-  void relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric = 0);
+  void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag);
   void syncNumerics(const QList<quint8> &numerics);
 

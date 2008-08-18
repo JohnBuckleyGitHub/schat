@@ -288,9 +288,9 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
     if (!parseCmd(nick, msg)) {
       emit sendMessage(nick, msg);
       if (m_network) {
-        emit sendRelayMessage(channel, nick, msg, m_numeric);
+        emit sendRelayMessage(channel, nick, msg);
         if (m_remoteNumeric)
-          m_link->sendRelayMessage(channel, nick, msg, m_numeric);
+          m_link->sendRelayMessage(channel, nick, msg);
       }
     }
   }
@@ -315,11 +315,11 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
         err = false;        
         DaemonService *service = m_links.value(numeric)->service();
         if (service)
-          service->sendRelayMessage(channel, nick, msg, m_numeric);
+          service->sendRelayMessage(channel, nick, msg);
       }
       else if (m_remoteNumeric) {
         err = false;
-        m_link->sendRelayMessage(channel, nick, msg, m_numeric);
+        m_link->sendRelayMessage(channel, nick, msg);
       }
       
       if (!err)
@@ -428,7 +428,7 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
  * \param msg Cообщение.
  * \param numeric Номер сервера на котором находится пользователь отправивший сообщение.
  */
-void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 /*numeric*/)
+void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg)
 {
 #ifdef SCHAT_DEBUG
   qDebug() << "Daemon::relayMessage()" << channel << sender << msg;
@@ -442,12 +442,22 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
     emit sendMessage(sender, msg);
-    emit sendRelayMessage("", sender, msg, m_numeric);
+
+    if (m_users.contains(sender)) {
+      quint8 senderNum = m_users.value(sender)->numeric();
+
+      QHashIterator<quint8, LinkUnit *> i(m_links);
+      while (i.hasNext()) {
+        i.next();
+        if (i.key() != senderNum && i.value()->service())
+          i.value()->service()->sendRelayMessage("", sender, msg);
+      }
+    }
     return;
   }
 
   quint8 numeric = m_users.value(channel)->numeric();
-  
+
   if (m_settings->getBool("PrivateLog"))
     m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
 
@@ -459,7 +469,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   else if (m_links.contains(numeric)) {
     DaemonService *service = m_links.value(numeric)->service();
     if (service)
-      service->sendRelayMessage(channel, sender, msg, numeric);
+      service->sendRelayMessage(channel, sender, msg);
   }
 }
 
@@ -625,10 +635,10 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
       if (!m_numerics.contains(numeric)) {
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         m_numerics << numeric;
-        connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
+        connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
         connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
-        connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &, quint8)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &, quint8)));
+        connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
@@ -729,7 +739,7 @@ void Daemon::link()
       m_link = new ClientService(m_profile, m_network, this);
       connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
       connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
-      connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &, quint8)), SLOT(relayMessage(const QString &, const QString &, const QString &, quint8)));
+      connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
       connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
       connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(clientAccessGranted(const QString &, const QString &, quint16)));
