@@ -256,9 +256,19 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
 
 
 /*!
- * \brief Обработка нового сообщения от пользователя.
+ * \brief Обработка нового сообщения от локального пользователя.
  * 
  * Для всех сообщений проверяется наличие в них команды для сервера.
+ * 
+ * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал.
+ * Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
+ * 
+ * Отправка приватных сообщений производится различными способами в зависимости от того к какому серверу подключен получатель.
+ * Получатель может быть:
+ *  - Подключенным локально к этому серверу (numeric == m_numeric).
+ *  - Подключенным к одному из серверов подключенных к данному серверу (m_links.contains(numeric)).
+ *  - Подключенным к серверу к которому невозможно обратится на прямую, в этом случае при наличии клиентского подключения,
+ * сообщение передаётся на вышестоящий сервер.
  * 
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param nick Ник отправителя сообщения.
@@ -289,15 +299,31 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
 
     if (!parseCmd(nick, msg)) {
-      if (m_users.value(channel)->numeric() == m_numeric) {
-        DaemonService *senderService = qobject_cast<DaemonService *>(sender());
-        if (senderService)
-          senderService->sendPrivateMessage(1, channel, msg);
-
+      quint16 numeric = m_users.value(channel)->numeric();
+      DaemonService *senderService = qobject_cast<DaemonService *>(sender());
+      if (!senderService)
+        return;
+      bool err = true;
+      
+      if (numeric == m_numeric) {
+        err = false;
         DaemonService *service = m_users.value(channel)->service();
         if (service)
           service->sendPrivateMessage(0, nick, msg);
-      } /// \todo Реализовать синхронизацию приватных сообщений.
+      }
+      else if (m_links.contains(numeric)) {
+        err = false;        
+        DaemonService *service = m_links.value(numeric)->service();
+        if (service)
+          service->sendRelayMessage(channel, nick, msg, m_numeric);
+      }
+      else if (m_remoteNumeric) {
+        err = false;
+        m_link->sendRelayMessage(channel, nick, msg, m_numeric);
+      }
+      
+      if (!err)
+        senderService->sendPrivateMessage(1, channel, msg);
     }
   }
 }
@@ -391,15 +417,21 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
 /*!
  * \brief Обработка сообщения пользователя полученного с другого сервера.
  * 
+ * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал. Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
+ * 
+ * Отправка приватных сообщений произовдится различными способами в зависимости от того к какому серверу подключен получатель. Получатель может быть:
+ *  - Подключенным локально к этому серверу (numeric == m_numeric).
+ *  - Подключенным к одному из серверов подкюченных к данному серверу (m_links.contains(numeric)).
+ * 
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param sender  Ник отправителся.
  * \param msg Cообщение.
  * \param numeric Номер сервера на котором находится пользователь отправивший сообщение.
  */
-void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 numeric)
+void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg, quint8 /*numeric*/)
 {
 #ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::relayMessage()" << channel << sender << msg << numeric;
+  qDebug() << "Daemon::relayMessage()" << channel << sender << msg;
 #endif
 
   if (!m_network)
@@ -410,8 +442,25 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
     emit sendMessage(sender, msg);
-    emit sendRelayMessage("", sender, msg, numeric);
-  } /// \todo Добавить поддержку приватных сообщений.
+    emit sendRelayMessage("", sender, msg, m_numeric);
+    return;
+  }
+
+  quint8 numeric = m_users.value(channel)->numeric();
+  
+  if (m_settings->getBool("PrivateLog"))
+    m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
+
+  if (numeric == m_numeric) {
+    DaemonService *service = m_users.value(channel)->service();
+    if (service)
+      service->sendPrivateMessage(0, sender, msg);
+  }
+  else if (m_links.contains(numeric)) {
+    DaemonService *service = m_links.value(numeric)->service();
+    if (service)
+      service->sendRelayMessage(channel, sender, msg, numeric);
+  }
 }
 
 
@@ -455,13 +504,14 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
  * \param nick Ник пользователя отправившего сообщение.
  * \param msg Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
+ * \todo Доработать команду /server info и добавить команду /servers
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
   if (!m_users.contains(nick))
     return false;
 
-  // Команда "/server info"
+  /// Команда "/server info"
   if (msg.startsWith("/server info", Qt::CaseInsensitive)) {
     DaemonService *service = m_users.value(nick)->service();
     if (service) {

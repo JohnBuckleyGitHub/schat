@@ -293,8 +293,8 @@ void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
  */
 void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric)
 {
-  if (numeric == m_numeric)
-    return;
+//  if (numeric == m_numeric)
+//    return;
 
   if (isReady()) {
     QByteArray block;
