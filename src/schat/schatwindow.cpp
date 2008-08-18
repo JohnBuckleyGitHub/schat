@@ -490,21 +490,28 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
       tab->browser->msgChangedNick(gender, nick, newNick);
     }
     
-    newProfile(gender, newNick, name, false);
+    newProfile(gender, newNick, name);
     
     mainChannel->browser->msgChangedNick(gender, nick, newNick);
   }  
 }
 
 
-/** [private slots]
+/*!
+ * \brief Обработка изменения профиля пользователя.
  * 
+ * При наличии пользователя в списке функция обновляет информацию о пользователе,
+ * а также если имеются открытые приваты, то вкладка также обновляется.
+ * 
+ * \param gender Новый пол пользователя.
+ * \param nick Ник пользователя.
+ * \param name Новое полное имя.
  */
-void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name, bool echo)
+void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name)
 {
   QStandardItem *item = findItem(nick);
-  
-  if (item) {
+
+  if (item) {    
     AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
     profile.setGender(gender);
     profile.setNick(nick);
@@ -512,21 +519,16 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
     item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
     item->setToolTip(userToolTip(profile));
     item->setData(profile.pack(), Qt::UserRole + 1);
-    
+
     int index = tabIndex(nick);
     if (index != -1) {
       m_tabs->setTabToolTip(index, userToolTip(profile));
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       tab->icon.addFile(":/images/" + profile.gender() + ".png");
-      
+
       if (!tab->notice)
         m_tabs->setTabIcon(index, tab->icon);
-      
-      if (echo)
-        tab->browser->msgChangedProfile(profile.genderNum(), nick);
     }
-    if (echo)
-      mainChannel->browser->msgChangedProfile(profile.genderNum(), nick);
   }
 }
 
@@ -1033,7 +1035,7 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
   connect(m_clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
   connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &, bool)), SLOT(newProfile(quint8, const QString &, const QString &, bool)));
+  connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
 }

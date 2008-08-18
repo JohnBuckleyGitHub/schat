@@ -648,24 +648,27 @@ void ClientService::opcodeNewNick()
 }
 
 
-/** [private]
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
  * 
+ * В случае успешного разбора пакета высылается сигнал newProfile(quint8 gender, const QString &nick, const QString &name).
  */
 void ClientService::opcodeNewProfile()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::opcodeNewProfile()";
-  
+#endif
+
   quint8 p_gender;
   QString p_nick;
   QString p_name;
   m_stream >> p_gender >> p_nick >> p_name;
   m_nextBlockSize = 0;
-  
-  bool echo = true;
-  if (m_profile->nick() == p_nick)
-    echo = false;
-  
-  emit newProfile(p_gender, p_nick, p_name, echo);
+
+  if (p_nick.isEmpty())
+    return;
+
+  emit newProfile(p_gender, p_nick, p_name);
 }
 
 
