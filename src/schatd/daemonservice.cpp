@@ -653,8 +653,10 @@ void DaemonService::opcodePong()
 }
 
 
-/** [private]
- * Разбор пакета с опкодом `OpcodeRelayMessage`.
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeRelayMessage.
+ * 
+ * В случае успеха высылается сигнал void relayMessage(const QString &channel, const QString &sender, const QString &message).
  */
 void DaemonService::opcodeRelayMessage()
 {
@@ -669,6 +671,12 @@ void DaemonService::opcodeRelayMessage()
   qDebug() << "  SENDER: " << p_sender;
   qDebug() << "  MESSAGE:" << p_message;
 #endif
+  if (p_sender.isEmpty())
+    return;
+
+  if (p_message.isEmpty())
+    return;
+
   emit relayMessage(p_channel, p_sender, p_message);
 }
 
