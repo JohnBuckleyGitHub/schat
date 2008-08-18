@@ -426,7 +426,6 @@ void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param sender  Ник отправителся.
  * \param msg Cообщение.
- * \param numeric Номер сервера на котором находится пользователь отправивший сообщение.
  */
 void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg)
 {

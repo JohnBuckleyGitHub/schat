@@ -41,12 +41,12 @@
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  centralWidget = new QWidget(this);  
+  centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
   lineEdit      = new QLineEdit(centralWidget);
   m_tabs        = new QTabWidget(splitter);
   rightWidget   = new QWidget(splitter);
-  listView      = new QListView(rightWidget);  
+  listView      = new QListView(rightWidget);
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
   sendLayout    = new QHBoxLayout;
