@@ -100,7 +100,7 @@ static const quint16 OpcodeServerMessage             = 202;
  * QString -> ник отправителся
  * QString -> сообщение
  * ОТПРАВИТЕЛЬ: ---------------
- * Клиент
+ * Сервер, Клиент
  */
 static const quint16 OpcodeRelayMessage              = 205;
 
