@@ -599,19 +599,26 @@ void DaemonService::opcodeMessage()
 }
 
 
-/** [private]
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
+ * 
  * 
  */
 void DaemonService::opcodeNewProfile()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeNewProfile()";
-  
+#endif
+
   quint8 p_gender;
   QString p_nick;
   QString p_name;
   m_stream >> p_gender >> p_nick >> p_name;
   m_nextBlockSize = 0;
-  
+
+  if (p_nick.isEmpty())
+    return;
+
   if (m_profile->nick() == p_nick)
     emit newProfile(p_gender, m_profile->nick(), p_name);
   else

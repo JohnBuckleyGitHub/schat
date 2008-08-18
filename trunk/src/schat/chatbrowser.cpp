@@ -78,18 +78,6 @@ void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QStr
 /** [public]
  * 
  */
-void ChatBrowser::msgChangedProfile(quint16 sex, const QString &nick)
-{
-  if (sex)
-    msg(tr("<i class='gr'><b>%1</b> изменила свой профиль</i>").arg(Qt::escape(nick)));
-  else
-    msg(tr("<i class='gr'><b>%1</b> изменил свой профиль</i>").arg(Qt::escape(nick)));
-}
-
-
-/** [public]
- * 
- */
 void ChatBrowser::msgDisconnect()
 {
   msg(tr("<i class='err'>Соединение разорвано</i>"));

@@ -58,7 +58,7 @@ signals:
   void message(const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
-  void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
+  void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);

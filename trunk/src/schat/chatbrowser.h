@@ -35,7 +35,6 @@ public:
   void msg(const QString &text);
   void msgBadNickName(const QString &nick);
   void msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
-  void msgChangedProfile(quint16 sex, const QString &nick);
   void msgDisconnect();
   void msgNewParticipant(quint8 sex, const QString &nick);
   void msgOldClientProtocol();
