@@ -683,8 +683,10 @@ void SChatWindow::returnPressed()
 }
 
 
-/** [private slots]
+/*!
+ * \brief Показ сообщения от сервера.
  * 
+ * \todo Сделать показ сообщения в активной вкладке.
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
