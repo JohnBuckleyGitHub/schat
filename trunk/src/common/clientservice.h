@@ -40,7 +40,7 @@ public:
   ~ClientService();
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
-  bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
+  bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   inline void sendByeMsg()                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg) { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
@@ -61,7 +61,7 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name, bool echo);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
-  void relayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
+  void relayMessage(const QString &channel, const QString &sender, const QString &message);
   void serverMessage(const QString &msg);
   void syncNumerics(const QList<quint8> &numerics);
   void syncUsersEnd();

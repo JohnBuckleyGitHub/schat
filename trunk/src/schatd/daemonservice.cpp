@@ -291,18 +291,14 @@ void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
 /** [public slots]
  * 
  */
-void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric)
+void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
-//  if (numeric == m_numeric)
-//    return;
-
   if (isReady()) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0)
         << OpcodeRelayMessage
-        << numeric
         << channel
         << sender
         << message;
@@ -662,11 +658,10 @@ void DaemonService::opcodePong()
  */
 void DaemonService::opcodeRelayMessage()
 {
-  quint8 p_numeric;
   QString p_channel;
   QString p_sender;
   QString p_message;
-  m_stream >> p_numeric >> p_channel >> p_sender >> p_message;
+  m_stream >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::opcodeRelayMessage()";
@@ -674,7 +669,7 @@ void DaemonService::opcodeRelayMessage()
   qDebug() << "  SENDER: " << p_sender;
   qDebug() << "  MESSAGE:" << p_message;
 #endif
-  emit relayMessage(p_channel, p_sender, p_message, p_numeric);
+  emit relayMessage(p_channel, p_sender, p_message);
 }
 
 
