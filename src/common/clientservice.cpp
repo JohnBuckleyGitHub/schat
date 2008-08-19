@@ -521,6 +521,23 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
 }
 
 
+bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << gender << nick << nNick << name; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
 /** [private]
  * Функция создаёт сокет `m_socket` и создаёт необходимые соединения сигнал-слот.
  * ВНИМАНИЕ: функция не проверяет наличие сокета `m_socket`, это должно делаться за пределами функции.

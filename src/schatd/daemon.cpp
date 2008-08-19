@@ -357,63 +357,6 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 }
 
 
-/** [private slots]
- * 
- */
-void Daemon::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
-{
-  qDebug() << "Daemon::newNick()";
-  
-  if (!m_users.contains(nick))
-    return;
-  
-  if (m_users.contains(newNick)) {
-    DaemonService *service = qobject_cast<DaemonService *>(sender());
-    if (service)
-      service->quit();
-  }
-  else { 
-    if (m_settings->getBool("ChannelLog"))
-      if (gender)
-        m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(newNick));
-      else
-        m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(newNick));
-    
-    UserUnit *unit = m_users.value(nick);
-    m_users.remove(nick);
-    m_users.insert(newNick, unit);
-    unit->profile()->setGender(gender);
-    unit->profile()->setNick(newNick);
-    unit->profile()->setFullName(name);
-    
-    emit sendNewNick(gender, nick, newNick, name);
-  }
-}
-
-
-/** [private slots]
- * 
- */
-void Daemon::newProfile(quint8 gender, const QString &nick, const QString &name)
-{
-  qDebug() << "Daemon::newProfile()";
-  
-  if (!m_users.contains(nick))
-    return;
-  
-  if (m_settings->getBool("ChannelLog"))
-    if (gender)
-      m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
-    else
-      m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
-  
-  UserUnit *unit = m_users.value(nick);
-  unit->profile()->setGender(gender);
-  unit->profile()->setFullName(name);
-  emit sendNewProfile(gender, nick, name);
-}
-
-
 /*!
  * \brief Обработка сообщения пользователя полученного с другого сервера.
  * 
@@ -499,7 +442,6 @@ void Daemon::serviceLeave(const QString &nick, quint8 flag)
  */
 void Daemon::syncNumerics(const QList<quint8> &numerics)
 {
-  qDebug() << "Daemon::syncNumerics()" << numerics;
   foreach (quint8 numeric, numerics) {
     if (!m_numerics.contains(numeric))
       m_numerics << numeric;
@@ -634,10 +576,12 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
       if (!m_numerics.contains(numeric)) {
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
         m_numerics << numeric;
+        connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
         connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
+        connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
@@ -744,7 +688,8 @@ void Daemon::link()
       connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(clientAccessGranted(const QString &, const QString &, quint16)));
       connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
       connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
-      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));      
+      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
+      connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
       m_link->connectToHost();
     }
   }
@@ -798,6 +743,68 @@ void Daemon::sendAllUsers(DaemonService *service)
       service->sendNewUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
     service->sendSyncUsersEnd();
+  }
+}
+
+
+/*!
+ * \brief Универсальная функция для обработки изменения профиля и/или ника пользователя.
+ * 
+ * \param gender Новый пол пользователя.
+ * \param nick Старый ник пользователя.
+ * \param nNick Новый ник пользователя, может быть пустой строкой, что означает что ник не изменился.
+ * \param name Новое полное имя пользователя.
+ * \param local Флаг локального подключения \a true локальное \a false удалённое.
+ */
+void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local)
+{
+  if (!m_users.contains(nick))
+    return;
+
+  if (nNick.isEmpty()) {
+    if (m_settings->getBool("ChannelLog"))
+      if (gender)
+        m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
+      else
+        m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
+
+    UserUnit *unit = m_users.value(nick);
+    unit->profile()->setGender(gender);
+    unit->profile()->setFullName(name);
+    emit sendNewProfile(gender, nick, name);
+    
+    if (m_network) {
+      emit sendSyncProfile(gender, nick, "", name);
+      if (m_remoteNumeric && local)
+        m_link->sendSyncProfile(gender, nick, "", name);
+    }
+  }
+  else if (!m_users.contains(nNick)) {
+    if (m_settings->getBool("ChannelLog"))
+      if (gender)
+        m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(nNick));
+      else
+        m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(nNick));
+
+    UserUnit *unit = m_users.value(nick);
+    m_users.remove(nick);
+    m_users.insert(nNick, unit);
+    unit->profile()->setGender(gender);
+    unit->profile()->setNick(nNick);
+    unit->profile()->setFullName(name);
+
+    emit sendNewNick(gender, nick, nNick, name);
+
+    if (m_network) {
+      emit sendSyncProfile(gender, nick, nNick, name);
+      if (m_remoteNumeric && local)
+        m_link->sendSyncProfile(gender, nick, nNick, name);
+    }
+  }
+  else if (local && m_users.contains(nNick)) {
+    DaemonService *service = qobject_cast<DaemonService *>(sender());
+    if (service)
+      service->quit();
   }
 }
 
