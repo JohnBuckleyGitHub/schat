@@ -202,6 +202,10 @@ void DaemonService::readyRead()
           opcodeUserLeave();
           break;
           
+        case OpcodeNewNick:
+          opcodeNewNick();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -221,7 +225,8 @@ void DaemonService::readyRead()
 }
 
 
-/** [public slots]
+/*!
+ * \brief Отправка пакета с опкодом \b OpcodeNewNick.
  * 
  */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
@@ -229,8 +234,8 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::sendNewNick()";
 #endif
-  
-  if (m_profile->nick() == nick) {
+
+  if (m_profile->nick() == nick && m_flag == FlagNone) {
     m_profile->setGender(gender);
     m_profile->setNick(newNick);
     m_profile->setFullName(name);
@@ -239,7 +244,8 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
 }
 
 
-/** [public slots]
+/*!
+ * \brief Отправка пакета с опкодом \b OpcodeNewProfile.
  * 
  */
 void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QString &name)
@@ -596,6 +602,18 @@ void DaemonService::opcodeMessage()
     return;
 
   emit message(p_channel, m_profile->nick(), p_message);
+}
+
+
+void DaemonService::opcodeNewNick()
+{
+  quint8 p_gender;
+  QString p_nick;
+  QString p_newNick;
+  QString p_name;
+  m_stream >> p_gender >> p_nick >> p_newNick >> p_name;
+  m_nextBlockSize = 0;
+  emit newNick(p_gender, p_nick, p_newNick, p_name);
 }
 
 

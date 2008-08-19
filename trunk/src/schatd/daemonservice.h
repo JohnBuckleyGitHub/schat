@@ -80,6 +80,7 @@ private:
   quint16 verifyGreeting(quint16 version);
   void opcodeByeMsg();
   void opcodeMessage();
+  void opcodeNewNick();
   void opcodeNewProfile();
   void opcodeNewUser();
   void opcodePong();
