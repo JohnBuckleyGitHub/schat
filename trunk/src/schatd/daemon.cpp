@@ -329,16 +329,6 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
 }
 
 
-/** [private slots]
- * 
- */
-void Daemon::newBye(const QString &nick, const QString &bye)
-{
-  if (m_users.contains(nick))
-    m_users.value(nick)->profile()->setByeMsg(bye);
-}
-
-
 /*!
  * \brief Уведомление о подключении к удалённому серверу другого сервера.
  * 
@@ -590,8 +580,10 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
         connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
+        connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
         connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
+        connect(this, SIGNAL(sendSyncBye(const QString &, const QString &)), service, SLOT(sendSyncBye(const QString &, const QString &)));
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
@@ -700,6 +692,7 @@ void Daemon::link()
       connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
       connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
       connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
+      connect(m_link, SIGNAL(syncBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
       m_link->connectToHost();
     }
   }
@@ -741,8 +734,8 @@ void Daemon::linkLeave(const QString &nick)
 }
 
 
-/** [private]
- * Отправка подключившемуся клиенту списка всех пользователей.
+/*!
+ * \brief Отправка подключившемуся клиенту списка всех пользователей.
  */
 void Daemon::sendAllUsers(DaemonService *service)
 {
@@ -753,6 +746,29 @@ void Daemon::sendAllUsers(DaemonService *service)
       service->sendNewUser(i.value()->profile()->pack(), 0, i.value()->numeric());
     }
     service->sendSyncUsersEnd();
+  }
+}
+
+
+/*!
+ * \brief Универсальная функция для обработки изменения сообщения о выходе пользователем.
+ * 
+ * \param nick Ник пользователя.
+ * \param bye Новое сообщение о выходе.
+ * \param local Флаг локального подключения \a true локальное \a false удалённое.
+ */
+void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
+{
+  if (!m_users.contains(nick))
+    return;
+
+  m_users.value(nick)->profile()->setByeMsg(bye);
+
+  if (m_network) {
+    emit sendSyncBye(nick, bye);
+
+    if (m_remoteNumeric && local)
+      m_link->sendSyncBye(nick, bye);
   }
 }
 

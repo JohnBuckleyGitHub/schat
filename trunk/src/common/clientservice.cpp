@@ -407,6 +407,10 @@ void ClientService::readyRead()
           emit syncUsersEnd();
           break;
           
+        case OpcodeSyncByeMsg:
+          opcodeSyncByeMsg();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -484,6 +488,23 @@ bool ClientService::send(quint16 opcode, const QString &msg)
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode << msg; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+bool ClientService::send(quint16 opcode, const QString &str1, const QString &str2)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << str1 << str2; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -777,6 +798,23 @@ void ClientService::opcodeServerMessage()
   m_stream >> p_message;
   m_nextBlockSize = 0;
   emit serverMessage(p_message);
+}
+
+
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeSyncByeMsg.
+ */
+void ClientService::opcodeSyncByeMsg()
+{
+  QString p_nick;
+  QString p_msg;
+  m_stream >> p_nick >> p_msg;
+  m_nextBlockSize = 0;
+
+  if (p_nick.isEmpty())
+    return;
+
+  emit syncBye(p_nick, p_msg);
 }
 
 

@@ -44,6 +44,7 @@ public:
   inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()                                                                               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
+  inline void sendSyncBye(const QString &nick, const QString &bye)                                           { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { send(OpcodeNewNick, gender, nick, nNick, name); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)                            { send(OpcodeUserLeave, flag, nick, bye); }
   void connectToHost();
@@ -64,6 +65,7 @@ signals:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
   void serverMessage(const QString &msg);
+  void syncBye(const QString &nick, const QString &bye);
   void syncNumerics(const QList<quint8> &numerics);
   void syncUsersEnd();
   void unconnected(bool echo = true);
@@ -80,6 +82,7 @@ private slots:
 private:
   bool send(quint16 opcode);
   bool send(quint16 opcode, const QString &msg);
+  bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
   void createSocket();
@@ -95,6 +98,7 @@ private:
   void opcodePrivateMessage();
   void opcodeRelayMessage();
   void opcodeServerMessage();
+  void opcodeSyncByeMsg();
   void opcodeSyncNumerics();
   void opcodeUserLeave();
   void unknownOpcode();

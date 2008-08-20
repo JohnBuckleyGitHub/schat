@@ -206,6 +206,10 @@ void DaemonService::readyRead()
           opcodeNewNick();
           break;
           
+        case OpcodeSyncByeMsg:
+          opcodeSyncByeMsg();
+          break;
+          
         default:
           unknownOpcode();
           break;
@@ -565,13 +569,11 @@ quint16 DaemonService::verifyGreeting(quint16 version)
 }
 
 
-/** [private]
- * Разбор пакета с опкодом `OpcodeByeMsg`.
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
  */
 void DaemonService::opcodeByeMsg()
 {
-  qDebug() << "DaemonService::opcodeByeMsg()";
-  
   QString p_bye;
   m_stream >> p_bye;
   m_nextBlockSize = 0;
@@ -706,9 +708,27 @@ void DaemonService::opcodeRelayMessage()
 }
 
 
-/** [private]
- * Разбор пакета с опкодом `OpcodeUserLeave`.
- * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeSyncByeMsg.
+ */
+void DaemonService::opcodeSyncByeMsg()
+{
+  QString p_nick;
+  QString p_msg;
+  m_stream >> p_nick >> p_msg;
+  m_nextBlockSize = 0;
+
+  if (p_nick.isEmpty())
+    return;
+
+  emit newBye(p_nick, p_msg);
+}
+
+
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeUserLeave.
+ * 
+ * В конце разбора высылается сигнал userLeave(const QString &, const QString &, bool).
  */
 void DaemonService::opcodeUserLeave()
 {
@@ -717,7 +737,7 @@ void DaemonService::opcodeUserLeave()
   QString p_bye;
   m_stream >> p_flag >> p_nick >> p_bye;
   m_nextBlockSize = 0;
-  
+
   emit userLeave(p_nick, p_bye, p_flag);
 }
 
