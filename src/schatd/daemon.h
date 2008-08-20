@@ -50,6 +50,7 @@ signals:
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
+  void sendSyncBye(const QString &nick, const QString &bye);
   void sendSyncProfile(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
@@ -57,8 +58,10 @@ public slots:
   void incomingConnection();
   
 private slots:
+  inline void newBye(const QString &nick, const QString &bye)                                            { syncBye(nick, bye, true); }
   inline void newNick(quint8 gender, const QString &nick, const QString &nNick, const QString &name)     { syncProfile(gender, nick, nNick, name, true); }
   inline void newProfile(quint8 gender, const QString &nick, const QString &name)                        { syncProfile(gender, nick, "", name, true); }
+  inline void syncBye(const QString &nick, const QString &bye)                                           { syncBye(nick, bye, false); }
   inline void syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { syncProfile(gender, nick, nNick, name, false); }
   void clientAccessGranted(const QString &network, const QString &server, quint16 numeric);
   void clientServiceLeave(bool echo = true);
@@ -68,7 +71,6 @@ private slots:
   void greeting(const QStringList &list, quint8 flag);
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void message(const QString &channel, const QString &sender, const QString &message);
-  void newBye(const QString &nick, const QString &bye);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag);
@@ -82,6 +84,7 @@ private:
   void link();
   void linkLeave(const QString &nick);
   void sendAllUsers(DaemonService *service);
+  void syncBye(const QString &nick, const QString &bye, bool local);
   void syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local);
   void userLeave(const QString &nick);
 

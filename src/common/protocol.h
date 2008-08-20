@@ -251,6 +251,18 @@ static const quint16 OpcodeSyncNumerics              = 1100;
  */
 static const quint16 OpcodeSyncUsersEnd              = 1110;
 
+/**
+ * Синхроницазия сообщения о выходе.
+ * ФОРМАТ: --------------------
+ * quint16 -> размер пакета
+ * quint16 -> опкод
+ * QString -> Ник пользователя изменившего сообщение
+ * QString -> Текст сообщения о выходе
+ * ОТПРАВИТЕЛЬ: ---------------
+ * Сервер, Клиент
+ */
+static const quint16 OpcodeSyncByeMsg                = 1120;
+
 
 /**
  * КОДЫ ОШИБОК

@@ -58,6 +58,7 @@ public slots:
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
   inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, message); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
+  inline void sendSyncBye(const QString &nick, const QString &bye)                         { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { send(OpcodeUserLeave, flag, nick, bye); }
   void disconnected();
   void readyRead();
@@ -85,6 +86,7 @@ private:
   void opcodeNewUser();
   void opcodePong();
   void opcodeRelayMessage();
+  void opcodeSyncByeMsg();
   void opcodeUserLeave();
   void unknownOpcode();
 
