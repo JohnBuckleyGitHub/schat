@@ -148,6 +148,8 @@ void Daemon::clientServiceLeave(bool /*echo*/)
   m_numerics << m_numeric;
   m_numerics += m_links.keys();
 
+  emit sendLinkLeave(m_numeric, m_network->name(), m_profile->byeMsg());
+
   QHashIterator<QString, UserUnit *> i(m_users);
   while (i.hasNext()) {
     i.next();
@@ -574,7 +576,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
 
       if (!m_numerics.contains(numeric)) {
-        m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::Host), service));
+        m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
         m_numerics << numeric;
         connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
         connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
@@ -587,7 +589,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
-        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::Host));
+        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
         
         sendAllUsers(service);
 
@@ -664,7 +666,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 void Daemon::link()
 {
   m_numeric = quint8(m_settings->getInt("Numeric"));
-  if (!m_numeric) {
+  if (!m_numeric || m_settings->getString("Name").isEmpty()) {
     m_network = 0;
     return;
   }
@@ -678,6 +680,7 @@ void Daemon::link()
     m_profile = new AbstractProfile(this);
     m_profile->setNick(QString().number(m_settings->getInt("Numeric")));
     m_profile->setFullName(m_network->key());
+    m_profile->setByeMsg(m_settings->getString("Name"));
     m_numerics << m_numeric;
 
     if (m_network->count() > 0) {
