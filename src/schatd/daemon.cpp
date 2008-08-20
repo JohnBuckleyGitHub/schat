@@ -455,7 +455,7 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
  * \param nick Ник пользователя отправившего сообщение.
  * \param msg Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
- * \todo Доработать команду /server info и добавить команду /servers
+ * \todo Добавить команду /servers
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
@@ -477,13 +477,16 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
 }
 
 
-/** [private]
+/*!
+ * \brief Возвращает html форматированную строку содержащую информацию о сервере.
  * 
+ * \return Строка с информацией о сервере.
  */
 QString Daemon::serverInfo() const
 {
-  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, ").arg(SCHAT_VERSION);
-  
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.net.ru'>http://impomezia.net.ru</a>"
+      "<table><tr><td class='info'>Платформа: </td><td><b>").arg(SCHAT_VERSION);
+
 #if   defined(Q_OS_AIX)
   info += "AIX";
 #elif defined(Q_OS_BSD4)
@@ -541,10 +544,17 @@ QString Daemon::serverInfo() const
 #elif defined(Q_OS_WINCE)
   info += "Windows CE";
 #endif
-  
-  info += ", <a href='http://impomezia.net.ru'>http://impomezia.net.ru</a><br />";
-  info += tr("Пользователей в сети: <b>%1</b>").arg(m_users.count());
-  
+
+  info += tr(", Qt %1</b></td></tr>").arg(qVersion());
+
+  if (m_network) {
+    info += tr("<tr><td class='info'>Название сети: </td><td><b>%1</b></td></tr>").arg(m_network->name());
+    info += tr("<tr><td class='info'>Пользователей: </td><td><b>%1</b></td></tr>").arg(m_users.count());
+    info += tr("<tr><td class='info'>Серверов: </td><td><b>%1</b></td></tr></table>").arg(m_numerics.count());
+  }
+  else
+    info += tr("<tr><td class='info'>Пользователей: </td><td><b>%1</b></td></tr></table>").arg(m_users.count());
+
   return info;
 }
 
