@@ -51,4 +51,5 @@ void DaemonSettings::read()
   setInt("Numeric", 0, s);
   setString("ListenAddress", "0.0.0.0", s);
   setString("NetworkFile", "network.xml", s);
+  setString("Name", "", s);
 }
