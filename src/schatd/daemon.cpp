@@ -602,7 +602,6 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         sendAllUsers(service);
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
-        /// \todo Необходимо добавить запись в канальный лог
       }
       else
         err = ErrorNumericAlreadyUse;
