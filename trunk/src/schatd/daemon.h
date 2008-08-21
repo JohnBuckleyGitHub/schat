@@ -89,6 +89,7 @@ private:
   void userLeave(const QString &nick);
 
   AbstractProfile *m_profile;
+  bool m_syncUsers;
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
   ClientService *m_link;

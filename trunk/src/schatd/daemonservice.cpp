@@ -49,6 +49,7 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_pings = 0;
     m_ping.start(5000);
     m_numeric = 0;
+    m_kill = false;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
@@ -111,8 +112,10 @@ void DaemonService::accessGranted(quint16 numeric)
 /** [public]
  * 
  */
-void DaemonService::quit()
+void DaemonService::quit(bool kill)
 {
+  m_kill = kill;
+
   if (isReady())
     m_socket->disconnectFromHost();
 }
@@ -139,12 +142,10 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
  * 
  */
 void DaemonService::disconnected()
-{
-  qDebug() << "DaemonService::disconnected()";
-  
-  if (m_accepted)
+{  
+  if (m_accepted && !m_kill)
     emit leave(m_profile->nick(), m_flag);
-  
+
   deleteLater();
 }
 
