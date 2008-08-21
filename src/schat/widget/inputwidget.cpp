@@ -30,5 +30,8 @@
  */
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
-{  
+{
+  QFont font = currentFont();
+  QFontInfo info(font);
+  setMinimumHeight(info.pixelSize() * 2);
 }

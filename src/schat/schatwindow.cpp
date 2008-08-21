@@ -29,6 +29,7 @@
 #include "tab.h"
 #include "version.h"
 #include "welcomedialog.h"
+#include "widget/sendwidget.h"
 
 /*!
  * \class SChatWindow
@@ -41,9 +42,10 @@
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
+  m_send = new SendWidget(this);
   centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
-  lineEdit      = new QLineEdit(centralWidget);
+//  lineEdit      = new QLineEdit(centralWidget);
   m_tabs        = new QTabWidget(splitter);
   rightWidget   = new QWidget(splitter);
   listView      = new QListView(rightWidget);
@@ -52,7 +54,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   sendLayout    = new QHBoxLayout;
   toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
-  sendButton    = new QToolButton(centralWidget);
+//  sendButton    = new QToolButton(centralWidget);
   statusLabel   = new QLabel(this);
   m_profile     = new AbstractProfile(this);
   settings      = new Settings(m_profile, this);
@@ -69,13 +71,14 @@ SChatWindow::SChatWindow(QWidget *parent)
   rightLayout->setMargin(0);
   rightLayout->setSpacing(4);
   
-  sendLayout->addWidget(lineEdit);
-  sendLayout->addWidget(sendButton);
-  
+//  sendLayout->addWidget(lineEdit);
+//  sendLayout->addWidget(sendButton);
   mainLayout->addWidget(splitter);
-  mainLayout->addLayout(sendLayout);
+  mainLayout->addWidget(m_send);
   mainLayout->setMargin(4);
   mainLayout->setSpacing(3);
+  mainLayout->setStretchFactor(splitter, 99);
+  mainLayout->setStretchFactor(m_send, 1);
   
   setCentralWidget(centralWidget);
   setStatusBar(statusbar);
@@ -102,7 +105,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   createTrayIcon();
   createService();
   
-  connect(lineEdit, SIGNAL(returnPressed()), SLOT(returnPressed()));
+//  connect(lineEdit, SIGNAL(returnPressed()), SLOT(returnPressed()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
@@ -598,21 +601,21 @@ void SChatWindow::returnPressed()
 {
   // Получаем текст и удаляем пустые символы по краям
   // Выходим если текс пустой.
-  QString text = lineEdit->text().trimmed();
-  if (text.isEmpty())
-    return;
-  
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-  
-  if (parseCmd(tab, text))
-    return;
-  
-  if (m_clientService) {
-    QString channel;
-    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-    if (m_clientService->sendMessage(channel, text))
-      lineEdit->clear();
-  }
+//  QString text = lineEdit->text().trimmed();
+//  if (text.isEmpty())
+//    return;
+//  
+//  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+//  
+//  if (parseCmd(tab, text))
+//    return;
+//  
+//  if (m_clientService) {
+//    QString channel;
+//    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
+//    if (m_clientService->sendMessage(channel, text))
+//      lineEdit->clear();
+//  }
 }
 
 
@@ -810,7 +813,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   else
     return false;
   
-  lineEdit->clear();
+//  lineEdit->clear();
   return true;
 }
 
@@ -920,10 +923,10 @@ void SChatWindow::createActions()
   connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
   
   // Отправить сообщение в чат
-  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
-  sendAction->setStatusTip(tr("Отправить сообщение в чат"));
-  sendButton->setDefaultAction(sendAction);
-  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
+//  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
+//  sendAction->setStatusTip(tr("Отправить сообщение в чат"));
+//  sendButton->setDefaultAction(sendAction);
+//  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
   
   // Настройка
   m_settingsButton = new QToolButton(this);
