@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<network version="1.0">
+  <meta>
+    <name>Achim Network (Internet)</name>
+    <site>http://impomezia.net.ru</site>
+    <description>Achim Game Network via Internet</description>
+  </meta>
+  <servers>
+    <host>impomezia.dyndns.org</host>
+  </servers>
+</network>
