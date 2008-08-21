@@ -465,8 +465,10 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
  */
 void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric*/)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "SChatWindow::newUser(const QStringList &, quint8, quint8)" << echo ;
-  
+#endif
+
   AbstractProfile profile(list);
   QString nick = profile.nick();
   
@@ -526,8 +528,10 @@ void SChatWindow::notice()
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &message)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "SChatWindow::privateMessage()" << flag << nick << message;
-  
+#endif
+
   QStandardItem *item = findItem(nick);
   if (!item)
     return;
