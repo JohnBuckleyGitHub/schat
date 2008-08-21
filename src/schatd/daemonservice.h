@@ -40,7 +40,7 @@ public:
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
-  void quit();
+  void quit(bool kill = false);
   void sendNumerics(const QList<quint8> &numerics);
 
 signals:
@@ -92,6 +92,7 @@ private:
 
   AbstractProfile *m_profile;
   bool m_accepted;
+  bool m_kill;
   int m_pings;
   QDataStream m_stream;
   QTcpSocket *m_socket;

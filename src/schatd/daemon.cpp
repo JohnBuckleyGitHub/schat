@@ -47,6 +47,7 @@ Daemon::Daemon(QObject *parent)
 {
   m_settings = new DaemonSettings(this);
   m_remoteNumeric = 0;
+  m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
 }
 
@@ -169,8 +170,15 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
-{ /// \todo сделать проверку на коллизию ников.
+{
   QString nick = list.at(AbstractProfile::Nick);
+
+  if (m_users.contains(nick) && !m_syncUsers) {
+    DaemonService *service = m_users.value(nick)->service();
+    if (service)
+      service->quit(true);
+    userLeave(nick);
+  }
 
   if (!m_users.contains(nick)) {
     m_users.insert(nick, new UserUnit(list, 0, numeric));
@@ -195,6 +203,7 @@ void Daemon::clientSyncUsersEnd()
         m_link->sendNewUser(i.value()->profile()->pack(), 0, numeric);
     }
   }
+  m_syncUsers = true;
 }
 
 
@@ -447,7 +456,6 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
  * \param nick Ник пользователя отправившего сообщение.
  * \param msg Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
- * \todo Добавить команду /servers
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
