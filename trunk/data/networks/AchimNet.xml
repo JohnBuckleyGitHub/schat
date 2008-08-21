@@ -7,5 +7,6 @@
   </meta>
   <servers>
     <host>192.168.5.130</host>
+    <host>192.168.5.1</host>
   </servers>
 </network>
