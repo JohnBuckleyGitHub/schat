@@ -21,12 +21,17 @@
 
 #include <QWidget>
 
+class InputWidget;
+
 class SendWidget : public QWidget
 {
   Q_OBJECT
 
 public:
   SendWidget(QWidget *parent = 0);
+
+private:
+  InputWidget *m_input;
 };
 
 #endif /*SENDWIDGET_H_*/

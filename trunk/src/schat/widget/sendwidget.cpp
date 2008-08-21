@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "widget/inputwidget.h"
 #include "widget/sendwidget.h"
 
 /*!
@@ -30,5 +31,9 @@
  */
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
-{  
+{
+  m_input = new InputWidget(this);
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(m_input);  
+  mainLayout->setMargin(0);
 }

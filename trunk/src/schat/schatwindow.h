@@ -52,6 +52,7 @@ class QTabWidget;
 class QTimer;
 class QToolButton;
 class QVBoxLayout;
+class SendWidget;
 class Settings;
 class Tab;
 class WelcomeDialog;
@@ -135,12 +136,12 @@ private:
   QAction *networkSetAction;
   QAction *profileSetAction;
   QAction *quitAction;
-  QAction *sendAction;
+//  QAction *sendAction;
   QAction *settingsAction;
   QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
-  QLineEdit *lineEdit;
+//  QLineEdit *lineEdit;
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
@@ -153,11 +154,12 @@ private:
   QTimer *m_updateTimer;
   QTimer *noticeTimer;
   QToolButton *m_settingsButton;
-  QToolButton *sendButton;
+//  QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
+  SendWidget *m_send;
   Settings *settings;
   WelcomeDialog *welcomeDialog;
 
