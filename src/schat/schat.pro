@@ -46,6 +46,7 @@ HEADERS += \
     tab.h \
     version.h \
     welcomedialog.h \
+    widget/inputwidget.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -65,6 +66,7 @@ SOURCES += \
     settingsdialog.cpp \
     tab.cpp \
     welcomedialog.cpp \
+    widget/inputwidget.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
