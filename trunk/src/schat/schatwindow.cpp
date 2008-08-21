@@ -183,64 +183,6 @@ void SChatWindow::handleMessage(const QString &/*message*/)
 }
 
 
-/** [public slots]
- * 
- */
-//void SChatWindow::incomingDirectConnection(const QString &n, ServerSocket *socket)
-//{
-////  int index = tabIndex(QChar('#') + n); FIXME Восстановить работу `DirectChannelServer`
-////  
-////  if (index == -1) {
-////    Profile *p = new Profile(socket->sex(), socket->participantInfo(), this);
-////    DirectChannelServer *ch = new DirectChannelServer(profile, socket, this);
-////    ch->icon.addFile(Profile::sexIconString(socket->sex()));
-////    index = tabWidget->addTab(ch, ch->icon, QChar('#') + n);
-////    tabWidget->setTabToolTip(index, p->toolTip());
-////    p->deleteLater();    
-////  }
-////  else if (DirectChannelServer *channel  = qobject_cast<DirectChannelServer *>(tabWidget->widget(index)))
-////    channel->changeSocket(socket);  
-////    
-////  tabWidget->setCurrentIndex(index);
-//}
-
-
-/** [public slots]
- * Уведомление от классов `DirectChannel` и `DirectChannelServer` о новом сообщении
- * Слот при необходимости запускает механизм уведомления о новом сообщении.
- */
-//void SChatWindow::newDirectMessage()
-//{
-//  AbstractTab *channel = static_cast<AbstractTab *>(sender());
-//  int index = tabWidget->indexOf(channel);
-//  
-//  if ((tabWidget->currentIndex() != index) || (!isActiveWindow()))
-//    startNotice(index);
-//}
-
-
-/** [public slots]
- * Слот вызывается из класса `DirectChannel` когда инкапсулированный в него
- * `ClientSocket` отправляет сигнал `newParticipant()`.
- * Слот переименовывает вкладку в соответствии с ником ('#' + ник),
- * устанавливает всплывающую подсказку и устанавливает иконку.
- * *
- * quint16 sex             - пол участника.
- * const QStringList &info - унифицированный список для создания профиля.
- */
-//void SChatWindow::newDirectParticipant(quint16 sex, const QStringList &info)
-//{
-////  AbstractTab *channel = static_cast<AbstractTab *>(sender());
-////  Profile *p = new Profile(sex, info, this);
-////  int index = tabWidget->indexOf(channel);
-////  channel->icon.addFile(":/images/" + m_profile->gender(quint8(sex)) + ".png");
-////  tabWidget->setTabText(index, QChar('#') + info.at(0));
-////  tabWidget->setTabToolTip(index, p->toolTip());
-////  tabWidget->setTabIcon(index, channel->icon);
-////  p->deleteLater();  
-//}
-
-
 /** [private slots]
  * 
  */
@@ -306,21 +248,6 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
     setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
   } 
 }
-
-
-/** [private slots]
- * 
- */
-//void SChatWindow::addTab()
-//{
-//  QString label = tr("Новое подключение");
-//  int index = tabIndex(label);
-//  
-//  if (index > 0)
-//    tabWidget->setCurrentIndex(index);
-////  else FIXME восстановить работоспособность
-////    tabWidget->setCurrentIndex(tabWidget->addTab(new DirectChannel(profile, this), QIcon(":/images/new.png"), label));  
-//}
 
 
 /** [private slots]
@@ -467,7 +394,7 @@ void SChatWindow::messageClicked()
  */
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &ip)
 {
-  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(ip).arg(network)); // FIXME убрать numeric
+  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(ip).arg(network));
 }
 
 
@@ -1108,61 +1035,6 @@ void SChatWindow::hideChat()
         
   hide();
 }
-
-
-/** [private]
- * 
- *//*
-void SChatWindow::removeConnection() // FIXME remove SChatWindow::removeConnection()
-{
-  quint16 err = clientSocket->protocolError();
-  model.clear();
-  
-  // Если ник уже используется, то не показываем выбор сервера
-  // и переподключаемся с новым ником, с нулевым интервалом.
-  if (err != ErrorNickAlreadyUse)
-    mainChannel->displayChoiceServer(true);
-  
-  if (state == Connected || state == Stopped)
-    mainChannel->browser->msgDisconnect();
-  
-  switch (err) {
-    case ErrorBadNickName:
-      state = Stopped;
-      mainChannel->browser->msgBadNickName(m_profile->nick());
-      break;
-      
-    case ErrorNickAlreadyUse:
-      uniqueNick();
-      break;
-      
-    case ErrorOldClientProtocol:
-      state = Stopped;
-      mainChannel->browser->msgOldClientProtocol();
-      break;
-      
-    case ErrorOldServerProtocol:
-      state = Stopped;
-      mainChannel->browser->msgOldServerProtocol();
-      break;
-      
-    default:
-      break;
-  }
-
-//  statusLabel->setText(tr("Не подключено"));
-  
-  if (!(state == Stopped || state == Ignore)) {
-    state = WaitingForConnected;
-    
-    if (err == ErrorNickAlreadyUse)
-      newConnection();
-    else
-      m_reconnectTimer->start();
-  }
-  else if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
-}*/
 
 
 /** [private]
