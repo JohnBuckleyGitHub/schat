@@ -57,7 +57,9 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
  */
 ClientService::~ClientService()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::~ClientService()";
+#endif
 }
 
 
@@ -175,10 +177,11 @@ void ClientService::connectToHost()
  */
 void ClientService::quit(bool end)
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::quit(bool)" << end;
-  
+#endif
+
   if (m_socket) {
-    qDebug() << "HAVE SOCKET";
     if (m_socket->state() == QTcpSocket::ConnectedState) {
       m_fatal = end;
       m_socket->disconnectFromHost();
@@ -231,8 +234,10 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
  */
 void ClientService::check()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "ClientService::check()";
-  
+#endif
+
   if (m_socket) {
     if (m_socket->state() != QTcpSocket::ConnectedState) {
       m_socket->deleteLater();
@@ -585,7 +590,6 @@ void ClientService::opcodeAccessDenied()
   quint16 p_reason;
   m_stream >> p_reason;
   m_nextBlockSize = 0;
-  qDebug() << "reason" << p_reason;
   m_fatal = true;
   emit accessDenied(p_reason);
 }
