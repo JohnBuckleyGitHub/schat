@@ -59,7 +59,9 @@ AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
  */
 AbstractProfile::~AbstractProfile()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "AbstractProfile::~AbstractProfile()";
+#endif
 }
 
 
@@ -69,7 +71,7 @@ AbstractProfile::~AbstractProfile()
 bool AbstractProfile::isValidNick(const QString &n)
 {
   QString nick = n.simplified();
-  
+
   if (nick.size() > MaxNickLength)
     return false;
   if (nick.isEmpty())
@@ -78,7 +80,7 @@ bool AbstractProfile::isValidNick(const QString &n)
     return false;
   if (nick == ".")
     return false;
-  
+
   return true;
 }
 

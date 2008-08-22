@@ -90,11 +90,9 @@ bool Network::fromFile(const QString &file)
  * Получение адреса и порта сервера из строки.
  */
 bool Network::fromString(const QString &s)
-{
-  qDebug() << "Network::fromString(const QString &)" << s;
-  
+{  
   m_servers.clear();
-  
+
   QStringList list = s.split(QChar(':'));
   if (list.size() == 2) {
     m_valid   = true;

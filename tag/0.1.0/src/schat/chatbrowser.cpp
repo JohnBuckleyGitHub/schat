@@ -177,7 +177,7 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
   if (message.startsWith("/me ", Qt::CaseInsensitive))
-    msg(tr("<span class='me'>%1 %2</span>").arg(nick).arg(message.mid(message.indexOf(QChar(' ')))));
+    msg(tr("<span class='me'>%1 %2</span>").arg(nick).arg(Qt::escape(message.mid(message.indexOf(QChar(' '))))));
   else
     msg(tr("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(Qt::escape(message)));
 }
