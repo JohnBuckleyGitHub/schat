@@ -24,9 +24,15 @@
 class InputWidget : public QTextEdit
 {
   Q_OBJECT
-  
+
 public:
   InputWidget(QWidget *parent = 0);
+
+signals:
+  void sendMsg(const QString &message);
+
+protected:
+  void keyPressEvent(QKeyEvent *event);
 };
 
 #endif /*INPUTWIDGET_H_*/

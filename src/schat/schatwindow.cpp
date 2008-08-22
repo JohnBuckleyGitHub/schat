@@ -77,7 +77,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   mainLayout->addWidget(m_send);
   mainLayout->setMargin(4);
   mainLayout->setSpacing(3);
-  mainLayout->setStretchFactor(splitter, 99);
+  mainLayout->setStretchFactor(splitter, 999);
   mainLayout->setStretchFactor(m_send, 1);
   
   setCentralWidget(centralWidget);
@@ -105,7 +105,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   createTrayIcon();
   createService();
   
-//  connect(lineEdit, SIGNAL(returnPressed()), SLOT(returnPressed()));
+  connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
@@ -597,25 +597,26 @@ void SChatWindow::resetTabNotice(int index)
 /** [private slots]
  * Отправка сообщения в чат
  */
-void SChatWindow::returnPressed()
+void SChatWindow::sendMsg(const QString &message)
 {
+  qDebug() << message;
   // Получаем текст и удаляем пустые символы по краям
   // Выходим если текс пустой.
 //  QString text = lineEdit->text().trimmed();
 //  if (text.isEmpty())
 //    return;
 //  
-//  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-//  
-//  if (parseCmd(tab, text))
-//    return;
-//  
-//  if (m_clientService) {
-//    QString channel;
-//    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-//    if (m_clientService->sendMessage(channel, text))
-//      lineEdit->clear();
-//  }
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+
+  if (parseCmd(tab, message))
+    return;
+
+  if (m_clientService) {
+    QString channel;
+    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
+    if (m_clientService->sendMessage(channel, message));
+      m_send->clear();
+  }
 }
 
 
@@ -812,8 +813,8 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
   }
   else
     return false;
-  
-//  lineEdit->clear();
+
+  m_send->clear();
   return true;
 }
 
