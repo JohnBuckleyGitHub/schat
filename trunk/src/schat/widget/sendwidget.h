@@ -21,6 +21,8 @@
 
 #include <QWidget>
 
+#include "widget/inputwidget.h"
+
 class InputWidget;
 
 class SendWidget : public QWidget
@@ -29,6 +31,10 @@ class SendWidget : public QWidget
 
 public:
   SendWidget(QWidget *parent = 0);
+  void clear() { m_input->clear(); }
+
+signals:
+  void sendMsg(const QString &message);
 
 private:
   InputWidget *m_input;

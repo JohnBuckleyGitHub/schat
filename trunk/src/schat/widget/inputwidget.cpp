@@ -31,7 +31,33 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
 {
-  QFont font = currentFont();
-  QFontInfo info(font);
-  setMinimumHeight(info.pixelSize() * 2);
+  QFontInfo fontInfo(currentFont());
+  setMinimumHeight(fontInfo.pixelSize() * 2);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+
+void InputWidget::keyPressEvent(QKeyEvent *event)
+{
+  QKeySequence seq = event->key() + event->modifiers();
+  QString key = seq.toString();
+
+  if (key == "Return") {
+    QString html = toHtml();
+    html = html.remove("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n");
+    html = html.remove(QRegExp("<html><head>*</head>", Qt::CaseInsensitive, QRegExp::Wildcard));
+    html = html.remove(QRegExp("<body[^>]*>"));
+    html = html.remove(QRegExp("<p[^>]*>"));
+    html = html.remove(QChar('\n'));
+    html = html.remove("</p></body></html>");
+
+    if (!html.isEmpty())
+      emit sendMsg(html);
+
+    qDebug() << html;
+  }
+  else if (event->key() == Qt::Key_Tab)
+    QWidget::keyPressEvent(event);
+  else
+    QTextEdit::keyPressEvent(event);
 }
