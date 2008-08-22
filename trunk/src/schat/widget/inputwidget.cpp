@@ -37,6 +37,15 @@ InputWidget::InputWidget(QWidget *parent)
 }
 
 
+/*!
+ * \brief Обработка событий нажатия клавиш.
+ * 
+ * Если нажата кнопка \b Return производится формирование строки для отправки.
+ *  - Вырезаются лишние части html документа.
+ *  - Если в результате осталась пустая строка, то выход.
+ *  - Сообщение обрезается до 8192 символов.
+ *  - Удаляются все двойные переносы строк.
+ */
 void InputWidget::keyPressEvent(QKeyEvent *event)
 {
   QKeySequence seq = event->key() + event->modifiers();
@@ -51,8 +60,15 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     html = html.remove(QChar('\n'));
     html = html.remove("</p></body></html>");
 
-    if (!html.isEmpty())
-      emit sendMsg(html);
+    if (html.isEmpty())
+      return;
+
+    html = html.left(8192);
+
+    while (html.contains("<br /><br />"))
+      html = html.replace("<br /><br />", "<br />");
+
+    emit sendMsg(html);
 
     qDebug() << html;
   }

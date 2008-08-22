@@ -594,18 +594,11 @@ void SChatWindow::resetTabNotice(int index)
 }
 
 
-/** [private slots]
- * Отправка сообщения в чат
+/*!
+ * \brief Обработка отправки сообщения.
  */
 void SChatWindow::sendMsg(const QString &message)
 {
-  qDebug() << message;
-  // Получаем текст и удаляем пустые символы по краям
-  // Выходим если текс пустой.
-//  QString text = lineEdit->text().trimmed();
-//  if (text.isEmpty())
-//    return;
-//  
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
 
   if (parseCmd(tab, message))
