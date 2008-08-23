@@ -34,11 +34,14 @@ InputWidget::InputWidget(QWidget *parent)
   QFontInfo fontInfo(currentFont());
   setMinimumHeight(fontInfo.pixelSize() * 2);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_default = currentCharFormat();
 }
 
 
 void InputWidget::sendMsg()
 {
+  processLinks();
+
   QString html = toHtml();
   html = html.remove("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n");
   html = html.remove(QRegExp("<html><head>*</head>", Qt::CaseInsensitive, QRegExp::Wildcard));
@@ -70,6 +73,16 @@ void InputWidget::sendMsg()
 
 
 /*!
+ * Очистка документа.
+ */
+void InputWidget::clearMsg()
+{
+  clear();
+  setCurrentCharFormat(m_default);
+}
+
+
+/*!
  * \brief Обработка событий нажатия клавиш.
  * 
  * Если нажата кнопка \b Return производится формирование строки для отправки.
@@ -89,4 +102,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
   else
     QTextEdit::keyPressEvent(event);
+}
+
+
+/*!
+ * \brief Преобразование простых ссылок в html ссылки.
+ */
+void InputWidget::processLinks()
+{
+  QTextCursor cursor = document()->rootFrame()->firstCursorPosition();
+
+  forever {
+    cursor = document()->find(QRegExp("\\b(http|ftp|https)://[\\S]+"), cursor);
+
+    if(!cursor.isNull())
+      cursor.insertHtml((QString("<a href=%1>%2</a>").arg(cursor.selectedText()).arg(cursor.selectedText())));
+    else
+      break;
+  }
 }
