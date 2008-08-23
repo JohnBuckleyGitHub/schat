@@ -59,7 +59,9 @@ AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
  */
 AbstractProfile::~AbstractProfile()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "AbstractProfile::~AbstractProfile()";
+#endif
 }
 
 

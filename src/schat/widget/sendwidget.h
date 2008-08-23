@@ -52,9 +52,11 @@ private:
   InputWidget *m_input;
   QAction *m_boldAction;
   QAction *m_italicAction;
+  QAction *m_sendAction;
   QAction *m_underlineAction;
   QToolButton *m_boldButton;
   QToolButton *m_italicButton;
+  QToolButton *m_sendButton;
   QToolButton *m_underlineButton;
 };
 

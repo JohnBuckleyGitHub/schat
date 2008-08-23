@@ -30,6 +30,9 @@ public:
 
 signals:
   void sendMsg(const QString &message);
+  
+public slots:
+  void sendMsg();
 
 protected:
   void keyPressEvent(QKeyEvent *event);
