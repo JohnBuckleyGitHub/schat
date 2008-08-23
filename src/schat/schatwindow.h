@@ -111,7 +111,7 @@ private slots:
   #endif
 
 private:
-  bool parseCmd(AbstractTab *tab, const QString &text);
+  bool parseCmd(AbstractTab *tab, const QString &message);
   int tabIndex(const QString &s, int start = 1) const;
   QStandardItem* findItem(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);

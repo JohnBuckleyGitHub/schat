@@ -59,8 +59,10 @@ UserUnit::UserUnit(const QStringList &list, DaemonService *service, quint8 numer
  */
 UserUnit::~UserUnit()
 {
+#ifdef SCHAT_DEBUG
   qDebug() << "UserUnit::~UserUnit()";
-  
+#endif
+
   if (m_profile)
     delete m_profile;
 }

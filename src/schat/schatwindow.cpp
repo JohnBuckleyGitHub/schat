@@ -766,8 +766,10 @@ void SChatWindow::welcomeOk()
 /** [private]
  * 
  */
-bool SChatWindow::parseCmd(AbstractTab *tab, const QString &text)
+bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
 {
+  QString text = ChannelLog::toPlainText(message);
+
   // команда /bye
   if (text.startsWith("/bye", Qt::CaseInsensitive)) {   
     if (text.startsWith("/bye ", Qt::CaseInsensitive))
