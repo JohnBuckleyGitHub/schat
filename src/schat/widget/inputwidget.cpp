@@ -35,6 +35,7 @@ InputWidget::InputWidget(QWidget *parent)
   setMinimumHeight(fontInfo.pixelSize() * 2);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_default = currentCharFormat();
+  m_current = 0;
 }
 
 
@@ -64,7 +65,10 @@ void InputWidget::sendMsg()
   html = html.replace("<br /></span>", "</span>");
 
   if (html.endsWith("<br />"))
-    html = html.mid(0, 6);
+    html = html.left(html.size() - 6);
+
+  m_msg << html;
+  m_current = m_msg.count();
 
   emit sendMsg(html);
 
@@ -98,10 +102,42 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (key == "Return")
     sendMsg();
+  else if (key == "Ctrl+Up")
+    nextMsg();
+  else if (key == "Ctrl+Down")
+    prevMsg();
   else if (event->key() == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else
     QTextEdit::keyPressEvent(event);
+}
+
+
+/*!
+ * \brief Вставка следующего отправленного сообщения.
+ */
+void InputWidget::nextMsg()
+{
+  if (m_current + 1 < m_msg.count()) {
+    ++m_current;
+    setHtml(m_msg.at(m_current));
+    moveCursor(QTextCursor::End);
+  }
+}
+
+
+/*!
+ * \brief Вставка предыдущего отправленного сообщения.
+ */
+void InputWidget::prevMsg()
+{  
+  if (m_current) {
+    if (m_current <= m_msg.count()) {
+      --m_current;
+      setHtml(m_msg.at(m_current));
+      moveCursor(QTextCursor::End);
+    }
+  }
 }
 
 
