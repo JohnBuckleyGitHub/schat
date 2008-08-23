@@ -37,6 +37,35 @@ InputWidget::InputWidget(QWidget *parent)
 }
 
 
+void InputWidget::sendMsg()
+{
+  QString html = toHtml();
+  html = html.remove("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n");
+  html = html.remove(QRegExp("<html><head>*</head>", Qt::CaseInsensitive, QRegExp::Wildcard));
+  html = html.remove(QRegExp("<body[^>]*>"));
+  html = html.remove(QRegExp("<p[^>]*>"));
+  html = html.remove(QChar('\n'));
+  html = html.remove("</p></body></html>");
+
+  if (html.isEmpty())
+    return;
+  
+  if (toPlainText().trimmed().isEmpty())
+    return;
+
+  html = html.left(8192);
+
+  while (html.contains("<br /><br />"))
+    html = html.replace("<br /><br />", "<br />");
+  
+  html = html.replace("<br /></span>", "</span>");
+
+  emit sendMsg(html);
+
+  qDebug() << html;
+}
+
+
 /*!
  * \brief Обработка событий нажатия клавиш.
  * 
@@ -51,27 +80,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
   QKeySequence seq = event->key() + event->modifiers();
   QString key = seq.toString();
 
-  if (key == "Return") {
-    QString html = toHtml();
-    html = html.remove("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n");
-    html = html.remove(QRegExp("<html><head>*</head>", Qt::CaseInsensitive, QRegExp::Wildcard));
-    html = html.remove(QRegExp("<body[^>]*>"));
-    html = html.remove(QRegExp("<p[^>]*>"));
-    html = html.remove(QChar('\n'));
-    html = html.remove("</p></body></html>");
-
-    if (html.isEmpty())
-      return;
-
-    html = html.left(8192);
-
-    while (html.contains("<br /><br />"))
-      html = html.replace("<br /><br />", "<br />");
-
-    emit sendMsg(html);
-
-    qDebug() << html;
-  }
+  if (key == "Return")
+    sendMsg();
   else if (event->key() == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else

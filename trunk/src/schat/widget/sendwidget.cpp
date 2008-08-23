@@ -39,6 +39,7 @@ SendWidget::SendWidget(QWidget *parent)
   buttonLayout->addWidget(m_italicButton);
   buttonLayout->addWidget(m_underlineButton);
   buttonLayout->addStretch();
+  buttonLayout->addWidget(m_sendButton);
   buttonLayout->setMargin(0);
   buttonLayout->setSpacing(1);
   
@@ -128,6 +129,13 @@ void SendWidget::createButtons()
   m_underlineButton->setDefaultAction(m_underlineAction);
   m_underlineButton->setAutoRaise(true);
   connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
+  
+  m_sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить сообщение"), this);
+  m_sendAction->setStatusTip(tr("Отправить сообщение"));
+  m_sendButton = new QToolButton(this);
+  m_sendButton->setDefaultAction(m_sendAction);
+  m_sendButton->setAutoRaise(true);
+  connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
 }
 
 
