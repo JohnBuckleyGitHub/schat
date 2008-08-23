@@ -49,26 +49,24 @@ SendWidget::SendWidget(QWidget *parent)
   mainLayout->setSpacing(1);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
+  connect(m_input, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), SLOT(currentCharFormatChanged(const QTextCharFormat &)));
 }
 
 
-void SendWidget::mergeFormat(const QTextCharFormat &format)
+/*!
+ * \brief Обработка изменения формата символов.
+ */
+void SendWidget::currentCharFormatChanged(const QTextCharFormat &format)
 {
-  QTextCursor cursor = m_input->textCursor();
-
-  if(!cursor.hasSelection())
-    cursor.movePosition(cursor.position() == 0 ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-
-  cursor.mergeCharFormat(format);
-  m_input->mergeCurrentCharFormat(format);
-
-//  if(m_input->toPlainText().isEmpty()) {
-//    cursor.setBlockCharFormat(m_input->currentCharFormat());
-//    cursor.clearSelection();
-//  }
+  m_boldAction->setChecked(format.font().bold());
+  m_italicAction->setChecked(format.font().italic());
+  m_underlineAction->setChecked(format.font().underline());
 }
 
 
+/*!
+ * \brief Изменение состояние текса "Полужирный" \a Ctrl+B.
+ */
 void SendWidget::setBold(bool b)
 {
   QTextCharFormat format;
@@ -78,6 +76,9 @@ void SendWidget::setBold(bool b)
 }
 
 
+/*!
+ * \brief Изменение состояние текса "Курсив" \a Ctrl+I.
+ */
 void SendWidget::setItalic(bool b)
 {
   QTextCharFormat format;
@@ -87,6 +88,9 @@ void SendWidget::setItalic(bool b)
 }
 
 
+/*!
+ * \brief Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
+ */
 void SendWidget::setUnderline(bool b)
 {
   QTextCharFormat format;
@@ -96,6 +100,9 @@ void SendWidget::setUnderline(bool b)
 }
 
 
+/*!
+ * \brief Функция создаёт кнопки.
+ */
 void SendWidget::createButtons()
 {
   m_boldAction = new QAction(QIcon(":/images/bold.png"), tr("Полужирный"), this);
@@ -121,4 +128,19 @@ void SendWidget::createButtons()
   m_underlineButton->setDefaultAction(m_underlineAction);
   m_underlineButton->setAutoRaise(true);
   connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
+}
+
+
+/*!
+ * \brief Слияние формата.
+ */
+void SendWidget::mergeFormat(const QTextCharFormat &format)
+{
+  QTextCursor cursor = m_input->textCursor();
+
+  if(!cursor.hasSelection())
+    cursor.movePosition(cursor.position() == 0 ? QTextCursor::NextCharacter : QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+
+  cursor.mergeCharFormat(format);
+  m_input->mergeCurrentCharFormat(format);
 }
