@@ -34,7 +34,7 @@ class SendWidget : public QWidget
 
 public:
   SendWidget(QWidget *parent = 0);
-  void clear() { m_input->clear(); }
+  inline void clear() { m_input->clearMsg(); }
 
 signals:
   void sendMsg(const QString &message);

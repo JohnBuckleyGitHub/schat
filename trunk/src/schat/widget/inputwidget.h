@@ -27,15 +27,21 @@ class InputWidget : public QTextEdit
 
 public:
   InputWidget(QWidget *parent = 0);
+  void clearMsg();
 
 signals:
   void sendMsg(const QString &message);
-  
+
 public slots:
   void sendMsg();
 
 protected:
   void keyPressEvent(QKeyEvent *event);
+
+private:
+  void processLinks();
+  
+  QTextCharFormat m_default;
 };
 
 #endif /*INPUTWIDGET_H_*/
