@@ -41,6 +41,17 @@ ChannelLog::ChannelLog(QObject *parent)
 }
 
 
+QString ChannelLog::toPlainText(const QString &str)
+{
+  QString out = str;
+  out = out.replace("<br />", QChar('\n'), Qt::CaseInsensitive);
+  out = out.remove("</span>", Qt::CaseInsensitive);
+  out = out.remove(QRegExp("<span[^>]*>"));
+  out = out.trimmed();
+  return out;
+}
+
+
 /** [public]
  * 
  */
@@ -54,14 +65,14 @@ void ChannelLog::msg(const QString &text)
       closeFile();
       openFile();
     }
-    
+
     if (m_file.isOpen())
       if (m_mode == Html) {
         QString line = "<div><small class='gr'>" + dateTimeStamp() + "</small> " + text + "</div>";
         m_stream << line << endl;
       }
       else
-        m_stream << dateTimeStamp() << ' ' << text << endl;
+        m_stream << dateTimeStamp() << ' ' << toPlainText(text) << endl;
   }
 }
 

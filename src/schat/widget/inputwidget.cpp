@@ -57,8 +57,11 @@ void InputWidget::sendMsg()
 
   while (html.contains("<br /><br />"))
     html = html.replace("<br /><br />", "<br />");
-  
+
   html = html.replace("<br /></span>", "</span>");
+
+  if (html.endsWith("<br />"))
+    html = html.mid(0, 6);
 
   emit sendMsg(html);
 

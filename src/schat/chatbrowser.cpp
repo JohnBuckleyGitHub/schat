@@ -59,7 +59,7 @@ void ChatBrowser::msg(const QString &text)
  */
 void ChatBrowser::msgBadNickName(const QString &nick)
 {
-  msg(tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(nick));
+  msg(tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(Qt::escape(nick)));
 }
 
 
@@ -176,8 +176,11 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
  */
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
-  if (message.startsWith("/me ", Qt::CaseInsensitive))
-    msg(tr("<span class='me'>%1 %2</span>").arg(nick).arg(message.mid(message.indexOf(QChar(' ')))));
+  if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
+    QString me = message;
+    me.remove("/me ", Qt::CaseInsensitive); 
+    msg(tr("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(me));
+  }
   else
     msg(tr("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(message));
 }
