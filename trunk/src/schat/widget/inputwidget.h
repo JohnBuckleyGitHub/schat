@@ -39,8 +39,12 @@ protected:
   void keyPressEvent(QKeyEvent *event);
 
 private:
+  void nextMsg();
+  void prevMsg();
   void processLinks();
-  
+
+  int m_current;
+  QStringList m_msg;
   QTextCharFormat m_default;
 };
 
