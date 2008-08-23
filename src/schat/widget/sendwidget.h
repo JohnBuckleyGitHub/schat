@@ -19,11 +19,14 @@
 #ifndef SENDWIDGET_H_
 #define SENDWIDGET_H_
 
+#include <QTextCharFormat>
 #include <QWidget>
 
 #include "widget/inputwidget.h"
 
 class InputWidget;
+class QAction;
+class QToolButton;
 
 class SendWidget : public QWidget
 {
@@ -32,12 +35,26 @@ class SendWidget : public QWidget
 public:
   SendWidget(QWidget *parent = 0);
   void clear() { m_input->clear(); }
+  void mergeFormat(const QTextCharFormat &format);
+
+public slots:
+  void setBold(bool b);
+  void setItalic(bool b);
+  void setUnderline (bool b);
 
 signals:
   void sendMsg(const QString &message);
 
 private:
+  void createButtons();
+  
   InputWidget *m_input;
+  QAction *m_boldAction;
+  QAction *m_italicAction;
+  QAction *m_underlineAction;
+  QToolButton *m_boldButton;
+  QToolButton *m_italicButton;
+  QToolButton *m_underlineButton;
 };
 
 #endif /*SENDWIDGET_H_*/

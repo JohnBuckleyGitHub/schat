@@ -32,9 +32,93 @@ SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
 {
   m_input = new InputWidget(this);
+  createButtons();
+
+  QHBoxLayout *buttonLayout = new QHBoxLayout;
+  buttonLayout->addWidget(m_boldButton);
+  buttonLayout->addWidget(m_italicButton);
+  buttonLayout->addWidget(m_underlineButton);
+  buttonLayout->addStretch();
+  buttonLayout->setMargin(0);
+  buttonLayout->setSpacing(1);
+  
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addLayout(buttonLayout);
   mainLayout->addWidget(m_input);  
   mainLayout->setMargin(0);
+  mainLayout->setSpacing(1);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
+}
+
+
+void SendWidget::mergeFormat(const QTextCharFormat &format)
+{
+  QTextCursor cursor = m_input->textCursor();
+
+  if(!cursor.hasSelection())
+    cursor.movePosition(cursor.position() == 0 ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+
+  cursor.mergeCharFormat(format);
+  m_input->mergeCurrentCharFormat(format);
+
+//  if(m_input->toPlainText().isEmpty()) {
+//    cursor.setBlockCharFormat(m_input->currentCharFormat());
+//    cursor.clearSelection();
+//  }
+}
+
+
+void SendWidget::setBold(bool b)
+{
+  QTextCharFormat format;
+  format.setFontWeight(b ? QFont::Bold : QFont::Normal);
+
+  mergeFormat(format);
+}
+
+
+void SendWidget::setItalic(bool b)
+{
+  QTextCharFormat format;
+  format.setFontItalic(b);
+
+  mergeFormat(format);
+}
+
+
+void SendWidget::setUnderline(bool b)
+{
+  QTextCharFormat format;
+  format.setFontUnderline(b);
+
+  mergeFormat(format);
+}
+
+
+void SendWidget::createButtons()
+{
+  m_boldAction = new QAction(QIcon(":/images/bold.png"), tr("Полужирный"), this);
+  m_boldAction->setCheckable(true);
+  m_boldAction->setShortcut(Qt::CTRL + Qt::Key_B);
+  m_boldButton = new QToolButton(this);
+  m_boldButton->setDefaultAction(m_boldAction);
+  m_boldButton->setAutoRaise(true);
+  connect(m_boldAction, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
+
+  m_italicAction = new QAction(QIcon(":/images/italic.png"), tr("Курсив"), this);
+  m_italicAction->setCheckable(true);
+  m_italicAction->setShortcut(Qt::CTRL + Qt::Key_I);
+  m_italicButton = new QToolButton(this);
+  m_italicButton->setDefaultAction(m_italicAction);
+  m_italicButton->setAutoRaise(true);
+  connect(m_italicAction, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
+
+  m_underlineAction = new QAction(QIcon(":/images/underline.png"), tr("Подчёркнутый"), this);
+  m_underlineAction->setCheckable(true);
+  m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
+  m_underlineButton = new QToolButton(this);
+  m_underlineButton->setDefaultAction(m_underlineAction);
+  m_underlineButton->setAutoRaise(true);
+  connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
 }

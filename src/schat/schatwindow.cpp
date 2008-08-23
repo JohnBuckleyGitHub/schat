@@ -76,7 +76,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   mainLayout->addWidget(splitter);
   mainLayout->addWidget(m_send);
   mainLayout->setMargin(4);
-  mainLayout->setSpacing(3);
+  mainLayout->setSpacing(1);
   mainLayout->setStretchFactor(splitter, 999);
   mainLayout->setStretchFactor(m_send, 1);
   
