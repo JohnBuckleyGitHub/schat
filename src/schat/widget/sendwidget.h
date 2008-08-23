@@ -35,19 +35,20 @@ class SendWidget : public QWidget
 public:
   SendWidget(QWidget *parent = 0);
   void clear() { m_input->clear(); }
-  void mergeFormat(const QTextCharFormat &format);
-
-public slots:
-  void setBold(bool b);
-  void setItalic(bool b);
-  void setUnderline (bool b);
 
 signals:
   void sendMsg(const QString &message);
 
+private slots:
+  void currentCharFormatChanged(const QTextCharFormat &format);
+  void setBold(bool b);
+  void setItalic(bool b);
+  void setUnderline (bool b);
+
 private:
   void createButtons();
-  
+  void mergeFormat(const QTextCharFormat &format);
+
   InputWidget *m_input;
   QAction *m_boldAction;
   QAction *m_italicAction;
