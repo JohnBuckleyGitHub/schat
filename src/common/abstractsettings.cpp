@@ -22,15 +22,16 @@
 
 /*!
  * \class AbstractSettings
- * \brief Класс читает настройки сервера.
+ * \brief Абстрактный базовый класс для чтения настроек.
  * 
- * Читает настройки и предоставляет методы для получения настроек.
+ * Предоставляет методы для получения настроек, типов \a bool, \a int и \a QString.
  */
 
 /*!
  * \brief Конструктор класса AbstractSettings.
  */
-AbstractSettings::AbstractSettings(QObject *parent)
+AbstractSettings::AbstractSettings(const QString &filename, QObject *parent)
   : QObject(parent)
 {
+  m_settings = new QSettings(filename, QSettings::IniFormat, this);
 }

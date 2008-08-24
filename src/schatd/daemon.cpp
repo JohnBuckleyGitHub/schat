@@ -45,7 +45,7 @@
 Daemon::Daemon(QObject *parent)
   : QObject(parent)
 {
-  m_settings = new DaemonSettings(this);
+  m_settings = new DaemonSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", this);
   m_remoteNumeric = 0;
   m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
