@@ -136,12 +136,10 @@ private:
   QAction *networkSetAction;
   QAction *profileSetAction;
   QAction *quitAction;
-//  QAction *sendAction;
   QAction *settingsAction;
   QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
-//  QLineEdit *lineEdit;
   QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
@@ -154,13 +152,12 @@ private:
   QTimer *m_updateTimer;
   QTimer *noticeTimer;
   QToolButton *m_settingsButton;
-//  QToolButton *sendButton;
   QVBoxLayout *mainLayout;
   QVBoxLayout *rightLayout;
   QWidget *centralWidget;
   QWidget *rightWidget;
   SendWidget *m_send;
-  Settings *settings;
+  Settings *m_settings;
   WelcomeDialog *welcomeDialog;
 
   #ifdef SCHAT_UPDATE
