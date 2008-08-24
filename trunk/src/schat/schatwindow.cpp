@@ -93,16 +93,16 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   #ifdef SCHAT_UPDATE
   m_updateTimer = new QTimer(this);
-  m_updateTimer->setInterval(m_settings->updateCheckInterval * 60 * 1000);
+  m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   #endif
-  
+
   createActions();
   createCornerWidgets();
   createToolButtons();
   createTrayIcon();
   createService();
-  
+
   connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
@@ -116,7 +116,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_tabs->setCurrentIndex(m_tabs->addTab(mainChannel, tr("Общий")));
   m_tabs->setTabIcon(0, mainChannel->icon);
   
-  if (!m_settings->hideWelcome || m_settings->firstRun) {
+  if (!m_settings->getBool("HideWelcome") || m_settings->getBool("FirstRun")) {
     welcomeDialog = new WelcomeDialog(m_settings, m_profile, this);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!welcomeDialog->exec())
@@ -664,10 +664,10 @@ void SChatWindow::settingsChanged(int notify)
 
     #ifdef SCHAT_UPDATE
     case Settings::UpdateSettingsChanged:
-      m_updateTimer->setInterval(m_settings->updateCheckInterval * 60 * 1000);
+      m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
       break;
     #endif
-            
+  
     default:
       break;
   }

@@ -47,7 +47,7 @@ UpdateNotify::UpdateNotify(Settings *settings, QObject *parent)
 void UpdateNotify::execute()
 {
   if (m_process.state() == QProcess::NotRunning)
-    m_process.start('"' + m_appPath + "/update.exe\" -get " + m_settings->updateUrl); 
+    m_process.start('"' + m_appPath + "/update.exe\" -get " + m_settings->getString("Updates/Url")); 
 }
 
 
