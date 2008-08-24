@@ -32,6 +32,7 @@ HEADERS = \
     protocol.h \
     userunit.h \
     version.h \
+    abstractsettings.h \
     
 SOURCES = \
     abstractprofile.cpp \
@@ -46,6 +47,7 @@ SOURCES = \
     network.cpp \
     networkreader.cpp \
     userunit.cpp \
+    abstractsettings.cpp
     
 DEPENDPATH  += . \
                ../common \
