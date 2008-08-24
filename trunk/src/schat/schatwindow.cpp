@@ -55,7 +55,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   statusbar     = new QStatusBar(this);
   statusLabel   = new QLabel(this);
   m_profile     = new AbstractProfile(this);
-  m_settings    = new Settings(m_profile, this);
+  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
   
@@ -87,8 +87,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setFocusPolicy(Qt::NoFocus);
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
+
   m_settings->read();
-  
+  restoreGeometry();
+
   #ifdef SCHAT_UPDATE
   m_updateTimer = new QTimer(this);
   m_updateTimer->setInterval(m_settings->updateCheckInterval * 60 * 1000);
@@ -147,6 +149,7 @@ SChatWindow::SChatWindow(QWidget *parent)
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
 {
+  saveGeometry();
   m_settings->write();
 
   if (isHidden()) {
@@ -280,7 +283,8 @@ void SChatWindow::addTab(const QModelIndex &i)
 void SChatWindow::closeChat()
 {
   m_clientService->quit();
-  
+
+  saveGeometry();
   m_settings->write();
   qApp->quit();
 }
@@ -1027,6 +1031,31 @@ void SChatWindow::hideChat()
     aboutDialog->hide();
         
   hide();
+}
+
+
+/*!
+ * \brief Восстанавливает геометрию окна.
+ */
+void SChatWindow::restoreGeometry()
+{
+  resize(m_settings->size());
+  QPoint pos = m_settings->pos();
+  if (pos.x() != -999 && pos.y() != -999)
+    move(pos);
+
+  splitter->restoreState(m_settings->splitter());
+}
+
+
+/*!
+ * \brief Сохраняет еометрию окна.
+ */
+void SChatWindow::saveGeometry()
+{
+  m_settings->setPos(pos());
+  m_settings->setSize(size());
+  m_settings->setSplitter(splitter->saveState());
 }
 
 

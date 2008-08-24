@@ -23,12 +23,13 @@
 #include <QSettings>
 #include <QStandardItemModel>
 
+#include "abstractsettings.h"
 #include "network.h"
 
 class SChatWindow;
 class AbstractProfile;
 
-class Settings : public QObject {
+class Settings : public AbstractSettings {
   Q_OBJECT
   
 public:
@@ -41,12 +42,18 @@ public:
     ByeMsgChanged
   };
   
-  Settings(AbstractProfile *p, QObject *parent);
-  inline void notify(int notify) { emit changed(notify); }
+  Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
+  inline QByteArray splitter() const                  { return m_splitter; }
+  inline QPoint pos() const                           { return m_pos; }
+  inline QSize size() const                           { return m_size; }
+  inline void notify(int notify)                      { emit changed(notify); }
+  inline void setPos(const QPoint &pos)               { m_pos = pos; }
+  inline void setSize(const QSize &size)              { m_size = size; }
+  inline void setSplitter(const QByteArray &splitter) { m_splitter = splitter; }
   void notify(int notify, int index);
   void read();
   void write();
-  
+
   bool firstRun;
   bool hideWelcome;
   bool needCreateNetworkList;
@@ -68,9 +75,11 @@ signals:
 private:
   void createServerList(QSettings &s);
   void saveRecentServers(QSettings &s);
-  
+
   AbstractProfile *m_profile;
-  SChatWindow *chat;
+  QByteArray m_splitter;
+  QPoint m_pos;
+  QSize m_size;
 };
 
 #endif /*SETTINGS_H_*/
