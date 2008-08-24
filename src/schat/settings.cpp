@@ -32,11 +32,9 @@
 /*!
  * \brief Конструктор класса Settings.
  */
-Settings::Settings(AbstractProfile *p, QObject *parent)
-  : QObject(parent)
+Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *parent)
+  : AbstractSettings(filename, parent), m_profile(profile)
 {
-  m_profile = p;
-  chat    = static_cast<SChatWindow *>(parent);
   needCreateNetworkList = true;
 }
 
@@ -63,15 +61,11 @@ void Settings::notify(int notify, int index)
 void Settings::read()
 {
   QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  
-  // Позиция и размер окна
-  QPoint pos = s.value("Pos", QPoint(-999, -999)).toPoint();            // Позиция окна
-  QSize size = s.value("Size", QSize(680, 460)).toSize();               // Размер окна
-  chat->resize(size);
-  if (pos.x() != -999 && pos.y() != -999)
-    chat->move(pos);
-  
-  chat->restoreSplitter((s.value("Splitter").toByteArray()));           // Состояние сплитера
+
+  m_pos  = m_settings->value("Pos", QPoint(-999, -999)).toPoint();            // Позиция окна.
+  m_size = m_settings->value("Size", QSize(680, 460)).toSize();               // Размер окна.
+  m_splitter = m_settings->value("Splitter").toByteArray();                   // Состояние сплитера.
+
   hideWelcome = s.value("HideWelcome", false).toBool();                 // Показ окна для выбора ника и сервера при старте
   firstRun    = s.value("FirstRun", true).toBool();                     // Первый запуск
   style       = s.value("Style", "Plastique").toString();               // Внешний вид
@@ -108,10 +102,10 @@ void Settings::read()
 void Settings::write()
 {
   QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  
-  s.setValue("Size", chat->size());
-  s.setValue("Pos", chat->pos());
-  s.setValue("Splitter", chat->saveSplitter());
+
+  m_settings->setValue("Size", m_size);
+  m_settings->setValue("Pos", m_pos);
+  m_settings->setValue("Splitter", m_splitter);
   s.setValue("HideWelcome", hideWelcome);
   s.setValue("FirstRun", false);
   s.setValue("Style", style);

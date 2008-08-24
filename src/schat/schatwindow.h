@@ -63,8 +63,6 @@ class SChatWindow : public QMainWindow
 
 public:
   SChatWindow(QWidget *parent = 0);
-  inline void restoreSplitter(QByteArray state) { splitter->restoreState(state); }
-  inline QByteArray saveSplitter() const        { return splitter->saveState(); }
   
 protected:
   void closeEvent(QCloseEvent *event);
@@ -121,6 +119,8 @@ private:
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
+  void restoreGeometry();
+  void saveGeometry();
   void settingsPage(int page = 0);
   void showChat();
   void startNotice(int index);
