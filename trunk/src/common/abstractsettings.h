@@ -27,17 +27,15 @@ class AbstractSettings : public QObject {
   Q_OBJECT
   
 public:
-  AbstractSettings(QObject *parent = 0);
+  AbstractSettings(const QString &filename, QObject *parent = 0);
   inline bool getBool(const QString &key) const                       { return m_bool.value(key); }
   inline int getInt(const QString &key) const                         { return m_int.value(key); }
   inline QString getString(const QString &key) const                  { return m_string.value(key); }
   inline void setBool(const QString &key, bool value)                 { m_bool[key] = value; }
   inline void setInt(const QString &key, int value)                   { m_int[key] = value; }
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
-  virtual void read() = 0;
-  virtual void write() = 0;
 
-private:
+protected:
   inline void readBool(const QString &key, bool defValue)             { m_bool[key] = m_settings->value(key, defValue).toBool(); }
   inline void readInt(const QString &key, int defValue)               { m_int[key] = m_settings->value(key, defValue).toInt(); }
   inline void readString(const QString &key, const QString &defValue) { m_string[key] = m_settings->value(key, defValue).toString(); }

@@ -31,8 +31,8 @@
 /*!
  * \brief Конструктор класса DaemonSettings.
  */
-DaemonSettings::DaemonSettings(QObject *parent)
-  : QObject(parent)
+DaemonSettings::DaemonSettings(const QString &filename, QObject *parent)
+  : AbstractSettings(filename, parent)
 {
 }
 
@@ -42,8 +42,6 @@ DaemonSettings::DaemonSettings(QObject *parent)
  */
 void DaemonSettings::read()
 {
-  m_settings = new QSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
-
   readBool("ChannelLog", false);
   readBool("PrivateLog", false);
   readInt("ListenPort", 7666);
