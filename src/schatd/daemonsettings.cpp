@@ -42,14 +42,14 @@ DaemonSettings::DaemonSettings(QObject *parent)
  */
 void DaemonSettings::read()
 {
-  QSettings s(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
+  m_settings = new QSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", QSettings::IniFormat, this);
 
-  setBool("ChannelLog", false, s);
-  setBool("PrivateLog", false, s);
-  setInt("ListenPort", 7666, s);
-  setInt("LogLevel", 0, s);
-  setInt("Numeric", 0, s);
-  setString("ListenAddress", "0.0.0.0", s);
-  setString("NetworkFile", "network.xml", s);
-  setString("Name", "", s);
+  readBool("ChannelLog", false);
+  readBool("PrivateLog", false);
+  readInt("ListenPort", 7666);
+  readInt("LogLevel", 0);
+  readInt("Numeric", 0);
+  readString("ListenAddress", "0.0.0.0");
+  readString("NetworkFile", "network.xml");
+  readString("Name", "");
 }
