@@ -41,7 +41,7 @@ public:
     UpdateSettingsChanged,
     ByeMsgChanged
   };
-  
+
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
   inline QByteArray splitter() const                  { return m_splitter; }
   inline QPoint pos() const                           { return m_pos; }
@@ -54,27 +54,20 @@ public:
   void read();
   void write();
 
-  bool firstRun;
-  bool hideWelcome;
   bool needCreateNetworkList;
   Network network;
   QStandardItemModel networksModel;
-  QString style;
-  
-  #ifdef SCHAT_UPDATE
-  bool updateAutoClean;
-  bool updateAutoDownload;
-  int updateCheckInterval;  
-  QString updateUrl;
-  #endif
 
 signals:
   void changed(int notify);
   void networksModelIndexChanged(int index);
 
 private:
-  void createServerList(QSettings &s);
-  void saveRecentServers(QSettings &s);
+  inline void writeBool(const QString &key)           { m_settings->setValue(key, m_bool.value(key)); }
+  inline void writeInt(const QString &key)            { m_settings->setValue(key, m_int.value(key)); }
+  inline void writeString(const QString &key)         { m_settings->setValue(key, m_string.value(key)); }
+  void createServerList();
+  void saveRecentServers();
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;

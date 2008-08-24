@@ -233,7 +233,7 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   m_settings = settings;
   
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
-  m_welcomeCheckBox->setChecked(m_settings->hideWelcome);
+  m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
   m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
   
   m_networkWidget = new NetworkWidget(m_settings, this);
@@ -271,7 +271,7 @@ void NetworkSettings::save()
   if (m_networkWidget->save())
     m_settings->notify(Settings::NetworkSettingsChanged);
   
-  m_settings->hideWelcome = m_welcomeCheckBox->isChecked();
+  m_settings->setBool("HideWelcome", m_welcomeCheckBox->isChecked());
 }
 
 
@@ -288,7 +288,7 @@ InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
   
   m_styleComboBox = new QComboBox(this);
   m_styleComboBox->addItems(QStyleFactory::keys());  
-  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->style));
+  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
   
   QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
   QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
@@ -316,8 +316,8 @@ void InterfaceSettings::reset()
 void InterfaceSettings::save()
 {
   if (m_styleComboBox->currentIndex() != -1) {
-    m_settings->style = m_styleComboBox->currentText();
-    qApp->setStyle(m_settings->style);
+    m_settings->setString("Style", m_styleComboBox->currentText()) ;
+    qApp->setStyle(m_settings->getString("Style"));
   }
 }
 
@@ -335,17 +335,17 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
   m_settings = settings;
   
   m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
-  m_autoDownload->setChecked(m_settings->updateAutoDownload);
+  m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
   m_autoDownload->setEnabled(false);
   
   m_autoClean = new QCheckBox(tr("Удалять обновления после установки"), this);
-  m_autoClean->setChecked(m_settings->updateAutoClean);
+  m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
   
   QLabel *interval = new QLabel(tr("Интервал проверки обновлений:"));
   QHBoxLayout *intervalLayout = new QHBoxLayout;
   
   m_interval = new QSpinBox(this);
-  m_interval->setValue(m_settings->updateCheckInterval);
+  m_interval->setValue(m_settings->getInt("Updates/CheckInterval"));
   m_interval->setRange(5, 1440);
   m_interval->setSuffix(tr(" мин"));
   
@@ -382,9 +382,9 @@ void UpdateSettings::reset()
  */
 void UpdateSettings::save()
 {
-  m_settings->updateAutoDownload = m_autoDownload->isChecked();
-  m_settings->updateAutoClean = m_autoClean->isChecked();
-  m_settings->updateCheckInterval = m_interval->value();
+  m_settings->setBool("Updates/AutoDownload", m_autoDownload->isChecked());
+  m_settings->setBool("Updates/AutoClean", m_autoClean->isChecked());
+  m_settings->setInt("Updates/CheckInterval", m_interval->value());
   m_settings->notify(Settings::UpdateSettingsChanged);
 }
 #endif
