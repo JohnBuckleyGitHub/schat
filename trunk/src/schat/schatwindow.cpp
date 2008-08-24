@@ -45,7 +45,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_send = new SendWidget(this);
   centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
-//  lineEdit      = new QLineEdit(centralWidget);
   m_tabs        = new QTabWidget(splitter);
   rightWidget   = new QWidget(splitter);
   listView      = new QListView(rightWidget);
@@ -54,10 +53,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   sendLayout    = new QHBoxLayout;
   toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
-//  sendButton    = new QToolButton(centralWidget);
   statusLabel   = new QLabel(this);
   m_profile     = new AbstractProfile(this);
-  settings      = new Settings(m_profile, this);
+  m_settings    = new Settings(m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
   
@@ -70,9 +68,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   rightLayout->addWidget(listView);
   rightLayout->setMargin(0);
   rightLayout->setSpacing(4);
-  
-//  sendLayout->addWidget(lineEdit);
-//  sendLayout->addWidget(sendButton);
+
   mainLayout->addWidget(splitter);
   mainLayout->addWidget(m_send);
   mainLayout->setMargin(4);
@@ -91,11 +87,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setFocusPolicy(Qt::NoFocus);
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
-  settings->read();
+  m_settings->read();
   
   #ifdef SCHAT_UPDATE
   m_updateTimer = new QTimer(this);
-  m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
+  m_updateTimer->setInterval(m_settings->updateCheckInterval * 60 * 1000);
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   #endif
   
@@ -111,15 +107,15 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
   connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
-  connect(settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
   
-  mainChannel = new MainChannel(settings, this);
+  mainChannel = new MainChannel(m_settings, this);
   mainChannel->icon.addFile(":/images/main.png");
   m_tabs->setCurrentIndex(m_tabs->addTab(mainChannel, tr("Общий")));
   m_tabs->setTabIcon(0, mainChannel->icon);
   
-  if (!settings->hideWelcome || settings->firstRun) {
-    welcomeDialog = new WelcomeDialog(settings, m_profile, this);
+  if (!m_settings->hideWelcome || m_settings->firstRun) {
+    welcomeDialog = new WelcomeDialog(m_settings, m_profile, this);
     connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!welcomeDialog->exec())
       mainChannel->displayChoiceServer(true);
@@ -151,7 +147,7 @@ SChatWindow::SChatWindow(QWidget *parent)
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
 {
-  settings->write();
+  m_settings->write();
 
   if (isHidden()) {
     event->accept();
@@ -285,7 +281,7 @@ void SChatWindow::closeChat()
 {
   m_clientService->quit();
   
-  settings->write();
+  m_settings->write();
   qApp->quit();
 }
 
@@ -634,7 +630,7 @@ void SChatWindow::update()
     m_updateTimer->start();
   
   if (!m_updateNotify) {
-    m_updateNotify = new UpdateNotify(settings, this);
+    m_updateNotify = new UpdateNotify(m_settings, this);
     connect(m_updateNotify, SIGNAL(done(int)), SLOT(updateGetDone(int)));
   }
   
@@ -664,7 +660,7 @@ void SChatWindow::settingsChanged(int notify)
 
     #ifdef SCHAT_UPDATE
     case Settings::UpdateSettingsChanged:
-      m_updateTimer->setInterval(settings->updateCheckInterval * 60 * 1000);
+      m_updateTimer->setInterval(m_settings->updateCheckInterval * 60 * 1000);
       break;
     #endif
             
@@ -743,7 +739,7 @@ void SChatWindow::settingsPage(int page)
     show();
   
   if (!settingsDialog) {
-    settingsDialog = new SettingsDialog(m_profile, settings, this);
+    settingsDialog = new SettingsDialog(m_profile, m_settings, this);
     settingsDialog->show();
   }
   
@@ -917,13 +913,7 @@ void SChatWindow::createActions()
   // Выход из программы
   quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
-  
-  // Отправить сообщение в чат
-//  sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить, Enter"), this);
-//  sendAction->setStatusTip(tr("Отправить сообщение в чат"));
-//  sendButton->setDefaultAction(sendAction);
-//  connect(sendAction, SIGNAL(triggered()), this, SLOT(returnPressed()));
-  
+
   // Настройка
   m_settingsButton = new QToolButton(this);
   settingsAction = new QAction(QIcon(":/images/settings.png"), tr("Настройка..."), this);
@@ -953,7 +943,7 @@ void SChatWindow::createCornerWidgets()
  */
 void SChatWindow::createService()
 {
-  m_clientService = new ClientService(m_profile, &settings->network, this);
+  m_clientService = new ClientService(m_profile, &m_settings->network, this);
   connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
   connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
   connect(m_clientService, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(newUser(const QStringList &, quint8, quint8)));
