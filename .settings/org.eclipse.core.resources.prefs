@@ -1,14 +1,14 @@
-#Fri Aug 01 16:04:14 MSD 2008
+#Mon Aug 25 15:14:09 MSD 2008
 eclipse.preferences.version=1
-encoding//package/win32/include/common.nsh=WINDOWS-1251
-encoding//package/win32/include/page-options.nsh=WINDOWS-1251
-encoding//package/win32/include/schat.nsh=WINDOWS-1251
-encoding//package/win32/include/sections.nsh=WINDOWS-1251
-encoding//package/win32/include/translations.nsh=WINDOWS-1251
-encoding//package/win32/include/translations/english.nsh=WINDOWS-1251
-encoding//package/win32/include/translations/russian.nsh=WINDOWS-1251
-encoding//package/win32/include/update.nsh=WINDOWS-1251
-encoding//package/win32/installer-core.nsi=WINDOWS-1251
-encoding//package/win32/installer-qt.nsi=WINDOWS-1251
-encoding//package/win32/installer.nsi=WINDOWS-1251
+encoding//os/win32/include/common.nsh=WINDOWS-1251
+encoding//os/win32/include/page-options.nsh=WINDOWS-1251
+encoding//os/win32/include/schat.nsh=WINDOWS-1251
+encoding//os/win32/include/sections.nsh=WINDOWS-1251
+encoding//os/win32/include/translations.nsh=WINDOWS-1251
+encoding//os/win32/include/translations/english.nsh=WINDOWS-1251
+encoding//os/win32/include/translations/russian.nsh=WINDOWS-1251
+encoding//os/win32/include/update.nsh=WINDOWS-1251
+encoding//os/win32/installer-core.nsi=WINDOWS-1251
+encoding//os/win32/installer-qt.nsi=WINDOWS-1251
+encoding//os/win32/installer.nsi=WINDOWS-1251
 encoding/<project>=UTF-8
