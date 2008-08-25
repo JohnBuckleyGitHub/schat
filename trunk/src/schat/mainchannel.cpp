@@ -31,7 +31,7 @@
  * \brief Конструктор класса MainChannel.
  */
 MainChannel::MainChannel(Settings *settings, QWidget *parent)
-  : AbstractTab(parent)
+  : AbstractTab(settings, parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   type = Main;

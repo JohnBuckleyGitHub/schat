@@ -266,7 +266,7 @@ void SChatWindow::addTab(const QModelIndex &i)
   
   if (index == -1) {
     AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
-    Tab *tab = new Tab(this);
+    Tab *tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
@@ -544,7 +544,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
   
   if (index == -1) {
     AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
-    tab = new Tab(this);
+    tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);

@@ -29,12 +29,12 @@
 /*!
  * \brief Конструктор класса AbstractTab.
  */
-AbstractTab::AbstractTab(QWidget *parent)
+AbstractTab::AbstractTab(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   
   notice = false;
-  browser = new ChatBrowser(this);
+  browser = new ChatBrowser(settings, this);
   type = Unknown;
 }

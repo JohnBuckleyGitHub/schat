@@ -28,12 +28,12 @@
 /*!
  * \brief Конструктор класса Tab.
  */
-Tab::Tab(QWidget *parent)
-  : AbstractTab(parent)
+Tab::Tab(Settings *settings, QWidget *parent)
+  : AbstractTab(settings, parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   type = Private;
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(browser);
   mainLayout->setMargin(0);

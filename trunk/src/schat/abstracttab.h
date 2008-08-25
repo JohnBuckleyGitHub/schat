@@ -24,6 +24,7 @@
 
 #include "chatbrowser.h"
 
+class Settings;
 class QTextBrowser;
 
 class AbstractTab : public QWidget {
@@ -38,7 +39,7 @@ public:
     DirectServer
   };
   
-  AbstractTab(QWidget *parent = 0);
+  AbstractTab(Settings *settings, QWidget *parent = 0);
   
   bool notice;
   ChatBrowser *browser;
