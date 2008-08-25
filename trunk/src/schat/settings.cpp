@@ -55,6 +55,13 @@ void Settings::notify(int notify, int index)
 }
 
 
+void Settings::createEmoticonsMap()
+{
+  m_emoticons.clear();
+  m_emoticons.insert(":imp:", ":/images/logo16.png");
+}
+
+
 /** [public]
  * 
  */
@@ -80,6 +87,8 @@ void Settings::read()
   m_profile->setGender(m_settings->value("Gender", "male").toString());
   m_profile->setByeMsg(m_settings->value("Bye", "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
+
+  createEmoticonsMap();
 
 #ifdef SCHAT_UPDATE
   int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
