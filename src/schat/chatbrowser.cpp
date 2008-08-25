@@ -204,18 +204,18 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   while (index != -1 && !smile.isEmpty()) {
     cursor = doc.find(smile, cursor, QTextDocument::FindWholeWords);
+    index = plain.indexOf(smile, index, Qt::CaseInsensitive) + 1;
+
     if (!cursor.isNull()) {
       qDebug() << "NOT NULL" << cursor.selectedText();
 
-      if (cursor.selectedText() == smile) {
-        cursor.insertText(" ");
-      }
+      if (cursor.selectedText() == smile)
+        m_settings->insertSmile(cursor, smile);
 
       if (cursor.position() == plain.size())
         break;
     }
 
-    index = plain.indexOf(smile, index, Qt::CaseInsensitive) + 1;
     if ((smile = m_settings->nextSmile(plain, index)).isEmpty())
       break;
   }

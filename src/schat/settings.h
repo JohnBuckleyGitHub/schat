@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QTextCursor>
 
 #include "abstractsettings.h"
 #include "network.h"
@@ -43,6 +44,7 @@ public:
   };
 
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
+  bool insertSmile(QTextCursor &cursor, const QString &smile);
   inline QByteArray splitter() const                  { return m_splitter; }
   inline QMap<QString, QString>& emoticons()          { return m_emoticons; }
   inline QPoint pos() const                           { return m_pos; }
