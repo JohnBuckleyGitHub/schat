@@ -24,11 +24,13 @@
 
 #include "channellog.h"
 
+class Settings;
+
 class ChatBrowser : public QTextBrowser {
   Q_OBJECT
-  
+
 public:
-  ChatBrowser(QWidget *parent = 0);
+  ChatBrowser(Settings *settings, QWidget *parent = 0);
   inline QString channel()                       { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
@@ -43,14 +45,15 @@ public:
   void msgReadyForUse(const QString &addr);
   void msgReadyForUse(const QString &network, const QString &addr);
   void scroll();
-  
+
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
-  
+
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
-  
+
 private:
+  Settings *m_settings;
   ChannelLog *m_channelLog;
 };
 

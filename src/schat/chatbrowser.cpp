@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "chatbrowser.h"
+#include "settings.h"
 
 /*!
  * \class ChatBrowser
@@ -28,8 +29,8 @@
 /*!
  * \brief Конструктор класса ChatBrowser.
  */
-ChatBrowser::ChatBrowser(QWidget *parent)
-  : QTextBrowser(parent)
+ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
+  : QTextBrowser(parent), m_settings(settings)
 {
   m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);

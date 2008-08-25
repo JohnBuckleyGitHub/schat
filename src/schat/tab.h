@@ -27,7 +27,7 @@ class Tab : public AbstractTab {
   Q_OBJECT
 
 public:
-  Tab(QWidget *parent = 0);
+  Tab(Settings *settings, QWidget *parent = 0);
 };
 
 #endif /*TAB_H_*/
