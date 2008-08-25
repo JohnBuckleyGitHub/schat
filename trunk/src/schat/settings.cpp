@@ -39,6 +39,15 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 }
 
 
+bool Settings::insertSmile(QTextCursor &cursor, const QString &smile)
+{
+  if (m_emoticons.contains(smile))
+    cursor.insertImage(m_emoticons.value(smile));
+
+  return true;
+}
+
+
 QString Settings::nextSmile(const QString &text, int pos) const
 {
   QMapIterator <QString, QString> i(m_emoticons);
@@ -58,6 +67,7 @@ void Settings::createEmoticonsMap()
 {
   m_emoticons.clear();
   m_emoticons.insert(":)", ":/images/logo16.png");
+  m_emoticons.insert("ПЫЩ", ":/images/quit.png");
 }
 
 
