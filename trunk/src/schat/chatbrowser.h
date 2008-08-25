@@ -31,7 +31,7 @@ class ChatBrowser : public QTextBrowser {
 
 public:
   ChatBrowser(Settings *settings, QWidget *parent = 0);
-  inline QString channel()                       { return m_channelLog->channel(); }
+  inline QString channel() const                 { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
   void msg(const QString &text);

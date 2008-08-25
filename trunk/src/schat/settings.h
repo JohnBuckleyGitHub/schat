@@ -51,6 +51,7 @@ public:
   inline void setPos(const QPoint &pos)               { m_pos = pos; }
   inline void setSize(const QSize &size)              { m_size = size; }
   inline void setSplitter(const QByteArray &splitter) { m_splitter = splitter; }
+  QString nextSmile(const QString &text, int pos = 0) const;
   void createEmoticonsMap();
   void notify(int notify, int index);
   void read();
