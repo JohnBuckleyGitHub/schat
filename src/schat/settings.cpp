@@ -39,6 +39,28 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 }
 
 
+QString Settings::nextSmile(const QString &text, int pos) const
+{
+  QMapIterator <QString, QString> i(m_emoticons);
+  while (i.hasNext()) {
+    i.next();
+    QString key = i.key();
+    int index = text.indexOf(key, pos, Qt::CaseInsensitive);
+    if (index != -1)
+      return key;
+  }
+
+  return "";
+}
+
+
+void Settings::createEmoticonsMap()
+{
+  m_emoticons.clear();
+  m_emoticons.insert(":)", ":/images/logo16.png");
+}
+
+
 /** [public]
  * 
  */
@@ -52,13 +74,6 @@ void Settings::notify(int notify, int index)
     default:
       break;
   }  
-}
-
-
-void Settings::createEmoticonsMap()
-{
-  m_emoticons.clear();
-  m_emoticons.insert(":imp:", ":/images/logo16.png");
 }
 
 

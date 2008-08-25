@@ -197,13 +197,36 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(message));
   }
 
+  QTextCursor cursor(&doc);
+  QString plain = doc.toPlainText();
+  QString smile = m_settings->nextSmile(plain);
+  int index = 0;
+
+  while (index != -1 && !smile.isEmpty()) {
+    cursor = doc.find(smile, cursor, QTextDocument::FindWholeWords);
+    if (!cursor.isNull()) {
+      qDebug() << "NOT NULL" << cursor.selectedText();
+
+      if (cursor.selectedText() == smile) {
+        cursor.insertText(" ");
+      }
+
+      if (cursor.position() == plain.size())
+        break;
+    }
+
+    index = plain.indexOf(smile, index, Qt::CaseInsensitive) + 1;
+    if ((smile = m_settings->nextSmile(plain, index)).isEmpty())
+      break;
+  }
+
   QTextCursor merge(&doc);
   merge.clearSelection();
   merge.setPosition(0);
   merge.insertHtml(pre);
   append(doc.toHtml());
 
-  qDebug() << toHtml();
+//  qDebug() << toHtml();
 
   scroll();
 }
