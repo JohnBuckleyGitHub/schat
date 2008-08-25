@@ -53,8 +53,9 @@ public slots:
   void msgNewMessage(const QString &nick, const QString &message);
 
 private:
-  Settings *m_settings;
   ChannelLog *m_channelLog;
+  QString m_style;
+  Settings *m_settings;
 };
 
 #endif /*CHATBROWSER_H_*/

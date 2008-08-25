@@ -35,12 +35,15 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
   m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);
   setOpenExternalLinks(true);
-  document()->setDefaultStyleSheet(
+
+  m_style = QString(
       ".gr    { color:#90a4b3; }"
       ".green { color:#6bb521; }"
       ".err   { color:#da251d; }"
       ".info  { color:#5096cf; }"
       ".me    { color:#cd00cd; }");
+
+  document()->setDefaultStyleSheet(m_style);
 }
 
 
@@ -177,11 +180,30 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
  */
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
+  QTextDocument doc;
+  doc.setDefaultStyleSheet(m_style);
+  QString pre;
+
   if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
     QString me = message;
-    me.remove("/me ", Qt::CaseInsensitive); 
-    msg(tr("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(me));
+    me.remove("/me ", Qt::CaseInsensitive);
+    doc.setHtml("<span class='me'>" + me + "</span>");
+    pre = QString("<small class='gr'>(%1)</small> <span class='me'>%2</span> ").arg(currentTime()).arg(Qt::escape(nick));
+    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(me));
   }
-  else
-    msg(tr("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(message));
+  else {
+    doc.setHtml(message);
+    pre = QString("<small class='gr'>(%1)</small> <b class='gr'>%2:</b> ").arg(currentTime()).arg(Qt::escape(nick));
+    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(message));
+  }
+
+  QTextCursor merge(&doc);
+  merge.clearSelection();
+  merge.setPosition(0);
+  merge.insertHtml(pre);
+  append(doc.toHtml());
+
+  qDebug() << toHtml();
+
+  scroll();
 }
