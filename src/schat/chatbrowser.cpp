@@ -44,6 +44,7 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
       ".me    { color:#cd00cd; }");
 
   document()->setDefaultStyleSheet(m_style);
+  m_keepAnimations = -1;
 }
 
 
@@ -212,7 +213,12 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
       if (cursor.selectedText() == smile) {
         QString file = m_settings->smileFile(smile);
         if (!file.isEmpty()) {
-          cursor.insertImage(QUrl::fromLocalFile(file).toString());
+//          cursor.insertImage(QUrl::fromLocalFile(file).toString());
+          cursor.insertText(" ");
+          AnimatedSmile* asmile = new AnimatedSmile;
+          asmile->init(cursor.position() + Qt::escape(nick).size() + 13 + toPlainText().size(), file, document());
+
+          m_animatedSmiles.append(asmile);
         }
       }
 
@@ -229,8 +235,54 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   merge.setPosition(0);
   merge.insertHtml(pre);
   append(doc.toHtml());
+  
+  playPauseAnimations(true);
+  setAnimations();
 
 //  qDebug() << toHtml();
 
   scroll();
+}
+
+
+void ChatBrowser::playPauseAnimations(bool play)
+{
+//  if(play && !QChatSettings::settings()->boolOption("UseAnimatedSmiles"))
+//    return;
+
+  if(play && m_keepAnimations < 0)
+    foreach(AnimatedSmile* sm, m_animatedSmiles)
+      sm->start();
+  else if(!play)
+    foreach(AnimatedSmile* sm, m_animatedSmiles)
+      sm->stop();
+  else
+  {
+    int i, j;
+    for(i = m_animatedSmiles.size() - 1, j = 0; i >= 0 && j < m_keepAnimations; i--)
+    {
+      if(m_animatedSmiles[i]->animated())
+      {
+        m_animatedSmiles[i]->start();
+        j++;
+      }
+    }
+
+    for(; i >= 0; i--)
+      if(m_animatedSmiles[i]->animated())
+        m_animatedSmiles[i]->setPaused(true);
+  }
+
+  if(play)
+    setAnimations();
+}
+
+
+void ChatBrowser::setAnimations()
+{
+  int min = cursorForPosition(QPoint(0, 0)).position();
+  int max = cursorForPosition(QPoint(size().width(), size().height())).position();
+
+  foreach(AnimatedSmile* sm, m_animatedSmiles)
+    sm->pauseIfHidden(min, max);
 }
