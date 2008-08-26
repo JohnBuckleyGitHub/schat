@@ -38,6 +38,7 @@ SendWidget::SendWidget(QWidget *parent)
   buttonLayout->addWidget(m_boldButton);
   buttonLayout->addWidget(m_italicButton);
   buttonLayout->addWidget(m_underlineButton);
+  buttonLayout->addWidget(m_emoticonButton);
   buttonLayout->addStretch();
   buttonLayout->addWidget(m_sendButton);
   buttonLayout->setMargin(0);
@@ -136,6 +137,15 @@ void SendWidget::createButtons()
   m_sendButton->setDefaultAction(m_sendAction);
   m_sendButton->setAutoRaise(true);
   connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
+
+  m_popup = new QMenu(this);
+  m_emoticonButton = new QToolButton(this);
+  m_emoticonButton->setIcon(QIcon(":/images/emoticon.png"));
+  m_emoticonButton->setToolTip(tr("Добавить смайлик"));
+  m_emoticonButton->setAutoRaise(true);
+  m_emoticonButton->setMenu(m_popup);
+  m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
+  
 }
 
 
