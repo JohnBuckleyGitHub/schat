@@ -44,7 +44,6 @@ public:
   };
 
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
-  bool insertSmile(QTextCursor &cursor, const QString &smile);
   inline QByteArray splitter() const                  { return m_splitter; }
   inline QPoint pos() const                           { return m_pos; }
   inline QSize size() const                           { return m_size; }
@@ -53,6 +52,7 @@ public:
   inline void setSize(const QSize &size)              { m_size = size; }
   inline void setSplitter(const QByteArray &splitter) { m_splitter = splitter; }
   QString nextSmile(const QString &text, int pos = 0) const;
+  QString smileFile(const QString &smile);
   void createEmoticonsMap();
   void notify(int notify, int index);
   void read();

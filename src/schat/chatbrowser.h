@@ -22,6 +22,7 @@
 #include <QTextBrowser>
 #include <QTime>
 
+#include "animatedsmile.h"
 #include "channellog.h"
 
 class Settings;
@@ -54,6 +55,7 @@ public slots:
 
 private:
   ChannelLog *m_channelLog;
+  QList<AnimatedSmile*> m_animatedSmiles;
   QString m_style;
   Settings *m_settings;
 };
