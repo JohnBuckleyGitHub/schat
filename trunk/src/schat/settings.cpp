@@ -42,25 +42,19 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 
 bool Settings::insertSmile(QTextCursor &cursor, const QString &smile)
 {
-  qDebug() << "Settings::insertSmile()" << smile;
-  
   if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
     return false;
 
   if (m_emoticons.contains(smile)) {
     int index = m_emoticons.value(smile);
-//    m_emoticonsFiles
     if (index < m_emoticonsFiles.size()) {
       QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
       if (!QFile::exists(file))
         return false;
-      cursor.insertImage(file);
+      cursor.insertImage(QUrl::fromLocalFile(file).toString());
     }
     else
       return false;
-      
-//    if (QFile::exists(m_emoticonsPath + "/"))
-//    cursor.insertImage(m_emoticons.value(smile));
   }
 
   return false;
