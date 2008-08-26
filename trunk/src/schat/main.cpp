@@ -29,26 +29,28 @@ int main(int argc, char *argv[])
 {  
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-  
+
   QApplication app(argc, argv);
+  QCoreApplication::addLibraryPath(app.applicationDirPath() + "/plugins");
+
   app.setStyle(new QPlastiqueStyle);
-  
+
   if (install())
     return 0;
-  
+
   QStringList arguments = app.arguments();
   arguments.takeFirst();
-  
+
   QTranslator qtTranslator;
   qtTranslator.load("qt_ru", ":/translations");
   app.installTranslator(&qtTranslator);
-  
+
   // Требуем поддержку System Tray
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
     QMessageBox::critical(0, QObject::tr("Systray"), QObject::tr("I couldn't detect any system tray on this system."));
     return 1;
   }
-  
+
   // Допускаем запуск только одной копии из одной папки
   QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
   SingleApplication instance("SimpleChat", serverName, &app);
@@ -57,15 +59,15 @@ int main(int argc, char *argv[])
     if (instance.sendMessage(message))
       return 0;
   }
-  
+
   SChatWindow window;
   if (arguments.contains("-hide"))
     window.hide();
   else
     window.show();
-  
+
   QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &window, SLOT(handleMessage(const QString &)));
-  
+
   return app.exec();
 }
 
