@@ -68,14 +68,16 @@ QString Settings::smileFile(const QString &smile)
 QStringList Settings::smiles(const QString &text) const
 {
   QStringList out;
-
-  QMapIterator <QString, int> i(m_emoticons);
-  while (i.hasNext()) {
-    i.next();
-    QString key = i.key();
-
-    if (text.contains(key))
-      out << key;
+  
+  if (!m_emoticons.isEmpty()) {
+    QMapIterator <QString, int> i(m_emoticons);
+    while (i.hasNext()) {
+      i.next();
+      QString key = i.key();
+  
+      if (text.contains(key))
+        out << key;
+    }
   }
 
   return out;
@@ -87,7 +89,7 @@ QStringList Settings::smiles(const QString &text) const
  */
 void Settings::createEmoticonsMap()
 {
-  m_emoticonsPath = getString("EmoticonsPath");
+  m_emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonsTheme");
   bool err = true;
 
   if (QFile::exists(m_emoticonsPath + "/icondef.xml")) {
@@ -133,7 +135,7 @@ void Settings::read()
   readBool("HideWelcome", false);
   readBool("FirstRun", true);
   readString("Style", "Plastique");
-  readString("EmoticonsPath", qApp->applicationDirPath() + "/emoticons/kolobok");
+  readString("EmoticonsTheme", "kolobok");
   qApp->setStyle(getString("Style"));
 
   network.fromConfig(m_settings->value("Network", "AchimNet.xml").toString());
@@ -177,6 +179,7 @@ void Settings::write()
 
   writeBool("HideWelcome");
   writeString("Style");
+  writeString("EmoticonsTheme");
 
   m_settings->setValue("Network", network.config());
   saveRecentServers();
