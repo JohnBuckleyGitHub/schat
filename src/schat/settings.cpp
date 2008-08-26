@@ -89,7 +89,7 @@ QStringList Settings::smiles(const QString &text) const
  */
 void Settings::createEmoticonsMap()
 {
-  m_emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonsTheme");
+  m_emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
   bool err = true;
 
   if (QFile::exists(m_emoticonsPath + "/icondef.xml")) {
@@ -134,8 +134,10 @@ void Settings::read()
 
   readBool("HideWelcome", false);
   readBool("FirstRun", true);
+  readBool("EmoticonsRequireSpaces", true);
+  readInt("AnimatedEmoticonsInMessage", 2);
   readString("Style", "Plastique");
-  readString("EmoticonsTheme", "kolobok");
+  readString("EmoticonTheme", "kolobok");
   qApp->setStyle(getString("Style"));
 
   network.fromConfig(m_settings->value("Network", "AchimNet.xml").toString());
@@ -178,6 +180,8 @@ void Settings::write()
   m_settings->setValue("FirstRun", false);
 
   writeBool("HideWelcome");
+  writeBool("EmoticonsRequireSpaces");
+  writeInt("AnimatedEmoticonsInMessage");
   writeString("Style");
   writeString("EmoticonsTheme");
 
