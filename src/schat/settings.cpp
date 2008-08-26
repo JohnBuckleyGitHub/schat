@@ -40,24 +40,6 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 }
 
 
-/*!
- * \brief Возвращает следующую строку с именем смайлика найденную в строке.
- */
-QString Settings::nextSmile(const QString &text, int pos) const
-{
-  QMapIterator <QString, int> i(m_emoticons);
-  while (i.hasNext()) {
-    i.next();
-    QString key = i.key();
-    int index = text.indexOf(key, pos, Qt::CaseInsensitive);
-    if (index != -1)
-      return key;
-  }
-
-  return "";
-}
-
-
 QString Settings::smileFile(const QString &smile)
 {
   if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
@@ -77,6 +59,26 @@ QString Settings::smileFile(const QString &smile)
   }
 
   return "";
+}
+
+
+/*!
+ * \brief Возвращает список всех смайликов которые были найдены в строке.
+ */
+QStringList Settings::smiles(const QString &text) const
+{
+  QStringList out;
+
+  QMapIterator <QString, int> i(m_emoticons);
+  while (i.hasNext()) {
+    i.next();
+    QString key = i.key();
+
+    if (text.contains(key))
+      out << key;
+  }
+
+  return out;
 }
 
 
