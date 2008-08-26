@@ -25,9 +25,13 @@
     File "${SCHAT_QTDIR}\bin\QtCore4.dll"
     File "${SCHAT_QTDIR}\bin\QtGui4.dll"
     File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+    
     !ifdef VC90
       File "${VC90_REDIST_DIR}\msvcr90.dll"
-    !endif    
+    !endif  
+    
+    SetOutPath "$INSTDIR\plugins\imageformats"
+    File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"  
   !endif
 !macroend
 
@@ -54,6 +58,10 @@ Section "$(STR1000)" SecCore
   SetOutPath "$INSTDIR\doc"
   File "..\..\data\doc\*.html"
   File "..\..\data\doc\*.example"
+  
+  SetOutPath "$INSTDIR\emoticons\kolobok"
+  File "..\..\data\emoticons\kolobok\*.gif"
+  File "..\..\data\emoticons\kolobok\icondef.xml"
   
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -93,12 +101,19 @@ Section "Uninstall"
     Delete "$INSTDIR\networks\*.xml"
     Delete "$INSTDIR\doc\*.html"
     Delete "$INSTDIR\doc\*.example"
+    Delete "$INSTDIR\emoticons\kolobok\*.gif"
+    Delete "$INSTDIR\emoticons\kolobok\icondef.xml"
+    Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
     
     !ifdef VC90
       Delete "$INSTDIR\msvcr90.dll"
       Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
     !endif
     
+    RMDir "$INSTDIR\emoticons\kolobok"
+    RMDir "$INSTDIR\emoticons"
+    RMDir "$INSTDIR\plugins\imageformats"
+    RMDir "$INSTDIR\plugins"
     RMDir "$INSTDIR\networks"
     RMDir "$INSTDIR\doc"
     RMDir "$INSTDIR"
