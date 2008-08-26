@@ -48,13 +48,21 @@ public:
   void scroll();
 
 protected:
+  bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event);}
   void contextMenuEvent(QContextMenuEvent *event);
+  void hideEvent(QHideEvent* /*event*/) { playPauseAnimations(false); }
+  void showEvent(QShowEvent* /*event*/) { playPauseAnimations(true); }
 
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
 
+private slots:
+  void playPauseAnimations(bool play);
+  void setAnimations();
+
 private:
   ChannelLog *m_channelLog;
+  int m_keepAnimations;
   QList<AnimatedSmile*> m_animatedSmiles;
   QString m_style;
   Settings *m_settings;
