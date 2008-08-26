@@ -67,10 +67,11 @@ bool Settings::insertSmile(QTextCursor &cursor, const QString &smile)
 }
 
 
+/*!
+ * \brief Возвращает следующую строку с именем смайлика найденную в строке.
+ */
 QString Settings::nextSmile(const QString &text, int pos) const
 {
-  qDebug() << "Settings::nextSmile()" << m_emoticons.size() << m_emoticonsFiles.size();
-  
   QMapIterator <QString, int> i(m_emoticons);
   while (i.hasNext()) {
     i.next();
@@ -84,23 +85,24 @@ QString Settings::nextSmile(const QString &text, int pos) const
 }
 
 
+/*!
+ * \brief Создаёт карту смайликов.
+ */
 void Settings::createEmoticonsMap()
 {
   m_emoticonsPath = getString("EmoticonsPath");
-  QString file = m_emoticonsPath + "/icondef.xml";
+  bool err = true;
 
-  if (QFile::exists(file)) {
-    IconDefReader reader;
-    reader.readFile(file);
-    m_emoticons = reader.emoticons();
-    m_emoticonsFiles = reader.files();
+  if (QFile::exists(m_emoticonsPath + "/icondef.xml")) {
+    IconDefReader reader(&m_emoticons, &m_emoticonsFiles);
+    if (reader.readFile(m_emoticonsPath + "/icondef.xml"))
+      err = false;
   }
-  else {
+
+  if (err) {
     m_emoticons.clear();
     m_emoticonsFiles.clear();
   }
-//  m_emoticons.insert(":)", ":/images/logo16.png");
-//  m_emoticons.insert("ПЫЩ", ":/images/quit.png");
 }
 
 

@@ -28,8 +28,11 @@
 /*!
  * \brief Конструктор класса IconDefReader.
  */
-IconDefReader::IconDefReader()
+IconDefReader::IconDefReader(QMap<QString, int> *emoticons, QStringList *files)
+  : m_emoticons(emoticons), m_files(files)
 {
+  m_emoticons->clear();
+  m_files->clear();
 }
 
 
@@ -38,7 +41,7 @@ bool IconDefReader::readFile(const QString &fileName)
   QFile file(fileName);
   if (!file.open(QFile::ReadOnly | QFile::Text))
     return false;
-  
+
   setDevice(&file);
 
   while (!atEnd()) {
@@ -59,7 +62,7 @@ bool IconDefReader::readFile(const QString &fileName)
 void IconDefReader::readIcon()
 {
   m_text.clear();
-  
+
   while (!atEnd()) {
     readNext();
 
@@ -73,11 +76,14 @@ void IconDefReader::readIcon()
           m_text << text;
       }
       else if (name() == "object") {
-        m_files << readElementText();
-        int index = m_files.size() - 1;
-        if (!m_text.isEmpty() && index >= 0)
-          foreach (QString text, m_text)
-            m_emoticons.insert(text, index);
+        QString object = readElementText();
+        if (!object.isEmpty()) {
+          m_files->append(object);
+          int index = m_files->size() - 1;
+          if (!m_text.isEmpty() && index >= 0)
+            foreach (QString text, m_text)
+              m_emoticons->insert(text, index);
+        }
       }
       else
         readUnknownElement();
