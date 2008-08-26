@@ -78,6 +78,7 @@ private:
   QMap<QString, int> m_emoticons;
   QPoint m_pos;
   QSize m_size;
+  QString m_emoticonsPath;
   QStringList m_emoticonsFiles;
 };
 
