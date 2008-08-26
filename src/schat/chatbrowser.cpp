@@ -200,6 +200,12 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   QTextCursor cursor(&doc);
   QString plain = doc.toPlainText();
+  cursor.clearSelection();
+  cursor.setPosition(0);
+  cursor.insertHtml(pre);
+  int offset = doc.toPlainText().size() - plain.size();
+  cursor.setPosition(offset);
+
   QString smile = m_settings->nextSmile(plain);
   int index = 0;
 
@@ -216,7 +222,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 //          cursor.insertImage(QUrl::fromLocalFile(file).toString());
           cursor.insertText(" ");
           AnimatedSmile* asmile = new AnimatedSmile;
-          asmile->init(cursor.position() + Qt::escape(nick).size() + 13 + toPlainText().size(), file, document());
+          asmile->init(cursor.position() + toPlainText().size(), file, document());
 
           m_animatedSmiles.append(asmile);
         }
@@ -229,13 +235,8 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     if ((smile = m_settings->nextSmile(plain, index)).isEmpty())
       break;
   }
-
-  QTextCursor merge(&doc);
-  merge.clearSelection();
-  merge.setPosition(0);
-  merge.insertHtml(pre);
   append(doc.toHtml());
-  
+
   playPauseAnimations(true);
   setAnimations();
 
