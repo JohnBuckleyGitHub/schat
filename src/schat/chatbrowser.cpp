@@ -210,11 +210,11 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   if (!smiles.isEmpty()) {
     foreach (QString smile, smiles) {
+      cursor.setPosition(offset);
       qDebug() << "smile:" << smile;
 
-      cursor = doc.find(smile, offset);
-      if (!cursor.isNull()) {
-        qDebug() << "NOT NULL" << cursor.selectedText();
+      do {
+        cursor = doc.find(smile, cursor);
 
         if (cursor.selectedText() == smile) {
           QString file = m_settings->smileFile(smile);
@@ -227,7 +227,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
             m_animatedSmiles.append(asmile);
           }
         }
-      }
+      } while (!cursor.isNull());
     }
   }
 
