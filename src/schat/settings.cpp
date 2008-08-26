@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "icondefreader.h"
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
@@ -41,15 +42,35 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 
 bool Settings::insertSmile(QTextCursor &cursor, const QString &smile)
 {
-//  if (m_emoticons.contains(smile))
-//    cursor.insertImage(m_emoticons.value(smile));
+  qDebug() << "Settings::insertSmile()" << smile;
+  
+  if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
+    return false;
 
-  return true;
+  if (m_emoticons.contains(smile)) {
+    int index = m_emoticons.value(smile);
+//    m_emoticonsFiles
+    if (index < m_emoticonsFiles.size()) {
+      QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
+      if (!QFile::exists(file))
+        return false;
+      cursor.insertImage(file);
+    }
+    else
+      return false;
+      
+//    if (QFile::exists(m_emoticonsPath + "/"))
+//    cursor.insertImage(m_emoticons.value(smile));
+  }
+
+  return false;
 }
 
 
 QString Settings::nextSmile(const QString &text, int pos) const
 {
+  qDebug() << "Settings::nextSmile()" << m_emoticons.size() << m_emoticonsFiles.size();
+  
   QMapIterator <QString, int> i(m_emoticons);
   while (i.hasNext()) {
     i.next();
@@ -65,7 +86,19 @@ QString Settings::nextSmile(const QString &text, int pos) const
 
 void Settings::createEmoticonsMap()
 {
-  m_emoticons.clear();
+  m_emoticonsPath = getString("EmoticonsPath");
+  QString file = m_emoticonsPath + "/icondef.xml";
+
+  if (QFile::exists(file)) {
+    IconDefReader reader;
+    reader.readFile(file);
+    m_emoticons = reader.emoticons();
+    m_emoticonsFiles = reader.files();
+  }
+  else {
+    m_emoticons.clear();
+    m_emoticonsFiles.clear();
+  }
 //  m_emoticons.insert(":)", ":/images/logo16.png");
 //  m_emoticons.insert("ПЫЩ", ":/images/quit.png");
 }
