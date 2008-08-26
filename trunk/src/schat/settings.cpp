@@ -40,27 +40,6 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 }
 
 
-bool Settings::insertSmile(QTextCursor &cursor, const QString &smile)
-{
-  if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
-    return false;
-
-  if (m_emoticons.contains(smile)) {
-    int index = m_emoticons.value(smile);
-    if (index < m_emoticonsFiles.size()) {
-      QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
-      if (!QFile::exists(file))
-        return false;
-      cursor.insertImage(QUrl::fromLocalFile(file).toString());
-    }
-    else
-      return false;
-  }
-
-  return false;
-}
-
-
 /*!
  * \brief Возвращает следующую строку с именем смайлика найденную в строке.
  */
@@ -73,6 +52,28 @@ QString Settings::nextSmile(const QString &text, int pos) const
     int index = text.indexOf(key, pos, Qt::CaseInsensitive);
     if (index != -1)
       return key;
+  }
+
+  return "";
+}
+
+
+QString Settings::smileFile(const QString &smile)
+{
+  if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
+    return "";
+
+  if (m_emoticons.contains(smile)) {
+    int index = m_emoticons.value(smile);
+    if (index < m_emoticonsFiles.size()) {
+      QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
+      if (!QFile::exists(file))
+        return "";
+
+      return file;
+    }
+    else
+      return "";
   }
 
   return "";

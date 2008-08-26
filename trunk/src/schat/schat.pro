@@ -50,6 +50,7 @@ HEADERS += \
     widget/sendwidget.h \
     abstractsettings.h \
     icondefreader.h \
+    animatedsmile.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -73,6 +74,7 @@ SOURCES += \
     widget/sendwidget.cpp \
     abstractsettings.cpp \
     icondefreader.cpp \
+    animatedsmile.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc

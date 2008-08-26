@@ -209,8 +209,12 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     if (!cursor.isNull()) {
       qDebug() << "NOT NULL" << cursor.selectedText();
 
-      if (cursor.selectedText() == smile)
-        m_settings->insertSmile(cursor, smile);
+      if (cursor.selectedText() == smile) {
+        QString file = m_settings->smileFile(smile);
+        if (!file.isEmpty()) {
+          cursor.insertImage(QUrl::fromLocalFile(file).toString());
+        }
+      }
 
       if (cursor.position() == plain.size())
         break;
