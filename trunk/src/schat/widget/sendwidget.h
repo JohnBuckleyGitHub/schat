@@ -54,7 +54,9 @@ private:
   QAction *m_italicAction;
   QAction *m_sendAction;
   QAction *m_underlineAction;
+  QMenu *m_popup;
   QToolButton *m_boldButton;
+  QToolButton *m_emoticonButton;
   QToolButton *m_italicButton;
   QToolButton *m_sendButton;
   QToolButton *m_underlineButton;

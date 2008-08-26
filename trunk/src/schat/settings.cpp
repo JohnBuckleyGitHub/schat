@@ -194,7 +194,7 @@ void Settings::write()
   m_settings->setValue("Gender", m_profile->gender());
   m_settings->setValue("Bye", m_profile->byeMsg());
   m_settings->endGroup();
-  
+
 #ifdef SCHAT_UPDATE
   writeBool("Updates/AutoClean");
   writeInt("Updates/CheckInterval");
