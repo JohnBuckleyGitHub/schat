@@ -206,35 +206,31 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   int offset = doc.toPlainText().size() - plain.size();
   cursor.setPosition(offset);
 
-  QString smile = m_settings->nextSmile(plain);
-  int index = 0;
+  QStringList smiles = m_settings->smiles(plain);
 
-  while (index != -1 && !smile.isEmpty()) {
-    cursor = doc.find(smile, cursor, QTextDocument::FindWholeWords);
-    index = plain.indexOf(smile, index, Qt::CaseInsensitive) + 1;
+  if (!smiles.isEmpty()) {
+    foreach (QString smile, smiles) {
+      qDebug() << "smile:" << smile;
 
-    if (!cursor.isNull()) {
-      qDebug() << "NOT NULL" << cursor.selectedText();
+      cursor = doc.find(smile, offset);
+      if (!cursor.isNull()) {
+        qDebug() << "NOT NULL" << cursor.selectedText();
 
-      if (cursor.selectedText() == smile) {
-        QString file = m_settings->smileFile(smile);
-        if (!file.isEmpty()) {
-//          cursor.insertImage(QUrl::fromLocalFile(file).toString());
-          cursor.insertText(" ");
-          AnimatedSmile* asmile = new AnimatedSmile;
-          asmile->init(cursor.position() + toPlainText().size(), file, document());
+        if (cursor.selectedText() == smile) {
+          QString file = m_settings->smileFile(smile);
+          if (!file.isEmpty()) {
+  //          cursor.insertImage(QUrl::fromLocalFile(file).toString());
+            cursor.insertText(" ");
+            AnimatedSmile* asmile = new AnimatedSmile;
+            asmile->init(cursor.position() + toPlainText().size(), file, document());
 
-          m_animatedSmiles.append(asmile);
+            m_animatedSmiles.append(asmile);
+          }
         }
       }
-
-      if (cursor.position() == plain.size())
-        break;
     }
-
-    if ((smile = m_settings->nextSmile(plain, index)).isEmpty())
-      break;
   }
+
   append(doc.toHtml());
 
   playPauseAnimations(true);
