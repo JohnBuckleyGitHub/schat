@@ -607,7 +607,7 @@ void SChatWindow::sendMsg(const QString &message)
   if (m_clientService) {
     QString channel;
     m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-    if (m_clientService->sendMessage(channel, message));
+    if (m_clientService->sendMessage(channel, message))
       m_send->clear();
   }
 }
