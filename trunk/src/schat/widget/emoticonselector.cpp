@@ -59,7 +59,7 @@ void EmoticonLabel::mousePressEvent(QMouseEvent*)
 void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
 {
   if (m_ok)
-    emit clicked(m_text);
+    emit clicked(" " + m_text + " ");
 }
 
 
@@ -128,14 +128,14 @@ void EmoticonSelector::emoticonClicked(const QString &str)
 }
 
 
-void EmoticonSelector::hideEvent( QHideEvent* )
+void EmoticonSelector::hideEvent(QHideEvent*)
 {
   foreach (QMovie *movie, m_movieList)
     movie->setPaused(true);
 }
 
 
-void EmoticonSelector::showEvent( QShowEvent* )
+void EmoticonSelector::showEvent(QShowEvent*)
 {
   foreach (QMovie *movie, m_movieList)
     movie->setPaused(false);
