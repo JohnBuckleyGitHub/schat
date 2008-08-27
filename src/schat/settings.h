@@ -19,6 +19,7 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
+#include <QHash>
 #include <QObject>
 #include <QSettings>
 #include <QStandardItemModel>
@@ -29,6 +30,12 @@
 
 class SChatWindow;
 class AbstractProfile;
+
+struct Emoticons {
+  QString name;
+  QString file;
+  Emoticons(QString _name, QString _file) { name = _name; file = _file; }
+};
 
 class Settings : public AbstractSettings {
   Q_OBJECT
@@ -44,17 +51,17 @@ public:
   };
 
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
-  inline QByteArray splitter() const                  { return m_splitter; }
-  inline QMap<QString, int> emoticons() const         { return m_emoticons; }
-  inline QPoint pos() const                           { return m_pos; }
-  inline QSize size() const                           { return m_size; }
-  inline QStringList emoticonsFiles() const           { return m_emoticonsFiles; }
-  inline void notify(int notify)                      { emit changed(notify); }
-  inline void setPos(const QPoint &pos)               { m_pos = pos; }
-  inline void setSize(const QSize &size)              { m_size = size; }
-  inline void setSplitter(const QByteArray &splitter) { m_splitter = splitter; }
+  inline QByteArray splitter() const                   { return m_splitter; }
+  inline QHash<QString, QStringList> emoticons() const { return m_emoticons; }
+  inline QPoint pos() const                            { return m_pos; }
+  inline QSize size() const                            { return m_size; }
+  inline QStringList emoticonsFiles() const            { return m_emoticonsFiles; }
+  inline void notify(int notify)                       { emit changed(notify); }
+  inline void setPos(const QPoint &pos)                { m_pos = pos; }
+  inline void setSize(const QSize &size)               { m_size = size; }
+  inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
+  QList<Emoticons> emoticons(const QString &text) const;
   QString smileFile(const QString &smile);
-  QStringList smiles(const QString &text) const;
   void createEmoticonsMap();
   void notify(int notify, int index);
   void read();
@@ -77,7 +84,8 @@ private:
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;
-  QMap<QString, int> m_emoticons;
+  QMap<QString, int> m_emoticons2;
+  QHash<QString, QStringList> m_emoticons;
   QPoint m_pos;
   QSize m_size;
   QString m_emoticonsPath;

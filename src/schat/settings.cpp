@@ -42,11 +42,11 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 
 QString Settings::smileFile(const QString &smile)
 {
-  if (m_emoticons.isEmpty() || m_emoticonsFiles.isEmpty())
+  if (m_emoticons2.isEmpty() || m_emoticonsFiles.isEmpty())
     return "";
 
-  if (m_emoticons.contains(smile)) {
-    int index = m_emoticons.value(smile);
+  if (m_emoticons2.contains(smile)) {
+    int index = m_emoticons2.value(smile);
     if (index < m_emoticonsFiles.size()) {
       QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
       if (!QFile::exists(file))
@@ -65,18 +65,20 @@ QString Settings::smileFile(const QString &smile)
 /*!
  * \brief Возвращает список всех смайликов которые были найдены в строке.
  */
-QStringList Settings::smiles(const QString &text) const
+QList<Emoticons> Settings::emoticons(const QString &text) const
 {
-  QStringList out;
-  
-  if (!m_emoticons.isEmpty()) {
-    QMapIterator <QString, int> i(m_emoticons);
+  QList<Emoticons> out;
+
+  if (!m_emoticons.isEmpty() && !text.isEmpty()) {
+    QHashIterator <QString, QStringList> i(m_emoticons);
     while (i.hasNext()) {
       i.next();
-      QString key = i.key();
-  
-      if (text.contains(key))
-        out << key;
+      QStringList list = i.value();
+      foreach (QString name, list) {
+        if (text.contains(name)) {
+          out << Emoticons(name, i.key()); 
+        }
+      }
     }
   }
 
@@ -93,13 +95,13 @@ void Settings::createEmoticonsMap()
   bool err = true;
 
   if (QFile::exists(m_emoticonsPath + "/icondef.xml")) {
-    IconDefReader reader(&m_emoticons, &m_emoticonsFiles);
+    IconDefReader reader(&m_emoticons);
     if (reader.readFile(m_emoticonsPath + "/icondef.xml"))
       err = false;
   }
 
   if (err) {
-    m_emoticons.clear();
+    m_emoticons2.clear();
     m_emoticonsFiles.clear();
   }
 }

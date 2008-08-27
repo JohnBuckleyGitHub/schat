@@ -206,19 +206,21 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   int offset = doc.toPlainText().size() - plain.size();
   cursor.setPosition(offset);
 
-  QStringList smiles = m_settings->smiles(plain);
+  QList<Emoticons> emoticons = m_settings->emoticons(plain);
 
-  if (!smiles.isEmpty()) {
-    foreach (QString smile, smiles) {
+  if (!emoticons.isEmpty()) {
+    QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+    
+    foreach (Emoticons emoticon, emoticons) {
       cursor.setPosition(offset);
-      qDebug() << "smile:" << smile;
+      qDebug() << "smile:" << emoticon.name << emoticon.file;
 
       do {
-        cursor = doc.find(smile, cursor);
+        cursor = doc.find(emoticon.name, cursor);
 
-        if (cursor.selectedText() == smile) {
-          QString file = m_settings->smileFile(smile);
-          if (!file.isEmpty()) {
+        if (cursor.selectedText() == emoticon.name) {
+          QString file = emoticonsPath + emoticon.file;
+          if (!emoticon.file.isEmpty()) {
   //          cursor.insertImage(QUrl::fromLocalFile(file).toString());
             cursor.insertText(" ");
             AnimatedSmile* asmile = new AnimatedSmile;

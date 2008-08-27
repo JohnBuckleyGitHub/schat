@@ -140,8 +140,8 @@ void SendWidget::createButtons()
   connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
   
   m_popup = new QMenu(this);
-  m_emoticonSelector = new EmoticonSelector(m_settings, m_popup);
-  QWidgetAction *act = new QWidgetAction(m_popup);
+  m_emoticonSelector = new EmoticonSelector(m_settings, this);
+  QWidgetAction *act = new QWidgetAction(this);
   act->setDefaultWidget(m_emoticonSelector);
   m_popup->addAction(act);
   connect(m_popup, SIGNAL(aboutToShow()), m_emoticonSelector, SLOT(prepareList()));
