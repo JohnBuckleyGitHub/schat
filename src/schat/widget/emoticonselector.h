@@ -39,14 +39,15 @@ class EmoticonLabel : public QLabel
 
 public:
   EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent = 0);
-  ~EmoticonLabel();
 
 signals:
   void clicked(const QString &text);
 
 private:
+  void mousePressEvent(QMouseEvent*);
   void mouseReleaseEvent(QMouseEvent*);
   QString m_text;
+  bool m_ok;
 };
 
 
@@ -55,31 +56,26 @@ class EmoticonSelector : public QWidget
   Q_OBJECT
 
 public:
-
   EmoticonSelector(Settings *settings, QWidget *parent = 0);
 //  ~EmoticonSelector();
 
   typedef QList<QMovie*> MovieList;
 signals:
-  /**
-  * gets emitted when an emoticon has been selected from the list
-  * the QString holds the emoticon as a string or is 0L if nothing was selected
-  **/
-  void ItemSelected(const QString &);
+  void itemSelected(const QString &str);
 
 public slots:
   void prepareList();
 
 protected:
-  virtual void hideEvent( QHideEvent* );
-  virtual void showEvent( QShowEvent* );
-  MovieList m_movieList;
-  QGridLayout *m_lay;
+  virtual void hideEvent(QHideEvent*);
+  virtual void showEvent(QShowEvent*);
 
 protected slots:
   void emoticonClicked(const QString &);
-  
+
 private:
+  MovieList m_movieList;
+  QGridLayout *m_lay;
   Settings *m_settings;
 };
 
