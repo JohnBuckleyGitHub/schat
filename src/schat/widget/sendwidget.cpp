@@ -131,21 +131,22 @@ void SendWidget::createButtons()
   m_underlineButton->setDefaultAction(m_underlineAction);
   m_underlineButton->setAutoRaise(true);
   connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
-  
+
   m_sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить сообщение"), this);
   m_sendAction->setStatusTip(tr("Отправить сообщение"));
   m_sendButton = new QToolButton(this);
   m_sendButton->setDefaultAction(m_sendAction);
   m_sendButton->setAutoRaise(true);
   connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
-  
+
   m_popup = new QMenu(this);
   m_emoticonSelector = new EmoticonSelector(m_settings, this);
   QWidgetAction *act = new QWidgetAction(this);
   act->setDefaultWidget(m_emoticonSelector);
   m_popup->addAction(act);
   connect(m_popup, SIGNAL(aboutToShow()), m_emoticonSelector, SLOT(prepareList()));
-  
+  connect(m_emoticonSelector, SIGNAL(itemSelected(const QString &)), m_input, SLOT(insertPlainText(const QString &)));
+
   m_emoticonButton = new QToolButton(this);
   m_emoticonButton->setIcon(QIcon(":/images/emoticon.png"));
   m_emoticonButton->setToolTip(tr("Добавить смайлик"));
