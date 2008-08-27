@@ -24,16 +24,18 @@
 
 #include "widget/inputwidget.h"
 
+class EmoticonSelector;
 class InputWidget;
 class QAction;
 class QToolButton;
+class Settings;
 
 class SendWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  SendWidget(QWidget *parent = 0);
+  SendWidget(Settings *settings, QWidget *parent = 0);
   inline void clear() { m_input->clearMsg(); }
 
 signals:
@@ -49,6 +51,7 @@ private:
   void createButtons();
   void mergeFormat(const QTextCharFormat &format);
 
+  EmoticonSelector *m_emoticonSelector;
   InputWidget *m_input;
   QAction *m_boldAction;
   QAction *m_italicAction;
@@ -60,6 +63,7 @@ private:
   QToolButton *m_italicButton;
   QToolButton *m_sendButton;
   QToolButton *m_underlineButton;
+  Settings *m_settings;
 };
 
 #endif /*SENDWIDGET_H_*/

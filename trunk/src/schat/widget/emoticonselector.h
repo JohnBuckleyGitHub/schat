@@ -37,6 +37,7 @@
 class QGridLayout;
 class QHideEvent;
 class QShowEvent;
+class Settings;
 
 class EmoticonItem : public QListWidgetItem
 {
@@ -57,8 +58,7 @@ class EmoticonSelector : public QWidget
   Q_OBJECT
 
 public:
-
-  EmoticonSelector ( QWidget *parent = 0 );
+  EmoticonSelector(Settings *settings, QWidget *parent = 0);
 //  ~EmoticonSelector();
 
 signals:
@@ -81,9 +81,10 @@ protected slots:
   void currentChanged();
 
 private:
-  QListWidget *m_emoticonList;
   QLabel *m_currentEmoticon;
+  QListWidget *m_emoticonList;
   QMovie *m_currentMovie;
+  Settings *m_settings;
 };
 
 #endif /*EMOTICONSELECTOR_H_*/
