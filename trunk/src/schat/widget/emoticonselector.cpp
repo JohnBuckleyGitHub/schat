@@ -32,7 +32,7 @@
 EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
   : QLabel(parent)
 {
-  mText = emoticonText;
+  m_text = emoticonText;
   setMovie(new QMovie(pixmapPath) );
   setAlignment(Qt::AlignCenter);
 //  QToolTip::add(this,emoticonText);
@@ -75,9 +75,9 @@ void EmoticonSelector::prepareList(void)
 //  kdDebug(14000) << k_funcinfo << "called." << endl;
   int row = 0;
   int col = 0;
-  QHash<QString, QStringList> list;
-  list.insert("smile.gif", QStringList() << ":)");
-  list.insert("sad.gif", QStringList() << ":-(");
+  QHash<QString, QStringList> list = m_settings->emoticons();
+//  list.insert("smile.gif", QStringList() << ":)");
+//  list.insert("sad.gif", QStringList() << ":-(");
 //  QMap<QString, QStringList> list = Kopete::Emoticons::self()->emoticonAndPicList();
   int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
   //kdDebug(14000) << "emoticonsPerRow=" << emoticonsPerRow << endl;
@@ -107,6 +107,8 @@ void EmoticonSelector::prepareList(void)
   QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme");
 
   m_lay = new QGridLayout(this);
+  m_lay->setMargin(2);
+  m_lay->setSpacing(2);
   m_movieList.clear();
   
   QHashIterator<QString, QStringList> i(list);

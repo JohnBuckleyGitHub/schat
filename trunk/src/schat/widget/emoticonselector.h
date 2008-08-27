@@ -44,10 +44,11 @@ public:
 signals:
   void clicked(const QString &text);
 
-protected:
+private:
   void mouseReleaseEvent(QMouseEvent*);
-  QString mText;
+  QString m_text;
 };
+
 
 class EmoticonSelector : public QWidget
 {
