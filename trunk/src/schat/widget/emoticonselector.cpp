@@ -83,7 +83,7 @@ void EmoticonSelector::prepareList()
   int row = 0;
   int col = 0;
   QHash<QString, QStringList> list = m_settings->emoticons();
-  int emoticonsPerRow = static_cast<int>(sqrt(list.count()));
+  int emoticonsPerRow = static_cast<int>(sqrt((float)list.count()));
 
   if (m_lay) {
     QList<EmoticonLabel *> labels = this->findChildren<EmoticonLabel *>();
