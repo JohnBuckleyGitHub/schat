@@ -40,28 +40,6 @@ Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *p
 }
 
 
-QString Settings::smileFile(const QString &smile)
-{
-  if (m_emoticons2.isEmpty() || m_emoticonsFiles.isEmpty())
-    return "";
-
-  if (m_emoticons2.contains(smile)) {
-    int index = m_emoticons2.value(smile);
-    if (index < m_emoticonsFiles.size()) {
-      QString file = m_emoticonsPath + "/" + m_emoticonsFiles.at(index);
-      if (!QFile::exists(file))
-        return "";
-
-      return file;
-    }
-    else
-      return "";
-  }
-
-  return "";
-}
-
-
 /*!
  * \brief Возвращает список всех смайликов которые были найдены в строке.
  */
@@ -91,19 +69,17 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
  */
 void Settings::createEmoticonsMap()
 {
-  m_emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
+  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
   bool err = true;
 
-  if (QFile::exists(m_emoticonsPath + "/icondef.xml")) {
+  if (QFile::exists(emoticonsPath + "/icondef.xml")) {
     IconDefReader reader(&m_emoticons);
-    if (reader.readFile(m_emoticonsPath + "/icondef.xml"))
+    if (reader.readFile(emoticonsPath + "/icondef.xml"))
       err = false;
   }
 
-  if (err) {
-    m_emoticons2.clear();
-    m_emoticonsFiles.clear();
-  }
+  if (err)
+    m_emoticons.clear();
 }
 
 
