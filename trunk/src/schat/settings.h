@@ -55,13 +55,11 @@ public:
   inline QHash<QString, QStringList> emoticons() const { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
-  inline QStringList emoticonsFiles() const            { return m_emoticonsFiles; }
   inline void notify(int notify)                       { emit changed(notify); }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
   QList<Emoticons> emoticons(const QString &text) const;
-  QString smileFile(const QString &smile);
   void createEmoticonsMap();
   void notify(int notify, int index);
   void read();
@@ -84,12 +82,9 @@ private:
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;
-  QMap<QString, int> m_emoticons2;
   QHash<QString, QStringList> m_emoticons;
   QPoint m_pos;
   QSize m_size;
-  QString m_emoticonsPath;
-  QStringList m_emoticonsFiles;
 };
 
 #endif /*SETTINGS_H_*/
