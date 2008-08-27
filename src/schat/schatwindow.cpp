@@ -42,7 +42,9 @@
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  m_send = new SendWidget(this);
+  m_profile     = new AbstractProfile(this);
+  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
+  m_send        = new SendWidget(m_settings, this);
   centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
   m_tabs        = new QTabWidget(splitter);
@@ -54,8 +56,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   statusLabel   = new QLabel(this);
-  m_profile     = new AbstractProfile(this);
-  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
   noticeTimer   = new QTimer(this);
   noticeTimer->setInterval(800);
   

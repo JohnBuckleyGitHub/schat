@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "widget/emoticonselector.h"
 #include "widget/sendwidget.h"
 
 /*!
@@ -28,8 +29,8 @@
 /*!
  * \brief Конструктор класса SendWidget.
  */
-SendWidget::SendWidget(QWidget *parent)
-  : QWidget(parent)
+SendWidget::SendWidget(Settings *settings, QWidget *parent)
+  : QWidget(parent), m_settings(settings)
 {
   m_input = new InputWidget(this);
   createButtons();
@@ -137,15 +138,20 @@ void SendWidget::createButtons()
   m_sendButton->setDefaultAction(m_sendAction);
   m_sendButton->setAutoRaise(true);
   connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
-
+  
   m_popup = new QMenu(this);
+  m_emoticonSelector = new EmoticonSelector(m_settings, m_popup);
+  QWidgetAction *act = new QWidgetAction(m_popup);
+  act->setDefaultWidget(m_emoticonSelector);
+  m_popup->addAction(act);
+  connect(m_popup, SIGNAL(aboutToShow()), m_emoticonSelector, SLOT(prepareList()));
+  
   m_emoticonButton = new QToolButton(this);
   m_emoticonButton->setIcon(QIcon(":/images/emoticon.png"));
   m_emoticonButton->setToolTip(tr("Добавить смайлик"));
   m_emoticonButton->setAutoRaise(true);
   m_emoticonButton->setMenu(m_popup);
   m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
-  
 }
 
 

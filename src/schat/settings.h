@@ -45,8 +45,10 @@ public:
 
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
   inline QByteArray splitter() const                  { return m_splitter; }
+  inline QMap<QString, int> emoticons() const         { return m_emoticons; }
   inline QPoint pos() const                           { return m_pos; }
   inline QSize size() const                           { return m_size; }
+  inline QStringList emoticonsFiles() const           { return m_emoticonsFiles; }
   inline void notify(int notify)                      { emit changed(notify); }
   inline void setPos(const QPoint &pos)               { m_pos = pos; }
   inline void setSize(const QSize &size)              { m_size = size; }

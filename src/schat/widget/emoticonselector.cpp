@@ -23,16 +23,11 @@
  */
 
 #include "emoticonselector.h"
-//#include "kopeteemoticons.h"
+#include "settings.h"
 
 #include <math.h>
 
-#include <QPixmap>
-#include <QMouseEvent>
-#include <QHBoxLayout>
-#include <QObject>
-#include <QHideEvent>
-#include <QShowEvent>
+#include <QtGui>
 
 //#include <kdebug.h>
 //#include <kemoticons.h>
@@ -63,8 +58,8 @@ QString EmoticonItem::pixmapPath() const
   return m_pixmapPath;
 }
 
-EmoticonSelector::EmoticonSelector(QWidget *parent)
-  : QWidget(parent)
+EmoticonSelector::EmoticonSelector(Settings *settings, QWidget *parent)
+  : QWidget(parent), m_settings(settings)
 {
   QHBoxLayout *lay = new QHBoxLayout(this);
   lay->setSpacing( 0 );
@@ -101,7 +96,8 @@ void EmoticonSelector::prepareList(void)
 //  QHash<QString, QStringList> list = Kopete::Emoticons::self()->theme().emoticonsMap();
 
 //  for (QHash<QString, QStringList>::const_iterator it = list.constBegin(); it != list.constEnd(); ++it )
-//    (void) new EmoticonItem(it.value().first(), it.key(), m_emoticonList);
+    new EmoticonItem(":)", qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/angel.gif", m_emoticonList);
+    new EmoticonItem(";-)", qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/wink.gif", m_emoticonList);
 
   m_emoticonList->setIconSize(QSize(32,32));
 }
