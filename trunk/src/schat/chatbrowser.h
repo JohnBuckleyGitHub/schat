@@ -19,12 +19,14 @@
 #ifndef CHATBROWSER_H_
 #define CHATBROWSER_H_
 
+#include <QHash>
 #include <QTextBrowser>
 #include <QTime>
 
 #include "animatedsmile.h"
 #include "channellog.h"
 
+class EmoticonMovie;
 class Settings;
 
 class ChatBrowser : public QTextBrowser {
@@ -48,21 +50,24 @@ public:
   void scroll();
 
 protected:
-  bool viewportEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
-  void hideEvent(QHideEvent* /*event*/) { playPauseAnimations(false); }
-  void showEvent(QShowEvent* /*event*/) { playPauseAnimations(true); }
+  void hideEvent(QHideEvent* /*event*/);
+  void showEvent(QShowEvent* /*event*/);
 
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
 
 private slots:
+  void animate(const QString &key);
   void playPauseAnimations(bool play);
   void setAnimations();
 
 private:
+  void addAnimation(const QString &fileName);
+  
   ChannelLog *m_channelLog;
   int m_keepAnimations;
+  QHash<QString, EmoticonMovie*> m_aemoticon;
   QList<AnimatedSmile*> m_animatedSmiles;
   QString m_style;
   Settings *m_settings;
