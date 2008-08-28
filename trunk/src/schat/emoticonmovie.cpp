@@ -28,13 +28,32 @@
 /*!
  * \brief Конструктор класса EmoticonMovie.
  */
-EmoticonMovie::EmoticonMovie(const QString &filename, QWidget *parent)
+EmoticonMovie::EmoticonMovie(const QString &filename, int pos, QWidget *parent)
   : QMovie(parent)
 {
   setFileName(filename);
   m_key = QFileInfo(filename).fileName();
+  addPos(pos);
   start();
   connect(this, SIGNAL(frameChanged(int)), SLOT(next()));
+}
+
+
+void EmoticonMovie::pauseIfHidden(int min, int max)
+{
+  bool pause = true;
+
+  foreach (int pos, m_positions) {
+    if (pos >= min && pos <= max) {
+      pause = false;
+      break;
+    }
+  }
+
+  if (pause && state() == QMovie::Running)
+    setPaused(true);
+  else if (!pause && state() == QMovie::Paused)
+    setPaused(false);
 }
 
 
