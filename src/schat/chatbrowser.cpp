@@ -214,7 +214,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     
     foreach (Emoticons emoticon, emoticons) {
       cursor.setPosition(offset);
-      qDebug() << "smile:" << emoticon.name << emoticon.file;
+//      qDebug() << "smile:" << emoticon.name << emoticon.file;
 
       do {
         cursor = doc.find(emoticon.name, cursor);
@@ -223,8 +223,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
           QString file = emoticonsPath + emoticon.file;
           if (!emoticon.file.isEmpty()) {
             cursor.insertImage(QFileInfo(file).fileName());
-//            cursor.insertText(" ");
-            addAnimation(file);
+            addAnimation(file, cursor.position() + toPlainText().size());
           }
         }
       } while (!cursor.isNull());
@@ -266,19 +265,23 @@ void ChatBrowser::setAnimations()
   int min = cursorForPosition(QPoint(0, 0)).position();
   int max = cursorForPosition(QPoint(size().width(), size().height())).position();
 
-  foreach(AnimatedSmile* sm, m_animatedSmiles)
-    sm->pauseIfHidden(min, max);
+  QHashIterator<QString, EmoticonMovie*> i(m_aemoticon);
+  while (i.hasNext()) {
+    i.next();
+    i.value()->pauseIfHidden(min, max);
+  }
 }
 
 
-void ChatBrowser::addAnimation(const QString &fileName)
+void ChatBrowser::addAnimation(const QString &fileName, int pos)
 {
   QString name = QFileInfo(fileName).fileName();
   if (m_aemoticon.contains(name))
-    return;
-
-  EmoticonMovie *movie = new EmoticonMovie(fileName, this);
-  m_aemoticon.insert(name, movie);
-  document()->addResource(QTextDocument::ImageResource, name, movie->currentPixmap());
-  connect(movie, SIGNAL(frameChanged(const QString &)), this, SLOT(animate(const QString &)));
+    m_aemoticon.value(name)->addPos(pos);
+  else {
+    EmoticonMovie *movie = new EmoticonMovie(fileName, pos, this);    
+    m_aemoticon.insert(name, movie);
+    document()->addResource(QTextDocument::ImageResource, name, movie->currentPixmap());
+    connect(movie, SIGNAL(frameChanged(const QString &)), this, SLOT(animate(const QString &)));
+  }
 }

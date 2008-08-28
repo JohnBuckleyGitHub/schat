@@ -50,6 +50,7 @@ public:
   void scroll();
 
 protected:
+  inline bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event); }
   inline void hideEvent(QHideEvent* /*event*/) { pauseAnimations(true); }
   inline void showEvent(QShowEvent* /*event*/) { pauseAnimations(false); }
   void contextMenuEvent(QContextMenuEvent *event);
@@ -63,7 +64,7 @@ private slots:
   void setAnimations();
 
 private:
-  void addAnimation(const QString &fileName);
+  void addAnimation(const QString &fileName, int pos = -1);
   
   ChannelLog *m_channelLog;
   int m_keepAnimations;
