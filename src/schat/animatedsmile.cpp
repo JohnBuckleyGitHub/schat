@@ -19,11 +19,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QUrl>
-#include <QFile>
-#include <QCryptographicHash>
+#include <QtGui>
 
 #include "animatedsmile.h"
+#include "chatbrowser.h"
 
 /*!
  * \class AnimatedSmile
@@ -37,8 +36,8 @@ QMap<QByteArray, QMovie*> AnimatedSmile::m_allSmiles;
 /*!
  * \brief Конструктор класса AnimatedSmile.
  */
-AnimatedSmile::AnimatedSmile(QObject *parent)
- : QObject(parent)
+AnimatedSmile::AnimatedSmile(ChatBrowser *browser, QObject *parent)
+ : QObject(parent), m_browser(browser)
 {
   m_smile    = 0;
   m_document = 0;
@@ -74,9 +73,11 @@ void AnimatedSmile::init(int pos, const QString& smile, QTextDocument* doc)
     m_allSmiles.insert(result, m_smile);
   }
 
-  m_filename = smile;
+  m_filename = QFileInfo(smile).fileName();
   m_document = doc;
   m_pos      = pos;
+  m_first    = true;
+  m_count    = -1;
 
   connect(m_smile, SIGNAL(frameChanged(int)), this, SLOT(nextFrame()));
 }
@@ -92,12 +93,37 @@ void AnimatedSmile::nextFrame()
 {
   if (m_running && m_smile && m_document) {
     QTextCursor cursor(m_document);
+    
+    m_browser->setUpdatesEnabled(false);
+    
+//    int frame = m_smile->currentFrameNumber();
+//    if (frame > m_count) {
+//      qDebug() << "frame > m_count" << frame << m_count;
+//      m_count = frame;
+      m_document->addResource(QTextDocument::ImageResource, QUrl(m_filename), m_smile->currentImage());
+//    }
+    if (m_first) {
+      m_first = false;
+      QTextImageFormat img;
+      img.setName(m_filename);
+      cursor.setPosition(m_pos);
+      cursor.insertImage(img);
+    }
+    else {
+//      cursor.setPosition(m_pos + 1);
+//      QTextImageFormat img = cursor.charFormat().toImageFormat();
+//      qDebug() << "img.isValid()" << img.isValid();
+//      img.setName(m_filename + QString().number(frame));
+//      cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+//      cursor.insertImage(img);
+      m_browser->setLineWrapColumnOrWidth(m_browser->lineWrapColumnOrWidth());
+    }
+    m_browser->setUpdatesEnabled(true);
+    
 
-    m_document->addResource(QTextDocument::ImageResource, QUrl(m_filename), m_smile->currentImage());
-
-    cursor.setPosition(m_pos);
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-
-    cursor.insertImage(m_filename);
+//    cursor.setPosition(m_pos);
+//    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+//
+//    cursor.insertImage(m_filename);
   }
 }

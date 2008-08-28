@@ -164,6 +164,15 @@ void ChatBrowser::scroll()
 }
 
 
+bool ChatBrowser::viewportEvent(QEvent *event)
+{
+  qDebug() << "ChatBrowser::viewportEvent()";
+  setAnimations();
+  return QTextBrowser::viewportEvent(event);
+}
+
+
+
 /** [protected]
  * 
  */
@@ -223,7 +232,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
           if (!emoticon.file.isEmpty()) {
   //          cursor.insertImage(QUrl::fromLocalFile(file).toString());
             cursor.insertText(" ");
-            AnimatedSmile* asmile = new AnimatedSmile;
+            AnimatedSmile* asmile = new AnimatedSmile(this);
             asmile->init(cursor.position() + toPlainText().size(), file, document());
 
             m_animatedSmiles.append(asmile);

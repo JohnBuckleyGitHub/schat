@@ -27,12 +27,14 @@
 #include <QTextCursor>
 #include <QTextDocument>
 
+class ChatBrowser;
+
 class AnimatedSmile : public QObject
 {
   Q_OBJECT
 
 public:
-  AnimatedSmile(QObject *parent = 0);
+  AnimatedSmile(ChatBrowser *browser, QObject *parent = 0);
   ~AnimatedSmile();
   inline bool animated()        {return true;}
   inline void setPaused(bool b) { m_running = !b; }
@@ -51,6 +53,9 @@ private:
   QString m_filename;
   QTextDocument *m_document;
   static QMap<QByteArray, QMovie*> m_allSmiles;
+  ChatBrowser *m_browser;
+  bool m_first;
+  int m_count;
 };
 
 #endif /*ANIMATEDSMILE_H_*/

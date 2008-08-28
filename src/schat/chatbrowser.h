@@ -48,7 +48,7 @@ public:
   void scroll();
 
 protected:
-  bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event);}
+  bool viewportEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
   void hideEvent(QHideEvent* /*event*/) { playPauseAnimations(false); }
   void showEvent(QShowEvent* /*event*/) { playPauseAnimations(true); }
