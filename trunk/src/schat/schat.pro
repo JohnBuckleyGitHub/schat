@@ -52,6 +52,7 @@ HEADERS += \
     icondefreader.h \
     animatedsmile.h \
     widget/emoticonselector.h \
+    emoticonmovie.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -77,6 +78,7 @@ SOURCES += \
     icondefreader.cpp \
     animatedsmile.cpp \
     widget/emoticonselector.cpp \
+    emoticonmovie.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
