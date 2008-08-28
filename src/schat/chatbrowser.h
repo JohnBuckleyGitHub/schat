@@ -50,16 +50,16 @@ public:
   void scroll();
 
 protected:
+  inline void hideEvent(QHideEvent* /*event*/) { pauseAnimations(true); }
+  inline void showEvent(QShowEvent* /*event*/) { pauseAnimations(false); }
   void contextMenuEvent(QContextMenuEvent *event);
-  void hideEvent(QHideEvent* /*event*/);
-  void showEvent(QShowEvent* /*event*/);
 
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
 
 private slots:
   void animate(const QString &key);
-  void playPauseAnimations(bool play);
+  void pauseAnimations(bool paused);
   void setAnimations();
 
 private:

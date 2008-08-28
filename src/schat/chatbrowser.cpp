@@ -176,32 +176,6 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
-void ChatBrowser::hideEvent(QHideEvent* /*event*/)
-{
-  qDebug() << "ChatBrowser::hideEvent()";
-  if (!m_aemoticon.isEmpty()) {
-    QHashIterator<QString, EmoticonMovie*> i(m_aemoticon);
-    while (i.hasNext()) {
-      i.next();
-      i.value()->setPaused(true);
-    }
-  }
-}
-
-
-void ChatBrowser::showEvent(QShowEvent* /*event*/)
-{
-  qDebug() << "ChatBrowser::showEvent()";
-  if (!m_aemoticon.isEmpty()) {
-    QHashIterator<QString, EmoticonMovie*> i(m_aemoticon);
-    while (i.hasNext()) {
-      i.next();
-      i.value()->setPaused(false);
-    }
-  }
-}
-
-
 /** [public slots]
  * Новое сообщение `const QString &message`,
  * от участника `const QString &nick`.
@@ -259,9 +233,6 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   append(doc.toHtml());
 
-  playPauseAnimations(true);
-  setAnimations();
-
 //  qDebug() << toHtml();
 
   scroll();
@@ -278,36 +249,15 @@ void ChatBrowser::animate(const QString &key)
 
 
 
-void ChatBrowser::playPauseAnimations(bool play)
+void ChatBrowser::pauseAnimations(bool paused)
 {
-//  if(play && !QChatSettings::settings()->boolOption("UseAnimatedSmiles"))
-//    return;
-
-  if(play && m_keepAnimations < 0)
-    foreach(AnimatedSmile* sm, m_animatedSmiles)
-      sm->start();
-  else if(!play)
-    foreach(AnimatedSmile* sm, m_animatedSmiles)
-      sm->stop();
-  else
-  {
-    int i, j;
-    for(i = m_animatedSmiles.size() - 1, j = 0; i >= 0 && j < m_keepAnimations; i--)
-    {
-      if(m_animatedSmiles[i]->animated())
-      {
-        m_animatedSmiles[i]->start();
-        j++;
-      }
+  if (!m_aemoticon.isEmpty()) {
+    QHashIterator<QString, EmoticonMovie*> i(m_aemoticon);
+    while (i.hasNext()) {
+      i.next();
+      i.value()->setPaused(paused);
     }
-
-    for(; i >= 0; i--)
-      if(m_animatedSmiles[i]->animated())
-        m_animatedSmiles[i]->setPaused(true);
   }
-
-  if(play)
-    setAnimations();
 }
 
 
