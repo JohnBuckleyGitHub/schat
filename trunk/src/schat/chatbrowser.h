@@ -48,11 +48,14 @@ public:
   void msgReadyForUse(const QString &addr);
   void msgReadyForUse(const QString &network, const QString &addr);
   void scroll();
+  
+signals:
+  void pauseAnimations(bool paused);
 
 protected:
   inline bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event); }
-  inline void hideEvent(QHideEvent* /*event*/) { pauseAnimations(true); }
-  inline void showEvent(QShowEvent* /*event*/) { pauseAnimations(false); }
+  inline void hideEvent(QHideEvent* /*event*/) { emit pauseAnimations(true); }
+  inline void showEvent(QShowEvent* /*event*/) { emit pauseAnimations(false); }
   void contextMenuEvent(QContextMenuEvent *event);
 
 public slots:
@@ -60,7 +63,6 @@ public slots:
 
 private slots:
   void animate(const QString &key);
-  void pauseAnimations(bool paused);
   void setAnimations();
 
 private:

@@ -246,19 +246,6 @@ void ChatBrowser::animate(const QString &key)
 }
 
 
-
-void ChatBrowser::pauseAnimations(bool paused)
-{
-  if (!m_aemoticon.isEmpty()) {
-    QHashIterator<QString, EmoticonMovie*> i(m_aemoticon);
-    while (i.hasNext()) {
-      i.next();
-      i.value()->setPaused(paused);
-    }
-  }
-}
-
-
 void ChatBrowser::setAnimations()
 {
   int min = cursorForPosition(QPoint(0, 0)).position();
@@ -282,5 +269,6 @@ void ChatBrowser::addAnimation(const QString &fileName, int pos)
     m_aemoticon.insert(name, movie);
     document()->addResource(QTextDocument::ImageResource, name, movie->currentPixmap());
     connect(movie, SIGNAL(frameChanged(const QString &)), this, SLOT(animate(const QString &)));
+    connect(this, SIGNAL(pauseAnimations(bool)), movie, SLOT(setPaused(bool)));
   }
 }
