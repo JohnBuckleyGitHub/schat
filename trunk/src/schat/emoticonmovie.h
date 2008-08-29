@@ -26,10 +26,12 @@ class EmoticonMovie : public QMovie
   Q_OBJECT
 
 public:
-  EmoticonMovie(const QString &filename, int pos = -1, QWidget *parent = 0);
-  inline QList<int> positions() const { return m_positions; }
+  EmoticonMovie(const QString &filename, int pos = -1, int starts = -1, QWidget *parent = 0);
+  inline QList<int> starts() const    { return m_starts; }
+//  inline QList<int> positions() const { return m_positions; }
   inline QString key() const          { return m_key; }
   inline void addPos(int pos)         { if (pos >= 0) m_positions << pos; }
+  void addStarts(int starts);
 
 signals:
   void frameChanged(const QString &key);
@@ -41,8 +43,9 @@ private slots:
   void next();
 
 private:
-  QString m_key;
+  QList<int> m_starts;
   QList<int> m_positions;
+  QString m_key;
 };
 
 #endif /*EMOTICONMOVIE_H_*/

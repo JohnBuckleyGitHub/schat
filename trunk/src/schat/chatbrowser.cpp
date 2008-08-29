@@ -221,7 +221,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
             QString file = emoticonsPath + emoticon.file;
             if (!emoticon.file.isEmpty()) {
               docCursor.insertImage(QFileInfo(file).fileName());
-              addAnimation(file, docCursor.position() + size);
+              addAnimation(file, docCursor.position() + size, size + 1);
             }
           }
         } while (!docCursor.isNull());
@@ -241,7 +241,17 @@ void ChatBrowser::animate(const QString &key)
 {
   if (m_aemoticon.contains(key)) {
     document()->addResource(QTextDocument::ImageResource, key, m_aemoticon.value(key)->currentPixmap());
-    setLineWrapColumnOrWidth(lineWrapColumnOrWidth());
+    QList<int> starts = m_aemoticon.value(key)->starts();
+    QTextCursor cursor(document());
+    cursor.beginEditBlock();
+    foreach (int start, starts) {
+      cursor.setPosition(start);
+      cursor.insertText(" ");
+      cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+      cursor.insertText("");
+    }
+    cursor.endEditBlock();
+//    setLineWrapColumnOrWidth(lineWrapColumnOrWidth());
   }
 }
 
@@ -255,13 +265,15 @@ void ChatBrowser::setAnimations()
 }
 
 
-void ChatBrowser::addAnimation(const QString &fileName, int pos)
+void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
 {
   QString name = QFileInfo(fileName).fileName();
-  if (m_aemoticon.contains(name))
+  if (m_aemoticon.contains(name)) {
     m_aemoticon.value(name)->addPos(pos);
+    m_aemoticon.value(name)->addStarts(starts);
+  }
   else {
-    EmoticonMovie *movie = new EmoticonMovie(fileName, pos, this);    
+    EmoticonMovie *movie = new EmoticonMovie(fileName, pos, starts, this);    
     m_aemoticon.insert(name, movie);
     document()->addResource(QTextDocument::ImageResource, name, movie->currentPixmap());
     connect(movie, SIGNAL(frameChanged(const QString &)), SLOT(animate(const QString &)));
