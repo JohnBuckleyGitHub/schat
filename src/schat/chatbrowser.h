@@ -20,8 +20,10 @@
 #define CHATBROWSER_H_
 
 #include <QHash>
+#include <QQueue>
 #include <QTextBrowser>
 #include <QTime>
+#include <QTimer>
 
 #include "animatedsmile.h"
 #include "channellog.h"
@@ -55,25 +57,29 @@ signals:
 
 protected:
   inline bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event); }
-  inline void hideEvent(QHideEvent* /*event*/) { emit pauseAnimations(true); }
-  inline void showEvent(QShowEvent* /*event*/) { emit pauseAnimations(false); }
+  inline void hideEvent(QHideEvent* /*event*/) { emit setPauseAnimations(true); }
+  inline void showEvent(QShowEvent* /*event*/) { emit setPauseAnimations(false); }
   void contextMenuEvent(QContextMenuEvent *event);
 
 public slots:
   void msgNewMessage(const QString &nick, const QString &message);
 
 private slots:
+  void animate();
   void animate(const QString &key);
   void setAnimations();
 
 private:
   void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
-  
+  void setPauseAnimations(bool paused);
+
   ChannelLog *m_channelLog;
   int m_keepAnimations;
   QHash<QString, EmoticonMovie*> m_aemoticon;
   QList<AnimatedSmile*> m_animatedSmiles;
+  QQueue<int> m_animateQueue;
   QString m_style;
+  QTimer m_animateTimer;
   Settings *m_settings;
 };
 

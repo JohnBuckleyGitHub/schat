@@ -46,6 +46,8 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 
   document()->setDefaultStyleSheet(m_style);
   m_keepAnimations = -1;
+  m_animateTimer.setInterval(50);
+  connect(&m_animateTimer, SIGNAL(timeout()), SLOT(animate()));
 }
 
 
@@ -203,29 +205,27 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   docCursor.insertHtml(msg);
   QString plainMsg = doc.toPlainText().mid(offset);
 
-  if (plainMsg.size() < 1024) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
 
-    if (!emoticons.isEmpty()) {
-      QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-      int size = toPlainText().size();
+  if (!emoticons.isEmpty()) {
+    QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+    int size = toPlainText().size();
 
-      foreach (Emoticons emoticon, emoticons) {
-        docCursor.setPosition(offset);
+    foreach (Emoticons emoticon, emoticons) {
+      docCursor.setPosition(offset);
 //        qDebug() << "smile:" << emoticon.name << emoticon.file;
 
-        do {
-          docCursor = doc.find(emoticon.name, docCursor);
+      do {
+        docCursor = doc.find(emoticon.name, docCursor);
 
-          if (docCursor.selectedText() == emoticon.name) {
-            QString file = emoticonsPath + emoticon.file;
-            if (!emoticon.file.isEmpty()) {
-              docCursor.insertImage(QFileInfo(file).fileName());
-              addAnimation(file, docCursor.position() + size, size + 1);
-            }
+        if (docCursor.selectedText() == emoticon.name) {
+          QString file = emoticonsPath + emoticon.file;
+          if (!emoticon.file.isEmpty()) {
+            docCursor.insertImage(QFileInfo(file).fileName());
+            addAnimation(file, docCursor.position() + size, size + 1);
           }
-        } while (!docCursor.isNull());
-      }
+        }
+      } while (!docCursor.isNull());
     }
   }
 
@@ -237,21 +237,29 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 }
 
 
+void ChatBrowser::animate()
+{  
+  QTextCursor cursor(document());
+  cursor.beginEditBlock();
+  while (!m_animateQueue.isEmpty()) {
+    cursor.setPosition(m_animateQueue.dequeue());
+    cursor.insertText(" ");
+    cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+    cursor.insertText("");
+  }
+  cursor.endEditBlock();
+}
+
+
 void ChatBrowser::animate(const QString &key)
 {
   if (m_aemoticon.contains(key)) {
     document()->addResource(QTextDocument::ImageResource, key, m_aemoticon.value(key)->currentPixmap());
     QList<int> starts = m_aemoticon.value(key)->starts();
-    QTextCursor cursor(document());
-    cursor.beginEditBlock();
     foreach (int start, starts) {
-      cursor.setPosition(start);
-      cursor.insertText(" ");
-      cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-      cursor.insertText("");
+      if (!m_animateQueue.contains(start))
+        m_animateQueue.enqueue(start);
     }
-    cursor.endEditBlock();
-//    setLineWrapColumnOrWidth(lineWrapColumnOrWidth());
   }
 }
 
@@ -280,4 +288,20 @@ void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
     connect(this, SIGNAL(pauseAnimations(bool)), movie, SLOT(setPaused(bool)));
     connect(this, SIGNAL(pauseIfHidden(int, int)), movie, SLOT(pauseIfHidden(int, int)));
   }
+
+  if (!m_animateTimer.isActive())
+    m_animateTimer.start();
+}
+
+
+void ChatBrowser::setPauseAnimations(bool paused)
+{
+  emit pauseAnimations(paused);
+
+  if (paused) {
+    if (m_animateTimer.isActive())
+      m_animateTimer.stop();
+  }
+  else if (!m_aemoticon.isEmpty() && !m_animateTimer.isActive())
+    m_animateTimer.start();
 }
