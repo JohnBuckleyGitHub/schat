@@ -40,9 +40,10 @@
 EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
   : QLabel(parent)
 {
-  m_ok = false;
-  m_text = emoticonText;
-  setMovie(new QMovie(pixmapPath, QByteArray(), this));
+  m_ok    = false;
+  m_text  = emoticonText;
+  m_movie = new QMovie(pixmapPath, QByteArray(), this);
+  setMovie(m_movie);
   setAlignment(Qt::AlignCenter);
   QPixmap p(pixmapPath);
   if (p.width() > 32 || p.height() > 32)
@@ -51,12 +52,13 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 }
 
 
-void EmoticonLabel::mousePressEvent(QMouseEvent*)
+void EmoticonLabel::mousePressEvent(QMouseEvent */*event*/)
 {
   m_ok = true;
 }
 
-void EmoticonLabel::mouseReleaseEvent(QMouseEvent*)
+
+void EmoticonLabel::mouseReleaseEvent(QMouseEvent */*event*/)
 {
   if (m_ok)
     emit clicked(" " + m_text + " ");
@@ -83,17 +85,11 @@ void EmoticonSelector::prepareList()
   int row = 0;
   int col = 0;
   QHash<QString, QStringList> list = m_settings->emoticons();
-  int emoticonsPerRow = static_cast<int>(sqrt((float)list.count()));
+  int emoticonsPerRow = (int) sqrt((float)list.count());
 
-  if (m_lay) {
-    QList<EmoticonLabel *> labels = this->findChildren<EmoticonLabel *>();
-    if (!labels.isEmpty()) {
-      foreach (EmoticonLabel *label, labels)
-        delete label;
-      labels.clear();
-    }
+  if (m_lay)
     delete m_lay;
-  }
+
   QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme");
 
   m_lay = new QGridLayout(this);
@@ -104,10 +100,11 @@ void EmoticonSelector::prepareList()
   QHashIterator<QString, QStringList> i(list);
   while (i.hasNext()) {
     i.next();
-    QWidget *w = new EmoticonLabel(i.value().first(), emoticonsPath + "/" + i.key(), this);
-    m_movieList.push_back( ((QLabel*)w)->movie() );
-    connect(w, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
-    m_lay->addWidget(w, row, col);
+    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + "/" + i.key(), this);
+    connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
+    connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
+    connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
+    m_lay->addWidget(label, row, col);
     if ( col == emoticonsPerRow ) {
       col = 0;
       row++;
@@ -123,20 +120,7 @@ void EmoticonSelector::emoticonClicked(const QString &str)
   emit itemSelected(str);
 
   QMenu *popup = qobject_cast<QMenu *>(parentWidget());
-  if (isVisible() && popup)
+  if (isVisible() && popup) {
     popup->close();
-}
-
-
-void EmoticonSelector::hideEvent(QHideEvent*)
-{
-  foreach (QMovie *movie, m_movieList)
-    movie->setPaused(true);
-}
-
-
-void EmoticonSelector::showEvent(QShowEvent*)
-{
-  foreach (QMovie *movie, m_movieList)
-    movie->setPaused(false);
+  }
 }
