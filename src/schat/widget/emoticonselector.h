@@ -26,6 +26,7 @@
 #define EMOTICONSELECTOR_H_
 
 #include <QLabel>
+#include <QMovie>
 #include <QWidget>
 
 class QGridLayout;
@@ -43,11 +44,16 @@ public:
 signals:
   void clicked(const QString &text);
 
+public slots:
+  inline void setPaused(bool paused) { m_movie->setPaused(paused); }
+
 private:
-  void mousePressEvent(QMouseEvent*);
-  void mouseReleaseEvent(QMouseEvent*);
-  QString m_text;
+  void mousePressEvent(QMouseEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
+
   bool m_ok;
+  QMovie *m_movie;
+  QString m_text;
 };
 
 
@@ -57,24 +63,25 @@ class EmoticonSelector : public QWidget
 
 public:
   EmoticonSelector(Settings *settings, QWidget *parent = 0);
-//  ~EmoticonSelector();
 
-  typedef QList<QMovie*> MovieList;
 signals:
+  void deleteLabels();
   void itemSelected(const QString &str);
+  void setPaused(bool paused);
 
 public slots:
   void prepareList();
+  void aboutToHide() { emit deleteLabels(); }
 
 protected:
-  virtual void hideEvent(QHideEvent*);
-  virtual void showEvent(QShowEvent*);
+//  virtual void hideEvent(QHideEvent*);
+  void showEvent(QShowEvent */*event*/) { emit setPaused(false); }
 
 protected slots:
   void emoticonClicked(const QString &);
 
-private:
-  MovieList m_movieList;
+private:  
+  QList<QMovie*> m_movieList;
   QGridLayout *m_lay;
   Settings *m_settings;
 };

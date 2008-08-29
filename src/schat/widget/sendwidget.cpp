@@ -145,6 +145,7 @@ void SendWidget::createButtons()
   act->setDefaultWidget(m_emoticonSelector);
   m_popup->addAction(act);
   connect(m_popup, SIGNAL(aboutToShow()), m_emoticonSelector, SLOT(prepareList()));
+  connect(m_popup, SIGNAL(aboutToHide()), m_emoticonSelector, SLOT(aboutToHide()));
   connect(m_emoticonSelector, SIGNAL(itemSelected(const QString &)), m_input, SLOT(insertPlainText(const QString &)));
 
   m_emoticonButton = new QToolButton(this);
