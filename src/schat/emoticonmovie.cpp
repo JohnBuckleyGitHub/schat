@@ -28,14 +28,23 @@
 /*!
  * \brief Конструктор класса EmoticonMovie.
  */
-EmoticonMovie::EmoticonMovie(const QString &filename, int pos, QWidget *parent)
+EmoticonMovie::EmoticonMovie(const QString &filename, int pos, int starts, QWidget *parent)
   : QMovie(parent)
 {
   setFileName(filename);
   m_key = QFileInfo(filename).fileName();
   addPos(pos);
+  addStarts(starts);
   start();
   connect(this, SIGNAL(frameChanged(int)), SLOT(next()));
+}
+
+
+void EmoticonMovie::addStarts(int starts)
+{
+  if (starts >= 0)
+    if (!m_starts.contains(starts))
+      m_starts << starts;
 }
 
 

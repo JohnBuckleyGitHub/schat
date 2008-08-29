@@ -67,7 +67,7 @@ private slots:
   void setAnimations();
 
 private:
-  void addAnimation(const QString &fileName, int pos = -1);
+  void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
   
   ChannelLog *m_channelLog;
   int m_keepAnimations;
