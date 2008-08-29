@@ -30,10 +30,12 @@ public:
   inline QList<int> positions() const { return m_positions; }
   inline QString key() const          { return m_key; }
   inline void addPos(int pos)         { if (pos >= 0) m_positions << pos; }
-  void pauseIfHidden(int min, int max);
 
 signals:
   void frameChanged(const QString &key);
+
+public slots:
+  void pauseIfHidden(int min, int max);
 
 private slots:
   void next();

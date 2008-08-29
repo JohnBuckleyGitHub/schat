@@ -51,6 +51,7 @@ public:
   
 signals:
   void pauseAnimations(bool paused);
+  void pauseIfHidden(int min, int max);
 
 protected:
   inline bool viewportEvent(QEvent *event)     { setAnimations(); return QTextBrowser::viewportEvent(event); }
