@@ -184,49 +184,48 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
   QTextDocument doc;
   doc.setDefaultStyleSheet(m_style);
-  QString pre;
+  QTextCursor docCursor(&doc);
+  QString msg = message;
 
   if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
-    QString me = message;
-    me.remove("/me ", Qt::CaseInsensitive);
-    doc.setHtml("<span class='me'>" + me + "</span>");
-    pre = QString("<small class='gr'>(%1)</small> <span class='me'>%2</span> ").arg(currentTime()).arg(Qt::escape(nick));
-    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(me));
+    msg.remove("/me ", Qt::CaseInsensitive);
+    msg = "<span class='me'>" + msg + "</span>";
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <span class='me'>%2</span> ").arg(currentTime()).arg(Qt::escape(nick)));
+    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(msg));
   }
   else {
-    doc.setHtml(message);
-    pre = QString("<small class='gr'>(%1)</small> <b class='gr'>%2:</b> ").arg(currentTime()).arg(Qt::escape(nick));
-    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(message));
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <b class='gr'>%2:</b> ").arg(currentTime()).arg(Qt::escape(nick)));
+    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(msg));
   }
 
-  QTextCursor cursor(&doc);
-  QString plain = doc.toPlainText();
-  cursor.clearSelection();
-  cursor.setPosition(0);
-  cursor.insertHtml(pre);
-  int offset = doc.toPlainText().size() - plain.size();
-  cursor.setPosition(offset);
+  docCursor.movePosition(QTextCursor::End);
+  int offset = docCursor.position();
+  docCursor.insertHtml(msg);
+  QString plainMsg = doc.toPlainText().mid(offset);
 
-  QList<Emoticons> emoticons = m_settings->emoticons(plain);
+  if (plainMsg.size() < 1024) {
+    QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
 
-  if (!emoticons.isEmpty()) {
-    QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-    
-    foreach (Emoticons emoticon, emoticons) {
-      cursor.setPosition(offset);
-//      qDebug() << "smile:" << emoticon.name << emoticon.file;
+    if (!emoticons.isEmpty()) {
+      QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+      int size = toPlainText().size();
 
-      do {
-        cursor = doc.find(emoticon.name, cursor);
+      foreach (Emoticons emoticon, emoticons) {
+        docCursor.setPosition(offset);
+//        qDebug() << "smile:" << emoticon.name << emoticon.file;
 
-        if (cursor.selectedText() == emoticon.name) {
-          QString file = emoticonsPath + emoticon.file;
-          if (!emoticon.file.isEmpty()) {
-            cursor.insertImage(QFileInfo(file).fileName());
-            addAnimation(file, cursor.position() + toPlainText().size());
+        do {
+          docCursor = doc.find(emoticon.name, docCursor);
+
+          if (docCursor.selectedText() == emoticon.name) {
+            QString file = emoticonsPath + emoticon.file;
+            if (!emoticon.file.isEmpty()) {
+              docCursor.insertImage(QFileInfo(file).fileName());
+              addAnimation(file, docCursor.position() + size);
+            }
           }
-        }
-      } while (!cursor.isNull());
+        } while (!docCursor.isNull());
+      }
     }
   }
 
