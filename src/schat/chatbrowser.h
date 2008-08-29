@@ -25,7 +25,6 @@
 #include <QTime>
 #include <QTimer>
 
-#include "animatedsmile.h"
 #include "channellog.h"
 
 class EmoticonMovie;
@@ -76,7 +75,6 @@ private:
   ChannelLog *m_channelLog;
   int m_keepAnimations;
   QHash<QString, EmoticonMovie*> m_aemoticon;
-  QList<AnimatedSmile*> m_animatedSmiles;
   QQueue<int> m_animateQueue;
   QString m_style;
   QTimer m_animateTimer;

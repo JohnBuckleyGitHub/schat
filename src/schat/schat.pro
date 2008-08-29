@@ -30,10 +30,13 @@ RESOURCES += ../../data/schat.qrc
 HEADERS += \
     aboutdialog.h \
     abstractprofile.h \
+    abstractsettings.h \
     abstracttab.h \
     channellog.h \
     chatbrowser.h \
     clientservice.h \
+    emoticonmovie.h \
+    icondefreader.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -46,21 +49,20 @@ HEADERS += \
     tab.h \
     version.h \
     welcomedialog.h \
+    widget/emoticonselector.h \
     widget/inputwidget.h \
     widget/sendwidget.h \
-    abstractsettings.h \
-    icondefreader.h \
-    animatedsmile.h \
-    widget/emoticonselector.h \
-    emoticonmovie.h \
 
 SOURCES += \
     aboutdialog.cpp \
     abstractprofile.cpp \
+    abstractsettings.cpp \
     abstracttab.cpp \
     channellog.cpp \
     chatbrowser.cpp \
     clientservice.cpp \
+    emoticonmovie.cpp \
+    icondefreader.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \
@@ -72,13 +74,9 @@ SOURCES += \
     settingsdialog.cpp \
     tab.cpp \
     welcomedialog.cpp \
+    widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
     widget/sendwidget.cpp \
-    abstractsettings.cpp \
-    icondefreader.cpp \
-    animatedsmile.cpp \
-    widget/emoticonselector.cpp \
-    emoticonmovie.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
