@@ -161,7 +161,7 @@ void Settings::write()
   writeBool("EmoticonsRequireSpaces");
   writeInt("AnimatedEmoticonsInMessage");
   writeString("Style");
-  writeString("EmoticonsTheme");
+  writeString("EmoticonTheme");
 
   m_settings->setValue("Network", network.config());
   saveRecentServers();
