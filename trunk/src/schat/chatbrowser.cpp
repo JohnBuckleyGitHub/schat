@@ -48,7 +48,7 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 
   document()->setDefaultStyleSheet(m_style);
   m_keepAnimations = -1;
-  m_animateTimer.setInterval(50);
+  m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
   connect(&m_animateTimer, SIGNAL(timeout()), SLOT(animate()));
 }
 

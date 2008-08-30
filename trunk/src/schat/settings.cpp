@@ -115,6 +115,7 @@ void Settings::read()
   readBool("EmoticonsRequireSpaces", true);
   readBool("UseEmoticons", true);
   readBool("UseAnimatedEmoticons", true);
+  readInt("EmoticonsRefreshTime", 50);
   readString("Style", "Plastique");
   readString("EmoticonTheme", "kolobok");
   qApp->setStyle(getString("Style"));
