@@ -72,6 +72,7 @@ public slots:
   void handleMessage(const QString& message);
   
 private slots:
+  inline void settingsEmoticons() { settingsPage(SettingsDialog::EmoticonsPage); }
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
   inline void settingsNetwork()   { settingsPage(SettingsDialog::NetworkPage); }
   inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
@@ -132,6 +133,7 @@ private:
   MainChannel *mainChannel;
   QAction *aboutAction;
   QAction *closeTabAction;
+  QAction *m_emoticonsSetAction;
   QAction *interfaceSetAction;
   QAction *networkSetAction;
   QAction *profileSetAction;
