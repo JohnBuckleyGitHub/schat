@@ -40,49 +40,40 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   m_contentsWidget = new QListWidget(this);
   m_pagesWidget    = new QStackedWidget(this);
 
-  m_profilePage    = new ProfileSettings(settings, profile, this);
+  m_profilePage    = new ProfileSettings(settings, profile, this); 
   m_networkPage    = new NetworkSettings(settings, this);
   m_interfacePage  = new InterfaceSettings(settings, this);
   m_emoticonsPage  = new EmoticonsSettings(settings, this);
 
-  m_pagesWidget->addWidget(m_profilePage);
-  m_pagesWidget->addWidget(m_networkPage);
-  m_pagesWidget->addWidget(m_interfacePage);
-  m_pagesWidget->addWidget(m_emoticonsPage);
+  createPage(QIcon(":/images/profile.png"), tr("Личные данные"), m_profilePage);
+  createPage(QIcon(":/images/network.png"), tr("Сеть"), m_networkPage);
+  createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_interfacePage);
+  createPage(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_emoticonsPage);
 
   #ifdef SCHAT_UPDATE
   m_updatePage = new UpdateSettings(settings, this);
-  m_pagesWidget->addWidget(m_updatePage);
+  createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
   #endif
-  
+
   QFrame *line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
-  
-  new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), m_contentsWidget);
-  new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), m_contentsWidget);
-  new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_contentsWidget);
-  new QListWidgetItem(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_contentsWidget);
-  
-  #ifdef SCHAT_UPDATE
-  new QListWidgetItem(QIcon(":/images/update.png"), tr("Обновления"), m_contentsWidget);
-  #endif
-  
+
   connect(m_contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
-  connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
-  connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-  connect(m_resetButton, SIGNAL(clicked()), this, SLOT(reset()));
-  connect(m_profilePage, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
-  
+  connect(m_okButton, SIGNAL(clicked()), SLOT(accept()));
+  connect(m_cancelButton, SIGNAL(clicked()), SLOT(close()));
+  connect(m_resetButton, SIGNAL(clicked()), SLOT(reset()));
+  connect(m_profilePage, SIGNAL(validNick(bool)), SLOT(validNick(bool)));
+
   m_contentsWidget->setCurrentRow(ProfilePage);
-  
+
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addStretch();
   buttonLayout->addWidget(m_resetButton);
   buttonLayout->addWidget(m_okButton);
   buttonLayout->addWidget(m_cancelButton);
   buttonLayout->setSpacing(3);
-  
+
   QGridLayout *mainLayout = new QGridLayout(this);
   mainLayout->setColumnStretch(0, 1);
   mainLayout->setColumnStretch(1, 3);
@@ -92,14 +83,11 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   mainLayout->addLayout(buttonLayout, 2, 0, 1, 2);
   mainLayout->setMargin(3);
   mainLayout->setSpacing(3);
-  
+
   setWindowTitle(tr("Настройка"));
 }
 
 
-/** [SettingsDialog/public]
- * 
- */
 void SettingsDialog::setPage(int page)
 {
   m_contentsWidget->setCurrentRow(page);
@@ -107,26 +95,13 @@ void SettingsDialog::setPage(int page)
 }
 
 
-/** [SettingsDialog/public slots]
- * Вызаваем сохранение настроек и закрываем диалог
- */
 void SettingsDialog::accept()
 {
-  m_profilePage->save();
-  m_networkPage->save();
-  m_interfacePage->save();
-  m_emoticonsPage->save();
-  
-  #ifdef SCHAT_UPDATE
-  m_updatePage->save();
-  #endif
+  emit save();
   close();
 }
 
 
-/** [SettingsDialog/public slots]
- * 
- */
 void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
 {
   if (!current)
@@ -136,34 +111,18 @@ void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previ
 }
 
 
-/** [SettingsDialog/public slots]
- * 
- */
 void SettingsDialog::reset()
 {
-  switch (m_pagesWidget->currentIndex()) {
-    case ProfilePage:
-      m_profilePage->reset();      
-      break;
-      
-    case NetworkPage:
-      m_networkPage->reset();
-      break;
-      
-    case InterfacePage:
-      m_interfacePage->reset();
-      break;
-      
-    case EmoticonsPage:
-      m_emoticonsPage->reset();
-      break;
-    
-    #ifdef SCHAT_UPDATE
-    case UpdatePage:
-      m_updatePage->reset();
-      break;
-    #endif
-  }  
+  emit reset(m_pagesWidget->currentIndex());
+}
+
+
+void SettingsDialog::createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page)
+{
+  m_pagesWidget->addWidget(page);
+  new QListWidgetItem(icon, text, m_contentsWidget);
+  connect(this, SIGNAL(save()), page, SLOT(save()));
+  connect(this, SIGNAL(reset(int)), page, SLOT(reset(int)));
 }
 
 
@@ -213,10 +172,12 @@ ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, Q
 /** [ProfileSettings/public]
  * 
  */
-void ProfileSettings::reset()
+void ProfileSettings::reset(int page)
 {
-  m_profileWidget->reset();
-  m_byeMsgEdit->setText("IMPOMEZIA Simple Chat");
+  if (page == m_id) {
+    m_profileWidget->reset();
+    m_byeMsgEdit->setText("IMPOMEZIA Simple Chat");
+  }
 }
 
 
@@ -269,10 +230,12 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
 /** [NetworkSettings/public]
  * 
  */
-void NetworkSettings::reset()
+void NetworkSettings::reset(int page)
 {
-  m_networkWidget->reset();
-  m_welcomeCheckBox->setChecked(true);
+  if (page == m_id) {
+    m_networkWidget->reset();
+    m_welcomeCheckBox->setChecked(true);
+  }
 }
 
 
@@ -314,9 +277,11 @@ InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
 /** [InterfaceSettings/public]
  * 
  */
-void InterfaceSettings::reset()
+void InterfaceSettings::reset(int page)
 {
-  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
+  if (page == m_id) {
+    m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
+  }
 }
 
 
@@ -348,8 +313,11 @@ EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
 }
 
 
-void EmoticonsSettings::reset()
+void EmoticonsSettings::reset(int page)
 {
+  if (page == m_id) {
+    
+  }
 }
 
 
@@ -400,11 +368,13 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
 /** [UpdateSettings/public]
  * 
  */
-void UpdateSettings::reset()
+void UpdateSettings::reset(int page)
 {
-  m_autoDownload->setChecked(true);
-  m_autoClean->setChecked(true);
-  m_interval->setValue(60);
+  if (page == m_id) {
+    m_autoDownload->setChecked(true);
+    m_autoClean->setChecked(true);
+    m_interval->setValue(60);
+  }
 }
 
 
