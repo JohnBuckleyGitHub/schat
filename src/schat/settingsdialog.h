@@ -22,10 +22,11 @@
 #include <QDialog>
 #include <QPushButton>
 
+class AbstractProfile;
+class EmoticonsSettings;
 class InterfaceSettings;
 class NetworkSettings;
 class NetworkWidget;
-class AbstractProfile;
 class ProfileSettings;
 class ProfileWidget;
 class QCheckBox;
@@ -56,6 +57,7 @@ public:
     ProfilePage,
     NetworkPage,
     InterfacePage,
+    EmoticonsPage,
     UpdatePage
   };
   
@@ -71,6 +73,7 @@ private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
   
 private:
+  EmoticonsSettings *m_emoticonsPage;
   InterfaceSettings *m_interfacePage;
   NetworkSettings *m_networkPage;
   ProfileSettings *m_profilePage;
@@ -79,7 +82,7 @@ private:
   QPushButton *m_okButton;
   QPushButton *m_resetButton;
   QStackedWidget *m_pagesWidget;
-  
+
   #ifdef SCHAT_UPDATE
   UpdateSettings *m_updatePage;
   #endif
@@ -145,6 +148,24 @@ public:
   
 private:
   QComboBox *m_styleComboBox;
+  Settings *m_settings;
+};
+
+
+/*!
+ * \class EmoticonsSettings
+ * \brief Диалог "Настройка", страница "Смайлики".
+ */
+class EmoticonsSettings : public QWidget
+{
+  Q_OBJECT
+
+public:
+  EmoticonsSettings(Settings *settings, QWidget *parent = 0);
+  void reset();
+  void save();
+
+private:
   Settings *m_settings;
 };
 

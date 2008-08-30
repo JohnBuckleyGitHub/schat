@@ -895,6 +895,10 @@ void SChatWindow::createActions()
   closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
   connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
+  // Смайлики...
+  m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
+  connect(m_emoticonsSetAction, SIGNAL(triggered()), this, SLOT(settingsEmoticons()));
+  
   // Интерфейс...
   interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
   connect(interfaceSetAction, SIGNAL(triggered()), this, SLOT(settingsInterface()));
@@ -969,6 +973,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(profileSetAction);
   iconMenu->addAction(networkSetAction);
   iconMenu->addAction(interfaceSetAction);
+  iconMenu->addAction(m_emoticonsSetAction);
   
   #ifdef SCHAT_UPDATE
   iconMenu->addAction(updateSetAction);

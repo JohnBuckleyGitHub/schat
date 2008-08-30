@@ -32,21 +32,23 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
 {
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
-  
+
   m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
   m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
   m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
   m_contentsWidget = new QListWidget(this);
-  m_pagesWidget    = new QStackedWidget;
+  m_pagesWidget    = new QStackedWidget(this);
 
   m_profilePage    = new ProfileSettings(settings, profile, this);
   m_networkPage    = new NetworkSettings(settings, this);
   m_interfacePage  = new InterfaceSettings(settings, this);
-  
+  m_emoticonsPage  = new EmoticonsSettings(settings, this);
+
   m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_pagesWidget->addWidget(m_profilePage);
   m_pagesWidget->addWidget(m_networkPage);
   m_pagesWidget->addWidget(m_interfacePage);
+  m_pagesWidget->addWidget(m_emoticonsPage);
 
   #ifdef SCHAT_UPDATE
   m_updatePage = new UpdateSettings(settings, this);
@@ -60,6 +62,7 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   new QListWidgetItem(QIcon(":/images/profile.png"), tr("Личные данные"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/network.png"), tr("Сеть"), m_contentsWidget);
   new QListWidgetItem(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_contentsWidget);
+  new QListWidgetItem(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_contentsWidget);
   
   #ifdef SCHAT_UPDATE
   new QListWidgetItem(QIcon(":/images/update.png"), tr("Обновления"), m_contentsWidget);
@@ -112,6 +115,7 @@ void SettingsDialog::accept()
   m_profilePage->save();
   m_networkPage->save();
   m_interfacePage->save();
+  m_emoticonsPage->save();
   
   #ifdef SCHAT_UPDATE
   m_updatePage->save();
@@ -148,6 +152,10 @@ void SettingsDialog::reset()
       
     case InterfacePage:
       m_interfacePage->reset();
+      break;
+      
+    case EmoticonsPage:
+      m_emoticonsPage->reset();
       break;
     
     #ifdef SCHAT_UPDATE
@@ -319,6 +327,34 @@ void InterfaceSettings::save()
     m_settings->setString("Style", m_styleComboBox->currentText()) ;
     qApp->setStyle(m_settings->getString("Style"));
   }
+}
+
+
+
+
+/*!
+ * \brief Конструктор класса EmoticonsSettings.
+ */
+EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
+  : QWidget(parent), m_settings(settings)
+{
+  setAttribute(Qt::WA_DeleteOnClose);
+
+  QLabel *label = new QLabel("Превед", this);
+  
+  QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(label);
+  mainLayout->addStretch();
+}
+
+
+void EmoticonsSettings::reset()
+{
+}
+
+
+void EmoticonsSettings::save()
+{
 }
 
 
