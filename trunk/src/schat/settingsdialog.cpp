@@ -305,24 +305,59 @@ void InterfaceSettings::save()
 EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::EmoticonsPage, settings, parent)
 {
-  QLabel *label = new QLabel("Превед", this);
+  m_themeCombo = new QComboBox(this);
+
+  m_themeGroup = new QGroupBox(tr("Тема смайликов"), this);
+  QHBoxLayout *themeGroupLayout = new QHBoxLayout(m_themeGroup);
+  themeGroupLayout->addWidget(m_themeCombo);
+  themeGroupLayout->addStretch();
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(label);
+  mainLayout->addWidget(m_themeGroup);
+
+  m_enableCheck = new QCheckBox(tr("Включить смайлики"), this);
+  m_enableCheck->setChecked(m_settings->getBool("UseEmoticons"));
+  connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
+
+  m_animateCheck = new QCheckBox(tr("Разрешить анимацию"), this);
+  m_animateCheck->setChecked(m_settings->getBool("UseAnimatedEmoticons"));
+
+  m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
+  m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
+
+  mainLayout->addWidget(m_enableCheck);
+  mainLayout->addWidget(m_animateCheck);
+  mainLayout->addWidget(m_requireSpacesCheck);
   mainLayout->addStretch();
+
+  enable(m_enableCheck->isChecked());
 }
 
 
 void EmoticonsSettings::reset(int page)
 {
   if (page == m_id) {
-    
+    m_enableCheck->setChecked(true);
+    m_animateCheck->setChecked(true);
+    m_requireSpacesCheck->setChecked(true);
+    enable(true);
   }
 }
 
 
 void EmoticonsSettings::save()
 {
+  m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
+  m_settings->setBool("UseAnimatedEmoticons", m_animateCheck->isChecked());
+  m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
+}
+
+
+void EmoticonsSettings::enable(bool checked)
+{
+  m_themeGroup->setEnabled(checked);
+  m_animateCheck->setEnabled(checked);
+  m_requireSpacesCheck->setEnabled(checked);
 }
 
 
