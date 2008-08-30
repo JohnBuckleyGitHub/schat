@@ -35,7 +35,8 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
 
   m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
   m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
-  m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);  
+  m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);
+  m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_contentsWidget = new QListWidget(this);
   m_pagesWidget    = new QStackedWidget(this);
 
@@ -44,7 +45,6 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   m_interfacePage  = new InterfaceSettings(settings, this);
   m_emoticonsPage  = new EmoticonsSettings(settings, this);
 
-  m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_pagesWidget->addWidget(m_profilePage);
   m_pagesWidget->addWidget(m_networkPage);
   m_pagesWidget->addWidget(m_interfacePage);
@@ -169,32 +169,41 @@ void SettingsDialog::reset()
 
 
 /*!
+ * \brief Конструктор класса AbstractSettingsPage.
+ */
+AbstractSettingsPage::AbstractSettingsPage(SettingsDialog::Page id, Settings *settings, QWidget *parent)
+  : QWidget(parent)
+{
+  m_id = id;
+  m_settings = settings;
+}
+
+
+
+/*!
  * \brief Конструктор класса ProfileSettings.
  */
 ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent)
-  : QWidget(parent)
+  : AbstractSettingsPage(SettingsDialog::ProfilePage, settings, parent)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-  
-  m_settings = settings;
   m_profile  = profile;
   m_profileWidget = new ProfileWidget(profile, this);
   connect(m_profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
-  
+
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
   m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
-  m_byeMsgEdit->setMaxLength(255);
-  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие участники если вы выйдете из чата"));
-  
+  m_byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
+  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи если вы выйдете из чата"));
+
   QHBoxLayout *byeMsgLayout = new QHBoxLayout;
   byeMsgLayout->addWidget(byeMsgLabel);
   byeMsgLayout->addWidget(m_byeMsgEdit);
-  
+
   QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
   QVBoxLayout *profileGroupLayout = new QVBoxLayout(profileGroupBox);
   profileGroupLayout->addWidget(m_profileWidget);
   profileGroupLayout->addLayout(byeMsgLayout);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(profileGroupBox);
   mainLayout->addStretch();
@@ -234,27 +243,23 @@ void ProfileSettings::save()
  * \brief Конструктор класса NetworkSettings.
  */
 NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
-  : QWidget(parent)
-{
-  setAttribute(Qt::WA_DeleteOnClose);
-  
-  m_settings = settings;
-  
+  : AbstractSettingsPage(SettingsDialog::NetworkPage, settings, parent)
+{  
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
   m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
-  
+
   m_networkWidget = new NetworkWidget(m_settings, this);
-  
+
   QHBoxLayout *networkLayout = new QHBoxLayout;
   networkLayout->addWidget(m_networkWidget);
   networkLayout->setMargin(0);
-  
+
   QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
   QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
   serverGroupLayout->addLayout(networkLayout);
   serverGroupLayout->addWidget(m_welcomeCheckBox);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(serverGroupBox);
   mainLayout->addStretch();
@@ -289,20 +294,17 @@ void NetworkSettings::save()
  * \brief Конструктор класса InterfaceSettings.
  */
 InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
-  : QWidget(parent)
-{
-  setAttribute(Qt::WA_DeleteOnClose);
-  m_settings = settings;
-  
+  : AbstractSettingsPage(SettingsDialog::InterfacePage, settings, parent)
+{  
   m_styleComboBox = new QComboBox(this);
   m_styleComboBox->addItems(QStyleFactory::keys());  
   m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
-  
+
   QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
   QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
   styleGroupLayout->addWidget(m_styleComboBox);
   styleGroupLayout->addStretch();
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(styleGroupBox);
   mainLayout->addStretch();
@@ -336,12 +338,10 @@ void InterfaceSettings::save()
  * \brief Конструктор класса EmoticonsSettings.
  */
 EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
-  : QWidget(parent), m_settings(settings)
+  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, settings, parent)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-
   QLabel *label = new QLabel("Превед", this);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(label);
   mainLayout->addStretch();
@@ -365,26 +365,23 @@ void EmoticonsSettings::save()
  */
 #ifdef SCHAT_UPDATE
 UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
-  : QWidget(parent)
-{
-  setAttribute(Qt::WA_DeleteOnClose);
-  m_settings = settings;
-  
+  : AbstractSettingsPage(SettingsDialog::UpdatePage, settings, parent)
+{  
   m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
   m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
   m_autoDownload->setEnabled(false);
-  
+
   m_autoClean = new QCheckBox(tr("Удалять обновления после установки"), this);
   m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
-  
-  QLabel *interval = new QLabel(tr("Интервал проверки обновлений:"));
+
+  QLabel *interval = new QLabel(tr("Интервал проверки обновлений:"), this);
   QHBoxLayout *intervalLayout = new QHBoxLayout;
-  
+
   m_interval = new QSpinBox(this);
   m_interval->setValue(m_settings->getInt("Updates/CheckInterval"));
   m_interval->setRange(5, 1440);
   m_interval->setSuffix(tr(" мин"));
-  
+
   QGroupBox *styleGroupBox = new QGroupBox(tr("Автоматические обновления"), this);
   QVBoxLayout *styleGroupLayout = new QVBoxLayout(styleGroupBox);
   styleGroupLayout->addWidget(m_autoDownload);
@@ -393,7 +390,7 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
   intervalLayout->addWidget(m_interval);
   intervalLayout->addStretch();
   styleGroupLayout->addLayout(intervalLayout);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(styleGroupBox);
   mainLayout->addStretch();

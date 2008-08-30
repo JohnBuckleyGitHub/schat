@@ -53,7 +53,7 @@ class SettingsDialog : public QDialog
   Q_OBJECT
 
 public:
-  enum {
+  enum Page {
     ProfilePage,
     NetworkPage,
     InterfacePage,
@@ -90,25 +90,47 @@ private:
 
 
 /*!
- * \class SettingsDialog
- * \brief Диалог "Настройка", страница "Личные данные".
+ * \class AbstractSettingsPage
+ * \brief Абстрактный базовый класс страницы настроек.
  */
-class ProfileSettings : public QWidget
+class AbstractSettingsPage : public QWidget
 {
   Q_OBJECT
-  
+
+public:
+  AbstractSettingsPage(SettingsDialog::Page id, Settings *settings, QWidget *parent = 0);
+
+public slots:
+  void reset() {}
+  void save()  {}
+
+protected:
+  Settings *m_settings;
+  SettingsDialog::Page m_id;
+};
+
+
+/*!
+ * \class ProfileSettings
+ * \brief Диалог "Настройка", страница "Личные данные".
+ */
+class ProfileSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
 public:
   ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent = 0);
+
+public slots:
   void reset();
   void save();
-  
+
 signals:
   void validNick(bool b);
-  
+
 private:
   ProfileWidget *m_profileWidget;
   QLineEdit *m_byeMsgEdit;
-  Settings *m_settings;
   AbstractProfile *m_profile;
 };
 
@@ -117,19 +139,20 @@ private:
  * \class NetworkSettings
  * \brief Диалог "Настройка", страница "Сеть".
  */
-class NetworkSettings : public QWidget
+class NetworkSettings : public AbstractSettingsPage
 {
   Q_OBJECT
-  
+
 public:
   NetworkSettings(Settings *settings, QWidget *parent = 0);
+
+public slots:
   void reset();
   void save();
-  
+
 private:
   NetworkWidget *m_networkWidget;
   QCheckBox *m_welcomeCheckBox;
-  Settings *m_settings;
 };
 
 
@@ -137,18 +160,19 @@ private:
  * \class InterfaceSettings
  * \brief Диалог "Настройка", страница "Интерфейс".
  */
-class InterfaceSettings : public QWidget
+class InterfaceSettings : public AbstractSettingsPage
 {
   Q_OBJECT
-  
+
 public:
   InterfaceSettings(Settings *settings, QWidget *parent = 0);
+
+public slots:
   void reset();
   void save();
-  
+
 private:
   QComboBox *m_styleComboBox;
-  Settings *m_settings;
 };
 
 
@@ -156,17 +180,16 @@ private:
  * \class EmoticonsSettings
  * \brief Диалог "Настройка", страница "Смайлики".
  */
-class EmoticonsSettings : public QWidget
+class EmoticonsSettings : public AbstractSettingsPage
 {
   Q_OBJECT
 
 public:
   EmoticonsSettings(Settings *settings, QWidget *parent = 0);
+
+public slots:
   void reset();
   void save();
-
-private:
-  Settings *m_settings;
 };
 
 
@@ -175,20 +198,21 @@ private:
  * \brief Диалог "Настройка", страница "Обновления".
  */
 #ifdef SCHAT_UPDATE
-class UpdateSettings : public QWidget
+class UpdateSettings : public AbstractSettingsPage
 {
   Q_OBJECT
-  
+
 public:
   UpdateSettings(Settings *settings, QWidget *parent = 0);
+
+public slots:
   void reset();
   void save();
-  
+
 private:
   QCheckBox *m_autoClean;
   QCheckBox *m_autoDownload;
   QSpinBox *m_interval;
-  Settings *m_settings;
 };
 #endif
 
