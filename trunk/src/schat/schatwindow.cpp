@@ -881,8 +881,8 @@ QString SChatWindow::userToolTip(const AbstractProfile &profile)
 void SChatWindow::createActions()
 {
   // О Программе...
-  aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
-  connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+  m_aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
+  connect(m_aboutAction, SIGNAL(triggered()), this, SLOT(about()));
   
   // Открытие новой вкладки, для создания нового подключения
 //  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение"), this);
@@ -891,26 +891,26 @@ void SChatWindow::createActions()
 //  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
   // Разорвать текущее соединение
-  closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
-  closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
-  connect(closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
+  m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
+  m_closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
+  connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
   // Смайлики...
   m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
   connect(m_emoticonsSetAction, SIGNAL(triggered()), this, SLOT(settingsEmoticons()));
   
   // Интерфейс...
-  interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
-  connect(interfaceSetAction, SIGNAL(triggered()), this, SLOT(settingsInterface()));
+  m_interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
+  connect(m_interfaceSetAction, SIGNAL(triggered()), this, SLOT(settingsInterface()));
   
   // Сеть...
-  networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
-  connect(networkSetAction, SIGNAL(triggered()), this, SLOT(settingsNetwork()));
+  m_networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
+  connect(m_networkSetAction, SIGNAL(triggered()), this, SLOT(settingsNetwork()));
   
   // Личные данные...
-  profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
-  profileSetAction->setShortcut(tr("Ctrl+F12"));
-  connect(profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
+  m_profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
+  m_profileSetAction->setShortcut(tr("Ctrl+F12"));
+  connect(m_profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
   
   // Обновления...
   #ifdef SCHAT_UPDATE
@@ -919,8 +919,8 @@ void SChatWindow::createActions()
   #endif
   
   // Выход из программы
-  quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
-  connect(quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
+  m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
+  connect(m_quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
 }
 
 
@@ -935,7 +935,7 @@ void SChatWindow::createCornerWidgets()
 //  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
   
   QToolButton *closeTabButton = new QToolButton(this);
-  closeTabButton->setDefaultAction(closeTabAction);
+  closeTabButton->setDefaultAction(m_closeTabAction);
   closeTabButton->setAutoRaise(true);
   m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);  
 }
@@ -970,9 +970,9 @@ void SChatWindow::createService()
 void SChatWindow::createToolButtons()
 {
   QMenu *iconMenu = new QMenu(this);
-  iconMenu->addAction(profileSetAction);
-  iconMenu->addAction(networkSetAction);
-  iconMenu->addAction(interfaceSetAction);
+  iconMenu->addAction(m_profileSetAction);
+  iconMenu->addAction(m_networkSetAction);
+  iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
   
   #ifdef SCHAT_UPDATE
@@ -988,7 +988,7 @@ void SChatWindow::createToolButtons()
   m_settingsButton->setPopupMode(QToolButton::InstantPopup);
   
   QToolButton *aboutButton = new QToolButton(this);
-  aboutButton->setDefaultAction(aboutAction);
+  aboutButton->setDefaultAction(m_aboutAction);
   aboutButton->setAutoRaise(true);
   
   QFrame *line = new QFrame(this);
@@ -1009,10 +1009,10 @@ void SChatWindow::createToolButtons()
 void SChatWindow::createTrayIcon()
 {
   trayIconMenu = new QMenu(this);
-  trayIconMenu->addAction(aboutAction);
-  trayIconMenu->addAction(profileSetAction);
+  trayIconMenu->addAction(m_aboutAction);
+  trayIconMenu->addAction(m_profileSetAction);
   trayIconMenu->addSeparator();
-  trayIconMenu->addAction(quitAction);
+  trayIconMenu->addAction(m_quitAction);
   
   trayIcon = new QSystemTrayIcon(this);
   trayIcon->setIcon(QIcon(":/images/logo16.png"));
