@@ -52,13 +52,13 @@ EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapP
 }
 
 
-void EmoticonLabel::mousePressEvent(QMouseEvent */*event*/)
+void EmoticonLabel::mousePressEvent(QMouseEvent* /*event*/)
 {
   m_ok = true;
 }
 
 
-void EmoticonLabel::mouseReleaseEvent(QMouseEvent */*event*/)
+void EmoticonLabel::mouseReleaseEvent(QMouseEvent* /*event*/)
 {
   if (m_ok)
     emit clicked(" " + m_text + " ");
