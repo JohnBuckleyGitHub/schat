@@ -23,6 +23,7 @@
 #include <QPushButton>
 
 class AbstractProfile;
+class AbstractSettingsPage;
 class EmoticonsSettings;
 class InterfaceSettings;
 class NetworkSettings;
@@ -60,9 +61,13 @@ public:
     EmoticonsPage,
     UpdatePage
   };
-  
+
   SettingsDialog(AbstractProfile *p, Settings *s, QWidget *parent = 0);
   void setPage(int page = 0);
+  
+signals:
+  void reset(int page);
+  void save();
 
 public slots:
   void accept();
@@ -71,8 +76,10 @@ public slots:
 
 private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
-  
+
 private:
+  void createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
+
   EmoticonsSettings *m_emoticonsPage;
   InterfaceSettings *m_interfacePage;
   NetworkSettings *m_networkPage;
@@ -101,8 +108,8 @@ public:
   AbstractSettingsPage(SettingsDialog::Page id, Settings *settings, QWidget *parent = 0);
 
 public slots:
-  void reset() {}
-  void save()  {}
+  void reset(int /*page*/) {}
+  void save()              {}
 
 protected:
   Settings *m_settings;
@@ -122,7 +129,7 @@ public:
   ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent = 0);
 
 public slots:
-  void reset();
+  void reset(int page);
   void save();
 
 signals:
@@ -147,7 +154,7 @@ public:
   NetworkSettings(Settings *settings, QWidget *parent = 0);
 
 public slots:
-  void reset();
+  void reset(int page);
   void save();
 
 private:
@@ -168,7 +175,7 @@ public:
   InterfaceSettings(Settings *settings, QWidget *parent = 0);
 
 public slots:
-  void reset();
+  void reset(int page);
   void save();
 
 private:
@@ -188,7 +195,7 @@ public:
   EmoticonsSettings(Settings *settings, QWidget *parent = 0);
 
 public slots:
-  void reset();
+  void reset(int page);
   void save();
 };
 
@@ -206,7 +213,7 @@ public:
   UpdateSettings(Settings *settings, QWidget *parent = 0);
 
 public slots:
-  void reset();
+  void reset(int page);
   void save();
 
 private:
