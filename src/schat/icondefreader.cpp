@@ -31,7 +31,8 @@
 IconDefReader::IconDefReader(QHash<QString, QStringList> *emoticons)
   : m_emoticons(emoticons)
 {
-  m_emoticons->clear();
+  if (m_emoticons)
+    m_emoticons->clear();
 }
 
 
@@ -69,15 +70,19 @@ void IconDefReader::readIcon()
       break;
 
     if (isStartElement()) {
-      if (name() == "text") {
-        QString text = readElementText();
-        if (!text.isEmpty())
-          m_text << text;
-      }
-      else if (name() == "object") {
-        QString object = readElementText();
-        if (!m_text.isEmpty() && !object.isEmpty())
-          m_emoticons->insert(object, m_text);
+      if (m_emoticons) {
+        if (name() == "text") {
+          QString text = readElementText();
+          if (!text.isEmpty())
+            m_text << text;
+        }
+        else if (name() == "object") {
+          QString object = readElementText();
+          if (!m_text.isEmpty() && !object.isEmpty())
+            m_emoticons->insert(object, m_text);
+        }
+        else
+          readUnknownElement();
       }
       else
         readUnknownElement();

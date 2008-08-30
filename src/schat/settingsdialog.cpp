@@ -17,12 +17,13 @@
  */
 #include <QtGui>
 
+#include "abstractprofile.h"
+#include "icondefreader.h"
 #include "networkwidget.h"
 #include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"
 #include "settingsdialog.h"
-#include "abstractprofile.h"
 
 /*!
  * \brief Конструктор класса SettingsDialog.
@@ -330,6 +331,9 @@ EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
   mainLayout->addWidget(m_requireSpacesCheck);
   mainLayout->addStretch();
 
+  if (!createThemeList())
+    m_enableCheck->setEnabled(false);
+
   enable(m_enableCheck->isChecked());
 }
 
@@ -340,6 +344,7 @@ void EmoticonsSettings::reset(int page)
     m_enableCheck->setChecked(true);
     m_animateCheck->setChecked(true);
     m_requireSpacesCheck->setChecked(true);
+    m_themeCombo->setCurrentIndex(m_themeCombo->findText("kolobok"));
     enable(true);
   }
 }
@@ -350,6 +355,8 @@ void EmoticonsSettings::save()
   m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
   m_settings->setBool("UseAnimatedEmoticons", m_animateCheck->isChecked());
   m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
+  m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
+  m_settings->createEmoticonsMap();
 }
 
 
@@ -358,6 +365,31 @@ void EmoticonsSettings::enable(bool checked)
   m_themeGroup->setEnabled(checked);
   m_animateCheck->setEnabled(checked);
   m_requireSpacesCheck->setEnabled(checked);
+}
+
+
+bool EmoticonsSettings::createThemeList()
+{
+  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/";
+  QDir dir(emoticonsPath);
+  QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+  if (list.isEmpty())
+    return false;
+
+  foreach (QString theme, list) {
+    if (QFile::exists(emoticonsPath + theme + "/icondef.xml")) {
+      IconDefReader reader(0);
+      if (reader.readFile(emoticonsPath + theme + "/icondef.xml"))
+        m_themeCombo->addItem(theme);
+    }
+  }
+  if (m_themeCombo->count() == -1)
+    return false;
+  else {
+    m_themeCombo->setCurrentIndex(m_themeCombo->findText(m_settings->getString("EmoticonTheme")));
+    return true;
+  }
 }
 
 

@@ -33,7 +33,6 @@ private:
   void readUnknownElement();
 
   QHash<QString, QStringList> *m_emoticons;
-//  QStringList *m_files;
   QStringList m_text;
 };
 

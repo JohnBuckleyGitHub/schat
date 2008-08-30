@@ -198,11 +198,13 @@ public:
 public slots:
   void reset(int page);
   void save();
-  
+
 private slots:
   void enable(bool checked);
-  
+
 private:
+  bool createThemeList();
+
   QCheckBox *m_animateCheck;
   QCheckBox *m_enableCheck;
   QCheckBox *m_requireSpacesCheck;
