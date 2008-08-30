@@ -86,7 +86,7 @@ MainTab::MainTab(QWidget *parent)
   QLabel *aboutLabel = new QLabel(tr(  
       "<h2>Simple Chat %1</h2>"
       "<p><i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></div>"
-      "<p>Официальный сайт программы: <a href='http://impomezia.net.ru'>http://impomezia.net.ru</a>.</p>"
+      "<p>Официальный сайт программы: <a href='http://impomezia.net.ru' style='color:#1a4d82;'>http://impomezia.net.ru</a>.</p>"
       "<p>Эта программа использует библиотеку:<br>"
       "<b>Qt Open Source Edition %2<b>"
   ).arg(SCHAT_VERSION).arg(qVersion()), this);
@@ -167,7 +167,7 @@ LicenseTab::LicenseTab(QWidget *parent)
       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
       "GNU General Public License for more details.</p>"
       "<p>You should have received a copy of the GNU General Public License "
-      "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
+      "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
   ).arg(SCHAT_VERSION));
 
   textBrowser->setOpenExternalLinks(true);

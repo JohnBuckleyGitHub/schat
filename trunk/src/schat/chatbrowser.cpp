@@ -42,7 +42,9 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
       ".green { color:#6bb521; }"
       ".err   { color:#da251d; }"
       ".info  { color:#5096cf; }"
-      ".me    { color:#cd00cd; }");
+      ".me    { color:#cd00cd; }"
+      "a      { color:#1a4d82; }"
+      );
 
   document()->setDefaultStyleSheet(m_style);
   m_keepAnimations = -1;

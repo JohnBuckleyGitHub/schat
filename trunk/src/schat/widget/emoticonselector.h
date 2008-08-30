@@ -75,7 +75,7 @@ public slots:
 
 protected:
 //  virtual void hideEvent(QHideEvent*);
-  void showEvent(QShowEvent */*event*/) { emit setPaused(false); }
+  void showEvent(QShowEvent* /*event*/) { emit setPaused(false); }
 
 protected slots:
   void emoticonClicked(const QString &);
