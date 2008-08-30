@@ -154,6 +154,7 @@ void SendWidget::createButtons()
   m_emoticonButton->setAutoRaise(true);
   m_emoticonButton->setMenu(m_popup);
   m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
+  m_emoticonButton->setShortcut(Qt::CTRL + Qt::Key_E);
 }
 
 
