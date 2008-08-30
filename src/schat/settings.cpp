@@ -113,6 +113,8 @@ void Settings::read()
   readBool("HideWelcome", false);
   readBool("FirstRun", true);
   readBool("EmoticonsRequireSpaces", true);
+  readBool("UseEmoticons", true);
+  readBool("UseAnimatedEmoticons", true);
   readString("Style", "Plastique");
   readString("EmoticonTheme", "kolobok");
   qApp->setStyle(getString("Style"));
@@ -158,6 +160,8 @@ void Settings::write()
 
   writeBool("HideWelcome");
   writeBool("EmoticonsRequireSpaces");
+  writeBool("UseEmoticons");
+  writeBool("UseAnimatedEmoticons");
   writeString("Style");
   writeString("EmoticonTheme");
 

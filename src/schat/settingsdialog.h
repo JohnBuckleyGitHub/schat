@@ -32,6 +32,7 @@ class ProfileSettings;
 class ProfileWidget;
 class QCheckBox;
 class QComboBox;
+class QGroupBox;
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
@@ -197,6 +198,16 @@ public:
 public slots:
   void reset(int page);
   void save();
+  
+private slots:
+  void enable(bool checked);
+  
+private:
+  QCheckBox *m_animateCheck;
+  QCheckBox *m_enableCheck;
+  QCheckBox *m_requireSpacesCheck;
+  QComboBox *m_themeCombo;
+  QGroupBox *m_themeGroup;
 };
 
 
