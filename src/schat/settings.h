@@ -53,7 +53,7 @@ public:
 
   Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
   inline QByteArray splitter() const                   { return m_splitter; }
-  inline QHash<QString, QStringList> emoticons() const { return m_emoticons; }
+  inline QMap<QString, QStringList> emoticons() const  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline void notify(int notify)                       { emit changed(notify); }
@@ -83,7 +83,7 @@ private:
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;
-  QHash<QString, QStringList> m_emoticons;
+  QMap<QString, QStringList> m_emoticons;
   QPoint m_pos;
   QSize m_size;
 };

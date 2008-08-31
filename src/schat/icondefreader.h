@@ -24,7 +24,7 @@
 class IconDefReader : public QXmlStreamReader {
   
 public:
-  IconDefReader(QHash<QString, QStringList> *emoticons);
+  IconDefReader(QMap<QString, QStringList> *emoticons);
   bool readFile(const QString &fileName);
 
 private:
@@ -32,7 +32,7 @@ private:
   void readIcondef();
   void readUnknownElement();
 
-  QHash<QString, QStringList> *m_emoticons;
+  QMap<QString, QStringList> *m_emoticons;
   QStringList m_text;
 };
 

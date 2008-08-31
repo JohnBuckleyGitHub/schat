@@ -48,7 +48,7 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
   QList<Emoticons> out;
 
   if (!m_emoticons.isEmpty() && !text.isEmpty()) {
-    QHashIterator <QString, QStringList> i(m_emoticons);
+    QMapIterator <QString, QStringList> i(m_emoticons);
     while (i.hasNext()) {
       i.next();
       QStringList list = i.value();

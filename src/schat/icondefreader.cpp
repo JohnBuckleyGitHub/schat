@@ -28,7 +28,7 @@
 /*!
  * \brief Конструктор класса IconDefReader.
  */
-IconDefReader::IconDefReader(QHash<QString, QStringList> *emoticons)
+IconDefReader::IconDefReader(QMap<QString, QStringList> *emoticons)
   : m_emoticons(emoticons)
 {
   if (m_emoticons)
