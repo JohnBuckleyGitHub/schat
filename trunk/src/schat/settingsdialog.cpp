@@ -18,6 +18,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "emoticonsreader.h"
 #include "icondefreader.h"
 #include "networkwidget.h"
 #include "profilewidget.h"
@@ -388,6 +389,11 @@ bool EmoticonsSettings::createThemeList()
     if (QFile::exists(emoticonsPath + theme + "/icondef.xml")) {
       IconDefReader reader(0);
       if (reader.readFile(emoticonsPath + theme + "/icondef.xml"))
+        m_themeCombo->addItem(theme);
+    }
+    else if (QFile::exists(emoticonsPath + theme + "/emoticons.xml")) {
+      EmoticonsReader reader(0);
+      if (reader.readFile(emoticonsPath + theme + "/emoticons.xml"))
         m_themeCombo->addItem(theme);
     }
   }

@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "emoticonsreader.h"
 #include "icondefreader.h"
 #include "networkreader.h"
 #include "schatwindow.h"
@@ -75,6 +76,11 @@ void Settings::createEmoticonsMap()
   if (QFile::exists(emoticonsPath + "/icondef.xml")) {
     IconDefReader reader(&m_emoticons);
     if (reader.readFile(emoticonsPath + "/icondef.xml"))
+      err = false;
+  }
+  else if (QFile::exists(emoticonsPath + "/emoticons.xml")) {
+    EmoticonsReader reader(&m_emoticons);
+    if (reader.readFile(emoticonsPath + "/emoticons.xml"))
       err = false;
   }
 

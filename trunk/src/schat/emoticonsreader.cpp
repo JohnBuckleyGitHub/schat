@@ -18,17 +18,17 @@
 
 #include <QtCore>
 
-#include "icondefreader.h"
+#include "emoticonsreader.h"
 
 /*!
- * \class IconDefReader
- * \brief Класс для чтения xml-файла смайликов (icondef.xml формат Psi).
+ * \class EmoticonsReader
+ * \brief Класс для чтения xml-файла смайликов (emoticons.xml формат Kopete).
  */
 
 /*!
- * \brief Конструктор класса IconDefReader.
+ * \brief Конструктор класса EmoticonsReader.
  */
-IconDefReader::IconDefReader(QMap<QString, QStringList> *emoticons)
+EmoticonsReader::EmoticonsReader(QMap<QString, QStringList> *emoticons)
   : m_emoticons(emoticons)
 {
   if (m_emoticons)
@@ -36,7 +36,7 @@ IconDefReader::IconDefReader(QMap<QString, QStringList> *emoticons)
 }
 
 
-bool IconDefReader::readFile(const QString &fileName)
+bool EmoticonsReader::readFile(const QString &fileName)
 {
   QFile file(fileName);
   if (!file.open(QFile::ReadOnly | QFile::Text))
@@ -48,10 +48,10 @@ bool IconDefReader::readFile(const QString &fileName)
     readNext();
 
     if (isStartElement()) {
-      if (name() == "icondef")
-        readIcondef();
+      if (name() == "messaging-emoticon-map")
+        readMap();
       else
-        raiseError(QObject::tr("bad icondef file"));
+        raiseError(QObject::tr("bad messaging-emoticon-map file"));
     }
   }
 
@@ -59,7 +59,7 @@ bool IconDefReader::readFile(const QString &fileName)
 }
 
 
-void IconDefReader::readIcon()
+void EmoticonsReader::readEmoticon(const QString &file)
 {
   m_text.clear();
 
@@ -70,16 +70,19 @@ void IconDefReader::readIcon()
       break;
 
     if (isStartElement()) {
-      if (m_emoticons) {
-        if (name() == "text") {
-          QString text = readElementText();
-          if (!text.isEmpty())
-            m_text << text;
-        }
-        else if (name() == "object") {
-          QString object = readElementText();
-          if (!m_text.isEmpty() && !object.isEmpty())
-            m_emoticons->insert(object, m_text);
+      if (m_emoticons && !file.isEmpty()) {
+        if (name() == "string") {
+          QString str = readElementText();
+          if (!str.isEmpty()) {
+            if (m_emoticons->contains(file)) {
+              QStringList list = m_emoticons->value(file);
+              list << str;
+              m_emoticons->insert(file, list);
+            }
+            else {
+              m_emoticons->insert(file, QStringList() << str);
+            }
+          }
         }
         else
           readUnknownElement();
@@ -91,7 +94,7 @@ void IconDefReader::readIcon()
 }
 
 
-void IconDefReader::readIcondef()
+void EmoticonsReader::readMap()
 {
   while (!atEnd()) {
     readNext();
@@ -100,8 +103,8 @@ void IconDefReader::readIcondef()
       break;
 
     if (isStartElement()) {
-      if (name() == "icon")
-        readIcon();
+      if (name() == "emoticon")
+        readEmoticon(attributes().value("file").toString());
       else
         readUnknownElement();
     }
@@ -109,7 +112,7 @@ void IconDefReader::readIcondef()
 }
 
 
-void IconDefReader::readUnknownElement()
+void EmoticonsReader::readUnknownElement()
 {
   while (!atEnd()) {
     readNext();

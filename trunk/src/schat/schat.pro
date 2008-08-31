@@ -52,6 +52,7 @@ HEADERS += \
     widget/emoticonselector.h \
     widget/inputwidget.h \
     widget/sendwidget.h \
+    emoticonsreader.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -77,6 +78,7 @@ SOURCES += \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
     widget/sendwidget.cpp \
+    emoticonsreader.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schat/debug/rcc
