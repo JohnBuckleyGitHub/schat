@@ -318,12 +318,15 @@ EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
 
   m_enableCheck = new QCheckBox(tr("Включить смайлики"), this);
   m_enableCheck->setChecked(m_settings->getBool("UseEmoticons"));
+  m_enableCheck->setToolTip(tr("Включает использование графических смайликов"));
   connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
   m_animateCheck = new QCheckBox(tr("Разрешить анимацию"), this);
+  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах, может приводить к повышенной загрузке процессора"));
   m_animateCheck->setChecked(m_settings->getBool("UseAnimatedEmoticons"));
 
   m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
+  m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они отделены пробелами от остального сообщения"));
   m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
 
   mainLayout->addWidget(m_enableCheck);
@@ -357,6 +360,7 @@ void EmoticonsSettings::save()
   m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
   m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
   m_settings->createEmoticonsMap();
+  m_settings->notify(Settings::EmoticonsChanged);
 }
 
 

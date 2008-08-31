@@ -20,6 +20,7 @@
 
 #include "widget/emoticonselector.h"
 #include "widget/sendwidget.h"
+#include "settings.h"
 
 /*!
  * \class SendWidget
@@ -34,6 +35,7 @@ SendWidget::SendWidget(Settings *settings, QWidget *parent)
 {
   m_input = new InputWidget(this);
   createButtons();
+  setSettings();
 
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addWidget(m_boldButton);
@@ -52,6 +54,7 @@ SendWidget::SendWidget(Settings *settings, QWidget *parent)
   mainLayout->setSpacing(1);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), SLOT(currentCharFormatChanged(const QTextCharFormat &)));
 }
 
@@ -88,6 +91,15 @@ void SendWidget::setItalic(bool b)
   format.setFontItalic(b);
 
   mergeFormat(format);
+}
+
+
+void SendWidget::setSettings()
+{
+  m_useEmoticons           = m_settings->getBool("UseEmoticons");
+  m_useAnimatedEmoticons   = m_settings->getBool("UseAnimatedEmoticons");
+  m_emoticonsRequireSpaces = m_settings->getBool("EmoticonsRequireSpaces");
+  m_emoticonButton->setEnabled(m_useEmoticons);
 }
 
 

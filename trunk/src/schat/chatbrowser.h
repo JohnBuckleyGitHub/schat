@@ -67,11 +67,15 @@ private slots:
   void animate();
   void animate(const QString &key);
   void setAnimations();
+  void setSettings();
 
 private:
   void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
   void setPauseAnimations(bool paused);
 
+  bool m_emoticonsRequireSpaces;
+  bool m_useAnimatedEmoticons;
+  bool m_useEmoticons;
   ChannelLog *m_channelLog;
   int m_keepAnimations;
   QHash<QString, EmoticonMovie*> m_aemoticon;

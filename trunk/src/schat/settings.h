@@ -47,6 +47,7 @@ public:
     ProfileSettingsChanged,
     ServerChanged,
     UpdateSettingsChanged,
+    EmoticonsChanged,
     ByeMsgChanged
   };
 
