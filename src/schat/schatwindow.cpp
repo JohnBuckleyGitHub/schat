@@ -44,6 +44,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 {
   m_profile     = new AbstractProfile(this);
   m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
+  m_settings->read();
+
   m_send        = new SendWidget(m_settings, this);
   centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
@@ -88,7 +90,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
   listView->setModel(&model);
 
-  m_settings->read();
   restoreGeometry();
 
   #ifdef SCHAT_UPDATE

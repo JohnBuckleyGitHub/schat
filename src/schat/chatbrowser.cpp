@@ -48,8 +48,11 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 
   document()->setDefaultStyleSheet(m_style);
   m_keepAnimations = -1;
+  
+  setSettings();
   m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
   connect(&m_animateTimer, SIGNAL(timeout()), SLOT(animate()));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
 }
 
 
@@ -209,7 +212,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
 
-  if (!emoticons.isEmpty()) {
+  if (!emoticons.isEmpty() && m_useEmoticons) {
     QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
     int size = toPlainText().size();
 
@@ -256,7 +259,9 @@ void ChatBrowser::animate()
 void ChatBrowser::animate(const QString &key)
 {
   if (m_aemoticon.contains(key)) {
-    document()->addResource(QTextDocument::ImageResource, key, m_aemoticon.value(key)->currentPixmap());
+    if (m_useAnimatedEmoticons)
+      document()->addResource(QTextDocument::ImageResource, key, m_aemoticon.value(key)->currentPixmap());
+
     QList<int> starts = m_aemoticon.value(key)->starts();
     foreach (int start, starts) {
       if (!m_animateQueue.contains(start))
@@ -272,6 +277,15 @@ void ChatBrowser::setAnimations()
   int max = cursorForPosition(QPoint(size().width(), size().height())).position();
 
   emit pauseIfHidden(min, max);
+}
+
+
+void ChatBrowser::setSettings()
+{
+  m_useEmoticons           = m_settings->getBool("UseEmoticons");
+  m_useAnimatedEmoticons   = m_settings->getBool("UseAnimatedEmoticons");
+  m_emoticonsRequireSpaces = m_settings->getBool("EmoticonsRequireSpaces");
+  setPauseAnimations(!m_useAnimatedEmoticons);
 }
 
 
@@ -291,19 +305,22 @@ void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
     connect(this, SIGNAL(pauseIfHidden(int, int)), movie, SLOT(pauseIfHidden(int, int)));
   }
 
-  if (!m_animateTimer.isActive())
+  if (!m_animateTimer.isActive() && m_useAnimatedEmoticons)
     m_animateTimer.start();
 }
 
 
 void ChatBrowser::setPauseAnimations(bool paused)
 {
-  emit pauseAnimations(paused);
+  if (m_useAnimatedEmoticons)
+    emit pauseAnimations(paused);
+  else
+    emit pauseAnimations(true);
 
   if (paused) {
     if (m_animateTimer.isActive())
       m_animateTimer.stop();
   }
-  else if (!m_aemoticon.isEmpty() && !m_animateTimer.isActive())
+  else if (!m_aemoticon.isEmpty() && !m_animateTimer.isActive() && m_useAnimatedEmoticons)
     m_animateTimer.start();
 }

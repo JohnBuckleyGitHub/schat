@@ -45,12 +45,16 @@ private slots:
   void currentCharFormatChanged(const QTextCharFormat &format);
   void setBold(bool b);
   void setItalic(bool b);
+  void setSettings();
   void setUnderline (bool b);
 
 private:
   void createButtons();
   void mergeFormat(const QTextCharFormat &format);
 
+  bool m_emoticonsRequireSpaces;
+  bool m_useAnimatedEmoticons;
+  bool m_useEmoticons;
   EmoticonSelector *m_emoticonSelector;
   InputWidget *m_input;
   QAction *m_boldAction;
