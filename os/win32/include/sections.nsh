@@ -59,15 +59,33 @@ Section "$(STR1000)" SecCore
   File "..\..\data\doc\*.html"
   File "..\..\data\doc\*.example"
   
-  SetOutPath "$INSTDIR\emoticons\kolobok"
-  File "..\..\data\emoticons\kolobok\*.gif"
-  File "..\..\data\emoticons\kolobok\icondef.xml"
-  
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
 SectionEnd
 !macroend
+
+
+!macro  SECTION_KOLOBOK
+!define SECTION_KOLOBOK
+Section "Kolobok" SecKolobok
+  SectionIn 1
+  SetOutPath "$INSTDIR\emoticons\kolobok"
+  File "..\..\data\emoticons\kolobok\*.gif"
+  File "..\..\data\emoticons\kolobok\icondef.xml"
+SectionEnd
+!macroend /*SECTION_KOLOBOK*/
+
+
+!macro  SECTION_SIMPLE_SMILEYS
+!define SECTION_SIMPLE_SMILEYS
+Section "Simple Smileys" SecSimpleSmileys
+  SectionIn 1
+  SetOutPath "$INSTDIR\emoticons\Simple Smileys"
+  File "..\..\data\emoticons\Simple Smileys\*.png"
+  File "..\..\data\emoticons\Simple Smileys\emoticons.xml"
+SectionEnd
+!macroend /*SECTION_SIMPLE_SMILEYS*/
 
 
 !macro  SECTION_SERVER
@@ -103,6 +121,8 @@ Section "Uninstall"
     Delete "$INSTDIR\doc\*.example"
     Delete "$INSTDIR\emoticons\kolobok\*.gif"
     Delete "$INSTDIR\emoticons\kolobok\icondef.xml"
+    Delete "$INSTDIR\emoticons\Simple Smileys\*.png"
+    Delete "$INSTDIR\emoticons\Simple Smileys\emoticons.xml"
     Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
     
     !ifdef VC90
@@ -134,6 +154,13 @@ SectionEnd
   !endif
   !ifdef SECTION_SERVER
     !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(STR1003)
+  !endif
+  !insertmacro MUI_DESCRIPTION_TEXT ${GroupEmoticons} $(STR1004)
+  !ifdef SECTION_KOLOBOK
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecKolobok} "Kolobok emoticons by Aiwan http://kolobok.us/"
+  !endif
+  !ifdef SECTION_SIMPLE_SMILEYS
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSimpleSmileys} "Simple Smileys by Leo Bolin http://leobolin.net/simplesmileys/"
   !endif
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 

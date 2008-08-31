@@ -36,5 +36,6 @@ ${L} STR1000 "Core Components"
 ${L} STR1001 "$(STR1000)"
 ${L} STR1002 "Standalone Server"
 ${L} STR1003 "$(STR1002)"
+${L} STR1004 "Emoticons"
 
 !endif /* ENGLISH_NSH_ */
