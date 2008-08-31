@@ -103,3 +103,12 @@ FunctionEnd
     StrCpy $INSTDIR $R0
   ${EndUnless}
 !macroend
+
+
+!macro SAVE_SECTION _SEC _KEY
+  ${If} ${SectionIsSelected} ${_SEC}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 1
+  ${Else}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 0
+  ${EndIf}
+!macroend

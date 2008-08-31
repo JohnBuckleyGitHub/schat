@@ -83,6 +83,10 @@ Page custom SettingsPage SettingsPageLeave
  * Секции
  */
 !insertmacro SECTION_CORE
+SectionGroup "$(STR1004)" GroupEmoticons
+  !insertmacro SECTION_KOLOBOK
+  !insertmacro SECTION_SIMPLE_SMILEYS
+SectionGroupEnd
 !insertmacro SECTION_SERVER
 !insertmacro SECTION_OPTIONS
 !insertmacro SECTION_DESC
@@ -95,13 +99,9 @@ Page custom SettingsPage SettingsPageLeave
 Section
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version"     "${SCHAT_VERSION}"
   
-  !ifdef SECTION_SERVER
-  ${If} ${SectionIsSelected} ${SecServer}
-    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Server" 1
-  ${Else}
-    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Server" 0
-  ${EndIf}
-  !endif
+  !insertmacro SAVE_SECTION ${SecServer} "Server"
+  !insertmacro SAVE_SECTION ${SecKolobok} "Emoticons.Kolobok"
+  !insertmacro SAVE_SECTION ${SecSimpleSmileys} "Emoticons.SimpleSmileys"
   
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"     "$settings.Desktop"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch" "$settings.QuickLaunch"
@@ -139,6 +139,8 @@ Function .onInit
   ${Option} "AutoStart"   1 $settings.AutoStart
   
   ${SectionState} "Server" 0 ${SecServer}
+  ${SectionState} "Emoticons.Kolobok" 1 ${SecKolobok}
+  ${SectionState} "Emoticons.SimpleSmileys" 1 ${SecSimpleSmileys}
 FunctionEnd
 
 
