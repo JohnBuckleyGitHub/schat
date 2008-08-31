@@ -334,8 +334,11 @@ EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
   mainLayout->addWidget(m_requireSpacesCheck);
   mainLayout->addStretch();
 
-  if (!createThemeList())
+  if (!createThemeList()) {
     m_enableCheck->setEnabled(false);
+    m_enableCheck->setChecked(false);
+    m_settings->setBool("UseEmoticons", false);
+  }
 
   enable(m_enableCheck->isChecked());
 }
