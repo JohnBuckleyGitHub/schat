@@ -78,8 +78,10 @@ void Settings::createEmoticonsMap()
       err = false;
   }
 
-  if (err)
+  if (err) {
     m_emoticons.clear();
+    setBool("UseEmoticons", false);
+  }
 }
 
 
