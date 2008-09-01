@@ -75,8 +75,13 @@ void Settings::createEmoticonsMap()
 
   if (QFile::exists(emoticonsPath + "/icondef.xml")) {
     IconDefReader reader(&m_emoticons);
-    if (reader.readFile(emoticonsPath + "/icondef.xml"))
+    if (reader.readFile(emoticonsPath + "/icondef.xml")) {
       err = false;
+      if (reader.refresh())
+        setInt("EmoticonsRefreshTime", reader.refresh());
+      else
+        setInt("EmoticonsRefreshTime", 50);
+    }
   }
   else if (QFile::exists(emoticonsPath + "/emoticons.xml")) {
     EmoticonsReader reader(&m_emoticons);

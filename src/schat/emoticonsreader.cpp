@@ -61,8 +61,6 @@ bool EmoticonsReader::readFile(const QString &fileName)
 
 void EmoticonsReader::readEmoticon(const QString &file)
 {
-  m_text.clear();
-
   while (!atEnd()) {
     readNext();
 
