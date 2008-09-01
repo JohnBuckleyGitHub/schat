@@ -209,28 +209,69 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   int offset = docCursor.position();
   docCursor.insertHtml(msg);
   QString plainMsg = doc.toPlainText().mid(offset);
-
+  
+  if (m_useEmoticons) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
 
-  if (!emoticons.isEmpty() && m_useEmoticons) {
-    QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-    int size = toPlainText().size();
+    if (!emoticons.isEmpty()) {
+      QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+      int size = toPlainText().size();
 
-    foreach (Emoticons emoticon, emoticons) {
-      docCursor.setPosition(offset);
-//        qDebug() << "smile:" << emoticon.name << emoticon.file;
+      foreach (Emoticons emoticon, emoticons) {
+        docCursor.setPosition(offset);
+  //        qDebug() << "smile:" << emoticon.name << emoticon.file;
 
-      do {
-        docCursor = doc.find(emoticon.name, docCursor);
+        do {
+          bool ok = false;
+          docCursor = doc.find(emoticon.name, docCursor);
+          int docSize = doc.toPlainText().size();
 
-        if (docCursor.selectedText() == emoticon.name) {
-          QString file = emoticonsPath + emoticon.file;
-          if (!emoticon.file.isEmpty()) {
-            docCursor.insertImage(QFileInfo(file).fileName());
-            addAnimation(file, docCursor.position() + size, size + 1);
+          if (docCursor.selectedText() == emoticon.name) {
+            if (m_emoticonsRequireSpaces) {
+              QTextCursor findCursor(&doc);
+
+              // Сообщение содержит только один смайлик и больше ничего.
+              if (docCursor.anchor() == offset && docCursor.position() == docSize)
+                ok = true;
+              // Код смайлика находится в начале строки, после него должен следовать пробел.
+              else if (docCursor.anchor() == offset) {
+                findCursor.setPosition(docCursor.position());
+                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+                if (findCursor.selectedText() == " ")
+                  ok = true;
+              }
+              // Код смайлика находится в конце строки, перед ним должен находится пробел.
+              else if (docCursor.position() == docSize) {
+                findCursor.setPosition(docCursor.anchor());
+                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+                if (findCursor.selectedText() == " ")
+                  ok = true;
+              }
+              // Код смайлика находится внутри строки, с обоих сторон должны находится пробелы.
+              else {
+                findCursor.setPosition(docCursor.anchor());
+                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+                QString prev = findCursor.selectedText();
+                findCursor.setPosition(docCursor.position());
+                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+                QString next = findCursor.selectedText();
+                if (prev == " " && next == " ")
+                  ok = true;
+              }
+            }
+            else
+              ok = true;
           }
-        }
-      } while (!docCursor.isNull());
+
+          if (ok) {
+            QString file = emoticonsPath + emoticon.file;
+            if (!emoticon.file.isEmpty()) {
+              docCursor.insertImage(QFileInfo(file).fileName());
+              addAnimation(file, docCursor.position() + size, size + 1);
+            }
+          }
+        } while (!docCursor.isNull());
+      }
     }
   }
 
