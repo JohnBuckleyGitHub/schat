@@ -327,6 +327,7 @@ void ChatBrowser::setSettings()
   m_useAnimatedEmoticons   = m_settings->getBool("UseAnimatedEmoticons");
   m_emoticonsRequireSpaces = m_settings->getBool("EmoticonsRequireSpaces");
   setPauseAnimations(!m_useAnimatedEmoticons);
+  m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
 }
 
 

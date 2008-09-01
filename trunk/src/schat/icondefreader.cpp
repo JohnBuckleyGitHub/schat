@@ -33,6 +33,8 @@ IconDefReader::IconDefReader(QMap<QString, QStringList> *emoticons)
 {
   if (m_emoticons)
     m_emoticons->clear();
+  
+  m_refresh = 0;
 }
 
 
@@ -100,8 +102,28 @@ void IconDefReader::readIcondef()
       break;
 
     if (isStartElement()) {
-      if (name() == "icon")
+      if (name() == "meta")
+        readMeta();
+      else if (name() == "icon")
         readIcon();
+      else
+        readUnknownElement();
+    }
+  }
+}
+
+
+void IconDefReader::readMeta()
+{
+  while (!atEnd()) {
+    readNext();
+
+    if (isEndElement())
+      break;
+
+    if (isStartElement()) {
+      if (name() == "refresh")
+        m_refresh = readElementText().toInt();
       else
         readUnknownElement();
     }

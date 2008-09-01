@@ -31,7 +31,6 @@ private:
   void readUnknownElement();
 
   QMap<QString, QStringList> *m_emoticons;
-  QStringList m_text;
 };
 
 #endif /*EMOTICONSREADER_H_*/
