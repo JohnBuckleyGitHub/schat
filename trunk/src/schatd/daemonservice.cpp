@@ -19,8 +19,9 @@
 #include <QtCore>
 #include <QtNetwork>
 
-#include "daemonservice.h"
 #include "abstractprofile.h"
+#include "channellog.h"
+#include "daemonservice.h"
 
 /*!
  * \class DaemonService
@@ -606,6 +607,10 @@ void DaemonService::opcodeMessage()
   if (p_message.isEmpty())
     return;
 
+  p_message = ChannelLog::htmlFilter(p_message);
+  if (p_message.isEmpty())
+    return;
+
   emit message(p_channel, m_profile->nick(), p_message);
 }
 
@@ -704,6 +709,10 @@ void DaemonService::opcodeRelayMessage()
   if (p_sender.isEmpty())
     return;
 
+  if (p_message.isEmpty())
+    return;
+
+  p_message = ChannelLog::htmlFilter(p_message);
   if (p_message.isEmpty())
     return;
 
