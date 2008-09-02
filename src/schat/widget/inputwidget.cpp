@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "channellog.h"
 #include "widget/inputwidget.h"
 
 /*!
@@ -45,24 +46,10 @@ void InputWidget::sendMsg()
 //  processLinks();
 
   QString html = toHtml();
-  // Очистка полного html документа от ненужных тегов.
-  QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
-  html.remove(badStuff);
-  html = html.trimmed();
+  html = ChannelLog::htmlFilter(html);
 
   if (html.isEmpty())
     return;
-
-  html = html.left(8192);
-  html.replace(QChar('\n'), "<br />");
-
-  while (html.contains("<br /><br />"))
-    html.replace("<br /><br />", "<br />");
-
-  html.replace("<br /></span>", "</span>");
-
-  if (html.endsWith("<br />"))
-    html.left(html.size() - 6);
 
   m_msg << html;
   m_current = m_msg.count();
@@ -71,7 +58,7 @@ void InputWidget::sendMsg()
 
   emit sendMsg(html);
 
-//  qDebug() << html;
+  qDebug() << html;
 }
 
 
