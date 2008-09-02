@@ -36,6 +36,7 @@ public:
   ChannelLog(QObject *parent = 0);
   inline QString channel()                       { return m_channel; }
   inline void setMode(Mode mode)                 { m_mode = mode; }
+  static QString htmlFilter(const QString &html, int left = 8192);
   static QString toPlainText(const QString &str);
   void msg(const QString &text);
   void setChannel(const QString &channel);

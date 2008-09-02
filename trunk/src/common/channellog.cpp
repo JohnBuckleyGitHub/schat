@@ -41,12 +41,93 @@ ChannelLog::ChannelLog(QObject *parent)
 }
 
 
+QString ChannelLog::htmlFilter(const QString &html, int left)
+{
+  QString out = html;
+
+  /// Очищает html документ от неотображаемой информации.
+  QRegExp badStuff("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
+  badStuff.setCaseSensitivity(Qt::CaseInsensitive);
+  out.remove(badStuff);
+  out = out.trimmed();
+
+  if (out.isEmpty())
+    return "";
+
+  /// Обрезает до максимальной длинны.
+  out = out.left(left);
+
+  /// Удаляет запрещённые теги.
+  badStuff.setCaseSensitivity(Qt::CaseInsensitive);
+  QStringList otherBadTags;
+  otherBadTags << "address"
+               << "big"
+               << "blockquote"
+               << "center"
+               << "dd"
+               << "div"
+               << "dl"
+               << "dt"
+               << "font"
+               << "h1"
+               << "h2"
+               << "h3"
+               << "h4"
+               << "h5"
+               << "h6"
+               << "hr"
+               << "kbd"
+               << "li"
+               << "ol"
+               << "qt"
+               << "small"
+               << "sub"
+               << "sup"
+               << "table"
+               << "tbody"
+               << "td"
+               << "tfoot"
+               << "th"
+               << "thead"
+               << "tr"
+               << "img"
+               << "ul";
+
+  foreach (QString tag, otherBadTags) {
+    badStuff.setPattern(QString("</?%1[^<>]*>").arg(tag));
+    out.remove(badStuff);
+  }
+
+  /// Удаляет пустые ссылки.
+  badStuff.setPattern("<a[^<]*>[\\s]*</a>");
+  out.remove(badStuff);
+
+  /// Заменяет перенос строк на соответствующий html код.
+  out.replace(QChar('\n'), "<br />");
+
+  /// Заменяет двойные переносы строк на одинарные.
+  while (out.contains("<br /><br />"))
+    out.replace("<br /><br />", "<br />");
+
+  /// Удаляет код переноса строки если тот находится в конце сообщения.
+  out.replace("<br /></span>", "</span>");
+  if (out.endsWith("<br />"))
+    out.left(out.size() - 6);
+
+  /// Удаляет запрещённые css стили.
+  badStuff.setPattern("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;");
+  out.remove(badStuff);
+
+  return out.simplified();
+}
+
+
 QString ChannelLog::toPlainText(const QString &str)
 {
   QString out = str;
   out = out.replace("<br />", QChar('\n'), Qt::CaseInsensitive);
   out = out.remove("</span>", Qt::CaseInsensitive);
-  out = out.remove(QRegExp("<span[^>]*>"));
+  out = out.remove(QRegExp("</?span[^<>]*>|</?a[^<>]*>"));
   out = out.trimmed();
   return out;
 }
