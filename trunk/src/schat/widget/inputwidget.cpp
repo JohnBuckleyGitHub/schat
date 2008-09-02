@@ -36,43 +36,40 @@ InputWidget::InputWidget(QWidget *parent)
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_default = currentCharFormat();
   m_current = 0;
+  document()->setDefaultStyleSheet("a {color:#1a4d82;}");
 }
 
 
 void InputWidget::sendMsg()
 {
-  processLinks();
+//  processLinks();
 
   QString html = toHtml();
-  html = html.remove("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n");
-  html = html.remove(QRegExp("<html><head>*</head>", Qt::CaseInsensitive, QRegExp::Wildcard));
-  html = html.remove(QRegExp("<body[^>]*>"));
-  html = html.remove(QRegExp("<p[^>]*>"));
-  html = html.remove(QChar('\n'));
-  html = html.remove("</p></body></html>");
+  // Очистка полного html документа от ненужных тегов.
+  QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
+  html.remove(badStuff);
+  html = html.trimmed();
 
   if (html.isEmpty())
     return;
-  
-  if (toPlainText().trimmed().isEmpty())
-    return;
 
   html = html.left(8192);
+  html.replace(QChar('\n'), "<br />");
 
   while (html.contains("<br /><br />"))
-    html = html.replace("<br /><br />", "<br />");
+    html.replace("<br /><br />", "<br />");
 
-  html = html.replace("<br /></span>", "</span>");
+  html.replace("<br /></span>", "</span>");
 
   if (html.endsWith("<br />"))
-    html = html.left(html.size() - 6);
+    html.left(html.size() - 6);
 
   m_msg << html;
   m_current = m_msg.count();
 
   emit sendMsg(html);
 
-  qDebug() << html;
+//  qDebug() << html;
 }
 
 
