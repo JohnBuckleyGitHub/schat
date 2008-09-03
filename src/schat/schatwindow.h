@@ -82,7 +82,7 @@ private slots:
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void addTab(const QModelIndex &i);
   void closeChat();
-  void closeTab();
+  void closeTab(int tab = -1);
   void connecting(const QString &server, bool network);
   void fatal();
   void genericMessage(const QString &info);
@@ -110,6 +110,7 @@ private slots:
   #endif
 
 private:
+  bool eventFilter(QObject *object, QEvent *event);
   bool parseCmd(AbstractTab *tab, const QString &message);
   int tabIndex(const QString &s, int start = 1) const;
   QStandardItem* findItem(const QString &nick) const;
@@ -138,7 +139,6 @@ private:
   QAction *m_networkSetAction;
   QAction *m_profileSetAction;
   QAction *m_quitAction;
-  QHBoxLayout *sendLayout;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
   QListView *listView;
