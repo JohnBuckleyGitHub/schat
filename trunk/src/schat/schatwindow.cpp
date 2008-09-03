@@ -50,11 +50,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   centralWidget = new QWidget(this);
   splitter      = new QSplitter(centralWidget);
   m_tabs        = new QTabWidget(splitter);
+  m_tabs->installEventFilter(this);
   rightWidget   = new QWidget(splitter);
   listView      = new QListView(rightWidget);
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
-  sendLayout    = new QHBoxLayout;
   toolsLayout   = new QHBoxLayout;
   statusbar     = new QStatusBar(this);
   statusLabel   = new QLabel(this);
@@ -294,13 +294,16 @@ void SChatWindow::closeChat()
 /** [private slots]
  * 
  */
-void SChatWindow::closeTab()
+void SChatWindow::closeTab(int tab)
 {
-  int index = m_tabs->currentIndex();
+  int index = tab;
+  if (index == -1)
+    index = m_tabs->currentIndex();
+
   if (index) {
     QWidget *widget = m_tabs->widget(index);
     m_tabs->removeTab(index);
-    widget->deleteLater();
+    QTimer::singleShot(0, widget, SLOT(deleteLater()));
   }
   else
     m_clientService->quit();
@@ -764,6 +767,32 @@ void SChatWindow::welcomeOk()
 }
 
 
+bool SChatWindow::eventFilter(QObject *object, QEvent *event)
+{
+  if (m_tabs == object) {
+    bool mousRel  = event->type() == QEvent::MouseButtonRelease;
+
+    if (mousRel) {
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+      int index = -1;
+      QTabBar *tabBar = qFindChild<QTabBar*>(m_tabs);
+      for (int i = 0; i < tabBar->count(); ++i) {
+        if (tabBar->tabRect(i).contains(mouseEvent->pos())) {
+          index = i;
+          break;
+        }
+      }
+      if (index > -1 && (mouseEvent->button() == Qt::MidButton)) {
+        closeTab(index);
+        return true;
+      }
+    }
+  }
+
+  return QMainWindow::eventFilter(object, event);
+}
+
+
 /** [private]
  * 
  */
@@ -891,9 +920,9 @@ void SChatWindow::createActions()
 //  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
 //  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
   
-  // Разорвать текущее соединение
-  m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Разорвать текущее соединение"), this);
-  m_closeTabAction->setStatusTip(tr("Разорвать текущее соединение"));
+  // Закрыть вкладку
+  m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
+  m_closeTabAction->setStatusTip(tr("Закрыть вкладку"));
   connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
   
   // Смайлики...
