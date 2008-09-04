@@ -183,6 +183,26 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
+void ChatBrowser::clear()
+{
+  if (m_animateTimer.isActive())
+    m_animateTimer.stop();
+
+  m_animateQueue.clear();
+
+  if (!m_aemoticon.isEmpty()) {
+    QHashIterator <QString, EmoticonMovie*> i(m_aemoticon);
+    while (i.hasNext()) {
+      i.next();
+      i.value()->deleteLater();
+    }
+    m_aemoticon.clear();
+  }
+
+  QTextBrowser::clear();
+}
+
+
 /** [public slots]
  * Новое сообщение `const QString &message`,
  * от участника `const QString &nick`.
