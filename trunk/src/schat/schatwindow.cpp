@@ -807,6 +807,9 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
 
     m_clientService->quit();
   }
+  else if (text.startsWith("/clear", Qt::CaseInsensitive)) {
+    tab->browser->clear();
+  }
   // команда /exit
   else if (text.startsWith("/exit", Qt::CaseInsensitive)) {
     closeChat();

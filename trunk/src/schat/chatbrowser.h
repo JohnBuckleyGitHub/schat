@@ -61,6 +61,7 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
 
 public slots:
+  void clear();
   void msgNewMessage(const QString &nick, const QString &message);
 
 private slots:
