@@ -461,11 +461,11 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
   if (!m_users.contains(nick))
     return false;
-  
-  QString text = ChannelLog::toPlainText(msg);
 
-  /// Команда "/server info"
-  if (text.startsWith("/server info", Qt::CaseInsensitive)) {
+  QString text = ChannelLog::toPlainText(msg).trimmed().toLower();
+
+  /// Команда "/server"
+  if (text == "/server") {
     DaemonService *service = m_users.value(nick)->service();
     if (service) {
       service->sendServerMessage(serverInfo());
