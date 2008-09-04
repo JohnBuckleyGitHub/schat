@@ -43,8 +43,6 @@ InputWidget::InputWidget(QWidget *parent)
 
 void InputWidget::sendMsg()
 {
-//  processLinks();
-
   QString html = toHtml();
   html = ChannelLog::htmlFilter(html);
 
@@ -58,7 +56,7 @@ void InputWidget::sendMsg()
 
   emit sendMsg(html);
 
-  qDebug() << html;
+//  qDebug() << html;
 }
 
 
