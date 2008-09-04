@@ -31,6 +31,8 @@
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
 
+QMap<QString, QString> SChatWindow::m_cmds;
+
 /*!
  * \class SChatWindow
  * \brief Главное окно чата.
@@ -798,42 +800,39 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
  */
 bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
 {
-  QString text = ChannelLog::toPlainText(message);
+  QString text     = ChannelLog::toPlainText(message).trimmed();
+  QString textFull = text;
+  text = text.toLower();
 
-  // команда /bye
-  if (text.startsWith("/bye", Qt::CaseInsensitive)) {   
-    if (text.startsWith("/bye ", Qt::CaseInsensitive))
-      m_clientService->sendByeMsg(text.mid(text.indexOf(QChar(' '))));
+  /// /bye
+  if (text.startsWith("/bye")) {   
+    if (text.startsWith("/bye "))
+      m_clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
 
     m_clientService->quit();
   }
-  else if (text.startsWith("/clear", Qt::CaseInsensitive)) {
+  /// /clear
+  else if (text == "/clear") {
     tab->browser->clear();
   }
-  // команда /exit
-  else if (text.startsWith("/exit", Qt::CaseInsensitive)) {
+  /// /exit
+  else if (text == "/exit") {
     closeChat();
   }
-  // команда /help
-  else if (text.startsWith("/help", Qt::CaseInsensitive)) {
-    tab->browser->msg(tr(
-        "<b class='info'>Доступные команды:</b><br />"
-        "<b>/bye [текст сообщения]</b><span class='info'> - Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span><br />"
-        "<b>/exit</b><span class='info'> - Выход из чата.</span><br />"
-        "<b>/help</b><span class='info'> - Отображает подсказу о командах.</span><br />"
-        "<b>/log</b><span class='info'> - Открывает папку с файлами журнала чата.</span><br />"
-        "<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span><br />"
-        "<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span><br />"
-        "<b>/server info</b><span class='info'> - Просмотр информации о сервере</span>"
-        ));
+  /// /help
+  else if (text.startsWith("/help")) {
+    if (text.startsWith("/help "))
+      cmdHelp(tab, textFull.mid(textFull.indexOf(QChar(' '))).trimmed());
+    else
+      cmdHelp(tab, "");
   }
-  // команда /log
-  else if (text.startsWith("/log", Qt::CaseInsensitive)) {
+  /// /log
+  else if (text == "/log") {
     QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath() + "/log"));
   }
-  // команда /nick
-  else if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
-    QString newNick = text.mid(text.indexOf(QChar(' ')));
+  /// /nick
+  else if (text.startsWith("/nick ")) {
+    QString newNick = textFull.mid(textFull.indexOf(QChar(' ')));
     if (AbstractProfile::isValidNick(newNick) && m_profile->nick() != newNick) {
       m_profile->setNick(newNick);
       m_clientService->sendNewProfile();
@@ -869,15 +868,6 @@ int SChatWindow::tabIndex(const QString &s, int start) const
 /** [private]
  * 
  */
-//Profile* SChatWindow::profileFromItem(const QStandardItem *item)
-//{
-//  return new Profile(quint8(item->data(Qt::UserRole + 1).toUInt()), item->data(Qt::UserRole + 2).toStringList(), this);
-//}
-
-
-/** [private]
- * 
- */
 QStandardItem* SChatWindow::findItem(const QString &nick) const
 {
   QList<QStandardItem *> items;
@@ -905,6 +895,48 @@ QString SChatWindow::userToolTip(const AbstractProfile &profile)
             "<tr><td>Клиент:</td><td>%4</td></tr>"
             "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
             .arg(":/images/" + profile.gender() + ".png").arg(profile.nick()).arg(p_name).arg(p_agent).arg(profile.host());
+}
+
+
+void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
+{
+  if (m_cmds.isEmpty()) {
+    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> - Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
+    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> - Очистка окна чата.</span>"));
+    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> - Выход из чата.</span>"));
+    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> - Отображает подсказу о командах.</span>"));
+    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> - Открывает папку с файлами журнала чата."));
+    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
+    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
+    m_cmds.insert("server", tr("<b>/server</b><span class='info'> - Просмотр информации о сервере</span>"));
+  }
+
+  if (cmd.isEmpty()) {
+    QString out = tr("<b class='info'>Доступные команды:</b><br />");
+    out += "<b>";
+
+    QMapIterator<QString, QString> i(m_cmds);
+    while (i.hasNext()) {
+      i.next();
+      out += ('/' + i.key() + "<br />");
+    }
+
+    out += "</b>";
+    out += tr("<span class='info'>Используйте <b>/help команда</b>, для просмотра подробной информации о команде.</span>");
+    tab->browser->msg(out);
+    return;
+  }
+
+  QString command = cmd.toLower();
+  if (command.startsWith(QChar('/'))) {
+    command = command.mid(1);
+  }
+
+  if (m_cmds.contains(command)) {
+    tab->browser->msg(m_cmds.value(command));
+  }
+  else
+    tab->browser->msg(tr("Неизвестная команда: <b>%1</b>").arg(command));
 }
 
 

@@ -115,6 +115,7 @@ private:
   int tabIndex(const QString &s, int start = 1) const;
   QStandardItem* findItem(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
+  static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void createActions();
   void createCornerWidgets();
   void createService();
@@ -159,6 +160,7 @@ private:
   QWidget *rightWidget;
   SendWidget *m_send;
   Settings *m_settings;
+  static QMap<QString, QString> m_cmds;
   WelcomeDialog *welcomeDialog;
 
   #ifdef SCHAT_UPDATE
