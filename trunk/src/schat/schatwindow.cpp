@@ -107,6 +107,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   createService();
 
   connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
+  connect(m_send, SIGNAL(needCopy()), SLOT(copy()));
   connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
@@ -326,6 +327,18 @@ void SChatWindow::connecting(const QString &server, bool network)
     statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
   
   mainChannel->displayChoiceServer(false);
+}
+
+
+void SChatWindow::copy()
+{
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+  QTextCursor cursor = tab->browser->textCursor();
+
+  if (cursor.hasSelection())
+    tab->browser->copy();
+  else
+    m_send->copy();
 }
 
 

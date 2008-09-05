@@ -30,6 +30,7 @@ public:
   void clearMsg();
 
 signals:
+  void needCopy();
   void sendMsg(const QString &message);
 
 public slots:
