@@ -54,6 +54,7 @@ SendWidget::SendWidget(Settings *settings, QWidget *parent)
   mainLayout->setSpacing(1);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
+  connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), SLOT(currentCharFormatChanged(const QTextCharFormat &)));
 }

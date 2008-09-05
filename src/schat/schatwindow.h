@@ -84,6 +84,7 @@ private slots:
   void closeChat();
   void closeTab(int tab = -1);
   void connecting(const QString &server, bool network);
+  void copy();
   void fatal();
   void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);

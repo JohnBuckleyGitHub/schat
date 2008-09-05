@@ -90,6 +90,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     nextMsg();
   else if (key == "Ctrl+Down")
     prevMsg();
+  else if (key == "Ctrl+C")
+    emit needCopy();
   else if (event->key() == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else

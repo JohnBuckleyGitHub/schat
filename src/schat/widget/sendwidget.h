@@ -39,7 +39,11 @@ public:
   inline void clear() { m_input->clearMsg(); }
 
 signals:
+  void needCopy();
   void sendMsg(const QString &message);
+
+public slots:
+  void copy() { m_input->copy(); }
 
 private slots:
   void currentCharFormatChanged(const QTextCharFormat &format);
