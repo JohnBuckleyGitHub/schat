@@ -22,13 +22,6 @@
 #include "version.h"
 
 /*!
- * \class AboutDialog
- * \brief Диалог "О Программе"
- * 
- * Базовый диалог для просмотра информации о программе, включает в себя классы MainTab, ChangeLogTab и LicenseTab.
- */
-
-/*!
  * \brief Конструктор класса AboutDialog.
  */
 AboutDialog::AboutDialog(QWidget *parent)
@@ -36,36 +29,32 @@ AboutDialog::AboutDialog(QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
-  
-  tabWidget = new QTabWidget(this);
-  tabWidget->addTab(new MainTab(this), tr("О Программе"));
-  tabWidget->addTab(new ChangeLogTab(this), tr("История версий"));
-  tabWidget->addTab(new LicenseTab(this), tr("Лицензия"));
-  
-  closeButton = new QPushButton(tr("Закрыть"), this);
-  closeButton->setDefault(true);
 
-  connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
- 
+  m_tabWidget = new QTabWidget(this);
+  m_tabWidget->addTab(new MainTab(this), tr("О Программе"));
+  m_tabWidget->addTab(new MembersTab(this), tr("Участники"));
+  m_tabWidget->addTab(new ChangeLogTab(this), tr("История версий"));
+  m_tabWidget->addTab(new LicenseTab(this), tr("Лицензия"));
+
+  m_closeButton = new QPushButton(tr("Закрыть"), this);
+  m_closeButton->setDefault(true);
+
+  connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addStretch();
-  buttonLayout->addWidget(closeButton);
-  
+  buttonLayout->addWidget(m_closeButton);
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(tabWidget);
+  mainLayout->addWidget(m_tabWidget);
   mainLayout->addLayout(buttonLayout);
   mainLayout->setMargin(3);
   mainLayout->setSpacing(3);
   setLayout(mainLayout);
-  
+
   setWindowTitle(tr("О Программе"));
 }
 
-
-/*!
- * \class MainTab
- * \brief Диалог "О Программе", Главная страница
- */
 
 /*!
  * \brief Конструктор класса MainTab.
@@ -83,13 +72,14 @@ MainTab::MainTab(QWidget *parent)
   QLabel *gplLabel = new QLabel(this);
   gplLabel->setPixmap(QPixmap(":/images/gplv3-88x31.png"));
   
-  QLabel *aboutLabel = new QLabel(tr(  
-      "<h2>Simple Chat %1</h2>"
+  QLabel *nameLabel = new QLabel(tr("<h2>IMPOMEZIA Simple Chat %1</h2>").arg(SCHAT_VERSION), this);
+  nameLabel->setWordWrap(false);
+  QLabel *aboutLabel = new QLabel(tr(
       "<p><i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></div>"
       "<p>Официальный сайт программы: <a href='http://impomezia.net.ru' style='color:#1a4d82;'>http://impomezia.net.ru</a>.</p>"
       "<p>Эта программа использует библиотеку:<br>"
       "<b>Qt Open Source Edition %2<b>"
-  ).arg(SCHAT_VERSION).arg(qVersion()), this);
+  ).arg(qVersion()), this);
   
   QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   
@@ -109,15 +99,27 @@ MainTab::MainTab(QWidget *parent)
   bottomLayout->addWidget(qtLabel);
   
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
+  mainLayout->addWidget(nameLabel);
   mainLayout->addLayout(topLayout);
   mainLayout->addLayout(bottomLayout);
 }
 
 
 /*!
- * \class ChangeLogTab
- * \brief Диалог "О Программе", Страница истории версий.
+ * \brief Конструктор класса MembersTab.
  */
+MembersTab::MembersTab(QWidget *parent)
+  : QWidget(parent)
+{
+  QTextBrowser *textBrowser = new QTextBrowser(this);
+  textBrowser->setOpenExternalLinks(true);
+  textBrowser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
+
+  QHBoxLayout *mainLayout = new QHBoxLayout(this);
+  mainLayout->addWidget(textBrowser);
+  mainLayout->setMargin(0);
+}
+
 
 /*!
  * \brief Конструктор класса ChangeLogTab.
@@ -142,11 +144,6 @@ ChangeLogTab::ChangeLogTab(QWidget *parent)
   mainLayout->setMargin(0);
 }
 
-
-/*!
- * \class LicenseTab
- * \brief Диалог "О Программе", Лицензия.
- */
 
 /*!
  * \brief Конструктор класса LicenseTab.
