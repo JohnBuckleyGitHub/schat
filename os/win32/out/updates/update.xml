@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates version="1.0">
   <meta>
-    <core level="43">0.1.0.408 Alpha</core>
-    <qt level="5">4.4.1</qt>
+    <core level="20000516">0.2.0.516 Alpha</core>
+    <qt level="20000516">4.4.1</qt>
   </meta>
   <files platform="win32">
     <cumulative>
-      <file size="3030917" md5="c149cd3b57b470084e8849a801052b14" type="qt" level="5">schat-runtime-0.1.0.408.exe</file>
-      <file size="181973" md5="7ee6cc6d7444396ad90e2b195c0355d6" type="core" level="43">schat-core-0.1.0.408.exe</file>
+      <file size="3036698" md5="d08ef14c44e918e4eed1db24484e0986" type="qt" level="20000516">schat-runtime-0.2.0.516.exe</file>
+      <file size="395719" md5="568f30a8885d37a635278687e1f2da87" type="core" level="20000516">schat-core-0.2.0.516.exe</file>
     </cumulative>
   </files>
 </updates>
