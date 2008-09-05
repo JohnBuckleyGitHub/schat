@@ -177,9 +177,6 @@ void SendWidget::mergeFormat(const QTextCharFormat &format)
 {
   QTextCursor cursor = m_input->textCursor();
 
-  if(!cursor.hasSelection())
-    cursor.movePosition(cursor.position() == 0 ? QTextCursor::NextCharacter : QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-
   cursor.mergeCharFormat(format);
   m_input->mergeCurrentCharFormat(format);
 }
