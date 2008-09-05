@@ -118,6 +118,9 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
   badStuff.setPattern("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;");
   out.remove(badStuff);
 
+  if (toPlainText(out).isEmpty())
+    return "";
+
   return out.simplified();
 }
 
