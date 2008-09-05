@@ -28,6 +28,7 @@
   <file>images/undo.png</file>
   <file>images/up.png</file>
   <file>images/update.png</file>
+  <file>doc/members.html</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>

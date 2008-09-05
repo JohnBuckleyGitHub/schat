@@ -24,6 +24,11 @@
 class QLabel;
 class QTabWidget;
 
+/*!
+ * \brief Диалог "О Программе"
+ * 
+ * Базовый диалог для просмотра информации о программе, включает в себя классы MainTab, ChangeLogTab и LicenseTab.
+ */
 class AboutDialog : public QDialog
 {
   Q_OBJECT
@@ -32,12 +37,14 @@ public:
   AboutDialog(QWidget *parent = 0);
 
 private:
-  QPushButton *closeButton;
-  QTabWidget *tabWidget;
+  QPushButton *m_closeButton;
+  QTabWidget *m_tabWidget;
 };
 
 
-
+/*!
+ * \brief Диалог "О Программе", Главная страница
+ */
 class MainTab : public QWidget
 {
   Q_OBJECT
@@ -47,7 +54,21 @@ public:
 };
 
 
+/*!
+ * \brief Диалог "О Программе", Страница участников.
+ */
+class MembersTab : public QWidget
+{
+  Q_OBJECT
 
+public:
+  MembersTab(QWidget *parent = 0); 
+};
+
+
+/*!
+ * \brief Диалог "О Программе", Страница истории версий.
+ */
 class ChangeLogTab : public QWidget
 {
   Q_OBJECT
@@ -57,7 +78,9 @@ public:
 };
 
 
-
+/*!
+ * \brief Диалог "О Программе", Лицензия.
+ */
 class LicenseTab : public QWidget
 {
   Q_OBJECT
