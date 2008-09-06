@@ -137,7 +137,7 @@ void SendWidget::createButtons()
   m_italicButton->setAutoRaise(true);
   connect(m_italicAction, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
 
-  m_underlineAction = new QAction(QIcon(":/images/underline.png"), tr("Подчёркнутный"), this);
+  m_underlineAction = new QAction(QIcon(":/images/underline.png"), tr("Подчёркнутый"), this);
   m_underlineAction->setCheckable(true);
   m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
   m_underlineButton = new QToolButton(this);
