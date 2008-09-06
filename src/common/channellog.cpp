@@ -128,9 +128,15 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
 QString ChannelLog::toPlainText(const QString &str)
 {
   QString out = str;
-  out = out.replace("<br />", QChar('\n'), Qt::CaseInsensitive);
-  out = out.remove("</span>", Qt::CaseInsensitive);
-  out = out.remove(QRegExp("</?span[^<>]*>|</?a[^<>]*>"));
+  out.replace("<br />", QChar('\n'), Qt::CaseInsensitive);
+  out.remove("</span>", Qt::CaseInsensitive);
+  out.remove(QRegExp("</?span[^<>]*>|</?a[^<>]*>"));
+
+  out.replace("&gt;", ">");
+  out.replace("&lt;", "<");
+  out.replace("&quot;", "\"");
+  out.replace("&nbsp;", " ");
+  out.replace("&amp;", "&");
   out = out.trimmed();
   return out;
 }
