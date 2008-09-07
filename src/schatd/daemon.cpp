@@ -84,6 +84,9 @@ bool Daemon::start()
     m_privateLog->setMode(ChannelLog::Plain);
   }
 
+  m_maxLinks = m_settings->getInt("MaxLinks");
+  m_maxUsers = m_settings->getInt("MaxUsers");
+
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
   bool result     = m_server.listen(QHostAddress(address), port);

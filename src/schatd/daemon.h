@@ -94,6 +94,8 @@ private:
   ChannelLog *m_privateLog;
   ClientService *m_link;
   DaemonSettings *m_settings;
+  int m_maxLinks;
+  int m_maxUsers;
   Log *m_log;
   Network *m_network;
   QHash<QString, UserUnit *> m_users;
