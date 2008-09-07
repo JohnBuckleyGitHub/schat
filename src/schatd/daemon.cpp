@@ -484,7 +484,15 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
 
 int Daemon::localLinksCount() const
 {
-  return 0;
+  int out = 0;
+  QHashIterator<quint8, LinkUnit *> i(m_links);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value()->service())
+      ++out;
+  }
+
+  return out;
 }
 
 
@@ -497,7 +505,7 @@ int Daemon::localUsersCount() const
     if (i.value()->numeric() == m_numeric)
       ++out;
   }
-  qDebug() << "Daemon::localUsersCount()" << out;
+
   return out;
 }
 
@@ -604,11 +612,19 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
   quint16 err = 0;
   quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
-  
+
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
 
       if (!m_numerics.contains(numeric)) {
+
+        if (m_maxLinks > 0) {
+          if (m_maxLinks == localLinksCount()) {
+            service->accessDenied(ErrorLinksLimitExceeded);
+            return;
+          }
+        }
+        
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
         m_numerics << numeric;
         connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));

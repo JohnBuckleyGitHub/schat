@@ -591,7 +591,7 @@ void ClientService::opcodeAccessDenied()
   m_stream >> p_reason;
   m_nextBlockSize = 0;
 
-  if (!(p_reason == ErrorUsersLimitExceeded))
+  if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded))
     m_fatal = true;
 
   emit accessDenied(p_reason);
