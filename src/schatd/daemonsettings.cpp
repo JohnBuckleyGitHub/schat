@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ void DaemonSettings::read()
   readInt("ListenPort", 7666);
   readInt("LogLevel", 0);
   readInt("Numeric", 0);
-  readInt("MaxUsers", 100);
-  readInt("MaxLinks", 10);
+  readInt("MaxUsers", 0);
+  readInt("MaxLinks", 0);
   readString("ListenAddress", "0.0.0.0");
   readString("NetworkFile", "network.xml");
   readString("Name", "");
