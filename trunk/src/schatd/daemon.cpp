@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -482,6 +482,26 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
 }
 
 
+int Daemon::localLinksCount() const
+{
+  return 0;
+}
+
+
+int Daemon::localUsersCount() const
+{
+  int out = 0;
+  QHashIterator<QString, UserUnit *> i(m_users);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value()->numeric() == m_numeric)
+      ++out;
+  }
+  qDebug() << "Daemon::localUsersCount()" << out;
+  return out;
+}
+
+
 /*!
  * \brief Возвращает html форматированную строку содержащую информацию о сервере.
  * 
@@ -633,8 +653,16 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = list.at(AbstractProfile::Nick);
-  
+
   if (!m_users.contains(nick)) {
+
+    if (m_maxUsers > 0) {
+      if (m_maxUsers == localUsersCount()) {
+        service->accessDenied(ErrorUsersLimitExceeded);
+        return;
+      }
+    }
+
     m_users.insert(nick, new UserUnit(list, service, m_numeric));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
