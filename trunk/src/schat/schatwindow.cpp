@@ -233,6 +233,7 @@ void SChatWindow::accessDenied(quint16 reason)
 
     case ErrorUsersLimitExceeded:
     case ErrorLinksLimitExceeded:
+    case ErrorMaxUsersPerIpExceeded:
       notify = false;
       break;
 

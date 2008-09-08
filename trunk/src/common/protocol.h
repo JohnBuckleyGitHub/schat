@@ -279,5 +279,6 @@ static const quint16 ErrorNumericAlreadyUse          = 403; // Ошибка ли
 static const quint16 ErrorBadNumeric                 = 404; // Ошибка линковки, неверный/некорректный numeric.
 static const quint16 ErrorUsersLimitExceeded         = 500; // Превышено максимально допустимое количество пользователей на этом сервере.
 static const quint16 ErrorLinksLimitExceeded         = 501; // Превышено максимально допустимое количество серверов подключенных к этому серверу.
+static const quint16 ErrorMaxUsersPerIpExceeded      = 502;
 
 #endif /*PROTOCOL_H_*/
