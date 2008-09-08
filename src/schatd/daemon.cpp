@@ -86,6 +86,7 @@ bool Daemon::start()
 
   m_maxLinks = m_settings->getInt("MaxLinks");
   m_maxUsers = m_settings->getInt("MaxUsers");
+  m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
@@ -679,6 +680,23 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
       }
     }
 
+    if (m_maxUsersPerIp > 0) {
+      QString ip = list.at(AbstractProfile::Host);
+      if (m_ipLimits.contains(ip)) {
+        int hosts = m_ipLimits.value(ip);
+        if (hosts == m_maxUsersPerIp) {
+          service->accessDenied(ErrorMaxUsersPerIpExceeded);
+          return;
+        }
+        else {
+          m_ipLimits.insert(ip, hosts + 1);
+        }
+      }
+      else {
+        m_ipLimits.insert(ip, 1);
+      }
+    }
+
     m_users.insert(nick, new UserUnit(list, service, m_numeric));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
@@ -902,6 +920,17 @@ void Daemon::userLeave(const QString &nick)
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
     m_users.remove(nick);
+
+    if (m_maxUsersPerIp > 0) {
+      QString ip = unit->profile()->host();
+      if (m_ipLimits.contains(ip)) {
+        int hosts = m_ipLimits.value(ip);
+        if (hosts)
+          m_ipLimits.insert(ip, hosts - 1);
+        else
+          m_ipLimits.remove(ip);
+      }
+    }
 
     LOG(0, tr("- Notice - Disconnect: %1@%2").arg(nick).arg(unit->profile()->host()));
 

@@ -51,6 +51,7 @@ void DaemonSettings::read()
   readInt("Numeric", 0);
   readInt("MaxUsers", 0);
   readInt("MaxLinks", 0);
+  readInt("MaxUsersPerIp", 0);
   readString("ListenAddress", "0.0.0.0");
   readString("NetworkFile", "network.xml");
   readString("Name", "");

@@ -98,8 +98,10 @@ private:
   DaemonSettings *m_settings;
   int m_maxLinks;
   int m_maxUsers;
+  int m_maxUsersPerIp;
   Log *m_log;
   Network *m_network;
+  QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
   QList<quint8> m_numerics;
