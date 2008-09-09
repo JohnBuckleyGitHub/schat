@@ -518,7 +518,7 @@ int Daemon::localUsersCount() const
  */
 QString Daemon::serverInfo() const
 {
-  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.net.ru'>http://impomezia.net.ru</a>"
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.com'>http://impomezia.com</a>"
       "<table><tr><td class='info'>Платформа: </td><td><b>").arg(SCHAT_VERSION);
 
 #if   defined(Q_OS_AIX)
