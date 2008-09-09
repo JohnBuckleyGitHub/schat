@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -277,5 +277,8 @@ static const quint16 ErrorNotNetworkConfigured       = 400; // На сервер
 static const quint16 ErrorBadNetworkKey              = 401; // Ошибка проверки ключа сети.
 static const quint16 ErrorNumericAlreadyUse          = 403; // Ошибка линковки numeric подключаемого сервера уже используется.
 static const quint16 ErrorBadNumeric                 = 404; // Ошибка линковки, неверный/некорректный numeric.
+static const quint16 ErrorUsersLimitExceeded         = 500; // Превышено максимально допустимое количество пользователей на этом сервере.
+static const quint16 ErrorLinksLimitExceeded         = 501; // Превышено максимально допустимое количество серверов подключенных к этому серверу.
+static const quint16 ErrorMaxUsersPerIpExceeded      = 502;
 
 #endif /*PROTOCOL_H_*/

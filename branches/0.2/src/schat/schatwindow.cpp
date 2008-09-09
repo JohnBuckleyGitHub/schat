@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -211,29 +211,39 @@ void SChatWindow::about()
  */
 void SChatWindow::accessDenied(quint16 reason)
 {
+  bool notify = true;
+
   switch (reason) {
     case ErrorNickAlreadyUse:
       uniqueNick();
       m_clientService->connectToHost();
       break;
-      
+
     case ErrorOldClientProtocol:
       mainChannel->browser->msgOldClientProtocol();
       break;
-      
+
     case ErrorOldServerProtocol:
       mainChannel->browser->msgOldServerProtocol();
       break;
-      
+
     case ErrorBadNickName:
       mainChannel->browser->msgBadNickName(m_profile->nick());
       break;
-      
+
+    case ErrorUsersLimitExceeded:
+    case ErrorLinksLimitExceeded:
+    case ErrorMaxUsersPerIpExceeded:
+      notify = false;
+      break;
+
     default:
       mainChannel->browser->msg(tr("<i class='err'>При подключении произошла критическая ошибка с кодом: <b>%1</b></i>").arg(reason));
       break;
   }
-  unconnected(false);
+
+  if (notify)
+    unconnected(false);
 }
 
 

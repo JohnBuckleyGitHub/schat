@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -582,15 +582,18 @@ void ClientService::createSocket()
 }
 
 
-/** [private]
- * Разбор пакета с опкодом `OpcodeAccessDenied`.
+/*!
+ * Разбор пакета с опкодом  \b OpcodeAccessDenied.
  */
 void ClientService::opcodeAccessDenied()
 {
   quint16 p_reason;
   m_stream >> p_reason;
   m_nextBlockSize = 0;
-  m_fatal = true;
+
+  if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded || p_reason == ErrorMaxUsersPerIpExceeded))
+    m_fatal = true;
+
   emit accessDenied(p_reason);
 }
 
