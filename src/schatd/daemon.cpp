@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -83,6 +83,10 @@ bool Daemon::start()
     m_privateLog->setChannel("#private");
     m_privateLog->setMode(ChannelLog::Plain);
   }
+
+  m_maxLinks = m_settings->getInt("MaxLinks");
+  m_maxUsers = m_settings->getInt("MaxUsers");
+  m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
@@ -479,6 +483,34 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
 }
 
 
+int Daemon::localLinksCount() const
+{
+  int out = 0;
+  QHashIterator<quint8, LinkUnit *> i(m_links);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value()->service())
+      ++out;
+  }
+
+  return out;
+}
+
+
+int Daemon::localUsersCount() const
+{
+  int out = 0;
+  QHashIterator<QString, UserUnit *> i(m_users);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value()->numeric() == m_numeric)
+      ++out;
+  }
+
+  return out;
+}
+
+
 /*!
  * \brief Возвращает html форматированную строку содержащую информацию о сервере.
  * 
@@ -581,11 +613,19 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
   quint16 err = 0;
   quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
-  
+
   if (m_network) {
     if (m_network->key() == list.at(AbstractProfile::FullName)) {
 
       if (!m_numerics.contains(numeric)) {
+
+        if (m_maxLinks > 0) {
+          if (m_maxLinks == localLinksCount()) {
+            service->accessDenied(ErrorLinksLimitExceeded);
+            return;
+          }
+        }
+        
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
         m_numerics << numeric;
         connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
@@ -630,8 +670,33 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = list.at(AbstractProfile::Nick);
-  
+
   if (!m_users.contains(nick)) {
+
+    if (m_maxUsers > 0) {
+      if (m_maxUsers == localUsersCount()) {
+        service->accessDenied(ErrorUsersLimitExceeded);
+        return;
+      }
+    }
+
+    if (m_maxUsersPerIp > 0) {
+      QString ip = list.at(AbstractProfile::Host);
+      if (m_ipLimits.contains(ip)) {
+        int hosts = m_ipLimits.value(ip);
+        if (hosts == m_maxUsersPerIp) {
+          service->accessDenied(ErrorMaxUsersPerIpExceeded);
+          return;
+        }
+        else {
+          m_ipLimits.insert(ip, hosts + 1);
+        }
+      }
+      else {
+        m_ipLimits.insert(ip, 1);
+      }
+    }
+
     m_users.insert(nick, new UserUnit(list, service, m_numeric));
     connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
@@ -855,6 +920,17 @@ void Daemon::userLeave(const QString &nick)
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
     m_users.remove(nick);
+
+    if (m_maxUsersPerIp > 0) {
+      QString ip = unit->profile()->host();
+      if (m_ipLimits.contains(ip)) {
+        int hosts = m_ipLimits.value(ip);
+        if (hosts)
+          m_ipLimits.insert(ip, hosts - 1);
+        else
+          m_ipLimits.remove(ip);
+      }
+    }
 
     LOG(0, tr("- Notice - Disconnect: %1@%2").arg(nick).arg(unit->profile()->host()));
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ MainTab::MainTab(QWidget *parent)
   nameLabel->setWordWrap(false);
   QLabel *aboutLabel = new QLabel(tr(
       "<p><i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></div>"
-      "<p>Официальный сайт программы: <a href='http://impomezia.net.ru' style='color:#1a4d82;'>http://impomezia.net.ru</a>.</p>"
+      "<p>Официальный сайт программы: <a href='http://impomezia.com' style='color:#1a4d82;'>http://impomezia.com</a>.</p>"
       "<p>Эта программа использует библиотеку:<br>"
       "<b>Qt Open Source Edition %2<b>"
   ).arg(qVersion()), this);
