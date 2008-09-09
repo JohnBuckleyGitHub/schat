@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,18 +56,26 @@ SendWidget::SendWidget(Settings *settings, QWidget *parent)
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
   connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
-  connect(m_input, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), SLOT(currentCharFormatChanged(const QTextCharFormat &)));
+  connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 }
 
 
 /*!
- * \brief Обработка изменения формата символов.
+ * \brief Обработка изменения позиции курсора для обновления кнопок.
  */
-void SendWidget::currentCharFormatChanged(const QTextCharFormat &format)
+void SendWidget::cursorPositionChanged()
 {
-  m_boldAction->setChecked(format.font().bold());
-  m_italicAction->setChecked(format.font().italic());
-  m_underlineAction->setChecked(format.font().underline());
+  QTextCursor cursor = m_input->textCursor();
+  if (cursor.hasSelection()) {
+    int position = cursor.position();
+    if (position < cursor.anchor())
+      cursor.setPosition(position + 1);
+  }
+
+  QTextCharFormat charFormat = cursor.charFormat();
+  m_boldAction->setChecked(charFormat.font().bold());
+  m_italicAction->setChecked(charFormat.font().italic());
+  m_underlineAction->setChecked(charFormat.font().underline());
 }
 
 
