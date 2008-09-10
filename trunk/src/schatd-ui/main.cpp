@@ -18,6 +18,8 @@
 
 #include <QtGui>
 
+#include "daemonui.h"
+
 int main(int argc, char *argv[])
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
@@ -40,6 +42,12 @@ int main(int argc, char *argv[])
     QMessageBox::critical(0, QObject::tr("Systray"), QObject::tr("I couldn't detect any system tray on this system."));
     return 1;
   }
+
+  DaemonUi ui;
+  if (arguments.contains("-hide"))
+    ui.hide();
+  else
+    ui.show();
 
   return app.exec();
 }

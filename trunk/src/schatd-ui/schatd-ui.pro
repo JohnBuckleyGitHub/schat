@@ -28,9 +28,11 @@ QT += network
 RESOURCES += ../../data/schatd-ui.qrc
 
 HEADERS += \
+    daemonui.h \
 
 SOURCES += \
     main.cpp \
+    daemonui.cpp \
 
 CONFIG(debug, debug|release) { 
     RCC_DIR = ../../tmp/schatd-ui/debug/rcc
