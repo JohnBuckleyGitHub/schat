@@ -3,6 +3,9 @@
   <file>images/logo16-gray.png</file>
   <file>images/logout.png</file>
   <file>images/quit.png</file>
+  <file>images/play.png</file>
+  <file>images/restart.png</file>
+  <file>images/stop.png</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>
