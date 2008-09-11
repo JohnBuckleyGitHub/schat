@@ -19,10 +19,13 @@
 #ifndef DAEMONUI_H_
 #define DAEMONUI_H_
 
-#include <QAction>
 #include <QDialog>
-#include <QMenu>
-#include <QSystemTrayIcon>
+
+class QAction;
+class QLabel;
+class QMenu;
+class QSystemTrayIcon;
+class QToolButton;
 
 /*!
  * \brief Диалог управления сервером
@@ -40,8 +43,17 @@ private:
 
   QAction *m_quitAction;
   QAction *m_quitAllAction;
+  QAction *m_restartAction;
+  QAction *m_startAction;
+  QAction *m_stopAction;
+  QLabel *m_aboutLabel;
   QMenu *m_menu;
+  QPushButton *m_hideButton;
+  QPushButton *m_settingsButton;
   QSystemTrayIcon *m_tray;
+  QToolButton *m_restartButton;
+  QToolButton *m_startButton;
+  QToolButton *m_stopButton;
 };
 
 #endif /*DAEMONUI_H_*/
