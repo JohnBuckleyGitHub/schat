@@ -19,7 +19,10 @@
 #ifndef DAEMONUI_H_
 #define DAEMONUI_H_
 
+#include <QAction>
 #include <QDialog>
+#include <QMenu>
+#include <QSystemTrayIcon>
 
 /*!
  * \brief Диалог управления сервером
@@ -30,6 +33,15 @@ class DaemonUi : public QDialog
 
 public:
   DaemonUi(QWidget *parent = 0);
+
+private:
+  void createActions();
+  void createTray();
+
+  QAction *m_quitAction;
+  QAction *m_quitAllAction;
+  QMenu *m_menu;
+  QSystemTrayIcon *m_tray;
 };
 
 #endif /*DAEMONUI_H_*/
