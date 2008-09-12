@@ -44,10 +44,10 @@ int main(int argc, char *argv[])
   }
 
   DaemonUi ui;
-  if (arguments.contains("-hide"))
-    ui.hide();
-  else
+  if (arguments.contains("-show"))
     ui.show();
+  else
+    ui.hide();
 
   return app.exec();
 }

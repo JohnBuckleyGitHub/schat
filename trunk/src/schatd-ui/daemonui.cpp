@@ -28,11 +28,12 @@
 DaemonUi::DaemonUi(QWidget *parent)
   : QDialog(parent)
 {
-  setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
+  setWindowFlags(Qt::Tool);
 
   createActions();
   createButtons();
 
+  // Кнопки управления сервером
   QFrame *line1 = new QFrame(this);
   line1->setFrameShape(QFrame::VLine);
   line1->setFrameShadow(QFrame::Sunken);
@@ -46,7 +47,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   controlGroupLay->addWidget(m_restartButton);
   controlGroupLay->addWidget(line1);
   controlGroupLay->addWidget(m_settingsButton);
-  
+
+  // Отображение статуса
   m_statusLabel = new QLabel(tr("<b>Ошибка</b>"), this);
   m_ledLabel = new QLabel("<img src=':/images/led/greenled.png' aling='left' />", this);
   QGroupBox *statusGroup = new QGroupBox(tr("Статус"), this);
@@ -56,21 +58,25 @@ DaemonUi::DaemonUi(QWidget *parent)
   statusGroupLay->addWidget(m_statusLabel);
   statusGroupLay->addStretch();
   statusGroupLay->addWidget(m_ledLabel);
-  
+
   QHBoxLayout *controlLay = new QHBoxLayout;
   controlLay->addWidget(controlGroup);
   controlLay->addWidget(statusGroup);
 
+  // Кнопки внизу окна
   QHBoxLayout *bottomLay = new QHBoxLayout;
   bottomLay->addStretch();
   bottomLay->addWidget(m_hideButton);
-  
+  bottomLay->addWidget(m_quitButton);
+
+  // Все основные виджеты
   QVBoxLayout *bodyLay = new QVBoxLayout;
   bodyLay->setMargin(6);
   bodyLay->setSpacing(6);
   bodyLay->addLayout(controlLay);
   bodyLay->addLayout(bottomLay);
 
+  // Надпись вверху окна
   m_aboutLabel = new QLabel(QString(
       "<html><body style='color:#333;margin:6px;'>"
       "<h4 style='margin-bottom:0px;'>IMPOMEZIA Simple Chat Daemon UI %1</h4>"
@@ -78,18 +84,18 @@ DaemonUi::DaemonUi(QWidget *parent)
       "</body></html>").arg(SCHAT_VERSION), this);
   m_aboutLabel->setStyleSheet("background:#fff; border:4px solid #fff;");
   m_aboutLabel->setOpenExternalLinks(true);
-  
+
   QFrame *line2 = new QFrame(this);
   line2->setFrameShape(QFrame::HLine);
   line2->setFrameShadow(QFrame::Sunken);
 
+  // End  
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
   mainLay->addWidget(m_aboutLabel);
   mainLay->addWidget(line2);
   mainLay->addLayout(bodyLay);
-  
 
   createTray();
 
@@ -97,10 +103,34 @@ DaemonUi::DaemonUi(QWidget *parent)
 }
 
 
+void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+  switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::MiddleClick:
+      if (isHidden()) {
+        show();
+        activateWindow();
+      }
+      else
+        hide();
+
+    default:
+      break;
+  }
+}
+
+
+/*!
+ * Создаёт объекты QAction
+ */
 void DaemonUi::createActions()
 {
   m_quitAllAction = new QAction(QIcon(":/images/quit.png"), tr("Выход с &остановкой сервера"), this);
+
   m_quitAction = new QAction(QIcon(":/images/logout.png"), tr("&Выход"), this);
+  connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+
   m_restartAction = new QAction(QIcon(":/images/restart.png"), tr("&Перезапуск"), this);
   m_startAction = new QAction(QIcon(":/images/play.png"), tr("&Запуск"), this);
   m_stopAction = new QAction(QIcon(":/images/stop.png"), tr("&Остановка"), this);
@@ -113,7 +143,13 @@ void DaemonUi::createActions()
  */
 void DaemonUi::createButtons()
 {
-  m_hideButton = new QPushButton(tr("Скрыть"), this);
+  m_hideButton = new QPushButton(QIcon(":/images/ok.png"), tr("Скрыть"), this);
+  m_hideButton->setToolTip(tr("Скрыть окно программы"));
+  connect(m_hideButton, SIGNAL(clicked(bool)), SLOT(hide()));
+  
+  m_quitButton = new QPushButton(QIcon(":/images/logout.png"), "", this);
+  m_quitButton->setToolTip(tr("Выход"));
+  connect(m_quitButton, SIGNAL(clicked(bool)), qApp, SLOT(quit()));
 
   m_startButton = new QToolButton(this);
   m_startButton->setAutoRaise(true);
@@ -152,5 +188,7 @@ void DaemonUi::createTray()
   m_tray->setIcon(QIcon(":/images/logo16-gray.png"));
   m_tray->setToolTip(tr("IMPOMEZIA Simple Chat Daemon UI %1").arg(SCHAT_VERSION));
   m_tray->setContextMenu(m_menu);
+
+  connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   m_tray->show();
 }

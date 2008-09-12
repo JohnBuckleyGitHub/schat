@@ -20,11 +20,11 @@
 #define DAEMONUI_H_
 
 #include <QDialog>
+#include <QSystemTrayIcon>
 
 class QAction;
 class QLabel;
 class QMenu;
-class QSystemTrayIcon;
 class QToolButton;
 
 /*!
@@ -36,6 +36,9 @@ class DaemonUi : public QDialog
 
 public:
   DaemonUi(QWidget *parent = 0);
+
+private slots:
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
   void createActions();
@@ -49,10 +52,11 @@ private:
   QAction *m_startAction;
   QAction *m_stopAction;
   QLabel *m_aboutLabel;
-  QLabel *m_statusLabel;
   QLabel *m_ledLabel;
+  QLabel *m_statusLabel;
   QMenu *m_menu;
   QPushButton *m_hideButton;
+  QPushButton *m_quitButton;
   QSystemTrayIcon *m_tray;
   QToolButton *m_restartButton;
   QToolButton *m_settingsButton;
