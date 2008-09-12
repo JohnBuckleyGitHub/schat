@@ -49,8 +49,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   controlGroupLay->addWidget(m_settingsButton);
 
   // Отображение статуса
-  m_statusLabel = new QLabel(tr("<b>Ошибка</b>"), this);
-  m_ledLabel = new QLabel("<img src=':/images/led/greenled.png' aling='left' />", this);
+  m_statusLabel = new QLabel(this);
+  m_ledLabel = new QLabel(this);
   QGroupBox *statusGroup = new QGroupBox(tr("Статус"), this);
   QHBoxLayout *statusGroupLay = new QHBoxLayout(statusGroup);
   statusGroupLay->setMargin(2);
@@ -98,6 +98,7 @@ DaemonUi::DaemonUi(QWidget *parent)
   mainLay->addLayout(bodyLay);
 
   createTray();
+  setStatus(Unknown);
 
   setWindowTitle(tr("Управление сервером"));
 }
@@ -146,7 +147,7 @@ void DaemonUi::createButtons()
   m_hideButton = new QPushButton(QIcon(":/images/ok.png"), tr("Скрыть"), this);
   m_hideButton->setToolTip(tr("Скрыть окно программы"));
   connect(m_hideButton, SIGNAL(clicked(bool)), SLOT(hide()));
-  
+
   m_quitButton = new QPushButton(QIcon(":/images/logout.png"), "", this);
   m_quitButton->setToolTip(tr("Выход"));
   connect(m_quitButton, SIGNAL(clicked(bool)), qApp, SLOT(quit()));
@@ -191,4 +192,77 @@ void DaemonUi::createTray()
 
   connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   m_tray->show();
+}
+
+
+void DaemonUi::setActionsState(bool start, bool stop, bool restart, bool quit, bool settings)
+{
+  m_startAction->setEnabled(start);
+  m_stopAction->setEnabled(stop);
+  m_restartAction->setEnabled(restart);
+  m_quitAllAction->setEnabled(quit);
+  m_settingsAction->setEnabled(settings);
+}
+
+
+void DaemonUi::setLedColor(LedColor color)
+{
+  QString img;
+  QString icon;
+
+  if (color == Green) {
+    img = ":/images/led/greenled.png";
+    icon = ":/images/logo16-green.png";
+  }
+  else if (color == Yellow) {
+    img = ":/images/led/yellowled.png";
+    icon = ":/images/logo16-yellow.png";
+  }
+  else {
+    img = ":/images/led/redled.png";
+    icon = ":/images/logo16-gray.png";
+  }
+
+  m_ledLabel->setPixmap(QPixmap(img));
+  m_tray->setIcon(QIcon(icon));
+}
+
+
+void DaemonUi::setStatus(DaemonUi::Status status)
+{
+  m_status = status;
+  switch (status) {
+    case Unknown:
+      setActionsState(false, false, false, false, false);
+      setLedColor(Yellow);
+      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Инициализация...</b>"));
+      break;
+
+    case Error:
+      setActionsState(false, false, false, false);
+      setLedColor();
+      m_statusLabel->setText(tr("<b style='color:#c00;'>&nbsp;Ошибка</b>"));
+      break;
+
+    case Started:
+      setActionsState(false);
+      setLedColor(Green);
+      m_statusLabel->setText(tr("<b style='color:#090;'>&nbsp;Успешно запущен</b>"));
+      break;
+
+    case Stopped:
+      setActionsState(true, false, true, false);
+      setLedColor();
+      m_statusLabel->setText(tr("<b style='color:#c00;'>&nbsp;Остановлен</b>"));
+      break;
+
+    case Restarting:
+      setActionsState(false, false, false, false);
+      setLedColor(Yellow);
+      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Ожидание...</b>"));
+      break;
+
+    default:
+      break;
+  }
 }

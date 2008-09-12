@@ -35,6 +35,20 @@ class DaemonUi : public QDialog
   Q_OBJECT
 
 public:
+  enum Status {
+    Unknown,
+    Error,
+    Started,
+    Stopped,
+    Restarting
+  };
+
+  enum LedColor {
+    Red,
+    Yellow,
+    Green
+  };
+
   DaemonUi(QWidget *parent = 0);
 
 private slots:
@@ -44,6 +58,9 @@ private:
   void createActions();
   void createButtons();
   void createTray();
+  void setActionsState(bool start = true, bool stop = true, bool restart = true, bool quit = true, bool settings = true);
+  void setLedColor(LedColor color = Red);
+  void setStatus(Status status);
 
   QAction *m_quitAction;
   QAction *m_quitAllAction;
@@ -62,6 +79,7 @@ private:
   QToolButton *m_settingsButton;
   QToolButton *m_startButton;
   QToolButton *m_stopButton;
+  Status m_status;
 };
 
 #endif /*DAEMONUI_H_*/
