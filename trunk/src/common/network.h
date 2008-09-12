@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "networkreader.h"
 
-static const QString FailBackServer = "192.168.5.130";
+static const QString FailBackServer = "schat.impomezia.com";
 static const quint16 FailBackPort   = 7666;
 
 class Network {
