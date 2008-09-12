@@ -39,19 +39,23 @@ public:
 
 private:
   void createActions();
+  void createButtons();
   void createTray();
 
   QAction *m_quitAction;
   QAction *m_quitAllAction;
   QAction *m_restartAction;
+  QAction *m_settingsAction;
   QAction *m_startAction;
   QAction *m_stopAction;
   QLabel *m_aboutLabel;
+  QLabel *m_statusLabel;
+  QLabel *m_ledLabel;
   QMenu *m_menu;
   QPushButton *m_hideButton;
-  QPushButton *m_settingsButton;
   QSystemTrayIcon *m_tray;
   QToolButton *m_restartButton;
+  QToolButton *m_settingsButton;
   QToolButton *m_startButton;
   QToolButton *m_stopButton;
 };
