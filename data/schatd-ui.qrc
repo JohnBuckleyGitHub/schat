@@ -2,6 +2,8 @@
 <qresource>
   <file>images/daemonsettings.png</file>
   <file>images/logo16-gray.png</file>
+  <file>images/logo16-green.png</file>
+  <file>images/logo16-yellow.png</file>
   <file>images/logout.png</file>
   <file>images/quit.png</file>
   <file>images/ok.png</file>
