@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QtCore>
 
 #include "network.h"
 
@@ -163,8 +163,6 @@ ServerInfo Network::server() const
 
 /*!
  * \brief Статическая функция возвращающая структуру \a ServerInfo по умолчанию.
- * 
- * \todo В будущем эта функция должна возвращать реальный адрес сервера в интернете.
  */
 ServerInfo Network::failBack()
 {
