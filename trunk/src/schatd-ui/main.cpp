@@ -20,6 +20,10 @@
 
 #include "daemonui.h"
 
+#ifndef DISABLE_SINGLE_APP
+  #include "singleapplication.h"
+#endif
+
 int main(int argc, char *argv[])
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
@@ -43,11 +47,25 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  #ifndef DISABLE_SINGLE_APP
+    QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
+    SingleApplication instance("SimpleChatDaemonUI", serverName, &app);
+    if (instance.isRunning()) {
+      QString message = "SimpleChatDaemonUI";
+      if (instance.sendMessage(message))
+        return 0;
+    }
+  #endif
+
   DaemonUi ui;
   if (arguments.contains("-show"))
     ui.show();
   else
     ui.hide();
+
+  #ifndef DISABLE_SINGLE_APP
+    QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &ui, SLOT(handleMessage(const QString &)));
+  #endif
 
   return app.exec();
 }

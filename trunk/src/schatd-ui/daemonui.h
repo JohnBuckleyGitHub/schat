@@ -51,6 +51,11 @@ public:
 
   DaemonUi(QWidget *parent = 0);
 
+public slots:
+  #ifndef DISABLE_SINGLE_APP
+    void handleMessage(const QString& message);
+  #endif
+
 private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
@@ -61,6 +66,7 @@ private:
   void setActionsState(bool start = true, bool stop = true, bool restart = true, bool quit = true, bool settings = true);
   void setLedColor(LedColor color = Red);
   void setStatus(Status status);
+  void showUi();
 
   QAction *m_quitAction;
   QAction *m_quitAllAction;
