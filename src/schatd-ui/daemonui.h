@@ -58,6 +58,10 @@ public slots:
 
 private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void init();
+  void restart();
+  void start();
+  void stop();
 
 private:
   void createActions();
@@ -80,6 +84,7 @@ private:
   QMenu *m_menu;
   QPushButton *m_hideButton;
   QPushButton *m_quitButton;
+  QString m_appDir;
   QSystemTrayIcon *m_tray;
   QToolButton *m_restartButton;
   QToolButton *m_settingsButton;
