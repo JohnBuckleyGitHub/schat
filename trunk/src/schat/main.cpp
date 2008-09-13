@@ -19,8 +19,11 @@
 #include <QtGui>
 
 #include "schatwindow.h"
-#include "singleapplication.h"
 #include "version.h"
+
+#ifndef DISABLE_SINGLE_APP
+  #include "singleapplication.h"
+#endif
 
 bool install();
 
@@ -50,14 +53,22 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  // Допускаем запуск только одной копии из одной папки
-  QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
-  SingleApplication instance("SimpleChat", serverName, &app);
-  if (instance.isRunning()) {
-    QString message = "SimpleChat";
-    if (instance.sendMessage(message))
-      return 0;
-  }
+  #ifndef DISABLE_SINGLE_APP
+    QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
+    SingleApplication instance("SimpleChat", serverName, &app);
+    if (instance.isRunning()) {
+      QString message;
+
+      if (!arguments.isEmpty())
+        message = arguments.join(", ");
+
+      if (instance.sendMessage(message))
+        return 0;
+    }
+  #endif
+
+  if (arguments.contains("-exit"))
+    return 0;
 
   SChatWindow window;
   if (arguments.contains("-hide"))
@@ -65,7 +76,9 @@ int main(int argc, char *argv[])
   else
     window.show();
 
-  QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &window, SLOT(handleMessage(const QString &)));
+  #ifndef DISABLE_SINGLE_APP
+    QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &window, SLOT(handleMessage(const QString &)));
+  #endif
 
   return app.exec();
 }
