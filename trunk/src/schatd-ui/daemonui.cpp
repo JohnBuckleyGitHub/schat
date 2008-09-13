@@ -107,6 +107,13 @@ DaemonUi::DaemonUi(QWidget *parent)
 #ifndef DISABLE_SINGLE_APP
 void DaemonUi::handleMessage(const QString& message)
 {
+  QStringList list = message.split(", ");
+
+  if (list.contains("-exit")) {
+    qApp->quit();
+    return;
+  }
+
   showUi();
 }
 #endif

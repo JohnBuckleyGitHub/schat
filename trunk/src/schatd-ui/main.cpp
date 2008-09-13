@@ -51,11 +51,18 @@ int main(int argc, char *argv[])
     QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
     SingleApplication instance("SimpleChatDaemonUI", serverName, &app);
     if (instance.isRunning()) {
-      QString message = "SimpleChatDaemonUI";
+      QString message;
+
+      if (!arguments.isEmpty())
+        message = arguments.join(", ");
+
       if (instance.sendMessage(message))
         return 0;
     }
   #endif
+
+  if (arguments.contains("-exit"))
+    return 0;
 
   DaemonUi ui;
   if (arguments.contains("-show"))
