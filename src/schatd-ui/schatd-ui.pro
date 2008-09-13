@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,18 +15,21 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TEMPLATE = app
-TARGET = 
-DEPENDPATH  += . \
-               ../common \
-                            
-INCLUDEPATH += . \
-               ../common \
-               
+SCHAT_CONSOLE    = 0
+SCHAT_DEBUG      = 0
+SCHAT_SINGLE_APP = 1
+
 QT += network
+TEMPLATE = app
+DEPENDPATH += \
+   . \
+   ../common \
+
+INCLUDEPATH += \
+    . \
+    ../common \
 
 RESOURCES += ../../data/schatd-ui.qrc
-
 HEADERS += \
     daemonui.h \
 
@@ -34,27 +37,6 @@ SOURCES += \
     main.cpp \
     daemonui.cpp \
 
-CONFIG(debug, debug|release) { 
-    RCC_DIR = ../../tmp/schatd-ui/debug/rcc
-    MOC_DIR = ../../tmp/schatd-ui/debug/moc
-    OBJECTS_DIR = ../../tmp/schatd-ui/debug/obj
-    DESTDIR = ../../out/debug
-}
+win32:RC_FILE = schatd-ui.rc
 
-CONFIG(release, debug|release) { 
-    RCC_DIR = ../../tmp/schatd-ui/release/rcc
-    MOC_DIR = ../../tmp/schatd-ui/release/moc
-    OBJECTS_DIR = ../../tmp/schatd-ui/release/obj
-    DESTDIR = ../../out/release
-}
-
-win32 {
-    RC_FILE = schatd-ui.rc
-}
-
-INCLUDEPATH += ../3rdparty/singleapplication/include
-SINGLEAPPLICATION_LIBCONFIG = staticlib
-win32-msvc*:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
-else:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
-
-include(schatd-ui.pri)
+include(../common/common.pri)
