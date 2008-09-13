@@ -101,6 +101,9 @@ DaemonUi::DaemonUi(QWidget *parent)
   setStatus(Unknown);
 
   setWindowTitle(tr("Управление сервером"));
+
+  m_appDir = qApp->applicationDirPath();
+  QTimer::singleShot(0, this, SLOT(init()));
 }
 
 
@@ -135,6 +138,46 @@ void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
 }
 
 
+void DaemonUi::init()
+{
+  qDebug() << "DaemonUi::init()";
+  
+  #ifdef Q_WS_WIN
+    QString daemonFile = m_appDir + "/schatd.exe";
+  #else
+    QString daemonFile = m_appDir + "/schatd";
+  #endif
+
+  if (!QFile::exists(daemonFile)) {
+    setStatus(Error);
+    return;
+  }
+
+  setStatus(Stopped);
+}
+
+
+void DaemonUi::restart()
+{
+  qDebug() << "DaemonUi::restart()";
+  setStatus(Started);
+}
+
+
+void DaemonUi::start()
+{
+  qDebug() << "DaemonUi::start()";
+  setStatus(Started);
+}
+
+
+void DaemonUi::stop()
+{
+  qDebug() << "DaemonUi::stop()";
+  setStatus(Stopped);
+}
+
+
 /*!
  * Создаёт объекты QAction
  */
@@ -146,8 +189,14 @@ void DaemonUi::createActions()
   connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
   m_restartAction = new QAction(QIcon(":/images/restart.png"), tr("&Перезапуск"), this);
+  connect(m_restartAction, SIGNAL(triggered()), SLOT(restart()));
+
   m_startAction = new QAction(QIcon(":/images/play.png"), tr("&Запуск"), this);
+  connect(m_startAction, SIGNAL(triggered()), SLOT(start()));
+
   m_stopAction = new QAction(QIcon(":/images/stop.png"), tr("&Остановка"), this);
+  connect(m_stopAction, SIGNAL(triggered()), SLOT(stop()));
+
   m_settingsAction = new QAction(QIcon(":/images/daemonsettings.png"), tr("&Настройка..."), this);
 }
 
