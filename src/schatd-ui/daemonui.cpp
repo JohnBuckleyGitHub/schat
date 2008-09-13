@@ -104,15 +104,21 @@ DaemonUi::DaemonUi(QWidget *parent)
 }
 
 
+#ifndef DISABLE_SINGLE_APP
+void DaemonUi::handleMessage(const QString& message)
+{
+  showUi();
+}
+#endif
+
+
 void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::MiddleClick:
-      if (isHidden()) {
-        show();
-        activateWindow();
-      }
+      if (isHidden())
+        showUi();
       else
         hide();
 
@@ -265,4 +271,11 @@ void DaemonUi::setStatus(DaemonUi::Status status)
     default:
       break;
   }
+}
+
+
+void DaemonUi::showUi()
+{
+  show();
+  activateWindow();
 }
