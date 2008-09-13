@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,37 +15,25 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TEMPLATE = app
+SCHAT_CONSOLE    = 0
+SCHAT_DEBUG      = 0
+SCHAT_SINGLE_APP = 0
+SCHAT_RESOURCES  = 0
+SCHAT_RC_FILE    = 1
+
 QT += network
-#CONFIG += console
+TEMPLATE = app
 
 HEADERS += \
     download.h \
     update.h \
     updatexmlreader.h \
-    version.h
+    version.h \
+
 SOURCES += \
     download.cpp \
     main.cpp \
     update.cpp \
     updatexmlreader.cpp \
 
-DEPENDPATH  += . \
-               ../common
-                
-INCLUDEPATH += . \
-               ../common
-
-CONFIG(debug, debug|release) { 
-    RCC_DIR = ../../tmp/update/debug/rcc
-    MOC_DIR = ../../tmp/update/debug/moc
-    OBJECTS_DIR = ../../tmp/update/debug/obj
-    DESTDIR = ../../out/debug
-}
-CONFIG(release, debug|release) { 
-    RCC_DIR = ../../tmp/update/release/rcc
-    MOC_DIR = ../../tmp/update/release/moc
-    OBJECTS_DIR = ../../tmp/update/release/obj
-    DESTDIR = ../../out/release
-}
-win32:RC_FILE = update.rc
+include(../common/common.pri)

@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,11 +15,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TEMPLATE = app
+SCHAT_CONSOLE    = 1
+SCHAT_DEBUG      = 0
+SCHAT_SINGLE_APP = 0
+SCHAT_RESOURCES  = 0
+SCHAT_RC_FILE    = 1
+
 QT = core network
-CONFIG += console warn_on
+TEMPLATE = app
+
 HEADERS = \
     abstractprofile.h \
+    abstractsettings.h \
     channellog.h \
     clientservice.h \
     daemon.h \
@@ -32,10 +39,10 @@ HEADERS = \
     protocol.h \
     userunit.h \
     version.h \
-    abstractsettings.h \
-    
+
 SOURCES = \
     abstractprofile.cpp \
+    abstractsettings.cpp \
     channellog.cpp \
     clientservice.cpp \
     daemon.cpp \
@@ -47,26 +54,5 @@ SOURCES = \
     network.cpp \
     networkreader.cpp \
     userunit.cpp \
-    abstractsettings.cpp
-    
-DEPENDPATH  += . \
-               ../common \
-                
-INCLUDEPATH += . \
-               ../common \
 
-CONFIG(debug, debug|release) { 
-    RCC_DIR = ../../tmp/schatd/debug/rcc
-    MOC_DIR = ../../tmp/schatd/debug/moc
-    OBJECTS_DIR = ../../tmp/schatd/debug/obj
-    DESTDIR = ../../out/debug
-}
-CONFIG(release, debug|release) { 
-    RCC_DIR = ../../tmp/schatd/release/rcc
-    MOC_DIR = ../../tmp/schatd/release/moc
-    OBJECTS_DIR = ../../tmp/schatd/release/obj
-    DESTDIR = ../../out/release
-}
-win32:RC_FILE = schatd.rc
-
-include(schatd.pri)
+include(../common/common.pri)

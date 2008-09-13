@@ -18,25 +18,17 @@
 SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 1
+SCHAT_RESOURCES  = 1
+SCHAT_RC_FILE    = 1
 
 QT += network
 TEMPLATE = app
-DEPENDPATH += \
-   . \
-   ../common \
 
-INCLUDEPATH += \
-    . \
-    ../common \
-
-RESOURCES += ../../data/schatd-ui.qrc
 HEADERS += \
     daemonui.h \
 
 SOURCES += \
     main.cpp \
     daemonui.cpp \
-
-win32:RC_FILE = schatd-ui.rc
 
 include(../common/common.pri)

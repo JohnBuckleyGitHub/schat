@@ -15,6 +15,14 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+DEPENDPATH += \
+    . \
+    ../common \
+
+INCLUDEPATH += \
+    . \
+    ../common \
+
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../tmp/$${TARGET}/debug/rcc
   MOC_DIR = ../../tmp/$${TARGET}/debug/moc
@@ -48,4 +56,12 @@ contains( SCHAT_SINGLE_APP, 1 ) {
 }
 else {
   DEFINES += DISABLE_SINGLE_APP
+}
+
+contains( SCHAT_RESOURCES, 1 ) {
+  RESOURCES += ../../data/$${TARGET}.qrc
+}
+
+contains( SCHAT_RC_FILE, 1 ) {
+  win32:RC_FILE = $${TARGET}.rc
 }
