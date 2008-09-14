@@ -180,13 +180,19 @@ bool SChatWindow::event(QEvent *event)
 }
 
 
-/** [public slots]
- * 
- */
-void SChatWindow::handleMessage(const QString &/*message*/)
+#ifndef DISABLE_SINGLE_APP
+void SChatWindow::handleMessage(const QString &message)
 {
+  QStringList list = message.split(", ");
+
+  if (list.contains("-exit")) {
+    closeChat();
+    return;
+  }
+
   showChat();
 }
+#endif
 
 
 /** [private slots]
