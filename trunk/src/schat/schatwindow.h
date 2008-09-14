@@ -69,8 +69,10 @@ protected:
   bool event(QEvent *event);
   
 public slots:
-  void handleMessage(const QString& message);
-  
+  #ifndef DISABLE_SINGLE_APP
+    void handleMessage(const QString& message);
+  #endif
+
 private slots:
   inline void settingsEmoticons() { settingsPage(SettingsDialog::EmoticonsPage); }
   inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
