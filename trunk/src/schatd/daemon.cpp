@@ -31,6 +31,10 @@
 #include "userunit.h"
 #include "version.h"
 
+#ifndef DISABLE_LOCAL_SERVER
+  #include "ipc/localservice.h"
+#endif
+
 /*!
  * \class Daemon
  * \brief Сервер чата
@@ -468,7 +472,9 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 #ifndef DISABLE_LOCAL_SERVER
 void Daemon::incomingLocalConnection()
 {
-  
+  if (m_localServer->hasPendingConnections()) {
+    LocalService *service = new LocalService(m_localServer->nextPendingConnection(), this);
+  }
 }
 #endif /*DISABLE_LOCAL_SERVER*/
 

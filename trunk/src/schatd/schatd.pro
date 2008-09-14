@@ -20,6 +20,7 @@ SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 0
 SCHAT_RESOURCES  = 0
 SCHAT_RC_FILE    = 1
+SCHAT_LOCAL_IPC  = 1
 
 QT = core network
 TEMPLATE = app
@@ -54,5 +55,13 @@ SOURCES = \
     network.cpp \
     networkreader.cpp \
     userunit.cpp \
+
+contains( SCHAT_LOCAL_IPC, 1 ) {
+  HEADERS += ipc/localservice.h
+  SOURCES += ipc/localservice.cpp
+}
+else {
+  DEFINES += DISABLE_LOCAL_SERVER
+}
 
 include(../common/common.pri)
