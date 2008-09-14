@@ -21,6 +21,7 @@
 
 #include "daemonui.h"
 #include "version.h"
+#include "ipc/localclientservice.h"
 
 /*!
  * \brief Конструктор класса DaemonUi.
@@ -152,6 +153,8 @@ void DaemonUi::init()
     setStatus(Error);
     return;
   }
+
+  m_client = new LocalClientService(this);
 
   setStatus(Stopped);
 }
