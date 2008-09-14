@@ -22,10 +22,6 @@
 #include <QTcpServer>
 #include <QHash>
 
-#ifndef DISABLE_LOCAL_SERVER
-  #include <QLocalServer>
-#endif
-
 class AbstractProfile;
 class ChannelLog;
 class ClientService;
@@ -34,6 +30,7 @@ class DaemonSettings;
 class LinkUnit;
 class Log;
 class Network;
+class QLocalServer;
 class UserUnit;
 
 #define LOG(x, y) if (m_settings->getInt("LogLevel") >= x) m_log->append(y)
@@ -116,7 +113,7 @@ private:
   quint8 m_remoteNumeric;
 
   #ifndef DISABLE_LOCAL_SERVER
-    QLocalServer m_localServer;
+    QLocalServer *m_localServer;
   #endif
 };
 

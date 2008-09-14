@@ -46,6 +46,7 @@ void DaemonSettings::read()
 {
   readBool("ChannelLog", false);
   readBool("PrivateLog", false);
+  readBool("LocalServer", true);
   readInt("ListenPort", 7666);
   readInt("LogLevel", 0);
   readInt("Numeric", 0);
