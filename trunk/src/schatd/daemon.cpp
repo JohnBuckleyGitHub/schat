@@ -49,10 +49,6 @@ Daemon::Daemon(QObject *parent)
   m_remoteNumeric = 0;
   m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
-
-  #ifndef DISABLE_LOCAL_SERVER
-    connect(&m_localServer, SIGNAL(newConnection()), SLOT(incomingLocalConnection()));
-  #endif
 }
 
 
@@ -91,6 +87,17 @@ bool Daemon::start()
   m_maxLinks = m_settings->getInt("MaxLinks");
   m_maxUsers = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
+
+  #ifndef DISABLE_LOCAL_SERVER
+    if (m_settings->getBool("LocalServer")) {
+      m_localServer = new QLocalServer(this);
+      if (m_localServer->listen("fortune")) {
+        connect(m_localServer, SIGNAL(newConnection()), SLOT(incomingLocalConnection()));
+      }
+      else
+        m_localServer->deleteLater();
+    }
+  #endif /*DISABLE_LOCAL_SERVER*/
 
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
