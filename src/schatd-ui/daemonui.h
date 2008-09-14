@@ -22,6 +22,7 @@
 #include <QDialog>
 #include <QSystemTrayIcon>
 
+class LocalClientService;
 class QAction;
 class QLabel;
 class QMenu;
@@ -72,6 +73,7 @@ private:
   void setStatus(Status status);
   void showUi();
 
+  LocalClientService *m_client;
   QAction *m_quitAction;
   QAction *m_quitAllAction;
   QAction *m_restartAction;
