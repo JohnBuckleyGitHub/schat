@@ -22,6 +22,10 @@
 #include <QTcpServer>
 #include <QHash>
 
+#ifndef DISABLE_LOCAL_SERVER
+  #include <QLocalServer>
+#endif
+
 class AbstractProfile;
 class ChannelLog;
 class ClientService;
@@ -41,7 +45,7 @@ class Daemon : public QObject
 public:
   Daemon(QObject *parent = 0);
   bool start();
-  
+
 signals:
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip);
@@ -54,9 +58,6 @@ signals:
   void sendSyncProfile(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
-public slots:
-  void incomingConnection();
-  
 private slots:
   inline void newBye(const QString &nick, const QString &bye)                                            { syncBye(nick, bye, true); }
   inline void newNick(quint8 gender, const QString &nick, const QString &nNick, const QString &name)     { syncProfile(gender, nick, nNick, name, true); }
@@ -69,12 +70,17 @@ private slots:
   void clientSyncUsersEnd();
   void clientUserLeave(const QString &nick, const QString &bye, quint8 flag);
   void greeting(const QStringList &list, quint8 flag);
+  void incomingConnection();
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag);
   void syncNumerics(const QList<quint8> &numerics);
+
+  #ifndef DISABLE_LOCAL_SERVER
+    void incomingLocalConnection();
+  #endif
 
 private:
   bool parseCmd(const QString &nick, const QString &msg);
@@ -108,6 +114,10 @@ private:
   QTcpServer m_server;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
+
+  #ifndef DISABLE_LOCAL_SERVER
+    QLocalServer m_localServer;
+  #endif
 };
 
 /*! \fn void Daemon::sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)
