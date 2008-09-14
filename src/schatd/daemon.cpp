@@ -49,6 +49,10 @@ Daemon::Daemon(QObject *parent)
   m_remoteNumeric = 0;
   m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
+
+  #ifndef DISABLE_LOCAL_SERVER
+    connect(&m_localServer, SIGNAL(newConnection()), SLOT(incomingLocalConnection()));
+  #endif
 }
 
 
@@ -101,26 +105,6 @@ bool Daemon::start()
   }
 
   return result;
-}
-
-
-/*!
- * \brief Обслуживание нового входящего соединения.
- * 
- * При наличии ожидающего соединения создаётся класс DaemonService получающий указатель на \a QTcpSocket.
- * Функция также создаёт базовые соединения сигнал/слот, общие для клиентского и межсерверного соединения.
- */
-void Daemon::incomingConnection()
-{
-  if (m_server.hasPendingConnections()) {
-    DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
-    connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
-    connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
-    connect(this, SIGNAL(userLeave(const QString &, const QString &, quint8)), service, SLOT(sendUserLeave(const QString &, const QString &, quint8)));
-    connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
-    connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
-    connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
-  }
 }
 
 
@@ -250,6 +234,26 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
       greetingLink(list, service);
     else
       greetingUser(list, service);
+}
+
+
+/*!
+ * \brief Обслуживание нового входящего соединения.
+ * 
+ * При наличии ожидающего соединения создаётся класс DaemonService получающий указатель на \a QTcpSocket.
+ * Функция также создаёт базовые соединения сигнал/слот, общие для клиентского и межсерверного соединения.
+ */
+void Daemon::incomingConnection()
+{
+  if (m_server.hasPendingConnections()) {
+    DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
+    connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
+    connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
+    connect(this, SIGNAL(userLeave(const QString &, const QString &, quint8)), service, SLOT(sendUserLeave(const QString &, const QString &, quint8)));
+    connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
+    connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
+    connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), service, SLOT(sendLinkLeave(quint8, const QString &, const QString &)));
+  }
 }
 
 
@@ -452,6 +456,14 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
       m_numerics << numeric;
   }
 }
+
+
+#ifndef DISABLE_LOCAL_SERVER
+void Daemon::incomingLocalConnection()
+{
+  
+}
+#endif /*DISABLE_LOCAL_SERVER*/
 
 
 /*!
