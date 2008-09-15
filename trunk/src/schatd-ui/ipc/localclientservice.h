@@ -21,6 +21,7 @@
 
 #include <QLocalSocket>
 #include <QPointer>
+#include <QTimer>
 
 class LocalClientService : public QObject
 {
@@ -39,13 +40,16 @@ signals:
   void notify(LocalClientService::Reason reason);
 
 private slots:
+  void connected();
   void disconnected();
   void error(QLocalSocket::LocalSocketError err);
   void readyRead();
+  void reconnect();
 
 private:
   QDataStream m_stream;
   QPointer<QLocalSocket> m_socket;
+  QTimer m_reconnectTimer;
   quint16 m_nextBlockSize;
 };
 

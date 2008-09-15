@@ -37,9 +37,11 @@ LocalClientService::LocalClientService(QObject *parent)
   m_socket = new QLocalSocket(this);
   m_stream.setVersion(StreamVersion);
   m_stream.setDevice(m_socket);
+  connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
   connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), SLOT(error(QLocalSocket::LocalSocketError)));
   connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+  connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
 }
 
 
@@ -53,9 +55,19 @@ void LocalClientService::connectToServer()
 }
 
 
+void LocalClientService::connected()
+{
+  qDebug() << "LocalClientService::connected()";
+  m_reconnectTimer.stop();
+  m_reconnectTimer.setInterval(500);
+  emit notify(Start);
+}
+
+
 void LocalClientService::disconnected()
 {
   qDebug() << "LocalClientService::disconnected()";
+  m_reconnectTimer.start();
   emit notify(Stop);
 }
 
@@ -70,4 +82,11 @@ void LocalClientService::readyRead()
 {
   qDebug() << "LocalClientService::readyRead()";
   emit notify(Stop);
+}
+
+
+void LocalClientService::reconnect()
+{
+  qDebug() << "LocalClientService::reconnect()";
+  connectToServer();
 }
