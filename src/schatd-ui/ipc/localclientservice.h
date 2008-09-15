@@ -27,10 +27,26 @@ class LocalClientService : public QObject
   Q_OBJECT
 
 public:
+  enum Reason {
+    Start,
+    Stop
+  };
+
   LocalClientService(QObject *parent = 0);
+  void connectToServer();
+
+signals:
+  void notify(LocalClientService::Reason reason);
+
+private slots:
+  void disconnected();
+  void error(QLocalSocket::LocalSocketError err);
+  void readyRead();
 
 private:
+  QDataStream m_stream;
   QPointer<QLocalSocket> m_socket;
+  quint16 m_nextBlockSize;
 };
 
 #endif /*LOCALCLIENTSERVICE_H_*/

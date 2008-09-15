@@ -20,6 +20,7 @@
 #include <QtNetwork>
 
 #include "localclientservice.h"
+#include "protocol.h"
 
 /*!
  * \class LocalClientService
@@ -32,5 +33,41 @@
 LocalClientService::LocalClientService(QObject *parent)
   : QObject(parent)
 {
-  m_socket = 0;
+  m_nextBlockSize = 0;
+  m_socket = new QLocalSocket(this);
+  m_stream.setVersion(StreamVersion);
+  m_stream.setDevice(m_socket);
+  connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
+  connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), SLOT(error(QLocalSocket::LocalSocketError)));
+  connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+}
+
+
+void LocalClientService::connectToServer()
+{
+  qDebug() << "LocalClientService::connectToServer()";
+
+  m_nextBlockSize = 0;
+  m_socket->abort();
+  m_socket->connectToServer("fortune");
+}
+
+
+void LocalClientService::disconnected()
+{
+  qDebug() << "LocalClientService::disconnected()";
+  emit notify(Stop);
+}
+
+
+void LocalClientService::error(QLocalSocket::LocalSocketError err)
+{
+  qDebug() << "LocalClientService::error()" << err;
+}
+
+
+void LocalClientService::readyRead()
+{
+  qDebug() << "LocalClientService::readyRead()";
+  emit notify(Stop);
 }

@@ -22,6 +22,8 @@
 #include <QDialog>
 #include <QSystemTrayIcon>
 
+#include "ipc/localclientservice.h"
+
 class LocalClientService;
 class QAction;
 class QLabel;
@@ -60,6 +62,7 @@ public slots:
 private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void init();
+  void notify(LocalClientService::Reason reason);
   void restart();
   void start();
   void stop();
