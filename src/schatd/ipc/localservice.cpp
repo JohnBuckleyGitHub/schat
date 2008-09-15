@@ -19,6 +19,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
+#include "protocol.h"
 #include "ipc/localservice.h"
 
 /*!
@@ -37,9 +38,25 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   qDebug() << "LocalService::LocalService()";
 
   if (m_socket) {
-//    connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
-//    connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+    connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
+    connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+    m_nextBlockSize = 0;
+    m_stream.setDevice(m_socket);
+    m_stream.setVersion(StreamVersion);
   }
   else
     deleteLater();
+}
+
+
+void LocalService::disconnected()
+{
+  qDebug() << "LocalService::disconnected()";
+  deleteLater();
+}
+
+
+void LocalService::readyRead()
+{
+  qDebug() << "LocalService::readyRead()";
 }

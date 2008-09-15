@@ -154,8 +154,8 @@ void DaemonUi::init()
   }
 
   m_client = new LocalClientService(this);
-  m_client->connectToServer();
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
+  m_client->connectToServer();
 }
 
 
