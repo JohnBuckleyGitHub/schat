@@ -95,7 +95,7 @@ bool Daemon::start()
   #ifndef DISABLE_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
       m_localServer = new QLocalServer(this);
-      if (m_localServer->listen("fortune")) {
+      if (m_localServer->listen(QCryptographicHash::hash(qApp->applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex())) {
         connect(m_localServer, SIGNAL(newConnection()), SLOT(incomingLocalConnection()));
       }
       else
@@ -473,7 +473,7 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 void Daemon::incomingLocalConnection()
 {
   if (m_localServer->hasPendingConnections()) {
-    LocalService *service = new LocalService(m_localServer->nextPendingConnection(), this);
+    new LocalService(m_localServer->nextPendingConnection(), this);
   }
 }
 #endif /*DISABLE_LOCAL_SERVER*/

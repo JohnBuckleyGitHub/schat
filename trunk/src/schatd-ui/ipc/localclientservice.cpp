@@ -33,6 +33,7 @@
 LocalClientService::LocalClientService(QObject *parent)
   : QObject(parent)
 {
+  m_key = QCryptographicHash::hash(qApp->applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex();
   m_reconnectTimer.setInterval(600);
   m_nextBlockSize = 0;
   m_socket = new QLocalSocket(this);
@@ -52,7 +53,7 @@ void LocalClientService::connectToServer()
 
   m_nextBlockSize = 0;
   m_socket->abort();
-  m_socket->connectToServer("fortune");
+  m_socket->connectToServer(m_key);
 }
 
 
