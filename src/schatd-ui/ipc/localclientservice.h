@@ -47,6 +47,8 @@ private slots:
   void reconnect();
 
 private:
+  bool send(quint16 opcode, quint16 param);
+
   QDataStream m_stream;
   QPointer<QLocalSocket> m_socket;
   QTimer m_reconnectTimer;
