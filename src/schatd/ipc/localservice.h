@@ -27,15 +27,19 @@ class LocalService : public QObject
 
 public:
   LocalService(QLocalSocket *socket, QObject *parent = 0);
+//  ~LocalService();
 
 private slots:
   void disconnected();
   void readyRead();
 
 private:
-  quint16 m_nextBlockSize;
+  void unknownOpcode();
+
   QDataStream m_stream;
   QLocalSocket *m_socket;
+  quint16 m_nextBlockSize;
+  quint16 m_opcode;
 };
 
 #endif /*LOCALSERVICE_H_*/

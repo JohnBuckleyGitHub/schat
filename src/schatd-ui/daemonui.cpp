@@ -187,7 +187,7 @@ void DaemonUi::start()
 void DaemonUi::stop()
 {
   qDebug() << "DaemonUi::stop()";
-  setStatus(Stopped);
+  m_client->exit();
 }
 
 

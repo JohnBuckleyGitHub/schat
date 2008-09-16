@@ -47,6 +47,13 @@ LocalClientService::LocalClientService(QObject *parent)
 }
 
 
+void LocalClientService::exit()
+{
+  qDebug() << "LocalClientService::exit()";
+  send(666);
+}
+
+
 void LocalClientService::connectToServer()
 {
   qDebug() << "LocalClientService::connectToServer()";
@@ -99,13 +106,13 @@ void LocalClientService::reconnect()
 }
 
 
-bool LocalClientService::send(quint16 opcode, quint16 param)
+bool LocalClientService::send(quint16 opcode)
 {
   if (m_socket->state() == QLocalSocket::ConnectedState) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << param; 
+    out << quint16(0) << opcode; 
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
