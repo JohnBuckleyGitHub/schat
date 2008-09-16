@@ -33,6 +33,7 @@
 LocalClientService::LocalClientService(QObject *parent)
   : QObject(parent)
 {
+  m_reconnectTimer.setInterval(600);
   m_nextBlockSize = 0;
   m_socket = new QLocalSocket(this);
   m_stream.setVersion(StreamVersion);
@@ -59,15 +60,16 @@ void LocalClientService::connected()
 {
   qDebug() << "LocalClientService::connected()";
   m_reconnectTimer.stop();
-  m_reconnectTimer.setInterval(500);
   emit notify(Start);
+  send(13, 31);
 }
 
 
 void LocalClientService::disconnected()
 {
   qDebug() << "LocalClientService::disconnected()";
-  m_reconnectTimer.start();
+  if (!m_reconnectTimer.isActive())
+    m_reconnectTimer.start();
   emit notify(Stop);
 }
 
@@ -89,4 +91,21 @@ void LocalClientService::reconnect()
 {
   qDebug() << "LocalClientService::reconnect()";
   connectToServer();
+}
+
+
+bool LocalClientService::send(quint16 opcode, quint16 param)
+{
+  if (m_socket->state() == QLocalSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << opcode << param; 
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
 }
