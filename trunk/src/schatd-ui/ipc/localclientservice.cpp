@@ -62,7 +62,6 @@ void LocalClientService::connected()
   qDebug() << "LocalClientService::connected()";
   m_reconnectTimer.stop();
   emit notify(Start);
-  send(13, 31);
 }
 
 
@@ -71,6 +70,7 @@ void LocalClientService::disconnected()
   qDebug() << "LocalClientService::disconnected()";
   if (!m_reconnectTimer.isActive())
     m_reconnectTimer.start();
+
   emit notify(Stop);
 }
 
@@ -78,6 +78,10 @@ void LocalClientService::disconnected()
 void LocalClientService::error(QLocalSocket::LocalSocketError err)
 {
   qDebug() << "LocalClientService::error()" << err;
+  if (!m_reconnectTimer.isActive())
+    m_reconnectTimer.start();
+
+  emit notify(Stop);
 }
 
 

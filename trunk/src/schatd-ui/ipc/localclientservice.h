@@ -34,10 +34,12 @@ public:
   };
 
   LocalClientService(QObject *parent = 0);
-  void connectToServer();
 
 signals:
   void notify(LocalClientService::Reason reason);
+
+public slots:
+  void connectToServer();
 
 private slots:
   void connected();
