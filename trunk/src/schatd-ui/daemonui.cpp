@@ -103,6 +103,12 @@ DaemonUi::DaemonUi(QWidget *parent)
   setWindowTitle(tr("Управление сервером"));
 
   m_appDir = qApp->applicationDirPath();
+  #ifdef Q_WS_WIN
+    m_daemonFile = m_appDir + "/schatd.exe";
+  #else
+    m_daemonFile = m_appDir + "/schatd";
+  #endif
+
   QTimer::singleShot(0, this, SLOT(init()));
 }
 
@@ -141,14 +147,8 @@ void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
 void DaemonUi::init()
 {
   qDebug() << "DaemonUi::init()";
-  
-  #ifdef Q_WS_WIN
-    QString daemonFile = m_appDir + "/schatd.exe";
-  #else
-    QString daemonFile = m_appDir + "/schatd";
-  #endif
 
-  if (!QFile::exists(daemonFile)) {
+  if (!QFile::exists(m_daemonFile)) {
     setStatus(Error);
     return;
   }
@@ -179,7 +179,8 @@ void DaemonUi::restart()
 void DaemonUi::start()
 {
   qDebug() << "DaemonUi::start()";
-  setStatus(Started);
+  if (!QProcess::startDetached('"' + m_daemonFile + '"'))
+    setStatus(Error);
 }
 
 
