@@ -34,6 +34,7 @@ public:
   };
 
   LocalClientService(QObject *parent = 0);
+  void exit();
 
 signals:
   void notify(LocalClientService::Reason reason);
@@ -49,7 +50,7 @@ private slots:
   void reconnect();
 
 private:
-  bool send(quint16 opcode, quint16 param);
+  bool send(quint16 opcode);
 
   QDataStream m_stream;
   QPointer<QLocalSocket> m_socket;

@@ -17,6 +17,7 @@
  */
 
 #include <QtCore>
+#include <QtGlobal>
 #include <QtNetwork>
 
 #include "protocol.h"
@@ -49,6 +50,17 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
 }
 
 
+//LocalService::~LocalService()
+//{
+//  qDebug() << "LocalService::~LocalService()";
+////  if (m_socket)
+////    if (m_socket->state() == QLocalSocket::ConnectedState) {
+////      m_socket->disconnectFromServer();
+////      m_socket->waitForDisconnected(1000);
+////    }
+//}
+
+
 void LocalService::disconnected()
 {
   qDebug() << "LocalService::disconnected()";
@@ -59,4 +71,37 @@ void LocalService::disconnected()
 void LocalService::readyRead()
 {
   qDebug() << "LocalService::readyRead()";
+  forever {
+    if (!m_nextBlockSize) {
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+
+      m_stream >> m_nextBlockSize;
+    }
+
+    if (m_socket->bytesAvailable() < m_nextBlockSize)
+      break;
+
+    m_stream >> m_opcode;
+    
+    switch (m_opcode) {
+      case 666:
+        m_socket->disconnectFromServer();
+        m_socket->waitForDisconnected();
+        QCoreApplication::quit();
+        return;
+        
+      default:
+        unknownOpcode();
+        break;
+    }
+  }
+}
+
+
+void LocalService::unknownOpcode()
+{
+  qDebug() << "LocalService::unknownOpcode()";
+  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  m_nextBlockSize = 0;
 }
