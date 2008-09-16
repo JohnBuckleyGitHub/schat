@@ -53,6 +53,7 @@ private:
   QPointer<QLocalSocket> m_socket;
   QTimer m_reconnectTimer;
   quint16 m_nextBlockSize;
+  QString m_key;
 };
 
 #endif /*LOCALCLIENTSERVICE_H_*/
