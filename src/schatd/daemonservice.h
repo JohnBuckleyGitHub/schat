@@ -33,7 +33,6 @@ class DaemonService : public QObject
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
-  ~DaemonService();
   bool isReady() const;
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }

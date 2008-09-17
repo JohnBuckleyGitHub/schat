@@ -41,6 +41,7 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 #endif
 
   if (m_socket) {
+    m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
     m_accepted = false;
@@ -55,20 +56,6 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
   }
   else
     deleteLater();
-}
-
-
-/** [public]
- * 
- */
-DaemonService::~DaemonService()
-{
-#ifdef SCHAT_DEBUG
-  qDebug() << "DaemonService::~DESTRUCTOR";
-#endif
-
-  if (m_socket)
-    delete m_socket;
 }
 
 

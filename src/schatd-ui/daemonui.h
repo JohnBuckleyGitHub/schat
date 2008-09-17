@@ -41,6 +41,7 @@ public:
   enum Status {
     Unknown,
     Error,
+    Starting,
     Started,
     Stopped,
     Restarting

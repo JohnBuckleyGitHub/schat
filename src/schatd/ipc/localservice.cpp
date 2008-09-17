@@ -39,6 +39,7 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   qDebug() << "LocalService::LocalService()";
 
   if (m_socket) {
+    m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
     m_nextBlockSize = 0;
@@ -48,17 +49,6 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   else
     deleteLater();
 }
-
-
-//LocalService::~LocalService()
-//{
-//  qDebug() << "LocalService::~LocalService()";
-////  if (m_socket)
-////    if (m_socket->state() == QLocalSocket::ConnectedState) {
-////      m_socket->disconnectFromServer();
-////      m_socket->waitForDisconnected(1000);
-////    }
-//}
 
 
 void LocalService::disconnected()
@@ -83,14 +73,12 @@ void LocalService::readyRead()
       break;
 
     m_stream >> m_opcode;
-    
+
     switch (m_opcode) {
       case 666:
-        m_socket->disconnectFromServer();
-        m_socket->waitForDisconnected();
         QCoreApplication::quit();
         return;
-        
+
       default:
         unknownOpcode();
         break;
