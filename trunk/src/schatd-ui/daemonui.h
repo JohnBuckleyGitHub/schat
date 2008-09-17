@@ -38,21 +38,6 @@ class DaemonUi : public QDialog
   Q_OBJECT
 
 public:
-  enum Status {
-    Unknown,
-    Error,
-    Starting,
-    Started,
-    Stopped,
-    Restarting
-  };
-
-  enum LedColor {
-    Red,
-    Yellow,
-    Green
-  };
-
   DaemonUi(QWidget *parent = 0);
 
 public slots:
@@ -70,6 +55,22 @@ private slots:
   void stop() { m_client->exit(); }
 
 private:
+  enum Status {
+    Unknown,
+    Error,
+    Starting,
+    Started,
+    Stopped,
+    Restarting
+  };
+
+  enum LedColor {
+    Red,
+    Yellow,
+    Green
+  };
+
+  bool arguments(const QStringList &args);
   void createActions();
   void createButtons();
   void createTray();

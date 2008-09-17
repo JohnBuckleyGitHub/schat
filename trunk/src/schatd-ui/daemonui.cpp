@@ -124,7 +124,8 @@ void DaemonUi::handleMessage(const QString& message)
     return;
   }
 
-  showUi();
+  if (!arguments(list))
+    showUi();
 }
 #endif
 
@@ -162,6 +163,10 @@ void DaemonUi::init()
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
   m_client->connectToServer();
+
+  QStringList args = QApplication::arguments();
+  args.takeFirst();
+  arguments(args);
 }
 
 
@@ -202,6 +207,25 @@ void DaemonUi::start()
 
     m_client->connectToServer();
   }
+}
+
+
+bool DaemonUi::arguments(const QStringList &args)
+{
+  if (args.contains("-start") && m_startAction->isEnabled()) {
+    start();
+    return true;
+  }
+  else if (args.contains("-stop") && m_stopAction->isEnabled()) {
+    stop();
+    return true;
+  }
+  else if (args.contains("-restart") && m_restartAction->isEnabled()) {
+    restart();
+    return true;
+  }
+
+  return false;
 }
 
 
