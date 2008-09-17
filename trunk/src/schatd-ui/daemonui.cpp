@@ -162,6 +162,19 @@ void DaemonUi::init()
 void DaemonUi::notify(LocalClientService::Reason reason)
 {
   qDebug() << "DaemonUi::notify()" << reason;
+
+  switch (reason) {
+    case LocalClientService::Start:
+      setStatus(Started);
+      break;
+
+    case LocalClientService::Stop:
+      qDebug() << "Stop" << m_status;
+      if (m_status != Starting)
+        setStatus(Stopped);
+      break;
+  }
+
   if (reason == LocalClientService::Start)
     setStatus(Started);
   else if (reason == LocalClientService::Stop)
@@ -181,6 +194,10 @@ void DaemonUi::start()
   qDebug() << "DaemonUi::start()";
   if (!QProcess::startDetached('"' + m_daemonFile + '"'))
     setStatus(Error);
+  else {
+    m_client->connectToServer();
+    setStatus(Starting);
+  }
 }
 
 
@@ -317,6 +334,12 @@ void DaemonUi::setStatus(DaemonUi::Status status)
       setActionsState(false, false, false, false);
       setLedColor();
       m_statusLabel->setText(tr("<b style='color:#c00;'>&nbsp;Ошибка</b>"));
+      break;
+
+    case Starting:
+      setActionsState(false, false, false);
+      setLedColor(Yellow);
+      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Запуск...</b>"));
       break;
 
     case Started:

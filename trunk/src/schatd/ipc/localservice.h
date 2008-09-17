@@ -27,7 +27,6 @@ class LocalService : public QObject
 
 public:
   LocalService(QLocalSocket *socket, QObject *parent = 0);
-//  ~LocalService();
 
 private slots:
   void disconnected();
