@@ -153,8 +153,6 @@ void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void DaemonUi::init()
 {
-  qDebug() << "DaemonUi::init()";
-
   if (!QFile::exists(m_daemonFile)) {
     setStatus(Error);
     return;
@@ -168,15 +166,12 @@ void DaemonUi::init()
 
 void DaemonUi::notify(LocalClientService::Reason reason)
 {
-  qDebug() << "DaemonUi::notify()" << reason;
-
   switch (reason) {
     case LocalClientService::Start:
       setStatus(Started);
       break;
 
     case LocalClientService::Stop:
-      qDebug() << "Stop" << m_status;
       if (!(m_status == Starting || m_status == Restarting)) 
         setStatus(Stopped);
       break;
@@ -186,7 +181,6 @@ void DaemonUi::notify(LocalClientService::Reason reason)
 
 void DaemonUi::restart()
 {
-  qDebug() << "DaemonUi::restart()";
   if (m_status == Started)
     setStatus(Restarting);
   else
@@ -199,14 +193,13 @@ void DaemonUi::restart()
 
 void DaemonUi::start()
 {
-  qDebug() << "DaemonUi::start()";
   if (!QProcess::startDetached('"' + m_daemonFile + '"'))
     setStatus(Error);
   else {
-    m_client->connectToServer();
-
     if (m_status != Restarting)
       setStatus(Starting);
+
+    m_client->connectToServer();
   }
 }
 
@@ -325,9 +318,7 @@ void DaemonUi::setLedColor(LedColor color)
 
 
 void DaemonUi::setStatus(DaemonUi::Status status)
-{
-  qDebug() << "DaemonUi::setStatus()" << status;
-  
+{  
   m_status = status;
   switch (status) {
     case Unknown:
