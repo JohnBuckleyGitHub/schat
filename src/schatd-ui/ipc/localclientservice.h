@@ -34,13 +34,13 @@ public:
   };
 
   LocalClientService(QObject *parent = 0);
-  void exit();
 
 signals:
   void notify(LocalClientService::Reason reason);
 
 public slots:
   void connectToServer();
+  void exit();
 
 private slots:
   void connected();

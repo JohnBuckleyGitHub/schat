@@ -47,14 +47,6 @@ LocalClientService::LocalClientService(QObject *parent)
 }
 
 
-void LocalClientService::exit()
-{
-  qDebug() << "LocalClientService::exit()";
-  if (send(666))
-    m_socket->disconnectFromServer();
-}
-
-
 void LocalClientService::connectToServer()
 {
   qDebug() << "LocalClientService::connectToServer()";
@@ -62,6 +54,14 @@ void LocalClientService::connectToServer()
   m_nextBlockSize = 0;
   m_socket->abort();
   m_socket->connectToServer(m_key);
+}
+
+
+void LocalClientService::exit()
+{
+  qDebug() << "LocalClientService::exit()";
+  if (send(666))
+    m_socket->disconnectFromServer();
 }
 
 
