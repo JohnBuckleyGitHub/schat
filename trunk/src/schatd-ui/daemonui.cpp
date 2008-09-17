@@ -170,22 +170,23 @@ void DaemonUi::notify(LocalClientService::Reason reason)
 
     case LocalClientService::Stop:
       qDebug() << "Stop" << m_status;
-      if (m_status != Starting)
+      if (!(m_status == Starting || m_status == Restarting)) 
         setStatus(Stopped);
       break;
   }
-
-  if (reason == LocalClientService::Start)
-    setStatus(Started);
-  else if (reason == LocalClientService::Stop)
-    setStatus(Stopped);
 }
 
 
 void DaemonUi::restart()
 {
   qDebug() << "DaemonUi::restart()";
-  setStatus(Started);
+  if (m_status == Started)
+    setStatus(Restarting);
+  else
+    setStatus(Starting);
+
+  m_client->exit();
+  QTimer::singleShot(1000, this, SLOT(start()));
 }
 
 
@@ -196,7 +197,9 @@ void DaemonUi::start()
     setStatus(Error);
   else {
     m_client->connectToServer();
-    setStatus(Starting);
+
+    if (m_status != Restarting)
+      setStatus(Starting);
   }
 }
 
@@ -322,6 +325,8 @@ void DaemonUi::setLedColor(LedColor color)
 
 void DaemonUi::setStatus(DaemonUi::Status status)
 {
+  qDebug() << "DaemonUi::setStatus()" << status;
+  
   m_status = status;
   switch (status) {
     case Unknown:
@@ -357,7 +362,7 @@ void DaemonUi::setStatus(DaemonUi::Status status)
     case Restarting:
       setActionsState(false, false, false, false);
       setLedColor(Yellow);
-      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Ожидание...</b>"));
+      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Перезапуск...</b>"));
       break;
 
     default:
