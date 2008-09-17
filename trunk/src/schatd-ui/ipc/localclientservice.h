@@ -45,9 +45,6 @@ public slots:
 private slots:
   void connected();
   void disconnected();
-  void error(QLocalSocket::LocalSocketError err);
-  void readyRead();
-  void reconnect();
 
 private:
   bool send(quint16 opcode);

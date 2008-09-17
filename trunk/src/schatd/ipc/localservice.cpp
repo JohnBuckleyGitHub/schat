@@ -36,12 +36,10 @@
 LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   : QObject(parent), m_socket(socket)
 {
-  qDebug() << "LocalService::LocalService()";
-
   if (m_socket) {
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
-    connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+    connect(m_socket, SIGNAL(disconnected()), SLOT(deleteLater()));
     m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
@@ -51,16 +49,8 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
 }
 
 
-void LocalService::disconnected()
-{
-  qDebug() << "LocalService::disconnected()";
-  deleteLater();
-}
-
-
 void LocalService::readyRead()
 {
-  qDebug() << "LocalService::readyRead()";
   forever {
     if (!m_nextBlockSize) {
       if (m_socket->bytesAvailable() < (int) sizeof(quint16))
@@ -89,7 +79,6 @@ void LocalService::readyRead()
 
 void LocalService::unknownOpcode()
 {
-  qDebug() << "LocalService::unknownOpcode()";
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
 }

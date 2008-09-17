@@ -29,7 +29,6 @@ public:
   LocalService(QLocalSocket *socket, QObject *parent = 0);
 
 private slots:
-  void disconnected();
   void readyRead();
 
 private:
