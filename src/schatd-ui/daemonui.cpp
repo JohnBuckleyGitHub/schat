@@ -101,6 +101,7 @@ DaemonUi::DaemonUi(QWidget *parent)
   setStatus(Unknown);
 
   setWindowTitle(tr("Управление сервером"));
+  setWindowIcon(QIcon(":/images/logo16-green.png"));
 
   m_appDir = qApp->applicationDirPath();
   #ifdef Q_WS_WIN
