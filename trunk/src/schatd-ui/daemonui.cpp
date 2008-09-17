@@ -128,6 +128,13 @@ void DaemonUi::handleMessage(const QString& message)
 #endif
 
 
+void DaemonUi::exit()
+{
+  m_client->exit();
+  QApplication::quit();
+}
+
+
 void DaemonUi::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason) {
@@ -204,19 +211,13 @@ void DaemonUi::start()
 }
 
 
-void DaemonUi::stop()
-{
-  qDebug() << "DaemonUi::stop()";
-  m_client->exit();
-}
-
-
 /*!
  * Создаёт объекты QAction
  */
 void DaemonUi::createActions()
 {
-  m_quitAllAction = new QAction(QIcon(":/images/quit.png"), tr("Выход с &остановкой сервера"), this);
+  m_quitAllAction = new QAction(QIcon(":/images/quit.png"), tr("Выход с о&становкой сервера"), this);
+  connect(m_quitAllAction, SIGNAL(triggered()), SLOT(exit()));
 
   m_quitAction = new QAction(QIcon(":/images/logout.png"), tr("&Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));

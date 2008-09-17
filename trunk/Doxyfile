@@ -87,6 +87,7 @@ INPUT                  = doc \
                          src/common \
                          src/schat \
                          src/schatd \
+                         src/schatd-ui \
                          src/update
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \

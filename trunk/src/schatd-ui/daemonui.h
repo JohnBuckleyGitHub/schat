@@ -61,12 +61,13 @@ public slots:
   #endif
 
 private slots:
+  void exit();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void init();
   void notify(LocalClientService::Reason reason);
   void restart();
   void start();
-  void stop();
+  void stop() { m_client->exit(); }
 
 private:
   void createActions();
