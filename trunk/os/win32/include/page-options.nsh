@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@ var DesktopCheckBox
 var QuickLaunchCheckBox
 var AllProgramsCheckBox
 var AutostartCheckBox
+var AutostartDaemonCheckBox
 var settings.Desktop
 var settings.QuickLaunch
 var settings.AllPrograms
 var settings.AutoStart
+var settings.AutoDaemonStart
 
 !macro SETTINGS_PAGE
 Function SettingsPage
@@ -56,15 +58,25 @@ Function SettingsPage
   Pop $AutostartCheckBox
   ${NSD_SetState} $AutoStartCheckBox $settings.AutoStart
   
+  ${NSD_CreateCheckbox} 10 116 90% 18 "$(STR105)"
+  Pop $AutostartDaemonCheckBox
+  ${If} ${SectionIsSelected} ${SecServer}
+    ${NSD_SetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
+  ${Else}
+    ${NSD_AddStyle} $AutostartDaemonCheckBox ${WS_DISABLED}
+    ${NSD_SetState} $AutostartDaemonCheckBox ${BST_UNCHECKED}
+  ${EndIf}
+  
   nsDialogs::Show
 
 FunctionEnd
 
 Function SettingsPageLeave
-  ${NSD_GetState} $DesktopCheckBox     $settings.Desktop
-  ${NSD_GetState} $QuickLaunchCheckBox $settings.QuickLaunch
-  ${NSD_GetState} $AllProgramsCheckBox $settings.AllPrograms
-  ${NSD_GetState} $AutoStartCheckBox   $settings.AutoStart
+  ${NSD_GetState} $DesktopCheckBox         $settings.Desktop
+  ${NSD_GetState} $QuickLaunchCheckBox     $settings.QuickLaunch
+  ${NSD_GetState} $AllProgramsCheckBox     $settings.AllPrograms
+  ${NSD_GetState} $AutoStartCheckBox       $settings.AutoStart
+  ${NSD_GetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
 FunctionEnd
 !macroend
 
@@ -88,12 +100,17 @@ Section
     IfFileExists    "${SCHAT_PROGRAMGROUP}\*.*" +2
     CreateDirectory "${SCHAT_PROGRAMGROUP}"
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR300).lnk" "$INSTDIR\uninstall.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
+    CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\${SCHAT_NAME}.lnk" "$INSTDIR\schat.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
   ${EndIf}
   
   ${If} $settings.AutoStart == ${BST_CHECKED}
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat.exe -hide"
-  ${EndIf}  
+  ${EndIf}
+  
+  ${If} $settings.AutoDaemonStart == ${BST_CHECKED}
+    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME} Daemon" "$INSTDIR\schatd-ui.exe -start"
+  ${EndIf}
 SectionEnd
 !macroend
 

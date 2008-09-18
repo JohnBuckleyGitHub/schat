@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,14 +28,16 @@ ${L} STR101  "Рабочий стол"
 ${L} STR102  "Быстрый запуск"
 ${L} STR103  "Меню $\"Все программы$\""
 ${L} STR104  "Добавить в автозагрузку"
+${L} STR105  "Добавить сервер в автозагрузку"
 ${L} STR200  "Выберите дополнительные задачи"
 ${L} STR201  "Какие дополнительные задачи необходимо выполнить?"
 ${L} STR300  "Удаление программы"
+${L} STR301  "Управление сервером"
 ${L} STR400  "Обнаружена работающая копия ${SCHAT_NAME}. Завершите работу ${SCHAT_NAME} и попробуйте снова."
 ${L} STR1000 "Основные компоненты"
 ${L} STR1001 "Основные компоненты ${SCHAT_NAME}"
 ${L} STR1002 "Cервер"
-${L} STR1003 "Отдельный легковесный сервер чата (для запуска в качестве демона)"
+${L} STR1003 "Cервер чата и программа для управления им"
 ${L} STR1004 "Темы смайликов"
 
 !endif /* RUSSIAN_NSH_ */

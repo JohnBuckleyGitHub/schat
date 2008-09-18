@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,10 +42,10 @@ Section "$(STR1000)" SecCore
 
   SetOutPath "$INSTDIR"
   SectionIn RO
-  
+
   File "..\..\out\release\schat.exe"
   File "..\..\out\release\update.exe"
-  
+
   !ifdef VC90
     File "contrib\Microsoft.VC90.CRT.manifest"
   !endif
@@ -94,6 +94,7 @@ Section "$(STR1002)" SecServer
 
   SetOutPath "$INSTDIR"
   File "..\..\out\release\schatd.exe"
+  File "..\..\out\release\schatd-ui.exe"
 
 SectionEnd
 !macroend
@@ -112,6 +113,7 @@ Section "Uninstall"
     Delete "$INSTDIR\uninstall.ini"
     Delete "$INSTDIR\schat.exe"
     Delete "$INSTDIR\schatd.exe"
+    Delete "$INSTDIR\schatd-ui.exe"
     Delete "$INSTDIR\update.exe"
     Delete "$INSTDIR\QtCore4.dll"
     Delete "$INSTDIR\QtGui4.dll"
