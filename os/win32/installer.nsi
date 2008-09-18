@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -103,10 +103,11 @@ Section
   !insertmacro SAVE_SECTION ${SecKolobok} "Emoticons.Kolobok"
   !insertmacro SAVE_SECTION ${SecSimpleSmileys} "Emoticons.SimpleSmileys"
   
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"     "$settings.Desktop"
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch" "$settings.QuickLaunch"
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AllPrograms" "$settings.AllPrograms"
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoStart"   "$settings.AutoStart"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"         "$settings.Desktop"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch"     "$settings.QuickLaunch"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AllPrograms"     "$settings.AllPrograms"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoStart"       "$settings.AutoStart"
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoDaemonStart" "$settings.AutoDaemonStart"
   
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME} ${SCHAT_VERSION}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
@@ -133,10 +134,11 @@ Function .onInit
   
   !insertmacro UPDATE_CMD
     
-  ${Option} "Desktop"     0 $settings.Desktop
-  ${Option} "QuickLaunch" 1 $settings.QuickLaunch
-  ${Option} "AllPrograms" 1 $settings.AllPrograms
-  ${Option} "AutoStart"   1 $settings.AutoStart
+  ${Option} "Desktop"         0 $settings.Desktop
+  ${Option} "QuickLaunch"     1 $settings.QuickLaunch
+  ${Option} "AllPrograms"     1 $settings.AllPrograms
+  ${Option} "AutoStart"       1 $settings.AutoStart
+  ${Option} "AutoDaemonStart" 0 $settings.AutoDaemonStart
   
   ${SectionState} "Server" 0 ${SecServer}
   ${SectionState} "Emoticons.Kolobok" 1 ${SecKolobok}
@@ -152,5 +154,5 @@ FunctionEnd
 
 
 !insertmacro findRunningChat
-!insertmacro un.findRunningChat
 !insertmacro SETTINGS_PAGE
+!insertmacro un.findRunningChat

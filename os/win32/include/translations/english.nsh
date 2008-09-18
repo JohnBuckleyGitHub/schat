@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,8 +28,10 @@ ${L} STR101  "Desktop"
 ${L} STR102  "Quick Launch"
 ${L} STR103  "Start Menu"
 ${L} STR104  "To add in autostart"
+${L} STR105  "To add daemon in autostart"
 ${L} STR200  "Select additional tasks"
 ${L} STR300  "Uninstall"
+${L} STR301  "Management of a server"
 ${L} STR400  "An instance of ${SCHAT_NAME} is currently running. Exit ${SCHAT_NAME} and then try again."
 ${L} STR201  "What additional tasks needed for executing?"
 ${L} STR1000 "Core Components"
