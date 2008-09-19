@@ -966,11 +966,11 @@ void Daemon::userLeave(const QString &nick)
       else
         m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
 
-    delete unit;
-
     emit userLeave(nick, bye, 1);
 
-    if (m_network && m_remoteNumeric)
+    if (m_network && m_remoteNumeric && unit->numeric() == m_numeric)
       m_link->sendUserLeave(nick, bye, 1);
+
+    delete unit;
   }
 }
