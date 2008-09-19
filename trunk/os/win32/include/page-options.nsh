@@ -100,7 +100,11 @@ Section
     IfFileExists    "${SCHAT_PROGRAMGROUP}\*.*" +2
     CreateDirectory "${SCHAT_PROGRAMGROUP}"
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR300).lnk" "$INSTDIR\uninstall.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
-    CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
+    
+    ${If} ${SectionIsSelected} ${SecServer}
+      CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
+    ${EndIf}
+    
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\${SCHAT_NAME}.lnk" "$INSTDIR\schat.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
   ${EndIf}
   
