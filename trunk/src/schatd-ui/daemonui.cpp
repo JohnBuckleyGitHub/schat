@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include "daemonui.h"
 #include "version.h"
+#include "daemonuisettings.h"
 
 /*!
  * \brief Конструктор класса DaemonUi.
@@ -29,6 +30,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   : QDialog(parent)
 {
   setWindowFlags(Qt::Tool);
+
+  m_settings = new DaemonUiSettings(qApp->applicationDirPath() + "/schatd.conf", this);
 
   createActions();
   createButtons();
@@ -159,6 +162,8 @@ void DaemonUi::init()
     setStatus(Error);
     return;
   }
+
+  m_settings->read();
 
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));

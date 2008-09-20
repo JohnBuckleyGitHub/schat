@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #include "ipc/localclientservice.h"
 
+class DaemonUiSettings;
 class LocalClientService;
 class QAction;
 class QLabel;
@@ -79,6 +80,7 @@ private:
   void setStatus(Status status);
   void showUi();
 
+  DaemonUiSettings *m_settings;
   LocalClientService *m_client;
   QAction *m_quitAction;
   QAction *m_quitAllAction;
