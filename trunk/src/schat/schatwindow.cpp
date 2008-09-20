@@ -650,12 +650,15 @@ void SChatWindow::sendMsg(const QString &message)
 
 /*!
  * \brief Показ сообщения от сервера.
- * 
- * \todo Сделать показ сообщения в активной вкладке.
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
-  mainChannel->browser->msg(msg);
+  if (m_tabs->currentIndex() == 0)
+    mainChannel->browser->msg(msg);
+  else {
+    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+    tab->browser->msg(msg);
+  }
 }
 
 
