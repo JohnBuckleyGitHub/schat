@@ -25,11 +25,17 @@ QT += network
 TEMPLATE = app
 
 HEADERS += \
+    abstractsettings.h \
+    daemonsettings.h \
     daemonui.h \
+    daemonuisettings.h \
     ipc/localclientservice.h \
 
 SOURCES += \
+    abstractsettings.cpp \
+    daemonsettings.cpp \
     daemonui.cpp \
+    daemonuisettings.cpp \
     ipc/localclientservice.cpp \
     main.cpp \
 

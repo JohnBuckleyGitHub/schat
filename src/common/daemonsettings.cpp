@@ -19,7 +19,6 @@
 #include <QtCore>
 
 #include "daemonsettings.h"
-#include "log.h"
 
 /*!
  * \class DaemonSettings
