@@ -32,3 +32,9 @@ DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *
 
   setWindowTitle(tr("Настройка"));
 }
+
+
+DaemonSettingsDialog::~DaemonSettingsDialog()
+{
+  qDebug() << "DaemonSettingsDialog::~DaemonSettingsDialog()";
+}

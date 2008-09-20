@@ -202,6 +202,22 @@ void DaemonUi::restart()
 }
 
 
+void DaemonUi::settings()
+{
+  qDebug() << "DaemonUi::settings()";
+
+  if (isHidden())
+    show();
+
+  if (!m_settingsDialog) {
+    m_settingsDialog = new DaemonSettingsDialog(m_settings, this);
+    m_settingsDialog->show();
+  }
+
+  m_settingsDialog->activateWindow();
+}
+
+
 void DaemonUi::start()
 {
   if (!QProcess::startDetached('"' + m_daemonFile + '"'))
@@ -255,6 +271,7 @@ void DaemonUi::createActions()
   connect(m_stopAction, SIGNAL(triggered()), SLOT(stop()));
 
   m_settingsAction = new QAction(QIcon(":/images/daemonsettings.png"), tr("&Настройка..."), this);
+  connect(m_settingsAction, SIGNAL(triggered()), SLOT(settings()));
 }
 
 
