@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
+# Copyright (c) 2008 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ TEMPLATE = app
 
 HEADERS += \
     abstractsettings.h \
+    daemonsettingsdialog.h \
     daemonsettings.h \
     daemonui.h \
     daemonuisettings.h \
@@ -33,6 +34,7 @@ HEADERS += \
 
 SOURCES += \
     abstractsettings.cpp \
+    daemonsettingsdialog.cpp \
     daemonsettings.cpp \
     daemonui.cpp \
     daemonuisettings.cpp \
