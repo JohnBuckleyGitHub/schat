@@ -19,7 +19,7 @@
 #ifndef DAEMONSETTINGSDIALOG_H_
 #define DAEMONSETTINGSDIALOG_H_
 
-#include <QDialog>
+#include "abstractsettingsdialog.h"
 
 class DaemonUiSettings;
 
@@ -27,7 +27,7 @@ class DaemonUiSettings;
  * \class DaemonSettingsDialog
  * \brief Настройка сервера
  */
-class DaemonSettingsDialog : public QDialog
+class DaemonSettingsDialog : public AbstractSettingsDialog
 {
   Q_OBJECT
 

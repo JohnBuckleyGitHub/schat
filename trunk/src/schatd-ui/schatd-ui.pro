@@ -26,6 +26,7 @@ TEMPLATE = app
 
 HEADERS += \
     abstractsettings.h \
+    abstractsettingsdialog.h \
     daemonsettingsdialog.h \
     daemonsettings.h \
     daemonui.h \
@@ -34,6 +35,7 @@ HEADERS += \
 
 SOURCES += \
     abstractsettings.cpp \
+    abstractsettingsdialog.cpp \
     daemonsettingsdialog.cpp \
     daemonsettings.cpp \
     daemonui.cpp \
