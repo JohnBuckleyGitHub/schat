@@ -20,8 +20,10 @@
 #define DAEMONUI_H_
 
 #include <QDialog>
+#include <QPointer>
 #include <QSystemTrayIcon>
 
+#include "daemonsettingsdialog.h"
 #include "ipc/localclientservice.h"
 
 class DaemonUiSettings;
@@ -52,6 +54,7 @@ private slots:
   void init();
   void notify(LocalClientService::Reason reason);
   void restart();
+  void settings();
   void start();
   void stop() { m_client->exit(); }
 
@@ -92,6 +95,7 @@ private:
   QLabel *m_ledLabel;
   QLabel *m_statusLabel;
   QMenu *m_menu;
+  QPointer<DaemonSettingsDialog> m_settingsDialog;
   QPushButton *m_hideButton;
   QPushButton *m_quitButton;
   QString m_appDir;

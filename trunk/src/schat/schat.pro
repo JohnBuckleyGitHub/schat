@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
+# Copyright (c) 2008 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ HEADERS += \
     widget/emoticonselector.h \
     widget/inputwidget.h \
     widget/sendwidget.h \
+    abstractsettingsdialog.h \
 
 SOURCES += \
     aboutdialog.cpp \
@@ -78,6 +79,7 @@ SOURCES += \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
     widget/sendwidget.cpp \
+    abstractsettingsdialog.cpp \
 
 win32 {
     HEADERS += win32/updatenotify.h

@@ -33,6 +33,7 @@ class DaemonSettingsDialog : public QDialog
 
 public:
   DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
+  ~DaemonSettingsDialog();
 
 private:
   DaemonUiSettings *m_settings;
