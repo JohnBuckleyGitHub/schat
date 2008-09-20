@@ -25,12 +25,8 @@
  * \brief Конструктор класса DaemonSettingsDialog.
  */
 DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent)
-  : QDialog(parent), m_settings(settings)
+  : AbstractSettingsDialog(parent), m_settings(settings)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-  setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
-
-  setWindowTitle(tr("Настройка"));
 }
 
 
