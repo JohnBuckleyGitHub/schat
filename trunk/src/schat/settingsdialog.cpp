@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <QtGui>
 
 #include "abstractprofile.h"
@@ -30,18 +31,8 @@
  * \brief Конструктор класса SettingsDialog.
  */
 SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
-  : QDialog(parent)
+  : AbstractSettingsDialog(parent)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-  setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
-
-  m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
-  m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
-  m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);
-  m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
-  m_contentsWidget = new QListWidget(this);
-  m_pagesWidget    = new QStackedWidget(this);
-
   m_profilePage    = new ProfileSettings(settings, profile, this); 
   m_networkPage    = new NetworkSettings(settings, this);
   m_interfacePage  = new InterfaceSettings(settings, this);
@@ -57,95 +48,15 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
   #endif
 
-  QFrame *line = new QFrame(this);
-  line->setFrameShape(QFrame::HLine);
-  line->setFrameShadow(QFrame::Sunken);
-
-  connect(m_contentsWidget, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
-  connect(m_okButton, SIGNAL(clicked()), SLOT(accept()));
-  connect(m_cancelButton, SIGNAL(clicked()), SLOT(close()));
-  connect(m_resetButton, SIGNAL(clicked()), SLOT(reset()));
   connect(m_profilePage, SIGNAL(validNick(bool)), SLOT(validNick(bool)));
-
-  m_contentsWidget->setCurrentRow(ProfilePage);
-
-  QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->addStretch();
-  buttonLayout->addWidget(m_resetButton);
-  buttonLayout->addWidget(m_okButton);
-  buttonLayout->addWidget(m_cancelButton);
-  buttonLayout->setSpacing(3);
-
-  QGridLayout *mainLayout = new QGridLayout(this);
-  mainLayout->setColumnStretch(0, 1);
-  mainLayout->setColumnStretch(1, 3);
-  mainLayout->addWidget(m_contentsWidget, 0, 0);
-  mainLayout->addWidget(m_pagesWidget, 0, 1);
-  mainLayout->addWidget(line, 1, 0, 1, 2);
-  mainLayout->addLayout(buttonLayout, 2, 0, 1, 2);
-  mainLayout->setMargin(3);
-  mainLayout->setSpacing(3);
-
-  setWindowTitle(tr("Настройка"));
 }
-
-
-void SettingsDialog::setPage(int page)
-{
-  m_contentsWidget->setCurrentRow(page);
-  m_pagesWidget->setCurrentIndex(page);
-}
-
-
-void SettingsDialog::accept()
-{
-  emit save();
-  close();
-}
-
-
-void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
-{
-  if (!current)
-    current = previous;
-
-  m_pagesWidget->setCurrentIndex(m_contentsWidget->row(current));
-}
-
-
-void SettingsDialog::reset()
-{
-  emit reset(m_pagesWidget->currentIndex());
-}
-
-
-void SettingsDialog::createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page)
-{
-  m_pagesWidget->addWidget(page);
-  new QListWidgetItem(icon, text, m_contentsWidget);
-  connect(this, SIGNAL(save()), page, SLOT(save()));
-  connect(this, SIGNAL(reset(int)), page, SLOT(reset(int)));
-}
-
-
-
-/*!
- * \brief Конструктор класса AbstractSettingsPage.
- */
-AbstractSettingsPage::AbstractSettingsPage(SettingsDialog::Page id, Settings *settings, QWidget *parent)
-  : QWidget(parent)
-{
-  m_id = id;
-  m_settings = settings;
-}
-
 
 
 /*!
  * \brief Конструктор класса ProfileSettings.
  */
 ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::ProfilePage, settings, parent)
+  : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), m_settings(settings)
 {
   m_profile  = profile;
   m_profileWidget = new ProfileWidget(profile, this);
@@ -206,7 +117,7 @@ void ProfileSettings::save()
  * \brief Конструктор класса NetworkSettings.
  */
 NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::NetworkPage, settings, parent)
+  : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), m_settings(settings)
 {  
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
@@ -259,7 +170,7 @@ void NetworkSettings::save()
  * \brief Конструктор класса InterfaceSettings.
  */
 InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::InterfacePage, settings, parent)
+  : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), m_settings(settings)
 {  
   m_styleComboBox = new QComboBox(this);
   m_styleComboBox->addItems(QStyleFactory::keys());  
@@ -305,7 +216,7 @@ void InterfaceSettings::save()
  * \brief Конструктор класса EmoticonsSettings.
  */
 EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, settings, parent)
+  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, parent), m_settings(settings)
 {
   m_themeCombo = new QComboBox(this);
 
@@ -413,7 +324,7 @@ bool EmoticonsSettings::createThemeList()
  */
 #ifdef SCHAT_UPDATE
 UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::UpdatePage, settings, parent)
+  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent), m_settings(settings)
 {  
   m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
   m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));

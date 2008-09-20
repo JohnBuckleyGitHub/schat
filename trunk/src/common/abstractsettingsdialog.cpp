@@ -96,8 +96,17 @@ void AbstractSettingsDialog::reset() { emit reset(m_pagesWidget->currentIndex())
 
 void AbstractSettingsDialog::createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page)
 {
-//  m_pagesWidget->addWidget(page);
-//  new QListWidgetItem(icon, text, m_contentsWidget);
-//  connect(this, SIGNAL(save()), page, SLOT(save()));
-//  connect(this, SIGNAL(reset(int)), page, SLOT(reset(int)));
+  m_pagesWidget->addWidget(page);
+  new QListWidgetItem(icon, text, m_contentsWidget);
+  connect(this, SIGNAL(save()), page, SLOT(save()));
+  connect(this, SIGNAL(reset(int)), page, SLOT(reset(int)));
+}
+
+
+/*!
+ * \brief Конструктор класса AbstractSettingsPage.
+ */
+AbstractSettingsPage::AbstractSettingsPage(int id, QWidget *parent)
+  : QWidget(parent), m_id(id)
+{
 }

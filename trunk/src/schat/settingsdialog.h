@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #ifndef SETTINGSDIALOG_H_
 #define SETTINGSDIALOG_H_
 
-#include <QDialog>
 #include <QPushButton>
 
+#include "abstractsettingsdialog.h"
+
 class AbstractProfile;
-class AbstractSettingsPage;
 class EmoticonsSettings;
 class InterfaceSettings;
 class NetworkSettings;
@@ -34,11 +34,7 @@ class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLineEdit;
-class QListWidget;
-class QListWidgetItem;
 class QSpinBox;
-class QStackedWidget;
-class SChatWindow;
 class Settings;
 
 #ifdef SCHAT_UPDATE
@@ -50,7 +46,7 @@ class UpdateSettings;
  * \class SettingsDialog
  * \brief Диалог "Настройка".
  */
-class SettingsDialog : public QDialog
+class SettingsDialog : public AbstractSettingsDialog
 {
   Q_OBJECT
 
@@ -63,58 +59,20 @@ public:
     UpdatePage
   };
 
-  SettingsDialog(AbstractProfile *p, Settings *s, QWidget *parent = 0);
-  void setPage(int page = 0);
-  
-signals:
-  void reset(int page);
-  void save();
-
-public slots:
-  void accept();
-  void changePage(QListWidgetItem *current, QListWidgetItem *previous);
-  void reset();
+  SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent = 0);
 
 private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
 
 private:
-  void createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
-
   EmoticonsSettings *m_emoticonsPage;
   InterfaceSettings *m_interfacePage;
   NetworkSettings *m_networkPage;
   ProfileSettings *m_profilePage;
-  QListWidget *m_contentsWidget;
-  QPushButton *m_cancelButton;
-  QPushButton *m_okButton;
-  QPushButton *m_resetButton;
-  QStackedWidget *m_pagesWidget;
 
   #ifdef SCHAT_UPDATE
   UpdateSettings *m_updatePage;
   #endif
-};
-
-
-/*!
- * \class AbstractSettingsPage
- * \brief Абстрактный базовый класс страницы настроек.
- */
-class AbstractSettingsPage : public QWidget
-{
-  Q_OBJECT
-
-public:
-  AbstractSettingsPage(SettingsDialog::Page id, Settings *settings, QWidget *parent = 0);
-
-public slots:
-  void reset(int /*page*/) {}
-  void save()              {}
-
-protected:
-  Settings *m_settings;
-  SettingsDialog::Page m_id;
 };
 
 
@@ -137,9 +95,10 @@ signals:
   void validNick(bool b);
 
 private:
+  AbstractProfile *m_profile;
   ProfileWidget *m_profileWidget;
   QLineEdit *m_byeMsgEdit;
-  AbstractProfile *m_profile;
+  Settings *m_settings;
 };
 
 
@@ -161,6 +120,7 @@ public slots:
 private:
   NetworkWidget *m_networkWidget;
   QCheckBox *m_welcomeCheckBox;
+  Settings *m_settings;
 };
 
 
@@ -181,6 +141,7 @@ public slots:
 
 private:
   QComboBox *m_styleComboBox;
+  Settings *m_settings;
 };
 
 
@@ -210,6 +171,7 @@ private:
   QCheckBox *m_requireSpacesCheck;
   QComboBox *m_themeCombo;
   QGroupBox *m_themeGroup;
+  Settings *m_settings;
 };
 
 
@@ -233,6 +195,7 @@ private:
   QCheckBox *m_autoClean;
   QCheckBox *m_autoDownload;
   QSpinBox *m_interval;
+  Settings *m_settings;
 };
 #endif
 

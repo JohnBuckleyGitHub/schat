@@ -57,4 +57,23 @@ protected:
   QStackedWidget *m_pagesWidget;
 };
 
+
+/*!
+ * \brief Абстрактный базовый класс страницы настроек.
+ */
+class AbstractSettingsPage : public QWidget
+{
+  Q_OBJECT
+
+public:
+  AbstractSettingsPage(int id, QWidget *parent = 0);
+
+public slots:
+  void reset(int /*page*/) {}
+  void save()              {}
+
+protected:
+  int m_id;
+};
+
 #endif /*ABSTRACTSETTINGSDIALOG_H_*/
