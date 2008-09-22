@@ -19,8 +19,11 @@
 #ifndef DAEMONSETTINGSDIALOG_H_
 #define DAEMONSETTINGSDIALOG_H_
 
+#include <QObject>
+
 #include "abstractsettingsdialog.h"
 
+class DaemonCommonSettings;
 class DaemonUiSettings;
 
 /*!
@@ -32,8 +35,32 @@ class DaemonSettingsDialog : public AbstractSettingsDialog
   Q_OBJECT
 
 public:
+  enum Page {
+    CommonPage
+  };
+
   DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
   ~DaemonSettingsDialog();
+
+private:
+  DaemonCommonSettings *m_commonPage;
+  DaemonUiSettings *m_settings;
+};
+
+
+/*!
+ * \brief Диалог "Настройка", страница "Интерфейс".
+ */
+class DaemonCommonSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  DaemonCommonSettings(DaemonUiSettings *settings, QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
 
 private:
   DaemonUiSettings *m_settings;

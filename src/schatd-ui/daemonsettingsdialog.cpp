@@ -27,10 +27,38 @@
 DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent)
   : AbstractSettingsDialog(parent), m_settings(settings)
 {
+  m_commonPage = new DaemonCommonSettings(settings, this);
+  createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
 }
 
 
 DaemonSettingsDialog::~DaemonSettingsDialog()
 {
   qDebug() << "DaemonSettingsDialog::~DaemonSettingsDialog()";
+}
+
+
+/*!
+ * \brief Конструктор класса DaemonCommonSettings.
+ */
+DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
+{  
+  QHBoxLayout *name = new QHBoxLayout(this);
+  QLabel *label = new QLabel("test", this);
+  name->addWidget(label);
+}
+
+
+void DaemonCommonSettings::reset(int page)
+{
+  if (page == m_id) {
+//    m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
+  }
+}
+
+
+void DaemonCommonSettings::save()
+{
+
 }
