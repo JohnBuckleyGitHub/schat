@@ -25,6 +25,9 @@
 
 class DaemonCommonSettings;
 class DaemonUiSettings;
+class QCheckBox;
+class QComboBox;
+class QSpinBox;
 
 /*!
  * \class DaemonSettingsDialog
@@ -64,6 +67,10 @@ public slots:
 
 private:
   DaemonUiSettings *m_settings;
+  QCheckBox *m_mainChannelLog;
+  QComboBox *m_listenCombo;
+  QSpinBox *m_logSpin;
+  QSpinBox *m_portSpin;
 };
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/
