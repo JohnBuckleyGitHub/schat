@@ -114,7 +114,12 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
 void DaemonCommonSettings::reset(int page)
 {
   if (page == m_id) {
-//    m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
+    m_listen->setCurrentIndex(0);
+    m_port->setValue(7666);
+    m_logLevel->setValue(0);
+    m_channelLog->setChecked(false);
+    m_maxUsers->setValue(0);
+    m_maxUsersPerIp->setValue(0);
   }
 }
 
