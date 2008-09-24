@@ -17,6 +17,7 @@
  */
 
 #include <QtGui>
+#include <QtNetwork>
 
 #include "daemonsettingsdialog.h"
 #include "daemonuisettings.h"
@@ -39,8 +40,9 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
 {
   m_listen = new QComboBox(this);
-  m_listen->addItem("0.0.0.0");
   m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
+  createListenList();
+
   m_port = new QSpinBox(this);
   m_port->setRange(1024, 65536);
   m_port->setValue(m_settings->getInt("ListenPort"));
@@ -82,11 +84,11 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
   m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
-  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу"));
+  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу, 0 - без ограничений"));
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
   m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
-  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса"));
+  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса, 0 - без ограничений"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
   maxUsersLabel->setBuddy(m_maxUsers);
@@ -120,4 +122,21 @@ void DaemonCommonSettings::reset(int page)
 void DaemonCommonSettings::save()
 {
 
+}
+
+
+void DaemonCommonSettings::createListenList()
+{
+  m_listen->addItem("0.0.0.0");
+
+  QList<QHostAddress> list = QNetworkInterface::allAddresses();
+  foreach (QHostAddress addr, list)
+    m_listen->addItem(addr.toString());
+
+  QString listenAddress = m_settings->getString("ListenAddress");
+  int index = m_listen->findText(listenAddress);
+  if (index == -1)
+    m_listen->setCurrentIndex(0);
+  else
+    m_listen->setCurrentIndex(index);
 }

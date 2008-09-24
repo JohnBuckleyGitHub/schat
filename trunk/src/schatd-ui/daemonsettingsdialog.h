@@ -64,6 +64,8 @@ public slots:
   void save();
 
 private:
+  void createListenList();
+
   DaemonUiSettings *m_settings;
   QCheckBox *m_channelLog;
   QComboBox *m_listen;
