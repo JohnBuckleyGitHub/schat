@@ -27,7 +27,7 @@
 DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent)
   : AbstractSettingsDialog(parent), m_settings(settings)
 {
-  m_commonPage = new DaemonCommonSettings(settings, this);
+  m_commonPage = new DaemonCommonSettings(settings, m_contentsWidget);
   createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
 }
 
@@ -44,47 +44,67 @@ DaemonSettingsDialog::~DaemonSettingsDialog()
 DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
 {
-  m_listenCombo = new QComboBox(this);
-  m_listenCombo->addItem("0.0.0.0");
-  m_portSpin = new QSpinBox(this);
-  m_portSpin->setRange(1024, 65536);
-  m_portSpin->setValue(m_settings->getInt("ListenPort"));
+  m_listen = new QComboBox(this);
+  m_listen->addItem("0.0.0.0");
+  m_port = new QSpinBox(this);
+  m_port->setRange(1024, 65536);
+  m_port->setValue(m_settings->getInt("ListenPort"));
 
   QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
-  listenLabel->setBuddy(m_listenCombo);
+  listenLabel->setBuddy(m_listen);
   QLabel *portLabel = new QLabel(tr("&Порт:"), this);
-  portLabel->setBuddy(m_portSpin);
+  portLabel->setBuddy(m_port);
 
   QGroupBox *listenGroup = new QGroupBox(tr("Интерфейс сервера"), this);
   QHBoxLayout *listenLay = new QHBoxLayout(listenGroup);
   listenLay->addWidget(listenLabel);
-  listenLay->addWidget(m_listenCombo);
+  listenLay->addWidget(m_listen);
   listenLay->addWidget(portLabel);
-  listenLay->addWidget(m_portSpin);
+  listenLay->addWidget(m_port);
   listenLay->addStretch();
 
-  m_logSpin = new QSpinBox(this);
-  m_logSpin->setRange(-1, 0);
-  m_logSpin->setValue(m_settings->getInt("LogLevel"));
+  m_logLevel = new QSpinBox(this);
+  m_logLevel->setRange(-1, 0);
+  m_logLevel->setValue(m_settings->getInt("LogLevel"));
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
-  logLabel->setBuddy(m_logSpin);
+  logLabel->setBuddy(m_logLevel);
   QHBoxLayout *logLevelLay = new QHBoxLayout;
   logLevelLay->addWidget(logLabel);
-  logLevelLay->addWidget(m_logSpin);
+  logLevelLay->addWidget(m_logLevel);
   logLevelLay->addStretch();
 
   QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
   QVBoxLayout *logLay = new QVBoxLayout(logGroup);
   logLay->addLayout(logLevelLay);
 
-  m_mainChannelLog = new QCheckBox(tr("Вести журнал главного канала"), this);
-  m_mainChannelLog->setChecked(m_settings->getBool("ChannelLog"));
-  logLay->addWidget(m_mainChannelLog);
-  logLay->setMargin(6);
+  m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
+  m_channelLog->setChecked(m_settings->getBool("ChannelLog"));
+  logLay->addWidget(m_channelLog);
+
+  m_maxUsers = new QSpinBox(this);
+  m_maxUsers->setRange(0, 10000);
+  m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
+  m_maxUsersPerIp = new QSpinBox(this);
+  m_maxUsersPerIp->setRange(0, 10000);
+  m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
+
+  QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
+  maxUsersLabel->setBuddy(m_maxUsers);
+  QLabel *maxUsersPerIpLabel = new QLabel(tr("Лимит подключений с &одного адреса:"), this);
+  maxUsersPerIpLabel->setBuddy(m_maxUsersPerIp);
+
+  QGroupBox *limitsGroup = new QGroupBox(tr("Ограничения"), this);
+  QGridLayout *limitsLay = new QGridLayout(limitsGroup);
+  limitsLay->addWidget(maxUsersLabel, 0, 0);
+  limitsLay->addWidget(m_maxUsers, 0, 1);
+  limitsLay->addWidget(maxUsersPerIpLabel, 1, 0);
+  limitsLay->addWidget(m_maxUsersPerIp, 1, 1);
+  limitsLay->setColumnStretch(2, 1);
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(listenGroup);
   mainLayout->addWidget(logGroup);
+  mainLayout->addWidget(limitsGroup);
   mainLayout->addStretch();
 }
 

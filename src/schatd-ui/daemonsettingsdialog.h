@@ -67,10 +67,12 @@ public slots:
 
 private:
   DaemonUiSettings *m_settings;
-  QCheckBox *m_mainChannelLog;
-  QComboBox *m_listenCombo;
-  QSpinBox *m_logSpin;
-  QSpinBox *m_portSpin;
+  QCheckBox *m_channelLog;
+  QComboBox *m_listen;
+  QSpinBox *m_logLevel;
+  QSpinBox *m_maxUsers;
+  QSpinBox *m_maxUsersPerIp;
+  QSpinBox *m_port;
 };
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/
