@@ -30,7 +30,6 @@ class QComboBox;
 class QSpinBox;
 
 /*!
- * \class DaemonSettingsDialog
  * \brief Настройка сервера
  */
 class DaemonSettingsDialog : public AbstractSettingsDialog
@@ -43,7 +42,6 @@ public:
   };
 
   DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
-  ~DaemonSettingsDialog();
 
 private:
   DaemonCommonSettings *m_commonPage;

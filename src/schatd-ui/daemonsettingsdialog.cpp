@@ -27,14 +27,8 @@
 DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent)
   : AbstractSettingsDialog(parent), m_settings(settings)
 {
-  m_commonPage = new DaemonCommonSettings(settings, m_contentsWidget);
+  m_commonPage = new DaemonCommonSettings(settings, this);
   createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
-}
-
-
-DaemonSettingsDialog::~DaemonSettingsDialog()
-{
-  qDebug() << "DaemonSettingsDialog::~DaemonSettingsDialog()";
 }
 
 

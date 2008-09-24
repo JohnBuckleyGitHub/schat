@@ -204,8 +204,6 @@ void DaemonUi::restart()
 
 void DaemonUi::settings()
 {
-  qDebug() << "DaemonUi::settings()";
-
   if (isHidden())
     show();
 
