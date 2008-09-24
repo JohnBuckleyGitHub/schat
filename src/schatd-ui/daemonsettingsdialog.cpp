@@ -40,9 +40,11 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
 {
   m_listen = new QComboBox(this);
   m_listen->addItem("0.0.0.0");
+  m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
   m_port = new QSpinBox(this);
   m_port->setRange(1024, 65536);
   m_port->setValue(m_settings->getInt("ListenPort"));
+  m_port->setToolTip(tr("Порт на котором сервер будет ожидать подключения"));
 
   QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
   listenLabel->setBuddy(m_listen);
@@ -60,6 +62,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
   m_logLevel->setValue(m_settings->getInt("LogLevel"));
+  m_logLevel->setToolTip(tr("Уровень детализации журнала, -1 журналирование отключено"));
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
   logLabel->setBuddy(m_logLevel);
   QHBoxLayout *logLevelLay = new QHBoxLayout;
@@ -73,14 +76,17 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
 
   m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
   m_channelLog->setChecked(m_settings->getBool("ChannelLog"));
+  m_channelLog->setToolTip(tr("Управляет режимом записи событий основного канала в специальный журнал"));
   logLay->addWidget(m_channelLog);
 
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
   m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
+  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу"));
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
   m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
+  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
   maxUsersLabel->setBuddy(m_maxUsers);
