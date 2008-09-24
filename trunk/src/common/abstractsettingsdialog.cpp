@@ -45,8 +45,6 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
   connect(m_cancelButton, SIGNAL(clicked()), SLOT(close()));
   connect(m_resetButton, SIGNAL(clicked()), SLOT(reset()));
 
-  m_contentsWidget->setCurrentRow(0);
-
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addStretch();
   buttonLayout->addWidget(m_resetButton);
@@ -56,13 +54,14 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
 
   QGridLayout *mainLayout = new QGridLayout(this);
   mainLayout->setColumnStretch(0, 1);
-  mainLayout->setColumnStretch(1, 3);
+  mainLayout->setColumnStretch(1, 4);
   mainLayout->addWidget(m_contentsWidget, 0, 0);
   mainLayout->addWidget(m_pagesWidget, 0, 1);
   mainLayout->addWidget(line, 1, 0, 1, 2);
   mainLayout->addLayout(buttonLayout, 2, 0, 1, 2);
   mainLayout->setMargin(3);
   mainLayout->setSpacing(3);
+  m_badSize = true;
 
   setWindowTitle(tr("Настройка"));
 }
@@ -72,6 +71,19 @@ void AbstractSettingsDialog::setPage(int page)
 {
   m_contentsWidget->setCurrentRow(page);
   m_pagesWidget->setCurrentIndex(page);
+}
+
+
+void AbstractSettingsDialog::showEvent(QShowEvent *event)
+{
+  if (m_badSize) {
+    m_contentsWidget->setMinimumSize(m_contentsWidget->size());
+    resize(100, 100);
+    m_contentsWidget->setCurrentRow(0);
+    m_badSize = false;
+  }
+
+  QDialog::showEvent(event);
 }
 
 

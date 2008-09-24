@@ -42,6 +42,9 @@ signals:
   void reset(int page);
   void save();
 
+protected:
+  void showEvent(QShowEvent *event); 
+
 public slots:
   void accept();
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
@@ -50,6 +53,7 @@ public slots:
 protected:
   void createPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
 
+  bool m_badSize;
   QListWidget *m_contentsWidget;
   QPushButton *m_cancelButton;
   QPushButton *m_okButton;
