@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -165,14 +165,25 @@ void NetworkWidget::currentIndexChanged(int index)
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается при изменении текста в `m_selectCombo`.
  * Разрешаем выбор порта.
  */
-void NetworkWidget::editTextChanged(const QString &/*text*/)
+void NetworkWidget::editTextChanged(const QString &text)
 {
-  m_portLabel->setEnabled(true);
-  m_portBox->setEnabled(true);
+  QPalette palette = m_selectCombo->palette();
+  bool ok = !text.isEmpty();
+
+  if (ok)
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, QColor("#f66"));
+
+  m_selectCombo->setPalette(palette);
+  m_portLabel->setEnabled(ok);
+  m_portBox->setEnabled(ok);
+
+  emit validServer(ok);
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,16 +38,16 @@ class MainChannel : public AbstractTab {
 public:
   MainChannel(Settings *settings, QWidget *parent = 0);
   void displayChoiceServer(bool display);
-  
+
 public slots:
   inline void msgNewMessage(const QString &nick, const QString &message) { browser->msgNewMessage(nick, message); }
 
 private slots:
   void serverChanged();
-  
+
 private:
   void createActions();
-  
+
   NetworkWidget *m_networkWidget;
   QAction *m_connectCreateAction;
   QHBoxLayout *m_networkLayout;

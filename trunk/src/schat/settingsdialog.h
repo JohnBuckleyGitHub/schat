@@ -61,9 +61,6 @@ public:
 
   SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent = 0);
 
-private slots:
-  inline void validNick(bool b) { m_okButton->setEnabled(b); }
-
 private:
   EmoticonsSettings *m_emoticonsPage;
   InterfaceSettings *m_interfacePage;
@@ -112,6 +109,9 @@ class NetworkSettings : public AbstractSettingsPage
 
 public:
   NetworkSettings(Settings *settings, QWidget *parent = 0);
+
+signals:
+  void validServer(bool valid);
 
 public slots:
   void reset(int page);
