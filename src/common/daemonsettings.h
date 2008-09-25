@@ -29,6 +29,7 @@ class DaemonSettings : public AbstractSettings {
 public:
   DaemonSettings(const QString &filename, QObject *parent = 0);
   void read();
+  void write();
 };
 
 #endif /*DAEMONSETTINGS_H_*/
