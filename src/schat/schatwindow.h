@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -74,11 +74,6 @@ public slots:
   #endif
 
 private slots:
-  inline void settingsEmoticons() { settingsPage(SettingsDialog::EmoticonsPage); }
-  inline void settingsInterface() { settingsPage(SettingsDialog::InterfacePage); }
-  inline void settingsNetwork()   { settingsPage(SettingsDialog::NetworkPage); }
-  inline void settingsProfile()   { settingsPage(SettingsDialog::ProfilePage); }
-  inline void settingsUpdate()    { settingsPage(SettingsDialog::UpdatePage); }
   void about();
   void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
@@ -102,6 +97,7 @@ private slots:
   void resetTabNotice(int index);
   void sendMsg(const QString &message);
   void serverMessage(const QString &msg);
+  void settings();
   void settingsChanged(int notify);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
@@ -127,7 +123,6 @@ private:
   void hideChat();
   void restoreGeometry();
   void saveGeometry();
-  void settingsPage(int page = 0);
   void showChat();
   void startNotice(int index);
   void uniqueNick();

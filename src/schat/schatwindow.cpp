@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -662,6 +662,24 @@ void SChatWindow::serverMessage(const QString &msg)
 }
 
 
+void SChatWindow::settings()
+{
+  if (isHidden())
+    show();
+
+  if (!settingsDialog) {
+    settingsDialog = new SettingsDialog(m_profile, m_settings, this);
+    settingsDialog->show();
+  }
+
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    settingsDialog->setPage(action->data().toInt());
+
+  settingsDialog->activateWindow();
+}
+
+
 /** [private slots]
  * 
  */
@@ -770,24 +788,6 @@ void SChatWindow::updateGetDone(int code)
     s.setValue("Updates/ReadyToInstall", false);
 }
 #endif
-
-
-/** [private slots]
- * 
- */
-void SChatWindow::settingsPage(int page)
-{
-  if (isHidden())
-    show();
-  
-  if (!settingsDialog) {
-    settingsDialog = new SettingsDialog(m_profile, m_settings, this);
-    settingsDialog->show();
-  }
-  
-  settingsDialog->setPage(page);
-  settingsDialog->activateWindow();
-}
 
 
 /** [private slots]
@@ -979,45 +979,44 @@ void SChatWindow::createActions()
 {
   // О Программе...
   m_aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
-  connect(m_aboutAction, SIGNAL(triggered()), this, SLOT(about()));
-  
-  // Открытие новой вкладки, для создания нового подключения
-//  addTabAction = new QAction(QIcon(":/images/tab_new.png"), tr("Новое прямое подключение"), this);
-//  addTabAction->setShortcut(tr("Ctrl+N"));
-//  addTabAction->setStatusTip(tr("Открытие новой вкладки, для создания нового прямого подключения"));
-//  connect(addTabAction, SIGNAL(triggered()), this, SLOT(addTab()));
+  connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
   
   // Закрыть вкладку
   m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
   m_closeTabAction->setStatusTip(tr("Закрыть вкладку"));
-  connect(m_closeTabAction, SIGNAL(triggered()), this, SLOT(closeTab()));
-  
+  connect(m_closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
+
   // Смайлики...
   m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
-  connect(m_emoticonsSetAction, SIGNAL(triggered()), this, SLOT(settingsEmoticons()));
-  
+  m_emoticonsSetAction->setData(SettingsDialog::EmoticonsPage);
+  connect(m_emoticonsSetAction, SIGNAL(triggered()), SLOT(settings()));
+
   // Интерфейс...
   m_interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
-  connect(m_interfaceSetAction, SIGNAL(triggered()), this, SLOT(settingsInterface()));
-  
+  m_interfaceSetAction->setData(SettingsDialog::InterfacePage);
+  connect(m_interfaceSetAction, SIGNAL(triggered()), SLOT(settings()));
+
   // Сеть...
   m_networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
-  connect(m_networkSetAction, SIGNAL(triggered()), this, SLOT(settingsNetwork()));
-  
+  m_networkSetAction->setData(SettingsDialog::NetworkPage);
+  connect(m_networkSetAction, SIGNAL(triggered()), SLOT(settings()));
+
   // Личные данные...
   m_profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
   m_profileSetAction->setShortcut(tr("Ctrl+F12"));
-  connect(m_profileSetAction, SIGNAL(triggered()), this, SLOT(settingsProfile()));
-  
+  m_profileSetAction->setData(SettingsDialog::ProfilePage);
+  connect(m_profileSetAction, SIGNAL(triggered()), SLOT(settings()));
+
   // Обновления...
   #ifdef SCHAT_UPDATE
   updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
-  connect(updateSetAction, SIGNAL(triggered()), this, SLOT(settingsUpdate()));
+  updateSetAction->setData(SettingsDialog::UpdatePage);
+  connect(updateSetAction, SIGNAL(triggered()), SLOT(settings()));
   #endif
-  
+
   // Выход из программы
   m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
-  connect(m_quitAction, SIGNAL(triggered()), this, SLOT(closeChat()));
+  connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
 }
 
 
