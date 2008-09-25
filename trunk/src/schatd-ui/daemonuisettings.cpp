@@ -27,3 +27,31 @@ DaemonUiSettings::DaemonUiSettings(const QString &filename, QObject *parent)
   : DaemonSettings(filename, parent)
 {
 }
+
+
+void DaemonUiSettings::write()
+{
+  if (!m_string.isEmpty()) {
+    QMapIterator<QString, QString> i(m_string);
+    while (i.hasNext()) {
+      i.next();
+      m_settings->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_bool.isEmpty()) {
+    QMapIterator<QString, bool> i(m_bool);
+    while (i.hasNext()) {
+      i.next();
+      m_settings->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_int.isEmpty()) {
+    QMapIterator<QString, int> i(m_int);
+    while (i.hasNext()) {
+      i.next();
+      m_settings->setValue(i.key(), i.value());
+    }
+  }
+}
