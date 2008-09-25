@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -58,6 +58,8 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
+
+  connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
 }
 
 

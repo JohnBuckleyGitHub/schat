@@ -48,7 +48,8 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
   #endif
 
-  connect(m_profilePage, SIGNAL(validNick(bool)), SLOT(validNick(bool)));
+  connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
+  connect(m_networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
 
 
@@ -60,7 +61,7 @@ ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, Q
 {
   m_profile  = profile;
   m_profileWidget = new ProfileWidget(profile, this);
-  connect(m_profileWidget, SIGNAL(validNick(bool)), this, SIGNAL(validNick(bool)));
+  connect(m_profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
   m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
@@ -124,6 +125,7 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
 
   m_networkWidget = new NetworkWidget(m_settings, this);
+  connect(m_networkWidget, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
   QHBoxLayout *networkLayout = new QHBoxLayout;
   networkLayout->addWidget(m_networkWidget);
