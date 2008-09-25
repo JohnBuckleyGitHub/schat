@@ -49,6 +49,7 @@ public slots:
   #endif
 
 private slots:
+  void checkStart();
   void exit();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void init();
@@ -101,6 +102,7 @@ private:
   QString m_appDir;
   QString m_daemonFile;
   QSystemTrayIcon *m_tray;
+  QTimer m_checkTimer;
   QToolButton *m_restartButton;
   QToolButton *m_settingsButton;
   QToolButton *m_startButton;
