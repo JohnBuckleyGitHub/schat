@@ -33,6 +33,14 @@ DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *
 }
 
 
+void DaemonSettingsDialog::accept()
+{
+  emit save();
+  m_settings->write();
+  close();
+}
+
+
 /*!
  * \brief Конструктор класса DaemonCommonSettings.
  */
@@ -126,7 +134,12 @@ void DaemonCommonSettings::reset(int page)
 
 void DaemonCommonSettings::save()
 {
-
+  m_settings->setString("ListenAddress", m_listen->currentText());
+  m_settings->setInt("ListenPort",       m_port->value());
+  m_settings->setInt("LogLevel",         m_logLevel->value());
+  m_settings->setBool("ChannelLog",      m_channelLog->isChecked());
+  m_settings->setInt("MaxUsers",         m_maxUsers->value());
+  m_settings->setInt("MaxUsersPerIp",    m_maxUsersPerIp->value());
 }
 
 

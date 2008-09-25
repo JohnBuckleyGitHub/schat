@@ -43,6 +43,9 @@ public:
 
   DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
 
+public slots:
+  void accept();
+
 private:
   DaemonCommonSettings *m_commonPage;
   DaemonUiSettings *m_settings;
