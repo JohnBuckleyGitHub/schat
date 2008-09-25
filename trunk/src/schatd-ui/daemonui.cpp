@@ -32,6 +32,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   setWindowFlags(Qt::Tool);
 
   m_settings = new DaemonUiSettings(qApp->applicationDirPath() + "/schatd.conf", this);
+  m_checkTimer.setInterval(5000);
+  connect(&m_checkTimer, SIGNAL(timeout()), SLOT(checkStart()));
 
   createActions();
   createButtons();
@@ -133,6 +135,13 @@ void DaemonUi::handleMessage(const QString& message)
 #endif
 
 
+void DaemonUi::checkStart()
+{
+  if (m_status == Starting || m_status == Restarting)
+    setStatus(Error);
+}
+
+
 void DaemonUi::exit()
 {
   m_client->exit();
@@ -179,6 +188,7 @@ void DaemonUi::notify(LocalClientService::Reason reason)
 {
   switch (reason) {
     case LocalClientService::Start:
+      m_checkTimer.stop();
       setStatus(Started);
       break;
 
@@ -224,6 +234,7 @@ void DaemonUi::start()
     if (m_status != Restarting)
       setStatus(Starting);
 
+    m_checkTimer.start();
     m_client->connectToServer();
   }
 }
