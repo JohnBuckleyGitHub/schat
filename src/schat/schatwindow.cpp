@@ -442,21 +442,32 @@ void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QStr
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   QStandardItem *item = findItem(nick);
-  
+
   if (item) {
     item->setText(newNick);
     model.sort(0);
-    
-    int index = tabIndex(nick);
-    if (index != -1) {
-      m_tabs->setTabText(index, newNick);
-      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-      tab->browser->setChannel(newNick);
+
+    int oldIndex = tabIndex(nick);
+    int newIndex = tabIndex(newNick);
+
+    if (oldIndex != -1) {
+      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(oldIndex));
+
+      if (newIndex == -1) {
+        m_tabs->setTabText(oldIndex, newNick);
+        tab->browser->setChannel(newNick);
+      }
+      else {
+        AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(newIndex));
+        tab->browser->msgChangedNick(gender, nick, newNick);
+        if (m_tabs->currentIndex() == oldIndex)
+          m_tabs->setCurrentIndex(newIndex);
+      }
+
       tab->browser->msgChangedNick(gender, nick, newNick);
     }
-    
+
     newProfile(gender, newNick, name);
-    
     mainChannel->browser->msgChangedNick(gender, nick, newNick);
   }  
 }
@@ -536,8 +547,15 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
     int index = tabIndex(nick);
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-      if (tab->type == AbstractTab::Private)
+      if (tab->type == AbstractTab::Private) {
+        m_tabs->setTabToolTip(index, userToolTip(profile));
+        tab->icon.addFile(":/images/" + profile.gender() + ".png");
+
+        if (!tab->notice)
+          m_tabs->setTabIcon(index, tab->icon);
+
         tab->browser->msgNewParticipant(profile.genderNum(), nick);
+      }
     }
     
     mainChannel->browser->msgNewParticipant(profile.genderNum(), nick);
