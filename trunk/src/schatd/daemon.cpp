@@ -772,13 +772,25 @@ void Daemon::link()
   m_numeric = quint8(m_settings->getInt("Numeric"));
   if (!m_numeric || m_settings->getString("Name").isEmpty() || !m_settings->getBool("Network")) {
     m_network = 0;
+
+    if (m_settings->getBool("Network")) {
+      QString reason;
+      if (m_numeric)
+        reason = tr("Пустое имя сервера");
+      else
+        reason = tr("Номер сервера равен 0");
+
+      LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1]").arg(reason));
+    }
+
     return;
   }
 
   m_network = new Network(QCoreApplication::instance()->applicationDirPath());
-  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
+  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) { /// \todo Добавить корректную информацию о проблемах с network.xml
     delete m_network;
     m_network = 0;
+    LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [Ошибка разбора файла сети: %1]").arg(m_settings->getString("NetworkFile")));
   }
   else {
     m_profile = new AbstractProfile(this);
@@ -807,8 +819,12 @@ void Daemon::link()
         delete m_network;
         delete m_profile;
         m_network = 0;
+        LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [Не указан адрес вышестоящего сервера]"));
+        return;
       }
     }
+
+    LOG(0, tr("- Notice - Поддержка сети успешно инициализирована, %1@%2 \"%3\"").arg(m_numeric).arg(m_settings->getString("Name")).arg(m_network->name()));
   }
 }
 
