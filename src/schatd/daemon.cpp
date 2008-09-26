@@ -763,6 +763,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
  * - "Name" не является пустой строкой
  * - "Network" == true
  * - "NetworkFile" удалось успешно прочитать xml файл сети.
+ * - "RootServer" для некорневого сервера необходимы адреса вышестоящего сервера.
  *
  * В случае ошибки \a m_network устанавливается в \a 0.
  */
@@ -786,20 +787,27 @@ void Daemon::link()
     m_profile->setByeMsg(m_settings->getString("Name"));
     m_numerics << m_numeric;
 
-    if (m_network->count() > 0) {
-      m_link = new ClientService(m_profile, m_network, this);
-      connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
-      connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
-      connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
-      connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
-      connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
-      connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(clientAccessGranted(const QString &, const QString &, quint16)));
-      connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
-      connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
-      connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
-      connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
-      connect(m_link, SIGNAL(syncBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
-      m_link->connectToHost();
+    if (!m_settings->getBool("RootServer")) {
+      if (m_network->count() > 0) {
+        m_link = new ClientService(m_profile, m_network, this);
+        connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
+        connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
+        connect(m_link, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
+        connect(m_link, SIGNAL(syncNumerics(const QList<quint8> &)), SLOT(syncNumerics(const QList<quint8> &)));
+        connect(m_link, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
+        connect(m_link, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(clientAccessGranted(const QString &, const QString &, quint16)));
+        connect(m_link, SIGNAL(syncUsersEnd()), SLOT(clientSyncUsersEnd()));
+        connect(m_link, SIGNAL(unconnected(bool)), SLOT(clientServiceLeave(bool)));
+        connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
+        connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
+        connect(m_link, SIGNAL(syncBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
+        m_link->connectToHost();
+      }
+      else {
+        delete m_network;
+        delete m_profile;
+        m_network = 0;
+      }
     }
   }
 }

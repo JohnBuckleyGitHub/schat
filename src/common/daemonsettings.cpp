@@ -47,6 +47,7 @@ void DaemonSettings::read()
   readBool("PrivateLog", false);
   readBool("LocalServer", true);
   readBool("Network", false);
+  readBool("RootServer", false);
   readInt("ListenPort", 7666);
   readInt("LogLevel", 0);
   readInt("Numeric", 0);
