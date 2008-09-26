@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /*!
  * \class DaemonSettings
  * \brief Класс читает настройки сервера.
- * 
+ *
  * Читает настройки и предоставляет методы для получения настроек.
  */
 
@@ -38,14 +38,15 @@ DaemonSettings::DaemonSettings(const QString &filename, QObject *parent)
 
 /*!
  * \brief Чтение настроек
- * 
- * Сервер не принципиально не поддерживает запись настроек.
+ *
+ * Сервер принципиально не поддерживает запись настроек.
  */
 void DaemonSettings::read()
 {
   readBool("ChannelLog", false);
   readBool("PrivateLog", false);
   readBool("LocalServer", true);
+  readBool("Network", false);
   readInt("ListenPort", 7666);
   readInt("LogLevel", 0);
   readInt("Numeric", 0);
