@@ -24,6 +24,7 @@
 #include "abstractsettingsdialog.h"
 
 class DaemonCommonSettings;
+class DaemonNetSettings;
 class DaemonUiSettings;
 class QCheckBox;
 class QComboBox;
@@ -38,7 +39,8 @@ class DaemonSettingsDialog : public AbstractSettingsDialog
 
 public:
   enum Page {
-    CommonPage
+    CommonPage,
+    NetPage
   };
 
   DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
@@ -48,12 +50,13 @@ public slots:
 
 private:
   DaemonCommonSettings *m_commonPage;
+  DaemonNetSettings *m_netPage;
   DaemonUiSettings *m_settings;
 };
 
 
 /*!
- * \brief Диалог "Настройка", страница "Интерфейс".
+ * \brief Общие настройки сервера.
  */
 class DaemonCommonSettings : public AbstractSettingsPage
 {
@@ -76,6 +79,25 @@ private:
   QSpinBox *m_maxUsers;
   QSpinBox *m_maxUsersPerIp;
   QSpinBox *m_port;
+};
+
+
+/*!
+ * \brief Настройки сети серверов.
+ */
+class DaemonNetSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
+
+private:
+  DaemonUiSettings *m_settings;
 };
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/

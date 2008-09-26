@@ -29,7 +29,10 @@ DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *
   : AbstractSettingsDialog(parent), m_settings(settings)
 {
   m_commonPage = new DaemonCommonSettings(settings, this);
+  m_netPage    = new DaemonNetSettings(settings, this);
+
   createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
+  createPage(QIcon(":/images/network.png"), tr("Сеть"), m_netPage);
 }
 
 
@@ -157,4 +160,28 @@ void DaemonCommonSettings::createListenList()
     m_listen->setCurrentIndex(0);
   else
     m_listen->setCurrentIndex(index);
+}
+
+
+/*!
+ * \brief Конструктор класса DaemonNetSettings.
+ */
+DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
+{
+
+}
+
+
+void DaemonNetSettings::reset(int page)
+{
+  if (page == m_id) {
+
+  }
+}
+
+
+void DaemonNetSettings::save()
+{
+
 }
