@@ -34,6 +34,7 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
   m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);
   m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_contentsWidget = new QListWidget(this);
+  m_contentsWidget->setSpacing(1);
   m_pagesWidget    = new QStackedWidget(this);
 
   QFrame *line = new QFrame(this);
