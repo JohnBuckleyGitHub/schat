@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 /*!
  * \class Daemon
  * \brief Сервер чата
- * 
+ *
  * Класс полностью включает в себя функциональность сервера чата.
  */
 
@@ -58,7 +58,7 @@ Daemon::Daemon(QObject *parent)
 
 /*!
  * \brief Запуск сервера.
- * 
+ *
  * Функция читает настройки сервера, устанавливает параметры логирования каналов
  * и производит запуск сервера \a m_server.
  * Данные о попытке запуска заносятся в лог файл.
@@ -121,7 +121,7 @@ bool Daemon::start()
 
 /*!
  * \brief Уведомление об успешном установлении связи с вышестоящим сервером.
- * 
+ *
  * Функция устанавливает номер вышестоящего сервера и добавляет его номер в список номеров.
  * \param network Параметр игнорируется и не используется.
  * \param server Параметр игнорируется и не используется.
@@ -136,7 +136,7 @@ void Daemon::clientAccessGranted(const QString &/*network*/, const QString &/*se
 
 /*!
  * \brief Обработка потери соединения с вышестоящим сервером.
- * 
+ *
  * Функция сбрасывает \a m_remoteNumeric, удаляет не существующие больше номера серверов из \a m_numerics
  * и пользователей, которые были к ним подключены из \a m_users с рассылкой сигнала об отключении пользователя.
  * \param echo Параметр игнорируется и не используется.
@@ -161,7 +161,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
 
 /*!
  * \brief Синхронизация события подключения к удалённому серверу нового пользователя.
- * 
+ *
  * Слот вызывается при получении пакета \b OpcodeNewUser от локального клиентского подключения либо от удалённого сервера.
  * Функция вносит нового пользователя в список \a m_users и высылает уведомление.
  * \param list Стандартный список, содержащий в себе полные данные пользователя.
@@ -188,7 +188,7 @@ void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 nu
 
 /*!
  * \brief Уведомление о завершении передачи списка пользователей от вышестоящего сервера.
- * 
+ *
  * Функция высылает в ответ список локальных пользователей.
  */
 void Daemon::clientSyncUsersEnd()
@@ -208,7 +208,7 @@ void Daemon::clientSyncUsersEnd()
 
 /*!
  * \brief Синхронизация события отключения пользователя от удалённого сервера.
- * 
+ *
  * Функция устанавливает в профиле пользователя новое сообщение о выходе и вызывает функцию userLeave(const QString &nick).
  * \param nick Ник пользователя.
  * \param bye Сообщение о выходе.
@@ -226,7 +226,7 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
 
 /*!
  * \brief Обработка приветствия от подключенного клиента.
- * 
+ *
  * В зависимости от значения \a flag вызывается функция greetingLink(const QStringList &list, DaemonService *service) для сервера
  * либо greetingUser(const QStringList &list, DaemonService *service) для клиента.
  * \param list Стандартный список, содержащий в себе полные данные пользователя.
@@ -240,7 +240,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
 #endif
 
   DaemonService *service = qobject_cast<DaemonService *>(sender());
-  if (service)  
+  if (service)
     if (flag == FlagLink)
       greetingLink(list, service);
     else
@@ -250,7 +250,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
 
 /*!
  * \brief Обслуживание нового входящего соединения.
- * 
+ *
  * При наличии ожидающего соединения создаётся класс DaemonService получающий указатель на \a QTcpSocket.
  * Функция также создаёт базовые соединения сигнал/слот, общие для клиентского и межсерверного соединения.
  */
@@ -270,8 +270,8 @@ void Daemon::incomingConnection()
 
 /*!
  * \brief Уведомление об отключении от удалённого сервера другого сервера.
- * 
- * Номер сервера удаляется из списка серверов и высылается соответствующие уведомление. 
+ *
+ * Номер сервера удаляется из списка серверов и высылается соответствующие уведомление.
  * \param numeric Номер сервера подключившегося к сети.
  * \param network Название сети.
  * \param ip Адрес сервера
@@ -287,19 +287,19 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
 
 /*!
  * \brief Обработка нового сообщения от локального пользователя.
- * 
+ *
  * Для всех сообщений проверяется наличие в них команды для сервера.
- * 
+ *
  * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал.
  * Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
- * 
+ *
  * Отправка приватных сообщений производится различными способами в зависимости от того к какому серверу подключен получатель.
  * Получатель может быть:
  *  - Подключенным локально к этому серверу (numeric == m_numeric).
  *  - Подключенным к одному из серверов подключенных к данному серверу (m_links.contains(numeric)).
  *  - Подключенным к серверу к которому невозможно обратится на прямую, в этом случае при наличии клиентского подключения,
  * сообщение передаётся на вышестоящий сервер.
- * 
+ *
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param nick Ник отправителя сообщения.
  * \param msg Сообщение.
@@ -334,7 +334,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
       if (!senderService)
         return;
       bool err = true;
-      
+
       if (numeric == m_numeric) {
         err = false;
         DaemonService *service = m_users.value(channel)->service();
@@ -342,7 +342,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
           service->sendPrivateMessage(0, nick, msg);
       }
       else if (m_links.contains(numeric)) {
-        err = false;        
+        err = false;
         DaemonService *service = m_links.value(numeric)->service();
         if (service)
           service->sendRelayMessage(channel, nick, msg);
@@ -351,7 +351,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
         err = false;
         m_link->sendRelayMessage(channel, nick, msg);
       }
-      
+
       if (!err)
         senderService->sendPrivateMessage(1, channel, msg);
     }
@@ -361,8 +361,8 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
 
 /*!
  * \brief Уведомление о подключении к удалённому серверу другого сервера.
- * 
- * Номер нового сервера добавляется в список серверов и высылается уведомление о новом сервере. 
+ *
+ * Номер нового сервера добавляется в список серверов и высылается уведомление о новом сервере.
  * \param numeric Номер сервера подключившегося к сети.
  * \param network Название сети.
  * \param ip Адрес сервера
@@ -379,13 +379,13 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 
 /*!
  * \brief Обработка сообщения пользователя полученного с другого сервера.
- * 
+ *
  * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал. Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
- * 
+ *
  * Отправка приватных сообщений произовдится различными способами в зависимости от того к какому серверу подключен получатель. Получатель может быть:
  *  - Подключенным локально к этому серверу (numeric == m_numeric).
  *  - Подключенным к одному из серверов подкюченных к данному серверу (m_links.contains(numeric)).
- * 
+ *
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param sender  Ник отправителся.
  * \param msg Cообщение.
@@ -438,7 +438,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
 
 /*!
  * \brief Обработка отключения авторизированного клиента.
- * 
+ *
  * В зависимости от значения flag вызывается функция linkLeave(const QString &nick) для сервера либо userLeave(const QString &nick) для клиента.
  * \param nick Ник пользователя.
  * \param flag Флаг подключения.
@@ -458,7 +458,7 @@ void Daemon::serviceLeave(const QString &nick, quint8 flag)
 
 
 /** [private slots]
- * 
+ *
  */
 void Daemon::syncNumerics(const QList<quint8> &numerics)
 {
@@ -481,7 +481,7 @@ void Daemon::incomingLocalConnection()
 
 /*!
  * \brief Обработка команд предназначенных для сервера.
- * 
+ *
  * \param nick Ник пользователя отправившего сообщение.
  * \param msg Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
@@ -538,7 +538,7 @@ int Daemon::localUsersCount() const
 
 /*!
  * \brief Возвращает html форматированную строку содержащую информацию о сервере.
- * 
+ *
  * \return Строка с информацией о сервере.
  */
 QString Daemon::serverInfo() const
@@ -620,17 +620,17 @@ QString Daemon::serverInfo() const
 
 /*!
  * \brief Обработка приветствия от удалённого сервера.
- * 
+ *
  * Для успешного подключения должны быть соблюдены следующие условия:
  *  - Сконфигурированная сеть \a m_network.
  *  - Должны совпадать ключи сети.
  *  - Удалённый сервер должен иметь уникальный номер.
- * 
+ *
  * При успешном подключении сервис уведомляется об этом, также производится синхронизация номеров сети и пользователей.
  * Функция устанавливает соединения сигнал/слот специфичные для данного типа соединения.
- * 
+ *
  * Факт подключения записывается в журнал.
- * 
+ *
  * \param list Стандартный список, содержащий в себе полные данные пользователя.
  * \param service Указатель на сервис.
  */
@@ -650,7 +650,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
             return;
           }
         }
-        
+
         m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
         m_numerics << numeric;
         connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
@@ -665,7 +665,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->sendNumerics(m_numerics);
 
         emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
-        
+
         sendAllUsers(service);
 
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
@@ -688,7 +688,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 
 /*!
  * \brief Обработка приветствия от клиента.
- * 
+ *
  * \param list Стандартный список, содержащий в себе полные данные пользователя.
  * \param service Указатель на сервис.
  */
@@ -732,7 +732,7 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
     service->accessGranted(m_numeric);
     emit newUser(list, 1, m_numeric);
-  
+
     LOG(0, tr("- Notice - Connect: %1@%2, %3, %4, %5")
         .arg(list.at(AbstractProfile::Nick))
         .arg(list.at(AbstractProfile::Host))
@@ -755,17 +755,21 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 }
 
 
-/** [private]
- * Инициализирует файл сети "NetworkFile".
- * Если "Numeric" этого сервера равен `0`, то выходим из функции, без создания соединения.
- * В случае успешной инициализации сети, создаём локальный профиль `m_profile` и
- * если указан адрес вышестоящего сервера, то производится попытка подключения.
- * Если инициализация сети прошла с ошибкой `m_network` устанавливается в `0`.
+/*!
+ * \brief Инициализирует поддержку сети и при необходимости устанавливает соединение с вышестоящим сервером.
+ *
+ * Для успешной инициализации сети необходимы следубщие условия
+ * - "Numeric" > 0
+ * - "Name" не является пустой строкой
+ * - "Network" == true
+ * - "NetworkFile" удалось успешно прочитать xml файл сети.
+ *
+ * В случае ошибки \a m_network устанавливается в \a 0.
  */
 void Daemon::link()
 {
   m_numeric = quint8(m_settings->getInt("Numeric"));
-  if (!m_numeric || m_settings->getString("Name").isEmpty()) {
+  if (!m_numeric || m_settings->getString("Name").isEmpty() || !m_settings->getBool("Network")) {
     m_network = 0;
     return;
   }
@@ -803,7 +807,7 @@ void Daemon::link()
 
 /*!
  * \brief Обработка отключения нижестоящего сервера.
- * 
+ *
  * Сервер удаляется из списка подключенных серверов и его номер удаляется из списка номеров серверов.
  * Высылается уведомление об отключении сервера, и отключаются все клиенты, ассоциированные с этим сервером.
  * Событие записывается в журнал.
@@ -854,7 +858,7 @@ void Daemon::sendAllUsers(DaemonService *service)
 
 /*!
  * \brief Универсальная функция для обработки изменения сообщения о выходе пользователем.
- * 
+ *
  * \param nick Ник пользователя.
  * \param bye Новое сообщение о выходе.
  * \param local Флаг локального подключения \a true локальное \a false удалённое.
@@ -877,7 +881,7 @@ void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
 
 /*!
  * \brief Универсальная функция для обработки изменения профиля и/или ника пользователя.
- * 
+ *
  * \param gender Новый пол пользователя.
  * \param nick Старый ник пользователя.
  * \param nNick Новый ник пользователя, может быть пустой строкой, что означает что ник не изменился.
@@ -900,7 +904,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
     unit->profile()->setGender(gender);
     unit->profile()->setFullName(name);
     emit sendNewProfile(gender, nick, name);
-    
+
     if (m_network) {
       emit sendSyncProfile(gender, nick, "", name);
       if (m_remoteNumeric && local)
@@ -938,7 +942,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
 
 
 /** [private]
- * 
+ *
  */
 void Daemon::userLeave(const QString &nick)
 {
