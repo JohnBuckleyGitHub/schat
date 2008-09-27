@@ -255,14 +255,30 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
 void DaemonNetSettings::reset(int page)
 {
   if (page == m_id) {
-
+    m_network->setChecked(false);
+    m_root->setChecked(false);
+    m_netName->setText("Unknown Server");
+    m_key->setText("");
+    m_rootAddr->setText("");
+    m_name->setText("Unknown Server");
+    m_numeric->setValue(1);
+    m_limit->setValue(0);
+    enableAll(false);
+    changeRole(false);
   }
 }
 
 
 void DaemonNetSettings::save()
 {
+  m_settings->setBool("Network", m_network->isChecked());
 
+  if (m_network->isChecked()) {
+    m_settings->setBool("RootServer", m_root->isChecked());
+    m_settings->setInt("Numeric",     m_numeric->value());
+    m_settings->setInt("MaxLinks",    m_limit->value());
+    m_settings->setString("Name",     m_name->text());
+  }
 }
 
 
