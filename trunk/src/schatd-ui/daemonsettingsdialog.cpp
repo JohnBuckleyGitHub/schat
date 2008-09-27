@@ -75,7 +75,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
   m_logLevel->setValue(m_settings->getInt("LogLevel"));
-  m_logLevel->setToolTip(tr("Уровень детализации журнала, -1 журналирование отключено"));
+  m_logLevel->setToolTip(tr("Уровень детализации журнала\n-1 журналирование отключено"));
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
   logLabel->setBuddy(m_logLevel);
   QHBoxLayout *logLevelLay = new QHBoxLayout;
@@ -95,11 +95,11 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
   m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
-  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу, 0 - без ограничений"));
+  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу\n0 - без ограничений"));
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
   m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
-  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса, 0 - без ограничений"));
+  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса\n0 - без ограничений"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
   maxUsersLabel->setBuddy(m_maxUsers);
@@ -171,24 +171,29 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
 {
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
   m_network->setChecked(m_settings->getBool("Network"));
+  m_network->setToolTip(tr("Включить поддержку взаимодействия с другими серверами"));
   connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll(bool)));
 
   m_root = new QCheckBox(tr("&Корневой сервер"), this);
   m_root->setChecked(m_settings->getBool("RootServer"));
+  m_root->setToolTip(tr("Определяет роль этого сервера в сети"));
   connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
   m_netName = new QLineEdit("Unknown Network", this);
   m_netName->setMaxLength(64);
+  m_netName->setToolTip(tr("Название сети"));
   QLabel *netNameLabel = new QLabel(tr("&Название:"), this);
   netNameLabel->setBuddy(m_netName);
 
   m_key = new QLineEdit(this);
   m_key->setMaxLength(64);
   m_key->setEchoMode(QLineEdit::Password);
+  m_key->setToolTip(tr("Уникальный ключ сети\nДолжен быть одинаков на всех серверах"));
   QLabel *keyLabel = new QLabel(tr("&Ключ:"), this);
   keyLabel->setBuddy(m_key);
 
   m_rootAddr = new QLineEdit(this);
+  m_rootAddr->setToolTip(tr("Адрес корневого сервера\nЭто поле не используется корневым сервером"));
   QLabel *rootLabel = new QLabel(tr("Ко&рневой сервер:"), this);
   rootLabel->setBuddy(m_rootAddr);
 
@@ -205,6 +210,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   if (!m_settings->getString("Name").isEmpty())
     m_name->setText(m_settings->getString("Name"));
   m_name->setMaxLength(64);
+  m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
   QLabel *nameLabel = new QLabel(tr("Имя:"), this);
   nameLabel->setBuddy(m_name);
   QHBoxLayout *nameLay = new QHBoxLayout;
@@ -214,12 +220,14 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   m_numeric = new QSpinBox(this);
   m_numeric->setRange(1, 255);
   m_numeric->setValue(m_settings->getInt("Numeric"));
+  m_numeric->setToolTip(tr("Уникальный для сети номер сервера"));
   QLabel *numericLabel = new QLabel(tr("Уникальный &номер:"), this);
   numericLabel->setBuddy(m_numeric);
 
   m_limit = new QSpinBox(this);
   m_limit->setRange(0, 255);
   m_limit->setValue(m_settings->getInt("MaxLinks"));
+  m_limit->setToolTip(tr("Ограничение количества серверов которые могут быть подключены\nИспользуется только корневым сервером"));
   QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
   limitLabel->setBuddy(m_limit);
 
