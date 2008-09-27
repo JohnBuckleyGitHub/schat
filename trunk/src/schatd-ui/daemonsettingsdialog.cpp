@@ -171,8 +171,11 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
 {
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
   m_network->setChecked(m_settings->getBool("Network"));
+  connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll(bool)));
+
   m_root = new QCheckBox(tr("&Корневой сервер"), this);
   m_root->setChecked(m_settings->getBool("RootServer"));
+  connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
   m_netName = new QLineEdit("Unknown Network", this);
   m_netName->setMaxLength(64);
@@ -189,8 +192,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   QLabel *rootLabel = new QLabel(tr("Ко&рневой сервер:"), this);
   rootLabel->setBuddy(m_rootAddr);
 
-  QGroupBox *netGroup = new QGroupBox(tr("Сеть"), this);
-  QGridLayout *netLay = new QGridLayout(netGroup);
+  m_netGroup = new QGroupBox(tr("Сеть"), this);
+  QGridLayout *netLay = new QGridLayout(m_netGroup);
   netLay->addWidget(netNameLabel, 0, 0);
   netLay->addWidget(m_netName, 0, 1);
   netLay->addWidget(keyLabel, 1, 0);
@@ -220,8 +223,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
   limitLabel->setBuddy(m_limit);
 
-  QGroupBox *daemonGroup = new QGroupBox(tr("Сервер"), this);
-  QGridLayout *daemonLay = new QGridLayout(daemonGroup);
+  m_daemonGroup = new QGroupBox(tr("Сервер"), this);
+  QGridLayout *daemonLay = new QGridLayout(m_daemonGroup);
   daemonLay->addLayout(nameLay, 0, 0, 1, 3);
   daemonLay->addWidget(numericLabel, 1, 0);
   daemonLay->addWidget(m_numeric, 1, 1);
@@ -232,9 +235,12 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_network);
   mainLay->addWidget(m_root);
-  mainLay->addWidget(netGroup);
-  mainLay->addWidget(daemonGroup);
+  mainLay->addWidget(m_netGroup);
+  mainLay->addWidget(m_daemonGroup);
   mainLay->addStretch();
+
+  enableAll(m_network->isChecked());
+  changeRole(m_root->isChecked());
 }
 
 
@@ -249,4 +255,19 @@ void DaemonNetSettings::reset(int page)
 void DaemonNetSettings::save()
 {
 
+}
+
+
+void DaemonNetSettings::changeRole(bool root)
+{
+  m_rootAddr->setEnabled(!root);
+  m_limit->setEnabled(root);
+}
+
+
+void DaemonNetSettings::enableAll(bool enable)
+{
+  m_root->setEnabled(enable);
+  m_netGroup->setEnabled(enable);
+  m_daemonGroup->setEnabled(enable);
 }

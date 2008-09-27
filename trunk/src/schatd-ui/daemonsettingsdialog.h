@@ -28,6 +28,7 @@ class DaemonNetSettings;
 class DaemonUiSettings;
 class QCheckBox;
 class QComboBox;
+class QGroupBox;
 class QLineEdit;
 class QSpinBox;
 
@@ -97,10 +98,16 @@ public slots:
   void reset(int page);
   void save();
 
+private slots:
+  void changeRole(bool root);
+  void enableAll(bool enable);
+
 private:
   DaemonUiSettings *m_settings;
   QCheckBox *m_network;
   QCheckBox *m_root;
+  QGroupBox *m_daemonGroup;
+  QGroupBox *m_netGroup;
   QLineEdit *m_key;
   QLineEdit *m_name;
   QLineEdit *m_netName;
