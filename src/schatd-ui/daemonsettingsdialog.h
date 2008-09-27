@@ -28,6 +28,7 @@ class DaemonNetSettings;
 class DaemonUiSettings;
 class QCheckBox;
 class QComboBox;
+class QLineEdit;
 class QSpinBox;
 
 /*!
@@ -98,6 +99,14 @@ public slots:
 
 private:
   DaemonUiSettings *m_settings;
+  QCheckBox *m_network;
+  QCheckBox *m_root;
+  QLineEdit *m_key;
+  QLineEdit *m_name;
+  QLineEdit *m_netName;
+  QLineEdit *m_rootAddr;
+  QSpinBox *m_limit;
+  QSpinBox *m_numeric;
 };
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/

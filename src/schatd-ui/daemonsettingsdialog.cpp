@@ -114,11 +114,11 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
   limitsLay->addWidget(m_maxUsersPerIp, 1, 1);
   limitsLay->setColumnStretch(2, 1);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(listenGroup);
-  mainLayout->addWidget(logGroup);
-  mainLayout->addWidget(limitsGroup);
-  mainLayout->addStretch();
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(listenGroup);
+  mainLay->addWidget(logGroup);
+  mainLay->addWidget(limitsGroup);
+  mainLay->addStretch();
 }
 
 
@@ -169,7 +169,72 @@ void DaemonCommonSettings::createListenList()
 DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
 {
+  m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
+  m_network->setChecked(m_settings->getBool("Network"));
+  m_root = new QCheckBox(tr("&Корневой сервер"), this);
+  m_root->setChecked(m_settings->getBool("RootServer"));
 
+  m_netName = new QLineEdit("Unknown Network", this);
+  m_netName->setMaxLength(64);
+  QLabel *netNameLabel = new QLabel(tr("&Название:"), this);
+  netNameLabel->setBuddy(m_netName);
+
+  m_key = new QLineEdit(this);
+  m_key->setMaxLength(64);
+  m_key->setEchoMode(QLineEdit::Password);
+  QLabel *keyLabel = new QLabel(tr("&Ключ:"), this);
+  keyLabel->setBuddy(m_key);
+
+  m_rootAddr = new QLineEdit(this);
+  QLabel *rootLabel = new QLabel(tr("Ко&рневой сервер:"), this);
+  rootLabel->setBuddy(m_rootAddr);
+
+  QGroupBox *netGroup = new QGroupBox(tr("Сеть"), this);
+  QGridLayout *netLay = new QGridLayout(netGroup);
+  netLay->addWidget(netNameLabel, 0, 0);
+  netLay->addWidget(m_netName, 0, 1);
+  netLay->addWidget(keyLabel, 1, 0);
+  netLay->addWidget(m_key, 1, 1);
+  netLay->addWidget(rootLabel, 2, 0);
+  netLay->addWidget(m_rootAddr, 2, 1);
+
+  m_name = new QLineEdit("Unknown Server", this);
+  if (!m_settings->getString("Name").isEmpty())
+    m_name->setText(m_settings->getString("Name"));
+  m_name->setMaxLength(64);
+  QLabel *nameLabel = new QLabel(tr("Имя:"), this);
+  nameLabel->setBuddy(m_name);
+  QHBoxLayout *nameLay = new QHBoxLayout;
+  nameLay->addWidget(nameLabel);
+  nameLay->addWidget(m_name);
+
+  m_numeric = new QSpinBox(this);
+  m_numeric->setRange(1, 255);
+  m_numeric->setValue(m_settings->getInt("Numeric"));
+  QLabel *numericLabel = new QLabel(tr("Уникальный &номер:"), this);
+  numericLabel->setBuddy(m_numeric);
+
+  m_limit = new QSpinBox(this);
+  m_limit->setRange(0, 255);
+  m_limit->setValue(m_settings->getInt("MaxLinks"));
+  QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
+  limitLabel->setBuddy(m_limit);
+
+  QGroupBox *daemonGroup = new QGroupBox(tr("Сервер"), this);
+  QGridLayout *daemonLay = new QGridLayout(daemonGroup);
+  daemonLay->addLayout(nameLay, 0, 0, 1, 3);
+  daemonLay->addWidget(numericLabel, 1, 0);
+  daemonLay->addWidget(m_numeric, 1, 1);
+  daemonLay->addWidget(limitLabel, 2, 0);
+  daemonLay->addWidget(m_limit, 2, 1);
+  daemonLay->setColumnStretch(2, 1);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_network);
+  mainLay->addWidget(m_root);
+  mainLay->addWidget(netGroup);
+  mainLay->addWidget(daemonGroup);
+  mainLay->addStretch();
 }
 
 
