@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,8 +27,13 @@
 static const QString FailBackServer = "schat.impomezia.com";
 static const quint16 FailBackPort   = 7666;
 
+/*!
+ * \brief Класс читает xml-файл сети.
+ *
+ * \sa NetworkReader
+ */
 class Network {
-  
+
 public:
   Network();
   Network(const QString &path);
@@ -36,11 +41,13 @@ public:
   bool fromFile(const QString &file);
   bool fromString(const QString &s);
   inline bool isNetwork() const      { return m_network; }
+  inline bool single() const         { return m_single; }
   inline int count() const           { return m_servers.count(); }
   inline QString description() const { return m_description; }
   inline QString key() const         { return m_key; }
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }
+  inline void setSingle(bool single) { m_single = single; }
   QString config() const;
   quint16 port() const;
   ServerInfo server() const;
@@ -49,6 +56,7 @@ public:
 
 private:
   bool m_network;
+  bool m_single;
   bool m_valid;
   QList<ServerInfo> m_servers;
   QString m_description;

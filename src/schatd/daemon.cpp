@@ -786,7 +786,8 @@ void Daemon::link()
     return;
   }
 
-  m_network = new Network(QCoreApplication::instance()->applicationDirPath());
+  m_network = new Network(qApp->applicationDirPath());
+  m_network->setSingle(true);
   if (!m_network->fromFile(m_settings->getString("NetworkFile"))) { /// \todo Добавить корректную информацию о проблемах с network.xml
     delete m_network;
     m_network = 0;
@@ -814,6 +815,8 @@ void Daemon::link()
         connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
         connect(m_link, SIGNAL(syncBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
         m_link->connectToHost();
+        ServerInfo serverInfo = m_network->server();
+        LOG(0, tr("- Notice - Инициализировано соединение с корневым сервером, %1:%2").arg(serverInfo.address).arg(serverInfo.port));
       }
       else {
         delete m_network;
