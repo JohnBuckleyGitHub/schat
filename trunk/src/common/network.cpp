@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,29 +21,26 @@
 #include "network.h"
 
 /*!
- * \class Network
- * \brief Класс читает xml-файл сети.
- * 
- * \sa NetworkReader
- */
-
-/*!
  * \brief Конструктор класса Network.
  */
 Network::Network()
 {
   m_networksPath = qApp->applicationDirPath() + "/networks";
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
+  m_single = false;
 }
 
 
 /*!
  * \brief Конструктор класса Network.
+ *
+ * \param path путь в котором будут икаться файлы сети.
  */
 Network::Network(const QString &path)
 {
   m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
+  m_single = false;
 }
 
 
@@ -56,18 +53,20 @@ bool Network::fromConfig(const QString &s)
   if (QFile::exists(m_networksPath + '/' + s))
     return fromFile(s);
   else
-    return fromString(s);  
+    return fromString(s);
 }
 
 
-/** [public]
- * Парсинг файла сети.
+/*!
+ * Читает файл сети.
+ *
+ * \param file Имя файла без пути.
  */
 bool Network::fromFile(const QString &file)
 {
   NetworkReader reader;
   m_servers.clear();
-  
+
   if (reader.readFile(m_networksPath + '/' + file)) {
     m_valid       = true;
     m_network     = true;
@@ -90,7 +89,7 @@ bool Network::fromFile(const QString &file)
  * Получение адреса и порта сервера из строки.
  */
 bool Network::fromString(const QString &s)
-{  
+{
   m_servers.clear();
 
   QStringList list = s.split(QChar(':'));
@@ -128,8 +127,8 @@ QString Network::config() const
 }
 
 
-/** [public]
- * Функция возвращает структуру `ServerInfo`.
+/*!
+ * Функция возвращает структуру \a ServerInfo.
  * Если серверов больше одного, то возвращается случайный сервер,
  * при этом функция не допускает выдачи подряд одного и того же сервера.
  */
@@ -137,14 +136,17 @@ ServerInfo Network::server() const
 {
   if (m_servers.count() == 0)
     return failBack();
-  
+
   if (m_servers.count() == 1)
     return m_servers.at(0);
-  
+
+  if (m_single)
+    return m_servers.at(0);
+
   int index;
   static int prevIndex;
   static bool init;
-  
+
   if (init) {
     do {
       index = qrand() % m_servers.count();
@@ -154,9 +156,9 @@ ServerInfo Network::server() const
     init = true;
     index = qrand() % m_servers.count();
   }
-  
+
   prevIndex = index;
-  
+
   return m_servers.at(index);
 }
 
@@ -195,7 +197,7 @@ quint16 Network::port() const
 ServerInfo Network::serverInfo(const QString &s)
 {
   QStringList list = s.split(QChar(':'));
-  
+
   if (list.size() == 2) {
     ServerInfo info;
     info.address = list.at(0);
