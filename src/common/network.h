@@ -32,11 +32,12 @@ static const quint16 FailBackPort   = 7666;
  *
  * \sa NetworkReader
  */
-class Network {
+class Network : public QObject {
+  Q_OBJECT
 
 public:
-  Network();
-  Network(const QString &path);
+  Network(QObject *parent = 0);
+  Network(const QString &path, QObject *parent = 0);
   bool fromConfig(const QString &s);
   bool fromFile(const QString &file);
   bool fromString(const QString &s);
