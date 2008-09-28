@@ -33,7 +33,7 @@
 SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
   : AbstractSettingsDialog(parent)
 {
-  m_profilePage    = new ProfileSettings(settings, profile, this); 
+  m_profilePage    = new ProfileSettings(settings, profile, this);
   m_networkPage    = new NetworkSettings(settings, this);
   m_interfacePage  = new InterfaceSettings(settings, this);
   m_emoticonsPage  = new EmoticonsSettings(settings, this);
@@ -84,7 +84,7 @@ ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, Q
 
 
 /** [ProfileSettings/public]
- * 
+ *
  */
 void ProfileSettings::reset(int page)
 {
@@ -101,10 +101,10 @@ void ProfileSettings::reset(int page)
 void ProfileSettings::save()
 {
   m_profileWidget->save();
-  
+
   if (m_profileWidget->isModifiled())
     m_settings->notify(Settings::ProfileSettingsChanged);
-  
+
   if (m_profile->byeMsg() != m_byeMsgEdit->text()) {
     m_profile->setByeMsg(m_byeMsgEdit->text());
     m_settings->notify(Settings::ByeMsgChanged);
@@ -119,7 +119,7 @@ void ProfileSettings::save()
  */
 NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), m_settings(settings)
-{  
+{
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
   m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
@@ -131,7 +131,7 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
   networkLayout->addWidget(m_networkWidget);
   networkLayout->setMargin(0);
 
-  QGroupBox *serverGroupBox = new QGroupBox(tr("Сервер"), this);
+  QGroupBox *serverGroupBox = new QGroupBox(tr("Подключение"), this);
   QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
   serverGroupLayout->addLayout(networkLayout);
   serverGroupLayout->addWidget(m_welcomeCheckBox);
@@ -143,7 +143,7 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
 
 
 /** [NetworkSettings/public]
- * 
+ *
  */
 void NetworkSettings::reset(int page)
 {
@@ -161,7 +161,7 @@ void NetworkSettings::save()
 {
   if (m_networkWidget->save())
     m_settings->notify(Settings::NetworkSettingsChanged);
-  
+
   m_settings->setBool("HideWelcome", m_welcomeCheckBox->isChecked());
 }
 
@@ -173,9 +173,9 @@ void NetworkSettings::save()
  */
 InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), m_settings(settings)
-{  
+{
   m_styleComboBox = new QComboBox(this);
-  m_styleComboBox->addItems(QStyleFactory::keys());  
+  m_styleComboBox->addItems(QStyleFactory::keys());
   m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
 
   QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
@@ -190,7 +190,7 @@ InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
 
 
 /** [InterfaceSettings/public]
- * 
+ *
  */
 void InterfaceSettings::reset(int page)
 {
@@ -327,7 +327,7 @@ bool EmoticonsSettings::createThemeList()
 #ifdef SCHAT_UPDATE
 UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::UpdatePage, parent), m_settings(settings)
-{  
+{
   m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
   m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
   m_autoDownload->setEnabled(false);
@@ -359,7 +359,7 @@ UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
 
 
 /** [UpdateSettings/public]
- * 
+ *
  */
 void UpdateSettings::reset(int page)
 {
