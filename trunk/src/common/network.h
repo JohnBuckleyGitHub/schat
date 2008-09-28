@@ -44,6 +44,7 @@ public:
   inline bool single() const         { return m_single; }
   inline int count() const           { return m_servers.count(); }
   inline QString description() const { return m_description; }
+  inline QString error() const       { return m_error; }
   inline QString key() const         { return m_key; }
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }
@@ -60,6 +61,7 @@ private:
   bool m_valid;
   QList<ServerInfo> m_servers;
   QString m_description;
+  QString m_error;
   QString m_file;
   QString m_key;
   QString m_name;

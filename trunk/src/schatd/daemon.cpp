@@ -788,10 +788,10 @@ void Daemon::link()
 
   m_network = new Network(qApp->applicationDirPath());
   m_network->setSingle(true);
-  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) { /// \todo Добавить корректную информацию о проблемах с network.xml
+  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
+    LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
     delete m_network;
     m_network = 0;
-    LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [Ошибка разбора файла сети: %1]").arg(m_settings->getString("NetworkFile")));
   }
   else {
     m_profile = new AbstractProfile(this);

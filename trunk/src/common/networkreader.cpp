@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /*!
  * \class NetworkReader
  * \brief Низкоуровневый класс для чтения xml-файла сети.
- * 
+ *
  * \sa Network
  */
 
@@ -37,14 +37,16 @@ NetworkReader::NetworkReader()
 
 
 /** [public]
- * 
+ *
  */
 bool NetworkReader::readFile(const QString &fileName)
 {
   QFile file(fileName);
-  if (!file.open(QFile::ReadOnly | QFile::Text))
+  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    raiseError("File not found");
     return false;
-  
+  }
+
   setDevice(&file);
 
   while (!atEnd()) {
@@ -54,7 +56,7 @@ bool NetworkReader::readFile(const QString &fileName)
       if (name() == "network" && attributes().value("version") == "1.0")
         readNetwork();
       else
-        raiseError(QObject::tr("The file is not an NETWORK version 1.0 file."));
+        raiseError("Bad file format or version");
     }
   }
 
@@ -63,7 +65,7 @@ bool NetworkReader::readFile(const QString &fileName)
 
 
 /** [private]
- * 
+ *
  */
 void NetworkReader::readMeta()
 {
@@ -90,7 +92,7 @@ void NetworkReader::readMeta()
 
 
 /** [private]
- * 
+ *
  */
 void NetworkReader::readNetwork()
 {
@@ -130,7 +132,7 @@ void NetworkReader::readServers()
         QString t = readElementText();
         QStringList list = t.split(QChar(':'));
         ServerInfo serverInfo;
-        
+
         if (list.size() == 2) {
           serverInfo.address = list.at(0);
           serverInfo.port = quint16(list.at(1).toUInt());
@@ -143,12 +145,12 @@ void NetworkReader::readServers()
       else
         readUnknownElement();
     }
-  }  
+  }
 }
 
 
 /** [private]
- * 
+ *
  */
 void NetworkReader::readUnknownElement()
 {

@@ -81,6 +81,7 @@ bool Network::fromFile(const QString &file)
     m_valid   = false;
     m_network = false;
   }
+  m_error = reader.errorString();
   return m_valid;
 }
 
