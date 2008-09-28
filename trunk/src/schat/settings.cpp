@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
       QStringList list = i.value();
       foreach (QString name, list) {
         if (text.contains(name)) {
-          out << Emoticons(name, i.key()); 
+          out << Emoticons(name, i.key());
         }
       }
     }
@@ -97,7 +97,7 @@ void Settings::createEmoticonsMap()
 
 
 /** [public]
- * 
+ *
  */
 void Settings::notify(int notify, int index)
 {
@@ -105,15 +105,15 @@ void Settings::notify(int notify, int index)
     case NetworksModelIndexChanged:
       emit networksModelIndexChanged(index);
       break;
-      
+
     default:
       break;
-  }  
+  }
 }
 
 
 /** [public]
- * 
+ *
  */
 void Settings::read()
 {
@@ -161,12 +161,10 @@ void Settings::read()
 
 
 /** [public]
- * 
+ *
  */
 void Settings::write()
 {
-  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-
   m_settings->setValue("Size", m_size);
   m_settings->setValue("Pos", m_pos);
   m_settings->setValue("Splitter", m_splitter);
@@ -192,16 +190,12 @@ void Settings::write()
 #ifdef SCHAT_UPDATE
   writeBool("Updates/AutoClean");
   writeInt("Updates/CheckInterval");
-  s.beginGroup("Updates");
-//  s.setValue("CheckInterval", updateCheckInterval);
-//  s.setValue("AutoClean", updateAutoClean);
-  s.endGroup();
 #endif
 }
 
 
 /** [private]
- * Создаёт список сетей и одиночных серверов. 
+ * Создаёт список сетей и одиночных серверов.
  */
 void Settings::createServerList()
 {

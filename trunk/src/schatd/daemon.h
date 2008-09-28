@@ -19,8 +19,11 @@
 #ifndef DAEMON_H_
 #define DAEMON_H_
 
-#include <QTcpServer>
 #include <QHash>
+#include <QPointer>
+#include <QTcpServer>
+
+#include "network.h"
 
 class AbstractProfile;
 class ChannelLog;
@@ -103,11 +106,11 @@ private:
   int m_maxUsers;
   int m_maxUsersPerIp;
   Log *m_log;
-  Network *m_network;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
   QList<quint8> m_numerics;
+  QPointer<Network> m_network;
   QTcpServer m_server;
   quint8 m_numeric;
   quint8 m_remoteNumeric;

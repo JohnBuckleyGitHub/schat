@@ -771,7 +771,6 @@ void Daemon::link()
 {
   m_numeric = quint8(m_settings->getInt("Numeric"));
   if (!m_numeric || m_settings->getString("Name").isEmpty() || !m_settings->getBool("Network")) {
-    m_network = 0;
 
     if (m_settings->getBool("Network")) {
       QString reason;
@@ -786,12 +785,11 @@ void Daemon::link()
     return;
   }
 
-  m_network = new Network(qApp->applicationDirPath());
+  m_network = new Network(qApp->applicationDirPath(), this);
   m_network->setSingle(true);
   if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
     LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
     delete m_network;
-    m_network = 0;
   }
   else {
     m_profile = new AbstractProfile(this);
@@ -821,7 +819,6 @@ void Daemon::link()
       else {
         delete m_network;
         delete m_profile;
-        m_network = 0;
         LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [Не указан адрес вышестоящего сервера]"));
         return;
       }

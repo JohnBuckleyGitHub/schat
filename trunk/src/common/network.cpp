@@ -23,7 +23,8 @@
 /*!
  * \brief Конструктор класса Network.
  */
-Network::Network()
+Network::Network(QObject *parent)
+  : QObject(parent)
 {
   m_networksPath = qApp->applicationDirPath() + "/networks";
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
@@ -34,9 +35,11 @@ Network::Network()
 /*!
  * \brief Конструктор класса Network.
  *
- * \param path путь в котором будут икаться файлы сети.
+ * \param path Путь в котором будут икаться файлы сети.
+ * \param parent Указатель на родительский объект.
  */
-Network::Network(const QString &path)
+Network::Network(const QString &path, QObject *parent)
+  : QObject(parent)
 {
   m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
