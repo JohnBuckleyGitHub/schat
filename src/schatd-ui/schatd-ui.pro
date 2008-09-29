@@ -27,20 +27,24 @@ TEMPLATE = app
 HEADERS += \
     abstractsettings.h \
     abstractsettingsdialog.h \
-    daemonsettingsdialog.h \
     daemonsettings.h \
+    daemonsettingsdialog.h \
     daemonui.h \
     daemonuisettings.h \
     ipc/localclientservice.h \
+    network.h \
+    networkreader.h \
 
 SOURCES += \
     abstractsettings.cpp \
     abstractsettingsdialog.cpp \
-    daemonsettingsdialog.cpp \
     daemonsettings.cpp \
+    daemonsettingsdialog.cpp \
     daemonui.cpp \
     daemonuisettings.cpp \
     ipc/localclientservice.cpp \
     main.cpp \
+    network.cpp \
+    networkreader.cpp \
 
 include(../common/common.pri)

@@ -36,6 +36,13 @@ class Network : public QObject {
   Q_OBJECT
 
 public:
+  enum {
+    MaxName = 64,
+    MaxKey  = 64,
+    MaxSite = 255,
+    MaxDesc = 255
+  };
+
   Network(QObject *parent = 0);
   Network(const QString &path, QObject *parent = 0);
   bool fromConfig(const QString &s);

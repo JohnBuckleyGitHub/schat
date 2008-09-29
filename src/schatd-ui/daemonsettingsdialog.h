@@ -103,6 +103,8 @@ private slots:
   void enableAll(bool enable);
 
 private:
+  void readNetwork();
+
   DaemonUiSettings *m_settings;
   QCheckBox *m_network;
   QCheckBox *m_root;

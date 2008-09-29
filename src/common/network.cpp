@@ -73,10 +73,10 @@ bool Network::fromFile(const QString &file)
   if (reader.readFile(m_networksPath + '/' + file)) {
     m_valid       = true;
     m_network     = true;
-    m_description = reader.description();
-    m_name        = reader.networkName();
-    m_site        = reader.site();
-    m_key         = reader.key();
+    m_description = reader.description().left(MaxDesc);
+    m_name        = reader.networkName().left(MaxName);
+    m_site        = reader.site().left(MaxSite);
+    m_key         = reader.key().left(MaxKey);
     m_servers     = reader.servers();
     m_file        = file;
   }

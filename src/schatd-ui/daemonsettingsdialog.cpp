@@ -21,6 +21,7 @@
 
 #include "daemonsettingsdialog.h"
 #include "daemonuisettings.h"
+#include "network.h"
 
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
@@ -180,13 +181,13 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
   m_netName = new QLineEdit("Unknown Network", this);
-  m_netName->setMaxLength(64);
+  m_netName->setMaxLength(Network::MaxName);
   m_netName->setToolTip(tr("Название сети"));
   QLabel *netNameLabel = new QLabel(tr("&Название:"), this);
   netNameLabel->setBuddy(m_netName);
 
   m_key = new QLineEdit(this);
-  m_key->setMaxLength(64);
+  m_key->setMaxLength(Network::MaxKey);
   m_key->setEchoMode(QLineEdit::Password);
   m_key->setToolTip(tr("Уникальный ключ сети\nДолжен быть одинаков на всех серверах"));
   QLabel *keyLabel = new QLabel(tr("&Ключ:"), this);
@@ -209,7 +210,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   m_name = new QLineEdit("Unknown Server", this);
   if (!m_settings->getString("Name").isEmpty())
     m_name->setText(m_settings->getString("Name"));
-  m_name->setMaxLength(64);
+  m_name->setMaxLength(Network::MaxName);
   m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
   QLabel *nameLabel = new QLabel(tr("Имя:"), this);
   nameLabel->setBuddy(m_name);
@@ -249,6 +250,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
 
   enableAll(m_network->isChecked());
   changeRole(m_root->isChecked());
+  readNetwork();
 }
 
 
@@ -294,4 +296,20 @@ void DaemonNetSettings::enableAll(bool enable)
   m_root->setEnabled(enable);
   m_netGroup->setEnabled(enable);
   m_daemonGroup->setEnabled(enable);
+}
+
+
+void DaemonNetSettings::readNetwork()
+{
+  Network network(qApp->applicationDirPath(), this);
+  if (network.fromFile(m_settings->getString("NetworkFile"))) {
+    m_netName->setText(network.name());
+    m_key->setText(network.key());
+    ServerInfo info = network.server();
+    QString server = info.address;
+    if (info.port != 7666)
+      server += (":" + QString().number(info.port));
+
+    m_rootAddr->setText(server);
+  }
 }
