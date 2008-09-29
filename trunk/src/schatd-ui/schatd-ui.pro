@@ -34,6 +34,7 @@ HEADERS += \
     ipc/localclientservice.h \
     network.h \
     networkreader.h \
+    networkwriter.h \
 
 SOURCES += \
     abstractsettings.cpp \
@@ -46,5 +47,6 @@ SOURCES += \
     main.cpp \
     network.cpp \
     networkreader.cpp \
+    networkwriter.cpp \
 
 include(../common/common.pri)
