@@ -56,6 +56,7 @@ public:
   inline QString key() const         { return m_key; }
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }
+  inline void setFailBack(bool b)    { m_failBack = b; }
   inline void setSingle(bool single) { m_single = single; }
   QString config() const;
   quint16 port() const;
@@ -64,6 +65,7 @@ public:
   static ServerInfo serverInfo(const QString &s);
 
 private:
+  bool m_failBack;
   bool m_network;
   bool m_single;
   bool m_valid;

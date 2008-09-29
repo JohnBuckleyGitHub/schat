@@ -29,6 +29,7 @@ Network::Network(QObject *parent)
   m_networksPath = qApp->applicationDirPath() + "/networks";
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
   m_single = false;
+  m_failBack = true;
 }
 
 
@@ -44,6 +45,7 @@ Network::Network(const QString &path, QObject *parent)
   m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
   m_single = false;
+  m_failBack = true;
 }
 
 
@@ -139,7 +141,14 @@ QString Network::config() const
 ServerInfo Network::server() const
 {
   if (m_servers.count() == 0)
-    return failBack();
+    if (m_failBack)
+      return failBack();
+    else {
+      ServerInfo info;
+      info.address = "";
+      info.port    = 7666;
+      return info;
+    }
 
   if (m_servers.count() == 1)
     return m_servers.at(0);

@@ -27,8 +27,12 @@
 class NetworkWriter : public QXmlStreamWriter {
 
 public:
-  NetworkWriter();
+  NetworkWriter(const QMap<QString, QString> &meta, const QStringList &servers);
   bool writeFile(const QString &fileName);
+
+private:
+  const QMap<QString, QString> m_meta;
+  const QStringList m_servers;
 };
 
 #endif /* NETWORKWRITER_H_ */

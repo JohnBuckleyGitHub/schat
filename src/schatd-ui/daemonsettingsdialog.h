@@ -19,6 +19,7 @@
 #ifndef DAEMONSETTINGSDIALOG_H_
 #define DAEMONSETTINGSDIALOG_H_
 
+#include <QMap>
 #include <QObject>
 
 #include "abstractsettingsdialog.h"
@@ -114,6 +115,7 @@ private:
   QLineEdit *m_name;
   QLineEdit *m_netName;
   QLineEdit *m_rootAddr;
+  QMap<QString, QString> m_meta;
   QSpinBox *m_limit;
   QSpinBox *m_numeric;
 };
