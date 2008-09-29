@@ -21,6 +21,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QPalette>
 
 #include "abstractsettingsdialog.h"
 
@@ -95,15 +96,20 @@ class DaemonNetSettings : public AbstractSettingsPage
 public:
   DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent = 0);
 
+signals:
+  void validInput(bool valid);
+
 public slots:
   void reset(int page);
   void save();
 
 private slots:
   void changeRole(bool root);
-  void enableAll(bool enable);
+  void enableAll();
+  void inputChanged(const QString &text);
 
 private:
+  bool revalidate();
   void readNetwork();
 
   DaemonUiSettings *m_settings;
@@ -116,6 +122,8 @@ private:
   QLineEdit *m_netName;
   QLineEdit *m_rootAddr;
   QMap<QString, QString> m_meta;
+  QPalette m_normal;
+  QPalette m_red;
   QSpinBox *m_limit;
   QSpinBox *m_numeric;
 };

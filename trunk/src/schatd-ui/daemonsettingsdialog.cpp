@@ -35,6 +35,8 @@ DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *
 
   createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
   createPage(QIcon(":/images/network.png"), tr("Сеть"), m_netPage);
+
+  connect(m_netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
 
 
@@ -174,7 +176,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
   m_network->setChecked(m_settings->getBool("Network"));
   m_network->setToolTip(tr("Включить поддержку взаимодействия с другими серверами"));
-  connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll(bool)));
+  connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll()));
 
   m_root = new QCheckBox(tr("&Корневой сервер"), this);
   m_root->setChecked(m_settings->getBool("RootServer"));
@@ -184,6 +186,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   m_netName = new QLineEdit("Unknown Network", this);
   m_netName->setMaxLength(Network::MaxName);
   m_netName->setToolTip(tr("Название сети"));
+  connect(m_netName, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
   QLabel *netNameLabel = new QLabel(tr("&Название:"), this);
   netNameLabel->setBuddy(m_netName);
 
@@ -191,11 +194,13 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   m_key->setMaxLength(Network::MaxKey);
   m_key->setEchoMode(QLineEdit::Password);
   m_key->setToolTip(tr("Уникальный ключ сети\nДолжен быть одинаков на всех серверах"));
+  connect(m_key, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
   QLabel *keyLabel = new QLabel(tr("&Ключ:"), this);
   keyLabel->setBuddy(m_key);
 
   m_rootAddr = new QLineEdit(this);
   m_rootAddr->setToolTip(tr("Адрес корневого сервера\nЭто поле не используется корневым сервером"));
+  connect(m_rootAddr, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
   QLabel *rootLabel = new QLabel(tr("Ко&рневой сервер:"), this);
   rootLabel->setBuddy(m_rootAddr);
 
@@ -213,6 +218,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
     m_name->setText(m_settings->getString("Name"));
   m_name->setMaxLength(Network::MaxName);
   m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
+  connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
   QLabel *nameLabel = new QLabel(tr("Имя:"), this);
   nameLabel->setBuddy(m_name);
   QHBoxLayout *nameLay = new QHBoxLayout;
@@ -249,9 +255,14 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
   mainLay->addWidget(m_daemonGroup);
   mainLay->addStretch();
 
-  enableAll(m_network->isChecked());
+  m_normal = m_netName->palette();
+  m_red = m_normal;
+  m_red.setColor(QPalette::Active, QPalette::Base, QColor("#f66"));
+
   changeRole(m_root->isChecked());
   readNetwork();
+
+  QTimer::singleShot(0, this, SLOT(enableAll()));
 }
 
 
@@ -266,7 +277,7 @@ void DaemonNetSettings::reset(int page)
     m_name->setText("Unknown Server");
     m_numeric->setValue(1);
     m_limit->setValue(0);
-    enableAll(false);
+    enableAll();
     changeRole(false);
   }
 }
@@ -301,11 +312,54 @@ void DaemonNetSettings::changeRole(bool root)
 }
 
 
-void DaemonNetSettings::enableAll(bool enable)
+void DaemonNetSettings::enableAll()
 {
+  bool enable = m_network->isChecked();
+
+  if (enable) {
+    if (m_netName->text().isEmpty())
+      m_netName->setPalette(m_red);
+    if (m_key->text().isEmpty())
+      m_key->setPalette(m_red);
+    if (m_rootAddr->text().isEmpty())
+      m_rootAddr->setPalette(m_red);
+    if (m_name->text().isEmpty())
+      m_name->setPalette(m_red);
+  }
   m_root->setEnabled(enable);
   m_netGroup->setEnabled(enable);
   m_daemonGroup->setEnabled(enable);
+  emit validInput(revalidate());
+}
+
+
+void DaemonNetSettings::inputChanged(const QString &text)
+{
+  QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
+
+  if (lineEdit) {
+    if (lineEdit->text().isEmpty())
+      lineEdit->setPalette(m_red);
+    else
+      lineEdit->setPalette(m_normal);
+  }
+
+  emit validInput(revalidate());
+}
+
+
+bool DaemonNetSettings::revalidate()
+{
+  if (!m_network->isChecked())
+    return true;
+
+  if (m_netName->text().isEmpty() || m_key->text().isEmpty() || m_name->text().isEmpty())
+    return false;
+
+  if (m_rootAddr->text().isEmpty() && !m_root->isChecked())
+    return false;
+
+  return true;
 }
 
 
@@ -315,7 +369,8 @@ void DaemonNetSettings::readNetwork()
   network.setSingle(true);
   network.setFailBack(false);
   if (network.fromFile(m_settings->getString("NetworkFile"))) {
-    m_netName->setText(network.name());
+    if (!network.name().isEmpty())
+      m_netName->setText(network.name());
     m_key->setText(network.key());
 
     m_meta.insert("description", network.description());
