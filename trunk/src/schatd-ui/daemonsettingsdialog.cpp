@@ -22,6 +22,7 @@
 #include "daemonsettingsdialog.h"
 #include "daemonuisettings.h"
 #include "network.h"
+#include "networkwriter.h"
 
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
@@ -280,6 +281,15 @@ void DaemonNetSettings::save()
     m_settings->setInt("Numeric",     m_numeric->value());
     m_settings->setInt("MaxLinks",    m_limit->value());
     m_settings->setString("Name",     m_name->text());
+
+    m_meta.insert("name", m_netName->text());
+    m_meta.insert("key", m_key->text());
+    QString server;
+    if (!m_root->isChecked())
+      server = m_rootAddr->text();
+
+    NetworkWriter writer(m_meta, server.isEmpty() ? QStringList() : QStringList() << server);
+    writer.writeFile(qApp->applicationDirPath() + "/" + m_settings->getString("NetworkFile"));
   }
 }
 
@@ -302,9 +312,15 @@ void DaemonNetSettings::enableAll(bool enable)
 void DaemonNetSettings::readNetwork()
 {
   Network network(qApp->applicationDirPath(), this);
+  network.setSingle(true);
+  network.setFailBack(false);
   if (network.fromFile(m_settings->getString("NetworkFile"))) {
     m_netName->setText(network.name());
     m_key->setText(network.key());
+
+    m_meta.insert("description", network.description());
+    m_meta.insert("site", network.site());
+
     ServerInfo info = network.server();
     QString server = info.address;
     if (info.port != 7666)

@@ -23,12 +23,47 @@
 /*!
  * \brief Конструктор класса NetworkWriter.
  */
-NetworkWriter::NetworkWriter()
+NetworkWriter::NetworkWriter(const QMap<QString, QString> &meta, const QStringList &servers)
+  : m_meta(meta), m_servers(servers)
 {
+  setAutoFormatting(true);
+  setAutoFormattingIndent(2);
 }
 
 
 bool NetworkWriter::writeFile(const QString &fileName)
 {
+  QFile file(fileName);
+  if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    return false;
+  }
+
+  if (m_meta.isEmpty())
+    return false;
+
+  setDevice(&file);
+
+  writeStartDocument();
+  writeStartElement("network");
+  writeAttribute("version", "1.0");
+
+  writeStartElement("meta");
+    QMapIterator<QString, QString> i(m_meta);
+    while (i.hasNext()) {
+      i.next();
+      if (!i.value().isEmpty())
+        writeTextElement(i.key(), i.value());
+    }
+  writeEndElement();
+
+  if (!m_servers.isEmpty()) {
+    writeStartElement("servers");
+    foreach (QString server, m_servers)
+      if (!server.isEmpty())
+        writeTextElement("host", server);
+    writeEndElement();
+  }
+
+  writeEndDocument();
   return true;
 }
