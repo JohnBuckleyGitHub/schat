@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -62,46 +62,54 @@ AboutDialog::AboutDialog(QWidget *parent)
 MainTab::MainTab(QWidget *parent)
   : QWidget(parent)
 {
-  QLabel *aboutLogo = new QLabel(this);  
-  aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
-  aboutLogo->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-  
-  QLabel *qtLabel = new QLabel(this);
-  qtLabel->setPixmap(QPixmap(":/images/qt-logo.png"));
-  
-  QLabel *gplLabel = new QLabel(this);
-  gplLabel->setPixmap(QPixmap(":/images/gplv3-88x31.png"));
-  
   QLabel *nameLabel = new QLabel(tr("<h2>IMPOMEZIA Simple Chat %1</h2>").arg(SCHAT_VERSION), this);
   nameLabel->setWordWrap(false);
-  QLabel *aboutLabel = new QLabel(tr(
-      "<p><i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></div>"
-      "<p>Официальный сайт программы: <a href='http://impomezia.com' style='color:#1a4d82;'>http://impomezia.com</a>.</p>"
-      "<p>Эта программа использует библиотеку:<br>"
-      "<b>Qt Open Source Edition %2<b>"
-  ).arg(qVersion()), this);
-  
-  QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  
-  aboutLabel->setWordWrap(true);
-  aboutLabel->setAlignment(Qt::AlignLeft|Qt::AlignTop);
-  aboutLabel->setSizePolicy(sizePolicy);
-  aboutLabel->setOpenExternalLinks(true);
-  aboutLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse | Qt::LinksAccessibleByKeyboard);
-  
-  QHBoxLayout *topLayout = new QHBoxLayout;
-  topLayout->addWidget(aboutLogo);
-  topLayout->addWidget(aboutLabel);
-  
-  QHBoxLayout *bottomLayout = new QHBoxLayout;
-  bottomLayout->addStretch();
-  bottomLayout->addWidget(gplLabel);
-  bottomLayout->addWidget(qtLabel);
-  
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(nameLabel);
-  mainLayout->addLayout(topLayout);
-  mainLayout->addLayout(bottomLayout);
+
+  QLabel *aboutLogo = new QLabel(this);
+  aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
+  aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+  QLabel *copyrightLabel = new QLabel("Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.", this);
+  QLabel *homeLabel = new QLabel(QString("<b><a href='http://impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>").arg(tr("Официальный сайт")), this);
+  homeLabel->setOpenExternalLinks(true);
+  homeLabel->setToolTip(tr("Посетить сайт программы"));
+  QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b>").arg(tr("Эта программа использует библиотеку:")).arg(qVersion()), this);
+
+  QVBoxLayout *infoLay = new QVBoxLayout;
+  infoLay->addWidget(copyrightLabel);
+  infoLay->addSpacing(8);
+  infoLay->addWidget(homeLabel);
+  infoLay->addSpacing(8);
+  infoLay->addWidget(libLabel);
+  infoLay->addStretch();
+
+  QLabel *impomeziaLabel = new QLabel("<a href='http://impomezia.com/'><img src=':/images/impomezia.png' /></a>", this);
+  impomeziaLabel->setToolTip("IMPOMEZIA");
+  impomeziaLabel->setOpenExternalLinks(true);
+
+  QLabel *gplLabel = new QLabel("<a href='http://www.gnu.org/licenses/gpl.html'><img src=':/images/gplv3-88x31.png' /></a>", this);
+  gplLabel->setToolTip("GNU General Public License");
+  gplLabel->setOpenExternalLinks(true);
+
+  QLabel *qtLabel = new QLabel("<a href='http://trolltech.com/'><img src=':/images/qt-logo.png' /></a>", this);
+  qtLabel->setToolTip("Qt Open Source Edition");
+  qtLabel->setOpenExternalLinks(true);
+
+  QHBoxLayout *logosLay = new QHBoxLayout;
+  logosLay->addStretch();
+  logosLay->addWidget(impomeziaLabel);
+  logosLay->addWidget(gplLabel);
+  logosLay->addWidget(qtLabel);
+
+  QGridLayout *mainLay = new QGridLayout(this);
+  mainLay->addWidget(nameLabel, 0, 0, 1, 2);
+  mainLay->addWidget(aboutLogo, 1, 0);
+  mainLay->addLayout(infoLay, 1, 1);
+  mainLay->addLayout(logosLay, 2, 0, 1, 2);
+  mainLay->setColumnStretch(1, 1);
+  mainLay->setRowStretch(1, 1);
+
+
 }
 
 
@@ -129,7 +137,7 @@ ChangeLogTab::ChangeLogTab(QWidget *parent)
 {
   QTextBrowser *textBrowser = new QTextBrowser(this);
   textBrowser->setOpenExternalLinks(true);
-  
+
   QString file = qApp->applicationDirPath() + "/doc/ChangeLog.html";
   if (QFile::exists(file)) {
     textBrowser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
@@ -138,7 +146,7 @@ ChangeLogTab::ChangeLogTab(QWidget *parent)
   else
     textBrowser->setText(tr("<h3 style='color:#da251d;'>ОШИБКА</h3>"
                             "<p style='color:#da251d;'>Файл <b>%1</b> не найден!</p>").arg(file));
-  
+
   QHBoxLayout *mainLayout = new QHBoxLayout(this);
   mainLayout->addWidget(textBrowser);
   mainLayout->setMargin(0);
@@ -153,7 +161,7 @@ LicenseTab::LicenseTab(QWidget *parent)
 {
   QTextBrowser *textBrowser = new QTextBrowser(this);
   textBrowser->setText(tr(
-      "<p><b>Simple Chat %1</b><br />"
+      "<p style='color:#333;'><b>IMPOMEZIA Simple Chat %1</b><br />"
       "<i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
       "it under the terms of the GNU General Public License as published by "
