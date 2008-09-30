@@ -126,6 +126,11 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *
 }
 
 
+/*!
+ * \brief Сброс настроек на стандартные.
+ *
+ * \param page Номер текущей страницы настроек, только если номер страницы равен \a m_id, производится сброс настроек.
+ */
 void DaemonCommonSettings::reset(int page)
 {
   if (page == m_id) {
@@ -139,6 +144,13 @@ void DaemonCommonSettings::reset(int page)
 }
 
 
+/*!
+ * \brief Сохранение настроек.
+ *
+ * Настройки записываются \a m_settings и фактически будут записаны немного позднее при закрытии диалога.
+ *
+ * \sa DaemonUiSettings
+ */
 void DaemonCommonSettings::save()
 {
   m_settings->setString("ListenAddress", m_listen->currentText());
@@ -150,6 +162,10 @@ void DaemonCommonSettings::save()
 }
 
 
+/*!
+ * Добавляет в список доступных интерфейсов, для опции "ListenAddress",
+ * адреса локальных интерфейсов, также первым пунктом всегда идёт "0.0.0.0".
+ */
 void DaemonCommonSettings::createListenList()
 {
   m_listen->addItem("0.0.0.0");
@@ -266,6 +282,11 @@ DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent
 }
 
 
+/*!
+ * \brief Сброс настроек на стандартные.
+ *
+ * \param page Номер текущей страницы настроек, только если номер страницы равен \a m_id, производится сброс настроек.
+ */
 void DaemonNetSettings::reset(int page)
 {
   if (page == m_id) {
@@ -283,6 +304,14 @@ void DaemonNetSettings::reset(int page)
 }
 
 
+/*!
+ * \brief Сохранение настроек.
+ *
+ * Настройки записываются \a m_settings и фактически будут записаны немного позднее при закрытии диалога.
+ * Настройки сети (xml-файл), записываются сразу же, используется класс NetworkWriter.
+ *
+ * \sa DaemonUiSettings, NetworkWriter
+ */
 void DaemonNetSettings::save()
 {
   m_settings->setBool("Network", m_network->isChecked());
@@ -305,6 +334,10 @@ void DaemonNetSettings::save()
 }
 
 
+/*!
+ * Изменение роли сервера, если сервер является корневым, происходит отключение выбора адреса
+ * корневого сервера, иначе происходит отключение управления максимальным количеством серверов.
+ */
 void DaemonNetSettings::changeRole(bool root)
 {
   m_rootAddr->setEnabled(!root);
@@ -312,6 +345,12 @@ void DaemonNetSettings::changeRole(bool root)
 }
 
 
+/*!
+ * Управляет состоянием виджетов в зависимости от выбранных настроек.
+ * Если поддержка сети разрешена, то устанавливает красную палитру для виджетов с не корректным вводом.
+ * При отключенной поддержки сети, все виджеты отключаются.
+ * В конце высылается сигнал validInput(bool valid)
+ */
 void DaemonNetSettings::enableAll()
 {
   bool enable = m_network->isChecked();
@@ -333,6 +372,11 @@ void DaemonNetSettings::enableAll()
 }
 
 
+/*!
+ * Универсальный слот вызываемый при изменении текста в одном из полей ввода.
+ * Если новый текст пустой виджету устанавливается красная палитра \a m_red.
+ * В конце высылается сигнал validInput(bool valid)
+ */
 void DaemonNetSettings::inputChanged(const QString &text)
 {
   QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
@@ -348,6 +392,9 @@ void DaemonNetSettings::inputChanged(const QString &text)
 }
 
 
+/*!
+ *\return \a true если ввод корректный и \a false если не корректный и требуется запретить кнопку "OK".
+ */
 bool DaemonNetSettings::revalidate()
 {
   if (!m_network->isChecked())
@@ -363,6 +410,11 @@ bool DaemonNetSettings::revalidate()
 }
 
 
+/*!
+ * \brief Чтение файла сети.
+ *
+ * \sa Network
+ */
 void DaemonNetSettings::readNetwork()
 {
   Network network(qApp->applicationDirPath(), this);
