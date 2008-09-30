@@ -18,9 +18,9 @@
 
 !define SCHAT_NAME       "IMPOMEZIA Simple Chat"
 !define SCHAT_NAME_SHORT "Simple Chat"
-!define SCHAT_VERSION    "0.3.0.613"
+!define SCHAT_VERSION    "0.3.0.620"
 !define SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-!define SCHAT_QTDIR      "C:\qt\442"
+!define SCHAT_QTDIR      "C:\qt\443"
 !define SCHAT_WEB_SITE   "http://impomezia.com/"
 !define SCHAT_COPYRIGHT  "Copyright © 2008 IMPOMEZIA"
 !define SCHAT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
