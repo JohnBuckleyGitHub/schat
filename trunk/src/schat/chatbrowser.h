@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "channellog.h"
 
 class EmoticonMovie;
+class QAction;
 class Settings;
 
 class ChatBrowser : public QTextBrowser {
@@ -49,7 +50,7 @@ public:
   void msgReadyForUse(const QString &addr);
   void msgReadyForUse(const QString &network, const QString &addr);
   void scroll();
-  
+
 signals:
   void pauseAnimations(bool paused);
   void pauseIfHidden(int min, int max);
@@ -72,6 +73,7 @@ private slots:
 
 private:
   void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
+  void createActions();
   void setPauseAnimations(bool paused);
 
   bool m_emoticonsRequireSpaces;
@@ -79,6 +81,9 @@ private:
   bool m_useEmoticons;
   ChannelLog *m_channelLog;
   int m_keepAnimations;
+  QAction *m_clearAction;
+  QAction *m_copyAction;
+  QAction *m_selectAllAction;
   QHash<QString, EmoticonMovie*> m_aemoticon;
   QQueue<int> m_animateQueue;
   QString m_style;
