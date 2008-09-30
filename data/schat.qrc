@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>doc/members.html</file>
   <file>images/appearance.png</file>
   <file>images/bold.png</file>
   <file>images/cancel.png</file>
@@ -9,6 +10,7 @@
   <file>images/female.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/host.png</file>
+  <file>images/impomezia.png</file>
   <file>images/italic.png</file>
   <file>images/logo.png</file>
   <file>images/logo16.png</file>
@@ -28,7 +30,6 @@
   <file>images/undo.png</file>
   <file>images/up.png</file>
   <file>images/update.png</file>
-  <file>doc/members.html</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>
