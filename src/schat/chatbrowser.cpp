@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,16 +48,18 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 
   document()->setDefaultStyleSheet(m_style);
   m_keepAnimations = -1;
-  
+
   setSettings();
   m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
   connect(&m_animateTimer, SIGNAL(timeout()), SLOT(animate()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
+
+  createActions();
 }
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msg(const QString &text)
 {
@@ -68,7 +70,7 @@ void ChatBrowser::msg(const QString &text)
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgBadNickName(const QString &nick)
 {
@@ -77,7 +79,7 @@ void ChatBrowser::msgBadNickName(const QString &nick)
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
@@ -89,7 +91,7 @@ void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QStr
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgDisconnect()
 {
@@ -111,7 +113,7 @@ void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgOldClientProtocol()
 {
@@ -120,7 +122,7 @@ void ChatBrowser::msgOldClientProtocol()
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgOldServerProtocol()
 {
@@ -137,7 +139,7 @@ void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick, const QStr
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
-  
+
   if (sex)
     msg(tr("<i class='gr'><b>%1</b> вышла из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg));
   else
@@ -146,7 +148,7 @@ void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick, const QStr
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgReadyForUse(const QString &addr)
 {
@@ -155,7 +157,7 @@ void ChatBrowser::msgReadyForUse(const QString &addr)
 
 
 /** [public]
- * 
+ *
  */
 void ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
 {
@@ -172,14 +174,19 @@ void ChatBrowser::scroll()
 }
 
 
-/** [protected]
- * 
+/*!
+ * Контекстное меню
  */
 void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 {
-  QMenu *menu = createStandardContextMenu();
-  menu->exec(event->globalPos());
-  delete menu;
+  m_copyAction->setEnabled(textCursor().hasSelection());
+
+  QMenu menu(this);
+  menu.addAction(m_copyAction);
+  menu.addSeparator();
+  menu.addAction(m_clearAction);
+  menu.addAction(m_selectAllAction);
+  menu.exec(event->globalPos());
 }
 
 
@@ -229,7 +236,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   int offset = docCursor.position();
   docCursor.insertHtml(msg);
   QString plainMsg = doc.toPlainText().mid(offset);
-  
+
   if (m_useEmoticons) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
 
@@ -304,7 +311,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
 
 void ChatBrowser::animate()
-{  
+{
   QTextCursor cursor(document());
   cursor.beginEditBlock();
   while (!m_animateQueue.isEmpty()) {
@@ -359,7 +366,7 @@ void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
     m_aemoticon.value(name)->addStarts(starts);
   }
   else {
-    EmoticonMovie *movie = new EmoticonMovie(fileName, pos, starts, this);    
+    EmoticonMovie *movie = new EmoticonMovie(fileName, pos, starts, this);
     m_aemoticon.insert(name, movie);
     document()->addResource(QTextDocument::ImageResource, name, movie->currentPixmap());
     connect(movie, SIGNAL(frameChanged(const QString &)), SLOT(animate(const QString &)));
@@ -369,6 +376,23 @@ void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
 
   if (!m_animateTimer.isActive() && m_useAnimatedEmoticons)
     m_animateTimer.start();
+}
+
+
+/*!
+ * Создание объектов \a QAction.
+ */
+void ChatBrowser::createActions()
+{
+  m_copyAction = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
+  m_copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
+  connect(m_copyAction, SIGNAL(triggered()), SLOT(copy()));
+
+  m_clearAction = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  connect(m_clearAction, SIGNAL(triggered()), SLOT(clear()));
+
+  m_selectAllAction = new QAction(tr("&Выделить всё"), this);
+  connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
 
 
