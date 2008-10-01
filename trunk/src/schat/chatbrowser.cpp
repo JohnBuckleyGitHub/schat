@@ -180,6 +180,9 @@ void ChatBrowser::scroll()
 void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 {
   m_copyAction->setEnabled(textCursor().hasSelection());
+  bool empty = (bool) document()->toPlainText().size();
+  m_clearAction->setEnabled(empty);
+  m_selectAllAction->setEnabled(empty);
 
   QMenu menu(this);
   menu.addAction(m_copyAction);
