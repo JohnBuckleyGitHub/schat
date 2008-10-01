@@ -377,7 +377,7 @@ void DaemonNetSettings::enableAll()
  * Если новый текст пустой виджету устанавливается красная палитра \a m_red.
  * В конце высылается сигнал validInput(bool valid)
  */
-void DaemonNetSettings::inputChanged(const QString &text)
+void DaemonNetSettings::inputChanged(const QString &/*text*/)
 {
   QLineEdit *lineEdit = qobject_cast<QLineEdit *>(sender());
 
