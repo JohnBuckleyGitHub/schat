@@ -69,7 +69,6 @@ void InputWidget::clearMsg()
 
 void InputWidget::paste()
 {
-  qDebug() << "InputWidget::paste()";
   QTextEdit::paste();
 }
 
