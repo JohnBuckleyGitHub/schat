@@ -20,6 +20,7 @@ SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 1
 SCHAT_RESOURCES  = 1
 SCHAT_RC_FILE    = 1
+SCHAT_STATIC     = 0
 
 DEFINES += SCHAT_CLIENT
 
@@ -85,6 +86,11 @@ win32 {
     HEADERS += win32/updatenotify.h
     SOURCES += win32/updatenotify.cpp
     DEFINES += SCHAT_UPDATE
+}
+
+contains( SCHAT_STATIC, 1 ) {
+    QTPLUGIN += qgif
+    DEFINES  += SCHAT_STATIC
 }
 
 include(../common/common.pri)

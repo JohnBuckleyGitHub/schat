@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 #include "schatwindow.h"
 #include "version.h"
 
+#ifdef SCHAT_STATIC
+  Q_IMPORT_PLUGIN(qgif)
+#endif
+
 #ifndef DISABLE_SINGLE_APP
   #include "singleapplication.h"
 #endif
@@ -28,7 +32,7 @@
 bool install();
 
 int main(int argc, char *argv[])
-{  
+{
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
@@ -42,10 +46,6 @@ int main(int argc, char *argv[])
 
   QStringList arguments = app.arguments();
   arguments.takeFirst();
-
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_ru", ":/translations");
-  app.installTranslator(&qtTranslator);
 
   // Требуем поддержку System Tray
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -70,6 +70,10 @@ int main(int argc, char *argv[])
   if (arguments.contains("-exit"))
     return 0;
 
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_ru", ":/translations");
+  app.installTranslator(&qtTranslator);
+
   SChatWindow window;
   if (arguments.contains("-hide"))
     window.hide();
@@ -89,11 +93,11 @@ bool install()
   QString appPath = qApp->applicationDirPath();
   QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
   s.beginGroup("Updates");
-  
+
   if (s.value("ReadyToInstall", false).toBool()) {
     int qtLevel   = s.value("LastDownloadedQtLevel", 0).toInt();
     int coreLevel = s.value("LastDownloadedCoreLevel", 0).toInt();
-    
+
     if (qtLevel <= UpdateLevelQt && coreLevel <= UpdateLevelCore)
       return false;
     else if (QFile::exists(appPath + "/uninstall.exe")) {
@@ -101,11 +105,11 @@ bool install()
       args << "-update" << "-run";
       if (s.value("AutoClean", true).toBool())
         args << "-clean";
-      
+
       QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
       return true;
-    }    
+    }
   }
-  
+
   return false;
 }
