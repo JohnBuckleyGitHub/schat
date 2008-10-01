@@ -183,10 +183,19 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 
   QMenu menu(this);
   menu.addAction(m_copyAction);
+
+  QUrl link(anchorAt(event->pos()));
+  QAction *copyLinkAction = 0;
+  if (!link.isEmpty() && link.isValid())
+    copyLinkAction = menu.addAction(tr("Копировать &ссылку"));
+
   menu.addSeparator();
   menu.addAction(m_clearAction);
   menu.addAction(m_selectAllAction);
-  menu.exec(event->globalPos());
+  QAction *action = menu.exec(event->globalPos());
+
+  if (action == copyLinkAction)
+    QApplication::clipboard()->setText(link.toString());
 }
 
 
