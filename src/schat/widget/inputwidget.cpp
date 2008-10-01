@@ -34,6 +34,8 @@ InputWidget::InputWidget(QWidget *parent)
   m_default = currentCharFormat();
   m_current = 0;
   document()->setDefaultStyleSheet("a {color:#1a4d82;}");
+
+  createActions();
 }
 
 
@@ -69,7 +71,38 @@ void InputWidget::clearMsg()
 
 void InputWidget::paste()
 {
-  QTextEdit::paste();
+  if (canPaste()) {
+    QTextCharFormat format = currentCharFormat();
+    QTextEdit::paste();
+    setCurrentCharFormat(format);
+    emit cursorPositionChanged();
+  }
+}
+
+
+/*!
+ * Контекстное меню
+ */
+void InputWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+  bool selection = textCursor().hasSelection();
+
+  m_cutAction->setEnabled(selection);
+  m_copyAction->setEnabled(selection);
+  m_pasteAction->setEnabled(canPaste());
+
+  bool empty = (bool) document()->toPlainText().size();
+  m_clearAction->setEnabled(empty);
+  m_selectAllAction->setEnabled(empty);
+
+  QMenu menu(this);
+  menu.addAction(m_cutAction);
+  menu.addAction(m_copyAction);
+  menu.addAction(m_pasteAction);
+  menu.addSeparator();
+  menu.addAction(m_clearAction);
+  menu.addAction(m_selectAllAction);
+  menu.exec(event->globalPos());
 }
 
 
@@ -95,6 +128,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     prevMsg();
   else if (key == "Ctrl+C")
     emit needCopy();
+  else if (key == "Ctrl+V")
+    paste();
   else if (event->key() == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else
@@ -179,6 +214,31 @@ QString InputWidget::parseLinks(const QString &message, bool plain)
   result.replace(QRegExp(QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")), QLatin1String("\\1\\3"));
 
   return result;
+}
+
+
+/*!
+ * Создание объектов \a QAction.
+ */
+void InputWidget::createActions()
+{
+  m_cutAction = new QAction(QIcon(":/images/editcut.png"), tr("&Вырезать"), this);
+  m_cutAction->setShortcut(Qt::CTRL + Qt::Key_X);
+  connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
+
+  m_copyAction = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
+  m_copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
+  connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
+
+  m_pasteAction = new QAction(QIcon(":/images/editpaste.png"), tr("&Вставить"), this);
+  m_pasteAction->setShortcut(Qt::CTRL + Qt::Key_V);
+  connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
+
+  m_clearAction = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
+
+  m_selectAllAction = new QAction(tr("&Выделить всё"), this);
+  connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
 
 

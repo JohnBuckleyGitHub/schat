@@ -21,6 +21,8 @@
 
 #include <QTextEdit>
 
+class QAction;
+
 /*!
  * \brief Базовый виджет для ввода текста.
  */
@@ -30,25 +32,32 @@ class InputWidget : public QTextEdit
 
 public:
   InputWidget(QWidget *parent = 0);
-  void clearMsg();
 
 signals:
   void needCopy();
   void sendMsg(const QString &message);
 
 public slots:
+  void clearMsg();
   void paste();
   void sendMsg();
 
 protected:
+  void contextMenuEvent(QContextMenuEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
 private:
   QString parseLinks(const QString &message, bool plain = false);
+  void createActions();
   void nextMsg();
   void prevMsg();
 
   int m_current;
+  QAction *m_clearAction;
+  QAction *m_copyAction;
+  QAction *m_cutAction;
+  QAction *m_pasteAction;
+  QAction *m_selectAllAction;
   QStringList m_msg;
   QTextCharFormat m_default;
 };
