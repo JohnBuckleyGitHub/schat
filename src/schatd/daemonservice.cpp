@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 /*!
  * \class DaemonService
  * \brief Универсальный класс, обслуживающий клиентов.
- * 
+ *
  * При наличии валидного сокета, инициализируется сокет.
  */
 
@@ -100,7 +100,7 @@ void DaemonService::accessGranted(quint16 numeric)
 
 
 /** [public]
- * 
+ *
  */
 void DaemonService::quit(bool kill)
 {
@@ -120,7 +120,7 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeSyncNumerics << numerics; 
+    out << quint16(0) << OpcodeSyncNumerics << numerics;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -128,101 +128,9 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
 }
 
 
-/** [public slots]
- * 
- */
-void DaemonService::disconnected()
-{  
-  if (m_accepted && !m_kill)
-    emit leave(m_profile->nick(), m_flag);
-
-  deleteLater();
-}
-
-
-/** [public slots]
- * 
- */
-void DaemonService::readyRead()
-{  
-  forever {
-    if (!m_nextBlockSize) {
-      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
-        break;
-        
-      m_stream >> m_nextBlockSize;
-    }
-
-    if (m_socket->bytesAvailable() < m_nextBlockSize)
-      break;
-    
-    m_stream >> m_opcode;
-
-#ifdef SCHAT_DEBUG
-    if (m_opcode != 401)
-      qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
-#endif
-
-    if (m_accepted) {
-      switch (m_opcode) {
-        case OpcodeMessage:
-          opcodeMessage();
-          break;
-          
-        case OpcodePong:
-          opcodePong();
-          break;
-          
-        case OpcodeNewProfile:
-          opcodeNewProfile();
-          break;
-          
-        case OpcodeByeMsg:
-          opcodeByeMsg();
-          break;
-          
-        case OpcodeRelayMessage:
-          opcodeRelayMessage();
-          break;
-          
-        case OpcodeNewUser:
-          opcodeNewUser();
-          break;
-          
-        case OpcodeUserLeave:
-          opcodeUserLeave();
-          break;
-          
-        case OpcodeNewNick:
-          opcodeNewNick();
-          break;
-          
-        case OpcodeSyncByeMsg:
-          opcodeSyncByeMsg();
-          break;
-          
-        default:
-          unknownOpcode();
-          break;
-      };
-    }
-    else if (m_opcode == OpcodeGreeting) {
-      if (!opcodeGreeting()) {
-        m_socket->disconnectFromHost();
-        return;
-      }
-    }
-    else {
-      m_socket->disconnectFromHost();
-      return;
-    }
-  }
-}
-
-
 /*!
  * \brief Отправка пакета с опкодом \b OpcodeNewNick.
- * 
+ *
  */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
@@ -241,14 +149,14 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
 
 /*!
  * \brief Отправка пакета с опкодом \b OpcodeNewProfile.
- * 
+ *
  */
 void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QString &name)
 {
 #ifdef SCHAT_DEBUG
   qDebug() << "DaemonService::sendNewProfile()";
 #endif
-  
+
   if (m_profile->nick() == nick) {
     m_profile->setGender(gender);
     m_profile->setFullName(name);
@@ -261,7 +169,7 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
-{  
+{
   if (isReady()) {
 
     if (m_flag == FlagNone)
@@ -271,7 +179,7 @@ void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) 
+    out << quint16(0)
         << OpcodeNewUser
         << echo
         << numeric
@@ -290,7 +198,7 @@ void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
 
 
 /** [public slots]
- * 
+ *
  */
 void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
@@ -310,12 +218,24 @@ void DaemonService::sendRelayMessage(const QString &channel, const QString &send
 }
 
 
+/** [public slots]
+ *
+ */
+void DaemonService::disconnected()
+{
+  if (m_accepted && !m_kill)
+    emit leave(m_profile->nick(), m_flag);
+
+  deleteLater();
+}
+
+
 /** [private slots]
  * Если `m_accepted` не равен `true`, разрываем соединение,
  * т.к. не произошло рукопожатия за отведённое время.
  */
 void DaemonService::ping()
-{ 
+{
   if (m_accepted) {
     if (m_pings < 2) {
       send(OpcodePing);
@@ -333,8 +253,88 @@ void DaemonService::ping()
 }
 
 
+/** [public slots]
+ *
+ */
+void DaemonService::readyRead()
+{
+  forever {
+    if (!m_nextBlockSize) {
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+
+      m_stream >> m_nextBlockSize;
+    }
+
+    if (m_socket->bytesAvailable() < m_nextBlockSize)
+      break;
+
+    m_stream >> m_opcode;
+
+#ifdef SCHAT_DEBUG
+    if (m_opcode != 401)
+      qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
+
+    if (m_accepted) {
+      switch (m_opcode) {
+        case OpcodeMessage:
+          opcodeMessage();
+          break;
+
+        case OpcodePong:
+          opcodePong();
+          break;
+
+        case OpcodeNewProfile:
+          opcodeNewProfile();
+          break;
+
+        case OpcodeByeMsg:
+          opcodeByeMsg();
+          break;
+
+        case OpcodeRelayMessage:
+          opcodeRelayMessage();
+          break;
+
+        case OpcodeNewUser:
+          opcodeNewUser();
+          break;
+
+        case OpcodeUserLeave:
+          opcodeUserLeave();
+          break;
+
+        case OpcodeNewNick:
+          opcodeNewNick();
+          break;
+
+        case OpcodeSyncByeMsg:
+          opcodeSyncByeMsg();
+          break;
+
+        default:
+          unknownOpcode();
+          break;
+      };
+    }
+    else if (m_opcode == OpcodeGreeting) {
+      if (!opcodeGreeting()) {
+        m_socket->disconnectFromHost();
+        return;
+      }
+    }
+    else {
+      m_socket->disconnectFromHost();
+      return;
+    }
+  }
+}
+
+
 /** [private]
- * 
+ *
  */
 bool DaemonService::opcodeGreeting()
 {
@@ -354,7 +354,7 @@ bool DaemonService::opcodeGreeting()
   m_nextBlockSize = 0;
 
   QStringList profile;
-  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);; 
+  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);;
   m_profile = new AbstractProfile(profile, this);
 
   err = verifyGreeting(p_version);
@@ -383,7 +383,7 @@ bool DaemonService::send(quint16 opcode)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode; 
+    out << quint16(0) << opcode;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -408,7 +408,7 @@ bool DaemonService::send(quint16 opcode, const QString &msg)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << msg; 
+    out << quint16(0) << opcode << msg;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -434,7 +434,7 @@ bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << str1 << str2; 
+    out << quint16(0) << opcode << str1 << str2;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -459,7 +459,7 @@ bool DaemonService::send(quint16 opcode, quint16 err)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << err; 
+    out << quint16(0) << opcode << err;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -486,7 +486,7 @@ bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << flag << nick << message; 
+    out << quint16(0) << opcode << flag << nick << message;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -514,7 +514,7 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << newNick << name; 
+    out << quint16(0) << opcode << gender << nick << newNick << name;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -575,7 +575,7 @@ void DaemonService::opcodeByeMsg()
 
 /*!
  * \brief Разбор пакета \b OpcodeMessage, полученного от клиента.
- * 
+ *
  * В случае успеха высылается сигнал message(const QString &channel, const QString &sender, const QString &message).
  */
 void DaemonService::opcodeMessage()
@@ -616,8 +616,8 @@ void DaemonService::opcodeNewNick()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
- * 
- * 
+ *
+ *
  */
 void DaemonService::opcodeNewProfile()
 {
@@ -642,7 +642,7 @@ void DaemonService::opcodeNewProfile()
 
 
 /** [private]
- * 
+ *
  */
 void DaemonService::opcodeNewUser()
 {
@@ -677,7 +677,7 @@ void DaemonService::opcodePong()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeRelayMessage.
- * 
+ *
  * В случае успеха высылается сигнал void relayMessage(const QString &channel, const QString &sender, const QString &message).
  */
 void DaemonService::opcodeRelayMessage()
@@ -726,7 +726,7 @@ void DaemonService::opcodeSyncByeMsg()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeUserLeave.
- * 
+ *
  * В конце разбора высылается сигнал userLeave(const QString &, const QString &, bool).
  */
 void DaemonService::opcodeUserLeave()
