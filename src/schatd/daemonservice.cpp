@@ -227,7 +227,7 @@ void DaemonService::disconnected()
     if (m_error.isEmpty())
       m_error = m_socket->errorString();
 
-    emit leave(m_profile->nick(), m_flag);
+    emit leave(m_profile->nick(), m_flag, m_error);
   }
 
   deleteLater();

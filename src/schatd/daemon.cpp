@@ -259,7 +259,7 @@ void Daemon::incomingConnection()
   if (m_server.hasPendingConnections()) {
     DaemonService *service = new DaemonService(m_server.nextPendingConnection(), this);
     connect(service, SIGNAL(greeting(const QStringList &, quint8)), SLOT(greeting(const QStringList &, quint8)));
-    connect(service, SIGNAL(leave(const QString &, quint8)), SLOT(serviceLeave(const QString &, quint8)));
+    connect(service, SIGNAL(leave(const QString &, quint8, const QString &)), SLOT(serviceLeave(const QString &, quint8, const QString &)));
     connect(this, SIGNAL(userLeave(const QString &, const QString &, quint8)), service, SLOT(sendUserLeave(const QString &, const QString &, quint8)));
     connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), service, SLOT(sendNewUser(const QStringList &, quint8, quint8)));
     connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), service, SLOT(sendNewLink(quint8, const QString &, const QString &)));
@@ -437,23 +437,24 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
 
 
 /*!
- * \brief Обработка отключения авторизированного клиента.
+ * \brief Обработка отключения авторизированного пользователя.
  *
  * В зависимости от значения flag вызывается функция linkLeave(const QString &nick) для сервера либо userLeave(const QString &nick) для клиента.
  * \param nick Ник пользователя.
  * \param flag Флаг подключения.
+ * \param err Ошибка, причина разъединения.
  * \sa linkLeave(const QString &nick), userLeave(const QString &nick)
  */
-void Daemon::serviceLeave(const QString &nick, quint8 flag)
+void Daemon::serviceLeave(const QString &nick, quint8 flag, const QString &err)
 {
 #ifdef SCHAT_DEBUG
   qDebug() << "Daemon::serviceLeave(const QString &)" << nick << flag;
 #endif
 
   if (flag == FlagLink)
-    linkLeave(nick);
+    linkLeave(nick, err);
   else
-    userLeave(nick);
+    userLeave(nick, err);
 }
 
 
@@ -837,7 +838,7 @@ void Daemon::link()
  * Событие записывается в журнал.
  * \param nick Номер сервера в виде строки.
  */
-void Daemon::linkLeave(const QString &nick)
+void Daemon::linkLeave(const QString &nick, const QString &err)
 {
   if (m_network) {
     quint8 numeric = quint8(nick.toInt());
@@ -847,7 +848,7 @@ void Daemon::linkLeave(const QString &nick)
       m_links.remove(numeric);
       m_numerics.removeAll(numeric);
 
-      LOG(0, tr("- Notice - Disconnect Link: %1@%2").arg(nick).arg(unit->host()));
+      LOG(0, tr("- Notice - Disconnect Link: %1@%2 [%3]").arg(nick).arg(unit->host()).arg(err));
 
       emit sendLinkLeave(numeric, m_network->name(), unit->host());
 
@@ -968,7 +969,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
 /** [private]
  *
  */
-void Daemon::userLeave(const QString &nick)
+void Daemon::userLeave(const QString &nick, const QString &err)
 {
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
@@ -985,7 +986,7 @@ void Daemon::userLeave(const QString &nick)
       }
     }
 
-    LOG(0, tr("- Notice - Disconnect: %1@%2").arg(nick).arg(unit->profile()->host()));
+    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
 
     QString bye = unit->profile()->byeMsg();
     if (m_settings->getBool("ChannelLog"))
