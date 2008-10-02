@@ -75,7 +75,7 @@ private slots:
   void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
-  void serviceLeave(const QString &nick, quint8 flag);
+  void serviceLeave(const QString &nick, quint8 flag, const QString &err);
   void syncNumerics(const QList<quint8> &numerics);
 
   #ifndef DISABLE_LOCAL_SERVER
@@ -90,11 +90,11 @@ private:
   void greetingLink(const QStringList &list, DaemonService *service);
   void greetingUser(const QStringList &list, DaemonService *service);
   void link();
-  void linkLeave(const QString &nick);
+  void linkLeave(const QString &nick, const QString &err);
   void sendAllUsers(DaemonService *service);
   void syncBye(const QString &nick, const QString &bye, bool local);
   void syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local);
-  void userLeave(const QString &nick);
+  void userLeave(const QString &nick, const QString &err = QString());
 
   AbstractProfile *m_profile;
   bool m_syncUsers;

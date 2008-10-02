@@ -44,7 +44,7 @@ public:
 
 signals:
   void greeting(const QStringList &list, quint8 flag);
-  void leave(const QString &nick, quint8 flag);
+  void leave(const QString &nick, quint8 flag, const QString &err);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
