@@ -94,6 +94,7 @@ private:
   bool m_kill;
   int m_pings;
   QDataStream m_stream;
+  QString m_error;
   QTcpSocket *m_socket;
   QTimer m_ping;
   quint16 m_nextBlockSize;
