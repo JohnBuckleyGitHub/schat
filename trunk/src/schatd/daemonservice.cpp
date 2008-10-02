@@ -218,21 +218,30 @@ void DaemonService::sendRelayMessage(const QString &channel, const QString &send
 }
 
 
-/** [public slots]
- *
+/*!
+ * Обработка разрыва соединения.
  */
 void DaemonService::disconnected()
 {
-  if (m_accepted && !m_kill)
+  if (m_accepted && !m_kill) {
+    if (m_error.isEmpty())
+      m_error = m_socket->errorString();
+
     emit leave(m_profile->nick(), m_flag);
+  }
 
   deleteLater();
 }
 
 
-/** [private slots]
- * Если `m_accepted` не равен `true`, разрываем соединение,
- * т.к. не произошло рукопожатия за отведённое время.
+/*!
+ * Слот вызывается таймером \a m_ping, для проверки состояния соединения.
+ *
+ * Если соединение успешно установлено (m_accepted == true) и счётчик отправленных пакетов \a m_pings
+ * не превышен, производится отправка пакета \b OpcodePing и увеличивается счётчик пингов,
+ * иначе \a m_error устанавливается в "Ping timeout" и происходит отключение.
+ *
+ * При (m_accepted == false) при активном соединения происходит разъединение, иначе удаление сокета.
  */
 void DaemonService::ping()
 {
@@ -241,8 +250,10 @@ void DaemonService::ping()
       send(OpcodePing);
       ++m_pings;
     }
-    else
+    else {
+      m_error = tr("Ping timeout");
       m_socket->disconnectFromHost();
+    }
   }
   else {
     if (m_socket->state() == QAbstractSocket::ConnectedState)
