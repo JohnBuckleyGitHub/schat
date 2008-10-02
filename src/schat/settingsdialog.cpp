@@ -66,7 +66,7 @@ ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, Q
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
   m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
   m_byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
-  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи если вы выйдете из чата"));
+  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
 
   QHBoxLayout *byeMsgLayout = new QHBoxLayout;
   byeMsgLayout->addWidget(byeMsgLabel);
@@ -122,7 +122,7 @@ NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
 {
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
-  m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию и адрес сервера при запуске программы"));
+  m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
 
   m_networkWidget = new NetworkWidget(m_settings, this);
   connect(m_networkWidget, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
@@ -236,11 +236,11 @@ EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
   connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
   m_animateCheck = new QCheckBox(tr("Разрешить анимацию"), this);
-  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах, может приводить к повышенной загрузке процессора"));
+  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах,\nможет приводить к повышенной загрузке процессора"));
   m_animateCheck->setChecked(m_settings->getBool("UseAnimatedEmoticons"));
 
   m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
-  m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они отделены пробелами от остального сообщения"));
+  m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
   m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
 
   mainLayout->addWidget(m_enableCheck);
