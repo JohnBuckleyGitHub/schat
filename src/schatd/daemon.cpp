@@ -154,7 +154,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
   while (i.hasNext()) {
     i.next();
     if (!m_numerics.contains(i.value()->numeric()))
-      userLeave(i.value()->profile()->nick());
+      userLeave(i.value()->profile()->nick(), tr("Потеряно соединение с корневым сервером"));
   }
 }
 
@@ -213,14 +213,14 @@ void Daemon::clientSyncUsersEnd()
  * \param nick Ник пользователя.
  * \param bye Сообщение о выходе.
  * \param flag Параметр игнорируется и не используется.
- * \sa userLeave(const QString &nick)
+ * \sa userLeave(const QString &nick, const QString &err)
  */
 void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
 {
   if (m_users.contains(nick))
     m_users.value(nick)->profile()->setByeMsg(bye);
 
-  userLeave(nick);
+  userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
 }
 
 
@@ -439,11 +439,11 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
 /*!
  * \brief Обработка отключения авторизированного пользователя.
  *
- * В зависимости от значения flag вызывается функция linkLeave(const QString &nick) для сервера либо userLeave(const QString &nick) для клиента.
+ * В зависимости от значения flag вызывается функция linkLeave(const QString &nick) для сервера либо userLeave(const QString &nick, const QString &err) для пользователей.
  * \param nick Ник пользователя.
  * \param flag Флаг подключения.
  * \param err Ошибка, причина разъединения.
- * \sa linkLeave(const QString &nick), userLeave(const QString &nick)
+ * \sa linkLeave(const QString &nick, const QString &err), userLeave(const QString &nick, const QString &err)
  */
 void Daemon::serviceLeave(const QString &nick, quint8 flag, const QString &err)
 {
@@ -836,7 +836,9 @@ void Daemon::link()
  * Сервер удаляется из списка подключенных серверов и его номер удаляется из списка номеров серверов.
  * Высылается уведомление об отключении сервера, и отключаются все клиенты, ассоциированные с этим сервером.
  * Событие записывается в журнал.
+ *
  * \param nick Номер сервера в виде строки.
+ * \param err Ошибка, причина разъединения.
  */
 void Daemon::linkLeave(const QString &nick, const QString &err)
 {
@@ -856,7 +858,7 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
       while (i.hasNext()) {
         i.next();
         if (i.value()->numeric() == numeric)
-          userLeave(i.value()->profile()->nick());
+          userLeave(i.value()->profile()->nick(), tr("Отключение сервера %1@%2").arg(nick).arg(unit->host()));
       }
 
       delete unit;
