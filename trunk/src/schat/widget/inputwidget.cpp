@@ -238,6 +238,7 @@ void InputWidget::createActions()
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
   m_selectAllAction = new QAction(tr("&Выделить всё"), this);
+  m_selectAllAction->setShortcut(Qt::CTRL + Qt::Key_A);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
 
