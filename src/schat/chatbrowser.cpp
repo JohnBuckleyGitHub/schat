@@ -43,16 +43,17 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
       ".err   { color:#da251d; }"
       ".info  { color:#5096cf; }"
       ".me    { color:#cd00cd; }"
-      "a      { color:#1a4d82; }"
+      "a      { color:#1a4d82; text-decoration:none; }"
+      "a.nick { color:#90a4b3; font-weight:bold; }"
       );
 
   document()->setDefaultStyleSheet(m_style);
-  m_keepAnimations = -1;
 
   setSettings();
   m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
   connect(&m_animateTimer, SIGNAL(timeout()), SLOT(animate()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
+  connect(this, SIGNAL(anchorClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
 
   createActions();
 }
@@ -189,7 +190,7 @@ void ChatBrowser::contextMenuEvent(QContextMenuEvent *event)
 
   QUrl link(anchorAt(event->pos()));
   QAction *copyLinkAction = 0;
-  if (!link.isEmpty() && link.isValid())
+  if (!link.isEmpty() && link.isValid() && link.scheme() != "nick")
     copyLinkAction = menu.addAction(tr("Копировать &ссылку"));
 
   menu.addSeparator();
@@ -236,12 +237,14 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
     msg.remove("/me ", Qt::CaseInsensitive);
     msg = "<span class='me'>" + msg + "</span>";
-    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <span class='me'>%2</span> ").arg(currentTime()).arg(Qt::escape(nick)));
-    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(Qt::escape(nick)).arg(msg));
+    QString escapedNick = Qt::escape(nick);
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick://%2' class='me'>%3</span> ").arg(currentTime()).arg(escapedNick).arg(escapedNick));
+    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
   }
   else {
-    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <b class='gr'>%2:</b> ").arg(currentTime()).arg(Qt::escape(nick)));
-    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(Qt::escape(nick)).arg(msg));
+    QString escapedNick = Qt::escape(nick);
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a class='nick' href='nick://%2'>%3:</a> ").arg(currentTime()).arg(escapedNick).arg(escapedNick));
+    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(msg));
   }
 
   docCursor.movePosition(QTextCursor::End);
@@ -360,6 +363,11 @@ void ChatBrowser::animate(const QString &key)
         m_animateQueue.enqueue(start);
     }
   }
+}
+
+
+void ChatBrowser::linkClicked(const QUrl &link)
+{
 }
 
 
