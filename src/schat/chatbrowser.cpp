@@ -222,9 +222,9 @@ void ChatBrowser::clear()
 }
 
 
-/** [public slots]
- * Новое сообщение `const QString &message`,
- * от участника `const QString &nick`.
+/*!
+ * \param nick Ник отправителя сообщения.
+ * \param message Сообщение.
  */
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
@@ -251,10 +251,12 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   if (m_useEmoticons) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
+    QMap<int, QString> emoticonsToInsert;
 
     if (!emoticons.isEmpty()) {
       QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-      int size = toPlainText().size();
+      int size    = toPlainText().size();
+      int docSize = doc.toPlainText().size();
 
       foreach (Emoticons emoticon, emoticons) {
         docCursor.setPosition(offset);
@@ -303,20 +305,30 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
           }
 
           if (ok) {
-            QString file = emoticonsPath + emoticon.file;
             if (!emoticon.file.isEmpty()) {
-              docCursor.insertImage(QFileInfo(file).fileName());
-              addAnimation(file, docCursor.position() + size, size + 1);
+              QString file = emoticonsPath + emoticon.file;
+              docCursor.insertImage(emoticon.file);
+              emoticonsToInsert.insert(docCursor.position() + size, file);
             }
           }
+
         } while (!docCursor.isNull());
       }
+
+      if (!emoticonsToInsert.isEmpty()) {
+        int fix = docSize - doc.toPlainText().size();
+
+        QMapIterator<int, QString> i(emoticonsToInsert);
+        while (i.hasNext()) {
+          i.next();
+          addAnimation(i.value(), i.key() - fix, size + offset);
+        }
+      }
+
     }
   }
 
   append(doc.toHtml());
-
-//  qDebug() << toHtml();
 
   scroll();
 }
@@ -370,6 +382,13 @@ void ChatBrowser::setSettings()
 }
 
 
+/*!
+ * Добавление смайлика в документ.
+ *
+ * \param fileName Полное имя файла.
+ * \param pos      Позиция смайлика в документе.
+ * \param starts   Общая начальная позиция всех смайликов в данном блоке.
+ */
 void ChatBrowser::addAnimation(const QString &fileName, int pos, int starts)
 {
   QString name = QFileInfo(fileName).fileName();
