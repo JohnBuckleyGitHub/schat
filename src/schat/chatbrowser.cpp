@@ -276,25 +276,25 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
               else if (docCursor.anchor() == offset) {
                 findCursor.setPosition(docCursor.position());
                 findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-                if (findCursor.selectedText() == " ")
+                if (findCursor.selectedText().at(0).isSpace())
                   ok = true;
               }
               // Код смайлика находится в конце строки, перед ним должен находится пробел.
               else if (docCursor.position() == docSize) {
                 findCursor.setPosition(docCursor.anchor());
                 findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-                if (findCursor.selectedText() == " ")
+                if (findCursor.selectedText().at(0).isSpace())
                   ok = true;
               }
               // Код смайлика находится внутри строки, с обоих сторон должны находится пробелы.
               else {
                 findCursor.setPosition(docCursor.anchor());
                 findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-                QString prev = findCursor.selectedText();
+                QChar prev = findCursor.selectedText().at(0);
                 findCursor.setPosition(docCursor.position());
                 findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-                QString next = findCursor.selectedText();
-                if (prev == " " && next == " ")
+                QChar next = findCursor.selectedText().at(0);
+                if (prev.isSpace() && next.isSpace())
                   ok = true;
               }
             }
