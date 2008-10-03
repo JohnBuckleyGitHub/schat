@@ -164,19 +164,21 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  *
  * Слот вызывается при получении пакета \b OpcodeNewUser от локального клиентского подключения либо от удалённого сервера.
  * Функция вносит нового пользователя в список \a m_users и высылает уведомление.
- * \param list Стандартный список, содержащий в себе полные данные пользователя.
- * \param echo Параметр игнорируется и не используется.
+ *
+ * \param list    Стандартный список, содержащий в себе полные данные пользователя.
+ * \param echo    Параметр игнорируется и не используется.
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
 {
-  QString nick = list.at(AbstractProfile::Nick);
+  QString nick = list.at(AbstractProfile::Nick).toLower();
 
   if (m_users.contains(nick) && !m_syncUsers) {
     DaemonService *service = m_users.value(nick)->service();
     if (service)
       service->quit(true);
-    userLeave(nick);
+
+    userLeave(list.at(AbstractProfile::Nick));
   }
 
   if (!m_users.contains(nick)) {
@@ -217,8 +219,10 @@ void Daemon::clientSyncUsersEnd()
  */
 void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
 {
-  if (m_users.contains(nick))
-    m_users.value(nick)->profile()->setByeMsg(bye);
+  QString lowerNick = nick.toLower();
+
+  if (m_users.contains(lowerNick))
+    m_users.value(lowerNick)->profile()->setByeMsg(bye);
 
   userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
 }
@@ -311,6 +315,8 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << nick << msg;
 #endif
 
+  QString lowerChannel = channel.toLower();
+
   if (channel.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
       m_channelLog->msg(tr("%1: %2").arg(nick).arg(msg));
@@ -324,12 +330,12 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
       }
     }
   }
-  else if (m_users.contains(channel)) {
+  else if (m_users.contains(lowerChannel)) {
     if (m_settings->getBool("PrivateLog"))
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
 
     if (!parseCmd(nick, msg)) {
-      quint16 numeric = m_users.value(channel)->numeric();
+      quint16 numeric = m_users.value(lowerChannel)->numeric();
       DaemonService *senderService = qobject_cast<DaemonService *>(sender());
       if (!senderService)
         return;
@@ -337,7 +343,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
 
       if (numeric == m_numeric) {
         err = false;
-        DaemonService *service = m_users.value(channel)->service();
+        DaemonService *service = m_users.value(lowerChannel)->service();
         if (service)
           service->sendPrivateMessage(0, nick, msg);
       }
@@ -380,7 +386,9 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 /*!
  * \brief Обработка сообщения пользователя полученного с другого сервера.
  *
- * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал. Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
+ * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал.
+ * Происходит рассылка уведомление для локальных клиентов и остальных серверов,
+ * при необходимости добавляется запись в канальный лог.
  *
  * Отправка приватных сообщений произовдится различными способами в зависимости от того к какому серверу подключен получатель. Получатель может быть:
  *  - Подключенным локально к этому серверу (numeric == m_numeric).
@@ -388,7 +396,7 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
  *
  * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * \param sender  Ник отправителся.
- * \param msg Cообщение.
+ * \param msg     Cообщение.
  */
 void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg)
 {
@@ -399,14 +407,17 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   if (!m_network)
     return;
 
+  QString lowerChannel = channel.toLower();
+  QString lowerSender  = sender.toLower();
+
   if (channel.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
     emit sendMessage(sender, msg);
 
-    if (m_users.contains(sender)) {
-      quint8 senderNum = m_users.value(sender)->numeric();
+    if (m_users.contains(lowerSender)) {
+      quint8 senderNum = m_users.value(lowerSender)->numeric();
 
       QHashIterator<quint8, LinkUnit *> i(m_links);
       while (i.hasNext()) {
@@ -418,13 +429,13 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
     return;
   }
 
-  quint8 numeric = m_users.value(channel)->numeric();
+  quint8 numeric = m_users.value(lowerChannel)->numeric();
 
   if (m_settings->getBool("PrivateLog"))
     m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
 
   if (numeric == m_numeric) {
-    DaemonService *service = m_users.value(channel)->service();
+    DaemonService *service = m_users.value(lowerChannel)->service();
     if (service)
       service->sendPrivateMessage(0, sender, msg);
   }
@@ -484,19 +495,21 @@ void Daemon::incomingLocalConnection()
  * \brief Обработка команд предназначенных для сервера.
  *
  * \param nick Ник пользователя отправившего сообщение.
- * \param msg Сообщение.
+ * \param msg  Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
-  if (!m_users.contains(nick))
+  QString lowerNick = nick.toLower();
+
+  if (!m_users.contains(lowerNick))
     return false;
 
   QString text = ChannelLog::toPlainText(msg).trimmed().toLower();
 
   /// Команда "/server"
   if (text == "/server") {
-    DaemonService *service = m_users.value(nick)->service();
+    DaemonService *service = m_users.value(lowerNick)->service();
     if (service) {
       service->sendServerMessage(serverInfo());
       return true;
@@ -688,14 +701,14 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 
 
 /*!
- * \brief Обработка приветствия от клиента.
+ * \brief Обработка приветствия от локально подключенного пользователя.
  *
- * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param list    Стандартный список, содержащий в себе полные данные пользователя.
  * \param service Указатель на сервис.
  */
 void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
-  QString nick = list.at(AbstractProfile::Nick);
+  QString nick = list.at(AbstractProfile::Nick).toLower();
 
   if (!m_users.contains(nick)) {
 
@@ -886,16 +899,18 @@ void Daemon::sendAllUsers(DaemonService *service)
 /*!
  * \brief Универсальная функция для обработки изменения сообщения о выходе пользователем.
  *
- * \param nick Ник пользователя.
- * \param bye Новое сообщение о выходе.
+ * \param nick  Ник пользователя.
+ * \param bye   Новое сообщение о выходе.
  * \param local Флаг локального подключения \a true локальное \a false удалённое.
  */
 void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
 {
-  if (!m_users.contains(nick))
+  QString lowerNick = nick.toLower();
+
+  if (!m_users.contains(lowerNick))
     return;
 
-  m_users.value(nick)->profile()->setByeMsg(bye);
+  m_users.value(lowerNick)->profile()->setByeMsg(bye);
 
   if (m_network) {
     emit sendSyncBye(nick, bye);
@@ -909,25 +924,37 @@ void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
 /*!
  * \brief Универсальная функция для обработки изменения профиля и/или ника пользователя.
  *
+ * Все действия производятся, только если ник преобразованный в нижний регистр найден в \a m_users.
+ *
+ * Если новый ник является пустой строкой, это означает что ник не изменился а изменилась лишь профильная информация.
+ * Если \a m_users не содержит нового ника приведённого к нижнему регистру или старый и новый ник в нижнем регистре равны,
+ * производится изменение ника.
+ * Иначе если пользователь локальный и новый ник в нижнем регистре присутствует в \a m_users, то происходит
+ * попытка занять чужой ник, такой пользователь отключается.
+ *
  * \param gender Новый пол пользователя.
- * \param nick Старый ник пользователя.
- * \param nNick Новый ник пользователя, может быть пустой строкой, что означает что ник не изменился.
- * \param name Новое полное имя пользователя.
- * \param local Флаг локального подключения \a true локальное \a false удалённое.
+ * \param nick   Старый ник пользователя.
+ * \param nNick  Новый ник пользователя, может быть пустой строкой, что означает что ник не изменился.
+ * \param name   Новое полное имя пользователя.
+ * \param local  Флаг локального подключения \a true локальное \a false удалённое.
  */
 void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local)
 {
-  if (!m_users.contains(nick))
+  QString lowerNick = nick.toLower();
+
+  if (!m_users.contains(lowerNick))
     return;
 
-  if (nNick.isEmpty()) {
+  QString lowerNewNick = nNick.toLower();
+
+  if (lowerNewNick.isEmpty()) {
     if (m_settings->getBool("ChannelLog"))
       if (gender)
         m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
       else
         m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
 
-    UserUnit *unit = m_users.value(nick);
+    UserUnit *unit = m_users.value(lowerNick);
     unit->profile()->setGender(gender);
     unit->profile()->setFullName(name);
     emit sendNewProfile(gender, nick, name);
@@ -938,16 +965,16 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
         m_link->sendSyncProfile(gender, nick, "", name);
     }
   }
-  else if (!m_users.contains(nNick)) {
+  else if (!m_users.contains(lowerNewNick) || lowerNick == lowerNewNick) {
     if (m_settings->getBool("ChannelLog"))
       if (gender)
         m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(nNick));
       else
         m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(nNick));
 
-    UserUnit *unit = m_users.value(nick);
-    m_users.remove(nick);
-    m_users.insert(nNick, unit);
+    UserUnit *unit = m_users.value(lowerNick);
+    m_users.remove(lowerNick);
+    m_users.insert(lowerNewNick, unit);
     unit->profile()->setGender(gender);
     unit->profile()->setNick(nNick);
     unit->profile()->setFullName(name);
@@ -960,7 +987,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
         m_link->sendSyncProfile(gender, nick, nNick, name);
     }
   }
-  else if (local && m_users.contains(nNick)) {
+  else if (local && m_users.contains(lowerNewNick)) {
     DaemonService *service = qobject_cast<DaemonService *>(sender());
     if (service)
       service->quit();
@@ -968,14 +995,26 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
 }
 
 
-/** [private]
+/*!
+ * \brief Обработка отключения пользователя.
  *
+ * Все действия производятся, только если ник преобразованный в нижний регистр найден в \a m_users.
+ * При использовании ограничений по количеству подключений с одного адреса, производится уменьшение счётчика адресов
+ * или удаление записи в \a m_ipLimits.
+ * Событие отключения записывается в журнал сервера и при необходимости в канальный лог.
+ * Высылается сигнал userLeave(const QString &nick, const QString &bye, quint8 flag) и при наличии корневого сервера он
+ * также уведомляется об отключении пользователя (при условии, что пользователь локальный).
+ *
+ * \param nick Ник пользователя.
+ * \param err  Ошибка, причина разъединения.
  */
 void Daemon::userLeave(const QString &nick, const QString &err)
 {
-  if (m_users.contains(nick)) {
-    UserUnit *unit = m_users.value(nick);
-    m_users.remove(nick);
+  QString lowerNick = nick.toLower();
+
+  if (m_users.contains(lowerNick)) {
+    UserUnit *unit = m_users.value(lowerNick);
+    m_users.remove(lowerNick);
 
     if (m_maxUsersPerIp > 0) {
       QString ip = unit->profile()->host();
