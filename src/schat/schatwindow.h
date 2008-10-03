@@ -55,6 +55,7 @@ class QVBoxLayout;
 class SendWidget;
 class Settings;
 class Tab;
+class UserView;
 class WelcomeDialog;
 
 /*!
@@ -80,7 +81,7 @@ private slots:
   void about();
   void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
-  void addTab(const QModelIndex &i);
+  void addTab(const QString &nick);
   void closeChat();
   void closeTab(int tab = -1);
   void connecting(const QString &server, bool network);
@@ -115,8 +116,6 @@ private:
   bool eventFilter(QObject *object, QEvent *event);
   bool parseCmd(AbstractTab *tab, const QString &message);
   int tabIndex(const QString &s, int start = 1) const;
-  QStandardItem* findItem(const QString &nick) const;
-  static QString userToolTip(const AbstractProfile &profile);
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void createActions();
   void createCornerWidgets();
@@ -143,12 +142,10 @@ private:
   QAction *m_quitAction;
   QHBoxLayout *toolsLayout;
   QLabel *statusLabel;
-  QListView *listView;
   QMenu *trayIconMenu;
   QPointer<AboutDialog> aboutDialog;
   QPointer<SettingsDialog> settingsDialog;
   QSplitter *splitter;
-  QStandardItemModel model;
   QStatusBar *statusbar;
   QSystemTrayIcon *trayIcon;
   QTabWidget *m_tabs;
@@ -162,6 +159,7 @@ private:
   SendWidget *m_send;
   Settings *m_settings;
   static QMap<QString, QString> m_cmds;
+  UserView *m_users;
   WelcomeDialog *welcomeDialog;
 
   #ifdef SCHAT_UPDATE

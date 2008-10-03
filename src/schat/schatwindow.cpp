@@ -30,6 +30,7 @@
 #include "version.h"
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
+#include "widget/userview.h"
 
 QMap<QString, QString> SChatWindow::m_cmds;
 
@@ -49,7 +50,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_tabs        = new QTabWidget(splitter);
   m_tabs->installEventFilter(this);
   rightWidget   = new QWidget(splitter);
-  listView      = new QListView(rightWidget);
+  m_users       = new UserView(m_profile, rightWidget);
   rightLayout   = new QVBoxLayout(rightWidget);
   mainLayout    = new QVBoxLayout(centralWidget);
   toolsLayout   = new QHBoxLayout;
@@ -64,7 +65,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   splitter->setStretchFactor(1, 1);
 
   rightLayout->addLayout(toolsLayout);
-  rightLayout->addWidget(listView);
+  rightLayout->addWidget(m_users);
   rightLayout->setMargin(0);
   rightLayout->setSpacing(4);
 
@@ -83,9 +84,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   setWindowTitle(tr("IMPOMEZIA Simple Chat"));
 
   m_tabs->setElideMode(Qt::ElideRight);
-  listView->setFocusPolicy(Qt::NoFocus);
-  listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  listView->setModel(&model);
 
   restoreGeometry();
 
@@ -103,7 +101,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(m_send, SIGNAL(needCopy()), SLOT(copy()));
-  connect(listView, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
+  connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
@@ -270,22 +268,17 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 /** [private slots]
  *
  */
-void SChatWindow::addTab(const QModelIndex &i)
+void SChatWindow::addTab(const QString &nick)
 {
-  QStandardItem *item = model.itemFromIndex(i);
-  QString nick = item->text();
-  if (nick == m_profile->nick())
-    return;
-
   int index = tabIndex(nick);
 
   if (index == -1) {
-    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+    AbstractProfile profile(m_users->profile(nick));
     Tab *tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
-    m_tabs->setTabToolTip(index, userToolTip(profile));
+    m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
   }
 
   m_tabs->setCurrentIndex(index);
@@ -436,11 +429,8 @@ void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QStr
  */
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  QStandardItem *item = findItem(nick);
-
-  if (item) {
-    item->setText(newNick);
-    model.sort(0);
+  if (m_users->isUser(nick)) {
+    m_users->rename(nick, newNick);
 
     int oldIndex = tabIndex(nick);
     int newIndex = tabIndex(newNick);
@@ -475,25 +465,21 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
  * а также если имеются открытые приваты, то вкладка также обновляется.
  *
  * \param gender Новый пол пользователя.
- * \param nick Ник пользователя.
- * \param name Новое полное имя.
+ * \param nick   Ник пользователя.
+ * \param name   Новое полное имя.
  */
 void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name)
 {
-  QStandardItem *item = findItem(nick);
-
-  if (item) {
-    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+  if (m_users->isUser(nick)) {
+    AbstractProfile profile(m_users->profile(nick));
     profile.setGender(gender);
     profile.setNick(nick);
     profile.setFullName(name);
-    item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
-    item->setToolTip(userToolTip(profile));
-    item->setData(profile.pack(), Qt::UserRole + 1);
+    m_users->update(nick, profile);
 
     int index = tabIndex(nick);
     if (index != -1) {
-      m_tabs->setTabToolTip(index, userToolTip(profile));
+      m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       tab->icon.addFile(":/images/" + profile.gender() + ".png");
 
@@ -504,8 +490,8 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
 }
 
 
-/** [private slots]
- *
+/*!
+ * Добавление нового пользователя.
  */
 void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric*/)
 {
@@ -516,23 +502,8 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   AbstractProfile profile(list);
   QString nick = profile.nick();
 
-  if (nick == m_profile->nick())
-    if (findItem(profile.nick()))
-      return;
-
-  QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
-  item->setData(profile.pack(), Qt::UserRole + 1);
-  item->setToolTip(userToolTip(profile));
-
-  // Свой ник выделяем жирным шрифтом
-  if (nick == m_profile->nick()) {
-    QFont font;
-    font.setBold(true);
-    item->setFont(font);
-  }
-
-  model.appendRow(item);
-  model.sort(0);
+  if (!m_users->add(profile))
+    return;
 
   if (m_profile->nick() == nick)
     echo = 0;
@@ -543,7 +514,7 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       if (tab->type == AbstractTab::Private) {
-        m_tabs->setTabToolTip(index, userToolTip(profile));
+        m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
         tab->icon.addFile(":/images/" + profile.gender() + ".png");
 
         if (!tab->notice)
@@ -583,20 +554,19 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
   qDebug() << "SChatWindow::privateMessage()" << flag << nick << message;
 #endif
 
-  QStandardItem *item = findItem(nick);
-  if (!item)
+  if (!m_users->isUser(nick))
     return;
 
   Tab *tab = 0;
   int index = tabIndex(nick);
 
   if (index == -1) {
-    AbstractProfile profile(item->data(Qt::UserRole + 1).toStringList());
+    AbstractProfile profile(m_users->profile(nick));
     tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
     tab->browser->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
-    m_tabs->setTabToolTip(index, userToolTip(profile));
+    m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     m_tabs->setCurrentIndex(index);
   }
   else
@@ -749,7 +719,7 @@ void SChatWindow::settingsChanged(int notify)
 void SChatWindow::unconnected(bool echo)
 {
   statusLabel->setText(tr("Не подключено"));
-  model.clear();
+  m_users->clear();
 
   if (echo)
     mainChannel->browser->msgDisconnect();
@@ -761,11 +731,9 @@ void SChatWindow::unconnected(bool echo)
  */
 void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
 {
-  QStandardItem *item = findItem(nick);
-
-  if (item) {
-    QStringList list = item->data(Qt::UserRole + 1).toStringList();
-    model.removeRow(model.indexFromItem(item).row());
+  if (m_users->isUser(nick)) {
+    QStringList list = m_users->profile(nick);
+    m_users->remove(nick);
 
     if (flag == 1) {
       AbstractProfile profile(list);
@@ -907,39 +875,6 @@ int SChatWindow::tabIndex(const QString &s, int start) const
       }
 
   return tab;
-}
-
-
-/** [private]
- *
- */
-QStandardItem* SChatWindow::findItem(const QString &nick) const
-{
-  QList<QStandardItem *> items;
-
-  items = model.findItems(nick, Qt::MatchCaseSensitive);
-  if (items.size() == 1)
-    return items[0];
-  else
-    return 0;
-}
-
-
-/** [private] static
- *
- */
-QString SChatWindow::userToolTip(const AbstractProfile &profile)
-{
-  QString p_agent = profile.userAgent();
-  p_agent.replace(QChar('/'), QChar(' '));
-  QString p_name;
-  profile.fullName().isEmpty() ? p_name = tr("&lt;не указано&gt;") : p_name = profile.fullName();
-
-  return tr("<h3><img src='%1' align='left'> %2</h3>"
-            "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
-            "<tr><td>Клиент:</td><td>%4</td></tr>"
-            "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-            .arg(":/images/" + profile.gender() + ".png").arg(profile.nick()).arg(p_name).arg(p_agent).arg(profile.host());
 }
 
 

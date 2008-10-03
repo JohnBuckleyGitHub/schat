@@ -21,6 +21,9 @@
 
 #include <QListView>
 #include <QObject>
+#include <QStandardItemModel>
+
+class AbstractProfile;
 
 /*!
  * \brief Список пользователей.
@@ -28,7 +31,29 @@
 class UserView : public QListView {
   Q_OBJECT
 
-  UserView(QWidget *parent = 0);
+public:
+  UserView(const AbstractProfile *profile, QWidget *parent = 0);
+  bool add(const AbstractProfile &profile);
+  bool add(const QStringList &list);
+  inline bool isUser(const QString &nick) const { return (bool) findItem(nick); }
+  inline void clear()                           { m_model.clear(); }
+  QStringList profile(const QString &nick) const;
+  static QString userToolTip(const AbstractProfile &profile);
+  void remove(const QString &nick);
+  void rename(const QString &oldNick, const QString &newNick);
+  void update(const QString &nick, const AbstractProfile &profile);
+
+signals:
+  void addTab(const QString &nick);
+
+private slots:
+  void addTab(const QModelIndex &index);
+
+private:
+  QStandardItem* findItem(const QString &nick) const;
+
+  const AbstractProfile *m_profile;
+  QStandardItemModel m_model;
 };
 
 #endif /* USERVIEW_H_ */
