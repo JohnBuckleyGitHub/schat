@@ -68,6 +68,7 @@ public slots:
 private slots:
   void animate();
   void animate(const QString &key);
+  void linkClicked(const QUrl &link);
   void setAnimations();
   void setSettings();
 
@@ -80,7 +81,6 @@ private:
   bool m_useAnimatedEmoticons;
   bool m_useEmoticons;
   ChannelLog *m_channelLog;
-  int m_keepAnimations;
   QAction *m_clearAction;
   QAction *m_copyAction;
   QAction *m_selectAllAction;
