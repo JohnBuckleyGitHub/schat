@@ -57,17 +57,20 @@ class Settings;
 class Tab;
 class WelcomeDialog;
 
+/*!
+ * \brief Главное окно чата.
+ */
 class SChatWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
   SChatWindow(QWidget *parent = 0);
-  
+
 protected:
   void closeEvent(QCloseEvent *event);
   bool event(QEvent *event);
-  
+
 public slots:
   #ifndef DISABLE_SINGLE_APP
     void handleMessage(const QString& message);
@@ -103,7 +106,7 @@ private slots:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();
 
-  #ifdef SCHAT_UPDATE  
+  #ifdef SCHAT_UPDATE
   void update();
   void updateGetDone(int code);
   #endif

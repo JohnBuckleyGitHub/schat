@@ -31,6 +31,7 @@ HEADERS += \
     aboutdialog.h \
     abstractprofile.h \
     abstractsettings.h \
+    abstractsettingsdialog.h \
     abstracttab.h \
     channellog.h \
     chatbrowser.h \
@@ -53,12 +54,13 @@ HEADERS += \
     widget/emoticonselector.h \
     widget/inputwidget.h \
     widget/sendwidget.h \
-    abstractsettingsdialog.h \
+    widget/userview.h \
 
 SOURCES += \
     aboutdialog.cpp \
     abstractprofile.cpp \
     abstractsettings.cpp \
+    abstractsettingsdialog.cpp \
     abstracttab.cpp \
     channellog.cpp \
     chatbrowser.cpp \
@@ -80,7 +82,7 @@ SOURCES += \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
     widget/sendwidget.cpp \
-    abstractsettingsdialog.cpp \
+    widget/userview.cpp \
 
 win32 {
     HEADERS += win32/updatenotify.h
