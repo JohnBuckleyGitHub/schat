@@ -120,6 +120,13 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
 }
 
 
+void UserView::nickClicked(const QString &hex)
+{
+  QString nick = QByteArray::fromHex(hex.toUtf8());
+  prepareInsertNick(nick);
+}
+
+
 void UserView::mouseReleaseEvent(QMouseEvent *event)
 {
   QModelIndex index = indexAt(event->pos());
@@ -127,7 +134,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   if (event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton && index.isValid()) {
     QStandardItem *item = m_model.itemFromIndex(index);
 
-    insertNick(item);
+    prepareInsertNick(item->text());
   }
   else
     QListView::mouseReleaseEvent(event);
@@ -157,7 +164,7 @@ QStandardItem* UserView::findItem(const QString &nick) const
 }
 
 
-void UserView::insertNick(const QStandardItem *item)
+void UserView::prepareInsertNick(const QString &nick)
 {
-  emit insertNick(" <span style='color:#662900;'>" + item->text() + ":</span> ");
+  emit insertNick(" <span style='color:#662900;'>" + Qt::escape(nick) + ":</span> ");
 }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@
 class Settings;
 class QTextBrowser;
 
+/*!
+ * \brief Абстрактный базовый класс для вкладок чата.
+ */
 class AbstractTab : public QWidget {
   Q_OBJECT
 
@@ -38,13 +41,16 @@ public:
     Direct,
     DirectServer
   };
-  
+
   AbstractTab(Settings *settings, QWidget *parent = 0);
-  
+
   bool notice;
   ChatBrowser *browser;
   QIcon icon;
   Type type;
+
+signals:
+  void nickClicked(const QString &hex);
 };
 
 #endif /*ABSTRACTTAB_H_*/

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,19 +22,16 @@
 #include "channellog.h"
 
 /*!
- * \class AbstractTab
- * \brief Абстрактный базовый класс для вкладок чата.
- */
-
-/*!
  * \brief Конструктор класса AbstractTab.
  */
 AbstractTab::AbstractTab(Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  
+
   notice = false;
   browser = new ChatBrowser(settings, this);
   type = Unknown;
+
+  connect(browser, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
 }
