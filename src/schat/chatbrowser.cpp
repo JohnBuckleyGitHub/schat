@@ -35,7 +35,7 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 {
   m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);
-  setOpenExternalLinks(true);
+  setOpenLinks(false);
 
   m_style = QString(
       ".gr    { color:#90a4b3; }"
@@ -238,12 +238,18 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     msg.remove("/me ", Qt::CaseInsensitive);
     msg = "<span class='me'>" + msg + "</span>";
     QString escapedNick = Qt::escape(nick);
-    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick://%2' class='me'>%3</span> ").arg(currentTime()).arg(escapedNick).arg(escapedNick));
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick://%2' class='me'>%3</span> ")
+        .arg(currentTime())
+        .arg(QString(QCryptographicHash::hash(nick.toUtf8(), QCryptographicHash::Md5).toHex()))
+        .arg(escapedNick));
     m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
   }
   else {
     QString escapedNick = Qt::escape(nick);
-    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a class='nick' href='nick://%2'>%3:</a> ").arg(currentTime()).arg(escapedNick).arg(escapedNick));
+    docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a class='nick' href='nick://%2'>%3:</a> ")
+        .arg(currentTime())
+        .arg(QString(QCryptographicHash::hash(nick.toUtf8(), QCryptographicHash::Md5).toHex()))
+        .arg(escapedNick));
     m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(msg));
   }
 
@@ -368,6 +374,12 @@ void ChatBrowser::animate(const QString &key)
 
 void ChatBrowser::linkClicked(const QUrl &link)
 {
+  QString scheme = link.scheme();
+
+  if (scheme == "nick")
+    emit nickClicked(link.toString(QUrl::RemoveScheme).mid(2));
+  else if (scheme == "http" || scheme == "https" || scheme == "ftp" || scheme == "ftps" || scheme == "mailto")
+    QDesktopServices::openUrl(link);
 }
 
 

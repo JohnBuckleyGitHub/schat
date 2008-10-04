@@ -152,6 +152,7 @@ static QString makeRegExp( const char *pattern )
 
 /*!
  * \brief Преобразование простых ссылок в html ссылки.
+ *
  * \author (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
  */
 QString InputWidget::parseLinks(const QString &message, bool plain)

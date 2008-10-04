@@ -52,6 +52,7 @@ public:
   void scroll();
 
 signals:
+  void nickClicked(const QString &hash);
   void pauseAnimations(bool paused);
   void pauseIfHidden(int min, int max);
 
