@@ -111,6 +111,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   mainChannel = new MainChannel(m_settings, this);
   mainChannel->icon.addFile(":/images/main.png");
+  connect(mainChannel, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
+
   m_tabs->setCurrentIndex(m_tabs->addTab(mainChannel, tr("Общий")));
   m_tabs->setTabIcon(0, mainChannel->icon);
 
