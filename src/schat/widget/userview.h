@@ -24,6 +24,7 @@
 #include <QStandardItemModel>
 
 class AbstractProfile;
+class QMouseEvent;
 
 /*!
  * \brief Список пользователей.
@@ -45,12 +46,17 @@ public:
 
 signals:
   void addTab(const QString &nick);
+  void insertNick(const QString &nick);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
   void addTab(const QModelIndex &index);
 
 private:
   QStandardItem* findItem(const QString &nick) const;
+  void insertNick(const QStandardItem *item);
 
   const AbstractProfile *m_profile;
   QStandardItemModel m_model;
