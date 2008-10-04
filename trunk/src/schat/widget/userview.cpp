@@ -16,7 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#include <QtGui>
 
 #include "abstractprofile.h"
 #include "userview.h"
@@ -120,6 +120,20 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
 }
 
 
+void UserView::mouseReleaseEvent(QMouseEvent *event)
+{
+  QModelIndex index = indexAt(event->pos());
+
+  if (event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton && index.isValid()) {
+    QStandardItem *item = m_model.itemFromIndex(index);
+
+    insertNick(item);
+  }
+  else
+    QListView::mouseReleaseEvent(event);
+}
+
+
 void UserView::addTab(const QModelIndex &index)
 {
   QStandardItem *item = m_model.itemFromIndex(index);
@@ -140,4 +154,10 @@ QStandardItem* UserView::findItem(const QString &nick) const
     return items[0];
   else
     return 0;
+}
+
+
+void UserView::insertNick(const QStandardItem *item)
+{
+  emit insertNick(" <span style='color:#662900;'>" + item->text() + ":</span> ");
 }

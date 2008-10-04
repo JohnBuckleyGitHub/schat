@@ -102,6 +102,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(m_send, SIGNAL(needCopy()), SLOT(copy()));
   connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
+  connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));

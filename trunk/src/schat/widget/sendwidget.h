@@ -43,7 +43,8 @@ signals:
   void sendMsg(const QString &message);
 
 public slots:
-  void copy() { m_input->copy(); }
+  void copy()                          { m_input->copy(); }
+  void insertHtml(const QString &text) { m_input->insertHtml(text); }
 
 private slots:
   void cursorPositionChanged();
