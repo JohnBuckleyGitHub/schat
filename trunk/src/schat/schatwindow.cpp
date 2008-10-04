@@ -282,6 +282,7 @@ void SChatWindow::addTab(const QString &nick)
     tab->browser->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
+    connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
   }
 
   m_tabs->setCurrentIndex(index);
@@ -571,6 +572,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     index = m_tabs->addTab(tab, tab->icon, nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     m_tabs->setCurrentIndex(index);
+    connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
   }
   else
     tab = qobject_cast<Tab *>(m_tabs->widget(index));
