@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   }
 
   #ifndef DISABLE_SINGLE_APP
-    QString serverName = QString(QCryptographicHash::hash(app.applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex());
+    QString serverName = app.applicationDirPath().toUtf8().toHex();
     SingleApplication instance("SimpleChat", serverName, &app);
     if (instance.isRunning()) {
       QString message;
