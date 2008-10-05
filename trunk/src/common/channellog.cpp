@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /*!
  * \class ChannelLog
  * \brief Универсальный класс для записи в лог каналов.
- * 
+ *
  * Класс используется в клиенте и сервере и обеспечивает создание отдельный директорий в виде даты для логов.
  * Поддерживаются простой текстовый формат логов таки html-формат.
  * Из имён каналов удаляются символы недопустимые для имён файлов.
@@ -143,14 +143,14 @@ QString ChannelLog::toPlainText(const QString &str)
 
 
 /** [public]
- * 
+ *
  */
 void ChannelLog::msg(const QString &text)
 {
   if (!m_channel.isEmpty()) {
     if (!m_file.isOpen())
       openFile();
-    
+
     if (m_date != dateStamp()) {
       closeFile();
       openFile();
@@ -168,51 +168,51 @@ void ChannelLog::msg(const QString &text)
 
 
 /** [public]
- * 
+ *
  */
 void ChannelLog::setChannel(const QString &channel)
 {
   QString _channel = channel;
   #ifdef Q_OS_WIN
-  _channel.replace(QRegExp("COM[1-9]"), "COM_");
-  _channel.replace(QRegExp("LPT[1-9]"), "LPT_");
-  _channel.replace("CON", "CO_");
-  _channel.replace("NUL", "NU_");
-  _channel.replace("AUX", "AU_");
-  _channel.replace("PRN", "PR_");
+    _channel.replace(QRegExp("COM[1-9]"), "COM_");
+    _channel.replace(QRegExp("LPT[1-9]"), "LPT_");
+    _channel.replace("CON", "CO_");
+    _channel.replace("NUL", "NU_");
+    _channel.replace("AUX", "AU_");
+    _channel.replace("PRN", "PR_");
   #endif
   _channel.replace(QRegExp("[?\"/\\\\<>*|:]"), "_");
-  
+
   if (m_channel != _channel) {
     if (m_file.isOpen())
       m_file.close();
     m_channel = _channel;
-  }  
+  }
 }
 
 
 /** [private]
- * 
+ *
  */
 bool ChannelLog::openFile()
 {
   QString date = dateStamp();
-  
+
   QDir dir(m_appPath + "/log/" + date);
   if (!dir.exists())
     dir.mkpath(m_appPath + "/log/" + date);
-  
+
   bool bom = false;
   QString fileName = m_appPath + "/log/" + date + '/' + m_channel;
   if (m_mode == Html)
     fileName += ".html";
   else
     fileName += ".log";
-  
+
   m_file.setFileName(fileName);
   if (!m_file.exists())
     bom = true;
-  
+
   if (!m_file.open(QIODevice::Append))
     return false;
   else {
@@ -220,27 +220,28 @@ bool ChannelLog::openFile()
     m_stream.setGenerateByteOrderMark(bom);
     m_stream.setCodec("UTF-8");
   }
-  
+
   if (m_mode == Html && bom) {
     m_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
     m_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
     m_stream << "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" << endl;
     m_stream << "<style type=\"text/css\">" << endl;
-    m_stream << "  .gr { color:#90a4b3; }" << endl;
-    m_stream << "  .green { color:#6bb521; }" << endl;
-    m_stream << "  .err { color:#da251d; }" << endl;
-    m_stream << "  .info { color:#5096cf; }" << endl;
-    m_stream << "  .me { color:#cd00cd; }" << endl;
+    m_stream << " .gr { color:#90a4b3; }" << endl;
+    m_stream << " .green { color:#6bb521; }" << endl;
+    m_stream << " .err { color:#da251d; }" << endl;
+    m_stream << " .info { color:#5096cf; }" << endl;
+    m_stream << " .me { color:#cd00cd; }" << endl;
+    m_stream << " a { color:#1a4d82; text-decoration:none; }" << endl;
     m_stream << "</style></head><body>" << endl;
   }
-  
+
   m_date = date;
   return true;
 }
 
 
 /** [private]
- * 
+ *
  */
 void ChannelLog::closeFile()
 {
