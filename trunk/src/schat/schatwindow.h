@@ -129,9 +129,9 @@ private:
   void uniqueNick();
 
   AbstractProfile *m_profile;
-  bool currentTrayIcon;
+  bool m_currentTrayIcon;
   ClientService *m_clientService;
-  MainChannel *mainChannel;
+  MainChannel *m_main;
   QAction *m_aboutAction;
   QAction *m_closeTabAction;
   QAction *m_emoticonsSetAction;
@@ -139,27 +139,27 @@ private:
   QAction *m_networkSetAction;
   QAction *m_profileSetAction;
   QAction *m_quitAction;
-  QHBoxLayout *toolsLayout;
-  QLabel *statusLabel;
-  QMenu *trayIconMenu;
-  QPointer<AboutDialog> aboutDialog;
-  QPointer<SettingsDialog> settingsDialog;
-  QSplitter *splitter;
-  QStatusBar *statusbar;
-  QSystemTrayIcon *trayIcon;
+  QHBoxLayout *m_toolsLay;
+  QLabel *m_statusLabel;
+  QMenu *m_trayMenu;
+  QPointer<AboutDialog> m_about;
+  QPointer<SettingsDialog> m_settingsDialog;
+  QSplitter *m_splitter;
+  QStatusBar *m_statusBar;
+  QSystemTrayIcon *m_tray;
   QTabWidget *m_tabs;
+  QTimer *m_noticeTimer;
   QTimer *m_updateTimer;
-  QTimer *noticeTimer;
   QToolButton *m_settingsButton;
-  QVBoxLayout *mainLayout;
-  QVBoxLayout *rightLayout;
-  QWidget *centralWidget;
-  QWidget *rightWidget;
+  QVBoxLayout *m_mainLay;
+  QVBoxLayout *m_rightLay;
+  QWidget *m_central;
+  QWidget *m_right;
   SendWidget *m_send;
   Settings *m_settings;
   static QMap<QString, QString> m_cmds;
   UserView *m_users;
-  WelcomeDialog *welcomeDialog;
+  WelcomeDialog *m_welcome;
 
   #ifdef SCHAT_UPDATE
   QAction *updateSetAction;
