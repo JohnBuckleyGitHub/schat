@@ -31,7 +31,7 @@
  * \brief Конструктор класса SettingsDialog.
  */
 SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
-  : AbstractSettingsDialog(parent)
+  : AbstractSettingsDialog(parent), m_settings(settings)
 {
   m_profilePage    = new ProfileSettings(settings, profile, this);
   m_networkPage    = new NetworkSettings(settings, this);
@@ -50,6 +50,14 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
 
   connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
   connect(m_networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
+}
+
+
+void SettingsDialog::accept()
+{
+  emit save();
+  m_settings->write();
+  close();
 }
 
 

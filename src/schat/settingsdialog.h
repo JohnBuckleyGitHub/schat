@@ -61,11 +61,15 @@ public:
 
   SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent = 0);
 
+public slots:
+  void accept();
+
 private:
   EmoticonsSettings *m_emoticonsPage;
   InterfaceSettings *m_interfacePage;
   NetworkSettings *m_networkPage;
   ProfileSettings *m_profilePage;
+  Settings *m_settings;
 
   #ifdef SCHAT_UPDATE
   UpdateSettings *m_updatePage;
