@@ -22,6 +22,14 @@
 #include "emoticonmovie.h"
 #include "settings.h"
 
+
+struct PrepareEmoticons {
+  int position;
+  QString name;
+  QString file;
+  PrepareEmoticons(int _position, QString _name, QString _file) { position = _position; name = _name; file = _file; }
+};
+
 /*!
  * \class ChatBrowser
  * \brief Обеспечивает отображение текста в чате.
@@ -260,21 +268,21 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
   if (m_useEmoticons) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
-    QMap<int, QString> emoticonsToInsert;
+    QMap<int, PrepareEmoticons> prepareEmoticons;
 
     if (!emoticons.isEmpty()) {
-      QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
       int size    = toPlainText().size();
       int docSize = doc.toPlainText().size();
 
       foreach (Emoticons emoticon, emoticons) {
         docCursor.setPosition(offset);
-  //        qDebug() << "smile:" << emoticon.name << emoticon.file;
 
         do {
+          if (emoticon.file.isEmpty())
+            continue;
+
           bool ok = false;
           docCursor = doc.find(emoticon.name, docCursor);
-          int docSize = doc.toPlainText().size();
 
           if (docCursor.selectedText() == emoticon.name) {
             if (m_emoticonsRequireSpaces) {
@@ -313,24 +321,26 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
               ok = true;
           }
 
-          if (ok) {
-            if (!emoticon.file.isEmpty()) {
-              QString file = emoticonsPath + emoticon.file;
-              docCursor.insertImage(emoticon.file);
-              emoticonsToInsert.insert(docCursor.position() + size, file);
-            }
-          }
+          if (ok)
+            prepareEmoticons.insert(docCursor.anchor(), PrepareEmoticons(docCursor.position(), emoticon.name, emoticon.file));
 
         } while (!docCursor.isNull());
       }
 
-      if (!emoticonsToInsert.isEmpty()) {
-        int fix = docSize - doc.toPlainText().size();
+      if (!prepareEmoticons.isEmpty()) {
+        int blockStart = size + offset;
+        int fix        = 0;
+        QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+        QTextCursor emoCursor(&doc);
 
-        QMapIterator<int, QString> i(emoticonsToInsert);
+        QMapIterator<int, PrepareEmoticons> i(prepareEmoticons);
         while (i.hasNext()) {
           i.next();
-          addAnimation(i.value(), i.key() - fix, size + offset);
+          emoCursor.setPosition(i.key() - fix);
+          emoCursor.setPosition(i.value().position - fix, QTextCursor::KeepAnchor);
+          emoCursor.insertImage(i.value().file);
+          fix += i.value().name.size() - 1;
+          addAnimation(emoticonsPath + i.value().file, size + emoCursor.position(), blockStart);
         }
       }
 
