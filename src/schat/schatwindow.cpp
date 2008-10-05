@@ -45,41 +45,41 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_settings->read();
 
   m_send        = new SendWidget(m_settings, this);
-  centralWidget = new QWidget(this);
-  splitter      = new QSplitter(centralWidget);
-  m_tabs        = new QTabWidget(splitter);
+  m_central     = new QWidget(this);
+  m_splitter    = new QSplitter(m_central);
+  m_tabs        = new QTabWidget(m_splitter);
   m_tabs->installEventFilter(this);
-  rightWidget   = new QWidget(splitter);
-  m_users       = new UserView(m_profile, rightWidget);
-  rightLayout   = new QVBoxLayout(rightWidget);
-  mainLayout    = new QVBoxLayout(centralWidget);
-  toolsLayout   = new QHBoxLayout;
-  statusbar     = new QStatusBar(this);
-  statusLabel   = new QLabel(this);
-  noticeTimer   = new QTimer(this);
-  noticeTimer->setInterval(800);
+  m_right       = new QWidget(m_splitter);
+  m_users       = new UserView(m_profile, m_right);
+  m_rightLay    = new QVBoxLayout(m_right);
+  m_mainLay     = new QVBoxLayout(m_central);
+  m_toolsLay    = new QHBoxLayout;
+  m_statusBar   = new QStatusBar(this);
+  m_statusLabel = new QLabel(this);
+  m_noticeTimer = new QTimer(this);
+  m_noticeTimer->setInterval(800);
 
-  splitter->addWidget(m_tabs);
-  splitter->addWidget(rightWidget);
-  splitter->setStretchFactor(0, 4);
-  splitter->setStretchFactor(1, 1);
+  m_splitter->addWidget(m_tabs);
+  m_splitter->addWidget(m_right);
+  m_splitter->setStretchFactor(0, 4);
+  m_splitter->setStretchFactor(1, 1);
 
-  rightLayout->addLayout(toolsLayout);
-  rightLayout->addWidget(m_users);
-  rightLayout->setMargin(0);
-  rightLayout->setSpacing(4);
+  m_rightLay->addLayout(m_toolsLay);
+  m_rightLay->addWidget(m_users);
+  m_rightLay->setMargin(0);
+  m_rightLay->setSpacing(4);
 
-  mainLayout->addWidget(splitter);
-  mainLayout->addWidget(m_send);
-  mainLayout->setMargin(4);
-  mainLayout->setSpacing(1);
-  mainLayout->setStretchFactor(splitter, 999);
-  mainLayout->setStretchFactor(m_send, 1);
+  m_mainLay->addWidget(m_splitter);
+  m_mainLay->addWidget(m_send);
+  m_mainLay->setMargin(4);
+  m_mainLay->setSpacing(1);
+  m_mainLay->setStretchFactor(m_splitter, 999);
+  m_mainLay->setStretchFactor(m_send, 1);
 
-  setCentralWidget(centralWidget);
-  setStatusBar(statusbar);
-  statusbar->addWidget(statusLabel, 1);
-  statusLabel->setText(tr("Не подключено"));
+  setCentralWidget(m_central);
+  setStatusBar(m_statusBar);
+  m_statusBar->addWidget(m_statusLabel, 1);
+  m_statusLabel->setText(tr("Не подключено"));
 
   setWindowTitle(tr("IMPOMEZIA Simple Chat"));
 
@@ -103,24 +103,24 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_send, SIGNAL(needCopy()), SLOT(copy()));
   connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
-  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(noticeTimer, SIGNAL(timeout()), SLOT(notice()));
+  connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(m_noticeTimer, SIGNAL(timeout()), SLOT(notice()));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
-  connect(trayIcon, SIGNAL(messageClicked()), SLOT(messageClicked()));
+  connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
 
-  mainChannel = new MainChannel(m_settings, this);
-  mainChannel->icon.addFile(":/images/main.png");
-  connect(mainChannel, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
+  m_main = new MainChannel(m_settings, this);
+  m_main->icon.addFile(":/images/main.png");
+  connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
 
-  m_tabs->setCurrentIndex(m_tabs->addTab(mainChannel, tr("Общий")));
-  m_tabs->setTabIcon(0, mainChannel->icon);
+  m_tabs->setCurrentIndex(m_tabs->addTab(m_main, tr("Общий")));
+  m_tabs->setTabIcon(0, m_main->icon);
 
   if (!m_settings->getBool("HideWelcome") || m_settings->getBool("FirstRun")) {
-    welcomeDialog = new WelcomeDialog(m_settings, m_profile, this);
-    connect(welcomeDialog, SIGNAL(accepted()), this, SLOT(welcomeOk()));
-    if (!welcomeDialog->exec())
-      mainChannel->displayChoiceServer(true);
+    m_welcome = new WelcomeDialog(m_settings, m_profile, this);
+    connect(m_welcome, SIGNAL(accepted()), this, SLOT(welcomeOk()));
+    if (!m_welcome->exec())
+      m_main->displayChoiceServer(true);
   }
   else
     m_clientService->connectToHost();
@@ -149,12 +149,7 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 {
   saveGeometry();
   m_settings->write();
-
-  if (aboutDialog)
-    aboutDialog->hide();
-
-  if (settingsDialog)
-    settingsDialog->hide();
+  hideChat();
 
   QMainWindow::closeEvent(event);
 }
@@ -195,12 +190,12 @@ void SChatWindow::about()
   if (isHidden())
     show();
 
-  if (!aboutDialog) {
-    aboutDialog = new AboutDialog(this);
-    aboutDialog->show();
+  if (!m_about) {
+    m_about = new AboutDialog(this);
+    m_about->show();
   }
 
-  aboutDialog->activateWindow();
+  m_about->activateWindow();
 }
 
 
@@ -218,15 +213,15 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     case ErrorOldClientProtocol:
-      mainChannel->browser->msg(ChatBrowser::msgOldClientProtocol());
+      m_main->browser->msg(ChatBrowser::msgOldClientProtocol());
       break;
 
     case ErrorOldServerProtocol:
-      mainChannel->browser->msg(ChatBrowser::msgOldServerProtocol());
+      m_main->browser->msg(ChatBrowser::msgOldServerProtocol());
       break;
 
     case ErrorBadNickName:
-      mainChannel->browser->msg(ChatBrowser::msgBadNickName(m_profile->nick()));
+      m_main->browser->msg(ChatBrowser::msgBadNickName(m_profile->nick()));
       break;
 
     case ErrorUsersLimitExceeded:
@@ -236,7 +231,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      mainChannel->browser->msg(ChatBrowser::msgAccessDenied(reason));
+      m_main->browser->msg(ChatBrowser::msgAccessDenied(reason));
       break;
   }
 
@@ -252,13 +247,13 @@ void SChatWindow::accessDenied(quint16 reason)
 void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
 {
   if (network.isEmpty()) {
-    mainChannel->browser->msg(ChatBrowser::msgReadyForUse(server));
-    statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
+    m_main->browser->msg(ChatBrowser::msgReadyForUse(server));
+    m_statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
     setWindowTitle(tr("IMPOMEZIA Simple Chat"));
   }
   else {
-    mainChannel->browser->msg(ChatBrowser::msgReadyForUse(network, server));
-    statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
+    m_main->browser->msg(ChatBrowser::msgReadyForUse(network, server));
+    m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
   }
 }
@@ -326,11 +321,11 @@ void SChatWindow::closeTab(int tab)
 void SChatWindow::connecting(const QString &server, bool network)
 {
   if (network)
-    statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
+    m_statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
   else
-    statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+    m_statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
 
-  mainChannel->displayChoiceServer(false);
+  m_main->displayChoiceServer(false);
 }
 
 
@@ -351,7 +346,7 @@ void SChatWindow::copy()
  */
 void SChatWindow::fatal()
 {
-  mainChannel->displayChoiceServer(true);
+  m_main->displayChoiceServer(true);
 }
 
 
@@ -376,7 +371,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  mainChannel->browser->msg(ChatBrowser::msgLinkLeave(network, name));
+  m_main->browser->msg(ChatBrowser::msgLinkLeave(network, name));
 }
 
 
@@ -388,7 +383,7 @@ void SChatWindow::message(const QString &sender, const QString &message)
   if ((m_tabs->currentIndex() != 0) || (!isActiveWindow()))
     startNotice(0);
 
-  mainChannel->msgNewMessage(sender, message);
+  m_main->msgNewMessage(sender, message);
 }
 
 
@@ -405,7 +400,7 @@ void SChatWindow::messageClicked()
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  mainChannel->browser->msg(ChatBrowser::msgNewLink(network, name));
+  m_main->browser->msg(ChatBrowser::msgNewLink(network, name));
 }
 
 
@@ -438,7 +433,7 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
     }
 
     newProfile(gender, newNick, name);
-    mainChannel->browser->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+    m_main->browser->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
   }
 }
 
@@ -509,23 +504,20 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
       }
     }
 
-    mainChannel->browser->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
+    m_main->browser->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
   }
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::notice()
 {
-  if (currentTrayIcon) {
-    trayIcon->setIcon(QIcon(":/images/notice.png"));
-    currentTrayIcon = false;
+  if (m_currentTrayIcon) {
+    m_tray->setIcon(QIcon(":/images/notice.png"));
+    m_currentTrayIcon = false;
   }
   else {
-    trayIcon->setIcon(QIcon(":/images/logo16.png"));
-    currentTrayIcon = true;
+    m_tray->setIcon(QIcon(":/images/logo16.png"));
+    m_currentTrayIcon = true;
   }
 }
 
@@ -590,10 +582,10 @@ void SChatWindow::resetTabNotice(int index)
       return;
   }
 
-  if (noticeTimer->isActive()) {
-    noticeTimer->stop();
-    currentTrayIcon = true;
-    trayIcon->setIcon(QIcon(":/images/logo16.png"));
+  if (m_noticeTimer->isActive()) {
+    m_noticeTimer->stop();
+    m_currentTrayIcon = true;
+    m_tray->setIcon(QIcon(":/images/logo16.png"));
   }
 }
 
@@ -623,7 +615,7 @@ void SChatWindow::sendMsg(const QString &message)
 void SChatWindow::serverMessage(const QString &msg)
 {
   if (m_tabs->currentIndex() == 0)
-    mainChannel->browser->msg(msg);
+    m_main->browser->msg(msg);
   else {
     AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
     tab->browser->msg(msg);
@@ -636,16 +628,16 @@ void SChatWindow::settings()
   if (isHidden())
     show();
 
-  if (!settingsDialog) {
-    settingsDialog = new SettingsDialog(m_profile, m_settings, this);
-    settingsDialog->show();
+  if (!m_settingsDialog) {
+    m_settingsDialog = new SettingsDialog(m_profile, m_settings, this);
+    m_settingsDialog->show();
   }
 
   QAction *action = qobject_cast<QAction *>(sender());
   if (action)
-    settingsDialog->setPage(action->data().toInt());
+    m_settingsDialog->setPage(action->data().toInt());
 
-  settingsDialog->activateWindow();
+  m_settingsDialog->activateWindow();
 }
 
 
@@ -704,11 +696,11 @@ void SChatWindow::settingsChanged(int notify)
  */
 void SChatWindow::unconnected(bool echo)
 {
-  statusLabel->setText(tr("Не подключено"));
+  m_statusLabel->setText(tr("Не подключено"));
   m_users->clear();
 
   if (echo)
-    mainChannel->browser->msg(ChatBrowser::msgDisconnect());
+    m_main->browser->msg(ChatBrowser::msgDisconnect());
 }
 
 
@@ -730,7 +722,7 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
           tab->browser->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
       }
 
-      mainChannel->browser->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
+      m_main->browser->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
     }
   }
 }
@@ -749,7 +741,7 @@ void SChatWindow::updateGetDone(int code)
 
   if (code == 0) {
     QString version = s.value("Updates/LastDownloadedCoreVersion", "").toString();
-    trayIcon->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."), QSystemTrayIcon::Information, 60000);
+    m_tray->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."), QSystemTrayIcon::Information, 60000);
   }
   else
     s.setValue("Updates/ReadyToInstall", false);
@@ -762,7 +754,7 @@ void SChatWindow::updateGetDone(int code)
  */
 void SChatWindow::welcomeOk()
 {
-  welcomeDialog->deleteLater();
+  m_welcome->deleteLater();
 
   m_clientService->connectToHost();
 }
@@ -1025,44 +1017,38 @@ void SChatWindow::createToolButtons()
   line->setFrameShape(QFrame::VLine);
   line->setFrameShadow(QFrame::Sunken);
 
-  toolsLayout->addWidget(line);
-  toolsLayout->addWidget(m_settingsButton);
-  toolsLayout->addWidget(aboutButton);
-  toolsLayout->addStretch();
-  toolsLayout->setSpacing(0);
+  m_toolsLay->addWidget(line);
+  m_toolsLay->addWidget(m_settingsButton);
+  m_toolsLay->addWidget(aboutButton);
+  m_toolsLay->addStretch();
+  m_toolsLay->setSpacing(0);
 }
 
 
-/** [private]
- *
- */
 void SChatWindow::createTrayIcon()
 {
-  trayIconMenu = new QMenu(this);
-  trayIconMenu->addAction(m_aboutAction);
-  trayIconMenu->addAction(m_profileSetAction);
-  trayIconMenu->addSeparator();
-  trayIconMenu->addAction(m_quitAction);
+  m_trayMenu = new QMenu(this);
+  m_trayMenu->addAction(m_aboutAction);
+  m_trayMenu->addAction(m_profileSetAction);
+  m_trayMenu->addSeparator();
+  m_trayMenu->addAction(m_quitAction);
 
-  trayIcon = new QSystemTrayIcon(this);
-  trayIcon->setIcon(QIcon(":/images/logo16.png"));
-  trayIcon->setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
-  trayIcon->setContextMenu(trayIconMenu);
-  trayIcon->show();
-  currentTrayIcon = true;
+  m_tray = new QSystemTrayIcon(this);
+  m_tray->setIcon(QIcon(":/images/logo16.png"));
+  m_tray->setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
+  m_tray->setContextMenu(m_trayMenu);
+  m_tray->show();
+  m_currentTrayIcon = true;
 }
 
 
-/** [private]
- *
- */
 void SChatWindow::hideChat()
 {
-  if (settingsDialog)
-    settingsDialog->hide();
+  if (m_settingsDialog)
+    m_settingsDialog->hide();
 
-  if (aboutDialog)
-    aboutDialog->hide();
+  if (m_about)
+    m_about->hide();
 
   hide();
 }
@@ -1078,7 +1064,7 @@ void SChatWindow::restoreGeometry()
   if (pos.x() != -999 && pos.y() != -999)
     move(pos);
 
-  splitter->restoreState(m_settings->splitter());
+  m_splitter->restoreState(m_settings->splitter());
 }
 
 
@@ -1089,29 +1075,23 @@ void SChatWindow::saveGeometry()
 {
   m_settings->setPos(pos());
   m_settings->setSize(size());
-  m_settings->setSplitter(splitter->saveState());
+  m_settings->setSplitter(m_splitter->saveState());
 }
 
 
-/** [private]
- *
- */
 void SChatWindow::showChat()
 {
   show();
   activateWindow();
 
-  if (aboutDialog)
-    aboutDialog->show();
+  if (m_about)
+    m_about->show();
 
-  if (settingsDialog)
-    settingsDialog->show();
+  if (m_settingsDialog)
+    m_settingsDialog->show();
 }
 
 
-/** [private]
- *
- */
 void SChatWindow::startNotice(int index)
 {
   if (index == -1)
@@ -1120,10 +1100,10 @@ void SChatWindow::startNotice(int index)
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
   tab->notice = true;
   m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-  if (!noticeTimer->isActive()) {
-    currentTrayIcon = false;
-    trayIcon->setIcon(QIcon(":/images/notice.png"));
-    noticeTimer->start();
+  if (!m_noticeTimer->isActive()) {
+    m_currentTrayIcon = false;
+    m_tray->setIcon(QIcon(":/images/notice.png"));
+    m_noticeTimer->start();
   }
 }
 
