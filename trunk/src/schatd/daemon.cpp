@@ -47,6 +47,7 @@ Daemon::Daemon(QObject *parent)
   m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
+  connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), SLOT(logNewLink(quint8, const QString &, const QString &)));
 }
 
 
@@ -280,6 +281,16 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
   m_numerics.removeAll(numeric);
 
   emit sendLinkLeave(numeric, network, ip);
+}
+
+
+/*!
+ * Запись в канальный журнал события подключения сервера.
+ */
+void Daemon::logNewLink(quint8 /*numeric*/, const QString &network, const QString &name)
+{
+  if (m_settings->getBool("ChannelLog"))
+    m_channelLog->msg(tr("Сервер `%1` подключился к сети `%2`").arg(name).arg(network));
 }
 
 
@@ -695,11 +706,9 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         service->accessGranted(m_numeric);
         service->sendNumerics(m_numerics);
 
-        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
-
-        sendAllUsers(service);
-
         LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
+        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
+        sendAllUsers(service);
       }
       else
         err = ErrorNumericAlreadyUse;
