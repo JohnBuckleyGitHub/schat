@@ -31,11 +31,6 @@ struct PrepareEmoticons {
 };
 
 /*!
- * \class ChatBrowser
- * \brief Обеспечивает отображение текста в чате.
- */
-
-/*!
  * \brief Конструктор класса ChatBrowser.
  */
 ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
@@ -78,6 +73,12 @@ void ChatBrowser::msg(const QString &text)
 }
 
 
+QString ChatBrowser::msgAccessDenied(quint16 reason)
+{
+  return tr("<i class='err'>При подключении произошла критическая ошибка с кодом: <b>%1</b></i>").arg(reason);
+}
+
+
 QString ChatBrowser::msgBadNickName(const QString &nick)
 {
   return tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(Qt::escape(nick));
@@ -97,6 +98,20 @@ QString ChatBrowser::msgDisconnect()
 {
   return tr("<i class='err'>Соединение разорвано</i>");
 }
+
+
+QString ChatBrowser::msgLinkLeave(const QString &network, const QString &name)
+{
+  return tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b></i>").arg(name).arg(network);
+}
+
+
+QString ChatBrowser::msgNewLink(const QString &network, const QString &name)
+{
+  return tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(name).arg(network);
+}
+
+
 
 
 QString ChatBrowser::msgNewUser(quint8 sex, const QString &nick)
@@ -129,6 +144,12 @@ QString ChatBrowser::msgReadyForUse(const QString &addr)
 QString ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
 {
   return tr("<i class='green'>Успешно подключены к сети <b>%1</b> (%2)</i>").arg(network).arg(addr);
+}
+
+
+QString ChatBrowser::msgUnknownCmd(const QString &command)
+{
+  return tr("Неизвестная команда: <b>%1</b>").arg(command);
 }
 
 

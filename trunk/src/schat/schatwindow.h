@@ -87,12 +87,11 @@ private slots:
   void connecting(const QString &server, bool network);
   void copy();
   void fatal();
-  void genericMessage(const QString &info);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
-  void linkLeave(quint8 numeric, const QString &network, const QString &ip);
+  void linkLeave(quint8 numeric, const QString &network, const QString &name);
   void message(const QString &sender, const QString &message);
   void messageClicked();
-  void newLink(quint8 numeric, const QString &network, const QString &ip);
+  void newLink(quint8 numeric, const QString &network, const QString &name);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);

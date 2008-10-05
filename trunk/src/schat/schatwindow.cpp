@@ -240,7 +240,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      mainChannel->browser->msg(tr("<i class='err'>При подключении произошла критическая ошибка с кодом: <b>%1</b></i>").arg(reason));
+      mainChannel->browser->msg(ChatBrowser::msgAccessDenied(reason));
       break;
   }
 
@@ -362,15 +362,6 @@ void SChatWindow::fatal()
 /** [private slots]
  *
  */
-void SChatWindow::genericMessage(const QString &info)
-{
-  mainChannel->browser->msg(info);
-}
-
-
-/** [private slots]
- *
- */
 void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason) {
@@ -387,12 +378,9 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 }
 
 
-/** [private slots]
- *
- */
-void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &ip)
+void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b></i>").arg(ip).arg(network));
+  mainChannel->browser->msg(ChatBrowser::msgLinkLeave(network, name));
 }
 
 
@@ -419,12 +407,9 @@ void SChatWindow::messageClicked()
 }
 
 
-/** [private slots]
- *
- */
-void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &ip)
+void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  mainChannel->browser->msg(tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(ip).arg(network));
+  mainChannel->browser->msg(ChatBrowser::msgNewLink(network, name));
 }
 
 
@@ -921,7 +906,7 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
     tab->browser->msg(m_cmds.value(command));
   }
   else
-    tab->browser->msg(tr("Неизвестная команда: <b>%1</b>").arg(command));
+    tab->browser->msg(ChatBrowser::msgUnknownCmd(command));
 }
 
 

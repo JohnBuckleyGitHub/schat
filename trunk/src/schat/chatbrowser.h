@@ -31,6 +31,10 @@ class EmoticonMovie;
 class QAction;
 class Settings;
 
+
+/*!
+ * \brief Обеспечивает отображение текста в чате.
+ */
 class ChatBrowser : public QTextBrowser {
   Q_OBJECT
 
@@ -39,14 +43,18 @@ public:
   inline QString channel() const                 { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
+  static QString msgAccessDenied(quint16 reason);
   static QString msgBadNickName(const QString &nick);
   static QString msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
   static QString msgDisconnect();
+  static QString msgLinkLeave(const QString &network, const QString &name);
+  static QString msgNewLink(const QString &network, const QString &name);
   static QString msgNewUser(quint8 sex, const QString &nick);
   static QString msgOldClientProtocol();
   static QString msgOldServerProtocol();
   static QString msgReadyForUse(const QString &addr);
   static QString msgReadyForUse(const QString &network, const QString &addr);
+  static QString msgUnknownCmd(const QString &command);
   static QString msgUserLeft(quint8 sex, const QString &nick, const QString &bye);
   void msg(const QString &text);
   void scroll();
