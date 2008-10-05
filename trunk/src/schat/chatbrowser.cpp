@@ -62,12 +62,9 @@ ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
 }
 
 
-/** [public]
- *
- */
 void ChatBrowser::msg(const QString &text)
 {
-  m_channelLog->msg(text);
+  m_channelLog->msg(text); /// \todo Необходимо удалять ссылки со схемой \b nick.
   append(tr("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
   scroll();
 }
