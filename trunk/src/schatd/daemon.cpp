@@ -51,6 +51,7 @@ Daemon::Daemon(QObject *parent)
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
   connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), SLOT(logNewLink(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), SLOT(logLinkLeave(quint8, const QString &, const QString &)));
+  connect(this, SIGNAL(sendMessage(const QString &, const QString &)), SLOT(logMessage(const QString &, const QString &)));
 }
 
 
@@ -298,6 +299,16 @@ void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QStr
 
 
 /*!
+ * Запись в канальный журнал сообщения в главный канал.
+ */
+void Daemon::logMessage(const QString &sender, const QString &message)
+{
+  if (m_channelLog)
+    m_channelLog->msg(tr("%1: %2").arg(sender).arg(message));
+}
+
+
+/*!
  * Запись в канальный журнал события подключения сервера.
  */
 void Daemon::logNewLink(quint8 /*numeric*/, const QString &network, const QString &name)
@@ -359,9 +370,6 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   QString lowerChannel = channel.toLower();
 
   if (channel.isEmpty()) {
-    if (m_channelLog)
-      m_channelLog->msg(tr("%1: %2").arg(nick).arg(msg));
-
     if (!parseCmd(nick, msg)) {
       emit sendMessage(nick, msg);
       if (m_network) {
@@ -452,9 +460,6 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   QString lowerSender  = sender.toLower();
 
   if (channel.isEmpty()) {
-    if (m_channelLog)
-      m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
-
     emit sendMessage(sender, msg);
 
     if (m_users.contains(lowerSender)) {
