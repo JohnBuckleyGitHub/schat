@@ -144,23 +144,19 @@ SChatWindow::SChatWindow(QWidget *parent)
 
 /*!
  * \brief Обработка события закрытия чата.
- *
- * \todo Исправить, проблему с препятствием завершению программы обычным путём.
  */
 void SChatWindow::closeEvent(QCloseEvent *event)
 {
   saveGeometry();
   m_settings->write();
 
-  if (isHidden()) {
-    event->accept();
-  }
-  else {
-    if (aboutDialog)
-      aboutDialog->hide();
-    hide();
-    event->ignore();
-  }
+  if (aboutDialog)
+    aboutDialog->hide();
+
+  if (settingsDialog)
+    settingsDialog->hide();
+
+  QMainWindow::closeEvent(event);
 }
 
 
