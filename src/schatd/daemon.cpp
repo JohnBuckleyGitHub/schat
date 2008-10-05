@@ -36,13 +36,6 @@
 #endif
 
 /*!
- * \class Daemon
- * \brief Сервер чата
- *
- * Класс полностью включает в себя функциональность сервера чата.
- */
-
-/*!
  * \brief Конструктор класса Daemon.
  * \param parent Указатель на родительский объект.
  */
@@ -53,6 +46,7 @@ Daemon::Daemon(QObject *parent)
   m_remoteNumeric = 0;
   m_syncUsers = false;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
+  connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
 }
 
 
@@ -170,7 +164,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
-{ /// \bug Это событие не записывается в журнал.
+{
   QString nick = list.at(AbstractProfile::Nick).toLower();
 
   if (m_users.contains(nick) && !m_syncUsers) {
@@ -286,6 +280,29 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
   m_numerics.removeAll(numeric);
 
   emit sendLinkLeave(numeric, network, ip);
+}
+
+
+/*!
+ * Запись в журналы сервера события подключения нового пользователя.
+ */
+void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric)
+{
+  QString nick = list.at(AbstractProfile::Nick);
+
+  LOG(0, tr("- Notice - Connect [%1]: %2@%3, %4, %5, %6")
+      .arg(numeric)
+      .arg(nick)
+      .arg(list.at(AbstractProfile::Host))
+      .arg(list.at(AbstractProfile::FullName))
+      .arg(list.at(AbstractProfile::Gender))
+      .arg(list.at(AbstractProfile::UserAgent)));
+
+  if (m_settings->getBool("ChannelLog"))
+    if (list.at(AbstractProfile::Gender) == "male")
+      m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
+    else
+      m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
 }
 
 
@@ -746,19 +763,6 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
     service->accessGranted(m_numeric);
     emit newUser(list, 1, m_numeric);
-
-    LOG(0, tr("- Notice - Connect: %1@%2, %3, %4, %5")
-        .arg(list.at(AbstractProfile::Nick))
-        .arg(list.at(AbstractProfile::Host))
-        .arg(list.at(AbstractProfile::FullName))
-        .arg(list.at(AbstractProfile::Gender))
-        .arg(list.at(AbstractProfile::UserAgent)));
-
-    if (m_settings->getBool("ChannelLog"))
-      if (list.at(AbstractProfile::Gender) == "male")
-        m_channelLog->msg(tr("`%1` зашёл в чат").arg(list.at(AbstractProfile::Nick)));
-      else
-        m_channelLog->msg(tr("`%1` зашла в чат").arg(list.at(AbstractProfile::Nick)));
 
     sendAllUsers(service);
     if (m_network && m_remoteNumeric)
