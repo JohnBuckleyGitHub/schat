@@ -87,10 +87,12 @@ QString ChatBrowser::msgBadNickName(const QString &nick)
 
 QString ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
-  if (sex) /// \todo Добавить ссылку на ник
-    return tr("<i class='info'><b>%1</b> теперь известна как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick));
+  QString nickHex = newNick.toUtf8().toHex();
+
+  if (sex)
+    return tr("<i class='info'><b>%1</b> теперь известна как <b><a href='nick:%2' class='info'>%3</a></b></i>").arg(Qt::escape(oldNick)).arg(nickHex).arg(Qt::escape(newNick));
   else
-    return tr("<i class='info'><b>%1</b> теперь известен как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick));
+    return tr("<i class='info'><b>%1</b> теперь известен как <b><a href='nick:%2' class='info'>%3</a></b></i>").arg(Qt::escape(oldNick)).arg(nickHex).arg(Qt::escape(newNick));
 }
 
 
@@ -115,11 +117,13 @@ QString ChatBrowser::msgNewLink(const QString &network, const QString &name)
 
 
 QString ChatBrowser::msgNewUser(quint8 sex, const QString &nick)
-{ /// \todo Добавить ссылку на ник
+{
+  QString nickHex = nick.toUtf8().toHex();
+
   if (sex)
-    return tr("<i class='gr'><b>%1</b> зашла в чат</i>").arg(Qt::escape(nick));
+    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> зашла в чат</i>").arg(nickHex).arg(Qt::escape(nick));
   else
-    return tr("<i class='gr'><b>%1</b> зашёл в чат</i>").arg(Qt::escape(nick));
+    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> зашёл в чат</i>").arg(nickHex).arg(Qt::escape(nick));
 }
 
 
@@ -154,15 +158,17 @@ QString ChatBrowser::msgUnknownCmd(const QString &command)
 
 
 QString ChatBrowser::msgUserLeft(quint8 sex, const QString &nick, const QString &bye)
-{ /// \todo Добавить ссылку на ник
+{
+  QString nickHex = nick.toUtf8().toHex();
+
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (sex)
-    return tr("<i class='gr'><b>%1</b> вышла из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg);
+    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> вышла из чата%3</i>").arg(nickHex).arg(Qt::escape(nick)).arg(byeMsg);
   else
-    return tr("<i class='gr'><b>%1</b> вышел из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg);
+    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> вышел из чата%3</i>").arg(nickHex).arg(Qt::escape(nick)).arg(byeMsg);
 }
 
 
