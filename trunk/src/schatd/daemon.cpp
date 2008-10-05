@@ -42,12 +42,15 @@
 Daemon::Daemon(QObject *parent)
   : QObject(parent)
 {
-  m_settings = new DaemonSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", this);
+  m_settings      = new DaemonSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", this);
   m_remoteNumeric = 0;
-  m_syncUsers = false;
+  m_syncUsers     = false;
+  m_channelLog    = 0;
+  m_privateLog    = 0;
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
   connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), SLOT(logNewLink(quint8, const QString &, const QString &)));
+  connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), SLOT(logLinkLeave(quint8, const QString &, const QString &)));
 }
 
 
@@ -83,8 +86,8 @@ bool Daemon::start()
     m_privateLog->setMode(ChannelLog::Plain);
   }
 
-  m_maxLinks = m_settings->getInt("MaxLinks");
-  m_maxUsers = m_settings->getInt("MaxUsers");
+  m_maxLinks      = m_settings->getInt("MaxLinks");
+  m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
   #ifndef DISABLE_LOCAL_SERVER
@@ -285,11 +288,21 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
 
 
 /*!
+ * Запись в канальный журнал события отключения сервера.
+ */
+void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
+{
+  if (m_channelLog)
+    m_channelLog->msg(tr("Сервер `%1` отключился от сети `%2`").arg(name).arg(network));
+}
+
+
+/*!
  * Запись в канальный журнал события подключения сервера.
  */
 void Daemon::logNewLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  if (m_settings->getBool("ChannelLog"))
+  if (m_channelLog)
     m_channelLog->msg(tr("Сервер `%1` подключился к сети `%2`").arg(name).arg(network));
 }
 
@@ -309,7 +322,7 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
       .arg(list.at(AbstractProfile::Gender))
       .arg(list.at(AbstractProfile::UserAgent)));
 
-  if (m_settings->getBool("ChannelLog"))
+  if (m_channelLog)
     if (list.at(AbstractProfile::Gender) == "male")
       m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
     else
@@ -346,7 +359,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   QString lowerChannel = channel.toLower();
 
   if (channel.isEmpty()) {
-    if (m_settings->getBool("ChannelLog"))
+    if (m_channelLog)
       m_channelLog->msg(tr("%1: %2").arg(nick).arg(msg));
 
     if (!parseCmd(nick, msg)) {
@@ -359,7 +372,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
     }
   }
   else if (m_users.contains(lowerChannel)) {
-    if (m_settings->getBool("PrivateLog"))
+    if (m_privateLog)
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
 
     if (!parseCmd(nick, msg)) {
@@ -439,7 +452,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   QString lowerSender  = sender.toLower();
 
   if (channel.isEmpty()) {
-    if (m_settings->getBool("ChannelLog"))
+    if (m_channelLog)
       m_channelLog->msg(tr("%1: %2").arg(sender).arg(msg));
 
     emit sendMessage(sender, msg);
@@ -459,7 +472,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
 
   quint8 numeric = m_users.value(lowerChannel)->numeric();
 
-  if (m_settings->getBool("PrivateLog"))
+  if (m_privateLog)
     m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
 
   if (numeric == m_numeric) {
@@ -961,7 +974,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
   QString lowerNewNick = nNick.toLower();
 
   if (lowerNewNick.isEmpty()) {
-    if (m_settings->getBool("ChannelLog"))
+    if (m_channelLog)
       if (gender)
         m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
       else
@@ -979,7 +992,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
     }
   }
   else if (!m_users.contains(lowerNewNick) || lowerNick == lowerNewNick) {
-    if (m_settings->getBool("ChannelLog"))
+    if (m_channelLog)
       if (gender)
         m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(nNick));
       else
@@ -1043,7 +1056,7 @@ void Daemon::userLeave(const QString &nick, const QString &err)
     LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
 
     QString bye = unit->profile()->byeMsg();
-    if (m_settings->getBool("ChannelLog"))
+    if (m_channelLog)
       if (unit->profile()->isMale())
         m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
       else
