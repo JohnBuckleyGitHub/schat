@@ -39,16 +39,16 @@ public:
   inline QString channel() const                 { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
+  static QString msgBadNickName(const QString &nick);
+  static QString msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
+  static QString msgDisconnect();
+  static QString msgNewUser(quint8 sex, const QString &nick);
+  static QString msgOldClientProtocol();
+  static QString msgOldServerProtocol();
+  static QString msgReadyForUse(const QString &addr);
+  static QString msgReadyForUse(const QString &network, const QString &addr);
+  static QString msgUserLeft(quint8 sex, const QString &nick, const QString &bye);
   void msg(const QString &text);
-  void msgBadNickName(const QString &nick);
-  void msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick);
-  void msgDisconnect();
-  void msgNewParticipant(quint8 sex, const QString &nick);
-  void msgOldClientProtocol();
-  void msgOldServerProtocol();
-  void msgParticipantLeft(quint8 sex, const QString &nick, const QString &bye);
-  void msgReadyForUse(const QString &addr);
-  void msgReadyForUse(const QString &network, const QString &addr);
   void scroll();
 
 signals:

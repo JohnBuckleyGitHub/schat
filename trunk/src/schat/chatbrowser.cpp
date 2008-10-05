@@ -78,100 +78,72 @@ void ChatBrowser::msg(const QString &text)
 }
 
 
-/** [public]
- *
- */
-void ChatBrowser::msgBadNickName(const QString &nick)
+QString ChatBrowser::msgBadNickName(const QString &nick)
 {
-  msg(tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(Qt::escape(nick)));
+  return tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(Qt::escape(nick));
 }
 
 
-/** [public]
- *
- */
-void ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
+QString ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
-  if (sex)
-    msg(tr("<i class='info'><b>%1</b> теперь известна как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+  if (sex) /// \todo Добавить ссылку на ник
+    return tr("<i class='info'><b>%1</b> теперь известна как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick));
   else
-    msg(tr("<i class='info'><b>%1</b> теперь известен как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick)));
+    return tr("<i class='info'><b>%1</b> теперь известен как <b>%2</b></i>").arg(Qt::escape(oldNick)).arg(Qt::escape(newNick));
 }
 
 
-/** [public]
- *
- */
-void ChatBrowser::msgDisconnect()
+QString ChatBrowser::msgDisconnect()
 {
-  msg(tr("<i class='err'>Соединение разорвано</i>"));
+  return tr("<i class='err'>Соединение разорвано</i>");
 }
 
 
-/** [public]
- * Уведомление о новом участнике `const QString &nick`,
- * используются различные сообщения в зависимости от пола `quint8 sex`.
- */
-void ChatBrowser::msgNewParticipant(quint8 sex, const QString &nick)
-{
+QString ChatBrowser::msgNewUser(quint8 sex, const QString &nick)
+{ /// \todo Добавить ссылку на ник
   if (sex)
-    msg(tr("<i class='gr'><b>%1</b> зашла в чат</i>").arg(Qt::escape(nick)));
+    return tr("<i class='gr'><b>%1</b> зашла в чат</i>").arg(Qt::escape(nick));
   else
-    msg(tr("<i class='gr'><b>%1</b> зашёл в чат</i>").arg(Qt::escape(nick)));
+    return tr("<i class='gr'><b>%1</b> зашёл в чат</i>").arg(Qt::escape(nick));
 }
 
 
-/** [public]
- *
- */
-void ChatBrowser::msgOldClientProtocol()
+QString ChatBrowser::msgOldClientProtocol()
 {
-  msg(tr("<span class='err'>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.</span>"));
+  return tr("<span class='err'>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.</span>");
 }
 
 
-/** [public]
- *
- */
-void ChatBrowser::msgOldServerProtocol()
+QString ChatBrowser::msgOldServerProtocol()
 {
-  msg(tr("<span class='err'>Сервер использует устаревшую версию протокола, подключение не возможно.</span>"));
+  return tr("<span class='err'>Сервер использует устаревшую версию протокола, подключение не возможно.</span>");
 }
 
 
-/** [public]
- * Уведомление о выходе участнике `const QString &nick`,
- * используются различные сообщения в зависимости от пола `quint8 sex`.
- */
-void ChatBrowser::msgParticipantLeft(quint8 sex, const QString &nick, const QString &bye)
+QString ChatBrowser::msgReadyForUse(const QString &addr)
 {
+  return tr("<i class='green'>Успешно подключены к серверу %1</i>").arg(addr);
+}
+
+
+QString ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
+{
+  return tr("<i class='green'>Успешно подключены к сети <b>%1</b> (%2)</i>").arg(network).arg(addr);
+}
+
+
+QString ChatBrowser::msgUserLeft(quint8 sex, const QString &nick, const QString &bye)
+{ /// \todo Добавить ссылку на ник
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (sex)
-    msg(tr("<i class='gr'><b>%1</b> вышла из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg));
+    return tr("<i class='gr'><b>%1</b> вышла из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg);
   else
-    msg(tr("<i class='gr'><b>%1</b> вышел из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg));
+    return tr("<i class='gr'><b>%1</b> вышел из чата%2</i>").arg(Qt::escape(nick)).arg(byeMsg);
 }
 
-
-/** [public]
- *
- */
-void ChatBrowser::msgReadyForUse(const QString &addr)
-{
-  msg(tr("<i class='green'>Успешно подключены к серверу %1</i>").arg(addr));
-}
-
-
-/** [public]
- *
- */
-void ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
-{
-  msg(tr("<i class='green'>Успешно подключены к сети <b>%1</b> (%2)</i>").arg(network).arg(addr));
-}
 
 /** [public]
  * Принудительно скролит текст
