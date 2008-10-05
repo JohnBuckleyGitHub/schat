@@ -77,6 +77,7 @@ private slots:
   void greeting(const QStringList &list, quint8 flag);
   void incomingConnection();
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
+  void logNewLink(quint8 numeric, const QString &network, const QString &name);
   void logNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
