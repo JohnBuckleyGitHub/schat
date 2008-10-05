@@ -38,6 +38,11 @@ class UserUnit;
 
 #define LOG(x, y) if (m_settings->getInt("LogLevel") >= x) m_log->append(y)
 
+/*!
+ * \brief Сервер чата
+ *
+ * Класс полностью включает в себя функциональность сервера чата.
+ */
 class Daemon : public QObject
 {
   Q_OBJECT
@@ -72,6 +77,7 @@ private slots:
   void greeting(const QStringList &list, quint8 flag);
   void incomingConnection();
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
+  void logNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
