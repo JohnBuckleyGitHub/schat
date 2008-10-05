@@ -170,7 +170,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
-{
+{ /// \bug Это событие не записывается в журнал.
   QString nick = list.at(AbstractProfile::Nick).toLower();
 
   if (m_users.contains(nick) && !m_syncUsers) {
@@ -756,9 +756,9 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 
     if (m_settings->getBool("ChannelLog"))
       if (list.at(AbstractProfile::Gender) == "male")
-        m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
+        m_channelLog->msg(tr("`%1` зашёл в чат").arg(list.at(AbstractProfile::Nick)));
       else
-        m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
+        m_channelLog->msg(tr("`%1` зашла в чат").arg(list.at(AbstractProfile::Nick)));
 
     sendAllUsers(service);
     if (m_network && m_remoteNumeric)
