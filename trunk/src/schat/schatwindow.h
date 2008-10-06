@@ -55,6 +55,7 @@ class QVBoxLayout;
 class SendWidget;
 class Settings;
 class Tab;
+class TrayIcon;
 class UserView;
 class WelcomeDialog;
 
@@ -95,7 +96,6 @@ private slots:
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
-  void notice();
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void resetTabNotice(int index);
   void sendMsg(const QString &message);
@@ -129,7 +129,6 @@ private:
   void uniqueNick();
 
   AbstractProfile *m_profile;
-  bool m_currentTrayIcon;
   ClientService *m_clientService;
   MainChannel *m_main;
   QAction *m_aboutAction;
@@ -146,9 +145,7 @@ private:
   QPointer<SettingsDialog> m_settingsDialog;
   QSplitter *m_splitter;
   QStatusBar *m_statusBar;
-  QSystemTrayIcon *m_tray;
   QTabWidget *m_tabs;
-  QTimer *m_noticeTimer;
   QTimer *m_updateTimer;
   QToolButton *m_settingsButton;
   QVBoxLayout *m_mainLay;
@@ -158,6 +155,7 @@ private:
   SendWidget *m_send;
   Settings *m_settings;
   static QMap<QString, QString> m_cmds;
+  TrayIcon *m_tray;
   UserView *m_users;
   WelcomeDialog *m_welcome;
 
