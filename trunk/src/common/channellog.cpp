@@ -46,7 +46,7 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
   QString out = html;
 
   /// Очищает html документ от неотображаемой информации.
-  QRegExp badStuff("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>");
+  QRegExp badStuff(QLatin1String("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>"));
   badStuff.setCaseSensitivity(Qt::CaseInsensitive);
   out.remove(badStuff);
   out = out.trimmed();
@@ -59,39 +59,39 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
 
   /// Удаляет запрещённые теги.
   badStuff.setCaseSensitivity(Qt::CaseInsensitive);
-  QStringList otherBadTags;
-  otherBadTags << "address"
-               << "big"
-               << "blockquote"
-               << "center"
-               << "dd"
-               << "div"
-               << "dl"
-               << "dt"
-               << "font"
-               << "h1"
-               << "h2"
-               << "h3"
-               << "h4"
-               << "h5"
-               << "h6"
-               << "hr"
-               << "kbd"
-               << "li"
-               << "ol"
-               << "qt"
-               << "small"
-               << "sub"
-               << "sup"
-               << "table"
-               << "tbody"
-               << "td"
-               << "tfoot"
-               << "th"
-               << "thead"
-               << "tr"
-               << "img"
-               << "ul";
+  QList<QLatin1String> otherBadTags;
+  otherBadTags << QLatin1String("address")
+               << QLatin1String("big")
+               << QLatin1String("blockquote")
+               << QLatin1String("center")
+               << QLatin1String("dd")
+               << QLatin1String("div")
+               << QLatin1String("dl")
+               << QLatin1String("dt")
+               << QLatin1String("font")
+               << QLatin1String("h1")
+               << QLatin1String("h2")
+               << QLatin1String("h3")
+               << QLatin1String("h4")
+               << QLatin1String("h5")
+               << QLatin1String("h6")
+               << QLatin1String("hr")
+               << QLatin1String("kbd")
+               << QLatin1String("li")
+               << QLatin1String("ol")
+               << QLatin1String("qt")
+               << QLatin1String("small")
+               << QLatin1String("sub")
+               << QLatin1String("sup")
+               << QLatin1String("table")
+               << QLatin1String("tbody")
+               << QLatin1String("td")
+               << QLatin1String("tfoot")
+               << QLatin1String("th")
+               << QLatin1String("thead")
+               << QLatin1String("tr")
+               << QLatin1String("img")
+               << QLatin1String("ul");
 
   foreach (QString tag, otherBadTags) {
     badStuff.setPattern(QString("</?%1[^<>]*>").arg(tag));
@@ -99,23 +99,23 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
   }
 
   /// Удаляет пустые ссылки.
-  badStuff.setPattern("<a[^<]*>[\\s]*</a>");
+  badStuff.setPattern(QLatin1String("<a[^<]*>[\\s]*</a>"));
   out.remove(badStuff);
 
   /// Заменяет перенос строк на соответствующий html код.
-  out.replace(QChar('\n'), "<br />");
+  out.replace(QLatin1String("\n"), QLatin1String("<br />"));
 
   /// Заменяет двойные переносы строк на одинарные.
-  while (out.contains("<br /><br />"))
-    out.replace("<br /><br />", "<br />");
+  while (out.contains(QLatin1String("<br /><br />")))
+    out.replace(QLatin1String("<br /><br />"), QLatin1String("<br />"));
 
   /// Удаляет код переноса строки если тот находится в конце сообщения.
-  out.replace("<br /></span>", "</span>");
-  if (out.endsWith("<br />"))
+  out.replace(QLatin1String("<br /></span>"), QLatin1String("</span>"));
+  if (out.endsWith(QLatin1String("<br />")))
     out.left(out.size() - 6);
 
   /// Удаляет запрещённые css стили.
-  badStuff.setPattern("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;");
+  badStuff.setPattern(QLatin1String("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;"));
   out.remove(badStuff);
 
   if (toPlainText(out).isEmpty())
@@ -128,23 +128,20 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
 QString ChannelLog::toPlainText(const QString &str)
 {
   QString out = str;
-  out.replace("<br />", QChar('\n'), Qt::CaseInsensitive);
-  out.remove("</span>", Qt::CaseInsensitive);
-  out.remove(QRegExp("</?span[^<>]*>|</?a[^<>]*>"));
+  out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
+  out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
+  out.remove(QRegExp(QLatin1String("</?span[^<>]*>|</?a[^<>]*>")));
 
-  out.replace("&gt;", ">");
-  out.replace("&lt;", "<");
-  out.replace("&quot;", "\"");
-  out.replace("&nbsp;", " ");
-  out.replace("&amp;", "&");
+  out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
+  out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
+  out.replace(QLatin1String("&quot;"), QLatin1String("\""));
+  out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
+  out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
   out = out.trimmed();
   return out;
 }
 
 
-/** [public]
- *
- */
 void ChannelLog::msg(const QString &text)
 {
   if (!m_channel.isEmpty()) {
@@ -167,21 +164,18 @@ void ChannelLog::msg(const QString &text)
 }
 
 
-/** [public]
- *
- */
 void ChannelLog::setChannel(const QString &channel)
 {
   QString _channel = channel;
   #ifdef Q_OS_WIN
-    _channel.replace(QRegExp("COM[1-9]"), "COM_");
-    _channel.replace(QRegExp("LPT[1-9]"), "LPT_");
-    _channel.replace("CON", "CO_");
-    _channel.replace("NUL", "NU_");
-    _channel.replace("AUX", "AU_");
-    _channel.replace("PRN", "PR_");
+    _channel.replace(QRegExp(QLatin1String("COM[1-9]")), QLatin1String("COM_"));
+    _channel.replace(QRegExp(QLatin1String("LPT[1-9]")), QLatin1String("LPT_"));
+    _channel.replace(QLatin1String("CON"), QLatin1String("CO_"));
+    _channel.replace(QLatin1String("NUL"), QLatin1String("NU_"));
+    _channel.replace(QLatin1String("AUX"), QLatin1String("AU_"));
+    _channel.replace(QLatin1String("PRN"), QLatin1String("PR_"));
   #endif
-  _channel.replace(QRegExp("[?\"/\\\\<>*|:]"), "_");
+  _channel.replace(QRegExp(QLatin1String("[?\"/\\\\<>*|:]")), QLatin1String("_"));
 
   if (m_channel != _channel) {
     if (m_file.isOpen())
@@ -191,9 +185,6 @@ void ChannelLog::setChannel(const QString &channel)
 }
 
 
-/** [private]
- *
- */
 bool ChannelLog::openFile()
 {
   QString date = dateStamp();

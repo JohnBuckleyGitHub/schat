@@ -244,7 +244,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     QString escapedNick = Qt::escape(nick);
     docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick:%2' class='me'>%3</span> ")
         .arg(currentTime())
-        .arg(QString(nick.toUtf8().toHex()))
+        .arg(QLatin1String(nick.toUtf8().toHex()))
         .arg(escapedNick));
     m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
   }
@@ -252,7 +252,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     QString escapedNick = Qt::escape(nick);
     docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a class='nick' href='nick:%2'>%3:</a> ")
         .arg(currentTime())
-        .arg(QString(nick.toUtf8().toHex()))
+        .arg(QLatin1String(nick.toUtf8().toHex()))
         .arg(escapedNick));
     m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(msg));
   }
