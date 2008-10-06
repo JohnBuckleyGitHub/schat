@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "trayicon.h"
+#include "version.h"
 
 /*!
  * \brief Конструктор класса TrayIcon.
@@ -26,7 +27,10 @@
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
 {
+  m_icon = QIcon(":/images/logo16.png");
+  setIcon(m_icon);
 
+  init();
 }
 
 
@@ -36,5 +40,63 @@ TrayIcon::TrayIcon(QObject *parent)
 TrayIcon::TrayIcon(const QIcon &icon, QObject *parent)
   : QSystemTrayIcon(icon, parent)
 {
+  m_icon = icon;
 
+  init();
+}
+
+
+/*!
+ * Включает/выключает режим нотификации.
+ *
+ * \param enable true - включить, false - выключить.
+ */
+void TrayIcon::notice(bool enable)
+{
+  if (enable && m_timer->isActive())
+    return;
+
+  if (!enable && !m_timer->isActive())
+    return;
+
+  if (enable) {
+    m_timer->start();
+    setIcon(m_noticeIcon);
+  }
+  else {
+    m_timer->stop();
+    setIcon(m_icon);
+  }
+
+  m_normal = !enable;
+
+}
+
+
+/*!
+ * Обработка события таймера \a m_timer.
+ * Изменяет иконку на противоположную.
+ */
+void TrayIcon::timeout()
+{
+  if (m_normal)
+    setIcon(m_noticeIcon);
+  else
+    setIcon(m_icon);
+
+  m_normal = !m_normal;
+}
+
+
+/*!
+ * Инициализация членов класса.
+ */
+void TrayIcon::init()
+{
+  setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
+  m_normal = true;
+  m_noticeIcon = QIcon(":/images/notice.png");
+  m_timer = new QTimer(this);
+  m_timer->setInterval(800);
+  connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
 }

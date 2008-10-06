@@ -27,6 +27,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "tab.h"
+#include "trayicon.h"
 #include "version.h"
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
@@ -56,8 +57,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_toolsLay    = new QHBoxLayout;
   m_statusBar   = new QStatusBar(this);
   m_statusLabel = new QLabel(this);
-  m_noticeTimer = new QTimer(this);
-  m_noticeTimer->setInterval(800);
 
   m_splitter->addWidget(m_tabs);
   m_splitter->addWidget(m_right);
@@ -104,7 +103,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(m_noticeTimer, SIGNAL(timeout()), SLOT(notice()));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
   connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
@@ -509,19 +507,6 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
 }
 
 
-void SChatWindow::notice()
-{
-  if (m_currentTrayIcon) {
-    m_tray->setIcon(QIcon(":/images/notice.png"));
-    m_currentTrayIcon = false;
-  }
-  else {
-    m_tray->setIcon(QIcon(":/images/logo16.png"));
-    m_currentTrayIcon = true;
-  }
-}
-
-
 /** [private slots]
  *
  */
@@ -582,11 +567,7 @@ void SChatWindow::resetTabNotice(int index)
       return;
   }
 
-  if (m_noticeTimer->isActive()) {
-    m_noticeTimer->stop();
-    m_currentTrayIcon = true;
-    m_tray->setIcon(QIcon(":/images/logo16.png"));
-  }
+  m_tray->notice(false);
 }
 
 
@@ -1033,12 +1014,9 @@ void SChatWindow::createTrayIcon()
   m_trayMenu->addSeparator();
   m_trayMenu->addAction(m_quitAction);
 
-  m_tray = new QSystemTrayIcon(this);
-  m_tray->setIcon(QIcon(":/images/logo16.png"));
-  m_tray->setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
+  m_tray = new TrayIcon(this);
   m_tray->setContextMenu(m_trayMenu);
   m_tray->show();
-  m_currentTrayIcon = true;
 }
 
 
@@ -1100,11 +1078,7 @@ void SChatWindow::startNotice(int index)
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
   tab->notice = true;
   m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-  if (!m_noticeTimer->isActive()) {
-    m_currentTrayIcon = false;
-    m_tray->setIcon(QIcon(":/images/notice.png"));
-    m_noticeTimer->start();
-  }
+  m_tray->notice(true);
 }
 
 
