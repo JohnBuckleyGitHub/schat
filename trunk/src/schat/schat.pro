@@ -49,6 +49,7 @@ HEADERS += \
     settings.h \
     settingsdialog.h \
     tab.h \
+    trayicon.h \
     version.h \
     welcomedialog.h \
     widget/emoticonselector.h \
@@ -78,6 +79,7 @@ SOURCES += \
     settings.cpp \
     settingsdialog.cpp \
     tab.cpp \
+    trayicon.cpp \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
