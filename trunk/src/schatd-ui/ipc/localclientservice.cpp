@@ -57,8 +57,10 @@ void LocalClientService::connectToServer()
 
 void LocalClientService::exit()
 {
-  if (send(666))
+  if (send(666)) {
     m_socket->disconnectFromServer();
+    m_socket->waitForDisconnected(2000);
+  }
 }
 
 
@@ -84,7 +86,7 @@ bool LocalClientService::send(quint16 opcode)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode; 
+    out << quint16(0) << opcode;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
