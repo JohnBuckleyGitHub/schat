@@ -33,28 +33,27 @@
 MainChannel::MainChannel(Settings *settings, QWidget *parent)
   : AbstractTab(settings, parent)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-  type = Main;
-  
+  m_type = Main;
+
   m_settings = settings;
-  browser->setChannel("#main");
-  
+  m_browser->setChannel("#main");
+
   createActions();
-  
+
   m_connectCreateButton->setVisible(false);
-  
+
   m_networkWidget = new NetworkWidget(settings, this);
   m_networkWidget->setVisible(false);
-  
+
   m_networkLayout = new QHBoxLayout;
   m_networkLayout->addWidget(m_networkWidget);
   m_networkLayout->addWidget(m_connectCreateButton);
   m_networkLayout->addStretch();
   m_networkLayout->setMargin(0);
-  
+
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
-  m_mainLayout->addWidget(browser);
+  m_mainLayout->addWidget(m_browser);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
@@ -63,11 +62,8 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
 }
 
 
-/** [public]
- * 
- */
 void MainChannel::displayChoiceServer(bool display)
-{
+{ /// \todo Оптимизировать.
   if (display) {
     m_networkLayout->setContentsMargins(4, 2, 4, 0);
     m_networkWidget->setVisible(true);
@@ -78,12 +74,12 @@ void MainChannel::displayChoiceServer(bool display)
     m_networkWidget->setVisible(false);
     m_networkLayout->setMargin(0);
   }
-  browser->scroll();
+  m_browser->scroll();
 }
 
 
 /** [private slots]
- * 
+ *
  */
 void MainChannel::serverChanged()
 {
@@ -93,7 +89,7 @@ void MainChannel::serverChanged()
 
 
 /** [private]
- * 
+ *
  */
 void MainChannel::createActions()
 {

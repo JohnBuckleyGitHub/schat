@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,20 +21,14 @@
 #include "tab.h"
 
 /*!
- * \class Tab
- * \brief Обеспечивает поддержку приватного канала чата.
- */
-
-/*!
  * \brief Конструктор класса Tab.
  */
 Tab::Tab(Settings *settings, QWidget *parent)
   : AbstractTab(settings, parent)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-  type = Private;
+  m_type = Private;
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(browser);
-  mainLayout->setMargin(0);
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_browser);
+  mainLay->setMargin(0);
 }
