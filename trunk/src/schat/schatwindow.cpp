@@ -1061,8 +1061,12 @@ void SChatWindow::saveGeometry()
 }
 
 
+/*!
+ * Показ окна чата.
+ */
 void SChatWindow::showChat()
 {
+  setWindowState(windowState() & ~Qt::WindowMinimized);
   show();
   activateWindow();
 
