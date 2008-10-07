@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 
 #include "abstracttab.h"
 
+/*!
+ * \brief Обеспечивает поддержку приватного канала чата.
+ */
 class Tab : public AbstractTab {
   Q_OBJECT
 

@@ -37,20 +37,29 @@ public:
   enum Type {
     Unknown,
     Main,
-    Private,
-    Direct,
-    DirectServer
+    Private
   };
 
   AbstractTab(Settings *settings, QWidget *parent = 0);
+  inline QTextCursor textCursor() const          { return m_browser->textCursor(); }
+  inline Type type() const                       { return m_type; }
+  inline void msg(const QString &text)           { m_browser->msg(text); }
+  inline void setChannel(const QString &channel) { m_browser->setChannel(channel); }
 
   bool notice;
-  ChatBrowser *browser;
   QIcon icon;
-  Type type;
 
 signals:
   void nickClicked(const QString &hex);
+
+public slots:
+  inline void clear()                                                    { m_browser->clear(); }
+  inline void copy()                                                     { m_browser->copy(); }
+  inline void msgNewMessage(const QString &nick, const QString &message) { m_browser->msgNewMessage(nick, message); }
+
+protected:
+  ChatBrowser *m_browser;
+  Type m_type;
 };
 
 #endif /*ABSTRACTTAB_H_*/

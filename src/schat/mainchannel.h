@@ -39,9 +39,6 @@ public:
   MainChannel(Settings *settings, QWidget *parent = 0);
   void displayChoiceServer(bool display);
 
-public slots:
-  inline void msgNewMessage(const QString &nick, const QString &message) { browser->msgNewMessage(nick, message); }
-
 private slots:
   void serverChanged();
 

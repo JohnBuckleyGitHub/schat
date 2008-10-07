@@ -30,8 +30,8 @@ AbstractTab::AbstractTab(Settings *settings, QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
 
   notice = false;
-  browser = new ChatBrowser(settings, this);
-  type = Unknown;
+  m_browser = new ChatBrowser(settings, this);
+  m_type = Unknown;
 
-  connect(browser, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
+  connect(m_browser, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
 }

@@ -211,15 +211,15 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     case ErrorOldClientProtocol:
-      m_main->browser->msg(ChatBrowser::msgOldClientProtocol());
+      m_main->msg(ChatBrowser::msgOldClientProtocol());
       break;
 
     case ErrorOldServerProtocol:
-      m_main->browser->msg(ChatBrowser::msgOldServerProtocol());
+      m_main->msg(ChatBrowser::msgOldServerProtocol());
       break;
 
     case ErrorBadNickName:
-      m_main->browser->msg(ChatBrowser::msgBadNickName(m_profile->nick()));
+      m_main->msg(ChatBrowser::msgBadNickName(m_profile->nick()));
       break;
 
     case ErrorUsersLimitExceeded:
@@ -229,7 +229,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      m_main->browser->msg(ChatBrowser::msgAccessDenied(reason));
+      m_main->msg(ChatBrowser::msgAccessDenied(reason));
       break;
   }
 
@@ -245,12 +245,12 @@ void SChatWindow::accessDenied(quint16 reason)
 void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
 {
   if (network.isEmpty()) {
-    m_main->browser->msg(ChatBrowser::msgReadyForUse(server));
+    m_main->msg(ChatBrowser::msgReadyForUse(server));
     m_statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
     setWindowTitle(tr("IMPOMEZIA Simple Chat"));
   }
   else {
-    m_main->browser->msg(ChatBrowser::msgReadyForUse(network, server));
+    m_main->msg(ChatBrowser::msgReadyForUse(network, server));
     m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
   }
@@ -268,7 +268,7 @@ void SChatWindow::addTab(const QString &nick)
     AbstractProfile profile(m_users->profile(nick));
     Tab *tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
-    tab->browser->setChannel(nick);
+    tab->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
@@ -330,10 +330,10 @@ void SChatWindow::connecting(const QString &server, bool network)
 void SChatWindow::copy()
 {
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-  QTextCursor cursor = tab->browser->textCursor();
+  QTextCursor cursor = tab->textCursor();
 
   if (cursor.hasSelection())
-    tab->browser->copy();
+    tab->copy();
   else
     m_send->copy();
 }
@@ -369,7 +369,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->browser->msg(ChatBrowser::msgLinkLeave(network, name));
+  m_main->msg(ChatBrowser::msgLinkLeave(network, name));
 }
 
 
@@ -398,7 +398,7 @@ void SChatWindow::messageClicked()
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->browser->msg(ChatBrowser::msgNewLink(network, name));
+  m_main->msg(ChatBrowser::msgNewLink(network, name));
 }
 
 
@@ -418,20 +418,20 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
 
       if (newIndex == -1) {
         m_tabs->setTabText(oldIndex, newNick);
-        tab->browser->setChannel(newNick);
+        tab->setChannel(newNick);
       }
       else {
         AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(newIndex));
-        tab->browser->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+        tab->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
         if (m_tabs->currentIndex() == oldIndex)
           m_tabs->setCurrentIndex(newIndex);
       }
 
-      tab->browser->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+      tab->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
     }
 
     newProfile(gender, newNick, name);
-    m_main->browser->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+    m_main->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
   }
 }
 
@@ -491,18 +491,18 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
     int index = tabIndex(nick);
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-      if (tab->type == AbstractTab::Private) {
+      if (tab->type() == AbstractTab::Private) {
         m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
         tab->icon.addFile(":/images/" + profile.gender() + ".png");
 
         if (!tab->notice)
           m_tabs->setTabIcon(index, tab->icon);
 
-        tab->browser->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
+        tab->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
       }
     }
 
-    m_main->browser->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
+    m_main->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
   }
 }
 
@@ -526,7 +526,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     AbstractProfile profile(m_users->profile(nick));
     tab = new Tab(m_settings, this);
     tab->icon.addFile(":/images/" + profile.gender() + ".png");
-    tab->browser->setChannel(nick);
+    tab->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon, nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     m_tabs->setCurrentIndex(index);
@@ -537,9 +537,9 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
   if (tab)
     if (flag == 1)
-      tab->browser->msgNewMessage(m_profile->nick(), message);
+      tab->msgNewMessage(m_profile->nick(), message);
     else
-      tab->browser->msgNewMessage(nick, message);
+      tab->msgNewMessage(nick, message);
 
   if ((m_tabs->currentIndex() != index) || (!isActiveWindow()))
     startNotice(index);
@@ -596,10 +596,10 @@ void SChatWindow::sendMsg(const QString &message)
 void SChatWindow::serverMessage(const QString &msg)
 {
   if (m_tabs->currentIndex() == 0)
-    m_main->browser->msg(msg);
+    m_main->msg(msg);
   else {
     AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-    tab->browser->msg(msg);
+    tab->msg(msg);
   }
 }
 
@@ -681,7 +681,7 @@ void SChatWindow::unconnected(bool echo)
   m_users->clear();
 
   if (echo)
-    m_main->browser->msg(ChatBrowser::msgDisconnect());
+    m_main->msg(ChatBrowser::msgDisconnect());
 }
 
 
@@ -699,11 +699,11 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
       int index = tabIndex(nick);
       if (index != -1) {
         AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-        if (tab->type == AbstractTab::Private)
-          tab->browser->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
+        if (tab->type() == AbstractTab::Private)
+          tab->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
       }
 
-      m_main->browser->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
+      m_main->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
     }
   }
 }
@@ -785,7 +785,7 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
   }
   /// /clear
   else if (text == "/clear") {
-    tab->browser->clear();
+    tab->clear();
   }
   /// /exit
   else if (text == "/exit") {
@@ -862,7 +862,7 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
 
     out += "</b>";
     out += tr("<span class='info'>Используйте <b>/help команда</b>, для просмотра подробной информации о команде.</span>");
-    tab->browser->msg(out);
+    tab->msg(out);
     return;
   }
 
@@ -872,10 +872,10 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
   }
 
   if (m_cmds.contains(command)) {
-    tab->browser->msg(m_cmds.value(command));
+    tab->msg(m_cmds.value(command));
   }
   else
-    tab->browser->msg(ChatBrowser::msgUnknownCmd(command));
+    tab->msg(ChatBrowser::msgUnknownCmd(command));
 }
 
 
