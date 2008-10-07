@@ -23,15 +23,10 @@
 #include "settings.h"
 
 /*!
- * \class MainChannel
- * \brief Обеспечивает поддержку главного канала чата.
- */
-
-/*!
  * \brief Конструктор класса MainChannel.
  */
-MainChannel::MainChannel(Settings *settings, QWidget *parent)
-  : AbstractTab(settings, parent)
+MainChannel::MainChannel(const QIcon &icon, Settings *settings, QWidget *parent)
+  : AbstractTab(icon, settings, parent)
 {
   m_type = Main;
 
@@ -62,18 +57,22 @@ MainChannel::MainChannel(Settings *settings, QWidget *parent)
 }
 
 
+/*!
+ * Включает/выключает показ виджета выбора сервера/сети.
+ *
+ * \param display \a true Показать виджет, \a Скрыть.
+ */
 void MainChannel::displayChoiceServer(bool display)
-{ /// \todo Оптимизировать.
-  if (display) {
+{
+  if (display)
     m_networkLayout->setContentsMargins(4, 2, 4, 0);
-    m_networkWidget->setVisible(true);
-    m_connectCreateButton->setVisible(true);
-  }
-  else {
-    m_connectCreateButton->setVisible(false);
-    m_networkWidget->setVisible(false);
+
+    m_networkWidget->setVisible(display);
+    m_connectCreateButton->setVisible(display);
+
+  if (!display)
     m_networkLayout->setMargin(0);
-  }
+
   m_browser->scroll();
 }
 
