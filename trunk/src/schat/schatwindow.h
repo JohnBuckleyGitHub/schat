@@ -97,11 +97,11 @@ private slots:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
-  void resetTabNotice(int index);
   void sendMsg(const QString &message);
   void serverMessage(const QString &msg);
   void settings();
   void settingsChanged(int notify);
+  void stopNotice(int index);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();

@@ -103,16 +103,15 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(resetTabNotice(int)));
+  connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
 
-  m_main = new MainChannel(m_settings, this);
-  m_main->icon.addFile(":/images/main.png");
+  m_main = new MainChannel(QIcon(":/images/main.png"), m_settings, this);
   connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
 
   m_tabs->setCurrentIndex(m_tabs->addTab(m_main, tr("Общий")));
-  m_tabs->setTabIcon(0, m_main->icon);
+  m_tabs->setTabIcon(0, m_main->icon());
 
   if (!m_settings->getBool("HideWelcome") || m_settings->getBool("FirstRun")) {
     m_welcome = new WelcomeDialog(m_settings, m_profile, this);
@@ -153,13 +152,13 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 }
 
 
-/** [protected]
- *
+/*!
+ * Обработка событий.
  */
 bool SChatWindow::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
-    resetTabNotice(m_tabs->currentIndex());
+    stopNotice(m_tabs->currentIndex());
 
   return QMainWindow::event(event);
 }
@@ -257,19 +256,15 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::addTab(const QString &nick)
 {
   int index = tabIndex(nick);
 
   if (index == -1) {
     AbstractProfile profile(m_users->profile(nick));
-    Tab *tab = new Tab(m_settings, this);
-    tab->icon.addFile(":/images/" + profile.gender() + ".png");
+    Tab *tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), m_settings, this);
     tab->setChannel(nick);
-    index = m_tabs->addTab(tab, tab->icon, nick);
+    index = m_tabs->addTab(tab, tab->icon(), nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
   }
@@ -378,8 +373,7 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &message)
 {
-  if ((m_tabs->currentIndex() != 0) || (!isActiveWindow()))
-    startNotice(0);
+  startNotice(0);
 
   m_main->msgNewMessage(sender, message);
 }
@@ -459,10 +453,10 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
     if (index != -1) {
       m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-      tab->icon.addFile(":/images/" + profile.gender() + ".png");
+      tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
 
-      if (!tab->notice)
-        m_tabs->setTabIcon(index, tab->icon);
+      if (!tab->notice())
+        m_tabs->setTabIcon(index, tab->icon());
     }
   }
 }
@@ -470,13 +464,20 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
 
 /*!
  * Добавление нового пользователя.
+ *
+ * Если не удалось добавить пользователя в \a m_users, то выходим из функции.
+ * Если ник равен нашему собственному нику, то принудительно отключаем эхо.
+ * Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике
+ * и если есть открытый приват вкладка также обновляется.
+ *
+ * Слот вызывается по событию в \a m_clientService.
+ *
+ * \param list    Стандартный список, содержащий в себе полные данные пользователя.
+ * \param echo    Необходимость добавить в канал уведомление о новом пользователе при echo == 1.
+ * \param numeric Не используется.
  */
 void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric*/)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::newUser(const QStringList &, quint8, quint8)" << echo ;
-#endif
-
   AbstractProfile profile(list);
   QString nick = profile.nick();
 
@@ -486,23 +487,23 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   if (m_profile->nick() == nick)
     echo = 0;
 
-  // Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике.
   if (echo == 1) {
+    QString msg = ChatBrowser::msgNewUser(profile.genderNum(), nick);
+    m_main->msg(msg);
+
     int index = tabIndex(nick);
     if (index != -1) {
       AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
       if (tab->type() == AbstractTab::Private) {
         m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
-        tab->icon.addFile(":/images/" + profile.gender() + ".png");
+        tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
 
-        if (!tab->notice)
-          m_tabs->setTabIcon(index, tab->icon);
+        if (!tab->notice())
+          m_tabs->setTabIcon(index, tab->icon());
 
-        tab->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
+        tab->msg(msg);
       }
     }
-
-    m_main->msg(ChatBrowser::msgNewUser(profile.genderNum(), nick));
   }
 }
 
@@ -524,10 +525,9 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
   if (index == -1) {
     AbstractProfile profile(m_users->profile(nick));
-    tab = new Tab(m_settings, this);
-    tab->icon.addFile(":/images/" + profile.gender() + ".png");
+    tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), m_settings, this);
     tab->setChannel(nick);
-    index = m_tabs->addTab(tab, tab->icon, nick);
+    index = m_tabs->addTab(tab, tab->icon(), nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     m_tabs->setCurrentIndex(index);
     connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
@@ -541,33 +541,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     else
       tab->msgNewMessage(nick, message);
 
-  if ((m_tabs->currentIndex() != index) || (!isActiveWindow()))
-    startNotice(index);
-}
-
-
-/** [private slots]
- *
- */
-void SChatWindow::resetTabNotice(int index)
-{
-  if (index == -1)
-    return;
-
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-  if (tab->notice) {
-    m_tabs->setTabIcon(index, tab->icon);
-    tab->notice = false;
-  }
-
-  int count = m_tabs->count();
-  for (int i = 0; i < count; ++i) {
-    AbstractTab *t = static_cast<AbstractTab *>(m_tabs->widget(i));
-    if (t->notice)
-      return;
-  }
-
-  m_tray->notice(false);
+  startNotice(index);
 }
 
 
@@ -669,6 +643,36 @@ void SChatWindow::settingsChanged(int notify)
     default:
       break;
   }
+}
+
+
+/*!
+ * При необходимости сбрасывает уведомление с текущей вкладки и общее уведомление в трее.
+ * Если нет ни одной вкладки с уведомление о новом сообщении, то сбрасываем уведомление в трее.
+ *
+ * Слот вызывается при изменении текущей вкладки и при событии QEvent::WindowActivate.
+ *
+ * \param index Номер текущей вкладки.
+ */
+void SChatWindow::stopNotice(int index)
+{
+  if (index == -1)
+    return;
+
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+  if (tab->notice()) {
+    m_tabs->setTabIcon(index, tab->icon());
+    tab->notice(false);
+  }
+
+  int count = m_tabs->count();
+  for (int i = 0; i < count; ++i) {
+    AbstractTab *t = static_cast<AbstractTab *>(m_tabs->widget(i));
+    if (t->notice())
+      return;
+  }
+
+  m_tray->notice(false);
 }
 
 
@@ -1070,15 +1074,26 @@ void SChatWindow::showChat()
 }
 
 
+/*!
+ * При необходимости вызывает уведомление о новом сообщении.
+ * Механизм уведомления запускается, если номер текущей вкладки не равен номеру вкладки
+ * с уведомлением или окно чата неактивно.
+ *
+ * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
+ *
+ * \param index Номер вкладки, в которой есть новое сообщение.
+ */
 void SChatWindow::startNotice(int index)
 {
   if (index == -1)
     return;
 
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-  tab->notice = true;
-  m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-  m_tray->notice(true);
+  if ((m_tabs->currentIndex() != index) || (!isActiveWindow())) {
+    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+    tab->notice(true);
+    m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
+    m_tray->notice(true);
+  }
 }
 
 

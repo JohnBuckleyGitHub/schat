@@ -32,11 +32,14 @@ class QToolButton;
 class QVBoxLayout;
 class Settings;
 
+/*!
+ * \brief Обеспечивает поддержку главного канала чата.
+ */
 class MainChannel : public AbstractTab {
   Q_OBJECT
 
 public:
-  MainChannel(Settings *settings, QWidget *parent = 0);
+  MainChannel(const QIcon &icon, Settings *settings, QWidget *parent = 0);
   void displayChoiceServer(bool display);
 
 private slots:

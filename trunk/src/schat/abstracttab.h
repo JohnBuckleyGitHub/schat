@@ -25,7 +25,6 @@
 #include "chatbrowser.h"
 
 class Settings;
-class QTextBrowser;
 
 /*!
  * \brief Абстрактный базовый класс для вкладок чата.
@@ -40,14 +39,15 @@ public:
     Private
   };
 
-  AbstractTab(Settings *settings, QWidget *parent = 0);
+  AbstractTab(const QIcon &icon, Settings *settings, QWidget *parent = 0);
+  inline bool notice()                           { return m_notice; }
+  inline QIcon icon()                            { return m_icon; }
   inline QTextCursor textCursor() const          { return m_browser->textCursor(); }
   inline Type type() const                       { return m_type; }
   inline void msg(const QString &text)           { m_browser->msg(text); }
+  inline void notice(bool enable)                { m_notice = enable; }
   inline void setChannel(const QString &channel) { m_browser->setChannel(channel); }
-
-  bool notice;
-  QIcon icon;
+  inline void setIcon(const QIcon &icon)         { m_icon = icon; }
 
 signals:
   void nickClicked(const QString &hex);
@@ -58,7 +58,9 @@ public slots:
   inline void msgNewMessage(const QString &nick, const QString &message) { m_browser->msgNewMessage(nick, message); }
 
 protected:
+  bool m_notice;
   ChatBrowser *m_browser;
+  QIcon m_icon;
   Type m_type;
 };
 

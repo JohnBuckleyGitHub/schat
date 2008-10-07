@@ -24,14 +24,15 @@
 /*!
  * \brief Конструктор класса AbstractTab.
  */
-AbstractTab::AbstractTab(Settings *settings, QWidget *parent)
+AbstractTab::AbstractTab(const QIcon &icon, Settings *settings, QWidget *parent)
   : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
-  notice = false;
+  m_notice  = false;
   m_browser = new ChatBrowser(settings, this);
-  m_type = Unknown;
+  m_type    = Unknown;
+  m_icon    = icon;
 
   connect(m_browser, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
 }
