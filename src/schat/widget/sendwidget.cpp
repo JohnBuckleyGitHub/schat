@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
 #include "settings.h"
 
 /*!
- * \class SendWidget
- * \brief Виджет полностью берущий на себя ввода текста.
- */
-
-/*!
  * \brief Конструктор класса SendWidget.
  */
 SendWidget::SendWidget(Settings *settings, QWidget *parent)
@@ -37,21 +32,22 @@ SendWidget::SendWidget(Settings *settings, QWidget *parent)
   createButtons();
   setSettings();
 
-  QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->addWidget(m_boldButton);
-  buttonLayout->addWidget(m_italicButton);
-  buttonLayout->addWidget(m_underlineButton);
-  buttonLayout->addWidget(m_emoticonButton);
-  buttonLayout->addStretch();
-  buttonLayout->addWidget(m_sendButton);
-  buttonLayout->setMargin(0);
-  buttonLayout->setSpacing(1);
-  
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addLayout(buttonLayout);
-  mainLayout->addWidget(m_input);  
-  mainLayout->setMargin(0);
-  mainLayout->setSpacing(1);
+  QHBoxLayout *buttonLay = new QHBoxLayout;
+  buttonLay->addWidget(m_boldButton);
+  buttonLay->addWidget(m_italicButton);
+  buttonLay->addWidget(m_underlineButton);
+  buttonLay->addWidget(m_emoticonButton);
+  buttonLay->addStretch();
+  buttonLay->addWidget(m_logButton);
+  buttonLay->addWidget(m_sendButton);
+  buttonLay->setMargin(0);
+  buttonLay->setSpacing(1);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addLayout(buttonLay);
+  mainLay->addWidget(m_input);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(1);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
   connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
@@ -76,6 +72,12 @@ void SendWidget::cursorPositionChanged()
   m_boldAction->setChecked(charFormat.font().bold());
   m_italicAction->setChecked(charFormat.font().italic());
   m_underlineAction->setChecked(charFormat.font().underline());
+}
+
+
+void SendWidget::log()
+{
+  QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath() + "/log"));
 }
 
 
@@ -105,10 +107,7 @@ void SendWidget::setItalic(bool b)
 
 void SendWidget::setSettings()
 {
-  m_useEmoticons           = m_settings->getBool("UseEmoticons");
-  m_useAnimatedEmoticons   = m_settings->getBool("UseAnimatedEmoticons");
-  m_emoticonsRequireSpaces = m_settings->getBool("EmoticonsRequireSpaces");
-  m_emoticonButton->setEnabled(m_useEmoticons);
+  m_emoticonButton->setEnabled(m_settings->getBool("UseEmoticons"));
 }
 
 
@@ -153,8 +152,13 @@ void SendWidget::createButtons()
   m_underlineButton->setAutoRaise(true);
   connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
 
+  m_logAction = new QAction(QIcon(":/images/toggle_log.png"), tr("Просмотр журнала"), this);
+  m_logButton = new QToolButton(this);
+  m_logButton->setDefaultAction(m_logAction);
+  m_logButton->setAutoRaise(true);
+  connect(m_logAction, SIGNAL(triggered()), SLOT(log()));
+
   m_sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить сообщение"), this);
-  m_sendAction->setStatusTip(tr("Отправить сообщение"));
   m_sendButton = new QToolButton(this);
   m_sendButton->setDefaultAction(m_sendAction);
   m_sendButton->setAutoRaise(true);
