@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,9 @@ class QAction;
 class QToolButton;
 class Settings;
 
+/*!
+ * \brief Виджет полностью берущий на себя ввода текста.
+ */
 class SendWidget : public QWidget
 {
   Q_OBJECT
@@ -48,6 +51,7 @@ public slots:
 
 private slots:
   void cursorPositionChanged();
+  void log();
   void setBold(bool b);
   void setItalic(bool b);
   void setSettings();
@@ -57,21 +61,20 @@ private:
   void createButtons();
   void mergeFormat(const QTextCharFormat &format);
 
-  bool m_emoticonsRequireSpaces;
-  bool m_useAnimatedEmoticons;
-  bool m_useEmoticons;
   EmoticonSelector *m_emoticonSelector;
   InputWidget *m_input;
   QAction *m_boldAction;
   QAction *m_italicAction;
   QAction *m_sendAction;
   QAction *m_underlineAction;
+  QAction *m_logAction;
   QMenu *m_popup;
   QToolButton *m_boldButton;
   QToolButton *m_emoticonButton;
   QToolButton *m_italicButton;
   QToolButton *m_sendButton;
   QToolButton *m_underlineButton;
+  QToolButton *m_logButton;
   Settings *m_settings;
 };
 
