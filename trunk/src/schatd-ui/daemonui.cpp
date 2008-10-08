@@ -21,7 +21,7 @@
 
 #include "daemonui.h"
 #include "version.h"
-#include "daemonuisettings.h"
+#include "daemonsettings.h"
 
 /*!
  * \brief Конструктор класса DaemonUi.
@@ -31,7 +31,7 @@ DaemonUi::DaemonUi(QWidget *parent)
 {
   setWindowFlags(Qt::Tool);
 
-  m_settings = new DaemonUiSettings(qApp->applicationDirPath() + "/schatd.conf", this);
+  m_settings = new DaemonSettings(qApp->applicationDirPath() + "/schatd.conf", this);
   m_checkTimer.setInterval(5000);
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(checkStart()));
 
@@ -94,7 +94,7 @@ DaemonUi::DaemonUi(QWidget *parent)
   line2->setFrameShape(QFrame::HLine);
   line2->setFrameShadow(QFrame::Sunken);
 
-  // End  
+  // End
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
@@ -174,6 +174,9 @@ void DaemonUi::init()
 
   m_settings->read();
 
+  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  qApp->setStyle(s.value("Style", "Plastique").toString());
+
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
   m_client->connectToServer();
@@ -193,7 +196,7 @@ void DaemonUi::notify(LocalClientService::Reason reason)
       break;
 
     case LocalClientService::Stop:
-      if (!(m_status == Starting || m_status == Restarting)) 
+      if (!(m_status == Starting || m_status == Restarting))
         setStatus(Stopped);
       break;
   }
@@ -374,7 +377,7 @@ void DaemonUi::setLedColor(LedColor color)
 
 
 void DaemonUi::setStatus(DaemonUi::Status status)
-{  
+{
   m_status = status;
   switch (status) {
     case Unknown:

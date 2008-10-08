@@ -59,7 +59,7 @@ void LocalClientService::exit()
 {
   if (send(666)) {
     m_socket->disconnectFromServer();
-    m_socket->waitForDisconnected(2000);
+    m_socket->waitForDisconnected(2000); /// \todo Исправить задержку при нажатии на кнопку стоп.
   }
 }
 

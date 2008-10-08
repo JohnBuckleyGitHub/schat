@@ -30,7 +30,6 @@ HEADERS += \
     daemonsettings.h \
     daemonsettingsdialog.h \
     daemonui.h \
-    daemonuisettings.h \
     ipc/localclientservice.h \
     network.h \
     networkreader.h \
@@ -42,7 +41,6 @@ SOURCES += \
     daemonsettings.cpp \
     daemonsettingsdialog.cpp \
     daemonui.cpp \
-    daemonuisettings.cpp \
     ipc/localclientservice.cpp \
     main.cpp \
     network.cpp \
