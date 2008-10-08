@@ -75,9 +75,6 @@ signals:
   void networksModelIndexChanged(int index);
 
 private:
-  inline void writeBool(const QString &key)           { m_settings->setValue(key, m_bool.value(key)); }
-  inline void writeInt(const QString &key)            { m_settings->setValue(key, m_int.value(key)); }
-  inline void writeString(const QString &key)         { m_settings->setValue(key, m_string.value(key)); }
   void createServerList();
   void saveRecentServers();
 

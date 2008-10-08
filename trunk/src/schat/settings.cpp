@@ -112,8 +112,8 @@ void Settings::notify(int notify, int index)
 }
 
 
-/** [public]
- *
+/*!
+ * Чтение настроек.
  */
 void Settings::read()
 {
@@ -121,24 +121,24 @@ void Settings::read()
   m_size = m_settings->value("Size", QSize(680, 460)).toSize();
   m_splitter = m_settings->value("Splitter").toByteArray();
 
-  readBool("HideWelcome", false);
-  readBool("FirstRun", true);
+  readBool("HideWelcome",            false);
+  readBool("FirstRun",               true);
   readBool("EmoticonsRequireSpaces", true);
-  readBool("UseEmoticons", true);
-  readBool("UseAnimatedEmoticons", true);
-  readInt("EmoticonsRefreshTime", 50);
-  readString("Style", "Plastique");
-  readString("EmoticonTheme", "kolobok");
+  readBool("UseEmoticons",           true);
+  readBool("UseAnimatedEmoticons",   true);
+  readInt("EmoticonsRefreshTime",    50);
+  readString("Style",                "Plastique");
+  readString("EmoticonTheme",        "kolobok");
   qApp->setStyle(getString("Style"));
 
   network.fromConfig(m_settings->value("Network", "AchimNet.xml").toString());
   createServerList();
 
   m_settings->beginGroup("Profile");
-  m_profile->setNick(m_settings->value("Nick", QDir::home().dirName()).toString());
+  m_profile->setNick(m_settings->value("Nick",     QDir::home().dirName()).toString());
   m_profile->setFullName(m_settings->value("Name", "").toString());
   m_profile->setGender(m_settings->value("Gender", "male").toString());
-  m_profile->setByeMsg(m_settings->value("Bye", "IMPOMEZIA Simple Chat").toString());
+  m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
 
   createEmoticonsMap();
@@ -163,17 +163,13 @@ void Settings::read()
  */
 void Settings::write()
 {
+  setBool("FirstRun", false);
+
+  AbstractSettings::write();
+
   m_settings->setValue("Size", m_size);
   m_settings->setValue("Pos", m_pos);
   m_settings->setValue("Splitter", m_splitter);
-  m_settings->setValue("FirstRun", false);
-
-  writeBool("HideWelcome");
-  writeBool("EmoticonsRequireSpaces");
-  writeBool("UseEmoticons");
-  writeBool("UseAnimatedEmoticons");
-  writeString("Style");
-  writeString("EmoticonTheme");
 
   m_settings->setValue("Network", network.config());
   saveRecentServers();
@@ -184,11 +180,6 @@ void Settings::write()
   m_settings->setValue("Gender", m_profile->gender());
   m_settings->setValue("Bye", m_profile->byeMsg());
   m_settings->endGroup();
-
-#ifdef SCHAT_UPDATE
-  writeBool("Updates/AutoClean");
-  writeInt("Updates/CheckInterval");
-#endif
 }
 
 
