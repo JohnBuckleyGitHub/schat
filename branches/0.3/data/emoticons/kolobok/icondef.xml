@@ -1,0 +1,320 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<icondef>
+  <meta>
+    <name>Kolobok Big Pack</name>
+    <version>2.0</version>
+    <creation>2008-01-05</creation>
+    <description>Kolobok emoticons by Aiwan http://kolobok.us/</description>
+    <home>Russia</home>
+    <author>LiGHTaz</author>
+    <refresh>150</refresh>
+  </meta>
+  <icon>
+    <text>O:-)</text>
+    <text>O:)</text>
+    <text>O=)</text>
+    <text>0:-)</text>
+    <text>0:)</text>
+    <text>0=)</text>
+    <object mime="image/gif">000.gif</object>
+  </icon>
+  <icon>
+    <text>:-)</text>
+    <text>:)</text>
+    <text>=)</text>
+    <object mime="image/gif">005.gif</object>
+  </icon>
+  <icon>
+    <text>:-(</text>
+    <text>:(</text>
+    <text>=(</text>
+    <object mime="image/gif">010.gif</object>
+  </icon>
+  <icon>
+    <text>;-)</text>
+    <text>;)</text>
+    <text>^_~ </text>
+    <object mime="image/gif">015.gif</object>
+  </icon>
+  <icon>
+    <text>:-P</text>
+    <text>:P</text>
+    <text>:-p</text>
+    <text>:p</text>
+    <text>=P</text>
+    <text>=p</text>
+    <object mime="image/gif">020.gif</object>
+  </icon>
+  <icon>
+    <text>8-)</text>
+    <text>8)</text>
+    <text>B)</text>
+    <object mime="image/gif">025.gif</object>
+  </icon>
+  <icon>
+    <text>:-D</text>
+    <text>:D</text>
+    <text>=D</text>
+    <object mime="image/gif">030.gif</object>
+  </icon>
+  <icon>
+    <text>:-[</text>
+    <text>:[</text>
+    <text>;'></text>
+    <text>;-.</text>
+    <object mime="image/gif">035.gif</object>
+  </icon>
+  <icon>
+    <text>=-O</text>
+    <text>=O</text>
+    <text>=-o</text>
+    <text>=0</text>
+    <text>O_O</text>
+    <text>O_o</text>
+    <text>o_O</text>
+    <text>O_0</text>
+    <text>o_0</text>
+    <text>0_O</text>
+    <text>0_o</text>
+    <object mime="image/gif">040.gif</object>
+  </icon>
+  <icon>
+    <text>:-*</text>
+    <text>:*</text>
+    <text>:-{}</text>
+    <text>:{}</text>
+    <text>+{}</text>
+    <text>={}</text>
+    <text>^.^</text>
+    <object mime="image/gif">045.gif</object>
+  </icon>
+  <icon>
+    <text>:'(</text>
+    <text>:-'(</text>
+    <object mime="image/gif">050.gif</object>
+  </icon>
+  <icon>
+    <text>:-X</text>
+    <text>:-x</text>
+    <text>X:</text>
+    <text>x:</text>
+    <text>:-#</text>
+    <text>:#</text>
+    <object mime="image/gif">055.gif</object>
+  </icon>
+  <icon>
+    <text>&gt;:o</text>
+    <text>&gt;:O</text>
+    <text>&gt;:o</text>
+    <text>:-@</text>
+    <object mime="image/gif">060.gif</object>
+  </icon>
+  <icon>
+    <text>:-|</text>
+    <text>:|</text>
+    <text>=|</text>
+    <object mime="image/gif">065.gif</object>
+  </icon>
+  <icon>
+    <text>:-\</text>
+    <text>:-/</text>
+    <text>:\</text>
+    <text>*BEEE*</text>
+    <object mime="image/gif">070.gif</object>
+  </icon>
+  <icon>
+    <text>*JOKINGLY*</text>
+    <text>8P</text>
+    <text>8p</text>
+    <object mime="image/gif">075.gif</object>
+  </icon>
+  <icon>
+    <text>]:-&gt;</text>
+    <text>}:-&gt;</text>
+    <text>]:&gt;</text>
+    <text>}:&gt;</text>
+    <text>&gt;:-]</text>
+    <text>&gt;:]</text>
+    <text>*DIABLO*</text>
+    <object mime="image/gif">080.gif</object>
+  </icon>
+  <icon>
+    <text>[:-}</text>
+    <text>[:}</text>
+    <object mime="image/gif">085.gif</object>
+  </icon>
+  <icon>
+    <text>*KISSED*</text>
+    <object mime="image/gif">090.gif</object>
+  </icon>
+  <icon>
+    <text>:-!</text>
+    <text>;-!</text>
+    <text>:!</text>
+    <text>;!</text>
+    <text>:-~</text>
+    <text>;-~</text>
+    <object mime="image/gif">095.gif</object>
+  </icon>
+  <icon>
+    <text>*TIRED*</text>
+    <text>|-0</text>
+    <object mime="image/gif">100.gif</object>
+  </icon>
+  <icon>
+    <text>*STOP*</text>
+    <object mime="image/gif">105.gif</object>
+  </icon>
+  <icon>
+    <text>*KISSING*</text>
+    <object mime="image/gif">110.gif</object>
+  </icon>
+  <icon>
+    <text>@}-&gt;--</text>
+    <text>@}-:--</text>
+    <text>@>}--`---</text>
+    <object mime="image/gif">115.gif</object>
+  </icon>
+  <icon>
+    <text>*THUMBS UP*</text>
+    <text>*GOOD*</text>
+    <object mime="image/gif">120.gif</object>
+  </icon>
+  <icon>
+    <text>*DRINK*</text>
+    <object mime="image/gif">125.gif</object>
+  </icon>
+  <icon>
+    <text>*IN LOVE*</text>
+    <object mime="image/gif">130.gif</object>
+  </icon>
+  <icon>
+    <text>@=</text>
+    <object mime="image/gif">135.gif</object>
+  </icon>
+  <icon>
+    <text>*HELP*</text>
+    <object mime="image/gif">140.gif</object>
+  </icon>
+  <icon>
+    <text>\m/</text>
+    <object mime="image/gif">145.gif</object>
+  </icon>
+  <icon>
+    <text>%)</text>
+    <text>%-)</text>
+    <text>:$</text>
+    <object mime="image/gif">150.gif</object>
+  </icon>
+  <icon>
+    <text>*OK*</text>
+    <object mime="image/gif">155.gif</object>
+  </icon>
+  <icon>
+    <text>*WASSUP*</text>
+    <text>*SUP*</text>
+    <object mime="image/gif">160.gif</object>
+  </icon>
+  <icon>
+    <text>*SORRY*</text>
+    <object mime="image/gif">165.gif</object>
+  </icon>
+  <icon>
+    <text>*BRAVO*</text>
+    <object mime="image/gif">170.gif</object>
+  </icon>
+  <icon>
+    <text>*ROFL*</text>
+    <text>*LOL*</text>
+    <object mime="image/gif">175.gif</object>
+  </icon>
+  <icon>
+    <text>*PARDON*</text>
+    <text>=]</text>
+    <object mime="image/gif">180.gif</object>
+  </icon>
+  <icon>
+    <text>*YES*</text>
+    <object mime="image/gif">182.gif</object>
+  </icon>
+  <icon>
+    <text>*NO*</text>
+    <object mime="image/gif">185.gif</object>
+  </icon>
+  <icon>
+    <text>*CRAZY*</text>
+    <object mime="image/gif">190.gif</object>
+  </icon>
+  <icon>
+    <text>*DONT_KNOW*</text>
+    <text>*UNKNOWN*</text>
+    <object mime="image/gif">195.gif</object>
+  </icon>
+  <icon>
+    <text>*DANCE*</text>
+    <object mime="image/gif">200.gif</object>
+  </icon>
+  <icon>
+    <text>*YAHOO*</text>
+    <text>*YAHOO!*</text>
+    <object mime="image/gif">205.gif</object>
+  </icon>
+  <icon>
+    <text>*HI*</text>
+    <text>*HELLO*</text>
+    <text>*PREVED*</text>
+    <text>*PRIVET*</text>
+    <object mime="image/gif">210.gif</object>
+  </icon>
+  <icon>
+    <text>*BYE*</text>
+    <object mime="image/gif">215.gif</object>
+  </icon>
+  <icon>
+    <text>;D</text>
+    <text>*ACUTE*</text>
+    <object mime="image/gif">220.gif</object>
+  </icon>
+  <icon>
+    <text>*WALL*</text>
+    <text>*DASH*</text>
+    <object mime="image/gif">225.gif</object>
+  </icon>
+  <icon>
+    <text>*WRITE*</text>
+    <text>*MAIL*</text>
+    <object mime="image/gif">230.gif</object>
+  </icon>
+  <icon>
+    <text>*SCRATCH*</text>
+    <object mime="image/gif">235.gif</object>
+  </icon>
+  <icon>
+    <text>*YEEES!*</text>
+    <object mime="image/gif">240.gif</object>
+  </icon>
+  <icon>
+    <text>*SARCASTIC*</text>
+    <object mime="image/gif">245.gif</object>
+  </icon>
+  <icon>
+    <text>*BOAST*</text>
+    <object mime="image/gif">250.gif</object>
+  </icon>
+  <icon>
+    <text>*GAMER*</text>
+    <object mime="image/gif">255.gif</object>
+  </icon>
+  <icon>
+    <text>*SEARCH*</text>
+    <object mime="image/gif">260.gif</object>
+  </icon>
+  <icon>
+    <text>*THANK*</text>
+    <object mime="image/gif">265.gif</object>
+  </icon>
+  <icon>
+    <text>*LAZY*</text>
+    <object mime="image/gif">270.gif</object>
+  </icon>
+</icondef>

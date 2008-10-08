@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<updates version="1.0">
+  <meta>
+    <core level="2008100801">0.3.0.674 Alpha</core>
+    <qt level="2008100801">4.4.3</qt>
+  </meta>
+  <files platform="win32">
+    <cumulative>
+      <file size="3036698" md5="d08ef14c44e918e4eed1db24484e0986" type="qt" level="20000516">schat-runtime-0.2.0.516.exe</file>
+      <file size="2950410" md5="bbb938becbbb854c017a4e16a9cbecbb" type="qt" level="2008100801">schat-runtime-0.3.0.674.exe</file>
+      <file size="395719" md5="568f30a8885d37a635278687e1f2da87" type="core" level="20000516">schat-core-0.2.0.516.exe</file>
+      <file size="395905" md5="0349beb45bc562d9c1ff360b170511ee" type="core" level="20100520">schat-core-0.2.1.520.exe</file>
+      <file size="396525" md5="17ed9f38ab331742f0b252d3e93b15ef" type="core" level="2008091000">schat-core-0.2.2.535.exe</file>
+      <file size="396546" md5="c4bae1f451d380ca0925c896e00e9511" type="core" level="2008091200">schat-core-0.2.3.545.exe</file>
+      <file size="434015" md5="4717c8bd5d2d7b074e7f65296baf8968" type="core" level="2008100801">schat-core-0.3.0.674.exe</file>
+    </cumulative>
+  </files>
+</updates>
