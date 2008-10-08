@@ -26,7 +26,7 @@
 #include "daemonsettingsdialog.h"
 #include "ipc/localclientservice.h"
 
-class DaemonUiSettings;
+class DaemonSettings;
 class LocalClientService;
 class QAction;
 class QLabel;
@@ -84,7 +84,7 @@ private:
   void setStatus(Status status);
   void showUi();
 
-  DaemonUiSettings *m_settings;
+  DaemonSettings *m_settings;
   LocalClientService *m_client;
   QAction *m_quitAction;
   QAction *m_quitAllAction;

@@ -27,7 +27,7 @@
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
  */
-DaemonSettingsDialog::DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent)
+DaemonSettingsDialog::DaemonSettingsDialog(DaemonSettings *settings, QWidget *parent)
   : AbstractSettingsDialog(parent), m_settings(settings)
 {
   m_commonPage = new DaemonCommonSettings(settings, this);
@@ -51,7 +51,7 @@ void DaemonSettingsDialog::accept()
 /*!
  * \brief Конструктор класса DaemonCommonSettings.
  */
-DaemonCommonSettings::DaemonCommonSettings(DaemonUiSettings *settings, QWidget *parent)
+DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
 {
   m_listen = new QComboBox(this);
@@ -186,7 +186,7 @@ void DaemonCommonSettings::createListenList()
 /*!
  * \brief Конструктор класса DaemonNetSettings.
  */
-DaemonNetSettings::DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent)
+DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
 {
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);

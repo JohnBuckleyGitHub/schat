@@ -27,7 +27,7 @@
 
 class DaemonCommonSettings;
 class DaemonNetSettings;
-class DaemonUiSettings;
+class DaemonSettings;
 class QCheckBox;
 class QComboBox;
 class QGroupBox;
@@ -47,7 +47,7 @@ public:
     NetPage
   };
 
-  DaemonSettingsDialog(DaemonUiSettings *settings, QWidget *parent = 0);
+  DaemonSettingsDialog(DaemonSettings *settings, QWidget *parent = 0);
 
 public slots:
   void accept();
@@ -55,7 +55,7 @@ public slots:
 private:
   DaemonCommonSettings *m_commonPage;
   DaemonNetSettings *m_netPage;
-  DaemonUiSettings *m_settings;
+  DaemonSettings *m_settings;
 };
 
 
@@ -67,7 +67,7 @@ class DaemonCommonSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  DaemonCommonSettings(DaemonUiSettings *settings, QWidget *parent = 0);
+  DaemonCommonSettings(DaemonSettings *settings, QWidget *parent = 0);
 
 public slots:
   void reset(int page);
@@ -76,7 +76,7 @@ public slots:
 private:
   void createListenList();
 
-  DaemonUiSettings *m_settings;
+  DaemonSettings *m_settings;
   QCheckBox *m_channelLog;
   QComboBox *m_listen;
   QSpinBox *m_logLevel;
@@ -94,7 +94,7 @@ class DaemonNetSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  DaemonNetSettings(DaemonUiSettings *settings, QWidget *parent = 0);
+  DaemonNetSettings(DaemonSettings *settings, QWidget *parent = 0);
 
 signals:
   void validInput(bool valid);
@@ -112,7 +112,7 @@ private:
   bool revalidate();
   void readNetwork();
 
-  DaemonUiSettings *m_settings;
+  DaemonSettings *m_settings;
   QCheckBox *m_network;
   QCheckBox *m_root;
   QGroupBox *m_daemonGroup;
