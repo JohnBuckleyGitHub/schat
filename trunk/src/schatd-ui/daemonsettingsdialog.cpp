@@ -20,7 +20,7 @@
 #include <QtNetwork>
 
 #include "daemonsettingsdialog.h"
-#include "daemonuisettings.h"
+#include "daemonsettings.h"
 #include "network.h"
 #include "networkwriter.h"
 
