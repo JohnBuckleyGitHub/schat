@@ -31,6 +31,7 @@ class DaemonUiSettings : public DaemonSettings {
 
 public:
   DaemonUiSettings(const QString &filename, QObject *parent = 0);
+  void read();
   void write();
 };
 

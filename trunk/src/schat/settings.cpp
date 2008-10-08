@@ -117,8 +117,6 @@ void Settings::notify(int notify, int index)
  */
 void Settings::read()
 {
-  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-
   m_pos  = m_settings->value("Pos", QPoint(-999, -999)).toPoint();
   m_size = m_settings->value("Size", QSize(680, 460)).toSize();
   m_splitter = m_settings->value("Splitter").toByteArray();

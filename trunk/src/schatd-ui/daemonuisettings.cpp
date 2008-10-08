@@ -16,6 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtGui>
 
 #include "daemonuisettings.h"
@@ -29,6 +30,21 @@ DaemonUiSettings::DaemonUiSettings(const QString &filename, QObject *parent)
 }
 
 
+/*!
+ * Чтение настроек.
+ */
+void DaemonUiSettings::read()
+{
+  DaemonSettings::read();
+
+  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  qApp->setStyle(s.value("Style", "Plastique").toString());
+}
+
+
+/*!
+ * Запись настроек.
+ */
 void DaemonUiSettings::write()
 {
   if (!m_string.isEmpty()) {
