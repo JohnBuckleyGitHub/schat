@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,9 +23,14 @@
 #include <QMap>
 #include <QSettings>
 
+/*!
+ * \brief Абстрактный базовый класс для чтения настроек.
+ *
+ * Предоставляет методы для получения настроек, типов \a bool, \a int и \a QString.
+ */
 class AbstractSettings : public QObject {
   Q_OBJECT
-  
+
 public:
   AbstractSettings(const QString &filename, QObject *parent = 0);
   inline bool getBool(const QString &key) const                       { return m_bool.value(key); }
@@ -34,6 +39,10 @@ public:
   inline void setBool(const QString &key, bool value)                 { m_bool[key] = value; }
   inline void setInt(const QString &key, int value)                   { m_int[key] = value; }
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
+
+  #ifndef SCHAT_NO_WRITE_SETTINGS
+    void write();
+  #endif
 
 protected:
   inline void readBool(const QString &key, bool defValue)             { m_bool[key] = m_settings->value(key, defValue).toBool(); }
