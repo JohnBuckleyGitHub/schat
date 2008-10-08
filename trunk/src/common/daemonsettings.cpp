@@ -21,13 +21,6 @@
 #include "daemonsettings.h"
 
 /*!
- * \class DaemonSettings
- * \brief Класс читает настройки сервера.
- *
- * Читает настройки и предоставляет методы для получения настроек.
- */
-
-/*!
  * \brief Конструктор класса DaemonSettings.
  */
 DaemonSettings::DaemonSettings(const QString &filename, QObject *parent)

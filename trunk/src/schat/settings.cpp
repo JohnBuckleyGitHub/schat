@@ -158,8 +158,8 @@ void Settings::read()
 }
 
 
-/** [public]
- *
+/*!
+ * Запись настроек.
  */
 void Settings::write()
 {

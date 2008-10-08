@@ -23,6 +23,11 @@
 
 #include "abstractsettings.h"
 
+/*!
+ * \brief Класс читает настройки сервера.
+ *
+ * Читает настройки и предоставляет методы для получения настроек.
+ */
 class DaemonSettings : public AbstractSettings {
   Q_OBJECT
 
