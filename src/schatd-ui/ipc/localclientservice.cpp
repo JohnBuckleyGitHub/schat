@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,11 +21,6 @@
 
 #include "localclientservice.h"
 #include "protocol.h"
-
-/*!
- * \class LocalClientService
- * \brief Универсальный сервис клиента чата.
- */
 
 /*!
  * \brief Конструктор класса LocalClientService.
@@ -58,8 +53,8 @@ void LocalClientService::connectToServer()
 void LocalClientService::exit()
 {
   if (send(666)) {
+    m_socket->waitForBytesWritten(2000);
     m_socket->disconnectFromServer();
-    m_socket->waitForDisconnected(2000); /// \todo Исправить задержку при нажатии на кнопку стоп.
   }
 }
 
