@@ -119,7 +119,7 @@ DaemonUi::DaemonUi(QWidget *parent)
 }
 
 
-#ifndef DISABLE_SINGLE_APP
+#ifndef SCHAT_NO_SINGLE_APP
 void DaemonUi::handleMessage(const QString& message)
 {
   QStringList list = message.split(", ");

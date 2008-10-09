@@ -63,7 +63,7 @@ contains( SCHAT_LOCAL_IPC, 1 ) {
   SOURCES += ipc/localservice.cpp
 }
 else {
-  DEFINES += DISABLE_LOCAL_SERVER
+  DEFINES += SCHAT_NO_LOCAL_SERVER
 }
 
 include(../common/common.pri)

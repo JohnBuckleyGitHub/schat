@@ -20,7 +20,7 @@
 
 #include "daemonui.h"
 
-#ifndef DISABLE_SINGLE_APP
+#ifndef SCHAT_NO_SINGLE_APP
   #include "singleapplication.h"
 #endif
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  #ifndef DISABLE_SINGLE_APP
+  #ifndef SCHAT_NO_SINGLE_APP
     QString serverName = app.applicationDirPath().toUtf8().toHex();
     SingleApplication instance("SimpleChatDaemonUI", serverName, &app);
     if (instance.isRunning()) {
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
   else
     ui.hide();
 
-  #ifndef DISABLE_SINGLE_APP
+  #ifndef SCHAT_NO_SINGLE_APP
     QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &ui, SLOT(handleMessage(const QString &)));
   #endif
 

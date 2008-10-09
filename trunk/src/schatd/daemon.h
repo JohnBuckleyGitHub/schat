@@ -87,7 +87,7 @@ private slots:
   void serviceLeave(const QString &nick, quint8 flag, const QString &err);
   void syncNumerics(const QList<quint8> &numerics);
 
-  #ifndef DISABLE_LOCAL_SERVER
+  #ifndef SCHAT_NO_LOCAL_SERVER
     void incomingLocalConnection();
   #endif
 
