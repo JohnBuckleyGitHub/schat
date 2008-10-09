@@ -124,7 +124,7 @@ private:
   quint8 m_numeric;
   quint8 m_remoteNumeric;
 
-  #ifndef DISABLE_LOCAL_SERVER
+  #ifndef SCHAT_NO_LOCAL_SERVER
     QLocalServer *m_localServer;
   #endif
 };
