@@ -74,7 +74,7 @@ protected:
   bool event(QEvent *event);
 
 public slots:
-  #ifndef DISABLE_SINGLE_APP
+  #ifndef SCHAT_NO_SINGLE_APP
     void handleMessage(const QString& message);
   #endif
 

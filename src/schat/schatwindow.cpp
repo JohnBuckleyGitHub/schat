@@ -164,7 +164,7 @@ bool SChatWindow::event(QEvent *event)
 }
 
 
-#ifndef DISABLE_SINGLE_APP
+#ifndef SCHAT_NO_SINGLE_APP
 void SChatWindow::handleMessage(const QString &message)
 {
   QStringList list = message.split(", ");

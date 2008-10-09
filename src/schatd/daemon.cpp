@@ -31,7 +31,7 @@
 #include "userunit.h"
 #include "version.h"
 
-#ifndef DISABLE_LOCAL_SERVER
+#ifndef SCHAT_NO_LOCAL_SERVER
   #include "ipc/localservice.h"
 #endif
 
@@ -91,7 +91,7 @@ bool Daemon::start()
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
-  #ifndef DISABLE_LOCAL_SERVER
+  #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
       m_localServer = new QLocalServer(this);
       if (m_localServer->listen(QCryptographicHash::hash(qApp->applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex())) {
@@ -100,7 +100,7 @@ bool Daemon::start()
       else
         m_localServer->deleteLater();
     }
-  #endif /*DISABLE_LOCAL_SERVER*/
+  #endif /*SCHAT_NO_LOCAL_SERVER*/
 
   QString address = m_settings->getString("ListenAddress");
   quint16 port    = quint16(m_settings->getInt("ListenPort"));
@@ -527,14 +527,14 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
-#ifndef DISABLE_LOCAL_SERVER
+#ifndef SCHAT_NO_LOCAL_SERVER
 void Daemon::incomingLocalConnection()
 {
   if (m_localServer->hasPendingConnections()) {
     new LocalService(m_localServer->nextPendingConnection(), this);
   }
 }
-#endif /*DISABLE_LOCAL_SERVER*/
+#endif /*SCHAT_NO_LOCAL_SERVER*/
 
 
 /*!
