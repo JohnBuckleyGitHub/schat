@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@
 #include <QPointer>
 #include <QTimer>
 
+/*!
+ * \brief Клиентский сокет для коммуникации между программой управления сервером
+ * и сервером.
+ */
 class LocalClientService : public QObject
 {
   Q_OBJECT
