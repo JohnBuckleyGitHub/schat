@@ -16,6 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtGui>
 
 #include "abstractprofile.h"
@@ -32,6 +33,11 @@
 Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *parent)
   : AbstractSettings(filename, parent), m_profile(profile)
 {
+  QString defaultConf = qApp->applicationDirPath() + "/default.conf";
+  if (QFile::exists(defaultConf))
+    m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
+  else
+    m_default = 0;
 }
 
 
@@ -90,9 +96,6 @@ void Settings::createEmoticonsMap()
 }
 
 
-/** [public]
- *
- */
 void Settings::notify(int notify, int index)
 {
   switch (notify) {
@@ -176,6 +179,54 @@ void Settings::write()
   m_settings->setValue("Gender", m_profile->gender());
   m_settings->setValue("Bye", m_profile->byeMsg());
   m_settings->endGroup();
+}
+
+
+/*!
+ * Чтение \b bool опции.
+ *
+ * \param key      Ключ опции.
+ * \param defValue Значение по умолчанию.
+ */
+void Settings::readBool(const QString &key, bool defValue)
+{
+  bool def = defValue;
+  if (m_default)
+    def = m_default->value(key, defValue).toBool();
+
+  AbstractSettings::readBool(key, def);
+}
+
+
+/*!
+ * Чтение \b int опции.
+ *
+ * \param key      Ключ опции.
+ * \param defValue Значение по умолчанию.
+ */
+void Settings::readInt(const QString &key, int defValue)
+{
+  int def = defValue;
+  if (m_default)
+    def = m_default->value(key, defValue).toInt();
+
+  AbstractSettings::readInt(key, def);
+}
+
+
+/*!
+ * Чтение \b QString опции.
+ *
+ * \param key      Ключ опции.
+ * \param defValue Значение по умолчанию.
+ */
+void Settings::readString(const QString &key, const QString &defValue)
+{
+  QString def = defValue;
+  if (m_default)
+    def = m_default->value(key, defValue).toString();
+
+  AbstractSettings::readString(key, def);
 }
 
 
