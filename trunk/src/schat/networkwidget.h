@@ -28,6 +28,9 @@ class QSpinBox;
 class QStandardItemModel;
 class Settings;
 
+/*!
+ * \brief Виджет обеспечивающий выбор сети или одиночного сервера.
+ */
 class NetworkWidget : public QWidget {
   Q_OBJECT
 
@@ -49,11 +52,11 @@ private:
   void init();
 
   int m_initPort;
-  QComboBox *m_selectCombo;
+  QComboBox *m_select;
   QLabel *m_infoLabel;
   QLabel *m_portLabel;
-  QSpinBox *m_portBox;
-  QString m_initItemText;
+  QSpinBox *m_port;
+  QString m_initText;
   QString m_networksPath;
   Settings *m_settings;
 };
