@@ -39,6 +39,7 @@ public:
   inline void setBool(const QString &key, bool value)                 { m_bool[key] = value; }
   inline void setInt(const QString &key, int value)                   { m_int[key] = value; }
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
+  static AbstractSettings *instance()                                 { return m_self; }
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
     void write();
@@ -53,6 +54,9 @@ protected:
   QMap<QString, int> m_int;
   QMap<QString, QString> m_string;
   QSettings *m_settings;
+
+private:
+  static AbstractSettings *m_self;
 };
 
 #endif /*ABSTRACTSETTINGS_H_*/
