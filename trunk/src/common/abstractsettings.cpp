@@ -20,12 +20,17 @@
 
 #include "abstractsettings.h"
 
+AbstractSettings *AbstractSettings::m_self = 0;
+
 /*!
  * \brief Конструктор класса AbstractSettings.
  */
 AbstractSettings::AbstractSettings(const QString &filename, QObject *parent)
   : QObject(parent)
 {
+  Q_ASSERT_X(!m_self, "AbstractSettings", "there should be only one settings object");
+  m_self = this;
+
   m_settings = new QSettings(filename, QSettings::IniFormat, this);
 }
 
