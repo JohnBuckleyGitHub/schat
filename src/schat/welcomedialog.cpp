@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,17 +18,11 @@
 
 #include <QtGui>
 
-#include "networkwidget.h"
 #include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"
 #include "welcomedialog.h"
-
-
-/*!
- * \class WelcomeDialog
- * \brief Диалог приветствия.
- */
+#include "widget/networkwidget.h"
 
 /*!
  * \brief Конструктор класса WelcomeDialog.

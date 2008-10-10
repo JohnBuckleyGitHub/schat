@@ -19,8 +19,8 @@
 #include <QtGui>
 
 #include "mainchannel.h"
-#include "networkwidget.h"
 #include "settings.h"
+#include "widget/networkwidget.h"
 
 /*!
  * \brief Конструктор класса MainChannel.
