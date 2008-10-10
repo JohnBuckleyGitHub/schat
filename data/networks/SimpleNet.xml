@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <network version="1.0">
   <meta>
-    <name>Achim Network</name>
+    <name>Simple Network</name>
     <site>http://impomezia.com</site>
-    <description>Achim Game Network</description>
   </meta>
   <servers>
-    <host>192.168.5.130</host>
-    <host>192.168.5.1</host>
+    <host>schat.impomezia.com</host>
   </servers>
 </network>
