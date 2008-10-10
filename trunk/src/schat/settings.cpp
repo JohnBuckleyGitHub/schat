@@ -27,11 +27,6 @@
 #include "version.h"
 
 /*!
- * \class Settings
- * \brief Класс читает и записывает настройки клиента.
- */
-
-/*!
  * \brief Конструктор класса Settings.
  */
 Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *parent)
@@ -129,9 +124,11 @@ void Settings::read()
   readInt("EmoticonsRefreshTime",    50);
   readString("Style",                "Plastique");
   readString("EmoticonTheme",        "kolobok");
+  readString("Network",              "SimpleNet.xml");
+
   qApp->setStyle(getString("Style"));
 
-  network.fromConfig(m_settings->value("Network", "AchimNet.xml").toString());
+  network.fromConfig(getString("Network"));
   createServerList();
 
   m_settings->beginGroup("Profile");
@@ -164,6 +161,7 @@ void Settings::read()
 void Settings::write()
 {
   setBool("FirstRun", false);
+  setString("Network", network.config());
 
   AbstractSettings::write();
 
@@ -171,7 +169,6 @@ void Settings::write()
   m_settings->setValue("Pos", m_pos);
   m_settings->setValue("Splitter", m_splitter);
 
-  m_settings->setValue("Network", network.config());
   saveRecentServers();
 
   m_settings->beginGroup("Profile");
@@ -183,8 +180,9 @@ void Settings::write()
 }
 
 
-/** [private]
+/*!
  * Создаёт список сетей и одиночных серверов.
+ * \todo Исправить, в списке могут быть две сети с одинаковым именем.
  */
 void Settings::createServerList()
 {

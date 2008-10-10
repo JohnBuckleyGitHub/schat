@@ -28,7 +28,6 @@
 #include "abstractsettings.h"
 #include "network.h"
 
-class SChatWindow;
 class AbstractProfile;
 
 struct Emoticons {
@@ -37,6 +36,9 @@ struct Emoticons {
   Emoticons(QString _name, QString _file) { name = _name; file = _file; }
 };
 
+/*!
+ * \brief Класс читает и записывает настройки клиента.
+ */
 class Settings : public AbstractSettings {
   Q_OBJECT
 
