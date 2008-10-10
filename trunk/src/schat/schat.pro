@@ -42,7 +42,6 @@ HEADERS += \
     mainchannel.h \
     network.h \
     networkreader.h \
-    networkwidget.h \
     profilewidget.h \
     protocol.h \
     schatwindow.h \
@@ -54,6 +53,7 @@ HEADERS += \
     welcomedialog.h \
     widget/emoticonselector.h \
     widget/inputwidget.h \
+    widget/networkwidget.h \
     widget/sendwidget.h \
     widget/userview.h \
 
@@ -73,7 +73,6 @@ SOURCES += \
     mainchannel.cpp \
     network.cpp \
     networkreader.cpp \
-    networkwidget.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
     settings.cpp \
@@ -83,6 +82,7 @@ SOURCES += \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
+    widget/networkwidget.cpp \
     widget/sendwidget.cpp \
     widget/userview.cpp \
 

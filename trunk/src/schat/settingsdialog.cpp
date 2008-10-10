@@ -21,11 +21,11 @@
 #include "abstractprofile.h"
 #include "emoticonsreader.h"
 #include "icondefreader.h"
-#include "networkwidget.h"
 #include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "widget/networkwidget.h"
 
 /*!
  * \brief Конструктор класса SettingsDialog.

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ class QLineEdit;
 class SChatWindow;
 class Settings;
 
+/*!
+ * \brief Диалог приветствия.
+ */
 class WelcomeDialog : public QDialog
 {
   Q_OBJECT
@@ -43,8 +46,8 @@ public slots:
 
 private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
-  void changeIcon(bool s);  
-  
+  void changeIcon(bool s);
+
 private:
   NetworkWidget *m_networkWidget;
   ProfileWidget *m_profileWidget;
