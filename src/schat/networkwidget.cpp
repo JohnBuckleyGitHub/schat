@@ -23,88 +23,81 @@
 #include "settings.h"
 
 /*!
- * \class NetworkWidget
- * \brief Виджет обеспечивающий выбор сети или одиночного сервера.
- */
-
-/*!
  * \brief Конструктор класса NetworkWidget.
  */
 NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent), m_settings(settings)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  m_settings = settings;
-  
-  m_selectCombo = new QComboBox(this);
-  m_selectCombo->setEditable(true);
-  m_selectCombo->setDuplicatesEnabled(false);
-  m_selectCombo->setIconSize(QSize(18, 18));
-  m_selectCombo->setModel(&m_settings->networksModel);
-  
+
+  m_select = new QComboBox(this);
+  m_select->setEditable(true);
+  m_select->setIconSize(QSize(18, 18));
+  m_select->setModel(&m_settings->networksModel);
+
   m_infoLabel = new QLabel(tr("&Сервер/Сеть:"), this);
-  m_infoLabel->setBuddy(m_selectCombo);
-  
-  m_portBox = new QSpinBox(this);
-  m_portBox->setRange(1024, 65536);
-  m_portBox->setValue(7666);
-  m_portBox->setToolTip(tr("<div style='white-space:nowrap;'>Порт сервера, по умолчанию <b>7666</b><br />"
+  m_infoLabel->setBuddy(m_select);
+
+  m_port = new QSpinBox(this);
+  m_port->setRange(1024, 65536);
+  m_port->setValue(7666);
+  m_port->setToolTip(tr("<div style='white-space:nowrap;'>Порт сервера, по умолчанию <b>7666</b><br />"
       "<i>Доступно только при подключении к одиночному серверу</i>.</div>"));
-  m_portBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  m_port->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
   m_portLabel = new QLabel(tr("&Порт:"), this);
-  m_portLabel->setBuddy(m_portBox);
-  
+  m_portLabel->setBuddy(m_port);
+
   m_networksPath = qApp->applicationDirPath() + "/networks/";
-  
-  QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  mainLayout->addWidget(m_infoLabel);
-  mainLayout->addWidget(m_selectCombo, 1);
-  mainLayout->addSpacing(6);
-  mainLayout->addWidget(m_portLabel);
-  mainLayout->addWidget(m_portBox);
-  mainLayout->setSpacing(2);
-  mainLayout->setMargin(0);
-  
-  connect(m_selectCombo, SIGNAL(activated(int)), this, SLOT(activated(int)));
-  connect(m_selectCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
-  connect(m_selectCombo, SIGNAL(editTextChanged(const QString &)), this, SLOT(editTextChanged(const QString &)));
-  connect(m_settings, SIGNAL(networksModelIndexChanged(int)), this, SLOT(setCurrentIndex(int)));
-  
+
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(m_infoLabel);
+  mainLay->addWidget(m_select, 1);
+  mainLay->addSpacing(6);
+  mainLay->addWidget(m_portLabel);
+  mainLay->addWidget(m_port);
+  mainLay->setSpacing(2);
+  mainLay->setMargin(0);
+
+  connect(m_select, SIGNAL(activated(int)), SLOT(activated(int)));
+  connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
+  connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));
+  connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
+
   init();
 }
 
 
-/** [public]
- * Сохранение настроек
+/*!
+ * \brief Сохранение настроек введённых в виджете.
  */
 bool NetworkWidget::save()
 {
-  QString currentText = m_selectCombo->currentText();
-  
+  QString currentText = m_select->currentText();
+
   // Если нынешний текущей текст отличается от предыдущего значит изменены настройки
-  if (m_initItemText != currentText || m_initPort != m_portBox->value()) {
-    
+  if (m_initText != currentText || m_initPort != m_port->value()) {
+
     // В случае если не существует итема с текущим текстом, создаём итем
-    int index = m_selectCombo->findText(currentText);
+    int index = m_select->findText(currentText);
     if (index == -1)
-      m_selectCombo->addItem(QIcon(":/images/host.png"), currentText, m_portBox->value());
-    
-    index = m_selectCombo->findText(currentText);
-    
+      m_select->addItem(QIcon(":/images/host.png"), currentText, m_port->value());
+
+    index = m_select->findText(currentText);
+
     // Если данные итема содержат строку, значит, выбрана сеть, иначе одиночный сервер.
     // В данных хранится имя XML файла сети.
-    QVariant data = m_selectCombo->itemData(index);
+    QVariant data = m_select->itemData(index);
     if (data.type() == QVariant::String)
       m_settings->network.fromFile(data.toString());
     else {
-      m_settings->network.fromString(currentText + ':' + QString().setNum(m_portBox->value()));
-      m_selectCombo->setItemData(index, m_portBox->value());
+      m_settings->network.fromString(currentText + ':' + QString().setNum(m_port->value()));
+      m_select->setItemData(index, m_port->value());
     }
-    
+
     // Уведомление об изменении индекса
     m_settings->notify(Settings::NetworksModelIndexChanged, index);
-    
+
     return true;
   }
   else
@@ -116,11 +109,11 @@ bool NetworkWidget::save()
  * Сброс настроек виджета.
  */
 void NetworkWidget::reset()
-{
-  m_selectCombo->setCurrentIndex(m_selectCombo->findText("Achim Network"));
+{ /// \todo Это может работать не корректно.
+  m_select->setCurrentIndex(m_select->findText("Simple Network"));
   m_portLabel->setEnabled(false);
-  m_portBox->setEnabled(false);
-  m_portBox->setValue(7666);
+  m_port->setEnabled(false);
+  m_port->setValue(7666);
 }
 
 
@@ -133,17 +126,17 @@ void NetworkWidget::reset()
  */
 void NetworkWidget::activated(int index)
 {
-  QVariant data = m_selectCombo->itemData(index);
+  QVariant data = m_select->itemData(index);
   if (data.type() == QVariant::String) {
-    m_portBox->setEnabled(false);
-    m_portBox->setValue(7666);
+    m_port->setEnabled(false);
+    m_port->setValue(7666);
     m_portLabel->setEnabled(false);
   }
   else {
     if (data.type() == QVariant::Int)
-      m_portBox->setValue(data.toInt());
-    
-    m_portBox->setEnabled(true);
+      m_port->setValue(data.toInt());
+
+    m_port->setEnabled(true);
     m_portLabel->setEnabled(true);
   }
 }
@@ -152,15 +145,15 @@ void NetworkWidget::activated(int index)
 /** [private slots]
  * Слот вызывается при смене текущего индекса в `m_selectCombo`,
  * если итем не содержит иконки, значит, происходит добавление новой записи.
- * Устанавливаем иконку итема и в данные записываем порт `m_portBox->value()`. * 
+ * Устанавливаем иконку итема и в данные записываем порт `m_portBox->value()`. *
  */
 void NetworkWidget::currentIndexChanged(int index)
 {
-  QIcon icon = m_selectCombo->itemIcon(index);
+  QIcon icon = m_select->itemIcon(index);
   if (icon.isNull()) {
     icon.addFile(":/images/host.png");
-    m_selectCombo->setItemIcon(index, icon);
-    m_selectCombo->setItemData(index, m_portBox->value());
+    m_select->setItemIcon(index, icon);
+    m_select->setItemData(index, m_port->value());
   }
 }
 
@@ -171,7 +164,7 @@ void NetworkWidget::currentIndexChanged(int index)
  */
 void NetworkWidget::editTextChanged(const QString &text)
 {
-  QPalette palette = m_selectCombo->palette();
+  QPalette palette = m_select->palette();
   bool ok = !text.isEmpty();
 
   if (ok)
@@ -179,61 +172,69 @@ void NetworkWidget::editTextChanged(const QString &text)
   else
     palette.setColor(QPalette::Active, QPalette::Base, QColor("#f66"));
 
-  m_selectCombo->setPalette(palette);
+  m_select->setPalette(palette);
   m_portLabel->setEnabled(ok);
-  m_portBox->setEnabled(ok);
+  m_port->setEnabled(ok);
 
   emit validServer(ok);
 }
 
 
 /** [private slots]
- * 
+ *
  */
 void NetworkWidget::setCurrentIndex(int index)
 {
-  m_selectCombo->setCurrentIndex(index);
-  m_initItemText = m_selectCombo->currentText();
-  
+  m_select->setCurrentIndex(index);
+  m_initText = m_select->currentText();
+
   if (m_settings->network.isNetwork()) {
     m_portLabel->setEnabled(false);
-    m_portBox->setEnabled(false);
-    m_portBox->setValue(7666);
+    m_port->setEnabled(false);
+    m_port->setValue(7666);
   }
   else {
     m_portLabel->setEnabled(true);
-    m_portBox->setEnabled(true);
-    m_portBox->setValue(m_settings->network.port());
+    m_port->setEnabled(true);
+    m_port->setValue(m_settings->network.port());
   }
-  
-  m_initPort = m_portBox->value();
+
+  m_initPort = m_port->value();
 }
 
 
-/** [private]
- * 
+/*!
+ * \brief Инициализация виджета (установка на индекса на основе текущего выбора).
+ *
+ * Если текущая сеть является настоящей сетью (не одиночный сервер), то индексом устанавливается
+ * название сети, также отключается возможность выбирать порт.
+ *
+ * В случае одиночного сервера, при необходимости добавляется необходимый пункт
+ * и индекс устанавливается на основе адреса сервера, также устанавливается порт и разрешается
+ * возможность его изменения.
+ *
+ * Устанавливаются значения \a m_initText и \a m_initPort на основе текущего выбора.
  */
 void NetworkWidget::init()
 {
-  // Устанавливаем индекс на основе текущего выбора
   if (m_settings->network.isNetwork()) {
-    m_selectCombo->setCurrentIndex(m_selectCombo->findText(m_settings->network.name()));
+    m_select->setCurrentIndex(m_select->findText(m_settings->network.name()));
     m_portLabel->setEnabled(false);
-    m_portBox->setEnabled(false);
-    m_portBox->setValue(7666);
+    m_port->setEnabled(false);
+    m_port->setValue(7666);
   }
   else {
     ServerInfo info = m_settings->network.server();
-    
-    if (m_selectCombo->findText(info.address) == -1)
-      m_selectCombo->addItem(QIcon(":/images/host.png"), info.address, info.port);
-    
-    m_selectCombo->setCurrentIndex(m_selectCombo->findText(info.address));
-    m_portBox->setValue(info.port);
+
+    if (m_select->findText(info.address) == -1)
+      m_select->addItem(QIcon(":/images/host.png"), info.address, info.port);
+
+    m_select->setCurrentIndex(m_select->findText(info.address));
+    m_port->setValue(info.port);
     m_portLabel->setEnabled(true);
-    m_portBox->setEnabled(true);
+    m_port->setEnabled(true);
   }
-  
-  m_initItemText = m_selectCombo->currentText();
-  m_initPort     = m_portBox->value();
+
+  m_initText = m_select->currentText();
+  m_initPort = m_port->value();
 }

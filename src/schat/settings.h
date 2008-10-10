@@ -68,7 +68,6 @@ public:
   void read();
   void write();
 
-  bool needCreateNetworkList;
   Network network;
   QStandardItemModel networksModel;
 

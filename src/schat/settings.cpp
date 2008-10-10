@@ -32,7 +32,6 @@
 Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *parent)
   : AbstractSettings(filename, parent), m_profile(profile)
 {
-  needCreateNetworkList = true;
 }
 
 
