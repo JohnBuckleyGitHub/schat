@@ -75,6 +75,11 @@ signals:
   void changed(int notify);
   void networksModelIndexChanged(int index);
 
+protected:
+  void readBool(const QString &key, bool defValue);
+  void readInt(const QString &key, int defValue);
+  void readString(const QString &key, const QString &defValue);
+
 private:
   void createServerList();
   void saveRecentServers();
@@ -83,6 +88,7 @@ private:
   QByteArray m_splitter;
   QMap<QString, QStringList> m_emoticons;
   QPoint m_pos;
+  QSettings *m_default;
   QSize m_size;
 };
 
