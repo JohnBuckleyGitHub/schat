@@ -37,8 +37,6 @@ AbstractSettings::AbstractSettings(const QString &filename, QObject *parent)
 
 /*!
  * Чтение настроек.
- *
- * \todo Добавить поддержку ключей которые не должны записываться по умолчанию.
  */
 void AbstractSettings::read(const QSettings *s)
 {

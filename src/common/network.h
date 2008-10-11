@@ -24,11 +24,8 @@
 
 #include "networkreader.h"
 
-static const QString FailBackServer = "schat.impomezia.com";
-static const quint16 FailBackPort   = 7666;
-
 /*!
- * \brief Класс читает xml-файл сети.
+ * \brief Сервисный класс для работы с сетью.
  *
  * \sa NetworkReader
  */
@@ -63,6 +60,9 @@ public:
   ServerInfo server() const;
   static ServerInfo failBack();
   static ServerInfo serverInfo(const QString &s);
+
+  static const QString failBackServer;
+  static const quint16 failBackPort;
 
 private:
   bool m_failBack;
