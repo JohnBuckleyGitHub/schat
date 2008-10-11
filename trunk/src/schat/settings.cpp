@@ -65,6 +65,18 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
 }
 
 
+QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
+{
+  QList<QStandardItem *> items;
+
+  items = model->findItems(text, flags, column);
+  if (items.size() > 0)
+    return items[0];
+  else
+    return 0;
+}
+
+
 /*!
  * \brief Создаёт карту смайликов.
  */
@@ -240,20 +252,23 @@ void Settings::readString(const QString &key, const QString &defValue)
 
 /*!
  * Создаёт список сетей и одиночных серверов.
- * \todo Исправить, в списке могут быть две сети с одинаковым именем.
  */
 void Settings::createServerList()
 {
-  QDir directory(qApp->applicationDirPath() + "/networks/");
+  QString networksPath = qApp->applicationDirPath() + "/networks/";
+
+  QDir directory(networksPath);
   directory.setNameFilters(QStringList() << "*.xml");
   QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
   NetworkReader network;
 
   foreach (QString file, files)
-    if (network.readFile(qApp->applicationDirPath() + "/networks/" + file)) {
-      QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
-      item->setData(file, Qt::UserRole);
-      networksModel.appendRow(item);
+    if (network.readFile(networksPath + file)) {
+      if (!findItem(&networksModel, network.networkName())) {
+        QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
+        item->setData(file, Qt::UserRole);
+        networksModel.appendRow(item);
+      }
     }
 
   QStringList recent = m_settings->value("RecentServers", "empty").toStringList();
@@ -270,8 +285,8 @@ void Settings::createServerList()
 }
 
 
-/** [private]
- * Функция проходится по модели `networksModel` и выделяет из неё одиночные серверы,
+/*!
+ * Функция проходится по модели \a networksModel и выделяет из неё одиночные серверы,
  * для записи в файл настроек (ключ "RecentServers").
  */
 void Settings::saveRecentServers()

@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "settings.h"
 #include "userview.h"
 
 /*!
@@ -154,13 +155,7 @@ void UserView::addTab(const QModelIndex &index)
 
 QStandardItem* UserView::findItem(const QString &nick) const
 {
-  QList<QStandardItem *> items;
-
-  items = m_model.findItems(nick, Qt::MatchCaseSensitive);
-  if (items.size() == 1)
-    return items[0];
-  else
-    return 0;
+  return Settings::findItem(&m_model, nick);
 }
 
 
