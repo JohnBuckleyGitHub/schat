@@ -30,8 +30,8 @@
 #include "clientservice.h"
 #include "settingsdialog.h"
 
-#ifdef SCHAT_UPDATE
-#include "win32/updatenotify.h"
+#ifndef SCHAT_NO_UPDATE
+  #include "win32/updatenotify.h"
 #endif
 
 class AboutDialog;
@@ -106,9 +106,9 @@ private slots:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();
 
-  #ifdef SCHAT_UPDATE
-  void update();
-  void updateGetDone(int code);
+  #ifndef SCHAT_NO_UPDATE
+    void update();
+    void updateGetDone(int code);
   #endif
 
 private:
@@ -159,9 +159,9 @@ private:
   UserView *m_users;
   WelcomeDialog *m_welcome;
 
-  #ifdef SCHAT_UPDATE
-  QAction *updateSetAction;
-  QPointer<UpdateNotify> m_updateNotify;
+  #ifndef SCHAT_NO_UPDATE
+    QAction *updateSetAction;
+    QPointer<UpdateNotify> m_updateNotify;
   #endif
 };
 

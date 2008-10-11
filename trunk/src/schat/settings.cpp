@@ -142,18 +142,18 @@ void Settings::read()
   setString("EmoticonTheme",        "kolobok");
   setString("Network",              "SimpleNet.xml");
 
-#ifdef SCHAT_UPDATE
-  int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
-  if (interval < 5)
-    interval = 5;
-  else if (interval > 1440)
-    interval = 1440;
+  #ifndef SCHAT_NO_UPDATE
+    int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
+    if (interval < 5)
+      interval = 5;
+    else if (interval > 1440)
+      interval = 1440;
 
-  setInt("Updates/CheckInterval", interval);
-  setBool("Updates/AutoClean", true);
-  setBool("Updates/AutoDownload", true);
-  setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
-#endif
+    setInt("Updates/CheckInterval", interval);
+    setBool("Updates/AutoClean", true);
+    setBool("Updates/AutoDownload", true);
+    setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
+  #endif
 
   if (m_default)
     AbstractSettings::read(m_default);

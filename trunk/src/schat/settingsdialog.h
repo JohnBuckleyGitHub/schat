@@ -37,7 +37,7 @@ class QLineEdit;
 class QSpinBox;
 class Settings;
 
-#ifdef SCHAT_UPDATE
+#ifndef SCHAT_NO_UPDATE
 class UpdateSettings;
 #endif
 
@@ -71,8 +71,8 @@ private:
   ProfileSettings *m_profilePage;
   Settings *m_settings;
 
-  #ifdef SCHAT_UPDATE
-  UpdateSettings *m_updatePage;
+  #ifndef SCHAT_NO_UPDATE
+    UpdateSettings *m_updatePage;
   #endif
 };
 
@@ -183,7 +183,7 @@ private:
  * \class UpdateSettings
  * \brief Диалог "Настройка", страница "Обновления".
  */
-#ifdef SCHAT_UPDATE
+#ifndef SCHAT_NO_UPDATE
 class UpdateSettings : public AbstractSettingsPage
 {
   Q_OBJECT

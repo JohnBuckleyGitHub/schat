@@ -44,9 +44,9 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_interfacePage);
   createPage(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_emoticonsPage);
 
-  #ifdef SCHAT_UPDATE
-  m_updatePage = new UpdateSettings(this);
-  createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
+  #ifndef SCHAT_NO_UPDATE
+    m_updatePage = new UpdateSettings(this);
+    createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
   #endif
 
   connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
@@ -337,7 +337,7 @@ bool EmoticonsSettings::createThemeList()
 /*!
  * \brief Конструктор класса UpdateSettings.
  */
-#ifdef SCHAT_UPDATE
+#ifndef SCHAT_NO_UPDATE
 UpdateSettings::UpdateSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::UpdatePage, parent)
 {
