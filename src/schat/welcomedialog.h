@@ -39,7 +39,7 @@ class WelcomeDialog : public QDialog
   Q_OBJECT
 
 public:
-  WelcomeDialog(Settings *settings, AbstractProfile *profile, QWidget *parent = 0);
+  WelcomeDialog(AbstractProfile *profile, QWidget *parent = 0);
 
 public slots:
   void accept();

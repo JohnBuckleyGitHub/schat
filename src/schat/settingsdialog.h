@@ -59,7 +59,7 @@ public:
     UpdatePage
   };
 
-  SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent = 0);
+  SettingsDialog(AbstractProfile *profile, QWidget *parent = 0);
 
 public slots:
   void accept();
@@ -86,7 +86,7 @@ class ProfileSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent = 0);
+  ProfileSettings(AbstractProfile *profile, QWidget *parent = 0);
 
 public slots:
   void reset(int page);
@@ -112,7 +112,7 @@ class NetworkSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  NetworkSettings(Settings *settings, QWidget *parent = 0);
+  NetworkSettings(QWidget *parent = 0);
 
 signals:
   void validServer(bool valid);
@@ -137,7 +137,7 @@ class InterfaceSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  InterfaceSettings(Settings *settings, QWidget *parent = 0);
+  InterfaceSettings(QWidget *parent = 0);
 
 public slots:
   void reset(int page);
@@ -158,7 +158,7 @@ class EmoticonsSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  EmoticonsSettings(Settings *settings, QWidget *parent = 0);
+  EmoticonsSettings(QWidget *parent = 0);
 
 public slots:
   void reset(int page);
@@ -189,7 +189,7 @@ class UpdateSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  UpdateSettings(Settings *settings, QWidget *parent = 0);
+  UpdateSettings(QWidget *parent = 0);
 
 public slots:
   void reset(int page);

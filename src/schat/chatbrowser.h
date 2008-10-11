@@ -39,7 +39,7 @@ class ChatBrowser : public QTextBrowser {
   Q_OBJECT
 
 public:
-  ChatBrowser(Settings *settings, QWidget *parent = 0);
+  ChatBrowser(QWidget *parent = 0);
   inline QString channel() const                 { return m_channelLog->channel(); }
   inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }

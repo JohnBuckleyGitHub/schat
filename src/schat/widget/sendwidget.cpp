@@ -25,9 +25,10 @@
 /*!
  * \brief Конструктор класса SendWidget.
  */
-SendWidget::SendWidget(Settings *settings, QWidget *parent)
-  : QWidget(parent), m_settings(settings)
+SendWidget::SendWidget(QWidget *parent)
+  : QWidget(parent)
 {
+  m_settings = settings;
   m_input = new InputWidget(this);
   createButtons();
   setSettings();
@@ -165,7 +166,7 @@ void SendWidget::createButtons()
   connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
 
   m_popup = new QMenu(this);
-  m_emoticonSelector = new EmoticonSelector(m_settings, this);
+  m_emoticonSelector = new EmoticonSelector(this);
   QWidgetAction *act = new QWidgetAction(this);
   act->setDefaultWidget(m_emoticonSelector);
   m_popup->addAction(act);

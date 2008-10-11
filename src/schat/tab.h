@@ -30,7 +30,7 @@ class Tab : public AbstractTab {
   Q_OBJECT
 
 public:
-  Tab(const QIcon &icon, Settings *settings, QWidget *parent = 0);
+  Tab(const QIcon &icon, QWidget *parent = 0);
 };
 
 #endif /*TAB_H_*/

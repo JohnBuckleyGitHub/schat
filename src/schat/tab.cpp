@@ -23,8 +23,8 @@
 /*!
  * \brief Конструктор класса Tab.
  */
-Tab::Tab(const QIcon &icon, Settings *settings, QWidget *parent)
-  : AbstractTab(icon, settings, parent)
+Tab::Tab(const QIcon &icon, QWidget *parent)
+  : AbstractTab(icon, parent)
 {
   m_type = Private;
 

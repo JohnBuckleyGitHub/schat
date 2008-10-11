@@ -30,13 +30,14 @@
 /*!
  * \brief Конструктор класса SettingsDialog.
  */
-SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWidget *parent)
-  : AbstractSettingsDialog(parent), m_settings(settings)
+SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
+  : AbstractSettingsDialog(parent)
 {
-  m_profilePage    = new ProfileSettings(settings, profile, this);
-  m_networkPage    = new NetworkSettings(settings, this);
-  m_interfacePage  = new InterfaceSettings(settings, this);
-  m_emoticonsPage  = new EmoticonsSettings(settings, this);
+  m_settings       = settings;
+  m_profilePage    = new ProfileSettings(profile, this);
+  m_networkPage    = new NetworkSettings(this);
+  m_interfacePage  = new InterfaceSettings(this);
+  m_emoticonsPage  = new EmoticonsSettings(this);
 
   createPage(QIcon(":/images/profile.png"), tr("Личные данные"), m_profilePage);
   createPage(QIcon(":/images/network.png"), tr("Сеть"), m_networkPage);
@@ -44,7 +45,7 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, Settings *settings, QWi
   createPage(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_emoticonsPage);
 
   #ifdef SCHAT_UPDATE
-  m_updatePage = new UpdateSettings(settings, this);
+  m_updatePage = new UpdateSettings(this);
   createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
   #endif
 
@@ -64,9 +65,10 @@ void SettingsDialog::accept()
 /*!
  * \brief Конструктор класса ProfileSettings.
  */
-ProfileSettings::ProfileSettings(Settings *settings, AbstractProfile *profile, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), m_settings(settings)
+ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::ProfilePage, parent)
 {
+  m_settings = settings;
   m_profile  = profile;
   m_profileWidget = new ProfileWidget(profile, this);
   connect(m_profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
@@ -125,14 +127,15 @@ void ProfileSettings::save()
 /*!
  * \brief Конструктор класса NetworkSettings.
  */
-NetworkSettings::NetworkSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), m_settings(settings)
+NetworkSettings::NetworkSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::NetworkPage, parent)
 {
+  m_settings = settings;
   m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
   m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
   m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
 
-  m_networkWidget = new NetworkWidget(m_settings, this);
+  m_networkWidget = new NetworkWidget(this);
   connect(m_networkWidget, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
   QHBoxLayout *networkLayout = new QHBoxLayout;
@@ -179,9 +182,10 @@ void NetworkSettings::save()
 /*!
  * \brief Конструктор класса InterfaceSettings.
  */
-InterfaceSettings::InterfaceSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), m_settings(settings)
+InterfaceSettings::InterfaceSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::InterfacePage, parent)
 {
+  m_settings = settings;
   m_styleComboBox = new QComboBox(this);
   m_styleComboBox->addItems(QStyleFactory::keys());
   m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
@@ -225,9 +229,10 @@ void InterfaceSettings::save()
 /*!
  * \brief Конструктор класса EmoticonsSettings.
  */
-EmoticonsSettings::EmoticonsSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, parent), m_settings(settings)
+EmoticonsSettings::EmoticonsSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, parent)
 {
+  m_settings   = settings;
   m_themeCombo = new QComboBox(this);
 
   m_themeGroup = new QGroupBox(tr("Тема смайликов"), this);
@@ -333,9 +338,10 @@ bool EmoticonsSettings::createThemeList()
  * \brief Конструктор класса UpdateSettings.
  */
 #ifdef SCHAT_UPDATE
-UpdateSettings::UpdateSettings(Settings *settings, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent), m_settings(settings)
+UpdateSettings::UpdateSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent)
 {
+  m_settings = settings;
   m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
   m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
   m_autoDownload->setEnabled(false);

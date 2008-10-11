@@ -1,7 +1,7 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
- * 
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ *
  *  a button that pops up a list of all emoticons and returns
  *  the emoticon-string if one is selected in the list
  *
@@ -34,6 +34,9 @@ class QHideEvent;
 class QShowEvent;
 class Settings;
 
+/*!
+ * \brief Отображает один смайлик.
+ */
 class EmoticonLabel : public QLabel
 {
   Q_OBJECT
@@ -57,12 +60,15 @@ private:
 };
 
 
+/*!
+ * \brief Виджет для выбора смайликов.
+ */
 class EmoticonSelector : public QWidget
 {
   Q_OBJECT
 
 public:
-  EmoticonSelector(Settings *settings, QWidget *parent = 0);
+  EmoticonSelector(QWidget *parent = 0);
 
 signals:
   void deleteLabels();
@@ -74,13 +80,12 @@ public slots:
   void aboutToHide() { emit deleteLabels(); }
 
 protected:
-//  virtual void hideEvent(QHideEvent*);
   void showEvent(QShowEvent* /*event*/) { emit setPaused(false); }
 
 protected slots:
   void emoticonClicked(const QString &);
 
-private:  
+private:
   QList<QMovie*> m_movieList;
   QGridLayout *m_lay;
   Settings *m_settings;

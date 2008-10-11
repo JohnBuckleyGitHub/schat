@@ -27,7 +27,7 @@
 /*!
  * \brief Конструктор класса WelcomeDialog.
  */
-WelcomeDialog::WelcomeDialog(Settings *settings, AbstractProfile *profile, QWidget *parent)
+WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -40,7 +40,7 @@ WelcomeDialog::WelcomeDialog(Settings *settings, AbstractProfile *profile, QWidg
   m_okButton    = new QPushButton(QIcon(":/images/ok.png"), tr("ОК"), this);
   m_moreButton  = new QPushButton(QIcon(":/images/down.png"), tr(""), this);
   m_moreButton->setCheckable(true);
-  m_networkWidget = new NetworkWidget(m_settings, this);
+  m_networkWidget = new NetworkWidget(this);
   m_networkWidget->setVisible(false);
 
   QFrame *line = new QFrame(this);
