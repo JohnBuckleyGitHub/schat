@@ -167,6 +167,9 @@ void Settings::read()
  */
 void Settings::write()
 {
+  m_ro << "EmoticonsRefreshTime"
+       << "Updates/Url";
+
   setBool("FirstRun", false);
   setString("Network", network.config());
 
