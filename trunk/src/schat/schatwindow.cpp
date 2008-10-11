@@ -41,8 +41,8 @@ QMap<QString, QString> SChatWindow::m_cmds;
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  m_profile     = new AbstractProfile(this);
-  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
+  m_settings    = settings;
+  m_profile     = m_settings->profile();
   m_settings->read();
 
   m_send        = new SendWidget(this);

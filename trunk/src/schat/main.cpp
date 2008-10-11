@@ -16,9 +16,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtGui>
 
+#include "abstractprofile.h"
 #include "schatwindow.h"
+#include "settings.h"
 #include "version.h"
 
 #ifdef SCHAT_STATIC
@@ -37,13 +40,15 @@ int main(int argc, char *argv[])
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
   QApplication app(argc, argv);
-  app.setQuitOnLastWindowClosed(false);
-  QCoreApplication::addLibraryPath(app.applicationDirPath() + "/plugins");
-
-  app.setStyle(new QPlastiqueStyle);
+  QString      appPath = app.applicationDirPath();
+  Settings     appSettings(appPath + "/schat.conf");
 
   if (install())
     return 0;
+
+  app.setQuitOnLastWindowClosed(false);
+  app.addLibraryPath(appPath + "/plugins");
+  app.setStyle(new QPlastiqueStyle);
 
   QStringList arguments = app.arguments();
   arguments.takeFirst();
@@ -55,7 +60,7 @@ int main(int argc, char *argv[])
   }
 
   #ifndef SCHAT_NO_SINGLE_APP
-    QString serverName = app.applicationDirPath().toUtf8().toHex();
+    QString serverName = appPath.toUtf8().toHex();
     SingleApplication instance("SimpleChat", serverName, &app);
     if (instance.isRunning()) {
       QString message;

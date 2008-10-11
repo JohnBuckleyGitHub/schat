@@ -91,6 +91,9 @@ win32 {
     SOURCES += win32/updatenotify.cpp
     DEFINES += SCHAT_UPDATE
 }
+else {
+    DEFINES += SCHAT_NO_UPDATE
+}
 
 contains( SCHAT_STATIC, 1 ) {
     QTPLUGIN += qgif

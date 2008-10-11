@@ -55,7 +55,8 @@ public:
     ByeMsgChanged
   };
 
-  Settings(const QString &filename, AbstractProfile *profile, QObject *parent);
+  Settings(const QString &filename, QObject *parent = 0);
+  inline AbstractProfile* profile()                    { return m_profile; }
   inline QByteArray splitter() const                   { return m_splitter; }
   inline QMap<QString, QStringList> emoticons() const  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
