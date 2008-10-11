@@ -36,18 +36,20 @@ DaemonSettings::DaemonSettings(const QString &filename, QObject *parent)
  */
 void DaemonSettings::read()
 {
-  readBool("ChannelLog", false);
-  readBool("PrivateLog", false);
-  readBool("LocalServer", true);
-  readBool("Network", false);
-  readBool("RootServer", false);
-  readInt("ListenPort", 7666);
-  readInt("LogLevel", 0);
-  readInt("Numeric", 0);
-  readInt("MaxUsers", 0);
-  readInt("MaxLinks", 0);
-  readInt("MaxUsersPerIp", 0);
-  readString("ListenAddress", "0.0.0.0");
-  readString("NetworkFile", "network.xml");
-  readString("Name", "");
+  setBool("ChannelLog",      false);
+  setBool("PrivateLog",      false);
+  setBool("LocalServer",     true);
+  setBool("Network",         false);
+  setBool("RootServer",      false);
+  setInt("ListenPort",       7666);
+  setInt("LogLevel",         0);
+  setInt("Numeric",          0);
+  setInt("MaxUsers",         0);
+  setInt("MaxLinks",         0);
+  setInt("MaxUsersPerIp",    0);
+  setString("ListenAddress", "0.0.0.0");
+  setString("NetworkFile",   "network.xml");
+  setString("Name",          "");
+
+  AbstractSettings::read();
 }
