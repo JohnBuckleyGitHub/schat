@@ -22,6 +22,8 @@
 #include <QString>
 #include <QWidget>
 
+#include "networkreader.h"
+
 class QComboBox;
 class QLabel;
 class QSpinBox;
@@ -49,6 +51,7 @@ private slots:
   void setCurrentIndex(int index);
 
 private:
+  void addServer(const ServerInfo &info);
   void init();
 
   int m_initPort;

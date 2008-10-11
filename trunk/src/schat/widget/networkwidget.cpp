@@ -18,8 +18,8 @@
 
 #include <QtGui>
 
+#include "network.h"
 #include "networkwidget.h"
-#include "networkreader.h"
 #include "settings.h"
 
 /*!
@@ -106,15 +106,21 @@ bool NetworkWidget::save()
 }
 
 
-/** [public]
+/*!
  * Сброс настроек виджета.
  */
 void NetworkWidget::reset()
-{ /// \todo Это может работать не корректно.
-  m_select->setCurrentIndex(m_select->findText("Simple Network"));
-  m_portLabel->setEnabled(false);
-  m_port->setEnabled(false);
-  m_port->setValue(7666);
+{
+  int index = m_select->findText("Simple Network");
+
+  if (index != -1) {
+    m_select->setCurrentIndex(index);
+    m_portLabel->setEnabled(false);
+    m_port->setEnabled(false);
+    m_port->setValue(7666);
+  }
+  else
+    addServer(Network::failBack());
 }
 
 
@@ -204,6 +210,18 @@ void NetworkWidget::setCurrentIndex(int index)
 }
 
 
+void NetworkWidget::addServer(const ServerInfo &info)
+{
+  if (m_select->findText(info.address) == -1)
+    m_select->addItem(QIcon(":/images/host.png"), info.address, info.port);
+
+  m_select->setCurrentIndex(m_select->findText(info.address));
+  m_port->setValue(info.port);
+  m_portLabel->setEnabled(true);
+  m_port->setEnabled(true);
+}
+
+
 /*!
  * \brief Инициализация виджета (установка на индекса на основе текущего выбора).
  *
@@ -224,17 +242,8 @@ void NetworkWidget::init()
     m_port->setEnabled(false);
     m_port->setValue(7666);
   }
-  else {
-    ServerInfo info = m_settings->network.server();
-
-    if (m_select->findText(info.address) == -1)
-      m_select->addItem(QIcon(":/images/host.png"), info.address, info.port);
-
-    m_select->setCurrentIndex(m_select->findText(info.address));
-    m_port->setValue(info.port);
-    m_portLabel->setEnabled(true);
-    m_port->setEnabled(true);
-  }
+  else
+    addServer(m_settings->network.server());
 
   m_initText = m_select->currentText();
   m_initPort = m_port->value();

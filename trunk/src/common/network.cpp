@@ -20,6 +20,9 @@
 
 #include "network.h"
 
+const QString Network::failBackServer = "schat.impomezia.com";
+const quint16 Network::failBackPort   = 7666;
+
 /*!
  * \brief Конструктор класса Network.
  */
@@ -129,7 +132,7 @@ QString Network::config() const
       return m_servers.at(0).address + ':' + QString().setNum(m_servers.at(0).port);
   }
   else
-    return FailBackServer + ':' + QString().setNum(FailBackPort);
+    return failBackServer + ':' + QString().setNum(failBackPort);
 }
 
 
@@ -182,8 +185,8 @@ ServerInfo Network::server() const
 ServerInfo Network::failBack()
 {
   ServerInfo info;
-  info.address = FailBackServer;
-  info.port    = FailBackPort;
+  info.address = failBackServer;
+  info.port    = failBackPort;
   return info;
 }
 
@@ -197,7 +200,7 @@ quint16 Network::port() const
   if (m_valid && m_servers.size() == 1)
     return m_servers.at(0).port;
 
-  return FailBackPort;
+  return failBackPort;
 }
 
 
