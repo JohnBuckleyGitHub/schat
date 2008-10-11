@@ -73,18 +73,30 @@ QStringList UserView::profile(const QString &nick) const
 }
 
 
+/*!
+ * Формирует строку для всплывающей подсказки, содержащую информацию о пользователе.
+ *
+ * \param profile Профиль пользователя.
+ */
 QString UserView::userToolTip(const AbstractProfile &profile)
 {
   QString p_agent = profile.userAgent();
   p_agent.replace(QChar('/'), QChar(' '));
   QString p_name;
-  profile.fullName().isEmpty() ? p_name = tr("&lt;не указано&gt;") : p_name = profile.fullName();
+  profile.fullName().isEmpty() ? p_name = tr("<не указано>") : p_name = profile.fullName();
 
-  return tr("<h3><img src='%1' align='left'> %2</h3>"
-            "<table><tr><td>Настоящее имя:</td><td>%3</td></tr>"
-            "<tr><td>Клиент:</td><td>%4</td></tr>"
-            "<tr><td>IP-адрес:</td><td>%5</td></tr></table>")
-            .arg(":/images/" + profile.gender() + ".png").arg(profile.nick()).arg(p_name).arg(p_agent).arg(profile.host());
+  return QString("<h3><img src='%1' align='left'> %2</h3>"
+                 "<table><tr><td>%3</td><td>%4</td></tr>"
+                 "<tr><td>%5</td><td>%6</td></tr>"
+                 "<tr><td>%7</td><td>%8</td></tr></table>")
+                 .arg(":/images/" + profile.gender() + ".png")
+                 .arg(Qt::escape(profile.nick()))
+                 .arg(tr("ФИО:"))
+                 .arg(Qt::escape(p_name))
+                 .arg(tr("Клиент:"))
+                 .arg(Qt::escape(p_agent))
+                 .arg(tr("Адрес:"))
+                 .arg(Qt::escape(profile.host()));
 }
 
 
