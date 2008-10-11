@@ -86,10 +86,10 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   restoreGeometry();
 
-  #ifdef SCHAT_UPDATE
-  m_updateTimer = new QTimer(this);
-  m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
-  connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
+  #ifndef SCHAT_NO_UPDATE
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
+    connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
   #endif
 
   createActions();
@@ -133,8 +133,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 //  else
 //    delete daemon;
 
-  #ifdef SCHAT_UPDATE
-  QTimer::singleShot(0, this, SLOT(update()));
+  #ifndef SCHAT_NO_UPDATE
+    QTimer::singleShot(0, this, SLOT(update()));
   #endif
 }
 
@@ -599,7 +599,7 @@ void SChatWindow::showSettings()
 /** [private slots]
  *
  */
-#ifdef SCHAT_UPDATE
+#ifndef SCHAT_NO_UPDATE
 void SChatWindow::update()
 {
   if (!m_updateTimer->isActive())
@@ -634,7 +634,7 @@ void SChatWindow::settingsChanged(int notify)
       m_clientService->sendByeMsg();
       break;
 
-    #ifdef SCHAT_UPDATE
+    #ifndef SCHAT_NO_UPDATE
     case Settings::UpdateSettingsChanged:
       m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
       break;
@@ -716,7 +716,7 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
 /** [private slots]
  * Слот вызывается при завершении работы программы обновления
  */
-#ifdef SCHAT_UPDATE
+#ifndef SCHAT_NO_UPDATE
 void SChatWindow::updateGetDone(int code)
 {
   if (!m_updateNotify)
@@ -919,7 +919,7 @@ void SChatWindow::createActions()
   connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновления...
-  #ifdef SCHAT_UPDATE
+  #ifndef SCHAT_NO_UPDATE
   updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
   updateSetAction->setData(SettingsDialog::UpdatePage);
   connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
@@ -982,7 +982,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
 
-  #ifdef SCHAT_UPDATE
+  #ifndef SCHAT_NO_UPDATE
   iconMenu->addAction(updateSetAction);
   #endif
 
