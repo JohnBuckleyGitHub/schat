@@ -78,7 +78,8 @@ void AbstractSettings::write(QSettings *s)
     QMapIterator<QString, QString> i(m_string);
     while (i.hasNext()) {
       i.next();
-      s->setValue(i.key(), i.value());
+      if (!m_ro.contains(i.key()))
+        s->setValue(i.key(), i.value());
     }
   }
 
@@ -86,7 +87,8 @@ void AbstractSettings::write(QSettings *s)
     QMapIterator<QString, bool> i(m_bool);
     while (i.hasNext()) {
       i.next();
-      s->setValue(i.key(), i.value());
+      if (!m_ro.contains(i.key()))
+        s->setValue(i.key(), i.value());
     }
   }
 
@@ -94,7 +96,8 @@ void AbstractSettings::write(QSettings *s)
     QMapIterator<QString, int> i(m_int);
     while (i.hasNext()) {
       i.next();
-      s->setValue(i.key(), i.value());
+      if (!m_ro.contains(i.key()))
+        s->setValue(i.key(), i.value());
     }
   }
 }

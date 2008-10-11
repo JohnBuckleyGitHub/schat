@@ -19,12 +19,12 @@
 #ifndef ABSTRACTSETTINGS_H_
 #define ABSTRACTSETTINGS_H_
 
-#include <QObject>
 #include <QMap>
 #include <QSettings>
+#include <QStringList>
 
 /*!
- * \brief Абстрактный базовый класс для чтения настроек.
+ * \brief Абстрактный базовый класс для чтения и записи настроек.
  *
  * Предоставляет методы для получения настроек, типов \a bool, \a int и \a QString.
  */
@@ -60,6 +60,10 @@ protected:
   QMap<QString, int> m_int;
   QMap<QString, QString> m_string;
   QSettings *m_settings;
+
+  #ifndef SCHAT_NO_WRITE_SETTINGS
+    QStringList m_ro;
+  #endif
 
 private:
   static AbstractSettings *m_self;
