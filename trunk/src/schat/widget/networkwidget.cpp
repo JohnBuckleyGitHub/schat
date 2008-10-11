@@ -25,10 +25,11 @@
 /*!
  * \brief Конструктор класса NetworkWidget.
  */
-NetworkWidget::NetworkWidget(Settings *settings, QWidget *parent)
-  : QWidget(parent), m_settings(settings)
+NetworkWidget::NetworkWidget(QWidget *parent)
+  : QWidget(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
+  m_settings = settings;
 
   m_select = new QComboBox(this);
   m_select->setEditable(true);

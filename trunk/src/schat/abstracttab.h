@@ -39,7 +39,7 @@ public:
     Private
   };
 
-  AbstractTab(const QIcon &icon, Settings *settings, QWidget *parent = 0);
+  AbstractTab(const QIcon &icon, QWidget *parent = 0);
   inline bool notice()                           { return m_notice; }
   inline QIcon icon()                            { return m_icon; }
   inline QTextCursor textCursor() const          { return m_browser->textCursor(); }

@@ -39,7 +39,7 @@ class MainChannel : public AbstractTab {
   Q_OBJECT
 
 public:
-  MainChannel(const QIcon &icon, Settings *settings, QWidget *parent = 0);
+  MainChannel(const QIcon &icon, QWidget *parent = 0);
   void displayChoiceServer(bool display);
 
 private slots:

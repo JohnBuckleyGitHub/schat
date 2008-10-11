@@ -25,8 +25,8 @@
 /*!
  * \brief Конструктор класса MainChannel.
  */
-MainChannel::MainChannel(const QIcon &icon, Settings *settings, QWidget *parent)
-  : AbstractTab(icon, settings, parent)
+MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
+  : AbstractTab(icon, parent)
 {
   m_type = Main;
 
@@ -37,7 +37,7 @@ MainChannel::MainChannel(const QIcon &icon, Settings *settings, QWidget *parent)
 
   m_connectCreateButton->setVisible(false);
 
-  m_networkWidget = new NetworkWidget(settings, this);
+  m_networkWidget = new NetworkWidget(this);
   m_networkWidget->setVisible(false);
 
   m_networkLayout = new QHBoxLayout;

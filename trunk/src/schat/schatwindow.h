@@ -99,7 +99,7 @@ private slots:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void sendMsg(const QString &message);
   void serverMessage(const QString &msg);
-  void settings();
+  void showSettings();
   void settingsChanged(int notify);
   void stopNotice(int index);
   void unconnected(bool echo = true);

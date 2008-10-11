@@ -36,6 +36,8 @@ struct Emoticons {
   Emoticons(QString _name, QString _file) { name = _name; file = _file; }
 };
 
+#define settings (static_cast<Settings *>(AbstractSettings::instance()))
+
 /*!
  * \brief Класс читает и записывает настройки клиента.
  */

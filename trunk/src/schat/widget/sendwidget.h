@@ -38,7 +38,7 @@ class SendWidget : public QWidget
   Q_OBJECT
 
 public:
-  SendWidget(Settings *settings, QWidget *parent = 0);
+  SendWidget(QWidget *parent = 0);
   inline void clear() { m_input->clearMsg(); }
 
 signals:

@@ -45,7 +45,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", m_profile, this);
   m_settings->read();
 
-  m_send        = new SendWidget(m_settings, this);
+  m_send        = new SendWidget(this);
   m_central     = new QWidget(this);
   m_splitter    = new QSplitter(m_central);
   m_tabs        = new QTabWidget(m_splitter);
@@ -107,14 +107,14 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
 
-  m_main = new MainChannel(QIcon(":/images/main.png"), m_settings, this);
+  m_main = new MainChannel(QIcon(":/images/main.png"), this);
   connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
 
   m_tabs->setCurrentIndex(m_tabs->addTab(m_main, tr("Общий")));
   m_tabs->setTabIcon(0, m_main->icon());
 
   if (!m_settings->getBool("HideWelcome") || m_settings->getBool("FirstRun")) {
-    m_welcome = new WelcomeDialog(m_settings, m_profile, this);
+    m_welcome = new WelcomeDialog(m_profile, this);
     connect(m_welcome, SIGNAL(accepted()), this, SLOT(welcomeOk()));
     if (!m_welcome->exec())
       m_main->displayChoiceServer(true);
@@ -262,7 +262,7 @@ void SChatWindow::addTab(const QString &nick)
 
   if (index == -1) {
     AbstractProfile profile(m_users->profile(nick));
-    Tab *tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), m_settings, this);
+    Tab *tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
     tab->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon(), nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
@@ -525,7 +525,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
   if (index == -1) {
     AbstractProfile profile(m_users->profile(nick));
-    tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), m_settings, this);
+    tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
     tab->setChannel(nick);
     index = m_tabs->addTab(tab, tab->icon(), nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
@@ -578,13 +578,13 @@ void SChatWindow::serverMessage(const QString &msg)
 }
 
 
-void SChatWindow::settings()
+void SChatWindow::showSettings()
 {
   if (isHidden())
     show();
 
   if (!m_settingsDialog) {
-    m_settingsDialog = new SettingsDialog(m_profile, m_settings, this);
+    m_settingsDialog = new SettingsDialog(m_profile, this);
     m_settingsDialog->show();
   }
 
@@ -606,7 +606,7 @@ void SChatWindow::update()
     m_updateTimer->start();
 
   if (!m_updateNotify) {
-    m_updateNotify = new UpdateNotify(m_settings, this);
+    m_updateNotify = new UpdateNotify(this);
     connect(m_updateNotify, SIGNAL(done(int)), SLOT(updateGetDone(int)));
   }
 
@@ -900,29 +900,29 @@ void SChatWindow::createActions()
   // Смайлики...
   m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
   m_emoticonsSetAction->setData(SettingsDialog::EmoticonsPage);
-  connect(m_emoticonsSetAction, SIGNAL(triggered()), SLOT(settings()));
+  connect(m_emoticonsSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Интерфейс...
   m_interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
   m_interfaceSetAction->setData(SettingsDialog::InterfacePage);
-  connect(m_interfaceSetAction, SIGNAL(triggered()), SLOT(settings()));
+  connect(m_interfaceSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Сеть...
   m_networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
   m_networkSetAction->setData(SettingsDialog::NetworkPage);
-  connect(m_networkSetAction, SIGNAL(triggered()), SLOT(settings()));
+  connect(m_networkSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Личные данные...
   m_profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
   m_profileSetAction->setShortcut(tr("Ctrl+F12"));
   m_profileSetAction->setData(SettingsDialog::ProfilePage);
-  connect(m_profileSetAction, SIGNAL(triggered()), SLOT(settings()));
+  connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновления...
   #ifdef SCHAT_UPDATE
   updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
   updateSetAction->setData(SettingsDialog::UpdatePage);
-  connect(updateSetAction, SIGNAL(triggered()), SLOT(settings()));
+  connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
   #endif
 
   // Выход из программы

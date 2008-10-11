@@ -33,12 +33,13 @@ struct PrepareEmoticons {
 /*!
  * \brief Конструктор класса ChatBrowser.
  */
-ChatBrowser::ChatBrowser(Settings *settings, QWidget *parent)
-  : QTextBrowser(parent), m_settings(settings)
+ChatBrowser::ChatBrowser(QWidget *parent)
+  : QTextBrowser(parent)
 {
   m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);
   setOpenLinks(false);
+  m_settings = settings;
 
   m_style = QString(
       ".gr    { color:#90a4b3; }"

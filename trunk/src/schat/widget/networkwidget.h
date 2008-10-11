@@ -35,7 +35,7 @@ class NetworkWidget : public QWidget {
   Q_OBJECT
 
 public:
-  NetworkWidget(Settings *settings, QWidget *parent = 0);
+  NetworkWidget(QWidget *parent = 0);
   bool save();
   void reset();
 
