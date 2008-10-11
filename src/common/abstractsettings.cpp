@@ -34,25 +34,19 @@ AbstractSettings::AbstractSettings(const QString &filename, QObject *parent)
   m_settings = new QSettings(filename, QSettings::IniFormat, this);
 }
 
-/*!
- * Запись настроек.
- */
-#ifndef SCHAT_NO_WRITE_SETTINGS
-void AbstractSettings::write()
-{
-  if (!m_string.isEmpty()) {
-    QMapIterator<QString, QString> i(m_string);
-    while (i.hasNext()) {
-      i.next();
-      m_settings->setValue(i.key(), i.value());
-    }
-  }
 
+/*!
+ * Чтение настроек.
+ *
+ * \todo Добавить поддержку ключей которые не должны записываться по умолчанию.
+ */
+void AbstractSettings::read(const QSettings *s)
+{
   if (!m_bool.isEmpty()) {
     QMapIterator<QString, bool> i(m_bool);
     while (i.hasNext()) {
       i.next();
-      m_settings->setValue(i.key(), i.value());
+      m_bool[i.key()] = s->value(i.key(), i.value()).toBool();
     }
   }
 
@@ -60,7 +54,47 @@ void AbstractSettings::write()
     QMapIterator<QString, int> i(m_int);
     while (i.hasNext()) {
       i.next();
-      m_settings->setValue(i.key(), i.value());
+      m_int[i.key()] = s->value(i.key(), i.value()).toInt();
+    }
+  }
+
+  if (!m_string.isEmpty()) {
+    QMapIterator<QString, QString> i(m_string);
+    while (i.hasNext()) {
+      i.next();
+      m_string[i.key()] = s->value(i.key(), i.value()).toString();
+    }
+  }
+}
+
+
+/*!
+ * Запись настроек.
+ */
+#ifndef SCHAT_NO_WRITE_SETTINGS
+void AbstractSettings::write(QSettings *s)
+{
+  if (!m_string.isEmpty()) {
+    QMapIterator<QString, QString> i(m_string);
+    while (i.hasNext()) {
+      i.next();
+      s->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_bool.isEmpty()) {
+    QMapIterator<QString, bool> i(m_bool);
+    while (i.hasNext()) {
+      i.next();
+      s->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_int.isEmpty()) {
+    QMapIterator<QString, int> i(m_int);
+    while (i.hasNext()) {
+      i.next();
+      s->setValue(i.key(), i.value());
     }
   }
 }

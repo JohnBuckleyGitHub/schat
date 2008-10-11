@@ -115,18 +115,36 @@ void Settings::notify(int notify, int index)
 void Settings::read()
 {
   m_pos  = m_settings->value("Pos", QPoint(-999, -999)).toPoint();
-  m_size = m_settings->value("Size", QSize(680, 460)).toSize();
+  m_size = m_settings->value("Size", QSize(640, 430)).toSize();
   m_splitter = m_settings->value("Splitter").toByteArray();
 
-  readBool("HideWelcome",            false);
-  readBool("FirstRun",               true);
-  readBool("EmoticonsRequireSpaces", true);
-  readBool("UseEmoticons",           true);
-  readBool("UseAnimatedEmoticons",   true);
-  readInt("EmoticonsRefreshTime",    50);
-  readString("Style",                "Plastique");
-  readString("EmoticonTheme",        "kolobok");
-  readString("Network",              "SimpleNet.xml");
+  setBool("HideWelcome",            false);
+  setBool("FirstRun",               true);
+  setBool("EmoticonsRequireSpaces", true);
+  setBool("UseEmoticons",           true);
+  setBool("UseAnimatedEmoticons",   true);
+  setInt("EmoticonsRefreshTime",    50);
+  setString("Style",                "Plastique");
+  setString("EmoticonTheme",        "kolobok");
+  setString("Network",              "SimpleNet.xml");
+
+#ifdef SCHAT_UPDATE
+  int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
+  if (interval < 5)
+    interval = 5;
+  else if (interval > 1440)
+    interval = 1440;
+
+  setInt("Updates/CheckInterval", interval);
+  setBool("Updates/AutoClean", true);
+  setBool("Updates/AutoDownload", true);
+  setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
+#endif
+
+  if (m_default)
+    AbstractSettings::read(m_default);
+
+  AbstractSettings::read();
 
   qApp->setStyle(getString("Style"));
 
@@ -141,19 +159,6 @@ void Settings::read()
   m_settings->endGroup();
 
   createEmoticonsMap();
-
-#ifdef SCHAT_UPDATE
-  int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
-  if (interval < 5)
-    interval = 5;
-  else if (interval > 1440)
-    interval = 1440;
-
-  setInt("Updates/CheckInterval", interval);
-  readBool("Updates/AutoClean", true);
-  readBool("Updates/AutoDownload", true);
-  readString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
-#endif
 }
 
 

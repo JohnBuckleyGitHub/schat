@@ -40,15 +40,21 @@ public:
   inline void setInt(const QString &key, int value)                   { m_int[key] = value; }
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
   static AbstractSettings *instance()                                 { return m_self; }
+  void read()                                                         { read(m_settings); }
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
-    void write();
+    void write() { write(m_settings); }
   #endif
 
 protected:
   inline void readBool(const QString &key, bool defValue)             { m_bool[key] = m_settings->value(key, defValue).toBool(); }
   inline void readInt(const QString &key, int defValue)               { m_int[key] = m_settings->value(key, defValue).toInt(); }
   inline void readString(const QString &key, const QString &defValue) { m_string[key] = m_settings->value(key, defValue).toString(); }
+  void read(const QSettings *s);
+
+  #ifndef SCHAT_NO_WRITE_SETTINGS
+    void write(QSettings *s);
+  #endif
 
   QMap<QString, bool> m_bool;
   QMap<QString, int> m_int;
