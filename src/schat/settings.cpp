@@ -30,9 +30,11 @@
 /*!
  * \brief Конструктор класса Settings.
  */
-Settings::Settings(const QString &filename, AbstractProfile *profile, QObject *parent)
-  : AbstractSettings(filename, parent), m_profile(profile)
+Settings::Settings(const QString &filename, QObject *parent)
+  : AbstractSettings(filename, parent)
 {
+  m_profile = new AbstractProfile(this);
+
   QString defaultConf = qApp->applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
