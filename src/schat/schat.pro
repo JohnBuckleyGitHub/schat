@@ -49,6 +49,9 @@ HEADERS += \
     settingsdialog.h \
     tab.h \
     trayicon.h \
+    update/download.h \
+    update/update.h \
+    update/updatexmlreader.h \
     version.h \
     welcomedialog.h \
     widget/emoticonselector.h \
@@ -79,6 +82,9 @@ SOURCES += \
     settingsdialog.cpp \
     tab.cpp \
     trayicon.cpp \
+    update/download.cpp \
+    update/update.cpp \
+    update/updatexmlreader.cpp \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
