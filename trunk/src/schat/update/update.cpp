@@ -152,7 +152,7 @@ void Update::downloadNext()
 void Update::error(int err)
 {
   writeSettings(true);
-  qApp->exit(err);
+//  qApp->exit(err);
 }
 
 
@@ -163,7 +163,7 @@ void Update::finished()
 {
   writeSettings();
 
-  qApp->exit(0);
+//  qApp->exit(0);
 }
 
 

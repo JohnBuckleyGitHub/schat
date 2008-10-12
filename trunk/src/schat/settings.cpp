@@ -208,6 +208,15 @@ void Settings::write()
 }
 
 
+void Settings::update()
+{
+  if (!m_update)
+    m_update = new Update(QUrl("http://192.168.5.1/schat/updates/update2.xml"), this);
+
+  m_update->execute();
+}
+
+
 /*!
  * Чтение \b bool опции.
  *

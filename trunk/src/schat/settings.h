@@ -21,12 +21,14 @@
 
 #include <QHash>
 #include <QObject>
+#include <QPointer>
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QTextCursor>
 
 #include "abstractsettings.h"
 #include "network.h"
+#include "update/update.h"
 
 class AbstractProfile;
 
@@ -79,6 +81,9 @@ signals:
   void changed(int notify);
   void networksModelIndexChanged(int index);
 
+public slots:
+  void update();
+
 protected:
   void readBool(const QString &key, bool defValue);
   void readInt(const QString &key, int defValue);
@@ -94,6 +99,7 @@ private:
   QPoint m_pos;
   QSettings *m_default;
   QSize m_size;
+  QPointer<Update> m_update;
 };
 
 #endif /*SETTINGS_H_*/

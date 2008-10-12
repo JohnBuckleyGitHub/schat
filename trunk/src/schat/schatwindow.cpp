@@ -134,7 +134,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 //    delete daemon;
 
   #ifndef SCHAT_NO_UPDATE
-    QTimer::singleShot(0, this, SLOT(update()));
+    QTimer::singleShot(0, m_settings, SLOT(update()));
   #endif
 }
 
