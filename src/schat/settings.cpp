@@ -218,54 +218,6 @@ void Settings::update()
 
 
 /*!
- * Чтение \b bool опции.
- *
- * \param key      Ключ опции.
- * \param defValue Значение по умолчанию.
- */
-void Settings::readBool(const QString &key, bool defValue)
-{
-  bool def = defValue;
-  if (m_default)
-    def = m_default->value(key, defValue).toBool();
-
-  AbstractSettings::readBool(key, def);
-}
-
-
-/*!
- * Чтение \b int опции.
- *
- * \param key      Ключ опции.
- * \param defValue Значение по умолчанию.
- */
-void Settings::readInt(const QString &key, int defValue)
-{
-  int def = defValue;
-  if (m_default)
-    def = m_default->value(key, defValue).toInt();
-
-  AbstractSettings::readInt(key, def);
-}
-
-
-/*!
- * Чтение \b QString опции.
- *
- * \param key      Ключ опции.
- * \param defValue Значение по умолчанию.
- */
-void Settings::readString(const QString &key, const QString &defValue)
-{
-  QString def = defValue;
-  if (m_default)
-    def = m_default->value(key, defValue).toString();
-
-  AbstractSettings::readString(key, def);
-}
-
-
-/*!
  * Создаёт список сетей и одиночных серверов.
  */
 void Settings::createServerList()

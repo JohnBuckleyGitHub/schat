@@ -63,6 +63,19 @@ void AbstractSettings::read(const QSettings *s)
       m_string[i.key()] = s->value(i.key(), i.value()).toString();
     }
   }
+
+  if (!m_list.isEmpty()) {
+    QMapIterator<QString, QStringList> i(m_list);
+    while (i.hasNext()) {
+      i.next();
+      QStringList list = s->value(i.key(), i.value()).toStringList();
+      if (list.size() == 1)
+        if (list.at(0) == "empty")
+          list.clear();
+
+      m_list[i.key()] = list;
+    }
+  }
 }
 
 
@@ -72,15 +85,6 @@ void AbstractSettings::read(const QSettings *s)
 #ifndef SCHAT_NO_WRITE_SETTINGS
 void AbstractSettings::write(QSettings *s)
 {
-  if (!m_string.isEmpty()) {
-    QMapIterator<QString, QString> i(m_string);
-    while (i.hasNext()) {
-      i.next();
-      if (!m_ro.contains(i.key()))
-        s->setValue(i.key(), i.value());
-    }
-  }
-
   if (!m_bool.isEmpty()) {
     QMapIterator<QString, bool> i(m_bool);
     while (i.hasNext()) {
@@ -96,6 +100,29 @@ void AbstractSettings::write(QSettings *s)
       i.next();
       if (!m_ro.contains(i.key()))
         s->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_string.isEmpty()) {
+    QMapIterator<QString, QString> i(m_string);
+    while (i.hasNext()) {
+      i.next();
+      if (!m_ro.contains(i.key()))
+        s->setValue(i.key(), i.value());
+    }
+  }
+
+  if (!m_list.isEmpty()) {
+    QMapIterator<QString, QStringList> i(m_list);
+    while (i.hasNext()) {
+      i.next();
+      if (!m_ro.contains(i.key())) {
+        QStringList list = i.value();
+        if (list.isEmpty())
+          list << "empty";
+
+        s->setValue(i.key(), list);
+      }
     }
   }
 }

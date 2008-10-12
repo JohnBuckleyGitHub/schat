@@ -124,15 +124,6 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 
-  // Пытаемся запустить сервер, в случае неудачи удаляем сервер.
-//  daemon = new Server(this);
-//  if (daemon->start()) {
-//    daemon->setLocalProfile(profile);
-//    connect(daemon, SIGNAL(incomingDirectConnection(const QString &, ServerSocket *)), this, SLOT(incomingDirectConnection(const QString &, ServerSocket *)));
-//  }
-//  else
-//    delete daemon;
-
   #ifndef SCHAT_NO_UPDATE
     QTimer::singleShot(0, m_settings, SLOT(update()));
   #endif
