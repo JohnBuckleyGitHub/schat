@@ -187,20 +187,19 @@ void Settings::read()
 void Settings::write()
 {
   m_ro << "EmoticonsRefreshTime"
-       << "Updates/Url"
+       << "Updates/Mirrors"
        << "Updates/QtLevel"
        << "Updates/CoreLevel";
 
   setBool("FirstRun", false);
   setString("Network", network.config());
+  saveRecentServers();
 
   AbstractSettings::write();
 
   m_settings->setValue("Size", m_size);
   m_settings->setValue("Pos", m_pos);
   m_settings->setValue("Splitter", m_splitter);
-
-  saveRecentServers();
 
   m_settings->beginGroup("Profile");
   m_settings->setValue("Nick", m_profile->nick());
@@ -269,8 +268,5 @@ void Settings::saveRecentServers()
       list << (item->text() + ':' + item->data(Qt::UserRole).toString());
   }
 
-  if (list.isEmpty())
-    list << "empty";
-
-  m_settings->setValue("RecentServers", list);
+  setList("RecentServers", list);
 }
