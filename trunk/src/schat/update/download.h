@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,25 +22,31 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+/*!
+ * \brief Базовый класс для скачивания файла.
+ *
+ * Поддерживаются протоколы http и ftp, специальные возможности, например докачка не поддерживаются.
+ * \todo Добавить поддержку прокси.
+ */
 class Download: public QObject
 {
   Q_OBJECT
 
 public:
-  Download(const QString &targetPath, QObject *parent = 0);  
+  Download(const QString &targetPath, QObject *parent = 0);
   void get(const QUrl &url);
-  
+
 signals:
   void error();
   void saved(const QString &filename);
 
 private slots:
   void downloadFinished(QNetworkReply *reply);
-  
+
 private:
   bool saveToDisk(const QString &filename, QIODevice *data);
   QString saveFileName(const QUrl &url);
-  
+
   QNetworkAccessManager m_manager;
   QString m_targetPath;
 };
