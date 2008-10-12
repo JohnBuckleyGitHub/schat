@@ -141,6 +141,7 @@ void Settings::read()
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "kolobok");
   setString("Network",              "SimpleNet.xml");
+  setList("RecentServers",          QStringList());
 
   #ifndef SCHAT_NO_UPDATE
     int interval = m_settings->value("Updates/CheckInterval", 60).toInt(); /// \todo Не учитывается default.conf
@@ -154,7 +155,9 @@ void Settings::read()
     setInt("Updates/CoreLevel", UpdateLevelCore);
     setBool("Updates/AutoClean", true);
     setBool("Updates/AutoDownload", true);
-    setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
+    setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml"); /// \todo Удалить
+
+    setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/updates/update.xml"); /// \todo Адрес должен быть в интернете.
   #endif
 
   if (m_default)
@@ -238,9 +241,9 @@ void Settings::createServerList()
       }
     }
 
-  QStringList recent = m_settings->value("RecentServers", "empty").toStringList();
+  QStringList recent = getList("RecentServers");
 
-  if (recent.at(0) != "empty")
+  if (!recent.isEmpty())
     foreach (QString server, recent) {
       QStringList list = server.split(':');
       if (list.size() == 2) {

@@ -36,6 +36,7 @@ public:
   inline bool getBool(const QString &key) const                       { return m_bool.value(key); }
   inline int getInt(const QString &key) const                         { return m_int.value(key); }
   inline QString getString(const QString &key) const                  { return m_string.value(key); }
+  inline QStringList getList(const QString &key) const                { return m_list.value(key); }
   inline void setBool(const QString &key, bool value)                 { m_bool[key] = value; }
   inline void setInt(const QString &key, int value)                   { m_int[key] = value; }
   inline void setList(const QString &key, const QStringList &value)   { m_list[key] = value; }
