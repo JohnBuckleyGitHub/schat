@@ -150,6 +150,8 @@ void Settings::read()
       interval = 1440;
 
     setInt("Updates/CheckInterval", interval);
+    setInt("Updates/QtLevel", UpdateLevelQt);
+    setInt("Updates/CoreLevel", UpdateLevelCore);
     setBool("Updates/AutoClean", true);
     setBool("Updates/AutoDownload", true);
     setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml");
@@ -182,7 +184,9 @@ void Settings::read()
 void Settings::write()
 {
   m_ro << "EmoticonsRefreshTime"
-       << "Updates/Url";
+       << "Updates/Url"
+       << "Updates/QtLevel"
+       << "Updates/CoreLevel";
 
   setBool("FirstRun", false);
   setString("Network", network.config());
