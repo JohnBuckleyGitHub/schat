@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,8 @@
 
 #include "download.h"
 
-
-/** [public]
- * 
+/*!
+ * Конструктор класса Download.
  */
 Download::Download(const QString &targetPath, QObject *parent)
   : QObject(parent)
@@ -33,7 +32,7 @@ Download::Download(const QString &targetPath, QObject *parent)
 
 
 /** [public]
- * 
+ *
  */
 void Download::get(const QUrl &url)
 {
@@ -43,7 +42,7 @@ void Download::get(const QUrl &url)
 
 
 /** [private slots]
- * 
+ *
  */
 void Download::downloadFinished(QNetworkReply *reply)
 {
@@ -58,7 +57,7 @@ void Download::downloadFinished(QNetworkReply *reply)
 
 
 /** [private]
- * 
+ *
  */
 bool Download::saveToDisk(const QString &filename, QIODevice *data)
 {
@@ -68,7 +67,7 @@ bool Download::saveToDisk(const QString &filename, QIODevice *data)
 
   file.write(data->readAll());
   file.close();
-  
+
   emit saved(filename);
 
   return true;
@@ -76,7 +75,7 @@ bool Download::saveToDisk(const QString &filename, QIODevice *data)
 
 
 /** [private]
- * 
+ *
  */
 QString Download::saveFileName(const QUrl &url)
 {
@@ -85,7 +84,7 @@ QString Download::saveFileName(const QUrl &url)
 
   if (basename.isEmpty())
     return basename;
-  
+
   basename = m_targetPath + '/' + basename;
 
   if (QFile::exists(basename))
