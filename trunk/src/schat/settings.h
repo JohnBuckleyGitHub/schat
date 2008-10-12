@@ -84,11 +84,6 @@ signals:
 public slots:
   void update();
 
-protected:
-  void readBool(const QString &key, bool defValue);
-  void readInt(const QString &key, int defValue);
-  void readString(const QString &key, const QString &defValue);
-
 private:
   void createServerList();
   void saveRecentServers();
