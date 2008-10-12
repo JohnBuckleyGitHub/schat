@@ -143,7 +143,7 @@ void Settings::read()
   setString("Network",              "SimpleNet.xml");
 
   #ifndef SCHAT_NO_UPDATE
-    int interval = m_settings->value("Updates/CheckInterval", 60).toInt();
+    int interval = m_settings->value("Updates/CheckInterval", 60).toInt(); /// \todo Не учитывается default.conf
     if (interval < 5)
       interval = 5;
     else if (interval > 1440)
