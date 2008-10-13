@@ -30,24 +30,55 @@ Update::Update(QObject *parent)
   : QObject(parent)
 {
   m_settings   = settings;
-  m_url        = QUrl(m_settings->getList("Updates/Mirrors").at(0));
+//  m_url        = QUrl(m_settings->getList("Updates/Mirrors").at(0));
   m_appPath    = qApp->applicationDirPath();
   m_targetPath = m_appPath + "/updates";
   m_download   = new DownloadManager(m_targetPath, this);
-  m_urlPath    = QFileInfo(m_url.toString()).path();
+//  m_urlPath    = QFileInfo(m_url.toString()).path();
+  m_state      = Unknown;
 
-//  connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
-  connect(m_download, SIGNAL(error()), SLOT(error()));
+  QStringList mirrors = m_settings->getList("Updates/Mirrors");
+  if (!mirrors.isEmpty())
+    foreach (QString mirror, mirrors)
+      m_mirrors.enqueue(QUrl(mirror));
+
+  connect(m_download, SIGNAL(finished()), SLOT(downloadFinished()));
+  connect(m_download, SIGNAL(error()), SLOT(downloadError()));
 }
 
 
-/** [public slots]
- *
+/*!
+ * Запуск процедуры проверки обновлений.
  */
 void Update::execute()
 {
+  if (m_mirrors.isEmpty()) {
+    emit error();
+    return;
+  }
+
   m_state = GettingUpdateXml;
-  m_download->append(m_url);
+  m_xmlUrl = m_mirrors.dequeue();
+  m_download->append(m_xmlUrl);
+}
+
+
+/*!
+ * Обработка ошибки при скачивании файла.
+ *
+ * Если состояние равно \a GettingUpdateXml и если очередь \a m_mirrors
+ * не пуста то скачиваем xml файл со следующего зеркала.
+ */
+void Update::downloadError()
+{
+  if (m_state == GettingUpdateXml) {
+    if (!m_mirrors.isEmpty()) {
+      m_xmlUrl = m_mirrors.dequeue();
+      m_download->append(m_xmlUrl);
+    }
+    else
+      emit error();
+  }
 }
 
 
@@ -158,7 +189,7 @@ void Update::error(int err)
 /** [private]
  *
  */
-void Update::finished()
+void Update::downloadFinished()
 {
   writeSettings();
 

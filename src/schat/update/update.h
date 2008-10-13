@@ -38,17 +38,22 @@ class Update : public QObject {
 
 public:
   enum State {
+    Unknown,
     GettingUpdateXml,
     GettingUpdates
   };
 
   Update(QObject *parent = 0);
 
+signals:
+  void error();
+  void finished();
+
 public slots:
   void execute();
 
 private slots:
-  inline void error() { error(404); }
+  void downloadError();
   void saved(const QString &filename);
 
 private:
@@ -57,17 +62,18 @@ private:
   inline bool verifyFile() { return verifyFile(currentFile); };
   void downloadNext();
   void error(int err);
-  void finished();
+  void downloadFinished();
   void writeSettings(bool err = false) const;
 
   DownloadManager *m_download;
   FileInfo currentFile;
   QQueue<FileInfo> m_queue;
+  QQueue<QUrl> m_mirrors;
   QString m_appPath;
   QString m_targetPath;
   QString m_urlPath;
   QStringList m_files;
-  QUrl m_url;
+  QUrl m_xmlUrl;
   Settings *m_settings;
   State m_state;
   UpdateXmlReader m_reader;
