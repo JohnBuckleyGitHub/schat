@@ -82,6 +82,39 @@ void Update::downloadError()
 }
 
 
+/*!
+ * Уведомление об успешном скачивании файла.
+ */
+void Update::downloadFinished()
+{
+  qDebug() << "Update::downloadFinished()";
+
+  if (m_state == GettingUpdateXml) {
+    if (m_reader.readFile(m_targetPath + "/" + DownloadManager::saveFileName(m_xmlUrl))) {
+      qDebug() << "read ok";
+
+      if (m_reader.isValid()) {
+      QList<VersionInfo> versions = m_reader.version();
+        foreach (VersionInfo ver, versions)
+          qDebug() << ver.level << ver.type << ver.version;
+
+        QList<FileInfo> files = m_reader.files();
+        foreach (FileInfo file, files)
+          qDebug() << file.size << file.level << file.type << file.name << file.md5;
+      }
+    }
+    else {
+      emit error();
+      return;
+    }
+  }
+
+//  writeSettings();
+
+//  qApp->exit(0);
+}
+
+
 /** [private slots]
  * Слот вызывается при успешном сохранении файла.
  * Инициатор: `Download::saveToDisk(const QString &, QIODevice *)`
@@ -110,23 +143,23 @@ void Update::saved(const QString &filename)
  */
 bool Update::createQueue(const QString &filename)
 {
-  if (!m_reader.readFile(filename)) {
-    error(401);
-    return false;
-  }
-
-  if (!m_reader.isUpdateAvailable()) {
-    error(400);
-    return false;
-  }
-
-  QList<FileInfo> list = m_reader.list();
-
-  foreach (FileInfo fileInfo, list) {
-    m_files << fileInfo.name;
-    if (!verifyFile(fileInfo))
-      m_queue.enqueue(fileInfo);
-  }
+//  if (!m_reader.readFile(filename)) {
+//    error(401);
+//    return false;
+//  }
+//
+//  if (!m_reader.isUpdateAvailable()) {
+//    error(400);
+//    return false;
+//  }
+//
+//  QList<FileInfo> list = m_reader.list();
+//
+//  foreach (FileInfo fileInfo, list) {
+//    m_files << fileInfo.name;
+//    if (!verifyFile(fileInfo))
+//      m_queue.enqueue(fileInfo);
+//  }
 
   return true;
 }
@@ -189,17 +222,6 @@ void Update::error(int err)
 /** [private]
  *
  */
-void Update::downloadFinished()
-{
-  writeSettings();
-
-//  qApp->exit(0);
-}
-
-
-/** [private]
- *
- */
 void Update::writeSettings(bool err) const
 {
   QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
@@ -214,8 +236,8 @@ void Update::writeSettings(bool err) const
     return;
   }
 
-  s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
-  s.setValue("LastDownloadedQtVersion", m_reader.qt());
-  s.setValue("LastDownloadedCoreLevel", m_reader.coreLevel());
-  s.setValue("LastDownloadedCoreVersion", m_reader.core());
+//  s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
+//  s.setValue("LastDownloadedQtVersion", m_reader.qt());
+//  s.setValue("LastDownloadedCoreLevel", m_reader.coreLevel());
+//  s.setValue("LastDownloadedCoreVersion", m_reader.core());
 }

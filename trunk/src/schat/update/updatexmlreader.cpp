@@ -26,31 +26,28 @@
  */
 UpdateXmlReader::UpdateXmlReader()
 {
-  m_coreLevel = -1;
-  m_qtLevel = -1;
+  m_platform = "win32";
 }
 
 
-/** [public]
- *
+/*!
+ * Проверка корректности чтения.
+ * Функция должна вызываться после readFile(const QString &fileName).
  */
-bool UpdateXmlReader::isUpdateAvailable() const
+bool UpdateXmlReader::isValid() const
 {
-  if (m_list.isEmpty())
+  if (error())
     return false;
 
-  if (m_qtLevel > UpdateLevelQt)
-    return true;
+  if (m_version.isEmpty() || m_version.isEmpty())
+    return false;
 
-  if (m_coreLevel > UpdateLevelCore)
-    return true;
-
-  return false;
+  return true;
 }
 
 
-/** [public]
- *
+/*!
+ * Чтение файла.
  */
 bool UpdateXmlReader::readFile(const QString &fileName)
 {
@@ -64,7 +61,7 @@ bool UpdateXmlReader::readFile(const QString &fileName)
     readNext();
 
     if (isStartElement()) {
-      if (name() == "updates" && attributes().value("version") == "1.0")
+      if (name() == "updates" && attributes().value("version") == "1.1")
         readUpdates();
       else
         raiseError(QObject::tr("BAD FILE FORMAT OR VERSION"));
@@ -75,8 +72,42 @@ bool UpdateXmlReader::readFile(const QString &fileName)
 }
 
 
-/** [private]
+/*!
+ * Проверка правильности структуры FileInfo.
  *
+ * \return \a true успешная проверка, \a false ошибка.
+ */
+bool UpdateXmlReader::isValid(const FileInfo &file)
+{
+  if (file.size == 0 || file.level == 0)
+    return false;
+
+  if (file.md5.isEmpty() || file.type.isEmpty() || file.name.isEmpty())
+    return false;
+
+  return true;
+}
+
+
+/*!
+ * Проверка правильности структуры VersionInfo.
+ *
+ * \return \a true успешная проверка, \a false ошибка.
+ */
+bool UpdateXmlReader::isValid(const VersionInfo &version)
+{
+  if (version.level == 0)
+    return false;
+
+  if (version.type.isEmpty() || version.version.isEmpty())
+    return false;
+
+  return true;
+}
+
+
+/*!
+ * Чтение элемента cumulative.
  */
 void UpdateXmlReader::readCumulative()
 {
@@ -95,11 +126,8 @@ void UpdateXmlReader::readCumulative()
         fileInfo.md5  = attributes().value("md5").toString();
         fileInfo.name = readElementText();
 
-        if (fileInfo.type == "qt" && fileInfo.level == m_qtLevel && m_qtLevel > UpdateLevelQt)
-          m_list << fileInfo;
-
-        if (fileInfo.type == "core" && fileInfo.level == m_coreLevel && m_coreLevel > UpdateLevelCore)
-          m_list << fileInfo;
+        if (isValid(fileInfo))
+          m_files << fileInfo;
       }
       else
         readUnknownElement();
@@ -108,8 +136,8 @@ void UpdateXmlReader::readCumulative()
 }
 
 
-/** [private]
- *
+/*!
+ * Чтение элемента files.
  */
 void UpdateXmlReader::readFiles()
 {
@@ -129,8 +157,8 @@ void UpdateXmlReader::readFiles()
 }
 
 
-/** [private]
- *
+/*!
+ * Чтение элемента meta.
  */
 void UpdateXmlReader::readMeta()
 {
@@ -141,13 +169,14 @@ void UpdateXmlReader::readMeta()
       break;
 
     if (isStartElement()) {
-      if (name() == "core") {
-        m_coreLevel = attributes().value("level").toString().toInt();
-        m_core = readElementText();
-      }
-      else if (name() == "qt") {
-        m_qtLevel = attributes().value("level").toString().toInt();
-        m_qt = readElementText();
+      if (name() == "version") {
+        VersionInfo info;
+        info.level   = attributes().value("level").toString().toInt();
+        info.type    = attributes().value("type").toString();
+        info.version = readElementText();
+
+        if (isValid(info))
+          m_version << info;
       }
       else
         readUnknownElement();
@@ -156,8 +185,8 @@ void UpdateXmlReader::readMeta()
 }
 
 
-/** [private]
- *
+/*!
+ * Чтение неизвестного элемента.
  */
 void UpdateXmlReader::readUnknownElement()
 {
@@ -173,8 +202,8 @@ void UpdateXmlReader::readUnknownElement()
 }
 
 
-/** [private]
- *
+/*!
+ * Чтение корневого элемента.
  */
 void UpdateXmlReader::readUpdates()
 {
@@ -187,7 +216,7 @@ void UpdateXmlReader::readUpdates()
     if (isStartElement()) {
       if (name() == "meta")
         readMeta();
-      else if (name() == "files" && attributes().value("platform") == "win32")
+      else if (name() == "files" && attributes().value("platform") == m_platform)
         readFiles();
       else
         readUnknownElement();
