@@ -19,7 +19,7 @@
 #include <QApplication>
 #include <QtCore>
 
-#include "download.h"
+#include "downloadmanager.h"
 #include "update.h"
 #include "settings.h"
 
@@ -33,10 +33,10 @@ Update::Update(QObject *parent)
   m_url        = QUrl(m_settings->getList("Updates/Mirrors").at(0));
   m_appPath    = qApp->applicationDirPath();
   m_targetPath = m_appPath + "/updates";
-  m_download   = new Download(m_targetPath, this);
+  m_download   = new DownloadManager(m_targetPath, this);
   m_urlPath    = QFileInfo(m_url.toString()).path();
 
-  connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
+//  connect(m_download, SIGNAL(saved(const QString &)), SLOT(saved(const QString &)));
   connect(m_download, SIGNAL(error()), SLOT(error()));
 }
 
@@ -46,12 +46,8 @@ Update::Update(QObject *parent)
  */
 void Update::execute()
 {
-  if (!QDir().exists(m_targetPath))
-    if (!QDir().mkdir(m_targetPath))
-      error(400);
-
   m_state = GettingUpdateXml;
-  m_download->get(m_url);
+  m_download->append(m_url);
 }
 
 
@@ -142,7 +138,7 @@ void Update::downloadNext()
 {
   if (!m_queue.isEmpty()) {
     currentFile = m_queue.dequeue();
-    m_download->get(QUrl(m_urlPath + "/win32/" + currentFile.name));
+    m_download->append(QUrl(m_urlPath + "/win32/" + currentFile.name));
   }
   else
     finished();

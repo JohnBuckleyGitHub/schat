@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright В© 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,39 +16,48 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DOWNLOAD_H_
-#define DOWNLOAD_H_
+#ifndef DOWNLOADMANAGER_H
+#define DOWNLOADMANAGER_H
 
+#include <QFile>
+#include <QObject>
+#include <QQueue>
+#include <QTime>
+#include <QUrl>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
 
 /*!
- * \brief Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ С„Р°Р№Р»Р°.
+ * \brief Базовый класс для скачивания файла.
  *
- * РџРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ РїСЂРѕС‚РѕРєРѕР»С‹ http Рё ftp, СЃРїРµС†РёР°Р»СЊРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё, РЅР°РїСЂРёРјРµСЂ РґРѕРєР°С‡РєР° РЅРµ РїРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ.
- * \todo Р”РѕР±Р°РІРёС‚СЊ РїРѕРґРґРµСЂР¶РєСѓ РїСЂРѕРєСЃРё.
+ * Поддерживаются протоколы http и ftp, специальные возможности, например докачка не поддерживаются.
+ * \todo Добавить поддержку прокси.
  */
-class Download: public QObject
+class DownloadManager: public QObject
 {
   Q_OBJECT
 
 public:
-  Download(const QString &targetPath, QObject *parent = 0);
-  void get(const QUrl &url);
+  DownloadManager(const QString &targetPath, QObject *parent = 0);
+
+  void append(const QUrl &url);
+  void append(const QStringList &urlList);
+  static QString saveFileName(const QUrl &url);
 
 signals:
   void error();
-  void saved(const QString &filename);
+  void finished();
 
 private slots:
-  void downloadFinished(QNetworkReply *reply);
+  void startNextDownload();
+  void downloadFinished();
+  void downloadReadyRead();
 
 private:
-  bool saveToDisk(const QString &filename, QIODevice *data);
-  QString saveFileName(const QUrl &url);
-
+  QFile m_output;
   QNetworkAccessManager m_manager;
+  QNetworkReply *m_current;
+  QQueue<QUrl> m_downloadQueue;
   QString m_targetPath;
 };
 
-#endif /*DOWNLOAD_H_*/
+#endif

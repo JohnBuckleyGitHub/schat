@@ -49,7 +49,7 @@ HEADERS += \
     settingsdialog.h \
     tab.h \
     trayicon.h \
-    update/download.h \
+    update/downloadmanager.h \
     update/update.h \
     update/updatexmlreader.h \
     version.h \
@@ -82,7 +82,7 @@ SOURCES += \
     settingsdialog.cpp \
     tab.cpp \
     trayicon.cpp \
-    update/download.cpp \
+    update/downloadmanager.cpp \
     update/update.cpp \
     update/updatexmlreader.cpp \
     welcomedialog.cpp \
