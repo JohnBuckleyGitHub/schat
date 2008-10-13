@@ -24,11 +24,17 @@
 #include <QXmlStreamReader>
 
 struct FileInfo {
-  QString name;
   qint64 size;
+  int level;
   QString md5;
   QString type;
+  QString name;
+};
+
+struct VersionInfo {
   int level;
+  QString type;
+  QString version;
 };
 
 /*!
@@ -38,13 +44,14 @@ class UpdateXmlReader : public QXmlStreamReader {
 
 public:
   UpdateXmlReader();
-  bool isUpdateAvailable() const;
+  bool isValid() const;
   bool readFile(const QString &fileName);
-  inline int coreLevel() const             { return m_coreLevel; }
-  inline int qtLevel() const               { return m_qtLevel; }
-  inline QString core() const              { return m_core; }
-  inline QString qt() const                { return m_qt; }
-  inline QList<FileInfo> list() const      { return m_list; }
+  inline QList<FileInfo> files() const          { return m_files; }
+  inline QList<VersionInfo> version() const     { return m_version; }
+  inline QString platform() const               { return m_platform; }
+  inline void platform(const QString &platform) { m_platform = platform; }
+  static bool isValid(const FileInfo &file);
+  static bool isValid(const VersionInfo &version);
 
 private:
   void readCumulative();
@@ -53,11 +60,9 @@ private:
   void readUnknownElement();
   void readUpdates();
 
-  int m_coreLevel;
-  int m_qtLevel;
-  QList<FileInfo> m_list;
-  QString m_core;
-  QString m_qt;
+  QList<FileInfo> m_files;
+  QList<VersionInfo> m_version;
+  QString m_platform;
 };
 
 #endif /*UPDATEXMLREADER_H_*/

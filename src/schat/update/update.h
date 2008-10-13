@@ -54,6 +54,7 @@ public slots:
 
 private slots:
   void downloadError();
+  void downloadFinished();
   void saved(const QString &filename);
 
 private:
@@ -62,7 +63,6 @@ private:
   inline bool verifyFile() { return verifyFile(currentFile); };
   void downloadNext();
   void error(int err);
-  void downloadFinished();
   void writeSettings(bool err = false) const;
 
   DownloadManager *m_download;
