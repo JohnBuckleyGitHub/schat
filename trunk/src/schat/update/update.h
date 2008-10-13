@@ -25,7 +25,7 @@
 
 #include "updatexmlreader.h"
 
-class Download;
+class DownloadManager;
 class Settings;
 
 static const QString DefaultUpdateXmlUrl = "http://192.168.5.1/schat/updates/update.xml";
@@ -60,7 +60,7 @@ private:
   void finished();
   void writeSettings(bool err = false) const;
 
-  Download *m_download;
+  DownloadManager *m_download;
   FileInfo currentFile;
   QQueue<FileInfo> m_queue;
   QString m_appPath;
