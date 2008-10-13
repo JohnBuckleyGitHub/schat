@@ -16,18 +16,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtCore>
 
 #include "download.h"
 #include "update.h"
+#include "settings.h"
 
 /*!
  * Конструктор класса Update.
  */
-Update::Update(const QUrl &url, QObject *parent)
+Update::Update(QObject *parent)
   : QObject(parent)
 {
-  m_url        = url;
+  m_settings   = settings;
+  m_url        = QUrl(m_settings->getList("Updates/Mirrors").at(0));
   m_appPath    = qApp->applicationDirPath();
   m_targetPath = m_appPath + "/updates";
   m_download   = new Download(m_targetPath, this);

@@ -26,6 +26,7 @@
 #include "updatexmlreader.h"
 
 class Download;
+class Settings;
 
 static const QString DefaultUpdateXmlUrl = "http://192.168.5.1/schat/updates/update.xml";
 
@@ -41,7 +42,7 @@ public:
     GettingUpdates
   };
 
-  Update(const QUrl &url, QObject *parent = 0);
+  Update(QObject *parent = 0);
 
 public slots:
   void execute();
@@ -67,6 +68,7 @@ private:
   QString m_urlPath;
   QStringList m_files;
   QUrl m_url;
+  Settings *m_settings;
   State m_state;
   UpdateXmlReader m_reader;
 };
