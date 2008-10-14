@@ -155,6 +155,7 @@ void Settings::read()
     setInt("Updates/LevelCore", UpdateLevelCore);
     setBool("Updates/AutoClean", true);
     setBool("Updates/AutoDownload", true);
+    setString("Updates/LastVersion", SCHAT_VERSION);
     setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml"); /// \todo Удалить
 
     setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/updates/update.xml"); /// \todo Адрес должен быть в интернете.

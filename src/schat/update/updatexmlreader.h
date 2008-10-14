@@ -20,6 +20,7 @@
 #define UPDATEXMLREADER_H_
 
 #include <QList>
+#include <QMultiMap>
 #include <QStringList>
 #include <QXmlStreamReader>
 
@@ -46,7 +47,7 @@ public:
   UpdateXmlReader();
   bool isValid() const;
   bool readFile(const QString &fileName);
-  inline QList<FileInfo> files() const          { return m_files; }
+  inline QMultiMap<int, FileInfo> files() const { return m_files; }
   inline QList<VersionInfo> version() const     { return m_version; }
   inline QString platform() const               { return m_platform; }
   inline void platform(const QString &platform) { m_platform = platform; }
@@ -60,7 +61,7 @@ private:
   void readUnknownElement();
   void readUpdates();
 
-  QList<FileInfo> m_files;
+  QMultiMap<int, FileInfo> m_files;
   QList<VersionInfo> m_version;
   QString m_platform;
 };

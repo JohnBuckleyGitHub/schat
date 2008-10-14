@@ -127,7 +127,7 @@ void UpdateXmlReader::readCumulative()
         fileInfo.name = readElementText();
 
         if (isValid(fileInfo))
-          m_files << fileInfo;
+          m_files.insert(fileInfo.level, fileInfo);
       }
       else
         readUnknownElement();
