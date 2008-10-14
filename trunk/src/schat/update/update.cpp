@@ -198,10 +198,39 @@ bool Update::verifyFile(const FileInfo &fileInfo)
 
 
 /*!
+ * Формирование списка файлов.
+ */
+void Update::checkFiles()
+{
+  qDebug() << "Update::checkFiles()";
+
+  QMultiMap<int, FileInfo> files = m_reader.files();
+  QList<FileInfo> result;
+  qint64 size = 0;
+
+  foreach (VersionInfo ver, m_version) {
+    QList<FileInfo> info = files.values(ver.level);
+    if (!info.isEmpty()) {
+      foreach (FileInfo fileInfo, info)
+        if (fileInfo.type == ver.type) {
+          result << fileInfo;
+          size += fileInfo.size;
+        }
+    }
+  }
+
+  foreach (FileInfo file, result)
+    qDebug() << file.size << file.level << file.type << file.name << file.md5;
+
+  qDebug() << "size:" << size;
+}
+
+
+/*!
  * Анализ списка версий полученных из xml файла.
- * Функция заполняет список \a m_version версиями для обновления
- * и если этот список будет не пустым, то доступна новая версия.
- * В конце высылается сигнал updateAvailable(bool available).
+ * Функция заполняет список \a m_version версиями для обновления.
+ * Если список окажется пустым, то происходит уведомление об отсутствии новых версий,
+ * иначе происходит разбор файлов для обновления.
  */
 void Update::checkVersion()
 {
@@ -211,18 +240,21 @@ void Update::checkVersion()
 
   foreach (VersionInfo ver, versions) {
     if (ver.type == "core") {
-      if (ver.level > levelCore)
+      if (ver.level > levelCore) {
         m_version << ver;
+        m_settings->setString("Updates/LastVersion", ver.version);
+      }
     }
     else if (ver.type == "qt") {
       if (ver.level > levelQt)
         m_version << ver;
     }
-    else
-      m_version << ver;
   }
 
-  emit updateAvailable(!m_version.isEmpty());
+  if (m_version.isEmpty())
+    emit updateAvailable(false);
+  else
+    checkFiles();
 }
 
 
