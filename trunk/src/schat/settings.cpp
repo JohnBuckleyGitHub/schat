@@ -151,8 +151,8 @@ void Settings::read()
       interval = 1440;
 
     setInt("Updates/CheckInterval", interval);
-    setInt("Updates/QtLevel", UpdateLevelQt);
-    setInt("Updates/CoreLevel", UpdateLevelCore);
+    setInt("Updates/LevelQt", UpdateLevelQt);
+    setInt("Updates/LevelCore", UpdateLevelCore);
     setBool("Updates/AutoClean", true);
     setBool("Updates/AutoDownload", true);
     setString("Updates/Url", "http://192.168.5.1/schat/updates/update.xml"); /// \todo Удалить
@@ -188,8 +188,8 @@ void Settings::write()
 {
   m_ro << "EmoticonsRefreshTime"
        << "Updates/Mirrors"
-       << "Updates/QtLevel"
-       << "Updates/CoreLevel";
+       << "Updates/LevelQt"
+       << "Updates/LevelCore";
 
   setBool("FirstRun", false);
   setString("Network", network.config());

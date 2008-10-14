@@ -57,6 +57,7 @@ void Update::execute()
     return;
   }
 
+  m_version.clear();
   m_state = GettingUpdateXml;
   m_xmlUrl = m_mirrors.dequeue();
   m_download->append(m_xmlUrl);
@@ -94,13 +95,14 @@ void Update::downloadFinished()
       qDebug() << "read ok";
 
       if (m_reader.isValid()) {
-      QList<VersionInfo> versions = m_reader.version();
-        foreach (VersionInfo ver, versions)
-          qDebug() << ver.level << ver.type << ver.version;
-
-        QList<FileInfo> files = m_reader.files();
-        foreach (FileInfo file, files)
-          qDebug() << file.size << file.level << file.type << file.name << file.md5;
+        checkVersion();
+//      QList<VersionInfo> versions = m_reader.version();
+//        foreach (VersionInfo ver, versions)
+//          qDebug() << ver.level << ver.type << ver.version;
+//
+//        QList<FileInfo> files = m_reader.files();
+//        foreach (FileInfo file, files)
+//          qDebug() << file.size << file.level << file.type << file.name << file.md5;
       }
     }
     else {
@@ -192,6 +194,35 @@ bool Update::verifyFile(const FileInfo &fileInfo)
     return false;
 
   return true;
+}
+
+
+/*!
+ * Анализ списка версий полученных из xml файла.
+ * Функция заполняет список \a m_version версиями для обновления
+ * и если этот список будет не пустым, то доступна новая версия.
+ * В конце высылается сигнал updateAvailable(bool available).
+ */
+void Update::checkVersion()
+{
+  int levelQt   = m_settings->getInt("Updates/QtLevel");
+  int levelCore = m_settings->getInt("Updates/LevelCore");
+  QList<VersionInfo> versions = m_reader.version();
+
+  foreach (VersionInfo ver, versions) {
+    if (ver.type == "core") {
+      if (ver.level > levelCore)
+        m_version << ver;
+    }
+    else if (ver.type == "qt") {
+      if (ver.level > levelQt)
+        m_version << ver;
+    }
+    else
+      m_version << ver;
+  }
+
+  emit updateAvailable(!m_version.isEmpty());
 }
 
 

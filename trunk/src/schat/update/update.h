@@ -48,6 +48,7 @@ public:
 signals:
   void error();
   void finished();
+  void updateAvailable(bool available);
 
 public slots:
   void execute();
@@ -61,12 +62,14 @@ private:
   bool createQueue(const QString &filename);
   bool verifyFile(const FileInfo &fileInfo);
   inline bool verifyFile() { return verifyFile(currentFile); };
+  void checkVersion();
   void downloadNext();
   void error(int err);
   void writeSettings(bool err = false) const;
 
   DownloadManager *m_download;
   FileInfo currentFile;
+  QList<VersionInfo> m_version;
   QQueue<FileInfo> m_queue;
   QQueue<QUrl> m_mirrors;
   QString m_appPath;
