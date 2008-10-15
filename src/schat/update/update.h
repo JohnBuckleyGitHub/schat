@@ -62,6 +62,7 @@ private:
   bool createQueue(const QString &filename);
   bool verifyFile(const FileInfo &fileInfo) const;
   inline bool verifyFile() { return verifyFile(currentFile); };
+  QStringList checkLocalFiles();
   void checkFiles();
   void checkVersion();
   void downloadNext();
