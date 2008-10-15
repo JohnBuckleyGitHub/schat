@@ -167,10 +167,15 @@ bool Update::createQueue(const QString &filename)
 }
 
 
-/** [private]
+/*!
+ * Проверка локального файла.
+ * Наличие, размер, контрольная сумма.
+ * \todo Эта функция для проверки md5 суммы загружает файл целиком в память, это не оптимально.
  *
+ * \param fileInfo Структура содержащая информацию о файле.
+ * \return \a true в случае успешной проверки файла, иначе \a false;
  */
-bool Update::verifyFile(const FileInfo &fileInfo)
+bool Update::verifyFile(const FileInfo &fileInfo) const
 {
   QString fileName = m_targetPath + '/' + fileInfo.name;
   QFile file(fileName);
@@ -204,22 +209,30 @@ void Update::checkFiles()
 {
   qDebug() << "Update::checkFiles()";
 
-  QMultiMap<int, FileInfo> files = m_reader.files();
-  QList<FileInfo> result;
+  QMultiMap<int, FileInfo> map = m_reader.files();
+  QStringList files;
   qint64 size = 0;
 
   foreach (VersionInfo ver, m_version) {
-    QList<FileInfo> info = files.values(ver.level);
+    QList<FileInfo> info = map.values(ver.level);
     if (!info.isEmpty()) {
       foreach (FileInfo fileInfo, info)
         if (fileInfo.type == ver.type) {
-          result << fileInfo;
-          size += fileInfo.size;
+          m_files << fileInfo;
+          files << fileInfo.name;
         }
     }
   }
 
-  foreach (FileInfo file, result)
+  if (m_files.isEmpty()) {
+    emit error();
+    return;
+  }
+
+  m_settings->setList("Updates/Files", files);
+
+
+  foreach (FileInfo file, m_files)
     qDebug() << file.size << file.level << file.type << file.name << file.md5;
 
   qDebug() << "size:" << size;
@@ -287,17 +300,17 @@ void Update::error(int err)
  */
 void Update::writeSettings(bool err) const
 {
-  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
-  s.beginGroup("Updates");
-
-  if (!err) {
-    s.setValue("ReadyToInstall", true);
-    s.setValue("Files", m_files);
-  }
-  else {
-    s.setValue("ReadyToInstall", false);
-    return;
-  }
+//  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
+//  s.beginGroup("Updates");
+//
+//  if (!err) {
+//    s.setValue("ReadyToInstall", true);
+//    s.setValue("Files", m_files);
+//  }
+//  else {
+//    s.setValue("ReadyToInstall", false);
+//    return;
+//  }
 
 //  s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
 //  s.setValue("LastDownloadedQtVersion", m_reader.qt());

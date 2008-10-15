@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright В© 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "downloadmanager.h"
 
 /*!
- * Конструктор класса Download.
+ * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР° Download.
  */
 DownloadManager::DownloadManager(const QString &targetPath, QObject *parent) :
   QObject(parent), m_targetPath(targetPath)
@@ -31,8 +31,8 @@ DownloadManager::DownloadManager(const QString &targetPath, QObject *parent) :
 
 
 /*!
- * Добавление в очередь списка файлов.
- * В случае если очередь оказывается пустой, высылается сигнал \a void finished().
+ * Р”РѕР±Р°РІР»РµРЅРёРµ РІ РѕС‡РµСЂРµРґСЊ СЃРїРёСЃРєР° С„Р°Р№Р»РѕРІ.
+ * Р’ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕС‡РµСЂРµРґСЊ РѕРєР°Р·С‹РІР°РµС‚СЃСЏ РїСѓСЃС‚РѕР№, РІС‹СЃС‹Р»Р°РµС‚СЃСЏ СЃРёРіРЅР°Р» \a void finished().
  */
 void DownloadManager::append(const QStringList &urlList)
 {
@@ -45,9 +45,9 @@ void DownloadManager::append(const QStringList &urlList)
 
 
 /*!
- * Добавление в очередь одиночного адреса, в случае если очередь пуста
- * вызывается слот startNextDownload() для старта закачки, в противном случае адрес
- * просто добавляется в очередь.
+ * Р”РѕР±Р°РІР»РµРЅРёРµ РІ РѕС‡РµСЂРµРґСЊ РѕРґРёРЅРѕС‡РЅРѕРіРѕ Р°РґСЂРµСЃР°, РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕС‡РµСЂРµРґСЊ РїСѓСЃС‚Р°
+ * РІС‹Р·С‹РІР°РµС‚СЃСЏ СЃР»РѕС‚ startNextDownload() РґР»СЏ СЃС‚Р°СЂС‚Р° Р·Р°РєР°С‡РєРё, РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ Р°РґСЂРµСЃ
+ * РїСЂРѕСЃС‚Рѕ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РІ РѕС‡РµСЂРµРґСЊ.
  */
 void DownloadManager::append(const QUrl &url)
 {
@@ -59,8 +59,8 @@ void DownloadManager::append(const QUrl &url)
 
 
 /*!
- * Статическая функция извлекающая имя файла из Url.
- * Результат может быть пустой строкой, в случае некорректного адреса.
+ * РЎС‚Р°С‚РёС‡РµСЃРєР°СЏ С„СѓРЅРєС†РёСЏ РёР·РІР»РµРєР°СЋС‰Р°СЏ РёРјСЏ С„Р°Р№Р»Р° РёР· Url.
+ * Р РµР·СѓР»СЊС‚Р°С‚ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№ СЃС‚СЂРѕРєРѕР№, РІ СЃР»СѓС‡Р°Рµ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРіРѕ Р°РґСЂРµСЃР°.
  */
 QString DownloadManager::saveFileName(const QUrl &url)
 {
@@ -69,7 +69,7 @@ QString DownloadManager::saveFileName(const QUrl &url)
 
 
 /*!
- * Начало закачки следующего файла. Если очередь пуста, значит все закачки завершены.
+ * РќР°С‡Р°Р»Рѕ Р·Р°РєР°С‡РєРё СЃР»РµРґСѓСЋС‰РµРіРѕ С„Р°Р№Р»Р°. Р•СЃР»Рё РѕС‡РµСЂРµРґСЊ РїСѓСЃС‚Р°, Р·РЅР°С‡РёС‚ РІСЃРµ Р·Р°РєР°С‡РєРё Р·Р°РІРµСЂС€РµРЅС‹.
  */
 void DownloadManager::startNextDownload()
 {
@@ -80,14 +80,14 @@ void DownloadManager::startNextDownload()
 
   QUrl url = m_downloadQueue.dequeue();
 
-  // Ошибка если имя файла будет пустым.
+  // РћС€РёР±РєР° РµСЃР»Рё РёРјСЏ С„Р°Р№Р»Р° Р±СѓРґРµС‚ РїСѓСЃС‚С‹Рј.
   QString fileName = saveFileName(url);
   if (fileName.isEmpty()) {
     emit error();
     return;
   }
 
-  // Ошибка если не удастся создать директория назначения.
+  // РћС€РёР±РєР° РµСЃР»Рё РЅРµ СѓРґР°СЃС‚СЃСЏ СЃРѕР·РґР°С‚СЊ РґРёСЂРµРєС‚РѕСЂРёСЏ РЅР°Р·РЅР°С‡РµРЅРёСЏ.
   if (!QDir().exists(m_targetPath))
     if (!QDir().mkpath(m_targetPath)) {
       emit error();
@@ -96,7 +96,7 @@ void DownloadManager::startNextDownload()
 
   m_output.setFileName(m_targetPath + "/" + fileName);
 
-  // Ошибка если не удалось открыть файл для записи.
+  // РћС€РёР±РєР° РµСЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё.
   if (!m_output.open(QIODevice::WriteOnly)) {
     emit error();
     return;
@@ -112,7 +112,7 @@ void DownloadManager::startNextDownload()
 
 
 /*!
- * Завершение закачки файла.
+ * Р—Р°РІРµСЂС€РµРЅРёРµ Р·Р°РєР°С‡РєРё С„Р°Р№Р»Р°.
  */
 void DownloadManager::downloadFinished()
 {
@@ -130,7 +130,7 @@ void DownloadManager::downloadFinished()
 
 
 /*!
- * Слот вызывается при поступлении новой порции данных, для записи в файл.
+ * РЎР»РѕС‚ РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РїРѕСЃС‚СѓРїР»РµРЅРёРё РЅРѕРІРѕР№ РїРѕСЂС†РёРё РґР°РЅРЅС‹С…, РґР»СЏ Р·Р°РїРёСЃРё РІ С„Р°Р№Р».
  */
 void DownloadManager::downloadReadyRead()
 {

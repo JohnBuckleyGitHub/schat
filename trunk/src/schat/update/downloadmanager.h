@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright В© 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
 #include <QNetworkAccessManager>
 
 /*!
- * \brief Базовый класс для скачивания файла.
+ * \brief Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ С„Р°Р№Р»Р°.
  *
- * Поддерживаются протоколы http и ftp, специальные возможности, например докачка не поддерживаются.
- * \todo Добавить поддержку прокси.
+ * РџРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ РїСЂРѕС‚РѕРєРѕР»С‹ http Рё ftp, СЃРїРµС†РёР°Р»СЊРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё, РЅР°РїСЂРёРјРµСЂ РґРѕРєР°С‡РєР° РЅРµ РїРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ.
+ * \todo Р”РѕР±Р°РІРёС‚СЊ РїРѕРґРґРµСЂР¶РєСѓ РїСЂРѕРєСЃРё.
  */
 class DownloadManager: public QObject
 {
