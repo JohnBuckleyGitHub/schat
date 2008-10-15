@@ -58,6 +58,7 @@ void Update::execute()
   }
 
   m_version.clear();
+  m_files.clear();
   m_state = GettingUpdateXml;
   m_xmlUrl = m_mirrors.dequeue();
   m_download->append(m_xmlUrl);
@@ -202,8 +203,29 @@ bool Update::verifyFile(const FileInfo &fileInfo) const
 }
 
 
+QStringList Update::checkLocalFiles()
+{
+  qDebug() << "Update::checkLocalFiles()";
+
+  QStringList out;
+  qint64 size = 0;
+  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
+
+  foreach (FileInfo file, m_files) {
+    if (!verifyFile(file)) {
+      out << (url + file.name);
+      size += file.size;
+    }
+  }
+
+  m_settings->setInt("Updates/DownloadSize", size);
+
+  return out;
+}
+
+
 /*!
- * Формирование списка файлов.
+ * Формирование списка файлов необходимых для установки обновления.
  */
 void Update::checkFiles()
 {
@@ -212,6 +234,7 @@ void Update::checkFiles()
   QMultiMap<int, FileInfo> map = m_reader.files();
   QStringList files;
   qint64 size = 0;
+  m_files.clear();
 
   foreach (VersionInfo ver, m_version) {
     QList<FileInfo> info = map.values(ver.level);
@@ -231,9 +254,14 @@ void Update::checkFiles()
 
   m_settings->setList("Updates/Files", files);
 
+  QStringList urls = checkLocalFiles();
+  if (!urls.isEmpty()) {
+    m_state = GettingUpdates;
+    m_download->append(urls);
+  }
 
   foreach (FileInfo file, m_files)
-    qDebug() << file.size << file.level << file.type << file.name << file.md5;
+    qDebug() << "check" << file.size << file.level << file.type << file.name << file.md5;
 
   qDebug() << "size:" << size;
 }
@@ -250,6 +278,7 @@ void Update::checkVersion()
   int levelQt   = m_settings->getInt("Updates/QtLevel");
   int levelCore = m_settings->getInt("Updates/LevelCore");
   QList<VersionInfo> versions = m_reader.version();
+  m_version.clear();
 
   foreach (VersionInfo ver, versions) {
     if (ver.type == "core") {

@@ -153,6 +153,7 @@ void Settings::read()
     setInt("Updates/CheckInterval", interval);
     setInt("Updates/LevelQt", UpdateLevelQt);
     setInt("Updates/LevelCore", UpdateLevelCore);
+    setInt("Updates/DownloadSize", 0);
     setBool("Updates/AutoClean", true);
     setBool("Updates/AutoDownload", true);
     setString("Updates/LastVersion", QApplication::applicationVersion());

@@ -50,6 +50,9 @@ bool UpdateXmlReader::isValid() const
  */
 bool UpdateXmlReader::readFile(const QString &fileName)
 {
+  m_files.clear();
+  m_version.clear();
+
   QFile file(fileName);
   if (!file.open(QFile::ReadOnly | QFile::Text))
     return false;
