@@ -60,7 +60,7 @@ private slots:
 
 private:
   bool createQueue(const QString &filename);
-  bool verifyFile(const FileInfo &fileInfo);
+  bool verifyFile(const FileInfo &fileInfo) const;
   inline bool verifyFile() { return verifyFile(currentFile); };
   void checkFiles();
   void checkVersion();
@@ -70,13 +70,13 @@ private:
 
   DownloadManager *m_download;
   FileInfo currentFile;
+  QList<FileInfo> m_files;
   QList<VersionInfo> m_version;
   QQueue<FileInfo> m_queue;
   QQueue<QUrl> m_mirrors;
   QString m_appPath;
   QString m_targetPath;
   QString m_urlPath;
-  QStringList m_files;
   QUrl m_xmlUrl;
   Settings *m_settings;
   State m_state;
