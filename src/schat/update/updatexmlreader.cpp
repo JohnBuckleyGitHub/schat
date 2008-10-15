@@ -19,7 +19,6 @@
 #include <QtCore>
 
 #include "updatexmlreader.h"
-#include "version.h"
 
 /*!
  * Конструктор класса UpdateXmlReader.

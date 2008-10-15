@@ -19,7 +19,6 @@
 #include <QtGui>
 
 #include "aboutdialog.h"
-#include "version.h"
 
 /*!
  * \brief Конструктор класса AboutDialog.
@@ -62,7 +61,7 @@ AboutDialog::AboutDialog(QWidget *parent)
 MainTab::MainTab(QWidget *parent)
   : QWidget(parent)
 {
-  QLabel *nameLabel = new QLabel(tr("<h2>IMPOMEZIA Simple Chat %1</h2>").arg(SCHAT_VERSION), this);
+  QLabel *nameLabel = new QLabel(QString("<h2>%1 %2</h2>").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()), this);
   nameLabel->setWordWrap(false);
 
   QLabel *aboutLogo = new QLabel(this);
@@ -161,7 +160,7 @@ LicenseTab::LicenseTab(QWidget *parent)
 {
   QTextBrowser *textBrowser = new QTextBrowser(this);
   textBrowser->setText(tr(
-      "<p style='color:#333;'><b>IMPOMEZIA Simple Chat %1</b><br />"
+      "<p style='color:#333;'><b>%1 %2</b><br />"
       "<i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
       "it under the terms of the GNU General Public License as published by "
@@ -173,7 +172,9 @@ LicenseTab::LicenseTab(QWidget *parent)
       "GNU General Public License for more details.</p>"
       "<p>You should have received a copy of the GNU General Public License "
       "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
-  ).arg(SCHAT_VERSION));
+  )
+  .arg(QApplication::applicationName())
+  .arg(QApplication::applicationVersion()));
 
   textBrowser->setOpenExternalLinks(true);
 
