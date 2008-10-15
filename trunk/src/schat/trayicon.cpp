@@ -19,7 +19,6 @@
 #include <QtGui>
 
 #include "trayicon.h"
-#include "version.h"
 
 /*!
  * \brief Конструктор класса TrayIcon.
@@ -93,7 +92,7 @@ void TrayIcon::timeout()
  */
 void TrayIcon::init()
 {
-  setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(SCHAT_VERSION));
+  setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(QApplication::applicationVersion()));
   m_normal = true;
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);

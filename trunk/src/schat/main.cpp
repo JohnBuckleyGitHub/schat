@@ -46,6 +46,10 @@ int main(int argc, char *argv[])
   if (install())
     return 0;
 
+  app.setApplicationName(SCHAT_NAME);
+  app.setApplicationVersion(SCHAT_VERSION);
+  app.setOrganizationName(SCHAT_ORGANIZATION);
+  app.setOrganizationDomain(SCHAT_DOMAIN);
   app.setQuitOnLastWindowClosed(false);
   app.addLibraryPath(appPath + "/plugins");
   app.setStyle(new QPlastiqueStyle);
