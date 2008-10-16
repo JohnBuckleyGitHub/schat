@@ -110,6 +110,32 @@ void Settings::createEmoticonsMap()
 }
 
 
+void Settings::notify(int notify)
+{
+  bool readyToInstall = false;
+
+  switch (notify) {
+    case UpdateError:
+    case UpdateAvailable:
+    case UpdateNoAvailable:
+    case UpdateReady:
+      if (m_update)
+        m_update->deleteLater();
+
+      if (notify == UpdateReady)
+        readyToInstall = true;
+
+      setBool("Updates/ReadyToInstall", readyToInstall);
+      break;
+
+    default:
+      break;
+  }
+
+  emit changed(notify);
+}
+
+
 void Settings::notify(int notify, int index)
 {
   switch (notify) {
@@ -191,7 +217,9 @@ void Settings::write()
   m_ro << "EmoticonsRefreshTime"
        << "Updates/Mirrors"
        << "Updates/LevelQt"
-       << "Updates/LevelCore";
+       << "Updates/LevelCore"
+       << "Updates/LastVersion"
+       << "Updates/DownloadSize";
 
   setBool("FirstRun", false);
   setString("Network", network.config());
@@ -214,10 +242,10 @@ void Settings::write()
 
 void Settings::update()
 {
-  if (!m_update)
+  if (!m_update) {
     m_update = new Update(this);
-
-  m_update->execute();
+    m_update->execute();
+  }
 }
 
 
