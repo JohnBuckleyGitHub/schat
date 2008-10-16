@@ -16,6 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtGui>
 #include <QtNetwork>
 
@@ -262,8 +263,8 @@ void SChatWindow::addTab(const QString &nick)
 }
 
 
-/** [private slots]
- *
+/*!
+ * Завершение работы программы.
  */
 void SChatWindow::closeChat()
 {
@@ -368,14 +369,15 @@ void SChatWindow::message(const QString &sender, const QString &message)
 }
 
 
-/** [private slots]
- *
+/*!
+ * Обработка щелчка мыши по сообщению в трее.
  */
 void SChatWindow::messageClicked()
 {
-  QProcess::startDetached('"' + qApp->applicationDirPath() + "/schat.exe\"");
-
-  closeChat();
+  if (m_tray->message() == TrayIcon::UpdateReady) {
+    connect(qApp, SIGNAL(aboutToQuit()), SLOT(startMe()));
+    closeChat();
+  }
 }
 
 
@@ -585,27 +587,21 @@ void SChatWindow::showSettings()
 }
 
 
-/** [private slots]
+/*!
+ * Запуск собственной копии.
+ * Этот слот вызывается при завершении работы программы и только при согласии
+ * пользователя на немедленную установку обновления.
  *
+ * \todo SCHAT_NO_UPDATE
  */
-#ifndef SCHAT_NO_UPDATE
-void SChatWindow::update()
+void SChatWindow::startMe()
 {
-  if (!m_updateTimer->isActive())
-    m_updateTimer->start();
-
-  if (!m_updateNotify) {
-    m_updateNotify = new UpdateNotify(this);
-    connect(m_updateNotify, SIGNAL(done(int)), SLOT(updateGetDone(int)));
-  }
-
-  m_updateNotify->execute();
+  QProcess::startDetached('"' + qApp->applicationFilePath() + '"');
 }
-#endif
 
 
-/** [private slots]
- *
+/*!
+ * Обработка изменений настроек и прочих событий.
  */
 void SChatWindow::settingsChanged(int notify)
 {
@@ -622,12 +618,6 @@ void SChatWindow::settingsChanged(int notify)
     case Settings::ByeMsgChanged:
       m_clientService->sendByeMsg();
       break;
-
-    #ifndef SCHAT_NO_UPDATE
-    case Settings::UpdateSettingsChanged:
-      m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
-      break;
-    #endif
 
     default:
       break;
@@ -700,27 +690,6 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
     }
   }
 }
-
-
-/** [private slots]
- * Слот вызывается при завершении работы программы обновления
- */
-#ifndef SCHAT_NO_UPDATE
-void SChatWindow::updateGetDone(int code)
-{
-  if (!m_updateNotify)
-    m_updateNotify->deleteLater();
-
-  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-
-  if (code == 0) {
-    QString version = s.value("Updates/LastDownloadedCoreVersion", "").toString();
-    m_tray->showMessage(tr("Доступно обновление до версии %1").arg(version), tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."), QSystemTrayIcon::Information, 60000);
-  }
-  else
-    s.setValue("Updates/ReadyToInstall", false);
-}
-#endif
 
 
 /** [private slots]
