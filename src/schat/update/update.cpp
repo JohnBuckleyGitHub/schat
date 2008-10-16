@@ -30,11 +30,9 @@ Update::Update(QObject *parent)
   : QObject(parent)
 {
   m_settings   = settings;
-//  m_url        = QUrl(m_settings->getList("Updates/Mirrors").at(0));
   m_appPath    = qApp->applicationDirPath();
   m_targetPath = m_appPath + "/updates";
   m_download   = new DownloadManager(m_targetPath, this);
-//  m_urlPath    = QFileInfo(m_url.toString()).path();
   m_state      = Unknown;
 
   QStringList mirrors = m_settings->getList("Updates/Mirrors");
@@ -42,50 +40,46 @@ Update::Update(QObject *parent)
     foreach (QString mirror, mirrors)
       m_mirrors.enqueue(QUrl(mirror));
 
+  m_downloadAll = m_settings->getBool("Updates/AutoDownload");
+
   connect(m_download, SIGNAL(finished()), SLOT(downloadFinished()));
-  connect(m_download, SIGNAL(error()), SLOT(downloadError()));
+  connect(m_download, SIGNAL(error()), SLOT(execute()));
 }
 
 
 /*!
  * Запуск процедуры проверки обновлений.
+ *
+ * В случае если список \a m_mirrors пуст, то это критическая ситуация, сообщаем об ошибке.
+ *
+ * Иначе пытаемся скачать xml файл с информацией об новых версиях.
+ * Очищаем списки \a m_version и \a m_files, устанавливаем состояние \a GettingUpdateXml,
+ * получаем адрес файла из очереди \a m_mirrors и добавляем этот адрес в менеджер закачки.
  */
 void Update::execute()
 {
   if (m_mirrors.isEmpty()) {
-    emit error();
+    m_settings->notify(Settings::UpdateError);
     return;
   }
 
   m_version.clear();
   m_files.clear();
-  m_state = GettingUpdateXml;
+  m_state  = GettingUpdateXml;
   m_xmlUrl = m_mirrors.dequeue();
   m_download->append(m_xmlUrl);
 }
 
 
 /*!
- * Обработка ошибки при скачивании файла.
+ * Уведомление об успешном скачивании очереди файлов.
  *
- * Если состояние равно \a GettingUpdateXml и если очередь \a m_mirrors
- * не пуста то скачиваем xml файл со следующего зеркала.
- */
-void Update::downloadError()
-{
-  if (m_state == GettingUpdateXml) {
-    if (!m_mirrors.isEmpty()) {
-      m_xmlUrl = m_mirrors.dequeue();
-      m_download->append(m_xmlUrl);
-    }
-    else
-      emit error();
-  }
-}
-
-
-/*!
- * Уведомление об успешном скачивании файла.
+ * Если состояние равно \a GettingUpdateXml, то пытаемся прочитать скачанный xml файл.
+ * В случае успеха вызываем функцию checkVersion(), иначе пытаемся скачать следующий в очереди xml файл.
+ *
+ * Если состояние равно \a GettingUpdates, то запускаем проверку скачаных файлов checkLocalFiles(),
+ * если результатом работы функции будет пустой список, то скачивание прошло успешно, уведомляем о
+ * готовности к установке, иначе пытаемся скачать следующий в очереди xml файл.
  */
 void Update::downloadFinished()
 {
@@ -95,76 +89,21 @@ void Update::downloadFinished()
     if (m_reader.readFile(m_targetPath + "/" + DownloadManager::saveFileName(m_xmlUrl))) {
       qDebug() << "read ok";
 
-      if (m_reader.isValid()) {
+      if (m_reader.isValid())
         checkVersion();
-//      QList<VersionInfo> versions = m_reader.version();
-//        foreach (VersionInfo ver, versions)
-//          qDebug() << ver.level << ver.type << ver.version;
-//
-//        QList<FileInfo> files = m_reader.files();
-//        foreach (FileInfo file, files)
-//          qDebug() << file.size << file.level << file.type << file.name << file.md5;
-      }
+      else
+        execute();
     }
-    else {
-      emit error();
-      return;
-    }
-  }
-
-//  writeSettings();
-
-//  qApp->exit(0);
-}
-
-
-/** [private slots]
- * Слот вызывается при успешном сохранении файла.
- * Инициатор: `Download::saveToDisk(const QString &, QIODevice *)`
- */
-void Update::saved(const QString &filename)
-{
-  if (m_state == GettingUpdateXml) {
-
-    if (!createQueue(filename))
-      return;
-
-    m_state = GettingUpdates;
-    downloadNext();
+    else
+      execute();
   }
   else if (m_state == GettingUpdates) {
-    if (verifyFile())
-      downloadNext();
+    QStringList urls = checkLocalFiles();
+    if (urls.isEmpty())
+      m_settings->notify(Settings::UpdateReady);
     else
-      error(405);
+      execute();
   }
-}
-
-
-/** [private]
- *
- */
-bool Update::createQueue(const QString &filename)
-{
-//  if (!m_reader.readFile(filename)) {
-//    error(401);
-//    return false;
-//  }
-//
-//  if (!m_reader.isUpdateAvailable()) {
-//    error(400);
-//    return false;
-//  }
-//
-//  QList<FileInfo> list = m_reader.list();
-//
-//  foreach (FileInfo fileInfo, list) {
-//    m_files << fileInfo.name;
-//    if (!verifyFile(fileInfo))
-//      m_queue.enqueue(fileInfo);
-//  }
-
-  return true;
 }
 
 
@@ -248,7 +187,7 @@ void Update::checkFiles()
   }
 
   if (m_files.isEmpty()) {
-    emit error();
+    m_settings->notify(Settings::UpdateError);
     return;
   }
 
@@ -256,9 +195,15 @@ void Update::checkFiles()
 
   QStringList urls = checkLocalFiles();
   if (!urls.isEmpty()) {
-    m_state = GettingUpdates;
-    m_download->append(urls);
+    if (m_downloadAll) {
+      m_state = GettingUpdates;
+      m_download->append(urls);
+    }
+    else
+      m_settings->notify(Settings::UpdateAvailable);
   }
+  else
+    m_settings->notify(Settings::UpdateReady);
 
   foreach (FileInfo file, m_files)
     qDebug() << "check" << file.size << file.level << file.type << file.name << file.md5;
@@ -269,9 +214,12 @@ void Update::checkFiles()
 
 /*!
  * Анализ списка версий полученных из xml файла.
+ *
  * Функция заполняет список \a m_version версиями для обновления.
  * Если список окажется пустым, то происходит уведомление об отсутствии новых версий,
  * иначе происходит разбор файлов для обновления.
+ *
+ * При необходимости в настройки записывается ключ "Updates/LastVersion".
  */
 void Update::checkVersion()
 {
@@ -294,55 +242,7 @@ void Update::checkVersion()
   }
 
   if (m_version.isEmpty())
-    emit updateAvailable(false);
+    m_settings->notify(Settings::UpdateNoAvailable);
   else
     checkFiles();
-}
-
-
-/** [private]
- *
- */
-void Update::downloadNext()
-{
-  if (!m_queue.isEmpty()) {
-    currentFile = m_queue.dequeue();
-    m_download->append(QUrl(m_urlPath + "/win32/" + currentFile.name));
-  }
-  else
-    finished();
-}
-
-
-/** [private]
- *
- */
-void Update::error(int err)
-{
-  writeSettings(true);
-//  qApp->exit(err);
-}
-
-
-/** [private]
- *
- */
-void Update::writeSettings(bool err) const
-{
-//  QSettings s(m_appPath + "/schat.conf", QSettings::IniFormat);
-//  s.beginGroup("Updates");
-//
-//  if (!err) {
-//    s.setValue("ReadyToInstall", true);
-//    s.setValue("Files", m_files);
-//  }
-//  else {
-//    s.setValue("ReadyToInstall", false);
-//    return;
-//  }
-
-//  s.setValue("LastDownloadedQtLevel", m_reader.qtLevel());
-//  s.setValue("LastDownloadedQtVersion", m_reader.qt());
-//  s.setValue("LastDownloadedCoreLevel", m_reader.coreLevel());
-//  s.setValue("LastDownloadedCoreVersion", m_reader.core());
 }
