@@ -52,6 +52,7 @@ HEADERS += \
     update/downloadmanager.h \
     update/update.h \
     update/updatexmlreader.h \
+    update/verifythread.h \
     version.h \
     welcomedialog.h \
     widget/emoticonselector.h \
@@ -85,6 +86,7 @@ SOURCES += \
     update/downloadmanager.cpp \
     update/update.cpp \
     update/updatexmlreader.cpp \
+    update/verifythread.cpp \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
