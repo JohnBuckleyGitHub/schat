@@ -72,10 +72,21 @@ void Update::execute()
 }
 
 
+/*!
+ * Обработка завершения проверки локальных файлов.
+ *
+ * Если состояние равно \a GettingUpdateXml и список файлов которые необходимо скачать
+ * не пуст, то в зависимости от члена \a m_downloadAll либо скачиваем файлы, либо уведомляем
+ * о наличии новой версии.
+ *
+ * Если состояние равно \a GettingUpdates, то при пустом списке уведомляем о готовности к установке
+ * обновлений, иначе пытаемся скачать следующий xml файл.
+ *
+ * \param urls Список адресов файлов, которые необходимо скачать для установки обновления (пустой список означает, что все файлы скачаны).
+ * \param size Размер обновлений в байтах.
+ */
 void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
 {
-  qDebug() << "Update::checkLocalFilesDone()";
-
   m_settings->setInt("Updates/DownloadSize", size);
 
   if (m_state == GettingUpdateXml) {
@@ -90,7 +101,7 @@ void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
     else
       m_settings->notify(Settings::UpdateReady);
   }
-  else {
+  else if (m_state == GettingUpdates) {
     if (urls.isEmpty())
       m_settings->notify(Settings::UpdateReady);
     else
@@ -105,17 +116,12 @@ void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
  * Если состояние равно \a GettingUpdateXml, то пытаемся прочитать скачанный xml файл.
  * В случае успеха вызываем функцию checkVersion(), иначе пытаемся скачать следующий в очереди xml файл.
  *
- * Если состояние равно \a GettingUpdates, то запускаем проверку скачаных файлов checkLocalFiles(),
- * если результатом работы функции будет пустой список, то скачивание прошло успешно, уведомляем о
- * готовности к установке, иначе пытаемся скачать следующий в очереди xml файл.
+ * Если состояние равно \a GettingUpdates, то запускаем проверку скачаных файлов checkLocalFiles().
  */
 void Update::downloadFinished()
 {
-  qDebug() << "Update::downloadFinished()";
-
   if (m_state == GettingUpdateXml) {
     if (m_reader.readFile(m_targetPath + "/" + DownloadManager::saveFileName(m_xmlUrl))) {
-      qDebug() << "read ok";
 
       if (m_reader.isValid())
         checkVersion();
@@ -125,61 +131,24 @@ void Update::downloadFinished()
     else
       execute();
   }
-  else if (m_state == GettingUpdates) {
+  else if (m_state == GettingUpdates)
     checkLocalFiles();
-//    if (urls.isEmpty())
-//      m_settings->notify(Settings::UpdateReady);
-//    else
-//      execute();
-  }
-}
-
-
-/*!
- * Проверка локального файла.
- * Наличие, размер, контрольная сумма.
- * \todo Эта функция для проверки md5 суммы загружает файл целиком в память, это не оптимально.
- *
- * \param fileInfo Структура содержащая информацию о файле.
- * \return \a true в случае успешной проверки файла, иначе \a false;
- */
-bool Update::verifyFile(const FileInfo &fileInfo) const
-{
-  QString fileName = m_targetPath + '/' + fileInfo.name;
-  QFile file(fileName);
-
-  if (!file.exists())
-    return false;
-
-  if (file.size() != fileInfo.size)
-    return false;
-
-  QCryptographicHash hash(QCryptographicHash::Md5);
-  QByteArray result;
-
-  if(!file.open(QIODevice::ReadOnly))
-    return false;
-
-  hash.addData(file.readAll());
-  result = hash.result();
-
-  if (result.toHex() != fileInfo.md5)
-    return false;
-
-  return true;
 }
 
 
 /*!
  * Формирование списка файлов необходимых для установки обновления.
+ *
+ * Функция заполняет список \a m_files, если список будет пустым, пытаемся
+ * скачать следующий xml файл и выходим из функции.
+ *
+ * Список файлов также записывается в настройки "Updates/Files".
+ * В конце выполняется проверка скачанных файлов checkLocalFiles().
  */
 void Update::checkFiles()
 {
-  qDebug() << "Update::checkFiles()";
-
   QMultiMap<int, FileInfo> map = m_reader.files();
   QStringList files;
-  qint64 size = 0;
   m_files.clear();
 
   foreach (VersionInfo ver, m_version) {
@@ -194,49 +163,27 @@ void Update::checkFiles()
   }
 
   if (m_files.isEmpty()) {
-    m_settings->notify(Settings::UpdateError);
+    execute();
     return;
   }
 
   m_settings->setList("Updates/Files", files);
 
   checkLocalFiles();
-//  if (!urls.isEmpty()) {
-//    if (m_downloadAll) {
-//      m_state = GettingUpdates;
-//      m_download->append(urls);
-//    }
-//    else
-//      m_settings->notify(Settings::UpdateAvailable);
-//  }
-//  else
-//    m_settings->notify(Settings::UpdateReady);
-
-  foreach (FileInfo file, m_files)
-    qDebug() << "check" << file.size << file.level << file.type << file.name << file.md5;
-
-  qDebug() << "size:" << size;
 }
 
 
+/*!
+ * Проверка локальных файлов.
+ * Наличие, размер, контрольная сумма.
+ *
+ * Проверка запускается в отдельном потоке, результатом будет вызов слота checkLocalFilesDone(const QStringList &urls, qint64 size)
+ * Поток самостоятельно удалит себя при завершении.
+ */
 void Update::checkLocalFiles()
 {
-  qDebug() << "Update::checkLocalFiles()";
-//
-//  QStringList out;
-//  qint64 size = 0;
   QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
-//
-//  foreach (FileInfo file, m_files) {
-//    if (!verifyFile(file)) {
-//      out << (url + file.name);
-//      size += file.size;
-//    }
-//  }
-//
-//  m_settings->setInt("Updates/DownloadSize", size);
 
-//  return out;
   VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url, this);
   connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
   thread->start();

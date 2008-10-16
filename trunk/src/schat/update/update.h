@@ -28,10 +28,13 @@
 class DownloadManager;
 class Settings;
 
-static const QString DefaultUpdateXmlUrl = "http://192.168.5.1/schat/updates/update.xml";
-
 /*!
- * \brief Базовый класс для получения обновлений.
+ * \brief Класс предназначен для проверки наличия новых версий и скачивания обновлений.
+ *
+ * Класс поддерживает скачивание xml файла обновления с нескольких источников, анализ
+ * это файла, формирование списка файлов и их скачивание, а также проверку целостности скачанных файлов.
+ *
+ * Для уведомлений класс использует механизм \a notify объекта Settings.
  */
 class Update : public QObject {
   Q_OBJECT
@@ -55,7 +58,6 @@ private slots:
   void downloadFinished();
 
 private:
-  bool verifyFile(const FileInfo &fileInfo) const;
   void checkFiles();
   void checkLocalFiles();
   void checkVersion();

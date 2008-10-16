@@ -20,21 +20,24 @@
 
 #include "verifythread.h"
 
+/*!
+ * Конструктор класса VerifyThread.
+ *
+ * \param files      Список файлов которые необходимо проверить.
+ * \param targetPath Папка в которой находятся файлы.
+ * \param url        Адрес файлов, исключая имя файла.
+ * \param parent     Указатель на родительский объект.
+ */
 VerifyThread::VerifyThread(const QList<FileInfo> &files, const QString &targetPath, const QString &url, QObject *parent)
   : QThread(parent), m_files(files), m_targetPath(targetPath), m_url(url)
 {
-  qDebug() << "VerifyThread::VerifyThread()";
-
   connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
 
 
-VerifyThread::~VerifyThread()
-{
-  qDebug() << "VerifyThread::~VerifyThread()";
-}
-
-
+/*!
+ * Основной метод потока.
+ */
 void VerifyThread::run()
 {
   QStringList out;
@@ -48,8 +51,6 @@ void VerifyThread::run()
   }
 
   emit finished(out, size);
-//  exit();
-////  deleteLater();
 }
 
 /*!
