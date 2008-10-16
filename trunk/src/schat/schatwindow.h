@@ -99,17 +99,13 @@ private slots:
   void privateMessage(quint8 flag, const QString &nick, const QString &message);
   void sendMsg(const QString &message);
   void serverMessage(const QString &msg);
-  void showSettings();
   void settingsChanged(int notify);
+  void showSettings();
+  void startMe();
   void stopNotice(int index);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();
-
-  #ifndef SCHAT_NO_UPDATE
-    void update();
-    void updateGetDone(int code);
-  #endif
 
 private:
   bool eventFilter(QObject *object, QEvent *event);

@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "trayicon.h"
+#include "settings.h"
 
 /*!
  * \brief Конструктор класса TrayIcon.
@@ -72,6 +73,19 @@ void TrayIcon::notice(bool enable)
 }
 
 
+void TrayIcon::notify(int code)
+{
+  switch (code) {
+    case Settings::UpdateReady:
+      updateReady();
+      break;
+
+    default:
+      break;
+  }
+}
+
+
 /*!
  * Обработка события таймера \a m_timer.
  * Изменяет иконку на противоположную.
@@ -92,10 +106,29 @@ void TrayIcon::timeout()
  */
 void TrayIcon::init()
 {
+  m_settings = settings;
   setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(QApplication::applicationVersion()));
   m_normal = true;
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);
   m_timer->setInterval(800);
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
+}
+
+
+/*!
+ * Уведомление о готовности к установке обновлений.
+ *
+ * \todo SCHAT_NO_UPDATE
+ */
+void TrayIcon::updateReady()
+{
+  m_message = UpdateReady;
+  QString version = m_settings->getString("Updates/LastVersion");
+  showMessage(
+      tr("Доступно обновление до версии %1").arg(version),
+      tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
+      QSystemTrayIcon::Information,
+      60000);
 }

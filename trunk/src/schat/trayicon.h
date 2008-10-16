@@ -22,6 +22,7 @@
 #include <QSystemTrayIcon>
 
 class QTimer;
+class Settings;
 
 /*!
  * \brief Иконка в системном трее.
@@ -30,20 +31,29 @@ class TrayIcon : public QSystemTrayIcon {
   Q_OBJECT
 
 public:
+  enum Message {
+    UpdateReady
+  };
+
   TrayIcon(QObject *parent = 0);
+  inline Message message() const { return m_message; }
   TrayIcon(const QIcon &icon, QObject *parent = 0);
   void notice(bool enable);
 
 private slots:
+  void notify(int code);
   void timeout();
 
 private:
   void init();
+  void updateReady();
 
   bool m_normal;
+  Message m_message;
   QIcon m_icon;
   QIcon m_noticeIcon;
   QTimer *m_timer;
+  Settings *m_settings;
 };
 
 #endif /* TRAYICON_H_ */
