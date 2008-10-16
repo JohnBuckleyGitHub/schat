@@ -24,13 +24,15 @@
 
 #include "updatexmlreader.h"
 
+/*!
+ * \brief Поток выполняющий проверку скачанных файлов.
+ */
 class VerifyThread : public QThread
 {
   Q_OBJECT
 
 public:
   VerifyThread(const QList<FileInfo> &files, const QString &targetPath, const QString &url, QObject *parent = 0);
-  ~VerifyThread();
 
 signals:
   void finished(const QStringList &urls, qint64 size);
