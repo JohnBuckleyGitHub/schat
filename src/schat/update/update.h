@@ -51,12 +51,13 @@ public slots:
   void execute();
 
 private slots:
+  void checkLocalFilesDone(const QStringList &urls, qint64 size);
   void downloadFinished();
 
 private:
   bool verifyFile(const FileInfo &fileInfo) const;
-  QStringList checkLocalFiles();
   void checkFiles();
+  void checkLocalFiles();
   void checkVersion();
 
   bool m_downloadAll;
