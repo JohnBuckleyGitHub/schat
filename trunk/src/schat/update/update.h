@@ -44,40 +44,28 @@ public:
   };
 
   Update(QObject *parent = 0);
-
-signals:
-  void error();
-  void finished();
-  void updateAvailable(bool available);
+  inline bool downloadAll() const   { return m_downloadAll; }
+  inline void downloadAll(bool get) { m_downloadAll = get; }
 
 public slots:
   void execute();
 
 private slots:
-  void downloadError();
   void downloadFinished();
-  void saved(const QString &filename);
 
 private:
-  bool createQueue(const QString &filename);
   bool verifyFile(const FileInfo &fileInfo) const;
-  inline bool verifyFile() { return verifyFile(currentFile); };
   QStringList checkLocalFiles();
   void checkFiles();
   void checkVersion();
-  void downloadNext();
-  void error(int err);
-  void writeSettings(bool err = false) const;
 
+  bool m_downloadAll;
   DownloadManager *m_download;
-  FileInfo currentFile;
   QList<FileInfo> m_files;
   QList<VersionInfo> m_version;
-  QQueue<FileInfo> m_queue;
   QQueue<QUrl> m_mirrors;
   QString m_appPath;
   QString m_targetPath;
-  QString m_urlPath;
   QUrl m_xmlUrl;
   Settings *m_settings;
   State m_state;

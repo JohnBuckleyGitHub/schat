@@ -54,7 +54,11 @@ public:
     ServerChanged,
     UpdateSettingsChanged,
     EmoticonsChanged,
-    ByeMsgChanged
+    ByeMsgChanged,
+    UpdateError,
+    UpdateAvailable,
+    UpdateNoAvailable,
+    UpdateReady
   };
 
   Settings(const QString &filename, QObject *parent = 0);

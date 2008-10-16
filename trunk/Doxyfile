@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "IMPOMEZIA Simple Chat"
-PROJECT_NUMBER         = 0.1.0
+PROJECT_NUMBER         = 0.4.0
 OUTPUT_DIRECTORY       = doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = Russian
@@ -87,8 +87,7 @@ INPUT                  = doc \
                          src/common \
                          src/schat \
                          src/schatd \
-                         src/schatd-ui \
-                         src/update
+                         src/schatd-ui
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \
                          *.h \
