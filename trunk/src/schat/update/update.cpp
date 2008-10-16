@@ -20,8 +20,9 @@
 #include <QtCore>
 
 #include "downloadmanager.h"
-#include "update.h"
 #include "settings.h"
+#include "update.h"
+#include "verifythread.h"
 
 /*!
  * Конструктор класса Update.
@@ -71,6 +72,33 @@ void Update::execute()
 }
 
 
+void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
+{
+  qDebug() << "Update::checkLocalFilesDone()";
+
+  m_settings->setInt("Updates/DownloadSize", size);
+
+  if (m_state == GettingUpdateXml) {
+    if (!urls.isEmpty()) {
+      if (m_downloadAll) {
+        m_state = GettingUpdates;
+        m_download->append(urls);
+      }
+      else
+        m_settings->notify(Settings::UpdateAvailable);
+    }
+    else
+      m_settings->notify(Settings::UpdateReady);
+  }
+  else {
+    if (urls.isEmpty())
+      m_settings->notify(Settings::UpdateReady);
+    else
+      execute();
+  }
+}
+
+
 /*!
  * Уведомление об успешном скачивании очереди файлов.
  *
@@ -98,11 +126,11 @@ void Update::downloadFinished()
       execute();
   }
   else if (m_state == GettingUpdates) {
-    QStringList urls = checkLocalFiles();
-    if (urls.isEmpty())
-      m_settings->notify(Settings::UpdateReady);
-    else
-      execute();
+    checkLocalFiles();
+//    if (urls.isEmpty())
+//      m_settings->notify(Settings::UpdateReady);
+//    else
+//      execute();
   }
 }
 
@@ -142,27 +170,6 @@ bool Update::verifyFile(const FileInfo &fileInfo) const
 }
 
 
-QStringList Update::checkLocalFiles()
-{
-  qDebug() << "Update::checkLocalFiles()";
-
-  QStringList out;
-  qint64 size = 0;
-  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
-
-  foreach (FileInfo file, m_files) {
-    if (!verifyFile(file)) {
-      out << (url + file.name);
-      size += file.size;
-    }
-  }
-
-  m_settings->setInt("Updates/DownloadSize", size);
-
-  return out;
-}
-
-
 /*!
  * Формирование списка файлов необходимых для установки обновления.
  */
@@ -193,22 +200,46 @@ void Update::checkFiles()
 
   m_settings->setList("Updates/Files", files);
 
-  QStringList urls = checkLocalFiles();
-  if (!urls.isEmpty()) {
-    if (m_downloadAll) {
-      m_state = GettingUpdates;
-      m_download->append(urls);
-    }
-    else
-      m_settings->notify(Settings::UpdateAvailable);
-  }
-  else
-    m_settings->notify(Settings::UpdateReady);
+  checkLocalFiles();
+//  if (!urls.isEmpty()) {
+//    if (m_downloadAll) {
+//      m_state = GettingUpdates;
+//      m_download->append(urls);
+//    }
+//    else
+//      m_settings->notify(Settings::UpdateAvailable);
+//  }
+//  else
+//    m_settings->notify(Settings::UpdateReady);
 
   foreach (FileInfo file, m_files)
     qDebug() << "check" << file.size << file.level << file.type << file.name << file.md5;
 
   qDebug() << "size:" << size;
+}
+
+
+void Update::checkLocalFiles()
+{
+  qDebug() << "Update::checkLocalFiles()";
+//
+//  QStringList out;
+//  qint64 size = 0;
+  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
+//
+//  foreach (FileInfo file, m_files) {
+//    if (!verifyFile(file)) {
+//      out << (url + file.name);
+//      size += file.size;
+//    }
+//  }
+//
+//  m_settings->setInt("Updates/DownloadSize", size);
+
+//  return out;
+  VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url, this);
+  connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
+  thread->start();
 }
 
 

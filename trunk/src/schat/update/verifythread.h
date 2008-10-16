@@ -22,20 +22,28 @@
 #include <QMutex>
 #include <QThread>
 
+#include "updatexmlreader.h"
+
 class VerifyThread : public QThread
 {
   Q_OBJECT
 
 public:
-  VerifyThread(QObject *parent = 0);
-  void stop();
+  VerifyThread(const QList<FileInfo> &files, const QString &targetPath, const QString &url, QObject *parent = 0);
+  ~VerifyThread();
+
+signals:
+  void finished(const QStringList &urls, qint64 size);
 
 protected:
   void run();
 
 private:
-  bool m_stopped;
-  QMutex m_mutex;
+  bool verifyFile(const FileInfo &fileInfo) const;
+
+  QList<FileInfo> m_files;
+  QString m_targetPath;
+  QString m_url;
 };
 
 #endif /* VERIFYTHREAD_H_ */

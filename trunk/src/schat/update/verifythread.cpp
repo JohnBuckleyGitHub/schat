@@ -20,30 +20,68 @@
 
 #include "verifythread.h"
 
-VerifyThread::VerifyThread(QObject *parent)
+VerifyThread::VerifyThread(const QList<FileInfo> &files, const QString &targetPath, const QString &url, QObject *parent)
+  : QThread(parent), m_files(files), m_targetPath(targetPath), m_url(url)
 {
-  m_stopped = false;
+  qDebug() << "VerifyThread::VerifyThread()";
+
+  connect(this, SIGNAL(finished()), SLOT(deleteLater()));
+}
+
+
+VerifyThread::~VerifyThread()
+{
+  qDebug() << "VerifyThread::~VerifyThread()";
 }
 
 
 void VerifyThread::run()
 {
-  forever {
-    m_mutex.lock();
-    if (m_stopped) {
-      m_stopped = false;
-      m_mutex.unlock();
-      break;
-    }
-    m_mutex.unlock();
+  QStringList out;
+  qint64 size = 0;
 
+  foreach (FileInfo file, m_files) {
+    if (!verifyFile(file)) {
+      out << (m_url + file.name);
+      size += file.size;
+    }
   }
+
+  emit finished(out, size);
+//  exit();
+////  deleteLater();
 }
 
-
-void VerifyThread::stop()
+/*!
+ * Проверка локального файла.
+ * Наличие, размер, контрольная сумма.
+ * \todo Эта функция для проверки md5 суммы загружает файл целиком в память, это не оптимально.
+ *
+ * \param fileInfo Структура содержащая информацию о файле.
+ * \return \a true в случае успешной проверки файла, иначе \a false;
+ */
+bool VerifyThread::verifyFile(const FileInfo &fileInfo) const
 {
-  m_mutex.lock();
-  m_stopped = true;
-  m_mutex.unlock();
+  QString fileName = m_targetPath + '/' + fileInfo.name;
+  QFile file(fileName);
+
+  if (!file.exists())
+    return false;
+
+  if (file.size() != fileInfo.size)
+    return false;
+
+  QCryptographicHash hash(QCryptographicHash::Md5);
+  QByteArray result;
+
+  if(!file.open(QIODevice::ReadOnly))
+    return false;
+
+  hash.addData(file.readAll());
+  result = hash.result();
+
+  if (result.toHex() != fileInfo.md5)
+    return false;
+
+  return true;
 }
