@@ -184,7 +184,7 @@ void Update::checkLocalFiles()
 {
   QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
 
-  VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url, this);
+  VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url);
   connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
   thread->start();
 }
