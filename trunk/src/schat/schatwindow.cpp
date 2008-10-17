@@ -40,7 +40,7 @@ QMap<QString, QString> SChatWindow::m_cmds;
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  m_settings    = settings;
+  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", this);
   m_profile     = m_settings->profile();
   m_settings->read();
 
@@ -265,13 +265,18 @@ void SChatWindow::addTab(const QString &nick)
 
 /*!
  * Завершение работы программы.
+ *
+ * \todo SCHAT_NO_UPDATE
  */
-void SChatWindow::closeChat()
+void SChatWindow::closeChat(bool update)
 {
   m_clientService->quit();
-
   saveGeometry();
   m_settings->write();
+
+  if (update)
+    Settings::install();
+
   qApp->quit();
 }
 
@@ -374,10 +379,8 @@ void SChatWindow::message(const QString &sender, const QString &message)
  */
 void SChatWindow::messageClicked()
 {
-  if (m_tray->message() == TrayIcon::UpdateReady) {
-    connect(qApp, SIGNAL(aboutToQuit()), SLOT(startMe()));
-    closeChat();
-  }
+  if (m_tray->message() == TrayIcon::UpdateReady)
+    closeChat(true);
 }
 
 
@@ -584,19 +587,6 @@ void SChatWindow::showSettings()
     m_settingsDialog->setPage(action->data().toInt());
 
   m_settingsDialog->activateWindow();
-}
-
-
-/*!
- * Запуск собственной копии.
- * Этот слот вызывается при завершении работы программы и только при согласии
- * пользователя на немедленную установку обновления.
- *
- * \todo SCHAT_NO_UPDATE
- */
-void SChatWindow::startMe()
-{
-  QProcess::startDetached('"' + qApp->applicationFilePath() + '"');
 }
 
 
