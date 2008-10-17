@@ -201,7 +201,7 @@ void Update::checkLocalFiles()
  */
 void Update::checkVersion()
 {
-  int levelQt   = m_settings->getInt("Updates/QtLevel");
+  int levelQt   = m_settings->getInt("Updates/LevelQt");
   int levelCore = m_settings->getInt("Updates/LevelCore");
   QList<VersionInfo> versions = m_reader.version();
   m_version.clear();

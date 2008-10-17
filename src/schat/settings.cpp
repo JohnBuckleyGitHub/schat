@@ -67,6 +67,42 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
 }
 
 
+/*!
+ * Запуск обновления.
+ *
+ * \todo SCHAT_NO_UPDATE
+ */
+bool Settings::install()
+{
+  QString appPath = qApp->applicationDirPath();
+
+  QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
+  s.beginGroup("Updates");
+
+  if (s.value("ReadyToInstall", false).toBool()) {
+    QStringList files = s.value("Files", QStringList()).toStringList();
+    if (files.size() == 1)
+      if (files.at(0) == "empty")
+        files.clear();
+
+    if (files.isEmpty() || !QFile::exists(appPath + "/uninstall.exe"))
+      return false;
+
+    QStringList args;
+    args << "-update" << "-run";
+    if (s.value("AutoClean", true).toBool())
+      args << "-clean";
+
+    s.setValue("ReadyToInstall", false);
+
+    QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
+    return true;
+  }
+
+  return false;
+}
+
+
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
 {
   QList<QStandardItem *> items;

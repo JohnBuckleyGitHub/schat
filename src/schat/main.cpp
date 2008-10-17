@@ -32,20 +32,17 @@
   #include "singleapplication.h"
 #endif
 
-bool install();
-
 int main(int argc, char *argv[])
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
   QApplication app(argc, argv);
-  QString      appPath = app.applicationDirPath();
-  Settings     appSettings(appPath + "/schat.conf");
 
-  if (install())
+  if (Settings::install())
     return 0;
 
+  QString appPath = app.applicationDirPath();
   app.setApplicationName(SCHAT_NAME);
   app.setApplicationVersion(SCHAT_VERSION);
   app.setOrganizationName(SCHAT_ORGANIZATION);
@@ -95,35 +92,4 @@ int main(int argc, char *argv[])
   #endif
 
   return app.exec();
-}
-
-
-bool install()
-{
-  QString appPath       = qApp->applicationDirPath();
-
-  QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
-  s.beginGroup("Updates");
-
-  if (s.value("ReadyToInstall", false).toBool()) {
-    QStringList files = s.value("Files", QStringList()).toStringList();
-    if (files.size() == 1)
-      if (files.at(0) == "empty")
-        files.clear();
-
-    if (files.isEmpty() || !QFile::exists(appPath + "/uninstall.exe"))
-      return false;
-
-    QStringList args;
-    args << "-update" << "-run";
-    if (s.value("AutoClean", true).toBool())
-      args << "-clean";
-
-    s.setValue("ReadyToInstall", false);
-
-    QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
-    return true;
-  }
-
-  return false;
 }

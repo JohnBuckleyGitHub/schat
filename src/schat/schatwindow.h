@@ -83,7 +83,7 @@ private slots:
   void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
   void addTab(const QString &nick);
-  void closeChat();
+  void closeChat(bool update = false);
   void closeTab(int tab = -1);
   void connecting(const QString &server, bool network);
   void copy();
@@ -101,7 +101,6 @@ private slots:
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
-  void startMe();
   void stopNotice(int index);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);

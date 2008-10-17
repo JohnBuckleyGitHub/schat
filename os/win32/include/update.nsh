@@ -48,6 +48,9 @@ Var files
     ${un.WordFind} "$files" ", " "#" $0
     
     Banner::show /NOUNLOAD /set 76 "${SCHAT_NAME}" "Processing Update..."
+    
+    Sleep 1000
+    
     ${If} $files == $0 ; один файл
       !insertmacro UPDATE_ENGINE_EXEC $files
     ${Else}
