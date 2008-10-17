@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright � 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright � 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,11 +39,6 @@ Var files
     
     !insertmacro UPDATE_ENGINE_CMDOPTION $run   "-run"
     !insertmacro UPDATE_ENGINE_CMDOPTION $clean "-clean"
-    
-    ReadIniStr $R0 "$INSTDIR\schat.conf" "Updates" "ReadyToInstall"
-    ${If} $R0 != true
-      !insertmacro UPDATE_ENGINE_FAIL
-    ${EndIf}
     
     ReadIniStr $files "$INSTDIR\schat.conf" "Updates" "Files"
     ${If} $files == ""
