@@ -100,25 +100,29 @@ int main(int argc, char *argv[])
 
 bool install()
 {
-  QString appPath = qApp->applicationDirPath();
+  QString appPath       = qApp->applicationDirPath();
+
   QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
   s.beginGroup("Updates");
 
   if (s.value("ReadyToInstall", false).toBool()) {
-    int qtLevel   = s.value("LastDownloadedQtLevel", 0).toInt();
-    int coreLevel = s.value("LastDownloadedCoreLevel", 0).toInt();
+    QStringList files = s.value("Files", QStringList()).toStringList();
+    if (files.size() == 1)
+      if (files.at(0) == "empty")
+        files.clear();
 
-    if (qtLevel <= UpdateLevelQt && coreLevel <= UpdateLevelCore)
+    if (files.isEmpty() || !QFile::exists(appPath + "/uninstall.exe"))
       return false;
-    else if (QFile::exists(appPath + "/uninstall.exe")) {
-      QStringList args;
-      args << "-update" << "-run";
-      if (s.value("AutoClean", true).toBool())
-        args << "-clean";
 
-      QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
-      return true;
-    }
+    QStringList args;
+    args << "-update" << "-run";
+    if (s.value("AutoClean", true).toBool())
+      args << "-clean";
+
+    s.setValue("ReadyToInstall", false);
+
+    QProcess::startDetached('"' + appPath + "/uninstall.exe\"", args, appPath);
+    return true;
   }
 
   return false;

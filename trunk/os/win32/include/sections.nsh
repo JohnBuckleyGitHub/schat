@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ Section "$(STR1000)" SecCore
   SectionIn RO
 
   File "..\..\out\release\schat.exe"
-  File "..\..\out\release\update.exe"
 
   !ifdef VC90
     File "contrib\Microsoft.VC90.CRT.manifest"
