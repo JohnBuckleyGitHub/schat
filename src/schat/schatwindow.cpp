@@ -124,7 +124,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 
   #ifndef SCHAT_NO_UPDATE
-    QTimer::singleShot(0, m_settings, SLOT(update()));
+    QTimer::singleShot(0, m_settings, SLOT(updatesCheck()));
   #endif
 }
 
