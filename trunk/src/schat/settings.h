@@ -87,11 +87,13 @@ signals:
   void networksModelIndexChanged(int index);
 
 public slots:
-  void update();
+  inline void updatesCheck() { update(); }
+  inline void updatesGet()   { update(true); }
 
 private:
   void createServerList();
   void saveRecentServers();
+  void update(bool get = false);
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;

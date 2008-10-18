@@ -275,15 +275,6 @@ void Settings::write()
 }
 
 
-void Settings::update()
-{
-  if (!m_update) {
-    m_update = new Update(this);
-    m_update->execute();
-  }
-}
-
-
 /*!
  * Создаёт список сетей и одиночных серверов.
  */
@@ -334,4 +325,22 @@ void Settings::saveRecentServers()
   }
 
   setList("RecentServers", list);
+}
+
+
+/*!
+ * Запуск проверки обновлений.
+ *
+ * \param get \a true Форсированное скачивание обновлений.
+ */
+void Settings::update(bool get)
+{
+  if (!m_update) {
+    m_update = new Update(this);
+
+    if (get)
+      m_update->downloadAll(get);
+
+    m_update->execute();
+  }
 }

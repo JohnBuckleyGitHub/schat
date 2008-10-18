@@ -30,10 +30,6 @@
 #include "clientservice.h"
 #include "settingsdialog.h"
 
-#ifndef SCHAT_NO_UPDATE
-  #include "win32/updatenotify.h"
-#endif
-
 class AboutDialog;
 class AbstractProfile;
 class AbstractTab;
@@ -156,7 +152,6 @@ private:
 
   #ifndef SCHAT_NO_UPDATE
     QAction *updateSetAction;
-    QPointer<UpdateNotify> m_updateNotify;
   #endif
 };
 

@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE    = 1
+SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 1
 SCHAT_RESOURCES  = 1
@@ -95,8 +95,6 @@ SOURCES += \
     widget/userview.cpp \
 
 win32 {
-    HEADERS += win32/updatenotify.h
-    SOURCES += win32/updatenotify.cpp
     DEFINES += SCHAT_UPDATE
 }
 else {
