@@ -68,6 +68,7 @@ void Update::execute()
   m_files.clear();
   m_state  = GettingUpdateXml;
   m_xmlUrl = m_mirrors.dequeue();
+  m_download->clear();
   m_download->append(m_xmlUrl);
 }
 
