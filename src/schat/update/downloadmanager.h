@@ -38,10 +38,10 @@ class DownloadManager: public QObject
 
 public:
   DownloadManager(const QString &targetPath, QObject *parent = 0);
-
-  void append(const QUrl &url);
-  void append(const QStringList &urlList);
+  inline void clear() { m_downloadQueue.clear(); }
   static QString saveFileName(const QUrl &url);
+  void append(const QStringList &urlList);
+  void append(const QUrl &url);
 
 signals:
   void error();
