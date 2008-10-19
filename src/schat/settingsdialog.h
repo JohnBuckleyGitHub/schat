@@ -198,6 +198,8 @@ public slots:
 private:
   QCheckBox *m_autoClean;
   QCheckBox *m_autoDownload;
+  QCheckBox *m_checkOnStartup;
+  QComboBox *m_factor;
   QSpinBox *m_interval;
   Settings *m_settings;
 };

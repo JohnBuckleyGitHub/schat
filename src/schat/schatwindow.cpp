@@ -866,9 +866,9 @@ void SChatWindow::createActions()
   m_profileSetAction->setData(SettingsDialog::ProfilePage);
   connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
-  // Обновления...
+  // Обновление...
   #ifndef SCHAT_NO_UPDATE
-  updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновления..."), this);
+  updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
   updateSetAction->setData(SettingsDialog::UpdatePage);
   connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
   #endif

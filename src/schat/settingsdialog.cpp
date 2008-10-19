@@ -46,7 +46,7 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
 
   #ifndef SCHAT_NO_UPDATE
     m_updatePage = new UpdateSettings(this);
-    createPage(QIcon(":/images/update.png"), tr("Обновления"), m_updatePage);
+    createPage(QIcon(":/images/update.png"), tr("Обновление"), m_updatePage);
   #endif
 
   connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
@@ -342,33 +342,56 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::UpdatePage, parent)
 {
   m_settings = settings;
-  m_autoDownload = new QCheckBox(tr("Автоматически загружать обновления"), this);
-  m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
-  m_autoDownload->setEnabled(false);
 
-  m_autoClean = new QCheckBox(tr("Удалять обновления после установки"), this);
-  m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
+  // Уведомление о новых версиях.
+  QGroupBox *versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
+  versionGroup->setCheckable(true);
 
-  QLabel *interval = new QLabel(tr("Интервал проверки обновлений:"), this);
-  QHBoxLayout *intervalLayout = new QHBoxLayout;
+  m_checkOnStartup = new QCheckBox(tr("Проверять при &запуске"), this);
+  m_checkOnStartup->setToolTip(tr("Проверять обновления при запуске программы"));
+
+  QLabel *interval = new QLabel(tr("&Интервал проверки:"), this);
+  interval->setToolTip(tr("Временной интервал для периодической проверки\nобновлений"));
+  QHBoxLayout *intervalLay = new QHBoxLayout;
 
   m_interval = new QSpinBox(this);
   m_interval->setValue(m_settings->getInt("Updates/CheckInterval"));
   m_interval->setRange(5, 1440);
-  m_interval->setSuffix(tr(" мин"));
+  interval->setBuddy(interval);
 
-  QGroupBox *styleGroupBox = new QGroupBox(tr("Автоматические обновления"), this);
-  QVBoxLayout *styleGroupLayout = new QVBoxLayout(styleGroupBox);
-  styleGroupLayout->addWidget(m_autoDownload);
-  styleGroupLayout->addWidget(m_autoClean);
-  intervalLayout->addWidget(interval);
-  intervalLayout->addWidget(m_interval);
-  intervalLayout->addStretch();
-  styleGroupLayout->addLayout(intervalLayout);
+  m_factor = new QComboBox(this);
+  m_factor->addItem(tr("Минуты"));
+  m_factor->addItem(tr("Часы"));
+  m_factor->addItem(tr("Сутки"));
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(styleGroupBox);
-  mainLayout->addStretch();
+  intervalLay->addWidget(interval);
+  intervalLay->addWidget(m_interval);
+  intervalLay->addWidget(m_factor);
+  intervalLay->addStretch();
+
+  QVBoxLayout *versionLay = new QVBoxLayout(versionGroup);
+  versionLay->addWidget(m_checkOnStartup);
+  versionLay->addLayout(intervalLay);
+
+  // Автоматическое обновление
+  QGroupBox *updateGroup = new QGroupBox(tr("&Автоматическое обновление"), this);
+
+  m_autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
+  m_autoDownload->setToolTip(tr("Автоматически загружать обновления"));
+  m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
+
+  m_autoClean = new QCheckBox(tr("&Удалять после установки"), this);
+  m_autoClean->setToolTip(tr("Удалять обновления после установки"));
+  m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
+
+  QVBoxLayout *updateLay = new QVBoxLayout(updateGroup);
+  updateLay->addWidget(m_autoDownload);
+  updateLay->addWidget(m_autoClean);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(versionGroup);
+  mainLay->addWidget(updateGroup);
+  mainLay->addStretch();
 }
 
 
