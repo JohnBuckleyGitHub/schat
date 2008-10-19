@@ -66,86 +66,95 @@ ChatBrowser::ChatBrowser(QWidget *parent)
 void ChatBrowser::msg(const QString &text)
 {
   m_channelLog->msg(text); /// \todo Необходимо удалять ссылки со схемой \b nick.
-  append(tr("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
+  append(QString("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
   scroll();
 }
 
 
 QString ChatBrowser::msgAccessDenied(quint16 reason)
 {
-  return tr("<i class='err'>При подключении произошла критическая ошибка с кодом: <b>%1</b></i>").arg(reason);
+  return "<i class='err'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</i>";
 }
 
 
 QString ChatBrowser::msgBadNickName(const QString &nick)
 {
-  return tr("<i class='err'>Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой</i>").arg(Qt::escape(nick));
+  return "<i class='err'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(nick)) + "</i>";
 }
 
 
 QString ChatBrowser::msgChangedNick(quint16 sex, const QString &oldNick, const QString &newNick)
 {
+  QString nick    = Qt::escape(oldNick);
   QString nickHex = newNick.toUtf8().toHex();
+  QString nickNew = Qt::escape(newNick);
+  QString out = "<i class='info'>";
 
   if (sex)
-    return tr("<i class='info'><b>%1</b> теперь известна как <b><a href='nick:%2' class='info'>%3</a></b></i>").arg(Qt::escape(oldNick)).arg(nickHex).arg(Qt::escape(newNick));
+    out += tr("<b>%1</b> теперь известна как <b><a href='nick:%2' class='info'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
   else
-    return tr("<i class='info'><b>%1</b> теперь известен как <b><a href='nick:%2' class='info'>%3</a></b></i>").arg(Qt::escape(oldNick)).arg(nickHex).arg(Qt::escape(newNick));
+    out += tr("<b>%1</b> теперь известен как <b><a href='nick:%2' class='info'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
+
+  out += "</i>";
+  return out;
 }
 
 
 QString ChatBrowser::msgDisconnect()
 {
-  return tr("<i class='err'>Соединение разорвано</i>");
+  return "<i class='err'>" + tr("Соединение разорвано") + "</i>";
 }
 
 
 QString ChatBrowser::msgLinkLeave(const QString &network, const QString &name)
 {
-  return tr("<i class='gr'>Сервер <b>%1</b> отключился от сети <b>%2</b></i>").arg(name).arg(network);
+  return "<i class='gr'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(name).arg(network) + "</i>";
 }
 
 
 QString ChatBrowser::msgNewLink(const QString &network, const QString &name)
 {
-  return tr("<i class='gr'>Сервер <b>%1</b> подключился к сети <b>%2</b></i>").arg(name).arg(network);
+  return "<i class='gr'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(name).arg(network) + "</i>";
 }
-
-
 
 
 QString ChatBrowser::msgNewUser(quint8 sex, const QString &nick)
 {
+  QString escaped = Qt::escape(nick);
   QString nickHex = nick.toUtf8().toHex();
+  QString out = "<i class='gr'>";
 
   if (sex)
-    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> зашла в чат</i>").arg(nickHex).arg(Qt::escape(nick));
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> зашла в чат").arg(nickHex).arg(escaped);
   else
-    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> зашёл в чат</i>").arg(nickHex).arg(Qt::escape(nick));
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> зашёл в чат").arg(nickHex).arg(escaped);
+
+  out += "</i>";
+  return out;
 }
 
 
 QString ChatBrowser::msgOldClientProtocol()
 {
-  return tr("<span class='err'>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.</span>");
+  return "<span class='err'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>";
 }
 
 
 QString ChatBrowser::msgOldServerProtocol()
 {
-  return tr("<span class='err'>Сервер использует устаревшую версию протокола, подключение не возможно.</span>");
+  return "<span class='err'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>";
 }
 
 
 QString ChatBrowser::msgReadyForUse(const QString &addr)
 {
-  return tr("<i class='green'>Успешно подключены к серверу %1</i>").arg(addr);
+  return "<i class='green'>" + tr("Успешно подключены к серверу %1").arg(addr) + "</i>";
 }
 
 
 QString ChatBrowser::msgReadyForUse(const QString &network, const QString &addr)
 {
-  return tr("<i class='green'>Успешно подключены к сети <b>%1</b> (%2)</i>").arg(network).arg(addr);
+  return "<i class='green'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(network).arg(addr) + "</i>";
 }
 
 
@@ -157,20 +166,25 @@ QString ChatBrowser::msgUnknownCmd(const QString &command)
 
 QString ChatBrowser::msgUserLeft(quint8 sex, const QString &nick, const QString &bye)
 {
+  QString escaped = Qt::escape(nick);
   QString nickHex = nick.toUtf8().toHex();
+  QString out = "<i class='gr'>";
 
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (sex)
-    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> вышла из чата%3</i>").arg(nickHex).arg(Qt::escape(nick)).arg(byeMsg);
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
   else
-    return tr("<i class='gr'><b><a href='nick:%1' class='gr'>%2</a></b> вышел из чата%3</i>").arg(nickHex).arg(Qt::escape(nick)).arg(byeMsg);
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+
+  out += "</i>";
+  return out;
 }
 
 
-/** [public]
+/*!
  * Принудительно скролит текст
  */
 void ChatBrowser::scroll()

@@ -38,7 +38,7 @@ WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
   m_profileWidget = new ProfileWidget(profile, this);
   m_askCheckBox = new QCheckBox(tr("Больше не показывать это окно"), this);
   m_okButton    = new QPushButton(QIcon(":/images/ok.png"), tr("ОК"), this);
-  m_moreButton  = new QPushButton(QIcon(":/images/down.png"), tr(""), this);
+  m_moreButton  = new QPushButton(QIcon(":/images/down.png"), "", this);
   m_moreButton->setCheckable(true);
   m_networkWidget = new NetworkWidget(this);
   m_networkWidget->setVisible(false);
@@ -74,7 +74,7 @@ WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
   connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(m_profileWidget, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
 
-  setWindowTitle(tr("Simple Chat - Выбор ника"));
+  setWindowTitle(tr("%1 - Выбор ника").arg(QApplication::applicationName()));
 }
 
 

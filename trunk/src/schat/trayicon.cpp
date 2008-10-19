@@ -107,7 +107,7 @@ void TrayIcon::timeout()
 void TrayIcon::init()
 {
   m_settings = settings;
-  setToolTip(tr("IMPOMEZIA Simple Chat %1").arg(QApplication::applicationVersion()));
+  setToolTip(QApplication::applicationName() + " " + QApplication::applicationVersion());
   m_normal = true;
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);
