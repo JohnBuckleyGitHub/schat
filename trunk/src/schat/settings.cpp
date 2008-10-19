@@ -220,7 +220,7 @@ void Settings::read()
     setBool("Updates/AutoDownload", true);
     setString("Updates/LastVersion", QApplication::applicationVersion());
 
-    setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/updates/update2.xml"); /// \todo Адрес должен быть в интернете.
+    setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
   #endif
 
   if (m_default)
