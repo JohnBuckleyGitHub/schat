@@ -16,6 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QtGui>
 
 #include "aboutdialog.h"
@@ -30,35 +31,35 @@ AboutDialog::AboutDialog(QWidget *parent)
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
   m_tabWidget = new QTabWidget(this);
-  m_tabWidget->addTab(new MainTab(this), tr("О Программе"));
-  m_tabWidget->addTab(new MembersTab(this), tr("Участники"));
-  m_tabWidget->addTab(new ChangeLogTab(this), tr("История версий"));
-  m_tabWidget->addTab(new LicenseTab(this), tr("Лицензия"));
+  m_tabWidget->addTab(new AboutMain(this),      tr("О Программе"));
+  m_tabWidget->addTab(new AboutMembers(this),   tr("Участники"));
+  m_tabWidget->addTab(new AboutChangeLog(this), tr("История версий"));
+  m_tabWidget->addTab(new AboutLicense(this),   tr("Лицензия"));
 
   m_closeButton = new QPushButton(tr("Закрыть"), this);
   m_closeButton->setDefault(true);
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
-  QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->addStretch();
-  buttonLayout->addWidget(m_closeButton);
+  QHBoxLayout *buttonLay = new QHBoxLayout;
+  buttonLay->addStretch();
+  buttonLay->addWidget(m_closeButton);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(m_tabWidget);
-  mainLayout->addLayout(buttonLayout);
-  mainLayout->setMargin(3);
-  mainLayout->setSpacing(3);
-  setLayout(mainLayout);
+  QVBoxLayout *mainLay = new QVBoxLayout;
+  mainLay->addWidget(m_tabWidget);
+  mainLay->addLayout(buttonLay);
+  mainLay->setMargin(3);
+  mainLay->setSpacing(3);
+  setLayout(mainLay);
 
   setWindowTitle(tr("О Программе"));
 }
 
 
 /*!
- * \brief Конструктор класса MainTab.
+ * \brief Конструктор класса AboutMain.
  */
-MainTab::MainTab(QWidget *parent)
+AboutMain::AboutMain(QWidget *parent)
   : QWidget(parent)
 {
   QLabel *nameLabel = new QLabel(QString("<h2>%1 %2</h2>").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()), this);
@@ -69,9 +70,12 @@ MainTab::MainTab(QWidget *parent)
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
   QLabel *copyrightLabel = new QLabel("Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.", this);
-  QLabel *homeLabel = new QLabel(QString("<b><a href='http://impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>").arg(tr("Официальный сайт")), this);
+  QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
+      .arg(qApp->organizationDomain())
+      .arg(tr("Официальный сайт")), this);
+
   homeLabel->setOpenExternalLinks(true);
-  homeLabel->setToolTip(tr("Посетить сайт программы"));
+  homeLabel->setToolTip("http://" + qApp->organizationDomain());
   QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b>").arg(tr("Эта программа использует библиотеку:")).arg(qVersion()), this);
 
   QVBoxLayout *infoLay = new QVBoxLayout;
@@ -113,53 +117,55 @@ MainTab::MainTab(QWidget *parent)
 
 
 /*!
- * \brief Конструктор класса MembersTab.
+ * \brief Конструктор класса AboutMembers.
  */
-MembersTab::MembersTab(QWidget *parent)
+AboutMembers::AboutMembers(QWidget *parent)
   : QWidget(parent)
 {
-  QTextBrowser *textBrowser = new QTextBrowser(this);
-  textBrowser->setOpenExternalLinks(true);
-  textBrowser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
+  QTextBrowser *browser = new QTextBrowser(this);
+  browser->setOpenExternalLinks(true);
+  browser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
 
-  QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  mainLayout->addWidget(textBrowser);
-  mainLayout->setMargin(0);
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(browser);
+  mainLay->setMargin(0);
 }
 
 
 /*!
- * \brief Конструктор класса ChangeLogTab.
+ * \brief Конструктор класса AboutChangeLog.
  */
-ChangeLogTab::ChangeLogTab(QWidget *parent)
+AboutChangeLog::AboutChangeLog(QWidget *parent)
   : QWidget(parent)
 {
-  QTextBrowser *textBrowser = new QTextBrowser(this);
-  textBrowser->setOpenExternalLinks(true);
+  QTextBrowser *browser = new QTextBrowser(this);
+  browser->setOpenExternalLinks(true);
 
   QString file = qApp->applicationDirPath() + "/doc/ChangeLog.html";
   if (QFile::exists(file)) {
-    textBrowser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
-    textBrowser->setSource(QUrl("ChangeLog.html"));
+    browser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
+    browser->setSource(QUrl("ChangeLog.html"));
   }
   else
-    textBrowser->setText(tr("<h3 style='color:#da251d;'>ОШИБКА</h3>"
-                            "<p style='color:#da251d;'>Файл <b>%1</b> не найден!</p>").arg(file));
+    browser->setText(QString("<h3 style='color:#da251d;'>%1</h3>"
+                            "<p style='color:#da251d;'>%2</p>")
+                            .arg(tr("ОШИБКА"))
+                            .arg(tr("Файл <b>%1</b> не найден!").arg(file)));
 
-  QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  mainLayout->addWidget(textBrowser);
-  mainLayout->setMargin(0);
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(browser);
+  mainLay->setMargin(0);
 }
 
 
 /*!
- * \brief Конструктор класса LicenseTab.
+ * \brief Конструктор класса AboutLicense.
  */
-LicenseTab::LicenseTab(QWidget *parent)
+AboutLicense::AboutLicense(QWidget *parent)
   : QWidget(parent)
 {
-  QTextBrowser *textBrowser = new QTextBrowser(this);
-  textBrowser->setText(tr(
+  QTextBrowser *browser = new QTextBrowser(this);
+  browser->setText(QString(
       "<p style='color:#333;'><b>%1 %2</b><br />"
       "<i>Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
@@ -176,9 +182,9 @@ LicenseTab::LicenseTab(QWidget *parent)
   .arg(QApplication::applicationName())
   .arg(QApplication::applicationVersion()));
 
-  textBrowser->setOpenExternalLinks(true);
+  browser->setOpenExternalLinks(true);
 
-  QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  mainLayout->addWidget(textBrowser);
-  mainLayout->setMargin(0);
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(browser);
+  mainLay->setMargin(0);
 }
