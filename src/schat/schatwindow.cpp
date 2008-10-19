@@ -79,7 +79,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_statusBar->addWidget(m_statusLabel, 1);
   m_statusLabel->setText(tr("Не подключено"));
 
-  setWindowTitle(tr("IMPOMEZIA Simple Chat"));
+  setWindowTitle(QApplication::applicationName());
 
   m_tabs->setElideMode(Qt::ElideRight);
 
@@ -227,8 +227,8 @@ void SChatWindow::accessDenied(quint16 reason)
 }
 
 
-/** [private slots]
- * Слот вызывается кода `m_clientService` получает пакет с опкодом `OpcodeAccessGranted`,
+/*!
+ * Слот вызывается кода \a m_clientService получает пакет с опкодом \a OpcodeAccessGranted,
  * что означает успешное подключение к серверу/сети.
  */
 void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
@@ -236,12 +236,12 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
   if (network.isEmpty()) {
     m_main->msg(ChatBrowser::msgReadyForUse(server));
     m_statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
-    setWindowTitle(tr("IMPOMEZIA Simple Chat"));
+    setWindowTitle(QApplication::applicationName());
   }
   else {
     m_main->msg(ChatBrowser::msgReadyForUse(network, server));
     m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
-    setWindowTitle(tr("IMPOMEZIA Simple Chat - %1").arg(network));
+    setWindowTitle(QApplication::applicationName() + " - " + network);
   }
 }
 

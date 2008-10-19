@@ -42,8 +42,7 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   m_port = new QSpinBox(this);
   m_port->setRange(1024, 65536);
   m_port->setValue(7666);
-  m_port->setToolTip(tr("<div style='white-space:nowrap;'>Порт сервера, по умолчанию <b>7666</b><br />"
-      "<i>Доступно только при подключении к одиночному серверу</i>.</div>"));
+  m_port->setToolTip(tr("Порт сервера, по умолчанию 7666\nДоступно только при подключении к одиночному серверу"));
   m_port->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
   m_portLabel = new QLabel(tr("&Порт:"), this);
