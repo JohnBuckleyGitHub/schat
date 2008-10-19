@@ -45,48 +45,48 @@ private:
 /*!
  * \brief Диалог "О Программе", Главная страница
  */
-class MainTab : public QWidget
+class AboutMain : public QWidget
 {
   Q_OBJECT
 
 public:
-  MainTab(QWidget *parent = 0);
+  AboutMain(QWidget *parent = 0);
 };
 
 
 /*!
  * \brief Диалог "О Программе", Страница участников.
  */
-class MembersTab : public QWidget
+class AboutMembers : public QWidget
 {
   Q_OBJECT
 
 public:
-  MembersTab(QWidget *parent = 0);
+  AboutMembers(QWidget *parent = 0);
 };
 
 
 /*!
  * \brief Диалог "О Программе", Страница истории версий.
  */
-class ChangeLogTab : public QWidget
+class AboutChangeLog : public QWidget
 {
   Q_OBJECT
 
 public:
-  ChangeLogTab(QWidget *parent = 0);
+  AboutChangeLog(QWidget *parent = 0);
 };
 
 
 /*!
  * \brief Диалог "О Программе", Лицензия.
  */
-class LicenseTab : public QWidget
+class AboutLicense : public QWidget
 {
   Q_OBJECT
 
 public:
-  LicenseTab(QWidget *parent = 0);
+  AboutLicense(QWidget *parent = 0);
 };
 
 #endif /*ABOUTDIALOG_H_*/
