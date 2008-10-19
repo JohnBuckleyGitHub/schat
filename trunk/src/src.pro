@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 IMPOMEZIA (http://impomezia.com)
+# Copyright (c) 2008 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,25 +15,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE    = 0
-SCHAT_DEBUG      = 0
-SCHAT_SINGLE_APP = 0
-SCHAT_RESOURCES  = 0
-SCHAT_RC_FILE    = 1
-
-QT += network
-TEMPLATE = app
-
-HEADERS += \
-    download.h \
-    update.h \
-    updatexmlreader.h \
-    version.h \
-
-SOURCES += \
-    download.cpp \
-    main.cpp \
-    update.cpp \
-    updatexmlreader.cpp \
-
-include(../common/common.pri)
+TEMPLATE      = subdirs
+SUBDIRS       = \
+    schatd \
+    3rdparty \
+    schat \
+    schatd-ui
