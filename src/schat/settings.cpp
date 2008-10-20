@@ -34,6 +34,7 @@ Settings::Settings(const QString &filename, QObject *parent)
   : AbstractSettings(filename, parent)
 {
   m_profile = new AbstractProfile(this);
+  m_updateTimer = new QTimer(this);
 
   QString defaultConf = qApp->applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
@@ -164,6 +165,16 @@ void Settings::notify(int notify)
       setBool("Updates/ReadyToInstall", readyToInstall);
       break;
 
+    case UpdateSettingsChanged:
+      if (getBool("Updates/Enable")) {
+        m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
+        if (!m_updateTimer->isActive())
+          m_updateTimer->start();
+      }
+      else if (m_updateTimer->isActive())
+        m_updateTimer->stop();
+      break;
+
     default:
       break;
   }
@@ -205,30 +216,23 @@ void Settings::read()
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
 
-  #ifndef SCHAT_NO_UPDATE
-    int interval = m_settings->value("Updates/CheckInterval", 60).toInt(); /// \todo Не учитывается default.conf
-    if (interval < 5)
-      interval = 5;
-    else if (interval > 1440)
-      interval = 1440;
-
-    setBool("Updates/Enable",         true);
-    setBool("Updates/CheckOnStartup", true);
-    setInt("Updates/CheckInterval",   interval);
-    setInt("Updates/LevelQt",         UpdateLevelQt);
-    setInt("Updates/LevelCore",       UpdateLevelCore);
-    setInt("Updates/DownloadSize",    0);
-    setBool("Updates/AutoClean",      true);
-    setBool("Updates/AutoDownload",   false);
-    setString("Updates/LastVersion",  QApplication::applicationVersion());
-
-    setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
-  #endif
+  setBool("Updates/Enable",         true);
+  setBool("Updates/CheckOnStartup", true);
+  setInt("Updates/CheckInterval",   60);
+  setInt("Updates/LevelQt",         UpdateLevelQt);
+  setInt("Updates/LevelCore",       UpdateLevelCore);
+  setInt("Updates/DownloadSize",    0);
+  setBool("Updates/AutoClean",      true);
+  setBool("Updates/AutoDownload",   false);
+  setString("Updates/LastVersion",  QApplication::applicationVersion());
+  setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
 
   if (m_default)
     AbstractSettings::read(m_default);
 
   AbstractSettings::read();
+
+  normalizeInterval();
 
   qApp->setStyle(getString("Style"));
 
@@ -243,6 +247,10 @@ void Settings::read()
   m_settings->endGroup();
 
   createEmoticonsMap();
+
+  m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
+  m_updateTimer->start();
+  connect(m_updateTimer, SIGNAL(timeout()), SLOT(updatesCheck()));
 }
 
 
@@ -309,6 +317,22 @@ void Settings::createServerList()
         networksModel.appendRow(item);
       }
     }
+}
+
+
+/*!
+ * Приводит значение "Updates/CheckInterval" к допустимым пределам.
+ */
+void Settings::normalizeInterval()
+{
+  int interval = getInt("Updates/CheckInterval");
+
+  if (interval < 5)
+    interval = 5;
+  else if (interval > 1440)
+    interval = 1440;
+
+  setInt("Updates/CheckInterval", interval);
 }
 
 

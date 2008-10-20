@@ -92,6 +92,7 @@ public slots:
 
 private:
   void createServerList();
+  void normalizeInterval();
   void saveRecentServers();
   void update(bool get = false);
 
@@ -99,9 +100,10 @@ private:
   QByteArray m_splitter;
   QMap<QString, QStringList> m_emoticons;
   QPoint m_pos;
+  QPointer<Update> m_update;
   QSettings *m_default;
   QSize m_size;
-  QPointer<Update> m_update;
+  QTimer *m_updateTimer;
 };
 
 #endif /*SETTINGS_H_*/

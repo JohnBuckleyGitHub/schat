@@ -84,13 +84,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_tabs->setElideMode(Qt::ElideRight);
 
   restoreGeometry();
-
-  #ifndef SCHAT_NO_UPDATE
-    m_updateTimer = new QTimer(this);
-    m_updateTimer->setInterval(m_settings->getInt("Updates/CheckInterval") * 60 * 1000);
-    connect(m_updateTimer, SIGNAL(timeout()), SLOT(update()));
-  #endif
-
   createActions();
   createCornerWidgets();
   createToolButtons();
@@ -123,9 +116,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 
-  #ifndef SCHAT_NO_UPDATE
+  if (m_settings->getBool("Updates/Enable") && m_settings->getBool("Updates/CheckOnStartup"))
     QTimer::singleShot(0, m_settings, SLOT(updatesCheck()));
-  #endif
 }
 
 
