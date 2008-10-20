@@ -39,8 +39,10 @@ int main(int argc, char *argv[])
 
   QApplication app(argc, argv);
 
-  if (Settings::install())
-    return 0;
+  #ifndef SCHAT_NO_UPDATE
+    if (Settings::install())
+      return 0;
+  #endif
 
   QString appPath = app.applicationDirPath();
   app.setApplicationName(SCHAT_NAME);

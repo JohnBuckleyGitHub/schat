@@ -35,20 +35,6 @@ TrayIcon::TrayIcon(QObject *parent)
 
 
 /*!
- * Возвращает строку, содержащую удобный для человека размер файлов.
- */
-QString TrayIcon::bytesToHuman(int size)
-{
-  if (size < 1024)
-    return tr("%n Байт", "", size);
-  else if (size < 1048576)
-    return tr("%1 Кб").arg((int) size / 1024);
-  else
-    return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
-}
-
-
-/*!
  * \brief Конструктор класса TrayIcon.
  */
 TrayIcon::TrayIcon(const QIcon &icon, QObject *parent)
@@ -93,20 +79,26 @@ void TrayIcon::notice(bool enable)
 void TrayIcon::messageClicked()
 {
   if (m_message == TrayIcon::UpdateAvailable)
-    m_settings->updatesGet();
+    #ifndef SCHAT_NO_UPDATE
+      m_settings->updatesGet();
+    #else
+      QDesktopServices::openUrl(QUrl("http://impomezia.com"));
+    #endif
 }
 
 
 void TrayIcon::notify(int code)
 {
   switch (code) {
-    case Settings::UpdateReady:
-      updateReady();
-      break;
-
     case Settings::UpdateAvailable:
       updateAvailable();
       break;
+
+    #ifndef SCHAT_NO_UPDATE
+    case Settings::UpdateReady:
+      updateReady();
+      break;
+    #endif
 
     default:
       break;
@@ -159,12 +151,21 @@ void TrayIcon::updateAvailable()
   QString version = m_settings->getString("Updates/LastVersion");
 
   if (last.isEmpty() || last != version) {
+
+    #ifndef SCHAT_NO_UPDATE
     showMessage(
         tr("Доступно обновление до версии %1").arg(version),
         tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
            "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
         QSystemTrayIcon::Information,
         60000);
+    #else
+    showMessage(
+            tr("Доступна новая версия %1").arg(version),
+            tr("Щёлкните здесь для того чтобы перейти на страницу загрузки"),
+            QSystemTrayIcon::Information,
+            60000);
+    #endif
 
     last = version;
   }
@@ -172,10 +173,25 @@ void TrayIcon::updateAvailable()
 
 
 /*!
- * Уведомление о готовности к установке обновлений.
- *
- * \todo SCHAT_NO_UPDATE
+ * Возвращает строку, содержащую удобный для человека размер файлов.
  */
+#ifndef SCHAT_NO_UPDATE
+QString TrayIcon::bytesToHuman(int size)
+{
+  if (size < 1024)
+    return tr("%n Байт", "", size);
+  else if (size < 1048576)
+    return tr("%1 Кб").arg((int) size / 1024);
+  else
+    return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
+}
+#endif
+
+
+/*!
+ * Уведомление о готовности к установке обновлений.
+ */
+#ifndef SCHAT_NO_UPDATE
 void TrayIcon::updateReady()
 {
   m_message = UpdateReady;
@@ -186,3 +202,4 @@ void TrayIcon::updateReady()
       QSystemTrayIcon::Information,
       60000);
 }
+#endif

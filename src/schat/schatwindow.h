@@ -87,7 +87,6 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void linkLeave(quint8 numeric, const QString &network, const QString &name);
   void message(const QString &sender, const QString &message);
-  void messageClicked();
   void newLink(quint8 numeric, const QString &network, const QString &name);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
@@ -101,6 +100,10 @@ private slots:
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();
+
+  #ifndef SCHAT_NO_UPDATE
+    void messageClicked();
+  #endif
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
@@ -129,6 +132,7 @@ private:
   QAction *m_networkSetAction;
   QAction *m_profileSetAction;
   QAction *m_quitAction;
+  QAction *updateSetAction;
   QHBoxLayout *m_toolsLay;
   QLabel *m_statusLabel;
   QMenu *m_trayMenu;
@@ -148,10 +152,6 @@ private:
   TrayIcon *m_tray;
   UserView *m_users;
   WelcomeDialog *m_welcome;
-
-  #ifndef SCHAT_NO_UPDATE
-    QAction *updateSetAction;
-  #endif
 };
 
 #endif /*SCHATWINDOW_H_*/

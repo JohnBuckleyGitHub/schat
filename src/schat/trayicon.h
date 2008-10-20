@@ -38,7 +38,6 @@ public:
 
   TrayIcon(QObject *parent = 0);
   inline Message message() const { return m_message; }
-  static QString bytesToHuman(int size);
   TrayIcon(const QIcon &icon, QObject *parent = 0);
   void notice(bool enable);
 
@@ -50,7 +49,11 @@ private slots:
 private:
   void init();
   void updateAvailable();
-  void updateReady();
+
+  #ifndef SCHAT_NO_UPDATE
+    static QString bytesToHuman(int size);
+    void updateReady();
+  #endif
 
   bool m_normal;
   Message m_message;

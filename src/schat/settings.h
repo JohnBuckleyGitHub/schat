@@ -71,13 +71,16 @@ public:
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
   QList<Emoticons> emoticons(const QString &text) const;
-  static bool install();
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
   void createEmoticonsMap();
   void notify(int notify);
   void notify(int notify, int index);
   void read();
   void write();
+
+  #ifndef SCHAT_NO_UPDATE
+    static bool install();
+  #endif
 
   Network network;
   QStandardItemModel networksModel;

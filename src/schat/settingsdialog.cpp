@@ -38,16 +38,13 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   m_networkPage    = new NetworkSettings(this);
   m_interfacePage  = new InterfaceSettings(this);
   m_emoticonsPage  = new EmoticonsSettings(this);
+  m_updatePage     = new UpdateSettings(this);
 
   createPage(QIcon(":/images/profile.png"), tr("Личные данные"), m_profilePage);
   createPage(QIcon(":/images/network.png"), tr("Сеть"), m_networkPage);
   createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_interfacePage);
   createPage(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_emoticonsPage);
-
-  #ifndef SCHAT_NO_UPDATE
-    m_updatePage = new UpdateSettings(this);
-    createPage(QIcon(":/images/update.png"), tr("Обновление"), m_updatePage);
-  #endif
+  createPage(QIcon(":/images/update.png"), tr("Обновление"), m_updatePage);
 
   connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
   connect(m_networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
@@ -375,27 +372,31 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   versionLay->addLayout(intervalLay);
 
   // Автоматическое обновление
-  QGroupBox *updateGroup = new QGroupBox(tr("&Автоматическое обновление"), this);
+  #ifndef SCHAT_NO_UPDATE
+    QGroupBox *updateGroup = new QGroupBox(tr("&Автоматическое обновление"), this);
 
-  m_autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
-  m_autoDownload->setToolTip(tr("Автоматически загружать обновления"));
-  m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
+    m_autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
+    m_autoDownload->setToolTip(tr("Автоматически загружать обновления"));
+    m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
 
-  m_autoClean = new QCheckBox(tr("&Удалять после установки"), this);
-  m_autoClean->setToolTip(tr("Удалять обновления после установки"));
-  m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
+    m_autoClean = new QCheckBox(tr("&Удалять после установки"), this);
+    m_autoClean->setToolTip(tr("Удалять обновления после установки"));
+    m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
 
-  QVBoxLayout *updateLay = new QVBoxLayout(updateGroup);
-  updateLay->addWidget(m_autoDownload);
-  updateLay->addWidget(m_autoClean);
+    QVBoxLayout *updateLay = new QVBoxLayout(updateGroup);
+    updateLay->addWidget(m_autoDownload);
+    updateLay->addWidget(m_autoClean);
+
+    connect(m_versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
+    updateGroup->setEnabled(m_versionGroup->isChecked());
+  #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_versionGroup);
-  mainLay->addWidget(updateGroup);
+  #ifndef SCHAT_NO_UPDATE
+    mainLay->addWidget(updateGroup);
+  #endif
   mainLay->addStretch();
-
-  connect(m_versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
-  updateGroup->setEnabled(m_versionGroup->isChecked());
 }
 
 
