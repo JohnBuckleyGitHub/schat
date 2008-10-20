@@ -36,10 +36,7 @@ class QGroupBox;
 class QLineEdit;
 class QSpinBox;
 class Settings;
-
-#ifndef SCHAT_NO_UPDATE
 class UpdateSettings;
-#endif
 
 
 /*!
@@ -70,10 +67,7 @@ private:
   NetworkSettings *m_networkPage;
   ProfileSettings *m_profilePage;
   Settings *m_settings;
-
-  #ifndef SCHAT_NO_UPDATE
-    UpdateSettings *m_updatePage;
-  #endif
+  UpdateSettings *m_updatePage;
 };
 
 
@@ -183,7 +177,6 @@ private:
  * \class UpdateSettings
  * \brief Диалог "Настройка", страница "Обновления".
  */
-#ifndef SCHAT_NO_UPDATE
 class UpdateSettings : public AbstractSettingsPage
 {
   Q_OBJECT
@@ -209,6 +202,5 @@ private:
   QSpinBox *m_interval;
   Settings *m_settings;
 };
-#endif
 
 #endif /*SETTINGSDIALOG_H_*/

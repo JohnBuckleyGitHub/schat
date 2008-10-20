@@ -96,8 +96,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
-  connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+
+  #ifndef SCHAT_NO_UPDATE
+    connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
+  #endif
 
   m_main = new MainChannel(QIcon(":/images/main.png"), this);
   connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
@@ -257,17 +260,21 @@ void SChatWindow::addTab(const QString &nick)
 
 /*!
  * Завершение работы программы.
- *
- * \todo SCHAT_NO_UPDATE
  */
+#ifndef SCHAT_NO_UPDATE
 void SChatWindow::closeChat(bool update)
+#else
+void SChatWindow::closeChat(bool)
+#endif
 {
   m_clientService->quit();
   saveGeometry();
   m_settings->write();
 
-  if (update)
-    Settings::install();
+  #ifndef SCHAT_NO_UPDATE
+    if (update)
+      Settings::install();
+  #endif
 
   qApp->quit();
 }
@@ -363,16 +370,6 @@ void SChatWindow::message(const QString &sender, const QString &message)
   startNotice(0);
 
   m_main->msgNewMessage(sender, message);
-}
-
-
-/*!
- * Обработка щелчка мыши по сообщению в трее.
- */
-void SChatWindow::messageClicked()
-{
-  if (m_tray->message() == TrayIcon::UpdateReady)
-    closeChat(true);
 }
 
 
@@ -685,6 +682,18 @@ void SChatWindow::welcomeOk()
 }
 
 
+/*!
+ * Обработка щелчка мыши по сообщению в трее.
+ */
+#ifndef SCHAT_NO_UPDATE
+void SChatWindow::messageClicked()
+{
+  if (m_tray->message() == TrayIcon::UpdateReady)
+    closeChat(true);
+}
+#endif
+
+
 bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 {
   if (m_tabs == object) {
@@ -859,11 +868,9 @@ void SChatWindow::createActions()
   connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновление...
-  #ifndef SCHAT_NO_UPDATE
   updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
   updateSetAction->setData(SettingsDialog::UpdatePage);
   connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-  #endif
 
   // Выход из программы
   m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
@@ -921,10 +928,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(m_networkSetAction);
   iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
-
-  #ifndef SCHAT_NO_UPDATE
   iconMenu->addAction(updateSetAction);
-  #endif
 
   // Настройка
   m_settingsButton = new QToolButton(this);
