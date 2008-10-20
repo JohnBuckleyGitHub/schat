@@ -81,6 +81,10 @@ int main(int argc, char *argv[])
   qtTranslator.load("qt_ru", ":/translations");
   app.installTranslator(&qtTranslator);
 
+  QTranslator schatTranslator;
+  schatTranslator.load("schat_ru", ":/translations");
+  app.installTranslator(&schatTranslator);
+
   SChatWindow window;
   if (arguments.contains("-hide"))
     window.hide();

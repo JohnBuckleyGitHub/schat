@@ -337,11 +337,11 @@ bool EmoticonsSettings::createThemeList()
 /*!
  * \brief Конструктор класса UpdateSettings.
  */
-#ifndef SCHAT_NO_UPDATE
 UpdateSettings::UpdateSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::UpdatePage, parent)
 {
   m_settings = settings;
+  m_last = -1;
 
   // Уведомление о новых версиях.
   QGroupBox *versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
@@ -355,14 +355,13 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   QHBoxLayout *intervalLay = new QHBoxLayout;
 
   m_interval = new QSpinBox(this);
-  m_interval->setValue(m_settings->getInt("Updates/CheckInterval"));
-  m_interval->setRange(5, 1440);
+  m_interval->setRange(0, 60);
+  connect(m_interval, SIGNAL(valueChanged(int)), SLOT(intervalChanged(int)));
   interval->setBuddy(interval);
 
   m_factor = new QComboBox(this);
-  m_factor->addItem(tr("Минуты"));
-  m_factor->addItem(tr("Часы"));
-  m_factor->addItem(tr("Сутки"));
+  intervalChanged(m_settings->getInt("Updates/CheckInterval"));
+  connect(m_factor, SIGNAL(activated(int)), SLOT(factorChanged(int)));
 
   intervalLay->addWidget(interval);
   intervalLay->addWidget(m_interval);
@@ -395,29 +394,79 @@ UpdateSettings::UpdateSettings(QWidget *parent)
 }
 
 
-/** [UpdateSettings/public]
- *
- */
 void UpdateSettings::reset(int page)
 {
   if (page == m_id) {
     m_autoDownload->setChecked(true);
     m_autoClean->setChecked(true);
-    m_interval->setValue(60);
+    m_interval->setValue(m_factor->currentIndex() ? 1 : 60);
   }
 }
 
 
-
-
-/** [UpdateSettings/public]
- * Сохраняем настройки
- */
 void UpdateSettings::save()
 {
   m_settings->setBool("Updates/AutoDownload", m_autoDownload->isChecked());
   m_settings->setBool("Updates/AutoClean", m_autoClean->isChecked());
-  m_settings->setInt("Updates/CheckInterval", m_interval->value());
+  m_settings->setInt("Updates/CheckInterval", m_factor->currentIndex() ? m_interval->value() * 60 : m_interval->value());
   m_settings->notify(Settings::UpdateSettingsChanged);
 }
-#endif
+
+
+/*!
+ * Изменение отсчёта времени (минуты/часы).
+ */
+void UpdateSettings::factorChanged(int index)
+{
+  if (m_last != index)
+    if (index)
+      m_interval->setValue(1);
+    else
+      m_interval->setValue(59);
+
+  m_last = index;
+}
+
+
+/*!
+ * Обработка изменения значения в \a m_interval.
+ */
+void UpdateSettings::intervalChanged(int i)
+{
+  int value = i;
+  int index = 0;
+
+  if (m_factor->count() == 0) {
+    if (value > 59) {
+      value /= 60;
+      index = 1;
+    }
+  }
+  else {
+    index = m_factor->currentIndex();
+
+    if (index == 0 && value == 60) {
+      value = 1;
+      index = 1;
+    }
+    else if (index == 1 && value == 0) {
+      value = 59;
+      index = 0;
+    }
+    else if (index == 0 && value < 5)
+      value = 5;
+    else if (index == 1 && value > 24)
+      value = 24;
+  }
+
+  QString minute = tr("%n Минуты", "", value);
+  QString hour   = tr("%n Часы", "", value);
+
+  m_factor->clear();
+  m_factor->addItem(minute);
+  m_factor->addItem(hour);
+  m_factor->setCurrentIndex(index);
+  m_last = index;
+
+  m_interval->setValue(value);
+}
