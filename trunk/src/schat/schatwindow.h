@@ -137,7 +137,6 @@ private:
   QSplitter *m_splitter;
   QStatusBar *m_statusBar;
   QTabWidget *m_tabs;
-  QTimer *m_updateTimer;
   QToolButton *m_settingsButton;
   QVBoxLayout *m_mainLay;
   QVBoxLayout *m_rightLay;
