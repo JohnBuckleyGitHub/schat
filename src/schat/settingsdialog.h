@@ -195,7 +195,12 @@ public slots:
   void reset(int page);
   void save();
 
+private slots:
+  void factorChanged(int index);
+  void intervalChanged(int i);
+
 private:
+  int m_last;
   QCheckBox *m_autoClean;
   QCheckBox *m_autoDownload;
   QCheckBox *m_checkOnStartup;
