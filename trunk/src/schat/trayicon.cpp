@@ -87,6 +87,16 @@ void TrayIcon::notice(bool enable)
 }
 
 
+/*!
+ * Обработка щелчка мыши по сообщению в трее.
+ */
+void TrayIcon::messageClicked()
+{
+  if (m_message == TrayIcon::UpdateAvailable)
+    m_settings->updatesGet();
+}
+
+
 void TrayIcon::notify(int code)
 {
   switch (code) {
@@ -132,6 +142,7 @@ void TrayIcon::init()
   m_timer->setInterval(800);
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
+  connect(this, SIGNAL(messageClicked()), SLOT(messageClicked()));
 }
 
 
@@ -142,14 +153,21 @@ void TrayIcon::init()
  */
 void TrayIcon::updateAvailable()
 {
-  qDebug() << "TrayIcon::updateAvailable()";
   m_message = UpdateAvailable;
-  showMessage(
-        tr("Доступно обновление до версии %1").arg(m_settings->getString("Updates/LastVersion")),
+  static QString last;
+
+  QString version = m_settings->getString("Updates/LastVersion");
+
+  if (last.isEmpty() || last != version) {
+    showMessage(
+        tr("Доступно обновление до версии %1").arg(version),
         tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
            "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
         QSystemTrayIcon::Information,
         60000);
+
+    last = version;
+  }
 }
 
 

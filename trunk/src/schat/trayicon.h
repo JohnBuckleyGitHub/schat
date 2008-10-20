@@ -43,6 +43,7 @@ public:
   void notice(bool enable);
 
 private slots:
+  void messageClicked();
   void notify(int code);
   void timeout();
 
