@@ -35,6 +35,20 @@ TrayIcon::TrayIcon(QObject *parent)
 
 
 /*!
+ * Возвращает строку, содержащую удобный для человека размер файлов.
+ */
+QString TrayIcon::bytesToHuman(int size)
+{
+  if (size < 1024)
+    return tr("%n Байт", "", size);
+  else if (size < 1048576)
+    return tr("%1 Кб").arg((int) size / 1024);
+  else
+    return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
+}
+
+
+/*!
  * \brief Конструктор класса TrayIcon.
  */
 TrayIcon::TrayIcon(const QIcon &icon, QObject *parent)
@@ -80,6 +94,10 @@ void TrayIcon::notify(int code)
       updateReady();
       break;
 
+    case Settings::UpdateAvailable:
+      updateAvailable();
+      break;
+
     default:
       break;
   }
@@ -118,6 +136,24 @@ void TrayIcon::init()
 
 
 /*!
+ * Уведомление о доступности новой версии.
+ *
+ * \todo SCHAT_NO_UPDATE
+ */
+void TrayIcon::updateAvailable()
+{
+  qDebug() << "TrayIcon::updateAvailable()";
+  m_message = UpdateAvailable;
+  showMessage(
+        tr("Доступно обновление до версии %1").arg(m_settings->getString("Updates/LastVersion")),
+        tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
+           "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
+        QSystemTrayIcon::Information,
+        60000);
+}
+
+
+/*!
  * Уведомление о готовности к установке обновлений.
  *
  * \todo SCHAT_NO_UPDATE
@@ -127,7 +163,7 @@ void TrayIcon::updateReady()
   m_message = UpdateReady;
   QString version = m_settings->getString("Updates/LastVersion");
   showMessage(
-      tr("Доступно обновление до версии %1").arg(version),
+      tr("Всё готово к установке версии %1").arg(version),
       tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
       QSystemTrayIcon::Information,
       60000);

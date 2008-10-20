@@ -32,11 +32,13 @@ class TrayIcon : public QSystemTrayIcon {
 
 public:
   enum Message {
-    UpdateReady
+    UpdateReady,
+    UpdateAvailable
   };
 
   TrayIcon(QObject *parent = 0);
   inline Message message() const { return m_message; }
+  static QString bytesToHuman(int size);
   TrayIcon(const QIcon &icon, QObject *parent = 0);
   void notice(bool enable);
 
@@ -46,6 +48,7 @@ private slots:
 
 private:
   void init();
+  void updateAvailable();
   void updateReady();
 
   bool m_normal;
