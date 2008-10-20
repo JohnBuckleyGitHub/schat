@@ -212,13 +212,15 @@ void Settings::read()
     else if (interval > 1440)
       interval = 1440;
 
-    setInt("Updates/CheckInterval", interval);
-    setInt("Updates/LevelQt", UpdateLevelQt);
-    setInt("Updates/LevelCore", UpdateLevelCore);
-    setInt("Updates/DownloadSize", 0);
-    setBool("Updates/AutoClean", true);
-    setBool("Updates/AutoDownload", true);
-    setString("Updates/LastVersion", QApplication::applicationVersion());
+    setBool("Updates/Enable",         true);
+    setBool("Updates/CheckOnStartup", true);
+    setInt("Updates/CheckInterval",   interval);
+    setInt("Updates/LevelQt",         UpdateLevelQt);
+    setInt("Updates/LevelCore",       UpdateLevelCore);
+    setInt("Updates/DownloadSize",    0);
+    setBool("Updates/AutoClean",      true);
+    setBool("Updates/AutoDownload",   false);
+    setString("Updates/LastVersion",  QApplication::applicationVersion());
 
     setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
   #endif

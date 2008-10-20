@@ -344,11 +344,13 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   m_last = -1;
 
   // Уведомление о новых версиях.
-  QGroupBox *versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
-  versionGroup->setCheckable(true);
+  m_versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
+  m_versionGroup->setCheckable(true);
+  m_versionGroup->setChecked(m_settings->getBool("Updates/Enable"));
 
   m_checkOnStartup = new QCheckBox(tr("Проверять при &запуске"), this);
   m_checkOnStartup->setToolTip(tr("Проверять обновления при запуске программы"));
+  m_checkOnStartup->setChecked(m_settings->getBool("Updates/CheckOnStartup"));
 
   QLabel *interval = new QLabel(tr("&Интервал проверки:"), this);
   interval->setToolTip(tr("Временной интервал для периодической проверки\nобновлений"));
@@ -368,7 +370,7 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   intervalLay->addWidget(m_factor);
   intervalLay->addStretch();
 
-  QVBoxLayout *versionLay = new QVBoxLayout(versionGroup);
+  QVBoxLayout *versionLay = new QVBoxLayout(m_versionGroup);
   versionLay->addWidget(m_checkOnStartup);
   versionLay->addLayout(intervalLay);
 
@@ -388,16 +390,21 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   updateLay->addWidget(m_autoClean);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(versionGroup);
+  mainLay->addWidget(m_versionGroup);
   mainLay->addWidget(updateGroup);
   mainLay->addStretch();
+
+  connect(m_versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
+  updateGroup->setEnabled(m_versionGroup->isChecked());
 }
 
 
 void UpdateSettings::reset(int page)
 {
   if (page == m_id) {
-    m_autoDownload->setChecked(true);
+    m_versionGroup->setChecked(true);
+    m_checkOnStartup->setChecked(true);
+    m_autoDownload->setChecked(false);
     m_autoClean->setChecked(true);
     m_interval->setValue(m_factor->currentIndex() ? 1 : 60);
   }
@@ -406,9 +413,11 @@ void UpdateSettings::reset(int page)
 
 void UpdateSettings::save()
 {
-  m_settings->setBool("Updates/AutoDownload", m_autoDownload->isChecked());
-  m_settings->setBool("Updates/AutoClean", m_autoClean->isChecked());
-  m_settings->setInt("Updates/CheckInterval", m_factor->currentIndex() ? m_interval->value() * 60 : m_interval->value());
+  m_settings->setBool("Updates/Enable",         m_versionGroup->isChecked());
+  m_settings->setBool("Updates/CheckOnStartup", m_checkOnStartup->isChecked());
+  m_settings->setBool("Updates/AutoDownload",   m_autoDownload->isChecked());
+  m_settings->setBool("Updates/AutoClean",      m_autoClean->isChecked());
+  m_settings->setInt("Updates/CheckInterval",   m_factor->currentIndex() ? m_interval->value() * 60 : m_interval->value());
   m_settings->notify(Settings::UpdateSettingsChanged);
 }
 

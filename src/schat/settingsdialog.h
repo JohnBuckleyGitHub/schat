@@ -205,6 +205,7 @@ private:
   QCheckBox *m_autoDownload;
   QCheckBox *m_checkOnStartup;
   QComboBox *m_factor;
+  QGroupBox *m_versionGroup;
   QSpinBox *m_interval;
   Settings *m_settings;
 };
