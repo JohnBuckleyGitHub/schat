@@ -51,6 +51,7 @@ HEADERS += \
     trayicon.h \
     update/downloadmanager.h \
     update/update.h \
+    update/updatewidget.h \
     update/updatexmlreader.h \
     version.h \
     welcomedialog.h \
@@ -84,6 +85,7 @@ SOURCES += \
     trayicon.cpp \
     update/downloadmanager.cpp \
     update/update.cpp \
+    update/updatewidget.cpp \
     update/updatexmlreader.cpp \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
