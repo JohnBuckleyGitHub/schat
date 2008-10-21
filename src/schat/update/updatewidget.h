@@ -21,6 +21,10 @@
 
 #include <QWidget>
 
+class QLabel;
+class QMovie;
+class Settings;
+
 /*!
  * \brief Виджет проверяющий состояние обновления.
  */
@@ -31,6 +35,13 @@ class UpdateWidget : public QWidget
 public:
   UpdateWidget(QWidget *parent = 0);
 
+public slots:
+  void start();
+
+private:
+  QLabel *m_text;
+  QMovie *m_movie;
+  Settings *m_settings;
 };
 
 #endif /* UPDATEWIDGET_H_ */

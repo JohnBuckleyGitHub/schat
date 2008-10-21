@@ -23,6 +23,7 @@
 
 class QLabel;
 class QTabWidget;
+class UpdateWidget;
 
 /*!
  * \brief Диалог "О Программе"
@@ -39,6 +40,7 @@ public:
 private:
   QPushButton *m_closeButton;
   QTabWidget *m_tabWidget;
+  UpdateWidget *m_update;
 };
 
 
