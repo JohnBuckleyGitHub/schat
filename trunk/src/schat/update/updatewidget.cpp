@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "update/updatewidget.h"
+#include "settings.h"
 
 /*!
  * \brief Конструктор класса UpdateWidget.
@@ -26,5 +27,22 @@
 UpdateWidget::UpdateWidget(QWidget *parent)
   : QWidget(parent)
 {
+  m_settings = settings;
+  m_movie = new QMovie(":/images/load.gif", QByteArray(), this);
+  QLabel *movie = new QLabel(this);
+  movie->setMovie(m_movie);
 
+  m_text = new QLabel(tr("Проверка обновлений..."), this);
+
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(movie);
+  mainLay->addWidget(m_text);
+  mainLay->addStretch();
+  mainLay->setMargin(0);
+}
+
+
+void UpdateWidget::start()
+{
+  m_movie->start();
 }

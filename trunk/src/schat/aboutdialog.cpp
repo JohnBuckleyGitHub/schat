@@ -20,6 +20,7 @@
 #include <QtGui>
 
 #include "aboutdialog.h"
+#include "update/updatewidget.h"
 
 /*!
  * \brief Конструктор класса AboutDialog.
@@ -36,12 +37,15 @@ AboutDialog::AboutDialog(QWidget *parent)
   m_tabWidget->addTab(new AboutChangeLog(this), tr("История версий"));
   m_tabWidget->addTab(new AboutLicense(this),   tr("Лицензия"));
 
-  m_closeButton = new QPushButton(tr("Закрыть"), this);
+  m_closeButton = new QPushButton(QIcon(":/images/ok.png"), tr("Закрыть"), this);
   m_closeButton->setDefault(true);
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
+  m_update = new UpdateWidget(this);
+
   QHBoxLayout *buttonLay = new QHBoxLayout;
+  buttonLay->addWidget(m_update);
   buttonLay->addStretch();
   buttonLay->addWidget(m_closeButton);
 
@@ -53,6 +57,8 @@ AboutDialog::AboutDialog(QWidget *parent)
   setLayout(mainLay);
 
   setWindowTitle(tr("О Программе"));
+
+  QTimer::singleShot(0, m_update, SLOT(start()));
 }
 
 
