@@ -185,11 +185,14 @@ void Settings::read()
   setInt("Updates/CheckInterval",   60);
   setInt("Updates/LevelQt",         UpdateLevelQt);
   setInt("Updates/LevelCore",       UpdateLevelCore);
-  setInt("Updates/DownloadSize",    0);
-  setBool("Updates/AutoClean",      true);
-  setBool("Updates/AutoDownload",   false);
   setString("Updates/LastVersion",  QApplication::applicationVersion());
   setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
+
+  #ifndef SCHAT_NO_UPDATE
+    setInt("Updates/DownloadSize",    0);
+    setBool("Updates/AutoClean",      true);
+    setBool("Updates/AutoDownload",   false);
+  #endif
 
   if (m_default)
     AbstractSettings::read(m_default);
@@ -359,13 +362,19 @@ void Settings::saveRecentServers()
  *
  * \param get \a true Форсированное скачивание обновлений.
  */
+#ifndef SCHAT_NO_UPDATE
 void Settings::update(bool get)
+#else
+void Settings::update(bool)
+#endif
 {
   if (!m_update) {
     m_update = new Update(this);
 
-    if (get)
-      m_update->downloadAll(get);
+    #ifndef SCHAT_NO_UPDATE
+      if (get)
+        m_update->downloadAll(get);
+    #endif
 
     m_update->execute();
   }

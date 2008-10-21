@@ -91,7 +91,9 @@ signals:
 
 public slots:
   inline void updatesCheck() { update(); }
-  inline void updatesGet()   { update(true); }
+  #ifndef SCHAT_NO_UPDATE
+    inline void updatesGet() { update(true); }
+  #endif
 
 private:
   void createServerList();

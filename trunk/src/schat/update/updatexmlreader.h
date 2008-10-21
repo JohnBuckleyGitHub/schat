@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QXmlStreamReader>
 
+#ifndef SCHAT_NO_UPDATE
 struct FileInfo {
   qint64 size;
   int level;
@@ -31,6 +32,7 @@ struct FileInfo {
   QString type;
   QString name;
 };
+#endif
 
 struct VersionInfo {
   int level;
@@ -47,23 +49,30 @@ public:
   UpdateXmlReader();
   bool isValid() const;
   bool readFile(const QString &fileName);
-  inline QMultiMap<int, FileInfo> files() const { return m_files; }
   inline QList<VersionInfo> version() const     { return m_version; }
   inline QString platform() const               { return m_platform; }
   inline void platform(const QString &platform) { m_platform = platform; }
-  static bool isValid(const FileInfo &file);
   static bool isValid(const VersionInfo &version);
+  #ifndef SCHAT_NO_UPDATE
+    inline QMultiMap<int, FileInfo> files() const { return m_files; }
+    static bool isValid(const FileInfo &file);
+  #endif
 
 private:
-  void readCumulative();
   void readFiles();
   void readMeta();
   void readUnknownElement();
   void readUpdates();
+  #ifndef SCHAT_NO_UPDATE
+    void readCumulative();
+  #endif
 
-  QMultiMap<int, FileInfo> m_files;
   QList<VersionInfo> m_version;
   QString m_platform;
+
+  #ifndef SCHAT_NO_UPDATE
+    QMultiMap<int, FileInfo> m_files;
+  #endif
 };
 
 #endif /*UPDATEXMLREADER_H_*/

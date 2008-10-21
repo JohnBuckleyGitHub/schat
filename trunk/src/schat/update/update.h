@@ -43,36 +43,46 @@ public:
   enum State {
     Unknown,
     GettingUpdateXml,
-    GettingUpdates
+    #ifndef SCHAT_NO_UPDATE
+      GettingUpdates
+    #endif
   };
 
   Update(QObject *parent = 0);
-  inline bool downloadAll() const   { return m_downloadAll; }
-  inline void downloadAll(bool get) { m_downloadAll = get; }
+  #ifndef SCHAT_NO_UPDATE
+    inline bool downloadAll() const   { return m_downloadAll; }
+    inline void downloadAll(bool get) { m_downloadAll = get; }
+  #endif
 
 public slots:
   void execute();
 
 private slots:
-  void checkLocalFilesDone(const QStringList &urls, qint64 size);
   void downloadFinished();
+  #ifndef SCHAT_NO_UPDATE
+    void checkLocalFilesDone(const QStringList &urls, qint64 size);
+  #endif
 
 private:
-  void checkFiles();
-  void checkLocalFiles();
   void checkVersion();
+  #ifndef SCHAT_NO_UPDATE
+    void checkFiles();
+    void checkLocalFiles();
+  #endif
 
-  bool m_downloadAll;
   DownloadManager *m_download;
-  QList<FileInfo> m_files;
   QList<VersionInfo> m_version;
   QQueue<QUrl> m_mirrors;
-  QString m_appPath;
   QString m_targetPath;
   QUrl m_xmlUrl;
   Settings *m_settings;
   State m_state;
   UpdateXmlReader m_reader;
+
+  #ifndef SCHAT_NO_UPDATE
+    bool m_downloadAll;
+    QList<FileInfo> m_files;
+  #endif
 };
 
 #endif /*UPDATE_H_*/
