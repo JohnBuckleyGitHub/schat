@@ -44,6 +44,7 @@ Section "$(STR1000)" SecCore
   SectionIn RO
 
   File "..\..\out\release\schat.exe"
+  File /nonfatal "contrib\default.conf"
 
   !ifdef VC90
     File "contrib\Microsoft.VC90.CRT.manifest"
