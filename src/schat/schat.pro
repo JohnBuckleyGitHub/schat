@@ -52,7 +52,6 @@ HEADERS += \
     update/downloadmanager.h \
     update/update.h \
     update/updatexmlreader.h \
-    update/verifythread.h \
     version.h \
     welcomedialog.h \
     widget/emoticonselector.h \
@@ -86,7 +85,6 @@ SOURCES += \
     update/downloadmanager.cpp \
     update/update.cpp \
     update/updatexmlreader.cpp \
-    update/verifythread.cpp \
     welcomedialog.cpp \
     widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
@@ -95,7 +93,8 @@ SOURCES += \
     widget/userview.cpp \
 
 win32 {
-    DEFINES += SCHAT_UPDATE
+    HEADERS += update/verifythread.h
+    SOURCES += update/verifythread.cpp
 }
 else {
     DEFINES += SCHAT_NO_UPDATE

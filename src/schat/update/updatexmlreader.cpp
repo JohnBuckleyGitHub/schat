@@ -50,7 +50,9 @@ bool UpdateXmlReader::isValid() const
  */
 bool UpdateXmlReader::readFile(const QString &fileName)
 {
-  m_files.clear();
+  #ifndef SCHAT_NO_UPDATE
+    m_files.clear();
+  #endif
   m_version.clear();
 
   QFile file(fileName);
@@ -75,23 +77,6 @@ bool UpdateXmlReader::readFile(const QString &fileName)
 
 
 /*!
- * Проверка правильности структуры FileInfo.
- *
- * \return \a true успешная проверка, \a false ошибка.
- */
-bool UpdateXmlReader::isValid(const FileInfo &file)
-{
-  if (file.size == 0 || file.level == 0)
-    return false;
-
-  if (file.md5.isEmpty() || file.type.isEmpty() || file.name.isEmpty())
-    return false;
-
-  return true;
-}
-
-
-/*!
  * Проверка правильности структуры VersionInfo.
  *
  * \return \a true успешная проверка, \a false ошибка.
@@ -109,33 +94,22 @@ bool UpdateXmlReader::isValid(const VersionInfo &version)
 
 
 /*!
- * Чтение элемента cumulative.
+ * Проверка правильности структуры FileInfo.
+ *
+ * \return \a true успешная проверка, \a false ошибка.
  */
-void UpdateXmlReader::readCumulative()
+#ifndef SCHAT_NO_UPDATE
+bool UpdateXmlReader::isValid(const FileInfo &file)
 {
-  while (!atEnd()) {
-    readNext();
+  if (file.size == 0 || file.level == 0)
+    return false;
 
-    if (isEndElement())
-      break;
+  if (file.md5.isEmpty() || file.type.isEmpty() || file.name.isEmpty())
+    return false;
 
-    if (isStartElement()) {
-      if (name() == "file") {
-        FileInfo fileInfo;
-        fileInfo.type  = attributes().value("type").toString();
-        fileInfo.level = attributes().value("level").toString().toInt();
-        fileInfo.size = attributes().value("size").toString().toULongLong();
-        fileInfo.md5  = attributes().value("md5").toString();
-        fileInfo.name = readElementText();
-
-        if (isValid(fileInfo))
-          m_files.insert(fileInfo.level, fileInfo);
-      }
-      else
-        readUnknownElement();
-    }
-  }
+  return true;
 }
+#endif
 
 
 /*!
@@ -150,9 +124,11 @@ void UpdateXmlReader::readFiles()
       break;
 
     if (isStartElement()) {
+      #ifndef SCHAT_NO_UPDATE
       if (name() == "cumulative")
         readCumulative();
       else
+      #endif
         readUnknownElement();
     }
   }
@@ -225,3 +201,35 @@ void UpdateXmlReader::readUpdates()
     }
   }
 }
+
+
+/*!
+ * Чтение элемента cumulative.
+ */
+#ifndef SCHAT_NO_UPDATE
+void UpdateXmlReader::readCumulative()
+{
+  while (!atEnd()) {
+    readNext();
+
+    if (isEndElement())
+      break;
+
+    if (isStartElement()) {
+      if (name() == "file") {
+        FileInfo fileInfo;
+        fileInfo.type  = attributes().value("type").toString();
+        fileInfo.level = attributes().value("level").toString().toInt();
+        fileInfo.size = attributes().value("size").toString().toULongLong();
+        fileInfo.md5  = attributes().value("md5").toString();
+        fileInfo.name = readElementText();
+
+        if (isValid(fileInfo))
+          m_files.insert(fileInfo.level, fileInfo);
+      }
+      else
+        readUnknownElement();
+    }
+  }
+}
+#endif

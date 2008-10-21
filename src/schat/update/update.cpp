@@ -22,7 +22,10 @@
 #include "downloadmanager.h"
 #include "settings.h"
 #include "update.h"
-#include "verifythread.h"
+
+#ifndef SCHAT_NO_UPDATE
+  #include "verifythread.h"
+#endif
 
 /*!
  * Конструктор класса Update.
@@ -31,8 +34,7 @@ Update::Update(QObject *parent)
   : QObject(parent)
 {
   m_settings   = settings;
-  m_appPath    = qApp->applicationDirPath();
-  m_targetPath = m_appPath + "/updates";
+  m_targetPath = QApplication::applicationDirPath() + "/updates";
   m_download   = new DownloadManager(m_targetPath, this);
   m_state      = Unknown;
 
@@ -41,10 +43,12 @@ Update::Update(QObject *parent)
     foreach (QString mirror, mirrors)
       m_mirrors.enqueue(QUrl(mirror));
 
-  m_downloadAll = m_settings->getBool("Updates/AutoDownload");
-
   connect(m_download, SIGNAL(finished()), SLOT(downloadFinished()));
   connect(m_download, SIGNAL(error()), SLOT(execute()));
+
+  #ifndef SCHAT_NO_UPDATE
+    m_downloadAll = m_settings->getBool("Updates/AutoDownload");
+  #endif
 }
 
 
@@ -65,49 +69,13 @@ void Update::execute()
   }
 
   m_version.clear();
-  m_files.clear();
+  #ifndef SCHAT_NO_UPDATE
+    m_files.clear();
+  #endif
   m_state  = GettingUpdateXml;
   m_xmlUrl = m_mirrors.dequeue();
   m_download->clear();
   m_download->append(m_xmlUrl);
-}
-
-
-/*!
- * Обработка завершения проверки локальных файлов.
- *
- * Если состояние равно \a GettingUpdateXml и список файлов которые необходимо скачать
- * не пуст, то в зависимости от члена \a m_downloadAll либо скачиваем файлы, либо уведомляем
- * о наличии новой версии.
- *
- * Если состояние равно \a GettingUpdates, то при пустом списке уведомляем о готовности к установке
- * обновлений, иначе пытаемся скачать следующий xml файл.
- *
- * \param urls Список адресов файлов, которые необходимо скачать для установки обновления (пустой список означает, что все файлы скачаны).
- * \param size Размер обновлений в байтах.
- */
-void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
-{
-  m_settings->setInt("Updates/DownloadSize", size);
-
-  if (m_state == GettingUpdateXml) {
-    if (!urls.isEmpty()) {
-      if (m_downloadAll) {
-        m_state = GettingUpdates;
-        m_download->append(urls);
-      }
-      else
-        m_settings->notify(Settings::UpdateAvailable);
-    }
-    else
-      m_settings->notify(Settings::UpdateReady);
-  }
-  else if (m_state == GettingUpdates) {
-    if (urls.isEmpty())
-      m_settings->notify(Settings::UpdateReady);
-    else
-      execute();
-  }
 }
 
 
@@ -132,63 +100,51 @@ void Update::downloadFinished()
     else
       execute();
   }
-  else if (m_state == GettingUpdates)
-    checkLocalFiles();
+  #ifndef SCHAT_NO_UPDATE
+    else if (m_state == GettingUpdates)
+      checkLocalFiles();
+  #endif
 }
 
 
 /*!
- * Формирование списка файлов необходимых для установки обновления.
+ * Обработка завершения проверки локальных файлов.
  *
- * Функция заполняет список \a m_files, если список будет пустым, пытаемся
- * скачать следующий xml файл и выходим из функции.
+ * Если состояние равно \a GettingUpdateXml и список файлов которые необходимо скачать
+ * не пуст, то в зависимости от члена \a m_downloadAll либо скачиваем файлы, либо уведомляем
+ * о наличии новой версии.
  *
- * Список файлов также записывается в настройки "Updates/Files".
- * В конце выполняется проверка скачанных файлов checkLocalFiles().
+ * Если состояние равно \a GettingUpdates, то при пустом списке уведомляем о готовности к установке
+ * обновлений, иначе пытаемся скачать следующий xml файл.
+ *
+ * \param urls Список адресов файлов, которые необходимо скачать для установки обновления (пустой список означает, что все файлы скачаны).
+ * \param size Размер обновлений в байтах.
  */
-void Update::checkFiles()
+#ifndef SCHAT_NO_UPDATE
+void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
 {
-  QMultiMap<int, FileInfo> map = m_reader.files();
-  QStringList files;
-  m_files.clear();
+  m_settings->setInt("Updates/DownloadSize", size);
 
-  foreach (VersionInfo ver, m_version) {
-    QList<FileInfo> info = map.values(ver.level);
-    if (!info.isEmpty()) {
-      foreach (FileInfo fileInfo, info)
-        if (fileInfo.type == ver.type) {
-          m_files << fileInfo;
-          files << fileInfo.name;
-        }
+  if (m_state == GettingUpdateXml) {
+    if (!urls.isEmpty()) {
+      if (m_downloadAll) {
+        m_state = GettingUpdates;
+        m_download->append(urls);
+      }
+      else
+        m_settings->notify(Settings::UpdateAvailable);
     }
+    else
+      m_settings->notify(Settings::UpdateReady);
   }
-
-  if (m_files.isEmpty()) {
-    execute();
-    return;
+  else if (m_state == GettingUpdates) {
+    if (urls.isEmpty())
+      m_settings->notify(Settings::UpdateReady);
+    else
+      execute();
   }
-
-  m_settings->setList("Updates/Files", files);
-
-  checkLocalFiles();
 }
-
-
-/*!
- * Проверка локальных файлов.
- * Наличие, размер, контрольная сумма.
- *
- * Проверка запускается в отдельном потоке, результатом будет вызов слота checkLocalFilesDone(const QStringList &urls, qint64 size)
- * Поток самостоятельно удалит себя при завершении.
- */
-void Update::checkLocalFiles()
-{
-  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
-
-  VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url);
-  connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
-  thread->start();
-}
+#endif
 
 
 /*!
@@ -223,5 +179,67 @@ void Update::checkVersion()
   if (m_version.isEmpty())
     m_settings->notify(Settings::UpdateNoAvailable);
   else
-    checkFiles();
+    #ifndef SCHAT_NO_UPDATE
+      checkFiles();
+    #else
+      m_settings->notify(Settings::UpdateAvailable);
+    #endif
 }
+
+
+/*!
+ * Формирование списка файлов необходимых для установки обновления.
+ *
+ * Функция заполняет список \a m_files, если список будет пустым, пытаемся
+ * скачать следующий xml файл и выходим из функции.
+ *
+ * Список файлов также записывается в настройки "Updates/Files".
+ * В конце выполняется проверка скачанных файлов checkLocalFiles().
+ */
+#ifndef SCHAT_NO_UPDATE
+void Update::checkFiles()
+{
+  QMultiMap<int, FileInfo> map = m_reader.files();
+  QStringList files;
+  m_files.clear();
+
+  foreach (VersionInfo ver, m_version) {
+    QList<FileInfo> info = map.values(ver.level);
+    if (!info.isEmpty()) {
+      foreach (FileInfo fileInfo, info)
+        if (fileInfo.type == ver.type) {
+          m_files << fileInfo;
+          files << fileInfo.name;
+        }
+    }
+  }
+
+  if (m_files.isEmpty()) {
+    execute();
+    return;
+  }
+
+  m_settings->setList("Updates/Files", files);
+
+  checkLocalFiles();
+}
+#endif
+
+
+/*!
+ * Проверка локальных файлов.
+ * Наличие, размер, контрольная сумма.
+ *
+ * Проверка запускается в отдельном потоке, результатом будет вызов слота checkLocalFilesDone(const QStringList &urls, qint64 size)
+ * Поток самостоятельно удалит себя при завершении.
+ */
+#ifndef SCHAT_NO_UPDATE
+void Update::checkLocalFiles()
+{
+  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
+
+  VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url);
+  connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
+  thread->start();
+}
+#endif

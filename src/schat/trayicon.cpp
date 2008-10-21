@@ -140,8 +140,6 @@ void TrayIcon::init()
 
 /*!
  * Уведомление о доступности новой версии.
- *
- * \todo SCHAT_NO_UPDATE
  */
 void TrayIcon::updateAvailable()
 {
