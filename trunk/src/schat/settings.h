@@ -58,9 +58,9 @@ public:
     UpdateError,
     UpdateAvailable,
     UpdateNoAvailable,
+    UpdateAvailableForce,
 
     #ifndef SCHAT_NO_UPDATE
-      UpdateAvailableForce,
       UpdateReady,
       UpdateGetting
     #endif
