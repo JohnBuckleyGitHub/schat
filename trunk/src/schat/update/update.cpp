@@ -129,6 +129,7 @@ void Update::checkLocalFilesDone(const QStringList &urls, qint64 size)
     if (!urls.isEmpty()) {
       if (m_downloadAll) {
         m_state = GettingUpdates;
+        m_settings->notify(Settings::UpdateGetting);
         m_download->append(urls);
       }
       else

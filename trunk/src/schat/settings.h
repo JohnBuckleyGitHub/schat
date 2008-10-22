@@ -58,7 +58,12 @@ public:
     UpdateError,
     UpdateAvailable,
     UpdateNoAvailable,
-    UpdateReady
+
+    #ifndef SCHAT_NO_UPDATE
+      UpdateAvailableForce,
+      UpdateReady,
+      UpdateGetting
+    #endif
   };
 
   Settings(const QString &filename, QObject *parent = 0);
@@ -67,6 +72,7 @@ public:
   inline QMap<QString, QStringList> emoticons() const  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
+  inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
@@ -90,16 +96,16 @@ signals:
   void networksModelIndexChanged(int index);
 
 public slots:
-  inline void updatesCheck() { update(); }
+  inline bool updatesCheck() { return update(); }
   #ifndef SCHAT_NO_UPDATE
-    inline void updatesGet() { update(true); }
+    inline bool updatesGet() { return update(true); }
   #endif
 
 private:
+  bool update(bool get = false);
   void createServerList();
   void normalizeInterval();
   void saveRecentServers();
-  void update(bool get = false);
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;

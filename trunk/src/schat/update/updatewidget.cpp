@@ -54,7 +54,9 @@ void UpdateWidget::start()
     m_movie->movie()->start();
     m_icon->setVisible(false);
     m_text->setText(tr("Проверка обновлений..."));
-    m_settings->updatesCheck();
+    if (!m_settings->updatesCheck())
+      if (m_settings->updateState() == Update::GettingUpdates)
+        notify(Settings::UpdateGetting);
   }
   else {
     m_text->setText(tr("Проверка обновлений отключена, <a href='ue' style='text-decoration:none; color:#1a4d82;'>включить?</a>"));
@@ -74,16 +76,36 @@ void UpdateWidget::linkActivated(const QString &link)
 void UpdateWidget::notify(int code)
 {
   switch (code) {
+    case Settings::UpdateError:
+      m_text->setText(tr("Не удалось проверить обновления"));
+      setIcon("<img src=':/images/warning.png' />");
+      break;
+
     case Settings::UpdateNoAvailable:
       m_text->setText(tr("Версия <b>%1</b> самая свежая").arg(QApplication::applicationVersion()));
-      m_movie->movie()->stop();
-      m_movie->setVisible(false);
-      m_icon->setVisible(true);
-      m_icon->setText("<img src=':/images/ok2.png' />");
+      setIcon("<img src=':/images/ok2.png' />");
+      break;
+
+    case Settings::UpdateAvailable:
+    case Settings::UpdateGetting:
+    case Settings::UpdateReady:
+      m_text->setText(tr("Доступна новая версия <b>%1</b>").arg(m_settings->getString("Updates/LastVersion")));
+      setIcon("<img src=':/images/update.png' />");
+
+      if (code == Settings::UpdateAvailable)
+        m_settings->notify(Settings::UpdateAvailableForce);
       break;
 
     default:
       break;
   }
+}
 
+
+void UpdateWidget::setIcon(const QString &icon)
+{
+  m_movie->movie()->stop();
+  m_movie->setVisible(false);
+  m_icon->setVisible(true);
+  m_icon->setText(icon);
 }
