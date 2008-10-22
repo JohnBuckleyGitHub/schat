@@ -28,21 +28,62 @@ UpdateWidget::UpdateWidget(QWidget *parent)
   : QWidget(parent)
 {
   m_settings = settings;
-  m_movie = new QMovie(":/images/load.gif", QByteArray(), this);
-  QLabel *movie = new QLabel(this);
-  movie->setMovie(m_movie);
+  m_movie = new QLabel(this);
+  m_movie->setMovie(new QMovie(":/images/load.gif", QByteArray(), this));
 
-  m_text = new QLabel(tr("Проверка обновлений..."), this);
+  m_icon = new QLabel(this);
+  m_icon->setVisible(false);
+  m_text = new QLabel(this);
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->addWidget(movie);
+  mainLay->addWidget(m_movie);
+  mainLay->addWidget(m_icon);
   mainLay->addWidget(m_text);
   mainLay->addStretch();
   mainLay->setMargin(0);
+
+  connect(m_text, SIGNAL(linkActivated(const QString &)), SLOT(linkActivated(const QString &)));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 
 
 void UpdateWidget::start()
 {
-  m_movie->start();
+  if (m_settings->getBool("Updates/Enable")) {
+    m_movie->setVisible(true);
+    m_movie->movie()->start();
+    m_icon->setVisible(false);
+    m_text->setText(tr("Проверка обновлений..."));
+    m_settings->updatesCheck();
+  }
+  else {
+    m_text->setText(tr("Проверка обновлений отключена, <a href='ue' style='text-decoration:none; color:#1a4d82;'>включить?</a>"));
+  }
+}
+
+
+void UpdateWidget::linkActivated(const QString &link)
+{
+  if (link == "ue") {
+    m_settings->setBool("Updates/Enable", true);
+    start();
+  }
+}
+
+
+void UpdateWidget::notify(int code)
+{
+  switch (code) {
+    case Settings::UpdateNoAvailable:
+      m_text->setText(tr("Версия <b>%1</b> самая свежая").arg(QApplication::applicationVersion()));
+      m_movie->movie()->stop();
+      m_movie->setVisible(false);
+      m_icon->setVisible(true);
+      m_icon->setText("<img src=':/images/ok2.png' />");
+      break;
+
+    default:
+      break;
+  }
+
 }
