@@ -43,6 +43,8 @@ private slots:
   void notify(int code);
 
 private:
+  void setIcon(const QString &icon);
+
   QLabel *m_icon;
   QLabel *m_movie;
   QLabel *m_text;

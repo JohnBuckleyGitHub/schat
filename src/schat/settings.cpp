@@ -289,6 +289,35 @@ bool Settings::install()
 
 
 /*!
+ * Запуск проверки обновлений.
+ *
+ * \param get \a true Форсированное скачивание обновлений.
+ *
+ * \return \a true В случае если объект Update создан и запущена проверка.
+ */
+#ifndef SCHAT_NO_UPDATE
+bool Settings::update(bool get)
+#else
+bool Settings::update(bool)
+#endif
+{
+  if (!m_update) {
+    m_update = new Update(this);
+
+    #ifndef SCHAT_NO_UPDATE
+      if (get)
+        m_update->downloadAll(get);
+    #endif
+
+    m_update->execute();
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
  * Создаёт список сетей и одиночных серверов.
  */
 void Settings::createServerList()
@@ -354,28 +383,4 @@ void Settings::saveRecentServers()
   }
 
   setList("RecentServers", list);
-}
-
-
-/*!
- * Запуск проверки обновлений.
- *
- * \param get \a true Форсированное скачивание обновлений.
- */
-#ifndef SCHAT_NO_UPDATE
-void Settings::update(bool get)
-#else
-void Settings::update(bool)
-#endif
-{
-  if (!m_update) {
-    m_update = new Update(this);
-
-    #ifndef SCHAT_NO_UPDATE
-      if (get)
-        m_update->downloadAll(get);
-    #endif
-
-    m_update->execute();
-  }
 }

@@ -49,6 +49,7 @@ public:
   };
 
   Update(QObject *parent = 0);
+  inline State state() const          { return m_state; }
   #ifndef SCHAT_NO_UPDATE
     inline bool downloadAll() const   { return m_downloadAll; }
     inline void downloadAll(bool get) { m_downloadAll = get; }

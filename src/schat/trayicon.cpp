@@ -94,6 +94,10 @@ void TrayIcon::notify(int code)
       updateAvailable();
       break;
 
+    case Settings::UpdateAvailableForce:
+      updateAvailable(true);
+      break;
+
     #ifndef SCHAT_NO_UPDATE
     case Settings::UpdateReady:
       updateReady();
@@ -141,14 +145,14 @@ void TrayIcon::init()
 /*!
  * Уведомление о доступности новой версии.
  */
-void TrayIcon::updateAvailable()
+void TrayIcon::updateAvailable(bool force)
 {
   m_message = UpdateAvailable;
   static QString last;
 
   QString version = m_settings->getString("Updates/LastVersion");
 
-  if (last.isEmpty() || last != version) {
+  if (last.isEmpty() || last != version || force) {
 
     #ifndef SCHAT_NO_UPDATE
     showMessage(

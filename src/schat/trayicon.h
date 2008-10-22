@@ -48,7 +48,7 @@ private slots:
 
 private:
   void init();
-  void updateAvailable();
+  void updateAvailable(bool force = false);
 
   #ifndef SCHAT_NO_UPDATE
     static QString bytesToHuman(int size);
