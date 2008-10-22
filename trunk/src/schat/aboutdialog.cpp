@@ -117,8 +117,6 @@ AboutMain::AboutMain(QWidget *parent)
   mainLay->addLayout(logosLay, 2, 0, 1, 2);
   mainLay->setColumnStretch(1, 1);
   mainLay->setRowStretch(1, 1);
-
-
 }
 
 

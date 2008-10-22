@@ -38,9 +38,14 @@ public:
 public slots:
   void start();
 
+private slots:
+  void linkActivated(const QString &link);
+  void notify(int code);
+
 private:
+  QLabel *m_icon;
+  QLabel *m_movie;
   QLabel *m_text;
-  QMovie *m_movie;
   Settings *m_settings;
 };
 
