@@ -47,6 +47,9 @@ UpdateWidget::UpdateWidget(QWidget *parent)
 }
 
 
+/*!
+ * Запуск проверки обновлений.
+ */
 void UpdateWidget::start()
 {
   if (m_settings->getBool("Updates/Enable")) {
@@ -54,9 +57,13 @@ void UpdateWidget::start()
     m_movie->movie()->start();
     m_icon->setVisible(false);
     m_text->setText(tr("Проверка обновлений..."));
-    if (!m_settings->updatesCheck())
-      if (m_settings->updateState() == Update::GettingUpdates)
-        notify(Settings::UpdateGetting);
+    #ifdef SCHAT_NO_UPDATE
+      m_settings->updatesCheck();
+    #else
+      if (!m_settings->updatesCheck())
+        if (m_settings->updateState() == Update::GettingUpdates)
+          notify(Settings::UpdateGetting);
+    #endif
   }
   else {
     m_text->setText(tr("Проверка обновлений отключена, <a href='ue' style='text-decoration:none; color:#1a4d82;'>включить?</a>"));
@@ -64,6 +71,9 @@ void UpdateWidget::start()
 }
 
 
+/*!
+ * Обработка щелчка по ссылке.
+ */
 void UpdateWidget::linkActivated(const QString &link)
 {
   if (link == "ue") {
@@ -73,6 +83,9 @@ void UpdateWidget::linkActivated(const QString &link)
 }
 
 
+/*!
+ * Обработка уведомлений о состоянии проверки обновлений.
+ */
 void UpdateWidget::notify(int code)
 {
   switch (code) {
@@ -87,8 +100,10 @@ void UpdateWidget::notify(int code)
       break;
 
     case Settings::UpdateAvailable:
+    #ifndef SCHAT_NO_UPDATE
     case Settings::UpdateGetting:
     case Settings::UpdateReady:
+    #endif
       m_text->setText(tr("Доступна новая версия <b>%1</b>").arg(m_settings->getString("Updates/LastVersion")));
       setIcon("<img src=':/images/update.png' />");
 
@@ -102,6 +117,11 @@ void UpdateWidget::notify(int code)
 }
 
 
+/*!
+ * Останавливает и скрывает анимацию и устанавливает текст \a m_icon.
+ *
+ * \param icon текст, содержащий html код для вставки картинки.
+ */
 void UpdateWidget::setIcon(const QString &icon)
 {
   m_movie->movie()->stop();

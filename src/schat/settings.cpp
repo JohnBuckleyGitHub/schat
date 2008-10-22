@@ -119,12 +119,16 @@ void Settings::notify(int notify)
     case UpdateError:
     case UpdateAvailable:
     case UpdateNoAvailable:
-    case UpdateReady:
+    #ifndef SCHAT_NO_UPDATE
+      case UpdateReady:
+    #endif
       if (m_update)
         m_update->deleteLater();
 
-      if (notify == UpdateReady)
-        readyToInstall = true;
+      #ifndef SCHAT_NO_UPDATE
+        if (notify == UpdateReady)
+          readyToInstall = true;
+      #endif
 
       setBool("Updates/ReadyToInstall", readyToInstall);
       break;
