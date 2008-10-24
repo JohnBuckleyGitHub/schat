@@ -148,7 +148,6 @@ FunctionEnd
 
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
-  call un.findRunningChat
   !insertmacro UPDATE_ENGINE_INIT
 FunctionEnd
 
