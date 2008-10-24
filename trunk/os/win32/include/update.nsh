@@ -63,6 +63,7 @@ Var files
     !insertmacro UPDATE_ENGINE_DONE
   ${Else}
     StrCpy $mode "normal"
+    call un.findRunningChat
   ${EndUnless}
 !macroend
 
