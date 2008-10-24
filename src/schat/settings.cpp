@@ -277,7 +277,7 @@ bool Settings::install()
       return false;
 
     QStringList args;
-    args << "-update" << "-run";
+    args << "/S" << "-update" << "-run";
     if (s.value("AutoClean", true).toBool())
       args << "-clean";
 
