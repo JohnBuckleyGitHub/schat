@@ -272,9 +272,9 @@ void EmoticonsSettings::reset(int page)
 {
   if (page == m_id) {
     m_enableCheck->setChecked(true);
-    m_animateCheck->setChecked(true);
+    m_animateCheck->setChecked(false);
     m_requireSpacesCheck->setChecked(true);
-    m_themeCombo->setCurrentIndex(m_themeCombo->findText("kolobok"));
+    m_themeCombo->setCurrentIndex(m_themeCombo->findText("Kolobok"));
     enable(true);
   }
 }

@@ -70,9 +70,9 @@ SectionEnd
 !define SECTION_KOLOBOK
 Section "Kolobok" SecKolobok
   SectionIn 1
-  SetOutPath "$INSTDIR\emoticons\kolobok"
-  File "..\..\data\emoticons\kolobok\*.gif"
-  File "..\..\data\emoticons\kolobok\icondef.xml"
+  SetOutPath "$INSTDIR\emoticons\Kolobok"
+  File "..\..\data\emoticons\Kolobok\*.png"
+  File "..\..\data\emoticons\Kolobok\icondef.xml"
 SectionEnd
 !macroend /*SECTION_KOLOBOK*/
 
@@ -121,8 +121,8 @@ Section "Uninstall"
     Delete "$INSTDIR\networks\*.xml"
     Delete "$INSTDIR\doc\*.html"
     Delete "$INSTDIR\doc\*.example"
-    Delete "$INSTDIR\emoticons\kolobok\*.gif"
-    Delete "$INSTDIR\emoticons\kolobok\icondef.xml"
+    Delete "$INSTDIR\emoticons\Kolobok\*.png"
+    Delete "$INSTDIR\emoticons\Kolobok\icondef.xml"
     Delete "$INSTDIR\emoticons\Simple Smileys\*.png"
     Delete "$INSTDIR\emoticons\Simple Smileys\emoticons.xml"
     Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
@@ -132,7 +132,7 @@ Section "Uninstall"
       Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
     !endif
     
-    RMDir "$INSTDIR\emoticons\kolobok"
+    RMDir "$INSTDIR\emoticons\Kolobok"
     RMDir "$INSTDIR\emoticons"
     RMDir "$INSTDIR\plugins\imageformats"
     RMDir "$INSTDIR\plugins"
