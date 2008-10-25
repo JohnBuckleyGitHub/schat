@@ -177,10 +177,10 @@ void Settings::read()
   setBool("FirstRun",               true);
   setBool("EmoticonsRequireSpaces", true);
   setBool("UseEmoticons",           true);
-  setBool("UseAnimatedEmoticons",   true);
+  setBool("UseAnimatedEmoticons",   false);
   setInt("EmoticonsRefreshTime",    50);
   setString("Style",                "Plastique");
-  setString("EmoticonTheme",        "kolobok");
+  setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
 
