@@ -194,13 +194,15 @@ private slots:
 
 private:
   int m_last;
-  QCheckBox *m_autoClean;
-  QCheckBox *m_autoDownload;
   QCheckBox *m_checkOnStartup;
   QComboBox *m_factor;
   QGroupBox *m_versionGroup;
   QSpinBox *m_interval;
   Settings *m_settings;
+  #ifndef SCHAT_NO_UPDATE
+    QCheckBox *m_autoClean;
+    QCheckBox *m_autoDownload;
+  #endif
 };
 
 #endif /*SETTINGSDIALOG_H_*/

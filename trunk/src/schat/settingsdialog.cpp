@@ -405,9 +405,12 @@ void UpdateSettings::reset(int page)
   if (page == m_id) {
     m_versionGroup->setChecked(true);
     m_checkOnStartup->setChecked(true);
-    m_autoDownload->setChecked(false);
-    m_autoClean->setChecked(true);
     m_interval->setValue(m_factor->currentIndex() ? 1 : 60);
+
+    #ifndef SCHAT_NO_UPDATE
+      m_autoDownload->setChecked(false);
+      m_autoClean->setChecked(true);
+    #endif
   }
 }
 
@@ -416,10 +419,13 @@ void UpdateSettings::save()
 {
   m_settings->setBool("Updates/Enable",         m_versionGroup->isChecked());
   m_settings->setBool("Updates/CheckOnStartup", m_checkOnStartup->isChecked());
-  m_settings->setBool("Updates/AutoDownload",   m_autoDownload->isChecked());
-  m_settings->setBool("Updates/AutoClean",      m_autoClean->isChecked());
   m_settings->setInt("Updates/CheckInterval",   m_factor->currentIndex() ? m_interval->value() * 60 : m_interval->value());
   m_settings->notify(Settings::UpdateSettingsChanged);
+
+  #ifndef SCHAT_NO_UPDATE
+    m_settings->setBool("Updates/AutoDownload",   m_autoDownload->isChecked());
+    m_settings->setBool("Updates/AutoClean",      m_autoClean->isChecked());
+  #endif
 }
 
 
