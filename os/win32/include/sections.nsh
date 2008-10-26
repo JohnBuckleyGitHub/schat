@@ -42,6 +42,8 @@ Section "$(STR1000)" SecCore
 
   SetOutPath "$INSTDIR"
   SectionIn RO
+  
+  DeleteINIStr "$INSTDIR\schat.conf" "General" "UseAnimatedEmoticons"
 
   File "..\..\out\release\schat.exe"
   File /nonfatal "contrib\default.conf"
