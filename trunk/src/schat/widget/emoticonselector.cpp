@@ -77,6 +77,8 @@ void EmoticonSelector::prepareList()
   int col = 0;
   QMap<QString, QStringList> list = m_settings->emoticons();
   int emoticonsPerRow = (int) sqrt((float)list.count());
+  if (emoticonsPerRow * emoticonsPerRow == list.count())
+    emoticonsPerRow--;
 
   if (m_lay)
     delete m_lay;
@@ -96,7 +98,7 @@ void EmoticonSelector::prepareList()
     connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
     connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
     m_lay->addWidget(label, row, col);
-    if ( col == emoticonsPerRow ) {
+    if (col == emoticonsPerRow) {
       col = 0;
       row++;
     }
