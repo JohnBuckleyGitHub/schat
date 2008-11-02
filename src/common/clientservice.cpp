@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,6 @@ static const int CheckTimeout         = 6000;
 static const int ReconnectTimeout     = 3000;
 
 /*!
- * \class ClientService
- * \brief Универсальный сервис клиента чата.
- * 
- * Класс устанавливает и поддерживает соединение.
- */
-
-/*!
  * \brief Конструктор класса ClientService.
  */
 ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
@@ -45,7 +38,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(15000);
-  
+
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
   connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
@@ -53,7 +46,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
 
 
 /** [public]
- * 
+ *
  */
 ClientService::~ClientService()
 {
@@ -80,7 +73,7 @@ bool ClientService::isReady() const
 
 
 /** [public]
- * 
+ *
  */
 bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
@@ -119,7 +112,7 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
 #ifdef SCHAT_DEBUG
   qDebug() << "ClientService::sendMessage(const QString &, const QString &)" << channel << message;
 #endif
-  
+
   if (isReady()) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -149,12 +142,12 @@ void ClientService::connectToHost()
   if (m_socket)
     qDebug() << m_socket->state();
 #endif
-  
+
   if (!m_socket)
     createSocket();
-  
+
   m_fatal = false;
-  
+
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
     m_server = m_network->server();
     m_socket->connectToHost(m_server.address, m_server.port);
@@ -162,7 +155,7 @@ void ClientService::connectToHost()
       emit connecting(m_network->name(), true);
     else
       emit connecting(m_server.address, false);
-    
+
     m_checkTimer.start();
   }
   else if (m_socket->state() == QAbstractSocket::ConnectedState) {
@@ -173,7 +166,7 @@ void ClientService::connectToHost()
 
 
 /** [public]
- * 
+ *
  */
 void ClientService::quit(bool end)
 {
@@ -189,7 +182,7 @@ void ClientService::quit(bool end)
     else {
       m_socket->deleteLater();
       m_socket = 0;
-    }      
+    }
   }
 
   m_fatal = end;
@@ -203,7 +196,7 @@ void ClientService::quit(bool end)
 
 
 /** [public]
- * 
+ *
  */
 void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
@@ -211,7 +204,7 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) 
+    out << quint16(0)
         << OpcodeNewUser
         << echo
         << numeric
@@ -264,11 +257,11 @@ void ClientService::connected()
 #ifdef SCHAT_DEBUG
   qDebug() << "ClientService::connected()";
 #endif
-  
+
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
   m_reconnectTimer.setInterval(ReconnectTimeout);
-  
+
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(StreamVersion);
@@ -285,7 +278,7 @@ void ClientService::connected()
       << m_profile->fullName()
       << m_profile->userAgent()
       << m_profile->byeMsg();
-    
+
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
   m_socket->write(block);
@@ -325,7 +318,7 @@ void ClientService::disconnected()
 
 
 /** [private slots]
- * 
+ *
  */
 void ClientService::ping()
 {
@@ -338,18 +331,18 @@ void ClientService::ping()
  * Слот вызывается когда поступила новая порция данных для чтения из сокета `m_socket`.
  */
 void ClientService::readyRead()
-{  
+{
   forever {
     if (!m_nextBlockSize) {
       if (m_socket->bytesAvailable() < (int) sizeof(quint16))
         break;
-        
+
       m_stream >> m_nextBlockSize;
     }
 
     if (m_socket->bytesAvailable() < m_nextBlockSize)
       break;
-    
+
     m_stream >> m_opcode;
 
 #ifdef SCHAT_DEBUG
@@ -362,60 +355,60 @@ void ClientService::readyRead()
         case OpcodeNewUser:
           opcodeNewUser();
           break;
-          
+
         case OpcodeUserLeave:
           opcodeUserLeave();
           break;
-          
+
         case OpcodeMessage:
           opcodeMessage();
           break;
-          
+
         case OpcodePrivateMessage:
           opcodePrivateMessage();
           break;
-          
+
         case OpcodePing:
           opcodePing();
           break;
-          
+
         case OpcodeNewProfile:
           opcodeNewProfile();
           break;
-          
+
         case OpcodeNewNick:
           opcodeNewNick();
           break;
-          
+
         case OpcodeServerMessage:
           opcodeServerMessage();
           break;
-          
+
         case OpcodeNewLink:
           opcodeNewLink();
           break;
-          
+
         case OpcodeLinkLeave:
           opcodeLinkLeave();
           break;
-          
+
         case OpcodeRelayMessage:
           opcodeRelayMessage();
           break;
-          
+
         case OpcodeSyncNumerics:
           opcodeSyncNumerics();
           break;
-          
+
         case OpcodeSyncUsersEnd:
           m_nextBlockSize = 0;
           emit syncUsersEnd();
           break;
-          
+
         case OpcodeSyncByeMsg:
           opcodeSyncByeMsg();
           break;
-          
+
         default:
           unknownOpcode();
           break;
@@ -431,12 +424,12 @@ void ClientService::readyRead()
       m_socket->disconnectFromHost();
       return;
     }
-  } 
+  }
 }
 
 
 /** [private slots]
- * 
+ *
  */
 void ClientService::reconnect()
 {
@@ -446,9 +439,9 @@ void ClientService::reconnect()
 
   if (m_fatal)
     return;
-  
+
   m_reconnects++;
-  
+
   if (!m_socket)
     connectToHost();
 }
@@ -467,7 +460,7 @@ bool ClientService::send(quint16 opcode)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode; 
+    out << quint16(0) << opcode;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -492,7 +485,7 @@ bool ClientService::send(quint16 opcode, const QString &msg)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << msg; 
+    out << quint16(0) << opcode << msg;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -509,7 +502,7 @@ bool ClientService::send(quint16 opcode, const QString &str1, const QString &str
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << str1 << str2; 
+    out << quint16(0) << opcode << str1 << str2;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -536,7 +529,7 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << name; 
+    out << quint16(0) << opcode << gender << nick << name;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -553,7 +546,7 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << nNick << name; 
+    out << quint16(0) << opcode << gender << nick << nNick << name;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -573,7 +566,7 @@ void ClientService::createSocket()
 #ifdef SCHAT_DEBUG
   qDebug() << "ClientService::createSocket()";
 #endif
-  
+
   m_socket = new QTcpSocket(this);
   m_stream.setDevice(m_socket);
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
@@ -591,7 +584,9 @@ void ClientService::opcodeAccessDenied()
   m_stream >> p_reason;
   m_nextBlockSize = 0;
 
-  if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded || p_reason == ErrorMaxUsersPerIpExceeded))
+  /// \todo Полное игнорирование ошибки \a ErrorNumericAlreadyUse не является правильным, однако эта ошибка может возникнуть при определённых обстоятельствах,
+  /// что может привести к невозможности восстановления соединения, также эта ошибка возможна только при link-соединении.
+  if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded || p_reason == ErrorMaxUsersPerIpExceeded || p_reason == ErrorNumericAlreadyUse))
     m_fatal = true;
 
   emit accessDenied(p_reason);
@@ -611,19 +606,19 @@ void ClientService::opcodeAccessGranted()
   m_accepted = true;
   m_reconnects = 0;
   m_fatal = false;
-  
+
   QString network;
   if (m_network->isNetwork())
     network = m_network->name();
   else
     network = "";
-  
+
   emit accessGranted(network, m_server.address, p_level);
 }
 
 
 /** [private]
- * 
+ *
  */
 void ClientService::opcodeLinkLeave()
 {
@@ -632,13 +627,13 @@ void ClientService::opcodeLinkLeave()
   QString p_ip;
   m_stream >> p_numeric >> p_network >> p_ip;
   m_nextBlockSize = 0;
-  
+
   if (p_network.isEmpty())
     return;
-  
+
   if (p_ip.isEmpty())
     return;
-  
+
   emit linkLeave(p_numeric, p_network, p_ip);
 }
 
@@ -667,13 +662,13 @@ void ClientService::opcodeNewLink()
   QString p_ip;
   m_stream >> p_numeric >> p_network >> p_ip;
   m_nextBlockSize = 0;
-  
+
   if (p_network.isEmpty())
     return;
-  
+
   if (p_ip.isEmpty())
     return;
-  
+
   emit newLink(p_numeric, p_network, p_ip);
 }
 
@@ -695,7 +690,7 @@ void ClientService::opcodeNewNick()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
- * 
+ *
  * В случае успешного разбора пакета высылается сигнал newProfile(quint8 gender, const QString &nick, const QString &name).
  */
 void ClientService::opcodeNewProfile()
@@ -737,7 +732,7 @@ void ClientService::opcodeNewUser()
   QStringList profile;
   profile << p_nick << p_name << p_bye << p_agent << p_host << AbstractProfile::gender(p_gender);
 
-  emit newUser(profile, p_flag, p_numeric);  
+  emit newUser(profile, p_flag, p_numeric);
 }
 
 
@@ -748,7 +743,7 @@ void ClientService::opcodeNewUser()
 void ClientService::opcodePing()
 {
   m_nextBlockSize = 0;
-  m_ping.start(); 
+  m_ping.start();
   send(OpcodePong);
 }
 
@@ -770,7 +765,7 @@ void ClientService::opcodePrivateMessage()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeRelayMessage.
- * 
+ *
  * В случае успеха высылается сигнал void relayMessage(const QString &channel, const QString &sender, const QString &message).
  */
 void ClientService::opcodeRelayMessage()
@@ -848,7 +843,7 @@ void ClientService::opcodeUserLeave()
   QString p_bye;
   m_stream >> p_flag >> p_nick >> p_bye;
   m_nextBlockSize = 0;
-  
+
   emit userLeave(p_nick, p_bye, p_flag);
 }
 
