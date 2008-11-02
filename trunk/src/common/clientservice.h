@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@
 class AbstractProfile;
 class Network;
 
+/*!
+ * \brief Универсальный сервис клиента чата.
+ *
+ * Класс устанавливает и поддерживает соединение.
+ */
 class ClientService : public QObject
 {
   Q_OBJECT
