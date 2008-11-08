@@ -885,6 +885,11 @@ void SChatWindow::createActions()
   updateSetAction->setData(SettingsDialog::UpdatePage);
   connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
+  // Разное...
+  m_miscSetAction = new QAction(QIcon(":/images/misc.png"), tr("Разное..."), this);
+  m_miscSetAction->setData(SettingsDialog::MiscPage);
+  connect(m_miscSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+
   // Выход из программы
   m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
@@ -946,6 +951,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
   iconMenu->addAction(updateSetAction);
+  iconMenu->addAction(m_miscSetAction);
 
   // Настройка
   m_settingsButton = new QToolButton(this);
