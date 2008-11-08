@@ -83,6 +83,7 @@ private slots:
   void closeTab(int tab = -1);
   void connecting(const QString &server, bool network);
   void copy();
+  void daemonUi();
   void fatal();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void linkLeave(quint8 numeric, const QString &network, const QString &name);
@@ -127,6 +128,7 @@ private:
   MainChannel *m_main;
   QAction *m_aboutAction;
   QAction *m_closeTabAction;
+  QAction *m_daemonAction;
   QAction *m_emoticonsSetAction;
   QAction *m_interfaceSetAction;
   QAction *m_networkSetAction;
