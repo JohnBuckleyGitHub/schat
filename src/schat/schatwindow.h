@@ -131,6 +131,7 @@ private:
   QAction *m_daemonAction;
   QAction *m_emoticonsSetAction;
   QAction *m_interfaceSetAction;
+  QAction *m_miscSetAction;
   QAction *m_networkSetAction;
   QAction *m_profileSetAction;
   QAction *m_quitAction;

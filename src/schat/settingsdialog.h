@@ -24,8 +24,6 @@
 #include "abstractsettingsdialog.h"
 
 class AbstractProfile;
-class EmoticonsSettings;
-class InterfaceSettings;
 class NetworkSettings;
 class NetworkWidget;
 class ProfileSettings;
@@ -36,7 +34,6 @@ class QGroupBox;
 class QLineEdit;
 class QSpinBox;
 class Settings;
-class UpdateSettings;
 
 
 /*!
@@ -53,7 +50,8 @@ public:
     NetworkPage,
     InterfacePage,
     EmoticonsPage,
-    UpdatePage
+    UpdatePage,
+    MiscPage
   };
 
   SettingsDialog(AbstractProfile *profile, QWidget *parent = 0);
@@ -62,12 +60,7 @@ public slots:
   void accept();
 
 private:
-  EmoticonsSettings *m_emoticonsPage;
-  InterfaceSettings *m_interfacePage;
-  NetworkSettings *m_networkPage;
-  ProfileSettings *m_profilePage;
   Settings *m_settings;
-  UpdateSettings *m_updatePage;
 };
 
 
@@ -203,6 +196,26 @@ private:
     QCheckBox *m_autoClean;
     QCheckBox *m_autoDownload;
   #endif
+};
+
+
+/*!
+ * \class MiscSettings
+ * \brief Диалог "Настройка", страница "Разное".
+ */
+class MiscSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  MiscSettings(QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
+
+private:
+  Settings *m_settings;
 };
 
 #endif /*SETTINGSDIALOG_H_*/

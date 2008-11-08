@@ -33,21 +33,19 @@
 SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   : AbstractSettingsDialog(parent)
 {
-  m_settings       = settings;
-  m_profilePage    = new ProfileSettings(profile, this);
-  m_networkPage    = new NetworkSettings(this);
-  m_interfacePage  = new InterfaceSettings(this);
-  m_emoticonsPage  = new EmoticonsSettings(this);
-  m_updatePage     = new UpdateSettings(this);
+  m_settings = settings;
+  ProfileSettings *profilePage = new ProfileSettings(profile, this);
+  NetworkSettings *networkPage = new NetworkSettings(this);
 
-  createPage(QIcon(":/images/profile.png"), tr("Личные данные"), m_profilePage);
-  createPage(QIcon(":/images/network.png"), tr("Сеть"), m_networkPage);
-  createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"), m_interfacePage);
-  createPage(QIcon(":/images/emoticon.png"), tr("Смайлики"), m_emoticonsPage);
-  createPage(QIcon(":/images/update.png"), tr("Обновление"), m_updatePage);
+  createPage(QIcon(":/images/profile.png"),    tr("Личные данные"), profilePage);
+  createPage(QIcon(":/images/network.png"),    tr("Сеть"),          networkPage);
+  createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"),     new InterfaceSettings(this));
+  createPage(QIcon(":/images/emoticon.png"),   tr("Смайлики"),      new EmoticonsSettings(this));
+  createPage(QIcon(":/images/update.png"),     tr("Обновление"),    new UpdateSettings(this));
+  createPage(QIcon(":/images/misc.png"),       tr("Разное"),        new MiscSettings(this));
 
-  connect(m_profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
-  connect(m_networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
+  connect(profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
+  connect(networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
 
 
@@ -485,4 +483,30 @@ void UpdateSettings::intervalChanged(int i)
   m_last = index;
 
   m_interval->setValue(value);
+}
+
+
+/*!
+ * \brief Конструктор класса MiscSettings.
+ */
+MiscSettings::MiscSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::MiscPage, parent)
+{
+  m_settings = settings;
+
+//  QVBoxLayout *mainLay = new QVBoxLayout(this);
+}
+
+
+void MiscSettings::reset(int page)
+{
+  if (page == m_id) {
+
+  }
+}
+
+
+void MiscSettings::save()
+{
+
 }
