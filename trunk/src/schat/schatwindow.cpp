@@ -328,6 +328,19 @@ void SChatWindow::copy()
 }
 
 
+/*!
+ * Запуск программы управления сервером.
+ */
+void SChatWindow::daemonUi()
+{
+#ifdef Q_WS_WIN
+  QProcess::startDetached('"' + QApplication::applicationDirPath() + "/schatd-ui.exe\"", QStringList() << "-show");
+#else
+  QProcess::startDetached(QApplication::applicationDirPath() + "/schatd-ui", QStringList() << "-show");
+#endif
+}
+
+
 /** [private slots]
  *
  */
@@ -875,6 +888,10 @@ void SChatWindow::createActions()
   // Выход из программы
   m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
+
+  // Управление сервером...
+  m_daemonAction = new QAction(QIcon(":/images/network.png"), tr("Управление сервером..."), this);
+  connect(m_daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
 }
 
 
@@ -959,6 +976,16 @@ void SChatWindow::createTrayIcon()
   m_trayMenu = new QMenu(this);
   m_trayMenu->addAction(m_aboutAction);
   m_trayMenu->addAction(m_profileSetAction);
+
+#ifdef Q_WS_WIN
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
+#else
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui")) {
+#endif
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction(m_daemonAction);
+  }
+
   m_trayMenu->addSeparator();
   m_trayMenu->addAction(m_quitAction);
 
