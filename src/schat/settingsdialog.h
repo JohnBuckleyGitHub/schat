@@ -215,6 +215,10 @@ public slots:
   void save();
 
 private:
+  QCheckBox *m_autostart;
+  QCheckBox *m_autostartDaemon;
+  QCheckBox *m_log;
+  QCheckBox *m_logPrivate;
   Settings *m_settings;
 };
 

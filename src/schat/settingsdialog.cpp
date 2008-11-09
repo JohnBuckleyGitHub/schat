@@ -494,7 +494,34 @@ MiscSettings::MiscSettings(QWidget *parent)
 {
   m_settings = settings;
 
-//  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+
+  m_autostart = new QCheckBox(tr("&Автозапуск"), this);
+  m_autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+
+  m_autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
+  m_autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+
+  QVBoxLayout *integrationLay = new QVBoxLayout(integration);
+  integrationLay->addWidget(m_autostart);
+  integrationLay->addWidget(m_autostartDaemon);
+
+  QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
+
+  m_log = new QCheckBox(tr("Журнал основного канала"), this);
+  m_log->setToolTip(tr("Вести журнал основного канала"));
+
+  m_logPrivate = new QCheckBox(tr("Журналы приватов"), this);
+  m_logPrivate->setToolTip(tr("Вести журналы приватных сообщений"));
+
+  QVBoxLayout *logLay = new QVBoxLayout(logGroup);
+  logLay->addWidget(m_log);
+  logLay->addWidget(m_logPrivate);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(integration);
+  mainLay->addWidget(logGroup);
+  mainLay->addStretch();
 }
 
 
