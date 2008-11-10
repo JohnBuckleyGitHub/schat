@@ -220,7 +220,8 @@ void Settings::read()
   createEmoticonsMap();
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
-  m_updateTimer->start();
+  if (getBool("Updates/Enable"))
+    m_updateTimer->start();
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(updatesCheck()));
 }
 
