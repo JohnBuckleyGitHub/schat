@@ -498,9 +498,13 @@ MiscSettings::MiscSettings(QWidget *parent)
 
   m_autostart = new QCheckBox(tr("&Автозапуск"), this);
   m_autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+  m_autostart->setTristate();
+  m_autostart->setCheckState(Qt::PartiallyChecked);
 
   m_autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
   m_autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+  m_autostartDaemon->setTristate();
+  m_autostartDaemon->setCheckState(Qt::PartiallyChecked);
 
   QVBoxLayout *integrationLay = new QVBoxLayout(integration);
   integrationLay->addWidget(m_autostart);
@@ -522,6 +526,8 @@ MiscSettings::MiscSettings(QWidget *parent)
   mainLay->addWidget(integration);
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
+
+  autostart();
 }
 
 
@@ -535,5 +541,49 @@ void MiscSettings::reset(int page)
 
 void MiscSettings::save()
 {
+  writeAutostart();
+}
 
+
+/*!
+ * Устанавливает состояние флажков добавления в автозагрузку.
+ * Если файл программы управления сервером не найден, то скрываем флажок сервера.
+ * Если ключа в реестре не найдено, снимаем флажок.
+ */
+void MiscSettings::autostart()
+{
+  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
+    QString value = reg.value(QApplication::applicationName() + " Daemon", "").toString();
+    if (value.isEmpty())
+      m_autostartDaemon->setChecked(false);
+  }
+  else
+    m_autostartDaemon->setVisible(false);
+
+  QString value = reg.value(QApplication::applicationName(), "").toString();
+  if (value.isEmpty())
+    m_autostart->setChecked(false);
+}
+
+
+/*!
+ * Добавляет/удаляет чат и при необходимости сервер из автозагрузки.
+ */
+void MiscSettings::writeAutostart()
+{
+  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+
+  if (m_autostart->checkState() == Qt::Checked)
+    reg.setValue(QApplication::applicationName(), QDir::toNativeSeparators(QApplication::applicationFilePath()) + " -hide");
+  else if (m_autostart->checkState() == Qt::Unchecked)
+    reg.remove(QApplication::applicationName());
+
+  if (m_autostartDaemon->isVisible()) {
+    if (m_autostart->checkState() == Qt::Checked)
+      reg.setValue(QApplication::applicationName() + " Daemon", QDir::toNativeSeparators(QApplication::applicationDirPath() + "/schatd-ui.exe") + " -start");
+    else if (m_autostart->checkState() == Qt::Unchecked)
+      reg.remove(QApplication::applicationName() + " Daemon");
+  }
 }
