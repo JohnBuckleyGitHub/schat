@@ -215,14 +215,18 @@ public slots:
   void save();
 
 private:
-  void autostart();
-  void writeAutostart();
+  #ifdef Q_WS_WIN
+    void autostart();
+    void writeAutostart();
+  #endif
 
-  QCheckBox *m_autostart;
-  QCheckBox *m_autostartDaemon;
   QCheckBox *m_log;
   QCheckBox *m_logPrivate;
   Settings *m_settings;
+  #ifdef Q_WS_WIN
+    QCheckBox *m_autostart;
+    QCheckBox *m_autostartDaemon;
+  #endif
 };
 
 #endif /*SETTINGSDIALOG_H_*/

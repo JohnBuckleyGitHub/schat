@@ -494,21 +494,23 @@ MiscSettings::MiscSettings(QWidget *parent)
 {
   m_settings = settings;
 
-  QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+  #ifdef Q_WS_WIN
+    QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
 
-  m_autostart = new QCheckBox(tr("&Автозапуск"), this);
-  m_autostart->setToolTip(tr("Автозапуск программы при старте системы"));
-  m_autostart->setTristate();
-  m_autostart->setCheckState(Qt::PartiallyChecked);
+    m_autostart = new QCheckBox(tr("&Автозапуск"), this);
+    m_autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+    m_autostart->setTristate();
+    m_autostart->setCheckState(Qt::PartiallyChecked);
 
-  m_autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
-  m_autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
-  m_autostartDaemon->setTristate();
-  m_autostartDaemon->setCheckState(Qt::PartiallyChecked);
+    m_autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
+    m_autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+    m_autostartDaemon->setTristate();
+    m_autostartDaemon->setCheckState(Qt::PartiallyChecked);
 
-  QVBoxLayout *integrationLay = new QVBoxLayout(integration);
-  integrationLay->addWidget(m_autostart);
-  integrationLay->addWidget(m_autostartDaemon);
+    QVBoxLayout *integrationLay = new QVBoxLayout(integration);
+    integrationLay->addWidget(m_autostart);
+    integrationLay->addWidget(m_autostartDaemon);
+  #endif
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
@@ -523,11 +525,15 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->addWidget(m_logPrivate);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(integration);
+  #ifdef Q_WS_WIN
+    mainLay->addWidget(integration);
+  #endif
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
 
-  autostart();
+  #ifdef Q_WS_WIN
+    autostart();
+  #endif
 }
 
 
@@ -541,7 +547,9 @@ void MiscSettings::reset(int page)
 
 void MiscSettings::save()
 {
-  writeAutostart();
+  #ifdef Q_WS_WIN
+    writeAutostart();
+  #endif
 }
 
 
@@ -550,6 +558,7 @@ void MiscSettings::save()
  * Если файл программы управления сервером не найден, то скрываем флажок сервера.
  * Если ключа в реестре не найдено, снимаем флажок.
  */
+#ifdef Q_WS_WIN
 void MiscSettings::autostart()
 {
   QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
@@ -587,3 +596,4 @@ void MiscSettings::writeAutostart()
       reg.remove(QApplication::applicationName() + " Daemon");
   }
 }
+#endif
