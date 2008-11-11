@@ -178,6 +178,8 @@ void Settings::read()
   setBool("EmoticonsRequireSpaces", true);
   setBool("UseEmoticons",           true);
   setBool("UseAnimatedEmoticons",   false);
+  setBool("Log",                    true);
+  setBool("LogPrivate",             true);
   setInt("EmoticonsRefreshTime",    50);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");

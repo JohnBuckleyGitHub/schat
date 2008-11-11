@@ -34,9 +34,8 @@ struct PrepareEmoticons {
  * \brief Конструктор класса ChatBrowser.
  */
 ChatBrowser::ChatBrowser(QWidget *parent)
-  : QTextBrowser(parent)
+  : QTextBrowser(parent), m_log(false)
 {
-  m_channelLog = new ChannelLog(this);
   setFocusPolicy(Qt::NoFocus);
   setOpenLinks(false);
   m_settings = settings;
@@ -65,7 +64,7 @@ ChatBrowser::ChatBrowser(QWidget *parent)
 
 void ChatBrowser::msg(const QString &text)
 {
-  m_channelLog->msg(text); /// \todo Необходимо удалять ссылки со схемой \b nick.
+  toLog(text); /// \todo Необходимо удалять ссылки со схемой \b nick.
   append(QString("<div><small class='gr'>(%1)</small> %2</div>").arg(currentTime()).arg(text));
   scroll();
 }
@@ -184,6 +183,19 @@ QString ChatBrowser::msgUserLeft(quint8 sex, const QString &nick, const QString 
 }
 
 
+void ChatBrowser::log(bool enable)
+{
+  if (enable) {
+    if (!m_channelLog) {
+      m_channelLog = new ChannelLog(this);
+      m_channelLog->setChannel(m_channel);
+    }
+  }
+  else
+    m_channelLog->deleteLater();
+}
+
+
 /*!
  * Принудительно скролит текст
  */
@@ -261,7 +273,8 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
         .arg(currentTime())
         .arg(QLatin1String(nick.toUtf8().toHex()))
         .arg(escapedNick));
-    m_channelLog->msg(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
+
+    toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
   }
   else {
     QString escapedNick = Qt::escape(nick);
@@ -269,7 +282,8 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
         .arg(currentTime())
         .arg(QLatin1String(nick.toUtf8().toHex()))
         .arg(escapedNick));
-    m_channelLog->msg(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(msg));
+
+    toLog(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(msg));
   }
 
   docCursor.movePosition(QTextCursor::End);
@@ -481,4 +495,16 @@ void ChatBrowser::setPauseAnimations(bool paused)
   }
   else if (!m_aemoticon.isEmpty() && !m_animateTimer.isActive() && m_useAnimatedEmoticons)
     m_animateTimer.start();
+}
+
+
+void ChatBrowser::toLog(const QString &text)
+{
+  if (m_log) {
+    if (!m_channelLog) {
+      m_channelLog = new ChannelLog(this);
+      m_channelLog->setChannel(m_channel);
+    }
+    m_channelLog->msg(text);
+  }
 }

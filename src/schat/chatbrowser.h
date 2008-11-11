@@ -20,6 +20,7 @@
 #define CHATBROWSER_H_
 
 #include <QHash>
+#include <QPointer>
 #include <QQueue>
 #include <QTextBrowser>
 #include <QTime>
@@ -40,8 +41,8 @@ class ChatBrowser : public QTextBrowser {
 
 public:
   ChatBrowser(QWidget *parent = 0);
-  inline QString channel() const                 { return m_channelLog->channel(); }
-  inline void setChannel(const QString &channel) { m_channelLog->setChannel(channel); }
+  inline QString channel() const                 { return m_channel; }
+  inline void setChannel(const QString &channel) { m_channel = channel; if (m_channelLog) m_channelLog->setChannel(channel); }
   static inline QString currentTime()            { return QTime::currentTime().toString("hh:mm:ss"); }
   static QString msgAccessDenied(quint16 reason);
   static QString msgBadNickName(const QString &nick);
@@ -56,6 +57,7 @@ public:
   static QString msgReadyForUse(const QString &network, const QString &addr);
   static QString msgUnknownCmd(const QString &command);
   static QString msgUserLeft(quint8 sex, const QString &nick, const QString &bye);
+  void log(bool enable);
   void msg(const QString &text);
   void scroll();
 
@@ -85,16 +87,19 @@ private:
   void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
   void createActions();
   void setPauseAnimations(bool paused);
+  void toLog(const QString &text);
 
   bool m_emoticonsRequireSpaces;
+  bool m_log;
   bool m_useAnimatedEmoticons;
   bool m_useEmoticons;
-  ChannelLog *m_channelLog;
   QAction *m_clearAction;
   QAction *m_copyAction;
   QAction *m_selectAllAction;
   QHash<QString, EmoticonMovie*> m_aemoticon;
+  QPointer<ChannelLog> m_channelLog;
   QQueue<int> m_animateQueue;
+  QString m_channel;
   QString m_style;
   QTimer m_animateTimer;
   Settings *m_settings;
