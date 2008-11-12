@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "tab.h"
+#include "settings.h"
 
 /*!
  * \brief Конструктор класса Tab.
@@ -31,4 +32,15 @@ Tab::Tab(const QIcon &icon, QWidget *parent)
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_browser);
   mainLay->setMargin(0);
+
+  m_settings = settings;
+  m_browser->log(m_settings->getBool("LogPrivate"));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
+}
+
+
+void Tab::notify(int code)
+{
+  if (code == Settings::MiscSettingsChanged)
+    m_browser->log(m_settings->getBool("LogPrivate"));
 }

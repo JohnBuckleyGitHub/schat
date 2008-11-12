@@ -185,13 +185,15 @@ QString ChatBrowser::msgUserLeft(quint8 sex, const QString &nick, const QString 
 
 void ChatBrowser::log(bool enable)
 {
+  m_log = enable;
+
   if (enable) {
     if (!m_channelLog) {
       m_channelLog = new ChannelLog(this);
       m_channelLog->setChannel(m_channel);
     }
   }
-  else
+  else if (m_channelLog)
     m_channelLog->deleteLater();
 }
 
