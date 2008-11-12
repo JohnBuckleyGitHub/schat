@@ -514,11 +514,13 @@ MiscSettings::MiscSettings(QWidget *parent)
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
-  m_log = new QCheckBox(tr("Журнал основного канала"), this);
+  m_log = new QCheckBox(tr("Журнал &основного канала"), this);
   m_log->setToolTip(tr("Вести журнал основного канала"));
+  m_log->setChecked(m_settings->getBool("Log"));
 
-  m_logPrivate = new QCheckBox(tr("Журналы приватов"), this);
+  m_logPrivate = new QCheckBox(tr("Журналы &приватов"), this);
   m_logPrivate->setToolTip(tr("Вести журналы приватных сообщений"));
+  m_logPrivate->setChecked(m_settings->getBool("LogPrivate"));
 
   QVBoxLayout *logLay = new QVBoxLayout(logGroup);
   logLay->addWidget(m_log);
@@ -540,7 +542,8 @@ MiscSettings::MiscSettings(QWidget *parent)
 void MiscSettings::reset(int page)
 {
   if (page == m_id) {
-
+    m_log->setChecked(true);
+    m_logPrivate->setChecked(true);
   }
 }
 
@@ -550,6 +553,10 @@ void MiscSettings::save()
   #ifdef Q_WS_WIN
     writeAutostart();
   #endif
+
+  m_settings->setBool("Log", m_log->isChecked());
+  m_settings->setBool("LogPrivate", m_logPrivate->isChecked());
+  m_settings->notify(Settings::MiscSettingsChanged);
 }
 
 
