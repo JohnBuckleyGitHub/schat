@@ -32,6 +32,7 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
 
   m_settings = settings;
   m_browser->setChannel("#main");
+  m_browser->log(m_settings->getBool("Log"));
 
   createActions();
 
@@ -54,6 +55,7 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   setLayout(m_mainLayout);
 
   connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
+  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 
 
@@ -77,9 +79,13 @@ void MainChannel::displayChoiceServer(bool display)
 }
 
 
-/** [private slots]
- *
- */
+void MainChannel::notify(int code)
+{
+  if (code == Settings::MiscSettingsChanged)
+    m_browser->log(m_settings->getBool("Log"));
+}
+
+
 void MainChannel::serverChanged()
 {
   m_networkWidget->save();

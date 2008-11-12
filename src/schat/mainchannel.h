@@ -43,6 +43,7 @@ public:
   void displayChoiceServer(bool display);
 
 private slots:
+  void notify(int code);
   void serverChanged();
 
 private:
