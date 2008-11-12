@@ -54,6 +54,7 @@ public:
     ServerChanged,
     UpdateSettingsChanged,
     EmoticonsChanged,
+    MiscSettingsChanged,
     ByeMsgChanged,
     UpdateError,
     UpdateAvailable,
