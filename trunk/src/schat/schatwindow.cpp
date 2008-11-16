@@ -806,14 +806,14 @@ int SChatWindow::tabIndex(const QString &s, int start) const
 void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
 {
   if (m_cmds.isEmpty()) {
-    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> - Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
-    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> - Очистка окна чата.</span>"));
-    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> - Выход из чата.</span>"));
-    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> - Отображает подсказу о командах.</span>"));
-    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> - Открывает папку с файлами журнала чата."));
-    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> - Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
-    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> - Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
-    m_cmds.insert("server", tr("<b>/server</b><span class='info'> - Просмотр информации о сервере</span>"));
+    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> – Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
+    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> – Очистка окна чата.</span>"));
+    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> – Выход из чата.</span>"));
+    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> – Отображает подсказу о командах.</span>"));
+    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> – Открывает папку с файлами журнала чата."));
+    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> – Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
+    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> – Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
+    m_cmds.insert("server", tr("<b>/server</b><span class='info'> – Просмотр информации о сервере.</span>"));
   }
 
   if (cmd.isEmpty()) {
