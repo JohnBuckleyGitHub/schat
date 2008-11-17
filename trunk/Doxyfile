@@ -9,14 +9,18 @@ PROJECT_NUMBER         = 0.4.0
 OUTPUT_DIRECTORY       = doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = Russian
-BRIEF_MEMBER_DESC      = YES
+BRIEF_MEMBER_DESC      = NO
 REPEAT_BRIEF           = YES
 ABBREVIATE_BRIEF       = 
 ALWAYS_DETAILED_SEC    = YES
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = .
-STRIP_FROM_INC_PATH    = .
+STRIP_FROM_INC_PATH    = . \
+                         src/schatd \
+                         src/schat \
+                         src/schatd-ui \
+                         src/common
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 QT_AUTOBRIEF           = NO
@@ -128,11 +132,11 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = 
-HTML_FOOTER            = 
-HTML_STYLESHEET        = 
+HTML_HEADER            =
+HTML_FOOTER            =
+HTML_STYLESHEET        =
 HTML_ALIGN_MEMBERS     = NO
-GENERATE_HTMLHELP      = YES
+GENERATE_HTMLHELP      = NO
 GENERATE_DOCSET        = NO
 DOCSET_FEEDNAME        = "Doxygen generated docs"
 DOCSET_BUNDLE_ID       = org.doxygen.Project
@@ -150,8 +154,8 @@ TREEVIEW_WIDTH         = 250
 FORMULA_FONTSIZE       = 10
 
 #DOXYGEN2QTHELP_LOCATION = doxygen2qthelp
-#QTHELP_CONFIG           = doc/singleaplication.ini
-#QTHELP_FILE             = doc/singleaplication-0.6-doc.qch
+#QTHELP_CONFIG           =
+#QTHELP_FILE             =
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
