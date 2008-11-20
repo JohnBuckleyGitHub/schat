@@ -39,10 +39,10 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "000004b0"
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
-        VALUE "FileDescription",  "IMPOMEZIA Simple Chat Client"
+        VALUE "FileDescription",  "IMPOMEZIA Simple Chat Customize"
         VALUE "FileVersion",      SCHAT_VERSION
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
-        VALUE "OriginalFilename", "schat.exe"
+        VALUE "OriginalFilename", "customize.exe"
         VALUE "ProductName",      SCHAT_NAME
         VALUE "ProductVersion",   SCHAT_VERSION
       END
