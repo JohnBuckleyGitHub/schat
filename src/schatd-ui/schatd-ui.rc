@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,13 +38,13 @@ VS_VERSION_INFO VERSIONINFO
     BEGIN
       BLOCK "000004b0"
       BEGIN
-        VALUE "CompanyName", "IMPOMEZIA"
-        VALUE "FileDescription", "IMPOMEZIA Simple Chat Daemon UI"
-        VALUE "FileVersion", SCHAT_VERSION
-        VALUE "LegalCopyright", "Copyright © 2008 IMPOMEZIA"
-	VALUE "OriginalFilename", "schatd-ui.exe"
-        VALUE "ProductName", "IMPOMEZIA Simple Chat"
-        VALUE "ProductVersion", SCHAT_VERSION
+        VALUE "CompanyName",      SCHAT_ORGANIZATION
+        VALUE "FileDescription",  "IMPOMEZIA Simple Chat Daemon UI"
+        VALUE "FileVersion",      SCHAT_VERSION
+        VALUE "LegalCopyright",   SCHAT_COPYRIGHT
+        VALUE "OriginalFilename", "schatd-ui.exe"
+        VALUE "ProductName",      SCHAT_NAME
+        VALUE "ProductVersion",   SCHAT_VERSION
       END
     END
     BLOCK "VarFileInfo"

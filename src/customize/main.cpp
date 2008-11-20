@@ -16,17 +16,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QApplication>
+#include <QtGui>
 
-#define SCHAT_VERSION      "0.4.0.761 TRUNK"
-#define SCHAT_VERSION_RC   0,4,0,761
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008 IMPOMEZIA"
+#include "version.h"
 
-static const int UpdateLevelQt   = 2008102101;
-static const int UpdateLevelCore = 2008111200;
+int main(int argc, char *argv[])
+{
+  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-#endif /*VERSION_H_*/
+  QApplication app(argc, argv);
+
+  QString appPath = app.applicationDirPath();
+  app.setApplicationName(SCHAT_NAME);
+  app.setApplicationVersion(SCHAT_VERSION);
+  app.setOrganizationName(SCHAT_ORGANIZATION);
+  app.setOrganizationDomain(SCHAT_DOMAIN);
+  app.setQuitOnLastWindowClosed(false);
+  app.addLibraryPath(appPath + "/plugins");
+  app.setStyle(new QPlastiqueStyle);
+
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_ru", ":/translations");
+  app.installTranslator(&qtTranslator);
+
+  return app.exec();
+}

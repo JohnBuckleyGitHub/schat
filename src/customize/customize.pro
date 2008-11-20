@@ -15,11 +15,25 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG += ordered
-TEMPLATE      = subdirs
-SUBDIRS       = \
-    schatd \
-    3rdparty \
-    schat \
-    schatd-ui \
-    customize
+SCHAT_CONSOLE    = 0
+SCHAT_DEBUG      = 0
+SCHAT_RESOURCES  = 1
+SCHAT_RC_FILE    = 1
+SCHAT_STATIC     = 0
+
+QT += network
+TEMPLATE = app
+
+HEADERS += \
+    version.h \
+
+SOURCES += \
+    main.cpp \
+
+contains( SCHAT_STATIC, 1 ) {
+    DEFINES += SCHAT_STATIC
+}
+
+CODECFORTR = UTF-8
+
+include(../common/common.pri)
