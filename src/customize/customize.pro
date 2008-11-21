@@ -25,9 +25,13 @@ QT += network
 TEMPLATE = app
 
 HEADERS += \
+    customizewizard.h \
+    intropage.h \
     version.h \
 
 SOURCES += \
+    customizewizard.cpp \
+    intropage.cpp \
     main.cpp \
 
 contains( SCHAT_STATIC, 1 ) {

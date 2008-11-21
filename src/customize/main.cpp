@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QtGui>
 
+#include "customizewizard.h"
 #include "version.h"
 
 int main(int argc, char *argv[])
@@ -40,6 +41,9 @@ int main(int argc, char *argv[])
   QTranslator qtTranslator;
   qtTranslator.load("qt_ru", ":/translations");
   app.installTranslator(&qtTranslator);
+
+  CustomizeWizard wizard;
+  wizard.show();
 
   return app.exec();
 }
