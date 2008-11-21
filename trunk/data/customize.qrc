@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>images/watermark.png</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
 </RCC>
