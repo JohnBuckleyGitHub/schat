@@ -23,4 +23,8 @@
   !endif
 !macroend
 
+${mod} Core
 ${mod} Qt
+${mod} Emoticons.Kolobok
+${mod} Emoticons.Simple
+${mod} Daemon

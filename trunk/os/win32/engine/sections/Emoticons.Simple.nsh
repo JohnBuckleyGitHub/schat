@@ -16,15 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
-;!define Qt
-!define Emoticons.Kolobok
-!define Emoticons.Simple
-!define Daemon
+${Body} Emoticons.Simple
 
-;!define SCHAT_QTDIR      "C:\qt\443"
-;!define SCHAT_BINDIR     "..\..\out\release"
-;!define SCHAT_DATADIR    "..\..\data"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+${Section}
+  SetOutPath "$INSTDIR\emoticons\Simple Smileys"
+  File "${SCHAT_DATADIR}\emoticons\Simple Smileys\*.png"
+  File "${SCHAT_DATADIR}\emoticons\Simple Smileys\emoticons.xml"
+${SectionEnd}
 
-!include "engine\core.nsh"
+${BodyEnd}

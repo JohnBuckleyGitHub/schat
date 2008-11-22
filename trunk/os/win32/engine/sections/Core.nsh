@@ -16,15 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
-;!define Qt
-!define Emoticons.Kolobok
-!define Emoticons.Simple
-!define Daemon
+${Body} Core
 
-;!define SCHAT_QTDIR      "C:\qt\443"
-;!define SCHAT_BINDIR     "..\..\out\release"
-;!define SCHAT_DATADIR    "..\..\data"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+${Section}
+  SectionIn RO
 
-!include "engine\core.nsh"
+  SetOutPath "$INSTDIR"
+  File "${SCHAT_BINDIR}\schat.exe"
+
+  SetOutPath "$INSTDIR\networks"
+  File "..\..\data\networks\*.xml"
+
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_DATADIR}\doc\*.html"
+
+  WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
+  WriteUninstaller "$INSTDIR\uninstall.exe"
+${SectionEnd}
+
+${BodyEnd}
