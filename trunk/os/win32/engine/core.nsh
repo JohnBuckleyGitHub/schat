@@ -20,6 +20,9 @@
 !include "engine\default.nsh"
 !include "engine\schat.nsh"
 
+!define SCHAT_META
+!include "engine\sections.nsh"
+
 BrandingText "${SCHAT_COPYRIGHT}"
 Caption "${SCHAT_NAME} ${SCHAT_VERSION}"
 InstallDir "${SCHAT_INSTALLDIR}"
@@ -72,7 +75,8 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Russian"
 
+!undef SCHAT_META
 !define SCHAT_SECTIONS
-
 !include "engine\sections.nsh"
- 
+
+!insertmacro INSERT_TRANSLATIONS

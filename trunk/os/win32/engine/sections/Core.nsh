@@ -16,8 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Body} Core
+${Meta} Core
+${MetaEnd}
 
+${Body} Core
 ${Section}
   SectionIn RO
 
@@ -25,7 +27,7 @@ ${Section}
   File "${SCHAT_BINDIR}\schat.exe"
 
   SetOutPath "$INSTDIR\networks"
-  File "..\..\data\networks\*.xml"
+  File "${SCHAT_DATADIR}\networks\*.xml"
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_DATADIR}\doc\*.html"
@@ -33,5 +35,4 @@ ${Section}
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
 ${SectionEnd}
-
 ${BodyEnd}
