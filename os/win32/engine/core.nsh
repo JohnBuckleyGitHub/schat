@@ -75,9 +75,4 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !define SCHAT_SECTIONS
 
 !include "engine\sections.nsh"
-
-
-Section "Qt 4.4.3"
-
-SectionEnd
  

@@ -40,6 +40,8 @@ ${def} SCHAT_INSTALLDIR "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_VC90       1
 
 ${def} SCHAT_QTDIR      "C:\qt\443"
+${def} SCHAT_BINDIR     "..\..\out\release"
+${def} SCHAT_DATADIR    "..\..\data"
 ${def} VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
 
 !endif /* DEFAULT_NSH_ */

@@ -1,8 +1,13 @@
-#Sat Nov 22 18:42:22 MSK 2008
+#Sat Nov 22 21:50:20 MSK 2008
 eclipse.preferences.version=1
 encoding//os/win32/engine/core.nsh=WINDOWS-1251
 encoding//os/win32/engine/default.nsh=WINDOWS-1251
 encoding//os/win32/engine/schat.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Daemon.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Emoticons.Kolobok.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Emoticons.Simple.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Qt.nsh=WINDOWS-1251
 encoding//os/win32/include/common.nsh=WINDOWS-1251
 encoding//os/win32/include/page-options.nsh=WINDOWS-1251
 encoding//os/win32/include/schat.nsh=WINDOWS-1251
