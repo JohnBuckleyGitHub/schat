@@ -16,9 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Qt
+${Body} Qt
 
-;!define SCHAT_QTDIR      "C:\qt\443"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+${Section}
+  SectionIn RO
 
-!include "engine\core.nsh"
+  SetOutPath "$INSTDIR"
+  File "${SCHAT_QTDIR}\bin\QtCore4.dll"
+  File "${SCHAT_QTDIR}\bin\QtGui4.dll"
+  File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+
+  !if ${SCHAT_VC90} == 1
+    File "${VC90_REDIST_DIR}\msvcr90.dll"
+    File "contrib\Microsoft.VC90.CRT.manifest"
+  !endif
+
+  SetOutPath "$INSTDIR\plugins\imageformats"
+  File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"
+${SectionEnd}
+
+${BodyEnd}
