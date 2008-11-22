@@ -16,9 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Qt
+!define mod "!insertmacro SCHAT_MOD "
+!macro SCHAT_MOD _NAME
+  !ifdef ${_NAME}
+    !include "engine\sections\${_NAME}.nsh"
+  !endif
+!macroend
 
-;!define SCHAT_QTDIR      "C:\qt\443"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
-
-!include "engine\core.nsh"
+${mod} Qt

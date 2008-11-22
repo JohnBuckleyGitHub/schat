@@ -18,15 +18,18 @@
 
 !include "MUI2.nsh"
 !include "engine\default.nsh"
+!include "engine\schat.nsh"
 
 BrandingText "${SCHAT_COPYRIGHT}"
 Caption "${SCHAT_NAME} ${SCHAT_VERSION}"
 InstallDir "${SCHAT_INSTALLDIR}"
 InstallDirRegKey HKCU "${SCHAT_REGKEY}" ""
-InstType "1"
 Name "${SCHAT_NAME}"
 OutFile "${SCHAT_OUTDIR}schat-${SCHAT_PREFIX}${SCHAT_VERSION}${SCHAT_SUFFIX}.exe"
 RequestExecutionLevel user
+
+SetCompressor /SOLID lzma
+SetCompressorDictSize 10
 
 VIProductVersion "${SCHAT_VERSION}"
 VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
@@ -69,7 +72,12 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Russian"
 
-Section
+!define SCHAT_SECTIONS
+
+!include "engine\sections.nsh"
+
+
+Section "Qt 4.4.3"
 
 SectionEnd
  
