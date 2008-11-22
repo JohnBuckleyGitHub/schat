@@ -17,7 +17,7 @@
  */
 
 !define Core
-;!define Qt
+!define Qt
 !define Emoticons.Kolobok
 !define Emoticons.Simple
 !define Daemon

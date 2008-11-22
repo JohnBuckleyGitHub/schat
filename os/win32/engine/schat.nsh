@@ -16,6 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+!ifndef SCHAT_NSH_
+!define SCHAT_NSH_
+
+!include "engine\translations.nsh"
+
 /*
  * Макрос для сохранения имени модуля внутри ${Body}.
  * Зависит от MUI2.nsh.
@@ -23,6 +28,14 @@
 !macro SCHAT_MOD_ID _ID
   !insertmacro MUI_UNSET MOD_ID
   !define MOD_ID "${_ID}"
+!macroend
+
+
+!define Meta "!insertmacro SCHAT_META "
+!define MetaEnd "!endif"
+!macro SCHAT_META _ID
+  !ifdef SCHAT_META
+    !insertmacro SCHAT_MOD_ID ${_ID}
 !macroend
 
 
@@ -46,7 +59,7 @@
  */
 !define Section "!insertmacro SCHAT_SECTION "
 !macro SCHAT_SECTION
-  Section "${MOD_ID}"
+  Section "$(sec_${MOD_ID})" ${MOD_ID}_idx
     SetOverwrite on
 !macroend
 
@@ -54,3 +67,5 @@
 !macro SCHAT_SECTION_END
   SectionEnd
 !macroend
+
+!endif /* SCHAT_NSH_ */

@@ -16,19 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!ifndef mod
-  !define mod "!insertmacro SCHAT_MOD "
-!endif
-!ifmacrondef SCHAT_MOD
-  !macro SCHAT_MOD _NAME
-    !ifdef ${_NAME}
-      !include "engine\sections\${_NAME}.nsh"
-    !endif
-  !macroend
-!endif
+!ifndef TRANSLATIONS_NSH_
+!define TRANSLATIONS_NSH_
 
-${mod} Core
-${mod} Qt
-${mod} Emoticons.Kolobok
-${mod} Emoticons.Simple
-${mod} Daemon
+!define L "!insertmacro ${CURRENT_LANG}"
+
+!macro L_EN _NAME _TEXT
+  LangString ${_NAME} ${LANG_ENGLISH} "${_TEXT}"
+!macroend
+
+!macro L_RU _NAME _TEXT
+  LangString ${_NAME} ${LANG_RUSSIAN} "${_TEXT}"
+!macroend
+
+!macro INSERT_TRANSLATIONS
+  !include "engine\translations\english.nsh"
+  !include "engine\translations\russian.nsh"
+!macroend
+
+!endif /* TRANSLATIONS_NSH_ */
