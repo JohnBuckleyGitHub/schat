@@ -26,19 +26,21 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION    "0.4.0.0"
-${def} SCHAT_QT_VERSION "4.4.3"
-${def} SCHAT_NAME       "IMPOMEZIA Simple Chat"
-${def} SCHAT_NAME_SHORT "Simple Chat"
-${def} SCHAT_PREFIX     ""
-${def} SCHAT_SUFFIX     ""
-${def} SCHAT_OUTDIR     "out/"
-${def} SCHAT_REGKEY     "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-${def} SCHAT_WEB_SITE   "http://impomezia.com/"
-${def} SCHAT_COPYRIGHT  "Copyright © 2008 IMPOMEZIA"
-${def} SCHAT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
-${def} SCHAT_INSTALLDIR "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-${def} SCHAT_VC90       1
+${def} SCHAT_VERSION      "0.4.0.0"
+${def} SCHAT_QT_VERSION   "4.4.3"
+${def} SCHAT_NAME         "IMPOMEZIA Simple Chat"
+${def} SCHAT_NAME_SHORT   "Simple Chat"
+${def} SCHAT_PREFIX       ""
+${def} SCHAT_SUFFIX       ""
+${def} SCHAT_OUTDIR       "out/"
+${def} SCHAT_FINISH_RUN   "$INSTDIR\schat.exe"
+${def} SCHAT_REGKEY       "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
+${def} SCHAT_WEB_SITE     "http://impomezia.com/"
+${def} SCHAT_COPYRIGHT    "Copyright © 2008 IMPOMEZIA"
+${def} SCHAT_UNINST_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
+${def} SCHAT_INSTALLDIR   "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
+${def} SCHAT_PAGE_OPTIONS 1
+${def} SCHAT_VC90         1
 
 ${def} SCHAT_QTDIR      "C:\qt\443"
 ${def} SCHAT_BINDIR     "..\..\out\release"
