@@ -86,6 +86,16 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !include "engine\sections.nsh"
 !insertmacro SECTION_OPTIONS
 
+!undef SCHAT_SECTIONS
+!define SCHAT_DESC
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !if ${SCHAT_EMOTICON_GRP} == 1
+    !insertmacro MUI_DESCRIPTION_TEXT ${GroupEmoticons} $(STR1004)
+  !endif
+
+  !include "engine\sections.nsh"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
 !insertmacro INSERT_TRANSLATIONS
 
 Section
