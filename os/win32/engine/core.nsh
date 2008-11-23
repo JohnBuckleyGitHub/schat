@@ -81,11 +81,19 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Russian"
 
+
+/*
+ * Основные секции.
+ */
 !undef SCHAT_META
 !define SCHAT_SECTIONS
 !include "engine\sections.nsh"
 !insertmacro SECTION_OPTIONS
 
+
+/*
+ * Завершающие действия.
+ */
 !undef SCHAT_SECTIONS
 !define SCHAT_POST
 Section
@@ -94,6 +102,10 @@ Section
   !include "engine\sections.nsh"
 SectionEnd
 
+
+/*
+ * Описания секций.
+ */
 !undef SCHAT_POST
 !define SCHAT_DESC
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -104,8 +116,10 @@ SectionEnd
   !include "engine\sections.nsh"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-!insertmacro INSERT_TRANSLATIONS
 
+/*
+ * Инициализация.
+ */
 !undef SCHAT_DESC
 !define SCHAT_INIT
 Function .onInit
@@ -116,3 +130,4 @@ Function .onInit
 FunctionEnd
 
 !insertmacro OPTIONS_PAGE_FUNC
+!insertmacro INSERT_TRANSLATIONS
