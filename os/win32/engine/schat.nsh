@@ -47,6 +47,9 @@
 !define Body "!insertmacro SCHAT_MOD_BODY "
 !define BodyEnd "!endif"
 !macro SCHAT_MOD_BODY _ID
+  !ifdef SCHAT_DESC
+    !insertmacro MUI_DESCRIPTION_TEXT ${${_ID}_idx} "$(desc_${_ID})"
+  !endif
   !ifdef SCHAT_SECTIONS
     !insertmacro SCHAT_MOD_ID ${_ID}
 !macroend

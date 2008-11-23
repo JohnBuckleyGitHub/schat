@@ -40,6 +40,7 @@ ${def} SCHAT_COPYRIGHT    "Copyright © 2008 IMPOMEZIA"
 ${def} SCHAT_UNINST_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_INSTALLDIR   "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_PAGE_OPTIONS 1
+${def} SCHAT_EMOTICON_GRP 1
 ${def} SCHAT_VC90         1
 
 ${def} SCHAT_QTDIR      "C:\qt\443"

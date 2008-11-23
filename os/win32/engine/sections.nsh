@@ -31,12 +31,16 @@ ${mod} Core
 ${mod} Qt
 
 !ifdef SCHAT_SECTIONS
-  SectionGroup "$(STR1004)" GroupEmoticons
+  !if ${SCHAT_EMOTICON_GRP} == 1
+    SectionGroup "$(STR1004)" GroupEmoticons
+  !endif
 !endif
 ${mod} Emoticons.Kolobok
 ${mod} Emoticons.Simple
 !ifdef SCHAT_SECTIONS
-  SectionGroupEnd
+  !if ${SCHAT_EMOTICON_GRP} == 1
+    SectionGroupEnd
+  !endif
 !endif
 
 ${mod} Daemon
