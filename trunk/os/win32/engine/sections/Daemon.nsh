@@ -16,12 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Body} Daemon
+${Name} Daemon
+${State} 0
 
+${Body}
 ${Section}
   SetOutPath "$INSTDIR"
   File "${SCHAT_BINDIR}\schatd.exe"
   File "${SCHAT_BINDIR}\schatd-ui.exe"
 ${SectionEnd}
-
 ${BodyEnd}

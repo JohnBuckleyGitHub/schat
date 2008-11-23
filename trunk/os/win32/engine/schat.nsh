@@ -25,6 +25,7 @@
  * Макрос для сохранения имени модуля внутри ${Body}.
  * Зависит от MUI2.nsh.
  */
+!define Name "!insertmacro SCHAT_MOD_ID "
 !macro SCHAT_MOD_ID _ID
   !insertmacro MUI_UNSET MOD_ID
   !define MOD_ID "${_ID}"
@@ -39,6 +40,18 @@
 !macroend
 
 
+!define State "!insertmacro SCHAT_MOD_STATE "
+!macro SCHAT_MOD_STATE _STATE
+  !ifdef SCHAT_INIT
+    ${SectionState} "${MOD_ID}" ${_STATE} ${${MOD_ID}_idx}
+  !endif
+
+  !ifdef SCHAT_POST
+    !insertmacro SAVE_SECTION ${${MOD_ID}_idx} "${MOD_ID}"
+  !endif
+!macroend
+
+
 /*
  * Макрос контейнер для определения основной части модуля.
  * Используется парно: ${Body} и ${BodyEnd}.
@@ -46,12 +59,11 @@
  */
 !define Body "!insertmacro SCHAT_MOD_BODY "
 !define BodyEnd "!endif"
-!macro SCHAT_MOD_BODY _ID
+!macro SCHAT_MOD_BODY
   !ifdef SCHAT_DESC
-    !insertmacro MUI_DESCRIPTION_TEXT ${${_ID}_idx} "$(desc_${_ID})"
+    !insertmacro MUI_DESCRIPTION_TEXT ${${MOD_ID}_idx} "$(desc_${MOD_ID})"
   !endif
   !ifdef SCHAT_SECTIONS
-    !insertmacro SCHAT_MOD_ID ${_ID}
 !macroend
 
 
@@ -69,6 +81,42 @@
 !define SectionEnd "!insertmacro SCHAT_SECTION_END "
 !macro SCHAT_SECTION_END
   SectionEnd
+!macroend
+
+
+/*
+ * Управляет выбором секции
+ */
+!define SectionState "!insertmacro SectionState"
+!macro SectionState _KEY _DEF _SEC
+  Push $0
+  ClearErrors
+  ReadIniStr $0 "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}"
+  ${Unless} ${Errors}
+    ${If} $0 != 1
+    ${AndIf} $0 != 0
+      StrCpy $0 ${_DEF}
+    ${EndIf}
+  ${Else}
+    StrCpy $0 ${_DEF}
+  ${EndUnless}
+
+  ${If} $0 == 1
+    !insertmacro SelectSection ${_SEC}
+  ${Else}
+    !insertmacro UnselectSection ${_SEC}
+  ${EndIf}
+
+  Pop $0
+!macroend
+
+
+!macro SAVE_SECTION _SEC _KEY
+  ${If} ${SectionIsSelected} ${_SEC}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 1
+  ${Else}
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 0
+  ${EndIf}
 !macroend
 
 !endif /* SCHAT_NSH_ */
