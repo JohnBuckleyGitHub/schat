@@ -80,3 +80,12 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !include "engine\sections.nsh"
 
 !insertmacro INSERT_TRANSLATIONS
+
+Section
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version" "${SCHAT_VERSION}"
+
+SectionEnd
+
+Function .onInit
+  !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd

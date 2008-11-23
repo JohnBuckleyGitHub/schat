@@ -29,6 +29,14 @@
 
 ${mod} Core
 ${mod} Qt
+
+!ifdef SCHAT_SECTIONS
+  SectionGroup "$(STR1004)" GroupEmoticons
+!endif
 ${mod} Emoticons.Kolobok
 ${mod} Emoticons.Simple
+!ifdef SCHAT_SECTIONS
+  SectionGroupEnd
+!endif
+
 ${mod} Daemon
