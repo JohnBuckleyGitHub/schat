@@ -16,12 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Body} Emoticons.Simple
+${Name} Emoticons.Simple
+${State} 1
 
+${Body}
 ${Section}
   SetOutPath "$INSTDIR\emoticons\Simple Smileys"
   File "${SCHAT_DATADIR}\emoticons\Simple Smileys\*.png"
   File "${SCHAT_DATADIR}\emoticons\Simple Smileys\emoticons.xml"
 ${SectionEnd}
-
 ${BodyEnd}

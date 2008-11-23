@@ -16,12 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Body} Emoticons.Kolobok
+${Name} Emoticons.Kolobok
+${State} 1
 
+${Body}
 ${Section}
   SetOutPath "$INSTDIR\emoticons\Kolobok"
   File "${SCHAT_DATADIR}\emoticons\Kolobok\*.png"
   File "${SCHAT_DATADIR}\emoticons\Kolobok\icondef.xml"
 ${SectionEnd}
-
 ${BodyEnd}

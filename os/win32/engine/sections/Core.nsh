@@ -16,10 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Meta} Core
-${MetaEnd}
+${Name} Core
 
-${Body} Core
+${Body}
 ${Section}
   SectionIn RO
 

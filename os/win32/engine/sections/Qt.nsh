@@ -16,8 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-${Body} Qt
+${Name} Qt
 
+${Body}
 ${Section}
   SectionIn RO
 
@@ -34,5 +35,4 @@ ${Section}
   SetOutPath "$INSTDIR\plugins\imageformats"
   File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"
 ${SectionEnd}
-
 ${BodyEnd}

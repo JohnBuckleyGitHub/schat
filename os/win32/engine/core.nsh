@@ -87,6 +87,14 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro SECTION_OPTIONS
 
 !undef SCHAT_SECTIONS
+!define SCHAT_POST
+Section
+  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version" "${SCHAT_VERSION}"
+
+  !include "engine\sections.nsh"
+SectionEnd
+
+!undef SCHAT_POST
 !define SCHAT_DESC
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !if ${SCHAT_EMOTICON_GRP} == 1
@@ -98,14 +106,13 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
 !insertmacro INSERT_TRANSLATIONS
 
-Section
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version" "${SCHAT_VERSION}"
-
-SectionEnd
-
+!undef SCHAT_DESC
+!define SCHAT_INIT
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
   !insertmacro OPTIONS_PAGE_INIT
+
+  !include "engine\sections.nsh"
 FunctionEnd
 
 !insertmacro OPTIONS_PAGE_FUNC
