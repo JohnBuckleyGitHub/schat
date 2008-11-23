@@ -22,24 +22,17 @@
 !include "engine\translations.nsh"
 
 /*
- * Макрос для сохранения имени модуля внутри ${Body}.
+ * Cохранения имени модуля.
  * Зависит от MUI2.nsh.
  */
-!define Name "!insertmacro SCHAT_MOD_ID "
-!macro SCHAT_MOD_ID _ID
-  !insertmacro MUI_UNSET MOD_ID
-  !define MOD_ID "${_ID}"
-!macroend
+!define Name "!insertmacro MUI_SET MOD_ID "
 
 
-!define Meta "!insertmacro SCHAT_META "
-!define MetaEnd "!endif"
-!macro SCHAT_META _ID
-  !ifdef SCHAT_META
-    !insertmacro SCHAT_MOD_ID ${_ID}
-!macroend
-
-
+/*
+ * Макрос для включения поддержки механизма сохранения/восстановления
+ * состояния секции.
+ * \param _STATE 1 - секция выбрана по умолчанию, 0 - не выбрана.
+ */
 !define State "!insertmacro SCHAT_MOD_STATE "
 !macro SCHAT_MOD_STATE _STATE
   !ifdef SCHAT_INIT
@@ -56,6 +49,7 @@
  * Макрос контейнер для определения основной части модуля.
  * Используется парно: ${Body} и ${BodyEnd}.
  * Содержимое будет развёрнуто только при определении SCHAT_SECTIONS.
+ * дополнительно устанавливает описание для секции.
  */
 !define Body "!insertmacro SCHAT_MOD_BODY "
 !define BodyEnd "!endif"
@@ -85,7 +79,7 @@
 
 
 /*
- * Управляет выбором секции
+ * Управляет выбором секции.
  */
 !define SectionState "!insertmacro SectionState"
 !macro SectionState _KEY _DEF _SEC
@@ -111,6 +105,9 @@
 !macroend
 
 
+/*
+ * Сохраняет статус секции.
+ */
 !macro SAVE_SECTION _SEC _KEY
   ${If} ${SectionIsSelected} ${_SEC}
     WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 1
