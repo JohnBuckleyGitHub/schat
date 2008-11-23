@@ -19,6 +19,7 @@
 !include "MUI2.nsh"
 !include "engine\default.nsh"
 !include "engine\schat.nsh"
+!include "engine\page-options.nsh"
 
 !define SCHAT_META
 !include "engine\sections.nsh"
@@ -43,6 +44,10 @@ VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
+!if ${SCHAT_FINISH_RUN} != ""
+  !define MUI_FINISHPAGE_RUN "${SCHAT_FINISH_RUN}"
+!endif
+
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK            "${SCHAT_WEB_SITE}"
@@ -66,6 +71,7 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_PAGE_LICENSE "license.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+!insertmacro OPTIONS_PAGE
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -78,6 +84,7 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !undef SCHAT_META
 !define SCHAT_SECTIONS
 !include "engine\sections.nsh"
+!insertmacro SECTION_OPTIONS
 
 !insertmacro INSERT_TRANSLATIONS
 
@@ -88,4 +95,7 @@ SectionEnd
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
+  !insertmacro OPTIONS_PAGE_INIT
 FunctionEnd
+
+!insertmacro OPTIONS_PAGE_FUNC
