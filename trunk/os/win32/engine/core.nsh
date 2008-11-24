@@ -20,6 +20,7 @@
 !include "engine\default.nsh"
 !include "engine\schat.nsh"
 !include "engine\page-options.nsh"
+!include "engine\update.nsh"
 
 !define SCHAT_META
 !include "engine\sections.nsh"
@@ -43,6 +44,11 @@ VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
 VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
+
+!if ${SCHAT_CHECK_RUN} == 1
+ ReserveFile "contrib\plugins\FindProcDLL.dll"
+ ReserveFile "contrib\plugins\KillProcDLL.dll"
+!endif
 
 !if ${SCHAT_FINISH_RUN} != ""
   !define MUI_FINISHPAGE_RUN "${SCHAT_FINISH_RUN}"
@@ -100,13 +106,41 @@ Section
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Version" "${SCHAT_VERSION}"
 
   !include "engine\sections.nsh"
+
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME} ${SCHAT_VERSION}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schat.exe"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "IMPOMEZIA"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLInfoAbout"    "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayVersion"  "${SCHAT_VERSION}"
+SectionEnd
+
+
+/*
+ * Удаление.
+ */
+!undef SCHAT_POST
+!define SCHAT_UNINSTALL
+Section "Uninstall"
+  Delete "$DESKTOP\${SCHAT_NAME}.lnk"
+  Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
+  Delete "${SCHAT_PROGRAMGROUP}\*.lnk"
+  RMDir  "${SCHAT_PROGRAMGROUP}"
+
+  !include "engine\sections.nsh"
+
+  Delete "$INSTDIR\uninstall.ini"
+  DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
+  RMDir "$INSTDIR"
 SectionEnd
 
 
 /*
  * Описания секций.
  */
-!undef SCHAT_POST
+!undef SCHAT_UNINSTALL
 !define SCHAT_DESC
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !if ${SCHAT_EMOTICON_GRP} == 1
@@ -122,12 +156,29 @@ SectionEnd
  */
 !undef SCHAT_DESC
 !define SCHAT_INIT
+!insertmacro UPDATE_ENGINE_FUNCTIONS
+!insertmacro GetParameters
+!insertmacro GetOptionsS
+!insertmacro GetParent
+
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
-  !insertmacro OPTIONS_PAGE_INIT
+  !insertmacro UPDATE_CMD
 
+  !insertmacro OPTIONS_PAGE_INIT
   !include "engine\sections.nsh"
+FunctionEnd
+
+
+/*
+ * Инициализация деинсталлятора.
+ */
+Function un.onInit
+  !insertmacro MUI_UNGETLANGUAGE
+  !insertmacro UPDATE_ENGINE_INIT
 FunctionEnd
 
 !insertmacro OPTIONS_PAGE_FUNC
 !insertmacro INSERT_TRANSLATIONS
+!insertmacro FIND_RUNNING
+!insertmacro UN_FIND_RUNNING

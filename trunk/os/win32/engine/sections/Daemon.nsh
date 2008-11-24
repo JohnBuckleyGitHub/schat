@@ -26,3 +26,8 @@ ${Section}
   File "${SCHAT_BINDIR}\schatd-ui.exe"
 ${SectionEnd}
 ${BodyEnd}
+
+${Uninstall}
+  Delete "$INSTDIR\schatd.exe"
+  Delete "$INSTDIR\schatd-ui.exe"
+${UninstallEnd}

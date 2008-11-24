@@ -21,7 +21,7 @@
 !endif
 !ifmacrondef SCHAT_MOD
   !macro SCHAT_MOD _NAME
-    !ifdef ${_NAME}
+    !ifdef ${_NAME} | SCHAT_UNINSTALL
       !include "engine\sections\${_NAME}.nsh"
     !endif
   !macroend
