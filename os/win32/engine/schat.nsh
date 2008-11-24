@@ -20,6 +20,7 @@
 !define SCHAT_NSH_
 
 !include "engine\translations.nsh"
+!AddPluginDir "contrib\plugins"
 
 /*
  * Cохранения имени модуля.
@@ -78,6 +79,13 @@
 !macroend
 
 
+!define Uninstall "!insertmacro SCHAT_MOD_UNINSTALL "
+!define UninstallEnd "!endif"
+!macro SCHAT_MOD_UNINSTALL
+  !ifdef SCHAT_UNINSTALL
+!macroend
+
+
 /*
  * Управляет выбором секции.
  */
@@ -114,6 +122,78 @@
   ${Else}
     WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "${_KEY}" 0
   ${EndIf}
+!macroend
+
+
+/*
+ * Обработка ключа командной строки "-update".
+ * Путь установки становится на один уровень выше расположения exe файла.
+ */
+!macro UPDATE_CMD
+  ${GetParameters} $R0
+  ${GetOptionsS} $R0 "-update" $R0
+  ${Unless} ${Errors}
+    ${GetParent} "$EXEDIR" $R0
+    StrCpy $INSTDIR $R0
+  ${Else}
+    !if ${SCHAT_CHECK_RUN} == 1
+     call findRunningChat
+    !endif
+  ${EndUnless}
+!macroend
+
+
+/**
+ * Завершает все процессы с указаным именем
+ */
+!macro KILL_ALL _NAME
+ !if ${SCHAT_CHECK_RUN} == 1
+  Push $0
+  StrCpy $R0 1
+  ${While} $R0 == 1
+    KillProcDLL::KillProc "${_NAME}"
+    Pop $R0
+    FindProcDLL::FindProc "${_NAME}"
+    Pop $R0
+  ${EndWhile}
+  Pop $R0
+ !endif
+!macroend
+
+
+/*
+* Выводим `MessageBox` если чат запущен.
+*/
+!macro findRunningChat
+  ${Unless} ${Silent}
+    newcheck:
+    FindProcDLL::FindProc "schat.exe"
+    Pop $R0
+    ${If} $R0 == 1 
+      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(STR400)" IDRETRY newcheck
+      Quit
+    ${EndIf}
+  ${Else}
+     !insertmacro KILL_ALL "schat.exe"
+     !insertmacro KILL_ALL "schatd.exe"
+     !insertmacro KILL_ALL "schatd-ui.exe"
+  ${EndUnless}
+!macroend
+
+!macro FIND_RUNNING
+ !if ${SCHAT_CHECK_RUN} == 1
+  Function findRunningChat
+    !insertmacro findRunningChat
+  FunctionEnd
+ !endif
+!macroend
+
+!macro UN_FIND_RUNNING
+ !if ${SCHAT_CHECK_RUN} == 1
+  Function un.findRunningChat
+    !insertmacro findRunningChat
+  FunctionEnd
+ !endif
 !macroend
 
 !endif /* SCHAT_NSH_ */

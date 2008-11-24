@@ -36,3 +36,16 @@ ${Section}
   File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"
 ${SectionEnd}
 ${BodyEnd}
+
+
+${Uninstall}
+  Delete "$INSTDIR\QtCore4.dll"
+  Delete "$INSTDIR\QtGui4.dll"
+  Delete "$INSTDIR\QtNetwork4.dll"
+  Delete "$INSTDIR\msvcr90.dll"
+  Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
+  Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
+
+  RMDir "$INSTDIR\plugins\imageformats"
+  RMDir "$INSTDIR\plugins"
+${UninstallEnd}

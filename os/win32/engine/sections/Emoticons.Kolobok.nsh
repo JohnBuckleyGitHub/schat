@@ -26,3 +26,11 @@ ${Section}
   File "${SCHAT_DATADIR}\emoticons\Kolobok\icondef.xml"
 ${SectionEnd}
 ${BodyEnd}
+
+${Uninstall}
+  Delete "$INSTDIR\emoticons\Kolobok\*.png"
+  Delete "$INSTDIR\emoticons\Kolobok\icondef.xml"
+
+  RMDir "$INSTDIR\emoticons\Kolobok"
+  RMDir "$INSTDIR\emoticons"
+${UninstallEnd}

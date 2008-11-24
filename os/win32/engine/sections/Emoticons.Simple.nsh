@@ -26,3 +26,11 @@ ${Section}
   File "${SCHAT_DATADIR}\emoticons\Simple Smileys\emoticons.xml"
 ${SectionEnd}
 ${BodyEnd}
+
+${Uninstall}
+  Delete "$INSTDIR\emoticons\Simple Smileys\*.png"
+  Delete "$INSTDIR\emoticons\Simple Smileys\emoticons.xml"
+
+  RMDir "$INSTDIR\emoticons\Simple Smileys"
+  RMDir "$INSTDIR\emoticons"
+${UninstallEnd}
