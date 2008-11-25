@@ -16,11 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
+;!define Core
 !define Qt
-!define Emoticons.Kolobok
-!define Emoticons.Simple
-!define Daemon
+;!define Emoticons.Kolobok
+;!define Emoticons.Simple
+;!define Daemon
+
+!define SCHAT_PREFIX "runtime-"
 
 ;!define SCHAT_QTDIR      "C:\qt\443"
 ;!define SCHAT_BINDIR     "..\..\out\release"

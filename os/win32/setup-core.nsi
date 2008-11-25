@@ -17,10 +17,12 @@
  */
 
 !define Core
-!define Qt
+;!define Qt
 !define Emoticons.Kolobok
 !define Emoticons.Simple
 !define Daemon
+
+!define SCHAT_PREFIX "core-"
 
 ;!define SCHAT_QTDIR      "C:\qt\443"
 ;!define SCHAT_BINDIR     "..\..\out\release"

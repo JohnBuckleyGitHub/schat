@@ -19,6 +19,19 @@
 !ifndef UPDATE_NSH_
 !define UPDATE_NSH_
 
+/**
+ * Функции
+ */
+!macro UPDATE_ENGINE_FUNCTIONS
+  !ifdef Core
+    !insertmacro un.GetParameters
+    !insertmacro un.GetOptionsS
+    !insertmacro un.WordFind
+  !endif
+!macroend
+
+
+!ifdef Core
 !include "FileFunc.nsh"
 !include "WordFunc.nsh"
 
@@ -79,16 +92,6 @@ Var files
   ${Else}
     !insertmacro UPDATE_ENGINE_FAIL
   ${EndIf}
-!macroend
-
-
-/**
- * Функции
- */
-!macro UPDATE_ENGINE_FUNCTIONS
-  !insertmacro un.GetParameters
-  !insertmacro un.GetOptionsS
-  !insertmacro un.WordFind
 !macroend
 
 
@@ -162,4 +165,5 @@ Var files
   ${EndIf}
 !macroend
 
+!endif
 !endif /* UPDATE_NSH_ */

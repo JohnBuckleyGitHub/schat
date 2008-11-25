@@ -17,6 +17,8 @@
  */
 
 !include "MUI2.nsh"
+!include "FileFunc.nsh"
+!include "WordFunc.nsh"
 !include "engine\default.nsh"
 !include "engine\schat.nsh"
 !include "engine\page-options.nsh"
@@ -81,8 +83,10 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
+!ifdef Core
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+!endif
 
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Russian"
@@ -123,6 +127,7 @@ SectionEnd
  */
 !undef SCHAT_POST
 !define SCHAT_UNINSTALL
+!ifdef Core
 Section "Uninstall"
   Delete "$DESKTOP\${SCHAT_NAME}.lnk"
   Delete "$QUICKLAUNCH\${SCHAT_NAME}.lnk"
@@ -135,6 +140,7 @@ Section "Uninstall"
   DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
   RMDir "$INSTDIR"
 SectionEnd
+!endif
 
 
 /*
@@ -173,10 +179,12 @@ FunctionEnd
 /*
  * Инициализация деинсталлятора.
  */
+!ifdef Core
 Function un.onInit
   !insertmacro MUI_UNGETLANGUAGE
   !insertmacro UPDATE_ENGINE_INIT
 FunctionEnd
+!endif
 
 !insertmacro OPTIONS_PAGE_FUNC
 !insertmacro INSERT_TRANSLATIONS
