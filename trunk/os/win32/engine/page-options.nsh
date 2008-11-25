@@ -20,18 +20,21 @@
 !define PAGEOPTIONS_NSH_
 
 !if ${SCHAT_PAGE_OPTIONS} == 1
-!define SCHAT_PROGRAMGROUP "$SMPROGRAMS\${SCHAT_NAME}"
+  !define SCHAT_PROGRAMGROUP "$SMPROGRAMS\${SCHAT_NAME}"
+  
+  var DesktopCheckBox
+  var QuickLaunchCheckBox
+  var AllProgramsCheckBox
+  var AutostartCheckBox
+  var settings.Desktop
+  var settings.QuickLaunch
+  var settings.AllPrograms
+  var settings.AutoStart
 
-var DesktopCheckBox
-var QuickLaunchCheckBox
-var AllProgramsCheckBox
-var AutostartCheckBox
-var AutostartDaemonCheckBox
-var settings.Desktop
-var settings.QuickLaunch
-var settings.AllPrograms
-var settings.AutoStart
-var settings.AutoDaemonStart
+  !ifdef Daemon
+    var settings.AutoDaemonStart
+    var AutostartDaemonCheckBox
+  !endif
 !endif
 
 !macro OPTIONS_PAGE
@@ -67,14 +70,16 @@ Function SettingsPage
   Pop $AutostartCheckBox
   ${NSD_SetState} $AutoStartCheckBox $settings.AutoStart
 
-  ${NSD_CreateCheckbox} 10 116 90% 18 "$(STR105)"
-  Pop $AutostartDaemonCheckBox
-  ${If} ${SectionIsSelected} ${Daemon_idx}
-    ${NSD_SetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
-  ${Else}
-    ${NSD_AddStyle} $AutostartDaemonCheckBox ${WS_DISABLED}
-    ${NSD_SetState} $AutostartDaemonCheckBox ${BST_UNCHECKED}
-  ${EndIf}
+  !ifdef Daemon
+    ${NSD_CreateCheckbox} 10 116 90% 18 "$(STR105)"
+    Pop $AutostartDaemonCheckBox
+    ${If} ${SectionIsSelected} ${Daemon_idx}
+      ${NSD_SetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
+    ${Else}
+      ${NSD_AddStyle} $AutostartDaemonCheckBox ${WS_DISABLED}
+      ${NSD_SetState} $AutostartDaemonCheckBox ${BST_UNCHECKED}
+    ${EndIf}
+  !endif
 
   nsDialogs::Show
 
@@ -85,7 +90,10 @@ Function SettingsPageLeave
   ${NSD_GetState} $QuickLaunchCheckBox     $settings.QuickLaunch
   ${NSD_GetState} $AllProgramsCheckBox     $settings.AllPrograms
   ${NSD_GetState} $AutoStartCheckBox       $settings.AutoStart
-  ${NSD_GetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
+
+  !ifdef Daemon
+    ${NSD_GetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
+  !endif
 FunctionEnd
 !endif
 !macroend
@@ -112,9 +120,11 @@ Section
     CreateDirectory "${SCHAT_PROGRAMGROUP}"
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR300).lnk" "$INSTDIR\uninstall.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
 
-    ${If} ${SectionIsSelected} ${Daemon_idx}
-      CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
-    ${EndIf}
+    !ifdef Daemon
+      ${If} ${SectionIsSelected} ${Daemon_idx}
+        CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
+      ${EndIf}
+    !endif
 
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\${SCHAT_NAME}.lnk" "$INSTDIR\schat.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
   ${EndIf}
@@ -123,15 +133,20 @@ Section
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat.exe -hide"
   ${EndIf}
 
-  ${If} $settings.AutoDaemonStart == ${BST_CHECKED}
-    WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME} Daemon" "$INSTDIR\schatd-ui.exe -start"
-  ${EndIf}
+  !ifdef Daemon
+    ${If} $settings.AutoDaemonStart == ${BST_CHECKED}
+      WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME} Daemon" "$INSTDIR\schatd-ui.exe -start"
+    ${EndIf}
+  !endif
 
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"         "$settings.Desktop"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch"     "$settings.QuickLaunch"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AllPrograms"     "$settings.AllPrograms"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoStart"       "$settings.AutoStart"
-  WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoDaemonStart" "$settings.AutoDaemonStart"
+
+  !ifdef Daemon
+    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoDaemonStart" "$settings.AutoDaemonStart"
+  !endif
 SectionEnd
 !endif
 !macroend
@@ -166,7 +181,10 @@ SectionEnd
   ${Option} "QuickLaunch"     1 $settings.QuickLaunch
   ${Option} "AllPrograms"     1 $settings.AllPrograms
   ${Option} "AutoStart"       1 $settings.AutoStart
-  ${Option} "AutoDaemonStart" 0 $settings.AutoDaemonStart
+
+  !ifdef Daemon
+    ${Option} "AutoDaemonStart" 0 $settings.AutoDaemonStart
+  !endif
 !endif
 !macroend
 
