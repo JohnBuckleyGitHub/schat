@@ -26,7 +26,7 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION      "0.4.0.777"
+${def} SCHAT_VERSION      "0.4.0.778"
 ${def} SCHAT_QT_VERSION   "4.4.3"
 ${def} SCHAT_NAME         "IMPOMEZIA Simple Chat"
 ${def} SCHAT_NAME_SHORT   "Simple Chat"
@@ -41,7 +41,7 @@ ${def} SCHAT_UNINST_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\$
 ${def} SCHAT_INSTALLDIR   "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_PAGE_OPTIONS 1
 ${def} SCHAT_EMOTICON_GRP 1
-${def} SCHAT_CHECK_RUN    0
+${def} SCHAT_CHECK_RUN    1
 ${def} SCHAT_VC90         1
 
 ${def} SCHAT_QTDIR      "C:\qt\443"

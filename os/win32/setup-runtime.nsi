@@ -23,6 +23,7 @@
 ;!define Daemon
 
 !define SCHAT_PREFIX "runtime-"
+!define SCHAT_EMOTICON_GRP 0
 
 ;!define SCHAT_QTDIR      "C:\qt\443"
 ;!define SCHAT_BINDIR     "..\..\out\release"
