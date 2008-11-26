@@ -190,9 +190,11 @@
 
 !macro UN_FIND_RUNNING
  !if ${SCHAT_CHECK_RUN} == 1
-  Function un.findRunningChat
+ !ifdef Core
+   Function un.findRunningChat
     !insertmacro findRunningChat
-  FunctionEnd
+   FunctionEnd
+  !endif
  !endif
 !macroend
 
