@@ -33,7 +33,7 @@ ${def} SCHAT_NAME_SHORT   "Simple Chat"
 ${def} SCHAT_PREFIX       ""
 ${def} SCHAT_SUFFIX       ""
 ${def} SCHAT_OUTDIR       "out/"
-${def} SCHAT_FINISH_RUN   "$INSTDIR\schat.exe"
+${def} SCHAT_FINISH_RUN   1
 ${def} SCHAT_REGKEY       "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_WEB_SITE     "http://impomezia.com/"
 ${def} SCHAT_COPYRIGHT    "Copyright © 2008 IMPOMEZIA"

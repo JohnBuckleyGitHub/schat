@@ -52,8 +52,8 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
  ReserveFile "contrib\plugins\KillProcDLL.dll"
 !endif
 
-!if ${SCHAT_FINISH_RUN} != ""
-  !define MUI_FINISHPAGE_RUN "${SCHAT_FINISH_RUN}"
+!if ${SCHAT_FINISH_RUN} == 1
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\schat.exe"
 !endif
 
 !define MUI_ABORTWARNING

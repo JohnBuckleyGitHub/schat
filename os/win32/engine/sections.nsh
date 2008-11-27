@@ -44,3 +44,4 @@ ${mod} Emoticons.Simple
 !endif
 
 ${mod} Daemon
+${mod} Customize
