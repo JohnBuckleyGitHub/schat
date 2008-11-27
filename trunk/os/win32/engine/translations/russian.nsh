@@ -43,6 +43,8 @@ ${L} desc_Emoticons.Kolobok "Смайлики Kolobok от Aiwan http://kolobok.us/"
 ${L} sec_Emoticons.Simple   "Simple Smileys"
 ${L} desc_Emoticons.Simple  "Смайлики Simple Smileys от Leo Bolin http://leobolin.net/simplesmileys/"
 ${L} sec_Daemon             "Cервер"
-${L} desc_Daemon            "Cервер чата и программа для управления им"
+${L} desc_Daemon            "Cервер чата и программа для управления"
+${L} sec_Customize          "${SCHAT_NAME_SHORT} Customize"
+${L} desc_Customize         "${SCHAT_NAME} Customize"
 
 !endif /* RUSSIAN_NSH_ */

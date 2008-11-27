@@ -21,6 +21,7 @@
 ;!define Emoticons.Kolobok
 ;!define Emoticons.Simple
 ;!define Daemon
+;!define Customize
 
 !define SCHAT_PREFIX "runtime-"
 !define SCHAT_EMOTICON_GRP 0

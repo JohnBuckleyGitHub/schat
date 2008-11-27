@@ -21,6 +21,7 @@
 !define Emoticons.Kolobok
 !define Emoticons.Simple
 !define Daemon
+;!define Customize
 
 !define SCHAT_PREFIX "core-"
 

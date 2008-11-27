@@ -9,19 +9,25 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
-!define Qt
-!define Emoticons.Kolobok
-!define Emoticons.Simple
-!define Daemon
-;!define Customize
+;!define Core
+;!define Qt
+;!define Emoticons.Kolobok
+;!define Emoticons.Simple
+;!define Daemon
+!define Customize
+
+!define SCHAT_PREFIX "customize-"
+!define SCHAT_EMOTICON_GRP 0
+!define SCHAT_CHECK_RUN    0
+!define SCHAT_PAGE_OPTIONS 0
+!define SCHAT_FINISH_RUN   0
 
 ;!define SCHAT_QTDIR      "C:\qt\443"
 ;!define SCHAT_BINDIR     "..\..\out\release"

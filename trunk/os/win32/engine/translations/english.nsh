@@ -44,5 +44,7 @@ ${L} sec_Emoticons.Simple   "Simple Smileys"
 ${L} desc_Emoticons.Simple  "Simple Smileys by Leo Bolin http://leobolin.net/simplesmileys/"
 ${L} sec_Daemon             "Standalone Server"
 ${L} desc_Daemon            "Standalone Server and management tool"
+${L} sec_Customize          "${SCHAT_NAME_SHORT} Customize"
+${L} desc_Customize         "${SCHAT_NAME} Customize"
 
 !endif /* ENGLISH_NSH_ */
