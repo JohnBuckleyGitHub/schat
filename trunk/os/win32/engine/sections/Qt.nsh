@@ -23,9 +23,9 @@ ${Section}
   SectionIn RO
 
   SetOutPath "$INSTDIR"
-  File "${SCHAT_QTDIR}\bin\QtCore4.dll"
-  File "${SCHAT_QTDIR}\bin\QtGui4.dll"
-  File "${SCHAT_QTDIR}\bin\QtNetwork4.dll"
+  File "${SCHAT_QT_BINDIR}\QtCore4.dll"
+  File "${SCHAT_QT_BINDIR}\QtGui4.dll"
+  File "${SCHAT_QT_BINDIR}\QtNetwork4.dll"
 
   !if ${SCHAT_VC90} == 1
     File "${VC90_REDIST_DIR}\msvcr90.dll"

@@ -24,6 +24,7 @@ ${Section}
 
   SetOutPath "$INSTDIR"
   File "${SCHAT_BINDIR}\schat.exe"
+  File "license.txt"
 
   SetOutPath "$INSTDIR\networks"
   File "${SCHAT_DATADIR}\networks\*.xml"
