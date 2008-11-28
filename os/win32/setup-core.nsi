@@ -26,6 +26,7 @@
 !define SCHAT_PREFIX "core-"
 
 ;!define SCHAT_QTDIR      "C:\qt\443"
+;!define SCHAT_QT_BINDIR  "C:\qt\443\bin"
 ;!define SCHAT_BINDIR     "..\..\out\release"
 ;!define SCHAT_DATADIR    "..\..\data"
 ;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"

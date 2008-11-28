@@ -42,6 +42,11 @@ ${Section}
   File "engine\*.nsh"
 
   SetOutPath "$INSTDIR\custom\out"
+  SetOutPath "$INSTDIR\custom
+  File "engine\custom\setup-runtime.nsi"
+  File "engine\custom\setup-core.nsi"
+  File "engine\custom\setup.nsi"
+  File "license.txt"
 
   SetOutPath "$INSTDIR"
   File "${SCHAT_BINDIR}\customize.exe"

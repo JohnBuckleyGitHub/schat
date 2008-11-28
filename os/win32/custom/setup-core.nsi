@@ -9,30 +9,26 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-;!define Core
+!define Core
 ;!define Qt
-;!define Emoticons.Kolobok
-;!define Emoticons.Simple
-;!define Daemon
-!define Customize
+!define Emoticons.Kolobok
+!define Emoticons.Simple
+!define Daemon
+;!define Customize
 
-!define SCHAT_PREFIX "customize-"
-!define SCHAT_EMOTICON_GRP 0
-!define SCHAT_CHECK_RUN    0
-!define SCHAT_PAGE_OPTIONS 0
-!define SCHAT_FINISH_RUN   0
+!define SCHAT_PREFIX "core-"
 
-;!define SCHAT_QTDIR      "C:\qt\443"
-;!define SCHAT_QT_BINDIR  "C:\qt\443\bin"
-;!define SCHAT_BINDIR     "..\..\out\release"
-;!define SCHAT_DATADIR    "..\..\data"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+!define SCHAT_QTDIR      ".."
+!define SCHAT_QT_BINDIR  ".."
+!define SCHAT_BINDIR     ".."
+!define SCHAT_DATADIR    ".."
+!define VC90_REDIST_DIR  ".."
 
 !include "engine\core.nsh"
