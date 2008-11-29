@@ -54,9 +54,9 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   setPage(Page_Intro, new IntroPage(this));
   setStartId(Page_Intro);
 
-  connect(this, SIGNAL(customButtonClicked(int)), this, SLOT(customButtonClicked(int)));
+  connect(this, SIGNAL(accepted()), SLOT(close()));
+  connect(this, SIGNAL(rejected()), SLOT(close()));
 
-//  setStartId(Page_Intro);
 //  setPixmap(QWizard::LogoPixmap, QPixmap(":/images/wizard.png"));
 
   setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
@@ -64,4 +64,3 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
 //  settings->readSettings();
   setWizardStyle(QWizard::ModernStyle);
 }
-
