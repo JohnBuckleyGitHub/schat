@@ -26,13 +26,13 @@ TEMPLATE = app
 
 HEADERS += \
     customizewizard.h \
-    intropage.h \
+    page/intropage.h \
     version.h \
 
 SOURCES += \
     customizewizard.cpp \
-    intropage.cpp \
     main.cpp \
+    page/intropage.cpp \
 
 contains( SCHAT_STATIC, 1 ) {
     DEFINES += SCHAT_STATIC
