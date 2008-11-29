@@ -33,6 +33,9 @@ class SelectPage : public QWizardPage
 public:
   SelectPage(QWidget *parent = 0);
 
+private slots:
+  void clickedCore(bool checked);
+
 private:
   QCheckBox *m_core;
   QCheckBox *m_overrideLevels;
