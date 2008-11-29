@@ -9,17 +9,18 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
 
 #include "customizewizard.h"
 #include "page/intropage.h"
+#include "page/selectpage.h"
 
 /**
  * Конструктор InstallWizard
@@ -52,12 +53,13 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
 //  setPage(Page_End, new EndPage(this));
 
   setPage(Page_Intro, new IntroPage(this));
+  setPage(Page_Select, new SelectPage(this));
   setStartId(Page_Intro);
 
   connect(this, SIGNAL(accepted()), SLOT(close()));
   connect(this, SIGNAL(rejected()), SLOT(close()));
 
-//  setPixmap(QWizard::LogoPixmap, QPixmap(":/images/wizard.png"));
+  setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
 
   setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
 

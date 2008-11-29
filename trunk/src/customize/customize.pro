@@ -9,11 +9,11 @@
 #
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
@@ -27,12 +27,14 @@ TEMPLATE = app
 HEADERS += \
     customizewizard.h \
     page/intropage.h \
+    page/selectpage.h \
     version.h \
 
 SOURCES += \
     customizewizard.cpp \
     main.cpp \
     page/intropage.cpp \
+    page/selectpage.cpp \
 
 contains( SCHAT_STATIC, 1 ) {
     DEFINES += SCHAT_STATIC

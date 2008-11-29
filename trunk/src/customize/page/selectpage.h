@@ -16,23 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#ifndef SELECTPAGE_H_
+#define SELECTPAGE_H_
 
-#include <QObject>
-#include <QWizard>
+#include <QWizardPage>
 
-class CustomizeWizard : public QWizard
+class SelectPage : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  enum Pages {
-    Page_Intro,
-    Page_Select
-  };
-
-  CustomizeWizard(QWidget *parent = 0);
+  SelectPage(QWidget *parent = 0);
 };
 
-#endif /* CUSTOMIZEWIZARD_H_ */
+#endif /* SELECTPAGE_H_ */
