@@ -16,23 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#include <QtGui>
 
-#include <QObject>
-#include <QWizard>
+#include "selectpage.h"
 
-class CustomizeWizard : public QWizard
+SelectPage::SelectPage(QWidget *parent)
+  : QWizardPage(parent)
 {
-  Q_OBJECT
+  setTitle(tr("Выбор необходимых действий"));
+  setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
-public:
-  enum Pages {
-    Page_Intro,
-    Page_Select
-  };
+  QLabel *introLabel = new QLabel(tr(
+      "<p>Нажмите кнопку <b>&quot;Далее&quot;</b> для продолжения.</p>"
+      ).arg(QApplication::applicationVersion()), this);
+  introLabel->setWordWrap(true);
 
-  CustomizeWizard(QWidget *parent = 0);
-};
-
-#endif /* CUSTOMIZEWIZARD_H_ */
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(introLabel);
+  mainLay->addStretch();
+}
