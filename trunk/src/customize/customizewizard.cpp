@@ -19,7 +19,7 @@
 #include <QtGui>
 
 #include "customizewizard.h"
-#include "intropage.h"
+#include "page/intropage.h"
 
 /**
  * Конструктор InstallWizard
