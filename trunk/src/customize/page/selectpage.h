@@ -21,12 +21,29 @@
 
 #include <QWizardPage>
 
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QSpinBox;
+
 class SelectPage : public QWizardPage
 {
   Q_OBJECT
 
 public:
   SelectPage(QWidget *parent = 0);
+
+private:
+  QCheckBox *m_core;
+  QCheckBox *m_overrideLevels;
+  QCheckBox *m_runtime;
+  QCheckBox *m_save;
+  QLabel *m_coreLabel;
+  QLabel *m_runtimeLabel;
+  QLineEdit *m_suffix;
+  QLineEdit *m_version;
+  QSpinBox *m_coreLevel;
+  QSpinBox *m_runtimeLevel;
 };
 
 #endif /* SELECTPAGE_H_ */

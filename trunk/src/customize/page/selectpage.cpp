@@ -26,12 +26,49 @@ SelectPage::SelectPage(QWidget *parent)
   setTitle(tr("Выбор необходимых действий"));
   setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
-  QLabel *introLabel = new QLabel(tr(
-      "<p>Нажмите кнопку <b>&quot;Далее&quot;</b> для продолжения.</p>"
-      ).arg(QApplication::applicationVersion()), this);
-  introLabel->setWordWrap(true);
+  m_version = new QLineEdit(this);
+  QLabel *versionLabel = new QLabel(tr("&Версия:"), this);
+  versionLabel->setBuddy(m_version);
+
+  m_suffix = new QLineEdit(this);
+  QLabel *suffixLabel = new QLabel(tr("&Суффикс файлов:"), this);
+  suffixLabel->setBuddy(m_suffix);
+
+  QGroupBox *versionGroup = new QGroupBox(tr("Основные сведения"));
+  QHBoxLayout *versionLay = new QHBoxLayout(versionGroup);
+  versionLay->addWidget(versionLabel);
+  versionLay->addWidget(m_version);
+  versionLay->addSpacing(10);
+  versionLay->addWidget(suffixLabel);
+  versionLay->addWidget(m_suffix);
+  versionLay->addStretch();
+
+  m_core = new QCheckBox(tr("&Ядро"), this);
+  m_coreLabel = new QLabel(tr("Уровни обновлений:"), this);
+  m_coreLevel = new QSpinBox(this);
+  m_coreLevel->setRange(1, 2147483647);
+
+  m_runtime = new QCheckBox(tr("&Библиотека Qt"), this);
+  m_runtimeLevel = new QSpinBox(this);
+  m_runtimeLevel->setRange(1, 2147483647);
+
+  m_overrideLevels = new QCheckBox(tr("&Переопределить уровни обновлений"), this);
+  QGroupBox *updateGroup = new QGroupBox(tr("Альтернативное зеркало обновления"), this);
+  updateGroup->setCheckable(true);
+  QGridLayout *updateLay = new QGridLayout(updateGroup);
+  updateLay->addWidget(m_core, 0, 0);
+  updateLay->addWidget(m_coreLabel, 0, 1);
+  updateLay->addWidget(m_coreLevel, 0, 2);
+  updateLay->addWidget(m_runtime, 1, 0, 1, 2);
+  updateLay->addWidget(m_runtimeLevel, 1, 2);
+  updateLay->addWidget(m_overrideLevels, 2, 0, 1, 3);
+  updateLay->setColumnStretch(0, 1);
+
+  m_save = new QCheckBox(tr("Со&хранить введённые сведения"), this);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(introLabel);
+  mainLay->addWidget(versionGroup);
+  mainLay->addWidget(updateGroup);
+  mainLay->addWidget(m_save);
   mainLay->addStretch();
 }
