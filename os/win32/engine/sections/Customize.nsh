@@ -42,10 +42,10 @@ ${Section}
   File "engine\*.nsh"
 
   SetOutPath "$INSTDIR\custom\out"
-  SetOutPath "$INSTDIR\custom
-  File "engine\custom\setup-runtime.nsi"
-  File "engine\custom\setup-core.nsi"
-  File "engine\custom\setup.nsi"
+  SetOutPath "$INSTDIR\custom"
+  File "custom\setup-runtime.nsi"
+  File "custom\setup-core.nsi"
+  File "custom\setup.nsi"
   File "license.txt"
 
   SetOutPath "$INSTDIR"
@@ -67,6 +67,11 @@ ${Uninstall}
   Delete "$INSTDIR\custom\engine\sections\*.nsh"
   Delete "$INSTDIR\custom\engine\translations\*.nsh"
   Delete "$INSTDIR\custom\engine\*.nsh"
+
+  Delete "$INSTDIR\custom\setup-runtime.nsi"
+  Delete "$INSTDIR\custom\setup-core.nsi"
+  Delete "$INSTDIR\custom\setup.nsi"
+  Delete "$INSTDIR\custom\license.txt"
 
   Delete "$INSTDIR\customize.exe"
 
