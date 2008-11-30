@@ -23,26 +23,56 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
-#include <QtCore/QDir>
 #include <QtCore/QHash>
+#include <QtCore/QReadWriteLock>
 #include <QtCore/QRegExp>
+#include <QtCore/QSharedMemory>
 #include <QtCore/QString>
 
-#include <QtNetwork/QLocalSocket>
-
-#ifndef Q_OS_WIN
+#ifdef Q_OS_WIN
+#include <qt_windows.h>
+#else
 #include <sys/types.h>
 #include <pwd.h>
 #include <unistd.h>
 #endif
 
-#include "systemsemaphore.h"
-
 // timeouts are in ms
-static const int i_timeout_sem		= 10;
 static const int i_timeout_connect	= 200;
-static const int i_timeout_read		= 5000;
-static const int i_timeout_write	= 5000;
+static const int i_timeout_read		= 250;
+static const int i_timeout_write	= 500;
+
+static QString login()
+{
+	static QString login;
+	if(login.isEmpty())
+	{
+#ifdef Q_WS_QWS
+		login = QLatin1String("qws");
+#endif
+#ifdef Q_OS_WIN
+		QT_WA({
+			wchar_t buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
+			GetUserNameW(buffer, &bufferSize);
+			login = QString::fromUtf16((ushort*)buffer);
+		},
+		{
+			char buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
+			GetUserNameA(buffer, &bufferSize);
+			login = QString::fromLocal8Bit(buffer);
+		});
+#else
+		struct passwd* pwd = getpwuid(getuid());
+		if(pwd)
+			login = QLatin1String(pwd->pw_name);
+#endif
+		Q_ASSERT(!login.isEmpty());
+	}
+
+	return login;
+}
 
 static bool writeMessage(QLocalSocket* socket, const QString& message, int timeout = i_timeout_write)
 {
@@ -56,8 +86,9 @@ static bool writeMessage(QLocalSocket* socket, const QString& message, int timeo
 	out.device()->seek(0);
 	out << (quint32)(block.size() - sizeof(quint32));
 
-	socket->write(block);
-	bool ok = socket->waitForBytesWritten(timeout);
+	bool ok = (socket->write(block) != -1);
+	if(ok)
+		ok &= socket->waitForBytesWritten(timeout);
 
 	return ok;
 }
@@ -83,7 +114,10 @@ static QString readMessage(QLocalSocket* socket, bool* ok = 0)
 	while(socket->bytesAvailable() < blockSize)
 	{
 		if(!socket->waitForReadyRead(i_timeout_read))
+		{
+			in >> message;
 			return message;
+		}
 	}
 	in >> message;
 
@@ -93,186 +127,114 @@ static QString readMessage(QLocalSocket* socket, bool* ok = 0)
 	return message;
 }
 
-
-LocalThread::LocalThread(quintptr socketDescriptor, const QString& id, QObject* parent) : QThread(parent)
-{
-	this->socketDescriptor = socketDescriptor;
-	this->id = id;
-}
-
-LocalThread::~LocalThread()
-{
-	if(isRunning())
-	{
-		stopped = true;
-		wait();
-	}
-}
-
 void LocalThread::run()
 {
-	stopped = false;
-
 	QLocalSocket socket;
-	if(!socket.setSocketDescriptor(socketDescriptor) || socket.state() != QLocalSocket::ConnectedState)
+	m_socket = &socket;
+	connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+	connect(m_socket, SIGNAL(disconnected()), this, SLOT(quit()));
+
+	if(!m_socket->setSocketDescriptor(m_socketDescriptor) || m_socket->state() != QLocalSocket::ConnectedState)
+		return;
+	// send key to client for verification
+	if(!writeMessage(m_socket, m_key))
 		return;
 
-	// send id to client
-	if(!writeMessage(&socket, id))
-		return;
+	exec();
+}
 
-	const QString magic = id + QLatin1Char(':');
-	// wait to messages from client
-	while(socket.state() == QLocalSocket::ConnectedState && !stopped)
+void LocalThread::readyRead()
+{
+	bool ok = false;
+	QString message;
+	while(m_socket->bytesAvailable() > 0)
 	{
-		if(socket.waitForReadyRead(1000))
+		// read message from client
+		message = readMessage(m_socket, &ok);
+		if(ok)
 		{
-			while(socket.bytesAvailable() > 0)
-			{
-				bool ok;
-				QString message = readMessage(&socket, &ok);
-				if(ok && message.startsWith(magic))
-				{
-					emit messageReceived(message.remove(0, magic.size()));
-					writeMessage(&socket, id, i_timeout_write);
-				}
-			}
+			writeMessage(m_socket, m_key, i_timeout_write); // confirm receiving
+			emit messageReceived(message);
 		}
 	}
 }
 
 
-typedef QHash<QString, SystemSemaphore*> SemaphoreDict;
-typedef QHash<QString, QLocalServer*> ServerDict;
+class ServerCache : public QHash<QString, QLocalServer*>
+{
+public:
+	mutable QReadWriteLock lock;
+};
+Q_GLOBAL_STATIC(ServerCache, serverCache)
+
 
 class SingleApplicationPrivate
 {
 public:
-	SingleApplicationPrivate(SingleApplication* parent)
-		: q(parent), server(0), socket(0)
+	inline SingleApplicationPrivate(SingleApplication* parent) : q(parent),
+		socket(0),
+		isRunning(false)
 	{}
-	~SingleApplicationPrivate()
-	{ delete socket; }
+	inline ~SingleApplicationPrivate()
+	{}
 
 	void init();
-	bool isRunning() const;
 	bool connectToServer();
 	bool sendMessage(const QString& message, int timeout);
 
 	SingleApplication* q;
 
-	QString id;
-	QString serverName;
+	QString key;
+	QString uniqueKey;
 
-	QString allowedId;
-	QString allowedServerName;
-
-	QLocalServer* server;
 	QLocalSocket* socket;
 
-	static SemaphoreDict& semaphoreDict();
-	static ServerDict& serverDict();
+	bool isRunning;
 };
-
-static bool qSemaphoreDictInit = false;
-static void cleanSemaphoreDict()
-{
-	qDeleteAll(SingleApplicationPrivate::semaphoreDict());
-	SingleApplicationPrivate::semaphoreDict().clear();
-	qSemaphoreDictInit = false;
-}
-
-SemaphoreDict& SingleApplicationPrivate::semaphoreDict()
-{
-	static SemaphoreDict dict;
-	if(!qSemaphoreDictInit)
-	{
-		qSemaphoreDictInit = true;
-		qAddPostRoutine(cleanSemaphoreDict);
-	}
-
-	return dict;
-}
-
-static bool qServerDictInit = false;
-static void cleanServerDict()
-{
-	qDeleteAll(SingleApplicationPrivate::serverDict());
-	SingleApplicationPrivate::serverDict().clear();
-	qServerDictInit = false;
-}
-
-ServerDict& SingleApplicationPrivate::serverDict()
-{
-	static ServerDict dict;
-	if(!qServerDictInit)
-	{
-		qServerDictInit = true;
-		qAddPostRoutine(cleanServerDict);
-	}
-
-	return dict;
-}
 
 void SingleApplicationPrivate::init()
 {
-	if(id.isEmpty())
-		id = QLatin1String("SA");
-	if(serverName.isEmpty())
-		serverName = QLatin1String("SingleApplication");
+	key.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
+	if(key.isEmpty())
+		key = QLatin1String("SADEFAULTKEY");
+	uniqueKey = QString("_sa_").append(key).append(QLatin1Char('_')).append(login().toUtf8().toHex());
 
-	static QString login;
-	if(login.isEmpty())
+	ServerCache* cache = serverCache();
+	QWriteLocker locker(&cache->lock);
+
+	QLocalServer* server = cache->value(uniqueKey, 0);
+	if(!server)
 	{
-#ifdef Q_OS_WIN
-	  login = QDir::home().dirName();
-#else
-		struct passwd* pwd = getpwuid(getuid());
-		if(pwd)
-			login = QString(pwd->pw_name);
-#endif
+		QSharedMemory* shMem = new QSharedMemory(uniqueKey, qApp);
+		if(shMem->create(1))
+		{
+			server = new ThreadedLocalServer(key, qApp);
+			if(!server->listen(uniqueKey))
+			{
+				qWarning("QLocalServer::listen: %s (Used key is '%s')",
+						 server->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
+				delete server;
+				server = 0;
+			}
+			cache->insert(uniqueKey, server);
+		}
+		else
+		{
+			isRunning = (shMem->error() == QSharedMemory::AlreadyExists);
+			if(!isRunning)
+			{
+				qWarning("QSharedMemory::create: %s (Used key is '%s')",
+						 shMem->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
+			}
+			delete shMem;
+		}
 	}
-	allowedId = id;
-	allowedServerName = serverName;
-	allowedId.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
-	allowedServerName.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
-	allowedServerName.prepend(login).append(allowedId);
-
-	if(!isRunning())
+	if(server)
 	{
-		server = serverDict().value(allowedServerName, 0);
-		if(!server)
-		{
-			server = new ThreadedLocalServer(allowedId);
-			serverDict().insert(allowedServerName, server);
-		}
-		if(!server->isListening() && !server->listen(allowedServerName))
-		{
-			delete serverDict().take(allowedServerName);
-			server = 0;
-			return;
-		}
 		QObject::connect(server, SIGNAL(messageReceived(const QString&)),
 						 q, SIGNAL(messageReceived(const QString&)),
 						 Qt::QueuedConnection);
 	}
-}
-
-bool SingleApplicationPrivate::isRunning() const
-{
-	SystemSemaphore* semaphore = semaphoreDict().value(allowedServerName, 0);
-	if(semaphore)
-		return false;
-
-	semaphore = new SystemSemaphore(allowedServerName, 1);
-	if(semaphore->tryAcquire(i_timeout_sem))
-	{
-		semaphoreDict().insert(allowedServerName, semaphore);
-		return false;
-	}
-	delete semaphore;
-
-	return true;
 }
 
 bool SingleApplicationPrivate::connectToServer()
@@ -282,35 +244,35 @@ bool SingleApplicationPrivate::connectToServer()
 
 	if(!socket)
 		socket = new QLocalSocket(q);
-	socket->connectToServer(allowedServerName);
+	socket->connectToServer(uniqueKey);
 	if(socket->waitForConnected(i_timeout_connect))
 	{
 		bool ok;
 		const QString message = readMessage(socket, &ok);
-		// now compare received bytes with id
-		if(ok && message.compare(allowedId) == 0)
+		// now compare received bytes with key
+		if(ok && message.compare(key) == 0)
 			return true;
+
+		socket->disconnectFromServer();
+		socket->waitForDisconnected(i_timeout_connect);
 	}
 	socket->abort();
-	delete socket;
-	socket = 0;
 
 	return false;
 }
 
 bool SingleApplicationPrivate::sendMessage(const QString& message, int timeout)
 {
-	if(!isRunning() || !connectToServer())
+	if(!isRunning || !connectToServer())
 		return false;
 
-	const QString magic = allowedId + QLatin1Char(':');
-	if(!writeMessage(socket, magic + message, timeout))
+	if(!writeMessage(socket, message, timeout))
 		return false;
 
 	bool ok;
 	QString response = readMessage(socket, &ok);
 
-	return ok && response.compare(allowedId) == 0;
+	return (ok && response.compare(key) == 0);
 }
 
 
@@ -320,40 +282,42 @@ bool SingleApplicationPrivate::sendMessage(const QString& message, int timeout)
   instance, and to send command strings to that instance.
 
   The SingleApplication component is basically imitating QtSingleApplication commercial class.
-  Unlike QtSingleApplication the SingleApplication implementation uses System Semaphore
+  Unlike QtSingleApplication the SingleApplication implementation uses Shared Memory
   to detect a running instance and so-called "Local Sockets" to communicate with it.
 */
 
 /*!
-  Creates a SingleApplication object with the parent \a parent and the identifier \a id.
+  Creates a SingleApplication object with the parent \a parent and the default key.
+
+  \sa key(), QCoreApplication::applicationName()
 */
 
-SingleApplication::SingleApplication(const QString& id, QObject* parent) :
-	QObject(parent), d(new SingleApplicationPrivate(this))
+SingleApplication::SingleApplication(QObject* parent) : QObject(parent),
+	d(new SingleApplicationPrivate(this))
 {
-	d->id = id;
+	d->key = QCoreApplication::applicationName();
 	d->init();
 }
 
 /*!
-  Creates a SingleApplication object with the parent \a parent and the identifier \a id.
-  \a serverName specifies name for internal local socket.
+  Creates a SingleApplication object with the parent \a parent and the key \a key.
+
+  \sa key()
 */
 
-SingleApplication::SingleApplication(const QString& id, const QString& serverName, QObject* parent) :
-	QObject(parent), d(new SingleApplicationPrivate(this))
+SingleApplication::SingleApplication(const QString& key, QObject* parent) : QObject(parent),
+	d(new SingleApplicationPrivate(this))
 {
-	d->id = id;
-	d->serverName = serverName;
+	d->key = key;
 	d->init();
 }
 
 /*!
   The destructor destroys the SingleApplication object, but the
-  underlying system semaphore and local server are not removed from the system
+  underlying shared memory and local server are not removed from the system
   unless application exit.
 
-  Note: If the same application is started again it WILL find this instance.
+  Note: If another instance of application with the same key is started again it WILL find this instance.
 */
 
 SingleApplication::~SingleApplication()
@@ -362,21 +326,12 @@ SingleApplication::~SingleApplication()
 }
 
 /*!
-  Returns the identifier of this singleton object.
+  Returns the key of this single application.
 */
 
-QString SingleApplication::id() const
+QString SingleApplication::key() const
 {
-	return d->id;
-}
-
-/*!
-  Returns the name of internal local server or socket.
-*/
-
-QString SingleApplication::serverName() const
-{
-	return d->serverName;
+	return d->key;
 }
 
 /*!
@@ -389,7 +344,7 @@ QString SingleApplication::serverName() const
 
 bool SingleApplication::isRunning() const
 {
-	return d->isRunning();
+	return d->isRunning;
 }
 
 /*!
@@ -399,9 +354,9 @@ bool SingleApplication::isRunning() const
   otherwise returns false.
 */
 
-bool SingleApplication::isRunning(const QString& id)
+bool SingleApplication::isRunning(const QString& key)
 {
-	return SingleApplication(id).isRunning();
+	return SingleApplication(key).isRunning();
 }
 
 /*!
@@ -428,9 +383,9 @@ bool SingleApplication::sendMessage(const QString& message, int timeout)
   Tries to send the text \a message to the currently running instance.
 */
 
-bool SingleApplication::sendMessage(const QString& id, const QString& message, int timeout)
+bool SingleApplication::sendMessage(const QString& key, const QString& message, int timeout)
 {
-	return SingleApplication(id).sendMessage(message, timeout);
+	return SingleApplication(key).sendMessage(message, timeout);
 }
 
 /*!

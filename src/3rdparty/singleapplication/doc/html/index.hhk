@@ -4,42 +4,20 @@
 <param name="FrameName" value="right">
 </OBJECT>
 <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#b6db1ae0c2f6202a6dae8c2a66accaa8"><param name="Name" value="acquire"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#d5160fdc52bc6846e395471969a1cfa3"><param name="Name" value="error"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#1041f3a0972d96bfc87ffb4a0fd85200"><param name="Name" value="errorString"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#06be2d738a4fe9fdb941cb24161b26c0"><param name="Name" value="id"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#a514c13c962ad8caf9dbebe84e1f6b1d"><param name="Name" value="isRunning"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#318bfbb9f53bd05dca1115dd91a8d810"><param name="Name" value="messageReceived"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#50c2aec10cee34992c33b9c1e5f8d94f"><param name="Name" value="release"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#27927f281aa23ca926615f7c59b97cfd"><param name="Name" value="sendMessage"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#d356c62f95256a1d5651b6ff69d2d211"><param name="Name" value="serverName"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#dae6d8b1aca5817afa2e919080aca181"><param name="Name" value="setKey"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#7ad6f24210c09e6f54855e3cafb9993f"><param name="Name" value="sendMessage"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html"><param name="Name" value="SingleApplication"></OBJECT>
   <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#06be2d738a4fe9fdb941cb24161b26c0"><param name="Name" value="id"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#a514c13c962ad8caf9dbebe84e1f6b1d"><param name="Name" value="isRunning"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#318bfbb9f53bd05dca1115dd91a8d810"><param name="Name" value="messageReceived"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#27927f281aa23ca926615f7c59b97cfd"><param name="Name" value="sendMessage"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#d356c62f95256a1d5651b6ff69d2d211"><param name="Name" value="serverName"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#4adf4f9959579ff4924d6f4330928d4d"><param name="Name" value="SingleApplication"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#7ad6f24210c09e6f54855e3cafb9993f"><param name="Name" value="sendMessage"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#4f134f7175652e91b58944431d6d2915"><param name="Name" value="SingleApplication"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#47b51f253748dcf3d67eb3a4d7e45335"><param name="Name" value="~SingleApplication"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html"><param name="Name" value="SystemSemaphore"></OBJECT>
-  <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#b6db1ae0c2f6202a6dae8c2a66accaa8"><param name="Name" value="acquire"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#d5160fdc52bc6846e395471969a1cfa3"><param name="Name" value="error"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#1041f3a0972d96bfc87ffb4a0fd85200"><param name="Name" value="errorString"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#50c2aec10cee34992c33b9c1e5f8d94f"><param name="Name" value="release"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#dae6d8b1aca5817afa2e919080aca181"><param name="Name" value="setKey"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#139ef36d3ba29413e1ea4a56dac47f64"><param name="Name" value="SystemSemaphore"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#8cb73847a6fde0932b16f6fca23de922"><param name="Name" value="tryAcquire"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#ca93c961a9fa09dd59477b26f9924059"><param name="Name" value="~SystemSemaphore"></OBJECT>
-  </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#8cb73847a6fde0932b16f6fca23de922"><param name="Name" value="tryAcquire"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#47b51f253748dcf3d67eb3a4d7e45335"><param name="Name" value="~SingleApplication"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_system_semaphore.html#ca93c961a9fa09dd59477b26f9924059"><param name="Name" value="~SystemSemaphore"></OBJECT>
 </UL>
 </BODY>
 </HTML>

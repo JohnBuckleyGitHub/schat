@@ -9,7 +9,7 @@ The SingleApplication class provides an crossplatform interface to detect a runn
 and to send command strings to that instance.
 
 The SingleApplication component is basically imitating QtSingleApplication commercial class.
-Unlike QtSingleApplication the SingleApplication implementation uses System Semaphore 
+Unlike QtSingleApplication the SingleApplication implementation uses Shared Memory 
 to detect a running instance and so-called "Local Sockets" to communicate with it.
 
 SingleApplication might be usable in all environments where you find Qt4. 

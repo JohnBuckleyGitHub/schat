@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 	SingleApplication instance("TrivialExample", &app);
 	if(instance.isRunning())
 	{
-		QString message = "Hello! Did You hear other Trivial Example instance? :)\n"
-							"PID: " + QString::number(app.applicationPid());
+		QString message = Widget::tr("Hello! Did You hear other Trivial Example instance? :)\nPID: %1")
+							.arg(app.applicationPid());
 		if(instance.sendMessage(message))
 			return 0;
 	}

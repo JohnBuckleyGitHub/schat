@@ -74,7 +74,7 @@
   The component can be used in three different ways:
    - together with the application as a static library;
    - as a separate shared library;
-   - together with the application and creating it manually.
+   - together with the application in source files form.
 
   The first option is the simplest one and it is enabled by default.\n
   You just have to add <tt>singleapplication.pri</tt> to your project file, include <tt>singleapplication.h</tt> and create the SingleApplication object just after creating the Q(Core)Application object.
