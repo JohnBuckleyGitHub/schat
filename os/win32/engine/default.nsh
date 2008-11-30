@@ -45,6 +45,7 @@ ${def} SCHAT_CHECK_RUN    1
 ${def} SCHAT_VC90         1
 
 ${def} SCHAT_QTDIR      "C:\qt\443"
+${def} SCHAT_QT_BINDIR  "C:\qt\443\bin"
 ${def} SCHAT_BINDIR     "..\..\out\release"
 ${def} SCHAT_DATADIR    "..\..\data"
 ${def} VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
