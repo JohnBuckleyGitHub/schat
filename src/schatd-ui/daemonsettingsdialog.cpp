@@ -33,8 +33,8 @@ DaemonSettingsDialog::DaemonSettingsDialog(DaemonSettings *settings, QWidget *pa
   m_commonPage = new DaemonCommonSettings(settings, this);
   m_netPage    = new DaemonNetSettings(settings, this);
 
-  createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), m_commonPage);
-  createPage(QIcon(":/images/network.png"), tr("Сеть"), m_netPage);
+  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"), m_commonPage);
+  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"), m_netPage);
 
   connect(m_netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
 }

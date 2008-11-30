@@ -37,12 +37,12 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   ProfileSettings *profilePage = new ProfileSettings(profile, this);
   NetworkSettings *networkPage = new NetworkSettings(this);
 
-  createPage(QIcon(":/images/profile.png"),    tr("Личные данные"), profilePage);
-  createPage(QIcon(":/images/network.png"),    tr("Сеть"),          networkPage);
-  createPage(QIcon(":/images/appearance.png"), tr("Интерфейс"),     new InterfaceSettings(this));
-  createPage(QIcon(":/images/emoticon.png"),   tr("Смайлики"),      new EmoticonsSettings(this));
-  createPage(QIcon(":/images/update.png"),     tr("Обновление"),    new UpdateSettings(this));
-  createPage(QIcon(":/images/misc.png"),       tr("Разное"),        new MiscSettings(this));
+  createPage(QIcon(":/images/profile.png"),               tr("Личные данные"), profilePage);
+  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),          networkPage);
+  createPage(QIcon(":/images/applications-graphics.png"), tr("Интерфейс"),     new InterfaceSettings(this));
+  createPage(QIcon(":/images/emoticon.png"),              tr("Смайлики"),      new EmoticonsSettings(this));
+  createPage(QIcon(":/images/update.png"),                tr("Обновление"),    new UpdateSettings(this));
+  createPage(QIcon(":/images/application-x-desktop.png"), tr("Разное"),        new MiscSettings(this));
 
   connect(profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
   connect(networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));

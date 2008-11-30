@@ -29,8 +29,8 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
-  m_okButton       = new QPushButton(QIcon(":/images/ok.png"), tr("OK"), this);
-  m_cancelButton   = new QPushButton(QIcon(":/images/cancel.png"), tr("Отмена"), this);
+  m_okButton       = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("OK"), this);
+  m_cancelButton   = new QPushButton(QIcon(":/images/dialog-cancel.png"), tr("Отмена"), this);
   m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);
   m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
   m_contentsWidget = new QListWidget(this);

@@ -129,7 +129,7 @@ void SendWidget::setUnderline(bool b)
  */
 void SendWidget::createButtons()
 {
-  m_boldAction = new QAction(QIcon(":/images/bold.png"), tr("Полужирный"), this);
+  m_boldAction = new QAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this);
   m_boldAction->setCheckable(true);
   m_boldAction->setShortcut(Qt::CTRL + Qt::Key_B);
   m_boldButton = new QToolButton(this);
@@ -137,7 +137,7 @@ void SendWidget::createButtons()
   m_boldButton->setAutoRaise(true);
   connect(m_boldAction, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
 
-  m_italicAction = new QAction(QIcon(":/images/italic.png"), tr("Курсив"), this);
+  m_italicAction = new QAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this);
   m_italicAction->setCheckable(true);
   m_italicAction->setShortcut(Qt::CTRL + Qt::Key_I);
   m_italicButton = new QToolButton(this);
@@ -145,7 +145,7 @@ void SendWidget::createButtons()
   m_italicButton->setAutoRaise(true);
   connect(m_italicAction, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
 
-  m_underlineAction = new QAction(QIcon(":/images/underline.png"), tr("Подчёркнутый"), this);
+  m_underlineAction = new QAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this);
   m_underlineAction->setCheckable(true);
   m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
   m_underlineButton = new QToolButton(this);
@@ -153,13 +153,13 @@ void SendWidget::createButtons()
   m_underlineButton->setAutoRaise(true);
   connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
 
-  m_logAction = new QAction(QIcon(":/images/toggle_log.png"), tr("Просмотр журнала"), this);
+  m_logAction = new QAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this);
   m_logButton = new QToolButton(this);
   m_logButton->setDefaultAction(m_logAction);
   m_logButton->setAutoRaise(true);
   connect(m_logAction, SIGNAL(triggered()), SLOT(log()));
 
-  m_sendAction = new QAction(QIcon(":/images/send.png"), tr("Отправить сообщение"), this);
+  m_sendAction = new QAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"), this);
   m_sendButton = new QToolButton(this);
   m_sendButton->setDefaultAction(m_sendAction);
   m_sendButton->setAutoRaise(true);

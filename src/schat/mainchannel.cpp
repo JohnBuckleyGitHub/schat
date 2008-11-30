@@ -99,7 +99,7 @@ void MainChannel::serverChanged()
 void MainChannel::createActions()
 {
   m_connectCreateButton = new QToolButton(this);
-  m_connectCreateAction = new QAction(QIcon(":/images/connect_creating.png"), tr("Подключится"), this);
+  m_connectCreateAction = new QAction(QIcon(":/images/network_connect.png"), tr("Подключится"), this);
   m_connectCreateButton->setDefaultAction(m_connectCreateAction);
   m_connectCreateButton->setAutoRaise(true);
   connect(m_connectCreateAction, SIGNAL(triggered()), this, SLOT(serverChanged()));
