@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
   #ifndef SCHAT_NO_SINGLE_APP
     QString serverName = app.applicationDirPath().toUtf8().toHex();
-    SingleApplication instance("SimpleChatDaemonUI", serverName, &app);
+    SingleApplication instance("SimpleChatDaemonUI" + serverName, &app);
     if (instance.isRunning()) {
       QString message;
 
