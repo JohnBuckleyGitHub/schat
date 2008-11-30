@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SCHATWINDOW_H_
@@ -109,10 +109,12 @@ private slots:
 private:
   bool eventFilter(QObject *object, QEvent *event);
   bool parseCmd(AbstractTab *tab, const QString &message);
-  int tabIndex(const QString &s, int start = 1) const;
+  int tabIndex(const QString &text) const;
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void createActions();
-  void createCornerWidgets();
+  #if QT_VERSION < 0x040500
+    void createCornerWidgets();
+  #endif
   void createService();
   void createToolButtons();
   void createTrayIcon();
@@ -127,7 +129,9 @@ private:
   ClientService *m_clientService;
   MainChannel *m_main;
   QAction *m_aboutAction;
-  QAction *m_closeTabAction;
+  #if QT_VERSION < 0x040500
+    QAction *m_closeTabAction;
+  #endif
   QAction *m_daemonAction;
   QAction *m_emoticonsSetAction;
   QAction *m_interfaceSetAction;

@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -34,6 +34,9 @@ InputWidget::InputWidget(QWidget *parent)
   m_default = currentCharFormat();
   m_current = 0;
   document()->setDefaultStyleSheet("a {color:#1a4d82; text-decoration:none;}");
+  #if QT_VERSION >= 0x040500
+    document()->setDocumentMargin(2);
+  #endif
 
   createActions();
 }
