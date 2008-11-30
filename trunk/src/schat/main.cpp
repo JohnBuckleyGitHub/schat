@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
   #ifndef SCHAT_NO_SINGLE_APP
     QString serverName = appPath.toUtf8().toHex();
-    SingleApplication instance("SimpleChat", serverName, &app);
+    SingleApplication instance("SimpleChat" + serverName, &app);
     if (instance.isRunning()) {
       QString message;
 
