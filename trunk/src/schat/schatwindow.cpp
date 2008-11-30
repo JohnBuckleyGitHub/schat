@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QApplication>
@@ -65,12 +65,20 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_rightLay->addLayout(m_toolsLay);
   m_rightLay->addWidget(m_users);
   m_rightLay->setMargin(0);
-  m_rightLay->setSpacing(4);
+  #if QT_VERSION >= 0x040500
+    m_rightLay->setSpacing(0);
+  #else
+    m_rightLay->setSpacing(4);
+  #endif
 
   m_mainLay->addWidget(m_splitter);
   m_mainLay->addWidget(m_send);
   m_mainLay->setMargin(4);
-  m_mainLay->setSpacing(1);
+  #if QT_VERSION >= 0x040500
+    m_mainLay->setSpacing(2);
+  #else
+    m_mainLay->setSpacing(1);
+  #endif
   m_mainLay->setStretchFactor(m_splitter, 999);
   m_mainLay->setStretchFactor(m_send, 1);
 
@@ -82,10 +90,18 @@ SChatWindow::SChatWindow(QWidget *parent)
   setWindowTitle(QApplication::applicationName());
 
   m_tabs->setElideMode(Qt::ElideRight);
+  #if QT_VERSION >= 0x040500
+    m_tabs->setDocumentMode(true);
+    m_tabs->setTabsClosable(true);
+    m_tabs->setMovable(true);
+    connect(m_tabs, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+  #endif
 
   restoreGeometry();
   createActions();
-  createCornerWidgets();
+  #if QT_VERSION < 0x040500
+    createCornerWidgets();
+  #endif
   createToolButtons();
   createTrayIcon();
   createService();
@@ -280,8 +296,14 @@ void SChatWindow::closeChat(bool)
 }
 
 
-/** [private slots]
+/*!
+ * Обработка закрытия вкладки.
  *
+ * Если вкладка является основным каналом, то соединение разрывается,
+ * также эта вкладка становится активной,
+ * Вкладки-приваты закрываются и удаляются.
+ *
+ * \param tab Индекс вкладки, которую нужно закрыть, по умолчанию -1.
  */
 void SChatWindow::closeTab(int tab)
 {
@@ -289,13 +311,15 @@ void SChatWindow::closeTab(int tab)
   if (index == -1)
     index = m_tabs->currentIndex();
 
-  if (index) {
-    QWidget *widget = m_tabs->widget(index);
+  QWidget *widget = m_tabs->widget(index);
+  if (widget != m_main) {
     m_tabs->removeTab(index);
     QTimer::singleShot(0, widget, SLOT(deleteLater()));
   }
-  else
+  else {
     m_clientService->quit();
+    m_tabs->setCurrentIndex(index);
+  }
 }
 
 
@@ -375,14 +399,17 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
 }
 
 
-/** [private slots]
+/*!
+ * Получение сообщения в основной канал.
  *
+ * \param sender Ник отправителя.
+ * \param msg    Сообщение.
  */
-void SChatWindow::message(const QString &sender, const QString &message)
+void SChatWindow::message(const QString &sender, const QString &msg)
 {
-  startNotice(0);
+  startNotice(m_tabs->indexOf(m_main));
 
-  m_main->msgNewMessage(sender, message);
+  m_main->msgNewMessage(sender, msg);
 }
 
 
@@ -504,15 +531,15 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
 }
 
 
-/** [private slots]
+/*!
+ * Получение нового приватного сообщения от другого пользователя.
  *
+ * \param flag    Флаг эха.
+ * \param nick    Ник отправителя.
+ * \param message Сообщение.
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &message)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "SChatWindow::privateMessage()" << flag << nick << message;
-#endif
-
   if (!m_users->isUser(nick))
     return;
 
@@ -542,35 +569,34 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
 
 /*!
- * \brief Обработка отправки сообщения.
+ * Обработка отправки сообщения.
+ * Получатель определяется в зависимости от типа вкладки.
+ *
+ * \param msg Сообщение.
  */
-void SChatWindow::sendMsg(const QString &message)
+void SChatWindow::sendMsg(const QString &msg)
 {
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
 
-  if (parseCmd(tab, message))
+  if (parseCmd(tab, msg))
     return;
 
-  if (m_clientService) {
-    QString channel;
-    m_tabs->currentIndex() == 0 ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-    if (m_clientService->sendMessage(channel, message))
-      m_send->clear();
-  }
+  QString channel;
+  tab == m_main ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
+  if (m_clientService->sendMessage(channel, msg))
+    m_send->clear();
 }
 
 
 /*!
- * \brief Показ сообщения от сервера.
+ * Показ универсального сообщения от сервера.
+ *
+ * \param msg Сообщение.
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
-  if (m_tabs->currentIndex() == 0)
-    m_main->msg(msg);
-  else {
-    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-    tab->msg(msg);
-  }
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+  tab->msg(msg);
 }
 
 
@@ -660,8 +686,8 @@ void SChatWindow::unconnected(bool echo)
 }
 
 
-/** [private slots]
- * Выход удалённого пользователя из чата, опкод `OpcodeUserLeave`.
+/*!
+ * Выход удалённого пользователя из чата, опкод \a OpcodeUserLeave.
  */
 void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
 {
@@ -784,22 +810,24 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
 }
 
 
-/** [private]
+/*!
+ * Возвращает индекс вкладки с приватом по тексту.
  *
+ * \param text Текст поиска.
+ * \return Индекс найденной вкладки или -1.
  */
-int SChatWindow::tabIndex(const QString &s, int start) const
+int SChatWindow::tabIndex(const QString &text) const
 {
   int count = m_tabs->count();
-  int tab = -1;
 
-  if (count > start)
-    for (int i = start; i <= count; ++i)
-      if (m_tabs->tabText(i) == s) {
-        tab = i;
-        break;
-      }
+  if (count == 1 && m_tabs->widget(0) == m_main)
+    return -1;
+  else
+    for (int i = 0; i <= count; ++i)
+      if (m_tabs->tabText(i) == text && m_tabs->widget(i) != m_main)
+        return i;
 
-  return tab;
+  return -1;
 }
 
 
@@ -855,9 +883,11 @@ void SChatWindow::createActions()
   connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
 
   // Закрыть вкладку
-  m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
-  m_closeTabAction->setStatusTip(tr("Закрыть вкладку"));
-  connect(m_closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
+  #if QT_VERSION < 0x040500
+    m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
+    m_closeTabAction->setStatusTip(tr("Закрыть вкладку"));
+    connect(m_closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
+  #endif
 
   // Смайлики...
   m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
@@ -900,21 +930,15 @@ void SChatWindow::createActions()
 }
 
 
-/** [private]
- *
- */
+#if QT_VERSION < 0x040500
 void SChatWindow::createCornerWidgets()
 {
-//  QToolButton *addTabButton = new QToolButton(this);
-//  addTabButton->setDefaultAction(addTabAction);
-//  addTabButton->setAutoRaise(true);
-//  tabWidget->setCornerWidget(addTabButton, Qt::TopLeftCorner);
-
   QToolButton *closeTabButton = new QToolButton(this);
   closeTabButton->setDefaultAction(m_closeTabAction);
   closeTabButton->setAutoRaise(true);
   m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
 }
+#endif
 
 
 /** [private]
