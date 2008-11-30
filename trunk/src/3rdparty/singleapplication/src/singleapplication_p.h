@@ -25,14 +25,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QThread>
 
 #include <QtNetwork/QLocalServer>
+#include <QtNetwork/QLocalSocket>
 
 class LocalThread : public QThread
 {
 	Q_OBJECT
 
 public:
-	LocalThread(quintptr socketDescriptor, const QString& id, QObject* parent = 0);
-	~LocalThread();
+	LocalThread(quintptr socketDescriptor, const QString& key, QObject* parent = 0) : QThread(parent),
+		m_socketDescriptor(socketDescriptor),
+		m_key(key),
+		m_socket(0)
+	{
+	}
+	~LocalThread()
+	{}
 
 signals:
 	void messageReceived(const QString& message);
@@ -40,11 +47,14 @@ signals:
 protected:
 	void run();
 
-private:
-	quintptr socketDescriptor;
-	QString id;
+private slots:
+	void readyRead();
 
-	bool stopped;
+private:
+	quintptr m_socketDescriptor;
+	QString m_key;
+
+	QLocalSocket* m_socket;
 };
 
 
@@ -53,8 +63,9 @@ class ThreadedLocalServer : public QLocalServer
 	Q_OBJECT
 
 public:
-	ThreadedLocalServer(const QString& id, QObject* parent = 0) : QLocalServer(parent)
-	{ this->id = id; }
+	ThreadedLocalServer(const QString& key, QObject* parent = 0) : QLocalServer(parent),
+		m_key(key)
+	{}
 
 signals:
 	void messageReceived(const QString& message);
@@ -62,7 +73,7 @@ signals:
 protected:
 	void incomingConnection(quintptr socketDescriptor)
 	{
-		LocalThread* thread = new LocalThread(socketDescriptor, id, this);
+		LocalThread* thread = new LocalThread(socketDescriptor, m_key, this);
 		connect(thread, SIGNAL(messageReceived(const QString&)),
 				 this, SIGNAL(messageReceived(const QString&)));
 		connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -70,7 +81,7 @@ protected:
 	}
 
 private:
-	QString id;
+	QString m_key;
 };
 
 #endif // SINGLE_APPLICATION_P_H

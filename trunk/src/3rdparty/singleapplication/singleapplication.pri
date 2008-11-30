@@ -1,4 +1,4 @@
-#MAJOR_VERSION	= 0
+#MAJOR_VERSION	= 1
 
 CONFIG		*= qt
 QT		*= core network

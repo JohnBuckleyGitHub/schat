@@ -41,21 +41,18 @@ class SINGLEAPPLICATION_EXPORT SingleApplication : public QObject
 	Q_OBJECT
 
 public:
-	explicit SingleApplication(const QString& id, QObject* parent = 0);
-	explicit SingleApplication(const QString& id, const QString& serverName, QObject* parent = 0);
-	~SingleApplication();
+	explicit SingleApplication(QObject* parent = 0);
+	explicit SingleApplication(const QString& key, QObject* parent = 0);
+	virtual ~SingleApplication();
 
-public:
-	QString id() const;
-	QString serverName() const;
-
+	QString key() const;
 	bool isRunning() const;
 
-	static bool isRunning(const QString& id);
-	static bool sendMessage(const QString& id, const QString& message, int timeout = 5000);
+	static bool isRunning(const QString& key);
+	static bool sendMessage(const QString& key, const QString& message, int timeout = 500);
 
 public slots:
-	bool sendMessage(const QString& message, int timeout = 5000);
+	bool sendMessage(const QString& message, int timeout = 500);
 
 signals:
 	void messageReceived(const QString& message);
@@ -63,7 +60,7 @@ signals:
 private:
 	Q_DISABLE_COPY(SingleApplication);
 
-	SingleApplicationPrivate* d;
+	SingleApplicationPrivate* const d;
 };
 
 #endif // SINGLE_APPLICATION_H
