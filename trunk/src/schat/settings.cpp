@@ -339,7 +339,7 @@ void Settings::createServerList()
   foreach (QString file, files)
     if (network.readFile(networksPath + file)) {
       if (!findItem(&networksModel, network.networkName())) {
-        QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
+        QStandardItem *item = new QStandardItem(QIcon(":/images/applications-internet.png"), network.networkName());
         item->setData(file, Qt::UserRole);
         networksModel.appendRow(item);
       }
@@ -351,7 +351,7 @@ void Settings::createServerList()
     foreach (QString server, recent) {
       QStringList list = server.split(':');
       if (list.size() == 2) {
-        QStandardItem *item = new QStandardItem(QIcon(":/images/host.png"), list.at(0));
+        QStandardItem *item = new QStandardItem(QIcon(":/images/computer.png"), list.at(0));
         item->setData(list.at(1).toInt(), Qt::UserRole);
         networksModel.appendRow(item);
       }

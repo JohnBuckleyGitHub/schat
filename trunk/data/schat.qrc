@@ -1,42 +1,41 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>doc/members.html</file>
-  <file>images/appearance.png</file>
-  <file>images/bold.png</file>
-  <file>images/cancel.png</file>
-  <file>images/connect_creating.png</file>
-  <file>images/down.png</file>
+  <file>images/1downarrow.png</file>
+  <file>images/1uparrow.png</file>
+  <file>images/application_exit.png</file>
+  <file>images/applications-graphics.png</file>
+  <file>images/applications-internet.png</file>
+  <file>images/application-x-desktop.png</file>
+  <file>images/book.png</file>
+  <file>images/computer.png</file>
+  <file>images/configure.png</file>
+  <file>images/dialog-cancel.png</file>
+  <file>images/dialog-ok.png</file>
   <file>images/editclear.png</file>
   <file>images/editcopy.png</file>
   <file>images/editcut.png</file>
   <file>images/editpaste.png</file>
   <file>images/emoticon.png</file>
   <file>images/female.png</file>
+  <file>images/format-text-bold.png</file>
+  <file>images/format-text-italic.png</file>
+  <file>images/format-text-underline.png</file>
+  <file>images/go-jump-locationbar.png</file>
   <file>images/gplv3-88x31.png</file>
-  <file>images/host.png</file>
   <file>images/impomezia.png</file>
-  <file>images/italic.png</file>
   <file>images/load.gif</file>
   <file>images/logo.png</file>
   <file>images/logo16.png</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
-  <file>images/misc.png</file>
-  <file>images/network.png</file>
-  <file>images/new.png</file>
+  <file>images/network_connect.png</file>
   <file>images/notice.png</file>
-  <file>images/ok.png</file>
   <file>images/ok2.png</file>
   <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
-  <file>images/quit.png</file>
-  <file>images/send.png</file>
-  <file>images/settings.png</file>
   <file>images/tab_close.png</file>
-  <file>images/toggle_log.png</file>
-  <file>images/underline.png</file>
   <file>images/undo.png</file>
-  <file>images/up.png</file>
   <file>images/update.png</file>
   <file>images/warning.png</file>
   <file>translations/qt_ru.qm</file>

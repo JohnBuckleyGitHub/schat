@@ -37,7 +37,7 @@ AboutDialog::AboutDialog(QWidget *parent)
   m_tabWidget->addTab(new AboutChangeLog(this), tr("История версий"));
   m_tabWidget->addTab(new AboutLicense(this),   tr("Лицензия"));
 
-  m_closeButton = new QPushButton(QIcon(":/images/ok.png"), tr("Закрыть"), this);
+  m_closeButton = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Закрыть"), this);
   m_closeButton->setDefault(true);
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));

@@ -37,8 +37,8 @@ WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
 
   m_profileWidget = new ProfileWidget(profile, this);
   m_askCheckBox = new QCheckBox(tr("Больше не показывать это окно"), this);
-  m_okButton    = new QPushButton(QIcon(":/images/ok.png"), tr("ОК"), this);
-  m_moreButton  = new QPushButton(QIcon(":/images/down.png"), "", this);
+  m_okButton    = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("ОК"), this);
+  m_moreButton  = new QPushButton(QIcon(":/images/1downarrow.png"), "", this);
   m_moreButton->setCheckable(true);
   m_networkWidget = new NetworkWidget(this);
   m_networkWidget->setVisible(false);
@@ -97,11 +97,11 @@ void WelcomeDialog::accept()
 void WelcomeDialog::changeIcon(bool s)
 {
   if (s) {
-    m_moreButton->setIcon(QIcon(":/images/up.png"));
+    m_moreButton->setIcon(QIcon(":/images/1uparrow.png"));
     m_networkWidget->setVisible(true);
   }
   else {
-    m_moreButton->setIcon(QIcon(":/images/down.png"));
+    m_moreButton->setIcon(QIcon(":/images/1downarrow.png"));
     m_networkWidget->setVisible(false);
   }
 }

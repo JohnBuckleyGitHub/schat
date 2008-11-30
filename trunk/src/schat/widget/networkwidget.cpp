@@ -81,7 +81,7 @@ bool NetworkWidget::save()
     // В случае если не существует итема с текущим текстом, создаём итем
     int index = m_select->findText(currentText);
     if (index == -1)
-      m_select->addItem(QIcon(":/images/host.png"), currentText, m_port->value());
+      m_select->addItem(QIcon(":/images/computer.png"), currentText, m_port->value());
 
     index = m_select->findText(currentText);
 
@@ -157,7 +157,7 @@ void NetworkWidget::currentIndexChanged(int index)
 {
   QIcon icon = m_select->itemIcon(index);
   if (icon.isNull()) {
-    icon.addFile(":/images/host.png");
+    icon.addFile(":/images/computer.png");
     m_select->setItemIcon(index, icon);
     m_select->setItemData(index, m_port->value());
   }
@@ -212,7 +212,7 @@ void NetworkWidget::setCurrentIndex(int index)
 void NetworkWidget::addServer(const ServerInfo &info)
 {
   if (m_select->findText(info.address) == -1)
-    m_select->addItem(QIcon(":/images/host.png"), info.address, info.port);
+    m_select->addItem(QIcon(":/images/computer.png"), info.address, info.port);
 
   m_select->setCurrentIndex(m_select->findText(info.address));
   m_port->setValue(info.port);

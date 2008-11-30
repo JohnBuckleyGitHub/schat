@@ -865,12 +865,12 @@ void SChatWindow::createActions()
   connect(m_emoticonsSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Интерфейс...
-  m_interfaceSetAction = new QAction(QIcon(":/images/appearance.png"), tr("Интерфейс..."), this);
+  m_interfaceSetAction = new QAction(QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), this);
   m_interfaceSetAction->setData(SettingsDialog::InterfacePage);
   connect(m_interfaceSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Сеть...
-  m_networkSetAction = new QAction(QIcon(":/images/network.png"), tr("Сеть..."), this);
+  m_networkSetAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Сеть..."), this);
   m_networkSetAction->setData(SettingsDialog::NetworkPage);
   connect(m_networkSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
@@ -886,16 +886,16 @@ void SChatWindow::createActions()
   connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Разное...
-  m_miscSetAction = new QAction(QIcon(":/images/misc.png"), tr("Разное..."), this);
+  m_miscSetAction = new QAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), this);
   m_miscSetAction->setData(SettingsDialog::MiscPage);
   connect(m_miscSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Выход из программы
-  m_quitAction = new QAction(QIcon(":/images/quit.png"), tr("&Выход"), this);
+  m_quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
 
   // Управление сервером...
-  m_daemonAction = new QAction(QIcon(":/images/network.png"), tr("Управление сервером..."), this);
+  m_daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
   connect(m_daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
 }
 
@@ -955,7 +955,7 @@ void SChatWindow::createToolButtons()
 
   // Настройка
   m_settingsButton = new QToolButton(this);
-  m_settingsButton->setIcon(QIcon(":/images/settings.png"));
+  m_settingsButton->setIcon(QIcon(":/images/configure.png"));
   m_settingsButton->setToolTip(tr("Настройка..."));
   m_settingsButton->setAutoRaise(true);
   m_settingsButton->setMenu(iconMenu);
