@@ -618,6 +618,24 @@ void SChatWindow::showSettings()
 }
 
 
+void SChatWindow::sound(bool toggle)
+{
+  if (toggle)
+    m_settings->setBool("Sound", !m_settings->getBool("Sound"));
+
+  m_sound = m_settings->getBool("Sound");
+
+  if (m_sound) {
+    m_soundAction->setIcon(QIcon(":/images/sound.png"));
+    m_soundAction->setText(tr("Отключить звуки"));
+  }
+  else {
+    m_soundAction->setIcon(QIcon(":/images/sound_mute.png"));
+    m_soundAction->setText(tr("Включить звуки"));
+  }
+}
+
+
 /*!
  * Обработка изменений настроек и прочих событий.
  */
@@ -882,6 +900,10 @@ void SChatWindow::createActions()
   m_aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
   connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
 
+  m_soundAction = new QAction(this);
+  sound(false);
+  connect(m_soundAction, SIGNAL(triggered()), SLOT(sound()));
+
   // Закрыть вкладку
   #if QT_VERSION < 0x040500
     m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
@@ -911,9 +933,9 @@ void SChatWindow::createActions()
   connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновление...
-  updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
-  updateSetAction->setData(SettingsDialog::UpdatePage);
-  connect(updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  m_updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
+  m_updateSetAction->setData(SettingsDialog::UpdatePage);
+  connect(m_updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Разное...
   m_miscSetAction = new QAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), this);
@@ -974,7 +996,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(m_networkSetAction);
   iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
-  iconMenu->addAction(updateSetAction);
+  iconMenu->addAction(m_updateSetAction);
   iconMenu->addAction(m_miscSetAction);
 
   // Настройка
@@ -984,6 +1006,10 @@ void SChatWindow::createToolButtons()
   m_settingsButton->setAutoRaise(true);
   m_settingsButton->setMenu(iconMenu);
   m_settingsButton->setPopupMode(QToolButton::InstantPopup);
+
+  m_soundButton = new QToolButton(this);
+  m_soundButton->setAutoRaise(true);
+  m_soundButton->setDefaultAction(m_soundAction);
 
   QToolButton *aboutButton = new QToolButton(this);
   aboutButton->setDefaultAction(m_aboutAction);
@@ -995,6 +1021,7 @@ void SChatWindow::createToolButtons()
 
   m_toolsLay->addWidget(line);
   m_toolsLay->addWidget(m_settingsButton);
+  m_toolsLay->addWidget(m_soundButton);
   m_toolsLay->addWidget(aboutButton);
   m_toolsLay->addStretch();
   m_toolsLay->setSpacing(0);
@@ -1098,6 +1125,9 @@ void SChatWindow::startNotice(int index)
     tab->notice(true);
     m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
     m_tray->notice(true);
+
+    if (m_sound)
+      QSound::play(QApplication::applicationDirPath() + "/sounds/message.wav");
   }
 }
 
