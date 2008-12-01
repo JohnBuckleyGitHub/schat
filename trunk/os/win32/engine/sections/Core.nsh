@@ -31,6 +31,9 @@ ${Section}
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_DATADIR}\doc\*.html"
+  
+  SetOutPath "$INSTDIR\sounds"
+  File "${SCHAT_DATADIR}\sounds\*.wav"
 
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -43,9 +46,11 @@ ${Uninstall}
   Delete "$INSTDIR\networks\*.xml"
   Delete "$INSTDIR\doc\*.html"
   Delete "$INSTDIR\networks\*.xml"
+  Delete "$INSTDIR\sounds\*.wav"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\networks"
+  RMDir "$INSTDIR\sounds"
 
   DeleteRegKey HKCU "${SCHAT_REGKEY}"
 ${UninstallEnd}
