@@ -87,7 +87,7 @@ private slots:
   void fatal();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void linkLeave(quint8 numeric, const QString &network, const QString &name);
-  void message(const QString &sender, const QString &message);
+  void message(const QString &sender, const QString &msg);
   void newLink(quint8 numeric, const QString &network, const QString &name);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
@@ -97,6 +97,7 @@ private slots:
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
+  void sound(bool toggle = true);
   void stopNotice(int index);
   void unconnected(bool echo = true);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
@@ -125,13 +126,11 @@ private:
   void startNotice(int index);
   void uniqueNick();
 
+  bool m_sound;
   AbstractProfile *m_profile;
   ClientService *m_clientService;
   MainChannel *m_main;
   QAction *m_aboutAction;
-  #if QT_VERSION < 0x040500
-    QAction *m_closeTabAction;
-  #endif
   QAction *m_daemonAction;
   QAction *m_emoticonsSetAction;
   QAction *m_interfaceSetAction;
@@ -139,7 +138,8 @@ private:
   QAction *m_networkSetAction;
   QAction *m_profileSetAction;
   QAction *m_quitAction;
-  QAction *updateSetAction;
+  QAction *m_soundAction;
+  QAction *m_updateSetAction;
   QHBoxLayout *m_toolsLay;
   QLabel *m_statusLabel;
   QMenu *m_trayMenu;
@@ -149,6 +149,7 @@ private:
   QStatusBar *m_statusBar;
   QTabWidget *m_tabs;
   QToolButton *m_settingsButton;
+  QToolButton *m_soundButton;
   QVBoxLayout *m_mainLay;
   QVBoxLayout *m_rightLay;
   QWidget *m_central;
@@ -159,6 +160,9 @@ private:
   TrayIcon *m_tray;
   UserView *m_users;
   WelcomeDialog *m_welcome;
+  #if QT_VERSION < 0x040500
+    QAction *m_closeTabAction;
+  #endif
 };
 
 #endif /*SCHATWINDOW_H_*/
