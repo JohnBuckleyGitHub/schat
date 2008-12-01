@@ -108,6 +108,12 @@ private slots:
   #endif
 
 private:
+  enum Sound {
+    NoSound,
+    MessageSound,
+    PrivateMessageSound
+  };
+
   bool eventFilter(QObject *object, QEvent *event);
   bool parseCmd(AbstractTab *tab, const QString &message);
   int tabIndex(const QString &text) const;
@@ -123,7 +129,7 @@ private:
   void restoreGeometry();
   void saveGeometry();
   void showChat();
-  void startNotice(int index);
+  void startNotice(int index, Sound type = NoSound);
   void uniqueNick();
 
   bool m_sound;
