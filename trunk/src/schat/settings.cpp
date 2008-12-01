@@ -201,6 +201,11 @@ void Settings::read()
     setBool("Updates/AutoDownload",   false);
   #endif
 
+  setBool("Sound/MessageEnable",        true);
+  setBool("Sound/PrivateMessageEnable", true);
+  setString("Sound/Message",            "message.wav");
+  setString("Sound/PrivateMessage",     "message.wav");
+
   if (m_default)
     AbstractSettings::read(m_default);
 

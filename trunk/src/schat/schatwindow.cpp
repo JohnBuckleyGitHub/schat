@@ -407,7 +407,7 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
-  startNotice(m_tabs->indexOf(m_main));
+  startNotice(m_tabs->indexOf(m_main), MessageSound);
 
   m_main->msgNewMessage(sender, msg);
 }
@@ -564,7 +564,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     else
       tab->msgNewMessage(nick, message);
 
-  startNotice(index);
+  startNotice(index, PrivateMessageSound);
 }
 
 
@@ -1115,7 +1115,7 @@ void SChatWindow::showChat()
  *
  * \param index Номер вкладки, в которой есть новое сообщение.
  */
-void SChatWindow::startNotice(int index)
+void SChatWindow::startNotice(int index, Sound type)
 {
   if (index == -1)
     return;
@@ -1126,8 +1126,22 @@ void SChatWindow::startNotice(int index)
     m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
     m_tray->notice(true);
 
-    if (m_sound)
-      QSound::play(QApplication::applicationDirPath() + "/sounds/message.wav");
+    if (m_sound) {
+      switch (type) {
+        case MessageSound:
+          if (m_settings->getBool("Sound/MessageEnable"))
+            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/Message"));
+          break;
+
+        case PrivateMessageSound:
+          if (m_settings->getBool("Sound/PrivateMessageEnable"))
+            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/PrivateMessage"));
+          break;
+
+        default:
+          break;
+      }
+    }
   }
 }
 
