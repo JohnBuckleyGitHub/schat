@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SETTINGSDIALOG_H_
@@ -50,6 +50,7 @@ public:
     NetworkPage,
     InterfacePage,
     EmoticonsPage,
+    SoundPage,
     UpdatePage,
     MiscPage
   };
@@ -162,6 +163,25 @@ private:
   QCheckBox *m_requireSpacesCheck;
   QComboBox *m_themeCombo;
   QGroupBox *m_themeGroup;
+  Settings *m_settings;
+};
+
+
+/*!
+ * \brief Диалог "Настройка", страница "Звуки".
+ */
+class SoundSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  SoundSettings(QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
+
+private:
   Settings *m_settings;
 };
 

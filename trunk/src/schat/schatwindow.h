@@ -132,8 +132,8 @@ private:
   void startNotice(int index, Sound type = NoSound);
   void uniqueNick();
 
-  bool m_sound;
   AbstractProfile *m_profile;
+  bool m_sound;
   ClientService *m_clientService;
   MainChannel *m_main;
   QAction *m_aboutAction;
@@ -145,6 +145,7 @@ private:
   QAction *m_profileSetAction;
   QAction *m_quitAction;
   QAction *m_soundAction;
+  QAction *m_soundSetAction;
   QAction *m_updateSetAction;
   QHBoxLayout *m_toolsLay;
   QLabel *m_statusLabel;

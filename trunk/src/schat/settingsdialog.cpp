@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -41,6 +41,7 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),          networkPage);
   createPage(QIcon(":/images/applications-graphics.png"), tr("Интерфейс"),     new InterfaceSettings(this));
   createPage(QIcon(":/images/emoticon.png"),              tr("Смайлики"),      new EmoticonsSettings(this));
+  createPage(QIcon(":/images/sound.png"),                 tr("Звуки"),         new SoundSettings(this));
   createPage(QIcon(":/images/update.png"),                tr("Обновление"),    new UpdateSettings(this));
   createPage(QIcon(":/images/application-x-desktop.png"), tr("Разное"),        new MiscSettings(this));
 
@@ -324,6 +325,30 @@ bool EmoticonsSettings::createThemeList()
     m_themeCombo->setCurrentIndex(m_themeCombo->findText(m_settings->getString("EmoticonTheme")));
     return true;
   }
+}
+
+
+
+
+/*!
+ * \brief Конструктор класса SoundSettings.
+ */
+SoundSettings::SoundSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::SoundPage, parent)
+{
+  m_settings = settings;
+}
+
+
+void SoundSettings::reset(int page)
+{
+  if (page == m_id) {
+  }
+}
+
+
+void SoundSettings::save()
+{
 }
 
 
