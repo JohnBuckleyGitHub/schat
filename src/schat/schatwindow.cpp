@@ -900,10 +900,6 @@ void SChatWindow::createActions()
   m_aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
   connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
 
-  m_soundAction = new QAction(this);
-  sound(false);
-  connect(m_soundAction, SIGNAL(triggered()), SLOT(sound()));
-
   // Закрыть вкладку
   #if QT_VERSION < 0x040500
     m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
@@ -945,6 +941,16 @@ void SChatWindow::createActions()
   // Выход из программы
   m_quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
+
+  // Включить/выключить звук
+  m_soundAction = new QAction(this);
+  sound(false);
+  connect(m_soundAction, SIGNAL(triggered()), SLOT(sound()));
+
+  // Звуки...
+  m_soundSetAction = new QAction(QIcon(":/images/sound.png"), tr("Звуки..."), this);
+  m_soundSetAction->setData(SettingsDialog::SoundPage);
+  connect(m_soundSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Управление сервером...
   m_daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
@@ -996,6 +1002,7 @@ void SChatWindow::createToolButtons()
   iconMenu->addAction(m_networkSetAction);
   iconMenu->addAction(m_interfaceSetAction);
   iconMenu->addAction(m_emoticonsSetAction);
+  iconMenu->addAction(m_soundSetAction);
   iconMenu->addAction(m_updateSetAction);
   iconMenu->addAction(m_miscSetAction);
 
