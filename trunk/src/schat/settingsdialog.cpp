@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "widget/networkwidget.h"
+#include "widget/soundwidget.h"
 
 /*!
  * \brief Конструктор класса SettingsDialog.
@@ -337,6 +338,24 @@ SoundSettings::SoundSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::SoundPage, parent)
 {
   m_settings = settings;
+
+  m_enable = new QGroupBox(tr("&Звуковые уведомления"), this);
+  m_enable->setCheckable(true);
+
+  QDir dir(QApplication::applicationDirPath() + "/sounds");
+  QStringList list = dir.entryList(QStringList() << "*.wav", QDir::Files);
+
+  m_message = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
+  m_private = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
+
+  QVBoxLayout *soundLay = new QVBoxLayout(m_enable);
+  soundLay->addWidget(m_message);
+  soundLay->addWidget(m_private);
+  soundLay->setSpacing(0);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_enable);
+  mainLay->addStretch();
 }
 
 
