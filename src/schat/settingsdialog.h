@@ -34,6 +34,7 @@ class QGroupBox;
 class QLineEdit;
 class QSpinBox;
 class Settings;
+class SoundWidget;
 
 
 /*!
@@ -182,7 +183,10 @@ public slots:
   void save();
 
 private:
+  QGroupBox *m_enable;
   Settings *m_settings;
+  SoundWidget *m_message;
+  SoundWidget *m_private;
 };
 
 
