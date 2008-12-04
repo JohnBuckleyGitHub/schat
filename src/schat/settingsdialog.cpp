@@ -341,6 +341,7 @@ SoundSettings::SoundSettings(QWidget *parent)
 
   m_enable = new QGroupBox(tr("&Звуковые уведомления"), this);
   m_enable->setCheckable(true);
+  m_enable->setChecked(m_settings->getBool("Sound"));
 
   QDir dir(QApplication::applicationDirPath() + "/sounds");
   QStringList list = dir.entryList(QStringList() << "*.wav", QDir::Files);
@@ -370,8 +371,10 @@ void SoundSettings::reset(int page)
 
 void SoundSettings::save()
 {
+  m_settings->setBool("Sound", m_enable->isChecked());
   m_message->save();
   m_private->save();
+  m_settings->notify(Settings::SoundChanged);
 }
 
 

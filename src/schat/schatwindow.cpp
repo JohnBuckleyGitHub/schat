@@ -655,6 +655,10 @@ void SChatWindow::settingsChanged(int notify)
       m_clientService->sendByeMsg();
       break;
 
+    case Settings::SoundChanged:
+      sound(false);
+      break;
+
     default:
       break;
   }
