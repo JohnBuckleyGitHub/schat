@@ -35,6 +35,8 @@ class SoundWidget : public QWidget
 
 public:
   SoundWidget(const QString &key, const QString &name, const QString &desc, const QStringList &sounds, QWidget *parent = 0);
+  void reset(bool enable, const QString &file);
+  void save();
 
 private slots:
   void play();

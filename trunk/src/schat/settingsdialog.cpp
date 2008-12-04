@@ -362,12 +362,16 @@ SoundSettings::SoundSettings(QWidget *parent)
 void SoundSettings::reset(int page)
 {
   if (page == m_id) {
+    m_message->reset(true, "message.wav");
+    m_private->reset(true, "message.wav");
   }
 }
 
 
 void SoundSettings::save()
 {
+  m_message->save();
+  m_private->save();
 }
 
 
