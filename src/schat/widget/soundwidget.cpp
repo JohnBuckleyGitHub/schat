@@ -57,6 +57,22 @@ SoundWidget::SoundWidget(const QString &key, const QString &name, const QString 
 }
 
 
+void SoundWidget::reset(bool enable, const QString &file)
+{
+  m_check->setChecked(enable);
+  m_combo->setCurrentIndex(m_combo->findText(file));
+  m_combo->setEnabled(m_check->isChecked());
+  m_play->setEnabled(m_check->isChecked());
+}
+
+
+void SoundWidget::save()
+{
+  m_settings->setBool("Sound/" + m_key + "Enable", m_check->isChecked());
+  m_settings->setString("Sound/" + m_key, m_combo->currentText());
+}
+
+
 void SoundWidget::play()
 {
   QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_combo->currentText());

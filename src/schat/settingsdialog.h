@@ -38,7 +38,6 @@ class SoundWidget;
 
 
 /*!
- * \class SettingsDialog
  * \brief Диалог "Настройка".
  */
 class SettingsDialog : public AbstractSettingsDialog
@@ -67,7 +66,6 @@ private:
 
 
 /*!
- * \class ProfileSettings
  * \brief Диалог "Настройка", страница "Личные данные".
  */
 class ProfileSettings : public AbstractSettingsPage
@@ -93,7 +91,6 @@ private:
 
 
 /*!
- * \class NetworkSettings
  * \brief Диалог "Настройка", страница "Сеть".
  */
 class NetworkSettings : public AbstractSettingsPage
@@ -118,7 +115,6 @@ private:
 
 
 /*!
- * \class InterfaceSettings
  * \brief Диалог "Настройка", страница "Интерфейс".
  */
 class InterfaceSettings : public AbstractSettingsPage
@@ -139,7 +135,6 @@ private:
 
 
 /*!
- * \class EmoticonsSettings
  * \brief Диалог "Настройка", страница "Смайлики".
  */
 class EmoticonsSettings : public AbstractSettingsPage
@@ -191,7 +186,6 @@ private:
 
 
 /*!
- * \class UpdateSettings
  * \brief Диалог "Настройка", страница "Обновления".
  */
 class UpdateSettings : public AbstractSettingsPage
@@ -224,7 +218,6 @@ private:
 
 
 /*!
- * \class MiscSettings
  * \brief Диалог "Настройка", страница "Разное".
  */
 class MiscSettings : public AbstractSettingsPage
