@@ -107,6 +107,9 @@ public slots:
   void reset(int page);
   void save();
 
+private slots:
+  void openFolder();
+
 private:
   NetworkWidget *m_networkWidget;
   QCheckBox *m_welcomeCheckBox;
@@ -150,6 +153,7 @@ public slots:
 
 private slots:
   void enable(bool checked);
+  void openFolder();
 
 private:
   bool createThemeList();
@@ -176,6 +180,9 @@ public:
 public slots:
   void reset(int page);
   void save();
+
+private slots:
+  void openFolder();
 
 private:
   QGroupBox *m_enable;

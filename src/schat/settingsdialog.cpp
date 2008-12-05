@@ -75,18 +75,18 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   m_byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
   m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
 
-  QHBoxLayout *byeMsgLayout = new QHBoxLayout;
-  byeMsgLayout->addWidget(byeMsgLabel);
-  byeMsgLayout->addWidget(m_byeMsgEdit);
+  QHBoxLayout *byeMsgLay = new QHBoxLayout;
+  byeMsgLay->addWidget(byeMsgLabel);
+  byeMsgLay->addWidget(m_byeMsgEdit);
 
   QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
-  QVBoxLayout *profileGroupLayout = new QVBoxLayout(profileGroupBox);
-  profileGroupLayout->addWidget(m_profileWidget);
-  profileGroupLayout->addLayout(byeMsgLayout);
+  QVBoxLayout *profileGroupLay = new QVBoxLayout(profileGroupBox);
+  profileGroupLay->addWidget(m_profileWidget);
+  profileGroupLay->addLayout(byeMsgLay);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(profileGroupBox);
-  mainLayout->addStretch();
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(profileGroupBox);
+  mainLay->addStretch();
 }
 
 
@@ -135,18 +135,20 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   m_networkWidget = new NetworkWidget(this);
   connect(m_networkWidget, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
-  QHBoxLayout *networkLayout = new QHBoxLayout;
-  networkLayout->addWidget(m_networkWidget);
-  networkLayout->setMargin(0);
-
   QGroupBox *serverGroupBox = new QGroupBox(tr("Подключение"), this);
-  QVBoxLayout *serverGroupLayout = new QVBoxLayout(serverGroupBox);
-  serverGroupLayout->addLayout(networkLayout);
-  serverGroupLayout->addWidget(m_welcomeCheckBox);
+  QVBoxLayout *serverGroupLay = new QVBoxLayout(serverGroupBox);
+  serverGroupLay->addWidget(m_networkWidget);
+  serverGroupLay->addWidget(m_welcomeCheckBox);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(serverGroupBox);
-  mainLayout->addStretch();
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Файлы сети")), this);
+  url->setToolTip(tr("Открыть папку с файлами сети"));
+  url->setAlignment(Qt::AlignRight);
+  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(serverGroupBox);
+  mainLay->addStretch();
+  mainLay->addWidget(url);
 }
 
 
@@ -174,6 +176,10 @@ void NetworkSettings::save()
 }
 
 
+void NetworkSettings::openFolder()
+{
+  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/networks"));
+}
 
 
 /*!
@@ -188,13 +194,13 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
 
   QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
-  QHBoxLayout *styleGroupLayout = new QHBoxLayout(styleGroupBox);
-  styleGroupLayout->addWidget(m_styleComboBox);
-  styleGroupLayout->addStretch();
+  QHBoxLayout *styleGroupLay = new QHBoxLayout(styleGroupBox);
+  styleGroupLay->addWidget(m_styleComboBox);
+  styleGroupLay->addStretch();
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(styleGroupBox);
-  mainLayout->addStretch();
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(styleGroupBox);
+  mainLay->addStretch();
 }
 
 
@@ -233,12 +239,12 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   m_themeCombo = new QComboBox(this);
 
   m_themeGroup = new QGroupBox(tr("Тема смайликов"), this);
-  QHBoxLayout *themeGroupLayout = new QHBoxLayout(m_themeGroup);
-  themeGroupLayout->addWidget(m_themeCombo);
-  themeGroupLayout->addStretch();
+  QHBoxLayout *themeGroupLay = new QHBoxLayout(m_themeGroup);
+  themeGroupLay->addWidget(m_themeCombo);
+  themeGroupLay->addStretch();
 
-  QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->addWidget(m_themeGroup);
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_themeGroup);
 
   m_enableCheck = new QCheckBox(tr("Включить смайлики"), this);
   m_enableCheck->setChecked(m_settings->getBool("UseEmoticons"));
@@ -253,10 +259,16 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
   m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
 
-  mainLayout->addWidget(m_enableCheck);
-  mainLayout->addWidget(m_animateCheck);
-  mainLayout->addWidget(m_requireSpacesCheck);
-  mainLayout->addStretch();
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Темы смайликов")), this);
+  url->setToolTip(tr("Открыть папку с темами смайликов"));
+  url->setAlignment(Qt::AlignRight);
+  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+
+  mainLay->addWidget(m_enableCheck);
+  mainLay->addWidget(m_animateCheck);
+  mainLay->addWidget(m_requireSpacesCheck);
+  mainLay->addStretch();
+  mainLay->addWidget(url);
 
   if (!createThemeList()) {
     m_enableCheck->setEnabled(false);
@@ -296,6 +308,12 @@ void EmoticonsSettings::enable(bool checked)
   m_themeGroup->setEnabled(checked);
   m_animateCheck->setEnabled(checked);
   m_requireSpacesCheck->setEnabled(checked);
+}
+
+
+void EmoticonsSettings::openFolder()
+{
+  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/emoticons"));
 }
 
 
@@ -354,9 +372,15 @@ SoundSettings::SoundSettings(QWidget *parent)
   soundLay->addWidget(m_private);
   soundLay->setSpacing(0);
 
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Звуки")), this);
+  url->setToolTip(tr("Открыть папку со звуками"));
+  url->setAlignment(Qt::AlignRight);
+  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_enable);
   mainLay->addStretch();
+  mainLay->addWidget(url);
 }
 
 
@@ -375,6 +399,12 @@ void SoundSettings::save()
   m_message->save();
   m_private->save();
   m_settings->notify(Settings::SoundChanged);
+}
+
+
+void SoundSettings::openFolder()
+{
+  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/sounds"));
 }
 
 
