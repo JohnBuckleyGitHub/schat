@@ -21,6 +21,7 @@
 #include "customizewizard.h"
 #include "page/intropage.h"
 #include "page/selectpage.h"
+#include "wizardsettings.h"
 
 /**
  * Конструктор InstallWizard
@@ -51,6 +52,9 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
 //  setPage(Page_Commit, new CommitPage(settings, this));
 //  setPage(Page_Progress, new ProgressPage(settings, button(QWizard::NextButton), this));
 //  setPage(Page_End, new EndPage(this));
+
+  m_settings = new WizardSettings(QApplication::applicationDirPath() + "/customize.conf", this);
+  m_settings->read();
 
   setPage(Page_Intro, new IntroPage(this));
   setPage(Page_Select, new SelectPage(this));
