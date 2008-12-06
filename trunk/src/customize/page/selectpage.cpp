@@ -17,6 +17,7 @@
  */
 
 #include <QtGui>
+#include <limits.h>
 
 #include "selectpage.h"
 
@@ -27,6 +28,9 @@ SelectPage::SelectPage(QWidget *parent)
   setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
   m_version = new QLineEdit(this);
+  m_version->setValidator(new QRegExpValidator(QRegExp("([0-9]{1,3}[\\.]{1}){3}[0-9]{1,5}"), m_version));
+  m_version->setToolTip(tr("Версия приложения, будет использоваться инсталляторе\nдопустимый формат x.x.x.x"));
+
   QLabel *versionLabel = new QLabel(tr("&Версия:"), this);
   versionLabel->setBuddy(m_version);
 
@@ -46,14 +50,14 @@ SelectPage::SelectPage(QWidget *parent)
   m_core = new QCheckBox(tr("&Ядро"), this);
   m_coreLabel = new QLabel(tr("Уровни обновлений:"), this);
   m_coreLevel = new QSpinBox(this);
-  m_coreLevel->setRange(1, 2147483647);
+  m_coreLevel->setRange(1, INT_MAX);
 
   m_runtime = new QCheckBox(tr("&Библиотека Qt"), this);
   m_runtimeLevel = new QSpinBox(this);
-  m_runtimeLevel->setRange(1, 2147483647);
+  m_runtimeLevel->setRange(1, INT_MAX);
 
   m_overrideLevels = new QCheckBox(tr("&Переопределить уровни обновлений"), this);
-  QGroupBox *updateGroup = new QGroupBox(tr("Альтернативное зеркало обновления"), this);
+  QGroupBox *updateGroup = new QGroupBox(tr("Альтернативное зеркало обновлений"), this);
   updateGroup->setCheckable(true);
   QGridLayout *updateLay = new QGridLayout(updateGroup);
   updateLay->addWidget(m_core, 0, 0);
