@@ -25,16 +25,20 @@ QT += network
 TEMPLATE = app
 
 HEADERS += \
+    abstractsettings.h \
     customizewizard.h \
     page/intropage.h \
     page/selectpage.h \
     version.h \
+    wizardsettings.h \
 
 SOURCES += \
+    abstractsettings.cpp \
     customizewizard.cpp \
     main.cpp \
     page/intropage.cpp \
     page/selectpage.cpp \
+    wizardsettings.cpp \
 
 contains( SCHAT_STATIC, 1 ) {
     DEFINES += SCHAT_STATIC

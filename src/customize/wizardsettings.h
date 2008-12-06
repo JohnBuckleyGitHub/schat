@@ -16,28 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#ifndef WIZARDSETTINGS_H_
+#define WIZARDSETTINGS_H_
 
 #include <QObject>
-#include <QWizard>
 
-class WizardSettings;
+#include "abstractsettings.h"
 
-class CustomizeWizard : public QWizard
-{
+#define settings (static_cast<WizardSettings *>(AbstractSettings::instance()))
+
+/*!
+ * \brief Класс читает и записывает настройки мастера.
+ */
+class WizardSettings : public AbstractSettings {
   Q_OBJECT
 
 public:
-  enum Pages {
-    Page_Intro,
-    Page_Select
-  };
-
-  CustomizeWizard(QWidget *parent = 0);
-
-private:
-  WizardSettings *m_settings;
+  WizardSettings(const QString &filename, QObject *parent = 0);
+  void read();
 };
 
-#endif /* CUSTOMIZEWIZARD_H_ */
+#endif /* WIZARDSETTINGS_H_ */

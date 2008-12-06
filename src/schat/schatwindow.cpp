@@ -40,7 +40,7 @@ QMap<QString, QString> SChatWindow::m_cmds;
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  m_settings    = new Settings(qApp->applicationDirPath() + "/schat.conf", this);
+  m_settings    = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
   m_profile     = m_settings->profile();
   m_settings->read();
 
