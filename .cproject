@@ -155,6 +155,7 @@
 <pathentry base-path="schat" include="src/common" kind="inc" path="" system="true"/>
 <pathentry base-path="schat" include="src/schat" kind="inc" path="" system="true"/>
 <pathentry include="C:/dev/mingw/include" kind="inc" path="" system="true"/>
+<pathentry base-path="schat" include="src/customize" kind="inc" path="" system="true"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>

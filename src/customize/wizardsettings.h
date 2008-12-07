@@ -34,6 +34,9 @@ class WizardSettings : public AbstractSettings {
 public:
   WizardSettings(const QString &filename, QObject *parent = 0);
   void read();
+
+private:
+  void setVersions();
 };
 
 #endif /* WIZARDSETTINGS_H_ */

@@ -18,6 +18,7 @@
 
 #include <QtCore>
 
+#include "version.h"
 #include "wizardsettings.h"
 
 /*!
@@ -34,5 +35,25 @@ WizardSettings::WizardSettings(const QString &filename, QObject *parent)
  */
 void WizardSettings::read()
 {
+  setVersions();
   AbstractSettings::read();
+
+  if (!getBool("Save"))
+    setVersions();
+}
+
+
+void WizardSettings::setVersions()
+{
+  QString version = QCoreApplication::applicationVersion();
+  version = version.left(version.indexOf(' '));
+  setString("Version",      version);
+  setString("Suffix",       "");
+  setBool("Mirror",         false);
+  setBool("MirrorCore",     true);
+  setBool("MirrorQt",       true);
+  setBool("OverrideLevels", false);
+  setBool("Save",           false);
+  setInt("LevelCore",       UpdateLevelCore);
+  setInt("LevelQt",         UpdateLevelQt);
 }
