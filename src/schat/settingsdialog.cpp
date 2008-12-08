@@ -362,6 +362,7 @@ SoundSettings::SoundSettings(QWidget *parent)
   m_enable->setChecked(m_settings->getBool("Sound"));
 
   QDir dir(QApplication::applicationDirPath() + "/sounds");
+  /// \todo Необходимо устанвить более корректные фильтры для различных платформ.
   QStringList list = dir.entryList(QStringList() << "*.wav", QDir::Files);
 
   m_message = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
@@ -372,6 +373,16 @@ SoundSettings::SoundSettings(QWidget *parent)
   soundLay->addWidget(m_private);
   soundLay->setSpacing(0);
 
+  #ifdef Q_WS_X11
+    m_useCmd = new QGroupBox(tr("Внешняя команда для воспроизведения звука"), this);
+    m_useCmd->setCheckable(true);
+    m_useCmd->setChecked(m_settings->getBool("Sound/UseExternalCmd"));
+    m_cmd = new QLineEdit(m_settings->getString("Sound/ExternalCmd"), this);
+    m_cmd->setToolTip(tr("Внешняя команда, Вместо %1 подставляется\nимя звукового файла"));
+    QVBoxLayout *cmdLay = new QVBoxLayout(m_useCmd);
+    cmdLay->addWidget(m_cmd);
+  #endif
+
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Звуки")), this);
   url->setToolTip(tr("Открыть папку со звуками"));
   url->setAlignment(Qt::AlignRight);
@@ -379,6 +390,9 @@ SoundSettings::SoundSettings(QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_enable);
+  #ifdef Q_WS_X11
+    mainLay->addWidget(m_useCmd);
+  #endif
   mainLay->addStretch();
   mainLay->addWidget(url);
 }
@@ -389,6 +403,11 @@ void SoundSettings::reset(int page)
   if (page == m_id) {
     m_message->reset(true, "message.wav");
     m_private->reset(true, "message.wav");
+
+    #ifdef Q_WS_X11
+      m_useCmd->setChecked(true);
+      m_cmd->setText("aplay -q -N %1");
+    #endif
   }
 }
 
@@ -398,6 +417,10 @@ void SoundSettings::save()
   m_settings->setBool("Sound", m_enable->isChecked());
   m_message->save();
   m_private->save();
+  #ifdef Q_WS_X11
+    m_settings->setBool("Sound/UseExternalCmd", m_useCmd->isChecked());
+    m_settings->setString("Sound/ExternalCmd", m_cmd->text());
+  #endif
   m_settings->notify(Settings::SoundChanged);
 }
 

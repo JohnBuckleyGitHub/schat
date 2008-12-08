@@ -196,15 +196,20 @@ void Settings::read()
   setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
 
   #ifndef SCHAT_NO_UPDATE
-    setInt("Updates/DownloadSize",    0);
-    setBool("Updates/AutoClean",      true);
-    setBool("Updates/AutoDownload",   false);
+    setInt("Updates/DownloadSize",      0);
+    setBool("Updates/AutoClean",        true);
+    setBool("Updates/AutoDownload",     false);
   #endif
 
   setBool("Sound/MessageEnable",        true);
   setBool("Sound/PrivateMessageEnable", true);
   setString("Sound/Message",            "message.wav");
   setString("Sound/PrivateMessage",     "message.wav");
+
+  #ifdef Q_WS_X11
+    setBool("Sound/UseExternalCmd",     true);
+    setString("Sound/ExternalCmd",      "aplay -q -N %1");
+  #endif
 
   if (m_default)
     AbstractSettings::read(m_default);
