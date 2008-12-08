@@ -189,6 +189,10 @@ private:
   Settings *m_settings;
   SoundWidget *m_message;
   SoundWidget *m_private;
+  #ifdef Q_WS_X11
+    QGroupBox *m_useCmd;
+    QLineEdit *m_cmd;
+  #endif
 };
 
 

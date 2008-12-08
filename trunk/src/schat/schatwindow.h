@@ -119,18 +119,19 @@ private:
   int tabIndex(const QString &text) const;
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void createActions();
-  #if QT_VERSION < 0x040500
-    void createCornerWidgets();
-  #endif
   void createService();
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
+  void playSound(const QString &key);
   void restoreGeometry();
   void saveGeometry();
   void showChat();
-  void startNotice(int index, Sound type = NoSound);
+  void startNotice(int index, const QString &key);
   void uniqueNick();
+  #if QT_VERSION < 0x040500
+    void createCornerWidgets();
+  #endif
 
   AbstractProfile *m_profile;
   bool m_sound;

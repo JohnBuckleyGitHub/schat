@@ -407,7 +407,7 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
-  startNotice(m_tabs->indexOf(m_main), MessageSound);
+  startNotice(m_tabs->indexOf(m_main), "Message");
 
   m_main->msgNewMessage(sender, msg);
 }
@@ -564,7 +564,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     else
       tab->msgNewMessage(nick, message);
 
-  startNotice(index, PrivateMessageSound);
+  startNotice(index, "PrivateMessage");
 }
 
 
@@ -962,17 +962,6 @@ void SChatWindow::createActions()
 }
 
 
-#if QT_VERSION < 0x040500
-void SChatWindow::createCornerWidgets()
-{
-  QToolButton *closeTabButton = new QToolButton(this);
-  closeTabButton->setDefaultAction(m_closeTabAction);
-  closeTabButton->setAutoRaise(true);
-  m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
-}
-#endif
-
-
 /** [private]
  *
  */
@@ -1075,6 +1064,20 @@ void SChatWindow::hideChat()
 }
 
 
+void SChatWindow::playSound(const QString &key)
+{
+  QString file = QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/" + key);
+
+  if (m_settings->getBool("Sound/" + key + "Enable"))
+    #ifdef Q_WS_X11
+    if (m_settings->getBool("Sound/UseExternalCmd") && !m_settings->getString("Sound/ExternalCmd").isEmpty())
+      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(file));
+    else
+    #endif
+      QSound::play(file);
+}
+
+
 /*!
  * \brief Восстанавливает геометрию окна.
  */
@@ -1126,7 +1129,7 @@ void SChatWindow::showChat()
  *
  * \param index Номер вкладки, в которой есть новое сообщение.
  */
-void SChatWindow::startNotice(int index, Sound type)
+void SChatWindow::startNotice(int index, const QString &key)
 {
   if (index == -1)
     return;
@@ -1137,22 +1140,23 @@ void SChatWindow::startNotice(int index, Sound type)
     m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
     m_tray->notice(true);
 
-    if (m_sound) {
-      switch (type) {
-        case MessageSound:
-          if (m_settings->getBool("Sound/MessageEnable"))
-            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/Message"));
-          break;
-
-        case PrivateMessageSound:
-          if (m_settings->getBool("Sound/PrivateMessageEnable"))
-            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/PrivateMessage"));
-          break;
-
-        default:
-          break;
-      }
-    }
+    if (m_sound)
+      playSound(key);
+//      switch (type) {
+//        case MessageSound:
+//          if (m_settings->getBool("Sound/MessageEnable"))
+//            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/Message"));
+//          break;
+//
+//        case PrivateMessageSound:
+//          if (m_settings->getBool("Sound/PrivateMessageEnable"))
+//            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/PrivateMessage"));
+//          break;
+//
+//        default:
+//          break;
+//      }
+//    }
   }
 }
 
@@ -1164,3 +1168,14 @@ void SChatWindow::uniqueNick()
 {
   m_profile->setNick(m_profile->nick() + QString().setNum(qrand() % 99));
 }
+
+
+#if QT_VERSION < 0x040500
+void SChatWindow::createCornerWidgets()
+{
+  QToolButton *closeTabButton = new QToolButton(this);
+  closeTabButton->setDefaultAction(m_closeTabAction);
+  closeTabButton->setAutoRaise(true);
+  m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
+}
+#endif

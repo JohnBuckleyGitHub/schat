@@ -59,7 +59,7 @@ SelectPage::SelectPage(QWidget *parent)
   m_coreLevel = new QSpinBox(this);
   m_coreLevel->setRange(1, INT_MAX);
   m_coreLevel->setValue(m_settings->getInt("LevelCore"));
-  m_coreLevel->setToolTip(tr("Уровень обновления библиотеки Qt"));
+  m_coreLevel->setToolTip(tr("Уровень обновления основных компонентов"));
 
   m_runtime = new QCheckBox(tr("&Библиотека Qt"), this);
   m_runtime->setChecked(m_settings->getBool("MirrorQt"));
