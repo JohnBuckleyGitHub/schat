@@ -205,9 +205,18 @@ void Settings::read()
   setBool("Sound/PrivateMessageEnable", true);
   setString("Sound/Message",            "message.wav");
   setString("Sound/PrivateMessage",     "message.wav");
+  QStringList nameFilter;
+  nameFilter << "*.wav";
+  #if defined(Q_WS_X11)
+    nameFilter << "*.au";
+  #elif defined(Q_WS_MAC)
+    /// \todo Необходимо уточнить список поддерживаемых форматов под Mac OS X.
+    nameFilter << "*.aiff" << ".snd" << "*.mp3" << "*.m4a" << "*.m4b" << "*.m4p";
+  #endif
+  setList("Sound/NameFilter", nameFilter);
 
   #ifdef Q_WS_X11
-    setBool("Sound/UseExternalCmd",     true);
+    setBool("Sound/UseExternalCmd",     !QSound::isAvailable());
     setString("Sound/ExternalCmd",      "aplay -q -N %1");
   #endif
 
@@ -249,7 +258,8 @@ void Settings::write()
        << "Updates/LevelQt"
        << "Updates/LevelCore"
        << "Updates/LastVersion"
-       << "Updates/DownloadSize";
+       << "Updates/DownloadSize"
+       << "Sound/NameFilter";
 
   setBool("FirstRun", false);
   setString("Network", network.config());

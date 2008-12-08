@@ -362,8 +362,7 @@ SoundSettings::SoundSettings(QWidget *parent)
   m_enable->setChecked(m_settings->getBool("Sound"));
 
   QDir dir(QApplication::applicationDirPath() + "/sounds");
-  /// \todo Необходимо устанвить более корректные фильтры для различных платформ.
-  QStringList list = dir.entryList(QStringList() << "*.wav", QDir::Files);
+  QStringList list = dir.entryList(m_settings->getList("Sound/NameFilter"), QDir::Files);
 
   m_message = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
   m_private = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
