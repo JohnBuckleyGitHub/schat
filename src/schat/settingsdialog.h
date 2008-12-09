@@ -183,6 +183,7 @@ public slots:
 
 private slots:
   void openFolder();
+  void play(const QString &file);
 
 private:
   QGroupBox *m_enable;

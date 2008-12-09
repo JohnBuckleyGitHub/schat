@@ -75,5 +75,5 @@ void SoundWidget::save()
 
 void SoundWidget::play()
 {
-  QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_combo->currentText());
+  emit play(QApplication::applicationDirPath() + "/sounds/" + m_combo->currentText());
 }

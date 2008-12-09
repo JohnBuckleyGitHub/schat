@@ -365,7 +365,9 @@ SoundSettings::SoundSettings(QWidget *parent)
   QStringList list = dir.entryList(m_settings->getList("Sound/NameFilter"), QDir::Files);
 
   m_message = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
+  connect(m_message, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
   m_private = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
+  connect(m_private, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
 
   QVBoxLayout *soundLay = new QVBoxLayout(m_enable);
   soundLay->addWidget(m_message);
@@ -385,7 +387,7 @@ SoundSettings::SoundSettings(QWidget *parent)
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Звуки")), this);
   url->setToolTip(tr("Открыть папку со звуками"));
   url->setAlignment(Qt::AlignRight);
-  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+  connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_enable);
@@ -427,6 +429,17 @@ void SoundSettings::save()
 void SoundSettings::openFolder()
 {
   QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/sounds"));
+}
+
+
+void SoundSettings::play(const QString &file)
+{
+  #ifdef Q_WS_X11
+  if (m_useCmd->isChecked() && !m_cmd->text().isEmpty())
+    QProcess::startDetached(m_cmd->text().arg(file));
+  else
+  #endif
+    QSound::play(file);
 }
 
 

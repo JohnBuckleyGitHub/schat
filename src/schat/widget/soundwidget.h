@@ -38,6 +38,9 @@ public:
   void reset(bool enable, const QString &file);
   void save();
 
+signals:
+  void play(const QString &file);
+
 private slots:
   void play();
 

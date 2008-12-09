@@ -211,7 +211,7 @@ void Settings::read()
     nameFilter << "*.au";
   #elif defined(Q_WS_MAC)
     /// \todo Необходимо уточнить список поддерживаемых форматов под Mac OS X.
-    nameFilter << "*.aiff" << ".snd" << "*.mp3" << "*.m4a" << "*.m4b" << "*.m4p";
+    nameFilter << "*.aiff" << "*.snd" << "*.mp3" << "*.m4a" << "*.m4b" << "*.m4p";
   #endif
   setList("Sound/NameFilter", nameFilter);
 
