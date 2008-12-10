@@ -20,6 +20,7 @@
 #include <limits.h>
 
 #include "selectpage.h"
+#include "version.h"
 #include "wizardsettings.h"
 
 SelectPage::SelectPage(QWidget *parent)
@@ -90,11 +91,17 @@ SelectPage::SelectPage(QWidget *parent)
   m_save->setChecked(m_settings->getBool("Save"));
   m_save->setToolTip(tr("Сохранить заданные здесь настройки в качестве\nзначений по умолчанию"));
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(versionGroup);
-  mainLay->addWidget(m_mirror);
-  mainLay->addWidget(m_save);
-  mainLay->addStretch();
+  m_reset = new QToolButton(this);
+  m_reset->setIcon(QIcon(":/images/undo.png"));
+  m_reset->setAutoRaise(true);
+  m_reset->setToolTip(tr("Вернуть настройки по умолчанию"));
+  connect(m_reset, SIGNAL(clicked(bool)), SLOT(reset()));
+
+  QGridLayout *mainLay = new QGridLayout(this);
+  mainLay->addWidget(versionGroup, 0, 0, 1, 2);
+  mainLay->addWidget(m_mirror, 1, 0, 1, 2);
+  mainLay->addWidget(m_save, 2, 0);
+  mainLay->addWidget(m_reset, 2, 1);
 
   connect(m_core, SIGNAL(clicked(bool)), SLOT(clickedCore(bool)));
   connect(m_runtime, SIGNAL(clicked(bool)), m_runtimeLevel, SLOT(setEnabled(bool)));
@@ -115,4 +122,22 @@ void SelectPage::clickedCore(bool checked)
     m_runtimeLevel->setEnabled(m_runtime->isChecked());
   else
     m_runtimeLevel->setEnabled(checked);
+}
+
+
+/*!
+ * Восстанавливает значения по умолчанию.
+ * Вызывается кликом по кнопке \a m_reset.
+ */
+void SelectPage::reset()
+{
+  m_version->setText(WizardSettings::version());
+  m_suffix->setText("");
+  m_mirror->setChecked(false);
+  m_core->setChecked(true);
+  m_runtime->setChecked(true);
+  m_overrideLevels->setChecked(false);
+  m_save->setChecked(false);
+  m_coreLevel->setValue(UpdateLevelCore);
+  m_runtimeLevel->setValue(UpdateLevelQt);
 }

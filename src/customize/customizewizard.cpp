@@ -29,34 +29,23 @@
 CustomizeWizard::CustomizeWizard(QWidget *parent)
   : QWizard(parent)
 {
-//  settings = _settings;
-
   setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
 
-//  setOption(QWizard::HaveCustomButton1, true);
-//  setOption(QWizard::HaveCustomButton2, true);
+  setOption(QWizard::HaveCustomButton1, true);
   setOption(QWizard::NoBackButtonOnStartPage, true);
-//  setOption(QWizard::DisabledBackButtonOnLastPage, true);
-//  setButtonText(QWizard::CustomButton1, tr("О Программе"));
-//  setButtonText(QWizard::CustomButton2, tr("Настройка"));
+  setOption(QWizard::DisabledBackButtonOnLastPage, true);
+  setButtonText(QWizard::CustomButton1, tr("О Программе"));
 
-//  QList<QWizard::WizardButton> layout;
-//  layout << QWizard::CustomButton1 << QWizard::CustomButton2 << QWizard::Stretch
-//         << QWizard::BackButton << QWizard::NextButton << QWizard::CommitButton
-//         << QWizard::FinishButton << QWizard::CancelButton;
-//  setButtonLayout(layout);
-
-//  setPage(Page_Intro, new IntroPage(this));
-//  setPage(Page_Mode, new ModePage(settings, this));
-//  setPage(Page_Select, new SelectPage(settings, this));
-//  setPage(Page_Commit, new CommitPage(settings, this));
-//  setPage(Page_Progress, new ProgressPage(settings, button(QWizard::NextButton), this));
-//  setPage(Page_End, new EndPage(this));
+  QList<QWizard::WizardButton> layout;
+  layout << QWizard::CustomButton1 << QWizard::Stretch
+         << QWizard::BackButton << QWizard::NextButton << QWizard::CommitButton
+         << QWizard::FinishButton << QWizard::CancelButton;
+  setButtonLayout(layout);
 
   m_settings = new WizardSettings(QApplication::applicationDirPath() + "/customize.conf", this);
   m_settings->read();
 
-  setPage(Page_Intro, new IntroPage(this));
+  setPage(Page_Intro,  new IntroPage(this));
   setPage(Page_Select, new SelectPage(this));
   setStartId(Page_Intro);
 
@@ -64,9 +53,6 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   connect(this, SIGNAL(rejected()), SLOT(close()));
 
   setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
-
   setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
-
-//  settings->readSettings();
   setWizardStyle(QWizard::ModernStyle);
 }
