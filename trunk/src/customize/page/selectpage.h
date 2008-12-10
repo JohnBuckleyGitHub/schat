@@ -26,6 +26,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QSpinBox;
+class QToolButton;
 class WizardSettings;
 
 class SelectPage : public QWizardPage
@@ -37,6 +38,7 @@ public:
 
 private slots:
   void clickedCore(bool checked);
+  void reset();
 
 private:
   QCheckBox *m_core;
@@ -50,6 +52,7 @@ private:
   QLineEdit *m_version;
   QSpinBox *m_coreLevel;
   QSpinBox *m_runtimeLevel;
+  QToolButton *m_reset;
   WizardSettings *m_settings;
 };
 

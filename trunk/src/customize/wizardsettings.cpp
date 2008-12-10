@@ -43,11 +43,16 @@ void WizardSettings::read()
 }
 
 
-void WizardSettings::setVersions()
+QString WizardSettings::version()
 {
   QString version = QCoreApplication::applicationVersion();
-  version = version.left(version.indexOf(' '));
-  setString("Version",      version);
+  return version.left(version.indexOf(' '));
+}
+
+
+void WizardSettings::setVersions()
+{
+  setString("Version",      version());
   setString("Suffix",       "");
   setBool("Mirror",         false);
   setBool("MirrorCore",     true);

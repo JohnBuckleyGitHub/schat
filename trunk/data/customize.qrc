@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <file>images/impomezia48.png</file>
+  <file>images/undo.png</file>
   <file>images/watermark.png</file>
   <file>translations/qt_ru.qm</file>
 </qresource>
