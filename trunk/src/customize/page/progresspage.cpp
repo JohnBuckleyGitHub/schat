@@ -16,29 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#include <QtGui>
 
-#include <QObject>
-#include <QWizard>
+#include "progresspage.h"
+#include "wizardsettings.h"
 
-class WizardSettings;
-
-class CustomizeWizard : public QWizard
+/*!
+ * Конструктор ProgressPage
+ */
+ProgressPage::ProgressPage(QWidget *parent)
+  : QWizardPage(parent)
 {
-  Q_OBJECT
+  m_settings = settings;
+  setTitle(tr("Идёт установка программ"));
+  setSubTitle(tr("Подождите идёт установка выбранных программ"));
 
-public:
-  enum Pages {
-    Page_Intro,
-    Page_Select,
-    Page_Progress,
-  };
+  m_label = new QLabel(this);
+  m_progress = new QProgressBar(this);
+  m_log = new QTextEdit(this);
+  m_log->setReadOnly(true);
 
-  CustomizeWizard(QWidget *parent = 0);
-
-private:
-  WizardSettings *m_settings;
-};
-
-#endif /* CUSTOMIZEWIZARD_H_ */
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_label);
+  mainLay->addWidget(m_progress);
+  mainLay->addWidget(m_log);
+  mainLay->setMargin(0);
+}

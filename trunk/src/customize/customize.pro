@@ -28,6 +28,7 @@ HEADERS += \
     abstractsettings.h \
     customizewizard.h \
     page/intropage.h \
+    page/progresspage.h \
     page/selectpage.h \
     version.h \
     wizardsettings.h \
@@ -37,6 +38,7 @@ SOURCES += \
     customizewizard.cpp \
     main.cpp \
     page/intropage.cpp \
+    page/progresspage.cpp \
     page/selectpage.cpp \
     wizardsettings.cpp \
 
