@@ -16,29 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#ifndef PROGRESSPAGE_H_
+#define PROGRESSPAGE_H_
 
-#include <QObject>
-#include <QWizard>
+#include <QWizardPage>
 
+class QLabel;
+class QProgressBar;
+class QTextEdit;
 class WizardSettings;
 
-class CustomizeWizard : public QWizard
+class ProgressPage : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  enum Pages {
-    Page_Intro,
-    Page_Select,
-    Page_Progress,
-  };
-
-  CustomizeWizard(QWidget *parent = 0);
+  ProgressPage(QWidget *parent = 0);
 
 private:
+  QLabel *m_label;
+  QProgressBar *m_progress;
+  QProgressBar *packageProgressBar;
+  QTextEdit *m_log;
   WizardSettings *m_settings;
 };
 
-#endif /* CUSTOMIZEWIZARD_H_ */
+#endif /* PROGRESSPAGE_H_ */
