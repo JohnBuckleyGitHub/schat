@@ -26,6 +26,9 @@ class QProgressBar;
 class QTextEdit;
 class WizardSettings;
 
+/*!
+ * \brief Страница отображающая процесс создания дистрибутива.
+ */
 class ProgressPage : public QWizardPage
 {
   Q_OBJECT

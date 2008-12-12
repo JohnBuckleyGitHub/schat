@@ -23,6 +23,9 @@
 #include "version.h"
 #include "wizardsettings.h"
 
+/*!
+ * \brief Конструктор класса SelectPage.
+ */
 SelectPage::SelectPage(QWidget *parent)
   : QWizardPage(parent)
 {

@@ -1128,6 +1128,7 @@ void SChatWindow::showChat()
  * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
  *
  * \param index Номер вкладки, в которой есть новое сообщение.
+ * \param key   Ключ для звукового уведомления.
  */
 void SChatWindow::startNotice(int index, const QString &key)
 {
@@ -1142,21 +1143,6 @@ void SChatWindow::startNotice(int index, const QString &key)
 
     if (m_sound)
       playSound(key);
-//      switch (type) {
-//        case MessageSound:
-//          if (m_settings->getBool("Sound/MessageEnable"))
-//            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/Message"));
-//          break;
-//
-//        case PrivateMessageSound:
-//          if (m_settings->getBool("Sound/PrivateMessageEnable"))
-//            QSound::play(QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/PrivateMessage"));
-//          break;
-//
-//        default:
-//          break;
-//      }
-//    }
   }
 }
 
