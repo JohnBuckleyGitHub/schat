@@ -20,7 +20,8 @@ STRIP_FROM_INC_PATH    = . \
                          src/schatd \
                          src/schat \
                          src/schatd-ui \
-                         src/common
+                         src/common \
+                         src/customize
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 QT_AUTOBRIEF           = NO
@@ -91,7 +92,8 @@ INPUT                  = doc \
                          src/common \
                          src/schat \
                          src/schatd \
-                         src/schatd-ui
+                         src/schatd-ui \
+                         src/customize
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \
                          *.h \

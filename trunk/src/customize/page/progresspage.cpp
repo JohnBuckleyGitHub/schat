@@ -22,14 +22,14 @@
 #include "wizardsettings.h"
 
 /*!
- * Конструктор ProgressPage
+ * \brief Конструктор класса ProgressPage.
  */
 ProgressPage::ProgressPage(QWidget *parent)
   : QWizardPage(parent)
 {
   m_settings = settings;
-  setTitle(tr("Идёт установка программ"));
-  setSubTitle(tr("Подождите идёт установка выбранных программ"));
+  setTitle(tr("Идёт создание дистрибутива"));
+  setSubTitle(tr("Подождите идёт создание дистрибутива"));
 
   m_label = new QLabel(this);
   m_progress = new QProgressBar(this);

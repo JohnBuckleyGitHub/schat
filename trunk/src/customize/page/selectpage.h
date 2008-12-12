@@ -29,6 +29,9 @@ class QSpinBox;
 class QToolButton;
 class WizardSettings;
 
+/*!
+ * \brief Страница для установки версий и необходимости создания зеркала обновлений.
+ */
 class SelectPage : public QWizardPage
 {
   Q_OBJECT

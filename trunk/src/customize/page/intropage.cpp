@@ -20,6 +20,9 @@
 
 #include "intropage.h"
 
+/*!
+ * \brief Конструктор класса IntroPage.
+ */
 IntroPage::IntroPage(QWidget *parent)
   : QWizardPage(parent)
 {

@@ -21,6 +21,9 @@
 
 #include <QWizardPage>
 
+/*!
+ * \brief Первая страница мастера.
+ */
 class IntroPage : public QWizardPage
 {
   Q_OBJECT
