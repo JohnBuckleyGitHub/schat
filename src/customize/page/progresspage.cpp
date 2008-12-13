@@ -44,30 +44,88 @@ ProgressPage::ProgressPage(QWidget *parent)
 }
 
 
+/*!
+ * Получение значения системной переменной окружения.
+ *
+ * \param env Имя переменной.
+ * \return    Значение переменной или пустая строка.
+ */
+QString ProgressPage::envValue(const QString &env)
+{
+  QStringList environment = QProcess::systemEnvironment();
+  int index = environment.indexOf(QRegExp(env + ".*"));
+  if (index != -1) {
+    QStringList list = environment.at(index).split("=");
+    if (list.size() == 2)
+      return list.at(1);
+    else
+      return "";
+  }
+  else
+    return "";
+}
+
+
+/*!
+ * Инициализация страницы.
+ * Создаёт очередь заданий и по нулевому таймеру запускает следующие задание.
+ */
 void ProgressPage::initializePage()
 {
   qDebug() << "ProgressPage::initializePage()";
+
+  m_queue.enqueue(CreateNSI);
+  m_queue.enqueue(CreateEXE);
+
   QTimer::singleShot(0, this, SLOT(nextJob()));
 }
 
 
+/*!
+ * Выполняет следующее задание из очереди \a m_queue.
+ */
 void ProgressPage::nextJob()
 {
   qDebug() << "ProgressPage::nextJob()";
 
-  m_settings->write();
+  if (m_queue.isEmpty())
+    return;
+
+  Jobs job = m_queue.dequeue();
+
+  if (job == CreateNSI) {
+    m_settings->write();
+
+    if (!createNsi())
+      return;
+
+    QTimer::singleShot(0, this, SLOT(nextJob()));
+  }
+}
+
+
+/*!
+ * Запускает создание NSI файлов.
+ *
+ * \return Возвращает \a true если все файлы успешно созданы, иначе \a false.
+ */
+bool ProgressPage::createNsi()
+{
+  m_label->setText(tr("Создание NSI файлов..."));
 
   if (!createNsi(Main))
-    return;
+    return false;
 
   if (m_settings->getBool("Mirror") && m_settings->getBool("MirrorCore")) {
     if (!createNsi(Core))
-      return;
+      return false;
 
     if (m_settings->getBool("MirrorQt"))
       if (!createNsi(Runtime))
-        return;
+        return false;
   }
+
+  return true;
 }
 
 
