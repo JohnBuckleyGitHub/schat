@@ -19,6 +19,7 @@
 #ifndef PROGRESSPAGE_H_
 #define PROGRESSPAGE_H_
 
+#include <QQueue>
 #include <QWizardPage>
 
 class QLabel;
@@ -35,6 +36,7 @@ class ProgressPage : public QWizardPage
 
 public:
   ProgressPage(QWidget *parent = 0);
+  static QString envValue(const QString &env);
   void initializePage();
 
 private slots:
@@ -47,11 +49,18 @@ private:
     Runtime
   };
 
+  enum Jobs {
+    CreateNSI,
+    CreateEXE
+  };
+
+  bool createNsi();
   bool createNsi(Nsi type);
 
   QLabel *m_label;
   QProgressBar *m_progress;
   QProgressBar *packageProgressBar;
+  QQueue<Jobs> m_queue;
   QTextEdit *m_log;
   WizardSettings *m_settings;
 };
