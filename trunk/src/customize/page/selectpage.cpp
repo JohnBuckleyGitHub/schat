@@ -114,6 +114,27 @@ SelectPage::SelectPage(QWidget *parent)
 }
 
 
+bool SelectPage::validatePage()
+{
+  qDebug() << "SelectPage::validatePage()";
+
+  if (m_version->text().isEmpty())
+    return false;
+
+  m_settings->setString("Version",      m_version->text());
+  m_settings->setString("Suffix",       m_suffix->text());
+  m_settings->setBool("Mirror",         m_mirror->isChecked());
+  m_settings->setBool("MirrorCore",     m_core->isChecked());
+  m_settings->setBool("MirrorQt",       m_runtime->isChecked());
+  m_settings->setBool("OverrideLevels", m_overrideLevels->isChecked());
+  m_settings->setBool("Save",           m_save->isChecked());
+  m_settings->setInt("LevelCore",       m_coreLevel->value());
+  m_settings->setInt("LevelQt",         m_runtimeLevel->value());
+
+  return true;
+}
+
+
 void SelectPage::clickedCore(bool checked)
 {
   m_coreLabel->setEnabled(checked);

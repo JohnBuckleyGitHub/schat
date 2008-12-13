@@ -35,8 +35,20 @@ class ProgressPage : public QWizardPage
 
 public:
   ProgressPage(QWidget *parent = 0);
+  void initializePage();
+
+private slots:
+  void nextJob();
 
 private:
+  enum Nsi {
+    Main,
+    Core,
+    Runtime
+  };
+
+  bool createNsi(Nsi type);
+
   QLabel *m_label;
   QProgressBar *m_progress;
   QProgressBar *packageProgressBar;

@@ -38,6 +38,7 @@ class SelectPage : public QWizardPage
 
 public:
   SelectPage(QWidget *parent = 0);
+  bool validatePage();
 
 private slots:
   void clickedCore(bool checked);
