@@ -31,7 +31,7 @@ IntroPage::IntroPage(QWidget *parent)
 
   QLabel *introLabel = new QLabel(tr(
       "<p>Нажмите кнопку <b>&quot;Далее&quot;</b> для продолжения.</p>"
-      ).arg(QApplication::applicationVersion()), this);
+      ), this);
   introLabel->setWordWrap(true);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
