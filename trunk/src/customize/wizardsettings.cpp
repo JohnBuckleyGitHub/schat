@@ -31,11 +31,43 @@ WizardSettings::WizardSettings(const QString &filename, QObject *parent)
 
 
 /*!
+ * Получение значения системной переменной окружения.
+ *
+ * \param env Имя переменной.
+ * \return    Значение переменной или пустая строка.
+ */
+QString WizardSettings::envValue(const QString &env)
+{
+  QStringList environment = QProcess::systemEnvironment();
+  int index = environment.indexOf(QRegExp(env + ".*"));
+  if (index != -1) {
+    QStringList list = environment.at(index).split("=");
+    if (list.size() == 2)
+      return list.at(1);
+    else
+      return "";
+  }
+  else
+    return "";
+}
+
+
+/*!
  * Чтение настроек
  */
 void WizardSettings::read()
 {
   setVersions();
+
+  QString pf = envValue("ProgramFiles");
+  if (!pf.isEmpty()) {
+    pf += "/NSIS/makensis.exe";
+    pf = QDir::toNativeSeparators(pf);
+  }
+  else
+    pf = "makensis.exe";
+  setString("MakensisFile", pf);
+
   AbstractSettings::read();
 
   if (!getBool("Save"))
