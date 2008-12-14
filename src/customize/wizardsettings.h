@@ -33,6 +33,7 @@ class WizardSettings : public AbstractSettings {
 
 public:
   WizardSettings(const QString &filename, QObject *parent = 0);
+  static QString envValue(const QString &env);
   static QString version();
   void read();
 

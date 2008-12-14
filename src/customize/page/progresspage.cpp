@@ -25,7 +25,7 @@
  * \brief Конструктор класса ProgressPage.
  */
 ProgressPage::ProgressPage(QWidget *parent)
-  : QWizardPage(parent)
+  : QWizardPage(parent), m_process(0)
 {
   m_settings = settings;
   setTitle(tr("Идёт создание дистрибутива"));
@@ -45,34 +45,21 @@ ProgressPage::ProgressPage(QWidget *parent)
 
 
 /*!
- * Получение значения системной переменной окружения.
- *
- * \param env Имя переменной.
- * \return    Значение переменной или пустая строка.
- */
-QString ProgressPage::envValue(const QString &env)
-{
-  QStringList environment = QProcess::systemEnvironment();
-  int index = environment.indexOf(QRegExp(env + ".*"));
-  if (index != -1) {
-    QStringList list = environment.at(index).split("=");
-    if (list.size() == 2)
-      return list.at(1);
-    else
-      return "";
-  }
-  else
-    return "";
-}
-
-
-/*!
  * Инициализация страницы.
  * Создаёт очередь заданий и по нулевому таймеру запускает следующие задание.
  */
 void ProgressPage::initializePage()
 {
   qDebug() << "ProgressPage::initializePage()";
+
+  m_mirror       = m_settings->getBool("Mirror");
+  m_mirrorCore   = m_settings->getBool("MirrorCore");
+  m_mirrorQt     = m_settings->getBool("MirrorQt");
+  m_suffix       = m_settings->getString("Suffix");
+  m_version      = m_settings->getString("Version");
+  m_makensisFile = m_settings->getString("MakensisFile");
+  if (!m_suffix.isEmpty())
+    m_suffix = "-" + m_suffix;
 
   m_queue.enqueue(CreateNSI);
   m_queue.enqueue(CreateEXE);
@@ -101,6 +88,91 @@ void ProgressPage::nextJob()
 
     QTimer::singleShot(0, this, SLOT(nextJob()));
   }
+  else if (job == CreateEXE) {
+    if (!createExe())
+      return;
+  }
+}
+
+
+/*!
+ * Уведомление об ошибке запуска процесса.
+ */
+void ProgressPage::processError()
+{
+  m_log->append(tr("<span style='color:#900;'>Произошла ошибка при запуске <b>%1</b> [%2]</span>")
+      .arg(m_makensisFile)
+      .arg(m_process->errorString()));
+}
+
+
+/*!
+ * Завершение процесса компиляции, в случае успешного завершения если
+ * очередь \a m_nsi пуста, запускается выполнение следующей задачи, если
+ * не пуста, то запускается следующая компиляция.
+ */
+void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+  if (exitStatus == QProcess::CrashExit)
+    m_log->append(tr("<span style='color:#900;'>Произошёл сбой при запуске <b>%1</b> [%2]</span>")
+          .arg(m_makensisFile)
+          .arg(m_process->errorString()));
+  else if (exitCode != 0)
+    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при выполнении <b>%1</b></span>")
+          .arg(m_makensisFile));
+  else {
+    m_log->append(tr("Файл <b>%1</b> создан").arg(m_currentExe));
+    if (m_nsi.isEmpty())
+      QTimer::singleShot(0, this, SLOT(nextJob()));
+    else
+      compile();
+  }
+}
+
+
+/*!
+ * Отображение текста ошибки при выполнении компиляции.
+ */
+void ProgressPage::processStandardOutput()
+{
+  m_log->append(QString::fromLocal8Bit(m_process->readAllStandardOutput()));
+}
+
+
+/*!
+ * Запускает создание EXE файлов.
+ *
+ * \return Возвращает \a true, если запуск первого процесса в очереди был успешно
+ * инициирован, \a false если произошла ошибка на раннем этапе.
+ */
+bool ProgressPage::createExe()
+{
+  qDebug() << "ProgressPage::createExe()";
+
+  if (m_makensisFile.isEmpty()) {
+    m_log->append(tr("<span style='color:#900;'>Не удалось определить путь к <b>makensis.exe</b></span>"));
+    return false;
+  }
+
+  if (!QFile::exists(m_makensisFile)) {
+    m_log->append(tr("<span style='color:#900;'>Не удалось найти файл <b>%1</b></span>").arg(m_makensisFile));
+    return false;
+  }
+
+  if (!m_process) {
+    m_process = new QProcess(this);
+    m_process->setWorkingDirectory(QApplication::applicationDirPath() + "/custom");
+    connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(processError()));
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(processFinished(int, QProcess::ExitStatus)));
+    connect(m_process, SIGNAL(readyReadStandardOutput()), SLOT(processStandardOutput()));
+  }
+
+  if (!m_nsi.isEmpty())
+    compile();
+  else
+    return false;
+
+  return true;
 }
 
 
@@ -116,11 +188,11 @@ bool ProgressPage::createNsi()
   if (!createNsi(Main))
     return false;
 
-  if (m_settings->getBool("Mirror") && m_settings->getBool("MirrorCore")) {
+  if (m_mirror && m_mirrorCore) {
     if (!createNsi(Core))
       return false;
 
-    if (m_settings->getBool("MirrorQt"))
+    if (m_mirrorQt)
       if (!createNsi(Runtime))
         return false;
   }
@@ -151,6 +223,8 @@ bool ProgressPage::createNsi(Nsi type)
   QFile file(QApplication::applicationDirPath() + "/custom/" + fileName);
 
   if (file.open(QIODevice::WriteOnly)) {
+    m_nsi.enqueue(type);
+
     QTextStream stream(&file);
     stream.setCodec("CP-1251");
 
@@ -171,10 +245,10 @@ bool ProgressPage::createNsi(Nsi type)
     else if (type == Runtime)
       stream << "!define SCHAT_PREFIX \"runtime-\"" << endl;
 
-    if (!m_settings->getString("Suffix").isEmpty())
-      stream << "!define SCHAT_SUFFIX \"-" << m_settings->getString("Suffix") << '"' << endl;
+    if (!m_suffix.isEmpty())
+      stream << "!define SCHAT_SUFFIX \"" << m_suffix << '"' << endl;
 
-    stream << "!define SCHAT_VERSION " << m_settings->getString("Version") << endl
+    stream << "!define SCHAT_VERSION " << m_version << endl
            << "!define SCHAT_QTDIR \"..\"" << endl
            << "!define SCHAT_QT_BINDIR \"..\"" << endl
            << "!define SCHAT_BINDIR \"..\"" << endl
@@ -182,11 +256,41 @@ bool ProgressPage::createNsi(Nsi type)
            << "!define VC90_REDIST_DIR \"..\"" << endl << endl
            << "!include \"engine\\core.nsh\"" << endl;
 
-    m_log->append(tr("Файл <b>%1</b> успешно создан").arg(fileName));
+    m_log->append(tr("Файл <b>%1</b> создан").arg(fileName));
     return true;
   }
   else {
-    m_log->append(tr("Ошибка создания файла <b>%1</b> [%2]").arg(fileName).arg(file.errorString()));
+    m_log->append(tr("<span style='color:#900;'>Ошибка создания файла <b>%1</b> [%2]</span>").arg(fileName).arg(file.errorString()));
     return false;
   }
+}
+
+
+/*!
+ * Запуск компилятора NSIS для создания exe файла(ов).
+ */
+void ProgressPage::compile()
+{
+  qDebug() << "ProgressPage::compile()";
+
+  QStringList args;
+  args << "/V1";
+  Nsi nsi = m_nsi.dequeue();
+
+  if (nsi == Main) {
+    args << "setup.nsi";
+    m_currentExe = "schat-";
+  }
+  else if (nsi == Core) {
+    args << "setup-core.nsi";
+    m_currentExe = "schat-core-";
+  }
+  else if (nsi == Runtime) {
+    args << "setup-runtime.nsi";
+    m_currentExe = "schat-runtime-";
+  }
+  m_currentExe += (m_version + m_suffix + ".exe");
+
+  m_label->setText(tr("Создание %1...").arg(m_currentExe));
+  m_process->start('"' + m_makensisFile + '"', args);
 }

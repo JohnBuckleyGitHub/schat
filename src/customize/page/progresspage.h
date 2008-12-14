@@ -19,6 +19,7 @@
 #ifndef PROGRESSPAGE_H_
 #define PROGRESSPAGE_H_
 
+#include <QProcess>
 #include <QQueue>
 #include <QWizardPage>
 
@@ -36,11 +37,13 @@ class ProgressPage : public QWizardPage
 
 public:
   ProgressPage(QWidget *parent = 0);
-  static QString envValue(const QString &env);
   void initializePage();
 
 private slots:
   void nextJob();
+  void processError();
+  void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+  void processStandardOutput();
 
 private:
   enum Nsi {
@@ -54,13 +57,24 @@ private:
     CreateEXE
   };
 
+  bool createExe();
   bool createNsi();
   bool createNsi(Nsi type);
+  void compile();
 
+  bool m_mirror;
+  bool m_mirrorCore;
+  bool m_mirrorQt;
   QLabel *m_label;
+  QProcess *m_process;
   QProgressBar *m_progress;
   QProgressBar *packageProgressBar;
   QQueue<Jobs> m_queue;
+  QQueue<Nsi> m_nsi;
+  QString m_currentExe;
+  QString m_makensisFile;
+  QString m_suffix;
+  QString m_version;
   QTextEdit *m_log;
   WizardSettings *m_settings;
 };
