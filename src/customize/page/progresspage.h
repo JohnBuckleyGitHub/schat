@@ -26,6 +26,7 @@
 class QLabel;
 class QProgressBar;
 class QTextEdit;
+class QTimer;
 class WizardSettings;
 
 /*!
@@ -40,10 +41,12 @@ public:
   void initializePage();
 
 private slots:
+  void disableFinish();
   void nextJob();
   void processError();
   void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
   void processStandardOutput();
+  void timer();
 
 private:
   enum Nsi {
@@ -61,10 +64,12 @@ private:
   bool createNsi();
   bool createNsi(Nsi type);
   void compile();
+  void processRange();
 
   bool m_mirror;
   bool m_mirrorCore;
   bool m_mirrorQt;
+  int m_step;
   QLabel *m_label;
   QProcess *m_process;
   QProgressBar *m_progress;
@@ -76,6 +81,7 @@ private:
   QString m_suffix;
   QString m_version;
   QTextEdit *m_log;
+  QTimer *m_timer;
   WizardSettings *m_settings;
 };
 

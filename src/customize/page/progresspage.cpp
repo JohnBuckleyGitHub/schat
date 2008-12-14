@@ -33,6 +33,7 @@ ProgressPage::ProgressPage(QWidget *parent)
 
   m_label = new QLabel(this);
   m_progress = new QProgressBar(this);
+  m_progress->setValue(0);
   m_log = new QTextEdit(this);
   m_log->setReadOnly(true);
 
@@ -64,7 +65,19 @@ void ProgressPage::initializePage()
   m_queue.enqueue(CreateNSI);
   m_queue.enqueue(CreateEXE);
 
+  processRange();
+
+  QTimer::singleShot(0, this, SLOT(disableFinish()));
   QTimer::singleShot(0, this, SLOT(nextJob()));
+}
+
+
+/*!
+ * Отключает кнопку \b Finish.
+ */
+void ProgressPage::disableFinish()
+{
+  wizard()->button(QWizard::FinishButton)->setEnabled(false);
 }
 
 
@@ -75,8 +88,12 @@ void ProgressPage::nextJob()
 {
   qDebug() << "ProgressPage::nextJob()";
 
-  if (m_queue.isEmpty())
+  if (m_queue.isEmpty()) {
+    wizard()->button(QWizard::FinishButton)->setEnabled(true);
+    m_label->setText(tr("Готово"));
+    m_log->append(tr("<b style='color:#090;'>Все задачи успешно выполнены</b>"));
     return;
+  }
 
   Jobs job = m_queue.dequeue();
 
@@ -100,6 +117,9 @@ void ProgressPage::nextJob()
  */
 void ProgressPage::processError()
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
   m_log->append(tr("<span style='color:#900;'>Произошла ошибка при запуске <b>%1</b> [%2]</span>")
       .arg(m_makensisFile)
       .arg(m_process->errorString()));
@@ -113,6 +133,9 @@ void ProgressPage::processError()
  */
 void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
   if (exitStatus == QProcess::CrashExit)
     m_log->append(tr("<span style='color:#900;'>Произошёл сбой при запуске <b>%1</b> [%2]</span>")
           .arg(m_makensisFile)
@@ -122,6 +145,8 @@ void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus
           .arg(m_makensisFile));
   else {
     m_log->append(tr("Файл <b>%1</b> создан").arg(m_currentExe));
+    m_progress->setValue(m_progress->value() + m_step);
+
     if (m_nsi.isEmpty())
       QTimer::singleShot(0, this, SLOT(nextJob()));
     else
@@ -136,6 +161,20 @@ void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus
 void ProgressPage::processStandardOutput()
 {
   m_log->append(QString::fromLocal8Bit(m_process->readAllStandardOutput()));
+}
+
+
+/*!
+ * Увеличения значения прогресса по таймеру.
+ */
+void ProgressPage::timer()
+{
+  if (m_step > 5) {
+    m_progress->setValue(m_progress->value() + 1);
+    m_step--;
+  }
+  else
+    m_timer->stop();
 }
 
 
@@ -166,6 +205,10 @@ bool ProgressPage::createExe()
     connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(processFinished(int, QProcess::ExitStatus)));
     connect(m_process, SIGNAL(readyReadStandardOutput()), SLOT(processStandardOutput()));
   }
+
+  m_timer = new QTimer(this);
+  m_timer->setInterval(500);
+  connect(m_timer, SIGNAL(timeout()), SLOT(timer()));
 
   if (!m_nsi.isEmpty())
     compile();
@@ -257,6 +300,7 @@ bool ProgressPage::createNsi(Nsi type)
            << "!include \"engine\\core.nsh\"" << endl;
 
     m_log->append(tr("Файл <b>%1</b> создан").arg(fileName));
+    m_progress->setValue(m_progress->value() + 2);
     return true;
   }
   else {
@@ -280,17 +324,36 @@ void ProgressPage::compile()
   if (nsi == Main) {
     args << "setup.nsi";
     m_currentExe = "schat-";
+    m_step = 40;
   }
   else if (nsi == Core) {
     args << "setup-core.nsi";
     m_currentExe = "schat-core-";
+    m_step = 10;
   }
   else if (nsi == Runtime) {
     args << "setup-runtime.nsi";
     m_currentExe = "schat-runtime-";
+    m_step = 30;
   }
   m_currentExe += (m_version + m_suffix + ".exe");
 
   m_label->setText(tr("Создание %1...").arg(m_currentExe));
+  m_timer->start();
   m_process->start('"' + m_makensisFile + '"', args);
+}
+
+
+void ProgressPage::processRange()
+{
+  int max = 42;
+
+  if (m_mirror && m_mirrorCore) {
+    max += 12;
+
+    if (m_mirrorQt)
+      max += 32;
+  }
+
+  m_progress->setRange(0, max);
 }
