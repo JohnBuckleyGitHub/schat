@@ -16,30 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#ifndef SETTINGSPAGE_H_
+#define SETTINGSPAGE_H_
 
-#include <QObject>
-#include <QWizard>
+#include <QWizardPage>
 
 class WizardSettings;
 
-class CustomizeWizard : public QWizard
+/*!
+ * \brief Страница переопределения основных настроек.
+ */
+class SettingsPage : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  enum Pages {
-    Page_Intro,
-    Page_Select,
-    Page_Settings,
-    Page_Progress,
-  };
-
-  CustomizeWizard(QWidget *parent = 0);
+  SettingsPage(QWidget *parent = 0);
 
 private:
   WizardSettings *m_settings;
 };
 
-#endif /* CUSTOMIZEWIZARD_H_ */
+#endif /* SETTINGSPAGE_H_ */

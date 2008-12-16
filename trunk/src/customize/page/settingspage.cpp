@@ -16,30 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOMIZEWIZARD_H_
-#define CUSTOMIZEWIZARD_H_
+#include <QtGui>
 
-#include <QObject>
-#include <QWizard>
+#include "settingspage.h"
+#include "wizardsettings.h"
 
-class WizardSettings;
-
-class CustomizeWizard : public QWizard
+/*!
+ * \brief Конструктор класса SettingsPage.
+ */
+SettingsPage::SettingsPage(QWidget *parent)
+  : QWizardPage(parent)
 {
-  Q_OBJECT
+  m_settings = settings;
+  setTitle(tr("Выбор необходимых действий"));
+  setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
-public:
-  enum Pages {
-    Page_Intro,
-    Page_Select,
-    Page_Settings,
-    Page_Progress,
-  };
-
-  CustomizeWizard(QWidget *parent = 0);
-
-private:
-  WizardSettings *m_settings;
-};
-
-#endif /* CUSTOMIZEWIZARD_H_ */
+}
