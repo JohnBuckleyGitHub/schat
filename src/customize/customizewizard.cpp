@@ -20,9 +20,10 @@
 
 #include "customizewizard.h"
 #include "page/intropage.h"
-#include "page/selectpage.h"
-#include "wizardsettings.h"
 #include "page/progresspage.h"
+#include "page/selectpage.h"
+#include "page/settingspage.h"
+#include "wizardsettings.h"
 
 /**
  * Конструктор InstallWizard
@@ -48,6 +49,7 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
 
   setPage(Page_Intro,    new IntroPage(this));
   setPage(Page_Select,   new SelectPage(this));
+  setPage(Page_Settings, new SettingsPage(this));
   setPage(Page_Progress, new ProgressPage(this));
   setStartId(Page_Intro);
 

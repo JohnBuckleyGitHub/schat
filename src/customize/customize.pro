@@ -30,6 +30,7 @@ HEADERS += \
     page/intropage.h \
     page/progresspage.h \
     page/selectpage.h \
+    page/settingspage.h \
     version.h \
     wizardsettings.h \
 
@@ -40,6 +41,7 @@ SOURCES += \
     page/intropage.cpp \
     page/progresspage.cpp \
     page/selectpage.cpp \
+    page/settingspage.cpp \
     wizardsettings.cpp \
 
 contains( SCHAT_STATIC, 1 ) {
