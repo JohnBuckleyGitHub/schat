@@ -203,8 +203,8 @@ void Settings::read()
 
   setBool("Sound/MessageEnable",        true);
   setBool("Sound/PrivateMessageEnable", true);
-  setString("Sound/Message",            "message.wav");
-  setString("Sound/PrivateMessage",     "message.wav");
+  setString("Sound/Message",            "Received.wav");
+  setString("Sound/PrivateMessage",     "Received.wav");
   QStringList nameFilter;
   nameFilter << "*.wav";
   #if defined(Q_WS_X11)

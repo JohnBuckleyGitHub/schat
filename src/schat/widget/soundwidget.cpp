@@ -54,6 +54,8 @@ SoundWidget::SoundWidget(const QString &key, const QString &name, const QString 
 
   m_combo->setEnabled(m_check->isChecked());
   m_play->setEnabled(m_check->isChecked());
+
+  m_combo->setCurrentIndex(m_combo->findText(m_settings->getString("Sound/" + key)));
 }
 
 
