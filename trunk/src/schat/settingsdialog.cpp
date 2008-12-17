@@ -402,8 +402,8 @@ SoundSettings::SoundSettings(QWidget *parent)
 void SoundSettings::reset(int page)
 {
   if (page == m_id) {
-    m_message->reset(true, "message.wav");
-    m_private->reset(true, "message.wav");
+    m_message->reset(true, "Received.wav");
+    m_private->reset(true, "Received.wav");
 
     #ifdef Q_WS_X11
       m_useCmd->setChecked(true);
