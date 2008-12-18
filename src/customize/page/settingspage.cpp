@@ -28,7 +28,37 @@ SettingsPage::SettingsPage(QWidget *parent)
   : QWizardPage(parent)
 {
   m_settings = settings;
-  setTitle(tr("Выбор необходимых действий"));
-  setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
+  setTitle(tr("Переопределение настроек по умолчанию"));
+  setSubTitle(tr("Выберите какие основные настройки нужно переопределить"));
+
+  m_overrideNetwork = new QCheckBox(tr("&Файл сети"), this);
+  m_network = new QComboBox(this);
+
+  m_overrideEmoticons = new QCheckBox(tr("&Тема смайликов"), this);
+  m_emoticons = new QComboBox(this);
+
+  m_overrideMirror = new QCheckBox(tr("&Зеркало обновлений"), this);
+  m_mirror = new QLineEdit(this);
+
+  QGroupBox *group = new QGroupBox(tr("Основные настройки"), this);
+  QGridLayout *groupLay = new QGridLayout(group);
+  groupLay->addWidget(m_overrideNetwork, 0, 0);
+  groupLay->addWidget(m_network, 0, 1);
+  groupLay->addWidget(m_overrideEmoticons, 1, 0);
+  groupLay->addWidget(m_emoticons, 1, 1);
+  groupLay->addWidget(m_overrideMirror, 2, 0);
+  groupLay->addWidget(m_mirror, 2, 1, 1, 2);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(group);
+  mainLay->addStretch();
+
+  connect(m_overrideNetwork,   SIGNAL(clicked(bool)), m_network, SLOT(setEnabled(bool)));
+  connect(m_overrideEmoticons, SIGNAL(clicked(bool)), m_emoticons, SLOT(setEnabled(bool)));
+  connect(m_overrideMirror,    SIGNAL(clicked(bool)), m_mirror, SLOT(setEnabled(bool)));
+
+  m_network->setEnabled(m_overrideNetwork->isChecked());
+  m_emoticons->setEnabled(m_overrideEmoticons->isChecked());
+  m_mirror->setEnabled(m_overrideMirror->isChecked());
 }
