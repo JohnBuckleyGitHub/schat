@@ -21,6 +21,9 @@
 
 #include <QWizardPage>
 
+class QCheckBox;
+class QComboBox;
+class QLineEdit;
 class WizardSettings;
 
 /*!
@@ -34,6 +37,12 @@ public:
   SettingsPage(QWidget *parent = 0);
 
 private:
+  QCheckBox *m_overrideEmoticons;
+  QCheckBox *m_overrideMirror;
+  QCheckBox *m_overrideNetwork;
+  QComboBox *m_emoticons;
+  QComboBox *m_network;
+  QLineEdit *m_mirror;
   WizardSettings *m_settings;
 };
 
