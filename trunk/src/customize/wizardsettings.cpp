@@ -84,13 +84,19 @@ QString WizardSettings::version()
 
 void WizardSettings::setVersions()
 {
-  setString("Version",      version());
-  setString("Suffix",       "");
-  setBool("Mirror",         false);
-  setBool("MirrorCore",     true);
-  setBool("MirrorQt",       true);
-  setBool("OverrideLevels", false);
-  setBool("Save",           false);
-  setInt("LevelCore",       UpdateLevelCore);
-  setInt("LevelQt",         UpdateLevelQt);
+  setString("Version",         version());
+  setString("Suffix",          "");
+  setString("Network",         "SimpleNet.xml");
+  setString("Emoticons",       "Kolobok");
+  setString("Mirror",          "http://192.168.5.1/schat/mirror/mirror.xml");
+  setBool("Mirror",            false);
+  setBool("MirrorCore",        true);
+  setBool("MirrorQt",          true);
+  setBool("OverrideLevels",    false);
+  setBool("Save",              false);
+  setBool("OverrideNetwork",   false);
+  setBool("OverrideEmoticons", false);
+  setBool("OverrideMirror",    false);
+  setInt("LevelCore",          UpdateLevelCore);
+  setInt("LevelQt",            UpdateLevelQt);
 }
