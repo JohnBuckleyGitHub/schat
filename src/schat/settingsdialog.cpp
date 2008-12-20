@@ -319,7 +319,7 @@ void EmoticonsSettings::openFolder()
 
 bool EmoticonsSettings::createThemeList()
 {
-  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/";
+  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/";
   QDir dir(emoticonsPath);
   QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 

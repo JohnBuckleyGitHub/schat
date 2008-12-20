@@ -35,8 +35,12 @@ class SettingsPage : public QWizardPage
 
 public:
   SettingsPage(QWidget *parent = 0);
+  bool validatePage();
 
 private:
+  void emoticonsList();
+  void networkList();
+
   QCheckBox *m_overrideEmoticons;
   QCheckBox *m_overrideMirror;
   QCheckBox *m_overrideNetwork;
