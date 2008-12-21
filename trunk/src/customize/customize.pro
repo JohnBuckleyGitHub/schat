@@ -28,6 +28,7 @@ HEADERS += \
     abstractsettings.h \
     customizewizard.h \
     page/intropage.h \
+    page/nsispage.h \
     page/progresspage.h \
     page/selectpage.h \
     page/settingspage.h \
@@ -39,6 +40,7 @@ SOURCES += \
     customizewizard.cpp \
     main.cpp \
     page/intropage.cpp \
+    page/nsispage.cpp \
     page/progresspage.cpp \
     page/selectpage.cpp \
     page/settingspage.cpp \
