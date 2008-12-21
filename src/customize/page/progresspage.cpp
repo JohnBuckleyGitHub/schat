@@ -295,6 +295,9 @@ bool ProgressPage::createNsi(Nsi type)
              << "!define Emoticons.Kolobok" << endl
              << "!define Emoticons.Simple" << endl
              << "!define Daemon" << endl;
+
+      if (m_useDefaulConf)
+        stream << "!define SCHAT_DEFAULT_CONF 1" << endl;
     }
 
     if (type == Main || type == Runtime)

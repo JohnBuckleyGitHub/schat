@@ -26,6 +26,10 @@ ${Section}
   File "${SCHAT_BINDIR}\schat.exe"
   File "license.txt"
 
+  !if ${SCHAT_DEFAULT_CONF} == 1
+    File /nonfatal "default.conf"
+  !endif
+
   SetOutPath "$INSTDIR\networks"
   File "${SCHAT_DATADIR}\networks\*.xml"
 
