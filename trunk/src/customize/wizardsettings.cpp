@@ -88,7 +88,7 @@ void WizardSettings::setVersions()
   setString("Suffix",          "");
   setString("Network",         "SimpleNet.xml");
   setString("Emoticons",       "Kolobok");
-  setString("Mirror",          "http://192.168.5.1/schat/mirror/mirror.xml");
+  setString("MirrorUrl",       "http://192.168.5.1/schat/mirror/mirror.xml");
   setBool("Mirror",            false);
   setBool("MirrorCore",        true);
   setBool("MirrorQt",          true);

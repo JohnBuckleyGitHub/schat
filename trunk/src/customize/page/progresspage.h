@@ -57,18 +57,25 @@ private:
 
   enum Jobs {
     CreateNSI,
+    WriteConf,
     CreateEXE
   };
 
   bool createExe();
   bool createNsi();
   bool createNsi(Nsi type);
+  bool writeDefaultConf();
   void compile();
   void processRange();
 
   bool m_mirror;
   bool m_mirrorCore;
   bool m_mirrorQt;
+  bool m_overrideEmoticons;
+  bool m_overrideLevels;
+  bool m_overrideMirror;
+  bool m_overrideNetwork;
+  bool m_useDefaulConf;
   int m_step;
   QLabel *m_label;
   QProcess *m_process;

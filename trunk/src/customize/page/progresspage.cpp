@@ -53,16 +53,27 @@ void ProgressPage::initializePage()
 {
   qDebug() << "ProgressPage::initializePage()";
 
-  m_mirror       = m_settings->getBool("Mirror");
-  m_mirrorCore   = m_settings->getBool("MirrorCore");
-  m_mirrorQt     = m_settings->getBool("MirrorQt");
-  m_suffix       = m_settings->getString("Suffix");
-  m_version      = m_settings->getString("Version");
-  m_makensisFile = m_settings->getString("MakensisFile");
+  m_mirror            = m_settings->getBool("Mirror");
+  m_mirrorCore        = m_settings->getBool("MirrorCore");
+  m_mirrorQt          = m_settings->getBool("MirrorQt");
+  m_overrideLevels    = m_settings->getBool("OverrideLevels");
+  m_overrideNetwork   = m_settings->getBool("OverrideNetwork");
+  m_overrideEmoticons = m_settings->getBool("OverrideEmoticons");
+  m_overrideMirror    = m_settings->getBool("OverrideMirror");
+  m_suffix            = m_settings->getString("Suffix");
+  m_version           = m_settings->getString("Version");
+  m_makensisFile      = m_settings->getString("MakensisFile");
   if (!m_suffix.isEmpty())
     m_suffix = "-" + m_suffix;
 
+  if (m_overrideLevels || m_overrideNetwork || m_overrideEmoticons || m_overrideMirror || QFile::exists(QApplication::applicationDirPath() + "/custom/default.conf"))
+    m_useDefaulConf = true;
+  else
+    m_useDefaulConf = false;
+
   m_queue.enqueue(CreateNSI);
+  if (m_useDefaulConf)
+    m_queue.enqueue(WriteConf);
   m_queue.enqueue(CreateEXE);
 
   processRange();
@@ -101,6 +112,12 @@ void ProgressPage::nextJob()
     m_settings->write();
 
     if (!createNsi())
+      return;
+
+    QTimer::singleShot(0, this, SLOT(nextJob()));
+  }
+  else if (job == WriteConf) {
+    if (!writeDefaultConf())
       return;
 
     QTimer::singleShot(0, this, SLOT(nextJob()));
@@ -311,6 +328,43 @@ bool ProgressPage::createNsi(Nsi type)
 
 
 /*!
+ * Запись файла \b default.conf, для переопределения настроек по умолчанию.
+ *
+ * \return Возвращает \a true в случае успешной записи.
+ */
+bool ProgressPage::writeDefaultConf()
+{
+  m_label->setText(tr("Запись файла default.conf..."));
+  AbstractSettings s(QApplication::applicationDirPath() + "/custom/default.conf", this);
+
+  if (m_overrideNetwork) s.setString("Network", m_settings->getString("Network"));
+  if (m_overrideMirror) s.setString("Updates/Mirrors", m_settings->getString("MirrorUrl"));
+
+  if (m_overrideLevels) {
+    s.setInt("Updates/LevelQt", m_settings->getInt("LevelQt"));
+    s.setInt("Updates/LevelCore", m_settings->getInt("LevelCore"));
+  }
+
+  if (m_overrideEmoticons) {
+    s.setBool("UseEmoticons", true);
+    s.setString("EmoticonTheme", m_settings->getString("Emoticons"));
+  }
+
+  s.write(true);
+
+  if (s.status() != QSettings::NoError) {
+    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при записи файла <b>default.conf</b></span>"));
+    return false;
+  }
+
+  m_log->append(tr("Файл <b>default.conf</b> записан"));
+  m_progress->setValue(m_progress->value() + 2);
+
+  return true;
+}
+
+
+/*!
  * Запуск компилятора NSIS для создания exe файла(ов).
  */
 void ProgressPage::compile()
@@ -347,6 +401,9 @@ void ProgressPage::compile()
 void ProgressPage::processRange()
 {
   int max = 42;
+
+  if (m_useDefaulConf)
+    max += 2;
 
   if (m_mirror && m_mirrorCore) {
     max += 12;
