@@ -35,6 +35,7 @@ public:
   AbstractSettings(const QString &filename, QObject *parent = 0);
   inline bool getBool(const QString &key) const                       { return m_bool.value(key); }
   inline int getInt(const QString &key) const                         { return m_int.value(key); }
+  inline QSettings::Status status() const                             { return m_settings->status(); }
   inline QString getString(const QString &key) const                  { return m_string.value(key); }
   inline QStringList getList(const QString &key) const                { return m_list.value(key); }
   inline void setBool(const QString &key, bool value)                 { m_bool[key] = value; }
@@ -46,13 +47,14 @@ public:
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
     void write() { write(m_settings); }
+    void write(bool sync) { write(m_settings, sync); }
   #endif
 
 protected:
   void read(const QSettings *s);
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
-    void write(QSettings *s);
+    void write(QSettings *s, bool sync = false);
   #endif
 
   QMap<QString, bool> m_bool;

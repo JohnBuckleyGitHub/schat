@@ -86,7 +86,7 @@ void AbstractSettings::read(const QSettings *s)
  * Запись настроек.
  */
 #ifndef SCHAT_NO_WRITE_SETTINGS
-void AbstractSettings::write(QSettings *s)
+void AbstractSettings::write(QSettings *s, bool sync)
 {
   if (!m_bool.isEmpty()) {
     QMapIterator<QString, bool> i(m_bool);
@@ -128,5 +128,8 @@ void AbstractSettings::write(QSettings *s)
       }
     }
   }
+
+  if (sync)
+    m_settings->sync();
 }
 #endif

@@ -45,7 +45,7 @@ SettingsPage::SettingsPage(QWidget *parent)
   m_overrideMirror = new QCheckBox(tr("&Зеркало обновлений"), this);
   m_overrideMirror->setToolTip(tr("Установить альтернативный адрес источника обновлений"));
   m_overrideMirror->setChecked(m_settings->getBool("OverrideMirror"));
-  m_mirror = new QLineEdit(m_settings->getString("Mirror"), this); /// \todo Адрес должен быть в интернете.
+  m_mirror = new QLineEdit(m_settings->getString("MirrorUrl"), this); /// \todo Адрес должен быть в интернете.
 
   QGroupBox *group = new QGroupBox(tr("Основные настройки"), this);
   QGridLayout *groupLay = new QGridLayout(group);
@@ -92,7 +92,7 @@ bool SettingsPage::validatePage()
   m_settings->setBool("OverrideMirror",    m_overrideMirror->isChecked());
   m_settings->setString("Network",         m_network->currentText());
   m_settings->setString("Emoticons",       m_emoticons->currentText());
-  m_settings->setString("Mirror",          m_mirror->text());
+  m_settings->setString("MirrorUrl",       m_mirror->text());
 
   return true;
 }
