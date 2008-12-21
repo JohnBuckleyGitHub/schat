@@ -43,6 +43,7 @@ ${def} SCHAT_PAGE_OPTIONS 1
 ${def} SCHAT_EMOTICON_GRP 1
 ${def} SCHAT_CHECK_RUN    1
 ${def} SCHAT_VC90         1
+${def} SCHAT_DEFAULT_CONF 0
 
 ${def} SCHAT_QTDIR      "C:\qt\443"
 ${def} SCHAT_QT_BINDIR  "C:\qt\443\bin"
