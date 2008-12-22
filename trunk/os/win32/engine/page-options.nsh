@@ -177,13 +177,13 @@ SectionEnd
 
 !macro OPTIONS_PAGE_INIT
 !if ${SCHAT_PAGE_OPTIONS} == 1
-  ${Option} "Desktop"         0 $settings.Desktop
-  ${Option} "QuickLaunch"     1 $settings.QuickLaunch
-  ${Option} "AllPrograms"     1 $settings.AllPrograms
-  ${Option} "AutoStart"       1 $settings.AutoStart
+  ${Option} "Desktop"         ${OPT_DESKTOP}     $settings.Desktop
+  ${Option} "QuickLaunch"     ${OPT_QUICKLAUNCH} $settings.QuickLaunch
+  ${Option} "AllPrograms"     ${OPT_ALLPROGRAMS} $settings.AllPrograms
+  ${Option} "AutoStart"       ${OPT_AUTOSTART}   $settings.AutoStart
 
   !ifdef Daemon
-    ${Option} "AutoDaemonStart" 0 $settings.AutoDaemonStart
+    ${Option} "AutoDaemonStart" ${OPT_AUTODAEMONSTART} $settings.AutoDaemonStart
   !endif
 !endif
 !macroend
