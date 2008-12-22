@@ -21,6 +21,9 @@
 
 #include <QWizardPage>
 
+class QCheckBox;
+class QLineEdit;
+class QPushButton;
 class WizardSettings;
 
 /*!
@@ -32,8 +35,19 @@ class NsisPage : public QWizardPage
 
 public:
   NsisPage(QWidget *parent = 0);
+  bool validatePage();
+
+private slots:
+  void getOpenFileName();
 
 private:
+  QCheckBox *m_allPrograms;
+  QCheckBox *m_autostart;
+  QCheckBox *m_autostartDaemon;
+  QCheckBox *m_desktop;
+  QCheckBox *m_quickLaunch;
+  QLineEdit *m_nsis;
+  QPushButton *m_button;
   WizardSettings *m_settings;
 };
 

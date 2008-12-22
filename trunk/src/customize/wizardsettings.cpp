@@ -66,13 +66,18 @@ void WizardSettings::read()
   }
   else
     pf = "makensis.exe";
-  setString("MakensisFile",    pf);
-  setString("Network",         "SimpleNet.xml");
-  setString("Emoticons",       "Kolobok");
-  setString("MirrorUrl",       "http://192.168.5.1/schat/mirror/mirror.xml");
-  setBool("OverrideNetwork",   false);
-  setBool("OverrideEmoticons", false);
-  setBool("OverrideMirror",    false);
+  setString("MakensisFile",      pf);
+  setString("Network",           "SimpleNet.xml");
+  setString("Emoticons",         "Kolobok");
+  setString("MirrorUrl",         "http://192.168.5.1/schat/mirror/mirror.xml");
+  setBool("OverrideNetwork",     false);
+  setBool("OverrideEmoticons",   false);
+  setBool("OverrideMirror",      false);
+  setBool("NsisDesktop",         false);
+  setBool("NsisQuickLaunch",     true);
+  setBool("NsisAllPrograms",     true);
+  setBool("NsisAutostart",       true);
+  setBool("NsisAutostartDaemon", false);
 
   AbstractSettings::read();
 
