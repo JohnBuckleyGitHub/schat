@@ -316,7 +316,12 @@ bool ProgressPage::createNsi(Nsi type)
            << "!define SCHAT_QT_BINDIR \"..\"" << endl
            << "!define SCHAT_BINDIR \"..\"" << endl
            << "!define SCHAT_DATADIR \"..\"" << endl
-           << "!define VC90_REDIST_DIR \"..\"" << endl << endl
+           << "!define VC90_REDIST_DIR \"..\"" << endl
+           << "!define OPT_DESKTOP " << bool2int("NsisDesktop") << endl
+           << "!define OPT_QUICKLAUNCH " << bool2int("NsisQuickLaunch") << endl
+           << "!define OPT_ALLPROGRAMS " << bool2int("NsisAllPrograms") << endl
+           << "!define OPT_AUTOSTART " << bool2int("NsisAutostart") << endl
+           << "!define OPT_AUTODAEMONSTART " << bool2int("NsisAutostartDaemon") << endl << endl
            << "!include \"engine\\core.nsh\"" << endl;
 
     m_log->append(tr("Файл <b>%1</b> создан").arg(fileName));
@@ -364,6 +369,15 @@ bool ProgressPage::writeDefaultConf()
   m_progress->setValue(m_progress->value() + 2);
 
   return true;
+}
+
+
+int ProgressPage::bool2int(const QString &key) const
+{
+  if (m_settings->getBool(key))
+    return 1;
+  else
+    return 0;
 }
 
 

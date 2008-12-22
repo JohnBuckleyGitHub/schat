@@ -65,6 +65,7 @@ private:
   bool createNsi();
   bool createNsi(Nsi type);
   bool writeDefaultConf();
+  int bool2int(const QString &key) const;
   void compile();
   void processRange();
 

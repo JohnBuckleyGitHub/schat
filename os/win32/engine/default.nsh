@@ -26,29 +26,35 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION      "0.4.0.820"
-${def} SCHAT_QT_VERSION   "4.4.3"
-${def} SCHAT_NAME         "IMPOMEZIA Simple Chat"
-${def} SCHAT_NAME_SHORT   "Simple Chat"
-${def} SCHAT_PREFIX       ""
-${def} SCHAT_SUFFIX       ""
-${def} SCHAT_OUTDIR       "out/"
-${def} SCHAT_FINISH_RUN   1
-${def} SCHAT_REGKEY       "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-${def} SCHAT_WEB_SITE     "http://impomezia.com/"
-${def} SCHAT_COPYRIGHT    "Copyright © 2008 IMPOMEZIA"
-${def} SCHAT_UNINST_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
-${def} SCHAT_INSTALLDIR   "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
-${def} SCHAT_PAGE_OPTIONS 1
-${def} SCHAT_EMOTICON_GRP 1
-${def} SCHAT_CHECK_RUN    1
-${def} SCHAT_VC90         1
-${def} SCHAT_DEFAULT_CONF 0
+${def} SCHAT_VERSION       "0.4.0.820"
+${def} SCHAT_QT_VERSION    "4.4.3"
+${def} SCHAT_NAME          "IMPOMEZIA Simple Chat"
+${def} SCHAT_NAME_SHORT    "Simple Chat"
+${def} SCHAT_PREFIX        ""
+${def} SCHAT_SUFFIX        ""
+${def} SCHAT_OUTDIR        "out/"
+${def} SCHAT_FINISH_RUN    1
+${def} SCHAT_REGKEY        "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
+${def} SCHAT_WEB_SITE      "http://impomezia.com/"
+${def} SCHAT_COPYRIGHT     "Copyright © 2008 IMPOMEZIA"
+${def} SCHAT_UNINST_KEY    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
+${def} SCHAT_INSTALLDIR    "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
+${def} SCHAT_PAGE_OPTIONS  1
+${def} SCHAT_EMOTICON_GRP  1
+${def} SCHAT_CHECK_RUN     1
+${def} SCHAT_VC90          1
+${def} SCHAT_DEFAULT_CONF  0
 
-${def} SCHAT_QTDIR      "C:\qt\443"
-${def} SCHAT_QT_BINDIR  "C:\qt\443\bin"
-${def} SCHAT_BINDIR     "..\..\out\release"
-${def} SCHAT_DATADIR    "..\..\data"
-${def} VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+${def} OPT_DESKTOP         0
+${def} OPT_QUICKLAUNCH     1
+${def} OPT_ALLPROGRAMS     1
+${def} OPT_AUTOSTART       1
+${def} OPT_AUTODAEMONSTART 0
+
+${def} SCHAT_QTDIR         "C:\qt\443"
+${def} SCHAT_QT_BINDIR     "C:\qt\443\bin"
+${def} SCHAT_BINDIR        "..\..\out\release"
+${def} SCHAT_DATADIR       "..\..\data"
+${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
 
 !endif /* DEFAULT_NSH_ */
