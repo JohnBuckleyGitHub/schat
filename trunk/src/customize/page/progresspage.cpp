@@ -161,7 +161,7 @@ void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus
     m_log->append(tr("<span style='color:#900;'>Произошла ошибка при выполнении <b>%1</b></span>")
           .arg(m_makensisFile));
   else {
-    m_log->append(tr("Файл <b>%1</b> создан").arg(m_currentExe));
+    m_log->append(tr("Файл <b>%1</b> создан").arg("m_currentExe"));
     m_progress->setValue(m_progress->value() + m_step);
 
     if (m_nsi.isEmpty())
@@ -394,22 +394,24 @@ void ProgressPage::compile()
 
   if (nsi == Main) {
     args << "setup.nsi";
-    m_currentExe = "schat-";
+//    m_currentExe = "schat-";
     m_step = 40;
   }
   else if (nsi == Core) {
     args << "setup-core.nsi";
-    m_currentExe = "schat-core-";
+//    m_currentExe = "schat-core-";
     m_step = 10;
   }
   else if (nsi == Runtime) {
     args << "setup-runtime.nsi";
-    m_currentExe = "schat-runtime-";
+//    m_currentExe = "schat-runtime-";
     m_step = 30;
   }
-  m_currentExe += (m_version + m_suffix + ".exe");
+//  m_currentExe += (m_version + m_suffix + ".exe");
 
-  m_label->setText(tr("Создание %1...").arg(m_currentExe));
+//  m_exe.insert(nsi)
+
+//  m_label->setText(tr("Создание %1...").arg(m_currentExe));
   m_timer->start();
   m_process->start('"' + m_makensisFile + '"', args);
 }

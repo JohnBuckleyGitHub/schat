@@ -106,13 +106,17 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
   out.replace(QLatin1String("\n"), QLatin1String("<br />"));
 
   /// Заменяет двойные переносы строк на одинарные.
-  while (out.contains(QLatin1String("<br /><br />")))
-    out.replace(QLatin1String("<br /><br />"), QLatin1String("<br />"));
+  while (out.contains(QLatin1String("<br /><br /><br />")))
+    out.replace(QLatin1String("<br /><br /><br />"), QLatin1String("<br /><br />"));
 
   /// Удаляет код переноса строки если тот находится в конце сообщения.
+  out.replace(QLatin1String("<br /><br /></span>"), QLatin1String("<br /></span>"));
   out.replace(QLatin1String("<br /></span>"), QLatin1String("</span>"));
+
+  if (out.endsWith(QLatin1String("<br /><br />")))
+    out = out.left(out.size() - 12);
   if (out.endsWith(QLatin1String("<br />")))
-    out.left(out.size() - 6);
+    out = out.left(out.size() - 6);
 
   /// Удаляет запрещённые css стили.
   badStuff.setPattern(QLatin1String("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;"));
