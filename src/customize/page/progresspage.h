@@ -19,6 +19,7 @@
 #ifndef PROGRESSPAGE_H_
 #define PROGRESSPAGE_H_
 
+#include <QMap>
 #include <QProcess>
 #include <QQueue>
 #include <QWizardPage>
@@ -28,6 +29,11 @@ class QProgressBar;
 class QTextEdit;
 class QTimer;
 class WizardSettings;
+
+struct FileInfoLite {
+  qint64 size;
+  QString name;
+};
 
 /*!
  * \brief Страница отображающая процесс создания дистрибутива.
@@ -78,13 +84,14 @@ private:
   bool m_overrideNetwork;
   bool m_useDefaulConf;
   int m_step;
+  Nsi m_currentExe;
   QLabel *m_label;
+  QMap<Nsi, FileInfoLite> m_exe;
   QProcess *m_process;
   QProgressBar *m_progress;
   QProgressBar *packageProgressBar;
   QQueue<Jobs> m_queue;
   QQueue<Nsi> m_nsi;
-  QString m_currentExe;
   QString m_makensisFile;
   QString m_suffix;
   QString m_version;
