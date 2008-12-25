@@ -184,7 +184,7 @@ void Settings::read()
   setInt("EmoticonsRefreshTime",    50);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
-  setString("Network",              "SimpleNet.xml");
+  setString("Network",              "AchimNet.xml"); /// \todo исправить на SimpleNet.xml
   setList("RecentServers",          QStringList());
 
   setBool("Updates/Enable",         true);
