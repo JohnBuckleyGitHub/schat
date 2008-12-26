@@ -137,6 +137,13 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   if (m_settings->getBool("Updates/Enable") && m_settings->getBool("Updates/CheckOnStartup"))
     QTimer::singleShot(0, m_settings, SLOT(updatesCheck()));
+
+  if (Settings::isNewYear())
+    setWindowIcon(QIcon(":/images/logo-ny.png"));
+  #ifndef Q_WS_WIN
+  else
+    setWindowIcon(QIcon(":/images/logo.png"));
+  #endif
 }
 
 
@@ -901,7 +908,11 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
 void SChatWindow::createActions()
 {
   // О Программе...
-  m_aboutAction = new QAction(QIcon(":/images/logo16.png"), tr("О Программе..."), this);
+  m_aboutAction = new QAction(tr("О Программе..."), this);
+  if (Settings::isNewYear())
+    m_aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
+  else
+    m_aboutAction->setIcon(QIcon(":/images/logo16.png"));
   connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
 
   // Закрыть вкладку

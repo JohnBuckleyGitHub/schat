@@ -9,17 +9,18 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QApplication>
 #include <QtGui>
 
 #include "aboutdialog.h"
+#include "settings.h"
 #include "update/updatewidget.h"
 
 /*!
@@ -72,7 +73,10 @@ AboutMain::AboutMain(QWidget *parent)
   nameLabel->setWordWrap(false);
 
   QLabel *aboutLogo = new QLabel(this);
-  aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
+  if (Settings::isNewYear())
+    aboutLogo->setPixmap(QPixmap(":/images/logo-ny.png"));
+  else
+    aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
   QLabel *copyrightLabel = new QLabel("Copyright © 2008 <b>IMPOMEZIA</b>. All rights reserved.", this);
