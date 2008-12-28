@@ -92,8 +92,8 @@ private slots:
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
-  void privateMessage(quint8 flag, const QString &nick, const QString &message);
-  void sendMsg(const QString &message);
+  void privateMessage(quint8 flag, const QString &nick, const QString &msg);
+  void sendMsg(const QString &msg);
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
@@ -107,13 +107,11 @@ private slots:
     void messageClicked();
   #endif
 
-private:
-  enum Sound {
-    NoSound,
-    MessageSound,
-    PrivateMessageSound
-  };
+  #ifdef SCHAT_BENCHMARK
+    void benchmark();
+  #endif
 
+private:
   bool eventFilter(QObject *object, QEvent *event);
   bool parseCmd(AbstractTab *tab, const QString &message);
   int tabIndex(const QString &text) const;
@@ -123,7 +121,6 @@ private:
   void createToolButtons();
   void createTrayIcon();
   void hideChat();
-  void playSound(const QString &key);
   void restoreGeometry();
   void saveGeometry();
   void showChat();

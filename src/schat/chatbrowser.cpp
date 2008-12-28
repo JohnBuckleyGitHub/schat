@@ -265,6 +265,10 @@ void ChatBrowser::clear()
  */
 void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 {
+  #ifdef SCHAT_BENCHMARK
+    return;
+  #endif
+
   QTextDocument doc;
   doc.setDefaultStyleSheet(m_style);
   QTextCursor docCursor(&doc);

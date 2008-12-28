@@ -21,6 +21,7 @@ SCHAT_SINGLE_APP = 1
 SCHAT_RESOURCES  = 1
 SCHAT_RC_FILE    = 1
 SCHAT_STATIC     = 0
+SCHAT_BENCHMARK  = 0
 
 DEFINES += SCHAT_CLIENT
 
@@ -107,6 +108,10 @@ else {
 contains( SCHAT_STATIC, 1 ) {
     QTPLUGIN += qgif
     DEFINES  += SCHAT_STATIC
+}
+
+contains( SCHAT_BENCHMARK, 1 ) {
+    DEFINES += SCHAT_BENCHMARK
 }
 
 TRANSLATIONS += ../../data/translations/schat_ru.ts

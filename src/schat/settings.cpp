@@ -210,6 +210,22 @@ void Settings::read()
   setString("Network",              "AchimNet.xml"); /// \todo исправить на SimpleNet.xml
   setList("RecentServers",          QStringList());
 
+  #ifdef SCHAT_BENCHMARK
+    setBool("BenchmarkEnable",  false);
+    setInt("BenchmarkInterval", 1000);
+    setInt("BenchmarkDelay",    5000);
+
+    QStringList list;
+    list << "You've been leading a dog's life. Stay off the furniture."
+         << "You've got to think about tomorrow."
+         << "You will be surprised by a loud noise."
+         << "You will feel hungry again in another hour."
+         << "You might have mail."
+         << "You cannot kill time without injuring eternity."
+         << "Computers are not intelligent. They only think they are.";
+    setList("BenchmarkList", list);
+  #endif
+
   setBool("Updates/Enable",         true);
   setBool("Updates/CheckOnStartup", true);
   setInt("Updates/CheckInterval",   60);
@@ -283,6 +299,13 @@ void Settings::write()
        << "Updates/LastVersion"
        << "Updates/DownloadSize"
        << "Sound/NameFilter";
+
+  #ifdef SCHAT_BENCHMARK
+    m_ro << "BenchmarkEnable"
+         << "BenchmarkInterval"
+         << "BenchmarkDelay"
+         << "BenchmarkList";
+  #endif
 
   setBool("FirstRun", false);
   setString("Network", network.config());
