@@ -19,6 +19,7 @@
 #ifndef TRAYICON_H_
 #define TRAYICON_H_
 
+#include <QQueue>
 #include <QSystemTrayIcon>
 
 class QTimer;
@@ -36,10 +37,11 @@ public:
     UpdateAvailable
   };
 
+  TrayIcon(const QIcon &icon, QObject *parent = 0);
   TrayIcon(QObject *parent = 0);
   inline Message message() const { return m_message; }
-  TrayIcon(const QIcon &icon, QObject *parent = 0);
   void notice(bool enable);
+  void playSound(const QString &key);
 
 private slots:
   void messageClicked();
@@ -48,6 +50,7 @@ private slots:
 
 private:
   void init();
+  void playSound();
   void updateAvailable(bool force = false);
 
   #ifndef SCHAT_NO_UPDATE
@@ -59,6 +62,8 @@ private:
   Message m_message;
   QIcon m_icon;
   QIcon m_noticeIcon;
+  QQueue<QString> m_soundQueue;
+  QString m_soundsPath;
   QTimer *m_timer;
   Settings *m_settings;
 };

@@ -65,6 +65,7 @@ void TrayIcon::notice(bool enable)
   if (enable) {
     m_timer->start();
     setIcon(m_noticeIcon);
+    playSound();
   }
   else {
     m_timer->stop();
@@ -72,7 +73,16 @@ void TrayIcon::notice(bool enable)
   }
 
   m_normal = !enable;
+}
 
+
+/*!
+ * При необходимости добавляет звук в очередь.
+ */
+void TrayIcon::playSound(const QString &key)
+{
+  if (m_settings->getBool("Sound/" + key + "Enable") && !m_soundQueue.contains(key))
+    m_soundQueue.enqueue(key);
 }
 
 
@@ -124,6 +134,8 @@ void TrayIcon::timeout()
   else
     setIcon(m_icon);
 
+  playSound();
+
   m_normal = !m_normal;
 }
 
@@ -138,10 +150,30 @@ void TrayIcon::init()
   m_normal = true;
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);
-  m_timer->setInterval(800);
+  m_timer->setInterval(700);
+  m_soundsPath = QApplication::applicationDirPath() + "/sounds/";
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(this, SIGNAL(messageClicked()), SLOT(messageClicked()));
+}
+
+
+/*!
+ * Воспроизводит звуки из очереди \a m_soundQueue.
+ */
+void TrayIcon::playSound()
+{
+  while (!m_soundQueue.isEmpty()) {
+    QString key = m_soundQueue.dequeue();
+    QString file = m_soundsPath + m_settings->getString("Sound/" + key);
+
+    #ifdef Q_WS_X11
+    if (m_settings->getBool("Sound/UseExternalCmd") && !m_settings->getString("Sound/ExternalCmd").isEmpty())
+      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(file));
+    else
+    #endif
+      QSound::play(file);
+  }
 }
 
 

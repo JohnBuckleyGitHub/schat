@@ -144,6 +144,15 @@ SChatWindow::SChatWindow(QWidget *parent)
   else
     setWindowIcon(QIcon(":/images/logo.png"));
   #endif
+
+  #ifdef SCHAT_BENCHMARK
+  if (m_settings->getBool("BenchmarkEnable") && !m_settings->getList("BenchmarkList").isEmpty()) {
+    QTimer *benchTimer = new QTimer(this);
+    benchTimer->setInterval(m_settings->getInt("BenchmarkInterval"));
+    connect(benchTimer, SIGNAL(timeout()), SLOT(benchmark()));
+    QTimer::singleShot(m_settings->getInt("BenchmarkDelay"), benchTimer, SLOT(start()));
+  }
+  #endif
 }
 
 
@@ -545,7 +554,7 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
  * \param nick    Ник отправителя.
  * \param message Сообщение.
  */
-void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &message)
+void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &msg)
 {
   if (!m_users->isUser(nick))
     return;
@@ -567,9 +576,9 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
   if (tab)
     if (flag == 1)
-      tab->msgNewMessage(m_profile->nick(), message);
+      tab->msgNewMessage(m_profile->nick(), msg);
     else
-      tab->msgNewMessage(nick, message);
+      tab->msgNewMessage(nick, msg);
 
   startNotice(index, "PrivateMessage");
 }
@@ -786,6 +795,18 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 
   return QMainWindow::eventFilter(object, event);
 }
+
+
+#ifdef SCHAT_BENCHMARK
+void SChatWindow::benchmark()
+{
+  static QStringList list;
+  if (list.isEmpty())
+    list = m_settings->getList("BenchmarkList");
+
+  sendMsg(list.at(qrand() % list.size()));
+}
+#endif
 
 
 /** [private]
@@ -1075,20 +1096,6 @@ void SChatWindow::hideChat()
 }
 
 
-void SChatWindow::playSound(const QString &key)
-{
-  QString file = QApplication::applicationDirPath() + "/sounds/" + m_settings->getString("Sound/" + key);
-
-  if (m_settings->getBool("Sound/" + key + "Enable"))
-    #ifdef Q_WS_X11
-    if (m_settings->getBool("Sound/UseExternalCmd") && !m_settings->getString("Sound/ExternalCmd").isEmpty())
-      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(file));
-    else
-    #endif
-      QSound::play(file);
-}
-
-
 /*!
  * \brief Восстанавливает геометрию окна.
  */
@@ -1148,12 +1155,15 @@ void SChatWindow::startNotice(int index, const QString &key)
 
   if ((m_tabs->currentIndex() != index) || (!isActiveWindow())) {
     AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-    tab->notice(true);
-    m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-    m_tray->notice(true);
 
     if (m_sound)
-      playSound(key);
+      m_tray->playSound(key);
+
+    if (!tab->notice()) {
+      tab->notice(true);
+      m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
+      m_tray->notice(true);
+    }
   }
 }
 
