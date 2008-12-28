@@ -66,8 +66,9 @@ public:
   SChatWindow(QWidget *parent = 0);
 
 protected:
-  void closeEvent(QCloseEvent *event);
   bool event(QEvent *event);
+  void closeEvent(QCloseEvent *event);
+  void keyPressEvent(QKeyEvent *event);
 
 public slots:
   #ifndef SCHAT_NO_SINGLE_APP

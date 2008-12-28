@@ -169,6 +169,15 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 }
 
 
+void SChatWindow::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Escape)
+    hideChat();
+  else
+    QMainWindow::keyPressEvent(event);
+}
+
+
 /*!
  * Обработка событий.
  */
