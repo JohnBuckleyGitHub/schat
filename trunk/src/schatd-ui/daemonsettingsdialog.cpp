@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -138,7 +138,7 @@ void DaemonCommonSettings::reset(int page)
     m_port->setValue(7666);
     m_logLevel->setValue(0);
     m_channelLog->setChecked(false);
-    m_maxUsers->setValue(0);
+    m_maxUsers->setValue(100);
     m_maxUsersPerIp->setValue(0);
   }
 }
@@ -297,7 +297,7 @@ void DaemonNetSettings::reset(int page)
     m_rootAddr->setText("");
     m_name->setText("Unknown Server");
     m_numeric->setValue(1);
-    m_limit->setValue(0);
+    m_limit->setValue(10);
     enableAll();
     changeRole(false);
   }

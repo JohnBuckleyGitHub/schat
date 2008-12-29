@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef DAEMONSERVICE_H_
@@ -77,6 +77,8 @@ private:
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   quint16 verifyGreeting(quint16 version);
   void opcodeByeMsg();
   void opcodeMessage();
@@ -86,6 +88,8 @@ private:
   void opcodePong();
   void opcodeRelayMessage();
   void opcodeSyncByeMsg();
+  void opcodeUniversal();
+  void opcodeUniversalLite();
   void opcodeUserLeave();
   void unknownOpcode();
 

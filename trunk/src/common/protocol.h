@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.com)
+ * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef PROTOCOL_H_
@@ -140,7 +140,7 @@ static const quint16 OpcodeUserLeave                 = 302;
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
- * quint16 -> причина отказа.
+ * quint16 -> причина отказа
  * ОТПРАВИТЕЛЬ: ---------------
  * Сервер
  */
@@ -262,6 +262,27 @@ static const quint16 OpcodeSyncUsersEnd              = 1110;
  * Сервер, Клиент
  */
 static const quint16 OpcodeSyncByeMsg                = 1120;
+
+/*!
+ * Универсальный пакет.
+ * quint16        -> размер пакета
+ * quint16        -> опкод
+ * quint16        -> субопкод
+ * QList<quint32> -> контейнер для данных типа quint32
+ * QStringList    -> контейнер для данных типа QString
+ */
+static const quint16 OpcodeUniversal                 = 7666;
+
+/*!
+ * Универсальный облегчённый пакет.
+ * quint16        -> размер пакета
+ * quint16        -> опкод
+ * quint16        -> субопкод
+ * QList<quint32> -> контейнер для данных типа quint32
+ */
+static const quint16 OpcodeUniversalLite             = 7667;
+
+
 
 
 /**

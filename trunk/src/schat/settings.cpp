@@ -237,7 +237,7 @@ void Settings::read()
   #ifndef SCHAT_NO_UPDATE
     setInt("Updates/DownloadSize",      0);
     setBool("Updates/AutoClean",        true);
-    setBool("Updates/AutoDownload",     false);
+    setBool("Updates/AutoDownload",     true); /// \todo Исправить на false.
   #endif
 
   setBool("Sound/MessageEnable",        true);

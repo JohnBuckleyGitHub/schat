@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -49,7 +49,7 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
     m_pings = 0;
-    m_ping.start(5000);
+    m_ping.start(9000);
     m_numeric = 0;
     m_kill = false;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
@@ -325,6 +325,14 @@ void DaemonService::readyRead()
           opcodeSyncByeMsg();
           break;
 
+        case OpcodeUniversal:
+          opcodeUniversal();
+          break;
+
+        case OpcodeUniversalLite:
+          opcodeUniversalLite();
+          break;
+
         default:
           unknownOpcode();
           break;
@@ -536,6 +544,53 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
 }
 
 
+/*!
+ * Отправка универсального пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ * \param data2 Список данных типа QString
+ */
+bool DaemonService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
+ * Отправка универсального облегчённого пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ */
+bool DaemonService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversalLite << sub << data1;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
 /** [private]
  * Верификация пакета `OpcodeGreeting`.
  */
@@ -732,6 +787,31 @@ void DaemonService::opcodeSyncByeMsg()
     return;
 
   emit newBye(p_nick, p_msg);
+}
+
+
+/*!
+ * Разбор универсального пакета.
+ */
+void DaemonService::opcodeUniversal()
+{
+  quint16        subOpcode;
+  QList<quint32> data1;
+  QStringList    data2;
+  m_stream >> subOpcode >> data1 >> data2;
+  m_nextBlockSize = 0;
+}
+
+
+/*!
+ * Разбор универсального облегчённого пакета.
+ */
+void DaemonService::opcodeUniversalLite()
+{
+  quint16        subOpcode;
+  QList<quint32> data1;
+  m_stream >> subOpcode >> data1;
+  m_nextBlockSize = 0;
 }
 
 
