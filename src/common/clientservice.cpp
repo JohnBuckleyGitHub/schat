@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -37,7 +37,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_accepted = false;
   m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
-  m_ping.setInterval(15000);
+  m_ping.setInterval(22000);
 
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
@@ -409,6 +409,14 @@ void ClientService::readyRead()
           opcodeSyncByeMsg();
           break;
 
+        case OpcodeUniversal:
+          opcodeUniversal();
+          break;
+
+        case OpcodeUniversalLite:
+          opcodeUniversalLite();
+          break;
+
         default:
           unknownOpcode();
           break;
@@ -547,6 +555,53 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << opcode << gender << nick << nNick << name;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
+ * Отправка универсального пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ * \param data2 Список данных типа QString
+ */
+bool ClientService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
+ * Отправка универсального облегчённого пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ */
+bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversalLite << sub << data1;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -829,6 +884,31 @@ void ClientService::opcodeSyncNumerics()
   m_stream >> p_numerics;
   m_nextBlockSize = 0;
   emit syncNumerics(p_numerics);
+}
+
+
+/*!
+ * Разбор универсального пакета.
+ */
+void ClientService::opcodeUniversal()
+{
+  quint16        subOpcode;
+  QList<quint32> data1;
+  QStringList    data2;
+  m_stream >> subOpcode >> data1 >> data2;
+  m_nextBlockSize = 0;
+}
+
+
+/*!
+ * Разбор универсального облегчённого пакета.
+ */
+void ClientService::opcodeUniversalLite()
+{
+  quint16        subOpcode;
+  QList<quint32> data1;
+  m_stream >> subOpcode >> data1;
+  m_nextBlockSize = 0;
 }
 
 

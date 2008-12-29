@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -44,8 +44,8 @@ void DaemonSettings::read()
   setInt("ListenPort",       7666);
   setInt("LogLevel",         0);
   setInt("Numeric",          0);
-  setInt("MaxUsers",         0);
-  setInt("MaxLinks",         0);
+  setInt("MaxUsers",         100);
+  setInt("MaxLinks",         10);
   setInt("MaxUsersPerIp",    0);
   setString("ListenAddress", "0.0.0.0");
   setString("NetworkFile",   "network.xml");

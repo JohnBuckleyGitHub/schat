@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef CLIENTSERVICE_H_
@@ -90,6 +90,8 @@ private:
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
+  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   void createSocket();
   void opcodeAccessDenied();
   void opcodeAccessGranted();
@@ -105,6 +107,8 @@ private:
   void opcodeServerMessage();
   void opcodeSyncByeMsg();
   void opcodeSyncNumerics();
+  void opcodeUniversal();
+  void opcodeUniversalLite();
   void opcodeUserLeave();
   void unknownOpcode();
 
