@@ -50,6 +50,7 @@ contains( SCHAT_STATIC, 1 ) {
     DEFINES += SCHAT_STATIC
 }
 
+TRANSLATIONS += ../../data/translations/customize_ru.ts
 CODECFORTR = UTF-8
 
 include(../common/common.pri)
