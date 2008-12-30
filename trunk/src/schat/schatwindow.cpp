@@ -559,9 +559,9 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
 /*!
  * Получение нового приватного сообщения от другого пользователя.
  *
- * \param flag    Флаг эха.
- * \param nick    Ник отправителя.
- * \param message Сообщение.
+ * \param flag Флаг эха.
+ * \param nick Ник отправителя.
+ * \param msg  Сообщение.
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &msg)
 {

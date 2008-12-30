@@ -102,5 +102,8 @@ bool NsisPage::validatePage()
  */
 void NsisPage::getOpenFileName()
 {
-  m_nsis->setText(QDir::toNativeSeparators(QFileDialog::getOpenFileName(this, tr("Путь к компилятору NSIS"), m_nsis->text(), tr("Исполняемые файлы (*.exe)"))));
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Путь к компилятору NSIS"), m_nsis->text(), tr("Исполняемые файлы (*.exe)"));
+
+  if (!fileName.isEmpty())
+    m_nsis->setText(QDir::toNativeSeparators(fileName));
 }

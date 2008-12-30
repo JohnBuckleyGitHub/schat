@@ -161,7 +161,12 @@ void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus
     m_log->append(tr("<span style='color:#900;'>Произошла ошибка при выполнении <b>%1</b></span>")
           .arg(m_makensisFile));
   else {
-    m_log->append(tr("Файл <b>%1</b> создан").arg("m_currentExe"));
+    FileInfoLite liteInfo = m_exe.value(m_currentExe);
+    QFileInfo info(liteInfo.name);
+    liteInfo.size = info.size();
+    m_exe.insert(m_currentExe, liteInfo);
+
+    m_log->append(tr("Файл <b>%1</b> создан, размер %n байт", "", liteInfo.size).arg(info.fileName()));
     m_progress->setValue(m_progress->value() + m_step);
 
     if (m_nsi.isEmpty())
@@ -383,6 +388,12 @@ int ProgressPage::bool2int(const QString &key) const
 
 /*!
  * Запуск компилятора NSIS для создания exe файла(ов).
+ *
+ * Функция формирует командную строку для запуска компилятора и заносит результирующие
+ * имя exe файла в \a m_exe.
+ *
+ * В случае успешной компиляции вызывается слот processFinished(int exitCode, QProcess::ExitStatus exitStatus).
+ * В случае ошибки вызывается слот processError().
  */
 void ProgressPage::compile()
 {
@@ -391,27 +402,32 @@ void ProgressPage::compile()
   QStringList args;
   args << "/V1";
   Nsi nsi = m_nsi.dequeue();
+  QString currentExe;
 
   if (nsi == Main) {
     args << "setup.nsi";
-//    m_currentExe = "schat-";
+    currentExe = "schat-";
     m_step = 40;
   }
   else if (nsi == Core) {
     args << "setup-core.nsi";
-//    m_currentExe = "schat-core-";
+    currentExe = "schat-core-";
     m_step = 10;
   }
   else if (nsi == Runtime) {
     args << "setup-runtime.nsi";
-//    m_currentExe = "schat-runtime-";
+    currentExe = "schat-runtime-";
     m_step = 30;
   }
-//  m_currentExe += (m_version + m_suffix + ".exe");
+  currentExe += (m_version + m_suffix + ".exe");
 
-//  m_exe.insert(nsi)
+  FileInfoLite fileInfo;
+  fileInfo.size = 0;
+  fileInfo.name = QApplication::applicationDirPath() + "/custom/out/" + currentExe;
+  m_exe.insert(nsi, fileInfo);
+  m_currentExe = nsi;
 
-//  m_label->setText(tr("Создание %1...").arg(m_currentExe));
+  m_label->setText(tr("Создание %1...").arg(currentExe));
   m_timer->start();
   m_process->start('"' + m_makensisFile + '"', args);
 }

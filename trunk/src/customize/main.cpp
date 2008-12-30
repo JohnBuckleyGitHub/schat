@@ -42,6 +42,10 @@ int main(int argc, char *argv[])
   qtTranslator.load("qt_ru", ":/translations");
   app.installTranslator(&qtTranslator);
 
+  QTranslator translator;
+  translator.load("customize_ru", ":/translations");
+  app.installTranslator(&translator);
+
   CustomizeWizard wizard;
   wizard.show();
 
