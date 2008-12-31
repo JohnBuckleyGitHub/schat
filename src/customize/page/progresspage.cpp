@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "md5calcthread.h"
 #include "progresspage.h"
 #include "wizardsettings.h"
 
@@ -76,10 +77,50 @@ void ProgressPage::initializePage()
     m_queue.enqueue(WriteConf);
   m_queue.enqueue(CreateEXE);
 
+  if (m_mirror && m_mirrorCore)
+    m_queue.enqueue(CalcMd5);
+
   processRange();
 
   QTimer::singleShot(0, this, SLOT(disableFinish()));
   QTimer::singleShot(0, this, SLOT(nextJob()));
+}
+
+
+/*!
+ * Заносит результат вычислений контрольной суммы в \a m_exe.
+ *
+ * \param type Тип файла.
+ * \param md5  Контрольная сумма.
+ */
+void ProgressPage::calcDone(int type, const QByteArray &md5)
+{
+  qDebug() << "ProgressPage::calcDone()" << type << md5.toHex();
+
+  Nsi key = static_cast<Nsi>(type);
+
+  if (m_exe.contains(key)) {
+    FileInfoLite info = m_exe.value(key);
+    info.md5 = md5;
+    m_exe.insert(key, info);
+  }
+}
+
+
+/*!
+ * Уведомление о завершении расчёта контрольных сумм.
+ *
+ * \param error \a true если произошла ошибка.
+ */
+void ProgressPage::calcDone(bool error)
+{
+  if (error)
+    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при расчёте контрольных сумм</span>"));
+  else {
+    m_log->append(tr("Завершён подсчёт контрольных сумм"));
+    m_progress->setValue(m_progress->value() + 10);
+    QTimer::singleShot(0, this, SLOT(nextJob()));
+  }
 }
 
 
@@ -125,6 +166,14 @@ void ProgressPage::nextJob()
   else if (job == CreateEXE) {
     if (!createExe())
       return;
+  }
+  else if (job == CalcMd5) {
+    m_label->setText(tr("Подсчёт контрольных сумм"));
+    m_md5Calc = new Md5CalcThread(m_exe, this);
+    connect(m_md5Calc, SIGNAL(done(bool)), SLOT(calcDone(bool)));
+    connect(m_md5Calc, SIGNAL(done(int, const QByteArray &)), SLOT(calcDone(int, const QByteArray &)));
+
+    m_md5Calc->start();
   }
 }
 
@@ -441,7 +490,7 @@ void ProgressPage::processRange()
     max += 2;
 
   if (m_mirror && m_mirrorCore) {
-    max += 12;
+    max += 22;
 
     if (m_mirrorQt)
       max += 32;

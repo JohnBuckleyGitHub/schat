@@ -21,6 +21,8 @@
 
 #include <QThread>
 
+#include "page/progresspage.h"
+
 /*!
  * \brief Поток выполняющий расчёт контрольных сумм файлов.
  */
@@ -29,10 +31,19 @@ class Md5CalcThread : public QThread
   Q_OBJECT
 
 public:
-  Md5CalcThread(QObject *parent = 0);
+  Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, QObject *parent = 0);
+
+signals:
+  void done(int type, const QByteArray &md5);
+  void done(bool error);
 
 protected:
   void run();
+
+private:
+  bool calc(ProgressPage::Nsi type);
+
+  QMap<ProgressPage::Nsi, FileInfoLite> m_files;
 };
 
 #endif /* MD5CALCTHREAD_H_ */
