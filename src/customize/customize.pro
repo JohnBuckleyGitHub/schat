@@ -27,6 +27,7 @@ TEMPLATE = app
 HEADERS += \
     abstractsettings.h \
     customizewizard.h \
+    md5calcthread.h \
     page/intropage.h \
     page/nsispage.h \
     page/progresspage.h \
@@ -39,6 +40,7 @@ SOURCES += \
     abstractsettings.cpp \
     customizewizard.cpp \
     main.cpp \
+    md5calcthread.cpp \
     page/intropage.cpp \
     page/nsispage.cpp \
     page/progresspage.cpp \
