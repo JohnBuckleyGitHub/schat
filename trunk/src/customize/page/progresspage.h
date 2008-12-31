@@ -24,6 +24,7 @@
 #include <QQueue>
 #include <QWizardPage>
 
+class Md5CalcThread;
 class QLabel;
 class QProgressBar;
 class QTextEdit;
@@ -33,6 +34,7 @@ class WizardSettings;
 struct FileInfoLite {
   qint64 size;
   QString name;
+  QByteArray md5;
 };
 
 /*!
@@ -43,10 +45,18 @@ class ProgressPage : public QWizardPage
   Q_OBJECT
 
 public:
+  enum Nsi {
+    Main,
+    Core,
+    Runtime
+  };
+
   ProgressPage(QWidget *parent = 0);
   void initializePage();
 
 private slots:
+  void calcDone(int type, const QByteArray &md5);
+  void calcDone(bool error);
   void disableFinish();
   void nextJob();
   void processError();
@@ -55,16 +65,11 @@ private slots:
   void timer();
 
 private:
-  enum Nsi {
-    Main,
-    Core,
-    Runtime
-  };
-
   enum Jobs {
     CreateNSI,
     WriteConf,
-    CreateEXE
+    CreateEXE,
+    CalcMd5
   };
 
   bool createExe();
@@ -84,6 +89,7 @@ private:
   bool m_overrideNetwork;
   bool m_useDefaulConf;
   int m_step;
+  Md5CalcThread *m_md5Calc;
   Nsi m_currentExe;
   QLabel *m_label;
   QMap<Nsi, FileInfoLite> m_exe;
