@@ -54,8 +54,6 @@ ProgressPage::ProgressPage(QWidget *parent)
  */
 void ProgressPage::initializePage()
 {
-  qDebug() << "ProgressPage::initializePage()";
-
   m_mirror            = m_settings->getBool("Mirror");
   m_mirrorCore        = m_settings->getBool("MirrorCore");
   m_mirrorQt          = m_settings->getBool("MirrorQt");
@@ -99,8 +97,6 @@ void ProgressPage::initializePage()
  */
 void ProgressPage::calcDone(int type, const QByteArray &md5)
 {
-  qDebug() << "ProgressPage::calcDone()" << type << md5.toHex();
-
   Nsi key = static_cast<Nsi>(type);
 
   if (m_exe.contains(key)) {
@@ -142,8 +138,6 @@ void ProgressPage::disableFinish()
  */
 void ProgressPage::nextJob()
 {
-  qDebug() << "ProgressPage::nextJob()";
-
   if (m_queue.isEmpty()) {
     wizard()->button(QWizard::FinishButton)->setEnabled(true);
     m_label->setText(tr("Готово"));
@@ -271,8 +265,6 @@ void ProgressPage::timer()
  */
 bool ProgressPage::createExe()
 {
-  qDebug() << "ProgressPage::createExe()";
-
   if (m_makensisFile.isEmpty()) {
     m_log->append(tr("<span style='color:#900;'>Не удалось определить путь к <b>makensis.exe</b></span>"));
     return false;
@@ -336,11 +328,10 @@ bool ProgressPage::createMirrorXml()
   }
   else if (!versions.isEmpty())
     runtime = versions.at(0);
-  else
-    return false;
 
   versions.clear();
-  versions << runtime;
+  if (UpdateXmlReader::isValid(runtime))
+    versions << runtime;
 
   VersionInfo core;
   core.level   = m_settings->getInt("LevelCore");
@@ -364,6 +355,10 @@ bool ProgressPage::createMirrorXml()
     qtFile.name  = QFileInfo(qtFileLite.name).fileName();
     qtFile.level = levelQt;
     qtFile.type  = "qt";
+
+    if (!UpdateXmlReader::isValid(qtFile))
+      return false;
+
     files.insert(levelQt, qtFile);
   }
 
@@ -374,6 +369,10 @@ bool ProgressPage::createMirrorXml()
   coreFile.name  = QFileInfo(coreFileLite.name).fileName();
   coreFile.level = levelCore;
   coreFile.type  = "core";
+
+  if (!UpdateXmlReader::isValid(coreFile))
+    return false;
+
   files.insert(levelCore, coreFile);
 
   MirrorWriter writer(versions, files);
@@ -415,8 +414,6 @@ bool ProgressPage::createNsi()
  */
 bool ProgressPage::createNsi(Nsi type)
 {
-  qDebug() << "ProgressPage::createNsi()";
-
   QString fileName;
   if (type == Main)
     fileName = "setup.nsi";
@@ -537,8 +534,6 @@ int ProgressPage::bool2int(const QString &key) const
  */
 void ProgressPage::compile()
 {
-  qDebug() << "ProgressPage::compile()";
-
   QStringList args;
   args << "/V1";
   Nsi nsi = m_nsi.dequeue();
