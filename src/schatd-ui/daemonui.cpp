@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,13 +9,12 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 #include <QtGui>
 
@@ -85,7 +84,7 @@ DaemonUi::DaemonUi(QWidget *parent)
   m_aboutLabel = new QLabel(QString(
       "<html><body style='color:#333;margin:6px;'>"
       "<h4 style='margin-bottom:0px;'>IMPOMEZIA Simple Chat Daemon UI %1</h4>"
-      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
+      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 - 2009 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
       "</body></html>").arg(SCHAT_VERSION), this);
   m_aboutLabel->setStyleSheet("background:#fff; border:4px solid #fff;");
   m_aboutLabel->setOpenExternalLinks(true);
