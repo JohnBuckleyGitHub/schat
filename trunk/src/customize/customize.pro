@@ -28,6 +28,7 @@ HEADERS += \
     abstractsettings.h \
     customizewizard.h \
     md5calcthread.h \
+    mirrorwriter.h \
     page/intropage.h \
     page/nsispage.h \
     page/progresspage.h \
@@ -42,6 +43,7 @@ SOURCES += \
     customizewizard.cpp \
     main.cpp \
     md5calcthread.cpp \
+    mirrorwriter.cpp \
     page/intropage.cpp \
     page/nsispage.cpp \
     page/progresspage.cpp \
