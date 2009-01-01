@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "md5calcthread.h"
+#include "mirrorwriter.h"
 #include "progresspage.h"
 #include "updatexmlreader.h"
 #include "wizardsettings.h"
@@ -325,7 +326,8 @@ bool ProgressPage::createMirrorXml()
     }
   }
 
-  return true;
+  MirrorWriter writer(versions, files);
+  return writer.writeFile(fileName);
 }
 
 
