@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "md5calcthread.h"
 #include "progresspage.h"
+#include "updatexmlreader.h"
 #include "wizardsettings.h"
 
 /*!
@@ -77,8 +78,10 @@ void ProgressPage::initializePage()
     m_queue.enqueue(WriteConf);
   m_queue.enqueue(CreateEXE);
 
-  if (m_mirror && m_mirrorCore)
+  if (m_mirror && m_mirrorCore) {
     m_queue.enqueue(CalcMd5);
+    m_queue.enqueue(CreateMirrorXml);
+  }
 
   processRange();
 
@@ -174,6 +177,16 @@ void ProgressPage::nextJob()
     connect(m_md5Calc, SIGNAL(done(int, const QByteArray &)), SLOT(calcDone(int, const QByteArray &)));
 
     m_md5Calc->start();
+  }
+  else if (job == CreateMirrorXml) {
+    m_label->setText(tr("Создание mirror.xml"));
+    if (createMirrorXml()) {
+      m_progress->setValue(m_progress->value() + 2);
+      m_log->append(tr("Файл <b>mirror.xml</b> создан"));
+      QTimer::singleShot(0, this, SLOT(nextJob()));
+    }
+    else
+      m_log->append(tr("<span style='color:#900;'>Произошла ошибка при создании <b>mirror.xml</b></span>"));
   }
 }
 
@@ -285,6 +298,32 @@ bool ProgressPage::createExe()
     compile();
   else
     return false;
+
+  return true;
+}
+
+
+/*!
+ * Создаёт файл \b mirror.xml.
+ *
+ * \return Возвращает \a true в случае успеха.
+ */
+bool ProgressPage::createMirrorXml()
+{
+  QString fileName = QApplication::applicationDirPath() + "/custom/out/mirror.xml";
+
+  QList<VersionInfo> versions;
+  QMultiMap<int, FileInfo> files;
+
+  if (QFile::exists(fileName)) {
+    UpdateXmlReader reader;
+    reader.readFile(fileName);
+    if (reader.isValid()) {
+      qDebug() << "VALID";
+      versions = reader.version();
+      files = reader.files();
+    }
+  }
 
   return true;
 }
@@ -490,7 +529,7 @@ void ProgressPage::processRange()
     max += 2;
 
   if (m_mirror && m_mirrorCore) {
-    max += 22;
+    max += 24;
 
     if (m_mirrorQt)
       max += 32;

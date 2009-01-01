@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -69,10 +69,12 @@ private:
     CreateNSI,
     WriteConf,
     CreateEXE,
-    CalcMd5
+    CalcMd5,
+    CreateMirrorXml
   };
 
   bool createExe();
+  bool createMirrorXml();
   bool createNsi();
   bool createNsi(Nsi type);
   bool writeDefaultConf();
