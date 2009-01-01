@@ -320,11 +320,61 @@ bool ProgressPage::createMirrorXml()
     UpdateXmlReader reader;
     reader.readFile(fileName);
     if (reader.isValid()) {
-      qDebug() << "VALID";
-      versions = reader.version();
+
+      if (m_mirrorQt)
+        versions = reader.version();
+
       files = reader.files();
     }
   }
+
+  VersionInfo runtime;
+  if (m_mirrorQt) {
+    runtime.level   = m_settings->getInt("LevelQt");
+    runtime.type    = "qt";
+    runtime.version = qVersion();
+  }
+  else if (!versions.isEmpty())
+    runtime = versions.at(0);
+  else
+    return false;
+
+  versions.clear();
+  versions << runtime;
+
+  VersionInfo core;
+  core.level   = m_settings->getInt("LevelCore");
+  core.type    = "core";
+  core.version = m_settings->getString("Version");
+  versions << core;
+
+  int levelQt = m_settings->getInt("LevelQt");
+  if (files.contains(levelQt))
+    files.remove(levelQt);
+
+  int levelCore = m_settings->getInt("LevelCore");
+  if (files.contains(levelCore))
+    files.remove(levelCore);
+
+  if (m_mirrorQt) {
+    FileInfo qtFile;
+    FileInfoLite qtFileLite = m_exe.value(Runtime);
+    qtFile.size  = qtFileLite.size;
+    qtFile.md5   = qtFileLite.md5.toHex();
+    qtFile.name  = QFileInfo(qtFileLite.name).fileName();
+    qtFile.level = levelQt;
+    qtFile.type  = "qt";
+    files.insert(levelQt, qtFile);
+  }
+
+  FileInfo coreFile;
+  FileInfoLite coreFileLite = m_exe.value(Core);
+  coreFile.size  = coreFileLite.size;
+  coreFile.md5   = coreFileLite.md5.toHex();
+  coreFile.name  = QFileInfo(coreFileLite.name).fileName();
+  coreFile.level = levelCore;
+  coreFile.type  = "core";
+  files.insert(levelCore, coreFile);
 
   MirrorWriter writer(versions, files);
   return writer.writeFile(fileName);
