@@ -50,12 +50,11 @@ AboutDialog::AboutDialog(QWidget *parent)
   buttonLay->addStretch();
   buttonLay->addWidget(m_closeButton);
 
-  QVBoxLayout *mainLay = new QVBoxLayout;
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_tabWidget);
   mainLay->addLayout(buttonLay);
   mainLay->setMargin(3);
   mainLay->setSpacing(3);
-  setLayout(mainLay);
 
   setWindowTitle(tr("О Программе"));
 
