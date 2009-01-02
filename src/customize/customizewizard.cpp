@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -61,4 +61,19 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
   setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
   setWizardStyle(QWizard::ModernStyle);
+
+  connect(this, SIGNAL(customButtonClicked(int)), SLOT(customButtonClicked(int)));
+}
+
+
+void CustomizeWizard::customButtonClicked(int which)
+{
+  if (which == CustomButton1) {
+    if (!m_about) {
+      m_about = new AboutDialog(this);
+      m_about->show();
+    }
+
+    m_about->activateWindow();
+  }
 }

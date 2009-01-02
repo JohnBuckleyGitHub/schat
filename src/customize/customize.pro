@@ -25,6 +25,7 @@ QT += network
 TEMPLATE = app
 
 HEADERS += \
+    aboutdialog.h \
     abstractsettings.h \
     customizewizard.h \
     md5calcthread.h \
@@ -39,6 +40,7 @@ HEADERS += \
     wizardsettings.h \
 
 SOURCES += \
+    aboutdialog.cpp \
     abstractsettings.cpp \
     customizewizard.cpp \
     main.cpp \
@@ -55,6 +57,8 @@ SOURCES += \
 contains( SCHAT_STATIC, 1 ) {
     DEFINES += SCHAT_STATIC
 }
+
+DEFINES += SCHAT_NO_UPDATE_WIDGET
 
 TRANSLATIONS += ../../data/translations/customize_ru.ts
 CODECFORTR = UTF-8

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,10 @@
 #define CUSTOMIZEWIZARD_H_
 
 #include <QObject>
+#include <QPointer>
 #include <QWizard>
+
+#include "aboutdialog.h"
 
 class WizardSettings;
 
@@ -39,7 +42,11 @@ public:
 
   CustomizeWizard(QWidget *parent = 0);
 
+private slots:
+  void customButtonClicked(int which);
+
 private:
+  QPointer<AboutDialog> m_about;
   WizardSettings *m_settings;
 };
 

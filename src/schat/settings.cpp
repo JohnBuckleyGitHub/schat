@@ -68,29 +68,6 @@ QList<Emoticons> Settings::emoticons(const QString &text) const
 }
 
 
-/*!
- * Проверка на новый год.
- */
-bool Settings::isNewYear()
-{
-  static bool init;
-  static bool result;
-
-  if (!init) {
-    init = true;
-    QDate date = QDate::currentDate();
-    if (date.month() == 12 && date.day() > 19)
-      result = true;
-    else if (date.month() == 1 && date.day() < 15)
-      result = true;
-    else
-      result = false;
-  }
-
-  return result;
-}
-
-
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
 {
   QList<QStandardItem *> items;

@@ -20,8 +20,11 @@
 #include <QtGui>
 
 #include "aboutdialog.h"
-#include "settings.h"
-#include "update/updatewidget.h"
+#include "abstractsettings.h"
+
+#ifndef SCHAT_NO_UPDATE_WIDGET
+  #include "update/updatewidget.h"
+#endif
 
 /*!
  * \brief Конструктор класса AboutDialog.
@@ -43,10 +46,14 @@ AboutDialog::AboutDialog(QWidget *parent)
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
-  m_update = new UpdateWidget(this);
+  #ifndef SCHAT_NO_UPDATE_WIDGET
+    m_update = new UpdateWidget(this);
+  #endif
 
   QHBoxLayout *buttonLay = new QHBoxLayout;
-  buttonLay->addWidget(m_update);
+  #ifndef SCHAT_NO_UPDATE_WIDGET
+    buttonLay->addWidget(m_update);
+  #endif
   buttonLay->addStretch();
   buttonLay->addWidget(m_closeButton);
 
@@ -58,7 +65,9 @@ AboutDialog::AboutDialog(QWidget *parent)
 
   setWindowTitle(tr("О Программе"));
 
-  QTimer::singleShot(0, m_update, SLOT(start()));
+  #ifndef SCHAT_NO_UPDATE_WIDGET
+    QTimer::singleShot(0, m_update, SLOT(start()));
+  #endif
 }
 
 
@@ -72,7 +81,7 @@ AboutMain::AboutMain(QWidget *parent)
   nameLabel->setWordWrap(false);
 
   QLabel *aboutLogo = new QLabel(this);
-  if (Settings::isNewYear())
+  if (AbstractSettings::isNewYear())
     aboutLogo->setPixmap(QPixmap(":/images/logo-ny.png"));
   else
     aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
