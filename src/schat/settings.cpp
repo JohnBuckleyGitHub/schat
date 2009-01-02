@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ void Settings::read()
   setInt("EmoticonsRefreshTime",    50);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
-  setString("Network",              "AchimNet.xml"); /// \todo исправить на SimpleNet.xml
+  setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
 
   #ifdef SCHAT_BENCHMARK
@@ -232,12 +232,12 @@ void Settings::read()
   setInt("Updates/LevelQt",         UpdateLevelQt);
   setInt("Updates/LevelCore",       UpdateLevelCore);
   setString("Updates/LastVersion",  QApplication::applicationVersion());
-  setList("Updates/Mirrors", QStringList() << "http://192.168.5.1/schat/mirror/mirror.xml"); /// \todo Адрес должен быть в интернете.
+  setList("Updates/Mirrors", QStringList() << "http://schat.googlecode.com/files/mirror.xml");
 
   #ifndef SCHAT_NO_UPDATE
     setInt("Updates/DownloadSize",      0);
     setBool("Updates/AutoClean",        true);
-    setBool("Updates/AutoDownload",     true); /// \todo Исправить на false.
+    setBool("Updates/AutoDownload",     false);
   #endif
 
   setBool("Sound/MessageEnable",        true);

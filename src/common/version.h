@@ -19,14 +19,14 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION      "0.4.0.846 TRUNK"
-#define SCHAT_VERSION_RC   0,4,0,846
+#define SCHAT_VERSION      "0.4.0.848 TRUNK"
+#define SCHAT_VERSION_RC   0,4,0,848
 #define SCHAT_NAME         "IMPOMEZIA Simple Chat"
 #define SCHAT_ORGANIZATION "IMPOMEZIA"
 #define SCHAT_DOMAIN       "impomezia.com"
 #define SCHAT_COPYRIGHT    "Copyright © 2008 - 2009 IMPOMEZIA"
 
-static const int UpdateLevelQt   = 2008112500;
-static const int UpdateLevelCore = 2009010200;
+static const int UpdateLevelQt   = 2009010201;
+static const int UpdateLevelCore = 2009010201;
 
 #endif /*VERSION_H_*/
