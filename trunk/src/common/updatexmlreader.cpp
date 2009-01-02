@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
  */
 UpdateXmlReader::UpdateXmlReader()
 {
-  m_platform = "win32";
 }
 
 
@@ -198,7 +197,7 @@ void UpdateXmlReader::readUpdates()
     if (isStartElement()) {
       if (name() == "meta")
         readMeta();
-      else if (name() == "files" && attributes().value("platform") == m_platform)
+      else if (name() == "files")
         readFiles();
       else
         readUnknownElement();

@@ -22,6 +22,9 @@
 
 /*!
  * \brief Конструктор класса MirrorWriter.
+ *
+ * \param version Список версий.
+ * \param files   Список файлов.
  */
 MirrorWriter::MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files)
   : m_version(version), m_files(files)
@@ -31,6 +34,12 @@ MirrorWriter::MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<in
 }
 
 
+/*!
+ * Запись XML файла.
+ *
+ * \param fileName Имя файла.
+ * \return         Возвращает \a true в случае успешной записи.
+ */
 bool MirrorWriter::writeFile(const QString &fileName)
 {
   QFile file(fileName);
@@ -61,7 +70,7 @@ bool MirrorWriter::writeFile(const QString &fileName)
   writeEndElement();
 
   writeStartElement("files");
-  writeAttribute("platform", "win32");
+  writeAttribute("platform", "win32"); /// \todo Запись данного атрибута больше не нужна.
    writeStartElement("cumulative");
     QMapIterator<int, FileInfo> i(m_files);
     while (i.hasNext()) {
