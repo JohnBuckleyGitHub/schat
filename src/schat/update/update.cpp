@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -237,7 +237,7 @@ void Update::checkFiles()
 #ifndef SCHAT_NO_UPDATE
 void Update::checkLocalFiles()
 {
-  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/" + m_reader.platform() + "/";
+  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/";
 
   VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url);
   connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));
