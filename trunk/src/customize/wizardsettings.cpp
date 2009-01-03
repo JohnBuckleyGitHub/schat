@@ -78,6 +78,7 @@ void WizardSettings::read()
   setBool("NsisAllPrograms",     true);
   setBool("NsisAutostart",       true);
   setBool("NsisAutostartDaemon", false);
+  setBool("AutoDownloadUpdates", false);
 
   AbstractSettings::read();
 

@@ -82,4 +82,67 @@
         <translation>Выделить всё</translation>
     </message>
 </context>
+<context>
+    <name>QWizard</name>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="106"/>
+        <source>&lt; &amp;Back</source>
+        <translation>&lt; &amp;Назад</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="115"/>
+        <source>&amp;Finish</source>
+        <translation>&amp;Готово</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="119"/>
+        <source>&amp;Help</source>
+        <translation>&amp;Справка</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="106"/>
+        <source>Go Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="109"/>
+        <source>Continue</source>
+        <translation>Приступить</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="113"/>
+        <source>Commit</source>
+        <translation>Приступить</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="115"/>
+        <source>Done</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="117"/>
+        <source>Quit</source>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="119"/>
+        <source>Help</source>
+        <translation>Справка</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="117"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="111"/>
+        <source>&amp;Next</source>
+        <translation>&amp;Далее</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="111"/>
+        <source>&amp;Next &gt;</source>
+        <translation>&amp;Далее &gt;</translation>
+    </message>
+</context>
 </TS>

@@ -47,6 +47,10 @@ SettingsPage::SettingsPage(QWidget *parent)
   m_overrideMirror->setChecked(m_settings->getBool("OverrideMirror"));
   m_mirror = new QLineEdit(m_settings->getString("MirrorUrl"), this);
 
+  m_autoDownload = new QCheckBox(tr("Автоматически загружать &обновления"), this);
+  m_autoDownload->setToolTip(tr("Включить автоматическую загрузку обновлений по умолчанию"));
+  m_autoDownload->setChecked(m_settings->getBool("AutoDownloadUpdates"));
+
   QGroupBox *group = new QGroupBox(tr("Основные настройки"), this);
   QGridLayout *groupLay = new QGridLayout(group);
   groupLay->addWidget(m_overrideNetwork, 0, 0);
@@ -55,6 +59,7 @@ SettingsPage::SettingsPage(QWidget *parent)
   groupLay->addWidget(m_emoticons, 1, 1);
   groupLay->addWidget(m_overrideMirror, 2, 0);
   groupLay->addWidget(m_mirror, 2, 1, 1, 2);
+  groupLay->addWidget(m_autoDownload, 3, 0, 1, 3);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(group);
@@ -87,12 +92,13 @@ bool SettingsPage::validatePage()
   if (m_overrideMirror->isChecked() && m_mirror->text().isEmpty())
     return false;
 
-  m_settings->setBool("OverrideNetwork",   m_overrideNetwork->isChecked());
-  m_settings->setBool("OverrideEmoticons", m_overrideEmoticons->isChecked());
-  m_settings->setBool("OverrideMirror",    m_overrideMirror->isChecked());
-  m_settings->setString("Network",         m_network->currentText());
-  m_settings->setString("Emoticons",       m_emoticons->currentText());
-  m_settings->setString("MirrorUrl",       m_mirror->text());
+  m_settings->setBool("OverrideNetwork",     m_overrideNetwork->isChecked());
+  m_settings->setBool("OverrideEmoticons",   m_overrideEmoticons->isChecked());
+  m_settings->setBool("OverrideMirror",      m_overrideMirror->isChecked());
+  m_settings->setBool("AutoDownloadUpdates", m_autoDownload->isChecked());
+  m_settings->setString("Network",           m_network->currentText());
+  m_settings->setString("Emoticons",         m_emoticons->currentText());
+  m_settings->setString("MirrorUrl",         m_mirror->text());
 
   return true;
 }

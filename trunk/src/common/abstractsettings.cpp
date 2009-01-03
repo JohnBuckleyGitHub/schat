@@ -152,6 +152,9 @@ void AbstractSettings::write(QSettings *s, bool sync)
     }
   }
 
+  foreach (QString remove, m_remove)
+    m_settings->remove(remove);
+
   if (sync)
     m_settings->sync();
 }
