@@ -480,6 +480,9 @@ bool ProgressPage::createNsi(Nsi type)
 /*!
  * Запись файла \b default.conf, для переопределения настроек по умолчанию.
  *
+ * \todo Существует неоднозначность определения настроек, если в интерфейсе переопределение не было выбрано,
+ * а значение было вручную записано в default.conf.
+ *
  * \return Возвращает \a true в случае успешной записи.
  */
 bool ProgressPage::writeDefaultConf()
@@ -493,6 +496,10 @@ bool ProgressPage::writeDefaultConf()
   if (m_overrideLevels) {
     s.setInt("Updates/LevelQt", m_settings->getInt("LevelQt"));
     s.setInt("Updates/LevelCore", m_settings->getInt("LevelCore"));
+  }
+  else {
+    s.remove("Updates/LevelQt");
+    s.remove("Updates/LevelCore");
   }
 
   if (m_settings->getBool("AutoDownloadUpdates"))
