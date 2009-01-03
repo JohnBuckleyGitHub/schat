@@ -41,6 +41,7 @@ private:
   void emoticonsList();
   void networkList();
 
+  QCheckBox *m_autoDownload;
   QCheckBox *m_overrideEmoticons;
   QCheckBox *m_overrideMirror;
   QCheckBox *m_overrideNetwork;

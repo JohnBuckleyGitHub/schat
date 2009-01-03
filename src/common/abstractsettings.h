@@ -47,8 +47,9 @@ public:
   void read()                                                         { read(m_settings); }
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
-    void write() { write(m_settings); }
-    void write(bool sync) { write(m_settings, sync); }
+    inline void remove(const QString &key) { m_remove << key; }
+    void write()                           { write(m_settings); }
+    void write(bool sync)                  { write(m_settings, sync); }
   #endif
 
 protected:
@@ -65,6 +66,7 @@ protected:
   QSettings *m_settings;
 
   #ifndef SCHAT_NO_WRITE_SETTINGS
+    QStringList m_remove;
     QStringList m_ro;
   #endif
 

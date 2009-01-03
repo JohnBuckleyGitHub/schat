@@ -495,6 +495,11 @@ bool ProgressPage::writeDefaultConf()
     s.setInt("Updates/LevelCore", m_settings->getInt("LevelCore"));
   }
 
+  if (m_settings->getBool("AutoDownloadUpdates"))
+    s.setBool("Updates/AutoDownload", true);
+  else
+    s.remove("Updates/AutoDownload");
+
   if (m_overrideEmoticons) {
     s.setBool("UseEmoticons", true);
     s.setString("EmoticonTheme", m_settings->getString("Emoticons"));
