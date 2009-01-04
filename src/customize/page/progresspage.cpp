@@ -312,10 +312,7 @@ bool ProgressPage::createMirrorXml()
     UpdateXmlReader reader;
     reader.readFile(fileName);
     if (reader.isValid()) {
-
-      if (m_mirrorQt)
-        versions = reader.version();
-
+      versions = reader.version();
       files = reader.files();
     }
   }
@@ -340,12 +337,24 @@ bool ProgressPage::createMirrorXml()
   versions << core;
 
   int levelQt = m_settings->getInt("LevelQt");
-  if (files.contains(levelQt))
-    files.remove(levelQt);
+  if (m_mirrorQt) {
+    QMutableMapIterator<int, FileInfo> i(files);
+    while (i.hasNext()) {
+      i.next();
+      if (i.key() == levelQt)
+        if (i.value().type == "qt")
+          i.remove();
+    }
+  }
 
   int levelCore = m_settings->getInt("LevelCore");
-  if (files.contains(levelCore))
-    files.remove(levelCore);
+  QMutableMapIterator<int, FileInfo> i(files);
+  while (i.hasNext()) {
+    i.next();
+    if (i.key() == levelCore)
+      if (i.value().type == "core")
+        i.remove();
+  }
 
   if (m_mirrorQt) {
     FileInfo qtFile;
