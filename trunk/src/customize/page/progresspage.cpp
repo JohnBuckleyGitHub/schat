@@ -31,6 +31,9 @@ ProgressPage::ProgressPage(QWidget *parent)
   : QWizardPage(parent), m_process(0)
 {
   m_settings = settings;
+  m_dist = m_settings->dist();
+  m_rootPath = m_settings->rootPath();
+
   setTitle(tr("Идёт создание дистрибутива"));
   setSubTitle(tr("Подождите идёт создание дистрибутива"));
 
@@ -67,7 +70,7 @@ void ProgressPage::initializePage()
   if (!m_suffix.isEmpty())
     m_suffix = "-" + m_suffix;
 
-  if (m_overrideLevels || m_overrideNetwork || m_overrideEmoticons || m_overrideMirror || QFile::exists(QApplication::applicationDirPath() + "/custom/default.conf"))
+  if (m_overrideLevels || m_overrideNetwork || m_overrideEmoticons || m_overrideMirror || QFile::exists(m_rootPath + "/custom/default.conf"))
     m_useDefaulConf = true;
   else
     m_useDefaulConf = false;
@@ -162,6 +165,9 @@ void ProgressPage::nextJob()
     QTimer::singleShot(0, this, SLOT(nextJob()));
   }
   else if (job == CreateEXE) {
+    if (m_dist)
+      m_settings->write();
+
     if (!createExe())
       return;
   }
@@ -277,7 +283,11 @@ bool ProgressPage::createExe()
 
   if (!m_process) {
     m_process = new QProcess(this);
-    m_process->setWorkingDirectory(QApplication::applicationDirPath() + "/custom");
+    if (m_dist)
+      m_process->setWorkingDirectory(m_rootPath + "/os/win32");
+    else
+      m_process->setWorkingDirectory(m_rootPath + "/custom");
+
     connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(processError()));
     connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(processFinished(int, QProcess::ExitStatus)));
     connect(m_process, SIGNAL(readyReadStandardOutput()), SLOT(processStandardOutput()));
@@ -303,7 +313,11 @@ bool ProgressPage::createExe()
  */
 bool ProgressPage::createMirrorXml()
 {
-  QString fileName = QApplication::applicationDirPath() + "/custom/out/mirror.xml";
+  QString fileName;
+  if (m_dist)
+    fileName = m_rootPath + "/os/win32/out/mirror.xml";
+  else
+    fileName = m_rootPath + "/custom/out/mirror.xml";
 
   QList<VersionInfo> versions;
   QMultiMap<int, FileInfo> files;
@@ -333,7 +347,12 @@ bool ProgressPage::createMirrorXml()
   VersionInfo core;
   core.level   = m_settings->getInt("LevelCore");
   core.type    = "core";
-  core.version = m_settings->getString("Version");
+
+  if (m_dist)
+    core.version = QApplication::applicationVersion();
+  else
+    core.version = m_settings->getString("Version");
+
   versions << core;
 
   int levelQt = m_settings->getInt("LevelQt");
@@ -410,6 +429,9 @@ bool ProgressPage::createNsi()
         return false;
   }
 
+  if (m_dist)
+    m_nsi.enqueue(Customize);
+
   return true;
 }
 
@@ -423,6 +445,12 @@ bool ProgressPage::createNsi()
  */
 bool ProgressPage::createNsi(Nsi type)
 {
+  if (m_dist) {
+    m_nsi.enqueue(type);
+    m_progress->setValue(m_progress->value() + 2);
+    return true;
+  }
+
   QString fileName;
   if (type == Main)
     fileName = "setup.nsi";
@@ -431,7 +459,7 @@ bool ProgressPage::createNsi(Nsi type)
   else if (type == Runtime)
     fileName = "setup-runtime.nsi";
 
-  QFile file(QApplication::applicationDirPath() + "/custom/" + fileName);
+  QFile file(m_rootPath + "/custom/" + fileName);
 
   if (file.open(QIODevice::WriteOnly)) {
     m_nsi.enqueue(type);
@@ -497,7 +525,7 @@ bool ProgressPage::createNsi(Nsi type)
 bool ProgressPage::writeDefaultConf()
 {
   m_label->setText(tr("Запись файла default.conf..."));
-  AbstractSettings s(QApplication::applicationDirPath() + "/custom/default.conf", this);
+  AbstractSettings s(m_rootPath + "/custom/default.conf", this);
 
   if (m_overrideNetwork) s.setString("Network", m_settings->getString("Network"));
   if (m_overrideMirror) s.setString("Updates/Mirrors", m_settings->getString("MirrorUrl"));
@@ -575,11 +603,22 @@ void ProgressPage::compile()
     currentExe = "schat-runtime-";
     m_step = 30;
   }
+  else if (nsi == Customize) {
+    args << "setup-customize.nsi";
+    currentExe = "schat-customize-";
+    m_step = 10;
+  }
+
   currentExe += (m_version + m_suffix + ".exe");
 
   FileInfoLite fileInfo;
   fileInfo.size = 0;
-  fileInfo.name = QApplication::applicationDirPath() + "/custom/out/" + currentExe;
+
+  if (m_dist)
+    fileInfo.name = m_rootPath + "/os/win32/out/" + currentExe;
+  else
+    fileInfo.name = m_rootPath + "/custom/out/" + currentExe;
+
   m_exe.insert(nsi, fileInfo);
   m_currentExe = nsi;
 
@@ -592,6 +631,9 @@ void ProgressPage::compile()
 void ProgressPage::processRange()
 {
   int max = 42;
+
+  if (m_dist)
+    max += 10;
 
   if (m_useDefaulConf)
     max += 2;

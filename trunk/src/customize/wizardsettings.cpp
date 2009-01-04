@@ -85,7 +85,7 @@ void WizardSettings::read()
 
   AbstractSettings::read();
 
-  if (!getBool("Save"))
+  if (m_dist || !getBool("Save"))
     setVersions();
 }
 
@@ -130,9 +130,9 @@ void WizardSettings::setVersions()
 {
   setString("Version",      version());
   setString("Suffix",       "");
-  setBool("Mirror",         false);
+  setBool("Mirror",         m_dist);
   setBool("MirrorCore",     true);
-  setBool("MirrorQt",       true);
+  setBool("MirrorQt",       !m_dist);
   setBool("OverrideLevels", false);
   setBool("Save",           false);
   setInt("LevelCore",       UpdateLevelCore);
