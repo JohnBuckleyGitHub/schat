@@ -33,12 +33,18 @@ class WizardSettings : public AbstractSettings {
 
 public:
   WizardSettings(const QString &filename, QObject *parent = 0);
+  inline bool dist() const        { return m_dist; }
+  inline QString rootPath() const { return m_rootPath; }
   static QString envValue(const QString &env);
   static QString version();
   void read();
 
 private:
+  bool checkDist();
   void setVersions();
+
+  bool m_dist;
+  QString m_rootPath;
 };
 
 #endif /* WIZARDSETTINGS_H_ */

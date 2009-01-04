@@ -27,6 +27,9 @@
 WizardSettings::WizardSettings(const QString &filename, QObject *parent)
   : AbstractSettings(filename, parent)
 {
+  m_dist = checkDist();
+  if (!m_dist)
+    m_rootPath = QCoreApplication::applicationDirPath();
 }
 
 
@@ -91,6 +94,35 @@ QString WizardSettings::version()
 {
   QString version = QCoreApplication::applicationVersion();
   return version.left(version.indexOf(' '));
+}
+
+
+/*!
+ * Определяет режим работы программы, работа из дерева исходников, для формирования
+ * официального дистрибутива или работа в обычном режиме, для формирования
+ * пользовательского дистрибутива.
+ *
+ * \retun Возращает \a true если программа запущена из дерева исходников.
+ */
+bool WizardSettings::checkDist()
+{
+  QDir dir(QCoreApplication::applicationDirPath() + "/../../");
+  QString path = dir.absolutePath();
+
+  if (!QFile::exists(path + "/schat.pro"))
+    return false;
+
+  if (!QFile::exists(path + "/src/common/version.h"))
+    return false;
+
+  if (!QFile::exists(path + "/src/schat/schat.pro"))
+    return false;
+
+  if (!QFile::exists(path + "/os/win32/setup.nsi"))
+    return false;
+
+  m_rootPath = path;
+  return true;
 }
 
 
