@@ -47,10 +47,14 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
 
   m_settings = new WizardSettings(QApplication::applicationDirPath() + "/customize.conf", this);
   m_settings->read();
+  m_dist = m_settings->dist();
 
   setPage(Page_Intro,    new IntroPage(this));
   setPage(Page_Select,   new SelectPage(this));
-  setPage(Page_Settings, new SettingsPage(this));
+
+  if (!m_dist)
+    setPage(Page_Settings, new SettingsPage(this));
+
   setPage(Page_Nsis,     new NsisPage(this));
   setPage(Page_Progress, new ProgressPage(this));
   setStartId(Page_Intro);

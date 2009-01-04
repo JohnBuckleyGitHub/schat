@@ -45,6 +45,7 @@ private slots:
   void reset();
 
 private:
+  bool m_dist;
   QCheckBox *m_core;
   QCheckBox *m_overrideLevels;
   QCheckBox *m_runtime;

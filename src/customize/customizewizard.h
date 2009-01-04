@@ -46,6 +46,7 @@ private slots:
   void customButtonClicked(int which);
 
 private:
+  bool m_dist;
   QPointer<AboutDialog> m_about;
   WizardSettings *m_settings;
 };

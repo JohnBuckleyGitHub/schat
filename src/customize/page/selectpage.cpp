@@ -30,12 +30,15 @@ SelectPage::SelectPage(QWidget *parent)
   : QWizardPage(parent)
 {
   m_settings = settings;
+  m_dist = m_settings->dist();
+
   setTitle(tr("Выбор необходимых действий"));
   setSubTitle(tr("Выберете действия и укажите необходимые сведения для продолжения работы мастера"));
 
   m_version = new QLineEdit(m_settings->getString("Version"), this);
   m_version->setValidator(new QRegExpValidator(QRegExp("([0-9]{1,3}[\\.]{1}){3}[0-9]{1,5}"), m_version));
   m_version->setToolTip(tr("Версия приложения, будет использоваться инсталляторе\nдопустимый формат x.x.x.x"));
+  m_version->setEnabled(!m_dist);
 
   QLabel *versionLabel = new QLabel(tr("&Версия:"), this);
   versionLabel->setBuddy(m_version);
@@ -43,6 +46,7 @@ SelectPage::SelectPage(QWidget *parent)
   m_suffix = new QLineEdit(m_settings->getString("Suffix"), this);
   m_suffix->setValidator(new QRegExpValidator(QRegExp("[0-9a-zA-Z]{0,20}"), m_suffix));
   m_suffix->setToolTip(tr("Суффикс для имён файлов инсталлятора\nдопускаются только латинские символы и цифры"));
+  m_suffix->setEnabled(!m_dist);
 
   QLabel *suffixLabel = new QLabel(tr("&Суффикс файлов:"), this);
   suffixLabel->setBuddy(m_suffix);
@@ -64,6 +68,7 @@ SelectPage::SelectPage(QWidget *parent)
   m_coreLevel->setRange(1, INT_MAX);
   m_coreLevel->setValue(m_settings->getInt("LevelCore"));
   m_coreLevel->setToolTip(tr("Уровень обновления основных компонентов"));
+  m_coreLevel->setEnabled(!m_dist);
 
   m_runtime = new QCheckBox(tr("&Библиотека Qt"), this);
   m_runtime->setChecked(m_settings->getBool("MirrorQt"));
@@ -72,10 +77,12 @@ SelectPage::SelectPage(QWidget *parent)
   m_runtimeLevel->setRange(1, INT_MAX);
   m_runtimeLevel->setValue(m_settings->getInt("LevelQt"));
   m_runtimeLevel->setToolTip(tr("Уровень обновления библиотеки Qt"));
+  m_runtimeLevel->setEnabled(!m_dist);
 
   m_overrideLevels = new QCheckBox(tr("&Переопределить уровни обновлений"), this);
   m_overrideLevels->setChecked(m_settings->getBool("OverrideLevels"));
   m_overrideLevels->setToolTip(tr("Переопределить жёстко заданные уровни обновлений\nпри помощи default.conf"));
+  m_overrideLevels->setEnabled(!m_dist);
 
   m_mirror = new QGroupBox(tr("Альтернативное зеркало обновлений"), this);
   m_mirror->setCheckable(true);
@@ -93,11 +100,13 @@ SelectPage::SelectPage(QWidget *parent)
   m_save = new QCheckBox(tr("Со&хранить"), this);
   m_save->setChecked(m_settings->getBool("Save"));
   m_save->setToolTip(tr("Сохранить заданные здесь настройки в качестве\nзначений по умолчанию"));
+  m_save->setEnabled(!m_dist);
 
   m_reset = new QToolButton(this);
   m_reset->setIcon(QIcon(":/images/undo.png"));
   m_reset->setAutoRaise(true);
   m_reset->setToolTip(tr("Вернуть настройки по умолчанию"));
+  m_reset->setEnabled(!m_dist);
   connect(m_reset, SIGNAL(clicked(bool)), SLOT(reset()));
 
   QGridLayout *mainLay = new QGridLayout(this);
@@ -107,7 +116,9 @@ SelectPage::SelectPage(QWidget *parent)
   mainLay->addWidget(m_reset, 2, 1);
 
   connect(m_core, SIGNAL(clicked(bool)), SLOT(clickedCore(bool)));
-  connect(m_runtime, SIGNAL(clicked(bool)), m_runtimeLevel, SLOT(setEnabled(bool)));
+
+  if (!m_dist)
+    connect(m_runtime, SIGNAL(clicked(bool)), m_runtimeLevel, SLOT(setEnabled(bool)));
 
   if (m_mirror->isChecked())
     clickedCore(m_core->isChecked());
@@ -136,14 +147,17 @@ bool SelectPage::validatePage()
 void SelectPage::clickedCore(bool checked)
 {
   m_coreLabel->setEnabled(checked);
-  m_coreLevel->setEnabled(checked);
-  m_overrideLevels->setEnabled(checked);
   m_runtime->setEnabled(checked);
 
-  if (checked)
-    m_runtimeLevel->setEnabled(m_runtime->isChecked());
-  else
-    m_runtimeLevel->setEnabled(checked);
+  if (!m_dist) {
+    m_coreLevel->setEnabled(checked);
+    m_overrideLevels->setEnabled(checked);
+
+    if (checked)
+      m_runtimeLevel->setEnabled(m_runtime->isChecked());
+    else
+      m_runtimeLevel->setEnabled(checked);
+  }
 }
 
 

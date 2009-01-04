@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ NsisPage::NsisPage(QWidget *parent)
   m_autostartDaemon->setToolTip(tr("Добавить сервер в автозагрузку,\nбудет доступно только если при\nустановке выбран сервер"));
 
   QGroupBox *group = new QGroupBox(tr("Опции инсталлятора"), this);
+  group->setEnabled(!m_settings->dist());
   QVBoxLayout *groupLay = new QVBoxLayout(group);
   groupLay->addWidget(m_desktop);
   groupLay->addWidget(m_quickLaunch);

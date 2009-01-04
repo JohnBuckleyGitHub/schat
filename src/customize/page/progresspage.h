@@ -48,7 +48,8 @@ public:
   enum Nsi {
     Main,
     Core,
-    Runtime
+    Runtime,
+    Customize
   };
 
   ProgressPage(QWidget *parent = 0);
@@ -82,6 +83,7 @@ private:
   void compile();
   void processRange();
 
+  bool m_dist;
   bool m_mirror;
   bool m_mirrorCore;
   bool m_mirrorQt;
@@ -101,6 +103,7 @@ private:
   QQueue<Jobs> m_queue;
   QQueue<Nsi> m_nsi;
   QString m_makensisFile;
+  QString m_rootPath;
   QString m_suffix;
   QString m_version;
   QTextEdit *m_log;
