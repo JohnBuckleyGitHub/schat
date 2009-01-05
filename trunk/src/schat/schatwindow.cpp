@@ -904,8 +904,9 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
     m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> – Очистка окна чата.</span>"));
     m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> – Выход из чата.</span>"));
     m_cmds.insert("help",   tr("<b>/help</b><span class='info'> – Отображает подсказу о командах.</span>"));
-    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> – Открывает папку с файлами журнала чата."));
+    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> – Открывает папку с файлами журнала чата.</span>"));
     m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> – Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
+    m_cmds.insert("motd",   tr("<b>/motd</b><span class='info'> – Показ <i>Message Of The Day</i> сообщения сервера.</span>"));
     m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> – Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
     m_cmds.insert("server", tr("<b>/server</b><span class='info'> – Просмотр информации о сервере.</span>"));
   }

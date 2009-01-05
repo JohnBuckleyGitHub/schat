@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 0
-SCHAT_RESOURCES  = 0
+SCHAT_RESOURCES  = 1
 SCHAT_RC_FILE    = 1
 SCHAT_LOCAL_IPC  = 1
 
@@ -65,5 +65,8 @@ contains( SCHAT_LOCAL_IPC, 1 ) {
 else {
   DEFINES += SCHAT_NO_LOCAL_SERVER
 }
+
+TRANSLATIONS += ../../data/translations/schatd_ru.ts
+CODECFORTR = UTF-8
 
 include(../common/common.pri)
