@@ -881,11 +881,11 @@ void Daemon::link()
     m_profile->setByeMsg(m_settings->getString("Name"));
     m_numerics << m_numeric;
 
+    if (m_motd)
+      m_motdText.replace("${NETWORK}", m_network->name());
+
     if (!m_settings->getBool("RootServer")) {
       if (m_network->count() > 0) {
-
-        if (m_motd)
-          m_motdText.replace("${NETWORK}", m_network->name());
 
         m_link = new ClientService(m_profile, m_network, this);
         connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
