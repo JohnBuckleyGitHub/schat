@@ -591,8 +591,14 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
     return true;
   }
   else if (text == "/motd") {
-    if (m_motd)
-      service->sendServerMessage(m_motdText);
+    if (m_motd) {
+      QString motdText = m_motdText;
+      motdText.replace("${USERS_NUM}", QString::number(m_users.count()));
+      motdText.replace("${USERS}", tr("%n пользователь", "", m_users.count()));
+      motdText.replace("${SERVERS_NUM}", QString::number(m_numerics.count()));
+      motdText.replace("${SERVERS}", tr("%n сервер", "", m_numerics.count()));
+      service->sendServerMessage(motdText);
+    }
     return true;
   }
   else
@@ -877,6 +883,10 @@ void Daemon::link()
 
     if (!m_settings->getBool("RootServer")) {
       if (m_network->count() > 0) {
+
+        if (m_motd)
+          m_motdText.replace("${NETWORK}", m_network->name());
+
         m_link = new ClientService(m_profile, m_network, this);
         connect(m_link, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
         connect(m_link, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
