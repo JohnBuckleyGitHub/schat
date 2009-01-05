@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,6 +90,8 @@ bool Daemon::start()
   m_maxLinks      = m_settings->getInt("MaxLinks");
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
+
+  m_motd = motd();
 
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
@@ -538,6 +540,33 @@ void Daemon::incomingLocalConnection()
 
 
 /*!
+ * Инициализирует поддержку команды /motd (Message Of The Day).
+ *
+ * \return Возвращает \a true в случае успеха.
+ */
+bool Daemon::motd()
+{
+  int size = m_settings->getInt("MotdMaxSize");
+
+  if (!m_settings->getBool("Motd") || size < 1)
+    return false;
+
+  QFile file(QCoreApplication::applicationDirPath() + "/" + m_settings->getString("MotdFile"));
+  if (!file.exists())
+    return false;
+
+  if (file.open(QFile::ReadOnly | QFile::Text)) {
+    QTextStream stream(&file);
+    stream.setCodec("UTF-8");
+    m_motdText = stream.read(size);
+    return !m_motdText.isEmpty();
+  }
+  else
+    return false;
+}
+
+
+/*!
  * \brief Обработка команд предназначенных для сервера.
  *
  * \param nick Ник пользователя отправившего сообщение.
@@ -551,17 +580,20 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
   if (!m_users.contains(lowerNick))
     return false;
 
+  DaemonService *service = m_users.value(lowerNick)->service();
+  if (!service)
+    return false;
   QString text = ChannelLog::toPlainText(msg).trimmed().toLower();
 
   /// Команда "/server"
   if (text == "/server") {
-    DaemonService *service = m_users.value(lowerNick)->service();
-    if (service) {
-      service->sendServerMessage(serverInfo());
-      return true;
-    }
-    else
-      return false;
+    service->sendServerMessage(serverInfo());
+    return true;
+  }
+  else if (text == "/motd") {
+    if (m_motd)
+      service->sendServerMessage(m_motdText);
+    return true;
   }
   else
     return false;
