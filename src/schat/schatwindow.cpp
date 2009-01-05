@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,11 +38,12 @@ QMap<QString, QString> SChatWindow::m_cmds;
  * \brief Конструктор класса SChatWindow.
  */
 SChatWindow::SChatWindow(QWidget *parent)
-  : QMainWindow(parent)
+  : QMainWindow(parent), m_motd(true)
 {
   m_settings    = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
   m_profile     = m_settings->profile();
   m_settings->read();
+  m_motdEnable = m_settings->getBool("MotdEnable");
 
   m_send        = new SendWidget(this);
   m_central     = new QWidget(this);
@@ -278,6 +279,11 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
     m_main->msg(ChatBrowser::msgReadyForUse(network, server));
     m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(QApplication::applicationName() + " - " + network);
+  }
+
+  if (m_motdEnable && m_motd) {
+    m_motd = false;
+    m_clientService->sendMessage("", "/motd");
   }
 }
 
@@ -669,6 +675,7 @@ void SChatWindow::settingsChanged(int notify)
   switch (notify) {
     case Settings::NetworkSettingsChanged:
     case Settings::ServerChanged:
+      m_motd = true;
       m_clientService->connectToHost();
       break;
 
