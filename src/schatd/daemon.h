@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -92,6 +92,7 @@ private slots:
   #endif
 
 private:
+  bool motd();
   bool parseCmd(const QString &nick, const QString &msg);
   int localLinksCount() const;
   int localUsersCount() const;
@@ -106,6 +107,7 @@ private:
   void userLeave(const QString &nick, const QString &err = QString());
 
   AbstractProfile *m_profile;
+  bool m_motd;
   bool m_syncUsers;
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
@@ -120,6 +122,7 @@ private:
   QHash<quint8, LinkUnit *> m_links;
   QList<quint8> m_numerics;
   QPointer<Network> m_network;
+  QString m_motdText;
   QTcpServer m_server;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
