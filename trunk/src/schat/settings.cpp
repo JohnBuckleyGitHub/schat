@@ -181,6 +181,7 @@ void Settings::read()
   setBool("Log",                    true);
   setBool("LogPrivate",             true);
   setBool("Sound",                  true);
+  setBool("MotdEnable",             true);
   setInt("EmoticonsRefreshTime",    50);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
@@ -270,6 +271,7 @@ void Settings::read()
 void Settings::write()
 {
   m_ro << "EmoticonsRefreshTime"
+       << "MotdEnable"
        << "Updates/Mirrors"
        << "Updates/LevelQt"
        << "Updates/LevelCore"
