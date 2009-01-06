@@ -594,9 +594,9 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
     if (m_motd) {
       QString motdText = m_motdText;
       motdText.replace("${USERS_NUM}", QString::number(m_users.count()));
-      motdText.replace("${USERS}", tr("%n пользователь", "", m_users.count()));
+      motdText.replace("${USERS}", tr("<b>%n</b> пользователь", "", m_users.count()));
       motdText.replace("${SERVERS_NUM}", QString::number(m_numerics.count()));
-      motdText.replace("${SERVERS}", tr("%n сервер", "", m_numerics.count()));
+      motdText.replace("${SERVERS}", tr("<b>%n</b> сервер", "", m_numerics.count()));
       service->sendServerMessage(motdText);
     }
     return true;
