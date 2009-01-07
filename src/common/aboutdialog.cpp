@@ -107,20 +107,37 @@ AboutMain::AboutMain(QWidget *parent)
   QLabel *impomeziaLabel = new QLabel("<a href='http://impomezia.com/'><img src=':/images/impomezia.png' /></a>", this);
   impomeziaLabel->setToolTip("IMPOMEZIA");
   impomeziaLabel->setOpenExternalLinks(true);
+  impomeziaLabel->setAlignment(Qt::AlignBottom);
 
   QLabel *gplLabel = new QLabel("<a href='http://www.gnu.org/licenses/gpl.html'><img src=':/images/gplv3-88x31.png' /></a>", this);
   gplLabel->setToolTip("GNU General Public License");
   gplLabel->setOpenExternalLinks(true);
+  gplLabel->setAlignment(Qt::AlignBottom);
 
   QLabel *qtLabel = new QLabel("<a href='http://trolltech.com/'><img src=':/images/qt-logo.png' /></a>", this);
   qtLabel->setToolTip("Qt Open Source Edition");
   qtLabel->setOpenExternalLinks(true);
+  qtLabel->setAlignment(Qt::AlignBottom);
+
+  #ifndef SCHAT_NO_DONATE
+    QLabel *donateLabel = new QLabel(tr("Вы можете помочь развитию Simple Chat<br />2 line<br />3 line"), this);
+    donateLabel->setStyleSheet("border: 1px solid #7581a9;"
+        "border-radius: 3px;"
+        "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
+    donateLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  #endif
 
   QHBoxLayout *logosLay = new QHBoxLayout;
-  logosLay->addStretch();
+  #ifdef SCHAT_NO_DONATE
+    logosLay->addStretch();
+  #endif
   logosLay->addWidget(impomeziaLabel);
   logosLay->addWidget(gplLabel);
   logosLay->addWidget(qtLabel);
+  #ifndef SCHAT_NO_DONATE
+    logosLay->addStretch();
+    logosLay->addWidget(donateLabel);
+  #endif
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(nameLabel, 0, 0, 1, 2);
