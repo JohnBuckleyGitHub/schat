@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 
 #include "clientservice.h"
 
-static const int CheckTimeout         = 6000;
-static const int ReconnectTimeout     = 3000;
+static const int CheckTimeout         = 8000;
+static const int ReconnectTimeout     = 4000;
 
 /*!
  * \brief Конструктор класса ClientService.
@@ -38,6 +38,7 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
   m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(22000);
+  m_reconnectTimer.setInterval(ReconnectTimeout);
 
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(check()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(reconnect()));
@@ -260,7 +261,6 @@ void ClientService::connected()
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
-  m_reconnectTimer.setInterval(ReconnectTimeout);
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
