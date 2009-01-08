@@ -342,7 +342,8 @@ bool ProgressPage::createMirrorXml()
 
   versions.clear();
   if (UpdateXmlReader::isValid(runtime))
-    versions << runtime;
+    if (runtime.type == "qt")
+      versions << runtime;
 
   VersionInfo core;
   core.level   = m_settings->getInt("LevelCore");
