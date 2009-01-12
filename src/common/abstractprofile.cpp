@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA (http://impomezia.net.ru)
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,24 +9,17 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
 
 #include "abstractprofile.h"
 #include "version.h"
-
-/*!
- * \class AbstractProfile
- * \brief Абстрактный класс, хранящий информацию о пользователе.
- * 
- * Класс хранит в себе всю информацию о пользователе и предоставляет все необходимые методы для манипуляций с профилем.
- */
 
 /*!
  * \brief Конструктор класса AbstractProfile.
@@ -45,7 +38,7 @@ AbstractProfile::AbstractProfile(QObject *parent)
 
 
 /** [public]
- * 
+ *
  */
 AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
   : QObject(parent)
@@ -55,7 +48,7 @@ AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
 
 
 /** [public]
- * 
+ *
  */
 AbstractProfile::~AbstractProfile()
 {
@@ -66,12 +59,12 @@ AbstractProfile::~AbstractProfile()
 
 
 /** [public] static
- * 
+ *
  */
 bool AbstractProfile::isValidNick(const QString &n)
 {
   QString nick = n.simplified();
-  
+
   if (nick.size() > MaxNickLength)
     return false;
   if (nick.isEmpty())
@@ -80,19 +73,19 @@ bool AbstractProfile::isValidNick(const QString &n)
     return false;
   if (nick == ".")
     return false;
-  
+
   return true;
 }
 
 
 /** [public] static
- * 
+ *
  */
 bool AbstractProfile::isValidUserAgent(const QString &a)
 {
   if (a.isEmpty())
     return false;
-  
+
   QStringList list = a.split(QChar('/'));
   if (list.size() == 2)
     return true;
@@ -102,7 +95,7 @@ bool AbstractProfile::isValidUserAgent(const QString &a)
 
 
 /** [public]
- * 
+ *
  */
 QStringList AbstractProfile::pack() const
 {
@@ -113,7 +106,7 @@ QStringList AbstractProfile::pack() const
 
 
 /** [public]
- * 
+ *
  */
 void AbstractProfile::unpack(const QStringList &list)
 {
