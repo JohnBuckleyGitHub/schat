@@ -117,6 +117,4 @@ contains( SCHAT_BENCHMARK, 1 ) {
 TRANSLATIONS += ../../data/translations/schat_ru.ts
 CODECFORTR = UTF-8
 
-DEFINES += SCHAT_NO_DONATE
-
 include(../common/common.pri)

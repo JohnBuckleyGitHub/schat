@@ -63,6 +63,4 @@ DEFINES += SCHAT_NO_UPDATE_WIDGET
 TRANSLATIONS += ../../data/translations/customize_ru.ts
 CODECFORTR = UTF-8
 
-DEFINES += SCHAT_NO_DONATE
-
 include(../common/common.pri)

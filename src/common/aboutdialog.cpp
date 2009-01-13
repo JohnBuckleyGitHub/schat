@@ -91,18 +91,25 @@ AboutMain::AboutMain(QWidget *parent)
   QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
       .arg(qApp->organizationDomain())
       .arg(tr("Официальный сайт")), this);
-
   homeLabel->setOpenExternalLinks(true);
   homeLabel->setToolTip("http://" + qApp->organizationDomain());
+
+  QLabel *docLabel = new QLabel(QString("<b><a href='http://simple.impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
+      .arg(tr("Документация")), this);
+  docLabel->setOpenExternalLinks(true);
+  docLabel->setToolTip("http://simple.impomezia.com");
+
   QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b>").arg(tr("Эта программа использует библиотеку:")).arg(qVersion()), this);
 
   QVBoxLayout *infoLay = new QVBoxLayout;
   infoLay->addWidget(copyrightLabel);
   infoLay->addSpacing(8);
   infoLay->addWidget(homeLabel);
+  infoLay->addWidget(docLabel);
   infoLay->addSpacing(8);
   infoLay->addWidget(libLabel);
   infoLay->addStretch();
+  infoLay->setSpacing(0);
 
   QLabel *impomeziaLabel = new QLabel("<a href='http://impomezia.com/'><img src=':/images/impomezia.png' /></a>", this);
   impomeziaLabel->setToolTip("IMPOMEZIA");
@@ -120,11 +127,11 @@ AboutMain::AboutMain(QWidget *parent)
   qtLabel->setAlignment(Qt::AlignBottom);
 
   #ifndef SCHAT_NO_DONATE
-    QLabel *donateLabel = new QLabel(tr("Вы можете помочь развитию Simple Chat<br />2 line<br />3 line"), this);
+    QLabel *donateLabel = new QLabel(tr("Вы можете помочь развитию Simple Chat<br /><a href='http://impomezia.com/donate' style='text-decoration:none; color:#1a4d82;'>делом</a> или <a href='http://impomezia.com/donate' style='text-decoration:none; color:#1a4d82;'>материально</a>."), this);
     donateLabel->setStyleSheet("border: 1px solid #7581a9;"
         "border-radius: 3px;"
         "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
-    donateLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    donateLabel->setOpenExternalLinks(true);
   #endif
 
   QHBoxLayout *logosLay = new QHBoxLayout;
