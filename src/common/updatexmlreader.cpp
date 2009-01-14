@@ -55,6 +55,7 @@ bool UpdateXmlReader::readFile(const QString &fileName)
 {
   #ifndef SCHAT_NO_UPDATE
     m_files.clear();
+    m_baseUrl.clear();
   #endif
   m_version.clear();
 
@@ -116,29 +117,6 @@ bool UpdateXmlReader::isValid(const FileInfo &file)
 
 
 /*!
- * Чтение элемента files.
- */
-void UpdateXmlReader::readFiles()
-{
-  while (!atEnd()) {
-    readNext();
-
-    if (isEndElement())
-      break;
-
-    if (isStartElement()) {
-      #ifndef SCHAT_NO_UPDATE
-      if (name() == "cumulative")
-        readCumulative();
-      else
-      #endif
-        readUnknownElement();
-    }
-  }
-}
-
-
-/*!
  * Чтение элемента meta.
  */
 void UpdateXmlReader::readMeta()
@@ -197,8 +175,19 @@ void UpdateXmlReader::readUpdates()
     if (isStartElement()) {
       if (name() == "meta")
         readMeta();
-      else if (name() == "files")
+
+      #ifndef SCHAT_NO_UPDATE
+      else if (name() == "files") {
+        QUrl url(attributes().value("baseurl").toString());
+        if (url.isValid()) {
+          m_baseUrl = url.toString();
+          if (!m_baseUrl.endsWith("/"))
+            m_baseUrl += "/";
+        }
         readFiles();
+      }
+      #endif
+
       else
         readUnknownElement();
     }
@@ -223,13 +212,34 @@ void UpdateXmlReader::readCumulative()
         FileInfo fileInfo;
         fileInfo.type  = attributes().value("type").toString();
         fileInfo.level = attributes().value("level").toString().toInt();
-        fileInfo.size = attributes().value("size").toString().toULongLong();
-        fileInfo.md5  = attributes().value("md5").toString();
-        fileInfo.name = readElementText();
+        fileInfo.size  = attributes().value("size").toString().toULongLong();
+        fileInfo.md5   = attributes().value("md5").toString();
+        fileInfo.name  = readElementText();
 
         if (isValid(fileInfo))
           m_files.insert(fileInfo.level, fileInfo);
       }
+      else
+        readUnknownElement();
+    }
+  }
+}
+
+
+/*!
+ * Чтение элемента files.
+ */
+void UpdateXmlReader::readFiles()
+{
+  while (!atEnd()) {
+    readNext();
+
+    if (isEndElement())
+      break;
+
+    if (isStartElement()) {
+      if (name() == "cumulative")
+        readCumulative();
       else
         readUnknownElement();
     }
