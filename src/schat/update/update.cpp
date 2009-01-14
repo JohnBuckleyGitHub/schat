@@ -237,7 +237,9 @@ void Update::checkFiles()
 #ifndef SCHAT_NO_UPDATE
 void Update::checkLocalFiles()
 {
-  QString url = QFileInfo(m_xmlUrl.toString()).path() + "/";
+  QString url = m_reader.baseUrl();
+  if (url.isEmpty())
+    url = QFileInfo(m_xmlUrl.toString()).path() + "/";
 
   VerifyThread *thread = new VerifyThread(m_files, m_targetPath, url);
   connect(thread, SIGNAL(finished(const QStringList &, qint64)), SLOT(checkLocalFilesDone(const QStringList &, qint64)));

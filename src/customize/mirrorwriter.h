@@ -29,12 +29,15 @@
 class MirrorWriter : public QXmlStreamWriter {
 
 public:
-  MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files);
+  MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files, const QString &baseUrl = QString());
   bool writeFile(const QString &fileName);
+  inline void comparable(bool enable) { m_comparable = enable; }
 
 private:
+  bool m_comparable;
   const QList<VersionInfo> m_version;
   const QMultiMap<int, FileInfo> m_files;
+  const QString m_baseUrl;
 };
 
 #endif /* MIRRORWRITER_H_ */
