@@ -210,7 +210,7 @@ void Settings::read()
   setInt("Updates/LevelQt",         UpdateLevelQt);
   setInt("Updates/LevelCore",       UpdateLevelCore);
   setString("Updates/LastVersion",  QApplication::applicationVersion());
-  setList("Updates/Mirrors", QStringList() << "http://schat.googlecode.com/files/mirror.xml");
+  setList("Updates/Mirrors", QStringList() << "http://impomezia.com/mirror.xml");
 
   #ifndef SCHAT_NO_UPDATE
     setInt("Updates/DownloadSize",      0);
