@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -275,7 +275,10 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   QString msg = message;
 
   if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
-    msg.remove("/me ", Qt::CaseInsensitive);
+    int index = msg.indexOf("/me ", 0, Qt::CaseInsensitive);
+    if (index != -1)
+      msg.remove(index, 4);
+
     msg = "<span class='me'>" + msg + "</span>";
     QString escapedNick = Qt::escape(nick);
     docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick:%2' class='me'>%3</span> ")
