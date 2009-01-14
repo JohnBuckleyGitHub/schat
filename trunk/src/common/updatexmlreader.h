@@ -49,25 +49,27 @@ public:
   UpdateXmlReader();
   bool isValid() const;
   bool readFile(const QString &fileName);
-  inline QList<VersionInfo> version() const     { return m_version; }
+  inline QList<VersionInfo> version() const       { return m_version; }
   static bool isValid(const VersionInfo &version);
   #ifndef SCHAT_NO_UPDATE
     inline QMultiMap<int, FileInfo> files() const { return m_files; }
+    inline QString baseUrl() const                { return m_baseUrl; }
     static bool isValid(const FileInfo &file);
   #endif
 
 private:
-  void readFiles();
   void readMeta();
   void readUnknownElement();
   void readUpdates();
   #ifndef SCHAT_NO_UPDATE
     void readCumulative();
+    void readFiles();
   #endif
 
   QList<VersionInfo> m_version;
 
   #ifndef SCHAT_NO_UPDATE
+    QString m_baseUrl;
     QMultiMap<int, FileInfo> m_files;
   #endif
 };
