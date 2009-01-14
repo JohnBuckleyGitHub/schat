@@ -72,7 +72,13 @@ void WizardSettings::read()
   setString("MakensisFile",      pf);
   setString("Network",           "SimpleNet.xml");
   setString("Emoticons",         "Kolobok");
-  setString("MirrorUrl",         "http://schat.googlecode.com/files/mirror.xml");
+  setString("MirrorUrl",         "http://impomezia.com/mirror.xml");
+
+  if (m_dist)
+    setString("BaseUrl",         "http://schat.googlecode.com/files");
+  else
+    setString("BaseUrl",         "");
+
   setBool("OverrideNetwork",     false);
   setBool("OverrideEmoticons",   false);
   setBool("OverrideMirror",      false);
@@ -82,11 +88,14 @@ void WizardSettings::read()
   setBool("NsisAutostart",       true);
   setBool("NsisAutostartDaemon", false);
   setBool("AutoDownloadUpdates", false);
+  setBool("Comparable",          false);
 
   AbstractSettings::read();
 
   if (m_dist || !getBool("Save"))
     setVersions();
+
+  m_ro << "Comparable";
 }
 
 

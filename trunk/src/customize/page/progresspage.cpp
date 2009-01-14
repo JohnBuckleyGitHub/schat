@@ -404,7 +404,8 @@ bool ProgressPage::createMirrorXml()
 
   files.insert(levelCore, coreFile);
 
-  MirrorWriter writer(versions, files);
+  MirrorWriter writer(versions, files, m_settings->getString("BaseUrl"));
+  writer.comparable(m_settings->getBool("Comparable"));
   return writer.writeFile(fileName);
 }
 
