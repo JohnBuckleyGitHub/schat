@@ -26,8 +26,8 @@
  * \param version Список версий.
  * \param files   Список файлов.
  */
-MirrorWriter::MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files)
-  : m_version(version), m_files(files)
+MirrorWriter::MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files, const QString &baseUrl)
+  : m_comparable(false), m_version(version), m_files(files), m_baseUrl(baseUrl)
 {
   setAutoFormatting(true);
   setAutoFormattingIndent(2);
@@ -70,7 +70,12 @@ bool MirrorWriter::writeFile(const QString &fileName)
   writeEndElement();
 
   writeStartElement("files");
-  writeAttribute("platform", "win32"); /// \todo Запись данного атрибута больше не нужна.
+
+  if (m_comparable)
+    writeAttribute("platform", "win32");
+  if (!m_baseUrl.isEmpty())
+    writeAttribute("baseurl", m_baseUrl);
+
    writeStartElement("cumulative");
     QMapIterator<int, FileInfo> i(m_files);
     while (i.hasNext()) {
