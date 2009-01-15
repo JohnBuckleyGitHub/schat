@@ -900,15 +900,16 @@ int SChatWindow::tabIndex(const QString &text) const
 void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
 {
   if (m_cmds.isEmpty()) {
-    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> – Отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
-    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> – Очистка окна чата.</span>"));
-    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> – Выход из чата.</span>"));
-    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> – Отображает подсказу о командах.</span>"));
-    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> – Открывает папку с файлами журнала чата.</span>"));
-    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> – Отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
-    m_cmds.insert("motd",   tr("<b>/motd</b><span class='info'> – Показ <i>Message Of The Day</i> сообщения сервера.</span>"));
-    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> – Позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
-    m_cmds.insert("server", tr("<b>/server</b><span class='info'> – Просмотр информации о сервере.</span>"));
+    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
+    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> — очистка окна чата.</span>"));
+    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> — выход из чата.</span>"));
+    m_cmds.insert("google", tr("<b>/google &lt;строка поиска&gt;</b><span class='info'> — формирует ссылку с заданной строкой для поиска в Google.</span>"));
+    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> — отображает подсказу о командах.</span>"));
+    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> — открывает папку с файлами журнала чата.</span>"));
+    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
+    m_cmds.insert("motd",   tr("<b>/motd</b><span class='info'> — показ <i>Message Of The Day</i> сообщения сервера.</span>"));
+    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
+    m_cmds.insert("server", tr("<b>/server</b><span class='info'> — просмотр информации о сервере.</span>"));
   }
 
   if (cmd.isEmpty()) {

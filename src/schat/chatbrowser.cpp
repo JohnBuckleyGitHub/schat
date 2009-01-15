@@ -273,14 +273,11 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   doc.setDefaultStyleSheet(m_style);
   QTextCursor docCursor(&doc);
   QString msg = message;
+  QString escapedNick = Qt::escape(nick);
+  bool emoticonsEnable = true;
 
-  if (ChannelLog::toPlainText(message).startsWith("/me ", Qt::CaseInsensitive)) {
-    int index = msg.indexOf("/me ", 0, Qt::CaseInsensitive);
-    if (index != -1)
-      msg.remove(index, 4);
-
+  if (prepareCmd("/me ", msg)) {
     msg = "<span class='me'>" + msg + "</span>";
-    QString escapedNick = Qt::escape(nick);
     docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a href='nick:%2' class='me'>%3</span> ")
         .arg(currentTime())
         .arg(QLatin1String(nick.toUtf8().toHex()))
@@ -289,7 +286,16 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(msg));
   }
   else {
-    QString escapedNick = Qt::escape(nick);
+
+    if (prepareCmd("/google ", msg, false)) {
+      QTextDocument tempDoc;
+      tempDoc.setHtml(msg.trimmed());
+      QString tempMsg = tempDoc.toPlainText();
+      tempMsg.remove(0, 8);
+      emoticonsEnable = false;
+      msg = "<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b><b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b><b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: <b><a href='http://www.google.com/search?q=" + tempMsg + "'>" + tempMsg + "</a></b>";
+    }
+
     docCursor.insertHtml(QString("<small class='gr'>(%1)</small> <a class='nick' href='nick:%2'>%3:</a> ")
         .arg(currentTime())
         .arg(QLatin1String(nick.toUtf8().toHex()))
@@ -303,7 +309,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   docCursor.insertHtml(msg);
   QString plainMsg = doc.toPlainText().mid(offset);
 
-  if (m_useEmoticons) {
+  if (m_useEmoticons && emoticonsEnable) {
     QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
     QMap<int, PrepareEmoticons> prepareEmoticons;
 
@@ -446,6 +452,22 @@ void ChatBrowser::setSettings()
   m_emoticonsRequireSpaces = m_settings->getBool("EmoticonsRequireSpaces");
   setPauseAnimations(!m_useAnimatedEmoticons);
   m_animateTimer.setInterval(m_settings->getInt("EmoticonsRefreshTime"));
+}
+
+
+bool ChatBrowser::prepareCmd(const QString &cmd, QString &msg, bool cut) const
+{
+  if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
+    if (cut) {
+      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      if (index != -1)
+        msg.remove(index, cmd.size());
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 
