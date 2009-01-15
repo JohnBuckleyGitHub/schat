@@ -84,6 +84,7 @@ private slots:
   void setSettings();
 
 private:
+  bool prepareCmd(const QString &cmd, QString &msg, bool cut = true) const;
   void addAnimation(const QString &fileName, int pos = -1, int starts = -1);
   void createActions();
   void setPauseAnimations(bool paused);
