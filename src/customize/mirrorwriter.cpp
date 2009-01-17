@@ -25,6 +25,7 @@
  *
  * \param version Список версий.
  * \param files   Список файлов.
+ * \param baseUrl Базовый адрес файлов, пустой для автоматического получения на основе адреса mirror.xml.
  */
 MirrorWriter::MirrorWriter(const QList<VersionInfo> &version, const QMultiMap<int, FileInfo> &files, const QString &baseUrl)
   : m_comparable(false), m_version(version), m_files(files), m_baseUrl(baseUrl)
