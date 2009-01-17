@@ -455,6 +455,15 @@ void ChatBrowser::setSettings()
 }
 
 
+/*!
+ * Проверяет входящее сообщение на наличие команды и при необходимости вырезает эту команду из строки.
+ *
+ * \param cmd Команда.
+ * \param msg Сообщение.
+ * \param cut Разрешает вырезание команды из строки.
+ *
+ * \return Возвращает \a true если команда была найдена.
+ */
 bool ChatBrowser::prepareCmd(const QString &cmd, QString &msg, bool cut) const
 {
   if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
