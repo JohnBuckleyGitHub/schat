@@ -183,6 +183,7 @@ void Settings::read()
   setBool("Sound",                  true);
   setBool("MotdEnable",             true);
   setInt("EmoticonsRefreshTime",    50);
+  setInt("MaxSingleTypeEmoticons",  5);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
@@ -272,6 +273,7 @@ void Settings::write()
 {
   m_ro << "EmoticonsRefreshTime"
        << "MotdEnable"
+       << "MaxSingleTypeEmoticons"
        << "Updates/Mirrors"
        << "Updates/LevelQt"
        << "Updates/LevelCore"

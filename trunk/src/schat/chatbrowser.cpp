@@ -269,6 +269,14 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     return;
   #endif
 
+  static int maxSingleTypeEmoticons;
+  if (!maxSingleTypeEmoticons) {
+    int max = m_settings->getInt("MaxSingleTypeEmoticons");
+    if (max < 1)
+      max = 1;
+    maxSingleTypeEmoticons = max;
+  }
+
   QTextDocument doc;
   doc.setDefaultStyleSheet(m_style);
   QTextCursor docCursor(&doc);
@@ -317,15 +325,18 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
       int size    = toPlainText().size();
       int docSize = doc.toPlainText().size();
 
-      foreach (Emoticons emoticon, emoticons) {
+      for (int i = 0; i < emoticons.size(); ++i) {
+        Emoticons emoticon = emoticons.at(i);
         docCursor.setPosition(offset);
 
+        int count = 0;
         do {
           if (emoticon.file.isEmpty())
             continue;
 
           bool ok = false;
           docCursor = doc.find(emoticon.name, docCursor);
+          count++;
 
           if (docCursor.selectedText() == emoticon.name) {
             if (m_emoticonsRequireSpaces) {
@@ -366,6 +377,9 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
           if (ok)
             prepareEmoticons.insert(docCursor.anchor(), PrepareEmoticons(docCursor.position(), emoticon.name, emoticon.file));
+
+          if (count == maxSingleTypeEmoticons)
+            break;
 
         } while (!docCursor.isNull());
       }
