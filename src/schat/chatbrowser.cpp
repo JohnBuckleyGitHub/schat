@@ -323,6 +323,8 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
 
     if (!emoticons.isEmpty()) {
       QMap<QString, int> count;
+      QList<int> starts;
+      QList<int> ends;
       int size    = toPlainText().size();
       int docSize = doc.toPlainText().size();
 
@@ -375,8 +377,22 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
           }
 
           if (ok) {
-//            qDebug() << docCursor.anchor() << docCursor.position() << emoticon.name << emoticon.file;
+            int anchor   = docCursor.anchor();
+            int position = docCursor.position();
 
+            // Обход проблемы с кодами смайликов содержащими общие части
+            // при выключенной опции "Смайлики отделены пробелами".
+            if (!m_emoticonsRequireSpaces) {
+              if (starts.contains(anchor) || ends.contains(position))
+                continue;
+              else {
+                starts << anchor;
+                ends << position;
+              }
+            }
+
+            // Ограничение на количество смайликов одного типа,
+            // с учётом синонимов.
             QString file = emoticon.file;
             if (count.contains(file)) {
               int value = count.value(file);
@@ -388,7 +404,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
             else
               count.insert(file, 1);
 
-            prepareEmoticons.insert(docCursor.anchor(), PrepareEmoticons(docCursor.position(), emoticon.name, emoticon.file));
+            prepareEmoticons.insert(anchor, PrepareEmoticons(position, emoticon.name, file));
           }
 
         } while (!docCursor.isNull());
@@ -397,7 +413,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
       if (!prepareEmoticons.isEmpty()) {
         int blockStart = size + offset;
         int fix        = 0;
-        QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+        QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
         QTextCursor emoCursor(&doc);
 
         QMapIterator<int, PrepareEmoticons> i(prepareEmoticons);
