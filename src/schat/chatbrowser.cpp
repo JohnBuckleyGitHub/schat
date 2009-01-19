@@ -322,6 +322,7 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
     QMap<int, PrepareEmoticons> prepareEmoticons;
 
     if (!emoticons.isEmpty()) {
+      QMap<QString, int> count;
       int size    = toPlainText().size();
       int docSize = doc.toPlainText().size();
 
@@ -329,14 +330,12 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
         Emoticons emoticon = emoticons.at(i);
         docCursor.setPosition(offset);
 
-        int count = 0;
         do {
           if (emoticon.file.isEmpty())
             continue;
 
           bool ok = false;
           docCursor = doc.find(emoticon.name, docCursor);
-          count++;
 
           if (docCursor.selectedText() == emoticon.name) {
             if (m_emoticonsRequireSpaces) {
@@ -375,11 +374,22 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
               ok = true;
           }
 
-          if (ok)
-            prepareEmoticons.insert(docCursor.anchor(), PrepareEmoticons(docCursor.position(), emoticon.name, emoticon.file));
+          if (ok) {
+//            qDebug() << docCursor.anchor() << docCursor.position() << emoticon.name << emoticon.file;
 
-          if (count == maxSingleTypeEmoticons)
-            break;
+            QString file = emoticon.file;
+            if (count.contains(file)) {
+              int value = count.value(file);
+              if (value == maxSingleTypeEmoticons)
+                break;
+              else
+                count.insert(file, ++value);
+            }
+            else
+              count.insert(file, 1);
+
+            prepareEmoticons.insert(docCursor.anchor(), PrepareEmoticons(docCursor.position(), emoticon.name, emoticon.file));
+          }
 
         } while (!docCursor.isNull());
       }
