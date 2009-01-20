@@ -1,11 +1,10 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
- *  a button that pops up a list of all emoticons and returns
- *  the emoticon-string if one is selected in the list
- *
- *   Copyright (c) 2002 by Stefan Gehn            <metz AT gehn.net>
+ *   a button that pops up a list of all emoticons and returns
+ *   the emoticon-string if one is selected in the list
+ *   Copyright (c) 2002 by Stefan Gehn                 <metz AT gehn.net>
  *   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,11 +14,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "emoticonselector.h"
@@ -31,25 +30,18 @@
 
 /*!
  * \brief Конструктор класса EmoticonLabel.
+ *
+ * \todo Должна поддерживаться возможность выбрать смайлик с клавиатуры.
  */
 EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
-  : QLabel(parent)
+  : QLabel(parent), m_ok(false), m_text(emoticonText)
 {
-  m_ok    = false;
-  m_text  = emoticonText;
-  m_movie = new QMovie(pixmapPath, QByteArray(), this);
-  setMovie(m_movie);
+  setMovie(new QMovie(pixmapPath, QByteArray(), this));
   setAlignment(Qt::AlignCenter);
   QPixmap p(pixmapPath);
   if (p.width() > 32 || p.height() > 32)
     p.scaled(32, 32);
   setMinimumSize(p.size());
-}
-
-
-void EmoticonLabel::mousePressEvent(QMouseEvent* /*event*/)
-{
-  m_ok = true;
 }
 
 
@@ -64,10 +56,9 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent* /*event*/)
  * \brief Конструктор класса EmoticonSelector.
  */
 EmoticonSelector::EmoticonSelector(QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent), m_lay(0)
 {
   m_settings = settings;
-  m_lay = 0;
 }
 
 
@@ -83,7 +74,7 @@ void EmoticonSelector::prepareList()
   if (m_lay)
     delete m_lay;
 
-  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme");
+  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
 
   m_lay = new QGridLayout(this);
   m_lay->setMargin(2);
@@ -93,7 +84,7 @@ void EmoticonSelector::prepareList()
   QMapIterator<QString, QStringList> i(list);
   while (i.hasNext()) {
     i.next();
-    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + "/" + i.key(), this);
+    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + i.key(), this);
     connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
     connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
     connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
