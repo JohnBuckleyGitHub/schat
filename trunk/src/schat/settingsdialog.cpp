@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
   m_animateCheck = new QCheckBox(tr("Разрешить анимацию"), this);
-  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах,\nможет приводить к повышенной загрузке процессора"));
+  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах,\nможет приводить к повышенной загрузке процессора\nтакже выбранная тема должна поддерживать анимацию"));
   m_animateCheck->setChecked(m_settings->getBool("UseAnimatedEmoticons"));
 
   m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
