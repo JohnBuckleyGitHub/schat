@@ -426,7 +426,6 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
           addAnimation(emoticonsPath + i.value().file, size + emoCursor.position(), blockStart);
         }
       }
-
     }
   }
 
