@@ -1,11 +1,10 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
- *  a button that pops up a list of all emoticons and returns
- *  the emoticon-string if one is selected in the list
- *
- *   Copyright (c) 2002 by Stefan Gehn            <metz AT gehn.net>
+ *   a button that pops up a list of all emoticons and returns
+ *   the emoticon-string if one is selected in the list
+ *   Copyright (c) 2002 by Stefan Gehn                 <metz AT gehn.net>
  *   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,11 +14,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef EMOTICONSELECTOR_H_
@@ -48,15 +47,14 @@ signals:
   void clicked(const QString &text);
 
 public slots:
-  inline void setPaused(bool paused) { m_movie->setPaused(paused); }
+  inline void setPaused(bool paused) { movie()->setPaused(paused); }
 
 private:
-  void mousePressEvent(QMouseEvent *event);
+  inline void mousePressEvent(QMouseEvent* /*event*/) { m_ok = true; }
   void mouseReleaseEvent(QMouseEvent *event);
 
   bool m_ok;
-  QMovie *m_movie;
-  QString m_text;
+  const QString m_text;
 };
 
 
