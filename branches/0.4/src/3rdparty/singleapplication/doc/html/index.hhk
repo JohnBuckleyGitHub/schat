@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD></HEAD><BODY>
+<OBJECT type="text/site properties">
+<param name="FrameName" value="right">
+</OBJECT>
+<UL>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#a514c13c962ad8caf9dbebe84e1f6b1d"><param name="Name" value="isRunning"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#318bfbb9f53bd05dca1115dd91a8d810"><param name="Name" value="messageReceived"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#7ad6f24210c09e6f54855e3cafb9993f"><param name="Name" value="sendMessage"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html"><param name="Name" value="SingleApplication"></OBJECT>
+  <UL>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#a514c13c962ad8caf9dbebe84e1f6b1d"><param name="Name" value="isRunning"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#fc82a9b38fa6ccda33c4abac5e3f05b7"><param name="Name" value="key"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#318bfbb9f53bd05dca1115dd91a8d810"><param name="Name" value="messageReceived"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#7ad6f24210c09e6f54855e3cafb9993f"><param name="Name" value="sendMessage"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#4f134f7175652e91b58944431d6d2915"><param name="Name" value="SingleApplication"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#47b51f253748dcf3d67eb3a4d7e45335"><param name="Name" value="~SingleApplication"></OBJECT>
+  </UL>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="class_single_application.html#47b51f253748dcf3d67eb3a4d7e45335"><param name="Name" value="~SingleApplication"></OBJECT>
+</UL>
+</BODY>
+</HTML>

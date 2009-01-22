@@ -1,0 +1,87 @@
+/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+ * SingleApplication
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the LGPLv2
+ *****************************************************************************/
+
+/*
+  This file contains NO source code, just some documentation for doxygen to
+  parse.
+*/
+
+/*!
+  \mainpage SingleApplication
+
+  \section mainpage_overview Overview
+
+  The SingleApplication component provides support for applications that can be 
+  only started once per user.
+
+  The SingleApplication class provides an crossplatform interface to detect a running
+  instance, and to send command strings to that instance.
+
+  \section mainpage_license License
+
+  SingleApplication is distributed under the terms of the \ref license.
+
+  \section mainpage_platforms Platforms
+
+  SingleApplication might be usable in all environments where you find <a href="http://www.trolltech.com/products/qt">Qt</a>4.\n
+  SingleApplication requires Qt 4.4.x or newer.
+
+  \section mainpage_downloads Downloads
+
+  Stable releases are available at the SingleApplication
+  <a href="http://www.qt-apps.org/content/show.php/SingleApplication?content=81163">project page</a> on <a href="http://www.qt-apps.org/">qt-apps.org</a>.
+
+  \section mainpage_installation Installation
+ 
+  Have a look at the singleapplication.pro project file. It is prepared for building
+  static libraries for Win32 and Unix/X11 environments.\n
+  If you don't know what to do with it, read the page \ref install and/or 
+  Trolltech's <a href="http://www.trolltech.com/developer/documentation/index.html">qmake</a> documentation.
+  Once you have build the library you have to install all files from the lib, include and doc directories.
+
+  \section mainpage_using How to use the SingleApplication
+
+  Read the page \ref using to obtain how to integrate SingleApplication with your project.
+*/
+
+/*!
+  \page license LGPL, Version 2
+
+  \include ./COPYING
+*/
+
+/*!
+  \page install INSTALL
+
+  \include ./INSTALL
+*/
+
+/*!
+  \page using Using the SingleApplication
+
+  \section overview Overview
+
+  For some applications it is useful or even critical that they are started only once by any user.\n 
+  Future attempts to start the application should activate any already running instance, 
+  and possibly perform requested actions, e.g. loading a file, in that instance.
+
+  \section including Including in an Application
+
+  The component can be used in three different ways:
+   - together with the application as a static library;
+   - as a separate shared library;
+   - together with the application in source files form.
+
+  The first option is the simplest one and it is enabled by default.\n
+  You just have to add <tt>singleapplication.pri</tt> to your project file, include <tt>singleapplication.h</tt> and create the SingleApplication object just after creating the Q(Core)Application object.
+
+  To use shared library, just uncomment <tt>SINGLEAPPLICATION_LIBCONFIG = dll</tt> in <tt>config.pri</tt> and rebuild project as described above.\n
+  Refer to the Qt documentation for more details about using libraries if You have some questions.
+
+  If you do not want to use the SingleApplication as a library at all, make sure You comment <tt>SINGLEAPPLICATION_LIBCONFIG = dll</tt> in <tt>config.pri</tt> and rebuild project as described above.\n
+  Also define the @c SINGLEAPPLICATION_EXPORT macro (by adding it to the @c DEFINES variable in your project file).
+*/
