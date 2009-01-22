@@ -131,6 +131,7 @@
 </buildTargets>
 </storageModule>
 
+
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
 <pathentry base-path="C:/qt/443/include" include="" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/443/include" include="phonon" kind="inc" path="" system="true"/>
@@ -152,10 +153,10 @@
 <pathentry base-path="C:/qt/443/include" include="QtWebKit" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/443/include" include="QtXml" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/443/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/common" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/schat" kind="inc" path="" system="true"/>
+<pathentry base-path="schat_0_4" include="src/common" kind="inc" path="" system="true"/>
+<pathentry base-path="schat_0_4" include="src/schat" kind="inc" path="" system="true"/>
 <pathentry include="C:/dev/mingw/include" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/customize" kind="inc" path="" system="true"/>
+<pathentry base-path="schat_0_4" include="src/customize" kind="inc" path="" system="true"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>
