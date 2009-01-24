@@ -36,6 +36,7 @@ HEADERS += \
     abstracttab.h \
     channellog.h \
     chatbrowser.h \
+    chatwindow/chatwindowstyle.h \
     clientservice.h \
     emoticonmovie.h \
     emoticonsreader.h \
@@ -71,6 +72,7 @@ SOURCES += \
     abstracttab.cpp \
     channellog.cpp \
     chatbrowser.cpp \
+    chatwindow/chatwindowstyle.cpp \
     clientservice.cpp \
     emoticonmovie.cpp \
     emoticonsreader.cpp \
