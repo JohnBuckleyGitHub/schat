@@ -49,12 +49,6 @@ ChatView::~ChatView()
 }
 
 
-void ChatView::addServiceMsg(const QString &msg)
-{
-  appendMessage(m_style->makeStatus(msg));
-}
-
-
 void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
 {
   bool same = false;
@@ -65,6 +59,27 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     same = true;
 
   appendMessage(m_style->makeMessage(sender, message, direction, same), same);
+}
+
+
+void ChatView::addServiceMsg(const QString &msg)
+{
+  appendMessage(m_style->makeStatus(msg));
+}
+
+
+void ChatView::log(bool enable)
+{
+  m_log = enable;
+
+  if (enable) {
+    if (!m_channelLog) {
+      m_channelLog = new ChannelLog(this);
+      m_channelLog->setChannel(m_channel);
+    }
+  }
+  else if (m_channelLog)
+    m_channelLog->deleteLater();
 }
 
 

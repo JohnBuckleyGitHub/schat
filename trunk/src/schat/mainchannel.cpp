@@ -31,8 +31,8 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   m_type = Main;
 
   m_settings = settings;
-  m_browser->setChannel("#main");
-  m_browser->log(m_settings->getBool("Log"));
+  m_view->channel("#main");
+  m_view->log(m_settings->getBool("Log"));
 
   createActions();
 
@@ -50,7 +50,7 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
   m_mainLayout->addWidget(m_view);
-  m_mainLayout->addWidget(m_browser);
+//  m_mainLayout->addWidget(m_browser);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
@@ -76,14 +76,14 @@ void MainChannel::displayChoiceServer(bool display)
   if (!display)
     m_networkLayout->setMargin(0);
 
-  m_browser->scroll();
+//  m_browser->scroll();
 }
 
 
 void MainChannel::notify(int code)
 {
   if (code == Settings::MiscSettingsChanged)
-    m_browser->log(m_settings->getBool("Log"));
+    m_view->log(m_settings->getBool("Log"));
 }
 
 
