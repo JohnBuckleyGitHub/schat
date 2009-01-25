@@ -43,19 +43,19 @@ public:
   AbstractTab(const QIcon &icon, QWidget *parent = 0);
   inline bool notice()                           { return m_notice; }
   inline QIcon icon()                            { return m_icon; }
-  inline QTextCursor textCursor() const          { return m_browser->textCursor(); }
+//  inline QTextCursor textCursor() const          { return m_browser->textCursor(); }
   inline Type type() const                       { return m_type; }
   inline void msg(const QString &text)           { m_view->addServiceMsg(text); }
   inline void notice(bool enable)                { m_notice = enable; }
-  inline void setChannel(const QString &channel) { m_browser->setChannel(channel); }
+  inline void setChannel(const QString &ch)      { m_view->channel(ch); }
   inline void setIcon(const QIcon &icon)         { m_icon = icon; }
 
 signals:
   void nickClicked(const QString &hex);
 
 public slots:
-  inline void clear()                                                    { m_browser->clear(); }
-  inline void copy()                                                     { m_browser->copy(); }
+  inline void clear()                                                    { /*m_browser->clear();*/ }
+  inline void copy()                                                     { /*m_browser->copy();*/ }
   inline void addMsg(const QString &nick, const QString &message, bool direction = true) { m_view->addMsg(nick, message, direction); }
 
 protected:

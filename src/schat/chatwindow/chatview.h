@@ -19,7 +19,10 @@
 #ifndef CHATVIEW_H_
 #define CHATVIEW_H_
 
+#include <QPointer>
 #include <QWidget>
+
+#include "channellog.h"
 
 class ChatWindowStyleOutput;
 class QUrl;
@@ -39,8 +42,11 @@ class ChatView : public QWidget
 public:
   ChatView(QWidget *parent = 0);
   ~ChatView();
-  void addServiceMsg(const QString &msg);
+  inline QString channel() const         { return m_channel; }
+  inline void channel(const QString &ch) { m_channel = ch; if (m_channelLog) m_channelLog->setChannel(ch); }
   void addMsg(const QString &sender, const QString &message, bool direction = true);
+  void addServiceMsg(const QString &msg);
+  void log(bool enable);
 
 private slots:
   void linkClicked(const QUrl &url);
@@ -48,7 +54,10 @@ private slots:
 private:
   void appendMessage(QString message, bool same_from = false);
 
+  bool m_log;
   ChatWindowStyleOutput *m_style;
+  QPointer<ChannelLog> m_channelLog;
+  QString m_channel;
   QString m_prev;
   QWebView *m_view;
   Settings *m_settings;

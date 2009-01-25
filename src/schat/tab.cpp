@@ -31,11 +31,11 @@ Tab::Tab(const QIcon &icon, QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_view);
-  mainLay->addWidget(m_browser);
+//  mainLay->addWidget(m_browser);
   mainLay->setMargin(0);
 
   m_settings = settings;
-  m_browser->log(m_settings->getBool("LogPrivate"));
+  m_view->log(m_settings->getBool("LogPrivate"));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 
@@ -43,5 +43,5 @@ Tab::Tab(const QIcon &icon, QWidget *parent)
 void Tab::notify(int code)
 {
   if (code == Settings::MiscSettingsChanged)
-    m_browser->log(m_settings->getBool("LogPrivate"));
+    m_view->log(m_settings->getBool("LogPrivate"));
 }
