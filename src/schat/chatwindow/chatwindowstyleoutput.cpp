@@ -195,6 +195,7 @@ QString ChatWindowStyleOutput::makeStatus(const QString &message, const QString 
     html = html.replace(pos, timeRegExp.cap(0).length(), Qt::escape(time));
 
   // Replace %messages%, replacing last to avoid errors if messages contains tags.
-  html = html.replace("%message%", Qt::escape(message).replace("\\","\\\\").remove('\r').replace("%","&#37;")+"&nbsp;");
+  QString msg = message;
+  html = html.replace("%message%", msg.replace("\\","\\\\").remove('\r').replace("%","&#37;")+"&nbsp;");
   return html;
 }
