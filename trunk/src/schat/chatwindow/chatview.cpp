@@ -49,6 +49,68 @@ ChatView::~ChatView()
 }
 
 
+/*!
+ * Уведомление о смене пользователем ника.
+ */
+QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick)
+{
+  QString nick    = Qt::escape(oldNick);
+  QString nickHex = newNick.toUtf8().toHex();
+  QString nickNew = Qt::escape(newNick);
+  QString html = "<span class='statusChangedNick'>";
+
+  if (gender)
+    html += tr("<b>%1</b> теперь известна как <b><a href='nick:%2'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
+  else
+    html += tr("<b>%1</b> теперь известен как <b><a href='nick:%2'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
+
+  html += "</span>";
+  return html;
+}
+
+
+/*!
+ * Уведомление об подключении нового пользователя.
+ */
+QString ChatView::statusNewUser(quint8 gender, const QString &nick)
+{
+  QString escaped = Qt::escape(nick);
+  QString nickHex = nick.toUtf8().toHex();
+  QString out = "<span class='statusNewUser'>";
+
+  if (gender)
+    out += tr("<b><a href='nick:%1'>%2</a></b> зашла в чат").arg(nickHex).arg(escaped);
+  else
+    out += tr("<b><a href='nick:%1'>%2</a></b> зашёл в чат").arg(nickHex).arg(escaped);
+
+  out += "</span>";
+  return out;
+}
+
+
+/*!
+ * Уведомление об отключении пользователя.
+ */
+QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QString &bye)
+{
+  QString escaped = Qt::escape(nick);
+  QString nickHex = nick.toUtf8().toHex();
+  QString out = "<span class='statusUserLeft'>";
+
+  QString byeMsg;
+  if (!bye.isEmpty())
+    byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
+
+  if (gender)
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+  else
+    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+
+  out += "</span>";
+  return out;
+}
+
+
 void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
 {
   bool same = false;
@@ -62,8 +124,12 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
 }
 
 
+/*!
+ * Универсальное сервисное сообщение.
+ */
 void ChatView::addServiceMsg(const QString &msg)
 {
+  toLog(msg);
   appendMessage(m_style->makeStatus(msg));
 }
 
@@ -98,4 +164,19 @@ void ChatView::appendMessage(QString message, bool same_from)
 
   QString js_message = QString("append%2Message(\"%1\");").arg(message.replace("\"","\\\"").replace("\n","\\n")).arg(same_from?"Next":"");
   m_view->page()->mainFrame()->evaluateJavaScript(js_message);
+}
+
+
+/*!
+ * Записывает строку в журнал.
+ */
+void ChatView::toLog(const QString &text)
+{
+  if (m_log) {
+    if (!m_channelLog) {
+      m_channelLog = new ChannelLog(this);
+      m_channelLog->setChannel(m_channel);
+    }
+    m_channelLog->msg(text);
+  }
 }

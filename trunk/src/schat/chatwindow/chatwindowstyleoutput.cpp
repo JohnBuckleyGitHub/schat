@@ -137,8 +137,8 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
       html = sameSender ? m_style->getNextIncomingHtml() : m_style->getIncomingHtml();
   }
 
-  html = html.replace("%sender%", Qt::escape(sender));
-  html = html.replace("%senderScreenName%", Qt::escape(sender));
+  html = html.replace("%sender%", sender);
+  html = html.replace("%senderScreenName%", sender);
   html = html.replace("%service%", "schat");
   html = html.replace("%senderStatusIcon%", "");
 

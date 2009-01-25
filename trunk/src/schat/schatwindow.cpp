@@ -22,6 +22,7 @@
 
 #include "aboutdialog.h"
 #include "abstractprofile.h"
+#include "chatwindow/chatview.h"
 #include "mainchannel.h"
 #include "schatwindow.h"
 #include "settings.h"
@@ -237,15 +238,15 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     case ErrorOldClientProtocol:
-      m_main->msg(ChatBrowser::msgOldClientProtocol());
+      m_main->msg("<span class='statusOldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
       break;
 
     case ErrorOldServerProtocol:
-      m_main->msg(ChatBrowser::msgOldServerProtocol());
+      m_main->msg("<span class='statusOldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
       break;
 
     case ErrorBadNickName:
-      m_main->msg(ChatBrowser::msgBadNickName(m_profile->nick()));
+      m_main->msg("<span class='statusBadNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(m_profile->nick())) + "</span>");
       break;
 
     case ErrorUsersLimitExceeded:
@@ -255,7 +256,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      m_main->msg(ChatBrowser::msgAccessDenied(reason));
+      m_main->msg("<span class='statusAccessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
       break;
   }
 
@@ -271,12 +272,13 @@ void SChatWindow::accessDenied(quint16 reason)
 void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
 {
   if (network.isEmpty()) {
-    m_main->msg(ChatBrowser::msgReadyForUse(server));
-    m_statusLabel->setText(tr("Успешно подключены к серверу %1").arg(server));
+    QString text = tr("Успешно подключены к серверу %1").arg(server);
+    m_main->msg("<span class='statusReadyForUse'>" + text + "</span>");
+    m_statusLabel->setText(text);
     setWindowTitle(QApplication::applicationName());
   }
   else {
-    m_main->msg(ChatBrowser::msgReadyForUse(network, server));
+    m_main->msg("<span class='statusReadyForUse'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
     m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(QApplication::applicationName() + " - " + network);
   }
@@ -426,7 +428,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg(ChatBrowser::msgLinkLeave(network, name));
+  m_main->msg("<span class='statusLinkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -446,13 +448,10 @@ void SChatWindow::message(const QString &sender, const QString &msg)
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg(ChatBrowser::msgNewLink(network, name));
+  m_main->msg("<span class='statusNewLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   if (m_users->isUser(nick)) {
@@ -470,16 +469,16 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
       }
       else {
         AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(newIndex));
-        tab->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+        tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
         if (m_tabs->currentIndex() == oldIndex)
           m_tabs->setCurrentIndex(newIndex);
       }
 
-      tab->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+      tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
     }
 
     newProfile(gender, newNick, name);
-    m_main->msg(ChatBrowser::msgChangedNick(gender, nick, newNick));
+    m_main->msg(ChatView::statusChangedNick(gender, nick, newNick));
   }
 }
 
@@ -542,7 +541,7 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
     echo = 0;
 
   if (echo == 1) {
-    QString msg = ChatBrowser::msgNewUser(profile.genderNum(), nick);
+    QString msg = ChatView::statusNewUser(profile.genderNum(), nick);
     m_main->msg(msg);
 
     int index = tabIndex(nick);
@@ -627,7 +626,7 @@ void SChatWindow::sendMsg(const QString &msg)
 void SChatWindow::serverMessage(const QString &msg)
 {
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-  tab->msg(msg);
+  tab->msg(msg); /// \todo Необходимо фильтровать HTML.
 }
 
 
@@ -727,7 +726,7 @@ void SChatWindow::stopNotice(int index)
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается когда в `m_clientService` нет активного подключения.
  */
 void SChatWindow::unconnected(bool echo)
@@ -736,7 +735,7 @@ void SChatWindow::unconnected(bool echo)
   m_users->clear();
 
   if (echo)
-    m_main->msg(ChatBrowser::msgDisconnect());
+    m_main->msg("<span class='statusDisconnect'>" + tr("Соединение разорвано") + "</span>");
 }
 
 
@@ -755,10 +754,10 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
       if (index != -1) {
         AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
         if (tab->type() == AbstractTab::Private)
-          tab->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
+          tab->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
       }
 
-      m_main->msg(ChatBrowser::msgUserLeft(profile.genderNum(), nick, bye));
+      m_main->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
     }
   }
 }
@@ -937,7 +936,7 @@ void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
     tab->msg(m_cmds.value(command));
   }
   else
-    tab->msg(ChatBrowser::msgUnknownCmd(command));
+    tab->msg("<span class='statusUnknownCmd'>" + tr("Неизвестная команда: <b>%1</b>").arg(command) + "</span>");
 }
 
 
