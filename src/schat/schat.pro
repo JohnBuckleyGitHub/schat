@@ -25,7 +25,7 @@ SCHAT_BENCHMARK  = 0
 
 DEFINES += SCHAT_CLIENT
 
-QT += network
+QT += network webkit
 TEMPLATE = app
 
 HEADERS += \
@@ -36,6 +36,7 @@ HEADERS += \
     abstracttab.h \
     channellog.h \
     chatbrowser.h \
+    chatwindow/chatview.h \
     chatwindow/chatwindowstyle.h \
     chatwindow/chatwindowstyleoutput.h \
     clientservice.h \
@@ -73,6 +74,7 @@ SOURCES += \
     abstracttab.cpp \
     channellog.cpp \
     chatbrowser.cpp \
+    chatwindow/chatview.cpp \
     chatwindow/chatwindowstyle.cpp \
     chatwindow/chatwindowstyleoutput.cpp \
     clientservice.cpp \
