@@ -44,6 +44,9 @@ public:
   ~ChatView();
   inline QString channel() const         { return m_channel; }
   inline void channel(const QString &ch) { m_channel = ch; if (m_channelLog) m_channelLog->setChannel(ch); }
+  static QString statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick);
+  static QString statusNewUser(quint8 gender, const QString &nick);
+  static QString statusUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void addMsg(const QString &sender, const QString &message, bool direction = true);
   void addServiceMsg(const QString &msg);
   void log(bool enable);
@@ -53,6 +56,7 @@ private slots:
 
 private:
   void appendMessage(QString message, bool same_from = false);
+  void toLog(const QString &text);
 
   bool m_log;
   ChatWindowStyleOutput *m_style;
