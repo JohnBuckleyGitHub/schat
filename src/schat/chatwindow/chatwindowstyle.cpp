@@ -194,7 +194,8 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
   QStringList styleDirs;
 
   if (styleName != "Default")
-    qDebug() << "Find Style"; /// \todo Восстановить поиск стилей.
+    ;
+//    qDebug() << "Find Style"; /// \todo Восстановить поиск стилей.
 
   if (styleDirs.isEmpty()) {
 //    qDebug() << "Default Style";
@@ -205,9 +206,10 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
   else {
     d->styleName = styleName;
     if (styleDirs.count() > 1)
-      qDebug() << "found several styles with the same name. using first";
+      ;
+//      qDebug() << "found several styles with the same name. using first";
     d->baseHref = styleDirs.at(0);
-    qDebug() << "Using style:" << d->baseHref;
+//    qDebug() << "Using style:" << d->baseHref;
     d->defaultStyle = false;
   }
 

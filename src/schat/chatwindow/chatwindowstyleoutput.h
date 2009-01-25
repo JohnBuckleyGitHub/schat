@@ -53,6 +53,8 @@ public:
                      const QString &time = QDateTime::currentDateTime().toString("hh:mm:ss"));
 
 private:
+  void commonReplace(QString &html, const QString &msg, const QString &time);
+
   ChatWindowStyle *m_style;
   QString m_variant;
 };
