@@ -197,7 +197,7 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
     qDebug() << "Find Style"; /// \todo Восстановить поиск стилей.
 
   if (styleDirs.isEmpty()) {
-    qDebug() << "Default Style";
+//    qDebug() << "Default Style";
     d->styleName = "Default";
     d->baseHref = ":/webkit/Contents/Resources/";
     d->defaultStyle = true;
@@ -248,7 +248,7 @@ void ChatWindowStyle::listVariants()
     }
     // variantPath is relative to baseHref.
     variantPath = QString("Variants/%1").arg(*it);
-    qDebug() << variantName << variantPath;
+//    qDebug() << variantName << variantPath;
     d->variantsList.insert(variantName, variantPath);
   }
 }

@@ -28,7 +28,7 @@
 /*!
  * \brief This class represent a single chat window style.
  *
- * @author Michaël Larouche <larouche@kde.org>
+ * \author Michaël Larouche <larouche@kde.org>
  */
 class ChatWindowStyle
 {
