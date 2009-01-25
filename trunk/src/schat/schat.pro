@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ HEADERS += \
     channellog.h \
     chatbrowser.h \
     chatwindow/chatwindowstyle.h \
+    chatwindow/chatwindowstyleoutput.h \
     clientservice.h \
     emoticonmovie.h \
     emoticonsreader.h \
@@ -73,6 +74,7 @@ SOURCES += \
     channellog.cpp \
     chatbrowser.cpp \
     chatwindow/chatwindowstyle.cpp \
+    chatwindow/chatwindowstyleoutput.cpp \
     clientservice.cpp \
     emoticonmovie.cpp \
     emoticonsreader.cpp \
