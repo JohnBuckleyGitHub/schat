@@ -23,6 +23,9 @@
 #include "chatwindowstyle.h"
 #include "chatwindowstyleoutput.h"
 
+/*!
+ * \brief Конструктор класса ChatView.
+ */
 ChatView::ChatView(QWidget *parent)
   : QWidget(parent)
 {
@@ -36,6 +39,7 @@ ChatView::ChatView(QWidget *parent)
   mainLay->setMargin(0);
 
   connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+  setFocusPolicy(Qt::NoFocus);
 }
 
 
@@ -45,9 +49,28 @@ ChatView::~ChatView()
 }
 
 
+void ChatView::addServiceMsg(const QString &msg)
+{
+  appendMessage(m_style->makeStatus(msg));
+}
+
+
+void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
+{
+  bool same = false;
+
+  if (m_prev.isEmpty() || m_prev != sender)
+    m_prev = sender;
+  else
+    same = true;
+
+  appendMessage(m_style->makeMessage(sender, message, direction, same), same);
+}
+
+
 void ChatView::linkClicked(const QUrl &url)
 {
-  qDebug() << "ChatView::linkClicked()" << url.toString();
+//  qDebug() << "ChatView::linkClicked()" << url.toString();
 
   QDesktopServices::openUrl(url);
 

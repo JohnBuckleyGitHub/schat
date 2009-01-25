@@ -24,7 +24,14 @@
 class ChatWindowStyleOutput;
 class QUrl;
 class QWebView;
+class Settings;
 
+/*!
+ * \brief Обеспечивает отображение текста в чате.
+ *
+ * По умолчанию используется движок WebKit, но при компиляции
+ * можно отказаться от него в пользу QTextBrowser.
+ */
 class ChatView : public QWidget
 {
   Q_OBJECT
@@ -32,15 +39,19 @@ class ChatView : public QWidget
 public:
   ChatView(QWidget *parent = 0);
   ~ChatView();
+  void addServiceMsg(const QString &msg);
+  void addMsg(const QString &sender, const QString &message, bool direction = true);
 
 private slots:
   void linkClicked(const QUrl &url);
 
 private:
-  void appendMessage(QString message, bool same_from);
+  void appendMessage(QString message, bool same_from = false);
 
   ChatWindowStyleOutput *m_style;
+  QString m_prev;
   QWebView *m_view;
+  Settings *m_settings;
 };
 
 #endif /*CHATVIEW_H_*/

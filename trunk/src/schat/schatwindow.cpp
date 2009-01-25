@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -440,7 +440,7 @@ void SChatWindow::message(const QString &sender, const QString &msg)
 {
   startNotice(m_tabs->indexOf(m_main), "Message");
 
-  m_main->msgNewMessage(sender, msg);
+  m_main->addMsg(sender, msg, m_profile->nick() == sender);
 }
 
 
@@ -591,9 +591,9 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
   if (tab)
     if (flag == 1)
-      tab->msgNewMessage(m_profile->nick(), msg);
+      tab->addMsg(m_profile->nick(), msg);
     else
-      tab->msgNewMessage(nick, msg);
+      tab->addMsg(nick, msg, false);
 
   startNotice(index, "PrivateMessage");
 }
