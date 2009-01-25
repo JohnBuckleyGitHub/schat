@@ -139,13 +139,6 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
 
   html = html.replace("%sender%", Qt::escape(sender));
   html = html.replace("%senderScreenName%", Qt::escape(sender));
-  html = html.replace("%time%", Qt::escape(time));
-
-  QRegExp timeRegExp("%time\\{([^}]*)\\}%");
-  int pos = 0;
-  while((pos = timeRegExp.indexIn(html, pos)) != -1)
-    html = html.replace(pos, timeRegExp.cap(0).length(), Qt::escape(time));
-
   html = html.replace("%service%", "schat");
   html = html.replace("%senderStatusIcon%", "");
 
@@ -169,9 +162,7 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
   // Replace %messageDirection% with "rtl"(Right-To-Left) or "ltr"(Left-to-right)
   html = html.replace("%messageDirection%", aligment ? "ltr" : "rtl" );
 
-  // Replace %messages%, replacing last to avoid errors if messages contains tags
-  QString msg = message;
-  html = html.replace("%message%", msg.replace("\\","\\\\").remove('\r').replace("%","&#37;") + "&nbsp;");
+  commonReplace(html, message, time);
   return html;
 }
 
@@ -188,14 +179,27 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
 QString ChatWindowStyleOutput::makeStatus(const QString &message, const QString &time)
 {
   QString html = m_style->getStatusHtml();
+  commonReplace(html, message, time);
+  return html;
+}
+
+
+/*!
+ * Общие замены для обычного и статусного сообщения.
+ *
+ * \param html Строка, в которой будет производиться замены.
+ * \param msg  Сообщение.
+ * \param time Время.
+ */
+void ChatWindowStyleOutput::commonReplace(QString &html, const QString &msg, const QString &time)
+{
   html = html.replace("%time%", Qt::escape(time));
   QRegExp timeRegExp("%time\\{([^}]*)\\}%");
   int pos = 0;
   while((pos = timeRegExp.indexIn(html, pos)) != -1)
-    html = html.replace(pos, timeRegExp.cap(0).length(), Qt::escape(time));
+  html = html.replace(pos, timeRegExp.cap(0).length(), Qt::escape(time));
 
-  // Replace %messages%, replacing last to avoid errors if messages contains tags.
-  QString msg = message;
-  html = html.replace("%message%", msg.replace("\\","\\\\").remove('\r').replace("%","&#37;")+"&nbsp;");
-  return html;
+  // Replace %messages%, replacing last to avoid errors if messages contains tags
+  QString message = msg;
+  html = html.replace("%message%", message.replace("\\","\\\\").remove('\r').replace("%","&#37;") + "&nbsp;");
 }
