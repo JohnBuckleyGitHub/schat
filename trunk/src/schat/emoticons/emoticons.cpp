@@ -20,8 +20,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QFile>
+#include <QApplication>
 #include <QDir>
+#include <QFile>
 
 #include "emoticons.h"
 #include "emoticonsprovider.h"
@@ -89,8 +90,8 @@ void EmoticonsPrivate::themeChanged(const QString &path)
 /**
  * Default constructor
  */
-Emoticons::Emoticons()
-  : d(new EmoticonsPrivate(this))
+Emoticons::Emoticons(QObject *parent)
+  : QObject(parent), d(new EmoticonsPrivate(this))
 {
 //    d->loadServiceList();
 //    d->m_dirwatch = new KDirWatch;
@@ -173,19 +174,23 @@ QString Emoticons::currentThemeName()
 
 
 /*!
- * Returns a list of installed theme
+ * Returns a list of installed theme.
+ *
+ * \todo Невалидные темы не должны добавляться в список!
  */
 QStringList Emoticons::themeList()
 {
   QStringList ls;
-//    const QStringList themeDirs = KGlobal::dirs()->findDirs("emoticons", "");
-//
-//    for (int i = 0; i < themeDirs.count(); ++i) {
-//        QDir themeQDir(themeDirs[i]);
-//        themeQDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
-//        themeQDir.setSorting(QDir::Name);
-//        ls << themeQDir.entryList();
-//    }
+  QStringList themeDirs; /// \todo Добавить другие пути к темам смайликов.
+  themeDirs << (QApplication::applicationDirPath() + "/emoticons/");
+
+  for (int i = 0; i < themeDirs.count(); ++i) {
+    QDir themeQDir(themeDirs[i]);
+    themeQDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    themeQDir.setSorting(QDir::Name);
+    ls << themeQDir.entryList();
+  }
+
   return ls;
 }
 

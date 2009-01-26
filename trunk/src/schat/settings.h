@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,16 +27,11 @@
 #include <QTextCursor>
 
 #include "abstractsettings.h"
+#include "emoticons/emoticons.h"
 #include "network.h"
 #include "update/update.h"
 
 class AbstractProfile;
-
-struct Emoticons {
-  QString name;
-  QString file;
-  Emoticons(QString _name, QString _file) { name = _name; file = _file; }
-};
 
 #define settings (static_cast<Settings *>(AbstractSettings::instance()))
 
@@ -71,16 +66,16 @@ public:
   Settings(const QString &filename, QObject *parent = 0);
   inline AbstractProfile* profile()                    { return m_profile; }
   inline QByteArray splitter() const                   { return m_splitter; }
-  inline QMap<QString, QStringList> emoticons() const  { return m_emoticons; }
+  inline Emoticons* emoticons() const                  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
-  QList<Emoticons> emoticons(const QString &text) const;
+//  QList<Emoticons> emoticons(const QString &text) const;
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
-  void createEmoticonsMap();
+//  void createEmoticonsMap();
   void notify(int notify);
   void notify(int notify, int index);
   void read();
@@ -111,8 +106,8 @@ private:
 
   AbstractProfile *m_profile;
   QByteArray m_splitter;
-  QMap<QString, QStringList> m_emoticons;
   QPoint m_pos;
+  QPointer<Emoticons> m_emoticons;
   QPointer<Update> m_update;
   QSettings *m_default;
   QSize m_size;

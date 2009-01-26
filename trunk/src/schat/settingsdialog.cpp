@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "emoticons/emoticons.h"
 #include "emoticonsreader.h"
 #include "icondefreader.h"
 #include "profilewidget.h"
@@ -251,10 +252,6 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   m_enableCheck->setToolTip(tr("Включает использование графических смайликов"));
   connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
-  m_animateCheck = new QCheckBox(tr("Разрешить анимацию"), this);
-  m_animateCheck->setToolTip(tr("Разрешить поддержку анимации в смайликах,\nможет приводить к повышенной загрузке процессора\nтакже выбранная тема должна поддерживать анимацию"));
-  m_animateCheck->setChecked(m_settings->getBool("UseAnimatedEmoticons"));
-
   m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
   m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
   m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
@@ -265,7 +262,6 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   mainLay->addWidget(m_enableCheck);
-  mainLay->addWidget(m_animateCheck);
   mainLay->addWidget(m_requireSpacesCheck);
   mainLay->addStretch();
   mainLay->addWidget(url);
@@ -284,7 +280,6 @@ void EmoticonsSettings::reset(int page)
 {
   if (page == m_id) {
     m_enableCheck->setChecked(true);
-    m_animateCheck->setChecked(false);
     m_requireSpacesCheck->setChecked(true);
     m_themeCombo->setCurrentIndex(m_themeCombo->findText("Kolobok"));
     enable(true);
@@ -295,10 +290,9 @@ void EmoticonsSettings::reset(int page)
 void EmoticonsSettings::save()
 {
   m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
-  m_settings->setBool("UseAnimatedEmoticons", m_animateCheck->isChecked());
   m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
   m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
-  m_settings->createEmoticonsMap();
+//  m_settings->createEmoticonsMap();
   m_settings->notify(Settings::EmoticonsChanged);
 }
 
@@ -306,7 +300,6 @@ void EmoticonsSettings::save()
 void EmoticonsSettings::enable(bool checked)
 {
   m_themeGroup->setEnabled(checked);
-  m_animateCheck->setEnabled(checked);
   m_requireSpacesCheck->setEnabled(checked);
 }
 
@@ -319,25 +312,8 @@ void EmoticonsSettings::openFolder()
 
 bool EmoticonsSettings::createThemeList()
 {
-  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/";
-  QDir dir(emoticonsPath);
-  QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+  m_themeCombo->addItems(Emoticons::themeList());
 
-  if (list.isEmpty())
-    return false;
-
-  foreach (QString theme, list) {
-    if (QFile::exists(emoticonsPath + theme + "/icondef.xml")) {
-      IconDefReader reader(0);
-      if (reader.readFile(emoticonsPath + theme + "/icondef.xml"))
-        m_themeCombo->addItem(theme);
-    }
-    else if (QFile::exists(emoticonsPath + theme + "/emoticons.xml")) {
-      EmoticonsReader reader(0);
-      if (reader.readFile(emoticonsPath + theme + "/emoticons.xml"))
-        m_themeCombo->addItem(theme);
-    }
-  }
   if (m_themeCombo->count() == -1)
     return false;
   else {

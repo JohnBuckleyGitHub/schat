@@ -317,117 +317,117 @@ void ChatBrowser::msgNewMessage(const QString &nick, const QString &message)
   docCursor.insertHtml(msg);
   QString plainMsg = doc.toPlainText().mid(offset);
 
-  if (m_useEmoticons && emoticonsEnable) {
-    QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
-    QMap<int, PrepareEmoticons> prepareEmoticons;
-
-    if (!emoticons.isEmpty()) {
-      QMap<QString, int> count;
-      QList<int> starts;
-      QList<int> ends;
-      int size    = toPlainText().size();
-      int docSize = doc.toPlainText().size();
-
-      for (int i = 0; i < emoticons.size(); ++i) {
-        Emoticons emoticon = emoticons.at(i);
-        docCursor.setPosition(offset);
-
-        do {
-          if (emoticon.file.isEmpty())
-            continue;
-
-          bool ok = false;
-          docCursor = doc.find(emoticon.name, docCursor);
-
-          if (docCursor.selectedText() == emoticon.name) {
-            if (m_emoticonsRequireSpaces) {
-              QTextCursor findCursor(&doc);
-
-              // Сообщение содержит только один смайлик и больше ничего.
-              if (docCursor.anchor() == offset && docCursor.position() == docSize)
-                ok = true;
-              // Код смайлика находится в начале строки, после него должен следовать пробел.
-              else if (docCursor.anchor() == offset) {
-                findCursor.setPosition(docCursor.position());
-                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-                if (findCursor.selectedText().at(0).isSpace())
-                  ok = true;
-              }
-              // Код смайлика находится в конце строки, перед ним должен находится пробел.
-              else if (docCursor.position() == docSize) {
-                findCursor.setPosition(docCursor.anchor());
-                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-                if (findCursor.selectedText().at(0).isSpace())
-                  ok = true;
-              }
-              // Код смайлика находится внутри строки, с обоих сторон должны находится пробелы.
-              else {
-                findCursor.setPosition(docCursor.anchor());
-                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
-                QChar prev = findCursor.selectedText().at(0);
-                findCursor.setPosition(docCursor.position());
-                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
-                QChar next = findCursor.selectedText().at(0);
-                if (prev.isSpace() && next.isSpace())
-                  ok = true;
-              }
-            }
-            else
-              ok = true;
-          }
-
-          if (ok) {
-            int anchor   = docCursor.anchor();
-            int position = docCursor.position();
-
-            // Обход проблемы с кодами смайликов содержащими общие части
-            // при выключенной опции "Смайлики отделены пробелами".
-            if (!m_emoticonsRequireSpaces) {
-              if (starts.contains(anchor) || ends.contains(position))
-                continue;
-              else {
-                starts << anchor;
-                ends << position;
-              }
-            }
-
-            // Ограничение на количество смайликов одного типа,
-            // с учётом синонимов.
-            QString file = emoticon.file;
-            if (count.contains(file)) {
-              int value = count.value(file);
-              if (value == maxSingleTypeEmoticons)
-                break;
-              else
-                count.insert(file, ++value);
-            }
-            else
-              count.insert(file, 1);
-
-            prepareEmoticons.insert(anchor, PrepareEmoticons(position, emoticon.name, file));
-          }
-
-        } while (!docCursor.isNull());
-      }
-
-      if (!prepareEmoticons.isEmpty()) {
-        int blockStart = size + offset;
-        int fix        = 0;
-        QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-        QTextCursor emoCursor(&doc);
-
-        QMapIterator<int, PrepareEmoticons> i(prepareEmoticons);
-        while (i.hasNext()) {
-          i.next();
-          emoCursor.setPosition(i.key() - fix);
-          emoCursor.setPosition(i.value().position - fix, QTextCursor::KeepAnchor);
-          emoCursor.insertImage(i.value().file);
-          fix += i.value().name.size() - 1;
-          addAnimation(emoticonsPath + i.value().file, size + emoCursor.position(), blockStart);
-        }
-      }
-    }
-  }
+//  if (m_useEmoticons && emoticonsEnable) {
+//    QList<Emoticons> emoticons = m_settings->emoticons(plainMsg);
+//    QMap<int, PrepareEmoticons> prepareEmoticons;
+//
+//    if (!emoticons.isEmpty()) {
+//      QMap<QString, int> count;
+//      QList<int> starts;
+//      QList<int> ends;
+//      int size    = toPlainText().size();
+//      int docSize = doc.toPlainText().size();
+//
+//      for (int i = 0; i < emoticons.size(); ++i) {
+//        Emoticons emoticon = emoticons.at(i);
+//        docCursor.setPosition(offset);
+//
+//        do {
+//          if (emoticon.file.isEmpty())
+//            continue;
+//
+//          bool ok = false;
+//          docCursor = doc.find(emoticon.name, docCursor);
+//
+//          if (docCursor.selectedText() == emoticon.name) {
+//            if (m_emoticonsRequireSpaces) {
+//              QTextCursor findCursor(&doc);
+//
+//              // Сообщение содержит только один смайлик и больше ничего.
+//              if (docCursor.anchor() == offset && docCursor.position() == docSize)
+//                ok = true;
+//              // Код смайлика находится в начале строки, после него должен следовать пробел.
+//              else if (docCursor.anchor() == offset) {
+//                findCursor.setPosition(docCursor.position());
+//                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+//                if (findCursor.selectedText().at(0).isSpace())
+//                  ok = true;
+//              }
+//              // Код смайлика находится в конце строки, перед ним должен находится пробел.
+//              else if (docCursor.position() == docSize) {
+//                findCursor.setPosition(docCursor.anchor());
+//                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+//                if (findCursor.selectedText().at(0).isSpace())
+//                  ok = true;
+//              }
+//              // Код смайлика находится внутри строки, с обоих сторон должны находится пробелы.
+//              else {
+//                findCursor.setPosition(docCursor.anchor());
+//                findCursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+//                QChar prev = findCursor.selectedText().at(0);
+//                findCursor.setPosition(docCursor.position());
+//                findCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+//                QChar next = findCursor.selectedText().at(0);
+//                if (prev.isSpace() && next.isSpace())
+//                  ok = true;
+//              }
+//            }
+//            else
+//              ok = true;
+//          }
+//
+//          if (ok) {
+//            int anchor   = docCursor.anchor();
+//            int position = docCursor.position();
+//
+//            // Обход проблемы с кодами смайликов содержащими общие части
+//            // при выключенной опции "Смайлики отделены пробелами".
+//            if (!m_emoticonsRequireSpaces) {
+//              if (starts.contains(anchor) || ends.contains(position))
+//                continue;
+//              else {
+//                starts << anchor;
+//                ends << position;
+//              }
+//            }
+//
+//            // Ограничение на количество смайликов одного типа,
+//            // с учётом синонимов.
+//            QString file = emoticon.file;
+//            if (count.contains(file)) {
+//              int value = count.value(file);
+//              if (value == maxSingleTypeEmoticons)
+//                break;
+//              else
+//                count.insert(file, ++value);
+//            }
+//            else
+//              count.insert(file, 1);
+//
+//            prepareEmoticons.insert(anchor, PrepareEmoticons(position, emoticon.name, file));
+//          }
+//
+//        } while (!docCursor.isNull());
+//      }
+//
+//      if (!prepareEmoticons.isEmpty()) {
+//        int blockStart = size + offset;
+//        int fix        = 0;
+//        QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+//        QTextCursor emoCursor(&doc);
+//
+//        QMapIterator<int, PrepareEmoticons> i(prepareEmoticons);
+//        while (i.hasNext()) {
+//          i.next();
+//          emoCursor.setPosition(i.key() - fix);
+//          emoCursor.setPosition(i.value().position - fix, QTextCursor::KeepAnchor);
+//          emoCursor.insertImage(i.value().file);
+//          fix += i.value().name.size() - 1;
+//          addAnimation(emoticonsPath + i.value().file, size + emoCursor.position(), blockStart);
+//        }
+//      }
+//    }
+//  }
 
   append(doc.toHtml());
 
