@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -158,7 +158,6 @@ private slots:
 private:
   bool createThemeList();
 
-  QCheckBox *m_animateCheck;
   QCheckBox *m_enableCheck;
   QCheckBox *m_requireSpacesCheck;
   QComboBox *m_themeCombo;

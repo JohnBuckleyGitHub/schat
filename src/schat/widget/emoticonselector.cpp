@@ -64,38 +64,38 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 
 void EmoticonSelector::prepareList()
 {
-  int row = 0;
-  int col = 0;
-  QMap<QString, QStringList> list = m_settings->emoticons();
-  int emoticonsPerRow = (int) sqrt((float)list.count());
-  if (emoticonsPerRow * emoticonsPerRow == list.count())
-    emoticonsPerRow--;
-
-  if (m_lay)
-    delete m_lay;
-
-  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
-
-  m_lay = new QGridLayout(this);
-  m_lay->setMargin(2);
-  m_lay->setSpacing(2);
-  m_movieList.clear();
-
-  QMapIterator<QString, QStringList> i(list);
-  while (i.hasNext()) {
-    i.next();
-    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + i.key(), this);
-    connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
-    connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
-    connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
-    m_lay->addWidget(label, row, col);
-    if (col == emoticonsPerRow) {
-      col = 0;
-      row++;
-    }
-    else
-      col++;
-  }
+//  int row = 0;
+//  int col = 0;
+//  QMap<QString, QStringList> list = m_settings->emoticons();
+//  int emoticonsPerRow = (int) sqrt((float)list.count());
+//  if (emoticonsPerRow * emoticonsPerRow == list.count())
+//    emoticonsPerRow--;
+//
+//  if (m_lay)
+//    delete m_lay;
+//
+//  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+//
+//  m_lay = new QGridLayout(this);
+//  m_lay->setMargin(2);
+//  m_lay->setSpacing(2);
+//  m_movieList.clear();
+//
+//  QMapIterator<QString, QStringList> i(list);
+//  while (i.hasNext()) {
+//    i.next();
+//    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + i.key(), this);
+//    connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
+//    connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
+//    connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
+//    m_lay->addWidget(label, row, col);
+//    if (col == emoticonsPerRow) {
+//      col = 0;
+//      row++;
+//    }
+//    else
+//      col++;
+//  }
 }
 
 

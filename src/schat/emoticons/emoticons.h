@@ -45,7 +45,7 @@ class Emoticons : public QObject
   Q_OBJECT
 
 public:
-  Emoticons();
+  Emoticons(QObject *parent = 0);
   ~Emoticons();
   EmoticonsTheme theme();
   EmoticonsTheme theme(const QString &name);

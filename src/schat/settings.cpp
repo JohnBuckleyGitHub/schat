@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,25 +47,25 @@ Settings::Settings(const QString &filename, QObject *parent)
 /*!
  * \brief Возвращает список всех смайликов которые были найдены в строке.
  */
-QList<Emoticons> Settings::emoticons(const QString &text) const
-{
-  QList<Emoticons> out;
-
-  if (!m_emoticons.isEmpty() && !text.isEmpty()) {
-    QMapIterator <QString, QStringList> i(m_emoticons);
-    while (i.hasNext()) {
-      i.next();
-      QStringList list = i.value();
-      foreach (QString name, list) {
-        if (text.contains(name)) {
-          out << Emoticons(name, i.key());
-        }
-      }
-    }
-  }
-
-  return out;
-}
+//QList<Emoticons> Settings::emoticons(const QString &text) const
+//{
+//  QList<Emoticons> out;
+//
+//  if (!m_emoticons.isEmpty() && !text.isEmpty()) {
+//    QMapIterator <QString, QStringList> i(m_emoticons);
+//    while (i.hasNext()) {
+//      i.next();
+//      QStringList list = i.value();
+//      foreach (QString name, list) {
+//        if (text.contains(name)) {
+//          out << Emoticons(name, i.key());
+//        }
+//      }
+//    }
+//  }
+//
+//  return out;
+//}
 
 
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
@@ -83,32 +83,32 @@ QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString
 /*!
  * \brief Создаёт карту смайликов.
  */
-void Settings::createEmoticonsMap()
-{
-  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
-  bool err = true;
-
-  if (QFile::exists(emoticonsPath + "/icondef.xml")) {
-    IconDefReader reader(&m_emoticons);
-    if (reader.readFile(emoticonsPath + "/icondef.xml")) {
-      err = false;
-      if (reader.refresh())
-        setInt("EmoticonsRefreshTime", reader.refresh());
-      else
-        setInt("EmoticonsRefreshTime", 50);
-    }
-  }
-  else if (QFile::exists(emoticonsPath + "/emoticons.xml")) {
-    EmoticonsReader reader(&m_emoticons);
-    if (reader.readFile(emoticonsPath + "/emoticons.xml"))
-      err = false;
-  }
-
-  if (err) {
-    m_emoticons.clear();
-    setBool("UseEmoticons", false);
-  }
-}
+//void Settings::createEmoticonsMap()
+//{
+//  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
+//  bool err = true;
+//
+//  if (QFile::exists(emoticonsPath + "/icondef.xml")) {
+//    IconDefReader reader(&m_emoticons);
+//    if (reader.readFile(emoticonsPath + "/icondef.xml")) {
+//      err = false;
+//      if (reader.refresh())
+//        setInt("EmoticonsRefreshTime", reader.refresh());
+//      else
+//        setInt("EmoticonsRefreshTime", 50);
+//    }
+//  }
+//  else if (QFile::exists(emoticonsPath + "/emoticons.xml")) {
+//    EmoticonsReader reader(&m_emoticons);
+//    if (reader.readFile(emoticonsPath + "/emoticons.xml"))
+//      err = false;
+//  }
+//
+//  if (err) {
+//    m_emoticons.clear();
+//    setBool("UseEmoticons", false);
+//  }
+//}
 
 
 void Settings::notify(int notify)
@@ -141,6 +141,15 @@ void Settings::notify(int notify)
       }
       else if (m_updateTimer->isActive())
         m_updateTimer->stop();
+      break;
+
+    case EmoticonsChanged:
+      if (getBool("UseEmoticons")) {
+        if (!m_emoticons)
+          m_emoticons = new Emoticons(this);
+      }
+      else if (m_emoticons)
+        m_emoticons->deleteLater();
       break;
 
     default:
@@ -177,13 +186,10 @@ void Settings::read()
   setBool("FirstRun",               true);
   setBool("EmoticonsRequireSpaces", true);
   setBool("UseEmoticons",           true);
-  setBool("UseAnimatedEmoticons",   false);
   setBool("Log",                    true);
   setBool("LogPrivate",             true);
   setBool("Sound",                  true);
   setBool("MotdEnable",             true);
-  setInt("EmoticonsRefreshTime",    50);
-  setInt("MaxSingleTypeEmoticons",  5);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
@@ -244,8 +250,10 @@ void Settings::read()
   AbstractSettings::read();
 
   normalizeInterval();
+  QApplication::setStyle(getString("Style"));
 
-  qApp->setStyle(getString("Style"));
+  if (getBool("UseEmoticons"))
+    m_emoticons = new Emoticons(this);
 
   network.fromConfig(getString("Network"));
   createServerList();
@@ -257,7 +265,7 @@ void Settings::read()
   m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
 
-  createEmoticonsMap();
+//  createEmoticonsMap();
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))
@@ -271,9 +279,7 @@ void Settings::read()
  */
 void Settings::write()
 {
-  m_ro << "EmoticonsRefreshTime"
-       << "MotdEnable"
-       << "MaxSingleTypeEmoticons"
+  m_ro << "MotdEnable"
        << "Updates/Mirrors"
        << "Updates/LevelQt"
        << "Updates/LevelCore"
