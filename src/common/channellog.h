@@ -24,6 +24,13 @@
 #include <QTextStream>
 #include <QDateTime>
 
+/*!
+ * \brief Универсальный класс для записи в лог каналов.
+ *
+ * Класс используется в клиенте и сервере и обеспечивает создание отдельный директорий в виде даты для логов.
+ * Поддерживаются простой текстовый формат логов таки html-формат.
+ * Из имён каналов удаляются символы недопустимые для имён файлов.
+ */
 class ChannelLog : public QObject {
   Q_OBJECT
 
@@ -37,6 +44,7 @@ public:
   inline QString channel()                       { return m_channel; }
   inline void setMode(Mode mode)                 { m_mode = mode; }
   static QString htmlFilter(const QString &html, int left = 7000, bool strict = true);
+  static QString parseLinks(const QString &message, bool plain = false);
   static QString toPlainText(const QString &str);
   void msg(const QString &text);
   void setChannel(const QString &channel);

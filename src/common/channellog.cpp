@@ -21,15 +21,6 @@
 #include "channellog.h"
 
 /*!
- * \class ChannelLog
- * \brief Универсальный класс для записи в лог каналов.
- *
- * Класс используется в клиенте и сервере и обеспечивает создание отдельный директорий в виде даты для логов.
- * Поддерживаются простой текстовый формат логов таки html-формат.
- * Из имён каналов удаляются символы недопустимые для имён файлов.
- */
-
-/*!
  * \brief Конструктор класса ChannelLog.
  */
 ChannelLog::ChannelLog(QObject *parent)
@@ -130,6 +121,87 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
     return "";
 
   return out.simplified();
+}
+
+
+/*!
+ * \author © 2002-2008 by the Kopete developers <kopete-devel@kde.org>
+ */
+static QString makeRegExp( const char *pattern )
+{
+  const QString urlChar = QLatin1String("\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
+  const QString boundaryStart = QString("(^|[^%1])(").arg(urlChar);
+  const QString boundaryEnd = QString(")([^%1]|$)").arg(urlChar);
+
+  return boundaryStart + QLatin1String(pattern) + boundaryEnd;
+}
+
+
+/*!
+ * Преобразование простых ссылок в html ссылки.
+ *
+ * \author © 2002-2008 by the Kopete developers <kopete-devel@kde.org>
+ */
+QString ChannelLog::parseLinks(const QString &message, bool plain)
+{
+  if (!plain)
+  {
+    // < in HTML *always* means start-of-tag
+    QStringList entries = message.split(QChar('<'), QString::KeepEmptyParts);
+
+    QStringList::Iterator it = entries.begin();
+
+    // first one is different: it doesn't start with an HTML tag.
+    if (it != entries.end()) {
+      *it = parseLinks( *it, true);
+      ++it;
+    }
+
+    for ( ; it != entries.end(); ++it ) {
+      QString curr = *it;
+      // > in HTML means start-of-tag if and only if it's the first one after a <
+      int tagclose = curr.indexOf(QChar('>'));
+      // no >: the HTML is broken, but we can cope
+      if (tagclose == -1)
+        continue;
+      QString tag = curr.left(tagclose + 1);
+      QString body = curr.mid(tagclose + 1);
+      *it = tag + parseLinks(body, true);
+    }
+    return entries.join(QLatin1String("<"));
+  }
+
+  QString result = message;
+
+  // common subpatterns - may not contain matching parens!
+  const QString name = QLatin1String("[\\w\\+\\-=_\\.]+");
+  const QString userAndPassword = QString("(?:%1(?::%1)?\\@)").arg(name);
+  const QString urlChar = QLatin1String("\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
+  const QString urlSection = QString("[%1]+").arg(urlChar);
+  const QString domain = QLatin1String("[\\-\\w_]+(?:\\.[\\-\\w_]+)+");
+
+  //Replace http/https/ftp links:
+  // Replace (stuff)://[user:password@](linkstuff) with a link
+  result.replace(
+    QRegExp(makeRegExp("\\w+://%1?\\w%2").arg(userAndPassword, urlSection)),
+    QLatin1String("\\1<a href=\"\\2\" title=\"\\2\">\\2</a>\\3"));
+
+  // Replace www.X.Y(linkstuff) with a http: link
+  result.replace(
+    QRegExp(makeRegExp("%1?www\\.%2%3").arg(userAndPassword, domain, urlSection)),
+    QLatin1String("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3"));
+
+  //Replace Email Links
+  // Replace user@domain with a mailto: link
+  result.replace(
+    QRegExp(makeRegExp("%1@%2").arg(name, domain)),
+    QLatin1String("\\1<a href=\"mailto:\\2\" title=\"mailto:\\2\">\\2</a>\\3"));
+
+  //Workaround for Bug 85061: Highlighted URLs adds a ' ' after the URL itself
+  // the trailing  &nbsp; is included in the url.
+  result.replace(QRegExp(QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")), QLatin1String("\\1\\3"));
+
+  return result;
 }
 
 

@@ -56,6 +56,7 @@ private slots:
   void linkClicked(const QUrl &url);
 
 private:
+  bool prepareCmd(const QString &cmd, QString &msg, bool cut = true) const;
   void appendMessage(QString message, bool same_from = false);
   void toLog(const QString &text);
 
