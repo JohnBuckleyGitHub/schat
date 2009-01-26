@@ -119,22 +119,44 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  qDebug() << html;
+//  qDebug() << html;
   toLog(html);
   appendMessage(m_style->makeStatus(html));
 }
 
 
+/*!
+ * Добавление сообщения от пользователя.
+ */
 void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
 {
+  QTextDocument doc;
+  doc.setHtml(message);
+  QString html = ChannelLog::htmlFilter(doc.toHtml());
+  html = ChannelLog::parseLinks(html);
+
+//  qDebug() << html;
+  QString escapedNick = Qt::escape(sender);
+
+  bool action = false;
   bool same = false;
 
-  if (m_prev.isEmpty() || m_prev != sender)
-    m_prev = sender;
-  else
-    same = true;
+  if (prepareCmd("/me ", html)) {
+    action = true;
+    m_prev = "";
 
-  appendMessage(m_style->makeMessage(sender, message, direction, same), same);
+    toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(html));
+  }
+  else {
+    if (m_prev.isEmpty() || m_prev != sender)
+      m_prev = sender;
+    else
+      same = true;
+
+    toLog(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(html));
+  }
+
+  appendMessage(m_style->makeMessage(sender, html, direction, same, "", action), same);
 }
 
 
@@ -169,6 +191,31 @@ void ChatView::linkClicked(const QUrl &url)
 
   QDesktopServices::openUrl(url);
 
+}
+
+
+/*!
+ * Проверяет входящее сообщение на наличие команды и при
+ * необходимости вырезает эту команду из строки.
+ *
+ * \param cmd Команда.
+ * \param msg Сообщение.
+ * \param cut Разрешает вырезание команды из строки.
+ *
+ * \return Возвращает \a true если команда была найдена.
+ */
+bool ChatView::prepareCmd(const QString &cmd, QString &msg, bool cut) const
+{
+  if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
+    if (cut) {
+      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      if (index != -1)
+        msg.remove(index, cmd.size());
+    }
+    return true;
+  }
+
+  return false;
 }
 
 

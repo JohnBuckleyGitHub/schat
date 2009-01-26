@@ -47,7 +47,6 @@ protected:
   void keyPressEvent(QKeyEvent *event);
 
 private:
-  QString parseLinks(const QString &message, bool plain = false);
   void createActions();
   void nextMsg();
   void prevMsg();
