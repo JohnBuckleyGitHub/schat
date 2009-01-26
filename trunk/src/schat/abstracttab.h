@@ -41,14 +41,14 @@ public:
   };
 
   AbstractTab(const QIcon &icon, QWidget *parent = 0);
-  inline bool notice()                           { return m_notice; }
-  inline QIcon icon()                            { return m_icon; }
-//  inline QTextCursor textCursor() const          { return m_browser->textCursor(); }
-  inline Type type() const                       { return m_type; }
-  inline void msg(const QString &text)           { m_view->addServiceMsg(text); }
-  inline void notice(bool enable)                { m_notice = enable; }
-  inline void setChannel(const QString &ch)      { m_view->channel(ch); }
-  inline void setIcon(const QIcon &icon)         { m_icon = icon; }
+  inline bool notice()                                                { return m_notice; }
+  inline QIcon icon()                                                 { return m_icon; }
+  inline Type type() const                                            { return m_type; }
+  inline void addFilteredMsg(const QString &msg, bool strict = false) { m_view->addFilteredMsg(msg, strict); }
+  inline void msg(const QString &text)                                { m_view->addServiceMsg(text); }
+  inline void notice(bool enable)                                     { m_notice = enable; }
+  inline void setChannel(const QString &ch)                           { m_view->channel(ch); }
+  inline void setIcon(const QIcon &icon)                              { m_icon = icon; }
 
 signals:
   void nickClicked(const QString &hex);

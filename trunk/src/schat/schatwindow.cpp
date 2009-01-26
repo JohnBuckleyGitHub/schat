@@ -626,7 +626,7 @@ void SChatWindow::sendMsg(const QString &msg)
 void SChatWindow::serverMessage(const QString &msg)
 {
   AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-  tab->msg(msg); /// \todo Необходимо фильтровать HTML.
+  tab->addFilteredMsg(msg); /// \todo Необходимо фильтровать HTML.
 }
 
 

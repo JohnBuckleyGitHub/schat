@@ -111,6 +111,20 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
 }
 
 
+/*!
+ * Универсальное фильтрованное сервисное сообщение.
+ */
+void ChatView::addFilteredMsg(const QString &msg, bool strict)
+{
+  QTextDocument doc;
+  doc.setHtml(msg);
+  QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
+  qDebug() << html;
+  toLog(html);
+  appendMessage(m_style->makeStatus(html));
+}
+
+
 void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
 {
   bool same = false;
