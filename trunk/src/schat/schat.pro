@@ -41,6 +41,9 @@ HEADERS += \
     chatwindow/chatwindowstyleoutput.h \
     clientservice.h \
     emoticonmovie.h \
+    emoticons/emoticons.h \
+    emoticons/emoticonsprovider.h \
+    emoticons/emoticonstheme.h \
     emoticonsreader.h \
     icondefreader.h \
     mainchannel.h \
@@ -79,6 +82,9 @@ SOURCES += \
     chatwindow/chatwindowstyleoutput.cpp \
     clientservice.cpp \
     emoticonmovie.cpp \
+    emoticons/emoticons.cpp \
+    emoticons/emoticonsprovider.cpp \
+    emoticons/emoticonstheme.cpp \
     emoticonsreader.cpp \
     icondefreader.cpp \
     main.cpp \
