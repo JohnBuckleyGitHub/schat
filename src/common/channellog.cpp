@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -37,11 +37,11 @@ ChannelLog::ChannelLog(QObject *parent)
 {
   m_mode = Html;
   m_date = dateStamp();
-  m_appPath = qApp->applicationDirPath();
+  m_appPath = QCoreApplication::applicationDirPath();
 }
 
 
-QString ChannelLog::htmlFilter(const QString &html, int left)
+QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
 {
   QString out = html;
 
@@ -55,7 +55,11 @@ QString ChannelLog::htmlFilter(const QString &html, int left)
     return "";
 
   /// Обрезает до максимальной длинны.
-  out = out.left(left);
+  if (left)
+    out = out.left(left);
+
+  if (!strict)
+    return out;
 
   /// Удаляет запрещённые теги.
   badStuff.setCaseSensitivity(Qt::CaseInsensitive);
