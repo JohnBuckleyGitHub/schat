@@ -42,6 +42,7 @@ EmoticonsTheme::EmoticonsThemeData::EmoticonsThemeData()
 
 EmoticonsTheme::EmoticonsThemeData::~EmoticonsThemeData()
 {
+  qDebug() << "EmoticonsTheme::EmoticonsThemeData::~EmoticonsThemeData()";
 //     delete provider;
 }
 
@@ -81,6 +82,7 @@ EmoticonsTheme::EmoticonsTheme(EmoticonsProvider *p)
  */
 EmoticonsTheme::~EmoticonsTheme()
 {
+  qDebug() << "EmoticonsTheme::~EmoticonsTheme()";
 }
 
 

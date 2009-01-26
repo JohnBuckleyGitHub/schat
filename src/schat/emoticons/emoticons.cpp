@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFile>
+#include <QDebug>
 
 #include "emoticons.h"
 #include "emoticonsprovider.h"
@@ -51,6 +52,7 @@ EmoticonsPrivate::EmoticonsPrivate(Emoticons *parent)
 
 EmoticonsPrivate::~EmoticonsPrivate()
 {
+  qDebug() << "EmoticonsPrivate::~EmoticonsPrivate()";
 //    delete m_dirwatch;
 }
 
@@ -104,6 +106,7 @@ Emoticons::Emoticons(QObject *parent)
  */
 Emoticons::~Emoticons()
 {
+  qDebug() << "Emoticons::~Emoticons()";
   delete d;
 }
 
