@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * Base class KdeEmoticons
+ * Base class PidginEmoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -19,24 +19,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KDE_EMOTICONS_H_
-#define KDE_EMOTICONS_H_
-
-#include <QDomDocument>
-#include <QObject>
+#ifndef PIDGIN_EMOTICONS_H_
+#define PIDGIN_EMOTICONS_H_
 
 #include <emoticons/emoticonsprovider.h>
 
-class KdeEmoticons : public EmoticonsProvider
+class PidginEmoticons : public EmoticonsProvider
 {
   Q_OBJECT
 
 public:
-  KdeEmoticons(QObject *parent);
+  PidginEmoticons(QObject *parent);
   bool loadTheme(const QString &path);
 
 private:
-  QDomDocument m_themeXml;
+  QStringList m_text;
 };
 
-#endif /*KDE_EMOTICONS_H_*/
+#endif /*PIDGIN_EMOTICONS_H_*/
