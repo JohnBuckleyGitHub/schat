@@ -292,7 +292,6 @@ void EmoticonsSettings::save()
   m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
   m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
   m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
-//  m_settings->createEmoticonsMap();
   m_settings->notify(Settings::EmoticonsChanged);
 }
 

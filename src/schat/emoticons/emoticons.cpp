@@ -32,88 +32,44 @@ class EmoticonsPrivate
 public:
   EmoticonsPrivate(Emoticons *parent);
   ~EmoticonsPrivate();
-  void loadServiceList();
-//  EmoticonsProvider *loadProvider(const KService::Ptr &service);
-
-//  QList<KService::Ptr> m_loaded;
   QHash<QString, EmoticonsTheme> m_themes;
-//  KDirWatch *m_dirwatch;
   Emoticons *q;
-
-private slots:
-  void themeChanged(const QString &path);
 };
+
 
 EmoticonsPrivate::EmoticonsPrivate(Emoticons *parent)
   : q(parent)
 {
 }
 
+
 EmoticonsPrivate::~EmoticonsPrivate()
 {
-  qDebug() << "EmoticonsPrivate::~EmoticonsPrivate()";
-//    delete m_dirwatch;
 }
 
-//bool priorityLessThan(const KService::Ptr &s1, const KService::Ptr &s2)
-//{
-//    return (s1->property("X-KDE-Priority").toInt() > s2->property("X-KDE-Priority").toInt());
-//}
 
-void EmoticonsPrivate::loadServiceList()
-{
-//    QString constraint("(exist Library)");
-//    m_loaded = KServiceTypeTrader::self()->query("Emoticons", constraint);
-//    qSort(m_loaded.begin(), m_loaded.end(), priorityLessThan);
-}
-
-//EmoticonsProvider *EmoticonsPrivate::loadProvider(const KService::Ptr &service)
-//{
-//    KPluginFactory *factory = KPluginLoader(service->library()).factory();
-//    if (!factory) {
-//        kWarning() << "Invalid plugin factory for" << service->library();
-//        return 0;
-//    }
-//    EmoticonsProvider *provider = factory->create<EmoticonsProvider>(0);
-//    return provider;
-//}
-
-void EmoticonsPrivate::themeChanged(const QString &path)
-{
-  QFileInfo info(path);
-  QString name = info.dir().dirName();
-
-  if (m_themes.contains(name)) {
-    q->theme(name);
-  }
-}
-
-/**
- * Default constructor
+/*!
+ * Default constructor.
  */
 Emoticons::Emoticons(QObject *parent)
   : QObject(parent), d(new EmoticonsPrivate(this))
 {
-//    d->loadServiceList();
-//    d->m_dirwatch = new KDirWatch;
-//    connect(d->m_dirwatch, SIGNAL(dirty(const QString&)), this, SLOT(themeChanged(const QString&)));
 }
 
 
-/**
- * Destruct the object
+/*!
+ * Destruct the object.
  */
 Emoticons::~Emoticons()
 {
-  qDebug() << "Emoticons::~Emoticons()";
   delete d;
 }
 
 
 /*!
- * Retrieve the current emoticons theme
+ * Retrieve the current emoticons theme.
  *
- * \return the current EmoticonsTheme
+ * \return the current EmoticonsTheme.
  */
 EmoticonsTheme Emoticons::theme()
 {
@@ -122,22 +78,18 @@ EmoticonsTheme Emoticons::theme()
 
 
 /*!
- * Retrieve the theme with name \p name
+ * Retrieve the theme with name \p name.
  *
- * \param name name of the theme
- * \return the EmoticonsTheme \p name
+ * \param name name of the theme.
+ * \return the EmoticonsTheme \p name.
  */
 EmoticonsTheme Emoticons::theme(const QString &name)
 {
-  qDebug() << "Emoticons::theme()" << name;
-
   if (d->m_themes.contains(name)) {
     return d->m_themes.value(name);
   }
 
-
   QString path = QApplication::applicationDirPath() + "/emoticons/" + name + '/';
-
   EmoticonsProvider *provider = 0;
 
   if (QFile::exists(path) + "icondef.xml") {
@@ -152,37 +104,33 @@ EmoticonsTheme Emoticons::theme(const QString &name)
     return theme;
   }
 
-
-//  for (int i = 0; i < d->m_loaded.size(); ++i) {
-//    QString fName =
-//        d->m_loaded.at(i)->property("X-KDE-EmoticonsFileName").toString();
-//    QString path = KGlobal::dirs()->findResource("emoticons", name + '/'
-//        + fName);
-//
-//    if (QFile::exists(path)) {
-//      EmoticonsProvider *provider = d->loadProvider(d->m_loaded.at(i));
-//      EmoticonsTheme theme(provider);
-//      theme.loadTheme(path);
-//      d->m_themes.insert(name, theme);
-//
-//      if (!d->m_dirwatch->contains(path)) {
-//        d->m_dirwatch->addFile(path);
-//      }
-//      return theme;
-//    }
-//  }
   return EmoticonsTheme();
 }
 
 
-/**
- * Returns the current parse mode
+/*!
+ * Возвращает \a true если режим парсинга
+ * установлен в EmoticonsTheme::StrictParse.
+ */
+bool Emoticons::strictParse()
+{
+  if (parseMode() == EmoticonsTheme::RelaxedParse)
+    return false;
+  else
+    return true;
+}
+
+
+/*!
+ * Returns the current parse mode.
  */
 EmoticonsTheme::ParseMode Emoticons::parseMode()
 {
-//    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "Emoticons");
-//    return (EmoticonsTheme::ParseMode) config.readEntry("parseMode", int(EmoticonsTheme::RelaxedParse));
-  return EmoticonsTheme::StrictParse;
+  EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
+  if (settings->getBool("EmoticonsRequireSpaces"))
+    mode = EmoticonsTheme::RelaxedParse;
+
+  return mode;
 }
 
 
@@ -191,8 +139,6 @@ EmoticonsTheme::ParseMode Emoticons::parseMode()
  */
 QString Emoticons::currentThemeName()
 {
-//    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "Emoticons");
-//    QString name = config.readEntry("emoticonsTheme", "kde4");
   return settings->getString("EmoticonTheme");
 }
 
@@ -218,10 +164,39 @@ QStringList Emoticons::themeList()
   return ls;
 }
 
+
 /*!
- * Set \p theme as the current theme
+ * Set the parse mode to \p mode.
  *
- * \param theme a pointer to a EmoticonsTheme object
+ * Поддерживаются запись только двух режимов:
+ * EmoticonsTheme::StrictParse и EmoticonsTheme::RelaxedParse.
+ */
+void Emoticons::setParseMode(EmoticonsTheme::ParseMode mode)
+{
+  bool strict = true;
+  if (mode == EmoticonsTheme::RelaxedParse)
+    strict = false;
+
+  settings->setBool("EmoticonsRequireSpaces", strict);
+}
+
+
+/*!
+ * Устанавливает режим парсинга.
+ */
+void Emoticons::setStrictParse(bool strict)
+{
+  if (strict)
+    setParseMode(EmoticonsTheme::StrictParse);
+  else
+    setParseMode(EmoticonsTheme::RelaxedParse);
+}
+
+
+/*!
+ * Set \p theme as the current theme.
+ *
+ * \param theme a pointer to a EmoticonsTheme object.
  */
 void Emoticons::setTheme(const EmoticonsTheme &theme)
 {
@@ -230,24 +205,11 @@ void Emoticons::setTheme(const EmoticonsTheme &theme)
 
 
 /*!
- * Set \p theme as the current theme
+ * Set \p theme as the current theme.
  *
- * \param theme the name of a theme
+ * \param theme the name of a theme.
  */
 void Emoticons::setTheme(const QString &theme)
 {
-//    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "Emoticons");
-//    config.writeEntry("emoticonsTheme", theme);
-//    config.sync();
-}
-
-
-/*!
- * Set the parse mode to \p mode
- */
-void Emoticons::setParseMode(EmoticonsTheme::ParseMode mode)
-{
-//    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "Emoticons");
-//    config.writeEntry("parseMode", int(mode));
-//    config.sync();
+  settings->setString("EmoticonTheme", theme);
 }

@@ -90,19 +90,20 @@ public:
   bool loadTheme(const QString &path);
   bool removeEmoticon(const QString &emo);
   EmoticonsTheme& operator=(const EmoticonsTheme &ket);
-  QMap<QString, QStringList> emoticonsMap() const;
   QList<Token> tokenize(const QString &message, ParseMode mode = DefaultParse) const;
+  QMap<QString, QStringList> emoticonsMap() const;
   QString fileName() const;
   QString parseEmoticons(const QString &text, ParseMode mode = DefaultParse, const QStringList &exclude = QStringList()) const;
   QString themeName() const;
   QString themePath() const;
   void createNew();
   void save();
+  void setMaxParse(int max);
   void setThemeName(const QString &name);
 
 private:
-    class EmoticonsThemeData;
-    QSharedDataPointer<EmoticonsThemeData> d;
+  class EmoticonsThemeData;
+  QSharedDataPointer<EmoticonsThemeData> d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(EmoticonsTheme::ParseMode)

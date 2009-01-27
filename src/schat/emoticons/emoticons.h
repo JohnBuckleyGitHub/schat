@@ -49,19 +49,17 @@ public:
   ~Emoticons();
   EmoticonsTheme theme();
   EmoticonsTheme theme(const QString &name);
-  static Emoticons *instance() { return m_self; }
+  static bool strictParse();
   static EmoticonsTheme::ParseMode parseMode();
   static QString currentThemeName();
   static QStringList themeList();
   static void setParseMode(EmoticonsTheme::ParseMode mode);
+  static void setStrictParse(bool strict = true);
   static void setTheme(const EmoticonsTheme &theme);
   static void setTheme(const QString &theme);
 
 private:
   EmoticonsPrivate * const d;
-  static Emoticons *m_self;
-
-//    Q_PRIVATE_SLOT(d, void themeChanged(const QString &path))
 };
 
 #endif /*EMOTICONS_H_*/
