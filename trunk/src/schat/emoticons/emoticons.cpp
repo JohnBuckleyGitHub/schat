@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * Class Emoticons
+ * Base class Emoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
  * Copyright © 2008 Montel Laurent <montel@kde.org>
  *
@@ -20,13 +20,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
-#include <QDir>
-#include <QFile>
-#include <QDebug>
+#include <QtGui>
 
 #include "emoticons.h"
 #include "emoticonsprovider.h"
+#include "providers/xmpp/xmpp_emoticons.h"
+#include "settings.h"
 
 class EmoticonsPrivate
 {
@@ -130,26 +129,48 @@ EmoticonsTheme Emoticons::theme()
  */
 EmoticonsTheme Emoticons::theme(const QString &name)
 {
-//    if (d->m_themes.contains(name)) {
-//        return d->m_themes.value(name);
+  qDebug() << "Emoticons::theme()" << name;
+
+  if (d->m_themes.contains(name)) {
+    return d->m_themes.value(name);
+  }
+
+
+  QString path = QApplication::applicationDirPath() + "/emoticons/" + name + '/';
+
+  EmoticonsProvider *provider = 0;
+
+  if (QFile::exists(path) + "icondef.xml") {
+    provider = new XmppEmoticons(this);
+    path += "icondef.xml";
+  }
+
+  if (provider) {
+    EmoticonsTheme theme(provider);
+    theme.loadTheme(path);
+    d->m_themes.insert(name, theme);
+    return theme;
+  }
+
+
+//  for (int i = 0; i < d->m_loaded.size(); ++i) {
+//    QString fName =
+//        d->m_loaded.at(i)->property("X-KDE-EmoticonsFileName").toString();
+//    QString path = KGlobal::dirs()->findResource("emoticons", name + '/'
+//        + fName);
+//
+//    if (QFile::exists(path)) {
+//      EmoticonsProvider *provider = d->loadProvider(d->m_loaded.at(i));
+//      EmoticonsTheme theme(provider);
+//      theme.loadTheme(path);
+//      d->m_themes.insert(name, theme);
+//
+//      if (!d->m_dirwatch->contains(path)) {
+//        d->m_dirwatch->addFile(path);
+//      }
+//      return theme;
 //    }
-//
-//    for (int i = 0; i < d->m_loaded.size(); ++i) {
-//        QString fName = d->m_loaded.at(i)->property("X-KDE-EmoticonsFileName").toString();
-//        QString path = KGlobal::dirs()->findResource("emoticons", name + '/' + fName);
-//
-//        if (QFile::exists(path)) {
-//            EmoticonsProvider *provider = d->loadProvider(d->m_loaded.at(i));
-//            EmoticonsTheme theme(provider);
-//            theme.loadTheme(path);
-//            d->m_themes.insert(name, theme);
-//
-//            if (!d->m_dirwatch->contains(path)) {
-//                d->m_dirwatch->addFile(path);
-//            }
-//            return theme;
-//        }
-//    }
+//  }
   return EmoticonsTheme();
 }
 
@@ -166,13 +187,13 @@ EmoticonsTheme::ParseMode Emoticons::parseMode()
 
 
 /*!
- * Retrieve the current emoticon theme name
+ * Retrieve the current emoticon theme name.
  */
 QString Emoticons::currentThemeName()
 {
 //    KConfigGroup config(KSharedConfig::openConfig("kdeglobals"), "Emoticons");
 //    QString name = config.readEntry("emoticonsTheme", "kde4");
-  return "";
+  return settings->getString("EmoticonTheme");
 }
 
 

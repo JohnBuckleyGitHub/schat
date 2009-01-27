@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * Class Emoticons
+ * Base class Emoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEMOTICONS_H
-#define KEMOTICONS_H
+#ifndef EMOTICONS_H_
+#define EMOTICONS_H_
 
 #include <QObject>
 #include <QHash>
@@ -64,6 +64,4 @@ private:
 //    Q_PRIVATE_SLOT(d, void themeChanged(const QString &path))
 };
 
-#endif /* KEMOTICONS_H */
-
-// kate: space-indent on; indent-width 4; replace-tabs on;
+#endif /*EMOTICONS_H_*/
