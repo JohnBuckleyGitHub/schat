@@ -19,15 +19,10 @@
 #ifndef CHATVIEW_H_
 #define CHATVIEW_H_
 
-#include <QPointer>
 #include <QWidget>
 
-#include "channellog.h"
-
-class ChatWindowStyleOutput;
 class QUrl;
 class QWebView;
-class Settings;
 
 /*!
  * \brief Обеспечивает отображение текста в чате.
@@ -42,31 +37,29 @@ class ChatView : public QWidget
 public:
   ChatView(QWidget *parent = 0);
   ~ChatView();
-  inline QString channel() const         { return m_channel; }
-  inline void channel(const QString &ch) { m_channel = ch; if (m_channelLog) m_channelLog->setChannel(ch); }
+  QString channel() const;
   static QString statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick);
   static QString statusNewUser(quint8 gender, const QString &nick);
   static QString statusUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void addFilteredMsg(const QString &msg, bool strict = false);
   void addMsg(const QString &sender, const QString &message, bool direction = true);
   void addServiceMsg(const QString &msg);
+  void channel(const QString &ch);
   void log(bool enable);
 
 private slots:
   void linkClicked(const QUrl &url);
+  void notify(int notify);
 
 private:
   bool prepareCmd(const QString &cmd, QString &msg, bool cut = true) const;
   void appendMessage(QString message, bool same_from = false);
   void toLog(const QString &text);
 
-  bool m_log;
-  ChatWindowStyleOutput *m_style;
-  QPointer<ChannelLog> m_channelLog;
-  QString m_channel;
-  QString m_prev;
+  class ChatViewPrivate;
+  ChatViewPrivate *d;
+
   QWebView *m_view;
-  Settings *m_settings;
 };
 
 #endif /*CHATVIEW_H_*/

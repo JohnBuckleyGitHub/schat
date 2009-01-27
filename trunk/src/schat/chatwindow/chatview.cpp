@@ -19,10 +19,38 @@
 #include <QtGui>
 #include <QtWebKit>
 
+#include "channellog.h"
 #include "chatview.h"
 #include "chatwindowstyle.h"
 #include "chatwindowstyleoutput.h"
 #include "settings.h"
+
+class ChatView::ChatViewPrivate
+{
+public:
+  ChatViewPrivate();
+  ~ChatViewPrivate();
+  bool log;
+  bool strict;
+  ChatWindowStyleOutput *style;
+  QPointer<ChannelLog> channelLog;
+  QString channel;
+  QString prev;
+};
+
+
+ChatView::ChatViewPrivate::ChatViewPrivate()
+  : style(0)
+{
+}
+
+
+ChatView::ChatViewPrivate::~ChatViewPrivate()
+{
+  if (style)
+    delete style;
+}
+
 
 /*!
  * \brief Конструктор класса ChatView.
@@ -30,24 +58,34 @@
 ChatView::ChatView(QWidget *parent)
   : QWidget(parent)
 {
-  m_settings = settings;
+  d = new ChatViewPrivate;
+
   m_view = new QWebView(this);
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-  m_style = new ChatWindowStyleOutput("Default", "");
-  m_view->setHtml(m_style->makeSkeleton());
+  d->style = new ChatWindowStyleOutput("Default", "");
+  m_view->setHtml(d->style->makeSkeleton());
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_view);
   mainLay->setMargin(0);
 
   connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+  connect(settings, SIGNAL(changed(int)), SLOT(notify(int)));
   setFocusPolicy(Qt::NoFocus);
+
+  d->strict = Emoticons::strictParse();
 }
 
 
 ChatView::~ChatView()
 {
-  delete m_style;
+  delete d;
+}
+
+
+QString ChatView::channel() const
+{
+  return d->channel;
 }
 
 
@@ -123,7 +161,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
 //  qDebug() << html;
   toLog(html);
-  appendMessage(m_style->makeStatus(html));
+  appendMessage(d->style->makeStatus(html));
 }
 
 
@@ -137,8 +175,15 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
 
-  if (m_settings->emoticons())
-    html = m_settings->emoticons()->theme().parseEmoticons(html);
+  if (settings->emoticons()) {
+    EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
+    if (!d->strict)
+      mode = EmoticonsTheme::RelaxedParse;
+
+    qDebug() << d->strict;
+
+    html = settings->emoticons()->theme().parseEmoticons(html, mode);
+  }
 
 //  qDebug() << html;
   QString escapedNick = Qt::escape(sender);
@@ -148,20 +193,20 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
 
   if (prepareCmd("/me ", html)) {
     action = true;
-    m_prev = "";
+    d->prev = "";
 
     toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(html));
   }
   else {
-    if (m_prev.isEmpty() || m_prev != sender)
-      m_prev = sender;
+    if (d->prev.isEmpty() || d->prev != sender)
+      d->prev = sender;
     else
       same = true;
 
     toLog(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(html));
   }
 
-  appendMessage(m_style->makeMessage(sender, html, direction, same, "", action), same);
+  appendMessage(d->style->makeMessage(sender, html, direction, same, "", action), same);
 }
 
 
@@ -171,22 +216,31 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
 void ChatView::addServiceMsg(const QString &msg)
 {
   toLog(msg);
-  appendMessage(m_style->makeStatus(msg));
+  appendMessage(d->style->makeStatus(msg));
+}
+
+
+void ChatView::channel(const QString &ch)
+{
+  d->channel = ch;
+
+  if (d->channelLog)
+    d->channelLog->setChannel(ch);
 }
 
 
 void ChatView::log(bool enable)
 {
-  m_log = enable;
+  d->log = enable;
 
   if (enable) {
-    if (!m_channelLog) {
-      m_channelLog = new ChannelLog(this);
-      m_channelLog->setChannel(m_channel);
+    if (!d->channelLog) {
+      d->channelLog = new ChannelLog(this);
+      d->channelLog->setChannel(d->channel);
     }
   }
-  else if (m_channelLog)
-    m_channelLog->deleteLater();
+  else if (d->channelLog)
+    d->channelLog->deleteLater();
 }
 
 
@@ -195,7 +249,13 @@ void ChatView::linkClicked(const QUrl &url)
 //  qDebug() << "ChatView::linkClicked()" << url.toString();
 
   QDesktopServices::openUrl(url);
+}
 
+
+void ChatView::notify(int notify)
+{
+  if (notify == Settings::EmoticonsChanged)
+    d->strict = Emoticons::strictParse();
 }
 
 
@@ -238,11 +298,11 @@ void ChatView::appendMessage(QString message, bool same_from)
  */
 void ChatView::toLog(const QString &text)
 {
-  if (m_log) {
-    if (!m_channelLog) {
-      m_channelLog = new ChannelLog(this);
-      m_channelLog->setChannel(m_channel);
+  if (d->log) {
+    if (!d->channelLog) {
+      d->channelLog = new ChannelLog(this);
+      d->channelLog->setChannel(d->channel);
     }
-    m_channelLog->msg(text);
+    d->channelLog->msg(text);
   }
 }

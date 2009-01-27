@@ -190,7 +190,7 @@ QList<EmoticonsTheme::Token> EmoticonsTheme::tokenize(const QString &message, Pa
 
   if (!(mode & (StrictParse | RelaxedParse))) {
     //if none of theses two mode are selected, use the mode from the config
-    mode |= Emoticons::parseMode();
+    mode |= StrictParse;
   }
 
   QList<Token> result;
