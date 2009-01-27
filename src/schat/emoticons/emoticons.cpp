@@ -108,29 +108,9 @@ EmoticonsTheme Emoticons::theme(const QString &name)
 }
 
 
-/*!
- * Возвращает \a true если режим парсинга
- * установлен в EmoticonsTheme::StrictParse.
- */
 bool Emoticons::strictParse()
 {
-  if (parseMode() == EmoticonsTheme::RelaxedParse)
-    return false;
-  else
-    return true;
-}
-
-
-/*!
- * Returns the current parse mode.
- */
-EmoticonsTheme::ParseMode Emoticons::parseMode()
-{
-  EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
-  if (settings->getBool("EmoticonsRequireSpaces"))
-    mode = EmoticonsTheme::RelaxedParse;
-
-  return mode;
+  return settings->getBool("EmoticonsRequireSpaces");
 }
 
 
@@ -166,30 +146,13 @@ QStringList Emoticons::themeList()
 
 
 /*!
- * Set the parse mode to \p mode.
- *
- * Поддерживаются запись только двух режимов:
- * EmoticonsTheme::StrictParse и EmoticonsTheme::RelaxedParse.
- */
-void Emoticons::setParseMode(EmoticonsTheme::ParseMode mode)
-{
-  bool strict = true;
-  if (mode == EmoticonsTheme::RelaxedParse)
-    strict = false;
-
-  settings->setBool("EmoticonsRequireSpaces", strict);
-}
-
-
-/*!
  * Устанавливает режим парсинга.
  */
 void Emoticons::setStrictParse(bool strict)
 {
-  if (strict)
-    setParseMode(EmoticonsTheme::StrictParse);
-  else
-    setParseMode(EmoticonsTheme::RelaxedParse);
+  qDebug() << "Emoticons::setStrictParse" << strict;
+
+  settings->setBool("EmoticonsRequireSpaces", strict);
 }
 
 

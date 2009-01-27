@@ -50,10 +50,8 @@ public:
   EmoticonsTheme theme();
   EmoticonsTheme theme(const QString &name);
   static bool strictParse();
-  static EmoticonsTheme::ParseMode parseMode();
   static QString currentThemeName();
   static QStringList themeList();
-  static void setParseMode(EmoticonsTheme::ParseMode mode);
   static void setStrictParse(bool strict = true);
   static void setTheme(const EmoticonsTheme &theme);
   static void setTheme(const QString &theme);

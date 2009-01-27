@@ -254,12 +254,12 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
 
   m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
   m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
-  m_requireSpacesCheck->setChecked(m_settings->getBool("EmoticonsRequireSpaces"));
+  m_requireSpacesCheck->setChecked(Emoticons::strictParse());
 
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Темы смайликов")), this);
   url->setToolTip(tr("Открыть папку с темами смайликов"));
   url->setAlignment(Qt::AlignRight);
-  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+  connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   mainLay->addWidget(m_enableCheck);
   mainLay->addWidget(m_requireSpacesCheck);
@@ -290,7 +290,7 @@ void EmoticonsSettings::reset(int page)
 void EmoticonsSettings::save()
 {
   m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
-  m_settings->setBool("EmoticonsRequireSpaces", m_requireSpacesCheck->isChecked());
+  Emoticons::setStrictParse(m_requireSpacesCheck->isChecked());
   m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
   m_settings->notify(Settings::EmoticonsChanged);
 }

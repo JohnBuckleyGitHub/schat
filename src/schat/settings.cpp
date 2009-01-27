@@ -44,30 +44,6 @@ Settings::Settings(const QString &filename, QObject *parent)
 }
 
 
-/*!
- * \brief Возвращает список всех смайликов которые были найдены в строке.
- */
-//QList<Emoticons> Settings::emoticons(const QString &text) const
-//{
-//  QList<Emoticons> out;
-//
-//  if (!m_emoticons.isEmpty() && !text.isEmpty()) {
-//    QMapIterator <QString, QStringList> i(m_emoticons);
-//    while (i.hasNext()) {
-//      i.next();
-//      QStringList list = i.value();
-//      foreach (QString name, list) {
-//        if (text.contains(name)) {
-//          out << Emoticons(name, i.key());
-//        }
-//      }
-//    }
-//  }
-//
-//  return out;
-//}
-
-
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
 {
   QList<QStandardItem *> items;
@@ -78,37 +54,6 @@ QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString
   else
     return 0;
 }
-
-
-/*!
- * \brief Создаёт карту смайликов.
- */
-//void Settings::createEmoticonsMap()
-//{
-//  QString emoticonsPath = qApp->applicationDirPath() + "/emoticons/" + getString("EmoticonTheme");
-//  bool err = true;
-//
-//  if (QFile::exists(emoticonsPath + "/icondef.xml")) {
-//    IconDefReader reader(&m_emoticons);
-//    if (reader.readFile(emoticonsPath + "/icondef.xml")) {
-//      err = false;
-//      if (reader.refresh())
-//        setInt("EmoticonsRefreshTime", reader.refresh());
-//      else
-//        setInt("EmoticonsRefreshTime", 50);
-//    }
-//  }
-//  else if (QFile::exists(emoticonsPath + "/emoticons.xml")) {
-//    EmoticonsReader reader(&m_emoticons);
-//    if (reader.readFile(emoticonsPath + "/emoticons.xml"))
-//      err = false;
-//  }
-//
-//  if (err) {
-//    m_emoticons.clear();
-//    setBool("UseEmoticons", false);
-//  }
-//}
 
 
 void Settings::notify(int notify)

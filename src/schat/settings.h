@@ -73,9 +73,7 @@ public:
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
-//  QList<Emoticons> emoticons(const QString &text) const;
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
-//  void createEmoticonsMap();
   void notify(int notify);
   void notify(int notify, int index);
   void read();
