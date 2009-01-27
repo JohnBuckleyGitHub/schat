@@ -19,20 +19,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "xmpp_emoticons.h"
+#include "kde_emoticons.h"
 
-#include <QFile>
-#include <QFileInfo>
-#include <QImageReader>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtGui/QImageReader>
+#include <QtGui/QTextDocument>
 #include <QDebug>
 
-XmppEmoticons::XmppEmoticons(QObject *parent)
+KdeEmoticons::KdeEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
 {
 }
 
 
-bool XmppEmoticons::loadTheme(const QString &path)
+bool KdeEmoticons::loadTheme(const QString &path)
 {
   EmoticonsProvider::loadTheme(path);
 
@@ -59,43 +60,45 @@ bool XmppEmoticons::loadTheme(const QString &path)
 
   fp.close();
 
-  QDomElement fce = m_themeXml.firstChildElement("icondef");
+  QDomElement fce = m_themeXml.firstChildElement("messaging-emoticon-map");
 
-  if (fce.isNull()) {
+  if (fce.isNull())
     return false;
-  }
 
   QDomNodeList nl = fce.childNodes();
 
   clearEmoticonsMap();
-  QString thisThemePath = themePath();
 
   for (uint i = 0; i < nl.length(); i++) {
     QDomElement de = nl.item(i).toElement();
 
-    if (!de.isNull() && de.tagName() == "icon") {
+    if (!de.isNull() && de.tagName() == "emoticon") {
       QDomNodeList snl = de.childNodes();
       QStringList sl;
-      QString emo;
-      QStringList mime;
-      mime << "image/png" << "image/gif" << "image/bmp" << "image/jpeg";
 
       for (uint k = 0; k < snl.length(); k++) {
         QDomElement sde = snl.item(k).toElement();
 
-        if (!sde.isNull() && sde.tagName() == "text") {
+        if (!sde.isNull() && sde.tagName() == "string") {
           sl << sde.text();
-        }
-        else if (!sde.isNull() && sde.tagName() == "object" && mime.contains(
-            sde.attribute("mime"))) {
-          emo = sde.text();
         }
       }
 
-      emo = themePath() + '/' + emo;
+      QString emo = themePath() + '/' + de.attribute("file");
 
       if (!QFile::exists(emo)) {
-        continue;
+        QList<QByteArray> ext = QImageReader::supportedImageFormats();
+
+        for (int j = 0; j < ext.size(); ++j) {
+          emo = themePath() + '/' + de.attribute("file") + '.' + ext.at(j);
+          if (QFile::exists(emo)) {
+            break;
+          }
+        }
+
+        if (!QFile::exists(emo)) {
+          continue;
+        }
       }
 
       addEmoticonIndex(emo, sl);

@@ -44,6 +44,7 @@ HEADERS += \
     emoticons/emoticons.h \
     emoticons/emoticonsprovider.h \
     emoticons/emoticonstheme.h \
+    emoticons/providers/kde/kde_emoticons.h \
     emoticons/providers/xmpp/xmpp_emoticons.h \
     emoticonsreader.h \
     icondefreader.h \
@@ -86,6 +87,7 @@ SOURCES += \
     emoticons/emoticons.cpp \
     emoticons/emoticonsprovider.cpp \
     emoticons/emoticonstheme.cpp \
+    emoticons/providers/kde/kde_emoticons.cpp \
     emoticons/providers/xmpp/xmpp_emoticons.cpp \
     emoticonsreader.cpp \
     icondefreader.cpp \

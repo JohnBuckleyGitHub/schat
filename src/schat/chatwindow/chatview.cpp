@@ -180,8 +180,6 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     if (!d->strict)
       mode = EmoticonsTheme::RelaxedParse;
 
-    qDebug() << d->strict;
-
     html = settings->emoticons()->theme().parseEmoticons(html, mode);
   }
 

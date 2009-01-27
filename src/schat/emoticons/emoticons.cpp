@@ -24,6 +24,7 @@
 
 #include "emoticons.h"
 #include "emoticonsprovider.h"
+#include "providers/kde/kde_emoticons.h"
 #include "providers/xmpp/xmpp_emoticons.h"
 #include "settings.h"
 
@@ -85,16 +86,19 @@ EmoticonsTheme Emoticons::theme()
  */
 EmoticonsTheme Emoticons::theme(const QString &name)
 {
-  if (d->m_themes.contains(name)) {
+  if (d->m_themes.contains(name))
     return d->m_themes.value(name);
-  }
 
   QString path = QApplication::applicationDirPath() + "/emoticons/" + name + '/';
   EmoticonsProvider *provider = 0;
 
-  if (QFile::exists(path) + "icondef.xml") {
+  if (QFile::exists(path + "icondef.xml")) {
     provider = new XmppEmoticons(this);
     path += "icondef.xml";
+  }
+  else if (QFile::exists(path + "emoticons.xml")) {
+    provider = new KdeEmoticons(this);
+    path += "emoticons.xml";
   }
 
   if (provider) {
