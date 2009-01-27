@@ -19,24 +19,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef XMPP_EMOTICONS_H_
-#define XMPP_EMOTICONS_H_
+#ifndef KDE_EMOTICONS_H_
+#define KDE_EMOTICONS_H_
 
 #include <QDomDocument>
 #include <QObject>
 
 #include <emoticons/emoticonsprovider.h>
 
-class XmppEmoticons : public EmoticonsProvider
+class KdeEmoticons : public EmoticonsProvider
 {
   Q_OBJECT
 
 public:
-  XmppEmoticons(QObject *parent);
+  KdeEmoticons(QObject *parent);
   bool loadTheme(const QString &path);
 
 private:
   QDomDocument m_themeXml;
 };
 
-#endif /*XMPP_EMOTICONS_H_*/
+#endif /*KDE_EMOTICONS_H_*/

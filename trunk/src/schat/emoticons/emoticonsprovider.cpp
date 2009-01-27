@@ -28,7 +28,6 @@ class EmoticonsProviderPrivate
 {
 public:
     EmoticonsProviderPrivate();
-    ~EmoticonsProviderPrivate();
     QString m_themeName;
     QString m_fileName;
     QString m_themePath;
@@ -38,13 +37,6 @@ public:
 
 EmoticonsProviderPrivate::EmoticonsProviderPrivate()
 {
-  qDebug() << "EmoticonsProviderPrivate::EmoticonsProviderPrivate()";
-}
-
-
-EmoticonsProviderPrivate::~EmoticonsProviderPrivate()
-{
-  qDebug() << "EmoticonsProviderPrivate::~EmoticonsProviderPrivate()" << m_themeName;
 }
 
 
@@ -189,7 +181,7 @@ void EmoticonsProvider::setThemeName(const QString &name)
 /*!
  * Add an emoticon to the index.
  *
- * \param path path to the emoticon.
+ * \param path    path to the emoticon.
  * \param emoList list of text associated with this emoticon.
  */
 void EmoticonsProvider::addEmoticonIndex(const QString &path, const QStringList &emoList)
