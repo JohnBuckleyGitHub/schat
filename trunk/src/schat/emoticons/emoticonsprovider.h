@@ -61,7 +61,7 @@ public:
   explicit EmoticonsProvider(QObject *parent = 0);
   virtual ~EmoticonsProvider();
   QHash<QChar, QList<Emoticon> > emoticonsIndex() const;
-  QHash<QString, QStringList> emoticonsMap() const;
+  QMap<QString, QStringList> emoticonsMap() const;
   QString fileName() const;
   QString themeName() const;
   QString themePath() const;

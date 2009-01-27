@@ -171,10 +171,10 @@ EmoticonsTheme& EmoticonsTheme::operator=(const EmoticonsTheme &ket)
 /*!
  * Returns a QHash that contains the emoticons path as keys and the text as values.
  */
-QHash<QString, QStringList> EmoticonsTheme::emoticonsMap() const
+QMap<QString, QStringList> EmoticonsTheme::emoticonsMap() const
 {
   if (!d->provider) {
-    return QHash<QString, QStringList> ();
+    return QMap<QString, QStringList> ();
   }
 
   return d->provider->emoticonsMap();
@@ -396,14 +396,22 @@ QString EmoticonsTheme::parseEmoticons(const QString &text, ParseMode mode, cons
 
   QString result;
 
+  qDebug() << tokens.size();
+
+  int max = 10;
+  int count = 0;
+
   foreach(const Token &token , tokens) {
+    count++;
     switch (token.type) {
       case Text:
         result += token.text;
         break;
       case Image:
         if (!exclude.contains(token.text)) {
-          result += token.picHTMLCode;
+          qDebug() << count;
+          if (count < max)
+            result += token.picHTMLCode;
         }
         else {
           result += token.text;

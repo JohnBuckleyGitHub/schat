@@ -31,7 +31,7 @@ public:
     QString m_themeName;
     QString m_fileName;
     QString m_themePath;
-    QHash<QString, QStringList> m_emoticonsMap;
+    QMap<QString, QStringList> m_emoticonsMap;
     QHash<QChar, QList<EmoticonsProvider::Emoticon> > m_emoticonsIndex;
 };
 
@@ -72,7 +72,7 @@ QHash<QChar, QList<EmoticonsProvider::Emoticon> > EmoticonsProvider::emoticonsIn
 /*!
  * Returns a QHash that contains the emoticons path as keys and the text as values.
  */
-QHash<QString, QStringList> EmoticonsProvider::emoticonsMap() const
+QMap<QString, QStringList> EmoticonsProvider::emoticonsMap() const
 {
   return d->m_emoticonsMap;
 }

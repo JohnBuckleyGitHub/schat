@@ -68,6 +68,7 @@ bool XmppEmoticons::loadTheme(const QString &path)
   QDomNodeList nl = fce.childNodes();
 
   clearEmoticonsMap();
+  QString thisThemePath = themePath();
 
   for (uint i = 0; i < nl.length(); i++) {
     QDomElement de = nl.item(i).toElement();
@@ -92,8 +93,9 @@ bool XmppEmoticons::loadTheme(const QString &path)
       }
 
 //      emo = KGlobal::dirs()->findResource("emoticons", themeName() + '/' + emo);
+      emo = themePath() + '/' + emo;
 
-      if (emo.isNull()) {
+      if (!QFile::exists(emo)) {
         continue;
       }
 
