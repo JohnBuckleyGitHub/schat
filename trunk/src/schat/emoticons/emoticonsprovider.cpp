@@ -28,6 +28,7 @@ class EmoticonsProviderPrivate
 {
 public:
     EmoticonsProviderPrivate();
+    ~EmoticonsProviderPrivate();
     QString m_themeName;
     QString m_fileName;
     QString m_themePath;
@@ -38,6 +39,12 @@ public:
 EmoticonsProviderPrivate::EmoticonsProviderPrivate()
 {
   qDebug() << "EmoticonsProviderPrivate::EmoticonsProviderPrivate()";
+}
+
+
+EmoticonsProviderPrivate::~EmoticonsProviderPrivate()
+{
+  qDebug() << "EmoticonsProviderPrivate::~EmoticonsProviderPrivate()" << m_themeName;
 }
 
 
@@ -108,9 +115,9 @@ QString EmoticonsProvider::themePath() const
 /*!
  * Add the emoticon \p emo with text \p text.
  *
- * \param emo path to the emoticon image.
- * \param text the text of the emoticon separated by space for multiple text.
- * \param copy whether or not copy @p emo into the theme directory.
+ * \param emo    path to the emoticon image.
+ * \param text   the text of the emoticon separated by space for multiple text.
+ * \param option whether or not copy \p emo into the theme directory.
  * \return \c true if it can add the emoticon.
  */
 bool EmoticonsProvider::addEmoticon(const QString &emo, const QString &text, AddEmoticonOption option)

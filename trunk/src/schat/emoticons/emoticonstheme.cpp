@@ -33,17 +33,19 @@ public:
   EmoticonsThemeData();
   ~EmoticonsThemeData();
   EmoticonsProvider *provider;
+  int maxParse;
 };
 
 EmoticonsTheme::EmoticonsThemeData::EmoticonsThemeData()
 {
   provider = 0;
+  maxParse = 5;
 }
 
 EmoticonsTheme::EmoticonsThemeData::~EmoticonsThemeData()
 {
   qDebug() << "EmoticonsTheme::EmoticonsThemeData::~EmoticonsThemeData()";
-//     delete provider;
+  delete provider;
 }
 
 
@@ -78,7 +80,7 @@ EmoticonsTheme::EmoticonsTheme(EmoticonsProvider *p)
 
 
 /*!
- * Destructor
+ * Destructor.
  */
 EmoticonsTheme::~EmoticonsTheme()
 {
@@ -94,16 +96,15 @@ EmoticonsTheme::~EmoticonsTheme()
  * theme.addEmoticon("/path/to/smiley.png", ":) :-)");
  * \endcode
  *
- * \param emo path to the emoticon image.
- * \param text the text of the emoticon separated by space for multiple text.
- * \param copy whether or not copy @p emo into the theme directory.
- * \return @c true if it can add the emoticon.
+ * \param emo    path to the emoticon image.
+ * \param text   the text of the emoticon separated by space for multiple text.
+ * \param option whether or not copy \p emo into the theme directory.
+ * \return \c true if it can add the emoticon.
  */
 bool EmoticonsTheme::addEmoticon(const QString &emo, const QString &text, EmoticonsProvider::AddEmoticonOption option)
 {
-  if (!d->provider) {
+  if (!d->provider)
     return false;
-  }
 
   return d->provider->addEmoticon(emo, text, option);
 }
@@ -165,19 +166,6 @@ EmoticonsTheme& EmoticonsTheme::operator=(const EmoticonsTheme &ket)
 
   d = ket.d;
   return *this;
-}
-
-
-/*!
- * Returns a QHash that contains the emoticons path as keys and the text as values.
- */
-QMap<QString, QStringList> EmoticonsTheme::emoticonsMap() const
-{
-  if (!d->provider) {
-    return QMap<QString, QStringList> ();
-  }
-
-  return d->provider->emoticonsMap();
 }
 
 
@@ -308,7 +296,6 @@ QList<EmoticonsTheme::Token> EmoticonsTheme::tokenize(const QString &message, Pa
           if (htmlEnd == -1) {
             // Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
             // and continue
-            qDebug() << "Broken HTML entity, trying to recover.";
             inHTMLEntity = false;
             pos++;
           }
@@ -359,6 +346,19 @@ QList<EmoticonsTheme::Token> EmoticonsTheme::tokenize(const QString &message, Pa
 
 
 /*!
+ * Returns a QHash that contains the emoticons path as keys and the text as values.
+ */
+QMap<QString, QStringList> EmoticonsTheme::emoticonsMap() const
+{
+  if (!d->provider) {
+    return QMap<QString, QStringList> ();
+  }
+
+  return d->provider->emoticonsMap();
+}
+
+
+/*!
  * Returns the file name of the theme.
  */
 QString EmoticonsTheme::fileName() const
@@ -396,22 +396,20 @@ QString EmoticonsTheme::parseEmoticons(const QString &text, ParseMode mode, cons
 
   QString result;
 
-  qDebug() << tokens.size();
-
-  int max = 10;
+  int max = d->maxParse;
   int count = 0;
 
   foreach(const Token &token , tokens) {
-    count++;
     switch (token.type) {
       case Text:
         result += token.text;
         break;
       case Image:
         if (!exclude.contains(token.text)) {
-          qDebug() << count;
-          if (count < max)
+          if (count < max) {
             result += token.picHTMLCode;
+            count++;
+          }
         }
         else {
           result += token.text;
@@ -419,7 +417,6 @@ QString EmoticonsTheme::parseEmoticons(const QString &text, ParseMode mode, cons
         break;
 
       default:
-        qWarning() << "Unknown token type. Something's broken.";
         break;
     }
   }
@@ -476,6 +473,19 @@ void EmoticonsTheme::save()
   }
 
   d->provider->save();
+}
+
+
+/*!
+ * Устанавливает ограничение на количество смайлов
+ * которые будут вставлены.
+ */
+void EmoticonsTheme::setMaxParse(int max)
+{
+   if (max < 1)
+     d->maxParse = 5;
+   else
+     d->maxParse = max;
 }
 
 
