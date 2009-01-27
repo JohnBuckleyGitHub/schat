@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * Class EmoticonsTheme
+ * Base class EmoticonsTheme
  * Copyright © 2008      by Carlo Segato          <brandon.ml@gmail.com>
  * Copyright © 2002-2003 by Stefan Gehn           <metz@gehn.net>
  * Kopete    © 2002-2008 by the Kopete developers <kopete-devel@kde.org>

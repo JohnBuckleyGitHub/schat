@@ -25,7 +25,7 @@ SCHAT_BENCHMARK  = 0
 
 DEFINES += SCHAT_CLIENT
 
-QT += network webkit
+QT += network webkit xml
 TEMPLATE = app
 
 HEADERS += \
@@ -44,6 +44,7 @@ HEADERS += \
     emoticons/emoticons.h \
     emoticons/emoticonsprovider.h \
     emoticons/emoticonstheme.h \
+    emoticons/providers/xmpp/xmpp_emoticons.h \
     emoticonsreader.h \
     icondefreader.h \
     mainchannel.h \
@@ -85,6 +86,7 @@ SOURCES += \
     emoticons/emoticons.cpp \
     emoticons/emoticonsprovider.cpp \
     emoticons/emoticonstheme.cpp \
+    emoticons/providers/xmpp/xmpp_emoticons.cpp \
     emoticonsreader.cpp \
     icondefreader.cpp \
     main.cpp \

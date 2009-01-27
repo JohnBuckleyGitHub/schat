@@ -22,6 +22,7 @@
 #include "chatview.h"
 #include "chatwindowstyle.h"
 #include "chatwindowstyleoutput.h"
+#include "settings.h"
 
 /*!
  * \brief Конструктор класса ChatView.
@@ -29,6 +30,7 @@
 ChatView::ChatView(QWidget *parent)
   : QWidget(parent)
 {
+  m_settings = settings;
   m_view = new QWebView(this);
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   m_style = new ChatWindowStyleOutput("Default", "");
@@ -134,6 +136,8 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   doc.setHtml(message);
   QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
+
+  html = m_settings->emoticons()->theme().parseEmoticons(html);
 
 //  qDebug() << html;
   QString escapedNick = Qt::escape(sender);
