@@ -137,7 +137,8 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
 
-  html = m_settings->emoticons()->theme().parseEmoticons(html);
+  if (m_settings->emoticons())
+    html = m_settings->emoticons()->theme().parseEmoticons(html);
 
 //  qDebug() << html;
   QString escapedNick = Qt::escape(sender);

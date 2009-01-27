@@ -66,7 +66,7 @@ void EmoticonSelector::prepareList()
 {
   int row = 0;
   int col = 0;
-  QHash<QString, QStringList> list = m_settings->emoticons()->theme().emoticonsMap();
+  QMap<QString, QStringList> list = m_settings->emoticons()->theme().emoticonsMap();
   int emoticonsPerRow = (int) sqrt((float)list.count());
   if (emoticonsPerRow * emoticonsPerRow == list.count())
     emoticonsPerRow--;
@@ -81,10 +81,10 @@ void EmoticonSelector::prepareList()
   m_lay->setSpacing(2);
   m_movieList.clear();
 
-  QHashIterator<QString, QStringList> i(list);
+  QMapIterator<QString, QStringList> i(list);
   while (i.hasNext()) {
     i.next();
-    EmoticonLabel *label = new EmoticonLabel(i.value().first(), emoticonsPath + i.key(), this);
+    EmoticonLabel *label = new EmoticonLabel(i.value().first(), i.key(), this);
     connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
     connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
     connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));

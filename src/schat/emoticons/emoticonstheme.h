@@ -90,7 +90,7 @@ public:
   bool loadTheme(const QString &path);
   bool removeEmoticon(const QString &emo);
   EmoticonsTheme& operator=(const EmoticonsTheme &ket);
-  QHash<QString, QStringList> emoticonsMap() const;
+  QMap<QString, QStringList> emoticonsMap() const;
   QList<Token> tokenize(const QString &message, ParseMode mode = DefaultParse) const;
   QString fileName() const;
   QString parseEmoticons(const QString &text, ParseMode mode = DefaultParse, const QStringList &exclude = QStringList()) const;
