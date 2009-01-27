@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * Base class XmppEmoticons
+ * Base class KdeEmoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify

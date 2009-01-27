@@ -25,6 +25,7 @@
 #include "emoticons.h"
 #include "emoticonsprovider.h"
 #include "providers/kde/kde_emoticons.h"
+#include "providers/pidgin/pidgin_emoticons.h"
 #include "providers/xmpp/xmpp_emoticons.h"
 #include "settings.h"
 
@@ -100,6 +101,10 @@ EmoticonsTheme Emoticons::theme(const QString &name)
     provider = new KdeEmoticons(this);
     path += "emoticons.xml";
   }
+  else if (QFile::exists(path + "theme")) {
+    provider = new PidginEmoticons(this);
+    path += "theme";
+  }
 
   if (provider) {
     EmoticonsTheme theme(provider);
@@ -154,8 +159,6 @@ QStringList Emoticons::themeList()
  */
 void Emoticons::setStrictParse(bool strict)
 {
-  qDebug() << "Emoticons::setStrictParse" << strict;
-
   settings->setBool("EmoticonsRequireSpaces", strict);
 }
 
