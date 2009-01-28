@@ -21,12 +21,13 @@
 
 #include "kde_emoticons.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtGui/QImageReader>
-#include <QtGui/QTextDocument>
-#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QImageReader>
 
+/*!
+ * Конструктор класса KdeEmoticons.
+ */
 KdeEmoticons::KdeEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
 {
@@ -37,74 +38,99 @@ bool KdeEmoticons::loadTheme(const QString &path)
 {
   EmoticonsProvider::loadTheme(path);
 
-  QFile fp(path);
-
-  if (!fp.exists()) {
-    qWarning() << path << "doesn't exist!";
-    return false;
-  }
-
-  if (!fp.open(QIODevice::ReadOnly)) {
-    qWarning() << fp.fileName() << "can't open ReadOnly!";
-    return false;
-  }
-
-  QString error;
-  int eli, eco;
-  if (!m_themeXml.setContent(&fp, &error, &eli, &eco)) {
-    qWarning() << fp.fileName() << "can't copy to xml!";
-    qWarning() << error << "line:" << eli << "column:" << eco;
-    fp.close();
-    return false;
-  }
-
-  fp.close();
-
-  QDomElement fce = m_themeXml.firstChildElement("messaging-emoticon-map");
-
-  if (fce.isNull())
+  QFile file(path);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
     return false;
 
-  QDomNodeList nl = fce.childNodes();
+  m_reader.setDevice(&file);
 
-  clearEmoticonsMap();
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
 
-  for (uint i = 0; i < nl.length(); i++) {
-    QDomElement de = nl.item(i).toElement();
-
-    if (!de.isNull() && de.tagName() == "emoticon") {
-      QDomNodeList snl = de.childNodes();
-      QStringList sl;
-
-      for (uint k = 0; k < snl.length(); k++) {
-        QDomElement sde = snl.item(k).toElement();
-
-        if (!sde.isNull() && sde.tagName() == "string") {
-          sl << sde.text();
-        }
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "messaging-emoticon-map") {
+        clearEmoticonsMap();
+        readMap();
       }
-
-      QString emo = themePath() + '/' + de.attribute("file");
-
-      if (!QFile::exists(emo)) {
-        QList<QByteArray> ext = QImageReader::supportedImageFormats();
-
-        for (int j = 0; j < ext.size(); ++j) {
-          emo = themePath() + '/' + de.attribute("file") + '.' + ext.at(j);
-          if (QFile::exists(emo)) {
-            break;
-          }
-        }
-
-        if (!QFile::exists(emo)) {
-          continue;
-        }
-      }
-
-      addEmoticonIndex(emo, sl);
-      addEmoticonsMap(emo, sl);
+      else
+        m_reader.raiseError(QObject::tr("bad messaging-emoticon-map file"));
     }
   }
 
-  return true;
+  return !m_reader.error();
+}
+
+
+void KdeEmoticons::readMap()
+{
+  QList<QByteArray> ext = QImageReader::supportedImageFormats();
+
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "emoticon") {
+        QString file = m_reader.attributes().value("file").toString();
+
+        if (!file.isEmpty()) {
+          QStringList sl;
+
+          while (!m_reader.atEnd()) {
+            m_reader.readNext();
+
+            if (m_reader.isEndElement())
+              break;
+
+            if (m_reader.isStartElement()) {
+              if (m_reader.name() == "string") {
+                QString text = m_reader.readElementText();
+                if (!text.isEmpty())
+                  sl << text;
+              }
+            }
+          }
+
+          QString emo;
+          QString base = themePath() + '/' + file;
+
+          if (!QFile::exists(base)) {
+            for (int j = 0; j < ext.size(); ++j) {
+              emo = base + '.' + ext.at(j);
+              if (QFile::exists(emo)) {
+                break;
+              }
+            }
+          }
+          else
+            emo = base;
+
+          if (QFile::exists(emo)) {
+            addEmoticonIndex(emo, sl);
+            addEmoticonsMap(emo, sl);
+          }
+        }
+        else
+          readUnknownElement();
+      }
+      else
+        readUnknownElement();
+    }
+  }
+}
+
+
+void KdeEmoticons::readUnknownElement()
+{
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement())
+      readUnknownElement();
+  }
 }

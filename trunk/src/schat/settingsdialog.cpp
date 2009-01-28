@@ -20,7 +20,6 @@
 
 #include "abstractprofile.h"
 #include "emoticons/emoticons.h"
-#include "emoticonsreader.h"
 #include "profilewidget.h"
 #include "schatwindow.h"
 #include "settings.h"

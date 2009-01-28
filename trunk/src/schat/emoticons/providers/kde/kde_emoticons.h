@@ -22,11 +22,14 @@
 #ifndef KDE_EMOTICONS_H_
 #define KDE_EMOTICONS_H_
 
-#include <QDomDocument>
 #include <QObject>
+#include <QXmlStreamReader>
 
 #include <emoticons/emoticonsprovider.h>
 
+/*!
+ * \brief Класс для чтения пакета смайликов KDE формата.
+ */
 class KdeEmoticons : public EmoticonsProvider
 {
   Q_OBJECT
@@ -36,7 +39,10 @@ public:
   bool loadTheme(const QString &path);
 
 private:
-  QDomDocument m_themeXml;
+  void readMap();
+  void readUnknownElement();
+
+  QXmlStreamReader m_reader;
 };
 
 #endif /*KDE_EMOTICONS_H_*/

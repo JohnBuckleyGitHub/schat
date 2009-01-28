@@ -54,7 +54,6 @@ EmoticonsProvider::EmoticonsProvider(QObject *parent)
  */
 EmoticonsProvider::~EmoticonsProvider()
 {
-  qDebug() << "EmoticonsProvider::~EmoticonsProvider()";
   delete d;
 }
 
