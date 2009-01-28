@@ -19,12 +19,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
 #include <QFile>
-#include <QFileInfo>
+#include <QTextStream>
 
 #include "pidgin_emoticons.h"
 
+/*!
+ * Конструктор класса PidginEmoticons.
+ */
 PidginEmoticons::PidginEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
 {
@@ -37,15 +39,11 @@ bool PidginEmoticons::loadTheme(const QString &path)
 
   QFile fp(path);
 
-  if (!fp.exists()) {
-    qWarning() << path << "doesn't exist!";
+  if (!fp.exists())
     return false;
-  }
 
-  if (!fp.open(QIODevice::ReadOnly)) {
-    qWarning() << fp.fileName() << "can't open ReadOnly!";
+  if (!fp.open(QIODevice::ReadOnly))
     return false;
-  }
 
   QTextStream str(&fp);
   bool start = false;
