@@ -118,7 +118,9 @@ bool EmoticonsProvider::addEmoticon(const QString &emo, const QString &text, Add
 //        KIO::NetAccess::dircopy(KUrl(emo), KUrl(d->m_themePath));
 //    }
 
+  Q_UNUSED(emo);
   Q_UNUSED(text);
+  Q_UNUSED(option)
   return false;
 }
 
