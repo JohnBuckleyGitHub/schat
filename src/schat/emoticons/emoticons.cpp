@@ -24,6 +24,7 @@
 
 #include "emoticons.h"
 #include "emoticonsprovider.h"
+#include "providers/adium/adium_emoticons.h"
 #include "providers/kde/kde_emoticons.h"
 #include "providers/pidgin/pidgin_emoticons.h"
 #include "providers/xmpp/xmpp_emoticons.h"
@@ -105,6 +106,10 @@ EmoticonsTheme Emoticons::theme(const QString &name)
     provider = new PidginEmoticons(this);
     path += "theme";
   }
+  else if (QFile::exists(path + "Emoticons.plist")) {
+    provider = new AdiumEmoticons(this);
+    path += "Emoticons.plist";
+  }
 
   if (provider) {
     EmoticonsTheme theme(provider);
@@ -144,10 +149,14 @@ QStringList Emoticons::themeList()
   themeDirs << (QApplication::applicationDirPath() + "/emoticons/");
 
   for (int i = 0; i < themeDirs.count(); ++i) {
-    QDir themeQDir(themeDirs[i]);
+    QDir themeQDir(themeDirs.at(i));
     themeQDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     themeQDir.setSorting(QDir::Name);
-    ls << themeQDir.entryList();
+    QString dir = themeDirs.at(i);
+    foreach (QString theme, themeQDir.entryList()) {
+      if (QFile::exists(dir + theme + "/icondef.xml") || QFile::exists(dir + theme + "/emoticons.xml") || QFile::exists(dir + theme + "/theme") || QFile::exists(dir + theme + "/Emoticons.plist"))
+        ls << theme;
+    }
   }
 
   return ls;
