@@ -20,11 +20,12 @@
  */
 
 #include <QFile>
-#include <QFileInfo>
-#include <QImageReader>
 
 #include "adium_emoticons.h"
 
+/*!
+ * Конструктор класса AdiumEmoticons.
+ */
 AdiumEmoticons::AdiumEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
 {
@@ -35,66 +36,132 @@ bool AdiumEmoticons::loadTheme(const QString &path)
 {
   EmoticonsProvider::loadTheme(path);
 
-  QFile fp(path);
-
-  if (!fp.exists()) {
-//    qWarning() << path << "doesn't exist!";
+  QFile file(path);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
     return false;
-  }
 
-  if (!fp.open(QIODevice::ReadOnly)) {
-//    qWarning() << fp.fileName() << "can't open ReadOnly!";
-    return false;
-  }
+  m_reader.setDevice(&file);
 
-  QString error;
-  int eli, eco;
-  if (!m_themeXml.setContent(&fp, &error, &eli, &eco)) {
-//    qWarning() << fp.fileName() << "can't copy to xml!";
-//    qWarning() << error << "line:" << eli << "column:" << eco;
-    fp.close();
-    return false;
-  }
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
 
-  fp.close();
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "plist") {
+        clearEmoticonsMap();
 
-  QDomElement fce = m_themeXml.firstChildElement("plist").firstChildElement(
-      "dict").firstChildElement("dict");
+        while (!m_reader.atEnd()) {
+          m_reader.readNext();
 
-  if (fce.isNull()) {
-    return false;
-  }
+          if (m_reader.isEndElement())
+            break;
 
-  QDomNodeList nl = fce.childNodes();
+          if (m_reader.isStartElement()) {
+            if (m_reader.name().toString() == "dict")
+              while (!m_reader.atEnd()) {
+                m_reader.readNext();
 
-  clearEmoticonsMap();
-  QString name;
-  for (uint i = 0; i < nl.length(); i++) {
-    QDomElement de = nl.item(i).toElement();
+                if (m_reader.isEndElement())
+                  break;
 
-    if (!de.isNull() && de.tagName() == "key") {
-      name = themePath() + '/' + de.text();
-      continue;
-    }
-    else if (!de.isNull() && de.tagName() == "dict") {
-      QDomElement arr = de.firstChildElement("array");
-      QDomNodeList snl = arr.childNodes();
-      QStringList sl;
-
-      for (uint k = 0; k < snl.length(); k++) {
-        QDomElement sde = snl.item(k).toElement();
-
-        if (!sde.isNull() && sde.tagName() == "string") {
-          sl << sde.text();
+                if (m_reader.isStartElement()) {
+                  if (m_reader.name().toString() == "dict")
+                    readDict();
+                  else
+                    readUnknownElement();
+                }
+              }
+            else
+              readUnknownElement();
+          }
         }
+
       }
-      if (QFile::exists(name)) {
-        addEmoticonIndex(name, sl);
-        addEmoticonsMap(name, sl);
-        name.clear();
-      }
+      else
+        m_reader.raiseError(QObject::tr("bad plist file"));
     }
   }
 
-  return true;
+  return !m_reader.error();
+}
+
+
+void AdiumEmoticons::readDict()
+{
+  clearEmoticonsMap();
+
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement()) {
+
+      if (m_reader.name() == "key")
+        m_name = m_reader.readElementText();
+      else if (m_reader.name() == "dict" && !m_name.isEmpty())
+        readEmo();
+      else
+        readUnknownElement();
+    }
+  }
+}
+
+
+void AdiumEmoticons::readEmo()
+{
+  QStringList sl;
+
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "array") {
+        while (!m_reader.atEnd()) {
+          m_reader.readNext();
+
+          if (m_reader.isEndElement())
+            break;
+
+          if (m_reader.isStartElement()) {
+            if (m_reader.name() == "string") {
+              QString text = m_reader.readElementText();
+              if (!text.isEmpty())
+                sl << text;
+            }
+            else
+              readUnknownElement();
+          }
+        }
+
+      }
+      else
+        readUnknownElement();
+    }
+  }
+
+  m_name = themePath() + '/' + m_name;
+
+  if (QFile::exists(m_name)) {
+    addEmoticonIndex(m_name, sl);
+    addEmoticonsMap(m_name, sl);
+    m_name.clear();
+  }
+}
+
+
+void AdiumEmoticons::readUnknownElement()
+{
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement())
+      readUnknownElement();
+  }
 }

@@ -22,7 +22,6 @@
 #ifndef XMPP_EMOTICONS_H_
 #define XMPP_EMOTICONS_H_
 
-#include <QObject>
 #include <QXmlStreamReader>
 
 #include <emoticons/emoticonsprovider.h>

@@ -24,6 +24,9 @@
 
 #include <emoticons/emoticonsprovider.h>
 
+/*!
+ * \brief Класс для чтения пакета смайликов Pidgin формата.
+ */
 class PidginEmoticons : public EmoticonsProvider
 {
   Q_OBJECT

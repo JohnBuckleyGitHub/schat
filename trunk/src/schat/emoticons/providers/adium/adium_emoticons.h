@@ -22,10 +22,13 @@
 #ifndef ADIUM_EMOTICONS_H_
 #define ADIUM_EMOTICONS_H_
 
-#include <QDomDocument>
+#include <QXmlStreamReader>
 
 #include <emoticons/emoticonsprovider.h>
 
+/*!
+ * \brief Класс для чтения пакета смайликов Adium формата.
+ */
 class AdiumEmoticons : public EmoticonsProvider
 {
   Q_OBJECT
@@ -35,7 +38,12 @@ public:
   bool loadTheme(const QString &path);
 
 private:
-  QDomDocument m_themeXml;
+  void readDict();
+  void readEmo();
+  void readUnknownElement();
+
+  QString m_name;
+  QXmlStreamReader m_reader;
 };
 
 #endif /*ADIUM_EMOTICONS_H_*/
