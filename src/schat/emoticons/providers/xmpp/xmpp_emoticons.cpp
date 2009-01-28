@@ -27,7 +27,7 @@
 #include <QDebug>
 
 /*!
- * \brief Конструктор класса XmppEmoticons.
+ * Конструктор класса XmppEmoticons.
  */
 XmppEmoticons::XmppEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
@@ -51,6 +51,7 @@ bool XmppEmoticons::loadTheme(const QString &path)
 
     if (m_reader.isStartElement()) {
       if (m_reader.name() == "icondef") {
+        clearEmoticonsMap();
 
         while (!m_reader.atEnd()) {
           m_reader.readNext();

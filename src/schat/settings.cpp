@@ -20,7 +20,6 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
-#include "emoticonsreader.h"
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
