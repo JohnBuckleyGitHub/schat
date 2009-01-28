@@ -44,6 +44,7 @@ HEADERS += \
     emoticons/emoticons.h \
     emoticons/emoticonsprovider.h \
     emoticons/emoticonstheme.h \
+    emoticons/providers/adium/adium_emoticons.h \
     emoticons/providers/kde/kde_emoticons.h \
     emoticons/providers/pidgin/pidgin_emoticons.h \
     emoticons/providers/xmpp/xmpp_emoticons.h \
@@ -88,6 +89,7 @@ SOURCES += \
     emoticons/emoticons.cpp \
     emoticons/emoticonsprovider.cpp \
     emoticons/emoticonstheme.cpp \
+    emoticons/providers/adium/adium_emoticons.cpp \
     emoticons/providers/kde/kde_emoticons.cpp \
     emoticons/providers/pidgin/pidgin_emoticons.cpp \
     emoticons/providers/xmpp/xmpp_emoticons.cpp \
