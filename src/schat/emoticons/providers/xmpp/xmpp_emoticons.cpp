@@ -26,9 +26,13 @@
 #include <QImageReader>
 #include <QDebug>
 
+/*!
+ * \brief Конструктор класса XmppEmoticons.
+ */
 XmppEmoticons::XmppEmoticons(QObject *parent)
   : EmoticonsProvider(parent)
 {
+  m_mime << "image/png" << "image/gif" << "image/bmp" << "image/jpeg";
 }
 
 
@@ -36,72 +40,89 @@ bool XmppEmoticons::loadTheme(const QString &path)
 {
   EmoticonsProvider::loadTheme(path);
 
-  QFile fp(path);
-
-  if (!fp.exists()) {
-    qWarning() << path << "doesn't exist!";
+  QFile file(path);
+  if (!file.open(QFile::ReadOnly | QFile::Text))
     return false;
-  }
 
-  if (!fp.open(QIODevice::ReadOnly)) {
-    qWarning() << fp.fileName() << "can't open ReadOnly!";
-    return false;
-  }
+  m_reader.setDevice(&file);
 
-  QString error;
-  int eli, eco;
-  if (!m_themeXml.setContent(&fp, &error, &eli, &eco)) {
-    qWarning() << fp.fileName() << "can't copy to xml!";
-    qWarning() << error << "line:" << eli << "column:" << eco;
-    fp.close();
-    return false;
-  }
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
 
-  fp.close();
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "icondef") {
 
-  QDomElement fce = m_themeXml.firstChildElement("icondef");
+        while (!m_reader.atEnd()) {
+          m_reader.readNext();
 
-  if (fce.isNull()) {
-    return false;
-  }
+          if (m_reader.isEndElement())
+            break;
 
-  QDomNodeList nl = fce.childNodes();
-
-  clearEmoticonsMap();
-  QString thisThemePath = themePath();
-
-  for (uint i = 0; i < nl.length(); i++) {
-    QDomElement de = nl.item(i).toElement();
-
-    if (!de.isNull() && de.tagName() == "icon") {
-      QDomNodeList snl = de.childNodes();
-      QStringList sl;
-      QString emo;
-      QStringList mime;
-      mime << "image/png" << "image/gif" << "image/bmp" << "image/jpeg";
-
-      for (uint k = 0; k < snl.length(); k++) {
-        QDomElement sde = snl.item(k).toElement();
-
-        if (!sde.isNull() && sde.tagName() == "text") {
-          sl << sde.text();
+          if (m_reader.isStartElement()) {
+            if (m_reader.name() == "icon")
+              readIcon();
+            else
+              readUnknownElement();
+          }
         }
-        else if (!sde.isNull() && sde.tagName() == "object" && mime.contains(
-            sde.attribute("mime"))) {
-          emo = sde.text();
-        }
+
       }
+      else
+        m_reader.raiseError(QObject::tr("bad icondef file"));
+    }
+  }
 
-      emo = themePath() + '/' + emo;
+  return !m_reader.error();
+}
 
-      if (!QFile::exists(emo)) {
-        continue;
+
+void XmppEmoticons::readIcon()
+{
+  QString emo;
+  QStringList sl;
+
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement()) {
+      if (m_reader.name() == "text") {
+        QString text = m_reader.readElementText();
+        if (!text.isEmpty())
+          sl << text;
       }
+      else if (m_reader.name() == "object") {
+        QString mime = m_reader.attributes().value("mime").toString();
+        QString object = m_reader.readElementText();
+        if (!object.isEmpty() && m_mime.contains(mime))
+          emo = object;
+      }
+      else
+        readUnknownElement();
+    }
+  }
 
+  if (!emo.isEmpty()) {
+    emo = themePath() + '/' + emo;
+    if (QFile::exists(emo)) {
       addEmoticonIndex(emo, sl);
       addEmoticonsMap(emo, sl);
     }
   }
+}
 
-  return true;
+
+void XmppEmoticons::readUnknownElement()
+{
+  while (!m_reader.atEnd()) {
+    m_reader.readNext();
+
+    if (m_reader.isEndElement())
+      break;
+
+    if (m_reader.isStartElement())
+      readUnknownElement();
+  }
 }

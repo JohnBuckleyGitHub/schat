@@ -21,7 +21,6 @@
 
 #include "abstractprofile.h"
 #include "emoticonsreader.h"
-#include "icondefreader.h"
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"

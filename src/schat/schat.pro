@@ -49,7 +49,6 @@ HEADERS += \
     emoticons/providers/pidgin/pidgin_emoticons.h \
     emoticons/providers/xmpp/xmpp_emoticons.h \
     emoticonsreader.h \
-    icondefreader.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -94,7 +93,6 @@ SOURCES += \
     emoticons/providers/pidgin/pidgin_emoticons.cpp \
     emoticons/providers/xmpp/xmpp_emoticons.cpp \
     emoticonsreader.cpp \
-    icondefreader.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \
