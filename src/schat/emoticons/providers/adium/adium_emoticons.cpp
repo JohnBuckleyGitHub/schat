@@ -19,7 +19,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
@@ -39,20 +38,20 @@ bool AdiumEmoticons::loadTheme(const QString &path)
   QFile fp(path);
 
   if (!fp.exists()) {
-    qWarning() << path << "doesn't exist!";
+//    qWarning() << path << "doesn't exist!";
     return false;
   }
 
   if (!fp.open(QIODevice::ReadOnly)) {
-    qWarning() << fp.fileName() << "can't open ReadOnly!";
+//    qWarning() << fp.fileName() << "can't open ReadOnly!";
     return false;
   }
 
   QString error;
   int eli, eco;
   if (!m_themeXml.setContent(&fp, &error, &eli, &eco)) {
-    qWarning() << fp.fileName() << "can't copy to xml!";
-    qWarning() << error << "line:" << eli << "column:" << eco;
+//    qWarning() << fp.fileName() << "can't copy to xml!";
+//    qWarning() << error << "line:" << eli << "column:" << eco;
     fp.close();
     return false;
   }
