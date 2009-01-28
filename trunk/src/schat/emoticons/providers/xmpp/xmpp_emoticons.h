@@ -22,11 +22,14 @@
 #ifndef XMPP_EMOTICONS_H_
 #define XMPP_EMOTICONS_H_
 
-#include <QDomDocument>
 #include <QObject>
+#include <QXmlStreamReader>
 
 #include <emoticons/emoticonsprovider.h>
 
+/*!
+ * \brief Класс для чтения пакета смайликов формата Jabber Icon Style Package (XMPP).
+ */
 class XmppEmoticons : public EmoticonsProvider
 {
   Q_OBJECT
@@ -36,7 +39,11 @@ public:
   bool loadTheme(const QString &path);
 
 private:
-  QDomDocument m_themeXml;
+  void readIcon();
+  void readUnknownElement();
+
+  QStringList m_mime;
+  QXmlStreamReader m_reader;
 };
 
 #endif /*XMPP_EMOTICONS_H_*/
