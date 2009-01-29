@@ -47,6 +47,7 @@
   <file>translations/schat_ru.qm</file>
   <file>webkit/Contents/Resources/Footer.html</file>
   <file>webkit/Contents/Resources/Header.html</file>
+  <file>webkit/Contents/Resources/Images/StatusBg.png</file>
   <file>webkit/Contents/Resources/Incoming/Action.html</file>
   <file>webkit/Contents/Resources/Incoming/Content.html</file>
   <file>webkit/Contents/Resources/Incoming/Context.html</file>
