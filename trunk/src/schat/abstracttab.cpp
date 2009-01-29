@@ -30,11 +30,9 @@ AbstractTab::AbstractTab(const QIcon &icon, QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
 
   m_notice  = false;
-//  m_browser = new ChatBrowser(this);
-//  m_browser->setVisible(false);
   m_view    = new ChatView(this);
   m_type    = Unknown;
   m_icon    = icon;
 
-//  connect(m_browser, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
+  connect(m_view, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
 }

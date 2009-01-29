@@ -30,7 +30,7 @@ a span[style] { /* Fix Qt rich text */
 .smb, .ocb, .icb, .oab, .iab {
   margin:1px;
   padding:0 1px;
-  -webkit-border-radius:4px;
+  /*-webkit-border-radius:4px;*/
 }
 .oncb, .incb {
     margin-left:44px;
@@ -39,6 +39,10 @@ a span[style] { /* Fix Qt rich text */
   color:#be00c4;
   border:1px solid #fedbff;
   background:url(Images/ActionBg.png) top repeat-x #ffefff;
+}
+.oab .sender a, .iab .sender a {
+  color:#be00c4;
+  font-weight:bold;
 }
 .smb {
   color:#8797a3;
@@ -66,4 +70,24 @@ a span[style] { /* Fix Qt rich text */
 }
 .incb {
   border-top:1px solid #d7dcff;
+}
+.ocb .sender a, .ocb .sender, .icb .sender a, .icb .sender {
+  color:#185074;
+  font-weight:bold;
+}
+.oldClientProtocol, .oldServerProtocol, .badNickName, .àccessDenied, .disconnect {
+  color:#da251d;
+}
+.smb .ready {
+  color:#6bb521;
+}
+.changedNick, .changedNick a {
+  color:#5096cf;
+}
+.changedNick a {
+  font-weight:bold;
+}
+.newUser a, .userLeft a {
+  color:#8797a3;
+  font-weight:bold;
 }
