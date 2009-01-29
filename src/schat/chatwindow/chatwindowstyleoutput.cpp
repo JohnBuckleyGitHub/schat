@@ -201,5 +201,5 @@ void ChatWindowStyleOutput::commonReplace(QString &html, const QString &msg, con
 
   // Replace %messages%, replacing last to avoid errors if messages contains tags
   QString message = msg;
-  html = html.replace("%message%", message.replace("\\","\\\\").remove('\r').replace("%","&#37;") + "&nbsp;");
+  html = html.replace("%message%", message.replace("\\","\\\\").remove('\r').replace("%","&#37;"));
 }

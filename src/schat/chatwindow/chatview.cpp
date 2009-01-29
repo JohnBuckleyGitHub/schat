@@ -64,6 +64,7 @@ ChatView::ChatView(QWidget *parent)
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   d->style = new ChatWindowStyleOutput("Default", "");
   m_view->setHtml(d->style->makeSkeleton());
+  m_view->setFocusPolicy(Qt::NoFocus);
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_view);
@@ -159,7 +160,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-//  qDebug() << html;
+  html = tr("Сервисное сообщение:") + "<div class='ServiceBlock'>" + html + "</div>";
   toLog(html);
   appendMessage(d->style->makeStatus(html));
 }
@@ -205,6 +206,8 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   }
 
   appendMessage(d->style->makeMessage(sender, html, direction, same, "", action), same);
+
+//  qDebug() << m_view->page()->mainFrame()->toHtml();
 }
 
 

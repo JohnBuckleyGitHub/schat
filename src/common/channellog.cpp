@@ -45,6 +45,8 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
   if (out.isEmpty())
     return "";
 
+  out.remove('\r');
+
   /// Обрезает до максимальной длинны.
   if (left)
     out = out.left(left);
