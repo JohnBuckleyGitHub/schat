@@ -98,12 +98,12 @@ QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const
   QString nick    = Qt::escape(oldNick);
   QString nickHex = newNick.toUtf8().toHex();
   QString nickNew = Qt::escape(newNick);
-  QString html = "<span class='statusChangedNick'>";
+  QString html = "<span class='changedNick'>";
 
   if (gender)
-    html += tr("<b>%1</b> теперь известна как <b><a href='nick:%2'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
+    html += tr("<b>%1</b> теперь известна как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
   else
-    html += tr("<b>%1</b> теперь известен как <b><a href='nick:%2'>%3</a></b>").arg(nick).arg(nickHex).arg(nickNew);
+    html += tr("<b>%1</b> теперь известен как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
 
   html += "</span>";
   return html;
@@ -117,12 +117,12 @@ QString ChatView::statusNewUser(quint8 gender, const QString &nick)
 {
   QString escaped = Qt::escape(nick);
   QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='statusNewUser'>";
+  QString out = "<span class='newUser'>";
 
   if (gender)
-    out += tr("<b><a href='nick:%1'>%2</a></b> зашла в чат").arg(nickHex).arg(escaped);
+    out += tr("<a href='nick:%1'>%2</a> зашла в чат").arg(nickHex).arg(escaped);
   else
-    out += tr("<b><a href='nick:%1'>%2</a></b> зашёл в чат").arg(nickHex).arg(escaped);
+    out += tr("<a href='nick:%1'>%2</a> зашёл в чат").arg(nickHex).arg(escaped);
 
   out += "</span>";
   return out;
@@ -136,16 +136,16 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
 {
   QString escaped = Qt::escape(nick);
   QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='statusUserLeft'>";
+  QString out = "<span class='userLeft'>";
 
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (gender)
-    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    out += tr("<a href='nick:%1'>%2</a> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
   else
-    out += tr("<b><a href='nick:%1' class='gr'>%2</a></b> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    out += tr("<a href='nick:%1'>%2</a> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
 
   out += "</span>";
   return out;
@@ -205,7 +205,8 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     toLog(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(html));
   }
 
-  appendMessage(d->style->makeMessage(sender, html, direction, same, "", action), same);
+  QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";
+  appendMessage(d->style->makeMessage(name, html, direction, same, "", action), same);
 
 //  qDebug() << m_view->page()->mainFrame()->toHtml();
 }
@@ -247,9 +248,12 @@ void ChatView::log(bool enable)
 
 void ChatView::linkClicked(const QUrl &url)
 {
-//  qDebug() << "ChatView::linkClicked()" << url.toString();
+  QString scheme = url.scheme();
 
-  QDesktopServices::openUrl(url);
+  if (scheme == "nick")
+    emit nickClicked(url.toString(QUrl::RemoveScheme));
+  else
+    QDesktopServices::openUrl(url);
 }
 
 

@@ -47,6 +47,9 @@ public:
   void channel(const QString &ch);
   void log(bool enable);
 
+signals:
+  void nickClicked(const QString &hex);
+
 private slots:
   void linkClicked(const QUrl &url);
   void notify(int notify);

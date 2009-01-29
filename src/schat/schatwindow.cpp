@@ -238,15 +238,15 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     case ErrorOldClientProtocol:
-      m_main->msg("<span class='statusOldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
+      m_main->msg("<span class='oldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
       break;
 
     case ErrorOldServerProtocol:
-      m_main->msg("<span class='statusOldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
+      m_main->msg("<span class='oldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
       break;
 
     case ErrorBadNickName:
-      m_main->msg("<span class='statusBadNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(m_profile->nick())) + "</span>");
+      m_main->msg("<span class='badNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(m_profile->nick())) + "</span>");
       break;
 
     case ErrorUsersLimitExceeded:
@@ -256,7 +256,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      m_main->msg("<span class='statusAccessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
+      m_main->msg("<span class='аccessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
       break;
   }
 
@@ -273,12 +273,12 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 {
   if (network.isEmpty()) {
     QString text = tr("Успешно подключены к серверу %1").arg(server);
-    m_main->msg("<span class='statusReadyForUse'>" + text + "</span>");
+    m_main->msg("<span class='ready'>" + text + "</span>");
     m_statusLabel->setText(text);
     setWindowTitle(QApplication::applicationName());
   }
   else {
-    m_main->msg("<span class='statusReadyForUse'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
+    m_main->msg("<span class='ready'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
     m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(QApplication::applicationName() + " - " + network);
   }
@@ -428,7 +428,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg("<span class='statusLinkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  m_main->msg("<span class='linkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -448,7 +448,7 @@ void SChatWindow::message(const QString &sender, const QString &msg)
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg("<span class='statusNewLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  m_main->msg("<span class='newLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -735,7 +735,7 @@ void SChatWindow::unconnected(bool echo)
   m_users->clear();
 
   if (echo)
-    m_main->msg("<span class='statusDisconnect'>" + tr("Соединение разорвано") + "</span>");
+    m_main->msg("<span class='disconnect'>" + tr("Соединение разорвано") + "</span>");
 }
 
 

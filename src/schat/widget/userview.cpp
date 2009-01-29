@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -23,7 +23,7 @@
 #include "userview.h"
 
 /*!
- * \brief Конструктор класса UserView.
+ * Конструктор класса UserView.
  */
 UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   : QListView(parent), m_profile(profile)
@@ -135,8 +135,7 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
 
 void UserView::nickClicked(const QString &hex)
 {
-  QString nick = QByteArray::fromHex(hex.toUtf8());
-  prepareInsertNick(nick);
+  prepareInsertNick(QByteArray::fromHex(hex.toUtf8()));
 }
 
 
@@ -173,5 +172,5 @@ QStandardItem* UserView::findItem(const QString &nick) const
 
 void UserView::prepareInsertNick(const QString &nick)
 {
-  emit insertNick(" <span style='color:#662900;'>" + Qt::escape(nick) + ":</span> ");
+  emit insertNick(" <b>" + Qt::escape(nick) + "</b> ");
 }
