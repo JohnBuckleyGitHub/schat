@@ -160,7 +160,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  html = tr("Сервисное сообщение:") + "<div class='ServiceBlock'>" + html + "</div>";
+  html = tr("Сервисное сообщение:") + "<div class='sb'>" + html + "</div>";
   toLog(html);
   appendMessage(d->style->makeStatus(html));
 }
