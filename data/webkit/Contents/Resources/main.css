@@ -21,26 +21,49 @@ a span[style] { /* Fix Qt rich text */
   text-decoration:none !important;
   color:#815d53 !important;
 }
-.timestamp {
+.ts {
   font:"Courier New", Courier, monospace;
   color:#90a4b3;
   font-size:x-small;
   border-right:#bdc9d1 solid 1px;
 }
-.StatusMsgBlock {
-  color:#8797a3;
+.smb, .ocb, .icb, .oab, .iab {
   margin:1px;
   padding:0 1px;
-  background-color:#fbfcff;
   -webkit-border-radius:4px;
-  border:1px solid #f5f8ff;
-  background:url(Images/StatusBg.png) top repeat-x;
 }
-.ServiceBlock {
+.oncb, .incb {
+    margin-left:44px;
+}
+.oab, .iab {
+  color:#be00c4;
+  border:1px solid #fedbff;
+  background:url(Images/ActionBg.png) top repeat-x #ffefff;
+}
+.smb {
+  color:#8797a3;
+  border:1px solid #f5f8ff;
+  background:url(Images/StatusBg.png) top repeat-x #fbfcff;
+}
+.sb {
   color:#002b3c;
   background-color:#f5f8ff;
   border:#dce2e6 solid 1px;
   -webkit-border-radius:5px;
-  margin:1px 4px;
+  margin:1px 8px;
   padding:1px 4px;
+}
+.ocb {
+  border:1px solid #d5ffcd;
+  background:url(Images/OutgoingBg.png) top repeat-x #f6fff5;
+}
+.oncb {
+  border-top:1px solid #d5ffcd;
+}
+.icb {
+  border:1px solid #d7dcff;
+  background:url(Images/IncomingBg.png) top repeat-x #ebedff;
+}
+.incb {
+  border-top:1px solid #d7dcff;
 }
