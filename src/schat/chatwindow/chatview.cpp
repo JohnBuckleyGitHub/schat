@@ -30,9 +30,12 @@ class ChatView::ChatViewPrivate
 public:
   ChatViewPrivate();
   ~ChatViewPrivate();
+  bool empty;
   bool log;
   bool strict;
   ChatWindowStyleOutput *style;
+  QAction *clear;
+  QAction *copy;
   QPointer<ChannelLog> channelLog;
   QString channel;
   QString prev;
@@ -40,7 +43,7 @@ public:
 
 
 ChatView::ChatViewPrivate::ChatViewPrivate()
-  : style(0)
+  : empty(true), style(0)
 {
 }
 
@@ -56,25 +59,21 @@ ChatView::ChatViewPrivate::~ChatViewPrivate()
  * \brief Конструктор класса ChatView.
  */
 ChatView::ChatView(QWidget *parent)
-  : QWidget(parent)
+  : QWebView(parent)
 {
   d = new ChatViewPrivate;
 
-  m_view = new QWebView(this);
-  m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   d->style = new ChatWindowStyleOutput("Default", "");
-  m_view->setHtml(d->style->makeSkeleton());
-  m_view->setFocusPolicy(Qt::NoFocus);
+  setHtml(d->style->makeSkeleton());
+  setFocusPolicy(Qt::NoFocus);
 
-  QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->addWidget(m_view);
-  mainLay->setMargin(0);
-
-  connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+  connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
   connect(settings, SIGNAL(changed(int)), SLOT(notify(int)));
   setFocusPolicy(Qt::NoFocus);
 
   d->strict = Emoticons::strictParse();
+  createActions();
 }
 
 
@@ -157,10 +156,14 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
  */
 void ChatView::addFilteredMsg(const QString &msg, bool strict)
 {
+  d->empty = false;
+  d->prev = "";
+
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
   html = tr("Сервисное сообщение:") + "<div class='sb'>" + html + "</div>";
+
   toLog(html);
   appendMessage(d->style->makeStatus(html));
 }
@@ -171,6 +174,8 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
  */
 void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
 {
+  d->empty = false;
+
   QTextDocument doc;
   doc.setHtml(message);
   QString html = ChannelLog::htmlFilter(doc.toHtml());
@@ -217,6 +222,9 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
  */
 void ChatView::addServiceMsg(const QString &msg)
 {
+  d->empty = false;
+  d->prev = "";
+
   toLog(msg);
   appendMessage(d->style->makeStatus(msg));
 }
@@ -246,10 +254,47 @@ void ChatView::log(bool enable)
 }
 
 
+/*!
+ * Возвращает \a true в случае успешного копирования.
+ */
+bool ChatView::copy()
+{
+  if (selectedText().isEmpty())
+    return false;
+
+  triggerPageAction(QWebPage::Copy);
+  return true;
+}
+
+
+/*!
+ * Очистка окна чата.
+ */
 void ChatView::clear()
 {
-  m_view->setHtml(d->style->makeSkeleton());
+  setHtml(d->style->makeSkeleton());
+  d->empty = true;
   d->prev = "";
+}
+
+
+void ChatView::contextMenuEvent(QContextMenuEvent *event)
+{
+  d->copy->setEnabled(!selectedText().isEmpty());
+  d->clear->setEnabled(!d->empty);
+
+  QMenu menu(this);
+  menu.addAction(d->copy);
+
+  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  QUrl url = r.linkUrl();
+  if (!url.isEmpty() && url.scheme() != "nick")
+    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+
+  menu.addSeparator();
+  menu.addAction(d->clear);
+
+  menu.exec(event->globalPos());
 }
 
 
@@ -298,12 +343,20 @@ bool ChatView::prepareCmd(const QString &cmd, QString &msg, bool cut) const
 
 void ChatView::appendMessage(QString message, bool same_from)
 {
-//  qDebug() << "ChatView::appendMessage()" << message << same_from;
-
   QString js_message = QString("append%2Message(\"%1\");").arg(message.replace("\"","\\\"").replace("\n","\\n")).arg(same_from?"Next":"");
-  m_view->page()->mainFrame()->evaluateJavaScript(js_message);
+  page()->mainFrame()->evaluateJavaScript(js_message);
 }
 
+
+void ChatView::createActions()
+{
+  d->copy = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
+  d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
+  connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
+
+  d->clear = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
+}
 
 /*!
  * Записывает строку в журнал.
