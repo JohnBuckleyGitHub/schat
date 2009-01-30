@@ -39,7 +39,7 @@ public:
 EmoticonsTheme::EmoticonsThemeData::EmoticonsThemeData()
 {
   provider = 0;
-  maxParse = 5;
+  maxParse = 4;
 }
 
 EmoticonsTheme::EmoticonsThemeData::~EmoticonsThemeData()

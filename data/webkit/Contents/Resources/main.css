@@ -22,7 +22,6 @@ a span[style] { /* Fix Qt rich text */
   color:#815d53 !important;
 }
 .ts {
-  font:"Courier New", Courier, monospace;
   color:#90a4b3;
   font-size:x-small;
   border-right:#bdc9d1 solid 1px;
@@ -53,7 +52,7 @@ a span[style] { /* Fix Qt rich text */
   color:#002b3c;
   background-color:#f5f8ff;
   border:#dce2e6 solid 1px;
-  -webkit-border-radius:5px;
+  /*-webkit-border-radius:5px;*/
   margin:1px 8px;
   padding:1px 4px;
 }

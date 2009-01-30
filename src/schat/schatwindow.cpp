@@ -76,11 +76,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_mainLay->addWidget(m_splitter);
   m_mainLay->addWidget(m_send);
   m_mainLay->setMargin(4);
-  #if QT_VERSION >= 0x040500
-    m_mainLay->setSpacing(2);
-  #else
-    m_mainLay->setSpacing(1);
-  #endif
+  m_mainLay->setSpacing(1);
   m_mainLay->setStretchFactor(m_splitter, 999);
   m_mainLay->setStretchFactor(m_send, 1);
 
@@ -93,7 +89,6 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   m_tabs->setElideMode(Qt::ElideRight);
   #if QT_VERSION >= 0x040500
-    m_tabs->setDocumentMode(true);
     m_tabs->setTabsClosable(true);
     m_tabs->setMovable(true);
     connect(m_tabs, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
