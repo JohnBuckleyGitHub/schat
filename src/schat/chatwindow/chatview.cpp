@@ -162,7 +162,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  html = tr("Сервисное сообщение:") + "<div class='sb'>" + html + "</div>";
+  html = tr("<span class='preSb'>Сервисное сообщение:</span>") + "<div class='sb'>" + html + "</div>";
 
   toLog(html);
   appendMessage(d->style->makeStatus(html));
@@ -181,15 +181,6 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
 
-  if (settings->emoticons()) {
-    EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
-    if (!d->strict)
-      mode = EmoticonsTheme::RelaxedParse;
-
-    html = settings->emoticons()->theme().parseEmoticons(html, mode);
-  }
-
-//  qDebug() << html;
   QString escapedNick = Qt::escape(sender);
 
   bool action = false;
@@ -207,7 +198,15 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     else
       same = true;
 
-    toLog(QString("<b class='gr'>%1:</b> %2").arg(escapedNick).arg(html));
+    toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
+  }
+
+  if (settings->emoticons()) {
+    EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
+    if (!d->strict)
+      mode = EmoticonsTheme::RelaxedParse;
+
+    html = settings->emoticons()->theme().parseEmoticons(html, mode);
   }
 
   QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";

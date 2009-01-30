@@ -8,7 +8,7 @@ body {
   padding:0;
   color:#002b3c;
 }
-a, a span[style] {
+a {
   text-decoration:none;
 } 
 a:link, a:visited {
