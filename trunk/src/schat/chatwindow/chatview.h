@@ -19,10 +19,10 @@
 #ifndef CHATVIEW_H_
 #define CHATVIEW_H_
 
-#include <QWidget>
+#include <QWebView>
 
 class QUrl;
-class QWebView;
+
 
 /*!
  * \brief Обеспечивает отображение текста в чате.
@@ -30,7 +30,7 @@ class QWebView;
  * По умолчанию используется движок WebKit, но при компиляции
  * можно отказаться от него в пользу QTextBrowser.
  */
-class ChatView : public QWidget
+class ChatView : public QWebView
 {
   Q_OBJECT
 
@@ -45,11 +45,17 @@ public:
   void addMsg(const QString &sender, const QString &message, bool direction = true);
   void addServiceMsg(const QString &msg);
   void channel(const QString &ch);
-  void clear();
   void log(bool enable);
 
 signals:
   void nickClicked(const QString &hex);
+
+public slots:
+  bool copy();
+  void clear();
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
   void linkClicked(const QUrl &url);
@@ -58,12 +64,11 @@ private slots:
 private:
   bool prepareCmd(const QString &cmd, QString &msg, bool cut = true) const;
   void appendMessage(QString message, bool same_from = false);
+  void createActions();
   void toLog(const QString &text);
 
   class ChatViewPrivate;
   ChatViewPrivate *d;
-
-  QWebView *m_view;
 };
 
 #endif /*CHATVIEW_H_*/

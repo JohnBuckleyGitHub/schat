@@ -370,13 +370,9 @@ void SChatWindow::connecting(const QString &server, bool network)
 
 void SChatWindow::copy()
 {
-//  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-//  QTextCursor cursor = tab->textCursor();
-//
-//  if (cursor.hasSelection())
-//    tab->copy();
-//  else
-  m_send->copy();
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+  if (!tab->copy())
+    m_send->copy();
 }
 
 
