@@ -34,7 +34,7 @@ Settings::Settings(const QString &filename, QObject *parent)
   m_profile = new AbstractProfile(this);
   m_updateTimer = new QTimer(this);
 
-  QString defaultConf = qApp->applicationDirPath() + "/default.conf";
+  QString defaultConf = QApplication::applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
   else
