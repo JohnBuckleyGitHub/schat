@@ -246,6 +246,13 @@ void ChatView::log(bool enable)
 }
 
 
+void ChatView::clear()
+{
+  m_view->setHtml(d->style->makeSkeleton());
+  d->prev = "";
+}
+
+
 void ChatView::linkClicked(const QUrl &url)
 {
   QString scheme = url.scheme();

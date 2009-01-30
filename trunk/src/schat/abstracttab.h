@@ -54,7 +54,7 @@ signals:
   void nickClicked(const QString &hex);
 
 public slots:
-  inline void clear()                                                    { /*m_browser->clear();*/ }
+  inline void clear()                                                    { m_view->clear(); }
   inline void copy()                                                     { /*m_browser->copy();*/ }
   inline void addMsg(const QString &nick, const QString &message, bool direction = true) { m_view->addMsg(nick, message, direction); }
 
