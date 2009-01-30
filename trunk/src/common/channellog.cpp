@@ -299,12 +299,19 @@ bool ChannelLog::openFile()
     m_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
     m_stream << "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" << endl;
     m_stream << "<style type=\"text/css\">" << endl;
-    m_stream << " .gr { color:#90a4b3; }" << endl;
-    m_stream << " .green { color:#6bb521; }" << endl;
-    m_stream << " .err { color:#da251d; }" << endl;
-    m_stream << " .info { color:#5096cf; }" << endl;
+    m_stream << " .sender { color:#185074; }" << endl;
     m_stream << " .me { color:#cd00cd; }" << endl;
-    m_stream << " a { color:#1a4d82; text-decoration:none; }" << endl;
+    m_stream << " a { text-decoration:none; }" << endl;
+    m_stream << " a:link, a:visited { color:#815d53; }" << endl;
+    m_stream << " a:active { color:#858e93; }" << endl;
+    m_stream << " a span[style] { text-decoration:none !important; color:#815d53 !important; }" << endl;
+    m_stream << " .sb { color:#002b3c; background-color:#f5f8ff; border:#dce2e6 solid 1px; margin:1px 8px; padding:1px 4px; }" << endl;
+    m_stream << " .oldClientProtocol, .oldServerProtocol, .badNickName, .аccessDenied, .disconnect { color:#da251d; }" << endl;
+    m_stream << " .ready { color:#6bb521; }" << endl;
+    m_stream << " .gr, .preSb, .newUser, .newUser a, .userLeft, .userLeft a { color:#8797a3; }" << endl;
+    m_stream << " .newUser a, .userLeft a { font-weight:bold; }" << endl;
+    m_stream << " .info, .changedNick, .changedNick a { color:#5096cf; }" << endl;
+    m_stream << " .changedNick a { font-weight:bold; }" << endl;
     m_stream << "</style></head><body>" << endl;
   }
 
