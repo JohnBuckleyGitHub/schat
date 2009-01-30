@@ -45,6 +45,7 @@ public:
   void addMsg(const QString &sender, const QString &message, bool direction = true);
   void addServiceMsg(const QString &msg);
   void channel(const QString &ch);
+  void clear();
   void log(bool enable);
 
 signals:
