@@ -22,13 +22,13 @@ ${State} 1
 ${Body}
 ${Section}
   SetOutPath "$INSTDIR\emoticons\Kolobok"
-  File "${SCHAT_DATADIR}\emoticons\Kolobok\*.png"
+  File "${SCHAT_DATADIR}\emoticons\Kolobok\*.gif"
   File "${SCHAT_DATADIR}\emoticons\Kolobok\icondef.xml"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
-  Delete "$INSTDIR\emoticons\Kolobok\*.png"
+  Delete "$INSTDIR\emoticons\Kolobok\*.gif"
   Delete "$INSTDIR\emoticons\Kolobok\icondef.xml"
 
   RMDir "$INSTDIR\emoticons\Kolobok"
