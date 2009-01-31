@@ -253,6 +253,12 @@ void ChatView::log(bool enable)
 }
 
 
+void ChatView::scroll()
+{
+  page()->mainFrame()->evaluateJavaScript("alignChat(true)");
+}
+
+
 /*!
  * Возвращает \a true в случае успешного копирования.
  */

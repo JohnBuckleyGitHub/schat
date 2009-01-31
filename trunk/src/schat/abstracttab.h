@@ -22,7 +22,6 @@
 #include <QIcon>
 #include <QWidget>
 
-#include "chatbrowser.h"
 #include "chatwindow/chatview.h"
 
 class Settings;
@@ -60,7 +59,6 @@ public slots:
 
 protected:
   bool m_notice;
-  ChatBrowser *m_browser;
   ChatView *m_view;
   QIcon m_icon;
   Type m_type;

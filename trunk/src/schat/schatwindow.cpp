@@ -22,6 +22,7 @@
 
 #include "aboutdialog.h"
 #include "abstractprofile.h"
+#include "channellog.h"
 #include "chatwindow/chatview.h"
 #include "mainchannel.h"
 #include "schatwindow.h"

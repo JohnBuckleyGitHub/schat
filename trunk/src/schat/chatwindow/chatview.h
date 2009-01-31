@@ -46,6 +46,7 @@ public:
   void addServiceMsg(const QString &msg);
   void channel(const QString &ch);
   void log(bool enable);
+  void scroll();
 
 signals:
   void nickClicked(const QString &hex);
