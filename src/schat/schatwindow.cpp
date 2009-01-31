@@ -590,26 +590,6 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
 
 
 /*!
- * Обработка отправки сообщения.
- * Получатель определяется в зависимости от типа вкладки.
- *
- * \param msg Сообщение.
- */
-void SChatWindow::sendMsg(const QString &msg)
-{
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-
-  if (parseCmd(tab, msg))
-    return;
-
-  QString channel;
-  tab == m_main ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-  if (m_clientService->sendMessage(channel, msg))
-    m_send->clear();
-}
-
-
-/*!
  * Показ универсального сообщения от сервера.
  *
  * \param msg Сообщение.
@@ -825,10 +805,11 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
   text = text.toLower();
 
   /// /bye
-  if (text.startsWith("/bye")) {
-    if (text.startsWith("/bye "))
-      m_clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
-
+  if (text == "/bye") {
+    m_clientService->quit();
+  }
+  else if (text.startsWith("/bye ")) {
+    m_clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
     m_clientService->quit();
   }
   /// /clear
@@ -836,19 +817,26 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
     tab->clear();
   }
   /// /exit
-  else if (text == "/exit") {
+  else if (text == "/exit" || text == "/quit") {
     closeChat();
   }
+  else if (text.startsWith("/google ")) {
+    QString q = textFull.mid(textFull.indexOf(QChar(' '))).simplified().left(1000);
+    sendMsg(QString("<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b>"
+                    "<b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b>"
+                    "<b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: "
+                    "<b><a href='http://www.google.com/search?q=%1'>%1</a></b>").arg(q), false);
+  }
   /// /help
-  else if (text.startsWith("/help")) {
-    if (text.startsWith("/help "))
-      cmdHelp(tab, textFull.mid(textFull.indexOf(QChar(' '))).trimmed());
-    else
-      cmdHelp(tab, "");
+  else if (text == "/help") {
+    cmdHelp(tab, "");
+  }
+  else if (text.startsWith("/help ")) {
+    cmdHelp(tab, textFull.mid(textFull.indexOf(QChar(' '))).trimmed());
   }
   /// /log
   else if (text == "/log") {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath() + "/log"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
   }
   /// /nick
   else if (text.startsWith("/nick ")) {
@@ -1126,6 +1114,28 @@ void SChatWindow::saveGeometry()
   m_settings->setPos(pos());
   m_settings->setSize(size());
   m_settings->setSplitter(m_splitter->saveState());
+}
+
+
+/*!
+ * Обработка отправки сообщения.
+ * Получатель определяется в зависимости от типа вкладки.
+ *
+ * \param msg Сообщение.
+ * \param cmd Включает обработку команд.
+ */
+void SChatWindow::sendMsg(const QString &msg, bool cmd)
+{
+  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+
+  if (cmd)
+    if (parseCmd(tab, msg))
+      return;
+
+  QString channel;
+  tab == m_main ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
+  if (m_clientService->sendMessage(channel, msg))
+    m_send->clear();
 }
 
 
