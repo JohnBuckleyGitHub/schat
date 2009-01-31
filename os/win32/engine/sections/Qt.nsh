@@ -26,6 +26,7 @@ ${Section}
   File "${SCHAT_QT_BINDIR}\QtCore4.dll"
   File "${SCHAT_QT_BINDIR}\QtGui4.dll"
   File "${SCHAT_QT_BINDIR}\QtNetwork4.dll"
+  File "${SCHAT_QT_BINDIR}\QtWebKit4.dll"
 
   !if ${SCHAT_VC90} == 1
     File "${VC90_REDIST_DIR}\msvcr90.dll"
@@ -34,6 +35,8 @@ ${Section}
 
   SetOutPath "$INSTDIR\plugins\imageformats"
   File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"
+  File "${SCHAT_QTDIR}\plugins\imageformats\qico4.dll"
+  File "${SCHAT_QTDIR}\plugins\imageformats\qjpeg4.dll"
 ${SectionEnd}
 ${BodyEnd}
 
@@ -42,9 +45,12 @@ ${Uninstall}
   Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
+  Delete "$INSTDIR\QtWebKit4.dll"
   Delete "$INSTDIR\msvcr90.dll"
   Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
   Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
+  Delete "$INSTDIR\plugins\imageformats\qico4.dll"
+  Delete "$INSTDIR\plugins\imageformats\qjpeg4.dll"
 
   RMDir "$INSTDIR\plugins\imageformats"
   RMDir "$INSTDIR\plugins"
