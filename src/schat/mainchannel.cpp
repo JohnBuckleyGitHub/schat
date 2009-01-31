@@ -76,7 +76,7 @@ void MainChannel::displayChoiceServer(bool display)
   if (!display)
     m_networkLayout->setMargin(0);
 
-//  m_browser->scroll();
+  m_view->scroll();
 }
 
 

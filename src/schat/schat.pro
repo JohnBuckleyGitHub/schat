@@ -35,7 +35,6 @@ HEADERS += \
     abstractsettingsdialog.h \
     abstracttab.h \
     channellog.h \
-    chatbrowser.h \
     chatwindow/chatview.h \
     chatwindow/chatwindowstyle.h \
     chatwindow/chatwindowstyleoutput.h \
@@ -78,7 +77,6 @@ SOURCES += \
     abstractsettingsdialog.cpp \
     abstracttab.cpp \
     channellog.cpp \
-    chatbrowser.cpp \
     chatwindow/chatview.cpp \
     chatwindow/chatwindowstyle.cpp \
     chatwindow/chatwindowstyleoutput.cpp \
