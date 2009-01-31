@@ -29,6 +29,7 @@ ${Section}
   File "${SCHAT_QT_BINDIR}\QtWebKit4.dll"
 
   !if ${SCHAT_VC90} == 1
+    File "${VC90_REDIST_DIR}\msvcp90.dll"
     File "${VC90_REDIST_DIR}\msvcr90.dll"
     File "contrib\Microsoft.VC90.CRT.manifest"
   !endif
@@ -46,6 +47,7 @@ ${Uninstall}
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
   Delete "$INSTDIR\QtWebKit4.dll"
+  Delete "$INSTDIR\msvcp90.dll"
   Delete "$INSTDIR\msvcr90.dll"
   Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
   Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
