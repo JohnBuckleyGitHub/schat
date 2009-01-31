@@ -76,6 +76,7 @@ public slots:
   #endif
 
 private slots:
+  inline void sendMsg(const QString &msg) { sendMsg(msg, true); }
   void about();
   void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
@@ -94,7 +95,6 @@ private slots:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &msg);
-  void sendMsg(const QString &msg);
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
@@ -124,6 +124,7 @@ private:
   void hideChat();
   void restoreGeometry();
   void saveGeometry();
+  void sendMsg(const QString &msg, bool cmd);
   void showChat();
   void startNotice(int index, const QString &key);
   void uniqueNick();
