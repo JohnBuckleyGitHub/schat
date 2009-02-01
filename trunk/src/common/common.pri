@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
 #
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 DEPENDPATH += \
     . \
@@ -49,7 +49,7 @@ contains( SCHAT_DEBUG, 1 ) {
 }
 
 contains( SCHAT_SINGLE_APP, 1 ) {
-  INCLUDEPATH += ../3rdparty/singleapplication/include
+  INCLUDEPATH += ../3rdparty/singleapplication/include/SingleApplication
   SINGLEAPPLICATION_LIBCONFIG = staticlib
   win32-msvc*:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
   else:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication

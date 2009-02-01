@@ -23,15 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
+#include <QtCore/QDir>
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedMemory>
 #include <QtCore/QString>
 
 #include <QtNetwork/QLocalSocket>
 
-#ifdef Q_OS_WIN
-#include <qt_windows.h>
-#else
+#ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -51,18 +50,7 @@ static QString login()
 		login = QLatin1String("qws");
 #endif
 #ifdef Q_OS_WIN
-		QT_WA({
-			wchar_t buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
-			GetUserNameW(buffer, &bufferSize);
-			login = QString::fromUtf16((ushort*)buffer);
-		},
-		{
-			char buffer[256];
-			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
-			GetUserNameA(buffer, &bufferSize);
-			login = QString::fromLocal8Bit(buffer);
-		});
+		login = QDir::home().dirName();
 #else
 		struct passwd* pwd = getpwuid(getuid());
 		if(pwd)
@@ -157,11 +145,7 @@ void ServerThread::run()
 	QString uniqueKey = makeUniqueKey(key);
 
 	if(!localServer.listen(uniqueKey))
-	{
-		qWarning("SingleApplication: Unable to listen for incoming connections on '%s': %s.",
-				 uniqueKey.toLatin1().data(), localServer.errorString().toUtf8().data());
 		return;
-	}
 
 	exec();
 }
@@ -242,11 +226,6 @@ void SingleApplicationPrivate::init()
 	else
 	{
 		isRunning = (shMem->error() == QSharedMemory::AlreadyExists);
-		if(!isRunning)
-		{
-			qWarning("SingleApplication: unable to create a shared memory segment: %s (key: %s).",
-					 shMem->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
-		}
 		delete shMem;
 	}
 }
@@ -267,16 +246,10 @@ bool SingleApplicationPrivate::connectToServer()
 		if(ok && message == key)
 			return true;
 
-		qWarning("SingleApplication: Expected key '%s' got '%s'.",
-				 key.toLatin1().data(), message.toLatin1().data());
 		socket->disconnectFromServer();
 		socket->waitForDisconnected(i_timeout_connect);
 	}
-	else
-	{
-		qWarning("SingleApplication: Unable to connect to the server with a key '%s'.",
-				 uniqueKey.toLatin1().data());
-	}
+
 	socket->abort();
 
 	return false;
