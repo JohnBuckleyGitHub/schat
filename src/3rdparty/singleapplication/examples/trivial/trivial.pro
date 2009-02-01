@@ -1,16 +1,16 @@
-TEMPLATE	= app
-LANGUAGE	= C++
+TEMPLATE     = app
+LANGUAGE     = C++
 
-TARGET		= trivial
+TARGET       = trivial
 
 include(../../config.pri)
 
-DEPENDPATH	+= .
-INCLUDEPATH	+= .
+DEPENDPATH   += .
+INCLUDEPATH  += .
 
-HEADERS		+= widget.h
+HEADERS      += widget.h
 
-SOURCES		+= main.cpp \
-		widget.cpp
+SOURCES      += main.cpp \
+             widget.cpp
 
 include(../../singleapplication.pri)

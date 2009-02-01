@@ -17,29 +17,21 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ********************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef WORKER_H
+#define WORKER_H
 
+#include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include <QtGui/QMainWindow>
-
-class QWorkspace;
-
-class MainWindow : public QMainWindow
+class Worker : public QObject
 {
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget* parent = 0);
-	~MainWindow();
+	Worker(QObject* parent = 0);
 
 public slots:
-	void activate();
-	void handleMessage(const QString& message);
-
-private:
-	QWorkspace* workspace;
+	void showMessage(const QString& message);
 };
 
-#endif // MAINWINDOW_H
+#endif // WORKER_H

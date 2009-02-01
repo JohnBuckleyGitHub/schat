@@ -17,8 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ********************************************************************************/
 
-#ifndef SINGLE_APPLICATION_H
-#define SINGLE_APPLICATION_H
+#ifndef SINGLEAPPLICATION_H
+#define SINGLEAPPLICATION_H
 
 #include <QtCore/QObject>
 
@@ -48,9 +48,6 @@ public:
 	QString key() const;
 	bool isRunning() const;
 
-	static bool isRunning(const QString& key);
-	static bool sendMessage(const QString& key, const QString& message, int timeout = 500);
-
 public slots:
 	bool sendMessage(const QString& message, int timeout = 500);
 
@@ -59,8 +56,7 @@ signals:
 
 private:
 	Q_DISABLE_COPY(SingleApplication);
-
 	SingleApplicationPrivate* const d;
 };
 
-#endif // SINGLE_APPLICATION_H
+#endif // SINGLEAPPLICATION_H

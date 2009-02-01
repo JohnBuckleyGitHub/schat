@@ -15,7 +15,7 @@
 
   \section mainpage_overview Overview
 
-  The SingleApplication component provides support for applications that can be 
+  The SingleApplication component provides support for applications that can be
   only started once per user.
 
   The SingleApplication class provides an crossplatform interface to detect a running
@@ -36,7 +36,7 @@
   <a href="http://www.qt-apps.org/content/show.php/SingleApplication?content=81163">project page</a> on <a href="http://www.qt-apps.org/">qt-apps.org</a>.
 
   \section mainpage_installation Installation
- 
+
   Have a look at the singleapplication.pro project file. It is prepared for building
   static libraries for Win32 and Unix/X11 environments.\n
   If you don't know what to do with it, read the page \ref install and/or 

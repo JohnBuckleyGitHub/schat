@@ -1,23 +1,22 @@
 #MAJOR_VERSION	= 1
 
-CONFIG		*= qt
-QT		*= core network
+CONFIG       *= qt
+QT           *= core network
 
-DEPENDPATH	*= $$PWD/include
-INCLUDEPATH	*= $$PWD/include
+INCLUDEPATH  *= $$PWD/include \
+             $$PWD/include/SingleApplication
 
 isEmpty(SINGLEAPPLICATION_LIBNAME):SINGLEAPPLICATION_LIBNAME = singleapplication
 SALIBNAME = $$SINGLEAPPLICATION_LIBNAME
 CONFIG(debug, debug|release) {
-	unix:SALIBNAME = $$join(SALIBNAME,,,_debug)
-	else:SALIBNAME = $$join(SALIBNAME,,,d)
+    unix:SALIBNAME = $$join(SALIBNAME,,,_debug)
+    else:SALIBNAME = $$join(SALIBNAME,,,d)
 }
 
 isEmpty(SINGLEAPPLICATION_LIBCONFIG):SINGLEAPPLICATION_LIBCONFIG = staticlib
 contains(SINGLEAPPLICATION_LIBCONFIG, dll):DEFINES *= SINGLEAPPLICATION_DLL
 
 !contains(DEFINES, SINGLEAPPLICATION_BUILD) {
-	win32:SALIBNAME = $$join(SALIBNAME,,,$$MAJOR_VERSION)
-
-	LIBS	+= -l$$SALIBNAME
+    win32:SALIBNAME = $$join(SALIBNAME,,,$$MAJOR_VERSION)
+    LIBS += -l$$SALIBNAME
 }

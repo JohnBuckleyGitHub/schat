@@ -23,20 +23,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDataStream>
-#include <QtCore/QDir>
-#include <QtCore/QHash>
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QRegExp>
 #include <QtCore/QSharedMemory>
 #include <QtCore/QString>
 
-#ifndef Q_OS_WIN
+#include <QtNetwork/QLocalSocket>
+
+#ifdef Q_OS_WIN
+#include <qt_windows.h>
+#else
 #include <sys/types.h>
 #include <pwd.h>
 #include <unistd.h>
 #endif
 
-// timeouts are in ms
+// timeouts all are in ms
 static const int i_timeout_connect	= 200;
 static const int i_timeout_read		= 250;
 static const int i_timeout_write	= 500;
@@ -50,7 +51,18 @@ static QString login()
 		login = QLatin1String("qws");
 #endif
 #ifdef Q_OS_WIN
-		login = QDir::home().dirName();
+		QT_WA({
+			wchar_t buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
+			GetUserNameW(buffer, &bufferSize);
+			login = QString::fromUtf16((ushort*)buffer);
+		},
+		{
+			char buffer[256];
+			DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
+			GetUserNameA(buffer, &bufferSize);
+			login = QString::fromLocal8Bit(buffer);
+		});
 #else
 		struct passwd* pwd = getpwuid(getuid());
 		if(pwd)
@@ -60,6 +72,16 @@ static QString login()
 	}
 
 	return login;
+}
+
+static QString makeUniqueKey(const QString& key)
+{
+	QString uniqueKey = QString("_sa_");
+	uniqueKey.append(key);
+	uniqueKey.append(QLatin1Char('_'));
+	uniqueKey.append(login().toUtf8().toHex());
+
+	return uniqueKey;
 }
 
 static bool writeMessage(QLocalSocket* socket, const QString& message, int timeout = i_timeout_write)
@@ -115,45 +137,67 @@ static QString readMessage(QLocalSocket* socket, bool* ok = 0)
 	return message;
 }
 
-void LocalThread::run()
-{
-	QLocalSocket socket;
-	m_socket = &socket;
-	connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-	connect(m_socket, SIGNAL(disconnected()), this, SLOT(quit()));
 
-	if(!m_socket->setSocketDescriptor(m_socketDescriptor) || m_socket->state() != QLocalSocket::ConnectedState)
+ServerThread::ServerThread(const QString& key, QObject* parent) : QThread(parent),
+	key(key)
+{
+	connect(&localServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
+}
+
+ServerThread::~ServerThread()
+{
+	localServer.close();
+
+	quit();
+	wait();
+}
+
+void ServerThread::run()
+{
+	QString uniqueKey = makeUniqueKey(key);
+
+	if(!localServer.listen(uniqueKey))
+	{
+		qWarning("SingleApplication: Unable to listen for incoming connections on '%s': %s.",
+				 uniqueKey.toLatin1().data(), localServer.errorString().toUtf8().data());
 		return;
-	// send key to client for verification
-	if(!writeMessage(m_socket, m_key))
-		return;
+	}
 
 	exec();
 }
 
-void LocalThread::readyRead()
+void ServerThread::newConnection()
 {
-	bool ok = false;
-	QString message;
-	while(m_socket->bytesAvailable() > 0)
+	QLocalSocket* socket = localServer.nextPendingConnection();
+	if(socket)
 	{
-		// read message from client
-		message = readMessage(m_socket, &ok);
-		if(ok)
-		{
-			writeMessage(m_socket, m_key, i_timeout_write); // confirm receiving
-			emit messageReceived(message);
-		}
+		connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
+		connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
+		if(!writeMessage(socket, key))
+			socket->close();
 	}
 }
 
-
-class ServerCache : public QHash<QString, QLocalServer*>
+void ServerThread::readyRead()
 {
-public:
-	mutable QReadWriteLock lock;
-};
-Q_GLOBAL_STATIC(ServerCache, serverCache)
+	QLocalSocket* socket = qobject_cast<QLocalSocket*>(sender());
+	if(socket)
+	{
+		bool ok = false;
+		QString message;
+		while(socket->bytesAvailable() > 0)
+		{
+			// read message from client
+			message = readMessage(socket, &ok);
+			if(ok)
+			{
+				writeMessage(socket, key, i_timeout_write); // confirm
+				emit messageReceived(message);
+			}
+		}
+	}
+}
 
 
 class SingleApplicationPrivate
@@ -162,8 +206,6 @@ public:
 	inline SingleApplicationPrivate(SingleApplication* parent) : q(parent),
 		socket(0),
 		isRunning(false)
-	{}
-	inline ~SingleApplicationPrivate()
 	{}
 
 	void init();
@@ -182,46 +224,30 @@ public:
 
 void SingleApplicationPrivate::init()
 {
-	key.replace(QRegExp(QLatin1String("[^A-Za-z0-9]")), QString());
+	key.replace(QRegExp("[^A-Za-z0-9]"), QString());
 	if(key.isEmpty())
 		key = QLatin1String("SADEFAULTKEY");
-	uniqueKey = QString("_sa_").append(key).append(QLatin1Char('_')).append(login().toUtf8().toHex());
+	uniqueKey = makeUniqueKey(key);
 
-	ServerCache* cache = serverCache();
-	QWriteLocker locker(&cache->lock);
-
-	QLocalServer* server = cache->value(uniqueKey, 0);
-	if(!server)
+	QSharedMemory* shMem = new QSharedMemory(uniqueKey, q);
+	if(shMem->create(1))
 	{
-		QSharedMemory* shMem = new QSharedMemory(uniqueKey, qApp);
-		if(shMem->create(1))
-		{
-			server = new ThreadedLocalServer(key, qApp);
-			if(!server->listen(uniqueKey))
-			{
-				qWarning("QLocalServer::listen: %s (Used key is '%s')",
-						 server->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
-				delete server;
-				server = 0;
-			}
-			cache->insert(uniqueKey, server);
-		}
-		else
-		{
-			isRunning = (shMem->error() == QSharedMemory::AlreadyExists);
-			if(!isRunning)
-			{
-				qWarning("QSharedMemory::create: %s (Used key is '%s')",
-						 shMem->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
-			}
-			delete shMem;
-		}
-	}
-	if(server)
-	{
+		ServerThread* server = new ServerThread(key, q);
+		QObject::connect(server, SIGNAL(finished()), server, SLOT(deleteLater()));
 		QObject::connect(server, SIGNAL(messageReceived(const QString&)),
 						 q, SIGNAL(messageReceived(const QString&)),
 						 Qt::QueuedConnection);
+		server->start(QThread::LowPriority);
+	}
+	else
+	{
+		isRunning = (shMem->error() == QSharedMemory::AlreadyExists);
+		if(!isRunning)
+		{
+			qWarning("SingleApplication: unable to create a shared memory segment: %s (key: %s).",
+					 shMem->errorString().toUtf8().data(), uniqueKey.toLatin1().data());
+		}
+		delete shMem;
 	}
 }
 
@@ -238,11 +264,18 @@ bool SingleApplicationPrivate::connectToServer()
 		bool ok;
 		const QString message = readMessage(socket, &ok);
 		// now compare received bytes with key
-		if(ok && message.compare(key) == 0)
+		if(ok && message == key)
 			return true;
 
+		qWarning("SingleApplication: Expected key '%s' got '%s'.",
+				 key.toLatin1().data(), message.toLatin1().data());
 		socket->disconnectFromServer();
 		socket->waitForDisconnected(i_timeout_connect);
+	}
+	else
+	{
+		qWarning("SingleApplication: Unable to connect to the server with a key '%s'.",
+				 uniqueKey.toLatin1().data());
 	}
 	socket->abort();
 
@@ -260,7 +293,7 @@ bool SingleApplicationPrivate::sendMessage(const QString& message, int timeout)
 	bool ok;
 	QString response = readMessage(socket, &ok);
 
-	return (ok && response.compare(key) == 0);
+	return (ok && response == key);
 }
 
 
@@ -301,11 +334,9 @@ SingleApplication::SingleApplication(const QString& key, QObject* parent) : QObj
 }
 
 /*!
-  The destructor destroys the SingleApplication object, but the
-  underlying shared memory and local server are not removed from the system
-  unless application exit.
+  Destroys the SingleApplication object.
 
-  Note: If another instance of application with the same key is started again it WILL find this instance.
+  Note: If another instance of application with the same key is started again it WILL NOT find this instance.
 */
 
 SingleApplication::~SingleApplication()
@@ -336,25 +367,13 @@ bool SingleApplication::isRunning() const
 }
 
 /*!
-  This is an overloaded static member function, provided for convenience.
-
-  Returns true if another instance of this application has started;
-  otherwise returns false.
-*/
-
-bool SingleApplication::isRunning(const QString& key)
-{
-	return SingleApplication(key).isRunning();
-}
-
-/*!
   Tries to send the text \a message to the currently running instance.
   The SingleApplication object in the running instance
   will emit the messageReceived() signal when it receives the message.
 
-  This function returns true if the message has been sent to, and
-  processed by, the current instance. If there is no instance
-  currently running, or if the running instance fails to process the
+  This function returns true if the message has been sent to another
+  currently running instance. If there is no instance currently running,
+  or if the running instance fails to process the
   message within \a timeout milliseconds this function return false.
 
   \sa messageReceived()
@@ -363,17 +382,6 @@ bool SingleApplication::isRunning(const QString& key)
 bool SingleApplication::sendMessage(const QString& message, int timeout)
 {
 	return d->sendMessage(message, timeout);
-}
-
-/*!
-  This is an overloaded static member function, provided for convenience.
-
-  Tries to send the text \a message to the currently running instance.
-*/
-
-bool SingleApplication::sendMessage(const QString& key, const QString& message, int timeout)
-{
-	return SingleApplication(key).sendMessage(message, timeout);
 }
 
 /*!

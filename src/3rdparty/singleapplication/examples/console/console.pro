@@ -1,18 +1,18 @@
 TEMPLATE     = app
 LANGUAGE     = C++
 
-TARGET       = loader
+TARGET       = console
 
 include(../../config.pri)
+QT           -= gui
+CONFIG       *= console
 
 DEPENDPATH   += .
 INCLUDEPATH  += .
 
-HEADERS      += mainwindow.h
+HEADERS      += worker.h
 
 SOURCES      += main.cpp \
-             mainwindow.cpp
-
-win32:LIBS   += -luser32
+             worker.cpp
 
 include(../../singleapplication.pri)

@@ -1,3 +1,4 @@
-TEMPLATE	= subdirs
-SUBDIRS		= trivial \
-		loader
+TEMPLATE     = subdirs
+SUBDIRS      = console \
+             loader \
+             trivial

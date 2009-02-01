@@ -17,29 +17,19 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ********************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include "worker.h"
 
-#include <QtCore/QString>
+#include <QtCore/QDebug>
 
-#include <QtGui/QMainWindow>
-
-class QWorkspace;
-
-class MainWindow : public QMainWindow
+Worker::Worker(QObject* parent) : QObject(parent)
 {
-	Q_OBJECT
+	qDebug() << tr("I am a SingleApplication Console test app!");
+	qDebug() << tr("Start me once again...");
+}
 
-public:
-	MainWindow(QWidget* parent = 0);
-	~MainWindow();
+void Worker::showMessage(const QString& message)
+{
+	qDebug() << tr("Message received: %1").arg(message);
+}
 
-public slots:
-	void activate();
-	void handleMessage(const QString& message);
-
-private:
-	QWorkspace* workspace;
-};
-
-#endif // MAINWINDOW_H
+#include "moc_worker.cpp"
