@@ -75,7 +75,7 @@ public:
 protected:
   EmoticonsProviderPrivate * const d;
   void addEmoticonIndex(const QString &path, const QStringList &emoList);
-  void addEmoticonsMap(QString key, QStringList value);
+  void addEmoticonsMap(const QString &key, QStringList value);
   void clearEmoticonsMap();
   void removeEmoticonIndex(const QString &path, const QStringList &emoList);
   void removeEmoticonsMap(QString key);

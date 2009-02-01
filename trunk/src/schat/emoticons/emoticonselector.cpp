@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   a button that pops up a list of all emoticons and returns
  *   the emoticon-string if one is selected in the list
@@ -31,24 +31,27 @@
 /*!
  * \brief Конструктор класса EmoticonLabel.
  *
+ * \param text   Текстовый эквивалент смайлика.
+ * \param file   Файл смайлика.
+ * \param parent Указатель на родительский виджет.
+ *
  * \todo Должна поддерживаться возможность выбрать смайлик с клавиатуры.
  */
-EmoticonLabel::EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent)
-  : QLabel(parent), m_ok(false), m_text(emoticonText)
+EmoticonLabel::EmoticonLabel(const QString &text, const QString &file, QWidget *parent)
+  : QLabel(parent), m_ok(false)
 {
-  setMovie(new QMovie(pixmapPath, QByteArray(), this));
+  QMovie *movie = new QMovie(file, QByteArray(), this);
+  setMovie(movie);
   setAlignment(Qt::AlignCenter);
-  QPixmap p(pixmapPath);
-  if (p.width() > 32 || p.height() > 32)
-    p.scaled(32, 32);
-  setMinimumSize(p.size());
+  movie->start();
+  setToolTip(text);
 }
 
 
 void EmoticonLabel::mouseReleaseEvent(QMouseEvent* /*event*/)
 {
   if (m_ok)
-    emit clicked(" " + m_text + " ");
+    emit clicked(" " + toolTip() + " ");
 }
 
 
@@ -58,7 +61,6 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent* /*event*/)
 EmoticonSelector::EmoticonSelector(QWidget *parent)
   : QWidget(parent), m_lay(0)
 {
-  m_settings = settings;
 }
 
 
@@ -66,7 +68,9 @@ void EmoticonSelector::prepareList()
 {
   int row = 0;
   int col = 0;
-  QMap<QString, QStringList> list = m_settings->emoticons()->theme().emoticonsMap();
+
+  EmoticonsTheme theme = settings->emoticons()->theme();
+  QMap<QString, QStringList> list = theme.emoticonsMap();
   int emoticonsPerRow = (int) sqrt((float)list.count());
   if (emoticonsPerRow * emoticonsPerRow == list.count())
     emoticonsPerRow--;
@@ -74,19 +78,17 @@ void EmoticonSelector::prepareList()
   if (m_lay)
     delete m_lay;
 
-  QString emoticonsPath = QApplication::applicationDirPath() + "/emoticons/" + m_settings->getString("EmoticonTheme") + "/";
+  QString path = theme.themePath() + "/";
 
   m_lay = new QGridLayout(this);
   m_lay->setMargin(2);
   m_lay->setSpacing(2);
-  m_movieList.clear();
 
   QMapIterator<QString, QStringList> i(list);
   while (i.hasNext()) {
     i.next();
-    EmoticonLabel *label = new EmoticonLabel(i.value().first(), i.key(), this);
+    EmoticonLabel *label = new EmoticonLabel(i.value().first(), path + i.key(), this);
     connect(label, SIGNAL(clicked(const QString &)), SLOT(emoticonClicked(const QString &)));
-    connect(this, SIGNAL(setPaused(bool)), label, SLOT(setPaused(bool)));
     connect(this, SIGNAL(deleteLabels()), label, SLOT(deleteLater()));
     m_lay->addWidget(label, row, col);
     if (col == emoticonsPerRow) {
