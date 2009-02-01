@@ -210,11 +210,10 @@ void EmoticonsProvider::addEmoticonIndex(const QString &path, const QStringList 
 /*!
  * Insert a new item in the emoticons map.
  */
-void EmoticonsProvider::addEmoticonsMap(QString key, QStringList value)
+void EmoticonsProvider::addEmoticonsMap(const QString &key, QStringList value)
 {
-  if (!value.isEmpty()) {
-    d->m_emoticonsMap.insert(key, value);
-  }
+  if (!value.isEmpty())
+    d->m_emoticonsMap.insert(QFileInfo(key).fileName(), value);
 }
 
 

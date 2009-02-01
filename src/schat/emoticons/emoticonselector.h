@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   a button that pops up a list of all emoticons and returns
  *   the emoticon-string if one is selected in the list
@@ -31,7 +31,6 @@
 class QGridLayout;
 class QHideEvent;
 class QShowEvent;
-class Settings;
 
 /*!
  * \brief Отображает один смайлик.
@@ -41,20 +40,16 @@ class EmoticonLabel : public QLabel
   Q_OBJECT
 
 public:
-  EmoticonLabel(const QString &emoticonText, const QString &pixmapPath, QWidget *parent = 0);
+  EmoticonLabel(const QString &text, const QString &file, QWidget *parent = 0);
 
 signals:
   void clicked(const QString &text);
-
-public slots:
-  inline void setPaused(bool paused) { movie()->setPaused(paused); }
 
 private:
   inline void mousePressEvent(QMouseEvent* /*event*/) { m_ok = true; }
   void mouseReleaseEvent(QMouseEvent *event);
 
   bool m_ok;
-  const QString m_text;
 };
 
 
@@ -71,22 +66,16 @@ public:
 signals:
   void deleteLabels();
   void itemSelected(const QString &str);
-  void setPaused(bool paused);
 
 public slots:
+  inline void aboutToHide() { emit deleteLabels(); }
   void prepareList();
-  void aboutToHide() { emit deleteLabels(); }
-
-protected:
-  void showEvent(QShowEvent* /*event*/) { emit setPaused(false); }
 
 protected slots:
   void emoticonClicked(const QString &);
 
 private:
-  QList<QMovie*> m_movieList;
   QGridLayout *m_lay;
-  Settings *m_settings;
 };
 
 #endif /*EMOTICONSELECTOR_H_*/
