@@ -40,6 +40,7 @@ HEADERS += \
     chatwindow/chatwindowstyleoutput.h \
     clientservice.h \
     emoticons/emoticons.h \
+    emoticons/emoticonselector.h \
     emoticons/emoticonsprovider.h \
     emoticons/emoticonstheme.h \
     emoticons/providers/adium/adium_emoticons.h \
@@ -62,7 +63,6 @@ HEADERS += \
     updatexmlreader.h \
     version.h \
     welcomedialog.h \
-    widget/emoticonselector.h \
     widget/inputwidget.h \
     widget/networkwidget.h \
     widget/sendwidget.h \
@@ -81,6 +81,7 @@ SOURCES += \
     chatwindow/chatwindowstyleoutput.cpp \
     clientservice.cpp \
     emoticons/emoticons.cpp \
+    emoticons/emoticonselector.cpp \
     emoticons/emoticonsprovider.cpp \
     emoticons/emoticonstheme.cpp \
     emoticons/providers/adium/adium_emoticons.cpp \
@@ -102,7 +103,6 @@ SOURCES += \
     update/updatewidget.cpp \
     updatexmlreader.cpp \
     welcomedialog.cpp \
-    widget/emoticonselector.cpp \
     widget/inputwidget.cpp \
     widget/networkwidget.cpp \
     widget/sendwidget.cpp \
