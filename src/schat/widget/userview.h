@@ -49,7 +49,7 @@ signals:
   void insertNick(const QString &nick);
 
 public slots:
-  void nickClicked(const QString &hex);
+  void nickClicked(const QString &nick);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
@@ -59,7 +59,6 @@ private slots:
 
 private:
   QStandardItem* findItem(const QString &nick) const;
-  void prepareInsertNick(const QString &nick);
 
   const AbstractProfile *m_profile;
   QStandardItemModel m_model;

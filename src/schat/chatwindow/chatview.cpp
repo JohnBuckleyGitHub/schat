@@ -307,8 +307,12 @@ void ChatView::linkClicked(const QUrl &url)
 {
   QString scheme = url.scheme();
 
-  if (scheme == "nick")
-    emit nickClicked(url.toString(QUrl::RemoveScheme));
+  if (scheme == "nick") {
+    emit nickClicked(QByteArray::fromHex(url.toString(QUrl::RemoveScheme).toLatin1()));
+  }
+  else if (scheme == "smile") {
+    emit emoticonsClicked("&nbsp;" + QByteArray::fromHex(url.toString(QUrl::RemoveScheme).toLatin1()) + "&nbsp;");
+  }
   else
     QDesktopServices::openUrl(url);
 }

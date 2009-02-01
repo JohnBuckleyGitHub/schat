@@ -50,6 +50,7 @@ public:
   inline void setIcon(const QIcon &icon)                              { m_icon = icon; }
 
 signals:
+  void emoticonsClicked(const QString &emo);
   void nickClicked(const QString &hex);
 
 public slots:

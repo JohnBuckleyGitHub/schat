@@ -118,6 +118,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   m_main = new MainChannel(QIcon(":/images/main.png"), this);
   connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
+  connect(m_main, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
 
   m_tabs->setCurrentIndex(m_tabs->addTab(m_main, tr("Общий")));
   m_tabs->setTabIcon(0, m_main->icon());
@@ -297,6 +298,7 @@ void SChatWindow::addTab(const QString &nick)
     index = m_tabs->addTab(tab, tab->icon(), nick);
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
+    connect(tab, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   }
 
   m_tabs->setCurrentIndex(index);
