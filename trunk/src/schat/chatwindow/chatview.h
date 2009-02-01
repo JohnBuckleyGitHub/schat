@@ -49,7 +49,8 @@ public:
   void scroll();
 
 signals:
-  void nickClicked(const QString &hex);
+  void emoticonsClicked(const QString &emo);
+  void nickClicked(const QString &nick);
 
 public slots:
   bool copy();
