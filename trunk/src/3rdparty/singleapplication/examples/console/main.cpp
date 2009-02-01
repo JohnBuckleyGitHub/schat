@@ -17,29 +17,28 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ********************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
+#include <QtCore/QCoreApplication>
 #include <QtCore/QString>
 
-#include <QtGui/QMainWindow>
+#include "singleapplication.h"
+#include "worker.h"
 
-class QWorkspace;
-
-class MainWindow : public QMainWindow
+int main(int argc, char* argv[])
 {
-	Q_OBJECT
+	QCoreApplication app(argc, argv);
 
-public:
-	MainWindow(QWidget* parent = 0);
-	~MainWindow();
+	SingleApplication instance("ConsoleExample");
+	if(instance.isRunning())
+	{
+		QString message = Worker::tr("Hello! Did You hear other Console Example instance? :)\nPID: %1")
+							.arg(app.applicationPid());
+		if(instance.sendMessage(message))
+			return 0;
+	}
 
-public slots:
-	void activate();
-	void handleMessage(const QString& message);
+	Worker o;
+	QObject::connect(&instance, SIGNAL(messageReceived(const QString&)),
+						 &o, SLOT(showMessage(const QString&)));
 
-private:
-	QWorkspace* workspace;
-};
-
-#endif // MAINWINDOW_H
+	return app.exec();
+}
