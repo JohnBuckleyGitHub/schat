@@ -153,6 +153,7 @@
   ${While} $R0 == 1
     KillProcDLL::KillProc "${_NAME}"
     Pop $R0
+    Sleep 500
     FindProcDLL::FindProc "${_NAME}"
     Pop $R0
   ${EndWhile}
