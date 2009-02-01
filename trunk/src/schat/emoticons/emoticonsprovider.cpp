@@ -189,13 +189,17 @@ void EmoticonsProvider::addEmoticonIndex(const QString &path, const QStringList 
 {
   foreach(const QString &s, emoList) {
     EmoticonsProvider::Emoticon e;
+    QPixmap p;
 
     QString escaped = Qt::escape(s);
+    e.picPath = path;
+    p.load(path);
 
-    e.picHTMLCode = QString("<a href='smile:%3'><img class=\"smile\" title=\"%1\" alt=\"%1\" src=\"%2\" /></a>")
+    e.picHTMLCode = QString("<a href='smile:%3'><img class=\"smile\" title=\"%1\" alt=\"%1\" src=\"%2\" width=\"%4\" height=\"%5\"  /></a>")
                             .arg(escaped)
                             .arg(QUrl::fromLocalFile(path).toString())
-                            .arg(QString(s.toUtf8().toHex()));
+                            .arg(QString(s.toUtf8().toHex()))
+                            .arg(p.width()).arg(p.height());
 
     e.matchTextEscaped = escaped;
     e.matchText = s;

@@ -62,7 +62,7 @@ Var files
 
     Banner::show /NOUNLOAD /set 76 "${SCHAT_NAME}" "Processing Update..."
 
-    Sleep 1000
+    Sleep 1500
 
     ${If} $files == $0 ; один файл
       !insertmacro UPDATE_ENGINE_EXEC $files

@@ -293,7 +293,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != "nick")
+  if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile")
     menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
 
   menu.addSeparator();
