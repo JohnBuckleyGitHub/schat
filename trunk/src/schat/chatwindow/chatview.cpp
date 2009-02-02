@@ -22,24 +22,31 @@
 #include "channellog.h"
 #include "chatview.h"
 #include "chatview_p.h"
-#include "chatwindowstyle.h"
-#include "chatwindowstyleoutput.h"
 #include "settings.h"
 
+#ifndef SCHAT_NO_WEBKIT
+  #include "chatwindowstyle.h"
+  #include "chatwindowstyleoutput.h"
+#endif
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
  */
 ChatViewPrivate::ChatViewPrivate(ChatView *parent)
-  : empty(true), q(parent), style(0)
+  : empty(true), q(parent)
+#ifndef SCHAT_NO_WEBKIT
+  , style(0)
+#endif
 {
 }
 
 
 ChatViewPrivate::~ChatViewPrivate()
 {
-  if (style)
-    delete style;
+  #ifndef SCHAT_NO_WEBKIT
+    if (style)
+      delete style;
+  #endif
 }
 
 
@@ -87,16 +94,27 @@ void ChatViewPrivate::toLog(const QString &text)
  * \brief Конструктор класса ChatView.
  */
 ChatView::ChatView(QWidget *parent)
+#ifndef SCHAT_NO_WEBKIT
   : QWebView(parent)
+#else
+  : QTextBrowser(parent)
+#endif
 {
   d = new ChatViewPrivate(this);
 
-  page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-  d->style = new ChatWindowStyleOutput("Default", "");
-  setHtml(d->style->makeSkeleton());
-  setFocusPolicy(Qt::NoFocus);
+  #ifndef SCHAT_NO_WEBKIT
+    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    d->style = new ChatWindowStyleOutput("Default", "");
+    setHtml(d->style->makeSkeleton());
+    connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+  #else
+    setOpenLinks(false); /// \bug Добавить стиль
+    connect(this, SIGNAL(anchorClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+    #if QT_VERSION >= 0x040500
+      document()->setDocumentMargin(2);
+    #endif
+  #endif
 
-  connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
   connect(settings, SIGNAL(changed(int)), SLOT(notify(int)));
   setFocusPolicy(Qt::NoFocus);
 
@@ -193,7 +211,11 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   html = tr("<span class='preSb'>Сервисное сообщение:</span>") + "<div class='sb'>" + html + "</div>";
 
   d->toLog(html);
-  appendMessage(d->style->makeStatus(html));
+  #ifndef SCHAT_NO_WEBKIT
+    appendMessage(d->style->makeStatus(html));
+  #else
+    appendMessage(html);
+  #endif
 }
 
 
@@ -238,7 +260,11 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   }
 
   QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";
-  appendMessage(d->style->makeMessage(name, html, direction, same, "", action), same);
+  #ifndef SCHAT_NO_WEBKIT
+    appendMessage(d->style->makeMessage(name, html, direction, same, "", action), same);
+  #else
+    appendMessage(html);
+  #endif
 
 //  qDebug() << m_view->page()->mainFrame()->toHtml();
 }
@@ -253,7 +279,11 @@ void ChatView::addServiceMsg(const QString &msg)
   d->prev = "";
 
   d->toLog(msg);
-  appendMessage(d->style->makeStatus(msg));
+  #ifndef SCHAT_NO_WEBKIT
+    appendMessage(d->style->makeStatus(msg));
+  #else
+    appendMessage(msg);
+  #endif
 }
 
 
@@ -283,7 +313,12 @@ void ChatView::log(bool enable)
 
 void ChatView::scroll()
 {
-  page()->mainFrame()->evaluateJavaScript("alignChat(true)");
+  #ifndef SCHAT_NO_WEBKIT
+    page()->mainFrame()->evaluateJavaScript("alignChat(true)");
+  #else
+    QScrollBar *bar = verticalScrollBar();
+    bar->setValue(bar->maximum());
+  #endif
 }
 
 
@@ -292,10 +327,18 @@ void ChatView::scroll()
  */
 bool ChatView::copy()
 {
-  if (selectedText().isEmpty())
-    return false;
+  #ifndef SCHAT_NO_WEBKIT
+    if (selectedText().isEmpty())
+      return false;
 
-  triggerPageAction(QWebPage::Copy);
+    triggerPageAction(QWebPage::Copy);
+  #else
+    if (!textCursor().hasSelection())
+      return false;
+
+    QTextBrowser::copy();
+  #endif
+
   return true;
 }
 
@@ -305,7 +348,12 @@ bool ChatView::copy()
  */
 void ChatView::clear()
 {
-  setHtml(d->style->makeSkeleton());
+  #ifndef SCHAT_NO_WEBKIT
+    setHtml(d->style->makeSkeleton());
+  #else
+    QTextBrowser::clear();
+  #endif
+
   d->empty = true;
   d->prev = "";
 }
@@ -313,16 +361,16 @@ void ChatView::clear()
 
 void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
-  d->copy->setEnabled(!selectedText().isEmpty());
+//  d->copy->setEnabled(!selectedText().isEmpty());
   d->clear->setEnabled(!d->empty);
 
   QMenu menu(this);
   menu.addAction(d->copy);
 
-  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-  QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile")
-    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+//  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+//  QUrl url = r.linkUrl();
+//  if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile")
+//    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
 
   menu.addSeparator();
   menu.addAction(d->clear);
@@ -353,10 +401,18 @@ void ChatView::notify(int notify)
 }
 
 
-void ChatView::appendMessage(QString message, bool same_from)
+void ChatView::appendMessage(const QString &message, bool same_from)
 {
-  QString js_message = QString("append%2Message(\"%1\");").arg(message.replace("\"","\\\"").replace("\n","\\n")).arg(same_from?"Next":"");
-  page()->mainFrame()->evaluateJavaScript(js_message);
+  #ifndef SCHAT_NO_WEBKIT
+    QString js_message = message;
+    js_message.replace("\"","\\\"");
+    js_message.replace("\n","\\n");
+    js_message = QString("append%2Message(\"%1\");").arg(js_message).arg(same_from ? "Next" : "");
+    page()->mainFrame()->evaluateJavaScript(js_message);
+  #else
+    append(message);
+    scroll();
+  #endif
 }
 
 

@@ -19,10 +19,14 @@
 #ifndef CHATVIEW_H_
 #define CHATVIEW_H_
 
-#include <QWebView>
+#ifndef SCHAT_NO_WEBKIT
+  #include <QWebView>
+#else
+  #include <QTextBrowser>
+#endif
 
-class QUrl;
 class ChatViewPrivate;
+class QUrl;
 
 
 /*!
@@ -31,7 +35,11 @@ class ChatViewPrivate;
  * По умолчанию используется движок WebKit, но при компиляции
  * можно отказаться от него в пользу QTextBrowser.
  */
+#ifndef SCHAT_NO_WEBKIT
 class ChatView : public QWebView
+#else
+class ChatView : public QTextBrowser
+#endif
 {
   Q_OBJECT
 
@@ -65,7 +73,7 @@ private slots:
   void notify(int notify);
 
 private:
-  void appendMessage(QString message, bool same_from = false);
+  void appendMessage(const QString &message, bool same_from = false);
   void createActions();
 
   ChatViewPrivate *d;

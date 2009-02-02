@@ -37,12 +37,15 @@ public:
   bool log;
   bool strict;
   ChatView *q;
-  ChatWindowStyleOutput *style;
   QAction *clear;
   QAction *copy;
   QPointer<ChannelLog> channelLog;
   QString channel;
   QString prev;
+
+  #ifndef SCHAT_NO_WEBKIT
+    ChatWindowStyleOutput *style;
+  #endif
 };
 
 
