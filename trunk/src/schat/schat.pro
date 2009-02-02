@@ -36,6 +36,7 @@ HEADERS += \
     abstracttab.h \
     channellog.h \
     chatwindow/chatview.h \
+    chatwindow/chatview_p.h \
     chatwindow/chatwindowstyle.h \
     chatwindow/chatwindowstyleoutput.h \
     clientservice.h \

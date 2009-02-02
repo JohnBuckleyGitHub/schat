@@ -22,6 +22,7 @@
 #include <QWebView>
 
 class QUrl;
+class ChatViewPrivate;
 
 
 /*!
@@ -64,12 +65,9 @@ private slots:
   void notify(int notify);
 
 private:
-  bool prepareCmd(const QString &cmd, QString &msg, bool cut = true) const;
   void appendMessage(QString message, bool same_from = false);
   void createActions();
-  void toLog(const QString &text);
 
-  class ChatViewPrivate;
   ChatViewPrivate *d;
 };
 

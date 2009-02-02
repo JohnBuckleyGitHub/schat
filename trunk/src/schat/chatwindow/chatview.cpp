@@ -21,37 +21,65 @@
 
 #include "channellog.h"
 #include "chatview.h"
+#include "chatview_p.h"
 #include "chatwindowstyle.h"
 #include "chatwindowstyleoutput.h"
 #include "settings.h"
 
-class ChatView::ChatViewPrivate
-{
-public:
-  ChatViewPrivate();
-  ~ChatViewPrivate();
-  bool empty;
-  bool log;
-  bool strict;
-  ChatWindowStyleOutput *style;
-  QAction *clear;
-  QAction *copy;
-  QPointer<ChannelLog> channelLog;
-  QString channel;
-  QString prev;
-};
 
-
-ChatView::ChatViewPrivate::ChatViewPrivate()
-  : empty(true), style(0)
+/*!
+ * \brief Конструктор класса ChatViewPrivate.
+ */
+ChatViewPrivate::ChatViewPrivate(ChatView *parent)
+  : empty(true), q(parent), style(0)
 {
 }
 
 
-ChatView::ChatViewPrivate::~ChatViewPrivate()
+ChatViewPrivate::~ChatViewPrivate()
 {
   if (style)
     delete style;
+}
+
+
+/*!
+ * Проверяет входящее сообщение на наличие команды и при
+ * необходимости вырезает эту команду из строки.
+ *
+ * \param cmd Команда.
+ * \param msg Сообщение.
+ * \param cut Разрешает вырезание команды из строки.
+ *
+ * \return Возвращает \a true если команда была найдена.
+ */
+bool ChatViewPrivate::prepareCmd(const QString &cmd, QString &msg, bool cut)
+{
+  if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
+    if (cut) {
+      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      if (index != -1)
+        msg.remove(index, cmd.size());
+    }
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Записывает строку в журнал.
+ */
+void ChatViewPrivate::toLog(const QString &text)
+{
+  if (log) {
+    if (!channelLog) {
+      channelLog = new ChannelLog(q);
+      channelLog->setChannel(channel);
+    }
+    channelLog->msg(text);
+  }
 }
 
 
@@ -61,7 +89,7 @@ ChatView::ChatViewPrivate::~ChatViewPrivate()
 ChatView::ChatView(QWidget *parent)
   : QWebView(parent)
 {
-  d = new ChatViewPrivate;
+  d = new ChatViewPrivate(this);
 
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   d->style = new ChatWindowStyleOutput("Default", "");
@@ -164,7 +192,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
   html = tr("<span class='preSb'>Сервисное сообщение:</span>") + "<div class='sb'>" + html + "</div>";
 
-  toLog(html);
+  d->toLog(html);
   appendMessage(d->style->makeStatus(html));
 }
 
@@ -186,11 +214,11 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   bool action = false;
   bool same = false;
 
-  if (prepareCmd("/me ", html)) {
+  if (d->prepareCmd("/me ", html)) {
     action = true;
     d->prev = "";
 
-    toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(html));
+    d->toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(html));
   }
   else {
     if (d->prev.isEmpty() || d->prev != sender)
@@ -198,7 +226,7 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     else
       same = true;
 
-    toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
+    d->toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
   }
 
   if (settings->emoticons()) {
@@ -224,7 +252,7 @@ void ChatView::addServiceMsg(const QString &msg)
   d->empty = false;
   d->prev = "";
 
-  toLog(msg);
+  d->toLog(msg);
   appendMessage(d->style->makeStatus(msg));
 }
 
@@ -325,31 +353,6 @@ void ChatView::notify(int notify)
 }
 
 
-/*!
- * Проверяет входящее сообщение на наличие команды и при
- * необходимости вырезает эту команду из строки.
- *
- * \param cmd Команда.
- * \param msg Сообщение.
- * \param cut Разрешает вырезание команды из строки.
- *
- * \return Возвращает \a true если команда была найдена.
- */
-bool ChatView::prepareCmd(const QString &cmd, QString &msg, bool cut) const
-{
-  if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
-    if (cut) {
-      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
-      if (index != -1)
-        msg.remove(index, cmd.size());
-    }
-    return true;
-  }
-
-  return false;
-}
-
-
 void ChatView::appendMessage(QString message, bool same_from)
 {
   QString js_message = QString("append%2Message(\"%1\");").arg(message.replace("\"","\\\"").replace("\n","\\n")).arg(same_from?"Next":"");
@@ -365,18 +368,4 @@ void ChatView::createActions()
 
   d->clear = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
-}
-
-/*!
- * Записывает строку в журнал.
- */
-void ChatView::toLog(const QString &text)
-{
-  if (d->log) {
-    if (!d->channelLog) {
-      d->channelLog = new ChannelLog(this);
-      d->channelLog->setChannel(d->channel);
-    }
-    d->channelLog->msg(text);
-  }
 }
