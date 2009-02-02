@@ -16,6 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_CONSOLE    = 0
+SCHAT_WEBKIT     = 1
 SCHAT_DEBUG      = 0
 SCHAT_SINGLE_APP = 1
 SCHAT_RESOURCES  = 1
@@ -109,6 +110,13 @@ SOURCES += \
     widget/sendwidget.cpp \
     widget/soundwidget.cpp \
     widget/userview.cpp \
+    
+contains( SCHAT_WEBKIT, 1 ) {
+
+}
+else {
+  DEFINES += SCHAT_NO_WEBKIT
+}
 
 win32 {
     HEADERS += update/verifythread.h
