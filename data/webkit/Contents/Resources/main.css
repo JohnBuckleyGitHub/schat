@@ -36,8 +36,8 @@ a span[style] { /* Fix Qt rich text */
 }
 .oab, .iab {
   color:#be00c4;
-  border:1px solid #fedbff;
-  background:url(Images/ActionBg.png) top repeat-x #ffefff;
+  border:1px solid #ffefff;
+  background:url(Images/ActionBg.png) top repeat-x #fffbff;
 }
 .oab .sender a, .iab .sender a {
   color:#be00c4;
@@ -52,23 +52,22 @@ a span[style] { /* Fix Qt rich text */
   color:#002b3c;
   background-color:#f5f8ff;
   border:#dce2e6 solid 1px;
-  /*-webkit-border-radius:5px;*/
   margin:1px 8px;
   padding:1px 4px;
 }
 .ocb {
-  border:1px solid #d5ffcd;
-  background:url(Images/OutgoingBg.png) top repeat-x #f6fff5;
+  border:1px solid #eeffeb;
+  background:url(Images/OutgoingBg.png) top repeat-x #fcfffb;
 }
 .oncb {
-  border-top:1px solid #d5ffcd;
+  border-top:1px solid #eeffeb;
 }
 .icb {
-  border:1px solid #d7dcff;
-  background:url(Images/IncomingBg.png) top repeat-x #ebedff;
+  border:1px solid #f3f5ff;
+  background:url(Images/IncomingBg.png) top repeat-x #fbfcff;
 }
 .incb {
-  border-top:1px solid #d7dcff;
+  border-top:1px solid #f3f5ff;
 }
 .ocb .sender a, .ocb .sender, .icb .sender a, .icb .sender {
   color:#185074;
