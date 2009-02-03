@@ -38,8 +38,6 @@ HEADERS += \
     channellog.h \
     chatwindow/chatview.h \
     chatwindow/chatview_p.h \
-    chatwindow/chatwindowstyle.h \
-    chatwindow/chatwindowstyleoutput.h \
     clientservice.h \
     emoticons/emoticons.h \
     emoticons/emoticonselector.h \
@@ -79,8 +77,6 @@ SOURCES += \
     abstracttab.cpp \
     channellog.cpp \
     chatwindow/chatview.cpp \
-    chatwindow/chatwindowstyle.cpp \
-    chatwindow/chatwindowstyleoutput.cpp \
     clientservice.cpp \
     emoticons/emoticons.cpp \
     emoticons/emoticonselector.cpp \
@@ -112,7 +108,15 @@ SOURCES += \
     widget/userview.cpp \
     
 contains( SCHAT_WEBKIT, 1 ) {
-
+  HEADERS += \
+    chatwindow/chatwindowstyle.h \
+    chatwindow/chatwindowstyleoutput.h \
+    
+  SOURCES += \
+    chatwindow/chatwindowstyle.cpp \
+    chatwindow/chatwindowstyleoutput.cpp \
+    
+  RESOURCES += ../../data/$${TARGET}-webkit.qrc    
 }
 else {
   DEFINES += SCHAT_NO_WEBKIT

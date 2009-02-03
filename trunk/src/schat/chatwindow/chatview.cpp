@@ -101,6 +101,7 @@ void ChatViewPrivate::toLog(const QString &text)
 }
 
 
+#ifdef SCHAT_NO_WEBKIT
 QString ChatViewPrivate::makeMessage(const QString &sender, const QString &message, bool action)
 {
   if (action)
@@ -114,6 +115,7 @@ QString ChatViewPrivate::makeStatus(const QString &message)
 {
   return QString("<div><small class='ts'>%1 |</small> %2</div>").arg(QTime::currentTime().toString("hh:mm:ss")).arg(message);
 }
+#endif
 
 
 /*!
