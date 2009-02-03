@@ -90,6 +90,21 @@ void ChatViewPrivate::toLog(const QString &text)
 }
 
 
+QString ChatViewPrivate::makeMessage(const QString &sender, const QString &message, bool action)
+{
+  if (action)
+    return makeStatus(QString("<span class='me'>%1 %2</span>").arg(sender).arg(message));
+  else
+    return makeStatus(QString("<b class='sender'>%1:</b> %2").arg(sender).arg(message));
+}
+
+
+QString ChatViewPrivate::makeStatus(const QString &message)
+{
+  return QString("<div><small class='ts'>%1 |</small> %2</div>").arg(QTime::currentTime().toString("hh:mm:ss")).arg(message);
+}
+
+
 /*!
  * \brief Конструктор класса ChatView.
  */
@@ -202,20 +217,12 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
  */
 void ChatView::addFilteredMsg(const QString &msg, bool strict)
 {
-  d->empty = false;
-  d->prev = "";
-
   QTextDocument doc;
   doc.setHtml(msg);
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  html = tr("<span class='preSb'>Сервисное сообщение:</span>") + "<div class='sb'>" + html + "</div>";
+  html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Сервисное сообщение:")).arg(html);
 
-  d->toLog(html);
-  #ifndef SCHAT_NO_WEBKIT
-    appendMessage(d->style->makeStatus(html));
-  #else
-    appendMessage(html);
-  #endif
+  addServiceMsg(html);
 }
 
 
@@ -263,7 +270,7 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   #ifndef SCHAT_NO_WEBKIT
     appendMessage(d->style->makeMessage(name, html, direction, same, "", action), same);
   #else
-    appendMessage(html);
+    appendMessage(d->makeMessage(name, html, action));
   #endif
 
 //  qDebug() << m_view->page()->mainFrame()->toHtml();
@@ -282,7 +289,7 @@ void ChatView::addServiceMsg(const QString &msg)
   #ifndef SCHAT_NO_WEBKIT
     appendMessage(d->style->makeStatus(msg));
   #else
-    appendMessage(msg);
+    appendMessage(d->makeStatus(msg));
   #endif
 }
 

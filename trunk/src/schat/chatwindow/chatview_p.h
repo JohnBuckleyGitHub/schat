@@ -45,6 +45,9 @@ public:
 
   #ifndef SCHAT_NO_WEBKIT
     ChatWindowStyleOutput *style;
+  #else
+    static QString makeMessage(const QString &sender, const QString &message, bool action = false);
+    static QString makeStatus(const QString &message);
   #endif
 };
 
