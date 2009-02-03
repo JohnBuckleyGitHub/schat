@@ -33,7 +33,7 @@ InputWidget::InputWidget(QWidget *parent)
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_default = currentCharFormat();
   m_current = 0;
-  document()->setDefaultStyleSheet("a {color:#1a4d82; text-decoration:none;}");
+  document()->setDefaultStyleSheet("a {color:#815d53; text-decoration:none;}");
   #if QT_VERSION >= 0x040500
     document()->setDocumentMargin(2);
   #endif

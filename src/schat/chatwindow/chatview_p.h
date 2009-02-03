@@ -48,6 +48,8 @@ public:
   #else
     static QString makeMessage(const QString &sender, const QString &message, bool action = false);
     static QString makeStatus(const QString &message);
+
+    QString styleSheet;
   #endif
 };
 
