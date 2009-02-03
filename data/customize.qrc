@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
-<qresource>
+<qresource prefix="/">
   <file>doc/members.html</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
