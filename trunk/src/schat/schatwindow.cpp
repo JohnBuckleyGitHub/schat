@@ -253,7 +253,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      m_main->msg("<span class='аccessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
+      m_main->msg("<span class='accessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
       break;
   }
 
