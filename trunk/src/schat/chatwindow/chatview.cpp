@@ -389,21 +389,48 @@ void ChatView::clear()
 
 void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
-//  d->copy->setEnabled(!selectedText().isEmpty());
+  #ifndef SCHAT_NO_WEBKIT
+    d->copy->setEnabled(!selectedText().isEmpty());
+  #else
+    d->copy->setEnabled(textCursor().hasSelection());
+    d->selectAll->setEnabled(!d->empty);
+  #endif
+
+  QString copyLinkText = tr("Копировать &ссылку");
   d->clear->setEnabled(!d->empty);
+  QAction *copyLink = 0;
 
   QMenu menu(this);
   menu.addAction(d->copy);
 
-//  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-//  QUrl url = r.linkUrl();
-//  if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile")
-//    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+  #ifndef SCHAT_NO_WEBKIT
+    QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+    QUrl url = r.linkUrl();
+    if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile") {
+      copyLink = pageAction(QWebPage::CopyLinkToClipboard);
+      copyLink->setText(copyLinkText);
+    }
+  #else
+    QUrl url(anchorAt(event->pos()));
+    if (!url.isEmpty() && url.scheme() != "nick" && url.scheme() != "smile")
+      copyLink = menu.addAction(copyLinkText);
+  #endif
+
+  if (copyLink)
+    menu.addAction(copyLink);
 
   menu.addSeparator();
   menu.addAction(d->clear);
 
-  menu.exec(event->globalPos());
+  #ifndef SCHAT_NO_WEBKIT
+    menu.exec(event->globalPos());
+  #else
+    menu.addAction(d->selectAll);
+    QAction *action = menu.exec(event->globalPos());
+
+    if (action == copyLink)
+      QApplication::clipboard()->setText(url.toString());
+  #endif
 }
 
 
@@ -452,4 +479,9 @@ void ChatView::createActions()
 
   d->clear = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
+
+  #ifdef SCHAT_NO_WEBKIT
+    d->selectAll = new QAction(tr("&Выделить всё"), this);
+    connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
+  #endif
 }
