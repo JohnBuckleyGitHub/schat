@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
       if (!arguments.isEmpty())
         message = arguments.join(", ");
 
-      instance.sendMessage(message);
-      return 0;
+      if (instance.sendMessage(message))
+        return 0;
     }
   #endif
 
