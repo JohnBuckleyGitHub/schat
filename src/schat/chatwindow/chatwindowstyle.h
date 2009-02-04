@@ -52,31 +52,30 @@ public:
   ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
   ~ChatWindowStyle();
 
-  StyleVariants getVariants();
-  QString getStyleName() const;
-  QString getStyleBaseHref() const;
-
-  QString getTemplateHtml() const;
-  QString getHeaderHtml() const;
-  QString getFooterHtml() const;
-  QString getIncomingHtml() const;
-  QString getNextIncomingHtml() const;
-  QString getOutgoingHtml() const;
-  QString getNextOutgoingHtml() const;
-  QString getStatusHtml() const;
-  QString getActionIncomingHtml() const;
-  QString getActionOutgoingHtml() const;
-  QString getFileTransferIncomingHtml() const;
-  QString getOutgoingStateSendingHtml() const;
-  QString getOutgoingStateSentHtml() const;
-  QString getOutgoingStateErrorHtml() const;
-  QString getOutgoingStateUnknownHtml() const;
-//  QString getMainCSS() const;
-
   bool hasActionTemplate() const;
   bool hasCompact(const QString &variant) const;
   QString compact(const QString &variant) const;
+  QString styleBaseHref() const;
+  QString styleName() const;
+  static bool isValid(const QString &style);
+  StyleVariants variants();
   void reload();
+
+  QString templateHtml() const;
+  QString headerHtml() const;
+  QString footerHtml() const;
+  QString incomingHtml() const;
+  QString nextIncomingHtml() const;
+  QString outgoingHtml() const;
+  QString nextOutgoingHtml() const;
+  QString statusHtml() const;
+  QString actionIncomingHtml() const;
+  QString actionOutgoingHtml() const;
+  QString fileTransferIncomingHtml() const;
+  QString outgoingStateSendingHtml() const;
+  QString outgoingStateSentHtml() const;
+  QString outgoingStateErrorHtml() const;
+  QString outgoingStateUnknownHtml() const;
 
 private:
   bool readStyleFile(QString &out, const QString &fileName, bool failBack = true);

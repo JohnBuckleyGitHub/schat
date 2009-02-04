@@ -80,31 +80,41 @@ ChatWindowStyle::~ChatWindowStyle()
 
 
 /*!
- * Get the list of all variants for this theme.
- * If the variant aren't listed, it call the lister
- * before returning the list of the Variants.
- * If the variant are listed, it just return the cached
- * variant list.
- * \return the StyleVariants QHash.
+ * Check if the style has the support for Kopete Action template (Kopete extension).
+ *
+ * \return true if the style has Action template.
  */
-ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
+bool ChatWindowStyle::hasActionTemplate() const
 {
-  // If the variantList is empty, list available variants.
-  if( d->variantsList.isEmpty() )
-  {
-    listVariants();
-  }
-  return d->variantsList;
+  return (!d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty());
 }
 
+
 /*!
- * Get the style path.
- * The style path points to the directory where the style is located.
- * ex: ~/.kde/share/apps/kopete/styles/StyleName/
- *
- * \return the style path based.
+ * Check if the supplied variant has a compact form.
  */
-QString ChatWindowStyle::getStyleName() const { return d->styleName; }
+bool ChatWindowStyle::hasCompact(const QString & styleVariant) const
+{
+  if (d->compactVariants.contains(styleVariant))
+    return d->compactVariants.value(styleVariant);
+
+  return false;
+}
+
+
+/*!
+ * Return the compact version of the given style variant.
+ * For the unmodified style, this returns "Variants/_compact_.css".
+ */
+QString ChatWindowStyle::compact( const QString & styleVariant ) const
+{
+  QString compacted = styleVariant;
+  if ( styleVariant.isEmpty() ) {
+    return QLatin1String( "Variants/_compact_.css" );
+  } else {
+    return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
+  }
+}
 
 
 /*!
@@ -118,46 +128,78 @@ QString ChatWindowStyle::getStyleName() const { return d->styleName; }
  *
  * \return the path to the resource directory.
  */
-QString ChatWindowStyle::getStyleBaseHref() const
+QString ChatWindowStyle::styleBaseHref() const
 {
   if(d->defaultStyle)
     return "qrc" + d->baseHref;
 
-  #if defined(Q_WS_WIN)
-    return "file:///"+d->baseHref;
-  #else
-    return "file://"+d->baseHref;
-  #endif
+  return QUrl::fromLocalFile(d->baseHref).toString();
 }
-
-
-QString ChatWindowStyle::getTemplateHtml() const             { return d->templateHtml; }
-QString ChatWindowStyle::getHeaderHtml() const               { return d->headerHtml; }
-QString ChatWindowStyle::getFooterHtml() const               { return d->footerHtml; }
-QString ChatWindowStyle::getIncomingHtml() const             { return d->incomingHtml; }
-QString ChatWindowStyle::getNextIncomingHtml() const         { return d->nextIncomingHtml; }
-QString ChatWindowStyle::getOutgoingHtml() const             { return d->outgoingHtml; }
-QString ChatWindowStyle::getNextOutgoingHtml() const         { return d->nextOutgoingHtml; }
-QString ChatWindowStyle::getStatusHtml() const               { return d->statusHtml; }
-QString ChatWindowStyle::getActionIncomingHtml() const       { return d->actionIncomingHtml; }
-QString ChatWindowStyle::getActionOutgoingHtml() const       { return d->actionOutgoingHtml; }
-QString ChatWindowStyle::getFileTransferIncomingHtml() const { return d->fileTransferIncomingHtml; }
-QString ChatWindowStyle::getOutgoingStateSendingHtml() const { return d->outgoingStateSendingHtml; }
-QString ChatWindowStyle::getOutgoingStateSentHtml() const    { return d->outgoingStateSentHtml; }
-QString ChatWindowStyle::getOutgoingStateErrorHtml() const   { return d->outgoingStateErrorHtml; }
-QString ChatWindowStyle::getOutgoingStateUnknownHtml() const { return d->outgoingStateUnknownHtml; }
-//QString ChatWindowStyle::getMainCSS() const                  { return d->mainCSS; }
 
 
 /*!
- * Check if the style has the support for Kopete Action template (Kopete extension).
+ * Get the style path.
+ * The style path points to the directory where the style is located.
+ * ex: ~/.kde/share/apps/kopete/styles/StyleName/
  *
- * \return true if the style has Action template.
+ * \return the style path based.
  */
-bool ChatWindowStyle::hasActionTemplate() const
+QString ChatWindowStyle::styleName() const { return d->styleName; }
+
+
+bool ChatWindowStyle::isValid(const QString &style)
 {
-  return (!d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty());
+  Q_UNUSED(style);
+
+  return true;
 }
+
+
+/*!
+ * Get the list of all variants for this theme.
+ * If the variant aren't listed, it call the lister
+ * before returning the list of the Variants.
+ * If the variant are listed, it just return the cached
+ * variant list.
+ * \return the StyleVariants QHash.
+ */
+ChatWindowStyle::StyleVariants ChatWindowStyle::variants()
+{
+  // If the variantList is empty, list available variants.
+  if( d->variantsList.isEmpty() )
+  {
+    listVariants();
+  }
+  return d->variantsList;
+}
+
+
+/*!
+ * Reload style from disk.
+ */
+void ChatWindowStyle::reload()
+{
+  d->variantsList.clear();
+  readStyleFiles();
+  listVariants();
+}
+
+
+QString ChatWindowStyle::templateHtml() const             { return d->templateHtml; }
+QString ChatWindowStyle::headerHtml() const               { return d->headerHtml; }
+QString ChatWindowStyle::footerHtml() const               { return d->footerHtml; }
+QString ChatWindowStyle::incomingHtml() const             { return d->incomingHtml; }
+QString ChatWindowStyle::nextIncomingHtml() const         { return d->nextIncomingHtml; }
+QString ChatWindowStyle::outgoingHtml() const             { return d->outgoingHtml; }
+QString ChatWindowStyle::nextOutgoingHtml() const         { return d->nextOutgoingHtml; }
+QString ChatWindowStyle::statusHtml() const               { return d->statusHtml; }
+QString ChatWindowStyle::actionIncomingHtml() const       { return d->actionIncomingHtml; }
+QString ChatWindowStyle::actionOutgoingHtml() const       { return d->actionOutgoingHtml; }
+QString ChatWindowStyle::fileTransferIncomingHtml() const { return d->fileTransferIncomingHtml; }
+QString ChatWindowStyle::outgoingStateSendingHtml() const { return d->outgoingStateSendingHtml; }
+QString ChatWindowStyle::outgoingStateSentHtml() const    { return d->outgoingStateSentHtml; }
+QString ChatWindowStyle::outgoingStateErrorHtml() const   { return d->outgoingStateErrorHtml; }
+QString ChatWindowStyle::outgoingStateUnknownHtml() const { return d->outgoingStateUnknownHtml; }
 
 
 bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool failBack)
@@ -179,7 +221,6 @@ bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool 
   QTextStream stream(&file);
   stream.setCodec(QTextCodec::codecForName("UTF-8"));
   out = stream.readAll();
-//  qDebug() << fileName << out;
   file.close();
 
   return true;
@@ -214,9 +255,8 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
   }
 
   readStyleFiles();
-  if (styleBuildMode & StyleBuildNormal) {
+  if (styleBuildMode & StyleBuildNormal)
     listVariants();
-  }
 }
 
 
@@ -268,14 +308,13 @@ void ChatWindowStyle::readStyleFiles()
   readStyleFile(d->outgoingHtml,             "Outgoing/Content.html");
   readStyleFile(d->nextOutgoingHtml,         "Outgoing/NextContent.html");
   readStyleFile(d->statusHtml,               "Status.html");
-  readStyleFile(d->actionIncomingHtml,       "Incoming/Action.html");
-  readStyleFile(d->actionOutgoingHtml,       "Outgoing/Action.html");
+  readStyleFile(d->actionIncomingHtml,       "Incoming/Action.html", false);
+  readStyleFile(d->actionOutgoingHtml,       "Outgoing/Action.html", false);
   readStyleFile(d->fileTransferIncomingHtml, "Incoming/FileTransferRequest.html");
   readStyleFile(d->outgoingStateUnknownHtml, "Outgoing/StateUnknown.html");
   readStyleFile(d->outgoingStateSendingHtml, "Outgoing/StateSending.html");
   readStyleFile(d->outgoingStateSentHtml,    "Outgoing/StateSent.html");
   readStyleFile(d->outgoingStateErrorHtml,   "Outgoing/StateError.html");
-//  readStyleFile(d->mainCSS,                  "main.css");
 
   if ( d->fileTransferIncomingHtml.isEmpty() ||
        ( !d->fileTransferIncomingHtml.contains( "saveFileHandlerId" ) &&
@@ -297,43 +336,5 @@ void ChatWindowStyle::readStyleFiles()
                                "</div>" )
                                .arg( QObject::tr( "Download" ), QObject::tr( "Cancel" ) );
     d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
-  }
-}
-
-
-/*!
- * Reload style from disk.
- */
-void ChatWindowStyle::reload()
-{
-  d->variantsList.clear();
-  readStyleFiles();
-  listVariants();
-}
-
-
-/*!
- * Check if the supplied variant has a compact form.
- */
-bool ChatWindowStyle::hasCompact(const QString & styleVariant) const
-{
-  if (d->compactVariants.contains(styleVariant)) {
-    return d->compactVariants.value(styleVariant);
-  }
-  return false;
-}
-
-
-/*!
- * Return the compact version of the given style variant.
- * For the unmodified style, this returns "Variants/_compact_.css".
- */
-QString ChatWindowStyle::compact( const QString & styleVariant ) const
-{
-  QString compacted = styleVariant;
-  if ( styleVariant.isEmpty() ) {
-    return QLatin1String( "Variants/_compact_.css" );
-  } else {
-    return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
   }
 }

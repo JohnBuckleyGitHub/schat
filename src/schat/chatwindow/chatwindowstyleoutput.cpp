@@ -58,10 +58,10 @@ QString ChatWindowStyleOutput::makeSkeleton(const QString &chatName,        cons
                                             const QString &partnerName,     const QString &ownerIconPath,
                                             const QString &partnerIconPath, const QString &time)
 {
-  QString skeleton = m_style->getTemplateHtml();
-  skeleton.replace(skeleton.indexOf("%@"), 2, m_style->getStyleBaseHref());
-  skeleton.replace(skeleton.lastIndexOf("%@"), 2, m_style->getFooterHtml());
-  skeleton.replace(skeleton.lastIndexOf("%@"), 2, m_style->getHeaderHtml());
+  QString skeleton = m_style->templateHtml();
+  skeleton.replace(skeleton.indexOf("%@"), 2, m_style->styleBaseHref());
+  skeleton.replace(skeleton.lastIndexOf("%@"), 2, m_style->footerHtml());
+  skeleton.replace(skeleton.lastIndexOf("%@"), 2, m_style->headerHtml());
 
   if (!m_variant.isEmpty())
     skeleton.replace(skeleton.lastIndexOf("%@"), 2, "Variants/" + m_variant + ".css");
@@ -124,17 +124,20 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
 {
   QString html;
 
+  if (!m_style->hasActionTemplate())
+    action = false;
+
   if (direction) {
     if (action)
-      html = m_style->getActionOutgoingHtml();
+      html = m_style->actionOutgoingHtml();
     else
-      html = sameSender ? m_style->getNextOutgoingHtml() : m_style->getOutgoingHtml();
+      html = sameSender ? m_style->nextOutgoingHtml() : m_style->outgoingHtml();
   }
   else {
     if (action)
-      html = m_style->getActionIncomingHtml();
+      html = m_style->actionIncomingHtml();
     else
-      html = sameSender ? m_style->getNextIncomingHtml() : m_style->getIncomingHtml();
+      html = sameSender ? m_style->nextIncomingHtml() : m_style->incomingHtml();
   }
 
   html = html.replace("%sender%", sender);
@@ -145,9 +148,9 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
   QString avatar = avatarPath;
   if(avatar.isEmpty()) { /// \todo Исправить.
     if(direction)
-      avatar = (m_style->getStyleBaseHref() + "Outgoing/buddy_icon.png");
+      avatar = (m_style->styleBaseHref() + "Outgoing/buddy_icon.png");
     else
-      avatar = (m_style->getStyleBaseHref() + "Incoming/buddy_icon.png");
+      avatar = (m_style->styleBaseHref() + "Incoming/buddy_icon.png");
   }
 
   html = html.replace("%userIconPath%", avatar);
@@ -178,7 +181,7 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
  */
 QString ChatWindowStyleOutput::makeStatus(const QString &message, const QString &time)
 {
-  QString html = m_style->getStatusHtml();
+  QString html = m_style->statusHtml();
   commonReplace(html, message, time);
   return html;
 }
