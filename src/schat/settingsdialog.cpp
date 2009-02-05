@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "chatwindow/chatwindowstyle.h"
 #include "emoticons/emoticons.h"
 #include "profilewidget.h"
 #include "settings.h"
@@ -198,12 +199,42 @@ class InterfaceSettings::Private
 {
 public:
   Private() {}
+  void createStylesList();
 
   QCheckBox *grouping;
   QComboBox *chatStyle;
   QComboBox *chatStyleVariant;
   QComboBox *mainStyle;
 };
+
+
+void InterfaceSettings::Private::createStylesList()
+{
+  QStringList stylesDirs;
+  stylesDirs << (QApplication::applicationDirPath() + "/styles/");
+  int index = 0;
+
+  for (int i = 0; i < stylesDirs.count(); ++i) {
+    QString dir = stylesDirs.at(i);
+    QDir qdir(dir);
+    qdir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    qdir.setSorting(QDir::Name);
+
+    QStringList entryList = qdir.entryList();
+    if (entryList.contains("Default"))
+      entryList.removeAll("Default");
+
+    foreach (QString style, entryList) {
+      QString styleDirPath = dir + style + '/';
+      if (ChatWindowStyle::isValid(styleDirPath)) {
+        index++;
+        chatStyle->addItem(style);
+        chatStyle->setItemData(index, QStringList(ChatWindowStyle::variants(styleDirPath).keys()), Qt::UserRole + 1);
+      }
+    }
+  }
+}
+
 
 /*!
  * \brief Конструктор класса InterfaceSettings.
@@ -222,26 +253,35 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
 
   d->chatStyle = new QComboBox(this);
   d->chatStyle->addItem("Default");
-
-  QLabel *variant = new QLabel(tr("Вариант:"), this);
+  QLabel *name = new QLabel(tr("&Имя стиля:"), this);
+  name->setBuddy(d->chatStyle);
 
   d->chatStyleVariant = new QComboBox(this);
-  d->chatStyleVariant->addItem(tr("(без вариантов)"));
+  QLabel *variant = new QLabel(tr("&Вариант:"), this);
+  variant->setBuddy(d->chatStyleVariant);
 
   d->grouping = new QCheckBox(tr("Группировать идущие &подряд сообщения"), this);
+  d->grouping->setToolTip(tr("Группировать идущие подряд сообщения\nот одного пользователя если это\nподдерживается выбранным стилем"));
+  d->grouping->setChecked(SimpleSettings->getBool("MessageGrouping"));
 
   QGroupBox *chatStyleGroup = new QGroupBox(tr("Стиль &текста"), this);
   QGridLayout *chatStyleLay = new QGridLayout(chatStyleGroup);
-  chatStyleLay->addWidget(d->chatStyle, 0, 0);
-  chatStyleLay->addWidget(variant, 0, 1);
-  chatStyleLay->addWidget(d->chatStyleVariant, 0, 2);
-  chatStyleLay->addWidget(d->grouping, 1, 0, 1, 3);
-  chatStyleLay->setColumnStretch(0, 1);
+  chatStyleLay->addWidget(name, 0, 0);
+  chatStyleLay->addWidget(d->chatStyle, 0, 1);
+  chatStyleLay->addWidget(variant, 1, 0);
+  chatStyleLay->addWidget(d->chatStyleVariant, 1, 1);
+  chatStyleLay->addWidget(d->grouping, 2, 0, 1, 2);
+  chatStyleLay->setColumnStretch(1, 1);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(mainStyleGroup);
   mainLay->addWidget(chatStyleGroup);
   mainLay->addStretch();
+
+  connect(d->chatStyle, SIGNAL(currentIndexChanged(int)), SLOT(reloadVariants(int)));
+
+  d->createStylesList();
+  reloadVariants(0);
 }
 
 
@@ -261,6 +301,17 @@ void InterfaceSettings::save()
   if (d->mainStyle->currentIndex() != -1) {
     SimpleSettings->setString("Style", d->mainStyle->currentText()) ;
     QApplication::setStyle(d->mainStyle->currentText());
+  }
+}
+
+
+void InterfaceSettings::reloadVariants(int index)
+{
+  d->chatStyleVariant->clear();
+  d->chatStyleVariant->addItem(tr("(без вариантов)"));
+
+  if (index > 0) {
+    d->chatStyleVariant->addItems(d->chatStyle->itemData(index, Qt::UserRole + 1).toStringList());
   }
 }
 

@@ -133,9 +133,12 @@ void Settings::read()
   setBool("LogPrivate",             true);
   setBool("Sound",                  true);
   setBool("MotdEnable",             true);
+  setBool("MessageGrouping",        true);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
+  setString("ChatStyle",            "Default");
+  setString("ChatStyleVariant",     "");
   setList("RecentServers",          QStringList());
 
   #ifdef SCHAT_BENCHMARK

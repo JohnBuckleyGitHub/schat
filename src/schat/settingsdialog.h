@@ -115,6 +115,9 @@ public slots:
   void reset(int page);
   void save();
 
+private slots:
+  void reloadVariants(int index);
+
 private:
   class Private;
   Private * const d;

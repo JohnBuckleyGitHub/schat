@@ -155,6 +155,24 @@ bool ChatWindowStyle::isValid(const QString &style)
 }
 
 
+ChatWindowStyle::StyleVariants ChatWindowStyle::variants(const QString &style)
+{
+  QString variantDirPath = style + "Contents/Resources/Variants/";
+  QDir variantDir(variantDirPath);
+  variantDir.setFilter(QDir::Files);
+  variantDir.setSorting(QDir::Name);
+
+  QStringList entryList = variantDir.entryList(QStringList("*.css"));
+  StyleVariants out;
+
+  foreach (QString variantName, entryList) {
+    out.insert(QFileInfo(variantName).completeBaseName(), "Variants/" + variantName);
+  }
+
+  return out;
+}
+
+
 /*!
  * Get the list of all variants for this theme.
  * If the variant aren't listed, it call the lister
@@ -166,10 +184,9 @@ bool ChatWindowStyle::isValid(const QString &style)
 ChatWindowStyle::StyleVariants ChatWindowStyle::variants()
 {
   // If the variantList is empty, list available variants.
-  if( d->variantsList.isEmpty() )
-  {
+  if(d->variantsList.isEmpty())
     listVariants();
-  }
+
   return d->variantsList;
 }
 

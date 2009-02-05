@@ -39,7 +39,7 @@ public:
    * value = Path to variant CSS file.
    * Path is relative to Resources directory.
    */
-  typedef QHash<QString,QString> StyleVariants;
+  typedef QHash<QString, QString> StyleVariants;
 
   /*!
    * This enum specifies the mode of the constructor
@@ -58,6 +58,7 @@ public:
   QString styleBaseHref() const;
   QString styleName() const;
   static bool isValid(const QString &style);
+  static StyleVariants variants(const QString &style);
   StyleVariants variants();
   void reload();
 
