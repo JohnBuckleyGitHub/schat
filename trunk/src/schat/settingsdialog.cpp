@@ -21,7 +21,6 @@
 #include "abstractprofile.h"
 #include "emoticons/emoticons.h"
 #include "profilewidget.h"
-#include "schatwindow.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "widget/networkwidget.h"
@@ -33,7 +32,6 @@
 SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   : AbstractSettingsDialog(parent)
 {
-  m_settings = settings;
   ProfileSettings *profilePage = new ProfileSettings(profile, this);
   NetworkSettings *networkPage = new NetworkSettings(this);
 
@@ -53,34 +51,46 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
 void SettingsDialog::accept()
 {
   emit save();
-  m_settings->write();
+  SimpleSettings->write();
   close();
 }
+
+
+
+
+class ProfileSettings::Private
+{
+public:
+  Private() {}
+
+  AbstractProfile *profile;
+  ProfileWidget *profileWidget;
+  QLineEdit *byeMsgEdit;
+};
 
 
 /*!
  * \brief Конструктор класса ProfileSettings.
  */
 ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::ProfilePage, parent)
+  : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), d(new Private)
 {
-  m_settings = settings;
-  m_profile  = profile;
-  m_profileWidget = new ProfileWidget(profile, this);
-  connect(m_profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
+  d->profile  = profile;
+  d->profileWidget = new ProfileWidget(profile, this);
+  connect(d->profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
-  m_byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
-  m_byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
-  m_byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
+  d->byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
+  d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
+  d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
 
   QHBoxLayout *byeMsgLay = new QHBoxLayout;
   byeMsgLay->addWidget(byeMsgLabel);
-  byeMsgLay->addWidget(m_byeMsgEdit);
+  byeMsgLay->addWidget(d->byeMsgEdit);
 
   QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
   QVBoxLayout *profileGroupLay = new QVBoxLayout(profileGroupBox);
-  profileGroupLay->addWidget(m_profileWidget);
+  profileGroupLay->addWidget(d->profileWidget);
   profileGroupLay->addLayout(byeMsgLay);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
@@ -88,61 +98,65 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   mainLay->addStretch();
 }
 
+ProfileSettings::~ProfileSettings() { delete d; }
 
-/** [ProfileSettings/public]
- *
- */
+
 void ProfileSettings::reset(int page)
 {
   if (page == m_id) {
-    m_profileWidget->reset();
-    m_byeMsgEdit->setText("IMPOMEZIA Simple Chat");
+    d->profileWidget->reset();
+    d->byeMsgEdit->setText(QApplication::applicationName());
   }
 }
 
 
-/** [ProfileSettings/public]
- * Сохраняем настройки
- */
 void ProfileSettings::save()
 {
-  m_profileWidget->save();
+  d->profileWidget->save();
 
-  if (m_profileWidget->isModifiled())
-    m_settings->notify(Settings::ProfileSettingsChanged);
+  if (d->profileWidget->isModifiled())
+    SimpleSettings->notify(Settings::ProfileSettingsChanged);
 
-  if (m_profile->byeMsg() != m_byeMsgEdit->text()) {
-    m_profile->setByeMsg(m_byeMsgEdit->text());
-    m_settings->notify(Settings::ByeMsgChanged);
+  if (d->profile->byeMsg() != d->byeMsgEdit->text()) {
+    d->profile->setByeMsg(d->byeMsgEdit->text());
+    SimpleSettings->notify(Settings::ByeMsgChanged);
   }
 }
 
 
 
+
+class NetworkSettings::Private
+{
+public:
+  Private() {}
+
+  NetworkWidget *network;
+  QCheckBox *welcome;
+};
 
 /*!
  * \brief Конструктор класса NetworkSettings.
  */
 NetworkSettings::NetworkSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::NetworkPage, parent)
+  : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), d(new Private)
 {
-  m_settings = settings;
-  m_welcomeCheckBox = new QCheckBox(tr("Всегда использовать этот сервер"), this);
-  m_welcomeCheckBox->setChecked(m_settings->getBool("HideWelcome"));
-  m_welcomeCheckBox->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
+  d->welcome = new QCheckBox(tr("Всегда использовать этот сервер"), this);
+  d->welcome->setChecked(SimpleSettings->getBool("HideWelcome"));
+  d->welcome->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
 
-  m_networkWidget = new NetworkWidget(this);
-  connect(m_networkWidget, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
+  d->network = new NetworkWidget(this);
+  connect(d->network, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
   QGroupBox *serverGroupBox = new QGroupBox(tr("Подключение"), this);
   QVBoxLayout *serverGroupLay = new QVBoxLayout(serverGroupBox);
-  serverGroupLay->addWidget(m_networkWidget);
-  serverGroupLay->addWidget(m_welcomeCheckBox);
+  serverGroupLay->addWidget(d->network);
+  serverGroupLay->addWidget(d->welcome);
 
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Файлы сети")), this);
   url->setToolTip(tr("Открыть папку с файлами сети"));
   url->setAlignment(Qt::AlignRight);
-  connect(url,  SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
+  connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(serverGroupBox);
@@ -151,27 +165,24 @@ NetworkSettings::NetworkSettings(QWidget *parent)
 }
 
 
-/** [NetworkSettings/public]
- *
- */
+NetworkSettings::~NetworkSettings() { delete d; }
+
+
 void NetworkSettings::reset(int page)
 {
   if (page == m_id) {
-    m_networkWidget->reset();
-    m_welcomeCheckBox->setChecked(true);
+    d->network->reset();
+    d->welcome->setChecked(true);
   }
 }
 
 
-/** [NetworkSettings/public]
- * Сохраняем настройки
- */
 void NetworkSettings::save()
 {
-  if (m_networkWidget->save())
-    m_settings->notify(Settings::NetworkSettingsChanged);
+  if (d->network->save())
+    SimpleSettings->notify(Settings::NetworkSettingsChanged);
 
-  m_settings->setBool("HideWelcome", m_welcomeCheckBox->isChecked());
+  SimpleSettings->setBool("HideWelcome", d->welcome->isChecked());
 }
 
 
@@ -181,105 +192,139 @@ void NetworkSettings::openFolder()
 }
 
 
+
+
+class InterfaceSettings::Private
+{
+public:
+  Private() {}
+
+  QComboBox *mainStyle;
+};
+
 /*!
  * \brief Конструктор класса InterfaceSettings.
  */
 InterfaceSettings::InterfaceSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::InterfacePage, parent)
+  : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), d(new Private)
 {
-  m_settings = settings;
-  m_styleComboBox = new QComboBox(this);
-  m_styleComboBox->addItems(QStyleFactory::keys());
-  m_styleComboBox->setCurrentIndex(m_styleComboBox->findText(m_settings->getString("Style")));
+  d->mainStyle = new QComboBox(this);
+  d->mainStyle->addItems(QStyleFactory::keys());
+  d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleSettings->getString("Style")));
 
-  QGroupBox *styleGroupBox = new QGroupBox(tr("Внешний вид"), this);
-  QHBoxLayout *styleGroupLay = new QHBoxLayout(styleGroupBox);
-  styleGroupLay->addWidget(m_styleComboBox);
-  styleGroupLay->addStretch();
+  QGroupBox *mainStyleGroup = new QGroupBox(tr("&Глобальный стиль"), this);
+  QHBoxLayout *mainStyleLay = new QHBoxLayout(mainStyleGroup);
+  mainStyleLay->addWidget(d->mainStyle);
+  mainStyleLay->addStretch();
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(styleGroupBox);
+  mainLay->addWidget(mainStyleGroup);
   mainLay->addStretch();
 }
 
 
-/** [InterfaceSettings/public]
- *
- */
+InterfaceSettings::~InterfaceSettings() { delete d; }
+
+
 void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
-    m_styleComboBox->setCurrentIndex(m_styleComboBox->findText("Plastique"));
+    d->mainStyle->setCurrentIndex(d->mainStyle->findText("Plastique"));
   }
 }
 
 
-/** [InterfaceSettings/public]
- * Сохраняем настройки
- */
 void InterfaceSettings::save()
 {
-  if (m_styleComboBox->currentIndex() != -1) {
-    m_settings->setString("Style", m_styleComboBox->currentText()) ;
-    qApp->setStyle(m_settings->getString("Style"));
+  if (d->mainStyle->currentIndex() != -1) {
+    SimpleSettings->setString("Style", d->mainStyle->currentText()) ;
+    QApplication::setStyle(d->mainStyle->currentText());
   }
 }
 
 
+
+
+class EmoticonsSettings::Private
+{
+public:
+  Private() {}
+  bool createThemeList();
+
+  QCheckBox *enable;
+  QCheckBox *requireSpaces;
+  QComboBox *combo;
+  QGroupBox *group;
+};
+
+
+bool EmoticonsSettings::Private::createThemeList()
+{
+  combo->addItems(Emoticons::themeList());
+
+  if (combo->count() == -1)
+    return false;
+  else {
+    combo->setCurrentIndex(combo->findText(SimpleSettings->getString("EmoticonTheme")));
+    return true;
+  }
+}
 
 
 /*!
  * \brief Конструктор класса EmoticonsSettings.
  */
 EmoticonsSettings::EmoticonsSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, parent)
+  : AbstractSettingsPage(SettingsDialog::EmoticonsPage, parent), d(new Private)
 {
-  m_settings   = settings;
-  m_themeCombo = new QComboBox(this);
+  d->combo = new QComboBox(this);
 
-  m_themeGroup = new QGroupBox(tr("Тема смайликов"), this);
-  QHBoxLayout *themeGroupLay = new QHBoxLayout(m_themeGroup);
-  themeGroupLay->addWidget(m_themeCombo);
-  themeGroupLay->addStretch();
+  d->group = new QGroupBox(tr("Тема смайликов"), this);
+  QHBoxLayout *themeLay = new QHBoxLayout(d->group);
+  themeLay->addWidget(d->combo);
+  themeLay->addStretch();
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_themeGroup);
+  mainLay->addWidget(d->group);
 
-  m_enableCheck = new QCheckBox(tr("Включить смайлики"), this);
-  m_enableCheck->setChecked(m_settings->getBool("UseEmoticons"));
-  m_enableCheck->setToolTip(tr("Включает использование графических смайликов"));
-  connect(m_enableCheck, SIGNAL(clicked(bool)), SLOT(enable(bool)));
+  d->enable = new QCheckBox(tr("Включить смайлики"), this);
+  d->enable->setChecked(SimpleSettings->getBool("UseEmoticons"));
+  d->enable->setToolTip(tr("Включает использование графических смайликов"));
+  connect(d->enable, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
-  m_requireSpacesCheck = new QCheckBox(tr("Смайлики отделены пробелами"), this);
-  m_requireSpacesCheck->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
-  m_requireSpacesCheck->setChecked(Emoticons::strictParse());
+  d->requireSpaces = new QCheckBox(tr("Смайлики отделены пробелами"), this);
+  d->requireSpaces->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
+  d->requireSpaces->setChecked(Emoticons::strictParse());
 
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Темы смайликов")), this);
   url->setToolTip(tr("Открыть папку с темами смайликов"));
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
-  mainLay->addWidget(m_enableCheck);
-  mainLay->addWidget(m_requireSpacesCheck);
+  mainLay->addWidget(d->enable);
+  mainLay->addWidget(d->requireSpaces);
   mainLay->addStretch();
   mainLay->addWidget(url);
 
-  if (!createThemeList()) {
-    m_enableCheck->setEnabled(false);
-    m_enableCheck->setChecked(false);
-    m_settings->setBool("UseEmoticons", false);
+  if (!d->createThemeList()) {
+    d->enable->setEnabled(false);
+    d->enable->setChecked(false);
+    SimpleSettings->setBool("UseEmoticons", false);
   }
 
-  enable(m_enableCheck->isChecked());
+  enable(d->enable->isChecked());
 }
+
+
+EmoticonsSettings::~EmoticonsSettings() { delete d; }
 
 
 void EmoticonsSettings::reset(int page)
 {
   if (page == m_id) {
-    m_enableCheck->setChecked(true);
-    m_requireSpacesCheck->setChecked(true);
-    m_themeCombo->setCurrentIndex(m_themeCombo->findText("Kolobok"));
+    d->enable->setChecked(true);
+    d->requireSpaces->setChecked(true);
+    d->combo->setCurrentIndex(d->combo->findText("Kolobok"));
     enable(true);
   }
 }
@@ -287,17 +332,17 @@ void EmoticonsSettings::reset(int page)
 
 void EmoticonsSettings::save()
 {
-  m_settings->setBool("UseEmoticons", m_enableCheck->isChecked());
-  Emoticons::setStrictParse(m_requireSpacesCheck->isChecked());
-  m_settings->setString("EmoticonTheme", m_themeCombo->currentText());
-  m_settings->notify(Settings::EmoticonsChanged);
+  SimpleSettings->setBool("UseEmoticons", d->enable->isChecked());
+  Emoticons::setStrictParse(d->requireSpaces->isChecked());
+  SimpleSettings->setString("EmoticonTheme", d->combo->currentText());
+  SimpleSettings->notify(Settings::EmoticonsChanged);
 }
 
 
 void EmoticonsSettings::enable(bool checked)
 {
-  m_themeGroup->setEnabled(checked);
-  m_requireSpacesCheck->setEnabled(checked);
+  d->group->setEnabled(checked);
+  d->requireSpaces->setEnabled(checked);
 }
 
 
@@ -307,54 +352,53 @@ void EmoticonsSettings::openFolder()
 }
 
 
-bool EmoticonsSettings::createThemeList()
+
+
+class SoundSettings::Private
 {
-  m_themeCombo->addItems(Emoticons::themeList());
+public:
+  Private() {}
 
-  if (m_themeCombo->count() == -1)
-    return false;
-  else {
-    m_themeCombo->setCurrentIndex(m_themeCombo->findText(m_settings->getString("EmoticonTheme")));
-    return true;
-  }
-}
-
-
-
+  QGroupBox *enable;
+  SoundWidget *msg;
+  SoundWidget *privateMsg;
+  #ifdef Q_WS_X11
+    QGroupBox *useCmd;
+    QLineEdit *cmd;
+  #endif
+};
 
 /*!
  * \brief Конструктор класса SoundSettings.
  */
 SoundSettings::SoundSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::SoundPage, parent)
+  : AbstractSettingsPage(SettingsDialog::SoundPage, parent), d(new Private)
 {
-  m_settings = settings;
-
-  m_enable = new QGroupBox(tr("&Звуковые уведомления"), this);
-  m_enable->setCheckable(true);
-  m_enable->setChecked(m_settings->getBool("Sound"));
+  d->enable = new QGroupBox(tr("&Звуковые уведомления"), this);
+  d->enable->setCheckable(true);
+  d->enable->setChecked(SimpleSettings->getBool("Sound"));
 
   QDir dir(QApplication::applicationDirPath() + "/sounds");
-  QStringList list = dir.entryList(m_settings->getList("Sound/NameFilter"), QDir::Files);
+  QStringList list = dir.entryList(SimpleSettings->getList("Sound/NameFilter"), QDir::Files);
 
-  m_message = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
-  connect(m_message, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
-  m_private = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
-  connect(m_private, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
+  d->msg = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
+  connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
+  d->privateMsg = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
+  connect(d->privateMsg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
 
-  QVBoxLayout *soundLay = new QVBoxLayout(m_enable);
-  soundLay->addWidget(m_message);
-  soundLay->addWidget(m_private);
+  QVBoxLayout *soundLay = new QVBoxLayout(d->enable);
+  soundLay->addWidget(d->msg);
+  soundLay->addWidget(d->privateMsg);
   soundLay->setSpacing(0);
 
   #ifdef Q_WS_X11
-    m_useCmd = new QGroupBox(tr("Внешняя команда для воспроизведения звука"), this);
-    m_useCmd->setCheckable(true);
-    m_useCmd->setChecked(m_settings->getBool("Sound/UseExternalCmd"));
-    m_cmd = new QLineEdit(m_settings->getString("Sound/ExternalCmd"), this);
-    m_cmd->setToolTip(tr("Внешняя команда, Вместо %1 подставляется\nимя звукового файла"));
-    QVBoxLayout *cmdLay = new QVBoxLayout(m_useCmd);
-    cmdLay->addWidget(m_cmd);
+    d->useCmd = new QGroupBox(tr("Внешняя команда для воспроизведения звука"), this);
+    d->useCmd->setCheckable(true);
+    d->useCmd->setChecked(SimpleSettings->getBool("Sound/UseExternalCmd"));
+    d->cmd = new QLineEdit(SimpleSettings->getString("Sound/ExternalCmd"), this);
+    d->cmd->setToolTip(tr("Внешняя команда, Вместо %1 подставляется\nимя звукового файла"));
+    QVBoxLayout *cmdLay = new QVBoxLayout(d->useCmd);
+    cmdLay->addWidget(d->cmd);
   #endif
 
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Звуки")), this);
@@ -363,24 +407,27 @@ SoundSettings::SoundSettings(QWidget *parent)
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_enable);
+  mainLay->addWidget(d->enable);
   #ifdef Q_WS_X11
-    mainLay->addWidget(m_useCmd);
+    mainLay->addWidget(d->useCmd);
   #endif
   mainLay->addStretch();
   mainLay->addWidget(url);
 }
 
 
+SoundSettings::~SoundSettings() { delete d; }
+
+
 void SoundSettings::reset(int page)
 {
   if (page == m_id) {
-    m_message->reset(true, "Received.wav");
-    m_private->reset(true, "Received.wav");
+    d->msg->reset(true, "Received.wav");
+    d->privateMsg->reset(true, "Received.wav");
 
     #ifdef Q_WS_X11
-      m_useCmd->setChecked(true);
-      m_cmd->setText("aplay -q -N %1");
+      d->useCmd->setChecked(true);
+      d->cmd->setText("aplay -q -N %1");
     #endif
   }
 }
@@ -388,14 +435,14 @@ void SoundSettings::reset(int page)
 
 void SoundSettings::save()
 {
-  m_settings->setBool("Sound", m_enable->isChecked());
-  m_message->save();
-  m_private->save();
+  SimpleSettings->setBool("Sound", d->enable->isChecked());
+  d->msg->save();
+  d->privateMsg->save();
   #ifdef Q_WS_X11
-    m_settings->setBool("Sound/UseExternalCmd", m_useCmd->isChecked());
-    m_settings->setString("Sound/ExternalCmd", m_cmd->text());
+    SimpleSettings->setBool("Sound/UseExternalCmd", d->useCmd->isChecked());
+    SimpleSettings->setString("Sound/ExternalCmd", d->cmd->text());
   #endif
-  m_settings->notify(Settings::SoundChanged);
+  SimpleSettings->notify(Settings::SoundChanged);
 }
 
 
@@ -408,8 +455,8 @@ void SoundSettings::openFolder()
 void SoundSettings::play(const QString &file)
 {
   #ifdef Q_WS_X11
-  if (m_useCmd->isChecked() && !m_cmd->text().isEmpty())
-    QProcess::startDetached(m_cmd->text().arg(file));
+  if (d->useCmd->isChecked() && !d->cmd->text().isEmpty())
+    QProcess::startDetached(d->cmd->text().arg(file));
   else
   #endif
     QSound::play(file);
@@ -418,85 +465,102 @@ void SoundSettings::play(const QString &file)
 
 
 
+class UpdateSettings::Private
+{
+public:
+  Private()
+  : last(-1)
+  {}
+
+  int last;
+  QCheckBox *checkOnStartup;
+  QComboBox *factor;
+  QGroupBox *versionGroup;
+  QSpinBox *interval;
+  #ifndef SCHAT_NO_UPDATE
+    QCheckBox *autoClean;
+    QCheckBox *autoDownload;
+  #endif
+};
+
 /*!
  * \brief Конструктор класса UpdateSettings.
  */
 UpdateSettings::UpdateSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent)
+  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent), d(new Private)
 {
-  m_settings = settings;
-  m_last = -1;
-
   // Уведомление о новых версиях.
-  m_versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
-  m_versionGroup->setCheckable(true);
-  m_versionGroup->setChecked(m_settings->getBool("Updates/Enable"));
+  d->versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
+  d->versionGroup->setCheckable(true);
+  d->versionGroup->setChecked(SimpleSettings->getBool("Updates/Enable"));
 
-  m_checkOnStartup = new QCheckBox(tr("Проверять при &запуске"), this);
-  m_checkOnStartup->setToolTip(tr("Проверять обновления при запуске программы"));
-  m_checkOnStartup->setChecked(m_settings->getBool("Updates/CheckOnStartup"));
+  d->checkOnStartup = new QCheckBox(tr("Проверять при &запуске"), this);
+  d->checkOnStartup->setToolTip(tr("Проверять обновления при запуске программы"));
+  d->checkOnStartup->setChecked(SimpleSettings->getBool("Updates/CheckOnStartup"));
 
   QLabel *interval = new QLabel(tr("&Интервал проверки:"), this);
   interval->setToolTip(tr("Временной интервал для периодической проверки\nобновлений"));
   QHBoxLayout *intervalLay = new QHBoxLayout;
 
-  m_interval = new QSpinBox(this);
-  m_interval->setRange(0, 60);
-  connect(m_interval, SIGNAL(valueChanged(int)), SLOT(intervalChanged(int)));
+  d->interval = new QSpinBox(this);
+  d->interval->setRange(0, 60);
+  connect(d->interval, SIGNAL(valueChanged(int)), SLOT(intervalChanged(int)));
   interval->setBuddy(interval);
 
-  m_factor = new QComboBox(this);
-  intervalChanged(m_settings->getInt("Updates/CheckInterval"));
-  connect(m_factor, SIGNAL(activated(int)), SLOT(factorChanged(int)));
+  d->factor = new QComboBox(this);
+  intervalChanged(SimpleSettings->getInt("Updates/CheckInterval"));
+  connect(d->factor, SIGNAL(activated(int)), SLOT(factorChanged(int)));
 
   intervalLay->addWidget(interval);
-  intervalLay->addWidget(m_interval);
-  intervalLay->addWidget(m_factor);
+  intervalLay->addWidget(d->interval);
+  intervalLay->addWidget(d->factor);
   intervalLay->addStretch();
 
-  QVBoxLayout *versionLay = new QVBoxLayout(m_versionGroup);
-  versionLay->addWidget(m_checkOnStartup);
+  QVBoxLayout *versionLay = new QVBoxLayout(d->versionGroup);
+  versionLay->addWidget(d->checkOnStartup);
   versionLay->addLayout(intervalLay);
 
   // Автоматическое обновление
   #ifndef SCHAT_NO_UPDATE
     QGroupBox *updateGroup = new QGroupBox(tr("&Автоматическое обновление"), this);
 
-    m_autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
-    m_autoDownload->setToolTip(tr("Автоматически загружать обновления"));
-    m_autoDownload->setChecked(m_settings->getBool("Updates/AutoDownload"));
+    d->autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
+    d->autoDownload->setToolTip(tr("Автоматически загружать обновления"));
+    d->autoDownload->setChecked(SimpleSettings->getBool("Updates/AutoDownload"));
 
-    m_autoClean = new QCheckBox(tr("&Удалять после установки"), this);
-    m_autoClean->setToolTip(tr("Удалять обновления после установки"));
-    m_autoClean->setChecked(m_settings->getBool("Updates/AutoClean"));
+    d->autoClean = new QCheckBox(tr("&Удалять после установки"), this);
+    d->autoClean->setToolTip(tr("Удалять обновления после установки"));
+    d->autoClean->setChecked(SimpleSettings->getBool("Updates/AutoClean"));
 
     QVBoxLayout *updateLay = new QVBoxLayout(updateGroup);
-    updateLay->addWidget(m_autoDownload);
-    updateLay->addWidget(m_autoClean);
+    updateLay->addWidget(d->autoDownload);
+    updateLay->addWidget(d->autoClean);
 
-    connect(m_versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
-    updateGroup->setEnabled(m_versionGroup->isChecked());
+    connect(d->versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
+    updateGroup->setEnabled(d->versionGroup->isChecked());
   #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_versionGroup);
+  mainLay->addWidget(d->versionGroup);
   #ifndef SCHAT_NO_UPDATE
     mainLay->addWidget(updateGroup);
   #endif
   mainLay->addStretch();
 }
 
+UpdateSettings::~UpdateSettings() { delete d; }
+
 
 void UpdateSettings::reset(int page)
 {
   if (page == m_id) {
-    m_versionGroup->setChecked(true);
-    m_checkOnStartup->setChecked(true);
-    m_interval->setValue(m_factor->currentIndex() ? 1 : 60);
+    d->versionGroup->setChecked(true);
+    d->checkOnStartup->setChecked(true);
+    d->interval->setValue(d->factor->currentIndex() ? 1 : 60);
 
     #ifndef SCHAT_NO_UPDATE
-      m_autoDownload->setChecked(false);
-      m_autoClean->setChecked(true);
+      d->autoDownload->setChecked(false);
+      d->autoClean->setChecked(true);
     #endif
   }
 }
@@ -504,14 +568,14 @@ void UpdateSettings::reset(int page)
 
 void UpdateSettings::save()
 {
-  m_settings->setBool("Updates/Enable",         m_versionGroup->isChecked());
-  m_settings->setBool("Updates/CheckOnStartup", m_checkOnStartup->isChecked());
-  m_settings->setInt("Updates/CheckInterval",   m_factor->currentIndex() ? m_interval->value() * 60 : m_interval->value());
-  m_settings->notify(Settings::UpdateSettingsChanged);
+  SimpleSettings->setBool("Updates/Enable",         d->versionGroup->isChecked());
+  SimpleSettings->setBool("Updates/CheckOnStartup", d->checkOnStartup->isChecked());
+  SimpleSettings->setInt("Updates/CheckInterval",   d->factor->currentIndex() ? d->interval->value() * 60 : d->interval->value());
+  SimpleSettings->notify(Settings::UpdateSettingsChanged);
 
   #ifndef SCHAT_NO_UPDATE
-    m_settings->setBool("Updates/AutoDownload",   m_autoDownload->isChecked());
-    m_settings->setBool("Updates/AutoClean",      m_autoClean->isChecked());
+    SimpleSettings->setBool("Updates/AutoDownload",   d->autoDownload->isChecked());
+    SimpleSettings->setBool("Updates/AutoClean",      d->autoClean->isChecked());
   #endif
 }
 
@@ -521,32 +585,32 @@ void UpdateSettings::save()
  */
 void UpdateSettings::factorChanged(int index)
 {
-  if (m_last != index)
+  if (d->last != index)
     if (index)
-      m_interval->setValue(1);
+      d->interval->setValue(1);
     else
-      m_interval->setValue(59);
+      d->interval->setValue(59);
 
-  m_last = index;
+  d->last = index;
 }
 
 
 /*!
- * Обработка изменения значения в \a m_interval.
+ * Обработка изменения значения в \a d->interval.
  */
 void UpdateSettings::intervalChanged(int i)
 {
   int value = i;
   int index = 0;
 
-  if (m_factor->count() == 0) {
+  if (d->factor->count() == 0) {
     if (value > 59) {
       value /= 60;
       index = 1;
     }
   }
   else {
-    index = m_factor->currentIndex();
+    index = d->factor->currentIndex();
 
     if (index == 0 && value == 60) {
       value = 1;
@@ -565,55 +629,119 @@ void UpdateSettings::intervalChanged(int i)
   QString minute = tr("%n Минуты", "", value);
   QString hour   = tr("%n Часы", "", value);
 
-  m_factor->clear();
-  m_factor->addItem(minute);
-  m_factor->addItem(hour);
-  m_factor->setCurrentIndex(index);
-  m_last = index;
+  d->factor->clear();
+  d->factor->addItem(minute);
+  d->factor->addItem(hour);
+  d->factor->setCurrentIndex(index);
+  d->last = index;
 
-  m_interval->setValue(value);
+  d->interval->setValue(value);
 }
+
+
+
+
+class MiscSettings::Private
+{
+public:
+  Private() {}
+  #ifdef Q_WS_WIN
+    void readAutostart();
+    void writeAutostart();
+  #endif
+
+  QCheckBox *log;
+  QCheckBox *logPrivate;
+  #ifdef Q_WS_WIN
+    QCheckBox *autostart;
+    QCheckBox *autostartDaemon;
+  #endif
+};
+
+
+/*!
+ * Устанавливает состояние флажков добавления в автозагрузку.
+ * Если файл программы управления сервером не найден, то скрываем флажок сервера.
+ * Если ключа в реестре не найдено, снимаем флажок.
+ */
+#ifdef Q_WS_WIN
+void MiscSettings::Private::readAutostart()
+{
+  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
+    QString value = reg.value(QApplication::applicationName() + " Daemon", "").toString();
+    if (value.isEmpty())
+      autostartDaemon->setChecked(false);
+  }
+  else
+    autostartDaemon->setVisible(false);
+
+  QString value = reg.value(QApplication::applicationName(), "").toString();
+  if (value.isEmpty())
+    autostart->setChecked(false);
+}
+
+
+/*!
+ * Добавляет/удаляет чат и при необходимости сервер из автозагрузки.
+ */
+void MiscSettings::Private::writeAutostart()
+{
+  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+
+  if (autostart->checkState() == Qt::Checked)
+    reg.setValue(QApplication::applicationName(), QDir::toNativeSeparators(QApplication::applicationFilePath()) + " -hide");
+  else if (autostart->checkState() == Qt::Unchecked)
+    reg.remove(QApplication::applicationName());
+
+  if (autostartDaemon->isVisible()) {
+    if (autostart->checkState() == Qt::Checked)
+      reg.setValue(QApplication::applicationName() + " Daemon", QDir::toNativeSeparators(QApplication::applicationDirPath() + "/schatd-ui.exe") + " -start");
+    else if (autostart->checkState() == Qt::Unchecked)
+      reg.remove(QApplication::applicationName() + " Daemon");
+  }
+}
+#endif
 
 
 /*!
  * \brief Конструктор класса MiscSettings.
  */
 MiscSettings::MiscSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::MiscPage, parent)
+  : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
-  m_settings = settings;
-
   #ifdef Q_WS_WIN
     QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
 
-    m_autostart = new QCheckBox(tr("&Автозапуск"), this);
-    m_autostart->setToolTip(tr("Автозапуск программы при старте системы"));
-    m_autostart->setTristate();
-    m_autostart->setCheckState(Qt::PartiallyChecked);
+    d->autostart = new QCheckBox(tr("&Автозапуск"), this);
+    d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+    d->autostart->setTristate();
+    d->autostart->setCheckState(Qt::PartiallyChecked);
 
-    m_autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
-    m_autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
-    m_autostartDaemon->setTristate();
-    m_autostartDaemon->setCheckState(Qt::PartiallyChecked);
+    d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
+    d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+    d->autostartDaemon->setTristate();
+    d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
 
     QVBoxLayout *integrationLay = new QVBoxLayout(integration);
-    integrationLay->addWidget(m_autostart);
-    integrationLay->addWidget(m_autostartDaemon);
+    integrationLay->addWidget(d->autostart);
+    integrationLay->addWidget(d->autostartDaemon);
   #endif
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
-  m_log = new QCheckBox(tr("Журнал &основного канала"), this);
-  m_log->setToolTip(tr("Вести журнал основного канала"));
-  m_log->setChecked(m_settings->getBool("Log"));
+  d->log = new QCheckBox(tr("Журнал &основного канала"), this);
+  d->log->setToolTip(tr("Вести журнал основного канала"));
+  d->log->setChecked(SimpleSettings->getBool("Log"));
 
-  m_logPrivate = new QCheckBox(tr("Журналы &приватов"), this);
-  m_logPrivate->setToolTip(tr("Вести журналы приватных сообщений"));
-  m_logPrivate->setChecked(m_settings->getBool("LogPrivate"));
+  d->logPrivate = new QCheckBox(tr("Журналы &приватов"), this);
+  d->logPrivate->setToolTip(tr("Вести журналы приватных сообщений"));
+  d->logPrivate->setChecked(SimpleSettings->getBool("LogPrivate"));
 
   QVBoxLayout *logLay = new QVBoxLayout(logGroup);
-  logLay->addWidget(m_log);
-  logLay->addWidget(m_logPrivate);
+  logLay->addWidget(d->log);
+  logLay->addWidget(d->logPrivate);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   #ifdef Q_WS_WIN
@@ -623,16 +751,19 @@ MiscSettings::MiscSettings(QWidget *parent)
   mainLay->addStretch();
 
   #ifdef Q_WS_WIN
-    autostart();
+    d->readAutostart();
   #endif
 }
+
+
+MiscSettings::~MiscSettings() { delete d; }
 
 
 void MiscSettings::reset(int page)
 {
   if (page == m_id) {
-    m_log->setChecked(true);
-    m_logPrivate->setChecked(true);
+    d->log->setChecked(true);
+    d->logPrivate->setChecked(true);
   }
 }
 
@@ -640,56 +771,10 @@ void MiscSettings::reset(int page)
 void MiscSettings::save()
 {
   #ifdef Q_WS_WIN
-    writeAutostart();
+    d->writeAutostart();
   #endif
 
-  m_settings->setBool("Log", m_log->isChecked());
-  m_settings->setBool("LogPrivate", m_logPrivate->isChecked());
-  m_settings->notify(Settings::MiscSettingsChanged);
+  SimpleSettings->setBool("Log", d->log->isChecked());
+  SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
+  SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
-
-
-/*!
- * Устанавливает состояние флажков добавления в автозагрузку.
- * Если файл программы управления сервером не найден, то скрываем флажок сервера.
- * Если ключа в реестре не найдено, снимаем флажок.
- */
-#ifdef Q_WS_WIN
-void MiscSettings::autostart()
-{
-  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-
-  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
-    QString value = reg.value(QApplication::applicationName() + " Daemon", "").toString();
-    if (value.isEmpty())
-      m_autostartDaemon->setChecked(false);
-  }
-  else
-    m_autostartDaemon->setVisible(false);
-
-  QString value = reg.value(QApplication::applicationName(), "").toString();
-  if (value.isEmpty())
-    m_autostart->setChecked(false);
-}
-
-
-/*!
- * Добавляет/удаляет чат и при необходимости сервер из автозагрузки.
- */
-void MiscSettings::writeAutostart()
-{
-  QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-
-  if (m_autostart->checkState() == Qt::Checked)
-    reg.setValue(QApplication::applicationName(), QDir::toNativeSeparators(QApplication::applicationFilePath()) + " -hide");
-  else if (m_autostart->checkState() == Qt::Unchecked)
-    reg.remove(QApplication::applicationName());
-
-  if (m_autostartDaemon->isVisible()) {
-    if (m_autostart->checkState() == Qt::Checked)
-      reg.setValue(QApplication::applicationName() + " Daemon", QDir::toNativeSeparators(QApplication::applicationDirPath() + "/schatd-ui.exe") + " -start");
-    else if (m_autostart->checkState() == Qt::Unchecked)
-      reg.remove(QApplication::applicationName() + " Daemon");
-  }
-}
-#endif

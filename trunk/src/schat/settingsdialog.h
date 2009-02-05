@@ -19,22 +19,9 @@
 #ifndef SETTINGSDIALOG_H_
 #define SETTINGSDIALOG_H_
 
-#include <QPushButton>
-
 #include "abstractsettingsdialog.h"
 
 class AbstractProfile;
-class NetworkSettings;
-class NetworkWidget;
-class ProfileSettings;
-class ProfileWidget;
-class QCheckBox;
-class QComboBox;
-class QGroupBox;
-class QLineEdit;
-class QSpinBox;
-class Settings;
-class SoundWidget;
 
 
 /*!
@@ -59,9 +46,6 @@ public:
 
 public slots:
   void accept();
-
-private:
-  Settings *m_settings;
 };
 
 
@@ -74,6 +58,7 @@ class ProfileSettings : public AbstractSettingsPage
 
 public:
   ProfileSettings(AbstractProfile *profile, QWidget *parent = 0);
+  ~ProfileSettings();
 
 public slots:
   void reset(int page);
@@ -83,10 +68,8 @@ signals:
   void validNick(bool b);
 
 private:
-  AbstractProfile *m_profile;
-  ProfileWidget *m_profileWidget;
-  QLineEdit *m_byeMsgEdit;
-  Settings *m_settings;
+  class Private;
+  Private * const d;
 };
 
 
@@ -99,6 +82,7 @@ class NetworkSettings : public AbstractSettingsPage
 
 public:
   NetworkSettings(QWidget *parent = 0);
+  ~NetworkSettings();
 
 signals:
   void validServer(bool valid);
@@ -111,9 +95,8 @@ private slots:
   void openFolder();
 
 private:
-  NetworkWidget *m_networkWidget;
-  QCheckBox *m_welcomeCheckBox;
-  Settings *m_settings;
+  class Private;
+  Private * const d;
 };
 
 
@@ -126,14 +109,15 @@ class InterfaceSettings : public AbstractSettingsPage
 
 public:
   InterfaceSettings(QWidget *parent = 0);
+  ~InterfaceSettings();
 
 public slots:
   void reset(int page);
   void save();
 
 private:
-  QComboBox *m_styleComboBox;
-  Settings *m_settings;
+  class Private;
+  Private * const d;
 };
 
 
@@ -146,6 +130,7 @@ class EmoticonsSettings : public AbstractSettingsPage
 
 public:
   EmoticonsSettings(QWidget *parent = 0);
+  ~EmoticonsSettings();
 
 public slots:
   void reset(int page);
@@ -156,13 +141,8 @@ private slots:
   void openFolder();
 
 private:
-  bool createThemeList();
-
-  QCheckBox *m_enableCheck;
-  QCheckBox *m_requireSpacesCheck;
-  QComboBox *m_themeCombo;
-  QGroupBox *m_themeGroup;
-  Settings *m_settings;
+  class Private;
+  Private * const d;
 };
 
 
@@ -175,6 +155,7 @@ class SoundSettings : public AbstractSettingsPage
 
 public:
   SoundSettings(QWidget *parent = 0);
+  ~SoundSettings();
 
 public slots:
   void reset(int page);
@@ -185,14 +166,8 @@ private slots:
   void play(const QString &file);
 
 private:
-  QGroupBox *m_enable;
-  Settings *m_settings;
-  SoundWidget *m_message;
-  SoundWidget *m_private;
-  #ifdef Q_WS_X11
-    QGroupBox *m_useCmd;
-    QLineEdit *m_cmd;
-  #endif
+  class Private;
+  Private * const d;
 };
 
 
@@ -205,6 +180,7 @@ class UpdateSettings : public AbstractSettingsPage
 
 public:
   UpdateSettings(QWidget *parent = 0);
+  ~UpdateSettings();
 
 public slots:
   void reset(int page);
@@ -215,16 +191,8 @@ private slots:
   void intervalChanged(int i);
 
 private:
-  int m_last;
-  QCheckBox *m_checkOnStartup;
-  QComboBox *m_factor;
-  QGroupBox *m_versionGroup;
-  QSpinBox *m_interval;
-  Settings *m_settings;
-  #ifndef SCHAT_NO_UPDATE
-    QCheckBox *m_autoClean;
-    QCheckBox *m_autoDownload;
-  #endif
+  class Private;
+  Private * const d;
 };
 
 
@@ -237,24 +205,15 @@ class MiscSettings : public AbstractSettingsPage
 
 public:
   MiscSettings(QWidget *parent = 0);
+  ~MiscSettings();
 
 public slots:
   void reset(int page);
   void save();
 
 private:
-  #ifdef Q_WS_WIN
-    void autostart();
-    void writeAutostart();
-  #endif
-
-  QCheckBox *m_log;
-  QCheckBox *m_logPrivate;
-  Settings *m_settings;
-  #ifdef Q_WS_WIN
-    QCheckBox *m_autostart;
-    QCheckBox *m_autostartDaemon;
-  #endif
+  class Private;
+  Private * const d;
 };
 
 #endif /*SETTINGSDIALOG_H_*/
