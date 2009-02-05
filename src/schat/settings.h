@@ -34,6 +34,7 @@
 class AbstractProfile;
 
 #define settings (static_cast<Settings *>(AbstractSettings::instance()))
+#define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
 /*!
  * \brief Класс читает и записывает настройки клиента.
