@@ -199,6 +199,9 @@ class InterfaceSettings::Private
 public:
   Private() {}
 
+  QCheckBox *grouping;
+  QComboBox *chatStyle;
+  QComboBox *chatStyleVariant;
   QComboBox *mainStyle;
 };
 
@@ -217,8 +220,27 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   mainStyleLay->addWidget(d->mainStyle);
   mainStyleLay->addStretch();
 
+  d->chatStyle = new QComboBox(this);
+  d->chatStyle->addItem("Default");
+
+  QLabel *variant = new QLabel(tr("Вариант:"), this);
+
+  d->chatStyleVariant = new QComboBox(this);
+  d->chatStyleVariant->addItem(tr("(без вариантов)"));
+
+  d->grouping = new QCheckBox(tr("Группировать идущие &подряд сообщения"), this);
+
+  QGroupBox *chatStyleGroup = new QGroupBox(tr("Стиль &текста"), this);
+  QGridLayout *chatStyleLay = new QGridLayout(chatStyleGroup);
+  chatStyleLay->addWidget(d->chatStyle, 0, 0);
+  chatStyleLay->addWidget(variant, 0, 1);
+  chatStyleLay->addWidget(d->chatStyleVariant, 0, 2);
+  chatStyleLay->addWidget(d->grouping, 1, 0, 1, 3);
+  chatStyleLay->setColumnStretch(0, 1);
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(mainStyleGroup);
+  mainLay->addWidget(chatStyleGroup);
   mainLay->addStretch();
 }
 
