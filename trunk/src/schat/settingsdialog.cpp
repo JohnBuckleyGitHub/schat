@@ -200,6 +200,8 @@ class InterfaceSettings::Private
 public:
   Private() {}
   void createStylesList();
+  void reloadVariants(int index);
+  void setStyle();
 
   QCheckBox *grouping;
   QComboBox *chatStyle;
@@ -233,6 +235,34 @@ void InterfaceSettings::Private::createStylesList()
       }
     }
   }
+}
+
+
+void InterfaceSettings::Private::reloadVariants(int index)
+{
+  chatStyleVariant->clear();
+  chatStyleVariant->addItem(tr("(без вариантов)"));
+
+  if (index > 0) {
+    chatStyleVariant->addItems(chatStyle->itemData(index, Qt::UserRole + 1).toStringList());
+  }
+}
+
+
+void InterfaceSettings::Private::setStyle()
+{
+  QString style = SimpleSettings->getString("ChatStyle");
+  int index = chatStyle->findText(style);
+  if (index != -1) {
+    chatStyle->setCurrentIndex(index);
+    reloadVariants(index);
+    QString styleVariant = SimpleSettings->getString("ChatStyleVariant");
+    int variant = chatStyleVariant->findText(styleVariant);
+    if (variant != -1)
+      chatStyleVariant->setCurrentIndex(variant);
+  }
+  else
+    reloadVariants(0);
 }
 
 
@@ -281,7 +311,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   connect(d->chatStyle, SIGNAL(currentIndexChanged(int)), SLOT(reloadVariants(int)));
 
   d->createStylesList();
-  reloadVariants(0);
+  d->setStyle();
 }
 
 
@@ -292,6 +322,9 @@ void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
     d->mainStyle->setCurrentIndex(d->mainStyle->findText("Plastique"));
+    d->chatStyle->setCurrentIndex(0);
+    d->chatStyleVariant->setCurrentIndex(0);
+    d->grouping->setChecked(true);
   }
 }
 
@@ -302,17 +335,22 @@ void InterfaceSettings::save()
     SimpleSettings->setString("Style", d->mainStyle->currentText()) ;
     QApplication::setStyle(d->mainStyle->currentText());
   }
+
+  if (d->chatStyle->currentIndex() != -1)
+    SimpleSettings->setString("ChatStyle", d->chatStyle->currentText());
+
+  if (d->chatStyleVariant->currentIndex() == 0)
+    SimpleSettings->setString("ChatStyleVariant", "");
+  else if (d->chatStyleVariant->currentIndex() > 0)
+    SimpleSettings->setString("ChatStyleVariant", d->chatStyleVariant->currentText());
+
+  SimpleSettings->setBool("MessageGrouping", d->grouping->isChecked());
 }
 
 
 void InterfaceSettings::reloadVariants(int index)
 {
-  d->chatStyleVariant->clear();
-  d->chatStyleVariant->addItem(tr("(без вариантов)"));
-
-  if (index > 0) {
-    d->chatStyleVariant->addItems(d->chatStyle->itemData(index, Qt::UserRole + 1).toStringList());
-  }
+  d->reloadVariants(index);
 }
 
 
