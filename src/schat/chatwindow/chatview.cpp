@@ -132,7 +132,7 @@ ChatView::ChatView(QWidget *parent)
 
   #ifndef SCHAT_NO_WEBKIT
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    d->style = new ChatWindowStyleOutput("Default", "");
+    d->style = new ChatWindowStyleOutput(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant"));
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
   #else

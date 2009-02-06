@@ -249,25 +249,22 @@ bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool 
  */
 void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
 {
-  QStringList styleDirs;
+  QString basePath = QApplication::applicationDirPath() + "/styles/";
 
-//  if (styleName != "Default")
-//    ;
-//    qDebug() << "Find Style"; /// \todo Восстановить поиск стилей.
+  bool valid = false;
+  if (styleName != "Default") {
+    if (isValid(basePath + styleName))
+      valid = true;
+  }
 
-  if (styleDirs.isEmpty()) {
-//    qDebug() << "Default Style";
+  if (!valid) {
     d->styleName = "Default";
     d->baseHref = ":/webkit/Contents/Resources/";
     d->defaultStyle = true;
   }
   else {
     d->styleName = styleName;
-//    if (styleDirs.count() > 1)
-//      ;
-//      qDebug() << "found several styles with the same name. using first";
-    d->baseHref = styleDirs.at(0);
-//    qDebug() << "Using style:" << d->baseHref;
+    d->baseHref = basePath + styleName + "/Contents/Resources/";
     d->defaultStyle = false;
   }
 
