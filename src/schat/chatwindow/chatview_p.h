@@ -28,13 +28,12 @@ class ChatWindowStyleOutput;
 class ChatViewPrivate
 {
 public:
-  ChatViewPrivate(ChatView *parent);
+  ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent);
   ~ChatViewPrivate();
   static bool prepareCmd(const QString &cmd, QString &msg, bool cut = true);
   void toLog(const QString &text);
 
   bool empty;
-  bool grouping;
   bool log;
   bool strict;
   ChatView *q;
@@ -45,7 +44,12 @@ public:
   QString prev;
 
   #ifndef SCHAT_NO_WEBKIT
+    bool cleanStyle(const QString &styleName, const QString &styleVariant);
+
+    bool grouping;
     ChatWindowStyleOutput *style;
+    QString chatStyle;
+    QString chatStyleVariant;
   #else
     static QString makeMessage(const QString &sender, const QString &message, bool action = false);
     static QString makeStatus(const QString &message);

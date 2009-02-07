@@ -32,13 +32,13 @@
 /*!
  * \brief Конструктор класса ChatViewPrivate.
  */
-ChatViewPrivate::ChatViewPrivate(ChatView *parent)
-  : empty(true), q(parent)
-  #ifndef SCHAT_NO_WEBKIT
-  , style(0)
-  #endif
+ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
+  : empty(true), q(parent), chatStyle(styleName), chatStyleVariant(styleVariant)
 {
-  #ifdef SCHAT_NO_WEBKIT
+  #ifndef SCHAT_NO_WEBKIT
+    style = new ChatWindowStyleOutput(chatStyle, chatStyleVariant);
+    grouping = SimpleSettings->getBool("MessageGrouping");
+  #else
   styleSheet = "a { color:#815d53; text-decoration:none; }"
     ".sender, .sender a { color:#185074; }"
     ".me, .meSender a { color:#cd00cd; }"
@@ -51,7 +51,6 @@ ChatViewPrivate::ChatViewPrivate(ChatView *parent)
   #endif
 
   strict = Emoticons::strictParse();
-  grouping = SimpleSettings->getBool("MessageGrouping");
 }
 
 
@@ -104,7 +103,22 @@ void ChatViewPrivate::toLog(const QString &text)
 }
 
 
-#ifdef SCHAT_NO_WEBKIT
+#ifndef SCHAT_NO_WEBKIT
+bool ChatViewPrivate::cleanStyle(const QString &styleName, const QString &styleVariant)
+{
+  if (chatStyle != styleName || chatStyleVariant != styleVariant) {
+    chatStyle = styleName;
+    chatStyleVariant = styleVariant;
+    delete style;
+    style = new ChatWindowStyleOutput(chatStyle, chatStyleVariant);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+#else
 QString ChatViewPrivate::makeMessage(const QString &sender, const QString &message, bool action)
 {
   if (action)
@@ -131,11 +145,10 @@ ChatView::ChatView(QWidget *parent)
   : QTextBrowser(parent)
 #endif
 {
-  d = new ChatViewPrivate(this);
-
   #ifndef SCHAT_NO_WEBKIT
+    d = new ChatViewPrivate(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant"), this);
+
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    d->style = new ChatWindowStyleOutput(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant"));
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
   #else
@@ -461,6 +474,8 @@ void ChatView::notify(int notify)
   }
   else if (notify == Settings::InterfaceSettingsChanged) {
     d->grouping = SimpleSettings->getBool("MessageGrouping");
+    if (d->cleanStyle(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant")))
+      clear();
   }
 }
 

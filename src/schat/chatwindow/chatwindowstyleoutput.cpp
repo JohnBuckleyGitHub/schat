@@ -39,6 +39,15 @@ ChatWindowStyleOutput::~ChatWindowStyleOutput()
 }
 
 
+QString ChatWindowStyleOutput::makeStylesheet(const QString &variant) const
+{
+  if (variant.isEmpty())
+    return "main.css";
+
+  return m_style->variants().value(variant);
+}
+
+
 /*!
  * Create a html skeleton. Future messages will be added to it
  * skeleton consist of styles, header and footer
