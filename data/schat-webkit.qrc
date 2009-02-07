@@ -19,7 +19,6 @@
   <file>webkit/Contents/Resources/Outgoing/NextContext.html</file>
   <file>webkit/Contents/Resources/Status.html</file>
   <file>webkit/Contents/Resources/Template.html</file>
-  <file>webkit/Contents/Resources/Variants/Black.css</file>
-  <file>webkit/Contents/Resources/Variants/White.css</file>
+  <file>webkit/Contents/Resources/Variants/Monospace.css</file>
 </qresource>
 </RCC>

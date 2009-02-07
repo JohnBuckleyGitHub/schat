@@ -246,6 +246,8 @@ void InterfaceSettings::Private::reloadVariants(int index)
   if (index > 0) {
     chatStyleVariant->addItems(chatStyle->itemData(index, Qt::UserRole + 1).toStringList());
   }
+  else if (index == 0)
+    chatStyleVariant->addItem("Monospace");
 }
 
 
