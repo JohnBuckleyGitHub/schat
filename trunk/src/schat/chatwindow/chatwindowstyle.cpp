@@ -221,7 +221,7 @@ QString ChatWindowStyle::outgoingStateUnknownHtml() const { return d->outgoingSt
 
 bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool failBack)
 {
-  static QString baseHref = d->baseHref;
+  QString baseHref = d->baseHref;
   QString realFileName = baseHref + fileName;
 
   if (!QFile::exists(realFileName))

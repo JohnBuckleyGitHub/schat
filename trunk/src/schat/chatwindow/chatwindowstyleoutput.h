@@ -32,6 +32,7 @@ class ChatWindowStyleOutput
 public:
   ChatWindowStyleOutput(const QString &style, const QString &variant);
   ~ChatWindowStyleOutput();
+  QString makeStylesheet(const QString &variant) const;
 
   QString makeSkeleton(const QString &chatName = "%chatName%",
                        const QString &ownerName = "%sourceName%",
