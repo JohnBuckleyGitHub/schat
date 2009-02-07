@@ -49,6 +49,9 @@ ChatViewPrivate::ChatViewPrivate(ChatView *parent)
     ".info, .changedNick, .changedNick a { color:#5096cf; }"
     ".changedNick a { font-weight:bold; }";
   #endif
+
+  strict = Emoticons::strictParse();
+  grouping = SimpleSettings->getBool("MessageGrouping");
 }
 
 
@@ -148,7 +151,6 @@ ChatView::ChatView(QWidget *parent)
   connect(settings, SIGNAL(changed(int)), SLOT(notify(int)));
   setFocusPolicy(Qt::NoFocus);
 
-  d->strict = Emoticons::strictParse();
   createActions();
 }
 
@@ -275,6 +277,9 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
       d->prev = sender;
     else
       same = true;
+
+    if (!d->grouping)
+      same = false;
 
     d->toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
   }
@@ -451,8 +456,12 @@ void ChatView::linkClicked(const QUrl &url)
 
 void ChatView::notify(int notify)
 {
-  if (notify == Settings::EmoticonsChanged)
+  if (notify == Settings::EmoticonsChanged) {
     d->strict = Emoticons::strictParse();
+  }
+  else if (notify == Settings::InterfaceSettingsChanged) {
+    d->grouping = SimpleSettings->getBool("MessageGrouping");
+  }
 }
 
 

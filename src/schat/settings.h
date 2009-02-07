@@ -49,6 +49,7 @@ public:
     ProfileSettingsChanged,
     ServerChanged,
     UpdateSettingsChanged,
+    InterfaceSettingsChanged,
     EmoticonsChanged,
     SoundChanged,
     MiscSettingsChanged,

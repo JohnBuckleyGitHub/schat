@@ -345,6 +345,7 @@ void InterfaceSettings::save()
     SimpleSettings->setString("ChatStyleVariant", d->chatStyleVariant->currentText());
 
   SimpleSettings->setBool("MessageGrouping", d->grouping->isChecked());
+  SimpleSettings->notify(Settings::InterfaceSettingsChanged);
 }
 
 

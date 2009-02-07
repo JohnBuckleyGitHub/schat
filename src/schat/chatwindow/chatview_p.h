@@ -34,6 +34,7 @@ public:
   void toLog(const QString &text);
 
   bool empty;
+  bool grouping;
   bool log;
   bool strict;
   ChatView *q;
