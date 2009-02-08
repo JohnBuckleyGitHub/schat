@@ -34,7 +34,7 @@ public:
   ~ChatWindowStyleOutput();
   QString makeStylesheet(const QString &variant) const;
 
-  QString makeSkeleton(const QString &chatName = "%chatName%",
+  QString makeSkeleton(const QString &chatName = "IMPOMEZIA Simple Chat",
                        const QString &ownerName = "%sourceName%",
                        const QString &partnerName = "%destinationName%",
                        const QString &ownerIconPath = "",

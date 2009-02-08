@@ -90,23 +90,15 @@ QString ChatWindowStyleOutput::makeSkeleton(const QString &chatName,        cons
   while ((pos = timeRegExp.indexIn(skeleton, pos)) != -1)
     skeleton = skeleton.replace(pos, timeRegExp.cap(0).length(), time);
 
-  if(ownerIconPath == "")
-    skeleton = skeleton.replace("%outgoingIconPath%", "outgoing_icon.png"); // \todo Исправить outgoing_icon.png
+  if (ownerIconPath.isEmpty())
+    skeleton = skeleton.replace("%outgoingIconPath%", "qrc:/images/logo.png");
   else
-  #if defined(Q_WS_WIN)
-  skeleton = skeleton.replace("%outgoingIconPath%", ownerIconPath);
-  #else
-  skeleton = skeleton.replace("%outgoingIconPath%", "file://" + ownerIconPath);
-  #endif
+    skeleton.replace("%outgoingIconPath%", QUrl::fromLocalFile(ownerIconPath).toString());
 
-  if(partnerIconPath == "")
-    skeleton = skeleton.replace("%incomingIconPath%", "incoming_icon.png"); // \todo Исправить incoming_icon.png
+  if (partnerIconPath.isEmpty())
+    skeleton = skeleton.replace("%incomingIconPath%", "qrc:/images/logo.png");
   else
-  #if defined(Q_WS_WIN)
-  skeleton = skeleton.replace("%incomingIconPath%", partnerIconPath);
-  #else
-  skeleton = skeleton.replace("%incomingIconPath%", "file://" + partnerIconPath);
-  #endif
+    skeleton.replace("%incomingIconPath%", QUrl::fromLocalFile(partnerIconPath).toString());
 
   return skeleton;
 }
@@ -155,12 +147,8 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
   html = html.replace("%senderStatusIcon%", "");
 
   QString avatar = avatarPath;
-  if(avatar.isEmpty()) { /// \todo Исправить.
-    if(direction)
-      avatar = (m_style->styleBaseHref() + "Outgoing/buddy_icon.png");
-    else
-      avatar = (m_style->styleBaseHref() + "Incoming/buddy_icon.png");
-  }
+  if (avatar.isEmpty())
+    avatar = ("qrc:/images/logo.png");
 
   html = html.replace("%userIconPath%", avatar);
 
