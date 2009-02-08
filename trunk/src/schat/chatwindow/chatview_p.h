@@ -28,7 +28,11 @@ class ChatWindowStyleOutput;
 class ChatViewPrivate
 {
 public:
+  #ifndef SCHAT_NO_WEBKIT
   ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent);
+  #else
+  ChatViewPrivate(ChatView *parent);
+  #endif
   ~ChatViewPrivate();
   static bool prepareCmd(const QString &cmd, QString &msg, bool cut = true);
   void toLog(const QString &text);
@@ -41,7 +45,6 @@ public:
   QAction *copy;
   QPointer<ChannelLog> channelLog;
   QString channel;
-  QString prev;
 
   #ifndef SCHAT_NO_WEBKIT
     bool cleanStyle(const QString &styleName, const QString &styleVariant);
@@ -50,6 +53,7 @@ public:
     ChatWindowStyleOutput *style;
     QString chatStyle;
     QString chatStyleVariant;
+    QString prev;
   #else
     static QString makeMessage(const QString &sender, const QString &message, bool action = false);
     static QString makeStatus(const QString &message);

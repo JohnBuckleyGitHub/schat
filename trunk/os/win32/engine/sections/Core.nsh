@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ ${Section}
   SetOutPath "$INSTDIR\sounds"
   File "${SCHAT_DATADIR}\sounds\*.wav"
 
+  SetOutPath "$INSTDIR\styles"
+
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
 ${SectionEnd}
@@ -46,6 +48,7 @@ ${BodyEnd}
 
 ${Uninstall}
   Delete "$INSTDIR\schat.exe"
+  Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\uninstall.exe"
   Delete "$INSTDIR\networks\*.xml"
   Delete "$INSTDIR\doc\*.html"
@@ -55,6 +58,7 @@ ${Uninstall}
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\networks"
   RMDir "$INSTDIR\sounds"
+  RMDir "$INSTDIR\styles"
 
   DeleteRegKey HKCU "${SCHAT_REGKEY}"
 ${UninstallEnd}

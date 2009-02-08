@@ -116,7 +116,9 @@ public slots:
   void save();
 
 private slots:
-  void reloadVariants(int index);
+  #ifndef SCHAT_NO_WEBKIT
+    void reloadVariants(int index);
+  #endif
 
 private:
   class Private;
