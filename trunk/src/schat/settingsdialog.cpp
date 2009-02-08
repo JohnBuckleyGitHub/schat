@@ -231,7 +231,7 @@ void InterfaceSettings::Private::createStylesList()
       if (ChatWindowStyle::isValid(styleDirPath)) {
         index++;
         chatStyle->addItem(style);
-        chatStyle->setItemData(index, QStringList(ChatWindowStyle::variants(styleDirPath).keys()), Qt::UserRole + 1);
+        chatStyle->setItemData(index, QStringList(ChatWindowStyle::variants(styleDirPath + "Contents/Resources/Variants/").keys()), Qt::UserRole + 1);
       }
     }
   }

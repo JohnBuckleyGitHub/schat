@@ -53,12 +53,10 @@ public:
   ~ChatWindowStyle();
 
   bool hasActionTemplate() const;
-  bool hasCompact(const QString &variant) const;
-  QString compact(const QString &variant) const;
   QString styleBaseHref() const;
   QString styleName() const;
   static bool isValid(const QString &style);
-  static StyleVariants variants(const QString &style);
+  static StyleVariants variants(const QString &variantsPath);
   StyleVariants variants();
   void reload();
 
@@ -79,7 +77,7 @@ public:
   QString outgoingStateUnknownHtml() const;
 
 private:
-  bool readStyleFile(QString &out, const QString &fileName, bool failBack = true);
+  bool readStyleFile(QString &out, const QString &fileName, bool failBack = true) const;
   void init(const QString &styleName, StyleBuildMode styleBuildMode);
   void listVariants();
   void readStyleFiles();

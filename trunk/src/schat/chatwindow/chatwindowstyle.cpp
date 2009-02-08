@@ -48,9 +48,6 @@ public:
   QString outgoingStateErrorHtml;
   QString outgoingStateSentHtml;
   QString outgoingStateUnknownHtml;
-//  QString mainCSS;
-
-  QHash<QString, bool> compactVariants;
 };
 
 
@@ -87,33 +84,6 @@ ChatWindowStyle::~ChatWindowStyle()
 bool ChatWindowStyle::hasActionTemplate() const
 {
   return (!d->actionIncomingHtml.isEmpty() && !d->actionOutgoingHtml.isEmpty());
-}
-
-
-/*!
- * Check if the supplied variant has a compact form.
- */
-bool ChatWindowStyle::hasCompact(const QString & styleVariant) const
-{
-  if (d->compactVariants.contains(styleVariant))
-    return d->compactVariants.value(styleVariant);
-
-  return false;
-}
-
-
-/*!
- * Return the compact version of the given style variant.
- * For the unmodified style, this returns "Variants/_compact_.css".
- */
-QString ChatWindowStyle::compact( const QString & styleVariant ) const
-{
-  QString compacted = styleVariant;
-  if ( styleVariant.isEmpty() ) {
-    return QLatin1String( "Variants/_compact_.css" );
-  } else {
-    return compacted.insert( compacted.lastIndexOf('/') + 1, QString("_compact_") );
-  }
 }
 
 
@@ -155,10 +125,14 @@ bool ChatWindowStyle::isValid(const QString &style)
 }
 
 
-ChatWindowStyle::StyleVariants ChatWindowStyle::variants(const QString &style)
+/*!
+ * Формирует карту вариантов стиля.
+ *
+ * \param variantsPath Путь к папке с вариантами стиля.
+ */
+ChatWindowStyle::StyleVariants ChatWindowStyle::variants(const QString &variantsPath)
 {
-  QString variantDirPath = style + "Contents/Resources/Variants/";
-  QDir variantDir(variantDirPath);
+  QDir variantDir(variantsPath);
   variantDir.setFilter(QDir::Files);
   variantDir.setSorting(QDir::Name);
 
@@ -219,10 +193,19 @@ QString ChatWindowStyle::outgoingStateErrorHtml() const   { return d->outgoingSt
 QString ChatWindowStyle::outgoingStateUnknownHtml() const { return d->outgoingStateUnknownHtml; }
 
 
-bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool failBack)
+/*!
+ * Чтение файла стиля.
+ *
+ * \param out Строка в которую будет записан результат.
+ * \param fileName Относительно имя файла.
+ * \param failBack \a true если файл не будет найден, то прочитать файл по умолчанию из
+ * ресурсов, иначе вернуть ошибку.
+ *
+ * \return \a true в случае успеха.
+ */
+bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool failBack) const
 {
-  QString baseHref = d->baseHref;
-  QString realFileName = baseHref + fileName;
+  QString realFileName = d->baseHref + fileName;
 
   if (!QFile::exists(realFileName))
     if (failBack)
@@ -279,33 +262,7 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
  */
 void ChatWindowStyle::listVariants()
 {
-  QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
-  QDir variantDir(variantDirPath);
-
-  QStringList variantList = variantDir.entryList( QStringList("*.css") );
-  QStringList::ConstIterator it, itEnd = variantList.constEnd();
-  QLatin1String compactVersionPrefix("_compact_");
-  for(it = variantList.constBegin(); it != itEnd; ++it)
-  {
-    QString variantName = *it, variantPath;
-    // Retrieve only the file name.
-    variantName = variantName.left(variantName.lastIndexOf("."));
-    if ( variantName.startsWith( compactVersionPrefix ) ) {
-      if ( variantName == compactVersionPrefix ) {
-        d->compactVariants.insert( "", true );
-      }
-      continue;
-    }
-    QString compactVersionFilename = *it;
-    QString compactVersionPath = variantDirPath + compactVersionFilename.prepend( compactVersionPrefix );
-    if ( QFile::exists( compactVersionPath )) {
-      d->compactVariants.insert( variantName, true );
-    }
-    // variantPath is relative to baseHref.
-    variantPath = QString("Variants/%1").arg(*it);
-//    qDebug() << variantName << variantPath;
-    d->variantsList.insert(variantName, variantPath);
-  }
+  d->variantsList = variants(d->baseHref + "Variants/");
 }
 
 
