@@ -63,5 +63,4 @@ public:
   #endif
 };
 
-
 #endif /* CHATVIEW_P_H_ */

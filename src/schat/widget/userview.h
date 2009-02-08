@@ -25,6 +25,7 @@
 
 class AbstractProfile;
 class QMouseEvent;
+class UserViewPrivate;
 
 /*!
  * \brief Список пользователей.
@@ -34,10 +35,11 @@ class UserView : public QListView {
 
 public:
   UserView(const AbstractProfile *profile, QWidget *parent = 0);
+  ~UserView();
   bool add(const AbstractProfile &profile);
   bool add(const QStringList &list);
-  inline bool isUser(const QString &nick) const { return (bool) findItem(nick); }
-  inline void clear()                           { m_model.clear(); }
+  bool isUser(const QString &nick) const;
+  void clear();
   QStringList profile(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
   void remove(const QString &nick);
@@ -58,10 +60,7 @@ private slots:
   void addTab(const QModelIndex &index);
 
 private:
-  QStandardItem* findItem(const QString &nick) const;
-
-  const AbstractProfile *m_profile;
-  QStandardItemModel m_model;
+  UserViewPrivate * const d;
 };
 
 #endif /* USERVIEW_H_ */
