@@ -49,11 +49,13 @@ public:
 signals:
   void addTab(const QString &nick);
   void insertNick(const QString &nick);
+  void showSettings();
 
 public slots:
   void nickClicked(const QString &nick);
 
 protected:
+  void contextMenuEvent(QContextMenuEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
