@@ -68,6 +68,7 @@ HEADERS += \
     widget/sendwidget.h \
     widget/soundwidget.h \
     widget/userview.h \
+    widget/userview_p.h \
 
 SOURCES += \
     aboutdialog.cpp \

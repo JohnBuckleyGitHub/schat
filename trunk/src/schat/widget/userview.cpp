@@ -21,14 +21,49 @@
 #include "abstractprofile.h"
 #include "settings.h"
 #include "userview.h"
+#include "userview_p.h"
+
+
+/*!
+ * Конструктор класса UserViewPrivate.
+ */
+UserViewPrivate::UserViewPrivate(const AbstractProfile *prof)
+  : profile(prof)
+{
+
+}
+
+
+UserViewPrivate::~UserViewPrivate()
+{
+}
+
+
+/*!
+ * Выполняет поиск пользователя в модели.
+ *
+ * \param nick Ник пользователя.
+ * \return QStandardItem в случае успешного поиска, иначе 0.
+ */
+QStandardItem* UserViewPrivate::item(const QString &nick) const
+{
+  QList<QStandardItem *> items;
+
+  items = model.findItems(nick);
+  if (items.size() > 0)
+    return items[0];
+  else
+    return 0;
+}
+
 
 /*!
  * Конструктор класса UserView.
  */
 UserView::UserView(const AbstractProfile *profile, QWidget *parent)
-  : QListView(parent), m_profile(profile)
+  : QListView(parent), d(new UserViewPrivate(profile))
 {
-  setModel(&m_model);
+  setModel(&d->model);
   setFocusPolicy(Qt::NoFocus);
   setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -36,25 +71,31 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
 }
 
 
+UserView::~UserView()
+{
+  delete d;
+}
+
+
 bool UserView::add(const AbstractProfile &profile)
 {
   QString nick = profile.nick();
 
-  if (findItem(nick))
+  if (d->item(nick))
     return false;
 
   QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
   item->setData(profile.pack(), Qt::UserRole + 1);
   item->setToolTip(userToolTip(profile));
 
-  if (nick == m_profile->nick()) {
+  if (nick == d->profile->nick()) {
     QFont font;
     font.setBold(true);
     item->setFont(font);
   }
 
-  m_model.appendRow(item);
-  m_model.sort(0);
+  d->model.appendRow(item);
+  d->model.sort(0);
 
   return true;
 }
@@ -67,9 +108,21 @@ bool UserView::add(const QStringList &list)
 }
 
 
+bool UserView::isUser(const QString &nick) const
+{
+  return (bool) d->item(nick);
+}
+
+
+void UserView::clear()
+{
+  d->model.clear();
+}
+
+
 QStringList UserView::profile(const QString &nick) const
 {
-  QStandardItem *item = findItem(nick);
+  QStandardItem *item = d->item(nick);
   return item->data(Qt::UserRole + 1).toStringList();
 }
 
@@ -103,27 +156,27 @@ QString UserView::userToolTip(const AbstractProfile &profile)
 
 void UserView::remove(const QString &nick)
 {
-  QStandardItem *item = findItem(nick);
+  QStandardItem *item = d->item(nick);
 
   if (item)
-    m_model.removeRow(m_model.indexFromItem(item).row());
+    d->model.removeRow(d->model.indexFromItem(item).row());
 }
 
 
 void UserView::rename(const QString &oldNick, const QString &newNick)
 {
-  QStandardItem *item = findItem(oldNick);
+  QStandardItem *item = d->item(oldNick);
 
   if (item) {
     item->setText(newNick);
-    m_model.sort(0);
+    d->model.sort(0);
   }
 }
 
 
 void UserView::update(const QString &nick, const AbstractProfile &profile)
 {
-  QStandardItem *item = findItem(nick);
+  QStandardItem *item = d->item(nick);
 
   if (item) {
     item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
@@ -144,7 +197,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   QModelIndex index = indexAt(event->pos());
 
   if (event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton && index.isValid()) {
-    QStandardItem *item = m_model.itemFromIndex(index);
+    QStandardItem *item = d->model.itemFromIndex(index);
 
     nickClicked(item->text());
   }
@@ -155,16 +208,10 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
 
 void UserView::addTab(const QModelIndex &index)
 {
-  QStandardItem *item = m_model.itemFromIndex(index);
+  QStandardItem *item = d->model.itemFromIndex(index);
   QString nick = item->text();
-  if (nick == m_profile->nick())
+  if (nick == d->profile->nick())
     return;
 
   emit addTab(nick);
-}
-
-
-QStandardItem* UserView::findItem(const QString &nick) const
-{
-  return Settings::findItem(&m_model, nick);
 }
