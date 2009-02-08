@@ -65,7 +65,8 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
 {
   setModel(&d->model);
   setFocusPolicy(Qt::NoFocus);
-  setEditTriggers(QAbstractItemView::NoEditTriggers);
+  setEditTriggers(QListView::NoEditTriggers);
+  setSpacing(1);
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
 }
@@ -189,6 +190,42 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
 void UserView::nickClicked(const QString &nick)
 {
   emit insertNick(" <b>" + Qt::escape(nick) + "</b> ");
+}
+
+
+void UserView::contextMenuEvent(QContextMenuEvent *event)
+{
+  QModelIndex index = indexAt(event->pos());
+
+  if (index.isValid()) {
+    QStandardItem *item = d->model.itemFromIndex(index);
+    QString nick = item->text();
+
+    QAction *profileAction     = 0;
+    QAction *privateMsgAction  = 0;
+    QAction *nickClickedAction = 0;
+
+    QMenu menu(this);
+    if (nick == d->profile->nick()) {
+      profileAction = menu.addAction(QIcon(":/images/profile.png"), tr("Личные данные..."));
+      profileAction->setShortcut(tr("Ctrl+F12"));
+    }
+    else
+      privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
+
+    menu.addSeparator();
+    nickClickedAction = menu.addAction(tr("Вставить ник"));
+
+    QAction *action = menu.exec(event->globalPos());
+    if (action) {
+      if (action == profileAction)
+        emit showSettings();
+      else if (action == privateMsgAction)
+        addTab(index);
+      else if (action == nickClickedAction)
+        nickClicked(nick);
+    }
+  }
 }
 
 
