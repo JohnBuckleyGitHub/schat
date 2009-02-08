@@ -41,15 +41,7 @@ public:
    */
   typedef QHash<QString, QString> StyleVariants;
 
-  /*!
-   * This enum specifies the mode of the constructor
-   * - StyleBuildFast : Build the style the fatest possible
-   * - StyleBuildNormal : List all variants of this style. Require a async dir list.
-   */
-  enum StyleBuildMode { StyleBuildFast, StyleBuildNormal};
-
-  explicit ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode = StyleBuildNormal);
-  ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode = StyleBuildFast);
+  explicit ChatWindowStyle(const QString &styleName);
   ~ChatWindowStyle();
 
   bool hasActionTemplate() const;
@@ -78,7 +70,7 @@ public:
 
 private:
   bool readStyleFile(QString &out, const QString &fileName, bool failBack = true) const;
-  void init(const QString &styleName, StyleBuildMode styleBuildMode);
+  void init(const QString &styleName);
   void listVariants();
   void readStyleFiles();
 

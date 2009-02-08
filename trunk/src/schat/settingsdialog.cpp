@@ -227,11 +227,11 @@ void InterfaceSettings::Private::createStylesList()
       entryList.removeAll("Default");
 
     foreach (QString style, entryList) {
-      QString styleDirPath = dir + style + '/';
+      QString styleDirPath = dir + style;
       if (ChatWindowStyle::isValid(styleDirPath)) {
         index++;
         chatStyle->addItem(style);
-        chatStyle->setItemData(index, QStringList(ChatWindowStyle::variants(styleDirPath + "Contents/Resources/Variants/").keys()), Qt::UserRole + 1);
+        chatStyle->setItemData(index, QStringList(ChatWindowStyle::variants(styleDirPath + "/Contents/Resources/Variants/").keys()), Qt::UserRole + 1);
       }
     }
   }
