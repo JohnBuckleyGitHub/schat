@@ -18,7 +18,6 @@
 
 #include <QtGui>
 
-#include <QStringList>
 #include "chatwindowstyle.h"
 #include "chatwindowstyleoutput.h"
 
@@ -29,7 +28,10 @@ ChatWindowStyleOutput::ChatWindowStyleOutput(const QString &style, const QString
 {
 
   m_style = new ChatWindowStyle(style);
-  m_variant = variant;
+  if (m_style->variants().contains(variant))
+    m_variant = variant;
+  else
+    m_variant = "";
 
 }
 

@@ -29,7 +29,6 @@ class ChatWindowStyle::Private
 public:
   bool defaultStyle;
   QString baseHref;
-  QString currentVariantPath;
   QString styleName;
   StyleVariants variantsList;
 
@@ -55,18 +54,10 @@ public:
  * \brief Build a single chat window style.
  *
  */
-ChatWindowStyle::ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode)
+ChatWindowStyle::ChatWindowStyle(const QString &styleName)
   : d(new Private)
 {
-  init(styleName, styleBuildMode);
-}
-
-
-ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode)
-  : d(new Private)
-{
-  d->currentVariantPath = variantPath;
-  init(styleName, styleBuildMode);
+  init(styleName);
 }
 
 
@@ -117,11 +108,48 @@ QString ChatWindowStyle::styleBaseHref() const
 QString ChatWindowStyle::styleName() const { return d->styleName; }
 
 
+/*!
+ * Проверяет директорию со стилем на соответствие минимальным требованиям.
+ */
 bool ChatWindowStyle::isValid(const QString &style)
 {
-  Q_UNUSED(style);
+  int validResult = 0;
 
-  return true;
+  if (QDir().exists(style + "/Contents")) {
+    validResult++;
+  }
+  if (QDir().exists(style + "/Contents/Resources")) {
+    validResult++;
+  }
+  if (QDir().exists(style + "/Contents/Resources/Incoming")) {
+    validResult++;
+  }
+  if (QDir().exists(style + "/Contents/Resources/Outgoing")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/main.css")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/Footer.html")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/Status.html")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/Header.html")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/Incoming/Content.html")) {
+    validResult++;
+  }
+  if (QFile::exists(style + "/Contents/Resources/Outgoing/Content.html")) {
+    validResult++;
+  }
+
+  if (validResult >= 8)
+    return true;
+  else
+    return false;
 }
 
 
@@ -230,15 +258,15 @@ bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool 
 /*!
  * Init this class.
  */
-void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
+void ChatWindowStyle::init(const QString &styleName)
 {
   QString basePath = QApplication::applicationDirPath() + "/styles/";
 
-  bool valid = false;
-  if (styleName != "Default") {
-    if (isValid(basePath + styleName))
-      valid = true;
-  }
+  bool valid;
+  if (styleName == "Default")
+    valid = false;
+  else
+    valid = isValid(basePath + styleName);
 
   if (!valid) {
     d->styleName = "Default";
@@ -252,8 +280,7 @@ void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMo
   }
 
   readStyleFiles();
-  if (styleBuildMode & StyleBuildNormal)
-    listVariants();
+  listVariants();
 }
 
 
