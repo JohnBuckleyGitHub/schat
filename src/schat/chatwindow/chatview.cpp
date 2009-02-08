@@ -32,14 +32,19 @@
 /*!
  * \brief Конструктор класса ChatViewPrivate.
  */
+#ifndef SCHAT_NO_WEBKIT
 ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
   : empty(true), q(parent), chatStyle(styleName), chatStyleVariant(styleVariant)
+#else
+ChatViewPrivate::ChatViewPrivate(ChatView *parent)
+  : empty(true), q(parent)
+#endif
 {
   #ifndef SCHAT_NO_WEBKIT
     style = new ChatWindowStyleOutput(chatStyle, chatStyleVariant);
     grouping = SimpleSettings->getBool("MessageGrouping");
   #else
-  styleSheet = "a { color:#815d53; text-decoration:none; }"
+    styleSheet = "a { color:#815d53; text-decoration:none; }"
     ".sender, .sender a { color:#185074; }"
     ".me, .meSender a { color:#cd00cd; }"
     ".oldClientProtocol, .oldServerProtocol, .badNickName, .accessDenied, .disconnect { color:#da251d; }"
@@ -152,6 +157,8 @@ ChatView::ChatView(QWidget *parent)
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
   #else
+    d = new ChatViewPrivate(this);
+
     setOpenLinks(false);
     document()->setDefaultStyleSheet(d->styleSheet);
     setFrameShape(QFrame::NoFrame);
@@ -275,24 +282,31 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
   html = ChannelLog::parseLinks(html);
 
   QString escapedNick = Qt::escape(sender);
-
   bool action = false;
-  bool same = false;
+
+  #ifndef SCHAT_NO_WEBKIT
+    bool same = false;
+  #endif
 
   if (d->prepareCmd("/me ", html)) {
     action = true;
-    d->prev = "";
+
+    #ifndef SCHAT_NO_WEBKIT
+      d->prev = "";
+    #endif
 
     d->toLog(QString("<span class='me'>%1 %2</span>").arg(escapedNick).arg(html));
   }
   else {
-    if (d->prev.isEmpty() || d->prev != sender)
-      d->prev = sender;
-    else
-      same = true;
+    #ifndef SCHAT_NO_WEBKIT
+      if (d->prev.isEmpty() || d->prev != sender)
+        d->prev = sender;
+      else
+        same = true;
 
-    if (!d->grouping)
-      same = false;
+      if (!d->grouping)
+        same = false;
+    #endif
 
     d->toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
   }
@@ -322,7 +336,10 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
 void ChatView::addServiceMsg(const QString &msg)
 {
   d->empty = false;
-  d->prev = "";
+
+  #ifndef SCHAT_NO_WEBKIT
+    d->prev = "";
+  #endif
 
   d->toLog(msg);
   #ifndef SCHAT_NO_WEBKIT
@@ -396,12 +413,12 @@ void ChatView::clear()
 {
   #ifndef SCHAT_NO_WEBKIT
     setHtml(d->style->makeSkeleton());
+    d->prev = "";
   #else
     QTextBrowser::clear();
   #endif
 
   d->empty = true;
-  d->prev = "";
 }
 
 
@@ -472,11 +489,13 @@ void ChatView::notify(int notify)
   if (notify == Settings::EmoticonsChanged) {
     d->strict = Emoticons::strictParse();
   }
+  #ifndef SCHAT_NO_WEBKIT
   else if (notify == Settings::InterfaceSettingsChanged) {
     d->grouping = SimpleSettings->getBool("MessageGrouping");
     if (d->cleanStyle(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant")))
       clear();
   }
+  #endif
 }
 
 

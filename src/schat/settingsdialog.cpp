@@ -19,13 +19,16 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
-#include "chatwindow/chatwindowstyle.h"
 #include "emoticons/emoticons.h"
 #include "profilewidget.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "widget/networkwidget.h"
 #include "widget/soundwidget.h"
+
+#ifndef SCHAT_NO_WEBKIT
+  #include "chatwindow/chatwindowstyle.h"
+#endif
 
 /*!
  * \brief Конструктор класса SettingsDialog.
@@ -199,17 +202,21 @@ class InterfaceSettings::Private
 {
 public:
   Private() {}
-  void createStylesList();
-  void reloadVariants(int index);
-  void setStyle();
-
-  QCheckBox *grouping;
-  QComboBox *chatStyle;
-  QComboBox *chatStyleVariant;
   QComboBox *mainStyle;
+
+  #ifndef SCHAT_NO_WEBKIT
+    void createStylesList();
+    void reloadVariants(int index);
+    void setStyle();
+
+    QCheckBox *grouping;
+    QComboBox *chatStyle;
+    QComboBox *chatStyleVariant;
+  #endif
 };
 
 
+#ifndef SCHAT_NO_WEBKIT
 void InterfaceSettings::Private::createStylesList()
 {
   QStringList stylesDirs;
@@ -266,6 +273,7 @@ void InterfaceSettings::Private::setStyle()
   else
     reloadVariants(0);
 }
+#endif
 
 
 /*!
@@ -283,37 +291,43 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   mainStyleLay->addWidget(d->mainStyle);
   mainStyleLay->addStretch();
 
-  d->chatStyle = new QComboBox(this);
-  d->chatStyle->addItem("Default");
-  QLabel *name = new QLabel(tr("&Имя стиля:"), this);
-  name->setBuddy(d->chatStyle);
+  #ifndef SCHAT_NO_WEBKIT
+    d->chatStyle = new QComboBox(this);
+    d->chatStyle->addItem("Default");
+    QLabel *name = new QLabel(tr("&Имя стиля:"), this);
+    name->setBuddy(d->chatStyle);
 
-  d->chatStyleVariant = new QComboBox(this);
-  QLabel *variant = new QLabel(tr("&Вариант:"), this);
-  variant->setBuddy(d->chatStyleVariant);
+    d->chatStyleVariant = new QComboBox(this);
+    QLabel *variant = new QLabel(tr("&Вариант:"), this);
+    variant->setBuddy(d->chatStyleVariant);
 
-  d->grouping = new QCheckBox(tr("Группировать идущие &подряд сообщения"), this);
-  d->grouping->setToolTip(tr("Группировать идущие подряд сообщения\nот одного пользователя если это\nподдерживается выбранным стилем"));
-  d->grouping->setChecked(SimpleSettings->getBool("MessageGrouping"));
+    d->grouping = new QCheckBox(tr("Группировать идущие &подряд сообщения"), this);
+    d->grouping->setToolTip(tr("Группировать идущие подряд сообщения\nот одного пользователя если это\nподдерживается выбранным стилем"));
+    d->grouping->setChecked(SimpleSettings->getBool("MessageGrouping"));
 
-  QGroupBox *chatStyleGroup = new QGroupBox(tr("Стиль &текста"), this);
-  QGridLayout *chatStyleLay = new QGridLayout(chatStyleGroup);
-  chatStyleLay->addWidget(name, 0, 0);
-  chatStyleLay->addWidget(d->chatStyle, 0, 1);
-  chatStyleLay->addWidget(variant, 1, 0);
-  chatStyleLay->addWidget(d->chatStyleVariant, 1, 1);
-  chatStyleLay->addWidget(d->grouping, 2, 0, 1, 2);
-  chatStyleLay->setColumnStretch(1, 1);
+    QGroupBox *chatStyleGroup = new QGroupBox(tr("Стиль &текста"), this);
+    QGridLayout *chatStyleLay = new QGridLayout(chatStyleGroup);
+    chatStyleLay->addWidget(name, 0, 0);
+    chatStyleLay->addWidget(d->chatStyle, 0, 1);
+    chatStyleLay->addWidget(variant, 1, 0);
+    chatStyleLay->addWidget(d->chatStyleVariant, 1, 1);
+    chatStyleLay->addWidget(d->grouping, 2, 0, 1, 2);
+    chatStyleLay->setColumnStretch(1, 1);
+  #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(mainStyleGroup);
-  mainLay->addWidget(chatStyleGroup);
+  #ifndef SCHAT_NO_WEBKIT
+    mainLay->addWidget(chatStyleGroup);
+  #endif
   mainLay->addStretch();
 
-  connect(d->chatStyle, SIGNAL(currentIndexChanged(int)), SLOT(reloadVariants(int)));
+  #ifndef SCHAT_NO_WEBKIT
+    connect(d->chatStyle, SIGNAL(currentIndexChanged(int)), SLOT(reloadVariants(int)));
 
-  d->createStylesList();
-  d->setStyle();
+    d->createStylesList();
+    d->setStyle();
+  #endif
 }
 
 
@@ -324,9 +338,11 @@ void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
     d->mainStyle->setCurrentIndex(d->mainStyle->findText("Plastique"));
-    d->chatStyle->setCurrentIndex(0);
-    d->chatStyleVariant->setCurrentIndex(0);
-    d->grouping->setChecked(true);
+    #ifndef SCHAT_NO_WEBKIT
+      d->chatStyle->setCurrentIndex(0);
+      d->chatStyleVariant->setCurrentIndex(0);
+      d->grouping->setChecked(true);
+   #endif
   }
 }
 
@@ -338,24 +354,27 @@ void InterfaceSettings::save()
     QApplication::setStyle(d->mainStyle->currentText());
   }
 
-  if (d->chatStyle->currentIndex() != -1)
-    SimpleSettings->setString("ChatStyle", d->chatStyle->currentText());
+  #ifndef SCHAT_NO_WEBKIT
+    if (d->chatStyle->currentIndex() != -1)
+      SimpleSettings->setString("ChatStyle", d->chatStyle->currentText());
 
-  if (d->chatStyleVariant->currentIndex() == 0)
-    SimpleSettings->setString("ChatStyleVariant", "");
-  else if (d->chatStyleVariant->currentIndex() > 0)
-    SimpleSettings->setString("ChatStyleVariant", d->chatStyleVariant->currentText());
+    if (d->chatStyleVariant->currentIndex() == 0)
+      SimpleSettings->setString("ChatStyleVariant", "");
+    else if (d->chatStyleVariant->currentIndex() > 0)
+      SimpleSettings->setString("ChatStyleVariant", d->chatStyleVariant->currentText());
 
-  SimpleSettings->setBool("MessageGrouping", d->grouping->isChecked());
-  SimpleSettings->notify(Settings::InterfaceSettingsChanged);
+    SimpleSettings->setBool("MessageGrouping", d->grouping->isChecked());
+    SimpleSettings->notify(Settings::InterfaceSettingsChanged);
+  #endif
 }
 
 
+#ifndef SCHAT_NO_WEBKIT
 void InterfaceSettings::reloadVariants(int index)
 {
   d->reloadVariants(index);
 }
-
+#endif
 
 
 

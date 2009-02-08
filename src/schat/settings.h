@@ -49,7 +49,6 @@ public:
     ProfileSettingsChanged,
     ServerChanged,
     UpdateSettingsChanged,
-    InterfaceSettingsChanged,
     EmoticonsChanged,
     SoundChanged,
     MiscSettingsChanged,
@@ -61,7 +60,10 @@ public:
 
     #ifndef SCHAT_NO_UPDATE
       UpdateReady,
-      UpdateGetting
+      UpdateGetting,
+    #endif
+    #ifndef SCHAT_NO_WEBKIT
+      InterfaceSettingsChanged,
     #endif
   };
 
