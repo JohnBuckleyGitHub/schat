@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ public:
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
+  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()                                                                               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
@@ -74,6 +76,8 @@ signals:
   void syncNumerics(const QList<quint8> &numerics);
   void syncUsersEnd();
   void unconnected(bool echo = true);
+  void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 private slots:
@@ -90,8 +94,6 @@ private:
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
-  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   void createSocket();
   void opcodeAccessDenied();
   void opcodeAccessGranted();

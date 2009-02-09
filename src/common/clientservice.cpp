@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -91,6 +91,53 @@ bool ClientService::sendRelayMessage(const QString &channel, const QString &send
         << channel
         << sender
         << message;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
+ * Отправка универсального пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ * \param data2 Список данных типа QString
+ */
+bool ClientService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
+}
+
+
+/*!
+ * Отправка универсального облегчённого пакета.
+ *
+ * \param sub   Субопкод.
+ * \param data1 Список данных типа quint32
+ */
+bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
+{
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0) << OpcodeUniversalLite << sub << data1;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -565,53 +612,6 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
 }
 
 
-/*!
- * Отправка универсального пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- * \param data2 Список данных типа QString
- */
-bool ClientService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
- * Отправка универсального облегчённого пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- */
-bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversalLite << sub << data1;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
 /** [private]
  * Функция создаёт сокет `m_socket` и создаёт необходимые соединения сигнал-слот.
  * ВНИМАНИЕ: функция не проверяет наличие сокета `m_socket`, это должно делаться за пределами функции.
@@ -897,6 +897,8 @@ void ClientService::opcodeUniversal()
   QStringList    data2;
   m_stream >> subOpcode >> data1 >> data2;
   m_nextBlockSize = 0;
+
+  emit universal(subOpcode, data1, data2);
 }
 
 
@@ -909,6 +911,8 @@ void ClientService::opcodeUniversalLite()
   QList<quint32> data1;
   m_stream >> subOpcode >> data1;
   m_nextBlockSize = 0;
+
+  emit universalLite(subOpcode, data1);
 }
 
 

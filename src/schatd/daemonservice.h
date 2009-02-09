@@ -39,6 +39,8 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   bool isReady() const;
+  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
@@ -56,6 +58,8 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
+  void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
@@ -82,8 +86,6 @@ private:
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
-  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   quint16 verifyGreeting(quint16 version);
   void opcodeByeMsg();
   void opcodeMessage();
