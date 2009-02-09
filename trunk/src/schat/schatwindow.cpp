@@ -715,6 +715,16 @@ void SChatWindow::unconnected(bool echo)
 }
 
 
+void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
+{
+//  qDebug() << "SChatWindow::universal()";
+//  qDebug() << "  sub   =" << sub;
+//  qDebug() << "  data1 =" << data1;
+//  qDebug() << "  data2 =" << data2;
+
+}
+
+
 /*!
  * Выход удалённого пользователя из чата, опкод \a OpcodeUserLeave.
  */
@@ -809,8 +819,11 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
   QString textFull = text;
   text = text.toLower();
 
+  if (text == "/away") {
+    m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
+  }
   /// /bye
-  if (text == "/bye") {
+  else if (text == "/bye") {
     m_clientService->quit();
   }
   else if (text.startsWith("/bye ")) {
@@ -1015,6 +1028,8 @@ void SChatWindow::createService()
   connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
   connect(m_clientService, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
+  connect(m_clientService, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
+
 }
 
 

@@ -101,6 +101,7 @@ private slots:
   void sound(bool toggle = true);
   void stopNotice(int index);
   void unconnected(bool echo = true);
+  void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
   void welcomeOk();
 

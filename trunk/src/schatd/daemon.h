@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef DAEMON_H_
@@ -61,6 +61,7 @@ signals:
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message, quint8 numeric = 0);
   void sendSyncBye(const QString &nick, const QString &bye);
   void sendSyncProfile(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  void sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 private slots:
@@ -86,6 +87,7 @@ private slots:
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag, const QString &err);
   void syncNumerics(const QList<quint8> &numerics);
+  void universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2);
 
   #ifndef SCHAT_NO_LOCAL_SERVER
     void incomingLocalConnection();

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ public:
   inline QString host() const                      { return m_host; }
   inline QString nick() const                      { return m_nick; }
   inline QString userAgent() const                 { return m_userAgent; }
+  inline quint32 status() const                    { return m_status; }
   inline quint8 genderNum() const                  { if (m_male) return 0; else return 1; }
   inline static QString gender(bool male)          { if (male) return "male"; else return "female"; }
   inline static QString gender(quint8 g)           { if (g) return "female"; else return "male"; }
@@ -69,6 +70,7 @@ public:
   inline void setGender(quint8 _gender)            { setGender(gender(_gender)); }
   inline void setHost(const QString &host)         { m_host = host; }
   inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(MaxNickLength); }
+  inline void setStatus(quint32 status)            { m_status = status; }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QStringList pack() const;
   static bool isValidNick(const QString &nick);
@@ -76,12 +78,13 @@ public:
   void unpack(const QStringList &list);
 
 private:
+  bool m_male;
   QString m_byeMsg;
   QString m_fullName;
   QString m_host;
   QString m_nick;
   QString m_userAgent;
-  bool m_male;
+  quint32 m_status;
 };
 
 #endif /*ABSTRACTPROFILE_H_*/

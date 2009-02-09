@@ -39,8 +39,6 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   bool isReady() const;
-  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
@@ -58,11 +56,13 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
-  void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  void universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2);
   void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
+  bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
+  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
   inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, message); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
