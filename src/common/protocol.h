@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -283,6 +283,34 @@ static const quint16 OpcodeUniversal                 = 7666;
 static const quint16 OpcodeUniversalLite             = 7667;
 
 
+namespace schat
+{
+
+/*!
+ * Передачи информации о статусе.
+ * QList<quint32>[0] -> Статус (StatusNormal, StatusAway).
+ * Отправитель: Клиент.
+ */
+static const quint16 UniStatus                      = 10;
+
+
+/*!
+ * Передача списка пользователей с определённым статусом.
+ * QList<quint32>[0] -> Статус (StatusNormal, StatusAway).
+ * QList<quint32>[1] -> 1+ - включить отображение в тексте статуса,
+ *                      0  - тихий режим, по умолчанию 0.
+ * QStringList       -> как минимум один ник пользователя.
+ * Отправитель: Сервер.
+ */
+static const quint16 UniStatusList                  = 20;
+
+
+/*!
+ * Статусы для субопкода UniStatus.
+ */
+static const quint32 StatusNormal                   = 0;
+static const quint32 StatusAway                     = 1;
+}
 
 
 /**

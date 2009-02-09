@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -529,6 +529,30 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
+void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2)
+{
+//  qDebug() << "Daemon::universal()";
+//  qDebug() << "  sub   =" << sub;
+//  qDebug() << "  nick  =" << nick;
+//  qDebug() << "  data1 =" << data1;
+//  qDebug() << "  data2 =" << data2;
+
+  QString lowerNick = nick.toLower();
+
+  if (m_users.contains(lowerNick)) {
+    qDebug() << "contains";
+
+    if (sub == schat::UniStatus && !data1.isEmpty()) {
+      m_users.value(lowerNick)->profile()->setStatus(data1.at(0));
+      QList<quint32> out1;
+      out1 << data1.at(0) << 1;
+      emit sendUniversal(schat::UniStatusList, out1, QStringList(nick));
+    }
+  }
+
+}
+
+
 #ifndef SCHAT_NO_LOCAL_SERVER
 void Daemon::incomingLocalConnection()
 {
@@ -823,9 +847,11 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
     connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
     connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
+    connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
     connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
     connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
     connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
+    connect(this, SIGNAL(sendUniversal(quint16, const QList<quint32> &, const QStringList &)), service, SLOT(sendUniversal(quint16, const QList<quint32> &, const QStringList &)));
     service->accessGranted(m_numeric);
     emit newUser(list, 1, m_numeric);
 
