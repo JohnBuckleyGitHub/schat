@@ -86,7 +86,7 @@ bool UserView::add(const AbstractProfile &profile)
     return false;
 
   QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
-  item->setData(profile.pack(), Qt::UserRole + 1);
+  item->setData(profile.pack(), ProfileData);
   item->setToolTip(userToolTip(profile));
 
   if (nick == d->profile->nick()) {
@@ -124,7 +124,7 @@ void UserView::clear()
 QStringList UserView::profile(const QString &nick) const
 {
   QStandardItem *item = d->item(nick);
-  return item->data(Qt::UserRole + 1).toStringList();
+  return item->data(ProfileData).toStringList();
 }
 
 
@@ -136,7 +136,7 @@ QStringList UserView::profile(const QString &nick) const
 QString UserView::userToolTip(const AbstractProfile &profile)
 {
   QString p_agent = profile.userAgent();
-  p_agent.replace(QChar('/'), QChar(' '));
+  p_agent.replace('/', ' ');
   QString p_name;
   profile.fullName().isEmpty() ? p_name = tr("<не указано>") : p_name = profile.fullName();
 
@@ -182,7 +182,7 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
   if (item) {
     item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
     item->setToolTip(userToolTip(profile));
-    item->setData(profile.pack(), Qt::UserRole + 1);
+    item->setData(profile.pack(), ProfileData);
   }
 }
 
@@ -193,6 +193,9 @@ void UserView::nickClicked(const QString &nick)
 }
 
 
+/*!
+ * Контекстное меню.
+ */
 void UserView::contextMenuEvent(QContextMenuEvent *event)
 {
   QModelIndex index = indexAt(event->pos());
@@ -203,7 +206,6 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
 
     QAction *profileAction     = 0;
     QAction *privateMsgAction  = 0;
-    QAction *nickClickedAction = 0;
 
     QMenu menu(this);
     if (nick == d->profile->nick()) {
@@ -213,8 +215,21 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
     else
       privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
 
+    QMenu copyMenu(tr("Копировать"), this);
+    copyMenu.setIcon(QIcon(":/images/editcopy.png"));
+    menu.addMenu(&copyMenu);
+
+    AbstractProfile profile(item->data(ProfileData).toStringList(), this);
+    QAction *copyNick = copyMenu.addAction(QIcon(":/images/profile.png"), tr("Ник"));
+    QAction *copyFullName = 0;
+    if (!profile.fullName().isEmpty())
+      copyFullName = copyMenu.addAction(QIcon(":/images/profile.png"), tr("ФИО"));
+
+    QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/logo16.png"), tr("Клиент"));
+    QAction *copyHost = copyMenu.addAction(QIcon(":/images/applications-internet.png"), tr("Адрес"));
+
     menu.addSeparator();
-    nickClickedAction = menu.addAction(tr("Вставить ник"));
+    QAction *nickClickedAction = menu.addAction(tr("Вставить ник"));
 
     QAction *action = menu.exec(event->globalPos());
     if (action) {
@@ -222,6 +237,17 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
         emit showSettings();
       else if (action == privateMsgAction)
         addTab(index);
+      else if (action == copyNick)
+        QApplication::clipboard()->setText(nick);
+      else if (action == copyFullName)
+        QApplication::clipboard()->setText(profile.fullName());
+      else if (action == copyUserAgent) {
+        QString p_agent = profile.userAgent();
+        p_agent.replace('/', ' ');
+        QApplication::clipboard()->setText(p_agent);
+      }
+      else if (action == copyHost)
+        QApplication::clipboard()->setText(profile.host());
       else if (action == nickClickedAction)
         nickClicked(nick);
     }
