@@ -34,6 +34,10 @@ class UserView : public QListView {
   Q_OBJECT
 
 public:
+  enum ItemData {
+    ProfileData = Qt::UserRole + 1
+  };
+
   UserView(const AbstractProfile *profile, QWidget *parent = 0);
   ~UserView();
   bool add(const AbstractProfile &profile);
