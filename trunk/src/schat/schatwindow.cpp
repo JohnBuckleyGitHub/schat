@@ -579,6 +579,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
     m_tabs->setCurrentIndex(index);
     connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
+    connect(tab, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
   }
   else
     tab = qobject_cast<Tab *>(m_tabs->widget(index));
