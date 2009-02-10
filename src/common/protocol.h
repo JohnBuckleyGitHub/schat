@@ -310,6 +310,7 @@ static const quint16 UniStatusList                  = 20;
  */
 static const quint32 StatusNormal                   = 0;
 static const quint32 StatusAway                     = 1;
+static const quint32 StatusAutoAway                 = 2;
 }
 
 

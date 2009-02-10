@@ -35,7 +35,8 @@ class UserView : public QListView {
 
 public:
   enum ItemData {
-    ProfileData = Qt::UserRole + 1
+    ProfileData = Qt::UserRole + 1,
+    StatusData
   };
 
   UserView(const AbstractProfile *profile, QWidget *parent = 0);
@@ -43,11 +44,12 @@ public:
   bool add(const AbstractProfile &profile);
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
-  void clear();
   QStringList profile(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
+  void clear();
   void remove(const QString &nick);
   void rename(const QString &oldNick, const QString &newNick);
+  void setStatus(quint32 status, const QStringList &users);
   void update(const QString &nick, const AbstractProfile &profile);
 
 signals:

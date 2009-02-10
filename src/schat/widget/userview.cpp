@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "protocol.h"
 #include "settings.h"
 #include "userview.h"
 #include "userview_p.h"
@@ -171,6 +172,26 @@ void UserView::rename(const QString &oldNick, const QString &newNick)
   if (item) {
     item->setText(newNick);
     d->model.sort(0);
+  }
+}
+
+
+void UserView::setStatus(quint32 status, const QStringList &users)
+{
+  if (users.isEmpty())
+    return;
+
+  if (status > schat::StatusAutoAway )
+    status = schat::StatusNormal;
+
+  foreach (QString user, users) {
+    QStandardItem *item = d->item(user);
+    if (item) {
+      if (status == schat::StatusNormal)
+        item->setForeground(QPalette().brush(QPalette::WindowText));
+      else if (status == schat::StatusAway || status == schat::StatusAutoAway)
+        item->setForeground(QBrush(QColor("#90a4b3")));
+    }
   }
 }
 

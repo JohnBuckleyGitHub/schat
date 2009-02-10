@@ -122,6 +122,7 @@ private:
   void createService();
   void createToolButtons();
   void createTrayIcon();
+  void displayAway(quint32 status, const QString &nick);
   void hideChat();
   void restoreGeometry();
   void saveGeometry();
