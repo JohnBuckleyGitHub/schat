@@ -20,6 +20,7 @@
 #define SCHATWINDOW_P_H_
 
 #include <QPointer>
+#include <QPair>
 
 class AboutDialog;
 class ClientService;
@@ -40,7 +41,9 @@ public:
   ~SChatWindowPrivate();
 
   bool parseCmd(AbstractTab *tab, const QString &message);
-  int tabIndex(const QString &text) const;
+  QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
+  QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
+  QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void closeChat(bool update = false);
   void createToolButtons();

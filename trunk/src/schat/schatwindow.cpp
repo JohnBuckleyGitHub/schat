@@ -119,26 +119,53 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
 
 
 /*!
- * Возвращает индекс вкладки с приватом по тексту.
- *
- * \param text Текст поиска.
- * \return Индекс найденной вкладки или -1.
- *
- * \todo Выполнять поиск вкладки определённого типа.
- * \todo Возвращать тип QPair с индексом и указателем.
+ * Создаёт новую вкладку с приватом.
  */
-int SChatWindowPrivate::tabIndex(const QString &text) const
+QPair<int, AbstractTab *> SChatWindowPrivate::createPrivateTab(const QString &nick)
+{
+  AbstractProfile prof(users->profile(nick));
+  AbstractTab *tab = new Tab(QIcon(":/images/" + prof.gender() + ".png"), q);
+  tab->setChannel(nick);
+  int index = tabs->addTab(tab, tab->icon(), nick);
+  tabs->setTabToolTip(index, UserView::userToolTip(prof));
+
+  return QPair<int, AbstractTab *>(index, tab);
+}
+
+
+/*!
+ * Выполняет поиск вкладки с заданным текстом и типом.
+ */
+QPair<int, AbstractTab *> SChatWindowPrivate::tabFromName(const QString &text, AbstractTab::Type type) const
 {
   int count = tabs->count();
 
-  if (count == 1 && tabs->widget(0) == main)
-    return -1;
-  else
+  if (count > 0)
     for (int i = 0; i <= count; ++i)
-      if (tabs->tabText(i) == text && tabs->widget(i) != main)
-        return i;
+      if (tabs->tabText(i) == text) {
+        AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
+        if (tab->type() == type)
+          return QPair<int, AbstractTab *>(i, tab);
+      }
 
-  return -1;
+  return QPair<int, AbstractTab *>(-1, 0);
+}
+
+
+/*!
+ * Обновляет вкладку.
+ */
+QPair<int, AbstractTab *> SChatWindowPrivate::updatePrivateTab(const AbstractProfile &prof)
+{
+  QPair<int, AbstractTab *> tab = tabFromName(prof.nick());
+  if (tab.first != -1) {
+    tabs->setTabToolTip(tab.first, UserView::userToolTip(prof));
+    tab.second->setIcon(QIcon(":/images/" + prof.gender() + ".png"));
+
+    if (!tab.second->notice())
+      tabs->setTabIcon(tab.first, tab.second->icon());
+  }
+  return tab;
 }
 
 
@@ -309,12 +336,10 @@ void SChatWindowPrivate::displayAway(quint32 status, const QString &nick)
 
   html += "</span>";
 
-  int index = tabIndex(nick);
-  if (index != -1) {
-    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
-    if (tab->type() == AbstractTab::Private)
-      tab->msg(html);
-  }
+  /// \todo Добавить отображения собственного статуса во все открытые приваты.
+  QPair<int, AbstractTab *> tab = tabFromName(nick);
+  if (tab.first != -1)
+    tab.second->msg(html);
 }
 
 
@@ -706,18 +731,22 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 }
 
 
+/*!
+ * Открытие нового привата по инициативе пользователя.
+ * Если вкладка не существует, то она будет создана, индекс
+ * устанавливается на эту вкладку.
+ *
+ * \param nick Ник удалённого пользователя.
+ */
 void SChatWindow::addTab(const QString &nick)
 {
-  int index = d->tabIndex(nick);
+  int index = d->tabFromName(nick).first;
 
   if (index == -1) {
-    AbstractProfile profile(d->users->profile(nick));
-    Tab *tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
-    tab->setChannel(nick);
-    index = d->tabs->addTab(tab, tab->icon(), nick);
-    d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
-    connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
-    connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+    QPair<int, AbstractTab *> newTab = d->createPrivateTab(nick);
+    index = newTab.first;
+    connect(newTab.second, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
+    connect(newTab.second, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   }
 
   d->tabs->setCurrentIndex(index);
@@ -849,40 +878,41 @@ void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QStr
 }
 
 
+/*!
+ * Обработка изменения ника пользователя.
+ */
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   if (d->users->isUser(nick)) {
     d->users->rename(nick, newNick);
 
-    int oldIndex = d->tabIndex(nick);
-    int newIndex = d->tabIndex(newNick);
+    QPair<int, AbstractTab *> oldTab = d->tabFromName(nick);
+    QPair<int, AbstractTab *> newTab = d->tabFromName(newNick);
+    QString html = ChatView::statusChangedNick(gender, nick, newNick);
 
-    if (oldIndex != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(oldIndex));
+    if (oldTab.first != -1) {
 
-      if (newIndex == -1) {
-        d->tabs->setTabText(oldIndex, newNick);
-        tab->setChannel(newNick);
+      if (newTab.first == -1) {
+        d->tabs->setTabText(oldTab.first, newNick);
+        oldTab.second->setChannel(newNick);
       }
       else {
-        AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(newIndex));
-        tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
-        if (d->tabs->currentIndex() == oldIndex)
-          d->tabs->setCurrentIndex(newIndex);
+        newTab.second->msg(html);
+        if (d->tabs->currentIndex() == oldTab.first)
+          d->tabs->setCurrentIndex(newTab.first);
       }
 
-      tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
+      oldTab.second->msg(html);
     }
 
     newProfile(gender, newNick, name);
-    d->main->msg(ChatView::statusChangedNick(gender, nick, newNick));
+    d->main->msg(html);
   }
 }
 
 
 /*!
- * \brief Обработка изменения профиля пользователя.
- *
+ * Обработка изменения профиля пользователя.
  * При наличии пользователя в списке функция обновляет информацию о пользователе,
  * а также если имеются открытые приваты, то вкладка также обновляется.
  *
@@ -898,16 +928,7 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
     profile.setNick(nick);
     profile.setFullName(name);
     d->users->update(nick, profile);
-
-    int index = d->tabIndex(nick);
-    if (index != -1) {
-      d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
-      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
-      tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
-
-      if (!tab->notice())
-        d->tabs->setTabIcon(index, tab->icon());
-    }
+    d->updatePrivateTab(profile);
   }
 }
 
@@ -937,32 +958,23 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   if (d->profile->nick() == nick)
     echo = 0;
 
+  QPair<int, AbstractTab *> tab = d->updatePrivateTab(profile);
+
   if (echo == 1) {
-    QString msg = ChatView::statusNewUser(profile.genderNum(), nick);
-    d->main->msg(msg);
+    QString html = ChatView::statusNewUser(profile.genderNum(), nick);
+    d->main->msg(html);
 
-    int index = d->tabIndex(nick);
-    if (index != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
-      if (tab->type() == AbstractTab::Private) {
-        d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
-        tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
-
-        if (!tab->notice())
-          d->tabs->setTabIcon(index, tab->icon());
-
-        tab->msg(msg);
-      }
-    }
+    if (tab.first != -1)
+      tab.second->msg(html);
   }
 }
 
 
 /*!
- * Получение нового приватного сообщения от другого пользователя.
+ * Получение от клиентского сервиса нового приватного сообщения.
  *
- * \param flag Флаг эха.
- * \param nick Ник отправителя.
+ * \param flag Флаг эха, если равен \a 1 то это собственное сообщение.
+ * \param nick Ник пользователя, с которым идёт разговор.
  * \param msg  Сообщение.
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &msg)
@@ -970,21 +982,19 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
   if (!d->users->isUser(nick))
     return;
 
-  Tab *tab = 0;
-  int index = d->tabIndex(nick);
+  QPair<int, AbstractTab *> tabPair = d->tabFromName(nick);
+
+  int index = tabPair.first;
+  AbstractTab *tab = tabPair.second;
 
   if (index == -1) {
-    AbstractProfile profile(d->users->profile(nick));
-    tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
-    tab->setChannel(nick);
-    index = d->tabs->addTab(tab, tab->icon(), nick);
-    d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
+    QPair<int, AbstractTab *> newTab = d->createPrivateTab(nick);
+    index = newTab.first;
+    tab = newTab.second;
     d->tabs->setCurrentIndex(index);
     connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
     connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   }
-  else
-    tab = qobject_cast<Tab *>(d->tabs->widget(index)); /// \todo ШИТО?
 
   if (tab)
     if (flag == 1)
@@ -1141,25 +1151,29 @@ void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStr
 
 
 /*!
- * Выход удалённого пользователя из чата, опкод \a OpcodeUserLeave.
+ * Выход удалённого пользователя из чата.
+ *
+ * \param nick Ник пользователя.
+ * \param bye  Опциональное сообщение при выходе.
+ * \param flag Флаг эха, в случае если равен \a 1, то сообщение
+ *             о выходе будет добавлено в основной канал и в приват.
  */
 void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
 {
   if (d->users->isUser(nick)) {
-    QStringList list = d->users->profile(nick);
-    d->users->remove(nick);
 
     if (flag == 1) {
-      AbstractProfile profile(list);
-      int index = d->tabIndex(nick);
-      if (index != -1) {
-        AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
-        if (tab->type() == AbstractTab::Private)
-          tab->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
-      }
+      AbstractProfile profile(d->users->profile(nick));
+      QString html = ChatView::statusUserLeft(profile.genderNum(), nick, bye);
+      QPair<int, AbstractTab *> tab = d->tabFromName(nick);
 
-      d->main->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
+      if (tab.first != -1)
+        tab.second->msg(html);
+
+      d->main->msg(html);
     }
+
+    d->users->remove(nick);
   }
 }
 
