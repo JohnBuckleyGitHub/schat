@@ -28,9 +28,6 @@
 #include "network.h"
 #include "protocol.h"
 
-class AbstractProfile;
-class Network;
-
 /*!
  * \brief Универсальный сервис клиента чата.
  *
@@ -41,7 +38,7 @@ class ClientService : public QObject
   Q_OBJECT
 
 public:
-  ClientService(const AbstractProfile *profile, const Network *settings, QObject *parent = 0);
+  ClientService(const AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
