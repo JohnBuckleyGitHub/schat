@@ -48,7 +48,7 @@ ChatViewPrivate::ChatViewPrivate(ChatView *parent)
     ".sender, .sender a { color:#185074; }"
     ".me, .meSender a { color:#cd00cd; }"
     ".oldClientProtocol, .oldServerProtocol, .badNickName, .accessDenied, .disconnect { color:#da251d; }"
-    ".ts, .preSb, .newUser, .newUser a, .userLeft, .userLeft a { color:#8797a3; }"
+    ".ts, .preSb, .newUser, .newUser a, .userLeft, .userLeft a, .away, .away a { color:#8797a3; }"
     ".newUser a, .userLeft a, .meSender a { font-weight:bold; }"
     ".ready { color:#6bb521; }"
     ".info, .changedNick, .changedNick a { color:#5096cf; }"

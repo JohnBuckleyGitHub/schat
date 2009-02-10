@@ -540,8 +540,6 @@ void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &d
   QString lowerNick = nick.toLower();
 
   if (m_users.contains(lowerNick)) {
-    qDebug() << "contains";
-
     if (sub == schat::UniStatus && !data1.isEmpty()) {
       m_users.value(lowerNick)->profile()->setStatus(data1.at(0));
       QList<quint32> out1;

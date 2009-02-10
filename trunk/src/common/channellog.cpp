@@ -308,7 +308,7 @@ bool ChannelLog::openFile()
     m_stream << " .sb { color:#002b3c; background-color:#f5f8ff; border:#dce2e6 solid 1px; margin:1px 8px; padding:1px 4px; }" << endl;
     m_stream << " .oldClientProtocol, .oldServerProtocol, .badNickName, .accessDenied, .disconnect { color:#da251d; }" << endl;
     m_stream << " .ready { color:#6bb521; }" << endl;
-    m_stream << " .ts, .preSb, .newUser, .newUser a, .userLeft, .userLeft a { color:#8797a3; }" << endl;
+    m_stream << " .ts, .preSb, .newUser, .newUser a, .userLeft, .userLeft a, .away a { color:#8797a3; }" << endl;
     m_stream << " .newUser a, .userLeft a { font-weight:bold; }" << endl;
     m_stream << " .info, .changedNick, .changedNick a { color:#5096cf; }" << endl;
     m_stream << " .changedNick a { font-weight:bold; }" << endl;

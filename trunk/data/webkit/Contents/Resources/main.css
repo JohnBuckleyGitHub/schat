@@ -85,7 +85,7 @@ a span[style] { /* Fix Qt rich text */
 .changedNick a {
   font-weight:bold;
 }
-.newUser a, .userLeft a {
+.newUser a, .userLeft a, .away a {
   color:#8797a3;
   font-weight:bold;
 }

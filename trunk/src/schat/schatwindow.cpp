@@ -715,12 +715,19 @@ void SChatWindow::unconnected(bool echo)
 }
 
 
+/*!
+ * Обработка универсального пакета.
+ */
 void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
-//  qDebug() << "SChatWindow::universal()";
-//  qDebug() << "  sub   =" << sub;
-//  qDebug() << "  data1 =" << data1;
-//  qDebug() << "  data2 =" << data2;
+  if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty()) {
+    m_profile->setStatus(data1.at(0));
+    m_users->setStatus(data1.at(0), data2);
+    if (data1.size() > 1)
+      if (data1.at(1))
+        if (m_users->isUser(data2.at(0)))
+          displayAway(data1.at(0), data2.at(0));
+  }
 
 }
 
@@ -820,7 +827,10 @@ bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
   text = text.toLower();
 
   if (text == "/away") {
-    m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
+    if (m_profile->status() == schat::StatusAway)
+      m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusNormal, QStringList());
+    else
+      m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
   }
   /// /bye
   else if (text == "/bye") {
@@ -1097,6 +1107,43 @@ void SChatWindow::createTrayIcon()
   m_tray = new TrayIcon(this);
   m_tray->setContextMenu(m_trayMenu);
   m_tray->show();
+}
+
+
+/*!
+ * Отображает в тексте приватов Away-статусы.
+ *
+ * \param status Статус.
+ * \param nick   Ник пользователя.
+ */
+void SChatWindow::displayAway(quint32 status, const QString &nick)
+{
+  if (!m_users->isUser(nick))
+    return;
+
+  QString escaped = Qt::escape(nick);
+  QString nickHex = nick.toUtf8().toHex();
+  QString html = "<span class='away'>";
+
+  if (status == schat::StatusAway || status == schat::StatusAutoAway) {
+    html += tr("<a href='nick:%1'>%2</a> отсутствует").arg(nickHex).arg(escaped);
+  }
+  else {
+    AbstractProfile profile(m_users->profile(nick));
+    if (profile.genderNum())
+      html += tr("<a href='nick:%1'>%2</a> вернулась").arg(nickHex).arg(escaped);
+    else
+      html += tr("<a href='nick:%1'>%2</a> вернулся").arg(nickHex).arg(escaped);
+  }
+
+  html += "</span>";
+
+  int index = tabIndex(nick);
+  if (index != -1) {
+    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+    if (tab->type() == AbstractTab::Private)
+      tab->msg(html);
+  }
 }
 
 
