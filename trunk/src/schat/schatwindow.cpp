@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
 #include <QtGui>
 #include <QtNetwork>
 
@@ -24,8 +23,10 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "chatwindow/chatview.h"
+#include "clientservice.h"
 #include "mainchannel.h"
 #include "schatwindow.h"
+#include "schatwindow_p.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "tab.h"
@@ -34,109 +35,520 @@
 #include "widget/sendwidget.h"
 #include "widget/userview.h"
 
-QMap<QString, QString> SChatWindow::m_cmds;
+QMap<QString, QString> SChatWindowPrivate::cmds;
+
+
+/*!
+ * \brief Конструктор класса SChatWindowPrivate.
+ */
+SChatWindowPrivate::SChatWindowPrivate(SChatWindow *parent)
+  : motd(true), q(parent)
+{
+}
+
+
+SChatWindowPrivate::~SChatWindowPrivate()
+{
+}
+
+
+/*!
+ * Обработка команд.
+ */
+bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
+{
+  QString text     = ChannelLog::toPlainText(message).trimmed();
+  QString textFull = text;
+  text = text.toLower();
+
+  /// /away
+  if (text == "/away") {
+    if (profile->status() == schat::StatusAway)
+      clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusNormal, QStringList());
+    else
+      clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
+  }
+  /// /bye
+  else if (text == "/bye") {
+    clientService->quit();
+  }
+  else if (text.startsWith("/bye ")) {
+    clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
+    clientService->quit();
+  }
+  /// /clear
+  else if (text == "/clear") {
+    tab->clear();
+  }
+  /// /exit
+  else if (text == "/exit" || text == "/quit") {
+    closeChat();
+  }
+  else if (text.startsWith("/google ")) {
+    QString query = textFull.mid(textFull.indexOf(' ')).simplified().left(1000);
+    sendMsg(QString("<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b>"
+                    "<b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b>"
+                    "<b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: "
+                    "<b><a href='http://www.google.com/search?q=%1'>%1</a></b>").arg(query), false);
+  }
+  /// /help
+  else if (text == "/help") {
+    cmdHelp(tab, "");
+  }
+  else if (text.startsWith("/help ")) {
+    cmdHelp(tab, textFull.mid(textFull.indexOf(' ')).trimmed());
+  }
+  /// /log
+  else if (text == "/log") {
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
+  }
+  /// /nick
+  else if (text.startsWith("/nick ")) {
+    QString newNick = textFull.mid(textFull.indexOf(' '));
+    if (AbstractProfile::isValidNick(newNick) && profile->nick() != newNick) {
+      profile->setNick(newNick);
+      clientService->sendNewProfile();
+    }
+  }
+  else
+    return false;
+
+  send->clear();
+  return true;
+}
+
+
+/*!
+ * Возвращает индекс вкладки с приватом по тексту.
+ *
+ * \param text Текст поиска.
+ * \return Индекс найденной вкладки или -1.
+ *
+ * \todo Выполнять поиск вкладки определённого типа.
+ * \todo Возвращать тип QPair с индексом и указателем.
+ */
+int SChatWindowPrivate::tabIndex(const QString &text) const
+{
+  int count = tabs->count();
+
+  if (count == 1 && tabs->widget(0) == main)
+    return -1;
+  else
+    for (int i = 0; i <= count; ++i)
+      if (tabs->tabText(i) == text && tabs->widget(i) != main)
+        return i;
+
+  return -1;
+}
+
+
+/*!
+ * Отображает подсказку по командам.
+ */
+void SChatWindowPrivate::cmdHelp(AbstractTab *tab, const QString &cmd)
+{
+  if (cmds.isEmpty()) {
+    cmds.insert("bye",    QObject::tr("<b>/bye [текст сообщения]</b><span class='info'> — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
+    cmds.insert("clear",  QObject::tr("<b>/clear</b><span class='info'> — очистка окна чата.</span>"));
+    cmds.insert("exit",   QObject::tr("<b>/exit</b><span class='info'> — выход из чата.</span>"));
+    cmds.insert("google", QObject::tr("<b>/google &lt;строка поиска&gt;</b><span class='info'> — формирует ссылку с заданной строкой для поиска в Google.</span>"));
+    cmds.insert("help",   QObject::tr("<b>/help</b><span class='info'> — отображает подсказу о командах.</span>"));
+    cmds.insert("log",    QObject::tr("<b>/log</b><span class='info'> — открывает папку с файлами журнала чата.</span>"));
+    cmds.insert("me",     QObject::tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
+    cmds.insert("motd",   QObject::tr("<b>/motd</b><span class='info'> — показ <i>Message Of The Day</i> сообщения сервера.</span>"));
+    cmds.insert("nick",   QObject::tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
+    cmds.insert("server", QObject::tr("<b>/server</b><span class='info'> — просмотр информации о сервере.</span>"));
+  }
+
+  if (cmd.isEmpty()) {
+    QString out = QObject::tr("<b class='info'>Доступные команды:</b><br />");
+    out += "<b>";
+
+    QMapIterator<QString, QString> i(cmds);
+    while (i.hasNext()) {
+      i.next();
+      out += ('/' + i.key() + "<br />");
+    }
+
+    out += "</b>";
+    out += QObject::tr("<span class='info'>Используйте <b>/help команда</b>, для просмотра подробной информации о команде.</span>");
+    tab->msg(out);
+    return;
+  }
+
+  QString command = cmd.toLower();
+  if (command.startsWith('/')) {
+    command = command.mid(1);
+  }
+
+  if (cmds.contains(command)) {
+    tab->msg(cmds.value(command));
+  }
+  else
+    tab->msg("<span class='statusUnknownCmd'>" + QObject::tr("Неизвестная команда: <b>%1</b>").arg(command) + "</span>");
+}
+
+
+/*!
+ * Завершение работы программы.
+ */
+void SChatWindowPrivate::closeChat(bool update)
+{
+  #ifdef SCHAT_NO_UPDATE
+    Q_UNUSED(update)
+  #endif
+
+  clientService->quit();
+  saveGeometry();
+  pref->write();
+
+  #ifndef SCHAT_NO_UPDATE
+    if (update)
+      Settings::install();
+  #endif
+
+  QApplication::quit();
+}
+
+
+/*!
+ * Создаёт кнопки.
+ */
+void SChatWindowPrivate::createToolButtons()
+{
+  QMenu *iconMenu = new QMenu(q);
+  iconMenu->addAction(profileSetAction);
+  iconMenu->addAction(networkSetAction);
+  iconMenu->addAction(interfaceSetAction);
+  iconMenu->addAction(emoticonsSetAction);
+  iconMenu->addAction(soundSetAction);
+  iconMenu->addAction(updateSetAction);
+  iconMenu->addAction(miscSetAction);
+
+  // Настройка
+  settingsButton = new QToolButton(q);
+  settingsButton->setIcon(QIcon(":/images/configure.png"));
+  settingsButton->setToolTip(QObject::tr("Настройка..."));
+  settingsButton->setAutoRaise(true);
+  settingsButton->setMenu(iconMenu);
+  settingsButton->setPopupMode(QToolButton::InstantPopup);
+
+  soundButton = new QToolButton(q);
+  soundButton->setAutoRaise(true);
+  soundButton->setDefaultAction(soundAction);
+
+  QToolButton *aboutButton = new QToolButton(q);
+  aboutButton->setDefaultAction(aboutAction);
+  aboutButton->setAutoRaise(true);
+
+  QFrame *line = new QFrame(q);
+  line->setFrameShape(QFrame::VLine);
+  line->setFrameShadow(QFrame::Sunken);
+
+  toolsLay->addWidget(line);
+  toolsLay->addWidget(settingsButton);
+  toolsLay->addWidget(soundButton);
+  toolsLay->addWidget(aboutButton);
+  toolsLay->addStretch();
+  toolsLay->setSpacing(0);
+}
+
+
+/*!
+ * Инициализирует поддержку системного трея.
+ */
+void SChatWindowPrivate::createTrayIcon()
+{
+  trayMenu = new QMenu(q);
+  trayMenu->addAction(aboutAction);
+  trayMenu->addAction(profileSetAction);
+
+  #ifdef Q_WS_WIN
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
+  #else
+  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui")) {
+  #endif
+    trayMenu->addSeparator();
+    trayMenu->addAction(daemonAction);
+  }
+
+  trayMenu->addSeparator();
+  trayMenu->addAction(quitAction);
+
+  tray = new TrayIcon(q);
+  tray->setContextMenu(trayMenu);
+  tray->show();
+}
+
+
+/*!
+ * Отображает в тексте приватов Away-статусы.
+ *
+ * \param status Статус.
+ * \param nick   Ник пользователя.
+ */
+void SChatWindowPrivate::displayAway(quint32 status, const QString &nick)
+{
+  if (!users->isUser(nick))
+    return;
+
+  QString escaped = Qt::escape(nick);
+  QString nickHex = nick.toUtf8().toHex();
+  QString html = "<span class='away'>";
+
+  if (status == schat::StatusAway || status == schat::StatusAutoAway) {
+    html += QObject::tr("<a href='nick:%1'>%2</a> отсутствует").arg(nickHex).arg(escaped);
+  }
+  else {
+    AbstractProfile profile(users->profile(nick));
+    if (profile.genderNum())
+      html += QObject::tr("<a href='nick:%1'>%2</a> вернулась").arg(nickHex).arg(escaped);
+    else
+      html += QObject::tr("<a href='nick:%1'>%2</a> вернулся").arg(nickHex).arg(escaped);
+  }
+
+  html += "</span>";
+
+  int index = tabIndex(nick);
+  if (index != -1) {
+    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
+    if (tab->type() == AbstractTab::Private)
+      tab->msg(html);
+  }
+}
+
+
+/*!
+ * Скрывает окна чата.
+ */
+void SChatWindowPrivate::hideChat()
+{
+  if (settingsDialog)
+    settingsDialog->hide();
+
+  if (about)
+    about->hide();
+
+  q->hide();
+}
+
+
+/*!
+ * Восстанавливает геометрию окна.
+ */
+void SChatWindowPrivate::restoreGeometry()
+{
+  q->resize(pref->size());
+  QPoint pos = pref->pos();
+  if (pos.x() != -999 && pos.y() != -999)
+    q->move(pos);
+
+  splitter->restoreState(pref->splitter());
+}
+
+
+/*!
+ * Сохраняет геометрию окна.
+ */
+void SChatWindowPrivate::saveGeometry()
+{
+  pref->setPos(q->pos());
+  pref->setSize(q->size());
+  pref->setSplitter(splitter->saveState());
+}
+
+
+/*!
+ * Обработка отправки сообщения.
+ * Получатель определяется в зависимости от типа вкладки.
+ *
+ * \param msg Сообщение.
+ * \param cmd Включает обработку команд.
+ */
+void SChatWindowPrivate::sendMsg(const QString &msg, bool cmd)
+{
+  AbstractTab *tab = static_cast<AbstractTab *>(tabs->currentWidget());
+
+  if (cmd)
+    if (parseCmd(tab, msg))
+      return;
+
+  QString channel; /// \todo Реализовать более коректное определение канала с учётом типа вкладки.
+  tab == main ? channel = "" : channel = tabs->tabText(tabs->currentIndex());
+  if (clientService->sendMessage(channel, msg))
+    send->clear();
+}
+
+
+/*!
+ * Показ окна чата.
+ */
+void SChatWindowPrivate::showChat()
+{
+  q->setWindowState(q->windowState() & ~Qt::WindowMinimized);
+  q->show();
+  q->activateWindow();
+
+  if (about)
+    about->show();
+
+  if (settingsDialog)
+    settingsDialog->show();
+}
+
+
+/*!
+ * При необходимости вызывает уведомление о новом сообщении.
+ * Механизм уведомления запускается, если номер текущей вкладки не равен номеру вкладки
+ * с уведомлением или окно чата неактивно.
+ *
+ * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
+ *
+ * \param index Номер вкладки, в которой есть новое сообщение.
+ * \param key   Ключ для звукового уведомления.
+ */
+void SChatWindowPrivate::startNotice(int index, const QString &key)
+{
+  if (index == -1)
+    return;
+
+  if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
+    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
+
+    if (sound)
+      tray->playSound(key);
+
+    if (!tab->notice()) {
+      tab->notice(true);
+      tabs->setTabIcon(index, QIcon(":/images/notice.png"));
+      tray->notice(true);
+    }
+  }
+}
+
+
+/*!
+ * Создаёт уникальный ник.
+ * Ник + случайное число от 0 до 99.
+ */
+void SChatWindowPrivate::uniqueNick()
+{
+  profile->setNick(profile->nick() + QString().setNum(qrand() % 99));
+}
+
+
+#if QT_VERSION < 0x040500
+void SChatWindowPrivate::createCornerWidgets()
+{
+  QToolButton *closeTabButton = new QToolButton(q);
+  closeTabButton->setDefaultAction(closeTabAction);
+  closeTabButton->setAutoRaise(true);
+  tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
+}
+#endif
+
 
 /*!
  * \brief Конструктор класса SChatWindow.
  */
 SChatWindow::SChatWindow(QWidget *parent)
-  : QMainWindow(parent), m_motd(true)
+  : QMainWindow(parent), d(new SChatWindowPrivate(this))
 {
-  m_settings    = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
-  m_profile     = m_settings->profile();
-  m_settings->read();
-  m_motdEnable = m_settings->getBool("MotdEnable");
+  d->pref        = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
+  d->profile     = d->pref->profile();
+  d->pref->read();
+  d->motdEnable = d->pref->getBool("MotdEnable");
 
-  m_send        = new SendWidget(this);
-  m_central     = new QWidget(this);
-  m_splitter    = new QSplitter(m_central);
-  m_tabs        = new QTabWidget(m_splitter);
-  m_tabs->installEventFilter(this);
-  m_right       = new QWidget(m_splitter);
-  m_users       = new UserView(m_profile, m_right);
-  m_rightLay    = new QVBoxLayout(m_right);
-  m_mainLay     = new QVBoxLayout(m_central);
-  m_toolsLay    = new QHBoxLayout;
-  m_statusBar   = new QStatusBar(this);
-  m_statusLabel = new QLabel(this);
+  d->send        = new SendWidget(this);
+  d->central     = new QWidget(this);
+  d->splitter    = new QSplitter(d->central);
+  d->tabs        = new QTabWidget(d->splitter);
+  d->tabs->installEventFilter(this);
+  d->right       = new QWidget(d->splitter);
+  d->users       = new UserView(d->profile, d->right);
+  d->rightLay    = new QVBoxLayout(d->right);
+  d->mainLay     = new QVBoxLayout(d->central);
+  d->toolsLay    = new QHBoxLayout;
+  d->statusBar   = new QStatusBar(this);
+  d->statusLabel = new QLabel(this);
 
-  m_splitter->addWidget(m_tabs);
-  m_splitter->addWidget(m_right);
-  m_splitter->setStretchFactor(0, 4);
-  m_splitter->setStretchFactor(1, 1);
+  d->splitter->addWidget(d->tabs);
+  d->splitter->addWidget(d->right);
+  d->splitter->setStretchFactor(0, 4);
+  d->splitter->setStretchFactor(1, 1);
 
-  m_rightLay->addLayout(m_toolsLay);
-  m_rightLay->addWidget(m_users);
-  m_rightLay->setMargin(0);
+  d->rightLay->addLayout(d->toolsLay);
+  d->rightLay->addWidget(d->users);
+  d->rightLay->setMargin(0);
   #if QT_VERSION >= 0x040500
-    m_rightLay->setSpacing(0);
+    d->rightLay->setSpacing(0);
   #else
-    m_rightLay->setSpacing(4);
+    d->rightLay->setSpacing(4);
   #endif
 
-  m_mainLay->addWidget(m_splitter);
-  m_mainLay->addWidget(m_send);
-  m_mainLay->setMargin(4);
-  m_mainLay->setSpacing(1);
-  m_mainLay->setStretchFactor(m_splitter, 999);
-  m_mainLay->setStretchFactor(m_send, 1);
+  d->mainLay->addWidget(d->splitter);
+  d->mainLay->addWidget(d->send);
+  d->mainLay->setMargin(4);
+  d->mainLay->setSpacing(1);
+  d->mainLay->setStretchFactor(d->splitter, 999);
+  d->mainLay->setStretchFactor(d->send, 1);
 
-  setCentralWidget(m_central);
-  setStatusBar(m_statusBar);
-  m_statusBar->addWidget(m_statusLabel, 1);
-  m_statusLabel->setText(tr("Не подключено"));
+  setCentralWidget(d->central);
+  setStatusBar(d->statusBar);
+  d->statusBar->addWidget(d->statusLabel, 1);
+  d->statusLabel->setText(tr("Не подключено"));
 
   setWindowTitle(QApplication::applicationName());
 
-  m_tabs->setElideMode(Qt::ElideRight);
+  d->tabs->setElideMode(Qt::ElideRight);
   #if QT_VERSION >= 0x040500
-    m_tabs->setTabsClosable(true);
-    m_tabs->setMovable(true);
-    connect(m_tabs, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+    d->tabs->setTabsClosable(true);
+    d->tabs->setMovable(true);
+    connect(d->tabs, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   #endif
 
-  restoreGeometry();
+  d->restoreGeometry();
   createActions();
   #if QT_VERSION < 0x040500
-    createCornerWidgets();
+    d->createCornerWidgets();
   #endif
-  createToolButtons();
-  createTrayIcon();
+  d->createToolButtons();
+  d->createTrayIcon();
   createService();
 
-  connect(m_send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
-  connect(m_send, SIGNAL(needCopy()), SLOT(copy()));
-  connect(m_users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
-  connect(m_users, SIGNAL(insertNick(const QString &)), m_send, SLOT(insertHtml(const QString &)));
-  connect(m_users, SIGNAL(showSettings()), SLOT(showSettings()));
-  connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(m_tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
-  connect(m_settings, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+  connect(d->send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
+  connect(d->send, SIGNAL(needCopy()), SLOT(copy()));
+  connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
+  connect(d->users, SIGNAL(insertNick(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+  connect(d->users, SIGNAL(showSettings()), SLOT(showSettings()));
+  connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
+  connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
 
   #ifndef SCHAT_NO_UPDATE
-    connect(m_tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
+    connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   #endif
 
-  m_main = new MainChannel(QIcon(":/images/main.png"), this);
-  connect(m_main, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
-  connect(m_main, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
+  d->main = new MainChannel(QIcon(":/images/main.png"), this);
+  connect(d->main, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
+  connect(d->main, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
 
-  m_tabs->setCurrentIndex(m_tabs->addTab(m_main, tr("Общий")));
-  m_tabs->setTabIcon(0, m_main->icon());
+  d->tabs->setCurrentIndex(d->tabs->addTab(d->main, tr("Общий")));
+  d->tabs->setTabIcon(0, d->main->icon());
 
-  if (!m_settings->getBool("HideWelcome") || m_settings->getBool("FirstRun")) {
-    m_welcome = new WelcomeDialog(m_profile, this);
-    connect(m_welcome, SIGNAL(accepted()), this, SLOT(welcomeOk()));
-    if (!m_welcome->exec())
-      m_main->displayChoiceServer(true);
+  if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
+    d->welcome = new WelcomeDialog(d->profile, this);
+    connect(d->welcome, SIGNAL(accepted()), this, SLOT(welcomeOk()));
+    if (!d->welcome->exec())
+      d->main->displayChoiceServer(true);
   }
   else
-    m_clientService->connectToHost();
+    d->clientService->connectToHost();
 
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 
-  if (m_settings->getBool("Updates/Enable") && m_settings->getBool("Updates/CheckOnStartup"))
-    QTimer::singleShot(0, m_settings, SLOT(updatesCheck()));
+  if (d->pref->getBool("Updates/Enable") && d->pref->getBool("Updates/CheckOnStartup"))
+    QTimer::singleShot(0, d->pref, SLOT(updatesCheck()));
 
   if (Settings::isNewYear())
     setWindowIcon(QIcon(":/images/logo-ny.png"));
@@ -146,13 +558,19 @@ SChatWindow::SChatWindow(QWidget *parent)
   #endif
 
   #ifdef SCHAT_BENCHMARK
-  if (m_settings->getBool("BenchmarkEnable") && !m_settings->getList("BenchmarkList").isEmpty()) {
+  if (d->pref->getBool("BenchmarkEnable") && !d->pref->getList("BenchmarkList").isEmpty()) {
     QTimer *benchTimer = new QTimer(this);
-    benchTimer->setInterval(m_settings->getInt("BenchmarkInterval"));
+    benchTimer->setInterval(d->pref->getInt("BenchmarkInterval"));
     connect(benchTimer, SIGNAL(timeout()), SLOT(benchmark()));
-    QTimer::singleShot(m_settings->getInt("BenchmarkDelay"), benchTimer, SLOT(start()));
+    QTimer::singleShot(d->pref->getInt("BenchmarkDelay"), benchTimer, SLOT(start()));
   }
   #endif
+}
+
+
+SChatWindow::~SChatWindow()
+{
+  delete d;
 }
 
 
@@ -162,8 +580,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 void SChatWindow::closeEvent(QCloseEvent *event)
 {
   saveGeometry();
-  m_settings->write();
-  hideChat();
+  d->pref->write();
+  d->hideChat();
 
   QMainWindow::closeEvent(event);
 }
@@ -172,7 +590,7 @@ void SChatWindow::closeEvent(QCloseEvent *event)
 void SChatWindow::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_Escape)
-    hideChat();
+    d->hideChat();
   else
     QMainWindow::keyPressEvent(event);
 }
@@ -184,7 +602,7 @@ void SChatWindow::keyPressEvent(QKeyEvent *event)
 bool SChatWindow::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
-    stopNotice(m_tabs->currentIndex());
+    stopNotice(d->tabs->currentIndex());
 
   return QMainWindow::event(event);
 }
@@ -200,7 +618,7 @@ void SChatWindow::handleMessage(const QString &message)
     return;
   }
 
-  showChat();
+  d->showChat();
 }
 #endif
 
@@ -213,12 +631,12 @@ void SChatWindow::about()
   if (isHidden())
     show();
 
-  if (!m_about) {
-    m_about = new AboutDialog(this);
-    m_about->show();
+  if (!d->about) {
+    d->about = new AboutDialog(this);
+    d->about->show();
   }
 
-  m_about->activateWindow();
+  d->about->activateWindow();
 }
 
 
@@ -231,20 +649,20 @@ void SChatWindow::accessDenied(quint16 reason)
 
   switch (reason) {
     case ErrorNickAlreadyUse:
-      uniqueNick();
-      m_clientService->connectToHost();
+      d->uniqueNick();
+      d->clientService->connectToHost();
       break;
 
     case ErrorOldClientProtocol:
-      m_main->msg("<span class='oldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
+      d->main->msg("<span class='oldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
       break;
 
     case ErrorOldServerProtocol:
-      m_main->msg("<span class='oldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
+      d->main->msg("<span class='oldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
       break;
 
     case ErrorBadNickName:
-      m_main->msg("<span class='badNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(m_profile->nick())) + "</span>");
+      d->main->msg("<span class='badNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(d->profile->nick())) + "</span>");
       break;
 
     case ErrorUsersLimitExceeded:
@@ -254,7 +672,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      m_main->msg("<span class='accessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
+      d->main->msg("<span class='accessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
       break;
   }
 
@@ -264,67 +682,54 @@ void SChatWindow::accessDenied(quint16 reason)
 
 
 /*!
- * Слот вызывается кода \a m_clientService получает пакет с опкодом \a OpcodeAccessGranted,
+ * Слот вызывается кода \a d->clientService получает пакет с опкодом \a OpcodeAccessGranted,
  * что означает успешное подключение к серверу/сети.
  */
 void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
 {
   if (network.isEmpty()) {
     QString text = tr("Успешно подключены к серверу %1").arg(server);
-    m_main->msg("<span class='ready'>" + text + "</span>");
-    m_statusLabel->setText(text);
+    d->main->msg("<span class='ready'>" + text + "</span>");
+    d->statusLabel->setText(text);
     setWindowTitle(QApplication::applicationName());
   }
   else {
-    m_main->msg("<span class='ready'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
-    m_statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
+    d->main->msg("<span class='ready'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
+    d->statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
     setWindowTitle(QApplication::applicationName() + " - " + network);
   }
 
-  if (m_motdEnable && m_motd) {
-    m_motd = false;
-    m_clientService->sendMessage("", "/motd");
+  if (d->motdEnable && d->motd) {
+    d->motd = false;
+    d->clientService->sendMessage("", "/motd");
   }
 }
 
 
 void SChatWindow::addTab(const QString &nick)
 {
-  int index = tabIndex(nick);
+  int index = d->tabIndex(nick);
 
   if (index == -1) {
-    AbstractProfile profile(m_users->profile(nick));
+    AbstractProfile profile(d->users->profile(nick));
     Tab *tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
     tab->setChannel(nick);
-    index = m_tabs->addTab(tab, tab->icon(), nick);
-    m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
-    connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
-    connect(tab, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
+    index = d->tabs->addTab(tab, tab->icon(), nick);
+    d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
+    connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
+    connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   }
 
-  m_tabs->setCurrentIndex(index);
+  d->tabs->setCurrentIndex(index);
 }
 
 
 /*!
  * Завершение работы программы.
  */
-#ifndef SCHAT_NO_UPDATE
 void SChatWindow::closeChat(bool update)
-#else
-void SChatWindow::closeChat(bool)
-#endif
 {
-  m_clientService->quit();
-  saveGeometry();
-  m_settings->write();
-
-  #ifndef SCHAT_NO_UPDATE
-    if (update)
-      Settings::install();
-  #endif
-
-  qApp->quit();
+  d->closeChat(update);
 }
 
 
@@ -341,22 +746,22 @@ void SChatWindow::closeTab(int tab)
 {
   int index = tab;
   if (index == -1)
-    index = m_tabs->currentIndex();
+    index = d->tabs->currentIndex();
 
-  QWidget *widget = m_tabs->widget(index);
-  if (widget != m_main) {
-    m_tabs->removeTab(index);
+  QWidget *widget = d->tabs->widget(index);
+  if (widget != d->main) {
+    d->tabs->removeTab(index);
     QTimer::singleShot(0, widget, SLOT(deleteLater()));
   }
   else {
-    m_clientService->quit();
-    m_tabs->setCurrentIndex(index);
+    d->clientService->quit();
+    d->tabs->setCurrentIndex(index);
   }
 }
 
 
 /** [private slots]
- * Слот вызывается когда m_clientService пытается подключится к серверу.
+ * Слот вызывается когда d->clientService пытается подключится к серверу.
  * ПАРАМЕТРЫ:
  *   server  -> название сети если network = true, либо адрес сервера.
  *   network -> подключение к сети (true) либо к серверу (false).
@@ -364,19 +769,19 @@ void SChatWindow::closeTab(int tab)
 void SChatWindow::connecting(const QString &server, bool network)
 {
   if (network)
-    m_statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
+    d->statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
   else
-    m_statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
+    d->statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
 
-  m_main->displayChoiceServer(false);
+  d->main->displayChoiceServer(false);
 }
 
 
 void SChatWindow::copy()
 {
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+  AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->currentWidget());
   if (!tab->copy())
-    m_send->copy();
+    d->send->copy();
 }
 
 
@@ -398,22 +803,19 @@ void SChatWindow::daemonUi()
  */
 void SChatWindow::fatal()
 {
-  m_main->displayChoiceServer(true);
+  d->main->displayChoiceServer(true);
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::MiddleClick:
       if (isHidden())
-        showChat();
+        d->showChat();
       else
-        hideChat();
+        d->hideChat();
 
     default:
       break;
@@ -423,7 +825,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg("<span class='linkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  d->main->msg("<span class='linkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -435,45 +837,45 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
-  startNotice(m_tabs->indexOf(m_main), "Message");
+  d->startNotice(d->tabs->indexOf(d->main), "Message");
 
-  m_main->addMsg(sender, msg, m_profile->nick() == sender);
+  d->main->addMsg(sender, msg, d->profile->nick() == sender);
 }
 
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  m_main->msg("<span class='newLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  d->main->msg("<span class='newLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  if (m_users->isUser(nick)) {
-    m_users->rename(nick, newNick);
+  if (d->users->isUser(nick)) {
+    d->users->rename(nick, newNick);
 
-    int oldIndex = tabIndex(nick);
-    int newIndex = tabIndex(newNick);
+    int oldIndex = d->tabIndex(nick);
+    int newIndex = d->tabIndex(newNick);
 
     if (oldIndex != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(oldIndex));
+      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(oldIndex));
 
       if (newIndex == -1) {
-        m_tabs->setTabText(oldIndex, newNick);
+        d->tabs->setTabText(oldIndex, newNick);
         tab->setChannel(newNick);
       }
       else {
-        AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(newIndex));
+        AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(newIndex));
         tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
-        if (m_tabs->currentIndex() == oldIndex)
-          m_tabs->setCurrentIndex(newIndex);
+        if (d->tabs->currentIndex() == oldIndex)
+          d->tabs->setCurrentIndex(newIndex);
       }
 
       tab->msg(ChatView::statusChangedNick(gender, nick, newNick));
     }
 
     newProfile(gender, newNick, name);
-    m_main->msg(ChatView::statusChangedNick(gender, nick, newNick));
+    d->main->msg(ChatView::statusChangedNick(gender, nick, newNick));
   }
 }
 
@@ -490,21 +892,21 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
  */
 void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name)
 {
-  if (m_users->isUser(nick)) {
-    AbstractProfile profile(m_users->profile(nick));
+  if (d->users->isUser(nick)) {
+    AbstractProfile profile(d->users->profile(nick));
     profile.setGender(gender);
     profile.setNick(nick);
     profile.setFullName(name);
-    m_users->update(nick, profile);
+    d->users->update(nick, profile);
 
-    int index = tabIndex(nick);
+    int index = d->tabIndex(nick);
     if (index != -1) {
-      m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
-      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+      d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
+      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
       tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
 
       if (!tab->notice())
-        m_tabs->setTabIcon(index, tab->icon());
+        d->tabs->setTabIcon(index, tab->icon());
     }
   }
 }
@@ -513,12 +915,12 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
 /*!
  * Добавление нового пользователя.
  *
- * Если не удалось добавить пользователя в \a m_users, то выходим из функции.
+ * Если не удалось добавить пользователя в \a d->users, то выходим из функции.
  * Если ник равен нашему собственному нику, то принудительно отключаем эхо.
  * Если включено эхо, добавляем в основной канал и приваты, сообщение о новом участнике
  * и если есть открытый приват вкладка также обновляется.
  *
- * Слот вызывается по событию в \a m_clientService.
+ * Слот вызывается по событию в \a d->clientService.
  *
  * \param list    Стандартный список, содержащий в себе полные данные пользователя.
  * \param echo    Необходимость добавить в канал уведомление о новом пользователе при echo == 1.
@@ -529,25 +931,25 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   AbstractProfile profile(list);
   QString nick = profile.nick();
 
-  if (!m_users->add(profile))
+  if (!d->users->add(profile))
     return;
 
-  if (m_profile->nick() == nick)
+  if (d->profile->nick() == nick)
     echo = 0;
 
   if (echo == 1) {
     QString msg = ChatView::statusNewUser(profile.genderNum(), nick);
-    m_main->msg(msg);
+    d->main->msg(msg);
 
-    int index = tabIndex(nick);
+    int index = d->tabIndex(nick);
     if (index != -1) {
-      AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+      AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
       if (tab->type() == AbstractTab::Private) {
-        m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
+        d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
         tab->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
 
         if (!tab->notice())
-          m_tabs->setTabIcon(index, tab->icon());
+          d->tabs->setTabIcon(index, tab->icon());
 
         tab->msg(msg);
       }
@@ -565,32 +967,38 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &msg)
 {
-  if (!m_users->isUser(nick))
+  if (!d->users->isUser(nick))
     return;
 
   Tab *tab = 0;
-  int index = tabIndex(nick);
+  int index = d->tabIndex(nick);
 
   if (index == -1) {
-    AbstractProfile profile(m_users->profile(nick));
+    AbstractProfile profile(d->users->profile(nick));
     tab = new Tab(QIcon(":/images/" + profile.gender() + ".png"), this);
     tab->setChannel(nick);
-    index = m_tabs->addTab(tab, tab->icon(), nick);
-    m_tabs->setTabToolTip(index, UserView::userToolTip(profile));
-    m_tabs->setCurrentIndex(index);
-    connect(tab, SIGNAL(nickClicked(const QString &)), m_users, SLOT(nickClicked(const QString &)));
-    connect(tab, SIGNAL(emoticonsClicked(const QString &)), m_send, SLOT(insertHtml(const QString &)));
+    index = d->tabs->addTab(tab, tab->icon(), nick);
+    d->tabs->setTabToolTip(index, UserView::userToolTip(profile));
+    d->tabs->setCurrentIndex(index);
+    connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
+    connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   }
   else
-    tab = qobject_cast<Tab *>(m_tabs->widget(index));
+    tab = qobject_cast<Tab *>(d->tabs->widget(index)); /// \todo ШИТО?
 
   if (tab)
     if (flag == 1)
-      tab->addMsg(m_profile->nick(), msg);
+      tab->addMsg(d->profile->nick(), msg);
     else
       tab->addMsg(nick, msg, false);
 
-  startNotice(index, "PrivateMessage");
+  d->startNotice(index, "PrivateMessage");
+}
+
+
+void SChatWindow::sendMsg(const QString &msg)
+{
+  d->sendMsg(msg, true);
 }
 
 
@@ -601,7 +1009,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
+  AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->currentWidget());
   tab->addFilteredMsg(msg);
 }
 
@@ -611,33 +1019,33 @@ void SChatWindow::showSettings()
   if (isHidden())
     show();
 
-  if (!m_settingsDialog) {
-    m_settingsDialog = new SettingsDialog(m_profile, this);
-    m_settingsDialog->show();
+  if (!d->settingsDialog) {
+    d->settingsDialog = new SettingsDialog(d->profile, this);
+    d->settingsDialog->show();
   }
 
   QAction *action = qobject_cast<QAction *>(sender());
   if (action)
-    m_settingsDialog->setPage(action->data().toInt());
+    d->settingsDialog->setPage(action->data().toInt());
 
-  m_settingsDialog->activateWindow();
+  d->settingsDialog->activateWindow();
 }
 
 
 void SChatWindow::sound(bool toggle)
 {
   if (toggle)
-    m_settings->setBool("Sound", !m_settings->getBool("Sound"));
+    d->pref->setBool("Sound", !d->pref->getBool("Sound"));
 
-  m_sound = m_settings->getBool("Sound");
+  d->sound = d->pref->getBool("Sound");
 
-  if (m_sound) {
-    m_soundAction->setIcon(QIcon(":/images/sound.png"));
-    m_soundAction->setText(tr("Отключить звуки"));
+  if (d->sound) {
+    d->soundAction->setIcon(QIcon(":/images/sound.png"));
+    d->soundAction->setText(tr("Отключить звуки"));
   }
   else {
-    m_soundAction->setIcon(QIcon(":/images/sound_mute.png"));
-    m_soundAction->setText(tr("Включить звуки"));
+    d->soundAction->setIcon(QIcon(":/images/sound_mute.png"));
+    d->soundAction->setText(tr("Включить звуки"));
   }
 }
 
@@ -650,16 +1058,16 @@ void SChatWindow::settingsChanged(int notify)
   switch (notify) {
     case Settings::NetworkSettingsChanged:
     case Settings::ServerChanged:
-      m_motd = true;
-      m_clientService->connectToHost();
+      d->motd = true;
+      d->clientService->connectToHost();
       break;
 
     case Settings::ProfileSettingsChanged:
-      m_clientService->sendNewProfile();
+      d->clientService->sendNewProfile();
       break;
 
     case Settings::ByeMsgChanged:
-      m_clientService->sendByeMsg();
+      d->clientService->sendByeMsg();
       break;
 
     case Settings::SoundChanged:
@@ -685,33 +1093,33 @@ void SChatWindow::stopNotice(int index)
   if (index == -1)
     return;
 
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+  AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
   if (tab->notice()) {
-    m_tabs->setTabIcon(index, tab->icon());
+    d->tabs->setTabIcon(index, tab->icon());
     tab->notice(false);
   }
 
-  int count = m_tabs->count();
+  int count = d->tabs->count();
   for (int i = 0; i < count; ++i) {
-    AbstractTab *t = static_cast<AbstractTab *>(m_tabs->widget(i));
+    AbstractTab *t = static_cast<AbstractTab *>(d->tabs->widget(i));
     if (t->notice())
       return;
   }
 
-  m_tray->notice(false);
+  d->tray->notice(false);
 }
 
 
 /*!
- * Слот вызывается когда в `m_clientService` нет активного подключения.
+ * Слот вызывается когда в `d->clientService` нет активного подключения.
  */
 void SChatWindow::unconnected(bool echo)
 {
-  m_statusLabel->setText(tr("Не подключено"));
-  m_users->clear();
+  d->statusLabel->setText(tr("Не подключено"));
+  d->users->clear();
 
   if (echo)
-    m_main->msg("<span class='disconnect'>" + tr("Соединение разорвано") + "</span>");
+    d->main->msg("<span class='disconnect'>" + tr("Соединение разорвано") + "</span>");
 }
 
 
@@ -721,12 +1129,12 @@ void SChatWindow::unconnected(bool echo)
 void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
   if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty()) {
-    m_profile->setStatus(data1.at(0));
-    m_users->setStatus(data1.at(0), data2);
+    d->profile->setStatus(data1.at(0));
+    d->users->setStatus(data1.at(0), data2);
     if (data1.size() > 1)
       if (data1.at(1))
-        if (m_users->isUser(data2.at(0)))
-          displayAway(data1.at(0), data2.at(0));
+        if (d->users->isUser(data2.at(0)))
+          d->displayAway(data1.at(0), data2.at(0));
   }
 
 }
@@ -737,20 +1145,20 @@ void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStr
  */
 void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
 {
-  if (m_users->isUser(nick)) {
-    QStringList list = m_users->profile(nick);
-    m_users->remove(nick);
+  if (d->users->isUser(nick)) {
+    QStringList list = d->users->profile(nick);
+    d->users->remove(nick);
 
     if (flag == 1) {
       AbstractProfile profile(list);
-      int index = tabIndex(nick);
+      int index = d->tabIndex(nick);
       if (index != -1) {
-        AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
+        AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(index));
         if (tab->type() == AbstractTab::Private)
           tab->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
       }
 
-      m_main->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
+      d->main->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
     }
   }
 }
@@ -761,9 +1169,9 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
  */
 void SChatWindow::welcomeOk()
 {
-  m_welcome->deleteLater();
+  d->welcome->deleteLater();
 
-  m_clientService->connectToHost();
+  d->clientService->connectToHost();
 }
 
 
@@ -773,21 +1181,24 @@ void SChatWindow::welcomeOk()
 #ifndef SCHAT_NO_UPDATE
 void SChatWindow::messageClicked()
 {
-  if (m_tray->message() == TrayIcon::UpdateReady)
+  if (d->tray->message() == TrayIcon::UpdateReady)
     closeChat(true);
 }
 #endif
 
 
+/*!
+ * Фильтр событий.
+ */
 bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 {
-  if (m_tabs == object) {
+  if (d->tabs == object) {
     bool mousRel  = event->type() == QEvent::MouseButtonRelease;
 
     if (mousRel) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
       int index = -1;
-      QTabBar *tabBar = qFindChild<QTabBar*>(m_tabs);
+      QTabBar *tabBar = qFindChild<QTabBar*>(d->tabs);
       for (int i = 0; i < tabBar->count(); ++i) {
         if (tabBar->tabRect(i).contains(mouseEvent->pos())) {
           index = i;
@@ -810,7 +1221,7 @@ void SChatWindow::benchmark()
 {
   static QStringList list;
   if (list.isEmpty())
-    list = m_settings->getList("BenchmarkList");
+    list = d->pref->getList("BenchmarkList");
 
   sendMsg(list.at(qrand() % list.size()));
 }
@@ -820,201 +1231,71 @@ void SChatWindow::benchmark()
 /** [private]
  *
  */
-bool SChatWindow::parseCmd(AbstractTab *tab, const QString &message)
-{
-  QString text     = ChannelLog::toPlainText(message).trimmed();
-  QString textFull = text;
-  text = text.toLower();
-
-  if (text == "/away") {
-    if (m_profile->status() == schat::StatusAway)
-      m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusNormal, QStringList());
-    else
-      m_clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
-  }
-  /// /bye
-  else if (text == "/bye") {
-    m_clientService->quit();
-  }
-  else if (text.startsWith("/bye ")) {
-    m_clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
-    m_clientService->quit();
-  }
-  /// /clear
-  else if (text == "/clear") {
-    tab->clear();
-  }
-  /// /exit
-  else if (text == "/exit" || text == "/quit") {
-    closeChat();
-  }
-  else if (text.startsWith("/google ")) {
-    QString q = textFull.mid(textFull.indexOf(QChar(' '))).simplified().left(1000);
-    sendMsg(QString("<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b>"
-                    "<b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b>"
-                    "<b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: "
-                    "<b><a href='http://www.google.com/search?q=%1'>%1</a></b>").arg(q), false);
-  }
-  /// /help
-  else if (text == "/help") {
-    cmdHelp(tab, "");
-  }
-  else if (text.startsWith("/help ")) {
-    cmdHelp(tab, textFull.mid(textFull.indexOf(QChar(' '))).trimmed());
-  }
-  /// /log
-  else if (text == "/log") {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
-  }
-  /// /nick
-  else if (text.startsWith("/nick ")) {
-    QString newNick = textFull.mid(textFull.indexOf(QChar(' ')));
-    if (AbstractProfile::isValidNick(newNick) && m_profile->nick() != newNick) {
-      m_profile->setNick(newNick);
-      m_clientService->sendNewProfile();
-    }
-  }
-  else
-    return false;
-
-  m_send->clear();
-  return true;
-}
-
-
-/*!
- * Возвращает индекс вкладки с приватом по тексту.
- *
- * \param text Текст поиска.
- * \return Индекс найденной вкладки или -1.
- */
-int SChatWindow::tabIndex(const QString &text) const
-{
-  int count = m_tabs->count();
-
-  if (count == 1 && m_tabs->widget(0) == m_main)
-    return -1;
-  else
-    for (int i = 0; i <= count; ++i)
-      if (m_tabs->tabText(i) == text && m_tabs->widget(i) != m_main)
-        return i;
-
-  return -1;
-}
-
-
-void SChatWindow::cmdHelp(AbstractTab *tab, const QString &cmd)
-{
-  if (m_cmds.isEmpty()) {
-    m_cmds.insert("bye",    tr("<b>/bye [текст сообщения]</b><span class='info'> — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
-    m_cmds.insert("clear",  tr("<b>/clear</b><span class='info'> — очистка окна чата.</span>"));
-    m_cmds.insert("exit",   tr("<b>/exit</b><span class='info'> — выход из чата.</span>"));
-    m_cmds.insert("google", tr("<b>/google &lt;строка поиска&gt;</b><span class='info'> — формирует ссылку с заданной строкой для поиска в Google.</span>"));
-    m_cmds.insert("help",   tr("<b>/help</b><span class='info'> — отображает подсказу о командах.</span>"));
-    m_cmds.insert("log",    tr("<b>/log</b><span class='info'> — открывает папку с файлами журнала чата.</span>"));
-    m_cmds.insert("me",     tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
-    m_cmds.insert("motd",   tr("<b>/motd</b><span class='info'> — показ <i>Message Of The Day</i> сообщения сервера.</span>"));
-    m_cmds.insert("nick",   tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
-    m_cmds.insert("server", tr("<b>/server</b><span class='info'> — просмотр информации о сервере.</span>"));
-  }
-
-  if (cmd.isEmpty()) {
-    QString out = tr("<b class='info'>Доступные команды:</b><br />");
-    out += "<b>";
-
-    QMapIterator<QString, QString> i(m_cmds);
-    while (i.hasNext()) {
-      i.next();
-      out += ('/' + i.key() + "<br />");
-    }
-
-    out += "</b>";
-    out += tr("<span class='info'>Используйте <b>/help команда</b>, для просмотра подробной информации о команде.</span>");
-    tab->msg(out);
-    return;
-  }
-
-  QString command = cmd.toLower();
-  if (command.startsWith(QChar('/'))) {
-    command = command.mid(1);
-  }
-
-  if (m_cmds.contains(command)) {
-    tab->msg(m_cmds.value(command));
-  }
-  else
-    tab->msg("<span class='statusUnknownCmd'>" + tr("Неизвестная команда: <b>%1</b>").arg(command) + "</span>");
-}
-
-
-/** [private]
- *
- */
 void SChatWindow::createActions()
 {
   // О Программе...
-  m_aboutAction = new QAction(tr("О Программе..."), this);
+  d->aboutAction = new QAction(tr("О Программе..."), this);
   if (Settings::isNewYear())
-    m_aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
+    d->aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
   else
-    m_aboutAction->setIcon(QIcon(":/images/logo16.png"));
-  connect(m_aboutAction, SIGNAL(triggered()), SLOT(about()));
+    d->aboutAction->setIcon(QIcon(":/images/logo16.png"));
+  connect(d->aboutAction, SIGNAL(triggered()), SLOT(about()));
 
   // Закрыть вкладку
   #if QT_VERSION < 0x040500
-    m_closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
-    m_closeTabAction->setStatusTip(tr("Закрыть вкладку"));
-    connect(m_closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
+    d->closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
+    d->closeTabAction->setStatusTip(tr("Закрыть вкладку"));
+    connect(d->closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
   #endif
 
   // Смайлики...
-  m_emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
-  m_emoticonsSetAction->setData(SettingsDialog::EmoticonsPage);
-  connect(m_emoticonsSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
+  d->emoticonsSetAction->setData(SettingsDialog::EmoticonsPage);
+  connect(d->emoticonsSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Интерфейс...
-  m_interfaceSetAction = new QAction(QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), this);
-  m_interfaceSetAction->setData(SettingsDialog::InterfacePage);
-  connect(m_interfaceSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->interfaceSetAction = new QAction(QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), this);
+  d->interfaceSetAction->setData(SettingsDialog::InterfacePage);
+  connect(d->interfaceSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Сеть...
-  m_networkSetAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Сеть..."), this);
-  m_networkSetAction->setData(SettingsDialog::NetworkPage);
-  connect(m_networkSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->networkSetAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Сеть..."), this);
+  d->networkSetAction->setData(SettingsDialog::NetworkPage);
+  connect(d->networkSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Личные данные...
-  m_profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
-  m_profileSetAction->setShortcut(tr("Ctrl+F12"));
-  m_profileSetAction->setData(SettingsDialog::ProfilePage);
-  connect(m_profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
+  d->profileSetAction->setShortcut(tr("Ctrl+F12"));
+  d->profileSetAction->setData(SettingsDialog::ProfilePage);
+  connect(d->profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновление...
-  m_updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
-  m_updateSetAction->setData(SettingsDialog::UpdatePage);
-  connect(m_updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
+  d->updateSetAction->setData(SettingsDialog::UpdatePage);
+  connect(d->updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Разное...
-  m_miscSetAction = new QAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), this);
-  m_miscSetAction->setData(SettingsDialog::MiscPage);
-  connect(m_miscSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->miscSetAction = new QAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), this);
+  d->miscSetAction->setData(SettingsDialog::MiscPage);
+  connect(d->miscSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Выход из программы
-  m_quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
-  connect(m_quitAction, SIGNAL(triggered()), SLOT(closeChat()));
+  d->quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
+  connect(d->quitAction, SIGNAL(triggered()), SLOT(closeChat()));
 
   // Включить/выключить звук
-  m_soundAction = new QAction(this);
+  d->soundAction = new QAction(this);
   sound(false);
-  connect(m_soundAction, SIGNAL(triggered()), SLOT(sound()));
+  connect(d->soundAction, SIGNAL(triggered()), SLOT(sound()));
 
   // Звуки...
-  m_soundSetAction = new QAction(QIcon(":/images/sound.png"), tr("Звуки..."), this);
-  m_soundSetAction->setData(SettingsDialog::SoundPage);
-  connect(m_soundSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+  d->soundSetAction = new QAction(QIcon(":/images/sound.png"), tr("Звуки..."), this);
+  d->soundSetAction->setData(SettingsDialog::SoundPage);
+  connect(d->soundSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Управление сервером...
-  m_daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
-  connect(m_daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
+  d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
+  connect(d->daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
 }
 
 
@@ -1023,251 +1304,20 @@ void SChatWindow::createActions()
  */
 void SChatWindow::createService()
 {
-  m_clientService = new ClientService(m_profile, &m_settings->network, this);
-  connect(m_clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
-  connect(m_clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
-  connect(m_clientService, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(newUser(const QStringList &, quint8, quint8)));
-  connect(m_clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
-  connect(m_clientService, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(userLeave(const QString &, const QString &, quint8)));
-  connect(m_clientService, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
-  connect(m_clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(fatal()), SLOT(fatal()));
-  connect(m_clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
-  connect(m_clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
-  connect(m_clientService, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
-
+  d->clientService = new ClientService(d->profile, &d->pref->network, this);
+  connect(d->clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
+  connect(d->clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));
+  connect(d->clientService, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(newUser(const QStringList &, quint8, quint8)));
+  connect(d->clientService, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
+  connect(d->clientService, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(userLeave(const QString &, const QString &, quint8)));
+  connect(d->clientService, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
+  connect(d->clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(fatal()), SLOT(fatal()));
+  connect(d->clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
+  connect(d->clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
+  connect(d->clientService, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
 }
-
-
-/** [private]
- *
- */
-void SChatWindow::createToolButtons()
-{
-  QMenu *iconMenu = new QMenu(this);
-  iconMenu->addAction(m_profileSetAction);
-  iconMenu->addAction(m_networkSetAction);
-  iconMenu->addAction(m_interfaceSetAction);
-  iconMenu->addAction(m_emoticonsSetAction);
-  iconMenu->addAction(m_soundSetAction);
-  iconMenu->addAction(m_updateSetAction);
-  iconMenu->addAction(m_miscSetAction);
-
-  // Настройка
-  m_settingsButton = new QToolButton(this);
-  m_settingsButton->setIcon(QIcon(":/images/configure.png"));
-  m_settingsButton->setToolTip(tr("Настройка..."));
-  m_settingsButton->setAutoRaise(true);
-  m_settingsButton->setMenu(iconMenu);
-  m_settingsButton->setPopupMode(QToolButton::InstantPopup);
-
-  m_soundButton = new QToolButton(this);
-  m_soundButton->setAutoRaise(true);
-  m_soundButton->setDefaultAction(m_soundAction);
-
-  QToolButton *aboutButton = new QToolButton(this);
-  aboutButton->setDefaultAction(m_aboutAction);
-  aboutButton->setAutoRaise(true);
-
-  QFrame *line = new QFrame(this);
-  line->setFrameShape(QFrame::VLine);
-  line->setFrameShadow(QFrame::Sunken);
-
-  m_toolsLay->addWidget(line);
-  m_toolsLay->addWidget(m_settingsButton);
-  m_toolsLay->addWidget(m_soundButton);
-  m_toolsLay->addWidget(aboutButton);
-  m_toolsLay->addStretch();
-  m_toolsLay->setSpacing(0);
-}
-
-
-void SChatWindow::createTrayIcon()
-{
-  m_trayMenu = new QMenu(this);
-  m_trayMenu->addAction(m_aboutAction);
-  m_trayMenu->addAction(m_profileSetAction);
-
-#ifdef Q_WS_WIN
-  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
-#else
-  if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui")) {
-#endif
-    m_trayMenu->addSeparator();
-    m_trayMenu->addAction(m_daemonAction);
-  }
-
-  m_trayMenu->addSeparator();
-  m_trayMenu->addAction(m_quitAction);
-
-  m_tray = new TrayIcon(this);
-  m_tray->setContextMenu(m_trayMenu);
-  m_tray->show();
-}
-
-
-/*!
- * Отображает в тексте приватов Away-статусы.
- *
- * \param status Статус.
- * \param nick   Ник пользователя.
- */
-void SChatWindow::displayAway(quint32 status, const QString &nick)
-{
-  if (!m_users->isUser(nick))
-    return;
-
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString html = "<span class='away'>";
-
-  if (status == schat::StatusAway || status == schat::StatusAutoAway) {
-    html += tr("<a href='nick:%1'>%2</a> отсутствует").arg(nickHex).arg(escaped);
-  }
-  else {
-    AbstractProfile profile(m_users->profile(nick));
-    if (profile.genderNum())
-      html += tr("<a href='nick:%1'>%2</a> вернулась").arg(nickHex).arg(escaped);
-    else
-      html += tr("<a href='nick:%1'>%2</a> вернулся").arg(nickHex).arg(escaped);
-  }
-
-  html += "</span>";
-
-  int index = tabIndex(nick);
-  if (index != -1) {
-    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-    if (tab->type() == AbstractTab::Private)
-      tab->msg(html);
-  }
-}
-
-
-void SChatWindow::hideChat()
-{
-  if (m_settingsDialog)
-    m_settingsDialog->hide();
-
-  if (m_about)
-    m_about->hide();
-
-  hide();
-}
-
-
-/*!
- * \brief Восстанавливает геометрию окна.
- */
-void SChatWindow::restoreGeometry()
-{
-  resize(m_settings->size());
-  QPoint pos = m_settings->pos();
-  if (pos.x() != -999 && pos.y() != -999)
-    move(pos);
-
-  m_splitter->restoreState(m_settings->splitter());
-}
-
-
-/*!
- * \brief Сохраняет еометрию окна.
- */
-void SChatWindow::saveGeometry()
-{
-  m_settings->setPos(pos());
-  m_settings->setSize(size());
-  m_settings->setSplitter(m_splitter->saveState());
-}
-
-
-/*!
- * Обработка отправки сообщения.
- * Получатель определяется в зависимости от типа вкладки.
- *
- * \param msg Сообщение.
- * \param cmd Включает обработку команд.
- */
-void SChatWindow::sendMsg(const QString &msg, bool cmd)
-{
-  AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->currentWidget());
-
-  if (cmd)
-    if (parseCmd(tab, msg))
-      return;
-
-  QString channel;
-  tab == m_main ? channel = "" : channel = m_tabs->tabText(m_tabs->currentIndex());
-  if (m_clientService->sendMessage(channel, msg))
-    m_send->clear();
-}
-
-
-/*!
- * Показ окна чата.
- */
-void SChatWindow::showChat()
-{
-  setWindowState(windowState() & ~Qt::WindowMinimized);
-  show();
-  activateWindow();
-
-  if (m_about)
-    m_about->show();
-
-  if (m_settingsDialog)
-    m_settingsDialog->show();
-}
-
-
-/*!
- * При необходимости вызывает уведомление о новом сообщении.
- * Механизм уведомления запускается, если номер текущей вкладки не равен номеру вкладки
- * с уведомлением или окно чата неактивно.
- *
- * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
- *
- * \param index Номер вкладки, в которой есть новое сообщение.
- * \param key   Ключ для звукового уведомления.
- */
-void SChatWindow::startNotice(int index, const QString &key)
-{
-  if (index == -1)
-    return;
-
-  if ((m_tabs->currentIndex() != index) || (!isActiveWindow())) {
-    AbstractTab *tab = static_cast<AbstractTab *>(m_tabs->widget(index));
-
-    if (m_sound)
-      m_tray->playSound(key);
-
-    if (!tab->notice()) {
-      tab->notice(true);
-      m_tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-      m_tray->notice(true);
-    }
-  }
-}
-
-
-/** [private]
- *
- */
-void SChatWindow::uniqueNick()
-{
-  m_profile->setNick(m_profile->nick() + QString().setNum(qrand() % 99));
-}
-
-
-#if QT_VERSION < 0x040500
-void SChatWindow::createCornerWidgets()
-{
-  QToolButton *closeTabButton = new QToolButton(this);
-  closeTabButton->setDefaultAction(m_closeTabAction);
-  closeTabButton->setAutoRaise(true);
-  m_tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
-}
-#endif

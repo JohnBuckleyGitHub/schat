@@ -20,40 +20,9 @@
 #define SCHATWINDOW_H_
 
 #include <QMainWindow>
-#include <QPointer>
-#include <QSplitter>
-#include <QStandardItemModel>
 #include <QSystemTrayIcon>
-#include <QTcpSocket>
-#include <QTime>
 
-#include "clientservice.h"
-#include "settingsdialog.h"
-
-class AboutDialog;
-class AbstractProfile;
-class AbstractTab;
-class MainChannel;
-class Profile;
-class QAction;
-class QHBoxLayout;
-class QHBoxLayout;
-class QLabel;
-class QLineEdit;
-class QListView;
-class QMenu;
-class QStandardItem;
-class QStatusBar;
-class QTabWidget;
-class QTimer;
-class QToolButton;
-class QVBoxLayout;
-class SendWidget;
-class Settings;
-class Tab;
-class TrayIcon;
-class UserView;
-class WelcomeDialog;
+class SChatWindowPrivate;
 
 /*!
  * \brief Главное окно чата.
@@ -64,6 +33,7 @@ class SChatWindow : public QMainWindow
 
 public:
   SChatWindow(QWidget *parent = 0);
+  ~SChatWindow();
 
 protected:
   bool event(QEvent *event);
@@ -76,7 +46,6 @@ public slots:
   #endif
 
 private slots:
-  inline void sendMsg(const QString &msg) { sendMsg(msg, true); }
   void about();
   void accessDenied(quint16 reason);
   void accessGranted(const QString &network, const QString &server, quint16 level);
@@ -95,6 +64,7 @@ private slots:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void privateMessage(quint8 flag, const QString &nick, const QString &msg);
+  void sendMsg(const QString &msg);
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
@@ -115,65 +85,10 @@ private slots:
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
-  bool parseCmd(AbstractTab *tab, const QString &message);
-  int tabIndex(const QString &text) const;
-  static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void createActions();
   void createService();
-  void createToolButtons();
-  void createTrayIcon();
-  void displayAway(quint32 status, const QString &nick);
-  void hideChat();
-  void restoreGeometry();
-  void saveGeometry();
-  void sendMsg(const QString &msg, bool cmd);
-  void showChat();
-  void startNotice(int index, const QString &key);
-  void uniqueNick();
-  #if QT_VERSION < 0x040500
-    void createCornerWidgets();
-  #endif
 
-  AbstractProfile *m_profile;
-  bool m_motd;
-  bool m_motdEnable;
-  bool m_sound;
-  ClientService *m_clientService;
-  MainChannel *m_main;
-  QAction *m_aboutAction;
-  QAction *m_daemonAction;
-  QAction *m_emoticonsSetAction;
-  QAction *m_interfaceSetAction;
-  QAction *m_miscSetAction;
-  QAction *m_networkSetAction;
-  QAction *m_profileSetAction;
-  QAction *m_quitAction;
-  QAction *m_soundAction;
-  QAction *m_soundSetAction;
-  QAction *m_updateSetAction;
-  QHBoxLayout *m_toolsLay;
-  QLabel *m_statusLabel;
-  QMenu *m_trayMenu;
-  QPointer<AboutDialog> m_about;
-  QPointer<SettingsDialog> m_settingsDialog;
-  QSplitter *m_splitter;
-  QStatusBar *m_statusBar;
-  QTabWidget *m_tabs;
-  QToolButton *m_settingsButton;
-  QToolButton *m_soundButton;
-  QVBoxLayout *m_mainLay;
-  QVBoxLayout *m_rightLay;
-  QWidget *m_central;
-  QWidget *m_right;
-  SendWidget *m_send;
-  Settings *m_settings;
-  static QMap<QString, QString> m_cmds;
-  TrayIcon *m_tray;
-  UserView *m_users;
-  WelcomeDialog *m_welcome;
-  #if QT_VERSION < 0x040500
-    QAction *m_closeTabAction;
-  #endif
+  SChatWindowPrivate * const d;
 };
 
-#endif /*SCHATWINDOW_H_*/
+#endif /* SCHATWINDOW_H_ */

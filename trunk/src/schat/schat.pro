@@ -53,6 +53,7 @@ HEADERS += \
     profilewidget.h \
     protocol.h \
     schatwindow.h \
+    schatwindow_p.h \
     settings.h \
     settingsdialog.h \
     tab.h \
