@@ -44,12 +44,14 @@ public:
   QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
   QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
   QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
+  QString channel();
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void closeChat(bool update = false);
   void createToolButtons();
   void createTrayIcon();
   void displayAway(quint32 status, const QString &nick);
   void hideChat();
+  void msgToAllPrivateTabs(const QString &msg);
   void restoreGeometry();
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);

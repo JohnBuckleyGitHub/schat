@@ -193,6 +193,8 @@ void UserView::setStatus(quint32 status, const QStringList &users)
         item->setForeground(QBrush(QColor("#90a4b3")));
     }
   }
+
+  setCurrentIndex(QModelIndex());
 }
 
 

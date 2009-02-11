@@ -141,7 +141,7 @@ QPair<int, AbstractTab *> SChatWindowPrivate::tabFromName(const QString &text, A
   int count = tabs->count();
 
   if (count > 0)
-    for (int i = 0; i <= count; ++i)
+    for (int i = 0; i < count; ++i)
       if (tabs->tabText(i) == text) {
         AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
         if (tab->type() == type)
@@ -166,6 +166,19 @@ QPair<int, AbstractTab *> SChatWindowPrivate::updatePrivateTab(const AbstractPro
       tabs->setTabIcon(tab.first, tab.second->icon());
   }
   return tab;
+}
+
+
+/*!
+ * Определяет получателя сообщения.
+ */
+QString SChatWindowPrivate::channel()
+{
+  AbstractTab *tab = static_cast<AbstractTab *>(tabs->currentWidget());
+  if (tab->type() == AbstractTab::Private)
+    return tabs->tabText(tabs->currentIndex());
+  else
+    return "";
 }
 
 
@@ -336,10 +349,14 @@ void SChatWindowPrivate::displayAway(quint32 status, const QString &nick)
 
   html += "</span>";
 
-  /// \todo Добавить отображения собственного статуса во все открытые приваты.
-  QPair<int, AbstractTab *> tab = tabFromName(nick);
-  if (tab.first != -1)
-    tab.second->msg(html);
+  if (nick == profile->nick()) {
+    msgToAllPrivateTabs(html);
+  }
+  else {
+    QPair<int, AbstractTab *> tab = tabFromName(nick);
+    if (tab.first != -1)
+      tab.second->msg(html);
+  }
 }
 
 
@@ -355,6 +372,22 @@ void SChatWindowPrivate::hideChat()
     about->hide();
 
   q->hide();
+}
+
+
+/*!
+ * Добавляет сообщение во все открытие приваты.
+ */
+void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
+{
+  int count = tabs->count();
+
+  if (count > 0)
+    for (int i = 0; i < count; ++i) {
+      AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
+      if (tab->type() == AbstractTab::Private)
+        tab->msg(msg);
+    }
 }
 
 
@@ -398,9 +431,7 @@ void SChatWindowPrivate::sendMsg(const QString &msg, bool cmd)
     if (parseCmd(tab, msg))
       return;
 
-  QString channel; /// \todo Реализовать более коректное определение канала с учётом типа вкладки.
-  tab == main ? channel = "" : channel = tabs->tabText(tabs->currentIndex());
-  if (clientService->sendMessage(channel, msg))
+  if (clientService->sendMessage(channel(), msg))
     send->clear();
 }
 
