@@ -210,11 +210,12 @@ void Daemon::clientSyncUsersEnd()
 
 
 /*!
- * \brief Синхронизация события отключения пользователя от удалённого сервера.
+ * Синхронизация события отключения пользователя от удалённого сервера.
+ * Событие игнорируется если пользователь является локальным.
  *
  * Функция устанавливает в профиле пользователя новое сообщение о выходе и вызывает функцию userLeave(const QString &nick).
  * \param nick Ник пользователя.
- * \param bye Сообщение о выходе.
+ * \param bye  Сообщение о выходе.
  * \param flag Параметр игнорируется и не используется.
  * \sa userLeave(const QString &nick, const QString &err)
  */
@@ -222,8 +223,13 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
 {
   QString lowerNick = nick.toLower();
 
-  if (m_users.contains(lowerNick))
-    m_users.value(lowerNick)->profile()->setByeMsg(bye);
+  if (m_users.contains(lowerNick)) {
+    UserUnit *unit = m_users.value(lowerNick);
+    if (unit->numeric() == m_numeric)
+      return;
+
+    unit->profile()->setByeMsg(bye);
+  }
 
   userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
 }
