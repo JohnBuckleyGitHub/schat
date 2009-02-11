@@ -531,12 +531,6 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 
 void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2)
 {
-//  qDebug() << "Daemon::universal()";
-//  qDebug() << "  sub   =" << sub;
-//  qDebug() << "  nick  =" << nick;
-//  qDebug() << "  data1 =" << data1;
-//  qDebug() << "  data2 =" << data2;
-
   QString lowerNick = nick.toLower();
 
   if (m_users.contains(lowerNick)) {
@@ -547,7 +541,6 @@ void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &d
       emit sendUniversal(schat::UniStatusList, out1, QStringList(nick));
     }
   }
-
 }
 
 
@@ -983,11 +976,30 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
 void Daemon::sendAllUsers(DaemonService *service)
 {
   if (service) {
+    QMultiHash<quint32, QString> status;
+
     QHashIterator<QString, UserUnit *> i(m_users);
     while (i.hasNext()) {
       i.next();
-      service->sendNewUser(i.value()->profile()->pack(), 0, i.value()->numeric());
+      AbstractProfile *profile = i.value()->profile();
+      if (profile->status())
+        status.insert(profile->status(), profile->nick());
+      service->sendNewUser(profile->pack(), 0, i.value()->numeric());
     }
+
+    if (!status.isEmpty()) {
+      QList<quint32> statusCodes;
+      QHashIterator<quint32, QString> i(status);
+      while (i.hasNext()) {
+        i.next();
+        if (!statusCodes.contains(i.key()))
+          statusCodes << i.key();
+      }
+      foreach (quint32 code, statusCodes) {
+        service->sendUniversal(schat::UniStatusList, QList<quint32>() << code, status.values(code));
+      }
+    }
+
     service->sendSyncUsersEnd();
   }
 }
