@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -210,11 +210,12 @@ void Daemon::clientSyncUsersEnd()
 
 
 /*!
- * \brief Синхронизация события отключения пользователя от удалённого сервера.
+ * Синхронизация события отключения пользователя от удалённого сервера.
+ * Событие игнорируется если пользователь является локальным.
  *
  * Функция устанавливает в профиле пользователя новое сообщение о выходе и вызывает функцию userLeave(const QString &nick).
  * \param nick Ник пользователя.
- * \param bye Сообщение о выходе.
+ * \param bye  Сообщение о выходе.
  * \param flag Параметр игнорируется и не используется.
  * \sa userLeave(const QString &nick, const QString &err)
  */
@@ -222,8 +223,13 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
 {
   QString lowerNick = nick.toLower();
 
-  if (m_users.contains(lowerNick))
-    m_users.value(lowerNick)->profile()->setByeMsg(bye);
+  if (m_users.contains(lowerNick)) {
+    UserUnit *unit = m_users.value(lowerNick);
+    if (unit->numeric() == m_numeric)
+      return;
+
+    unit->profile()->setByeMsg(bye);
+  }
 
   userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
 }
