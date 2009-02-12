@@ -77,6 +77,8 @@ public:
   static bool isValidUserAgent(const QString &a);
   void unpack(const QStringList &list);
 
+  Q_DISABLE_COPY(AbstractProfile)
+
 private:
   bool m_male;
   QString m_byeMsg;

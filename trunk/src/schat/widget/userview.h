@@ -44,7 +44,7 @@ public:
   bool add(const AbstractProfile &profile);
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
-  QStringList profile(const QString &nick) const;
+  AbstractProfile profile(const QString &nick) const;
   static QString userToolTip(const AbstractProfile &profile);
   void clear();
   void remove(const QString &nick);

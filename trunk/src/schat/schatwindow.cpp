@@ -64,9 +64,9 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
   /// /away
   if (text == "/away") {
     if (profile->status() == schat::StatusAway)
-      clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusNormal, QStringList());
+      sendStatus(schat::StatusNormal);
     else
-      clientService->sendUniversal(schat::UniStatus, QList<quint32>() << schat::StatusAway, QStringList());
+      sendStatus(schat::StatusAway);
   }
   /// /bye
   else if (text == "/bye") {
@@ -115,6 +115,15 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
 
   send->clear();
   return true;
+}
+
+
+/*!
+ * Формирует универсальный пакет для отправки статуса.
+ */
+bool SChatWindowPrivate::sendStatus(quint32 status)
+{
+  return clientService->sendUniversal(schat::UniStatus, QList<quint32>() << status, QStringList());
 }
 
 
@@ -323,6 +332,11 @@ void SChatWindowPrivate::createTrayIcon()
 
 /*!
  * Отображает в тексте приватов Away-статусы.
+ * Формирует HTML строку в зависимости от статуса и пола для отображения в тексте.
+ * Если происходит изменение собственного статуса, то сообщение добавляется
+ * во все открытые приваты, иначе происходит поиск вкладки с приватом и в
+ * случае успеха сообщение добавляется туда и происходит обновление
+ * всплывающей подсказки.
  *
  * \param status Статус.
  * \param nick   Ник пользователя.
@@ -354,8 +368,10 @@ void SChatWindowPrivate::displayAway(quint32 status, const QString &nick)
   }
   else {
     QPair<int, AbstractTab *> tab = tabFromName(nick);
-    if (tab.first != -1)
+    if (tab.first != -1) {
       tab.second->msg(html);
+      tabs->setTabToolTip(tab.first, UserView::userToolTip(users->profile(nick)));
+    }
   }
 }
 
@@ -490,6 +506,49 @@ void SChatWindowPrivate::startNotice(int index, const QString &key)
 void SChatWindowPrivate::uniqueNick()
 {
   profile->setNick(profile->nick() + QString().setNum(qrand() % 99));
+}
+
+
+/*!
+ * Обработка изменения статуса пользователей.
+ *
+ * - Если собственный ник, содержится в \p data2, то устанавливаем в профиле статус.
+ * - Обновляем список пользователей.
+ * - Если включено эхо, то выполняем функцию displayAway(quint32 status, const QString &nick)
+ * для первого ника.
+ * - Иначе происходит обновление всплывающих подсказок приватов.
+ */
+void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStringList &data2)
+{
+  if (data2.contains(profile->nick()))
+    profile->setStatus(data1.at(0));
+
+  users->setStatus(data1.at(0), data2);
+  if (data1.size() > 1)
+    if (data1.at(1))
+      if (users->isUser(data2.at(0))) {
+        displayAway(data1.at(0), data2.at(0));
+        return;
+      }
+
+  int count = tabs->count();
+  if (count > 0) {
+    QHash<QString, int> privateTabs;
+
+    for (int i = 0; i < count; ++i) {
+      AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
+      if (tab->type() == AbstractTab::Private)
+        privateTabs.insert(tabs->tabText(i), i);
+    }
+
+    if (!privateTabs.isEmpty()) {
+      foreach (QString user, data2) {
+        if (users->isUser(user))
+          if (privateTabs.contains(user))
+            tabs->setTabToolTip(privateTabs.value(user), UserView::userToolTip(users->profile(user)));
+      }
+    }
+  }
 }
 
 
@@ -1152,6 +1211,19 @@ void SChatWindow::stopNotice(int index)
 
 
 /*!
+ * Обработка завершения синхронизации списка пользователей.
+ * При необходимости высылается статус.
+ */
+void SChatWindow::syncUsersEnd()
+{
+  if (d->profile->status()) {
+    d->sendStatus(d->profile->status());
+    d->profile->setStatus(schat::StatusNormal);
+  }
+}
+
+
+/*!
  * Слот вызывается когда в `d->clientService` нет активного подключения.
  */
 void SChatWindow::unconnected(bool echo)
@@ -1169,15 +1241,8 @@ void SChatWindow::unconnected(bool echo)
  */
 void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
-  if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty()) {
-    d->profile->setStatus(data1.at(0));
-    d->users->setStatus(data1.at(0), data2);
-    if (data1.size() > 1)
-      if (data1.at(1))
-        if (d->users->isUser(data2.at(0)))
-          d->displayAway(data1.at(0), data2.at(0));
-  }
-
+  if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty())
+    d->universalStatus(data1, data2);
 }
 
 
@@ -1344,8 +1409,8 @@ void SChatWindow::createActions()
 }
 
 
-/** [private]
- *
+/*!
+ * Создаёт клиентский сервис.
  */
 void SChatWindow::createService()
 {
@@ -1359,6 +1424,7 @@ void SChatWindow::createService()
   connect(d->clientService, SIGNAL(message(const QString &, const QString &)), SLOT(message(const QString &, const QString &)));
   connect(d->clientService, SIGNAL(privateMessage(quint8, const QString &, const QString &)), SLOT(privateMessage(quint8, const QString &, const QString &)));
   connect(d->clientService, SIGNAL(fatal()), SLOT(fatal()));
+  connect(d->clientService, SIGNAL(syncUsersEnd()), SLOT(syncUsersEnd()));
   connect(d->clientService, SIGNAL(serverMessage(const QString &)), SLOT(serverMessage(const QString &)));
   connect(d->clientService, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(d->clientService, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));

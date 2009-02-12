@@ -41,6 +41,7 @@ public:
   ~SChatWindowPrivate();
 
   bool parseCmd(AbstractTab *tab, const QString &message);
+  bool sendStatus(quint32 status);
   QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
   QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
   QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
@@ -58,6 +59,7 @@ public:
   void showChat();
   void startNotice(int index, const QString &key);
   void uniqueNick();
+  void universalStatus(const QList<quint32> &data1, const QStringList &data2);
   #if QT_VERSION < 0x040500
     void createCornerWidgets();
   #endif

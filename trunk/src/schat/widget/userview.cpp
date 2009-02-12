@@ -79,15 +79,19 @@ UserView::~UserView()
 }
 
 
+/*!
+ * Добавление пользователя в список.
+ */
 bool UserView::add(const AbstractProfile &profile)
 {
   QString nick = profile.nick();
 
-  if (d->item(nick))
+  if (isUser(nick))
     return false;
 
   QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
   item->setData(profile.pack(), ProfileData);
+  item->setData(profile.status(), StatusData);
   item->setToolTip(userToolTip(profile));
 
   if (nick == d->profile->nick()) {
@@ -110,6 +114,11 @@ bool UserView::add(const QStringList &list)
 }
 
 
+/*!
+ * Проверка на наличие пользователя в списке.
+ *
+ * \return \a true если пользователь найден.
+ */
 bool UserView::isUser(const QString &nick) const
 {
   return (bool) d->item(nick);
@@ -122,10 +131,16 @@ void UserView::clear()
 }
 
 
-QStringList UserView::profile(const QString &nick) const
+/*!
+ * Возвращает профиль пользователя.
+ * Перед вызовом функции необходимо убедится, что пользователь имеется в списке.
+ */
+AbstractProfile UserView::profile(const QString &nick) const
 {
   QStandardItem *item = d->item(nick);
-  return item->data(ProfileData).toStringList();
+  AbstractProfile profile(item->data(ProfileData).toStringList());
+  profile.setStatus(item->data(StatusData).toUInt());
+  return profile;
 }
 
 
@@ -136,23 +151,22 @@ QStringList UserView::profile(const QString &nick) const
  */
 QString UserView::userToolTip(const AbstractProfile &profile)
 {
-  QString p_agent = profile.userAgent();
-  p_agent.replace('/', ' ');
-  QString p_name;
-  profile.fullName().isEmpty() ? p_name = tr("<не указано>") : p_name = profile.fullName();
+  QString html = QString("<h3><img src='%1' align='left'> %2</h3><table>").arg(":/images/" + profile.gender() + ".png").arg(Qt::escape(profile.nick()));
+  if (!profile.fullName().isEmpty())
+    html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("ФИО:")).arg(Qt::escape(profile.fullName()));
+  html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
+  html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("Адрес:")).arg(Qt::escape(profile.host()));
 
-  return QString("<h3><img src='%1' align='left'> %2</h3>"
-                 "<table><tr><td>%3</td><td>%4</td></tr>"
-                 "<tr><td>%5</td><td>%6</td></tr>"
-                 "<tr><td>%7</td><td>%8</td></tr></table>")
-                 .arg(":/images/" + profile.gender() + ".png")
-                 .arg(Qt::escape(profile.nick()))
-                 .arg(tr("ФИО:"))
-                 .arg(Qt::escape(p_name))
-                 .arg(tr("Клиент:"))
-                 .arg(Qt::escape(p_agent))
-                 .arg(tr("Адрес:"))
-                 .arg(Qt::escape(profile.host()));
+  quint32 status = profile.status();
+  html += QString("<tr><td>%1</td>").arg(tr("Статус:"));
+  if (status == schat::StatusAway || status == schat::StatusAutoAway)
+    html += QString("<td>%1</td></tr>").arg(tr("Отсутствую"));
+  else
+    html += QString("<td>%1</td></tr>").arg(tr("В сети"));
+
+  html += "</table>";
+
+  return html;
 }
 
 
@@ -176,6 +190,9 @@ void UserView::rename(const QString &oldNick, const QString &newNick)
 }
 
 
+/*!
+ * Установка статуса пользователя.
+ */
 void UserView::setStatus(quint32 status, const QStringList &users)
 {
   if (users.isEmpty())
@@ -191,6 +208,9 @@ void UserView::setStatus(quint32 status, const QStringList &users)
         item->setForeground(QPalette().brush(QPalette::WindowText));
       else if (status == schat::StatusAway || status == schat::StatusAutoAway)
         item->setForeground(QBrush(QColor("#90a4b3")));
+
+      item->setData(status, StatusData);
+      item->setToolTip(userToolTip(profile(user)));
     }
   }
 
