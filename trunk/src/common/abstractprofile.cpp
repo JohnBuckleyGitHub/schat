@@ -22,7 +22,33 @@
 #include "version.h"
 
 /*!
- * \brief Конструктор класса AbstractProfile.
+ * Конструктор копирования.
+ */
+AbstractProfile::AbstractProfile(const AbstractProfile &other)
+  : m_male(other.m_male),
+  m_byeMsg(other.m_byeMsg),
+  m_fullName(other.m_fullName),
+  m_host(other.m_host),
+  m_nick(other.m_nick),
+  m_userAgent(other.m_userAgent),
+  m_status(other.m_status)
+{
+}
+
+
+/*!
+ * Конструктор класса AbstractProfile.
+ */
+AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
+  : QObject(parent)
+{
+  unpack(list);
+  m_status = 0;
+}
+
+
+/*!
+ * Конструктор класса AbstractProfile.
  */
 AbstractProfile::AbstractProfile(QObject *parent)
   : QObject(parent)
@@ -38,20 +64,6 @@ AbstractProfile::AbstractProfile(QObject *parent)
 }
 
 
-/** [public]
- *
- */
-AbstractProfile::AbstractProfile(const QStringList &list, QObject *parent)
-  : QObject(parent)
-{
-  unpack(list);
-  m_status = 0;
-}
-
-
-/** [public]
- *
- */
 AbstractProfile::~AbstractProfile()
 {
 #ifdef SCHAT_DEBUG
