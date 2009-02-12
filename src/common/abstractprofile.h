@@ -45,8 +45,9 @@ public:
     Gender
   };
 
-  AbstractProfile(QObject *parent = 0);
+  AbstractProfile(const AbstractProfile &other);
   AbstractProfile(const QStringList &list, QObject *parent = 0);
+  AbstractProfile(QObject *parent = 0);
   ~AbstractProfile();
   inline bool isFemale() const                     { return !m_male; }
   inline bool isMale() const                       { return m_male; }
@@ -76,8 +77,6 @@ public:
   static bool isValidNick(const QString &nick);
   static bool isValidUserAgent(const QString &a);
   void unpack(const QStringList &list);
-
-  Q_DISABLE_COPY(AbstractProfile)
 
 private:
   bool m_male;

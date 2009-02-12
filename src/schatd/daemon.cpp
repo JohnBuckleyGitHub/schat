@@ -537,6 +537,8 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 
 void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2)
 {
+  Q_UNUSED(data2)
+
   QString lowerNick = nick.toLower();
 
   if (m_users.contains(lowerNick)) {
