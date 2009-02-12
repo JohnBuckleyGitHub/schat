@@ -197,14 +197,36 @@ void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 nu
 void Daemon::clientSyncUsersEnd()
 {
   if (m_remoteNumeric) {
+    QMultiHash<quint32, QString> status;
+
     QHashIterator<QString, UserUnit *> i(m_users);
     while (i.hasNext()) {
       i.next();
       quint8 numeric = i.value()->numeric();
-      if (numeric == m_numeric || m_links.contains(numeric))
-        m_link->sendNewUser(i.value()->profile()->pack(), 0, numeric);
+      if (numeric == m_numeric || m_links.contains(numeric)) {
+        AbstractProfile *profile = i.value()->profile();
+
+        if (profile->status())
+          status.insert(profile->status(), profile->nick());
+
+        m_link->sendNewUser(profile->pack(), 0, numeric);
+      }
+    }
+
+    if (!status.isEmpty()) {
+      QList<quint32> statusCodes;
+      QHashIterator<quint32, QString> i(status);
+      while (i.hasNext()) {
+        i.next();
+        if (!statusCodes.contains(i.key()))
+          statusCodes << i.key();
+      }
+      foreach (quint32 code, statusCodes) {
+        m_link->sendUniversal(schat::UniStatusList, QList<quint32>() << code, status.values(code));
+      }
     }
   }
+
   m_syncUsers = true;
 }
 
@@ -535,6 +557,38 @@ void Daemon::syncNumerics(const QList<quint8> &numerics)
 }
 
 
+/*!
+ * Получение универсального пакета от вышестоящего сервера.
+ * или если \p numeric > 0, то от вторичного.
+ *
+ * Поддерживаемые форматы пакетов: schat::UniStatusList.
+ */
+void Daemon::universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2, quint8 numeric)
+{
+  if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty()) {
+    updateStatus(data1.at(0), data2);
+
+    if (numeric) {
+      QHashIterator<quint8, LinkUnit *> i(m_links);
+      while (i.hasNext()) {
+        i.next();
+        if (i.key() != numeric && i.value()->service())
+          i.value()->service()->sendUniversal(sub, data1, data2);
+      }
+    }
+    emit sendUniversal(sub, data1, data2);
+  }
+}
+
+
+/*!
+ * Получение универсального пакета от локального пользователя.
+ * Пакет обрабатывается и вызывается сигнал sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
+ * для отправки нового универсального пакета для локальных клиентов.
+ * В случае поддержки сети пакет также отправляется на корневой сервер или на все вторичные сервера.
+ *
+ * Поддерживаемые форматы пакетов: schat::UniStatus.
+ */
 void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2)
 {
   Q_UNUSED(data2)
@@ -547,6 +601,16 @@ void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &d
       QList<quint32> out1;
       out1 << data1.at(0) << 1;
       emit sendUniversal(schat::UniStatusList, out1, QStringList(nick));
+
+      if (m_network) {
+        if (m_remoteNumeric)
+          m_link->sendUniversal(schat::UniStatusList, out1, QStringList(nick));
+        else {
+          foreach (LinkUnit *unit, m_links)
+            if (unit->service())
+              unit->service()->sendUniversal(schat::UniStatusList, out1, QStringList(nick));
+        }
+      }
     }
   }
 }
@@ -779,6 +843,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
         connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
         connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
         connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
+        connect(service, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &, quint8)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &, quint8)));
         connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
         connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
         connect(this, SIGNAL(sendSyncBye(const QString &, const QString &)), service, SLOT(sendSyncBye(const QString &, const QString &)));
@@ -924,6 +989,7 @@ void Daemon::link()
         connect(m_link, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
         connect(m_link, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
         connect(m_link, SIGNAL(syncBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
+        connect(m_link, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
         m_link->connectToHost();
         ServerInfo serverInfo = m_network->server();
         LOG(0, tr("- Notice - Инициализировано соединение с корневым сервером, %1:%2").arg(serverInfo.address).arg(serverInfo.port));
@@ -1108,6 +1174,22 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
     DaemonService *service = qobject_cast<DaemonService *>(sender());
     if (service)
       service->quit();
+  }
+}
+
+
+/*!
+ * Обновляет статус пользователей, исключая локальных.
+ */
+void Daemon::updateStatus(quint32 status, const QStringList &users)
+{
+  foreach (QString user, users) {
+    QString lowerNick = user.toLower();
+    if (m_users.contains(lowerNick)) {
+      UserUnit *unit = m_users.value(lowerNick);
+      if (unit->numeric() != m_numeric)
+        unit->profile()->setStatus(status);
+    }
   }
 }
 
