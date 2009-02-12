@@ -56,6 +56,7 @@ signals:
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
+  void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2, quint8 numeric);
   void universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2);
   void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);

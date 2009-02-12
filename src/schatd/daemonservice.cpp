@@ -794,7 +794,10 @@ void DaemonService::opcodeUniversal()
   m_stream >> subOpcode >> data1 >> data2;
   m_nextBlockSize = 0;
 
-  emit universal(subOpcode, m_profile->nick(), data1, data2);
+  if (m_flag == FlagLink)
+    emit universal(subOpcode, data1, data2, m_numeric);
+  else
+    emit universal(subOpcode, m_profile->nick(), data1, data2);
 }
 
 
