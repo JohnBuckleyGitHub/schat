@@ -25,7 +25,8 @@
  * Конструктор копирования.
  */
 AbstractProfile::AbstractProfile(const AbstractProfile &other)
-  : m_male(other.m_male),
+  : QObject(),
+  m_male(other.m_male),
   m_byeMsg(other.m_byeMsg),
   m_fullName(other.m_fullName),
   m_host(other.m_host),
