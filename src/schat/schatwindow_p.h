@@ -59,6 +59,7 @@ public:
   void restoreGeometry();
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
+  void setAwayOptions();
   void showChat();
   void startNotice(int index, const QString &key);
   void statusAccessGranted(const QString &network, const QString &server);
@@ -71,11 +72,14 @@ public:
   #endif
 
   AbstractProfile *profile;
+  bool autoAway;
+  bool exitAwayOnSend;
   bool motd;
   bool motdEnable;
   bool sound;
   ClientService *clientService;
   Idle idleDetector;
+  int autoAwayTime;
   MainChannel *main;
   QAction *aboutAction;
   QAction *daemonAction;

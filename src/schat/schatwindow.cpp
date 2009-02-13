@@ -481,8 +481,28 @@ void SChatWindowPrivate::sendMsg(const QString &msg, bool cmd)
     if (parseCmd(tab, msg))
       return;
 
+  if (exitAwayOnSend) {
+    if (profile->status() == schat::StatusAway || profile->status() == schat::StatusAutoAway)
+      sendStatus(schat::StatusNormal);
+  }
+
   if (clientService->sendMessage(channel(), msg))
     send->clear();
+}
+
+
+void SChatWindowPrivate::setAwayOptions()
+{
+  autoAway = pref->getBool("AutoAway");
+  exitAwayOnSend = pref->getBool("ExitAwayOnSend");
+  autoAwayTime = pref->getInt("AutoAwayTime");
+  if (autoAwayTime < 1)
+    autoAwayTime = 1;
+
+  if (autoAway && !idleDetector.isActive())
+    idleDetector.start();
+  else if (idleDetector.isActive())
+    idleDetector.stop();
 }
 
 
@@ -559,6 +579,9 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
     motd = false;
     clientService->sendMessage("", "/motd");
   }
+
+  if (autoAway && profile->status() != schat::StatusAway && !idleDetector.isActive())
+    idleDetector.start();
 }
 
 
@@ -629,6 +652,9 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
       statusCombo->setCurrentIndex(1);
     else
       statusCombo->setCurrentIndex(0);
+
+    if (autoAway && status != schat::StatusAway && !idleDetector.isActive())
+      idleDetector.start();
   }
 
   users->setStatus(status, data2);
@@ -787,7 +813,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   #endif
 
   connect(&d->idleDetector, SIGNAL(secondsIdle(int)), SLOT(onSecondsIdle(int)));
-  d->idleDetector.start();
+  d->setAwayOptions();
 }
 
 
@@ -1152,7 +1178,14 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
 
 void SChatWindow::onSecondsIdle(int seconds)
 {
-//  qDebug() << "SChatWindow::onSecondsIdle()" << seconds;
+  // if activity is detected
+  if (seconds == 0) {
+    if (d->profile->status() == schat::StatusAutoAway)
+      d->sendStatus(schat::StatusNormal);
+  }
+
+  if (seconds == d->autoAwayTime * 60)
+    d->sendStatus(schat::StatusAutoAway);
 }
 
 
@@ -1249,8 +1282,10 @@ void SChatWindow::sound(bool toggle)
 void SChatWindow::statusChangedByUser(int index)
 {
   if (index < 2) {
-    if (index == 1)
+    if (index == 1) {
+      d->idleDetector.stop();
       d->sendStatus(schat::StatusAway);
+    }
     else
       d->sendStatus(schat::StatusNormal);
 
