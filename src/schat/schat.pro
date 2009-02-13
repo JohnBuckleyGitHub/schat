@@ -134,6 +134,13 @@ else {
     DEFINES += SCHAT_NO_UPDATE
 }
 
+unix {
+#   LIBS += -lXss
+#   DEFINES += SCHAT_X11_XSS
+   SOURCES += idle/idle_x11.cpp
+}
+macx:SOURCES += idle/idle_mac.cpp
+
 contains( SCHAT_STATIC, 1 ) {
     QTPLUGIN += qgif
     DEFINES  += SCHAT_STATIC
