@@ -78,7 +78,6 @@ public:
   QPoint lastMousePos;
   QDateTime idleSince;
 
-  bool active;
   int idleTime;
   QDateTime startTime;
   QTimer checkTimer;

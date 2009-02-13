@@ -31,7 +31,6 @@ static int platform_ref = 0;
 Idle::Idle()
   : d(new Private)
 {
-  d->active = false;
   d->idleTime = 0;
 
   // try to use platform idle
@@ -64,7 +63,7 @@ Idle::~Idle()
 
 bool Idle::isActive() const
 {
-  return d->active;
+  return d->checkTimer.isActive();
 }
 
 
