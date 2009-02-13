@@ -261,6 +261,34 @@ void SChatWindowPrivate::closeChat(bool update)
 }
 
 
+void SChatWindowPrivate::createStatusBar()
+{
+  connectLabel = new QLabel(q);
+  connectLabel->setVisible(false);
+
+  connectMovie = new QLabel(q);
+  connectMovie->setMovie(new QMovie(":/images/load.gif", QByteArray(), q));
+  connectMovie->setVisible(false);
+
+  statusLabel = new QLabel(QObject::tr("Нет подключения"), q);
+  statusLabel->setWordWrap(true);
+
+  statusCombo = new QComboBox(q);
+  statusCombo->addItem(QObject::tr("В сети"));
+  statusCombo->addItem(QObject::tr("Отсутствую"));
+  statusCombo->addItem(QObject::tr("Не в сети"));
+  statusCombo->setFocusPolicy(Qt::NoFocus);
+
+  statusBar = new QStatusBar(q);
+  statusBar->addWidget(connectLabel);
+  statusBar->addWidget(connectMovie);
+  statusBar->addWidget(statusLabel, 1);
+  statusBar->addPermanentWidget(statusCombo);
+  statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
+  q->setStatusBar(statusBar);
+}
+
+
 /*!
  * Создаёт кнопки.
  */
@@ -500,6 +528,61 @@ void SChatWindowPrivate::startNotice(int index, const QString &key)
 }
 
 
+void SChatWindowPrivate::statusAccessGranted(const QString &network, const QString &server)
+{
+  connectMovie->movie()->setPaused(true);
+  connectMovie->setVisible(false);
+  connectLabel->setVisible(true);
+  connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
+
+  if (network.isEmpty()) {
+    statusLabel->setText(QObject::tr("Сервер %1").arg(server));
+    main->msg("<span class='ready'>" + QObject::tr("Успешно подключены к серверу %1").arg(server) + "</span>");
+    q->setWindowTitle(QApplication::applicationName());
+  }
+  else {
+    statusLabel->setText(QObject::tr("Сеть %1 (%2)").arg(network).arg(server));
+    main->msg("<span class='ready'>" + QObject::tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
+    q->setWindowTitle(QApplication::applicationName() + " - " + network);
+  }
+
+  if (motdEnable && motd) {
+    motd = false;
+    clientService->sendMessage("", "/motd");
+  }
+}
+
+
+void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
+{
+  connectMovie->movie()->setPaused(false);
+  connectMovie->setVisible(true);
+  connectLabel->setVisible(false);
+
+  if (network)
+    statusLabel->setText(QObject::tr("Подключение к сети %1...").arg(server));
+  else
+    statusLabel->setText(QObject::tr("Подключение к серверу %1...").arg(server));
+
+  main->displayChoiceServer(false);
+}
+
+
+void SChatWindowPrivate::statusUnconnected(bool echo)
+{
+  connectMovie->movie()->setPaused(true);
+  connectMovie->setVisible(false);
+  connectLabel->setVisible(true);
+  connectLabel->setPixmap(QPixmap(":/images/network_disconnect.png"));
+
+  statusLabel->setText(QObject::tr("Нет подключения"));
+  users->clear();
+
+  if (echo)
+    main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
+}
+
+
 /*!
  * Создаёт уникальный ник.
  * Ник + случайное число от 0 до 99.
@@ -585,8 +668,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->rightLay    = new QVBoxLayout(d->right);
   d->mainLay     = new QVBoxLayout(d->central);
   d->toolsLay    = new QHBoxLayout;
-  d->statusBar   = new QStatusBar(this);
-  d->statusLabel = new QLabel(this);
 
   d->splitter->addWidget(d->tabs);
   d->splitter->addWidget(d->right);
@@ -604,15 +685,13 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   d->mainLay->addWidget(d->splitter);
   d->mainLay->addWidget(d->send);
-  d->mainLay->setMargin(4);
   d->mainLay->setSpacing(1);
   d->mainLay->setStretchFactor(d->splitter, 999);
   d->mainLay->setStretchFactor(d->send, 1);
+  d->mainLay->setContentsMargins(3, 3, 3, 0);
 
   setCentralWidget(d->central);
-  setStatusBar(d->statusBar);
-  d->statusBar->addWidget(d->statusLabel, 1);
-  d->statusLabel->setText(tr("Не подключено"));
+  d->createStatusBar();
 
   setWindowTitle(QApplication::applicationName());
 
@@ -801,24 +880,11 @@ void SChatWindow::accessDenied(quint16 reason)
  * Слот вызывается кода \a d->clientService получает пакет с опкодом \a OpcodeAccessGranted,
  * что означает успешное подключение к серверу/сети.
  */
-void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 /*level*/)
+void SChatWindow::accessGranted(const QString &network, const QString &server, quint16 level)
 {
-  if (network.isEmpty()) {
-    QString text = tr("Успешно подключены к серверу %1").arg(server);
-    d->main->msg("<span class='ready'>" + text + "</span>");
-    d->statusLabel->setText(text);
-    setWindowTitle(QApplication::applicationName());
-  }
-  else {
-    d->main->msg("<span class='ready'>" + tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
-    d->statusLabel->setText(tr("Успешно подключены к сети %1 (%2)").arg(network).arg(server));
-    setWindowTitle(QApplication::applicationName() + " - " + network);
-  }
+  Q_UNUSED(level)
 
-  if (d->motdEnable && d->motd) {
-    d->motd = false;
-    d->clientService->sendMessage("", "/motd");
-  }
+  d->statusAccessGranted(network, server);
 }
 
 
@@ -880,20 +946,15 @@ void SChatWindow::closeTab(int tab)
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается когда d->clientService пытается подключится к серверу.
- * ПАРАМЕТРЫ:
- *   server  -> название сети если network = true, либо адрес сервера.
- *   network -> подключение к сети (true) либо к серверу (false).
+ *
+ * \param server  Название сети если network = true, либо адрес сервера.
+ * \param network Нодключение к сети \a true либо к серверу \a false.
  */
 void SChatWindow::connecting(const QString &server, bool network)
 {
-  if (network)
-    d->statusLabel->setText(tr("Идёт подключение к сети %1...").arg(server));
-  else
-    d->statusLabel->setText(tr("Идёт подключение к серверу %1...").arg(server));
-
-  d->main->displayChoiceServer(false);
+  d->statusConnecting(server, network);
 }
 
 
@@ -1229,11 +1290,7 @@ void SChatWindow::syncUsersEnd()
  */
 void SChatWindow::unconnected(bool echo)
 {
-  d->statusLabel->setText(tr("Не подключено"));
-  d->users->clear();
-
-  if (echo)
-    d->main->msg("<span class='disconnect'>" + tr("Соединение разорвано") + "</span>");
+  d->statusUnconnected(echo);
 }
 
 

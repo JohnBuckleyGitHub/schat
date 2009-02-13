@@ -48,6 +48,7 @@ public:
   QString channel();
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void closeChat(bool update = false);
+  void createStatusBar();
   void createToolButtons();
   void createTrayIcon();
   void displayAway(quint32 status, const QString &nick);
@@ -58,6 +59,9 @@ public:
   void sendMsg(const QString &msg, bool cmd);
   void showChat();
   void startNotice(int index, const QString &key);
+  void statusAccessGranted(const QString &network, const QString &server);
+  void statusConnecting(const QString &server, bool network);
+  void statusUnconnected(bool echo);
   void uniqueNick();
   void universalStatus(const QList<quint32> &data1, const QStringList &data2);
   #if QT_VERSION < 0x040500
@@ -81,7 +85,10 @@ public:
   QAction *soundAction;
   QAction *soundSetAction;
   QAction *updateSetAction;
+  QComboBox *statusCombo;
   QHBoxLayout *toolsLay;
+  QLabel *connectLabel;
+  QLabel *connectMovie;
   QLabel *statusLabel;
   QMenu *trayMenu;
   QPointer<AboutDialog> about;
