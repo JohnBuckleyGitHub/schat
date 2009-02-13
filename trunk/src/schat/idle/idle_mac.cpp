@@ -105,8 +105,9 @@ pascal void IdlePlatform::Private::IdleTimerAction(EventLoopTimerRef, EventLoopI
 }
 
 
-IdlePlatform::IdlePlatform() {
-  d = new Private();
+IdlePlatform::IdlePlatform()
+  : d(new Private())
+{
 }
 
 IdlePlatform::~IdlePlatform() {

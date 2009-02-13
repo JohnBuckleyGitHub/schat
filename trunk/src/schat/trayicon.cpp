@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,24 +27,7 @@
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
 {
-  if (Settings::isNewYear())
-    m_icon = QIcon(":/images/logo16-ny.png");
-  else
-    m_icon = QIcon(":/images/logo16.png");
-  setIcon(m_icon);
-
-  init();
-}
-
-
-/*!
- * \brief Конструктор класса TrayIcon.
- */
-TrayIcon::TrayIcon(const QIcon &icon, QObject *parent)
-  : QSystemTrayIcon(icon, parent)
-{
-  m_icon = icon;
-
+  setAway(false);
   init();
 }
 
@@ -83,6 +66,22 @@ void TrayIcon::playSound(const QString &key)
 {
   if (m_settings->getBool("Sound/" + key + "Enable") && !m_soundQueue.contains(key))
     m_soundQueue.enqueue(key);
+}
+
+
+void TrayIcon::setAway(bool away)
+{
+  if (away) {
+    m_icon = QIcon(":/images/logo16-away.png");
+  }
+  else {
+    if (Settings::isNewYear())
+      m_icon = QIcon(":/images/logo16-ny.png");
+    else
+      m_icon = QIcon(":/images/logo16.png");
+  }
+
+  setIcon(m_icon);
 }
 
 

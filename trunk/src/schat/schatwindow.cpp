@@ -648,10 +648,14 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 
   if (data2.contains(profile->nick())) {
     profile->setStatus(data1.at(0));
-    if (status == schat::StatusAutoAway || status == schat::StatusAway)
+    if (status == schat::StatusAutoAway || status == schat::StatusAway) {
       statusCombo->setCurrentIndex(1);
-    else
+      tray->setAway();
+    }
+    else {
       statusCombo->setCurrentIndex(0);
+      tray->setAway(false);
+    }
 
     if (autoAway && status != schat::StatusAway && !idleDetector.isActive())
       idleDetector.start();
