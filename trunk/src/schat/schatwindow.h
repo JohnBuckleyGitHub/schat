@@ -63,6 +63,7 @@ private slots:
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
+  void onSecondsIdle(int seconds);
   void privateMessage(quint8 flag, const QString &nick, const QString &msg);
   void sendMsg(const QString &msg);
   void serverMessage(const QString &msg);

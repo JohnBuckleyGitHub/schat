@@ -785,6 +785,9 @@ SChatWindow::SChatWindow(QWidget *parent)
     QTimer::singleShot(d->pref->getInt("BenchmarkDelay"), benchTimer, SLOT(start()));
   }
   #endif
+
+  connect(&d->idleDetector, SIGNAL(secondsIdle(int)), SLOT(onSecondsIdle(int)));
+  d->idleDetector.start();
 }
 
 
@@ -1144,6 +1147,12 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
     if (tab.first != -1)
       tab.second->msg(html);
   }
+}
+
+
+void SChatWindow::onSecondsIdle(int seconds)
+{
+//  qDebug() << "SChatWindow::onSecondsIdle()" << seconds;
 }
 
 

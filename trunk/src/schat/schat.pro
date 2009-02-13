@@ -47,6 +47,7 @@ HEADERS += \
     emoticons/providers/kde/kde_emoticons.h \
     emoticons/providers/pidgin/pidgin_emoticons.h \
     emoticons/providers/xmpp/xmpp_emoticons.h \
+    idle/idle.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -88,6 +89,7 @@ SOURCES += \
     emoticons/providers/kde/kde_emoticons.cpp \
     emoticons/providers/pidgin/pidgin_emoticons.cpp \
     emoticons/providers/xmpp/xmpp_emoticons.cpp \
+    idle/idle.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \
@@ -126,7 +128,7 @@ else {
 
 win32 {
     HEADERS += update/verifythread.h
-    SOURCES += update/verifythread.cpp
+    SOURCES += update/verifythread.cpp idle/idle_win.cpp
 }
 else {
     DEFINES += SCHAT_NO_UPDATE
