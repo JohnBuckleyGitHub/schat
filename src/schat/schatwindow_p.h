@@ -22,6 +22,8 @@
 #include <QPointer>
 #include <QPair>
 
+#include "idle/idle.h"
+
 class AboutDialog;
 class ClientService;
 class SendWidget;
@@ -73,6 +75,7 @@ public:
   bool motdEnable;
   bool sound;
   ClientService *clientService;
+  Idle idleDetector;
   MainChannel *main;
   QAction *aboutAction;
   QAction *daemonAction;
