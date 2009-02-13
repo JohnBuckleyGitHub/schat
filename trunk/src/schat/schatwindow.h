@@ -69,6 +69,7 @@ private slots:
   void settingsChanged(int notify);
   void showSettings();
   void sound(bool toggle = true);
+  void statusChangedByUser(int index);
   void stopNotice(int index);
   void syncUsersEnd();
   void unconnected(bool echo = true);

@@ -123,7 +123,12 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
  */
 bool SChatWindowPrivate::sendStatus(quint32 status)
 {
-  return clientService->sendUniversal(schat::UniStatus, QList<quint32>() << status, QStringList());
+  if (clientService->isReady())
+    return clientService->sendUniversal(schat::UniStatus, QList<quint32>() << status, QStringList());
+  else {
+    profile->setStatus(status);
+    return true;
+  }
 }
 
 
@@ -528,12 +533,16 @@ void SChatWindowPrivate::startNotice(int index, const QString &key)
 }
 
 
+/*!
+ * Отображение состояния успешного подключения к серверу/сети.
+ */
 void SChatWindowPrivate::statusAccessGranted(const QString &network, const QString &server)
 {
   connectMovie->movie()->setPaused(true);
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
+  statusCombo->setCurrentIndex(0);
 
   if (network.isEmpty()) {
     statusLabel->setText(QObject::tr("Сервер %1").arg(server));
@@ -553,11 +562,15 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
 }
 
 
+/*!
+ * Отображение состояния подключения к серверу/сети.
+ */
 void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
 {
   connectMovie->movie()->setPaused(false);
   connectMovie->setVisible(true);
   connectLabel->setVisible(false);
+  statusCombo->setCurrentIndex(2);
 
   if (network)
     statusLabel->setText(QObject::tr("Подключение к сети %1...").arg(server));
@@ -568,12 +581,16 @@ void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
 }
 
 
+/*!
+ * Отображение состояния отсутствия подключения к серверу/сети.
+ */
 void SChatWindowPrivate::statusUnconnected(bool echo)
 {
   connectMovie->movie()->setPaused(true);
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_disconnect.png"));
+  statusCombo->setCurrentIndex(2);
 
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
@@ -604,14 +621,21 @@ void SChatWindowPrivate::uniqueNick()
  */
 void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStringList &data2)
 {
-  if (data2.contains(profile->nick()))
-    profile->setStatus(data1.at(0));
+  quint32 status = data1.at(0);
 
-  users->setStatus(data1.at(0), data2);
+  if (data2.contains(profile->nick())) {
+    profile->setStatus(data1.at(0));
+    if (status == schat::StatusAutoAway || status == schat::StatusAway)
+      statusCombo->setCurrentIndex(1);
+    else
+      statusCombo->setCurrentIndex(0);
+  }
+
+  users->setStatus(status, data2);
   if (data1.size() > 1)
     if (data1.at(1))
       if (users->isUser(data2.at(0))) {
-        displayAway(data1.at(0), data2.at(0));
+        displayAway(status, data2.at(0));
         return;
       }
 
@@ -719,6 +743,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+  connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
 
   #ifndef SCHAT_NO_UPDATE
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
@@ -1209,6 +1234,22 @@ void SChatWindow::sound(bool toggle)
     d->soundAction->setIcon(QIcon(":/images/sound_mute.png"));
     d->soundAction->setText(tr("Включить звуки"));
   }
+}
+
+
+void SChatWindow::statusChangedByUser(int index)
+{
+  if (index < 2) {
+    if (index == 1)
+      d->sendStatus(schat::StatusAway);
+    else
+      d->sendStatus(schat::StatusNormal);
+
+    if (!d->clientService->isReady())
+      d->clientService->connectToHost();
+  }
+  else
+    d->clientService->quit();
 }
 
 

@@ -50,7 +50,6 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
   m_mainLayout->addWidget(m_view);
-//  m_mainLayout->addWidget(m_browser);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
