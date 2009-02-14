@@ -32,14 +32,14 @@ class DaemonLog : public QObject
 
 public:
   DaemonLog(QObject *parent = 0);
-
   bool init();
+  static DaemonLog *self() { return m_self; }
   void append(const QString &text);
 
 private:
   QFile m_file;
-  QString m_appPath;
   QTextStream m_stream;
+  static DaemonLog *m_self;
 };
 
 #endif /* DAEMONLOG_H_ */

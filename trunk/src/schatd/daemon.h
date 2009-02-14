@@ -36,7 +36,7 @@ class Network;
 class QLocalServer;
 class UserUnit;
 
-#define LOG(x, y) if (m_settings->getInt("LogLevel") >= x) m_log->append(y)
+#define LOG(x, y) if (logLevel >= x) m_log->append(y)
 
 /*!
  * \brief Сервер чата
@@ -111,16 +111,17 @@ private:
   void userLeave(const QString &nick, const QString &err = QString());
 
   AbstractProfile *m_profile;
+  bool logLevel;
   bool m_motd;
   bool m_syncUsers;
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
   ClientService *m_link;
+  DaemonLog *m_log;
   DaemonSettings *m_settings;
   int m_maxLinks;
   int m_maxUsers;
   int m_maxUsersPerIp;
-  DaemonLog *m_log;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
@@ -130,7 +131,6 @@ private:
   QTcpServer m_server;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
-
   #ifndef SCHAT_NO_LOCAL_SERVER
     QLocalServer *m_localServer;
   #endif

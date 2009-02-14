@@ -16,10 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <QtCore>
 
 #include "daemonlog.h"
+
+DaemonLog *DaemonLog::m_self = 0;
 
 /*!
  * \brief Конструктор класса Log.
@@ -27,22 +28,22 @@
 DaemonLog::DaemonLog(QObject *parent)
   : QObject(parent)
 {
-  m_appPath = QCoreApplication::applicationDirPath();
+  Q_ASSERT(!m_self);
+  m_self = this;
 }
 
 
-/** [public]
- *
- */
 bool DaemonLog::init()
 {
-  QDir dir(m_appPath + "/log");
+  QString appPath = QCoreApplication::applicationDirPath();
+
+  QDir dir(appPath + "/log");
   if (!dir.exists())
-    dir.mkdir(m_appPath + "/log");
+    dir.mkdir(appPath + "/log");
 
   bool bom = false;
 
-  m_file.setFileName(m_appPath + "/log/schatd.log");
+  m_file.setFileName(appPath + "/log/schatd.log");
   if (!m_file.exists())
     bom = true;
 
@@ -58,9 +59,6 @@ bool DaemonLog::init()
 }
 
 
-/** [public]
- *
- */
 void DaemonLog::append(const QString &text)
 {
   m_stream << QDateTime(QDateTime::currentDateTime()).toString("(yyyy.MM.dd hh:mm:ss) ") << text << endl;
