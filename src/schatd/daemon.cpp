@@ -72,6 +72,7 @@ bool Daemon::start()
     if (!m_log->init()) {
       m_log->deleteLater();
       m_settings->setInt("LogLevel", -1);
+      logLevel = m_settings->getInt("LogLevel");
     }
   }
 
