@@ -69,7 +69,10 @@ public:
 
   AbstractProfile *profile;
   ProfileWidget *profileWidget;
+  QCheckBox *autoAway;
+  QCheckBox *exitAwayOnSend;
   QLineEdit *byeMsgEdit;
+  QSpinBox *autoAwayTime;
 };
 
 
@@ -79,27 +82,52 @@ public:
 ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), d(new Private)
 {
-  d->profile  = profile;
+  d->profile = profile;
   d->profileWidget = new ProfileWidget(profile, this);
   connect(d->profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
-  QLabel *byeMsgLabel = new QLabel(tr("Сообщение при выходе"), this);
   d->byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
   d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
   d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
+  QLabel *byeMsg = new QLabel(tr("Сообщение при &выходе"), this);
+  byeMsg->setBuddy(d->byeMsgEdit);
 
-  QHBoxLayout *byeMsgLay = new QHBoxLayout;
-  byeMsgLay->addWidget(byeMsgLabel);
-  byeMsgLay->addWidget(d->byeMsgEdit);
+  QGroupBox *profileGroup = new QGroupBox(tr("Профиль"), this);
+  QGridLayout *profileLay = new QGridLayout(profileGroup);
+  profileLay->addWidget(d->profileWidget, 0, 0, 1, 2);
+  profileLay->addWidget(byeMsg, 1, 0);
+  profileLay->addWidget(d->byeMsgEdit, 1, 1);
+  profileLay->setMargin(6);
+  profileLay->setSpacing(4);
 
-  QGroupBox *profileGroupBox = new QGroupBox(tr("Профиль"), this);
-  QVBoxLayout *profileGroupLay = new QVBoxLayout(profileGroupBox);
-  profileGroupLay->addWidget(d->profileWidget);
-  profileGroupLay->addLayout(byeMsgLay);
+  d->autoAway = new QCheckBox(tr("Включить &статус при простое:"), this);
+  d->autoAway->setToolTip(tr("Автоматически переходить в статус Отсутствую\nпри простое и возвращаться в обычный режим\nпри появлении активности"));
+  d->autoAway->setChecked(SimpleSettings->getBool("AutoAway"));
+
+  d->autoAwayTime = new QSpinBox(this);
+  d->autoAwayTime->setRange(1, 1440);
+  d->autoAwayTime->setSuffix(tr(" мин"));
+  d->autoAwayTime->setValue(SimpleSettings->getInt("AutoAwayTime"));
+
+  d->exitAwayOnSend = new QCheckBox(tr("Возвращаться в &обычный режим при отправке"), this);
+  d->exitAwayOnSend->setToolTip(tr("Возвращаться в обычный режим при отправке\nсообщения если до этого статус Отсутствую\nбыл установлен в ручную"));
+  d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
+
+  QGroupBox *awayGroup = new QGroupBox(tr("Статус: Отсутствую"), this);
+  QGridLayout *awayLay = new QGridLayout(awayGroup);
+  awayLay->addWidget(d->autoAway, 0, 0);
+  awayLay->addWidget(d->autoAwayTime, 0, 1);
+  awayLay->addWidget(d->exitAwayOnSend, 1, 0, 1, 2);
+  awayLay->setColumnStretch(0, 1);
+  awayLay->setMargin(6);
+  awayLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(profileGroupBox);
+  mainLay->addWidget(profileGroup);
+  mainLay->addSpacing(12);
+  mainLay->addWidget(awayGroup);
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 }
 
 ProfileSettings::~ProfileSettings() { delete d; }
@@ -110,6 +138,9 @@ void ProfileSettings::reset(int page)
   if (page == m_id) {
     d->profileWidget->reset();
     d->byeMsgEdit->setText(QApplication::applicationName());
+    d->autoAway->setChecked(true);
+    d->autoAwayTime->setValue(10);
+    d->exitAwayOnSend->setChecked(true);
   }
 }
 
@@ -152,10 +183,12 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   d->network = new NetworkWidget(this);
   connect(d->network, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
-  QGroupBox *serverGroupBox = new QGroupBox(tr("Подключение"), this);
-  QVBoxLayout *serverGroupLay = new QVBoxLayout(serverGroupBox);
-  serverGroupLay->addWidget(d->network);
-  serverGroupLay->addWidget(d->welcome);
+  QGroupBox *serverGroup = new QGroupBox(tr("Подключение"), this);
+  QVBoxLayout *serverLay = new QVBoxLayout(serverGroup);
+  serverLay->addWidget(d->network);
+  serverLay->addWidget(d->welcome);
+  serverLay->setMargin(6);
+  serverLay->setSpacing(4);
 
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Файлы сети")), this);
   url->setToolTip(tr("Открыть папку с файлами сети"));
@@ -163,9 +196,10 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(serverGroupBox);
+  mainLay->addWidget(serverGroup);
   mainLay->addStretch();
   mainLay->addWidget(url);
+  mainLay->setContentsMargins(3, 3, 3, 0);
 }
 
 
@@ -290,6 +324,8 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   QHBoxLayout *mainStyleLay = new QHBoxLayout(mainStyleGroup);
   mainStyleLay->addWidget(d->mainStyle);
   mainStyleLay->addStretch();
+  mainStyleLay->setMargin(6);
+  mainStyleLay->setSpacing(4);
 
   #ifndef SCHAT_NO_WEBKIT
     d->chatStyle = new QComboBox(this);
@@ -313,14 +349,18 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
     chatStyleLay->addWidget(d->chatStyleVariant, 1, 1);
     chatStyleLay->addWidget(d->grouping, 2, 0, 1, 2);
     chatStyleLay->setColumnStretch(1, 1);
+    chatStyleLay->setMargin(6);
+    chatStyleLay->setSpacing(4);
   #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(mainStyleGroup);
   #ifndef SCHAT_NO_WEBKIT
+    mainLay->addSpacing(12);
     mainLay->addWidget(chatStyleGroup);
   #endif
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 
   #ifndef SCHAT_NO_WEBKIT
     connect(d->chatStyle, SIGNAL(currentIndexChanged(int)), SLOT(reloadVariants(int)));
@@ -416,6 +456,8 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   QHBoxLayout *themeLay = new QHBoxLayout(d->group);
   themeLay->addWidget(d->combo);
   themeLay->addStretch();
+  themeLay->setMargin(6);
+  themeLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->group);
@@ -438,6 +480,8 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   mainLay->addWidget(d->requireSpaces);
   mainLay->addStretch();
   mainLay->addWidget(url);
+  mainLay->setSpacing(4);
+  mainLay->setContentsMargins(3, 3, 3, 0);
 
   if (!d->createThemeList()) {
     d->enable->setEnabled(false);
@@ -522,6 +566,7 @@ SoundSettings::SoundSettings(QWidget *parent)
   QVBoxLayout *soundLay = new QVBoxLayout(d->enable);
   soundLay->addWidget(d->msg);
   soundLay->addWidget(d->privateMsg);
+  soundLay->setMargin(6);
   soundLay->setSpacing(0);
 
   #ifdef Q_WS_X11
@@ -546,6 +591,7 @@ SoundSettings::SoundSettings(QWidget *parent)
   #endif
   mainLay->addStretch();
   mainLay->addWidget(url);
+  mainLay->setContentsMargins(3, 3, 3, 0);
 }
 
 
@@ -648,10 +694,14 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   intervalLay->addWidget(d->interval);
   intervalLay->addWidget(d->factor);
   intervalLay->addStretch();
+  intervalLay->setMargin(6);
+  intervalLay->setSpacing(4);
 
   QVBoxLayout *versionLay = new QVBoxLayout(d->versionGroup);
   versionLay->addWidget(d->checkOnStartup);
   versionLay->addLayout(intervalLay);
+  versionLay->setMargin(6);
+  versionLay->setSpacing(4);
 
   // Автоматическое обновление
   #ifndef SCHAT_NO_UPDATE
@@ -671,14 +721,18 @@ UpdateSettings::UpdateSettings(QWidget *parent)
 
     connect(d->versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
     updateGroup->setEnabled(d->versionGroup->isChecked());
+    updateLay->setMargin(6);
+    updateLay->setSpacing(4);
   #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->versionGroup);
   #ifndef SCHAT_NO_UPDATE
+    mainLay->addSpacing(12);
     mainLay->addWidget(updateGroup);
   #endif
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 }
 
 UpdateSettings::~UpdateSettings() { delete d; }
@@ -860,6 +914,8 @@ MiscSettings::MiscSettings(QWidget *parent)
     QVBoxLayout *integrationLay = new QVBoxLayout(integration);
     integrationLay->addWidget(d->autostart);
     integrationLay->addWidget(d->autostartDaemon);
+    integrationLay->setMargin(6);
+    integrationLay->setMargin(4);
   #endif
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
@@ -875,13 +931,17 @@ MiscSettings::MiscSettings(QWidget *parent)
   QVBoxLayout *logLay = new QVBoxLayout(logGroup);
   logLay->addWidget(d->log);
   logLay->addWidget(d->logPrivate);
+  logLay->setMargin(6);
+  logLay->setMargin(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   #ifdef Q_WS_WIN
     mainLay->addWidget(integration);
+    mainLay->addSpacing(12);
   #endif
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 
   #ifdef Q_WS_WIN
     d->readAutostart();
