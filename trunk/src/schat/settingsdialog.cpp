@@ -109,6 +109,9 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   d->autoAwayTime->setSuffix(tr(" мин"));
   d->autoAwayTime->setValue(SimpleSettings->getInt("AutoAwayTime"));
 
+  connect(d->autoAway, SIGNAL(clicked(bool)), d->autoAwayTime, SLOT(setEnabled(bool)));
+  d->autoAwayTime->setEnabled(d->autoAway->isChecked());
+
   d->exitAwayOnSend = new QCheckBox(tr("Возвращаться в &обычный режим при отправке"), this);
   d->exitAwayOnSend->setToolTip(tr("Возвращаться в обычный режим при отправке\nсообщения если до этого статус Отсутствую\nбыл установлен в ручную"));
   d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
@@ -140,6 +143,7 @@ void ProfileSettings::reset(int page)
     d->byeMsgEdit->setText(QApplication::applicationName());
     d->autoAway->setChecked(true);
     d->autoAwayTime->setValue(10);
+    d->autoAwayTime->setEnabled(true);
     d->exitAwayOnSend->setChecked(true);
   }
 }
@@ -156,6 +160,19 @@ void ProfileSettings::save()
     d->profile->setByeMsg(d->byeMsgEdit->text());
     SimpleSettings->notify(Settings::ByeMsgChanged);
   }
+
+  bool modified = false;
+  if (SimpleSettings->save("AutoAway", d->autoAway->isChecked()))
+    modified = true;
+
+  if (SimpleSettings->save("AutoAwayTime", d->autoAwayTime->value()))
+    modified = true;
+
+  if (SimpleSettings->save("ExitAwayOnSend", d->exitAwayOnSend->isChecked()))
+    modified = true;
+
+  if (modified)
+    SimpleSettings->notify(Settings::AwaySettingsChanged);
 }
 
 

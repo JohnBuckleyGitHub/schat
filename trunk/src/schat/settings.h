@@ -47,6 +47,7 @@ public:
     NetworkSettingsChanged,
     NetworksModelIndexChanged,
     ProfileSettingsChanged,
+    AwaySettingsChanged,
     ServerChanged,
     UpdateSettingsChanged,
     EmoticonsChanged,
@@ -68,9 +69,12 @@ public:
   };
 
   Settings(const QString &filename, QObject *parent = 0);
+  bool save(const QString &key, bool value);
+  bool save(const QString &key, const QString &value);
+  bool save(const QString &key, int value);
   inline AbstractProfile* profile()                    { return m_profile; }
-  inline QByteArray splitter() const                   { return m_splitter; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
+  inline QByteArray splitter() const                   { return m_splitter; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }

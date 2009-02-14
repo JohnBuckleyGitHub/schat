@@ -499,8 +499,10 @@ void SChatWindowPrivate::setAwayOptions()
   if (autoAwayTime < 1)
     autoAwayTime = 1;
 
-  if (autoAway && !idleDetector.isActive())
-    idleDetector.start();
+  if (autoAway) {
+    if (!idleDetector.isActive())
+      idleDetector.start();
+  }
   else if (idleDetector.isActive())
     idleDetector.stop();
 }
@@ -1323,6 +1325,10 @@ void SChatWindow::settingsChanged(int notify)
 
     case Settings::SoundChanged:
       sound(false);
+      break;
+
+    case Settings::AwaySettingsChanged:
+      d->setAwayOptions();
       break;
 
     default:

@@ -42,6 +42,39 @@ Settings::Settings(const QString &filename, QObject *parent)
 }
 
 
+bool Settings::save(const QString &key, bool value)
+{
+  if (getBool(key) == value)
+    return false;
+  else {
+    setBool(key, value);
+    return true;
+  }
+}
+
+
+bool Settings::save(const QString &key, const QString &value)
+{
+  if (getString(key) == value)
+    return false;
+  else {
+    setString(key, value);
+    return true;
+  }
+}
+
+
+bool Settings::save(const QString &key, int value)
+{
+  if (getInt(key) == value)
+    return false;
+  else {
+    setInt(key, value);
+    return true;
+  }
+}
+
+
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
 {
   QList<QStandardItem *> items;

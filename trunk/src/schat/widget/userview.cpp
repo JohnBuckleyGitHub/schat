@@ -69,6 +69,13 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   setEditTriggers(QListView::NoEditTriggers);
   setSpacing(1);
 
+  QPalette p = palette();
+  if (p.color(QPalette::Base) == Qt::white) {
+    setAlternatingRowColors(true);
+    p.setColor(QPalette::AlternateBase, QColor("#f7faff"));
+    setPalette(p);
+  }
+
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
 }
 
