@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QPointer>
 #include <QTcpServer>
+#include <QTimer>
 
 #include "network.h"
 
@@ -75,6 +76,7 @@ private slots:
   void clientSyncUsers(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void clientSyncUsersEnd();
   void clientUserLeave(const QString &nick, const QString &bye, quint8 flag);
+  void detectZombie();
   void greeting(const QStringList &list, quint8 flag);
   void incomingConnection();
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
@@ -129,6 +131,7 @@ private:
   QPointer<Network> m_network;
   QString m_motdText;
   QTcpServer m_server;
+  QTimer zombieTimer;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
   #ifndef SCHAT_NO_LOCAL_SERVER

@@ -47,11 +47,13 @@ Daemon::Daemon(QObject *parent)
   m_syncUsers     = false;
   m_channelLog    = 0;
   m_privateLog    = 0;
+  zombieTimer.setInterval(6000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
   connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), SLOT(logNewLink(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), SLOT(logLinkLeave(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendMessage(const QString &, const QString &)), SLOT(logMessage(const QString &, const QString &)));
+  connect(&zombieTimer, SIGNAL(timeout()), SLOT(detectZombie()));
 }
 
 
@@ -65,6 +67,7 @@ Daemon::Daemon(QObject *parent)
  */
 bool Daemon::start()
 {
+  zombieTimer.start();
   m_settings->read();
 
   if (m_settings->getInt("LogLevel") > -1) {
@@ -255,6 +258,20 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
   }
 
   userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
+}
+
+
+/*!
+ * \test Экспериментальная функция определения локальных зависших пользователей.
+ */
+void Daemon::detectZombie()
+{
+  if (!m_users.isEmpty()) {
+    foreach (UserUnit *unit, m_users) {
+      if (unit->numeric() == m_numeric && !unit->service())
+        userLeave(unit->profile()->nick(), "Detect zombie");
+    }
+  }
 }
 
 
@@ -871,7 +888,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
 }
 
 
-/*!
+/*!\
  * \brief Обработка приветствия от локально подключенного пользователя.
  *
  * \param list    Стандартный список, содержащий в себе полные данные пользователя.
@@ -881,51 +898,60 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = list.at(AbstractProfile::Nick).toLower();
 
-  if (!m_users.contains(nick)) {
+  /// \test Экспериментальное определение зависших пользователей.
+  if (m_users.contains(nick)) {
+    UserUnit *unit = m_users.value(nick);
+    if (unit->numeric() == m_numeric && !unit->service())
+      userLeave(unit->profile()->nick(), "Detect zombie");
+    else {
+      LOG(1, tr("- Warning - Name Collision: %1@%2 reject").arg(list.at(AbstractProfile::Nick)).arg(list.at(AbstractProfile::Host)));
+      service->accessDenied(ErrorNickAlreadyUse);
+    }
 
-    if (m_maxUsers > 0) {
-      if (m_maxUsers == localUsersCount()) {
-        service->accessDenied(ErrorUsersLimitExceeded);
+    return;
+  }
+
+
+  if (m_maxUsers > 0) {
+    if (m_maxUsers == localUsersCount()) {
+      service->accessDenied(ErrorUsersLimitExceeded);
+      return;
+    }
+  }
+
+  if (m_maxUsersPerIp > 0) {
+    QString ip = list.at(AbstractProfile::Host);
+    if (m_ipLimits.contains(ip)) {
+      int hosts = m_ipLimits.value(ip);
+      if (hosts == m_maxUsersPerIp) {
+        service->accessDenied(ErrorMaxUsersPerIpExceeded);
         return;
       }
-    }
-
-    if (m_maxUsersPerIp > 0) {
-      QString ip = list.at(AbstractProfile::Host);
-      if (m_ipLimits.contains(ip)) {
-        int hosts = m_ipLimits.value(ip);
-        if (hosts == m_maxUsersPerIp) {
-          service->accessDenied(ErrorMaxUsersPerIpExceeded);
-          return;
-        }
-        else {
-          m_ipLimits.insert(ip, hosts + 1);
-        }
-      }
       else {
-        m_ipLimits.insert(ip, 1);
+        m_ipLimits.insert(ip, hosts + 1);
       }
     }
-
-    m_users.insert(nick, new UserUnit(list, service, m_numeric));
-    connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
-    connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
-    connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
-    connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
-    connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
-    connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
-    connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
-    connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
-    connect(this, SIGNAL(sendUniversal(quint16, const QList<quint32> &, const QStringList &)), service, SLOT(sendUniversal(quint16, const QList<quint32> &, const QStringList &)));
-    service->accessGranted(m_numeric);
-    emit newUser(list, 1, m_numeric);
-
-    sendAllUsers(service);
-    if (m_network && m_remoteNumeric)
-      m_link->sendNewUser(list, 1, m_numeric);
+    else {
+      m_ipLimits.insert(ip, 1);
+    }
   }
-  else
-    service->accessDenied(ErrorNickAlreadyUse);
+
+  m_users.insert(nick, new UserUnit(list, service, m_numeric));
+  connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
+  connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
+  connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
+  connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
+  connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
+  connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
+  connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
+  connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
+  connect(this, SIGNAL(sendUniversal(quint16, const QList<quint32> &, const QStringList &)), service, SLOT(sendUniversal(quint16, const QList<quint32> &, const QStringList &)));
+  service->accessGranted(m_numeric);
+  emit newUser(list, 1, m_numeric);
+
+  sendAllUsers(service);
+  if (m_network && m_remoteNumeric)
+    m_link->sendNewUser(list, 1, m_numeric);
 }
 
 
@@ -1214,6 +1240,7 @@ void Daemon::userLeave(const QString &nick, const QString &err)
 
   if (m_users.contains(lowerNick)) {
     UserUnit *unit = m_users.value(lowerNick);
+
     m_users.remove(lowerNick);
 
     if (m_maxUsersPerIp > 0) {
