@@ -28,10 +28,10 @@
 class AbstractProfile;
 class ChannelLog;
 class ClientService;
+class DaemonLog;
 class DaemonService;
 class DaemonSettings;
 class LinkUnit;
-class Log;
 class Network;
 class QLocalServer;
 class UserUnit;
@@ -120,7 +120,7 @@ private:
   int m_maxLinks;
   int m_maxUsers;
   int m_maxUsersPerIp;
-  Log *m_log;
+  DaemonLog *m_log;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
