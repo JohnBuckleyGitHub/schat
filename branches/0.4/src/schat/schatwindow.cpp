@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   m_mainLay     = new QVBoxLayout(m_central);
   m_toolsLay    = new QHBoxLayout;
   m_statusBar   = new QStatusBar(this);
+  m_statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
   m_statusLabel = new QLabel(this);
 
   m_splitter->addWidget(m_tabs);
@@ -74,7 +75,6 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   m_mainLay->addWidget(m_splitter);
   m_mainLay->addWidget(m_send);
-  m_mainLay->setMargin(4);
   #if QT_VERSION >= 0x040500
     m_mainLay->setSpacing(2);
   #else
@@ -82,6 +82,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   #endif
   m_mainLay->setStretchFactor(m_splitter, 999);
   m_mainLay->setStretchFactor(m_send, 1);
+  m_mainLay->setContentsMargins(3, 3, 3, 0);
 
   setCentralWidget(m_central);
   setStatusBar(m_statusBar);
