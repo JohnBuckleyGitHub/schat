@@ -26,7 +26,7 @@
 #include "daemonservice.h"
 #include "daemonsettings.h"
 #include "linkunit.h"
-#include "log.h"
+#include "daemonlog.h"
 #include "protocol.h"
 #include "userunit.h"
 #include "version.h"
@@ -68,7 +68,7 @@ bool Daemon::start()
   m_settings->read();
 
   if (m_settings->getInt("LogLevel") > -1) {
-    m_log = new Log(this);
+    m_log = new DaemonLog(this);
     if (!m_log->init()) {
       m_log->deleteLater();
       m_settings->setInt("LogLevel", -1);

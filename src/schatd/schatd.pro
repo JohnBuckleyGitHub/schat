@@ -33,10 +33,10 @@ HEADERS = \
     channellog.h \
     clientservice.h \
     daemon.h \
+    daemonlog.h \
     daemonservice.h \
     daemonsettings.h \
     linkunit.h \
-    log.h \
     network.h \
     networkreader.h \
     protocol.h \
@@ -49,10 +49,10 @@ SOURCES = \
     channellog.cpp \
     clientservice.cpp \
     daemon.cpp \
+    daemonlog.cpp \
     daemonservice.cpp \
     daemonsettings.cpp \
     linkunit.cpp \
-    log.cpp \
     main.cpp \
     network.cpp \
     networkreader.cpp \
