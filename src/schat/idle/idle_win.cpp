@@ -3,7 +3,7 @@
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  * idle_win.cpp - detect desktop idle time
- * Copyright © 2003 Justin Karneges
+ * Copyright © 2003 Justin Karneges <justin@affinix.com> (from KVIrc source code)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
