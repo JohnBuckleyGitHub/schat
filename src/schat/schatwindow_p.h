@@ -103,6 +103,7 @@ public:
   QSplitter *splitter;
   QStatusBar *statusBar;
   QTabWidget *tabs;
+  QTime pingTime;
   QToolButton *settingsButton;
   QToolButton *soundButton;
   QVBoxLayout *mainLay;

@@ -47,7 +47,7 @@ Daemon::Daemon(QObject *parent)
   m_syncUsers     = false;
   m_channelLog    = 0;
   m_privateLog    = 0;
-  zombieTimer.setInterval(6000);
+  zombieTimer.setInterval(30000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
   connect(this, SIGNAL(sendNewLink(quint8, const QString &, const QString &)), SLOT(logNewLink(quint8, const QString &, const QString &)));
@@ -418,7 +418,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   QString lowerChannel = channel.toLower();
 
   if (channel.isEmpty()) {
-    if (!parseCmd(nick, msg)) {
+    if (!parseCmd(channel, nick, msg)) {
       emit sendMessage(nick, msg);
       if (m_network) {
         emit sendRelayMessage(channel, nick, msg);
@@ -431,7 +431,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
     if (m_privateLog)
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
 
-    if (!parseCmd(nick, msg)) {
+    if (!parseCmd(channel, nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
       DaemonService *senderService = qobject_cast<DaemonService *>(sender());
       if (!senderService)
@@ -678,7 +678,7 @@ bool Daemon::motd()
  * \param msg  Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
  */
-bool Daemon::parseCmd(const QString &nick, const QString &msg)
+bool Daemon::parseCmd(const QString &channel, const QString &nick, const QString &msg)
 {
   QString lowerNick = nick.toLower();
 
@@ -688,6 +688,7 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
   DaemonService *service = m_users.value(lowerNick)->service();
   if (!service)
     return false;
+
   QString text = ChannelLog::toPlainText(msg).trimmed().toLower();
 
   /// Команда "/server"
@@ -704,6 +705,10 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
       motdText.replace("${SERVERS}", tr("<b>%n</b> сервер", "", m_numerics.count()));
       service->sendServerMessage(motdText);
     }
+    return true;
+  }
+  else if (text == "/ping" && channel.isEmpty()) {
+    service->sendServerMessage("/pong");
     return true;
   }
   else
