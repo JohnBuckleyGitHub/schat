@@ -200,6 +200,25 @@ QString SChatWindowPrivate::channel()
 }
 
 
+QString SChatWindowPrivate::colorizedPing() const
+{
+  int ms = pingTime.elapsed();
+
+  #ifdef Q_WS_WIN
+    if (ms == 0)
+      ms = 8;
+  #endif
+
+  QString color = "6bb521";
+  if (ms > 200 && ms < 500)
+    color = "ff9900";
+  else if (ms > 500)
+    color = "da251d";
+
+  return QObject::tr("Ping до сервера <b style='color:#%1;'>%2 мс</b>").arg(color).arg(ms);
+}
+
+
 /*!
  * Отображает подсказку по командам.
  */
@@ -1247,11 +1266,12 @@ void SChatWindow::sendMsg(const QString &msg)
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
+  AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->currentWidget());
   if (msg == "/pong") {
-    d->main->msg(QString::number(d->pingTime.elapsed()));
+    tab->msg(d->colorizedPing());
     return;
   }
-  AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->currentWidget());
+
   tab->addFilteredMsg(msg);
 }
 
