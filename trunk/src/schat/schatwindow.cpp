@@ -110,6 +110,10 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
       clientService->sendNewProfile();
     }
   }
+  else if (text == "/ping") {
+    pingTime.start();
+    return false;
+  }
   else
     return false;
 
@@ -1079,7 +1083,6 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
   d->startNotice(d->tabs->indexOf(d->main), "Message");
-
   d->main->addMsg(sender, msg, d->profile->nick() == sender);
 }
 
@@ -1244,6 +1247,10 @@ void SChatWindow::sendMsg(const QString &msg)
  */
 void SChatWindow::serverMessage(const QString &msg)
 {
+  if (msg == "/pong") {
+    d->main->msg(QString::number(d->pingTime.elapsed()));
+    return;
+  }
   AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->currentWidget());
   tab->addFilteredMsg(msg);
 }

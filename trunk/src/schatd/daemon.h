@@ -98,7 +98,7 @@ private slots:
 
 private:
   bool motd();
-  bool parseCmd(const QString &nick, const QString &msg);
+  bool parseCmd(const QString &channel, const QString &nick, const QString &msg);
   int localLinksCount() const;
   int localUsersCount() const;
   QString serverInfo() const;
