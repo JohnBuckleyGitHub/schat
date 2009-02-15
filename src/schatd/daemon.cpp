@@ -418,7 +418,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   QString lowerChannel = channel.toLower();
 
   if (channel.isEmpty()) {
-    if (!parseCmd(channel, nick, msg)) {
+    if (!parseCmd(nick, msg)) {
       emit sendMessage(nick, msg);
       if (m_network) {
         emit sendRelayMessage(channel, nick, msg);
@@ -431,7 +431,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
     if (m_privateLog)
       m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
 
-    if (!parseCmd(channel, nick, msg)) {
+    if (!parseCmd(nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
       DaemonService *senderService = qobject_cast<DaemonService *>(sender());
       if (!senderService)
@@ -678,7 +678,7 @@ bool Daemon::motd()
  * \param msg  Сообщение.
  * \return \a true если команда опознана и выполнена, \a false при возникновении любой ошибки.
  */
-bool Daemon::parseCmd(const QString &channel, const QString &nick, const QString &msg)
+bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
   QString lowerNick = nick.toLower();
 
@@ -707,7 +707,7 @@ bool Daemon::parseCmd(const QString &channel, const QString &nick, const QString
     }
     return true;
   }
-  else if (text == "/ping" && channel.isEmpty()) {
+  else if (text == "/ping") {
     service->sendServerMessage("/pong");
     return true;
   }
