@@ -302,9 +302,10 @@ void SChatWindowPrivate::createStatusBar()
   statusLabel->setWordWrap(true);
 
   statusCombo = new QComboBox(q);
-  statusCombo->addItem(QObject::tr("В сети"));
-  statusCombo->addItem(QObject::tr("Отсутствую"));
-  statusCombo->addItem(QObject::tr("Не в сети"));
+  statusCombo->setIconSize(QSize(14, 14));
+  statusCombo->addItem(QIcon(":/images/status-online.png"), QObject::tr("В сети"));
+  statusCombo->addItem(QIcon(":/images/status-away.png"), QObject::tr("Отсутствую"));
+  statusCombo->addItem(QIcon(":/images/status-offline.png"), QObject::tr("Не в сети"));
   statusCombo->setFocusPolicy(Qt::NoFocus);
 
   statusBar = new QStatusBar(q);
