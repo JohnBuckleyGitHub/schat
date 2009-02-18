@@ -47,6 +47,7 @@ Daemon::Daemon(QObject *parent)
   m_syncUsers     = false;
   m_channelLog    = 0;
   m_privateLog    = 0;
+  m_statsInterval = 0;
   zombieTimer.setInterval(30000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
@@ -95,7 +96,8 @@ bool Daemon::start()
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
-  m_motd = motd();
+  m_motd  = initMotd();
+  m_stats = initStats();
 
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
@@ -272,6 +274,26 @@ void Daemon::detectZombie()
         userLeave(unit->profile()->nick(), "Detect zombie");
     }
   }
+}
+
+
+void Daemon::dumpStats()
+{
+  QFile file(m_statsFile);
+  if (!file.open(QFile::WriteOnly | QFile::Text))
+    return;
+
+  QXmlStreamWriter writer;
+  writer.setAutoFormatting(true);
+  writer.setAutoFormattingIndent(2);
+  writer.setDevice(&file);
+  writer.writeStartDocument();
+
+  writer.writeStartElement("stats");
+  writer.writeAttribute("version", "1.0");
+  writer.writeTextElement("users", QString::number(m_users.count()));
+  writer.writeTextElement("servers", QString::number(m_numerics.count()));
+  writer.writeEndDocument();
 }
 
 
@@ -649,7 +671,7 @@ void Daemon::incomingLocalConnection()
  *
  * \return Возвращает \a true в случае успеха.
  */
-bool Daemon::motd()
+bool Daemon::initMotd()
 {
   int size = m_settings->getInt("MotdMaxSize");
 
@@ -668,6 +690,31 @@ bool Daemon::motd()
   }
   else
     return false;
+}
+
+
+/*!
+ * Инициализирует поддержку записи статистической информации.
+ */
+bool Daemon::initStats()
+{
+  if (m_settings->getBool("Stats")) {
+    m_statsInterval = m_settings->getInt("StatsInterval");
+    if (m_statsInterval < 1)
+      m_statsInterval = 1;
+
+    m_statsFile = m_settings->getString("StatsFile");
+    if (QFileInfo(m_statsFile).isRelative())
+      m_statsFile = QCoreApplication::applicationDirPath() + '/' + m_statsFile;
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), SLOT(dumpStats()));
+    timer->start(m_statsInterval * 1000);
+
+    return true;
+  }
+
+  return false;
 }
 
 

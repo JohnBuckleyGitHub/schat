@@ -77,6 +77,7 @@ private slots:
   void clientSyncUsersEnd();
   void clientUserLeave(const QString &nick, const QString &bye, quint8 flag);
   void detectZombie();
+  void dumpStats();
   void greeting(const QStringList &list, quint8 flag);
   void incomingConnection();
   void linkLeave(quint8 numeric, const QString &network, const QString &ip);
@@ -97,7 +98,8 @@ private slots:
   #endif
 
 private:
-  bool motd();
+  bool initMotd();
+  bool initStats();
   bool parseCmd(const QString &nick, const QString &msg);
   int localLinksCount() const;
   int localUsersCount() const;
@@ -115,6 +117,7 @@ private:
   AbstractProfile *m_profile;
   bool logLevel;
   bool m_motd;
+  bool m_stats;
   bool m_syncUsers;
   ChannelLog *m_channelLog;
   ChannelLog *m_privateLog;
@@ -124,12 +127,14 @@ private:
   int m_maxLinks;
   int m_maxUsers;
   int m_maxUsersPerIp;
+  int m_statsInterval;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
   QList<quint8> m_numerics;
   QPointer<Network> m_network;
   QString m_motdText;
+  QString m_statsFile;
   QTcpServer m_server;
   QTimer zombieTimer;
   quint8 m_numeric;
