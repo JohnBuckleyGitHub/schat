@@ -38,12 +38,12 @@ function userBarText($image, $x, $y, $fontfile, $text)
 
 function userbar($statsFile, $basePath, $outFile)
 {
-  $image = @imagecreatefrompng($basePath . "userbar-template.png");
+  $image = imagecreatefrompng($basePath . "userbar-template.png");
   if (!$image)
     return;
  
   $count = 0;
-  $xml = @simplexml_load_file($statsFile);
+  $xml = simplexml_load_file($statsFile);
   if ($xml) {
     $count = $xml->users;
     if ($count == "")

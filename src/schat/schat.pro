@@ -51,6 +51,7 @@ HEADERS += \
     mainchannel.h \
     network.h \
     networkreader.h \
+    popup/popupwindow.h \
     profilewidget.h \
     protocol.h \
     schatwindow.h \
@@ -94,6 +95,7 @@ SOURCES += \
     mainchannel.cpp \
     network.cpp \
     networkreader.cpp \
+    popup/popupwindow.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
     settings.cpp \

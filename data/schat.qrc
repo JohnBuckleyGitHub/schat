@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file>css/popupwindow-flash.css</file>
+  <file>css/popupwindow-normal.css</file>
   <file>doc/members.html</file>
   <file>images/1downarrow.png</file>
   <file>images/1uparrow.png</file>
