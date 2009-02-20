@@ -44,6 +44,7 @@ public:
 
   bool parseCmd(AbstractTab *tab, const QString &message);
   bool sendStatus(quint32 status);
+  bool startNotice(int index, const QString &key);
   QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
   QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
   QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
@@ -62,7 +63,6 @@ public:
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
   void showChat();
-  void startNotice(int index, const QString &key);
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
   void statusUnconnected(bool echo);

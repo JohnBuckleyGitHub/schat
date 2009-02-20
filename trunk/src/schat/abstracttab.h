@@ -56,7 +56,7 @@ signals:
 public slots:
   inline bool copy()  { return m_view->copy(); }
   inline void clear() { m_view->clear(); }
-  inline void addMsg(const QString &nick, const QString &message, bool direction = true) { m_view->addMsg(nick, message, direction); }
+  inline void addMsg(const QString &nick, const QString &message, int options = ChatView::MsgSend, bool notice = false) { m_view->addMsg(nick, message, options, notice); }
 
 protected:
   bool m_notice;
