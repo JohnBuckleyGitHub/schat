@@ -32,6 +32,9 @@ public:
   PopupManager(QObject *parent = 0);
   ~PopupManager();
 
+public slots:
+  void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
+
 private:
   class Private;
   Private *const d;

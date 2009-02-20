@@ -52,6 +52,7 @@ public:
 signals:
   void emoticonsClicked(const QString &emo);
   void nickClicked(const QString &hex);
+  void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
 
 public slots:
   inline bool copy()  { return m_view->copy(); }

@@ -25,6 +25,7 @@
 #include "chatwindow/chatview.h"
 #include "clientservice.h"
 #include "mainchannel.h"
+#include "popup/popupmanager.h"
 #include "schatwindow.h"
 #include "schatwindow_p.h"
 #include "settings.h"
@@ -777,6 +778,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   setCentralWidget(d->central);
   d->createStatusBar();
+  d->popupManager = new PopupManager(this);
 
   setWindowTitle(QApplication::applicationName());
 
@@ -813,6 +815,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->main = new MainChannel(QIcon(":/images/main.png"), this);
   connect(d->main, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
   connect(d->main, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+  connect(d->main, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
 
   d->tabs->setCurrentIndex(d->tabs->addTab(d->main, tr("Общий")));
   d->tabs->setTabIcon(0, d->main->icon());
@@ -993,6 +996,7 @@ void SChatWindow::addTab(const QString &nick)
     index = newTab.first;
     connect(newTab.second, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
     connect(newTab.second, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+    connect(newTab.second, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
   }
 
   d->tabs->setCurrentIndex(index);
@@ -1248,6 +1252,7 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     d->tabs->setCurrentIndex(index);
     connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
     connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+    connect(tab, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
   }
 
   bool notice = d->startNotice(index, "PrivateMessage");
