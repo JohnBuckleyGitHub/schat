@@ -48,9 +48,29 @@ class PopupWindow : public QFrame
   Q_OBJECT
 
 public:
-  PopupWindow(const QString &nick, const QString &time, const QString &html, QWidget *parent = 0);
+
+  /// Содержит сообщение, которое будет показано во всплывающем окне.
+  struct Message {
+    Message() {}
+    Message(const QString &n, const QString &t, const QString &h, bool p)
+    : nick(n), time(t), html(h), pub(p) {}
+
+    QString nick; ///< Ник отправителя.
+    QString time; ///< Время сообщения.
+    QString html; ///< Тело сообщения.
+    bool pub;     ///< \a true Если сообщение из основного канала.
+  };
+
+  /// Установки для фиксированного размера окна.
+  enum Size {
+    Width = 240, ///< Ширина.
+    Height = 90, ///< Высота.
+    Space = 3    ///< Свободное пространство между окнами.
+  };
+
+  PopupWindow(const Message &message, QWidget *parent = 0);
   ~PopupWindow();
-  void start();
+  void start(int slot = 1);
 
 signals:
   void aboutToClose(const QString &nick);
