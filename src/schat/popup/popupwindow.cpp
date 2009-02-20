@@ -52,6 +52,7 @@ public:
   Private();
 
   bool normal;
+  int slot;
   QLabel *nick;
   QLabel *time;
   QString flashStyle;
@@ -64,7 +65,7 @@ public:
  * Конструктор класса PopupWindow::Private.
  */
 PopupWindow::Private::Private()
-  : normal(true)
+  : normal(true), slot(0)
 {
   QFile file;
   file.setFileName(":/css/popupwindow-normal.css");
@@ -84,17 +85,17 @@ PopupWindow::Private::Private()
 /*!
  * Конструктор класса PopupWindow.
  */
-PopupWindow::PopupWindow(const QString &nick, const QString &time, const QString &html, QWidget *parent)
+PopupWindow::PopupWindow(const Message &message, QWidget *parent)
   : QFrame(parent), d(new Private)
 {
   setObjectName("PopupWindow");
   setAttribute(Qt::WA_DeleteOnClose, true);
 
-  d->nick = new QLabel(nick, this);
+  d->nick = new QLabel(message.nick, this);
   d->nick->setObjectName("NickLabel");
-  d->time = new QLabel(time, this);
+  d->time = new QLabel(message.time, this);
   d->text = new PopupTextBrowser(this);
-  d->text->setHtml(html);
+  d->text->setHtml(message.html);
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(d->nick, 0, 0);
@@ -105,7 +106,7 @@ PopupWindow::PopupWindow(const QString &nick, const QString &time, const QString
   mainLay->setColumnStretch(0, 1);
 
   setStyleSheet(d->normalStyle);
-  setFixedSize(QSize(240, 90));
+  setFixedSize(QSize(Width, Height));
 
   QTimer *timer = new QTimer(this);
   timer->setInterval(1500);
@@ -131,14 +132,20 @@ PopupWindow::~PopupWindow()
 }
 
 
-void PopupWindow::start()
+/*!
+ * Показ окна
+ */
+void PopupWindow::start(int slot)
 {
-  QDesktopWidget desktopSize;
-  QRect geometry = desktopSize.availableGeometry();
+  d->slot = slot;
 
-  move(geometry.right() - width(), geometry.bottom() - height());
+  QRect geometry = QDesktopWidget().availableGeometry();
+//  qDebug() << geometry.right() << geometry.bottom();
 
-  qScrollEffect(this, QEffects::LeftScroll, 200);
+  move(geometry.right() - Width, geometry.bottom() - (slot == 1 ? Height : (Height + Space) * slot));
+
+  show();
+//  qScrollEffect(this, QEffects::LeftScroll, 200);
 }
 
 

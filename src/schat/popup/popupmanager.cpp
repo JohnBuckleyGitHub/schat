@@ -19,22 +19,32 @@
 #include <QtGui>
 
 #include "popupmanager.h"
+#include "popupmanager_p.h"
 
 /*!
- * \brief Приватный D-класс для класса PopupManager.
+ * Конструктор класса PopupManagerPrivate.
  */
-class PopupManager::Private
+PopupManagerPrivate::PopupManagerPrivate()
+  : QObject(), usedSlot(0)
 {
-public:
-  Private() {}
-};
+  maxSlots = static_cast<int>(QDesktopWidget().availableGeometry().bottom() / (PopupWindow::Height + PopupWindow::Space));
+}
+
+
+void PopupManagerPrivate::popupMsg(const PopupWindow::Message &message)
+{
+  usedSlot++;
+  PopupWindow *window = new PopupWindow(message);
+  window->start(usedSlot);
+
+}
 
 
 /*!
  * Конструктор класса PopupManager.
  */
 PopupManager::PopupManager(QObject *parent)
-  : QObject(parent), d(new Private)
+  : QObject(parent), d(new PopupManagerPrivate)
 {
 }
 
@@ -50,4 +60,7 @@ void PopupManager::popupMsg(const QString &nick, const QString &time, const QStr
 //  qDebug() << "PopupManager::popupMsg()";
 //  qDebug() << nick << time << pub;
 //  qDebug() << html;
+
+  if (d->usedSlot < d->maxSlots)
+    d->popupMsg(PopupWindow::Message(nick, time, html, pub));
 }

@@ -16,29 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef POPUPMANAGER_H_
-#define POPUPMANAGER_H_
+#ifndef POPUPMANAGER_P_H_
+#define POPUPMANAGER_P_H_
 
+#include <QHash>
 #include <QObject>
+#include <QQueue>
 
-class PopupManagerPrivate;
+#include "popupwindow.h"
 
 /*!
- * \brief Менеджер всплывающих окон.
+ * \brief Приватный D-класс для класса PopupManager.
  */
-class PopupManager : public QObject
+class PopupManagerPrivate : public QObject
 {
   Q_OBJECT
 
 public:
-  PopupManager(QObject *parent = 0);
-  ~PopupManager();
+  PopupManagerPrivate();
+  void popupMsg(const PopupWindow::Message &message);
 
-public slots:
-  void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
-
-private:
-  PopupManagerPrivate *const d;
+  int maxSlots;                          ///< Максимальное число окон.
+  int usedSlot;                          ///< Число занятых слотов.
+  QHash<QString, PopupWindow *> windows; ///< Созданные окна в качестве ключа используется ник.
+  QQueue<PopupWindow::Message> queue;    ///< Очередь сообщений для показа.
 };
 
-#endif /* POPUPMANAGER_H_ */
+#endif /* POPUPMANAGER_P_H_ */

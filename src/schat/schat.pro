@@ -52,6 +52,7 @@ HEADERS += \
     network.h \
     networkreader.h \
     popup/popupmanager.h \
+    popup/popupmanager_p.h \
     popup/popupwindow.h \
     profilewidget.h \
     protocol.h \
