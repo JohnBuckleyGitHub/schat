@@ -137,6 +137,41 @@ bool SChatWindowPrivate::sendStatus(quint32 status)
 
 
 /*!
+ * При необходимости вызывает уведомление о новом сообщении.
+ * Механизм уведомления запускается, если номер текущей вкладки не равен номеру вкладки
+ * с уведомлением или окно чата неактивно.
+ *
+ * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
+ *
+ * \param index Номер вкладки, в которой есть новое сообщение.
+ * \param key   Ключ для звукового уведомления.
+ *
+ * \return \a true если механизм уведомлений запущен.
+ */
+bool SChatWindowPrivate::startNotice(int index, const QString &key)
+{
+  if (index == -1)
+    return false;
+
+  if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
+    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
+
+    if (sound)
+      tray->playSound(key);
+
+    if (!tab->notice()) {
+      tab->notice(true);
+      tabs->setTabIcon(index, QIcon(":/images/notice.png"));
+      tray->notice(true);
+    }
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
  * Создаёт новую вкладку с приватом.
  */
 QPair<int, AbstractTab *> SChatWindowPrivate::createPrivateTab(const QString &nick)
@@ -546,36 +581,6 @@ void SChatWindowPrivate::showChat()
 
   if (settingsDialog)
     settingsDialog->show();
-}
-
-
-/*!
- * При необходимости вызывает уведомление о новом сообщении.
- * Механизм уведомления запускается, если номер текущей вкладки не равен номеру вкладки
- * с уведомлением или окно чата неактивно.
- *
- * Функция вызывается при получении нового сообщения в главном канале или при приватном сообщении.
- *
- * \param index Номер вкладки, в которой есть новое сообщение.
- * \param key   Ключ для звукового уведомления.
- */
-void SChatWindowPrivate::startNotice(int index, const QString &key)
-{
-  if (index == -1)
-    return;
-
-  if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
-    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
-
-    if (sound)
-      tray->playSound(key);
-
-    if (!tab->notice()) {
-      tab->notice(true);
-      tabs->setTabIcon(index, QIcon(":/images/notice.png"));
-      tray->notice(true);
-    }
-  }
 }
 
 
@@ -1102,8 +1107,9 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
-  d->startNotice(d->tabs->indexOf(d->main), "Message");
-  d->main->addMsg(sender, msg, d->profile->nick() == sender);
+  d->main->addMsg(sender, msg,
+      (d->profile->nick() == sender ? ChatView::MsgSend : ChatView::MsgRecived) | ChatView::MsgPublic,
+      d->startNotice(d->tabs->indexOf(d->main), "Message"));
 }
 
 
@@ -1244,13 +1250,13 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   }
 
+  bool notice = d->startNotice(index, "PrivateMessage");
+
   if (tab)
     if (flag == 1)
       tab->addMsg(d->profile->nick(), msg);
     else
-      tab->addMsg(nick, msg, false);
-
-  d->startNotice(index, "PrivateMessage");
+      tab->addMsg(nick, msg, ChatView::MsgRecived, notice);
 }
 
 

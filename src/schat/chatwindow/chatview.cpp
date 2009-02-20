@@ -269,7 +269,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
 /*!
  * Добавление сообщения от пользователя.
  */
-void ChatView::addMsg(const QString &sender, const QString &message, bool direction)
+void ChatView::addMsg(const QString &sender, const QString &message, int options, bool notice)
 {
   d->empty = false;
 
@@ -319,9 +319,13 @@ void ChatView::addMsg(const QString &sender, const QString &message, bool direct
     html = settings->emoticons()->theme().parseEmoticons(html, mode);
   }
 
+//  qDebug() << options << notice ;
+//  if (!SimpleSettings->getBool("PopupWindow"))
+//    notice = false;
+
   QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";
   #ifndef SCHAT_NO_WEBKIT
-    appendMessage(d->style->makeMessage(name, html, direction, same, "", action), same);
+    appendMessage(d->style->makeMessage(name, html, options & MsgSend, same, "", action), same);
   #else
     appendMessage(d->makeMessage(name, html, action));
   #endif

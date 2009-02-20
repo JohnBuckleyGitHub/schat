@@ -44,6 +44,14 @@ class ChatView : public QTextBrowser
   Q_OBJECT
 
 public:
+
+  /// Опции сообщения.
+  enum MsgOptions {
+    MsgSend    = 0x1, ///< Пользователь является отправителем сообщения.
+    MsgRecived = 0x2, ///< Сообщение получено от другого пользователя.
+    MsgPublic  = 0x4  ///< Публичное сообщение в главном канале.
+  };
+
   ChatView(QWidget *parent = 0);
   ~ChatView();
   QString channel() const;
@@ -51,7 +59,7 @@ public:
   static QString statusNewUser(quint8 gender, const QString &nick);
   static QString statusUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void addFilteredMsg(const QString &msg, bool strict = false);
-  void addMsg(const QString &sender, const QString &message, bool direction = true);
+  void addMsg(const QString &sender, const QString &message, int options = MsgSend, bool notice = false);
   void addServiceMsg(const QString &msg);
   void channel(const QString &ch);
   void log(bool enable);

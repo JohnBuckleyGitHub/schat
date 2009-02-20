@@ -168,6 +168,7 @@ void Settings::read()
   setBool("MotdEnable",             true);
   setBool("ExitAwayOnSend",         true);
   setBool("AutoAway",               true);
+  setBool("PopupWindow",            true);
   setInt("AutoAwayTime",            10);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
