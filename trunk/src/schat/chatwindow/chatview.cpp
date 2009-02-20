@@ -311,17 +311,20 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
     d->toLog(QString("<b class='sender'>%1:</b> %2").arg(escapedNick).arg(html));
   }
 
-  if (settings->emoticons()) {
+  // Парсинг смайлов
+  if (SimpleSettings->emoticons()) {
     EmoticonsTheme::ParseMode mode = EmoticonsTheme::StrictParse;
     if (!d->strict)
       mode = EmoticonsTheme::RelaxedParse;
 
-    html = settings->emoticons()->theme().parseEmoticons(html, mode);
+    html = SimpleSettings->emoticons()->theme().parseEmoticons(html, mode);
   }
 
-//  qDebug() << options << notice ;
-//  if (!SimpleSettings->getBool("PopupWindow"))
-//    notice = false;
+  // Поддержка извещателя
+  if (SimpleSettings->getBool("PopupWindow") && notice) {
+    if (!(options & MsgPublic))
+      emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, false);
+  }
 
   QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";
   #ifndef SCHAT_NO_WEBKIT

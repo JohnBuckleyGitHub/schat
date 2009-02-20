@@ -36,4 +36,5 @@ AbstractTab::AbstractTab(const QIcon &icon, QWidget *parent)
 
   connect(m_view, SIGNAL(emoticonsClicked(const QString &)), SIGNAL(emoticonsClicked(const QString &)));
   connect(m_view, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
+  connect(m_view, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)));
 }

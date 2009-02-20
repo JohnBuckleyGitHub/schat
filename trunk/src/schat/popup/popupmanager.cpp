@@ -43,3 +43,11 @@ PopupManager::~PopupManager()
 {
   delete d;
 }
+
+
+void PopupManager::popupMsg(const QString &nick, const QString &time, const QString &html, bool pub)
+{
+//  qDebug() << "PopupManager::popupMsg()";
+//  qDebug() << nick << time << pub;
+//  qDebug() << html;
+}

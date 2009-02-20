@@ -26,6 +26,7 @@
 
 class AboutDialog;
 class ClientService;
+class PopupManager;
 class SendWidget;
 class SettingsDialog;
 class SettingsDialog;
@@ -82,6 +83,7 @@ public:
   Idle idleDetector;
   int autoAwayTime;
   MainChannel *main;
+  PopupManager *popupManager;
   QAction *aboutAction;
   QAction *daemonAction;
   QAction *emoticonsSetAction;
