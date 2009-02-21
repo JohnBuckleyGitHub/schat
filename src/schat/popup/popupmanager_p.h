@@ -43,6 +43,7 @@ public:
 
 signals:
   void freeSlot(int slot);
+  void openChat(const QString &nick, bool pub);
 
 public slots:
   void popupClosed(const QString &nick, int slot);

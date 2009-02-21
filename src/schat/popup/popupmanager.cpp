@@ -39,6 +39,7 @@ void PopupManagerPrivate::popupMsg(const PopupWindow::Message &message)
   usedSlots++;
   PopupWindow *window = new PopupWindow(message);
   connect(window, SIGNAL(aboutToClose(const QString &, int)), SLOT(popupClosed(const QString &, int)));
+  connect(window, SIGNAL(openChat(const QString &, bool)), SIGNAL(openChat(const QString &, bool)));
   connect(this, SIGNAL(freeSlot(int)), window, SLOT(freeSlot(int)));
 
   window->start(usedSlots);
@@ -67,6 +68,7 @@ void PopupManagerPrivate::popupClosed(const QString &nick, int slot)
 PopupManager::PopupManager(QObject *parent)
   : QObject(parent), d(new PopupManagerPrivate)
 {
+  connect(d, SIGNAL(openChat(const QString &, bool)), SIGNAL(openChat(const QString &, bool)));
 }
 
 

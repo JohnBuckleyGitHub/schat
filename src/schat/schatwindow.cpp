@@ -779,6 +779,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   setCentralWidget(d->central);
   d->createStatusBar();
   d->popupManager = new PopupManager(this);
+  connect(d->popupManager, SIGNAL(openChat(const QString &, bool)), SLOT(openChat(const QString &, bool)));
 
   setWindowTitle(QApplication::applicationName());
 
@@ -1225,6 +1226,22 @@ void SChatWindow::onSecondsIdle(int seconds)
 
   if (seconds == d->autoAwayTime * 60)
     d->sendStatus(schat::StatusAutoAway);
+}
+
+
+
+/*!
+ * Получение от извещателя запроса на показ окна чата.
+ */
+void SChatWindow::openChat(const QString &nick, bool pub)
+{
+  if (!pub) {
+    QPair<int, AbstractTab *> tab = d->tabFromName(nick);
+    if (tab.first != -1)
+      d->tabs->setCurrentIndex(tab.first);
+  }
+
+  d->showChat();
 }
 
 

@@ -179,9 +179,9 @@ void PopupWindow::freeSlot(int slot)
 void PopupWindow::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::RightButton)
-    openChat();
-  else if (event->button() == Qt::LeftButton)
     close();
+  else if (event->button() == Qt::LeftButton)
+    openChat();
 }
 
 
