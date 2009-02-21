@@ -115,7 +115,6 @@ private:
   void userLeave(const QString &nick, const QString &err = QString());
 
   AbstractProfile *m_profile;
-  bool logLevel;
   bool m_motd;
   bool m_stats;
   bool m_syncUsers;
@@ -124,6 +123,7 @@ private:
   ClientService *m_link;
   DaemonLog *m_log;
   DaemonSettings *m_settings;
+  int logLevel;
   int m_maxLinks;
   int m_maxUsers;
   int m_maxUsersPerIp;

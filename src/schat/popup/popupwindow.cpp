@@ -18,8 +18,10 @@
 
 #include <QtGui>
 
+#include "abstractprofile.h"
 #include "popupwindow.h"
-#include "qeffects_p.h"
+#include "protocol.h"
+#include "settings.h"
 
 /*!
  * Конструктор класса PopupTextBrowser.
@@ -56,6 +58,7 @@ public:
   QLabel *nick;        ///< Обеспечивает отображение и хранение ника отправителя.
   QLabel *time;        ///< Обеспечивает отображение времени сообщения.
   QTextBrowser *text;  ///< Обеспечивает отображение текста сообщения.
+  QTimer *closeTimer;  ///< Таймер автоматического закрытия.
 };
 
 
@@ -63,7 +66,7 @@ public:
  * Конструктор класса PopupWindow::Private.
  */
 PopupWindow::Private::Private()
-  : slot(0)
+  : slot(0), closeTimer(0)
 {
 }
 
@@ -101,7 +104,14 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
   connect(d->text, SIGNAL(closeWindow()), SLOT(close()));
   connect(d->text, SIGNAL(openChat()), SLOT(openChat()));
 
-//  QTimer::singleShot((20 + 1) * 1000, this, SLOT(close()));
+  if (SimpleSettings->profile()->status() != schat::StatusAutoAway) {
+    d->closeTimer = new QTimer(this);
+    int delay = SimpleSettings->getInt("PopupWindowDelay");
+    d->closeTimer->setInterval((delay > 1 ? delay : 1) * 1000);
+    d->closeTimer->start();
+    connect(d->closeTimer, SIGNAL(timeout()), SLOT(close()));
+  }
+
   setWindowOpacity(0.9);
   #if defined(Q_OS_MAC)
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
@@ -114,6 +124,17 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
 PopupWindow::~PopupWindow()
 {
   delete d;
+}
+
+
+void PopupWindow::setMessage(const Message &message)
+{
+  d->time->setText(message.time);
+  d->text->setHtml(message.html);
+  d->pub = message.pub;
+
+  if (d->closeTimer)
+    d->closeTimer->start();
 }
 
 

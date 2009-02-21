@@ -70,6 +70,7 @@ public:
 
   PopupWindow(const Message &message, QWidget *parent = 0);
   ~PopupWindow();
+  void setMessage(const Message &message);
   void start(int slot = 1);
 
 signals:
