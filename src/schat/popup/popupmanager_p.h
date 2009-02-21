@@ -35,17 +35,25 @@ class PopupManagerPrivate : public QObject
 public:
   PopupManagerPrivate();
   void popupMsg(const PopupWindow::Message &message);
+  void readStyleSheets();
 
+  bool normal;                           ///< Флаг стиля, \a true нормальный, иначе оранжевый.
+  bool styleSheetsReaded;                ///< \a true если стили высплывающих окон прочитаны.
   int maxSlots;                          ///< Максимальное число окон.
   int usedSlots;                         ///< Число занятых слотов.
   QHash<QString, PopupWindow *> windows; ///< Созданные окна в качестве ключа используется ник.
   QQueue<PopupWindow::Message> queue;    ///< Очередь сообщений для показа.
+  QString flashStyle;                    ///< Оранжевый стиль.
+  QString normalStyle;                   ///< Нормальный стиль.
+  QTimer *timer;                         ///< Таймер мигания всплывающих окон.
 
 signals:
+  void flash(const QString &style);
   void freeSlot(int slot);
   void openChat(const QString &nick, bool pub);
 
 public slots:
+  void flash();
   void popupClosed(const QString &nick, int slot);
 };
 

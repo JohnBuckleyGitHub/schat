@@ -25,9 +25,13 @@
  * Конструктор класса PopupManagerPrivate.
  */
 PopupManagerPrivate::PopupManagerPrivate()
-  : QObject(), usedSlots(0)
+  : QObject(), normal(false), styleSheetsReaded(false), usedSlots(0)
 {
   maxSlots = static_cast<int>(QDesktopWidget().availableGeometry().bottom() / (PopupWindow::Height + PopupWindow::Space));
+
+  timer = new QTimer(this);
+  timer->setInterval(1500);
+  connect(timer, SIGNAL(timeout()), SLOT(flash()));
 }
 
 
@@ -36,15 +40,64 @@ PopupManagerPrivate::PopupManagerPrivate()
  */
 void PopupManagerPrivate::popupMsg(const PopupWindow::Message &message)
 {
+  if (!usedSlots) {
+    if (!styleSheetsReaded)
+      readStyleSheets();
+
+    timer->start();
+  }
+
   usedSlots++;
   PopupWindow *window = new PopupWindow(message);
   connect(window, SIGNAL(aboutToClose(const QString &, int)), SLOT(popupClosed(const QString &, int)));
   connect(window, SIGNAL(openChat(const QString &, bool)), SIGNAL(openChat(const QString &, bool)));
   connect(this, SIGNAL(freeSlot(int)), window, SLOT(freeSlot(int)));
+  connect(this, SIGNAL(flash(const QString &)), window, SLOT(flash(const QString &)));
+
+  if (normal)
+    window->flash(normalStyle);
+  else
+    window->flash(flashStyle);
 
   window->start(usedSlots);
   if (!windows.contains(message.nick))
     windows.insert(message.nick, window);
+}
+
+
+/*!
+ * Отложенное чтение стилей всплывающих окон.
+ */
+void PopupManagerPrivate::readStyleSheets()
+{
+  QFile file;
+  file.setFileName(":/css/popupwindow-normal.css");
+  if (file.open(QFile::ReadOnly)) {
+    normalStyle = QLatin1String(file.readAll());
+    file.close();
+  }
+
+  file.setFileName(":/css/popupwindow-flash.css");
+  if (file.open(QFile::ReadOnly)) {
+    flashStyle = QLatin1String(file.readAll());
+    file.close();
+  }
+
+  styleSheetsReaded = true;
+}
+
+
+/*!
+ * Изменение стиля по таймеру для создания эффекта мигания окна.
+ */
+void PopupManagerPrivate::flash()
+{
+  normal = !normal;
+
+  if (normal)
+    emit flash(normalStyle);
+  else
+    emit flash(flashStyle);
 }
 
 
@@ -59,6 +112,10 @@ void PopupManagerPrivate::popupClosed(const QString &nick, int slot)
 
   if (!queue.isEmpty())
     popupMsg(queue.dequeue());
+  else if (!usedSlots) {
+    timer->stop();
+    normal = false;
+  }
 }
 
 

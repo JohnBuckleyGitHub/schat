@@ -78,13 +78,13 @@ signals:
 
 public slots:
   void close();
+  void flash(const QString &style);
   void freeSlot(int slot);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void flash();
   void openChat();
 
 private:
