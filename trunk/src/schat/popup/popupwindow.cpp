@@ -51,13 +51,10 @@ class PopupWindow::Private
 public:
   Private();
 
-  bool normal;         ///< Флаг стиля, \a true нормальный, иначе оранжевый.
   bool pub;            ///< Сообщение является обращением по имени из основного канала.
   int slot;            ///< Занятый окном слот, используется для расчёта позиции на экране.
   QLabel *nick;        ///< Обеспечивает отображение и хранение ника отправителя.
   QLabel *time;        ///< Обеспечивает отображение времени сообщения.
-  QString flashStyle;  ///< Оранжевый стиль.
-  QString normalStyle; ///< Нормальный стиль.
   QTextBrowser *text;  ///< Обеспечивает отображение текста сообщения.
 };
 
@@ -66,20 +63,8 @@ public:
  * Конструктор класса PopupWindow::Private.
  */
 PopupWindow::Private::Private()
-  : normal(true), slot(0)
+  : slot(0)
 {
-  QFile file;
-  file.setFileName(":/css/popupwindow-normal.css");
-  if (file.open(QFile::ReadOnly)) {
-    normalStyle = QLatin1String(file.readAll());
-    file.close();
-  }
-
-  file.setFileName(":/css/popupwindow-flash.css");
-  if (file.open(QFile::ReadOnly)) {
-    flashStyle = QLatin1String(file.readAll());
-    file.close();
-  }
 }
 
 
@@ -111,13 +96,7 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
   mainLay->setSpacing(0);
   mainLay->setColumnStretch(0, 1);
 
-  setStyleSheet(d->normalStyle);
   setFixedSize(QSize(Width, Height));
-
-  QTimer *timer = new QTimer(this);
-  timer->setInterval(1500);
-  connect(timer, SIGNAL(timeout()), SLOT(flash()));
-  QTimer::singleShot(0, timer, SLOT(start()));
 
   connect(d->text, SIGNAL(closeWindow()), SLOT(close()));
   connect(d->text, SIGNAL(openChat()), SLOT(openChat()));
@@ -160,6 +139,12 @@ void PopupWindow::close()
 }
 
 
+void PopupWindow::flash(const QString &style)
+{
+  setStyleSheet(style);
+}
+
+
 /*!
  * Обработка освобождения слота.
  * Если освободившийся слот меньше, то смещается на один слот вниз.
@@ -182,20 +167,6 @@ void PopupWindow::mouseReleaseEvent(QMouseEvent *event)
     close();
   else if (event->button() == Qt::LeftButton)
     openChat();
-}
-
-
-/*!
- * Изменение стиля по таймеру для создания эффекта мигания окна.
- */
-void PopupWindow::flash()
-{
-  if (d->normal)
-    setStyleSheet(d->flashStyle);
-  else
-    setStyleSheet(d->normalStyle);
-
-  d->normal = !d->normal;
 }
 
 
