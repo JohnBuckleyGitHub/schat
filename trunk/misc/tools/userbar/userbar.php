@@ -43,16 +43,20 @@ function userbar($statsFile, $basePath, $outFile)
     return;
  
   $count = 0;
-  $xml = simplexml_load_file($statsFile);
-  if ($xml) {
-    $count = $xml->users;
-    if ($count == "")
-      $count = 0;
+  if (function_exists('simplexml_load_file')) {
+    $xml = simplexml_load_file($statsFile);
+    if ($xml) {
+      $count = $xml->users;
+      if ($count == "")
+        $count = 0;
+    }
   }
+  else
+    echo("SimpleXML not found");
 
   userBarText($image, 328, 12, $basePath . "hoog_mini.ttf", $count);
   imagepng($image, $outFile);
   imagedestroy($image);
 }
 
-?> 
+?>
