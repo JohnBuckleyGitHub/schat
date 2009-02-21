@@ -25,18 +25,39 @@
  * Конструктор класса PopupManagerPrivate.
  */
 PopupManagerPrivate::PopupManagerPrivate()
-  : QObject(), usedSlot(0)
+  : QObject(), usedSlots(0)
 {
   maxSlots = static_cast<int>(QDesktopWidget().availableGeometry().bottom() / (PopupWindow::Height + PopupWindow::Space));
 }
 
 
+/*!
+ * Создание всплывающего окна.
+ */
 void PopupManagerPrivate::popupMsg(const PopupWindow::Message &message)
 {
-  usedSlot++;
+  usedSlots++;
   PopupWindow *window = new PopupWindow(message);
-  window->start(usedSlot);
+  connect(window, SIGNAL(aboutToClose(const QString &, int)), SLOT(popupClosed(const QString &, int)));
+  connect(this, SIGNAL(freeSlot(int)), window, SLOT(freeSlot(int)));
 
+  window->start(usedSlots);
+  if (!windows.contains(message.nick))
+    windows.insert(message.nick, window);
+}
+
+
+/*!
+ * Обработка закрытия всплывающего окна.
+ * Если очередь сообщений не пуста, то создаются новое окно.
+ */
+void PopupManagerPrivate::popupClosed(const QString &nick, int slot)
+{
+  usedSlots--;
+  emit freeSlot(slot);
+
+  if (!queue.isEmpty())
+    popupMsg(queue.dequeue());
 }
 
 
@@ -55,12 +76,17 @@ PopupManager::~PopupManager()
 }
 
 
+/*!
+ * Получение запроса на создание нового окна.
+ * Если есть свободные слоты, то сообщение сразу же отображается,
+ * иначе оно добавляется в очередь.
+ */
 void PopupManager::popupMsg(const QString &nick, const QString &time, const QString &html, bool pub)
 {
-//  qDebug() << "PopupManager::popupMsg()";
-//  qDebug() << nick << time << pub;
-//  qDebug() << html;
+  PopupWindow::Message message(nick, time, html, pub);
 
-  if (d->usedSlot < d->maxSlots)
-    d->popupMsg(PopupWindow::Message(nick, time, html, pub));
+  if (d->usedSlots < d->maxSlots)
+    d->popupMsg(message);
+  else
+    d->queue.enqueue(message);
 }

@@ -58,7 +58,7 @@ public:
     QString nick; ///< Ник отправителя.
     QString time; ///< Время сообщения.
     QString html; ///< Тело сообщения.
-    bool pub;     ///< \a true Если сообщение из основного канала.
+    bool pub;     ///< Сообщение является обращением по имени из основного канала.
   };
 
   /// Установки для фиксированного размера окна.
@@ -73,11 +73,12 @@ public:
   void start(int slot = 1);
 
 signals:
-  void aboutToClose(const QString &nick);
-  void openChat(const QString &nick);
+  void aboutToClose(const QString &nick, int slot);
+  void openChat(const QString &nick, bool pub);
 
 public slots:
   void close();
+  void freeSlot(int slot);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
@@ -87,6 +88,8 @@ private slots:
   void openChat();
 
 private:
+  void moveToSlot(int slot);
+
   class Private;
   Private *const d;
 };
