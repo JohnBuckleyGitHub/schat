@@ -170,6 +170,7 @@ void Settings::read()
   setBool("AutoAway",               true);
   setBool("PopupWindow",            true);
   setInt("AutoAwayTime",            10);
+  setInt("PopupWindowDelay",        10);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");

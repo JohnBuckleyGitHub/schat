@@ -35,6 +35,13 @@ PopupManagerPrivate::PopupManagerPrivate()
 }
 
 
+PopupManagerPrivate::~PopupManagerPrivate()
+{
+  if (!windows.isEmpty())
+    qDeleteAll(windows);
+}
+
+
 /*!
  * Создание всплывающего окна.
  */
@@ -47,21 +54,25 @@ void PopupManagerPrivate::popupMsg(const PopupWindow::Message &message)
     timer->start();
   }
 
-  usedSlots++;
-  PopupWindow *window = new PopupWindow(message);
-  connect(window, SIGNAL(aboutToClose(const QString &, int)), SLOT(popupClosed(const QString &, int)));
-  connect(window, SIGNAL(openChat(const QString &, bool)), SIGNAL(openChat(const QString &, bool)));
-  connect(this, SIGNAL(freeSlot(int)), window, SLOT(freeSlot(int)));
-  connect(this, SIGNAL(flash(const QString &)), window, SLOT(flash(const QString &)));
+  if (!windows.contains(message.nick)) {
+    usedSlots++;
+    PopupWindow *window = new PopupWindow(message);
+    connect(window, SIGNAL(aboutToClose(const QString &, int)), SLOT(popupClosed(const QString &, int)));
+    connect(window, SIGNAL(openChat(const QString &, bool)), SIGNAL(openChat(const QString &, bool)));
+    connect(this, SIGNAL(freeSlot(int)), window, SLOT(freeSlot(int)));
+    connect(this, SIGNAL(flash(const QString &)), window, SLOT(flash(const QString &)));
 
-  if (normal)
-    window->flash(normalStyle);
-  else
-    window->flash(flashStyle);
+    if (normal)
+      window->flash(normalStyle);
+    else
+      window->flash(flashStyle);
 
-  window->start(usedSlots);
-  if (!windows.contains(message.nick))
+    window->start(usedSlots);
+
     windows.insert(message.nick, window);
+  }
+  else
+    windows.value(message.nick)->setMessage(message);
 }
 
 
@@ -108,6 +119,9 @@ void PopupManagerPrivate::flash()
 void PopupManagerPrivate::popupClosed(const QString &nick, int slot)
 {
   usedSlots--;
+  if (windows.contains(nick))
+    windows.remove(nick);
+
   emit freeSlot(slot);
 
   if (!queue.isEmpty())

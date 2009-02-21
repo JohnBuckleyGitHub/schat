@@ -34,6 +34,7 @@ class PopupManagerPrivate : public QObject
 
 public:
   PopupManagerPrivate();
+  ~PopupManagerPrivate();
   void popupMsg(const PopupWindow::Message &message);
   void readStyleSheets();
 
