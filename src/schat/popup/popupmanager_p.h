@@ -37,9 +37,15 @@ public:
   void popupMsg(const PopupWindow::Message &message);
 
   int maxSlots;                          ///< Максимальное число окон.
-  int usedSlot;                          ///< Число занятых слотов.
+  int usedSlots;                         ///< Число занятых слотов.
   QHash<QString, PopupWindow *> windows; ///< Созданные окна в качестве ключа используется ник.
   QQueue<PopupWindow::Message> queue;    ///< Очередь сообщений для показа.
+
+signals:
+  void freeSlot(int slot);
+
+public slots:
+  void popupClosed(const QString &nick, int slot);
 };
 
 #endif /* POPUPMANAGER_P_H_ */

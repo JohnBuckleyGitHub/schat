@@ -51,13 +51,14 @@ class PopupWindow::Private
 public:
   Private();
 
-  bool normal;
-  int slot;
-  QLabel *nick;
-  QLabel *time;
-  QString flashStyle;
-  QString normalStyle;
-  QTextBrowser *text;
+  bool normal;         ///< Флаг стиля, \a true нормальный, иначе оранжевый.
+  bool pub;            ///< Сообщение является обращением по имени из основного канала.
+  int slot;            ///< Занятый окном слот, используется для расчёта позиции на экране.
+  QLabel *nick;        ///< Обеспечивает отображение и хранение ника отправителя.
+  QLabel *time;        ///< Обеспечивает отображение времени сообщения.
+  QString flashStyle;  ///< Оранжевый стиль.
+  QString normalStyle; ///< Нормальный стиль.
+  QTextBrowser *text;  ///< Обеспечивает отображение текста сообщения.
 };
 
 
@@ -90,10 +91,15 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
 {
   setObjectName("PopupWindow");
   setAttribute(Qt::WA_DeleteOnClose, true);
+  d->pub = message.pub;
 
   d->nick = new QLabel(message.nick, this);
+  d->nick->setTextFormat(Qt::PlainText);
   d->nick->setObjectName("NickLabel");
+
   d->time = new QLabel(message.time, this);
+  d->time->setTextFormat(Qt::PlainText);
+
   d->text = new PopupTextBrowser(this);
   d->text->setHtml(message.html);
 
@@ -137,12 +143,7 @@ PopupWindow::~PopupWindow()
  */
 void PopupWindow::start(int slot)
 {
-  d->slot = slot;
-
-  QRect geometry = QDesktopWidget().availableGeometry();
-//  qDebug() << geometry.right() << geometry.bottom();
-
-  move(geometry.right() - Width, geometry.bottom() - (slot == 1 ? Height : (Height + Space) * slot));
+  moveToSlot(slot);
 
   show();
 //  qScrollEffect(this, QEffects::LeftScroll, 200);
@@ -154,8 +155,21 @@ void PopupWindow::start(int slot)
  */
 void PopupWindow::close()
 {
-  emit aboutToClose(d->nick->text());
+  emit aboutToClose(d->nick->text(), d->slot);
   QWidget::close();
+}
+
+
+/*!
+ * Обработка освобождения слота.
+ * Если освободившийся слот меньше, то смещается на один слот вниз.
+ *
+ * \param slot Освободившийся слот.
+ */
+void PopupWindow::freeSlot(int slot)
+{
+  if (slot < d->slot)
+    moveToSlot(--d->slot);
 }
 
 
@@ -187,6 +201,18 @@ void PopupWindow::flash()
 
 void PopupWindow::openChat()
 {
-  emit openChat(d->nick->text());
+  emit openChat(d->nick->text(), d->pub);
   close();
+}
+
+
+/*!
+ * Перемещение окна в заданный слот.
+ * Определяются координаты слота и окно перемещается туда.
+ */
+void PopupWindow::moveToSlot(int slot)
+{
+  d->slot = slot;
+  QRect geometry = QDesktopWidget().availableGeometry();
+  move(geometry.right() - Width, geometry.bottom() - (slot == 1 ? Height : (Height + Space) * slot));
 }
