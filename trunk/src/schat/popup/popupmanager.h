@@ -34,6 +34,9 @@ public:
   PopupManager(QObject *parent = 0);
   ~PopupManager();
 
+signals:
+  void openChat(const QString &nick, bool pub);
+
 public slots:
   void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
 
