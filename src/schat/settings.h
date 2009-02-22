@@ -33,7 +33,7 @@
 
 class AbstractProfile;
 
-#define settings (static_cast<Settings *>(AbstractSettings::instance()))
+#define settings (static_cast<Settings *>(AbstractSettings::instance())) /// \todo Удалить этот макрос.
 #define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
 /*!
@@ -72,6 +72,7 @@ public:
   bool save(const QString &key, bool value);
   bool save(const QString &key, const QString &value);
   bool save(const QString &key, int value);
+  const QString& richTextCSS();
   inline AbstractProfile* profile()                    { return m_profile; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
   inline QByteArray splitter() const                   { return m_splitter; }
@@ -111,12 +112,14 @@ private:
   void saveRecentServers();
 
   AbstractProfile *m_profile;
+  bool m_initRichTextCSS;
   QByteArray m_splitter;
   QPoint m_pos;
   QPointer<Emoticons> m_emoticons;
   QPointer<Update> m_update;
   QSettings *m_default;
   QSize m_size;
+  QString m_richTextCSS;
   QTimer *m_updateTimer;
 };
 

@@ -43,16 +43,6 @@ ChatViewPrivate::ChatViewPrivate(ChatView *parent)
   #ifndef SCHAT_NO_WEBKIT
     style = new ChatWindowStyleOutput(chatStyle, chatStyleVariant);
     grouping = SimpleSettings->getBool("MessageGrouping");
-  #else
-    styleSheet = "a { color:#815d53; text-decoration:none; }"
-    ".sender, .sender a { color:#185074; }"
-    ".me, .meSender a { color:#cd00cd; }"
-    ".oldClientProtocol, .oldServerProtocol, .badNickName, .accessDenied, .disconnect { color:#da251d; }"
-    ".ts, .preSb, .newUser, .newUser a, .userLeft, .userLeft a, .away, .away a { color:#8797a3; }"
-    ".newUser a, .userLeft a, .meSender a { font-weight:bold; }"
-    ".ready { color:#6bb521; }"
-    ".info, .changedNick, .changedNick a { color:#5096cf; }"
-    ".changedNick a { font-weight:bold; }";
   #endif
 
   strict = Emoticons::strictParse();
@@ -160,7 +150,7 @@ ChatView::ChatView(QWidget *parent)
     d = new ChatViewPrivate(this);
 
     setOpenLinks(false);
-    document()->setDefaultStyleSheet(d->styleSheet);
+    document()->setDefaultStyleSheet(SimpleSettings->richTextCSS());
     setFrameShape(QFrame::NoFrame);
     connect(this, SIGNAL(anchorClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
     #if QT_VERSION >= 0x040500
@@ -168,7 +158,7 @@ ChatView::ChatView(QWidget *parent)
     #endif
   #endif
 
-  connect(settings, SIGNAL(changed(int)), SLOT(notify(int)));
+  connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
   setFocusPolicy(Qt::NoFocus);
 
   createActions();
@@ -255,10 +245,9 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
 void ChatView::addFilteredMsg(const QString &msg, bool strict)
 {
   QTextDocument doc;
-  #ifdef SCHAT_NO_WEBKIT
-    doc.setDefaultStyleSheet(d->styleSheet);
-  #endif
+  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
   doc.setHtml(msg);
+
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
   html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Сервисное сообщение:")).arg(html);
 
@@ -274,10 +263,9 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
   d->empty = false;
 
   QTextDocument doc;
-  #ifdef SCHAT_NO_WEBKIT
-    doc.setDefaultStyleSheet(d->styleSheet);
-  #endif
+  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
   doc.setHtml(message);
+
   QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
 

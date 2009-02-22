@@ -59,7 +59,6 @@ public:
     static QString makeStatus(const QString &message);
 
     QAction *selectAll;
-    QString styleSheet;
   #endif
 };
 

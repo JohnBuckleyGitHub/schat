@@ -29,7 +29,7 @@
  * \brief Конструктор класса Settings.
  */
 Settings::Settings(const QString &filename, QObject *parent)
-  : AbstractSettings(filename, parent)
+  : AbstractSettings(filename, parent), m_initRichTextCSS(false)
 {
   m_profile = new AbstractProfile(this);
   m_updateTimer = new QTimer(this);
@@ -72,6 +72,24 @@ bool Settings::save(const QString &key, int value)
     setInt(key, value);
     return true;
   }
+}
+
+
+/*!
+ * Возвращает константную ссылку на стандартный CSS стиль для Rich Text движка.
+ */
+const QString& Settings::richTextCSS()
+{
+   if (!m_initRichTextCSS) {
+     QFile file(":/css/richtext.css");
+     if (file.open(QFile::ReadOnly)) {
+       m_richTextCSS = QLatin1String(file.readAll());
+       file.close();
+     }
+     m_initRichTextCSS = true;
+   }
+
+   return m_richTextCSS;
 }
 
 
