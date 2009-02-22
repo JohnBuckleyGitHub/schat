@@ -89,6 +89,7 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
   d->time->setTextFormat(Qt::PlainText);
 
   d->text = new PopupTextBrowser(this);
+  d->text->document()->setDefaultStyleSheet(SimpleSettings->richTextCSS());
   d->text->setHtml(message.html);
 
   QGridLayout *mainLay = new QGridLayout(this);
