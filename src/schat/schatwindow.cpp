@@ -339,8 +339,9 @@ void SChatWindowPrivate::createStatusBar()
 
   statusCombo = new QComboBox(q);
   statusCombo->setIconSize(QSize(14, 14));
-  statusCombo->addItem(QIcon(":/images/status-online.png"), QObject::tr("В сети"));
-  statusCombo->addItem(QIcon(":/images/status-away.png"), QObject::tr("Отсутствую"));
+  statusCombo->addItem(QIcon(":/images/status-online.png"),  QObject::tr("В сети"));
+  statusCombo->addItem(QIcon(":/images/status-away.png"),    QObject::tr("Отсутствую"));
+  statusCombo->addItem(QIcon(":/images/status-dnd.png"),     QObject::tr("Не беспокоить"));
   statusCombo->addItem(QIcon(":/images/status-offline.png"), QObject::tr("Не в сети"));
   statusCombo->setFocusPolicy(Qt::NoFocus);
 
@@ -541,8 +542,8 @@ void SChatWindowPrivate::sendMsg(const QString &msg, bool cmd)
     if (parseCmd(tab, msg))
       return;
 
-  if (exitAwayOnSend) {
-    if (profile->status() == schat::StatusAway || profile->status() == schat::StatusAutoAway)
+  if (exitAwayOnSend) { /// \todo Изменить название опции.
+    if (profile->status() != schat::StatusNormal)
       sendStatus(schat::StatusNormal);
   }
 
@@ -594,7 +595,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
-  statusCombo->setCurrentIndex(0);
+  statusCombo->setCurrentIndex(StatusOnline);
 
   if (network.isEmpty()) {
     statusLabel->setText(QObject::tr("Сервер %1").arg(server));
@@ -612,7 +613,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
     clientService->sendMessage("", "/motd");
   }
 
-  if (autoAway && profile->status() != schat::StatusAway && !idleDetector.isActive())
+  if (autoAway && profile->status() != schat::StatusAway && !idleDetector.isActive()) /// \todo ШИТО?
     idleDetector.start();
 }
 
@@ -625,7 +626,7 @@ void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
   connectMovie->movie()->setPaused(false);
   connectMovie->setVisible(true);
   connectLabel->setVisible(false);
-  statusCombo->setCurrentIndex(2);
+  statusCombo->setCurrentIndex(StatusOffline);
 
   if (network)
     statusLabel->setText(QObject::tr("Подключение к сети %1...").arg(server));
@@ -645,7 +646,7 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_disconnect.png"));
-  statusCombo->setCurrentIndex(2);
+  statusCombo->setCurrentIndex(StatusOffline);
 
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
@@ -681,11 +682,11 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
   if (data2.contains(profile->nick())) {
     profile->setStatus(data1.at(0));
     if (status == schat::StatusAutoAway || status == schat::StatusAway) {
-      statusCombo->setCurrentIndex(1);
+      statusCombo->setCurrentIndex(StatusAway);
       tray->setAway();
     }
     else {
-      statusCombo->setCurrentIndex(0);
+      statusCombo->setCurrentIndex(StatusOnline);
       tray->setAway(false);
     }
 
@@ -701,6 +702,7 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
         return;
       }
 
+  // Обновление всплывающих подсказок приватов.
   int count = tabs->count();
   if (count > 0) {
     QHash<QString, int> privateTabs;
@@ -1343,21 +1345,26 @@ void SChatWindow::sound(bool toggle)
 }
 
 
+/*!
+ * Обработка изменения статуса пользователем.
+ */
 void SChatWindow::statusChangedByUser(int index)
 {
-  if (index < 2) {
-    if (index == 1) {
-      d->idleDetector.stop();
-      d->sendStatus(schat::StatusAway);
-    }
-    else
-      d->sendStatus(schat::StatusNormal);
+  if (index == SChatWindowPrivate::StatusOffline) {
+    d->clientService->quit();
+    return;
+  }
 
-    if (!d->clientService->isReady())
-      d->clientService->connectToHost();
+  if (index == SChatWindowPrivate::StatusAway) {
+    d->idleDetector.stop();
+    d->sendStatus(schat::StatusAway);
+  }
+  else if (index == SChatWindowPrivate::StatusDnD) {
+    d->idleDetector.stop();
+    d->sendStatus(schat::StatusDnD);
   }
   else
-    d->clientService->quit();
+    d->sendStatus(schat::StatusNormal);
 }
 
 

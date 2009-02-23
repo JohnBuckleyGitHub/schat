@@ -40,6 +40,13 @@ class WelcomeDialog;
 class SChatWindowPrivate
 {
 public:
+  enum Status {
+    StatusOnline,
+    StatusAway,
+    StatusDnD,
+    StatusOffline
+  };
+
   SChatWindowPrivate(SChatWindow *parent);
   ~SChatWindowPrivate();
 
