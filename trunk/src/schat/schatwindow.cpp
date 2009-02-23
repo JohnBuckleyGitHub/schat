@@ -426,7 +426,7 @@ void SChatWindowPrivate::createTrayIcon()
 
 
 /*!
- * Отображает в тексте приватов Away-статусы.
+ * Отображает в тексте приватов статусы.
  * Формирует HTML строку в зависимости от статуса и пола для отображения в тексте.
  * Если происходит изменение собственного статуса, то сообщение добавляется
  * во все открытые приваты, иначе происходит поиск вкладки с приватом и в
@@ -436,27 +436,27 @@ void SChatWindowPrivate::createTrayIcon()
  * \param status Статус.
  * \param nick   Ник пользователя.
  */
-void SChatWindowPrivate::displayAway(quint32 status, const QString &nick)
+void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
 {
   if (!users->isUser(nick))
     return;
 
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString html = "<span class='away'>";
+  QString html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
+  if (users->profile(nick).genderNum())
+    html += QObject::tr("сменила статус на:");
+  else
+    html += QObject::tr("сменил статус на:");
 
-  if (status == schat::StatusAway || status == schat::StatusAutoAway) {
-    html += QObject::tr("<a href='nick:%1'>%2</a> отсутствует").arg(nickHex).arg(escaped);
-  }
-  else {
-    AbstractProfile profile(users->profile(nick));
-    if (profile.genderNum())
-      html += QObject::tr("<a href='nick:%1'>%2</a> вернулась").arg(nickHex).arg(escaped);
-    else
-      html += QObject::tr("<a href='nick:%1'>%2</a> вернулся").arg(nickHex).arg(escaped);
-  }
+  html += " <b>";
 
-  html += "</span>";
+  if (status == schat::StatusAutoAway || status == schat::StatusAway)
+    html += QObject::tr("Отсутствую");
+  else if (status == schat::StatusDnD)
+    html += QObject::tr("Не беспокоить");
+  else
+    html += QObject::tr("В сети");
+
+  html += "</b></span>";
 
   if (nick == profile->nick()) {
     msgToAllPrivateTabs(html);
@@ -613,7 +613,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
     clientService->sendMessage("", "/motd");
   }
 
-  if (autoAway && profile->status() != schat::StatusAway && !idleDetector.isActive()) /// \todo ШИТО?
+  if (autoAway && profile->status() == schat::StatusNormal && !idleDetector.isActive())
     idleDetector.start();
 }
 
@@ -700,7 +700,7 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
   if (data1.size() > 1)
     if (data1.at(1))
       if (users->isUser(data2.at(0))) {
-        displayAway(status, data2.at(0));
+        displayStatus(status, data2.at(0));
         return;
       }
 

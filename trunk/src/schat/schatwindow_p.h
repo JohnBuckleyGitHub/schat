@@ -63,7 +63,7 @@ public:
   void createStatusBar();
   void createToolButtons();
   void createTrayIcon();
-  void displayAway(quint32 status, const QString &nick);
+  void displayStatus(quint32 status, const QString &nick);
   void hideChat();
   void msgToAllPrivateTabs(const QString &msg);
   void restoreGeometry();
