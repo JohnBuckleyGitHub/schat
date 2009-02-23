@@ -71,12 +71,15 @@ public:
   inline void setGender(quint8 _gender)            { setGender(gender(_gender)); }
   inline void setHost(const QString &host)         { m_host = host; }
   inline void setNick(const QString &nick)         { m_nick = nick.simplified().left(MaxNickLength); }
-  inline void setStatus(quint32 status)            { m_status = status; }
   inline void setUserAgent(const QString &agent)   { m_userAgent = agent.simplified(); }
   QStringList pack() const;
   static bool isValidNick(const QString &nick);
   static bool isValidUserAgent(const QString &a);
+  void setStatus(quint32 status);
   void unpack(const QStringList &list);
+
+signals:
+  void statusChanged(quint32 newStatus);
 
 private:
   bool m_male;

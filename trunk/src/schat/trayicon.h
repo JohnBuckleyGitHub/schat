@@ -28,7 +28,8 @@ class Settings;
 /*!
  * \brief Иконка в системном трее.
  */
-class TrayIcon : public QSystemTrayIcon {
+class TrayIcon : public QSystemTrayIcon
+{
   Q_OBJECT
 
 public:
@@ -41,11 +42,11 @@ public:
   inline Message message() const { return m_message; }
   void notice(bool enable);
   void playSound(const QString &key);
-  void setAway(bool away = true);
 
 private slots:
   void messageClicked();
   void notify(int code);
+  void setStatus(quint32 status);
   void timeout();
 
 private:
