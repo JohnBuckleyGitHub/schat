@@ -109,9 +109,6 @@ bool AbstractProfile::isValidUserAgent(const QString &a)
 }
 
 
-/** [public]
- *
- */
 QStringList AbstractProfile::pack() const
 {
   QStringList list;
@@ -120,9 +117,13 @@ QStringList AbstractProfile::pack() const
 }
 
 
-/** [public]
- *
- */
+void AbstractProfile::setStatus(quint32 status)
+{
+  m_status = status;
+  emit statusChanged(status);
+}
+
+
 void AbstractProfile::unpack(const QStringList &list)
 {
   setNick(list.at(Nick));

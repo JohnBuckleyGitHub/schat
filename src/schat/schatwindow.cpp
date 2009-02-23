@@ -683,11 +683,9 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
     profile->setStatus(data1.at(0));
     if (status == schat::StatusAutoAway || status == schat::StatusAway) {
       statusCombo->setCurrentIndex(StatusAway);
-      tray->setAway();
     }
     else {
       statusCombo->setCurrentIndex(StatusOnline);
-      tray->setAway(false);
     }
 
     if (autoAway && status != schat::StatusAway && !idleDetector.isActive())
@@ -1365,6 +1363,9 @@ void SChatWindow::statusChangedByUser(int index)
   }
   else
     d->sendStatus(schat::StatusNormal);
+
+  if (!d->clientService->isReady())
+    d->clientService->connectToHost();
 }
 
 

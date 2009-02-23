@@ -18,8 +18,10 @@
 
 #include <QtGui>
 
-#include "trayicon.h"
+#include "abstractprofile.h"
+#include "protocol.h"
 #include "settings.h"
+#include "trayicon.h"
 
 /*!
  * \brief Конструктор класса TrayIcon.
@@ -27,7 +29,7 @@
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
 {
-  setAway(false);
+  setStatus(schat::StatusNormal);
   init();
 }
 
@@ -69,22 +71,6 @@ void TrayIcon::playSound(const QString &key)
 }
 
 
-void TrayIcon::setAway(bool away)
-{
-  if (away) {
-    m_icon = QIcon(":/images/logo16-away.png");
-  }
-  else {
-    if (Settings::isNewYear())
-      m_icon = QIcon(":/images/logo16-ny.png");
-    else
-      m_icon = QIcon(":/images/logo16.png");
-  }
-
-  setIcon(m_icon);
-}
-
-
 /*!
  * Обработка щелчка мыши по сообщению в трее.
  */
@@ -123,6 +109,26 @@ void TrayIcon::notify(int code)
 
 
 /*!
+ * Обработка изменения статуса пользователя.
+ *
+ * \param status Новый статус.
+ */
+void TrayIcon::setStatus(quint32 status)
+{
+  if (status == schat::StatusAway || status == schat::StatusAutoAway)
+    m_icon = QIcon(":/images/logo16-away.png");
+  else if (status == schat::StatusDnD)
+    m_icon = QIcon(":/images/logo16-dnd.png");
+  else if (Settings::isNewYear())
+    m_icon = QIcon(":/images/logo16-ny.png");
+  else
+    m_icon = QIcon(":/images/logo16.png");
+
+  setIcon(m_icon);
+}
+
+
+/*!
  * Обработка события таймера \a m_timer.
  * Изменяет иконку на противоположную.
  */
@@ -154,6 +160,7 @@ void TrayIcon::init()
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(this, SIGNAL(messageClicked()), SLOT(messageClicked()));
+  connect(m_settings->profile(), SIGNAL(statusChanged(quint32)), SLOT(setStatus(quint32)));
 }
 
 
