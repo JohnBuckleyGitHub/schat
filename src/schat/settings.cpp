@@ -187,6 +187,7 @@ void Settings::read()
   setBool("ExitAwayOnSend",         true);
   setBool("AutoAway",               true);
   setBool("PopupWindow",            true);
+  setBool("PopupWindowPublic",      true);
   setInt("AutoAwayTime",            10);
   setInt("PopupWindowDelay",        10);
   setString("Style",                "Plastique");

@@ -19,6 +19,7 @@
 #include <QtGui>
 #include <QtWebKit>
 
+#include "abstractprofile.h"
 #include "channellog.h"
 #include "chatview.h"
 #include "chatview_p.h"
@@ -310,7 +311,11 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
 
   // Поддержка извещателя
   if (SimpleSettings->getBool("PopupWindow") && notice) {
-    if (!(options & MsgPublic))
+    if (options & MsgPublic) {
+      if (SimpleSettings->getBool("PopupWindowPublic") && d->prepareCmd(SimpleSettings->profile()->nick(), html, false))
+        emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, true);
+    }
+    else
       emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, false);
   }
 

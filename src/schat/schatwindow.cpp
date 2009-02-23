@@ -1240,6 +1240,8 @@ void SChatWindow::openChat(const QString &nick, bool pub)
     if (tab.first != -1)
       d->tabs->setCurrentIndex(tab.first);
   }
+  else
+    d->tabs->setCurrentWidget(d->main);
 
   d->showChat();
 }
