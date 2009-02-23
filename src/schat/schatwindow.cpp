@@ -679,20 +679,24 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 {
   quint32 status = data1.at(0);
 
+  // Проверка наличия собственного ника в списке data2.
   if (data2.contains(profile->nick())) {
     profile->setStatus(data1.at(0));
-    if (status == schat::StatusAutoAway || status == schat::StatusAway) {
-      statusCombo->setCurrentIndex(StatusAway);
-    }
-    else {
-      statusCombo->setCurrentIndex(StatusOnline);
-    }
 
-    if (autoAway && status != schat::StatusAway && !idleDetector.isActive())
+    if (status == schat::StatusAutoAway || status == schat::StatusAway)
+      statusCombo->setCurrentIndex(StatusAway);
+    else if (status == schat::StatusDnD)
+      statusCombo->setCurrentIndex(StatusDnD);
+    else
+      statusCombo->setCurrentIndex(StatusOnline);
+
+    if (autoAway && status == schat::StatusNormal && !idleDetector.isActive())
       idleDetector.start();
   }
 
+  // Обновление списка пользователей.
   users->setStatus(status, data2);
+
   if (data1.size() > 1)
     if (data1.at(1))
       if (users->isUser(data2.at(0))) {

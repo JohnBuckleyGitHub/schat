@@ -160,18 +160,20 @@ QString UserView::userToolTip(const AbstractProfile &profile)
 {
   QString html = QString("<h3><img src='%1' align='left'> %2</h3><table>").arg(":/images/" + profile.gender() + ".png").arg(Qt::escape(profile.nick()));
   if (!profile.fullName().isEmpty())
-    html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("ФИО:")).arg(Qt::escape(profile.fullName()));
-  html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
-  html += QString("<tr><td>%1</td><td>%2</td></tr>").arg(tr("Адрес:")).arg(Qt::escape(profile.host()));
+    html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("ФИО:")).arg(Qt::escape(profile.fullName()));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("Адрес:")).arg(Qt::escape(profile.host()));
 
   quint32 status = profile.status();
-  html += QString("<tr><td>%1</td>").arg(tr("Статус:"));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(tr("Статус:"));
   if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    html += QString("<td>%1</td></tr>").arg(tr("Отсутствую"));
+    html += tr("Отсутствую");
+  else if (status == schat::StatusDnD)
+    html += tr("Не беспокоить");
   else
-    html += QString("<td>%1</td></tr>").arg(tr("В сети"));
+    html += tr("В сети");
 
-  html += "</table>";
+  html += "</td></tr></table>";
 
   return html;
 }
@@ -198,23 +200,25 @@ void UserView::rename(const QString &oldNick, const QString &newNick)
 
 
 /*!
- * Установка статуса пользователя.
+ * Установка статуса пользователей.
+ *
+ * \param status Статус.
+ * \param users  Список ников пользователей с заданным статусом.
  */
 void UserView::setStatus(quint32 status, const QStringList &users)
 {
   if (users.isEmpty())
     return;
 
-  if (status > schat::StatusAutoAway )
-    status = schat::StatusNormal;
-
   foreach (QString user, users) {
     QStandardItem *item = d->item(user);
     if (item) {
-      if (status == schat::StatusNormal)
-        item->setForeground(QPalette().brush(QPalette::WindowText));
-      else if (status == schat::StatusAway || status == schat::StatusAutoAway)
+      if (status == schat::StatusAway || status == schat::StatusAutoAway)
         item->setForeground(QBrush(QColor("#90a4b3")));
+      else if (status == schat::StatusDnD)
+        item->setForeground(QBrush(QColor("#73bbef")));
+      else
+        item->setForeground(QPalette().brush(QPalette::WindowText));
 
       item->setData(status, StatusData);
       item->setToolTip(userToolTip(profile(user)));
