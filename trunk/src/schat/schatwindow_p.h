@@ -66,11 +66,13 @@ public:
   void displayStatus(quint32 status, const QString &nick);
   void hideChat();
   void msgToAllPrivateTabs(const QString &msg);
+  void mute(bool mute);
   void restoreGeometry();
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
   void showChat();
+  void sound(bool toggle);
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
   void statusUnconnected(bool echo);
@@ -82,10 +84,9 @@ public:
 
   AbstractProfile *profile;
   bool autoAway;
+  bool enableMotd;
   bool exitAwayOnSend;
   bool motd;
-  bool motdEnable;
-  bool sound;
   ClientService *clientService;
   Idle idleDetector;
   int autoAwayTime;

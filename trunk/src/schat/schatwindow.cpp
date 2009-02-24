@@ -157,7 +157,7 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
   if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
     AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
 
-    if (sound)
+    if (soundAction->data().toBool())
       tray->playSound(key);
 
     if (!tab->notice()) {
@@ -502,6 +502,21 @@ void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
 }
 
 
+void SChatWindowPrivate::mute(bool mute)
+{
+  if (mute) {
+    soundAction->setIcon(QIcon(":/images/sound_mute.png"));
+    soundAction->setText(QObject::tr("Включить звуки"));
+  }
+  else {
+    soundAction->setIcon(QIcon(":/images/sound.png"));
+    soundAction->setText(QObject::tr("Отключить звуки"));
+  }
+
+  soundAction->setData(!mute);
+}
+
+
 /*!
  * Восстанавливает геометрию окна.
  */
@@ -586,6 +601,32 @@ void SChatWindowPrivate::showChat()
 }
 
 
+void SChatWindowPrivate::sound(bool toggle)
+{
+  bool enable = true;
+
+  if (toggle) {
+    if (pref->profile()->status() == schat::StatusDnD) {
+      if (soundAction->data().toBool()) {
+        pref->setBool("Sound/MuteInDnD", true);
+        enable = false;
+      }
+      else {
+        pref->setBool("Sound/MuteInDnD", false);
+        pref->setBool("Sound", true);
+      }
+    }
+    else
+      pref->setBool("Sound", !pref->getBool("Sound"));
+  }
+
+  if (pref->profile()->status() != schat::StatusDnD)
+    enable = pref->getBool("Sound");
+
+  mute(!enable);
+}
+
+
 /*!
  * Отображение состояния успешного подключения к серверу/сети.
  */
@@ -608,7 +649,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
     q->setWindowTitle(QApplication::applicationName() + " - " + network);
   }
 
-  if (motdEnable && motd) {
+  if (enableMotd && motd) {
     motd = false;
     clientService->sendMessage("", "/motd");
   }
@@ -651,6 +692,8 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
 
+  mute(!pref->getBool("Sound"));
+
   if (echo)
     main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
 }
@@ -681,12 +724,16 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 
   // Проверка наличия собственного ника в списке data2.
   if (data2.contains(profile->nick())) {
+    mute(!pref->getBool("Sound"));
     profile->setStatus(data1.at(0));
 
     if (status == schat::StatusAutoAway || status == schat::StatusAway)
       statusCombo->setCurrentIndex(StatusAway);
-    else if (status == schat::StatusDnD)
+    else if (status == schat::StatusDnD) {
       statusCombo->setCurrentIndex(StatusDnD);
+      if (pref->getBool("Sound/MuteInDnD") && soundAction->data().toBool())
+        mute(true);
+    }
     else
       statusCombo->setCurrentIndex(StatusOnline);
 
@@ -746,7 +793,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->pref        = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
   d->profile     = d->pref->profile();
   d->pref->read();
-  d->motdEnable = d->pref->getBool("MotdEnable");
+  d->enableMotd  = d->pref->getBool("MotdEnable");
 
   d->send        = new SendWidget(this);
   d->central     = new QWidget(this);
@@ -1331,19 +1378,7 @@ void SChatWindow::showSettings()
 
 void SChatWindow::sound(bool toggle)
 {
-  if (toggle)
-    d->pref->setBool("Sound", !d->pref->getBool("Sound"));
-
-  d->sound = d->pref->getBool("Sound");
-
-  if (d->sound) {
-    d->soundAction->setIcon(QIcon(":/images/sound.png"));
-    d->soundAction->setText(tr("Отключить звуки"));
-  }
-  else {
-    d->soundAction->setIcon(QIcon(":/images/sound_mute.png"));
-    d->soundAction->setText(tr("Включить звуки"));
-  }
+  d->sound(toggle);
 }
 
 
