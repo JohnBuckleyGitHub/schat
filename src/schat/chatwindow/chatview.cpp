@@ -23,6 +23,7 @@
 #include "channellog.h"
 #include "chatview.h"
 #include "chatview_p.h"
+#include "protocol.h"
 #include "settings.h"
 
 #ifndef SCHAT_NO_WEBKIT
@@ -310,7 +311,10 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
   }
 
   // Поддержка извещателя
-  if (SimpleSettings->getBool("PopupWindow") && notice) {
+  if (notice && SimpleSettings->profile()->status() == schat::StatusDnD && SimpleSettings->getBool("NoPopupWindowInDnD"))
+    notice = false;
+
+  if (notice && SimpleSettings->getBool("PopupWindow")) {
     if (options & MsgPublic) {
       if (SimpleSettings->getBool("PopupWindowPublic") && d->prepareCmd(SimpleSettings->profile()->nick(), html, false))
         emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, true);
