@@ -70,7 +70,7 @@ private slots:
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettings();
-  void sound(bool toggle = true);
+  void sound();
   void statusChangedByUser(int index);
   void stopNotice(int index);
   void syncUsersEnd();

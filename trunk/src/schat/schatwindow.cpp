@@ -502,6 +502,11 @@ void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
 }
 
 
+/*!
+ * Включает/выключает звук.
+ *
+ * \param mute \a true выключить звук.
+ */
 void SChatWindowPrivate::mute(bool mute)
 {
   if (mute) {
@@ -601,29 +606,41 @@ void SChatWindowPrivate::showChat()
 }
 
 
-void SChatWindowPrivate::sound(bool toggle)
+/*!
+ * Включение/выключение звука пользователем.
+ * Если текущий статус равен schat::StatusDnD и звук включен,
+ * то опция \b Sound/MuteInDnD устанавливается в \a true и звук выключается.
+ * иначе если звук выключен, звук включается глобально, опция \b Sound и
+ * опция \b Sound/MuteInDnD устанавливается в \a true.
+ *
+ * Для всех прочих статусов, значение опции \b Sound меняется на противоположное.
+ */
+void SChatWindowPrivate::sound()
 {
-  bool enable = true;
-
-  if (toggle) {
-    if (pref->profile()->status() == schat::StatusDnD) {
-      if (soundAction->data().toBool()) {
-        pref->setBool("Sound/MuteInDnD", true);
-        enable = false;
-      }
-      else {
-        pref->setBool("Sound/MuteInDnD", false);
-        pref->setBool("Sound", true);
-      }
+  if (pref->profile()->status() == schat::StatusDnD) {
+    if (soundAction->data().toBool()) {
+      pref->setBool("Sound/MuteInDnD", true);
+      mute(true);
     }
-    else
-      pref->setBool("Sound", !pref->getBool("Sound"));
+    else {
+      pref->setBool("Sound/MuteInDnD", false);
+      pref->setBool("Sound", true);
+      mute(false);
+    }
   }
+  else {
+    pref->setBool("Sound", !pref->getBool("Sound"));
+    soundState();
+  }
+}
 
-  if (pref->profile()->status() != schat::StatusDnD)
-    enable = pref->getBool("Sound");
 
-  mute(!enable);
+/*!
+ * Устанавливает состояние звука на основе настроек.
+ */
+void SChatWindowPrivate::soundState()
+{
+  mute(!pref->getBool("Sound"));
 }
 
 
@@ -692,7 +709,7 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
 
-  mute(!pref->getBool("Sound"));
+  soundState();
 
   if (echo)
     main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
@@ -724,7 +741,7 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 
   // Проверка наличия собственного ника в списке data2.
   if (data2.contains(profile->nick())) {
-    mute(!pref->getBool("Sound"));
+    soundState();
     profile->setStatus(data1.at(0));
 
     if (status == schat::StatusAutoAway || status == schat::StatusAway)
@@ -1376,9 +1393,12 @@ void SChatWindow::showSettings()
 }
 
 
-void SChatWindow::sound(bool toggle)
+/*!
+ * \sa SChatWindowPrivate::sound()
+ */
+void SChatWindow::sound()
 {
-  d->sound(toggle);
+  d->sound();
 }
 
 
@@ -1429,7 +1449,10 @@ void SChatWindow::settingsChanged(int notify)
       break;
 
     case Settings::SoundChanged:
-      sound(false);
+      d->soundState();
+      if (d->profile->status() == schat::StatusDnD && d->pref->getBool("Sound/MuteInDnD")) {
+        d->mute(true);
+      }
       break;
 
     case Settings::AwaySettingsChanged:
@@ -1653,7 +1676,7 @@ void SChatWindow::createActions()
 
   // Включить/выключить звук
   d->soundAction = new QAction(this);
-  sound(false);
+  d->soundState();
   connect(d->soundAction, SIGNAL(triggered()), SLOT(sound()));
 
   // Звуки...

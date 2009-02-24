@@ -72,7 +72,8 @@ public:
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
   void showChat();
-  void sound(bool toggle);
+  void sound();
+  void soundState();
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
   void statusUnconnected(bool echo);
