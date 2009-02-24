@@ -233,6 +233,7 @@ void Settings::read()
 
   setBool("Sound/MessageEnable",        true);
   setBool("Sound/PrivateMessageEnable", true);
+  setBool("Sound/MuteInDnD",            true);
   setString("Sound/Message",            "Received.wav");
   setString("Sound/PrivateMessage",     "Received.wav");
   QStringList nameFilter;
