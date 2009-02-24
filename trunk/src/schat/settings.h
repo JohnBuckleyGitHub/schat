@@ -69,9 +69,6 @@ public:
   };
 
   Settings(const QString &filename, QObject *parent = 0);
-  bool save(const QString &key, bool value);
-  bool save(const QString &key, const QString &value);
-  bool save(const QString &key, int value);
   const QString& richTextCSS();
   inline AbstractProfile* profile()                    { return m_profile; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
@@ -82,6 +79,9 @@ public:
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
   inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
+  int save(const QString &key, bool value);
+  int save(const QString &key, const QString &value);
+  int save(const QString &key, int value);
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
   void notify(int notify);
   void notify(int notify, int index);

@@ -42,39 +42,6 @@ Settings::Settings(const QString &filename, QObject *parent)
 }
 
 
-bool Settings::save(const QString &key, bool value)
-{
-  if (getBool(key) == value)
-    return false;
-  else {
-    setBool(key, value);
-    return true;
-  }
-}
-
-
-bool Settings::save(const QString &key, const QString &value)
-{
-  if (getString(key) == value)
-    return false;
-  else {
-    setString(key, value);
-    return true;
-  }
-}
-
-
-bool Settings::save(const QString &key, int value)
-{
-  if (getInt(key) == value)
-    return false;
-  else {
-    setInt(key, value);
-    return true;
-  }
-}
-
-
 /*!
  * Возвращает константную ссылку на стандартный CSS стиль для Rich Text движка.
  */
@@ -90,6 +57,36 @@ const QString& Settings::richTextCSS()
    }
 
    return m_richTextCSS;
+}
+
+
+int Settings::save(const QString &key, bool value)
+{
+  if (getBool(key) == value)
+    return 0;
+
+  setBool(key, value);
+  return 1;
+}
+
+
+int Settings::save(const QString &key, const QString &value)
+{
+  if (getString(key) == value)
+    return 0;
+
+  setString(key, value);
+  return 1;
+}
+
+
+int Settings::save(const QString &key, int value)
+{
+  if (getInt(key) == value)
+    return 0;
+
+  setInt(key, value);
+  return 1;
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -59,19 +59,22 @@ SoundWidget::SoundWidget(const QString &key, const QString &name, const QString 
 }
 
 
+int SoundWidget::save()
+{
+  int modified = 0;
+  modified += m_settings->save("Sound/" + m_key + "Enable", m_check->isChecked());
+  modified += m_settings->save("Sound/" + m_key, m_combo->currentText());
+
+  return modified;
+}
+
+
 void SoundWidget::reset(bool enable, const QString &file)
 {
   m_check->setChecked(enable);
   m_combo->setCurrentIndex(m_combo->findText(file));
   m_combo->setEnabled(m_check->isChecked());
   m_play->setEnabled(m_check->isChecked());
-}
-
-
-void SoundWidget::save()
-{
-  m_settings->setBool("Sound/" + m_key + "Enable", m_check->isChecked());
-  m_settings->setString("Sound/" + m_key, m_combo->currentText());
 }
 
 

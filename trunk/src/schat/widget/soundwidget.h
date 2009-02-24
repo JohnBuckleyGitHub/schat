@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ class SoundWidget : public QWidget
 
 public:
   SoundWidget(const QString &key, const QString &name, const QString &desc, const QStringList &sounds, QWidget *parent = 0);
+  int save();
   void reset(bool enable, const QString &file);
-  void save();
 
 signals:
   void play(const QString &file);

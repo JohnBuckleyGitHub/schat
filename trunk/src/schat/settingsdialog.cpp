@@ -161,15 +161,10 @@ void ProfileSettings::save()
     SimpleSettings->notify(Settings::ByeMsgChanged);
   }
 
-  bool modified = false;
-  if (SimpleSettings->save("AutoAway", d->autoAway->isChecked()))
-    modified = true;
-
-  if (SimpleSettings->save("AutoAwayTime", d->autoAwayTime->value()))
-    modified = true;
-
-  if (SimpleSettings->save("ExitAwayOnSend", d->exitAwayOnSend->isChecked()))
-    modified = true;
+  int modified = 0;
+  modified += SimpleSettings->save("AutoAway", d->autoAway->isChecked());
+  modified += SimpleSettings->save("AutoAwayTime", d->autoAwayTime->value());
+  modified += SimpleSettings->save("ExitAwayOnSend", d->exitAwayOnSend->isChecked());
 
   if (modified)
     SimpleSettings->notify(Settings::AwaySettingsChanged);
@@ -553,6 +548,7 @@ class SoundSettings::Private
 public:
   Private() {}
 
+  QCheckBox *muteInDnD;
   QGroupBox *enable;
   SoundWidget *msg;
   SoundWidget *privateMsg;
@@ -575,9 +571,10 @@ SoundSettings::SoundSettings(QWidget *parent)
   QDir dir(QApplication::applicationDirPath() + "/sounds");
   QStringList list = dir.entryList(SimpleSettings->getList("Sound/NameFilter"), QDir::Files);
 
-  d->msg = new SoundWidget("Message", tr("Сообщение"), tr("Сообщение в основной канал"), list, this);
+  d->msg = new SoundWidget("Message", tr("&Сообщение"), tr("Сообщение в основной канал"), list, this);
   connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
-  d->privateMsg = new SoundWidget("PrivateMessage", tr("Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
+
+  d->privateMsg = new SoundWidget("PrivateMessage", tr("&Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
   connect(d->privateMsg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
 
   QVBoxLayout *soundLay = new QVBoxLayout(d->enable);
@@ -601,11 +598,16 @@ SoundSettings::SoundSettings(QWidget *parent)
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
+  d->muteInDnD = new QCheckBox(tr("Статус \"Не беспокоить\" &отключает звук"), this);
+  d->muteInDnD->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает звук"));
+  d->muteInDnD->setChecked(SimpleSettings->getBool("Sound/MuteInDnD"));
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->enable);
   #ifdef Q_WS_X11
     mainLay->addWidget(d->useCmd);
   #endif
+  mainLay->addWidget(d->muteInDnD);
   mainLay->addStretch();
   mainLay->addWidget(url);
   mainLay->setContentsMargins(3, 3, 3, 0);
@@ -618,8 +620,10 @@ SoundSettings::~SoundSettings() { delete d; }
 void SoundSettings::reset(int page)
 {
   if (page == m_id) {
+    d->enable->setChecked(true);
     d->msg->reset(true, "Received.wav");
     d->privateMsg->reset(true, "Received.wav");
+    d->muteInDnD->setChecked(true);
 
     #ifdef Q_WS_X11
       d->useCmd->setChecked(true);
@@ -631,14 +635,19 @@ void SoundSettings::reset(int page)
 
 void SoundSettings::save()
 {
-  SimpleSettings->setBool("Sound", d->enable->isChecked());
-  d->msg->save();
-  d->privateMsg->save();
+  int modified = 0;
+
+  modified += SimpleSettings->save("Sound", d->enable->isChecked());
+  modified += modified += d->msg->save();
+  modified += d->privateMsg->save();
+  modified += SimpleSettings->save("Sound/MuteInDnD", d->muteInDnD->isChecked());
   #ifdef Q_WS_X11
-    SimpleSettings->setBool("Sound/UseExternalCmd", d->useCmd->isChecked());
-    SimpleSettings->setString("Sound/ExternalCmd", d->cmd->text());
+    modified += SimpleSettings->save("Sound/UseExternalCmd", d->useCmd->isChecked());
+    modified += SimpleSettings->save("Sound/ExternalCmd", d->cmd->text());
   #endif
-  SimpleSettings->notify(Settings::SoundChanged);
+
+  if (modified)
+    SimpleSettings->notify(Settings::SoundChanged);
 }
 
 
