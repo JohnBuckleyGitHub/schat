@@ -309,6 +309,13 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
+/*!
+ * Обработка событий от мыши.
+ * - Если нажата кнопка Ctrl и левая кнопка мыши и индекс валидный
+ * вызываем вставку ника.
+ * - Для левой кнопки и не валидного индекса, снимаем выделение со всех итемов.
+ * - Для всех остальных событий вызываем стандартный обработчик.
+ */
 void UserView::mouseReleaseEvent(QMouseEvent *event)
 {
   QModelIndex index = indexAt(event->pos());
@@ -318,6 +325,8 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
 
     nickClicked(item->text());
   }
+  else if (event->button() == Qt::LeftButton && !index.isValid())
+    setCurrentIndex(QModelIndex());
   else
     QListView::mouseReleaseEvent(event);
 }
