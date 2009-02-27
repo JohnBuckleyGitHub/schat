@@ -366,6 +366,7 @@ void SChatWindowPrivate::createToolButtons()
   iconMenu->addAction(interfaceSetAction);
   iconMenu->addAction(emoticonsSetAction);
   iconMenu->addAction(soundSetAction);
+  iconMenu->addAction(notificationSetAction);
   iconMenu->addAction(updateSetAction);
   iconMenu->addAction(miscSetAction);
 
@@ -1683,6 +1684,11 @@ void SChatWindow::createActions()
   d->soundSetAction = new QAction(QIcon(":/images/sound.png"), tr("Звуки..."), this);
   d->soundSetAction->setData(SettingsDialog::SoundPage);
   connect(d->soundSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+
+  // Оповещатель...
+  d->notificationSetAction = new QAction(QIcon(":/images/notification.png"), tr("Оповещатель..."), this);
+  d->notificationSetAction->setData(SettingsDialog::NotificationPage);
+  connect(d->notificationSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Управление сервером...
   d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);

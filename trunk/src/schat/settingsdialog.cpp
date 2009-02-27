@@ -44,6 +44,7 @@ SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
   createPage(QIcon(":/images/applications-graphics.png"), tr("Интерфейс"),     new InterfaceSettings(this));
   createPage(QIcon(":/images/emoticon.png"),              tr("Смайлики"),      new EmoticonsSettings(this));
   createPage(QIcon(":/images/sound.png"),                 tr("Звуки"),         new SoundSettings(this));
+  createPage(QIcon(":/images/notification.png"),          tr("Оповещатель"),   new NotificationSettings(this));
   createPage(QIcon(":/images/update.png"),                tr("Обновление"),    new UpdateSettings(this));
   createPage(QIcon(":/images/application-x-desktop.png"), tr("Разное"),        new MiscSettings(this));
 
@@ -666,6 +667,110 @@ void SoundSettings::play(const QString &file)
   #endif
     QSound::play(file);
 }
+
+
+
+
+class NotificationSettings::Private
+{
+public:
+  Private() {}
+
+  QCheckBox *autoAway;
+  QCheckBox *dnd;
+  QCheckBox *privateMsg;
+  QCheckBox *publicMsg;
+  QCheckBox *timeOut;
+  QGroupBox *popupGroup;
+  QSpinBox *timeOutSpin;
+};
+
+
+/*!
+ * \brief Конструктор класса NotificationSettings.
+ */
+NotificationSettings::NotificationSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::NotificationPage, parent), d(new Private)
+{
+  d->privateMsg = new QCheckBox(tr("&Приватные сообщение"), this);
+  d->privateMsg->setToolTip(tr("Оповещать о приватных сообщениях"));
+
+  d->publicMsg = new QCheckBox(tr("&Обращение в основном канале"), this);
+  d->publicMsg->setToolTip(tr("Оповещать об обращениях\nпо нику в основном канале"));
+
+  QGroupBox *eventGroup = new QGroupBox(tr("Оповещение о событиях"), this);
+  QVBoxLayout *eventLay = new QVBoxLayout(eventGroup);
+  eventLay->addWidget(d->privateMsg);
+  eventLay->addWidget(d->publicMsg);
+  eventLay->setMargin(6);
+  eventLay->setSpacing(0);
+
+  d->dnd = new QCheckBox(tr("&Статус \"Не беспокоить\" отключает оповещения"), this);
+  d->dnd->setToolTip(tr("Использование статуса \"Не беспокоить\"\nотключает оповещения"));
+
+  d->timeOut = new QCheckBox(tr("&Автоматически закрывать спустя:"), this);
+  d->timeOut->setToolTip(tr("Автоматически закрывать всплывающие\nокна спустя заданное число секунд"));
+
+  d->timeOutSpin = new QSpinBox(this);
+  d->timeOutSpin->setRange(1, 1440);
+  d->timeOutSpin->setSuffix(tr(" сек"));
+
+  d->autoAway = new QCheckBox("&Но не при автоматическом статусе \"Отсутствую\"", this);
+  d->autoAway->setToolTip(tr("Не закрывать автоматически всплывающие окна\nпри автоматическом статусе \"Отсутствую\""));
+
+  d->popupGroup = new QGroupBox(tr("Параметры всплывающих окон"), this);
+  QGridLayout *popupLay = new QGridLayout(d->popupGroup);
+  popupLay->addWidget(d->dnd, 0, 0, 1, 3);
+  popupLay->addWidget(d->timeOut, 1, 0, 1, 2);
+  popupLay->addWidget(d->timeOutSpin, 1, 2);
+  popupLay->addItem(new QSpacerItem(32, 0), 2, 0);
+  popupLay->addWidget(d->autoAway, 2, 1, 1, 2);
+  popupLay->setColumnStretch(1, 1);
+  popupLay->setMargin(6);
+  popupLay->setSpacing(0);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(eventGroup);
+  mainLay->addSpacing(12);
+  mainLay->addWidget(d->popupGroup);
+  mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
+
+  d->autoAway->setEnabled(d->timeOut->isChecked());
+  d->timeOutSpin->setEnabled(d->timeOut->isChecked());
+  popupGroupState();
+
+  connect(d->timeOut,    SIGNAL(clicked(bool)), d->autoAway,    SLOT(setEnabled(bool)));
+  connect(d->timeOut,    SIGNAL(clicked(bool)), d->timeOutSpin, SLOT(setEnabled(bool)));
+  connect(d->privateMsg, SIGNAL(clicked(bool)),                 SLOT(popupGroupState()));
+  connect(d->publicMsg,  SIGNAL(clicked(bool)),                 SLOT(popupGroupState()));
+}
+
+
+NotificationSettings::~NotificationSettings() { delete d; }
+
+
+void NotificationSettings::reset(int page)
+{
+  if (page == m_id) {
+  }
+}
+
+
+void NotificationSettings::save()
+{
+  int modified = 0;
+
+  if (modified)
+    SimpleSettings->notify(Settings::NotificationChanged);
+}
+
+
+void NotificationSettings::popupGroupState()
+{
+  d->popupGroup->setEnabled(d->privateMsg->isChecked() || d->publicMsg->isChecked());
+}
+
 
 
 

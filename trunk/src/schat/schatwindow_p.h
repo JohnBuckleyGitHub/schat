@@ -99,6 +99,7 @@ public:
   QAction *interfaceSetAction;
   QAction *miscSetAction;
   QAction *networkSetAction;
+  QAction *notificationSetAction;
   QAction *profileSetAction;
   QAction *quitAction;
   QAction *soundAction;

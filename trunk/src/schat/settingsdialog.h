@@ -38,6 +38,7 @@ public:
     InterfacePage,
     EmoticonsPage,
     SoundPage,
+    NotificationPage,
     UpdatePage,
     MiscPage
   };
@@ -169,6 +170,30 @@ public slots:
 private slots:
   void openFolder();
   void play(const QString &file);
+
+private:
+  class Private;
+  Private * const d;
+};
+
+
+/*!
+ * \brief Диалог "Оповещатель", страница "Звуки".
+ */
+class NotificationSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  NotificationSettings(QWidget *parent = 0);
+  ~NotificationSettings();
+
+public slots:
+  void reset(int page);
+  void save();
+
+private slots:
+  void popupGroupState();
 
 private:
   class Private;
