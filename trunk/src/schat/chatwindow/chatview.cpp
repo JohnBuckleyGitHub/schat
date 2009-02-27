@@ -310,19 +310,6 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
     html = SimpleSettings->emoticons()->theme().parseEmoticons(html, mode);
   }
 
-  // Поддержка извещателя
-  if (notice && SimpleSettings->profile()->status() == schat::StatusDnD && SimpleSettings->getBool("NoPopupWindowInDnD"))
-    notice = false;
-
-  if (notice && SimpleSettings->getBool("PopupWindow")) {
-    if (options & MsgPublic) {
-      if (SimpleSettings->getBool("PopupWindowPublic") && d->prepareCmd(SimpleSettings->profile()->nick(), html, false))
-        emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, true);
-    }
-    else
-      emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, false);
-  }
-
   QString name = "<a href='nick:" + sender.toUtf8().toHex() + "'>" + escapedNick + "</a>";
   #ifndef SCHAT_NO_WEBKIT
     appendMessage(d->style->makeMessage(name, html, options & MsgSend, same, "", action), same);
@@ -330,7 +317,21 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
     appendMessage(d->makeMessage(name, html, action));
   #endif
 
-//  qDebug() << m_view->page()->mainFrame()->toHtml();
+  // Поддержка извещателя.
+  if (!notice)
+    return;
+
+  if (SimpleSettings->profile()->status() == schat::StatusDnD && SimpleSettings->getBool("NoNotificationInDnD"))
+    return;
+
+  if (options & MsgPublic) {
+    if (SimpleSettings->getBool("NotificationPublic") && d->prepareCmd(SimpleSettings->profile()->nick(), html, false))
+      emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, true);
+  }
+  else {
+    if (SimpleSettings->getBool("Notification"))
+      emit popupMsg(sender, QDateTime::currentDateTime().toString("hh:mm:ss"), html, false);
+  }
 }
 
 
