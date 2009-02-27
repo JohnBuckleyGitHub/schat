@@ -37,9 +37,9 @@ PopupTextBrowser::PopupTextBrowser(QWidget *parent)
 void PopupTextBrowser::mouseReleaseEvent(QMouseEvent * event)
 {
   if (event->button() == Qt::RightButton)
-    emit closeWindow();
+    emit openChat(false);
   else if (event->button() == Qt::LeftButton)
-    emit openChat();
+    emit openChat(true);
 
   QTextBrowser::mousePressEvent(event);
 }
@@ -102,8 +102,7 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
 
   setFixedSize(QSize(Width, Height));
 
-  connect(d->text, SIGNAL(closeWindow()), SLOT(close()));
-  connect(d->text, SIGNAL(openChat()), SLOT(openChat()));
+  connect(d->text, SIGNAL(openChat(bool)), SLOT(openChat(bool)));
 
   setWindowOpacity(0.9);
   #if defined(Q_OS_MAC)
@@ -190,15 +189,15 @@ void PopupWindow::freeSlot(int slot)
 void PopupWindow::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::RightButton)
-    close();
+    openChat(false);
   else if (event->button() == Qt::LeftButton)
-    openChat();
+    openChat(true);
 }
 
 
-void PopupWindow::openChat()
+void PopupWindow::openChat(bool open)
 {
-  emit openChat(d->nick->text(), d->pub);
+  emit openChat(d->nick->text(), d->pub, open);
   close();
 }
 

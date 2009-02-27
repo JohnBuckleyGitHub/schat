@@ -32,8 +32,7 @@ public:
   PopupTextBrowser(QWidget *parent = 0);
 
 signals:
-  void closeWindow();
-  void openChat();
+  void openChat(bool open);
 
 protected:
   void mouseReleaseEvent(QMouseEvent * event);
@@ -75,7 +74,7 @@ public:
 
 signals:
   void aboutToClose(const QString &nick, int slot);
-  void openChat(const QString &nick, bool pub);
+  void openChat(const QString &nick, bool pub, bool open);
 
 public slots:
   void close();
@@ -86,7 +85,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void openChat();
+  void openChat(bool open);
 
 private:
   void moveToSlot(int slot);
