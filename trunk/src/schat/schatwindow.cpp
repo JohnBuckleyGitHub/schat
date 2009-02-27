@@ -848,7 +848,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   setCentralWidget(d->central);
   d->createStatusBar();
   d->popupManager = new PopupManager(this);
-  connect(d->popupManager, SIGNAL(openChat(const QString &, bool)), SLOT(openChat(const QString &, bool)));
+  connect(d->popupManager, SIGNAL(openChat(const QString &, bool, bool)), SLOT(openChat(const QString &, bool, bool)));
 
   setWindowTitle(QApplication::applicationName());
 
@@ -1302,17 +1302,26 @@ void SChatWindow::onSecondsIdle(int seconds)
 /*!
  * Получение от извещателя запроса на показ окна чата.
  */
-void SChatWindow::openChat(const QString &nick, bool pub)
+void SChatWindow::openChat(const QString &nick, bool pub, bool open)
 {
   if (!pub) {
     QPair<int, AbstractTab *> tab = d->tabFromName(nick);
-    if (tab.first != -1)
-      d->tabs->setCurrentIndex(tab.first);
+    if (tab.first != -1) {
+      if (open)
+        d->tabs->setCurrentIndex(tab.first);
+      else
+        stopNotice(tab.first);
+    }
   }
-  else
-    d->tabs->setCurrentWidget(d->main);
+  else {
+    if (open)
+      d->tabs->setCurrentWidget(d->main);
+    else
+      stopNotice(d->tabs->indexOf(d->main));
+  }
 
-  d->showChat();
+  if (open)
+    d->showChat();
 }
 
 

@@ -51,7 +51,7 @@ public:
 signals:
   void flash(const QString &style);
   void freeSlot(int slot);
-  void openChat(const QString &nick, bool pub);
+  void openChat(const QString &nick, bool pub, bool open);
 
 public slots:
   void flash();
