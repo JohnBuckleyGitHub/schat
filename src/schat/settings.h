@@ -52,6 +52,7 @@ public:
     UpdateSettingsChanged,
     EmoticonsChanged,
     SoundChanged,
+    NotificationChanged,
     MiscSettingsChanged,
     ByeMsgChanged,
     UpdateError,
