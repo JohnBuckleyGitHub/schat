@@ -105,20 +105,24 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
   connect(d->text, SIGNAL(closeWindow()), SLOT(close()));
   connect(d->text, SIGNAL(openChat()), SLOT(openChat()));
 
-  if (SimpleSettings->profile()->status() != schat::StatusAutoAway) {
-    d->closeTimer = new QTimer(this);
-    int delay = SimpleSettings->getInt("PopupWindowDelay");
-    d->closeTimer->setInterval((delay > 1 ? delay : 1) * 1000);
-    d->closeTimer->start();
-    connect(d->closeTimer, SIGNAL(timeout()), SLOT(close()));
-  }
-
   setWindowOpacity(0.9);
   #if defined(Q_OS_MAC)
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
   #else
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::ToolTip);
   #endif
+
+  if (!SimpleSettings->getBool("PopupAutoClose"))
+    return;
+
+  if (SimpleSettings->profile()->status() == schat::StatusAutoAway && SimpleSettings->getBool("NoPopupAutoCloseInAway"))
+    return;
+
+  d->closeTimer = new QTimer(this);
+  int delay = SimpleSettings->getInt("PopupAutoCloseTime");
+  d->closeTimer->setInterval((delay > 1 ? delay : 1) * 1000);
+  d->closeTimer->start();
+  connect(d->closeTimer, SIGNAL(timeout()), SLOT(close()));
 }
 
 

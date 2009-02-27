@@ -183,11 +183,13 @@ void Settings::read()
   setBool("MotdEnable",             true);
   setBool("ExitAwayOnSend",         true);
   setBool("AutoAway",               true);
-  setBool("PopupWindow",            true);
-  setBool("PopupWindowPublic",      true);
-  setBool("NoPopupWindowInDnD",     true);
+  setBool("Notification",           true);
+  setBool("NotificationPublic",     true);
+  setBool("NoNotificationInDnD",    true);
+  setBool("PopupAutoClose",         true);
+  setBool("NoPopupAutoCloseInAway", true);
   setInt("AutoAwayTime",            10);
-  setInt("PopupWindowDelay",        10);
+  setInt("PopupAutoCloseTime",      10);
   setString("Style",                "Plastique");
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");

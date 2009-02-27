@@ -694,9 +694,11 @@ NotificationSettings::NotificationSettings(QWidget *parent)
 {
   d->privateMsg = new QCheckBox(tr("&Приватные сообщение"), this);
   d->privateMsg->setToolTip(tr("Оповещать о приватных сообщениях"));
+  d->privateMsg->setChecked(SimpleSettings->getBool("Notification"));
 
   d->publicMsg = new QCheckBox(tr("&Обращение в основном канале"), this);
   d->publicMsg->setToolTip(tr("Оповещать об обращениях\nпо нику в основном канале"));
+  d->publicMsg->setChecked(SimpleSettings->getBool("NotificationPublic"));
 
   QGroupBox *eventGroup = new QGroupBox(tr("Оповещение о событиях"), this);
   QVBoxLayout *eventLay = new QVBoxLayout(eventGroup);
@@ -707,16 +709,20 @@ NotificationSettings::NotificationSettings(QWidget *parent)
 
   d->dnd = new QCheckBox(tr("&Статус \"Не беспокоить\" отключает оповещения"), this);
   d->dnd->setToolTip(tr("Использование статуса \"Не беспокоить\"\nотключает оповещения"));
+  d->dnd->setChecked(SimpleSettings->getBool("NoNotificationInDnD"));
 
   d->timeOut = new QCheckBox(tr("&Автоматически закрывать спустя:"), this);
   d->timeOut->setToolTip(tr("Автоматически закрывать всплывающие\nокна спустя заданное число секунд"));
+  d->timeOut->setChecked(SimpleSettings->getBool("PopupAutoClose"));
 
   d->timeOutSpin = new QSpinBox(this);
   d->timeOutSpin->setRange(1, 1440);
   d->timeOutSpin->setSuffix(tr(" сек"));
+  d->timeOutSpin->setValue(SimpleSettings->getInt("PopupAutoCloseTime"));
 
   d->autoAway = new QCheckBox("&Но не при автоматическом статусе \"Отсутствую\"", this);
   d->autoAway->setToolTip(tr("Не закрывать автоматически всплывающие окна\nпри автоматическом статусе \"Отсутствую\""));
+  d->autoAway->setChecked(SimpleSettings->getBool("NoPopupAutoCloseInAway"));
 
   d->popupGroup = new QGroupBox(tr("Параметры всплывающих окон"), this);
   QGridLayout *popupLay = new QGridLayout(d->popupGroup);
@@ -753,6 +759,15 @@ NotificationSettings::~NotificationSettings() { delete d; }
 void NotificationSettings::reset(int page)
 {
   if (page == m_id) {
+    d->privateMsg->setChecked(true);
+    d->publicMsg->setChecked(true);
+    d->dnd->setChecked(true);
+    d->timeOut->setChecked(true);
+    d->autoAway->setChecked(true);
+    d->autoAway->setEnabled(true);
+    d->timeOutSpin->setValue(10);
+    d->timeOutSpin->setEnabled(true);
+    d->popupGroup->setEnabled(true);
   }
 }
 
@@ -760,6 +775,13 @@ void NotificationSettings::reset(int page)
 void NotificationSettings::save()
 {
   int modified = 0;
+
+  modified += SimpleSettings->save("Notification",           d->privateMsg->isChecked());
+  modified += SimpleSettings->save("NotificationPublic",     d->publicMsg->isChecked());
+  modified += SimpleSettings->save("NoNotificationInDnD",    d->dnd->isChecked());
+  modified += SimpleSettings->save("PopupAutoClose",         d->timeOut->isChecked());
+  modified += SimpleSettings->save("PopupAutoCloseTime",     d->timeOutSpin->value());
+  modified += SimpleSettings->save("NoPopupAutoCloseInAway", d->autoAway->isChecked());
 
   if (modified)
     SimpleSettings->notify(Settings::NotificationChanged);
