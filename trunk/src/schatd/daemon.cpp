@@ -127,7 +127,8 @@ bool Daemon::start()
 
 
 /*!
- * \brief Уведомление об успешном установлении связи с вышестоящим сервером.
+ * Уведомление об успешном установлении связи с вышестоящим сервером.
+ * \todo Добавить запись в журнал.
  *
  * Функция устанавливает номер вышестоящего сервера и добавляет его номер в список номеров.
  * \param network Параметр игнорируется и не используется.
@@ -302,9 +303,9 @@ void Daemon::dumpStats()
  *
  * В зависимости от значения \a flag вызывается функция greetingLink(const QStringList &list, DaemonService *service) для сервера
  * либо greetingUser(const QStringList &list, DaemonService *service) для клиента.
+ *
  * \param list Стандартный список, содержащий в себе полные данные пользователя.
  * \param flag Флаг подключения.
- * \sa greetingLink(const QStringList &list, DaemonService *service), greetingUser(const QStringList &list, DaemonService *service)
  */
 void Daemon::greeting(const QStringList &list, quint8 flag)
 {
@@ -314,10 +315,26 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
 
   DaemonService *service = qobject_cast<DaemonService *>(sender());
   if (service)
-    if (flag == FlagLink)
-      greetingLink(list, service);
-    else
-      greetingUser(list, service);
+    if (flag == FlagLink) {
+      quint16 err = greetingLink(list, service);
+      if (err) {
+        LOG(0, tr("- Warning - Отказ в доступе серверу: %1@%2, код ошибки: %3")
+            .arg(QString(list.at(AbstractProfile::Nick)))
+            .arg(list.at(AbstractProfile::Host))
+            .arg(err));
+        service->accessDenied(err);
+      }
+    }
+    else {
+      quint16 err = greetingUser(list, service);
+      if (err) {
+        LOG(0, tr("- Warning - Отказ в доступе пользователю: %1@%2, код ошибки: %3")
+            .arg(QString(list.at(AbstractProfile::Nick)))
+            .arg(list.at(AbstractProfile::Host))
+            .arg(err));
+        service->accessDenied(err);
+      }
+    }
 }
 
 
@@ -874,7 +891,7 @@ QString Daemon::serverInfo() const
 
 
 /*!
- * \brief Обработка приветствия от удалённого сервера.
+ * Обработка приветствия от удалённого сервера.
  *
  * Для успешного подключения должны быть соблюдены следующие условия:
  *  - Сконфигурированная сеть \a m_network.
@@ -886,57 +903,47 @@ QString Daemon::serverInfo() const
  *
  * Факт подключения записывается в журнал.
  *
- * \param list Стандартный список, содержащий в себе полные данные пользователя.
+ * \param list    Стандартный список, содержащий в себе полные данные пользователя.
  * \param service Указатель на сервис.
  */
-void Daemon::greetingLink(const QStringList &list, DaemonService *service)
+quint16 Daemon::greetingLink(const QStringList &list, DaemonService *service)
 {
-  quint16 err = 0;
+  if (!m_network)
+    return ErrorNotNetworkConfigured;
+
+  if (m_remoteNumeric)
+    return ErrorRootServerIsSlave;
+
+  if (m_network->key() != list.at(AbstractProfile::FullName))
+    return ErrorBadNetworkKey;
+
   quint8 numeric = quint8(QString(list.at(AbstractProfile::Nick)).toInt());
+  if (m_numerics.contains(numeric))
+    return ErrorNumericAlreadyUse;
 
-  if (m_network) {
-    if (m_network->key() == list.at(AbstractProfile::FullName)) {
+  if (m_maxLinks > 0)
+    if (m_maxLinks == localLinksCount())
+      return ErrorLinksLimitExceeded;
 
-      if (!m_numerics.contains(numeric)) {
+  m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
+  m_numerics << numeric;
+  connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
+  connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
+  connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
+  connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
+  connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
+  connect(service, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &, quint8)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &, quint8)));
+  connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
+  connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
+  connect(this, SIGNAL(sendSyncBye(const QString &, const QString &)), service, SLOT(sendSyncBye(const QString &, const QString &)));
+  service->accessGranted(m_numeric);
+  service->sendNumerics(m_numerics);
 
-        if (m_maxLinks > 0) {
-          if (m_maxLinks == localLinksCount()) {
-            service->accessDenied(ErrorLinksLimitExceeded);
-            return;
-          }
-        }
+  LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
+  emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
+  sendAllUsers(service);
 
-        m_links.insert(numeric, new LinkUnit(list.at(AbstractProfile::ByeMsg), service));
-        m_numerics << numeric;
-        connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(syncProfile(quint8, const QString &, const QString &, const QString &)));
-        connect(service, SIGNAL(relayMessage(const QString &, const QString &, const QString &)), SLOT(relayMessage(const QString &, const QString &, const QString &)));
-        connect(service, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(clientSyncUsers(const QStringList &, quint8, quint8)));
-        connect(service, SIGNAL(userLeave(const QString &, const QString &, quint8)), SLOT(clientUserLeave(const QString &, const QString &, quint8)));
-        connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(syncBye(const QString &, const QString &)));
-        connect(service, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &, quint8)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &, quint8)));
-        connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
-        connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
-        connect(this, SIGNAL(sendSyncBye(const QString &, const QString &)), service, SLOT(sendSyncBye(const QString &, const QString &)));
-        service->accessGranted(m_numeric);
-        service->sendNumerics(m_numerics);
-
-        LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
-        emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
-        sendAllUsers(service);
-      }
-      else
-        err = ErrorNumericAlreadyUse;
-    }
-    else
-      err = ErrorBadNetworkKey;
-  }
-  else
-    err = ErrorNotNetworkConfigured;
-
-  if (err) {
-    LOG(0, tr("- Warning - Отказ в доступе серверу: %1@%2, код ошибки: %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(err));
-    service->accessDenied(err);
-  }
+  return 0;
 }
 
 
@@ -946,7 +953,7 @@ void Daemon::greetingLink(const QStringList &list, DaemonService *service)
  * \param list    Стандартный список, содержащий в себе полные данные пользователя.
  * \param service Указатель на сервис.
  */
-void Daemon::greetingUser(const QStringList &list, DaemonService *service)
+quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = list.at(AbstractProfile::Nick).toLower();
 
@@ -955,29 +962,21 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
     UserUnit *unit = m_users.value(nick);
     if (unit->numeric() == m_numeric && !unit->service())
       userLeave(unit->profile()->nick(), "Detect zombie");
-    else {
-      LOG(1, tr("- Warning - Name Collision: %1@%2 reject").arg(list.at(AbstractProfile::Nick)).arg(list.at(AbstractProfile::Host)));
-      service->accessDenied(ErrorNickAlreadyUse);
-    }
 
-    return;
+    return ErrorNickAlreadyUse;
   }
 
 
-  if (m_maxUsers > 0) {
-    if (m_maxUsers == localUsersCount()) {
-      service->accessDenied(ErrorUsersLimitExceeded);
-      return;
-    }
-  }
+  if (m_maxUsers > 0)
+    if (m_maxUsers == localUsersCount())
+      return ErrorUsersLimitExceeded;
 
   if (m_maxUsersPerIp > 0) {
     QString ip = list.at(AbstractProfile::Host);
     if (m_ipLimits.contains(ip)) {
       int hosts = m_ipLimits.value(ip);
       if (hosts == m_maxUsersPerIp) {
-        service->accessDenied(ErrorMaxUsersPerIpExceeded);
-        return;
+        return ErrorMaxUsersPerIpExceeded;
       }
       else {
         m_ipLimits.insert(ip, hosts + 1);
@@ -1004,6 +1003,8 @@ void Daemon::greetingUser(const QStringList &list, DaemonService *service)
   sendAllUsers(service);
   if (m_network && m_remoteNumeric)
     m_link->sendNewUser(list, 1, m_numeric);
+
+  return 0;
 }
 
 

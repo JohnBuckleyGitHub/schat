@@ -328,6 +328,7 @@ static const quint16 ErrorNotNetworkConfigured       = 400; // На сервер
 static const quint16 ErrorBadNetworkKey              = 401; // Ошибка проверки ключа сети.
 static const quint16 ErrorNumericAlreadyUse          = 403; // Ошибка линковки numeric подключаемого сервера уже используется.
 static const quint16 ErrorBadNumeric                 = 404; // Ошибка линковки, неверный/некорректный numeric.
+static const quint16 ErrorRootServerIsSlave          = 405; // Ошибка подключения к корневому серверу, т.к он сконфигурирован как вторичный.
 static const quint16 ErrorUsersLimitExceeded         = 500; // Превышено максимально допустимое количество пользователей на этом сервере.
 static const quint16 ErrorLinksLimitExceeded         = 501; // Превышено максимально допустимое количество серверов подключенных к этому серверу.
 static const quint16 ErrorMaxUsersPerIpExceeded      = 502;
