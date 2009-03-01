@@ -128,17 +128,20 @@ bool Daemon::start()
 
 /*!
  * Уведомление об успешном установлении связи с вышестоящим сервером.
- * \todo Добавить запись в журнал.
  *
  * Функция устанавливает номер вышестоящего сервера и добавляет его номер в список номеров.
  * \param network Параметр игнорируется и не используется.
- * \param server Параметр игнорируется и не используется.
+ * \param server  Адрес вышестоящего сервера.
  * \param numeric Номер вышестоящего сервера.
  */
-void Daemon::clientAccessGranted(const QString &/*network*/, const QString &/*server*/, quint16 numeric)
+void Daemon::clientAccessGranted(const QString &network, const QString &server, quint16 numeric)
 {
+  Q_UNUSED(network)
+
   m_remoteNumeric = numeric;
   m_numerics << numeric;
+
+  LOG(0, tr("- Notice - Установлено соединение с корневым сервером: %1@%2").arg(numeric).arg(server));
 }
 
 
