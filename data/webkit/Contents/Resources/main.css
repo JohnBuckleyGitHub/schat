@@ -79,7 +79,7 @@ a span[style] { /* Fix Qt rich text */
 .smb .ready {
   color:#6bb521;
 }
-.changedNick, .changedNick a {
+.info, .changedNick, .changedNick a {
   color:#5096cf;
 }
 .changedNick a {
