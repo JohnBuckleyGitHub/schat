@@ -104,8 +104,8 @@ private:
   int localLinksCount() const;
   int localUsersCount() const;
   QString serverInfo() const;
-  void greetingLink(const QStringList &list, DaemonService *service);
-  void greetingUser(const QStringList &list, DaemonService *service);
+  quint16 greetingLink(const QStringList &list, DaemonService *service);
+  quint16 greetingUser(const QStringList &list, DaemonService *service);
   void link();
   void linkLeave(const QString &nick, const QString &err);
   void sendAllUsers(DaemonService *service);
