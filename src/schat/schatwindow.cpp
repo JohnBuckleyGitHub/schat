@@ -416,6 +416,16 @@ void SChatWindowPrivate::createTrayIcon()
   trayMenu->addAction(aboutAction);
   trayMenu->addAction(profileSetAction);
 
+  QMenu *statusMenu = new QMenu(QObject::tr("Статус"), q);
+
+  statusMenu->addAction(onlineAction);
+  statusMenu->addAction(awayAction);
+  statusMenu->addAction(dndAction);
+  statusMenu->addAction(offlineAction);
+
+  statusAction = trayMenu->addMenu(statusMenu);
+  statusAction->setIcon(QIcon(":/images/status-online.png"));
+
   #ifdef Q_WS_WIN
   if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
   #else
@@ -672,7 +682,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
   else {
     statusLabel->setText(QObject::tr("Сеть %1 (%2)").arg(network).arg(server));
     main->msg("<span class='ready'>" + QObject::tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
-    q->setWindowTitle(QApplication::applicationName() + " - " + network);
+    q->setWindowTitle(QApplication::applicationName() + " — " + network);
   }
 
   if (enableMotd && motd) {
@@ -1423,6 +1433,17 @@ void SChatWindow::sound()
 /*!
  * Обработка изменения статуса пользователем.
  */
+void SChatWindow::statusChangedByUser()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    statusChangedByUser(action->data().toInt());
+}
+
+
+/*!
+ * Обработка изменения статуса пользователем.
+ */
 void SChatWindow::statusChangedByUser(int index)
 {
   if (index == SChatWindowPrivate::StatusOffline) {
@@ -1710,6 +1731,26 @@ void SChatWindow::createActions()
   // Управление сервером...
   d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
   connect(d->daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
+
+  // Статус/В сети
+  d->onlineAction = new QAction(QIcon(":/images/status-online.png"), tr("В сети"), this);
+  d->onlineAction->setData(SChatWindowPrivate::StatusOnline);
+  connect(d->onlineAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
+
+  // Статус/Отсутствую
+  d->awayAction = new QAction(QIcon(":/images/status-away.png"), tr("Отсутствую"), this);
+  d->awayAction->setData(SChatWindowPrivate::StatusAway);
+  connect(d->awayAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
+
+  // Статус/Не беспокоить
+  d->dndAction = new QAction(QIcon(":/images/status-dnd.png"), tr("Не беспокоить"), this);
+  d->dndAction->setData(SChatWindowPrivate::StatusDnD);
+  connect(d->dndAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
+
+  // Статус/Не в сети
+  d->offlineAction = new QAction(QIcon(":/images/status-offline.png"), tr("Не в сети"), this);
+  d->offlineAction->setData(SChatWindowPrivate::StatusOffline);
+  connect(d->offlineAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
 }
 
 

@@ -71,6 +71,7 @@ private slots:
   void settingsChanged(int notify);
   void showSettings();
   void sound();
+  void statusChangedByUser();
   void statusChangedByUser(int index);
   void stopNotice(int index);
   void syncUsersEnd();
