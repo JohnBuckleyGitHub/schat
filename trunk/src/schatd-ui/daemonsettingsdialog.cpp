@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,61 +49,67 @@ void DaemonSettingsDialog::accept()
 
 
 /*!
- * \brief Конструктор класса DaemonCommonSettings.
+ * Конструктор класса DaemonCommonSettings.
  */
 DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
 {
   m_listen = new QComboBox(this);
   m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
+
   createListenList();
 
   m_port = new QSpinBox(this);
-  m_port->setRange(1024, 65536);
+  m_port->setRange(1, 65536);
   m_port->setValue(m_settings->getInt("ListenPort"));
   m_port->setToolTip(tr("Порт на котором сервер будет ожидать подключения"));
 
   QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
   listenLabel->setBuddy(m_listen);
+
   QLabel *portLabel = new QLabel(tr("&Порт:"), this);
   portLabel->setBuddy(m_port);
 
   QGroupBox *listenGroup = new QGroupBox(tr("Интерфейс сервера"), this);
-  QHBoxLayout *listenLay = new QHBoxLayout(listenGroup);
-  listenLay->addWidget(listenLabel);
-  listenLay->addWidget(m_listen);
-  listenLay->addWidget(portLabel);
-  listenLay->addWidget(m_port);
-  listenLay->addStretch();
+  QGridLayout *listenLay = new QGridLayout(listenGroup);
+  listenLay->addWidget(listenLabel, 0, 0);
+  listenLay->addWidget(m_listen, 0, 1);
+  listenLay->addWidget(portLabel, 0, 2);
+  listenLay->addWidget(m_port, 0, 3);
+  listenLay->setColumnStretch(1, 1);
+  listenLay->setMargin(6);
+  listenLay->setSpacing(4);
 
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
   m_logLevel->setValue(m_settings->getInt("LogLevel"));
   m_logLevel->setToolTip(tr("Уровень детализации журнала\n-1 журналирование отключено"));
+
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
   logLabel->setBuddy(m_logLevel);
-  QHBoxLayout *logLevelLay = new QHBoxLayout;
-  logLevelLay->addWidget(logLabel);
-  logLevelLay->addWidget(m_logLevel);
-  logLevelLay->addStretch();
-
-  QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
-  QVBoxLayout *logLay = new QVBoxLayout(logGroup);
-  logLay->addLayout(logLevelLay);
 
   m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
   m_channelLog->setChecked(m_settings->getBool("ChannelLog"));
-  m_channelLog->setToolTip(tr("Управляет режимом записи событий основного канала в специальный журнал"));
-  logLay->addWidget(m_channelLog);
+  m_channelLog->setToolTip(tr("Управляет режимом записи событий основного\nканала в специальный журнал"));
+
+  QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
+  QGridLayout *logLay = new QGridLayout(logGroup);
+  logLay->addWidget(logLabel, 0, 0);
+  logLay->addWidget(m_logLevel, 0, 1, 1, 2);
+  logLay->addWidget(m_channelLog, 1, 0, 1, 3);
+  logLay->setColumnStretch(3, 1);
+  logLay->setMargin(6);
+  logLay->setSpacing(4);
 
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
   m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
-  m_maxUsers->setToolTip(tr("Ограничение максимального количества пользователей которые могут быть подключены к серверу\n0 - без ограничений"));
+  m_maxUsers->setToolTip(tr("Ограничение максимального количества\nпользователей которые могут быть подключены к серверу\n0 - без ограничений"));
+
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
   m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
-  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества пользователей с одного адреса\n0 - без ограничений"));
+  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества\nпользователей с одного адреса\n0 - без ограничений"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
   maxUsersLabel->setBuddy(m_maxUsers);
@@ -117,12 +123,15 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
   limitsLay->addWidget(maxUsersPerIpLabel, 1, 0);
   limitsLay->addWidget(m_maxUsersPerIp, 1, 1);
   limitsLay->setColumnStretch(2, 1);
+  limitsLay->setMargin(6);
+  limitsLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(listenGroup);
   mainLay->addWidget(logGroup);
   mainLay->addWidget(limitsGroup);
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 }
 
 
@@ -184,7 +193,7 @@ void DaemonCommonSettings::createListenList()
 
 
 /*!
- * \brief Конструктор класса DaemonNetSettings.
+ * Конструктор класса DaemonNetSettings.
  */
 DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
@@ -228,6 +237,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   netLay->addWidget(m_key, 1, 1);
   netLay->addWidget(rootLabel, 2, 0);
   netLay->addWidget(m_rootAddr, 2, 1);
+  netLay->setMargin(6);
+  netLay->setSpacing(4);
 
   m_name = new QLineEdit("Unknown Server", this);
   if (!m_settings->getString("Name").isEmpty())
@@ -240,6 +251,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   QHBoxLayout *nameLay = new QHBoxLayout;
   nameLay->addWidget(nameLabel);
   nameLay->addWidget(m_name);
+  nameLay->setMargin(0);
+  nameLay->setSpacing(4);
 
   m_numeric = new QSpinBox(this);
   m_numeric->setRange(1, 255);
@@ -263,6 +276,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   daemonLay->addWidget(limitLabel, 2, 0);
   daemonLay->addWidget(m_limit, 2, 1);
   daemonLay->setColumnStretch(2, 1);
+  netLay->setMargin(6);
+  netLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_network);
@@ -270,6 +285,7 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   mainLay->addWidget(m_netGroup);
   mainLay->addWidget(m_daemonGroup);
   mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
 
   m_normal = m_netName->palette();
   m_red = m_normal;
