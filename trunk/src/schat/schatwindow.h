@@ -73,6 +73,7 @@ private slots:
   void sound();
   void statusChangedByUser();
   void statusChangedByUser(int index);
+  void statusShortcut(int key);
   void stopNotice(int index);
   void syncUsersEnd();
   void unconnected(bool echo = true);
