@@ -672,7 +672,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
-  statusCombo->setCurrentIndex(StatusOnline);
+  updateStatus(StatusOnline);
 
   if (network.isEmpty()) {
     statusLabel->setText(QObject::tr("Сервер %1").arg(server));
@@ -703,7 +703,7 @@ void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
   connectMovie->movie()->setPaused(false);
   connectMovie->setVisible(true);
   connectLabel->setVisible(false);
-  statusCombo->setCurrentIndex(StatusOffline);
+  updateStatus(StatusOffline);
 
   if (network)
     statusLabel->setText(QObject::tr("Подключение к сети %1...").arg(server));
@@ -723,7 +723,7 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
   connectMovie->setVisible(false);
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_disconnect.png"));
-  statusCombo->setCurrentIndex(StatusOffline);
+  updateStatus(StatusOffline);
 
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
@@ -764,14 +764,14 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
     profile->setStatus(data1.at(0));
 
     if (status == schat::StatusAutoAway || status == schat::StatusAway)
-      statusCombo->setCurrentIndex(StatusAway);
+      updateStatus(StatusAway);
     else if (status == schat::StatusDnD) {
-      statusCombo->setCurrentIndex(StatusDnD);
+      updateStatus(StatusDnD);
       if (pref->getBool("Sound/MuteInDnD") && soundAction->data().toBool())
         mute(true);
     }
     else
-      statusCombo->setCurrentIndex(StatusOnline);
+      updateStatus(StatusOnline);
 
     if (autoAway && status == schat::StatusNormal && !idleDetector.isActive())
       idleDetector.start();
@@ -805,6 +805,35 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
             tabs->setTabToolTip(privateTabs.value(user), UserView::userToolTip(users->profile(user)));
       }
     }
+  }
+}
+
+
+/*!
+ * Обновление визуальной информации о статусе.
+ * Устанавливается индекс в \a statusCombo
+ * и иконка для \a statusCombo.
+ */
+void SChatWindowPrivate::updateStatus(int status)
+{
+  statusCombo->setCurrentIndex(status);
+
+  switch (status) {
+    case StatusOnline:
+      statusAction->setIcon(QIcon(":/images/status-online.png"));
+      break;
+
+    case StatusAway:
+      statusAction->setIcon(QIcon(":/images/status-away.png"));
+      break;
+
+    case StatusDnD:
+      statusAction->setIcon(QIcon(":/images/status-dnd.png"));
+      break;
+
+    case StatusOffline:
+      statusAction->setIcon(QIcon(":/images/status-offline.png"));
+      break;
   }
 }
 
@@ -1446,16 +1475,26 @@ void SChatWindow::statusChangedByUser()
  */
 void SChatWindow::statusChangedByUser(int index)
 {
+  quint32 status = d->profile->status();
+  if (index == SChatWindowPrivate::StatusOnline && status == schat::StatusNormal)
+    return;
+
   if (index == SChatWindowPrivate::StatusOffline) {
     d->clientService->quit();
     return;
   }
 
   if (index == SChatWindowPrivate::StatusAway) {
+    if (status == schat::StatusAway)
+      return;
+
     d->idleDetector.stop();
     d->sendStatus(schat::StatusAway);
   }
   else if (index == SChatWindowPrivate::StatusDnD) {
+    if (status == schat::StatusDnD)
+      return;
+
     d->idleDetector.stop();
     d->sendStatus(schat::StatusDnD);
   }

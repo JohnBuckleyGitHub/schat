@@ -79,6 +79,7 @@ public:
   void statusUnconnected(bool echo);
   void uniqueNick();
   void universalStatus(const QList<quint32> &data1, const QStringList &data2);
+  void updateStatus(int status);
   #if QT_VERSION < 0x040500
     void createCornerWidgets();
   #endif
