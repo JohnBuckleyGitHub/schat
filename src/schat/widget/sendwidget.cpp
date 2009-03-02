@@ -52,6 +52,7 @@ SendWidget::SendWidget(QWidget *parent)
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
   connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
+  connect(m_input, SIGNAL(statusShortcut(int)), SIGNAL(statusShortcut(int)));
   connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 }

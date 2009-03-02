@@ -131,6 +131,14 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     emit needCopy();
   else if (key == "Ctrl+V")
     paste();
+  else if (key == "Ctrl+1")
+    emit statusShortcut(1);
+  else if (key == "Ctrl+2")
+    emit statusShortcut(2);
+  else if (key == "Ctrl+3")
+    emit statusShortcut(3);
+  else if (key == "Ctrl+0")
+    emit statusShortcut(0);
   else if (event->key() == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else

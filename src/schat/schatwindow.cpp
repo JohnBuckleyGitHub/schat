@@ -421,6 +421,7 @@ void SChatWindowPrivate::createTrayIcon()
   statusMenu->addAction(onlineAction);
   statusMenu->addAction(awayAction);
   statusMenu->addAction(dndAction);
+  statusMenu->addSeparator();
   statusMenu->addAction(offlineAction);
 
   statusAction = trayMenu->addMenu(statusMenu);
@@ -917,6 +918,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   connect(d->send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(d->send, SIGNAL(needCopy()), SLOT(copy()));
+  connect(d->send, SIGNAL(statusShortcut(int)), SLOT(statusShortcut(int)));
   connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(d->users, SIGNAL(insertNick(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->users, SIGNAL(showSettings()), SLOT(showSettings()));
@@ -1507,6 +1509,19 @@ void SChatWindow::statusChangedByUser(int index)
 
 
 /*!
+ * Обработка клавиатурных сочетаний Ctrl+1, Ctrl+2, Ctrl+3 и Ctrl+0
+ * для изменения статуса.
+ */
+void SChatWindow::statusShortcut(int key)
+{
+  if (key == 0)
+    statusChangedByUser(SChatWindowPrivate::StatusOffline);
+  else
+    statusChangedByUser(--key);
+}
+
+
+/*!
  * Обработка изменений настроек и прочих событий.
  */
 void SChatWindow::settingsChanged(int notify)
@@ -1774,21 +1789,25 @@ void SChatWindow::createActions()
   // Статус/В сети
   d->onlineAction = new QAction(QIcon(":/images/status-online.png"), tr("В сети"), this);
   d->onlineAction->setData(SChatWindowPrivate::StatusOnline);
+  d->onlineAction->setShortcut(tr("Ctrl+1"));
   connect(d->onlineAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
 
   // Статус/Отсутствую
   d->awayAction = new QAction(QIcon(":/images/status-away.png"), tr("Отсутствую"), this);
   d->awayAction->setData(SChatWindowPrivate::StatusAway);
+  d->awayAction->setShortcut(tr("Ctrl+2"));
   connect(d->awayAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
 
   // Статус/Не беспокоить
   d->dndAction = new QAction(QIcon(":/images/status-dnd.png"), tr("Не беспокоить"), this);
   d->dndAction->setData(SChatWindowPrivate::StatusDnD);
+  d->dndAction->setShortcut(tr("Ctrl+3"));
   connect(d->dndAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
 
   // Статус/Не в сети
   d->offlineAction = new QAction(QIcon(":/images/status-offline.png"), tr("Не в сети"), this);
   d->offlineAction->setData(SChatWindowPrivate::StatusOffline);
+  d->offlineAction->setShortcut(tr("Ctrl+0"));
   connect(d->offlineAction, SIGNAL(triggered()), SLOT(statusChangedByUser()));
 }
 

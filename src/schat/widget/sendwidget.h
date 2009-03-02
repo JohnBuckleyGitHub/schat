@@ -44,6 +44,7 @@ public:
 signals:
   void needCopy();
   void sendMsg(const QString &message);
+  void statusShortcut(int key);
 
 public slots:
   void copy()                          { m_input->copy(); }
