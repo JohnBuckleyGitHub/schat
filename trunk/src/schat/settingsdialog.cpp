@@ -181,6 +181,12 @@ public:
 
   NetworkWidget *network;
   QCheckBox *welcome;
+  QComboBox *type;
+  QGroupBox *proxyGroup;
+  QLineEdit *host;
+  QLineEdit *password;
+  QLineEdit *userName;
+  QSpinBox *port;
 };
 
 /*!
@@ -203,6 +209,50 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   serverLay->setMargin(6);
   serverLay->setSpacing(4);
 
+  d->proxyGroup = new QGroupBox(tr("Подключение через прокси-сервер"), this);
+  d->proxyGroup->setCheckable(true);
+
+  d->type = new QComboBox(this);
+  d->type->addItem(tr("HTTP"));
+  d->type->addItem(tr("SOCKS5"));
+  d->type->setToolTip(tr("Тип прокси-сервера"));
+  QLabel *type = new QLabel(tr("&Тип:"), this);
+  type->setBuddy(d->type);
+
+  d->host = new QLineEdit(this);
+  d->host->setToolTip(tr("Адрес прокси-сервера"));
+  QLabel *host = new QLabel(tr("&Адрес:"), this);
+  host->setBuddy(d->host);
+
+  d->port = new QSpinBox(this);
+  d->port->setRange(1, 65536);
+  d->port->setToolTip(tr("Порт прокси-сервера"));
+  QLabel *port = new QLabel(tr("&Порт:"), this);
+  port->setBuddy(d->port);
+
+  d->userName = new QLineEdit(this);
+  d->userName->setToolTip(tr("Имя пользователя для авторизации на прокси-сервере"));
+  QLabel *userName = new QLabel(tr("&Имя:"), this);
+  userName->setBuddy(d->userName);
+
+  d->password = new QLineEdit(this);
+  d->password->setEchoMode(QLineEdit::Password);
+  d->password->setToolTip(tr("Пароль для авторизации на прокси-сервере"));
+  QLabel *password = new QLabel(tr("Па&роль:"), this);
+  password->setBuddy(d->password);
+
+  QGridLayout *proxyLay = new QGridLayout(d->proxyGroup);
+  proxyLay->addWidget(type, 0, 0);
+  proxyLay->addWidget(d->type, 0, 1);
+  proxyLay->addWidget(host, 1, 0);
+  proxyLay->addWidget(d->host, 1, 1, 1, 3);
+  proxyLay->addWidget(port, 1, 4);
+  proxyLay->addWidget(d->port, 1, 5);
+  proxyLay->addWidget(userName, 2, 0);
+  proxyLay->addWidget(d->userName, 2, 1);
+  proxyLay->addWidget(password, 2, 2);
+  proxyLay->addWidget(d->password, 2, 3, 1, 3);
+
   QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Файлы сети")), this);
   url->setToolTip(tr("Открыть папку с файлами сети"));
   url->setAlignment(Qt::AlignRight);
@@ -210,6 +260,8 @@ NetworkSettings::NetworkSettings(QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(serverGroup);
+  mainLay->addSpacing(12);
+  mainLay->addWidget(d->proxyGroup);
   mainLay->addStretch();
   mainLay->addWidget(url);
   mainLay->setContentsMargins(3, 3, 3, 0);
