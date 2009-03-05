@@ -211,15 +211,22 @@ NetworkSettings::NetworkSettings(QWidget *parent)
 
   d->proxyGroup = new QGroupBox(tr("Подключение через прокси-сервер"), this);
   d->proxyGroup->setCheckable(true);
+  d->proxyGroup->setChecked(SimpleSettings->getBool("Proxy/Enable"));
 
   d->type = new QComboBox(this);
   d->type->addItem(tr("HTTP"));
   d->type->addItem(tr("SOCKS5"));
   d->type->setToolTip(tr("Тип прокси-сервера"));
+
+  if (SimpleSettings->getInt("Proxy/Type") == 1)
+    d->type->setCurrentIndex(1);
+  else
+    d->type->setCurrentIndex(0);
+
   QLabel *type = new QLabel(tr("&Тип:"), this);
   type->setBuddy(d->type);
 
-  d->host = new QLineEdit(this);
+  d->host = new QLineEdit(SimpleSettings->getString("Proxy/Host"), this);
   d->host->setToolTip(tr("Адрес прокси-сервера"));
   QLabel *host = new QLabel(tr("&Адрес:"), this);
   host->setBuddy(d->host);
@@ -227,15 +234,16 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   d->port = new QSpinBox(this);
   d->port->setRange(1, 65536);
   d->port->setToolTip(tr("Порт прокси-сервера"));
+  d->port->setValue(SimpleSettings->getInt("Proxy/Port"));
   QLabel *port = new QLabel(tr("&Порт:"), this);
   port->setBuddy(d->port);
 
-  d->userName = new QLineEdit(this);
+  d->userName = new QLineEdit(SimpleSettings->getString("Proxy/UserName"), this);
   d->userName->setToolTip(tr("Имя пользователя для авторизации на прокси-сервере"));
   QLabel *userName = new QLabel(tr("&Имя:"), this);
   userName->setBuddy(d->userName);
 
-  d->password = new QLineEdit(this);
+  d->password = new QLineEdit(SimpleSettings->getString("Proxy/Password"), this);
   d->password->setEchoMode(QLineEdit::Password);
   d->password->setToolTip(tr("Пароль для авторизации на прокси-сервере"));
   QLabel *password = new QLabel(tr("Па&роль:"), this);
@@ -276,16 +284,40 @@ void NetworkSettings::reset(int page)
   if (page == m_id) {
     d->network->reset();
     d->welcome->setChecked(true);
+    d->proxyGroup->setChecked(false);
+    d->host->clear();
+    d->port->setValue(3128);
+    d->userName->clear();
+    d->password->clear();
   }
 }
 
 
 void NetworkSettings::save()
 {
+  int modified = 0;
+
   if (d->network->save())
-    SimpleSettings->notify(Settings::NetworkSettingsChanged);
+    modified++;
 
   SimpleSettings->setBool("HideWelcome", d->welcome->isChecked());
+
+  modified += SimpleSettings->save("Proxy/Enable", d->proxyGroup->isChecked());
+
+  int proxyPref = 0;
+  proxyPref += SimpleSettings->save("Proxy/Type",     d->type->currentIndex());
+  proxyPref += SimpleSettings->save("Proxy/Port",     d->port->value());
+  proxyPref += SimpleSettings->save("Proxy/Host",     d->host->text());
+  proxyPref += SimpleSettings->save("Proxy/UserName", d->userName->text());
+  proxyPref += SimpleSettings->save("Proxy/Password", d->password->text());
+
+  if (d->proxyGroup->isChecked())
+    modified += proxyPref;
+
+  if (modified) {
+    SimpleSettings->setApplicationProxy();
+    SimpleSettings->notify(Settings::NetworkSettingsChanged);
+  }
 }
 
 

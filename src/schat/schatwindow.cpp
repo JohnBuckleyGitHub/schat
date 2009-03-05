@@ -1817,6 +1817,8 @@ void SChatWindow::createActions()
  */
 void SChatWindow::createService()
 {
+  d->pref->setApplicationProxy();
+
   d->clientService = new ClientService(d->profile, &d->pref->network, this);
   connect(d->clientService, SIGNAL(connecting(const QString &, bool)), SLOT(connecting(const QString &, bool)));
   connect(d->clientService, SIGNAL(unconnected(bool)), SLOT(unconnected(bool)));

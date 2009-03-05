@@ -18,6 +18,7 @@
 
 #include <QApplication>
 #include <QtGui>
+#include <QtNetwork>
 
 #include "abstractprofile.h"
 #include "networkreader.h"
@@ -217,6 +218,13 @@ void Settings::read()
     setList("BenchmarkList", list);
   #endif
 
+  setBool("Proxy/Enable",     false);
+  setInt("Proxy/Type",        0);
+  setInt("Proxy/Port",        3128);
+  setString("Proxy/Host",     "");
+  setString("Proxy/UserName", "");
+  setString("Proxy/Password", "");
+
   setBool("Updates/Enable",         true);
   setBool("Updates/CheckOnStartup", true);
   setInt("Updates/CheckInterval",   60);
@@ -278,6 +286,31 @@ void Settings::read()
   if (getBool("Updates/Enable"))
     m_updateTimer->start();
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(updatesCheck()));
+}
+
+
+/*!
+ * Установка глобальных настроек прокси.
+ */
+void Settings::setApplicationProxy() const
+{
+  QNetworkProxy proxy;
+
+  if (getBool("Proxy/Enable")) {
+    if (getInt("Proxy/Type") == 1)
+      proxy.setType(QNetworkProxy::Socks5Proxy);
+    else
+      proxy.setType(QNetworkProxy::HttpProxy);
+
+    proxy.setHostName(getString("Proxy/Host"));
+    proxy.setPort(getInt("Proxy/Port"));
+    proxy.setUser(getString("Proxy/UserName"));
+    proxy.setPassword(getString("Proxy/Password"));
+  }
+  else
+    proxy.setType(QNetworkProxy::NoProxy);
+
+   QNetworkProxy::setApplicationProxy(proxy);
 }
 
 

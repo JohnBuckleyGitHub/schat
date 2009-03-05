@@ -87,6 +87,7 @@ public:
   void notify(int notify);
   void notify(int notify, int index);
   void read();
+  void setApplicationProxy() const;
   void write();
 
   #ifndef SCHAT_NO_UPDATE
