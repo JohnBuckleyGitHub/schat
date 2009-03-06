@@ -218,12 +218,13 @@ void Settings::read()
     setList("BenchmarkList", list);
   #endif
 
-  setBool("Proxy/Enable",     false);
-  setInt("Proxy/Type",        0);
-  setInt("Proxy/Port",        3128);
-  setString("Proxy/Host",     "");
-  setString("Proxy/UserName", "");
-  setString("Proxy/Password", "");
+  setBool("Proxy/Enable",         false);
+  setBool("Proxy/HideAndDisable", true);
+  setInt("Proxy/Type",            0);
+  setInt("Proxy/Port",            3128);
+  setString("Proxy/Host",         "");
+  setString("Proxy/UserName",     "");
+  setString("Proxy/Password",     "");
 
   setBool("Updates/Enable",         true);
   setBool("Updates/CheckOnStartup", true);
@@ -294,23 +295,25 @@ void Settings::read()
  */
 void Settings::setApplicationProxy() const
 {
-  QNetworkProxy proxy;
+  if (!getBool("Proxy/HideAndDisable")) {
+    QNetworkProxy proxy;
 
-  if (getBool("Proxy/Enable")) {
-    if (getInt("Proxy/Type") == 1)
-      proxy.setType(QNetworkProxy::Socks5Proxy);
+    if (getBool("Proxy/Enable")) {
+      if (getInt("Proxy/Type") == 1)
+        proxy.setType(QNetworkProxy::Socks5Proxy);
+      else
+        proxy.setType(QNetworkProxy::HttpProxy);
+
+      proxy.setHostName(getString("Proxy/Host"));
+      proxy.setPort(getInt("Proxy/Port"));
+      proxy.setUser(getString("Proxy/UserName"));
+      proxy.setPassword(getString("Proxy/Password"));
+    }
     else
-      proxy.setType(QNetworkProxy::HttpProxy);
+      proxy.setType(QNetworkProxy::NoProxy);
 
-    proxy.setHostName(getString("Proxy/Host"));
-    proxy.setPort(getInt("Proxy/Port"));
-    proxy.setUser(getString("Proxy/UserName"));
-    proxy.setPassword(getString("Proxy/Password"));
+     QNetworkProxy::setApplicationProxy(proxy);
   }
-  else
-    proxy.setType(QNetworkProxy::NoProxy);
-
-   QNetworkProxy::setApplicationProxy(proxy);
 }
 
 
@@ -325,7 +328,8 @@ void Settings::write()
        << "Updates/LevelCore"
        << "Updates/LastVersion"
        << "Updates/DownloadSize"
-       << "Sound/NameFilter";
+       << "Sound/NameFilter"
+       << "Proxy/HideAndDisable";
 
   #ifdef SCHAT_BENCHMARK
     m_ro << "BenchmarkEnable"

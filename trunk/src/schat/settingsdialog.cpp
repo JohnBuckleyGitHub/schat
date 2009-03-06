@@ -212,6 +212,7 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   d->proxyGroup = new QGroupBox(tr("Подключение через прокси-сервер"), this);
   d->proxyGroup->setCheckable(true);
   d->proxyGroup->setChecked(SimpleSettings->getBool("Proxy/Enable"));
+  d->proxyGroup->setVisible(!SimpleSettings->getBool("Proxy/HideAndDisable"));
 
   d->type = new QComboBox(this);
   d->type->addItem(tr("HTTP"));
