@@ -18,7 +18,7 @@
 SCHAT_CONSOLE    = 0
 SCHAT_WEBKIT     = 1
 SCHAT_DEBUG      = 0
-SCHAT_SINGLE_APP = 1
+SCHAT_SINGLE_APP = 0
 SCHAT_RESOURCES  = 1
 SCHAT_RC_FILE    = 1
 SCHAT_STATIC     = 0
@@ -60,6 +60,7 @@ HEADERS += \
     schatwindow_p.h \
     settings.h \
     settingsdialog.h \
+    singleapplication.h \
     tab.h \
     trayicon.h \
     update/downloadmanager.h \
@@ -103,6 +104,7 @@ SOURCES += \
     schatwindow.cpp \
     settings.cpp \
     settingsdialog.cpp \
+    singleapplication.cpp \
     tab.cpp \
     trayicon.cpp \
     update/downloadmanager.cpp \
