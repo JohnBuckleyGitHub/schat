@@ -30,6 +30,7 @@
 #include "schatwindow_p.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "simplechatapp.h"
 #include "tab.h"
 #include "trayicon.h"
 #include "welcomedialog.h"
@@ -926,6 +927,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
+  connect(SimpleChatApp::instance(), SIGNAL(messageRecieved(const QString &)), SLOT(handleMessage(const QString &)));
 
   #ifndef SCHAT_NO_UPDATE
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
@@ -1012,21 +1014,6 @@ bool SChatWindow::event(QEvent *event)
 
   return QMainWindow::event(event);
 }
-
-
-#ifndef SCHAT_NO_SINGLE_APP
-void SChatWindow::handleMessage(const QString &message)
-{
-  QStringList list = message.split(", ");
-
-  if (list.contains("-exit")) {
-    closeChat();
-    return;
-  }
-
-  d->showChat();
-}
-#endif
 
 
 /** [private slots]
@@ -1191,12 +1178,22 @@ void SChatWindow::daemonUi()
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::fatal()
 {
   d->main->displayChoiceServer(true);
+}
+
+
+void SChatWindow::handleMessage(const QString &message)
+{
+  QStringList args = message.split(", ");
+
+  if (args.contains("-exit")) {
+    closeChat();
+    return;
+  }
+
+  d->showChat();
 }
 
 

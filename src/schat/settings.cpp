@@ -367,7 +367,7 @@ bool Settings::install()
 
   QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
   #if QT_VERSION >= 0x040500
-    s->setIniCodec("UTF-8");
+    s.setIniCodec("UTF-8");
   #endif
   s.beginGroup("Updates");
 

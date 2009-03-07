@@ -40,11 +40,6 @@ protected:
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
-public slots:
-  #ifndef SCHAT_NO_SINGLE_APP
-    void handleMessage(const QString& message);
-  #endif
-
 private slots:
   void about();
   void accessDenied(quint16 reason);
@@ -56,6 +51,7 @@ private slots:
   void copy();
   void daemonUi();
   void fatal();
+  void handleMessage(const QString& message);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void linkLeave(quint8 numeric, const QString &network, const QString &name);
   void message(const QString &sender, const QString &msg);

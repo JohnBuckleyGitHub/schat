@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * class SingleApplication Copyright © 2008, Benjamin C. Meyer
+ * class SingleApplication Copyright © 2008, Benjamin C. Meyer <ben@meyerhome.net>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 
 #include "singleapplication.h"
 
-#include <qdir.h>
-#include <qlocalserver.h>
-#include <qlocalsocket.h>
-#include <qtextstream.h>
-#include <qfile.h>
+#include <QDir>
+#include <QFile>
+#include <QLocalServer.h>
+#include <QLocalSocket>
+#include <QTextStream>
 
 #ifndef Q_OS_WIN
 #include <unistd.h>
@@ -32,31 +32,50 @@
 #include <windows.h>
 #endif
 
+/*!
+ * Конструктор класса SingleApplication.
+ */
 SingleApplication::SingleApplication(int &argc, char **argv)
-    : QApplication(argc, argv), m_localServer(0)
+  : QApplication(argc, argv), m_serverName(serverName()), m_localServer(0)
 {
 }
 
 
+/*!
+ * Отправка сообщения другому экземпляру, используется для
+ * передачи командной строки.
+ *
+ * \return \a true в случае успешной отправки, что свидетельствует
+ * о наличии другого экземпляра приложения.
+ */
 bool SingleApplication::sendMessage(const QString &message)
 {
   QLocalSocket socket;
-  socket.connectToServer(serverName());
+  socket.connectToServer(m_serverName);
+
   if (socket.waitForConnected(500)) {
     QTextStream stream(&socket);
     stream << message;
     stream.flush();
+
     if (socket.waitForBytesWritten())
       return true;
+
     // if the message was sent before waitForBytesWritten was called
     // it will return false
     if (socket.error() == QLocalSocket::UnknownSocketError)
       return true;
   }
+
   return false;
 }
 
 
+/*!
+ * Запуск локального сервера.
+ *
+ * \return \a true в случае успешного запуска сервера.
+ */
 bool SingleApplication::startSingleServer()
 {
   if (m_localServer)
@@ -66,39 +85,35 @@ bool SingleApplication::startSingleServer()
   connect(m_localServer, SIGNAL(newConnection()), SLOT(newConnection()));
 
   bool success = false;
-  if (!m_localServer->listen(serverName())) {
-    if (QAbstractSocket::AddressInUseError == m_localServer->serverError()) {
+
+  if (!m_localServer->listen(m_serverName)) {
+    if (m_localServer->serverError() == QAbstractSocket::AddressInUseError) {
       // cleanup from a segfaulted server
-#ifdef Q_OS_UNIX
-      QString fullServerName = QDir::tempPath() + QLatin1String("/")
-          + serverName();
+      #ifdef Q_OS_UNIX
+      QString fullServerName = QDir::tempPath() + QLatin1String("/") + m_serverName;
       if (QFile::exists(fullServerName))
         QFile::remove(fullServerName);
-#endif
-      if (m_localServer->listen(serverName())) {
-        success = true;
-      }
-    }
-    if (!success) {
-      qWarning() << "SingleApplication: Unable to listen:"
-          << m_localServer->errorString();
-    }
-  }
-  else {
-    success = true;
-  }
+      #endif
 
+      if (m_localServer->listen(m_serverName))
+        success = true;
+    }
+  }
+  else
+    success = true;
+
+  #ifdef Q_OS_UNIX
   if (success) {
     QFile file(m_localServer->fullServerName());
-    if (!file.setPermissions(QFile::ReadUser | QFile::WriteUser))
-      qWarning() << "SingleApplication: Unable to set permissions on:"
-          << file.fileName() << file.errorString();
+    file.setPermissions(QFile::ReadUser | QFile::WriteUser);
   }
+  #endif
 
   if (!success) {
     delete m_localServer;
     m_localServer = 0;
   }
+
   return success;
 }
 
@@ -114,11 +129,11 @@ void SingleApplication::newConnection()
   QLocalSocket *socket = m_localServer->nextPendingConnection();
   if (!socket)
     return;
-  socket->waitForReadyRead();
+
+  socket->waitForReadyRead(300);
   QTextStream stream(socket);
-  QString message;
-  stream >> message;emit
-  messageRecieved(message);
+  QString message = stream.readAll();
+  emit messageRecieved(message);
   delete socket;
 }
 
@@ -127,28 +142,15 @@ QString SingleApplication::serverName() const
 {
   QString serverName = QCoreApplication::applicationName();
   Q_ASSERT(!serverName.isEmpty());
-#ifdef Q_WS_QWS
+
+  #ifdef Q_WS_QWS
   serverName += QLatin1String("_qws");
-#endif
-#ifndef Q_OS_WIN
+  #endif
+
+  #ifndef Q_OS_WIN
   serverName += QString(QLatin1String("_%1_%2")).arg(getuid()).arg(getgid());
-#else
-  static QString login;
-  if (login.isEmpty()) {
-    QT_WA( {
-          wchar_t buffer[256];
-          DWORD bufferSize = sizeof(buffer) / sizeof(wchar_t) - 1;
-          GetUserNameW(buffer, &bufferSize);
-          login = QString::fromUtf16((ushort*)buffer);
-        },
-        {
-          char buffer[256];
-          DWORD bufferSize = sizeof(buffer) / sizeof(char) - 1;
-          GetUserNameA(buffer, &bufferSize);
-          login = QString::fromLocal8Bit(buffer);
-        });
-  }
-  serverName += QString::fromAscii("_%1").arg(login);
-#endif
+  #else
+  serverName += '_' + QDir::home().dirName();
+  #endif
   return serverName;
 }
