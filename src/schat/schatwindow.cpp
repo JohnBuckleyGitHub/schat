@@ -254,7 +254,7 @@ QString SChatWindowPrivate::colorizedPing() const
   QString color = "6bb521";
   if (ms > 200 && ms < 500)
     color = "ff9900";
-  else if (ms > 500)
+  else if (ms >= 500)
     color = "da251d";
 
   return QObject::tr("Ping до сервера <b style='color:#%1;'>%2 мс</b>").arg(color).arg(ms);
