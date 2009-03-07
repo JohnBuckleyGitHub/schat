@@ -366,6 +366,9 @@ bool Settings::install()
   QString appPath = qApp->applicationDirPath();
 
   QSettings s(appPath + "/schat.conf", QSettings::IniFormat);
+  #if QT_VERSION >= 0x040500
+    s->setIniCodec("UTF-8");
+  #endif
   s.beginGroup("Updates");
 
   if (s.value("ReadyToInstall", false).toBool()) {
