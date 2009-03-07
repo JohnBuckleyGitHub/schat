@@ -2,7 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
- * class SingleApplication Copyright © 2008, Benjamin C. Meyer
+ * class SingleApplication Copyright © 2008, Benjamin C. Meyer <ben@meyerhome.net>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,14 @@
 
 #include <QApplication>
 
+class QLocalServer;
+
 /*!
+ * \brief Обеспечивает запуск единственного экземпляра приложения.
+ *
  * QApplication subclass that should be used when you only want one
  * instant of the application to exist at a time.
 */
-class QLocalServer;
 class SingleApplication : public QApplication
 {
   Q_OBJECT
@@ -46,6 +49,7 @@ private slots:
 
 private:
   QString serverName() const;
+  const QString m_serverName;
   QLocalServer *m_localServer;
 };
 

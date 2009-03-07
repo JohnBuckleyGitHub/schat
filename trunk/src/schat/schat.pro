@@ -60,6 +60,7 @@ HEADERS += \
     schatwindow_p.h \
     settings.h \
     settingsdialog.h \
+    simplechatapp.h \
     singleapplication.h \
     tab.h \
     trayicon.h \
@@ -104,6 +105,7 @@ SOURCES += \
     schatwindow.cpp \
     settings.cpp \
     settingsdialog.cpp \
+    simplechatapp.cpp \
     singleapplication.cpp \
     tab.cpp \
     trayicon.cpp \
