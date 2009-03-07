@@ -219,7 +219,7 @@ void Settings::read()
   #endif
 
   setBool("Proxy/Enable",         false);
-  setBool("Proxy/HideAndDisable", true);
+  setBool("Proxy/HideAndDisable", false);
   setInt("Proxy/Type",            0);
   setInt("Proxy/Port",            3128);
   setString("Proxy/Host",         "");
