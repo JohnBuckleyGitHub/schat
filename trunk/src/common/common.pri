@@ -48,20 +48,14 @@ contains( SCHAT_DEBUG, 1 ) {
   DEFINES += SCHAT_DEBUG
 }
 
-contains( SCHAT_SINGLE_APP, 1 ) {
-  INCLUDEPATH += ../3rdparty/singleapplication/include/SingleApplication
-  SINGLEAPPLICATION_LIBCONFIG = staticlib
-  win32-msvc*:LIBS += ../3rdparty/singleapplication/bin/singleapplication.lib
-  else:LIBS += -L ../3rdparty/singleapplication/bin -lsingleapplication
-}
-else {
-  DEFINES += SCHAT_NO_SINGLE_APP
-}
-
 contains( SCHAT_RESOURCES, 1 ) {
   RESOURCES += ../../data/$${TARGET}.qrc
 }
 
 contains( SCHAT_RC_FILE, 1 ) {
   win32:RC_FILE = $${TARGET}.rc
+}
+
+contains( SCHAT_DEVEL_MODE, 1 ) {
+  DEFINES += SCHAT_DEVEL_MODE
 }
