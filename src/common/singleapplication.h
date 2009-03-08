@@ -49,8 +49,8 @@ private slots:
 
 private:
   QString serverName() const;
-  const QString m_serverName;
-  QLocalServer *m_localServer;
+
+  QLocalServer *m_localServer; ///< Локальный сервер.
 };
 
 #endif

@@ -20,6 +20,7 @@
 
 #include "singleapplication.h"
 
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QLocalServer.h>
@@ -28,15 +29,13 @@
 
 #ifndef Q_OS_WIN
 #include <unistd.h>
-#else
-#include <windows.h>
 #endif
 
 /*!
  * Конструктор класса SingleApplication.
  */
 SingleApplication::SingleApplication(int &argc, char **argv)
-  : QApplication(argc, argv), m_serverName(serverName()), m_localServer(0)
+  : QApplication(argc, argv), m_localServer(0)
 {
 }
 
@@ -51,7 +50,7 @@ SingleApplication::SingleApplication(int &argc, char **argv)
 bool SingleApplication::sendMessage(const QString &message)
 {
   QLocalSocket socket;
-  socket.connectToServer(m_serverName);
+  socket.connectToServer(serverName());
 
   if (socket.waitForConnected(500)) {
     QTextStream stream(&socket);
@@ -86,16 +85,16 @@ bool SingleApplication::startSingleServer()
 
   bool success = false;
 
-  if (!m_localServer->listen(m_serverName)) {
+  if (!m_localServer->listen(serverName())) {
     if (m_localServer->serverError() == QAbstractSocket::AddressInUseError) {
       // cleanup from a segfaulted server
       #ifdef Q_OS_UNIX
-      QString fullServerName = QDir::tempPath() + QLatin1String("/") + m_serverName;
+      QString fullServerName = QDir::tempPath() + QLatin1String("/") + serverName();
       if (QFile::exists(fullServerName))
         QFile::remove(fullServerName);
       #endif
 
-      if (m_localServer->listen(m_serverName))
+      if (m_localServer->listen(serverName()))
         success = true;
     }
   }
@@ -140,8 +139,12 @@ void SingleApplication::newConnection()
 
 QString SingleApplication::serverName() const
 {
+  static QString s_serverName;
+
+  if (!s_serverName.isEmpty())
+    return s_serverName;
+
   QString serverName = QCoreApplication::applicationName();
-  Q_ASSERT(!serverName.isEmpty());
 
   #ifdef Q_WS_QWS
   serverName += QLatin1String("_qws");
@@ -152,5 +155,7 @@ QString SingleApplication::serverName() const
   #else
   serverName += '_' + QDir::home().dirName();
   #endif
-  return serverName;
+
+  s_serverName = QCryptographicHash::hash(serverName.toUtf8(), QCryptographicHash::Md5).toHex();
+  return s_serverName;
 }
