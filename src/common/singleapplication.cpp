@@ -23,7 +23,7 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
-#include <QLocalServer.h>
+#include <QLocalServer>
 #include <QLocalSocket>
 #include <QTextStream>
 
@@ -49,6 +49,10 @@ SingleApplication::SingleApplication(int &argc, char **argv)
  */
 bool SingleApplication::sendMessage(const QString &message)
 {
+  #ifdef SCHAT_DEVEL_MODE
+  return false;
+  #endif
+
   QLocalSocket socket;
   socket.connectToServer(serverName());
 
@@ -77,6 +81,10 @@ bool SingleApplication::sendMessage(const QString &message)
  */
 bool SingleApplication::startSingleServer()
 {
+  #ifdef SCHAT_DEVEL_MODE
+  return true;
+  #endif
+
   if (m_localServer)
     return false;
 
@@ -119,6 +127,10 @@ bool SingleApplication::startSingleServer()
 
 bool SingleApplication::isRunning() const
 {
+  #ifdef SCHAT_DEVEL_MODE
+  return true;
+  #endif
+
   return (0 != m_localServer);
 }
 
