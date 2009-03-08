@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -118,20 +118,18 @@ DaemonUi::DaemonUi(QWidget *parent)
 }
 
 
-#ifndef SCHAT_NO_SINGLE_APP
 void DaemonUi::handleMessage(const QString& message)
 {
-  QStringList list = message.split(", ");
+  QStringList args = message.split(", ");
 
-  if (list.contains("-exit")) {
-    qApp->quit();
+  if (args.contains("-exit")) {
+    QApplication::quit();
     return;
   }
 
-  if (!arguments(list))
+  if (!arguments(args))
     showUi();
 }
-#endif
 
 
 void DaemonUi::checkStart()
@@ -270,7 +268,7 @@ void DaemonUi::createActions()
   connect(m_quitAllAction, SIGNAL(triggered()), SLOT(exit()));
 
   m_quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
-  connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+  connect(m_quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
   m_restartAction = new QAction(QIcon(":/images/restart.png"), tr("&Перезапуск"), this);
   connect(m_restartAction, SIGNAL(triggered()), SLOT(restart()));
@@ -297,7 +295,7 @@ void DaemonUi::createButtons()
 
   m_quitButton = new QPushButton(QIcon(":/images/application_exit.png"), "", this);
   m_quitButton->setToolTip(tr("Выход"));
-  connect(m_quitButton, SIGNAL(clicked(bool)), qApp, SLOT(quit()));
+  connect(m_quitButton, SIGNAL(clicked(bool)), QApplication::instance(), SLOT(quit()));
 
   m_startButton = new QToolButton(this);
   m_startButton->setAutoRaise(true);

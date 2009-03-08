@@ -19,28 +19,34 @@
 #include <QtGui>
 
 #include "daemonui.h"
-
-#ifndef SCHAT_NO_SINGLE_APP
-  #include "SingleApplication"
-#endif
+#include "singleapplication.h"
 
 int main(int argc, char *argv[])
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-  QApplication app(argc, argv);
+  SingleApplication app(argc, argv);
+  app.setApplicationName("IMPOMEZIA Simple Chat Daemon UI");
   app.setQuitOnLastWindowClosed(false);
-  QCoreApplication::addLibraryPath(app.applicationDirPath() + "/plugins");
-
+  app.addLibraryPath(app.applicationDirPath() + "/plugins");
   app.setStyle(new QPlastiqueStyle);
 
-  QStringList arguments = app.arguments();
-  arguments.takeFirst();
+  QStringList args = app.arguments();
+  args.takeFirst();
+  QString message;
 
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_ru", ":/translations");
-  app.installTranslator(&qtTranslator);
+  if (!args.isEmpty())
+    message = args.join(", ");
+
+  if (app.sendMessage(message))
+    return 0;
+
+  if (args.contains("-exit"))
+    return 0;
+
+  if (!app.startSingleServer())
+    return 0;
 
   // Требуем поддержку System Tray
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -48,32 +54,17 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  #ifndef SCHAT_NO_SINGLE_APP
-    QString serverName = app.applicationDirPath().toUtf8().toHex();
-    SingleApplication instance("SimpleChatDaemonUI" + serverName, &app);
-    if (instance.isRunning()) {
-      QString message;
-
-      if (!arguments.isEmpty())
-        message = arguments.join(", ");
-
-      if (instance.sendMessage(message))
-        return 0;
-    }
-  #endif
-
-  if (arguments.contains("-exit"))
-    return 0;
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_ru", ":/translations");
+  app.installTranslator(&qtTranslator);
 
   DaemonUi ui;
-  if (arguments.contains("-show"))
+  if (args.contains("-show"))
     ui.show();
   else
     ui.hide();
 
-  #ifndef SCHAT_NO_SINGLE_APP
-    QObject::connect(&instance, SIGNAL(messageReceived(const QString &)), &ui, SLOT(handleMessage(const QString &)));
-  #endif
+  QObject::connect(&app, SIGNAL(messageRecieved(const QString &)), &ui, SLOT(handleMessage(const QString &)));
 
   return app.exec();
 }
