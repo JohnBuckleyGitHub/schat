@@ -197,7 +197,7 @@ void Settings::read()
   setList("RecentServers",          QStringList());
 
   #ifndef SCHAT_NO_WEBKIT
-    setBool("MessageGrouping",      true);
+    setBool("MessageGrouping",      false);
     setString("ChatStyle",          "Default");
     setString("ChatStyleVariant",   "");
   #endif

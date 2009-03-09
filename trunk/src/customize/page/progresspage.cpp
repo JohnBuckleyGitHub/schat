@@ -173,7 +173,7 @@ void ProgressPage::nextJob()
   }
   else if (job == CalcMd5) {
     m_label->setText(tr("Подсчёт контрольных сумм"));
-    m_md5Calc = new Md5CalcThread(m_exe, this);
+    m_md5Calc = new Md5CalcThread(m_exe, m_settings->getString("PfxFile"), m_settings->getString("PfxPassword"), this);
     connect(m_md5Calc, SIGNAL(done(bool)), SLOT(calcDone(bool)));
     connect(m_md5Calc, SIGNAL(done(int, const QByteArray &)), SLOT(calcDone(int, const QByteArray &)));
 

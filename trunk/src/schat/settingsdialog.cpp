@@ -114,7 +114,7 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   d->autoAwayTime->setEnabled(d->autoAway->isChecked());
 
   d->exitAwayOnSend = new QCheckBox(tr("Возвращаться в &обычный режим при отправке"), this);
-  d->exitAwayOnSend->setToolTip(tr("Возвращаться в обычный режим при отправке\nсообщения если до этого статус Отсутствую\nбыл установлен в ручную"));
+  d->exitAwayOnSend->setToolTip(tr("Возвращаться в обычный режим при отправке\nсообщения, если до этого статус Отсутствую\nбыл установлен вручную"));
   d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
 
   QGroupBox *awayGroup = new QGroupBox(tr("Статус: Отсутствую"), this);
