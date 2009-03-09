@@ -34,7 +34,7 @@ public:
   Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, const QString &pfxFile, const QString &pfxPassword, QObject *parent = 0);
 
 signals:
-  void done(int type, const QByteArray &md5);
+  void done(int type, const QByteArray &hash, qint64 size);
   void done(bool error);
 
 protected:
@@ -43,6 +43,7 @@ protected:
 private:
   int calc(ProgressPage::Nsi type);
 
+  bool m_pfx;
   const QMap<ProgressPage::Nsi, FileInfoLite> m_files;
   const QString m_pfxFile;
   const QString m_pfxPassword;

@@ -96,15 +96,17 @@ void ProgressPage::initializePage()
  * Заносит результат вычислений контрольной суммы в \a m_exe.
  *
  * \param type Тип файла.
- * \param md5  Контрольная сумма.
+ * \param hash Контрольная сумма.
  */
-void ProgressPage::calcDone(int type, const QByteArray &md5)
+void ProgressPage::calcDone(int type, const QByteArray &hash, qint64 size)
 {
   Nsi key = static_cast<Nsi>(type);
 
   if (m_exe.contains(key)) {
     FileInfoLite info = m_exe.value(key);
-    info.md5 = md5;
+    info.md5 = hash;
+    if (size)
+      info.size = size;
     m_exe.insert(key, info);
   }
 }
@@ -175,7 +177,7 @@ void ProgressPage::nextJob()
     m_label->setText(tr("Подсчёт контрольных сумм"));
     m_md5Calc = new Md5CalcThread(m_exe, m_settings->getString("PfxFile"), m_settings->getString("PfxPassword"), this);
     connect(m_md5Calc, SIGNAL(done(bool)), SLOT(calcDone(bool)));
-    connect(m_md5Calc, SIGNAL(done(int, const QByteArray &)), SLOT(calcDone(int, const QByteArray &)));
+    connect(m_md5Calc, SIGNAL(done(int, const QByteArray &, qint64)), SLOT(calcDone(int, const QByteArray &, qint64)));
 
     m_md5Calc->start();
   }
