@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 /*!
  * Конструктор класса Md5CalcThread.
  */
-Md5CalcThread::Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, QObject *parent)
-  : QThread(parent), m_files(files)
+Md5CalcThread::Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, const QString &pfxFile, const QString &pfxPassword, QObject *parent)
+  : QThread(parent), m_files(files), m_pfxFile(pfxFile), m_pfxPassword(pfxPassword)
 {
   connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
@@ -35,15 +35,29 @@ Md5CalcThread::Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files,
  */
 void Md5CalcThread::run()
 {
-  bool noError = false;
+  if (!m_pfxFile.isEmpty() && !m_pfxPassword.isEmpty()) {
+    foreach (FileInfoLite info, m_files) {
+      QProcess process;
+      process.start(QString("SignTool.exe sign /f \"%1\" /p %2 /t http://timestamp.verisign.com/scripts/timestamp.dll \"%3\"")
+          .arg(QDir::toNativeSeparators(m_pfxFile))
+          .arg(m_pfxPassword)
+          .arg(info.name));
+      process.waitForStarted(10000);
+      process.waitForFinished();
+//      qDebug() << process.readAllStandardError();
+//      qDebug() << process.readAllStandardOutput();
+    }
+  }
+
+  bool errors = 0;
 
   if (m_files.contains(ProgressPage::Core))
-    noError = calc(ProgressPage::Core);
+    errors += calc(ProgressPage::Core);
 
-  if (m_files.contains(ProgressPage::Runtime) && noError)
-    noError = calc(ProgressPage::Runtime);
+  if (m_files.contains(ProgressPage::Runtime) && errors == 0)
+    errors = calc(ProgressPage::Runtime);
 
-  emit done(!noError);
+  emit done(errors != 0);
 }
 
 
@@ -54,24 +68,24 @@ void Md5CalcThread::run()
  * \param type Тип файла
  * \return \a true в случае успеха.
  */
-bool Md5CalcThread::calc(ProgressPage::Nsi type)
+int Md5CalcThread::calc(ProgressPage::Nsi type)
 {
   FileInfoLite info = m_files.value(type);
 
   QFile file(info.name);
 
   if (!file.exists())
-    return false;
+    return 1;
 
   QCryptographicHash hash(QCryptographicHash::Md5);
   QByteArray result;
 
   if(!file.open(QIODevice::ReadOnly))
-    return false;
+    return 1;
 
   hash.addData(file.readAll());
   result = hash.result();
   emit done(type, result);
 
-  return true;
+  return 0;
 }

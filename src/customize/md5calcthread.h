@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class Md5CalcThread : public QThread
   Q_OBJECT
 
 public:
-  Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, QObject *parent = 0);
+  Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, const QString &pfxFile, const QString &pfxPassword, QObject *parent = 0);
 
 signals:
   void done(int type, const QByteArray &md5);
@@ -41,9 +41,11 @@ protected:
   void run();
 
 private:
-  bool calc(ProgressPage::Nsi type);
+  int calc(ProgressPage::Nsi type);
 
-  QMap<ProgressPage::Nsi, FileInfoLite> m_files;
+  const QMap<ProgressPage::Nsi, FileInfoLite> m_files;
+  const QString m_pfxFile;
+  const QString m_pfxPassword;
 };
 
 #endif /* MD5CALCTHREAD_H_ */
