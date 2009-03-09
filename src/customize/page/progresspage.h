@@ -56,7 +56,7 @@ public:
   void initializePage();
 
 private slots:
-  void calcDone(int type, const QByteArray &md5);
+  void calcDone(int type, const QByteArray &hash, qint64 size);
   void calcDone(bool error);
   void disableFinish();
   void nextJob();

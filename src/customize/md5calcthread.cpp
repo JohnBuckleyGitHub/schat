@@ -25,8 +25,9 @@
  * Конструктор класса Md5CalcThread.
  */
 Md5CalcThread::Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files, const QString &pfxFile, const QString &pfxPassword, QObject *parent)
-  : QThread(parent), m_files(files), m_pfxFile(pfxFile), m_pfxPassword(pfxPassword)
+  : QThread(parent), m_files(files), m_pfxFile(QDir::toNativeSeparators(pfxFile)), m_pfxPassword(pfxPassword)
 {
+  m_pfx = (!m_pfxFile.isEmpty() && !m_pfxPassword.isEmpty());
   connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
 
@@ -35,11 +36,11 @@ Md5CalcThread::Md5CalcThread(const QMap<ProgressPage::Nsi, FileInfoLite> &files,
  */
 void Md5CalcThread::run()
 {
-  if (!m_pfxFile.isEmpty() && !m_pfxPassword.isEmpty()) {
+  if (m_pfx) {
     foreach (FileInfoLite info, m_files) {
       QProcess process;
       process.start(QString("SignTool.exe sign /f \"%1\" /p %2 /t http://timestamp.verisign.com/scripts/timestamp.dll \"%3\"")
-          .arg(QDir::toNativeSeparators(m_pfxFile))
+          .arg(m_pfxFile)
           .arg(m_pfxPassword)
           .arg(info.name));
       process.waitForStarted(10000);
@@ -55,7 +56,7 @@ void Md5CalcThread::run()
     errors += calc(ProgressPage::Core);
 
   if (m_files.contains(ProgressPage::Runtime) && errors == 0)
-    errors = calc(ProgressPage::Runtime);
+    errors += calc(ProgressPage::Runtime);
 
   emit done(errors != 0);
 }
@@ -85,7 +86,7 @@ int Md5CalcThread::calc(ProgressPage::Nsi type)
 
   hash.addData(file.readAll());
   result = hash.result();
-  emit done(type, result);
+  emit done(type, result, m_pfx ? QFileInfo(info.name).size() : 0);
 
   return 0;
 }
