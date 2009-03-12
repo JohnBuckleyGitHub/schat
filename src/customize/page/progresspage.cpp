@@ -97,6 +97,7 @@ void ProgressPage::initializePage()
  *
  * \param type Тип файла.
  * \param hash Контрольная сумма.
+ * \param size Новый размер файла после добавление ЭЦП, 0 - если размер не изменился.
  */
 void ProgressPage::calcDone(int type, const QByteArray &hash, qint64 size)
 {
