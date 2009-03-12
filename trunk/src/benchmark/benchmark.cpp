@@ -16,17 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "benchmark.h"
 
-#define SCHAT_VERSION      "0.5.2.1043 Beta"
-#define SCHAT_VERSION_RC   0,5,2,1043
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008 - 2009 IMPOMEZIA"
+#include <QtCore>
 
-static const int UpdateLevelQt   = 2009031300;
-static const int UpdateLevelCore = 2009031300;
+/*!
+ * Конструктор класса Benchmark.
+ */
+Benchmark::Benchmark(QObject *parent)
+  : QObject(parent)
+{
 
-#endif /*VERSION_H_*/
+}
