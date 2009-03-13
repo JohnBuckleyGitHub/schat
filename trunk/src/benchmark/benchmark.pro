@@ -24,13 +24,24 @@ QT = core network
 TEMPLATE = app
 
 DEFINES += SCHAT_NO_WRITE_SETTINGS
+DEFINES += SCHAT_CLIENT
 
 HEADERS = \
     benchmark.h \
+    abstractsettings.h \
+    network.h \
+    networkreader.h \
+    abstractprofile.h \
+    clientservice.h \
 
 SOURCES = \
     main.cpp \
     benchmark.cpp \
+    abstractsettings.cpp \
+    network.cpp \
+    networkreader.cpp \
+    abstractprofile.cpp \
+    clientservice.cpp \
 
 CODECFORTR = UTF-8
 
