@@ -22,6 +22,9 @@
 #include <QObject>
 #include <QStringList>
 
+class AbstractSettings;
+class Network;
+
 /*!
  * \brief Класс для стресс-тестирования.
  */
@@ -30,6 +33,21 @@ class Benchmark : public QObject {
 
 public:
   Benchmark(QObject *parent = 0);
+
+private slots:
+  void accessDenied(quint16 reason);
+  void connectToHost();
+  void init();
+
+private:
+
+  AbstractSettings *m_settings;
+  int m_connectInterval;
+  int m_count;
+  int m_usersCount;
+  Network *m_network;
+  QString m_nickPrefix;
+  QString m_serverAddr;
 };
 
 #endif /* BENCHMARK_H_ */
