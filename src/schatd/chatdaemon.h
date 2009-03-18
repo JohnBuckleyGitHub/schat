@@ -16,17 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CHAT_DAEMON_H_
+#define CHAT_DAEMON_H_
 
-#define SCHAT_VERSION      "0.6.0.1047 TRUNK"
-#define SCHAT_VERSION_RC   0,6,0,1047
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008 - 2009 IMPOMEZIA"
+#include <QObject>
 
-static const int UpdateLevelQt   = 2009031900;
-static const int UpdateLevelCore = 2009031900;
+/*!
+ * \brief Сервер чата
+ *
+ * Класс полностью включает в себя функциональность сервера чата.
+ */
+class ChatDaemon : public QObject
+{
+  Q_OBJECT
 
-#endif /*VERSION_H_*/
+public:
+  ChatDaemon(QObject *parent = 0);
+  ~ChatDaemon();
+  bool start();
+};
+
+#endif /*CHAT_DAEMON_H_*/

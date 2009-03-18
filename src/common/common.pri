@@ -18,10 +18,12 @@
 DEPENDPATH += \
     . \
     ../common \
+    ../3rdparty \
 
 INCLUDEPATH += \
     . \
     ../common \
+    ../3rdparty \
 
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../tmp/$${TARGET}/debug/rcc

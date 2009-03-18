@@ -285,6 +285,10 @@ static const quint16 OpcodeUniversalLite             = 7667;
 
 namespace schat
 {
+/*!
+ * Размер заголовка пакета (размер + опкод).
+ */
+static const quint16 headerSize = sizeof(quint16) + sizeof(quint16);
 
 /*!
  * Передачи информации о статусе.
