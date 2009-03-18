@@ -16,17 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef WORKERPOOL_H_
+#define WORKERPOOL_H_
 
-#define SCHAT_VERSION      "0.6.0.1047 TRUNK"
-#define SCHAT_VERSION_RC   0,6,0,1047
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008 - 2009 IMPOMEZIA"
+#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <QList>
 
-static const int UpdateLevelQt   = 2009031900;
-static const int UpdateLevelCore = 2009031900;
+#include "asio/asio.hpp"
 
-#endif /*VERSION_H_*/
+/*!
+ * A pool of io_service objects.
+ */
+class WorkerPool
+  : private boost::noncopyable
+{
+public:
+  explicit WorkerPool(int poolSize);
+  asio::io_service& getIoService();
+  void run();
+  void stop();
+
+private:
+  typedef boost::shared_ptr<asio::io_service> ioServicePtr;
+  typedef boost::shared_ptr<asio::io_service::work> workPtr;
+
+  int m_nextIoService;              ///< The next io_service to use for a connection.
+  QList<ioServicePtr> m_ioServices; ///< The pool of io_services.
+  QList<workPtr> m_work;            ///< The work that keeps the io_services running.
+};
+
+#endif /* WORKERPOOL_H_ */
