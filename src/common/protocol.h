@@ -290,6 +290,13 @@ namespace schat
  */
 static const quint16 headerSize = sizeof(quint16) + sizeof(quint16);
 
+
+/*!
+ * Время ожидания в секундах начала инициализации рукопожатия.
+ */
+static const int WaitGreetingTime                   = 10;
+
+
 /*!
  * Передачи информации о статусе.
  * QList<quint32>[0] -> Статус (StatusNormal, StatusAway).
