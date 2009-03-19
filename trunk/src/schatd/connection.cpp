@@ -21,12 +21,15 @@
 
 #include "abstractprofile.h"
 #include "connection.h"
+#include "packet.h"
 
 /*!
  * Construct a connection with the given io_service.
  */
-Connection::Connection(asio::io_service &ioService)
-  : m_profile(0),
+Connection::Connection(asio::io_service &ioService, QObject *parent)
+  : QObject(parent),
+  m_profile(0),
+  m_timer(ioService),
   m_socket(ioService),
   m_bodySize(0),
   m_opcode(0),
@@ -80,6 +83,9 @@ bool Connection::send(const QByteArray &data)
 void Connection::start()
 {
   qDebug() << "Connection::start()" << this;
+
+  m_timer.expires_from_now(boost::posix_time::seconds(schat::WaitGreetingTime));
+  m_timer.async_wait(boost::bind(&Connection::checkGreeting, this));
 
   m_socket.async_read_some(asio::buffer(m_header, schat::headerSize),
       boost::bind(&Connection::handleReadHeader, shared_from_this(),
@@ -170,6 +176,29 @@ quint16 Connection::verifyGreeting(quint16 version)
 }
 
 
+void Connection::checkGreeting()
+{
+  qDebug() << this << "checkGreeting()";
+
+  if (m_state == WaitGreeting)
+    close();
+}
+
+
+/*!
+ * Закрытие соединения.
+ * Останавливается передачи и приём данных и сокет закрывается.
+ */
+void Connection::close()
+{
+  qDebug() << this << "close()";
+
+  asio::error_code ignored;
+  m_socket.shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
+  m_socket.close(ignored);
+}
+
+
 /*!
  * Чтение тела пакета.
  */
@@ -189,14 +218,7 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
       case OpcodeGreeting:
         if (opcodeGreeting()) {
           m_state = Ready;
-
-          QByteArray block;
-          QDataStream out(&block, QIODevice::WriteOnly);
-          out.setVersion(StreamVersion);
-          out << quint16(0) << OpcodeAccessGranted << quint16(0);
-          out.device()->seek(0);
-          out << quint16(block.size() - (int) sizeof(quint16));
-          send(block);
+          send(Packet::create(OpcodeAccessGranted, 0));
         }
         else {
           m_state = WaitClose;
@@ -271,6 +293,12 @@ void Connection::handleWrite(const asio::error_code &e, int bytes)
 }
 
 
+/*!
+ * Отправка пакета из очереди.
+ * В случае если очередь m_sendQueue не пуста, то извлекается следующий пакет
+ * и записывается в буфер m_send, после этого инициализируется асинхронная
+ * запись в сокет.
+ */
 void Connection::send()
 {
   qDebug() << "send()" << this;

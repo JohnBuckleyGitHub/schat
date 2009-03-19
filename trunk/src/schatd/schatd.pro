@@ -27,10 +27,10 @@ QT = core network
 TEMPLATE = app
 
 DEFINES += SCHAT_NO_WRITE_SETTINGS
-DEFINES += _WIN32_WINNT=0x0501
 
 win32 {
     LIBS += -lws2_32 -lmswsock
+    DEFINES += _WIN32_WINNT=0x0501
 }
 
 HEADERS = \
@@ -38,6 +38,7 @@ HEADERS = \
     chatdaemon.h \
     chatserver.h \
     connection.h \
+    packet.h \
     version.h \
     workerpool.h \
 
@@ -47,6 +48,7 @@ SOURCES = \
     chatserver.cpp \
     connection.cpp \
     main.cpp \
+    packet.cpp \
     workerpool.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {

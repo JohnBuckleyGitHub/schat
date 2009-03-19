@@ -22,6 +22,10 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <QByteArray>
+#include <QDataStream>
+#include <QObject>
+#include <QQueue>
 
 #include "asio/asio.hpp"
 #include "protocol.h"
@@ -32,9 +36,12 @@ class AbstractProfile;
  * Represents a single connection from a client.
  */
 class Connection
-  : public boost::enable_shared_from_this<Connection>,
-    private boost::noncopyable
+  : public QObject,
+  public boost::enable_shared_from_this<Connection>,
+  private boost::noncopyable
 {
+  Q_OBJECT
+
 public:
   /// Состояние соединения.
   enum State {
@@ -44,7 +51,7 @@ public:
     WaitClose     ///< Соединение закрывается.
   };
 
-  explicit Connection(asio::io_service &ioService);
+  explicit Connection(asio::io_service &ioService, QObject *parent = 0);
   ~Connection();
 
   asio::ip::tcp::socket& socket();
@@ -54,12 +61,15 @@ public:
 private:
   bool opcodeGreeting();
   quint16 verifyGreeting(quint16 version);
+  void checkGreeting();
+  void close();
   void handleReadBody(const asio::error_code &e, int bytes);
   void handleReadHeader(const asio::error_code &e, int bytes);
   void handleWrite(const asio::error_code &e, int bytes);
   void send();
 
   AbstractProfile *m_profile;       ///< Профиль подключённого пользователя.
+  asio::deadline_timer m_timer;     ///< Таймер, для разрыва соединения если за заданное время не инициировано рукопожатие.
   asio::ip::tcp::socket m_socket;   ///< Socket for the connection.
   char m_body[8192];                ///< Буфер для чтения тела пакета.
   char m_header[schat::headerSize]; ///< Буфер для заголовка пакета.
