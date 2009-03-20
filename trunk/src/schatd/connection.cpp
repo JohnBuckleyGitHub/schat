@@ -31,6 +31,8 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
   m_profile(0),
   m_timer(ioService),
   m_socket(ioService),
+  m_oldProtocol(false),
+  m_pingState(WaitPing),
   m_bodySize(0),
   m_opcode(0),
   m_numeric(0),
@@ -53,14 +55,22 @@ Connection::~Connection()
  */
 asio::ip::tcp::socket& Connection::socket()
 {
-  qDebug() << "Connection::socket()" << this;
+//  qDebug() << "Connection::socket()" << this;
   return m_socket;
 }
 
 
+/*!
+ * Отправка пакета.
+ * Пакет добавляется в очередь m_sendQueue и если она была пуста
+ * немедленно производится начало асинхронной отправки.
+ *
+ * \param data Полностью сформированный пакет.
+ * \return \a true если состояние сокета равно Ready.
+ */
 bool Connection::send(const QByteArray &data)
 {
-  qDebug() << "send(const QByteArray &)" << this;
+//  qDebug() << "send(const QByteArray &)" << this;
 
   if (m_state == Ready) {
     if (m_sendQueue.isEmpty()) {
@@ -82,10 +92,10 @@ bool Connection::send(const QByteArray &data)
  */
 void Connection::start()
 {
-  qDebug() << "Connection::start()" << this;
+//  qDebug() << "Connection::start()" << this;
 
-  m_timer.expires_from_now(boost::posix_time::seconds(schat::WaitGreetingTime));
-  m_timer.async_wait(boost::bind(&Connection::checkGreeting, this));
+  m_timer.expires_from_now(boost::posix_time::seconds(schat::GreetingTimeout));
+  m_timer.async_wait(boost::bind(&Connection::checkGreeting, shared_from_this(), _1));
 
   m_socket.async_read_some(asio::buffer(m_header, schat::headerSize),
       boost::bind(&Connection::handleReadHeader, shared_from_this(),
@@ -103,7 +113,7 @@ void Connection::start()
  */
 bool Connection::opcodeGreeting()
 {
-  qDebug() << "Connection::opcodeGreeting()";
+//  qDebug() << "Connection::opcodeGreeting()";
 
   quint16 p_version;
   quint8  p_gender;
@@ -176,12 +186,28 @@ quint16 Connection::verifyGreeting(quint16 version)
 }
 
 
-void Connection::checkGreeting()
+/*!
+ * Обнаружение мёртвых соединений без инициированного рукопожатия.
+ * Функция вызывается спустя \b schat::GreetingTimeout секунд.
+ *
+ * Если рукопожатие не было инициировано соединение разрывается.
+ * В противном случае запускается пинг-таймер.
+ *
+ * \param e Код ошибки таймера.
+ */
+void Connection::checkGreeting(asio::error_code &e)
 {
   qDebug() << this << "checkGreeting()";
 
-  if (m_state == WaitGreeting)
-    close();
+  if (!e) {
+    if (m_state == WaitGreeting) {
+      close();
+      return;
+    }
+
+    if (m_state != WaitClose)
+      startPing(WaitPing, schat::PingInterval);
+  }
 }
 
 
@@ -193,7 +219,10 @@ void Connection::close()
 {
   qDebug() << this << "close()";
 
+  m_state = WaitClose;
+
   asio::error_code ignored;
+  m_timer.cancel(ignored);
   m_socket.shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
   m_socket.close(ignored);
 }
@@ -204,13 +233,13 @@ void Connection::close()
  */
 void Connection::handleReadBody(const asio::error_code &e, int bytes)
 {
-  qDebug() << "Connection::handleReadBody()" << this;
-  qDebug() << "  Transferred:     " << bytes << "bytes";
-  qDebug() << "  RAW Body:        " << QByteArray(m_body, m_bodySize - 2).toHex();
+//  qDebug() << "Connection::handleReadBody()" << this;
+//  qDebug() << "  Transferred:     " << bytes << "bytes";
+//  qDebug() << "  RAW Body:        " << QByteArray(m_body, m_bodySize - 2).toHex();
 
   if (!e) {
     if (bytes != m_bodySize - 2) {
-      m_state = WaitClose;
+      close();
       return;
     }
 
@@ -221,17 +250,23 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
           send(Packet::create(OpcodeAccessGranted, 0));
         }
         else {
-          m_state = WaitClose;
+          close();
           return;
         }
+        m_oldProtocol = true;
         break;
     }
+
+    if (!m_oldProtocol)
+      startPing(WaitPing, schat::PingInterval);
 
     m_socket.async_read_some(asio::buffer(m_header, schat::headerSize),
         boost::bind(&Connection::handleReadHeader, shared_from_this(),
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
   }
+  else
+    close();
 }
 
 
@@ -244,13 +279,13 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
  */
 void Connection::handleReadHeader(const asio::error_code &e, int bytes)
 {
-  qDebug() << "Connection::handleReadHeader()" << this;
-  qDebug() << "  Transferred:     " << bytes << "bytes";
-  qDebug() << "  RAW Header:      " << QByteArray(m_header, schat::headerSize).toHex();
+//  qDebug() << "Connection::handleReadHeader()" << this;
+//  qDebug() << "  Transferred:     " << bytes << "bytes";
+//  qDebug() << "  RAW Header:      " << QByteArray(m_header, schat::headerSize).toHex();
 
   if (!e) {
     if (bytes != schat::headerSize) {
-      m_state = WaitClose;
+      close();
       return;
     }
 
@@ -258,26 +293,43 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
     QDataStream stream(header);
 
     stream >> m_bodySize >> m_opcode;
-    if (m_bodySize > 8190)
+    if (m_bodySize > 8190) {
+      close();
       return;
+    }
 
     if (m_state != Ready) {
       if (WaitGreeting && m_opcode == OpcodeGreeting)
         m_state = WaitAccess;
       else if ((m_state == WaitGreeting && m_opcode != OpcodeGreeting) || m_state == WaitAccess) {
-        m_state = WaitClose;
+        close();
         return;
       }
     }
 
-    qDebug() << "  Full Packet Size:" << m_bodySize << "bytes";
-    qDebug() << "  Packet Opcode:   " << m_opcode;
+//    qDebug() << "  Full Packet Size:" << m_bodySize << "bytes";
+//    qDebug() << "  Packet Opcode:   " << m_opcode;
 
-    m_socket.async_read_some(asio::buffer(m_body, m_bodySize - 2),
-        boost::bind(&Connection::handleReadBody, shared_from_this(),
-          asio::placeholders::error,
-          asio::placeholders::bytes_transferred));
+    if (m_bodySize == 2) {
+      if (m_opcode == OpcodePong) {
+//        qDebug() << "<<<< PONG OK <<<<" << QDateTime::currentDateTime().toString("[mm:ss]");
+        startPing(WaitPing, schat::PingInterval);
+      }
+
+      m_socket.async_read_some(asio::buffer(m_header, schat::headerSize),
+          boost::bind(&Connection::handleReadHeader, shared_from_this(),
+            asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
+    }
+    else {
+      m_socket.async_read_some(asio::buffer(m_body, m_bodySize - 2),
+          boost::bind(&Connection::handleReadBody, shared_from_this(),
+            asio::placeholders::error,
+            asio::placeholders::bytes_transferred));
+    }
   }
+  else
+    close();
 }
 
 
@@ -286,9 +338,33 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
  */
 void Connection::handleWrite(const asio::error_code &e, int bytes)
 {
-  qDebug() << "Connection::handleWrite()" << this << bytes;
-  if (!e) {
+//  qDebug() << "Connection::handleWrite()" << this << bytes;
+  if (!e)
     send();
+  else
+    close();
+}
+
+
+/*!
+ * Обработка событий от пинг-таймера.
+ * Если текущее состояние равно WaitPing, то отправляется пинг-пакет
+ * и устанавливается состояние ожидания понг-пакета, если понг-таймер
+ * не будет сброшен пришедшим понг-пакетом или в случае использования
+ * нового протокола любым входящим пакетом, то соединение будет разорвано.
+ */
+void Connection::ping(asio::error_code &e)
+{
+  if (!e) {
+    if (m_pingState == WaitPing) {
+//      qDebug() << ">>>> PING SEND >>>>" << QDateTime::currentDateTime().toString("[mm:ss]");
+      send(Packet::create(OpcodePing));
+      startPing(WaitPong, schat::PongTimeout);
+    }
+    else {
+//      qDebug() << "<<<< PONG FAIL >>>>" << QDateTime::currentDateTime().toString("[mm:ss]");
+      close();
+    }
   }
 }
 
@@ -301,18 +377,29 @@ void Connection::handleWrite(const asio::error_code &e, int bytes)
  */
 void Connection::send()
 {
-  qDebug() << "send()" << this;
+//  qDebug() << this << "send()";
 
   if (!m_sendQueue.isEmpty()) {
     QByteArray data = m_sendQueue.dequeue();
     QDataStream out(&data, QIODevice::ReadOnly);
     out.device()->read(m_send, data.size());
 
-    qDebug() << "  RAW Send:" << QByteArray(m_send, data.size()).toHex();
+//    qDebug() << "  RAW Send:" << QByteArray(m_send, data.size()).toHex();
 
     m_socket.async_write_some(asio::buffer(m_send, data.size()),
         boost::bind(&Connection::handleWrite, shared_from_this(),
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
   }
+}
+
+
+void Connection::startPing(PingState state, int sec)
+{
+  if (sec < 1)
+    sec = schat::PingInterval;
+
+  m_pingState = state;
+  m_timer.expires_from_now(boost::posix_time::seconds(sec));
+  m_timer.async_wait(boost::bind(&Connection::ping, shared_from_this(), _1));
 }

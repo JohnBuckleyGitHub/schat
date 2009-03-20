@@ -25,6 +25,7 @@ class Packet {
   Packet() {}
 
 public:
+  static QByteArray create(quint16 opcode);
   static QByteArray create(quint16 opcode, quint16 data1);
 };
 

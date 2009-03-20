@@ -23,6 +23,23 @@
 
 /*!
  * Пакеты:
+ * - OpcodePing
+ * - OpcodePong
+ */
+QByteArray Packet::create(quint16 opcode)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(StreamVersion);
+  out << quint16(0) << opcode;
+  out.device()->seek(0);
+  out << quint16(block.size() - (int) sizeof(quint16));
+  return block;
+}
+
+
+/*!
+ * Пакеты:
  * - OpcodeAccessGranted
  */
 QByteArray Packet::create(quint16 opcode, quint16 data1)
