@@ -59,21 +59,31 @@ public:
   void start();
 
 private:
+  /// Состояние механизма проверки соединения.
+  enum PingState {
+    WaitPing, ///< Ожидание отправки пинг-запроса (schat::PingInterval).
+    WaitPong  ///< Ожидание ответа на пинг-запрос (schat::WaitPong).
+  };
+
   bool opcodeGreeting();
   quint16 verifyGreeting(quint16 version);
-  void checkGreeting();
+  void checkGreeting(asio::error_code &e);
   void close();
   void handleReadBody(const asio::error_code &e, int bytes);
   void handleReadHeader(const asio::error_code &e, int bytes);
   void handleWrite(const asio::error_code &e, int bytes);
+  void ping(asio::error_code &e);
   void send();
+  void startPing(PingState state, int sec);
 
   AbstractProfile *m_profile;       ///< Профиль подключённого пользователя.
-  asio::deadline_timer m_timer;     ///< Таймер, для разрыва соединения если за заданное время не инициировано рукопожатие.
+  asio::deadline_timer m_timer;     ///< Таймер, обслуживающий соединение.
   asio::ip::tcp::socket m_socket;   ///< Socket for the connection.
+  bool m_oldProtocol;               ///< Флаг использования устаревшего протокола версии 3.
   char m_body[8192];                ///< Буфер для чтения тела пакета.
   char m_header[schat::headerSize]; ///< Буфер для заголовка пакета.
   char m_send[8192];                ///< Буфер отправки пакета.
+  PingState m_pingState;            ///< Текущее состояние механизма проверки соединения.
   QQueue<QByteArray> m_sendQueue;   ///< Очередь пакетов для отправки.
   quint16 m_bodySize;               ///< Размер тела пакета.
   quint16 m_opcode;                 ///< Опкод пакета.
