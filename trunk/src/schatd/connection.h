@@ -30,8 +30,6 @@
 #include "asio/asio.hpp"
 #include "protocol.h"
 
-class AbstractProfile;
-
 /*!
  * Represents a single connection from a client.
  */
@@ -65,8 +63,7 @@ private:
     WaitPong  ///< Ожидание ответа на пинг-запрос (schat::WaitPong).
   };
 
-  bool opcodeGreeting();
-  quint16 verifyGreeting(quint16 version);
+  quint16 opcodeGreeting();
   void checkGreeting(asio::error_code &e);
   void close();
   void handleReadBody(const asio::error_code &e, int bytes);
@@ -76,7 +73,6 @@ private:
   void send();
   void startPing(PingState state, int sec);
 
-  AbstractProfile *m_profile;       ///< Профиль подключённого пользователя.
   asio::deadline_timer m_timer;     ///< Таймер, обслуживающий соединение.
   asio::ip::tcp::socket m_socket;   ///< Socket for the connection.
   bool m_oldProtocol;               ///< Флаг использования устаревшего протокола версии 3.
@@ -85,6 +81,7 @@ private:
   char m_send[8192];                ///< Буфер отправки пакета.
   PingState m_pingState;            ///< Текущее состояние механизма проверки соединения.
   QQueue<QByteArray> m_sendQueue;   ///< Очередь пакетов для отправки.
+  QString m_nick;                   ///< Ник подключивщегося пользователя.
   quint16 m_bodySize;               ///< Размер тела пакета.
   quint16 m_opcode;                 ///< Опкод пакета.
   quint8 m_flag;                    ///< Флаг.

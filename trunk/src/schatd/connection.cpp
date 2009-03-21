@@ -19,16 +19,15 @@
 #include <QtCore>
 #include <boost/bind.hpp>
 
-#include "abstractprofile.h"
 #include "connection.h"
 #include "packet.h"
+#include "usertools.h"
 
 /*!
  * Construct a connection with the given io_service.
  */
 Connection::Connection(asio::io_service &ioService, QObject *parent)
   : QObject(parent),
-  m_profile(0),
   m_timer(ioService),
   m_socket(ioService),
   m_oldProtocol(false),
@@ -45,9 +44,6 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
 Connection::~Connection()
 {
   qDebug() << "~" << this;
-
-  if (m_profile)
-    delete m_profile;
 }
 
 /*!
@@ -73,12 +69,9 @@ bool Connection::send(const QByteArray &data)
 //  qDebug() << "send(const QByteArray &)" << this;
 
   if (m_state == Ready) {
-    if (m_sendQueue.isEmpty()) {
-      m_sendQueue.enqueue(data);
+    m_sendQueue.enqueue(data);
+    if (m_sendQueue.size() == 1)
       send();
-    }
-    else
-      m_sendQueue.enqueue(data);
 
     return true;
   }
@@ -111,76 +104,42 @@ void Connection::start()
  *
  * \return \a true в случае успешной предварительной проверки.
  */
-bool Connection::opcodeGreeting()
+quint16 Connection::opcodeGreeting()
 {
-//  qDebug() << "Connection::opcodeGreeting()";
+  QByteArray body(m_body, m_bodySize - 2);
+  QDataStream stream(&body, QIODevice::ReadOnly);
+  stream.setVersion(StreamVersion);
 
   quint16 p_version;
-  quint8  p_gender;
-  QString p_nick;
-  QString p_name;
-  QString p_userAgent;
-  QString p_byeMsg;
-  quint16 err;
-
-  QDataStream stream(QByteArray(m_body, m_bodySize - 2));
-  stream >> p_version >> m_flag >> p_gender >> p_nick >> p_name >> p_userAgent >> p_byeMsg;
-
-  QStringList profile;
-  profile << p_nick << p_name << p_byeMsg << p_userAgent
-      << QString(m_socket.remote_endpoint().address().to_string().c_str())
-      << AbstractProfile::gender(p_gender);
-
-  m_profile = new AbstractProfile(profile);
-  qDebug() << profile;
-
-  err = verifyGreeting(p_version);
-
-  if (err) {
-//    accessDenied(err);
-    return false;
-  }
-
-//  emit greeting(m_profile->pack(), m_flag);
-
-  return true;
-}
-
-
-/*!
- * Предварительная проверка данных пакета \b OpcodeGreeting.
- *
- * \param version Версия протокола.
- * \return \a 0 - в случае успешной проверки, иначе код ошибки,
- * который будет отправлен клиенту.
- */
-quint16 Connection::verifyGreeting(quint16 version)
-{
-  if (version < ProtocolVersion)
+  stream >> p_version;
+  if (p_version < 3)
     return ErrorOldClientProtocol;
-
-  if (version > ProtocolVersion)
+  else if (p_version > 3)
     return ErrorOldServerProtocol;
 
-  if (!(m_flag == FlagNone || m_flag == FlagLink))
+  quint8 p_flag;
+  stream >> p_flag;
+  if (m_flag != FlagNone)
     return ErrorBadGreetingFlag;
 
-  if (!m_profile->isValidNick() && m_flag == FlagNone)
+  quint8 p_gender;
+  QString p_nick;
+  stream >> p_gender >> p_nick;
+  m_nick = UserTools::nick(p_nick);
+  if (!UserTools::isValidNick(m_nick))
     return ErrorBadNickName;
 
-  if (!m_profile->isValidUserAgent())
+  QString p_name;
+  QString p_userAgent;
+  stream >> p_name >> p_userAgent;
+
+  p_name = UserTools::fullName(p_name);
+  p_userAgent = UserTools::userAgent(p_userAgent);
+  if (!UserTools::isValidUserAgent(p_userAgent))
     return ErrorBadUserAgent;
 
-  if (m_flag == FlagLink) {
-    bool ok;
-    m_numeric = quint8(m_profile->nick().toInt(&ok));
-    if (ok) {
-      if (!m_numeric)
-        return ErrorBadNumeric;
-    }
-    else
-      return ErrorBadNumeric;
-  }
+  qDebug() << "           " << m_nick;
+//  QString(m_socket.remote_endpoint().address().to_string().c_str());
 
   return 0;
 }
@@ -245,13 +204,19 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
 
     switch (m_opcode) {
       case OpcodeGreeting:
-        if (opcodeGreeting()) {
-          m_state = Ready;
-          send(Packet::create(OpcodeAccessGranted, 0));
-        }
-        else {
-          close();
-          return;
+        {
+          quint16 err = opcodeGreeting();
+          if (err) {
+            m_sendQueue.clear();
+            m_sendQueue.enqueue(Packet::create(OpcodeAccessDenied, err));
+            send();
+            close();
+            return;
+          }
+          else {
+            m_state = Ready;
+            send(Packet::create(OpcodeAccessGranted, 0));
+          }
         }
         m_oldProtocol = true;
         break;
@@ -290,9 +255,10 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
     }
 
     QByteArray header(m_header, schat::headerSize);
-    QDataStream stream(header);
-
+    QDataStream stream(&header, QIODevice::ReadOnly);
+    stream.setVersion(StreamVersion);
     stream >> m_bodySize >> m_opcode;
+
     if (m_bodySize > 8190) {
       close();
       return;
@@ -307,7 +273,7 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
       }
     }
 
-//    qDebug() << "  Full Packet Size:" << m_bodySize << "bytes";
+//    qDebug() << "  Full Packet Size:" << m_bodySize + 2 << "bytes";
 //    qDebug() << "  Packet Opcode:   " << m_opcode;
 
     if (m_bodySize == 2) {
@@ -338,6 +304,8 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
  */
 void Connection::handleWrite(const asio::error_code &e, int bytes)
 {
+  Q_UNUSED(bytes)
+
 //  qDebug() << "Connection::handleWrite()" << this << bytes;
   if (!e)
     send();
@@ -382,6 +350,7 @@ void Connection::send()
   if (!m_sendQueue.isEmpty()) {
     QByteArray data = m_sendQueue.dequeue();
     QDataStream out(&data, QIODevice::ReadOnly);
+    out.setVersion(StreamVersion);
     out.device()->read(m_send, data.size());
 
 //    qDebug() << "  RAW Send:" << QByteArray(m_send, data.size()).toHex();

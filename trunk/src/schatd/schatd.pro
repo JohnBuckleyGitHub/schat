@@ -39,6 +39,7 @@ HEADERS = \
     chatserver.h \
     connection.h \
     packet.h \
+    usertools.h \
     version.h \
     workerpool.h \
 
@@ -49,6 +50,7 @@ SOURCES = \
     connection.cpp \
     main.cpp \
     packet.cpp \
+    usertools.cpp \
     workerpool.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {
