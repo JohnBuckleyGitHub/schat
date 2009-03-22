@@ -119,7 +119,7 @@ quint16 Connection::opcodeGreeting()
 
   quint8 p_flag;
   stream >> p_flag;
-  if (m_flag != FlagNone)
+  if (p_flag != FlagNone)
     return ErrorBadGreetingFlag;
 
   quint8 p_gender;
