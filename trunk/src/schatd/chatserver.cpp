@@ -50,7 +50,7 @@ ChatServer::ChatServer(const QString &address, quint16 port, int poolSize)
  */
 void ChatServer::run()
 {
-  qDebug() << "ChatServer::run()" << this;
+//  qDebug() << "ChatServer::run()" << this;
 
   m_workerPool.run();
 }
@@ -61,7 +61,7 @@ void ChatServer::run()
  */
 void ChatServer::stop()
 {
-  qDebug() << "ChatServer::stop()" << this;
+//  qDebug() << "ChatServer::stop()" << this;
 
   m_workerPool.stop();
 }
@@ -72,7 +72,7 @@ void ChatServer::stop()
  */
 void ChatServer::handleAccept(const asio::error_code &e)
 {
-  qDebug() << "ChatServer::handleAccept()" << this;
+//  qDebug() << "ChatServer::handleAccept()" << this;
 
   if (!e) {
     newConnection->start();

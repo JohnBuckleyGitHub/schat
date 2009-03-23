@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
   app.installTranslator(&translator);
 
   ChatDaemon daemon;
-  daemon.start();
 
   // Создаём PID-файл
   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");

@@ -19,8 +19,10 @@
 #include <QtCore>
 #include <boost/bind.hpp>
 
+#include "chatdaemon.h"
 #include "connection.h"
 #include "packet.h"
+#include "schatd.h"
 #include "usertools.h"
 
 /*!
@@ -38,6 +40,11 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
   m_state(WaitGreeting)
 {
   qDebug() << "Connection()" << this;
+
+  qRegisterMetaType<GreetingData>();
+  connect(this, SIGNAL(packet(const GreetingData &)), ChatDaemon::instance(), SLOT(packet(const GreetingData &)), Qt::QueuedConnection);
+
+//  qRegisterMetaType<GreetingData>();
 }
 
 
@@ -122,21 +129,26 @@ quint16 Connection::opcodeGreeting()
   if (p_flag != FlagNone)
     return ErrorBadGreetingFlag;
 
-  quint8 p_gender;
-  QString p_nick;
-  stream >> p_gender >> p_nick;
-  m_nick = UserTools::nick(p_nick);
-  if (!UserTools::isValidNick(m_nick))
+  GreetingData out;
+
+  stream >> out.gender >> out.nick;
+  out.nick = UserTools::nick(out.nick);
+  if (!UserTools::isValidNick(out.nick))
     return ErrorBadNickName;
 
-  QString p_name;
-  QString p_userAgent;
-  stream >> p_name >> p_userAgent;
+  stream >> out.fullName >> out.userAgent;
 
-  p_name = UserTools::fullName(p_name);
-  p_userAgent = UserTools::userAgent(p_userAgent);
-  if (!UserTools::isValidUserAgent(p_userAgent))
+  out.fullName = UserTools::fullName(out.fullName);
+  out.userAgent = UserTools::userAgent(out.userAgent);
+  if (!UserTools::isValidUserAgent(out.userAgent))
     return ErrorBadUserAgent;
+
+  stream >> out.byeMsg;
+  out.byeMsg = UserTools::byeMsg(out.byeMsg);
+  m_nick = out.nick;
+  out.protocol = 3;
+
+  emit packet(out);
 
   qDebug() << "           " << m_nick;
 //  QString(m_socket.remote_endpoint().address().to_string().c_str());
@@ -156,7 +168,7 @@ quint16 Connection::opcodeGreeting()
  */
 void Connection::checkGreeting(asio::error_code &e)
 {
-  qDebug() << this << "checkGreeting()";
+//  qDebug() << this << "checkGreeting()";
 
   if (!e) {
     if (m_state == WaitGreeting) {
@@ -176,7 +188,7 @@ void Connection::checkGreeting(asio::error_code &e)
  */
 void Connection::close()
 {
-  qDebug() << this << "close()";
+//  qDebug() << this << "close()";
 
   m_state = WaitClose;
 
