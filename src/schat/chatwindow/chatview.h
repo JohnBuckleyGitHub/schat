@@ -80,9 +80,12 @@ protected:
 private slots:
   void linkClicked(const QUrl &url);
   void notify(int notify);
+  #ifndef SCHAT_NO_WEBKIT
+    void loadFinished();
+  #endif
 
 private:
-  void appendMessage(const QString &message, bool same_from = false);
+  void appendMessage(const QString &message, bool sameFrom = false);
   void createActions();
 
   ChatViewPrivate *d;

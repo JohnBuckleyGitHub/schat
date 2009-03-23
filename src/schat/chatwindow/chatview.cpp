@@ -36,7 +36,11 @@
  */
 #ifndef SCHAT_NO_WEBKIT
 ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
-  : empty(true), q(parent), chatStyle(styleName), chatStyleVariant(styleVariant)
+  : empty(true),
+  q(parent),
+  loaded(false),
+  chatStyle(styleName),
+  chatStyleVariant(styleVariant)
 #else
 ChatViewPrivate::ChatViewPrivate(ChatView *parent)
   : empty(true), q(parent)
@@ -144,6 +148,7 @@ ChatView::ChatView(QWidget *parent)
 {
   #ifndef SCHAT_NO_WEBKIT
     d = new ChatViewPrivate(SimpleSettings->getString("ChatStyle"), SimpleSettings->getString("ChatStyleVariant"), this);
+    connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
 
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     setHtml(d->style->makeSkeleton());
@@ -417,6 +422,7 @@ bool ChatView::copy()
 void ChatView::clear()
 {
   #ifndef SCHAT_NO_WEBKIT
+    d->loaded = false;
     setHtml(d->style->makeSkeleton());
     d->prev = "";
   #else
@@ -504,14 +510,31 @@ void ChatView::notify(int notify)
 }
 
 
-void ChatView::appendMessage(const QString &message, bool same_from)
+/*!
+ * Завершение загрузки документа.
+ */
+#ifndef SCHAT_NO_WEBKIT
+void ChatView::loadFinished()
+{
+  d->loaded = true;
+
+  while (!d->pendingJs.isEmpty())
+    page()->mainFrame()->evaluateJavaScript(d->pendingJs.dequeue());
+}
+#endif
+
+
+void ChatView::appendMessage(const QString &message, bool sameFrom)
 {
   #ifndef SCHAT_NO_WEBKIT
-    QString js_message = message;
-    js_message.replace("\"","\\\"");
-    js_message.replace("\n","\\n");
-    js_message = QString("append%2Message(\"%1\");").arg(js_message).arg(same_from ? "Next" : "");
-    page()->mainFrame()->evaluateJavaScript(js_message);
+    QString jsMessage = message;
+    jsMessage.replace("\"","\\\"");
+    jsMessage.replace("\n","\\n");
+    jsMessage = QString("append%2Message(\"%1\");").arg(jsMessage).arg(sameFrom ? "Next" : "");
+    if (d->loaded)
+      page()->mainFrame()->evaluateJavaScript(jsMessage);
+    else
+      d->pendingJs.enqueue(jsMessage);
   #else
     append(message);
     scroll();
