@@ -50,7 +50,7 @@ void Md5CalcThread::run()
     }
   }
 
-  bool errors = 0;
+  int errors = 0;
 
   if (m_files.contains(ProgressPage::Core))
     errors += calc(ProgressPage::Core);
