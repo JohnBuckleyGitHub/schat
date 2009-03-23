@@ -50,7 +50,9 @@ public:
     bool cleanStyle(const QString &styleName, const QString &styleVariant);
 
     bool grouping;
+    bool loaded;
     ChatWindowStyleOutput *style;
+    QQueue<QString> pendingJs;
     QString chatStyle;
     QString chatStyleVariant;
     QString prev;
