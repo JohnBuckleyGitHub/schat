@@ -16,37 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHAT_DAEMON_H_
-#define CHAT_DAEMON_H_
+#ifndef SCHATD_H_
+#define SCHATD_H_
 
-#include <QObject>
-
-class ChatServer;
-struct GreetingData;
+#include <QMetaType>
 
 /*!
- * \brief Сервер чата
- *
- * Класс полностью включает в себя функциональность сервера чата.
+ * Информация об пользователе для обработки подключени.
  */
-class ChatDaemon : public QObject
-{
-  Q_OBJECT
-
-public:
-  ChatDaemon(QObject *parent = 0);
-  ~ChatDaemon();
-  inline static ChatDaemon *instance() { return m_self; }
-
-public slots:
-  void packet(const GreetingData &data);
-
-private slots:
-  void start();
-
-private:
-  ChatServer *m_server;
-  static ChatDaemon *m_self;
+struct GreetingData {
+  QString nick;
+  QString fullName;
+  QString userAgent;
+  QString byeMsg;
+  quint8 gender;
+  int protocol;
 };
 
-#endif /*CHAT_DAEMON_H_*/
+Q_DECLARE_METATYPE(GreetingData)
+
+#endif /* SCHATD_H_ */

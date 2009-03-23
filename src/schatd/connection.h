@@ -30,6 +30,8 @@
 #include "asio/asio.hpp"
 #include "protocol.h"
 
+struct GreetingData;
+
 /*!
  * Represents a single connection from a client.
  */
@@ -55,6 +57,9 @@ public:
   asio::ip::tcp::socket& socket();
   bool send(const QByteArray &data);
   void start();
+
+signals:
+  void packet(const GreetingData &data);
 
 private:
   /// Состояние механизма проверки соединения.

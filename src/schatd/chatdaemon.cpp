@@ -21,6 +21,10 @@
 
 #include "chatdaemon.h"
 #include "chatserver.h"
+#include "schatd.h"
+
+
+ChatDaemon *ChatDaemon::m_self = 0;
 
 /*!
  * \brief Конструктор класса ChatDaemon.
@@ -30,6 +34,11 @@ ChatDaemon::ChatDaemon(QObject *parent)
   : QObject(parent)
 {
   qDebug() << this;
+
+  Q_ASSERT(!m_self);
+  m_self = this;
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -39,19 +48,23 @@ ChatDaemon::~ChatDaemon()
 }
 
 
+void ChatDaemon::packet(const GreetingData &data)
+{
+  qDebug() << this << "packet()" << data.nick;
+}
+
+
 /*!
  * Запуск сервера.
  *
  * Функция читает настройки сервера, устанавливает параметры логирования каналов
  * и производит запуск сервера \a m_server.
  * Данные о попытке запуска заносятся в лог файл.
- * \return \a true в случае успешного запуска, и \a false при возникновении любой ошибки.
  */
-bool ChatDaemon::start()
+void ChatDaemon::start()
 {
+//  qDebug() << thread();
   qDebug() << this << "start()";
-  ChatServer server("0.0.0.0", 7777, 2);
-  server.run();
-
-  return true;
+  m_server = new ChatServer("0.0.0.0", 7777, 2);
+  m_server->start();
 }

@@ -36,6 +36,7 @@ class UserTools {
   UserTools() {}
 
 public:
+  inline static QString byeMsg(const QString &msg)        { return msg.simplified().left(MaxByeMsgSize); }
   inline static QString fullName(const QString &fullName) { return fullName.simplified().left(MaxNameSize); }
   inline static QString nick(const QString &nick)         { return nick.simplified().left(MaxNickSize); }
   inline static QString userAgent(const QString &agent)   { return agent.simplified().left(MaxUserAgentSize); }

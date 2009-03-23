@@ -30,8 +30,7 @@
 /*!
  * The top-level class of the chat server.
  */
-class ChatServer
-  : private boost::noncopyable
+class ChatServer : public QThread, private boost::noncopyable
 {
 public:
   explicit ChatServer(const QString &address, quint16 port, int poolSize);

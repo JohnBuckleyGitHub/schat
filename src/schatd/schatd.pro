@@ -39,6 +39,7 @@ HEADERS = \
     chatserver.h \
     connection.h \
     packet.h \
+    schatd.h \
     usertools.h \
     version.h \
     workerpool.h \
