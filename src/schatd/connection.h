@@ -24,13 +24,14 @@
 #include <boost/shared_ptr.hpp>
 #include <QByteArray>
 #include <QDataStream>
+#include <QMutex>
 #include <QObject>
 #include <QQueue>
 
 #include "asio/asio.hpp"
 #include "protocol.h"
 
-struct GreetingData;
+struct UserData;
 
 /*!
  * Represents a single connection from a client.
@@ -55,11 +56,12 @@ public:
   ~Connection();
 
   asio::ip::tcp::socket& socket();
-  bool send(const QByteArray &data);
+  void ready();
+  void send(const QByteArray &data);
   void start();
 
 signals:
-  void packet(const GreetingData &data);
+  void packet(const UserData &data);
 
 private:
   /// Состояние механизма проверки соединения.
@@ -69,6 +71,7 @@ private:
   };
 
   quint16 opcodeGreeting();
+  State state();
   void checkGreeting(asio::error_code &e);
   void close();
   void handleReadBody(const asio::error_code &e, int bytes);
@@ -77,14 +80,17 @@ private:
   void ping(asio::error_code &e);
   void send();
   void startPing(PingState state, int sec);
+  void state(State state);
 
   asio::deadline_timer m_timer;     ///< Таймер, обслуживающий соединение.
   asio::ip::tcp::socket m_socket;   ///< Socket for the connection.
+  asio::strand m_strand;            ///< Осуществляет асинхронный вызов функций в контексте потока соединения.
   bool m_oldProtocol;               ///< Флаг использования устаревшего протокола версии 3.
   char m_body[8192];                ///< Буфер для чтения тела пакета.
   char m_header[schat::headerSize]; ///< Буфер для заголовка пакета.
   char m_send[8192];                ///< Буфер отправки пакета.
   PingState m_pingState;            ///< Текущее состояние механизма проверки соединения.
+  QMutex m_mutex;                   ///< Mutex защищающий внешние интерфейсы соединения.
   QQueue<QByteArray> m_sendQueue;   ///< Очередь пакетов для отправки.
   QString m_nick;                   ///< Ник подключивщегося пользователя.
   quint16 m_bodySize;               ///< Размер тела пакета.

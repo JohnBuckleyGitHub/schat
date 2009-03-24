@@ -21,8 +21,8 @@
 
 #include "chatdaemon.h"
 #include "chatserver.h"
+#include "packet.h"
 #include "schatd.h"
-
 
 ChatDaemon *ChatDaemon::m_self = 0;
 
@@ -48,9 +48,22 @@ ChatDaemon::~ChatDaemon()
 }
 
 
-void ChatDaemon::packet(const GreetingData &data)
+void ChatDaemon::packet(const UserData &data)
 {
-  qDebug() << this << "packet()" << data.nick;
+//  qDebug() << this << "packet()" << data.nick;
+
+  Connection *con = qobject_cast<Connection *>(sender());
+  if (con) {
+    con->ready();
+    con->send(Packet::create(OpcodeAccessGranted, 0));
+  }
+
+//  ChatUser *user = new ChatUser(data, qobject_cast<Connection *>(sender()));
+//  m_users.insert(data.nick, user);
+
+//  Connection *connection = qobject_cast<Connection *>(sender());
+//  if (connection)
+//    connection->send(Packet::create(OpcodeAccessDenied, 999));
 }
 
 

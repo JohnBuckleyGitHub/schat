@@ -37,6 +37,7 @@ HEADERS = \
     abstractprofile.h \
     chatdaemon.h \
     chatserver.h \
+    chatuser.h \
     connection.h \
     packet.h \
     schatd.h \
@@ -48,6 +49,7 @@ SOURCES = \
     abstractprofile.cpp \
     chatdaemon.cpp \
     chatserver.cpp \
+    chatuser.cpp \
     connection.cpp \
     main.cpp \
     packet.cpp \
