@@ -32,6 +32,7 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
   : QObject(parent),
   m_timer(ioService),
   m_socket(ioService),
+  m_strand(ioService),
   m_oldProtocol(false),
   m_pingState(WaitPing),
   m_bodySize(0),
@@ -41,8 +42,8 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
 {
   qDebug() << "Connection()" << this;
 
-  qRegisterMetaType<GreetingData>();
-  connect(this, SIGNAL(packet(const GreetingData &)), ChatDaemon::instance(), SLOT(packet(const GreetingData &)), Qt::QueuedConnection);
+  qRegisterMetaType<UserData>();
+  connect(this, SIGNAL(packet(const UserData &)), ChatDaemon::instance(), SLOT(packet(const UserData &)), Qt::QueuedConnection);
 
 //  qRegisterMetaType<GreetingData>();
 }
@@ -64,26 +65,37 @@ asio::ip::tcp::socket& Connection::socket()
 
 
 /*!
+ * Устанавливает состояние соединения в Connection::Ready, что означает
+ * успешное прохождение авторизации.
+ *
+ * \note Эта функция потокобезопастна.
+ */
+void Connection::ready()
+{
+  state(Ready);
+}
+
+
+/*!
  * Отправка пакета.
- * Пакет добавляется в очередь m_sendQueue и если она была пуста
+ * Пакет добавляется в очередь Connection::m_sendQueue и если она была пуста
  * немедленно производится начало асинхронной отправки.
  *
  * \param data Полностью сформированный пакет.
- * \return \a true если состояние сокета равно Ready.
+ *
+ * \note Эта функция потокобезопастна, процесс отправки будет выполнен
+ * в контексте этого объекта.
  */
-bool Connection::send(const QByteArray &data)
+void Connection::send(const QByteArray &data)
 {
-//  qDebug() << "send(const QByteArray &)" << this;
+//  qDebug() << this << "send(const QByteArray &)" << QThread::currentThread();
 
-  if (m_state == Ready) {
-    m_sendQueue.enqueue(data);
-    if (m_sendQueue.size() == 1)
-      send();
+  m_mutex.lock();
+  m_sendQueue.enqueue(data);
+  if (m_sendQueue.size() == 1)
+    m_strand.post(boost::bind(&Connection::send, shared_from_this()));
 
-    return true;
-  }
-  else
-    return false;
+  m_mutex.unlock();
 }
 
 
@@ -129,7 +141,7 @@ quint16 Connection::opcodeGreeting()
   if (p_flag != FlagNone)
     return ErrorBadGreetingFlag;
 
-  GreetingData out;
+  UserData out;
 
   stream >> out.gender >> out.nick;
   out.nick = UserTools::nick(out.nick);
@@ -147,13 +159,25 @@ quint16 Connection::opcodeGreeting()
   out.byeMsg = UserTools::byeMsg(out.byeMsg);
   m_nick = out.nick;
   out.protocol = 3;
+  out.host = m_socket.remote_endpoint().address().to_string().c_str();
 
   emit packet(out);
 
   qDebug() << "           " << m_nick;
-//  QString(m_socket.remote_endpoint().address().to_string().c_str());
 
   return 0;
+}
+
+
+/*!
+ * Возвращает текущее состояние сокета.
+ *
+ * \note Эта функция потокобезопастна.
+ */
+Connection::State Connection::state()
+{
+  QMutexLocker locker(&m_mutex);
+  return m_state;
 }
 
 
@@ -169,14 +193,15 @@ quint16 Connection::opcodeGreeting()
 void Connection::checkGreeting(asio::error_code &e)
 {
 //  qDebug() << this << "checkGreeting()";
+//  qDebug() << "[2]" << QDateTime::currentDateTime().toString("mm:ss") << state();
 
   if (!e) {
-    if (m_state == WaitGreeting) {
+    if (state() == WaitGreeting) {
       close();
       return;
     }
 
-    if (m_state != WaitClose)
+    if (state() != WaitClose)
       startPing(WaitPing, schat::PingInterval);
   }
 }
@@ -190,7 +215,7 @@ void Connection::close()
 {
 //  qDebug() << this << "close()";
 
-  m_state = WaitClose;
+  state(WaitClose);
 
   asio::error_code ignored;
   m_timer.cancel(ignored);
@@ -224,10 +249,6 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
             send();
             close();
             return;
-          }
-          else {
-            m_state = Ready;
-            send(Packet::create(OpcodeAccessGranted, 0));
           }
         }
         m_oldProtocol = true;
@@ -276,10 +297,10 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
       return;
     }
 
-    if (m_state != Ready) {
-      if (WaitGreeting && m_opcode == OpcodeGreeting)
-        m_state = WaitAccess;
-      else if ((m_state == WaitGreeting && m_opcode != OpcodeGreeting) || m_state == WaitAccess) {
+    if (state() != Ready) {
+      if (state() == WaitGreeting && m_opcode == OpcodeGreeting)
+        state(WaitAccess);
+      else if ((state() == WaitGreeting && m_opcode != OpcodeGreeting) || state() == WaitAccess) {
         close();
         return;
       }
@@ -318,7 +339,7 @@ void Connection::handleWrite(const asio::error_code &e, int bytes)
 {
   Q_UNUSED(bytes)
 
-//  qDebug() << "Connection::handleWrite()" << this << bytes;
+//  qDebug() << this << "handleWrite()" << QThread::currentThread() << bytes;
   if (!e)
     send();
   else
@@ -328,7 +349,7 @@ void Connection::handleWrite(const asio::error_code &e, int bytes)
 
 /*!
  * Обработка событий от пинг-таймера.
- * Если текущее состояние равно WaitPing, то отправляется пинг-пакет
+ * Если текущее состояние равно Connection::WaitPing, то отправляется пинг-пакет
  * и устанавливается состояние ожидания понг-пакета, если понг-таймер
  * не будет сброшен пришедшим понг-пакетом или в случае использования
  * нового протокола любым входящим пакетом, то соединение будет разорвано.
@@ -351,13 +372,13 @@ void Connection::ping(asio::error_code &e)
 
 /*!
  * Отправка пакета из очереди.
- * В случае если очередь m_sendQueue не пуста, то извлекается следующий пакет
- * и записывается в буфер m_send, после этого инициализируется асинхронная
+ * В случае если очередь Connection::m_sendQueue не пуста, то извлекается следующий пакет
+ * и записывается в буфер Connection::m_send, после этого инициализируется асинхронная
  * запись в сокет.
  */
 void Connection::send()
 {
-//  qDebug() << this << "send()";
+//  qDebug() << this << "send()" << QThread::currentThread();
 
   if (!m_sendQueue.isEmpty()) {
     QByteArray data = m_sendQueue.dequeue();
@@ -383,4 +404,16 @@ void Connection::startPing(PingState state, int sec)
   m_pingState = state;
   m_timer.expires_from_now(boost::posix_time::seconds(sec));
   m_timer.async_wait(boost::bind(&Connection::ping, shared_from_this(), _1));
+}
+
+
+/*!
+ * Установка состояния сокета.
+ *
+ * \note Эта функция потокобезопастна.
+ */
+void Connection::state(State state)
+{
+  QMutexLocker locker(&m_mutex);
+  m_state = state;
 }

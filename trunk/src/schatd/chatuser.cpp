@@ -16,41 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHAT_DAEMON_H_
-#define CHAT_DAEMON_H_
-
-#include <QHash>
-#include <QObject>
+#include <QtCore>
 
 #include "chatuser.h"
 
-class ChatServer;
-struct UserData;
-
-/*!
- * \brief Сервер чата
- *
- * Класс полностью включает в себя функциональность сервера чата.
- */
-class ChatDaemon : public QObject
+ChatUser::ChatUser(const UserData &data, Connection *connection)
+  : m_connection(connection),
+  m_data(data)
 {
-  Q_OBJECT
+  qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
+}
 
-public:
-  ChatDaemon(QObject *parent = 0);
-  ~ChatDaemon();
-  inline static ChatDaemon *instance() { return m_self; }
 
-public slots:
-  void packet(const UserData &data);
-
-private slots:
-  void start();
-
-private:
-  ChatServer *m_server;
-  QHash<QString, ChatUser *> m_users;
-  static ChatDaemon *m_self;
-};
-
-#endif /*CHAT_DAEMON_H_*/
+ChatUser::~ChatUser()
+{
+  qDebug() << "ChatUser::~ChatUser()" << this;
+}

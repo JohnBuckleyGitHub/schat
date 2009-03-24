@@ -22,17 +22,18 @@
 #include <QMetaType>
 
 /*!
- * Информация об пользователе для обработки подключени.
+ * Базовая информация об пользователе.
  */
-struct GreetingData {
-  QString nick;
-  QString fullName;
-  QString userAgent;
-  QString byeMsg;
-  quint8 gender;
-  int protocol;
+struct UserData {
+  QString nick;      ///< Ник.
+  QString fullName;  ///< Полное имя.
+  QString userAgent; ///< Идентификация клиента пользователя.
+  QString byeMsg;    ///< Сообщение о выходе.
+  QString host;      ///< IP-адрес.
+  quint8 gender;     ///< Пол.
+  int protocol;      ///< Версия протокола.
 };
 
-Q_DECLARE_METATYPE(GreetingData)
+Q_DECLARE_METATYPE(UserData)
 
 #endif /* SCHATD_H_ */
