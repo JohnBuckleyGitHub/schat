@@ -28,7 +28,6 @@ ChatDaemon *ChatDaemon::m_self = 0;
 
 /*!
  * \brief Конструктор класса ChatDaemon.
- * \param parent Указатель на родительский объект.
  */
 ChatDaemon::ChatDaemon(QObject *parent)
   : QObject(parent)
@@ -45,6 +44,30 @@ ChatDaemon::ChatDaemon(QObject *parent)
 ChatDaemon::~ChatDaemon()
 {
   qDebug() << "~" << this;
+}
+
+
+/*!
+ * Проверка на наличие локального пользователя.
+ *
+ * \param nick Ник пользователя.
+ *
+ * \return \a true Если пользователь уже подключен, непосредственно к данному серверу,
+ * во всех остальных случаях \a false, даже если пользователь есть в списке, но подключен
+ * к другому серверу.
+ *
+ * \note Эта функция потокобезопастна.
+ */
+bool ChatDaemon::isLocalUser(const QString &nick) const
+{
+  bool result = false;
+
+  m_lock.lockForWrite();
+  if (m_users.contains(nick))
+    result = m_users.value(nick)->isLocal();
+
+  m_lock.unlock();
+  return result;
 }
 
 
@@ -68,7 +91,9 @@ void ChatDaemon::greeting(const UserData &data)
   }
 
   boost::shared_ptr<ChatUser> user(new ChatUser(data, connection));
+  m_lock.lockForRead();
   m_users.insert(data.nick, user);
+  m_lock.unlock();
   connection->ready();
   connection->send(Packet::create(OpcodeAccessGranted, 0));
 }
@@ -82,7 +107,9 @@ void ChatDaemon::localLeave(const QString &nick)
 //  qDebug() << "[1]" << QThread::currentThread() << nick;
 
   if (m_users.contains(nick)) {
+    m_lock.lockForRead();
     m_users.remove(nick);
+    m_lock.unlock();
   }
 }
 

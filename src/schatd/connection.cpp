@@ -159,6 +159,9 @@ quint16 Connection::opcodeGreeting()
   if (!UserTools::isValidNick(out.nick))
     return ErrorBadNickName;
 
+  if (m_daemon->isLocalUser(out.nick))
+    return ErrorNickAlreadyUse;
+
   stream >> out.fullName >> out.userAgent;
 
   out.fullName = UserTools::fullName(out.fullName);
@@ -230,7 +233,7 @@ void Connection::closeP()
   if (state() == WaitClose)
     return;
 
-  qDebug() << "[1]" << QThread::currentThread();
+//  qDebug() << "[1]" << QThread::currentThread();
 
   state(WaitClose);
   emit leave(m_nick);

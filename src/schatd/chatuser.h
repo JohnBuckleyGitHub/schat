@@ -30,8 +30,10 @@
 class ChatUser : public boost::enable_shared_from_this<ChatUser>, private boost::noncopyable
 {
 public:
-  ChatUser(const UserData &data, boost::shared_ptr<Connection> connection = 0);
+  ChatUser(const UserData &data);
+  ChatUser(const UserData &data, boost::shared_ptr<Connection> connection);
   ~ChatUser();
+  inline bool isLocal() const                       { return (bool) m_connection; }
   inline boost::shared_ptr<Connection> connection() { return m_connection; }
 
 private:
