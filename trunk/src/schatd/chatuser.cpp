@@ -20,6 +20,15 @@
 
 #include "chatuser.h"
 
+
+ChatUser::ChatUser(const UserData &data)
+  : m_connection(),
+  m_data(data)
+{
+  qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
+}
+
+
 ChatUser::ChatUser(const UserData &data, boost::shared_ptr<Connection> connection)
   : m_connection(connection),
   m_data(data)

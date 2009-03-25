@@ -21,6 +21,7 @@
 
 #include <QHash>
 #include <QObject>
+#include <QReadWriteLock>
 
 #include "chatuser.h"
 
@@ -39,6 +40,7 @@ class ChatDaemon : public QObject
 public:
   ChatDaemon(QObject *parent = 0);
   ~ChatDaemon();
+  bool isLocalUser(const QString &nick) const;
   inline static ChatDaemon *instance() { return m_self; }
 
 public slots:
@@ -50,6 +52,7 @@ private slots:
 
 private:
   ChatServer *m_server;
+  mutable QReadWriteLock m_lock;
   QHash<QString, boost::shared_ptr<ChatUser> > m_users;
   static ChatDaemon *m_self;
 };
