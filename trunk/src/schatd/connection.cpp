@@ -34,6 +34,7 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
   m_socket(ioService),
   m_strand(ioService),
   m_oldProtocol(false),
+  m_daemon(ChatDaemon::instance()),
   m_pingState(WaitPing),
   m_bodySize(0),
   m_opcode(0),
@@ -43,9 +44,8 @@ Connection::Connection(asio::io_service &ioService, QObject *parent)
   qDebug() << "Connection()" << this;
 
   qRegisterMetaType<UserData>();
-  connect(this, SIGNAL(packet(const UserData &)), ChatDaemon::instance(), SLOT(packet(const UserData &)), Qt::QueuedConnection);
-
-//  qRegisterMetaType<GreetingData>();
+  connect(this, SIGNAL(greeting(const UserData &)), m_daemon, SLOT(greeting(const UserData &)),  Qt::QueuedConnection);
+  connect(this, SIGNAL(leave(const QString &)),     m_daemon, SLOT(localLeave(const QString &)), Qt::QueuedConnection);
 }
 
 
@@ -61,6 +61,17 @@ asio::ip::tcp::socket& Connection::socket()
 {
 //  qDebug() << "Connection::socket()" << this;
   return m_socket;
+}
+
+
+/*!
+ * Закрытие соединения.
+ *
+ * \note Эта функция потокобезопастна.
+ */
+void Connection::close()
+{
+  m_strand.post(boost::bind(&Connection::closeP, shared_from_this()));
 }
 
 
@@ -161,7 +172,7 @@ quint16 Connection::opcodeGreeting()
   out.protocol = 3;
   out.host = m_socket.remote_endpoint().address().to_string().c_str();
 
-  emit packet(out);
+  emit greeting(out);
 
   qDebug() << "           " << m_nick;
 
@@ -197,7 +208,7 @@ void Connection::checkGreeting(asio::error_code &e)
 
   if (!e) {
     if (state() == WaitGreeting) {
-      close();
+      closeP();
       return;
     }
 
@@ -209,13 +220,20 @@ void Connection::checkGreeting(asio::error_code &e)
 
 /*!
  * Закрытие соединения.
- * Останавливается передачи и приём данных и сокет закрывается.
+ * Состояние устанавливается в Connection::WaitClose, останавливается
+ * таймер и останавливается передача и приём данных и сокет закрывается.
+ *
+ * \todo Необходимо уведомлять ядро о причине разъединения.
  */
-void Connection::close()
+void Connection::closeP()
 {
-//  qDebug() << this << "close()";
+  if (state() == WaitClose)
+    return;
+
+  qDebug() << "[1]" << QThread::currentThread();
 
   state(WaitClose);
+  emit leave(m_nick);
 
   asio::error_code ignored;
   m_timer.cancel(ignored);
@@ -235,7 +253,7 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
 
   if (!e) {
     if (bytes != m_bodySize - 2) {
-      close();
+      closeP();
       return;
     }
 
@@ -247,7 +265,7 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
             m_sendQueue.clear();
             m_sendQueue.enqueue(Packet::create(OpcodeAccessDenied, err));
             send();
-            close();
+            closeP();
             return;
           }
         }
@@ -264,7 +282,7 @@ void Connection::handleReadBody(const asio::error_code &e, int bytes)
           asio::placeholders::bytes_transferred));
   }
   else
-    close();
+    closeP();
 }
 
 
@@ -283,7 +301,7 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
 
   if (!e) {
     if (bytes != schat::headerSize) {
-      close();
+      closeP();
       return;
     }
 
@@ -293,7 +311,7 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
     stream >> m_bodySize >> m_opcode;
 
     if (m_bodySize > 8190) {
-      close();
+      closeP();
       return;
     }
 
@@ -301,7 +319,7 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
       if (state() == WaitGreeting && m_opcode == OpcodeGreeting)
         state(WaitAccess);
       else if ((state() == WaitGreeting && m_opcode != OpcodeGreeting) || state() == WaitAccess) {
-        close();
+        closeP();
         return;
       }
     }
@@ -328,7 +346,7 @@ void Connection::handleReadHeader(const asio::error_code &e, int bytes)
     }
   }
   else
-    close();
+    closeP();
 }
 
 
@@ -343,7 +361,7 @@ void Connection::handleWrite(const asio::error_code &e, int bytes)
   if (!e)
     send();
   else
-    close();
+    closeP();
 }
 
 
@@ -364,7 +382,7 @@ void Connection::ping(asio::error_code &e)
     }
     else {
 //      qDebug() << "<<<< PONG FAIL >>>>" << QDateTime::currentDateTime().toString("[mm:ss]");
-      close();
+      closeP();
     }
   }
 }

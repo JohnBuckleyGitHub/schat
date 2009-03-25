@@ -20,7 +20,7 @@
 
 #include "chatuser.h"
 
-ChatUser::ChatUser(const UserData &data, Connection *connection)
+ChatUser::ChatUser(const UserData &data, boost::shared_ptr<Connection> connection)
   : m_connection(connection),
   m_data(data)
 {
@@ -30,5 +30,5 @@ ChatUser::ChatUser(const UserData &data, Connection *connection)
 
 ChatUser::~ChatUser()
 {
-  qDebug() << "ChatUser::~ChatUser()" << this;
+  qDebug() << "~ ChatUser()" << this;
 }

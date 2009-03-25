@@ -42,14 +42,15 @@ public:
   inline static ChatDaemon *instance() { return m_self; }
 
 public slots:
-  void packet(const UserData &data);
+  void greeting(const UserData &data);
+  void localLeave(const QString &nick);
 
 private slots:
   void start();
 
 private:
   ChatServer *m_server;
-  QHash<QString, ChatUser *> m_users;
+  QHash<QString, boost::shared_ptr<ChatUser> > m_users;
   static ChatDaemon *m_self;
 };
 
