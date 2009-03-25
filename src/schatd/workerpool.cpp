@@ -51,7 +51,7 @@ WorkerPool::WorkerPool(int poolSize)
  */
 asio::io_service& WorkerPool::getIoService()
 {
-  qDebug() << "WorkerPool::getIoService()" << this;
+//  qDebug() << "WorkerPool::getIoService()" << this;
 
   asio::io_service& ioService = *m_ioServices[m_nextIoService];
   ++m_nextIoService;

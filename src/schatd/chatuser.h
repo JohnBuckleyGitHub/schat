@@ -19,21 +19,23 @@
 #ifndef CHATUSER_H_
 #define CHATUSER_H_
 
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <QPointer>
 
 #include "connection.h"
 #include "schatd.h"
 
-class ChatUser
+class ChatUser : public boost::enable_shared_from_this<ChatUser>, private boost::noncopyable
 {
-
 public:
-  ChatUser(const UserData &data, Connection *connection = 0);
+  ChatUser(const UserData &data, boost::shared_ptr<Connection> connection = 0);
   ~ChatUser();
-  inline Connection* connection() { return m_connection; }
+  inline boost::shared_ptr<Connection> connection() { return m_connection; }
 
 private:
-  QPointer<Connection> m_connection;
+  boost::shared_ptr<Connection> m_connection;
   UserData m_data;
 };
 

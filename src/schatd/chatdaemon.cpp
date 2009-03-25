@@ -48,22 +48,42 @@ ChatDaemon::~ChatDaemon()
 }
 
 
-void ChatDaemon::packet(const UserData &data)
+/*!
+ * Обработка приветствия от локального пользователя.
+ */
+void ChatDaemon::greeting(const UserData &data)
 {
 //  qDebug() << this << "packet()" << data.nick;
 
-  Connection *con = qobject_cast<Connection *>(sender());
-  if (con) {
-    con->ready();
-    con->send(Packet::create(OpcodeAccessGranted, 0));
+  Connection *tmp = qobject_cast<Connection *>(sender());
+  if (!tmp)
+    return;
+
+  boost::shared_ptr<Connection> connection = tmp->shared_from_this();
+
+  if (m_users.contains(data.nick)) {
+    connection->send(Packet::create(OpcodeAccessDenied, ErrorNickAlreadyUse));
+    connection->close();
+    return;
   }
 
-//  ChatUser *user = new ChatUser(data, qobject_cast<Connection *>(sender()));
-//  m_users.insert(data.nick, user);
+  boost::shared_ptr<ChatUser> user(new ChatUser(data, connection));
+  m_users.insert(data.nick, user);
+  connection->ready();
+  connection->send(Packet::create(OpcodeAccessGranted, 0));
+}
 
-//  Connection *connection = qobject_cast<Connection *>(sender());
-//  if (connection)
-//    connection->send(Packet::create(OpcodeAccessDenied, 999));
+
+/*!
+ * Обработка отключения локального пользователя.
+ */
+void ChatDaemon::localLeave(const QString &nick)
+{
+//  qDebug() << "[1]" << QThread::currentThread() << nick;
+
+  if (m_users.contains(nick)) {
+    m_users.remove(nick);
+  }
 }
 
 

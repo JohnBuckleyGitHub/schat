@@ -31,6 +31,7 @@
 #include "asio/asio.hpp"
 #include "protocol.h"
 
+class ChatDaemon;
 struct UserData;
 
 /*!
@@ -56,12 +57,14 @@ public:
   ~Connection();
 
   asio::ip::tcp::socket& socket();
+  void close();
   void ready();
   void send(const QByteArray &data);
   void start();
 
 signals:
-  void packet(const UserData &data);
+  void greeting(const UserData &data);
+  void leave(const QString &nick);
 
 private:
   /// Состояние механизма проверки соединения.
@@ -73,7 +76,7 @@ private:
   quint16 opcodeGreeting();
   State state();
   void checkGreeting(asio::error_code &e);
-  void close();
+  void closeP();
   void handleReadBody(const asio::error_code &e, int bytes);
   void handleReadHeader(const asio::error_code &e, int bytes);
   void handleWrite(const asio::error_code &e, int bytes);
@@ -89,6 +92,7 @@ private:
   char m_body[8192];                ///< Буфер для чтения тела пакета.
   char m_header[schat::headerSize]; ///< Буфер для заголовка пакета.
   char m_send[8192];                ///< Буфер отправки пакета.
+  const ChatDaemon *m_daemon;       ///< Указатель на ядро чата.
   PingState m_pingState;            ///< Текущее состояние механизма проверки соединения.
   QMutex m_mutex;                   ///< Mutex защищающий внешние интерфейсы соединения.
   QQueue<QByteArray> m_sendQueue;   ///< Очередь пакетов для отправки.
