@@ -21,12 +21,15 @@
 
 #include <QByteArray>
 
+struct UserData;
+
 class Packet {
   Packet() {}
 
 public:
   static QByteArray create(quint16 opcode);
   static QByteArray create(quint16 opcode, quint16 data1);
+  static QByteArray create(quint16 opcode, quint8 echo, quint8 numeric, const UserData &data);
 };
 
 
