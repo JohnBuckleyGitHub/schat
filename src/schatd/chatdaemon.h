@@ -43,6 +43,9 @@ public:
   bool isLocalUser(const QString &nick) const;
   inline static ChatDaemon *instance() { return m_self; }
 
+signals:
+  void relayV3(const QByteArray &array);
+
 public slots:
   void greeting(const UserData &data);
   void localLeave(const QString &nick);

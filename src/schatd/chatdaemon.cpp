@@ -91,11 +91,17 @@ void ChatDaemon::greeting(const UserData &data)
   }
 
   boost::shared_ptr<ChatUser> user(new ChatUser(data, connection));
+  connect(this, SIGNAL(relayV3(const QByteArray &)), user.get(), SLOT(relay(const QByteArray &)));
+
   m_lock.lockForRead();
   m_users.insert(data.nick, user);
   m_lock.unlock();
   connection->ready();
   connection->send(Packet::create(OpcodeAccessGranted, 0));
+
+  if (data.protocol == 3) {
+    emit relayV3(Packet::create(OpcodeNewUser, 1, 0, data));
+  }
 }
 
 

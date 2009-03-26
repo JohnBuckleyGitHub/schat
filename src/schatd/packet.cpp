@@ -20,6 +20,7 @@
 
 #include "packet.h"
 #include "protocol.h"
+#include "schatd.h"
 
 /*!
  * Пакеты:
@@ -48,6 +49,31 @@ QByteArray Packet::create(quint16 opcode, quint16 data1)
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(StreamVersion);
   out << quint16(0) << opcode << data1;
+  out.device()->seek(0);
+  out << quint16(block.size() - (int) sizeof(quint16));
+  return block;
+}
+
+
+/*!
+ * Пакеты:
+ * - OpcodeNewUser
+ */
+QByteArray Packet::create(quint16 opcode, quint8 echo, quint8 numeric, const UserData &data)
+{
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(StreamVersion);
+  out << quint16(0)
+      << opcode
+      << echo
+      << numeric
+      << data.gender
+      << data.nick
+      << data.fullName
+      << data.byeMsg
+      << data.userAgent
+      << data.host;
   out.device()->seek(0);
   out << quint16(block.size() - (int) sizeof(quint16));
   return block;
