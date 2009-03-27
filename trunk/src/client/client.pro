@@ -15,13 +15,31 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd \
-    schat \
-    schatd-ui \
-    benchmark \
-    client \
+SCHAT_CONSOLE    = 1
+SCHAT_DEBUG      = 0
+SCHAT_RESOURCES  = 0
+SCHAT_RC_FILE    = 0
+SCHAT_LOCAL_IPC  = 0
 
-win32:SUBDIRS += customize
+QT = core network
+TEMPLATE = app
+
+HEADERS = \
+    client/simpleclient.h \
+
+SOURCES = \
+    main.cpp \
+    client/simpleclient.cpp \
+
+contains( SCHAT_LOCAL_IPC, 1 ) {
+  HEADERS += ipc/localservice.h
+  SOURCES += ipc/localservice.cpp
+}
+else {
+  DEFINES += SCHAT_NO_LOCAL_SERVER
+}
+
+TRANSLATIONS += ../../data/translations/schatd_ru.ts
+CODECFORTR = UTF-8
+
+include(../common/common.pri)

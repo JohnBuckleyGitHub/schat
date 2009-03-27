@@ -18,35 +18,16 @@
 
 #include <QtCore>
 
-#include "chatuser.h"
+#include "client/simpleclient.h"
 
-
-ChatUser::ChatUser(const UserData &data)
-  : QObject(),
-  m_connection(),
-  m_data(data)
+int main(int argc, char *argv[])
 {
-  qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
-}
+  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
+  QCoreApplication app(argc, argv);
+  SimpleClient client;
+  client.link(QPair<QString, quint16>("192.168.5.134", 7777));
 
-ChatUser::ChatUser(const UserData &data, boost::shared_ptr<Connection> connection)
-  : QObject(),
-  m_connection(connection),
-  m_data(data)
-{
-  qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
-}
-
-
-ChatUser::~ChatUser()
-{
-  qDebug() << "~ ChatUser()" << this;
-}
-
-
-void ChatUser::relay(const QByteArray &data)
-{
-//  qDebug() << this << "relay()";
-  m_connection->send(data);
+  return app.exec();
 }
