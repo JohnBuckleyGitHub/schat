@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 
   QCoreApplication app(argc, argv);
   SimpleClient client;
+  client.setNick("TesT");
   client.link(QPair<QString, quint16>("192.168.5.134", 7777));
 
   return app.exec();

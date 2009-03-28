@@ -25,7 +25,7 @@ class UserTools {
   enum {
     MaxNickSize      = 24,
     MinNickSize      = 2,
-    MaxNameSize      = 120,
+    MaxNameSize      = 64,
     MinNameSize      = 0,
     MaxByeMsgSize    = 100,
     MinByeMsgSize    = 0,

@@ -43,6 +43,11 @@ public:
   SimpleClient::State state() const;
   void link();
   void link(QPair<QString, quint16> remote);
+  void setFullName(const QString &fullName);
+  void setGender(quint8 gender);
+  void setNick(const QString &nick);
+  void setPassword(const QString &password);
+  void setUserName(const QString &userName);
 
 private slots:
   void connected();
