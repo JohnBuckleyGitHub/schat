@@ -26,6 +26,7 @@ TEMPLATE = app
 
 HEADERS = \
     client/simpleclient.h \
+    protocol4.h \
 
 SOURCES = \
     main.cpp \
