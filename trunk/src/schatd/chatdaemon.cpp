@@ -99,9 +99,9 @@ void ChatDaemon::greeting(const UserData &data)
   connection->ready();
   connection->send(Packet::create(OpcodeAccessGranted, 0));
 
-  if (data.protocol == 3) {
-    emit relayV3(Packet::create(OpcodeNewUser, 1, 0, data));
-  }
+//  if (data.protocol == 3) {
+//    emit relayV3(Packet::create(OpcodeNewUser, 1, 0, data));
+//  }
 }
 
 
