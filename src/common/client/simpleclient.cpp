@@ -184,6 +184,17 @@ void SimpleClient::connected()
 {
   qDebug() << this << "connected()";
 
+  protocol::packet::Greeting packet(0,
+      d->gender,
+      d->uniqueId,
+      d->userName.toLatin1(),
+      d->password,
+      d->nick,
+      d->fullName);
+
+  QByteArray block = protocol::packet::create(packet);
+  qDebug() << block.size() << block.toHex();
+
 }
 
 
