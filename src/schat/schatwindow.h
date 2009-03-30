@@ -67,6 +67,7 @@ private slots:
   void settingsChanged(int notify);
   void showSettings();
   void sound();
+  void splitterMoved();
   void statusChangedByUser();
   void statusChangedByUser(int index);
   void statusShortcut(int key);

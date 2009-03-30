@@ -553,7 +553,12 @@ void SChatWindowPrivate::restoreGeometry()
   if (pos.x() != -999 && pos.y() != -999)
     q->move(pos);
 
-  splitter->restoreState(pref->splitter());
+  QStringList splitterSizes = pref->getList("SplitterSizes");
+  if (splitterSizes.size() == 2) {
+    int size1 = splitterSizes.at(0).toInt();
+    if (size1 > 10)
+      splitter->setSizes(QList<int>() << size1 << splitterSizes.at(1).toInt());
+  }
 }
 
 
@@ -564,7 +569,6 @@ void SChatWindowPrivate::saveGeometry()
 {
   pref->setPos(q->pos());
   pref->setSize(q->size());
-  pref->setSplitter(splitter->saveState());
 }
 
 
@@ -875,8 +879,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   d->splitter->addWidget(d->tabs);
   d->splitter->addWidget(d->right);
-  d->splitter->setStretchFactor(0, 4);
-  d->splitter->setStretchFactor(1, 1);
+  d->splitter->setStretchFactor(0, 3);
+  d->splitter->setStretchFactor(1, 2);
 
   d->rightLay->addLayout(d->toolsLay);
   d->rightLay->addWidget(d->users);
@@ -927,6 +931,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
+  connect(d->splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
   connect(SimpleChatApp::instance(), SIGNAL(messageRecieved(const QString &)), SLOT(handleMessage(const QString &)));
 
   #ifndef SCHAT_NO_UPDATE
@@ -1455,6 +1460,18 @@ void SChatWindow::showSettings()
 void SChatWindow::sound()
 {
   d->sound();
+}
+
+
+/*!
+ * Обработка перемещения разделителя.
+ * Новое положение сохраняется в настройках.
+ */
+void SChatWindow::splitterMoved()
+{
+  QList<int> sizes = d->splitter->sizes();
+  if (sizes.size() == 2)
+    d->pref->setList("SplitterSizes", QStringList() << QString::number(sizes.at(0)) << QString::number(sizes.at(1)));
 }
 
 

@@ -172,7 +172,6 @@ void Settings::read()
 {
   m_pos  = m_settings->value("Pos", QPoint(-999, -999)).toPoint();
   m_size = m_settings->value("Size", QSize(640, 430)).toSize();
-  m_splitter = m_settings->value("Splitter").toByteArray();
 
   setBool("HideWelcome",            false);
   setBool("FirstRun",               true);
@@ -195,6 +194,7 @@ void Settings::read()
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
+  setList("SplitterSizes",          QStringList() << "0" << "0");
 
   #ifndef SCHAT_NO_WEBKIT
     setBool("MessageGrouping",      false);
@@ -346,7 +346,6 @@ void Settings::write()
 
   m_settings->setValue("Size", m_size);
   m_settings->setValue("Pos", m_pos);
-  m_settings->setValue("Splitter", m_splitter);
 
   m_settings->beginGroup("Profile");
   m_settings->setValue("Nick", m_profile->nick());
