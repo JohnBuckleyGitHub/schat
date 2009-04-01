@@ -35,24 +35,26 @@ win32 {
 
 HEADERS = \
     abstractprofile.h \
+    abstractprotocolhandler.h \
     chatdaemon.h \
     chatserver.h \
     chatuser.h \
     connection.h \
-    packet.h \
     schatd.h \
+    simpleclienthandler.h \
     usertools.h \
     version.h \
     workerpool.h \
 
 SOURCES = \
     abstractprofile.cpp \
+    abstractprotocolhandler.cpp \
     chatdaemon.cpp \
     chatserver.cpp \
     chatuser.cpp \
     connection.cpp \
     main.cpp \
-    packet.cpp \
+    simpleclienthandler.cpp \
     usertools.cpp \
     workerpool.cpp \
 
