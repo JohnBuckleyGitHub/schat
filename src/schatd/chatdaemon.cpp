@@ -78,26 +78,25 @@ void ChatDaemon::greeting(const UserData &data)
 {
 //  qDebug() << this << "packet()" << data.nick;
 
-  Connection *tmp = qobject_cast<Connection *>(sender());
-  if (!tmp)
-    return;
-
-  boost::shared_ptr<Connection> connection = tmp->shared_from_this();
-
-  if (m_users.contains(data.nick)) {
-    connection->send(Packet::create(OpcodeAccessDenied, ErrorNickAlreadyUse));
-    connection->close();
-    return;
-  }
-
-  boost::shared_ptr<ChatUser> user(new ChatUser(data, connection));
-  connect(this, SIGNAL(relayV3(const QByteArray &)), user.get(), SLOT(relay(const QByteArray &)));
-
-  m_lock.lockForRead();
-  m_users.insert(data.nick, user);
-  m_lock.unlock();
-  connection->ready();
-  connection->send(Packet::create(OpcodeAccessGranted, 0));
+//  Connection *tmp = qobject_cast<Connection *>(sender());
+//  if (!tmp)
+//    return;
+//
+//  boost::shared_ptr<Connection> connection = tmp->shared_from_this();
+//
+//  if (m_users.contains(data.nick)) {
+//    connection->send(Packet::create(OpcodeAccessDenied, ErrorNickAlreadyUse));
+//    connection->close();
+//    return;
+//  }
+//
+//  boost::shared_ptr<ChatUser> user(new ChatUser(data, connection));
+//
+//  m_lock.lockForRead();
+//  m_users.insert(data.nick, user);
+//  m_lock.unlock();
+//  connection->ready();
+//  connection->send(Packet::create(OpcodeAccessGranted, 0));
 
 //  if (data.protocol == 3) {
 //    emit relayV3(Packet::create(OpcodeNewUser, 1, 0, data));

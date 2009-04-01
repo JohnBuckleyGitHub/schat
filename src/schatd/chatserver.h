@@ -41,9 +41,9 @@ public:
 private:
   void handleAccept(const asio::error_code& e);
 
-  WorkerPool m_workerPool;            ///< The pool of io_service objects used to perform asynchronous operations.
-  asio::ip::tcp::acceptor m_acceptor; ///< Acceptor used to listen for incoming connections.
-  ConnectionPtr newConnection;        ///< The next connection to be accepted.
+  WorkerPool m_workerPool;                     ///< The pool of io_service objects used to perform asynchronous operations.
+  asio::ip::tcp::acceptor m_acceptor;          ///< Acceptor used to listen for incoming connections.
+  boost::shared_ptr<Connection> newConnection; ///< The next connection to be accepted.
 };
 
 #endif /* CHATSERVER_H_ */

@@ -21,28 +21,17 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
-#include <QByteArray>
-#include <QDataStream>
-#include <QMutex>
-#include <QObject>
-#include <QQueue>
 
-#include "asio/asio.hpp"
-#include "protocol.h"
-
-class ChatDaemon;
-struct UserData;
+#include "asio/io_service.hpp"
+#include "asio/ip/tcp.hpp"
 
 /*!
  * Represents a single connection from a client.
  */
 class Connection
-  : public QObject,
-  public boost::enable_shared_from_this<Connection>,
+  : public boost::enable_shared_from_this<Connection>,
   private boost::noncopyable
 {
-  Q_OBJECT
 
 public:
   /// Состояние соединения.
@@ -53,7 +42,7 @@ public:
     WaitClose     ///< Соединение закрывается.
   };
 
-  explicit Connection(asio::io_service &ioService, QObject *parent = 0);
+  explicit Connection(asio::io_service &ioService);
   ~Connection();
 
   asio::ip::tcp::socket& socket();
@@ -61,10 +50,6 @@ public:
   void ready();
   void send(const QByteArray &data);
   void start();
-
-signals:
-  void greeting(const UserData &data);
-  void leave(const QString &nick);
 
 private:
   /// Состояние механизма проверки соединения.
@@ -74,35 +59,16 @@ private:
   };
 
   quint16 opcodeGreeting();
-  State state();
   void checkGreeting(asio::error_code &e);
-  void closeP();
-  void handleReadBody(const asio::error_code &e, int bytes);
+  void handleClose();
+  void handleReadBody(const asio::error_code &err, int bytes);
   void handleReadHeader(const asio::error_code &e, int bytes);
   void handleWrite(const asio::error_code &e, int bytes);
   void ping(asio::error_code &e);
-  void send();
   void startPing(PingState state, int sec);
-  void state(State state);
 
-  asio::deadline_timer m_timer;     ///< Таймер, обслуживающий соединение.
-  asio::ip::tcp::socket m_socket;   ///< Socket for the connection.
-  asio::strand m_strand;            ///< Осуществляет асинхронный вызов функций в контексте потока соединения.
-  bool m_oldProtocol;               ///< Флаг использования устаревшего протокола версии 3.
-  char m_body[8192];                ///< Буфер для чтения тела пакета.
-  char m_header[schat::headerSize]; ///< Буфер для заголовка пакета.
-  char m_send[8192];                ///< Буфер отправки пакета.
-  const ChatDaemon *m_daemon;       ///< Указатель на ядро чата.
-  PingState m_pingState;            ///< Текущее состояние механизма проверки соединения.
-  QMutex m_mutex;                   ///< Mutex защищающий внешние интерфейсы соединения.
-  QQueue<QByteArray> m_sendQueue;   ///< Очередь пакетов для отправки.
-  QString m_nick;                   ///< Ник подключивщегося пользователя.
-  quint16 m_bodySize;               ///< Размер тела пакета.
-  quint16 m_opcode;                 ///< Опкод пакета.
-  quint8 m_numeric;                 ///< Уникальный номер удалённого сервера, при использовании подключения в качестве линка.
-  State m_state;                    ///< Статус соединения.
+  class Private;
+  Private* const d;
 };
-
-typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif /* CONNECTION_H_ */

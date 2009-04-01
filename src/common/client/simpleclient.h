@@ -22,6 +22,12 @@
 #include <QObject>
 #include <QPair>
 
+namespace protocol {
+namespace packet {
+class AbstractPacket;
+}
+}
+
 /*!
  * \brief Универсальный и полностью самодостаточный клиент чата.
  */
@@ -39,7 +45,9 @@ public:
   };
 
   SimpleClient(QObject *parent = 0);
-  ~SimpleClient();
+  virtual ~SimpleClient();
+
+  bool isReady() const;
   SimpleClient::State state() const;
   void link();
   void link(QPair<QString, quint16> remote);
@@ -48,6 +56,10 @@ public:
   void setNick(const QString &nick);
   void setPassword(const QString &password);
   void setUserName(const QString &userName);
+
+protected:
+  bool send(const protocol::packet::AbstractPacket &packet);
+  bool send(const QByteArray &data);
 
 private slots:
   void connected();

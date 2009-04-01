@@ -55,6 +55,16 @@ enum Gender {
  */
 namespace packet {
 
+
+/*!
+ * Размеры структур данных.
+ */
+enum Sizes {
+  HeaderSize = 4,   ///< Размер заголовка пакета (размер + опкод).
+  MaxSize    = 8192 ///< Максимальный размер пакета.
+};
+
+
 /*!
  * \brief Абстрактный базовый пакет, размер 4 байта.
  */
@@ -76,24 +86,6 @@ public:
 
   quint16 opcode; ///< Опкод пакета.
 };
-
-
-/*!
- * Универсальный конструктор для формирования пакета для отправки.
- *
- * \param packet Абстрактный базовый пакет или его наследник.
- */
-static QByteArray create(const protocol::packet::AbstractPacket &packet)
-{
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(protocol::StreamVersion);
-  out << quint16(0) << packet.opcode;
-  packet.toStream(out);
-  out.device()->seek(0);
-  out << quint16(block.size() - 4);
-  return block;
-}
 
 
 /*!
@@ -142,6 +134,26 @@ public:
   QString fullName;    ///< Размер от 4 до 68 байт. \sa SimpleClient::Private::fullName.
 };
 }
+
+class PacketTool {
+public:
+  /*!
+   * Универсальный конструктор для формирования пакета для отправки.
+   *
+   * \param packet Абстрактный базовый пакет или его наследник.
+   */
+  static QByteArray create(const protocol::packet::AbstractPacket &packet)
+  {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(protocol::StreamVersion);
+    out << quint16(0) << packet.opcode;
+    packet.toStream(out);
+    out.device()->seek(0);
+    out << quint16(block.size() - 4);
+    return block;
+  }
+};
 }
 
 #endif /* PROTOCOL4_H_ */

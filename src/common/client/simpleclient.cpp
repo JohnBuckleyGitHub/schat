@@ -87,6 +87,24 @@ SimpleClient::SimpleClient(QObject *parent)
 SimpleClient::~SimpleClient()
 {
   qDebug() << " ~ " << this;
+  delete d;
+}
+
+
+/*!
+ * Проверка на готовность отправки пакетов.
+ *
+ * \return \a true если подключение активно и можно отправлять пакеты.
+ */
+bool SimpleClient::isReady() const
+{
+  if (!d->socket)
+    return false;
+
+  if (d->socket->state() == QTcpSocket::ConnectedState)
+    return true;
+  else
+    return false;
 }
 
 
@@ -177,6 +195,26 @@ void SimpleClient::setUserName(const QString &userName)
 }
 
 
+bool SimpleClient::send(const protocol::packet::AbstractPacket &packet)
+{
+  if (!isReady())
+    return false;
+
+  d->socket->write(protocol::PacketTool::create(packet));
+  return true;
+}
+
+
+bool SimpleClient::send(const QByteArray &data)
+{
+  if (!isReady())
+    return false;
+
+  d->socket->write(data);
+  return true;
+}
+
+
 /*!
  * Слот вызывается после успешной установки соединения.
  */
@@ -192,9 +230,7 @@ void SimpleClient::connected()
       d->nick,
       d->fullName);
 
-  QByteArray block = protocol::packet::create(packet);
-  qDebug() << block.size() << block.toHex();
-
+  send(packet);
 }
 
 
