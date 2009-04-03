@@ -19,6 +19,8 @@
 #include <QtCore>
 #include <boost/bind.hpp>
 
+#define SCHAT_DEBUG
+
 #include "simpleclienthandler.h"
 #include "asio/asio.hpp"
 #include "connection.h"
@@ -32,7 +34,7 @@ class Connection::Private
 public:
   Private(Connection *parent, asio::io_service &ioService)
   : handler(0),
-  timer(ioService),
+  checkTimer(0),
   socket(ioService),
   q(parent),
   pingState(Connection::WaitPing),
@@ -44,17 +46,20 @@ public:
   ~Private()
   {
     if (handler) delete handler;
+    if (checkTimer) delete checkTimer;
   }
 
   inline State state() const        { return m_state; }
   inline void setState(State state) { m_state = state; }
+  void check(asio::error_code &err);
   void close();
   void readBody(const asio::error_code &err, int bytes);
   void readHeader(const asio::error_code &err, int bytes);
   void send();
+  void start();
 
   AbstractProtocolHandler *handler;                ///< Обработчик протокола.
-  asio::deadline_timer timer;                      ///< Таймер, обслуживающий соединение.
+  asio::deadline_timer *checkTimer;                ///< Таймер, обслуживающий соединение.
   asio::ip::tcp::socket socket;                    ///< Сокет обслуживающий данное соединение.
   char bodyBuffer[protocol::packet::MaxSize];      ///< Буфер для чтения тела пакета.
   char headerBuffer[protocol::packet::HeaderSize]; ///< Буфер для заголовка пакета.
@@ -70,6 +75,40 @@ private:
 
   State m_state;                                   ///< Статус соединения.
 };
+
+
+/*!
+ * Обнаружение мёртвых соединений без инициированного рукопожатия.
+ * Функция вызывается спустя \b 20 секунд.
+ *
+ * Если рукопожатие не было инициировано соединение разрывается.
+ * В противном случае запускается пинг-таймер.
+ *
+ * \param err Код ошибки таймера.
+ */
+void Connection::Private::check(asio::error_code &err)
+{
+  DEBUG_OUT("Connection::Private::check()" << this)
+//  qDebug() << "[2]" << QDateTime::currentDateTime().toString("mm:ss") << state();
+
+  if (!err) {
+//    if (d->state() == WaitGreeting) {
+//      handleClose();
+//      return;
+//    }
+
+//    if (d->state() != WaitClose) {
+//      d->timer.expires_from_now(boost::posix_time::millisec(50));
+//      d->timer.async_wait(boost::bind(&Connection::checkGreeting, shared_from_this(), _1));
+//    }
+//      startPing(WaitPing, schat::PingInterval);
+  }
+
+  if (checkTimer) {
+    delete checkTimer;
+    checkTimer = 0;
+  }
+}
 
 
 /*!
@@ -89,7 +128,9 @@ void Connection::Private::close()
     handler->reset();
 
   asio::error_code ignored;
-  timer.cancel(ignored);
+  if (checkTimer)
+    checkTimer->cancel(ignored);
+
   socket.shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
   socket.close(ignored);
 }
@@ -236,6 +277,20 @@ void Connection::Private::send()
 }
 
 
+/*!
+ * Запуск первой асинхронной операции для этого соединения.
+ */
+void Connection::Private::start()
+{
+  if (!checkTimer) checkTimer = new asio::deadline_timer(socket.get_io_service());
+  checkTimer->expires_from_now(boost::posix_time::seconds(protocol::CheckTimeout));
+  checkTimer->async_wait(boost::bind(&Connection::handleCheck, q->shared_from_this(), _1));
+
+  socket.async_read_some(asio::buffer(headerBuffer, protocol::packet::HeaderSize),
+      boost::bind(&Connection::handleReadHeader, q->shared_from_this(), _1, _2));
+}
+
+
 bool Connection::Private::detect()
 {
   if (opcode == protocol::Greeting) {
@@ -271,7 +326,6 @@ Connection::~Connection()
  */
 asio::ip::tcp::socket& Connection::socket()
 {
-//  qDebug() << "Connection::socket()" << this;
   return d->socket;
 }
 
@@ -323,17 +377,11 @@ void Connection::send(const QByteArray &data)
 
 
 /*!
- * Start the first asynchronous operation for the connection.
+ * \sa Connection::Private::start().
  */
 void Connection::start()
 {
-//  qDebug() << "Connection::start()" << this;
-
-//  d->timer.expires_from_now(boost::posix_time::seconds(schat::GreetingTimeout));
-//  d->timer.async_wait(boost::bind(&Connection::checkGreeting, shared_from_this(), _1));
-
-  d->socket.async_read_some(asio::buffer(d->headerBuffer, protocol::packet::HeaderSize),
-      boost::bind(&Connection::handleReadHeader, shared_from_this(), _1, _2));
+  d->start();
 }
 
 
@@ -392,28 +440,11 @@ quint16 Connection::opcodeGreeting()
 
 
 /*!
- * Обнаружение мёртвых соединений без инициированного рукопожатия.
- * Функция вызывается спустя \b schat::GreetingTimeout секунд.
- *
- * Если рукопожатие не было инициировано соединение разрывается.
- * В противном случае запускается пинг-таймер.
- *
- * \param e Код ошибки таймера.
+ * \sa Connection::Private::check(asio::error_code &err).
  */
-void Connection::checkGreeting(asio::error_code &e)
+void Connection::handleCheck(asio::error_code &err)
 {
-//  qDebug() << this << "checkGreeting()";
-//  qDebug() << "[2]" << QDateTime::currentDateTime().toString("mm:ss") << state();
-
-  if (!e) {
-//    if (d->state() == WaitGreeting) {
-//      handleClose();
-//      return;
-//    }
-
-//    if (d->state() != WaitClose)
-//      startPing(WaitPing, schat::PingInterval);
-  }
+  d->check(err);
 }
 
 
@@ -484,6 +515,6 @@ void Connection::startPing(PingState state, int sec)
 //    sec = schat::PingInterval;
 
   d->pingState = state;
-  d->timer.expires_from_now(boost::posix_time::seconds(sec));
-  d->timer.async_wait(boost::bind(&Connection::ping, shared_from_this(), _1));
+//  d->timer.expires_from_now(boost::posix_time::seconds(sec));
+//  d->timer.async_wait(boost::bind(&Connection::ping, shared_from_this(), _1));
 }
