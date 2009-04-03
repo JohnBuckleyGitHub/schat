@@ -19,6 +19,10 @@
 #ifndef ABSTRACTPROTOCOLHANDLER_H_
 #define ABSTRACTPROTOCOLHANDLER_H_
 
+#include <boost/shared_ptr.hpp>
+
+#include "connection.h"
+
 /*!
  * \brief Базовый класс для обработки специфичный протоколов.
  */
@@ -32,9 +36,14 @@ public:
     SimpleServerServer  ///< Протокол обмена между серверами.
   };
 
-  AbstractProtocolHandler(Type type = Basic);
+  AbstractProtocolHandler(boost::shared_ptr<Connection> connection, Type type = Basic);
   virtual ~AbstractProtocolHandler();
   inline Type type() const { return m_type; }
+  inline void reset()      { m_connection.reset(); }
+  virtual void append(quint16 opcode, const QByteArray &data);
+
+protected:
+  boost::shared_ptr<Connection> m_connection;
 
 private:
   const Type m_type;

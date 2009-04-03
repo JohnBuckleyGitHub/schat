@@ -19,6 +19,7 @@
 #include <QtCore>
 #include <boost/bind.hpp>
 
+#include "simpleclienthandler.h"
 #include "asio/asio.hpp"
 #include "connection.h"
 #include "protocol4.h"
@@ -30,7 +31,8 @@ class Connection::Private
 {
 public:
   Private(Connection *parent, asio::io_service &ioService)
-  : timer(ioService),
+  : handler(0),
+  timer(ioService),
   socket(ioService),
   q(parent),
   pingState(Connection::WaitPing),
@@ -39,6 +41,11 @@ public:
   m_state(WaitGreeting)
   {}
 
+  ~Private()
+  {
+    if (handler) delete handler;
+  }
+
   inline State state() const        { return m_state; }
   inline void setState(State state) { m_state = state; }
   void close();
@@ -46,6 +53,7 @@ public:
   void readHeader(const asio::error_code &err, int bytes);
   void send();
 
+  AbstractProtocolHandler *handler;                ///< Обработчик протокола.
   asio::deadline_timer timer;                      ///< Таймер, обслуживающий соединение.
   asio::ip::tcp::socket socket;                    ///< Сокет обслуживающий данное соединение.
   char bodyBuffer[protocol::packet::MaxSize];      ///< Буфер для чтения тела пакета.
@@ -58,6 +66,8 @@ public:
   quint16 opcode;                                  ///< Опкод пакета.
 
 private:
+  bool detect();
+
   State m_state;                                   ///< Статус соединения.
 };
 
@@ -75,6 +85,8 @@ void Connection::Private::close()
     return;
 
   setState(WaitClose);
+  if (handler)
+    handler->reset();
 
   asio::error_code ignored;
   timer.cancel(ignored);
@@ -88,15 +100,17 @@ void Connection::Private::close()
  */
 void Connection::Private::readBody(const asio::error_code &err, int bytes)
 {
-  qDebug() << "readBody()" << this;
-  qDebug() << "  Transferred:     " << bytes << "bytes";
-  qDebug() << "  RAW Body:        " << QByteArray(bodyBuffer, bodySize).toHex();
+//  qDebug() << "readBody()" << this;
+//  qDebug() << "  Transferred:     " << bytes << "bytes";
+//  qDebug() << "  RAW Body:        " << QByteArray(bodyBuffer, bodySize).toHex();
 
   if (!err) {
     if (bytes != bodySize) {
       close();
       return;
     }
+
+    handler->append(opcode, QByteArray(bodyBuffer, bodySize));
 
 //    switch (d->opcode) {
 //      case OpcodeGreeting:
@@ -156,6 +170,15 @@ void Connection::Private::readHeader(const asio::error_code &err, int bytes)
       return;
     }
 
+    if (state() == WaitGreeting) {
+      if (!detect()) {
+        close();
+        return;
+      }
+      else
+        setState(WaitAccess);
+    }
+
 //    if (state() != Ready) {
 //      if (state() == WaitGreeting && d->opcode == OpcodeGreeting)
 //        state(WaitAccess);
@@ -210,6 +233,16 @@ void Connection::Private::send()
     socket.async_write_some(asio::buffer(sendBuffer, data.size()),
         boost::bind(&Connection::handleWrite, q->shared_from_this(), _1, _2));
   }
+}
+
+
+bool Connection::Private::detect()
+{
+  if (opcode == protocol::Greeting) {
+    handler = new SimpleClientHandler(q->shared_from_this());
+    return true;
+  }
+  return false;
 }
 
 
