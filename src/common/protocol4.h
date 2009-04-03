@@ -156,4 +156,10 @@ public:
 };
 }
 
+#ifdef SCHAT_DEBUG
+  #define DEBUG_OUT(x) qDebug() << x;
+#else
+  #define DEBUG_OUT(x)
+#endif
+
 #endif /* PROTOCOL4_H_ */

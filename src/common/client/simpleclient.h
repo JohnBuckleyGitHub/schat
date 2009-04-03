@@ -50,7 +50,8 @@ public:
   bool isReady() const;
   SimpleClient::State state() const;
   void link();
-  void link(QPair<QString, quint16> remote);
+  void link(const QPair<QString, quint16> &remote);
+  void link(const QString &remote);
   void setFullName(const QString &fullName);
   void setGender(quint8 gender);
   void setNick(const QString &nick);
