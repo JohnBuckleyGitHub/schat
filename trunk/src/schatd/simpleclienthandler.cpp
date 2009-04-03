@@ -23,12 +23,20 @@
 /*!
  * Конструктор класса SimpleClientHandler.
  */
-SimpleClientHandler::SimpleClientHandler()
-  : AbstractProtocolHandler(AbstractProtocolHandler::SimpleClientServer)
+SimpleClientHandler::SimpleClientHandler(boost::shared_ptr<Connection> connection)
+  : AbstractProtocolHandler(connection, AbstractProtocolHandler::SimpleClientServer)
 {
 }
 
 
 SimpleClientHandler::~SimpleClientHandler()
 {
+}
+
+
+void SimpleClientHandler::append(quint16 opcode, const QByteArray &data)
+{
+  qDebug() << " | OPCODE:   | " << opcode;
+  qDebug() << " | SIZE:     | " << data.size() << "bytes";
+  qDebug() << " | RAW BODY: | " << data.toHex();
 }

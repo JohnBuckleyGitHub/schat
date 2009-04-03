@@ -23,12 +23,18 @@
 /*!
  * Конструктор класса AbstractProtocolHandler.
  */
-AbstractProtocolHandler::AbstractProtocolHandler(Type type)
-  : m_type(type)
+AbstractProtocolHandler::AbstractProtocolHandler(boost::shared_ptr<Connection> connection, Type type)
+  : m_connection(connection), m_type(type)
 {
 }
 
 
 AbstractProtocolHandler::~AbstractProtocolHandler()
 {
+}
+
+
+void AbstractProtocolHandler::append(quint16 /*opcode*/, const QByteArray &/*data*/)
+{
+
 }
