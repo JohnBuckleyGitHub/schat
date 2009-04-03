@@ -59,11 +59,11 @@ private:
   };
 
   quint16 opcodeGreeting();
-  void checkGreeting(asio::error_code &e);
+  void handleCheck(asio::error_code &err);
   void handleClose();
   void handleReadBody(const asio::error_code &err, int bytes);
-  void handleReadHeader(const asio::error_code &e, int bytes);
-  void handleWrite(const asio::error_code &e, int bytes);
+  void handleReadHeader(const asio::error_code &err, int bytes);
+  void handleWrite(const asio::error_code &err, int bytes);
   void ping(asio::error_code &e);
   void startPing(PingState state, int sec);
 
