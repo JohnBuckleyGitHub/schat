@@ -19,6 +19,8 @@
 #include <QtCore>
 #include <QtNetwork>
 
+#define SCHAT_DEBUG
+
 #include "protocol4.h"
 #include "simpleclient.h"
 #include "usertools.h"
@@ -77,7 +79,6 @@ const QByteArray SimpleClient::Private::getUniqueId() const
 SimpleClient::SimpleClient(QObject *parent)
   : QObject(parent), d(new Private(this))
 {
-  qDebug() << this;
 }
 
 
@@ -86,7 +87,7 @@ SimpleClient::SimpleClient(QObject *parent)
  */
 SimpleClient::~SimpleClient()
 {
-  qDebug() << " ~ " << this;
+  DEBUG_OUT(" ~ " << this)
   delete d;
 }
 
@@ -122,7 +123,7 @@ SimpleClient::State SimpleClient::state() const
  */
 void SimpleClient::link()
 {
-  qDebug() << this << "connect()";
+  DEBUG_OUT(this << "link()" << d->host << d->port)
 
   createSocket();
 
@@ -137,11 +138,27 @@ void SimpleClient::link()
  *
  * \param remote Пара содержащая адрес и порт сервера.
  */
-void SimpleClient::link(QPair<QString, quint16> remote)
+void SimpleClient::link(const QPair<QString, quint16> &remote)
 {
-  qDebug() << this << "connect()";
   d->host = remote.first;
   d->port = remote.second;
+
+  link();
+}
+
+
+/*!
+ * Подключение к серверу с указанным адресом.
+ *
+ * \param remote Строка вида: "адрес сервера:порт", например schat.impomezia.com:7666.
+ */
+void SimpleClient::link(const QString &remote)
+{
+  QStringList pair = remote.split(":");
+  if (pair.size() == 2) {
+    d->host = pair.at(0);
+    d->port = QString(pair.at(1)).toUInt();
+  }
 
   link();
 }
@@ -220,7 +237,7 @@ bool SimpleClient::send(const QByteArray &data)
  */
 void SimpleClient::connected()
 {
-  qDebug() << this << "connected()";
+  DEBUG_OUT(this << "connected()")
 
   protocol::packet::Greeting packet(0,
       d->gender,
@@ -239,7 +256,7 @@ void SimpleClient::connected()
  */
 void SimpleClient::disconnected()
 {
-  qDebug() << this << "disconnected()";
+  DEBUG_OUT(this << "disconnected()")
 }
 
 
@@ -248,7 +265,7 @@ void SimpleClient::disconnected()
  */
 void SimpleClient::readyRead()
 {
-  qDebug() << this << "readyRead()";
+  DEBUG_OUT(this << "readyRead()")
 }
 
 
