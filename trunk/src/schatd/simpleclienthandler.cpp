@@ -18,6 +18,9 @@
 
 #include <QtCore>
 
+#define SCHAT_DEBUG
+
+#include "protocol4.h"
 #include "simpleclienthandler.h"
 
 /*!
@@ -34,9 +37,31 @@ SimpleClientHandler::~SimpleClientHandler()
 }
 
 
+/*!
+ * Обработка нового пакета.
+ */
 void SimpleClientHandler::append(quint16 opcode, const QByteArray &data)
 {
-  qDebug() << " | OPCODE:   | " << opcode;
-  qDebug() << " | SIZE:     | " << data.size() << "bytes";
-  qDebug() << " | RAW BODY: | " << data.toHex();
+  DEBUG_OUT(" | OPCODE:   | " << opcode)
+  DEBUG_OUT(" | SIZE:     | " << data.size() << "bytes")
+  DEBUG_OUT(" | RAW BODY: | " << data.toHex())
+
+  if (opcode == protocol::Greeting) {
+    greeting(data);
+  }
+}
+
+
+/*!
+ * Обработка приветствия.
+ */
+void SimpleClientHandler::greeting(const QByteArray &data)
+{
+  DEBUG_OUT("SimpleClientHandler::greeting()" << this);
+
+  protocol::packet::Greeting packet(data);
+  if (packet.error) {
+    m_connection->die();
+    return;
+  }
 }

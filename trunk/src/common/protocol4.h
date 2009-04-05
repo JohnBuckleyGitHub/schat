@@ -90,16 +90,29 @@ public:
   : opcode(0) {}
 
   /// Конструктор инициализирующий опкод пакета.
-  AbstractPacket(quint16 opcode)
-  : opcode(opcode) {}
+  AbstractPacket(quint16 opcode = 0, bool compress = false)
+  : opcode(opcode), compress(compress), error(false) {}
 
   /// Деструктор
   virtual ~AbstractPacket() {}
 
-  /// Отправка в поток тела пакета.
-  virtual void toStream(QDataStream &stream) const { Q_UNUSED(stream) }
+  /// Формирование тела пакета для отправки.
+  QByteArray body() const
+  {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(protocol::StreamVersion);
+    toStream(out);
+    return block;
+  }
 
   quint16 opcode; ///< Опкод пакета.
+  bool compress;  ///< Разрешить сжатие этого пакета.
+  bool error;     ///< \a true если произошла ошибка при чтении пакета.
+
+protected:
+  /// Отправка в поток тела пакета.
+  virtual void toStream(QDataStream &stream) const { Q_UNUSED(stream) }
 };
 
 
@@ -132,10 +145,15 @@ public:
   fullName(fullName)
   {}
 
-  void toStream(QDataStream &stream) const
+  Greeting(const QByteArray &data)
+  : AbstractPacket(protocol::Greeting)
   {
-    stream << majorVersion << minorVersion << features << gender
-           << uniqueId << userName << password << nick << fullName;
+    QDataStream stream(data);
+    stream.setVersion(protocol::StreamVersion);
+    stream >> majorVersion >> minorVersion >> features >> gender
+           >> uniqueId >> userName >> password >> nick >> fullName;
+
+    error = (bool) stream.status();
   }
 
   quint8 majorVersion; ///< Размер 1 байт. \sa protocol::Version.
@@ -147,6 +165,13 @@ public:
   QByteArray password; ///< Размер от 4 до 24 байт. \sa SimpleClient::Private::password.
   QString nick;        ///< Размер от 4 до 52 байт. \sa SimpleClient::Private::nick.
   QString fullName;    ///< Размер от 4 до 68 байт. \sa SimpleClient::Private::fullName.
+
+private:
+  void toStream(QDataStream &stream) const
+  {
+    stream << majorVersion << minorVersion << features << gender
+           << uniqueId << userName << password << nick << fullName;
+  }
 };
 }
 
@@ -159,14 +184,12 @@ public:
    */
   static QByteArray create(const protocol::packet::AbstractPacket &packet)
   {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
+    QByteArray body = packet.body();
+    QByteArray header;
+    QDataStream out(&header, QIODevice::WriteOnly);
     out.setVersion(protocol::StreamVersion);
-    out << quint16(0) << packet.opcode;
-    packet.toStream(out);
-    out.device()->seek(0);
-    out << quint16(block.size() - 4);
-    return block;
+    out << quint16(body.size()) << packet.opcode;
+    return header + body;
   }
 };
 }
