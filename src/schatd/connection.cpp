@@ -35,6 +35,7 @@ public:
   Private(Connection *parent, asio::io_service &ioService)
   : handler(0),
   checkTimer(0),
+  pingTimer(ioService),
   socket(ioService),
   q(parent),
   pingState(Connection::WaitPing),
@@ -60,6 +61,7 @@ public:
 
   AbstractProtocolHandler *handler;                ///< Обработчик протокола.
   asio::deadline_timer *checkTimer;                ///< Таймер, обслуживающий соединение.
+  asio::deadline_timer pingTimer;                  ///< Таймер, для пинг-запросов для состояния соединения.
   asio::ip::tcp::socket socket;                    ///< Сокет обслуживающий данное соединение.
   char bodyBuffer[protocol::packet::MaxSize];      ///< Буфер для чтения тела пакета.
   char headerBuffer[protocol::packet::HeaderSize]; ///< Буфер для заголовка пакета.
@@ -219,6 +221,10 @@ void Connection::Private::readHeader(const asio::error_code &err, int bytes)
       else
         setState(WaitAccess);
     }
+    else if (state() != Ready) {
+      close();
+      return;
+    }
 
 //    if (state() != Ready) {
 //      if (state() == WaitGreeting && d->opcode == OpcodeGreeting)
@@ -338,6 +344,15 @@ asio::ip::tcp::socket& Connection::socket()
 void Connection::close()
 {
 //  m_strand.post(boost::bind(&Connection::handleClose, shared_from_this()));
+}
+
+
+/*!
+ * Принудительное закрытие соединения.
+ */
+void Connection::die()
+{
+  d->close();
 }
 
 

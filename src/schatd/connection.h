@@ -47,6 +47,7 @@ public:
 
   asio::ip::tcp::socket& socket();
   void close();
+  void die();
   void ready();
   void send(const QByteArray &data);
   void start();
