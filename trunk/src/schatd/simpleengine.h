@@ -16,48 +16,48 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHAT_DAEMON_H_
-#define CHAT_DAEMON_H_
+#ifndef SIMPLEENGINE_H_
+#define SIMPLEENGINE_H_
 
-#include <QHash>
 #include <QObject>
-#include <QReadWriteLock>
 
-#include "chatuser.h"
-
-class ChatServer;
-struct UserData;
+class WorkerThread;
 
 /*!
- * \brief Сервер чата
+ * \brief Базовые загрузочные опции сервера.
+ *
+ * Эти опции не могут быть изменены на протяжении всей работы сервера.
+ */
+struct BootOptions
+{
+  int poolSize;    ///< Количество рабочих потоков.
+  QString address; ///< Адрес сервера.
+  quint16 port;    ///< Порт сервера.
+};
+
+
+/*!
+ * \brief Сервер чата.
  *
  * Класс полностью включает в себя функциональность сервера чата.
  */
-class ChatDaemon : public QObject
+class SimpleEngine : public QObject
 {
   Q_OBJECT
 
 public:
-  ChatDaemon(QObject *parent = 0);
-  ~ChatDaemon();
-  bool isLocalUser(const QString &nick) const;
-  inline static ChatDaemon *instance() { return m_self; }
-
-signals:
-  void relayV3(const QByteArray &array);
-
-public slots:
-  void greeting(const UserData &data);
-  void localLeave(const QString &nick);
-
-private slots:
-  void start();
+  SimpleEngine(const BootOptions &boot, QObject *parent = 0);
+  ~SimpleEngine();
+  inline static SimpleEngine *instance() { return m_self; }
+  void run();
+  void stop();
+  WorkerThread* worker();
 
 private:
-  ChatServer *m_server;
-  mutable QReadWriteLock m_lock;
-  QHash<QString, boost::shared_ptr<ChatUser> > m_users;
-  static ChatDaemon *m_self;
+  class Private;
+  Private* const d;
+
+  static SimpleEngine *m_self;
 };
 
-#endif /*CHAT_DAEMON_H_*/
+#endif /* SIMPLEENGINE_H_ */

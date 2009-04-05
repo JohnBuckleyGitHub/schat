@@ -20,7 +20,6 @@
 
 #include "workerthread.h"
 
-
 /*!
  * \brief Приватный D-класс для класса Connection.
  */
@@ -49,6 +48,12 @@ WorkerThread::WorkerThread(asio::io_service &io, QObject *parent)
 WorkerThread::~WorkerThread()
 {
   delete d;
+}
+
+
+asio::io_service& WorkerThread::io()
+{
+  return d->io;
 }
 
 

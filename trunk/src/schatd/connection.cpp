@@ -16,15 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
 #include <boost/bind.hpp>
+#include <QtCore>
 
 #define SCHAT_DEBUG
 
-#include "simpleclienthandler.h"
 #include "asio/asio.hpp"
 #include "connection.h"
 #include "protocol4.h"
+#include "simpleclienthandler.h"
+#include "workerthread.h"
 
 /*!
  * \brief Приватный D-класс для класса Connection.
@@ -90,7 +91,7 @@ private:
  */
 void Connection::Private::check(asio::error_code &err)
 {
-  DEBUG_OUT("Connection::Private::check()" << this)
+//  DEBUG_OUT("Connection::Private::check()" << this)
 //  qDebug() << "[2]" << QDateTime::currentDateTime().toString("mm:ss") << state();
 
   if (!err) {
@@ -191,9 +192,9 @@ void Connection::Private::readBody(const asio::error_code &err, int bytes)
  */
 void Connection::Private::readHeader(const asio::error_code &err, int bytes)
 {
-  qDebug() << "readHeader()" << this;
-  qDebug() << "  Transferred:     " << bytes << "bytes";
-  qDebug() << "  RAW Header:      " << QByteArray(headerBuffer, protocol::packet::HeaderSize).toHex();
+//  DEBUG_OUT("readHeader()" << this << QThread::currentThread())
+//  DEBUG_OUT("  Transferred:     " << bytes << "bytes")
+  DEBUG_OUT("  RAW Header:      " << QByteArray(headerBuffer, protocol::packet::HeaderSize).toHex())
 
   if (!err) {
     using namespace protocol;
@@ -310,8 +311,8 @@ bool Connection::Private::detect()
 /*!
  * Construct a connection with the given io_service.
  */
-Connection::Connection(asio::io_service &ioService)
-  : d(new Private(this, ioService))
+Connection::Connection(WorkerThread *thread)
+  : d(new Private(this, thread->io()))
 {
   qDebug() << "Connection()" << this;
 

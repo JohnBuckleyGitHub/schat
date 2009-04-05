@@ -25,6 +25,8 @@
 #include "asio/io_service.hpp"
 #include "asio/ip/tcp.hpp"
 
+class WorkerThread;
+
 /*!
  * Represents a single connection from a client.
  */
@@ -42,7 +44,7 @@ public:
     WaitClose     ///< Соединение закрывается.
   };
 
-  explicit Connection(asio::io_service &ioService);
+  explicit Connection(WorkerThread *thread);
   ~Connection();
 
   asio::ip::tcp::socket& socket();
