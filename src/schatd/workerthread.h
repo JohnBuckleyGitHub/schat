@@ -16,34 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATSERVER_H_
-#define CHATSERVER_H_
+#ifndef WORKERTHREAD_H_
+#define WORKERTHREAD_H_
 
-#include <boost/noncopyable.hpp>
+#include <QThread>
 #include <boost/shared_ptr.hpp>
-#include <QString>
 
-#include "asio/asio.hpp"
-#include "connection.h"
-#include "workerpool.h"
+#include "asio/io_service.hpp"
 
 /*!
- * The top-level class of the chat server.
+ * \brief Рабочий поток сервера чата.
+ *
+ * Число рабочих потоков рекомендуется устанавливать равным числу ядер/процессоров.
  */
-class ChatServer : private boost::noncopyable
+class WorkerThread : public QThread
 {
 public:
-  explicit ChatServer(const QString &address, quint16 port, int poolSize);
+  WorkerThread(asio::io_service &io, QObject *parent = 0);
+  ~WorkerThread();
 
   void run();
   void stop();
 
 private:
-  void handleAccept(const asio::error_code& e);
-
-  WorkerPool m_workerPool;                     ///< The pool of io_service objects used to perform asynchronous operations.
-  asio::ip::tcp::acceptor m_acceptor;          ///< Acceptor used to listen for incoming connections.
-  boost::shared_ptr<Connection> newConnection; ///< The next connection to be accepted.
+  class Private;
+  Private* const d;
 };
 
-#endif /* CHATSERVER_H_ */
+#endif /* WORKERTHREAD_H_ */

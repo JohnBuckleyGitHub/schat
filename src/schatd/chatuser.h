@@ -22,27 +22,37 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#include <QPointer>
 
 #include "connection.h"
 #include "schatd.h"
 
+/*!
+ * Базовая информация об пользователе.
+ */
+//struct UserData {
+//  QString nick;      ///< Ник.
+//  QString fullName;  ///< Полное имя.
+//  QString userAgent; ///< Идентификация клиента пользователя.
+//  QString byeMsg;    ///< Сообщение о выходе.
+//  QString host;      ///< IP-адрес.
+//  quint8 gender;     ///< Пол.
+//  int protocol;      ///< Версия протокола.
+//};
+
+
+/*!
+ * Базовый комуникационный класс хранящий иноформацию о пользователе.
+ */
 class ChatUser
-  : public QObject,
-  public boost::enable_shared_from_this<ChatUser>,
+  : public boost::enable_shared_from_this<ChatUser>,
   private boost::noncopyable
 {
-  Q_OBJECT
-
 public:
   ChatUser(const UserData &data);
   ChatUser(const UserData &data, boost::shared_ptr<Connection> connection);
   ~ChatUser();
   inline bool isLocal() const                       { return (bool) m_connection; }
   inline boost::shared_ptr<Connection> connection() { return m_connection; }
-
-public slots:
-  void relay(const QByteArray &data);
 
 private:
   boost::shared_ptr<Connection> m_connection;

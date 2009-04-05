@@ -17,8 +17,9 @@
  */
 
 #include <QtCore>
+#include <QtTest>
 
-#define SCHAT_DEBUG
+//#define SCHAT_DEBUG
 
 #include "protocol4.h"
 #include "simpleclienthandler.h"

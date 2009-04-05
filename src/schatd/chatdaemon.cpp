@@ -131,5 +131,5 @@ void ChatDaemon::start()
 //  qDebug() << thread();
   qDebug() << this << "start()";
   m_server = new ChatServer("0.0.0.0", 7777, 2);
-  m_server->start();
+  m_server->run();
 }
