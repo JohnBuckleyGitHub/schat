@@ -37,28 +37,24 @@ win32 {
 HEADERS = \
     abstractprofile.h \
     abstractprotocolhandler.h \
-    chatdaemon.h \
-    chatserver.h \
     chatuser.h \
     connection.h \
     schatd.h \
     simpleclienthandler.h \
+    simpleengine.h \
     usertools.h \
     version.h \
-    workerpool.h \
     workerthread.h \
 
 SOURCES = \
     abstractprofile.cpp \
     abstractprotocolhandler.cpp \
-    chatdaemon.cpp \
-    chatserver.cpp \
     chatuser.cpp \
     connection.cpp \
     main.cpp \
     simpleclienthandler.cpp \
+    simpleengine.cpp \
     usertools.cpp \
-    workerpool.cpp \
     workerthread.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {

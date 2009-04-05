@@ -35,6 +35,7 @@ public:
   WorkerThread(asio::io_service &io, QObject *parent = 0);
   ~WorkerThread();
 
+  asio::io_service& io();
   void run();
   void stop();
 

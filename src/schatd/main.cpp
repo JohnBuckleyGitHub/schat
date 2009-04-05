@@ -16,9 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "chatdaemon.h"
-
 #include <QtCore>
+
+#include "simpleengine.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,7 +31,15 @@ int main(int argc, char *argv[])
   translator.load("schatd_ru", ":/translations");
   app.installTranslator(&translator);
 
-  ChatDaemon daemon;
+//  ChatDaemon daemon;
+
+  BootOptions boot;
+  boot.address  = "0.0.0.0";
+  boot.port     = 7777;
+  boot.poolSize = 2;
+
+  SimpleEngine engine(boot);
+  engine.run();
 
   // Создаём PID-файл
   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");
