@@ -25,6 +25,7 @@ CONFIG += exceptions
 
 QT = core network
 TEMPLATE = app
+CONFIG += qtestlib
 
 DEFINES += SCHAT_NO_WRITE_SETTINGS
 
@@ -45,6 +46,7 @@ HEADERS = \
     usertools.h \
     version.h \
     workerpool.h \
+    workerthread.h \
 
 SOURCES = \
     abstractprofile.cpp \
@@ -57,6 +59,7 @@ SOURCES = \
     simpleclienthandler.cpp \
     usertools.cpp \
     workerpool.cpp \
+    workerthread.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {
   HEADERS += ipc/localservice.h

@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "workerpool.h"
+#include "workerthread.h"
 
 /*!
  * Construct the \b io_service pool.
@@ -71,16 +72,24 @@ void WorkerPool::run()
 {
   qDebug() << "WorkerPool::run()" << this << m_ioServices.size();
 
-  QList<boost::shared_ptr<asio::thread> > threads;
+//  QList<boost::shared_ptr<asio::thread> > threads;
 
   for (int i = 0; i < m_ioServices.size(); ++i) {
-    boost::shared_ptr<asio::thread> thread(new asio::thread(boost::bind(&asio::io_service::run, m_ioServices[i])));
-    threads.append(thread);
+//    boost::shared_ptr<asio::thread> thread(new asio::thread(boost::bind(&asio::io_service::run, m_ioServices[i])));
+//    threads.append(thread);
+    WorkerThread *thread = new WorkerThread(*m_ioServices[i]);
+    thread->start();
   }
 
+  qDebug() << "[1]";
+
   // Wait for all threads in the pool to exit.
-  for (int i = 0; i < threads.size(); ++i)
-    threads[i]->join();
+//  for (int i = 0; i < threads.size(); ++i) {
+//    qDebug() << i;
+////    threads[i]->join();
+//  }
+
+  qDebug() << "[2]";
 }
 
 

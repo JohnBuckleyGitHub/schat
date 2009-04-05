@@ -20,10 +20,8 @@
 
 #include "chatuser.h"
 
-
 ChatUser::ChatUser(const UserData &data)
-  : QObject(),
-  m_connection(),
+  : m_connection(),
   m_data(data)
 {
   qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
@@ -31,8 +29,7 @@ ChatUser::ChatUser(const UserData &data)
 
 
 ChatUser::ChatUser(const UserData &data, boost::shared_ptr<Connection> connection)
-  : QObject(),
-  m_connection(connection),
+  : m_connection(connection),
   m_data(data)
 {
   qDebug() << "ChatUser::ChatUser()" << this << m_data.nick;
@@ -42,11 +39,4 @@ ChatUser::ChatUser(const UserData &data, boost::shared_ptr<Connection> connectio
 ChatUser::~ChatUser()
 {
   qDebug() << "~ ChatUser()" << this;
-}
-
-
-void ChatUser::relay(const QByteArray &data)
-{
-//  qDebug() << this << "relay()";
-  m_connection->send(data);
 }
