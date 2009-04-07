@@ -73,13 +73,11 @@ public:
   const QString& richTextCSS();
   inline AbstractProfile* profile()                    { return m_profile; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
-  inline QByteArray splitter() const                   { return m_splitter; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
-  inline void setSplitter(const QByteArray &splitter)  { m_splitter = splitter; }
   int save(const QString &key, bool value);
   int save(const QString &key, const QString &value);
   int save(const QString &key, int value);
@@ -115,7 +113,6 @@ private:
 
   AbstractProfile *m_profile;
   bool m_initRichTextCSS;
-  QByteArray m_splitter;
   QPoint m_pos;
   QPointer<Emoticons> m_emoticons;
   QPointer<Update> m_update;
