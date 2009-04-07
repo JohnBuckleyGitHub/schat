@@ -32,7 +32,7 @@ public:
   void append(quint16 opcode, const QByteArray &data);
 
 private:
-  void greeting(const QByteArray &data);
+  int greeting(const QByteArray &data);
 };
 
 #endif /* SIMPLECLIENTHANDLER_H_ */

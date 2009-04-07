@@ -34,11 +34,16 @@ public:
   Private(SimpleClient *parent)
   : uniqueId(getUniqueId()),
   gender(protocol::Male),
+  bodySize(0),
+  opcode(0),
   q(parent),
   state(SimpleClient::UnconnectedState)
   {}
 
   const QByteArray getUniqueId() const;
+  void connected();
+  void disconnected();
+  void readyRead();
 
   const QByteArray uniqueId;   ///< Уникальный идентификатор, используется для анонимных пользователей, вместо пароля.
   protocol::Gender gender;     ///< Пол пользователя.
@@ -49,6 +54,8 @@ public:
   QString host;                ///< Адрес сервера.
   QString nick;                ///< Ник пользователя.
   QString userName;            ///< Логин зарегистрированного пользователя.
+  quint16 bodySize;            ///< Размер тела пакета.
+  quint16 opcode;              ///< Опкод пакета.
   quint16 port;                ///< Порт сервера.
   SimpleClient *q;             ///< Указатель на родительский объект.
   SimpleClient::State state;   ///< Состояние подключения.
@@ -70,6 +77,56 @@ const QByteArray SimpleClient::Private::getUniqueId() const
   }
 
   return QByteArray();
+}
+
+
+/*!
+ * Обработка успешной установки соединения.
+ */
+void SimpleClient::Private::connected()
+{
+  DEBUG_OUT("SimpleClient::Private::connected()" << this)
+
+  protocol::packet::Greeting packet(0,
+      gender, uniqueId, userName.toLatin1(),
+      password, nick, fullName);
+
+  q->send(packet);
+}
+
+
+/*!
+ * Обработка разрыва соединения.
+ */
+void SimpleClient::Private::disconnected()
+{
+  DEBUG_OUT("SimpleClient::Private::disconnected()" << this)
+}
+
+
+/*!
+ * Обработка новой порции данных для чтения.
+ */
+void SimpleClient::Private::readyRead()
+{
+  DEBUG_OUT("SimpleClient::Private::readyRead()" << this)
+
+  forever {
+    if (!bodySize) {
+      if (socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+
+      stream >> bodySize;
+    }
+
+    if (socket->bytesAvailable() < bodySize)
+      break;
+
+    stream >> opcode;
+
+    QByteArray block = socket->read(bodySize);
+    bodySize = 0;
+  }
 }
 
 
@@ -233,21 +290,11 @@ bool SimpleClient::send(const QByteArray &data)
 
 
 /*!
- * Слот вызывается после успешной установки соединения.
+ * \sa SimpleClient::Private::connected().
  */
 void SimpleClient::connected()
 {
-  DEBUG_OUT(this << "connected()")
-
-  protocol::packet::Greeting packet(0,
-      d->gender,
-      d->uniqueId,
-      d->userName.toLatin1(),
-      d->password,
-      d->nick,
-      d->fullName);
-
-  send(packet);
+  d->connected();
 }
 
 
@@ -256,7 +303,7 @@ void SimpleClient::connected()
  */
 void SimpleClient::disconnected()
 {
-  DEBUG_OUT(this << "disconnected()")
+  d->disconnected();
 }
 
 
@@ -265,7 +312,7 @@ void SimpleClient::disconnected()
  */
 void SimpleClient::readyRead()
 {
-  DEBUG_OUT(this << "readyRead()")
+  d->readyRead();
 }
 
 

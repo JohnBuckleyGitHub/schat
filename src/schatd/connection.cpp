@@ -33,15 +33,16 @@
 class Connection::Private
 {
 public:
-  Private(Connection *parent, asio::io_service &ioService)
+  Private(WorkerThread *thread, Connection *parent)
   : handler(0),
   checkTimer(0),
-  pingTimer(ioService),
-  socket(ioService),
+  pingTimer(thread->io()),
+  socket(thread->io()),
   q(parent),
   pingState(Connection::WaitPing),
   bodySize(0),
   opcode(0),
+  thread(thread),
   m_state(WaitGreeting)
   {}
 
@@ -72,6 +73,7 @@ public:
   QQueue<QByteArray> sendQueue;                    ///< Очередь пакетов для отправки.
   quint16 bodySize;                                ///< Размер тела пакета.
   quint16 opcode;                                  ///< Опкод пакета.
+  WorkerThread *thread;                            ///< Указатель на рабочий поток этого соединения.
 
 private:
   bool detect();
@@ -298,6 +300,11 @@ void Connection::Private::start()
 }
 
 
+/*!
+ * Определение типа протокола и установка обработчика.
+ *
+ * \return \a false в случае не известного протокола.
+ */
 bool Connection::Private::detect()
 {
   if (opcode == protocol::Greeting) {
@@ -312,19 +319,15 @@ bool Connection::Private::detect()
  * Construct a connection with the given io_service.
  */
 Connection::Connection(WorkerThread *thread)
-  : d(new Private(this, thread->io()))
+  : d(new Private(thread, this))
 {
-  qDebug() << "Connection()" << this;
-
-//  qRegisterMetaType<UserData>();
-//  connect(this, SIGNAL(greeting(const UserData &)), m_daemon, SLOT(greeting(const UserData &)),  Qt::QueuedConnection);
-//  connect(this, SIGNAL(leave(const QString &)),     m_daemon, SLOT(localLeave(const QString &)), Qt::QueuedConnection);
+  DEBUG_OUT("Connection()" << this)
 }
 
 
 Connection::~Connection()
 {
-  qDebug() << "~" << this;
+  DEBUG_OUT("~" << this)
   delete d;
 }
 
@@ -339,12 +342,10 @@ asio::ip::tcp::socket& Connection::socket()
 
 /*!
  * Закрытие соединения.
- *
- * \note Эта функция потокобезопастна.
  */
 void Connection::close()
 {
-//  m_strand.post(boost::bind(&Connection::handleClose, shared_from_this()));
+  d->close();
 }
 
 
@@ -375,20 +376,14 @@ void Connection::ready()
  * немедленно производится начало асинхронной отправки.
  *
  * \param data Полностью сформированный пакет.
- *
- * \note Эта функция потокобезопастна, процесс отправки будет выполнен
- * в контексте этого объекта.
  */
 void Connection::send(const QByteArray &data)
 {
-//  qDebug() << this << "send(const QByteArray &)" << QThread::currentThread();
+  DEBUG_OUT("send(const QByteArray &)" << this)
 
-//  d->mutex.lock();
-//  d->sendQueue.enqueue(data);
-//  if (d->sendQueue.size() == 1)
-//    m_strand.post(boost::bind(&Connection::send, shared_from_this()));
-
-//  d->mutex.unlock();
+  d->sendQueue.enqueue(data);
+  if (d->sendQueue.size() == 1)
+    d->send();
 }
 
 
@@ -527,6 +522,7 @@ void Connection::ping(asio::error_code &e)
 
 void Connection::startPing(PingState state, int sec)
 {
+  Q_UNUSED(sec)
 //  if (sec < 1)
 //    sec = schat::PingInterval;
 

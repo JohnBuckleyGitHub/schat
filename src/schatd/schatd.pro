@@ -39,7 +39,6 @@ HEADERS = \
     abstractprotocolhandler.h \
     chatuser.h \
     connection.h \
-    schatd.h \
     simpleclienthandler.h \
     simpleengine.h \
     usertools.h \
