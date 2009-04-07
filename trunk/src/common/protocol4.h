@@ -42,7 +42,8 @@ enum Version {
  * Коды пакетов, размер кода 2 байта (quint16).
  */
 enum PacketOpcode {
-  Greeting = 7666 ///< Пакет инициирующий рукопожатие. \sa protocol::packet::Greeting.
+  Greeting = 7666, ///< Пакет инициирующий рукопожатие. \sa protocol::packet::Greeting.
+  GreetingReply    ///< Ответ на рукопожатие.
 };
 
 
@@ -53,6 +54,15 @@ enum Gender {
   Male,   ///< Пользователь мужского пола.
   Female, ///< Пользователь женского пола.
   Bot     ///< Пользователь является ботом.
+};
+
+
+/*!
+ * Коды ошибок.
+ */
+enum Error {
+  NoError          = 0,  ///< Нет ошибки.
+  ErrorBadNickName = 400 ///< Не корректный ник.
 };
 
 
@@ -85,15 +95,11 @@ enum Sizes {
  */
 class AbstractPacket {
 public:
-  /// Базовый конструктор.
-  AbstractPacket()
-  : opcode(0) {}
-
   /// Конструктор инициализирующий опкод пакета.
   AbstractPacket(quint16 opcode = 0, bool compress = false)
   : opcode(opcode), compress(compress), error(false) {}
 
-  /// Деструктор
+  /// Деструктор.
   virtual ~AbstractPacket() {}
 
   /// Формирование тела пакета для отправки.
@@ -171,6 +177,41 @@ private:
   {
     stream << majorVersion << minorVersion << features << gender
            << uniqueId << userName << password << nick << fullName;
+  }
+};
+
+
+/*!
+ * \brief Ответ на рукопожатие.
+ *
+ * Этот пакет является ответом сервера на
+ * инициализированное клиентом рукопожатие.
+ */
+class GreetingReply : public AbstractPacket {
+public:
+
+  /// Конструктор для подготовки пакета к отправке.
+  GreetingReply(quint16 err)
+  : AbstractPacket(protocol::GreetingReply),
+  errorCode(err)
+  {}
+
+  GreetingReply(const QByteArray &data)
+  : AbstractPacket(protocol::GreetingReply)
+  {
+    QDataStream stream(data);
+    stream.setVersion(protocol::StreamVersion);
+    stream >> errorCode;
+
+    error = (bool) stream.status();
+  }
+
+  quint16 errorCode; ///< Код ошибки рукопожатия.
+
+private:
+  void toStream(QDataStream &stream) const
+  {
+    stream << errorCode;
   }
 };
 }

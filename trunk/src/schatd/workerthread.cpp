@@ -16,8 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boost/bind.hpp>
 #include <QtCore>
 
+#define SCHAT_DEBUG
+
+#include "asio/asio.hpp"
 #include "workerthread.h"
 
 /*!
@@ -27,13 +31,26 @@ class WorkerThread::Private
 {
 public:
   Private(asio::io_service &io)
-  : io(io)
+  : jobTimer(io),
+  io(io)
   {}
 
   ~Private() {}
+  void handleJob(asio::error_code &err);
 
-  asio::io_service &io;
+  asio::deadline_timer jobTimer;
+  asio::io_service &io;          ///< Сервис.
 };
+
+
+void WorkerThread::Private::handleJob(asio::error_code &err)
+{
+//  qDebug() << "handleJob()";
+  if (!err) {
+    jobTimer.expires_from_now(boost::posix_time::millisec(100));
+    jobTimer.async_wait(boost::bind(&WorkerThread::Private::handleJob, this, _1));
+  }
+}
 
 
 /*!
@@ -62,6 +79,9 @@ asio::io_service& WorkerThread::io()
  */
 void WorkerThread::run()
 {
+//  asio::error_code err;
+//  d->handleJob(err);
+
   d->io.run();
 }
 

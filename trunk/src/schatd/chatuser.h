@@ -24,20 +24,17 @@
 #include <boost/shared_ptr.hpp>
 
 #include "connection.h"
-#include "schatd.h"
 
 /*!
  * Базовая информация об пользователе.
  */
-//struct UserData {
-//  QString nick;      ///< Ник.
-//  QString fullName;  ///< Полное имя.
-//  QString userAgent; ///< Идентификация клиента пользователя.
-//  QString byeMsg;    ///< Сообщение о выходе.
-//  QString host;      ///< IP-адрес.
-//  quint8 gender;     ///< Пол.
-//  int protocol;      ///< Версия протокола.
-//};
+struct UserData {
+  QString nick;      ///< Ник.
+  QString fullName;  ///< Полное имя.
+  QString byeMsg;    ///< Сообщение о выходе.
+  QString host;      ///< IP-адрес.
+  quint8 gender;     ///< Пол.
+};
 
 
 /*!

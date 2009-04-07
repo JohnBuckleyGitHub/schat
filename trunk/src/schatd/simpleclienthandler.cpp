@@ -47,8 +47,16 @@ void SimpleClientHandler::append(quint16 opcode, const QByteArray &data)
   DEBUG_OUT(" | SIZE:     | " << data.size() << "bytes")
   DEBUG_OUT(" | RAW BODY: | " << data.toHex())
 
+  using namespace protocol;
+
   if (opcode == protocol::Greeting) {
-    greeting(data);
+    int err = greeting(data);
+    if (err > 0) {
+      m_connection->send(PacketTool::create(packet::GreetingReply(err)));
+//      m_connection->close();
+    }
+    else if (err == -1)
+      m_connection->close();
   }
 }
 
@@ -56,13 +64,19 @@ void SimpleClientHandler::append(quint16 opcode, const QByteArray &data)
 /*!
  * Обработка приветствия.
  */
-void SimpleClientHandler::greeting(const QByteArray &data)
+int SimpleClientHandler::greeting(const QByteArray &data)
 {
   DEBUG_OUT("SimpleClientHandler::greeting()" << this);
 
   protocol::packet::Greeting packet(data);
-  if (packet.error) {
-    m_connection->die();
-    return;
-  }
+  if (packet.error)
+    return -1;
+
+//  UserData out;
+  return protocol::ErrorBadNickName;
+//  out.nick = UserTools::nick(out.nick);
+//  if (!UserTools::isValidNick(out.nick))
+//    return ErrorBadNickName;
+
+  return 0;
 }
