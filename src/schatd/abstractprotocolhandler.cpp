@@ -23,7 +23,7 @@
 /*!
  * Конструктор класса AbstractProtocolHandler.
  */
-AbstractProtocolHandler::AbstractProtocolHandler(boost::shared_ptr<Connection> connection, Type type)
+AbstractProtocolHandler::AbstractProtocolHandler(Connection &connection, Type type)
   : m_connection(connection), m_type(type)
 {
 }

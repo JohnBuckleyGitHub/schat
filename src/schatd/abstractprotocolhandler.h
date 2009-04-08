@@ -36,14 +36,13 @@ public:
     SimpleServerServer  ///< Протокол обмена между серверами.
   };
 
-  AbstractProtocolHandler(boost::shared_ptr<Connection> connection, Type type = Basic);
+  AbstractProtocolHandler(Connection &connection, Type type = Basic);
   virtual ~AbstractProtocolHandler();
   inline Type type() const { return m_type; }
-  inline void reset()      { m_connection.reset(); }
   virtual void append(quint16 opcode, const QByteArray &data);
 
 protected:
-  boost::shared_ptr<Connection> m_connection;
+  Connection &m_connection;
 
 private:
   const Type m_type;
