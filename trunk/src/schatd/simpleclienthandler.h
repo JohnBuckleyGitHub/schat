@@ -27,7 +27,7 @@
 class SimpleClientHandler : public AbstractProtocolHandler {
 
 public:
-  SimpleClientHandler(boost::shared_ptr<Connection> connection);
+  SimpleClientHandler(Connection &connection);
   ~SimpleClientHandler();
   void append(quint16 opcode, const QByteArray &data);
 

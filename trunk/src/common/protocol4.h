@@ -61,8 +61,9 @@ enum Gender {
  * Коды ошибок.
  */
 enum Error {
-  NoError          = 0,  ///< Нет ошибки.
-  ErrorBadNickName = 400 ///< Не корректный ник.
+  NoError          = 0,   ///< Нет ошибки.
+  ErrorBadNickName = 400, ///< Не корректный ник.
+  ErrorNickAlreadyUse     ///< Выбранный ник уже используется.
 };
 
 

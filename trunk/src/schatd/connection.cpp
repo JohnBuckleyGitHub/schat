@@ -129,8 +129,6 @@ void Connection::Private::close()
     return;
 
   setState(WaitClose);
-  if (handler)
-    handler->reset();
 
   asio::error_code ignored;
   if (checkTimer)
@@ -308,7 +306,7 @@ void Connection::Private::start()
 bool Connection::Private::detect()
 {
   if (opcode == protocol::Greeting) {
-    handler = new SimpleClientHandler(q->shared_from_this());
+    handler = new SimpleClientHandler(*q);
     return true;
   }
   return false;

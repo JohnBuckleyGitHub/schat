@@ -21,13 +21,15 @@
 
 //#define SCHAT_DEBUG
 
+#include "chatuser.h"
 #include "protocol4.h"
 #include "simpleclienthandler.h"
+#include "usertools.h"
 
 /*!
  * Конструктор класса SimpleClientHandler.
  */
-SimpleClientHandler::SimpleClientHandler(boost::shared_ptr<Connection> connection)
+SimpleClientHandler::SimpleClientHandler(Connection &connection)
   : AbstractProtocolHandler(connection, AbstractProtocolHandler::SimpleClientServer)
 {
 }
@@ -52,11 +54,11 @@ void SimpleClientHandler::append(quint16 opcode, const QByteArray &data)
   if (opcode == protocol::Greeting) {
     int err = greeting(data);
     if (err > 0) {
-      m_connection->send(PacketTool::create(packet::GreetingReply(err)));
+      m_connection.send(PacketTool::create(packet::GreetingReply(err)));
 //      m_connection->close();
     }
     else if (err == -1)
-      m_connection->close();
+      m_connection.close();
   }
 }
 
@@ -72,11 +74,17 @@ int SimpleClientHandler::greeting(const QByteArray &data)
   if (packet.error)
     return -1;
 
-//  UserData out;
-  return protocol::ErrorBadNickName;
-//  out.nick = UserTools::nick(out.nick);
-//  if (!UserTools::isValidNick(out.nick))
-//    return ErrorBadNickName;
+  UserData out;
 
+  out.nick = UserTools::nick(packet.nick);
+  if (!UserTools::isValidNick(out.nick))
+    return protocol::ErrorBadNickName;
+
+  out.fullName = UserTools::fullName(packet.fullName);
+  out.host     = m_connection.socket().remote_endpoint().address().to_string().c_str();
+  out.gender   = packet.gender;
+
+//  boost::shared_ptr<ChatUser> user(new ChatUser(out, m_connection));
+  qDebug() << out.host;
   return 0;
 }
