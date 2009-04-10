@@ -27,23 +27,22 @@
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
  */
-DaemonSettingsDialog::DaemonSettingsDialog(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsDialog(parent), m_settings(settings)
+DaemonSettingsDialog::DaemonSettingsDialog(QWidget *parent)
+  : AbstractSettingsDialog(parent)
 {
-  m_commonPage = new DaemonCommonSettings(settings, this);
-  m_netPage    = new DaemonNetSettings(settings, this);
+  DaemonNetSettings *netPage = new DaemonNetSettings(this);
 
-  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"), m_commonPage);
-  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"), m_netPage);
+  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"), new DaemonCommonSettings(this));
+  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),  netPage);
 
-  connect(m_netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
+  connect(netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
 
 
 void DaemonSettingsDialog::accept()
 {
   emit save();
-  m_settings->write();
+  DaemonSettingsInstance->write();
   close();
 }
 
@@ -51,8 +50,8 @@ void DaemonSettingsDialog::accept()
 /*!
  * Конструктор класса DaemonCommonSettings.
  */
-DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
+DaemonCommonSettings::DaemonCommonSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent)
 {
   m_listen = new QComboBox(this);
   m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
@@ -61,7 +60,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_port = new QSpinBox(this);
   m_port->setRange(1, 65536);
-  m_port->setValue(m_settings->getInt("ListenPort"));
+  m_port->setValue(DaemonSettingsInstance->getInt("ListenPort"));
   m_port->setToolTip(tr("Порт на котором сервер будет ожидать подключения"));
 
   QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
@@ -82,14 +81,14 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
-  m_logLevel->setValue(m_settings->getInt("LogLevel"));
+  m_logLevel->setValue(DaemonSettingsInstance->getInt("LogLevel"));
   m_logLevel->setToolTip(tr("Уровень детализации журнала\n-1 журналирование отключено"));
 
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
   logLabel->setBuddy(m_logLevel);
 
   m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
-  m_channelLog->setChecked(m_settings->getBool("ChannelLog"));
+  m_channelLog->setChecked(DaemonSettingsInstance->getBool("ChannelLog"));
   m_channelLog->setToolTip(tr("Управляет режимом записи событий основного\nканала в специальный журнал"));
 
   QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
@@ -103,12 +102,12 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
-  m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
+  m_maxUsers->setValue(DaemonSettingsInstance->getInt("MaxUsers"));
   m_maxUsers->setToolTip(tr("Ограничение максимального количества\nпользователей которые могут быть подключены к серверу\n0 - без ограничений"));
 
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
-  m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
+  m_maxUsersPerIp->setValue(DaemonSettingsInstance->getInt("MaxUsersPerIp"));
   m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества\nпользователей с одного адреса\n0 - без ограничений"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
@@ -136,7 +135,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
 
 /*!
- * \brief Сброс настроек на стандартные.
+ * Сброс настроек на стандартные.
  *
  * \param page Номер текущей страницы настроек, только если номер страницы равен \a m_id, производится сброс настроек.
  */
@@ -147,7 +146,7 @@ void DaemonCommonSettings::reset(int page)
     m_port->setValue(7666);
     m_logLevel->setValue(0);
     m_channelLog->setChecked(false);
-    m_maxUsers->setValue(100);
+    m_maxUsers->setValue(0);
     m_maxUsersPerIp->setValue(0);
   }
 }
@@ -162,12 +161,12 @@ void DaemonCommonSettings::reset(int page)
  */
 void DaemonCommonSettings::save()
 {
-  m_settings->setString("ListenAddress", m_listen->currentText());
-  m_settings->setInt("ListenPort",       m_port->value());
-  m_settings->setInt("LogLevel",         m_logLevel->value());
-  m_settings->setBool("ChannelLog",      m_channelLog->isChecked());
-  m_settings->setInt("MaxUsers",         m_maxUsers->value());
-  m_settings->setInt("MaxUsersPerIp",    m_maxUsersPerIp->value());
+  DaemonSettingsInstance->setString("ListenAddress", m_listen->currentText());
+  DaemonSettingsInstance->setInt("ListenPort",       m_port->value());
+  DaemonSettingsInstance->setInt("LogLevel",         m_logLevel->value());
+  DaemonSettingsInstance->setBool("ChannelLog",      m_channelLog->isChecked());
+  DaemonSettingsInstance->setInt("MaxUsers",         m_maxUsers->value());
+  DaemonSettingsInstance->setInt("MaxUsersPerIp",    m_maxUsersPerIp->value());
 }
 
 
@@ -183,7 +182,7 @@ void DaemonCommonSettings::createListenList()
   foreach (QHostAddress addr, list)
     m_listen->addItem(addr.toString());
 
-  QString listenAddress = m_settings->getString("ListenAddress");
+  QString listenAddress = DaemonSettingsInstance->getString("ListenAddress");
   int index = m_listen->findText(listenAddress);
   if (index == -1)
     m_listen->setCurrentIndex(0);
@@ -195,16 +194,16 @@ void DaemonCommonSettings::createListenList()
 /*!
  * Конструктор класса DaemonNetSettings.
  */
-DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
+DaemonNetSettings::DaemonNetSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent)
 {
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
-  m_network->setChecked(m_settings->getBool("Network"));
+  m_network->setChecked(DaemonSettingsInstance->getBool("Network"));
   m_network->setToolTip(tr("Включить поддержку взаимодействия с другими серверами"));
   connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll()));
 
   m_root = new QCheckBox(tr("&Корневой сервер"), this);
-  m_root->setChecked(m_settings->getBool("RootServer"));
+  m_root->setChecked(DaemonSettingsInstance->getBool("RootServer"));
   m_root->setToolTip(tr("Определяет роль этого сервера в сети"));
   connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
@@ -241,8 +240,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   netLay->setSpacing(4);
 
   m_name = new QLineEdit("Unknown Server", this);
-  if (!m_settings->getString("Name").isEmpty())
-    m_name->setText(m_settings->getString("Name"));
+  if (!DaemonSettingsInstance->getString("Name").isEmpty())
+    m_name->setText(DaemonSettingsInstance->getString("Name"));
   m_name->setMaxLength(Network::MaxName);
   m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
   connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
@@ -256,14 +255,14 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
 
   m_numeric = new QSpinBox(this);
   m_numeric->setRange(1, 255);
-  m_numeric->setValue(m_settings->getInt("Numeric"));
+  m_numeric->setValue(DaemonSettingsInstance->getInt("Numeric"));
   m_numeric->setToolTip(tr("Уникальный для сети номер сервера"));
   QLabel *numericLabel = new QLabel(tr("Уникальный &номер:"), this);
   numericLabel->setBuddy(m_numeric);
 
   m_limit = new QSpinBox(this);
   m_limit->setRange(0, 255);
-  m_limit->setValue(m_settings->getInt("MaxLinks"));
+  m_limit->setValue(DaemonSettingsInstance->getInt("MaxLinks"));
   m_limit->setToolTip(tr("Ограничение количества серверов которые могут быть подключены\nИспользуется только корневым сервером"));
   QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
   limitLabel->setBuddy(m_limit);
@@ -330,13 +329,13 @@ void DaemonNetSettings::reset(int page)
  */
 void DaemonNetSettings::save()
 {
-  m_settings->setBool("Network", m_network->isChecked());
+  DaemonSettingsInstance->setBool("Network", m_network->isChecked());
 
   if (m_network->isChecked()) {
-    m_settings->setBool("RootServer", m_root->isChecked());
-    m_settings->setInt("Numeric",     m_numeric->value());
-    m_settings->setInt("MaxLinks",    m_limit->value());
-    m_settings->setString("Name",     m_name->text());
+    DaemonSettingsInstance->setBool("RootServer", m_root->isChecked());
+    DaemonSettingsInstance->setInt("Numeric",     m_numeric->value());
+    DaemonSettingsInstance->setInt("MaxLinks",    m_limit->value());
+    DaemonSettingsInstance->setString("Name",     m_name->text());
 
     m_meta.insert("name", m_netName->text());
     m_meta.insert("key", m_key->text());
@@ -345,7 +344,7 @@ void DaemonNetSettings::save()
       server = m_rootAddr->text();
 
     NetworkWriter writer(m_meta, server.isEmpty() ? QStringList() : QStringList() << server);
-    writer.writeFile(qApp->applicationDirPath() + "/" + m_settings->getString("NetworkFile"));
+    writer.writeFile(QApplication::applicationDirPath() + "/" + DaemonSettingsInstance->getString("NetworkFile"));
   }
 }
 
@@ -433,10 +432,10 @@ bool DaemonNetSettings::revalidate()
  */
 void DaemonNetSettings::readNetwork()
 {
-  Network network(qApp->applicationDirPath(), this);
+  Network network(QApplication::applicationDirPath(), this);
   network.setSingle(true);
   network.setFailBack(false);
-  if (network.fromFile(m_settings->getString("NetworkFile"))) {
+  if (network.fromFile(DaemonSettingsInstance->getString("NetworkFile"))) {
     if (!network.name().isEmpty())
       m_netName->setText(network.name());
     m_key->setText(network.key());

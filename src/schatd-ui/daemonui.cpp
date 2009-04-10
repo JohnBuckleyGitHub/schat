@@ -84,8 +84,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   m_aboutLabel = new QLabel(QString(
       "<html><body style='color:#333;margin:6px;'>"
       "<h4 style='margin-bottom:0px;'>IMPOMEZIA Simple Chat Daemon UI %1</h4>"
-      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 - 2009 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
-      "</body></html>").arg(SCHAT_VERSION), this);
+      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 - %2 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
+      "</body></html>").arg(SCHAT_VERSION).arg(QDateTime::currentDateTime().toString("yyyy")), this);
   m_aboutLabel->setStyleSheet("background:#fff; border:4px solid #fff;");
   m_aboutLabel->setOpenExternalLinks(true);
 
@@ -218,7 +218,7 @@ void DaemonUi::settings()
     show();
 
   if (!m_settingsDialog) {
-    m_settingsDialog = new DaemonSettingsDialog(m_settings, this);
+    m_settingsDialog = new DaemonSettingsDialog(this);
     m_settingsDialog->show();
   }
 
