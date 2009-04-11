@@ -27,7 +27,9 @@
 
 class QCheckBox;
 class QComboBox;
+class QCommandLinkButton;
 class QGroupBox;
+class QLabel;
 class QLineEdit;
 class QSpinBox;
 
@@ -41,7 +43,10 @@ class DaemonSettingsDialog : public AbstractSettingsDialog
 public:
   enum Page {
     CommonPage,
-    NetPage
+    NetPage,
+    #ifndef SCHATD_NO_SERVICE
+    ServicePage
+    #endif
   };
 
   DaemonSettingsDialog(QWidget *parent = 0);
@@ -117,5 +122,31 @@ private:
   QSpinBox *m_limit;
   QSpinBox *m_numeric;
 };
+
+
+/*!
+ * \brief Общие настройки сервера.
+ */
+#ifndef SCHATD_NO_SERVICE
+class DaemonServiceSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  DaemonServiceSettings(QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
+
+private:
+  QCommandLinkButton *m_install;
+  QLabel *m_info;
+  QLabel *m_instsrvExe;
+  QLabel *m_srvanyExe;
+  QLabel *m_state;
+  QLineEdit *m_serviceName;
+};
+#endif
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/
