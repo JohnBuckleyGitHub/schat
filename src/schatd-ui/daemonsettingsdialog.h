@@ -133,6 +133,14 @@ class DaemonServiceSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
+  /// Статус установки сервиса.
+  enum Status {
+    Unknown,        ///< Не определёное состояние.
+    Invalid,        ///< Ошибка, установка сервиса не возможна, не найдены файлы из Windows Resource Kit.
+    ReadyToInstall, ///< Всё готово к установке сервиса.
+    Installed       ///< Сервис установлен.
+  };
+
   DaemonServiceSettings(QWidget *parent = 0);
 
 public slots:
@@ -140,12 +148,18 @@ public slots:
   void save();
 
 private:
+  bool exist(QLabel *label, const QString &file) const;
+  void detect();
+  void setCommandLinkState();
+
   QCommandLinkButton *m_install;
+  QGroupBox *m_installGroup;
   QLabel *m_info;
   QLabel *m_instsrvExe;
   QLabel *m_srvanyExe;
   QLabel *m_state;
   QLineEdit *m_serviceName;
+  Status m_status;
 };
 #endif
 

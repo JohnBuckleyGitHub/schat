@@ -459,17 +459,19 @@ void DaemonNetSettings::readNetwork()
 /*!
  * Конструктор класса DaemonCommonSettings.
  */
+#ifndef SCHATD_NO_SERVICE
 DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
-  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent),
+  m_status(Unknown)
 {
   QLabel *state = new QLabel(tr("Windows сервис:"), this);
-  m_state = new QLabel("<b>не установлен</b>", this);
+  m_state = new QLabel(tr("<b style='color:#c00;'>не определено</b>"), this);
 
   QLabel *instsrvExe = new QLabel("instsrv.exe:", this);
-  m_instsrvExe = new QLabel("<b>не найден</b>", this);
+  m_instsrvExe = new QLabel(this);
 
   QLabel *srvanyExe = new QLabel("srvany.exe:", this);
-  m_srvanyExe = new QLabel("<b>не найден</b>", this);
+  m_srvanyExe = new QLabel(this);
 
   QGroupBox *infoGroup = new QGroupBox(tr("Информация"), this);
   QGridLayout *infoLay = new QGridLayout(infoGroup);
@@ -484,12 +486,13 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   infoLay->setSpacing(4);
 
   QLabel *serviceName = new QLabel(tr("Имя сервиса:"), this);
-  m_serviceName = new QLineEdit(this);
+  m_serviceName = new QLineEdit(DaemonSettingsInstance->getString("Service/Name"), this);
+  m_serviceName->setMaxLength(128);
 
   m_install = new QCommandLinkButton(tr("Установить"), tr("Установить сервер как сервис"), this);
 
-  QGroupBox *installGroup = new QGroupBox(tr("Установка/Удаление"), this);
-  QGridLayout *installLay = new QGridLayout(installGroup);
+  m_installGroup = new QGroupBox(tr("Установка/Удаление"), this);
+  QGridLayout *installLay = new QGridLayout(m_installGroup);
   installLay->addWidget(serviceName, 0, 0);
   installLay->addWidget(m_serviceName, 0, 1);
   installLay->addWidget(m_install, 1, 0, 1, 2);
@@ -507,10 +510,12 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(infoGroup);
-  mainLay->addWidget(installGroup);
+  mainLay->addWidget(m_installGroup);
   mainLay->addWidget(m_info);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
+
+  detect();
 }
 
 
@@ -530,3 +535,74 @@ void DaemonServiceSettings::reset(int page)
 void DaemonServiceSettings::save()
 {
 }
+
+
+/*!
+ * Проверка на наличие необходимого файла из Windows Resource Kit.
+ *
+ * \param label Указатель на объект QLabel, для отображения состояния.
+ * \param file  Имя файла, который нужно найти (без пути).
+ *
+ * \return \a true если файл найден.
+ */
+bool DaemonServiceSettings::exist(QLabel *label, const QString &file) const
+{
+  if (!QFile::exists(QApplication::applicationDirPath() + "/" + file)) {
+    label->setText(tr("<b style='color:#c00;'>не найден</b>"));
+    return false;
+  }
+
+  label->setText(tr("<b style='color:#090;'>найден</b>"));
+  return true;
+}
+
+
+/*!
+ * Определение текущего состояния сервиса.
+ */
+void DaemonServiceSettings::detect()
+{
+  m_status = Unknown;
+
+  if (!exist(m_instsrvExe, "instsrv.exe"))
+    m_status = Invalid;
+
+  if (!exist(m_srvanyExe, "srvany.exe"))
+    m_status = Invalid;
+
+  if (m_status == Invalid) {
+    m_installGroup->setEnabled(false);
+    m_info->setVisible(true);
+    setCommandLinkState();
+    return;
+  }
+
+  if (DaemonSettingsInstance->getBool("Service/Installed")) {
+    m_serviceName->setEnabled(false);
+    m_state->setText(tr("<b style='color:#090;'>установлен</b>"));
+    m_status = Installed;
+  }
+  else {
+    m_serviceName->setEnabled(true);
+    m_state->setText(tr("<b style='color:#c00;'>не установлен</b>"));
+    m_status = ReadyToInstall;
+  }
+
+  m_installGroup->setEnabled(true);
+  m_info->setVisible(false);
+  setCommandLinkState();
+}
+
+
+void DaemonServiceSettings::setCommandLinkState()
+{
+  if (m_status != Installed) {
+    m_install->setText(tr("Установить"));
+    m_install->setDescription(tr("Установить сервер как сервис"));
+  }
+  else {
+    m_install->setText(tr("Удалить"));
+    m_install->setDescription(tr("Удалить сервис сервера чата"));
+  }
+}
+#endif

@@ -46,7 +46,7 @@ void DaemonSettings::read()
   setInt("ListenPort",       7666);
   setInt("LogLevel",         0);
   setInt("Numeric",          0);
-  setInt("MaxUsers",         100);
+  setInt("MaxUsers",         0);
   setInt("MaxLinks",         10);
   setInt("MaxUsersPerIp",    0);
   setInt("MotdMaxSize",      2048);
@@ -56,6 +56,11 @@ void DaemonSettings::read()
   setString("Name",          "");
   setString("MotdFile",      "motd.html");
   setString("StatsFile",     "stats.xml");
+
+  #ifndef SCHATD_NO_SERVICE
+    setBool("Service/Installed", false);
+    setString("Service/Name", "Simple Chat Daemon");
+  #endif
 
   AbstractSettings::read();
 }
