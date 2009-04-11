@@ -49,4 +49,6 @@ SOURCES += \
     networkwriter.cpp \
     singleapplication.cpp \
 
+!win32:DEFINES += SCHATD_NO_SERVICE
+
 include(../common/common.pri)

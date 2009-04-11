@@ -32,8 +32,11 @@ DaemonSettingsDialog::DaemonSettingsDialog(QWidget *parent)
 {
   DaemonNetSettings *netPage = new DaemonNetSettings(this);
 
-  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"), new DaemonCommonSettings(this));
-  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),  netPage);
+  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"),  new DaemonCommonSettings(this));
+  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),   netPage);
+  #ifndef SCHATD_NO_SERVICE
+    createPage(QIcon(":/images/windows-service.png"),     tr("Сервис"), new DaemonServiceSettings(this));
+  #endif
 
   connect(netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
@@ -450,4 +453,80 @@ void DaemonNetSettings::readNetwork()
 
     m_rootAddr->setText(server);
   }
+}
+
+
+/*!
+ * Конструктор класса DaemonCommonSettings.
+ */
+DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent)
+{
+  QLabel *state = new QLabel(tr("Windows сервис:"), this);
+  m_state = new QLabel("<b>не установлен</b>", this);
+
+  QLabel *instsrvExe = new QLabel("instsrv.exe:", this);
+  m_instsrvExe = new QLabel("<b>не найден</b>", this);
+
+  QLabel *srvanyExe = new QLabel("srvany.exe:", this);
+  m_srvanyExe = new QLabel("<b>не найден</b>", this);
+
+  QGroupBox *infoGroup = new QGroupBox(tr("Информация"), this);
+  QGridLayout *infoLay = new QGridLayout(infoGroup);
+  infoLay->addWidget(state, 0, 0);
+  infoLay->addWidget(m_state, 0, 1);
+  infoLay->addWidget(instsrvExe, 1, 0);
+  infoLay->addWidget(m_instsrvExe, 1, 1);
+  infoLay->addWidget(srvanyExe, 2, 0);
+  infoLay->addWidget(m_srvanyExe, 2, 1);
+  infoLay->setColumnStretch(1, 1);
+  infoLay->setMargin(6);
+  infoLay->setSpacing(4);
+
+  QLabel *serviceName = new QLabel(tr("Имя сервиса:"), this);
+  m_serviceName = new QLineEdit(this);
+
+  m_install = new QCommandLinkButton(tr("Установить"), tr("Установить сервер как сервис"), this);
+
+  QGroupBox *installGroup = new QGroupBox(tr("Установка/Удаление"), this);
+  QGridLayout *installLay = new QGridLayout(installGroup);
+  installLay->addWidget(serviceName, 0, 0);
+  installLay->addWidget(m_serviceName, 0, 1);
+  installLay->addWidget(m_install, 1, 0, 1, 2);
+  installLay->setMargin(6);
+  installLay->setSpacing(4);
+
+  m_info = new QLabel(tr("Для установки сервиса необходимо скопировать файлы <b>instsrv.exe</b> и <b>srvany.exe</b> "
+      "из комплекта <b>Windows Resource Kit</b> в папку с сервером.<br />"
+      "<a href='http://simple.impomezia.com/Windows_Service' style='text-decoration:none; color:#1a4d82;'>Подробности</a>."), this);
+  m_info->setStyleSheet("border: 1px solid #7581a9;"
+      "border-radius: 3px;"
+      "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
+  m_info->setOpenExternalLinks(true);
+  m_info->setWordWrap(true);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(infoGroup);
+  mainLay->addWidget(installGroup);
+  mainLay->addWidget(m_info);
+  mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
+}
+
+
+/*!
+ * Сброс настроек на стандартные.
+ */
+void DaemonServiceSettings::reset(int page)
+{
+  if (page == m_id) {
+  }
+}
+
+
+/*!
+ * Сохранение настроек.
+ */
+void DaemonServiceSettings::save()
+{
 }
