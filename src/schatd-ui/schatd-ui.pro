@@ -34,6 +34,7 @@ HEADERS += \
     network.h \
     networkreader.h \
     networkwriter.h \
+    serviceinstaller.h \
     singleapplication.h \
 
 SOURCES += \
@@ -47,6 +48,7 @@ SOURCES += \
     network.cpp \
     networkreader.cpp \
     networkwriter.cpp \
+    serviceinstaller.cpp \
     singleapplication.cpp \
 
 !win32:DEFINES += SCHATD_NO_SERVICE
