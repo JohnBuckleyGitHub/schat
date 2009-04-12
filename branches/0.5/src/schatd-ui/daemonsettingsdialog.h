@@ -147,6 +147,9 @@ public slots:
   void reset(int page);
   void save();
 
+private slots:
+  void serviceNameChanged(const QString &text);
+
 private:
   bool exist(QLabel *label, const QString &file) const;
   void detect();

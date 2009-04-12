@@ -19,10 +19,11 @@
 #include <QtGui>
 #include <QtNetwork>
 
-#include "daemonsettingsdialog.h"
 #include "daemonsettings.h"
+#include "daemonsettingsdialog.h"
 #include "network.h"
 #include "networkwriter.h"
+#include "serviceinstaller.h"
 
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
@@ -516,6 +517,8 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   mainLay->setContentsMargins(3, 3, 3, 0);
 
   detect();
+
+  connect(m_serviceName, SIGNAL(textChanged(const QString &)), SLOT(serviceNameChanged(const QString &)));
 }
 
 
@@ -534,6 +537,15 @@ void DaemonServiceSettings::reset(int page)
  */
 void DaemonServiceSettings::save()
 {
+}
+
+
+void DaemonServiceSettings::serviceNameChanged(const QString &text)
+{
+  if (text.isEmpty() || ServiceInstaller::exists(text))
+    m_install->setEnabled(false);
+  else
+    m_install->setEnabled(true);
 }
 
 
