@@ -24,7 +24,9 @@
  * Конструктор класса ServiceInstaller.
  */
 ServiceInstaller::ServiceInstaller(QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_process(0),
+  m_state(Ready)
 {
 }
 
@@ -32,6 +34,39 @@ ServiceInstaller::ServiceInstaller(QObject *parent)
 ServiceInstaller::~ServiceInstaller()
 {
   qDebug() << "~ServiceInstaller()";
+}
+
+
+/*!
+ * Запуск процедуры установки сервиса.
+ */
+void ServiceInstaller::install(const QString &name)
+{
+  qDebug() << "install()" << name;
+
+  if (m_state != Ready)
+    return;
+
+  if (name.isEmpty() || exists(name))
+    return;
+
+  m_state = Installing;
+  m_name  = name;
+
+  if (!m_process)
+    m_process = new QProcess(this);
+
+  connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(error()));
+  connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(finished(int, QProcess::ExitStatus)));
+
+  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" "
+      + QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/srvany.exe") + '"');
+}
+
+
+void ServiceInstaller::uninstall(const QString &name)
+{
+  qDebug() << "uninstall()" << name;
 }
 
 
@@ -48,4 +83,21 @@ bool ServiceInstaller::exists(const QString &name)
     return true;
 
   return false;
+}
+
+
+void ServiceInstaller::error()
+{
+  qDebug() << "error()";
+}
+
+
+void ServiceInstaller::finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+  qDebug() << "finished()" << exitCode << exitStatus;
+
+  if (exitCode == 0 && exitStatus == QProcess::NormalExit) {
+    QSettings s("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\" + m_name, QSettings::NativeFormat);
+    s.setValue("Parameters/Application", QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/schatd.exe"));
+  }
 }
