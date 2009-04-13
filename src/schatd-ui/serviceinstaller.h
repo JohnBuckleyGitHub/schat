@@ -20,6 +20,7 @@
 #define SERVICEINSTALLER_H_
 
 #include <QObject>
+#include <QProcess>
 
 /*!
  * \brief Устанавливает и удаляет Win32 сервис.
@@ -29,10 +30,28 @@ class ServiceInstaller : public QObject
   Q_OBJECT
 
 public:
+  /// Состояние объекта.
+  enum State {
+    Ready,       ///< Готовность к действиям.
+    Installing,  ///< Идёт процесс установки сервиса.
+    UnInstalling ///< Идёт процесс удаления сервиса.
+  };
+
   ServiceInstaller(QObject *parent = 0);
   ~ServiceInstaller();
+  void install(const QString &name);
+  void uninstall(const QString &name);
 
   static bool exists(const QString &name);
+
+private slots:
+  void error();
+  void finished(int exitCode, QProcess::ExitStatus exitStatus);
+
+private:
+  QProcess *m_process;
+  QString m_name;
+  State m_state;
 };
 
 

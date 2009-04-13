@@ -463,6 +463,7 @@ void DaemonNetSettings::readNetwork()
 #ifndef SCHATD_NO_SERVICE
 DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent),
+  m_installer(new ServiceInstaller(this)),
   m_status(Unknown)
 {
   QLabel *state = new QLabel(tr("Windows сервис:"), this);
@@ -518,6 +519,7 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
 
   detect();
 
+  connect(m_install, SIGNAL(clicked(bool)), SLOT(clicked()));
   connect(m_serviceName, SIGNAL(textChanged(const QString &)), SLOT(serviceNameChanged(const QString &)));
 }
 
@@ -537,6 +539,15 @@ void DaemonServiceSettings::reset(int page)
  */
 void DaemonServiceSettings::save()
 {
+}
+
+
+void DaemonServiceSettings::clicked()
+{
+  if (m_status == ReadyToInstall)
+    m_installer->install(m_serviceName->text());
+  else if (m_status == Installed)
+    m_installer->uninstall(m_serviceName->text());
 }
 
 

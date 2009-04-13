@@ -32,6 +32,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QSpinBox;
+class ServiceInstaller;
 
 /*!
  * \brief Настройка сервера
@@ -138,7 +139,8 @@ public:
     Unknown,        ///< Не определёное состояние.
     Invalid,        ///< Ошибка, установка сервиса не возможна, не найдены файлы из Windows Resource Kit.
     ReadyToInstall, ///< Всё готово к установке сервиса.
-    Installed       ///< Сервис установлен.
+    Installed,      ///< Сервис установлен.
+    Wait            ///< Ожидание установки/удаления сервиса.
   };
 
   DaemonServiceSettings(QWidget *parent = 0);
@@ -148,6 +150,7 @@ public slots:
   void save();
 
 private slots:
+  void clicked();
   void serviceNameChanged(const QString &text);
 
 private:
@@ -162,6 +165,7 @@ private:
   QLabel *m_srvanyExe;
   QLabel *m_state;
   QLineEdit *m_serviceName;
+  ServiceInstaller* const m_installer;
   Status m_status;
 };
 #endif
