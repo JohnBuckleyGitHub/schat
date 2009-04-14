@@ -18,6 +18,7 @@
 
 #include <QtCore>
 
+#include "daemonsettings.h"
 #include "serviceinstaller.h"
 
 /*!
@@ -38,39 +39,6 @@ ServiceInstaller::~ServiceInstaller()
 
 
 /*!
- * Запуск процедуры установки сервиса.
- */
-void ServiceInstaller::install(const QString &name)
-{
-  qDebug() << "install()" << name;
-
-  if (m_state != Ready)
-    return;
-
-  if (name.isEmpty() || exists(name))
-    return;
-
-  m_state = Installing;
-  m_name  = name;
-
-  if (!m_process)
-    m_process = new QProcess(this);
-
-  connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(error()));
-  connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(finished(int, QProcess::ExitStatus)));
-
-  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" "
-      + QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/srvany.exe") + '"');
-}
-
-
-void ServiceInstaller::uninstall(const QString &name)
-{
-  qDebug() << "uninstall()" << name;
-}
-
-
-/*!
  * Проверка на наличие сервера с именем \p name в реестре.
  *
  * \return \a true если сервис найден.
@@ -86,9 +54,77 @@ bool ServiceInstaller::exists(const QString &name)
 }
 
 
+bool ServiceInstaller::isValid(const QString &name)
+{
+  if (!exists(name))
+    return false;
+
+  QSettings s("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\" + name, QSettings::NativeFormat);
+
+  QString imagePath = s.value("ImagePath", "").toString();
+  if (imagePath.isEmpty() || QFileInfo(imagePath) != QFileInfo(QCoreApplication::applicationDirPath() + "/srvany.exe"))
+    return false;
+
+  QString application = s.value("Parameters/Application", "").toString();
+  if (application.isEmpty() || QFileInfo(application) != QFileInfo(QCoreApplication::applicationDirPath() + "/schatd.exe"))
+    return false;
+
+  qDebug() << "valid" << name;
+  return true;
+}
+
+
+/*!
+ * Запуск процедуры установки сервиса.
+ */
+void ServiceInstaller::install(const QString &name)
+{
+  qDebug() << "install()" << name;
+
+  if (m_state != Ready) {
+    emit done(true);
+    return;
+  }
+
+  if (name.isEmpty() || exists(name)) {
+    emit done(true);
+    return;
+  }
+
+  m_state = Installing;
+  m_name  = name;
+  createProcess();
+
+  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" "
+      + QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/srvany.exe") + '"');
+}
+
+
+void ServiceInstaller::uninstall(const QString &name)
+{
+  qDebug() << "uninstall()" << name;
+  if (m_state != Ready) {
+    emit done(true);
+    return;
+  }
+
+  if (!isValid(name)) {
+    emit done(true);
+    return;
+  }
+
+  m_state = UnInstalling;
+  m_name  = name;
+  createProcess();
+
+  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" remove");
+}
+
+
 void ServiceInstaller::error()
 {
   qDebug() << "error()";
+  emit done(true);
 }
 
 
@@ -97,7 +133,28 @@ void ServiceInstaller::finished(int exitCode, QProcess::ExitStatus exitStatus)
   qDebug() << "finished()" << exitCode << exitStatus;
 
   if (exitCode == 0 && exitStatus == QProcess::NormalExit) {
-    QSettings s("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\" + m_name, QSettings::NativeFormat);
-    s.setValue("Parameters/Application", QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/schatd.exe"));
+    if (m_state == Installing) {
+      QSettings s("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\" + m_name, QSettings::NativeFormat);
+      s.setValue("Parameters/Application", QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/schatd.exe"));
+      DaemonSettingsInstance->setBool("Service/Installed", true);
+      DaemonSettingsInstance->setString("Service/Name", m_name);
+    }
+    else {
+      DaemonSettingsInstance->setBool("Service/Installed", false);
+    }
+    m_state = Ready;
+    emit done(false);
+  }
+  else
+    emit done(true);
+}
+
+
+void ServiceInstaller::createProcess()
+{
+  if (!m_process) {
+    m_process = new QProcess(this);
+    connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(error()));
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(finished(int, QProcess::ExitStatus)));
   }
 }

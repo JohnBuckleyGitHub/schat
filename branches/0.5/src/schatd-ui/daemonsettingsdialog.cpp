@@ -23,7 +23,10 @@
 #include "daemonsettingsdialog.h"
 #include "network.h"
 #include "networkwriter.h"
-#include "serviceinstaller.h"
+
+#ifndef SCHATD_NO_SERVICE
+  #include "serviceinstaller.h"
+#endif
 
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
@@ -467,7 +470,7 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   m_status(Unknown)
 {
   QLabel *state = new QLabel(tr("Windows сервис:"), this);
-  m_state = new QLabel(tr("<b style='color:#c00;'>не определено</b>"), this);
+  m_state = new QLabel(tr("<b style='color:#c00;'>не установлен</b>"), this);
 
   QLabel *instsrvExe = new QLabel("instsrv.exe:", this);
   m_instsrvExe = new QLabel(this);
@@ -519,7 +522,11 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
 
   detect();
 
+  if (m_status != Installed)
+    serviceNameChanged(m_serviceName->text());
+
   connect(m_install, SIGNAL(clicked(bool)), SLOT(clicked()));
+  connect(m_installer, SIGNAL(done(bool)), SLOT(done(bool)));
   connect(m_serviceName, SIGNAL(textChanged(const QString &)), SLOT(serviceNameChanged(const QString &)));
 }
 
@@ -544,10 +551,29 @@ void DaemonServiceSettings::save()
 
 void DaemonServiceSettings::clicked()
 {
-  if (m_status == ReadyToInstall)
+  if (m_status == ReadyToInstall) {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    m_status = WaitForInstall;
     m_installer->install(m_serviceName->text());
-  else if (m_status == Installed)
+  }
+  else if (m_status == Installed) {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    m_status = WaitForRemove;
     m_installer->uninstall(m_serviceName->text());
+  }
+}
+
+
+void DaemonServiceSettings::done(bool err)
+{
+  if (m_status == WaitForInstall) {
+    err ? setState(ErrorInstall) : setState(Installed);
+    QApplication::restoreOverrideCursor();
+  }
+  else if (m_status == WaitForRemove) {
+    err ? setState(ErrorRemove) : setState(ReadyToInstall);
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 
@@ -594,26 +620,14 @@ void DaemonServiceSettings::detect()
     m_status = Invalid;
 
   if (m_status == Invalid) {
-    m_installGroup->setEnabled(false);
-    m_info->setVisible(true);
-    setCommandLinkState();
+    setState();
     return;
   }
 
-  if (DaemonSettingsInstance->getBool("Service/Installed")) {
-    m_serviceName->setEnabled(false);
-    m_state->setText(tr("<b style='color:#090;'>установлен</b>"));
-    m_status = Installed;
-  }
-  else {
-    m_serviceName->setEnabled(true);
-    m_state->setText(tr("<b style='color:#c00;'>не установлен</b>"));
-    m_status = ReadyToInstall;
-  }
-
-  m_installGroup->setEnabled(true);
-  m_info->setVisible(false);
-  setCommandLinkState();
+  if (DaemonSettingsInstance->getBool("Service/Installed") && ServiceInstaller::isValid(m_serviceName->text()))
+    setState(Installed);
+  else
+    setState(ReadyToInstall);
 }
 
 
@@ -627,5 +641,38 @@ void DaemonServiceSettings::setCommandLinkState()
     m_install->setText(tr("Удалить"));
     m_install->setDescription(tr("Удалить сервис сервера чата"));
   }
+}
+
+
+void DaemonServiceSettings::setState()
+{
+  if (m_status == Invalid) {
+    m_installGroup->setEnabled(false);
+    m_info->setVisible(true);
+  }
+  else {
+    m_installGroup->setEnabled(true);
+    m_info->setVisible(false);
+  }
+
+  if (m_status == Installed) {
+    m_serviceName->setEnabled(false);
+    m_state->setText(tr("<b style='color:#090;'>установлен</b>"));
+  }
+  else if (m_status == ReadyToInstall) {
+    m_serviceName->setEnabled(true);
+    m_state->setText(tr("<b style='color:#c00;'>не установлен</b>"));
+  }
+  else if (m_status == ErrorInstall) {
+    m_serviceName->setEnabled(true);
+    m_state->setText(tr("<b style='color:#c00;'>ошибка при установке</b>"));
+  }
+  else if (m_status == ErrorRemove) {
+    m_serviceName->setEnabled(false);
+    m_state->setText(tr("<b style='color:#c00;'>ошибка при удалении</b>"));
+  }
+
+  if (m_status != ErrorRemove)
+    setCommandLinkState();
 }
 #endif
