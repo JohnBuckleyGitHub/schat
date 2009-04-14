@@ -32,13 +32,13 @@ class ServiceInstaller : public QObject
 public:
   /// Состояние объекта.
   enum State {
-    Ready,       ///< Готовность к действиям.
-    Installing,  ///< Идёт процесс установки сервиса.
-    UnInstalling ///< Идёт процесс удаления сервиса.
+    Ready,        ///< Готовность к действиям.
+    Installing,   ///< Идёт процесс установки сервиса.
+    UnInstalling, ///< Идёт процесс удаления сервиса.
+    Stopping      ///< Запущен процесс остановки сервиса, перед его удалением.
   };
 
   ServiceInstaller(QObject *parent = 0);
-  ~ServiceInstaller();
   static bool exists(const QString &name);
   static bool isValid(const QString &name);
   void install(const QString &name);
@@ -53,10 +53,11 @@ private slots:
 
 private:
   void createProcess();
+  void startRemove();
 
-  QProcess *m_process;
-  QString m_name;
-  State m_state;
+  QProcess *m_process; ///< Процесс выполняющий работы по установке/остановке/удалению сервиса.
+  QString m_name;      ///< Имя сервиса, над которым совершаются действия.
+  State m_state;       ///< Состояние объекта.
 };
 
 
