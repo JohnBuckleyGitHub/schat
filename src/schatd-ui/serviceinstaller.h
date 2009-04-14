@@ -39,16 +39,21 @@ public:
 
   ServiceInstaller(QObject *parent = 0);
   ~ServiceInstaller();
+  static bool exists(const QString &name);
+  static bool isValid(const QString &name);
   void install(const QString &name);
   void uninstall(const QString &name);
 
-  static bool exists(const QString &name);
+signals:
+  void done(bool err);
 
 private slots:
   void error();
   void finished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
+  void createProcess();
+
   QProcess *m_process;
   QString m_name;
   State m_state;

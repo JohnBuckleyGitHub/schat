@@ -22,6 +22,10 @@
 #include "version.h"
 #include "daemonsettings.h"
 
+#ifndef SCHATD_NO_SERVICE
+  #include "serviceinstaller.h"
+#endif
+
 /*!
  * \brief Конструктор класса DaemonUi.
  */
@@ -171,8 +175,13 @@ void DaemonUi::init()
 
   m_settings->read();
 
-  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  qApp->setStyle(s.value("Style", "Plastique").toString());
+  #ifndef SCHATD_NO_SERVICE
+    if (m_settings->getBool("Service/Installed"))
+      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
+  #endif
+
+  QSettings s(QApplication::applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  QApplication::setStyle(s.value("Style", "Plastique").toString());
 
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
