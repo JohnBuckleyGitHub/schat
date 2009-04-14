@@ -89,7 +89,7 @@ void ServiceInstaller::install(const QString &name)
   m_name  = name;
   createProcess();
 
-  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" "
+  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" \""
       + QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/srvany.exe") + '"');
 }
 
