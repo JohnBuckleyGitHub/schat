@@ -32,12 +32,6 @@ ServiceInstaller::ServiceInstaller(QObject *parent)
 }
 
 
-ServiceInstaller::~ServiceInstaller()
-{
-  qDebug() << "~ServiceInstaller()";
-}
-
-
 /*!
  * Проверка на наличие сервера с именем \p name в реестре.
  *
@@ -54,6 +48,9 @@ bool ServiceInstaller::exists(const QString &name)
 }
 
 
+/*!
+ * Проверка сервиса на правильность: наличие, корректные пути к \b srvany.exe и \b schatd.exe.
+ */
 bool ServiceInstaller::isValid(const QString &name)
 {
   if (!exists(name))
@@ -69,7 +66,6 @@ bool ServiceInstaller::isValid(const QString &name)
   if (application.isEmpty() || QFileInfo(application) != QFileInfo(QCoreApplication::applicationDirPath() + "/schatd.exe"))
     return false;
 
-  qDebug() << "valid" << name;
   return true;
 }
 
@@ -79,8 +75,6 @@ bool ServiceInstaller::isValid(const QString &name)
  */
 void ServiceInstaller::install(const QString &name)
 {
-  qDebug() << "install()" << name;
-
   if (m_state != Ready) {
     emit done(true);
     return;
@@ -100,9 +94,11 @@ void ServiceInstaller::install(const QString &name)
 }
 
 
+/*!
+ * Запуск процедуры удаления сервиса.
+ */
 void ServiceInstaller::uninstall(const QString &name)
 {
-  qDebug() << "uninstall()" << name;
   if (m_state != Ready) {
     emit done(true);
     return;
@@ -113,31 +109,52 @@ void ServiceInstaller::uninstall(const QString &name)
     return;
   }
 
-  m_state = UnInstalling;
+  m_state = Stopping;
   m_name  = name;
   createProcess();
 
-  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + name + "\" remove");
+  m_process->start("net stop \"" + name + '"');
 }
 
 
+/*!
+ * Обработка ошибки при запуске/работе процесса.
+ */
 void ServiceInstaller::error()
 {
-  qDebug() << "error()";
-  emit done(true);
+  if (m_state == Stopping)
+    startRemove();
+  else
+    emit done(true);
 }
 
 
+/*!
+ * Завершение работы процесса.
+ * В зависимости от состояния и успешности завершения выполняются различные задачи.
+ * - Если происходила остановка сервиса, то запускается удаление.
+ * - При успешной установке сервиса, в реестр дописывается параметр для запуска сервера.
+ */
 void ServiceInstaller::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  qDebug() << "finished()" << exitCode << exitStatus;
+  if (m_state == Stopping) {
+    startRemove();
+    return;
+  }
 
   if (exitCode == 0 && exitStatus == QProcess::NormalExit) {
     if (m_state == Installing) {
       QSettings s("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\" + m_name, QSettings::NativeFormat);
       s.setValue("Parameters/Application", QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/schatd.exe"));
-      DaemonSettingsInstance->setBool("Service/Installed", true);
-      DaemonSettingsInstance->setString("Service/Name", m_name);
+      if (isValid(m_name)) {
+        DaemonSettingsInstance->setBool("Service/Installed", true);
+        DaemonSettingsInstance->setString("Service/Name", m_name);
+      }
+      else {
+        m_state = Ready;
+        emit done(true);
+        return;
+      }
     }
     else {
       DaemonSettingsInstance->setBool("Service/Installed", false);
@@ -150,6 +167,9 @@ void ServiceInstaller::finished(int exitCode, QProcess::ExitStatus exitStatus)
 }
 
 
+/*!
+ * Создание в случае необходимости процесса для совершения действий.
+ */
 void ServiceInstaller::createProcess()
 {
   if (!m_process) {
@@ -157,4 +177,14 @@ void ServiceInstaller::createProcess()
     connect(m_process, SIGNAL(error(QProcess::ProcessError)), SLOT(error()));
     connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(finished(int, QProcess::ExitStatus)));
   }
+}
+
+
+/*!
+ * Запуск процесса удаления сервиса.
+ */
+void ServiceInstaller::startRemove()
+{
+  m_state = UnInstalling;
+  m_process->start('"' + QCoreApplication::applicationDirPath() + "/instsrv.exe\" \"" + m_name + "\" remove");
 }

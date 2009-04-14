@@ -549,6 +549,9 @@ void DaemonServiceSettings::save()
 }
 
 
+/*!
+ * Обработка нажатия кнопки установки/удаления сервиса.
+ */
 void DaemonServiceSettings::clicked()
 {
   if (m_status == ReadyToInstall) {
@@ -564,6 +567,11 @@ void DaemonServiceSettings::clicked()
 }
 
 
+/*!
+ * Завершение операций.
+ *
+ * \param err \a true если при выполнении операций произошла ошибка.
+ */
 void DaemonServiceSettings::done(bool err)
 {
   if (m_status == WaitForInstall) {
@@ -577,6 +585,11 @@ void DaemonServiceSettings::done(bool err)
 }
 
 
+/*!
+ * Обработка изменения имени сервиса.
+ *
+ * \param text новое имя сервиса.
+ */
 void DaemonServiceSettings::serviceNameChanged(const QString &text)
 {
   if (text.isEmpty() || ServiceInstaller::exists(text))
@@ -631,6 +644,9 @@ void DaemonServiceSettings::detect()
 }
 
 
+/*!
+ * Установка состояния кнопки.
+ */
 void DaemonServiceSettings::setCommandLinkState()
 {
   if (m_status != Installed) {
@@ -644,6 +660,9 @@ void DaemonServiceSettings::setCommandLinkState()
 }
 
 
+/*!
+ * Обновление внешнего вида диалога в зависимости от статуса.
+ */
 void DaemonServiceSettings::setState()
 {
   if (m_status == Invalid) {

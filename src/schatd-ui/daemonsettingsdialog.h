@@ -126,7 +126,7 @@ private:
 
 
 /*!
- * \brief Общие настройки сервера.
+ * \brief Страница установки/удаления сервиса.
  */
 #ifndef SCHATD_NO_SERVICE
 class DaemonServiceSettings : public AbstractSettingsPage
