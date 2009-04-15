@@ -145,7 +145,7 @@ void DaemonUi::checkStart()
 
 void DaemonUi::exit()
 {
-  m_client->exit();
+  stop();
   QApplication::quit();
 }
 
@@ -209,6 +209,9 @@ void DaemonUi::notify(LocalClientService::Reason reason)
 }
 
 
+/*!
+ * Перезапуск сервера.
+ */
 void DaemonUi::restart()
 {
   if (m_status == Started)
@@ -216,7 +219,7 @@ void DaemonUi::restart()
   else
     setStatus(Starting);
 
-  m_client->exit();
+  stop();
   QTimer::singleShot(1000, this, SLOT(start()));
 }
 
@@ -235,17 +238,49 @@ void DaemonUi::settings()
 }
 
 
+/*!
+ * Запуск сервера.
+ * Для win32 платформы при использовании сервиса, производится
+ * его запуск с помощью команды \b net. Для всех остальных случаев
+ * процесс запускается непосредственно.
+ */
 void DaemonUi::start()
 {
-  if (!QProcess::startDetached('"' + m_daemonFile + '"'))
-    setStatus(Error);
-  else {
-    if (m_status != Restarting)
-      setStatus(Starting);
+  #ifndef SCHATD_NO_SERVICE
+  if (m_settings->getBool("Service/Installed"))
+    process()->start("net start \"" + m_settings->getString("Service/Name") + '"');
+  else
+  #endif
 
-    m_checkTimer.start();
-    m_client->connectToServer();
+  if (!QProcess::startDetached('"' + m_daemonFile + '"')) {
+    setStatus(Error);
+    return;
   }
+
+  if (m_status != Restarting)
+    setStatus(Starting);
+
+  m_checkTimer.start();
+  m_client->connectToServer();
+}
+
+
+/*!
+ * Остановка сервера.
+ * Для win32 платформы при использовании сервиса, производится
+ * его остановка с помощью команды \b net. Для всех остальных случаев
+ * через локальное подключение посылается команда на завершение.
+ */
+void DaemonUi::stop()
+{
+  #ifndef SCHATD_NO_SERVICE
+  if (m_settings->getBool("Service/Installed")) {
+    m_client->leave();
+    process()->start("net stop \"" + m_settings->getString("Service/Name") + '"');
+  }
+  else
+  #endif
+    m_client->exit();
 }
 
 
@@ -432,4 +467,13 @@ void DaemonUi::showUi()
 {
   show();
   activateWindow();
+}
+
+
+QProcess* DaemonUi::process()
+{
+  QProcess *p = new QProcess(this);
+  connect(p, SIGNAL(error(QProcess::ProcessError)), p, SLOT(deleteLater()));
+  connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), p, SLOT(deleteLater()));
+  return p;
 }
