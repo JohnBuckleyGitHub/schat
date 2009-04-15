@@ -31,6 +31,7 @@ class LocalClientService;
 class QAction;
 class QLabel;
 class QMenu;
+class QProcess;
 class QToolButton;
 
 /*!
@@ -55,7 +56,7 @@ private slots:
   void restart();
   void settings();
   void start();
-  void stop() { m_client->exit(); }
+  void stop();
 
 private:
   enum Status {
@@ -81,6 +82,10 @@ private:
   void setLedColor(LedColor color = Red);
   void setStatus(Status status);
   void showUi();
+
+  #ifndef SCHATD_NO_SERVICE
+    QProcess* process();
+  #endif
 
   DaemonSettings *m_settings;
   LocalClientService *m_client;

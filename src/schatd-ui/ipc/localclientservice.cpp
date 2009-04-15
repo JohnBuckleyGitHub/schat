@@ -59,6 +59,12 @@ void LocalClientService::exit()
 }
 
 
+void LocalClientService::leave()
+{
+  m_socket->disconnectFromServer();
+}
+
+
 void LocalClientService::connected()
 {
   m_reconnectTimer.stop();
