@@ -470,6 +470,7 @@ void DaemonUi::showUi()
 }
 
 
+#ifndef SCHATD_NO_SERVICE
 QProcess* DaemonUi::process()
 {
   QProcess *p = new QProcess(this);
@@ -477,3 +478,4 @@ QProcess* DaemonUi::process()
   connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), p, SLOT(deleteLater()));
   return p;
 }
+#endif
