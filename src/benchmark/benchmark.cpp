@@ -69,8 +69,6 @@ void Benchmark::connectToHost()
 
 void Benchmark::init()
 {
-  qDebug() << "Benchmark::init()";
-
   m_settings->read();
   m_connectInterval = m_settings->getInt("ConnectInterval");
   m_usersCount      = m_settings->getInt("UsersCount");
