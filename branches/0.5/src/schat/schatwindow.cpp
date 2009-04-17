@@ -1327,11 +1327,10 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   QPair<int, AbstractTab *> tab = d->updatePrivateTab(profile);
 
   if (echo == 1) {
-    QString html = ChatView::statusNewUser(profile.genderNum(), nick);
-    d->main->msg(html);
+    d->main->addNewUser(profile.genderNum(), nick);
 
     if (tab.first != -1)
-      tab.second->msg(html);
+      tab.second->msg(ChatView::statusNewUser(profile.genderNum(), nick));
   }
 }
 
@@ -1648,13 +1647,12 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
 
     if (flag == 1) {
       AbstractProfile profile(d->users->profile(nick));
-      QString html = ChatView::statusUserLeft(profile.genderNum(), nick, bye);
       QPair<int, AbstractTab *> tab = d->tabFromName(nick);
 
-      if (tab.first != -1)
-        tab.second->msg(html);
+      d->main->addUserLeft(profile.genderNum(), nick, bye);
 
-      d->main->msg(html);
+      if (tab.first != -1)
+        tab.second->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
     }
 
     d->users->remove(nick);

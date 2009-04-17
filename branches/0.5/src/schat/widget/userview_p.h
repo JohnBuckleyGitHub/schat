@@ -31,6 +31,7 @@ public:
   ~UserViewPrivate();
   QStandardItem* item(const QString &nick) const;
   void sort();
+  void sortNow();
 
   bool needSort;
   const AbstractProfile *profile;

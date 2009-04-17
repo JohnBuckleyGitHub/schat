@@ -59,6 +59,23 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
 }
 
 
+void MainChannel::addNewUser(quint8 gender, const QString &nick)
+{
+//  m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
+  if (!m_usersJoin.isActive())
+    m_usersJoin.start(1000, this);
+
+  m_newUsers.insert(nick, gender);
+}
+
+
+void MainChannel::addUserLeft(quint8 gender, const QString &nick, const QString &bye)
+{
+//  qDebug() << "MainChannel::addUserLeft()" << nick;
+//  m_view->addServiceMsg(ChatView::statusUserLeft(gender, nick, bye));
+}
+
+
 /*!
  * Включает/выключает показ виджета выбора сервера/сети.
  *
@@ -79,6 +96,23 @@ void MainChannel::displayChoiceServer(bool display)
 }
 
 
+void MainChannel::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_usersJoin.timerId()) {
+    m_usersJoin.stop();
+    if (!m_newUsers.isEmpty()) {
+      if (m_newUsers.size() == 1)
+        m_view->addServiceMsg(ChatView::statusNewUser(m_newUsers.values().at(0), m_newUsers.keys().at(0)));
+      else
+        addNewUsers(m_newUsers.keys());
+
+      m_newUsers.clear();
+    }
+  } else
+    AbstractTab::timerEvent(event);
+}
+
+
 void MainChannel::notify(int code)
 {
   if (code == Settings::MiscSettingsChanged)
@@ -93,9 +127,26 @@ void MainChannel::serverChanged()
 }
 
 
-/** [private]
- *
- */
+void MainChannel::addNewUsers(const QStringList &nicks)
+{
+  QString out = "<span class='newUser'>";
+
+  if (nicks.size() > 10) {
+    out += tr("<b>%n</b> пользователь заходят в чат", "", nicks.size());
+  }
+  else {
+    out += QString("<a href='nick:%1'>%2</a>").arg(QString(nicks.at(0).toUtf8().toHex())).arg(Qt::escape(nicks.at(0)));
+    for (int i = 1; i < nicks.size(); ++i) {
+      out += QString(", <a href='nick:%1'>%2</a>").arg(QString(nicks.at(i).toUtf8().toHex())).arg(Qt::escape(nicks.at(i)));
+    }
+    out += tr(" заходят в чат");
+  }
+
+  out += "</span>";
+  m_view->addServiceMsg(out);
+}
+
+
 void MainChannel::createActions()
 {
   m_connectCreateButton = new QToolButton(this);

@@ -58,13 +58,33 @@ QStandardItem* UserViewPrivate::item(const QString &nick) const
 }
 
 
+/*!
+ * Сортировка списка пользователей, отложенная если
+ * их больше 100, либо немедленная.
+ */
 void UserViewPrivate::sort()
 {
-  if (!needSort && !sortTimer.isActive()) {
-    qDebug() << "start sort";
-    needSort = true;
-    sortTimer.start();
+  if (model.rowCount() > 100) {
+    if (!needSort && !sortTimer.isActive()) {
+      needSort = true;
+      sortTimer.start();
+    }
   }
+  else
+    sortNow();
+}
+
+
+/*!
+ * Немедленная сортировка списка пользователей.
+ */
+void UserViewPrivate::sortNow()
+{
+  if (sortTimer.isActive())
+    sortTimer.stop();
+
+  needSort = false;
+  model.sort(0);
 }
 
 
@@ -357,10 +377,5 @@ void UserView::addTab(const QModelIndex &index)
 
 void UserView::sort()
 {
-  qDebug() << "sort()";
-  if (d->sortTimer.isActive())
-    d->sortTimer.stop();
-
-  d->needSort = false;
-  d->model.sort(0);
+  d->sortNow();
 }
