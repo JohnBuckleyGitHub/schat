@@ -19,6 +19,8 @@
 #ifndef MAINCHANNEL_H_
 #define MAINCHANNEL_H_
 
+#include <QBasicTimer>
+#include <QHash>
 #include <QLineEdit>
 #include <QWidget>
 
@@ -40,17 +42,25 @@ class MainChannel : public AbstractTab {
 
 public:
   MainChannel(const QIcon &icon, QWidget *parent = 0);
+  void addNewUser(quint8 gender, const QString &nick);
+  void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
+
+protected:
+  void timerEvent(QTimerEvent *event);
 
 private slots:
   void notify(int code);
   void serverChanged();
 
 private:
+  void addNewUsers(const QStringList &nicks);
   void createActions();
 
   NetworkWidget *m_networkWidget;
   QAction *m_connectCreateAction;
+  QBasicTimer m_usersJoin;
+  QHash<QString, quint8> m_newUsers;
   QHBoxLayout *m_networkLayout;
   QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
