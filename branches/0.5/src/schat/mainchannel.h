@@ -46,25 +46,27 @@ public:
   void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
 
-protected:
-  void timerEvent(QTimerEvent *event);
+//protected:
+//  void timerEvent(QTimerEvent *event);
 
 private slots:
   void notify(int code);
   void serverChanged();
 
 private:
-  void addNewUsers(const QStringList &nicks);
   void createActions();
+
+//  void addNewUsers(const QStringList &nicks);
 
   NetworkWidget *m_networkWidget;
   QAction *m_connectCreateAction;
-  QBasicTimer m_usersJoin;
-  QHash<QString, quint8> m_newUsers;
   QHBoxLayout *m_networkLayout;
   QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
   Settings *m_settings;
+
+//  QHash<QString, quint8> m_newUsers;
+//  QBasicTimer m_usersJoin;
 };
 
 #endif /*MAINCHANNEL_H_*/
