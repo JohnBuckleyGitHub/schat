@@ -22,6 +22,10 @@
 #include "version.h"
 #include "daemonsettings.h"
 
+#ifndef SCHATD_NO_SERVICE
+  #include "serviceinstaller.h"
+#endif
+
 /*!
  * \brief Конструктор класса DaemonUi.
  */
@@ -84,8 +88,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   m_aboutLabel = new QLabel(QString(
       "<html><body style='color:#333;margin:6px;'>"
       "<h4 style='margin-bottom:0px;'>IMPOMEZIA Simple Chat Daemon UI %1</h4>"
-      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 - 2009 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
-      "</body></html>").arg(SCHAT_VERSION), this);
+      "<p style='margin-left:16px;margin-top:5px;'>Copyright © 2008 - %2 IMPOMEZIA &lt;<a href='mailto:schat@impomezia.com' style='color:#1a4d82;'>schat@impomezia.com</a>&gt; GPL</p>"
+      "</body></html>").arg(SCHAT_VERSION).arg(QDateTime::currentDateTime().toString("yyyy")), this);
   m_aboutLabel->setStyleSheet("background:#fff; border:4px solid #fff;");
   m_aboutLabel->setOpenExternalLinks(true);
 
@@ -141,7 +145,7 @@ void DaemonUi::checkStart()
 
 void DaemonUi::exit()
 {
-  m_client->exit();
+  stop();
   QApplication::quit();
 }
 
@@ -171,8 +175,13 @@ void DaemonUi::init()
 
   m_settings->read();
 
-  QSettings s(qApp->applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
-  qApp->setStyle(s.value("Style", "Plastique").toString());
+  #ifndef SCHATD_NO_SERVICE
+    if (m_settings->getBool("Service/Installed"))
+      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
+  #endif
+
+  QSettings s(QApplication::applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  QApplication::setStyle(s.value("Style", "Plastique").toString());
 
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
@@ -200,6 +209,9 @@ void DaemonUi::notify(LocalClientService::Reason reason)
 }
 
 
+/*!
+ * Перезапуск сервера.
+ */
 void DaemonUi::restart()
 {
   if (m_status == Started)
@@ -207,7 +219,7 @@ void DaemonUi::restart()
   else
     setStatus(Starting);
 
-  m_client->exit();
+  stop();
   QTimer::singleShot(1000, this, SLOT(start()));
 }
 
@@ -218,7 +230,7 @@ void DaemonUi::settings()
     show();
 
   if (!m_settingsDialog) {
-    m_settingsDialog = new DaemonSettingsDialog(m_settings, this);
+    m_settingsDialog = new DaemonSettingsDialog(this);
     m_settingsDialog->show();
   }
 
@@ -226,17 +238,49 @@ void DaemonUi::settings()
 }
 
 
+/*!
+ * Запуск сервера.
+ * Для win32 платформы при использовании сервиса, производится
+ * его запуск с помощью команды \b net. Для всех остальных случаев
+ * процесс запускается непосредственно.
+ */
 void DaemonUi::start()
 {
-  if (!QProcess::startDetached('"' + m_daemonFile + '"'))
-    setStatus(Error);
-  else {
-    if (m_status != Restarting)
-      setStatus(Starting);
+  #ifndef SCHATD_NO_SERVICE
+  if (m_settings->getBool("Service/Installed"))
+    process()->start("net start \"" + m_settings->getString("Service/Name") + '"');
+  else
+  #endif
 
-    m_checkTimer.start();
-    m_client->connectToServer();
+  if (!QProcess::startDetached('"' + m_daemonFile + '"')) {
+    setStatus(Error);
+    return;
   }
+
+  if (m_status != Restarting)
+    setStatus(Starting);
+
+  m_checkTimer.start();
+  m_client->connectToServer();
+}
+
+
+/*!
+ * Остановка сервера.
+ * Для win32 платформы при использовании сервиса, производится
+ * его остановка с помощью команды \b net. Для всех остальных случаев
+ * через локальное подключение посылается команда на завершение.
+ */
+void DaemonUi::stop()
+{
+  #ifndef SCHATD_NO_SERVICE
+  if (m_settings->getBool("Service/Installed")) {
+    m_client->leave();
+    process()->start("net stop \"" + m_settings->getString("Service/Name") + '"');
+  }
+  else
+  #endif
+    m_client->exit();
 }
 
 
@@ -424,3 +468,14 @@ void DaemonUi::showUi()
   show();
   activateWindow();
 }
+
+
+#ifndef SCHATD_NO_SERVICE
+QProcess* DaemonUi::process()
+{
+  QProcess *p = new QProcess(this);
+  connect(p, SIGNAL(error(QProcess::ProcessError)), p, SLOT(deleteLater()));
+  connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), p, SLOT(deleteLater()));
+  return p;
+}
+#endif

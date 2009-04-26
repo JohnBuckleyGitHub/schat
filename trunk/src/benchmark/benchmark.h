@@ -45,6 +45,7 @@ private:
   int m_connectInterval;
   int m_count;
   int m_usersCount;
+  Network *m_network;
   QString m_nickPrefix;
   QString m_serverAddr;
 };

@@ -29,9 +29,9 @@
  * Конструктор класса UserViewPrivate.
  */
 UserViewPrivate::UserViewPrivate(const AbstractProfile *prof)
-  : profile(prof)
+  : needSort(false), profile(prof)
 {
-
+  sortTimer.setInterval(300);
 }
 
 
@@ -59,6 +59,36 @@ QStandardItem* UserViewPrivate::item(const QString &nick) const
 
 
 /*!
+ * Сортировка списка пользователей, отложенная если
+ * их больше 100, либо немедленная.
+ */
+void UserViewPrivate::sort()
+{
+  if (model.rowCount() > 100) {
+    if (!needSort && !sortTimer.isActive()) {
+      needSort = true;
+      sortTimer.start();
+    }
+  }
+  else
+    sortNow();
+}
+
+
+/*!
+ * Немедленная сортировка списка пользователей.
+ */
+void UserViewPrivate::sortNow()
+{
+  if (sortTimer.isActive())
+    sortTimer.stop();
+
+  needSort = false;
+  model.sort(0);
+}
+
+
+/*!
  * Конструктор класса UserView.
  */
 UserView::UserView(const AbstractProfile *profile, QWidget *parent)
@@ -77,6 +107,7 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   }
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
+  connect(&d->sortTimer, SIGNAL(timeout()), SLOT(sort()));
 }
 
 
@@ -108,7 +139,7 @@ bool UserView::add(const AbstractProfile &profile)
   }
 
   d->model.appendRow(item);
-  d->model.sort(0);
+  d->sort();
 
   return true;
 }
@@ -183,8 +214,9 @@ void UserView::remove(const QString &nick)
 {
   QStandardItem *item = d->item(nick);
 
-  if (item)
+  if (item) {
     d->model.removeRow(d->model.indexFromItem(item).row());
+  }
 }
 
 
@@ -194,7 +226,7 @@ void UserView::rename(const QString &oldNick, const QString &newNick)
 
   if (item) {
     item->setText(newNick);
-    d->model.sort(0);
+    sort();
   }
 }
 
@@ -340,4 +372,10 @@ void UserView::addTab(const QModelIndex &index)
     return;
 
   emit addTab(nick);
+}
+
+
+void UserView::sort()
+{
+  d->sortNow();
 }

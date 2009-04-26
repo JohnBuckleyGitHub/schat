@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -9,52 +9,54 @@
 #
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program. If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE    = 1
+SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
+SCHAT_SINGLE_APP = 0
 SCHAT_RESOURCES  = 1
 SCHAT_RC_FILE    = 1
-SCHAT_LOCAL_IPC  = 0
-
-CONFIG += exceptions
+SCHAT_LOCAL_IPC  = 1
 
 QT = core network
 TEMPLATE = app
-CONFIG += qtestlib
 
 DEFINES += SCHAT_NO_WRITE_SETTINGS
 
-win32 {
-    LIBS += -lws2_32 -lmswsock
-    DEFINES += _WIN32_WINNT=0x0501
-}
-
 HEADERS = \
     abstractprofile.h \
-    abstractprotocolhandler.h \
-    chatuser.h \
-    connection.h \
-    simpleclienthandler.h \
-    simpleengine.h \
-    usertools.h \
+    abstractsettings.h \
+    channellog.h \
+    clientservice.h \
+    daemon.h \
+    daemonlog.h \
+    daemonservice.h \
+    daemonsettings.h \
+    linkunit.h \
+    network.h \
+    networkreader.h \
+    protocol.h \
+    userunit.h \
     version.h \
-    workerthread.h \
 
 SOURCES = \
     abstractprofile.cpp \
-    abstractprotocolhandler.cpp \
-    chatuser.cpp \
-    connection.cpp \
+    abstractsettings.cpp \
+    channellog.cpp \
+    clientservice.cpp \
+    daemon.cpp \
+    daemonlog.cpp \
+    daemonservice.cpp \
+    daemonsettings.cpp \
+    linkunit.cpp \
     main.cpp \
-    simpleclienthandler.cpp \
-    simpleengine.cpp \
-    usertools.cpp \
-    workerthread.cpp \
+    network.cpp \
+    networkreader.cpp \
+    userunit.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {
   HEADERS += ipc/localservice.h

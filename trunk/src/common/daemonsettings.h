@@ -23,6 +23,8 @@
 
 #include "abstractsettings.h"
 
+#define DaemonSettingsInstance (static_cast<DaemonSettings *>(AbstractSettings::instance()))
+
 /*!
  * \brief Класс читает настройки сервера.
  *

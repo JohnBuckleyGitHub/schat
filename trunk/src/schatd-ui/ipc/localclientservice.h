@@ -45,6 +45,7 @@ signals:
 public slots:
   void connectToServer();
   void exit();
+  void leave();
 
 private slots:
   void connected();

@@ -49,4 +49,12 @@ SOURCES += \
     networkwriter.cpp \
     singleapplication.cpp \
 
+win32{
+    HEADERS += serviceinstaller.h
+    SOURCES += serviceinstaller.cpp
+}
+else {
+    DEFINES += SCHATD_NO_SERVICE
+}
+
 include(../common/common.pri)

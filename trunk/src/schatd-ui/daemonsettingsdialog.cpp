@@ -19,31 +19,37 @@
 #include <QtGui>
 #include <QtNetwork>
 
-#include "daemonsettingsdialog.h"
 #include "daemonsettings.h"
+#include "daemonsettingsdialog.h"
 #include "network.h"
 #include "networkwriter.h"
+
+#ifndef SCHATD_NO_SERVICE
+  #include "serviceinstaller.h"
+#endif
 
 /*!
  * \brief Конструктор класса DaemonSettingsDialog.
  */
-DaemonSettingsDialog::DaemonSettingsDialog(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsDialog(parent), m_settings(settings)
+DaemonSettingsDialog::DaemonSettingsDialog(QWidget *parent)
+  : AbstractSettingsDialog(parent)
 {
-  m_commonPage = new DaemonCommonSettings(settings, this);
-  m_netPage    = new DaemonNetSettings(settings, this);
+  DaemonNetSettings *netPage = new DaemonNetSettings(this);
 
-  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"), m_commonPage);
-  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"), m_netPage);
+  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"),  new DaemonCommonSettings(this));
+  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),   netPage);
+  #ifndef SCHATD_NO_SERVICE
+    createPage(QIcon(":/images/windows-service.png"),     tr("Сервис"), new DaemonServiceSettings(this));
+  #endif
 
-  connect(m_netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
+  connect(netPage, SIGNAL(validInput(bool)), m_okButton, SLOT(setEnabled(bool)));
 }
 
 
 void DaemonSettingsDialog::accept()
 {
   emit save();
-  m_settings->write();
+  DaemonSettingsInstance->write();
   close();
 }
 
@@ -51,8 +57,8 @@ void DaemonSettingsDialog::accept()
 /*!
  * Конструктор класса DaemonCommonSettings.
  */
-DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent), m_settings(settings)
+DaemonCommonSettings::DaemonCommonSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent)
 {
   m_listen = new QComboBox(this);
   m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
@@ -61,7 +67,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_port = new QSpinBox(this);
   m_port->setRange(1, 65536);
-  m_port->setValue(m_settings->getInt("ListenPort"));
+  m_port->setValue(DaemonSettingsInstance->getInt("ListenPort"));
   m_port->setToolTip(tr("Порт на котором сервер будет ожидать подключения"));
 
   QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
@@ -82,14 +88,14 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
-  m_logLevel->setValue(m_settings->getInt("LogLevel"));
+  m_logLevel->setValue(DaemonSettingsInstance->getInt("LogLevel"));
   m_logLevel->setToolTip(tr("Уровень детализации журнала\n-1 журналирование отключено"));
 
   QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
   logLabel->setBuddy(m_logLevel);
 
   m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
-  m_channelLog->setChecked(m_settings->getBool("ChannelLog"));
+  m_channelLog->setChecked(DaemonSettingsInstance->getBool("ChannelLog"));
   m_channelLog->setToolTip(tr("Управляет режимом записи событий основного\nканала в специальный журнал"));
 
   QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
@@ -103,12 +109,12 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
-  m_maxUsers->setValue(m_settings->getInt("MaxUsers"));
+  m_maxUsers->setValue(DaemonSettingsInstance->getInt("MaxUsers"));
   m_maxUsers->setToolTip(tr("Ограничение максимального количества\nпользователей которые могут быть подключены к серверу\n0 - без ограничений"));
 
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
-  m_maxUsersPerIp->setValue(m_settings->getInt("MaxUsersPerIp"));
+  m_maxUsersPerIp->setValue(DaemonSettingsInstance->getInt("MaxUsersPerIp"));
   m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества\nпользователей с одного адреса\n0 - без ограничений"));
 
   QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
@@ -136,7 +142,7 @@ DaemonCommonSettings::DaemonCommonSettings(DaemonSettings *settings, QWidget *pa
 
 
 /*!
- * \brief Сброс настроек на стандартные.
+ * Сброс настроек на стандартные.
  *
  * \param page Номер текущей страницы настроек, только если номер страницы равен \a m_id, производится сброс настроек.
  */
@@ -147,7 +153,7 @@ void DaemonCommonSettings::reset(int page)
     m_port->setValue(7666);
     m_logLevel->setValue(0);
     m_channelLog->setChecked(false);
-    m_maxUsers->setValue(100);
+    m_maxUsers->setValue(0);
     m_maxUsersPerIp->setValue(0);
   }
 }
@@ -162,12 +168,12 @@ void DaemonCommonSettings::reset(int page)
  */
 void DaemonCommonSettings::save()
 {
-  m_settings->setString("ListenAddress", m_listen->currentText());
-  m_settings->setInt("ListenPort",       m_port->value());
-  m_settings->setInt("LogLevel",         m_logLevel->value());
-  m_settings->setBool("ChannelLog",      m_channelLog->isChecked());
-  m_settings->setInt("MaxUsers",         m_maxUsers->value());
-  m_settings->setInt("MaxUsersPerIp",    m_maxUsersPerIp->value());
+  DaemonSettingsInstance->setString("ListenAddress", m_listen->currentText());
+  DaemonSettingsInstance->setInt("ListenPort",       m_port->value());
+  DaemonSettingsInstance->setInt("LogLevel",         m_logLevel->value());
+  DaemonSettingsInstance->setBool("ChannelLog",      m_channelLog->isChecked());
+  DaemonSettingsInstance->setInt("MaxUsers",         m_maxUsers->value());
+  DaemonSettingsInstance->setInt("MaxUsersPerIp",    m_maxUsersPerIp->value());
 }
 
 
@@ -183,7 +189,7 @@ void DaemonCommonSettings::createListenList()
   foreach (QHostAddress addr, list)
     m_listen->addItem(addr.toString());
 
-  QString listenAddress = m_settings->getString("ListenAddress");
+  QString listenAddress = DaemonSettingsInstance->getString("ListenAddress");
   int index = m_listen->findText(listenAddress);
   if (index == -1)
     m_listen->setCurrentIndex(0);
@@ -195,16 +201,16 @@ void DaemonCommonSettings::createListenList()
 /*!
  * Конструктор класса DaemonNetSettings.
  */
-DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
-  : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent), m_settings(settings)
+DaemonNetSettings::DaemonNetSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent)
 {
   m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
-  m_network->setChecked(m_settings->getBool("Network"));
+  m_network->setChecked(DaemonSettingsInstance->getBool("Network"));
   m_network->setToolTip(tr("Включить поддержку взаимодействия с другими серверами"));
   connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll()));
 
   m_root = new QCheckBox(tr("&Корневой сервер"), this);
-  m_root->setChecked(m_settings->getBool("RootServer"));
+  m_root->setChecked(DaemonSettingsInstance->getBool("RootServer"));
   m_root->setToolTip(tr("Определяет роль этого сервера в сети"));
   connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
@@ -241,8 +247,8 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
   netLay->setSpacing(4);
 
   m_name = new QLineEdit("Unknown Server", this);
-  if (!m_settings->getString("Name").isEmpty())
-    m_name->setText(m_settings->getString("Name"));
+  if (!DaemonSettingsInstance->getString("Name").isEmpty())
+    m_name->setText(DaemonSettingsInstance->getString("Name"));
   m_name->setMaxLength(Network::MaxName);
   m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
   connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
@@ -256,14 +262,14 @@ DaemonNetSettings::DaemonNetSettings(DaemonSettings *settings, QWidget *parent)
 
   m_numeric = new QSpinBox(this);
   m_numeric->setRange(1, 255);
-  m_numeric->setValue(m_settings->getInt("Numeric"));
+  m_numeric->setValue(DaemonSettingsInstance->getInt("Numeric"));
   m_numeric->setToolTip(tr("Уникальный для сети номер сервера"));
   QLabel *numericLabel = new QLabel(tr("Уникальный &номер:"), this);
   numericLabel->setBuddy(m_numeric);
 
   m_limit = new QSpinBox(this);
   m_limit->setRange(0, 255);
-  m_limit->setValue(m_settings->getInt("MaxLinks"));
+  m_limit->setValue(DaemonSettingsInstance->getInt("MaxLinks"));
   m_limit->setToolTip(tr("Ограничение количества серверов которые могут быть подключены\nИспользуется только корневым сервером"));
   QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
   limitLabel->setBuddy(m_limit);
@@ -330,13 +336,13 @@ void DaemonNetSettings::reset(int page)
  */
 void DaemonNetSettings::save()
 {
-  m_settings->setBool("Network", m_network->isChecked());
+  DaemonSettingsInstance->setBool("Network", m_network->isChecked());
 
   if (m_network->isChecked()) {
-    m_settings->setBool("RootServer", m_root->isChecked());
-    m_settings->setInt("Numeric",     m_numeric->value());
-    m_settings->setInt("MaxLinks",    m_limit->value());
-    m_settings->setString("Name",     m_name->text());
+    DaemonSettingsInstance->setBool("RootServer", m_root->isChecked());
+    DaemonSettingsInstance->setInt("Numeric",     m_numeric->value());
+    DaemonSettingsInstance->setInt("MaxLinks",    m_limit->value());
+    DaemonSettingsInstance->setString("Name",     m_name->text());
 
     m_meta.insert("name", m_netName->text());
     m_meta.insert("key", m_key->text());
@@ -345,7 +351,7 @@ void DaemonNetSettings::save()
       server = m_rootAddr->text();
 
     NetworkWriter writer(m_meta, server.isEmpty() ? QStringList() : QStringList() << server);
-    writer.writeFile(qApp->applicationDirPath() + "/" + m_settings->getString("NetworkFile"));
+    writer.writeFile(QApplication::applicationDirPath() + "/" + DaemonSettingsInstance->getString("NetworkFile"));
   }
 }
 
@@ -433,10 +439,10 @@ bool DaemonNetSettings::revalidate()
  */
 void DaemonNetSettings::readNetwork()
 {
-  Network network(qApp->applicationDirPath(), this);
+  Network network(QApplication::applicationDirPath(), this);
   network.setSingle(true);
   network.setFailBack(false);
-  if (network.fromFile(m_settings->getString("NetworkFile"))) {
+  if (network.fromFile(DaemonSettingsInstance->getString("NetworkFile"))) {
     if (!network.name().isEmpty())
       m_netName->setText(network.name());
     m_key->setText(network.key());
@@ -452,3 +458,240 @@ void DaemonNetSettings::readNetwork()
     m_rootAddr->setText(server);
   }
 }
+
+
+/*!
+ * Конструктор класса DaemonCommonSettings.
+ */
+#ifndef SCHATD_NO_SERVICE
+DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
+  : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent),
+  m_installer(new ServiceInstaller(this)),
+  m_status(Unknown)
+{
+  QLabel *state = new QLabel(tr("Windows сервис:"), this);
+  m_state = new QLabel(tr("<b style='color:#c00;'>не установлен</b>"), this);
+
+  QLabel *instsrvExe = new QLabel("instsrv.exe:", this);
+  m_instsrvExe = new QLabel(this);
+
+  QLabel *srvanyExe = new QLabel("srvany.exe:", this);
+  m_srvanyExe = new QLabel(this);
+
+  QGroupBox *infoGroup = new QGroupBox(tr("Информация"), this);
+  QGridLayout *infoLay = new QGridLayout(infoGroup);
+  infoLay->addWidget(state, 0, 0);
+  infoLay->addWidget(m_state, 0, 1);
+  infoLay->addWidget(instsrvExe, 1, 0);
+  infoLay->addWidget(m_instsrvExe, 1, 1);
+  infoLay->addWidget(srvanyExe, 2, 0);
+  infoLay->addWidget(m_srvanyExe, 2, 1);
+  infoLay->setColumnStretch(1, 1);
+  infoLay->setMargin(6);
+  infoLay->setSpacing(4);
+
+  QLabel *serviceName = new QLabel(tr("Имя сервиса:"), this);
+  m_serviceName = new QLineEdit(DaemonSettingsInstance->getString("Service/Name"), this);
+  m_serviceName->setMaxLength(128);
+
+  m_install = new QCommandLinkButton(tr("Установить"), tr("Установить сервер как сервис"), this);
+
+  m_installGroup = new QGroupBox(tr("Установка/Удаление"), this);
+  QGridLayout *installLay = new QGridLayout(m_installGroup);
+  installLay->addWidget(serviceName, 0, 0);
+  installLay->addWidget(m_serviceName, 0, 1);
+  installLay->addWidget(m_install, 1, 0, 1, 2);
+  installLay->setMargin(6);
+  installLay->setSpacing(4);
+
+  m_info = new QLabel(tr("Для установки сервиса необходимо скопировать файлы <b>instsrv.exe</b> и <b>srvany.exe</b> "
+      "из комплекта <b>Windows Resource Kit</b> в папку с сервером.<br />"
+      "<a href='http://simple.impomezia.com/Windows_Service' style='text-decoration:none; color:#1a4d82;'>Подробности</a>."), this);
+  m_info->setStyleSheet("border: 1px solid #7581a9;"
+      "border-radius: 3px;"
+      "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
+  m_info->setOpenExternalLinks(true);
+  m_info->setWordWrap(true);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(infoGroup);
+  mainLay->addWidget(m_installGroup);
+  mainLay->addWidget(m_info);
+  mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
+
+  detect();
+
+  if (m_status != Installed)
+    serviceNameChanged(m_serviceName->text());
+
+  connect(m_install, SIGNAL(clicked(bool)), SLOT(clicked()));
+  connect(m_installer, SIGNAL(done(bool)), SLOT(done(bool)));
+  connect(m_serviceName, SIGNAL(textChanged(const QString &)), SLOT(serviceNameChanged(const QString &)));
+}
+
+
+/*!
+ * Сброс настроек на стандартные.
+ */
+void DaemonServiceSettings::reset(int page)
+{
+  if (page == m_id) {
+  }
+}
+
+
+/*!
+ * Сохранение настроек.
+ */
+void DaemonServiceSettings::save()
+{
+}
+
+
+/*!
+ * Обработка нажатия кнопки установки/удаления сервиса.
+ */
+void DaemonServiceSettings::clicked()
+{
+  if (m_status == ReadyToInstall) {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    m_status = WaitForInstall;
+    m_installer->install(m_serviceName->text());
+  }
+  else if (m_status == Installed) {
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    m_status = WaitForRemove;
+    m_installer->uninstall(m_serviceName->text());
+  }
+}
+
+
+/*!
+ * Завершение операций.
+ *
+ * \param err \a true если при выполнении операций произошла ошибка.
+ */
+void DaemonServiceSettings::done(bool err)
+{
+  if (m_status == WaitForInstall) {
+    err ? setState(ErrorInstall) : setState(Installed);
+    QApplication::restoreOverrideCursor();
+  }
+  else if (m_status == WaitForRemove) {
+    err ? setState(ErrorRemove) : setState(ReadyToInstall);
+    QApplication::restoreOverrideCursor();
+  }
+}
+
+
+/*!
+ * Обработка изменения имени сервиса.
+ *
+ * \param text новое имя сервиса.
+ */
+void DaemonServiceSettings::serviceNameChanged(const QString &text)
+{
+  if (text.isEmpty() || ServiceInstaller::exists(text))
+    m_install->setEnabled(false);
+  else
+    m_install->setEnabled(true);
+}
+
+
+/*!
+ * Проверка на наличие необходимого файла из Windows Resource Kit.
+ *
+ * \param label Указатель на объект QLabel, для отображения состояния.
+ * \param file  Имя файла, который нужно найти (без пути).
+ *
+ * \return \a true если файл найден.
+ */
+bool DaemonServiceSettings::exist(QLabel *label, const QString &file) const
+{
+  if (!QFile::exists(QApplication::applicationDirPath() + "/" + file)) {
+    label->setText(tr("<b style='color:#c00;'>не найден</b>"));
+    return false;
+  }
+
+  label->setText(tr("<b style='color:#090;'>найден</b>"));
+  return true;
+}
+
+
+/*!
+ * Определение текущего состояния сервиса.
+ */
+void DaemonServiceSettings::detect()
+{
+  m_status = Unknown;
+
+  if (!exist(m_instsrvExe, "instsrv.exe"))
+    m_status = Invalid;
+
+  if (!exist(m_srvanyExe, "srvany.exe"))
+    m_status = Invalid;
+
+  if (m_status == Invalid) {
+    setState();
+    return;
+  }
+
+  if (DaemonSettingsInstance->getBool("Service/Installed") && ServiceInstaller::isValid(m_serviceName->text()))
+    setState(Installed);
+  else
+    setState(ReadyToInstall);
+}
+
+
+/*!
+ * Установка состояния кнопки.
+ */
+void DaemonServiceSettings::setCommandLinkState()
+{
+  if (m_status != Installed) {
+    m_install->setText(tr("Установить"));
+    m_install->setDescription(tr("Установить сервер как сервис"));
+  }
+  else {
+    m_install->setText(tr("Удалить"));
+    m_install->setDescription(tr("Удалить сервис сервера чата"));
+  }
+}
+
+
+/*!
+ * Обновление внешнего вида диалога в зависимости от статуса.
+ */
+void DaemonServiceSettings::setState()
+{
+  if (m_status == Invalid) {
+    m_installGroup->setEnabled(false);
+    m_info->setVisible(true);
+  }
+  else {
+    m_installGroup->setEnabled(true);
+    m_info->setVisible(false);
+  }
+
+  if (m_status == Installed) {
+    m_serviceName->setEnabled(false);
+    m_state->setText(tr("<b style='color:#090;'>установлен</b>"));
+  }
+  else if (m_status == ReadyToInstall) {
+    m_serviceName->setEnabled(true);
+    m_state->setText(tr("<b style='color:#c00;'>не установлен</b>"));
+  }
+  else if (m_status == ErrorInstall) {
+    m_serviceName->setEnabled(true);
+    m_state->setText(tr("<b style='color:#c00;'>ошибка при установке</b>"));
+  }
+  else if (m_status == ErrorRemove) {
+    m_serviceName->setEnabled(false);
+    m_state->setText(tr("<b style='color:#c00;'>ошибка при удалении</b>"));
+  }
+
+  if (m_status != ErrorRemove)
+    setCommandLinkState();
+}
+#endif

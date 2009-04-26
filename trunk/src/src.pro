@@ -21,7 +21,5 @@ SUBDIRS  = \
     schatd \
     schat \
     schatd-ui \
-    benchmark \
-    client \
 
 win32:SUBDIRS += customize
