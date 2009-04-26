@@ -66,6 +66,7 @@ protected:
 
 private slots:
   void addTab(const QModelIndex &index);
+  void sort();
 
 private:
   UserViewPrivate * const d;

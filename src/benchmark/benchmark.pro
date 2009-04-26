@@ -27,15 +27,21 @@ DEFINES += SCHAT_NO_WRITE_SETTINGS
 DEFINES += SCHAT_CLIENT
 
 HEADERS = \
-    abstractsettings.h \
     benchmark.h \
-    client/simpleclient.h \
+    abstractsettings.h \
+    network.h \
+    networkreader.h \
+    abstractprofile.h \
+    clientservice.h \
 
-SOURCES = \    
-    abstractsettings.cpp \
-    benchmark.cpp \
-    client/simpleclient.cpp \
+SOURCES = \
     main.cpp \
+    benchmark.cpp \
+    abstractsettings.cpp \
+    network.cpp \
+    networkreader.cpp \
+    abstractprofile.cpp \
+    clientservice.cpp \
 
 CODECFORTR = UTF-8
 

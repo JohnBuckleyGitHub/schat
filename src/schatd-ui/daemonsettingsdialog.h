@@ -25,14 +25,14 @@
 
 #include "abstractsettingsdialog.h"
 
-class DaemonCommonSettings;
-class DaemonNetSettings;
-class DaemonSettings;
 class QCheckBox;
 class QComboBox;
+class QCommandLinkButton;
 class QGroupBox;
+class QLabel;
 class QLineEdit;
 class QSpinBox;
+class ServiceInstaller;
 
 /*!
  * \brief Настройка сервера
@@ -44,18 +44,16 @@ class DaemonSettingsDialog : public AbstractSettingsDialog
 public:
   enum Page {
     CommonPage,
-    NetPage
+    NetPage,
+    #ifndef SCHATD_NO_SERVICE
+    ServicePage
+    #endif
   };
 
-  DaemonSettingsDialog(DaemonSettings *settings, QWidget *parent = 0);
+  DaemonSettingsDialog(QWidget *parent = 0);
 
 public slots:
   void accept();
-
-private:
-  DaemonCommonSettings *m_commonPage;
-  DaemonNetSettings *m_netPage;
-  DaemonSettings *m_settings;
 };
 
 
@@ -67,7 +65,7 @@ class DaemonCommonSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  DaemonCommonSettings(DaemonSettings *settings, QWidget *parent = 0);
+  DaemonCommonSettings(QWidget *parent = 0);
 
 public slots:
   void reset(int page);
@@ -76,7 +74,6 @@ public slots:
 private:
   void createListenList();
 
-  DaemonSettings *m_settings;
   QCheckBox *m_channelLog;
   QComboBox *m_listen;
   QSpinBox *m_logLevel;
@@ -94,7 +91,7 @@ class DaemonNetSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  DaemonNetSettings(DaemonSettings *settings, QWidget *parent = 0);
+  DaemonNetSettings(QWidget *parent = 0);
 
 signals:
   void validInput(bool valid);
@@ -112,7 +109,6 @@ private:
   bool revalidate();
   void readNetwork();
 
-  DaemonSettings *m_settings;
   QCheckBox *m_network;
   QCheckBox *m_root;
   QGroupBox *m_daemonGroup;
@@ -127,5 +123,57 @@ private:
   QSpinBox *m_limit;
   QSpinBox *m_numeric;
 };
+
+
+/*!
+ * \brief Страница установки/удаления сервиса.
+ */
+#ifndef SCHATD_NO_SERVICE
+class DaemonServiceSettings : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  /// Статус установки сервиса.
+  enum Status {
+    Unknown,        ///< Не определённое состояние.
+    Invalid,        ///< Ошибка, установка сервиса не возможна, не найдены файлы из Windows Resource Kit.
+    ReadyToInstall, ///< Всё готово к установке сервиса.
+    Installed,      ///< Сервис установлен.
+    WaitForInstall, ///< Ожидание установки сервиса.
+    WaitForRemove,  ///< Ожидание удаления сервиса.
+    ErrorInstall,   ///< Ошибка при установке сервиса.
+    ErrorRemove,    ///< Ошибка при удалении сервиса.
+  };
+
+  DaemonServiceSettings(QWidget *parent = 0);
+
+public slots:
+  void reset(int page);
+  void save();
+
+private slots:
+  void clicked();
+  void done(bool err);
+  void serviceNameChanged(const QString &text);
+
+private:
+  bool exist(QLabel *label, const QString &file) const;
+  inline void setState(Status status) { m_status = status; setState(); }
+  void detect();
+  void setCommandLinkState();
+  void setState();
+
+  QCommandLinkButton *m_install;
+  QGroupBox *m_installGroup;
+  QLabel *m_info;
+  QLabel *m_instsrvExe;
+  QLabel *m_srvanyExe;
+  QLabel *m_state;
+  QLineEdit *m_serviceName;
+  ServiceInstaller* const m_installer;
+  Status m_status;
+};
+#endif
 
 #endif /*DAEMONSETTINGSDIALOG_H_*/

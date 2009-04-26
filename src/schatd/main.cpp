@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include <QtCore>
 
-#include "simpleengine.h"
+#include "daemon.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,15 +31,10 @@ int main(int argc, char *argv[])
   translator.load("schatd_ru", ":/translations");
   app.installTranslator(&translator);
 
-//  ChatDaemon daemon;
+  Daemon daemon;
 
-  BootOptions boot;
-  boot.address  = "0.0.0.0";
-  boot.port     = 7777;
-  boot.poolSize = 2;
-
-  SimpleEngine engine(boot);
-  engine.run();
+  if (!daemon.start())
+    return 3;
 
   // Создаём PID-файл
   QFile pidfile(QCoreApplication::instance()->applicationDirPath() + "/schatd.pid");

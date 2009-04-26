@@ -19,6 +19,8 @@
 #ifndef USERVIEW_P_H_
 #define USERVIEW_P_H_
 
+#include <QTimer>
+
 /*!
  * \brief Приватный D-класс для класса UserView.
  */
@@ -28,9 +30,13 @@ public:
   UserViewPrivate(const AbstractProfile *prof);
   ~UserViewPrivate();
   QStandardItem* item(const QString &nick) const;
+  void sort();
+  void sortNow();
 
+  bool needSort;
   const AbstractProfile *profile;
   QStandardItemModel model;
+  QTimer sortTimer;
 };
 
 #endif /* USERVIEW_P_H_ */
