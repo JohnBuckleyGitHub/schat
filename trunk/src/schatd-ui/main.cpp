@@ -30,7 +30,10 @@ int main(int argc, char *argv[])
   app.setApplicationName("IMPOMEZIA Simple Chat Daemon UI");
   app.setQuitOnLastWindowClosed(false);
   app.addLibraryPath(app.applicationDirPath() + "/plugins");
-  app.setStyle(new QPlastiqueStyle);
+
+  #ifndef Q_OS_WINCE
+    app.setStyle(new QPlastiqueStyle);
+  #endif
 
   QStringList args = app.arguments();
   args.takeFirst();
