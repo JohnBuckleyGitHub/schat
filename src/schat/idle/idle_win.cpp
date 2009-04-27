@@ -24,6 +24,7 @@
 #include <QLibrary>
 #include <qt_windows.h>
 
+#ifndef Q_OS_WINCE
 class IdlePlatform::Private
 {
 public:
@@ -36,23 +37,29 @@ public:
   DWORD (__stdcall * IdleUIGetLastInputTime)(void);
   QLibrary *lib;
 };
+#endif
 
 
 IdlePlatform::IdlePlatform()
+#ifndef Q_OS_WINCE
   : d(new Private)
+#endif
 {
 }
 
 
 IdlePlatform::~IdlePlatform()
 {
-  delete d->lib;
-  delete d;
+  #ifndef Q_OS_WINCE
+    delete d->lib;
+    delete d;
+  #endif
 }
 
 
 bool IdlePlatform::init()
 {
+  #ifndef Q_OS_WINCE
   if (d->lib)
     return true;
   void *p;
@@ -78,6 +85,7 @@ bool IdlePlatform::init()
     delete d->lib;
     d->lib = 0;
   }
+  #endif
 
   return false;
 }
@@ -85,6 +93,7 @@ bool IdlePlatform::init()
 
 int IdlePlatform::secondsIdle()
 {
+  #ifndef Q_OS_WINCE
   int i;
   if (d->GetLastInputInfo) {
     LASTINPUTINFO li;
@@ -101,4 +110,7 @@ int IdlePlatform::secondsIdle()
     return 0;
 
   return (GetTickCount() - i) / 1000;
+  #else
+  return 0;
+  #endif
 }

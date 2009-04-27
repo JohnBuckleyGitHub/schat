@@ -23,7 +23,17 @@
 
 #include <QApplication>
 
+#if defined(Q_OS_WINCE)
+ #if QT_VERSION >= 0x040500
+  #define SCHAT_HAVE_IPC
+ #endif
+#elif QT_VERSION >= 0x040400
+ #define SCHAT_HAVE_IPC
+#endif
+
+#if defined(SCHAT_HAVE_IPC)
 class QLocalServer;
+#endif
 
 /*!
  * \brief Обеспечивает запуск единственного экземпляра приложения.
@@ -44,6 +54,7 @@ public:
 signals:
   void messageRecieved(const QString &message);
 
+#if defined(SCHAT_HAVE_IPC)
 private slots:
   void newConnection();
 
@@ -51,6 +62,7 @@ private:
   QString serverName() const;
 
   QLocalServer *m_localServer; ///< Локальный сервер.
+#endif
 };
 
 #endif

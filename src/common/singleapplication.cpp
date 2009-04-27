@@ -23,9 +23,12 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
+
+#if defined(SCHAT_HAVE_IPC)
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QTextStream>
+#endif
 
 #ifndef Q_OS_WIN
 #include <unistd.h>
@@ -35,7 +38,10 @@
  * Конструктор класса SingleApplication.
  */
 SingleApplication::SingleApplication(int &argc, char **argv)
-  : QApplication(argc, argv), m_localServer(0)
+  : QApplication(argc, argv)
+#if defined(SCHAT_HAVE_IPC)
+  , m_localServer(0)
+#endif
 {
 }
 
@@ -49,10 +55,12 @@ SingleApplication::SingleApplication(int &argc, char **argv)
  */
 bool SingleApplication::sendMessage(const QString &message)
 {
-  #ifdef SCHAT_DEVEL_MODE
+  #if defined(SCHAT_DEVEL_MODE) || !defined(SCHAT_HAVE_IPC)
+  Q_UNUSED(message)
   return false;
   #endif
 
+  #if defined(SCHAT_HAVE_IPC)
   QLocalSocket socket;
   socket.connectToServer(serverName());
 
@@ -69,6 +77,7 @@ bool SingleApplication::sendMessage(const QString &message)
     if (socket.error() == QLocalSocket::UnknownSocketError)
       return true;
   }
+  #endif
 
   return false;
 }
@@ -81,10 +90,11 @@ bool SingleApplication::sendMessage(const QString &message)
  */
 bool SingleApplication::startSingleServer()
 {
-  #ifdef SCHAT_DEVEL_MODE
+  #if defined(SCHAT_DEVEL_MODE) || !defined(SCHAT_HAVE_IPC)
   return true;
   #endif
 
+  #if defined(SCHAT_HAVE_IPC)
   if (m_localServer)
     return false;
 
@@ -122,19 +132,23 @@ bool SingleApplication::startSingleServer()
   }
 
   return success;
+  #endif
 }
 
 
 bool SingleApplication::isRunning() const
 {
-  #ifdef SCHAT_DEVEL_MODE
+  #if defined(SCHAT_DEVEL_MODE) || !defined(SCHAT_HAVE_IPC)
   return true;
   #endif
 
+  #if defined(SCHAT_HAVE_IPC)
   return (0 != m_localServer);
+  #endif
 }
 
 
+#if defined(SCHAT_HAVE_IPC)
 void SingleApplication::newConnection()
 {
   QLocalSocket *socket = m_localServer->nextPendingConnection();
@@ -171,3 +185,4 @@ QString SingleApplication::serverName() const
   s_serverName = QCryptographicHash::hash(serverName.toUtf8(), QCryptographicHash::Md5).toHex();
   return s_serverName;
 }
+#endif

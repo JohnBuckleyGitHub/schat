@@ -1761,7 +1761,9 @@ void SChatWindow::createActions()
 
   // Личные данные...
   d->profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
+  #ifndef Q_OS_WINCE
   d->profileSetAction->setShortcut(tr("Ctrl+F12"));
+  #endif
   d->profileSetAction->setData(SettingsDialog::ProfilePage);
   connect(d->profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 

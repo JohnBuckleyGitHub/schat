@@ -65,8 +65,10 @@ public:
   int secondsIdle();
 
 private:
-  class Private;
-  Private * const d;
+  #ifndef Q_OS_WINCE
+    class Private;
+    Private * const d;
+  #endif
 };
 
 

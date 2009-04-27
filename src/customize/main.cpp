@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QApplication>
@@ -36,7 +36,10 @@ int main(int argc, char *argv[])
   app.setOrganizationDomain(SCHAT_DOMAIN);
   app.setQuitOnLastWindowClosed(true);
   app.addLibraryPath(appPath + "/plugins");
-  app.setStyle(new QPlastiqueStyle);
+
+  #ifndef Q_OS_WINCE
+    app.setStyle(new QPlastiqueStyle);
+  #endif
 
   QTranslator qtTranslator;
   qtTranslator.load("qt_ru", ":/translations");

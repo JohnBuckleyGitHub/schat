@@ -36,7 +36,10 @@ SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   setOrganizationDomain(SCHAT_DOMAIN);
   setQuitOnLastWindowClosed(false);
   addLibraryPath(appPath + "/plugins");
-  setStyle(new QPlastiqueStyle);
+
+  #ifndef Q_OS_WINCE
+    setStyle(new QPlastiqueStyle);
+  #endif
 
   QStringList args = arguments();
   args.takeFirst();

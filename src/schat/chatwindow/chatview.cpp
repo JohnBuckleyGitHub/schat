@@ -17,7 +17,6 @@
  */
 
 #include <QtGui>
-#include <QtWebKit>
 
 #include "abstractprofile.h"
 #include "channellog.h"
@@ -27,6 +26,7 @@
 #include "settings.h"
 
 #ifndef SCHAT_NO_WEBKIT
+  #include <QtWebKit>
   #include "chatwindowstyle.h"
   #include "chatwindowstyleoutput.h"
 #endif
@@ -536,6 +536,7 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
     else
       d->pendingJs.enqueue(jsMessage);
   #else
+    Q_UNUSED(sameFrom)
     append(message);
     scroll();
   #endif
