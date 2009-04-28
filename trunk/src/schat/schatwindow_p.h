@@ -22,6 +22,10 @@
 #include <QPointer>
 #include <QPair>
 
+#if defined(Q_OS_WINCE) && !defined(SCHAT_WINCE)
+  #define SCHAT_WINCE
+#endif
+
 #include "idle/idle.h"
 
 class AboutDialog;
@@ -84,6 +88,10 @@ public:
     void createCornerWidgets();
   #endif
 
+  #ifdef SCHAT_WINCE
+    void createMainWceMenu();
+  #endif
+
   AbstractProfile *profile;
   bool autoAway;
   bool enableMotd;
@@ -107,6 +115,7 @@ public:
   QAction *onlineAction;
   QAction *profileSetAction;
   QAction *quitAction;
+  QAction *settingsAction;
   QAction *soundAction;
   QAction *soundSetAction;
   QAction *statusAction;

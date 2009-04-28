@@ -410,12 +410,16 @@ void SChatWindowPrivate::createToolButtons()
 
 /*!
  * Инициализирует поддержку системного трея.
+ *
+ * \note Для Windows Mobile не происходит создания меню трея,
+ * вместо этого создаётся меню приложения.
  */
 void SChatWindowPrivate::createTrayIcon()
 {
+  #ifndef SCHAT_WINCE
   trayMenu = new QMenu(q);
   trayMenu->addAction(aboutAction);
-  trayMenu->addAction(profileSetAction);
+  trayMenu->addAction(settingsAction);
 
   QMenu *statusMenu = new QMenu(QObject::tr("Статус"), q);
 
@@ -439,9 +443,14 @@ void SChatWindowPrivate::createTrayIcon()
 
   trayMenu->addSeparator();
   trayMenu->addAction(quitAction);
+  #else
+  createMainWceMenu();
+  #endif
 
   tray = new TrayIcon(q);
+  #ifndef SCHAT_WINCE
   tray->setContextMenu(trayMenu);
+  #endif
   tray->show();
 }
 
@@ -824,6 +833,7 @@ void SChatWindowPrivate::updateStatus(int status)
 {
   statusCombo->setCurrentIndex(status);
 
+  #ifndef SCHAT_WINCE
   switch (status) {
     case StatusOnline:
       statusAction->setIcon(QIcon(":/images/status-online.png"));
@@ -841,7 +851,27 @@ void SChatWindowPrivate::updateStatus(int status)
       statusAction->setIcon(QIcon(":/images/status-offline.png"));
       break;
   }
+  #endif
 }
+
+
+#ifdef SCHAT_WINCE
+void SChatWindowPrivate::createMainWceMenu()
+{
+  q->menuBar()->addAction(aboutAction);
+  q->menuBar()->addAction(settingsAction);
+
+  QMenu *statusMenu = q->menuBar()->addMenu(QObject::tr("Статус"));
+  statusMenu->addAction(onlineAction);
+  statusMenu->addAction(awayAction);
+  statusMenu->addAction(dndAction);
+  statusMenu->addSeparator();
+  statusMenu->addAction(offlineAction);
+
+  q->menuBar()->addSeparator();
+  q->menuBar()->addAction(quitAction);
+}
+#endif
 
 
 #if QT_VERSION < 0x040500
@@ -1766,6 +1796,11 @@ void SChatWindow::createActions()
   #endif
   d->profileSetAction->setData(SettingsDialog::ProfilePage);
   connect(d->profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
+
+  // Настройка...
+  d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
+  d->settingsAction->setData(SettingsDialog::ProfilePage);
+  connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Обновление...
   d->updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
