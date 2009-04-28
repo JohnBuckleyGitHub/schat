@@ -346,6 +346,7 @@ void SChatWindowPrivate::createStatusBar()
   statusLabel = new QLabel(QObject::tr("Нет подключения"), q);
   statusLabel->setWordWrap(true);
 
+  #ifndef SCHAT_WINCE
   statusCombo = new QComboBox(q);
   statusCombo->setIconSize(QSize(14, 14));
   statusCombo->addItem(QIcon(":/images/status-online.png"),  QObject::tr("В сети"));
@@ -353,12 +354,15 @@ void SChatWindowPrivate::createStatusBar()
   statusCombo->addItem(QIcon(":/images/status-dnd.png"),     QObject::tr("Не беспокоить"));
   statusCombo->addItem(QIcon(":/images/status-offline.png"), QObject::tr("Не в сети"));
   statusCombo->setFocusPolicy(Qt::NoFocus);
+  #endif
 
   statusBar = new QStatusBar(q);
   statusBar->addWidget(connectLabel);
   statusBar->addWidget(connectMovie);
   statusBar->addWidget(statusLabel, 1);
+  #ifndef SCHAT_WINCE
   statusBar->addPermanentWidget(statusCombo);
+  #endif
   statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
   q->setStatusBar(statusBar);
 }
@@ -831,9 +835,9 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
  */
 void SChatWindowPrivate::updateStatus(int status)
 {
+  #ifndef SCHAT_WINCE
   statusCombo->setCurrentIndex(status);
 
-  #ifndef SCHAT_WINCE
   switch (status) {
     case StatusOnline:
       statusAction->setIcon(QIcon(":/images/status-online.png"));
@@ -851,6 +855,8 @@ void SChatWindowPrivate::updateStatus(int status)
       statusAction->setIcon(QIcon(":/images/status-offline.png"));
       break;
   }
+  #else
+  Q_UNUSED(status)
   #endif
 }
 
@@ -921,8 +927,15 @@ SChatWindow::SChatWindow(QWidget *parent)
     d->rightLay->setSpacing(4);
   #endif
 
-  d->mainLay->addWidget(d->splitter);
+  /// \note Для Windows Mobile поле отправки находится сверху,
+  /// для предотвращения его перекрытия виртуальной клавиатурой.
+  #ifdef SCHAT_WINCE
   d->mainLay->addWidget(d->send);
+  #endif
+  d->mainLay->addWidget(d->splitter);
+  #ifndef SCHAT_WINCE
+  d->mainLay->addWidget(d->send);
+  #endif
   d->mainLay->setSpacing(1);
   d->mainLay->setStretchFactor(d->splitter, 999);
   d->mainLay->setStretchFactor(d->send, 1);
@@ -960,7 +973,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+  #ifndef SCHAT_WINCE
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
+  #endif
   connect(d->splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
   connect(SimpleChatApp::instance(), SIGNAL(messageRecieved(const QString &)), SLOT(handleMessage(const QString &)));
 

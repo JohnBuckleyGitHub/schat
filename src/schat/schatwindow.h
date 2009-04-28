@@ -22,6 +22,10 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+#if defined(Q_OS_WINCE) && !defined(SCHAT_WINCE)
+  #define SCHAT_WINCE
+#endif
+
 class SChatWindowPrivate;
 
 /*!

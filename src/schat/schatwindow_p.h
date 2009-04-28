@@ -120,7 +120,6 @@ public:
   QAction *soundSetAction;
   QAction *statusAction;
   QAction *updateSetAction;
-  QComboBox *statusCombo;
   QHBoxLayout *toolsLay;
   QLabel *connectLabel;
   QLabel *connectMovie;
@@ -147,6 +146,9 @@ public:
   WelcomeDialog *welcome;
   #if QT_VERSION < 0x040500
     QAction *closeTabAction;
+  #endif
+  #ifndef SCHAT_WINCE
+    QComboBox *statusCombo;
   #endif
 };
 
