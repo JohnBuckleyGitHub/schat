@@ -1491,8 +1491,6 @@ void SChatWindow::statusChangedByUser()
 void SChatWindow::statusChangedByUser(int index)
 {
   quint32 status = d->profile->status();
-  if (index == SChatWindowPrivate::StatusOnline && status == schat::StatusNormal)
-    return;
 
   if (index == SChatWindowPrivate::StatusOffline) {
     d->clientService->quit();
