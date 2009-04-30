@@ -28,19 +28,14 @@
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
 {
-  m_settings = settings;
   m_input = new InputWidget(this);
   createButtons();
   setSettings();
 
   QHBoxLayout *buttonLay = new QHBoxLayout;
-  buttonLay->addWidget(m_boldButton);
-  buttonLay->addWidget(m_italicButton);
-  buttonLay->addWidget(m_underlineButton);
-  buttonLay->addWidget(m_emoticonButton);
+  buttonLay->addWidget(m_format);
   buttonLay->addStretch();
-  buttonLay->addWidget(m_logButton);
-  buttonLay->addWidget(m_sendButton);
+  buttonLay->addWidget(m_tools);
   buttonLay->setMargin(0);
   buttonLay->setSpacing(1);
 
@@ -53,7 +48,7 @@ SendWidget::SendWidget(QWidget *parent)
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
   connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
   connect(m_input, SIGNAL(statusShortcut(int)), SIGNAL(statusShortcut(int)));
-  connect(m_settings, SIGNAL(changed(int)), SLOT(setSettings()));
+  connect(SimpleSettings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 }
 
@@ -109,7 +104,7 @@ void SendWidget::setItalic(bool b)
 
 void SendWidget::setSettings()
 {
-  m_emoticonButton->setEnabled(m_settings->getBool("UseEmoticons"));
+  m_emoticonButton->setEnabled(SimpleSettings->getBool("UseEmoticons"));
 }
 
 
@@ -130,41 +125,29 @@ void SendWidget::setUnderline(bool b)
  */
 void SendWidget::createButtons()
 {
-  m_boldAction = new QAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this);
+  m_format = new QToolBar(this);
+  m_format->setIconSize(QSize(16, 16));
+  m_format->setStyleSheet("QToolBar { margin: 0px; }");
+
+  m_boldAction = m_format->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
   m_boldAction->setCheckable(true);
   m_boldAction->setShortcut(Qt::CTRL + Qt::Key_B);
-  m_boldButton = new QToolButton(this);
-  m_boldButton->setDefaultAction(m_boldAction);
-  m_boldButton->setAutoRaise(true);
-  connect(m_boldAction, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
 
-  m_italicAction = new QAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this);
+  m_italicAction = m_format->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
   m_italicAction->setCheckable(true);
   m_italicAction->setShortcut(Qt::CTRL + Qt::Key_I);
-  m_italicButton = new QToolButton(this);
-  m_italicButton->setDefaultAction(m_italicAction);
-  m_italicButton->setAutoRaise(true);
-  connect(m_italicAction, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
 
-  m_underlineAction = new QAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this);
+  m_underlineAction = m_format->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
   m_underlineAction->setCheckable(true);
   m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
-  m_underlineButton = new QToolButton(this);
-  m_underlineButton->setDefaultAction(m_underlineAction);
-  m_underlineButton->setAutoRaise(true);
-  connect(m_underlineAction, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
 
-  m_logAction = new QAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this);
-  m_logButton = new QToolButton(this);
-  m_logButton->setDefaultAction(m_logAction);
-  m_logButton->setAutoRaise(true);
-  connect(m_logAction, SIGNAL(triggered()), SLOT(log()));
+  m_tools = new QToolBar(this);
+  m_tools->setIconSize(QSize(16, 16));
+  m_tools->setStyleSheet("QToolBar { margin: 0px; }");
 
-  m_sendAction = new QAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"), this);
-  m_sendButton = new QToolButton(this);
-  m_sendButton->setDefaultAction(m_sendAction);
-  m_sendButton->setAutoRaise(true);
-  connect(m_sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
+  m_tools->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
+  m_tools->addSeparator();
+  m_tools->addAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"), m_input, SLOT(sendMsg()));
 
   m_popup = new QMenu(this);
   m_emoticonSelector = new EmoticonSelector(this);
@@ -182,6 +165,8 @@ void SendWidget::createButtons()
   m_emoticonButton->setMenu(m_popup);
   m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
   m_emoticonButton->setShortcut(Qt::CTRL + Qt::Key_E);
+  m_format->addSeparator();
+  m_format->addWidget(m_emoticonButton);
 }
 
 
