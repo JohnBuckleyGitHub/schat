@@ -37,6 +37,17 @@ CONFIG(release, debug|release) {
   DESTDIR = ../../out/release
 }
 
+contains( SCHAT_WINCE, 1 ) {
+  SCHAT_SINGLEAPP = 0
+}
+
+contains( SCHAT_SINGLEAPP, 0 ) {
+  DEFINES += SCHAT_NO_SINGLEAPP
+}
+else {
+  include(../3rdparty/qtsingleapplication/src/qtsingleapplication.pri)
+}
+
 contains( SCHAT_CONSOLE, 1 ) {
   CONFIG += console
 }

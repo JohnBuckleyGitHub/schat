@@ -19,16 +19,31 @@
 #ifndef SIMPLECHATAPP_H_
 #define SIMPLECHATAPP_H_
 
-#include "singleapplication.h"
+#ifdef SCHAT_NO_SINGLEAPP
+ #define QtSingleApplication QApplication
+ #include <QApplication>
+#else
+ #include <QtSingleApplication>
+#endif
 
-class SimpleChatApp : public SingleApplication
+class SChatWindow;
+
+/*!
+ * \brief Экземпляр приложения.
+ */
+class SimpleChatApp : public QtSingleApplication
 {
   Q_OBJECT
 
 public:
   SimpleChatApp(int &argc, char **argv);
   ~SimpleChatApp();
+  bool isRunning();
+  int run();
   static SimpleChatApp *instance();
+
+private:
+  SChatWindow *m_window;
 };
 
 #endif /* SIMPLECHATAPP_H_ */

@@ -17,13 +17,11 @@
  */
 
 #include <QApplication>
-#include <QtGui>
+#include <QMessageBox>
+#include <QSystemTrayIcon>
 
-#include "abstractprofile.h"
-#include "schatwindow.h"
 #include "settings.h"
 #include "simplechatapp.h"
-#include "version.h"
 
 #ifdef SCHAT_STATIC
   Q_IMPORT_PLUGIN(qgif)
@@ -32,7 +30,7 @@
 int main(int argc, char *argv[])
 {
   SimpleChatApp app(argc, argv);
-  if (!app.isRunning())
+  if (app.isRunning())
     return 0;
 
   #ifndef SCHAT_NO_UPDATE
@@ -46,21 +44,5 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_ru", ":/translations");
-  app.installTranslator(&qtTranslator);
-
-  QTranslator translator;
-  translator.load("schat_ru", ":/translations");
-  app.installTranslator(&translator);
-
-  SChatWindow window;
-  QStringList args = app.arguments();
-  args.takeFirst();
-  if (args.contains("-hide"))
-    window.hide();
-  else
-    window.show();
-
-  return app.exec();
+  return app.run();
 }

@@ -977,7 +977,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
   #endif
   connect(d->splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
-  connect(SimpleChatApp::instance(), SIGNAL(messageRecieved(const QString &)), SLOT(handleMessage(const QString &)));
 
   #ifndef SCHAT_NO_UPDATE
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));

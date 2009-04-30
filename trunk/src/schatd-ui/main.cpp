@@ -16,17 +16,27 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#ifdef SCHAT_NO_SINGLEAPP
+ #define QtSingleApplication QApplication
+ #include <QApplication>
+#else
+ #include <QtSingleApplication>
+#endif
+
+#include <QMessageBox>
+#include <QPlastiqueStyle>
+#include <QSystemTrayIcon>
+#include <QTextCodec>
+#include <QTranslator>
 
 #include "daemonui.h"
-#include "singleapplication.h"
 
 int main(int argc, char *argv[])
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-  SingleApplication app(argc, argv);
+  QtSingleApplication app(argc, argv);
   app.setApplicationName("IMPOMEZIA Simple Chat Daemon UI");
   app.setQuitOnLastWindowClosed(false);
   app.addLibraryPath(app.applicationDirPath() + "/plugins");
@@ -36,20 +46,23 @@ int main(int argc, char *argv[])
   #endif
 
   QStringList args = app.arguments();
-  args.takeFirst();
-  QString message;
+  args.removeFirst();
 
-  if (!args.isEmpty())
-    message = args.join(", ");
+  #ifndef SCHAT_NO_SINGLEAPP
+  #ifndef SCHAT_DEVEL_MODE
+  if (args.isEmpty() && app.sendMessage(""))
+    return 0;
 
+  QString message = args.join(", ");
+
+  if (args.contains("-exit")) {
+    app.sendMessage(message);
+    return 0;
+  }
   if (app.sendMessage(message))
     return 0;
-
-  if (args.contains("-exit"))
-    return 0;
-
-  if (!app.startSingleServer())
-    return 0;
+  #endif
+  #endif
 
   // Требуем поддержку System Tray
   if (!QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -67,7 +80,9 @@ int main(int argc, char *argv[])
   else
     ui.hide();
 
-  QObject::connect(&app, SIGNAL(messageRecieved(const QString &)), &ui, SLOT(handleMessage(const QString &)));
+  #ifndef SCHAT_NO_SINGLEAPP
+  QObject::connect(&app, SIGNAL(messageReceived(const QString &)), &ui, SLOT(handleMessage(const QString &)));
+  #endif
 
   return app.exec();
 }
