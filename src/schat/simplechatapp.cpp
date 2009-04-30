@@ -23,11 +23,17 @@
 #include "simplechatapp.h"
 #include "version.h"
 
+#ifndef SCHAT_NO_SINGLEAPP
+ #define SCHAT_PREFFIX "SimpleChat",
+#else
+ #define SCHAT_PREFFIX
+#endif
+
 /*!
  * Конструктор класса SimpleChatApp.
  */
 SimpleChatApp::SimpleChatApp(int &argc, char **argv)
-  : QtSingleApplication("SimpleChat", argc, argv),
+  : QtSingleApplication(SCHAT_PREFFIX argc, argv),
   m_window(0)
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
