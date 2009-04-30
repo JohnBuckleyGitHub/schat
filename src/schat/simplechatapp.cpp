@@ -19,48 +19,92 @@
 #include <QtGui>
 #include <QtNetwork>
 
+#include "schatwindow.h"
 #include "simplechatapp.h"
 #include "version.h"
 
+/*!
+ * Конструктор класса SimpleChatApp.
+ */
 SimpleChatApp::SimpleChatApp(int &argc, char **argv)
-  : SingleApplication(argc, argv)
+  : QtSingleApplication("SimpleChat", argc, argv),
+  m_window(0)
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-
-  QString appPath = applicationDirPath();
 
   setApplicationName(SCHAT_NAME);
   setApplicationVersion(SCHAT_VERSION);
   setOrganizationName(SCHAT_ORGANIZATION);
   setOrganizationDomain(SCHAT_DOMAIN);
   setQuitOnLastWindowClosed(false);
-  addLibraryPath(appPath + "/plugins");
+  addLibraryPath(applicationDirPath() + "/plugins");
 
   #ifndef Q_OS_WINCE
     setStyle(new QPlastiqueStyle);
   #endif
-
-  QStringList args = arguments();
-  args.takeFirst();
-  QString message;
-
-  if (!args.isEmpty())
-    message = args.join(", ");
-
-  if (sendMessage(message))
-    return;
-
-  if (args.contains("-exit"))
-    return;
-
-  if (!startSingleServer())
-    return;
 }
 
 
 SimpleChatApp::~SimpleChatApp()
 {
+  if (m_window)
+    delete m_window;
+}
+
+
+/*!
+ * Returns true if another instance of this application is running; otherwise false.
+ */
+bool SimpleChatApp::isRunning()
+{
+  #if defined(SCHAT_NO_SINGLEAPP) || defined(SCHAT_DEVEL_MODE)
+  return false;
+  #else
+  QStringList args = arguments();
+  args.removeFirst();
+
+  if (args.isEmpty())
+    return sendMessage("");
+
+  QString message = args.join(", ");
+
+  if (args.contains("-exit")) {
+    sendMessage(message);
+    return true;
+  }
+  else
+    return sendMessage(message);
+  #endif
+}
+
+
+/*!
+ * Загрузка переводов, создание главного окна и запуск цикла событий.
+ */
+int SimpleChatApp::run()
+{
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_ru", ":/translations");
+  installTranslator(&qtTranslator);
+
+  QTranslator translator;
+  translator.load("schat_ru", ":/translations");
+  installTranslator(&translator);
+
+  m_window = new SChatWindow;
+  QStringList args = arguments();
+  args.removeFirst();
+
+  if (args.contains("-hide"))
+    m_window->hide();
+  else
+    m_window->show();
+
+  #ifndef SCHAT_NO_SINGLEAPP
+  connect(this, SIGNAL(messageReceived(const QString &)), m_window, SLOT(handleMessage(const QString &)));
+  #endif
+  return exec();
 }
 
 

@@ -34,7 +34,6 @@ HEADERS += \
     network.h \
     networkreader.h \
     networkwriter.h \
-    singleapplication.h \
 
 SOURCES += \
     abstractsettings.cpp \
@@ -47,7 +46,6 @@ SOURCES += \
     network.cpp \
     networkreader.cpp \
     networkwriter.cpp \
-    singleapplication.cpp \
 
 win32{
     HEADERS += serviceinstaller.h
