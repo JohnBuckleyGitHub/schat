@@ -32,18 +32,19 @@ SendWidget::SendWidget(QWidget *parent)
   createButtons();
   setSettings();
 
-  QHBoxLayout *buttonLay = new QHBoxLayout;
-  buttonLay->addWidget(m_format);
-  buttonLay->addStretch();
-  buttonLay->addWidget(m_tools);
-  buttonLay->setMargin(0);
-  buttonLay->setSpacing(1);
+  QGridLayout *mainLay = new QGridLayout(this);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addLayout(buttonLay);
-  mainLay->addWidget(m_input);
+  #ifndef Q_OS_WINCE
+  mainLay->addWidget(m_toolBar, 0, 0);
+  mainLay->addWidget(m_input, 1, 0);
+  #else
+  mainLay->addWidget(m_input, 0, 0);
+  mainLay->addWidget(m_toolBar, 1, 0);
+  #endif
+  if (SimpleSettings->getBool("BigSendButton"))
+    mainLay->addWidget(m_sendButton, 0, 1, 2, 1);
   mainLay->setMargin(0);
-  mainLay->setSpacing(1);
+  mainLay->setSpacing(0);
 
   connect(m_input, SIGNAL(sendMsg(const QString &)), SIGNAL(sendMsg(const QString &)));
   connect(m_input, SIGNAL(needCopy()), SIGNAL(needCopy()));
@@ -125,29 +126,25 @@ void SendWidget::setUnderline(bool b)
  */
 void SendWidget::createButtons()
 {
-  m_format = new QToolBar(this);
-  m_format->setIconSize(QSize(16, 16));
-  m_format->setStyleSheet("QToolBar { margin: 0px; }");
+  m_toolBar = new QToolBar(this);
+  #if !defined(Q_OS_WINCE)
+  m_toolBar->setIconSize(QSize(16, 16));
+  #elif defined(SCHAT_WINCE_VGA)
+  m_toolBar->setIconSize(QSize(36, 36));
+  #endif
+  m_toolBar->setStyleSheet("QToolBar { margin: 0px; }");
 
-  m_boldAction = m_format->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
+  m_boldAction = m_toolBar->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
   m_boldAction->setCheckable(true);
   m_boldAction->setShortcut(Qt::CTRL + Qt::Key_B);
 
-  m_italicAction = m_format->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
+  m_italicAction = m_toolBar->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
   m_italicAction->setCheckable(true);
   m_italicAction->setShortcut(Qt::CTRL + Qt::Key_I);
 
-  m_underlineAction = m_format->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
+  m_underlineAction = m_toolBar->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
   m_underlineAction->setCheckable(true);
   m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
-
-  m_tools = new QToolBar(this);
-  m_tools->setIconSize(QSize(16, 16));
-  m_tools->setStyleSheet("QToolBar { margin: 0px; }");
-
-  m_tools->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
-  m_tools->addSeparator();
-  m_tools->addAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"), m_input, SLOT(sendMsg()));
 
   m_popup = new QMenu(this);
   m_emoticonSelector = new EmoticonSelector(this);
@@ -165,8 +162,35 @@ void SendWidget::createButtons()
   m_emoticonButton->setMenu(m_popup);
   m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
   m_emoticonButton->setShortcut(Qt::CTRL + Qt::Key_E);
-  m_format->addSeparator();
-  m_format->addWidget(m_emoticonButton);
+  m_toolBar->addSeparator();
+  m_toolBar->addWidget(m_emoticonButton);
+
+  QWidget *stretch = new QWidget(this);
+  QHBoxLayout *stretchLay = new QHBoxLayout(stretch);
+  stretchLay->addStretch();
+  m_toolBar->addWidget(stretch);
+
+  m_toolBar->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
+
+  QAction *sendAction = new QAction(QIcon(":/images/go-jump-locationbar-v.png"), tr("Отправить сообщение"), this);
+  connect(sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
+  m_sendButton = new QToolButton(this);
+  m_sendButton->setDefaultAction(sendAction);
+  m_sendButton->setAutoRaise(true);
+
+  if (SimpleSettings->getBool("BigSendButton")) {
+    sendAction->setIcon(QIcon(":/images/go-jump-locationbar-v.png"));
+    #ifdef SCHAT_WINCE_VGA
+    m_sendButton->setIconSize(QSize(52, 80));
+    #else
+    m_sendButton->setIconSize(QSize(27, 40));
+    #endif
+  }
+  else {
+    sendAction->setIcon(QIcon(":/images/go-jump-locationbar.png"));
+    m_toolBar->addSeparator();
+    m_toolBar->addWidget(m_sendButton);
+  }
 }
 
 

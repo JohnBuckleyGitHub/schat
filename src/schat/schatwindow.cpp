@@ -930,16 +930,17 @@ SChatWindow::SChatWindow(QWidget *parent)
   /// \note Для Windows Mobile поле отправки находится сверху,
   /// для предотвращения его перекрытия виртуальной клавиатурой.
   #ifdef SCHAT_WINCE
-  d->mainLay->addWidget(d->send);
+    d->mainLay->addWidget(d->send);
+    d->mainLay->setContentsMargins(0, 0, 0, 0);
   #endif
   d->mainLay->addWidget(d->splitter);
   #ifndef SCHAT_WINCE
-  d->mainLay->addWidget(d->send);
+    d->mainLay->addWidget(d->send);
+    d->mainLay->setContentsMargins(3, 3, 3, 0);
   #endif
   d->mainLay->setSpacing(1);
   d->mainLay->setStretchFactor(d->splitter, 999);
   d->mainLay->setStretchFactor(d->send, 1);
-  d->mainLay->setContentsMargins(3, 3, 3, 0);
 
   setCentralWidget(d->central);
   d->createStatusBar();

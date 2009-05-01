@@ -148,6 +148,12 @@ contains( SCHAT_STATIC, 1 ) {
     DEFINES  += SCHAT_STATIC
 }
 
+contains( SCHAT_WINCE_VGA, 1 ) {
+  SCHAT_RC_FILE = 0
+  DEFINES += SCHAT_WINCE_VGA
+  win32:RC_FILE = schat.rc
+}
+
 TRANSLATIONS += ../../data/translations/schat_ru.ts
 CODECFORTR = UTF-8
 

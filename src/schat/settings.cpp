@@ -202,20 +202,10 @@ void Settings::read()
     setString("ChatStyleVariant",   "");
   #endif
 
-  #ifdef SCHAT_BENCHMARK
-    setBool("BenchmarkEnable",  false);
-    setInt("BenchmarkInterval", 1000);
-    setInt("BenchmarkDelay",    5000);
-
-    QStringList list;
-    list << "You've been leading a dog's life. Stay off the furniture."
-         << "You've got to think about tomorrow."
-         << "You will be surprised by a loud noise."
-         << "You will feel hungry again in another hour."
-         << "You might have mail."
-         << "You cannot kill time without injuring eternity."
-         << "Computers are not intelligent. They only think they are.";
-    setList("BenchmarkList", list);
+  #ifdef Q_OS_WINCE
+  setBool("BigSendButton", true);
+  #else
+  setBool("BigSendButton", false);
   #endif
 
   setBool("Proxy/Enable",         false);
@@ -330,13 +320,6 @@ void Settings::write()
        << "Updates/DownloadSize"
        << "Sound/NameFilter"
        << "Proxy/HideAndDisable";
-
-  #ifdef SCHAT_BENCHMARK
-    m_ro << "BenchmarkEnable"
-         << "BenchmarkInterval"
-         << "BenchmarkDelay"
-         << "BenchmarkList";
-  #endif
 
   setBool("FirstRun", false);
   setString("Network", network.config());
