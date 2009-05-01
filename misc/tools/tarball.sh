@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-FNAME="schat-0.5.3.1097"
+FNAME="schat-0.5.3.1103"
 svn co http://schat.googlecode.com/svn/branches/0.5/ schat
 rm -fr $FNAME
 cp -fR schat $FNAME

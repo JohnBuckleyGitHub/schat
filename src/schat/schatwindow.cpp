@@ -744,10 +744,23 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
 /*!
  * Создаёт уникальный ник.
  * Ник + случайное число от 0 до 99.
+ *
+ * Специальные случаи:
+ * - Если длина ника равна максимальной допустимой, то отрезаются
+ * два последних символа, для нормализации длинны.
+ * - Если ник на один символ короче максимума, то случайное число
+ * генерируется в диапазоне от 0 до 9.
  */
 void SChatWindowPrivate::uniqueNick()
 {
-  profile->setNick(profile->nick() + QString().setNum(qrand() % 99));
+  int max = 99;
+  QString nick = profile->nick();
+  if (nick.size() == AbstractProfile::MaxNickLength)
+    nick = nick.left(AbstractProfile::MaxNickLength - 2);
+  else if (nick.size() == AbstractProfile::MaxNickLength - 1)
+    max = 9;
+
+  profile->setNick(nick + QString().setNum(qrand() % max));
 }
 
 
