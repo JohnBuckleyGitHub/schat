@@ -68,9 +68,9 @@ private:
   QAction *m_italicAction;
   QAction *m_underlineAction;
   QMenu *m_popup;
-  QToolBar *m_format;
-  QToolBar *m_tools;
+  QToolBar *m_toolBar;
   QToolButton *m_emoticonButton;
+  QToolButton *m_sendButton;
 };
 
 #endif /*SENDWIDGET_H_*/
