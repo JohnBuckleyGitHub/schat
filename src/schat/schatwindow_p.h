@@ -106,21 +106,12 @@ public:
   QAction *awayAction;
   QAction *daemonAction;
   QAction *dndAction;
-  QAction *emoticonsSetAction;
-  QAction *interfaceSetAction;
-  QAction *miscSetAction;
-  QAction *networkSetAction;
-  QAction *notificationSetAction;
   QAction *offlineAction;
   QAction *onlineAction;
-  QAction *profileSetAction;
   QAction *quitAction;
   QAction *settingsAction;
   QAction *soundAction;
-  QAction *soundSetAction;
   QAction *statusAction;
-  QAction *updateSetAction;
-  QHBoxLayout *toolsLay;
   QLabel *connectLabel;
   QLabel *connectMovie;
   QLabel *statusLabel;
@@ -149,6 +140,7 @@ public:
   #endif
   #ifndef SCHAT_WINCE
     QComboBox *statusCombo;
+    QToolBar *toolBar;
   #endif
 };
 
