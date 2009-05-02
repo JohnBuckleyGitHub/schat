@@ -181,9 +181,9 @@ void SendWidget::createButtons()
   if (SimpleSettings->getBool("BigSendButton")) {
     sendAction->setIcon(QIcon(":/images/go-jump-locationbar-v.png"));
     #ifdef SCHAT_WINCE_VGA
-    m_sendButton->setIconSize(QSize(52, 80));
+    m_sendButton->setIconSize(QSize(55, 72));
     #else
-    m_sendButton->setIconSize(QSize(27, 40));
+    m_sendButton->setIconSize(QSize(27, 36));
     #endif
   }
   else {
