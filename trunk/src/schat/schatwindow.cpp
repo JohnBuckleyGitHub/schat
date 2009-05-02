@@ -374,14 +374,32 @@ void SChatWindowPrivate::createStatusBar()
 void SChatWindowPrivate::createToolButtons()
 {
   QMenu *iconMenu = new QMenu(q);
-  iconMenu->addAction(profileSetAction);
-  iconMenu->addAction(networkSetAction);
-  iconMenu->addAction(interfaceSetAction);
-  iconMenu->addAction(emoticonsSetAction);
-  iconMenu->addAction(soundSetAction);
-  iconMenu->addAction(notificationSetAction);
-  iconMenu->addAction(updateSetAction);
-  iconMenu->addAction(miscSetAction);
+  QAction *profilePref = iconMenu->addAction(QIcon(":/images/profile.png"), QObject::tr("Личные данные..."), q, SLOT(showSettings()));
+  #ifndef Q_OS_WINCE
+  profilePref->setShortcut(QObject::tr("Ctrl+F12"));
+  #endif
+  profilePref->setData(SettingsDialog::ProfilePage);
+
+  QAction *networkPref = iconMenu->addAction(QIcon(":/images/applications-internet.png"), QObject::tr("Сеть..."), q, SLOT(showSettings()));
+  networkPref->setData(SettingsDialog::NetworkPage);
+
+  QAction *interfacePref = iconMenu->addAction(QIcon(":/images/applications-graphics.png"), QObject::tr("Интерфейс..."), q, SLOT(showSettings()));
+  interfacePref->setData(SettingsDialog::InterfacePage);
+
+  QAction *emoticonsPref = iconMenu->addAction(QIcon(":/images/emoticon.png"), QObject::tr("Смайлики..."), q, SLOT(showSettings()));
+  emoticonsPref->setData(SettingsDialog::EmoticonsPage);
+
+  QAction *soundPref = iconMenu->addAction(QIcon(":/images/sound.png"), QObject::tr("Звуки..."), q, SLOT(showSettings()));
+  soundPref->setData(SettingsDialog::SoundPage);
+
+  QAction *notificationPref = iconMenu->addAction(QIcon(":/images/notification.png"), QObject::tr("Оповещатель..."), q, SLOT(showSettings()));
+  notificationPref->setData(SettingsDialog::NotificationPage);
+
+  QAction *updatePref = iconMenu->addAction(QIcon(":/images/update.png"), QObject::tr("Обновление..."), q, SLOT(showSettings()));
+  updatePref->setData(SettingsDialog::UpdatePage);
+
+  QAction *miscPref = iconMenu->addAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), q, SLOT(showSettings()));
+  miscPref->setData(SettingsDialog::MiscPage);
 
   // Настройка
   settingsButton = new QToolButton(q);
@@ -391,24 +409,12 @@ void SChatWindowPrivate::createToolButtons()
   settingsButton->setMenu(iconMenu);
   settingsButton->setPopupMode(QToolButton::InstantPopup);
 
-  soundButton = new QToolButton(q);
-  soundButton->setAutoRaise(true);
-  soundButton->setDefaultAction(soundAction);
-
-  QToolButton *aboutButton = new QToolButton(q);
-  aboutButton->setDefaultAction(aboutAction);
-  aboutButton->setAutoRaise(true);
-
-  QFrame *line = new QFrame(q);
-  line->setFrameShape(QFrame::VLine);
-  line->setFrameShadow(QFrame::Sunken);
-
-  toolsLay->addWidget(line);
-  toolsLay->addWidget(settingsButton);
-  toolsLay->addWidget(soundButton);
-  toolsLay->addWidget(aboutButton);
-  toolsLay->addStretch();
-  toolsLay->setSpacing(0);
+  toolBar->setIconSize(QSize(16, 16));
+  toolBar->setStyleSheet("QToolBar { margin: 0px; }");
+  toolBar->addSeparator();
+  toolBar->addWidget(settingsButton);
+  toolBar->addAction(soundAction);
+  toolBar->addAction(aboutAction);
 }
 
 
@@ -924,14 +930,14 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->users       = new UserView(d->profile, d->right);
   d->rightLay    = new QVBoxLayout(d->right);
   d->mainLay     = new QVBoxLayout(d->central);
-  d->toolsLay    = new QHBoxLayout;
+  d->toolBar     = new QToolBar(this);
 
   d->splitter->addWidget(d->tabs);
   d->splitter->addWidget(d->right);
   d->splitter->setStretchFactor(0, 3);
   d->splitter->setStretchFactor(1, 2);
 
-  d->rightLay->addLayout(d->toolsLay);
+  d->rightLay->addWidget(d->toolBar);
   d->rightLay->addWidget(d->users);
   d->rightLay->setMargin(0);
   #if QT_VERSION >= 0x040500
@@ -1800,43 +1806,10 @@ void SChatWindow::createActions()
     connect(d->closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
   #endif
 
-  // Смайлики...
-  d->emoticonsSetAction = new QAction(QIcon(":/images/emoticon.png"), tr("Смайлики..."), this);
-  d->emoticonsSetAction->setData(SettingsDialog::EmoticonsPage);
-  connect(d->emoticonsSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Интерфейс...
-  d->interfaceSetAction = new QAction(QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), this);
-  d->interfaceSetAction->setData(SettingsDialog::InterfacePage);
-  connect(d->interfaceSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Сеть...
-  d->networkSetAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Сеть..."), this);
-  d->networkSetAction->setData(SettingsDialog::NetworkPage);
-  connect(d->networkSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Личные данные...
-  d->profileSetAction = new QAction(QIcon(":/images/profile.png"), tr("Личные данные..."), this);
-  #ifndef Q_OS_WINCE
-  d->profileSetAction->setShortcut(tr("Ctrl+F12"));
-  #endif
-  d->profileSetAction->setData(SettingsDialog::ProfilePage);
-  connect(d->profileSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
   // Настройка...
   d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
   d->settingsAction->setData(SettingsDialog::ProfilePage);
   connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Обновление...
-  d->updateSetAction = new QAction(QIcon(":/images/update.png"), tr("Обновление..."), this);
-  d->updateSetAction->setData(SettingsDialog::UpdatePage);
-  connect(d->updateSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Разное...
-  d->miscSetAction = new QAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), this);
-  d->miscSetAction->setData(SettingsDialog::MiscPage);
-  connect(d->miscSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Выход из программы
   d->quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
@@ -1846,16 +1819,6 @@ void SChatWindow::createActions()
   d->soundAction = new QAction(this);
   d->soundState();
   connect(d->soundAction, SIGNAL(triggered()), SLOT(sound()));
-
-  // Звуки...
-  d->soundSetAction = new QAction(QIcon(":/images/sound.png"), tr("Звуки..."), this);
-  d->soundSetAction->setData(SettingsDialog::SoundPage);
-  connect(d->soundSetAction, SIGNAL(triggered()), SLOT(showSettings()));
-
-  // Оповещатель...
-  d->notificationSetAction = new QAction(QIcon(":/images/notification.png"), tr("Оповещатель..."), this);
-  d->notificationSetAction->setData(SettingsDialog::NotificationPage);
-  connect(d->notificationSetAction, SIGNAL(triggered()), SLOT(showSettings()));
 
   // Управление сервером...
   d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);

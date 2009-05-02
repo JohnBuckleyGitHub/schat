@@ -10,7 +10,7 @@
   <file>images/applications-graphics.png</file>
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
-  <file>images/book.png</file>
+  <file alias="images/book.png">images/vga/book.png</file>
   <file>images/computer.png</file>
   <file>images/configure.png</file>
   <file>images/dialog-cancel.png</file>
@@ -46,8 +46,8 @@
   <file>images/player_play.png</file>
   <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
-  <file>images/sound.png</file>
-  <file>images/sound_mute.png</file>
+  <file alias="images/sound.png">images/vga/sound.png</file>
+  <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
   <file>images/status-away.png</file>
   <file>images/status-dnd.png</file>
   <file>images/status-offline.png</file>
