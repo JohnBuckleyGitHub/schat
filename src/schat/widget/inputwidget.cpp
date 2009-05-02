@@ -28,9 +28,7 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
 {
-  QFontInfo fontInfo(currentFont());
-  setMinimumHeight(fontInfo.pixelSize() * 2);
-  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  detectMinimumHeight();
   m_default = currentCharFormat();
   m_current = 0;
   document()->setDefaultStyleSheet("a {color:#815d53; text-decoration:none;}");
@@ -169,6 +167,23 @@ void InputWidget::createActions()
   m_selectAllAction = new QAction(tr("&Выделить всё"), this);
   m_selectAllAction->setShortcut(Qt::CTRL + Qt::Key_A);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
+}
+
+
+void InputWidget::detectMinimumHeight()
+{
+  #if defined(Q_OS_WINCE)
+   #if defined(SCHAT_WINCE_VGA)
+    static const int correction = 10;
+   #else
+    static const int correction = 4;
+   #endif
+  #else
+    static const int correction = 0;
+  #endif
+  QFontInfo fontInfo(currentFont());
+  setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 
