@@ -184,6 +184,7 @@ void InputWidget::detectMinimumHeight()
   QFontInfo fontInfo(currentFont());
   setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 

@@ -26,10 +26,11 @@
  * \brief Конструктор класса SendWidget.
  */
 SendWidget::SendWidget(QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent),
+  m_input(new InputWidget(this))
 {
-  m_input = new InputWidget(this);
-  createButtons();
+  m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator";
+  initToolBar();
   setSettings();
 
   QGridLayout *mainLay = new QGridLayout(this);
@@ -41,8 +42,8 @@ SendWidget::SendWidget(QWidget *parent)
   mainLay->addWidget(m_input, 0, 0);
   mainLay->addWidget(m_toolBar, 1, 0);
   #endif
-  if (SimpleSettings->getBool("BigSendButton"))
-    mainLay->addWidget(m_sendButton, 0, 1, 2, 1);
+  if (SimpleSettings->getBool("BigSendButton") && m_send)
+    mainLay->addWidget(m_send, 0, 1, 2, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
@@ -67,9 +68,9 @@ void SendWidget::cursorPositionChanged()
   }
 
   QTextCharFormat charFormat = cursor.charFormat();
-  m_boldAction->setChecked(charFormat.font().bold());
-  m_italicAction->setChecked(charFormat.font().italic());
-  m_underlineAction->setChecked(charFormat.font().underline());
+  if (m_bold) m_bold->setChecked(charFormat.font().bold());
+  if (m_italic) m_italic->setChecked(charFormat.font().italic());
+  if (m_underline) m_underline->setChecked(charFormat.font().underline());
 }
 
 
@@ -80,7 +81,7 @@ void SendWidget::log()
 
 
 /*!
- * \brief Изменение состояние текса "Полужирный" \a Ctrl+B.
+ * Изменение состояние текса "Полужирный" \a Ctrl+B.
  */
 void SendWidget::setBold(bool b)
 {
@@ -105,7 +106,7 @@ void SendWidget::setItalic(bool b)
 
 void SendWidget::setSettings()
 {
-  m_emoticonButton->setEnabled(SimpleSettings->getBool("UseEmoticons"));
+  if (m_emoticons) m_emoticons->setEnabled(SimpleSettings->getBool("UseEmoticons"));
 }
 
 
@@ -122,11 +123,136 @@ void SendWidget::setUnderline(bool b)
 
 
 /*!
- * \brief Функция создаёт кнопки.
+ * Фильтр событий.
  */
-void SendWidget::createButtons()
+bool SendWidget::eventFilter(QObject *object, QEvent *event)
+{
+//  if (event->type() == QEvent::ContextMenu) {
+//    qDebug() << "eventFilter()" << object;
+//    QMenu menu(this);
+//    menu.addAction("тест");
+//
+//    QContextMenuEvent *menuEvent = static_cast<QContextMenuEvent *>(event);
+//    menu.exec(menuEvent->globalPos());
+//    return true;
+//  }
+
+  return QWidget::eventFilter(object, event);
+}
+
+
+/*!
+ * Создание кнопки на панели инструментов.
+ *
+ * \param name Символьное имя кнопки.
+ * \return Указатель на созданный объект QAction, или 0 в случае ошибки.
+ */
+QAction* SendWidget::createAction(const QString &name)
+{
+  QString lowerName = name.toLower();
+  if (!m_availableActions.contains(name))
+    return 0;
+
+  QAction *action = 0;
+
+  if (lowerName == "bold") {
+    action = m_toolBar->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
+    action->setCheckable(true);
+    action->setShortcut(Qt::CTRL + Qt::Key_B);
+    m_bold = action;
+  }
+  else if (lowerName == "italic") {
+    action = m_toolBar->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
+    action->setCheckable(true);
+    action->setShortcut(Qt::CTRL + Qt::Key_I);
+    m_italic = action;
+  }
+  else if (lowerName == "underline") {
+    action = m_toolBar->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
+    action->setCheckable(true);
+    action->setShortcut(Qt::CTRL + Qt::Key_U);
+    m_underline = action;
+  }
+  else if (lowerName == "separator") {
+    action = m_toolBar->addSeparator();
+  }
+  else if (lowerName == "emoticons") {
+    QMenu *menu = new QMenu(this);
+    EmoticonSelector *emoticonSelector = new EmoticonSelector(this);
+    QWidgetAction *act = new QWidgetAction(this);
+    act->setDefaultWidget(emoticonSelector);
+    menu->addAction(act);
+    connect(menu, SIGNAL(aboutToShow()), emoticonSelector, SLOT(prepareList()));
+    connect(menu, SIGNAL(aboutToHide()), emoticonSelector, SLOT(aboutToHide()));
+    connect(emoticonSelector, SIGNAL(itemSelected(const QString &)), m_input, SLOT(insertPlainText(const QString &)));
+
+    m_emoticons = new QToolButton(this);
+    m_emoticons->setIcon(QIcon(":/images/emoticon.png"));
+    m_emoticons->setToolTip(tr("Добавить смайлик"));
+    m_emoticons->setAutoRaise(true);
+    m_emoticons->setMenu(menu);
+    m_emoticons->setPopupMode(QToolButton::InstantPopup);
+    m_emoticons->setShortcut(Qt::CTRL + Qt::Key_E);
+    action = m_toolBar->addWidget(m_emoticons);
+  }
+  else if (lowerName == "stretch") {
+    QWidget *stretch = new QWidget(this);
+    QHBoxLayout *stretchLay = new QHBoxLayout(stretch);
+    stretchLay->addStretch();
+    action = m_toolBar->addWidget(stretch);
+  }
+  else if (lowerName == "log") {
+    action = m_toolBar->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
+  }
+  else if (lowerName == "send") {
+    m_send = new QToolButton(this);
+    m_send->setToolTip(tr("Отправить сообщение"));
+    m_send->setAutoRaise(true);
+    connect(m_send, SIGNAL(clicked()), m_input, SLOT(sendMsg()));
+
+    if (SimpleSettings->getBool("BigSendButton")) {
+      m_send->setIcon(QIcon(":/images/go-jump-locationbar-v.png"));
+      #ifdef SCHAT_WINCE_VGA
+      m_send->setIconSize(QSize(55, 72));
+      #else
+      m_send->setIconSize(QSize(27, 36));
+      #endif
+    }
+    else {
+      m_send->setIcon(QIcon(":/images/go-jump-locationbar.png"));
+      action = m_toolBar->addWidget(m_send);
+    }
+  }
+
+  if (action) {
+    m_availableActions.removeAll(lowerName);
+    action->setData(lowerName);
+    if (lowerName != "separator" && !m_availableActions.contains("separator"))
+      m_availableActions << "separator";
+  }
+
+  return action;
+}
+
+
+/*!
+ * Создание кнопок на панели инструментов по списку.
+ */
+void SendWidget::buildToolBar(const QStringList &actions)
+{
+  foreach (QString name, actions) {
+    createAction(name);
+  }
+}
+
+
+/*!
+ * Инициализация панели инструментов.
+ */
+void SendWidget::initToolBar()
 {
   m_toolBar = new QToolBar(this);
+  m_toolBar->installEventFilter(this);
   #if !defined(Q_OS_WINCE)
   m_toolBar->setIconSize(QSize(16, 16));
   #elif defined(SCHAT_WINCE_VGA)
@@ -134,63 +260,7 @@ void SendWidget::createButtons()
   #endif
   m_toolBar->setStyleSheet("QToolBar { margin: 0px; }");
 
-  m_boldAction = m_toolBar->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
-  m_boldAction->setCheckable(true);
-  m_boldAction->setShortcut(Qt::CTRL + Qt::Key_B);
-
-  m_italicAction = m_toolBar->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
-  m_italicAction->setCheckable(true);
-  m_italicAction->setShortcut(Qt::CTRL + Qt::Key_I);
-
-  m_underlineAction = m_toolBar->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
-  m_underlineAction->setCheckable(true);
-  m_underlineAction->setShortcut(Qt::CTRL + Qt::Key_U);
-
-  m_popup = new QMenu(this);
-  m_emoticonSelector = new EmoticonSelector(this);
-  QWidgetAction *act = new QWidgetAction(this);
-  act->setDefaultWidget(m_emoticonSelector);
-  m_popup->addAction(act);
-  connect(m_popup, SIGNAL(aboutToShow()), m_emoticonSelector, SLOT(prepareList()));
-  connect(m_popup, SIGNAL(aboutToHide()), m_emoticonSelector, SLOT(aboutToHide()));
-  connect(m_emoticonSelector, SIGNAL(itemSelected(const QString &)), m_input, SLOT(insertPlainText(const QString &)));
-
-  m_emoticonButton = new QToolButton(this);
-  m_emoticonButton->setIcon(QIcon(":/images/emoticon.png"));
-  m_emoticonButton->setToolTip(tr("Добавить смайлик"));
-  m_emoticonButton->setAutoRaise(true);
-  m_emoticonButton->setMenu(m_popup);
-  m_emoticonButton->setPopupMode(QToolButton::InstantPopup);
-  m_emoticonButton->setShortcut(Qt::CTRL + Qt::Key_E);
-  m_toolBar->addSeparator();
-  m_toolBar->addWidget(m_emoticonButton);
-
-  QWidget *stretch = new QWidget(this);
-  QHBoxLayout *stretchLay = new QHBoxLayout(stretch);
-  stretchLay->addStretch();
-  m_toolBar->addWidget(stretch);
-
-  m_toolBar->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
-
-  QAction *sendAction = new QAction(QIcon(":/images/go-jump-locationbar-v.png"), tr("Отправить сообщение"), this);
-  connect(sendAction, SIGNAL(triggered()), m_input, SLOT(sendMsg()));
-  m_sendButton = new QToolButton(this);
-  m_sendButton->setDefaultAction(sendAction);
-  m_sendButton->setAutoRaise(true);
-
-  if (SimpleSettings->getBool("BigSendButton")) {
-    sendAction->setIcon(QIcon(":/images/go-jump-locationbar-v.png"));
-    #ifdef SCHAT_WINCE_VGA
-    m_sendButton->setIconSize(QSize(55, 72));
-    #else
-    m_sendButton->setIconSize(QSize(27, 36));
-    #endif
-  }
-  else {
-    sendAction->setIcon(QIcon(":/images/go-jump-locationbar.png"));
-    m_toolBar->addSeparator();
-    m_toolBar->addWidget(m_sendButton);
-  }
+  buildToolBar(SimpleSettings->getList("ToolBarLayout"));
 }
 
 

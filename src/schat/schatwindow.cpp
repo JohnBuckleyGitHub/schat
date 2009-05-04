@@ -370,6 +370,7 @@ void SChatWindowPrivate::createStatusBar()
 
 /*!
  * Создаёт кнопки.
+ * \todo Сделать более красивое создание действий.
  */
 void SChatWindowPrivate::createToolButtons()
 {
@@ -398,7 +399,7 @@ void SChatWindowPrivate::createToolButtons()
   QAction *updatePref = iconMenu->addAction(QIcon(":/images/update.png"), QObject::tr("Обновление..."), q, SLOT(showSettings()));
   updatePref->setData(SettingsDialog::UpdatePage);
 
-  QAction *miscPref = iconMenu->addAction(QIcon(":/images/application-x-desktop.png"), tr("Разное..."), q, SLOT(showSettings()));
+  QAction *miscPref = iconMenu->addAction(QIcon(":/images/application-x-desktop.png"),  QObject::tr("Разное..."), q, SLOT(showSettings()));
   miscPref->setData(SettingsDialog::MiscPage);
 
   // Настройка
@@ -1747,6 +1748,9 @@ void SChatWindow::messageClicked()
 
 /*!
  * Фильтр событий.
+ *
+ * \todo Добавить контекстное меню, для заголовков вкладок.
+ * \todo Оптимизировать закрытие вкладки.
  */
 bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 {
@@ -1773,17 +1777,6 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
   return QMainWindow::eventFilter(object, event);
 }
 
-
-#ifdef SCHAT_BENCHMARK
-void SChatWindow::benchmark()
-{
-  static QStringList list;
-  if (list.isEmpty())
-    list = d->pref->getList("BenchmarkList");
-
-  sendMsg(list.at(qrand() % list.size()));
-}
-#endif
 
 
 /** [private]
