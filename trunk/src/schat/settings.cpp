@@ -195,6 +195,7 @@ void Settings::read()
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
   setList("SplitterSizes",          QStringList() << "0" << "0");
+  setList("ToolBarLayout",          schat::DefaultToolBarLayout);
 
   #ifndef SCHAT_NO_WEBKIT
     setBool("MessageGrouping",      false);

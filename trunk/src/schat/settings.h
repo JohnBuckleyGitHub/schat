@@ -36,6 +36,11 @@ class AbstractProfile;
 #define settings (static_cast<Settings *>(AbstractSettings::instance())) /// \todo Удалить этот макрос.
 #define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
+namespace schat {
+  static const QStringList DefaultToolBarLayout = QStringList() << "bold" << "italic" << "underline"
+      << "separator" << "emoticons" << "stretch" << "log" << "separator" << "send";
+}
+
 /*!
  * \brief Класс читает и записывает настройки клиента.
  */

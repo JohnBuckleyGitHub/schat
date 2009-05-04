@@ -19,6 +19,7 @@
 #ifndef SENDWIDGET_H_
 #define SENDWIDGET_H_
 
+#include <QPointer>
 #include <QTextCharFormat>
 #include <QWidget>
 
@@ -59,18 +60,20 @@ private slots:
   void setUnderline (bool b);
 
 private:
-  void createButtons();
+  bool eventFilter(QObject *object, QEvent *event);
+  QAction* createAction(const QString &name);
+  void buildToolBar(const QStringList &actions);
+  void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
 
-  EmoticonSelector *m_emoticonSelector;
-  InputWidget *m_input;
-  QAction *m_boldAction;
-  QAction *m_italicAction;
-  QAction *m_underlineAction;
-  QMenu *m_popup;
-  QToolBar *m_toolBar;
-  QToolButton *m_emoticonButton;
-  QToolButton *m_sendButton;
+  InputWidget* const m_input;        ///< Виджет ввода текста.
+  QPointer<QAction> m_bold;          ///< "Полужирный".
+  QPointer<QAction> m_italic;        ///< "Курсив".
+  QPointer<QAction> m_underline;     ///< "Подчёркнутый".
+  QPointer<QToolButton> m_emoticons; ///< Кнопка для выбора смайлов.
+  QPointer<QToolButton> m_send;      ///< Кнопка отправки.
+  QStringList m_availableActions;    ///< Список кнопок которые можно добавить на панель инструментов.
+  QToolBar *m_toolBar;               ///< Панель инструментов.
 };
 
 #endif /*SENDWIDGET_H_*/
