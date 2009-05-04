@@ -127,15 +127,34 @@ void SendWidget::setUnderline(bool b)
  */
 bool SendWidget::eventFilter(QObject *object, QEvent *event)
 {
-//  if (event->type() == QEvent::ContextMenu) {
-//    qDebug() << "eventFilter()" << object;
-//    QMenu menu(this);
-//    menu.addAction("тест");
-//
-//    QContextMenuEvent *menuEvent = static_cast<QContextMenuEvent *>(event);
-//    menu.exec(menuEvent->globalPos());
-//    return true;
-//  }
+  if (event->type() == QEvent::ContextMenu) {
+    QMenu menu(this);
+    QContextMenuEvent *menuEvent = static_cast<QContextMenuEvent *>(event);
+
+    QAction *removeAction = 0;
+
+    QAction *action = m_toolBar->actionAt(menuEvent->pos());
+    QString name;
+    if (action) {
+      name = action->data().toString();
+      if (!name.isEmpty()) {
+        removeAction = menu.addAction(QIcon(":/images/edit-delete.png"), "Удалить");
+      }
+    }
+
+    QAction *result = menu.exec(menuEvent->globalPos());
+    if (result) {
+      if (result == removeAction) {
+        m_toolBar->removeAction(action);
+        action->deleteLater();
+        if (!m_availableActions.contains(name))
+          m_availableActions << name;
+
+        saveToolBarLayout();
+      }
+    }
+    return true;
+  }
 
   return QWidget::eventFilter(object, event);
 }
@@ -236,6 +255,21 @@ QAction* SendWidget::createAction(const QString &name)
 
 
 /*!
+ * Текущий список кнопок.
+ */
+QStringList SendWidget::toolBarLayout() const
+{
+  QStringList out;
+  foreach (QAction *action, m_toolBar->actions()) {
+    QString name = action->data().toString();
+    if (!name.isEmpty())
+      out << name;
+  }
+  return out;
+}
+
+
+/*!
  * Создание кнопок на панели инструментов по списку.
  */
 void SendWidget::buildToolBar(const QStringList &actions)
@@ -243,6 +277,8 @@ void SendWidget::buildToolBar(const QStringList &actions)
   foreach (QString name, actions) {
     createAction(name);
   }
+
+  saveToolBarLayout();
 }
 
 
@@ -265,7 +301,7 @@ void SendWidget::initToolBar()
 
 
 /*!
- * \brief Слияние формата.
+ * Слияние формата.
  */
 void SendWidget::mergeFormat(const QTextCharFormat &format)
 {
@@ -273,4 +309,10 @@ void SendWidget::mergeFormat(const QTextCharFormat &format)
 
   cursor.mergeCharFormat(format);
   m_input->mergeCurrentCharFormat(format);
+}
+
+
+void SendWidget::saveToolBarLayout()
+{
+  SimpleSettings->setList("ToolBarLayout", toolBarLayout());
 }
