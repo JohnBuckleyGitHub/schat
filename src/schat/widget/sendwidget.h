@@ -62,9 +62,11 @@ private slots:
 private:
   bool eventFilter(QObject *object, QEvent *event);
   QAction* createAction(const QString &name);
+  QStringList toolBarLayout() const;
   void buildToolBar(const QStringList &actions);
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
+  void saveToolBarLayout();
 
   InputWidget* const m_input;        ///< Виджет ввода текста.
   QPointer<QAction> m_bold;          ///< "Полужирный".
