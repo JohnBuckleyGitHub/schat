@@ -2,7 +2,12 @@
 <qresource prefix="/">
   <file alias="images/book.png">images/vga/book.png</file>
   <file alias="images/edit-add.png">images/vga/edit-add.png</file>
+  <file alias="images/edit-clear.png">images/vga/edit-clear.png</file>
+  <file alias="images/edit-copy.png">images/vga/edit-copy.png</file>
+  <file alias="images/edit-cut.png">images/vga/edit-cut.png</file>
   <file alias="images/edit-delete.png">images/vga/edit-delete.png</file>
+  <file alias="images/edit-paste.png">images/vga/edit-paste.png</file>
+  <file alias="images/edit-select-all.png">images/vga/edit-select-all.png</file>
   <file alias="images/format-text-bold.png">images/vga/format-text-bold.png</file>
   <file alias="images/format-text-italic.png">images/vga/format-text-italic.png</file>
   <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
@@ -25,10 +30,6 @@
   <file>images/configure.png</file>
   <file>images/dialog-cancel.png</file>
   <file>images/dialog-ok.png</file>
-  <file>images/editclear.png</file>
-  <file>images/editcopy.png</file>
-  <file>images/editcut.png</file>
-  <file>images/editpaste.png</file>
   <file>images/emoticon.png</file>
   <file>images/female.png</file>
   <file>images/gplv3-88x31.png</file>

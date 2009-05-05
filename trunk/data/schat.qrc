@@ -16,11 +16,12 @@
   <file>images/dialog-cancel.png</file>
   <file>images/dialog-ok.png</file>
   <file>images/edit-add.png</file>
-  <file>images/editclear.png</file>
-  <file>images/editcopy.png</file>
-  <file>images/editcut.png</file>
+  <file>images/edit-clear.png</file>
+  <file>images/edit-copy.png</file>
+  <file>images/edit-cut.png</file>
   <file>images/edit-delete.png</file>
-  <file>images/editpaste.png</file>
+  <file>images/edit-paste.png</file>
+  <file>images/edit-select-all.png</file>
   <file>images/emoticon.png</file>
   <file>images/female.png</file>
   <file>images/format-text-bold.png</file>

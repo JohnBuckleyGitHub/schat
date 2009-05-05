@@ -146,7 +146,10 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     }
 
     QAction *resetAction = 0;
-    if (toolBarLayout() != schat::DefaultToolBarLayout) {
+    QStringList list = toolBarLayout();
+    if (m_bigSendButton && !list.contains("send"))
+      list << "send";
+    if (list != schat::DefaultToolBarLayout) {
       menu.addSeparator();
       resetAction = menu.addAction(QIcon(":/images/undo.png"), tr("По умолчанию"));
     }
