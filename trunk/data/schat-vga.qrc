@@ -1,5 +1,16 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="images/book.png">images/vga/book.png</file>
+  <file alias="images/edit-add.png">images/vga/edit-add.png</file>
+  <file alias="images/edit-delete.png">images/vga/edit-delete.png</file>
+  <file alias="images/format-text-bold.png">images/vga/format-text-bold.png</file>
+  <file alias="images/format-text-italic.png">images/vga/format-text-italic.png</file>
+  <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
+  <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
+  <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
+  <file alias="images/sound.png">images/vga/sound.png</file>
+  <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
+  <file alias="images/undo.png">images/vga/undo.png</file>
   <file>css/popupwindow-flash.css</file>
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
@@ -10,7 +21,6 @@
   <file>images/applications-graphics.png</file>
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
-  <file alias="images/book.png">images/vga/book.png</file>
   <file>images/computer.png</file>
   <file>images/configure.png</file>
   <file>images/dialog-cancel.png</file>
@@ -21,11 +31,6 @@
   <file>images/editpaste.png</file>
   <file>images/emoticon.png</file>
   <file>images/female.png</file>
-  <file alias="images/format-text-bold.png">images/vga/format-text-bold.png</file>
-  <file alias="images/format-text-italic.png">images/vga/format-text-italic.png</file>
-  <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
-  <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
-  <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
   <file>images/im-status-message-edit.png</file>
@@ -46,14 +51,11 @@
   <file>images/player_play.png</file>
   <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
-  <file alias="images/sound.png">images/vga/sound.png</file>
-  <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
   <file>images/status-away.png</file>
   <file>images/status-dnd.png</file>
   <file>images/status-offline.png</file>
   <file>images/status-online.png</file>
   <file>images/tab_close.png</file>
-  <file>images/undo.png</file>
   <file>images/update.png</file>
   <file>images/warning.png</file>
   <file>translations/qt_ru.qm</file>

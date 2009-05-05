@@ -141,8 +141,14 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     if (action) {
       name = action->data().toString();
       if (!name.isEmpty()) {
-        removeAction = menu.addAction(QIcon(":/images/edit-delete.png"), "Удалить");
+        removeAction = menu.addAction(QIcon(":/images/edit-delete.png"), tr("Удалить"));
       }
+    }
+
+    QAction *resetAction = 0;
+    if (toolBarLayout() != schat::DefaultToolBarLayout) {
+      menu.addSeparator();
+      resetAction = menu.addAction(QIcon(":/images/undo.png"), tr("По умолчанию"));
     }
 
     QAction *result = menu.exec(menuEvent->globalPos());
@@ -154,6 +160,10 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
           m_availableActions << name;
 
         saveToolBarLayout();
+      }
+      else if (result == resetAction) {
+        clearToolBar();
+        buildToolBar(schat::DefaultToolBarLayout, false);
       }
       else {
         QString name = result->data().toString();
@@ -340,14 +350,36 @@ QMenu* SendWidget::availableActions()
 
 /*!
  * Создание кнопок на панели инструментов по списку.
+ *
+ * \param actions   Список кнопок.
+ * \param forceSend Форсированное добавление кнопки отправки, при использовании большой кнопки отправки.
  */
-void SendWidget::buildToolBar(const QStringList &actions)
+void SendWidget::buildToolBar(const QStringList &actions, bool forceSend)
 {
   foreach (QString name, actions) {
     createAction(name);
   }
 
+  if (forceSend && m_bigSendButton && !actions.contains("send"))
+    createAction("send");
+
   saveToolBarLayout();
+}
+
+
+/*!
+ * Очистка панели инструментов от кнопок.
+ */
+void SendWidget::clearToolBar()
+{
+  QList<QAction *> list = m_toolBar->actions();
+  m_toolBar->clear();
+  foreach (QAction *a, list) {
+    QString name = a->data().toString();
+    if (!name.isEmpty() && !m_availableActions.contains(name))
+      m_availableActions << name;
+    a->deleteLater();
+  }
 }
 
 
