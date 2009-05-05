@@ -61,13 +61,15 @@ private slots:
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
-  QAction* createAction(const QString &name);
+  QAction* createAction(const QString &name, QAction *before = 0);
+  QMenu* availableActions();
   QStringList toolBarLayout() const;
   void buildToolBar(const QStringList &actions);
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
   void saveToolBarLayout();
 
+  const bool m_bigSendButton;        ///< Опция настроек "BigSendButton".
   InputWidget* const m_input;        ///< Виджет ввода текста.
   QPointer<QAction> m_bold;          ///< "Полужирный".
   QPointer<QAction> m_italic;        ///< "Курсив".
