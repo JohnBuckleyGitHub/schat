@@ -27,6 +27,7 @@
  */
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent),
+  m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
   m_input(new InputWidget(this))
 {
   m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator";
@@ -42,7 +43,7 @@ SendWidget::SendWidget(QWidget *parent)
   mainLay->addWidget(m_input, 0, 0);
   mainLay->addWidget(m_toolBar, 1, 0);
   #endif
-  if (SimpleSettings->getBool("BigSendButton") && m_send)
+  if (m_bigSendButton && m_send)
     mainLay->addWidget(m_send, 0, 1, 2, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
@@ -128,9 +129,11 @@ void SendWidget::setUnderline(bool b)
 bool SendWidget::eventFilter(QObject *object, QEvent *event)
 {
   if (event->type() == QEvent::ContextMenu) {
-    QMenu menu(this);
     QContextMenuEvent *menuEvent = static_cast<QContextMenuEvent *>(event);
-
+    QMenu menu(this);
+    QMenu *addMenu = availableActions();
+    if (addMenu)
+      menu.addMenu(addMenu);
     QAction *removeAction = 0;
 
     QAction *action = m_toolBar->actionAt(menuEvent->pos());
@@ -152,6 +155,12 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
 
         saveToolBarLayout();
       }
+      else {
+        QString name = result->data().toString();
+        if (!name.isEmpty()) {
+          createAction(name, action);
+        }
+      }
     }
     return true;
   }
@@ -163,10 +172,11 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
 /*!
  * Создание кнопки на панели инструментов.
  *
- * \param name Символьное имя кнопки.
+ * \param name   Символьное имя кнопки.
+ * \param before Кнопка будет вставлена до этой кнопки, если 0, то кнопка будет вставлена в конец.
  * \return Указатель на созданный объект QAction, или 0 в случае ошибки.
  */
-QAction* SendWidget::createAction(const QString &name)
+QAction* SendWidget::createAction(const QString &name, QAction *before)
 {
   QString lowerName = name.toLower();
   if (!m_availableActions.contains(name))
@@ -229,7 +239,7 @@ QAction* SendWidget::createAction(const QString &name)
     m_send->setAutoRaise(true);
     connect(m_send, SIGNAL(clicked()), m_input, SLOT(sendMsg()));
 
-    if (SimpleSettings->getBool("BigSendButton")) {
+    if (m_bigSendButton) {
       m_send->setIcon(QIcon(":/images/go-jump-locationbar-v.png"));
       #ifdef SCHAT_WINCE_VGA
       m_send->setIconSize(QSize(55, 72));
@@ -248,6 +258,11 @@ QAction* SendWidget::createAction(const QString &name)
     action->setData(lowerName);
     if (lowerName != "separator" && !m_availableActions.contains("separator"))
       m_availableActions << "separator";
+
+    if (before) {
+      m_toolBar->removeAction(action);
+      m_toolBar->insertAction(before, action);
+    }
   }
 
   return action;
@@ -266,6 +281,60 @@ QStringList SendWidget::toolBarLayout() const
       out << name;
   }
   return out;
+}
+
+
+/*!
+ * Формирует меню с доступными кнопками для добавления на панель инструментов.
+ *
+ * \return Возвращает сформированное меню, или 0 если нет доступных кнопок.
+ */
+QMenu* SendWidget::availableActions()
+{
+  QMenu *menu = new QMenu(tr("Добавить"), this);
+  menu->setIcon(QIcon(":/images/edit-add.png"));
+
+  if (m_availableActions.isEmpty())
+    return 0;
+
+  if (m_availableActions.contains("bold"))
+    menu->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"))->setData("bold");
+
+  if (m_availableActions.contains("italic"))
+    menu->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"))->setData("italic");
+
+  if (m_availableActions.contains("underline"))
+    menu->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"))->setData("underline");
+
+  if (m_availableActions.contains("emoticons"))
+    menu->addAction(QIcon(":/images/emoticon.png"), tr("Смайлики"))->setData("emoticons");
+
+  if (m_availableActions.contains("log"))
+    menu->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"))->setData("log");
+
+  if (m_availableActions.contains("send") && !m_bigSendButton)
+    menu->addAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"))->setData("send");
+
+  bool separator = false;
+
+  if (m_availableActions.contains("separator")) {
+    separator = true;
+    menu->addSeparator();
+    menu->addAction(tr("Разделитель"))->setData("separator");
+  }
+
+  if (m_availableActions.contains("stretch")) {
+    if (!separator)
+      menu->addSeparator();
+    menu->addAction(tr("Растяжка"))->setData("stretch");
+  }
+
+  if (menu->actions().isEmpty()) {
+    menu->deleteLater();
+    return 0;
+  }
+  else
+    return menu;
 }
 
 
