@@ -64,7 +64,8 @@ private:
   QAction* createAction(const QString &name, QAction *before = 0);
   QMenu* availableActions();
   QStringList toolBarLayout() const;
-  void buildToolBar(const QStringList &actions);
+  void buildToolBar(const QStringList &actions, bool forceSend = true);
+  void clearToolBar();
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
   void saveToolBarLayout();

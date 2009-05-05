@@ -140,8 +140,8 @@ public:
   #endif
   #ifndef SCHAT_WINCE
     QComboBox *statusCombo;
-    QToolBar *toolBar;
   #endif
+  QToolBar *toolBar;
 };
 
 #endif /* SCHATWINDOW_P_H_ */
