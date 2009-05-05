@@ -149,22 +149,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
  */
 void InputWidget::createActions()
 {
-  m_cutAction = new QAction(QIcon(":/images/editcut.png"), tr("&Вырезать"), this);
+  m_cutAction = new QAction(QIcon(":/images/edit-cut.png"), tr("&Вырезать"), this);
   m_cutAction->setShortcut(Qt::CTRL + Qt::Key_X);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
-  m_copyAction = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
+  m_copyAction = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
   m_copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
-  m_pasteAction = new QAction(QIcon(":/images/editpaste.png"), tr("&Вставить"), this);
+  m_pasteAction = new QAction(QIcon(":/images/edit-paste.png"), tr("&Вставить"), this);
   m_pasteAction->setShortcut(Qt::CTRL + Qt::Key_V);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
-  m_clearAction = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  m_clearAction = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
-  m_selectAllAction = new QAction(tr("&Выделить всё"), this);
+  m_selectAllAction = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
   m_selectAllAction->setShortcut(Qt::CTRL + Qt::Key_A);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }

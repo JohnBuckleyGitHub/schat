@@ -545,15 +545,15 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 
 void ChatView::createActions()
 {
-  d->copy = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
+  d->copy = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  d->clear = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(tr("&Выделить всё"), this);
+    d->selectAll = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
   #endif
 }

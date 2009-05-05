@@ -410,7 +410,9 @@ void SChatWindowPrivate::createToolButtons()
   settingsButton->setMenu(iconMenu);
   settingsButton->setPopupMode(QToolButton::InstantPopup);
 
+  #ifndef Q_OS_WINCE
   toolBar->setIconSize(QSize(16, 16));
+  #endif
   toolBar->setStyleSheet("QToolBar { margin: 0px; }");
   toolBar->addSeparator();
   toolBar->addWidget(settingsButton);

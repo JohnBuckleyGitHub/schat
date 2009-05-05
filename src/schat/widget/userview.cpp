@@ -302,7 +302,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
       privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
 
     QMenu copyMenu(tr("Копировать"), this);
-    copyMenu.setIcon(QIcon(":/images/editcopy.png"));
+    copyMenu.setIcon(QIcon(":/images/edit-copy.png"));
     menu.addMenu(&copyMenu);
 
     AbstractProfile profile(item->data(ProfileData).toStringList(), this);
