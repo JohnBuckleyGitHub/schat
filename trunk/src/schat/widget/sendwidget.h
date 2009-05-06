@@ -57,7 +57,8 @@ private slots:
   void setBold(bool b);
   void setItalic(bool b);
   void setSettings();
-  void setUnderline (bool b);
+  void setStrike(bool b);
+  void setUnderline(bool b);
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
@@ -74,6 +75,7 @@ private:
   InputWidget* const m_input;        ///< Виджет ввода текста.
   QPointer<QAction> m_bold;          ///< "Полужирный".
   QPointer<QAction> m_italic;        ///< "Курсив".
+  QPointer<QAction> m_strike;        ///< "Зачёркнутый".
   QPointer<QAction> m_underline;     ///< "Подчёркнутый".
   QPointer<QToolButton> m_emoticons; ///< Кнопка для выбора смайлов.
   QPointer<QToolButton> m_send;      ///< Кнопка отправки.

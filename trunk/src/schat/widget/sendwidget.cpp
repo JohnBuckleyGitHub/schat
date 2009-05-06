@@ -30,7 +30,7 @@ SendWidget::SendWidget(QWidget *parent)
   m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
   m_input(new InputWidget(this))
 {
-  m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator";
+  m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
   initToolBar();
   setSettings();
 
@@ -69,9 +69,10 @@ void SendWidget::cursorPositionChanged()
   }
 
   QTextCharFormat charFormat = cursor.charFormat();
-  if (m_bold) m_bold->setChecked(charFormat.font().bold());
-  if (m_italic) m_italic->setChecked(charFormat.font().italic());
+  if (m_bold)      m_bold->setChecked(charFormat.font().bold());
+  if (m_italic)    m_italic->setChecked(charFormat.font().italic());
   if (m_underline) m_underline->setChecked(charFormat.font().underline());
+  if (m_strike)    m_strike->setChecked(charFormat.font().strikeOut());
 }
 
 
@@ -112,7 +113,19 @@ void SendWidget::setSettings()
 
 
 /*!
- * \brief Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
+ * Изменение состояние текса "Зачёркнутый".
+ */
+void SendWidget::setStrike(bool b)
+{
+  QTextCharFormat format;
+  format.setFontStrikeOut(b);
+
+  mergeFormat(format);
+}
+
+
+/*!
+ * Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
  */
 void SendWidget::setUnderline(bool b)
 {
@@ -161,8 +174,6 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
         action->deleteLater();
         if (!m_availableActions.contains(name))
           m_availableActions << name;
-
-        saveToolBarLayout();
       }
       else if (result == resetAction) {
         clearToolBar();
@@ -174,6 +185,8 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
           createAction(name, action);
         }
       }
+
+      saveToolBarLayout();
     }
     return true;
   }
@@ -214,6 +227,11 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
     action->setCheckable(true);
     action->setShortcut(Qt::CTRL + Qt::Key_U);
     m_underline = action;
+  }
+  else if (lowerName == "strike") {
+    action = m_toolBar->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"), this, SLOT(setStrike(bool)));
+    action->setCheckable(true);
+    m_strike = action;
   }
   else if (lowerName == "separator") {
     action = m_toolBar->addSeparator();
@@ -318,6 +336,9 @@ QMenu* SendWidget::availableActions()
 
   if (m_availableActions.contains("underline"))
     menu->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"))->setData("underline");
+
+  if (m_availableActions.contains("strike"))
+    menu->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"))->setData("strike");
 
   if (m_availableActions.contains("emoticons"))
     menu->addAction(QIcon(":/images/emoticon.png"), tr("Смайлики"))->setData("emoticons");
