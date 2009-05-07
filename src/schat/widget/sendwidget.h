@@ -41,10 +41,12 @@ class SendWidget : public QWidget
 public:
   SendWidget(QWidget *parent = 0);
   inline void clear() { m_input->clearMsg(); }
+  QToolButton* settingsButton() const;
 
 signals:
   void needCopy();
   void sendMsg(const QString &message);
+  void showSettingsPage(int page);
   void statusShortcut(int key);
 
 public slots:
@@ -58,15 +60,18 @@ private slots:
   void setItalic(bool b);
   void setSettings();
   void setStrike(bool b);
+  void settingsPage();
   void setUnderline(bool b);
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
   QAction* createAction(const QString &name, QAction *before = 0);
+  QAction* createSettingsPage(QMenu *menu, const QIcon &icon, const QString &text, int page);
   QMenu* availableActions();
   QStringList toolBarLayout() const;
   void buildToolBar(const QStringList &actions, bool forceSend = true);
   void clearToolBar();
+  void createSettingsButton();
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
   void saveToolBarLayout();
@@ -81,6 +86,7 @@ private:
   QPointer<QToolButton> m_send;      ///< Кнопка отправки.
   QStringList m_availableActions;    ///< Список кнопок которые можно добавить на панель инструментов.
   QToolBar *m_toolBar;               ///< Панель инструментов.
+  QToolButton *m_settingsButton;     ///< Кнопка с меню настроек.
 };
 
 #endif /*SENDWIDGET_H_*/

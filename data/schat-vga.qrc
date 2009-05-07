@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="images/book.png">images/vga/book.png</file>
+  <file alias="images/configure.png">images/vga/configure.png</file>
   <file alias="images/edit-add.png">images/vga/edit-add.png</file>
   <file alias="images/edit-clear.png">images/vga/edit-clear.png</file>
   <file alias="images/edit-copy.png">images/vga/edit-copy.png</file>
@@ -28,7 +29,6 @@
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
   <file>images/computer.png</file>
-  <file>images/configure.png</file>
   <file>images/dialog-cancel.png</file>
   <file>images/dialog-ok.png</file>
   <file>images/emoticon.png</file>

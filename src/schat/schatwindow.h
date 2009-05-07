@@ -69,7 +69,7 @@ private slots:
   void sendMsg(const QString &msg);
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
-  void showSettings();
+  void showSettingsPage(int page = 0);
   void sound();
   void splitterMoved();
   void statusChangedByUser();

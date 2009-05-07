@@ -37,8 +37,13 @@ class AbstractProfile;
 #define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
 namespace schat {
+  #ifndef Q_OS_WINCE
   static const QStringList DefaultToolBarLayout = QStringList() << "bold" << "italic" << "underline"
       << "separator" << "emoticons" << "stretch" << "log" << "separator" << "send";
+  #else
+  static const QStringList DefaultToolBarLayout = QStringList() << "bold" << "italic" << "underline"
+      << "separator" << "settings" << "emoticons" << "stretch" << "log" << "separator" << "send";
+  #endif
 }
 
 /*!
