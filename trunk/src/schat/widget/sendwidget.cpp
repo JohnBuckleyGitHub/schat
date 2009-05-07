@@ -20,10 +20,11 @@
 
 #include "emoticons/emoticonselector.h"
 #include "settings.h"
+#include "settingsdialog.h"
 #include "widget/sendwidget.h"
 
 /*!
- * \brief Конструктор класса SendWidget.
+ * Конструктор класса SendWidget.
  */
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent),
@@ -31,6 +32,7 @@ SendWidget::SendWidget(QWidget *parent)
   m_input(new InputWidget(this))
 {
   m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
+  createSettingsButton();
   initToolBar();
   setSettings();
 
@@ -53,6 +55,16 @@ SendWidget::SendWidget(QWidget *parent)
   connect(m_input, SIGNAL(statusShortcut(int)), SIGNAL(statusShortcut(int)));
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
+}
+
+
+QToolButton* SendWidget::settingsButton() const
+{
+  if (m_availableActions.contains("settings")) {
+    return m_settingsButton;
+  }
+
+  return 0;
 }
 
 
@@ -124,6 +136,14 @@ void SendWidget::setStrike(bool b)
 }
 
 
+void SendWidget::settingsPage()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    emit showSettingsPage(action->data().toInt());
+}
+
+
 /*!
  * Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
  */
@@ -171,7 +191,8 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     if (result) {
       if (result == removeAction) {
         m_toolBar->removeAction(action);
-        action->deleteLater();
+        if (name != "settings")
+          action->deleteLater();
         if (!m_availableActions.contains(name))
           m_availableActions << name;
       }
@@ -232,6 +253,10 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
     action = m_toolBar->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"), this, SLOT(setStrike(bool)));
     action->setCheckable(true);
     m_strike = action;
+  }
+  else if (lowerName == "settings") {
+    action = m_toolBar->addWidget(m_settingsButton);
+    action->setVisible(true);
   }
   else if (lowerName == "separator") {
     action = m_toolBar->addSeparator();
@@ -300,6 +325,14 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
 }
 
 
+QAction* SendWidget::createSettingsPage(QMenu *menu, const QIcon &icon, const QString &text, int page)
+{
+  QAction *action = menu->addAction(icon, text, this, SLOT(settingsPage()));
+  action->setData(page);
+  return action;
+}
+
+
 /*!
  * Текущий список кнопок.
  */
@@ -339,6 +372,11 @@ QMenu* SendWidget::availableActions()
 
   if (m_availableActions.contains("strike"))
     menu->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"))->setData("strike");
+
+  #ifdef Q_OS_WINCE
+  if (m_availableActions.contains("settings"))
+    menu->addAction(QIcon(":/images/configure.png"), tr("Настройка"))->setData("settings");
+  #endif
 
   if (m_availableActions.contains("emoticons"))
     menu->addAction(QIcon(":/images/emoticon.png"), tr("Смайлики"))->setData("emoticons");
@@ -402,8 +440,37 @@ void SendWidget::clearToolBar()
     QString name = a->data().toString();
     if (!name.isEmpty() && !m_availableActions.contains(name))
       m_availableActions << name;
-    a->deleteLater();
+
+    if (name != "settings")
+      a->deleteLater();
   }
+}
+
+
+/*!
+ * Создание кнопки настройки.
+ */
+void SendWidget::createSettingsButton()
+{
+  m_settingsButton = new QToolButton(this);
+  m_settingsButton->setIcon(QIcon(":/images/configure.png"));
+  m_settingsButton->setToolTip(tr("Настройка..."));
+  m_settingsButton->setAutoRaise(true);
+  m_settingsButton->setPopupMode(QToolButton::InstantPopup);
+  m_settingsButton->setVisible(false);
+
+  QMenu *menu = new QMenu(m_settingsButton);
+  createSettingsPage(menu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
+  createSettingsPage(menu, QIcon(":/images/applications-internet.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
+  createSettingsPage(menu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);
+  createSettingsPage(menu, QIcon(":/images/emoticon.png"), tr("Смайлики..."), SettingsDialog::EmoticonsPage);
+  createSettingsPage(menu, QIcon(":/images/sound.png"), tr("Звуки..."), SettingsDialog::SoundPage);
+  createSettingsPage(menu, QIcon(":/images/notification.png"), tr("Оповещатель..."), SettingsDialog::NotificationPage);
+  createSettingsPage(menu, QIcon(":/images/update.png"), tr("Обновление..."), SettingsDialog::UpdatePage);
+  createSettingsPage(menu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
+
+  m_settingsButton->setMenu(menu);
+  m_availableActions << "settings";
 }
 
 

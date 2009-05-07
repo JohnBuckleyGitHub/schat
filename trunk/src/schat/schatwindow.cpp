@@ -370,52 +370,17 @@ void SChatWindowPrivate::createStatusBar()
 
 /*!
  * Создаёт кнопки.
- * \todo Сделать более красивое создание действий.
  */
 void SChatWindowPrivate::createToolButtons()
 {
-  QMenu *iconMenu = new QMenu(q);
-  QAction *profilePref = iconMenu->addAction(QIcon(":/images/profile.png"), QObject::tr("Личные данные..."), q, SLOT(showSettings()));
-  #ifndef Q_OS_WINCE
-  profilePref->setShortcut(QObject::tr("Ctrl+F12"));
-  #endif
-  profilePref->setData(SettingsDialog::ProfilePage);
-
-  QAction *networkPref = iconMenu->addAction(QIcon(":/images/applications-internet.png"), QObject::tr("Сеть..."), q, SLOT(showSettings()));
-  networkPref->setData(SettingsDialog::NetworkPage);
-
-  QAction *interfacePref = iconMenu->addAction(QIcon(":/images/applications-graphics.png"), QObject::tr("Интерфейс..."), q, SLOT(showSettings()));
-  interfacePref->setData(SettingsDialog::InterfacePage);
-
-  QAction *emoticonsPref = iconMenu->addAction(QIcon(":/images/emoticon.png"), QObject::tr("Смайлики..."), q, SLOT(showSettings()));
-  emoticonsPref->setData(SettingsDialog::EmoticonsPage);
-
-  QAction *soundPref = iconMenu->addAction(QIcon(":/images/sound.png"), QObject::tr("Звуки..."), q, SLOT(showSettings()));
-  soundPref->setData(SettingsDialog::SoundPage);
-
-  QAction *notificationPref = iconMenu->addAction(QIcon(":/images/notification.png"), QObject::tr("Оповещатель..."), q, SLOT(showSettings()));
-  notificationPref->setData(SettingsDialog::NotificationPage);
-
-  QAction *updatePref = iconMenu->addAction(QIcon(":/images/update.png"), QObject::tr("Обновление..."), q, SLOT(showSettings()));
-  updatePref->setData(SettingsDialog::UpdatePage);
-
-  QAction *miscPref = iconMenu->addAction(QIcon(":/images/application-x-desktop.png"),  QObject::tr("Разное..."), q, SLOT(showSettings()));
-  miscPref->setData(SettingsDialog::MiscPage);
-
-  // Настройка
-  settingsButton = new QToolButton(q);
-  settingsButton->setIcon(QIcon(":/images/configure.png"));
-  settingsButton->setToolTip(QObject::tr("Настройка..."));
-  settingsButton->setAutoRaise(true);
-  settingsButton->setMenu(iconMenu);
-  settingsButton->setPopupMode(QToolButton::InstantPopup);
-
   #ifndef Q_OS_WINCE
   toolBar->setIconSize(QSize(16, 16));
   #endif
   toolBar->setStyleSheet("QToolBar { margin: 0px; }");
   toolBar->addSeparator();
-  toolBar->addWidget(settingsButton);
+  QToolButton *settingsButton = send->settingsButton();
+  if (settingsButton)
+    toolBar->addWidget(settingsButton)->setVisible(true);
   toolBar->addAction(soundAction);
   toolBar->addAction(aboutAction);
 }
@@ -990,9 +955,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(d->send, SIGNAL(needCopy()), SLOT(copy()));
   connect(d->send, SIGNAL(statusShortcut(int)), SLOT(statusShortcut(int)));
+  connect(d->send, SIGNAL(showSettingsPage(int)), SLOT(showSettingsPage(int)));
   connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(d->users, SIGNAL(insertNick(const QString &)), d->send, SLOT(insertHtml(const QString &)));
-  connect(d->users, SIGNAL(showSettings()), SLOT(showSettings()));
+  connect(d->users, SIGNAL(showSettings()), SLOT(showSettingsPage()));
   connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
@@ -1502,7 +1468,10 @@ void SChatWindow::serverMessage(const QString &msg)
 }
 
 
-void SChatWindow::showSettings()
+/*!
+ * Отображает выбранную страницу настроек.
+ */
+void SChatWindow::showSettingsPage(int page)
 {
   if (isHidden())
     show();
@@ -1512,10 +1481,7 @@ void SChatWindow::showSettings()
     d->settingsDialog->show();
   }
 
-  QAction *action = qobject_cast<QAction *>(sender());
-  if (action)
-    d->settingsDialog->setPage(action->data().toInt());
-
+  d->settingsDialog->setPage(page);
   d->settingsDialog->activateWindow();
 }
 
@@ -1804,7 +1770,7 @@ void SChatWindow::createActions()
   // Настройка...
   d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
   d->settingsAction->setData(SettingsDialog::ProfilePage);
-  connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettings()));
+  connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettingsPage()));
 
   // Выход из программы
   d->quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);

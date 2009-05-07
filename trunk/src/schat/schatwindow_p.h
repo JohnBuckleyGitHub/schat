@@ -122,7 +122,6 @@ public:
   QStatusBar *statusBar;
   QTabWidget *tabs;
   QTime pingTime;
-  QToolButton *settingsButton;
   QToolButton *soundButton;
   QVBoxLayout *mainLay;
   QVBoxLayout *rightLay;
