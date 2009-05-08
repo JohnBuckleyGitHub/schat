@@ -31,6 +31,16 @@ class SoundAction : public QAction
 
 public:
   SoundAction(QObject *parent = 0);
+  inline bool isMute() const { return m_mute; };
+  void mute();
+  void mute(bool mute);
+
+private slots:
+  void notify(int notify);
+  void sound();
+
+private:
+  bool m_mute; ///< \a true если звук отключен.
 };
 
 #endif /* SOUNDACTION_H_ */

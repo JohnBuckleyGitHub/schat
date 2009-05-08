@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "simplechatapp.h"
+#include "soundaction.h"
 #include "tab.h"
 #include "trayicon.h"
 #include "welcomedialog.h"
@@ -164,8 +165,7 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
   if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
     AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
 
-    /// \deprecated Проверку на разрешение на воспроизведение звука нужно перенести в класс SoundAction.
-    if (soundAction->data().toBool())
+    if (!soundAction->isMute())
       tray->playSound(key);
 
     if (!tab->notice()) {
@@ -371,6 +371,7 @@ void SChatWindowPrivate::createStatusBar()
 
 /*!
  * Создаёт кнопки.
+ * \todo Удалить эту функцию для Windows Mobile
  */
 void SChatWindowPrivate::createToolButtons()
 {
@@ -383,8 +384,9 @@ void SChatWindowPrivate::createToolButtons()
   if (settingsButton)
     toolBar->addWidget(settingsButton)->setVisible(true);
 
-  /// \deprecated Механизм добавление кнопки должен быть изменён.
-  toolBar->addAction(soundAction);
+  if (send->soundAction().second)
+    toolBar->addAction(soundAction);
+
   toolBar->addAction(aboutAction);
 }
 
@@ -514,28 +516,6 @@ void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
 
 
 /*!
- * Включает/выключает звук.
- *
- * \param mute \a true выключить звук.
- *
- * \deprecated Переключение состояние должно происходить внутри класса SoundAction.
- */
-void SChatWindowPrivate::mute(bool mute)
-{
-  if (mute) {
-    soundAction->setIcon(QIcon(":/images/sound_mute.png"));
-    soundAction->setText(QObject::tr("Включить звуки"));
-  }
-  else {
-    soundAction->setIcon(QIcon(":/images/sound.png"));
-    soundAction->setText(QObject::tr("Отключить звуки"));
-  }
-
-  soundAction->setData(!mute);
-}
-
-
-/*!
  * Восстанавливает геометрию окна.
  */
 void SChatWindowPrivate::restoreGeometry()
@@ -624,47 +604,6 @@ void SChatWindowPrivate::showChat()
 
 
 /*!
- * Включение/выключение звука пользователем.
- * Если текущий статус равен schat::StatusDnD и звук включен,
- * то опция \b Sound/MuteInDnD устанавливается в \a true и звук выключается.
- * иначе если звук выключен, звук включается глобально, опция \b Sound и
- * опция \b Sound/MuteInDnD устанавливается в \a true.
- *
- * Для всех прочих статусов, значение опции \b Sound меняется на противоположное.
- *
- * \deprecated Функцию целиком необходимо перенести в класс SoundAction.
- */
-void SChatWindowPrivate::sound()
-{
-  if (pref->profile()->status() == schat::StatusDnD) {
-    if (soundAction->data().toBool()) {
-      pref->setBool("Sound/MuteInDnD", true);
-      mute(true);
-    }
-    else {
-      pref->setBool("Sound/MuteInDnD", false);
-      pref->setBool("Sound", true);
-      mute(false);
-    }
-  }
-  else {
-    pref->setBool("Sound", !pref->getBool("Sound"));
-    soundState();
-  }
-}
-
-
-/*!
- * Устанавливает состояние звука на основе настроек.
- * \deprecated Функцию целиком необходимо перенести в класс SoundAction.
- */
-void SChatWindowPrivate::soundState()
-{
-  mute(!pref->getBool("Sound"));
-}
-
-
-/*!
  * Отображение состояния успешного подключения к серверу/сети.
  */
 void SChatWindowPrivate::statusAccessGranted(const QString &network, const QString &server)
@@ -729,8 +668,7 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
   statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
 
-  /// \deprecated Установка состояния звука должа производится вызовом метода класса SoundAction.
-  soundState();
+  soundAction->mute();
 
   if (echo)
     main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
@@ -775,16 +713,15 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 
   // Проверка наличия собственного ника в списке data2.
   if (data2.contains(profile->nick())) {
-    soundState(); /// \deprecated Установка состояния звука должа производится вызовом метода класса SoundAction.
+    soundAction->mute();
     profile->setStatus(data1.at(0));
 
     if (status == schat::StatusAutoAway || status == schat::StatusAway)
       updateStatus(StatusAway);
     else if (status == schat::StatusDnD) {
       updateStatus(StatusDnD);
-      /// \deprecated Управление состоянием звука должно при статусе "Не беспокоить" должно находится в классе SoundAction.
       if (pref->getBool("Sound/MuteInDnD") && soundAction->data().toBool())
-        mute(true);
+        soundAction->mute(true);
     }
     else
       updateStatus(StatusOnline);
@@ -1497,15 +1434,6 @@ void SChatWindow::showSettingsPage(int page)
 
 
 /*!
- * \sa SChatWindowPrivate::sound()
- */
-void SChatWindow::sound()
-{
-  d->sound();
-}
-
-
-/*!
  * Обработка перемещения разделителя.
  * Новое положение сохраняется в настройках.
  */
@@ -1593,14 +1521,6 @@ void SChatWindow::settingsChanged(int notify)
 
     case Settings::ByeMsgChanged:
       d->clientService->sendByeMsg();
-      break;
-
-    /// \deprecated Обработка изменения настроек звука должна происходить в классе SoundAction.
-    case Settings::SoundChanged:
-      d->soundState();
-      if (d->profile->status() == schat::StatusDnD && d->pref->getBool("Sound/MuteInDnD")) {
-        d->mute(true);
-      }
       break;
 
     case Settings::AwaySettingsChanged:
@@ -1758,8 +1678,8 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 
 
 
-/** [private]
- *
+/*!
+ * Создание действий.
  */
 void SChatWindow::createActions()
 {
@@ -1788,10 +1708,7 @@ void SChatWindow::createActions()
   connect(d->quitAction, SIGNAL(triggered()), SLOT(closeChat()));
 
   // Включить/выключить звук
-  /// \deprecated Полностью изменить создание действия.
-  d->soundAction = new QAction(this);
-  d->soundState();
-  connect(d->soundAction, SIGNAL(triggered()), SLOT(sound()));
+  d->soundAction = d->send->soundAction().first;
 
   // Управление сервером...
   d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);

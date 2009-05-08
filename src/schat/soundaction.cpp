@@ -16,6 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtGui>
+
+#include "abstractprofile.h"
+#include "protocol.h"
+#include "settings.h"
 #include "soundaction.h"
 
 /*!
@@ -24,5 +29,79 @@
 SoundAction::SoundAction(QObject *parent)
   : QAction(parent)
 {
+  setData("sound");
+  mute();
+  connect(this, SIGNAL(triggered()), SLOT(sound()));
+  connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
+}
 
+
+/*!
+ * Включает/выключает звук.
+ */
+void SoundAction::mute()
+{
+  mute(!SimpleSettings->getBool("Sound"));
+}
+
+
+/*!
+ * Включает/выключает звук.
+ *
+ * \param mute \a true выключить звук.
+ */
+void SoundAction::mute(bool mute)
+{
+  if (mute) {
+    setIcon(QIcon(":/images/sound_mute.png"));
+    setText(tr("Включить звуки"));
+  }
+  else {
+    setIcon(QIcon(":/images/sound.png"));
+    setText(tr("Отключить звуки"));
+  }
+
+  m_mute = mute;
+}
+
+
+/*!
+ * Обработка изменения настроек.
+ */
+void SoundAction::notify(int notify)
+{
+  if (notify == Settings::SoundChanged) {
+    mute();
+    if (SimpleSettings->profile()->status() == schat::StatusDnD && SimpleSettings->getBool("Sound/MuteInDnD"))
+      mute(true);
+  }
+}
+
+
+/*!
+ * Включение/выключение звука пользователем.
+ * Если текущий статус равен schat::StatusDnD и звук включен,
+ * то опция \b Sound/MuteInDnD устанавливается в \a true и звук выключается.
+ * иначе если звук выключен, звук включается глобально, опция \b Sound и
+ * опция \b Sound/MuteInDnD устанавливается в \a false.
+ *
+ * Для всех прочих статусов, значение опции \b Sound меняется на противоположное.
+ */
+void SoundAction::sound()
+{
+  if (SimpleSettings->profile()->status() == schat::StatusDnD) {
+    if (!isMute()) {
+      SimpleSettings->setBool("Sound/MuteInDnD", true);
+      mute(true);
+    }
+    else {
+      SimpleSettings->setBool("Sound/MuteInDnD", false);
+      SimpleSettings->setBool("Sound", true);
+      mute(false);
+    }
+  }
+  else {
+    SimpleSettings->setBool("Sound", !SimpleSettings->getBool("Sound"));
+    mute();
+  }
 }
