@@ -42,7 +42,7 @@ namespace schat {
       << "separator" << "emoticons" << "stretch" << "log" << "separator" << "send";
   #else
   static const QStringList DefaultToolBarLayout = QStringList() << "bold" << "italic" << "underline"
-      << "separator" << "settings" << "emoticons" << "stretch" << "log" << "separator" << "send";
+      << "separator" << "settings" << "emoticons" << "stretch" << "sound" << "log" << "separator" << "send";
   #endif
 }
 

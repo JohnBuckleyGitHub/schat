@@ -21,6 +21,7 @@
 #include "emoticons/emoticonselector.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "soundaction.h"
 #include "widget/sendwidget.h"
 
 /*!
@@ -32,7 +33,7 @@ SendWidget::SendWidget(QWidget *parent)
   m_input(new InputWidget(this))
 {
   m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
-  createSettingsButton();
+  createPermanentButtons();
   initToolBar();
   setSettings();
 
@@ -58,11 +59,20 @@ SendWidget::SendWidget(QWidget *parent)
 }
 
 
+/*!
+ * Возвращает пару: указатель на действие и флаг доступности.
+ */
+QPair<SoundAction*, bool> SendWidget::soundAction() const
+{
+  QPair<SoundAction*, bool> pair(m_soundAction, m_availableActions.contains("sound"));
+  return pair;
+}
+
+
 QToolButton* SendWidget::settingsButton() const
 {
-  if (m_availableActions.contains("settings")) {
+  if (m_availableActions.contains("settings"))
     return m_settingsButton;
-  }
 
   return 0;
 }
@@ -191,7 +201,7 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     if (result) {
       if (result == removeAction) {
         m_toolBar->removeAction(action);
-        if (name != "settings")
+        if (!m_permanentButtons.contains(name))
           action->deleteLater();
         if (!m_availableActions.contains(name))
           m_availableActions << name;
@@ -285,6 +295,10 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
     QHBoxLayout *stretchLay = new QHBoxLayout(stretch);
     stretchLay->addStretch();
     action = m_toolBar->addWidget(stretch);
+  }
+  else if (lowerName == "sound") {
+    m_toolBar->addAction(m_soundAction);
+    action = m_soundAction;
   }
   else if (lowerName == "log") {
     action = m_toolBar->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
@@ -384,6 +398,11 @@ QMenu* SendWidget::availableActions()
   if (m_availableActions.contains("log"))
     menu->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"))->setData("log");
 
+  #ifdef Q_OS_WINCE
+  if (m_availableActions.contains("sound"))
+    menu->addAction(QIcon(":/images/sound.png"), tr("Звук"))->setData("sound");
+  #endif
+
   if (m_availableActions.contains("send") && !m_bigSendButton)
     menu->addAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"))->setData("send");
 
@@ -441,7 +460,7 @@ void SendWidget::clearToolBar()
     if (!name.isEmpty() && !m_availableActions.contains(name))
       m_availableActions << name;
 
-    if (name != "settings")
+    if (m_permanentButtons.contains(name))
       a->deleteLater();
   }
 }
@@ -450,7 +469,7 @@ void SendWidget::clearToolBar()
 /*!
  * Создание кнопки настройки.
  */
-void SendWidget::createSettingsButton()
+void SendWidget::createPermanentButtons()
 {
   m_settingsButton = new QToolButton(this);
   m_settingsButton->setIcon(QIcon(":/images/configure.png"));
@@ -470,7 +489,11 @@ void SendWidget::createSettingsButton()
   createSettingsPage(menu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
 
   m_settingsButton->setMenu(menu);
-  m_availableActions << "settings";
+
+  m_soundAction = new SoundAction(this);
+
+  m_permanentButtons << "settings" << "sound";
+  m_availableActions << m_permanentButtons;
 }
 
 

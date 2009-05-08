@@ -37,6 +37,7 @@ class SettingsDialog;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
+class SoundAction;
 
 /*!
  * \brief Приватный D-класс для класса SChatWindow.
@@ -70,14 +71,11 @@ public:
   void displayStatus(quint32 status, const QString &nick);
   void hideChat();
   void msgToAllPrivateTabs(const QString &msg);
-  void mute(bool mute);
   void restoreGeometry();
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
   void showChat();
-  void sound();
-  void soundState();
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
   void statusUnconnected(bool echo);
@@ -110,7 +108,6 @@ public:
   QAction *onlineAction;
   QAction *quitAction;
   QAction *settingsAction;
-  QAction *soundAction;
   QAction *statusAction;
   QLabel *connectLabel;
   QLabel *connectMovie;
@@ -122,7 +119,6 @@ public:
   QStatusBar *statusBar;
   QTabWidget *tabs;
   QTime pingTime;
-  QToolButton *soundButton;
   QVBoxLayout *mainLay;
   QVBoxLayout *rightLay;
   QWidget *central;
@@ -130,6 +126,7 @@ public:
   SChatWindow *q;
   SendWidget *send;
   Settings *pref;
+  SoundAction *soundAction;
   static QMap<QString, QString> cmds;
   TrayIcon *tray;
   UserView *users;

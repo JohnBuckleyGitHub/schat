@@ -30,6 +30,7 @@ class InputWidget;
 class QAction;
 class QToolBar;
 class QToolButton;
+class SoundAction;
 
 /*!
  * \brief Виджет полностью берущий на себя ввода текста.
@@ -41,6 +42,7 @@ class SendWidget : public QWidget
 public:
   SendWidget(QWidget *parent = 0);
   inline void clear() { m_input->clearMsg(); }
+  QPair<SoundAction*, bool> soundAction() const;
   QToolButton* settingsButton() const;
 
 signals:
@@ -71,7 +73,7 @@ private:
   QStringList toolBarLayout() const;
   void buildToolBar(const QStringList &actions, bool forceSend = true);
   void clearToolBar();
-  void createSettingsButton();
+  void createPermanentButtons();
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
   void saveToolBarLayout();
@@ -85,8 +87,10 @@ private:
   QPointer<QToolButton> m_emoticons; ///< Кнопка для выбора смайлов.
   QPointer<QToolButton> m_send;      ///< Кнопка отправки.
   QStringList m_availableActions;    ///< Список кнопок которые можно добавить на панель инструментов.
+  QStringList m_permanentButtons;    ///< Список не удаляемых кнопок.
   QToolBar *m_toolBar;               ///< Панель инструментов.
   QToolButton *m_settingsButton;     ///< Кнопка с меню настроек.
+  SoundAction *m_soundAction;        ///< Действие для включения/выключения звука.
 };
 
 #endif /*SENDWIDGET_H_*/
