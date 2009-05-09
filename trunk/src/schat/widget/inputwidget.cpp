@@ -121,6 +121,10 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (key == "Return")
     sendMsg();
+  #if QT_VERSION >= 0x040500
+  else if (key == "Ctrl+Return")
+    QApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::ShiftModifier));
+  #endif
   else if (key == "Ctrl+Up")
     nextMsg();
   else if (key == "Ctrl+Down")
@@ -150,22 +154,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 void InputWidget::createActions()
 {
   m_cutAction = new QAction(QIcon(":/images/edit-cut.png"), tr("&Вырезать"), this);
-  m_cutAction->setShortcut(Qt::CTRL + Qt::Key_X);
+  m_cutAction->setShortcut(QKeySequence::Cut);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
   m_copyAction = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
-  m_copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
+  m_copyAction->setShortcut(QKeySequence::Copy);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
   m_pasteAction = new QAction(QIcon(":/images/edit-paste.png"), tr("&Вставить"), this);
-  m_pasteAction->setShortcut(Qt::CTRL + Qt::Key_V);
+  m_pasteAction->setShortcut(QKeySequence::Paste);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
   m_clearAction = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
   m_selectAllAction = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
-  m_selectAllAction->setShortcut(Qt::CTRL + Qt::Key_A);
+  m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
 
