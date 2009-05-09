@@ -460,7 +460,7 @@ void SendWidget::clearToolBar()
     if (!name.isEmpty() && !m_availableActions.contains(name))
       m_availableActions << name;
 
-    if (m_permanentButtons.contains(name))
+    if (!m_permanentButtons.contains(name))
       a->deleteLater();
   }
 }

@@ -370,28 +370,6 @@ void SChatWindowPrivate::createStatusBar()
 
 
 /*!
- * Создаёт кнопки.
- * \todo Удалить эту функцию для Windows Mobile
- */
-void SChatWindowPrivate::createToolButtons()
-{
-  #ifndef Q_OS_WINCE
-  toolBar->setIconSize(QSize(16, 16));
-  #endif
-  toolBar->setStyleSheet("QToolBar { margin: 0px; }");
-  toolBar->addSeparator();
-  QToolButton *settingsButton = send->settingsButton();
-  if (settingsButton)
-    toolBar->addWidget(settingsButton)->setVisible(true);
-
-  if (send->soundAction().second)
-    toolBar->addAction(soundAction);
-
-  toolBar->addAction(aboutAction);
-}
-
-
-/*!
  * Инициализирует поддержку системного трея.
  *
  * \note Для Windows Mobile не происходит создания меню трея,
@@ -795,7 +773,27 @@ void SChatWindowPrivate::updateStatus(int status)
 }
 
 
-#ifdef SCHAT_WINCE
+/*!
+ * Создаёт кнопки.
+ */
+#ifndef SCHAT_WINCE
+void SChatWindowPrivate::createToolButtons()
+{
+  toolBar->setIconSize(QSize(16, 16));
+  toolBar->setStyleSheet("QToolBar { margin: 0px; }");
+  toolBar->addSeparator();
+  QToolButton *settingsButton = send->settingsButton();
+  if (settingsButton)
+    toolBar->addWidget(settingsButton)->setVisible(true);
+
+  if (send->soundAction().second)
+    toolBar->addAction(soundAction);
+
+  toolBar->addAction(aboutAction);
+}
+
+
+#else
 void SChatWindowPrivate::createMainWceMenu()
 {
   q->menuBar()->addAction(aboutAction);
@@ -845,14 +843,18 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->users       = new UserView(d->profile, d->right);
   d->rightLay    = new QVBoxLayout(d->right);
   d->mainLay     = new QVBoxLayout(d->central);
+  #ifndef SCHAT_WINCE
   d->toolBar     = new QToolBar(this);
+  #endif
 
   d->splitter->addWidget(d->tabs);
   d->splitter->addWidget(d->right);
   d->splitter->setStretchFactor(0, 3);
   d->splitter->setStretchFactor(1, 2);
 
+  #ifndef SCHAT_WINCE
   d->rightLay->addWidget(d->toolBar);
+  #endif
   d->rightLay->addWidget(d->users);
   d->rightLay->setMargin(0);
   #if QT_VERSION >= 0x040500
@@ -893,9 +895,11 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->restoreGeometry();
   createActions();
   #if QT_VERSION < 0x040500
-    d->createCornerWidgets();
+  d->createCornerWidgets();
   #endif
+  #ifndef SCHAT_WINCE
   d->createToolButtons();
+  #endif
   d->createTrayIcon();
   createService();
 
