@@ -66,7 +66,6 @@ public:
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
   void closeChat(bool update = false);
   void createStatusBar();
-  void createToolButtons();
   void createTrayIcon();
   void displayStatus(quint32 status, const QString &nick);
   void hideChat();
@@ -86,8 +85,10 @@ public:
     void createCornerWidgets();
   #endif
 
-  #ifdef SCHAT_WINCE
-    void createMainWceMenu();
+  #ifndef SCHAT_WINCE
+  void createToolButtons();
+  #else
+  void createMainWceMenu();
   #endif
 
   AbstractProfile *profile;
@@ -136,8 +137,8 @@ public:
   #endif
   #ifndef SCHAT_WINCE
     QComboBox *statusCombo;
+    QToolBar *toolBar;
   #endif
-  QToolBar *toolBar;
 };
 
 #endif /* SCHATWINDOW_P_H_ */
