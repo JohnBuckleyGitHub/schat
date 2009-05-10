@@ -780,7 +780,7 @@ void SChatWindowPrivate::updateStatus(int status)
 void SChatWindowPrivate::createToolButtons()
 {
   toolBar->setIconSize(QSize(16, 16));
-  toolBar->setStyleSheet("QToolBar { margin: 0px; }");
+  toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
   toolBar->addSeparator();
   QToolButton *settingsButton = send->settingsButton();
   if (settingsButton)

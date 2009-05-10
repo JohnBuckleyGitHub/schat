@@ -33,6 +33,7 @@ HEADERS += \
     chatwindow/chatview.h \
     chatwindow/chatview_p.h \
     clientservice.h \
+    colorbutton.h \
     emoticons/emoticons.h \
     emoticons/emoticonselector.h \
     emoticons/emoticonsprovider.h \
@@ -80,6 +81,7 @@ SOURCES += \
     channellog.cpp \
     chatwindow/chatview.cpp \
     clientservice.cpp \
+    colorbutton.cpp \
     emoticons/emoticons.cpp \
     emoticons/emoticonselector.cpp \
     emoticons/emoticonsprovider.cpp \
