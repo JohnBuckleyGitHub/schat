@@ -129,9 +129,9 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     nextMsg();
   else if (key == "Ctrl+Down")
     prevMsg();
-  else if (key == "Ctrl+C")
+  else if (event->matches(QKeySequence::Copy))
     emit needCopy();
-  else if (key == "Ctrl+V")
+  else if (event->matches(QKeySequence::Paste))
     paste();
   else if (key == "Ctrl+1")
     emit statusShortcut(1);
