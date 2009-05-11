@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="images/book.png">images/vga/book.png</file>
+  <file alias="images/color.png">images/vga/color.png</file>
   <file alias="images/configure.png">images/vga/configure.png</file>
   <file alias="images/edit-add.png">images/vga/edit-add.png</file>
   <file alias="images/edit-clear.png">images/vga/edit-clear.png</file>

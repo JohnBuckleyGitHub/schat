@@ -26,6 +26,31 @@
 ColorButton::ColorButton(QWidget *parent)
   : QToolButton(parent)
 {
-
+  setColor(QColor("#000000"));
 }
 
+
+ColorButton::~ColorButton()
+{
+}
+
+
+/*!
+ * Установка нового цвета.
+ */
+void ColorButton::setColor(const QColor &color)
+{
+  QPainter painter;
+  QPixmap pix(":/images/color.png");
+  painter.begin(&pix);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(QBrush(color));
+  #ifndef SCHAT_WINCE_VGA
+  painter.drawEllipse(QPoint(8, 8), 4, 4);
+  #else
+  painter.drawEllipse(QPoint(16, 16), 8, 8);
+  #endif
+  painter.end();
+  setIcon(pix);
+}

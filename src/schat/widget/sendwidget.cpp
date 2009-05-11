@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "colorbutton.h"
 #include "emoticons/emoticonselector.h"
 #include "settings.h"
 #include "settingsdialog.h"
@@ -32,7 +33,7 @@ SendWidget::SendWidget(QWidget *parent)
   m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
   m_input(new InputWidget(this))
 {
-  m_availableActions << "bold" << "italic" << "underline" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
+  m_availableActions << "bold" << "italic" << "underline" << "color" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
   createPermanentButtons();
   initToolBar();
   setSettings();
@@ -270,6 +271,11 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
   }
   else if (lowerName == "separator") {
     action = m_toolBar->addSeparator();
+  }
+  else if (lowerName == "color") {
+    if (!m_color)
+      m_color = new ColorButton(this);
+    action = m_toolBar->addWidget(m_color);
   }
   else if (lowerName == "emoticons") {
     QMenu *menu = new QMenu(this);

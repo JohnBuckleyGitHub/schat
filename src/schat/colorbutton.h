@@ -31,6 +31,10 @@ class ColorButton : public QToolButton
 
 public:
   ColorButton(QWidget *parent = 0);
+  ~ColorButton();
+
+private:
+  void setColor(const QColor &color);
 };
 
 
