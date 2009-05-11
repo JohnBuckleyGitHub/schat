@@ -25,6 +25,7 @@
 
 #include "widget/inputwidget.h"
 
+class ColorButton;
 class EmoticonSelector;
 class InputWidget;
 class QAction;
@@ -80,6 +81,7 @@ private:
 
   const bool m_bigSendButton;        ///< Опция настроек "BigSendButton".
   InputWidget* const m_input;        ///< Виджет ввода текста.
+  QPointer<ColorButton> m_color;     ///< Кнопка для цветового веделения.
   QPointer<QAction> m_bold;          ///< "Полужирный".
   QPointer<QAction> m_italic;        ///< "Курсив".
   QPointer<QAction> m_strike;        ///< "Зачёркнутый".
