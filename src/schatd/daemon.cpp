@@ -71,12 +71,12 @@ bool Daemon::start()
   zombieTimer.start();
   m_settings->read();
 
-  if (m_settings->getInt("LogLevel") > -1) {
+  logLevel = m_settings->getInt("LogLevel");
+  if (logLevel > -1) {
     m_log = new DaemonLog(this);
     if (!m_log->init()) {
       m_log->deleteLater();
-      m_settings->setInt("LogLevel", -1);
-      logLevel = m_settings->getInt("LogLevel");
+      logLevel = -1;
     }
   }
 
