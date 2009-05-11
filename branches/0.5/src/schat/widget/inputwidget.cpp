@@ -28,9 +28,7 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
 {
-  QFontInfo fontInfo(currentFont());
-  setMinimumHeight(fontInfo.pixelSize() * 2);
-  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  detectMinimumHeight();
   m_default = currentCharFormat();
   m_current = 0;
   document()->setDefaultStyleSheet("a {color:#815d53; text-decoration:none;}");
@@ -123,13 +121,17 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (key == "Return")
     sendMsg();
+  #if QT_VERSION >= 0x040500
+  else if (key == "Ctrl+Return")
+    QApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::ShiftModifier));
+  #endif
   else if (key == "Ctrl+Up")
     nextMsg();
   else if (key == "Ctrl+Down")
     prevMsg();
-  else if (key == "Ctrl+C")
+  else if (event->matches(QKeySequence::Copy))
     emit needCopy();
-  else if (key == "Ctrl+V")
+  else if (event->matches(QKeySequence::Paste))
     paste();
   else if (key == "Ctrl+1")
     emit statusShortcut(1);
@@ -151,24 +153,42 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
  */
 void InputWidget::createActions()
 {
-  m_cutAction = new QAction(QIcon(":/images/editcut.png"), tr("&Вырезать"), this);
-  m_cutAction->setShortcut(Qt::CTRL + Qt::Key_X);
+  m_cutAction = new QAction(QIcon(":/images/edit-cut.png"), tr("&Вырезать"), this);
+  m_cutAction->setShortcut(QKeySequence::Cut);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
-  m_copyAction = new QAction(QIcon(":/images/editcopy.png"), tr("&Копировать"), this);
-  m_copyAction->setShortcut(Qt::CTRL + Qt::Key_C);
+  m_copyAction = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  m_copyAction->setShortcut(QKeySequence::Copy);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
-  m_pasteAction = new QAction(QIcon(":/images/editpaste.png"), tr("&Вставить"), this);
-  m_pasteAction->setShortcut(Qt::CTRL + Qt::Key_V);
+  m_pasteAction = new QAction(QIcon(":/images/edit-paste.png"), tr("&Вставить"), this);
+  m_pasteAction->setShortcut(QKeySequence::Paste);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
-  m_clearAction = new QAction(QIcon(":/images/editclear.png"), tr("&Очистить"), this);
+  m_clearAction = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
-  m_selectAllAction = new QAction(tr("&Выделить всё"), this);
-  m_selectAllAction->setShortcut(Qt::CTRL + Qt::Key_A);
+  m_selectAllAction = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+  m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
+}
+
+
+void InputWidget::detectMinimumHeight()
+{
+  #if defined(Q_OS_WINCE)
+   #if defined(SCHAT_WINCE_VGA)
+    static const int correction = 10;
+   #else
+    static const int correction = 4;
+   #endif
+  #else
+    static const int correction = 0;
+  #endif
+  QFontInfo fontInfo(currentFont());
+  setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 

@@ -49,6 +49,7 @@ protected:
 
 private:
   void createActions();
+  void detectMinimumHeight();
   void nextMsg();
   void prevMsg();
 
