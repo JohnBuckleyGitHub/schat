@@ -19,8 +19,30 @@
 #ifndef COLORBUTTON_H_
 #define COLORBUTTON_H_
 
-#include <QWidget>
+#include <QLabel>
 #include <QToolButton>
+#include <QWidget>
+
+/*!
+ * \brief Виджет для выбора цветов.
+ */
+class ColorWidget : public QWidget
+{
+  Q_OBJECT
+
+public:
+  ColorWidget(QWidget *parent = 0);
+
+signals:
+  void newColor(const QColor &color);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent *event);
+
+private:
+  QImage m_image;
+};
 
 /*!
  * \brief Кнопка для выбора цвета текста.
@@ -33,8 +55,11 @@ public:
   ColorButton(QWidget *parent = 0);
   ~ColorButton();
 
-private:
+private slots:
   void setColor(const QColor &color);
+
+private:
+  ColorWidget *m_colorWidget;
 };
 
 

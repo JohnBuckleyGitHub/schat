@@ -21,12 +21,52 @@
 #include "colorbutton.h"
 
 /*!
+ * Конструктор класса ColorWidget.
+ */
+ColorWidget::ColorWidget(QWidget *parent)
+  : QWidget(parent)
+{
+  m_image = QImage(":/images/color-map.png");
+  setMinimumSize(m_image.size());
+}
+
+
+void ColorWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  if (event->button() == Qt::LeftButton && m_image.valid(event->pos()))
+    emit newColor(QColor(m_image.pixel(event->pos())));
+
+  QWidget::mouseReleaseEvent(event);
+}
+
+
+void ColorWidget::paintEvent(QPaintEvent * /*event*/)
+{
+  QPainter painter(this);
+  painter.drawImage(0, 0, m_image);
+}
+
+
+
+
+/*!
  * Конструктор класса ColorButton.
  */
 ColorButton::ColorButton(QWidget *parent)
-  : QToolButton(parent)
+  : QToolButton(parent),
+  m_colorWidget(new ColorWidget(this))
 {
   setColor(QColor("#000000"));
+
+  QMenu *menu = new QMenu(this);
+  QWidgetAction *action = new QWidgetAction(this);
+  action->setDefaultWidget(m_colorWidget);
+  menu->addAction(action);
+
+  setMenu(menu);
+  setPopupMode(QToolButton::MenuButtonPopup);
+
+  connect(m_colorWidget, SIGNAL(newColor(const QColor &)), SLOT(setColor(const QColor &)));
 }
 
 
