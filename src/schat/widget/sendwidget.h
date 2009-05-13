@@ -65,6 +65,7 @@ private slots:
   void setStrike(bool b);
   void settingsPage();
   void setUnderline(bool b);
+  void textColor(const QColor &color);
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
