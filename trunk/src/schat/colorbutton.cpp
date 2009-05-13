@@ -28,9 +28,13 @@ ColorWidget::ColorWidget(QWidget *parent)
 {
   m_image = QImage(":/images/color-map.png");
   setMinimumSize(m_image.size());
+  setCursor(Qt::PointingHandCursor);
 }
 
 
+/*!
+ * Обработка нажатий мыши.
+ */
 void ColorWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::LeftButton && m_image.valid(event->pos()))
@@ -40,6 +44,9 @@ void ColorWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
+/*!
+ * Отрисовка виджета.
+ */
 void ColorWidget::paintEvent(QPaintEvent * /*event*/)
 {
   QPainter painter(this);
@@ -52,11 +59,12 @@ void ColorWidget::paintEvent(QPaintEvent * /*event*/)
 /*!
  * Конструктор класса ColorButton.
  */
-ColorButton::ColorButton(QWidget *parent)
+ColorButton::ColorButton(const QColor &color, QWidget *parent)
   : QToolButton(parent),
-  m_colorWidget(new ColorWidget(this))
+  m_colorWidget(new ColorWidget(this)),
+  m_color(color)
 {
-  setColor(QColor("#000000"));
+  setColor(m_color);
 
   QMenu *menu = new QMenu(this);
   QWidgetAction *action = new QWidgetAction(this);
@@ -67,11 +75,18 @@ ColorButton::ColorButton(QWidget *parent)
   setPopupMode(QToolButton::MenuButtonPopup);
 
   connect(m_colorWidget, SIGNAL(newColor(const QColor &)), SLOT(setColor(const QColor &)));
+  connect(this, SIGNAL(clicked(bool)), SLOT(newColor()));
 }
 
 
 ColorButton::~ColorButton()
 {
+}
+
+
+void ColorButton::newColor()
+{
+  emit newColor(m_color);
 }
 
 
@@ -93,4 +108,6 @@ void ColorButton::setColor(const QColor &color)
   #endif
   painter.end();
   setIcon(pix);
+  m_color = color;
+  emit newColor(color);
 }

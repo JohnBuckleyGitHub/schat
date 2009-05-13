@@ -52,14 +52,19 @@ class ColorButton : public QToolButton
   Q_OBJECT
 
 public:
-  ColorButton(QWidget *parent = 0);
+  ColorButton(const QColor &color, QWidget *parent = 0);
   ~ColorButton();
 
+signals:
+  void newColor(const QColor &color);
+
 private slots:
+  void newColor();
   void setColor(const QColor &color);
 
 private:
   ColorWidget *m_colorWidget;
+  QColor m_color;
 };
 
 

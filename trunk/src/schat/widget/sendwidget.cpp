@@ -167,6 +167,18 @@ void SendWidget::setUnderline(bool b)
 }
 
 
+void SendWidget::textColor(const QColor &color)
+{
+  if (!color.isValid())
+    return;
+
+  QTextCharFormat format;
+  format.setForeground(color);
+
+  mergeFormat(format);
+}
+
+
 /*!
  * Фильтр событий.
  */
@@ -273,8 +285,10 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
     action = m_toolBar->addSeparator();
   }
   else if (lowerName == "color") {
-    if (!m_color)
-      m_color = new ColorButton(this);
+    if (!m_color) {
+      m_color = new ColorButton(m_input->textColor(), this);
+      connect(m_color, SIGNAL(newColor(const QColor &)), SLOT(textColor(const QColor &)));
+    }
     action = m_toolBar->addWidget(m_color);
   }
   else if (lowerName == "emoticons") {
