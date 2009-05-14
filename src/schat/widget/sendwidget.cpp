@@ -390,42 +390,26 @@ QStringList SendWidget::toolBarLayout() const
  */
 QMenu* SendWidget::availableActions()
 {
-  QMenu *menu = new QMenu(tr("Добавить"), this);
-  menu->setIcon(QIcon(":/images/edit-add.png"));
-
   if (m_availableActions.isEmpty())
     return 0;
 
-  if (m_availableActions.contains("bold"))
-    menu->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"))->setData("bold");
+  QMenu *menu = new QMenu(tr("Добавить"), this);
+  menu->setIcon(QIcon(":/images/edit-add.png"));
 
-  if (m_availableActions.contains("italic"))
-    menu->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"))->setData("italic");
-
-  if (m_availableActions.contains("underline"))
-    menu->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"))->setData("underline");
-
-  if (m_availableActions.contains("strike"))
-    menu->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"))->setData("strike");
-
+  availableAction(menu, "bold",      QIcon(":/images/format-text-bold.png"),          tr("Полужирный"));
+  availableAction(menu, "italic",    QIcon(":/images/format-text-italic.png"),        tr("Курсив"));
+  availableAction(menu, "underline", QIcon(":/images/format-text-underline.png"),     tr("Подчёркнутый"));
+  availableAction(menu, "strike",    QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"));
   #ifdef Q_OS_WINCE
-  if (m_availableActions.contains("settings"))
-    menu->addAction(QIcon(":/images/configure.png"), tr("Настройка"))->setData("settings");
+  availableAction(menu, "settings",  QIcon(":/images/configure.png"),                 tr("Настройка"));
   #endif
-
-  if (m_availableActions.contains("emoticons"))
-    menu->addAction(QIcon(":/images/emoticon.png"), tr("Смайлики"))->setData("emoticons");
-
-  if (m_availableActions.contains("log"))
-    menu->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"))->setData("log");
-
+  availableAction(menu, "color",     QIcon(":/images/color.png"),                     tr("Выбор цвета"));
+  availableAction(menu, "emoticons", QIcon(":/images/emoticon.png"),                  tr("Смайлики"));
+  availableAction(menu, "log",       QIcon(":/images/book.png"),                      tr("Просмотр журнала"));
   #ifdef Q_OS_WINCE
-  if (m_availableActions.contains("sound"))
-    menu->addAction(QIcon(":/images/sound.png"), tr("Звук"))->setData("sound");
+  availableAction(menu, "sound",     QIcon(":/images/sound.png"),                     tr("Звук"));
   #endif
-
-  if (m_availableActions.contains("send") && !m_bigSendButton)
-    menu->addAction(QIcon(":/images/go-jump-locationbar.png"), tr("Отправить сообщение"))->setData("send");
+  availableAction(menu, "send",      QIcon(":/images/go-jump-locationbar.png"),       tr("Отправить сообщение"));
 
   bool separator = false;
 
@@ -447,6 +431,13 @@ QMenu* SendWidget::availableActions()
   }
   else
     return menu;
+}
+
+
+void SendWidget::availableAction(QMenu *menu, const QString &name, const QIcon &icon, const QString &text) const
+{
+  if (m_availableActions.contains(name))
+    menu->addAction(icon, text)->setData(name);
 }
 
 

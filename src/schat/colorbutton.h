@@ -34,8 +34,13 @@ public:
   /// Размер блока цвета.
   /// \todo Эти размеры и сама подложка с цветами должна быть настраиваемая.
   enum ColorBlock {
+    #ifndef SCHAT_WINCE_VGA
     BlockWidth  = 15,
     BlockHeight = 24
+    #else
+    BlockWidth  = 30,
+    BlockHeight = 48
+    #endif
   };
 
   ColorWidget(const QColor &color, QWidget *parent = 0);
