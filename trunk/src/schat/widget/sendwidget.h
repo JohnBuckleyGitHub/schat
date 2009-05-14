@@ -73,6 +73,7 @@ private:
   QAction* createSettingsPage(QMenu *menu, const QIcon &icon, const QString &text, int page);
   QMenu* availableActions();
   QStringList toolBarLayout() const;
+  void availableAction(QMenu *menu, const QString &name, const QIcon &icon, const QString &text) const;
   void buildToolBar(const QStringList &actions, bool forceSend = true);
   void clearToolBar();
   void createPermanentButtons();
