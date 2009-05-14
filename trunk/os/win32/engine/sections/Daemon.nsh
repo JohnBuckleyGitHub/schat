@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
@@ -24,7 +24,10 @@ ${Section}
   SetOutPath "$INSTDIR"
   File "${SCHAT_BINDIR}\schatd.exe"
   File "${SCHAT_BINDIR}\schatd-ui.exe"
+  
+  SetOverwrite ifnewer
   File "${SCHAT_DATADIR}\motd.html"
+  SetOverwrite on
 ${SectionEnd}
 ${BodyEnd}
 

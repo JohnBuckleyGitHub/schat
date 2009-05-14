@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright пїЅ 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
@@ -62,8 +62,11 @@ Var files
 
     Banner::show /NOUNLOAD /set 76 "${SCHAT_NAME}" "Processing Update..."
 
-    Sleep 1500
-
+    Sleep 1000
+    !if ${SCHAT_CHECK_RUN} == 1
+     call un.findRunningChat
+    !endif
+    
     ${If} $files == $0 ; один файл
       !insertmacro UPDATE_ENGINE_EXEC $files
     ${Else}
