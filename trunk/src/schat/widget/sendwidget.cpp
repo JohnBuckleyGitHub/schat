@@ -96,6 +96,7 @@ void SendWidget::cursorPositionChanged()
   if (m_italic)    m_italic->setChecked(charFormat.font().italic());
   if (m_underline) m_underline->setChecked(charFormat.font().underline());
   if (m_strike)    m_strike->setChecked(charFormat.font().strikeOut());
+  if (m_color)     m_color->setAltColor(charFormat.foreground().color());
 }
 
 

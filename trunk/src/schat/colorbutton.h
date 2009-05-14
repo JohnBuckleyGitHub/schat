@@ -31,7 +31,15 @@ class ColorWidget : public QWidget
   Q_OBJECT
 
 public:
-  ColorWidget(QWidget *parent = 0);
+  /// Размер блока цвета.
+  /// \todo Эти размеры и сама подложка с цветами должна быть настраиваемая.
+  enum ColorBlock {
+    BlockWidth  = 15,
+    BlockHeight = 24
+  };
+
+  ColorWidget(const QColor &color, QWidget *parent = 0);
+  inline void setColor(const QColor &color) { m_color = color; };
 
 signals:
   void newColor(const QColor &color);
@@ -41,6 +49,7 @@ protected:
   void paintEvent(QPaintEvent *event);
 
 private:
+  QColor m_color;
   QImage m_image;
 };
 
@@ -54,6 +63,7 @@ class ColorButton : public QToolButton
 public:
   ColorButton(const QColor &color, QWidget *parent = 0);
   ~ColorButton();
+  inline void setAltColor(const QColor &color) { m_colorWidget->setColor(color); };
 
 signals:
   void newColor(const QColor &color);
