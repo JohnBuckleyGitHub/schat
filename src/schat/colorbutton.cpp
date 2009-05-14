@@ -23,8 +23,9 @@
 /*!
  * Конструктор класса ColorWidget.
  */
-ColorWidget::ColorWidget(QWidget *parent)
-  : QWidget(parent)
+ColorWidget::ColorWidget(const QColor &color, QWidget *parent)
+  : QWidget(parent),
+  m_color(color)
 {
   m_image = QImage(":/images/color-map.png");
   setMinimumSize(m_image.size());
@@ -38,7 +39,10 @@ ColorWidget::ColorWidget(QWidget *parent)
 void ColorWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::LeftButton && m_image.valid(event->pos()))
-    emit newColor(QColor(m_image.pixel(event->pos())));
+    if (event->pos().x() <= BlockWidth && event->pos().y() <= BlockHeight)
+      emit newColor(m_color);
+    else
+      emit newColor(QColor(m_image.pixel(event->pos())));
 
   QWidget::mouseReleaseEvent(event);
 }
@@ -51,6 +55,9 @@ void ColorWidget::paintEvent(QPaintEvent * /*event*/)
 {
   QPainter painter(this);
   painter.drawImage(0, 0, m_image);
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(QBrush(m_color));
+  painter.drawRect(0, 0, BlockWidth, BlockHeight);
 }
 
 
@@ -61,7 +68,7 @@ void ColorWidget::paintEvent(QPaintEvent * /*event*/)
  */
 ColorButton::ColorButton(const QColor &color, QWidget *parent)
   : QToolButton(parent),
-  m_colorWidget(new ColorWidget(this)),
+  m_colorWidget(new ColorWidget(color, this)),
   m_color(color)
 {
   setColor(m_color);
