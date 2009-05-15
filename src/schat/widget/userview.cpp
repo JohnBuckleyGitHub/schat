@@ -294,10 +294,8 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
     QAction *privateMsgAction  = 0;
 
     QMenu menu(this);
-    if (nick == d->profile->nick()) {
+    if (nick == d->profile->nick())
       profileAction = menu.addAction(QIcon(":/images/profile.png"), tr("Личные данные..."));
-      profileAction->setShortcut(tr("Ctrl+F12"));
-    }
     else
       privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
 

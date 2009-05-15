@@ -80,6 +80,7 @@ ColorButton::ColorButton(const QColor &color, QWidget *parent)
 
   setMenu(menu);
   setPopupMode(QToolButton::MenuButtonPopup);
+  setToolTip(tr("Цвет текста"));
 
   connect(m_colorWidget, SIGNAL(newColor(const QColor &)), SLOT(setColor(const QColor &)));
   connect(this, SIGNAL(clicked(bool)), SLOT(newColor()));
