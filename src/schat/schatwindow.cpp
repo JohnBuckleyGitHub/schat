@@ -32,7 +32,7 @@
 #include "settingsdialog.h"
 #include "simplechatapp.h"
 #include "soundaction.h"
-#include "tab.h"
+#include "privatetab.h"
 #include "trayicon.h"
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
@@ -186,7 +186,7 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
 QPair<int, AbstractTab *> SChatWindowPrivate::createPrivateTab(const QString &nick)
 {
   AbstractProfile prof(users->profile(nick));
-  AbstractTab *tab = new Tab(QIcon(":/images/" + prof.gender() + ".png"), q);
+  AbstractTab *tab = new PrivateTab(QIcon(":/images/" + prof.gender() + ".png"), q);
   tab->setChannel(nick);
   int index = tabs->addTab(tab, tab->icon(), nick);
   tabs->setTabToolTip(index, UserView::userToolTip(prof));

@@ -49,6 +49,7 @@ HEADERS += \
     popup/popupmanager.h \
     popup/popupmanager_p.h \
     popup/popupwindow.h \
+    privatetab.h \
     profilewidget.h \
     protocol.h \
     schatwindow.h \
@@ -57,7 +58,6 @@ HEADERS += \
     settingsdialog.h \
     simplechatapp.h \
     soundaction.h \
-    tab.h \
     trayicon.h \
     update/downloadmanager.h \
     update/update.h \
@@ -97,13 +97,13 @@ SOURCES += \
     networkreader.cpp \
     popup/popupmanager.cpp \
     popup/popupwindow.cpp \
+    privatetab.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
     settings.cpp \
     settingsdialog.cpp \
     simplechatapp.cpp \
     soundaction.cpp \
-    tab.cpp \
     trayicon.cpp \
     update/downloadmanager.cpp \
     update/update.cpp \
