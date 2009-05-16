@@ -70,7 +70,6 @@ private slots:
   void serverMessage(const QString &msg);
   void settingsChanged(int notify);
   void showSettingsPage(int page = 0);
-  void splitterMoved();
   void statusChangedByUser();
   void statusChangedByUser(int index);
   void statusShortcut(int key);

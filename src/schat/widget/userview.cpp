@@ -98,6 +98,7 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
   setEditTriggers(QListView::NoEditTriggers);
   setSpacing(1);
+  setFrameShape(QFrame::NoFrame);
 
   QPalette p = palette();
   if (p.color(QPalette::Base) == Qt::white) {

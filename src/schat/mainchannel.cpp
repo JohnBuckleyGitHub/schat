@@ -21,12 +21,14 @@
 #include "mainchannel.h"
 #include "settings.h"
 #include "widget/networkwidget.h"
+#include "widget/userview.h"
 
 /*!
  * \brief Конструктор класса MainChannel.
  */
-MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
-  : AbstractTab(Main, icon, parent)
+MainChannel::MainChannel(const QIcon &icon, UserView *userView, QWidget *parent)
+  : AbstractTab(Main, icon, parent),
+  m_userView(userView)
 {
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
@@ -44,15 +46,30 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   m_networkLayout->addStretch();
   m_networkLayout->setMargin(0);
 
+  m_splitter = new QSplitter(this);
+  m_splitter->addWidget(m_view);
+  m_splitter->addWidget(userView);
+  m_splitter->setStretchFactor(0, 3);
+  m_splitter->setStretchFactor(1, 2);
+  m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
+
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
-  m_mainLayout->addWidget(m_view);
+  m_mainLayout->addWidget(m_splitter);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
 
+  QStringList splitterSizes = SimpleSettings->getList("SplitterSizes");
+  if (splitterSizes.size() == 2) {
+    int size1 = splitterSizes.at(0).toInt();
+    if (size1 > 10)
+      m_splitter->setSizes(QList<int>() << size1 << splitterSizes.at(1).toInt());
+  }
+
   connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
+  connect(m_splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
 }
 
 
@@ -124,6 +141,18 @@ void MainChannel::serverChanged()
 {
   m_networkWidget->save();
   SimpleSettings->notify(Settings::ServerChanged);
+}
+
+
+/*!
+ * Обработка перемещения разделителя.
+ * Новое положение сохраняется в настройках.
+ */
+void MainChannel::splitterMoved()
+{
+  QList<int> sizes = m_splitter->sizes();
+  if (sizes.size() == 2)
+    SimpleSettings->setList("SplitterSizes", QStringList() << QString::number(sizes.at(0)) << QString::number(sizes.at(1)));
 }
 
 
