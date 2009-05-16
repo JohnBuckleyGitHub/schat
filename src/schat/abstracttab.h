@@ -24,8 +24,6 @@
 
 #include "chatwindow/chatview.h"
 
-class Settings;
-
 /*!
  * \brief Абстрактный базовый класс для вкладок чата.
  */
@@ -39,14 +37,14 @@ public:
     Private
   };
 
-  AbstractTab(const QIcon &icon, QWidget *parent = 0);
-  inline bool notice()                                                { return m_notice; }
-  inline QIcon icon()                                                 { return m_icon; }
+  AbstractTab(Type type, const QIcon &icon, QWidget *parent = 0, bool text = true);
+  inline bool notice() const                                          { return m_notice; }
+  inline QIcon icon() const                                           { return m_icon; }
   inline Type type() const                                            { return m_type; }
-  inline void addFilteredMsg(const QString &msg, bool strict = false) { m_view->addFilteredMsg(msg, strict); }
-  inline void msg(const QString &text)                                { m_view->addServiceMsg(text); }
+  inline void addFilteredMsg(const QString &msg, bool strict = false) { if (m_view) m_view->addFilteredMsg(msg, strict); }
+  inline void msg(const QString &text)                                { if (m_view) m_view->addServiceMsg(text); }
   inline void notice(bool enable)                                     { m_notice = enable; }
-  inline void setChannel(const QString &ch)                           { m_view->channel(ch); }
+  inline void setChannel(const QString &ch)                           { if (m_view) m_view->channel(ch); }
   inline void setIcon(const QIcon &icon)                              { m_icon = icon; }
 
 signals:
@@ -55,9 +53,9 @@ signals:
   void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
 
 public slots:
-  inline bool copy()  { return m_view->copy(); }
-  inline void clear() { m_view->clear(); }
-  inline void addMsg(const QString &nick, const QString &message, int options = ChatView::MsgSend, bool notice = false) { m_view->addMsg(nick, message, options, notice); }
+  inline bool copy()  { if (m_view)return m_view->copy(); }
+  inline void clear() { if (m_view) m_view->clear(); }
+  inline void addMsg(const QString &nick, const QString &message, int options = ChatView::MsgSend, bool notice = false) { if (m_view) m_view->addMsg(nick, message, options, notice); }
 
 protected:
   bool m_notice;

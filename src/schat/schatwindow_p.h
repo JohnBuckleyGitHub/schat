@@ -38,6 +38,7 @@ class TrayIcon;
 class UserView;
 class WelcomeDialog;
 class SoundAction;
+class Settings;
 
 /*!
  * \brief Приватный D-класс для класса SChatWindow.

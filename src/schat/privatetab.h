@@ -23,8 +23,6 @@
 
 #include "abstracttab.h"
 
-class Settings;
-
 /*!
  * \brief Обеспечивает поддержку приватного канала чата.
  */
@@ -33,9 +31,6 @@ class PrivateTab : public AbstractTab {
 
 public:
   PrivateTab(const QIcon &icon, QWidget *parent = 0);
-
-private:
-  Settings *m_settings;
 
 private slots:
   void notify(int code);
