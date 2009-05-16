@@ -502,13 +502,6 @@ void SChatWindowPrivate::restoreGeometry()
   QPoint pos = pref->pos();
   if (pos.x() != -999 && pos.y() != -999)
     q->move(pos);
-
-  QStringList splitterSizes = pref->getList("SplitterSizes");
-  if (splitterSizes.size() == 2) {
-    int size1 = splitterSizes.at(0).toInt();
-    if (size1 > 10)
-      splitter->setSizes(QList<int>() << size1 << splitterSizes.at(1).toInt());
-  }
 }
 
 
@@ -781,7 +774,7 @@ void SChatWindowPrivate::createToolButtons()
 {
   toolBar->setIconSize(QSize(16, 16));
   toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
-  toolBar->addSeparator();
+
   QToolButton *settingsButton = send->settingsButton();
   if (settingsButton)
     toolBar->addWidget(settingsButton)->setVisible(true);
@@ -790,6 +783,7 @@ void SChatWindowPrivate::createToolButtons()
     toolBar->addAction(soundAction);
 
   toolBar->addAction(aboutAction);
+  tabs->setCornerWidget(toolBar);
 }
 
 
@@ -836,31 +830,12 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   d->send        = new SendWidget(this);
   d->central     = new QWidget(this);
-  d->splitter    = new QSplitter(d->central);
-  d->tabs        = new QTabWidget(d->splitter);
+  d->tabs        = new QTabWidget(this);
   d->tabs->installEventFilter(this);
-  d->right       = new QWidget(d->splitter);
-  d->users       = new UserView(d->profile, d->right);
-  d->rightLay    = new QVBoxLayout(d->right);
+  d->users       = new UserView(d->profile, this);
   d->mainLay     = new QVBoxLayout(d->central);
   #ifndef SCHAT_WINCE
   d->toolBar     = new QToolBar(this);
-  #endif
-
-  d->splitter->addWidget(d->tabs);
-  d->splitter->addWidget(d->right);
-  d->splitter->setStretchFactor(0, 3);
-  d->splitter->setStretchFactor(1, 2);
-
-  #ifndef SCHAT_WINCE
-  d->rightLay->addWidget(d->toolBar);
-  #endif
-  d->rightLay->addWidget(d->users);
-  d->rightLay->setMargin(0);
-  #if QT_VERSION >= 0x040500
-    d->rightLay->setSpacing(0);
-  #else
-    d->rightLay->setSpacing(4);
   #endif
 
   /// \note Для Windows Mobile поле отправки находится сверху,
@@ -869,13 +844,13 @@ SChatWindow::SChatWindow(QWidget *parent)
     d->mainLay->addWidget(d->send);
     d->mainLay->setContentsMargins(0, 0, 0, 0);
   #endif
-  d->mainLay->addWidget(d->splitter);
+  d->mainLay->addWidget(d->tabs);
   #ifndef SCHAT_WINCE
     d->mainLay->addWidget(d->send);
     d->mainLay->setContentsMargins(3, 3, 3, 0);
   #endif
   d->mainLay->setSpacing(1);
-  d->mainLay->setStretchFactor(d->splitter, 999);
+  d->mainLay->setStretchFactor(d->tabs, 999);
   d->mainLay->setStretchFactor(d->send, 1);
 
   setCentralWidget(d->central);
@@ -916,13 +891,12 @@ SChatWindow::SChatWindow(QWidget *parent)
   #ifndef SCHAT_WINCE
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
   #endif
-  connect(d->splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
 
   #ifndef SCHAT_NO_UPDATE
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   #endif
 
-  d->main = new MainChannel(QIcon(":/images/main.png"), this);
+  d->main = new MainChannel(QIcon(":/images/main.png"), d->users, this);
   connect(d->main, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
   connect(d->main, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->main, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
@@ -1434,18 +1408,6 @@ void SChatWindow::showSettingsPage(int page)
 
   d->settingsDialog->setPage(page);
   d->settingsDialog->activateWindow();
-}
-
-
-/*!
- * Обработка перемещения разделителя.
- * Новое положение сохраняется в настройках.
- */
-void SChatWindow::splitterMoved()
-{
-  QList<int> sizes = d->splitter->sizes();
-  if (sizes.size() == 2)
-    d->pref->setList("SplitterSizes", QStringList() << QString::number(sizes.at(0)) << QString::number(sizes.at(1)));
 }
 
 

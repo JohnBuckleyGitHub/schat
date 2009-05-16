@@ -117,14 +117,11 @@ public:
   QMenu *trayMenu;
   QPointer<AboutDialog> about;
   QPointer<SettingsDialog> settingsDialog;
-  QSplitter *splitter;
   QStatusBar *statusBar;
   QTabWidget *tabs;
   QTime pingTime;
   QVBoxLayout *mainLay;
-  QVBoxLayout *rightLay;
   QWidget *central;
-  QWidget *right;
   SChatWindow *q;
   SendWidget *send;
   Settings *pref;

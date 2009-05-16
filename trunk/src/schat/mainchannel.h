@@ -30,8 +30,10 @@ class NetworkWidget;
 class QAction;
 class QHBoxLayout;
 class QLabel;
+class QSplitter;
 class QToolButton;
 class QVBoxLayout;
+class UserView;
 
 /*!
  * \brief Обеспечивает поддержку главного канала чата.
@@ -40,7 +42,7 @@ class MainChannel : public AbstractTab {
   Q_OBJECT
 
 public:
-  MainChannel(const QIcon &icon, QWidget *parent = 0);
+  MainChannel(const QIcon &icon, UserView *userView, QWidget *parent = 0);
   void addNewUser(quint8 gender, const QString &nick);
   void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
@@ -51,6 +53,7 @@ public:
 private slots:
   void notify(int code);
   void serverChanged();
+  void splitterMoved();
 
 private:
   void createActions();
@@ -60,8 +63,10 @@ private:
   NetworkWidget *m_networkWidget;
   QAction *m_connectCreateAction;
   QHBoxLayout *m_networkLayout;
+  QSplitter *m_splitter;
   QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
+  UserView *m_userView;
 
 //  QHash<QString, quint8> m_newUsers;
 //  QBasicTimer m_usersJoin;
