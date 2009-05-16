@@ -24,17 +24,19 @@
 /*!
  * \brief Конструктор класса AbstractTab.
  */
-AbstractTab::AbstractTab(const QIcon &icon, QWidget *parent)
-  : QWidget(parent)
+AbstractTab::AbstractTab(Type type, const QIcon &icon, QWidget *parent, bool text)
+  : QWidget(parent),
+  m_notice(false),
+  m_view(0),
+  m_icon(icon),
+  m_type(type)
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
-  m_notice  = false;
-  m_view    = new ChatView(this);
-  m_type    = Unknown;
-  m_icon    = icon;
-
-  connect(m_view, SIGNAL(emoticonsClicked(const QString &)), SIGNAL(emoticonsClicked(const QString &)));
-  connect(m_view, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
-  connect(m_view, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)));
+  if (text) {
+    m_view = new ChatView(this);
+    connect(m_view, SIGNAL(emoticonsClicked(const QString &)), SIGNAL(emoticonsClicked(const QString &)));
+    connect(m_view, SIGNAL(nickClicked(const QString &)), SIGNAL(nickClicked(const QString &)));
+    connect(m_view, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)));
+  }
 }

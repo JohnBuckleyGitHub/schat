@@ -26,13 +26,10 @@
  * \brief Конструктор класса MainChannel.
  */
 MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
-  : AbstractTab(icon, parent)
+  : AbstractTab(Main, icon, parent)
 {
-  m_type = Main;
-
-  m_settings = settings;
   m_view->channel("#main");
-  m_view->log(m_settings->getBool("Log"));
+  m_view->log(SimpleSettings->getBool("Log"));
 
   createActions();
 
@@ -55,7 +52,7 @@ MainChannel::MainChannel(const QIcon &icon, QWidget *parent)
   setLayout(m_mainLayout);
 
   connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
-  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
+  connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 
 
@@ -119,14 +116,14 @@ void MainChannel::displayChoiceServer(bool display)
 void MainChannel::notify(int code)
 {
   if (code == Settings::MiscSettingsChanged)
-    m_view->log(m_settings->getBool("Log"));
+    m_view->log(SimpleSettings->getBool("Log"));
 }
 
 
 void MainChannel::serverChanged()
 {
   m_networkWidget->save();
-  m_settings->notify(Settings::ServerChanged);
+  SimpleSettings->notify(Settings::ServerChanged);
 }
 
 

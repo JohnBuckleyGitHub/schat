@@ -25,22 +25,19 @@
  * \brief Конструктор класса Tab.
  */
 PrivateTab::PrivateTab(const QIcon &icon, QWidget *parent)
-  : AbstractTab(icon, parent)
+  : AbstractTab(Private, icon, parent)
 {
-  m_type = Private;
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_view);
   mainLay->setMargin(0);
 
-  m_settings = settings;
-  m_view->log(m_settings->getBool("LogPrivate"));
-  connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
+  m_view->log(SimpleSettings->getBool("LogPrivate"));
+  connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 
 
 void PrivateTab::notify(int code)
 {
   if (code == Settings::MiscSettingsChanged)
-    m_view->log(m_settings->getBool("LogPrivate"));
+    m_view->log(SimpleSettings->getBool("LogPrivate"));
 }

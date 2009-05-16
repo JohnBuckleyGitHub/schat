@@ -32,7 +32,6 @@ class QHBoxLayout;
 class QLabel;
 class QToolButton;
 class QVBoxLayout;
-class Settings;
 
 /*!
  * \brief Обеспечивает поддержку главного канала чата.
@@ -63,7 +62,6 @@ private:
   QHBoxLayout *m_networkLayout;
   QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
-  Settings *m_settings;
 
 //  QHash<QString, quint8> m_newUsers;
 //  QBasicTimer m_usersJoin;
