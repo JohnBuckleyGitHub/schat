@@ -11,12 +11,16 @@
   <file alias="images/edit-delete.png">images/vga/edit-delete.png</file>
   <file alias="images/edit-paste.png">images/vga/edit-paste.png</file>
   <file alias="images/edit-select-all.png">images/vga/edit-select-all.png</file>
+  <file alias="images/emoticon.png">images/vga/emoticon.png</file>
+  <file alias="images/female.png">images/vga/female.png</file>
   <file alias="images/format-text-bold.png">images/vga/format-text-bold.png</file>
   <file alias="images/format-text-italic.png">images/vga/format-text-italic.png</file>
   <file alias="images/format-text-strikethrough.png">images/vga/format-text-strikethrough.png</file>
   <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
   <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
   <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
+  <file alias="images/male.png">images/vga/male.png</file>
+  <file alias="images/profile.png">images/vga/profile.png</file>
   <file alias="images/sound.png">images/vga/sound.png</file>
   <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
   <file alias="images/undo.png">images/vga/undo.png</file>
@@ -33,8 +37,6 @@
   <file>images/computer.png</file>
   <file>images/dialog-cancel.png</file>
   <file>images/dialog-ok.png</file>
-  <file>images/emoticon.png</file>
-  <file>images/female.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
   <file>images/im-status-message-edit.png</file>
@@ -46,14 +48,12 @@
   <file>images/logo16-ny.png</file>
   <file>images/logo-ny.png</file>
   <file>images/main.png</file>
-  <file>images/male.png</file>
   <file>images/network_connect.png</file>
   <file>images/network_disconnect.png</file>
   <file>images/notice.png</file>
   <file>images/notification.png</file>
   <file>images/ok2.png</file>
   <file>images/player_play.png</file>
-  <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
   <file>images/status-away.png</file>
   <file>images/status-dnd.png</file>
