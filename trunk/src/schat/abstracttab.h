@@ -53,7 +53,7 @@ signals:
   void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
 
 public slots:
-  inline bool copy()  { if (m_view)return m_view->copy(); }
+  inline bool copy()  { if (m_view) return m_view->copy(); else return false; }
   inline void clear() { if (m_view) m_view->clear(); }
   inline void addMsg(const QString &nick, const QString &message, int options = ChatView::MsgSend, bool notice = false) { if (m_view) m_view->addMsg(nick, message, options, notice); }
 
