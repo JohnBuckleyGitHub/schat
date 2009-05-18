@@ -772,8 +772,14 @@ void SChatWindowPrivate::updateStatus(int status)
 #ifndef SCHAT_WINCE
 void SChatWindowPrivate::createToolButtons()
 {
+
   toolBar->setIconSize(QSize(16, 16));
   toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+
+  #if QT_VERSION < 0x040500
+  toolBar->addAction(QIcon(":/images/tab_close.png"), QObject::tr("Закрыть вкладку"), q, SLOT(closeTab()));
+  toolBar->addSeparator();
+  #endif
 
   QToolButton *settingsButton = send->settingsButton();
   if (settingsButton)
@@ -802,17 +808,6 @@ void SChatWindowPrivate::createMainWceMenu()
 
   q->menuBar()->addSeparator();
   q->menuBar()->addAction(quitAction);
-}
-#endif
-
-
-#if QT_VERSION < 0x040500
-void SChatWindowPrivate::createCornerWidgets()
-{
-  QToolButton *closeTabButton = new QToolButton(q);
-  closeTabButton->setDefaultAction(closeTabAction);
-  closeTabButton->setAutoRaise(true);
-  tabs->setCornerWidget(closeTabButton, Qt::TopRightCorner);
 }
 #endif
 
@@ -869,9 +864,6 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   d->restoreGeometry();
   createActions();
-  #if QT_VERSION < 0x040500
-  d->createCornerWidgets();
-  #endif
   #ifndef SCHAT_WINCE
   d->createToolButtons();
   #endif
@@ -1653,13 +1645,6 @@ void SChatWindow::createActions()
   else
     d->aboutAction->setIcon(QIcon(":/images/logo16.png"));
   connect(d->aboutAction, SIGNAL(triggered()), SLOT(about()));
-
-  // Закрыть вкладку
-  #if QT_VERSION < 0x040500
-    d->closeTabAction = new QAction(QIcon(":/images/tab_close.png"), tr("Закрыть вкладку"), this);
-    d->closeTabAction->setStatusTip(tr("Закрыть вкладку"));
-    connect(d->closeTabAction, SIGNAL(triggered()), SLOT(closeTab()));
-  #endif
 
   // Настройка...
   d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
