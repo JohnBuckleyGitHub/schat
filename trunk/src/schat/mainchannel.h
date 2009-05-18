@@ -31,6 +31,7 @@ class QAction;
 class QHBoxLayout;
 class QLabel;
 class QSplitter;
+class QTabWidget;
 class QToolButton;
 class QVBoxLayout;
 class UserView;
@@ -42,7 +43,7 @@ class MainChannel : public AbstractTab {
   Q_OBJECT
 
 public:
-  MainChannel(const QIcon &icon, UserView *userView, QWidget *parent = 0);
+  MainChannel(const QIcon &icon, UserView *userView, QTabWidget *parent);
   void addNewUser(quint8 gender, const QString &nick);
   void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
@@ -54,6 +55,7 @@ private slots:
   void notify(int code);
   void serverChanged();
   void splitterMoved();
+  void usersCountChanged(int count);
 
 private:
   void createActions();
@@ -64,6 +66,7 @@ private:
   QAction *m_connectCreateAction;
   QHBoxLayout *m_networkLayout;
   QSplitter *m_splitter;
+  QTabWidget *m_tabs;
   QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
   UserView *m_userView;

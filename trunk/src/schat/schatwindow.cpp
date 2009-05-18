@@ -896,13 +896,10 @@ SChatWindow::SChatWindow(QWidget *parent)
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   #endif
 
-  d->main = new MainChannel(QIcon(":/images/main.png"), d->users, this);
+  d->main = new MainChannel(QIcon(":/images/main.png"), d->users, d->tabs);
   connect(d->main, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
   connect(d->main, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->main, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
-
-  d->tabs->setCurrentIndex(d->tabs->addTab(d->main, tr("Общий")));
-  d->tabs->setTabIcon(0, d->main->icon());
 
   if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
     d->welcome = new WelcomeDialog(d->profile, this);

@@ -26,8 +26,9 @@
 /*!
  * \brief Конструктор класса MainChannel.
  */
-MainChannel::MainChannel(const QIcon &icon, UserView *userView, QWidget *parent)
+MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *parent)
   : AbstractTab(Main, icon, parent),
+  m_tabs(parent),
   m_userView(userView)
 {
   m_view->channel("#main");
@@ -70,6 +71,10 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QWidget *parent)
   connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(m_splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
+  connect(m_userView, SIGNAL(usersCountChanged(int)), SLOT(usersCountChanged(int)));
+
+  m_tabs->setCurrentIndex(m_tabs->addTab(this, tr("Общий")));
+  m_tabs->setTabIcon(m_tabs->indexOf(this), icon);
 }
 
 
@@ -153,6 +158,20 @@ void MainChannel::splitterMoved()
   QList<int> sizes = m_splitter->sizes();
   if (sizes.size() == 2)
     SimpleSettings->setList("SplitterSizes", QStringList() << QString::number(sizes.at(0)) << QString::number(sizes.at(1)));
+}
+
+
+/*!
+ * Обновление заголовка вкладки при изменении числа пользователей
+ *
+ * \param count Число пользователей, 0 - означает отсутствие соединения.
+ */
+void MainChannel::usersCountChanged(int count)
+{
+  if (count)
+    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий (%1)").arg(count));
+  else
+    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий"));
 }
 
 

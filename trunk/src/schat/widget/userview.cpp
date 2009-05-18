@@ -141,6 +141,7 @@ bool UserView::add(const AbstractProfile &profile)
 
   d->model.appendRow(item);
   d->sort();
+  emit usersCountChanged(d->model.rowCount(QModelIndex()));
 
   return true;
 }
@@ -167,6 +168,7 @@ bool UserView::isUser(const QString &nick) const
 void UserView::clear()
 {
   d->model.clear();
+  emit usersCountChanged(0);
 }
 
 
@@ -217,6 +219,7 @@ void UserView::remove(const QString &nick)
 
   if (item) {
     d->model.removeRow(d->model.indexFromItem(item).row());
+    emit usersCountChanged(d->model.rowCount(QModelIndex()));
   }
 }
 

@@ -56,6 +56,7 @@ signals:
   void addTab(const QString &nick);
   void insertNick(const QString &nick);
   void showSettings();
+  void usersCountChanged(int count);
 
 public slots:
   void nickClicked(const QString &nick);
