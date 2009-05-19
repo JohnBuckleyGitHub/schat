@@ -84,7 +84,7 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), d(new Private)
 {
   d->profile = profile;
-  d->profileWidget = new ProfileWidget(profile, this);
+  d->profileWidget = new ProfileWidget(this);
   connect(d->profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
   d->byeMsgEdit = new QLineEdit(profile->byeMsg(), this);

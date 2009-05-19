@@ -1604,14 +1604,11 @@ void SChatWindow::messageClicked()
  * Фильтр событий.
  *
  * \todo Добавить контекстное меню, для заголовков вкладок.
- * \todo Оптимизировать закрытие вкладки.
  */
 bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 {
   if (d->tabs == object) {
-    bool mousRel  = event->type() == QEvent::MouseButtonRelease;
-
-    if (mousRel) {
+    if (event->type() == QEvent::MouseButtonRelease) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
       int index = -1;
       QTabBar *tabBar = qFindChild<QTabBar*>(d->tabs);
