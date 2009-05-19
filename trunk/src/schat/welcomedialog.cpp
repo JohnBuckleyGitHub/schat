@@ -27,7 +27,7 @@
 /*!
  * \brief Конструктор класса WelcomeDialog.
  */
-WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
+WelcomeDialog::WelcomeDialog(AbstractProfile * /*profile*/, QWidget *parent)
   : QDialog(parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -35,7 +35,7 @@ WelcomeDialog::WelcomeDialog(AbstractProfile *profile, QWidget *parent)
 
   m_settings = settings;
 
-  m_profileWidget = new ProfileWidget(profile, this);
+  m_profileWidget = new ProfileWidget(this);
   m_askCheckBox = new QCheckBox(tr("Больше не показывать это окно"), this);
   m_okButton    = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("ОК"), this);
   m_moreButton  = new QPushButton(QIcon(":/images/1downarrow.png"), "", this);

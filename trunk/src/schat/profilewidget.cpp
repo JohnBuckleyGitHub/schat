@@ -20,46 +20,37 @@
 
 #include "abstractprofile.h"
 #include "profilewidget.h"
+#include "settings.h"
 
 /*!
- * \brief Конструктор класса ProfileWidget.
+ * Конструктор класса ProfileWidget.
  */
-ProfileWidget::ProfileWidget(AbstractProfile *p, QWidget *parent)
-  : QWidget(parent), m_profile(p)
+ProfileWidget::ProfileWidget(QWidget *parent)
+  : QWidget(parent),
+  m_profile(SimpleSettings->profile())
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
   m_nick = new QLineEdit(m_profile->nick(), this);
   m_nick->setMaxLength(AbstractProfile::MaxNickLength);
-  m_nickLabel = new QLabel(tr("&Ник:"), this);
-  m_nickLabel->setBuddy(m_nick);
 
   m_name = new QLineEdit(m_profile->fullName(), this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
-  m_nameLabel = new QLabel(tr("&ФИO:"), this);
-  m_nameLabel->setBuddy(m_nick);
 
   m_gender = new QComboBox(this);
   m_gender->addItem(QIcon(":/images/male.png"), tr("Мужской"));
   m_gender->addItem(QIcon(":/images/female.png"), tr("Женский"));
   m_gender->setCurrentIndex(m_profile->genderNum());
-  m_genderLabel = new QLabel(tr("&Пол:"), this);
-  m_genderLabel->setBuddy(m_nick);
 
   connect(m_nick, SIGNAL(textChanged(const QString &)), this, SLOT(validateNick(const QString &)));
 
-  QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-  QGridLayout *mainLay = new QGridLayout(this);
-  mainLay->addWidget(m_nickLabel, 0, 0);
-  mainLay->addWidget(m_nick, 0, 1, 1, 2);
-  mainLay->addWidget(m_nameLabel, 1, 0);
-  mainLay->addWidget(m_name, 1, 1, 1, 2);
-  mainLay->addWidget(m_genderLabel, 2, 0);
-  mainLay->addWidget(m_gender, 2, 1);
-  mainLay->addItem(spacer, 2, 2);
+  QFormLayout *mainLay = new QFormLayout(this);
+  mainLay->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
   mainLay->setMargin(0);
   mainLay->setSpacing(5);
+  mainLay->addRow(tr("&Ник:"), m_nick);
+  mainLay->addRow(tr("&ФИO:"), m_name);
+  mainLay->addRow(tr("&Пол:"), m_gender);
 }
 
 

@@ -23,7 +23,6 @@
 
 class AbstractProfile;
 class QComboBox;
-class QLabel;
 class QLineEdit;
 
 /*!
@@ -33,8 +32,8 @@ class ProfileWidget : public QWidget {
   Q_OBJECT
 
 public:
-  ProfileWidget(AbstractProfile *p, QWidget *parent = 0);
-  inline bool isModifiled() { return m_modifiled; }
+  ProfileWidget(QWidget *parent = 0);
+  inline bool isModifiled() const { return m_modifiled; }
   void reset();
   void save();
 
@@ -48,9 +47,6 @@ private:
   AbstractProfile *m_profile;
   bool m_modifiled;
   QComboBox *m_gender;
-  QLabel *m_genderLabel;
-  QLabel *m_nameLabel;
-  QLabel *m_nickLabel;
   QLineEdit *m_name;
   QLineEdit *m_nick;
 };
