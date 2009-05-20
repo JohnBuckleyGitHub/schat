@@ -24,6 +24,7 @@
 class AbstractProfile;
 class QComboBox;
 class QLineEdit;
+class NickEdit;
 
 /*!
  * \brief Виджет обеспечивающий редактирование собственного профиля.
@@ -33,22 +34,17 @@ class ProfileWidget : public QWidget {
 
 public:
   ProfileWidget(QWidget *parent = 0);
-  inline bool isModifiled() const { return m_modifiled; }
+  int save();
   void reset();
-  void save();
 
 signals:
-  void validNick(bool b);
-
-private slots:
-  void validateNick(const QString &text);
+  void validNick(bool valid);
 
 private:
   AbstractProfile *m_profile;
-  bool m_modifiled;
   QComboBox *m_gender;
   QLineEdit *m_name;
-  QLineEdit *m_nick;
+  NickEdit *m_nickEdit;
 };
 
 #endif /*PROFILEWIDGET_H_*/

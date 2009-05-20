@@ -18,12 +18,57 @@
 
 #include <QtGui>
 
+#include "abstractprofile.h"
 #include "nickedit.h"
 
 /*!
  * Конструктор класса NickEdit.
  */
-NickEdit::NickEdit(QWidget *parent)
+NickEdit::NickEdit(const QString &nick, QWidget *parent)
   : QWidget(parent)
 {
+  m_edit = new QLineEdit(nick, this);
+  m_edit->setMaxLength(AbstractProfile::MaxNickLength);
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(m_edit);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
+
+  connect(m_edit, SIGNAL(textChanged(const QString &)), SLOT(validateNick(const QString &)));
+}
+
+
+QString NickEdit::nick() const
+{
+  return m_edit->text();
+}
+
+
+/*!
+ * Сброс введённых данных на стандартные значения.
+ */
+void NickEdit::reset()
+{
+  m_edit->setText(QDir::home().dirName());
+}
+
+
+/*!
+ * Проверка правильности ника, в случае если ник не корректный,
+ * то устанавливается красный фон.
+ *
+ * \todo Необходимо учитывать возможную коллизию с уже присутствующими в чате пользователями.
+ */
+void NickEdit::validateNick(const QString &text)
+{
+  QPalette pal = m_edit->palette();
+  bool valid = AbstractProfile::isValidNick(text);
+
+  if (valid)
+    pal.setColor(QPalette::Active, QPalette::Base, Qt::white);
+  else
+    pal.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+
+  emit validNick(valid);
+  m_edit->setPalette(pal);
 }
