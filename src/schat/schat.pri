@@ -67,6 +67,7 @@ HEADERS += \
     welcomedialog.h \
     widget/inputwidget.h \
     widget/networkwidget.h \
+    widget/nickedit.h \
     widget/sendwidget.h \
     widget/soundwidget.h \
     widget/userview.h \
@@ -112,6 +113,7 @@ SOURCES += \
     welcomedialog.cpp \
     widget/inputwidget.cpp \
     widget/networkwidget.cpp \
+    widget/nickedit.cpp \
     widget/sendwidget.cpp \
     widget/soundwidget.cpp \
     widget/userview.cpp \
