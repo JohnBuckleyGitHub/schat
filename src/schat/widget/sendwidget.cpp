@@ -18,11 +18,13 @@
 
 #include <QtGui>
 
+#include "abstractprofile.h"
 #include "colorbutton.h"
 #include "emoticons/emoticonselector.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "soundaction.h"
+#include "widget/nickedit.h"
 #include "widget/sendwidget.h"
 
 /*!
@@ -491,6 +493,14 @@ void SendWidget::createPermanentButtons()
   m_settingsButton->setVisible(false);
 
   QMenu *menu = new QMenu(m_settingsButton);
+
+  QWidgetAction *act = new QWidgetAction(this);
+  NickEdit *nickEdit = new NickEdit(this, NickEdit::GenderButton | NickEdit::ApplyButton);
+  nickEdit->setMargin(2);
+  act->setDefaultWidget(nickEdit);
+  menu->addAction(act);
+  menu->addSeparator();
+
   createSettingsPage(menu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
   createSettingsPage(menu, QIcon(":/images/applications-internet.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
   createSettingsPage(menu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);

@@ -20,19 +20,48 @@
 
 #include "abstractprofile.h"
 #include "nickedit.h"
+#include "settings.h"
 
 /*!
  * Конструктор класса NickEdit.
  */
-NickEdit::NickEdit(const QString &nick, QWidget *parent)
-  : QWidget(parent)
+NickEdit::NickEdit(QWidget *parent, Options options)
+  : QWidget(parent),
+  m_applyButton(0),
+  m_genderButton(0)
 {
-  m_edit = new QLineEdit(nick, this);
+  m_edit = new QLineEdit(this);
   m_edit->setMaxLength(AbstractProfile::MaxNickLength);
-  QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->addWidget(m_edit);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
+
+  m_mainLay = new QHBoxLayout(this);
+  m_mainLay->addWidget(m_edit);
+
+  if (options & GenderButton) {
+    QMenu *menu = new QMenu(this);
+    menu->addAction(QIcon(":/images/male.png"), tr("Мужской"));
+    menu->addAction(QIcon(":/images/female.png"), tr("Женский"));
+
+    m_genderButton = new QToolButton(this);
+    m_genderButton->setIcon(QIcon(":/images/male.png"));
+    m_genderButton->setToolTip(tr("Добавить смайлик"));
+    m_genderButton->setAutoRaise(true);
+    m_genderButton->setPopupMode(QToolButton::InstantPopup);
+    m_genderButton->setMenu(menu);
+    m_mainLay->addWidget(m_genderButton);
+  }
+
+  if (options & ApplyButton) {
+    m_applyButton = new QToolButton(this);
+    m_applyButton->setIcon(QIcon(":/images/dialog-ok.png"));
+    m_applyButton->setToolTip(tr("Добавить смайлик"));
+    m_applyButton->setAutoRaise(true);
+    m_applyButton->setPopupMode(QToolButton::InstantPopup);
+    m_mainLay->addWidget(m_applyButton);
+
+    connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
+  }
+  m_mainLay->setMargin(0);
+  m_mainLay->setSpacing(0);
 
   connect(m_edit, SIGNAL(textChanged(const QString &)), SLOT(validateNick(const QString &)));
 }
@@ -53,6 +82,53 @@ void NickEdit::reset()
 }
 
 
+void NickEdit::setMargin(int margin)
+{
+  m_mainLay->setMargin(margin);
+}
+
+
+/*!
+ * Сохранение настроек.
+ */
+int NickEdit::save(int notify)
+{
+  int modified = 0;
+
+  if (SimpleSettings->profile()->nick() != nick()) {
+    SimpleSettings->profile()->setNick(nick());
+    modified++;
+  }
+
+  if (notify && modified)
+    SimpleSettings->notify(Settings::ProfileSettingsChanged);
+
+  if (m_applyButton) {
+    QMenu *popup = qobject_cast<QMenu *>(parentWidget());
+    if (isVisible() && popup)
+      popup->close();
+  }
+
+  return modified;
+}
+
+
+/*!
+ * Обработка события показа виджета.
+ * В поле редактирования устанавливается текущий ник.
+ */
+void NickEdit::showEvent(QShowEvent * /*event*/)
+{
+  m_edit->setText(SimpleSettings->profile()->nick());
+  int editHeight = m_edit->height();
+  if (m_genderButton)
+    m_genderButton->setMaximumSize(editHeight, editHeight);
+
+  if (m_applyButton)
+    m_applyButton->setMaximumSize(editHeight, editHeight);
+}
+
+
 /*!
  * Проверка правильности ника, в случае если ник не корректный,
  * то устанавливается красный фон.
@@ -69,6 +145,7 @@ void NickEdit::validateNick(const QString &text)
   else
     pal.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 
-  emit validNick(valid);
   m_edit->setPalette(pal);
+  if (m_applyButton) m_applyButton->setEnabled(valid);
+  emit validNick(valid);
 }
