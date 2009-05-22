@@ -42,6 +42,8 @@ public:
   Q_DECLARE_FLAGS(Options, OptionsFlag)
 
   NickEdit(QWidget *parent = 0, Options options = NoOptions);
+  inline bool isMale() const { return m_male; }
+  inline void setGender(int gender) { setMale(!(bool) gender); }
   QString nick() const;
   void reset();
   void setMargin(int margin);
@@ -56,9 +58,13 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
+  void genderChange();
   void validateNick(const QString &text);
 
 private:
+  void setMale(bool male);
+
+  bool m_male;
   QHBoxLayout *m_mainLay;
   QLineEdit *m_edit;
   QToolButton *m_applyButton;

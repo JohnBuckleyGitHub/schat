@@ -59,15 +59,11 @@ ProfileWidget::ProfileWidget(QWidget *parent)
  */
 int ProfileWidget::save()
 {
+  m_nickEdit->setGender(m_gender->currentIndex());
   int modified = m_nickEdit->save(false);
 
   if (m_profile->fullName() != m_name->text()) {
     m_profile->setFullName(m_name->text());
-    modified++;
-  }
-
-  if (m_profile->genderNum() != quint8(m_gender->currentIndex())) {
-    m_profile->setGender(quint8(m_gender->currentIndex()));
     modified++;
   }
 

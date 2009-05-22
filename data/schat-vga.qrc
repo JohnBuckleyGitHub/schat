@@ -4,6 +4,8 @@
   <file alias="images/color.png">images/vga/color.png</file>
   <file alias="images/color-map.png">images/vga/color-map.png</file>
   <file alias="images/configure.png">images/vga/configure.png</file>
+  <file alias="images/dialog-cancel.png">images/vga/dialog-cancel.png</file>
+  <file alias="images/dialog-ok.png">images/vga/dialog-ok.png</file>
   <file alias="images/edit-add.png">images/vga/edit-add.png</file>
   <file alias="images/edit-clear.png">images/vga/edit-clear.png</file>
   <file alias="images/edit-copy.png">images/vga/edit-copy.png</file>
@@ -35,8 +37,6 @@
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
   <file>images/computer.png</file>
-  <file>images/dialog-cancel.png</file>
-  <file>images/dialog-ok.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
   <file>images/im-status-message-edit.png</file>

@@ -27,6 +27,7 @@
  */
 NickEdit::NickEdit(QWidget *parent, Options options)
   : QWidget(parent),
+  m_male(true),
   m_applyButton(0),
   m_genderButton(0)
 {
@@ -38,12 +39,11 @@ NickEdit::NickEdit(QWidget *parent, Options options)
 
   if (options & GenderButton) {
     QMenu *menu = new QMenu(this);
-    menu->addAction(QIcon(":/images/male.png"), tr("Мужской"));
-    menu->addAction(QIcon(":/images/female.png"), tr("Женский"));
+    menu->addAction(QIcon(":/images/male.png"),   tr("Мужской"), this, SLOT(genderChange()))->setData(true);
+    menu->addAction(QIcon(":/images/female.png"), tr("Женский"), this, SLOT(genderChange()))->setData(false);
 
     m_genderButton = new QToolButton(this);
-    m_genderButton->setIcon(QIcon(":/images/male.png"));
-    m_genderButton->setToolTip(tr("Добавить смайлик"));
+    m_genderButton->setToolTip(tr("Пол"));
     m_genderButton->setAutoRaise(true);
     m_genderButton->setPopupMode(QToolButton::InstantPopup);
     m_genderButton->setMenu(menu);
@@ -53,7 +53,7 @@ NickEdit::NickEdit(QWidget *parent, Options options)
   if (options & ApplyButton) {
     m_applyButton = new QToolButton(this);
     m_applyButton->setIcon(QIcon(":/images/dialog-ok.png"));
-    m_applyButton->setToolTip(tr("Добавить смайлик"));
+    m_applyButton->setToolTip(tr("Применить"));
     m_applyButton->setAutoRaise(true);
     m_applyButton->setPopupMode(QToolButton::InstantPopup);
     m_mainLay->addWidget(m_applyButton);
@@ -100,6 +100,11 @@ int NickEdit::save(int notify)
     modified++;
   }
 
+  if (SimpleSettings->profile()->isMale() != isMale()) {
+    SimpleSettings->profile()->setGender(isMale());
+    modified++;
+  }
+
   if (notify && modified)
     SimpleSettings->notify(Settings::ProfileSettingsChanged);
 
@@ -121,11 +126,24 @@ void NickEdit::showEvent(QShowEvent * /*event*/)
 {
   m_edit->setText(SimpleSettings->profile()->nick());
   int editHeight = m_edit->height();
-  if (m_genderButton)
+  if (m_genderButton) {
     m_genderButton->setMaximumSize(editHeight, editHeight);
+    setMale(SimpleSettings->profile()->isMale());
+  }
 
   if (m_applyButton)
     m_applyButton->setMaximumSize(editHeight, editHeight);
+}
+
+
+/*!
+ * Обработка изменения пола через кнопку встроенную в виджет.
+ */
+void NickEdit::genderChange()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    setMale(action->data().toBool());
 }
 
 
@@ -148,4 +166,22 @@ void NickEdit::validateNick(const QString &text)
   m_edit->setPalette(pal);
   if (m_applyButton) m_applyButton->setEnabled(valid);
   emit validNick(valid);
+}
+
+
+/*!
+ * Установка пола.
+ *
+ * \param male \a true если пол мужской.
+ */
+void NickEdit::setMale(bool male)
+{
+  if (m_genderButton) {
+    if (male)
+      m_genderButton->setIcon(QIcon(":/images/male.png"));
+    else
+      m_genderButton->setIcon(QIcon(":/images/female.png"));
+  }
+
+  m_male = male;
 }
