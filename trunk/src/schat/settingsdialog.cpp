@@ -152,8 +152,7 @@ void ProfileSettings::reset(int page)
 
 void ProfileSettings::save()
 {
-  if (d->profileWidget->save())
-    SimpleSettings->notify(Settings::ProfileSettingsChanged);
+  d->profileWidget->save();
 
   if (d->profile->byeMsg() != d->byeMsgEdit->text()) {
     d->profile->setByeMsg(d->byeMsgEdit->text());

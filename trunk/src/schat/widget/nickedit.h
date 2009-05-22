@@ -21,7 +21,9 @@
 
 #include <QWidget>
 
+class QHBoxLayout;
 class QLineEdit;
+class QToolButton;
 
 /*!
  * \brief Обеспечивает редактирование ника и пола пользователя.
@@ -31,18 +33,38 @@ class NickEdit : public QWidget
   Q_OBJECT
 
 public:
-  NickEdit(const QString &nick, QWidget *parent = 0);
+  enum OptionsFlag {
+    NoOptions    = 0x0,
+    GenderButton = 0x1,
+    ApplyButton  = 0x2
+  };
+
+  Q_DECLARE_FLAGS(Options, OptionsFlag)
+
+  NickEdit(QWidget *parent = 0, Options options = NoOptions);
   QString nick() const;
   void reset();
+  void setMargin(int margin);
 
 signals:
   void validNick(bool valid);
+
+public slots:
+  int save(int notify = true);
+
+protected:
+  void showEvent(QShowEvent *event);
 
 private slots:
   void validateNick(const QString &text);
 
 private:
+  QHBoxLayout *m_mainLay;
   QLineEdit *m_edit;
+  QToolButton *m_applyButton;
+  QToolButton *m_genderButton;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(NickEdit::Options)
 
 #endif /* NICKEDIT_H_ */

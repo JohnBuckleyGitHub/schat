@@ -32,7 +32,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
-  m_nickEdit = new NickEdit(m_profile->nick(), this);
+  m_nickEdit = new NickEdit(this);
 
   m_name = new QLineEdit(m_profile->fullName(), this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
@@ -59,12 +59,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
  */
 int ProfileWidget::save()
 {
-  int modified = 0;
-
-  if (m_profile->nick() != m_nickEdit->nick()) {
-    m_profile->setNick(m_nickEdit->nick());
-    modified++;
-  }
+  int modified = m_nickEdit->save(false);
 
   if (m_profile->fullName() != m_name->text()) {
     m_profile->setFullName(m_name->text());
@@ -75,6 +70,9 @@ int ProfileWidget::save()
     m_profile->setGender(quint8(m_gender->currentIndex()));
     modified++;
   }
+
+  if (modified)
+    SimpleSettings->notify(Settings::ProfileSettingsChanged);
 
   return modified;
 }
