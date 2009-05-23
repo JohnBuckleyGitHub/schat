@@ -55,6 +55,7 @@ public slots:
   int save(int notify = true);
 
 protected:
+  void keyPressEvent(QKeyEvent *event);
   void showEvent(QShowEvent *event);
 
 private slots:

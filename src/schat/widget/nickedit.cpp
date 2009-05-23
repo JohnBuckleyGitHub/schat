@@ -119,6 +119,18 @@ int NickEdit::save(int notify)
 
 
 /*!
+ * Переопределение нажатие на \b Enter, при использовании
+ * опции NickEdit::ApplyButton это вызовет применение введённых настроек.
+ */
+void NickEdit::keyPressEvent(QKeyEvent *event)
+{
+  if (m_applyButton && event->key() == Qt::Key_Return)
+    save();
+  else
+    QWidget::keyPressEvent(event);
+}
+
+/*!
  * Обработка события показа виджета.
  * В поле редактирования устанавливается текущий ник.
  */
