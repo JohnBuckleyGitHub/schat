@@ -90,16 +90,16 @@ ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
   d->byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
   d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
   d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
-  QLabel *byeMsg = new QLabel(tr("Сообщение при &выходе"), this);
-  byeMsg->setBuddy(d->byeMsgEdit);
+  QLabel *byeMsgLabel = new QLabel(tr("Сообщение при &выходе:"), this);
+  byeMsgLabel->setBuddy(d->byeMsgEdit);
 
   QGroupBox *profileGroup = new QGroupBox(tr("Профиль"), this);
-  QGridLayout *profileLay = new QGridLayout(profileGroup);
-  profileLay->addWidget(d->profileWidget, 0, 0, 1, 2);
-  profileLay->addWidget(byeMsg, 1, 0);
-  profileLay->addWidget(d->byeMsgEdit, 1, 1);
+  QVBoxLayout *profileLay = new QVBoxLayout(profileGroup);
   profileLay->setMargin(6);
   profileLay->setSpacing(4);
+  profileLay->addWidget(d->profileWidget);
+  profileLay->addWidget(byeMsgLabel);
+  profileLay->addWidget(d->byeMsgEdit);
 
   d->autoAway = new QCheckBox(tr("Включить &статус при простое:"), this);
   d->autoAway->setToolTip(tr("Автоматически переходить в статус Отсутствую\nпри простое и возвращаться в обычный режим\nпри появлении активности"));

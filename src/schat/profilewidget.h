@@ -42,9 +42,10 @@ signals:
 
 private:
   AbstractProfile *m_profile;
+  bool m_compactGenderWidget;
+  NickEdit *m_nickEdit;
   QComboBox *m_gender;
   QLineEdit *m_name;
-  NickEdit *m_nickEdit;
 };
 
 #endif /*PROFILEWIDGET_H_*/

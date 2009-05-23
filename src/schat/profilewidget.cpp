@@ -28,19 +28,22 @@
  */
 ProfileWidget::ProfileWidget(QWidget *parent)
   : QWidget(parent),
-  m_profile(SimpleSettings->profile())
+  m_profile(SimpleSettings->profile()),
+  m_compactGenderWidget(SimpleSettings->getBool("CompactGenderWidget"))
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
-  m_nickEdit = new NickEdit(this);
+  m_nickEdit = new NickEdit(this, m_compactGenderWidget ? NickEdit::GenderButton : NickEdit::NoOptions);
 
   m_name = new QLineEdit(m_profile->fullName(), this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
 
-  m_gender = new QComboBox(this);
-  m_gender->addItem(QIcon(":/images/male.png"), tr("Мужской"));
-  m_gender->addItem(QIcon(":/images/female.png"), tr("Женский"));
-  m_gender->setCurrentIndex(m_profile->genderNum());
+  if (!m_compactGenderWidget) {
+    m_gender = new QComboBox(this);
+    m_gender->addItem(QIcon(":/images/male.png"),   tr("Мужской"));
+    m_gender->addItem(QIcon(":/images/female.png"), tr("Женский"));
+    m_gender->setCurrentIndex(m_profile->genderNum());
+  }
 
   connect(m_nickEdit, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
@@ -50,7 +53,9 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   mainLay->setSpacing(5);
   mainLay->addRow(tr("&Ник:"), m_nickEdit);
   mainLay->addRow(tr("&ФИO:"), m_name);
-  mainLay->addRow(tr("&Пол:"), m_gender);
+
+  if (!m_compactGenderWidget)
+    mainLay->addRow(tr("&Пол:"), m_gender);
 }
 
 
@@ -59,7 +64,9 @@ ProfileWidget::ProfileWidget(QWidget *parent)
  */
 int ProfileWidget::save()
 {
-  m_nickEdit->setGender(m_gender->currentIndex());
+  if (!m_compactGenderWidget)
+    m_nickEdit->setGender(m_gender->currentIndex());
+
   int modified = m_nickEdit->save(false);
 
   if (m_profile->fullName() != m_name->text()) {
@@ -81,5 +88,9 @@ void ProfileWidget::reset()
 {
   m_nickEdit->reset();
   m_name->setText("");
-  m_gender->setCurrentIndex(0);
+
+  if (m_compactGenderWidget)
+    m_nickEdit->setGender(0);
+  else
+    m_gender->setCurrentIndex(0);
 }

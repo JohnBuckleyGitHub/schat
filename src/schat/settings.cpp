@@ -188,6 +188,7 @@ void Settings::read()
   setBool("NoNotificationInDnD",    true);
   setBool("PopupAutoClose",         true);
   setBool("NoPopupAutoCloseInAway", true);
+  setBool("CompactGenderWidget",    true);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
   setString("Style",                "Plastique");
@@ -320,7 +321,9 @@ void Settings::write()
        << "Updates/LastVersion"
        << "Updates/DownloadSize"
        << "Sound/NameFilter"
-       << "Proxy/HideAndDisable";
+       << "Proxy/HideAndDisable"
+       << "BigSendButton"
+       << "CompactGenderWidget";
 
   setBool("FirstRun", false);
   setString("Network", network.config());
