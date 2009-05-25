@@ -252,6 +252,9 @@ void Settings::read()
     setString("Sound/ExternalCmd",      "aplay -q -N %1");
   #endif
 
+  setInt("Profile/MaxSavedRecentNicks", 16);
+  setList("Profile/RecentNicks", QStringList());
+
   if (m_default)
     AbstractSettings::read(m_default);
 
