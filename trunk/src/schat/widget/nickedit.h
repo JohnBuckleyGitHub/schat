@@ -23,6 +23,7 @@
 
 class QHBoxLayout;
 class QLineEdit;
+class QStringListModel;
 class QToolButton;
 
 /*!
@@ -63,11 +64,14 @@ private slots:
   void validateNick(const QString &text);
 
 private:
+  void initCompleter();
   void setMale(bool male);
 
   bool m_male;
+  int m_maxSavedRecentNicks;
   QHBoxLayout *m_mainLay;
   QLineEdit *m_edit;
+  QStringListModel *m_model;
   QToolButton *m_applyButton;
   QToolButton *m_genderButton;
 };

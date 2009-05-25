@@ -28,11 +28,13 @@
 NickEdit::NickEdit(QWidget *parent, Options options)
   : QWidget(parent),
   m_male(true),
+  m_maxSavedRecentNicks(SimpleSettings->getInt("Profile/MaxSavedRecentNicks")),
   m_applyButton(0),
   m_genderButton(0)
 {
   m_edit = new QLineEdit(this);
   m_edit->setMaxLength(AbstractProfile::MaxNickLength);
+  initCompleter();
 
   m_mainLay = new QHBoxLayout(this);
   m_mainLay->addWidget(m_edit);
@@ -114,6 +116,18 @@ int NickEdit::save(int notify)
       popup->close();
   }
 
+  if (m_maxSavedRecentNicks && modified) {
+    QStringList recentNicks = SimpleSettings->getList("Profile/RecentNicks");
+    if (recentNicks.contains(nick()))
+      recentNicks.removeAll(nick());
+
+    if (recentNicks.size() == m_maxSavedRecentNicks)
+      recentNicks.removeLast();
+
+    recentNicks.prepend(nick());
+    SimpleSettings->setList("Profile/RecentNicks", recentNicks);
+  }
+
   return modified;
 }
 
@@ -124,7 +138,7 @@ int NickEdit::save(int notify)
  */
 void NickEdit::keyPressEvent(QKeyEvent *event)
 {
-  if (m_applyButton && event->key() == Qt::Key_Return)
+  if (m_applyButton && m_applyButton->isEnabled() && event->key() == Qt::Key_Return)
     save();
   else
     QWidget::keyPressEvent(event);
@@ -145,6 +159,9 @@ void NickEdit::showEvent(QShowEvent * /*event*/)
 
   if (m_applyButton)
     m_applyButton->setMaximumSize(editHeight, editHeight);
+
+  if (m_maxSavedRecentNicks)
+    m_model->setStringList(SimpleSettings->getList("Profile/RecentNicks"));
 }
 
 
@@ -178,6 +195,22 @@ void NickEdit::validateNick(const QString &text)
   m_edit->setPalette(pal);
   if (m_applyButton) m_applyButton->setEnabled(valid);
   emit validNick(valid);
+}
+
+
+void NickEdit::initCompleter()
+{
+  if (m_maxSavedRecentNicks < 0)
+    m_maxSavedRecentNicks = 0;
+
+  if (m_maxSavedRecentNicks) {
+    QCompleter *completer = new QCompleter(this);
+    m_edit->setCompleter(completer);
+
+    m_model = new QStringListModel(this);
+    completer->setModel(m_model);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+  }
 }
 
 
