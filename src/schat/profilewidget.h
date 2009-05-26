@@ -43,6 +43,7 @@ signals:
 private:
   AbstractProfile *m_profile;
   bool m_compactGenderWidget;
+  bool m_maxRecentItems;
   NickEdit *m_nickEdit;
   QComboBox *m_gender;
   QLineEdit *m_name;

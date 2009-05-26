@@ -29,7 +29,8 @@
 ProfileWidget::ProfileWidget(QWidget *parent)
   : QWidget(parent),
   m_profile(SimpleSettings->profile()),
-  m_compactGenderWidget(SimpleSettings->getBool("CompactGenderWidget"))
+  m_compactGenderWidget(SimpleSettings->getBool("CompactGenderWidget")),
+  m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems"))
 {
   setAttribute(Qt::WA_DeleteOnClose);
 
@@ -37,6 +38,10 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
   m_name = new QLineEdit(m_profile->fullName(), this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
+  if (m_maxRecentItems) {
+    m_name->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentRealNames"), m_name));
+    m_name->completer()->setCaseSensitivity(Qt::CaseInsensitive);
+  }
 
   if (!m_compactGenderWidget) {
     m_gender = new QComboBox(this);
@@ -72,6 +77,8 @@ int ProfileWidget::save()
   if (m_profile->fullName() != m_name->text()) {
     m_profile->setFullName(m_name->text());
     modified++;
+    if (m_maxRecentItems)
+      NickEdit::modifyRecentList("Profile/RecentRealNames", m_profile->fullName());
   }
 
   if (modified)
