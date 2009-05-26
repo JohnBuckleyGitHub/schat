@@ -253,9 +253,10 @@ void Settings::read()
     setString("Sound/ExternalCmd",      "aplay -q -N %1");
   #endif
 
-  setInt("Profile/MaxRecentItems", 16);
-  setList("Profile/RecentNicks", QStringList());
+  setInt("Profile/MaxRecentItems",   16);
+  setList("Profile/RecentNicks",     QStringList());
   setList("Profile/RecentRealNames", QStringList());
+  setList("Profile/RecentByeMsgs",   QStringList());
 
   if (m_default)
     AbstractSettings::read(m_default);
@@ -280,8 +281,9 @@ void Settings::read()
 
   if (getInt("Profile/MaxRecentItems") < 0)
     setInt("Profile/MaxRecentItems", 0);
-  NickEdit::modifyRecentList("Profile/RecentNicks", m_profile->nick(), false);
+  NickEdit::modifyRecentList("Profile/RecentNicks",     m_profile->nick(), false);
   NickEdit::modifyRecentList("Profile/RecentRealNames", m_profile->fullName(), false);
+  NickEdit::modifyRecentList("Profile/RecentByeMsgs",   m_profile->byeMsg(), false);
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))

@@ -1391,7 +1391,7 @@ void SChatWindow::showSettingsPage(int page)
     show();
 
   if (!d->settingsDialog) {
-    d->settingsDialog = new SettingsDialog(d->profile, this);
+    d->settingsDialog = new SettingsDialog(this);
     d->settingsDialog->show();
   }
 

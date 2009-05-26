@@ -86,7 +86,7 @@ QString NickEdit::nick() const
 void NickEdit::modifyRecentList(const QString &key, const QString &value, bool remove)
 {
   int maxSize = SimpleSettings->getInt("Profile/MaxRecentItems");
-  if (maxSize < 1)
+  if (maxSize < 1 || value.isEmpty())
     return;
 
   QStringList recentList = SimpleSettings->getList(key);
