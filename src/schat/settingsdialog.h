@@ -21,9 +21,6 @@
 
 #include "abstractsettingsdialog.h"
 
-class AbstractProfile;
-
-
 /*!
  * \brief Диалог "Настройка".
  */
@@ -43,7 +40,7 @@ public:
     MiscPage
   };
 
-  SettingsDialog(AbstractProfile *profile, QWidget *parent = 0);
+  SettingsDialog(QWidget *parent = 0);
 
 public slots:
   void accept();
@@ -58,7 +55,7 @@ class ProfileSettings : public AbstractSettingsPage
   Q_OBJECT
 
 public:
-  ProfileSettings(AbstractProfile *profile, QWidget *parent = 0);
+  ProfileSettings(QWidget *parent = 0);
   ~ProfileSettings();
 
 public slots:

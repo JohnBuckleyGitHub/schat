@@ -24,6 +24,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "widget/networkwidget.h"
+#include "widget/nickedit.h"
 #include "widget/soundwidget.h"
 
 #ifndef SCHAT_NO_WEBKIT
@@ -33,10 +34,10 @@
 /*!
  * \brief Конструктор класса SettingsDialog.
  */
-SettingsDialog::SettingsDialog(AbstractProfile *profile, QWidget *parent)
+SettingsDialog::SettingsDialog(QWidget *parent)
   : AbstractSettingsDialog(parent)
 {
-  ProfileSettings *profilePage = new ProfileSettings(profile, this);
+  ProfileSettings *profilePage = new ProfileSettings(this);
   NetworkSettings *networkPage = new NetworkSettings(this);
 
   createPage(QIcon(":/images/profile.png"),               tr("Личные данные"), profilePage);
@@ -66,9 +67,13 @@ void SettingsDialog::accept()
 class ProfileSettings::Private
 {
 public:
-  Private() {}
+  Private()
+  : profile(SimpleSettings->profile()),
+  maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems"))
+  {}
 
   AbstractProfile *profile;
+  bool maxRecentItems;
   ProfileWidget *profileWidget;
   QCheckBox *autoAway;
   QCheckBox *exitAwayOnSend;
@@ -80,16 +85,19 @@ public:
 /*!
  * \brief Конструктор класса ProfileSettings.
  */
-ProfileSettings::ProfileSettings(AbstractProfile *profile, QWidget *parent)
+ProfileSettings::ProfileSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), d(new Private)
 {
-  d->profile = profile;
   d->profileWidget = new ProfileWidget(this);
   connect(d->profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
-  d->byeMsgEdit = new QLineEdit(profile->byeMsg(), this);
+  d->byeMsgEdit = new QLineEdit(d->profile->byeMsg(), this);
   d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
   d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
+  if (d->maxRecentItems) {
+    d->byeMsgEdit->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentByeMsgs"), this));
+    d->byeMsgEdit->completer()->setCaseSensitivity(Qt::CaseInsensitive);
+  }
   QLabel *byeMsgLabel = new QLabel(tr("Сообщение при &выходе:"), this);
   byeMsgLabel->setBuddy(d->byeMsgEdit);
 
@@ -156,6 +164,9 @@ void ProfileSettings::save()
 
   if (d->profile->byeMsg() != d->byeMsgEdit->text()) {
     d->profile->setByeMsg(d->byeMsgEdit->text());
+    if (d->maxRecentItems)
+      NickEdit::modifyRecentList("Profile/RecentByeMsgs", d->profile->byeMsg());
+
     SimpleSettings->notify(Settings::ByeMsgChanged);
   }
 
