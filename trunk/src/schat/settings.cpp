@@ -253,7 +253,7 @@ void Settings::read()
     setString("Sound/ExternalCmd",      "aplay -q -N %1");
   #endif
 
-  setInt("Profile/MaxSavedRecentNicks", 16);
+  setInt("Profile/MaxRecentItems", 16);
   setList("Profile/RecentNicks", QStringList());
 
   if (m_default)
@@ -277,7 +277,7 @@ void Settings::read()
   m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
 
-  NickEdit::modifyRecentList("Profile/RecentNicks", m_profile->nick(), getInt("Profile/MaxSavedRecentNicks"), false);
+  NickEdit::modifyRecentList("Profile/RecentNicks", m_profile->nick(), false);
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))
@@ -328,7 +328,7 @@ void Settings::write()
        << "Proxy/HideAndDisable"
        << "BigSendButton"
        << "CompactGenderWidget"
-       << "Profile/MaxSavedRecentNicks";
+       << "Profile/MaxRecentItems";
 
   setBool("FirstRun", false);
   setString("Network", network.config());
