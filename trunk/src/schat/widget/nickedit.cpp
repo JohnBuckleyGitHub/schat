@@ -145,9 +145,8 @@ int NickEdit::save(int notify)
       popup->close();
   }
 
-  if (m_maxRecentItems && modified) {
+  if (m_maxRecentItems && modified)
     modifyRecentList("Profile/RecentNicks", nick());
-  }
 
   return modified;
 }
@@ -221,11 +220,8 @@ void NickEdit::validateNick(const QString &text)
 
 void NickEdit::initCompleter()
 {
-  if (m_maxRecentItems < 0)
-    m_maxRecentItems = 0;
-
   if (m_maxRecentItems) {
-    QCompleter *completer = new QCompleter(this);
+    QCompleter *completer = new QCompleter(m_edit);
     m_edit->setCompleter(completer);
 
     m_model = new QStringListModel(this);

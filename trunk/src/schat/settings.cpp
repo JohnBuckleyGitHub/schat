@@ -255,6 +255,7 @@ void Settings::read()
 
   setInt("Profile/MaxRecentItems", 16);
   setList("Profile/RecentNicks", QStringList());
+  setList("Profile/RecentRealNames", QStringList());
 
   if (m_default)
     AbstractSettings::read(m_default);
@@ -277,7 +278,10 @@ void Settings::read()
   m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
 
+  if (getInt("Profile/MaxRecentItems") < 0)
+    setInt("Profile/MaxRecentItems", 0);
   NickEdit::modifyRecentList("Profile/RecentNicks", m_profile->nick(), false);
+  NickEdit::modifyRecentList("Profile/RecentRealNames", m_profile->fullName(), false);
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))
