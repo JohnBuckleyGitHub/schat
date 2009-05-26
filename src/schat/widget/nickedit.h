@@ -46,7 +46,7 @@ public:
   inline bool isMale() const        { return m_male; }
   inline void setGender(int gender) { setMale(!(bool) gender); }
   QString nick() const;
-  static void modifyRecentList(const QString &key, const QString &value, int maxSize, bool remove = true);
+  static void modifyRecentList(const QString &key, const QString &value, bool remove = true);
   void reset();
   void setMargin(int margin);
 
@@ -69,7 +69,7 @@ private:
   void setMale(bool male);
 
   bool m_male;
-  int m_maxSavedRecentNicks;
+  int m_maxRecentItems;
   QHBoxLayout *m_mainLay;
   QLineEdit *m_edit;
   QStringListModel *m_model;

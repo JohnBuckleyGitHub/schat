@@ -28,7 +28,7 @@
 NickEdit::NickEdit(QWidget *parent, Options options)
   : QWidget(parent),
   m_male(true),
-  m_maxSavedRecentNicks(SimpleSettings->getInt("Profile/MaxSavedRecentNicks")),
+  m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems")),
   m_applyButton(0),
   m_genderButton(0)
 {
@@ -83,8 +83,9 @@ QString NickEdit::nick() const
  * \param maxSize Максимальный размер списка.
  * \param remove  При \a false значение будет добавлено только если, в исходном списке оно отсутствует.
  */
-void NickEdit::modifyRecentList(const QString &key, const QString &value, int maxSize, bool remove)
+void NickEdit::modifyRecentList(const QString &key, const QString &value, bool remove)
 {
+  int maxSize = SimpleSettings->getInt("Profile/MaxRecentItems");
   if (maxSize < 1)
     return;
 
@@ -144,8 +145,8 @@ int NickEdit::save(int notify)
       popup->close();
   }
 
-  if (m_maxSavedRecentNicks && modified) {
-    modifyRecentList("Profile/RecentNicks", nick(), m_maxSavedRecentNicks);
+  if (m_maxRecentItems && modified) {
+    modifyRecentList("Profile/RecentNicks", nick());
   }
 
   return modified;
@@ -180,7 +181,7 @@ void NickEdit::showEvent(QShowEvent * /*event*/)
   if (m_applyButton)
     m_applyButton->setMaximumSize(editHeight, editHeight);
 
-  if (m_maxSavedRecentNicks)
+  if (m_maxRecentItems)
     m_model->setStringList(SimpleSettings->getList("Profile/RecentNicks"));
 }
 
@@ -220,10 +221,10 @@ void NickEdit::validateNick(const QString &text)
 
 void NickEdit::initCompleter()
 {
-  if (m_maxSavedRecentNicks < 0)
-    m_maxSavedRecentNicks = 0;
+  if (m_maxRecentItems < 0)
+    m_maxRecentItems = 0;
 
-  if (m_maxSavedRecentNicks) {
+  if (m_maxRecentItems) {
     QCompleter *completer = new QCompleter(this);
     m_edit->setCompleter(completer);
 
