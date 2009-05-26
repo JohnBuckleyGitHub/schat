@@ -25,6 +25,7 @@
 #include "schatwindow.h"
 #include "settings.h"
 #include "version.h"
+#include "widget/nickedit.h"
 
 /*!
  * \brief Конструктор класса Settings.
@@ -276,7 +277,7 @@ void Settings::read()
   m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
   m_settings->endGroup();
 
-//  createEmoticonsMap();
+  NickEdit::modifyRecentList("Profile/RecentNicks", m_profile->nick(), getInt("Profile/MaxSavedRecentNicks"), false);
 
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))
@@ -326,7 +327,8 @@ void Settings::write()
        << "Sound/NameFilter"
        << "Proxy/HideAndDisable"
        << "BigSendButton"
-       << "CompactGenderWidget";
+       << "CompactGenderWidget"
+       << "Profile/MaxSavedRecentNicks";
 
   setBool("FirstRun", false);
   setString("Network", network.config());

@@ -76,6 +76,34 @@ QString NickEdit::nick() const
 
 
 /*!
+ * Модификация списка для автодополнения введённых данных.
+ *
+ * \param key     Ключ настроек.
+ * \param value   Новое значение для добавления в список.
+ * \param maxSize Максимальный размер списка.
+ * \param remove  При \a false значение будет добавлено только если, в исходном списке оно отсутствует.
+ */
+void NickEdit::modifyRecentList(const QString &key, const QString &value, int maxSize, bool remove)
+{
+  if (maxSize < 1)
+    return;
+
+  QStringList recentList = SimpleSettings->getList(key);
+  bool contains = recentList.contains(value);
+  if (contains && remove)
+    recentList.removeAll(value);
+
+  if (!(!remove && contains))
+    recentList.prepend(value);
+
+  while (recentList.size() > maxSize)
+    recentList.removeLast();
+
+  SimpleSettings->setList(key, recentList);
+}
+
+
+/*!
  * Сброс введённых данных на стандартные значения.
  */
 void NickEdit::reset()
@@ -117,15 +145,7 @@ int NickEdit::save(int notify)
   }
 
   if (m_maxSavedRecentNicks && modified) {
-    QStringList recentNicks = SimpleSettings->getList("Profile/RecentNicks");
-    if (recentNicks.contains(nick()))
-      recentNicks.removeAll(nick());
-
-    if (recentNicks.size() == m_maxSavedRecentNicks)
-      recentNicks.removeLast();
-
-    recentNicks.prepend(nick());
-    SimpleSettings->setList("Profile/RecentNicks", recentNicks);
+    modifyRecentList("Profile/RecentNicks", nick(), m_maxSavedRecentNicks);
   }
 
   return modified;
