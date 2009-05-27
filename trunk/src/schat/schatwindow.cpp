@@ -95,10 +95,11 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
   }
   else if (text.startsWith("/google ")) {
     QString query = textFull.mid(textFull.indexOf(' ')).simplified().left(1000);
-    sendMsg(QString("<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b>"
-                    "<b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b>"
-                    "<b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: "
-                    "<b><a href='http://www.google.com/search?q=%1'>%1</a></b>").arg(query), false);
+    sendMsg("<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b>"
+            "<b style='color:#f3c518'>o</b><b style='color:#0039b6'>g</b>"
+            "<b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>: "
+            "<b><a href='http://www.google.com/search?q=" + QUrl::toPercentEncoding(query)
+            + "'>" + Qt::escape(query) + "</a></b>", false);
   }
   /// /help
   else if (text == "/help") {
