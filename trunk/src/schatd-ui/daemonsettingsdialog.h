@@ -32,7 +32,10 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QSpinBox;
-class ServiceInstaller;
+
+#ifndef SCHATD_NO_SERVICE
+class QtServiceController;
+#endif
 
 /*!
  * \brief Настройка сервера
@@ -137,16 +140,14 @@ public:
   /// Статус установки сервиса.
   enum Status {
     Unknown,        ///< Не определённое состояние.
-    Invalid,        ///< Ошибка, установка сервиса не возможна, не найдены файлы из Windows Resource Kit.
     ReadyToInstall, ///< Всё готово к установке сервиса.
     Installed,      ///< Сервис установлен.
-    WaitForInstall, ///< Ожидание установки сервиса.
-    WaitForRemove,  ///< Ожидание удаления сервиса.
     ErrorInstall,   ///< Ошибка при установке сервиса.
     ErrorRemove,    ///< Ошибка при удалении сервиса.
   };
 
   DaemonServiceSettings(QWidget *parent = 0);
+  ~DaemonServiceSettings();
 
 public slots:
   void reset(int page);
@@ -154,11 +155,8 @@ public slots:
 
 private slots:
   void clicked();
-  void done(bool err);
-  void serviceNameChanged(const QString &text);
 
 private:
-  bool exist(QLabel *label, const QString &file) const;
   inline void setState(Status status) { m_status = status; setState(); }
   void detect();
   void setCommandLinkState();
@@ -166,12 +164,9 @@ private:
 
   QCommandLinkButton *m_install;
   QGroupBox *m_installGroup;
-  QLabel *m_info;
-  QLabel *m_instsrvExe;
-  QLabel *m_srvanyExe;
-  QLabel *m_state;
-  QLineEdit *m_serviceName;
-  ServiceInstaller* const m_installer;
+  QLabel *m_serviceName;
+  QLabel *m_stateLabel;
+  QtServiceController *m_controller;
   Status m_status;
 };
 #endif

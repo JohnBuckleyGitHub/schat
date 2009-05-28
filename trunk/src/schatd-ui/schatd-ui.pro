@@ -48,8 +48,7 @@ SOURCES += \
     networkwriter.cpp \
 
 win32{
-    HEADERS += serviceinstaller.h
-    SOURCES += serviceinstaller.cpp
+    include(../3rdparty/qtservice/src/qtservice.pri)
 }
 else {
     DEFINES += SCHATD_NO_SERVICE

@@ -78,10 +78,9 @@ QString NickEdit::nick() const
 /*!
  * Модификация списка для автодополнения введённых данных.
  *
- * \param key     Ключ настроек.
- * \param value   Новое значение для добавления в список.
- * \param maxSize Максимальный размер списка.
- * \param remove  При \a false значение будет добавлено только если, в исходном списке оно отсутствует.
+ * \param key    Ключ настроек.
+ * \param value  Новое значение для добавления в список.
+ * \param remove При \a false значение будет добавлено только если, в исходном списке оно отсутствует.
  */
 void NickEdit::modifyRecentList(const QString &key, const QString &value, bool remove)
 {

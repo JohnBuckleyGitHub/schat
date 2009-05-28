@@ -25,7 +25,7 @@
 #include "networkwriter.h"
 
 #ifndef SCHATD_NO_SERVICE
-  #include "serviceinstaller.h"
+ #include "QtServiceController"
 #endif
 
 /*!
@@ -466,68 +466,43 @@ void DaemonNetSettings::readNetwork()
 #ifndef SCHATD_NO_SERVICE
 DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent),
-  m_installer(new ServiceInstaller(this)),
+  m_controller(new QtServiceController("Simple Chat Daemon")),
   m_status(Unknown)
 {
-  QLabel *state = new QLabel(tr("Windows сервис:"), this);
-  m_state = new QLabel(tr("<b style='color:#c00;'>не установлен</b>"), this);
-
-  QLabel *instsrvExe = new QLabel("instsrv.exe:", this);
-  m_instsrvExe = new QLabel(this);
-
-  QLabel *srvanyExe = new QLabel("srvany.exe:", this);
-  m_srvanyExe = new QLabel(this);
+  m_stateLabel = new QLabel(QString("<b style='color:#c00;'>%1</b>").arg(tr("не установлен")), this);
 
   QGroupBox *infoGroup = new QGroupBox(tr("Информация"), this);
-  QGridLayout *infoLay = new QGridLayout(infoGroup);
-  infoLay->addWidget(state, 0, 0);
-  infoLay->addWidget(m_state, 0, 1);
-  infoLay->addWidget(instsrvExe, 1, 0);
-  infoLay->addWidget(m_instsrvExe, 1, 1);
-  infoLay->addWidget(srvanyExe, 2, 0);
-  infoLay->addWidget(m_srvanyExe, 2, 1);
-  infoLay->setColumnStretch(1, 1);
+  QFormLayout *infoLay = new QFormLayout(infoGroup);
+  infoLay->addRow(tr("Windows сервис:"), m_stateLabel);
   infoLay->setMargin(6);
   infoLay->setSpacing(4);
 
-  QLabel *serviceName = new QLabel(tr("Имя сервиса:"), this);
-  m_serviceName = new QLineEdit(DaemonSettingsInstance->getString("Service/Name"), this);
-  m_serviceName->setMaxLength(128);
-
-  m_install = new QCommandLinkButton(tr("Установить"), tr("Установить сервер как сервис"), this);
+  m_serviceName = new QLabel("<b>" + m_controller->serviceName() + "</b>", this);
+  m_install = new QCommandLinkButton(this);
 
   m_installGroup = new QGroupBox(tr("Установка/Удаление"), this);
-  QGridLayout *installLay = new QGridLayout(m_installGroup);
-  installLay->addWidget(serviceName, 0, 0);
-  installLay->addWidget(m_serviceName, 0, 1);
-  installLay->addWidget(m_install, 1, 0, 1, 2);
+  QFormLayout *installLay = new QFormLayout(m_installGroup);
+  installLay->addRow(tr("Имя сервиса:"), m_serviceName);
+  installLay->addRow(m_install);
   installLay->setMargin(6);
   installLay->setSpacing(4);
-
-  m_info = new QLabel(tr("Для установки сервиса необходимо скопировать файлы <b>instsrv.exe</b> и <b>srvany.exe</b> "
-      "из комплекта <b>Windows Resource Kit</b> в папку с сервером.<br />"
-      "<a href='http://simple.impomezia.com/Windows_Service' style='text-decoration:none; color:#1a4d82;'>Подробности</a>."), this);
-  m_info->setStyleSheet("border: 1px solid #7581a9;"
-      "border-radius: 3px;"
-      "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
-  m_info->setOpenExternalLinks(true);
-  m_info->setWordWrap(true);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(infoGroup);
   mainLay->addWidget(m_installGroup);
-  mainLay->addWidget(m_info);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
 
   detect();
-
-  if (m_status != Installed)
-    serviceNameChanged(m_serviceName->text());
+  setCommandLinkState();
 
   connect(m_install, SIGNAL(clicked(bool)), SLOT(clicked()));
-  connect(m_installer, SIGNAL(done(bool)), SLOT(done(bool)));
-  connect(m_serviceName, SIGNAL(textChanged(const QString &)), SLOT(serviceNameChanged(const QString &)));
+}
+
+
+DaemonServiceSettings::~DaemonServiceSettings()
+{
+  delete m_controller;
 }
 
 
@@ -556,66 +531,18 @@ void DaemonServiceSettings::clicked()
 {
   if (m_status == ReadyToInstall) {
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    m_status = WaitForInstall;
-    m_installer->install(m_serviceName->text());
+    if (QtServiceController::install(QApplication::applicationDirPath() + "/schatd.exe") && m_controller->isInstalled())
+      setState(Installed);
+    else
+      setState(ErrorInstall);
+    QApplication::restoreOverrideCursor();
   }
   else if (m_status == Installed) {
-    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-    m_status = WaitForRemove;
-    m_installer->uninstall(m_serviceName->text());
+    if (m_controller->uninstall() && !m_controller->isInstalled())
+      setState(ReadyToInstall);
+    else
+      setState(ErrorRemove);
   }
-}
-
-
-/*!
- * Завершение операций.
- *
- * \param err \a true если при выполнении операций произошла ошибка.
- */
-void DaemonServiceSettings::done(bool err)
-{
-  if (m_status == WaitForInstall) {
-    err ? setState(ErrorInstall) : setState(Installed);
-    QApplication::restoreOverrideCursor();
-  }
-  else if (m_status == WaitForRemove) {
-    err ? setState(ErrorRemove) : setState(ReadyToInstall);
-    QApplication::restoreOverrideCursor();
-  }
-}
-
-
-/*!
- * Обработка изменения имени сервиса.
- *
- * \param text новое имя сервиса.
- */
-void DaemonServiceSettings::serviceNameChanged(const QString &text)
-{
-  if (text.isEmpty() || ServiceInstaller::exists(text))
-    m_install->setEnabled(false);
-  else
-    m_install->setEnabled(true);
-}
-
-
-/*!
- * Проверка на наличие необходимого файла из Windows Resource Kit.
- *
- * \param label Указатель на объект QLabel, для отображения состояния.
- * \param file  Имя файла, который нужно найти (без пути).
- *
- * \return \a true если файл найден.
- */
-bool DaemonServiceSettings::exist(QLabel *label, const QString &file) const
-{
-  if (!QFile::exists(QApplication::applicationDirPath() + "/" + file)) {
-    label->setText(tr("<b style='color:#c00;'>не найден</b>"));
-    return false;
-  }
-
-  label->setText(tr("<b style='color:#090;'>найден</b>"));
-  return true;
 }
 
 
@@ -624,20 +551,7 @@ bool DaemonServiceSettings::exist(QLabel *label, const QString &file) const
  */
 void DaemonServiceSettings::detect()
 {
-  m_status = Unknown;
-
-  if (!exist(m_instsrvExe, "instsrv.exe"))
-    m_status = Invalid;
-
-  if (!exist(m_srvanyExe, "srvany.exe"))
-    m_status = Invalid;
-
-  if (m_status == Invalid) {
-    setState();
-    return;
-  }
-
-  if (DaemonSettingsInstance->getBool("Service/Installed") && ServiceInstaller::isValid(m_serviceName->text()))
+  if (m_controller->isInstalled())
     setState(Installed);
   else
     setState(ReadyToInstall);
@@ -665,30 +579,17 @@ void DaemonServiceSettings::setCommandLinkState()
  */
 void DaemonServiceSettings::setState()
 {
-  if (m_status == Invalid) {
-    m_installGroup->setEnabled(false);
-    m_info->setVisible(true);
-  }
-  else {
-    m_installGroup->setEnabled(true);
-    m_info->setVisible(false);
-  }
-
   if (m_status == Installed) {
-    m_serviceName->setEnabled(false);
-    m_state->setText(tr("<b style='color:#090;'>установлен</b>"));
+    m_stateLabel->setText(QString("<b style='color:#090;'>%1</b>").arg("установлен"));
   }
   else if (m_status == ReadyToInstall) {
-    m_serviceName->setEnabled(true);
-    m_state->setText(tr("<b style='color:#c00;'>не установлен</b>"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("не установлен"));
   }
   else if (m_status == ErrorInstall) {
-    m_serviceName->setEnabled(true);
-    m_state->setText(tr("<b style='color:#c00;'>ошибка при установке</b>"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("ошибка при установке"));
   }
   else if (m_status == ErrorRemove) {
-    m_serviceName->setEnabled(false);
-    m_state->setText(tr("<b style='color:#c00;'>ошибка при удалении</b>"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("ошибка при удалении"));
   }
 
   if (m_status != ErrorRemove)
