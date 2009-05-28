@@ -142,6 +142,7 @@
 </buildTargets>
 </storageModule>
 
+
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
 <pathentry base-path="C:/qt/4.5.1/include" include="" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/4.5.1/include" include="ActiveQt" kind="inc" path="" system="true"/>
@@ -170,6 +171,7 @@
 <pathentry include="C:/dev/mingw/include" kind="inc" path="" system="true"/>
 <pathentry base-path="schat" include="src/customize" kind="inc" path="" system="true"/>
 <pathentry base-path="schat" include="src/3rdparty/qtsingleapplication/src" kind="inc" path="" system="true"/>
+<pathentry base-path="schat" include="src/3rdparty/qtservice/src" kind="inc" path="" system="true"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>

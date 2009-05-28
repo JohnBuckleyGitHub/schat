@@ -16,12 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#include <QCoreApplication>
 
-#include "daemonapp.h"
+#include "qtservice.h"
 
-int main(int argc, char *argv[])
+#ifndef DAEMONAPP_H_
+#define DAEMONAPP_H_
+
+/*!
+ * \brief Основаный на QtService класс обеспечивающий запуск и управление сервером.
+ */
+class DaemonApp : public QtService<QCoreApplication>
 {
-  DaemonApp service(argc, argv);
-  return service.exec();
-}
+public:
+  DaemonApp(int argc, char **argv);
+
+protected:
+  void start();
+  void stop();
+};
+
+#endif /* DAEMONAPP_H_ */

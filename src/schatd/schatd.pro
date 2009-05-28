@@ -34,6 +34,7 @@ HEADERS = \
     channellog.h \
     clientservice.h \
     daemon.h \
+    daemonapp.h \
     daemonlog.h \
     daemonservice.h \
     daemonsettings.h \
@@ -50,6 +51,7 @@ SOURCES = \
     channellog.cpp \
     clientservice.cpp \
     daemon.cpp \
+    daemonapp.cpp \
     daemonlog.cpp \
     daemonservice.cpp \
     daemonsettings.cpp \
@@ -70,4 +72,5 @@ else {
 TRANSLATIONS += ../../data/translations/schatd_ru.ts
 CODECFORTR = UTF-8
 
+include(../3rdparty/qtservice/src/qtservice.pri)
 include(../common/common.pri)
