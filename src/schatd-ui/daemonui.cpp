@@ -23,7 +23,7 @@
 #include "daemonsettings.h"
 
 #ifndef SCHATD_NO_SERVICE
-  #include "serviceinstaller.h"
+  #include "QtServiceController"
 #endif
 
 /*!
@@ -34,7 +34,7 @@ DaemonUi::DaemonUi(QWidget *parent)
 {
   setWindowFlags(Qt::Tool);
 
-  m_settings = new DaemonSettings(qApp->applicationDirPath() + "/schatd.conf", this);
+  m_settings = new DaemonSettings(QApplication::applicationDirPath() + "/schatd.conf", this);
   m_checkTimer.setInterval(5000);
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(checkStart()));
 
@@ -175,10 +175,10 @@ void DaemonUi::init()
 
   m_settings->read();
 
-  #ifndef SCHATD_NO_SERVICE
-    if (m_settings->getBool("Service/Installed"))
-      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
-  #endif
+//  #ifndef SCHATD_NO_SERVICE
+//    if (m_settings->getBool("Service/Installed"))
+//      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
+//  #endif
 
   QSettings s(QApplication::applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
   QApplication::setStyle(s.value("Style", "Plastique").toString());
@@ -252,7 +252,7 @@ void DaemonUi::start()
   else
   #endif
 
-  if (!QProcess::startDetached('"' + m_daemonFile + '"')) {
+  if (!QProcess::startDetached('"' + m_daemonFile + "\" -exec")) {
     setStatus(Error);
     return;
   }
