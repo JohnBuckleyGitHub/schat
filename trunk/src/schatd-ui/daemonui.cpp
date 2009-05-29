@@ -27,10 +27,13 @@
 #endif
 
 /*!
- * \brief Конструктор класса DaemonUi.
+ * Конструктор класса DaemonUi.
  */
 DaemonUi::DaemonUi(QWidget *parent)
   : QDialog(parent)
+  #ifndef SCHATD_NO_SERVICE
+  , m_controller(new QtServiceController("Simple Chat Daemon"))
+  #endif
 {
   setWindowFlags(Qt::Tool);
 
@@ -119,6 +122,14 @@ DaemonUi::DaemonUi(QWidget *parent)
   #endif
 
   QTimer::singleShot(0, this, SLOT(init()));
+}
+
+
+DaemonUi::~DaemonUi()
+{
+  #ifndef SCHATD_NO_SERVICE
+  delete m_controller;
+  #endif
 }
 
 
@@ -247,15 +258,20 @@ void DaemonUi::settings()
 void DaemonUi::start()
 {
   #ifndef SCHATD_NO_SERVICE
-  if (m_settings->getBool("Service/Installed"))
-    process()->start("net start \"" + m_settings->getString("Service/Name") + '"');
+  if (!m_controller->isInstalled()) {
+    if (!QProcess::startDetached('"' + m_daemonFile + "\" -exec")) {
+      setStatus(Error);
+      return;
+    }
+  }
   else
-  #endif
-
-  if (!QProcess::startDetached('"' + m_daemonFile + "\" -exec")) {
+    m_controller->start();
+  #else
+  if (!QProcess::startDetached('"' + m_daemonFile + "\" -start")) {
     setStatus(Error);
     return;
   }
+  #endif
 
   if (m_status != Restarting)
     setStatus(Starting);
@@ -267,20 +283,23 @@ void DaemonUi::start()
 
 /*!
  * Остановка сервера.
- * Для win32 платформы при использовании сервиса, производится
- * его остановка с помощью команды \b net. Для всех остальных случаев
- * через локальное подключение посылается команда на завершение.
  */
 void DaemonUi::stop()
 {
   #ifndef SCHATD_NO_SERVICE
-  if (m_settings->getBool("Service/Installed")) {
+  if (m_controller->isInstalled()) {
     m_client->leave();
-    process()->start("net stop \"" + m_settings->getString("Service/Name") + '"');
+    m_controller->stop();
   }
   else
-  #endif
     m_client->exit();
+  #else
+  m_client->leave();
+  if (!QProcess::startDetached('"' + m_daemonFile + "\" -terminate")) {
+    setStatus(Error);
+    return;
+  }
+  #endif
 }
 
 

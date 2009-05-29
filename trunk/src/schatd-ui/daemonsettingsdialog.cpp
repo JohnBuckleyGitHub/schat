@@ -538,7 +538,10 @@ void DaemonServiceSettings::clicked()
     QApplication::restoreOverrideCursor();
   }
   else if (m_status == Installed) {
-    if (m_controller->uninstall() && !m_controller->isInstalled())
+    if (m_controller->isRunning())
+      m_controller->stop();
+
+    if (m_controller->uninstall())
       setState(ReadyToInstall);
     else
       setState(ErrorRemove);

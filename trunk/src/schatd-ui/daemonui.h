@@ -34,6 +34,10 @@ class QMenu;
 class QProcess;
 class QToolButton;
 
+#ifndef SCHATD_NO_SERVICE
+class QtServiceController;
+#endif
+
 /*!
  * \brief Диалог управления сервером
  */
@@ -43,6 +47,7 @@ class DaemonUi : public QDialog
 
 public:
   DaemonUi(QWidget *parent = 0);
+  ~DaemonUi();
 
 public slots:
   void handleMessage(const QString& message);
@@ -111,6 +116,9 @@ private:
   QToolButton *m_startButton;
   QToolButton *m_stopButton;
   Status m_status;
+  #ifndef SCHATD_NO_SERVICE
+  QtServiceController *m_controller;
+  #endif
 };
 
 #endif /*DAEMONUI_H_*/

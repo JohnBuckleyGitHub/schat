@@ -31,6 +31,7 @@ DaemonApp::DaemonApp(int argc, char **argv)
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
   setServiceDescription("IMPOMEZIA Simple Chat Daemon");
+  setStartupType(QtServiceController::AutoStartup);
 }
 
 
