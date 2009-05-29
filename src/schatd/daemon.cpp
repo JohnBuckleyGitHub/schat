@@ -101,10 +101,19 @@ bool Daemon::start()
 
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
+      QString serverName = QCryptographicHash::hash(QCoreApplication::applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex();
+      #ifdef Q_OS_UNIX
+       #if QT_VERSION >= 0x040500
+        QLocalServer::removeServer(serverName);
+       #else
+        QString fullServerName = QDir::tempPath() + QLatin1String("/") + serverName;
+        if (QFile::exists(fullServerName))
+          QFile::remove(fullServerName);
+       #endif
+      #endif
       m_localServer = new QLocalServer(this);
-      if (m_localServer->listen(QCryptographicHash::hash(qApp->applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex())) {
+      if (m_localServer->listen(serverName))
         connect(m_localServer, SIGNAL(newConnection()), SLOT(incomingLocalConnection()));
-      }
       else
         m_localServer->deleteLater();
     }
