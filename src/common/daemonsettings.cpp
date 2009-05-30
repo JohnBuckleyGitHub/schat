@@ -57,10 +57,5 @@ void DaemonSettings::read()
   setString("MotdFile",      "motd.html");
   setString("StatsFile",     "stats.xml");
 
-  #ifndef SCHATD_NO_SERVICE
-    setBool("Service/Installed", false);
-    setString("Service/Name", "Simple Chat Daemon");
-  #endif
-
   AbstractSettings::read();
 }
