@@ -251,9 +251,6 @@ void DaemonUi::settings()
 
 /*!
  * Запуск сервера.
- * Для win32 платформы при использовании сервиса, производится
- * его запуск с помощью команды \b net. Для всех остальных случаев
- * процесс запускается непосредственно.
  */
 void DaemonUi::start()
 {
@@ -267,7 +264,7 @@ void DaemonUi::start()
   else
     m_controller->start();
   #else
-  if (!QProcess::startDetached('"' + m_daemonFile + "\" -start")) {
+  if (!QProcess::startDetached('"' + m_daemonFile + '"')) {
     setStatus(Error);
     return;
   }
@@ -487,14 +484,3 @@ void DaemonUi::showUi()
   show();
   activateWindow();
 }
-
-
-#ifndef SCHATD_NO_SERVICE
-QProcess* DaemonUi::process()
-{
-  QProcess *p = new QProcess(this);
-  connect(p, SIGNAL(error(QProcess::ProcessError)), p, SLOT(deleteLater()));
-  connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), p, SLOT(deleteLater()));
-  return p;
-}
-#endif
