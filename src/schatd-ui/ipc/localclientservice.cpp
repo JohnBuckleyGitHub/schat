@@ -37,6 +37,7 @@ LocalClientService::LocalClientService(QObject *parent)
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), SLOT(disconnected()));
   connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+  connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
   connect(&m_reconnectTimer, SIGNAL(timeout()), SLOT(connectToServer()));
 }
 
@@ -81,6 +82,34 @@ void LocalClientService::disconnected()
 }
 
 
+void LocalClientService::readyRead()
+{
+  forever {
+    if (!m_nextBlockSize) {
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+
+      m_stream >> m_nextBlockSize;
+    }
+
+    if (m_socket->bytesAvailable() < m_nextBlockSize)
+      break;
+
+    m_stream >> m_opcode;
+
+    switch (m_opcode) {
+      case 666:
+        m_socket->disconnectFromServer();
+        return;
+
+      default:
+        unknownOpcode();
+        break;
+    }
+  }
+}
+
+
 bool LocalClientService::send(quint16 opcode)
 {
   if (m_socket->state() == QLocalSocket::ConnectedState) {
@@ -95,4 +124,11 @@ bool LocalClientService::send(quint16 opcode)
   }
   else
     return false;
+}
+
+
+void LocalClientService::unknownOpcode()
+{
+  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  m_nextBlockSize = 0;
 }

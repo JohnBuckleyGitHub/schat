@@ -24,14 +24,7 @@
 #include "ipc/localservice.h"
 
 /*!
- * \class LocalService
- * \brief Класс, обслуживающий локальные соединения.
- * 
- * При наличии валидного сокета, инициализируется сокет.
- */
-
-/*!
- * \brief Конструктор класса LocalService.
+ * Конструктор класса LocalService.
  */
 LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   : QObject(parent), m_socket(socket)
@@ -46,6 +39,15 @@ LocalService::LocalService(QLocalSocket *socket, QObject *parent)
   }
   else
     deleteLater();
+}
+
+
+LocalService::~LocalService()
+{
+  if (m_socket && m_socket->state() == QLocalSocket::ConnectedState && send(666)) {
+//    m_socket->waitForBytesWritten(500);
+    m_socket->close();
+  }
 }
 
 
@@ -74,6 +76,22 @@ void LocalService::readyRead()
         break;
     }
   }
+}
+
+
+bool LocalService::send(quint16 opcode)
+{
+  if (m_socket->state() == QLocalSocket::ConnectedState) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << quint16(0) << opcode;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
+  }
+  else
+    return false;
 }
 
 

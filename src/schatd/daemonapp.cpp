@@ -67,4 +67,5 @@ void DaemonApp::start()
 void DaemonApp::stop()
 {
   QFile::remove(application()->applicationDirPath() + "/schatd.pid");
+  application()->quit();
 }

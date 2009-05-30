@@ -16,12 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef DAEMONAPP_H_
+#define DAEMONAPP_H_
+
 #include <QCoreApplication>
 
 #include "qtservice.h"
-
-#ifndef DAEMONAPP_H_
-#define DAEMONAPP_H_
 
 /*!
  * \brief Основаный на QtService класс обеспечивающий запуск и управление сервером.
