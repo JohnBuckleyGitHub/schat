@@ -88,10 +88,6 @@ private:
   void setStatus(Status status);
   void showUi();
 
-  #ifndef SCHATD_NO_SERVICE
-    QProcess* process();
-  #endif
-
   DaemonSettings *m_settings;
   LocalClientService *m_client;
   QAction *m_quitAction;
