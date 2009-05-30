@@ -50,15 +50,18 @@ public slots:
 private slots:
   void connected();
   void disconnected();
+  void readyRead();
 
 private:
   bool send(quint16 opcode);
+  void unknownOpcode();
 
   QDataStream m_stream;
   QPointer<QLocalSocket> m_socket;
+  QString m_key;
   QTimer m_reconnectTimer;
   quint16 m_nextBlockSize;
-  QString m_key;
+  quint16 m_opcode;
 };
 
 #endif /*LOCALCLIENTSERVICE_H_*/

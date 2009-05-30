@@ -21,17 +21,22 @@
 
 #include <QLocalSocket>
 
+/*!
+ * \brief Класс, обслуживающий локальные соединения.
+ */
 class LocalService : public QObject
 {
   Q_OBJECT
 
 public:
   LocalService(QLocalSocket *socket, QObject *parent = 0);
+  ~LocalService();
 
 private slots:
   void readyRead();
 
 private:
+  bool send(quint16 opcode);
   void unknownOpcode();
 
   QDataStream m_stream;
