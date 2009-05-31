@@ -55,7 +55,7 @@ AbstractProfile::AbstractProfile(QObject *parent)
   : QObject(parent)
 {
   m_male = true;
-  m_nick = QDir::home().dirName();
+  m_nick = defaultNick();
 #ifdef SCHAT_CLIENT
   m_userAgent = QString("IMPOMEZIA Simple Chat/%1").arg(SCHAT_VERSION);
 #else
@@ -65,17 +65,6 @@ AbstractProfile::AbstractProfile(QObject *parent)
 }
 
 
-AbstractProfile::~AbstractProfile()
-{
-#ifdef SCHAT_DEBUG
-  qDebug() << "AbstractProfile::~AbstractProfile()";
-#endif
-}
-
-
-/** [public] static
- *
- */
 bool AbstractProfile::isValidNick(const QString &n)
 {
   QString nick = n.simplified();
@@ -93,9 +82,6 @@ bool AbstractProfile::isValidNick(const QString &n)
 }
 
 
-/** [public] static
- *
- */
 bool AbstractProfile::isValidUserAgent(const QString &a)
 {
   if (a.isEmpty())
@@ -114,6 +100,23 @@ QStringList AbstractProfile::pack() const
   QStringList list;
   list << m_nick << m_fullName << m_byeMsg << m_userAgent << m_host << gender();
   return list;
+}
+
+
+/*!
+ * Автоматическое определение ника по умолчанию.
+ */
+QString AbstractProfile::defaultNick()
+{
+  #ifdef Q_OS_WINCE
+  QSettings s("HKEY_CURRENT_USER\\ControlPanel\\Owner", QSettings::NativeFormat);
+  QString name = s.value("Name").toString();
+  if (name.isEmpty())
+    name = "WindowsMobile";
+  return name;
+  #else
+  return QDir::home().dirName();
+  #endif
 }
 
 

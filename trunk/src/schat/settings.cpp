@@ -273,7 +273,7 @@ void Settings::read()
   createServerList();
 
   m_settings->beginGroup("Profile");
-  m_profile->setNick(m_settings->value("Nick",     QDir::home().dirName()).toString());
+  m_profile->setNick(m_settings->value("Nick",     AbstractProfile::defaultNick()).toString());
   m_profile->setFullName(m_settings->value("Name", "").toString());
   m_profile->setGender(m_settings->value("Gender", "male").toString());
   m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());

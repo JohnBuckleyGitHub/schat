@@ -96,8 +96,6 @@ void ProfileWidget::reset()
   m_nickEdit->reset();
   m_name->setText("");
 
-  if (m_compactGenderWidget)
-    m_nickEdit->setGender(0);
-  else
+  if (!m_compactGenderWidget)
     m_gender->setCurrentIndex(0);
 }

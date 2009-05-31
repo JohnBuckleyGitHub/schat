@@ -108,7 +108,9 @@ void NickEdit::modifyRecentList(const QString &key, const QString &value, bool r
  */
 void NickEdit::reset()
 {
-  m_edit->setText(QDir::home().dirName());
+  m_edit->setText(AbstractProfile::defaultNick());
+  if (m_genderButton)
+    setGender(0);
 }
 
 
