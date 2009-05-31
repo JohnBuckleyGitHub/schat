@@ -48,7 +48,6 @@ public:
   AbstractProfile(const AbstractProfile &other);
   AbstractProfile(const QStringList &list, QObject *parent = 0);
   AbstractProfile(QObject *parent = 0);
-  ~AbstractProfile();
   inline bool isFemale() const                     { return !m_male; }
   inline bool isMale() const                       { return m_male; }
   inline bool isValidNick() const                  { return isValidNick(m_nick); }
@@ -75,6 +74,7 @@ public:
   QStringList pack() const;
   static bool isValidNick(const QString &nick);
   static bool isValidUserAgent(const QString &a);
+  static QString defaultNick();
   void setStatus(quint32 status);
   void unpack(const QStringList &list);
 
