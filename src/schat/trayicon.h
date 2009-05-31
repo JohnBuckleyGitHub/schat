@@ -33,9 +33,10 @@ class TrayIcon : public QSystemTrayIcon
   Q_OBJECT
 
 public:
+  /// Тип сообщения отображаемый в трее.
   enum Message {
-    UpdateReady,
-    UpdateAvailable
+    UpdateReady,    ///< Обновление готово к установке.
+    UpdateAvailable ///< Доступно обновление.
   };
 
   TrayIcon(QObject *parent = 0);
@@ -50,20 +51,22 @@ private slots:
   void timeout();
 
 private:
+  void displayMessage(Message message, bool force = false);
   void init();
   void playSound();
   void updateAvailable(bool force = false);
 
   #ifndef SCHAT_NO_UPDATE
-    static QString bytesToHuman(int size);
-    void updateReady();
+  static QString bytesToHuman(int size);
   #endif
 
+  bool m_deferredMessage;
   bool m_normal;
   Message m_message;
   QIcon m_icon;
   QIcon m_noticeIcon;
   QQueue<QString> m_soundQueue;
+  QString m_lastCheckedVersion;
   QString m_soundsPath;
   QTimer *m_timer;
   Settings *m_settings;

@@ -27,7 +27,11 @@
  * \brief Конструктор класса TrayIcon.
  */
 TrayIcon::TrayIcon(QObject *parent)
-  : QSystemTrayIcon(parent)
+  : QSystemTrayIcon(parent),
+  m_deferredMessage(false),
+  m_normal(true),
+  m_lastCheckedVersion(SimpleSettings->getString("Updates/LastVersion")),
+  m_settings(SimpleSettings)
 {
   setStatus(schat::StatusNormal);
   init();
@@ -98,7 +102,7 @@ void TrayIcon::notify(int code)
 
     #ifndef SCHAT_NO_UPDATE
     case Settings::UpdateReady:
-      updateReady();
+      displayMessage(UpdateReady);
       break;
     #endif
 
@@ -124,6 +128,10 @@ void TrayIcon::setStatus(quint32 status)
   else
     m_icon = QIcon(":/images/logo16.png");
 
+  if (status != schat::StatusAutoAway && status != schat::StatusDnD && m_deferredMessage) {
+    displayMessage(m_message);
+  }
+
   setIcon(m_icon);
 }
 
@@ -146,13 +154,56 @@ void TrayIcon::timeout()
 
 
 /*!
+ * Отображение сообщения заданного типа.
+ */
+void TrayIcon::displayMessage(Message message, bool force)
+{
+  QString version = m_settings->getString("Updates/LastVersion");
+  m_message = message;
+
+  if (!force) {
+    if (SimpleSettings->profile()->status() == schat::StatusAutoAway || SimpleSettings->profile()->status() == schat::StatusDnD) {
+      m_deferredMessage = true;
+      return;
+    }
+  }
+
+  m_deferredMessage = false;
+
+  if (message == UpdateAvailable) {
+    #ifndef SCHAT_NO_UPDATE
+    showMessage(
+      tr("Доступно обновление до версии %1").arg(version),
+      tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
+         "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
+      QSystemTrayIcon::Information,
+      60000);
+    #else
+    showMessage(
+          tr("Доступна новая версия %1").arg(version),
+          tr("Щёлкните здесь для того чтобы перейти на страницу загрузки"),
+          QSystemTrayIcon::Information,
+          60000);
+    #endif
+  }
+  #ifndef SCHAT_NO_UPDATE
+  else if (message == UpdateReady) {
+    showMessage(
+        tr("Всё готово к установке версии %1").arg(version),
+        tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
+        QSystemTrayIcon::Information,
+        60000);
+  }
+  #endif
+}
+
+
+/*!
  * Инициализация членов класса.
  */
 void TrayIcon::init()
 {
-  m_settings = settings;
   setToolTip(QApplication::applicationName() + " " + QApplication::applicationVersion());
-  m_normal = true;
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);
   m_timer->setInterval(700);
@@ -188,29 +239,11 @@ void TrayIcon::playSound()
  */
 void TrayIcon::updateAvailable(bool force)
 {
-  m_message = UpdateAvailable;
-  static QString last;
-
   QString version = m_settings->getString("Updates/LastVersion");
 
-  if (last.isEmpty() || last != version || force) {
-
-    #ifndef SCHAT_NO_UPDATE
-    showMessage(
-        tr("Доступно обновление до версии %1").arg(version),
-        tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
-           "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
-        QSystemTrayIcon::Information,
-        60000);
-    #else
-    showMessage(
-            tr("Доступна новая версия %1").arg(version),
-            tr("Щёлкните здесь для того чтобы перейти на страницу загрузки"),
-            QSystemTrayIcon::Information,
-            60000);
-    #endif
-
-    last = version;
+  if (m_lastCheckedVersion != version || force) {
+    displayMessage(UpdateAvailable, force);
+    m_lastCheckedVersion = version;
   }
 }
 
@@ -227,22 +260,5 @@ QString TrayIcon::bytesToHuman(int size)
     return tr("%1 Кб").arg((int) size / 1024);
   else
     return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
-}
-#endif
-
-
-/*!
- * Уведомление о готовности к установке обновлений.
- */
-#ifndef SCHAT_NO_UPDATE
-void TrayIcon::updateReady()
-{
-  m_message = UpdateReady;
-  QString version = m_settings->getString("Updates/LastVersion");
-  showMessage(
-      tr("Всё готово к установке версии %1").arg(version),
-      tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
-      QSystemTrayIcon::Information,
-      60000);
 }
 #endif
