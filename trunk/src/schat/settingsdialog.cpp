@@ -304,11 +304,7 @@ void NetworkSettings::reset(int page)
 
 void NetworkSettings::save()
 {
-  int modified = 0;
-
-  if (d->network->save())
-    modified++;
-
+  int modified = d->network->save(false);
   SimpleSettings->setBool("HideWelcome", d->welcome->isChecked());
 
   modified += SimpleSettings->save("Proxy/Enable", d->proxyGroup->isChecked());
