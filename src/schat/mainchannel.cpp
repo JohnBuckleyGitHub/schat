@@ -38,7 +38,7 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
 
   m_connectCreateButton->setVisible(false);
 
-  m_networkWidget = new NetworkWidget(this);
+  m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel);
   m_networkWidget->setVisible(false);
 
   m_networkLayout = new QHBoxLayout;

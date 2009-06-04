@@ -54,7 +54,7 @@ signals:
   void validNick(bool valid);
 
 public slots:
-  int save(int notify = true);
+  int save(bool notify = true);
 
 protected:
   void keyPressEvent(QKeyEvent *event);

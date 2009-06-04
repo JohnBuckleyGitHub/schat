@@ -123,7 +123,7 @@ void NickEdit::setMargin(int margin)
 /*!
  * Сохранение настроек.
  */
-int NickEdit::save(int notify)
+int NickEdit::save(bool notify)
 {
   int modified = 0;
 

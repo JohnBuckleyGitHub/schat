@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef NETWORKWIDGET_H_
@@ -33,35 +33,47 @@ class Settings;
 /*!
  * \brief Виджет обеспечивающий выбор сети или одиночного сервера.
  */
-class NetworkWidget : public QWidget {
+class NetworkWidget : public QWidget
+{
   Q_OBJECT
 
 public:
-  NetworkWidget(QWidget *parent = 0);
-  bool save();
+  /// Опции создания виджета.
+  enum OptionsFlag {
+    NoOptions    = 0x0, ///< Нет опций.
+    NetworkLabel = 0x1, ///< Добавить надпись \b Сеть.
+  };
+
+  Q_DECLARE_FLAGS(Options, OptionsFlag)
+
+  NetworkWidget(QWidget *parent = 0, Options options = NoOptions);
   void reset();
 
 signals:
   void validServer(bool valid);
 
+public slots:
+  int save(bool notify = true);
+
 private slots:
-  void activated(int index);
   void currentIndexChanged(int index);
   void editTextChanged(const QString &text);
   void setCurrentIndex(int index);
 
 private:
-  void addServer(const ServerInfo &info);
+  inline int addSingleServer(const ServerInfo &info, bool current = true) { return addSingleServer(info.address, info.port, current); }
+  int addSingleServer(const QString &address, quint16 port, bool current = true);
+  int findSingleServer(const QString &address, quint16 port) const;
+  ServerInfo singleServer(const QString &url);
   void init();
 
   int m_initPort;
   QComboBox *m_select;
-  QLabel *m_infoLabel;
-  QLabel *m_portLabel;
-  QSpinBox *m_port;
   QString m_initText;
   QString m_networksPath;
   Settings *m_settings;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(NetworkWidget::Options)
 
 #endif /*NETWORKWIDGET_H_*/

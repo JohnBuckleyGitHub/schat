@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -23,85 +23,40 @@
 #include "settings.h"
 
 /*!
- * \brief Конструктор класса NetworkWidget.
+ * Конструктор класса NetworkWidget.
  */
-NetworkWidget::NetworkWidget(QWidget *parent)
-  : QWidget(parent)
+NetworkWidget::NetworkWidget(QWidget *parent, Options options)
+  : QWidget(parent),
+  m_settings(SimpleSettings)
 {
   setAttribute(Qt::WA_DeleteOnClose);
-  m_settings = settings;
 
   m_select = new QComboBox(this);
   m_select->setEditable(true);
   m_select->setIconSize(QSize(18, 18));
   m_select->setModel(&m_settings->networksModel);
 
-  m_infoLabel = new QLabel(tr("&Сервер/Сеть:"), this);
-  m_infoLabel->setBuddy(m_select);
-
-  m_port = new QSpinBox(this);
-  m_port->setRange(1024, 65536);
-  m_port->setValue(7666);
-  m_port->setToolTip(tr("Порт сервера, по умолчанию 7666\nДоступно только при подключении к одиночному серверу"));
-  m_port->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-  m_portLabel = new QLabel(tr("&Порт:"), this);
-  m_portLabel->setBuddy(m_port);
-
-  m_networksPath = qApp->applicationDirPath() + "/networks/";
+  m_networksPath = QApplication::applicationDirPath() + "/networks/";
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->addWidget(m_infoLabel);
-  mainLay->addWidget(m_select, 1);
-  mainLay->addSpacing(6);
-  mainLay->addWidget(m_portLabel);
-  mainLay->addWidget(m_port);
   mainLay->setSpacing(2);
   mainLay->setMargin(0);
 
-  connect(m_select, SIGNAL(activated(int)), SLOT(activated(int)));
+  if (options & NetworkLabel) {
+    QLabel *networkLabel = new QLabel(tr("&Сеть:"), this);
+    networkLabel->setBuddy(m_select);
+    mainLay->addWidget(networkLabel);
+  }
+
+  mainLay->addWidget(m_select);
+  mainLay->setStretchFactor(m_select, 1);
+
+//  connect(m_select, SIGNAL(activated(int)), SLOT(activated(int)));
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
   connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
 
   init();
-}
-
-
-/*!
- * \brief Сохранение настроек введённых в виджете.
- */
-bool NetworkWidget::save()
-{
-  QString currentText = m_select->currentText();
-
-  // Если нынешний текущей текст отличается от предыдущего значит изменены настройки
-  if (m_initText != currentText || m_initPort != m_port->value()) {
-
-    // В случае если не существует итема с текущим текстом, создаём итем
-    int index = m_select->findText(currentText);
-    if (index == -1)
-      m_select->addItem(QIcon(":/images/computer.png"), currentText, m_port->value());
-
-    index = m_select->findText(currentText);
-
-    // Если данные итема содержат строку, значит, выбрана сеть, иначе одиночный сервер.
-    // В данных хранится имя XML файла сети.
-    QVariant data = m_select->itemData(index);
-    if (data.type() == QVariant::String)
-      m_settings->network.fromFile(data.toString());
-    else {
-      m_settings->network.fromString(currentText + ':' + QString().setNum(m_port->value()));
-      m_select->setItemData(index, m_port->value());
-    }
-
-    // Уведомление об изменении индекса
-    m_settings->notify(Settings::NetworksModelIndexChanged, index);
-
-    return true;
-  }
-  else
-    return false;
 }
 
 
@@ -114,44 +69,56 @@ void NetworkWidget::reset()
 
   if (index != -1) {
     m_select->setCurrentIndex(index);
-    m_portLabel->setEnabled(false);
-    m_port->setEnabled(false);
-    m_port->setValue(7666);
+//    m_portLabel->setEnabled(false);
+//    m_port->setEnabled(false);
+//    m_port->setValue(7666);
   }
   else
-    addServer(Network::failBack());
+    addSingleServer(Network::failBack());
 }
 
 
-/** [private slots]
- * Слот вызывается при активации итема в `m_selectCombo`,
- * если тип данных активированного итема `QVariant::String`, то текущий итем является сетью,
- * поэтому отключаем возможность выбора порта.
- * Иначе разрешаем выбор порта и если тип данных итема равен `QVariant::Int`,
- * то устанавливаем значение `m_portBox` на основе данных итема.
+/*!
+ * Сохранение настроек введённых в виджете.
+ *
+ * Если нынешний текущей текст отличается от предыдущего значит, изменены настройки.
+ * В случае необходимости будет добавлен одиночный сервер.
  */
-void NetworkWidget::activated(int index)
+int NetworkWidget::save(bool notify)
 {
-  QVariant data = m_select->itemData(index);
-  if (data.type() == QVariant::String) {
-    m_port->setEnabled(false);
-    m_port->setValue(7666);
-    m_portLabel->setEnabled(false);
-  }
-  else {
-    if (data.type() == QVariant::Int)
-      m_port->setValue(data.toInt());
+  QString currentText = m_select->currentText();
 
-    m_port->setEnabled(true);
-    m_portLabel->setEnabled(true);
+  if (m_initText != currentText) {
+    int index = m_select->findText(currentText);
+    if (index == -1)
+      index = addSingleServer(singleServer(currentText), false);
+
+    index = m_select->findText(currentText);
+
+    // Если данные итема содержат строку, значит, выбрана сеть, иначе одиночный сервер.
+    // В данных хранится имя XML файла сети.
+    QVariant data = m_select->itemData(index);
+    if (data.type() == QVariant::String)
+      m_settings->network.fromFile(data.toString());
+    else {
+      ServerInfo info = singleServer(currentText);
+      m_settings->network.fromString(info.address + ':' + QString::number(info.port));
+    }
+
+    m_settings->notify(Settings::NetworksModelIndexChanged, index);
+    if (notify)
+      m_settings->notify(Settings::NetworkSettingsChanged);
+
+    return 1;
   }
+  else
+    return 0;
 }
 
 
-/** [private slots]
- * Слот вызывается при смене текущего индекса в `m_selectCombo`,
+/*!
+ * Слот вызывается при смене текущего индекса
  * если итем не содержит иконки, значит, происходит добавление новой записи.
- * Устанавливаем иконку итема и в данные записываем порт `m_portBox->value()`. *
  */
 void NetworkWidget::currentIndexChanged(int index)
 {
@@ -159,14 +126,12 @@ void NetworkWidget::currentIndexChanged(int index)
   if (icon.isNull()) {
     icon.addFile(":/images/computer.png");
     m_select->setItemIcon(index, icon);
-    m_select->setItemData(index, m_port->value());
   }
 }
 
 
 /*!
- * Слот вызывается при изменении текста в `m_selectCombo`.
- * Разрешаем выбор порта.
+ * Слот вызывается при изменении текста.
  */
 void NetworkWidget::editTextChanged(const QString &text)
 {
@@ -176,48 +141,98 @@ void NetworkWidget::editTextChanged(const QString &text)
   if (ok)
     palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
   else
-    palette.setColor(QPalette::Active, QPalette::Base, QColor("#f66"));
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 
   m_select->setPalette(palette);
-  m_portLabel->setEnabled(ok);
-  m_port->setEnabled(ok);
-
   emit validServer(ok);
 }
 
 
-/** [private slots]
- *
+/*!
+ * Установка текущего индекса.
  */
 void NetworkWidget::setCurrentIndex(int index)
 {
   m_select->setCurrentIndex(index);
   m_initText = m_select->currentText();
 
-  if (m_settings->network.isNetwork()) {
-    m_portLabel->setEnabled(false);
-    m_port->setEnabled(false);
-    m_port->setValue(7666);
-  }
-  else {
-    m_portLabel->setEnabled(true);
-    m_port->setEnabled(true);
-    m_port->setValue(m_settings->network.port());
-  }
+//  if (m_settings->network.isNetwork()) {
+//    m_portLabel->setEnabled(false);
+//    m_port->setEnabled(false);
+//    m_port->setValue(7666);
+//  }
+//  else {
+//    m_portLabel->setEnabled(true);
+//    m_port->setEnabled(true);
+//    m_port->setValue(m_settings->network.port());
+//  }
 
-  m_initPort = m_port->value();
+//  m_initPort = m_port->value();
 }
 
 
-void NetworkWidget::addServer(const ServerInfo &info)
+/*!
+ * Добавление в случае необходимости нового одиночного сервера.
+ */
+int NetworkWidget::addSingleServer(const QString &address, quint16 port, bool current)
 {
-  if (m_select->findText(info.address) == -1)
-    m_select->addItem(QIcon(":/images/computer.png"), info.address, info.port);
+  int index = findSingleServer(address, port);
+  if (index == -1) {
+    if (port == 7666)
+      m_select->addItem(QIcon(":/images/computer.png"), address);
+    else
+      m_select->addItem(QIcon(":/images/computer.png"), address + ":" + QString::number(port));
 
-  m_select->setCurrentIndex(m_select->findText(info.address));
-  m_port->setValue(info.port);
-  m_portLabel->setEnabled(true);
-  m_port->setEnabled(true);
+    index = findSingleServer(address, port);
+  }
+
+  if (current && index != -1)
+    m_select->setCurrentIndex(index);
+
+  return index;
+}
+
+
+/*!
+ * Поиск одиночного сервера.
+ * В случае стандартного порта, сначала ищется укороченная запись, затем
+ * сочетание address:port.
+ *
+ * \return -1 в случае не удачного поиска.
+ */
+int NetworkWidget::findSingleServer(const QString &address, quint16 port) const
+{
+  int index = -1;
+  if (port == 7666) {
+    index = m_select->findText(address);
+    if (index != -1)
+      return index;
+  }
+
+  index = m_select->findText(address + ":" + QString::number(port));
+  return index;
+}
+
+
+/*!
+ * Формирует структуру с информацией о сервере на основе строки.
+ */
+ServerInfo NetworkWidget::singleServer(const QString &url)
+{
+  ServerInfo out;
+  out.port = 7666;
+  int lastIndex = url.lastIndexOf(':');
+  if (lastIndex == -1) {
+    out.address = url;
+    return out;
+  }
+
+  out.address = url.left(lastIndex);
+  out.port = QString(url.mid(lastIndex + 1)).toUInt();
+  if (!out.port)
+    out.port = 7666;
+
+  return out;
 }
 
 
@@ -237,13 +252,13 @@ void NetworkWidget::init()
 {
   if (m_settings->network.isNetwork()) {
     m_select->setCurrentIndex(m_select->findText(m_settings->network.name()));
-    m_portLabel->setEnabled(false);
-    m_port->setEnabled(false);
-    m_port->setValue(7666);
+//    m_portLabel->setEnabled(false);
+//    m_port->setEnabled(false);
+//    m_port->setValue(7666);
   }
   else
-    addServer(m_settings->network.server());
+    addSingleServer(m_settings->network.server());
 
   m_initText = m_select->currentText();
-  m_initPort = m_port->value();
+//  m_initPort = m_port->value();
 }
