@@ -20,6 +20,7 @@
 
 #include "abstractprofile.h"
 #include "nickedit.h"
+#include "quickactions.h"
 #include "settings.h"
 
 /*!
@@ -141,9 +142,9 @@ int NickEdit::save(bool notify)
     SimpleSettings->notify(Settings::ProfileSettingsChanged);
 
   if (m_applyButton) {
-    QMenu *popup = qobject_cast<QMenu *>(parentWidget());
+    QuickActions *popup = qobject_cast<QuickActions *>(parentWidget());
     if (isVisible() && popup)
-      popup->close();
+      popup->closePopup();
   }
 
   if (m_maxRecentItems && modified)

@@ -36,8 +36,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   m_select->setIconSize(QSize(18, 18));
   m_select->setModel(&m_settings->networksModel);
 
-  m_networksPath = QApplication::applicationDirPath() + "/networks/";
-
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->setSpacing(2);
   mainLay->setMargin(0);
@@ -51,7 +49,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   mainLay->addWidget(m_select);
   mainLay->setStretchFactor(m_select, 1);
 
-//  connect(m_select, SIGNAL(activated(int)), SLOT(activated(int)));
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
   connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
@@ -67,12 +64,8 @@ void NetworkWidget::reset()
 {
   int index = m_select->findText("Simple Network");
 
-  if (index != -1) {
+  if (index != -1)
     m_select->setCurrentIndex(index);
-//    m_portLabel->setEnabled(false);
-//    m_port->setEnabled(false);
-//    m_port->setValue(7666);
-  }
   else
     addSingleServer(Network::failBack());
 }
@@ -155,19 +148,6 @@ void NetworkWidget::setCurrentIndex(int index)
 {
   m_select->setCurrentIndex(index);
   m_initText = m_select->currentText();
-
-//  if (m_settings->network.isNetwork()) {
-//    m_portLabel->setEnabled(false);
-//    m_port->setEnabled(false);
-//    m_port->setValue(7666);
-//  }
-//  else {
-//    m_portLabel->setEnabled(true);
-//    m_port->setEnabled(true);
-//    m_port->setValue(m_settings->network.port());
-//  }
-
-//  m_initPort = m_port->value();
 }
 
 
@@ -250,15 +230,10 @@ ServerInfo NetworkWidget::singleServer(const QString &url)
  */
 void NetworkWidget::init()
 {
-  if (m_settings->network.isNetwork()) {
+  if (m_settings->network.isNetwork())
     m_select->setCurrentIndex(m_select->findText(m_settings->network.name()));
-//    m_portLabel->setEnabled(false);
-//    m_port->setEnabled(false);
-//    m_port->setValue(7666);
-  }
   else
     addSingleServer(m_settings->network.server());
 
   m_initText = m_select->currentText();
-//  m_initPort = m_port->value();
 }
