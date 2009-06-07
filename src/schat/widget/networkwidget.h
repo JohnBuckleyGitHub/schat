@@ -67,10 +67,8 @@ private:
   ServerInfo singleServer(const QString &url);
   void init();
 
-  int m_initPort;
   QComboBox *m_select;
   QString m_initText;
-  QString m_networksPath;
   Settings *m_settings;
 };
 
