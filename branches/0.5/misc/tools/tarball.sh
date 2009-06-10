@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-FNAME="schat-0.5.3.1106"
+FNAME="schat-0.5.4.1165"
 svn co http://schat.googlecode.com/svn/branches/0.5/ schat
 rm -fr $FNAME
 cp -fR schat $FNAME
