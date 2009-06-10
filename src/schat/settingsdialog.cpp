@@ -724,7 +724,7 @@ void SoundSettings::save()
   int modified = 0;
 
   modified += SimpleSettings->save("Sound", d->enable->isChecked());
-  modified += modified += d->msg->save();
+  modified += d->msg->save();
   modified += d->privateMsg->save();
   modified += SimpleSettings->save("Sound/MuteInDnD", d->muteInDnD->isChecked());
   #ifdef Q_WS_X11

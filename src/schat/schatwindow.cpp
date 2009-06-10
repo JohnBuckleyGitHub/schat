@@ -1525,7 +1525,7 @@ void SChatWindow::statusChangedByUser(int index)
     d->idleDetector.stop();
     d->sendStatus(schat::StatusDnD);
   }
-  else
+  else if (d->profile->status() != schat::StatusNormal)
     d->sendStatus(schat::StatusNormal);
 
   if (!d->clientService->isReady())
