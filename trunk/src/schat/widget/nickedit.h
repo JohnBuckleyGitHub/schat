@@ -67,6 +67,7 @@ private slots:
 private:
   void initCompleter();
   void setMale(bool male);
+  void setOptimalSize();
 
   bool m_male;
   int m_maxRecentItems;

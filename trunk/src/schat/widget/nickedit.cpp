@@ -57,13 +57,12 @@ NickEdit::NickEdit(QWidget *parent, Options options)
     m_applyButton->setIcon(QIcon(":/images/dialog-ok.png"));
     m_applyButton->setToolTip(tr("Применить"));
     m_applyButton->setAutoRaise(true);
-    m_applyButton->setPopupMode(QToolButton::InstantPopup);
     m_mainLay->addWidget(m_applyButton);
-
     connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
   }
   m_mainLay->setMargin(0);
-  m_mainLay->setSpacing(0);
+  m_mainLay->setSpacing(1);
+  setOptimalSize();
 
   connect(m_edit, SIGNAL(textChanged(const QString &)), SLOT(validateNick(const QString &)));
 }
@@ -172,17 +171,13 @@ void NickEdit::keyPressEvent(QKeyEvent *event)
 void NickEdit::showEvent(QShowEvent * /*event*/)
 {
   m_edit->setText(SimpleSettings->profile()->nick());
-  int editHeight = m_edit->height();
-  if (m_genderButton) {
-    m_genderButton->setMaximumSize(editHeight, editHeight);
+  if (m_genderButton)
     setMale(SimpleSettings->profile()->isMale());
-  }
-
-  if (m_applyButton)
-    m_applyButton->setMaximumSize(editHeight, editHeight);
 
   if (m_maxRecentItems)
     m_model->setStringList(SimpleSettings->getList("Profile/RecentNicks"));
+
+  setOptimalSize();
 }
 
 
@@ -247,4 +242,17 @@ void NickEdit::setMale(bool male)
   }
 
   m_male = male;
+}
+
+
+void NickEdit::setOptimalSize()
+{
+  int editHeight = m_edit->sizeHint().height();
+  m_edit->setMinimumHeight(editHeight);
+
+  if (m_genderButton)
+    m_genderButton->setMaximumSize(editHeight, editHeight);
+
+  if (m_applyButton)
+    m_applyButton->setMaximumSize(editHeight, editHeight);
 }
