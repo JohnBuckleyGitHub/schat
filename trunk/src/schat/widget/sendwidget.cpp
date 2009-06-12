@@ -21,11 +21,11 @@
 #include "abstractprofile.h"
 #include "colorbutton.h"
 #include "emoticons/emoticonselector.h"
-#include "quickactions.h"
-#include "sendwidget.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "soundaction.h"
+#include "widget/nickedit.h"
+#include "widget/sendwidget.h"
 
 /*!
  * Конструктор класса SendWidget.
@@ -494,10 +494,11 @@ void SendWidget::createPermanentButtons()
 
   QMenu *menu = new QMenu(m_settingsButton);
 
-  QWidgetAction *action = new QWidgetAction(this);
-  QuickActions *quickActions = new QuickActions(this);
-  action->setDefaultWidget(quickActions);
-  menu->addAction(action);
+  QWidgetAction *act = new QWidgetAction(this);
+  NickEdit *nickEdit = new NickEdit(this, NickEdit::GenderButton | NickEdit::ApplyButton);
+  nickEdit->setMargin(2);
+  act->setDefaultWidget(nickEdit);
+  menu->addAction(act);
   menu->addSeparator();
 
   createSettingsPage(menu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
