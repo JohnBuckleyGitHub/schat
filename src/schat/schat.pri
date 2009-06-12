@@ -68,7 +68,6 @@ HEADERS += \
     widget/inputwidget.h \
     widget/networkwidget.h \
     widget/nickedit.h \
-    widget/quickactions.h \
     widget/sendwidget.h \
     widget/soundwidget.h \
     widget/userview.h \
@@ -115,7 +114,6 @@ SOURCES += \
     widget/inputwidget.cpp \
     widget/networkwidget.cpp \
     widget/nickedit.cpp \
-    widget/quickactions.cpp \
     widget/sendwidget.cpp \
     widget/soundwidget.cpp \
     widget/userview.cpp \
