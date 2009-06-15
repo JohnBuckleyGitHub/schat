@@ -4,6 +4,7 @@
   <file alias="images/color.png">images/vga/color.png</file>
   <file alias="images/color-map.png">images/vga/color-map.png</file>
   <file alias="images/configure.png">images/vga/configure.png</file>
+  <file alias="images/configure2.png">images/vga/configure2.png</file>
   <file alias="images/dialog-cancel.png">images/vga/dialog-cancel.png</file>
   <file alias="images/dialog-ok.png">images/vga/dialog-ok.png</file>
   <file alias="images/edit-add.png">images/vga/edit-add.png</file>

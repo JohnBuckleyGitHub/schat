@@ -501,14 +501,15 @@ void SendWidget::createPermanentButtons()
   menu->addAction(act);
   menu->addSeparator();
 
-  createSettingsPage(menu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
-  createSettingsPage(menu, QIcon(":/images/applications-internet.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
-  createSettingsPage(menu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);
-  createSettingsPage(menu, QIcon(":/images/emoticon.png"), tr("Смайлики..."), SettingsDialog::EmoticonsPage);
-  createSettingsPage(menu, QIcon(":/images/sound.png"), tr("Звуки..."), SettingsDialog::SoundPage);
-  createSettingsPage(menu, QIcon(":/images/notification.png"), tr("Оповещатель..."), SettingsDialog::NotificationPage);
-  createSettingsPage(menu, QIcon(":/images/update.png"), tr("Обновление..."), SettingsDialog::UpdatePage);
-  createSettingsPage(menu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
+  QMenu *prefMenu = menu->addMenu(QIcon(":/images/configure2.png"), tr("Параметры"));
+  createSettingsPage(prefMenu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
+  createSettingsPage(prefMenu, QIcon(":/images/applications-internet.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
+  createSettingsPage(prefMenu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);
+  createSettingsPage(prefMenu, QIcon(":/images/emoticon.png"), tr("Смайлики..."), SettingsDialog::EmoticonsPage);
+  createSettingsPage(prefMenu, QIcon(":/images/sound.png"), tr("Звуки..."), SettingsDialog::SoundPage);
+  createSettingsPage(prefMenu, QIcon(":/images/notification.png"), tr("Оповещатель..."), SettingsDialog::NotificationPage);
+  createSettingsPage(prefMenu, QIcon(":/images/update.png"), tr("Обновление..."), SettingsDialog::UpdatePage);
+  createSettingsPage(prefMenu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
 
   m_settingsButton->setMenu(menu);
 
