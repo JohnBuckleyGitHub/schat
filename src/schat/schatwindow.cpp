@@ -381,7 +381,7 @@ void SChatWindowPrivate::createTrayIcon()
   #ifndef SCHAT_WINCE
   trayMenu = new QMenu(q);
   trayMenu->addAction(aboutAction);
-  trayMenu->addAction(settingsAction);
+  trayMenu->addAction(settingsAction); /// \todo Необходимо изменить название пункта меню на \b Параметры.
 
   QMenu *statusMenu = new QMenu(QObject::tr("Статус"), q);
 
