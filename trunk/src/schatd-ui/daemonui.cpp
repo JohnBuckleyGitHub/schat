@@ -324,10 +324,10 @@ bool DaemonUi::arguments(const QStringList &args)
  */
 void DaemonUi::createActions()
 {
-  m_quitAllAction = new QAction(QIcon(":/images/system-shutdown.png"), tr("Выход с о&становкой сервера"), this);
+  m_quitAllAction = new QAction(QIcon(":/images/shutdown.png"), tr("Выход с о&становкой сервера"), this);
   connect(m_quitAllAction, SIGNAL(triggered()), SLOT(exit()));
 
-  m_quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
+  m_quitAction = new QAction(QIcon(":/images/exit.png"), tr("Выход"), this);
   connect(m_quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
   m_restartAction = new QAction(QIcon(":/images/restart.png"), tr("&Перезапуск"), this);
@@ -353,7 +353,7 @@ void DaemonUi::createButtons()
   m_hideButton->setToolTip(tr("Скрыть окно программы"));
   connect(m_hideButton, SIGNAL(clicked(bool)), SLOT(hide()));
 
-  m_quitButton = new QPushButton(QIcon(":/images/application_exit.png"), "", this);
+  m_quitButton = new QPushButton(QIcon(":/images/exit.png"), "", this);
   m_quitButton->setToolTip(tr("Выход"));
   connect(m_quitButton, SIGNAL(clicked(bool)), QApplication::instance(), SLOT(quit()));
 

@@ -380,7 +380,7 @@ void SChatWindowPrivate::createTrayIcon()
 {
   #ifndef SCHAT_WINCE
   trayMenu = new QMenu(q);
-  trayMenu->addAction(aboutAction);
+  trayMenu->addAction(send->aboutAction());
   trayMenu->addAction(settingsAction); /// \todo Необходимо изменить название пункта меню на \b Параметры.
 
   QMenu *statusMenu = new QMenu(QObject::tr("Статус"), q);
@@ -404,7 +404,7 @@ void SChatWindowPrivate::createTrayIcon()
   }
 
   trayMenu->addSeparator();
-  trayMenu->addAction(quitAction);
+  trayMenu->addAction(send->quitAction());
   #else
   createMainWceMenu();
   #endif
@@ -789,7 +789,7 @@ void SChatWindowPrivate::createToolButtons()
   if (send->soundAction().second)
     toolBar->addAction(soundAction);
 
-  toolBar->addAction(aboutAction);
+  toolBar->addAction(send->aboutAction());
   tabs->setCornerWidget(toolBar);
 }
 
@@ -797,7 +797,7 @@ void SChatWindowPrivate::createToolButtons()
 #else
 void SChatWindowPrivate::createMainWceMenu()
 {
-  q->menuBar()->addAction(aboutAction);
+  q->menuBar()->addAction(send->aboutAction());
   q->menuBar()->addAction(settingsAction);
 
   QMenu *statusMenu = q->menuBar()->addMenu(QObject::tr("Статус"));
@@ -808,7 +808,7 @@ void SChatWindowPrivate::createMainWceMenu()
   statusMenu->addAction(offlineAction);
 
   q->menuBar()->addSeparator();
-  q->menuBar()->addAction(quitAction);
+  q->menuBar()->addAction(send->quitAction());
 }
 #endif
 
@@ -873,6 +873,8 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   connect(d->send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
   connect(d->send, SIGNAL(needCopy()), SLOT(copy()));
+  connect(d->send, SIGNAL(about()), SLOT(about()));
+  connect(d->send, SIGNAL(closeChat()), SLOT(closeChat()));
   connect(d->send, SIGNAL(statusShortcut(int)), SLOT(statusShortcut(int)));
   connect(d->send, SIGNAL(showSettingsPage(int)), SLOT(showSettingsPage(int)));
   connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
@@ -1636,22 +1638,10 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
  */
 void SChatWindow::createActions()
 {
-  // О Программе...
-  d->aboutAction = new QAction(tr("О Программе..."), this);
-  if (Settings::isNewYear())
-    d->aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
-  else
-    d->aboutAction->setIcon(QIcon(":/images/logo16.png"));
-  connect(d->aboutAction, SIGNAL(triggered()), SLOT(about()));
-
   // Настройка...
   d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
   d->settingsAction->setData(SettingsDialog::ProfilePage);
   connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettingsPage()));
-
-  // Выход из программы
-  d->quitAction = new QAction(QIcon(":/images/application_exit.png"), tr("&Выход"), this);
-  connect(d->quitAction, SIGNAL(triggered()), SLOT(closeChat()));
 
   // Включить/выключить звук
   d->soundAction = d->send->soundAction().first;

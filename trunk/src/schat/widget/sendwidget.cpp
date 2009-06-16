@@ -510,11 +510,17 @@ void SendWidget::createPermanentButtons()
   createSettingsPage(prefMenu, QIcon(":/images/notification.png"), tr("Оповещатель..."), SettingsDialog::NotificationPage);
   createSettingsPage(prefMenu, QIcon(":/images/update.png"), tr("Обновление..."), SettingsDialog::UpdatePage);
   createSettingsPage(prefMenu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
+  m_aboutAction = menu->addAction(tr("О Simple Chat..."), this, SIGNAL(about()));
+  if (Settings::isNewYear())
+    m_aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
+  else
+    m_aboutAction->setIcon(QIcon(":/images/logo16.png"));
+
+  menu->addSeparator();
+  m_quitAction = menu->addAction(QIcon(":/images/exit.png"), tr("Выход"), this, SIGNAL(closeChat()));
 
   m_settingsButton->setMenu(menu);
-
   m_soundAction = new SoundAction(this);
-
   m_permanentButtons << "settings" << "sound";
   m_availableActions << m_permanentButtons;
 }

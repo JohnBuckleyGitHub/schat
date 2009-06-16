@@ -42,11 +42,15 @@ class SendWidget : public QWidget
 
 public:
   SendWidget(QWidget *parent = 0);
-  inline void clear() { m_input->clearMsg(); }
+  inline QAction* aboutAction() const { return m_aboutAction; }
+  inline QAction* quitAction() const  { return m_quitAction; }
+  inline void clear()                 { m_input->clearMsg(); }
   QPair<SoundAction*, bool> soundAction() const;
   QToolButton* settingsButton() const;
 
 signals:
+  void about();
+  void closeChat();
   void needCopy();
   void sendMsg(const QString &message);
   void showSettingsPage(int page);
@@ -83,6 +87,8 @@ private:
 
   const bool m_bigSendButton;        ///< Опция настроек "BigSendButton".
   InputWidget* const m_input;        ///< Виджет ввода текста.
+  QAction *m_aboutAction;            ///< "О Simple Chat...".
+  QAction *m_quitAction;             ///< "Выход".
   QPointer<ColorButton> m_color;     ///< Кнопка для цветового веделения.
   QPointer<QAction> m_bold;          ///< "Полужирный".
   QPointer<QAction> m_italic;        ///< "Курсив".
