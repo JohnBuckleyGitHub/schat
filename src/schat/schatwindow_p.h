@@ -99,13 +99,11 @@ public:
   int autoAwayTime;
   MainChannel *main;
   PopupManager *popupManager;
-  QAction *aboutAction;
   QAction *awayAction;
   QAction *daemonAction;
   QAction *dndAction;
   QAction *offlineAction;
   QAction *onlineAction;
-  QAction *quitAction;
   QAction *settingsAction;
   QAction *statusAction;
   QLabel *connectLabel;
