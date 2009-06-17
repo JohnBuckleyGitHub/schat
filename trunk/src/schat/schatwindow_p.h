@@ -124,7 +124,6 @@ public:
   static QMap<QString, QString> cmds;
   TrayIcon *tray;
   UserView *users;
-  WelcomeDialog *welcome;
   #ifndef SCHAT_WINCE
     QComboBox *statusCombo;
     QToolBar *toolBar;
