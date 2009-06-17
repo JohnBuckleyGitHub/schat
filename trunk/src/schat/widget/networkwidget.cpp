@@ -57,7 +57,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
     m_applyButton->setAutoRaise(true);
     mainLay->addWidget(m_applyButton);
 
-    connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
+    connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(link()));
   }
 
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
@@ -149,6 +149,15 @@ void NetworkWidget::editTextChanged(const QString &text)
 
   m_select->setPalette(palette);
   emit validServer(ok);
+  if (m_applyButton)
+    m_applyButton->setEnabled(ok);
+}
+
+
+void NetworkWidget::link()
+{
+  save(false);
+  SimpleSettings->notify(Settings::ServerChanged);
 }
 
 

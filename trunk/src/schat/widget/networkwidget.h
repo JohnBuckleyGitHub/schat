@@ -60,6 +60,7 @@ public slots:
 private slots:
   void currentIndexChanged(int index);
   void editTextChanged(const QString &text);
+  void link();
   void setCurrentIndex(int index);
 
 private:
