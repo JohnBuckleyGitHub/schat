@@ -58,16 +58,12 @@ private slots:
   void usersCountChanged(int count);
 
 private:
-  void createActions();
-
 //  void addNewUsers(const QStringList &nicks);
 
   NetworkWidget *m_networkWidget;
-  QAction *m_connectCreateAction;
   QHBoxLayout *m_networkLayout;
   QSplitter *m_splitter;
   QTabWidget *m_tabs;
-  QToolButton *m_connectCreateButton;
   QVBoxLayout *m_mainLayout;
   UserView *m_userView;
 

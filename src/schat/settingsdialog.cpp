@@ -203,7 +203,7 @@ public:
 NetworkSettings::NetworkSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), d(new Private)
 {
-  d->welcome = new QCheckBox(tr("Всегда использовать этот сервер"), this);
+  d->welcome = new QCheckBox(tr("Всегда использовать это подключение"), this);
   d->welcome->setChecked(SimpleSettings->getBool("HideWelcome"));
   d->welcome->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
 

@@ -34,16 +34,11 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
 
-  createActions();
-
-  m_connectCreateButton->setVisible(false);
-
   m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel | NetworkWidget::ApplyButton);
   m_networkWidget->setVisible(false);
 
   m_networkLayout = new QHBoxLayout;
   m_networkLayout->addWidget(m_networkWidget);
-  m_networkLayout->addWidget(m_connectCreateButton);
   m_networkLayout->addStretch();
   m_networkLayout->setMargin(0);
 
@@ -68,7 +63,6 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
       m_splitter->setSizes(QList<int>() << size1 << splitterSizes.at(1).toInt());
   }
 
-  connect(m_networkWidget, SIGNAL(validServer(bool)), m_connectCreateButton, SLOT(setEnabled(bool)));
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(m_splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
   connect(m_userView, SIGNAL(usersCountChanged(int)), SLOT(usersCountChanged(int)));
@@ -107,12 +101,10 @@ void MainChannel::displayChoiceServer(bool display)
 {
   if (display)
     m_networkLayout->setContentsMargins(4, 2, 4, 0);
+  else
+    m_networkLayout->setMargin(0);
 
     m_networkWidget->setVisible(display);
-    m_connectCreateButton->setVisible(display);
-
-  if (!display)
-    m_networkLayout->setMargin(0);
 
   m_view->scroll();
 }
@@ -172,16 +164,6 @@ void MainChannel::usersCountChanged(int count)
     m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий (%1)").arg(count));
   else
     m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий"));
-}
-
-
-void MainChannel::createActions()
-{
-  m_connectCreateButton = new QToolButton(this);
-  m_connectCreateAction = new QAction(QIcon(":/images/network_connect.png"), tr("Подключится"), this);
-  m_connectCreateButton->setDefaultAction(m_connectCreateAction);
-  m_connectCreateButton->setAutoRaise(true);
-  connect(m_connectCreateAction, SIGNAL(triggered()), this, SLOT(serverChanged()));
 }
 
 
