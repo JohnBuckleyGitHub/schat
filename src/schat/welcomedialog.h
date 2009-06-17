@@ -46,7 +46,10 @@ public slots:
 
 private slots:
   inline void validNick(bool b) { m_okButton->setEnabled(b); }
+
+  #ifndef Q_OS_WINCE
   void changeIcon(bool s);
+  #endif
 
 private:
   NetworkWidget *m_networkWidget;

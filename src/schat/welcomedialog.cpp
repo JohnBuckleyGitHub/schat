@@ -25,52 +25,68 @@
 #include "widget/networkwidget.h"
 
 /*!
- * \brief Конструктор класса WelcomeDialog.
+ * Конструктор класса WelcomeDialog.
  */
 WelcomeDialog::WelcomeDialog(AbstractProfile * /*profile*/, QWidget *parent)
-  : QDialog(parent)
+  : QDialog(parent),
+  m_settings(SimpleSettings)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
-  m_settings = SimpleSettings;
-
   m_profileWidget = new ProfileWidget(this);
   m_askCheckBox = new QCheckBox(tr("Больше не спрашивать"), this);
   m_okButton    = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("ОК"), this);
+  #ifndef Q_OS_WINCE
   m_moreButton  = new QPushButton(QIcon(":/images/arrow-down.png"), "", this);
   m_moreButton->setCheckable(true);
-  m_networkWidget = new NetworkWidget(this);
-  m_networkWidget->setVisible(false);
+  connect(m_moreButton, SIGNAL(toggled(bool)), this, SLOT(changeIcon(bool)));
+  #endif
+  m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel);
 
   QFrame *line = new QFrame(this);
-  line->setObjectName(QString::fromUtf8("line"));
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
   mainLayout->addWidget(m_profileWidget);
-  mainLayout->addWidget(line);
 
   QHBoxLayout *buttonsLayout = new QHBoxLayout;
+  #ifndef Q_OS_WINCE
   buttonsLayout->addWidget(m_askCheckBox);
+  #endif
   buttonsLayout->addStretch();
   buttonsLayout->addWidget(m_okButton);
+  #ifndef Q_OS_WINCE
   buttonsLayout->addWidget(m_moreButton);
+  #endif
   buttonsLayout->setSpacing(3);
 
+  #ifndef Q_OS_WINCE
+  mainLayout->addWidget(line);
   mainLayout->addLayout(buttonsLayout);
   mainLayout->addWidget(m_networkWidget);
+  #else
+  mainLayout->addSpacing(m_networkWidget->sizeHint().height());
+  mainLayout->addWidget(m_networkWidget);
+  mainLayout->addWidget(line);
+  mainLayout->addWidget(m_askCheckBox);
+  mainLayout->addLayout(buttonsLayout);
+  mainLayout->addStretch();
+  #endif
   mainLayout->setMargin(6);
   mainLayout->setSpacing(6);
-  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-  m_profileWidget->setMinimumSize(m_networkWidget->minimumSizeHint().width(), m_profileWidget->minimumSizeHint().height());
+  #ifdef Q_OS_WINCE
+  setWindowState(Qt::WindowMaximized);
+  #else
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  m_networkWidget->setVisible(false);
+  #endif
 
   if (m_settings->getBool("FirstRun"))
     m_askCheckBox->setChecked(true);
 
-  connect(m_moreButton, SIGNAL(toggled(bool)), this, SLOT(changeIcon(bool)));
   connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(m_profileWidget, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
 
@@ -78,9 +94,6 @@ WelcomeDialog::WelcomeDialog(AbstractProfile * /*profile*/, QWidget *parent)
 }
 
 
-/** [public slots]
- *
- */
 void WelcomeDialog::accept()
 {
   m_profileWidget->save();
@@ -91,9 +104,7 @@ void WelcomeDialog::accept()
 }
 
 
-/** [private slots]
- *
- */
+#ifndef Q_OS_WINCE
 void WelcomeDialog::changeIcon(bool s)
 {
   if (s) {
@@ -105,3 +116,4 @@ void WelcomeDialog::changeIcon(bool s)
     m_networkWidget->setVisible(false);
   }
 }
+#endif
