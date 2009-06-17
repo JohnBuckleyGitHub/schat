@@ -27,6 +27,7 @@
  */
 NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   : QWidget(parent),
+  m_applyButton(0),
   m_settings(SimpleSettings)
 {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -48,6 +49,16 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
 
   mainLay->addWidget(m_select);
   mainLay->setStretchFactor(m_select, 1);
+
+  if (options & ApplyButton) {
+    m_applyButton = new QToolButton(this);
+    m_applyButton->setIcon(QIcon(":/images/arrow-right.png"));
+    m_applyButton->setToolTip(tr("Подключится к выбранной сети"));
+    m_applyButton->setAutoRaise(true);
+    mainLay->addWidget(m_applyButton);
+
+    connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
+  }
 
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
   connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));

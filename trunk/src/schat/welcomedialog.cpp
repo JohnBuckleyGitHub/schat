@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtGui>
@@ -33,12 +33,12 @@ WelcomeDialog::WelcomeDialog(AbstractProfile * /*profile*/, QWidget *parent)
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
-  m_settings = settings;
+  m_settings = SimpleSettings;
 
   m_profileWidget = new ProfileWidget(this);
-  m_askCheckBox = new QCheckBox(tr("Больше не показывать это окно"), this);
+  m_askCheckBox = new QCheckBox(tr("Больше не спрашивать"), this);
   m_okButton    = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("ОК"), this);
-  m_moreButton  = new QPushButton(QIcon(":/images/1downarrow.png"), "", this);
+  m_moreButton  = new QPushButton(QIcon(":/images/arrow-down.png"), "", this);
   m_moreButton->setCheckable(true);
   m_networkWidget = new NetworkWidget(this);
   m_networkWidget->setVisible(false);
@@ -97,11 +97,11 @@ void WelcomeDialog::accept()
 void WelcomeDialog::changeIcon(bool s)
 {
   if (s) {
-    m_moreButton->setIcon(QIcon(":/images/1uparrow.png"));
+    m_moreButton->setIcon(QIcon(":/images/arrow-up.png"));
     m_networkWidget->setVisible(true);
   }
   else {
-    m_moreButton->setIcon(QIcon(":/images/1downarrow.png"));
+    m_moreButton->setIcon(QIcon(":/images/arrow-down.png"));
     m_networkWidget->setVisible(false);
   }
 }
