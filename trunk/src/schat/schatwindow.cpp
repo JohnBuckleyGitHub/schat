@@ -1631,7 +1631,7 @@ void SChatWindow::createActions()
   d->soundAction = d->send->soundAction().first;
 
   // Управление сервером...
-  d->daemonAction = new QAction(QIcon(":/images/applications-internet.png"), tr("Управление сервером..."), this);
+  d->daemonAction = new QAction(QIcon(":/images/network.png"), tr("Управление сервером..."), this);
   connect(d->daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
 
   // Статус/В сети

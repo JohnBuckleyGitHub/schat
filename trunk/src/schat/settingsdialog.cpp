@@ -41,7 +41,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   NetworkSettings *networkPage = new NetworkSettings(this);
 
   createPage(QIcon(":/images/profile.png"),               tr("Личные данные"), profilePage);
-  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),          networkPage);
+  createPage(QIcon(":/images/network.png"),               tr("Сеть"),          networkPage);
   createPage(QIcon(":/images/applications-graphics.png"), tr("Интерфейс"),     new InterfaceSettings(this));
   createPage(QIcon(":/images/emoticon.png"),              tr("Смайлики"),      new EmoticonsSettings(this));
   createPage(QIcon(":/images/sound.png"),                 tr("Звуки"),         new SoundSettings(this));

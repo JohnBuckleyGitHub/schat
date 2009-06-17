@@ -314,7 +314,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
       copyFullName = copyMenu.addAction(QIcon(":/images/profile.png"), tr("ФИО"));
 
     QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/logo16.png"), tr("Клиент"));
-    QAction *copyHost = copyMenu.addAction(QIcon(":/images/applications-internet.png"), tr("Адрес"));
+    QAction *copyHost = copyMenu.addAction(QIcon(":/images/computer.png"), tr("Адрес"));
 
     menu.addSeparator();
     QAction *nickClickedAction = menu.addAction(tr("Вставить ник"));

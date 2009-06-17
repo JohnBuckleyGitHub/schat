@@ -5,7 +5,6 @@
   <file>css/richtext.css</file>
   <file>doc/members.html</file>
   <file>images/applications-graphics.png</file>
-  <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
   <file>images/arrow-down.png</file>
   <file>images/arrow-right.png</file>
@@ -46,6 +45,7 @@
   <file>images/logo-ny.png</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
+  <file>images/network.png</file>
   <file>images/network_connect.png</file>
   <file>images/network_disconnect.png</file>
   <file>images/notice.png</file>

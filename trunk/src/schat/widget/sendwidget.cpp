@@ -503,7 +503,7 @@ void SendWidget::createPermanentButtons()
 
   QMenu *prefMenu = menu->addMenu(QIcon(":/images/configure2.png"), tr("Параметры"));
   createSettingsPage(prefMenu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
-  createSettingsPage(prefMenu, QIcon(":/images/applications-internet.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
+  createSettingsPage(prefMenu, QIcon(":/images/network.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
   createSettingsPage(prefMenu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);
   createSettingsPage(prefMenu, QIcon(":/images/emoticon.png"), tr("Смайлики..."), SettingsDialog::EmoticonsPage);
   createSettingsPage(prefMenu, QIcon(":/images/sound.png"), tr("Звуки..."), SettingsDialog::SoundPage);

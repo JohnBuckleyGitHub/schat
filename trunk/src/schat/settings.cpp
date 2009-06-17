@@ -437,7 +437,7 @@ void Settings::createServerList()
   foreach (QString file, files)
     if (network.readFile(networksPath + file)) {
       if (!findItem(&networksModel, network.networkName())) {
-        QStandardItem *item = new QStandardItem(QIcon(":/images/applications-internet.png"), network.networkName());
+        QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
         item->setData(file, Qt::UserRole);
         networksModel.appendRow(item);
       }
