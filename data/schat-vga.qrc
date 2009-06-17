@@ -1,5 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="images/arrow-down.png">images/vga/arrow-down.png</file>
+  <file alias="images/arrow-right.png">images/vga/arrow-right.png</file>
+  <file alias="images/arrow-up.png">images/vga/arrow-up.png</file>
   <file alias="images/book.png">images/vga/book.png</file>
   <file alias="images/color.png">images/vga/color.png</file>
   <file alias="images/color-map.png">images/vga/color-map.png</file>
@@ -34,8 +37,6 @@
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
   <file>doc/members.html</file>
-  <file>images/1downarrow.png</file>
-  <file>images/1uparrow.png</file>
   <file>images/applications-graphics.png</file>
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
@@ -45,11 +46,9 @@
   <file>images/im-status-message-edit.png</file>
   <file>images/load.gif</file>
   <file>images/logo.png</file>
-  <file>images/logo16.png</file>
   <file>images/logo16-away.png</file>
   <file>images/logo16-dnd.png</file>
   <file>images/logo16-ny.png</file>
-  <file>images/logo-ny.png</file>
   <file>images/main.png</file>
   <file>images/network_connect.png</file>
   <file>images/network_disconnect.png</file>

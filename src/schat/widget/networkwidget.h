@@ -28,6 +28,7 @@ class QComboBox;
 class QLabel;
 class QSpinBox;
 class QStandardItemModel;
+class QToolButton;
 class Settings;
 
 /*!
@@ -42,6 +43,7 @@ public:
   enum OptionsFlag {
     NoOptions    = 0x0, ///< Нет опций.
     NetworkLabel = 0x1, ///< Добавить надпись \b Сеть.
+    ApplyButton  = 0x2  ///< Кнопка для применения настроек.
   };
 
   Q_DECLARE_FLAGS(Options, OptionsFlag)
@@ -69,6 +71,7 @@ private:
 
   QComboBox *m_select;
   QString m_initText;
+  QToolButton *m_applyButton;
   Settings *m_settings;
 };
 

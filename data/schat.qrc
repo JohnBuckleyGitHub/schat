@@ -4,11 +4,12 @@
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
   <file>doc/members.html</file>
-  <file>images/1downarrow.png</file>
-  <file>images/1uparrow.png</file>
   <file>images/applications-graphics.png</file>
   <file>images/applications-internet.png</file>
   <file>images/application-x-desktop.png</file>
+  <file>images/arrow-down.png</file>
+  <file>images/arrow-right.png</file>
+  <file>images/arrow-up.png</file>
   <file>images/book.png</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
