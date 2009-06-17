@@ -23,7 +23,6 @@
 #include <QPushButton>
 
 class NetworkWidget;
-class AbstractProfile;
 class ProfileWidget;
 class QCheckBox;
 class QLabel;
@@ -39,7 +38,7 @@ class WelcomeDialog : public QDialog
   Q_OBJECT
 
 public:
-  WelcomeDialog(AbstractProfile *profile, QWidget *parent = 0);
+  WelcomeDialog(QWidget *parent = 0);
 
 public slots:
   void accept();

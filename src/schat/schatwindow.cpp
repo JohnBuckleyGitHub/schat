@@ -896,19 +896,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->main, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->main, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
 
-  if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
-    d->welcome = new WelcomeDialog(d->profile, this);
-    connect(d->welcome, SIGNAL(accepted()), this, SLOT(welcomeOk()));
-    if (!d->welcome->exec())
-      d->main->displayChoiceServer(true);
-  }
-  else
-    d->clientService->connectToHost();
-
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
-
-  if (d->pref->getBool("Updates/Enable") && d->pref->getBool("Updates/CheckOnStartup"))
-    QTimer::singleShot(0, d->pref, SLOT(updatesCheck()));
 
   if (Settings::isNewYear())
     setWindowIcon(QIcon(":/images/logo-ny.png"));
@@ -917,17 +905,24 @@ SChatWindow::SChatWindow(QWidget *parent)
     setWindowIcon(QIcon(":/images/logo.png"));
   #endif
 
-  #ifdef SCHAT_BENCHMARK
-  if (d->pref->getBool("BenchmarkEnable") && !d->pref->getList("BenchmarkList").isEmpty()) {
-    QTimer *benchTimer = new QTimer(this);
-    benchTimer->setInterval(d->pref->getInt("BenchmarkInterval"));
-    connect(benchTimer, SIGNAL(timeout()), SLOT(benchmark()));
-    QTimer::singleShot(d->pref->getInt("BenchmarkDelay"), benchTimer, SLOT(start()));
+  // Показ модального диалога приветствия.
+  if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
+    WelcomeDialog welcome(this);
+    if (!welcome.exec()) {
+      d->statusUnconnected(false);
+      fatal();
+    }
+    else
+      d->clientService->connectToHost();
   }
-  #endif
+  else
+    d->clientService->connectToHost();
 
   connect(&d->idleDetector, SIGNAL(secondsIdle(int)), SLOT(onSecondsIdle(int)));
   d->setAwayOptions();
+
+  if (d->pref->getBool("Updates/Enable") && d->pref->getBool("Updates/CheckOnStartup"))
+    QTimer::singleShot(0, d->pref, SLOT(updatesCheck()));
 }
 
 
@@ -1577,17 +1572,6 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag
 
     d->users->remove(nick);
   }
-}
-
-
-/** [private slots]
- *
- */
-void SChatWindow::welcomeOk()
-{
-  d->welcome->deleteLater();
-
-  d->clientService->connectToHost();
 }
 
 

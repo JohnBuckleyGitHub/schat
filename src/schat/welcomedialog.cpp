@@ -27,11 +27,10 @@
 /*!
  * Конструктор класса WelcomeDialog.
  */
-WelcomeDialog::WelcomeDialog(AbstractProfile * /*profile*/, QWidget *parent)
+WelcomeDialog::WelcomeDialog(QWidget *parent)
   : QDialog(parent),
   m_settings(SimpleSettings)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
   m_profileWidget = new ProfileWidget(this);
