@@ -36,8 +36,8 @@ DaemonSettingsDialog::DaemonSettingsDialog(QWidget *parent)
 {
   DaemonNetSettings *netPage = new DaemonNetSettings(this);
 
-  createPage(QIcon(":/images/daemonsettings.png"),        tr("Общие"),  new DaemonCommonSettings(this));
-  createPage(QIcon(":/images/applications-internet.png"), tr("Сеть"),   netPage);
+  createPage(QIcon(":/images/daemonsettings.png"), tr("Общие"), new DaemonCommonSettings(this));
+  createPage(QIcon(":/images/network.png"),        tr("Сеть"),  netPage);
   #ifndef SCHATD_NO_SERVICE
     createPage(QIcon(":/images/windows-service.png"),     tr("Сервис"), new DaemonServiceSettings(this));
   #endif
