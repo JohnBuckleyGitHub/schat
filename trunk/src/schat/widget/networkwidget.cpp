@@ -34,7 +34,9 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
 
   m_select = new QComboBox(this);
   m_select->setEditable(true);
+  #ifndef SCHAT_WINCE_VGA
   m_select->setIconSize(QSize(18, 18));
+  #endif
   m_select->setModel(&m_settings->networksModel);
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
@@ -65,6 +67,28 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
 
   init();
+}
+
+
+/*!
+ * Формирует структуру с информацией о сервере на основе строки.
+ */
+ServerInfo NetworkWidget::singleServer(const QString &url)
+{
+  ServerInfo out;
+  out.port = 7666;
+  int lastIndex = url.lastIndexOf(':');
+  if (lastIndex == -1) {
+    out.address = url;
+    return out;
+  }
+
+  out.address = url.left(lastIndex);
+  out.port = QString(url.mid(lastIndex + 1)).toUInt();
+  if (!out.port)
+    out.port = 7666;
+
+  return out;
 }
 
 
@@ -211,28 +235,6 @@ int NetworkWidget::findSingleServer(const QString &address, quint16 port) const
 
   index = m_select->findText(address + ":" + QString::number(port));
   return index;
-}
-
-
-/*!
- * Формирует структуру с информацией о сервере на основе строки.
- */
-ServerInfo NetworkWidget::singleServer(const QString &url)
-{
-  ServerInfo out;
-  out.port = 7666;
-  int lastIndex = url.lastIndexOf(':');
-  if (lastIndex == -1) {
-    out.address = url;
-    return out;
-  }
-
-  out.address = url.left(lastIndex);
-  out.port = QString(url.mid(lastIndex + 1)).toUInt();
-  if (!out.port)
-    out.port = 7666;
-
-  return out;
 }
 
 
