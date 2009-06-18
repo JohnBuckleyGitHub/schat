@@ -49,6 +49,7 @@ public:
   Q_DECLARE_FLAGS(Options, OptionsFlag)
 
   NetworkWidget(QWidget *parent = 0, Options options = NoOptions);
+  static ServerInfo singleServer(const QString &url);
   void reset();
 
 signals:
@@ -67,7 +68,6 @@ private:
   inline int addSingleServer(const ServerInfo &info, bool current = true) { return addSingleServer(info.address, info.port, current); }
   int addSingleServer(const QString &address, quint16 port, bool current = true);
   int findSingleServer(const QString &address, quint16 port) const;
-  ServerInfo singleServer(const QString &url);
   void init();
 
   QComboBox *m_select;

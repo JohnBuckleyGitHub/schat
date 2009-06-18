@@ -25,6 +25,7 @@
 #include "schatwindow.h"
 #include "settings.h"
 #include "version.h"
+#include "widget/networkwidget.h"
 #include "widget/nickedit.h"
 
 /*!
@@ -427,14 +428,14 @@ bool Settings::update(bool)
  */
 void Settings::createServerList()
 {
-  QString networksPath = qApp->applicationDirPath() + "/networks/";
+  QString networksPath = QApplication::applicationDirPath() + "/networks/";
 
   QDir directory(networksPath);
   directory.setNameFilters(QStringList() << "*.xml");
   QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
   NetworkReader network;
 
-  foreach (QString file, files)
+  foreach (QString file, files) {
     if (network.readFile(networksPath + file)) {
       if (!findItem(&networksModel, network.networkName())) {
         QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
@@ -442,18 +443,21 @@ void Settings::createServerList()
         networksModel.appendRow(item);
       }
     }
+  }
 
   QStringList recent = getList("RecentServers");
 
-  if (!recent.isEmpty())
+  if (!recent.isEmpty()) {
     foreach (QString server, recent) {
-      QStringList list = server.split(':');
-      if (list.size() == 2) {
-        QStandardItem *item = new QStandardItem(QIcon(":/images/computer.png"), list.at(0));
-        item->setData(list.at(1).toInt(), Qt::UserRole);
-        networksModel.appendRow(item);
+      QStringList list = server.split(':', QString::SkipEmptyParts);
+      if (list.size() > 1) {
+        ServerInfo info = NetworkWidget::singleServer(server);
+        if (info.port == 7666)
+          server = info.address;
+        networksModel.appendRow(new QStandardItem(QIcon(":/images/computer.png"), server));
       }
     }
+  }
 }
 
 
@@ -483,8 +487,10 @@ void Settings::saveRecentServers()
 
   for (int row = 0; row < networksModel.rowCount(); ++row) {
     QStandardItem *item = networksModel.item(row);
-    if (item->data(Qt::UserRole).type() == QVariant::Int)
-      list << (item->text() + ':' + item->data(Qt::UserRole).toString());
+    if (item->data(Qt::UserRole).type() != QVariant::String) {
+      ServerInfo info = NetworkWidget::singleServer(item->text());
+      list << (info.address + ":" + QString::number(info.port));
+    }
   }
 
   setList("RecentServers", list);
