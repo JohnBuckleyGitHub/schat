@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file>images/applications-internet.png</file>
   <file>images/daemonsettings.png</file>
   <file>images/dialog-cancel.png</file>
   <file>images/dialog-ok.png</file>
@@ -11,6 +10,7 @@
   <file>images/logo16-gray.png</file>
   <file>images/logo16-green.png</file>
   <file>images/logo16-yellow.png</file>
+  <file>images/network.png</file>
   <file>images/play.png</file>
   <file>images/restart.png</file>
   <file>images/shutdown.png</file>
