@@ -83,10 +83,8 @@ public:
   void universalStatus(const QList<quint32> &data1, const QStringList &data2);
   void updateStatus(int status);
 
-  #ifndef SCHAT_WINCE
+  #ifndef Q_OS_WINCE
   void createToolButtons();
-  #else
-  void createMainWceMenu();
   #endif
 
   AbstractProfile *profile;
@@ -109,7 +107,6 @@ public:
   QLabel *connectLabel;
   QLabel *connectMovie;
   QLabel *statusLabel;
-  QMenu *trayMenu;
   QPointer<AboutDialog> about;
   QPointer<SettingsDialog> settingsDialog;
   QStatusBar *statusBar;
