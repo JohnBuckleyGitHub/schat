@@ -68,10 +68,13 @@ void TrayIcon::notice(bool enable)
 /*!
  * При необходимости добавляет звук в очередь.
  */
-void TrayIcon::playSound(const QString &key)
+void TrayIcon::playSound(const QString &key, bool force)
 {
   if (m_settings->getBool("Sound/" + key + "Enable") && !m_soundQueue.contains(key))
     m_soundQueue.enqueue(key);
+
+  if (force)
+    playSound();
 }
 
 

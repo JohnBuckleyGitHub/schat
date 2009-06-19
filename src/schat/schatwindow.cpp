@@ -163,11 +163,12 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
   if (index == -1)
     return false;
 
-  if ((tabs->currentIndex() != index) || (!q->isActiveWindow())) {
-    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
+  bool notice = (tabs->currentIndex() != index || !q->isActiveWindow());
+  if ((notice || pref->getBool("Sound/AlwaysPlay")) && !soundAction->isMute())
+    tray->playSound(key, true);
 
-    if (!soundAction->isMute())
-      tray->playSound(key);
+  if (notice) {
+    AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(index));
 
     if (!tab->notice()) {
       tab->notice(true);
@@ -1161,9 +1162,10 @@ void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QS
  */
 void SChatWindow::message(const QString &sender, const QString &msg)
 {
+  bool selfMsg = d->profile->nick() == sender;
   d->main->addMsg(sender, msg,
-      (d->profile->nick() == sender ? ChatView::MsgSend : ChatView::MsgRecived) | ChatView::MsgPublic,
-      d->startNotice(d->tabs->indexOf(d->main), "Message"));
+      (selfMsg ? ChatView::MsgSend : ChatView::MsgRecived) | ChatView::MsgPublic,
+      selfMsg ? false : d->startNotice(d->tabs->indexOf(d->main), "Message"));
 }
 
 
@@ -1331,13 +1333,12 @@ void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString
     connect(tab, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
   }
 
-  bool notice = d->startNotice(index, "PrivateMessage");
-
-  if (tab)
+  if (tab) {
     if (flag == 1)
       tab->addMsg(d->profile->nick(), msg);
     else
-      tab->addMsg(nick, msg, ChatView::MsgRecived, notice);
+      tab->addMsg(nick, msg, ChatView::MsgRecived, d->startNotice(index, "PrivateMessage"));
+  }
 }
 
 
