@@ -207,9 +207,11 @@ void Settings::read()
   #endif
 
   #ifdef Q_OS_WINCE
-  setBool("BigSendButton", true);
+  setBool("BigSendButton",    true);
+  setBool("Sound/AlwaysPlay", true);
   #else
-  setBool("BigSendButton", false);
+  setBool("BigSendButton",    false);
+  setBool("Sound/AlwaysPlay", false);
   #endif
 
   setBool("Proxy/Enable",         false);

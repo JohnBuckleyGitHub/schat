@@ -42,7 +42,7 @@ public:
   TrayIcon(QObject *parent = 0);
   inline Message message() const { return m_message; }
   void notice(bool enable);
-  void playSound(const QString &key);
+  void playSound(const QString &key, bool force = false);
 
 private slots:
   void messageClicked();
