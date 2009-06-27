@@ -121,6 +121,10 @@
 
 
 
+
+
+
+
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
 <target name="Qt Release Build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -141,31 +145,29 @@
 </target>
 </buildTargets>
 </storageModule>
-
-
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry base-path="C:/qt/4.5.1/include" include="" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="ActiveQt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="Phonon" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="Qt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="Qt3Support" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtAssistant" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtCore" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtDBus" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtDesigner" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtGui" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtHelp" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtNetwork" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtOpenGL" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtScript" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtScriptTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtSql" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtSvg" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtTest" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtUiTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtWebKit" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtXml" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.1/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="ActiveQt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="Phonon" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="Qt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="Qt3Support" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtAssistant" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtCore" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtDBus" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtDesigner" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtGui" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtHelp" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtNetwork" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtOpenGL" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtScript" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtScriptTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtSql" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtSvg" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtTest" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtUiTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtWebKit" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtXml" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/4.5.2/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
 <pathentry base-path="schat" include="src/common" kind="inc" path="" system="true"/>
 <pathentry base-path="schat" include="src/schat" kind="inc" path="" system="true"/>
 <pathentry include="C:/dev/mingw/include" kind="inc" path="" system="true"/>
