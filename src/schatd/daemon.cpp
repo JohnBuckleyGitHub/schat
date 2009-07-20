@@ -96,9 +96,6 @@ bool Daemon::start()
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
-  m_motd  = initMotd();
-  m_stats = initStats();
-
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
       QString serverName = QCryptographicHash::hash(QCoreApplication::applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex();
@@ -130,6 +127,9 @@ bool Daemon::start()
   else {
     LOG(0, tr("- Error - Ошибка запуска `IMPOMEZIA Simple Chat Daemon`, [%1]").arg(m_server.errorString()));
   }
+
+  m_motd  = initMotd();
+  m_stats = initStats();
 
   return result;
 }
@@ -723,10 +723,15 @@ bool Daemon::initMotd()
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
     m_motdText = stream.read(size);
-    return !m_motdText.isEmpty();
+    if (!m_motdText.isEmpty()) {
+      if (m_network)
+        m_motdText.replace("${NETWORK}", m_network->name());
+
+      return true;
+    }
   }
-  else
-    return false;
+
+  return false;
 }
 
 
@@ -1058,7 +1063,7 @@ void Daemon::link()
     return;
   }
 
-  m_network = new Network(qApp->applicationDirPath(), this);
+  m_network = new Network(QCoreApplication::applicationDirPath(), this);
   m_network->setSingle(true);
   if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
     LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
@@ -1070,9 +1075,6 @@ void Daemon::link()
     m_profile->setFullName(m_network->key());
     m_profile->setByeMsg(m_settings->getString("Name"));
     m_numerics << m_numeric;
-
-    if (m_motd)
-      m_motdText.replace("${NETWORK}", m_network->name());
 
     if (!m_settings->getBool("RootServer")) {
       if (m_network->count() > 0) {
