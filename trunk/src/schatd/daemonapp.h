@@ -20,8 +20,11 @@
 #define DAEMONAPP_H_
 
 #include <QCoreApplication>
+#include <QPointer>
 
 #include "qtservice.h"
+
+class Daemon;
 
 /*!
  * \brief Основаный на QtService класс обеспечивающий запуск и управление сервером.
@@ -32,8 +35,12 @@ public:
   DaemonApp(int argc, char **argv);
 
 protected:
+  void processCommand(int code);
   void start();
   void stop();
+
+private:
+  QPointer<Daemon> m_daemon;
 };
 
 #endif /* DAEMONAPP_H_ */

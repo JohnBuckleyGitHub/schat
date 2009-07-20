@@ -35,6 +35,13 @@ DaemonApp::DaemonApp(int argc, char **argv)
 }
 
 
+void DaemonApp::processCommand(int code)
+{
+  if (m_daemon)
+    m_daemon->reload(code);
+}
+
+
 /*!
  * Запуск сервера.
  */
@@ -45,9 +52,9 @@ void DaemonApp::start()
   translator->load("schatd_ru", ":/translations");
   app->installTranslator(translator);
 
-  Daemon *daemon = new Daemon(app);
+  m_daemon = new Daemon(app);
 
-  if (!daemon->start()) {
+  if (!m_daemon->start()) {
     logMessage("Failed to start Simple Chat Daemon, see logs", QtServiceBase::Error);
     app->exit(3);
   }

@@ -51,6 +51,7 @@ class Daemon : public QObject
 public:
   Daemon(QObject *parent = 0);
   bool start();
+  void reload(int code);
 
 signals:
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);

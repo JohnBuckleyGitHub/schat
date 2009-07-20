@@ -135,6 +135,14 @@ bool Daemon::start()
 }
 
 
+void Daemon::reload(int code)
+{
+  Q_UNUSED(code)
+
+  m_motd = initMotd();
+}
+
+
 /*!
  * Уведомление об успешном установлении связи с вышестоящим сервером.
  *

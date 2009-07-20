@@ -20,6 +20,7 @@
 #define ABSTRACTSETTINGS_H_
 
 #include <QMap>
+#include <QObject>
 #include <QSettings>
 #include <QStringList>
 
@@ -28,7 +29,8 @@
  *
  * Предоставляет методы для получения настроек, типов \a bool, \a int и \a QString.
  */
-class AbstractSettings : public QObject {
+class AbstractSettings : public QObject
+{
   Q_OBJECT
 
 public:
