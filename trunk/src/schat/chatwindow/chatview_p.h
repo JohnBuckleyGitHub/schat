@@ -41,6 +41,7 @@ public:
   bool log;
   bool strict;
   ChatView *q;
+  QAction *autoScroll;
   QAction *clear;
   QAction *copy;
   QPointer<ChannelLog> channelLog;

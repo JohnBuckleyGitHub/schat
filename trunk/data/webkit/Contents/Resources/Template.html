@@ -24,7 +24,6 @@
         range.selectNode(chat);
         var documentFragment = range.createContextualFragment(html);
         var myFrag = chat.appendChild(documentFragment);
-        alignChat(true);
       }
       
       function appendNextMessage(html) {
@@ -39,7 +38,6 @@
         var pointer = insert.parentNode;
         insert.parentNode.replaceChild(newNode, insert);
         var els = pointer.getElementsByTagName("div");
-        alignChat(true);
       }
       
       //Auto-scroll to bottom.  Use nearBottom to determine if a scrollToBottom is desired.
