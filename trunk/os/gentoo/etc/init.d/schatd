@@ -35,8 +35,8 @@ stop() {
 }
 
 reload() {
-	ebegin "Reload IMPOMEZIA Simple Chat Daemon"
-	${SCHAT_PATH}/schatd -- -c 0
+	ebegin "Reloading IMPOMEZIA Simple Chat Daemon"
+	${SCHAT_PATH}/schatd -c 0
 	eend $?
 }
 
