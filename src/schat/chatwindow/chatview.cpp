@@ -268,6 +268,8 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
 void ChatView::addMsg(const QString &sender, const QString &message, int options, bool notice)
 {
   d->empty = false;
+  if (SimpleSettings->profile()->nick() == sender)
+    d->autoScroll->setChecked(true);
 
   QTextDocument doc;
   doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
@@ -386,6 +388,9 @@ void ChatView::log(bool enable)
 
 void ChatView::scroll()
 {
+  if (!d->autoScroll->isChecked())
+    return;
+
   #ifndef SCHAT_NO_WEBKIT
     page()->mainFrame()->evaluateJavaScript("alignChat(true)");
   #else
@@ -466,6 +471,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
     menu.addAction(copyLink);
 
   menu.addSeparator();
+  menu.addAction(d->autoScroll);
   menu.addAction(d->clear);
 
   #ifndef SCHAT_NO_WEBKIT
@@ -531,8 +537,10 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
     jsMessage.replace("\"","\\\"");
     jsMessage.replace("\n","\\n");
     jsMessage = QString("append%2Message(\"%1\");").arg(jsMessage).arg(sameFrom ? "Next" : "");
-    if (d->loaded)
+    if (d->loaded) {
       page()->mainFrame()->evaluateJavaScript(jsMessage);
+      scroll();
+    }
     else
       d->pendingJs.enqueue(jsMessage);
   #else
@@ -545,6 +553,10 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 
 void ChatView::createActions()
 {
+  d->autoScroll = new QAction(QIcon(":/images/note2.png"), tr("Автопрокрутка"), this);
+  d->autoScroll->setCheckable(true);
+  d->autoScroll->setChecked(true);
+
   d->copy = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));

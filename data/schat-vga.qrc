@@ -31,6 +31,7 @@
   <file alias="images/logo16-ny.png">images/logo-ny.png</file>
   <file alias="images/male.png">images/vga/male.png</file>
   <file alias="images/network.png">images/vga/network.png</file>
+  <file alias="images/note2.png">images/vga/note2.png</file>
   <file alias="images/profile.png">images/vga/profile.png</file>
   <file alias="images/sound.png">images/vga/sound.png</file>
   <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
