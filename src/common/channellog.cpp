@@ -55,7 +55,6 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
     return out;
 
   /// Удаляет запрещённые теги.
-  badStuff.setCaseSensitivity(Qt::CaseInsensitive);
   QList<QLatin1String> otherBadTags;
   otherBadTags << QLatin1String("address")
                << QLatin1String("big")
@@ -99,6 +98,8 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
   badStuff.setPattern(QLatin1String("<a[^<]*>[\\s]*</a>"));
   out.remove(badStuff);
 
+  out.replace("  ", "&nbsp;&nbsp;");
+
   /// Заменяет перенос строк на соответствующий html код.
   out.replace(QLatin1String("\n"), QLatin1String("<br />"));
 
@@ -122,7 +123,7 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
   if (toPlainText(out).isEmpty())
     return "";
 
-  return out.simplified();
+  return out;
 }
 
 
@@ -212,7 +213,7 @@ QString ChannelLog::toPlainText(const QString &str)
   QString out = str;
   out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
   out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
-  out.remove(QRegExp(QLatin1String("</?span[^<>]*>|</?a[^<>]*>")));
+  out.remove(QRegExp(QLatin1String("<[^>]*>")));
 
   out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
   out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
