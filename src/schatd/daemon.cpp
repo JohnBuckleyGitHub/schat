@@ -182,7 +182,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
   while (i.hasNext()) {
     i.next();
     if (!m_numerics.contains(i.value()->numeric()))
-      userLeave(i.value()->profile()->nick(), tr("Потеряно соединение с корневым сервером"));
+      removeUser(i.value()->profile()->nick(), tr("Потеряно соединение с корневым сервером"), 0);
   }
 }
 
@@ -194,10 +194,10 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  * Функция вносит нового пользователя в список \a m_users и высылает уведомление.
  *
  * \param list    Стандартный список, содержащий в себе полные данные пользователя.
- * \param echo    Параметр игнорируется и не используется.
+ * \param echo    Флаг пакетной передачи.
  * \param numeric Номер сервера, к которому подключен данный пользователь.
  */
-void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 numeric)
+void Daemon::clientSyncUsers(const QStringList &list, quint8 echo, quint8 numeric)
 {
   QString nick = list.at(AbstractProfile::Nick).toLower();
 
@@ -206,12 +206,12 @@ void Daemon::clientSyncUsers(const QStringList &list, quint8 /*echo*/, quint8 nu
     if (service)
       service->quit(true);
 
-    userLeave(list.at(AbstractProfile::Nick));
+    removeUser(list.at(AbstractProfile::Nick));
   }
 
   if (!m_users.contains(nick)) {
     m_users.insert(nick, new UserUnit(list, 0, numeric));
-    emit newUser(list, 1, numeric);
+    emit newUser(list, echo, numeric);
   }
 }
 
@@ -280,7 +280,7 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
     unit->profile()->setByeMsg(bye);
   }
 
-  userLeave(nick, tr("Пользователь отключился от удалённого сервера"));
+  removeUser(nick, tr("Пользователь отключился от удалённого сервера"));
 }
 
 
@@ -292,7 +292,7 @@ void Daemon::detectZombie()
   if (!m_users.isEmpty()) {
     foreach (UserUnit *unit, m_users) {
       if (unit->numeric() == m_numeric && !unit->service())
-        userLeave(unit->profile()->nick(), "Detect zombie");
+        removeUser(unit->profile()->nick(), "Detect zombie");
     }
   }
 }
@@ -618,7 +618,7 @@ void Daemon::serviceLeave(const QString &nick, quint8 flag, const QString &err)
   if (flag == FlagLink)
     linkLeave(nick, err);
   else
-    userLeave(nick, err);
+    removeUser(nick, err);
 }
 
 
@@ -986,7 +986,7 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
     if (unit->numeric() == m_numeric && !unit->service())
-      userLeave(unit->profile()->nick(), "Detect zombie");
+      removeUser(unit->profile()->nick(), "Detect zombie");
 
     return ErrorNickAlreadyUse;
   }
@@ -1137,11 +1137,64 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
       while (i.hasNext()) {
         i.next();
         if (i.value()->numeric() == numeric)
-          userLeave(i.value()->profile()->nick(), tr("Отключение сервера %1@%2").arg(nick).arg(unit->host()));
+          removeUser(i.value()->profile()->nick(), tr("Отключение сервера %1@%2").arg(nick).arg(unit->host()), 0);
       }
 
       delete unit;
     }
+  }
+}
+
+
+/*!
+ * \brief Обработка отключения пользователя.
+ *
+ * Все действия производятся, только если ник преобразованный в нижний регистр найден в \a m_users.
+ * При использовании ограничений по количеству подключений с одного адреса, производится уменьшение счётчика адресов
+ * или удаление записи в \a m_ipLimits.
+ * Событие отключения записывается в журнал сервера и при необходимости в канальный лог.
+ * Высылается сигнал userLeave(const QString &nick, const QString &bye, quint8 flag) и при наличии корневого сервера он
+ * также уведомляется об отключении пользователя (при условии, что пользователь локальный).
+ *
+ * \param nick Ник пользователя.
+ * \param err  Ошибка, причина разъединения.
+ * \param flag Флаг пакетной передачи.
+ */
+void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
+{
+  QString lowerNick = nick.toLower();
+
+  if (m_users.contains(lowerNick)) {
+    UserUnit *unit = m_users.value(lowerNick);
+
+    m_users.remove(lowerNick);
+
+    if (m_maxUsersPerIp > 0) {
+      QString ip = unit->profile()->host();
+      if (m_ipLimits.contains(ip)) {
+        int hosts = m_ipLimits.value(ip);
+        if (hosts)
+          m_ipLimits.insert(ip, hosts - 1);
+        else
+          m_ipLimits.remove(ip);
+      }
+    }
+
+    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
+
+    QString bye = unit->profile()->byeMsg();
+    if (m_channelLog)
+      if (unit->profile()->isMale())
+        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
+      else
+        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
+
+    emit userLeave(nick, bye, flag);
+
+    if (m_network && m_remoteNumeric && unit->numeric() == m_numeric)
+      m_link->sendUserLeave(nick, bye, flag);
+
+    delete unit;
   }
 }
 
@@ -1292,57 +1345,5 @@ void Daemon::updateStatus(quint32 status, const QStringList &users)
       if (unit->numeric() != m_numeric)
         unit->profile()->setStatus(status);
     }
-  }
-}
-
-
-/*!
- * \brief Обработка отключения пользователя.
- *
- * Все действия производятся, только если ник преобразованный в нижний регистр найден в \a m_users.
- * При использовании ограничений по количеству подключений с одного адреса, производится уменьшение счётчика адресов
- * или удаление записи в \a m_ipLimits.
- * Событие отключения записывается в журнал сервера и при необходимости в канальный лог.
- * Высылается сигнал userLeave(const QString &nick, const QString &bye, quint8 flag) и при наличии корневого сервера он
- * также уведомляется об отключении пользователя (при условии, что пользователь локальный).
- *
- * \param nick Ник пользователя.
- * \param err  Ошибка, причина разъединения.
- */
-void Daemon::userLeave(const QString &nick, const QString &err)
-{
-  QString lowerNick = nick.toLower();
-
-  if (m_users.contains(lowerNick)) {
-    UserUnit *unit = m_users.value(lowerNick);
-
-    m_users.remove(lowerNick);
-
-    if (m_maxUsersPerIp > 0) {
-      QString ip = unit->profile()->host();
-      if (m_ipLimits.contains(ip)) {
-        int hosts = m_ipLimits.value(ip);
-        if (hosts)
-          m_ipLimits.insert(ip, hosts - 1);
-        else
-          m_ipLimits.remove(ip);
-      }
-    }
-
-    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
-
-    QString bye = unit->profile()->byeMsg();
-    if (m_channelLog)
-      if (unit->profile()->isMale())
-        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
-      else
-        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
-
-    emit userLeave(nick, bye, 1);
-
-    if (m_network && m_remoteNumeric && unit->numeric() == m_numeric)
-      m_link->sendUserLeave(nick, bye, 1);
-
-    delete unit;
   }
 }

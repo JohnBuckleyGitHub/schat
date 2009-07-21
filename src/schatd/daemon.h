@@ -109,11 +109,11 @@ private:
   quint16 greetingUser(const QStringList &list, DaemonService *service);
   void link();
   void linkLeave(const QString &nick, const QString &err);
+  void removeUser(const QString &nick, const QString &err = QString(), quint8 flag = 1);
   void sendAllUsers(DaemonService *service);
   void syncBye(const QString &nick, const QString &bye, bool local);
   void syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local);
   void updateStatus(quint32 status, const QStringList &users);
-  void userLeave(const QString &nick, const QString &err = QString());
 
   AbstractProfile *m_profile;
   bool m_motd;
