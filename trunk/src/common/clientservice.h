@@ -91,6 +91,7 @@ private:
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
+  int activeInterfaces();
   void createSocket();
   void opcodeAccessDenied();
   void opcodeAccessGranted();

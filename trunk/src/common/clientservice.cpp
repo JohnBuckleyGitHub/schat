@@ -198,7 +198,9 @@ void ClientService::connectToHost()
 
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
     m_server = m_network->server();
-    m_socket->connectToHost(m_server.address, m_server.port);
+    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
+      m_socket->connectToHost(m_server.address, m_server.port);
+
     if (m_network->isNetwork())
       emit connecting(m_network->name(), true);
     else
@@ -609,6 +611,21 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
   }
   else
     return false;
+}
+
+
+/*!
+ * Возвращает число активных сетевых интерфейсов, исключая LoopBack.
+ */
+int ClientService::activeInterfaces()
+{
+  int result = 0;
+  QList<QNetworkInterface> allInterfaces = QNetworkInterface::allInterfaces();
+  foreach (QNetworkInterface iface, allInterfaces) {
+    if (iface.isValid() && iface.flags() & QNetworkInterface::IsUp && !(iface.flags() & QNetworkInterface::IsLoopBack))
+      result++;
+  }
+  return result;
 }
 
 
