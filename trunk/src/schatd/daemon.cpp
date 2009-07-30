@@ -268,7 +268,7 @@ void Daemon::clientSyncUsersEnd()
  * \param flag Параметр игнорируется и не используется.
  * \sa userLeave(const QString &nick, const QString &err)
  */
-void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*flag*/)
+void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 flag)
 {
   QString lowerNick = nick.toLower();
 
@@ -280,7 +280,7 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 /*f
     unit->profile()->setByeMsg(bye);
   }
 
-  removeUser(nick, tr("Пользователь отключился от удалённого сервера"));
+  removeUser(nick, tr("Пользователь отключился от удалённого сервера"), flag);
 }
 
 
