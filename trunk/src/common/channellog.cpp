@@ -220,6 +220,7 @@ QString ChannelLog::toPlainText(const QString &str)
   out.replace(QLatin1String("&quot;"), QLatin1String("\""));
   out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
   out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
+  out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
   out = out.trimmed();
   return out;
 }

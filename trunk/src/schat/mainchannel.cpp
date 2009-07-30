@@ -52,6 +52,7 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
   m_mainLayout->addWidget(m_splitter);
+  m_mainLayout->setStretchFactor(m_splitter, 999);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
   setLayout(m_mainLayout);
