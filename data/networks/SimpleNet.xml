@@ -2,7 +2,7 @@
 <network version="1.0">
   <meta>
     <name>Simple Network</name>
-    <site>http://impomezia.com</site>
+    <site>http://impomezia.ru</site>
   </meta>
   <servers>
     <host>schat.impomezia.com</host>
