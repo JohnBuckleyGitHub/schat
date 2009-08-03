@@ -117,7 +117,8 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
     out = out.left(out.size() - 6);
 
   /// Удаляет запрещённые css стили.
-  badStuff.setPattern(QLatin1String("font-size:[^;]*;|background-color:[^;]*;|font-family:[^;]*;"));
+  /// \todo Эта функция также удалит заданные селекторы из текста, что не допустимо.
+  badStuff.setPattern("\\s?font-size:[^;]*;|\\s?background-color:[^;]*;|\\s?font-family:[^;]*;");
   out.remove(badStuff);
 
   if (toPlainText(out).isEmpty())

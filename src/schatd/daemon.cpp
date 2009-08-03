@@ -724,6 +724,7 @@ bool Daemon::initMotd()
     stream.setCodec("UTF-8");
     m_motdText = stream.read(size);
     if (!m_motdText.isEmpty()) {
+      m_motdText.replace("${VERSION}", SCHAT_VERSION);
       if (m_network)
         m_motdText.replace("${NETWORK}", m_network->name());
 
@@ -840,7 +841,7 @@ int Daemon::localUsersCount() const
  */
 QString Daemon::serverInfo() const
 {
-  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.com'>http://impomezia.com</a>"
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.ru'>http://impomezia.ru</a>"
       "<table><tr><td class='info'>Платформа: </td><td><b>").arg(SCHAT_VERSION);
 
 #if   defined(Q_OS_AIX)
