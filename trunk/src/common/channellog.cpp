@@ -131,9 +131,9 @@ QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
 /*!
  * \author © 2002-2008 by the Kopete developers <kopete-devel@kde.org>
  */
-static QString makeRegExp( const char *pattern )
+static QString makeRegExp(const char *pattern)
 {
-  const QString urlChar = QLatin1String("\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
+  const QString urlChar = QLatin1String("\\+\\-\\w\\./\\\\#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
   const QString boundaryStart = QString("(^|[^%1])(").arg(urlChar);
   const QString boundaryEnd = QString(")([^%1]|$)").arg(urlChar);
 
@@ -180,7 +180,7 @@ QString ChannelLog::parseLinks(const QString &message, bool plain)
   // common subpatterns - may not contain matching parens!
   const QString name = QLatin1String("[\\w\\+\\-=_\\.]+");
   const QString userAndPassword = QString("(?:%1(?::%1)?\\@)").arg(name);
-  const QString urlChar = QLatin1String("\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
+  const QString urlChar = QLatin1String("\\+\\-\\w\\./\\\\#@&;:=\\?~%_,\\!\\$\\*\\(\\)");
   const QString urlSection = QString("[%1]+").arg(urlChar);
   const QString domain = QLatin1String("[\\-\\w_]+(?:\\.[\\-\\w_]+)+");
 
@@ -194,6 +194,11 @@ QString ChannelLog::parseLinks(const QString &message, bool plain)
   result.replace(
     QRegExp(makeRegExp("%1?www\\.%2%3").arg(userAndPassword, domain, urlSection)),
     QLatin1String("\\1<a href=\"http://\\2\" title=\"http://\\2\">\\2</a>\\3"));
+
+  // Replace \\server\sharename with a file: link
+  result.replace(
+    QRegExp(makeRegExp("\\\\\\\\%1").arg(urlSection)),
+    QLatin1String("\\1<a href=\"file:\\2\" title=\"\\2\">\\2</a>\\3"));
 
   //Replace Email Links
   // Replace user@domain with a mailto: link
