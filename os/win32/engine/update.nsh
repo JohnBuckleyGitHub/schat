@@ -38,6 +38,7 @@
 Var mode
 Var cmdparams
 Var run
+Var run_daemon
 Var clean
 Var files
 
@@ -142,6 +143,15 @@ Var files
   Banner::destroy
   ${If} $run == 1
     Exec `"$INSTDIR\schat.exe"`
+  ${EndIf}
+
+  ${If} $run_daemon == 1
+    ReadRegStr $R0 HKLM "SYSTEM\CurrentControlSet\Services\Simple Chat Daemon" "ImagePath"
+    ${If} $R0 != ""
+      Exec '"$INSTDIR\schatd.exe"'
+    ${Else}
+      Exec '"$INSTDIR\schatd.exe" -e'
+    ${EndIf}
   ${EndIf}
 
   Quit
