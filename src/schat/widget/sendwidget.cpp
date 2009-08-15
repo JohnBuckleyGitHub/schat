@@ -237,6 +237,10 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     }
     return true;
   }
+  else if (m_settingsButton->menu() == object && event->type() == QEvent::KeyPress) {
+    if (static_cast<QKeyEvent *>(event)->modifiers() == Qt::AltModifier)
+      return true;
+  }
 
   return QWidget::eventFilter(object, event);
 }
@@ -493,6 +497,7 @@ void SendWidget::createPermanentButtons()
   m_settingsButton->setVisible(false);
 
   QMenu *menu = new QMenu(m_settingsButton);
+  menu->installEventFilter(this);
 
   QWidgetAction *act = new QWidgetAction(this);
   NickEdit *nickEdit = new NickEdit(this, NickEdit::GenderButton | NickEdit::ApplyButton);
