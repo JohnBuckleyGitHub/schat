@@ -99,6 +99,11 @@ private slots:
   #endif
 
 private:
+  /// Конфигурационные опции задаваемые через переменные окружения.
+  enum Env {
+    EnvConfFile ///< Путь к конфигурационному файлу.
+  };
+
   bool initMotd();
   bool initStats();
   bool parseCmd(const QString &nick, const QString &msg);
@@ -107,6 +112,8 @@ private:
   QString serverInfo() const;
   quint16 greetingLink(const QStringList &list, DaemonService *service);
   quint16 greetingUser(const QStringList &list, DaemonService *service);
+  static QString envValue(const QString &env, const QString &failBack);
+  void environment();
   void link();
   void linkLeave(const QString &nick, const QString &err);
   void removeUser(const QString &nick, const QString &err = QString(), quint8 flag = 1);
@@ -133,6 +140,7 @@ private:
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
   QList<quint8> m_numerics;
+  QMap<Env, QString> m_environment;
   QPointer<Network> m_network;
   QString m_motdText;
   QString m_statsFile;
