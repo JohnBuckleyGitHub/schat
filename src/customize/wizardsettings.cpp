@@ -42,7 +42,7 @@ WizardSettings::WizardSettings(const QString &filename, QObject *parent)
 QString WizardSettings::envValue(const QString &env)
 {
   QStringList environment = QProcess::systemEnvironment();
-  int index = environment.indexOf(QRegExp(env + ".*"));
+  int index = environment.indexOf(QRegExp(env + "=.*"));
   if (index != -1) {
     QStringList list = environment.at(index).split("=");
     if (list.size() == 2)

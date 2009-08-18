@@ -40,14 +40,16 @@
  * \param parent Указатель на родительский объект.
  */
 Daemon::Daemon(QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_syncUsers(false),
+  m_channelLog(0),
+  m_privateLog(0),
+  m_statsInterval(0),
+  m_remoteNumeric(0)
 {
-  m_settings      = new DaemonSettings(QCoreApplication::instance()->applicationDirPath() + "/schatd.conf", this);
-  m_remoteNumeric = 0;
-  m_syncUsers     = false;
-  m_channelLog    = 0;
-  m_privateLog    = 0;
-  m_statsInterval = 0;
+  environment();
+  m_settings = new DaemonSettings(m_environment.value(EnvConfFile), this);
+
   zombieTimer.setInterval(30000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
   connect(this, SIGNAL(newUser(const QStringList &, quint8, quint8)), SLOT(logNewUser(const QStringList &, quint8, quint8)));
@@ -1031,6 +1033,35 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
     m_link->sendNewUser(list, 1, m_numeric);
 
   return 0;
+}
+
+
+/*!
+ * Получение значения системной переменной окружения.
+ *
+ * \param env Имя переменной.
+ * \return    Значение переменной или пустая строка.
+ */
+QString Daemon::envValue(const QString &env, const QString &failBack)
+{
+  QStringList environment = QProcess::systemEnvironment();
+  QString out = failBack;
+  int index = environment.indexOf(QRegExp(env + "=.*"));
+  if (index != -1) {
+    QStringList list = environment.at(index).split("=");
+    if (list.size() == 2)
+      out = list.at(1);
+  }
+  return out;
+}
+
+
+/*!
+ * Установка настроек, которые могут быть изменены через переменные окружения.
+ */
+void Daemon::environment()
+{
+  m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", QCoreApplication::applicationDirPath() + "/schatd.conf"));
 }
 
 
