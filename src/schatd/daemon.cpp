@@ -922,9 +922,9 @@ QString Daemon::serverInfo() const
 #endif
 
   info += tr(", Qt %1</b></td></tr>").arg(qVersion());
-
   if (m_network) {
     info += tr("<tr><td class='info'>Название сети: </td><td><b>%1</b></td></tr>").arg(m_network->name());
+    info += tr("<tr><td class='info'>Имя сервера: </td><td><b>%1</b></td></tr>").arg(m_settings->getString("Name"));
     info += tr("<tr><td class='info'>Пользователей: </td><td><b>%1</b></td></tr>").arg(m_users.count());
     info += tr("<tr><td class='info'>Серверов: </td><td><b>%1</b></td></tr></table>").arg(m_numerics.count());
   }
