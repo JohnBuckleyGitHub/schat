@@ -32,7 +32,7 @@ class DaemonLog : public QObject
 
 public:
   DaemonLog(QObject *parent = 0);
-  bool init();
+  bool init(const QString &file);
   static DaemonLog *self() { return m_self; }
   void append(const QString &text);
 

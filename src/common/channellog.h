@@ -41,6 +41,7 @@ public:
   };
 
   ChannelLog(QObject *parent = 0);
+  ChannelLog(const QString &logPath, QObject *parent = 0);
   inline QString channel()                       { return m_channel; }
   inline void setMode(Mode mode)                 { m_mode = mode; }
   static QString htmlFilter(const QString &html, int left = 7000, bool strict = true);
@@ -57,9 +58,9 @@ private:
 
   Mode m_mode;
   QFile m_file;
-  QString m_appPath;
   QString m_channel;
   QString m_date;
+  QString m_logPath;
   QTextStream m_stream;
 };
 
