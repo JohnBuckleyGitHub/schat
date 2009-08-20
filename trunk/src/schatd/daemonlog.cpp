@@ -33,17 +33,17 @@ DaemonLog::DaemonLog(QObject *parent)
 }
 
 
-bool DaemonLog::init()
+bool DaemonLog::init(const QString &file)
 {
   QString appPath = QCoreApplication::applicationDirPath();
 
-  QDir dir(appPath + "/log");
+  QDir dir(QFileInfo(file).absolutePath());
   if (!dir.exists())
-    dir.mkdir(appPath + "/log");
+    dir.mkpath(dir.absolutePath());
 
   bool bom = false;
 
-  m_file.setFileName(appPath + "/log/schatd.log");
+  m_file.setFileName(file);
   if (!m_file.exists())
     bom = true;
 

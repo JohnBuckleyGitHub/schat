@@ -21,14 +21,26 @@
 #include "channellog.h"
 
 /*!
- * \brief Конструктор класса ChannelLog.
+ * Конструктор класса ChannelLog.
  */
 ChannelLog::ChannelLog(QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_mode(Html),
+  m_date(dateStamp())
 {
-  m_mode = Html;
-  m_date = dateStamp();
-  m_appPath = QCoreApplication::applicationDirPath();
+  m_logPath = QCoreApplication::applicationDirPath() + "/log";
+}
+
+
+/*!
+ * Конструктор класса ChannelLog.
+ */
+ChannelLog::ChannelLog(const QString &logPath, QObject *parent)
+  : QObject(parent),
+  m_mode(Html),
+  m_date(dateStamp()),
+  m_logPath(logPath)
+{
 }
 
 
@@ -279,12 +291,12 @@ bool ChannelLog::openFile()
 {
   QString date = dateStamp();
 
-  QDir dir(m_appPath + "/log/" + date);
+  QDir dir(m_logPath + "/" + date);
   if (!dir.exists())
-    dir.mkpath(m_appPath + "/log/" + date);
+    dir.mkpath(dir.absolutePath());
 
   bool bom = false;
-  QString fileName = m_appPath + "/log/" + date + '/' + m_channel;
+  QString fileName = m_logPath + "/" + date + '/' + m_channel;
   if (m_mode == Html)
     fileName += ".html";
   else
@@ -294,13 +306,13 @@ bool ChannelLog::openFile()
   if (!m_file.exists())
     bom = true;
 
-  if (!m_file.open(QIODevice::Append))
-    return false;
-  else {
+  if (m_file.open(QIODevice::Append)) {
     m_stream.setDevice(&m_file);
     m_stream.setGenerateByteOrderMark(bom);
     m_stream.setCodec("UTF-8");
   }
+  else
+    return false;
 
   if (m_mode == Html && bom) {
     m_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;

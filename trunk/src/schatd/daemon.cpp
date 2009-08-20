@@ -89,20 +89,20 @@ bool Daemon::start()
   logLevel = m_settings->getInt("LogLevel");
   if (logLevel > -1) {
     m_log = new DaemonLog(this);
-    if (!m_log->init()) {
+    if (!m_log->init(m_environment.value(EnvLogDir) + "/schatd.log")) {
       m_log->deleteLater();
       logLevel = -1;
     }
   }
 
   if (m_settings->getBool("ChannelLog")) {
-    m_channelLog = new ChannelLog(this);
+    m_channelLog = new ChannelLog(m_environment.value(EnvLogDir), this);
     m_channelLog->setChannel("#main");
     m_channelLog->setMode(ChannelLog::Plain);
   }
 
   if (m_settings->getBool("PrivateLog")) {
-    m_privateLog = new ChannelLog(this);
+    m_privateLog = new ChannelLog(m_environment.value(EnvLogDir), this);
     m_privateLog->setChannel("#private");
     m_privateLog->setMode(ChannelLog::Plain);
   }
@@ -1080,6 +1080,7 @@ void Daemon::environment()
 {
   m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", QCoreApplication::applicationDirPath() + "/schatd.conf"));
   m_environment.insert(EnvPidFile, envValue("SCHATD_PID", QCoreApplication::applicationDirPath() + "/schatd.pid"));
+  m_environment.insert(EnvLogDir, envValue("SCHATD_LOG", QCoreApplication::applicationDirPath() + "/log"));
 }
 
 
