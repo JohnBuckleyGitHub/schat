@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -27,12 +27,12 @@ const quint16 Network::failBackPort   = 7666;
  * \brief Конструктор класса Network.
  */
 Network::Network(QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_failBack(true),
+  m_single(false)
 {
-  m_networksPath = qApp->applicationDirPath() + "/networks";
+  m_networksPath = QCoreApplication::applicationDirPath() + "/networks";
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
-  m_single = false;
-  m_failBack = true;
 }
 
 
@@ -43,12 +43,12 @@ Network::Network(QObject *parent)
  * \param parent Указатель на родительский объект.
  */
 Network::Network(const QString &path, QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_failBack(true),
+  m_single(false)
 {
   m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
-  m_single = false;
-  m_failBack = true;
 }
 
 

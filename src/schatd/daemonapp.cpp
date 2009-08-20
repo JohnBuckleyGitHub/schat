@@ -58,13 +58,6 @@ void DaemonApp::start()
     logMessage("Failed to start Simple Chat Daemon, see logs", QtServiceBase::Error);
     app->exit(3);
   }
-
-  QFile pidfile(app->applicationDirPath() + "/schatd.pid");
-  if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    QTextStream out(&pidfile);
-    out << app->applicationPid();
-    pidfile.close();
-  }
 }
 
 
@@ -73,6 +66,5 @@ void DaemonApp::start()
  */
 void DaemonApp::stop()
 {
-  QFile::remove(application()->applicationDirPath() + "/schatd.pid");
   application()->quit();
 }

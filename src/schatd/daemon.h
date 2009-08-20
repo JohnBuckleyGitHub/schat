@@ -50,6 +50,7 @@ class Daemon : public QObject
 
 public:
   Daemon(QObject *parent = 0);
+  ~Daemon();
   bool start();
   void reload(int code);
 
@@ -101,7 +102,8 @@ private slots:
 private:
   /// Конфигурационные опции задаваемые через переменные окружения.
   enum Env {
-    EnvConfFile ///< Путь к конфигурационному файлу.
+    EnvConfFile, ///< Полное имя конфигурационного файла.
+    EnvPidFile   ///< Полное имя PID-файла.
   };
 
   bool initMotd();
