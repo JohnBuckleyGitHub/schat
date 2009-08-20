@@ -767,7 +767,7 @@ bool Daemon::initStats()
 
     m_statsFile = m_settings->getString("StatsFile");
     if (QFileInfo(m_statsFile).isRelative())
-      m_statsFile = QCoreApplication::applicationDirPath() + '/' + m_statsFile;
+      m_statsFile = m_environment.value(EnvVarDir) + '/' + m_statsFile;
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), SLOT(dumpStats()));
@@ -1078,9 +1078,11 @@ QString Daemon::envValue(const QString &env, const QString &failBack)
  */
 void Daemon::environment()
 {
-  m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", QCoreApplication::applicationDirPath() + "/schatd.conf"));
-  m_environment.insert(EnvPidFile, envValue("SCHATD_PID", QCoreApplication::applicationDirPath() + "/schatd.pid"));
-  m_environment.insert(EnvLogDir, envValue("SCHATD_LOG", QCoreApplication::applicationDirPath() + "/log"));
+  QString appDirPath = QCoreApplication::applicationDirPath();
+  m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", appDirPath + "/schatd.conf"));
+  m_environment.insert(EnvPidFile,  envValue("SCHATD_PID",  appDirPath + "/schatd.pid"));
+  m_environment.insert(EnvLogDir,   envValue("SCHATD_LOG",  appDirPath + "/log"));
+  m_environment.insert(EnvVarDir,   envValue("SCHATD_VAR",  appDirPath));
 }
 
 
