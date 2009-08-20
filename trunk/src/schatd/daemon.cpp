@@ -730,7 +730,11 @@ bool Daemon::initMotd()
   if (!m_settings->getBool("Motd") || size < 1)
     return false;
 
-  QFile file(QCoreApplication::applicationDirPath() + "/" + m_settings->getString("MotdFile"));
+  QString motdFile = m_settings->getString("MotdFile");
+  if (QFileInfo(motdFile).isRelative())
+    motdFile = QFileInfo(m_environment.value(EnvConfFile)).absolutePath() + "/" + motdFile;
+
+  QFile file(motdFile);
   if (!file.exists())
     return false;
 
@@ -1109,9 +1113,17 @@ void Daemon::link()
     return;
   }
 
-  m_network = new Network(QCoreApplication::applicationDirPath(), this);
+  QString networkFile = m_settings->getString("NetworkFile");
+  QString networkFilePath = m_environment.value(EnvConfFile);
+  if (!QFileInfo(networkFile).isRelative()) {
+    networkFilePath = networkFile;
+    networkFile = QFileInfo(networkFile).fileName();
+  }
+  networkFilePath = QFileInfo(networkFilePath).absolutePath();
+
+  m_network = new Network(networkFilePath, this);
   m_network->setSingle(true);
-  if (!m_network->fromFile(m_settings->getString("NetworkFile"))) {
+  if (!m_network->fromFile(networkFile)) {
     LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
     delete m_network;
   }
