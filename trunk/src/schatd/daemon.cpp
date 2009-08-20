@@ -57,6 +57,19 @@ Daemon::Daemon(QObject *parent)
   connect(this, SIGNAL(sendLinkLeave(quint8, const QString &, const QString &)), SLOT(logLinkLeave(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendMessage(const QString &, const QString &)), SLOT(logMessage(const QString &, const QString &)));
   connect(&zombieTimer, SIGNAL(timeout()), SLOT(detectZombie()));
+
+  QFile pidfile(m_environment.value(EnvPidFile));
+  if (pidfile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream out(&pidfile);
+    out << QCoreApplication::applicationPid();
+    pidfile.close();
+  }
+}
+
+
+Daemon::~Daemon()
+{
+  QFile::remove(m_environment.value(EnvPidFile));
 }
 
 
@@ -1062,6 +1075,7 @@ QString Daemon::envValue(const QString &env, const QString &failBack)
 void Daemon::environment()
 {
   m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", QCoreApplication::applicationDirPath() + "/schatd.conf"));
+  m_environment.insert(EnvPidFile, envValue("SCHATD_PID", QCoreApplication::applicationDirPath() + "/schatd.pid"));
 }
 
 
