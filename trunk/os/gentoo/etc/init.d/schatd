@@ -24,13 +24,17 @@ depend() {
 
 start() {
 	ebegin "Starting IMPOMEZIA Simple Chat Daemon"
-	start-stop-daemon --start --exec ${SCHAT_PATH}/schatd -- -start
+	SCHATD_CONF="${SCHATD_CONF}" \
+	SCHATD_PID="${SCHATD_PID}" \
+	SCHATD_LOG="${SCHATD_LOG}" \
+	SCHATD_VAR="${SCHATD_VAR}" \
+	start-stop-daemon --chuid ${SCHATD_USER} --start --exec ${SCHATD_PATH}/schatd 
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping IMPOMEZIA Simple Chat Daemon"
-	start-stop-daemon --stop --exec ${SCHAT_PATH}/schatd -- -terminate
+	start-stop-daemon --stop --exec ${SCHATD_PATH}/schatd -- -terminate
 	eend $?
 }
 
