@@ -1056,8 +1056,9 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
 /*!
  * Получение значения системной переменной окружения.
  *
- * \param env Имя переменной.
- * \return    Значение переменной или пустая строка.
+ * \param env      Имя переменной.
+ * \param failBack Значение по умолчанию.
+ * \return         Значение переменной или значение по умолчанию.
  */
 QString Daemon::envValue(const QString &env, const QString &failBack)
 {

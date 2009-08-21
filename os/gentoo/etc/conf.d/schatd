@@ -15,4 +15,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_PATH="/opt/schat"
+SCHATD_PATH="/usr/bin"
+SCHATD_CONF="/etc/schat/schatd.conf"
+SCHATD_PID="/var/run/schat/schatd.pid"
+SCHATD_LOG="/var/log/schat"
+SCHATD_VAR="/var/lib/schat"
+
+SCHATD_USER="root"
