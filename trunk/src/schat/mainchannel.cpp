@@ -44,7 +44,7 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
 
   m_splitter = new QSplitter(this);
   m_splitter->addWidget(m_view);
-  m_splitter->addWidget(userView);
+  m_splitter->addWidget(createUserView());
   m_splitter->setStretchFactor(0, 3);
   m_splitter->setStretchFactor(1, 2);
   m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
@@ -165,6 +165,23 @@ void MainChannel::usersCountChanged(int count)
     m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий (%1)").arg(count));
   else
     m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий"));
+}
+
+
+/*!
+ * Создание комбинированного виджета списка пользователей
+ * и быстрого поиска.
+ */
+QWidget* MainChannel::createUserView()
+{
+  QWidget *userWidget = new QWidget(this);
+  QuickUserSearch *userSearch = new QuickUserSearch(m_userView);
+  QVBoxLayout *userLay = new QVBoxLayout(userWidget);
+  userLay->setMargin(0);
+  userLay->setSpacing(2);
+  userLay->addWidget(m_userView);
+  userLay->addWidget(userSearch);
+  return userWidget;
 }
 
 
