@@ -59,6 +59,7 @@ private slots:
 
 private:
 //  void addNewUsers(const QStringList &nicks);
+  QWidget* createUserView();
 
   NetworkWidget *m_networkWidget;
   QHBoxLayout *m_networkLayout;

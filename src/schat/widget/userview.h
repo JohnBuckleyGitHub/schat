@@ -19,18 +19,36 @@
 #ifndef USERVIEW_H_
 #define USERVIEW_H_
 
+#include <QLineEdit>
 #include <QListView>
 #include <QObject>
 #include <QStandardItemModel>
 
 class AbstractProfile;
 class QMouseEvent;
+class UserView;
 class UserViewPrivate;
+
+/*!
+ * \brief Виджет для поиска пользователя.
+ */
+class QuickUserSearch : public QLineEdit
+{
+  Q_OBJECT
+
+public:
+  QuickUserSearch(UserView *parent);
+
+private:
+  UserView *m_view;
+};
+
 
 /*!
  * \brief Список пользователей.
  */
-class UserView : public QListView {
+class UserView : public QListView
+{
   Q_OBJECT
 
 public:

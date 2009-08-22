@@ -24,6 +24,16 @@
 #include "userview.h"
 #include "userview_p.h"
 
+/*!
+ * Конструктор класса QuickUserSearch.
+ */
+QuickUserSearch::QuickUserSearch(UserView *parent)
+  : QLineEdit(parent),
+  m_view(parent)
+{
+  setFrame(false);
+}
+
 
 /*!
  * Конструктор класса UserViewPrivate.
