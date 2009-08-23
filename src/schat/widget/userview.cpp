@@ -29,9 +29,37 @@
  */
 QuickUserSearch::QuickUserSearch(UserView *parent)
   : QLineEdit(parent),
+  m_pos(0),
   m_view(parent)
 {
   setFrame(false);
+  connect(this, SIGNAL(textEdited(const QString &)), SLOT(textEdited(const QString &)));
+  connect(this, SIGNAL(returnPressed()), SLOT(returnPressed()));
+}
+
+
+/*!
+ * Базовая функция быстрого поиска пользователя.
+ * В случае неудачного поиска для виджета устанавливается красная палитра.
+ *
+ * \param text  Поисковый запрос, первые символы ника или ник целиком.
+ * \param reset Указывает на необходимость поиска первого ника.
+ */
+void QuickUserSearch::quickSearch(const QString &text, bool reset)
+{
+  QPalette pal = palette();
+  if (reset)
+    m_pos = 0;
+
+  m_pos = m_view->quickSearch(text, m_pos);
+  if (m_pos != -1 || text.isEmpty()) {
+    pal.setColor(QPalette::Active, QPalette::Base, Qt::white);
+    m_pos++;
+  }
+  else
+    pal.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+
+  setPalette(pal);
 }
 
 
@@ -56,11 +84,11 @@ UserViewPrivate::~UserViewPrivate()
  * \param nick Ник пользователя.
  * \return QStandardItem в случае успешного поиска, иначе 0.
  */
-QStandardItem* UserViewPrivate::item(const QString &nick) const
+QStandardItem* UserViewPrivate::item(const QString &nick, Qt::MatchFlags flags) const
 {
   QList<QStandardItem *> items;
 
-  items = model.findItems(nick);
+  items = model.findItems(nick, flags);
   if (items.size() > 0)
     return items[0];
   else
@@ -105,7 +133,7 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   : QListView(parent), d(new UserViewPrivate(profile))
 {
   setModel(&d->model);
-  setFocusPolicy(Qt::NoFocus);
+  setFocusPolicy(Qt::TabFocus);
   setEditTriggers(QListView::NoEditTriggers);
   setSpacing(1);
   setFrameShape(QFrame::NoFrame);
@@ -113,7 +141,7 @@ UserView::UserView(const AbstractProfile *profile, QWidget *parent)
   QPalette p = palette();
   if (p.color(QPalette::Base) == Qt::white) {
     setAlternatingRowColors(true);
-    p.setColor(QPalette::AlternateBase, QColor("#f7faff"));
+    p.setColor(QPalette::AlternateBase, QColor(247, 250, 255));
     setPalette(p);
   }
 
@@ -172,6 +200,36 @@ bool UserView::add(const QStringList &list)
 bool UserView::isUser(const QString &nick) const
 {
   return (bool) d->item(nick);
+}
+
+
+/*!
+ * Выполняет быстрый поиск ника по первым символам.
+ *
+ * \param nick Поисковый запрос, первые символы ника или ник целиком.
+ * \param pos  Позиция поиска после, которой необходимо найти ник.
+ *
+ * \return -1 в случае неуспешного поиска, или позиция ника.
+ */
+int UserView::quickSearch(const QString &nick, int pos)
+{
+  if (nick.isEmpty())
+    return -1;
+
+  QList<QStandardItem *> items = d->model.findItems(nick, Qt::MatchStartsWith | Qt::MatchWrap);
+  if (!items.size())
+    return -1;
+
+  if (items.size() <= pos)
+    pos = 0;
+
+  QStandardItem *item = items[pos];
+
+  QModelIndex index = d->model.indexFromItem(item);
+  setCurrentIndex(index);
+  scrollTo(index);
+
+  return pos;
 }
 
 

@@ -29,7 +29,7 @@ class UserViewPrivate
 public:
   UserViewPrivate(const AbstractProfile *prof);
   ~UserViewPrivate();
-  QStandardItem* item(const QString &nick) const;
+  QStandardItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchExactly) const;
   void sort();
   void sortNow();
 
