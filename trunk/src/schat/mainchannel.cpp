@@ -176,6 +176,7 @@ QWidget* MainChannel::createUserView()
 {
   QWidget *userWidget = new QWidget(this);
   QuickUserSearch *userSearch = new QuickUserSearch(m_userView);
+  m_userView->setQuickSearch(userSearch);
   QVBoxLayout *userLay = new QVBoxLayout(userWidget);
   userLay->setMargin(0);
   userLay->setSpacing(2);

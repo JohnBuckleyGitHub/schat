@@ -70,3 +70,5 @@ contains( SCHAT_RC_FILE, 1 ) {
 contains( SCHAT_DEVEL_MODE, 1 ) {
   DEFINES += SCHAT_DEVEL_MODE
 }
+
+DEFINES += SCHAT_NO_DONATE

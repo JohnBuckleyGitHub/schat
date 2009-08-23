@@ -21,6 +21,8 @@
 
 #include <QTimer>
 
+class QuickUserSearch;
+
 /*!
  * \brief Приватный D-класс для класса UserView.
  */
@@ -37,6 +39,7 @@ public:
   const AbstractProfile *profile;
   QStandardItemModel model;
   QTimer sortTimer;
+  QuickUserSearch *quickUserSearch;
 };
 
 #endif /* USERVIEW_P_H_ */

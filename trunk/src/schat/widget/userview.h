@@ -75,6 +75,7 @@ public:
   void clear();
   void remove(const QString &nick);
   void rename(const QString &oldNick, const QString &newNick);
+  void setQuickSearch(QuickUserSearch *widget);
   void setStatus(quint32 status, const QStringList &users);
   void update(const QString &nick, const AbstractProfile &profile);
 
@@ -90,12 +91,15 @@ public slots:
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
+  void resizeEvent(QResizeEvent *event);
 
 private slots:
   void addTab(const QModelIndex &index);
   void sort();
 
 private:
+  void updateQuickSearchVisible();
+
   UserViewPrivate * const d;
 };
 
