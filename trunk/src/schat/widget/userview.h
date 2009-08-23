@@ -39,8 +39,15 @@ class QuickUserSearch : public QLineEdit
 public:
   QuickUserSearch(UserView *parent);
 
+private slots:
+  inline void returnPressed()                 { quickSearch(text(), false); }
+  inline void textEdited(const QString &text) { quickSearch(text); }
+
 private:
-  UserView *m_view;
+  void quickSearch(const QString &text, bool reset = true);
+
+  int m_pos;        ///< Сохранёная позиция поиска, используется для поиска следующего ника, удовлетворяющему текущему запросу.
+  UserView *m_view; ///< Указатель на объект UserView.
 };
 
 
@@ -59,10 +66,11 @@ public:
 
   UserView(const AbstractProfile *profile, QWidget *parent = 0);
   ~UserView();
+  AbstractProfile profile(const QString &nick) const;
   bool add(const AbstractProfile &profile);
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
-  AbstractProfile profile(const QString &nick) const;
+  int quickSearch(const QString &nick, int pos = 0);
   static QString userToolTip(const AbstractProfile &profile);
   void clear();
   void remove(const QString &nick);
