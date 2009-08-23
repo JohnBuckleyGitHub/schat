@@ -35,6 +35,7 @@ QuickUserSearch::QuickUserSearch(UserView *parent)
   setFrame(false);
   connect(this, SIGNAL(textEdited(const QString &)), SLOT(textEdited(const QString &)));
   connect(this, SIGNAL(returnPressed()), SLOT(returnPressed()));
+  setVisible(false);
 }
 
 
@@ -67,7 +68,9 @@ void QuickUserSearch::quickSearch(const QString &text, bool reset)
  * Конструктор класса UserViewPrivate.
  */
 UserViewPrivate::UserViewPrivate(const AbstractProfile *prof)
-  : needSort(false), profile(prof)
+  : needSort(false),
+  profile(prof),
+  quickUserSearch(0)
 {
   sortTimer.setInterval(300);
 }
@@ -303,6 +306,12 @@ void UserView::rename(const QString &oldNick, const QString &newNick)
 }
 
 
+void UserView::setQuickSearch(QuickUserSearch *widget)
+{
+  d->quickUserSearch = widget;
+}
+
+
 /*!
  * Установка статуса пользователей.
  *
@@ -433,6 +442,12 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
     QListView::mouseReleaseEvent(event);
 }
 
+void UserView::resizeEvent(QResizeEvent *event)
+{
+  updateQuickSearchVisible();
+  QListView::resizeEvent(event);
+}
+
 
 void UserView::addTab(const QModelIndex &index)
 {
@@ -448,4 +463,11 @@ void UserView::addTab(const QModelIndex &index)
 void UserView::sort()
 {
   d->sortNow();
+}
+
+
+void UserView::updateQuickSearchVisible()
+{
+  if (d->quickUserSearch)
+    d->quickUserSearch->setVisible(verticalScrollBar()->isVisible());
 }
