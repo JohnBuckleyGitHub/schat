@@ -153,6 +153,7 @@ ChatView::ChatView(QWidget *parent)
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+    setAcceptDrops(false);
   #else
     d = new ChatViewPrivate(this);
 
