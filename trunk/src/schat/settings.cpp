@@ -191,6 +191,7 @@ void Settings::read()
   setBool("PopupAutoClose",         true);
   setBool("NoPopupAutoCloseInAway", true);
   setBool("CompactGenderWidget",    true);
+  setBool("StatusMessages",         true);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
   setString("Style",                "Plastique");
