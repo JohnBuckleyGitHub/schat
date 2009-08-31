@@ -434,33 +434,37 @@ void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
   if (!users->isUser(nick))
     return;
 
-  QString html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
-  if (users->profile(nick).genderNum())
-    html += QObject::tr("сменила статус на:");
-  else
-    html += QObject::tr("сменил статус на:");
+  bool statusMessages = pref->getBool("StatusMessages");
+  QString html;
+  if (statusMessages) {
+    html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
+    if (users->profile(nick).isFemale())
+      html += QObject::tr("сменила статус на:");
+    else
+      html += QObject::tr("сменил статус на:");
 
-  html += " <b>";
+    html += " <b>";
 
-  if (status == schat::StatusAutoAway || status == schat::StatusAway)
-    html += QObject::tr("Отсутствую");
-  else if (status == schat::StatusDnD)
-    html += QObject::tr("Не беспокоить");
-  else
-    html += QObject::tr("В сети");
+    if (status == schat::StatusAutoAway || status == schat::StatusAway)
+      html += QObject::tr("Отсутствую");
+    else if (status == schat::StatusDnD)
+      html += QObject::tr("Не беспокоить");
+    else
+      html += QObject::tr("В сети");
 
-  html += "</b></span>";
-
-  if (nick == profile->nick()) {
-    msgToAllPrivateTabs(html);
+    html += "</b></span>";
   }
-  else {
+
+  if (nick != profile->nick()) {
     QPair<int, AbstractTab *> tab = tabFromName(nick);
     if (tab.first != -1) {
-      tab.second->msg(html);
+      if (statusMessages)
+        tab.second->msg(html);
       tabs->setTabToolTip(tab.first, UserView::userToolTip(users->profile(nick)));
     }
   }
+  else if (statusMessages)
+    msgToAllPrivateTabs(html);
 }
 
 
