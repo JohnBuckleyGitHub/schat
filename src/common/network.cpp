@@ -143,7 +143,7 @@ QString Network::config() const
  */
 ServerInfo Network::server() const
 {
-  if (m_servers.count() == 0)
+  if (m_servers.count() == 0) {
     if (m_failBack)
       return failBack();
     else {
@@ -152,6 +152,7 @@ ServerInfo Network::server() const
       info.port    = 7666;
       return info;
     }
+  }
 
   if (m_servers.count() == 1)
     return m_servers.at(0);

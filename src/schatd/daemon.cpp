@@ -349,7 +349,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
 #endif
 
   DaemonService *service = qobject_cast<DaemonService *>(sender());
-  if (service)
+  if (service) {
     if (flag == FlagLink) {
       quint16 err = greetingLink(list, service);
       if (err) {
@@ -370,6 +370,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
         service->accessDenied(err);
       }
     }
+  }
 }
 
 
@@ -455,11 +456,12 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
       .arg(list.at(AbstractProfile::Gender))
       .arg(list.at(AbstractProfile::UserAgent)));
 
-  if (m_channelLog)
+  if (m_channelLog) {
     if (list.at(AbstractProfile::Gender) == "male")
       m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
     else
       m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
+  }
 }
 
 
@@ -1245,11 +1247,12 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
     LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
 
     QString bye = unit->profile()->byeMsg();
-    if (m_channelLog)
+    if (m_channelLog) {
       if (unit->profile()->isMale())
         m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
       else
         m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
+    }
 
     emit userLeave(nick, bye, flag);
 
@@ -1348,11 +1351,12 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
   QString lowerNewNick = nNick.toLower();
 
   if (lowerNewNick.isEmpty()) {
-    if (m_channelLog)
+    if (m_channelLog) {
       if (gender)
         m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
       else
         m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
+    }
 
     UserUnit *unit = m_users.value(lowerNick);
     unit->profile()->setGender(gender);
@@ -1366,11 +1370,12 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
     }
   }
   else if (!m_users.contains(lowerNewNick) || lowerNick == lowerNewNick) {
-    if (m_channelLog)
+    if (m_channelLog) {
       if (gender)
         m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(nNick));
       else
         m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(nNick));
+    }
 
     UserUnit *unit = m_users.value(lowerNick);
     m_users.remove(lowerNick);

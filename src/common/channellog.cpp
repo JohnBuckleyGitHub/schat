@@ -255,13 +255,14 @@ void ChannelLog::msg(const QString &text)
       openFile();
     }
 
-    if (m_file.isOpen())
+    if (m_file.isOpen()) {
       if (m_mode == Html) {
         QString line = "<div><small class='ts'>" + dateTimeStamp() + "</small> " + text + "</div>";
         m_stream << line << endl;
       }
       else
         m_stream << dateTimeStamp() << ' ' << toPlainText(text) << endl;
+    }
   }
 }
 
