@@ -1014,11 +1014,12 @@ void UpdateSettings::save()
  */
 void UpdateSettings::factorChanged(int index)
 {
-  if (d->last != index)
+  if (d->last != index) {
     if (index)
       d->interval->setValue(1);
     else
       d->interval->setValue(59);
+  }
 
   d->last = index;
 }

@@ -19,6 +19,7 @@ SCHAT_CONSOLE    = 1
 SCHAT_DEBUG      = 0
 SCHAT_RESOURCES  = 0
 SCHAT_RC_FILE    = 0
+SCHAT_SINGLEAPP  = 0
 
 QT = core network
 TEMPLATE = app

@@ -49,6 +49,7 @@ Benchmark::Benchmark(QObject *parent)
 
 void Benchmark::accessDenied(quint16 reason)
 {
+  Q_UNUSED(reason)
 //  qDebug() << "Benchmark::accessDenied()" << reason;
 }
 

@@ -235,11 +235,12 @@ bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool 
 {
   QString realFileName = d->baseHref + fileName;
 
-  if (!QFile::exists(realFileName))
+  if (!QFile::exists(realFileName)) {
     if (failBack)
       realFileName = ":/webkit/Contents/Resources/" + fileName;
     else
       return false;
+  }
 
   QFile file(realFileName);
 

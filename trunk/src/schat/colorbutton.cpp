@@ -38,11 +38,12 @@ ColorWidget::ColorWidget(const QColor &color, QWidget *parent)
  */
 void ColorWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  if (event->button() == Qt::LeftButton && m_image.valid(event->pos()))
+  if (event->button() == Qt::LeftButton && m_image.valid(event->pos())) {
     if (event->pos().x() <= BlockWidth && event->pos().y() <= BlockHeight)
       emit newColor(m_color);
     else
       emit newColor(QColor(m_image.pixel(event->pos())));
+  }
 
   QWidget::mouseReleaseEvent(event);
 }
