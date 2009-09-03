@@ -32,6 +32,7 @@ PrivateTab::PrivateTab(const QIcon &icon, QWidget *parent)
   mainLay->setMargin(0);
 
   m_view->log(SimpleSettings->getBool("LogPrivate"));
+  m_view->setAllowStatusMessages();
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 

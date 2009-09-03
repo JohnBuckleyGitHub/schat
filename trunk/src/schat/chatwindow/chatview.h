@@ -54,6 +54,7 @@ public:
 
   ChatView(QWidget *parent = 0);
   ~ChatView();
+  bool allowStatusMessages() const;
   QString channel() const;
   static QString statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick);
   static QString statusNewUser(quint8 gender, const QString &nick);
@@ -64,6 +65,7 @@ public:
   void channel(const QString &ch);
   void log(bool enable);
   void scroll();
+  void setAllowStatusMessages();
 
 signals:
   void emoticonsClicked(const QString &emo);
@@ -80,6 +82,7 @@ protected:
 private slots:
   void linkClicked(const QUrl &url);
   void notify(int notify);
+  void toggleStatusMessages(bool checked);
   #ifndef SCHAT_NO_WEBKIT
     void loadFinished();
   #endif

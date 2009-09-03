@@ -38,12 +38,15 @@
 ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
   : empty(true),
   q(parent),
+  statusMessages(0),
   loaded(false),
   chatStyle(styleName),
   chatStyleVariant(styleVariant)
 #else
 ChatViewPrivate::ChatViewPrivate(ChatView *parent)
-  : empty(true), q(parent)
+  : empty(true),
+  q(parent),
+  statusMessages(0)
 #endif
 {
   #ifndef SCHAT_NO_WEBKIT
@@ -176,6 +179,12 @@ ChatView::ChatView(QWidget *parent)
 ChatView::~ChatView()
 {
   delete d;
+}
+
+
+bool ChatView::allowStatusMessages() const
+{
+  return (bool) d->statusMessages;
 }
 
 
@@ -402,6 +411,21 @@ void ChatView::scroll()
 
 
 /*!
+ * Добавляет пункт в контекстное меню для включения/выключения статусных сообщений.
+ */
+void ChatView::setAllowStatusMessages()
+{
+  if (d->statusMessages)
+    return;
+
+  d->statusMessages = new QAction(QIcon(":/images/im-user.png"), tr("Статусные сообщения"), this);
+  d->statusMessages->setCheckable(true);
+  d->statusMessages->setChecked(SimpleSettings->getBool("StatusMessages"));
+  connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
+}
+
+
+/*!
  * Возвращает \a true в случае успешного копирования.
  */
 bool ChatView::copy()
@@ -473,6 +497,10 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addSeparator();
   menu.addAction(d->autoScroll);
+  if (d->statusMessages) {
+    menu.addAction(d->statusMessages);
+    menu.addSeparator();
+  }
   menu.addAction(d->clear);
 
   #ifndef SCHAT_NO_WEBKIT
@@ -514,6 +542,12 @@ void ChatView::notify(int notify)
       clear();
   }
   #endif
+}
+
+
+void ChatView::toggleStatusMessages(bool checked)
+{
+  SimpleSettings->setBool("StatusMessages", checked);
 }
 
 
