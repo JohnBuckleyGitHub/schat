@@ -27,6 +27,7 @@
   <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
   <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
   <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
+  <file alias="images/im-user.png">images/vga/im-user.png</file>
   <file alias="images/logo16.png">images/logo.png</file>
   <file alias="images/logo16-ny.png">images/logo-ny.png</file>
   <file alias="images/male.png">images/vga/male.png</file>
