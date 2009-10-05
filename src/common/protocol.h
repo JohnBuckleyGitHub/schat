@@ -32,7 +32,7 @@ static const quint8 FlagLink                         = 2;
  * ФОРМАТ: --------------------
  * quint16 -> размер пакета
  * quint16 -> опкод
- * quint8  -> версия протокола `ProtocolVersion`
+ * quint16 -> версия протокола `ProtocolVersion`
  * quint8  -> флаг `Flag*`
  * quint8  -> пол участника: 0 - мужской, 1 - женский (numeric сервера при `FlagLink`)
  * QString -> ник участника (рекомендуется пустая строка при `FlagLink`)
