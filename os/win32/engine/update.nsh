@@ -38,7 +38,6 @@
 Var mode
 Var cmdparams
 Var run
-Var run_daemon
 Var clean
 Var files
 

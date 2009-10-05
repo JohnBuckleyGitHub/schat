@@ -24,6 +24,8 @@
 !include "engine\page-options.nsh"
 !include "engine\update.nsh"
 
+Var run_daemon
+
 !define SCHAT_META
 !include "engine\sections.nsh"
 
