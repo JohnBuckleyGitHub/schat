@@ -26,7 +26,7 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION       "0.7.0.1213"
+${def} SCHAT_VERSION       "0.7.0.1216"
 ${def} SCHAT_QT_VERSION    "4.5.3"
 ${def} SCHAT_NAME          "IMPOMEZIA Simple Chat"
 ${def} SCHAT_NAME_SHORT    "Simple Chat"
