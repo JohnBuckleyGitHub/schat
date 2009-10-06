@@ -21,8 +21,17 @@
 
 #include "clientservice.h"
 
-static const int CheckTimeout         = 8000;
+static const int CheckTimeout         = 12000;
 static const int ReconnectTimeout     = 4000;
+
+#ifdef SCHAT_DEBUG
+  #undef SCHAT_DEBUG
+  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
+  #include <QDebug>
+  #include <QTime>
+#else
+  #define SCHAT_DEBUG(x)
+#endif
 
 /*!
  * \brief Конструктор класса ClientService.
@@ -46,18 +55,13 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
 }
 
 
-/** [public]
- *
- */
 ClientService::~ClientService()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::~ClientService()";
-#endif
+  SCHAT_DEBUG(this << "::~ClientService()")
 }
 
 
-/** [public]
+/*!
  * Возвращает `true` если сервис находится в активном состоянии.
  */
 bool ClientService::isReady() const
@@ -73,14 +77,9 @@ bool ClientService::isReady() const
 }
 
 
-/** [public]
- *
- */
 bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message;
-#endif
+  SCHAT_DEBUG(this << "::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message)
 
   if (isReady()) {
     QByteArray block;
@@ -148,7 +147,7 @@ bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
 }
 
 
-/** [public]
+/*!
  * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
  * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
  * const QString &message -> сообщение.
@@ -157,9 +156,7 @@ bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
  */
 bool ClientService::sendMessage(const QString &channel, const QString &message)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::sendMessage(const QString &, const QString &)" << channel << message;
-#endif
+  SCHAT_DEBUG(this << "::sendMessage(const QString &, const QString &)" << channel << message)
 
   if (isReady()) {
     QByteArray block;
@@ -179,7 +176,7 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
 }
 
 
-/** [public]
+/*!
  * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
  * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
  */
@@ -215,14 +212,9 @@ void ClientService::connectToHost()
 }
 
 
-/** [public]
- *
- */
 void ClientService::quit(bool end)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::quit(bool)" << end;
-#endif
+  SCHAT_DEBUG(this << "::quit(bool)" << end);
 
   if (m_socket) {
     if (m_socket->state() == QTcpSocket::ConnectedState) {
@@ -272,14 +264,12 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
 }
 
 
-/** [private slots]
+/*!
  * Разрыв соединения или переподключение если после `CheckTimeout` миллисекунд не удалось установить действующие соединение.
  */
 void ClientService::check()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::check()";
-#endif
+  SCHAT_DEBUG(this << "::check()")
 
   if (m_socket) {
     if (m_socket->state() != QTcpSocket::ConnectedState) {
@@ -297,16 +287,14 @@ void ClientService::check()
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается при успешном подключении сокета `m_socket` к серверу.
  * Слот отправляет приветственное сообщение серверу (OpcodeGreeting).
  * Таймер переподключения `m_reconnectTimer` отстанавливается.
  */
 void ClientService::connected()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::connected()";
-#endif
+  SCHAT_DEBUG(this << "::connected()")
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
@@ -334,15 +322,13 @@ void ClientService::connected()
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается при разрыве соединения сокетом `m_socket`.
  * Высылается сигнал `unconnected()`.
  */
 void ClientService::disconnected()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::disconnected()";
-#endif
+  SCHAT_DEBUG(this << "::disconnected()")
 
   if (m_ping.isActive())
     m_ping.stop();
@@ -394,10 +380,10 @@ void ClientService::readyRead()
 
     m_stream >> m_opcode;
 
-#ifdef SCHAT_DEBUG
+    #ifdef SCHAT_DEBUG
     if (m_opcode != 400)
-      qDebug() << "client opcode:" << m_opcode << "size:" << m_nextBlockSize;
-#endif
+      SCHAT_DEBUG(this << "client opcode:" << m_opcode << "size:" << m_nextBlockSize)
+    #endif
 
     if (m_accepted) {
       switch (m_opcode) {
@@ -485,14 +471,9 @@ void ClientService::readyRead()
 }
 
 
-/** [private slots]
- *
- */
 void ClientService::reconnect()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::reconnect()" << m_reconnectTimer.interval() << m_reconnects << m_fatal;
-#endif
+  SCHAT_DEBUG(this << "::reconnect()" << m_reconnectTimer.interval() << m_reconnects << m_fatal)
 
   if (m_fatal)
     return;
@@ -629,15 +610,13 @@ int ClientService::activeInterfaces()
 }
 
 
-/** [private]
+/*!
  * Функция создаёт сокет `m_socket` и создаёт необходимые соединения сигнал-слот.
  * ВНИМАНИЕ: функция не проверяет наличие сокета `m_socket`, это должно делаться за пределами функции.
  */
 void ClientService::createSocket()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::createSocket()";
-#endif
+  SCHAT_DEBUG(this << "::createSocket()")
 
   m_socket = new QTcpSocket(this);
   m_stream.setDevice(m_socket);
@@ -767,9 +746,7 @@ void ClientService::opcodeNewNick()
  */
 void ClientService::opcodeNewProfile()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::opcodeNewProfile()";
-#endif
+  SCHAT_DEBUG(this << "::opcodeNewProfile()")
 
   quint8 p_gender;
   QString p_nick;
@@ -847,12 +824,10 @@ void ClientService::opcodeRelayMessage()
   QString p_message;
   m_stream >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
-#ifdef SCHAT_DEBUG
-  qDebug() << "ClientService::opcodeRelayMessage()";
-  qDebug() << "  CHANNEL:" << p_channel;
-  qDebug() << "  SENDER: " << p_sender;
-  qDebug() << "  MESSAGE:" << p_message;
-#endif
+  SCHAT_DEBUG(this << "ClientService::opcodeRelayMessage()")
+  SCHAT_DEBUG("  CHANNEL:" << p_channel)
+  SCHAT_DEBUG("  SENDER: " << p_sender)
+  SCHAT_DEBUG("  MESSAGE:" << p_message)
   if (p_sender.isEmpty())
     return;
 
@@ -933,7 +908,7 @@ void ClientService::opcodeUniversalLite()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeUserLeave`.
  * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
  */
@@ -949,15 +924,14 @@ void ClientService::opcodeUserLeave()
 }
 
 
-/** [private]
+/*!
  * Функция читает пакет с неизвестным опкодом.
  */
 void ClientService::unknownOpcode()
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "DaemonService::unknownOpcode()";
-  qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
-#endif
+  SCHAT_DEBUG(this << "::unknownOpcode()")
+  SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
+
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
 }
