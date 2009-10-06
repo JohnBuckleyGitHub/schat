@@ -33,7 +33,7 @@ class ProfileWidget : public QWidget {
   Q_OBJECT
 
 public:
-  ProfileWidget(QWidget *parent = 0);
+  ProfileWidget(bool compactGender, QWidget *parent = 0);
   int save();
   void reset();
 

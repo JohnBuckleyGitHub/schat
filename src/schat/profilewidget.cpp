@@ -26,10 +26,10 @@
 /*!
  * Конструктор класса ProfileWidget.
  */
-ProfileWidget::ProfileWidget(QWidget *parent)
+ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
   : QWidget(parent),
   m_profile(SimpleSettings->profile()),
-  m_compactGenderWidget(SimpleSettings->getBool("CompactGenderWidget")),
+  m_compactGenderWidget(compactGender),
   m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems"))
 {
   setAttribute(Qt::WA_DeleteOnClose);
