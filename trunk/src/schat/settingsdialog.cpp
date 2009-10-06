@@ -88,7 +88,7 @@ public:
 ProfileSettings::ProfileSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::ProfilePage, parent), d(new Private)
 {
-  d->profileWidget = new ProfileWidget(this);
+  d->profileWidget = new ProfileWidget(SimpleSettings->getBool("CompactGenderWidget"), this);
   connect(d->profileWidget, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
   d->byeMsgEdit = new QLineEdit(d->profile->byeMsg(), this);

@@ -33,7 +33,7 @@ WelcomeDialog::WelcomeDialog(QWidget *parent)
 {
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
-  m_profileWidget = new ProfileWidget(this);
+  m_profileWidget = new ProfileWidget(false, this);
   m_askCheckBox = new QCheckBox(tr("Больше не спрашивать"), this);
   m_okButton    = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("ОК"), this);
   #ifndef Q_OS_WINCE
@@ -89,7 +89,7 @@ WelcomeDialog::WelcomeDialog(QWidget *parent)
   connect(m_okButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(m_profileWidget, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
 
-  setWindowTitle(tr("%1 - Выбор ника").arg(QApplication::applicationName()));
+  setWindowTitle(tr("Выбор ника"));
 }
 
 
