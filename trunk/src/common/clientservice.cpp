@@ -184,8 +184,9 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
 void ClientService::connectToHost()
 {
   SCHAT_DEBUG(this << "ClientService::connectToHost()")
-  if (m_socket)
+  if (m_socket) {
     SCHAT_DEBUG(m_socket->state())
+  }
 
   if (!m_socket)
     createSocket();
@@ -390,10 +391,9 @@ void ClientService::readyRead()
 
     m_stream >> m_opcode;
 
-    #ifdef SCHAT_DEBUG
-    if (m_opcode != 400)
+    if (m_opcode != 400) {
       SCHAT_DEBUG(this << "client opcode:" << m_opcode << "size:" << m_nextBlockSize)
-    #endif
+    }
 
     if (m_accepted) {
       switch (m_opcode) {
