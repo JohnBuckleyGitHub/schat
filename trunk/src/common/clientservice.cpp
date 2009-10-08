@@ -293,7 +293,7 @@ void ClientService::check()
  */
 void ClientService::connected()
 {
-  SCHAT_DEBUG(this << "::connected()")
+  SCHAT_DEBUG(this << "::connected()" << "socket:" << m_socket)
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
@@ -327,15 +327,10 @@ void ClientService::connected()
  */
 void ClientService::disconnected()
 {
-  SCHAT_DEBUG(this << "::disconnected()")
+  SCHAT_DEBUG(this << "::disconnected()" << "socket:" << m_socket)
 
   if (m_ping.isActive())
     m_ping.stop();
-
-  if (m_socket) {
-    m_socket->deleteLater();
-    m_socket = 0;
-  }
 
   if (m_accepted) {
     emit unconnected();
@@ -350,6 +345,12 @@ void ClientService::disconnected()
   }
   else
     emit fatal();
+
+  if (m_socket) {
+    m_socket->abort();
+    m_socket->deleteLater();
+    m_socket = 0;
+  }
 }
 
 
