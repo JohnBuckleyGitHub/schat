@@ -37,15 +37,14 @@ static const int ReconnectTimeout     = 4000;
  * \brief Конструктор класса ClientService.
  */
 ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
-  : QObject(parent),
-  m_accepted(false),
-  m_fatal(false),
-  m_profile(profile),
-  m_network(network),
-  m_reconnects(0),
-  m_nextBlockSize(0)
+  : QObject(parent), m_profile(profile), m_network(network)
 {
+  m_socket = 0;
+  m_nextBlockSize = 0;
+  m_reconnects = 0;
   m_stream.setVersion(StreamVersion);
+  m_accepted = false;
+  m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(22000);
   m_reconnectTimer.setInterval(ReconnectTimeout);
@@ -183,7 +182,7 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
  */
 void ClientService::connectToHost()
 {
-  SCHAT_DEBUG(this << "ClientService::connectToHost()")
+  SCHAT_DEBUG(this << "::connectToHost()")
   if (m_socket) {
     SCHAT_DEBUG(m_socket->state())
   }
@@ -192,17 +191,18 @@ void ClientService::connectToHost()
     createSocket();
 
   m_fatal = false;
-  m_checkTimer.start();
-  m_reconnectTimer.stop();
 
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
     m_server = m_network->server();
-    m_socket->connectToHost(m_server.address, m_server.port);
+    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
+      m_socket->connectToHost(m_server.address, m_server.port);
 
     if (m_network->isNetwork())
       emit connecting(m_network->name(), true);
     else
       emit connecting(m_server.address, false);
+
+    m_checkTimer.start();
   }
   else if (m_socket->state() == QAbstractSocket::ConnectedState) {
     m_reconnects = 0;
@@ -272,8 +272,8 @@ void ClientService::check()
 
   if (m_socket) {
     if (m_socket->state() != QTcpSocket::ConnectedState) {
-      m_reconnects = m_network->count() * 2;
-      disconnected();
+      m_socket->deleteLater();
+      m_socket = 0;
       connectToHost();
     }
     else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
@@ -293,7 +293,7 @@ void ClientService::check()
  */
 void ClientService::connected()
 {
-  SCHAT_DEBUG(this << "::connected()" << "socket:" << m_socket)
+  SCHAT_DEBUG(this << "::connected()")
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
@@ -327,10 +327,13 @@ void ClientService::connected()
  */
 void ClientService::disconnected()
 {
-  SCHAT_DEBUG(this << "::disconnected()" << "socket:" << m_socket)
+  SCHAT_DEBUG(this << "::disconnected()")
 
   if (m_ping.isActive())
     m_ping.stop();
+
+  if (m_socket)
+    m_socket->deleteLater();
 
   if (m_accepted) {
     emit unconnected();
@@ -339,28 +342,12 @@ void ClientService::disconnected()
 
   if (!m_fatal) {
     if ((m_reconnects < (m_network->count() * 2)))
-      QTimer::singleShot(500, this, SLOT(reconnect()));
+      QTimer::singleShot(0, this, SLOT(reconnect()));
 
     m_reconnectTimer.start();
   }
   else
     emit fatal();
-
-  if (m_socket) {
-    m_socket->abort();
-    m_socket->deleteLater();
-    m_socket = 0;
-  }
-}
-
-
-void ClientService::error()
-{
-  SCHAT_DEBUG(this << "::error()")
-  if (m_socket && m_socket->state() == QAbstractSocket::ConnectedState)
-    m_socket->disconnectFromHost();
-  else
-    disconnected();
 }
 
 
@@ -392,9 +379,11 @@ void ClientService::readyRead()
 
     m_stream >> m_opcode;
 
+    #ifdef SCHAT_DEBUG
     if (m_opcode != 400) {
       SCHAT_DEBUG(this << "client opcode:" << m_opcode << "size:" << m_nextBlockSize)
     }
+    #endif
 
     if (m_accepted) {
       switch (m_opcode) {
@@ -490,8 +479,9 @@ void ClientService::reconnect()
     return;
 
   m_reconnects++;
-  error();
-  connectToHost();
+
+  if (!m_socket)
+    connectToHost();
 }
 
 
@@ -606,6 +596,21 @@ bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, con
 
 
 /*!
+ * Возвращает число активных сетевых интерфейсов, исключая LoopBack.
+ */
+int ClientService::activeInterfaces()
+{
+  int result = 0;
+  QList<QNetworkInterface> allInterfaces = QNetworkInterface::allInterfaces();
+  foreach (QNetworkInterface iface, allInterfaces) {
+    if (iface.isValid() && iface.flags() & QNetworkInterface::IsUp && !(iface.flags() & QNetworkInterface::IsLoopBack))
+      result++;
+  }
+  return result;
+}
+
+
+/*!
  * Функция создаёт сокет `m_socket` и создаёт необходимые соединения сигнал-слот.
  * ВНИМАНИЕ: функция не проверяет наличие сокета `m_socket`, это должно делаться за пределами функции.
  */
@@ -618,7 +623,6 @@ void ClientService::createSocket()
   connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
   connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
-  connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error()));
 }
 
 
@@ -640,7 +644,7 @@ void ClientService::opcodeAccessDenied()
 }
 
 
-/*!
+/** [private]
  * Разбор пакета с опкодом `OpcodeAccessGranted`.
  * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
  * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
@@ -653,7 +657,6 @@ void ClientService::opcodeAccessGranted()
   m_accepted = true;
   m_reconnects = 0;
   m_fatal = false;
-  m_checkTimer.stop();
 
   QString network;
   if (m_network->isNetwork())
