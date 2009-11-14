@@ -214,7 +214,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
  */
 void Daemon::clientSyncUsers(const QStringList &list, quint8 echo, quint8 numeric)
 {
-  QString nick = list.at(AbstractProfile::Nick).toLower();
+  QString nick = normalizeNick(list.at(AbstractProfile::Nick));
 
   if (m_users.contains(nick) && !m_syncUsers) {
     DaemonService *service = m_users.value(nick)->service();
@@ -285,7 +285,7 @@ void Daemon::clientSyncUsersEnd()
  */
 void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 flag)
 {
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (m_users.contains(lowerNick)) {
     UserUnit *unit = m_users.value(lowerNick);
@@ -491,7 +491,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << nick << msg;
 #endif
 
-  QString lowerChannel = channel.toLower();
+  QString lowerChannel = normalizeNick(channel);
 
   if (channel.isEmpty()) {
     if (!parseCmd(nick, msg)) {
@@ -580,8 +580,8 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   if (!m_network)
     return;
 
-  QString lowerChannel = channel.toLower();
-  QString lowerSender  = sender.toLower();
+  QString lowerChannel = normalizeNick(channel);
+  QString lowerSender  = normalizeNick(sender);
 
   if (channel.isEmpty()) {
     emit sendMessage(sender, msg);
@@ -687,7 +687,7 @@ void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &d
 {
   Q_UNUSED(data2)
 
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (m_users.contains(lowerNick)) {
     if (sub == schat::UniStatus && !data1.isEmpty()) {
@@ -791,7 +791,7 @@ bool Daemon::initStats()
  */
 bool Daemon::parseCmd(const QString &nick, const QString &msg)
 {
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (!m_users.contains(lowerNick))
     return false;
@@ -852,6 +852,16 @@ int Daemon::localUsersCount() const
   }
 
   return out;
+}
+
+
+/*!
+ * Выполняет нормализацию ника, для использования его в качестве ключа
+ * в таблице пользователей.
+ */
+QString Daemon::normalizeNick(const QString &nick) const
+{
+  return nick.toLower();
 }
 
 
@@ -1002,7 +1012,7 @@ quint16 Daemon::greetingLink(const QStringList &list, DaemonService *service)
  */
 quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
-  QString nick = list.at(AbstractProfile::Nick).toLower();
+  QString nick = normalizeNick(list.at(AbstractProfile::Nick));
 
   /// \test Экспериментальное определение зависших пользователей.
   if (m_users.contains(nick)) {
@@ -1226,7 +1236,7 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
  */
 void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
 {
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (m_users.contains(lowerNick)) {
     UserUnit *unit = m_users.value(lowerNick);
@@ -1308,7 +1318,7 @@ void Daemon::sendAllUsers(DaemonService *service)
  */
 void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
 {
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (!m_users.contains(lowerNick))
     return;
@@ -1343,12 +1353,12 @@ void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
  */
 void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local)
 {
-  QString lowerNick = nick.toLower();
+  QString lowerNick = normalizeNick(nick);
 
   if (!m_users.contains(lowerNick))
     return;
 
-  QString lowerNewNick = nNick.toLower();
+  QString lowerNewNick = normalizeNick(nNick);
 
   if (lowerNewNick.isEmpty()) {
     if (m_channelLog) {
@@ -1406,7 +1416,7 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
 void Daemon::updateStatus(quint32 status, const QStringList &users)
 {
   foreach (QString user, users) {
-    QString lowerNick = user.toLower();
+    QString lowerNick = normalizeNick(user);
     if (m_users.contains(lowerNick)) {
       UserUnit *unit = m_users.value(lowerNick);
       if (unit->numeric() != m_numeric)

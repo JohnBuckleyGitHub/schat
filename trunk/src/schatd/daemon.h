@@ -113,6 +113,7 @@ private:
   bool parseCmd(const QString &nick, const QString &msg);
   int localLinksCount() const;
   int localUsersCount() const;
+  QString normalizeNick(const QString &nick) const;
   QString serverInfo() const;
   quint16 greetingLink(const QStringList &list, DaemonService *service);
   quint16 greetingUser(const QStringList &list, DaemonService *service);
