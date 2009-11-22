@@ -113,6 +113,7 @@ private:
   bool parseCmd(const QString &nick, const QString &msg);
   int localLinksCount() const;
   int localUsersCount() const;
+  QString envConfFile(const QString &key) const;
   QString normalizeNick(const QString &nick) const;
   QString serverInfo() const;
   quint16 greetingLink(const QStringList &list, DaemonService *service);
@@ -141,6 +142,7 @@ private:
   int m_maxUsers;
   int m_maxUsersPerIp;
   int m_statsInterval;
+  QHash<QChar, QChar> m_normalize;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
