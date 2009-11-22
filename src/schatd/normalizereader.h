@@ -19,6 +19,7 @@
 #ifndef NORMALIZEREADER_H_
 #define NORMALIZEREADER_H_
 
+#include <QHash>
 #include <QXmlStreamReader>
 
 /*!
@@ -27,11 +28,14 @@
 class NormalizeReader : public QXmlStreamReader {
 
 public:
-  NormalizeReader();
+  NormalizeReader(QHash<QChar, QChar> &normalize);
   bool readFile(const QString &fileName);
 
 private:
+  void readChar();
   void readUnknownElement();
+
+  QHash<QChar, QChar> &m_normalize;
 };
 
 #endif /* NORMALIZEREADER_H_ */

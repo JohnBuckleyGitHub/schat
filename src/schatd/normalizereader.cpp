@@ -17,13 +17,15 @@
  */
 
 #include <QFile>
+#include <QDebug>
 
 #include "normalizereader.h"
 
 /*!
  * Конструктор класса NormalizeReader.
  */
-NormalizeReader::NormalizeReader()
+NormalizeReader::NormalizeReader(QHash<QChar, QChar> &normalize)
+  : m_normalize(normalize)
 {
 }
 
@@ -38,19 +40,44 @@ bool NormalizeReader::readFile(const QString &fileName)
     return false;
 
   setDevice(&file);
+  m_normalize.clear();
 
   while (!atEnd()) {
     readNext();
 
     if (isStartElement()) {
       if (name() == "normalize" && attributes().value("version") == "1.0")
-        readUnknownElement();
+        readChar();
       else
         raiseError(QObject::tr("BAD FILE FORMAT OR VERSION"));
     }
   }
 
   return !error();
+}
+
+
+void NormalizeReader::readChar()
+{
+  while (!atEnd()) {
+    readNext();
+
+    if (isEndElement())
+      break;
+
+    if (isStartElement()) {
+      if (name() == "char") {
+        QString n = attributes().value("n").toString();
+        QString k = readElementText();
+        if (n.size() > 0 && k.size() > 0) {
+          if (!m_normalize.contains(k.at(0)))
+            m_normalize.insert(k.at(0), n.at(0));
+        }
+      }
+      else
+        readUnknownElement();
+    }
+  }
 }
 
 

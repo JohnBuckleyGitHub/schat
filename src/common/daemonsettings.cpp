@@ -55,6 +55,7 @@ void DaemonSettings::read()
   setString("NetworkFile",   "network.xml");
   setString("Name",          "");
   setString("MotdFile",      "motd.html");
+  setString("NormalizeFile", "normalize.xml");
   setString("StatsFile",     "stats.xml");
 
   AbstractSettings::read();

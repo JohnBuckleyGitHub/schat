@@ -23,10 +23,11 @@
 #include "channellog.h"
 #include "clientservice.h"
 #include "daemon.h"
+#include "daemonlog.h"
 #include "daemonservice.h"
 #include "daemonsettings.h"
 #include "linkunit.h"
-#include "daemonlog.h"
+#include "normalizereader.h"
 #include "protocol.h"
 #include "userunit.h"
 #include "version.h"
@@ -111,8 +112,6 @@ bool Daemon::start()
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
-  m_normalize.insert(QChar(0x0430), 'a');
-
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
       QString serverName = QCryptographicHash::hash(QCoreApplication::applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex();
@@ -156,6 +155,11 @@ void Daemon::reload(int code)
 {
   Q_UNUSED(code)
 
+  NormalizeReader reader(m_normalize);
+  if (!reader.readFile(envConfFile("NormalizeFile"))) {
+    LOG(0, tr("- Warning - Ошибка загрузки файла: %1, нормализация ников будет работать в ограниченном режиме")
+                .arg(envConfFile("NormalizeFile")));
+  }
   m_motd = initMotd();
 }
 
