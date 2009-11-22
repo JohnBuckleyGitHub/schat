@@ -111,6 +111,8 @@ bool Daemon::start()
   m_maxUsers      = m_settings->getInt("MaxUsers");
   m_maxUsersPerIp = m_settings->getInt("MaxUsersPerIp");
 
+  m_normalize.insert(QChar(0x0430), 'a');
+
   #ifndef SCHAT_NO_LOCAL_SERVER
     if (m_settings->getBool("LocalServer")) {
       QString serverName = QCryptographicHash::hash(QCoreApplication::applicationDirPath().toUtf8(), QCryptographicHash::Md5).toHex();
@@ -732,11 +734,7 @@ bool Daemon::initMotd()
   if (!m_settings->getBool("Motd") || size < 1)
     return false;
 
-  QString motdFile = m_settings->getString("MotdFile");
-  if (QFileInfo(motdFile).isRelative())
-    motdFile = QFileInfo(m_environment.value(EnvConfFile)).absolutePath() + "/" + motdFile;
-
-  QFile file(motdFile);
+  QFile file(envConfFile("MotdFile"));
   if (!file.exists())
     return false;
 
@@ -856,12 +854,37 @@ int Daemon::localUsersCount() const
 
 
 /*!
+ * Формирует полный путь к файлу, если задан относительный,
+ * с учётом расположения конфигурационного файла.
+ *
+ * \param key Ключ в настройках.
+ */
+QString Daemon::envConfFile(const QString &key) const
+{
+  QString file = m_settings->getString(key);
+  if (QFileInfo(file).isRelative())
+    file = QFileInfo(m_environment.value(EnvConfFile)).absolutePath() + "/" + file;
+
+  return file;
+}
+
+
+/*!
  * Выполняет нормализацию ника, для использования его в качестве ключа
  * в таблице пользователей.
  */
 QString Daemon::normalizeNick(const QString &nick) const
 {
-  return nick.toLower();
+  if (nick.isEmpty())
+    return "";
+
+  QString out = nick.toLower();
+  for (int i = 0; i < out.size(); ++i) {
+    if (m_normalize.contains(out.at(i)))
+      out[i] = m_normalize.value(out.at(i));
+  }
+
+  return out;
 }
 
 
