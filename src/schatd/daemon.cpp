@@ -145,7 +145,7 @@ bool Daemon::start()
     LOG(0, tr("- Error - Ошибка запуска `IMPOMEZIA Simple Chat Daemon`, [%1]").arg(m_server.errorString()));
   }
 
-  m_motd  = initMotd();
+  reload(0);
   m_stats = initStats();
 
   return result;
