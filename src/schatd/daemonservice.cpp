@@ -22,15 +22,7 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "daemonservice.h"
-
-#ifdef SCHAT_DEBUG
-  #undef SCHAT_DEBUG
-  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
-  #include <QDebug>
-  #include <QTime>
-#else
-  #define SCHAT_DEBUG(x)
-#endif
+#include "schatmacro.h"
 
 /*!
  * \brief Конструктор класса DaemonService.
