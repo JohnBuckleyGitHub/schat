@@ -20,18 +20,10 @@
 #include <QtNetwork>
 
 #include "clientservice.h"
+#include "schatmacro.h"
 
 static const int CheckTimeout         = 12000;
 static const int ReconnectTimeout     = 4000;
-
-#ifdef SCHAT_DEBUG
-  #undef SCHAT_DEBUG
-  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
-  #include <QDebug>
-  #include <QTime>
-#else
-  #define SCHAT_DEBUG(x)
-#endif
 
 /*!
  * \brief Конструктор класса ClientService.
