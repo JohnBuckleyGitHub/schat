@@ -22,7 +22,6 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "daemonservice.h"
-#include "schatmacro.h"
 
 /*!
  * \brief Конструктор класса DaemonService.
@@ -30,7 +29,9 @@
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 : QObject(parent), m_socket(socket)
 {
-  SCHAT_DEBUG(this)
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::KONSTRUCTOR";
+#endif
 
   if (m_socket) {
     m_socket->setParent(this);
@@ -173,7 +174,9 @@ bool DaemonService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
  */
 void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  SCHAT_DEBUG(this << "::sendNewNick()")
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::sendNewNick()";
+#endif
 
   if (m_profile->nick() == nick && m_flag == FlagNone) {
     m_profile->setGender(gender);
@@ -190,7 +193,9 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
  */
 void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QString &name)
 {
-  SCHAT_DEBUG(this << "::sendNewProfile()")
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::sendNewProfile()";
+#endif
 
   if (m_profile->nick() == nick) {
     m_profile->setGender(gender);
@@ -200,7 +205,7 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
 }
 
 
-/*!
+/** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
@@ -317,6 +322,11 @@ void DaemonService::readyRead()
 
     m_stream >> m_opcode;
 
+#ifdef SCHAT_DEBUG
+    if (m_opcode != 401)
+      qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
+
     if (m_accepted) {
       switch (m_opcode) {
         case OpcodeMessage:
@@ -382,9 +392,14 @@ void DaemonService::readyRead()
 }
 
 
+/** [private]
+ *
+ */
 bool DaemonService::opcodeGreeting()
 {
-  SCHAT_DEBUG(this << "::opcodeGreeting()")
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeGreeting()";
+#endif
 
   quint16 p_version;
   quint8  p_gender;
@@ -629,11 +644,12 @@ void DaemonService::opcodeMessage()
   m_stream >> p_channel >> p_message;
   m_nextBlockSize = 0;
 
-  SCHAT_DEBUG(this << "opcodeMessage()")
-  SCHAT_DEBUG("  CHANNEL:" << p_channel)
-  SCHAT_DEBUG("  SENDER: " << m_profile->nick())
-  SCHAT_DEBUG("  MESSAGE:" << p_message)
-
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeMessage()";
+  qDebug() << "  CHANNEL:" << p_channel;
+  qDebug() << "  SENDER: " << m_profile->nick();
+  qDebug() << "  MESSAGE:" << p_message;
+#endif
   if (p_message.isEmpty())
     return;
 
@@ -659,10 +675,14 @@ void DaemonService::opcodeNewNick()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
+ *
+ *
  */
 void DaemonService::opcodeNewProfile()
 {
-  SCHAT_DEBUG(this << "::opcodeNewProfile()")
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeNewProfile()";
+#endif
 
   quint8 p_gender;
   QString p_nick;
@@ -680,6 +700,9 @@ void DaemonService::opcodeNewProfile()
 }
 
 
+/** [private]
+ *
+ */
 void DaemonService::opcodeNewUser()
 {
   quint8 p_flag;
@@ -700,7 +723,7 @@ void DaemonService::opcodeNewUser()
 }
 
 
-/*!
+/** [private]
  * Разбор пакета с опкодом `OpcodePong`.
  * Функция сбрасывает счётчик `OpcodePong`.
  */
@@ -723,12 +746,12 @@ void DaemonService::opcodeRelayMessage()
   QString p_message;
   m_stream >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
-
-  SCHAT_DEBUG(this << "opcodeRelayMessage()")
-  SCHAT_DEBUG("  CHANNEL:" << p_channel)
-  SCHAT_DEBUG("  SENDER: " << p_sender)
-  SCHAT_DEBUG("  MESSAGE:" << p_message)
-
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::opcodeRelayMessage()";
+  qDebug() << "  CHANNEL:" << p_channel;
+  qDebug() << "  SENDER: " << p_sender;
+  qDebug() << "  MESSAGE:" << p_message;
+#endif
   if (p_sender.isEmpty())
     return;
 
@@ -809,14 +832,15 @@ void DaemonService::opcodeUserLeave()
 }
 
 
-/*!
+/** [private]
  * Функция читает пакет с неизвестным опкодом.
  */
 void DaemonService::unknownOpcode()
 {
-  SCHAT_DEBUG(this << "::unknownOpcode()")
-  SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
-
+#ifdef SCHAT_DEBUG
+  qDebug() << "DaemonService::unknownOpcode()";
+  qDebug() << "opcode:" << m_opcode << "size:" << m_nextBlockSize;
+#endif
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
 }
