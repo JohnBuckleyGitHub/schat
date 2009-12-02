@@ -180,6 +180,10 @@ ChatView::ChatView(QWidget *parent)
 ChatView::~ChatView()
 {
   delete d;
+
+  #if QT_VERSION >= 0x040600
+  QWebSettings::clearMemoryCaches();
+  #endif
 }
 
 
@@ -454,6 +458,10 @@ void ChatView::clear()
 {
   #ifndef SCHAT_NO_WEBKIT
     d->loaded = false;
+
+    #if QT_VERSION >= 0x040600
+    QWebSettings::clearMemoryCaches();
+    #endif
     setHtml(d->style->makeSkeleton());
     d->prev = "";
   #else
