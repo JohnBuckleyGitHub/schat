@@ -17,6 +17,7 @@
  */
 
 #include <QtGui>
+#include <QtWebKit>
 
 #include "abstractprofile.h"
 #include "channellog.h"

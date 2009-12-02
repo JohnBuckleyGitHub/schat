@@ -129,6 +129,7 @@
 <buildTargets>
 <target name="Qt Release Build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>mingw32-make</buildCommand>
+<buildArguments/>
 <buildTarget>release</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -136,6 +137,7 @@
 </target>
 <target name="Qt Debug Build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>mingw32-make</buildCommand>
+<buildArguments/>
 <buildTarget>debug</buildTarget>
 <stopOnError>false</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
@@ -144,34 +146,32 @@
 </buildTargets>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry base-path="C:/qt/4.5.3/include" include="" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="ActiveQt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="Phonon" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="Qt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="Qt3Support" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtAssistant" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtCore" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtDBus" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtDesigner" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtGui" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtHelp" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtNetwork" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtOpenGL" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtScript" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtScriptTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtSql" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtSvg" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtTest" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtUiTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtWebKit" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtXml" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/4.5.3/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/common" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/schat" kind="inc" path="" system="true"/>
-<pathentry include="C:/dev/mingw/include" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/customize" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/3rdparty/qtsingleapplication/src" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/3rdparty/qtservice/src" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="ActiveQt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="phonon" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="phonon_compat" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="Qt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="Qt3Support" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtAssistant" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtCore" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDBus" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDeclarative" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDesigner" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtGui" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtHelp" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtMultimedia" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtNetwork" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtOpenGL" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtOpenVG" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtScript" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtScriptTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtSql" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtSvg" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtTest" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtUiTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtWebKit" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtXml" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/qt/2009.05/qt/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>
