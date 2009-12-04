@@ -26,8 +26,8 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION       "0.7.0.1225"
-${def} SCHAT_QT_VERSION    "4.5.3"
+${def} SCHAT_VERSION       "0.8.0.1234"
+${def} SCHAT_QT_VERSION    "4.6.0"
 ${def} SCHAT_NAME          "IMPOMEZIA Simple Chat"
 ${def} SCHAT_NAME_SHORT    "Simple Chat"
 ${def} SCHAT_PREFIX        ""
@@ -51,8 +51,8 @@ ${def} OPT_ALLPROGRAMS     1
 ${def} OPT_AUTOSTART       1
 ${def} OPT_AUTODAEMONSTART 0
 
-${def} SCHAT_QTDIR         "C:\qt\4.5.3"
-${def} SCHAT_QT_BINDIR     "C:\qt\4.5.3\bin"
+${def} SCHAT_QTDIR         "C:\qt\4.6.0"
+${def} SCHAT_QT_BINDIR     "C:\qt\4.6.0\bin"
 ${def} SCHAT_BINDIR        "..\..\out\release"
 ${def} SCHAT_DATADIR       "..\..\data"
 ${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
