@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<normalize version="1.0">
+ 	<char n="a">а</char>
+	<char n="e">е</char>
+	<char n="e">ё</char>
+	<char n="3">з</char>
+	<char n="m">м</char>
+	<char n="h">н</char>
+	<char n="o">о</char>
+	<char n="p">р</char>
+	<char n="c">с</char>
+	<char n="y">у</char>
+	<char n="x">х</char>
+	<char n="4">ч</char>
+	<char n="1">i</char>
+</normalize>
