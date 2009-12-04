@@ -17,7 +17,12 @@
  */
 
 #include <QtGui>
-#include <QtWebKit>
+
+#ifndef SCHAT_NO_WEBKIT
+  #include <QtWebKit>
+  #include "chatwindowstyle.h"
+  #include "chatwindowstyleoutput.h"
+#endif
 
 #include "abstractprofile.h"
 #include "channellog.h"
@@ -25,12 +30,6 @@
 #include "chatview_p.h"
 #include "protocol.h"
 #include "settings.h"
-
-#ifndef SCHAT_NO_WEBKIT
-  #include <QtWebKit>
-  #include "chatwindowstyle.h"
-  #include "chatwindowstyleoutput.h"
-#endif
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
@@ -181,7 +180,7 @@ ChatView::~ChatView()
 {
   delete d;
 
-  #if QT_VERSION >= 0x040600
+  #if QT_VERSION >= 0x040600 && !defined(SCHAT_NO_WEBKIT)
   QWebSettings::clearMemoryCaches();
   #endif
 }
