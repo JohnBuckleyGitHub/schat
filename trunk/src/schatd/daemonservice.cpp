@@ -630,34 +630,6 @@ void DaemonService::opcodeByeMsg()
 }
 
 
-/*!
- * \brief Разбор пакета \b OpcodeMessage, полученного от клиента.
- *
- * В случае успеха высылается сигнал message(const QString &channel, const QString &sender, const QString &message).
- */
-void DaemonService::opcodeMessage()
-{
-  QString p_channel;
-  QString p_message;
-  m_stream >> p_channel >> p_message;
-  m_nextBlockSize = 0;
-
-  SCHAT_DEBUG(this << "opcodeMessage()")
-  SCHAT_DEBUG("  CHANNEL:" << p_channel)
-  SCHAT_DEBUG("  SENDER: " << m_profile->nick())
-  SCHAT_DEBUG("  MESSAGE:" << p_message)
-
-  if (p_message.isEmpty())
-    return;
-
-  p_message = ChannelLog::htmlFilter(p_message);
-  if (p_message.isEmpty())
-    return;
-
-  emit message(p_channel, m_profile->nick(), p_message);
-}
-
-
 void DaemonService::opcodeNewNick()
 {
   quint8 p_gender;

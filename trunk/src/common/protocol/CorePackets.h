@@ -54,6 +54,8 @@ class MessagePacket : public AbstractRawPacket
 {
 public:
   MessagePacket();
+  inline QString channel() const           { return m_channel; }
+  inline QString message() const           { return m_message; }
   inline QString nick() const              { return m_nick; }
   inline void setNick(const QString &nick) { m_nick = nick; }
   static QList<quint16> opcodes() { return QList<quint16>() << 200; }
