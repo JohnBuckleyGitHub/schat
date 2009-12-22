@@ -28,4 +28,18 @@
   #define SCHAT_DEBUG(x)
 #endif
 
+#define SCHAT_READ_PACKET(x) if (x ::opcodes().contains(opcode)) { \
+                               x packet; \
+                               if (packet.read(opcode, block)) \
+                                 read(&packet); \
+                               return; \
+                             }
+
+#define SCHAT_EMIT_PACKET(x) if (x ::opcodes().contains(opcode)) { \
+                               x packet; \
+                               if (packet.read(opcode, block)) \
+                                 emitPacket(&packet); \
+                               return; \
+                             }
+
 #endif /* SCHATMACRO_H_ */

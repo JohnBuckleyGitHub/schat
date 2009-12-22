@@ -20,12 +20,15 @@
 #define DAEMONSERVICE_H_
 
 #include <QDataStream>
+#include <QObject>
 #include <QTcpSocket>
 #include <QTimer>
 
 #include "protocol.h"
 
+class AbstractRawPacket;
 class AbstractProfile;
+class MessagePacket;
 
 /*!
  * \brief Универсальный класс, обслуживающий клиентов.
@@ -55,6 +58,7 @@ signals:
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
+  void packet(AbstractRawPacket *packet);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
   void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2, quint8 numeric);
   void universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2);
@@ -88,6 +92,7 @@ private:
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   quint16 verifyGreeting(quint16 version);
+  void emitPacket(AbstractRawPacket *packet);
   void opcodeByeMsg();
   void opcodeMessage();
   void opcodeNewNick();
@@ -99,17 +104,21 @@ private:
   void opcodeUniversal();
   void opcodeUniversalLite();
   void opcodeUserLeave();
+  void rawPacket(quint16 opcode, const QByteArray &block);
+  void read(MessagePacket *packet);
   void unknownOpcode();
 
   AbstractProfile *m_profile;
   bool m_accepted;
   bool m_kill;
   int m_pings;
-  QDataStream m_stream;
+  QDataStream m_stream;         ///< Поток для чтения данный поступивших из сокета.
+  qint64 m_rx;                  ///< Счётчик полученных (receive) байт.
+  qint64 m_tx;                  ///< Счётчик отправленных (transmit) байт.
   QString m_error;
   QTcpSocket *m_socket;
   QTimer m_ping;
-  quint16 m_nextBlockSize;
+  quint16 m_nextBlockSize;      ///< Размер следующего блока данных.
   quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;
