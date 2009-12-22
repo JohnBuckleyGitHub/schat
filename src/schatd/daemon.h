@@ -34,6 +34,7 @@ class DaemonLog;
 class DaemonService;
 class DaemonSettings;
 class LinkUnit;
+class MessagePacket;
 class Network;
 class QLocalServer;
 class UserUnit;
@@ -88,7 +89,6 @@ private slots:
   void logMessage(const QString &sender, const QString &message);
   void logNewLink(quint8 numeric, const QString &network, const QString &name);
   void logNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
-  void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
   void packet(AbstractRawPacket *packet);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
@@ -124,6 +124,7 @@ private:
   void environment();
   void link();
   void linkLeave(const QString &nick, const QString &err);
+  void read(MessagePacket *packet);
   void removeUser(const QString &nick, const QString &err = QString(), quint8 flag = 1);
   void sendAllUsers(DaemonService *service);
   void syncBye(const QString &nick, const QString &bye, bool local);

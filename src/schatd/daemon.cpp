@@ -29,6 +29,7 @@
 #include "linkunit.h"
 #include "normalizereader.h"
 #include "protocol.h"
+#include "protocol/CorePackets.h"
 #include "schatmacro.h"
 #include "userunit.h"
 #include "version.h"
@@ -473,79 +474,6 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
 
 
 /*!
- * \brief Обработка нового сообщения от локального пользователя.
- *
- * Для всех сообщений проверяется наличие в них команды для сервера.
- *
- * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал.
- * Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
- *
- * Отправка приватных сообщений производится различными способами в зависимости от того к какому серверу подключен получатель.
- * Получатель может быть:
- *  - Подключенным локально к этому серверу (numeric == m_numeric).
- *  - Подключенным к одному из серверов подключенных к данному серверу (m_links.contains(numeric)).
- *  - Подключенным к серверу к которому невозможно обратится на прямую, в этом случае при наличии клиентского подключения,
- * сообщение передаётся на вышестоящий сервер.
- *
- * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
- * \param nick Ник отправителя сообщения.
- * \param msg Сообщение.
- * \sa parseCmd(const QString &nick, const QString &msg).
- */
-void Daemon::message(const QString &channel, const QString &nick, const QString &msg)
-{
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << nick << msg;
-#endif
-
-  QString lowerChannel = normalizeNick(channel);
-
-  if (channel.isEmpty()) {
-    if (!parseCmd(nick, msg)) {
-      emit sendMessage(nick, msg);
-      if (m_network) {
-        emit sendRelayMessage(channel, nick, msg);
-        if (m_remoteNumeric)
-          m_link->sendRelayMessage(channel, nick, msg);
-      }
-    }
-  }
-  else if (m_users.contains(lowerChannel)) {
-    if (m_privateLog)
-      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
-
-    if (!parseCmd(nick, msg)) {
-      quint16 numeric = m_users.value(lowerChannel)->numeric();
-      DaemonService *senderService = qobject_cast<DaemonService *>(sender());
-      if (!senderService)
-        return;
-      bool err = true;
-
-      if (numeric == m_numeric) {
-        err = false;
-        DaemonService *service = m_users.value(lowerChannel)->service();
-        if (service)
-          service->sendPrivateMessage(0, nick, msg);
-      }
-      else if (m_links.contains(numeric)) {
-        err = false;
-        DaemonService *service = m_links.value(numeric)->service();
-        if (service)
-          service->sendRelayMessage(channel, nick, msg);
-      }
-      else if (m_remoteNumeric) {
-        err = false;
-        m_link->sendRelayMessage(channel, nick, msg);
-      }
-
-      if (!err)
-        senderService->sendPrivateMessage(1, channel, msg);
-    }
-  }
-}
-
-
-/*!
  * \brief Уведомление о подключении к удалённому серверу другого сервера.
  *
  * Номер нового сервера добавляется в список серверов и высылается уведомление о новом сервере.
@@ -566,6 +494,9 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 void Daemon::packet(AbstractRawPacket *packet)
 {
   SCHAT_DEBUG(this << "::packet(" << packet << ")")
+  quint16 opcode = packet->opcode();
+
+  SCHAT_DETECT_PACKET(MessagePacket)
 }
 
 
@@ -1082,7 +1013,6 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
   connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
-  connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
   connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
   connect(service, SIGNAL(packet(AbstractRawPacket *)), SLOT(packet(AbstractRawPacket *)));
   connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
@@ -1250,6 +1180,73 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
       }
 
       delete unit;
+    }
+  }
+}
+
+
+
+/*!
+ * Обработка нового сообщения от локального пользователя.
+ * Для всех сообщений проверяется наличие в них команды для сервера.
+ *
+ * Если \a channel пустая строка, то это сообщение предназначено для отправки в главный канал.
+ * Происходит рассылка уведомление для локальных клиентов и остальных серверов, при необходимости добавляется запись в канальный лог.
+ *
+ * Отправка приватных сообщений производится различными способами в зависимости от того к какому серверу подключен получатель.
+ * Получатель может быть:
+ *  - Подключенным локально к этому серверу (numeric == m_numeric).
+ *  - Подключенным к одному из серверов подключенных к данному серверу (m_links.contains(numeric)).
+ *  - Подключенным к серверу к которому невозможно обратится на прямую, в этом случае при наличии клиентского подключения,
+ * сообщение передаётся на вышестоящий сервер.
+ */
+void Daemon::read(MessagePacket *packet)
+{
+  QString channel      = packet->channel();
+  QString lowerChannel = normalizeNick(channel);
+  QString nick         = packet->nick();
+  QString msg          = packet->message();
+
+  if (channel.isEmpty()) {
+    if (!parseCmd(nick, msg)) {
+      emit sendMessage(nick, msg);
+      if (m_network) {
+        emit sendRelayMessage(channel, nick, msg);
+        if (m_remoteNumeric)
+          m_link->sendRelayMessage(channel, nick, msg);
+      }
+    }
+  }
+  else if (m_users.contains(lowerChannel)) {
+    if (m_privateLog)
+      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
+
+    if (!parseCmd(nick, msg)) {
+      quint16 numeric = m_users.value(lowerChannel)->numeric();
+      DaemonService *senderService = qobject_cast<DaemonService *>(sender());
+      if (!senderService)
+        return;
+      bool err = true;
+
+      if (numeric == m_numeric) {
+        err = false;
+        DaemonService *service = m_users.value(lowerChannel)->service();
+        if (service)
+          service->sendPrivateMessage(0, nick, msg);
+      }
+      else if (m_links.contains(numeric)) {
+        err = false;
+        DaemonService *service = m_links.value(numeric)->service();
+        if (service)
+          service->sendRelayMessage(channel, nick, msg);
+      }
+      else if (m_remoteNumeric) {
+        err = false;
+        m_link->sendRelayMessage(channel, nick, msg);
+      }
+
+      if (!err)
+        senderService->sendPrivateMessage(1, channel, msg);
     }
   }
 }

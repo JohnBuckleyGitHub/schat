@@ -42,4 +42,9 @@
                                return; \
                              }
 
+#define SCHAT_DETECT_PACKET(x)   if (x ::opcodes().contains(opcode)) { \
+                                   x *p = static_cast<x *>(packet); \
+                                   read(p); \
+                                 }
+
 #endif /* SCHATMACRO_H_ */

@@ -53,7 +53,6 @@ public:
 signals:
   void greeting(const QStringList &list, quint8 flag);
   void leave(const QString &nick, quint8 flag, const QString &err);
-  void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
@@ -129,14 +128,6 @@ private:
  *
  * \param flag Флаг эха, если 1 то это подтверждение отправки сообщения.
  * \param nick Ник, отправившего сообщение (flag = 0), ник того кому предназначается сообщение (flag = 1).
- * \param message Сообщение.
- */
-
-/*! \fn void DaemonService::message(const QString &channel, const QString &sender, const QString &message)
- * \brief Уведомление о новом сообщении от пользователя.
- *
- * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
- * \param sender Ник отправителя сообщения.
  * \param message Сообщение.
  */
 

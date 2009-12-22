@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "abstractprofile.h"
 #include "channellog.h"
 #include "protocol/CorePackets.h"
 #include "schatmacro.h"
