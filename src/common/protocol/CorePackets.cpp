@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "channellog.h"
 #include "protocol/CorePackets.h"
 #include "schatmacro.h"
 
@@ -86,5 +87,40 @@ bool AbstractRawPacket::readStream(QDataStream *stream)
 void AbstractRawPacket::writeStream(QDataStream *stream) const
 {
   SCHAT_DEBUG(this << "writeStream()")
+  Q_UNUSED(stream)
+}
+
+
+/*!
+ * Конструктор класса MessagePacket.
+ */
+MessagePacket::MessagePacket()
+  : AbstractRawPacket(200)
+{
+}
+
+
+/*!
+ * \todo Добавить проверку на корректность канала.
+ */
+bool MessagePacket::readStream(QDataStream *stream)
+{
+  *stream >> m_channel >> m_message;
+  SCHAT_DEBUG(">> m_channel  =" << m_channel)
+  SCHAT_DEBUG(">> m_message  =" << m_message)
+
+  if (m_message.isEmpty())
+    return false;
+
+  m_message = ChannelLog::htmlFilter(m_message);
+  if (m_message.isEmpty())
+    return false;
+
+  return AbstractRawPacket::readStream(stream);
+}
+
+
+void MessagePacket::writeStream(QDataStream *stream) const
+{
   Q_UNUSED(stream)
 }

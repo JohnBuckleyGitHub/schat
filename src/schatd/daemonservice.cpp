@@ -22,13 +22,22 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "daemonservice.h"
+#include "protocol/CorePackets.h"
 #include "schatmacro.h"
 
 /*!
  * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
-: QObject(parent), m_socket(socket)
+  : QObject(parent),
+  m_accepted(false),
+  m_kill(false),
+  m_pings(0),
+  m_rx(0),
+  m_tx(0),
+  m_socket(socket),
+  m_nextBlockSize(0),
+  m_numeric(0)
 {
   SCHAT_DEBUG(this)
 
@@ -36,14 +45,9 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
-    m_accepted = false;
-    m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
-    m_pings = 0;
     m_ping.start(9000);
-    m_numeric = 0;
-    m_kill = false;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
@@ -306,7 +310,7 @@ void DaemonService::readyRead()
 {
   forever {
     if (!m_nextBlockSize) {
-      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+      if (m_socket->bytesAvailable() < 2)
         break;
 
       m_stream >> m_nextBlockSize;
@@ -315,14 +319,15 @@ void DaemonService::readyRead()
     if (m_socket->bytesAvailable() < m_nextBlockSize)
       break;
 
-    m_stream >> m_opcode;
+    quint16 opcode;
+    m_stream >> opcode;
+    m_opcode = opcode;
+
+    m_rx += m_nextBlockSize + 2;
+    QByteArray block;
 
     if (m_accepted) {
       switch (m_opcode) {
-        case OpcodeMessage:
-          opcodeMessage();
-          break;
-
         case OpcodePong:
           opcodePong();
           break;
@@ -364,7 +369,9 @@ void DaemonService::readyRead()
           break;
 
         default:
-          unknownOpcode();
+          block = m_socket->read(m_nextBlockSize - 2);
+          m_nextBlockSize = 0;
+          rawPacket(opcode, block);
           break;
       };
     }
@@ -604,6 +611,12 @@ quint16 DaemonService::verifyGreeting(quint16 version)
 }
 
 
+void DaemonService::emitPacket(AbstractRawPacket *p)
+{
+  emit packet(p);
+}
+
+
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
  */
@@ -806,6 +819,27 @@ void DaemonService::opcodeUserLeave()
   m_nextBlockSize = 0;
 
   emit userLeave(p_nick, p_bye, p_flag);
+}
+
+
+/*!
+ * Получение нового сырого пакета.
+ *
+ * \param opcode Код пакета.
+ * \param block  Тело пакета.
+ */
+void DaemonService::rawPacket(quint16 opcode, const QByteArray &block)
+{
+  SCHAT_DEBUG(this << "rawPacket(" << opcode << ", size:" << block.size() << "| rx:" << m_rx << "tx:" << m_tx)
+
+  SCHAT_READ_PACKET(MessagePacket)
+}
+
+
+void DaemonService::read(MessagePacket *p)
+{
+  p->setNick(m_profile->nick());
+  emit packet(p);
 }
 
 

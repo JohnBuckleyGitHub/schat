@@ -27,6 +27,7 @@
 #include "network.h"
 
 class AbstractProfile;
+class AbstractRawPacket;
 class ChannelLog;
 class ClientService;
 class DaemonLog;
@@ -89,6 +90,7 @@ private slots:
   void logNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
+  void packet(AbstractRawPacket *packet);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag, const QString &err);
   void syncNumerics(const QList<quint8> &numerics);

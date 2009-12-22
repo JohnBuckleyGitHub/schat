@@ -29,6 +29,7 @@
 #include "linkunit.h"
 #include "normalizereader.h"
 #include "protocol.h"
+#include "schatmacro.h"
 #include "userunit.h"
 #include "version.h"
 
@@ -562,6 +563,12 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 }
 
 
+void Daemon::packet(AbstractRawPacket *packet)
+{
+  SCHAT_DEBUG(this << "::packet(" << packet << ")")
+}
+
+
 /*!
  * \brief Обработка сообщения пользователя полученного с другого сервера.
  *
@@ -1077,6 +1084,7 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
   connect(service, SIGNAL(message(const QString &, const QString &, const QString &)), SLOT(message(const QString &, const QString &, const QString &)));
   connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
+  connect(service, SIGNAL(packet(AbstractRawPacket *)), SLOT(packet(AbstractRawPacket *)));
   connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
   connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));

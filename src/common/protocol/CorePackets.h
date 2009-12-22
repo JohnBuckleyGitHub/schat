@@ -21,6 +21,7 @@
 
 #include <QByteArray>
 #include <QList>
+#include <QString>
 
 /*!
  * \brief Абстрактный сырой пакет.
@@ -43,6 +44,27 @@ protected:
 
   bool m_valid;     ///< \a true в случае если пакет корректен.
   quint16 m_opcode; ///< Код пакета.
+};
+
+
+/*!
+ * \brief Отправка сообщения.
+ */
+class MessagePacket : public AbstractRawPacket
+{
+public:
+  MessagePacket();
+  inline QString nick() const              { return m_nick; }
+  inline void setNick(const QString &nick) { m_nick = nick; }
+  static QList<quint16> opcodes() { return QList<quint16>() << 200; }
+
+protected:
+  bool readStream(QDataStream *stream);
+  void writeStream(QDataStream *stream) const;
+
+  QString m_nick;    ///< Локальный ник.
+  QString m_channel; ///< Канал (ник) для кого предназначено сообщение.
+  QString m_message; ///< Сообщение.
 };
 
 #endif /* COREPACKETS_H_ */
