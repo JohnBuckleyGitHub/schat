@@ -494,9 +494,13 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
 void Daemon::packet(AbstractRawPacket *packet)
 {
   SCHAT_DEBUG(this << "::packet(" << packet << ")")
+  if (!qobject_cast<DaemonService *>(sender()))
+    return;
+
   quint16 opcode = packet->opcode();
 
   SCHAT_DETECT_PACKET(MessagePacket)
+  SCHAT_DETECT_PACKET(ByeMsgPacket)
 }
 
 
@@ -1012,7 +1016,6 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   m_users.insert(nick, new UserUnit(list, service, m_numeric));
   connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
-  connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
   connect(service, SIGNAL(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QString &, const QList<quint32> &, const QStringList &)));
   connect(service, SIGNAL(packet(AbstractRawPacket *)), SLOT(packet(AbstractRawPacket *)));
   connect(this, SIGNAL(sendNewNick(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
@@ -1185,6 +1188,11 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
 }
 
 
+void Daemon::read(ByeMsgPacket *packet)
+{
+  syncBye(qobject_cast<DaemonService *>(sender())->nick(), packet->bye(), true);
+}
+
 
 /*!
  * Обработка нового сообщения от локального пользователя.
@@ -1202,9 +1210,10 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
  */
 void Daemon::read(MessagePacket *packet)
 {
+  DaemonService *senderService = qobject_cast<DaemonService *>(sender());
   QString channel      = packet->channel();
   QString lowerChannel = normalizeNick(channel);
-  QString nick         = packet->nick();
+  QString nick         = senderService->nick();
   QString msg          = packet->message();
 
   if (channel.isEmpty()) {
@@ -1223,9 +1232,6 @@ void Daemon::read(MessagePacket *packet)
 
     if (!parseCmd(nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
-      DaemonService *senderService = qobject_cast<DaemonService *>(sender());
-      if (!senderService)
-        return;
       bool err = true;
 
       if (numeric == m_numeric) {

@@ -101,14 +101,16 @@ MessagePacket::MessagePacket()
 }
 
 
-/*!
- * \todo Добавить проверку на корректность канала.
- */
 bool MessagePacket::readStream(QDataStream *stream)
 {
   *stream >> m_channel >> m_message;
   SCHAT_DEBUG(">> m_channel  =" << m_channel)
   SCHAT_DEBUG(">> m_message  =" << m_message)
+
+  if (!m_channel.isEmpty()) {
+    if (!AbstractProfile::isValidNick(m_channel))
+      return false;
+  }
 
   if (m_message.isEmpty())
     return false;
@@ -122,6 +124,30 @@ bool MessagePacket::readStream(QDataStream *stream)
 
 
 void MessagePacket::writeStream(QDataStream *stream) const
+{
+  Q_UNUSED(stream)
+}
+
+
+/*!
+ * Конструктор класса MessagePacket.
+ */
+ByeMsgPacket::ByeMsgPacket()
+  : AbstractRawPacket(603)
+{
+}
+
+
+bool ByeMsgPacket::readStream(QDataStream *stream)
+{
+  *stream >> m_bye;
+  SCHAT_DEBUG(">> m_bye      =" << m_bye)
+
+  return AbstractRawPacket::readStream(stream);
+}
+
+
+void ByeMsgPacket::writeStream(QDataStream *stream) const
 {
   Q_UNUSED(stream)
 }

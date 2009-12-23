@@ -48,7 +48,7 @@ protected:
 
 
 /*!
- * \brief Отправка сообщения.
+ * \brief Отправка сообщения клиентом.
  */
 class MessagePacket : public AbstractRawPacket
 {
@@ -56,17 +56,32 @@ public:
   MessagePacket();
   inline QString channel() const           { return m_channel; }
   inline QString message() const           { return m_message; }
-  inline QString nick() const              { return m_nick; }
-  inline void setNick(const QString &nick) { m_nick = nick; }
-  static QList<quint16> opcodes() { return QList<quint16>() << 200; }
+  static QList<quint16> opcodes()          { return QList<quint16>() << 200; }
 
 protected:
   bool readStream(QDataStream *stream);
   void writeStream(QDataStream *stream) const;
 
-  QString m_nick;    ///< Локальный ник.
   QString m_channel; ///< Канал (ник) для кого предназначено сообщение.
   QString m_message; ///< Сообщение.
+};
+
+
+/*!
+ * \brief Отправка клиентом нового сообщения о выходе.
+ */
+class ByeMsgPacket : public AbstractRawPacket
+{
+public:
+  ByeMsgPacket();
+  inline QString bye() const      { return m_bye; }
+  static QList<quint16> opcodes() { return QList<quint16>() << 603; }
+
+protected:
+  bool readStream(QDataStream *stream);
+  void writeStream(QDataStream *stream) const;
+
+  QString m_bye; ///< Сообщение о выходе.
 };
 
 #endif /* COREPACKETS_H_ */
