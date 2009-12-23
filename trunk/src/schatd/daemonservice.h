@@ -26,8 +26,9 @@
 
 #include "protocol.h"
 
-class AbstractRawPacket;
 class AbstractProfile;
+class AbstractRawPacket;
+class ByeMsgPacket;
 class MessagePacket;
 
 /*!
@@ -45,11 +46,11 @@ public:
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
+  QString nick() const;
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
   void quit(bool kill = false);
   void sendNumerics(const QList<quint8> &numerics);
-
 signals:
   void greeting(const QStringList &list, quint8 flag);
   void leave(const QString &nick, quint8 flag, const QString &err);
@@ -92,8 +93,6 @@ private:
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   quint16 verifyGreeting(quint16 version);
   void emitPacket(AbstractRawPacket *packet);
-  void opcodeByeMsg();
-  void opcodeMessage();
   void opcodeNewNick();
   void opcodeNewProfile();
   void opcodeNewUser();
@@ -104,7 +103,7 @@ private:
   void opcodeUniversalLite();
   void opcodeUserLeave();
   void rawPacket(quint16 opcode, const QByteArray &block);
-  void read(MessagePacket *packet);
+  void read(ByeMsgPacket *packet);
   void unknownOpcode();
 
   AbstractProfile *m_profile;

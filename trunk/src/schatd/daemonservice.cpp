@@ -71,6 +71,12 @@ bool DaemonService::isReady() const
 }
 
 
+QString DaemonService::nick() const
+{
+  return m_profile->nick();
+}
+
+
 /** [public]
  * Клиент получил отказ в доступе, `quint16 reason` - причина отказа.
  * Отсылаем ошибку и разрываем соединение.
@@ -334,10 +340,6 @@ void DaemonService::readyRead()
 
         case OpcodeNewProfile:
           opcodeNewProfile();
-          break;
-
-        case OpcodeByeMsg:
-          opcodeByeMsg();
           break;
 
         case OpcodeRelayMessage:
@@ -617,19 +619,6 @@ void DaemonService::emitPacket(AbstractRawPacket *p)
 }
 
 
-/*!
- * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
- */
-void DaemonService::opcodeByeMsg()
-{
-  QString p_bye;
-  m_stream >> p_bye;
-  m_nextBlockSize = 0;
-  m_profile->setByeMsg(p_bye);
-  emit newBye(m_profile->nick(), p_bye);
-}
-
-
 void DaemonService::opcodeNewNick()
 {
   quint8 p_gender;
@@ -804,13 +793,14 @@ void DaemonService::rawPacket(quint16 opcode, const QByteArray &block)
 {
   SCHAT_DEBUG(this << "rawPacket(" << opcode << ", size:" << block.size() << "| rx:" << m_rx << "tx:" << m_tx)
 
-  SCHAT_READ_PACKET(MessagePacket)
+  SCHAT_EMIT_PACKET(MessagePacket)
+  SCHAT_READ_PACKET(ByeMsgPacket)
 }
 
 
-void DaemonService::read(MessagePacket *p)
+void DaemonService::read(ByeMsgPacket *p)
 {
-  p->setNick(m_profile->nick());
+  m_profile->setByeMsg(p->bye());
   emit packet(p);
 }
 

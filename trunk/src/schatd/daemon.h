@@ -28,6 +28,7 @@
 
 class AbstractProfile;
 class AbstractRawPacket;
+class ByeMsgPacket;
 class ChannelLog;
 class ClientService;
 class DaemonLog;
@@ -70,7 +71,6 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 private slots:
-  inline void newBye(const QString &nick, const QString &bye)                                            { syncBye(nick, bye, true); }
   inline void newNick(quint8 gender, const QString &nick, const QString &nNick, const QString &name)     { syncProfile(gender, nick, nNick, name, true); }
   inline void newProfile(quint8 gender, const QString &nick, const QString &name)                        { syncProfile(gender, nick, "", name, true); }
   inline void syncBye(const QString &nick, const QString &bye)                                           { syncBye(nick, bye, false); }
@@ -124,6 +124,7 @@ private:
   void environment();
   void link();
   void linkLeave(const QString &nick, const QString &err);
+  void read(ByeMsgPacket *packet);
   void read(MessagePacket *packet);
   void removeUser(const QString &nick, const QString &err = QString(), quint8 flag = 1);
   void sendAllUsers(DaemonService *service);
