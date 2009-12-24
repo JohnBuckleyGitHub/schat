@@ -27,13 +27,14 @@
 #include "abstractprofile.h"
 #include "network.h"
 #include "protocol.h"
+#include "servicecore.h"
 
 /*!
  * \brief Универсальный сервис клиента чата.
  *
  * Класс устанавливает и поддерживает соединение.
  */
-class ClientService : public QObject
+class ClientService : public ServiceCore
 {
   Q_OBJECT
 

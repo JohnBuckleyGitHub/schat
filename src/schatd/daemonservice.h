@@ -25,6 +25,7 @@
 #include <QTimer>
 
 #include "protocol.h"
+#include "servicecore.h"
 
 class AbstractProfile;
 class AbstractRawPacket;
@@ -36,7 +37,7 @@ class MessagePacket;
  *
  * При наличии валидного сокета, инициализируется сокет.
  */
-class DaemonService : public QObject
+class DaemonService : public ServiceCore
 {
   Q_OBJECT
 

@@ -43,6 +43,7 @@ HEADERS = \
     normalizereader.h \
     protocol.h \
     protocol/CorePackets.h \
+    servicecore.h \
     userunit.h \
     version.h \
 
@@ -62,6 +63,7 @@ SOURCES = \
     networkreader.cpp \
     normalizereader.cpp \
     protocol/CorePackets.cpp \
+    servicecore.cpp \
     userunit.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {
