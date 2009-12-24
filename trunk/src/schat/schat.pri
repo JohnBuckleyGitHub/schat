@@ -54,6 +54,7 @@ HEADERS += \
     protocol.h \
     schatwindow.h \
     schatwindow_p.h \
+    servicecore.h \
     settings.h \
     settingsdialog.h \
     simplechatapp.h \
@@ -101,6 +102,7 @@ SOURCES += \
     privatetab.cpp \
     profilewidget.cpp \
     schatwindow.cpp \
+    servicecore.cpp \
     settings.cpp \
     settingsdialog.cpp \
     simplechatapp.cpp \

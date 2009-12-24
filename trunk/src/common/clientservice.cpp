@@ -29,7 +29,9 @@ static const int ReconnectTimeout     = 4000;
  * \brief Конструктор класса ClientService.
  */
 ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
-  : QObject(parent), m_profile(profile), m_network(network)
+  : ServiceCore(parent),
+  m_profile(profile),
+  m_network(network)
 {
   m_socket = 0;
   m_nextBlockSize = 0;

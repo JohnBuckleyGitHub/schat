@@ -29,7 +29,7 @@
  * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
-  : QObject(parent),
+  : ServiceCore(parent),
   m_accepted(false),
   m_kill(false),
   m_pings(0),
