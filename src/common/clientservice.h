@@ -39,9 +39,8 @@ class ClientService : public ServiceCore
   Q_OBJECT
 
 public:
-  ClientService(const AbstractProfile *profile, const Network *network, QObject *parent = 0);
+  ClientService(AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
-  bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
@@ -113,17 +112,11 @@ private:
   void opcodeUserLeave();
   void unknownOpcode();
 
-  bool m_accepted;
   bool m_fatal;
-  const AbstractProfile *m_profile;
   const Network *m_network;
   int m_reconnects;
-  QDataStream m_stream;
-  QPointer<QTcpSocket> m_socket;
   QTimer m_checkTimer;
-  QTimer m_ping;
   QTimer m_reconnectTimer;
-  quint16 m_nextBlockSize;
   quint16 m_opcode;
   ServerInfo m_server;
 };

@@ -16,12 +16,43 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "abstractprofile.h"
 #include "servicecore.h"
 
 /*!
  * \brief Конструктор класса ServiceCore.
  */
 ServiceCore::ServiceCore(QObject *parent)
-  : QObject(parent)
+  : QObject(parent),
+  m_profile(0),
+  m_accepted(false),
+  m_rx(0),
+  m_tx(0),
+  m_nextBlockSize(0)
 {
+  m_stream.setVersion(QDataStream::Qt_4_4);
+}
+
+
+/*!
+ * Возвращает \a true если сервис находится в активном состоянии.
+ */
+bool ServiceCore::isReady() const
+{
+  if (m_socket && m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
+    return true;
+
+  return false;
+}
+
+
+/*!
+ * \return Ник пользователя ассоциированного с сервисом.
+ */
+QString ServiceCore::nick() const
+{
+  if (m_profile)
+    return m_profile->nick();
+
+  return "";
 }

@@ -19,6 +19,8 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
+#include <QDataStream>
+
 static const int     StreamVersion                   = QDataStream::Qt_4_4;
 static const quint16 ProtocolVersion                 = 3;
 
