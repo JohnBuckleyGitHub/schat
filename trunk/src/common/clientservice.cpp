@@ -28,17 +28,13 @@ static const int ReconnectTimeout     = 4000;
 /*!
  * \brief Конструктор класса ClientService.
  */
-ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
+ClientService::ClientService(AbstractProfile *profile, const Network *network, QObject *parent)
   : ServiceCore(parent),
-  m_profile(profile),
-  m_network(network)
+  m_fatal(false),
+  m_network(network),
+  m_reconnects(0)
 {
-  m_socket = 0;
-  m_nextBlockSize = 0;
-  m_reconnects = 0;
-  m_stream.setVersion(StreamVersion);
-  m_accepted = false;
-  m_fatal = false;
+  m_profile = profile;
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(22000);
   m_reconnectTimer.setInterval(ReconnectTimeout);
@@ -52,22 +48,6 @@ ClientService::ClientService(const AbstractProfile *profile, const Network *netw
 ClientService::~ClientService()
 {
   SCHAT_DEBUG(this << "::~ClientService()")
-}
-
-
-/*!
- * Возвращает `true` если сервис находится в активном состоянии.
- */
-bool ClientService::isReady() const
-{
-  if (m_socket) {
-    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
-      return true;
-    else
-      return false;
-  }
-  else
-    return false;
 }
 
 

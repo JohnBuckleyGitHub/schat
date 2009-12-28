@@ -20,6 +20,11 @@
 #define SERVICECORE_H_
 
 #include <QObject>
+#include <QPointer>
+#include <QTcpSocket>
+#include <QTimer>
+
+class AbstractProfile;
 
 /*!
  * \brief Базовый класс для клиентского и серверного сервиса.
@@ -30,8 +35,18 @@ class ServiceCore : public QObject
 
 public:
   ServiceCore(QObject *parent = 0);
+  bool isReady() const;
+  QString nick() const;
 
-
+protected:
+  AbstractProfile *m_profile;    ///< Профиль пользователя ассоциированный с данным соединением.
+  bool m_accepted;               ///< \a true в случае успешной установки соедидения.
+  QDataStream m_stream;          ///< Поток для чтения данный поступивших из сокета.
+  qint64 m_rx;                   ///< Счётчик полученных (receive) байт.
+  qint64 m_tx;                   ///< Счётчик отправленных (transmit) байт.
+  QPointer<QTcpSocket> m_socket; ///< TCP сокет обслуживающий подключение.
+  QTimer m_ping;                 ///< Ping-таймер.
+  quint16 m_nextBlockSize;       ///< Размер следующего блока данных.
 };
 
 

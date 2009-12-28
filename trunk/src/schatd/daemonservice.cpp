@@ -30,50 +30,23 @@
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
   : ServiceCore(parent),
-  m_accepted(false),
   m_kill(false),
   m_pings(0),
-  m_rx(0),
-  m_tx(0),
-  m_socket(socket),
-  m_nextBlockSize(0),
   m_numeric(0)
 {
   SCHAT_DEBUG(this)
+  m_socket = socket;
 
   if (m_socket) {
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
     m_stream.setDevice(m_socket);
-    m_stream.setVersion(StreamVersion);
     m_ping.start(9000);
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
     deleteLater();
-}
-
-
-/*!
- * Возвращает \a true если сервис находится в активном состоянии.
- */
-bool DaemonService::isReady() const
-{
-  if (m_socket) {
-    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
-      return true;
-    else
-      return false;
-  }
-  else
-    return false;
-}
-
-
-QString DaemonService::nick() const
-{
-  return m_profile->nick();
 }
 
 

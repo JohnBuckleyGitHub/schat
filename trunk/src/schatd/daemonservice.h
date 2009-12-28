@@ -19,10 +19,7 @@
 #ifndef DAEMONSERVICE_H_
 #define DAEMONSERVICE_H_
 
-#include <QDataStream>
 #include <QObject>
-#include <QTcpSocket>
-#include <QTimer>
 
 #include "protocol.h"
 #include "servicecore.h"
@@ -43,11 +40,9 @@ class DaemonService : public ServiceCore
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
-  bool isReady() const;
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
-  QString nick() const;
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
   void quit(bool kill = false);
@@ -107,17 +102,9 @@ private:
   void read(ByeMsgPacket *packet);
   void unknownOpcode();
 
-  AbstractProfile *m_profile;
-  bool m_accepted;
   bool m_kill;
   int m_pings;
-  QDataStream m_stream;         ///< Поток для чтения данный поступивших из сокета.
-  qint64 m_rx;                  ///< Счётчик полученных (receive) байт.
-  qint64 m_tx;                  ///< Счётчик отправленных (transmit) байт.
   QString m_error;
-  QTcpSocket *m_socket;
-  QTimer m_ping;
-  quint16 m_nextBlockSize;      ///< Размер следующего блока данных.
   quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;
