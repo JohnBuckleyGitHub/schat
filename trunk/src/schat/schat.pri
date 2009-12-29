@@ -52,6 +52,7 @@ HEADERS += \
     privatetab.h \
     profilewidget.h \
     protocol.h \
+    protocol/CorePackets.h \
     schatwindow.h \
     schatwindow_p.h \
     servicecore.h \
@@ -101,6 +102,7 @@ SOURCES += \
     popup/popupwindow.cpp \
     privatetab.cpp \
     profilewidget.cpp \
+    protocol/CorePackets.cpp \
     schatwindow.cpp \
     servicecore.cpp \
     settings.cpp \

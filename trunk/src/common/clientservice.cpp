@@ -20,6 +20,7 @@
 #include <QtNetwork>
 
 #include "clientservice.h"
+#include "protocol/CorePackets.h"
 #include "schatmacro.h"
 
 static const int CheckTimeout         = 12000;
@@ -122,35 +123,6 @@ bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
 
 
 /*!
- * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
- * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
- * const QString &message -> сообщение.
- * ----
- * Возвращает `true` в случае успешной отправки (без подтверждения сервером).
- */
-bool ClientService::sendMessage(const QString &channel, const QString &message)
-{
-  SCHAT_DEBUG(this << "::sendMessage(const QString &, const QString &)" << channel << message)
-
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeMessage
-        << channel
-        << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
  * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
  * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
  */
@@ -207,6 +179,13 @@ void ClientService::quit(bool end)
     m_checkTimer.stop();
     m_reconnectTimer.stop();
   }
+}
+
+
+void ClientService::sendByeMsg()
+{
+  ByeMsgPacket packet(m_profile->byeMsg());
+  rawSend(packet);
 }
 
 

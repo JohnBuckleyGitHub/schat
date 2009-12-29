@@ -26,13 +26,14 @@
 #include "clientservice.h"
 #include "mainchannel.h"
 #include "popup/popupmanager.h"
+#include "privatetab.h"
+#include "protocol/CorePackets.h"
 #include "schatwindow.h"
 #include "schatwindow_p.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "simplechatapp.h"
 #include "soundaction.h"
-#include "privatetab.h"
 #include "trayicon.h"
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
@@ -76,7 +77,8 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
     clientService->quit();
   }
   else if (text.startsWith("/bye ")) {
-    clientService->sendByeMsg(textFull.mid(textFull.indexOf(QChar(' '))));
+    ByeMsgPacket packet(textFull.mid(textFull.indexOf(QChar(' '))));
+    clientService->rawSend(packet);
     clientService->quit();
   }
   /// /clear
@@ -541,7 +543,8 @@ void SChatWindowPrivate::sendMsg(const QString &msg, bool cmd)
       sendStatus(schat::StatusNormal);
   }
 
-  if (clientService->sendMessage(channel(), msg))
+  MessagePacket packet(channel(), msg);
+  if (clientService->rawSend(packet))
     send->clear();
 }
 
@@ -604,7 +607,8 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
 
   if (enableMotd && motd) {
     motd = false;
-    clientService->sendMessage("", "/motd");
+    MessagePacket packet("", "/motd");
+    clientService->rawSend(packet);
   }
 
   if (autoAway && profile->status() == schat::StatusNormal && !idleDetector.isActive())

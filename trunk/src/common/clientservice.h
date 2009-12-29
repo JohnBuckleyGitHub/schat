@@ -41,18 +41,16 @@ class ClientService : public ServiceCore
 public:
   ClientService(AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
-  bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
   bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
-  inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
-  inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()                                                                               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   inline void sendSyncBye(const QString &nick, const QString &bye)                                           { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { send(OpcodeNewNick, gender, nick, nNick, name); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)                            { send(OpcodeUserLeave, flag, nick, bye); }
   void connectToHost();
   void quit(bool end = true);
+  void sendByeMsg();
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
 
 signals:

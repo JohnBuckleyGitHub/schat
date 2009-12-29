@@ -25,6 +25,7 @@
 #include <QTimer>
 
 class AbstractProfile;
+class AbstractRawPacket;
 
 /*!
  * \brief Базовый класс для клиентского и серверного сервиса.
@@ -36,6 +37,7 @@ class ServiceCore : public QObject
 public:
   ServiceCore(QObject *parent = 0);
   bool isReady() const;
+  bool rawSend(const AbstractRawPacket &packet);
   QString nick() const;
 
 protected:
