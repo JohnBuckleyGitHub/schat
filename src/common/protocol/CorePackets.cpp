@@ -101,6 +101,21 @@ MessagePacket::MessagePacket()
 }
 
 
+/*!
+ * Конструктор класса MessagePacket.
+ */
+MessagePacket::MessagePacket(const QString &channel, const QString &message)
+  : AbstractRawPacket(200),
+  m_channel(channel),
+  m_message(message)
+{
+}
+
+
+/*!
+ * - m_channel если не является пустым, должен быть валидным ником.
+ * - m_message обрабатывается HTML фильтром и не должен быть пустым.
+ */
 bool MessagePacket::readStream(QDataStream *stream)
 {
   *stream >> m_channel >> m_message;
@@ -125,7 +140,7 @@ bool MessagePacket::readStream(QDataStream *stream)
 
 void MessagePacket::writeStream(QDataStream *stream) const
 {
-  Q_UNUSED(stream)
+  *stream << m_channel << m_message;
 }
 
 
@@ -134,6 +149,13 @@ void MessagePacket::writeStream(QDataStream *stream) const
  */
 ByeMsgPacket::ByeMsgPacket()
   : AbstractRawPacket(603)
+{
+}
+
+
+ByeMsgPacket::ByeMsgPacket(const QString &bye)
+  : AbstractRawPacket(603),
+  m_bye(bye)
 {
 }
 
@@ -149,5 +171,5 @@ bool ByeMsgPacket::readStream(QDataStream *stream)
 
 void ByeMsgPacket::writeStream(QDataStream *stream) const
 {
-  Q_UNUSED(stream)
+  *stream << m_bye;
 }

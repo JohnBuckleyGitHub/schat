@@ -54,6 +54,7 @@ class MessagePacket : public AbstractRawPacket
 {
 public:
   MessagePacket();
+  MessagePacket(const QString &channel, const QString &message);
   inline QString channel() const           { return m_channel; }
   inline QString message() const           { return m_message; }
   static QList<quint16> opcodes()          { return QList<quint16>() << 200; }
@@ -74,6 +75,7 @@ class ByeMsgPacket : public AbstractRawPacket
 {
 public:
   ByeMsgPacket();
+  ByeMsgPacket(const QString &bye);
   inline QString bye() const      { return m_bye; }
   static QList<quint16> opcodes() { return QList<quint16>() << 603; }
 

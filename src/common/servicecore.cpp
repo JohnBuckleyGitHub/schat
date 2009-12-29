@@ -17,6 +17,8 @@
  */
 
 #include "abstractprofile.h"
+#include "protocol/CorePackets.h"
+#include "schatmacro.h"
 #include "servicecore.h"
 
 /*!
@@ -43,6 +45,27 @@ bool ServiceCore::isReady() const
     return true;
 
   return false;
+}
+
+
+/*!
+ * Базовая функция отправки пакета.
+ */
+bool ServiceCore::rawSend(const AbstractRawPacket &packet)
+{
+  SCHAT_DEBUG(this << "rawSend(" << packet.opcode() << ")")
+  if (!isReady())
+    return false;
+
+  QByteArray size;
+  QDataStream out(&size, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_4_4);
+  QByteArray data = packet.data();
+  out << quint16(data.size());
+  m_tx += data.size() + 2;
+
+  m_socket->write(size + data);
+  return true;
 }
 
 
