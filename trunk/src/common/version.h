@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION      "0.8.0.1234 Beta"
-#define SCHAT_VERSION_RC   0,8,0,1234
+#define SCHAT_VERSION      "0.8.0.1241 Beta"
+#define SCHAT_VERSION_RC   0,8,0,1241
 #define SCHAT_NAME         "IMPOMEZIA Simple Chat"
 #define SCHAT_ORGANIZATION "IMPOMEZIA"
 #define SCHAT_DOMAIN       "impomezia.ru"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2009 IMPOMEZIA"
+#define SCHAT_COPYRIGHT    "Copyright © 2008-2010 IMPOMEZIA"
 
 static const int UpdateLevelQt   = 2009120400;
-static const int UpdateLevelCore = 2009120401;
+static const int UpdateLevelCore = 2010010400;
 
 #endif /*VERSION_H_*/

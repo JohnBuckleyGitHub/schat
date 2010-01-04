@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,6 +90,48 @@ void AbstractRawPacket::writeStream(QDataStream *stream) const
   SCHAT_DEBUG(this << "writeStream()")
   Q_UNUSED(stream)
 }
+
+
+/*!
+ * Конструктор класса HandshakeRequest.
+ */
+HandshakeRequest::HandshakeRequest()
+  : AbstractRawPacket(100),
+  m_version(3),
+  m_flag(FlagNone),
+  m_gender(0)
+{
+}
+
+
+/*!
+ * Конструктор класса HandshakeRequest.
+ */
+HandshakeRequest::HandshakeRequest(AbstractProfile *profile, quint16 version, Flag flag)
+  : AbstractRawPacket(100),
+  m_version(version),
+  m_flag(flag),
+  m_gender(profile->genderNum()),
+  m_nick(profile->nick()),
+  m_name(profile->fullName()),
+  m_agent(profile->userAgent()),
+  m_bye(profile->byeMsg())
+{
+}
+
+
+bool HandshakeRequest::readStream(QDataStream *stream)
+{
+  return AbstractRawPacket::readStream(stream);
+}
+
+
+void HandshakeRequest::writeStream(QDataStream *stream) const
+{
+  *stream << m_version << m_flag << m_gender << m_nick << m_name << m_agent << m_bye;
+}
+
+
 
 
 /*!

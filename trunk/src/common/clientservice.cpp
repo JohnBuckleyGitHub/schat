@@ -251,26 +251,15 @@ void ClientService::connected()
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
 
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(StreamVersion);
-  out << quint16(0)
-      << OpcodeGreeting
-      << ProtocolVersion
-      #ifdef SCHAT_CLIENT
-       << FlagNone
-      #else
-       << FlagLink
-      #endif
-      << m_profile->genderNum()
-      << m_profile->nick()
-      << m_profile->fullName()
-      << m_profile->userAgent()
-      << m_profile->byeMsg();
+  #ifdef SCHAT_CLIENT
+  HandshakeRequest packet(m_profile);
+  #else
+  HandshakeRequest packet(m_profile, 3, HandshakeRequest::FlagLink);
+  #endif
 
-  out.device()->seek(0);
-  out << quint16(block.size() - (int) sizeof(quint16));
-  m_socket->write(block);
+  m_accepted = true;
+  rawSend(packet);
+  m_accepted = false;
 }
 
 

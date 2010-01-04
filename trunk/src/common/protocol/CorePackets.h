@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,36 @@ protected:
 
   bool m_valid;     ///< \a true в случае если пакет корректен.
   quint16 m_opcode; ///< Код пакета.
+};
+
+
+/*!
+ * \brief Пакет, инициализирующий соединение.
+ */
+class HandshakeRequest : public AbstractRawPacket
+{
+public:
+  enum Flag {
+    FlagNone,
+    FlagDirect,
+    FlagLink
+  };
+
+  HandshakeRequest();
+  HandshakeRequest(AbstractProfile *profile, quint16 version = 3, Flag flag = FlagNone);
+  static QList<quint16> opcodes() { return QList<quint16>() << 100; }
+
+protected:
+  bool readStream(QDataStream *stream);
+  void writeStream(QDataStream *stream) const;
+
+  quint16 m_version; ///< версия протокола.
+  quint8 m_flag;     ///< флаг Flag.
+  quint8 m_gender;   ///< пол участника: 0 - мужской, 1 - женский (numeric сервера при FlagLink).
+  QString m_nick;    ///< ник участника (рекомендуется пустая строка при FlagLink).
+  QString m_name;    ///< полное имя участника, может быть пустой строкой (ключ сети при FlagLink).
+  QString m_agent;   ///< строка идентифицирующая агент пользователя, формат: UserAgent/Version.
+  QString m_bye;     ///< сообщение о выходе из чата.
 };
 
 
