@@ -99,7 +99,10 @@ HandshakeRequest::HandshakeRequest()
   : AbstractRawPacket(100),
   m_version(3),
   m_flag(FlagNone),
-  m_gender(0)
+  m_gender(0),
+  m_profile(0),
+  m_error(ErrorNoError),
+  m_numeric(0)
 {
 }
 
@@ -115,14 +118,66 @@ HandshakeRequest::HandshakeRequest(AbstractProfile *profile, quint16 version, Fl
   m_nick(profile->nick()),
   m_name(profile->fullName()),
   m_agent(profile->userAgent()),
-  m_bye(profile->byeMsg())
+  m_bye(profile->byeMsg()),
+  m_profile(0),
+  m_error(ErrorNoError),
+  m_numeric(0)
 {
 }
 
 
 bool HandshakeRequest::readStream(QDataStream *stream)
 {
+  *stream >> m_version >> m_flag >> m_gender >> m_nick >> m_name >> m_agent >> m_bye;
+  SCHAT_DEBUG(">> m_version  =" << m_version)
+  SCHAT_DEBUG(">> m_flag     =" << m_flag)
+  SCHAT_DEBUG(">> m_gender   =" << m_gender)
+  SCHAT_DEBUG(">> m_nick     =" << m_nick)
+  SCHAT_DEBUG(">> m_name     =" << m_name)
+  SCHAT_DEBUG(">> m_agent    =" << m_agent)
+  SCHAT_DEBUG(">> m_bye      =" << m_bye)
+
+  QStringList profile;
+  profile << m_nick << m_name << m_bye << m_agent << "" << AbstractProfile::gender(m_gender);
+  m_profile = new AbstractProfile(profile);
+  m_error = verify();
+
   return AbstractRawPacket::readStream(stream);
+}
+
+
+/*!
+ * Предварительная проверка пакета.
+ */
+HandshakeRequest::Error HandshakeRequest::verify()
+{
+  if (m_version < 3)
+    return ErrorOldClientProtocol;
+
+  if (m_version > 3)
+    return ErrorOldServerProtocol;
+
+//  if (!(m_flag == FlagNone || m_flag == FlagLink))
+//    return ErrorBadGreetingFlag;
+
+  if (!m_profile->isValidNick() && m_flag == FlagNone)
+    return ErrorBadNickName;
+
+  if (!m_profile->isValidUserAgent())
+    return ErrorBadUserAgent;
+
+  if (m_flag == FlagLink) {
+    bool ok;
+    m_numeric = quint8(m_profile->nick().toInt(&ok));
+    if (ok) {
+      if (!m_numeric)
+        return ErrorBadNumeric;
+    }
+    else
+      return ErrorBadNumeric;
+  }
+
+  return ErrorNoError;
 }
 
 

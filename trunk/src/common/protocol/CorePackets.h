@@ -59,21 +59,48 @@ public:
     FlagLink
   };
 
+  /// Коды ошибок.
+  enum Error {
+    ErrorNoError               = 0,   ///< Нет ошибки.
+    ErrorNickAlreadyUse        = 200, ///< Выбранный ник уже занят.
+    ErrorOldClientProtocol     = 100, ///< Клиент использует устаревшую версию протокола.
+    ErrorOldServerProtocol     = 104, ///< Сервер использует устаревшую версию протокола.
+    ErrorBadGreetingFlag       = 101, ///< Клиент отправил неподдерживаемый флаг приветствия.
+    ErrorBadNickName           = 102, ///< Выбранный клиентом ник, не допустим в чате.
+    ErrorBadUserAgent          = 103, ///< Клиент отправил недопустимый UserAgent.
+    ErrorNotNetworkConfigured  = 400, ///< На сервере, к которому пытается слинковаться другой сервер, не настроена сеть.
+    ErrorBadNetworkKey         = 401, ///< Ошибка проверки ключа сети.
+    ErrorNumericAlreadyUse     = 403, ///< Ошибка линковки numeric подключаемого сервера уже используется.
+    ErrorBadNumeric            = 404, ///< Ошибка линковки, неверный/некорректный numeric.
+    ErrorRootServerIsSlave     = 405, ///< Ошибка подключения к корневому серверу, т.к он сконфигурирован как вторичный.
+    ErrorUsersLimitExceeded    = 500, ///< Превышено максимально допустимое количество пользователей на этом сервере.
+    ErrorLinksLimitExceeded    = 501, ///< Превышено максимально допустимое количество серверов подключенных к этому серверу.
+    ErrorMaxUsersPerIpExceeded = 502  ///< Превышено максимально допустимое число пользователей с одного ip адреса.
+  };
+
   HandshakeRequest();
   HandshakeRequest(AbstractProfile *profile, quint16 version = 3, Flag flag = FlagNone);
-  static QList<quint16> opcodes() { return QList<quint16>() << 100; }
+  inline AbstractProfile* profile() { return m_profile; }
+  inline Error error() const        { return m_error; }
+  inline quint8 flag() const        { return m_flag; }
+  inline quint8 numeric() const     { return m_numeric; }
+  static QList<quint16> opcodes()   { return QList<quint16>() << 100; }
 
 protected:
   bool readStream(QDataStream *stream);
+  Error verify();
   void writeStream(QDataStream *stream) const;
 
-  quint16 m_version; ///< версия протокола.
-  quint8 m_flag;     ///< флаг Flag.
-  quint8 m_gender;   ///< пол участника: 0 - мужской, 1 - женский (numeric сервера при FlagLink).
-  QString m_nick;    ///< ник участника (рекомендуется пустая строка при FlagLink).
-  QString m_name;    ///< полное имя участника, может быть пустой строкой (ключ сети при FlagLink).
-  QString m_agent;   ///< строка идентифицирующая агент пользователя, формат: UserAgent/Version.
-  QString m_bye;     ///< сообщение о выходе из чата.
+  quint16 m_version;          ///< версия протокола.
+  quint8 m_flag;              ///< флаг Flag.
+  quint8 m_gender;            ///< пол участника: 0 - мужской, 1 - женский (numeric сервера при FlagLink).
+  QString m_nick;             ///< ник участника (рекомендуется пустая строка при FlagLink).
+  QString m_name;             ///< полное имя участника, может быть пустой строкой (ключ сети при FlagLink).
+  QString m_agent;            ///< строка идентифицирующая агент пользователя, формат: UserAgent/Version.
+  QString m_bye;              ///< сообщение о выходе из чата.
+  AbstractProfile *m_profile; ///< Профиль пользователя.
+  Error m_error;              ///< Ошибка авторизации.
+  quint8 m_numeric;           ///< Уникальный идентификатор сервера (при s2s соединении).
 };
 
 
