@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -523,6 +523,9 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
+/*!
+ * Обработка нажатия на ссылку.
+ */
 void ChatView::linkClicked(const QUrl &url)
 {
   QString scheme = url.scheme();
@@ -533,6 +536,11 @@ void ChatView::linkClicked(const QUrl &url)
   else if (scheme == "smile") {
     emit emoticonsClicked("&nbsp;" + QByteArray::fromHex(url.toString(QUrl::RemoveScheme).toLatin1()) + "&nbsp;");
   }
+  #if QT_VERSION >= 0x040600
+  else if (scheme == "file") {
+    QDesktopServices::openUrl(QDir::toNativeSeparators(url.toString(QUrl::RemoveScheme)));
+  }
+  #endif
   else
     QDesktopServices::openUrl(url);
 }
