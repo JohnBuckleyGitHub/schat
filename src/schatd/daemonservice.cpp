@@ -282,9 +282,6 @@ void DaemonService::ping()
 }
 
 
-/** [public slots]
- *
- */
 void DaemonService::readyRead()
 {
   forever {
@@ -350,8 +347,10 @@ void DaemonService::readyRead()
           break;
       };
     }
-    else if (m_opcode == OpcodeGreeting) {
-      if (!opcodeGreeting()) {
+    else if (HandshakeRequest::opcodes().contains(opcode)) {
+      block = m_socket->read(m_nextBlockSize - 2);
+      m_nextBlockSize = 0;
+      if (!handshake(opcode, block)) {
         m_socket->disconnectFromHost();
         return;
       }
@@ -364,34 +363,26 @@ void DaemonService::readyRead()
 }
 
 
-bool DaemonService::opcodeGreeting()
+/*!
+ * \return \a false если произошла ошибка при рукопожатии и нужно разорвать соединение.
+ */
+bool DaemonService::handshake(quint16 opcode, const QByteArray &block)
 {
-  SCHAT_DEBUG(this << "::opcodeGreeting()")
+  HandshakeRequest packet;
+  if (!packet.read(opcode, block))
+    return false;
 
-  quint16 p_version;
-  quint8  p_gender;
-  QString p_nick;
-  QString p_name;
-  QString p_userAgent;
-  QString p_byeMsg;
-  quint16 err;
+  m_profile = packet.profile();
+  m_profile->setParent(this);
+  m_flag = packet.flag();
 
-  m_stream >> p_version >> m_flag >> p_gender >> p_nick >> p_name >> p_userAgent >> p_byeMsg;
-  m_nextBlockSize = 0;
-
-  QStringList profile;
-  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);;
-  m_profile = new AbstractProfile(profile, this);
-
-  err = verifyGreeting(p_version);
-
+  HandshakeRequest::Error err = packet.error();
   if (err) {
     accessDenied(err);
     return false;
   }
 
   emit greeting(m_profile->pack(), m_flag);
-
   return true;
 }
 
@@ -548,41 +539,6 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
   }
   else
     return false;
-}
-
-
-/** [private]
- * Верификация пакета `OpcodeGreeting`.
- */
-quint16 DaemonService::verifyGreeting(quint16 version)
-{
-  if (version < ProtocolVersion)
-    return ErrorOldClientProtocol;
-
-  if (version > ProtocolVersion)
-    return ErrorOldServerProtocol;
-
-  if (!(m_flag == FlagNone || m_flag == FlagLink))
-    return ErrorBadGreetingFlag;
-
-  if (!m_profile->isValidNick() && m_flag == FlagNone)
-    return ErrorBadNickName;
-
-  if (!m_profile->isValidUserAgent())
-    return ErrorBadUserAgent;
-
-  if (m_flag == FlagLink) {
-    bool ok;
-    m_numeric = quint8(m_profile->nick().toInt(&ok));
-    if (ok) {
-      if (!m_numeric)
-        return ErrorBadNumeric;
-    }
-    else
-      return ErrorBadNumeric;
-  }
-
-  return 0;
 }
 
 
