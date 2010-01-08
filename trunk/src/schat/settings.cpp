@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ void Settings::notify(int notify, int index)
  */
 void Settings::read()
 {
-  m_pos  = m_settings->value("Pos", QPoint(-999, -999)).toPoint();
+  m_pos  = m_settings->value("Pos", QPoint(-99999, -99999)).toPoint();
   m_size = m_settings->value("Size", QSize(640, 430)).toSize();
 
   setBool("HideWelcome",            false);
@@ -192,6 +192,7 @@ void Settings::read()
   setBool("NoPopupAutoCloseInAway", true);
   setBool("CompactGenderWidget",    true);
   setBool("StatusMessages",         true);
+  setBool("Maximized",              false);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
   setString("Style",                "Plastique");
