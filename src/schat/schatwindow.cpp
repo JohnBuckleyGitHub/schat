@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -500,24 +500,16 @@ void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
 
 
 /*!
- * Восстанавливает геометрию окна.
- */
-void SChatWindowPrivate::restoreGeometry()
-{
-  q->resize(pref->size());
-  QPoint pos = pref->pos();
-  if (pos.x() != -999 && pos.y() != -999)
-    q->move(pos);
-}
-
-
-/*!
  * Сохраняет геометрию окна.
  */
 void SChatWindowPrivate::saveGeometry()
 {
-  pref->setPos(q->pos());
-  pref->setSize(q->size());
+  if (!q->isMaximized()) {
+    pref->setPos(q->pos());
+    pref->setSize(q->size());
+  }
+
+  pref->setBool("Maximized", q->isMaximized());
 }
 
 
@@ -852,7 +844,6 @@ SChatWindow::SChatWindow(QWidget *parent)
     connect(d->tabs, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   #endif
 
-  d->restoreGeometry();
   createActions();
   #ifndef SCHAT_WINCE
   d->createToolButtons();
@@ -940,6 +931,33 @@ void SChatWindow::keyPressEvent(QKeyEvent *event)
     d->hideChat();
   else
     QMainWindow::keyPressEvent(event);
+}
+
+
+/*!
+ * Обработка события показа окна.
+ *
+ * Если в настройках указана допустимая позиция окна, то окно перемещается в эту позицию.
+ * Если размеры окна из настроек не превышают размеры экрана, то изменяется размер окна,
+ * эта проверка не учитывает позицию окна, поэтом возможно часть окна может оказаться за пределами экрана.
+ */
+void SChatWindow::showEvent(QShowEvent *event)
+{
+  QPoint windowPos = d->pref->pos();
+  QDesktopWidget desktop;
+  QRect availableGeometry = desktop.availableGeometry(windowPos);
+
+  if (availableGeometry.contains(windowPos))
+    move(windowPos);
+
+  QSize windowSize = d->pref->size();
+  if (availableGeometry.width() >= windowSize.width() && availableGeometry.height() >= windowSize.height())
+    resize(windowSize);
+
+  if (d->pref->getBool("Maximized"))
+    showMaximized();
+
+  QMainWindow::showEvent(event);
 }
 
 
