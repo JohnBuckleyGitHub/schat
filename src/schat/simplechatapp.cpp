@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ int SimpleChatApp::run()
   if (args.contains("-hide"))
     m_window->hide();
   else
-    m_window->show();
+    m_window->showChat();
 
   #ifndef SCHAT_NO_SINGLEAPP
   connect(this, SIGNAL(messageReceived(const QString &)), m_window, SLOT(handleMessage(const QString &)));
