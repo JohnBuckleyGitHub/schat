@@ -38,6 +38,7 @@ class SChatWindow : public QMainWindow
 public:
   SChatWindow(QWidget *parent = 0);
   ~SChatWindow();
+  void showChat();
 
 protected:
   bool event(QEvent *event);

@@ -475,6 +475,8 @@ void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
  */
 void SChatWindowPrivate::hideChat()
 {
+  saveGeometry();
+
   if (settingsDialog)
     settingsDialog->hide();
 
@@ -506,7 +508,7 @@ void SChatWindowPrivate::msgToAllPrivateTabs(const QString &msg)
  */
 void SChatWindowPrivate::saveGeometry()
 {
-  if (!q->isMaximized()) {
+  if (!q->isMaximized() && q->size().height()) {
     pref->setPos(q->pos());
     pref->setSize(q->size());
   }
@@ -564,7 +566,12 @@ void SChatWindowPrivate::setAwayOptions()
 void SChatWindowPrivate::showChat()
 {
   q->setWindowState(q->windowState() & ~Qt::WindowMinimized);
-  q->show();
+
+  if (pref->getBool("Maximized"))
+    q->showMaximized();
+  else
+    q->show();
+
   q->activateWindow();
 
   if (about)
@@ -916,6 +923,12 @@ SChatWindow::~SChatWindow()
 }
 
 
+void SChatWindow::showChat()
+{
+  d->showChat();
+}
+
+
 /*!
  * \brief Обработка события закрытия чата.
  */
@@ -947,19 +960,18 @@ void SChatWindow::keyPressEvent(QKeyEvent *event)
  */
 void SChatWindow::showEvent(QShowEvent *event)
 {
-  QPoint windowPos = d->pref->pos();
-  QDesktopWidget desktop;
-  QRect availableGeometry = desktop.availableGeometry(windowPos);
+  if (!d->pref->getBool("Maximized")) {
+    QPoint windowPos = d->pref->pos();
+    QDesktopWidget desktop;
+    QRect availableGeometry = desktop.availableGeometry(windowPos);
 
-  if (availableGeometry.contains(windowPos))
-    move(windowPos);
+    QSize windowSize = d->pref->size();
+    if (availableGeometry.width() >= windowSize.width() && availableGeometry.height() >= windowSize.height())
+      resize(windowSize);
 
-  QSize windowSize = d->pref->size();
-  if (availableGeometry.width() >= windowSize.width() && availableGeometry.height() >= windowSize.height())
-    resize(windowSize);
-
-  if (d->pref->getBool("Maximized"))
-    showMaximized();
+    if (availableGeometry.contains(windowPos))
+      move(windowPos);
+  }
 
   QMainWindow::showEvent(event);
 }
@@ -972,6 +984,15 @@ bool SChatWindow::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
     stopNotice(d->tabs->currentIndex());
+
+  if (event->type() == QEvent::WindowStateChange) {
+    if (windowState() & Qt::WindowMinimized)
+      d->saveGeometry();
+
+    QWindowStateChangeEvent *e = static_cast<QWindowStateChangeEvent*>(event);
+    if (e->oldState() == Qt::WindowMaximized)
+      setGeometry(d->pref->pos().x(), d->pref->pos().y(), d->pref->size().width(), d->pref->size().height());
+  }
 
   return QMainWindow::event(event);
 }
