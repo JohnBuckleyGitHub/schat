@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,20 +38,21 @@ class ClientService : public QObject
   Q_OBJECT
 
 public:
-  ClientService(const AbstractProfile *profile, const Network *network, QObject *parent = 0);
+  ClientService(AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
   bool isReady() const;
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
   bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
+  inline QString safeNick() const                                                                            { return m_safeNick; };
   inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
   inline void sendNewProfile()                                                                               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   inline void sendSyncBye(const QString &nick, const QString &bye)                                           { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { send(OpcodeNewNick, gender, nick, nNick, name); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)                            { send(OpcodeUserLeave, flag, nick, bye); }
-  void connectToHost();
+  inline void setSafeNick(const QString &nick)                                                               { m_safeNick = nick; }
   void quit(bool end = true);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
 
@@ -77,6 +78,9 @@ signals:
   void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
+public slots:
+  void connectToHost();
+
 private slots:
   void check();
   void connected();
@@ -93,6 +97,7 @@ private:
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
   int activeInterfaces();
   void createSocket();
+  void mangleNick();
   void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeLinkLeave();
@@ -112,13 +117,14 @@ private:
   void opcodeUserLeave();
   void unknownOpcode();
 
+  AbstractProfile *m_profile;
   bool m_accepted;
   bool m_fatal;
-  const AbstractProfile *m_profile;
   const Network *m_network;
   int m_reconnects;
   QDataStream m_stream;
   QPointer<QTcpSocket> m_socket;
+  QString m_safeNick;
   QTimer m_checkTimer;
   QTimer m_ping;
   QTimer m_reconnectTimer;
