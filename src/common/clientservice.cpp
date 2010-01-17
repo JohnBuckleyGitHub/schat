@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,15 +36,18 @@ static const int ReconnectTimeout     = 4000;
 /*!
  * \brief Конструктор класса ClientService.
  */
-ClientService::ClientService(const AbstractProfile *profile, const Network *network, QObject *parent)
-  : QObject(parent), m_profile(profile), m_network(network)
+ClientService::ClientService(AbstractProfile *profile, const Network *network, QObject *parent)
+  : QObject(parent),
+  m_profile(profile),
+  m_accepted(false),
+  m_fatal(false),
+  m_network(network),
+  m_reconnects(0),
+  m_socket(0),
+  m_safeNick(profile->nick()),
+  m_nextBlockSize(0)
 {
-  m_socket = 0;
-  m_nextBlockSize = 0;
-  m_reconnects = 0;
   m_stream.setVersion(StreamVersion);
-  m_accepted = false;
-  m_fatal = false;
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(22000);
   m_reconnectTimer.setInterval(ReconnectTimeout);
@@ -176,41 +179,6 @@ bool ClientService::sendMessage(const QString &channel, const QString &message)
 }
 
 
-/*!
- * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
- * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
- */
-void ClientService::connectToHost()
-{
-  SCHAT_DEBUG(this << "::connectToHost()")
-  if (m_socket) {
-    SCHAT_DEBUG(m_socket->state())
-  }
-
-  if (!m_socket)
-    createSocket();
-
-  m_fatal = false;
-
-  if (m_socket->state() == QAbstractSocket::UnconnectedState) {
-    m_server = m_network->server();
-    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
-      m_socket->connectToHost(m_server.address, m_server.port);
-
-    if (m_network->isNetwork())
-      emit connecting(m_network->name(), true);
-    else
-      emit connecting(m_server.address, false);
-
-    m_checkTimer.start();
-  }
-  else if (m_socket->state() == QAbstractSocket::ConnectedState) {
-    m_reconnects = 0;
-    m_socket->disconnectFromHost();
-  }
-}
-
-
 void ClientService::quit(bool end)
 {
   SCHAT_DEBUG(this << "::quit(bool)" << end);
@@ -259,6 +227,41 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
+  }
+}
+
+
+/*!
+ * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
+ * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
+ */
+void ClientService::connectToHost()
+{
+  SCHAT_DEBUG(this << "::connectToHost()")
+  if (m_socket) {
+    SCHAT_DEBUG(m_socket->state())
+  }
+
+  if (!m_socket)
+    createSocket();
+
+  m_fatal = false;
+
+  if (m_socket->state() == QAbstractSocket::UnconnectedState) {
+    m_server = m_network->server();
+    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
+      m_socket->connectToHost(m_server.address, m_server.port);
+
+    if (m_network->isNetwork())
+      emit connecting(m_network->name(), true);
+    else
+      emit connecting(m_server.address, false);
+
+    m_checkTimer.start();
+  }
+  else if (m_socket->state() == QAbstractSocket::ConnectedState) {
+    m_reconnects = 0;
+    m_socket->disconnectFromHost();
   }
 }
 
@@ -626,6 +629,21 @@ void ClientService::createSocket()
 }
 
 
+void ClientService::mangleNick()
+{
+  SCHAT_DEBUG("mangleNick()")
+
+  int max = 99;
+  QString nick = m_safeNick;
+  if (nick.size() == AbstractProfile::MaxNickLength)
+    nick = nick.left(AbstractProfile::MaxNickLength - 2);
+  else if (nick.size() == AbstractProfile::MaxNickLength - 1)
+    max = 9;
+
+  m_profile->setNick(nick + QString().setNum(qrand() % max));
+}
+
+
 /*!
  * Разбор пакета с опкодом  \b OpcodeAccessDenied.
  */
@@ -639,6 +657,12 @@ void ClientService::opcodeAccessDenied()
   /// что может привести к невозможности восстановления соединения, также эта ошибка возможна только при link-соединении.
   if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded || p_reason == ErrorMaxUsersPerIpExceeded || p_reason == ErrorNumericAlreadyUse))
     m_fatal = true;
+
+  if (p_reason == ErrorNickAlreadyUse) {
+    mangleNick();
+    QTimer::singleShot(200, this, SLOT(connectToHost()));
+    return;
+  }
 
   emit accessDenied(p_reason);
 }

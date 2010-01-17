@@ -324,6 +324,7 @@ void SChatWindowPrivate::closeChat(bool update)
     Q_UNUSED(update)
   #endif
 
+  profile->setNick(clientService->safeNick());
   clientService->quit();
   saveGeometry();
   pref->write();
@@ -648,29 +649,6 @@ void SChatWindowPrivate::statusUnconnected(bool echo)
 
   if (echo)
     main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
-}
-
-
-/*!
- * Создаёт уникальный ник.
- * Ник + случайное число от 0 до 99.
- *
- * Специальные случаи:
- * - Если длина ника равна максимальной допустимой, то отрезаются
- * два последних символа, для нормализации длинны.
- * - Если ник на один символ короче максимума, то случайное число
- * генерируется в диапазоне от 0 до 9.
- */
-void SChatWindowPrivate::uniqueNick()
-{
-  int max = 99;
-  QString nick = profile->nick();
-  if (nick.size() == AbstractProfile::MaxNickLength)
-    nick = nick.left(AbstractProfile::MaxNickLength - 2);
-  else if (nick.size() == AbstractProfile::MaxNickLength - 1)
-    max = 9;
-
-  profile->setNick(nick + QString().setNum(qrand() % max));
 }
 
 
@@ -1008,19 +986,11 @@ void SChatWindow::about()
 }
 
 
-/** [private slots]
- *
- */
 void SChatWindow::accessDenied(quint16 reason)
 {
   bool notify = true;
 
   switch (reason) {
-    case ErrorNickAlreadyUse:
-      d->uniqueNick();
-      d->clientService->connectToHost();
-      break;
-
     case ErrorOldClientProtocol:
       d->main->msg("<span class='oldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
       break;
@@ -1503,6 +1473,7 @@ void SChatWindow::settingsChanged(int notify)
       break;
 
     case Settings::ProfileSettingsChanged:
+      d->clientService->setSafeNick(d->profile->nick());
       d->clientService->sendNewProfile();
       break;
 
