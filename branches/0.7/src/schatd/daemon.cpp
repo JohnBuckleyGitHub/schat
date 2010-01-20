@@ -500,9 +500,7 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
  */
 void Daemon::message(const QString &channel, const QString &nick, const QString &msg)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::message(const QString &, const QString &, const QString &)" << channel << nick << msg;
-#endif
+  SCHAT_DEBUG(this << "::message()" << channel << nick << msg)
 
   QString lowerChannel = normalizeNick(channel);
 
@@ -586,9 +584,7 @@ void Daemon::newLink(quint8 numeric, const QString &network, const QString &ip)
  */
 void Daemon::relayMessage(const QString &channel, const QString &sender, const QString &msg)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::relayMessage()" << channel << sender << msg;
-#endif
+  SCHAT_DEBUG(this << "::relayMessage()" << channel << sender << msg)
 
   if (!m_network)
     return;
@@ -641,9 +637,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
  */
 void Daemon::serviceLeave(const QString &nick, quint8 flag, const QString &err)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::serviceLeave(const QString &)" << nick << flag;
-#endif
+  SCHAT_DEBUG(this << "::serviceLeave()" << nick << flag)
 
   if (flag == FlagLink)
     linkLeave(nick, err);
