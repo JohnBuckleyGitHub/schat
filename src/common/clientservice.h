@@ -48,7 +48,6 @@ public:
   inline QString safeNick() const                                                                            { return m_safeNick; };
   inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
-  inline void sendNewProfile()                                                                               { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   inline void sendSyncBye(const QString &nick, const QString &bye)                                           { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { send(OpcodeNewNick, gender, nick, nNick, name); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)                            { send(OpcodeUserLeave, flag, nick, bye); }
@@ -79,6 +78,7 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
+  inline void sendNewProfile() { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   void connectToHost();
 
 private slots:

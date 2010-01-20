@@ -296,7 +296,7 @@ void ClientService::check()
  */
 void ClientService::connected()
 {
-  SCHAT_DEBUG(this << "::connected()")
+  SCHAT_DEBUG(this << "::connected()" << m_profile->nick())
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
@@ -330,7 +330,7 @@ void ClientService::connected()
  */
 void ClientService::disconnected()
 {
-  SCHAT_DEBUG(this << "::disconnected()")
+  SCHAT_DEBUG(this << "::disconnected()" << (m_socket ? m_socket->errorString() : ""))
 
   if (m_ping.isActive())
     m_ping.stop();
@@ -631,7 +631,7 @@ void ClientService::createSocket()
 
 void ClientService::mangleNick()
 {
-  SCHAT_DEBUG("mangleNick()")
+  SCHAT_DEBUG(this << "mangleNick()")
 
   int max = 99;
   QString nick = m_safeNick;
@@ -641,6 +641,7 @@ void ClientService::mangleNick()
     max = 9;
 
   m_profile->setNick(nick + QString().setNum(qrand() % max));
+  SCHAT_DEBUG("            ^^^^^ mangled nick:" << m_profile->nick())
 }
 
 
@@ -652,6 +653,8 @@ void ClientService::opcodeAccessDenied()
   quint16 p_reason;
   m_stream >> p_reason;
   m_nextBlockSize = 0;
+
+  SCHAT_DEBUG(this << "opcodeAccessDenied()" << "reason:" << p_reason)
 
   /// \todo Полное игнорирование ошибки \a ErrorNumericAlreadyUse не является правильным, однако эта ошибка может возникнуть при определённых обстоятельствах,
   /// что может привести к невозможности восстановления соединения, также эта ошибка возможна только при link-соединении.
@@ -945,6 +948,11 @@ void ClientService::opcodeUserLeave()
   m_nextBlockSize = 0;
 
   emit userLeave(p_nick, p_bye, p_flag);
+
+  if (p_nick == m_safeNick) {
+    m_profile->setNick(m_safeNick);
+    QTimer::singleShot(0, this, SLOT(sendNewProfile()));
+  }
 }
 
 

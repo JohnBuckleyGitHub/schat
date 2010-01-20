@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,15 @@
 
 #ifndef SCHAT_NO_LOCAL_SERVER
   #include "ipc/localservice.h"
+#endif
+
+#ifdef SCHAT_DEBUG
+  #undef SCHAT_DEBUG
+  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
+  #include <QDebug>
+  #include <QTime>
+#else
+  #define SCHAT_DEBUG(x)
 #endif
 
 /*!
@@ -306,7 +315,7 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 fla
 
 
 /*!
- * \test Экспериментальная функция определения локальных зависших пользователей.
+ * Определение локальных зависших пользователей.
  */
 void Daemon::detectZombie()
 {
@@ -350,9 +359,7 @@ void Daemon::dumpStats()
  */
 void Daemon::greeting(const QStringList &list, quint8 flag)
 {
-#ifdef SCHAT_DEBUG
-  qDebug() << "Daemon::greeting(const QStringList &)" << list.at(AbstractProfile::Nick) << flag;
-#endif
+  SCHAT_DEBUG(this << "::greeting()" << list.at(AbstractProfile::Nick) << flag << sender())
 
   DaemonService *service = qobject_cast<DaemonService *>(sender());
   if (service) {
