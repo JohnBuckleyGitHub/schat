@@ -1531,6 +1531,11 @@ void SChatWindow::syncUsersEnd()
     d->sendStatus(d->profile->status());
     d->profile->setStatus(schat::StatusNormal);
   }
+
+  if (!d->users->isUser(d->clientService->safeNick())) {
+    d->profile->setNick(d->clientService->safeNick());
+    QTimer::singleShot(0, d->clientService, SLOT(sendNewProfile()));
+  }
 }
 
 
