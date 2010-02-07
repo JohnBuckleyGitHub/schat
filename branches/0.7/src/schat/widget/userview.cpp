@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,19 @@
 #include "settings.h"
 #include "userview.h"
 #include "userview_p.h"
+
+/*!
+ * Конструктор класса UserItem.
+ */
+UserItem::UserItem(const AbstractProfile &profile)
+  : QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), profile.nick()),
+  m_profile(profile)
+{
+  setData(profile.pack(), UserView::ProfileData);
+  setData(profile.status(), UserView::StatusData);
+  setToolTip(UserView::userToolTip(profile));
+}
+
 
 /*!
  * Конструктор класса QuickUserSearch.
@@ -169,10 +182,7 @@ bool UserView::add(const AbstractProfile &profile)
   if (isUser(nick))
     return false;
 
-  QStandardItem *item = new QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), nick);
-  item->setData(profile.pack(), ProfileData);
-  item->setData(profile.status(), StatusData);
-  item->setToolTip(userToolTip(profile));
+  UserItem *item = new UserItem(profile);
 
   if (nick == d->profile->nick()) {
     QFont font;
@@ -325,7 +335,9 @@ void UserView::setStatus(quint32 status, const QStringList &users)
 
   foreach (QString user, users) {
     QStandardItem *item = d->item(user);
+    qDebug() << item;
     if (item) {
+      qDebug() << "[1]";
       if (status == schat::StatusAway || status == schat::StatusAutoAway)
         item->setForeground(QBrush(QColor("#90a4b3")));
       else if (status == schat::StatusDnD)
@@ -333,8 +345,10 @@ void UserView::setStatus(quint32 status, const QStringList &users)
       else
         item->setForeground(QPalette().brush(QPalette::WindowText));
 
+      qDebug() << "[2]";
       item->setData(status, StatusData);
-      item->setToolTip(userToolTip(profile(user)));
+//      item->setToolTip(userToolTip(profile(user)));
+      qDebug() << "[3]";
     }
   }
 
