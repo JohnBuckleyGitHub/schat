@@ -440,7 +440,7 @@ void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QStr
 void Daemon::logMessage(const QString &sender, const QString &message)
 {
   if (m_channelLog)
-    m_channelLog->msg(tr("%1: %2").arg(sender).arg(message));
+    m_channelLog->msg(tr("%1: %2").arg(sender).arg(ChannelLog::toPlainText(message)));
 }
 
 
@@ -516,7 +516,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   }
   else if (m_users.contains(lowerChannel)) {
     if (m_privateLog)
-      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(msg));
+      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(ChannelLog::toPlainText(msg)));
 
     if (!parseCmd(nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
@@ -611,7 +611,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   quint8 numeric = m_users.value(lowerChannel)->numeric();
 
   if (m_privateLog)
-    m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(msg));
+    m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(ChannelLog::toPlainText(msg)));
 
   if (numeric == m_numeric) {
     DaemonService *service = m_users.value(lowerChannel)->service();
