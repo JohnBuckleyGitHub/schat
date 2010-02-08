@@ -39,6 +39,14 @@ UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
   updateToolTip();
 }
 
+bool UserItem::isOpenTab() const
+{
+  if (m_tab)
+    return true;
+
+  return false;
+}
+
 
 /*!
  * Возвращает вкладку привата, если приват не был открыт, то он создаётся.
