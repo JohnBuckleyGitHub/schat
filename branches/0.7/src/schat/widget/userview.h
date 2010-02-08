@@ -109,6 +109,7 @@ public:
   void setQuickSearch(QuickUserSearch *widget);
   void setStatus(quint32 status, const QStringList &users);
   void update(const QString &nick, const AbstractProfile &profile);
+  void update(const QString &nick, const QString &newNick, const QString &name, quint8 gender);
 
 signals:
   void addTab(const QString &nick);
