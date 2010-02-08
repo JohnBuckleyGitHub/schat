@@ -22,6 +22,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QObject>
+#include <QPointer>
 #include <QStandardItemModel>
 
 #include "abstractprofile.h"
@@ -40,7 +41,7 @@ class UserItem : public QStandardItem
 public:
   UserItem(const AbstractProfile &profile, QTabWidget *tabs);
   inline AbstractProfile profile() const { return m_profile; }
-  inline bool isOpenTab() const          { return (bool) m_tab; }
+  bool isOpenTab() const;
   PrivateTab* privateTab();
   static QString userToolTip(const AbstractProfile &profile);
   void setStatus(quint32 status);
@@ -50,9 +51,9 @@ private:
   void updateIcon();
   void updateToolTip();
 
-  AbstractProfile m_profile; ///< Профиль пользователя.
-  PrivateTab *m_tab;         ///< Приват ассоциированный с этим пользователем.
-  QTabWidget *m_tabs;        ///< Виджет хранящий приваты.
+  AbstractProfile m_profile;  ///< Профиль пользователя.
+  QPointer<PrivateTab> m_tab; ///< Приват ассоциированный с этим пользователем.
+  QTabWidget *m_tabs;         ///< Виджет хранящий приваты.
 };
 
 
