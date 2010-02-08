@@ -33,7 +33,84 @@ UserItem::UserItem(const AbstractProfile &profile)
 {
   setData(profile.pack(), UserView::ProfileData);
   setData(profile.status(), UserView::StatusData);
-  setToolTip(UserView::userToolTip(profile));
+  updateToolTip();
+}
+
+
+/*!
+ * Формирует строку для всплывающей подсказки, содержащую информацию о пользователе.
+ *
+ * \param profile Профиль пользователя.
+ */
+QString UserItem::userToolTip(const AbstractProfile &profile)
+{
+  QString html = QString("<h3><img src='%1' align='left'> %2</h3><table>").arg(":/images/" + profile.gender() + ".png").arg(Qt::escape(profile.nick()));
+  if (!profile.fullName().isEmpty())
+    html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("ФИО:")).arg(Qt::escape(profile.fullName()));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("Адрес:")).arg(Qt::escape(profile.host()));
+
+  quint32 status = profile.status();
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(QObject::tr("Статус:"));
+  if (status == schat::StatusAway || status == schat::StatusAutoAway)
+    html += QObject::tr("Отсутствую");
+  else if (status == schat::StatusDnD)
+    html += QObject::tr("Не беспокоить");
+  else
+    html += QObject::tr("В сети");
+
+  html += "</td></tr></table>";
+
+  return html;
+}
+
+
+/*!
+ * Установка нового статуса.
+ *
+ * \param status Новый статус.
+ */
+void UserItem::setStatus(quint32 status)
+{
+  if (status == schat::StatusAway || status == schat::StatusAutoAway)
+    setForeground(QBrush(QColor(144, 164, 179)));
+  else if (status == schat::StatusDnD)
+    setForeground(QBrush(QColor(115, 187, 239)));
+  else
+    setForeground(QPalette().brush(QPalette::WindowText));
+
+  updateToolTip();
+}
+
+
+/*!
+ * Обновление информации о пользователе.
+ *
+ * \param Новый профиль.
+ */
+void UserItem::update(const AbstractProfile &profile)
+{
+  m_profile = profile;
+  updateIcon();
+  updateToolTip();
+}
+
+
+/*!
+ * Обновление иконки.
+ */
+void UserItem::updateIcon()
+{
+  setIcon(QIcon(":/images/" + m_profile.gender() + ".png"));
+}
+
+
+/*!
+ * Обновление всплывающей подсказки.
+ */
+void UserItem::updateToolTip()
+{
+  setToolTip(userToolTip(m_profile));
 }
 
 
@@ -98,15 +175,15 @@ UserViewPrivate::~UserViewPrivate()
  * Выполняет поиск пользователя в модели.
  *
  * \param nick Ник пользователя.
- * \return QStandardItem в случае успешного поиска, иначе 0.
+ * \return UserItem в случае успешного поиска, иначе 0.
  */
-QStandardItem* UserViewPrivate::item(const QString &nick, Qt::MatchFlags flags) const
+UserItem* UserViewPrivate::item(const QString &nick, Qt::MatchFlags flags) const
 {
   QList<QStandardItem *> items;
 
   items = model.findItems(nick, flags);
   if (items.size() > 0)
-    return items[0];
+    return static_cast<UserItem *>(items[0]);
   else
     return 0;
 }
@@ -259,10 +336,8 @@ void UserView::clear()
  */
 AbstractProfile UserView::profile(const QString &nick) const
 {
-  QStandardItem *item = d->item(nick);
-  AbstractProfile profile(item->data(ProfileData).toStringList());
-  profile.setStatus(item->data(StatusData).toUInt());
-  return profile;
+  UserItem *item = d->item(nick);
+  return item->profile();
 }
 
 
@@ -334,37 +409,24 @@ void UserView::setStatus(quint32 status, const QStringList &users)
     return;
 
   foreach (QString user, users) {
-    QStandardItem *item = d->item(user);
-    qDebug() << item;
-    if (item) {
-      qDebug() << "[1]";
-      if (status == schat::StatusAway || status == schat::StatusAutoAway)
-        item->setForeground(QBrush(QColor("#90a4b3")));
-      else if (status == schat::StatusDnD)
-        item->setForeground(QBrush(QColor("#73bbef")));
-      else
-        item->setForeground(QPalette().brush(QPalette::WindowText));
-
-      qDebug() << "[2]";
-      item->setData(status, StatusData);
-//      item->setToolTip(userToolTip(profile(user)));
-      qDebug() << "[3]";
-    }
+    UserItem *item = d->item(user);
+    if (item)
+      item->setStatus(status);
   }
 
   setCurrentIndex(QModelIndex());
 }
 
 
+/*!
+ * Обновление информации о пользователе.
+ */
 void UserView::update(const QString &nick, const AbstractProfile &profile)
 {
-  QStandardItem *item = d->item(nick);
+  UserItem *item = d->item(nick);
 
-  if (item) {
-    item->setIcon(QIcon(":/images/" + profile.gender() + ".png"));
-    item->setToolTip(userToolTip(profile));
-    item->setData(profile.pack(), ProfileData);
-  }
+  if (item)
+    item->update(profile);
 }
 
 

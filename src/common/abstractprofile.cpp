@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -62,6 +62,19 @@ AbstractProfile::AbstractProfile(QObject *parent)
   m_userAgent = QString("IMPOMEZIA Simple Chat Daemon/%1").arg(SCHAT_VERSION);
 #endif
   m_status = 0;
+}
+
+
+AbstractProfile& AbstractProfile::operator=(const AbstractProfile &other)
+{
+  m_male      = other.m_male;
+  m_byeMsg    = other.m_byeMsg;
+  m_fullName  = other.m_fullName;
+  m_host      = other.m_host;
+  m_nick      = other.m_nick;
+  m_userAgent = other.m_userAgent;
+  m_status    = other.m_status;
+  return *this;
 }
 
 
