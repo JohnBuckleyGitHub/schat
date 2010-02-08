@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "chatwindow/chatview.h"
 #include "privatetab.h"
 #include "protocol.h"
 #include "settings.h"
@@ -38,6 +39,7 @@ UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
   setData(profile.status(), UserView::StatusData);
   updateToolTip();
 }
+
 
 bool UserItem::isOpenTab() const
 {
@@ -109,6 +111,12 @@ void UserItem::setStatus(quint32 status)
 }
 
 
+void UserItem::setTab(PrivateTab *tab)
+{
+  m_tab = tab;
+}
+
+
 /*!
  * Обновление информации о пользователе.
  *
@@ -116,6 +124,10 @@ void UserItem::setStatus(quint32 status)
  */
 void UserItem::update(const AbstractProfile &profile)
 {
+  if (m_profile.nick() != profile.nick()) {
+    setText(profile.nick());
+  }
+
   m_profile = profile;
   updateIcon();
   updateToolTip();
@@ -128,6 +140,13 @@ void UserItem::update(const AbstractProfile &profile)
 void UserItem::updateIcon()
 {
   setIcon(QIcon(":/images/" + m_profile.gender() + ".png"));
+
+  if (m_tab) {
+    m_tab->setIcon(icon());
+
+    if (!m_tab->notice())
+      m_tabs->setTabIcon(m_tabs->indexOf(m_tab), icon());
+  }
 }
 
 
@@ -137,6 +156,9 @@ void UserItem::updateIcon()
 void UserItem::updateToolTip()
 {
   setToolTip(userToolTip(m_profile));
+
+  if (m_tab)
+    m_tabs->setTabToolTip(m_tabs->indexOf(m_tab), toolTip());
 }
 
 
@@ -279,7 +301,7 @@ UserView::~UserView()
 /*!
  * Добавление пользователя в список.
  */
-bool UserView::add(const AbstractProfile &profile)
+bool UserView::add(const AbstractProfile &profile, quint8 echo)
 {
   QString nick = profile.nick();
 
@@ -288,10 +310,22 @@ bool UserView::add(const AbstractProfile &profile)
 
   UserItem *item = new UserItem(profile, d->tabs);
 
+  // Свой ник выделяем жирным и отключаем эхо.
   if (nick == d->profile->nick()) {
     QFont font;
     font.setBold(true);
     item->setFont(font);
+    echo = 0;
+  }
+
+  // Ищем открытый приват и если находим обновляем его.
+  PrivateTab *tab = tabFromName(nick);
+  if (tab) {
+    item->setTab(tab);
+    item->update(profile);
+
+    if (echo == 1)
+      tab->msg(ChatView::statusNewUser(profile.genderNum(), nick));
   }
 
   d->model.appendRow(item);
@@ -365,6 +399,26 @@ PrivateTab* UserView::privateTab(const QString &nick)
   }
 
   return tab;
+}
+
+
+/*!
+ * Поиск открытого привата, по нику.
+ */
+PrivateTab* UserView::tabFromName(const QString &text) const
+{
+  int count = d->tabs->count();
+
+  if (count > 0) {
+    for (int i = 0; i < count; ++i)
+      if (d->tabs->tabText(i) == text) {
+        AbstractTab *tab = static_cast<AbstractTab *>(d->tabs->widget(i));
+        if (tab->type() == AbstractTab::Private)
+          return static_cast<PrivateTab *>(tab);
+      }
+  }
+
+  return 0;
 }
 
 
@@ -470,8 +524,13 @@ void UserView::update(const QString &nick, const AbstractProfile &profile)
 {
   UserItem *item = d->item(nick);
 
-  if (item)
+  if (item) {
     item->update(profile);
+
+    // Сортировка списка если ник изменился.
+    if (nick != profile.nick())
+      sort();
+  }
 }
 
 
