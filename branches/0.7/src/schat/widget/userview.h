@@ -38,9 +38,16 @@ class UserItem : public QStandardItem
 {
 public:
   UserItem(const AbstractProfile &profile);
+  inline AbstractProfile profile() const { return m_profile; }
+  static QString userToolTip(const AbstractProfile &profile);
+  void setStatus(quint32 status);
+  void update(const AbstractProfile &profile);
 
 private:
-  AbstractProfile m_profile;
+  void updateIcon();
+  void updateToolTip();
+
+  AbstractProfile m_profile; ///< Профиль пользователя.
 };
 
 
