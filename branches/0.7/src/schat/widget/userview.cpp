@@ -19,6 +19,7 @@
 #include <QtGui>
 
 #include "abstractprofile.h"
+#include "privatetab.h"
 #include "protocol.h"
 #include "settings.h"
 #include "userview.h"
@@ -27,13 +28,30 @@
 /*!
  * Конструктор класса UserItem.
  */
-UserItem::UserItem(const AbstractProfile &profile)
+UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
   : QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), profile.nick()),
-  m_profile(profile)
+  m_profile(profile),
+  m_tab(0),
+  m_tabs(tabs)
 {
   setData(profile.pack(), UserView::ProfileData);
   setData(profile.status(), UserView::StatusData);
   updateToolTip();
+}
+
+
+/*!
+ * Возвращает вкладку привата, если приват не был открыт, то он создаётся.
+ */
+PrivateTab* UserItem::privateTab()
+{
+  if (!m_tab) {
+    m_tab = new PrivateTab(icon(), m_tabs);
+    m_tab->setChannel(m_profile.nick());
+    int index = m_tabs->addTab(m_tab, icon(), m_profile.nick());
+    m_tabs->setTabToolTip(index, toolTip());
+  }
+  return m_tab;
 }
 
 
@@ -157,9 +175,10 @@ void QuickUserSearch::quickSearch(const QString &text, bool reset)
 /*!
  * Конструктор класса UserViewPrivate.
  */
-UserViewPrivate::UserViewPrivate(const AbstractProfile *prof)
+UserViewPrivate::UserViewPrivate(const AbstractProfile *profile, QTabWidget *tabs)
   : needSort(false),
-  profile(prof),
+  profile(profile),
+  tabs(tabs),
   quickUserSearch(0)
 {
   sortTimer.setInterval(300);
@@ -222,8 +241,8 @@ void UserViewPrivate::sortNow()
 /*!
  * Конструктор класса UserView.
  */
-UserView::UserView(const AbstractProfile *profile, QWidget *parent)
-  : QListView(parent), d(new UserViewPrivate(profile))
+UserView::UserView(const AbstractProfile *profile, QTabWidget *tabs, QWidget *parent)
+  : QListView(parent), d(new UserViewPrivate(profile, tabs))
 {
   setModel(&d->model);
   setFocusPolicy(Qt::TabFocus);
@@ -259,7 +278,7 @@ bool UserView::add(const AbstractProfile &profile)
   if (isUser(nick))
     return false;
 
-  UserItem *item = new UserItem(profile);
+  UserItem *item = new UserItem(profile, d->tabs);
 
   if (nick == d->profile->nick()) {
     QFont font;
@@ -320,6 +339,24 @@ int UserView::quickSearch(const QString &nick, int pos)
   scrollTo(index);
 
   return pos;
+}
+
+
+PrivateTab* UserView::privateTab(const QString &nick)
+{
+  UserItem *item = d->item(nick);
+  PrivateTab *tab = 0;
+  if (item) {
+    bool isOpen = item->isOpenTab();
+    tab = item->privateTab();
+    if (!isOpen) {
+      connect(tab, SIGNAL(nickClicked(const QString &)), SLOT(nickClicked(const QString &)));
+      connect(tab, SIGNAL(emoticonsClicked(const QString &)), SIGNAL(emoticonsClicked(const QString &)));
+      connect(tab, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)));
+    }
+  }
+
+  return tab;
 }
 
 
