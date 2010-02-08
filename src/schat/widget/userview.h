@@ -40,11 +40,12 @@ class UserItem : public QStandardItem
 {
 public:
   UserItem(const AbstractProfile &profile, QTabWidget *tabs);
-  inline AbstractProfile profile() const { return m_profile; }
   bool isOpenTab() const;
+  inline AbstractProfile profile() const { return m_profile; }
   PrivateTab* privateTab();
   static QString userToolTip(const AbstractProfile &profile);
   void setStatus(quint32 status);
+  void setTab(PrivateTab *tab);
   void update(const AbstractProfile &profile);
 
 private:
@@ -95,11 +96,12 @@ public:
   UserView(const AbstractProfile *profile, QTabWidget *tabs, QWidget *parent);
   ~UserView();
   AbstractProfile profile(const QString &nick) const;
-  bool add(const AbstractProfile &profile);
+  bool add(const AbstractProfile &profile, quint8 echo = 0);
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
   int quickSearch(const QString &nick, int pos = 0);
   PrivateTab* privateTab(const QString &nick);
+  PrivateTab* tabFromName(const QString &text) const;
   static QString userToolTip(const AbstractProfile &profile);
   void clear();
   void remove(const QString &nick);

@@ -202,23 +202,6 @@ QPair<int, AbstractTab *> SChatWindowPrivate::tabFromName(const QString &text, A
 
 
 /*!
- * Обновляет вкладку.
- */
-QPair<int, AbstractTab *> SChatWindowPrivate::updatePrivateTab(const AbstractProfile &prof)
-{
-  QPair<int, AbstractTab *> tab = tabFromName(prof.nick());
-  if (tab.first != -1) {
-    tabs->setTabToolTip(tab.first, UserView::userToolTip(prof));
-    tab.second->setIcon(QIcon(":/images/" + prof.gender() + ".png"));
-
-    if (!tab.second->notice())
-      tabs->setTabIcon(tab.first, tab.second->icon());
-  }
-  return tab;
-}
-
-
-/*!
  * Определяет получателя сообщения.
  */
 QString SChatWindowPrivate::channel()
@@ -1169,28 +1152,33 @@ void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QStr
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
   if (d->users->isUser(nick)) {
-    d->users->rename(nick, newNick);
-
-    QPair<int, AbstractTab *> oldTab = d->tabFromName(nick);
-    QPair<int, AbstractTab *> newTab = d->tabFromName(newNick);
+//    d->users->rename(nick, newNick);
+//
+//    QPair<int, AbstractTab *> oldTab = d->tabFromName(nick);
+//    QPair<int, AbstractTab *> newTab = d->tabFromName(newNick);
     QString html = ChatView::statusChangedNick(gender, nick, newNick);
+//
+//    if (oldTab.first != -1) {
+//
+//      if (newTab.first == -1) {
+//        d->tabs->setTabText(oldTab.first, newNick);
+//        oldTab.second->setChannel(newNick);
+//      }
+//      else {
+//        newTab.second->msg(html);
+//        if (d->tabs->currentIndex() == oldTab.first)
+//          d->tabs->setCurrentIndex(newTab.first);
+//      }
+//
+//      oldTab.second->msg(html);
+//    }
+    AbstractProfile profile(d->users->profile(nick));
+    profile.setNick(newNick);
+    profile.setGender(gender);
+    profile.setFullName(name);
+    d->users->update(nick, profile);
 
-    if (oldTab.first != -1) {
-
-      if (newTab.first == -1) {
-        d->tabs->setTabText(oldTab.first, newNick);
-        oldTab.second->setChannel(newNick);
-      }
-      else {
-        newTab.second->msg(html);
-        if (d->tabs->currentIndex() == oldTab.first)
-          d->tabs->setCurrentIndex(newTab.first);
-      }
-
-      oldTab.second->msg(html);
-    }
-
-    newProfile(gender, newNick, name);
+//    newProfile(gender, newNick, name);
     d->main->msg(html);
   }
 }
@@ -1213,7 +1201,6 @@ void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &
     profile.setNick(nick);
     profile.setFullName(name);
     d->users->update(nick, profile);
-    d->updatePrivateTab(profile);
   }
 }
 
@@ -1237,20 +1224,11 @@ void SChatWindow::newUser(const QStringList &list, quint8 echo, quint8 /*numeric
   AbstractProfile profile(list);
   QString nick = profile.nick();
 
-  if (!d->users->add(profile))
+  if (!d->users->add(profile, echo))
     return;
 
-  if (d->profile->nick() == nick)
-    echo = 0;
-
-  QPair<int, AbstractTab *> tab = d->updatePrivateTab(profile);
-
-  if (echo == 1) {
+  if (d->profile->nick() != nick && echo == 1)
     d->main->addNewUser(profile.genderNum(), nick);
-
-    if (tab.first != -1)
-      tab.second->msg(ChatView::statusNewUser(profile.genderNum(), nick));
-  }
 }
 
 

@@ -60,7 +60,6 @@ public:
   bool sendStatus(quint32 status);
   bool startNotice(int index, const QString &key);
   QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
-  QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
   QString channel();
   QString colorizedPing() const;
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
