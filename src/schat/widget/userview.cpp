@@ -523,14 +523,45 @@ void UserView::setStatus(quint32 status, const QStringList &users)
 void UserView::update(const QString &nick, const AbstractProfile &profile)
 {
   UserItem *item = d->item(nick);
+  if (!item)
+    return;
 
-  if (item) {
+  if (nick != profile.nick()) {
+    PrivateTab *oldTab = tabFromName(nick);
+    PrivateTab *newTab = tabFromName(profile.nick());
+    QString newNick = profile.nick();
+    QString html = ChatView::statusChangedNick(profile.genderNum(), nick, profile.nick());
+
+    if (oldTab) {
+      if (!newTab) {
+        d->tabs->setTabText(d->tabs->indexOf(oldTab), newNick);
+        oldTab->setChannel(newNick);
+        item->setTab(oldTab);
+      }
+      else {
+        newTab->msg(html);
+        item->setTab(newTab);
+        if (d->tabs->currentIndex() == d->tabs->indexOf(oldTab))
+          d->tabs->setCurrentIndex(d->tabs->indexOf(newTab));
+      }
+      oldTab->msg(html);
+    }
+
     item->update(profile);
-
-    // Сортировка списка если ник изменился.
-    if (nick != profile.nick())
-      sort();
+    sort();
   }
+  else
+    item->update(profile);
+}
+
+
+void UserView::update(const QString &nick, const QString &newNick, const QString &name, quint8 gender)
+{
+  AbstractProfile p(profile(nick));
+  p.setNick(newNick);
+  p.setGender(gender);
+  p.setFullName(name);
+  update(nick, p);
 }
 
 

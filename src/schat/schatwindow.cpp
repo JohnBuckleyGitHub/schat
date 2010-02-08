@@ -1151,36 +1151,11 @@ void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QStr
  */
 void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  if (d->users->isUser(nick)) {
-//    d->users->rename(nick, newNick);
-//
-//    QPair<int, AbstractTab *> oldTab = d->tabFromName(nick);
-//    QPair<int, AbstractTab *> newTab = d->tabFromName(newNick);
-    QString html = ChatView::statusChangedNick(gender, nick, newNick);
-//
-//    if (oldTab.first != -1) {
-//
-//      if (newTab.first == -1) {
-//        d->tabs->setTabText(oldTab.first, newNick);
-//        oldTab.second->setChannel(newNick);
-//      }
-//      else {
-//        newTab.second->msg(html);
-//        if (d->tabs->currentIndex() == oldTab.first)
-//          d->tabs->setCurrentIndex(newTab.first);
-//      }
-//
-//      oldTab.second->msg(html);
-//    }
-    AbstractProfile profile(d->users->profile(nick));
-    profile.setNick(newNick);
-    profile.setGender(gender);
-    profile.setFullName(name);
-    d->users->update(nick, profile);
+  if (!d->users->isUser(nick))
+    return;
 
-//    newProfile(gender, newNick, name);
-    d->main->msg(html);
-  }
+  d->users->update(nick, newNick, name, gender);
+  d->main->msg(ChatView::statusChangedNick(gender, nick, newNick));
 }
 
 
@@ -1195,13 +1170,8 @@ void SChatWindow::newNick(quint8 gender, const QString &nick, const QString &new
  */
 void SChatWindow::newProfile(quint8 gender, const QString &nick, const QString &name)
 {
-  if (d->users->isUser(nick)) {
-    AbstractProfile profile(d->users->profile(nick));
-    profile.setGender(gender);
-    profile.setNick(nick);
-    profile.setFullName(name);
-    d->users->update(nick, profile);
-  }
+  if (d->users->isUser(nick))
+    d->users->update(nick, nick, name, gender);
 }
 
 
