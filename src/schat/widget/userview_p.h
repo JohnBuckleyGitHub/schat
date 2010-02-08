@@ -29,7 +29,7 @@ class QuickUserSearch;
 class UserViewPrivate
 {
 public:
-  UserViewPrivate(const AbstractProfile *prof);
+  UserViewPrivate(const AbstractProfile *profile, QTabWidget *tabs);
   ~UserViewPrivate();
   UserItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchExactly) const;
   void sort();
@@ -38,6 +38,7 @@ public:
   bool needSort;
   const AbstractProfile *profile;
   QStandardItemModel model;
+  QTabWidget *tabs;
   QTimer sortTimer;
   QuickUserSearch *quickUserSearch;
 };

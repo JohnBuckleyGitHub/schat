@@ -183,21 +183,6 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
 
 
 /*!
- * Создаёт новую вкладку с приватом.
- */
-QPair<int, AbstractTab *> SChatWindowPrivate::createPrivateTab(const QString &nick)
-{
-  AbstractProfile prof(users->profile(nick));
-  AbstractTab *tab = new PrivateTab(QIcon(":/images/" + prof.gender() + ".png"), q);
-  tab->setChannel(nick);
-  int index = tabs->addTab(tab, tab->icon(), nick);
-  tabs->setTabToolTip(index, UserView::userToolTip(prof));
-
-  return QPair<int, AbstractTab *>(index, tab);
-}
-
-
-/*!
  * Выполняет поиск вкладки с заданным текстом и типом.
  */
 QPair<int, AbstractTab *> SChatWindowPrivate::tabFromName(const QString &text, AbstractTab::Type type) const
@@ -794,7 +779,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->central     = new QWidget(this);
   d->tabs        = new QTabWidget(this);
   d->tabs->installEventFilter(this);
-  d->users       = new UserView(d->profile, this);
+  d->users       = new UserView(d->profile, d->tabs, this);
   d->mainLay     = new QVBoxLayout(d->central);
   #ifndef SCHAT_WINCE
   d->toolBar     = new QToolBar(this);
@@ -845,6 +830,8 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(d->users, SIGNAL(insertNick(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->users, SIGNAL(showSettings()), SLOT(showSettingsPage()));
+  connect(d->users, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
+  connect(d->users, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
   connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
@@ -1032,25 +1019,16 @@ void SChatWindow::accessGranted(const QString &network, const QString &server, q
 
 
 /*!
- * Открытие нового привата по инициативе пользователя.
- * Если вкладка не существует, то она будет создана, индекс
- * устанавливается на эту вкладку.
+ * Открытие нового привата по инициативе локального пользователя.
+ * Индекс устанавливается на этот приват.
  *
  * \param nick Ник удалённого пользователя.
  */
 void SChatWindow::addTab(const QString &nick)
 {
-  int index = d->tabFromName(nick).first;
-
-  if (index == -1) {
-    QPair<int, AbstractTab *> newTab = d->createPrivateTab(nick);
-    index = newTab.first;
-    connect(newTab.second, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
-    connect(newTab.second, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
-    connect(newTab.second, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
-  }
-
-  d->tabs->setCurrentIndex(index);
+  PrivateTab *tab = d->users->privateTab(nick);
+  if (tab)
+    d->tabs->setCurrentIndex(d->tabs->indexOf(tab));
 }
 
 
@@ -1325,29 +1303,13 @@ void SChatWindow::openChat(const QString &nick, bool pub, bool open)
  */
 void SChatWindow::privateMessage(quint8 flag, const QString &nick, const QString &msg)
 {
-  if (!d->users->isUser(nick))
-    return;
-
-  QPair<int, AbstractTab *> tabPair = d->tabFromName(nick);
-
-  int index = tabPair.first;
-  AbstractTab *tab = tabPair.second;
-
-  if (index == -1) {
-    QPair<int, AbstractTab *> newTab = d->createPrivateTab(nick);
-    index = newTab.first;
-    tab = newTab.second;
-    d->tabs->setCurrentIndex(index);
-    connect(tab, SIGNAL(nickClicked(const QString &)), d->users, SLOT(nickClicked(const QString &)));
-    connect(tab, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
-    connect(tab, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
-  }
+  PrivateTab *tab = d->users->privateTab(nick);
 
   if (tab) {
     if (flag == 1)
       tab->addMsg(d->profile->nick(), msg);
     else
-      tab->addMsg(nick, msg, ChatView::MsgRecived, d->startNotice(index, "PrivateMessage"));
+      tab->addMsg(nick, msg, ChatView::MsgRecived, d->startNotice(d->tabs->indexOf(tab), "PrivateMessage"));
   }
 }
 

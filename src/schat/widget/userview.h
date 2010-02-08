@@ -27,6 +27,7 @@
 #include "abstractprofile.h"
 
 class AbstractProfile;
+class PrivateTab;
 class QMouseEvent;
 class UserView;
 class UserViewPrivate;
@@ -37,8 +38,10 @@ class UserViewPrivate;
 class UserItem : public QStandardItem
 {
 public:
-  UserItem(const AbstractProfile &profile);
+  UserItem(const AbstractProfile &profile, QTabWidget *tabs);
   inline AbstractProfile profile() const { return m_profile; }
+  inline bool isOpenTab() const          { return (bool) m_tab; }
+  PrivateTab* privateTab();
   static QString userToolTip(const AbstractProfile &profile);
   void setStatus(quint32 status);
   void update(const AbstractProfile &profile);
@@ -48,6 +51,8 @@ private:
   void updateToolTip();
 
   AbstractProfile m_profile; ///< Профиль пользователя.
+  PrivateTab *m_tab;         ///< Приват ассоциированный с этим пользователем.
+  QTabWidget *m_tabs;        ///< Виджет хранящий приваты.
 };
 
 
@@ -86,13 +91,14 @@ public:
     StatusData
   };
 
-  UserView(const AbstractProfile *profile, QWidget *parent = 0);
+  UserView(const AbstractProfile *profile, QTabWidget *tabs, QWidget *parent);
   ~UserView();
   AbstractProfile profile(const QString &nick) const;
   bool add(const AbstractProfile &profile);
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
   int quickSearch(const QString &nick, int pos = 0);
+  PrivateTab* privateTab(const QString &nick);
   static QString userToolTip(const AbstractProfile &profile);
   void clear();
   void remove(const QString &nick);
@@ -103,7 +109,9 @@ public:
 
 signals:
   void addTab(const QString &nick);
+  void emoticonsClicked(const QString &emo);
   void insertNick(const QString &nick);
+  void popupMsg(const QString &nick, const QString &time, const QString &html, bool pub);
   void showSettings();
   void usersCountChanged(int count);
 
