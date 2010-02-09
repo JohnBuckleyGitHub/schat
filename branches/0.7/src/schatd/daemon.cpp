@@ -697,7 +697,7 @@ void Daemon::universal(quint16 sub, const QString &nick, const QList<quint32> &d
   QString lowerNick = normalizeNick(nick);
 
   if (m_users.contains(lowerNick)) {
-    if (sub == schat::UniStatus && !data1.isEmpty()) {
+    if (sub == schat::UniStatus && !data1.isEmpty() && data1.at(0) != schat::StatusOffline) {
       m_users.value(lowerNick)->profile()->setStatus(data1.at(0));
       QList<quint32> out1;
       out1 << data1.at(0) << 1;
