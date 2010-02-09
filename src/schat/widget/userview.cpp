@@ -30,11 +30,12 @@
  * Конструктор класса UserItem.
  */
 UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
-  : QStandardItem(QIcon(":/images/" + profile.gender() + ".png"), profile.nick()),
+  : QStandardItem(profile.nick()),
   m_profile(profile),
   m_tab(0),
   m_tabs(tabs)
 {
+  updateIcon();
   updateToolTip();
 }
 
@@ -106,6 +107,7 @@ void UserItem::offline()
 {
   if (m_tab) {
     m_profile.setStatus(schat::StatusOffline);
+    updateIcon();
     m_tabs->setTabToolTip(m_tabs->indexOf(m_tab), userToolTip(m_profile));
   }
 }
@@ -126,6 +128,7 @@ void UserItem::setStatus(quint32 status)
     setForeground(QPalette().brush(QPalette::WindowText));
 
   m_profile.setStatus(status);
+  updateIcon();
   updateToolTip();
 }
 
@@ -153,12 +156,35 @@ void UserItem::update(const AbstractProfile &profile)
 }
 
 
+QIcon UserItem::drawIcon() const
+{
+  QString file = ":/images/" + m_profile.gender() + ".png";
+  quint32 status = m_profile.status();
+
+  if (status == schat::StatusOffline)
+    return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
+
+  if (status == schat::StatusNormal)
+    return QIcon(file);
+
+  QPixmap pixmap(file);
+  QPainter painter(&pixmap);
+  if (status == schat::StatusAway || status == schat::StatusAutoAway)
+    painter.drawPixmap(8, 8, QPixmap(":/images/status/small/away.png"));
+  else if (status == schat::StatusDnD)
+    painter.drawPixmap(7, 7, QPixmap(":/images/status/small/dnd.png"));
+
+  painter.end();
+  return QIcon(pixmap);
+}
+
+
 /*!
  * Обновление иконки.
  */
 void UserItem::updateIcon()
 {
-  setIcon(QIcon(":/images/" + m_profile.gender() + ".png"));
+  setIcon(drawIcon());
 
   if (m_tab) {
     m_tab->setIcon(icon());

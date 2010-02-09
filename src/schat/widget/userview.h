@@ -50,6 +50,7 @@ public:
   void update(const AbstractProfile &profile);
 
 private:
+  QIcon drawIcon() const;
   void updateIcon();
   void updateToolTip();
 
