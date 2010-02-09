@@ -35,8 +35,6 @@ UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
   m_tab(0),
   m_tabs(tabs)
 {
-  setData(profile.pack(), UserView::ProfileData);
-  setData(profile.status(), UserView::StatusData);
   updateToolTip();
 }
 
@@ -51,11 +49,11 @@ bool UserItem::isOpenTab() const
 
 
 /*!
- * Возвращает вкладку привата, если приват не был открыт, то он создаётся.
+ * Возвращает вкладку привата.
  */
-PrivateTab* UserItem::privateTab()
+PrivateTab* UserItem::privateTab(bool create)
 {
-  if (!m_tab) {
+  if (create && !m_tab) {
     m_tab = new PrivateTab(icon(), m_tabs);
     m_tab->setChannel(m_profile.nick());
     int index = m_tabs->addTab(m_tab, icon(), m_profile.nick());
@@ -107,6 +105,7 @@ void UserItem::setStatus(quint32 status)
   else
     setForeground(QPalette().brush(QPalette::WindowText));
 
+  m_profile.setStatus(status);
   updateToolTip();
 }
 
@@ -384,14 +383,14 @@ int UserView::quickSearch(const QString &nick, int pos)
 }
 
 
-PrivateTab* UserView::privateTab(const QString &nick)
+PrivateTab* UserView::privateTab(const QString &nick, bool create)
 {
   UserItem *item = d->item(nick);
   PrivateTab *tab = 0;
   if (item) {
     bool isOpen = item->isOpenTab();
-    tab = item->privateTab();
-    if (!isOpen) {
+    tab = item->privateTab(create);
+    if (tab && !isOpen) {
       connect(tab, SIGNAL(nickClicked(const QString &)), SLOT(nickClicked(const QString &)));
       connect(tab, SIGNAL(emoticonsClicked(const QString &)), SIGNAL(emoticonsClicked(const QString &)));
       connect(tab, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)));
@@ -437,34 +436,6 @@ AbstractProfile UserView::profile(const QString &nick) const
 {
   UserItem *item = d->item(nick);
   return item->profile();
-}
-
-
-/*!
- * Формирует строку для всплывающей подсказки, содержащую информацию о пользователе.
- *
- * \param profile Профиль пользователя.
- */
-QString UserView::userToolTip(const AbstractProfile &profile)
-{
-  QString html = QString("<h3><img src='%1' align='left'> %2</h3><table>").arg(":/images/" + profile.gender() + ".png").arg(Qt::escape(profile.nick()));
-  if (!profile.fullName().isEmpty())
-    html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("ФИО:")).arg(Qt::escape(profile.fullName()));
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(tr("Адрес:")).arg(Qt::escape(profile.host()));
-
-  quint32 status = profile.status();
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(tr("Статус:"));
-  if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    html += tr("Отсутствую");
-  else if (status == schat::StatusDnD)
-    html += tr("Не беспокоить");
-  else
-    html += tr("В сети");
-
-  html += "</td></tr></table>";
-
-  return html;
 }
 
 
@@ -579,7 +550,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
   QModelIndex index = indexAt(event->pos());
 
   if (index.isValid()) {
-    QStandardItem *item = d->model.itemFromIndex(index);
+    UserItem *item = static_cast<UserItem *>(d->model.itemFromIndex(index));
     QString nick = item->text();
 
     QAction *profileAction     = 0;
@@ -595,7 +566,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
     copyMenu.setIcon(QIcon(":/images/edit-copy.png"));
     menu.addMenu(&copyMenu);
 
-    AbstractProfile profile(item->data(ProfileData).toStringList(), this);
+    AbstractProfile profile = item->profile();
     QAction *copyNick = copyMenu.addAction(QIcon(":/images/profile.png"), tr("Ник"));
     QAction *copyFullName = 0;
     if (!profile.fullName().isEmpty())

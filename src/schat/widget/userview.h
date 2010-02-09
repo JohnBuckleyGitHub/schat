@@ -42,7 +42,7 @@ public:
   UserItem(const AbstractProfile &profile, QTabWidget *tabs);
   bool isOpenTab() const;
   inline AbstractProfile profile() const { return m_profile; }
-  PrivateTab* privateTab();
+  PrivateTab* privateTab(bool create = true);
   static QString userToolTip(const AbstractProfile &profile);
   void setStatus(quint32 status);
   void setTab(PrivateTab *tab);
@@ -88,11 +88,6 @@ class UserView : public QListView
   Q_OBJECT
 
 public:
-  enum ItemData {
-    ProfileData = Qt::UserRole + 1,
-    StatusData
-  };
-
   UserView(const AbstractProfile *profile, QTabWidget *tabs, QWidget *parent);
   ~UserView();
   AbstractProfile profile(const QString &nick) const;
@@ -100,9 +95,8 @@ public:
   bool add(const QStringList &list);
   bool isUser(const QString &nick) const;
   int quickSearch(const QString &nick, int pos = 0);
-  PrivateTab* privateTab(const QString &nick);
+  PrivateTab* privateTab(const QString &nick, bool create = true);
   PrivateTab* tabFromName(const QString &text) const;
-  static QString userToolTip(const AbstractProfile &profile);
   void clear();
   void remove(const QString &nick);
   void rename(const QString &oldNick, const QString &newNick);

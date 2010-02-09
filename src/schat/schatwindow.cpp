@@ -183,25 +183,6 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
 
 
 /*!
- * Выполняет поиск вкладки с заданным текстом и типом.
- */
-QPair<int, AbstractTab *> SChatWindowPrivate::tabFromName(const QString &text, AbstractTab::Type type) const
-{
-  int count = tabs->count();
-
-  if (count > 0)
-    for (int i = 0; i < count; ++i)
-      if (tabs->tabText(i) == text) {
-        AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
-        if (tab->type() == type)
-          return QPair<int, AbstractTab *>(i, tab);
-      }
-
-  return QPair<int, AbstractTab *>(-1, 0);
-}
-
-
-/*!
  * Определяет получателя сообщения.
  */
 QString SChatWindowPrivate::channel()
@@ -403,36 +384,34 @@ void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
   if (!users->isUser(nick))
     return;
 
-  bool statusMessages = pref->getBool("StatusMessages");
+  if (!pref->getBool("StatusMessages"))
+    return;
+
   QString html;
-  if (statusMessages) {
-    html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
-    if (users->profile(nick).isFemale())
-      html += QObject::tr("сменила статус на:");
-    else
-      html += QObject::tr("сменил статус на:");
+  html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
+  if (users->profile(nick).isFemale())
+    html += QObject::tr("сменила статус на:");
+  else
+    html += QObject::tr("сменил статус на:");
 
-    html += " <b>";
+  html += " <b>";
 
-    if (status == schat::StatusAutoAway || status == schat::StatusAway)
-      html += QObject::tr("Отсутствую");
-    else if (status == schat::StatusDnD)
-      html += QObject::tr("Не беспокоить");
-    else
-      html += QObject::tr("В сети");
+  if (status == schat::StatusAutoAway || status == schat::StatusAway)
+    html += QObject::tr("Отсутствую");
+  else if (status == schat::StatusDnD)
+    html += QObject::tr("Не беспокоить");
+  else
+    html += QObject::tr("В сети");
 
-    html += "</b></span>";
-  }
+  html += "</b></span>";
 
   if (nick != profile->nick()) {
-    QPair<int, AbstractTab *> tab = tabFromName(nick);
-    if (tab.first != -1) {
-      if (statusMessages)
-        tab.second->msg(html);
-      tabs->setTabToolTip(tab.first, UserView::userToolTip(users->profile(nick)));
+    PrivateTab *tab = users->privateTab(nick, false);
+    if (tab) {
+      tab->msg(html);
     }
   }
-  else if (statusMessages)
+  else
     msgToAllPrivateTabs(html);
 }
 
@@ -655,30 +634,10 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
   // Обновление списка пользователей.
   users->setStatus(status, data2);
 
-  if (data1.size() > 1)
-    if (data1.at(1))
-      if (users->isUser(data2.at(0))) {
-        displayStatus(status, data2.at(0));
-        return;
-      }
-
-  // Обновление всплывающих подсказок приватов.
-  int count = tabs->count();
-  if (count > 0) {
-    QHash<QString, int> privateTabs;
-
-    for (int i = 0; i < count; ++i) {
-      AbstractTab *tab = static_cast<AbstractTab *>(tabs->widget(i));
-      if (tab->type() == AbstractTab::Private)
-        privateTabs.insert(tabs->tabText(i), i);
-    }
-
-    if (!privateTabs.isEmpty()) {
-      foreach (QString user, data2) {
-        if (users->isUser(user))
-          if (privateTabs.contains(user))
-            tabs->setTabToolTip(privateTabs.value(user), UserView::userToolTip(users->profile(user)));
-      }
+  if (data1.size() > 1 && data1.at(1)) {
+    if (users->isUser(data2.at(0))) {
+      displayStatus(status, data2.at(0));
+      return;
     }
   }
 }
@@ -1222,12 +1181,12 @@ void SChatWindow::onSecondsIdle(int seconds)
 void SChatWindow::openChat(const QString &nick, bool pub, bool open)
 {
   if (!pub) {
-    QPair<int, AbstractTab *> tab = d->tabFromName(nick);
-    if (tab.first != -1) {
+    PrivateTab *tab = d->users->privateTab(nick, false);
+    if (tab) {
       if (open)
-        d->tabs->setCurrentIndex(tab.first);
+        d->tabs->setCurrentIndex(d->tabs->indexOf(tab));
       else
-        stopNotice(tab.first);
+        stopNotice(d->tabs->indexOf(tab));
     }
   }
   else {
@@ -1473,21 +1432,20 @@ void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStr
  *
  * \param nick Ник пользователя.
  * \param bye  Опциональное сообщение при выходе.
- * \param flag Флаг эха, в случае если равен \a 1, то сообщение
+ * \param echo Флаг эха, в случае если равен \a 1, то сообщение
  *             о выходе будет добавлено в основной канал и в приват.
  */
-void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 flag)
+void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 echo)
 {
   if (d->users->isUser(nick)) {
 
-    if (flag == 1) {
+    if (echo == 1) {
       AbstractProfile profile(d->users->profile(nick));
-      QPair<int, AbstractTab *> tab = d->tabFromName(nick);
+      PrivateTab *tab = d->users->privateTab(nick, false);
+      if (tab)
+        tab->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
 
       d->main->addUserLeft(profile.genderNum(), nick, bye);
-
-      if (tab.first != -1)
-        tab.second->msg(ChatView::statusUserLeft(profile.genderNum(), nick, bye));
     }
 
     d->users->remove(nick);
