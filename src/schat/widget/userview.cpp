@@ -71,10 +71,19 @@ PrivateTab* UserItem::privateTab(bool create)
 QString UserItem::userToolTip(const AbstractProfile &profile)
 {
   QString html = QString("<h3><img src='%1' align='left'> %2</h3><table>").arg(":/images/" + profile.gender() + ".png").arg(Qt::escape(profile.nick()));
+  QString line = "<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>";
+
   if (!profile.fullName().isEmpty())
-    html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("ФИО:")).arg(Qt::escape(profile.fullName()));
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("Клиент:")).arg(Qt::escape(profile.userAgent().replace('/', ' ')));
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>").arg(QObject::tr("Адрес:")).arg(Qt::escape(profile.host()));
+    html += QString(line).arg(QObject::tr("ФИО:")).arg(Qt::escape(profile.fullName()));
+
+  QStringList userAgent = profile.userAgent().split("/");
+  if (userAgent.size() == 2) {
+    if (userAgent.at(0) == "IMPOMEZIA Simple Chat")
+      html += QString(line).arg(QObject::tr("Версия:")).arg(Qt::escape(userAgent.at(1)));
+    else
+      html += QString(line).arg(QObject::tr("Клиент:")).arg(Qt::escape(userAgent.at(0) + " " + userAgent.at(1)));
+  }
+  html += QString(line).arg(QObject::tr("Адрес:")).arg(Qt::escape(profile.host()));
 
   quint32 status = profile.status();
   html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(QObject::tr("Статус:"));
