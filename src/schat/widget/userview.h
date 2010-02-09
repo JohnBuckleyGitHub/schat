@@ -44,6 +44,7 @@ public:
   inline AbstractProfile profile() const { return m_profile; }
   PrivateTab* privateTab(bool create = true);
   static QString userToolTip(const AbstractProfile &profile);
+  void offline();
   void setStatus(quint32 status);
   void setTab(PrivateTab *tab);
   void update(const AbstractProfile &profile);
@@ -99,7 +100,6 @@ public:
   PrivateTab* tabFromName(const QString &text) const;
   void clear();
   void remove(const QString &nick);
-  void rename(const QString &oldNick, const QString &newNick);
   void setQuickSearch(QuickUserSearch *widget);
   void setStatus(quint32 status, const QStringList &users);
   void update(const QString &nick, const AbstractProfile &profile);

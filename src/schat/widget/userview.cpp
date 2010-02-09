@@ -82,12 +82,23 @@ QString UserItem::userToolTip(const AbstractProfile &profile)
     html += QObject::tr("Отсутствую");
   else if (status == schat::StatusDnD)
     html += QObject::tr("Не беспокоить");
+  else if (status == schat::StatusOffline)
+    html += QObject::tr("Не в сети");
   else
     html += QObject::tr("В сети");
 
   html += "</td></tr></table>";
 
   return html;
+}
+
+
+void UserItem::offline()
+{
+  if (m_tab) {
+    m_profile.setStatus(schat::StatusOffline);
+    m_tabs->setTabToolTip(m_tabs->indexOf(m_tab), userToolTip(m_profile));
+  }
 }
 
 
@@ -441,22 +452,12 @@ AbstractProfile UserView::profile(const QString &nick) const
 
 void UserView::remove(const QString &nick)
 {
-  QStandardItem *item = d->item(nick);
+  UserItem *item = d->item(nick);
 
   if (item) {
+    item->offline();
     d->model.removeRow(d->model.indexFromItem(item).row());
     emit usersCountChanged(d->model.rowCount(QModelIndex()));
-  }
-}
-
-
-void UserView::rename(const QString &oldNick, const QString &newNick)
-{
-  QStandardItem *item = d->item(oldNick);
-
-  if (item) {
-    item->setText(newNick);
-    sort();
   }
 }
 
