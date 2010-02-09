@@ -58,10 +58,10 @@
   <file>images/qt-logo.png</file>
   <file>images/sound.png</file>
   <file>images/sound_mute.png</file>
-  <file>images/status-away.png</file>
-  <file>images/status-dnd.png</file>
-  <file>images/status-offline.png</file>
-  <file>images/status-online.png</file>
+  <file>images/status/away.png</file>
+  <file>images/status/dnd.png</file>
+  <file>images/status/offline.png</file>
+  <file>images/status/online.png</file>
   <file>images/tab_close.png</file>
   <file>images/undo.png</file>
   <file>images/update.png</file>

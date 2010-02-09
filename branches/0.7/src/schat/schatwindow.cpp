@@ -302,10 +302,10 @@ void SChatWindowPrivate::createStatusBar()
   #ifndef SCHAT_WINCE
   statusCombo = new QComboBox(q);
   statusCombo->setIconSize(QSize(14, 14));
-  statusCombo->addItem(QIcon(":/images/status-online.png"),  QObject::tr("В сети"));
-  statusCombo->addItem(QIcon(":/images/status-away.png"),    QObject::tr("Отсутствую"));
-  statusCombo->addItem(QIcon(":/images/status-dnd.png"),     QObject::tr("Не беспокоить"));
-  statusCombo->addItem(QIcon(":/images/status-offline.png"), QObject::tr("Не в сети"));
+  statusCombo->addItem(QIcon(":/images/status/online.png"),  QObject::tr("В сети"));
+  statusCombo->addItem(QIcon(":/images/status/away.png"),    QObject::tr("Отсутствую"));
+  statusCombo->addItem(QIcon(":/images/status/dnd.png"),     QObject::tr("Не беспокоить"));
+  statusCombo->addItem(QIcon(":/images/status/offline.png"), QObject::tr("Не в сети"));
   statusCombo->setFocusPolicy(Qt::NoFocus);
   #endif
 
@@ -346,7 +346,7 @@ void SChatWindowPrivate::createTrayIcon()
   statusMenu->addAction(offlineAction);
 
   statusAction = menu->addMenu(statusMenu);
-  statusAction->setIcon(QIcon(":/images/status-online.png"));
+  statusAction->setIcon(QIcon(":/images/status/online.png"));
 
   #ifdef Q_WS_WIN
   if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
@@ -656,22 +656,22 @@ void SChatWindowPrivate::updateStatus(int status)
 
   switch (status) {
     case StatusOnline:
-      statusAction->setIcon(QIcon(":/images/status-online.png"));
+      statusAction->setIcon(QIcon(":/images/status/online.png"));
       onlineAction->setChecked(true);
       break;
 
     case StatusAway:
-      statusAction->setIcon(QIcon(":/images/status-away.png"));
+      statusAction->setIcon(QIcon(":/images/status/away.png"));
       awayAction->setChecked(true);
       break;
 
     case StatusDnD:
-      statusAction->setIcon(QIcon(":/images/status-dnd.png"));
+      statusAction->setIcon(QIcon(":/images/status/dnd.png"));
       dndAction->setChecked(true);
       break;
 
     case StatusOffline:
-      statusAction->setIcon(QIcon(":/images/status-offline.png"));
+      statusAction->setIcon(QIcon(":/images/status/offline.png"));
       offlineAction->setChecked(true);
       break;
   }
@@ -1515,22 +1515,22 @@ void SChatWindow::createActions()
   QActionGroup *statusActionGroup = new QActionGroup(this);
   connect(statusActionGroup, SIGNAL(triggered(QAction *)), SLOT(statusChangedByUser(QAction *)));
 
-  d->onlineAction = statusActionGroup->addAction(QIcon(":/images/status-online.png"), tr("В сети"));
+  d->onlineAction = statusActionGroup->addAction(QIcon(":/images/status/online.png"), tr("В сети"));
   d->onlineAction->setData(SChatWindowPrivate::StatusOnline);
   d->onlineAction->setShortcut(tr("Ctrl+1"));
   d->onlineAction->setCheckable(true);
 
-  d->awayAction = statusActionGroup->addAction(QIcon(":/images/status-away.png"), tr("Отсутствую"));
+  d->awayAction = statusActionGroup->addAction(QIcon(":/images/status/away.png"), tr("Отсутствую"));
   d->awayAction->setData(SChatWindowPrivate::StatusAway);
   d->awayAction->setShortcut(tr("Ctrl+2"));
   d->awayAction->setCheckable(true);
 
-  d->dndAction = statusActionGroup->addAction(QIcon(":/images/status-dnd.png"), tr("Не беспокоить"));
+  d->dndAction = statusActionGroup->addAction(QIcon(":/images/status/dnd.png"), tr("Не беспокоить"));
   d->dndAction->setData(SChatWindowPrivate::StatusDnD);
   d->dndAction->setShortcut(tr("Ctrl+3"));
   d->dndAction->setCheckable(true);
 
-  d->offlineAction = statusActionGroup->addAction(QIcon(":/images/status-offline.png"), tr("Не в сети"));
+  d->offlineAction = statusActionGroup->addAction(QIcon(":/images/status/offline.png"), tr("Не в сети"));
   d->offlineAction->setData(SChatWindowPrivate::StatusOffline);
   d->offlineAction->setShortcut(tr("Ctrl+0"));
   d->offlineAction->setCheckable(true);
