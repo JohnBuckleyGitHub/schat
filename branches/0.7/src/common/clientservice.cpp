@@ -949,7 +949,7 @@ void ClientService::opcodeUserLeave()
 
   emit userLeave(p_nick, p_bye, p_flag);
 
-  if (p_nick == m_safeNick) {
+  if (p_nick.toLower() == m_safeNick.toLower()) {
     m_profile->setNick(m_safeNick);
     QTimer::singleShot(0, this, SLOT(sendNewProfile()));
   }

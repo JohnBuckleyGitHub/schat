@@ -207,17 +207,17 @@ AboutLicense::AboutLicense(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setText(QString(
       "<p style='color:#333;'><b>%1 %2</b><br />"
-      "<i>Copyright © 2008 - 2009 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
+      "<i>Copyright © 2008 - 2010 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
       "it under the terms of the GNU General Public License as published by "
       "the Free Software Foundation, either version 3 of the License, or "
       "(at your option) any later version.</p>"
       "<p>This program is distributed in the hope that it will be useful, "
       "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
       "GNU General Public License for more details.</p>"
       "<p>You should have received a copy of the GNU General Public License "
-      "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
+      "along with this program. If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
   )
   .arg(QApplication::applicationName())
   .arg(QApplication::applicationVersion()));
