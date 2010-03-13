@@ -31,7 +31,7 @@ class UserViewPrivate
 public:
   UserViewPrivate(const AbstractProfile *profile, QTabWidget *tabs);
   ~UserViewPrivate();
-  UserItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchExactly) const;
+  UserItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchFixedString) const;
   void sort();
   void sortNow();
 
