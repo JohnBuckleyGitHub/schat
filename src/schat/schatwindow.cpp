@@ -364,7 +364,7 @@ void SChatWindowPrivate::createTrayIcon()
   #ifndef Q_OS_WINCE
   tray->setContextMenu(menu);
   #endif
-  tray->show();
+  QTimer::singleShot(0, tray, SLOT(show()));
 }
 
 
@@ -760,7 +760,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   #ifndef SCHAT_WINCE
   d->createToolButtons();
   #endif
-  d->createTrayIcon();
   createService();
 
   connect(d->send, SIGNAL(sendMsg(const QString &)), SLOT(sendMsg(const QString &)));
@@ -774,13 +773,15 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->users, SIGNAL(showSettings()), SLOT(showSettingsPage()));
   connect(d->users, SIGNAL(emoticonsClicked(const QString &)), d->send, SLOT(insertHtml(const QString &)));
   connect(d->users, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
-  connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
+
   #ifndef SCHAT_WINCE
   connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
   #endif
 
+  d->createTrayIcon();
+  connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   #ifndef SCHAT_NO_UPDATE
     connect(d->tray, SIGNAL(messageClicked()), SLOT(messageClicked()));
   #endif
