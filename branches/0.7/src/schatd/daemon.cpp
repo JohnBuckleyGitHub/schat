@@ -502,6 +502,21 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
 {
   SCHAT_DEBUG(this << "::message()" << channel << nick << msg)
 
+  UserUnit *user = m_users.value(normalizeNick(nick), 0);
+  if (!user)
+    return;
+
+  int mute = user->isFlood(msg);
+  qDebug() << mute;
+  if (mute > 0) {
+    DaemonService *service = user->service();
+    qDebug() << service;
+    if (service) {
+      service->sendServerMessage(tr("Для предотвращения флуда вы лишены возможности говорить на <b>%n</b> секунд", "", mute));
+    }
+    return;
+  }
+
   QString lowerChannel = normalizeNick(channel);
 
   if (channel.isEmpty()) {
