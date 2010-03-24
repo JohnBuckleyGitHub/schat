@@ -32,22 +32,25 @@ class AbstractProfile;
 class FloodLimits {
 public:
   FloodLimits()
-  : floodDetectTime(15),
+  : floodDetectTime(16),
+    floodLimit(8),
     maxRepeatedMsgs(3),
     muteTime(60)
   {
   }
 
-  FloodLimits(int floodDetectTime, int maxRepeatedMsgs, int muteTime)
+  FloodLimits(int floodDetectTime, int floodLimit, int maxRepeatedMsgs, int muteTime)
   : floodDetectTime(floodDetectTime),
+    floodLimit(floodLimit),
     maxRepeatedMsgs(maxRepeatedMsgs),
     muteTime(muteTime)
   {
   }
 
-  const int floodDetectTime;
-  const int maxRepeatedMsgs;
-  const int muteTime;
+  const int floodDetectTime; ///< Контрольное время в течении которого обнаруживается флуд.
+  const int floodLimit;      ///< Максимальное число сообщений которые могут быть отправлены за время floodDetectTime.
+  const int maxRepeatedMsgs; ///< Максимальное число повторяющихся подряд сообщений.
+  const int muteTime;        ///< Время в течении которого пользователь не может говорить.
 };
 
 
@@ -70,10 +73,12 @@ public:
 private:
   AbstractProfile *m_profile;        ///< Профиль пользователя.
   FloodLimits m_floodLimits;         ///< Параметры защиты от флуда.
+  int m_messages;                    ///< Счётчик сообщений для обнаружения флуда.
   int m_repeatedMsgs;                ///< Число зафиксированных повторяющихся сообщений.
   QPointer<DaemonService> m_service; ///< Сервис обслуживающий пользователя.
   QString m_previousMessage;         ///< Предыдущее сообщение.
   quint8 m_numeric;                  ///< Номер сервера.
+  uint m_floodDetectStartTime;       ///< Контрольное время старта проверки на флуд.
   uint m_lastMsgTime;                ///< Время последнего сообщения.
   uint m_muteTime;                   ///< Время когда начало действовать ограничение.
 };

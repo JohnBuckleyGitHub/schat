@@ -26,6 +26,7 @@
  */
 UserUnit::UserUnit()
   : m_profile(0),
+    m_messages(0),
     m_repeatedMsgs(0),
     m_numeric(0),
     m_muteTime(0)
@@ -41,6 +42,7 @@ UserUnit::UserUnit()
  */
 UserUnit::UserUnit(const QStringList &list, DaemonService *service, quint8 numeric)
   : m_profile(new AbstractProfile(list)),
+    m_messages(0),
     m_repeatedMsgs(0),
     m_service(service),
     m_numeric(numeric),
@@ -60,6 +62,11 @@ UserUnit::~UserUnit()
 }
 
 
+/**
+ * Проверка сообщения на удовлетворение критериям флуда.
+ *
+ * \return Время в секундах на которое пользователь лишён права голоса, по причине флуда, 0 - если флуд не обнаружен.
+ */
 int UserUnit::isFlood(const QString &message)
 {
   if (m_previousMessage == message)
@@ -70,8 +77,20 @@ int UserUnit::isFlood(const QString &message)
   m_previousMessage = message;
   m_lastMsgTime = QDateTime::currentDateTime().toTime_t();
 
-  if (m_repeatedMsgs >= m_floodLimits.maxRepeatedMsgs)
+  if (m_messages == 0) {
+    m_floodDetectStartTime = m_lastMsgTime;
+    m_messages++;
+  }
+  else if (m_lastMsgTime - m_floodDetectStartTime <= (uint) m_floodLimits.floodDetectTime) {
+    m_messages++;
+  }
+  else {
+    m_messages = 0;
+  }
+
+  if (m_repeatedMsgs >= m_floodLimits.maxRepeatedMsgs || m_messages >= m_floodLimits.floodLimit) {
     m_muteTime = m_lastMsgTime;
+  }
 
   int offset = m_lastMsgTime - m_muteTime;
   if (m_muteTime != 0 && offset <= m_floodLimits.muteTime)
