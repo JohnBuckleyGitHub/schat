@@ -54,6 +54,31 @@ public:
 };
 
 
+/**
+ * Хранит информацию о флуд лимитах, пока пользователь отключен.
+ */
+class FloodOfflineItem {
+public:
+  FloodOfflineItem()
+  : m_muteTime(0)
+  {
+  }
+
+  FloodOfflineItem(const QString &host, uint muteTime)
+  : m_host(host),
+    m_muteTime(muteTime)
+  {
+  }
+
+  inline QString host() const  { return m_host; }
+  inline uint muteTime() const { return m_muteTime; }
+
+private:
+  QString m_host;
+  uint m_muteTime;
+};
+
+
 /*!
  * \brief Базовый класс хранящий информацию о пользователе.
  */
@@ -64,10 +89,12 @@ public:
   UserUnit(const QStringList &list, DaemonService *service = 0, quint8 numeric = 0);
   ~UserUnit();
 
-  inline AbstractProfile* profile()      { return m_profile; }
-  inline DaemonService* service()        { return m_service; }
-  inline quint8 numeric()                { return m_numeric; }
-  inline void setNumeric(quint8 numeric) { m_numeric = numeric; }
+  inline AbstractProfile* profile() const { return m_profile; }
+  inline DaemonService* service() const   { return m_service; }
+  inline quint8 numeric() const           { return m_numeric; }
+  inline uint muteTime() const            { return m_muteTime; }
+  inline void setMuteTime(uint muteTime)  { m_muteTime = muteTime; }
+  inline void setNumeric(quint8 numeric)  { m_numeric = numeric; }
   int isFlood(const QString &message);
 
 private:
