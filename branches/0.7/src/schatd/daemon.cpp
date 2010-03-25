@@ -502,6 +502,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
 {
   SCHAT_DEBUG(this << "::message()" << channel << nick << msg)
 
+  // Проверка сообщения на флуд.
   UserUnit *user = m_users.value(normalizeNick(nick), 0);
   if (!user)
     return;
@@ -1086,7 +1087,13 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
     }
   }
 
-  m_users.insert(nick, new UserUnit(list, service, m_numeric));
+  // Восстановление сохранённых флуд лимитов.
+  UserUnit *user = new UserUnit(list, service, m_numeric);
+  if (m_floodOffline.contains(nick) && service->host() == m_floodOffline.value(nick).host()) {
+    user->setMuteTime(m_floodOffline.value(nick).muteTime());
+  }
+
+  m_users.insert(nick, user);
   connect(service, SIGNAL(newNick(quint8, const QString &, const QString &, const QString &)), SLOT(newNick(quint8, const QString &, const QString &, const QString &)));
   connect(service, SIGNAL(newProfile(quint8, const QString &, const QString &)), SLOT(newProfile(quint8, const QString &, const QString &)));
   connect(service, SIGNAL(newBye(const QString &, const QString &)), SLOT(newBye(const QString &, const QString &)));
@@ -1310,6 +1317,14 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
 
     if (m_network && m_remoteNumeric && unit->numeric() == m_numeric)
       m_link->sendUserLeave(nick, bye, flag);
+
+    // При необходимости сохраняет время начала действия ограничения флуда.
+    if (unit->service() && unit->muteTime()) {
+      if (m_floodOffline.contains(lowerNick))
+        m_floodOffline.remove(lowerNick);
+
+      m_floodOffline.insert(lowerNick, FloodOfflineItem(unit->profile()->host(), unit->muteTime()));
+    }
 
     delete unit;
   }
