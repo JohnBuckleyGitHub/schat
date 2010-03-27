@@ -153,16 +153,22 @@ bool Daemon::start()
     LOG(0, tr("- Error - Ошибка запуска `IMPOMEZIA Simple Chat Daemon`, [%1]").arg(m_server.errorString()));
   }
 
-  reload(0);
+  reload(-1);
   m_stats = initStats();
 
   return result;
 }
 
 
+/**
+ * Мягкий перезапуск сервера.
+ */
 void Daemon::reload(int code)
 {
   Q_UNUSED(code)
+
+  if (code != -1)
+    m_settings->reload();
 
   NormalizeReader reader(m_normalize);
   if (!reader.readFile(envConfFile("NormalizeFile"))) {
@@ -170,6 +176,22 @@ void Daemon::reload(int code)
                 .arg(envConfFile("NormalizeFile")));
   }
   m_motd = initMotd();
+  m_floodLimits = FloodLimits(m_settings->getInt("FloodDetectTime"),
+      m_settings->getInt("FloodLimit"),
+      m_settings->getInt("MaxRepeatedMsgs"),
+      m_settings->getInt("MuteTime"));
+
+  if (code != -1) {
+    m_floodOffline.clear();
+
+    QHashIterator<QString, UserUnit *> i(m_users);
+    while (i.hasNext()) {
+      i.next();
+      if (i.value()->service())
+        i.value()->setFloodLimits(m_floodLimits);
+    }
+    LOG(0, tr("- Notice - Мягкий перезапуск сервера завершён"));
+  }
 }
 
 
@@ -240,7 +262,7 @@ void Daemon::clientSyncUsers(const QStringList &list, quint8 echo, quint8 numeri
   }
 
   if (!m_users.contains(nick)) {
-    m_users.insert(nick, new UserUnit(list, 0, numeric));
+    m_users.insert(nick, new UserUnit(list, m_floodLimits, 0, numeric));
     emit newUser(list, echo, numeric);
   }
 }
@@ -1088,7 +1110,7 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   }
 
   // Восстановление сохранённых флуд лимитов.
-  UserUnit *user = new UserUnit(list, service, m_numeric);
+  UserUnit *user = new UserUnit(list, m_floodLimits, service, m_numeric);
   if (m_floodOffline.contains(nick) && service->host() == m_floodOffline.value(nick).host()) {
     user->setMuteTime(m_floodOffline.value(nick).muteTime());
   }

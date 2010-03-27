@@ -40,8 +40,9 @@ UserUnit::UserUnit()
  * \param service Указатель на сервис клиента.
  * \param numeric номер сервера к которому подключен клиент.
  */
-UserUnit::UserUnit(const QStringList &list, DaemonService *service, quint8 numeric)
+UserUnit::UserUnit(const QStringList &list, const FloodLimits &floodLimits, DaemonService *service, quint8 numeric)
   : m_profile(new AbstractProfile(list)),
+    m_floodLimits(floodLimits),
     m_messages(0),
     m_repeatedMsgs(0),
     m_service(service),
@@ -81,21 +82,32 @@ int UserUnit::isFlood(const QString &message)
     m_floodDetectStartTime = m_lastMsgTime;
     m_messages++;
   }
-  else if (m_lastMsgTime - m_floodDetectStartTime <= (uint) m_floodLimits.floodDetectTime) {
+  else if (m_lastMsgTime - m_floodDetectStartTime <= (uint) m_floodLimits.floodDetectTime()) {
     m_messages++;
   }
   else {
     m_messages = 0;
   }
 
-  if (m_repeatedMsgs >= m_floodLimits.maxRepeatedMsgs || m_messages >= m_floodLimits.floodLimit) {
+  if (m_repeatedMsgs >= m_floodLimits.maxRepeatedMsgs() || m_messages >= m_floodLimits.floodLimit()) {
     m_muteTime = m_lastMsgTime;
   }
 
   int offset = m_lastMsgTime - m_muteTime;
-  if (m_muteTime != 0 && offset <= m_floodLimits.muteTime)
-    return m_floodLimits.muteTime - offset;
+  if (m_muteTime != 0 && offset <= m_floodLimits.muteTime())
+    return m_floodLimits.muteTime() - offset;
 
   m_muteTime = 0;
   return 0;
+}
+
+
+/*!
+ * Установка новых параметров защиты от флуда и сброс текущих ограничений.
+ */
+void UserUnit::setFloodLimits(const FloodLimits &limits)
+{
+  m_messages = 0;
+  m_muteTime = 0;
+  m_floodLimits = limits;
 }

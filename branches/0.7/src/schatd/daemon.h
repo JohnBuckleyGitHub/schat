@@ -25,6 +25,7 @@
 #include <QTimer>
 
 #include "network.h"
+#include "userunit.h"
 
 class AbstractProfile;
 class ChannelLog;
@@ -138,6 +139,7 @@ private:
   ClientService *m_link;
   DaemonLog *m_log;
   DaemonSettings *m_settings;
+  FloodLimits m_floodLimits;
   int logLevel;
   int m_maxLinks;
   int m_maxUsers;
