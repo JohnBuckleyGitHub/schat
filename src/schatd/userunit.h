@@ -32,25 +32,31 @@ class AbstractProfile;
 class FloodLimits {
 public:
   FloodLimits()
-  : floodDetectTime(16),
-    floodLimit(8),
-    maxRepeatedMsgs(3),
-    muteTime(60)
+  : m_floodDetectTime(16),
+    m_floodLimit(8),
+    m_maxRepeatedMsgs(3),
+    m_muteTime(60)
   {
   }
 
   FloodLimits(int floodDetectTime, int floodLimit, int maxRepeatedMsgs, int muteTime)
-  : floodDetectTime(floodDetectTime),
-    floodLimit(floodLimit),
-    maxRepeatedMsgs(maxRepeatedMsgs),
-    muteTime(muteTime)
+  : m_floodDetectTime(floodDetectTime),
+    m_floodLimit(floodLimit),
+    m_maxRepeatedMsgs(maxRepeatedMsgs),
+    m_muteTime(muteTime)
   {
   }
 
-  const int floodDetectTime; ///< Контрольное время в течении которого обнаруживается флуд.
-  const int floodLimit;      ///< Максимальное число сообщений которые могут быть отправлены за время floodDetectTime.
-  const int maxRepeatedMsgs; ///< Максимальное число повторяющихся подряд сообщений.
-  const int muteTime;        ///< Время в течении которого пользователь не может говорить.
+  inline int floodDetectTime() const { return m_floodDetectTime;  }
+  inline int floodLimit() const      { return m_floodLimit;  }
+  inline int maxRepeatedMsgs() const { return m_maxRepeatedMsgs;  }
+  inline int muteTime() const        { return m_muteTime;  }
+
+private:
+  int m_floodDetectTime; ///< Контрольное время в течении которого обнаруживается флуд.
+  int m_floodLimit;      ///< Максимальное число сообщений которые могут быть отправлены за время floodDetectTime.
+  int m_maxRepeatedMsgs; ///< Максимальное число повторяющихся подряд сообщений.
+  int m_muteTime;        ///< Время в течении которого пользователь не может говорить.
 };
 
 
@@ -86,7 +92,7 @@ class UserUnit {
   
 public:
   UserUnit();
-  UserUnit(const QStringList &list, DaemonService *service = 0, quint8 numeric = 0);
+  UserUnit(const QStringList &list, const FloodLimits &floodLimits, DaemonService *service = 0, quint8 numeric = 0);
   ~UserUnit();
 
   inline AbstractProfile* profile() const { return m_profile; }
@@ -96,6 +102,7 @@ public:
   inline void setMuteTime(uint muteTime)  { m_muteTime = muteTime; }
   inline void setNumeric(quint8 numeric)  { m_numeric = numeric; }
   int isFlood(const QString &message);
+  void setFloodLimits(const FloodLimits &limits);
 
 private:
   AbstractProfile *m_profile;        ///< Профиль пользователя.

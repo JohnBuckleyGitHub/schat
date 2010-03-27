@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@ AbstractSettings *AbstractSettings::m_self = 0;
 /*!
  * \brief Конструктор класса AbstractSettings.
  */
-AbstractSettings::AbstractSettings(const QString &filename, QObject *parent)
+AbstractSettings::AbstractSettings(const QString &fileName, QObject *parent)
   : QObject(parent)
 {
   Q_ASSERT_X(!m_self, "AbstractSettings", "there should be only one settings object");
   m_self = this;
 
-  m_settings = new QSettings(filename, QSettings::IniFormat, this);
+  m_settings = new QSettings(fileName, QSettings::IniFormat, this);
   #if QT_VERSION >= 0x040500
     m_settings->setIniCodec("UTF-8");
   #endif
