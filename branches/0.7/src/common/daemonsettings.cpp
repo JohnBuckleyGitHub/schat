@@ -71,10 +71,16 @@ void DaemonSettings::reload()
 }
 
 
+/*!
+ * Ключи настроек, которые могут быть изменены во время работы сервера.
+ */
 void DaemonSettings::mutableKeys()
 {
-  setInt("FloodDetectTime",  16);
-  setInt("FloodLimit",       8);
-  setInt("MaxRepeatedMsgs",  3);
-  setInt("MuteTime",         60);
+  setInt("FloodDetectTime",     16);
+  setInt("FloodLimit",          8);
+  setInt("MaxRepeatedMsgs",     3);
+  setInt("MuteTime",            60);
+  setInt("JoinFloodDetectTime", 60);
+  setInt("JoinFloodLimit",      3);
+  setInt("JoinFloodBanTime",    60);
 }

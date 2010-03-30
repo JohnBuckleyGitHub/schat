@@ -178,6 +178,9 @@ void Daemon::reload(int code)
   m_motd = initMotd();
   m_floodLimits = FloodLimits(m_settings->getInt("FloodDetectTime"),
       m_settings->getInt("FloodLimit"),
+      m_settings->getInt("JoinFloodBanTime"),
+      m_settings->getInt("JoinFloodDetectTime"),
+      m_settings->getInt("JoinFloodLimit"),
       m_settings->getInt("MaxRepeatedMsgs"),
       m_settings->getInt("MuteTime"));
 
@@ -1079,7 +1082,6 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = normalizeNick(list.at(AbstractProfile::Nick));
 
-  /// \test Экспериментальное определение зависших пользователей.
   if (m_users.contains(nick)) {
     UserUnit *unit = m_users.value(nick);
     if (unit->numeric() == m_numeric && !unit->service())
@@ -1113,6 +1115,14 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   UserUnit *user = new UserUnit(list, m_floodLimits, service, m_numeric);
   if (m_floodOffline.contains(nick) && service->host() == m_floodOffline.value(nick).host()) {
     user->setMuteTime(m_floodOffline.value(nick).muteTime());
+
+    FloodOfflineItem item = m_floodOffline.value(nick);
+    if (QDateTime::currentDateTime().toTime_t() - item.timeStamp() < (uint) m_floodLimits.joinFloodDetectTime()) {
+       if (item.reconnects() >= m_floodLimits.joinFloodLimit())
+        return ErrorUsersLimitExceeded;
+
+      user->setReconnects(item.reconnects() + 1);
+    }
   }
 
   m_users.insert(nick, user);
@@ -1310,12 +1320,12 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
   QString lowerNick = normalizeNick(nick);
 
   if (m_users.contains(lowerNick)) {
-    UserUnit *unit = m_users.value(lowerNick);
+    UserUnit *user = m_users.value(lowerNick);
 
     m_users.remove(lowerNick);
 
     if (m_maxUsersPerIp > 0) {
-      QString ip = unit->profile()->host();
+      QString ip = user->profile()->host();
       if (m_ipLimits.contains(ip)) {
         int hosts = m_ipLimits.value(ip);
         if (hosts)
@@ -1325,11 +1335,11 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
       }
     }
 
-    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(unit->profile()->host()).arg(err));
+    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(user->profile()->host()).arg(err));
 
-    QString bye = unit->profile()->byeMsg();
+    QString bye = user->profile()->byeMsg();
     if (m_channelLog) {
-      if (unit->profile()->isMale())
+      if (user->profile()->isMale())
         m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
       else
         m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
@@ -1337,18 +1347,18 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
 
     emit userLeave(nick, bye, flag);
 
-    if (m_network && m_remoteNumeric && unit->numeric() == m_numeric)
+    if (m_network && m_remoteNumeric && user->numeric() == m_numeric)
       m_link->sendUserLeave(nick, bye, flag);
 
     // При необходимости сохраняет время начала действия ограничения флуда.
-    if (unit->service() && unit->muteTime()) {
+    if (user->service() && (user->muteTime() || (QDateTime::currentDateTime().toTime_t() - user->timeStamp() < (uint) m_floodLimits.joinFloodDetectTime()))) {
       if (m_floodOffline.contains(lowerNick))
         m_floodOffline.remove(lowerNick);
 
-      m_floodOffline.insert(lowerNick, FloodOfflineItem(unit->profile()->host(), unit->muteTime()));
+      m_floodOffline.insert(lowerNick, FloodOfflineItem(user->reconnects(), user->profile()->host(), user->muteTime(), user->timeStamp()));
     }
 
-    delete unit;
+    delete user;
   }
 }
 
