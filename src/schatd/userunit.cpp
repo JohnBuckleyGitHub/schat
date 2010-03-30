@@ -27,9 +27,11 @@
 UserUnit::UserUnit()
   : m_profile(0),
     m_messages(0),
+    m_reconnects(0),
     m_repeatedMsgs(0),
     m_numeric(0),
-    m_muteTime(0)
+    m_muteTime(0),
+    m_timeStamp(QDateTime::currentDateTime().toTime_t())
 {
 }
 
@@ -44,10 +46,12 @@ UserUnit::UserUnit(const QStringList &list, const FloodLimits &floodLimits, Daem
   : m_profile(new AbstractProfile(list)),
     m_floodLimits(floodLimits),
     m_messages(0),
+    m_reconnects(0),
     m_repeatedMsgs(0),
     m_service(service),
     m_numeric(numeric),
-    m_muteTime(0)
+    m_muteTime(0),
+    m_timeStamp(QDateTime::currentDateTime().toTime_t())
 {
 }
 
@@ -98,6 +102,15 @@ int UserUnit::isFlood(const QString &message)
     return m_floodLimits.muteTime() - offset;
 
   m_muteTime = 0;
+  return 0;
+}
+
+
+int UserUnit::reconnects() const
+{
+  if (QDateTime::currentDateTime().toTime_t() - m_timeStamp < (uint) m_floodLimits.joinFloodDetectTime())
+    return m_reconnects;
+
   return 0;
 }
 
