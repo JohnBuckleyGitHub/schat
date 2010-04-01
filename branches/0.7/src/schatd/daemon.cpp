@@ -535,9 +535,8 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   int mute = user->isFlood(msg);
   if (mute > 0) {
     DaemonService *service = user->service();
-    qDebug() << service;
     if (service) {
-      service->sendServerMessage(tr("Для предотвращения флуда вы лишены возможности говорить на <b>%n</b> секунд", "", mute));
+      service->sendServerMessage(tr("To prevent flood, you muted to <b>%n</ b> seconds", "", mute));
     }
     return;
   }
@@ -854,9 +853,9 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
     if (m_motd) {
       QString motdText = m_motdText;
       motdText.replace("${USERS_NUM}", QString::number(m_users.count()));
-      motdText.replace("${USERS}", tr("<b>%n</b> пользователь", "", m_users.count()));
+      motdText.replace("${USERS}", tr("<b>%n</b> users", "", m_users.count()));
       motdText.replace("${SERVERS_NUM}", QString::number(m_numerics.count()));
-      motdText.replace("${SERVERS}", tr("<b>%n</b> сервер", "", m_numerics.count()));
+      motdText.replace("${SERVERS}", tr("<b>%n</b> servers", "", m_numerics.count()));
       service->sendServerMessage(motdText);
     }
     return true;
