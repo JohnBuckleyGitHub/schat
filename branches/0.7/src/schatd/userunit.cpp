@@ -26,9 +26,7 @@
  */
 UserUnit::UserUnit()
   : m_profile(0),
-    m_messages(0),
     m_reconnects(0),
-    m_repeatedMsgs(0),
     m_numeric(0),
     m_muteTime(0),
     m_timeStamp(QDateTime::currentDateTime().toTime_t())
@@ -45,9 +43,7 @@ UserUnit::UserUnit()
 UserUnit::UserUnit(const QStringList &list, const FloodLimits &floodLimits, DaemonService *service, quint8 numeric)
   : m_profile(new AbstractProfile(list)),
     m_floodLimits(floodLimits),
-    m_messages(0),
     m_reconnects(0),
-    m_repeatedMsgs(0),
     m_service(service),
     m_numeric(numeric),
     m_muteTime(0),
@@ -72,32 +68,35 @@ UserUnit::~UserUnit()
  *
  * \return Время в секундах на которое пользователь лишён права голоса, по причине флуда, 0 - если флуд не обнаружен.
  */
-int UserUnit::isFlood(const QString &message)
+int UserUnit::isFlood(const QString &channel, const QString &message)
 {
-  if (m_previousMessage == message)
-    m_repeatedMsgs++;
+  FloodChannel fc = floodChannel(channel);
+  if (fc.previous == message)
+    fc.repeated++;
   else
-    m_repeatedMsgs = 0;
+    fc.repeated = 0;
 
-  m_previousMessage = message;
-  m_lastMsgTime = QDateTime::currentDateTime().toTime_t();
+  fc.previous = message;
+  fc.lastMsgTime = QDateTime::currentDateTime().toTime_t();
 
-  if (m_messages == 0) {
-    m_floodDetectStartTime = m_lastMsgTime;
-    m_messages++;
+  if (fc.messages == 0) {
+    fc.floodDetectStartTime = fc.lastMsgTime;
+    fc.messages++;
   }
-  else if (m_lastMsgTime - m_floodDetectStartTime <= (uint) m_floodLimits.floodDetectTime()) {
-    m_messages++;
+  else if (fc.lastMsgTime - fc.floodDetectStartTime <= (uint) m_floodLimits.floodDetectTime()) {
+    fc.messages++;
   }
   else {
-    m_messages = 0;
+    fc.messages = 0;
   }
 
-  if (m_repeatedMsgs >= m_floodLimits.maxRepeatedMsgs() || m_messages >= m_floodLimits.floodLimit()) {
-    m_muteTime = m_lastMsgTime;
+  if (fc.repeated >= m_floodLimits.maxRepeatedMsgs() || fc.messages >= m_floodLimits.floodLimit()) {
+    m_muteTime = fc.lastMsgTime;
   }
 
-  int offset = m_lastMsgTime - m_muteTime;
+  setFloodChannel(channel, fc);
+
+  int offset = fc.lastMsgTime - m_muteTime;
   if (m_muteTime != 0 && offset <= m_floodLimits.muteTime())
     return m_floodLimits.muteTime() - offset;
 
@@ -120,7 +119,24 @@ int UserUnit::reconnects() const
  */
 void UserUnit::setFloodLimits(const FloodLimits &limits)
 {
-  m_messages = 0;
-  m_muteTime = 0;
+  m_channels.clear();
   m_floodLimits = limits;
+}
+
+
+FloodChannel UserUnit::floodChannel(const QString &channel) const
+{
+  if (!m_channels.contains(channel))
+    return FloodChannel();
+
+  return m_channels.value(channel);
+}
+
+
+void UserUnit::setFloodChannel(const QString &channel, const FloodChannel &fc)
+{
+  if (m_channels.contains(channel))
+    m_channels.remove(channel);
+
+  m_channels.insert(channel, fc);
 }

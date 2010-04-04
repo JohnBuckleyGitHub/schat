@@ -532,7 +532,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   if (!user)
     return;
 
-  int mute = user->isFlood(msg);
+  int mute = user->isFlood(channel, msg);
   if (mute > 0) {
     DaemonService *service = user->service();
     if (service) {
