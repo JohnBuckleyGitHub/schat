@@ -32,7 +32,7 @@ import javax.microedition.midlet.MIDlet;
  */
 public class Simple extends MIDlet implements CommandListener {
 
-  public final static String VERSION = "0.1.0.246";
+  public final static String VERSION = "0.1.0.1277";
   private final static int FORM_MAIN = 0;
   private final static int FORM_CONFIG = 1;
   private final static int FORM_ABOUT = 2;
