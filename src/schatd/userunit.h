@@ -105,6 +105,24 @@ private:
 };
 
 
+class FloodChannel {
+public:
+  FloodChannel()
+  : messages(0),
+    repeated(0),
+    muteTime(0)
+  {
+  }
+
+  int messages;            ///< Счётчик сообщений для обнаружения флуда.
+  int repeated;              ///< Число зафиксированных повторяющихся сообщений.
+  QString previous;          ///< Предыдущее сообщение.
+  uint floodDetectStartTime; ///< Контрольное время старта проверки на флуд.
+  uint lastMsgTime;          ///< Время последнего сообщения.
+  uint muteTime;             ///< Время когда начало действовать ограничение.
+};
+
+
 /*!
  * \brief Базовый класс хранящий информацию о пользователе.
  */
@@ -123,21 +141,20 @@ public:
   inline void setMuteTime(uint muteTime)  { m_muteTime = muteTime; }
   inline void setNumeric(quint8 numeric)  { m_numeric = numeric; }
   inline void setReconnects(int count)    { m_reconnects = count; }
-  int isFlood(const QString &message);
+  int isFlood(const QString &channel, const QString &message);
   int reconnects() const;
   void setFloodLimits(const FloodLimits &limits);
 
 private:
+  FloodChannel floodChannel(const QString &channel) const;
+  void setFloodChannel(const QString &channel, const FloodChannel &fc);
+
   AbstractProfile *m_profile;        ///< Профиль пользователя.
   FloodLimits m_floodLimits;         ///< Параметры защиты от флуда.
-  int m_messages;                    ///< Счётчик сообщений для обнаружения флуда.
   int m_reconnects;                  ///< Количество зафиксированных попыток переподключения.
-  int m_repeatedMsgs;                ///< Число зафиксированных повторяющихся сообщений.
+  QHash<QString, FloodChannel> m_channels;
   QPointer<DaemonService> m_service; ///< Сервис обслуживающий пользователя.
-  QString m_previousMessage;         ///< Предыдущее сообщение.
   quint8 m_numeric;                  ///< Номер сервера.
-  uint m_floodDetectStartTime;       ///< Контрольное время старта проверки на флуд.
-  uint m_lastMsgTime;                ///< Время последнего сообщения.
   uint m_muteTime;                   ///< Время когда начало действовать ограничение.
   uint m_timeStamp;                  ///< Время когда пользователь подключился.
 };
