@@ -1081,15 +1081,6 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
 {
   QString nick = normalizeNick(list.at(AbstractProfile::Nick));
 
-  if (m_users.contains(nick)) {
-    UserUnit *unit = m_users.value(nick);
-    if (unit->numeric() == m_numeric && !unit->service())
-      removeUser(unit->profile()->nick(), "Detect zombie");
-
-    return ErrorNickAlreadyUse;
-  }
-
-
   if (m_maxUsers > 0)
     if (m_maxUsers == localUsersCount())
       return ErrorUsersLimitExceeded;
@@ -1116,12 +1107,27 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
     user->setMuteTime(m_floodOffline.value(nick).muteTime());
 
     FloodOfflineItem item = m_floodOffline.value(nick);
-    if (QDateTime::currentDateTime().toTime_t() - item.timeStamp() < (uint) m_floodLimits.joinFloodDetectTime()) {
-       if (item.reconnects() >= m_floodLimits.joinFloodLimit())
-        return ErrorUsersLimitExceeded;
+    if (QDateTime::currentDateTime().toTime_t() - item.timeStamp() < (uint) m_floodLimits.joinFloodBanTime()) {
+       if (item.reconnects() >= m_floodLimits.joinFloodLimit()) {
+         delete user;
+         return ErrorUsersLimitExceeded;
+       }
 
       user->setReconnects(item.reconnects() + 1);
     }
+  }
+
+  if (m_users.contains(nick)) {
+    UserUnit *unit = m_users.value(nick);
+    if (unit->numeric() == m_numeric && !unit->service())
+      removeUser(unit->profile()->nick(), "Detect zombie");
+
+    if (m_floodOffline.contains(nick))
+      m_floodOffline.remove(nick);
+
+    m_floodOffline.insert(nick, FloodOfflineItem(user->reconnects(), user->profile()->host(), user->muteTime(), QDateTime::currentDateTime().toTime_t()));
+    delete user;
+    return ErrorNickAlreadyUse;
   }
 
   m_users.insert(nick, user);
