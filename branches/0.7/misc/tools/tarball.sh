@@ -16,8 +16,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-FNAME="schat-0.7.1.1266"
-svn co http://schat.googlecode.com/svn/tag/0.7.1 schat
+FNAME="schat-0.7.1.1280"
+svn co http://schat.googlecode.com/svn/tag/0.7.2 schat
 rm -fr $FNAME
 cp -fR schat $FNAME
 find $FNAME -name .svn -exec rm -rf {} \; > /dev/null 2>&1
