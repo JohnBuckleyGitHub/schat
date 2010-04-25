@@ -39,7 +39,7 @@ class DaemonService : public QObject
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   bool isReady() const;
-  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
+  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
   QString host() const;
@@ -66,7 +66,7 @@ public slots:
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
   bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
-  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, message); }
+  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, parseCmd(message)); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
   inline void sendSyncBye(const QString &nick, const QString &bye)                         { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { send(OpcodeUserLeave, flag, nick, bye); }
@@ -88,6 +88,7 @@ private:
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  QString parseCmd(const QString &message) const;
   quint16 verifyGreeting(quint16 version);
   void opcodeByeMsg();
   void opcodeMessage();

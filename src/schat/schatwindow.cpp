@@ -220,6 +220,7 @@ QString SChatWindowPrivate::colorizedPing() const
 void SChatWindowPrivate::cmdHelp(AbstractTab *tab, const QString &cmd)
 {
   if (cmds.isEmpty()) {
+    cmds.insert("all",    QObject::tr("<b>/all</b><span class='info'> — Личное обращение ко всем пользователям.</span>"));
     cmds.insert("away",   QObject::tr("<b>/away</b><span class='info'> — включает/выключает статус <b>Отсутствую</b>.</span>"));
     cmds.insert("bye",    QObject::tr("<b>/bye [текст сообщения]</b><span class='info'> — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
     cmds.insert("clear",  QObject::tr("<b>/clear</b><span class='info'> — очистка окна чата.</span>"));

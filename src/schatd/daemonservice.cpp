@@ -590,6 +590,22 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
 }
 
 
+QString DaemonService::parseCmd(const QString &message) const
+{
+  QString text = ChannelLog::toPlainText(message).trimmed().toLower();
+  QString out = message;
+  if (text.startsWith("/all ", Qt::CaseInsensitive)) {
+    int index = out.indexOf("/all ", 0, Qt::CaseInsensitive);
+    if (index != -1)
+      out.remove(index, 5);
+
+    out = "<b>" + m_profile->nick() + "</b> " + out;
+  }
+
+  return out;
+}
+
+
 /** [private]
  * Верификация пакета `OpcodeGreeting`.
  */
