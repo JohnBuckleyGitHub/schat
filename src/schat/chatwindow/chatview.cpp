@@ -81,9 +81,15 @@ bool ChatViewPrivate::prepareCmd(const QString &cmd, QString &msg, bool cut)
 {
   if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
     if (cut) {
-      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      QString c = cmd;
+      int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      if (index == -1 && c.endsWith(' ')) {
+        c = c.left(c.size() - 1);
+        index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      }
+
       if (index != -1)
-        msg.remove(index, cmd.size());
+        msg.remove(index, c.size());
     }
     return true;
   }
