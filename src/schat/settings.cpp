@@ -31,12 +31,13 @@
 /*!
  * \brief Конструктор класса Settings.
  */
-Settings::Settings(const QString &filename, QObject *parent)
-  : AbstractSettings(filename, parent), m_initRichTextCSS(false)
+Settings::Settings(bool unixLike, QObject *parent)
+  : AbstractSettings(unixLike ? QDir::homePath() + "/.config/schat/schat.conf" : QApplication::applicationDirPath() + "/schat.conf", parent),
+    m_profile(new AbstractProfile(this)),
+    m_initRichTextCSS(false),
+    m_unixLike(unixLike),
+    m_updateTimer(new QTimer(this))
 {
-  m_profile = new AbstractProfile(this);
-  m_updateTimer = new QTimer(this);
-
   QString defaultConf = QApplication::applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
@@ -90,6 +91,18 @@ int Settings::save(const QString &key, int value)
 
   setInt(key, value);
   return 1;
+}
+
+
+/*!
+ * Проверка пути, если название вышестоящего каталога равно bin, то функция возвращает true.
+ */
+bool Settings::isUnixLike()
+{
+  if (QDir(QApplication::applicationDirPath()).dirName() == "bin")
+    return true;
+
+  return false;
 }
 
 
