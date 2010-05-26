@@ -79,18 +79,21 @@ public:
     #endif
   };
 
-  Settings(const QString &filename, QObject *parent = 0);
+  Settings(bool unixLike, QObject *parent = 0);
   const QString& richTextCSS();
   inline AbstractProfile* profile()                    { return m_profile; }
+  inline bool unixLike() const { return m_unixLike; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
+  inline void setUnixLike(bool unixLike) { m_unixLike = unixLike; }
   int save(const QString &key, bool value);
   int save(const QString &key, const QString &value);
   int save(const QString &key, int value);
+  static bool isUnixLike();
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
   void notify(int notify);
   void notify(int notify, int index);
@@ -123,6 +126,7 @@ private:
 
   AbstractProfile *m_profile;
   bool m_initRichTextCSS;
+  bool m_unixLike;
   QPoint m_pos;
   QPointer<Emoticons> m_emoticons;
   QPointer<Update> m_update;

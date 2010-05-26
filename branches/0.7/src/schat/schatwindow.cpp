@@ -713,7 +713,7 @@ void SChatWindowPrivate::createToolButtons()
 SChatWindow::SChatWindow(QWidget *parent)
   : QMainWindow(parent), d(new SChatWindowPrivate(this))
 {
-  d->pref        = new Settings(QApplication::applicationDirPath() + "/schat.conf", this);
+  d->pref        = new Settings(Settings::isUnixLike(), this);
   d->profile     = d->pref->profile();
   d->pref->read();
   d->enableMotd  = d->pref->getBool("MotdEnable");
