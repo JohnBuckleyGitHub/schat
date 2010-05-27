@@ -38,7 +38,7 @@ Settings::Settings(bool unixLike, QObject *parent)
     m_unixLike(unixLike),
     m_updateTimer(new QTimer(this))
 {
-  QString defaultConf = QApplication::applicationDirPath() + "/default.conf";
+  QString defaultConf = QDir::cleanPath(QApplication::applicationDirPath() + (unixLike ? "/../share/schat" : "") + "/default.conf");
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
   else
@@ -93,17 +93,6 @@ int Settings::save(const QString &key, int value)
   return 1;
 }
 
-
-/*!
- * Проверка пути, если название вышестоящего каталога равно bin, то функция возвращает true.
- */
-bool Settings::isUnixLike()
-{
-  if (QDir(QApplication::applicationDirPath()).dirName() == "bin")
-    return true;
-
-  return false;
-}
 
 
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)

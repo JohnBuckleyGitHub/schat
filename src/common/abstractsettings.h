@@ -46,6 +46,7 @@ public:
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
   static AbstractSettings *instance()                                 { return m_self; }
   static bool isNewYear();
+  static bool isUnixLike();
   void read()                                                         { read(m_settings); }
 
   #ifndef SCHAT_NO_WRITE_SETTINGS

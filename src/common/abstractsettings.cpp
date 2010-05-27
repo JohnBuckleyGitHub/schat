@@ -62,6 +62,18 @@ bool AbstractSettings::isNewYear()
 
 
 /*!
+ * Проверка пути, если название вышестоящего каталога равно bin, то функция возвращает true.
+ */
+bool AbstractSettings::isUnixLike()
+{
+  if (QDir(QCoreApplication::applicationDirPath()).dirName() == "bin")
+    return true;
+
+  return false;
+}
+
+
+/*!
  * Чтение настроек.
  */
 void AbstractSettings::read(const QSettings *s)
