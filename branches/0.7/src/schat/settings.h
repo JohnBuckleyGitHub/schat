@@ -93,7 +93,6 @@ public:
   int save(const QString &key, bool value);
   int save(const QString &key, const QString &value);
   int save(const QString &key, int value);
-  static bool isUnixLike();
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
   void notify(int notify);
   void notify(int notify, int index);

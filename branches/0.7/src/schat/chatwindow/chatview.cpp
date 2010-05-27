@@ -105,7 +105,7 @@ void ChatViewPrivate::toLog(const QString &text)
 {
   if (log) {
     if (!channelLog) {
-      channelLog = new ChannelLog(q);
+      channelLog = new ChannelLog((SimpleSettings->isUnixLike() ? QDir::homePath() + "/.config/schat" : QApplication::applicationDirPath()) + "/log", q);
       channelLog->setChannel(channel);
     }
     channelLog->msg(text);
@@ -397,7 +397,7 @@ void ChatView::log(bool enable)
 
   if (enable) {
     if (!d->channelLog) {
-      d->channelLog = new ChannelLog(this);
+      d->channelLog = new ChannelLog((SimpleSettings->isUnixLike() ? QDir::homePath() + "/.config/schat" : QApplication::applicationDirPath()) + "/log", this);
       d->channelLog->setChannel(d->channel);
     }
   }

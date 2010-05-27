@@ -89,10 +89,10 @@ AboutMain::AboutMain(QWidget *parent)
 
   QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2010 <b>IMPOMEZIA</b>. All rights reserved.", this);
   QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
-      .arg(qApp->organizationDomain())
+      .arg(QApplication::organizationDomain())
       .arg(tr("Официальный сайт")), this);
   homeLabel->setOpenExternalLinks(true);
-  homeLabel->setToolTip("http://" + qApp->organizationDomain());
+  homeLabel->setToolTip("http://" + QApplication::organizationDomain());
 
   QLabel *docLabel = new QLabel(QString("<b><a href='http://simple.impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
       .arg(tr("Документация")), this);
@@ -181,16 +181,24 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setOpenExternalLinks(true);
 
-  QString file = qApp->applicationDirPath() + "/doc/ChangeLog.html";
-  if (QFile::exists(file)) {
-    browser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
+  QString path = QApplication::applicationDirPath();
+  if (AbstractSettings::isUnixLike())
+    path += "/../share/schat/doc";
+  else
+    path += "/doc";
+
+  path = QDir::cleanPath(path);
+  qDebug() << path;
+
+  if (QFile::exists(path + "/ChangeLog.html")) {
+    browser->setSearchPaths(QStringList() << (path));
     browser->setSource(QUrl("ChangeLog.html"));
   }
   else
     browser->setText(QString("<h3 style='color:#da251d;'>%1</h3>"
                             "<p style='color:#da251d;'>%2</p>")
                             .arg(tr("ОШИБКА"))
-                            .arg(tr("Файл <b>%1</b> не найден!").arg(file)));
+                            .arg(tr("Файл <b>%1</b> не найден!").arg(path + "/ChangeLog.html")));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(browser);
