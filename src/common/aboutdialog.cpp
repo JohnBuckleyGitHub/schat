@@ -181,14 +181,11 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setOpenExternalLinks(true);
 
-  QString path = QApplication::applicationDirPath();
+  QString path;
   if (AbstractSettings::isUnixLike())
-    path += "/../share/schat/doc";
+    path = SCHAT_UNIX_SHARE("doc");
   else
-    path += "/doc";
-
-  path = QDir::cleanPath(path);
-  qDebug() << path;
+    path = QApplication::applicationDirPath() + "/doc";
 
   if (QFile::exists(path + "/ChangeLog.html")) {
     browser->setSearchPaths(QStringList() << (path));

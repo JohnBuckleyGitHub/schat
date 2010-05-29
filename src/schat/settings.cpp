@@ -32,13 +32,13 @@
  * \brief Конструктор класса Settings.
  */
 Settings::Settings(bool unixLike, QObject *parent)
-  : AbstractSettings(unixLike ? QDir::homePath() + "/.config/schat/schat.conf" : QApplication::applicationDirPath() + "/schat.conf", parent),
+  : AbstractSettings(unixLike ? SCHAT_UNIX_CONFIG("schat.conf") : QApplication::applicationDirPath() + "/schat.conf", parent),
     m_profile(new AbstractProfile(this)),
     m_initRichTextCSS(false),
     m_unixLike(unixLike),
     m_updateTimer(new QTimer(this))
 {
-  QString defaultConf = QDir::cleanPath(QApplication::applicationDirPath() + (unixLike ? "/../share/schat" : "") + "/default.conf");
+  QString defaultConf = unixLike ? SCHAT_UNIX_SHARE("default.conf") : QApplication::applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
   else
@@ -93,6 +93,36 @@ int Settings::save(const QString &key, int value)
   return 1;
 }
 
+
+/*!
+ * Возвращает список путей.
+ */
+QStringList Settings::path(Paths type) const
+{
+  QStringList out;
+  QString base;
+
+  switch (type) {
+    case EmoticonsPath:
+      break;
+
+    case SoundsPath:
+      base = "sounds";
+
+      if (isUnixLike()) {
+        out << SCHAT_UNIX_CONFIG(base);
+        out << SCHAT_UNIX_SHARE(base);
+
+      }
+      else {
+        out << QApplication::applicationDirPath() + "/" + base;
+      }
+      break;
+  }
+
+  qDebug() << this << "path()" << out;
+  return out;
+}
 
 
 QStandardItem* Settings::findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags, int column)
