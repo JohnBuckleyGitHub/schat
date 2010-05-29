@@ -24,6 +24,9 @@
 #include <QSettings>
 #include <QStringList>
 
+#define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QDir::homePath() + "/.config/schat/" + x)
+#define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/schat/" + x)
+
 /*!
  * \brief Абстрактный базовый класс для чтения и записи настроек.
  *

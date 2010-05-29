@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -659,7 +659,9 @@ SoundSettings::SoundSettings(QWidget *parent)
   d->enable->setChecked(SimpleSettings->getBool("Sound"));
 
   QDir dir(QApplication::applicationDirPath() + "/sounds");
-  QStringList list = dir.entryList(SimpleSettings->getList("Sound/NameFilter"), QDir::Files);
+  QStringList nameFilter = SimpleSettings->getList("Sound/NameFilter");
+
+  QStringList list = dir.entryList(nameFilter, QDir::Files);
 
   d->msg = new SoundWidget("Message", tr("&Сообщение"), tr("Сообщение в основной канал"), list, this);
   connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
