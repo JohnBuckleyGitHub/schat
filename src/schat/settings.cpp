@@ -120,7 +120,6 @@ QStringList Settings::path(Paths type) const
       break;
   }
 
-  qDebug() << this << "path()" << out;
   return out;
 }
 

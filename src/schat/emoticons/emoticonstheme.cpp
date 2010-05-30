@@ -405,6 +405,7 @@ QString EmoticonsTheme::parseEmoticons(const QString &text, ParseMode mode, cons
       case Image:
         if (!exclude.contains(token.text)) {
           if (count < max) {
+            result += "<span style=\"display:inline-block;width:1px;height:1px;overflow:hidden;\">" + token.text + "</span>";
             result += token.picHTMLCode;
             count++;
           }
