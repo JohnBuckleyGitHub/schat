@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class EmoticonsTheme
  * Copyright © 2008      by Carlo Segato          <brandon.ml@gmail.com>
@@ -405,7 +405,7 @@ QString EmoticonsTheme::parseEmoticons(const QString &text, ParseMode mode, cons
       case Image:
         if (!exclude.contains(token.text)) {
           if (count < max) {
-            result += "<span style=\"display:inline-block;width:1px;height:1px;overflow:hidden;\">" + token.text + "</span>";
+            result += "<span style='display:inline-block;width:1px;height:1px;overflow:hidden;'>" + token.text + "</span>";
             result += token.picHTMLCode;
             count++;
           }
