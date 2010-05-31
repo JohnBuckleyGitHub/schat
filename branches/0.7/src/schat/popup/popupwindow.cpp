@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -79,18 +79,18 @@ PopupWindow::PopupWindow(const Message &message, QWidget *parent)
 {
   setObjectName("PopupWindow");
   setAttribute(Qt::WA_DeleteOnClose, true);
-  d->pub = message.pub;
 
   d->nick = new QLabel(message.nick, this);
   d->nick->setTextFormat(Qt::PlainText);
   d->nick->setObjectName("NickLabel");
 
-  d->time = new QLabel(message.time, this);
+  d->time = new QLabel(this);
   d->time->setTextFormat(Qt::PlainText);
 
   d->text = new PopupTextBrowser(this);
   d->text->document()->setDefaultStyleSheet(SimpleSettings->richTextCSS());
-  d->text->setHtml(message.html);
+
+  setMessage(message);
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(d->nick, 0, 0);
@@ -134,7 +134,11 @@ PopupWindow::~PopupWindow()
 void PopupWindow::setMessage(const Message &message)
 {
   d->time->setText(message.time);
-  d->text->setHtml(message.html);
+
+  QString html = message.html;
+  html.remove(QRegExp("<span style='display:inline-block;width:1px;height:1px;overflow:hidden;'>[^<]*</span>"));
+  d->text->setHtml(html);
+
   d->pub = message.pub;
 
   if (d->closeTimer)
@@ -150,7 +154,6 @@ void PopupWindow::start(int slot)
   moveToSlot(slot);
 
   show();
-//  qScrollEffect(this, QEffects::LeftScroll, 200);
 }
 
 
