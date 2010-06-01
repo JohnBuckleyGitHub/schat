@@ -80,5 +80,11 @@ void SoundWidget::reset(bool enable, const QString &file)
 
 void SoundWidget::play()
 {
-  emit play(QApplication::applicationDirPath() + "/sounds/" + m_combo->currentText());
+  QString file = "/" + m_combo->currentText();
+  foreach (QString path, SimpleSettings->path(Settings::SoundsPath)) {
+    if (QFile::exists(path + file)) {
+      emit play(path + file);
+      return;
+    }
+  }
 }

@@ -658,10 +658,17 @@ SoundSettings::SoundSettings(QWidget *parent)
   d->enable->setCheckable(true);
   d->enable->setChecked(SimpleSettings->getBool("Sound"));
 
-  QDir dir(QApplication::applicationDirPath() + "/sounds");
+  QStringList sounds = SimpleSettings->path(Settings::SoundsPath);
   QStringList nameFilter = SimpleSettings->getList("Sound/NameFilter");
+  QStringList list;
 
-  QStringList list = dir.entryList(nameFilter, QDir::Files);
+  foreach (QString path, sounds) {
+    QDir dir(path);
+    foreach (QString file, dir.entryList(nameFilter, QDir::Files)) {
+      if (!list.contains(file))
+        list << file;
+    }
+  }
 
   d->msg = new SoundWidget("Message", tr("&Сообщение"), tr("Сообщение в основной канал"), list, this);
   connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
@@ -745,7 +752,7 @@ void SoundSettings::save()
 
 void SoundSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/sounds"));
+  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::SoundsPath).at(0)));
 }
 
 

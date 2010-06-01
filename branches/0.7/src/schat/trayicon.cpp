@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ void TrayIcon::messageClicked()
     #ifndef SCHAT_NO_UPDATE
       m_settings->updatesGet();
     #else
-      QDesktopServices::openUrl(QUrl("http://impomezia.com"));
+      QDesktopServices::openUrl(QUrl("http://impomezia.ru"));
     #endif
 }
 
@@ -210,7 +210,6 @@ void TrayIcon::init()
   m_noticeIcon = QIcon(":/images/notice.png");
   m_timer = new QTimer(this);
   m_timer->setInterval(700);
-  m_soundsPath = QApplication::applicationDirPath() + "/sounds/";
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(this, SIGNAL(messageClicked()), SLOT(messageClicked()));
@@ -225,14 +224,27 @@ void TrayIcon::playSound()
 {
   while (!m_soundQueue.isEmpty()) {
     QString key = m_soundQueue.dequeue();
-    QString file = m_soundsPath + m_settings->getString("Sound/" + key);
+    QString file = "/" + m_settings->getString("Sound/" + key);
+
+    if (!m_soundCache.contains(key)) {
+      QStringList sounds = m_settings->path(Settings::SoundsPath);
+      for (int i = 0; i < sounds.size(); ++i) {
+        if (QFile::exists(sounds.at(i) + file)) {
+          m_soundCache.insert(key, sounds.at(i) + file);
+          break;
+        }
+      }
+    }
+
+    if (!m_soundCache.contains(key))
+      return;
 
     #ifdef Q_WS_X11
     if (m_settings->getBool("Sound/UseExternalCmd") && !m_settings->getString("Sound/ExternalCmd").isEmpty())
-      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(file));
+      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(m_soundCache.value(key)));
     else
     #endif
-      QSound::play(file);
+      QSound::play(m_soundCache.value(key));
   }
 }
 
