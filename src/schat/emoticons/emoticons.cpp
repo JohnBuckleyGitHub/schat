@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class Emoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
@@ -124,7 +124,7 @@ EmoticonsTheme Emoticons::theme(const QString &name)
 
 bool Emoticons::strictParse()
 {
-  return settings->getBool("EmoticonsRequireSpaces");
+  return SimpleSettings->getBool("EmoticonsRequireSpaces");
 }
 
 
@@ -133,7 +133,7 @@ bool Emoticons::strictParse()
  */
 QString Emoticons::currentThemeName()
 {
-  return settings->getString("EmoticonTheme");
+  return SimpleSettings->getString("EmoticonTheme");
 }
 
 
@@ -168,7 +168,7 @@ QStringList Emoticons::themeList()
  */
 void Emoticons::setStrictParse(bool strict)
 {
-  settings->setBool("EmoticonsRequireSpaces", strict);
+  SimpleSettings->setBool("EmoticonsRequireSpaces", strict);
 }
 
 
@@ -190,5 +190,5 @@ void Emoticons::setTheme(const EmoticonsTheme &theme)
  */
 void Emoticons::setTheme(const QString &theme)
 {
-  settings->setString("EmoticonTheme", theme);
+  SimpleSettings->setString("EmoticonTheme", theme);
 }

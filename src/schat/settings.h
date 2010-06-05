@@ -33,7 +33,6 @@
 
 class AbstractProfile;
 
-#define settings (static_cast<Settings *>(AbstractSettings::instance())) /// \todo Удалить этот макрос.
 #define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
 namespace schat {
