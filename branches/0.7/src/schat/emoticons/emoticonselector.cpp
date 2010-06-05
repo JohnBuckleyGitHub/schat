@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   a button that pops up a list of all emoticons and returns
  *   the emoticon-string if one is selected in the list
@@ -69,7 +69,7 @@ void EmoticonSelector::prepareList()
   int row = 0;
   int col = 0;
 
-  EmoticonsTheme theme = settings->emoticons()->theme();
+  EmoticonsTheme theme = SimpleSettings->emoticons()->theme();
   QMap<QString, QStringList> list = theme.emoticonsMap();
   int emoticonsPerRow = (int) sqrt((float)list.count());
   if (emoticonsPerRow * emoticonsPerRow == list.count())

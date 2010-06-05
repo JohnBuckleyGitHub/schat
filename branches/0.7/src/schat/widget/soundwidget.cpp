@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 SoundWidget::SoundWidget(const QString &key, const QString &name, const QString &desc, const QStringList &sounds, QWidget *parent)
   : QWidget(parent), m_key(key)
 {
-  m_settings = settings;
+  m_settings = SimpleSettings;
 
   m_check = new QCheckBox(name, this);
   m_check->setToolTip(desc);
