@@ -328,7 +328,7 @@ void NetworkSettings::save()
 
 void NetworkSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/networks"));
+  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::NetworksPath).at(0)));
 }
 
 

@@ -1223,7 +1223,7 @@ void Daemon::link()
   }
   networkFilePath = QFileInfo(networkFilePath).absolutePath();
 
-  m_network = new Network(networkFilePath, this);
+  m_network = new Network(QStringList(networkFilePath), this);
   m_network->setSingle(true);
   if (!m_network->fromFile(networkFile)) {
     LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
