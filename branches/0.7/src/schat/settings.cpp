@@ -100,23 +100,17 @@ int Settings::save(const QString &key, int value)
 QStringList Settings::path(Paths type) const
 {
   QStringList out;
-  QString base;
 
   switch (type) {
     case EmoticonsPath:
       break;
 
+    case NetworksPath:
+      out = path("networks");
+      break;
+
     case SoundsPath:
-      base = "sounds";
-
-      if (isUnixLike()) {
-        out << SCHAT_UNIX_CONFIG(base);
-        out << SCHAT_UNIX_SHARE(base);
-
-      }
-      else {
-        out << QApplication::applicationDirPath() + "/" + base;
-      }
+      out = path("sounds");
       break;
   }
 
@@ -305,6 +299,7 @@ void Settings::read()
   if (getBool("UseEmoticons"))
     m_emoticons = new Emoticons(this);
 
+  network.setPaths(path(NetworksPath));
   network.fromConfig(getString("Network"));
   createServerList();
 
@@ -458,20 +453,43 @@ bool Settings::update(bool)
 }
 
 
+QStringList Settings::path(const QString &base) const
+{
+  QStringList out;
+
+  if (isUnixLike()) {
+    out << SCHAT_UNIX_CONFIG(base);
+    out << SCHAT_UNIX_SHARE(base);
+  }
+  else {
+    out << QApplication::applicationDirPath() + "/" + base;
+  }
+
+  return out;
+}
+
+
 /*!
  * Создаёт список сетей и одиночных серверов.
  */
 void Settings::createServerList()
 {
-  QString networksPath = QApplication::applicationDirPath() + "/networks/";
+  QStringList networks = SimpleSettings->path(Settings::NetworksPath);
+  QStringList nameFilter = QStringList("*.xml");
+  QStringList files;
 
-  QDir directory(networksPath);
-  directory.setNameFilters(QStringList() << "*.xml");
-  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
+  foreach (QString path, networks) {
+    QDir dir(path);
+    foreach (QString file, dir.entryList(nameFilter, QDir::Files)) {
+      if (!files.contains(file))
+        files << path + "/" + file;
+    }
+  }
+
   NetworkReader network;
 
   foreach (QString file, files) {
-    if (network.readFile(networksPath + file)) {
+    if (network.readFile(file)) {
       if (!findItem(&networksModel, network.networkName())) {
         QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
         item->setData(file, Qt::UserRole);

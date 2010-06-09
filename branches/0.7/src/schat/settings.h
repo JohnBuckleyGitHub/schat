@@ -81,6 +81,7 @@ public:
   /// Пути.
   enum Paths {
     EmoticonsPath, ///< Пути к смайликам.
+    NetworksPath,  ///< Путь к файлам сети.
     SoundsPath     ///< Пути к звукам.
   };
 
@@ -125,6 +126,7 @@ public slots:
 
 private:
   bool update(bool get = false);
+  QStringList path(const QString &base) const;
   void createServerList();
   void normalizeInterval();
   void saveRecentServers();
