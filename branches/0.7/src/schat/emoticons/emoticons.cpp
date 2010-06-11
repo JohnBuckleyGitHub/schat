@@ -91,24 +91,33 @@ EmoticonsTheme Emoticons::theme(const QString &name)
   if (d->m_themes.contains(name))
     return d->m_themes.value(name);
 
-  QString path = QApplication::applicationDirPath() + "/emoticons/" + name + '/';
+  QStringList emoticons = SimpleSettings->path(Settings::EmoticonsPath);
+  QString path;
   EmoticonsProvider *provider = 0;
 
-  if (QFile::exists(path + "icondef.xml")) {
-    provider = new XmppEmoticons(this);
-    path += "icondef.xml";
-  }
-  else if (QFile::exists(path + "emoticons.xml")) {
-    provider = new KdeEmoticons(this);
-    path += "emoticons.xml";
-  }
-  else if (QFile::exists(path + "theme")) {
-    provider = new PidginEmoticons(this);
-    path += "theme";
-  }
-  else if (QFile::exists(path + "Emoticons.plist")) {
-    provider = new AdiumEmoticons(this);
-    path += "Emoticons.plist";
+  for (int i = 0; i < emoticons.size(); ++i) {
+    path = emoticons.at(i) + '/' + name + '/';
+
+    if (QFile::exists(path + "icondef.xml")) {
+      provider = new XmppEmoticons(this);
+      path += "icondef.xml";
+      break;
+    }
+    else if (QFile::exists(path + "emoticons.xml")) {
+      provider = new KdeEmoticons(this);
+      path += "emoticons.xml";
+      break;
+    }
+    else if (QFile::exists(path + "theme")) {
+      provider = new PidginEmoticons(this);
+      path += "theme";
+      break;
+    }
+    else if (QFile::exists(path + "Emoticons.plist")) {
+      provider = new AdiumEmoticons(this);
+      path += "Emoticons.plist";
+      break;
+    }
   }
 
   if (provider) {
@@ -138,21 +147,20 @@ QString Emoticons::currentThemeName()
 
 
 /*!
- * Returns a list of installed theme.
+* Returns a list of installed theme.
  *
- * \todo Невалидные темы не должны добавляться в список!
+ * \todo Добавить улучшенную проверку на корректность добавляемых тем.
  */
 QStringList Emoticons::themeList()
 {
   QStringList ls;
-  QStringList themeDirs; /// \todo Добавить другие пути к темам смайликов.
-  themeDirs << (QApplication::applicationDirPath() + "/emoticons/");
+  QStringList themeDirs = SimpleSettings->path(Settings::EmoticonsPath);
 
   for (int i = 0; i < themeDirs.count(); ++i) {
     QDir themeQDir(themeDirs.at(i));
     themeQDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     themeQDir.setSorting(QDir::Name);
-    QString dir = themeDirs.at(i);
+    QString dir = themeDirs.at(i) + "/";
     foreach (QString theme, themeQDir.entryList()) {
       if (QFile::exists(dir + theme + "/icondef.xml") || QFile::exists(dir + theme + "/emoticons.xml") || QFile::exists(dir + theme + "/theme") || QFile::exists(dir + theme + "/Emoticons.plist"))
         ls << theme;

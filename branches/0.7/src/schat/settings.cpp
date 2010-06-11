@@ -103,6 +103,7 @@ QStringList Settings::path(Paths type) const
 
   switch (type) {
     case EmoticonsPath:
+      out = path("emoticons");
       break;
 
     case NetworksPath:
