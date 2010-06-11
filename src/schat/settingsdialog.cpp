@@ -627,7 +627,7 @@ void EmoticonsSettings::enable(bool checked)
 
 void EmoticonsSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/emoticons"));
+  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::EmoticonsPath).at(0)));
 }
 
 
