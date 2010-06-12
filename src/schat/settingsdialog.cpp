@@ -355,12 +355,11 @@ public:
 #ifndef SCHAT_NO_WEBKIT
 void InterfaceSettings::Private::createStylesList()
 {
-  QStringList stylesDirs;
-  stylesDirs << (QApplication::applicationDirPath() + "/styles/");
+  QStringList stylesDirs = SimpleSettings->path(Settings::StylesPath);
   int index = 0;
 
   for (int i = 0; i < stylesDirs.count(); ++i) {
-    QString dir = stylesDirs.at(i);
+    QString dir = stylesDirs.at(i) + '/';
     QDir qdir(dir);
     qdir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     qdir.setSorting(QDir::Name);

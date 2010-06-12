@@ -82,7 +82,8 @@ public:
   enum Paths {
     EmoticonsPath, ///< Пути к смайликам.
     NetworksPath,  ///< Путь к файлам сети.
-    SoundsPath     ///< Пути к звукам.
+    SoundsPath,    ///< Пути к звукам.
+    StylesPath     ///< Пути к стилям текста.
   };
 
   Settings(bool unixLike, QObject *parent = 0);
