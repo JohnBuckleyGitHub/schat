@@ -113,6 +113,10 @@ QStringList Settings::path(Paths type) const
     case SoundsPath:
       out = path("sounds");
       break;
+
+    case StylesPath:
+      out = path("styles");
+      break;
   }
 
   return out;
