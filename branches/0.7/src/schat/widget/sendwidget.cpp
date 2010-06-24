@@ -104,7 +104,7 @@ void SendWidget::cursorPositionChanged()
 
 void SendWidget::log()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
+  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::LogPath).at(0)));
 }
 
 

@@ -110,7 +110,7 @@ bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
   }
   /// /log
   else if (text == "/log") {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::LogPath).at(0)));
   }
   /// /nick
   else if (text.startsWith("/nick ")) {

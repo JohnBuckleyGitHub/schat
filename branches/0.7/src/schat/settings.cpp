@@ -117,6 +117,13 @@ QStringList Settings::path(Paths type) const
     case StylesPath:
       out = path("styles");
       break;
+
+    case LogPath:
+      if (isUnixLike())
+        out << SCHAT_UNIX_CONFIG("log");
+      else
+        out << QApplication::applicationDirPath() + "/log";
+      break;
   }
 
   return out;
