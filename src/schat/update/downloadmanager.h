@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 #include <QUrl>
 #include <QNetworkAccessManager>
 
+class QTemporaryFile;
+
 /*!
  * \brief Базовый класс для скачивания файла.
  *
@@ -37,7 +39,9 @@ class DownloadManager: public QObject
 
 public:
   DownloadManager(const QString &targetPath, QObject *parent = 0);
+  ~DownloadManager();
   inline void clear() { m_downloadQueue.clear(); }
+  QString mirrorXml() const;
   static QString saveFileName(const QUrl &url);
   void append(const QStringList &urlList);
   void append(const QUrl &url);
@@ -52,11 +56,13 @@ private slots:
   void downloadReadyRead();
 
 private:
+  bool m_getMirror;
   QFile m_output;
   QNetworkAccessManager m_manager;
   QNetworkReply *m_current;
   QQueue<QUrl> m_downloadQueue;
   QString m_targetPath;
+  QTemporaryFile *m_mirrorXml;
 };
 
 #endif
