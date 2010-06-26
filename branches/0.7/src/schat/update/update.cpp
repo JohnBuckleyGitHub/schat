@@ -90,7 +90,7 @@ void Update::execute()
 void Update::downloadFinished()
 {
   if (m_state == GettingUpdateXml) {
-    if (m_reader.readFile(m_targetPath + "/" + DownloadManager::saveFileName(m_xmlUrl))) {
+    if (m_reader.readFile(m_download->mirrorXml())) {
 
       if (m_reader.isValid())
         checkVersion();
