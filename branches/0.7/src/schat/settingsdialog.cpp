@@ -54,6 +54,19 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 }
 
 
+/*!
+ * Открывает папку, которая при необходимости будет создана.
+ */
+void SettingsDialog::openFolder(int path)
+{
+  QString dir = SimpleSettings->path(static_cast<Settings::Paths>(path)).at(0);
+  if (!QDir().exists(dir))
+    QDir().mkpath(dir);
+
+  QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
+}
+
+
 void SettingsDialog::accept()
 {
   emit save();
@@ -328,7 +341,7 @@ void NetworkSettings::save()
 
 void NetworkSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::NetworksPath).at(0)));
+  SettingsDialog::openFolder(Settings::NetworksPath);
 }
 
 
@@ -626,7 +639,7 @@ void EmoticonsSettings::enable(bool checked)
 
 void EmoticonsSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::EmoticonsPath).at(0)));
+  SettingsDialog::openFolder(Settings::EmoticonsPath);
 }
 
 
@@ -751,7 +764,7 @@ void SoundSettings::save()
 
 void SoundSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::SoundsPath).at(0)));
+  SettingsDialog::openFolder(Settings::SoundsPath);
 }
 
 
