@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -162,5 +162,28 @@ contains( SCHAT_WINCE_VGA, 1 ) {
 
 TRANSLATIONS += ../../data/translations/schat_ru.ts
 CODECFORTR = UTF-8
+
+unix {
+  target.path += $$SCHAT_PREFIX/bin
+
+  doc.files = ../../data/doc/ChangeLog.html 
+  doc.path = $$SCHAT_PREFIX/share/schat/doc
+
+  emoticons_kolobok.files = ../../data/emoticons/Kolobok/icondef.xml
+  emoticons_kolobok.files += ../../data/emoticons/Kolobok/*.gif
+  emoticons_kolobok.path = $$SCHAT_PREFIX/share/schat/emoticons/Kolobok
+
+  emoticons_simple.files = $$quote(../../data/emoticons/Simple Smileys/emoticons.xml)
+  emoticons_simple.files += $$quote(../../data/emoticons/Simple Smileys/*.png)
+  emoticons_simple.path = $$quote($$SCHAT_PREFIX/share/schat/emoticons/Simple Smileys)
+
+  networks.files = ../../data/networks/*.xml
+  networks.path = $$SCHAT_PREFIX/share/schat/networks
+
+  sounds.files = ../../data/sounds/*.wav
+  sounds.path = $$SCHAT_PREFIX/share/schat/sounds
+
+  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds
+}
 
 include(../common/common.pri)
