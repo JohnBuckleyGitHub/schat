@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   a button that pops up a list of all emoticons and returns
  *   the emoticon-string if one is selected in the list
@@ -26,6 +26,7 @@
 
 #include <QLabel>
 #include <QMovie>
+#include <QObject>
 #include <QWidget>
 
 class QGridLayout;
@@ -56,7 +57,7 @@ private:
 /*!
  * \brief Виджет для выбора смайликов.
  */
-class EmoticonSelector : public QWidget
+class EmoticonSelector : public QFrame
 {
   Q_OBJECT
 
