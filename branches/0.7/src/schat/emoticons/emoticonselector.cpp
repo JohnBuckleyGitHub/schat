@@ -38,13 +38,20 @@
  * \todo Должна поддерживаться возможность выбрать смайлик с клавиатуры.
  */
 EmoticonLabel::EmoticonLabel(const QString &text, const QString &file, QWidget *parent)
-  : QLabel(parent), m_ok(false)
+  : QLabel(parent),
+    m_ok(false)
 {
   QMovie *movie = new QMovie(file, QByteArray(), this);
   setMovie(movie);
   setAlignment(Qt::AlignCenter);
   movie->start();
   setToolTip(text);
+
+  #ifdef Q_WS_X11
+  setStyleSheet("EmoticonLabel {background: #ffffff; border: 1px solid #eeeeee;}");
+  #else
+  setStyleSheet("EmoticonLabel {background: #ffffff}");
+  #endif
 }
 
 
@@ -59,8 +66,12 @@ void EmoticonLabel::mouseReleaseEvent(QMouseEvent* /*event*/)
  * \brief Конструктор класса EmoticonSelector.
  */
 EmoticonSelector::EmoticonSelector(QWidget *parent)
-  : QWidget(parent), m_lay(0)
+  : QFrame(parent),
+    m_lay(0)
 {
+  #ifndef Q_WS_X11
+  setStyleSheet("EmoticonSelector {background: #eeeeee}");
+  #endif
 }
 
 
@@ -81,8 +92,13 @@ void EmoticonSelector::prepareList()
   QString path = theme.themePath() + "/";
 
   m_lay = new QGridLayout(this);
+  #ifdef Q_WS_X11
+  m_lay->setMargin(0);
+  m_lay->setSpacing(0);
+  #else
   m_lay->setMargin(2);
-  m_lay->setSpacing(2);
+  m_lay->setSpacing(1);
+  #endif
 
   QMapIterator<QString, QStringList> i(list);
   while (i.hasNext()) {
