@@ -22,6 +22,9 @@
 #include <QMenu>
 #include <QObject>
 
+class QLabel;
+
+
 /*!
  * \brief Обеспечивает функциональность меню выбора смайликов.
  */
@@ -39,6 +42,8 @@ public:
 
   StatusMenu(QWidget *parent = 0);
   QIcon icon(Status status) const;
+  QString maxSizeText() const;
+  QString text() const;
   void setStatus(Status status);
 
 signals:
@@ -50,6 +55,31 @@ private slots:
 private:
   QActionGroup *m_group;       ///< Группа для того чтобы можно было выбрать только один статус.
   QList<QAction *> m_statuses; ///< Список статусов.
+};
+
+
+/*!
+ * \brief Виджет выбора статусов из строки состояния.
+ */
+class StatusWidget : public QWidget
+{
+  Q_OBJECT
+
+public:
+  StatusWidget(StatusMenu *menu, QWidget *parent = 0);
+  void setStatus(StatusMenu::Status status);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+  void showEvent(QShowEvent *event);
+
+private:
+  void setIcon(StatusMenu::Status status);
+
+  bool m_actualSize;
+  QLabel *m_icon;     ///< Видежт для отображения иконки статуса.
+  QLabel *m_label;    ///< Виджет для показа текста статуса.
+  StatusMenu *m_menu; ///< Меню для выбора статуса.
 };
 
 #endif /* STATUSMENU_H_ */

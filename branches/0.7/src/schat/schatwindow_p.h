@@ -37,6 +37,7 @@ class SettingsDialog;
 class SettingsDialog;
 class SoundAction;
 class StatusMenu;
+class StatusWidget;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
@@ -106,10 +107,10 @@ public:
   SoundAction *soundAction;
   static QMap<QString, QString> cmds;
   StatusMenu *statusMenu;
+  StatusWidget *statusWidget;
   TrayIcon *tray;
   UserView *users;
   #ifndef SCHAT_WINCE
-    QComboBox *statusCombo;
     QToolBar *toolBar;
   #endif
 };
