@@ -70,6 +70,7 @@ HEADERS += \
     widget/nickedit.h \
     widget/sendwidget.h \
     widget/soundwidget.h \
+    widget/statusmenu.h \
     widget/userview.h \
     widget/userview_p.h \
 
@@ -116,6 +117,7 @@ SOURCES += \
     widget/nickedit.cpp \
     widget/sendwidget.cpp \
     widget/soundwidget.cpp \
+    widget/statusmenu.cpp \
     widget/userview.cpp \
     
 contains( SCHAT_WEBKIT, 1 ) {

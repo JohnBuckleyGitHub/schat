@@ -32,13 +32,14 @@ class AboutDialog;
 class ClientService;
 class PopupManager;
 class SendWidget;
+class Settings;
 class SettingsDialog;
 class SettingsDialog;
+class SoundAction;
+class StatusMenu;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
-class SoundAction;
-class Settings;
 
 /*!
  * \brief Приватный D-класс для класса SChatWindow.
@@ -115,6 +116,7 @@ public:
   Settings *pref;
   SoundAction *soundAction;
   static QMap<QString, QString> cmds;
+  StatusMenu *statusMenu;
   TrayIcon *tray;
   UserView *users;
   #ifndef SCHAT_WINCE
