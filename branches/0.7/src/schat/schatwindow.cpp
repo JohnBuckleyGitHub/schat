@@ -26,16 +26,17 @@
 #include "clientservice.h"
 #include "mainchannel.h"
 #include "popup/popupmanager.h"
+#include "privatetab.h"
 #include "schatwindow.h"
 #include "schatwindow_p.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "simplechatapp.h"
 #include "soundaction.h"
-#include "privatetab.h"
 #include "trayicon.h"
 #include "welcomedialog.h"
 #include "widget/sendwidget.h"
+#include "widget/statusmenu.h"
 #include "widget/userview.h"
 
 QMap<QString, QString> SChatWindowPrivate::cmds;
@@ -339,7 +340,7 @@ void SChatWindowPrivate::createTrayIcon()
   menu->addAction(send->aboutAction());
   menu->addAction(settingsAction); /// \todo Необходимо изменить название пункта меню на \b Параметры.
 
-  QMenu *statusMenu = new QMenu(QObject::tr("Статус"), q);
+  statusMenu = new StatusMenu(q);
   statusMenu->addAction(onlineAction);
   statusMenu->addAction(awayAction);
   statusMenu->addAction(dndAction);
