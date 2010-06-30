@@ -16,6 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QContextMenuEvent>
+#include <QHBoxLayout>
+#include <QLabel>
+
 #include "statusmenu.h"
 
 /*!
@@ -80,6 +84,24 @@ QIcon StatusMenu::icon(Status status) const
 }
 
 
+QString StatusMenu::maxSizeText() const
+{
+  QString out;
+  for (int i = 0; i < m_statuses.size(); ++i) {
+    if (m_statuses.at(i)->text().size() > out.size())
+      out = m_statuses.at(i)->text().size();
+  }
+
+  return out;
+}
+
+
+QString StatusMenu::text() const
+{
+  return m_group->checkedAction()->text();
+}
+
+
 /*!
  * Установка статуса.
  */
@@ -95,4 +117,67 @@ void StatusMenu::setStatus(Status status)
 void StatusMenu::statusChanged(QAction *action)
 {
   emit statusChanged(action->data().toInt());
+}
+
+
+
+
+/*!
+ * \brief Конструктор класса StatusWidget.
+ */
+StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
+  : QWidget(parent),
+    m_actualSize(false),
+    m_menu(menu)
+{
+  m_icon = new QLabel(this);
+  setIcon(StatusMenu::StatusOnline);
+
+  m_label = new QLabel(m_menu->maxSizeText(), this);
+  QHBoxLayout *lay = new QHBoxLayout(this);
+  lay->setMargin(0);
+  lay->setSpacing(3);
+  lay->addWidget(m_icon);
+  lay->addWidget(m_label);
+  lay->addStretch();
+}
+
+
+void StatusWidget::setStatus(StatusMenu::Status status)
+{
+  m_menu->setStatus(status);
+  setIcon(status);
+  if (m_actualSize)
+    m_label->setText(m_menu->text());
+}
+
+
+/*!
+ * Обработка нажатий кнопок мыши для показа меню.
+ */
+void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
+    m_menu->exec(event->globalPos());
+  }
+  else {
+    QWidget::mouseReleaseEvent(event);
+  }
+}
+
+
+void StatusWidget::showEvent(QShowEvent *event)
+{
+  if (!m_actualSize) {
+    setMinimumSize(size());
+    m_label->setText(m_menu->text());
+    m_actualSize = true;
+  }
+  QWidget::showEvent(event);
+}
+
+
+void StatusWidget::setIcon(StatusMenu::Status status)
+{
+  m_icon->setPixmap(m_menu->icon(status).pixmap(16));
 }

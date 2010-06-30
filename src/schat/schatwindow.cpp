@@ -302,23 +302,14 @@ void SChatWindowPrivate::createStatusBar()
   statusLabel->setWordWrap(true);
 
   statusMenu = new StatusMenu(q);
-
-  #ifndef SCHAT_WINCE
-  statusCombo = new QComboBox(q);
-  statusCombo->setIconSize(QSize(14, 14));
-  statusCombo->addItem(QIcon(":/images/status/online.png"),  QObject::tr("В сети"));
-  statusCombo->addItem(QIcon(":/images/status/away.png"),    QObject::tr("Отсутствую"));
-  statusCombo->addItem(QIcon(":/images/status/dnd.png"),     QObject::tr("Не беспокоить"));
-  statusCombo->addItem(QIcon(":/images/status/offline.png"), QObject::tr("Не в сети"));
-  statusCombo->setFocusPolicy(Qt::NoFocus);
-  #endif
+  statusWidget = new StatusWidget(statusMenu, q);
 
   statusBar = new QStatusBar(q);
   statusBar->addWidget(connectLabel);
   statusBar->addWidget(connectMovie);
   statusBar->addWidget(statusLabel, 1);
   #ifndef SCHAT_WINCE
-  statusBar->addPermanentWidget(statusCombo);
+  statusBar->addPermanentWidget(statusWidget);
   #endif
   statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
   q->setStatusBar(statusBar);
@@ -642,16 +633,10 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
 
 /*!
  * Обновление визуальной информации о статусе.
- * Устанавливается индекс в \a statusCombo
- * и иконка для \a statusCombo.
  */
 void SChatWindowPrivate::updateStatus(int status)
 {
-  #ifndef SCHAT_WINCE
-  statusCombo->setCurrentIndex(status);
-  #endif
-
-  statusMenu->setStatus(static_cast<StatusMenu::Status>(status));
+  statusWidget->setStatus(static_cast<StatusMenu::Status>(status));
   statusAction->setIcon(statusMenu->icon(static_cast<StatusMenu::Status>(status)));
 }
 
@@ -755,10 +740,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->users, SIGNAL(popupMsg(const QString &, const QString &, const QString &, bool)), d->popupManager, SLOT(popupMsg(const QString &, const QString &, const QString &, bool)));
   connect(d->tabs, SIGNAL(currentChanged(int)), SLOT(stopNotice(int)));
   connect(d->pref, SIGNAL(changed(int)), SLOT(settingsChanged(int)));
-
-  #ifndef SCHAT_WINCE
-  connect(d->statusCombo, SIGNAL(activated(int)), SLOT(statusChangedByUser(int)));
-  #endif
 
   d->createTrayIcon();
   connect(d->tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
