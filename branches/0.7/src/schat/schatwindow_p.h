@@ -47,13 +47,6 @@ class WelcomeDialog;
 class SChatWindowPrivate
 {
 public:
-  enum Status {
-    StatusOnline,
-    StatusAway,
-    StatusDnD,
-    StatusOffline
-  };
-
   SChatWindowPrivate(SChatWindow *parent);
   ~SChatWindowPrivate();
 
@@ -94,11 +87,7 @@ public:
   int autoAwayTime;
   MainChannel *main;
   PopupManager *popupManager;
-  QAction *awayAction;
   QAction *daemonAction;
-  QAction *dndAction;
-  QAction *offlineAction;
-  QAction *onlineAction;
   QAction *settingsAction;
   QAction *statusAction;
   QLabel *connectLabel;

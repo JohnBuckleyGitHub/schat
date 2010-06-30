@@ -30,7 +30,26 @@ class StatusMenu : public QMenu
   Q_OBJECT
 
 public:
+  enum Status {
+    StatusOnline,
+    StatusAway,
+    StatusDnD,
+    StatusOffline
+  };
+
   StatusMenu(QWidget *parent = 0);
+  QIcon icon(Status status) const;
+  void setStatus(Status status);
+
+signals:
+  void statusChanged(int status);
+
+private slots:
+  void statusChanged(QAction *action);
+
+private:
+  QActionGroup *m_group;       ///< Группа для того чтобы можно было выбрать только один статус.
+  QList<QAction *> m_statuses; ///< Список статусов.
 };
 
 #endif /* STATUSMENU_H_ */

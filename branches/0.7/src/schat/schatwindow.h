@@ -74,7 +74,6 @@ private slots:
   void showSettingsPage(int page = 0);
   void statusChangedByUser();
   void statusChangedByUser(int index);
-  void statusChangedByUser(QAction *action);
   void statusShortcut(int key);
   void stopNotice(int index);
   void syncUsersEnd();
