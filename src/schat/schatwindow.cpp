@@ -301,7 +301,7 @@ void SChatWindowPrivate::createStatusBar()
   statusLabel = new QLabel(QObject::tr("Нет подключения"), q);
   statusLabel->setWordWrap(true);
 
-  statusMenu = new StatusMenu(q);
+  statusMenu = new StatusMenu(profile->isMale(), q);
   statusWidget = new StatusWidget(statusMenu, q);
 
   statusBar = new QStatusBar(q);
@@ -1297,6 +1297,8 @@ void SChatWindow::settingsChanged(int notify)
     case Settings::ProfileSettingsChanged:
       d->clientService->setSafeNick(d->profile->nick());
       d->clientService->sendNewProfile();
+      d->statusWidget->setGender(d->profile->isMale());
+      d->statusAction->setIcon(d->statusMenu->icon(d->statusMenu->status()));
       break;
 
     case Settings::ByeMsgChanged:

@@ -19,14 +19,16 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPainter>
 
 #include "statusmenu.h"
 
 /*!
  * \brief Конструктор класса StatusMenu.
  */
-StatusMenu::StatusMenu(QWidget *parent)
+StatusMenu::StatusMenu(bool male, QWidget *parent)
   : QMenu(tr("Статус"), parent),
+    m_male(male),
     m_group(new QActionGroup(this))
 {
   QAction *action = m_group->addAction(icon(StatusOnline), tr("В сети"));
@@ -66,21 +68,23 @@ StatusMenu::StatusMenu(QWidget *parent)
  */
 QIcon StatusMenu::icon(Status status) const
 {
-  switch (status) {
-    case StatusOnline:
-      return QIcon(":/images/status/online.png");
+  QString file = ":/images/" + QString(m_male ? "male" : "female") + ".png";
 
-    case StatusAway:
-      return QIcon(":/images/status/away.png");
+  if (status == StatusOffline)
+    return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
-    case StatusDnD:
-      return QIcon(":/images/status/dnd.png");
+  if (status == StatusOnline)
+    return QIcon(file);
 
-    case StatusOffline:
-      return QIcon(":/images/status/offline.png");
-  }
+  QPixmap pixmap(file);
+  QPainter painter(&pixmap);
+  if (status == StatusAway)
+    painter.drawPixmap(8, 8, QPixmap(":/images/status/small/away.png"));
+  else if (status == StatusDnD)
+    painter.drawPixmap(7, 7, QPixmap(":/images/status/small/dnd.png"));
 
-  return QIcon();
+  painter.end();
+  return QIcon(pixmap);
 }
 
 
@@ -102,11 +106,22 @@ QString StatusMenu::text() const
 }
 
 
+void StatusMenu::setGender(bool male)
+{
+  m_male = male;
+
+  for (int i = 0; i < m_statuses.size(); ++i) {
+    m_statuses.at(i)->setIcon(icon(static_cast<StatusMenu::Status>(i)));
+  }
+}
+
+
 /*!
  * Установка статуса.
  */
 void StatusMenu::setStatus(Status status)
 {
+  m_status = status;
   m_statuses.at(status)->setChecked(true);
 }
 
@@ -118,8 +133,6 @@ void StatusMenu::statusChanged(QAction *action)
 {
   emit statusChanged(action->data().toInt());
 }
-
-
 
 
 /*!
@@ -140,6 +153,13 @@ StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
   lay->addWidget(m_icon);
   lay->addWidget(m_label);
   lay->addStretch();
+}
+
+
+void StatusWidget::setGender(bool male)
+{
+  m_menu->setGender(male);
+  setIcon(m_menu->status());
 }
 
 

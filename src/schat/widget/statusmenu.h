@@ -40,10 +40,12 @@ public:
     StatusOffline
   };
 
-  StatusMenu(QWidget *parent = 0);
+  StatusMenu(bool male, QWidget *parent = 0);
+  inline Status status() const { return m_status; }
   QIcon icon(Status status) const;
   QString maxSizeText() const;
   QString text() const;
+  void setGender(bool male);
   void setStatus(Status status);
 
 signals:
@@ -53,8 +55,10 @@ private slots:
   void statusChanged(QAction *action);
 
 private:
+  bool m_male;
   QActionGroup *m_group;       ///< Группа для того чтобы можно было выбрать только один статус.
   QList<QAction *> m_statuses; ///< Список статусов.
+  Status m_status;
 };
 
 
@@ -67,6 +71,7 @@ class StatusWidget : public QWidget
 
 public:
   StatusWidget(StatusMenu *menu, QWidget *parent = 0);
+  void setGender(bool male);
   void setStatus(StatusMenu::Status status);
 
 protected:
