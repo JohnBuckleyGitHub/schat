@@ -46,6 +46,10 @@ SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   setQuitOnLastWindowClosed(false);
   addLibraryPath(applicationDirPath() + "/plugins");
 
+  #if defined(Q_WS_X11)
+  setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  #endif
+
   #ifndef Q_OS_WINCE
     setStyle(new QPlastiqueStyle);
   #endif
