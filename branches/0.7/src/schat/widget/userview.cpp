@@ -23,6 +23,7 @@
 #include "privatetab.h"
 #include "protocol.h"
 #include "settings.h"
+#include "simplechatapp.h"
 #include "userview.h"
 #include "userview_p.h"
 
@@ -599,7 +600,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
       privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
 
     QMenu copyMenu(tr("Копировать"), this);
-    copyMenu.setIcon(QIcon(":/images/edit-copy.png"));
+    copyMenu.setIcon(SimpleChatApp::iconFromTheme("edit-copy"));
     menu.addMenu(&copyMenu);
 
     AbstractProfile profile = item->profile();

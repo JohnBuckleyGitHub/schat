@@ -30,6 +30,7 @@
 #include "chatview_p.h"
 #include "protocol.h"
 #include "settings.h"
+#include "simplechatapp.h"
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
@@ -614,15 +615,15 @@ void ChatView::createActions()
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
-  d->copy = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Копировать"), this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
+  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("&Очистить"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("&Выделить всё"), this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
   #endif
 }

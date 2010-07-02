@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 #include <QtGui>
 
 #include "channellog.h"
+#include "simplechatapp.h"
 #include "widget/inputwidget.h"
-
 
 /*!
  * \brief Конструктор класса InputWidget.
@@ -153,22 +153,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
  */
 void InputWidget::createActions()
 {
-  m_cutAction = new QAction(QIcon(":/images/edit-cut.png"), tr("&Вырезать"), this);
+  m_cutAction = new QAction(SimpleChatApp::iconFromTheme("edit-cut"), tr("&Вырезать"), this);
   m_cutAction->setShortcut(QKeySequence::Cut);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
-  m_copyAction = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  m_copyAction = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Копировать"), this);
   m_copyAction->setShortcut(QKeySequence::Copy);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
-  m_pasteAction = new QAction(QIcon(":/images/edit-paste.png"), tr("&Вставить"), this);
+  m_pasteAction = new QAction(SimpleChatApp::iconFromTheme("edit-paste"), tr("&Вставить"), this);
   m_pasteAction->setShortcut(QKeySequence::Paste);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
-  m_clearAction = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
+  m_clearAction = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("&Очистить"), this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
-  m_selectAllAction = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+  m_selectAllAction = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("&Выделить всё"), this);
   m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }

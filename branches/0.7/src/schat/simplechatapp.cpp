@@ -114,6 +114,16 @@ int SimpleChatApp::run()
 }
 
 
+QIcon SimpleChatApp::iconFromTheme(const QString &name)
+{
+  #if defined(Q_WS_X11) && QT_VERSION >= 0x040600
+  return QIcon::fromTheme(name, QIcon(":/images/" + name + ".png"));
+  #else
+  return QIcon(":/images/"+ name + ".png");
+  #endif
+}
+
+
 QString SimpleChatApp::defaultStyle()
 {
   #if defined(Q_WS_X11)
