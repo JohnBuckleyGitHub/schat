@@ -23,6 +23,7 @@
 #include "profilewidget.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "simplechatapp.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
 #include "widget/soundwidget.h"
@@ -491,11 +492,11 @@ InterfaceSettings::~InterfaceSettings() { delete d; }
 void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
-    d->mainStyle->setCurrentIndex(d->mainStyle->findText("Plastique"));
+    d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleChatApp::defaultStyle()));
     #ifndef SCHAT_NO_WEBKIT
       d->chatStyle->setCurrentIndex(0);
       d->chatStyleVariant->setCurrentIndex(0);
-      d->grouping->setChecked(true);
+      d->grouping->setChecked(false);
    #endif
   }
 }

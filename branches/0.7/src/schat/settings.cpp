@@ -24,6 +24,7 @@
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
+#include "simplechatapp.h"
 #include "version.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
@@ -232,7 +233,8 @@ void Settings::read()
   setBool("Maximized",              false);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
-  setString("Style",                "Plastique");
+
+  setString("Style",                SimpleChatApp::defaultStyle());
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
