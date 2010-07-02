@@ -49,10 +49,6 @@ SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   #if defined(Q_WS_X11)
   setAttribute(Qt::AA_DontShowIconsInMenus, false);
   #endif
-
-  #ifndef Q_OS_WINCE
-    setStyle(new QPlastiqueStyle);
-  #endif
 }
 
 
@@ -115,6 +111,21 @@ int SimpleChatApp::run()
   connect(this, SIGNAL(messageReceived(const QString &)), m_window, SLOT(handleMessage(const QString &)));
   #endif
   return exec();
+}
+
+
+QString SimpleChatApp::defaultStyle()
+{
+  #if defined(Q_WS_X11)
+  QStringList styles = QStyleFactory::keys();
+  if (styles.contains("Oxygen"))
+    return "Oxygen";
+
+  if (styles.contains("GTK+"))
+    return "GTK+";
+  #endif
+
+  return "Plastique";
 }
 
 
