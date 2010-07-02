@@ -164,6 +164,8 @@ ChatView::ChatView(QWidget *parent)
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
     setAcceptDrops(false);
+
+    QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   #else
     d = new ChatViewPrivate(this);
 
