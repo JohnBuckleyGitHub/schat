@@ -40,6 +40,7 @@ public:
   ~SimpleChatApp();
   bool isRunning();
   int run();
+  static QIcon iconFromTheme(const QString &name);
   static QString defaultStyle();
   static SimpleChatApp *instance();
 
