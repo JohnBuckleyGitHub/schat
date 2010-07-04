@@ -185,7 +185,13 @@ unix {
   sounds.files = ../../data/sounds/*.wav
   sounds.path = $$SCHAT_PREFIX/share/schat/sounds
 
-  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds
+  pixmaps.files = ../../data/images/schat.png
+  pixmaps.path = $$SCHAT_PREFIX/share/pixmaps
+
+  applications.files = ../../os/ubuntu/schat.desktop
+  applications.path = $$SCHAT_PREFIX/share/applications
+
+  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds pixmaps applications
 }
 
 include(../common/common.pri)
