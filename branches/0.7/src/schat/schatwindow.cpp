@@ -755,10 +755,10 @@ SChatWindow::SChatWindow(QWidget *parent)
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 
   if (Settings::isNewYear())
-    setWindowIcon(QIcon(":/images/logo-ny.png"));
+    setWindowIcon(QIcon(":/images/schat-ny.png"));
   #ifndef Q_WS_WIN
   else
-    setWindowIcon(QIcon(":/images/logo.png"));
+    setWindowIcon(QIcon(":/images/schat.png"));
   #endif
 
   // Показ модального диалога приветствия.

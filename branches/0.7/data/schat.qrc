@@ -38,12 +38,6 @@
   <file>images/im-status-message-edit.png</file>
   <file>images/im-user.png</file>
   <file>images/load.gif</file>
-  <file>images/logo.png</file>
-  <file>images/logo16.png</file>
-  <file>images/logo16-away.png</file>
-  <file>images/logo16-dnd.png</file>
-  <file>images/logo16-ny.png</file>
-  <file>images/logo-ny.png</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
   <file>images/network.png</file>
@@ -56,6 +50,12 @@
   <file>images/player_play.png</file>
   <file>images/profile.png</file>
   <file>images/qt-logo.png</file>
+  <file>images/schat.png</file>
+  <file>images/schat16.png</file>
+  <file>images/schat16-away.png</file>
+  <file>images/schat16-dnd.png</file>
+  <file>images/schat16-ny.png</file>
+  <file>images/schat-ny.png</file>
   <file>images/sound.png</file>
   <file>images/sound_mute.png</file>
   <file>images/status/small/away.png</file>

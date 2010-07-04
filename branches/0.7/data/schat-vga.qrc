@@ -28,8 +28,8 @@
   <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
   <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
   <file alias="images/im-user.png">images/vga/im-user.png</file>
-  <file alias="images/logo16.png">images/logo.png</file>
-  <file alias="images/logo16-ny.png">images/logo-ny.png</file>
+  <file alias="images/logo16.png">images/schat.png</file>
+  <file alias="images/logo16-ny.png">images/schat-ny.png</file>
   <file alias="images/male.png">images/vga/male.png</file>
   <file alias="images/network.png">images/vga/network.png</file>
   <file alias="images/note2.png">images/vga/note2.png</file>
@@ -47,10 +47,6 @@
   <file>images/impomezia.png</file>
   <file>images/im-status-message-edit.png</file>
   <file>images/load.gif</file>
-  <file>images/logo.png</file>
-  <file>images/logo16-away.png</file>
-  <file>images/logo16-dnd.png</file>
-  <file>images/logo16-ny.png</file>
   <file>images/main.png</file>
   <file>images/network_connect.png</file>
   <file>images/network_disconnect.png</file>
@@ -59,6 +55,10 @@
   <file>images/ok2.png</file>
   <file>images/player_play.png</file>
   <file>images/qt-logo.png</file>
+  <file>images/schat.png</file>
+  <file>images/schat16-away.png</file>
+  <file>images/schat16-dnd.png</file>
+  <file>images/schat16-ny.png</file>
   <file>images/tab_close.png</file>
   <file>images/update.png</file>
   <file>images/warning.png</file>
