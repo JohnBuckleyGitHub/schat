@@ -82,9 +82,9 @@ AboutMain::AboutMain(QWidget *parent)
 
   QLabel *aboutLogo = new QLabel(this);
   if (AbstractSettings::isNewYear())
-    aboutLogo->setPixmap(QPixmap(":/images/logo-ny.png"));
+    aboutLogo->setPixmap(QPixmap(":/images/schat-ny.png"));
   else
-    aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
+    aboutLogo->setPixmap(QPixmap(":/images/schat.png"));
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
   QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2010 <b>IMPOMEZIA</b>. All rights reserved.", this);

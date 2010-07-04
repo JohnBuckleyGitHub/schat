@@ -123,13 +123,13 @@ void TrayIcon::notify(int code)
 void TrayIcon::setStatus(quint32 status)
 {
   if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    m_icon = QIcon(":/images/logo16-away.png");
+    m_icon = QIcon(":/images/schat16-away.png");
   else if (status == schat::StatusDnD)
-    m_icon = QIcon(":/images/logo16-dnd.png");
+    m_icon = QIcon(":/images/schat16-dnd.png");
   else if (Settings::isNewYear())
-    m_icon = QIcon(":/images/logo16-ny.png");
+    m_icon = QIcon(":/images/schat16-ny.png");
   else
-    m_icon = QIcon(":/images/logo16.png");
+    m_icon = QIcon(":/images/schat16.png");
 
   if (status != schat::StatusAutoAway && status != schat::StatusDnD && m_deferredMessage) {
     displayMessage(m_message);

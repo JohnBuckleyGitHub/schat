@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -517,9 +517,9 @@ void SendWidget::createPermanentButtons()
   createSettingsPage(prefMenu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
   m_aboutAction = menu->addAction(tr("О Simple Chat..."), this, SIGNAL(about()));
   if (Settings::isNewYear())
-    m_aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
+    m_aboutAction->setIcon(QIcon(":/images/schat16-ny.png"));
   else
-    m_aboutAction->setIcon(QIcon(":/images/logo16.png"));
+    m_aboutAction->setIcon(QIcon(":/images/schat16.png"));
 
   menu->addSeparator();
   m_quitAction = menu->addAction(QIcon(":/images/exit.png"), tr("Выход"), this, SIGNAL(closeChat()));

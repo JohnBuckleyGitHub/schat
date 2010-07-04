@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -93,12 +93,12 @@ QString ChatWindowStyleOutput::makeSkeleton(const QString &chatName,        cons
     skeleton = skeleton.replace(pos, timeRegExp.cap(0).length(), time);
 
   if (ownerIconPath.isEmpty())
-    skeleton = skeleton.replace("%outgoingIconPath%", "qrc:/images/logo.png");
+    skeleton = skeleton.replace("%outgoingIconPath%", "qrc:/images/schat.png");
   else
     skeleton.replace("%outgoingIconPath%", QUrl::fromLocalFile(ownerIconPath).toString());
 
   if (partnerIconPath.isEmpty())
-    skeleton = skeleton.replace("%incomingIconPath%", "qrc:/images/logo.png");
+    skeleton = skeleton.replace("%incomingIconPath%", "qrc:/images/schat.png");
   else
     skeleton.replace("%incomingIconPath%", QUrl::fromLocalFile(partnerIconPath).toString());
 
@@ -150,7 +150,7 @@ QString ChatWindowStyleOutput::makeMessage(const QString &sender, const QString 
 
   QString avatar = avatarPath;
   if (avatar.isEmpty())
-    avatar = ("qrc:/images/logo.png");
+    avatar = ("qrc:/images/schat.png");
 
   html = html.replace("%userIconPath%", avatar);
 

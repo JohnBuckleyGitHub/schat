@@ -609,7 +609,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
     if (!profile.fullName().isEmpty())
       copyFullName = copyMenu.addAction(QIcon(":/images/profile.png"), tr("ФИО"));
 
-    QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/logo16.png"), tr("Клиент"));
+    QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/schat16.png"), tr("Клиент"));
     QAction *copyHost = copyMenu.addAction(QIcon(":/images/computer.png"), tr("Адрес"));
 
     menu.addSeparator();

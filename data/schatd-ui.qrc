@@ -7,12 +7,12 @@
   <file>images/led/greenled.png</file>
   <file>images/led/redled.png</file>
   <file>images/led/yellowled.png</file>
-  <file>images/logo16-gray.png</file>
-  <file>images/logo16-green.png</file>
-  <file>images/logo16-yellow.png</file>
   <file>images/network.png</file>
   <file>images/play.png</file>
   <file>images/restart.png</file>
+  <file>images/schat16-gray.png</file>
+  <file>images/schat16-green.png</file>
+  <file>images/schat16-yellow.png</file>
   <file>images/shutdown.png</file>
   <file>images/stop.png</file>
   <file>images/undo.png</file>
