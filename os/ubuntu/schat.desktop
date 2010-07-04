@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
+Type=Application
 Name=IMPOMEZIA Simple Chat
 Comment=IMPOMEZIA Simple Chat Client
-Exec=schat %f
-Terminal=false
-Type=Application
 Icon=schat
-Categories=Application;Internet;Network;
+Exec=schat
+Terminal=false
+Categories=Qt;Network;Chat;
