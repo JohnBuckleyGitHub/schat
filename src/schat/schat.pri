@@ -169,7 +169,7 @@ unix {
   target.path += $$SCHAT_PREFIX/bin
 
   doc.files = ../../data/doc/ChangeLog.html 
-  doc.path = $$SCHAT_PREFIX/share/schat/doc
+  doc.path = $$SCHAT_PREFIX/share/doc/schat/html
 
   emoticons_kolobok.files = ../../data/emoticons/Kolobok/icondef.xml
   emoticons_kolobok.files += ../../data/emoticons/Kolobok/*.gif
