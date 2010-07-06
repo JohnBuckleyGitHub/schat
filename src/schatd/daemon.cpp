@@ -45,6 +45,8 @@
   #define SCHAT_DEBUG(x)
 #endif
 
+Daemon *Daemon::m_self = 0;
+
 /*!
  * \brief Конструктор класса Daemon.
  * \param parent Указатель на родительский объект.
@@ -57,6 +59,7 @@ Daemon::Daemon(QObject *parent)
   m_statsInterval(0),
   m_remoteNumeric(0)
 {
+  m_self = this;
   environment();
   m_settings = new DaemonSettings(m_environment.value(EnvConfFile), this);
 
