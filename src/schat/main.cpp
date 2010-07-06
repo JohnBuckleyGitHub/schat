@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,12 +37,6 @@ int main(int argc, char *argv[])
     if (Settings::install())
       return 0;
   #endif
-
-  // Требуем поддержку System Tray
-  if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-    QMessageBox::critical(0, QObject::tr("Systray"), QObject::tr("I couldn't detect any system tray on this system."));
-    return 1;
-  }
 
   return app.run();
 }

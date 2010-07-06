@@ -17,6 +17,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 cd ../..
+patch -p0 -N -i os/ubuntu/ubuntu.patch
 qmake -r
 
 mkdir src/schat/debian
