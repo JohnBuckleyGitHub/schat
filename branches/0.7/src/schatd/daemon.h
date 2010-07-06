@@ -54,6 +54,7 @@ public:
   Daemon(QObject *parent = 0);
   ~Daemon();
   bool start();
+  static Daemon *instance() { return m_self; }
   void reload(int code);
 
 signals:
@@ -159,6 +160,7 @@ private:
   QTimer zombieTimer;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
+  static Daemon *m_self;
   #ifndef SCHAT_NO_LOCAL_SERVER
     QLocalServer *m_localServer;
   #endif
