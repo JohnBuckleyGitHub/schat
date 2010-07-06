@@ -1097,16 +1097,15 @@ class MiscSettings::Private
 {
 public:
   Private() {}
-  #ifdef Q_WS_WIN
-    void readAutostart();
-    void writeAutostart();
-  #endif
+  void readAutostart();
+  void writeAutostart();
 
+  QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
+
   #ifdef Q_WS_WIN
-    QCheckBox *autostart;
-    QCheckBox *autostartDaemon;
+  QCheckBox *autostartDaemon;
   #endif
 };
 
@@ -1116,9 +1115,9 @@ public:
  * Если файл программы управления сервером не найден, то скрываем флажок сервера.
  * Если ключа в реестре не найдено, снимаем флажок.
  */
-#ifdef Q_WS_WIN
 void MiscSettings::Private::readAutostart()
 {
+  #if defined(Q_WS_WIN)
   QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
   if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
@@ -1132,6 +1131,13 @@ void MiscSettings::Private::readAutostart()
   QString value = reg.value(QApplication::applicationName(), "").toString();
   if (value.isEmpty())
     autostart->setChecked(false);
+  #elif defined(Q_WS_X11)
+  QString desktopFile = QDir::homePath() + "/.config/autostart/schat.desktop";
+  if (!QFile::exists(desktopFile) || QSettings(desktopFile, QSettings::IniFormat).value("Desktop Entry/X-GNOME-Autostart-enabled").toBool() == false) {
+    autostart->setChecked(false);
+    return;
+  }
+  #endif
 }
 
 
@@ -1140,6 +1146,7 @@ void MiscSettings::Private::readAutostart()
  */
 void MiscSettings::Private::writeAutostart()
 {
+  #if defined(Q_WS_WIN)
   QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
   if (autostart->checkState() == Qt::Checked)
@@ -1153,8 +1160,33 @@ void MiscSettings::Private::writeAutostart()
     else if (autostart->checkState() == Qt::Unchecked)
       reg.remove(QApplication::applicationName() + " Daemon");
   }
+  #elif defined(Q_WS_X11)
+  QString path = QDir::homePath() + "/.config/autostart/";
+  if (autostart->checkState() == Qt::Checked) {
+    if (!QDir().exists(path))
+      QDir().mkpath(path);
+
+    QFile file(path + "schat.desktop");
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << "[Desktop Entry]" << endl;
+      out << "Version=1.0" << endl;
+      out << "Type=Application" << endl;
+      out << "Name=IMPOMEZIA Simple Chat" << endl;
+      out << "Comment=" << endl;
+      out << "Icon=schat" << endl;
+      out << "Exec=schat -hide" << endl;
+      out << "Hidden=false" << endl;
+      out << "NoDisplay=false" << endl;
+      out << "X-GNOME-Autostart-enabled=true" << endl;
+      file.close();
+    }
+  }
+  else if (autostart->checkState() == Qt::Unchecked) {
+    QFile::remove(path + "schat.desktop");
+  }
+  #endif
 }
-#endif
 
 
 /*!
@@ -1163,25 +1195,27 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
+  QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+
+  d->autostart = new QCheckBox(tr("&Автозапуск"), this);
+  d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+  d->autostart->setTristate();
+  d->autostart->setCheckState(Qt::PartiallyChecked);
+
   #ifdef Q_WS_WIN
-    QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
-
-    d->autostart = new QCheckBox(tr("&Автозапуск"), this);
-    d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
-    d->autostart->setTristate();
-    d->autostart->setCheckState(Qt::PartiallyChecked);
-
-    d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
-    d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
-    d->autostartDaemon->setTristate();
-    d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
-
-    QVBoxLayout *integrationLay = new QVBoxLayout(integration);
-    integrationLay->addWidget(d->autostart);
-    integrationLay->addWidget(d->autostartDaemon);
-    integrationLay->setMargin(6);
-    integrationLay->setMargin(4);
+  d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
+  d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+  d->autostartDaemon->setTristate();
+  d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
   #endif
+
+  QVBoxLayout *integrationLay = new QVBoxLayout(integration);
+  integrationLay->addWidget(d->autostart);
+  #ifdef Q_WS_WIN
+  integrationLay->addWidget(d->autostartDaemon);
+  #endif
+  integrationLay->setMargin(6);
+  integrationLay->setMargin(4);
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
@@ -1200,17 +1234,13 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->setMargin(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  #ifdef Q_WS_WIN
-    mainLay->addWidget(integration);
-    mainLay->addSpacing(12);
-  #endif
+  mainLay->addWidget(integration);
+  mainLay->addSpacing(12);
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
 
-  #ifdef Q_WS_WIN
-    d->readAutostart();
-  #endif
+  d->readAutostart();
 }
 
 
@@ -1228,9 +1258,7 @@ void MiscSettings::reset(int page)
 
 void MiscSettings::save()
 {
-  #ifdef Q_WS_WIN
-    d->writeAutostart();
-  #endif
+  d->writeAutostart();
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
