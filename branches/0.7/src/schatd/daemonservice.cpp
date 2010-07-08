@@ -689,6 +689,8 @@ void DaemonService::opcodeMessage()
 
 void DaemonService::opcodeNewNick()
 {
+  SCHAT_DEBUG(this << "::opcodeNewNick()")
+
   quint8 p_gender;
   QString p_nick;
   QString p_newNick;
