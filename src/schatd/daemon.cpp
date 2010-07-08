@@ -1268,6 +1268,7 @@ void Daemon::link()
     }
 
     LOG(0, tr("- Notice - Поддержка сети успешно инициализирована, %1@%2 \"%3\"").arg(m_numeric).arg(m_settings->getString("Name")).arg(m_network->name()));
+    SCHAT_DEBUG(this << "network up!" << m_settings->getString("Name") << m_numeric);
   }
 }
 
@@ -1450,6 +1451,8 @@ void Daemon::syncBye(const QString &nick, const QString &bye, bool local)
  */
 void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name, bool local)
 {
+  SCHAT_DEBUG(this << "::syncProfile()" << gender << nick << nNick << name << local);
+
   QString lowerNick = normalizeNick(nick);
 
   if (!m_users.contains(lowerNick))
@@ -1485,6 +1488,10 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
     }
 
     UserUnit *unit = m_users.value(lowerNick);
+    if (m_network) {
+      if (unit->numeric() == m_numeric && !local)
+        return;
+    }
     m_users.remove(lowerNick);
     m_users.insert(lowerNewNick, unit);
     unit->profile()->setGender(gender);
@@ -1495,8 +1502,9 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
 
     if (m_network) {
       emit sendSyncProfile(gender, nick, nNick, name);
-      if (m_remoteNumeric && local)
+      if (m_remoteNumeric && local) {
         m_link->sendSyncProfile(gender, nick, nNick, name);
+      }
     }
   }
   else if (local && m_users.contains(lowerNewNick)) {
