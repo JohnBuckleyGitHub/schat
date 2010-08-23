@@ -15,7 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES = 1
+macx {
+   TARGET = SimpleChat
+   SCHAT_RESOURCES = 0
+   RESOURCES += ../../data/schat.qrc
+}
+else {
+   SCHAT_RESOURCES = 1
+}
+
 SCHAT_RC_FILE   = 1
 
 QT += network
@@ -129,7 +137,7 @@ contains( SCHAT_WEBKIT, 1 ) {
     chatwindow/chatwindowstyle.cpp \
     chatwindow/chatwindowstyleoutput.cpp \
     
-  RESOURCES += ../../data/$${TARGET}-webkit.qrc
+  RESOURCES += ../../data/schat-webkit.qrc
   QT += webkit   
 }
 else {
@@ -149,7 +157,7 @@ unix {
 #   DEFINES += SCHAT_X11_XSS
    SOURCES += idle/idle_x11.cpp
 }
-macx:SOURCES += idle/idle_mac.cpp
+#macx:SOURCES += idle/idle_mac.cpp
 
 contains( SCHAT_STATIC, 1 ) {
     QTPLUGIN += qgif
