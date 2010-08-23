@@ -19,6 +19,8 @@ macx {
    TARGET = SimpleChat
    SCHAT_RESOURCES = 0
    RESOURCES += ../../data/schat.qrc
+   ICON = ../../os/macosx/schat.icns
+   QMAKE_INFO_PLIST = ../../os/macosx/Info.plist
 }
 else {
    SCHAT_RESOURCES = 1
