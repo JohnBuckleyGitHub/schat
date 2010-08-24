@@ -28,13 +28,12 @@ macdeployqt schatd-ui.app
 macdeployqt schatd.app
 cp schatd-ui.app/Contents/MacOS/schatd-ui $TARGET.app/Contents/MacOS/
 cp schatd.app/Contents/MacOS/schatd $TARGET.app/Contents/MacOS/
-ln -s /Applications Applications
 
-cp -fr ../../data/doc $TARGET.app/Contents/MacOS/doc
-cp -fr ../../data/emoticons $TARGET.app/Contents/MacOS/emoticons
-cp -fr ../../data/networks $TARGET.app/Contents/MacOS/networks
-cp -fr ../../data/sounds $TARGET.app/Contents/MacOS/sounds 
-find $TARGET.app/Contents/MacOS -name .svn -exec rm -rf {} \; > /dev/null 2>&1
+cp -fr ../../data/doc $TARGET.app/Contents/Resources/doc
+cp -fr ../../data/emoticons $TARGET.app/Contents/Resources/emoticons
+cp -fr ../../data/networks $TARGET.app/Contents/Resources/networks
+cp -fr ../../data/sounds $TARGET.app/Contents/Resources/sounds 
+find $TARGET.app/Contents/Resources -name .svn -exec rm -rf {} \; > /dev/null 2>&1
 
 echo ""
 echo -e "\x1b[32m***\x1b[0m Please create volume named \x1b[1mSimpleChat\x1b[0m and store as file \x1b[1m~/Desktop/schat.dmg\x1b[0m"

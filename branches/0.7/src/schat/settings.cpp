@@ -472,7 +472,9 @@ QStringList Settings::path(const QString &base) const
   QStringList out;
 
   if (isUnixLike()) {
+    #if !defined(Q_OS_MAC)
     out << SCHAT_UNIX_CONFIG(base);
+    #endif
     out << SCHAT_UNIX_SHARE(base);
   }
   else {
