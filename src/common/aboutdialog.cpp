@@ -183,7 +183,11 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
 
   QString path;
   if (AbstractSettings::isUnixLike())
+    #if defined(Q_OS_MAC)
+    path = SCHAT_UNIX_DOC("doc");
+    #else
     path = SCHAT_UNIX_DOC("html");
+    #endif
   else
     path = QApplication::applicationDirPath() + "/doc";
 

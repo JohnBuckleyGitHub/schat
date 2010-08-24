@@ -19,9 +19,15 @@
 #ifndef ABSTRACTSETTINGS_H_
 #define ABSTRACTSETTINGS_H_
 
-#define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QDir::homePath() + "/.config/schat/" + x)
-#define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/schat/" + x)
-#define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/doc/schat/" + x)
+#if defined(Q_OS_MAC)
+  #define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+#else
+  #define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QDir::homePath() + "/.config/schat/" + x)
+  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/schat/" + x)
+  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/doc/schat/" + x)
+#endif
 
 #include <QMap>
 #include <QObject>

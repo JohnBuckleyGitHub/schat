@@ -135,6 +135,10 @@ QString SimpleChatApp::defaultStyle()
     return "GTK+";
   #endif
 
+  #if defined(Q_OS_MAC)
+  return "Macintosh (aqua)";
+  #endif
+
   return "Plastique";
 }
 

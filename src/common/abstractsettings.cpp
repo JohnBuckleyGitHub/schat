@@ -66,8 +66,12 @@ bool AbstractSettings::isNewYear()
  */
 bool AbstractSettings::isUnixLike()
 {
+  #if defined(Q_OS_MAC)
+  return true;
+  #else
   if (QDir(QCoreApplication::applicationDirPath()).dirName() == "bin")
     return true;
+  #endif
 
   return false;
 }
