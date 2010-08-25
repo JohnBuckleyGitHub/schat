@@ -1208,6 +1208,9 @@ MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
   QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+  #if defined(Q_OS_MAC)
+  integration->setVisible(false);
+  #endif
 
   d->autostart = new QCheckBox(tr("&Автозапуск"), this);
   d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
@@ -1247,7 +1250,9 @@ MiscSettings::MiscSettings(QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(integration);
+  #if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
+  #endif
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
