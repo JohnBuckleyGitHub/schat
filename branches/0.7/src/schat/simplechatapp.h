@@ -41,8 +41,11 @@ public:
   bool isRunning();
   int run();
   static QIcon iconFromTheme(const QString &name);
-  static QString defaultStyle();
   static SimpleChatApp *instance();
+
+  #if !defined(SCHAT_NO_STYLE)
+  static QString defaultStyle();
+  #endif
 
 private:
   SChatWindow *m_window;

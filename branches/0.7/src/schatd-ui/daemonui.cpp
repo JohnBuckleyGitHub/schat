@@ -187,6 +187,7 @@ void DaemonUi::init()
   m_settings->read();
 
 
+  #if !defined(SCHAT_NO_STYLE)
   QString schatConf;
   if (AbstractSettings::isUnixLike()) {
     schatConf = SCHAT_UNIX_CONFIG("schat.conf");
@@ -197,6 +198,7 @@ void DaemonUi::init()
 
   QSettings s(schatConf, QSettings::IniFormat, this);
   QApplication::setStyle(s.value("Style", "Plastique").toString());
+  #endif
 
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));

@@ -234,7 +234,9 @@ void Settings::read()
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
 
+  #if !defined(SCHAT_NO_STYLE)
   setString("Style",                SimpleChatApp::defaultStyle());
+  #endif
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
@@ -308,7 +310,9 @@ void Settings::read()
   AbstractSettings::read();
 
   normalizeInterval();
+  #if !defined(SCHAT_NO_STYLE)
   QApplication::setStyle(getString("Style"));
+  #endif
 
   if (getBool("UseEmoticons"))
     m_emoticons = new Emoticons(this);
@@ -321,7 +325,7 @@ void Settings::read()
   m_profile->setNick(m_settings->value("Nick",     AbstractProfile::defaultNick()).toString());
   m_profile->setFullName(m_settings->value("Name", "").toString());
   m_profile->setGender(m_settings->value("Gender", "male").toString());
-  m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
+  m_profile->setByeMsg(m_settings->value("Bye",    "").toString());
   m_settings->endGroup();
 
   if (getInt("Profile/MaxRecentItems") < 0)

@@ -352,7 +352,9 @@ class InterfaceSettings::Private
 {
 public:
   Private() {}
+  #if !defined(SCHAT_NO_STYLE)
   QComboBox *mainStyle;
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     void createStylesList();
@@ -431,6 +433,7 @@ void InterfaceSettings::Private::setStyle()
 InterfaceSettings::InterfaceSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), d(new Private)
 {
+  #if !defined(SCHAT_NO_STYLE)
   d->mainStyle = new QComboBox(this);
   d->mainStyle->addItems(QStyleFactory::keys());
   d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleSettings->getString("Style")));
@@ -441,6 +444,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   mainStyleLay->addStretch();
   mainStyleLay->setMargin(6);
   mainStyleLay->setSpacing(4);
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     d->chatStyle = new QComboBox(this);
@@ -469,9 +473,13 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
+  #if !defined(SCHAT_NO_STYLE)
   mainLay->addWidget(mainStyleGroup);
+  #endif
   #ifndef SCHAT_NO_WEBKIT
+    #if !defined(SCHAT_NO_STYLE)
     mainLay->addSpacing(12);
+    #endif
     mainLay->addWidget(chatStyleGroup);
   #endif
   mainLay->addStretch();
@@ -492,7 +500,9 @@ InterfaceSettings::~InterfaceSettings() { delete d; }
 void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
+    #if !defined(SCHAT_NO_STYLE)
     d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleChatApp::defaultStyle()));
+    #endif
     #ifndef SCHAT_NO_WEBKIT
       d->chatStyle->setCurrentIndex(0);
       d->chatStyleVariant->setCurrentIndex(0);
@@ -504,10 +514,12 @@ void InterfaceSettings::reset(int page)
 
 void InterfaceSettings::save()
 {
+  #if !defined(SCHAT_NO_STYLE)
   if (d->mainStyle->currentIndex() != -1) {
     SimpleSettings->setString("Style", d->mainStyle->currentText()) ;
     QApplication::setStyle(d->mainStyle->currentText());
   }
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     if (d->chatStyle->currentIndex() != -1)
