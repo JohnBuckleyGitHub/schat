@@ -124,6 +124,13 @@ QIcon SimpleChatApp::iconFromTheme(const QString &name)
 }
 
 
+SimpleChatApp *SimpleChatApp::instance()
+{
+  return (static_cast<SimpleChatApp *>(QCoreApplication::instance()));
+}
+
+
+#if !defined(SCHAT_NO_STYLE)
 QString SimpleChatApp::defaultStyle()
 {
   #if defined(Q_WS_X11)
@@ -135,15 +142,6 @@ QString SimpleChatApp::defaultStyle()
     return "GTK+";
   #endif
 
-  #if defined(Q_OS_MAC)
-  return "Macintosh (aqua)";
-  #endif
-
   return "Plastique";
 }
-
-
-SimpleChatApp *SimpleChatApp::instance()
-{
-  return (static_cast<SimpleChatApp *>(QCoreApplication::instance()));
-}
+#endif
