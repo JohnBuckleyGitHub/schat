@@ -543,7 +543,9 @@ void SendWidget::initToolBar()
   #elif defined(SCHAT_WINCE_VGA)
   m_toolBar->setIconSize(QSize(36, 36));
   #endif
+  #if !defined(Q_OS_MAC)
   m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+  #endif
 
   buildToolBar(SimpleSettings->getList("ToolBarLayout"));
 }

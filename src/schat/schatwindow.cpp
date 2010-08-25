@@ -649,7 +649,9 @@ void SChatWindowPrivate::createToolButtons()
 {
 
   toolBar->setIconSize(QSize(16, 16));
+  #if !defined(Q_OS_MAC)
   toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+  #endif
 
   #if QT_VERSION < 0x040500
   toolBar->addAction(QIcon(":/images/tab_close.png"), QObject::tr("Закрыть вкладку"), q, SLOT(closeTab()));
@@ -684,6 +686,9 @@ SChatWindow::SChatWindow(QWidget *parent)
   d->central     = new QWidget(this);
   d->tabs        = new QTabWidget(this);
   d->tabs->installEventFilter(this);
+  #if defined(Q_OS_MAC)
+  d->tabs->setDocumentMode(true);
+  #endif
   d->users       = new UserView(d->profile, d->tabs, this);
   d->mainLay     = new QVBoxLayout(d->central);
   #ifndef SCHAT_WINCE
@@ -695,13 +700,21 @@ SChatWindow::SChatWindow(QWidget *parent)
   #ifdef SCHAT_WINCE
     d->mainLay->addWidget(d->send);
     d->mainLay->setContentsMargins(0, 0, 0, 0);
+    d->mainLay->setContentsMargins(3, 3, 3, 0);
+    d->mainLay->setSpacing(1);
   #endif
   d->mainLay->addWidget(d->tabs);
   #ifndef SCHAT_WINCE
     d->mainLay->addWidget(d->send);
+    #if defined(Q_OS_MAC)
+    d->mainLay->setContentsMargins(0, 0, 0, 0);
+    d->mainLay->setSpacing(0);
+    #else
     d->mainLay->setContentsMargins(3, 3, 3, 0);
+    d->mainLay->setSpacing(1);
+    #endif
   #endif
-  d->mainLay->setSpacing(1);
+
   d->mainLay->setStretchFactor(d->tabs, 999);
   d->mainLay->setStretchFactor(d->send, 1);
 
