@@ -92,6 +92,7 @@ private slots:
 private:
   bool eventFilter(QObject *object, QEvent *event);
   void createActions();
+  void createMenu();
   void createService();
 
   SChatWindowPrivate * const d;

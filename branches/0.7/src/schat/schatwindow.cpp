@@ -740,6 +740,7 @@ SChatWindow::SChatWindow(QWidget *parent)
   #endif
 
   createActions();
+  createMenu();
   #ifndef SCHAT_WINCE
   d->createToolButtons();
   #endif
@@ -1466,6 +1467,16 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
   return QMainWindow::eventFilter(object, event);
 }
 
+
+void SChatWindow::createMenu()
+{
+  #if !defined(SCHAT_NO_MENU)
+  menuBar()->addMenu(d->statusMenu);
+  QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+  helpMenu->addAction(tr("&About"), this, SLOT(about()));
+  helpMenu->addAction(tr("&Preferences"), this, SLOT(showSettingsPage()));
+  #endif
+}
 
 
 /*!
