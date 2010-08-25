@@ -1475,6 +1475,7 @@ void SChatWindow::createMenu()
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(tr("&About"), this, SLOT(about()));
   helpMenu->addAction(tr("&Preferences"), this, SLOT(showSettingsPage()));
+  helpMenu->addAction(tr("&Quit"), this, SLOT(closeChat(bool)));
   #endif
 }
 
