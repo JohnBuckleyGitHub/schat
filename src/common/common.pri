@@ -41,7 +41,12 @@ contains( SCHAT_WINCE, 1 ) {
   SCHAT_SINGLEAPP = 0
 }
 
-macx:DEFINES += SCHAT_NO_STYLE
+macx {
+  DEFINES += SCHAT_NO_STYLE
+}
+else {
+  DEFINES += SCHAT_NO_MENU
+}
 
 contains( SCHAT_SINGLEAPP, 0 ) {
   DEFINES += SCHAT_NO_SINGLEAPP
