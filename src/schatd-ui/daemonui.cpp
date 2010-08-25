@@ -186,12 +186,16 @@ void DaemonUi::init()
 
   m_settings->read();
 
-//  #ifndef SCHATD_NO_SERVICE
-//    if (m_settings->getBool("Service/Installed"))
-//      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
-//  #endif
 
-  QSettings s(QApplication::applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  QString schatConf;
+  if (AbstractSettings::isUnixLike()) {
+    schatConf = SCHAT_UNIX_CONFIG("schat.conf");
+  }
+  else {
+    schatConf = QApplication::applicationDirPath() + "/schat.conf";
+  }
+
+  QSettings s(schatConf, QSettings::IniFormat, this);
   QApplication::setStyle(s.value("Style", "Plastique").toString());
 
   m_client = new LocalClientService(this);
