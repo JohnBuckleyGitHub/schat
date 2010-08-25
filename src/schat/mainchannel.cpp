@@ -45,9 +45,15 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   m_splitter = new QSplitter(this);
   m_splitter->addWidget(m_view);
   m_splitter->addWidget(createUserView());
-  m_splitter->setStretchFactor(0, 3);
-  m_splitter->setStretchFactor(1, 2);
+  m_splitter->setStretchFactor(0, 1);
+  m_splitter->setStretchFactor(1, 1);
+
+  #if defined(Q_OS_MAC)
+  m_splitter->setHandleWidth(1);
+  m_splitter->setStyleSheet("QSplitter::handle { background: #919191; }");
+  #else
   m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
+  #endif
 
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);

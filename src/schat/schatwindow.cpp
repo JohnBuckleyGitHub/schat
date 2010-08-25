@@ -311,7 +311,12 @@ void SChatWindowPrivate::createStatusBar()
   #ifndef SCHAT_WINCE
   statusBar->addPermanentWidget(statusWidget);
   #endif
+
+  #if defined(Q_OS_MAC)
+  statusBar->setStyleSheet("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }");
+  #else
   statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
+  #endif
   q->setStatusBar(statusBar);
 }
 

@@ -28,6 +28,11 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
 {
+  #if defined(Q_OS_MAC)
+  setAttribute(Qt::WA_MacShowFocusRect, true);
+  setFrameShape(QFrame::NoFrame);
+  setFrameShadow(QFrame::Plain);
+  #endif
   detectMinimumHeight();
   m_default = currentCharFormat();
   m_current = 0;
@@ -183,7 +188,11 @@ void InputWidget::detectMinimumHeight()
     static const int correction = 4;
    #endif
   #else
+    #if defined(Q_OS_MAC)
+    static const int correction = 4;
+    #else
     static const int correction = 0;
+    #endif
   #endif
   QFontInfo fontInfo(currentFont());
   setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
