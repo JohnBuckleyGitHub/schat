@@ -19,11 +19,17 @@
 #include <QApplication>
 #include <QtGui>
 
+#include "3rdparty/qtwin.h"
 #include "aboutdialog.h"
 #include "abstractsettings.h"
 
 #ifndef SCHAT_NO_UPDATE_WIDGET
   #include "update/updatewidget.h"
+#endif
+
+#if defined(Q_WS_WIN)
+  #include <qt_windows.h>
+  #define WM_DWMCOMPOSITIONCHANGED 0x031E // Composition changed window message
 #endif
 
 /*!
@@ -46,28 +52,56 @@ AboutDialog::AboutDialog(QWidget *parent)
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
+  m_bottom = new QWidget(this);
+  m_bottom->setObjectName("AboutBottom");
+  QHBoxLayout *buttonLay = new QHBoxLayout(m_bottom);
+  buttonLay->setMargin(2);
   #ifndef SCHAT_NO_UPDATE_WIDGET
     m_update = new UpdateWidget(this);
-  #endif
-
-  QHBoxLayout *buttonLay = new QHBoxLayout;
-  #ifndef SCHAT_NO_UPDATE_WIDGET
     buttonLay->addWidget(m_update);
   #endif
   buttonLay->addStretch();
   buttonLay->addWidget(m_closeButton);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_tabWidget);
-  mainLay->addLayout(buttonLay);
-  mainLay->setMargin(3);
-  mainLay->setSpacing(3);
+  m_mainLay = new QVBoxLayout(this);
+  m_mainLay->addWidget(m_tabWidget);
+  m_mainLay->addWidget(m_bottom);
+  setStyleSheet();
 
   setWindowTitle(tr("О Программе"));
 
   #ifndef SCHAT_NO_UPDATE_WIDGET
     QTimer::singleShot(0, m_update, SLOT(start()));
   #endif
+}
+
+
+#if defined(Q_WS_WIN)
+bool AboutDialog::winEvent(MSG *message, long *result)
+{
+  if (message && message->message == WM_DWMCOMPOSITIONCHANGED) {
+    setStyleSheet();
+  }
+  return QWidget::winEvent(message, result);
+}
+#endif
+
+
+void AboutDialog::setStyleSheet()
+{
+  #if defined(Q_WS_WIN)
+  m_bottom->setStyleSheet(QString("QWidget#AboutBottom { background-color: %1; }").arg(palette().color(QPalette::Window).name()));
+  #endif
+
+  if (QtWin::isCompositionEnabled()) {
+    m_mainLay->setMargin(0);
+    m_mainLay->setSpacing(0);
+    QtWin::extendFrameIntoClientArea(this);
+  }
+  else {
+    m_mainLay->setMargin(3);
+    m_mainLay->setSpacing(3);
+  }
 }
 
 

@@ -900,7 +900,7 @@ bool SChatWindow::winEvent(MSG *message, long *result)
       d->mainLay->setContentsMargins(3, 3, 3, 0);
     }
   }
-  return QWidget::winEvent(message, result);
+  return QMainWindow::winEvent(message, result);
 }
 #endif
 
