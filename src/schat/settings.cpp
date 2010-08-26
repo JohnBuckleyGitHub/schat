@@ -24,6 +24,7 @@
 #include "networkreader.h"
 #include "schatwindow.h"
 #include "settings.h"
+#include "simplechatapp.h"
 #include "version.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
@@ -31,13 +32,14 @@
 /*!
  * \brief Конструктор класса Settings.
  */
-Settings::Settings(const QString &filename, QObject *parent)
-  : AbstractSettings(filename, parent), m_initRichTextCSS(false)
+Settings::Settings(bool unixLike, QObject *parent)
+  : AbstractSettings(unixLike ? SCHAT_UNIX_CONFIG("schat.conf") : QApplication::applicationDirPath() + "/schat.conf", parent),
+    m_profile(new AbstractProfile(this)),
+    m_initRichTextCSS(false),
+    m_unixLike(unixLike),
+    m_updateTimer(new QTimer(this))
 {
-  m_profile = new AbstractProfile(this);
-  m_updateTimer = new QTimer(this);
-
-  QString defaultConf = QApplication::applicationDirPath() + "/default.conf";
+  QString defaultConf = unixLike ? SCHAT_UNIX_SHARE("default.conf") : QApplication::applicationDirPath() + "/default.conf";
   if (QFile::exists(defaultConf))
     m_default = new QSettings(defaultConf, QSettings::IniFormat, this);
   else
@@ -90,6 +92,42 @@ int Settings::save(const QString &key, int value)
 
   setInt(key, value);
   return 1;
+}
+
+
+/*!
+ * Возвращает список путей.
+ */
+QStringList Settings::path(Paths type) const
+{
+  QStringList out;
+
+  switch (type) {
+    case EmoticonsPath:
+      out = path("emoticons");
+      break;
+
+    case NetworksPath:
+      out = path("networks");
+      break;
+
+    case SoundsPath:
+      out = path("sounds");
+      break;
+
+    case StylesPath:
+      out = path("styles");
+      break;
+
+    case LogPath:
+      if (isUnixLike())
+        out << SCHAT_UNIX_CONFIG("log");
+      else
+        out << QApplication::applicationDirPath() + "/log";
+      break;
+  }
+
+  return out;
 }
 
 
@@ -195,7 +233,10 @@ void Settings::read()
   setBool("Maximized",              false);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);
-  setString("Style",                "Plastique");
+
+  #if !defined(SCHAT_NO_STYLE)
+  setString("Style",                SimpleChatApp::defaultStyle());
+  #endif
   setString("EmoticonTheme",        "Kolobok");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
@@ -269,11 +310,14 @@ void Settings::read()
   AbstractSettings::read();
 
   normalizeInterval();
+  #if !defined(SCHAT_NO_STYLE)
   QApplication::setStyle(getString("Style"));
+  #endif
 
   if (getBool("UseEmoticons"))
     m_emoticons = new Emoticons(this);
 
+  network.setPaths(path(NetworksPath));
   network.fromConfig(getString("Network"));
   createServerList();
 
@@ -281,7 +325,7 @@ void Settings::read()
   m_profile->setNick(m_settings->value("Nick",     AbstractProfile::defaultNick()).toString());
   m_profile->setFullName(m_settings->value("Name", "").toString());
   m_profile->setGender(m_settings->value("Gender", "male").toString());
-  m_profile->setByeMsg(m_settings->value("Bye",    "IMPOMEZIA Simple Chat").toString());
+  m_profile->setByeMsg(m_settings->value("Bye",    "").toString());
   m_settings->endGroup();
 
   if (getInt("Profile/MaxRecentItems") < 0)
@@ -427,20 +471,45 @@ bool Settings::update(bool)
 }
 
 
+QStringList Settings::path(const QString &base) const
+{
+  QStringList out;
+
+  if (isUnixLike()) {
+    #if !defined(Q_OS_MAC)
+    out << SCHAT_UNIX_CONFIG(base);
+    #endif
+    out << SCHAT_UNIX_SHARE(base);
+  }
+  else {
+    out << QApplication::applicationDirPath() + "/" + base;
+  }
+
+  return out;
+}
+
+
 /*!
  * Создаёт список сетей и одиночных серверов.
  */
 void Settings::createServerList()
 {
-  QString networksPath = QApplication::applicationDirPath() + "/networks/";
+  QStringList networks = SimpleSettings->path(Settings::NetworksPath);
+  QStringList nameFilter = QStringList("*.xml");
+  QStringList files;
 
-  QDir directory(networksPath);
-  directory.setNameFilters(QStringList() << "*.xml");
-  QStringList files = directory.entryList(QDir::Files | QDir::NoSymLinks);
+  foreach (QString path, networks) {
+    QDir dir(path);
+    foreach (QString file, dir.entryList(nameFilter, QDir::Files)) {
+      if (!files.contains(file))
+        files << path + "/" + file;
+    }
+  }
+
   NetworkReader network;
 
   foreach (QString file, files) {
-    if (network.readFile(networksPath + file)) {
+    if (network.readFile(file)) {
       if (!findItem(&networksModel, network.networkName())) {
         QStandardItem *item = new QStandardItem(QIcon(":/images/network.png"), network.networkName());
         item->setData(file, Qt::UserRole);

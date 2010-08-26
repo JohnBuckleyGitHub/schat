@@ -32,13 +32,15 @@ class AboutDialog;
 class ClientService;
 class PopupManager;
 class SendWidget;
+class Settings;
 class SettingsDialog;
 class SettingsDialog;
+class SoundAction;
+class StatusMenu;
+class StatusWidget;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
-class SoundAction;
-class Settings;
 
 /*!
  * \brief Приватный D-класс для класса SChatWindow.
@@ -46,22 +48,12 @@ class Settings;
 class SChatWindowPrivate
 {
 public:
-  enum Status {
-    StatusOnline,
-    StatusAway,
-    StatusDnD,
-    StatusOffline
-  };
-
   SChatWindowPrivate(SChatWindow *parent);
   ~SChatWindowPrivate();
 
   bool parseCmd(AbstractTab *tab, const QString &message);
   bool sendStatus(quint32 status);
   bool startNotice(int index, const QString &key);
-  QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
-  QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
-  QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
   QString channel();
   QString colorizedPing() const;
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
@@ -74,6 +66,7 @@ public:
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
+  void setStyleSheet();
   void showChat();
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
@@ -96,11 +89,7 @@ public:
   int autoAwayTime;
   MainChannel *main;
   PopupManager *popupManager;
-  QAction *awayAction;
   QAction *daemonAction;
-  QAction *dndAction;
-  QAction *offlineAction;
-  QAction *onlineAction;
   QAction *settingsAction;
   QAction *statusAction;
   QLabel *connectLabel;
@@ -118,10 +107,11 @@ public:
   Settings *pref;
   SoundAction *soundAction;
   static QMap<QString, QString> cmds;
+  StatusMenu *statusMenu;
+  StatusWidget *statusWidget;
   TrayIcon *tray;
   UserView *users;
   #ifndef SCHAT_WINCE
-    QComboBox *statusCombo;
     QToolBar *toolBar;
   #endif
 };

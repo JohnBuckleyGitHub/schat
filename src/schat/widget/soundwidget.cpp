@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 SoundWidget::SoundWidget(const QString &key, const QString &name, const QString &desc, const QStringList &sounds, QWidget *parent)
   : QWidget(parent), m_key(key)
 {
-  m_settings = settings;
+  m_settings = SimpleSettings;
 
   m_check = new QCheckBox(name, this);
   m_check->setToolTip(desc);
@@ -80,5 +80,11 @@ void SoundWidget::reset(bool enable, const QString &file)
 
 void SoundWidget::play()
 {
-  emit play(QApplication::applicationDirPath() + "/sounds/" + m_combo->currentText());
+  QString file = "/" + m_combo->currentText();
+  foreach (QString path, SimpleSettings->path(Settings::SoundsPath)) {
+    if (QFile::exists(path + file)) {
+      emit play(path + file);
+      return;
+    }
+  }
 }

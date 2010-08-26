@@ -46,8 +46,8 @@ SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   setQuitOnLastWindowClosed(false);
   addLibraryPath(applicationDirPath() + "/plugins");
 
-  #ifndef Q_OS_WINCE
-    setStyle(new QPlastiqueStyle);
+  #if defined(Q_WS_X11)
+  setAttribute(Qt::AA_DontShowIconsInMenus, false);
   #endif
 }
 
@@ -114,7 +114,41 @@ int SimpleChatApp::run()
 }
 
 
+QIcon SimpleChatApp::iconFromTheme(const QString &name)
+{
+  #if defined(Q_WS_X11) && QT_VERSION >= 0x040600
+  return QIcon::fromTheme(name, QIcon(":/images/" + name + ".png"));
+  #else
+  return QIcon(":/images/"+ name + ".png");
+  #endif
+}
+
+
 SimpleChatApp *SimpleChatApp::instance()
 {
   return (static_cast<SimpleChatApp *>(QCoreApplication::instance()));
 }
+
+
+#if !defined(SCHAT_NO_STYLE)
+QString SimpleChatApp::defaultStyle()
+{
+  QStringList styles = QStyleFactory::keys();
+  Q_UNUSED(styles);
+
+  #if defined(Q_WS_X11)
+  if (styles.contains("Oxygen"))
+    return "Oxygen";
+
+  if (styles.contains("GTK+"))
+    return "GTK+";
+  #endif
+
+  #if defined(Q_WS_WIN)
+  if (styles.contains("WindowsVista"))
+    return "WindowsVista";
+  #endif
+
+  return "Plastique";
+}
+#endif

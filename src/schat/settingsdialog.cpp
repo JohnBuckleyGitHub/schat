@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "profilewidget.h"
 #include "settings.h"
 #include "settingsdialog.h"
+#include "simplechatapp.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
 #include "widget/soundwidget.h"
@@ -51,6 +52,19 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
   connect(profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
   connect(networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
+}
+
+
+/*!
+ * Открывает папку, которая при необходимости будет создана.
+ */
+void SettingsDialog::openFolder(int path)
+{
+  QString dir = SimpleSettings->path(static_cast<Settings::Paths>(path)).at(0);
+  if (!QDir().exists(dir))
+    QDir().mkpath(dir);
+
+  QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
 }
 
 
@@ -328,7 +342,7 @@ void NetworkSettings::save()
 
 void NetworkSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/networks"));
+  SettingsDialog::openFolder(Settings::NetworksPath);
 }
 
 
@@ -338,7 +352,9 @@ class InterfaceSettings::Private
 {
 public:
   Private() {}
+  #if !defined(SCHAT_NO_STYLE)
   QComboBox *mainStyle;
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     void createStylesList();
@@ -355,12 +371,11 @@ public:
 #ifndef SCHAT_NO_WEBKIT
 void InterfaceSettings::Private::createStylesList()
 {
-  QStringList stylesDirs;
-  stylesDirs << (QApplication::applicationDirPath() + "/styles/");
+  QStringList stylesDirs = SimpleSettings->path(Settings::StylesPath);
   int index = 0;
 
   for (int i = 0; i < stylesDirs.count(); ++i) {
-    QString dir = stylesDirs.at(i);
+    QString dir = stylesDirs.at(i) + '/';
     QDir qdir(dir);
     qdir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     qdir.setSorting(QDir::Name);
@@ -418,6 +433,7 @@ void InterfaceSettings::Private::setStyle()
 InterfaceSettings::InterfaceSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::InterfacePage, parent), d(new Private)
 {
+  #if !defined(SCHAT_NO_STYLE)
   d->mainStyle = new QComboBox(this);
   d->mainStyle->addItems(QStyleFactory::keys());
   d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleSettings->getString("Style")));
@@ -428,6 +444,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   mainStyleLay->addStretch();
   mainStyleLay->setMargin(6);
   mainStyleLay->setSpacing(4);
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     d->chatStyle = new QComboBox(this);
@@ -456,9 +473,13 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   #endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
+  #if !defined(SCHAT_NO_STYLE)
   mainLay->addWidget(mainStyleGroup);
+  #endif
   #ifndef SCHAT_NO_WEBKIT
+    #if !defined(SCHAT_NO_STYLE)
     mainLay->addSpacing(12);
+    #endif
     mainLay->addWidget(chatStyleGroup);
   #endif
   mainLay->addStretch();
@@ -479,11 +500,13 @@ InterfaceSettings::~InterfaceSettings() { delete d; }
 void InterfaceSettings::reset(int page)
 {
   if (page == m_id) {
-    d->mainStyle->setCurrentIndex(d->mainStyle->findText("Plastique"));
+    #if !defined(SCHAT_NO_STYLE)
+    d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleChatApp::defaultStyle()));
+    #endif
     #ifndef SCHAT_NO_WEBKIT
       d->chatStyle->setCurrentIndex(0);
       d->chatStyleVariant->setCurrentIndex(0);
-      d->grouping->setChecked(true);
+      d->grouping->setChecked(false);
    #endif
   }
 }
@@ -491,10 +514,12 @@ void InterfaceSettings::reset(int page)
 
 void InterfaceSettings::save()
 {
+  #if !defined(SCHAT_NO_STYLE)
   if (d->mainStyle->currentIndex() != -1) {
     SimpleSettings->setString("Style", d->mainStyle->currentText()) ;
     QApplication::setStyle(d->mainStyle->currentText());
   }
+  #endif
 
   #ifndef SCHAT_NO_WEBKIT
     if (d->chatStyle->currentIndex() != -1)
@@ -627,7 +652,7 @@ void EmoticonsSettings::enable(bool checked)
 
 void EmoticonsSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/emoticons"));
+  SettingsDialog::openFolder(Settings::EmoticonsPath);
 }
 
 
@@ -658,8 +683,17 @@ SoundSettings::SoundSettings(QWidget *parent)
   d->enable->setCheckable(true);
   d->enable->setChecked(SimpleSettings->getBool("Sound"));
 
-  QDir dir(QApplication::applicationDirPath() + "/sounds");
-  QStringList list = dir.entryList(SimpleSettings->getList("Sound/NameFilter"), QDir::Files);
+  QStringList sounds = SimpleSettings->path(Settings::SoundsPath);
+  QStringList nameFilter = SimpleSettings->getList("Sound/NameFilter");
+  QStringList list;
+
+  foreach (QString path, sounds) {
+    QDir dir(path);
+    foreach (QString file, dir.entryList(nameFilter, QDir::Files)) {
+      if (!list.contains(file))
+        list << file;
+    }
+  }
 
   d->msg = new SoundWidget("Message", tr("&Сообщение"), tr("Сообщение в основной канал"), list, this);
   connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
@@ -743,7 +777,7 @@ void SoundSettings::save()
 
 void SoundSettings::openFolder()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/sounds"));
+  SettingsDialog::openFolder(Settings::SoundsPath);
 }
 
 
@@ -1075,16 +1109,15 @@ class MiscSettings::Private
 {
 public:
   Private() {}
-  #ifdef Q_WS_WIN
-    void readAutostart();
-    void writeAutostart();
-  #endif
+  void readAutostart();
+  void writeAutostart();
 
+  QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
+
   #ifdef Q_WS_WIN
-    QCheckBox *autostart;
-    QCheckBox *autostartDaemon;
+  QCheckBox *autostartDaemon;
   #endif
 };
 
@@ -1094,9 +1127,9 @@ public:
  * Если файл программы управления сервером не найден, то скрываем флажок сервера.
  * Если ключа в реестре не найдено, снимаем флажок.
  */
-#ifdef Q_WS_WIN
 void MiscSettings::Private::readAutostart()
 {
+  #if defined(Q_WS_WIN)
   QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
   if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
@@ -1110,6 +1143,13 @@ void MiscSettings::Private::readAutostart()
   QString value = reg.value(QApplication::applicationName(), "").toString();
   if (value.isEmpty())
     autostart->setChecked(false);
+  #elif defined(Q_WS_X11)
+  QString desktopFile = QDir::homePath() + "/.config/autostart/schat.desktop";
+  if (!QFile::exists(desktopFile) || QSettings(desktopFile, QSettings::IniFormat).value("Desktop Entry/X-GNOME-Autostart-enabled").toBool() == false) {
+    autostart->setChecked(false);
+    return;
+  }
+  #endif
 }
 
 
@@ -1118,6 +1158,7 @@ void MiscSettings::Private::readAutostart()
  */
 void MiscSettings::Private::writeAutostart()
 {
+  #if defined(Q_WS_WIN)
   QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
   if (autostart->checkState() == Qt::Checked)
@@ -1131,8 +1172,33 @@ void MiscSettings::Private::writeAutostart()
     else if (autostart->checkState() == Qt::Unchecked)
       reg.remove(QApplication::applicationName() + " Daemon");
   }
+  #elif defined(Q_WS_X11)
+  QString path = QDir::homePath() + "/.config/autostart/";
+  if (autostart->checkState() == Qt::Checked) {
+    if (!QDir().exists(path))
+      QDir().mkpath(path);
+
+    QFile file(path + "schat.desktop");
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+      QTextStream out(&file);
+      out << "[Desktop Entry]" << endl;
+      out << "Version=1.0" << endl;
+      out << "Type=Application" << endl;
+      out << "Name=IMPOMEZIA Simple Chat" << endl;
+      out << "Comment=" << endl;
+      out << "Icon=schat" << endl;
+      out << "Exec=schat -hide" << endl;
+      out << "Hidden=false" << endl;
+      out << "NoDisplay=false" << endl;
+      out << "X-GNOME-Autostart-enabled=true" << endl;
+      file.close();
+    }
+  }
+  else if (autostart->checkState() == Qt::Unchecked) {
+    QFile::remove(path + "schat.desktop");
+  }
+  #endif
 }
-#endif
 
 
 /*!
@@ -1141,25 +1207,30 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
-  #ifdef Q_WS_WIN
-    QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
-
-    d->autostart = new QCheckBox(tr("&Автозапуск"), this);
-    d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
-    d->autostart->setTristate();
-    d->autostart->setCheckState(Qt::PartiallyChecked);
-
-    d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
-    d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
-    d->autostartDaemon->setTristate();
-    d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
-
-    QVBoxLayout *integrationLay = new QVBoxLayout(integration);
-    integrationLay->addWidget(d->autostart);
-    integrationLay->addWidget(d->autostartDaemon);
-    integrationLay->setMargin(6);
-    integrationLay->setMargin(4);
+  QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+  #if defined(Q_OS_MAC)
+  integration->setVisible(false);
   #endif
+
+  d->autostart = new QCheckBox(tr("&Автозапуск"), this);
+  d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+  d->autostart->setTristate();
+  d->autostart->setCheckState(Qt::PartiallyChecked);
+
+  #ifdef Q_WS_WIN
+  d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
+  d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+  d->autostartDaemon->setTristate();
+  d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
+  #endif
+
+  QVBoxLayout *integrationLay = new QVBoxLayout(integration);
+  integrationLay->addWidget(d->autostart);
+  #ifdef Q_WS_WIN
+  integrationLay->addWidget(d->autostartDaemon);
+  #endif
+  integrationLay->setMargin(6);
+  integrationLay->setMargin(4);
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
@@ -1178,17 +1249,15 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->setMargin(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  #ifdef Q_WS_WIN
-    mainLay->addWidget(integration);
-    mainLay->addSpacing(12);
+  mainLay->addWidget(integration);
+  #if !defined(Q_OS_MAC)
+  mainLay->addSpacing(12);
   #endif
   mainLay->addWidget(logGroup);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
 
-  #ifdef Q_WS_WIN
-    d->readAutostart();
-  #endif
+  d->readAutostart();
 }
 
 
@@ -1206,9 +1275,7 @@ void MiscSettings::reset(int page)
 
 void MiscSettings::save()
 {
-  #ifdef Q_WS_WIN
-    d->writeAutostart();
-  #endif
+  d->writeAutostart();
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());

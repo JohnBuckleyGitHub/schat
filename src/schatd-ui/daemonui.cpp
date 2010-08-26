@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ DaemonUi::DaemonUi(QWidget *parent)
   setStatus(Unknown);
 
   setWindowTitle(tr("Управление сервером"));
-  setWindowIcon(QIcon(":/images/logo16-green.png"));
+  setWindowIcon(QIcon(":/images/schat16-green.png"));
 
   m_appDir = qApp->applicationDirPath();
   #ifdef Q_WS_WIN
@@ -186,13 +186,19 @@ void DaemonUi::init()
 
   m_settings->read();
 
-//  #ifndef SCHATD_NO_SERVICE
-//    if (m_settings->getBool("Service/Installed"))
-//      m_settings->setBool("Service/Installed", ServiceInstaller::isValid(m_settings->getString("Service/Name")));
-//  #endif
 
-  QSettings s(QApplication::applicationDirPath() + "/schat.conf", QSettings::IniFormat, this);
+  #if !defined(SCHAT_NO_STYLE)
+  QString schatConf;
+  if (AbstractSettings::isUnixLike()) {
+    schatConf = SCHAT_UNIX_CONFIG("schat.conf");
+  }
+  else {
+    schatConf = QApplication::applicationDirPath() + "/schat.conf";
+  }
+
+  QSettings s(schatConf, QSettings::IniFormat, this);
   QApplication::setStyle(s.value("Style", "Plastique").toString());
+  #endif
 
   m_client = new LocalClientService(this);
   connect(m_client, SIGNAL(notify(LocalClientService::Reason)), SLOT(notify(LocalClientService::Reason)));
@@ -391,7 +397,7 @@ void DaemonUi::createTray()
   m_menu->addAction(m_quitAction);
 
   m_tray = new QSystemTrayIcon(this);
-  m_tray->setIcon(QIcon(":/images/logo16-gray.png"));
+  m_tray->setIcon(QIcon(":/images/schat16-gray.png"));
   m_tray->setToolTip(tr("IMPOMEZIA Simple Chat Daemon UI %1").arg(SCHAT_VERSION));
   m_tray->setContextMenu(m_menu);
 
@@ -417,15 +423,15 @@ void DaemonUi::setLedColor(LedColor color)
 
   if (color == Green) {
     img = ":/images/led/greenled.png";
-    icon = ":/images/logo16-green.png";
+    icon = ":/images/schat16-green.png";
   }
   else if (color == Yellow) {
     img = ":/images/led/yellowled.png";
-    icon = ":/images/logo16-yellow.png";
+    icon = ":/images/schat16-yellow.png";
   }
   else {
     img = ":/images/led/redled.png";
-    icon = ":/images/logo16-gray.png";
+    icon = ":/images/schat16-gray.png";
   }
 
   m_ledLabel->setPixmap(QPixmap(img));

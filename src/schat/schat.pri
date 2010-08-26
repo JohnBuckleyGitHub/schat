@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,17 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES = 1
+macx {
+   TARGET = SimpleChat
+   SCHAT_RESOURCES = 0
+   RESOURCES += ../../data/schat.qrc
+   ICON = ../../os/macosx/schat.icns
+   QMAKE_INFO_PLIST = ../../os/macosx/Info.plist
+}
+else {
+   SCHAT_RESOURCES = 1
+}
+
 SCHAT_RC_FILE   = 1
 
 QT += network
@@ -24,6 +34,7 @@ TEMPLATE = app
 DEFINES += SCHAT_CLIENT
 
 HEADERS += \
+    3rdparty/qtwin.h \
     aboutdialog.h \
     abstractprofile.h \
     abstractsettings.h \
@@ -52,10 +63,8 @@ HEADERS += \
     privatetab.h \
     profilewidget.h \
     protocol.h \
-    protocol/CorePackets.h \
     schatwindow.h \
     schatwindow_p.h \
-    servicecore.h \
     settings.h \
     settingsdialog.h \
     simplechatapp.h \
@@ -72,10 +81,12 @@ HEADERS += \
     widget/nickedit.h \
     widget/sendwidget.h \
     widget/soundwidget.h \
+    widget/statusmenu.h \
     widget/userview.h \
     widget/userview_p.h \
 
 SOURCES += \
+    3rdparty/qtwin.cpp \
     aboutdialog.cpp \
     abstractprofile.cpp \
     abstractsettings.cpp \
@@ -102,9 +113,7 @@ SOURCES += \
     popup/popupwindow.cpp \
     privatetab.cpp \
     profilewidget.cpp \
-    protocol/CorePackets.cpp \
     schatwindow.cpp \
-    servicecore.cpp \
     settings.cpp \
     settingsdialog.cpp \
     simplechatapp.cpp \
@@ -120,6 +129,7 @@ SOURCES += \
     widget/nickedit.cpp \
     widget/sendwidget.cpp \
     widget/soundwidget.cpp \
+    widget/statusmenu.cpp \
     widget/userview.cpp \
     
 contains( SCHAT_WEBKIT, 1 ) {
@@ -131,7 +141,7 @@ contains( SCHAT_WEBKIT, 1 ) {
     chatwindow/chatwindowstyle.cpp \
     chatwindow/chatwindowstyleoutput.cpp \
     
-  RESOURCES += ../../data/$${TARGET}-webkit.qrc
+  RESOURCES += ../../data/schat-webkit.qrc
   QT += webkit   
 }
 else {
@@ -151,7 +161,7 @@ unix {
 #   DEFINES += SCHAT_X11_XSS
    SOURCES += idle/idle_x11.cpp
 }
-macx:SOURCES += idle/idle_mac.cpp
+#macx:SOURCES += idle/idle_mac.cpp
 
 contains( SCHAT_STATIC, 1 ) {
     QTPLUGIN += qgif
@@ -166,5 +176,34 @@ contains( SCHAT_WINCE_VGA, 1 ) {
 
 TRANSLATIONS += ../../data/translations/schat_ru.ts
 CODECFORTR = UTF-8
+
+unix {
+  target.path += $$SCHAT_PREFIX/bin
+
+  doc.files = ../../data/doc/ChangeLog.html 
+  doc.path = $$SCHAT_PREFIX/share/doc/schat/html
+
+  emoticons_kolobok.files = ../../data/emoticons/Kolobok/icondef.xml
+  emoticons_kolobok.files += ../../data/emoticons/Kolobok/*.gif
+  emoticons_kolobok.path = $$SCHAT_PREFIX/share/schat/emoticons/Kolobok
+
+  emoticons_simple.files = $$quote(../../data/emoticons/Simple Smileys/emoticons.xml)
+  emoticons_simple.files += $$quote(../../data/emoticons/Simple Smileys/*.png)
+  emoticons_simple.path = $$quote($$SCHAT_PREFIX/share/schat/emoticons/Simple Smileys)
+
+  networks.files = ../../data/networks/*.xml
+  networks.path = $$SCHAT_PREFIX/share/schat/networks
+
+  sounds.files = ../../data/sounds/*.wav
+  sounds.path = $$SCHAT_PREFIX/share/schat/sounds
+
+  pixmaps.files = ../../data/images/schat.png
+  pixmaps.path = $$SCHAT_PREFIX/share/pixmaps
+
+  applications.files = ../../os/ubuntu/schat.desktop
+  applications.path = $$SCHAT_PREFIX/share/applications
+
+  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds pixmaps applications
+}
 
 include(../common/common.pri)

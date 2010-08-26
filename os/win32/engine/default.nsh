@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION       "0.8.0.1234"
-${def} SCHAT_QT_VERSION    "4.6.0"
+${def} SCHAT_VERSION       "0.7.4.1336"
+${def} SCHAT_QT_VERSION    "4.6.3"
 ${def} SCHAT_NAME          "IMPOMEZIA Simple Chat"
 ${def} SCHAT_NAME_SHORT    "Simple Chat"
 ${def} SCHAT_PREFIX        ""
@@ -36,7 +36,7 @@ ${def} SCHAT_OUTDIR        "out/"
 ${def} SCHAT_FINISH_RUN    1
 ${def} SCHAT_REGKEY        "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_WEB_SITE      "http://impomezia.ru/"
-${def} SCHAT_COPYRIGHT     "Copyright © 2008 - 2009 IMPOMEZIA"
+${def} SCHAT_COPYRIGHT     "Copyright © 2008 - 2010 IMPOMEZIA"
 ${def} SCHAT_UNINST_KEY    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_INSTALLDIR    "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_PAGE_OPTIONS  1
@@ -51,8 +51,8 @@ ${def} OPT_ALLPROGRAMS     1
 ${def} OPT_AUTOSTART       1
 ${def} OPT_AUTODAEMONSTART 0
 
-${def} SCHAT_QTDIR         "C:\qt\4.6.0"
-${def} SCHAT_QT_BINDIR     "C:\qt\4.6.0\bin"
+${def} SCHAT_QTDIR         "C:\Qt\4.6.3"
+${def} SCHAT_QT_BINDIR     "C:\Qt\4.6.3\bin"
 ${def} SCHAT_BINDIR        "..\..\out\release"
 ${def} SCHAT_DATADIR       "..\..\data"
 ${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"

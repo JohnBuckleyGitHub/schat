@@ -45,6 +45,9 @@ protected:
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
   void showEvent(QShowEvent *event);
+  #if defined(Q_WS_WIN)
+  bool winEvent(MSG *message, long *result);
+  #endif
 
 private slots:
   void about();
@@ -74,13 +77,12 @@ private slots:
   void showSettingsPage(int page = 0);
   void statusChangedByUser();
   void statusChangedByUser(int index);
-  void statusChangedByUser(QAction *action);
   void statusShortcut(int key);
   void stopNotice(int index);
   void syncUsersEnd();
   void unconnected(bool echo = true);
   void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  void userLeave(const QString &nick, const QString &bye, quint8 flag);
+  void userLeave(const QString &nick, const QString &bye, quint8 echo);
 
   #ifndef SCHAT_NO_UPDATE
     void messageClicked();
@@ -93,6 +95,7 @@ private slots:
 private:
   bool eventFilter(QObject *object, QEvent *event);
   void createActions();
+  void createMenu();
   void createService();
 
   SChatWindowPrivate * const d;

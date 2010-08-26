@@ -26,6 +26,7 @@ QT += network
 TEMPLATE = app
 
 HEADERS += \
+    3rdparty/qtwin.h \
     aboutdialog.h \
     abstractsettings.h \
     customizewizard.h \
@@ -41,6 +42,7 @@ HEADERS += \
     wizardsettings.h \
 
 SOURCES += \
+    3rdparty/qtwin.cpp \
     aboutdialog.cpp \
     abstractsettings.cpp \
     customizewizard.cpp \

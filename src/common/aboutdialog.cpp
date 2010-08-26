@@ -19,11 +19,17 @@
 #include <QApplication>
 #include <QtGui>
 
+#include "3rdparty/qtwin.h"
 #include "aboutdialog.h"
 #include "abstractsettings.h"
 
 #ifndef SCHAT_NO_UPDATE_WIDGET
   #include "update/updatewidget.h"
+#endif
+
+#if defined(Q_WS_WIN)
+  #include <qt_windows.h>
+  #define WM_DWMCOMPOSITIONCHANGED 0x031E // Composition changed window message
 #endif
 
 /*!
@@ -46,28 +52,56 @@ AboutDialog::AboutDialog(QWidget *parent)
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
+  m_bottom = new QWidget(this);
+  m_bottom->setObjectName("AboutBottom");
+  QHBoxLayout *buttonLay = new QHBoxLayout(m_bottom);
+  buttonLay->setMargin(2);
   #ifndef SCHAT_NO_UPDATE_WIDGET
     m_update = new UpdateWidget(this);
-  #endif
-
-  QHBoxLayout *buttonLay = new QHBoxLayout;
-  #ifndef SCHAT_NO_UPDATE_WIDGET
     buttonLay->addWidget(m_update);
   #endif
   buttonLay->addStretch();
   buttonLay->addWidget(m_closeButton);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_tabWidget);
-  mainLay->addLayout(buttonLay);
-  mainLay->setMargin(3);
-  mainLay->setSpacing(3);
+  m_mainLay = new QVBoxLayout(this);
+  m_mainLay->addWidget(m_tabWidget);
+  m_mainLay->addWidget(m_bottom);
+  setStyleSheet();
 
   setWindowTitle(tr("О Программе"));
 
   #ifndef SCHAT_NO_UPDATE_WIDGET
     QTimer::singleShot(0, m_update, SLOT(start()));
   #endif
+}
+
+
+#if defined(Q_WS_WIN)
+bool AboutDialog::winEvent(MSG *message, long *result)
+{
+  if (message && message->message == WM_DWMCOMPOSITIONCHANGED) {
+    setStyleSheet();
+  }
+  return QWidget::winEvent(message, result);
+}
+#endif
+
+
+void AboutDialog::setStyleSheet()
+{
+  #if defined(Q_WS_WIN)
+  m_bottom->setStyleSheet(QString("QWidget#AboutBottom { background-color: %1; }").arg(palette().color(QPalette::Window).name()));
+  #endif
+
+  if (QtWin::isCompositionEnabled()) {
+    m_mainLay->setMargin(0);
+    m_mainLay->setSpacing(0);
+    QtWin::extendFrameIntoClientArea(this);
+  }
+  else {
+    m_mainLay->setMargin(3);
+    m_mainLay->setSpacing(3);
+  }
 }
 
 
@@ -82,17 +116,17 @@ AboutMain::AboutMain(QWidget *parent)
 
   QLabel *aboutLogo = new QLabel(this);
   if (AbstractSettings::isNewYear())
-    aboutLogo->setPixmap(QPixmap(":/images/logo-ny.png"));
+    aboutLogo->setPixmap(QPixmap(":/images/schat-ny.png"));
   else
-    aboutLogo->setPixmap(QPixmap(":/images/logo.png"));
+    aboutLogo->setPixmap(QPixmap(":/images/schat.png"));
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-  QLabel *copyrightLabel = new QLabel("Copyright © 2008-2010 <b>IMPOMEZIA</b>. All rights reserved.", this);
+  QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2010 <b>IMPOMEZIA</b>. All rights reserved.", this);
   QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
-      .arg(qApp->organizationDomain())
+      .arg(QApplication::organizationDomain())
       .arg(tr("Официальный сайт")), this);
   homeLabel->setOpenExternalLinks(true);
-  homeLabel->setToolTip("http://" + qApp->organizationDomain());
+  homeLabel->setToolTip("http://" + QApplication::organizationDomain());
 
   QLabel *docLabel = new QLabel(QString("<b><a href='http://simple.impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
       .arg(tr("Документация")), this);
@@ -181,16 +215,25 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setOpenExternalLinks(true);
 
-  QString file = qApp->applicationDirPath() + "/doc/ChangeLog.html";
-  if (QFile::exists(file)) {
-    browser->setSearchPaths(QStringList() << (qApp->applicationDirPath() + "/doc"));
+  QString path;
+  if (AbstractSettings::isUnixLike())
+    #if defined(Q_OS_MAC)
+    path = SCHAT_UNIX_DOC("doc");
+    #else
+    path = SCHAT_UNIX_DOC("html");
+    #endif
+  else
+    path = QApplication::applicationDirPath() + "/doc";
+
+  if (QFile::exists(path + "/ChangeLog.html")) {
+    browser->setSearchPaths(QStringList() << (path));
     browser->setSource(QUrl("ChangeLog.html"));
   }
   else
     browser->setText(QString("<h3 style='color:#da251d;'>%1</h3>"
                             "<p style='color:#da251d;'>%2</p>")
                             .arg(tr("ОШИБКА"))
-                            .arg(tr("Файл <b>%1</b> не найден!").arg(file)));
+                            .arg(tr("Файл <b>%1</b> не найден!").arg(path + "/ChangeLog.html")));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(browser);
@@ -207,17 +250,17 @@ AboutLicense::AboutLicense(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setText(QString(
       "<p style='color:#333;'><b>%1 %2</b><br />"
-      "<i>Copyright © 2008 - 2009 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
+      "<i>Copyright © 2008 - 2010 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
       "it under the terms of the GNU General Public License as published by "
       "the Free Software Foundation, either version 3 of the License, or "
       "(at your option) any later version.</p>"
       "<p>This program is distributed in the hope that it will be useful, "
       "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
       "GNU General Public License for more details.</p>"
       "<p>You should have received a copy of the GNU General Public License "
-      "along with this program.  If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
+      "along with this program. If not, see &lt;<a href='http://www.gnu.org/licenses/gpl.html' style='color:#1a4d82;'>http://www.gnu.org/licenses/gpl.html</a>&gt;.</p>"
   )
   .arg(QApplication::applicationName())
   .arg(QApplication::applicationVersion()));

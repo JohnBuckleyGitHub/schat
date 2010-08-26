@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "3rdparty/qtwin.h"
 #include "abstractprofile.h"
 #include "colorbutton.h"
 #include "emoticons/emoticonselector.h"
@@ -33,7 +34,8 @@
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent),
   m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
-  m_input(new InputWidget(this))
+  m_input(new InputWidget(this)),
+  m_toolBar(0)
 {
   m_availableActions << "bold" << "italic" << "underline" << "color" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
   createPermanentButtons();
@@ -81,6 +83,21 @@ QToolButton* SendWidget::settingsButton() const
 }
 
 
+void SendWidget::setStyleSheet()
+{
+  if (!m_toolBar)
+    return;
+
+  #if !defined(Q_OS_MAC)
+    #if defined(Q_WS_WIN)
+    m_toolBar->setStyleSheet(QString("QToolBar { background-color: %1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
+    #else
+    m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+    #endif
+  #endif
+}
+
+
 /*!
  * \brief Обработка изменения позиции курсора для обновления кнопок.
  */
@@ -104,7 +121,7 @@ void SendWidget::cursorPositionChanged()
 
 void SendWidget::log()
 {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/log"));
+  QDesktopServices::openUrl(QUrl::fromLocalFile(SimpleSettings->path(Settings::LogPath).at(0)));
 }
 
 
@@ -517,9 +534,9 @@ void SendWidget::createPermanentButtons()
   createSettingsPage(prefMenu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
   m_aboutAction = menu->addAction(tr("О Simple Chat..."), this, SIGNAL(about()));
   if (Settings::isNewYear())
-    m_aboutAction->setIcon(QIcon(":/images/logo16-ny.png"));
+    m_aboutAction->setIcon(QIcon(":/images/schat16-ny.png"));
   else
-    m_aboutAction->setIcon(QIcon(":/images/logo16.png"));
+    m_aboutAction->setIcon(QIcon(":/images/schat16.png"));
 
   menu->addSeparator();
   m_quitAction = menu->addAction(QIcon(":/images/exit.png"), tr("Выход"), this, SIGNAL(closeChat()));
@@ -537,14 +554,14 @@ void SendWidget::createPermanentButtons()
 void SendWidget::initToolBar()
 {
   m_toolBar = new QToolBar(this);
+  m_toolBar->setAttribute(Qt::WA_NoSystemBackground, false);
   m_toolBar->installEventFilter(this);
   #if !defined(Q_OS_WINCE)
   m_toolBar->setIconSize(QSize(16, 16));
   #elif defined(SCHAT_WINCE_VGA)
   m_toolBar->setIconSize(QSize(36, 36));
   #endif
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
-
+  setStyleSheet();
   buildToolBar(SimpleSettings->getList("ToolBarLayout"));
 }
 
