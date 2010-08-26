@@ -133,13 +133,20 @@ SimpleChatApp *SimpleChatApp::instance()
 #if !defined(SCHAT_NO_STYLE)
 QString SimpleChatApp::defaultStyle()
 {
-  #if defined(Q_WS_X11)
   QStringList styles = QStyleFactory::keys();
+  Q_UNUSED(styles);
+
+  #if defined(Q_WS_X11)
   if (styles.contains("Oxygen"))
     return "Oxygen";
 
   if (styles.contains("GTK+"))
     return "GTK+";
+  #endif
+
+  #if defined(Q_WS_WIN)
+  if (styles.contains("WindowsVista"))
+    return "WindowsVista";
   #endif
 
   return "Plastique";
