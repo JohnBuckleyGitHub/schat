@@ -45,6 +45,9 @@ protected:
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
   void showEvent(QShowEvent *event);
+  #if defined(Q_WS_WIN)
+  bool winEvent(MSG *message, long *result);
+  #endif
 
 private slots:
   void about();

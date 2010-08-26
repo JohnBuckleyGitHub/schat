@@ -19,6 +19,7 @@
 #include <QtGui>
 #include <QtNetwork>
 
+#include "3rdparty/qtwin.h"
 #include "aboutdialog.h"
 #include "abstractprofile.h"
 #include "channellog.h"
@@ -39,6 +40,11 @@
 #include "widget/statusmenu.h"
 #include "widget/userview.h"
 
+#if defined(Q_WS_WIN)
+  #include <qt_windows.h>
+  #define WM_DWMCOMPOSITIONCHANGED 0x031E // Composition changed window message
+#endif
+
 QMap<QString, QString> SChatWindowPrivate::cmds;
 
 
@@ -46,7 +52,10 @@ QMap<QString, QString> SChatWindowPrivate::cmds;
  * \brief Конструктор класса SChatWindowPrivate.
  */
 SChatWindowPrivate::SChatWindowPrivate(SChatWindow *parent)
-  : motd(true), q(parent)
+  : motd(true),
+    statusBar(0),
+    q(parent),
+    send(0)
 {
 }
 
@@ -312,11 +321,7 @@ void SChatWindowPrivate::createStatusBar()
   statusBar->addPermanentWidget(statusWidget);
   #endif
 
-  #if defined(Q_OS_MAC)
-  statusBar->setStyleSheet("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }");
-  #else
-  statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
-  #endif
+  setStyleSheet();
   q->setStatusBar(statusBar);
 }
 
@@ -495,6 +500,23 @@ void SChatWindowPrivate::setAwayOptions()
   }
   else if (idleDetector.isActive())
     idleDetector.stop();
+}
+
+
+void SChatWindowPrivate::setStyleSheet()
+{
+  if (!statusBar)
+    return;
+
+  #if defined(Q_OS_MAC)
+  statusBar->setStyleSheet("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }");
+  #else
+    #if defined(Q_WS_WIN)
+    statusBar->setStyleSheet(QString("QStatusBar { background-color: %1; } QStatusBar::item { border-width: 0; }").arg(q->palette().color(QPalette::Window).name()));
+    #else
+    statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
+    #endif
+  #endif
 }
 
 
@@ -706,20 +728,24 @@ SChatWindow::SChatWindow(QWidget *parent)
     d->mainLay->addWidget(d->send);
     d->mainLay->setContentsMargins(0, 0, 0, 0);
     d->mainLay->setContentsMargins(3, 3, 3, 0);
-    d->mainLay->setSpacing(1);
   #endif
   d->mainLay->addWidget(d->tabs);
   #ifndef SCHAT_WINCE
     d->mainLay->addWidget(d->send);
     #if defined(Q_OS_MAC)
     d->mainLay->setContentsMargins(0, 0, 0, 0);
-    d->mainLay->setSpacing(0);
     #else
-    d->mainLay->setContentsMargins(3, 3, 3, 0);
-    d->mainLay->setSpacing(1);
+    if (QtWin::isCompositionEnabled()) {
+      d->mainLay->setContentsMargins(0, 0, 0, 0);
+      QtWin::extendFrameIntoClientArea(this);
+    }
+    else {
+      d->mainLay->setContentsMargins(3, 3, 3, 0);
+    }
     #endif
   #endif
 
+  d->mainLay->setSpacing(0);
   d->mainLay->setStretchFactor(d->tabs, 999);
   d->mainLay->setStretchFactor(d->send, 1);
 
@@ -862,6 +888,23 @@ void SChatWindow::showEvent(QShowEvent *event)
 }
 
 
+#if defined(Q_WS_WIN)
+bool SChatWindow::winEvent(MSG *message, long *result)
+{
+  if (message && message->message == WM_DWMCOMPOSITIONCHANGED) {
+    if (QtWin::isCompositionEnabled()) {
+      d->mainLay->setContentsMargins(0, 0, 0, 0);
+      QtWin::extendFrameIntoClientArea(this);
+    }
+    else {
+      d->mainLay->setContentsMargins(3, 3, 3, 0);
+    }
+  }
+  return QWidget::winEvent(message, result);
+}
+#endif
+
+
 /*!
  * Обработка событий.
  */
@@ -874,6 +917,14 @@ bool SChatWindow::event(QEvent *event)
     if (windowState() & Qt::WindowMinimized)
       d->saveGeometry();
   }
+
+  #if defined(Q_WS_WIN)
+  if (event->type() == QEvent::ApplicationPaletteChange) {
+    d->setStyleSheet();
+    if (d->send)
+      d->send->setStyleSheet();
+  }
+  #endif
 
   return QMainWindow::event(event);
 }

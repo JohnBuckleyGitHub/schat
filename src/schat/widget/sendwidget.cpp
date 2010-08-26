@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "3rdparty/qtwin.h"
 #include "abstractprofile.h"
 #include "colorbutton.h"
 #include "emoticons/emoticonselector.h"
@@ -33,7 +34,8 @@
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent),
   m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
-  m_input(new InputWidget(this))
+  m_input(new InputWidget(this)),
+  m_toolBar(0)
 {
   m_availableActions << "bold" << "italic" << "underline" << "color" << "emoticons" << "stretch" << "log" << "send" << "separator" << "strike";
   createPermanentButtons();
@@ -78,6 +80,21 @@ QToolButton* SendWidget::settingsButton() const
     return m_settingsButton;
 
   return 0;
+}
+
+
+void SendWidget::setStyleSheet()
+{
+  if (!m_toolBar)
+    return;
+
+  #if !defined(Q_OS_MAC)
+    #if defined(Q_WS_WIN)
+    m_toolBar->setStyleSheet(QString("QToolBar { background-color: %1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
+    #else
+    m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+    #endif
+  #endif
 }
 
 
@@ -537,16 +554,14 @@ void SendWidget::createPermanentButtons()
 void SendWidget::initToolBar()
 {
   m_toolBar = new QToolBar(this);
+  m_toolBar->setAttribute(Qt::WA_NoSystemBackground, false);
   m_toolBar->installEventFilter(this);
   #if !defined(Q_OS_WINCE)
   m_toolBar->setIconSize(QSize(16, 16));
   #elif defined(SCHAT_WINCE_VGA)
   m_toolBar->setIconSize(QSize(36, 36));
   #endif
-  #if !defined(Q_OS_MAC)
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
-  #endif
-
+  setStyleSheet();
   buildToolBar(SimpleSettings->getList("ToolBarLayout"));
 }
 
