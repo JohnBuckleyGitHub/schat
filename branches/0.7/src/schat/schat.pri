@@ -34,6 +34,7 @@ TEMPLATE = app
 DEFINES += SCHAT_CLIENT
 
 HEADERS += \
+    3rdparty/qtwin.h \
     aboutdialog.h \
     abstractprofile.h \
     abstractsettings.h \
@@ -85,6 +86,7 @@ HEADERS += \
     widget/userview_p.h \
 
 SOURCES += \
+    3rdparty/qtwin.cpp \
     aboutdialog.cpp \
     abstractprofile.cpp \
     abstractsettings.cpp \

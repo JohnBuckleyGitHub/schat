@@ -66,6 +66,7 @@ public:
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
+  void setStyleSheet();
   void showChat();
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
