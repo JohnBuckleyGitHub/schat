@@ -36,8 +36,7 @@ ClientService::ClientService(AbstractProfile *profile, const Network *network, Q
   m_fatal(false),
   m_network(network),
   m_reconnects(0),
-  m_safeNick(profile->nick()),
-  m_nextBlockSize(0)
+  m_safeNick(profile->nick())
 {
   m_stream.setVersion(StreamVersion);
   m_checkTimer.setInterval(CheckTimeout);

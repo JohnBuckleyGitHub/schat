@@ -41,10 +41,13 @@ public:
   inline qint64 tx() const { return m_tx; }
 
 protected:
+  virtual void readPacket(int pcode, const QByteArray &block);
+
   QDataStream m_stream;          ///< Поток для чтения данный поступивших из сокета.
   qint64 m_rx;                   ///< Счётчик полученных (receive) байт.
   qint64 m_tx;                   ///< Счётчик отправленных (transmit) байт.
   QPointer<QTcpSocket> m_socket; ///< Сокет обслуживающий подключение.
+  quint16 m_nextBlockSize;       ///< Размер следующего блока данных.
 };
 
 #endif /* ABSTRACTPEER_H_ */

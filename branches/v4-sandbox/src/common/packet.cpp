@@ -46,6 +46,15 @@ PacketBuilder::~PacketBuilder()
 }
 
 
+int PacketBuilder::size() const
+{
+  if (!m_size)
+    return m_data->size();
+
+  return m_size;
+}
+
+
 /*!
  * \return Сформированный пакет.
  */
@@ -123,13 +132,36 @@ void PacketBuilder::addPacket(int pcode)
 /*!
  * Конструктор класса PacketReader.
  */
-PacketReader::PacketReader()
+PacketReader::PacketReader(int pcode, const QByteArray &block)
+  : m_count(1),
+    m_pcode(pcode)
+
 {
-  SCHAT_DEBUG("PacketReader()" << this)
+  SCHAT_DEBUG("PacketReader()" << this << pcode)
+
+  m_stream = new QDataStream(block);
 }
 
 
 PacketReader::~PacketReader()
 {
   SCHAT_DEBUG("~PacketReader()" << this)
+}
+
+
+/*!
+ * Возвращает код следующего инкапсулированного пакета.
+ * \todo Добавить поддержку склеенных пакетов.
+ */
+int PacketReader::getPacket()
+{
+  return m_pcode;
+}
+
+
+QString PacketReader::getUtf16() const
+{
+  QString out;
+  *m_stream >> out;
+  return out;
 }

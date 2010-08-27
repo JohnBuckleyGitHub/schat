@@ -26,7 +26,8 @@
 AbstractPeer::AbstractPeer(QObject *parent)
   : QObject(parent),
   m_rx(0),
-  m_tx(0)
+  m_tx(0),
+  m_nextBlockSize(0)
 {
   SCHAT_DEBUG(this)
 }
@@ -65,4 +66,17 @@ bool AbstractPeer::send(const PacketBuilder &builder)
   m_tx += builder.size();
 
   return true;
+}
+
+
+/*!
+ * Чтение пакета.
+ * \param pcode Код пакета.
+ * \param block Тело пакета.
+ */
+void AbstractPeer::readPacket(int pcode, const QByteArray &block)
+{
+  Q_UNUSED(pcode)
+  Q_UNUSED(block)
+  SCHAT_DEBUG(this << "readPacket(" << pcode << ", size:" << block.size() << "| rx:" << m_rx << "tx:" << m_tx)
 }

@@ -37,7 +37,9 @@ enum DataTypes {
 
 /// Коды пакетов.
 enum PacketCodes {
-  HandshakeRequest = 100, ///< v3 name: OpcodeGreeting
+  HandshakeRequest = 100, ///< Начальный пакет. v3 name: OpcodeGreeting.
+  HandshakeReply   = 102, ///< Ответ на HandshakeRequest.
+  Message          = 200, ///< Сообщение. v3 name: OpcodeMessage.
 };
 }
 
@@ -50,14 +52,14 @@ class PacketBuilder
 public:
   PacketBuilder();
   ~PacketBuilder();
-  inline int size() const { return m_size; }
+  int size() const;
   QByteArray data() const;
   void add(Packet::DataTypes type, const QString &data);
   void add(Packet::DataTypes type, int data);
   void addPacket(int pcode);
 
 private:
-  mutable int m_size;               ///< Размер пакета, высчитываемый во время вызова функции data();
+  mutable int m_size;               ///< Размер пакета, без учёта заголовка, до время вызова функции data();
   QByteArray *m_data;               ///< Тело пакета.
   QDataStream *m_stream;            ///< Поток для записи.
   QList<QPair<int, int> > m_pcodes; ///< Список кодов пакетов со смещением относительно начала тела пакета.
@@ -72,9 +74,16 @@ private:
 class PacketReader
 {
 public:
-  PacketReader();
+  PacketReader(int pcode, const QByteArray &block);
   ~PacketReader();
+  int count() const { return m_count; }
+  int getPacket();
+  QString getUtf16() const;
 
+private:
+  int m_count;           ///< Число склеенных пакетов.
+  int m_pcode;           ///< Текущий инкапсулированного пакета.
+  QDataStream *m_stream; ///< Поток для чтения данных.
 };
 
 #endif /* PACKET_H_ */
