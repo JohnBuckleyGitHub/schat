@@ -50,12 +50,14 @@ class PacketBuilder
 public:
   PacketBuilder();
   ~PacketBuilder();
-  QByteArray data();
+  inline int size() const { return m_size; }
+  QByteArray data() const;
   void add(Packet::DataTypes type, const QString &data);
   void add(Packet::DataTypes type, int data);
   void addPacket(int pcode);
 
 private:
+  mutable int m_size;               ///< Размер пакета, высчитываемый во время вызова функции data();
   QByteArray *m_data;               ///< Тело пакета.
   QDataStream *m_stream;            ///< Поток для записи.
   QList<QPair<int, int> > m_pcodes; ///< Список кодов пакетов со смещением относительно начала тела пакета.

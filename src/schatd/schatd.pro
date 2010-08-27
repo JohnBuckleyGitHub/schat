@@ -28,6 +28,7 @@ TEMPLATE = app
 DEFINES += SCHAT_NO_WRITE_SETTINGS
 
 HEADERS = \
+    AbstractPeer.h \
     abstractprofile.h \
     abstractsettings.h \
     channellog.h \
@@ -40,14 +41,15 @@ HEADERS = \
     linkunit.h \
     network.h \
     networkreader.h \
-    protocol.h \
-    userunit.h \
-    version.h \
     normalizereader.h \
     packet.h \
+    protocol.h \
     schat.h \
+    userunit.h \
+    version.h \
 
 SOURCES = \
+    AbstractPeer.cpp \
     abstractprofile.cpp \
     abstractsettings.cpp \
     channellog.cpp \
@@ -62,8 +64,8 @@ SOURCES = \
     network.cpp \
     networkreader.cpp \
     normalizereader.cpp \
-    userunit.cpp \
     packet.cpp \
+    userunit.cpp \
 
 contains( SCHAT_LOCAL_IPC, 1 ) {
   HEADERS += ipc/localservice.h

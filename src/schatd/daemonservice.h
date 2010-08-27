@@ -23,22 +23,25 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "AbstractPeer.h"
 #include "protocol.h"
 
 class AbstractProfile;
+class PacketBuilder;
 
 /*!
  * \brief Универсальный класс, обслуживающий клиентов.
  *
  * При наличии валидного сокета, инициализируется сокет.
  */
-class DaemonService : public QObject
+class DaemonService : public AbstractPeer
 {
   Q_OBJECT
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
   bool isReady() const;
+  bool send(const PacketBuilder &builder);
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }

@@ -36,6 +36,7 @@ DEFINES += SCHAT_CLIENT
 HEADERS += \
     3rdparty/qtwin.h \
     aboutdialog.h \
+    AbstractPeer.h \
     abstractprofile.h \
     abstractsettings.h \
     abstractsettingsdialog.h \
@@ -57,12 +58,14 @@ HEADERS += \
     mainchannel.h \
     network.h \
     networkreader.h \
+    packet.h \
     popup/popupmanager.h \
     popup/popupmanager_p.h \
     popup/popupwindow.h \
     privatetab.h \
     profilewidget.h \
     protocol.h \
+    schat.h \
     schatwindow.h \
     schatwindow_p.h \
     settings.h \
@@ -84,12 +87,11 @@ HEADERS += \
     widget/statusmenu.h \
     widget/userview.h \
     widget/userview_p.h \
-    packet.h \
-    schat.h \
 
 SOURCES += \
     3rdparty/qtwin.cpp \
     aboutdialog.cpp \
+    AbstractPeer.cpp \
     abstractprofile.cpp \
     abstractsettings.cpp \
     abstractsettingsdialog.cpp \
@@ -111,6 +113,7 @@ SOURCES += \
     mainchannel.cpp \
     network.cpp \
     networkreader.cpp \
+    packet.cpp \
     popup/popupmanager.cpp \
     popup/popupwindow.cpp \
     privatetab.cpp \
@@ -133,7 +136,6 @@ SOURCES += \
     widget/soundwidget.cpp \
     widget/statusmenu.cpp \
     widget/userview.cpp \
-    packet.cpp \
     
 contains( SCHAT_WEBKIT, 1 ) {
   HEADERS += \

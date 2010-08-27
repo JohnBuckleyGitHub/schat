@@ -22,21 +22,14 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "daemonservice.h"
-
-#ifdef SCHAT_DEBUG
-  #undef SCHAT_DEBUG
-  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
-  #include <QDebug>
-  #include <QTime>
-#else
-  #define SCHAT_DEBUG(x)
-#endif
+#include "packet.h"
+#include "schat.h"
 
 /*!
  * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
-: QObject(parent), m_socket(socket)
+  : AbstractPeer(parent), m_socket(socket)
 {
   SCHAT_DEBUG(this);
 
@@ -60,18 +53,34 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 
 
 /*!
- * Возвращает \a true если сервис находится в активном состоянии.
+ * Возвращает `true` если сервис находится в активном состоянии.
+ * \todo Обобщить
  */
 bool DaemonService::isReady() const
 {
-  if (m_socket) {
-    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
-      return true;
-    else
-      return false;
-  }
-  else
+  if (!m_socket)
     return false;
+
+  if (m_socket->state() == QTcpSocket::ConnectedState)
+    return true;
+
+  return false;
+}
+
+
+/*!
+ * Отправка пакета.
+ * \todo Обобщить
+ */
+bool DaemonService::send(const PacketBuilder &builder)
+{
+  if (!isReady())
+    return false;
+
+  m_socket->write(builder.data());
+  m_tx += builder.size();
+
+  return true;
 }
 
 
