@@ -126,7 +126,6 @@ private:
   QTimer m_checkTimer;
   QTimer m_ping;
   QTimer m_reconnectTimer;
-  quint16 m_nextBlockSize;
   quint16 m_opcode;
   ServerInfo m_server;
 };

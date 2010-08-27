@@ -27,6 +27,7 @@
 #include "protocol.h"
 
 class AbstractProfile;
+class PacketReader;
 
 /*!
  * \brief Универсальный класс, обслуживающий клиентов.
@@ -75,6 +76,9 @@ public slots:
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
 
+protected:
+  void readPacket(int pcode, const QByteArray &block);
+
 private slots:
   void disconnected();
   void ping();
@@ -90,8 +94,8 @@ private:
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   QString parseCmd(const QString &message) const;
   quint16 verifyGreeting(quint16 version);
+  void messagePacket(const PacketReader &reader);
   void opcodeByeMsg();
-  void opcodeMessage();
   void opcodeNewNick();
   void opcodeNewProfile();
   void opcodeNewUser();
@@ -109,7 +113,6 @@ private:
   int m_pings;
   QString m_error;
   QTimer m_ping;
-  quint16 m_nextBlockSize;
   quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;

@@ -62,10 +62,15 @@ QString DaemonService::host() const
 /*!
  * Клиент получил отказ в доступе, `quint16 reason` - причина отказа.
  * Отсылаем ошибку и разрываем соединение.
+ * \deprecated Необходимо заменить пакет OpcodeAccessDenied на HandshakeReply.
  */
 void DaemonService::accessDenied(quint16 reason)
 {
-  send(OpcodeAccessDenied, reason);
+  PacketBuilder builder;
+  builder.addPacket(OpcodeAccessDenied);
+  builder.add(Packet::UINT16, reason);
+  AbstractPeer::send(builder);
+
   m_socket->disconnectFromHost();
 }
 
@@ -73,11 +78,15 @@ void DaemonService::accessDenied(quint16 reason)
 /*!
  * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
  * и устанавливаем флаг `m_accepted` в `true`.
+ * \deprecated Необходимо заменить пакет OpcodeAccessGranted на HandshakeReply.
  */
 void DaemonService::accessGranted(quint16 numeric)
 {
   if (!m_accepted) {
-    send(OpcodeAccessGranted, numeric);
+    PacketBuilder builder;
+    builder.addPacket(OpcodeAccessGranted);
+    builder.add(Packet::UINT16, numeric);
+    AbstractPeer::send(builder);
     m_accepted = true;
   }
 }
@@ -246,6 +255,25 @@ void DaemonService::sendRelayMessage(const QString &channel, const QString &send
 
 
 /*!
+ * \todo Добавить поддержку склеенных пакетов.
+ */
+void DaemonService::readPacket(int pcode, const QByteArray &block)
+{
+  AbstractPeer::readPacket(pcode, block);
+
+  PacketReader reader(pcode, block);
+  switch (pcode) {
+    case Packet::Message:
+      messagePacket(reader);
+      break;
+
+    default:
+      break;
+  }
+}
+
+
+/*!
  * Обработка разрыва соединения.
  */
 void DaemonService::disconnected()
@@ -307,7 +335,9 @@ void DaemonService::readyRead()
     if (m_socket->bytesAvailable() < m_nextBlockSize)
       break;
 
-    m_stream >> m_opcode;
+    quint16 pcode;
+    m_stream >> pcode;
+    m_opcode = pcode;
 
     if (m_opcode != 401) {
       SCHAT_DEBUG(this << "opcode:" << m_opcode << "size:" << m_nextBlockSize)
@@ -315,9 +345,8 @@ void DaemonService::readyRead()
 
     if (m_accepted) {
       switch (m_opcode) {
-        case OpcodeMessage:
-          opcodeMessage();
-          break;
+//        case OpcodeMessage:
+//          break;
 
         case OpcodePong:
           opcodePong();
@@ -625,31 +654,16 @@ quint16 DaemonService::verifyGreeting(quint16 version)
 
 
 /*!
- * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
- */
-void DaemonService::opcodeByeMsg()
-{
-  QString p_bye;
-  m_stream >> p_bye;
-  m_nextBlockSize = 0;
-  m_profile->setByeMsg(p_bye);
-  emit newBye(m_profile->nick(), p_bye);
-}
-
-
-/*!
  * \brief Разбор пакета \b OpcodeMessage, полученного от клиента.
  *
  * В случае успеха высылается сигнал message(const QString &channel, const QString &sender, const QString &message).
  */
-void DaemonService::opcodeMessage()
+void DaemonService::messagePacket(const PacketReader &reader)
 {
-  QString p_channel;
-  QString p_message;
-  m_stream >> p_channel >> p_message;
-  m_nextBlockSize = 0;
+  QString p_channel = reader.getUtf16();
+  QString p_message = reader.getUtf16();
 
-  SCHAT_DEBUG(this << "::opcodeMessage()")
+  SCHAT_DEBUG(this << "Packet::Message")
   SCHAT_DEBUG("  CHANNEL:" << p_channel)
   SCHAT_DEBUG("  SENDER: " << m_profile->nick())
   SCHAT_DEBUG("  MESSAGE:" << p_message)
@@ -662,6 +676,19 @@ void DaemonService::opcodeMessage()
     return;
 
   emit message(p_channel, m_profile->nick(), p_message);
+}
+
+
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
+ */
+void DaemonService::opcodeByeMsg()
+{
+  QString p_bye;
+  m_stream >> p_bye;
+  m_nextBlockSize = 0;
+  m_profile->setByeMsg(p_bye);
+  emit newBye(m_profile->nick(), p_bye);
 }
 
 
@@ -844,6 +871,8 @@ void DaemonService::unknownOpcode()
   SCHAT_DEBUG(this << "::unknownOpcode()")
   SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
 
-  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  QByteArray block = m_socket->read(m_nextBlockSize - 2);
+  m_rx += m_nextBlockSize + 2;
   m_nextBlockSize = 0;
+  readPacket(m_opcode, block);
 }
