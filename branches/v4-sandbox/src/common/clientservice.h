@@ -24,16 +24,19 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include "AbstractPeer.h"
 #include "abstractprofile.h"
 #include "network.h"
 #include "protocol.h"
+
+class PacketBuilder;
 
 /*!
  * \brief Универсальный сервис клиента чата.
  *
  * Класс устанавливает и поддерживает соединение.
  */
-class ClientService : public QObject
+class ClientService : public AbstractPeer
 {
   Q_OBJECT
 
@@ -41,6 +44,7 @@ public:
   ClientService(AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
   bool isReady() const;
+  bool send(const PacketBuilder &builder);
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);

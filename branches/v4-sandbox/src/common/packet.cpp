@@ -27,6 +27,7 @@
  * Конструктор класса PacketBuilder.
  */
 PacketBuilder::PacketBuilder()
+  : m_size(0)
 {
   SCHAT_DEBUG("PacketBuilder()" << this)
 
@@ -48,7 +49,7 @@ PacketBuilder::~PacketBuilder()
 /*!
  * \return Сформированный пакет.
  */
-QByteArray PacketBuilder::data()
+QByteArray PacketBuilder::data() const
 {
   SCHAT_DEBUG("PacketBuilder::data()" << this)
   Q_ASSERT(!m_pcodes.isEmpty());
@@ -62,10 +63,11 @@ QByteArray PacketBuilder::data()
   }
 
   /// \todo Добавить поддержку сжатия пакетов.
+  m_size = m_data->size() + header.size();
   stream.device()->seek(0);
-  stream << quint16(m_data->size() + header.size() - 2);
+  stream << quint16(m_size - 2);
 
-  SCHAT_DEBUG(" ^^^^ full size of data:" << m_data->size() + header.size() << "bytes")
+  SCHAT_DEBUG(" ^^^^ full size of data:" << m_size << "bytes")
   return header + *m_data;
 }
 
