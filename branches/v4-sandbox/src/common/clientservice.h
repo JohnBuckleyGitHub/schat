@@ -20,8 +20,6 @@
 #define CLIENTSERVICE_H_
 
 #include <QObject>
-#include <QPointer>
-#include <QTcpSocket>
 #include <QTimer>
 
 #include "AbstractPeer.h"
@@ -43,8 +41,6 @@ class ClientService : public AbstractPeer
 public:
   ClientService(AbstractProfile *profile, const Network *network, QObject *parent = 0);
   ~ClientService();
-  bool isReady() const;
-  bool send(const PacketBuilder &builder);
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
@@ -126,8 +122,6 @@ private:
   bool m_fatal;
   const Network *m_network;
   int m_reconnects;
-  QDataStream m_stream;
-  QPointer<QTcpSocket> m_socket;
   QString m_safeNick;
   QTimer m_checkTimer;
   QTimer m_ping;

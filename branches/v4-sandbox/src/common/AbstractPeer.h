@@ -20,6 +20,10 @@
 #define ABSTRACTPEER_H_
 
 #include <QObject>
+#include <QPointer>
+#include <QTcpSocket>
+
+class PacketBuilder;
 
 /*!
  * \brief Абстрактный базовый каркас для клиентского и серверного подключения.
@@ -31,12 +35,16 @@ class AbstractPeer : public QObject
 public:
   AbstractPeer(QObject *parent = 0);
   ~AbstractPeer();
+  bool isReady() const;
+  bool send(const PacketBuilder &builder);
   inline qint64 rx() const { return m_rx; }
   inline qint64 tx() const { return m_tx; }
 
 protected:
-  qint64 m_rx; ///< Счётчик полученных (receive) байт.
-  qint64 m_tx; ///< Счётчик отправленных (transmit) байт.
+  QDataStream m_stream;          ///< Поток для чтения данный поступивших из сокета.
+  qint64 m_rx;                   ///< Счётчик полученных (receive) байт.
+  qint64 m_tx;                   ///< Счётчик отправленных (transmit) байт.
+  QPointer<QTcpSocket> m_socket; ///< Сокет обслуживающий подключение.
 };
 
 #endif /* ABSTRACTPEER_H_ */
