@@ -20,18 +20,11 @@
 #include <QtNetwork>
 
 #include "clientservice.h"
+#include "packet.h"
+#include "schat.h"
 
 static const int CheckTimeout         = 12000;
 static const int ReconnectTimeout     = 4000;
-
-#ifdef SCHAT_DEBUG
-  #undef SCHAT_DEBUG
-  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
-  #include <QDebug>
-  #include <QTime>
-#else
-  #define SCHAT_DEBUG(x)
-#endif
 
 /*!
  * \brief Конструктор класса ClientService.
@@ -301,26 +294,17 @@ void ClientService::connected()
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
 
-  QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
-  out.setVersion(StreamVersion);
-  out << quint16(0)
-      << OpcodeGreeting
-      << ProtocolVersion
-      #ifdef SCHAT_CLIENT
-       << FlagNone
-      #else
-       << FlagLink
-      #endif
-      << m_profile->genderNum()
-      << m_profile->nick()
-      << m_profile->fullName()
-      << m_profile->userAgent()
-      << m_profile->byeMsg();
+  PacketBuilder builder;
+  builder.addPacket(Packet::HandshakeRequest);
+  builder.add(Packet::UINT16, ProtocolVersion);
+  builder.add(Packet::UINT8, FlagNone);
+  builder.add(Packet::UINT8, m_profile->genderNum());
+  builder.add(Packet::UTF16, m_profile->nick());
+  builder.add(Packet::UTF16, m_profile->fullName());
+  builder.add(Packet::UTF16, m_profile->userAgent());
+  builder.add(Packet::UTF16, m_profile->byeMsg());
 
-  out.device()->seek(0);
-  out << quint16(block.size() - (int) sizeof(quint16));
-  m_socket->write(block);
+  m_socket->write(builder.data());
 }
 
 

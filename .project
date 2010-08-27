@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>schat_0_7</name>
+	<name>v4-sandbox</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -44,7 +44,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.build.target.inc</key>
-					<value>release</value>
+					<value>debug</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>

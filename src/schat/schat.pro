@@ -15,10 +15,11 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE    = 0
+SCHAT_CONSOLE    = 1
 SCHAT_WEBKIT     = 1
 SCHAT_STATIC     = 0
-SCHAT_DEVEL_MODE = 0
+SCHAT_DEVEL_MODE = 1
+SCHAT_DEBUG      = 1
 SCHAT_PREFIX     = /usr
 
 include(schat.pri)
