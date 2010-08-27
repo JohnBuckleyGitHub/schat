@@ -36,7 +36,6 @@ ClientService::ClientService(AbstractProfile *profile, const Network *network, Q
   m_fatal(false),
   m_network(network),
   m_reconnects(0),
-  m_socket(0),
   m_safeNick(profile->nick()),
   m_nextBlockSize(0)
 {
@@ -54,38 +53,6 @@ ClientService::ClientService(AbstractProfile *profile, const Network *network, Q
 ClientService::~ClientService()
 {
   SCHAT_DEBUG(this << "::~ClientService()")
-}
-
-
-/*!
- * Возвращает `true` если сервис находится в активном состоянии.
- * \todo Обобщить
- */
-bool ClientService::isReady() const
-{
-  if (!m_socket)
-    return false;
-
-  if (m_socket->state() == QTcpSocket::ConnectedState)
-    return true;
-
-  return false;
-}
-
-
-/*!
- * Отправка пакета.
- * \todo Обобщить
- */
-bool ClientService::send(const PacketBuilder &builder)
-{
-  if (!isReady())
-    return false;
-
-  m_socket->write(builder.data());
-  m_tx += builder.size();
-
-  return true;
 }
 
 
@@ -320,7 +287,7 @@ void ClientService::connected()
   builder.add(Packet::UTF16, m_profile->userAgent());
   builder.add(Packet::UTF16, m_profile->byeMsg());
 
-  send(builder);
+  AbstractPeer::send(builder);
 }
 
 

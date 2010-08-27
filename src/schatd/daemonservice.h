@@ -27,7 +27,6 @@
 #include "protocol.h"
 
 class AbstractProfile;
-class PacketBuilder;
 
 /*!
  * \brief Универсальный класс, обслуживающий клиентов.
@@ -40,8 +39,6 @@ class DaemonService : public AbstractPeer
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
-  bool isReady() const;
-  bool send(const PacketBuilder &builder);
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
@@ -110,9 +107,7 @@ private:
   bool m_accepted;
   bool m_kill;
   int m_pings;
-  QDataStream m_stream;
   QString m_error;
-  QTcpSocket *m_socket;
   QTimer m_ping;
   quint16 m_nextBlockSize;
   quint16 m_opcode;

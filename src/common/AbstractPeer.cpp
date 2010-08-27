@@ -17,6 +17,7 @@
  */
 
 #include "AbstractPeer.h"
+#include "packet.h"
 #include "schat.h"
 
 /*!
@@ -34,4 +35,34 @@ AbstractPeer::AbstractPeer(QObject *parent)
 AbstractPeer::~AbstractPeer()
 {
   SCHAT_DEBUG("~" << this)
+}
+
+
+/*!
+ * Возвращает true если сервис находится в активном состоянии.
+ */
+bool AbstractPeer::isReady() const
+{
+  if (!m_socket)
+    return false;
+
+  if (m_socket->state() == QTcpSocket::ConnectedState)
+    return true;
+
+  return false;
+}
+
+
+/*!
+ * Отправка пакета.
+ */
+bool AbstractPeer::send(const PacketBuilder &builder)
+{
+  if (!isReady())
+    return false;
+
+  m_socket->write(builder.data());
+  m_tx += builder.size();
+
+  return true;
 }

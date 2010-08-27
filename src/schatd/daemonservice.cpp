@@ -29,9 +29,10 @@
  * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
-  : AbstractPeer(parent), m_socket(socket)
+  : AbstractPeer(parent)
 {
   SCHAT_DEBUG(this);
+  m_socket = socket;
 
   if (m_socket) {
     m_socket->setParent(this);
@@ -49,38 +50,6 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
   }
   else
     deleteLater();
-}
-
-
-/*!
- * Возвращает `true` если сервис находится в активном состоянии.
- * \todo Обобщить
- */
-bool DaemonService::isReady() const
-{
-  if (!m_socket)
-    return false;
-
-  if (m_socket->state() == QTcpSocket::ConnectedState)
-    return true;
-
-  return false;
-}
-
-
-/*!
- * Отправка пакета.
- * \todo Обобщить
- */
-bool DaemonService::send(const PacketBuilder &builder)
-{
-  if (!isReady())
-    return false;
-
-  m_socket->write(builder.data());
-  m_tx += builder.size();
-
-  return true;
 }
 
 
