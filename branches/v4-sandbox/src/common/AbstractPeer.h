@@ -40,6 +40,9 @@ public:
   inline qint64 rx() const { return m_rx; }
   inline qint64 tx() const { return m_tx; }
 
+protected slots:
+  void readyRead();
+
 protected:
   virtual void readPacket(int pcode, const QByteArray &block);
 

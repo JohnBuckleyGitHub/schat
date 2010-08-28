@@ -70,6 +70,33 @@ bool AbstractPeer::send(const PacketBuilder &builder)
 
 
 /*!
+ * Слот вызывается когда поступила новая порция данных для чтения из сокета.
+ */
+void AbstractPeer::readyRead()
+{
+  forever {
+    if (!m_nextBlockSize) {
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
+        break;
+
+      m_stream >> m_nextBlockSize;
+    }
+
+    if (m_socket->bytesAvailable() < m_nextBlockSize)
+      break;
+
+    quint16 pcode;
+    m_stream >> pcode;
+
+    QByteArray block = m_socket->read(m_nextBlockSize - 2);
+    m_rx += m_nextBlockSize + 2;
+    m_nextBlockSize = 0;
+    readPacket(pcode, block);
+  }
+}
+
+
+/*!
  * Чтение пакета.
  * \param pcode Код пакета.
  * \param block Тело пакета.

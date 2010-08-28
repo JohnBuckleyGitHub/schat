@@ -173,9 +173,49 @@ int PacketReader::getPacket()
 }
 
 
+int PacketReader::getUint16() const
+{
+  quint16 out;
+  *m_stream >> out;
+  return out;
+}
+
+
+int PacketReader::getUint8() const
+{
+  quint8 out;
+  *m_stream >> out;
+  return out;
+}
+
+
+QList<quint32> PacketReader::getUint32List() const
+{
+  QList<quint32> out;
+  *m_stream >> out;
+  return out;
+}
+
+
+QList<quint8> PacketReader::getUint8List() const
+{
+  QList<quint8> out;
+  *m_stream >> out;
+  return out;
+}
+
+
 QString PacketReader::getUtf16() const
 {
   QString out;
+  *m_stream >> out;
+  return out;
+}
+
+
+QStringList PacketReader::getUtf16List() const
+{
+  QStringList out;
   *m_stream >> out;
   return out;
 }

@@ -33,7 +33,7 @@ enum DataTypes {
   UINT8,      ///< quint8
   UTF16,      ///< UTF-16 string
   UTF8,       ///< UTF-8 string
-  UINT16LIST, ///< QList<quint32>
+  UINT32LIST, ///< QList<quint32>
   UTF16LIST   ///< QStringList
 };
 
@@ -82,7 +82,12 @@ public:
   ~PacketReader();
   int count() const { return m_count; }
   int getPacket();
+  int getUint16() const;
+  int getUint8() const;
+  QList<quint32> getUint32List() const;
+  QList<quint8> getUint8List() const;
   QString getUtf16() const;
+  QStringList getUtf16List() const;
 
 private:
   int m_count;           ///< Число склеенных пакетов.
