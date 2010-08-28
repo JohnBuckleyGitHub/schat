@@ -29,10 +29,12 @@ namespace Packet {
 
 /// Типы данных.
 enum DataTypes {
-  UINT16, ///< quint16
-  UINT8,  ///< quint8
-  UTF16,  ///< UTF-16 string
-  UTF8,   ///< UTF-8 string
+  UINT16,     ///< quint16
+  UINT8,      ///< quint8
+  UTF16,      ///< UTF-16 string
+  UTF8,       ///< UTF-8 string
+  UINT16LIST, ///< QList<quint32>
+  UTF16LIST   ///< QStringList
 };
 
 /// Коды пакетов.
@@ -50,10 +52,12 @@ enum PacketCodes {
 class PacketBuilder
 {
 public:
-  PacketBuilder();
+  PacketBuilder(int pcode);
   ~PacketBuilder();
   int size() const;
   QByteArray data() const;
+  void add(const QList<quint32> &data);
+  void add(const QStringList &data);
   void add(Packet::DataTypes type, const QString &data);
   void add(Packet::DataTypes type, int data);
   void addPacket(int pcode);

@@ -55,26 +55,35 @@ ClientService::~ClientService()
 }
 
 
+/*!
+ * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
+ * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * const QString &message -> сообщение.
+ * ----
+ * Возвращает `true` в случае успешной отправки (без подтверждения сервером).
+ */
+bool ClientService::sendMessage(const QString &channel, const QString &message)
+{
+  SCHAT_DEBUG(this << "::sendMessage(const QString &, const QString &)" << channel << message)
+
+  PacketBuilder builder(Packet::Message);
+  builder.add(Packet::UTF16, channel);
+  builder.add(Packet::UTF16, message);
+
+  return send(builder);
+}
+
+
 bool ClientService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
   SCHAT_DEBUG(this << "::sendRelayMessage(const QString &, const QString &, const QString &, quint8)" << channel << sender << message)
 
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeRelayMessage
-        << channel
-        << sender
-        << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
+  PacketBuilder builder(OpcodeRelayMessage);
+  builder.add(Packet::UTF16, channel);
+  builder.add(Packet::UTF16, sender);
+  builder.add(Packet::UTF16, message);
+
+  return send(builder);
 }
 
 
@@ -87,70 +96,12 @@ bool ClientService::sendRelayMessage(const QString &channel, const QString &send
  */
 bool ClientService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
+  PacketBuilder builder(OpcodeUniversal);
+  builder.add(Packet::UINT16, sub);
+  builder.add(data1);
+  builder.add(data2);
 
-
-/*!
- * Отправка универсального облегчённого пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- */
-bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversalLite << sub << data1;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
- * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
- * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
- * const QString &message -> сообщение.
- * ----
- * Возвращает `true` в случае успешной отправки (без подтверждения сервером).
- */
-bool ClientService::sendMessage(const QString &channel, const QString &message)
-{
-  SCHAT_DEBUG(this << "::sendMessage(const QString &, const QString &)" << channel << message)
-
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeMessage
-        << channel
-        << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
+  return send(builder);
 }
 
 
@@ -179,30 +130,61 @@ void ClientService::quit(bool end)
 }
 
 
-/** [public]
- *
- */
+void ClientService::sendByeMsg(const QString &msg)
+{
+  PacketBuilder builder(OpcodeByeMsg);
+  builder.add(Packet::UTF16, msg);
+
+  send(builder);
+}
+
+
 void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeNewUser
-        << echo
-        << numeric
-        << AbstractProfile::genderNum(list.at(AbstractProfile::Gender))
-        << list.at(AbstractProfile::Nick)
-        << list.at(AbstractProfile::FullName)
-        << list.at(AbstractProfile::ByeMsg)
-        << list.at(AbstractProfile::UserAgent)
-        << list.at(AbstractProfile::Host);
+  PacketBuilder builder(OpcodeNewUser);
+  builder.add(Packet::UINT8, echo);
+  builder.add(Packet::UINT8, numeric);
+  builder.add(Packet::UINT8, AbstractProfile::genderNum(list.at(AbstractProfile::Gender)));
+  builder.add(Packet::UTF16, list.at(AbstractProfile::Nick));
+  builder.add(Packet::UTF16, list.at(AbstractProfile::FullName));
+  builder.add(Packet::UTF16, list.at(AbstractProfile::ByeMsg));
+  builder.add(Packet::UTF16, list.at(AbstractProfile::UserAgent));
+  builder.add(Packet::UTF16, list.at(AbstractProfile::Host));
 
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  send(builder);
+}
+
+
+void ClientService::sendSyncBye(const QString &nick, const QString &bye)
+{
+  PacketBuilder builder(OpcodeSyncByeMsg);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, bye);
+
+  send(builder);
+}
+
+
+void ClientService::sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name)
+{
+  PacketBuilder builder(OpcodeNewNick);
+  builder.add(Packet::UINT8, gender);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, nNick);
+  builder.add(Packet::UTF16, name);
+
+  send(builder);
+}
+
+
+void ClientService::sendUserLeave(const QString &nick, const QString &bye, quint8 flag)
+{
+  PacketBuilder builder(OpcodeUserLeave);
+  builder.add(Packet::UINT8, flag);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, bye);
+
+  send(builder);
 }
 
 
@@ -237,6 +219,36 @@ void ClientService::connectToHost()
   else if (m_socket->state() == QAbstractSocket::ConnectedState) {
     m_reconnects = 0;
     m_socket->disconnectFromHost();
+  }
+}
+
+
+void ClientService::sendNewProfile()
+{
+  PacketBuilder builder(OpcodeNewProfile);
+  builder.add(Packet::UINT8, m_profile->genderNum());
+  builder.add(Packet::UTF16, m_profile->nick());
+  builder.add(Packet::UTF16, m_profile->fullName());
+
+  send(builder);
+}
+
+
+/*!
+ * \todo Добавить поддержку склеенных пакетов.
+ */
+void ClientService::readPacket(int pcode, const QByteArray &block)
+{
+  AbstractPeer::readPacket(pcode, block);
+
+  PacketReader reader(pcode, block);
+  switch (pcode) {
+    case Packet::Message:
+      messagePacket(reader);
+      break;
+
+    default:
+      break;
   }
 }
 
@@ -276,8 +288,7 @@ void ClientService::connected()
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
 
-  PacketBuilder builder;
-  builder.addPacket(Packet::HandshakeRequest);
+  PacketBuilder builder(Packet::HandshakeRequest);
   builder.add(Packet::UINT16, ProtocolVersion);
   builder.add(Packet::UINT8, FlagNone);
   builder.add(Packet::UINT8, m_profile->genderNum());
@@ -286,7 +297,7 @@ void ClientService::connected()
   builder.add(Packet::UTF16, m_profile->userAgent());
   builder.add(Packet::UTF16, m_profile->byeMsg());
 
-  AbstractPeer::send(builder);
+  send(builder);
 }
 
 
@@ -362,10 +373,6 @@ void ClientService::readyRead()
 
         case OpcodeUserLeave:
           opcodeUserLeave();
-          break;
-
-        case OpcodeMessage:
-          opcodeMessage();
           break;
 
         case OpcodePrivateMessage:
@@ -454,116 +461,6 @@ void ClientService::reconnect()
 }
 
 
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * ОПКОДЫ:
- *   `OpcodePong`.
- */
-bool ClientService::send(quint16 opcode)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * QString ->
- * ОПКОДЫ:
- *   `OpcodeByeMsg`.
- */
-bool ClientService::send(quint16 opcode, const QString &msg)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << msg;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-bool ClientService::send(quint16 opcode, const QString &str1, const QString &str2)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << str1 << str2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * quint8  ->
- * QString ->
- * QString ->
- * ОПКОДЫ:
- *   `OpcodeNewProfile`.
- */
-bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &name)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << name;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-bool ClientService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << nNick << name;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
 /*!
  * Возвращает число активных сетевых интерфейсов, исключая LoopBack.
  */
@@ -608,6 +505,17 @@ void ClientService::mangleNick()
 
   m_profile->setNick(nick + QString().setNum(qrand() % max));
   SCHAT_DEBUG("            ^^^^^ mangled nick:" << m_profile->nick())
+}
+
+
+/*!
+ * Разбор пакета с опкодом `OpcodeMessage`.
+ */
+void ClientService::messagePacket(const PacketReader &reader)
+{
+  QString p_sender = reader.getUtf16();
+  QString p_message = reader.getUtf16();
+  emit message(p_sender, p_message);
 }
 
 
@@ -679,20 +587,6 @@ void ClientService::opcodeLinkLeave()
     return;
 
   emit linkLeave(p_numeric, p_network, p_ip);
-}
-
-
-/** [private]
- * Разбор пакета с опкодом `OpcodeMessage`.
- * В конце разбора высылается сигнал `message(const QString &, const QString &)`.
- */
-void ClientService::opcodeMessage()
-{
-  QString p_sender;
-  QString p_message;
-  m_stream >> p_sender >> p_message;
-  m_nextBlockSize = 0;
-  emit message(p_sender, p_message);
 }
 
 
@@ -778,7 +672,7 @@ void ClientService::opcodeNewUser()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodePing`.
  * В ответ высылается пакет `OpcodePong`.
  */
@@ -786,7 +680,7 @@ void ClientService::opcodePing()
 {
   m_nextBlockSize = 0;
   m_ping.start();
-  send(OpcodePong);
+  AbstractPeer::send(PacketBuilder(OpcodePong));
 }
 
 
@@ -930,6 +824,8 @@ void ClientService::unknownOpcode()
   SCHAT_DEBUG(this << "::unknownOpcode()")
   SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
 
-  QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
+  QByteArray block = m_socket->read(m_nextBlockSize - 2);
+  m_rx += m_nextBlockSize + 2;
   m_nextBlockSize = 0;
+  readPacket(m_opcode, block);
 }

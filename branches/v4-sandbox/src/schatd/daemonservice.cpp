@@ -66,8 +66,7 @@ QString DaemonService::host() const
  */
 void DaemonService::accessDenied(quint16 reason)
 {
-  PacketBuilder builder;
-  builder.addPacket(OpcodeAccessDenied);
+  PacketBuilder builder(OpcodeAccessDenied);
   builder.add(Packet::UINT16, reason);
   AbstractPeer::send(builder);
 
@@ -83,8 +82,7 @@ void DaemonService::accessDenied(quint16 reason)
 void DaemonService::accessGranted(quint16 numeric)
 {
   if (!m_accepted) {
-    PacketBuilder builder;
-    builder.addPacket(OpcodeAccessGranted);
+    PacketBuilder builder(OpcodeAccessGranted);
     builder.add(Packet::UINT16, numeric);
     AbstractPeer::send(builder);
     m_accepted = true;

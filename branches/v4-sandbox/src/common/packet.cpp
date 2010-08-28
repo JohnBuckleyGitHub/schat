@@ -18,6 +18,7 @@
 
 #include <QByteArray>
 #include <QDataStream>
+#include <QStringList>
 
 #include "packet.h"
 #include "schat.h"
@@ -26,7 +27,7 @@
 /*!
  * Конструктор класса PacketBuilder.
  */
-PacketBuilder::PacketBuilder()
+PacketBuilder::PacketBuilder(int pcode)
   : m_size(0)
 {
   SCHAT_DEBUG("PacketBuilder()" << this)
@@ -34,6 +35,7 @@ PacketBuilder::PacketBuilder()
   m_data = new QByteArray();
   m_stream = new QDataStream(m_data, QIODevice::WriteOnly);
   m_stream->setVersion(QDataStream::Qt_4_4);
+  addPacket(pcode);
 }
 
 
@@ -78,6 +80,18 @@ QByteArray PacketBuilder::data() const
 
   SCHAT_DEBUG(" ^^^^ full size of data:" << m_size << "bytes")
   return header + *m_data;
+}
+
+
+void PacketBuilder::add(const QList<quint32> &data)
+{
+  *m_stream << data;
+}
+
+
+void PacketBuilder::add(const QStringList &data)
+{
+  *m_stream << data;
 }
 
 
