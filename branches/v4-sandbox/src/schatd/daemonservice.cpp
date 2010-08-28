@@ -68,7 +68,7 @@ void DaemonService::accessDenied(quint16 reason)
 {
   PacketBuilder builder(OpcodeAccessDenied);
   builder.add(Packet::UINT16, reason);
-  AbstractPeer::send(builder);
+  send(builder);
 
   m_socket->disconnectFromHost();
 }
@@ -84,7 +84,7 @@ void DaemonService::accessGranted(quint16 numeric)
   if (!m_accepted) {
     PacketBuilder builder(OpcodeAccessGranted);
     builder.add(Packet::UINT16, numeric);
-    AbstractPeer::send(builder);
+    send(builder);
     m_accepted = true;
   }
 }
@@ -102,20 +102,29 @@ void DaemonService::quit(bool kill)
 }
 
 
-/** [public]
+/*!
  * Пакет `OpcodeSyncNumerics`.
  */
 void DaemonService::sendNumerics(const QList<quint8> &numerics)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeSyncNumerics << numerics;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  PacketBuilder builder(OpcodeSyncNumerics);
+  builder.add(numerics);
+  send(builder);
+}
+
+
+void DaemonService::sendServerMessage(const QString &msg)
+{
+  PacketBuilder builder(OpcodeServerMessage);
+  builder.add(Packet::UTF16, msg);
+
+  send(builder);
+}
+
+
+void DaemonService::sendSyncUsersEnd()
+{
+  send(PacketBuilder(OpcodeSyncUsersEnd));
 }
 
 
@@ -128,18 +137,22 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
  */
 bool DaemonService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
+  PacketBuilder builder(OpcodeUniversal);
+  builder.add(Packet::UINT16, sub);
+  builder.add(data1);
+  builder.add(data2);
+
+  return send(builder);}
+
+
+
+void DaemonService::sendMessage(const QString &sender, const QString &message)
+{
+  PacketBuilder builder(Packet::Message);
+  builder.add(Packet::UTF16, sender);
+  builder.add(Packet::UTF16, message);
+
+  send(builder);
 }
 
 
@@ -156,7 +169,14 @@ void DaemonService::sendNewNick(quint8 gender, const QString &nick, const QStrin
     m_profile->setNick(newNick);
     m_profile->setFullName(name);
   }
-  send(OpcodeNewNick, gender, nick, newNick, name);
+
+  PacketBuilder builder(OpcodeNewNick);
+  builder.add(Packet::UINT8, gender);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, newNick);
+  builder.add(Packet::UTF16, name);
+
+  send(builder);
 }
 
 
@@ -172,11 +192,12 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
     m_profile->setGender(gender);
     m_profile->setFullName(name);
   }
-  send(OpcodeNewProfile, gender, nick, name);
+
+  sendPacket(OpcodeNewProfile, gender, nick, name);
 }
 
 
-/** [public slots]
+/*!
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
@@ -187,45 +208,39 @@ void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
       if (list.at(AbstractProfile::Nick) == m_profile->nick() && !echo)
         return;
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeNewUser
-        << echo
-        << numeric
-        << AbstractProfile::genderNum(list.at(AbstractProfile::Gender))
-        << list.at(AbstractProfile::Nick)
-        << list.at(AbstractProfile::FullName)
-        << list.at(AbstractProfile::ByeMsg)
-        << list.at(AbstractProfile::UserAgent)
-        << list.at(AbstractProfile::Host);
+    PacketBuilder builder(OpcodeNewUser);
+    builder.add(Packet::UINT8, echo);
+    builder.add(Packet::UINT8, numeric);
+    builder.add(Packet::UINT8, AbstractProfile::genderNum(list.at(AbstractProfile::Gender)));
+    builder.add(Packet::UTF16, list.at(AbstractProfile::Nick));
+    builder.add(Packet::UTF16, list.at(AbstractProfile::FullName));
+    builder.add(Packet::UTF16, list.at(AbstractProfile::ByeMsg));
+    builder.add(Packet::UTF16, list.at(AbstractProfile::UserAgent));
+    builder.add(Packet::UTF16, list.at(AbstractProfile::Host));
 
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
+    send(builder);
   }
 }
 
 
-/** [public slots]
- *
- */
 void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeRelayMessage
-        << channel
-        << sender
-        << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  PacketBuilder builder(OpcodeRelayMessage);
+  builder.add(Packet::UTF16, channel);
+  builder.add(Packet::UTF16, sender);
+  builder.add(Packet::UTF16, message);
+
+  send(builder);
+}
+
+
+void DaemonService::sendSyncBye(const QString &nick, const QString &bye)
+{
+  PacketBuilder builder(OpcodeSyncByeMsg);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, bye);
+
+  send(builder);
 }
 
 
@@ -277,7 +292,7 @@ void DaemonService::ping()
 {
   if (m_accepted) {
     if (m_pings < 2) {
-      send(OpcodePing);
+      send(PacketBuilder(OpcodePing));
       ++m_pings;
     }
     else {
@@ -418,156 +433,21 @@ bool DaemonService::opcodeGreeting()
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
- * ОПКОДЫ:
- *   `OpcodePing`.
- */
-bool DaemonService::send(quint16 opcode)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * QString ->
- * ОПКОДЫ:
- *   `OpcodeServerMessage`.
- */
-bool DaemonService::send(quint16 opcode, const QString &msg)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << msg;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * QString ->
- * QString ->
- * ОПКОДЫ:
- *   `OpcodeMessage`.
- */
-bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str2)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << str1 << str2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * quint16 ->
- * ОПКОДЫ:
- *   `OpcodeAccessGranted`, `OpcodeAccessDenied`.
- */
-bool DaemonService::send(quint16 opcode, quint16 err)
-{
-  if (m_socket->state() == QTcpSocket::ConnectedState) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << err;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
  * quint8  ->
  * QString ->
  * QString ->
  * ОПКОДЫ:
  *   `OpcodePrivateMessage`, `OpcodeUserLeave`.
  */
-bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const QString &message)
+bool DaemonService::sendPacket(int pcode, int flag, const QString &nick, const QString &message)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << flag << nick << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
+  PacketBuilder builder(pcode);
+  builder.add(Packet::UINT8, flag);
+  builder.add(Packet::UTF16, nick);
+  builder.add(Packet::UTF16, message);
+
+  return send(builder);
 }
-
-
-/** [private]
- * Отправка стандартного пакета:
- * quint16 -> размер пакета
- * quint16 -> опкод
- * quint8  ->
- * QString ->
- * QString ->
- * QString ->
- * ОПКОДЫ:
- *   `OpcodeNewNick`.
- */
-bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << newNick << name;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
 
 /*!
  * Обнаружение команды "/all".

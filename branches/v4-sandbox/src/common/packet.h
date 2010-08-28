@@ -33,6 +33,7 @@ enum DataTypes {
   UINT8,      ///< quint8
   UTF16,      ///< UTF-16 string
   UTF8,       ///< UTF-8 string
+  UINT8LIST,  ///< QList<quint8>
   UINT32LIST, ///< QList<quint32>
   UTF16LIST   ///< QStringList
 };
@@ -57,6 +58,7 @@ public:
   int size() const;
   QByteArray data() const;
   void add(const QList<quint32> &data);
+  void add(const QList<quint8> &data);
   void add(const QStringList &data);
   void add(Packet::DataTypes type, const QString &data);
   void add(Packet::DataTypes type, int data);
