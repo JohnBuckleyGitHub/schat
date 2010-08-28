@@ -40,14 +40,14 @@ class DaemonService : public AbstractPeer
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
-  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
-  inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
-  inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
   QString host() const;
+  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { sendPacket(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
   void quit(bool kill = false);
   void sendNumerics(const QList<quint8> &numerics);
+  void sendServerMessage(const QString &msg);
+  void sendSyncUsersEnd();
 
 signals:
   void greeting(const QStringList &list, quint8 flag);
@@ -65,15 +65,15 @@ signals:
 
 public slots:
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
-  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, parseCmd(message)); }
-  inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
-  inline void sendSyncBye(const QString &nick, const QString &bye)                         { send(OpcodeSyncByeMsg, nick, bye); }
-  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { send(OpcodeUserLeave, flag, nick, bye); }
+  inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { sendPacket(OpcodeLinkLeave, numeric, network, ip); }
+  inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { sendPacket(OpcodeNewLink, numeric, network, ip); }
+  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { sendPacket(OpcodeUserLeave, flag, nick, bye); }
+  void sendMessage(const QString &sender, const QString &message);
   void sendNewNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void sendNewProfile(quint8 gender, const QString &nick, const QString &name);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
   void sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
+  void sendSyncBye(const QString &nick, const QString &bye);
 
 protected:
   void readPacket(int pcode, const QByteArray &block);
@@ -85,12 +85,7 @@ private slots:
 
 private:
   bool opcodeGreeting();
-  bool send(quint16 opcode);
-  bool send(quint16 opcode, const QString &msg);
-  bool send(quint16 opcode, const QString &str1, const QString &str2);
-  bool send(quint16 opcode, quint16 err);
-  bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
-  bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
+  bool sendPacket(int pcode, int flag, const QString &nick, const QString &message);
   QString parseCmd(const QString &message) const;
   quint16 verifyGreeting(quint16 version);
   void messagePacket(const PacketReader &reader);

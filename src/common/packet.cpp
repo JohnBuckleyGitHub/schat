@@ -89,6 +89,12 @@ void PacketBuilder::add(const QList<quint32> &data)
 }
 
 
+void PacketBuilder::add(const QList<quint8> &data)
+{
+  *m_stream << data;
+}
+
+
 void PacketBuilder::add(const QStringList &data)
 {
   *m_stream << data;
