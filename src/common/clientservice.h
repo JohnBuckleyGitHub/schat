@@ -28,6 +28,7 @@
 #include "protocol.h"
 
 class PacketBuilder;
+class PacketReader;
 
 /*!
  * \brief Универсальный сервис клиента чата.
@@ -44,16 +45,15 @@ public:
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
-  inline QString safeNick() const                                                                            { return m_safeNick; };
-  inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
-  inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
-  inline void sendSyncBye(const QString &nick, const QString &bye)                                           { send(OpcodeSyncByeMsg, nick, bye); }
-  inline void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name) { send(OpcodeNewNick, gender, nick, nNick, name); }
-  inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)                            { send(OpcodeUserLeave, flag, nick, bye); }
-  inline void setSafeNick(const QString &nick)                                                               { m_safeNick = nick; }
+  inline QString safeNick() const                                                                      { return m_safeNick; };
+  inline void sendByeMsg()                                                                             { sendByeMsg(m_profile->byeMsg()); }
+  inline void setSafeNick(const QString &nick)                                                         { m_safeNick = nick; }
   void quit(bool end = true);
+  void sendByeMsg(const QString &msg);
   void sendNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
+  void sendSyncBye(const QString &nick, const QString &bye);
+  void sendSyncProfile(quint8 gender, const QString &nick, const QString &nNick, const QString &name);
+  void sendUserLeave(const QString &nick, const QString &bye, quint8 flag);
 
 signals:
   void accessDenied(quint16 reason);
@@ -78,8 +78,11 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
-  inline void sendNewProfile() { send(OpcodeNewProfile, m_profile->genderNum(), m_profile->nick(), m_profile->fullName()); }
   void connectToHost();
+  void sendNewProfile();
+
+protected:
+  void readPacket(int pcode, const QByteArray &block);
 
 private slots:
   void check();
@@ -90,18 +93,13 @@ private slots:
   void reconnect();
 
 private:
-  bool send(quint16 opcode);
-  bool send(quint16 opcode, const QString &msg);
-  bool send(quint16 opcode, const QString &str1, const QString &str2);
-  bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &name);
-  bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &nNick, const QString &name);
   int activeInterfaces();
   void createSocket();
   void mangleNick();
+  void messagePacket(const PacketReader &reader);
   void opcodeAccessDenied();
   void opcodeAccessGranted();
   void opcodeLinkLeave();
-  void opcodeMessage();
   void opcodeNewLink();
   void opcodeNewNick();
   void opcodeNewProfile();
