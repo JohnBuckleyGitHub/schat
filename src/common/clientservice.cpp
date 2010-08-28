@@ -242,14 +242,85 @@ void ClientService::readPacket(int pcode, const QByteArray &block)
   AbstractPeer::readPacket(pcode, block);
 
   PacketReader reader(pcode, block);
-  switch (pcode) {
-    case Packet::Message:
-      messagePacket(reader);
-      break;
 
-    default:
-      break;
+  if (m_accepted) {
+    switch (pcode) {
+      case OpcodeNewUser:
+        opcodeNewUser(reader);
+        break;
+
+      case Packet::Message:
+        messagePacket(reader);
+        break;
+
+      case OpcodeUserLeave:
+        opcodeUserLeave(reader);
+        break;
+
+      case OpcodePrivateMessage:
+        opcodePrivateMessage(reader);
+        break;
+
+      case OpcodePing:
+        opcodePing();
+        break;
+
+      case OpcodeNewProfile:
+        opcodeNewProfile(reader);
+        break;
+
+      case OpcodeNewNick:
+        opcodeNewNick(reader);
+        break;
+
+      case OpcodeServerMessage:
+        opcodeServerMessage(reader);
+        break;
+
+      case OpcodeNewLink:
+        opcodeNewLink(reader);
+        break;
+
+      case OpcodeLinkLeave:
+        opcodeLinkLeave(reader);
+        break;
+
+      case OpcodeRelayMessage:
+        opcodeRelayMessage(reader);
+        break;
+
+      case OpcodeSyncNumerics:
+        opcodeSyncNumerics(reader);
+        break;
+
+      case OpcodeSyncUsersEnd:
+        emit syncUsersEnd();
+        break;
+
+      case OpcodeSyncByeMsg:
+        opcodeSyncByeMsg(reader);
+        break;
+
+      case OpcodeUniversal:
+        opcodeUniversal(reader);
+        break;
+
+      default:
+        break;
+    }
   }
+  else if (pcode == OpcodeAccessGranted) {
+    opcodeAccessGranted(reader);
+  }
+  else if (pcode == OpcodeAccessDenied) {
+    opcodeAccessDenied(reader);
+  }
+  else {
+    m_socket->disconnectFromHost();
+    return;
+  }
+
+
 }
 
 
@@ -341,112 +412,6 @@ void ClientService::ping()
 }
 
 
-/** [private slots]
- * Слот вызывается когда поступила новая порция данных для чтения из сокета `m_socket`.
- */
-void ClientService::readyRead()
-{
-  forever {
-    if (!m_nextBlockSize) {
-      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
-        break;
-
-      m_stream >> m_nextBlockSize;
-    }
-
-    if (m_socket->bytesAvailable() < m_nextBlockSize)
-      break;
-
-    m_stream >> m_opcode;
-
-    #ifdef SCHAT_DEBUG
-    if (m_opcode != 400) {
-      SCHAT_DEBUG(this << "client opcode:" << m_opcode << "size:" << m_nextBlockSize)
-    }
-    #endif
-
-    if (m_accepted) {
-      switch (m_opcode) {
-        case OpcodeNewUser:
-          opcodeNewUser();
-          break;
-
-        case OpcodeUserLeave:
-          opcodeUserLeave();
-          break;
-
-        case OpcodePrivateMessage:
-          opcodePrivateMessage();
-          break;
-
-        case OpcodePing:
-          opcodePing();
-          break;
-
-        case OpcodeNewProfile:
-          opcodeNewProfile();
-          break;
-
-        case OpcodeNewNick:
-          opcodeNewNick();
-          break;
-
-        case OpcodeServerMessage:
-          opcodeServerMessage();
-          break;
-
-        case OpcodeNewLink:
-          opcodeNewLink();
-          break;
-
-        case OpcodeLinkLeave:
-          opcodeLinkLeave();
-          break;
-
-        case OpcodeRelayMessage:
-          opcodeRelayMessage();
-          break;
-
-        case OpcodeSyncNumerics:
-          opcodeSyncNumerics();
-          break;
-
-        case OpcodeSyncUsersEnd:
-          m_nextBlockSize = 0;
-          emit syncUsersEnd();
-          break;
-
-        case OpcodeSyncByeMsg:
-          opcodeSyncByeMsg();
-          break;
-
-        case OpcodeUniversal:
-          opcodeUniversal();
-          break;
-
-        case OpcodeUniversalLite:
-          opcodeUniversalLite();
-          break;
-
-        default:
-          unknownOpcode();
-          break;
-      };
-    }
-    else if (m_opcode == OpcodeAccessGranted) {
-      opcodeAccessGranted();
-    }
-    else if (m_opcode == OpcodeAccessDenied) {
-      opcodeAccessDenied();
-    }
-    else {
-      m_socket->disconnectFromHost();
-      return;
-    }
-  }
-}
-
-
 void ClientService::reconnect()
 {
   SCHAT_DEBUG(this << "::reconnect()" << m_reconnectTimer.interval() << m_reconnects << m_fatal)
@@ -522,11 +487,9 @@ void ClientService::messagePacket(const PacketReader &reader)
 /*!
  * Разбор пакета с опкодом  \b OpcodeAccessDenied.
  */
-void ClientService::opcodeAccessDenied()
+void ClientService::opcodeAccessDenied(const PacketReader &reader)
 {
-  quint16 p_reason;
-  m_stream >> p_reason;
-  m_nextBlockSize = 0;
+  quint16 p_reason = reader.getUint16();
 
   SCHAT_DEBUG(this << "opcodeAccessDenied()" << "reason:" << p_reason)
 
@@ -545,16 +508,14 @@ void ClientService::opcodeAccessDenied()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeAccessGranted`.
  * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
  * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
  */
-void ClientService::opcodeAccessGranted()
+void ClientService::opcodeAccessGranted(const PacketReader &reader)
 {
-  quint16 p_level;
-  m_stream >> p_level;
-  m_nextBlockSize = 0;
+  quint16 p_level = reader.getUint16();
   m_accepted = true;
   m_reconnects = 0;
   m_fatal = false;
@@ -569,16 +530,14 @@ void ClientService::opcodeAccessGranted()
 }
 
 
-/** [private]
+/*!
  *
  */
-void ClientService::opcodeLinkLeave()
+void ClientService::opcodeLinkLeave(const PacketReader &reader)
 {
-  quint8 p_numeric;
-  QString p_network;
-  QString p_ip;
-  m_stream >> p_numeric >> p_network >> p_ip;
-  m_nextBlockSize = 0;
+  quint8 p_numeric  = reader.getUint8();
+  QString p_network = reader.getUtf16();
+  QString p_ip      = reader.getUtf16();
 
   if (p_network.isEmpty())
     return;
@@ -590,16 +549,14 @@ void ClientService::opcodeLinkLeave()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeNewLink`.
  */
-void ClientService::opcodeNewLink()
+void ClientService::opcodeNewLink(const PacketReader &reader)
 {
-  quint8 p_numeric;
-  QString p_network;
-  QString p_ip;
-  m_stream >> p_numeric >> p_network >> p_ip;
-  m_nextBlockSize = 0;
+  quint8 p_numeric  = reader.getUint8();
+  QString p_network = reader.getUtf16();
+  QString p_ip      = reader.getUtf16();
 
   if (p_network.isEmpty())
     return;
@@ -611,17 +568,16 @@ void ClientService::opcodeNewLink()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeNewNick`.
  */
-void ClientService::opcodeNewNick()
+void ClientService::opcodeNewNick(const PacketReader &reader)
 {
-  quint8 p_gender;
-  QString p_nick;
-  QString p_newNick;
-  QString p_name;
-  m_stream >> p_gender >> p_nick >> p_newNick >> p_name;
-  m_nextBlockSize = 0;
+  quint8 p_gender   = reader.getUint8();
+  QString p_nick    = reader.getUtf16();
+  QString p_newNick = reader.getUtf16();
+  QString p_name    = reader.getUtf16();
+
   emit newNick(p_gender, p_nick, p_newNick, p_name);
 }
 
@@ -631,15 +587,13 @@ void ClientService::opcodeNewNick()
  *
  * В случае успешного разбора пакета высылается сигнал newProfile(quint8 gender, const QString &nick, const QString &name).
  */
-void ClientService::opcodeNewProfile()
+void ClientService::opcodeNewProfile(const PacketReader &reader)
 {
   SCHAT_DEBUG(this << "::opcodeNewProfile()")
 
-  quint8 p_gender;
-  QString p_nick;
-  QString p_name;
-  m_stream >> p_gender >> p_nick >> p_name;
-  m_nextBlockSize = 0;
+  quint8 p_gender = reader.getUint8();
+  QString p_nick  = reader.getUtf16();
+  QString p_name  = reader.getUtf16();
 
   if (p_nick.isEmpty())
     return;
@@ -648,23 +602,21 @@ void ClientService::opcodeNewProfile()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeNewUser`.
  * В конце разбора высылается сигнал `newUser(const QStringList &, bool)`.
  */
-void ClientService::opcodeNewUser()
+void ClientService::opcodeNewUser(const PacketReader &reader)
 {
-  quint8 p_flag;
-  quint8 p_numeric;
-  quint8 p_gender;
-  QString p_nick;
-  QString p_name;
-  QString p_bye;
-  QString p_agent;
-  QString p_host;
+  quint8 p_flag    = reader.getUint8();
+  quint8 p_numeric = reader.getUint8();
+  quint8 p_gender  = reader.getUint8();
+  QString p_nick   = reader.getUtf16();
+  QString p_name   = reader.getUtf16();
+  QString p_bye    = reader.getUtf16();
+  QString p_agent  = reader.getUtf16();
+  QString p_host   = reader.getUtf16();
 
-  m_stream >> p_flag >> p_numeric >> p_gender >> p_nick >> p_name >> p_bye >> p_agent >> p_host;
-  m_nextBlockSize = 0;
   QStringList profile;
   profile << p_nick << p_name << p_bye << p_agent << p_host << AbstractProfile::gender(p_gender);
 
@@ -678,23 +630,20 @@ void ClientService::opcodeNewUser()
  */
 void ClientService::opcodePing()
 {
-  m_nextBlockSize = 0;
   m_ping.start();
-  AbstractPeer::send(PacketBuilder(OpcodePong));
+  send(PacketBuilder(OpcodePong));
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodePrivateMessage`.
  * В конце разбора высылается сигнал `privateMessage(quint8, const QString &, const QString &)`.
  */
-void ClientService::opcodePrivateMessage()
+void ClientService::opcodePrivateMessage(const PacketReader &reader)
 {
-  quint8 p_flag;
-  QString p_nick;
-  QString p_message;
-  m_stream >> p_flag >> p_nick >> p_message;
-  m_nextBlockSize = 0;
+  quint8 p_flag     = reader.getUint8();
+  QString p_nick    = reader.getUtf16();
+  QString p_message = reader.getUtf16();
   emit privateMessage(p_flag, p_nick, p_message);
 }
 
@@ -704,13 +653,12 @@ void ClientService::opcodePrivateMessage()
  *
  * В случае успеха высылается сигнал void relayMessage(const QString &channel, const QString &sender, const QString &message).
  */
-void ClientService::opcodeRelayMessage()
+void ClientService::opcodeRelayMessage(const PacketReader &reader)
 {
-  QString p_channel;
-  QString p_sender;
-  QString p_message;
-  m_stream >> p_channel >> p_sender >> p_message;
-  m_nextBlockSize = 0;
+  QString p_channel = reader.getUtf16();
+  QString p_sender  = reader.getUtf16();
+  QString p_message = reader.getUtf16();
+
   SCHAT_DEBUG(this << "ClientService::opcodeRelayMessage()")
   SCHAT_DEBUG("  CHANNEL:" << p_channel)
   SCHAT_DEBUG("  SENDER: " << p_sender)
@@ -725,14 +673,12 @@ void ClientService::opcodeRelayMessage()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeServerMessage`.
  */
-void ClientService::opcodeServerMessage()
+void ClientService::opcodeServerMessage(const PacketReader &reader)
 {
-  QString p_message;
-  m_stream >> p_message;
-  m_nextBlockSize = 0;
+  QString p_message = reader.getUtf16();
   emit serverMessage(p_message);
 }
 
@@ -740,12 +686,10 @@ void ClientService::opcodeServerMessage()
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeSyncByeMsg.
  */
-void ClientService::opcodeSyncByeMsg()
+void ClientService::opcodeSyncByeMsg(const PacketReader &reader)
 {
-  QString p_nick;
-  QString p_msg;
-  m_stream >> p_nick >> p_msg;
-  m_nextBlockSize = 0;
+  QString p_nick = reader.getUtf16();
+  QString p_msg  = reader.getUtf16();
 
   if (p_nick.isEmpty())
     return;
@@ -754,14 +698,12 @@ void ClientService::opcodeSyncByeMsg()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeSyncNumerics`.
  */
-void ClientService::opcodeSyncNumerics()
+void ClientService::opcodeSyncNumerics(const PacketReader &reader)
 {
-  QList<quint8> p_numerics;
-  m_stream >> p_numerics;
-  m_nextBlockSize = 0;
+  QList<quint8> p_numerics = reader.getUint8List();
   emit syncNumerics(p_numerics);
 }
 
@@ -769,29 +711,13 @@ void ClientService::opcodeSyncNumerics()
 /*!
  * Разбор универсального пакета.
  */
-void ClientService::opcodeUniversal()
+void ClientService::opcodeUniversal(const PacketReader &reader)
 {
-  quint16        subOpcode;
-  QList<quint32> data1;
-  QStringList    data2;
-  m_stream >> subOpcode >> data1 >> data2;
-  m_nextBlockSize = 0;
+  quint16 subOpcode    = reader.getUint16();
+  QList<quint32> data1 = reader.getUint32List();
+  QStringList data2    = reader.getUtf16List();
 
   emit universal(subOpcode, data1, data2);
-}
-
-
-/*!
- * Разбор универсального облегчённого пакета.
- */
-void ClientService::opcodeUniversalLite()
-{
-  quint16        subOpcode;
-  QList<quint32> data1;
-  m_stream >> subOpcode >> data1;
-  m_nextBlockSize = 0;
-
-  emit universalLite(subOpcode, data1);
 }
 
 
@@ -799,13 +725,11 @@ void ClientService::opcodeUniversalLite()
  * Разбор пакета с опкодом `OpcodeUserLeave`.
  * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
  */
-void ClientService::opcodeUserLeave()
+void ClientService::opcodeUserLeave(const PacketReader &reader)
 {
-  quint8 p_flag;
-  QString p_nick;
-  QString p_bye;
-  m_stream >> p_flag >> p_nick >> p_bye;
-  m_nextBlockSize = 0;
+  quint8 p_flag = reader.getUint8();
+  QString p_nick = reader.getUtf16();
+  QString p_bye  = reader.getUtf16();
 
   emit userLeave(p_nick, p_bye, p_flag);
 
@@ -813,19 +737,4 @@ void ClientService::opcodeUserLeave()
     m_profile->setNick(m_safeNick);
     QTimer::singleShot(0, this, SLOT(sendNewProfile()));
   }
-}
-
-
-/*!
- * Функция читает пакет с неизвестным опкодом.
- */
-void ClientService::unknownOpcode()
-{
-  SCHAT_DEBUG(this << "::unknownOpcode()")
-  SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
-
-  QByteArray block = m_socket->read(m_nextBlockSize - 2);
-  m_rx += m_nextBlockSize + 2;
-  m_nextBlockSize = 0;
-  readPacket(m_opcode, block);
 }

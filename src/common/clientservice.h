@@ -89,7 +89,6 @@ private slots:
   void connected();
   void disconnected();
   void ping();
-  void readyRead();
   void reconnect();
 
 private:
@@ -97,23 +96,21 @@ private:
   void createSocket();
   void mangleNick();
   void messagePacket(const PacketReader &reader);
-  void opcodeAccessDenied();
-  void opcodeAccessGranted();
-  void opcodeLinkLeave();
-  void opcodeNewLink();
-  void opcodeNewNick();
-  void opcodeNewProfile();
-  void opcodeNewUser();
+  void opcodeAccessDenied(const PacketReader &reader);
+  void opcodeAccessGranted(const PacketReader &reader);
+  void opcodeLinkLeave(const PacketReader &reader);
+  void opcodeNewLink(const PacketReader &reader);
+  void opcodeNewNick(const PacketReader &reader);
+  void opcodeNewProfile(const PacketReader &reader);
+  void opcodeNewUser(const PacketReader &reader);
   void opcodePing();
-  void opcodePrivateMessage();
-  void opcodeRelayMessage();
-  void opcodeServerMessage();
-  void opcodeSyncByeMsg();
-  void opcodeSyncNumerics();
-  void opcodeUniversal();
-  void opcodeUniversalLite();
-  void opcodeUserLeave();
-  void unknownOpcode();
+  void opcodePrivateMessage(const PacketReader &reader);
+  void opcodeRelayMessage(const PacketReader &reader);
+  void opcodeServerMessage(const PacketReader &reader);
+  void opcodeSyncByeMsg(const PacketReader &reader);
+  void opcodeSyncNumerics(const PacketReader &reader);
+  void opcodeUniversal(const PacketReader &reader);
+  void opcodeUserLeave(const PacketReader &reader);
 
   AbstractProfile *m_profile;
   bool m_accepted;

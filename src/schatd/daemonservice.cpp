@@ -144,29 +144,6 @@ bool DaemonService::sendUniversal(quint16 sub, const QList<quint32> &data1, cons
 
 
 /*!
- * Отправка универсального облегчённого пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- */
-bool DaemonService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversalLite << sub << data1;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
  * \brief Отправка пакета с опкодом \b OpcodeNewNick.
  *
  */

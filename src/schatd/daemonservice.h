@@ -65,7 +65,6 @@ signals:
 
 public slots:
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
   inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, parseCmd(message)); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
