@@ -35,8 +35,8 @@ class AbstractPeer : public QObject
 public:
   AbstractPeer(QObject *parent = 0);
   ~AbstractPeer();
-  bool isReady() const;
-  bool send(const PacketBuilder &builder);
+  bool isReady(bool safe = true) const;
+  bool send(const PacketBuilder &builder, bool safe = true);
   inline qint64 rx() const { return m_rx; }
   inline qint64 tx() const { return m_tx; }
 
@@ -46,6 +46,7 @@ protected slots:
 protected:
   virtual void readPacket(int pcode, const QByteArray &block);
 
+  bool m_accepted;               ///< true после процедуры рукопожатия.
   QDataStream m_stream;          ///< Поток для чтения данный поступивших из сокета.
   qint64 m_rx;                   ///< Счётчик полученных (receive) байт.
   qint64 m_tx;                   ///< Счётчик отправленных (transmit) байт.

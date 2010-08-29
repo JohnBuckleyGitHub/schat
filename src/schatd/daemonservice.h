@@ -98,7 +98,6 @@ private:
   void opcodeUserLeave(const PacketReader &reader);
 
   AbstractProfile *m_profile;
-  bool m_accepted;
   bool m_kill;
   int m_pings;
   QString m_error;
