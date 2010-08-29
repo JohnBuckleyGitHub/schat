@@ -38,8 +38,6 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
-    m_accepted = false;
-    m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
     m_stream.setVersion(StreamVersion);
     m_pings = 0;
@@ -68,7 +66,7 @@ void DaemonService::accessDenied(quint16 reason)
 {
   PacketBuilder builder(OpcodeAccessDenied);
   builder.add(Packet::UINT16, reason);
-  send(builder);
+  send(builder, false);
 
   m_socket->disconnectFromHost();
 }
@@ -84,7 +82,7 @@ void DaemonService::accessGranted(quint16 numeric)
   if (!m_accepted) {
     PacketBuilder builder(OpcodeAccessGranted);
     builder.add(Packet::UINT16, numeric);
-    send(builder);
+    send(builder, false);
     m_accepted = true;
   }
 }
@@ -203,10 +201,10 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
   if (isReady()) {
-
-    if (m_flag == FlagNone)
+    if (m_flag == FlagNone) {
       if (list.at(AbstractProfile::Nick) == m_profile->nick() && !echo)
         return;
+    }
 
     PacketBuilder builder(OpcodeNewUser);
     builder.add(Packet::UINT8, echo);
@@ -374,7 +372,6 @@ bool DaemonService::opcodeGreeting(const PacketReader &reader)
 
   QStringList profile;
   profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);
-  qDebug() << profile;
   m_profile = new AbstractProfile(profile, this);
 
   quint16 err = verifyGreeting(p_version);
@@ -434,7 +431,7 @@ QString DaemonService::parseCmd(const QString &message) const
 }
 
 
-/** [private]
+/*!
  * Верификация пакета `OpcodeGreeting`.
  */
 quint16 DaemonService::verifyGreeting(quint16 version)

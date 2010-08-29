@@ -32,7 +32,6 @@ static const int ReconnectTimeout     = 4000;
 ClientService::ClientService(AbstractProfile *profile, const Network *network, QObject *parent)
   : AbstractPeer(parent),
   m_profile(profile),
-  m_accepted(false),
   m_fatal(false),
   m_network(network),
   m_reconnects(0),
@@ -372,7 +371,7 @@ void ClientService::connected()
   builder.add(Packet::UTF16, m_profile->userAgent());
   builder.add(Packet::UTF16, m_profile->byeMsg());
 
-  send(builder);
+  send(builder, false);
 }
 
 

@@ -113,7 +113,6 @@ private:
   void opcodeUserLeave(const PacketReader &reader);
 
   AbstractProfile *m_profile;
-  bool m_accepted;
   bool m_fatal;
   const Network *m_network;
   int m_reconnects;

@@ -25,6 +25,7 @@
  */
 AbstractPeer::AbstractPeer(QObject *parent)
   : QObject(parent),
+  m_accepted(false),
   m_rx(0),
   m_tx(0),
   m_nextBlockSize(0)
@@ -42,8 +43,11 @@ AbstractPeer::~AbstractPeer()
 /*!
  * Возвращает true если сервис находится в активном состоянии.
  */
-bool AbstractPeer::isReady() const
+bool AbstractPeer::isReady(bool safe) const
 {
+  if (safe && !m_accepted)
+    return false;
+
   if (!m_socket)
     return false;
 
@@ -57,9 +61,9 @@ bool AbstractPeer::isReady() const
 /*!
  * Отправка пакета.
  */
-bool AbstractPeer::send(const PacketBuilder &builder)
+bool AbstractPeer::send(const PacketBuilder &builder, bool safe)
 {
-  if (!isReady())
+  if (!isReady(safe))
     return false;
 
   m_socket->write(builder.data());
