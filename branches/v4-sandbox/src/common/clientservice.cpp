@@ -361,7 +361,11 @@ void ClientService::connected()
 
   PacketBuilder builder(Packet::HandshakeRequest);
   builder.add(Packet::UINT16, ProtocolVersion);
+  #ifdef SCHAT_CLIENT
   builder.add(Packet::UINT8, FlagNone);
+  #else
+  builder.add(Packet::UINT8, FlagLink);
+  #endif
   builder.add(Packet::UINT8, m_profile->genderNum());
   builder.add(Packet::UTF16, m_profile->nick());
   builder.add(Packet::UTF16, m_profile->fullName());

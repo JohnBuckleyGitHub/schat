@@ -252,14 +252,65 @@ void DaemonService::readPacket(int pcode, const QByteArray &block)
   AbstractPeer::readPacket(pcode, block);
 
   PacketReader reader(pcode, block);
-  switch (pcode) {
-    case Packet::Message:
-      messagePacket(reader);
-      break;
 
-    default:
-      break;
+  if (m_accepted) {
+    switch (pcode) {
+      case Packet::Message:
+        messagePacket(reader);
+        break;
+
+      case OpcodePong:
+        m_pings = 0;
+        break;
+
+      case OpcodeNewProfile:
+        opcodeNewProfile(reader);
+        break;
+
+      case OpcodeByeMsg:
+        opcodeByeMsg(reader);
+        break;
+
+      case OpcodeRelayMessage:
+        opcodeRelayMessage(reader);
+        break;
+
+      case OpcodeNewUser:
+        opcodeNewUser(reader);
+        break;
+
+      case OpcodeUserLeave:
+        opcodeUserLeave(reader);
+        break;
+
+      case OpcodeNewNick:
+        opcodeNewNick(reader);
+        break;
+
+      case OpcodeSyncByeMsg:
+        opcodeSyncByeMsg(reader);
+        break;
+
+      case OpcodeUniversal:
+        opcodeUniversal(reader);
+        break;
+
+      default:
+        break;
+    }
   }
+  else if (pcode == OpcodeGreeting) {
+    if (!opcodeGreeting(reader)) {
+      m_socket->disconnectFromHost();
+      return;
+    }
+  }
+  else {
+    m_socket->disconnectFromHost();
+    return;
+  }
+
+
 }
 
 
@@ -309,114 +360,24 @@ void DaemonService::ping()
 }
 
 
-/** [public slots]
- *
- */
-void DaemonService::readyRead()
-{
-  forever {
-    if (!m_nextBlockSize) {
-      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
-        break;
-
-      m_stream >> m_nextBlockSize;
-    }
-
-    if (m_socket->bytesAvailable() < m_nextBlockSize)
-      break;
-
-    quint16 pcode;
-    m_stream >> pcode;
-    m_opcode = pcode;
-
-    if (m_opcode != 401) {
-      SCHAT_DEBUG(this << "opcode:" << m_opcode << "size:" << m_nextBlockSize)
-    }
-
-    if (m_accepted) {
-      switch (m_opcode) {
-//        case OpcodeMessage:
-//          break;
-
-        case OpcodePong:
-          opcodePong();
-          break;
-
-        case OpcodeNewProfile:
-          opcodeNewProfile();
-          break;
-
-        case OpcodeByeMsg:
-          opcodeByeMsg();
-          break;
-
-        case OpcodeRelayMessage:
-          opcodeRelayMessage();
-          break;
-
-        case OpcodeNewUser:
-          opcodeNewUser();
-          break;
-
-        case OpcodeUserLeave:
-          opcodeUserLeave();
-          break;
-
-        case OpcodeNewNick:
-          opcodeNewNick();
-          break;
-
-        case OpcodeSyncByeMsg:
-          opcodeSyncByeMsg();
-          break;
-
-        case OpcodeUniversal:
-          opcodeUniversal();
-          break;
-
-        case OpcodeUniversalLite:
-          opcodeUniversalLite();
-          break;
-
-        default:
-          unknownOpcode();
-          break;
-      };
-    }
-    else if (m_opcode == OpcodeGreeting) {
-      if (!opcodeGreeting()) {
-        m_socket->disconnectFromHost();
-        return;
-      }
-    }
-    else {
-      m_socket->disconnectFromHost();
-      return;
-    }
-  }
-}
-
-
-bool DaemonService::opcodeGreeting()
+bool DaemonService::opcodeGreeting(const PacketReader &reader)
 {
   SCHAT_DEBUG(this << "::opcodeGreeting()")
 
-  quint16 p_version;
-  quint8  p_gender;
-  QString p_nick;
-  QString p_name;
-  QString p_userAgent;
-  QString p_byeMsg;
-  quint16 err;
-
-  m_stream >> p_version >> m_flag >> p_gender >> p_nick >> p_name >> p_userAgent >> p_byeMsg;
-  m_nextBlockSize = 0;
+  quint16 p_version   = reader.getUint16();
+  m_flag              = reader.getUint8();
+  quint8  p_gender    = reader.getUint8();
+  QString p_nick      = reader.getUtf16();
+  QString p_name      = reader.getUtf16();
+  QString p_userAgent = reader.getUtf16();
+  QString p_byeMsg    = reader.getUtf16();
 
   QStringList profile;
-  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);;
+  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);
+  qDebug() << profile;
   m_profile = new AbstractProfile(profile, this);
 
-  err = verifyGreeting(p_version);
+  quint16 err = verifyGreeting(p_version);
 
   if (err) {
     accessDenied(err);
@@ -537,26 +498,23 @@ void DaemonService::messagePacket(const PacketReader &reader)
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
  */
-void DaemonService::opcodeByeMsg()
+void DaemonService::opcodeByeMsg(const PacketReader &reader)
 {
-  QString p_bye;
-  m_stream >> p_bye;
-  m_nextBlockSize = 0;
+  QString p_bye = reader.getUtf16();
   m_profile->setByeMsg(p_bye);
   emit newBye(m_profile->nick(), p_bye);
 }
 
 
-void DaemonService::opcodeNewNick()
+void DaemonService::opcodeNewNick(const PacketReader &reader)
 {
   SCHAT_DEBUG(this << "::opcodeNewNick()")
 
-  quint8 p_gender;
-  QString p_nick;
-  QString p_newNick;
-  QString p_name;
-  m_stream >> p_gender >> p_nick >> p_newNick >> p_name;
-  m_nextBlockSize = 0;
+  quint8 p_gender   = reader.getUint8();
+  QString p_nick    = reader.getUtf16();
+  QString p_newNick = reader.getUtf16();
+  QString p_name    = reader.getUtf16();
+
   emit newNick(p_gender, p_nick, p_newNick, p_name);
 }
 
@@ -566,15 +524,13 @@ void DaemonService::opcodeNewNick()
  *
  *
  */
-void DaemonService::opcodeNewProfile()
+void DaemonService::opcodeNewProfile(const PacketReader &reader)
 {
   SCHAT_DEBUG(this << "::opcodeNewProfile()")
 
-  quint8 p_gender;
-  QString p_nick;
-  QString p_name;
-  m_stream >> p_gender >> p_nick >> p_name;
-  m_nextBlockSize = 0;
+  quint8 p_gender = reader.getUint8();
+  QString p_nick  = reader.getUtf16();
+  QString p_name  = reader.getUtf16();
 
   if (p_nick.isEmpty())
     return;
@@ -586,37 +542,21 @@ void DaemonService::opcodeNewProfile()
 }
 
 
-/** [private]
- *
- */
-void DaemonService::opcodeNewUser()
+void DaemonService::opcodeNewUser(const PacketReader &reader)
 {
-  quint8 p_flag;
-  quint8 p_numeric;
-  quint8 p_gender;
-  QString p_nick;
-  QString p_name;
-  QString p_bye;
-  QString p_agent;
-  QString p_host;
+  quint8 p_flag    = reader.getUint8();
+  quint8 p_numeric = reader.getUint8();
+  quint8 p_gender  = reader.getUint8();
+  QString p_nick   = reader.getUtf16();
+  QString p_name   = reader.getUtf16();
+  QString p_bye    = reader.getUtf16();
+  QString p_agent  = reader.getUtf16();
+  QString p_host   = reader.getUtf16();
 
-  m_stream >> p_flag >> p_numeric >> p_gender >> p_nick >> p_name >> p_bye >> p_agent >> p_host;
-  m_nextBlockSize = 0;
   QStringList profile;
   profile << p_nick << p_name << p_bye << p_agent << p_host << AbstractProfile::gender(p_gender);
 
   emit newUser(profile, p_flag, p_numeric);
-}
-
-
-/** [private]
- * Разбор пакета с опкодом `OpcodePong`.
- * Функция сбрасывает счётчик `OpcodePong`.
- */
-void DaemonService::opcodePong()
-{
-  m_nextBlockSize = 0;
-  m_pings = 0;
 }
 
 
@@ -625,13 +565,11 @@ void DaemonService::opcodePong()
  *
  * В случае успеха высылается сигнал void relayMessage(const QString &channel, const QString &sender, const QString &message).
  */
-void DaemonService::opcodeRelayMessage()
+void DaemonService::opcodeRelayMessage(const PacketReader &reader)
 {
-  QString p_channel;
-  QString p_sender;
-  QString p_message;
-  m_stream >> p_channel >> p_sender >> p_message;
-  m_nextBlockSize = 0;
+  QString p_channel = reader.getUtf16();
+  QString p_sender  = reader.getUtf16();
+  QString p_message = reader.getUtf16();
 
   SCHAT_DEBUG(this << "::opcodeRelayMessage()")
   SCHAT_DEBUG(this << "  CHANNEL:" << p_channel)
@@ -655,12 +593,10 @@ void DaemonService::opcodeRelayMessage()
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeSyncByeMsg.
  */
-void DaemonService::opcodeSyncByeMsg()
+void DaemonService::opcodeSyncByeMsg(const PacketReader &reader)
 {
-  QString p_nick;
-  QString p_msg;
-  m_stream >> p_nick >> p_msg;
-  m_nextBlockSize = 0;
+  QString p_nick = reader.getUtf16();
+  QString p_msg  = reader.getUtf16();
 
   if (p_nick.isEmpty())
     return;
@@ -672,13 +608,11 @@ void DaemonService::opcodeSyncByeMsg()
 /*!
  * Разбор универсального пакета.
  */
-void DaemonService::opcodeUniversal()
+void DaemonService::opcodeUniversal(const PacketReader &reader)
 {
-  quint16        subOpcode;
-  QList<quint32> data1;
-  QStringList    data2;
-  m_stream >> subOpcode >> data1 >> data2;
-  m_nextBlockSize = 0;
+  quint16        subOpcode = reader.getUint16();
+  QList<quint32> data1     = reader.getUint32List();
+  QStringList    data2     = reader.getUtf16List();
 
   if (m_flag == FlagLink)
     emit universal(subOpcode, data1, data2, m_numeric);
@@ -688,46 +622,15 @@ void DaemonService::opcodeUniversal()
 
 
 /*!
- * Разбор универсального облегчённого пакета.
- */
-void DaemonService::opcodeUniversalLite()
-{
-  quint16        subOpcode;
-  QList<quint32> data1;
-  m_stream >> subOpcode >> data1;
-  m_nextBlockSize = 0;
-
-  emit universalLite(subOpcode, data1);
-}
-
-
-/*!
  * \brief Разбор пакета с опкодом \b OpcodeUserLeave.
  *
  * В конце разбора высылается сигнал userLeave(const QString &, const QString &, bool).
  */
-void DaemonService::opcodeUserLeave()
+void DaemonService::opcodeUserLeave(const PacketReader &reader)
 {
-  quint8 p_flag;
-  QString p_nick;
-  QString p_bye;
-  m_stream >> p_flag >> p_nick >> p_bye;
-  m_nextBlockSize = 0;
+  quint8 p_flag  = reader.getUint8();
+  QString p_nick = reader.getUtf16();
+  QString p_bye  = reader.getUtf16();
 
   emit userLeave(p_nick, p_bye, p_flag);
-}
-
-
-/*!
- * Функция читает пакет с неизвестным опкодом.
- */
-void DaemonService::unknownOpcode()
-{
-  SCHAT_DEBUG(this << "::unknownOpcode()")
-  SCHAT_DEBUG("opcode:" << m_opcode << "size:" << m_nextBlockSize)
-
-  QByteArray block = m_socket->read(m_nextBlockSize - 2);
-  m_rx += m_nextBlockSize + 2;
-  m_nextBlockSize = 0;
-  readPacket(m_opcode, block);
 }
