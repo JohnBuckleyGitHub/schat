@@ -81,25 +81,21 @@ protected:
 private slots:
   void disconnected();
   void ping();
-  void readyRead();
 
 private:
-  bool opcodeGreeting();
+  bool opcodeGreeting(const PacketReader &reader);
   bool sendPacket(int pcode, int flag, const QString &nick, const QString &message);
   QString parseCmd(const QString &message) const;
   quint16 verifyGreeting(quint16 version);
   void messagePacket(const PacketReader &reader);
-  void opcodeByeMsg();
-  void opcodeNewNick();
-  void opcodeNewProfile();
-  void opcodeNewUser();
-  void opcodePong();
-  void opcodeRelayMessage();
-  void opcodeSyncByeMsg();
-  void opcodeUniversal();
-  void opcodeUniversalLite();
-  void opcodeUserLeave();
-  void unknownOpcode();
+  void opcodeByeMsg(const PacketReader &reader);
+  void opcodeNewNick(const PacketReader &reader);
+  void opcodeNewProfile(const PacketReader &reader);
+  void opcodeNewUser(const PacketReader &reader);
+  void opcodeRelayMessage(const PacketReader &reader);
+  void opcodeSyncByeMsg(const PacketReader &reader);
+  void opcodeUniversal(const PacketReader &reader);
+  void opcodeUserLeave(const PacketReader &reader);
 
   AbstractProfile *m_profile;
   bool m_accepted;
@@ -107,7 +103,6 @@ private:
   int m_pings;
   QString m_error;
   QTimer m_ping;
-  quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;
 };
