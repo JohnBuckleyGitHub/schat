@@ -21,7 +21,7 @@
 
 #include "clientservice.h"
 
-static const int CheckTimeout         = 12000;
+static const int CheckTimeout         = 15000;
 static const int ReconnectTimeout     = 4000;
 
 #ifdef SCHAT_DEBUG
@@ -41,6 +41,7 @@ ClientService::ClientService(AbstractProfile *profile, const Network *network, Q
   m_profile(profile),
   m_accepted(false),
   m_fatal(false),
+  m_synced(false),
   m_network(network),
   m_reconnects(0),
   m_socket(0),
@@ -246,6 +247,7 @@ void ClientService::connectToHost()
     createSocket();
 
   m_fatal = false;
+  m_synced = false;
 
   if (m_socket->state() == QAbstractSocket::UnconnectedState) {
     m_server = m_network->server();
@@ -271,18 +273,22 @@ void ClientService::connectToHost()
  */
 void ClientService::check()
 {
-  SCHAT_DEBUG(this << "::check()")
+  SCHAT_DEBUG(this << "::check()" << m_accepted << m_synced)
 
   if (m_socket) {
-    if (m_socket->state() != QTcpSocket::ConnectedState) {
+    if (m_socket->state() == QTcpSocket::ConnectedState) {
+      if (!m_accepted || !m_synced) {
+        m_socket->disconnectFromHost();
+        return;
+      }
+      m_checkTimer.stop();
+    }
+    else {
       m_socket->deleteLater();
       m_socket = 0;
-      connectToHost();
+      QTimer::singleShot(1000, this, SLOT(connectToHost()));
+      return;
     }
-    else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
-      m_socket->disconnectFromHost();
-    else
-      m_checkTimer.stop();
   }
   else
     m_checkTimer.stop();
@@ -364,7 +370,7 @@ void ClientService::ping()
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается когда поступила новая порция данных для чтения из сокета `m_socket`.
  */
 void ClientService::readyRead()
@@ -439,8 +445,7 @@ void ClientService::readyRead()
           break;
 
         case OpcodeSyncUsersEnd:
-          m_nextBlockSize = 0;
-          emit syncUsersEnd();
+          opcodeSyncUsersEnd();
           break;
 
         case OpcodeSyncByeMsg:
@@ -663,7 +668,7 @@ void ClientService::opcodeAccessDenied()
 
   if (p_reason == ErrorNickAlreadyUse) {
     mangleNick();
-    QTimer::singleShot(200, this, SLOT(connectToHost()));
+    QTimer::singleShot(400, this, SLOT(connectToHost()));
     return;
   }
 
@@ -671,7 +676,7 @@ void ClientService::opcodeAccessDenied()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeAccessGranted`.
  * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
  * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
@@ -894,7 +899,7 @@ void ClientService::opcodeSyncByeMsg()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeSyncNumerics`.
  */
 void ClientService::opcodeSyncNumerics()
@@ -903,6 +908,14 @@ void ClientService::opcodeSyncNumerics()
   m_stream >> p_numerics;
   m_nextBlockSize = 0;
   emit syncNumerics(p_numerics);
+}
+
+
+void ClientService::opcodeSyncUsersEnd()
+{
+  m_nextBlockSize = 0;
+  m_synced = true;
+  emit syncUsersEnd();
 }
 
 
