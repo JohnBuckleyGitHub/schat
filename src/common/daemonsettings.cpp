@@ -82,5 +82,5 @@ void DaemonSettings::mutableKeys()
   setInt("MuteTime",            60);
   setInt("JoinFloodDetectTime", 60);
   setInt("JoinFloodLimit",      3);
-  setInt("JoinFloodBanTime",    60);
+  setInt("JoinFloodBanTime",    120);
 }

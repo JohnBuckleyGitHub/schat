@@ -112,6 +112,7 @@ private:
   void opcodeServerMessage();
   void opcodeSyncByeMsg();
   void opcodeSyncNumerics();
+  void opcodeSyncUsersEnd();
   void opcodeUniversal();
   void opcodeUniversalLite();
   void opcodeUserLeave();
@@ -120,6 +121,7 @@ private:
   AbstractProfile *m_profile;
   bool m_accepted;
   bool m_fatal;
+  bool m_synced;
   const Network *m_network;
   int m_reconnects;
   QDataStream m_stream;
