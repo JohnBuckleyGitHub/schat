@@ -68,6 +68,7 @@ public:
 private:
   bool m_failBack;
   bool m_network;
+  bool m_random;
   bool m_single;
   bool m_valid;
   QList<ServerInfo> m_servers;

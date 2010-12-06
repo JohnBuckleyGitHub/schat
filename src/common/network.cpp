@@ -29,6 +29,7 @@ const quint16 Network::failBackPort   = 7666;
 Network::Network(QObject *parent)
   : QObject(parent),
   m_failBack(true),
+  m_random(true),
   m_single(false),
   m_networksPath(QCoreApplication::applicationDirPath() + "/networks")
 {
@@ -45,6 +46,7 @@ Network::Network(QObject *parent)
 Network::Network(const QStringList &paths, QObject *parent)
   : QObject(parent),
   m_failBack(true),
+  m_random(true),
   m_single(false),
   m_networksPath(paths)
 {
@@ -105,6 +107,7 @@ bool Network::fromFile(const QString &f)
     m_site        = reader.site().left(MaxSite);
     m_key         = reader.key().left(MaxKey);
     m_servers     = reader.servers();
+    m_random      = reader.isRandom();
     m_file        = file;
   }
   else {
@@ -182,18 +185,31 @@ ServerInfo Network::server() const
   if (m_single)
     return m_servers.at(0);
 
-  int index;
+  int index = 0;
   static int prevIndex;
   static bool init;
 
-  if (init) {
-    do {
+  if (m_random) {
+    if (init) {
+      do {
+        index = qrand() % m_servers.count();
+      } while (index == prevIndex);
+    }
+    else {
+      init = true;
       index = qrand() % m_servers.count();
-    } while (index == prevIndex);
+    }
   }
   else {
-    init = true;
-    index = qrand() % m_servers.count();
+    if (init) {
+      if (prevIndex < m_servers.count() - 1)
+        index = ++prevIndex;
+      else
+        index = 0;
+    }
+    else {
+      init = true;
+    }
   }
 
   prevIndex = index;
