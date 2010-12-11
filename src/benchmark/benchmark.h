@@ -34,16 +34,21 @@ class Benchmark : public QObject {
 public:
   Benchmark(QObject *parent = 0);
 
+signals:
+  void started(int count);
+
+public slots:
+  void init();
+
 private slots:
   void accessDenied(quint16 reason);
   void connectToHost();
-  void init();
 
 private:
-
   AbstractSettings *m_settings;
   int m_connectInterval;
   int m_count;
+  int m_started;
   int m_usersCount;
   Network *m_network;
   QString m_nickPrefix;

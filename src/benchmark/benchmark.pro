@@ -15,11 +15,12 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE    = 1
+SCHAT_CONSOLE    = 0
 SCHAT_DEBUG      = 0
 SCHAT_RESOURCES  = 0
 SCHAT_RC_FILE    = 0
 SCHAT_SINGLEAPP  = 0
+BENCHMARK_NO_UI  = 0
 
 QT = core network
 TEMPLATE = app
@@ -28,22 +29,35 @@ DEFINES += SCHAT_NO_WRITE_SETTINGS
 DEFINES += SCHAT_CLIENT
 
 HEADERS = \
-    benchmark.h \
+    abstractprofile.h \
     abstractsettings.h \
+    benchmark.h \
+    benchmarkapp.h \
+    clientservice.h \
     network.h \
     networkreader.h \
-    abstractprofile.h \
-    clientservice.h \
 
 SOURCES = \
-    main.cpp \
-    benchmark.cpp \
+    abstractprofile.cpp \
     abstractsettings.cpp \
+    benchmark.cpp \
+    benchmarkapp.cpp \
+    clientservice.cpp \
+    main.cpp \
     network.cpp \
     networkreader.cpp \
-    abstractprofile.cpp \
-    clientservice.cpp \
 
 CODECFORTR = UTF-8
+
+contains( BENCHMARK_NO_UI, 1 ) {
+  CONFIG += console
+  DEFINES += BENCHMARK_NO_UI
+}
+else {
+  CONFIG += console
+  QT += gui
+  HEADERS += benchmarkui.h
+  SOURCES += benchmarkui.cpp
+}
 
 include(../common/common.pri)
