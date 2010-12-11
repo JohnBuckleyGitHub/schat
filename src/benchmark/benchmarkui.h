@@ -34,6 +34,7 @@ public:
 
 signals:
   void start();
+  void stop();
 
 public slots:
   void started(int count);

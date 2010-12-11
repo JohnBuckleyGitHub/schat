@@ -43,10 +43,9 @@ BenchmarkApp::BenchmarkApp(int &argc, char **argv)
   setOrganizationDomain(SCHAT_DOMAIN);
   addLibraryPath(applicationDirPath() + "/plugins");
 
-  m_benchmark = new Benchmark(this);
   m_ui = new BenchmarkUi();
-  connect(m_ui, SIGNAL(start()), m_benchmark, SLOT(init()));
-  connect(m_benchmark, SIGNAL(started(int)), m_ui, SLOT(started(int)));
+  connect(m_ui, SIGNAL(start()), this, SLOT(start()));
+  connect(m_ui, SIGNAL(stop()), this, SLOT(stop()));
 
   m_ui->show();
 }
@@ -54,4 +53,20 @@ BenchmarkApp::BenchmarkApp(int &argc, char **argv)
 
 BenchmarkApp::~BenchmarkApp()
 {
+}
+
+
+void BenchmarkApp::start()
+{
+  m_benchmark = new Benchmark(this);
+  connect(m_benchmark, SIGNAL(started(int)), m_ui, SLOT(started(int)));
+
+  m_benchmark->start();
+}
+
+
+void BenchmarkApp::stop()
+{
+  m_benchmark->quit();
+  m_benchmark->deleteLater();
 }

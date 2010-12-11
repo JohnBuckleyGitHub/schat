@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QThread>
 
 class AbstractSettings;
 class Network;
@@ -28,31 +29,32 @@ class Network;
 /*!
  * \brief Класс для стресс-тестирования.
  */
-class Benchmark : public QObject {
+class Benchmark : public QThread
+{
   Q_OBJECT
 
 public:
   Benchmark(QObject *parent = 0);
+  ~Benchmark();
 
 signals:
   void started(int count);
-
-public slots:
-  void init();
 
 private slots:
   void accessDenied(quint16 reason);
   void connectToHost();
 
+protected:
+  void run();
+
 private:
-  AbstractSettings *m_settings;
-  int m_connectInterval;
-  int m_count;
-  int m_started;
-  int m_usersCount;
-  Network *m_network;
-  QString m_nickPrefix;
-  QString m_serverAddr;
+  AbstractSettings *m_settings; ///< Настройки.
+  int m_connectInterval;        ///< Интервал подключения (ConnectInterval), по умолчанию 200 мс.
+  int m_count;                  ///< Счётчик созданных подключений.
+  int m_usersCount;             ///< Число подключений (UsersCount), по умолчанию 10.
+  Network *m_network;           ///< Извлекает данные для подключения из строки.
+  QString m_nickPrefix;         ///< Префикс имён пользователей (NickPrefix), по умолчанию "test_".
+  QString m_serverAddr;         ///< Адрес сервера для тестирования (Network), по умолчанию "192.168.238.1:7667".
 };
 
 #endif /* BENCHMARK_H_ */
