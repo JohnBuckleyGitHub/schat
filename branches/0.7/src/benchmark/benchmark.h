@@ -38,6 +38,7 @@ public:
   ~Benchmark();
 
 signals:
+  void rejected(int count);
   void started(int count);
 
 private slots:
@@ -51,6 +52,7 @@ private:
   AbstractSettings *m_settings; ///< Настройки.
   int m_connectInterval;        ///< Интервал подключения (ConnectInterval), по умолчанию 200 мс.
   int m_count;                  ///< Счётчик созданных подключений.
+  int m_rejected;               ///< Счётчик клиентов которым отказано в подключении.
   int m_usersCount;             ///< Число подключений (UsersCount), по умолчанию 10.
   Network *m_network;           ///< Извлекает данные для подключения из строки.
   QString m_nickPrefix;         ///< Префикс имён пользователей (NickPrefix), по умолчанию "test_".

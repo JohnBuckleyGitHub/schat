@@ -29,10 +29,11 @@
  */
 BenchmarkApp::BenchmarkApp(int &argc, char **argv)
 #if !defined(BENCHMARK_NO_UI)
-  : QApplication(argc, argv)
+  : QApplication(argc, argv),
 #else
-  : QCoreApplication(argc, argv)
+  : QCoreApplication(argc, argv),
 #endif
+  m_benchmark(0)
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -58,8 +59,12 @@ BenchmarkApp::~BenchmarkApp()
 
 void BenchmarkApp::start()
 {
+  if (m_benchmark)
+    return;
+
   m_benchmark = new Benchmark(this);
   connect(m_benchmark, SIGNAL(started(int)), m_ui, SLOT(started(int)));
+  connect(m_benchmark, SIGNAL(rejected(int)), m_ui, SLOT(rejected(int)));
 
   m_benchmark->start();
 }
@@ -67,6 +72,10 @@ void BenchmarkApp::start()
 
 void BenchmarkApp::stop()
 {
+  if (!m_benchmark)
+    return;
+
   m_benchmark->quit();
   m_benchmark->deleteLater();
+  m_benchmark = 0;
 }
