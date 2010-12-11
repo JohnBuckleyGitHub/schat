@@ -32,6 +32,7 @@ Benchmark::Benchmark(QObject *parent)
   m_settings(0),
   m_connectInterval(200),
   m_count(0),
+  m_rejected(0),
   m_usersCount(10),
   m_network(0),
   m_nickPrefix("test_"),
@@ -53,7 +54,8 @@ Benchmark::~Benchmark()
 void Benchmark::accessDenied(quint16 reason)
 {
   Q_UNUSED(reason)
-//  qDebug() << "Benchmark::accessDenied()" << reason;
+  m_rejected++;
+  emit rejected(m_rejected);
 }
 
 

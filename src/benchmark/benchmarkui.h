@@ -37,10 +37,16 @@ signals:
   void stop();
 
 public slots:
+  void rejected(int count);
   void started(int count);
+
+private slots:
+  void start(bool checked);
+  void stop(bool checked);
 
 private:
   QGroupBox *m_statistics;
+  QLabel *m_rejected;
   QLabel *m_started;
   QPushButton *m_start;
   QPushButton *m_stop;

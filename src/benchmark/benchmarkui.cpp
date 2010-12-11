@@ -39,13 +39,15 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
 
   m_start = new QPushButton(tr("&Start"), this);
   m_start->setDefault(true);
-  connect(m_start, SIGNAL(clicked(bool)), this, SIGNAL(start()));
+  connect(m_start, SIGNAL(clicked(bool)), this, SLOT(start(bool)));
 
   m_stop = new QPushButton(tr("S&top"), this);
-  connect(m_stop, SIGNAL(clicked(bool)), this, SIGNAL(stop()));
+  m_stop->setEnabled(false);
+  connect(m_stop, SIGNAL(clicked(bool)), this, SLOT(stop(bool)));
 
   m_statistics = new QGroupBox(tr("Statistics"), this);
   m_started = new QLabel("0", this);
+  m_rejected = new QLabel("0", this);
 
   QHBoxLayout *controlLay = new QHBoxLayout();
   controlLay->addWidget(m_start);
@@ -53,6 +55,7 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
 
   QFormLayout *statisticsLay = new QFormLayout(m_statistics);
   statisticsLay->addRow("Started:", m_started);
+  statisticsLay->addRow("Rejected:", m_rejected);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addLayout(controlLay);
@@ -60,7 +63,33 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
 }
 
 
+void BenchmarkUi::rejected(int count)
+{
+  m_rejected->setText(QString::number(count));
+}
+
+
 void BenchmarkUi::started(int count)
 {
   m_started->setText(QString::number(count));
+}
+
+
+void BenchmarkUi::start(bool checked)
+{
+  Q_UNUSED(checked);
+  m_start->setEnabled(false);
+  m_stop->setEnabled(true);
+  m_started->setText("0");
+  m_rejected->setText("0");
+  emit start();
+}
+
+
+void BenchmarkUi::stop(bool checked)
+{
+  Q_UNUSED(checked);
+  m_start->setEnabled(true);
+  m_stop->setEnabled(false);
+  emit stop();
 }
