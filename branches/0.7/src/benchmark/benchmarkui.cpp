@@ -34,45 +34,15 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
 {
   setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
-//
-//  m_tabWidget = new QTabWidget(this);
-//  m_tabWidget->addTab(new AboutMain(this),      tr("О Программе"));
-//  m_tabWidget->addTab(new AboutMembers(this),   tr("Участники"));
-//  m_tabWidget->addTab(new AboutChangeLog(this), tr("История версий"));
-//  m_tabWidget->addTab(new AboutLicense(this),   tr("Лицензия"));
-//
-//  m_closeButton = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Закрыть"), this);
-//  m_closeButton->setDefault(true);
-//
-//  connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
-//
-//  m_bottom = new QWidget(this);
-//  m_bottom->setObjectName("AboutBottom");
-//  QHBoxLayout *buttonLay = new QHBoxLayout(m_bottom);
-//  buttonLay->setMargin(2);
-//  #ifndef SCHAT_NO_UPDATE_WIDGET
-//    m_update = new UpdateWidget(this);
-//    buttonLay->addWidget(m_update);
-//  #endif
-//  buttonLay->addStretch();
-//  buttonLay->addWidget(m_closeButton);
-//
-//  m_mainLay = new QVBoxLayout(this);
-//  m_mainLay->addWidget(m_tabWidget);
-//  m_mainLay->addWidget(m_bottom);
-//  setStyleSheet();
-//
+
   setWindowTitle(QApplication::applicationName() + " " + QApplication::applicationVersion());
-//
-//  #ifndef SCHAT_NO_UPDATE_WIDGET
-//    QTimer::singleShot(0, m_update, SLOT(start()));
-//  #endif
 
   m_start = new QPushButton(tr("&Start"), this);
   m_start->setDefault(true);
   connect(m_start, SIGNAL(clicked(bool)), this, SIGNAL(start()));
 
   m_stop = new QPushButton(tr("S&top"), this);
+  connect(m_stop, SIGNAL(clicked(bool)), this, SIGNAL(stop()));
 
   m_statistics = new QGroupBox(tr("Statistics"), this);
   m_started = new QLabel("0", this);

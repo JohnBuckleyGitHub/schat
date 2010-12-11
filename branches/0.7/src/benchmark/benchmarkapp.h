@@ -39,6 +39,10 @@ public:
   BenchmarkApp(int &argc, char **argv);
   ~BenchmarkApp();
 
+private slots:
+  void start();
+  void stop();
+
 private:
   Benchmark *m_benchmark;
   BenchmarkUi *m_ui;
