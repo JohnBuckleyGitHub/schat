@@ -31,9 +31,10 @@ Benchmark::Benchmark(QObject *parent)
   : QObject(parent),
   m_connectInterval(200),
   m_count(0),
+  m_started(0),
   m_usersCount(10),
   m_nickPrefix("test_"),
-  m_serverAddr("192.168.5.150:7666")
+  m_serverAddr("192.168.238.1:7667")
 {
   m_settings = new AbstractSettings(QCoreApplication::applicationDirPath() + "/benchmark.conf", this);
   m_settings->setInt("ConnectInterval", m_connectInterval);
@@ -43,7 +44,7 @@ Benchmark::Benchmark(QObject *parent)
 
   m_network = new Network(this);
 
-  QTimer::singleShot(0, this, SLOT(init()));
+//  QTimer::singleShot(0, this, SLOT(init()));
 }
 
 
@@ -61,6 +62,8 @@ void Benchmark::connectToHost()
     profile->setNick(m_nickPrefix + QString::number(m_count));
     ClientService *service = new ClientService(profile, m_network, this);
     connect(service, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
+    m_started++;
+    emit started(m_started);
     service->connectToHost();
     m_count++;
     QTimer::singleShot(m_connectInterval, this, SLOT(connectToHost()));
@@ -70,6 +73,8 @@ void Benchmark::connectToHost()
 
 void Benchmark::init()
 {
+  m_started = 0;
+
   m_settings->read();
   m_connectInterval = m_settings->getInt("ConnectInterval");
   m_usersCount      = m_settings->getInt("UsersCount");
