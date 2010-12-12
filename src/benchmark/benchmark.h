@@ -38,11 +38,17 @@ public:
   ~Benchmark();
 
 signals:
+  void accepted(int count);
+  void disconnected(int count);
   void rejected(int count);
   void started(int count);
+  void synced(int count);
 
 private slots:
-  void accessDenied(quint16 reason);
+  inline void accessDenied(quint16) { emit rejected(++m_rejected); }
+  inline void accessGranted(const QString &, const QString &, quint16) { emit accepted(++m_accepted); }
+  inline void syncUsersEnd() { emit synced(++m_synced); }
+  inline void unconnected() { emit disconnected(++m_disconnected); }
   void connectToHost();
 
 protected:
@@ -50,9 +56,12 @@ protected:
 
 private:
   AbstractSettings *m_settings; ///< Настройки.
+  int m_accepted;               ///< Счётчик принятых соединений.
   int m_connectInterval;        ///< Интервал подключения (ConnectInterval), по умолчанию 200 мс.
   int m_count;                  ///< Счётчик созданных подключений.
+  int m_disconnected;           ///< Счётчик отключений.
   int m_rejected;               ///< Счётчик клиентов которым отказано в подключении.
+  int m_synced;                 ///< Счётчик синхронизированных соединений.
   int m_usersCount;             ///< Число подключений (UsersCount), по умолчанию 10.
   Network *m_network;           ///< Извлекает данные для подключения из строки.
   QString m_nickPrefix;         ///< Префикс имён пользователей (NickPrefix), по умолчанию "test_".
