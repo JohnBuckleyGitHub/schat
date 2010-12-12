@@ -20,9 +20,9 @@
 #define BENCHMARKUI_H_
 
 #include <QDialog>
+#include <QLabel>
 
 class QGroupBox;
-class QLabel;
 class QPushButton;
 
 class BenchmarkUi : public QDialog
@@ -37,8 +37,11 @@ signals:
   void stop();
 
 public slots:
-  void rejected(int count);
-  void started(int count);
+  inline void accepted(int count) { m_accepted->setText(QString::number(count)); }
+  inline void disconnected(int count) { m_disconnected->setText(QString::number(count)); }
+  inline void rejected(int count) { m_rejected->setText(QString::number(count)); }
+  inline void started(int count)  { m_started->setText(QString::number(count)); }
+  inline void synced(int count)   { m_synced->setText(QString::number(count)); }
 
 private slots:
   void start(bool checked);
@@ -46,8 +49,11 @@ private slots:
 
 private:
   QGroupBox *m_statistics;
+  QLabel *m_accepted;
+  QLabel *m_disconnected;
   QLabel *m_rejected;
   QLabel *m_started;
+  QLabel *m_synced;
   QPushButton *m_start;
   QPushButton *m_stop;
 };

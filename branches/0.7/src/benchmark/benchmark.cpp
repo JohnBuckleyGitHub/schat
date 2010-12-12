@@ -30,9 +30,12 @@
 Benchmark::Benchmark(QObject *parent)
   : QThread(parent),
   m_settings(0),
+  m_accepted(0),
   m_connectInterval(200),
   m_count(0),
+  m_disconnected(0),
   m_rejected(0),
+  m_synced(0),
   m_usersCount(10),
   m_network(0),
   m_nickPrefix("test_"),
@@ -51,14 +54,6 @@ Benchmark::~Benchmark()
 }
 
 
-void Benchmark::accessDenied(quint16 reason)
-{
-  Q_UNUSED(reason)
-  m_rejected++;
-  emit rejected(m_rejected);
-}
-
-
 void Benchmark::connectToHost()
 {
   if (m_count < m_usersCount) {
@@ -68,10 +63,12 @@ void Benchmark::connectToHost()
 
     ClientService *service = new ClientService(profile, m_network);
     connect(this, SIGNAL(finished()), service, SLOT(deleteLater()));
+    connect(service, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(service, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
+    connect(service, SIGNAL(syncUsersEnd()), SLOT(syncUsersEnd()));
+    connect(service, SIGNAL(unconnected(bool)), SLOT(unconnected()));
 
-    m_count++;
-    emit started(m_count);
+    emit started(++m_count);
     service->connectToHost();
     QTimer::singleShot(m_connectInterval, this, SLOT(connectToHost()));
   }

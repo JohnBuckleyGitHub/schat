@@ -65,6 +65,9 @@ void BenchmarkApp::start()
   m_benchmark = new Benchmark(this);
   connect(m_benchmark, SIGNAL(started(int)), m_ui, SLOT(started(int)));
   connect(m_benchmark, SIGNAL(rejected(int)), m_ui, SLOT(rejected(int)));
+  connect(m_benchmark, SIGNAL(accepted(int)), m_ui, SLOT(accepted(int)));
+  connect(m_benchmark, SIGNAL(synced(int)), m_ui, SLOT(synced(int)));
+  connect(m_benchmark, SIGNAL(disconnected(int)), m_ui, SLOT(disconnected(int)));
 
   m_benchmark->start();
 }

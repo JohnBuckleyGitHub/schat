@@ -21,7 +21,6 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QLabel>
 #include <QFormLayout>
 
 #include "benchmarkui.h"
@@ -48,6 +47,9 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
   m_statistics = new QGroupBox(tr("Statistics"), this);
   m_started = new QLabel("0", this);
   m_rejected = new QLabel("0", this);
+  m_accepted = new QLabel("0", this);
+  m_synced = new QLabel("0", this);
+  m_disconnected = new QLabel("0", this);
 
   QHBoxLayout *controlLay = new QHBoxLayout();
   controlLay->addWidget(m_start);
@@ -56,22 +58,13 @@ BenchmarkUi::BenchmarkUi(QWidget *parent)
   QFormLayout *statisticsLay = new QFormLayout(m_statistics);
   statisticsLay->addRow("Started:", m_started);
   statisticsLay->addRow("Rejected:", m_rejected);
+  statisticsLay->addRow("Accepted:", m_accepted);
+  statisticsLay->addRow("Synced:", m_synced);
+  statisticsLay->addRow("Disconnected:", m_disconnected);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addLayout(controlLay);
   mainLay->addWidget(m_statistics);
-}
-
-
-void BenchmarkUi::rejected(int count)
-{
-  m_rejected->setText(QString::number(count));
-}
-
-
-void BenchmarkUi::started(int count)
-{
-  m_started->setText(QString::number(count));
 }
 
 
@@ -82,6 +75,9 @@ void BenchmarkUi::start(bool checked)
   m_stop->setEnabled(true);
   m_started->setText("0");
   m_rejected->setText("0");
+  m_accepted->setText("0");
+  m_synced->setText("0");
+  m_disconnected->setText("0");
   emit start();
 }
 
