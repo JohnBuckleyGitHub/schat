@@ -38,17 +38,21 @@ public:
   ~Benchmark();
 
 signals:
+  #if !defined(BENCHMARK_NO_UI)
   void accepted(int count);
   void disconnected(int count);
   void rejected(int count);
   void started(int count);
   void synced(int count);
+  #endif
 
 private slots:
+  #if !defined(BENCHMARK_NO_UI)
   inline void accessDenied(quint16) { emit rejected(++m_rejected); }
   inline void accessGranted(const QString &, const QString &, quint16) { emit accepted(++m_accepted); }
   inline void syncUsersEnd() { emit synced(++m_synced); }
   inline void unconnected() { emit disconnected(++m_disconnected); }
+  #endif
   void connectToHost();
 
 protected:

@@ -63,12 +63,17 @@ void Benchmark::connectToHost()
 
     ClientService *service = new ClientService(profile, m_network);
     connect(this, SIGNAL(finished()), service, SLOT(deleteLater()));
+
+    #if !defined(BENCHMARK_NO_UI)
     connect(service, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(service, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
     connect(service, SIGNAL(syncUsersEnd()), SLOT(syncUsersEnd()));
     connect(service, SIGNAL(unconnected(bool)), SLOT(unconnected()));
-
     emit started(++m_count);
+    #else
+    ++m_count;
+    #endif
+
     service->connectToHost();
     QTimer::singleShot(m_connectInterval, this, SLOT(connectToHost()));
   }

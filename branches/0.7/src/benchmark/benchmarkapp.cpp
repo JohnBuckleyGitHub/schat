@@ -16,13 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTextCodec>
 #include <QDebug>
+#include <QTextCodec>
+#include <QTimer>
 
 #include "benchmark.h"
 #include "benchmarkapp.h"
-#include "benchmarkui.h"
 #include "version.h"
+
+#if !defined(BENCHMARK_NO_UI)
+  #include "benchmarkui.h"
+#endif
 
 /*!
  * Конструктор класса BenchmarkApp.
@@ -44,11 +48,15 @@ BenchmarkApp::BenchmarkApp(int &argc, char **argv)
   setOrganizationDomain(SCHAT_DOMAIN);
   addLibraryPath(applicationDirPath() + "/plugins");
 
+  #if !defined(BENCHMARK_NO_UI)
   m_ui = new BenchmarkUi();
   connect(m_ui, SIGNAL(start()), this, SLOT(start()));
   connect(m_ui, SIGNAL(stop()), this, SLOT(stop()));
 
   m_ui->show();
+  #else
+  QTimer::singleShot(0, this, SLOT(start()));
+  #endif
 }
 
 
@@ -63,11 +71,13 @@ void BenchmarkApp::start()
     return;
 
   m_benchmark = new Benchmark(this);
+  #if !defined(BENCHMARK_NO_UI)
   connect(m_benchmark, SIGNAL(started(int)), m_ui, SLOT(started(int)));
   connect(m_benchmark, SIGNAL(rejected(int)), m_ui, SLOT(rejected(int)));
   connect(m_benchmark, SIGNAL(accepted(int)), m_ui, SLOT(accepted(int)));
   connect(m_benchmark, SIGNAL(synced(int)), m_ui, SLOT(synced(int)));
   connect(m_benchmark, SIGNAL(disconnected(int)), m_ui, SLOT(disconnected(int)));
+  #endif
 
   m_benchmark->start();
 }
