@@ -30,6 +30,6 @@
 ;!define SCHAT_QT_BINDIR  "C:\qt\4.5.2\bin"
 ;!define SCHAT_BINDIR     "..\..\out\release"
 ;!define SCHAT_DATADIR    "..\..\data"
-;!define VC90_REDIST_DIR  "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+;!define VC100_REDIST_DIR "C:\Windows\system32"
 
 !include "engine\core.nsh"

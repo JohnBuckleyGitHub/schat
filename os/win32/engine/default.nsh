@@ -26,7 +26,7 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION       "0.7.5.1353"
+${def} SCHAT_VERSION       "0.7.5.1361"
 ${def} SCHAT_QT_VERSION    "4.7.1"
 ${def} SCHAT_NAME          "IMPOMEZIA Simple Chat"
 ${def} SCHAT_NAME_SHORT    "Simple Chat"
@@ -42,7 +42,8 @@ ${def} SCHAT_INSTALLDIR    "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_PAGE_OPTIONS  1
 ${def} SCHAT_EMOTICON_GRP  1
 ${def} SCHAT_CHECK_RUN     1
-${def} SCHAT_VC90          1
+${def} SCHAT_VC90          0
+${def} SCHAT_VC100         1
 ${def} SCHAT_DEFAULT_CONF  0
 
 ${def} OPT_DESKTOP         0
@@ -56,5 +57,6 @@ ${def} SCHAT_QT_BINDIR     "C:\Qt\4.7.1\bin"
 ${def} SCHAT_BINDIR        "..\..\out\release"
 ${def} SCHAT_DATADIR       "..\..\data"
 ${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
+${def} VC100_REDIST_DIR    "C:\Windows\system32"
 
 !endif /* DEFAULT_NSH_ */
