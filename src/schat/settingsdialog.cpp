@@ -843,7 +843,7 @@ NotificationSettings::NotificationSettings(QWidget *parent)
   d->timeOutSpin->setSuffix(tr(" сек"));
   d->timeOutSpin->setValue(SimpleSettings->getInt("PopupAutoCloseTime"));
 
-  d->autoAway = new QCheckBox("&Но не при автоматическом статусе \"Отсутствую\"", this);
+  d->autoAway = new QCheckBox(tr("&Но не при автоматическом статусе \"Отсутствую\""), this);
   d->autoAway->setToolTip(tr("Не закрывать автоматически всплывающие окна\nпри автоматическом статусе \"Отсутствую\""));
   d->autoAway->setChecked(SimpleSettings->getBool("NoPopupAutoCloseInAway"));
 
