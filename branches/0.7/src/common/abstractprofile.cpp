@@ -61,6 +61,9 @@ AbstractProfile::AbstractProfile(QObject *parent)
 #else
   m_userAgent = QString("IMPOMEZIA Simple Chat Daemon/%1").arg(SCHAT_VERSION);
 #endif
+  if (QSysInfo::WordSize == 64)
+    m_userAgent += " (64 bit)";
+
   m_status = 0;
 }
 
