@@ -133,7 +133,9 @@ AboutMain::AboutMain(QWidget *parent)
   docLabel->setOpenExternalLinks(true);
   docLabel->setToolTip("http://simple.impomezia.com");
 
-  QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b>").arg(tr("Эта программа использует библиотеку:")).arg(qVersion()), this);
+  QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b> (%3)")
+      .arg(tr("Эта программа использует библиотеку:"))
+      .arg(qVersion()).arg(QSysInfo::WordSize == 32 ? tr("32 битную") : tr("64 битную")), this);
 
   QVBoxLayout *infoLay = new QVBoxLayout;
   infoLay->addWidget(copyrightLabel);
