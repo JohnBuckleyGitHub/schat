@@ -104,20 +104,19 @@ QStringList Settings::path(Paths type) const
 
   switch (type) {
     case EmoticonsPath:
-      out = path("emoticons");
-      break;
+      return path("emoticons");
 
     case NetworksPath:
-      out = path("networks");
-      break;
+      return path("networks");
 
     case SoundsPath:
-      out = path("sounds");
-      break;
+      return path("sounds");
 
     case StylesPath:
-      out = path("styles");
-      break;
+      return path("styles");
+
+    case TranslationsPath:
+      return path("translations");
 
     case LogPath:
       if (isUnixLike())

@@ -1109,7 +1109,10 @@ class MiscSettings::Private
 {
 public:
   Private() {}
+  QString languageName(const QString &file) const;
+  QStringList findQmFiles() const;
   void readAutostart();
+  void translations();
   void writeAutostart();
 
   QCheckBox *autostart;
@@ -1121,6 +1124,38 @@ public:
   QCheckBox *autostartDaemon;
   #endif
 };
+
+
+QString MiscSettings::Private::languageName(const QString &file) const
+{
+  QTranslator translator;
+  translator.load(file);
+
+  return translator.translate("SimpleChatApp", "English");
+}
+
+
+/*!
+ * \todo проверить обработку коллизий.
+ */
+QStringList MiscSettings::Private::findQmFiles() const
+{
+  QStringList dirs = SimpleSettings->path(Settings::TranslationsPath);
+  QStringList fileNames;
+
+  foreach (QString d, dirs) {
+    QDir dir(d);
+    QStringList fn = dir.entryList(QStringList("*.qm"), QDir::Files, QDir::Name);
+    QMutableStringListIterator i(fn);
+    while (i.hasNext()) {
+        i.next();
+        i.setValue(dir.filePath(i.value()));
+    }
+    fileNames += fn;
+  }
+
+  return fileNames;
+}
 
 
 /*!
@@ -1151,6 +1186,29 @@ void MiscSettings::Private::readAutostart()
     return;
   }
   #endif
+}
+
+
+/*!
+ * Загрузка языковых файлов.
+ * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
+ * за исключением расширения, например schat_ru.qm и schat_ru.png.
+ */
+void MiscSettings::Private::translations()
+{
+  QStringList qmFiles = findQmFiles();
+
+  for (int i = 0; i < qmFiles.size(); ++i) {
+    QString file = qmFiles[i];
+    QString icon = file.left(file.size() - 3) + ".png";
+
+    if (!QFile::exists(icon))
+      icon = ":/images/lang/unknown.png";
+
+    language->addItem(QIcon(icon), languageName(qmFiles[i]), file);
+  }
+
+  language->setCurrentIndex(language->findText(SimpleChatApp::instance()->language()));
 }
 
 
@@ -1210,8 +1268,10 @@ MiscSettings::MiscSettings(QWidget *parent)
 {
   QGroupBox *language = new QGroupBox(tr("Language"), this);
   d->language = new QComboBox(this);
-  d->language->setIconSize(QSize(23, 13));
+  d->language->setIconSize(QSize(25, 15));
   d->language->addItem(QIcon(":/images/lang/en.png"), "English");
+
+  d->translations();
 
   QHBoxLayout *languageLay = new QHBoxLayout(language);
   languageLay->addWidget(d->language);
