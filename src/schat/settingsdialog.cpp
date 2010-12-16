@@ -1115,6 +1115,7 @@ public:
   QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
+  QComboBox *language;
 
   #ifdef Q_WS_WIN
   QCheckBox *autostartDaemon;
@@ -1207,6 +1208,17 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
+  QGroupBox *language = new QGroupBox(tr("Language"), this);
+  d->language = new QComboBox(this);
+  d->language->setIconSize(QSize(23, 13));
+  d->language->addItem(QIcon(":/images/lang/en.png"), "English");
+
+  QHBoxLayout *languageLay = new QHBoxLayout(language);
+  languageLay->addWidget(d->language);
+  languageLay->addStretch();
+  languageLay->setMargin(6);
+  languageLay->setSpacing(4);
+
   QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
   #if defined(Q_OS_MAC)
   integration->setVisible(false);
@@ -1230,7 +1242,7 @@ MiscSettings::MiscSettings(QWidget *parent)
   integrationLay->addWidget(d->autostartDaemon);
   #endif
   integrationLay->setMargin(6);
-  integrationLay->setMargin(4);
+  integrationLay->setSpacing(4);
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
@@ -1246,9 +1258,11 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->addWidget(d->log);
   logLay->addWidget(d->logPrivate);
   logLay->setMargin(6);
-  logLay->setMargin(4);
+  logLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(language);
+  mainLay->addSpacing(12);
   mainLay->addWidget(integration);
   #if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
