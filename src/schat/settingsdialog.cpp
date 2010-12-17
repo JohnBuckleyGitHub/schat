@@ -1109,6 +1109,7 @@ class MiscSettings::Private
 {
 public:
   Private() {}
+  QString languageIcon(const QString &file) const;
   QString languageName(const QString &file) const;
   QStringList findQmFiles() const;
   void readAutostart();
@@ -1126,6 +1127,32 @@ public:
 };
 
 
+/*!
+ * Возвращает путь к файлу изображения флага языка.
+ * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
+ * за исключением расширения, например schat_ru.qm и schat_ru.png.
+ * В случае если не будут найдены изображения для русского или английского языка,
+ * то для них будут использованы изображения по умолчанию.
+ */
+QString MiscSettings::Private::languageIcon(const QString &file) const
+{
+  QString icon = file.left(file.size() - 3) + ".png";
+  if (QFile::exists(icon))
+    return icon;
+
+  if (icon.endsWith("schat_ru.png"))
+    return ":/translations/schat_ru.png";
+
+  if (icon.endsWith("schat_en.png"))
+    return ":/translations/schat_en.png";
+
+  return ":/images/lang/unknown.png";
+}
+
+
+/*!
+ * Получаем переведённое имя языка из qm файла.
+ */
 QString MiscSettings::Private::languageName(const QString &file) const
 {
   QTranslator translator;
@@ -1191,21 +1218,26 @@ void MiscSettings::Private::readAutostart()
 
 /*!
  * Загрузка языковых файлов.
- * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
- * за исключением расширения, например schat_ru.qm и schat_ru.png.
  */
 void MiscSettings::Private::translations()
 {
   QStringList qmFiles = findQmFiles();
+  qmFiles.append(":/translations/schat_ru.qm");
+  bool canOverrideEnglish = true;
 
   for (int i = 0; i < qmFiles.size(); ++i) {
     QString file = qmFiles[i];
-    QString icon = file.left(file.size() - 3) + ".png";
+    QString langName = languageName(file);
 
-    if (!QFile::exists(icon))
-      icon = ":/images/lang/unknown.png";
-
-    language->addItem(QIcon(icon), languageName(qmFiles[i]), file);
+    // Добавляем в список только уникальные языки.
+    if (language->findText(langName) == -1) {
+      language->addItem(QIcon(languageIcon(file)), langName, file);
+    }
+    else if (canOverrideEnglish && file.endsWith("schat_en.qm")) {
+      language->setItemIcon(0, QIcon(languageIcon(file)));
+      language->setItemData(0, file);
+      canOverrideEnglish = false;
+    }
   }
 
   language->setCurrentIndex(language->findText(SimpleChatApp::instance()->language()));
@@ -1269,7 +1301,7 @@ MiscSettings::MiscSettings(QWidget *parent)
   QGroupBox *language = new QGroupBox(tr("Language"), this);
   d->language = new QComboBox(this);
   d->language->setIconSize(QSize(25, 15));
-  d->language->addItem(QIcon(":/images/lang/en.png"), "English");
+  d->language->addItem(QIcon(":/translations/schat_en.png"), "English", ":/translations/schat_en.qm");
 
   d->translations();
 
