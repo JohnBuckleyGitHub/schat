@@ -27,6 +27,7 @@
 #endif
 
 class SChatWindow;
+class Translation;
 
 /*!
  * \brief Экземпляр приложения.
@@ -44,14 +45,16 @@ public:
   int run();
   static QIcon iconFromTheme(const QString &name);
   static SimpleChatApp *instance();
+  Translation *translation();
 
   #if !defined(SCHAT_NO_STYLE)
   static QString defaultStyle();
   #endif
 
 private:
-  SChatWindow *m_window;
   QString m_language;
+  SChatWindow *m_window;
+  Translation *m_translation;
 };
 
 #endif /* SIMPLECHATAPP_H_ */

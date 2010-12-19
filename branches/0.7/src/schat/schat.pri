@@ -69,6 +69,7 @@ HEADERS += \
     settingsdialog.h \
     simplechatapp.h \
     soundaction.h \
+    translation.h \
     trayicon.h \
     update/downloadmanager.h \
     update/update.h \
@@ -118,6 +119,7 @@ SOURCES += \
     settingsdialog.cpp \
     simplechatapp.cpp \
     soundaction.cpp \
+    translation.cpp \
     trayicon.cpp \
     update/downloadmanager.cpp \
     update/update.cpp \
