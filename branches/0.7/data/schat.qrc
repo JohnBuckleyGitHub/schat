@@ -68,6 +68,7 @@
   <file>images/update.png</file>
   <file>images/warning.png</file>
   <file>translations/qt_ru.qm</file>
+  <file>translations/schat_en.qm</file>
   <file>translations/schat_ru.qm</file>
 </qresource>
 </RCC>
