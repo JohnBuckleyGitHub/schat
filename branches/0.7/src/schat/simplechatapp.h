@@ -40,8 +40,6 @@ public:
   SimpleChatApp(int &argc, char **argv);
   ~SimpleChatApp();
   bool isRunning();
-  inline QString language() const { return m_language; }
-  inline void setLanguage(const QString language) { m_language = language; }
   int run();
   static QIcon iconFromTheme(const QString &name);
   static SimpleChatApp *instance();
@@ -52,7 +50,6 @@ public:
   #endif
 
 private:
-  QString m_language;
   SChatWindow *m_window;
   Translation *m_translation;
 };
