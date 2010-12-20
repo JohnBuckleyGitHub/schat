@@ -17,8 +17,10 @@
  */
 
 #include <QCoreApplication>
+#include <QFileInfo>
+#include <QLocale>
 #include <QTranslator>
-#include <QDebug>
+//#include <QDebug>
 
 #include "translation.h"
 
@@ -30,26 +32,64 @@ Translation::Translation(QObject *parent)
   m_empty(true)
 {
   m_language = tr("English");
+  m_name = "en";
+  m_prefix = "schat_";
   m_core = new QTranslator(this);
 }
 
 
+/*!
+ * Загрузка языкового файла.
+ * Допустимые значения для параметра \p name:
+ * - auto или пустая строка, будет произведена попытка автоматически определить язык
+ * в случае неудачи будет установлен английский язык.
+ *
+ * - Полный путь к qm файла, в случае неудачи будет попытка загрузить язык полученный из имени qm файла.
+ *
+ * - Код языка.
+ */
 void Translation::load(const QString &name)
 {
-//  qDebug() << this << "load" << name << m_search;
-
   if (!m_empty) {
     QCoreApplication::removeTranslator(m_core);
   }
   else
     m_empty = false;
 
-  qDebug() << QLocale::system().name();
-//  QString fileName;
-//  if (name.endsWith(".qm")) {
-//    m_name = detectName(name);
-//    fileName = name;
-//  }
+  if (name == "auto" || name.isEmpty()) {
+    QLocale locale = QLocale::system();
+    if (locale.language() == QLocale::C)
+      m_name = "en";
+    else
+      m_name = locale.name();
+  }
+  else if (name.endsWith(".qm")) {
+    QFileInfo fileInfo = QFileInfo(name);
+    m_name = fileInfo.baseName().mid(m_prefix.size());
+    if (m_core->load(name)) {
+      m_language = m_core->translate("Translation", "English");
+      return;
+    }
+    else {
+      load(m_name);
+    }
+  }
+  else {
+    m_name = name;
+  }
+
+  bool loaded = false;
+
+  for (int i = 0; i < m_search.size(); ++i) {
+    loaded = m_core->load(m_prefix + m_name, m_search.at(i));
+    if (loaded)
+      break;
+  }
+
+  if (loaded)
+    m_language = m_core->translate("Translation", "English");
+  else if (m_name != "en")
+    load("en");
 }
 
 

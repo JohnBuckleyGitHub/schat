@@ -24,6 +24,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "simplechatapp.h"
+#include "translation.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
 #include "widget/soundwidget.h"
@@ -1158,7 +1159,7 @@ QString MiscSettings::Private::languageName(const QString &file) const
   QTranslator translator;
   translator.load(file);
 
-  return translator.translate("SimpleChatApp", "English");
+  return translator.translate("Translation", "English");
 }
 
 
@@ -1240,7 +1241,7 @@ void MiscSettings::Private::translations()
     }
   }
 
-  language->setCurrentIndex(language->findText(SimpleChatApp::instance()->language()));
+  language->setCurrentIndex(language->findText(CURRENT_LANG));
 }
 
 
@@ -1385,5 +1386,12 @@ void MiscSettings::save()
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
+
+  if (d->language->currentText() != CURRENT_LANG) {
+    Translation *translation = SimpleChatApp::instance()->translation();
+    translation->load(d->language->itemData(d->language->currentIndex()).toString());
+    SimpleSettings->setString("Translation", translation->name());
+  }
+
   SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
