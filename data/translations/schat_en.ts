@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru">
+<TS version="2.0" language="en">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>AboutChangeLog</name>
@@ -1228,7 +1228,7 @@
         <location filename="../../src/common/translation.cpp" line="90"/>
         <location filename="../../src/schat/settingsdialog.cpp" line="1162"/>
         <source>English</source>
-        <translation>Русский</translation>
+        <translation>English</translation>
     </message>
 </context>
 <context>
@@ -1268,20 +1268,19 @@
         <location filename="../../src/schat/trayicon.cpp" line="273"/>
         <source>%n Byte</source>
         <translation>
-            <numerusform>%n Байт</numerusform>
-            <numerusform>%n Байта</numerusform>
-            <numerusform>%n Байт</numerusform>
+            <numerusform>%n Byte</numerusform>
+            <numerusform>%n Bytes</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="275"/>
         <source>%1 kB</source>
-        <translation>%1 Кб</translation>
+        <translation>%1  kB</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="277"/>
         <source>%1 MB</source>
-        <translation>%1 Мб</translation>
+        <translation>%1 MB</translation>
     </message>
 </context>
 <context>
@@ -1341,18 +1340,16 @@
         <location filename="../../src/schat/settingsdialog.cpp" line="1094"/>
         <source>%n Minute</source>
         <translation>
-            <numerusform>Минута</numerusform>
-            <numerusform>Минуты</numerusform>
-            <numerusform>Минут</numerusform>
+            <numerusform>Minute</numerusform>
+            <numerusform>Minutes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/schat/settingsdialog.cpp" line="1095"/>
         <source>%n Hour</source>
         <translation>
-            <numerusform>Час</numerusform>
-            <numerusform>Часа</numerusform>
-            <numerusform>Часов</numerusform>
+            <numerusform> Hour</numerusform>
+            <numerusform>Hours</numerusform>
         </translation>
     </message>
 </context>

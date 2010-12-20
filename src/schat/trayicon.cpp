@@ -270,10 +270,10 @@ void TrayIcon::updateAvailable(bool force)
 QString TrayIcon::bytesToHuman(int size)
 {
   if (size < 1024)
-    return tr("%n Байт", "", size);
+    return tr("%n Byte", "", size);
   else if (size < 1048576)
-    return tr("%1 Кб").arg((int) size / 1024);
+    return tr("%1 kB").arg((int) size / 1024);
   else
-    return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
+    return tr("%1 MB").arg((double) size / 1048576, 0, 'f', 2);
 }
 #endif

@@ -68,6 +68,7 @@ void Translation::load(const QString &name)
     m_name = fileInfo.baseName().mid(m_prefix.size());
     if (m_core->load(name)) {
       m_language = m_core->translate("Translation", "English");
+      QCoreApplication::installTranslator(m_core);
       return;
     }
     else {
@@ -86,8 +87,10 @@ void Translation::load(const QString &name)
       break;
   }
 
-  if (loaded)
+  if (loaded) {
     m_language = m_core->translate("Translation", "English");
+    QCoreApplication::installTranslator(m_core);
+  }
   else if (m_name != "en")
     load("en");
 }

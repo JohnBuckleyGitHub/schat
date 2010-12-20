@@ -1091,8 +1091,8 @@ void UpdateSettings::intervalChanged(int i)
       value = 24;
   }
 
-  QString minute = tr("%n Минуты", "", value);
-  QString hour   = tr("%n Часы", "", value);
+  QString minute = tr("%n Minute", "", value);
+  QString hour   = tr("%n Hour", "", value);
 
   d->factor->clear();
   d->factor->addItem(minute);
