@@ -20,6 +20,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QTranslator>
+#include <QLibraryInfo>
 //#include <QDebug>
 
 #include "translation.h"
@@ -35,6 +36,7 @@ Translation::Translation(QObject *parent)
   m_name = "en";
   m_prefix = "schat_";
   m_core = new QTranslator(this);
+  m_qt = new QTranslator(this);
 }
 
 
@@ -52,6 +54,7 @@ void Translation::load(const QString &name)
 {
   if (!m_empty) {
     QCoreApplication::removeTranslator(m_core);
+    QCoreApplication::removeTranslator(m_qt);
   }
   else
     m_empty = false;
@@ -108,4 +111,14 @@ void Translation::loadQt()
 {
   m_language = m_core->translate("Translation", "English");
   QCoreApplication::installTranslator(m_core);
+
+  QStringList search = m_search;
+  search.append(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
+  for (int i = 0; i < search.size(); ++i) {
+    if (m_qt->load("qt_" + m_name, search.at(i))) {
+      QCoreApplication::installTranslator(m_qt);
+      return;
+    }
+  }
 }

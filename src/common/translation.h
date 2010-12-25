@@ -47,6 +47,7 @@ private:
   QString m_prefix;     ///< Префикс файлов перевода.
   QStringList m_search; ///< Список директорий для поиска переводов.
   QTranslator *m_core;  ///< Основной загрузчик переводов.
+  QTranslator *m_qt;    ///< Загрузчки перевода Qt.
 };
 
 #endif /* TRANSLATION_H_ */
