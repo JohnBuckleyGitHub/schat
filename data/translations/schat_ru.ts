@@ -302,7 +302,7 @@
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1305"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Язык</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1318"/>
