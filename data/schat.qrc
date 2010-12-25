@@ -1,7 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="translations/schat_en.png">images/lang/en.png</file>
-  <file alias="translations/schat_ru.png">images/lang/ru.png</file>
   <file>css/popupwindow-flash.css</file>
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
@@ -39,7 +37,6 @@
   <file>images/impomezia.png</file>
   <file>images/im-status-message-edit.png</file>
   <file>images/im-user.png</file>
-  <file>images/lang/unknown.png</file>
   <file>images/load.gif</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
@@ -68,7 +65,6 @@
   <file>images/update.png</file>
   <file>images/warning.png</file>
   <file>translations/qt_ru.qm</file>
-  <file>translations/schat_en.qm</file>
   <file>translations/schat_ru.qm</file>
 </qresource>
 </RCC>

@@ -25,7 +25,6 @@
 #include "schatwindow.h"
 #include "settings.h"
 #include "simplechatapp.h"
-#include "translation.h"
 #include "version.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
@@ -105,19 +104,20 @@ QStringList Settings::path(Paths type) const
 
   switch (type) {
     case EmoticonsPath:
-      return path("emoticons");
+      out = path("emoticons");
+      break;
 
     case NetworksPath:
-      return path("networks");
+      out = path("networks");
+      break;
 
     case SoundsPath:
-      return path("sounds");
+      out = path("sounds");
+      break;
 
     case StylesPath:
-      return path("styles");
-
-    case TranslationsPath:
-      return path("translations");
+      out = path("styles");
+      break;
 
     case LogPath:
       if (isUnixLike())
@@ -238,7 +238,6 @@ void Settings::read()
   setString("Style",                SimpleChatApp::defaultStyle());
   #endif
   setString("EmoticonTheme",        "Kolobok");
-  setString("Translation",          "auto");
   setString("Network",              "SimpleNet.xml");
   setList("RecentServers",          QStringList());
   setList("SplitterSizes",          QStringList() << "0" << "0");
@@ -309,10 +308,6 @@ void Settings::read()
     AbstractSettings::read(m_default);
 
   AbstractSettings::read();
-
-  Translation *translation = SimpleChatApp::instance()->translation();
-  translation->setSearch(path(TranslationsPath));
-  translation->load(getString("Translation"));
 
   normalizeInterval();
   #if !defined(SCHAT_NO_STYLE)

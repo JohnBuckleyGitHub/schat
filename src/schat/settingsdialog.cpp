@@ -24,7 +24,6 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "simplechatapp.h"
-#include "translation.h"
 #include "widget/networkwidget.h"
 #include "widget/nickedit.h"
 #include "widget/soundwidget.h"
@@ -1091,8 +1090,8 @@ void UpdateSettings::intervalChanged(int i)
       value = 24;
   }
 
-  QString minute = tr("%n Minute", "", value);
-  QString hour   = tr("%n Hour", "", value);
+  QString minute = tr("%n Минуты", "", value);
+  QString hour   = tr("%n Часы", "", value);
 
   d->factor->clear();
   d->factor->addItem(minute);
@@ -1110,80 +1109,17 @@ class MiscSettings::Private
 {
 public:
   Private() {}
-  QString languageIcon(const QString &file) const;
-  QString languageName(const QString &file) const;
-  QStringList findQmFiles() const;
   void readAutostart();
-  void translations();
   void writeAutostart();
 
   QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
-  QComboBox *language;
 
   #ifdef Q_WS_WIN
   QCheckBox *autostartDaemon;
   #endif
 };
-
-
-/*!
- * Возвращает путь к файлу изображения флага языка.
- * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
- * за исключением расширения, например schat_ru.qm и schat_ru.png.
- * В случае если не будут найдены изображения для русского или английского языка,
- * то для них будут использованы изображения по умолчанию.
- */
-QString MiscSettings::Private::languageIcon(const QString &file) const
-{
-  QString icon = file.left(file.size() - 3) + ".png";
-  if (QFile::exists(icon))
-    return icon;
-
-  if (icon.endsWith("schat_ru.png"))
-    return ":/translations/schat_ru.png";
-
-  if (icon.endsWith("schat_en.png"))
-    return ":/translations/schat_en.png";
-
-  return ":/images/lang/unknown.png";
-}
-
-
-/*!
- * Получаем переведённое имя языка из qm файла.
- */
-QString MiscSettings::Private::languageName(const QString &file) const
-{
-  QTranslator translator;
-  translator.load(file);
-
-  return translator.translate("Translation", "English");
-}
-
-
-/*!
- * \todo проверить обработку коллизий.
- */
-QStringList MiscSettings::Private::findQmFiles() const
-{
-  QStringList dirs = SimpleSettings->path(Settings::TranslationsPath);
-  QStringList fileNames;
-
-  foreach (QString d, dirs) {
-    QDir dir(d);
-    QStringList fn = dir.entryList(QStringList("schat_*.qm"), QDir::Files, QDir::Name);
-    QMutableStringListIterator i(fn);
-    while (i.hasNext()) {
-        i.next();
-        i.setValue(dir.filePath(i.value()));
-    }
-    fileNames += fn;
-  }
-
-  return fileNames;
-}
 
 
 /*!
@@ -1214,37 +1150,6 @@ void MiscSettings::Private::readAutostart()
     return;
   }
   #endif
-}
-
-
-/*!
- * Загрузка языковых файлов.
- */
-void MiscSettings::Private::translations()
-{
-  QStringList qmFiles = findQmFiles();
-  qmFiles.append(":/translations/schat_ru.qm");
-  bool canOverrideEnglish = true;
-
-  for (int i = 0; i < qmFiles.size(); ++i) {
-    QString file = qmFiles[i];
-    QString langName = languageName(file);
-
-    if (langName.isEmpty())
-      continue;
-
-    // Добавляем в список только уникальные языки.
-    if (language->findText(langName) == -1) {
-      language->addItem(QIcon(languageIcon(file)), langName, file);
-    }
-    else if (canOverrideEnglish && file.endsWith("schat_en.qm")) {
-      language->setItemIcon(0, QIcon(languageIcon(file)));
-      language->setItemData(0, file);
-      canOverrideEnglish = false;
-    }
-  }
-
-  language->setCurrentIndex(language->findText(CURRENT_LANG));
 }
 
 
@@ -1302,19 +1207,6 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
-  QGroupBox *language = new QGroupBox(tr("Language"), this);
-  d->language = new QComboBox(this);
-  d->language->setIconSize(QSize(25, 15));
-  d->language->addItem(QIcon(":/translations/schat_en.png"), "English", ":/translations/schat_en.qm");
-
-  d->translations();
-
-  QHBoxLayout *languageLay = new QHBoxLayout(language);
-  languageLay->addWidget(d->language);
-  languageLay->addStretch();
-  languageLay->setMargin(6);
-  languageLay->setSpacing(4);
-
   QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
   #if defined(Q_OS_MAC)
   integration->setVisible(false);
@@ -1338,7 +1230,7 @@ MiscSettings::MiscSettings(QWidget *parent)
   integrationLay->addWidget(d->autostartDaemon);
   #endif
   integrationLay->setMargin(6);
-  integrationLay->setSpacing(4);
+  integrationLay->setMargin(4);
 
   QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
 
@@ -1354,11 +1246,9 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->addWidget(d->log);
   logLay->addWidget(d->logPrivate);
   logLay->setMargin(6);
-  logLay->setSpacing(4);
+  logLay->setMargin(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(language);
-  mainLay->addSpacing(12);
   mainLay->addWidget(integration);
   #if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
@@ -1389,12 +1279,5 @@ void MiscSettings::save()
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
-
-  if (d->language->currentText() != CURRENT_LANG) {
-    Translation *translation = SimpleChatApp::instance()->translation();
-    translation->load(d->language->itemData(d->language->currentIndex()).toString());
-    SimpleSettings->setString("Translation", translation->name());
-  }
-
   SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
