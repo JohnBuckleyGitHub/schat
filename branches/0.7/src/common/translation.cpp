@@ -67,8 +67,7 @@ void Translation::load(const QString &name)
     QFileInfo fileInfo = QFileInfo(name);
     m_name = fileInfo.baseName().mid(m_prefix.size());
     if (m_core->load(name)) {
-      m_language = m_core->translate("Translation", "English");
-      QCoreApplication::installTranslator(m_core);
+      loadQt();
       return;
     }
     else {
@@ -88,8 +87,7 @@ void Translation::load(const QString &name)
   }
 
   if (loaded) {
-    m_language = m_core->translate("Translation", "English");
-    QCoreApplication::installTranslator(m_core);
+    loadQt();
   }
   else if (m_name != "en")
     load("en");
@@ -100,4 +98,14 @@ void Translation::setSearch(const QStringList &search)
 {
   m_search = search;
   m_search.append(":/translations");
+}
+
+
+/*!
+ * Завершает загрузку перевода для приложения и инициирует загрузку перевода Qt.
+ */
+void Translation::loadQt()
+{
+  m_language = m_core->translate("Translation", "English");
+  QCoreApplication::installTranslator(m_core);
 }

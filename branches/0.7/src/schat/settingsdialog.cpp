@@ -1173,7 +1173,7 @@ QStringList MiscSettings::Private::findQmFiles() const
 
   foreach (QString d, dirs) {
     QDir dir(d);
-    QStringList fn = dir.entryList(QStringList("*.qm"), QDir::Files, QDir::Name);
+    QStringList fn = dir.entryList(QStringList("schat_*.qm"), QDir::Files, QDir::Name);
     QMutableStringListIterator i(fn);
     while (i.hasNext()) {
         i.next();
@@ -1229,6 +1229,9 @@ void MiscSettings::Private::translations()
   for (int i = 0; i < qmFiles.size(); ++i) {
     QString file = qmFiles[i];
     QString langName = languageName(file);
+
+    if (langName.isEmpty())
+      continue;
 
     // Добавляем в список только уникальные языки.
     if (language->findText(langName) == -1) {
