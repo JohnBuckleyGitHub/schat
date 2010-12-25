@@ -21,7 +21,6 @@
 
 #include "schatwindow.h"
 #include "simplechatapp.h"
-#include "translation.h"
 #include "version.h"
 
 #ifndef SCHAT_NO_SINGLEAPP
@@ -35,8 +34,7 @@
  */
 SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   : QtSingleApplication(SCHAT_PREFFIX argc, argv),
-  m_window(0),
-  m_translation(0)
+  m_window(0)
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -92,6 +90,14 @@ bool SimpleChatApp::isRunning()
  */
 int SimpleChatApp::run()
 {
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_ru", ":/translations");
+  installTranslator(&qtTranslator);
+
+  QTranslator translator;
+  translator.load("schat_ru", ":/translations");
+  installTranslator(&translator);
+
   m_window = new SChatWindow;
   QStringList args = arguments();
   args.removeFirst();
@@ -122,16 +128,6 @@ SimpleChatApp *SimpleChatApp::instance()
 {
   return (static_cast<SimpleChatApp *>(QCoreApplication::instance()));
 }
-
-
-Translation* SimpleChatApp::translation()
-{
-  if (!m_translation)
-    m_translation = new Translation(this);
-
-  return m_translation;
-}
-
 
 
 #if !defined(SCHAT_NO_STYLE)
