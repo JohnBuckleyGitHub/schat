@@ -21,6 +21,7 @@
 
 #include "schatwindow.h"
 #include "simplechatapp.h"
+#include "translation.h"
 #include "version.h"
 
 #ifndef SCHAT_NO_SINGLEAPP
@@ -34,7 +35,8 @@
  */
 SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   : QtSingleApplication(SCHAT_PREFFIX argc, argv),
-  m_window(0)
+  m_window(0),
+  m_translation(0)
 {
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -46,8 +48,8 @@ SimpleChatApp::SimpleChatApp(int &argc, char **argv)
   setQuitOnLastWindowClosed(false);
   addLibraryPath(applicationDirPath() + "/plugins");
 
-  #ifndef Q_OS_WINCE
-    setStyle(new QPlastiqueStyle);
+  #if defined(Q_WS_X11)
+  setAttribute(Qt::AA_DontShowIconsInMenus, false);
   #endif
 }
 
@@ -90,14 +92,6 @@ bool SimpleChatApp::isRunning()
  */
 int SimpleChatApp::run()
 {
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_ru", ":/translations");
-  installTranslator(&qtTranslator);
-
-  QTranslator translator;
-  translator.load("schat_ru", ":/translations");
-  installTranslator(&translator);
-
   m_window = new SChatWindow;
   QStringList args = arguments();
   args.removeFirst();
@@ -114,7 +108,51 @@ int SimpleChatApp::run()
 }
 
 
+QIcon SimpleChatApp::iconFromTheme(const QString &name)
+{
+  #if defined(Q_WS_X11) && QT_VERSION >= 0x040600
+  return QIcon::fromTheme(name, QIcon(":/images/" + name + ".png"));
+  #else
+  return QIcon(":/images/"+ name + ".png");
+  #endif
+}
+
+
 SimpleChatApp *SimpleChatApp::instance()
 {
   return (static_cast<SimpleChatApp *>(QCoreApplication::instance()));
 }
+
+
+Translation* SimpleChatApp::translation()
+{
+  if (!m_translation)
+    m_translation = new Translation(this);
+
+  return m_translation;
+}
+
+
+
+#if !defined(SCHAT_NO_STYLE)
+QString SimpleChatApp::defaultStyle()
+{
+  QStringList styles = QStyleFactory::keys();
+  Q_UNUSED(styles);
+
+  #if defined(Q_WS_X11)
+  if (styles.contains("Oxygen"))
+    return "Oxygen";
+
+  if (styles.contains("GTK+"))
+    return "GTK+";
+  #endif
+
+  #if defined(Q_WS_WIN)
+  if (styles.contains("WindowsVista"))
+    return "WindowsVista";
+  #endif
+
+  return "Plastique";
+}
+#endif

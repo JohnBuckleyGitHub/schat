@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,22 +20,35 @@
 #include <QtNetwork>
 
 #include "clientservice.h"
-#include "protocol/CorePackets.h"
-#include "schatmacro.h"
 
-static const int CheckTimeout         = 12000;
+static const int CheckTimeout         = 15000;
 static const int ReconnectTimeout     = 4000;
+
+#ifdef SCHAT_DEBUG
+  #undef SCHAT_DEBUG
+  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
+  #include <QDebug>
+  #include <QTime>
+#else
+  #define SCHAT_DEBUG(x)
+#endif
 
 /*!
  * \brief Конструктор класса ClientService.
  */
 ClientService::ClientService(AbstractProfile *profile, const Network *network, QObject *parent)
-  : ServiceCore(parent),
+  : QObject(parent),
+  m_profile(profile),
+  m_accepted(false),
   m_fatal(false),
+  m_synced(false),
   m_network(network),
-  m_reconnects(0)
+  m_reconnects(0),
+  m_socket(0),
+  m_safeNick(profile->nick()),
+  m_nextBlockSize(0)
 {
-  m_profile = profile;
+  m_stream.setVersion(StreamVersion);
   m_checkTimer.setInterval(CheckTimeout);
   m_ping.setInterval(22000);
   m_reconnectTimer.setInterval(ReconnectTimeout);
@@ -49,6 +62,22 @@ ClientService::ClientService(AbstractProfile *profile, const Network *network, Q
 ClientService::~ClientService()
 {
   SCHAT_DEBUG(this << "::~ClientService()")
+}
+
+
+/*!
+ * Возвращает `true` если сервис находится в активном состоянии.
+ */
+bool ClientService::isReady() const
+{
+  if (m_socket) {
+    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 
@@ -123,37 +152,31 @@ bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
 
 
 /*!
- * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
- * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
+ * Отправка пакета `OpcodeMessage` на сервер, ник отправителя находится в удалённом сервисе.
+ * const QString &channel -> канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * const QString &message -> сообщение.
+ * ----
+ * Возвращает `true` в случае успешной отправки (без подтверждения сервером).
  */
-void ClientService::connectToHost()
+bool ClientService::sendMessage(const QString &channel, const QString &message)
 {
-  SCHAT_DEBUG(this << "::connectToHost()")
-  if (m_socket) {
-    SCHAT_DEBUG(m_socket->state())
+  SCHAT_DEBUG(this << "::sendMessage(const QString &, const QString &)" << channel << message)
+
+  if (isReady()) {
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(StreamVersion);
+    out << quint16(0)
+        << OpcodeMessage
+        << channel
+        << message;
+    out.device()->seek(0);
+    out << quint16(block.size() - (int) sizeof(quint16));
+    m_socket->write(block);
+    return true;
   }
-
-  if (!m_socket)
-    createSocket();
-
-  m_fatal = false;
-
-  if (m_socket->state() == QAbstractSocket::UnconnectedState) {
-    m_server = m_network->server();
-    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
-      m_socket->connectToHost(m_server.address, m_server.port);
-
-    if (m_network->isNetwork())
-      emit connecting(m_network->name(), true);
-    else
-      emit connecting(m_server.address, false);
-
-    m_checkTimer.start();
-  }
-  else if (m_socket->state() == QAbstractSocket::ConnectedState) {
-    m_reconnects = 0;
-    m_socket->disconnectFromHost();
-  }
+  else
+    return false;
 }
 
 
@@ -179,13 +202,6 @@ void ClientService::quit(bool end)
     m_checkTimer.stop();
     m_reconnectTimer.stop();
   }
-}
-
-
-void ClientService::sendByeMsg()
-{
-  ByeMsgPacket packet(m_profile->byeMsg());
-  rawSend(packet);
 }
 
 
@@ -217,22 +233,62 @@ void ClientService::sendNewUser(const QStringList &list, quint8 echo, quint8 num
 
 
 /*!
+ * Подключение к хосту, за выдачу адреса сервера и порта отвечает класс `m_network`.
+ * В случае попытки подключения высылается сигнал `void connecting(const QString &, bool)`.
+ */
+void ClientService::connectToHost()
+{
+  SCHAT_DEBUG(this << "::connectToHost()")
+  if (m_socket) {
+    SCHAT_DEBUG(m_socket->state())
+  }
+
+  if (!m_socket)
+    createSocket();
+
+  m_fatal = false;
+  m_synced = false;
+
+  if (m_socket->state() == QAbstractSocket::UnconnectedState) {
+    m_server = m_network->server();
+    if (m_server.address == "127.0.0.1" || m_server.address == "localhost" || activeInterfaces())
+      m_socket->connectToHost(m_server.address, m_server.port);
+
+    if (m_network->isNetwork())
+      emit connecting(m_network->name(), true);
+    else
+      emit connecting(m_server.address, false);
+
+    m_checkTimer.start();
+  }
+  else if (m_socket->state() == QAbstractSocket::ConnectedState) {
+    m_reconnects = 0;
+    m_socket->disconnectFromHost();
+  }
+}
+
+
+/*!
  * Разрыв соединения или переподключение если после `CheckTimeout` миллисекунд не удалось установить действующие соединение.
  */
 void ClientService::check()
 {
-  SCHAT_DEBUG(this << "::check()")
+  SCHAT_DEBUG(this << "::check()" << m_accepted << m_synced)
 
   if (m_socket) {
-    if (m_socket->state() != QTcpSocket::ConnectedState) {
+    if (m_socket->state() == QTcpSocket::ConnectedState) {
+      if (!m_accepted || !m_synced) {
+        m_socket->disconnectFromHost();
+        return;
+      }
+      m_checkTimer.stop();
+    }
+    else {
       m_socket->deleteLater();
       m_socket = 0;
-      connectToHost();
+      QTimer::singleShot(1000, this, SLOT(connectToHost()));
+      return;
     }
-    else if (!m_accepted && m_socket->state() == QTcpSocket::ConnectedState)
-      m_socket->disconnectFromHost();
-    else
-      m_checkTimer.stop();
   }
   else
     m_checkTimer.stop();
@@ -246,20 +302,31 @@ void ClientService::check()
  */
 void ClientService::connected()
 {
-  SCHAT_DEBUG(this << "::connected()")
+  SCHAT_DEBUG(this << "::connected()" << m_profile->nick())
 
   m_nextBlockSize = 0;
   m_reconnectTimer.stop();
 
-  #ifdef SCHAT_CLIENT
-  HandshakeRequest packet(m_profile);
-  #else
-  HandshakeRequest packet(m_profile, 3, HandshakeRequest::FlagLink);
-  #endif
+  QByteArray block;
+  QDataStream out(&block, QIODevice::WriteOnly);
+  out.setVersion(StreamVersion);
+  out << quint16(0)
+      << OpcodeGreeting
+      << ProtocolVersion
+      #ifdef SCHAT_CLIENT
+       << FlagNone
+      #else
+       << FlagLink
+      #endif
+      << m_profile->genderNum()
+      << m_profile->nick()
+      << m_profile->fullName()
+      << m_profile->userAgent()
+      << m_profile->byeMsg();
 
-  m_accepted = true;
-  rawSend(packet);
-  m_accepted = false;
+  out.device()->seek(0);
+  out << quint16(block.size() - (int) sizeof(quint16));
+  m_socket->write(block);
 }
 
 
@@ -269,7 +336,7 @@ void ClientService::connected()
  */
 void ClientService::disconnected()
 {
-  SCHAT_DEBUG(this << "::disconnected()")
+  SCHAT_DEBUG(this << "::disconnected()" << (m_socket ? m_socket->errorString() : ""))
 
   if (m_ping.isActive())
     m_ping.stop();
@@ -303,7 +370,7 @@ void ClientService::ping()
 }
 
 
-/** [private slots]
+/*!
  * Слот вызывается когда поступила новая порция данных для чтения из сокета `m_socket`.
  */
 void ClientService::readyRead()
@@ -378,8 +445,7 @@ void ClientService::readyRead()
           break;
 
         case OpcodeSyncUsersEnd:
-          m_nextBlockSize = 0;
-          emit syncUsersEnd();
+          opcodeSyncUsersEnd();
           break;
 
         case OpcodeSyncByeMsg:
@@ -568,6 +634,22 @@ void ClientService::createSocket()
 }
 
 
+void ClientService::mangleNick()
+{
+  SCHAT_DEBUG(this << "mangleNick()")
+
+  int max = 99;
+  QString nick = m_safeNick;
+  if (nick.size() == AbstractProfile::MaxNickLength)
+    nick = nick.left(AbstractProfile::MaxNickLength - 2);
+  else if (nick.size() == AbstractProfile::MaxNickLength - 1)
+    max = 9;
+
+  m_profile->setNick(nick + QString().setNum(qrand() % max));
+  SCHAT_DEBUG("            ^^^^^ mangled nick:" << m_profile->nick())
+}
+
+
 /*!
  * Разбор пакета с опкодом  \b OpcodeAccessDenied.
  */
@@ -577,16 +659,24 @@ void ClientService::opcodeAccessDenied()
   m_stream >> p_reason;
   m_nextBlockSize = 0;
 
+  SCHAT_DEBUG(this << "opcodeAccessDenied()" << "reason:" << p_reason)
+
   /// \todo Полное игнорирование ошибки \a ErrorNumericAlreadyUse не является правильным, однако эта ошибка может возникнуть при определённых обстоятельствах,
   /// что может привести к невозможности восстановления соединения, также эта ошибка возможна только при link-соединении.
   if (!(p_reason == ErrorUsersLimitExceeded || p_reason == ErrorLinksLimitExceeded || p_reason == ErrorMaxUsersPerIpExceeded || p_reason == ErrorNumericAlreadyUse))
     m_fatal = true;
 
+  if (p_reason == ErrorNickAlreadyUse) {
+    mangleNick();
+    QTimer::singleShot(400, this, SLOT(connectToHost()));
+    return;
+  }
+
   emit accessDenied(p_reason);
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeAccessGranted`.
  * Функция отправляет сигнал `accessGranted(const QString &, const QString &, quint16)`.
  * Если установлено подключение к одиночному серверу, то имя сети устанавливается "".
@@ -809,7 +899,7 @@ void ClientService::opcodeSyncByeMsg()
 }
 
 
-/** [private]
+/*!
  * Разбор пакета с опкодом `OpcodeSyncNumerics`.
  */
 void ClientService::opcodeSyncNumerics()
@@ -818,6 +908,14 @@ void ClientService::opcodeSyncNumerics()
   m_stream >> p_numerics;
   m_nextBlockSize = 0;
   emit syncNumerics(p_numerics);
+}
+
+
+void ClientService::opcodeSyncUsersEnd()
+{
+  m_nextBlockSize = 0;
+  m_synced = true;
+  emit syncUsersEnd();
 }
 
 
@@ -863,6 +961,11 @@ void ClientService::opcodeUserLeave()
   m_nextBlockSize = 0;
 
   emit userLeave(p_nick, p_bye, p_flag);
+
+  if (p_nick.toLower() == m_safeNick.toLower()) {
+    m_profile->setNick(m_safeNick);
+    QTimer::singleShot(0, this, SLOT(sendNewProfile()));
+  }
 }
 
 

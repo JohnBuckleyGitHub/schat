@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #endif
 
 class SChatWindow;
+class Translation;
 
 /*!
  * \brief Экземпляр приложения.
@@ -40,10 +41,17 @@ public:
   ~SimpleChatApp();
   bool isRunning();
   int run();
+  static QIcon iconFromTheme(const QString &name);
   static SimpleChatApp *instance();
+  Translation *translation();
+
+  #if !defined(SCHAT_NO_STYLE)
+  static QString defaultStyle();
+  #endif
 
 private:
   SChatWindow *m_window;
+  Translation *m_translation;
 };
 
 #endif /* SIMPLECHATAPP_H_ */

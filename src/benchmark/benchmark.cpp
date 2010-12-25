@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,48 +28,68 @@
  * Конструктор класса Benchmark.
  */
 Benchmark::Benchmark(QObject *parent)
-  : QObject(parent),
+  : QThread(parent),
+  m_settings(0),
+  m_accepted(0),
   m_connectInterval(200),
   m_count(0),
+  m_disconnected(0),
+  m_rejected(0),
+  m_synced(0),
   m_usersCount(10),
+  m_network(0),
   m_nickPrefix("test_"),
-  m_serverAddr("192.168.5.150:7666")
+  m_serverAddr("192.168.238.1:7667")
 {
-  m_settings = new AbstractSettings(QCoreApplication::applicationDirPath() + "/benchmark.conf", this);
-  m_settings->setInt("ConnectInterval", m_connectInterval);
-  m_settings->setInt("UsersCount",      m_usersCount);
-  m_settings->setString("NickPrefix",   m_nickPrefix);
-  m_settings->setString("Network",      m_serverAddr);
-
-  m_network = new Network(this);
-
-  QTimer::singleShot(0, this, SLOT(init()));
 }
 
 
-void Benchmark::accessDenied(quint16 reason)
+Benchmark::~Benchmark()
 {
-  Q_UNUSED(reason)
-//  qDebug() << "Benchmark::accessDenied()" << reason;
+  if (m_settings)
+    delete m_settings;
+
+  if (m_network)
+    delete m_network;
 }
 
 
 void Benchmark::connectToHost()
 {
   if (m_count < m_usersCount) {
-    AbstractProfile *profile = new AbstractProfile(this);
+    AbstractProfile *profile = new AbstractProfile();
     profile->setNick(m_nickPrefix + QString::number(m_count));
-    ClientService *service = new ClientService(profile, m_network, this);
+    connect(this, SIGNAL(finished()), profile, SLOT(deleteLater()));
+
+    ClientService *service = new ClientService(profile, m_network);
+    connect(this, SIGNAL(finished()), service, SLOT(deleteLater()));
+
+    #if !defined(BENCHMARK_NO_UI)
+    connect(service, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
     connect(service, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
+    connect(service, SIGNAL(syncUsersEnd()), SLOT(syncUsersEnd()));
+    connect(service, SIGNAL(unconnected(bool)), SLOT(unconnected()));
+    emit started(++m_count);
+    #else
+    ++m_count;
+    #endif
+
     service->connectToHost();
-    m_count++;
     QTimer::singleShot(m_connectInterval, this, SLOT(connectToHost()));
   }
 }
 
 
-void Benchmark::init()
+void Benchmark::run()
 {
+  m_settings = new AbstractSettings(QCoreApplication::applicationDirPath() + "/benchmark.conf");
+  m_settings->setInt("ConnectInterval", m_connectInterval);
+  m_settings->setInt("UsersCount",      m_usersCount);
+  m_settings->setString("NickPrefix",   m_nickPrefix);
+  m_settings->setString("Network",      m_serverAddr);
+
+  m_network = new Network();
+
   m_settings->read();
   m_connectInterval = m_settings->getInt("ConnectInterval");
   m_usersCount      = m_settings->getInt("UsersCount");
@@ -79,4 +99,6 @@ void Benchmark::init()
   m_network->fromString(m_serverAddr);
 
   connectToHost();
+
+  exec();
 }

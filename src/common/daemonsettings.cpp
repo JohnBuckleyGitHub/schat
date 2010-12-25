@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 /*!
  * \brief Конструктор класса DaemonSettings.
  */
-DaemonSettings::DaemonSettings(const QString &filename, QObject *parent)
-  : AbstractSettings(filename, parent)
+DaemonSettings::DaemonSettings(const QString &fileName, QObject *parent)
+  : AbstractSettings(fileName, parent)
 {
 }
 
@@ -57,6 +57,30 @@ void DaemonSettings::read()
   setString("MotdFile",      "motd.html");
   setString("NormalizeFile", "normalize.xml");
   setString("StatsFile",     "stats.xml");
+  mutableKeys();
 
   AbstractSettings::read();
+}
+
+
+void DaemonSettings::reload()
+{
+  mutableKeys();
+  m_settings->sync();
+  AbstractSettings::read();
+}
+
+
+/*!
+ * Ключи настроек, которые могут быть изменены во время работы сервера.
+ */
+void DaemonSettings::mutableKeys()
+{
+  setInt("FloodDetectTime",     16);
+  setInt("FloodLimit",          8);
+  setInt("MaxRepeatedMsgs",     3);
+  setInt("MuteTime",            60);
+  setInt("JoinFloodDetectTime", 60);
+  setInt("JoinFloodLimit",      3);
+  setInt("JoinFloodBanTime",    120);
 }

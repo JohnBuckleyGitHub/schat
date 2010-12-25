@@ -33,6 +33,14 @@ ${Section}
     File "${VC90_REDIST_DIR}\msvcr90.dll"
     File "contrib\Microsoft.VC90.CRT.manifest"
   !endif
+  
+  !if ${SCHAT_VC100} == 1
+    File "${VC100_REDIST_DIR}\msvcp100.dll"
+    File "${VC100_REDIST_DIR}\msvcr100.dll"
+    Delete "$INSTDIR\msvcp90.dll"
+    Delete "$INSTDIR\msvcr90.dll"
+    Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
+  !endif
 
   SetOutPath "$INSTDIR\plugins\imageformats"
   File "${SCHAT_QTDIR}\plugins\imageformats\qgif4.dll"
@@ -49,6 +57,8 @@ ${Uninstall}
   Delete "$INSTDIR\QtWebKit4.dll"
   Delete "$INSTDIR\msvcp90.dll"
   Delete "$INSTDIR\msvcr90.dll"
+  Delete "$INSTDIR\msvcp100.dll"
+  Delete "$INSTDIR\msvcr100.dll"
   Delete "$INSTDIR\Microsoft.VC90.CRT.manifest"
   Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
   Delete "$INSTDIR\plugins\imageformats\qico4.dll"

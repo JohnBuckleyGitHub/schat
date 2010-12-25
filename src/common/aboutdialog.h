@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 class QLabel;
 class QTabWidget;
+class QVBoxLayout;
 
 #ifndef SCHAT_NO_UPDATE_WIDGET
   class UpdateWidget;
@@ -40,9 +41,18 @@ class AboutDialog : public QDialog
 public:
   AboutDialog(QWidget *parent = 0);
 
+protected:
+  #if defined(Q_WS_WIN)
+  bool winEvent(MSG *message, long *result);
+  #endif
+
 private:
+  void setStyleSheet();
+
   QPushButton *m_closeButton;
   QTabWidget *m_tabWidget;
+  QVBoxLayout *m_mainLay;
+  QWidget *m_bottom;
   #ifndef SCHAT_NO_UPDATE_WIDGET
     UpdateWidget *m_update;
   #endif

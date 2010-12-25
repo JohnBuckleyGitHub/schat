@@ -439,7 +439,7 @@ bool DaemonNetSettings::revalidate()
  */
 void DaemonNetSettings::readNetwork()
 {
-  Network network(QApplication::applicationDirPath(), this);
+  Network network(QStringList(QApplication::applicationDirPath()), this);
   network.setSingle(true);
   network.setFailBack(false);
   if (network.fromFile(DaemonSettingsInstance->getString("NetworkFile"))) {

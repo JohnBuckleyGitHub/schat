@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,11 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+
+#include <QContextMenuEvent>
+#include <QMenu>
+//#include <QDebug>
 
 #include "channellog.h"
+#include "simplechatapp.h"
 #include "widget/inputwidget.h"
-
 
 /*!
  * \brief Конструктор класса InputWidget.
@@ -28,6 +31,11 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
 {
+  #if defined(Q_OS_MAC)
+  setAttribute(Qt::WA_MacShowFocusRect, true);
+  setFrameShape(QFrame::NoFrame);
+  setFrameShadow(QFrame::Plain);
+  #endif
   detectMinimumHeight();
   m_default = currentCharFormat();
   m_current = 0;
@@ -76,6 +84,15 @@ void InputWidget::paste()
     setCurrentCharFormat(format);
     emit cursorPositionChanged();
   }
+}
+
+
+void InputWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QTextEdit::changeEvent(event);
 }
 
 
@@ -153,22 +170,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
  */
 void InputWidget::createActions()
 {
-  m_cutAction = new QAction(QIcon(":/images/edit-cut.png"), tr("&Вырезать"), this);
+  m_cutAction = new QAction(SimpleChatApp::iconFromTheme("edit-cut"), "", this);
   m_cutAction->setShortcut(QKeySequence::Cut);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
-  m_copyAction = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  m_copyAction = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), "", this);
   m_copyAction->setShortcut(QKeySequence::Copy);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
-  m_pasteAction = new QAction(QIcon(":/images/edit-paste.png"), tr("&Вставить"), this);
+  m_pasteAction = new QAction(SimpleChatApp::iconFromTheme("edit-paste"), "", this);
   m_pasteAction->setShortcut(QKeySequence::Paste);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
-  m_clearAction = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
+  m_clearAction = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
-  m_selectAllAction = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+  m_selectAllAction = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
   m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
@@ -183,7 +200,11 @@ void InputWidget::detectMinimumHeight()
     static const int correction = 4;
    #endif
   #else
+    #if defined(Q_OS_MAC)
+    static const int correction = 4;
+    #else
     static const int correction = 0;
+    #endif
   #endif
   QFontInfo fontInfo(currentFont());
   setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
@@ -217,4 +238,14 @@ void InputWidget::prevMsg()
       moveCursor(QTextCursor::End);
     }
   }
+}
+
+
+void InputWidget::retranslateUi()
+{
+  m_cutAction->setText(tr("Cu&t"));
+  m_copyAction->setText(tr("&Copy"));
+  m_pasteAction->setText(tr("&Paste"));
+  m_clearAction->setText(tr("Clear"));
+  m_selectAllAction->setText(tr("Select All"));
 }

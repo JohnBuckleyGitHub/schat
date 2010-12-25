@@ -4,7 +4,8 @@
     <name>Simple Network</name>
     <site>http://impomezia.ru</site>
   </meta>
-  <servers>
+  <servers random="false">
     <host>schat.impomezia.com</host>
+    <host>us.schat.impomezia.com</host>
   </servers>
 </network>

@@ -30,6 +30,7 @@
 #include "chatview_p.h"
 #include "protocol.h"
 #include "settings.h"
+#include "simplechatapp.h"
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
@@ -81,9 +82,15 @@ bool ChatViewPrivate::prepareCmd(const QString &cmd, QString &msg, bool cut)
 {
   if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
     if (cut) {
-      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      QString c = cmd;
+      int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      if (index == -1 && c.endsWith(' ')) {
+        c = c.left(c.size() - 1);
+        index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      }
+
       if (index != -1)
-        msg.remove(index, cmd.size());
+        msg.remove(index, c.size());
     }
     return true;
   }
@@ -99,7 +106,7 @@ void ChatViewPrivate::toLog(const QString &text)
 {
   if (log) {
     if (!channelLog) {
-      channelLog = new ChannelLog(q);
+      channelLog = new ChannelLog(SimpleSettings->isUnixLike() ? SCHAT_UNIX_CONFIG("log") : QApplication::applicationDirPath() + "/log", q);
       channelLog->setChannel(channel);
     }
     channelLog->msg(text);
@@ -157,6 +164,8 @@ ChatView::ChatView(QWidget *parent)
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
     setAcceptDrops(false);
+
+    QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   #else
     d = new ChatViewPrivate(this);
 
@@ -391,7 +400,7 @@ void ChatView::log(bool enable)
 
   if (enable) {
     if (!d->channelLog) {
-      d->channelLog = new ChannelLog(this);
+      d->channelLog = new ChannelLog(SimpleSettings->isUnixLike() ? SCHAT_UNIX_CONFIG("log") : QApplication::applicationDirPath() + "/log", this);
       d->channelLog->setChannel(d->channel);
     }
   }
@@ -608,15 +617,15 @@ void ChatView::createActions()
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
-  d->copy = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Копировать"), this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
+  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("&Очистить"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("&Выделить всё"), this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
   #endif
 }

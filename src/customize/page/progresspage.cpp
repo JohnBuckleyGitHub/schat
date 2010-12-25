@@ -500,7 +500,7 @@ bool ProgressPage::createNsi(Nsi type)
            << "!define SCHAT_QT_BINDIR \"..\"" << endl
            << "!define SCHAT_BINDIR \"..\"" << endl
            << "!define SCHAT_DATADIR \"..\"" << endl
-           << "!define VC90_REDIST_DIR \"..\"" << endl
+           << "!define VC100_REDIST_DIR \"..\"" << endl
            << "!define OPT_DESKTOP " << bool2int("NsisDesktop") << endl
            << "!define OPT_QUICKLAUNCH " << bool2int("NsisQuickLaunch") << endl
            << "!define OPT_ALLPROGRAMS " << bool2int("NsisAllPrograms") << endl

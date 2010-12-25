@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,9 +45,15 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   m_splitter = new QSplitter(this);
   m_splitter->addWidget(m_view);
   m_splitter->addWidget(createUserView());
-  m_splitter->setStretchFactor(0, 3);
-  m_splitter->setStretchFactor(1, 2);
+  m_splitter->setStretchFactor(0, 1);
+  m_splitter->setStretchFactor(1, 1);
+
+  #if defined(Q_OS_MAC)
+  m_splitter->setHandleWidth(1);
+  m_splitter->setStyleSheet("QSplitter::handle { background: #919191; }");
+  #else
   m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
+  #endif
 
   m_mainLayout = new QVBoxLayout;
   m_mainLayout->addLayout(m_networkLayout);
@@ -80,10 +86,6 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
 void MainChannel::addNewUser(quint8 gender, const QString &nick)
 {
   m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
-//  if (!m_usersJoin.isActive())
-//    m_usersJoin.start(1000, this);
-//
-//  m_newUsers.insert(nick, gender);
 }
 
 
@@ -105,27 +107,10 @@ void MainChannel::displayChoiceServer(bool display)
   else
     m_networkLayout->setMargin(0);
 
-    m_networkWidget->setVisible(display);
+  m_networkWidget->setVisible(display);
 
   m_view->scroll();
 }
-
-
-//void MainChannel::timerEvent(QTimerEvent *event)
-//{
-//  if (event->timerId() == m_usersJoin.timerId()) {
-//    m_usersJoin.stop();
-//    if (!m_newUsers.isEmpty()) {
-//      if (m_newUsers.size() == 1)
-//        m_view->addServiceMsg(ChatView::statusNewUser(m_newUsers.values().at(0), m_newUsers.keys().at(0)));
-//      else
-//        addNewUsers(m_newUsers.keys());
-//
-//      m_newUsers.clear();
-//    }
-//  } else
-//    AbstractTab::timerEvent(event);
-//}
 
 
 void MainChannel::notify(int code)
@@ -184,23 +169,3 @@ QWidget* MainChannel::createUserView()
   userLay->addWidget(userSearch);
   return userWidget;
 }
-
-
-//void MainChannel::addNewUsers(const QStringList &nicks)
-//{
-//  QString out = "<span class='newUser'>";
-//
-//  if (nicks.size() > 10) {
-//    out += tr("<b>%n</b> пользователь заходят в чат", "", nicks.size());
-//  }
-//  else {
-//    out += QString("<a href='nick:%1'>%2</a>").arg(QString(nicks.at(0).toUtf8().toHex())).arg(Qt::escape(nicks.at(0)));
-//    for (int i = 1; i < nicks.size(); ++i) {
-//      out += QString(", <a href='nick:%1'>%2</a>").arg(QString(nicks.at(i).toUtf8().toHex())).arg(Qt::escape(nicks.at(i)));
-//    }
-//    out += tr(" заходят в чат");
-//  }
-//
-//  out += "</span>";
-//  m_view->addServiceMsg(out);
-//}

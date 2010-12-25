@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,10 @@ const quint16 Network::failBackPort   = 7666;
 Network::Network(QObject *parent)
   : QObject(parent),
   m_failBack(true),
-  m_single(false)
+  m_random(true),
+  m_single(false),
+  m_networksPath(QCoreApplication::applicationDirPath() + "/networks")
 {
-  m_networksPath = QCoreApplication::applicationDirPath() + "/networks";
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 }
 
@@ -42,26 +43,36 @@ Network::Network(QObject *parent)
  * \param path Путь в котором будут икаться файлы сети.
  * \param parent Указатель на родительский объект.
  */
-Network::Network(const QString &path, QObject *parent)
+Network::Network(const QStringList &paths, QObject *parent)
   : QObject(parent),
   m_failBack(true),
-  m_single(false)
+  m_random(true),
+  m_single(false),
+  m_networksPath(paths)
 {
-  m_networksPath = path;
   qsrand(QDateTime(QDateTime::currentDateTime()).toTime_t());
 }
 
 
-/** [public]
+/*!
  * Получение списка сервером, входная строка является записью в конфигурационном файле,
  * если файл найден, вызывается функция `fromFile()` если нет `fromString()`.
  */
 bool Network::fromConfig(const QString &s)
 {
-  if (QFile::exists(m_networksPath + '/' + s))
-    return fromFile(s);
-  else
-    return fromString(s);
+  if (QFileInfo(s).isAbsolute()) {
+    if (QFile::exists(s))
+      return fromFile(s);
+    else
+      return fromConfig(QFileInfo(s).fileName());
+  }
+
+  foreach (QString path, m_networksPath) {
+    if (QFile::exists(path + "/" + s))
+      return fromFile(path + "/" + s);
+  }
+
+  return fromString(s);
 }
 
 
@@ -70,12 +81,25 @@ bool Network::fromConfig(const QString &s)
  *
  * \param file Имя файла без пути.
  */
-bool Network::fromFile(const QString &file)
+bool Network::fromFile(const QString &f)
 {
   NetworkReader reader;
   m_servers.clear();
 
-  if (reader.readFile(m_networksPath + '/' + file)) {
+  QString file;
+  if (QFileInfo(f).isRelative()) {
+    for (int i = 0; i < m_networksPath.size(); ++i) {
+      if (QFile::exists(m_networksPath.at(i) + "/" + f)) {
+        file = m_networksPath.at(i) + "/" + f;
+        break;
+      }
+    }
+  }
+  else {
+    file = f;
+  }
+
+  if (!file.isEmpty() && reader.readFile(file)) {
     m_valid       = true;
     m_network     = true;
     m_description = reader.description().left(MaxDesc);
@@ -83,6 +107,7 @@ bool Network::fromFile(const QString &file)
     m_site        = reader.site().left(MaxSite);
     m_key         = reader.key().left(MaxKey);
     m_servers     = reader.servers();
+    m_random      = reader.isRandom();
     m_file        = file;
   }
   else {
@@ -118,7 +143,7 @@ bool Network::fromString(const QString &s)
 }
 
 
-/** [public]
+/*!
  * Возвращает строку для записи в конфигурационный файл,
  * это может быть именем файла сети либо в случае одиночного сервера,
  * парой "адрес:порт".
@@ -127,7 +152,7 @@ QString Network::config() const
 {
   if (m_valid) {
     if (m_network)
-      return m_file;
+      return QFileInfo(m_file).fileName();
     else
       return m_servers.at(0).address + ':' + QString().setNum(m_servers.at(0).port);
   }
@@ -160,18 +185,31 @@ ServerInfo Network::server() const
   if (m_single)
     return m_servers.at(0);
 
-  int index;
+  int index = 0;
   static int prevIndex;
   static bool init;
 
-  if (init) {
-    do {
+  if (m_random) {
+    if (init) {
+      do {
+        index = qrand() % m_servers.count();
+      } while (index == prevIndex);
+    }
+    else {
+      init = true;
       index = qrand() % m_servers.count();
-    } while (index == prevIndex);
+    }
   }
   else {
-    init = true;
-    index = qrand() % m_servers.count();
+    if (init) {
+      if (prevIndex < m_servers.count() - 1)
+        index = ++prevIndex;
+      else
+        index = 0;
+    }
+    else {
+      init = true;
+    }
   }
 
   prevIndex = index;

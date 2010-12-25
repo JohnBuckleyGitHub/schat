@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,11 +9,11 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <QtCore>
@@ -32,6 +32,7 @@
  * \brief Конструктор класса NetworkReader.
  */
 NetworkReader::NetworkReader()
+  : m_random(true)
 {
 }
 
@@ -105,8 +106,9 @@ void NetworkReader::readNetwork()
     if (isStartElement()) {
       if (name() == "meta")
         readMeta();
-      else if (name() == "servers")
+      else if (name() == "servers") {
         readServers();
+      }
       else
         readUnknownElement();
     }
@@ -114,13 +116,16 @@ void NetworkReader::readNetwork()
 }
 
 
-/** [private]
+/*!
  * Функция читает список серверов сети (элемент host) в список `m_servers`.
  * Адрес сервера может быть вида: "адрес:порт",
  * если порт не указан, используется стандартный 7666.
  */
 void NetworkReader::readServers()
 {
+  if (attributes().value("random") == "false")
+    m_random = false;
+
   while (!atEnd()) {
     readNext();
 

@@ -244,6 +244,12 @@ QString ChannelLog::toPlainText(const QString &str)
 }
 
 
+/*!
+ * Запись строки в журнал.
+ *
+ * \param text   Строка.
+ * \param filter Включает использование HTML фильтра, если формат журнала протой текст.
+ */
 void ChannelLog::msg(const QString &text)
 {
   if (!m_channel.isEmpty()) {
@@ -261,7 +267,7 @@ void ChannelLog::msg(const QString &text)
         m_stream << line << endl;
       }
       else
-        m_stream << dateTimeStamp() << ' ' << toPlainText(text) << endl;
+        m_stream << dateTimeStamp() << ' ' << text << endl;
     }
   }
 }

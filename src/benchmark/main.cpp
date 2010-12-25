@@ -16,17 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "benchmark.h"
-
-#include <QtCore>
+#include "benchmarkapp.h"
 
 int main(int argc, char *argv[])
 {
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-
-  QCoreApplication app(argc, argv);
-  Benchmark benchmark;
+  BenchmarkApp app(argc, argv);
 
   return app.exec();
 }

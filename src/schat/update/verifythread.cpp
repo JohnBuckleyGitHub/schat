@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ void VerifyThread::run()
 /*!
  * Проверка локального файла.
  * Наличие, размер, контрольная сумма.
- * \todo Эта функция для проверки md5 суммы загружает файл целиком в память, это не оптимально.
  *
  * \param fileInfo Структура содержащая информацию о файле.
  * \return \a true в случае успешной проверки файла, иначе \a false;
@@ -78,6 +77,9 @@ bool VerifyThread::verifyFile(const FileInfo &fileInfo) const
   if(!file.open(QIODevice::ReadOnly))
     return false;
 
+  while (file.bytesAvailable() > 65536) {
+    hash.addData(file.read(65536));
+  }
   hash.addData(file.readAll());
   result = hash.result();
 

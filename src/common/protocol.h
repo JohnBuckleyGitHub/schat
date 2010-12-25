@@ -19,8 +19,6 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
-#include <QDataStream>
-
 static const int     StreamVersion                   = QDataStream::Qt_4_4;
 static const quint16 ProtocolVersion                 = 3;
 
@@ -314,6 +312,7 @@ static const quint32 StatusNormal                   = 0;
 static const quint32 StatusAway                     = 1;
 static const quint32 StatusAutoAway                 = 2;
 static const quint32 StatusDnD                      = 3;
+static const quint32 StatusOffline                  = 32768;
 }
 
 

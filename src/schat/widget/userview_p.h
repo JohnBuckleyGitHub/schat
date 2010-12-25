@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,15 +29,16 @@ class QuickUserSearch;
 class UserViewPrivate
 {
 public:
-  UserViewPrivate(const AbstractProfile *prof);
+  UserViewPrivate(const AbstractProfile *profile, QTabWidget *tabs);
   ~UserViewPrivate();
-  QStandardItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchExactly) const;
+  UserItem* item(const QString &nick, Qt::MatchFlags flags = Qt::MatchFixedString) const;
   void sort();
   void sortNow();
 
   bool needSort;
   const AbstractProfile *profile;
   QStandardItemModel model;
+  QTabWidget *tabs;
   QTimer sortTimer;
   QuickUserSearch *quickUserSearch;
 };
