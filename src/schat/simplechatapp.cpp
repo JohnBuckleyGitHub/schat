@@ -92,16 +92,6 @@ bool SimpleChatApp::isRunning()
  */
 int SimpleChatApp::run()
 {
-//  QTranslator qtTranslator;
-//  qtTranslator.load("qt_ru", ":/translations");
-//  installTranslator(&qtTranslator);
-//
-//  QTranslator translator;
-//  translator.load("schat_ru", ":/translations");
-//  installTranslator(&translator);
-//
-//  setLanguage(translator.translate("SimpleChatApp", "English"));
-
   m_window = new SChatWindow;
   QStringList args = arguments();
   args.removeFirst();

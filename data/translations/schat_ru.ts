@@ -218,29 +218,29 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat/widget/inputwidget.cpp" line="161"/>
-        <source>&amp;Вырезать</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/inputwidget.cpp" line="246"/>
+        <source>Cu&amp;t</source>
+        <translation>&amp;Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/inputwidget.cpp" line="165"/>
-        <source>&amp;Копировать</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/inputwidget.cpp" line="247"/>
+        <source>&amp;Copy</source>
+        <translation>&amp;Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/inputwidget.cpp" line="169"/>
-        <source>&amp;Вставить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/inputwidget.cpp" line="248"/>
+        <source>&amp;Paste</source>
+        <translation>В&amp;ставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/inputwidget.cpp" line="173"/>
-        <source>&amp;Очистить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/inputwidget.cpp" line="249"/>
+        <source>Clear</source>
+        <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/inputwidget.cpp" line="176"/>
-        <source>&amp;Выделить всё</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/inputwidget.cpp" line="250"/>
+        <source>Select All</source>
+        <translation>Выделить всё</translation>
     </message>
 </context>
 <context>
@@ -300,57 +300,57 @@
 <context>
     <name>MiscSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1302"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1305"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1315"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1318"/>
         <source>Интеграция</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1320"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1323"/>
         <source>&amp;Автозапуск</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1321"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1324"/>
         <source>Автозапуск программы при старте системы</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1326"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1329"/>
         <source>Автозапуск &amp;сервера</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1327"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1330"/>
         <source>Автозапуск сервера при старте системы</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1340"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1343"/>
         <source>&amp;Журналирование</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1342"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1345"/>
         <source>Журнал &amp;основного канала</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1343"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1346"/>
         <source>Вести журнал основного канала</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1346"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1349"/>
         <source>Журналы &amp;приватов</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1347"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1350"/>
         <source>Вести журналы приватных сообщений</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1223,9 +1223,8 @@
 <context>
     <name>Translation</name>
     <message>
-        <location filename="../../src/common/translation.cpp" line="34"/>
-        <location filename="../../src/common/translation.cpp" line="70"/>
-        <location filename="../../src/common/translation.cpp" line="90"/>
+        <location filename="../../src/common/translation.cpp" line="35"/>
+        <location filename="../../src/common/translation.cpp" line="112"/>
         <location filename="../../src/schat/settingsdialog.cpp" line="1162"/>
         <source>English</source>
         <translation>Русский</translation>

@@ -16,7 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+
+#include <QContextMenuEvent>
+#include <QMenu>
+//#include <QDebug>
 
 #include "channellog.h"
 #include "simplechatapp.h"
@@ -81,6 +84,15 @@ void InputWidget::paste()
     setCurrentCharFormat(format);
     emit cursorPositionChanged();
   }
+}
+
+
+void InputWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QTextEdit::changeEvent(event);
 }
 
 
@@ -158,22 +170,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
  */
 void InputWidget::createActions()
 {
-  m_cutAction = new QAction(SimpleChatApp::iconFromTheme("edit-cut"), tr("&Вырезать"), this);
+  m_cutAction = new QAction(SimpleChatApp::iconFromTheme("edit-cut"), "", this);
   m_cutAction->setShortcut(QKeySequence::Cut);
   connect(m_cutAction, SIGNAL(triggered()), SLOT(cut()));
 
-  m_copyAction = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Копировать"), this);
+  m_copyAction = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), "", this);
   m_copyAction->setShortcut(QKeySequence::Copy);
   connect(m_copyAction, SIGNAL(triggered()), SIGNAL(needCopy()));
 
-  m_pasteAction = new QAction(SimpleChatApp::iconFromTheme("edit-paste"), tr("&Вставить"), this);
+  m_pasteAction = new QAction(SimpleChatApp::iconFromTheme("edit-paste"), "", this);
   m_pasteAction->setShortcut(QKeySequence::Paste);
   connect(m_pasteAction, SIGNAL(triggered()), SLOT(paste()));
 
-  m_clearAction = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("&Очистить"), this);
+  m_clearAction = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(m_clearAction, SIGNAL(triggered()), SLOT(clearMsg()));
 
-  m_selectAllAction = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("&Выделить всё"), this);
+  m_selectAllAction = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
   m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
 }
@@ -226,4 +238,14 @@ void InputWidget::prevMsg()
       moveCursor(QTextCursor::End);
     }
   }
+}
+
+
+void InputWidget::retranslateUi()
+{
+  m_cutAction->setText(tr("Cu&t"));
+  m_copyAction->setText(tr("&Copy"));
+  m_pasteAction->setText(tr("&Paste"));
+  m_clearAction->setText(tr("Clear"));
+  m_selectAllAction->setText(tr("Select All"));
 }
