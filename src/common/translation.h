@@ -39,7 +39,7 @@ public:
   void setSearch(const QStringList &search);
 
 private:
-  QString detectName(const QString &file) const;
+  void loadQt();
 
   bool m_empty;         ///< true если не было загружено ни одного перевода.
   QString m_language;   ///< Человеко-понятное переведённое имя языка.
