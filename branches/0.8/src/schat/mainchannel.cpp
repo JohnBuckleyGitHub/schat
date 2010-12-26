@@ -17,31 +17,26 @@
  */
 
 #include <QSplitter>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
+//#include <QDebug>
 
 #include "mainchannel.h"
 #include "settings.h"
 #include "widget/networkwidget.h"
 #include "widget/userview.h"
+#include "widget/welcome.h"
 
 /*!
  * \brief Конструктор класса MainChannel.
  */
 MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *parent)
   : AbstractTab(Main, icon, parent),
+  m_networkWidget(0),
   m_tabs(parent),
   m_userView(userView)
 {
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
-
-  m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel | NetworkWidget::ApplyButton);
-  m_networkWidget->setVisible(false);
-
-  m_networkLayout = new QHBoxLayout;
-  m_networkLayout->addWidget(m_networkWidget);
-  m_networkLayout->addStretch();
-  m_networkLayout->setMargin(0);
 
   m_splitter = new QSplitter(this);
   m_splitter->addWidget(m_view);
@@ -56,13 +51,11 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
   #endif
 
-  m_mainLayout = new QVBoxLayout;
-  m_mainLayout->addLayout(m_networkLayout);
+  m_mainLayout = new QVBoxLayout(this);
   m_mainLayout->addWidget(m_splitter);
   m_mainLayout->setStretchFactor(m_splitter, 999);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
-  setLayout(m_mainLayout);
 
   QStringList splitterSizes = SimpleSettings->getList("SplitterSizes");
   if (splitterSizes.size() == 2) {
@@ -103,12 +96,20 @@ void MainChannel::addUserLeft(quint8 gender, const QString &nick, const QString 
  */
 void MainChannel::displayChoiceServer(bool display)
 {
-  if (display)
-    m_networkLayout->setContentsMargins(4, 2, 4, 0);
-  else
-    m_networkLayout->setMargin(0);
-
-  m_networkWidget->setVisible(display);
+  if (display) {
+    if (!m_networkWidget) {
+      m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel | NetworkWidget::ApplyButton | NetworkWidget::AddStretch);
+      m_networkWidget->layout()->setContentsMargins(4, 2, 4, 0);
+    }
+    m_mainLayout->insertWidget(0, m_networkWidget);
+  }
+  else {
+    if (m_networkWidget) {
+      m_mainLayout->removeWidget(m_networkWidget);
+      m_networkWidget->deleteLater();
+      m_networkWidget = 0;
+    }
+  }
 
   m_view->scroll();
 }

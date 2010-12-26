@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QComboBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QToolButton>
 
 #include "network.h"
 #include "networkwidget.h"
@@ -39,7 +42,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   #endif
   m_select->setModel(&m_settings->networksModel);
 
-  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  QHBoxLayout *mainLay = new QHBoxLayout;
   mainLay->setSpacing(2);
   mainLay->setMargin(0);
 
@@ -61,6 +64,14 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
 
     connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(link()));
   }
+
+  if (options & AddStretch) {
+    QHBoxLayout *stretchLay = new QHBoxLayout(this);
+    stretchLay->addLayout(mainLay);
+    stretchLay->addStretch();
+  }
+  else
+    setLayout(mainLay);
 
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
   connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));

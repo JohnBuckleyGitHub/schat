@@ -85,6 +85,7 @@ HEADERS += \
     widget/statusmenu.h \
     widget/userview.h \
     widget/userview_p.h \
+    widget/welcome.h \
 
 SOURCES += \
     3rdparty/qtwin.cpp \
@@ -133,6 +134,7 @@ SOURCES += \
     widget/soundwidget.cpp \
     widget/statusmenu.cpp \
     widget/userview.cpp \
+    widget/welcome.cpp \
     
 contains( SCHAT_WEBKIT, 1 ) {
   HEADERS += \

@@ -19,22 +19,16 @@
 #ifndef MAINCHANNEL_H_
 #define MAINCHANNEL_H_
 
-#include <QBasicTimer>
-#include <QHash>
-#include <QLineEdit>
 #include <QWidget>
 
 #include "abstracttab.h"
 
 class NetworkWidget;
-class QAction;
-class QHBoxLayout;
-class QLabel;
 class QSplitter;
 class QTabWidget;
-class QToolButton;
 class QVBoxLayout;
 class UserView;
+class WelcomeWidget;
 
 /*!
  * \brief Обеспечивает поддержку главного канала чата.
@@ -58,11 +52,11 @@ private:
   QWidget* createUserView();
 
   NetworkWidget *m_networkWidget;
-  QHBoxLayout *m_networkLayout;
   QSplitter *m_splitter;
   QTabWidget *m_tabs;
   QVBoxLayout *m_mainLayout;
   UserView *m_userView;
+  WelcomeWidget *m_welcome;
 };
 
 #endif /*MAINCHANNEL_H_*/
