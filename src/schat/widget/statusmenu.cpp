@@ -20,6 +20,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
+//#include <QDebug>
 
 #include "statusmenu.h"
 
@@ -27,23 +28,23 @@
  * \brief Конструктор класса StatusMenu.
  */
 StatusMenu::StatusMenu(bool male, QWidget *parent)
-  : QMenu(tr("Статус"), parent),
+  : QMenu(parent),
     m_male(male),
     m_group(new QActionGroup(this))
 {
-  QAction *action = m_group->addAction(icon(StatusOnline), tr("В сети"));
+  QAction *action = m_group->addAction(icon(StatusOnline), "");
   action->setShortcut(Qt::CTRL + Qt::Key_1);
   m_statuses.append(action);
 
-  action = m_group->addAction(icon(StatusAway), tr("Отсутствую"));
+  action = m_group->addAction(icon(StatusAway), "");
   action->setShortcut(Qt::CTRL + Qt::Key_2);
   m_statuses.append(action);
 
-  action = m_group->addAction(icon(StatusDnD), tr("Не беспокоить"));
+  action = m_group->addAction(icon(StatusDnD), "");
   action->setShortcut(Qt::CTRL + Qt::Key_3);
   m_statuses.append(action);
 
-  action = m_group->addAction(icon(StatusOffline), tr("Не в сети"));
+  action = m_group->addAction(icon(StatusOffline), "");
   action->setShortcut(Qt::CTRL + Qt::Key_0);
   m_statuses.append(action);
 
@@ -62,6 +63,7 @@ StatusMenu::StatusMenu(bool male, QWidget *parent)
   addAction(m_statuses.at(StatusOffline));
 
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
+  retranslateUi();
 }
 
 
@@ -95,7 +97,7 @@ QString StatusMenu::maxSizeText() const
   QString out;
   for (int i = 0; i < m_statuses.size(); ++i) {
     if (m_statuses.at(i)->text().size() > out.size())
-      out = m_statuses.at(i)->text().size();
+      out = m_statuses.at(i)->text();
   }
 
   return out;
@@ -128,12 +130,32 @@ void StatusMenu::setStatus(Status status)
 }
 
 
+
+void StatusMenu::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QMenu::changeEvent(event);
+}
+
+
 /*!
  * Обработка выбора пользователем в меню нового статуса.
  */
 void StatusMenu::statusChanged(QAction *action)
 {
   emit statusChanged(action->data().toInt());
+}
+
+
+void StatusMenu::retranslateUi()
+{
+  setTitle(tr("Status"));
+  m_statuses.at(StatusOnline)->setText(tr("Online"));
+  m_statuses.at(StatusAway)->setText(tr("Away"));
+  m_statuses.at(StatusDnD)->setText(tr("DND"));
+  m_statuses.at(StatusOffline)->setText(tr("Offline"));
 }
 
 
@@ -148,7 +170,7 @@ StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
   m_icon = new QLabel(this);
   setIcon(StatusMenu::StatusOffline);
 
-  m_label = new QLabel(m_menu->maxSizeText(), this);
+  m_label = new QLabel(this);
   QHBoxLayout *lay = new QHBoxLayout(this);
   lay->setMargin(0);
   lay->setSpacing(3);
@@ -171,6 +193,24 @@ void StatusWidget::setStatus(StatusMenu::Status status)
   setIcon(status);
   if (m_actualSize)
     m_label->setText(m_menu->text());
+}
+
+
+/*!
+ * При изменении языка скрываем и затем снова показываем виджет
+ * для того что перерассчитать актуальный размер.
+ */
+void StatusWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    m_actualSize = false;
+    setMinimumSize(0, 0);
+    m_label->setText(m_menu->maxSizeText());
+    setVisible(false);
+    setVisible(true);
+  }
+
+  QWidget::changeEvent(event);
 }
 
 
