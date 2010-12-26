@@ -52,6 +52,8 @@ StatusMenu::StatusMenu(bool male, QWidget *parent)
     m_statuses.at(i)->setCheckable(true);
   }
 
+  action->setChecked(true);
+
   for (int i = 0; i < 3; ++i) {
     addAction(m_statuses.at(i));
   }
@@ -144,7 +146,7 @@ StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
     m_menu(menu)
 {
   m_icon = new QLabel(this);
-  setIcon(StatusMenu::StatusOnline);
+  setIcon(StatusMenu::StatusOffline);
 
   m_label = new QLabel(m_menu->maxSizeText(), this);
   QHBoxLayout *lay = new QHBoxLayout(this);
