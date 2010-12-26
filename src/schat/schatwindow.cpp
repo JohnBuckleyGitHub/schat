@@ -344,7 +344,7 @@ void SChatWindowPrivate::createTrayIcon()
   menu->addAction(settingsAction);
 
   statusAction = menu->addMenu(statusMenu);
-  statusAction->setIcon(statusMenu->icon(StatusMenu::StatusOnline));
+  statusAction->setIcon(statusMenu->icon(StatusMenu::StatusOffline));
 
   #ifdef Q_WS_WIN
   if (QFile::exists(QApplication::applicationDirPath() + "/schatd-ui.exe")) {
