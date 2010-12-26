@@ -17,9 +17,11 @@
  */
 
 #include <QComboBox>
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
+//#include <QDebug>
 
 #include "network.h"
 #include "networkwidget.h"
@@ -30,6 +32,7 @@
  */
 NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   : QWidget(parent),
+  m_networkLabel(0),
   m_applyButton(0),
   m_settings(SimpleSettings)
 {
@@ -47,9 +50,9 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   mainLay->setMargin(0);
 
   if (options & NetworkLabel) {
-    QLabel *networkLabel = new QLabel(tr("&Сеть:"), this);
-    networkLabel->setBuddy(m_select);
-    mainLay->addWidget(networkLabel);
+    m_networkLabel = new QLabel(this);
+    m_networkLabel->setBuddy(m_select);
+    mainLay->addWidget(m_networkLabel);
   }
 
   mainLay->addWidget(m_select);
@@ -58,7 +61,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   if (options & ApplyButton) {
     m_applyButton = new QToolButton(this);
     m_applyButton->setIcon(QIcon(":/images/arrow-right.png"));
-    m_applyButton->setToolTip(tr("Подключится к выбранной сети"));
     m_applyButton->setAutoRaise(true);
     mainLay->addWidget(m_applyButton);
 
@@ -78,6 +80,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
 
   init();
+  retranslateUi();
 }
 
 
@@ -152,6 +155,15 @@ int NetworkWidget::save(bool notify)
   }
   else
     return 0;
+}
+
+
+void NetworkWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
 }
 
 
@@ -269,4 +281,14 @@ void NetworkWidget::init()
     addSingleServer(m_settings->network.server());
 
   m_initText = m_select->currentText();
+}
+
+
+void NetworkWidget::retranslateUi()
+{
+  if (m_networkLabel)
+    m_networkLabel->setText(tr("&Network:"));
+
+  if (m_applyButton)
+    m_applyButton->setToolTip(tr("Connect"));
 }
