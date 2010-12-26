@@ -51,10 +51,15 @@ public:
 signals:
   void statusChanged(int status);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void statusChanged(QAction *action);
 
 private:
+  void retranslateUi();
+
   bool m_male;
   QActionGroup *m_group;       ///< Группа для того чтобы можно было выбрать только один статус.
   QList<QAction *> m_statuses; ///< Список статусов.
@@ -75,6 +80,7 @@ public:
   void setStatus(StatusMenu::Status status);
 
 protected:
+  void changeEvent(QEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
   void showEvent(QShowEvent *event);
 

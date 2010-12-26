@@ -1195,29 +1195,29 @@
 <context>
     <name>StatusMenu</name>
     <message>
-        <location filename="../../src/schat/widget/statusmenu.cpp" line="30"/>
-        <source>Статус</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/statusmenu.cpp" line="154"/>
+        <source>Status</source>
+        <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/statusmenu.cpp" line="34"/>
-        <source>В сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/statusmenu.cpp" line="155"/>
+        <source>Online</source>
+        <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/statusmenu.cpp" line="38"/>
-        <source>Отсутствую</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/statusmenu.cpp" line="156"/>
+        <source>Away</source>
+        <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/statusmenu.cpp" line="42"/>
-        <source>Не беспокоить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/statusmenu.cpp" line="157"/>
+        <source>DND</source>
+        <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/statusmenu.cpp" line="46"/>
-        <source>Не в сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/statusmenu.cpp" line="158"/>
+        <source>Offline</source>
+        <translation>Не в сети</translation>
     </message>
 </context>
 <context>
@@ -1449,7 +1449,7 @@
     <message>
         <location filename="../../src/schat/widget/welcome.cpp" line="32"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подключиться</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/welcome.cpp" line="35"/>
