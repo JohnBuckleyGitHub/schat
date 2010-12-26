@@ -26,6 +26,7 @@
 
 class QComboBox;
 class QLabel;
+class QLabel;
 class QSpinBox;
 class QStandardItemModel;
 class QToolButton;
@@ -59,6 +60,9 @@ signals:
 public slots:
   int save(bool notify = true);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void currentIndexChanged(int index);
   void editTextChanged(const QString &text);
@@ -70,8 +74,10 @@ private:
   int addSingleServer(const QString &address, quint16 port, bool current = true);
   int findSingleServer(const QString &address, quint16 port) const;
   void init();
+  void retranslateUi();
 
   QComboBox *m_select;
+  QLabel *m_networkLabel;
   QString m_initText;
   QToolButton *m_applyButton;
   Settings *m_settings;

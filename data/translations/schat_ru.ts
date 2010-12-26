@@ -286,13 +286,13 @@
 <context>
     <name>MainChannel</name>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="77"/>
-        <location filename="../../src/schat/mainchannel.cpp" line="173"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="71"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="154"/>
         <source>Общий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="171"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="152"/>
         <source>Общий (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -452,14 +452,14 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat/widget/networkwidget.cpp" line="47"/>
-        <source>&amp;Сеть:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/networkwidget.cpp" line="290"/>
+        <source>&amp;Network:</source>
+        <translation>&amp;Сеть:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/networkwidget.cpp" line="58"/>
-        <source>Подключится к выбранной сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/networkwidget.cpp" line="293"/>
+        <source>Connect</source>
+        <translation>Подключиться</translation>
     </message>
 </context>
 <context>
@@ -1441,6 +1441,19 @@
     <message>
         <location filename="../../src/schat/welcomedialog.cpp" line="92"/>
         <source>Выбор ника</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WelcomeWidget</name>
+    <message>
+        <location filename="../../src/schat/widget/welcome.cpp" line="32"/>
+        <source>Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/welcome.cpp" line="35"/>
+        <source>Всегда использовать это подключение</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
