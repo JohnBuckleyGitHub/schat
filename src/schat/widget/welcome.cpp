@@ -21,6 +21,7 @@
 #include <QCheckBox>
 
 #include "profilewidget.h"
+#include "settings.h"
 #include "widget/networkwidget.h"
 #include "widget/welcome.h"
 
@@ -28,11 +29,16 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   : QWidget(parent)
 {
   m_profile = new ProfileWidget(false, this);
+  connect(m_profile, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
+
   m_network = new NetworkWidget(this, NetworkWidget::NetworkLabel);
   m_connect = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Connect"), this);
   m_connect->setDefault(true);
+  connect(m_connect, SIGNAL(clicked()), this, SLOT(link()));
 
   m_ask = new QCheckBox(tr("Всегда использовать это подключение"), this);
+  if (SimpleSettings->getBool("FirstRun"))
+    m_ask->setChecked(true);
 
   m_grid = new QGridLayout(this);
   m_grid->addWidget(m_profile, 0, 0, 1, 2);
@@ -43,4 +49,19 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   m_grid->addWidget(m_ask, 4, 0, 1, 3);
   m_grid->setColumnStretch(0, 1);
   m_grid->setColumnStretch(2, 2);
+}
+
+
+void WelcomeWidget::link()
+{
+  m_profile->save();
+  m_network->save(false);
+  SimpleSettings->setBool("HideWelcome", m_ask->isChecked());
+  SimpleSettings->notify(Settings::ServerChanged);
+}
+
+
+void WelcomeWidget::validNick(bool valid)
+{
+  m_connect->setEnabled(valid);
 }

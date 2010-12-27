@@ -41,10 +41,10 @@ public:
   void addNewUser(quint8 gender, const QString &nick);
   void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
+  void displayWelcome(bool display);
 
 private slots:
   void notify(int code);
-  void serverChanged();
   void splitterMoved();
   void usersCountChanged(int count);
 

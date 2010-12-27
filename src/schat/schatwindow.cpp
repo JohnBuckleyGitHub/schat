@@ -808,13 +808,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   // Показ модального диалога приветствия.
   if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
-    WelcomeDialog welcome(this);
-    if (!welcome.exec()) {
-      d->statusUnconnected(false);
-      fatal();
-    }
-    else
-      d->clientService->connectToHost();
+    d->main->displayWelcome(true);
   }
   else
     d->clientService->connectToHost();
