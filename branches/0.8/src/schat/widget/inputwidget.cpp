@@ -133,32 +133,32 @@ void InputWidget::contextMenuEvent(QContextMenuEvent *event)
  */
 void InputWidget::keyPressEvent(QKeyEvent *event)
 {
-  QKeySequence seq = event->key() + event->modifiers();
-  QString key = seq.toString();
+  int key = event->key();
+  Qt::KeyboardModifiers modifiers = event->modifiers();
 
-  if (key == "Return")
+  if (key == Qt::Key_Return && modifiers == Qt::NoModifier)
     sendMsg();
   #if QT_VERSION >= 0x040500
-  else if (key == "Ctrl+Return")
+  else if (key == Qt::Key_Return && modifiers == Qt::ControlModifier)
     QApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::ShiftModifier));
   #endif
-  else if (key == "Ctrl+Up")
+  else if (key == Qt::Key_Up && modifiers == Qt::ControlModifier)
     nextMsg();
-  else if (key == "Ctrl+Down")
+  else if (key == Qt::Key_Down && modifiers == Qt::ControlModifier)
     prevMsg();
   else if (event->matches(QKeySequence::Copy))
     emit needCopy();
   else if (event->matches(QKeySequence::Paste))
     paste();
-  else if (key == "Ctrl+1")
+  else if (key == Qt::Key_1 && modifiers == Qt::ControlModifier)
     emit statusShortcut(1);
-  else if (key == "Ctrl+2")
+  else if (key == Qt::Key_2 && modifiers == Qt::ControlModifier)
     emit statusShortcut(2);
-  else if (key == "Ctrl+3")
+  else if (key == Qt::Key_3 && modifiers == Qt::ControlModifier)
     emit statusShortcut(3);
-  else if (key == "Ctrl+0")
+  else if (key == Qt::Key_0 && modifiers == Qt::ControlModifier)
     emit statusShortcut(0);
-  else if (event->key() == Qt::Key_Tab)
+  else if (key == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else
     QTextEdit::keyPressEvent(event);

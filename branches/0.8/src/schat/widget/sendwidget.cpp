@@ -83,6 +83,12 @@ QToolButton* SendWidget::settingsButton() const
 }
 
 
+void SendWidget::setInputFocus()
+{
+  m_input->setFocus();
+}
+
+
 void SendWidget::setStyleSheet()
 {
   if (!m_toolBar)

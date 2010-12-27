@@ -16,9 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <QCheckBox>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QPushButton>
+//#include <QDebug>
 
 #include "profilewidget.h"
 #include "settings.h"
@@ -32,11 +34,11 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   connect(m_profile, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
 
   m_network = new NetworkWidget(this, NetworkWidget::NetworkLabel);
-  m_connect = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Connect"), this);
+  m_connect = new QPushButton(QIcon(":/images/dialog-ok.png"), "", this);
   m_connect->setDefault(true);
   connect(m_connect, SIGNAL(clicked()), this, SLOT(link()));
 
-  m_ask = new QCheckBox(tr("Всегда использовать это подключение"), this);
+  m_ask = new QCheckBox(this);
   if (SimpleSettings->getBool("FirstRun"))
     m_ask->setChecked(true);
 
@@ -49,6 +51,28 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   m_grid->addWidget(m_ask, 4, 0, 1, 3);
   m_grid->setColumnStretch(0, 1);
   m_grid->setColumnStretch(2, 2);
+
+  retranslateUi();
+}
+
+
+void WelcomeWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
+void WelcomeWidget::keyPressEvent(QKeyEvent *event)
+{
+  QKeySequence seq = event->key() + event->modifiers();
+  if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+    link();
+  }
+  else
+    QWidget::keyPressEvent(event);
 }
 
 
@@ -64,4 +88,11 @@ void WelcomeWidget::link()
 void WelcomeWidget::validNick(bool valid)
 {
   m_connect->setEnabled(valid);
+}
+
+
+void WelcomeWidget::retranslateUi()
+{
+  m_connect->setText(tr("Connect"));
+  m_ask->setText(tr("Всегда использовать это подключение"));
 }

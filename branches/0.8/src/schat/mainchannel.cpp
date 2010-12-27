@@ -123,6 +123,7 @@ void MainChannel::displayWelcome(bool display)
     if (!m_welcome) {
       m_welcome = new WelcomeWidget(this);
     }
+    m_welcome->setFocus();
     m_mainLayout->insertWidget(0, m_welcome);
     m_mainLayout->removeWidget(m_splitter);
     m_splitter->setVisible(false);

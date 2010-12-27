@@ -286,13 +286,13 @@
 <context>
     <name>MainChannel</name>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="71"/>
-        <location filename="../../src/schat/mainchannel.cpp" line="154"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="72"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="183"/>
         <source>Общий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="152"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="181"/>
         <source>Общий (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -671,125 +671,125 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="223"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="222"/>
         <source>Ping до сервера &lt;b style=&apos;color:#%1;&apos;&gt;%2 мс&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="233"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="232"/>
         <source>&lt;b&gt;/all&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — Личное обращение ко всем пользователям.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="234"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="233"/>
         <source>&lt;b&gt;/away&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — включает/выключает статус &lt;b&gt;Отсутствую&lt;/b&gt;.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="235"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="234"/>
         <source>&lt;b&gt;/bye [текст сообщения]&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="236"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="235"/>
         <source>&lt;b&gt;/clear&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — очистка окна чата.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="237"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="236"/>
         <source>&lt;b&gt;/dnd&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — включает/выключает статус &lt;b&gt;Не беспокоить&lt;/b&gt;.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="238"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="237"/>
         <source>&lt;b&gt;/exit&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — выход из чата.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="239"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="238"/>
         <source>&lt;b&gt;/google &amp;lt;строка поиска&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — формирует ссылку с заданной строкой для поиска в Google.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="240"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="239"/>
         <source>&lt;b&gt;/help&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отображает подсказу о командах.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="241"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="240"/>
         <source>&lt;b&gt;/log&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — открывает папку с файлами журнала чата.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="242"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="241"/>
         <source>&lt;b&gt;/me &amp;lt;текст сообщения&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="243"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="242"/>
         <source>&lt;b&gt;/motd&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — показ &lt;i&gt;Message Of The Day&lt;/i&gt; сообщения сервера.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="244"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="243"/>
         <source>&lt;b&gt;/nick &amp;lt;новый ник&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="245"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="244"/>
         <source>&lt;b&gt;/ping&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — определение времени задержки до сервера.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="246"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="245"/>
         <source>&lt;b&gt;/server&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — просмотр информации о сервере.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="250"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="249"/>
         <source>&lt;b class=&apos;info&apos;&gt;Доступные команды:&lt;/b&gt;&lt;br /&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="260"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="259"/>
         <source>&lt;span class=&apos;info&apos;&gt;Используйте &lt;b&gt;/help команда&lt;/b&gt;, для просмотра подробной информации о команде.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="274"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="273"/>
         <source>Неизвестная команда: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="310"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="309"/>
         <location filename="../../src/schat/schatwindow.cpp" line="607"/>
         <source>Нет подключения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="391"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="390"/>
         <source>сменила статус на:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="393"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="392"/>
         <source>сменил статус на:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="398"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="397"/>
         <location filename="../../src/schat/widget/userview.cpp" line="93"/>
         <source>Отсутствую</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="400"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="399"/>
         <location filename="../../src/schat/widget/userview.cpp" line="95"/>
         <source>Не беспокоить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="402"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="401"/>
         <location filename="../../src/schat/widget/userview.cpp" line="99"/>
         <source>В сети</source>
         <translation type="unfinished"></translation>
@@ -868,62 +868,62 @@
 <context>
     <name>SChatWindow</name>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="956"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="951"/>
         <source>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="960"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="955"/>
         <source>Сервер использует устаревшую версию протокола, подключение не возможно.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="964"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="959"/>
         <source>Выбранный ник: &lt;b&gt;%2&lt;/b&gt;, не допустим в чате, выберите другой</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="974"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="969"/>
         <source>При подключении произошла критическая ошибка с кодом: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1115"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1110"/>
         <source>Сервер &lt;b&gt;%1&lt;/b&gt; отключился от сети &lt;b&gt;%2&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1136"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1131"/>
         <source>Сервер &lt;b&gt;%1&lt;/b&gt; подключился к сети &lt;b&gt;%2&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1526"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1521"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1527"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1522"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1528"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1523"/>
         <source>&amp;Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1529"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1524"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1540"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1535"/>
         <source>Настройка...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1548"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1543"/>
         <source>Управление сервером...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -931,148 +931,148 @@
 <context>
     <name>SendWidget</name>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="220"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="226"/>
         <source>Удалить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="230"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="236"/>
         <source>По умолчанию</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="282"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="422"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="288"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="428"/>
         <source>Полужирный</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="288"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="423"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="294"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="429"/>
         <source>Курсив</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="294"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="424"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="300"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="430"/>
         <source>Подчёркнутый</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="300"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="425"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="306"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="431"/>
         <source>Зачёркнутый</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="330"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="336"/>
         <source>Добавить смайлик</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="348"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="431"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="354"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
         <source>Просмотр журнала</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="352"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="358"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="441"/>
         <source>Отправить сообщение</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="419"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="425"/>
         <source>Добавить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="427"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="433"/>
         <source>Настройка</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="429"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
         <source>Выбор цвета</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="430"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="436"/>
         <source>Смайлики</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="433"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="439"/>
         <source>Звук</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="442"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
         <source>Разделитель</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="454"/>
         <source>Растяжка</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="511"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="517"/>
         <source>Настройка...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="526"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="532"/>
         <source>Параметры</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="527"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="533"/>
         <source>Личные данные...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="528"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="534"/>
         <source>Сеть...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="529"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="535"/>
         <source>Интерфейс...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="530"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="536"/>
         <source>Смайлики...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="531"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="537"/>
         <source>Звуки...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="532"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="538"/>
         <source>Оповещатель...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="533"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="539"/>
         <source>Обновление...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="534"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="540"/>
         <source>Разное...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="535"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="541"/>
         <source>О Simple Chat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="542"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="548"/>
         <source>Выход</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1427,32 +1427,14 @@
     </message>
 </context>
 <context>
-    <name>WelcomeDialog</name>
-    <message>
-        <location filename="../../src/schat/welcomedialog.cpp" line="37"/>
-        <source>Больше не спрашивать</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/welcomedialog.cpp" line="38"/>
-        <source>ОК</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/welcomedialog.cpp" line="92"/>
-        <source>Выбор ника</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WelcomeWidget</name>
     <message>
-        <location filename="../../src/schat/widget/welcome.cpp" line="32"/>
+        <location filename="../../src/schat/widget/welcome.cpp" line="96"/>
         <source>Connect</source>
-        <translation type="unfinished">Подключиться</translation>
+        <translation>Подключиться</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/welcome.cpp" line="35"/>
+        <location filename="../../src/schat/widget/welcome.cpp" line="97"/>
         <source>Всегда использовать это подключение</source>
         <translation type="unfinished"></translation>
     </message>
