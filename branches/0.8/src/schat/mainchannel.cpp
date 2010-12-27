@@ -33,7 +33,8 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   : AbstractTab(Main, icon, parent),
   m_networkWidget(0),
   m_tabs(parent),
-  m_userView(userView)
+  m_userView(userView),
+  m_welcome(0)
 {
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
@@ -102,30 +103,57 @@ void MainChannel::displayChoiceServer(bool display)
       m_networkWidget->layout()->setContentsMargins(4, 2, 4, 0);
     }
     m_mainLayout->insertWidget(0, m_networkWidget);
-  }
-  else {
-    if (m_networkWidget) {
-      m_mainLayout->removeWidget(m_networkWidget);
-      m_networkWidget->deleteLater();
-      m_networkWidget = 0;
-    }
+    m_view->scroll();
+    return;
   }
 
+  if (m_networkWidget) {
+    m_mainLayout->removeWidget(m_networkWidget);
+    m_networkWidget->deleteLater();
+    m_networkWidget = 0;
+  }
   m_view->scroll();
+}
+
+
+void MainChannel::displayWelcome(bool display)
+{
+  if (display) {
+    displayChoiceServer(false);
+    if (!m_welcome) {
+      m_welcome = new WelcomeWidget(this);
+    }
+    m_mainLayout->insertWidget(0, m_welcome);
+    m_mainLayout->removeWidget(m_splitter);
+    m_splitter->setVisible(false);
+    #if QT_VERSION >= 0x040500
+    m_tabs->setTabsClosable(false);
+    #endif
+    return;
+  }
+
+  if (m_welcome) {
+    m_mainLayout->removeWidget(m_welcome);
+    m_welcome->deleteLater();
+    m_welcome = 0;
+    m_mainLayout->insertWidget(0, m_splitter);
+    m_splitter->setVisible(true);
+    #if QT_VERSION >= 0x040500
+    m_tabs->setTabsClosable(true);
+    #endif
+  }
 }
 
 
 void MainChannel::notify(int code)
 {
-  if (code == Settings::MiscSettingsChanged)
+  if (code == Settings::MiscSettingsChanged) {
     m_view->log(SimpleSettings->getBool("Log"));
-}
+  }
+  else if (code == Settings::ServerChanged) {
+    displayWelcome(false);
+  }
 
-
-void MainChannel::serverChanged()
-{
-  m_networkWidget->save();
-  SimpleSettings->notify(Settings::ServerChanged);
 }
 
 

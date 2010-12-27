@@ -34,6 +34,10 @@ class WelcomeWidget : public QWidget
 public:
   WelcomeWidget(QWidget *parent = 0);
 
+private slots:
+  void link();
+  void validNick(bool valid);
+
 private:
   NetworkWidget *m_network;
   ProfileWidget *m_profile;
