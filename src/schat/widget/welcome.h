@@ -34,11 +34,17 @@ class WelcomeWidget : public QWidget
 public:
   WelcomeWidget(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+  void keyPressEvent(QKeyEvent *event);
+
 private slots:
   void link();
   void validNick(bool valid);
 
 private:
+  void retranslateUi();
+
   NetworkWidget *m_network;
   ProfileWidget *m_profile;
   QCheckBox *m_ask;

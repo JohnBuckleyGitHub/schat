@@ -35,7 +35,6 @@
 #include "simplechatapp.h"
 #include "soundaction.h"
 #include "trayicon.h"
-#include "welcomedialog.h"
 #include "widget/sendwidget.h"
 #include "widget/statusmenu.h"
 #include "widget/userview.h"
@@ -552,6 +551,7 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
   connectLabel->setVisible(true);
   connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
   updateStatus(StatusMenu::StatusOnline);
+  send->setInputFocus();
 
   if (network.isEmpty()) {
     statusLabel->setText(QObject::tr("Сервер %1").arg(server));
@@ -808,6 +808,7 @@ SChatWindow::SChatWindow(QWidget *parent)
 
   // Показ модального диалога приветствия.
   if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
+    d->statusUnconnected(false);
     d->main->displayWelcome(true);
   }
   else

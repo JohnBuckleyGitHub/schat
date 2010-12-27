@@ -47,6 +47,7 @@ public:
   inline void clear()                 { m_input->clearMsg(); }
   QPair<SoundAction*, bool> soundAction() const;
   QToolButton* settingsButton() const;
+  void setInputFocus();
   void setStyleSheet();
 
 signals:
