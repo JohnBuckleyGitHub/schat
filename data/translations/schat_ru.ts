@@ -452,12 +452,12 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat/widget/networkwidget.cpp" line="290"/>
+        <location filename="../../src/schat/widget/networkwidget.cpp" line="281"/>
         <source>&amp;Network:</source>
         <translation>&amp;Сеть:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/networkwidget.cpp" line="293"/>
+        <location filename="../../src/schat/widget/networkwidget.cpp" line="284"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>
@@ -465,24 +465,24 @@
 <context>
     <name>NickEdit</name>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="44"/>
-        <source>Мужской</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="248"/>
+        <source>Male</source>
+        <translation>Мужской</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="45"/>
-        <source>Женский</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="249"/>
+        <source>Female</source>
+        <translation>Женский</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="48"/>
-        <source>Пол</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="250"/>
+        <source>Sex</source>
+        <translation>Пол</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="58"/>
-        <source>Применить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="254"/>
+        <source>Apply</source>
+        <translation>Применить</translation>
     </message>
 </context>
 <context>
@@ -613,27 +613,27 @@
 <context>
     <name>ProfileWidget</name>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="123"/>
+        <location filename="../../src/schat/profilewidget.cpp" line="114"/>
         <source>&amp;Nick:</source>
         <translation>&amp;Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="124"/>
+        <location filename="../../src/schat/profilewidget.cpp" line="115"/>
         <source>N&amp;ame:</source>
         <translation>&amp;ФИO:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="128"/>
+        <location filename="../../src/schat/profilewidget.cpp" line="119"/>
         <source>Male</source>
         <translation>Мужской</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="129"/>
+        <location filename="../../src/schat/profilewidget.cpp" line="120"/>
         <source>Female</source>
         <translation>Женский</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="130"/>
+        <location filename="../../src/schat/profilewidget.cpp" line="121"/>
         <source>&amp;Sex:</source>
         <translation>&amp;Пол:</translation>
     </message>
@@ -1429,12 +1429,12 @@
 <context>
     <name>WelcomeWidget</name>
     <message>
-        <location filename="../../src/schat/widget/welcome.cpp" line="96"/>
+        <location filename="../../src/schat/widget/welcome.cpp" line="87"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/welcome.cpp" line="97"/>
+        <location filename="../../src/schat/widget/welcome.cpp" line="88"/>
         <source>Всегда использовать это подключение</source>
         <translation type="unfinished"></translation>
     </message>
