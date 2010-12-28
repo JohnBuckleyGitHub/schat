@@ -19,10 +19,8 @@
 #ifndef NETWORKWIDGET_H_
 #define NETWORKWIDGET_H_
 
-#include <QString>
-#include <QWidget>
-
 #include "networkreader.h"
+#include "translatewidget.h"
 
 class QComboBox;
 class QLabel;
@@ -35,7 +33,7 @@ class Settings;
 /*!
  * \brief Виджет обеспечивающий выбор сети или одиночного сервера.
  */
-class NetworkWidget : public QWidget
+class NetworkWidget : public TranslateWidget
 {
   Q_OBJECT
 
@@ -59,9 +57,6 @@ signals:
 
 public slots:
   int save(bool notify = true);
-
-protected:
-  void changeEvent(QEvent *event);
 
 private slots:
   void currentIndexChanged(int index);

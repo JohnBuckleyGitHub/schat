@@ -16,39 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOME_H_
-#define WELCOME_H_
+#ifndef TRANSLATEWIDGET_H_
+#define TRANSLATEWIDGET_H_
 
-#include "translatewidget.h"
+#include <QWidget>
 
-class NetworkWidget;
-class ProfileWidget;
-class QCheckBox;
-class QGridLayout;
-class QPushButton;
-
-class WelcomeWidget : public TranslateWidget
+class TranslateWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  WelcomeWidget(QWidget *parent = 0);
+  TranslateWidget(QWidget *parent = 0);
 
 protected:
-  void keyPressEvent(QKeyEvent *event);
-
-private slots:
-  void link();
-  void validNick(bool valid);
-
-private:
-  void retranslateUi();
-
-  NetworkWidget *m_network;
-  ProfileWidget *m_profile;
-  QCheckBox *m_ask;
-  QGridLayout *m_grid;
-  QPushButton *m_connect;
+  void changeEvent(QEvent *event);
+  virtual void retranslateUi() = 0;
 };
 
-#endif /* WELCOME_H_ */
+#endif /* TRANSLATEWIDGET_H_ */

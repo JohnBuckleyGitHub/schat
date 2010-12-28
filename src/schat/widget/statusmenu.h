@@ -20,7 +20,8 @@
 #define STATUSMENU_H_
 
 #include <QMenu>
-#include <QObject>
+
+#include "translatewidget.h"
 
 class QLabel;
 
@@ -70,7 +71,7 @@ private:
 /*!
  * \brief Виджет выбора статусов из строки состояния.
  */
-class StatusWidget : public QWidget
+class StatusWidget : public TranslateWidget
 {
   Q_OBJECT
 
@@ -80,11 +81,11 @@ public:
   void setStatus(StatusMenu::Status status);
 
 protected:
-  void changeEvent(QEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
   void showEvent(QShowEvent *event);
 
 private:
+  void retranslateUi();
   void setIcon(StatusMenu::Status status);
 
   bool m_actualSize;

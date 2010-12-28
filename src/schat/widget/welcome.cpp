@@ -28,7 +28,7 @@
 #include "widget/welcome.h"
 
 WelcomeWidget::WelcomeWidget(QWidget *parent)
-  : QWidget(parent)
+  : TranslateWidget(parent)
 {
   m_profile = new ProfileWidget(false, this);
   connect(m_profile, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
@@ -53,15 +53,6 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   m_grid->setColumnStretch(2, 2);
 
   retranslateUi();
-}
-
-
-void WelcomeWidget::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWidget::changeEvent(event);
 }
 
 

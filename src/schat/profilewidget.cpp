@@ -33,7 +33,7 @@
  * Конструктор класса ProfileWidget.
  */
 ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
-  : QWidget(parent),
+  : TranslateWidget(parent),
   m_profile(SimpleSettings->profile()),
   m_compactGenderWidget(compactGender),
   m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems"))
@@ -106,15 +106,6 @@ void ProfileWidget::reset()
 
   if (!m_compactGenderWidget)
     m_gender->setCurrentIndex(0);
-}
-
-
-void ProfileWidget::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWidget::changeEvent(event);
 }
 
 
