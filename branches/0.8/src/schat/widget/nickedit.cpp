@@ -45,11 +45,22 @@ NickEdit::NickEdit(QWidget *parent, Options options)
   initCompleter();
 
   m_mainLay = new QHBoxLayout(this);
-  m_mainLay->addWidget(m_edit);
 
   if (options & GenderButton || options & ApplyButton) {
     m_toolBar = new QToolBar(this);
+    #if !defined(Q_OS_MAC)
+    m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+    #endif
   }
+
+  #if defined(Q_OS_MAC)
+  if (m_toolBar && options & GenderButton && options & ApplyButton)
+  #else
+  if (m_toolBar)
+  #endif
+    m_toolBar->addWidget(m_edit);
+  else
+    m_mainLay->addWidget(m_edit);
 
   if (options & GenderButton) {
     QMenu *menu = new QMenu(this);
@@ -57,7 +68,6 @@ NickEdit::NickEdit(QWidget *parent, Options options)
     m_femaleAction = menu->addAction(QIcon(":/images/female.png"), "", this, SLOT(genderChange()));
 
     m_genderButton = new QToolButton(this);
-    m_genderButton->setAutoRaise(true);
     m_genderButton->setPopupMode(QToolButton::InstantPopup);
     m_genderButton->setMenu(menu);
     m_toolBar->addWidget(m_genderButton);
@@ -66,7 +76,6 @@ NickEdit::NickEdit(QWidget *parent, Options options)
   if (options & ApplyButton) {
     m_applyButton = new QToolButton(this);
     m_applyButton->setIcon(QIcon(":/images/dialog-ok.png"));
-    m_applyButton->setAutoRaise(true);
     m_toolBar->addWidget(m_applyButton);
     connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
   }
@@ -187,6 +196,8 @@ void NickEdit::keyPressEvent(QKeyEvent *event)
 void NickEdit::showEvent(QShowEvent * /*event*/)
 {
   m_edit->setText(SimpleSettings->profile()->nick());
+  m_edit->setFocus();
+
   if (m_genderButton)
     setMale(SimpleSettings->profile()->isMale());
 
