@@ -31,7 +31,7 @@
  * Конструктор класса NetworkWidget.
  */
 NetworkWidget::NetworkWidget(QWidget *parent, Options options)
-  : QWidget(parent),
+  : TranslateWidget(parent),
   m_networkLabel(0),
   m_applyButton(0),
   m_settings(SimpleSettings)
@@ -155,15 +155,6 @@ int NetworkWidget::save(bool notify)
   }
   else
     return 0;
-}
-
-
-void NetworkWidget::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWidget::changeEvent(event);
 }
 
 

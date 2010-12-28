@@ -19,7 +19,7 @@
 #ifndef PROFILEWIDGET_H_
 #define PROFILEWIDGET_H_
 
-#include <QWidget>
+#include "translatewidget.h"
 
 class AbstractProfile;
 class NickEdit;
@@ -30,7 +30,8 @@ class QLineEdit;
 /*!
  * \brief Виджет обеспечивающий редактирование собственного профиля.
  */
-class ProfileWidget : public QWidget {
+class ProfileWidget : public TranslateWidget
+{
   Q_OBJECT
 
 public:
@@ -40,9 +41,6 @@ public:
 
 signals:
   void validNick(bool valid);
-
-protected:
-  void changeEvent(QEvent *event);
 
 private:
   void retranslateUi();

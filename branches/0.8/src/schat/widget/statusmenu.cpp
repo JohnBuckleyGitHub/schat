@@ -163,7 +163,7 @@ void StatusMenu::retranslateUi()
  * \brief Конструктор класса StatusWidget.
  */
 StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
-  : QWidget(parent),
+  : TranslateWidget(parent),
     m_actualSize(false),
     m_menu(menu)
 {
@@ -197,24 +197,6 @@ void StatusWidget::setStatus(StatusMenu::Status status)
 
 
 /*!
- * При изменении языка скрываем и затем снова показываем виджет
- * для того что перерассчитать актуальный размер.
- */
-void StatusWidget::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange) {
-    m_actualSize = false;
-    setMinimumSize(0, 0);
-    m_label->setText(m_menu->maxSizeText());
-    setVisible(false);
-    setVisible(true);
-  }
-
-  QWidget::changeEvent(event);
-}
-
-
-/*!
  * Обработка нажатий кнопок мыши для показа меню.
  */
 void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -236,6 +218,20 @@ void StatusWidget::showEvent(QShowEvent *event)
     m_actualSize = true;
   }
   QWidget::showEvent(event);
+}
+
+
+/*!
+ * При изменении языка скрываем и затем снова показываем виджет
+ * для того что перерассчитать актуальный размер.
+ */
+void StatusWidget::retranslateUi()
+{
+  m_actualSize = false;
+  setMinimumSize(0, 0);
+  m_label->setText(m_menu->maxSizeText());
+  setVisible(false);
+  setVisible(true);
 }
 
 
