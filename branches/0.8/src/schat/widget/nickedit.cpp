@@ -16,7 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QCompleter>
+#include <QMenu>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QStringListModel>
+#include <QToolButton>
+#include <QToolBar>
 
 #include "abstractprofile.h"
 #include "nickedit.h"
@@ -26,9 +33,10 @@
  * Конструктор класса NickEdit.
  */
 NickEdit::NickEdit(QWidget *parent, Options options)
-  : QWidget(parent),
+  : TranslateWidget(parent),
   m_male(true),
   m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems")),
+  m_toolBar(0),
   m_applyButton(0),
   m_genderButton(0)
 {
@@ -39,32 +47,40 @@ NickEdit::NickEdit(QWidget *parent, Options options)
   m_mainLay = new QHBoxLayout(this);
   m_mainLay->addWidget(m_edit);
 
+  if (options & GenderButton || options & ApplyButton) {
+    m_toolBar = new QToolBar(this);
+  }
+
   if (options & GenderButton) {
     QMenu *menu = new QMenu(this);
-    menu->addAction(QIcon(":/images/male.png"),   tr("Мужской"), this, SLOT(genderChange()))->setData(true);
-    menu->addAction(QIcon(":/images/female.png"), tr("Женский"), this, SLOT(genderChange()))->setData(false);
+    m_maleAction = menu->addAction(QIcon(":/images/male.png"),   "", this, SLOT(genderChange()));
+    m_femaleAction = menu->addAction(QIcon(":/images/female.png"), "", this, SLOT(genderChange()));
 
     m_genderButton = new QToolButton(this);
-    m_genderButton->setToolTip(tr("Пол"));
     m_genderButton->setAutoRaise(true);
     m_genderButton->setPopupMode(QToolButton::InstantPopup);
     m_genderButton->setMenu(menu);
-    m_mainLay->addWidget(m_genderButton);
+    m_toolBar->addWidget(m_genderButton);
   }
 
   if (options & ApplyButton) {
     m_applyButton = new QToolButton(this);
     m_applyButton->setIcon(QIcon(":/images/dialog-ok.png"));
-    m_applyButton->setToolTip(tr("Применить"));
     m_applyButton->setAutoRaise(true);
-    m_mainLay->addWidget(m_applyButton);
+    m_toolBar->addWidget(m_applyButton);
     connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(save()));
   }
+
+  if (m_toolBar)
+    m_mainLay->addWidget(m_toolBar);
+
   m_mainLay->setMargin(0);
   m_mainLay->setSpacing(1);
   setOptimalSize();
 
   connect(m_edit, SIGNAL(textChanged(const QString &)), SLOT(validateNick(const QString &)));
+
+  retranslateUi();
 }
 
 
@@ -188,7 +204,7 @@ void NickEdit::genderChange()
 {
   QAction *action = qobject_cast<QAction *>(sender());
   if (action)
-    setMale(action->data().toBool());
+    setMale(action == m_maleAction);
 }
 
 
@@ -226,6 +242,18 @@ void NickEdit::initCompleter()
   }
 }
 
+
+void NickEdit::retranslateUi()
+{
+  if (m_genderButton) {
+    m_maleAction->setText(tr("Male"));
+    m_femaleAction->setText(tr("Female"));
+    m_genderButton->setToolTip(tr("Sex"));
+  }
+
+  if (m_applyButton)
+    m_applyButton->setToolTip(tr("Apply"));
+}
 
 /*!
  * Установка пола.
