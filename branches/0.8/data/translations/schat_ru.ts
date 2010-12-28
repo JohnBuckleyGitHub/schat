@@ -613,29 +613,29 @@
 <context>
     <name>ProfileWidget</name>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="48"/>
-        <source>Мужской</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/profilewidget.cpp" line="123"/>
+        <source>&amp;Nick:</source>
+        <translation>&amp;Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="49"/>
-        <source>Женский</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/profilewidget.cpp" line="124"/>
+        <source>N&amp;ame:</source>
+        <translation>&amp;ФИO:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="59"/>
-        <source>&amp;Ник:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/profilewidget.cpp" line="128"/>
+        <source>Male</source>
+        <translation>Мужской</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="60"/>
-        <source>&amp;ФИO:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/profilewidget.cpp" line="129"/>
+        <source>Female</source>
+        <translation>Женский</translation>
     </message>
     <message>
-        <location filename="../../src/schat/profilewidget.cpp" line="63"/>
-        <source>&amp;Пол:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/profilewidget.cpp" line="130"/>
+        <source>&amp;Sex:</source>
+        <translation>&amp;Пол:</translation>
     </message>
 </context>
 <context>
