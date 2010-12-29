@@ -77,6 +77,7 @@ HEADERS += \
     update/updatewidget.h \
     updatexmlreader.h \
     version.h \
+    widget/connectionstatus.h \
     widget/inputwidget.h \
     widget/networkwidget.h \
     widget/nickedit.h \
@@ -127,6 +128,7 @@ SOURCES += \
     update/update.cpp \
     update/updatewidget.cpp \
     updatexmlreader.cpp \
+    widget/connectionstatus.cpp \
     widget/inputwidget.cpp \
     widget/networkwidget.cpp \
     widget/nickedit.cpp \
