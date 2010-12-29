@@ -30,6 +30,7 @@
 
 class AboutDialog;
 class ClientService;
+class ConnectionStatus;
 class PopupManager;
 class SendWidget;
 class Settings;
@@ -37,7 +38,6 @@ class SettingsDialog;
 class SettingsDialog;
 class SoundAction;
 class StatusMenu;
-class StatusWidget;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
@@ -66,7 +66,6 @@ public:
   void saveGeometry();
   void sendMsg(const QString &msg, bool cmd);
   void setAwayOptions();
-  void setStyleSheet();
   void showChat();
   void statusAccessGranted(const QString &network, const QString &server);
   void statusConnecting(const QString &server, bool network);
@@ -85,6 +84,7 @@ public:
   bool exitAwayOnSend;
   bool motd;
   ClientService *clientService;
+  ConnectionStatus *connectionStatus; ///< Статус бар.
   Idle idleDetector;
   int autoAwayTime;
   MainChannel *main;
@@ -92,12 +92,8 @@ public:
   QAction *daemonAction;
   QAction *settingsAction;
   QAction *statusAction;
-  QLabel *connectLabel;
-  QLabel *connectMovie;
-  QLabel *statusLabel;
   QPointer<AboutDialog> about;
   QPointer<SettingsDialog> settingsDialog;
-  QStatusBar *statusBar;
   QTabWidget *tabs;
   QTime pingTime;
   QVBoxLayout *mainLay;
@@ -108,7 +104,6 @@ public:
   SoundAction *soundAction;
   static QMap<QString, QString> cmds;
   StatusMenu *statusMenu;
-  StatusWidget *statusWidget;
   TrayIcon *tray;
   UserView *users;
   #ifndef SCHAT_WINCE

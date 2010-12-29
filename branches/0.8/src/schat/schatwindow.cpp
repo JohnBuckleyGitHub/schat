@@ -35,6 +35,7 @@
 #include "simplechatapp.h"
 #include "soundaction.h"
 #include "trayicon.h"
+#include "widget/connectionstatus.h"
 #include "widget/sendwidget.h"
 #include "widget/statusmenu.h"
 #include "widget/userview.h"
@@ -52,7 +53,6 @@ QMap<QString, QString> SChatWindowPrivate::cmds;
  */
 SChatWindowPrivate::SChatWindowPrivate(SChatWindow *parent)
   : motd(true),
-    statusBar(0),
     q(parent),
     send(0)
 {
@@ -299,29 +299,9 @@ void SChatWindowPrivate::closeChat(bool update)
 
 void SChatWindowPrivate::createStatusBar()
 {
-  connectLabel = new QLabel(q);
-  connectLabel->setVisible(false);
-
-  connectMovie = new QLabel(q);
-  connectMovie->setMovie(new QMovie(":/images/load.gif", QByteArray(), q));
-  connectMovie->setVisible(false);
-
-  statusLabel = new QLabel(QObject::tr("Нет подключения"), q);
-  statusLabel->setWordWrap(true);
-
   statusMenu = new StatusMenu(profile->isMale(), q);
-  statusWidget = new StatusWidget(statusMenu, q);
-
-  statusBar = new QStatusBar(q);
-  statusBar->addWidget(connectLabel);
-  statusBar->addWidget(connectMovie);
-  statusBar->addWidget(statusLabel, 1);
-  #ifndef SCHAT_WINCE
-  statusBar->addPermanentWidget(statusWidget);
-  #endif
-
-  setStyleSheet();
-  q->setStatusBar(statusBar);
+  connectionStatus = new ConnectionStatus(statusMenu, q);
+  q->setStatusBar(connectionStatus);
 }
 
 
@@ -502,23 +482,6 @@ void SChatWindowPrivate::setAwayOptions()
 }
 
 
-void SChatWindowPrivate::setStyleSheet()
-{
-  if (!statusBar)
-    return;
-
-  #if defined(Q_OS_MAC)
-  statusBar->setStyleSheet("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }");
-  #else
-    #if defined(Q_WS_WIN)
-    statusBar->setStyleSheet(QString("QStatusBar { background-color: %1; } QStatusBar::item { border-width: 0; }").arg(q->palette().color(QPalette::Window).name()));
-    #else
-    statusBar->setStyleSheet("QStatusBar::item { border-width: 0; }");
-    #endif
-  #endif
-}
-
-
 /*!
  * Показ окна чата.
  */
@@ -546,21 +509,15 @@ void SChatWindowPrivate::showChat()
  */
 void SChatWindowPrivate::statusAccessGranted(const QString &network, const QString &server)
 {
-  connectMovie->movie()->setPaused(true);
-  connectMovie->setVisible(false);
-  connectLabel->setVisible(true);
-  connectLabel->setPixmap(QPixmap(":/images/network_connect.png"));
+  connectionStatus->setState(ConnectionStatus::ConnectedState, server, network);
+  main->msg("<span class='ready'>" + connectionStatus->echoText() + "</span>");
   updateStatus(StatusMenu::StatusOnline);
   send->setInputFocus();
 
   if (network.isEmpty()) {
-    statusLabel->setText(QObject::tr("Сервер %1").arg(server));
-    main->msg("<span class='ready'>" + QObject::tr("Успешно подключены к серверу %1").arg(server) + "</span>");
     q->setWindowTitle(QApplication::applicationName());
   }
   else {
-    statusLabel->setText(QObject::tr("Сеть %1 (%2)").arg(network).arg(server));
-    main->msg("<span class='ready'>" + QObject::tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(network)).arg(server) + "</span>");
     q->setWindowTitle(QApplication::applicationName() + " — " + network);
   }
 
@@ -579,17 +536,14 @@ void SChatWindowPrivate::statusAccessGranted(const QString &network, const QStri
  */
 void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
 {
-  connectMovie->movie()->setPaused(false);
-  connectMovie->setVisible(true);
-  connectLabel->setVisible(false);
-  updateStatus(StatusMenu::StatusOffline);
-
   if (network)
-    statusLabel->setText(QObject::tr("Подключение к сети %1...").arg(server));
+    connectionStatus->setState(ConnectionStatus::ConnectingState, "", server);
   else
-    statusLabel->setText(QObject::tr("Подключение к серверу %1...").arg(server));
+    connectionStatus->setState(ConnectionStatus::ConnectingState, server);
 
+  updateStatus(StatusMenu::StatusOffline);
   main->displayChoiceServer(false);
+  main->displayWelcome(false);
 }
 
 
@@ -598,19 +552,13 @@ void SChatWindowPrivate::statusConnecting(const QString &server, bool network)
  */
 void SChatWindowPrivate::statusUnconnected(bool echo)
 {
-  connectMovie->movie()->setPaused(true);
-  connectMovie->setVisible(false);
-  connectLabel->setVisible(true);
-  connectLabel->setPixmap(QPixmap(":/images/network_disconnect.png"));
+  connectionStatus->setState(ConnectionStatus::UnconnectedState);
   updateStatus(StatusMenu::StatusOffline);
-
-  statusLabel->setText(QObject::tr("Нет подключения"));
   users->clear();
-
   soundAction->mute();
 
   if (echo)
-    main->msg("<span class='disconnect'>" + QObject::tr("Соединение разорвано") + "</span>");
+    main->msg("<span class='disconnect'>" + connectionStatus->echoText() + "</span>");
 }
 
 
@@ -663,7 +611,7 @@ void SChatWindowPrivate::universalStatus(const QList<quint32> &data1, const QStr
  */
 void SChatWindowPrivate::updateStatus(int status)
 {
-  statusWidget->setStatus(static_cast<StatusMenu::Status>(status));
+  connectionStatus->setUserStatus(status);
   statusAction->setIcon(statusMenu->icon(static_cast<StatusMenu::Status>(status)));
 }
 
@@ -806,9 +754,7 @@ SChatWindow::SChatWindow(QWidget *parent)
     setWindowIcon(QIcon(":/images/schat.png"));
   #endif
 
-  // Показ модального диалога приветствия.
   if (!d->pref->getBool("HideWelcome") || d->pref->getBool("FirstRun")) {
-    d->statusUnconnected(false);
     d->main->displayWelcome(true);
   }
   else
@@ -915,7 +861,6 @@ bool SChatWindow::event(QEvent *event)
 
   #if defined(Q_WS_WIN)
   if (event->type() == QEvent::ApplicationPaletteChange) {
-    d->setStyleSheet();
     if (d->send)
       d->send->setStyleSheet();
   }
@@ -1362,7 +1307,7 @@ void SChatWindow::settingsChanged(int notify)
     case Settings::ProfileSettingsChanged:
       d->clientService->setSafeNick(d->profile->nick());
       d->clientService->sendNewProfile();
-      d->statusWidget->setGender(d->profile->isMale());
+      d->connectionStatus->setGender(d->profile->isMale());
       d->statusAction->setIcon(d->statusMenu->icon(d->statusMenu->status()));
       break;
 
