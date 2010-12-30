@@ -56,6 +56,17 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 }
 
 
+void WelcomeWidget::notify(int code)
+{
+  if (code == Settings::HideWelcomeChanged) {
+    m_ask->setChecked(SimpleSettings->getBool("HideWelcome"));
+  }
+  else if (code == Settings::ProfileSettingsChanged) {
+    m_profile->reload();
+  }
+}
+
+
 void WelcomeWidget::keyPressEvent(QKeyEvent *event)
 {
   QKeySequence seq = event->key() + event->modifiers();

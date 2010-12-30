@@ -37,6 +37,7 @@ class ProfileWidget : public TranslateWidget
 public:
   ProfileWidget(bool compactGender, QWidget *parent = 0);
   int save();
+  void reload();
   void reset();
 
 signals:

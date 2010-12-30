@@ -155,6 +155,8 @@ void MainChannel::notify(int code)
     displayWelcome(false);
   }
 
+  if (m_welcome)
+    m_welcome->notify(code);
 }
 
 

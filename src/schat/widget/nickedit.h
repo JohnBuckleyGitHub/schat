@@ -48,6 +48,7 @@ public:
   inline void setGender(int gender) { setMale(!(bool) gender); }
   QString nick() const;
   static void modifyRecentList(const QString &key, const QString &value, bool remove = true);
+  void reload();
   void reset();
   void setMargin(int margin);
 

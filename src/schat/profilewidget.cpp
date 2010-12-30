@@ -42,7 +42,7 @@ ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
 
   m_nickEdit = new NickEdit(this, m_compactGenderWidget ? NickEdit::GenderButton : NickEdit::NoOptions);
 
-  m_name = new QLineEdit(m_profile->fullName(), this);
+  m_name = new QLineEdit(this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
   if (m_maxRecentItems) {
     m_name->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentRealNames"), m_name));
@@ -53,7 +53,6 @@ ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
     m_gender = new QComboBox(this);
     m_gender->addItem(QIcon(":/images/male.png"),   "");
     m_gender->addItem(QIcon(":/images/female.png"), "");
-    m_gender->setCurrentIndex(m_profile->genderNum());
   }
 
   connect(m_nickEdit, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
@@ -68,6 +67,7 @@ ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
   if (!m_compactGenderWidget)
     m_mainLay->addRow(" ", m_gender);
 
+  reload();
   retranslateUi();
 }
 
@@ -93,6 +93,17 @@ int ProfileWidget::save()
     SimpleSettings->notify(Settings::ProfileSettingsChanged);
 
   return modified;
+}
+
+
+void ProfileWidget::reload()
+{
+  m_nickEdit->reload();
+
+  m_name->setText(m_profile->fullName());
+  if (!m_compactGenderWidget) {
+    m_gender->setCurrentIndex(m_profile->genderNum());
+  }
 }
 
 
