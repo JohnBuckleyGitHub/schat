@@ -52,6 +52,7 @@ class Settings : public AbstractSettings {
   Q_OBJECT
 
 public:
+  /// Уведомления об изменении настроек.
   enum {
     NetworkSettingsChanged,
     NetworksModelIndexChanged,
@@ -76,6 +77,8 @@ public:
     #ifndef SCHAT_NO_WEBKIT
       InterfaceSettingsChanged,
     #endif
+
+    HideWelcomeChanged, ///< Состояние чекбокса "Всегда использовать это подключение".
   };
 
   /// Пути.

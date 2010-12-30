@@ -220,7 +220,7 @@ NetworkSettings::NetworkSettings(QWidget *parent)
 {
   d->welcome = new QCheckBox(tr("Всегда использовать это подключение"), this);
   d->welcome->setChecked(SimpleSettings->getBool("HideWelcome"));
-  d->welcome->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске программы"));
+  d->welcome->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске"));
 
   d->network = new NetworkWidget(this);
   connect(d->network, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
@@ -320,7 +320,10 @@ void NetworkSettings::reset(int page)
 void NetworkSettings::save()
 {
   int modified = d->network->save(false);
-  SimpleSettings->setBool("HideWelcome", d->welcome->isChecked());
+  if (SimpleSettings->getBool("HideWelcome") != d->welcome->isChecked()) {
+    SimpleSettings->setBool("HideWelcome", d->welcome->isChecked());
+    SimpleSettings->notify(Settings::HideWelcomeChanged);
+  }
 
   modified += SimpleSettings->save("Proxy/Enable", d->proxyGroup->isChecked());
 

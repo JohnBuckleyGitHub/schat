@@ -33,6 +33,7 @@ class WelcomeWidget : public TranslateWidget
 
 public:
   WelcomeWidget(QWidget *parent = 0);
+  void notify(int code);
 
 protected:
   void keyPressEvent(QKeyEvent *event);

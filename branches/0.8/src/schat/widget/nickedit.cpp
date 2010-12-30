@@ -127,6 +127,14 @@ void NickEdit::modifyRecentList(const QString &key, const QString &value, bool r
 }
 
 
+void NickEdit::reload()
+{
+  m_edit->setText(SimpleSettings->profile()->nick());
+
+  if (m_genderButton)
+    setMale(SimpleSettings->profile()->isMale());
+}
+
 /*!
  * Сброс введённых данных на стандартные значения.
  */
@@ -193,7 +201,7 @@ void NickEdit::keyPressEvent(QKeyEvent *event)
  * Обработка события показа виджета.
  * В поле редактирования устанавливается текущий ник.
  */
-void NickEdit::showEvent(QShowEvent * /*event*/)
+void NickEdit::showEvent(QShowEvent *event)
 {
   m_edit->setText(SimpleSettings->profile()->nick());
   m_edit->setFocus();
@@ -205,6 +213,8 @@ void NickEdit::showEvent(QShowEvent * /*event*/)
     m_model->setStringList(SimpleSettings->getList("Profile/RecentNicks"));
 
   setOptimalSize();
+
+  TranslateWidget::showEvent(event);
 }
 
 
