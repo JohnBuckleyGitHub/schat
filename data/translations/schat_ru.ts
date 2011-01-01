@@ -181,42 +181,42 @@
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="61"/>
         <source>Соединение разорвано</source>
-        <translation type="unfinished"></translation>
+        <translation>Соединение разорвано</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="65"/>
         <source>Успешно подключены к серверу %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Успешно подключены к серверу %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="67"/>
         <source>Успешно подключены к сети &lt;b&gt;%1&lt;/b&gt; (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Успешно подключены к сети &lt;b&gt;%1&lt;/b&gt; (%2)</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="141"/>
         <source>Нет подключения</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет подключения</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="145"/>
         <source>Подключение к серверу %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключение к серверу %1...</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="147"/>
         <source>Подключение к сети %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключение к сети %1...</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="151"/>
         <source>Сервер %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/connectionstatus.cpp" line="153"/>
         <source>Сеть %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеть %1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -1438,7 +1438,7 @@
     <message>
         <location filename="../../src/schat/widget/welcome.cpp" line="99"/>
         <source>Всегда использовать это подключение</source>
-        <translation type="unfinished"></translation>
+        <translation>Всегда использовать это подключение</translation>
     </message>
 </context>
 </TS>
