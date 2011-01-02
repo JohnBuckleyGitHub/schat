@@ -17,7 +17,14 @@
  */
 
 #include <QApplication>
-#include <QtGui>
+#include <QDir>
+#include <QGridLayout>
+#include <QIcon>
+#include <QLabel>
+#include <QPushButton>
+#include <QTabWidget>
+#include <QTextBrowser>
+#include <QTimer>
 
 #include "3rdparty/qtwin.h"
 #include "aboutdialog.h"
