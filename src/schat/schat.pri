@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ HEADERS += \
     emoticons/providers/pidgin/pidgin_emoticons.h \
     emoticons/providers/xmpp/xmpp_emoticons.h \
     idle/idle.h \
+    languagebox.h \
     mainchannel.h \
     network.h \
     networkreader.h \
@@ -108,6 +109,7 @@ SOURCES += \
     emoticons/providers/pidgin/pidgin_emoticons.cpp \
     emoticons/providers/xmpp/xmpp_emoticons.cpp \
     idle/idle.cpp \
+    languagebox.cpp \
     main.cpp \
     mainchannel.cpp \
     network.cpp \

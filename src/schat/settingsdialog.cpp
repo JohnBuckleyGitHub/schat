@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,10 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QCompleter>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFile>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QSound>
+#include <QSpinBox>
+#include <QStyleFactory>
 
 #include "abstractprofile.h"
 #include "emoticons/emoticons.h"
+#include "languagebox.h"
 #include "profilewidget.h"
 #include "settings.h"
 #include "settingsdialog.h"
@@ -1113,80 +1127,18 @@ class MiscSettings::Private
 {
 public:
   Private() {}
-  QString languageIcon(const QString &file) const;
-  QString languageName(const QString &file) const;
-  QStringList findQmFiles() const;
   void readAutostart();
-  void translations();
   void writeAutostart();
 
+  LanguageBox *language;
   QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
-  QComboBox *language;
 
   #ifdef Q_WS_WIN
   QCheckBox *autostartDaemon;
   #endif
 };
-
-
-/*!
- * Возвращает путь к файлу изображения флага языка.
- * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
- * за исключением расширения, например schat_ru.qm и schat_ru.png.
- * В случае если не будут найдены изображения для русского или английского языка,
- * то для них будут использованы изображения по умолчанию.
- */
-QString MiscSettings::Private::languageIcon(const QString &file) const
-{
-  QString icon = file.left(file.size() - 3) + ".png";
-  if (QFile::exists(icon))
-    return icon;
-
-  if (icon.endsWith("schat_ru.png"))
-    return ":/translations/schat_ru.png";
-
-  if (icon.endsWith("schat_en.png"))
-    return ":/translations/schat_en.png";
-
-  return ":/images/lang/unknown.png";
-}
-
-
-/*!
- * Получаем переведённое имя языка из qm файла.
- */
-QString MiscSettings::Private::languageName(const QString &file) const
-{
-  QTranslator translator;
-  translator.load(file);
-
-  return translator.translate("Translation", "English");
-}
-
-
-/*!
- * \todo проверить обработку коллизий.
- */
-QStringList MiscSettings::Private::findQmFiles() const
-{
-  QStringList dirs = SimpleSettings->path(Settings::TranslationsPath);
-  QStringList fileNames;
-
-  foreach (QString d, dirs) {
-    QDir dir(d);
-    QStringList fn = dir.entryList(QStringList("schat_*.qm"), QDir::Files, QDir::Name);
-    QMutableStringListIterator i(fn);
-    while (i.hasNext()) {
-        i.next();
-        i.setValue(dir.filePath(i.value()));
-    }
-    fileNames += fn;
-  }
-
-  return fileNames;
-}
 
 
 /*!
@@ -1217,37 +1169,6 @@ void MiscSettings::Private::readAutostart()
     return;
   }
   #endif
-}
-
-
-/*!
- * Загрузка языковых файлов.
- */
-void MiscSettings::Private::translations()
-{
-  QStringList qmFiles = findQmFiles();
-  qmFiles.append(":/translations/schat_ru.qm");
-  bool canOverrideEnglish = true;
-
-  for (int i = 0; i < qmFiles.size(); ++i) {
-    QString file = qmFiles[i];
-    QString langName = languageName(file);
-
-    if (langName.isEmpty())
-      continue;
-
-    // Добавляем в список только уникальные языки.
-    if (language->findText(langName) == -1) {
-      language->addItem(QIcon(languageIcon(file)), langName, file);
-    }
-    else if (canOverrideEnglish && file.endsWith("schat_en.qm")) {
-      language->setItemIcon(0, QIcon(languageIcon(file)));
-      language->setItemData(0, file);
-      canOverrideEnglish = false;
-    }
-  }
-
-  language->setCurrentIndex(language->findText(CURRENT_LANG));
 }
 
 
@@ -1306,11 +1227,7 @@ MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
   QGroupBox *language = new QGroupBox(tr("Language"), this);
-  d->language = new QComboBox(this);
-  d->language->setIconSize(QSize(25, 15));
-  d->language->addItem(QIcon(":/translations/schat_en.png"), "English", ":/translations/schat_en.qm");
-
-  d->translations();
+  d->language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
 
   QHBoxLayout *languageLay = new QHBoxLayout(language);
   languageLay->addWidget(d->language);
