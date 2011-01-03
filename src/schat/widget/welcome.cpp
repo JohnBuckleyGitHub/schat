@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,16 +22,25 @@
 #include <QPushButton>
 //#include <QDebug>
 
+#include "languagebox.h"
 #include "profilewidget.h"
 #include "settings.h"
+#include "simplechatapp.h"
+#include "translation.h"
 #include "widget/networkwidget.h"
 #include "widget/welcome.h"
 
+/*!
+ * Конструктор класса WelcomeWidget.
+ */
 WelcomeWidget::WelcomeWidget(QWidget *parent)
   : TranslateWidget(parent)
 {
   m_profile = new ProfileWidget(false, this);
   connect(m_profile, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
+
+  m_language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
+  connect(m_language, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(languageChanged(const QString &)));
 
   m_network = new NetworkWidget(this, NetworkWidget::NetworkLabel);
   m_connect = new QPushButton(QIcon(":/images/dialog-ok.png"), "", this);
@@ -45,10 +54,11 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   m_grid = new QGridLayout(this);
   m_grid->addWidget(m_profile, 0, 0, 1, 2);
   m_grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 2, 1, 1);
+  m_grid->addWidget(m_language, 0, 3, 1, 1, Qt::AlignTop);
   m_grid->addWidget(m_network, 1, 0, 1 ,2);
   m_grid->addWidget(m_connect, 2, 1);
   m_grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 3, 1, 1, 3);
-  m_grid->addWidget(m_ask, 4, 0, 1, 3);
+  m_grid->addWidget(m_ask, 4, 0, 1, 4);
   m_grid->setColumnStretch(0, 1);
   m_grid->setColumnStretch(2, 2);
 
@@ -75,6 +85,16 @@ void WelcomeWidget::keyPressEvent(QKeyEvent *event)
   }
   else
     QWidget::keyPressEvent(event);
+}
+
+
+void WelcomeWidget::languageChanged(const QString &text)
+{
+  if (text != CURRENT_LANG) {
+    Translation *translation = SimpleChatApp::instance()->translation();
+    translation->load(m_language->qmFile());
+    SimpleSettings->setString("Translation", translation->name());
+  }
 }
 
 
