@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="translations/schat_en.png">images/lang/en.png</file>
-  <file alias="translations/schat_ru.png">images/lang/ru.png</file>
+  <file alias="translations/en.png">images/lang/en.png</file>
+  <file alias="translations/ru.png">images/lang/ru.png</file>
   <file>css/popupwindow-flash.css</file>
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
