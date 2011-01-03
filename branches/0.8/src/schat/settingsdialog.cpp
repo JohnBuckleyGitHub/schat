@@ -1312,7 +1312,7 @@ void MiscSettings::save()
 
   if (d->language->currentText() != CURRENT_LANG) {
     Translation *translation = SimpleChatApp::instance()->translation();
-    translation->load(d->language->itemData(d->language->currentIndex()).toString());
+    translation->load(d->language->qmFile());
     SimpleSettings->setString("Translation", translation->name());
   }
 

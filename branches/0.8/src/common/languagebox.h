@@ -30,6 +30,7 @@ class LanguageBox : public QComboBox
 
 public:
   LanguageBox(const QString &language, const QString &prefix, const QStringList &search, QWidget *parent = 0);
+  QString qmFile() const;
 
 private:
   QString languageIcon(const QString &file) const;

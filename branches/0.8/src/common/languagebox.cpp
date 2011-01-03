@@ -31,10 +31,10 @@ LanguageBox::LanguageBox(const QString &language, const QString &prefix, const Q
   m_search(search)
 {
   setIconSize(QSize(25, 15));
-  addItem(QIcon(":/translations/" + m_prefix + "en.png"), "English", ":/translations/" + m_prefix + "en.qm");
+  addItem(QIcon(":/translations/en.png"), "English", ":/translations/" + m_prefix + "en.qm");
 
   QStringList qmFiles = findQmFiles();
-  qmFiles.append(":/translations/schat_ru.qm");
+  qmFiles.append(":/translations/" + m_prefix + "ru.qm");
   bool canOverrideEnglish = true;
 
   for (int i = 0; i < qmFiles.size(); ++i) {
@@ -48,7 +48,7 @@ LanguageBox::LanguageBox(const QString &language, const QString &prefix, const Q
     if (findText(langName) == -1) {
       addItem(QIcon(languageIcon(file)), langName, file);
     }
-    else if (canOverrideEnglish && file.endsWith("schat_en.qm")) {
+    else if (canOverrideEnglish && file.endsWith(m_prefix + "en.qm")) {
       setItemIcon(0, QIcon(languageIcon(file)));
       setItemData(0, file);
       canOverrideEnglish = false;
@@ -59,24 +59,28 @@ LanguageBox::LanguageBox(const QString &language, const QString &prefix, const Q
 }
 
 
+QString LanguageBox::qmFile() const
+{
+  return itemData(currentIndex()).toString();
+}
+
+
 /*!
  * Возвращает путь к файлу изображения флага языка.
- * Предполагается, что имя файла с изображением флага языка совпадает с именем языкового файла
- * за исключением расширения, например schat_ru.qm и schat_ru.png.
- * В случае если не будут найдены изображения для русского или английского языка,
- * то для них будут использованы изображения по умолчанию.
  */
 QString LanguageBox::languageIcon(const QString &file) const
 {
-  QString icon = file.left(file.size() - 3) + ".png";
+  QFileInfo fi(file);
+  QString icon = fi.absolutePath() + "/" + fi.baseName().remove(0, m_prefix.size()) + ".png";
+
   if (QFile::exists(icon))
     return icon;
 
-  if (icon.endsWith("schat_ru.png"))
-    return ":/translations/schat_ru.png";
+  if (icon.endsWith("ru.png"))
+    return ":/translations/ru.png";
 
-  if (icon.endsWith("schat_en.png"))
-    return ":/translations/schat_en.png";
+  if (icon.endsWith("en.png"))
+    return ":/translations/en.png";
 
   return ":/images/lang/unknown.png";
 }
