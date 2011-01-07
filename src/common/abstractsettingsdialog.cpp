@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
   m_okButton       = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("OK"), this);
-  m_cancelButton   = new QPushButton(QIcon(":/images/dialog-cancel.png"), tr("Отмена"), this);
+  m_cancelButton   = new QPushButton(QIcon(":/images/dialog-cancel.png"), tr("Cancel"), this);
   m_resetButton    = new QPushButton(QIcon(":/images/undo.png"), "", this);
-  m_resetButton->setToolTip(tr("Вернуть настройки по умолчанию"));
+  m_resetButton->setToolTip(tr("Restore default settings"));
   m_contentsWidget = new QListWidget(this);
   m_contentsWidget->setSpacing(1);
   m_pagesWidget    = new QStackedWidget(this);
@@ -64,7 +64,7 @@ AbstractSettingsDialog::AbstractSettingsDialog(QWidget *parent)
   mainLayout->setSpacing(3);
   m_badSize = true;
 
-  setWindowTitle(tr("Настройка"));
+  setWindowTitle(tr("Settings"));
 }
 
 

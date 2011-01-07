@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -58,13 +58,13 @@ ConnectionStatus::ConnectionStatus(StatusMenu *menu, QWidget *parent)
 QString ConnectionStatus::echoText() const
 {
   if (m_state == UnconnectedState)
-    return tr("Соединение разорвано");
+    return tr("Connection lost");
 
   if (m_state == ConnectedState) {
     if (m_network.isEmpty())
-      return tr("Успешно подключены к серверу %1").arg(Qt::escape(m_server));
+      return tr("Successfully connected to server %1").arg(Qt::escape(m_server));
     else
-      return tr("Успешно подключены к сети <b>%1</b> (%2)").arg(Qt::escape(m_network)).arg(Qt::escape(m_server));
+      return tr("Successfully connected to network <b>%1</b> (%2)").arg(Qt::escape(m_network)).arg(Qt::escape(m_server));
   }
 
   return "";
@@ -138,19 +138,19 @@ void ConnectionStatus::changeEvent(QEvent *event)
 void ConnectionStatus::retranslateUi()
 {
   if (m_state == UnconnectedState) {
-    m_status->setText(tr("Нет подключения"));
+    m_status->setText(tr("No connection"));
   }
   else if (m_state == ConnectingState) {
     if (m_network.isEmpty())
-      m_status->setText(tr("Подключение к серверу %1...").arg(m_server));
+      m_status->setText(tr("Connecting to server %1...").arg(m_server));
     else
-      m_status->setText(tr("Подключение к сети %1...").arg(m_network));
+      m_status->setText(tr("Connecting to network %1...").arg(m_network));
   }
   else if (m_state == ConnectedState) {
     if (m_network.isEmpty())
-      m_status->setText(tr("Сервер %1").arg(m_server));
+      m_status->setText(tr("Server %1").arg(m_server));
     else
-      m_status->setText(tr("Сеть %1 (%2)").arg(m_network).arg(m_server));
+      m_status->setText(tr("Network %1 (%2)").arg(m_network).arg(m_server));
   }
 }
 

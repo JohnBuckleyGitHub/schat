@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -81,15 +81,24 @@ ColorButton::ColorButton(const QColor &color, QWidget *parent)
 
   setMenu(menu);
   setPopupMode(QToolButton::MenuButtonPopup);
-  setToolTip(tr("Цвет текста"));
-
   connect(m_colorWidget, SIGNAL(newColor(const QColor &)), SLOT(setColor(const QColor &)));
   connect(this, SIGNAL(clicked(bool)), SLOT(newColor()));
+
+  retranslateUi();
 }
 
 
 ColorButton::~ColorButton()
 {
+}
+
+
+void ColorButton::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QToolButton::changeEvent(event);
 }
 
 
@@ -119,4 +128,10 @@ void ColorButton::setColor(const QColor &color)
   setIcon(pix);
   m_color = color;
   emit newColor(color);
+}
+
+
+void ColorButton::retranslateUi()
+{
+  setToolTip(tr("Text color"));
 }

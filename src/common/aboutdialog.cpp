@@ -49,12 +49,12 @@ AboutDialog::AboutDialog(QWidget *parent)
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
   m_tabWidget = new QTabWidget(this);
-  m_tabWidget->addTab(new AboutMain(this),      tr("О Программе"));
-  m_tabWidget->addTab(new AboutMembers(this),   tr("Участники"));
-  m_tabWidget->addTab(new AboutChangeLog(this), tr("История версий"));
-  m_tabWidget->addTab(new AboutLicense(this),   tr("Лицензия"));
+  m_tabWidget->addTab(new AboutMain(this),      tr("About"));
+  m_tabWidget->addTab(new AboutMembers(this),   tr("Members"));
+  m_tabWidget->addTab(new AboutChangeLog(this), tr("Changelog"));
+  m_tabWidget->addTab(new AboutLicense(this),   tr("License"));
 
-  m_closeButton = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Закрыть"), this);
+  m_closeButton = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Close"), this);
   m_closeButton->setDefault(true);
 
   connect(m_closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -75,7 +75,7 @@ AboutDialog::AboutDialog(QWidget *parent)
   m_mainLay->addWidget(m_bottom);
   setStyleSheet();
 
-  setWindowTitle(tr("О Программе"));
+  setWindowTitle(tr("About Simple Chat"));
 
   #ifndef SCHAT_NO_UPDATE_WIDGET
     QTimer::singleShot(0, m_update, SLOT(start()));
@@ -131,18 +131,18 @@ AboutMain::AboutMain(QWidget *parent)
   QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2011 <b>IMPOMEZIA</b>. All rights reserved.", this);
   QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
       .arg(QApplication::organizationDomain())
-      .arg(tr("Официальный сайт")), this);
+      .arg(tr("Official website")), this);
   homeLabel->setOpenExternalLinks(true);
   homeLabel->setToolTip("http://" + QApplication::organizationDomain());
 
   QLabel *docLabel = new QLabel(QString("<b><a href='http://simple.impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
-      .arg(tr("Документация")), this);
+      .arg(tr("Documentation")), this);
   docLabel->setOpenExternalLinks(true);
   docLabel->setToolTip("http://simple.impomezia.com");
 
   QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b> (%3)")
-      .arg(tr("Эта программа использует библиотеку:"))
-      .arg(qVersion()).arg(QSysInfo::WordSize == 32 ? tr("32 битную") : tr("64 битную")), this);
+      .arg(tr("This program uses library:"))
+      .arg(qVersion()).arg(QSysInfo::WordSize == 32 ? tr("32 bit") : tr("64 bit")), this);
 
   QVBoxLayout *infoLay = new QVBoxLayout;
   infoLay->addWidget(copyrightLabel);
@@ -164,30 +164,16 @@ AboutMain::AboutMain(QWidget *parent)
   gplLabel->setOpenExternalLinks(true);
   gplLabel->setAlignment(Qt::AlignBottom);
 
-  QLabel *qtLabel = new QLabel("<a href='http://www.qtsoftware.com/'><img src=':/images/qt-logo.png' /></a>", this);
+  QLabel *qtLabel = new QLabel("<a href='http://qt.nokia.com/'><img src=':/images/qt-logo.png' /></a>", this);
   qtLabel->setToolTip("Qt Open Source Edition");
   qtLabel->setOpenExternalLinks(true);
   qtLabel->setAlignment(Qt::AlignBottom);
 
-  #ifndef SCHAT_NO_DONATE
-    QLabel *donateLabel = new QLabel(tr("Вы можете помочь развитию Simple Chat<br /><a href='http://impomezia.com/donate' style='text-decoration:none; color:#1a4d82;'>делом</a> или <a href='http://impomezia.com/donate' style='text-decoration:none; color:#1a4d82;'>материально</a>."), this);
-    donateLabel->setStyleSheet("border: 1px solid #7581a9;"
-        "border-radius: 3px;"
-        "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f5f6ff, stop:1 #f2f2ff)");
-    donateLabel->setOpenExternalLinks(true);
-  #endif
-
   QHBoxLayout *logosLay = new QHBoxLayout;
-  #ifdef SCHAT_NO_DONATE
-    logosLay->addStretch();
-  #endif
+  logosLay->addStretch();
   logosLay->addWidget(impomeziaLabel);
   logosLay->addWidget(gplLabel);
   logosLay->addWidget(qtLabel);
-  #ifndef SCHAT_NO_DONATE
-    logosLay->addStretch();
-    logosLay->addWidget(donateLabel);
-  #endif
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(nameLabel, 0, 0, 1, 2);
@@ -239,10 +225,8 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
     browser->setSource(QUrl("ChangeLog.html"));
   }
   else
-    browser->setText(QString("<h3 style='color:#da251d;'>%1</h3>"
-                            "<p style='color:#da251d;'>%2</p>")
-                            .arg(tr("ОШИБКА"))
-                            .arg(tr("Файл <b>%1</b> не найден!").arg(path + "/ChangeLog.html")));
+    browser->setText(QString("<p style='color:#da251d;'>%2</p>")
+                            .arg(tr("File <b>%1</b> not found!").arg(path + "/ChangeLog.html")));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(browser);
