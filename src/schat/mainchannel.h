@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ class WelcomeWidget;
 /*!
  * \brief Обеспечивает поддержку главного канала чата.
  */
-class MainChannel : public AbstractTab {
+class MainChannel : public AbstractTab
+{
   Q_OBJECT
 
 public:
@@ -43,6 +44,9 @@ public:
   void displayChoiceServer(bool display);
   void displayWelcome(bool display);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void notify(int code);
   void splitterMoved();
@@ -50,7 +54,9 @@ private slots:
 
 private:
   QWidget* createUserView();
+  void retranslateUi();
 
+  int m_count;
   NetworkWidget *m_networkWidget;
   QSplitter *m_splitter;
   QTabWidget *m_tabs;
