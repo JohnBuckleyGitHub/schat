@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void UpdateWidget::start()
     m_movie->setVisible(true);
     m_movie->movie()->start();
     m_icon->setVisible(false);
-    m_text->setText(tr("Проверка обновлений..."));
+    m_text->setText(tr("Check for updates..."));
     #ifdef SCHAT_NO_UPDATE
       m_settings->updatesCheck();
     #else
@@ -66,7 +66,7 @@ void UpdateWidget::start()
     #endif
   }
   else {
-    m_text->setText(tr("Проверка обновлений отключена, <a href='ue' style='text-decoration:none; color:#1a4d82;'>включить?</a>"));
+    m_text->setText(QString("%1, <a href='ue' style='text-decoration:none; color:#1a4d82;'>%2</a>").arg(tr("Check for updates is disabled")).arg(tr("enable?")));
   }
 }
 
@@ -90,12 +90,12 @@ void UpdateWidget::notify(int code)
 {
   switch (code) {
     case Settings::UpdateError:
-      m_text->setText(tr("Не удалось проверить обновления"));
+      m_text->setText(tr("Check for updates failed"));
       setIcon("<img src=':/images/warning.png' />");
       break;
 
     case Settings::UpdateNoAvailable:
-      m_text->setText(tr("Версия <b>%1</b> самая свежая").arg(QApplication::applicationVersion()));
+      m_text->setText(tr("Version <b>%1</b> is the latest").arg(QApplication::applicationVersion()));
       setIcon("<img src=':/images/ok2.png' />");
       break;
 
@@ -104,7 +104,7 @@ void UpdateWidget::notify(int code)
     case Settings::UpdateGetting:
     case Settings::UpdateReady:
     #endif
-      m_text->setText(tr("Доступна новая версия <b>%1</b>").arg(m_settings->getString("Updates/LastVersion")));
+      m_text->setText(tr("New version <b>%1</b> is available").arg(m_settings->getString("Updates/LastVersion")));
       setIcon("<img src=':/images/update.png' />");
 
       if (code == Settings::UpdateAvailable)

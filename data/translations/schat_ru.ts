@@ -217,39 +217,38 @@
     <name>EmoticonsSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="600"/>
-        <source>Тема смайликов</source>
-        <translation type="unfinished"></translation>
+        <source>Emoticons theme</source>
+        <translation>Тема смайликов</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="610"/>
-        <source>Включить смайлики</source>
-        <translation type="unfinished"></translation>
+        <source>Enable emoticons</source>
+        <translation>Включить смайлики</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="612"/>
-        <source>Включает использование графических смайликов</source>
-        <translation type="unfinished"></translation>
+        <source>Enables use of graphic emoticons</source>
+        <translation>Включает использование графических смайликов</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="615"/>
-        <source>Смайлики отделены пробелами</source>
-        <translation type="unfinished"></translation>
+        <source>Emoticons are separated by spaces</source>
+        <translation>Смайлики отделены пробелами</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="616"/>
-        <source>Показывать смайлики только если они
-отделены пробелами от остального сообщения</source>
-        <translation type="unfinished"></translation>
+        <source>Show emoticons only if they are separated by spaces from the rest of the message</source>
+        <translation>Показывать смайлики только если они отделены пробелами от остального сообщения</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="619"/>
-        <source>Темы смайликов</source>
-        <translation type="unfinished"></translation>
+        <source>Emoticons themes</source>
+        <translation>Темы смайликов</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="620"/>
-        <source>Открыть папку с темами смайликов</source>
-        <translation type="unfinished"></translation>
+        <source>Open folder with emoticons themes</source>
+        <translation>Открыть папку с темами смайликов</translation>
     </message>
 </context>
 <context>
@@ -284,40 +283,38 @@
     <name>InterfaceSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="420"/>
-        <source>(без вариантов)</source>
-        <translation type="unfinished"></translation>
+        <source>(without variants)</source>
+        <translation>(без вариантов)</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="459"/>
-        <source>&amp;Глобальный стиль</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Global style</source>
+        <translation>&amp;Глобальный стиль</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="470"/>
-        <source>&amp;Имя стиля:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Style name:</source>
+        <translation>&amp;Имя стиля:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="474"/>
-        <source>&amp;Вариант:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Variant:</source>
+        <translation>&amp;Вариант:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="477"/>
-        <source>Группировать идущие &amp;подряд сообщения</source>
-        <translation type="unfinished"></translation>
+        <source>Group &amp;consecutive messages</source>
+        <translation>Группировать идущие &amp;подряд сообщения</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="478"/>
-        <source>Группировать идущие подряд сообщения
-от одного пользователя если это
-поддерживается выбранным стилем</source>
-        <translation type="unfinished"></translation>
+        <source>Group consecutive messages from one user, if the chosen style supports this option</source>
+        <translation>Группировать идущие подряд сообщения от одного пользователя, если это поддерживается выбранным стилем</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="481"/>
-        <source>Стиль &amp;текста</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Text style</source>
+        <translation>Стиль &amp;текста</translation>
     </message>
 </context>
 <context>
@@ -396,94 +393,83 @@
     <name>NetworkSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="235"/>
-        <source>Всегда использовать это подключение</source>
-        <translation type="unfinished">Всегда использовать это подключение</translation>
+        <source>Always use this connection</source>
+        <translation>Всегда использовать это подключение</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="237"/>
-        <source>Не запрашивать персональную информацию
-и адрес сервера при запуске</source>
-        <translation type="unfinished"></translation>
+        <source>Do not require personal information and server address at startup</source>
+        <translation>Не запрашивать персональную информацию и адрес сервера при запуске</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="242"/>
-        <source>Подключение</source>
-        <translation type="unfinished"></translation>
+        <source>Connection</source>
+        <translation>Подключение</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="249"/>
-        <source>Подключение через прокси-сервер</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="255"/>
-        <source>HTTP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="256"/>
-        <source>SOCKS5</source>
-        <translation type="unfinished"></translation>
+        <source>Connection via proxy server</source>
+        <translation>Подключение через прокси-сервер</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="257"/>
-        <source>Тип прокси-сервера</source>
-        <translation type="unfinished"></translation>
+        <source>Proxy server type</source>
+        <translation>Тип прокси-сервера</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="264"/>
-        <source>&amp;Тип:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Type:</source>
+        <translation>&amp;Тип:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="268"/>
-        <source>Адрес прокси-сервера</source>
-        <translation type="unfinished"></translation>
+        <source>Proxy server address</source>
+        <translation>Адрес прокси-сервера</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="269"/>
-        <source>&amp;Адрес:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Address:</source>
+        <translation>&amp;Адрес:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="274"/>
-        <source>Порт прокси-сервера</source>
-        <translation type="unfinished"></translation>
+        <source>Proxy server port</source>
+        <translation>Порт прокси-сервера</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="276"/>
-        <source>&amp;Порт:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Port:</source>
+        <translation>&amp;Порт:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="280"/>
-        <source>Имя пользователя для авторизации на прокси-сервере</source>
-        <translation type="unfinished"></translation>
+        <source>User name for authorization at proxy server</source>
+        <translation>Имя пользователя для авторизации на прокси-сервере</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="281"/>
-        <source>&amp;Имя:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Name:</source>
+        <translation>&amp;Имя:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="286"/>
-        <source>Пароль для авторизации на прокси-сервере</source>
-        <translation type="unfinished"></translation>
+        <source>Password for authorization at proxy server</source>
+        <translation>Пароль для авторизации на прокси-сервере</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="287"/>
-        <source>Па&amp;роль:</source>
-        <translation type="unfinished"></translation>
+        <source>P&amp;assword:</source>
+        <translation>Па&amp;роль:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="302"/>
-        <source>Файлы сети</source>
-        <translation type="unfinished"></translation>
+        <source>Network files</source>
+        <translation>Файлы сети</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="303"/>
-        <source>Открыть папку с файлами сети</source>
-        <translation type="unfinished"></translation>
+        <source>Open folder with network files</source>
+        <translation>Открыть папку с файлами сети</translation>
     </message>
 </context>
 <context>
@@ -1077,43 +1063,43 @@
     <name>SettingsDialog</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="59"/>
-        <source>Личные данные</source>
-        <translation type="unfinished"></translation>
+        <source>Personal data</source>
+        <translation>Личные данные</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="60"/>
-        <source>Сеть</source>
-        <translation type="unfinished"></translation>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="61"/>
-        <source>Интерфейс</source>
-        <translation type="unfinished"></translation>
+        <source>Interface</source>
+        <translation>Интерфейс</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="62"/>
-        <source>Смайлики</source>
-        <translation type="unfinished"></translation>
+        <source>Emoticons</source>
+        <translation>Смайлики</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="63"/>
-        <source>Звуки</source>
-        <translation type="unfinished"></translation>
+        <source>Sounds</source>
+        <translation>Звуки</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="64"/>
-        <source>Оповещатель</source>
-        <translation type="unfinished"></translation>
+        <source>Notifications</source>
+        <translation>Уведомления</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="65"/>
-        <source>Обновление</source>
-        <translation type="unfinished"></translation>
+        <source>Update</source>
+        <translation>Обновление</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="66"/>
-        <source>Разное</source>
-        <translation type="unfinished"></translation>
+        <source>Others</source>
+        <translation>Разное</translation>
     </message>
 </context>
 <context>
@@ -1355,28 +1341,33 @@
     <name>UpdateWidget</name>
     <message>
         <location filename="../../src/schat/update/updatewidget.cpp" line="59"/>
-        <source>Проверка обновлений...</source>
-        <translation type="unfinished"></translation>
+        <source>Check for updates...</source>
+        <translation>Проверка обновлений...</translation>
     </message>
     <message>
         <location filename="../../src/schat/update/updatewidget.cpp" line="69"/>
-        <source>Проверка обновлений отключена, &lt;a href=&apos;ue&apos; style=&apos;text-decoration:none; color:#1a4d82;&apos;&gt;включить?&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Check for updates is disabled</source>
+        <translation>Проверка обновлений отключена</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/update/updatewidget.cpp" line="69"/>
+        <source>enable?</source>
+        <translation>включить?</translation>
     </message>
     <message>
         <location filename="../../src/schat/update/updatewidget.cpp" line="93"/>
-        <source>Не удалось проверить обновления</source>
-        <translation type="unfinished"></translation>
+        <source>Check for updates failed</source>
+        <translation>Не удалось проверить обновления</translation>
     </message>
     <message>
         <location filename="../../src/schat/update/updatewidget.cpp" line="98"/>
-        <source>Версия &lt;b&gt;%1&lt;/b&gt; самая свежая</source>
-        <translation type="unfinished"></translation>
+        <source>Version &lt;b&gt;%1&lt;/b&gt; is the latest</source>
+        <translation>Версия &lt;b&gt;%1&lt;/b&gt; самая новая</translation>
     </message>
     <message>
         <location filename="../../src/schat/update/updatewidget.cpp" line="107"/>
-        <source>Доступна новая версия &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>New version &lt;b&gt;%1&lt;/b&gt; is available</source>
+        <translation>Доступна новая версия &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
 </context>
 <context>
@@ -1431,7 +1422,7 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/welcome.cpp" line="119"/>
-        <source>Всегда использовать это подключение</source>
+        <source>Always use this connection</source>
         <translation>Всегда использовать это подключение</translation>
     </message>
 </context>

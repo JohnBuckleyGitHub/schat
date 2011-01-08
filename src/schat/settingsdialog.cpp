@@ -56,14 +56,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   ProfileSettings *profilePage = new ProfileSettings(this);
   NetworkSettings *networkPage = new NetworkSettings(this);
 
-  createPage(QIcon(":/images/profile.png"),               tr("Личные данные"), profilePage);
-  createPage(QIcon(":/images/network.png"),               tr("Сеть"),          networkPage);
-  createPage(QIcon(":/images/applications-graphics.png"), tr("Интерфейс"),     new InterfaceSettings(this));
-  createPage(QIcon(":/images/emoticon.png"),              tr("Смайлики"),      new EmoticonsSettings(this));
-  createPage(QIcon(":/images/sound.png"),                 tr("Звуки"),         new SoundSettings(this));
-  createPage(QIcon(":/images/notification.png"),          tr("Оповещатель"),   new NotificationSettings(this));
-  createPage(QIcon(":/images/update.png"),                tr("Обновление"),    new UpdateSettings(this));
-  createPage(QIcon(":/images/application-x-desktop.png"), tr("Разное"),        new MiscSettings(this));
+  createPage(QIcon(":/images/profile.png"),               tr("Personal data"), profilePage);
+  createPage(QIcon(":/images/network.png"),               tr("Network"),       networkPage);
+  createPage(QIcon(":/images/applications-graphics.png"), tr("Interface"),     new InterfaceSettings(this));
+  createPage(QIcon(":/images/emoticon.png"),              tr("Emoticons"),     new EmoticonsSettings(this));
+  createPage(QIcon(":/images/sound.png"),                 tr("Sounds"),        new SoundSettings(this));
+  createPage(QIcon(":/images/notification.png"),          tr("Notifications"), new NotificationSettings(this));
+  createPage(QIcon(":/images/update.png"),                tr("Update"),        new UpdateSettings(this));
+  createPage(QIcon(":/images/application-x-desktop.png"), tr("Others"),        new MiscSettings(this));
 
   connect(profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
   connect(networkPage, SIGNAL(validServer(bool)), m_okButton, SLOT(setEnabled(bool)));
@@ -232,59 +232,59 @@ public:
 NetworkSettings::NetworkSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::NetworkPage, parent), d(new Private)
 {
-  d->welcome = new QCheckBox(tr("Всегда использовать это подключение"), this);
+  d->welcome = new QCheckBox(tr("Always use this connection"), this);
   d->welcome->setChecked(SimpleSettings->getBool("HideWelcome"));
-  d->welcome->setToolTip(tr("Не запрашивать персональную информацию\nи адрес сервера при запуске"));
+  d->welcome->setToolTip(tr("Do not require personal information and server address at startup"));
 
   d->network = new NetworkWidget(this);
   connect(d->network, SIGNAL(validServer(bool)), SIGNAL(validServer(bool)));
 
-  QGroupBox *serverGroup = new QGroupBox(tr("Подключение"), this);
+  QGroupBox *serverGroup = new QGroupBox(tr("Connection"), this);
   QVBoxLayout *serverLay = new QVBoxLayout(serverGroup);
   serverLay->addWidget(d->network);
   serverLay->addWidget(d->welcome);
   serverLay->setMargin(6);
   serverLay->setSpacing(4);
 
-  d->proxyGroup = new QGroupBox(tr("Подключение через прокси-сервер"), this);
+  d->proxyGroup = new QGroupBox(tr("Connection via proxy server"), this);
   d->proxyGroup->setCheckable(true);
   d->proxyGroup->setChecked(SimpleSettings->getBool("Proxy/Enable"));
   d->proxyGroup->setVisible(!SimpleSettings->getBool("Proxy/HideAndDisable"));
 
   d->type = new QComboBox(this);
-  d->type->addItem(tr("HTTP"));
-  d->type->addItem(tr("SOCKS5"));
-  d->type->setToolTip(tr("Тип прокси-сервера"));
+  d->type->addItem("HTTP");
+  d->type->addItem("SOCKS5");
+  d->type->setToolTip(tr("Proxy server type"));
 
   if (SimpleSettings->getInt("Proxy/Type") == 1)
     d->type->setCurrentIndex(1);
   else
     d->type->setCurrentIndex(0);
 
-  QLabel *type = new QLabel(tr("&Тип:"), this);
+  QLabel *type = new QLabel(tr("&Type:"), this);
   type->setBuddy(d->type);
 
   d->host = new QLineEdit(SimpleSettings->getString("Proxy/Host"), this);
-  d->host->setToolTip(tr("Адрес прокси-сервера"));
-  QLabel *host = new QLabel(tr("&Адрес:"), this);
+  d->host->setToolTip(tr("Proxy server address"));
+  QLabel *host = new QLabel(tr("&Address:"), this);
   host->setBuddy(d->host);
 
   d->port = new QSpinBox(this);
   d->port->setRange(1, 65536);
-  d->port->setToolTip(tr("Порт прокси-сервера"));
+  d->port->setToolTip(tr("Proxy server port"));
   d->port->setValue(SimpleSettings->getInt("Proxy/Port"));
-  QLabel *port = new QLabel(tr("&Порт:"), this);
+  QLabel *port = new QLabel(tr("&Port:"), this);
   port->setBuddy(d->port);
 
   d->userName = new QLineEdit(SimpleSettings->getString("Proxy/UserName"), this);
-  d->userName->setToolTip(tr("Имя пользователя для авторизации на прокси-сервере"));
-  QLabel *userName = new QLabel(tr("&Имя:"), this);
+  d->userName->setToolTip(tr("User name for authorization at proxy server"));
+  QLabel *userName = new QLabel(tr("&Name:"), this);
   userName->setBuddy(d->userName);
 
   d->password = new QLineEdit(SimpleSettings->getString("Proxy/Password"), this);
   d->password->setEchoMode(QLineEdit::Password);
-  d->password->setToolTip(tr("Пароль для авторизации на прокси-сервере"));
-  QLabel *password = new QLabel(tr("Па&роль:"), this);
+  d->password->setToolTip(tr("Password for authorization at proxy server"));
+  QLabel *password = new QLabel(tr("P&assword:"), this);
   password->setBuddy(d->password);
 
   QGridLayout *proxyLay = new QGridLayout(d->proxyGroup);
@@ -299,8 +299,8 @@ NetworkSettings::NetworkSettings(QWidget *parent)
   proxyLay->addWidget(password, 2, 2);
   proxyLay->addWidget(d->password, 2, 3, 1, 3);
 
-  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Файлы сети")), this);
-  url->setToolTip(tr("Открыть папку с файлами сети"));
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Network files")), this);
+  url->setToolTip(tr("Open folder with network files"));
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
@@ -417,7 +417,7 @@ void InterfaceSettings::Private::createStylesList()
 void InterfaceSettings::Private::reloadVariants(int index)
 {
   chatStyleVariant->clear();
-  chatStyleVariant->addItem(tr("(без вариантов)"));
+  chatStyleVariant->addItem(tr("(without variants)"));
 
   if (index > 0) {
     chatStyleVariant->addItems(chatStyle->itemData(index, Qt::UserRole + 1).toStringList());
@@ -456,7 +456,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   d->mainStyle->addItems(QStyleFactory::keys());
   d->mainStyle->setCurrentIndex(d->mainStyle->findText(SimpleSettings->getString("Style")));
 
-  QGroupBox *mainStyleGroup = new QGroupBox(tr("&Глобальный стиль"), this);
+  QGroupBox *mainStyleGroup = new QGroupBox(tr("&Global style"), this);
   QHBoxLayout *mainStyleLay = new QHBoxLayout(mainStyleGroup);
   mainStyleLay->addWidget(d->mainStyle);
   mainStyleLay->addStretch();
@@ -467,18 +467,18 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   #ifndef SCHAT_NO_WEBKIT
     d->chatStyle = new QComboBox(this);
     d->chatStyle->addItem("Default");
-    QLabel *name = new QLabel(tr("&Имя стиля:"), this);
+    QLabel *name = new QLabel(tr("&Style name:"), this);
     name->setBuddy(d->chatStyle);
 
     d->chatStyleVariant = new QComboBox(this);
-    QLabel *variant = new QLabel(tr("&Вариант:"), this);
+    QLabel *variant = new QLabel(tr("&Variant:"), this);
     variant->setBuddy(d->chatStyleVariant);
 
-    d->grouping = new QCheckBox(tr("Группировать идущие &подряд сообщения"), this);
-    d->grouping->setToolTip(tr("Группировать идущие подряд сообщения\nот одного пользователя если это\nподдерживается выбранным стилем"));
+    d->grouping = new QCheckBox(tr("Group &consecutive messages"), this);
+    d->grouping->setToolTip(tr("Group consecutive messages from one user, if the chosen style supports this option"));
     d->grouping->setChecked(SimpleSettings->getBool("MessageGrouping"));
 
-    QGroupBox *chatStyleGroup = new QGroupBox(tr("Стиль &текста"), this);
+    QGroupBox *chatStyleGroup = new QGroupBox(tr("&Text style"), this);
     QGridLayout *chatStyleLay = new QGridLayout(chatStyleGroup);
     chatStyleLay->addWidget(name, 0, 0);
     chatStyleLay->addWidget(d->chatStyle, 0, 1);
@@ -597,7 +597,7 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
 {
   d->combo = new QComboBox(this);
 
-  d->group = new QGroupBox(tr("Тема смайликов"), this);
+  d->group = new QGroupBox(tr("Emoticons theme"), this);
   QHBoxLayout *themeLay = new QHBoxLayout(d->group);
   themeLay->addWidget(d->combo);
   themeLay->addStretch();
@@ -607,17 +607,17 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->group);
 
-  d->enable = new QCheckBox(tr("Включить смайлики"), this);
+  d->enable = new QCheckBox(tr("Enable emoticons"), this);
   d->enable->setChecked(SimpleSettings->getBool("UseEmoticons"));
-  d->enable->setToolTip(tr("Включает использование графических смайликов"));
+  d->enable->setToolTip(tr("Enables use of graphic emoticons"));
   connect(d->enable, SIGNAL(clicked(bool)), SLOT(enable(bool)));
 
-  d->requireSpaces = new QCheckBox(tr("Смайлики отделены пробелами"), this);
-  d->requireSpaces->setToolTip(tr("Показывать смайлики только если они\nотделены пробелами от остального сообщения"));
+  d->requireSpaces = new QCheckBox(tr("Emoticons are separated by spaces"), this);
+  d->requireSpaces->setToolTip(tr("Show emoticons only if they are separated by spaces from the rest of the message"));
   d->requireSpaces->setChecked(Emoticons::strictParse());
 
-  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Темы смайликов")), this);
-  url->setToolTip(tr("Открыть папку с темами смайликов"));
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Emoticons themes")), this);
+  url->setToolTip(tr("Open folder with emoticons themes"));
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
