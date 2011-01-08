@@ -315,15 +315,19 @@
 <context>
     <name>MainChannel</name>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="72"/>
-        <location filename="../../src/schat/mainchannel.cpp" line="185"/>
-        <source>Общий</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/mainchannel.cpp" line="225"/>
+        <source>Welcome</source>
+        <translation>Приветствие</translation>
     </message>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="183"/>
-        <source>Общий (%1)</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/mainchannel.cpp" line="230"/>
+        <source>Main (%1)</source>
+        <translation>Общий (%1)</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/mainchannel.cpp" line="232"/>
+        <source>Main</source>
+        <translation>Общий</translation>
     </message>
 </context>
 <context>

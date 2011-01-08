@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
 #include <QSplitter>
 #include <QVBoxLayout>
 //#include <QDebug>
@@ -31,10 +32,11 @@
  */
 MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *parent)
   : AbstractTab(Main, icon, parent),
-  m_networkWidget(0),
-  m_tabs(parent),
-  m_userView(userView),
-  m_welcome(0)
+    m_count(0),
+    m_networkWidget(0),
+    m_tabs(parent),
+    m_userView(userView),
+    m_welcome(0)
 {
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
@@ -69,8 +71,10 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   connect(m_splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
   connect(m_userView, SIGNAL(usersCountChanged(int)), SLOT(usersCountChanged(int)));
 
-  m_tabs->setCurrentIndex(m_tabs->addTab(this, tr("Общий")));
+  m_tabs->setCurrentIndex(m_tabs->addTab(this, ""));
   m_tabs->setTabIcon(m_tabs->indexOf(this), icon);
+
+  retranslateUi();
 }
 
 
@@ -143,6 +147,17 @@ void MainChannel::displayWelcome(bool display)
     m_tabs->setTabsClosable(true);
     #endif
   }
+
+  retranslateUi();
+}
+
+
+void MainChannel::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  AbstractTab::changeEvent(event);
 }
 
 
@@ -179,10 +194,8 @@ void MainChannel::splitterMoved()
  */
 void MainChannel::usersCountChanged(int count)
 {
-  if (count)
-    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий (%1)").arg(count));
-  else
-    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий"));
+  m_count = count;
+  retranslateUi();
 }
 
 
@@ -201,4 +214,20 @@ QWidget* MainChannel::createUserView()
   userLay->addWidget(m_userView);
   userLay->addWidget(userSearch);
   return userWidget;
+}
+
+
+void MainChannel::retranslateUi()
+{
+  int index = m_tabs->indexOf(this);
+
+  if (m_welcome) {
+    m_tabs->setTabText(index, tr("Welcome"));
+    return;
+  }
+
+  if (m_count)
+    m_tabs->setTabText(index, tr("Main (%1)").arg(m_count));
+  else
+    m_tabs->setTabText(index, tr("Main"));
 }
