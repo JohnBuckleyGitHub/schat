@@ -569,7 +569,6 @@ public:
   Private() {}
   bool createThemeList();
 
-  QCheckBox *enable;
   QCheckBox *requireSpaces;
   QComboBox *combo;
   QGroupBox *group;
@@ -580,12 +579,18 @@ bool EmoticonsSettings::Private::createThemeList()
 {
   combo->addItems(Emoticons::themeList());
 
-  if (combo->count() == -1)
+  if (combo->count() == 0)
     return false;
-  else {
-    combo->setCurrentIndex(combo->findText(SimpleSettings->getString("EmoticonTheme")));
-    return true;
+
+  combo->setCurrentIndex(combo->findText(SimpleSettings->getString("EmoticonTheme")));
+  if (combo->currentIndex() == -1) {
+    combo->setCurrentIndex(combo->findText("Kolobok"));
+    if (combo->currentIndex() == -1) {
+      combo->setCurrentIndex(0);
+    }
   }
+
+  return true;
 }
 
 
@@ -597,8 +602,13 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
 {
   d->combo = new QComboBox(this);
 
-  d->group = new QGroupBox(tr("Emoticons theme"), this);
+  d->group = new QGroupBox(tr("&Emoticons"), this);
+  d->group->setCheckable(true);
+  d->group->setChecked(SimpleSettings->getBool("UseEmoticons"));
+  connect(d->group, SIGNAL(clicked(bool)), SLOT(enable(bool)));
+
   QHBoxLayout *themeLay = new QHBoxLayout(d->group);
+  themeLay->addWidget(new QLabel(tr("Theme:"), this));
   themeLay->addWidget(d->combo);
   themeLay->addStretch();
   themeLay->setMargin(6);
@@ -607,12 +617,7 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->group);
 
-  d->enable = new QCheckBox(tr("Enable emoticons"), this);
-  d->enable->setChecked(SimpleSettings->getBool("UseEmoticons"));
-  d->enable->setToolTip(tr("Enables use of graphic emoticons"));
-  connect(d->enable, SIGNAL(clicked(bool)), SLOT(enable(bool)));
-
-  d->requireSpaces = new QCheckBox(tr("Emoticons are separated by spaces"), this);
+  d->requireSpaces = new QCheckBox(tr("Emoticons are &separated by spaces"), this);
   d->requireSpaces->setToolTip(tr("Show emoticons only if they are separated by spaces from the rest of the message"));
   d->requireSpaces->setChecked(Emoticons::strictParse());
 
@@ -621,7 +626,6 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
-  mainLay->addWidget(d->enable);
   mainLay->addWidget(d->requireSpaces);
   mainLay->addStretch();
   mainLay->addWidget(url);
@@ -629,12 +633,12 @@ EmoticonsSettings::EmoticonsSettings(QWidget *parent)
   mainLay->setContentsMargins(3, 3, 3, 0);
 
   if (!d->createThemeList()) {
-    d->enable->setEnabled(false);
-    d->enable->setChecked(false);
+    d->group->setEnabled(false);
+    d->group->setChecked(false);
     SimpleSettings->setBool("UseEmoticons", false);
   }
 
-  enable(d->enable->isChecked());
+  enable(d->group->isChecked());
 }
 
 
@@ -644,7 +648,7 @@ EmoticonsSettings::~EmoticonsSettings() { delete d; }
 void EmoticonsSettings::reset(int page)
 {
   if (page == m_id) {
-    d->enable->setChecked(true);
+    d->group->setChecked(true);
     d->requireSpaces->setChecked(true);
     d->combo->setCurrentIndex(d->combo->findText("Kolobok"));
     enable(true);
@@ -654,7 +658,7 @@ void EmoticonsSettings::reset(int page)
 
 void EmoticonsSettings::save()
 {
-  SimpleSettings->setBool("UseEmoticons", d->enable->isChecked());
+  SimpleSettings->setBool("UseEmoticons", d->group->isChecked());
   Emoticons::setStrictParse(d->requireSpaces->isChecked());
   SimpleSettings->setString("EmoticonTheme", d->combo->currentText());
   SimpleSettings->notify(Settings::EmoticonsChanged);
@@ -663,7 +667,6 @@ void EmoticonsSettings::save()
 
 void EmoticonsSettings::enable(bool checked)
 {
-  d->group->setEnabled(checked);
   d->requireSpaces->setEnabled(checked);
 }
 
