@@ -116,5 +116,5 @@ void WelcomeWidget::validNick(bool valid)
 void WelcomeWidget::retranslateUi()
 {
   m_connect->setText(tr("Connect"));
-  m_ask->setText(tr("Всегда использовать это подключение"));
+  m_ask->setText(tr("Always use this connection"));
 }
