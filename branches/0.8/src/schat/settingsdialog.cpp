@@ -370,6 +370,8 @@ class InterfaceSettings::Private
 {
 public:
   Private() {}
+  LanguageBox *language;
+
   #if !defined(SCHAT_NO_STYLE)
   QComboBox *mainStyle;
   #endif
@@ -464,6 +466,21 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   mainStyleLay->setSpacing(4);
   #endif
 
+  QGroupBox *language = new QGroupBox(tr("Language"), this);
+  d->language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
+
+  QHBoxLayout *languageLay = new QHBoxLayout(language);
+  languageLay->addWidget(d->language);
+  languageLay->addStretch();
+  languageLay->setMargin(6);
+  languageLay->setSpacing(4);
+
+  #if !defined(SCHAT_NO_STYLE)
+  QHBoxLayout *topLay = new QHBoxLayout;
+  topLay->addWidget(mainStyleGroup, 0);
+  topLay->addWidget(language, 1);
+  #endif
+
   #ifndef SCHAT_NO_WEBKIT
     d->chatStyle = new QComboBox(this);
     d->chatStyle->addItem("Default");
@@ -492,12 +509,12 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   #if !defined(SCHAT_NO_STYLE)
-  mainLay->addWidget(mainStyleGroup);
+  mainLay->addLayout(topLay);
+  #else
+  mainLay->addWidget(language);
   #endif
   #ifndef SCHAT_NO_WEBKIT
-    #if !defined(SCHAT_NO_STYLE)
     mainLay->addSpacing(12);
-    #endif
     mainLay->addWidget(chatStyleGroup);
   #endif
   mainLay->addStretch();
@@ -551,6 +568,12 @@ void InterfaceSettings::save()
     SimpleSettings->setBool("MessageGrouping", d->grouping->isChecked());
     SimpleSettings->notify(Settings::InterfaceSettingsChanged);
   #endif
+
+  if (d->language->currentText() != CURRENT_LANG) {
+    Translation *translation = SimpleChatApp::instance()->translation();
+    translation->load(d->language->qmFile());
+    SimpleSettings->setString("Translation", translation->name());
+  }
 }
 
 
@@ -1133,7 +1156,6 @@ public:
   void readAutostart();
   void writeAutostart();
 
-  LanguageBox *language;
   QCheckBox *autostart;
   QCheckBox *log;
   QCheckBox *logPrivate;
@@ -1229,15 +1251,6 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
-  QGroupBox *language = new QGroupBox(tr("Language"), this);
-  d->language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
-
-  QHBoxLayout *languageLay = new QHBoxLayout(language);
-  languageLay->addWidget(d->language);
-  languageLay->addStretch();
-  languageLay->setMargin(6);
-  languageLay->setSpacing(4);
-
   QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
   #if defined(Q_OS_MAC)
   integration->setVisible(false);
@@ -1280,8 +1293,6 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->setSpacing(4);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(language);
-  mainLay->addSpacing(12);
   mainLay->addWidget(integration);
   #if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
@@ -1312,12 +1323,5 @@ void MiscSettings::save()
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
-
-  if (d->language->currentText() != CURRENT_LANG) {
-    Translation *translation = SimpleChatApp::instance()->translation();
-    translation->load(d->language->qmFile());
-    SimpleSettings->setString("Translation", translation->name());
-  }
-
   SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
