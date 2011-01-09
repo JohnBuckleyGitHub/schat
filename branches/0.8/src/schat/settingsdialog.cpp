@@ -1251,19 +1251,19 @@ void MiscSettings::Private::writeAutostart()
 MiscSettings::MiscSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::MiscPage, parent), d(new Private)
 {
-  QGroupBox *integration = new QGroupBox(tr("Интеграция"), this);
+  QGroupBox *integration = new QGroupBox(tr("Integration"), this);
   #if defined(Q_OS_MAC)
   integration->setVisible(false);
   #endif
 
-  d->autostart = new QCheckBox(tr("&Автозапуск"), this);
-  d->autostart->setToolTip(tr("Автозапуск программы при старте системы"));
+  d->autostart = new QCheckBox(tr("&Autorun"), this);
+  d->autostart->setToolTip(tr("Autorun at system startup"));
   d->autostart->setTristate();
   d->autostart->setCheckState(Qt::PartiallyChecked);
 
   #ifdef Q_WS_WIN
-  d->autostartDaemon = new QCheckBox(tr("Автозапуск &сервера"), this);
-  d->autostartDaemon->setToolTip(tr("Автозапуск сервера при старте системы"));
+  d->autostartDaemon = new QCheckBox(tr("&Server autorun"), this);
+  d->autostartDaemon->setToolTip(tr("Server autorun at system startup"));
   d->autostartDaemon->setTristate();
   d->autostartDaemon->setCheckState(Qt::PartiallyChecked);
   #endif
@@ -1276,14 +1276,14 @@ MiscSettings::MiscSettings(QWidget *parent)
   integrationLay->setMargin(6);
   integrationLay->setSpacing(4);
 
-  QGroupBox *logGroup = new QGroupBox(tr("&Журналирование"), this);
+  QGroupBox *logGroup = new QGroupBox(tr("&Logging"), this);
 
-  d->log = new QCheckBox(tr("Журнал &основного канала"), this);
-  d->log->setToolTip(tr("Вести журнал основного канала"));
+  d->log = new QCheckBox(tr("&Main channel log"), this);
+  d->log->setToolTip(tr("Keep a log of main channel"));
   d->log->setChecked(SimpleSettings->getBool("Log"));
 
-  d->logPrivate = new QCheckBox(tr("Журналы &приватов"), this);
-  d->logPrivate->setToolTip(tr("Вести журналы приватных сообщений"));
+  d->logPrivate = new QCheckBox(tr("&Private logs"), this);
+  d->logPrivate->setToolTip(tr("Keep logs of private messages"));
   d->logPrivate->setChecked(SimpleSettings->getBool("LogPrivate"));
 
   QVBoxLayout *logLay = new QVBoxLayout(logGroup);
