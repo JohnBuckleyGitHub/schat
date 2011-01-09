@@ -117,4 +117,5 @@ void WelcomeWidget::retranslateUi()
 {
   m_connect->setText(tr("Connect"));
   m_ask->setText(tr("Always use this connection"));
+  m_language->setCurrentIndex(m_language->findText(CURRENT_LANG));
 }
