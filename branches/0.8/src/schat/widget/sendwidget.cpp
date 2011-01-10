@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
  * Конструктор класса SendWidget.
  */
 SendWidget::SendWidget(QWidget *parent)
-  : QWidget(parent),
+  : TranslateWidget(parent),
   m_bigSendButton(SimpleSettings->getBool("BigSendButton")),
   m_input(new InputWidget(this)),
   m_toolBar(0)
@@ -61,6 +61,8 @@ SendWidget::SendWidget(QWidget *parent)
   connect(m_input, SIGNAL(statusShortcut(int)), SIGNAL(statusShortcut(int)));
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(setSettings()));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
+
+  retranslateUi();
 }
 
 
@@ -223,7 +225,7 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
     if (action) {
       name = action->data().toString();
       if (!name.isEmpty()) {
-        removeAction = menu.addAction(QIcon(":/images/edit-delete.png"), tr("Удалить"));
+        removeAction = menu.addAction(QIcon(":/images/edit-delete.png"), tr("Delete"));
       }
     }
 
@@ -233,7 +235,7 @@ bool SendWidget::eventFilter(QObject *object, QEvent *event)
       list << "send";
     if (list != schat::DefaultToolBarLayout) {
       menu.addSeparator();
-      resetAction = menu.addAction(QIcon(":/images/undo.png"), tr("По умолчанию"));
+      resetAction = menu.addAction(QIcon(":/images/undo.png"), tr("Default"));
     }
 
     QAction *result = menu.exec(menuEvent->globalPos());
@@ -285,25 +287,25 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
   QAction *action = 0;
 
   if (lowerName == "bold") {
-    action = m_toolBar->addAction(QIcon(":/images/format-text-bold.png"), tr("Полужирный"), this, SLOT(setBold(bool)));
+    action = m_toolBar->addAction(QIcon(":/images/format-text-bold.png"), "", this, SLOT(setBold(bool)));
     action->setCheckable(true);
     action->setShortcut(Qt::CTRL + Qt::Key_B);
     m_bold = action;
   }
   else if (lowerName == "italic") {
-    action = m_toolBar->addAction(QIcon(":/images/format-text-italic.png"), tr("Курсив"), this, SLOT(setItalic(bool)));
+    action = m_toolBar->addAction(QIcon(":/images/format-text-italic.png"), "", this, SLOT(setItalic(bool)));
     action->setCheckable(true);
     action->setShortcut(Qt::CTRL + Qt::Key_I);
     m_italic = action;
   }
   else if (lowerName == "underline") {
-    action = m_toolBar->addAction(QIcon(":/images/format-text-underline.png"), tr("Подчёркнутый"), this, SLOT(setUnderline(bool)));
+    action = m_toolBar->addAction(QIcon(":/images/format-text-underline.png"), "", this, SLOT(setUnderline(bool)));
     action->setCheckable(true);
     action->setShortcut(Qt::CTRL + Qt::Key_U);
     m_underline = action;
   }
   else if (lowerName == "strike") {
-    action = m_toolBar->addAction(QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"), this, SLOT(setStrike(bool)));
+    action = m_toolBar->addAction(QIcon(":/images/format-text-strikethrough.png"), "", this, SLOT(setStrike(bool)));
     action->setCheckable(true);
     m_strike = action;
   }
@@ -333,7 +335,6 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
 
     m_emoticons = new QToolButton(this);
     m_emoticons->setIcon(QIcon(":/images/emoticon.png"));
-    m_emoticons->setToolTip(tr("Добавить смайлик"));
     m_emoticons->setAutoRaise(true);
     m_emoticons->setMenu(menu);
     m_emoticons->setPopupMode(QToolButton::InstantPopup);
@@ -351,11 +352,11 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
     action = m_soundAction;
   }
   else if (lowerName == "log") {
-    action = m_toolBar->addAction(QIcon(":/images/book.png"), tr("Просмотр журнала"), this, SLOT(log()));
+    action = m_toolBar->addAction(QIcon(":/images/book.png"), "", this, SLOT(log()));
+    m_logAction = action;
   }
   else if (lowerName == "send") {
     m_send = new QToolButton(this);
-    m_send->setToolTip(tr("Отправить сообщение"));
     m_send->setAutoRaise(true);
     connect(m_send, SIGNAL(clicked()), m_input, SLOT(sendMsg()));
 
@@ -389,9 +390,9 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
 }
 
 
-QAction* SendWidget::createSettingsPage(QMenu *menu, const QIcon &icon, const QString &text, int page)
+QAction* SendWidget::createSettingsPage(const QIcon &icon, int page)
 {
-  QAction *action = menu->addAction(icon, text, this, SLOT(settingsPage()));
+  QAction *action = m_prefMenu->addAction(icon, "", this, SLOT(settingsPage()));
   action->setData(page);
   return action;
 }
@@ -422,36 +423,36 @@ QMenu* SendWidget::availableActions()
   if (m_availableActions.isEmpty())
     return 0;
 
-  QMenu *menu = new QMenu(tr("Добавить"), this);
+  QMenu *menu = new QMenu(tr("Add"), this);
   menu->setIcon(QIcon(":/images/edit-add.png"));
 
-  availableAction(menu, "bold",      QIcon(":/images/format-text-bold.png"),          tr("Полужирный"));
-  availableAction(menu, "italic",    QIcon(":/images/format-text-italic.png"),        tr("Курсив"));
-  availableAction(menu, "underline", QIcon(":/images/format-text-underline.png"),     tr("Подчёркнутый"));
-  availableAction(menu, "strike",    QIcon(":/images/format-text-strikethrough.png"), tr("Зачёркнутый"));
+  availableAction(menu, "bold",      QIcon(":/images/format-text-bold.png"),          tr("Bold"));
+  availableAction(menu, "italic",    QIcon(":/images/format-text-italic.png"),        tr("Italic"));
+  availableAction(menu, "underline", QIcon(":/images/format-text-underline.png"),     tr("Underline"));
+  availableAction(menu, "strike",    QIcon(":/images/format-text-strikethrough.png"), tr("Strikeout"));
   #ifdef Q_OS_WINCE
-  availableAction(menu, "settings",  QIcon(":/images/configure.png"),                 tr("Настройка"));
+  availableAction(menu, "settings",  QIcon(":/images/configure.png"),                 tr("Preferences"));
   #endif
-  availableAction(menu, "color",     QIcon(":/images/color.png"),                     tr("Выбор цвета"));
-  availableAction(menu, "emoticons", QIcon(":/images/emoticon.png"),                  tr("Смайлики"));
-  availableAction(menu, "log",       QIcon(":/images/book.png"),                      tr("Просмотр журнала"));
+  availableAction(menu, "color",     QIcon(":/images/color.png"),                     tr("Color"));
+  availableAction(menu, "emoticons", QIcon(":/images/emoticon.png"),                  tr("Emoticons"));
+  availableAction(menu, "log",       QIcon(":/images/book.png"),                      tr("Logs"));
   #ifdef Q_OS_WINCE
-  availableAction(menu, "sound",     QIcon(":/images/sound.png"),                     tr("Звук"));
+  availableAction(menu, "sound",     QIcon(":/images/sound.png"),                     tr("Sound"));
   #endif
-  availableAction(menu, "send",      QIcon(":/images/go-jump-locationbar.png"),       tr("Отправить сообщение"));
+  availableAction(menu, "send",      QIcon(":/images/go-jump-locationbar.png"),       tr("Send"));
 
   bool separator = false;
 
   if (m_availableActions.contains("separator")) {
     separator = true;
     menu->addSeparator();
-    menu->addAction(tr("Разделитель"))->setData("separator");
+    menu->addAction(tr("Separator"))->setData("separator");
   }
 
   if (m_availableActions.contains("stretch")) {
     if (!separator)
       menu->addSeparator();
-    menu->addAction(tr("Растяжка"))->setData("stretch");
+    menu->addAction(tr("Stretch"))->setData("stretch");
   }
 
   if (menu->actions().isEmpty()) {
@@ -514,7 +515,6 @@ void SendWidget::createPermanentButtons()
 {
   m_settingsButton = new QToolButton(this);
   m_settingsButton->setIcon(QIcon(":/images/configure.png"));
-  m_settingsButton->setToolTip(tr("Настройка..."));
   m_settingsButton->setAutoRaise(true);
   m_settingsButton->setPopupMode(QToolButton::InstantPopup);
   m_settingsButton->setVisible(false);
@@ -529,23 +529,25 @@ void SendWidget::createPermanentButtons()
   menu->addAction(act);
   menu->addSeparator();
 
-  QMenu *prefMenu = menu->addMenu(QIcon(":/images/configure2.png"), tr("Параметры"));
-  createSettingsPage(prefMenu, QIcon(":/images/profile.png"), tr("Личные данные..."), SettingsDialog::ProfilePage);
-  createSettingsPage(prefMenu, QIcon(":/images/network.png"), tr("Сеть..."), SettingsDialog::NetworkPage);
-  createSettingsPage(prefMenu, QIcon(":/images/applications-graphics.png"), tr("Интерфейс..."), SettingsDialog::InterfacePage);
-  createSettingsPage(prefMenu, QIcon(":/images/emoticon.png"), tr("Смайлики..."), SettingsDialog::EmoticonsPage);
-  createSettingsPage(prefMenu, QIcon(":/images/sound.png"), tr("Звуки..."), SettingsDialog::SoundPage);
-  createSettingsPage(prefMenu, QIcon(":/images/notification.png"), tr("Оповещатель..."), SettingsDialog::NotificationPage);
-  createSettingsPage(prefMenu, QIcon(":/images/update.png"), tr("Обновление..."), SettingsDialog::UpdatePage);
-  createSettingsPage(prefMenu, QIcon(":/images/application-x-desktop.png"), tr("Разное..."), SettingsDialog::MiscPage);
-  m_aboutAction = menu->addAction(tr("О Simple Chat..."), this, SIGNAL(about()));
+  m_prefMenu = menu->addMenu(QIcon(":/images/configure2.png"), "");
+  m_profilePage      = createSettingsPage(QIcon(":/images/profile.png"), SettingsDialog::ProfilePage);
+  m_networkPage      = createSettingsPage(QIcon(":/images/network.png"), SettingsDialog::NetworkPage);
+  m_interfacePage    = createSettingsPage(QIcon(":/images/applications-graphics.png"), SettingsDialog::InterfacePage);
+  m_emoticonsPage    = createSettingsPage(QIcon(":/images/emoticon.png"), SettingsDialog::EmoticonsPage);
+  m_soundPage        = createSettingsPage(QIcon(":/images/sound.png"), SettingsDialog::SoundPage);
+  m_notificationPage = createSettingsPage(QIcon(":/images/notification.png"), SettingsDialog::NotificationPage);
+  m_updatePage       = createSettingsPage(QIcon(":/images/update.png"), SettingsDialog::UpdatePage);
+  m_miscPage         = createSettingsPage(QIcon(":/images/application-x-desktop.png"), SettingsDialog::MiscPage);
+
+  m_aboutAction = menu->addAction("", this, SIGNAL(about()));
   if (Settings::isNewYear())
     m_aboutAction->setIcon(QIcon(":/images/schat16-ny.png"));
   else
     m_aboutAction->setIcon(QIcon(":/images/schat16.png"));
 
   menu->addSeparator();
-  m_quitAction = menu->addAction(QIcon(":/images/exit.png"), tr("Выход"), this, SIGNAL(closeChat()));
+  m_quitAction = menu->addAction(QIcon(":/images/exit.png"), "", this, SIGNAL(closeChat()));
+  m_quitAction->setShortcut(QKeySequence::Quit);
 
   m_settingsButton->setMenu(menu);
   m_soundAction = new SoundAction(this);
@@ -581,6 +583,33 @@ void SendWidget::mergeFormat(const QTextCharFormat &format)
 
   cursor.mergeCharFormat(format);
   m_input->mergeCurrentCharFormat(format);
+}
+
+
+void SendWidget::retranslateUi()
+{
+  m_settingsButton->setToolTip(tr("Menu"));
+  m_prefMenu->setTitle(tr("Preferences"));
+  m_aboutAction->setText(tr("About Simple Chat..."));
+  m_quitAction->setText(tr("Quit"));
+
+  m_profilePage->setText(tr("Personal data..."));
+  m_networkPage->setText(tr("Network..."));
+  m_interfacePage->setText(tr("Interface..."));
+  m_emoticonsPage->setText(tr("Emoticons..."));
+  m_soundPage->setText(tr("Sounds..."));
+  m_notificationPage->setText(tr("Notifications..."));
+  m_updatePage->setText(tr("Update..."));
+  m_miscPage->setText(tr("Others..."));
+
+  if (m_bold)      m_bold->setText(tr("Bold"));
+  if (m_italic)    m_italic->setText(tr("Italic"));
+  if (m_underline) m_underline->setText(tr("Underline"));
+  if (m_strike)    m_strike->setText(tr("Strikeout"));
+  if (m_emoticons) m_emoticons->setToolTip(tr("Add emoticon"));
+  if (m_logAction) m_logAction->setText(tr("Logs"));
+  if (m_send)      m_send->setToolTip(tr("Send"));
+
 }
 
 

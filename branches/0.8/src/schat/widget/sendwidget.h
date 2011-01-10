@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QTextCharFormat>
 #include <QWidget>
 
+#include "translatewidget.h"
 #include "widget/inputwidget.h"
 
 class ColorButton;
@@ -36,7 +37,7 @@ class SoundAction;
 /*!
  * \brief Виджет полностью берущий на себя ввода текста.
  */
-class SendWidget : public QWidget
+class SendWidget : public TranslateWidget
 {
   Q_OBJECT
 
@@ -76,7 +77,7 @@ private slots:
 private:
   bool eventFilter(QObject *object, QEvent *event);
   QAction* createAction(const QString &name, QAction *before = 0);
-  QAction* createSettingsPage(QMenu *menu, const QIcon &icon, const QString &text, int page);
+  QAction* createSettingsPage(const QIcon &icon, int page);
   QMenu* availableActions();
   QStringList toolBarLayout() const;
   void availableAction(QMenu *menu, const QString &name, const QIcon &icon, const QString &text) const;
@@ -85,15 +86,26 @@ private:
   void createPermanentButtons();
   void initToolBar();
   void mergeFormat(const QTextCharFormat &format);
+  void retranslateUi();
   void saveToolBarLayout();
 
   const bool m_bigSendButton;        ///< Опция настроек "BigSendButton".
   InputWidget* const m_input;        ///< Виджет ввода текста.
   QAction *m_aboutAction;            ///< "О Simple Chat...".
+  QAction *m_emoticonsPage;
+  QAction *m_interfacePage;
+  QAction *m_miscPage;
+  QAction *m_networkPage;
+  QAction *m_notificationPage;
+  QAction *m_profilePage;
   QAction *m_quitAction;             ///< "Выход".
+  QAction *m_soundPage;
+  QAction *m_updatePage;
+  QMenu *m_prefMenu;
   QPointer<ColorButton> m_color;     ///< Кнопка для цветового веделения.
   QPointer<QAction> m_bold;          ///< "Полужирный".
   QPointer<QAction> m_italic;        ///< "Курсив".
+  QPointer<QAction> m_logAction;
   QPointer<QAction> m_strike;        ///< "Зачёркнутый".
   QPointer<QAction> m_underline;     ///< "Подчёркнутый".
   QPointer<QToolButton> m_emoticons; ///< Кнопка для выбора смайлов.

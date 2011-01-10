@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="images/dialog-ok.png">images/dialog-ok-apply.png</file>
+  <file alias="images/notification.png">images/preferences-desktop-notification.png</file>
   <file alias="translations/en.png">images/lang/en.png</file>
   <file alias="translations/ru.png">images/lang/ru.png</file>
   <file>css/popupwindow-flash.css</file>
@@ -18,7 +20,6 @@
   <file>images/configure.png</file>
   <file>images/configure2.png</file>
   <file>images/dialog-cancel.png</file>
-  <file>images/dialog-ok.png</file>
   <file>images/edit-add.png</file>
   <file>images/edit-clear.png</file>
   <file>images/edit-copy.png</file>
@@ -48,7 +49,6 @@
   <file>images/network_disconnect.png</file>
   <file>images/note2.png</file>
   <file>images/notice.png</file>
-  <file>images/notification.png</file>
   <file>images/ok2.png</file>
   <file>images/player_play.png</file>
   <file>images/profile.png</file>

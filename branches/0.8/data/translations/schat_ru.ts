@@ -912,150 +912,146 @@
 <context>
     <name>SendWidget</name>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="226"/>
-        <source>Удалить</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="236"/>
-        <source>По умолчанию</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="288"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="428"/>
-        <source>Полужирный</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="294"/>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="429"/>
-        <source>Курсив</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
+        <source>Bold</source>
+        <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="300"/>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="430"/>
-        <source>Подчёркнутый</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
+        <source>Italic</source>
+        <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="306"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="438"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
+        <source>Logs</source>
+        <translation>Журналы</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="596"/>
+        <source>Personal data...</source>
+        <translation>Личные данные...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="597"/>
+        <source>Network...</source>
+        <translation>Сеть...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="598"/>
+        <source>Interface...</source>
+        <translation>Интерфейс...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="599"/>
+        <source>Emoticons...</source>
+        <translation>Смайлики...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="600"/>
+        <source>Sounds...</source>
+        <translation>Звуки...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="601"/>
+        <source>Notifications...</source>
+        <translation>Уведомления...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="602"/>
+        <source>Update...</source>
+        <translation>Обновление...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="603"/>
+        <source>Others...</source>
+        <translation>Разное...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
+        <source>Add emoticon</source>
+        <translation>Добавить смайлик</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="434"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="592"/>
+        <source>Preferences</source>
+        <translation>Настройка</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="228"/>
+        <source>Delete</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="238"/>
+        <source>Default</source>
+        <translation>По умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="426"/>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="431"/>
-        <source>Зачёркнутый</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
+        <source>Underline</source>
+        <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="336"/>
-        <source>Добавить смайлик</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="354"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
-        <source>Просмотр журнала</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="358"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="441"/>
-        <source>Отправить сообщение</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="425"/>
-        <source>Добавить</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="433"/>
-        <source>Настройка</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
-        <source>Выбор цвета</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="432"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
+        <source>Strikeout</source>
+        <translation>Зачёркнутый</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="436"/>
-        <source>Смайлики</source>
-        <translation type="unfinished"></translation>
+        <source>Color</source>
+        <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="439"/>
-        <source>Звук</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
+        <source>Emoticons</source>
+        <translation>Смайлики</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
-        <source>Разделитель</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="440"/>
+        <source>Sound</source>
+        <translation>Звук</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="454"/>
-        <source>Растяжка</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="442"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="611"/>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="517"/>
-        <source>Настройка...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="449"/>
+        <source>Separator</source>
+        <translation>Разделитель</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="532"/>
-        <source>Параметры</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="455"/>
+        <source>Stretch</source>
+        <translation>Растяжка</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="533"/>
-        <source>Личные данные...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="591"/>
+        <source>Menu</source>
+        <translation>Меню</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="534"/>
-        <source>Сеть...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="593"/>
+        <source>About Simple Chat...</source>
+        <translation>О Simple Chat...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="535"/>
-        <source>Интерфейс...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="536"/>
-        <source>Смайлики...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="537"/>
-        <source>Звуки...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="538"/>
-        <source>Оповещатель...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="539"/>
-        <source>Обновление...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="540"/>
-        <source>Разное...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="541"/>
-        <source>О Simple Chat...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="548"/>
-        <source>Выход</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="594"/>
+        <source>Quit</source>
+        <translation>Выход</translation>
     </message>
 </context>
 <context>
