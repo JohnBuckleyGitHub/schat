@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QAction>
+#include <QDesktopServices>
+#include <QMenu>
+#include <QTextDocument>
 
 #ifndef SCHAT_NO_WEBKIT
   #include <QtWebKit>
@@ -279,7 +282,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   doc.setHtml(msg);
 
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Сервисное сообщение:")).arg(html);
+  html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Service message:")).arg(html);
 
   addServiceMsg(html);
 }
@@ -431,7 +434,7 @@ void ChatView::setAllowStatusMessages()
   if (d->statusMessages)
     return;
 
-  d->statusMessages = new QAction(QIcon(":/images/im-user.png"), tr("Статусные сообщения"), this);
+  d->statusMessages = new QAction(QIcon(":/images/im-user.png"), tr("Status messages"), this);
   d->statusMessages->setCheckable(true);
   d->statusMessages->setChecked(SimpleSettings->getBool("StatusMessages"));
   connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
@@ -489,7 +492,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
     d->selectAll->setEnabled(!d->empty);
   #endif
 
-  QString copyLinkText = tr("Копировать &ссылку");
+  QString copyLinkText = tr("Copy &link");
   d->clear->setEnabled(!d->empty);
   QAction *copyLink = 0;
 
@@ -613,19 +616,19 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 
 void ChatView::createActions()
 {
-  d->autoScroll = new QAction(QIcon(":/images/note2.png"), tr("Автопрокрутка"), this);
+  d->autoScroll = new QAction(QIcon(":/images/note2.png"), tr("Autoscroll"), this);
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
-  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Копировать"), this);
+  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Copy"), this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("&Очистить"), this);
+  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("Clear"), this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("&Выделить всё"), this);
+    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("Select All"), this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
   #endif
 }

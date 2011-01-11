@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,8 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
-#include <QtNetwork>
+#include <QDesktopServices>
+#include <QDesktopWidget>
+#include <QKeyEvent>
+#include <QProcess>
+#include <QToolBar>
+#include <QToolButton>
+#include <QVBoxLayout>
 
 #include "3rdparty/qtwin.h"
 #include "aboutdialog.h"
@@ -219,7 +224,7 @@ QString SChatWindowPrivate::colorizedPing() const
   else if (ms >= 500)
     color = "da251d";
 
-  return QObject::tr("Ping до сервера <b style='color:#%1;'>%2 мс</b>").arg(color).arg(ms);
+  return QObject::tr("Ping to server") + " <b style='color:#" + color + ";'>" + QString::number(ms) + QObject::tr(" ms") + "</b>";
 }
 
 
@@ -780,6 +785,38 @@ void SChatWindow::showChat()
 }
 
 
+/*!
+ * Обработка событий.
+ */
+bool SChatWindow::event(QEvent *event)
+{
+  if (event->type() == QEvent::WindowActivate)
+    stopNotice(d->tabs->currentIndex());
+
+  if (event->type() == QEvent::WindowStateChange) {
+    if (windowState() & Qt::WindowMinimized)
+      d->saveGeometry();
+  }
+
+  #if defined(Q_WS_WIN)
+  if (event->type() == QEvent::ApplicationPaletteChange) {
+    if (d->send)
+      d->send->setStyleSheet();
+  }
+  #endif
+
+  return QMainWindow::event(event);
+}
+
+
+void SChatWindow::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QMainWindow::changeEvent(event);
+}
+
 
 /*!
  * \brief Обработка события закрытия чата.
@@ -846,30 +883,6 @@ bool SChatWindow::winEvent(MSG *message, long *result)
 #endif
 
 
-/*!
- * Обработка событий.
- */
-bool SChatWindow::event(QEvent *event)
-{
-  if (event->type() == QEvent::WindowActivate)
-    stopNotice(d->tabs->currentIndex());
-
-  if (event->type() == QEvent::WindowStateChange) {
-    if (windowState() & Qt::WindowMinimized)
-      d->saveGeometry();
-  }
-
-  #if defined(Q_WS_WIN)
-  if (event->type() == QEvent::ApplicationPaletteChange) {
-    if (d->send)
-      d->send->setStyleSheet();
-  }
-  #endif
-
-  return QMainWindow::event(event);
-}
-
-
 /** [private slots]
  *
  */
@@ -893,15 +906,15 @@ void SChatWindow::accessDenied(quint16 reason)
 
   switch (reason) {
     case ErrorOldClientProtocol:
-      d->main->msg("<span class='oldClientProtocol'>" + tr("Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста обновите программу.") + "</span>");
+      d->main->msg("<span class='disconnect'>" + tr("Your chat is using an old version of protocol, connection is not established, please update your program.") + "</span>");
       break;
 
     case ErrorOldServerProtocol:
-      d->main->msg("<span class='oldServerProtocol'>" + tr("Сервер использует устаревшую версию протокола, подключение не возможно.") + "</span>");
+      d->main->msg("<span class='disconnect'>" + tr("Server is using an old version of protocol, connection is not established.") + "</span>");
       break;
 
     case ErrorBadNickName:
-      d->main->msg("<span class='badNickName'>" + tr("Выбранный ник: <b>%2</b>, не допустим в чате, выберите другой").arg(Qt::escape(d->profile->nick())) + "</span>");
+      d->main->msg("<span class='disconnect'>" + tr("Chosen nickname: <b>%1</b> forbidden in the chat, choose another one").arg(Qt::escape(d->profile->nick())) + "</span>");
       break;
 
     case ErrorUsersLimitExceeded:
@@ -911,7 +924,7 @@ void SChatWindow::accessDenied(quint16 reason)
       break;
 
     default:
-      d->main->msg("<span class='accessDenied'>" + tr("При подключении произошла критическая ошибка с кодом: <b>%1</b>").arg(reason) + "</span>");
+      d->main->msg("<span class='disconnect'>" + tr("Critical error with code: <b>%1</b> occurred at connection").arg(reason) + "</span>");
       break;
   }
 
@@ -1052,7 +1065,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SChatWindow::linkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  d->main->msg("<span class='linkLeave'>" + tr("Сервер <b>%1</b> отключился от сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  d->main->msg("<span class='linkLeave'>" + tr("Server <b>%1</b> disconnected from network <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -1073,7 +1086,7 @@ void SChatWindow::message(const QString &sender, const QString &msg)
 
 void SChatWindow::newLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
-  d->main->msg("<span class='newLink'>" + tr("Сервер <b>%1</b> подключился к сети <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
+  d->main->msg("<span class='newLink'>" + tr("Server <b>%1</b> connected to network <b>%2</b>").arg(Qt::escape(name)).arg(Qt::escape(network)) + "</span>");
 }
 
 
@@ -1459,14 +1472,18 @@ bool SChatWindow::eventFilter(QObject *object, QEvent *event)
 }
 
 
+/*!
+ * Создание меню для Mac OS X.
+ */
 void SChatWindow::createMenu()
 {
   #if !defined(SCHAT_NO_MENU)
   menuBar()->addMenu(d->statusMenu);
-  QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-  helpMenu->addAction(tr("&About"), this, SLOT(about()));
-  helpMenu->addAction(tr("&Preferences"), this, SLOT(showSettingsPage()));
-  helpMenu->addAction(tr("&Quit"), this, SLOT(closeChat(bool)));
+  menuBar()->addAction("about", this, SLOT(about()));
+  QMenu *helpMenu = menuBar()->addMenu("Help");
+  helpMenu->addAction("about", this, SLOT(about()));
+  helpMenu->addAction("config", this, SLOT(showSettingsPage()));
+  helpMenu->addAction("quit", this, SLOT(closeChat(bool)));
   #endif
 }
 
@@ -1477,7 +1494,7 @@ void SChatWindow::createMenu()
 void SChatWindow::createActions()
 {
   // Настройка...
-  d->settingsAction = new QAction(QIcon(":/images/configure.png"), tr("Настройка..."), this);
+  d->settingsAction = new QAction(QIcon(":/images/configure.png"), "", this);
   d->settingsAction->setData(SettingsDialog::ProfilePage);
   connect(d->settingsAction, SIGNAL(triggered()), SLOT(showSettingsPage()));
 
@@ -1485,7 +1502,7 @@ void SChatWindow::createActions()
   d->soundAction = d->send->soundAction().first;
 
   // Управление сервером...
-  d->daemonAction = new QAction(QIcon(":/images/network.png"), tr("Управление сервером..."), this);
+  d->daemonAction = new QAction(QIcon(":/images/network.png"), "", this);
   connect(d->daemonAction, SIGNAL(triggered()), SLOT(daemonUi()));
 }
 
@@ -1514,4 +1531,11 @@ void SChatWindow::createService()
   connect(d->clientService, SIGNAL(newLink(quint8, const QString &, const QString &)), SLOT(newLink(quint8, const QString &, const QString &)));
   connect(d->clientService, SIGNAL(linkLeave(quint8, const QString &, const QString &)), SLOT(linkLeave(quint8, const QString &, const QString &)));
   connect(d->clientService, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
+}
+
+
+void SChatWindow::retranslateUi()
+{
+  d->settingsAction->setText(tr("Preferences..."));
+  d->daemonAction->setText(tr("Manage server..."));
 }

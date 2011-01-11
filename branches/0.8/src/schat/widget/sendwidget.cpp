@@ -16,7 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QAction>
+#include <QContextMenuEvent>
+#include <QDesktopServices>
+#include <QGridLayout>
+#include <QMenu>
+#include <QToolBar>
+#include <QWidgetAction>
 
 #include "3rdparty/qtwin.h"
 #include "abstractprofile.h"
