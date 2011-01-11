@@ -97,67 +97,73 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="224"/>
-        <source>&lt;b&gt;%1&lt;/b&gt; теперь известна как &lt;a href=&apos;nick:%2&apos;&gt;%3&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="223"/>
+        <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
+        <comment>Female</comment>
+        <translation>&lt;b&gt;%1&lt;/b&gt; теперь известна как %2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="226"/>
-        <source>&lt;b&gt;%1&lt;/b&gt; теперь известен как &lt;a href=&apos;nick:%2&apos;&gt;%3&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="225"/>
+        <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
+        <comment>Male</comment>
+        <translation>&lt;b&gt;%1&lt;/b&gt; теперь известен как %2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="243"/>
-        <source>&lt;a href=&apos;nick:%1&apos;&gt;%2&lt;/a&gt; зашла в чат</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="240"/>
+        <source>%1 entered chat</source>
+        <comment>Female</comment>
+        <translation>%1 зашла в чат</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="245"/>
-        <source>&lt;a href=&apos;nick:%1&apos;&gt;%2&lt;/a&gt; зашёл в чат</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="242"/>
+        <source>%1 entered chat</source>
+        <comment>Male</comment>
+        <translation>%1 зашёл в чат</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="266"/>
-        <source>&lt;a href=&apos;nick:%1&apos;&gt;%2&lt;/a&gt; вышла из чата%3</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="261"/>
+        <source>%1 left the chat%2</source>
+        <comment>Female</comment>
+        <translation>%1 вышла из чата%2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="268"/>
-        <source>&lt;a href=&apos;nick:%1&apos;&gt;%2&lt;/a&gt; вышел из чата%3</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="263"/>
+        <source>%1 left the chat%2</source>
+        <comment>Male</comment>
+        <translation>%1 вышел из чата%2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="285"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="279"/>
         <source>Service message:</source>
         <translation>Сервисное сообщение:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="437"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="431"/>
         <source>Status messages</source>
         <translation>Статусные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="495"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="502"/>
         <source>Copy &amp;link</source>
         <translation>Копировать &amp;ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="619"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="646"/>
         <source>Autoscroll</source>
         <translation>Автопрокрутка</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="623"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
         <source>&amp;Copy</source>
         <translation>&amp;Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="627"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="631"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="651"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -1085,12 +1091,12 @@
 <context>
     <name>SoundAction</name>
     <message>
-        <location filename="../../src/schat/soundaction.cpp" line="68"/>
+        <location filename="../../src/schat/soundaction.cpp" line="66"/>
         <source>Turn on sounds</source>
         <translation>Включить звуки</translation>
     </message>
     <message>
-        <location filename="../../src/schat/soundaction.cpp" line="70"/>
+        <location filename="../../src/schat/soundaction.cpp" line="68"/>
         <source>Turn off sounds</source>
         <translation>Отключить звуки</translation>
     </message>
@@ -1195,39 +1201,39 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="179"/>
+        <location filename="../../src/schat/trayicon.cpp" line="182"/>
         <source>Update to version %1 is available</source>
         <translation>Доступно обновление до версии %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="180"/>
+        <location filename="../../src/schat/trayicon.cpp" line="183"/>
         <source>Click here to download update right now.
 File size: %1</source>
         <translation>Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.
 Размер файлов: %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="186"/>
+        <location filename="../../src/schat/trayicon.cpp" line="189"/>
         <source>A new version %1 is available</source>
         <translation>Доступна новая версия %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="187"/>
+        <location filename="../../src/schat/trayicon.cpp" line="190"/>
         <source>Click here to go to a download page</source>
         <translation>Щёлкните здесь для того чтобы перейти на страницу загрузки</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="195"/>
+        <location filename="../../src/schat/trayicon.cpp" line="198"/>
         <source>Everything is ready to install version %1</source>
         <translation>Всё готово к установке версии %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="196"/>
+        <location filename="../../src/schat/trayicon.cpp" line="199"/>
         <source>Click here to install the update right now.</source>
         <translation>Щёлкните здесь для того чтобы установить это обновление прямо сейчас.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/schat/trayicon.cpp" line="273"/>
+        <location filename="../../src/schat/trayicon.cpp" line="276"/>
         <source>%n Byte</source>
         <translation>
             <numerusform>%n Байт</numerusform>
@@ -1236,12 +1242,12 @@ File size: %1</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="275"/>
+        <location filename="../../src/schat/trayicon.cpp" line="278"/>
         <source>%1 kB</source>
         <translation>%1 Кб</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="277"/>
+        <location filename="../../src/schat/trayicon.cpp" line="280"/>
         <source>%1 MB</source>
         <translation>%1 Мб</translation>
     </message>

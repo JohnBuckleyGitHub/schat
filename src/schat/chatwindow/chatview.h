@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ public slots:
   void clear();
 
 protected:
+  void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
@@ -90,6 +91,7 @@ private slots:
 private:
   void appendMessage(const QString &message, bool sameFrom = false);
   void createActions();
+  void retranslateUi();
 
   ChatViewPrivate *d;
 };
