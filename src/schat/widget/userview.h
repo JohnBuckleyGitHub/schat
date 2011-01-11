@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -70,12 +70,16 @@ class QuickUserSearch : public QLineEdit
 public:
   QuickUserSearch(UserView *parent);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   inline void returnPressed()                 { quickSearch(text(), false); }
   inline void textEdited(const QString &text) { quickSearch(text); }
 
 private:
   void quickSearch(const QString &text, bool reset = true);
+  void retranslateUi();
 
   int m_pos;        ///< Сохранёная позиция поиска, используется для поиска следующего ника, удовлетворяющему текущему запросу.
   UserView *m_view; ///< Указатель на объект UserView.

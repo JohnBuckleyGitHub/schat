@@ -805,19 +805,16 @@
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="382"/>
-        <location filename="../../src/schat/widget/userview.cpp" line="93"/>
         <source>Отсутствую</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="384"/>
-        <location filename="../../src/schat/widget/userview.cpp" line="95"/>
         <source>Не беспокоить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="386"/>
-        <location filename="../../src/schat/widget/userview.cpp" line="99"/>
         <source>В сети</source>
         <translation type="unfinished"></translation>
     </message>
@@ -826,35 +823,13 @@
         <source>Закрыть вкладку</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>QuickUserSearch</name>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="79"/>
-        <source>ФИО:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="84"/>
-        <source>Версия:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="86"/>
-        <source>Клиент:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="88"/>
-        <source>Адрес:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="91"/>
-        <source>Статус:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="97"/>
-        <source>Не в сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="269"/>
+        <source>Search...</source>
+        <translation>Поиск...</translation>
     </message>
 </context>
 <context>
@@ -1360,44 +1335,89 @@ File size: %1</source>
 <context>
     <name>UserView</name>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="598"/>
-        <source>Личные данные...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="84"/>
+        <source>Name:</source>
+        <translation>ФИО:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="600"/>
-        <source>Приватное сообщение</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="89"/>
+        <source>Version:</source>
+        <translation>Версия:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="602"/>
-        <source>Копировать</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="91"/>
+        <source>Client:</source>
+        <translation>Клиент:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="607"/>
-        <source>Ник</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="93"/>
+        <source>Address:</source>
+        <translation>Адрес:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="610"/>
-        <source>ФИО</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="96"/>
+        <source>Status:</source>
+        <translation>Статус:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="612"/>
-        <source>Клиент</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="98"/>
+        <source>Away</source>
+        <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="613"/>
-        <source>Адрес</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="100"/>
+        <source>DND</source>
+        <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="616"/>
-        <source>Вставить ник</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/widget/userview.cpp" line="102"/>
+        <source>Offline</source>
+        <translation>Не в сети</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="104"/>
+        <source>Online</source>
+        <translation>В сети</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="621"/>
+        <source>Personal data...</source>
+        <translation>Личные данные...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="623"/>
+        <source>Private message</source>
+        <translation>Приватное сообщение</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="625"/>
+        <source>Copy</source>
+        <translation>Копировать</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="630"/>
+        <source>Nick</source>
+        <translation>Ник</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="633"/>
+        <source>Name</source>
+        <translation>ФИО</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
+        <source>Client</source>
+        <translation>Клиент</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="636"/>
+        <source>Address</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="639"/>
+        <source>Insert nick</source>
+        <translation>Вставить ник</translation>
     </message>
 </context>
 <context>
