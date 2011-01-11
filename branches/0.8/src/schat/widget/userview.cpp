@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QClipboard>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QScrollBar>
+#include <QTextDocument>
 
 #include "abstractprofile.h"
 #include "chatwindow/chatview.h"
@@ -76,27 +80,27 @@ QString UserItem::userToolTip(const AbstractProfile &profile)
   QString line = "<tr><td style='color:#90a4b3;'>%1</td><td>%2</td></tr>";
 
   if (!profile.fullName().isEmpty())
-    html += QString(line).arg(QObject::tr("ФИО:")).arg(Qt::escape(profile.fullName()));
+    html += QString(line).arg(UserView::tr("Name:")).arg(Qt::escape(profile.fullName()));
 
   QStringList userAgent = profile.userAgent().split("/");
   if (userAgent.size() == 2) {
     if (userAgent.at(0) == "IMPOMEZIA Simple Chat")
-      html += QString(line).arg(QObject::tr("Версия:")).arg(Qt::escape(userAgent.at(1)));
+      html += QString(line).arg(UserView::tr("Version:")).arg(Qt::escape(userAgent.at(1)));
     else
-      html += QString(line).arg(QObject::tr("Клиент:")).arg(Qt::escape(userAgent.at(0) + " " + userAgent.at(1)));
+      html += QString(line).arg(UserView::tr("Client:")).arg(Qt::escape(userAgent.at(0) + " " + userAgent.at(1)));
   }
-  html += QString(line).arg(QObject::tr("Адрес:")).arg(Qt::escape(profile.host()));
+  html += QString(line).arg(UserView::tr("Address:")).arg(Qt::escape(profile.host()));
 
   quint32 status = profile.status();
-  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(QObject::tr("Статус:"));
+  html += QString("<tr><td style='color:#90a4b3;'>%1</td><td>").arg(UserView::tr("Status:"));
   if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    html += QObject::tr("Отсутствую");
+    html += UserView::tr("Away");
   else if (status == schat::StatusDnD)
-    html += QObject::tr("Не беспокоить");
+    html += UserView::tr("DND");
   else if (status == schat::StatusOffline)
-    html += QObject::tr("Не в сети");
+    html += UserView::tr("Offline");
   else
-    html += QObject::tr("В сети");
+    html += UserView::tr("Online");
 
   html += "</td></tr></table>";
 
@@ -220,6 +224,16 @@ QuickUserSearch::QuickUserSearch(UserView *parent)
   connect(this, SIGNAL(textEdited(const QString &)), SLOT(textEdited(const QString &)));
   connect(this, SIGNAL(returnPressed()), SLOT(returnPressed()));
   setVisible(false);
+  retranslateUi();
+}
+
+
+void QuickUserSearch::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QLineEdit::changeEvent(event);
 }
 
 
@@ -245,6 +259,14 @@ void QuickUserSearch::quickSearch(const QString &text, bool reset)
     pal.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 
   setPalette(pal);
+}
+
+
+void QuickUserSearch::retranslateUi()
+{
+  #if QT_VERSION >= 0x040700
+  setPlaceholderText(tr("Search..."));
+  #endif
 }
 
 
@@ -595,25 +617,25 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
 
     QMenu menu(this);
     if (nick == d->profile->nick())
-      profileAction = menu.addAction(QIcon(":/images/profile.png"), tr("Личные данные..."));
+      profileAction = menu.addAction(QIcon(":/images/profile.png"), tr("Personal data..."));
     else
-      privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Приватное сообщение"));
+      privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Private message"));
 
-    QMenu copyMenu(tr("Копировать"), this);
+    QMenu copyMenu(tr("Copy"), this);
     copyMenu.setIcon(SimpleChatApp::iconFromTheme("edit-copy"));
     menu.addMenu(&copyMenu);
 
     AbstractProfile profile = item->profile();
-    QAction *copyNick = copyMenu.addAction(QIcon(":/images/profile.png"), tr("Ник"));
+    QAction *copyNick = copyMenu.addAction(QIcon(":/images/profile.png"), tr("Nick"));
     QAction *copyFullName = 0;
     if (!profile.fullName().isEmpty())
-      copyFullName = copyMenu.addAction(QIcon(":/images/profile.png"), tr("ФИО"));
+      copyFullName = copyMenu.addAction(QIcon(":/images/profile.png"), tr("Name"));
 
-    QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/schat16.png"), tr("Клиент"));
-    QAction *copyHost = copyMenu.addAction(QIcon(":/images/computer.png"), tr("Адрес"));
+    QAction *copyUserAgent = copyMenu.addAction(QIcon(":/images/schat16.png"), tr("Client"));
+    QAction *copyHost = copyMenu.addAction(QIcon(":/images/computer.png"), tr("Address"));
 
     menu.addSeparator();
-    QAction *nickClickedAction = menu.addAction(tr("Вставить ник"));
+    QAction *nickClickedAction = menu.addAction(tr("Insert nick"));
 
     QAction *action = menu.exec(event->globalPos());
     if (action) {
@@ -660,6 +682,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   else
     QListView::mouseReleaseEvent(event);
 }
+
 
 void UserView::resizeEvent(QResizeEvent *event)
 {
