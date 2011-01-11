@@ -598,6 +598,7 @@ void SendWidget::retranslateUi()
   m_prefMenu->setTitle(tr("Preferences"));
   m_aboutAction->setText(tr("About Simple Chat..."));
   m_quitAction->setText(tr("Quit"));
+  m_soundAction->retranslateUi();
 
   m_profilePage->setText(tr("Personal data..."));
   m_networkPage->setText(tr("Network..."));
