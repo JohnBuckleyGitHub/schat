@@ -215,18 +215,16 @@ QString ChatView::channel() const
  */
 QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick)
 {
-  QString nick    = Qt::escape(oldNick);
-  QString nickHex = newNick.toUtf8().toHex();
-  QString nickNew = Qt::escape(newNick);
-  QString html = "<span class='changedNick'>";
+  QString nick = Qt::escape(oldNick);
+  QString link = "<a href='nick:" + newNick.toUtf8().toHex() + "'>" + Qt::escape(newNick) + "</a>";
+  QString html;
 
   if (gender)
-    html += tr("<b>%1</b> теперь известна как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
+    html = tr("<b>%1</b> is now known as %2", "Female").arg(nick).arg(link);
   else
-    html += tr("<b>%1</b> теперь известен как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
+    html = tr("<b>%1</b> is now known as %2", "Male").arg(nick).arg(link);
 
-  html += "</span>";
-  return html;
+  return "<span class='changedNick'>" + html + "</span>";
 }
 
 
@@ -235,17 +233,15 @@ QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const
  */
 QString ChatView::statusNewUser(quint8 gender, const QString &nick)
 {
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='newUser'>";
+  QString link = "<a href='nick:" + nick.toUtf8().toHex() + "'>" + Qt::escape(nick) + "</a>";
+  QString html;
 
   if (gender)
-    out += tr("<a href='nick:%1'>%2</a> зашла в чат").arg(nickHex).arg(escaped);
+    html = tr("%1 entered chat", "Female").arg(link);
   else
-    out += tr("<a href='nick:%1'>%2</a> зашёл в чат").arg(nickHex).arg(escaped);
+    html = tr("%1 entered chat", "Male").arg(link);
 
-  out += "</span>";
-  return out;
+  return "<span class='newUser'>" + html + "</span>";
 }
 
 
@@ -254,21 +250,19 @@ QString ChatView::statusNewUser(quint8 gender, const QString &nick)
  */
 QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QString &bye)
 {
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='userLeft'>";
+  QString html;
+  QString link = "<a href='nick:" + nick.toUtf8().toHex() + "'>" + Qt::escape(nick) + "</a>";
 
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (gender)
-    out += tr("<a href='nick:%1'>%2</a> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    html = tr("%1 left the chat%2", "Female").arg(link).arg(byeMsg);
   else
-    out += tr("<a href='nick:%1'>%2</a> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    html = tr("%1 left the chat%2", "Male").arg(link).arg(byeMsg);
 
-  out += "</span>";
-  return out;
+  return "<span class='userLeft'>" + html + "</span>";
 }
 
 
@@ -483,6 +477,19 @@ void ChatView::clear()
 }
 
 
+void ChatView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  #ifndef SCHAT_NO_WEBKIT
+  QWebView::changeEvent(event);
+  #else
+  QTextBrowser::changeEvent(event);
+  #endif
+}
+
+
 void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
   #ifndef SCHAT_NO_WEBKIT
@@ -616,19 +623,31 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 
 void ChatView::createActions()
 {
-  d->autoScroll = new QAction(QIcon(":/images/note2.png"), tr("Autoscroll"), this);
+  d->autoScroll = new QAction(QIcon(":/images/note2.png"), "", this);
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
-  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), tr("&Copy"), this);
+  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), "", this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), tr("Clear"), this);
+  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), tr("Select All"), this);
+    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
+  #endif
+}
+
+
+void ChatView::retranslateUi()
+{
+  d->autoScroll->setText(tr("Autoscroll"));
+  d->copy->setText(tr("&Copy"));
+  d->clear->setText(tr("Clear"));
+
+  #ifdef SCHAT_NO_WEBKIT
+  d->selectAll->setText(tr("Select All"));
   #endif
 }
