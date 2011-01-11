@@ -898,64 +898,64 @@
     <name>SendWidget</name>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="611"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="436"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="613"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="444"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
         <source>Logs</source>
         <translation>Журналы</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="602"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="603"/>
         <source>Personal data...</source>
         <translation>Личные данные...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="603"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="604"/>
         <source>Network...</source>
         <translation>Сеть...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="604"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
         <source>Interface...</source>
         <translation>Интерфейс...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
         <source>Emoticons...</source>
         <translation>Смайлики...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
         <source>Sounds...</source>
         <translation>Звуки...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
         <source>Notifications...</source>
         <translation>Уведомления...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
         <source>Update...</source>
         <translation>Обновление...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
         <source>Others...</source>
         <translation>Разное...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
         <source>Add emoticon</source>
         <translation>Добавить смайлик</translation>
     </message>
@@ -982,13 +982,13 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="613"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="438"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -1009,7 +1009,7 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="618"/>
         <source>Send</source>
         <translation>Отправить</translation>
     </message>
@@ -1085,14 +1085,14 @@
 <context>
     <name>SoundAction</name>
     <message>
-        <location filename="../../src/schat/soundaction.cpp" line="57"/>
-        <source>Включить звуки</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/soundaction.cpp" line="68"/>
+        <source>Turn on sounds</source>
+        <translation>Включить звуки</translation>
     </message>
     <message>
-        <location filename="../../src/schat/soundaction.cpp" line="61"/>
-        <source>Отключить звуки</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/soundaction.cpp" line="70"/>
+        <source>Turn off sounds</source>
+        <translation>Отключить звуки</translation>
     </message>
 </context>
 <context>
@@ -1196,34 +1196,35 @@
     <name>TrayIcon</name>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="179"/>
-        <source>Доступно обновление до версии %1</source>
-        <translation type="unfinished"></translation>
+        <source>Update to version %1 is available</source>
+        <translation>Доступно обновление до версии %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="180"/>
-        <source>Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.
-Размер файлов: %1</source>
-        <translation type="unfinished"></translation>
+        <source>Click here to download update right now.
+File size: %1</source>
+        <translation>Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.
+Размер файлов: %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="186"/>
-        <source>Доступна новая версия %1</source>
-        <translation type="unfinished"></translation>
+        <source>A new version %1 is available</source>
+        <translation>Доступна новая версия %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="187"/>
-        <source>Щёлкните здесь для того чтобы перейти на страницу загрузки</source>
-        <translation type="unfinished"></translation>
+        <source>Click here to go to a download page</source>
+        <translation>Щёлкните здесь для того чтобы перейти на страницу загрузки</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="195"/>
-        <source>Всё готово к установке версии %1</source>
-        <translation type="unfinished"></translation>
+        <source>Everything is ready to install version %1</source>
+        <translation>Всё готово к установке версии %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/trayicon.cpp" line="196"/>
-        <source>Щёлкните здесь для того чтобы установить это обновление прямо сейчас.</source>
-        <translation type="unfinished"></translation>
+        <source>Click here to install the update right now.</source>
+        <translation>Щёлкните здесь для того чтобы установить это обновление прямо сейчас.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/schat/trayicon.cpp" line="273"/>

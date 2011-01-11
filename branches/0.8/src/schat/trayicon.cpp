@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QApplication>
+#include <QFile>
+#include <QSound>
+#include <QTimer>
 
 #include "abstractprofile.h"
 #include "protocol.h"
@@ -176,15 +179,15 @@ void TrayIcon::displayMessage(Message message, bool force)
   if (message == UpdateAvailable) {
     #ifndef SCHAT_NO_UPDATE
     showMessage(
-      tr("Доступно обновление до версии %1").arg(version),
-      tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
-         "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
+      tr("Update to version %1 is available").arg(version),
+      tr("Click here to download update right now.\n"
+         "File size: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
       QSystemTrayIcon::Information,
       60000);
     #else
     showMessage(
-          tr("Доступна новая версия %1").arg(version),
-          tr("Щёлкните здесь для того чтобы перейти на страницу загрузки"),
+          tr("A new version %1 is available").arg(version),
+          tr("Click here to go to a download page"),
           QSystemTrayIcon::Information,
           60000);
     #endif
@@ -192,8 +195,8 @@ void TrayIcon::displayMessage(Message message, bool force)
   #ifndef SCHAT_NO_UPDATE
   else if (message == UpdateReady) {
     showMessage(
-        tr("Всё готово к установке версии %1").arg(version),
-        tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
+        tr("Everything is ready to install version %1").arg(version),
+        tr("Click here to install the update right now."),
         QSystemTrayIcon::Information,
         60000);
   }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <QtGui>
 
 #include "abstractprofile.h"
 #include "protocol.h"
@@ -52,16 +50,22 @@ void SoundAction::mute()
  */
 void SoundAction::mute(bool mute)
 {
-  if (mute) {
+  if (mute)
     setIcon(QIcon(":/images/sound_mute.png"));
-    setText(tr("Включить звуки"));
-  }
-  else {
+  else
     setIcon(QIcon(":/images/sound.png"));
-    setText(tr("Отключить звуки"));
-  }
 
   m_mute = mute;
+  retranslateUi();
+}
+
+
+void SoundAction::retranslateUi()
+{
+  if (m_mute)
+    setText(tr("Turn on sounds"));
+  else
+    setText(tr("Turn off sounds"));
 }
 
 
