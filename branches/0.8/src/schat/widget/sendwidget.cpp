@@ -542,6 +542,7 @@ void SendWidget::createPermanentButtons()
   m_emoticonsPage    = createSettingsPage(QIcon(":/images/emoticon.png"), SettingsDialog::EmoticonsPage);
   m_soundPage        = createSettingsPage(QIcon(":/images/sound.png"), SettingsDialog::SoundPage);
   m_notificationPage = createSettingsPage(QIcon(":/images/notification.png"), SettingsDialog::NotificationPage);
+  m_statusesPage     = createSettingsPage(QIcon(":/images/statuses.png"), SettingsDialog::StatusesPage);
   m_updatePage       = createSettingsPage(QIcon(":/images/update.png"), SettingsDialog::UpdatePage);
   m_miscPage         = createSettingsPage(QIcon(":/images/application-x-desktop.png"), SettingsDialog::MiscPage);
 
@@ -606,6 +607,7 @@ void SendWidget::retranslateUi()
   m_emoticonsPage->setText(tr("Emoticons..."));
   m_soundPage->setText(tr("Sounds..."));
   m_notificationPage->setText(tr("Notifications..."));
+  m_statusesPage->setText(tr("Statuses..."));
   m_updatePage->setText(tr("Update..."));
   m_miscPage->setText(tr("Others..."));
 

@@ -222,32 +222,32 @@
 <context>
     <name>EmoticonsSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="628"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="629"/>
         <source>&amp;Emoticons</source>
         <translation>&amp;Смайлики</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="634"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="635"/>
         <source>Theme:</source>
         <translation>Тема:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="643"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="644"/>
         <source>Emoticons are &amp;separated by spaces</source>
         <translation>Смайлики &amp;отделены пробелами</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="644"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="645"/>
         <source>Show emoticons only if they are separated by spaces from the rest of the message</source>
         <translation>Показывать смайлики только если они отделены пробелами от остального сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="647"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="648"/>
         <source>Emoticons themes</source>
         <translation>Темы смайликов</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="648"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="649"/>
         <source>Open folder with emoticons themes</source>
         <translation>Открыть папку с темами смайликов</translation>
     </message>
@@ -283,42 +283,42 @@
 <context>
     <name>InterfaceSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="422"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="423"/>
         <source>(without variants)</source>
         <translation>(без вариантов)</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="461"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="462"/>
         <source>&amp;Global style</source>
         <translation>&amp;Глобальный стиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="469"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="470"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="487"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="488"/>
         <source>&amp;Style name:</source>
         <translation>&amp;Имя стиля:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="491"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="492"/>
         <source>&amp;Variant:</source>
         <translation>&amp;Вариант:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="494"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="495"/>
         <source>Group &amp;consecutive messages</source>
         <translation>Группировать идущие &amp;подряд сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="495"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="496"/>
         <source>Group consecutive messages from one user, if the chosen style supports this option</source>
         <translation>Группировать идущие подряд сообщения от одного пользователя, если это поддерживается выбранным стилем</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="498"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="499"/>
         <source>&amp;Text style</source>
         <translation>Стиль &amp;текста</translation>
     </message>
@@ -344,52 +344,52 @@
 <context>
     <name>MiscSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1254"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1290"/>
         <source>Integration</source>
         <translation>Интеграция</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1259"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1295"/>
         <source>&amp;Autorun</source>
         <translation>&amp;Автозапуск</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1260"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1296"/>
         <source>Autorun at system startup</source>
         <translation>Автозапуск программы при старте системы</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1265"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1301"/>
         <source>&amp;Server autorun</source>
         <translation>Автозапуск &amp;сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1266"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1302"/>
         <source>Server autorun at system startup</source>
         <translation>Автозапуск сервера при старте системы</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1279"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1315"/>
         <source>&amp;Logging</source>
         <translation>&amp;Журналирование</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1281"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1317"/>
         <source>&amp;Main channel log</source>
         <translation>Журнал &amp;основного канала</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1282"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1318"/>
         <source>Keep a log of main channel</source>
         <translation>Вести журнал основного канала</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1285"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1321"/>
         <source>&amp;Private logs</source>
         <translation>Журналы &amp;приватов</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1286"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1322"/>
         <source>Keep logs of private messages</source>
         <translation>Вести журналы приватных сообщений</translation>
     </message>
@@ -397,82 +397,82 @@
 <context>
     <name>NetworkSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="235"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="236"/>
         <source>Always use this connection</source>
         <translation>Всегда использовать это подключение</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="237"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="238"/>
         <source>Do not require personal information and server address at startup</source>
         <translation>Не запрашивать персональную информацию и адрес сервера при запуске</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="242"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="243"/>
         <source>Connection</source>
         <translation>Подключение</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="249"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="250"/>
         <source>Connection via proxy server</source>
         <translation>Подключение через прокси-сервер</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="257"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="258"/>
         <source>Proxy server type</source>
         <translation>Тип прокси-сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="264"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="265"/>
         <source>&amp;Type:</source>
         <translation>&amp;Тип:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="268"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="269"/>
         <source>Proxy server address</source>
         <translation>Адрес прокси-сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="269"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="270"/>
         <source>&amp;Address:</source>
         <translation>&amp;Адрес:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="274"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="275"/>
         <source>Proxy server port</source>
         <translation>Порт прокси-сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="276"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="277"/>
         <source>&amp;Port:</source>
         <translation>&amp;Порт:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="280"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="281"/>
         <source>User name for authorization at proxy server</source>
         <translation>Имя пользователя для авторизации на прокси-сервере</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="281"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="282"/>
         <source>&amp;Name:</source>
         <translation>&amp;Имя:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="286"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="287"/>
         <source>Password for authorization at proxy server</source>
         <translation>Пароль для авторизации на прокси-сервере</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="287"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="288"/>
         <source>P&amp;assword:</source>
         <translation>Па&amp;роль:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="302"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="303"/>
         <source>Network files</source>
         <translation>Файлы сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="303"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="304"/>
         <source>Open folder with network files</source>
         <translation>Открыть папку с файлами сети</translation>
     </message>
@@ -516,71 +516,71 @@
 <context>
     <name>NotificationSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="862"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="863"/>
         <source>&amp;Приватные сообщение</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="863"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="864"/>
         <source>Оповещать о приватных сообщениях</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="866"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="867"/>
         <source>&amp;Обращение в основном канале</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="867"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="868"/>
         <source>Оповещать об обращениях
 по нику в основном канале</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="870"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="871"/>
         <source>Оповещение о событиях</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="877"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="878"/>
         <source>&amp;Статус &quot;Не беспокоить&quot; отключает оповещения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="878"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="879"/>
         <source>Использование статуса &quot;Не беспокоить&quot;
 отключает оповещения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="881"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="882"/>
         <source>&amp;Автоматически закрывать спустя:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="882"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="883"/>
         <source>Автоматически закрывать всплывающие
 окна спустя заданное число секунд</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="887"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="888"/>
         <source> сек</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="890"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="891"/>
         <source>&amp;Но не при автоматическом статусе &quot;Отсутствую&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="891"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="892"/>
         <source>Не закрывать автоматически всплывающие окна
 при автоматическом статусе &quot;Отсутствую&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="894"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="895"/>
         <source>Параметры всплывающих окон</source>
         <translation type="unfinished"></translation>
     </message>
@@ -588,52 +588,52 @@
 <context>
     <name>ProfileSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="125"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="126"/>
         <source>Сообщение которое увидят другие пользователи
 если вы выйдете из чата</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="130"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="131"/>
         <source>Сообщение при &amp;выходе:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="133"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="134"/>
         <source>Профиль</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="141"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="142"/>
         <source>Включить &amp;статус при простое:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="142"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="143"/>
         <source>Автоматически переходить в статус Отсутствую
 при простое и возвращаться в обычный режим
 при появлении активности</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="147"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="148"/>
         <source> мин</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="153"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="154"/>
         <source>Возвращаться в &amp;обычный режим при отправке</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="154"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="155"/>
         <source>Возвращаться в обычный режим при отправке
 сообщения, если до этого статус Отсутствую
 был установлен вручную</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="157"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="158"/>
         <source>Статус: Отсутствую</source>
         <translation type="unfinished"></translation>
     </message>
@@ -667,39 +667,6 @@
     </message>
 </context>
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../src/common/updatexmlreader.cpp" line="75"/>
-        <source>BAD FILE FORMAT OR VERSION</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/chatwindow/chatwindowstyle.cpp" line="343"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/chatwindow/chatwindowstyle.cpp" line="343"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/emoticons/providers/adium/adium_emoticons.cpp" line="80"/>
-        <source>bad plist file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/emoticons/providers/kde/kde_emoticons.cpp" line="56"/>
-        <source>bad messaging-emoticon-map file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/emoticons/providers/xmpp/xmpp_emoticons.cpp" line="72"/>
-        <source>bad icondef file</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QuickUserSearch</name>
     <message>
         <location filename="../../src/schat/widget/userview.cpp" line="268"/>
@@ -710,164 +677,164 @@
 <context>
     <name>SChatWindow</name>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="227"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="228"/>
         <source>Ping to server</source>
         <translation>Ping до сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="227"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="228"/>
         <source> ms</source>
         <translation> мс</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="237"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="238"/>
         <source>Personal message to all users.</source>
         <translation>Личное обращение ко всем пользователям.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="238"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="239"/>
         <source>turns on/off &lt;b&gt;Away&lt;/b&gt; status.</source>
         <translation>включает/выключает статус &lt;b&gt;Отсутствую&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="239"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="240"/>
         <source>disconnects from server/network, optionally an alternative quit message can be set.</source>
         <translation>отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="240"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="241"/>
         <source>chat window clearing.</source>
         <translation>очистка окна чата.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="241"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="242"/>
         <source>turns on/off &lt;b&gt;Do Not Disturb&lt;/b&gt; status.</source>
         <translation>включает/выключает статус &lt;b&gt;Не беспокоить&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="242"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="243"/>
         <source>exit from chat.</source>
         <translation>выход из чата.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="243"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="244"/>
         <source>forms the link with a given text for search in Google.</source>
         <translation>формирует ссылку с заданной строкой для поиска в Google.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="244"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="245"/>
         <source>displays command tip.</source>
         <translation>отображает подсказу о командах.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="245"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="246"/>
         <source>opens folder with chat logs.</source>
         <translation>открывает папку с файлами журнала чата.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="246"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="247"/>
         <source>about yourself in the third person, e.g. about what you’re doing now.</source>
         <translation>отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="247"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="248"/>
         <source>display of &lt;i&gt;Message Of The Day&lt;/i&gt; server message.</source>
         <translation>показ &lt;i&gt;Message Of The Day&lt;/i&gt; сообщения сервера.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="248"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="249"/>
         <source>allows to set a new nickname.</source>
         <translation>позволяет указать новый ник.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="249"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="250"/>
         <source>calculate time of delay to server.</source>
         <translation>определение времени задержки до сервера.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="250"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="251"/>
         <source>view server information.</source>
         <translation>просмотр информации о сервере.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="254"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="255"/>
         <source>Available commands:</source>
         <translation>Доступные команды:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="275"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="276"/>
         <source>Unknown command: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Неизвестная команда: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="372"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="373"/>
         <source>changed status to:</source>
         <comment>Female</comment>
         <translation>сменила статус на:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="374"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="375"/>
         <source>changed status to:</source>
         <comment>Male</comment>
         <translation>сменил статус на:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="379"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="380"/>
         <source>Away</source>
         <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="381"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="382"/>
         <source>DND</source>
         <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="383"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="384"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="634"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="635"/>
         <source>Close tab</source>
         <translation>Закрыть вкладку</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="906"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="907"/>
         <source>Your chat is using an old version of protocol, connection is not established, please update your program.</source>
         <translation>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста, обновите программу.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="910"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="911"/>
         <source>Server is using an old version of protocol, connection is not established.</source>
         <translation>Сервер использует устаревшую версию протокола, подключение не возможно.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="914"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="915"/>
         <source>Chosen nickname: &lt;b&gt;%1&lt;/b&gt; forbidden in the chat, choose another one</source>
         <translation>Выбранный ник: &lt;b&gt;%1&lt;/b&gt; не допустим в чате, выберите другой</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="924"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="925"/>
         <source>Critical error with code: &lt;b&gt;%1&lt;/b&gt; occurred at connection</source>
         <translation>При подключении произошла критическая ошибка с кодом: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1065"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1066"/>
         <source>Server &lt;b&gt;%1&lt;/b&gt; disconnected from network &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Сервер &lt;b&gt;%1&lt;/b&gt; отключился от сети &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1086"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1087"/>
         <source>Server &lt;b&gt;%1&lt;/b&gt; connected to network &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Сервер &lt;b&gt;%1&lt;/b&gt; подключился к сети &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1536"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1537"/>
         <source>Preferences...</source>
         <translation>Настройка...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1537"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1538"/>
         <source>Manage server...</source>
         <translation>Управление сервером... </translation>
     </message>
@@ -876,70 +843,75 @@
     <name>SendWidget</name>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="436"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="613"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="444"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="619"/>
         <source>Logs</source>
         <translation>Журналы</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="603"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="604"/>
         <source>Personal data...</source>
         <translation>Личные данные...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="604"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
         <source>Network...</source>
         <translation>Сеть...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
         <source>Interface...</source>
         <translation>Интерфейс...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
         <source>Emoticons...</source>
         <translation>Смайлики...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
         <source>Sounds...</source>
         <translation>Звуки...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
         <source>Notifications...</source>
         <translation>Уведомления...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
+        <source>Statuses...</source>
+        <translation>Статусы...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="611"/>
         <source>Update...</source>
         <translation>Обновление...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
         <source>Others...</source>
         <translation>Разное...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="618"/>
         <source>Add emoticon</source>
         <translation>Добавить смайлик</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="440"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="598"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="599"/>
         <source>Preferences</source>
         <translation>Настройка</translation>
     </message>
@@ -960,13 +932,13 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="438"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -987,7 +959,7 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="618"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="620"/>
         <source>Send</source>
         <translation>Отправить</translation>
     </message>
@@ -1002,17 +974,17 @@
         <translation>Растяжка</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="597"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="598"/>
         <source>Menu</source>
         <translation>Меню</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="599"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="600"/>
         <source>About Simple Chat...</source>
         <translation>О Simple Chat...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="600"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="601"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
@@ -1051,11 +1023,16 @@
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="65"/>
+        <source>Statuses</source>
+        <translation>Статусы</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="66"/>
         <source>Update</source>
         <translation>Обновление</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="66"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="67"/>
         <source>Others</source>
         <translation>Разное</translation>
     </message>
@@ -1076,58 +1053,58 @@
 <context>
     <name>SoundSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="726"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="727"/>
         <source>&amp;Звуковые уведомления</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="742"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="743"/>
         <source>&amp;Сообщение</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="742"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="743"/>
         <source>Сообщение в основной канал</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="745"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="746"/>
         <source>&amp;Приватное сообщение</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="745"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="746"/>
         <source>Сообщение в приват от другого пользователя</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="755"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="756"/>
         <source>Внешняя команда для воспроизведения звука</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="759"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="760"/>
         <source>Внешняя команда, Вместо %1 подставляется
 имя звукового файла</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="764"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="765"/>
         <source>Звуки</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="765"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="766"/>
         <source>Открыть папку со звуками</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="769"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="770"/>
         <source>Статус &quot;Не беспокоить&quot; &amp;отключает звук</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="770"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="771"/>
         <source>Использование статуса &quot;Не беспокоить&quot; отключает звук</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1173,39 +1150,39 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="182"/>
+        <location filename="../../src/schat/trayicon.cpp" line="183"/>
         <source>Update to version %1 is available</source>
         <translation>Доступно обновление до версии %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="183"/>
+        <location filename="../../src/schat/trayicon.cpp" line="184"/>
         <source>Click here to download update right now.
 File size: %1</source>
         <translation>Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.
 Размер файлов: %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="189"/>
+        <location filename="../../src/schat/trayicon.cpp" line="190"/>
         <source>A new version %1 is available</source>
         <translation>Доступна новая версия %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="190"/>
+        <location filename="../../src/schat/trayicon.cpp" line="191"/>
         <source>Click here to go to a download page</source>
         <translation>Щёлкните здесь для того чтобы перейти на страницу загрузки</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="198"/>
+        <location filename="../../src/schat/trayicon.cpp" line="199"/>
         <source>Everything is ready to install version %1</source>
         <translation>Всё готово к установке версии %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="199"/>
+        <location filename="../../src/schat/trayicon.cpp" line="200"/>
         <source>Click here to install the update right now.</source>
         <translation>Щёлкните здесь для того чтобы установить это обновление прямо сейчас.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/schat/trayicon.cpp" line="276"/>
+        <location filename="../../src/schat/trayicon.cpp" line="277"/>
         <source>%n Byte</source>
         <translation>
             <numerusform>%n Байт</numerusform>
@@ -1214,12 +1191,12 @@ File size: %1</source>
         </translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="278"/>
+        <location filename="../../src/schat/trayicon.cpp" line="279"/>
         <source>%1 kB</source>
         <translation>%1 Кб</translation>
     </message>
     <message>
-        <location filename="../../src/schat/trayicon.cpp" line="280"/>
+        <location filename="../../src/schat/trayicon.cpp" line="281"/>
         <source>%1 MB</source>
         <translation>%1 Мб</translation>
     </message>
@@ -1227,58 +1204,58 @@ File size: %1</source>
 <context>
     <name>UpdateSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="992"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1028"/>
         <source>&amp;Уведомление о новых версиях</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="996"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1032"/>
         <source>Проверять при &amp;запуске</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="997"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1033"/>
         <source>Проверять обновления при запуске программы</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1000"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1036"/>
         <source>&amp;Интервал проверки:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1001"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1037"/>
         <source>Временной интервал для периодической проверки
 обновлений</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1028"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1064"/>
         <source>&amp;Автоматическое обновление</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1030"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1066"/>
         <source>Автоматически &amp;загружать</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1031"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1067"/>
         <source>Автоматически загружать обновления</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1034"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1070"/>
         <source>&amp;Удалять после установки</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1035"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1071"/>
         <source>Удалять обновления после установки</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/schat/settingsdialog.cpp" line="1137"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1173"/>
         <source>%n Minute</source>
         <translation>
             <numerusform>Минута</numerusform>
@@ -1287,7 +1264,7 @@ File size: %1</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/schat/settingsdialog.cpp" line="1138"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1174"/>
         <source>%n Hour</source>
         <translation>
             <numerusform>Час</numerusform>

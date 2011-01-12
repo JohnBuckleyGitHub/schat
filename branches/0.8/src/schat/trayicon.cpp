@@ -17,6 +17,7 @@
  */
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFile>
 #include <QSound>
 #include <QTimer>

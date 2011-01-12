@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class AdiumEmoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
@@ -77,7 +77,7 @@ bool AdiumEmoticons::loadTheme(const QString &path)
 
       }
       else
-        m_reader.raiseError(QObject::tr("bad plist file"));
+        m_reader.raiseError("bad plist file");
     }
   }
 

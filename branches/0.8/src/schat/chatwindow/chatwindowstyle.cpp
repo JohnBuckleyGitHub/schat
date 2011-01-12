@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  * This file based on "kopetechatwindowstyle.cpp" - A Chat Window Style.
  * Copyright © 2005      by Michaël Larouche      <larouche@kde.org>
@@ -340,7 +340,7 @@ void ChatWindowStyle::readStyleFiles()
                                "  </span>\n"
                                " </div>\n"
                                "</div>" )
-                               .arg( QObject::tr( "Download" ), QObject::tr( "Cancel" ) );
+                               .arg("Download", "Cancel");
     d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
   }
 }

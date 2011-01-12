@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class XmppEmoticons
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
@@ -24,7 +24,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QImageReader>
-#include <QDebug>
 
 /*!
  * Конструктор класса XmppEmoticons.
@@ -69,7 +68,7 @@ bool XmppEmoticons::loadTheme(const QString &path)
 
       }
       else
-        m_reader.raiseError(QObject::tr("bad icondef file"));
+        m_reader.raiseError("bad icondef file");
     }
   }
 

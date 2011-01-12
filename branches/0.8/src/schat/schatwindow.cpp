@@ -19,6 +19,7 @@
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QKeyEvent>
+#include <QMenuBar>
 #include <QProcess>
 #include <QToolBar>
 #include <QToolButton>

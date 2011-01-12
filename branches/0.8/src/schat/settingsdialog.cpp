@@ -62,6 +62,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   createPage(QIcon(":/images/emoticon.png"),              tr("Emoticons"),     new EmoticonsSettings(this));
   createPage(QIcon(":/images/sound.png"),                 tr("Sounds"),        new SoundSettings(this));
   createPage(QIcon(":/images/notification.png"),          tr("Notifications"), new NotificationSettings(this));
+  createPage(QIcon(":/images/statuses.png"),              tr("Statuses"),      new StatusesSettings(this));
   createPage(QIcon(":/images/update.png"),                tr("Update"),        new UpdateSettings(this));
   createPage(QIcon(":/images/application-x-desktop.png"), tr("Others"),        new MiscSettings(this));
 
@@ -960,6 +961,41 @@ void NotificationSettings::popupGroupState()
   d->popupGroup->setEnabled(d->privateMsg->isChecked() || d->publicMsg->isChecked());
 }
 
+
+
+
+class StatusesSettings::Private
+{
+public:
+  Private() {}
+};
+
+
+/*!
+ * \brief Конструктор класса StatusesSettings.
+ */
+StatusesSettings::StatusesSettings(QWidget *parent)
+  : AbstractSettingsPage(SettingsDialog::StatusesPage, parent), d(new Private)
+{
+
+}
+
+
+StatusesSettings::~StatusesSettings() { delete d; }
+
+
+void StatusesSettings::reset(int page)
+{
+  if (page == m_id) {
+
+  }
+}
+
+
+void StatusesSettings::save()
+{
+
+}
 
 
 
