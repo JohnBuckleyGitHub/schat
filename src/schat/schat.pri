@@ -205,13 +205,19 @@ unix {
   sounds.files = ../../data/sounds/*.wav
   sounds.path = $$SCHAT_PREFIX/share/schat/sounds
 
+  translations.files = ../../data/translations/schat_en.qm
+  translations.files += ../../data/translations/schat_ru.qm
+  translations.files += ../../data/images/lang/en.png
+  translations.files += ../../data/images/lang/ru.png
+  translations.path = $$SCHAT_PREFIX/share/schat/translations
+
   pixmaps.files = ../../data/images/schat.png
   pixmaps.path = $$SCHAT_PREFIX/share/pixmaps
 
   applications.files = ../../os/ubuntu/schat.desktop
   applications.path = $$SCHAT_PREFIX/share/applications
 
-  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds pixmaps applications
+  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds translations pixmaps applications
 }
 
 include(../common/common.pri)

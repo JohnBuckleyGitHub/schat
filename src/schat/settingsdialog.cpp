@@ -26,10 +26,12 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QProcess>
 #include <QPushButton>
 #include <QSound>
 #include <QSpinBox>
 #include <QStyleFactory>
+#include <QTextStream>
 
 #include "abstractprofile.h"
 #include "emoticons/emoticons.h"
