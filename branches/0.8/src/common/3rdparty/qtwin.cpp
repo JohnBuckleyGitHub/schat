@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2009 Nokia Corporation and/or its subsidiary(-ies).
  * <http://labs.trolltech.com/blogs/2009/09/15/using-blur-behind-on-windows/>
  *
@@ -141,6 +141,9 @@ bool QtWin::enableBlurBehindWindow(QWidget *widget, bool enable)
             windowNotifier()->addWidget(widget);
         }
     }
+#else
+    Q_UNUSED(widget)
+    Q_UNUSED(enable)
 #endif
     return result;
 }
@@ -161,10 +164,11 @@ bool QtWin::extendFrameIntoClientArea(QWidget *widget, int left, int top, int ri
 {
 
     Q_ASSERT(widget);
-    Q_UNUSED(left);
-    Q_UNUSED(top);
-    Q_UNUSED(right);
-    Q_UNUSED(bottom);
+    Q_UNUSED(widget)
+    Q_UNUSED(left)
+    Q_UNUSED(top)
+    Q_UNUSED(right)
+    Q_UNUSED(bottom)
 
     bool result = false;
 #ifdef Q_WS_WIN
