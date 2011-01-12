@@ -698,6 +698,17 @@
         <source>bad icondef file</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>QuickUserSearch</name>
+    <message>
+        <location filename="../../src/schat/widget/userview.cpp" line="268"/>
+        <source>Search...</source>
+        <translation>Поиск...</translation>
+    </message>
+</context>
+<context>
+    <name>SChatWindow</name>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="227"/>
         <source>Ping to server</source>
@@ -710,167 +721,153 @@
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="237"/>
-        <source>&lt;b&gt;/all&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — Личное обращение ко всем пользователям.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Personal message to all users.</source>
+        <translation>Личное обращение ко всем пользователям.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="238"/>
-        <source>&lt;b&gt;/away&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — включает/выключает статус &lt;b&gt;Отсутствую&lt;/b&gt;.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>turns on/off &lt;b&gt;Away&lt;/b&gt; status.</source>
+        <translation>включает/выключает статус &lt;b&gt;Отсутствую&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="239"/>
-        <source>&lt;b&gt;/bye [текст сообщения]&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>disconnects from server/network, optionally an alternative quit message can be set.</source>
+        <translation>отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="240"/>
-        <source>&lt;b&gt;/clear&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — очистка окна чата.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>chat window clearing.</source>
+        <translation>очистка окна чата.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="241"/>
-        <source>&lt;b&gt;/dnd&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — включает/выключает статус &lt;b&gt;Не беспокоить&lt;/b&gt;.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>turns on/off &lt;b&gt;Do Not Disturb&lt;/b&gt; status.</source>
+        <translation>включает/выключает статус &lt;b&gt;Не беспокоить&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="242"/>
-        <source>&lt;b&gt;/exit&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — выход из чата.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>exit from chat.</source>
+        <translation>выход из чата.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="243"/>
-        <source>&lt;b&gt;/google &amp;lt;строка поиска&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — формирует ссылку с заданной строкой для поиска в Google.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>forms the link with a given text for search in Google.</source>
+        <translation>формирует ссылку с заданной строкой для поиска в Google.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="244"/>
-        <source>&lt;b&gt;/help&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отображает подсказу о командах.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>displays command tip.</source>
+        <translation>отображает подсказу о командах.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="245"/>
-        <source>&lt;b&gt;/log&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — открывает папку с файлами журнала чата.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>opens folder with chat logs.</source>
+        <translation>открывает папку с файлами журнала чата.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="246"/>
-        <source>&lt;b&gt;/me &amp;lt;текст сообщения&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>about yourself in the third person, e.g. about what you’re doing now.</source>
+        <translation>отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="247"/>
-        <source>&lt;b&gt;/motd&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — показ &lt;i&gt;Message Of The Day&lt;/i&gt; сообщения сервера.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>display of &lt;i&gt;Message Of The Day&lt;/i&gt; server message.</source>
+        <translation>показ &lt;i&gt;Message Of The Day&lt;/i&gt; сообщения сервера.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="248"/>
-        <source>&lt;b&gt;/nick &amp;lt;новый ник&amp;gt;&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>allows to set a new nickname.</source>
+        <translation>позволяет указать новый ник.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="249"/>
-        <source>&lt;b&gt;/ping&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — определение времени задержки до сервера.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>calculate time of delay to server.</source>
+        <translation>определение времени задержки до сервера.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="250"/>
-        <source>&lt;b&gt;/server&lt;/b&gt;&lt;span class=&apos;info&apos;&gt; — просмотр информации о сервере.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>view server information.</source>
+        <translation>просмотр информации о сервере.</translation>
     </message>
     <message>
         <location filename="../../src/schat/schatwindow.cpp" line="254"/>
-        <source>&lt;b class=&apos;info&apos;&gt;Доступные команды:&lt;/b&gt;&lt;br /&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Available commands:</source>
+        <translation>Доступные команды:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="264"/>
-        <source>&lt;span class=&apos;info&apos;&gt;Используйте &lt;b&gt;/help команда&lt;/b&gt;, для просмотра подробной информации о команде.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="275"/>
+        <source>Unknown command: &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation>Неизвестная команда: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="278"/>
-        <source>Неизвестная команда: &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="372"/>
+        <source>changed status to:</source>
+        <comment>Female</comment>
+        <translation>сменила статус на:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="375"/>
-        <source>сменила статус на:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="374"/>
+        <source>changed status to:</source>
+        <comment>Male</comment>
+        <translation>сменил статус на:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="377"/>
-        <source>сменил статус на:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="379"/>
+        <source>Away</source>
+        <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="382"/>
-        <source>Отсутствую</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="381"/>
+        <source>DND</source>
+        <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="384"/>
-        <source>Не беспокоить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="383"/>
+        <source>Online</source>
+        <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="386"/>
-        <source>В сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schat/schatwindow.cpp" line="634"/>
+        <source>Close tab</source>
+        <translation>Закрыть вкладку</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="637"/>
-        <source>Закрыть вкладку</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QuickUserSearch</name>
-    <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="269"/>
-        <source>Search...</source>
-        <translation>Поиск...</translation>
-    </message>
-</context>
-<context>
-    <name>SChatWindow</name>
-    <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="909"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="906"/>
         <source>Your chat is using an old version of protocol, connection is not established, please update your program.</source>
         <translation>Ваш чат использует устаревшую версию протокола, подключение не возможно, пожалуйста, обновите программу.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="913"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="910"/>
         <source>Server is using an old version of protocol, connection is not established.</source>
         <translation>Сервер использует устаревшую версию протокола, подключение не возможно.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="917"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="914"/>
         <source>Chosen nickname: &lt;b&gt;%1&lt;/b&gt; forbidden in the chat, choose another one</source>
         <translation>Выбранный ник: &lt;b&gt;%1&lt;/b&gt; не допустим в чате, выберите другой</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="927"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="924"/>
         <source>Critical error with code: &lt;b&gt;%1&lt;/b&gt; occurred at connection</source>
         <translation>При подключении произошла критическая ошибка с кодом: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1068"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1065"/>
         <source>Server &lt;b&gt;%1&lt;/b&gt; disconnected from network &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Сервер &lt;b&gt;%1&lt;/b&gt; отключился от сети &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1089"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1086"/>
         <source>Server &lt;b&gt;%1&lt;/b&gt; connected to network &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Сервер &lt;b&gt;%1&lt;/b&gt; подключился к сети &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1539"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1536"/>
         <source>Preferences...</source>
         <translation>Настройка...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1540"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1537"/>
         <source>Manage server...</source>
         <translation>Управление сервером... </translation>
     </message>
@@ -1335,87 +1332,87 @@ File size: %1</source>
 <context>
     <name>UserView</name>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="84"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="83"/>
         <source>Name:</source>
         <translation>ФИО:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="89"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="88"/>
         <source>Version:</source>
         <translation>Версия:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="91"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="90"/>
         <source>Client:</source>
         <translation>Клиент:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="93"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="92"/>
         <source>Address:</source>
         <translation>Адрес:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="96"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="95"/>
         <source>Status:</source>
         <translation>Статус:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="98"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="97"/>
         <source>Away</source>
         <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="100"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="99"/>
         <source>DND</source>
         <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="102"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="101"/>
         <source>Offline</source>
         <translation>Не в сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="104"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="103"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="621"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="620"/>
         <source>Personal data...</source>
         <translation>Личные данные...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="623"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="622"/>
         <source>Private message</source>
         <translation>Приватное сообщение</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="625"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="624"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="630"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="629"/>
         <source>Nick</source>
         <translation>Ник</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="633"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="632"/>
         <source>Name</source>
         <translation>ФИО</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="634"/>
         <source>Client</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="636"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
         <source>Address</source>
         <translation>Адрес</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="639"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="638"/>
         <source>Insert nick</source>
         <translation>Вставить ник</translation>
     </message>
