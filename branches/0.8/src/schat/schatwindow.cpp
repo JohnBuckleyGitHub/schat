@@ -224,7 +224,7 @@ QString SChatWindowPrivate::colorizedPing() const
   else if (ms >= 500)
     color = "da251d";
 
-  return QObject::tr("Ping to server") + " <b style='color:#" + color + ";'>" + QString::number(ms) + QObject::tr(" ms") + "</b>";
+  return SChatWindow::tr("Ping to server") + " <b style='color:#" + color + ";'>" + QString::number(ms) + SChatWindow::tr(" ms") + "</b>";
 }
 
 
@@ -234,34 +234,31 @@ QString SChatWindowPrivate::colorizedPing() const
 void SChatWindowPrivate::cmdHelp(AbstractTab *tab, const QString &cmd)
 {
   if (cmds.isEmpty()) {
-    cmds.insert("all",    QObject::tr("<b>/all</b><span class='info'> — Личное обращение ко всем пользователям.</span>"));
-    cmds.insert("away",   QObject::tr("<b>/away</b><span class='info'> — включает/выключает статус <b>Отсутствую</b>.</span>"));
-    cmds.insert("bye",    QObject::tr("<b>/bye [текст сообщения]</b><span class='info'> — отключится от сервера/сети, опционально можно указать альтернативное сообщение о выходе.</span>"));
-    cmds.insert("clear",  QObject::tr("<b>/clear</b><span class='info'> — очистка окна чата.</span>"));
-    cmds.insert("dnd",    QObject::tr("<b>/dnd</b><span class='info'> — включает/выключает статус <b>Не беспокоить</b>.</span>"));
-    cmds.insert("exit",   QObject::tr("<b>/exit</b><span class='info'> — выход из чата.</span>"));
-    cmds.insert("google", QObject::tr("<b>/google &lt;строка поиска&gt;</b><span class='info'> — формирует ссылку с заданной строкой для поиска в Google.</span>"));
-    cmds.insert("help",   QObject::tr("<b>/help</b><span class='info'> — отображает подсказу о командах.</span>"));
-    cmds.insert("log",    QObject::tr("<b>/log</b><span class='info'> — открывает папку с файлами журнала чата.</span>"));
-    cmds.insert("me",     QObject::tr("<b>/me &lt;текст сообщения&gt;</b><span class='info'> — отправка сообщения о себе от третьего лица, например о том что вы сейчас делаете.</span>"));
-    cmds.insert("motd",   QObject::tr("<b>/motd</b><span class='info'> — показ <i>Message Of The Day</i> сообщения сервера.</span>"));
-    cmds.insert("nick",   QObject::tr("<b>/nick &lt;новый ник&gt;</b><span class='info'> — позволяет указать новый ник, если указанный ник уже занят, произойдёт автоматическое отключение.</span>"));
-    cmds.insert("ping",   QObject::tr("<b>/ping</b><span class='info'> — определение времени задержки до сервера.</span>"));
-    cmds.insert("server", QObject::tr("<b>/server</b><span class='info'> — просмотр информации о сервере.</span>"));
+    cmds.insert("all",    SChatWindow::tr("Personal message to all users."));
+    cmds.insert("away",   SChatWindow::tr("turns on/off <b>Away</b> status."));
+    cmds.insert("bye",    SChatWindow::tr("disconnects from server/network, optionally an alternative quit message can be set."));
+    cmds.insert("clear",  SChatWindow::tr("chat window clearing."));
+    cmds.insert("dnd",    SChatWindow::tr("turns on/off <b>Do Not Disturb</b> status."));
+    cmds.insert("exit",   SChatWindow::tr("exit from chat."));
+    cmds.insert("google", SChatWindow::tr("forms the link with a given text for search in Google."));
+    cmds.insert("help",   SChatWindow::tr("displays command tip."));
+    cmds.insert("log",    SChatWindow::tr("opens folder with chat logs."));
+    cmds.insert("me",     SChatWindow::tr("about yourself in the third person, e.g. about what you’re doing now."));
+    cmds.insert("motd",   SChatWindow::tr("display of <i>Message Of The Day</i> server message."));
+    cmds.insert("nick",   SChatWindow::tr("allows to set a new nickname."));
+    cmds.insert("ping",   SChatWindow::tr("calculate time of delay to server."));
+    cmds.insert("server", SChatWindow::tr("view server information."));
   }
 
   if (cmd.isEmpty()) {
-    QString out = QObject::tr("<b class='info'>Доступные команды:</b><br />");
-    out += "<b>";
+    QString out = "<b class='info'>" + SChatWindow::tr("Available commands:") + "</b><br />";
 
     QMapIterator<QString, QString> i(cmds);
     while (i.hasNext()) {
       i.next();
-      out += ('/' + i.key() + "<br />");
+      out += ("<b class='info'>/" + i.key() + "</b> — " + i.value() + "<br />");
     }
 
-    out += "</b>";
-    out += QObject::tr("<span class='info'>Используйте <b>/help команда</b>, для просмотра подробной информации о команде.</span>");
     tab->msg(out);
     return;
   }
@@ -272,10 +269,10 @@ void SChatWindowPrivate::cmdHelp(AbstractTab *tab, const QString &cmd)
   }
 
   if (cmds.contains(command)) {
-    tab->msg(cmds.value(command));
+    tab->msg("<b class='info'>/" + command + "</b> — " + cmds.value(command));
   }
   else
-    tab->msg("<span class='statusUnknownCmd'>" + QObject::tr("Неизвестная команда: <b>%1</b>").arg(command) + "</span>");
+    tab->msg("<span class='statusUnknownCmd'>" + SChatWindow::tr("Unknown command: <b>%1</b>").arg(command) + "</span>");
 }
 
 
@@ -372,18 +369,18 @@ void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
   QString html;
   html = QString("<span class='away'><a href='nick:%1'>%2</a> ").arg(QLatin1String(nick.toUtf8().toHex())).arg(Qt::escape(nick));
   if (users->profile(nick).isFemale())
-    html += QObject::tr("сменила статус на:");
+    html += SChatWindow::tr("changed status to:", "Female");
   else
-    html += QObject::tr("сменил статус на:");
+    html += SChatWindow::tr("changed status to:", "Male");
 
   html += " <b>";
 
   if (status == schat::StatusAutoAway || status == schat::StatusAway)
-    html += QObject::tr("Отсутствую");
+    html += SChatWindow::tr("Away");
   else if (status == schat::StatusDnD)
-    html += QObject::tr("Не беспокоить");
+    html += SChatWindow::tr("DND");
   else
-    html += QObject::tr("В сети");
+    html += SChatWindow::tr("Online");
 
   html += "</b></span>";
 
@@ -634,7 +631,7 @@ void SChatWindowPrivate::createToolButtons()
   #endif
 
   #if QT_VERSION < 0x040500
-  toolBar->addAction(QIcon(":/images/tab_close.png"), QObject::tr("Закрыть вкладку"), q, SLOT(closeTab()));
+  toolBar->addAction(QIcon(":/images/tab_close.png"), SChatWindow::tr("Close tab"), q, SLOT(closeTab()));
   toolBar->addSeparator();
   #endif
 
@@ -1538,4 +1535,5 @@ void SChatWindow::retranslateUi()
 {
   d->settingsAction->setText(tr("Preferences..."));
   d->daemonAction->setText(tr("Manage server..."));
+  d->cmds.clear();
 }
