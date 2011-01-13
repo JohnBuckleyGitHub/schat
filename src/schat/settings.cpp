@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -228,7 +228,7 @@ void Settings::read()
   setBool("NoNotificationInDnD",    true);
   setBool("PopupAutoClose",         true);
   setBool("NoPopupAutoCloseInAway", true);
-  setBool("CompactGenderWidget",    true);
+  setBool("CompactGenderWidget",    false);
   setBool("StatusMessages",         true);
   setBool("Maximized",              false);
   setInt("AutoAwayTime",            10);

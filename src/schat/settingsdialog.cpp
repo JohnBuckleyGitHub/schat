@@ -107,10 +107,7 @@ public:
   AbstractProfile *profile;
   bool maxRecentItems;
   ProfileWidget *profileWidget;
-  QCheckBox *autoAway;
-  QCheckBox *exitAwayOnSend;
   QLineEdit *byeMsgEdit;
-  QSpinBox *autoAwayTime;
 };
 
 
@@ -125,7 +122,7 @@ ProfileSettings::ProfileSettings(QWidget *parent)
 
   d->byeMsgEdit = new QLineEdit(d->profile->byeMsg(), this);
   d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
-  d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи\nесли вы выйдете из чата"));
+  d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи если вы выйдете из чата"));
   if (d->maxRecentItems) {
     d->byeMsgEdit->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentByeMsgs"), this));
     d->byeMsgEdit->completer()->setCaseSensitivity(Qt::CaseInsensitive);
@@ -141,35 +138,8 @@ ProfileSettings::ProfileSettings(QWidget *parent)
   profileLay->addWidget(byeMsgLabel);
   profileLay->addWidget(d->byeMsgEdit);
 
-  d->autoAway = new QCheckBox(tr("Включить &статус при простое:"), this);
-  d->autoAway->setToolTip(tr("Автоматически переходить в статус Отсутствую\nпри простое и возвращаться в обычный режим\nпри появлении активности"));
-  d->autoAway->setChecked(SimpleSettings->getBool("AutoAway"));
-
-  d->autoAwayTime = new QSpinBox(this);
-  d->autoAwayTime->setRange(1, 1440);
-  d->autoAwayTime->setSuffix(tr(" мин"));
-  d->autoAwayTime->setValue(SimpleSettings->getInt("AutoAwayTime"));
-
-  connect(d->autoAway, SIGNAL(clicked(bool)), d->autoAwayTime, SLOT(setEnabled(bool)));
-  d->autoAwayTime->setEnabled(d->autoAway->isChecked());
-
-  d->exitAwayOnSend = new QCheckBox(tr("Возвращаться в &обычный режим при отправке"), this);
-  d->exitAwayOnSend->setToolTip(tr("Возвращаться в обычный режим при отправке\nсообщения, если до этого статус Отсутствую\nбыл установлен вручную"));
-  d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
-
-  QGroupBox *awayGroup = new QGroupBox(tr("Статус: Отсутствую"), this);
-  QGridLayout *awayLay = new QGridLayout(awayGroup);
-  awayLay->addWidget(d->autoAway, 0, 0);
-  awayLay->addWidget(d->autoAwayTime, 0, 1);
-  awayLay->addWidget(d->exitAwayOnSend, 1, 0, 1, 2);
-  awayLay->setColumnStretch(0, 1);
-  awayLay->setMargin(6);
-  awayLay->setSpacing(4);
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(profileGroup);
-  mainLay->addSpacing(12);
-  mainLay->addWidget(awayGroup);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
 }
@@ -181,11 +151,7 @@ void ProfileSettings::reset(int page)
 {
   if (page == m_id) {
     d->profileWidget->reset();
-    d->byeMsgEdit->setText(QApplication::applicationName());
-    d->autoAway->setChecked(true);
-    d->autoAwayTime->setValue(10);
-    d->autoAwayTime->setEnabled(true);
-    d->exitAwayOnSend->setChecked(true);
+    d->byeMsgEdit->setText("");
   }
 }
 
@@ -201,14 +167,6 @@ void ProfileSettings::save()
 
     SimpleSettings->notify(Settings::ByeMsgChanged);
   }
-
-  int modified = 0;
-  modified += SimpleSettings->save("AutoAway", d->autoAway->isChecked());
-  modified += SimpleSettings->save("AutoAwayTime", d->autoAwayTime->value());
-  modified += SimpleSettings->save("ExitAwayOnSend", d->exitAwayOnSend->isChecked());
-
-  if (modified)
-    SimpleSettings->notify(Settings::AwaySettingsChanged);
 }
 
 
@@ -710,7 +668,6 @@ class SoundSettings::Private
 public:
   Private() {}
 
-  QCheckBox *muteInDnD;
   QGroupBox *enable;
   SoundWidget *msg;
   SoundWidget *privateMsg;
@@ -769,16 +726,11 @@ SoundSettings::SoundSettings(QWidget *parent)
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
-  d->muteInDnD = new QCheckBox(tr("Статус \"Не беспокоить\" &отключает звук"), this);
-  d->muteInDnD->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает звук"));
-  d->muteInDnD->setChecked(SimpleSettings->getBool("Sound/MuteInDnD"));
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(d->enable);
   #ifdef Q_WS_X11
     mainLay->addWidget(d->useCmd);
   #endif
-  mainLay->addWidget(d->muteInDnD);
   mainLay->addStretch();
   mainLay->addWidget(url);
   mainLay->setContentsMargins(3, 3, 3, 0);
@@ -794,7 +746,6 @@ void SoundSettings::reset(int page)
     d->enable->setChecked(true);
     d->msg->reset(true, "Received.wav");
     d->privateMsg->reset(true, "Received.wav");
-    d->muteInDnD->setChecked(true);
 
     #ifdef Q_WS_X11
       d->useCmd->setChecked(true);
@@ -811,7 +762,6 @@ void SoundSettings::save()
   modified += SimpleSettings->save("Sound", d->enable->isChecked());
   modified += d->msg->save();
   modified += d->privateMsg->save();
-  modified += SimpleSettings->save("Sound/MuteInDnD", d->muteInDnD->isChecked());
   #ifdef Q_WS_X11
     modified += SimpleSettings->save("Sound/UseExternalCmd", d->useCmd->isChecked());
     modified += SimpleSettings->save("Sound/ExternalCmd", d->cmd->text());
@@ -847,7 +797,6 @@ public:
   Private() {}
 
   QCheckBox *autoAway;
-  QCheckBox *dnd;
   QCheckBox *privateMsg;
   QCheckBox *publicMsg;
   QCheckBox *timeOut;
@@ -877,10 +826,6 @@ NotificationSettings::NotificationSettings(QWidget *parent)
   eventLay->setMargin(6);
   eventLay->setSpacing(0);
 
-  d->dnd = new QCheckBox(tr("&Статус \"Не беспокоить\" отключает оповещения"), this);
-  d->dnd->setToolTip(tr("Использование статуса \"Не беспокоить\"\nотключает оповещения"));
-  d->dnd->setChecked(SimpleSettings->getBool("NoNotificationInDnD"));
-
   d->timeOut = new QCheckBox(tr("&Автоматически закрывать спустя:"), this);
   d->timeOut->setToolTip(tr("Автоматически закрывать всплывающие\nокна спустя заданное число секунд"));
   d->timeOut->setChecked(SimpleSettings->getBool("PopupAutoClose"));
@@ -896,11 +841,10 @@ NotificationSettings::NotificationSettings(QWidget *parent)
 
   d->popupGroup = new QGroupBox(tr("Параметры всплывающих окон"), this);
   QGridLayout *popupLay = new QGridLayout(d->popupGroup);
-  popupLay->addWidget(d->dnd, 0, 0, 1, 3);
-  popupLay->addWidget(d->timeOut, 1, 0, 1, 2);
-  popupLay->addWidget(d->timeOutSpin, 1, 2);
-  popupLay->addItem(new QSpacerItem(32, 0), 2, 0);
-  popupLay->addWidget(d->autoAway, 2, 1, 1, 2);
+  popupLay->addWidget(d->timeOut, 0, 0, 1, 2);
+  popupLay->addWidget(d->timeOutSpin, 0, 2);
+  popupLay->addItem(new QSpacerItem(32, 0), 1, 0);
+  popupLay->addWidget(d->autoAway, 1, 1, 1, 2);
   popupLay->setColumnStretch(1, 1);
   popupLay->setMargin(6);
   popupLay->setSpacing(0);
@@ -931,7 +875,6 @@ void NotificationSettings::reset(int page)
   if (page == m_id) {
     d->privateMsg->setChecked(true);
     d->publicMsg->setChecked(true);
-    d->dnd->setChecked(true);
     d->timeOut->setChecked(true);
     d->autoAway->setChecked(true);
     d->autoAway->setEnabled(true);
@@ -948,7 +891,6 @@ void NotificationSettings::save()
 
   modified += SimpleSettings->save("Notification",           d->privateMsg->isChecked());
   modified += SimpleSettings->save("NotificationPublic",     d->publicMsg->isChecked());
-  modified += SimpleSettings->save("NoNotificationInDnD",    d->dnd->isChecked());
   modified += SimpleSettings->save("PopupAutoClose",         d->timeOut->isChecked());
   modified += SimpleSettings->save("PopupAutoCloseTime",     d->timeOutSpin->value());
   modified += SimpleSettings->save("NoPopupAutoCloseInAway", d->autoAway->isChecked());
@@ -970,6 +912,13 @@ class StatusesSettings::Private
 {
 public:
   Private() {}
+
+  QCheckBox *autoAway;
+  QCheckBox *dnd;
+  QCheckBox *exitAwayOnSend;
+  QCheckBox *muteInDnD;
+  QComboBox *statuses;
+  QSpinBox *autoAwayTime;
 };
 
 
@@ -979,7 +928,64 @@ public:
 StatusesSettings::StatusesSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::StatusesPage, parent), d(new Private)
 {
+  d->exitAwayOnSend = new QCheckBox(tr("Сбросить статусы после отправки сообщения"), this);
+  d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
 
+  QLabel *statusLabel = new QLabel(tr("&Status:"), this);
+  d->statuses = new QComboBox(this);
+  d->statuses->addItem(tr("Away"));
+  d->statuses->addItem(tr("Do Not Disturb"));
+  connect(d->statuses, SIGNAL(currentIndexChanged(int)), this, SLOT(showOptions(int)));
+
+  statusLabel->setBuddy(d->statuses);
+
+  QGroupBox *group = new QGroupBox(tr("Опции статуса"), this);
+
+  d->autoAway = new QCheckBox(tr("Включить статус при простое:"), this);
+  d->autoAway->setToolTip(tr("Автоматически переходить в статус Отсутствую\nпри простое и возвращаться в обычный режим при появлении активности"));
+  d->autoAway->setChecked(SimpleSettings->getBool("AutoAway"));
+
+  d->autoAwayTime = new QSpinBox(this);
+  d->autoAwayTime->setRange(1, 1440);
+  d->autoAwayTime->setSuffix(tr(" min"));
+  d->autoAwayTime->setValue(SimpleSettings->getInt("AutoAwayTime"));
+
+  d->muteInDnD = new QCheckBox(tr("Статус отключает звук"), this);
+  d->muteInDnD->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает звук"));
+  d->muteInDnD->setChecked(SimpleSettings->getBool("Sound/MuteInDnD"));
+
+  d->dnd = new QCheckBox(tr("Статус отключает всплывающие окона"), this);
+  d->dnd->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает всплывающие окона"));
+  d->dnd->setChecked(SimpleSettings->getBool("NoNotificationInDnD"));
+
+  connect(d->autoAway, SIGNAL(clicked(bool)), d->autoAwayTime, SLOT(setEnabled(bool)));
+  d->autoAwayTime->setEnabled(d->autoAway->isChecked());
+
+  QGridLayout *groupLay = new QGridLayout(group);
+  groupLay->addWidget(d->autoAway, 0, 0);
+  groupLay->addWidget(d->autoAwayTime, 0, 1);
+  groupLay->addWidget(d->muteInDnD, 1, 0, 1, 2);
+  groupLay->addWidget(d->dnd, 2, 0, 1, 2);
+  groupLay->setColumnStretch(0, 1);
+  groupLay->setMargin(6);
+  groupLay->setSpacing(4);
+
+  QHBoxLayout *statusesLay = new QHBoxLayout;
+  statusesLay->addWidget(statusLabel);
+  statusesLay->addWidget(d->statuses);
+  statusesLay->addStretch();
+  statusesLay->setMargin(6);
+  statusesLay->setSpacing(4);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(d->exitAwayOnSend);
+  mainLay->addSpacing(12);
+  mainLay->addLayout(statusesLay);
+  mainLay->addWidget(group);
+  mainLay->addStretch();
+  mainLay->setContentsMargins(3, 3, 3, 0);
+
+  showOptions(0);
 }
 
 
@@ -989,16 +995,49 @@ StatusesSettings::~StatusesSettings() { delete d; }
 void StatusesSettings::reset(int page)
 {
   if (page == m_id) {
-
+    d->autoAway->setChecked(true);
+    d->autoAwayTime->setValue(10);
+    d->autoAwayTime->setEnabled(true);
+    d->exitAwayOnSend->setChecked(true);
+    d->muteInDnD->setChecked(true);
+    d->dnd->setChecked(true);
   }
 }
 
 
 void StatusesSettings::save()
 {
+  int modified = 0;
+  modified += SimpleSettings->save("AutoAway", d->autoAway->isChecked());
+  modified += SimpleSettings->save("AutoAwayTime", d->autoAwayTime->value());
+  modified += SimpleSettings->save("ExitAwayOnSend", d->exitAwayOnSend->isChecked());
 
+  if (modified)
+    SimpleSettings->notify(Settings::AwaySettingsChanged);
+
+  if (SimpleSettings->save("Sound/MuteInDnD", d->muteInDnD->isChecked()))
+    SimpleSettings->notify(Settings::SoundChanged);
+
+  if (SimpleSettings->save("NoNotificationInDnD", d->dnd->isChecked()))
+    SimpleSettings->notify(Settings::NotificationChanged);
 }
 
+
+void StatusesSettings::showOptions(int index)
+{
+  if (index == 0) {
+    d->autoAway->setVisible(true);
+    d->autoAwayTime->setVisible(true);
+    d->muteInDnD->setVisible(false);
+    d->dnd->setVisible(false);
+  }
+  else {
+    d->autoAway->setVisible(false);
+    d->autoAwayTime->setVisible(false);
+    d->muteInDnD->setVisible(true);
+    d->dnd->setVisible(true);
+  }
+}
 
 
 
