@@ -396,18 +396,13 @@
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1195"/>
         <location filename="../../src/schat/settingsdialog.cpp" line="1197"/>
-        <source>Проверка обновлений</source>
-        <translation type="unfinished"></translation>
+        <source>Checks for updates</source>
+        <translation>Проверка обновлений</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1203"/>
-        <source>Автоматически загружать</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1204"/>
-        <source>Автоматически загружать обновления</source>
-        <translation type="unfinished"></translation>
+        <source>Automatically download updates</source>
+        <translation>Автоматически загружать обновления</translation>
     </message>
 </context>
 <context>
@@ -533,61 +528,58 @@
     <name>NotificationSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="813"/>
-        <source>&amp;Приватные сообщение</source>
-        <translation type="unfinished"></translation>
+        <source>Private message</source>
+        <translation>Приватное сообщение</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="814"/>
-        <source>Оповещать о приватных сообщениях</source>
-        <translation type="unfinished"></translation>
+        <source>Notification of private messages</source>
+        <translation>Уведомлять о приватных сообщениях</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="817"/>
-        <source>&amp;Обращение в основном канале</source>
-        <translation type="unfinished"></translation>
+        <source>Personal message in main channel</source>
+        <translation>Обращение в основном канале</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="818"/>
-        <source>Оповещать об обращениях
-по нику в основном канале</source>
-        <translation type="unfinished"></translation>
+        <source>Notification of personal messages by nick in the main channel</source>
+        <translation>Уведомлять об обращениях по нику в основном канале</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="821"/>
-        <source>Оповещение о событиях</source>
-        <translation type="unfinished"></translation>
+        <source>Notification of events</source>
+        <translation>Уведомление о событиях</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="828"/>
-        <source>&amp;Автоматически закрывать спустя:</source>
-        <translation type="unfinished"></translation>
+        <source>Automatically close after:</source>
+        <translation>Автоматически закрывать спустя:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="829"/>
-        <source>Автоматически закрывать всплывающие
-окна спустя заданное число секунд</source>
-        <translation type="unfinished"></translation>
+        <source>Automatically close notification windows after a set number of seconds</source>
+        <translation>Автоматически закрывать всплывающие окна спустя заданное число секунд</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="834"/>
-        <source> сек</source>
-        <translation type="unfinished"></translation>
+        <source> sec</source>
+        <translation> сек</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="837"/>
-        <source>&amp;Но не при автоматическом статусе &quot;Отсутствую&quot;</source>
-        <translation type="unfinished"></translation>
+        <source>But not with automatic &quot;Away&quot; status</source>
+        <translation>Но не при автоматическом статусе &quot;Отсутствую&quot;</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="838"/>
-        <source>Не закрывать автоматически всплывающие окна
-при автоматическом статусе &quot;Отсутствую&quot;</source>
-        <translation type="unfinished"></translation>
+        <source>Do not close automatic pop-up windows at automatic &quot;Away&quot; status</source>
+        <translation>Не закрывать автоматически всплывающие окна при автоматическом статусе &quot;Отсутствую&quot;</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="841"/>
-        <source>Параметры всплывающих окон</source>
-        <translation type="unfinished"></translation>
+        <source>Notification window settings</source>
+        <translation>Параметры всплывающих окон</translation>
     </message>
 </context>
 <context>
@@ -1014,49 +1006,48 @@
     <name>SoundSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="685"/>
-        <source>&amp;Звуковые уведомления</source>
-        <translation type="unfinished"></translation>
+        <source>Sound notifications</source>
+        <translation>Звуковые уведомления</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="701"/>
-        <source>&amp;Сообщение</source>
-        <translation type="unfinished"></translation>
+        <source>Message</source>
+        <translation>Сообщение</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="701"/>
-        <source>Сообщение в основной канал</source>
-        <translation type="unfinished"></translation>
+        <source>Message to main channel</source>
+        <translation>Сообщение в основной канал</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="704"/>
-        <source>&amp;Приватное сообщение</source>
-        <translation type="unfinished"></translation>
+        <source>Private message</source>
+        <translation>Приватное сообщение</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="704"/>
-        <source>Сообщение в приват от другого пользователя</source>
-        <translation type="unfinished"></translation>
+        <source>Private message from another user</source>
+        <translation>Сообщение в приват от другого пользователя</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="714"/>
-        <source>Внешняя команда для воспроизведения звука</source>
-        <translation type="unfinished"></translation>
+        <source>External command for sound play</source>
+        <translation>Внешняя команда для воспроизведения звука</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="718"/>
-        <source>Внешняя команда, Вместо %1 подставляется
-имя звукового файла</source>
-        <translation type="unfinished"></translation>
+        <source>External command, instead of %1 sound file name is inserted</source>
+        <translation>Внешняя команда, Вместо %1 подставляется имя звукового файла</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="723"/>
-        <source>Звуки</source>
-        <translation type="unfinished"></translation>
+        <source>Sounds</source>
+        <translation>Звуки</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="724"/>
-        <source>Открыть папку со звуками</source>
-        <translation type="unfinished"></translation>
+        <source>Open folder with sounds</source>
+        <translation>Открыть папку со звуками</translation>
     </message>
 </context>
 <context>

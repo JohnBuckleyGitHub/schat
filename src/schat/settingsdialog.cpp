@@ -682,7 +682,7 @@ public:
 SoundSettings::SoundSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::SoundPage, parent), d(new Private)
 {
-  d->enable = new QGroupBox(tr("&Звуковые уведомления"), this);
+  d->enable = new QGroupBox(tr("Sound notifications"), this);
   d->enable->setCheckable(true);
   d->enable->setChecked(SimpleSettings->getBool("Sound"));
 
@@ -698,10 +698,10 @@ SoundSettings::SoundSettings(QWidget *parent)
     }
   }
 
-  d->msg = new SoundWidget("Message", tr("&Сообщение"), tr("Сообщение в основной канал"), list, this);
+  d->msg = new SoundWidget("Message", tr("Message"), tr("Message to main channel"), list, this);
   connect(d->msg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
 
-  d->privateMsg = new SoundWidget("PrivateMessage", tr("&Приватное сообщение"), tr("Сообщение в приват от другого пользователя"), list, this);
+  d->privateMsg = new SoundWidget("PrivateMessage", tr("Private message"), tr("Private message from another user"), list, this);
   connect(d->privateMsg, SIGNAL(play(const QString &)), SLOT(play(const QString &)));
 
   QVBoxLayout *soundLay = new QVBoxLayout(d->enable);
@@ -711,17 +711,17 @@ SoundSettings::SoundSettings(QWidget *parent)
   soundLay->setSpacing(0);
 
   #ifdef Q_WS_X11
-    d->useCmd = new QGroupBox(tr("Внешняя команда для воспроизведения звука"), this);
+    d->useCmd = new QGroupBox(tr("External command for sound play"), this);
     d->useCmd->setCheckable(true);
     d->useCmd->setChecked(SimpleSettings->getBool("Sound/UseExternalCmd"));
     d->cmd = new QLineEdit(SimpleSettings->getString("Sound/ExternalCmd"), this);
-    d->cmd->setToolTip(tr("Внешняя команда, Вместо %1 подставляется\nимя звукового файла"));
+    d->cmd->setToolTip(tr("External command, instead of %1 sound file name is inserted"));
     QVBoxLayout *cmdLay = new QVBoxLayout(d->useCmd);
     cmdLay->addWidget(d->cmd);
   #endif
 
-  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Звуки")), this);
-  url->setToolTip(tr("Открыть папку со звуками"));
+  QLabel *url = new QLabel(QString("<a style='text-decoration:none; color:#1a4d82;' href='#'>%1</a>").arg(tr("Sounds")), this);
+  url->setToolTip(tr("Open folder with sounds"));
   url->setAlignment(Qt::AlignRight);
   connect(url, SIGNAL(linkActivated(const QString &)), SLOT(openFolder()));
 
@@ -810,35 +810,35 @@ public:
 NotificationSettings::NotificationSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::NotificationPage, parent), d(new Private)
 {
-  d->privateMsg = new QCheckBox(tr("&Приватные сообщение"), this);
-  d->privateMsg->setToolTip(tr("Оповещать о приватных сообщениях"));
+  d->privateMsg = new QCheckBox(tr("Private message"), this);
+  d->privateMsg->setToolTip(tr("Notification of private messages"));
   d->privateMsg->setChecked(SimpleSettings->getBool("Notification"));
 
-  d->publicMsg = new QCheckBox(tr("&Обращение в основном канале"), this);
-  d->publicMsg->setToolTip(tr("Оповещать об обращениях\nпо нику в основном канале"));
+  d->publicMsg = new QCheckBox(tr("Personal message in main channel"), this);
+  d->publicMsg->setToolTip(tr("Notification of personal messages by nick in the main channel"));
   d->publicMsg->setChecked(SimpleSettings->getBool("NotificationPublic"));
 
-  QGroupBox *eventGroup = new QGroupBox(tr("Оповещение о событиях"), this);
+  QGroupBox *eventGroup = new QGroupBox(tr("Notification of events"), this);
   QVBoxLayout *eventLay = new QVBoxLayout(eventGroup);
   eventLay->addWidget(d->privateMsg);
   eventLay->addWidget(d->publicMsg);
   eventLay->setMargin(6);
   eventLay->setSpacing(0);
 
-  d->timeOut = new QCheckBox(tr("&Автоматически закрывать спустя:"), this);
-  d->timeOut->setToolTip(tr("Автоматически закрывать всплывающие\nокна спустя заданное число секунд"));
+  d->timeOut = new QCheckBox(tr("Automatically close after:"), this);
+  d->timeOut->setToolTip(tr("Automatically close notification windows after a set number of seconds"));
   d->timeOut->setChecked(SimpleSettings->getBool("PopupAutoClose"));
 
   d->timeOutSpin = new QSpinBox(this);
   d->timeOutSpin->setRange(1, 1440);
-  d->timeOutSpin->setSuffix(tr(" сек"));
+  d->timeOutSpin->setSuffix(tr(" sec"));
   d->timeOutSpin->setValue(SimpleSettings->getInt("PopupAutoCloseTime"));
 
-  d->autoAway = new QCheckBox(tr("&Но не при автоматическом статусе \"Отсутствую\""), this);
-  d->autoAway->setToolTip(tr("Не закрывать автоматически всплывающие окна\nпри автоматическом статусе \"Отсутствую\""));
+  d->autoAway = new QCheckBox(tr("But not with automatic \"Away\" status"), this);
+  d->autoAway->setToolTip(tr("Do not close automatic pop-up windows at automatic \"Away\" status"));
   d->autoAway->setChecked(SimpleSettings->getBool("NoPopupAutoCloseInAway"));
 
-  d->popupGroup = new QGroupBox(tr("Параметры всплывающих окон"), this);
+  d->popupGroup = new QGroupBox(tr("Notification window settings"), this);
   QGridLayout *popupLay = new QGridLayout(d->popupGroup);
   popupLay->addWidget(d->timeOut, 0, 0, 1, 2);
   popupLay->addWidget(d->timeOutSpin, 0, 2);
@@ -1192,16 +1192,15 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->setSpacing(4);
 
   #if defined(SCHAT_NO_UPDATE)
-  d->updateGroup = new QCheckBox(tr("Проверка обновлений"), this);
+  d->updateGroup = new QCheckBox(tr("Checks for updates"), this);
   #else
-  d->updateGroup = new QGroupBox(tr("Проверка обновлений"), this);
+  d->updateGroup = new QGroupBox(tr("Checks for updates"), this);
   #endif
   d->updateGroup->setCheckable(true);
   d->updateGroup->setChecked(SimpleSettings->getBool("Updates/Enable"));
 
   #if !defined(SCHAT_NO_UPDATE)
-  d->autoDownload = new QCheckBox(tr("Автоматически загружать"), this);
-  d->autoDownload->setToolTip(tr("Автоматически загружать обновления"));
+  d->autoDownload = new QCheckBox(tr("Automatically download updates"), this);
   d->autoDownload->setChecked(SimpleSettings->getBool("Updates/AutoDownload"));
 
   QVBoxLayout *updateLay = new QVBoxLayout(d->updateGroup);
