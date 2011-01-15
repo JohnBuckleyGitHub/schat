@@ -101,7 +101,6 @@ private:
   QAction *m_quitAction;             ///< "Выход".
   QAction *m_soundPage;
   QAction *m_statusesPage;
-  QAction *m_updatePage;
   QMenu *m_prefMenu;
   QPointer<ColorButton> m_color;     ///< Кнопка для цветового веделения.
   QPointer<QAction> m_bold;          ///< "Полужирный".
