@@ -37,7 +37,6 @@ public:
     SoundPage,
     NotificationPage,
     StatusesPage,
-    UpdatePage,
     MiscPage
   };
 
@@ -217,31 +216,6 @@ public slots:
 
 private slots:
   void showOptions(int index);
-
-private:
-  class Private;
-  Private * const d;
-};
-
-
-/*!
- * \brief Диалог "Настройка", страница "Обновления".
- */
-class UpdateSettings : public AbstractSettingsPage
-{
-  Q_OBJECT
-
-public:
-  UpdateSettings(QWidget *parent = 0);
-  ~UpdateSettings();
-
-public slots:
-  void reset(int page);
-  void save();
-
-private slots:
-  void factorChanged(int index);
-  void intervalChanged(int i);
 
 private:
   class Private;

@@ -65,7 +65,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   createPage(QIcon(":/images/sound.png"),                 tr("Sounds"),        new SoundSettings(this));
   createPage(QIcon(":/images/notification.png"),          tr("Notifications"), new NotificationSettings(this));
   createPage(QIcon(":/images/statuses.png"),              tr("Statuses"),      new StatusesSettings(this));
-  createPage(QIcon(":/images/update.png"),                tr("Update"),        new UpdateSettings(this));
   createPage(QIcon(":/images/application-x-desktop.png"), tr("Others"),        new MiscSettings(this));
 
   connect(profilePage, SIGNAL(validNick(bool)), m_okButton, SLOT(setEnabled(bool)));
@@ -1041,190 +1040,6 @@ void StatusesSettings::showOptions(int index)
 
 
 
-class UpdateSettings::Private
-{
-public:
-  Private()
-  : last(-1)
-  {}
-
-  int last;
-  QCheckBox *checkOnStartup;
-  QComboBox *factor;
-  QGroupBox *versionGroup;
-  QSpinBox *interval;
-  #ifndef SCHAT_NO_UPDATE
-    QCheckBox *autoClean;
-    QCheckBox *autoDownload;
-  #endif
-};
-
-/*!
- * \brief Конструктор класса UpdateSettings.
- */
-UpdateSettings::UpdateSettings(QWidget *parent)
-  : AbstractSettingsPage(SettingsDialog::UpdatePage, parent), d(new Private)
-{
-  // Уведомление о новых версиях.
-  d->versionGroup = new QGroupBox(tr("&Уведомление о новых версиях"), this);
-  d->versionGroup->setCheckable(true);
-  d->versionGroup->setChecked(SimpleSettings->getBool("Updates/Enable"));
-
-  d->checkOnStartup = new QCheckBox(tr("Проверять при &запуске"), this);
-  d->checkOnStartup->setToolTip(tr("Проверять обновления при запуске программы"));
-  d->checkOnStartup->setChecked(SimpleSettings->getBool("Updates/CheckOnStartup"));
-
-  QLabel *interval = new QLabel(tr("&Интервал проверки:"), this);
-  interval->setToolTip(tr("Временной интервал для периодической проверки\nобновлений"));
-  QHBoxLayout *intervalLay = new QHBoxLayout;
-
-  d->interval = new QSpinBox(this);
-  d->interval->setRange(0, 60);
-  connect(d->interval, SIGNAL(valueChanged(int)), SLOT(intervalChanged(int)));
-  interval->setBuddy(interval);
-
-  d->factor = new QComboBox(this);
-  intervalChanged(SimpleSettings->getInt("Updates/CheckInterval"));
-  connect(d->factor, SIGNAL(activated(int)), SLOT(factorChanged(int)));
-
-  intervalLay->addWidget(interval);
-  intervalLay->addWidget(d->interval);
-  intervalLay->addWidget(d->factor);
-  intervalLay->addStretch();
-  intervalLay->setMargin(6);
-  intervalLay->setSpacing(4);
-
-  QVBoxLayout *versionLay = new QVBoxLayout(d->versionGroup);
-  versionLay->addWidget(d->checkOnStartup);
-  versionLay->addLayout(intervalLay);
-  versionLay->setMargin(6);
-  versionLay->setSpacing(4);
-
-  // Автоматическое обновление
-  #ifndef SCHAT_NO_UPDATE
-    QGroupBox *updateGroup = new QGroupBox(tr("&Автоматическое обновление"), this);
-
-    d->autoDownload = new QCheckBox(tr("Автоматически &загружать"), this);
-    d->autoDownload->setToolTip(tr("Автоматически загружать обновления"));
-    d->autoDownload->setChecked(SimpleSettings->getBool("Updates/AutoDownload"));
-
-    d->autoClean = new QCheckBox(tr("&Удалять после установки"), this);
-    d->autoClean->setToolTip(tr("Удалять обновления после установки"));
-    d->autoClean->setChecked(SimpleSettings->getBool("Updates/AutoClean"));
-
-    QVBoxLayout *updateLay = new QVBoxLayout(updateGroup);
-    updateLay->addWidget(d->autoDownload);
-    updateLay->addWidget(d->autoClean);
-
-    connect(d->versionGroup, SIGNAL(toggled(bool)), updateGroup, SLOT(setEnabled(bool)));
-    updateGroup->setEnabled(d->versionGroup->isChecked());
-    updateLay->setMargin(6);
-    updateLay->setSpacing(4);
-  #endif
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(d->versionGroup);
-  #ifndef SCHAT_NO_UPDATE
-    mainLay->addSpacing(12);
-    mainLay->addWidget(updateGroup);
-  #endif
-  mainLay->addStretch();
-  mainLay->setContentsMargins(3, 3, 3, 0);
-}
-
-UpdateSettings::~UpdateSettings() { delete d; }
-
-
-void UpdateSettings::reset(int page)
-{
-  if (page == m_id) {
-    d->versionGroup->setChecked(true);
-    d->checkOnStartup->setChecked(true);
-    d->interval->setValue(d->factor->currentIndex() ? 1 : 60);
-
-    #ifndef SCHAT_NO_UPDATE
-      d->autoDownload->setChecked(false);
-      d->autoClean->setChecked(true);
-    #endif
-  }
-}
-
-
-void UpdateSettings::save()
-{
-  SimpleSettings->setBool("Updates/Enable",         d->versionGroup->isChecked());
-  SimpleSettings->setBool("Updates/CheckOnStartup", d->checkOnStartup->isChecked());
-  SimpleSettings->setInt("Updates/CheckInterval",   d->factor->currentIndex() ? d->interval->value() * 60 : d->interval->value());
-  SimpleSettings->notify(Settings::UpdateSettingsChanged);
-
-  #ifndef SCHAT_NO_UPDATE
-    SimpleSettings->setBool("Updates/AutoDownload",   d->autoDownload->isChecked());
-    SimpleSettings->setBool("Updates/AutoClean",      d->autoClean->isChecked());
-  #endif
-}
-
-
-/*!
- * Изменение отсчёта времени (минуты/часы).
- */
-void UpdateSettings::factorChanged(int index)
-{
-  if (d->last != index) {
-    if (index)
-      d->interval->setValue(1);
-    else
-      d->interval->setValue(59);
-  }
-
-  d->last = index;
-}
-
-
-/*!
- * Обработка изменения значения в \a d->interval.
- */
-void UpdateSettings::intervalChanged(int i)
-{
-  int value = i;
-  int index = 0;
-
-  if (d->factor->count() == 0) {
-    if (value > 59) {
-      value /= 60;
-      index = 1;
-    }
-  }
-  else {
-    index = d->factor->currentIndex();
-
-    if (index == 0 && value == 60) {
-      value = 1;
-      index = 1;
-    }
-    else if (index == 1 && value == 0) {
-      value = 59;
-      index = 0;
-    }
-    else if (index == 0 && value < 5)
-      value = 5;
-    else if (index == 1 && value > 24)
-      value = 24;
-  }
-
-  QString minute = tr("%n Minute", "", value);
-  QString hour   = tr("%n Hour", "", value);
-
-  d->factor->clear();
-  d->factor->addItem(minute);
-  d->factor->addItem(hour);
-  d->factor->setCurrentIndex(index);
-  d->last = index;
-
-  d->interval->setValue(value);
-}
-
-
-
 
 class MiscSettings::Private
 {
@@ -1237,7 +1052,14 @@ public:
   QCheckBox *log;
   QCheckBox *logPrivate;
 
-  #ifdef Q_WS_WIN
+  #if defined(SCHAT_NO_UPDATE)
+  QCheckBox *updateGroup;
+  #else
+  QGroupBox *updateGroup;
+  QCheckBox *autoDownload;
+  #endif
+
+  #if defined(Q_WS_WIN)
   QCheckBox *autostartDaemon;
   #endif
 };
@@ -1369,12 +1191,33 @@ MiscSettings::MiscSettings(QWidget *parent)
   logLay->setMargin(6);
   logLay->setSpacing(4);
 
+  #if defined(SCHAT_NO_UPDATE)
+  d->updateGroup = new QCheckBox(tr("Проверка обновлений"), this);
+  #else
+  d->updateGroup = new QGroupBox(tr("Проверка обновлений"), this);
+  #endif
+  d->updateGroup->setCheckable(true);
+  d->updateGroup->setChecked(SimpleSettings->getBool("Updates/Enable"));
+
+  #if !defined(SCHAT_NO_UPDATE)
+  d->autoDownload = new QCheckBox(tr("Автоматически загружать"), this);
+  d->autoDownload->setToolTip(tr("Автоматически загружать обновления"));
+  d->autoDownload->setChecked(SimpleSettings->getBool("Updates/AutoDownload"));
+
+  QVBoxLayout *updateLay = new QVBoxLayout(d->updateGroup);
+  updateLay->addWidget(d->autoDownload);
+  updateLay->setContentsMargins(16, 6, 6, 6);
+  updateLay->setSpacing(0);
+  #endif
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(integration);
   #if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
   #endif
   mainLay->addWidget(logGroup);
+  mainLay->addSpacing(12);
+  mainLay->addWidget(d->updateGroup);
   mainLay->addStretch();
   mainLay->setContentsMargins(3, 3, 3, 0);
 
@@ -1390,6 +1233,11 @@ void MiscSettings::reset(int page)
   if (page == m_id) {
     d->log->setChecked(true);
     d->logPrivate->setChecked(true);
+    d->updateGroup->setChecked(true);
+
+    #if !defined(SCHAT_NO_UPDATE)
+    d->autoDownload->setChecked(false);
+    #endif
   }
 }
 
@@ -1400,5 +1248,11 @@ void MiscSettings::save()
 
   SimpleSettings->setBool("Log", d->log->isChecked());
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
+  SimpleSettings->setBool("Updates/Enable", d->updateGroup->isChecked());
+
+  #if !defined(SCHAT_NO_UPDATE)
+  SimpleSettings->setBool("Updates/AutoDownload", d->autoDownload->isChecked());
+  #endif
+
   SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
