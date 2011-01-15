@@ -455,8 +455,14 @@ int UserView::quickSearch(const QString &nick, int pos)
 PrivateTab* UserView::privateTab(const QString &nick, bool create)
 {
   UserItem *item = d->item(nick);
-  PrivateTab *tab = 0;
-  if (item) {
+  PrivateTab *tab = tabFromName(nick);
+  if (!item)
+    return tab;
+
+  if (tab) {
+    item->setTab(tab);
+  }
+  else {
     bool isOpen = item->isOpenTab();
     tab = item->privateTab(create);
     if (tab && !isOpen) {
