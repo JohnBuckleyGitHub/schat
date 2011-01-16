@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ public:
   bool sendMessage(const QString &channel, const QString &message);
   bool sendRelayMessage(const QString &channel, const QString &sender, const QString &message);
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline QString safeNick() const                                                                            { return m_safeNick; };
   inline void sendByeMsg()                                                                                   { send(OpcodeByeMsg, m_profile->byeMsg()); }
   inline void sendByeMsg(const QString &msg)                                                                 { send(OpcodeByeMsg, msg); }
@@ -114,7 +113,6 @@ private:
   void opcodeSyncNumerics();
   void opcodeSyncUsersEnd();
   void opcodeUniversal();
-  void opcodeUniversalLite();
   void opcodeUserLeave();
   void unknownOpcode();
 

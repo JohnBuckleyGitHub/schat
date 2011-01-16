@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -118,29 +118,6 @@ bool ClientService::sendUniversal(quint16 sub, const QList<quint32> &data1, cons
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(StreamVersion);
     out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
- * Отправка универсального облегчённого пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- */
-bool ClientService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversalLite << sub << data1;
     out.device()->seek(0);
     out << quint16(block.size() - (int) sizeof(quint16));
     m_socket->write(block);
@@ -454,10 +431,6 @@ void ClientService::readyRead()
 
         case OpcodeUniversal:
           opcodeUniversal();
-          break;
-
-        case OpcodeUniversalLite:
-          opcodeUniversalLite();
           break;
 
         default:

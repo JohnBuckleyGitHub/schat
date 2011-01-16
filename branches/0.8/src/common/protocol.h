@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -272,15 +272,6 @@ static const quint16 OpcodeSyncByeMsg                = 1120;
  * QStringList    -> контейнер для данных типа QString
  */
 static const quint16 OpcodeUniversal                 = 7666;
-
-/*!
- * Универсальный облегчённый пакет.
- * quint16        -> размер пакета
- * quint16        -> опкод
- * quint16        -> субопкод
- * QList<quint32> -> контейнер для данных типа quint32
- */
-static const quint16 OpcodeUniversalLite             = 7667;
 
 
 namespace schat
