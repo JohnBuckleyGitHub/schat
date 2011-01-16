@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "linkunit.h"
 #include "normalizereader.h"
 #include "protocol.h"
+#include "translation.h"
 #include "userunit.h"
 #include "version.h"
 
@@ -62,6 +63,11 @@ Daemon::Daemon(QObject *parent)
   m_self = this;
   environment();
   m_settings = new DaemonSettings(m_environment.value(EnvConfFile), this);
+
+  m_translation = new Translation(this);
+  m_translation->setPrefix("schatd_");
+  m_translation->setSearch(m_environment.value(EnvShare) + "/translations");
+  m_translation->load(m_settings->getString("Translation"));
 
   zombieTimer.setInterval(30000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
@@ -1181,10 +1187,11 @@ QString Daemon::envValue(const QString &env, const QString &failBack)
 void Daemon::environment()
 {
   QString appDirPath = QCoreApplication::applicationDirPath();
-  m_environment.insert(EnvConfFile, envValue("SCHATD_CONF", appDirPath + "/schatd.conf"));
-  m_environment.insert(EnvPidFile,  envValue("SCHATD_PID",  appDirPath + "/schatd.pid"));
-  m_environment.insert(EnvLogDir,   envValue("SCHATD_LOG",  appDirPath + "/log"));
-  m_environment.insert(EnvVarDir,   envValue("SCHATD_VAR",  appDirPath));
+  m_environment.insert(EnvConfFile, envValue("SCHATD_CONF",  appDirPath + "/schatd.conf"));
+  m_environment.insert(EnvPidFile,  envValue("SCHATD_PID",   appDirPath + "/schatd.pid"));
+  m_environment.insert(EnvLogDir,   envValue("SCHATD_LOG",   appDirPath + "/log"));
+  m_environment.insert(EnvVarDir,   envValue("SCHATD_VAR",   appDirPath));
+  m_environment.insert(EnvShare,    envValue("SCHATD_SHARE", appDirPath));
 }
 
 
