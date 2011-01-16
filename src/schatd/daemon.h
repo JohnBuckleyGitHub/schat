@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class LinkUnit;
 class Network;
 class QLocalServer;
 class UserUnit;
+class Translation;
 
 #define LOG(x, y) if (logLevel >= x) m_log->append(y)
 
@@ -108,7 +109,8 @@ private:
     EnvConfFile, ///< Полное имя конфигурационного файла.
     EnvPidFile,  ///< Полное имя PID-файла.
     EnvLogDir,   ///< Директория для записи журналов сервера.
-    EnvVarDir    ///< Директория для файлов изменяемых в процессе работы.
+    EnvVarDir,   ///< Директория для файлов изменяемых в процессе работы.
+    EnvShare     ///< Директория для общих файлов.
   };
 
   bool initMotd();
@@ -160,6 +162,7 @@ private:
   QTimer zombieTimer;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
+  Translation *m_translation;
   static Daemon *m_self;
   #ifndef SCHAT_NO_LOCAL_SERVER
     QLocalServer *m_localServer;

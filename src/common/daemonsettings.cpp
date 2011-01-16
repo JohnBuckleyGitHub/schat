@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
 
 #include "daemonsettings.h"
 
@@ -57,6 +56,7 @@ void DaemonSettings::read()
   setString("MotdFile",      "motd.html");
   setString("NormalizeFile", "normalize.xml");
   setString("StatsFile",     "stats.xml");
+  setString("Translation",   "auto");
   mutableKeys();
 
   AbstractSettings::read();

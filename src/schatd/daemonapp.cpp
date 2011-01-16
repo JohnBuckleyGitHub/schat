@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#include <QTextCodec>
 
 #include "daemon.h"
 #include "daemonapp.h"
@@ -48,10 +48,6 @@ void DaemonApp::processCommand(int code)
 void DaemonApp::start()
 {
   QCoreApplication *app = application();
-  QTranslator *translator = new QTranslator(app);
-  translator->load("schatd_ru", ":/translations");
-  app->installTranslator(translator);
-
   m_daemon = new Daemon(app);
 
   if (!m_daemon->start()) {
