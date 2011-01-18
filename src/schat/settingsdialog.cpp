@@ -121,15 +121,15 @@ ProfileSettings::ProfileSettings(QWidget *parent)
 
   d->byeMsgEdit = new QLineEdit(d->profile->byeMsg(), this);
   d->byeMsgEdit->setMaxLength(AbstractProfile::MaxByeMsgLength);
-  d->byeMsgEdit->setToolTip(tr("Сообщение которое увидят другие пользователи если вы выйдете из чата"));
+  d->byeMsgEdit->setToolTip(tr("The message is seen by the other users if you are left of the chat"));
   if (d->maxRecentItems) {
     d->byeMsgEdit->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentByeMsgs"), this));
     d->byeMsgEdit->completer()->setCaseSensitivity(Qt::CaseInsensitive);
   }
-  QLabel *byeMsgLabel = new QLabel(tr("Сообщение при &выходе:"), this);
+  QLabel *byeMsgLabel = new QLabel(tr("Message at the exit:"), this);
   byeMsgLabel->setBuddy(d->byeMsgEdit);
 
-  QGroupBox *profileGroup = new QGroupBox(tr("Профиль"), this);
+  QGroupBox *profileGroup = new QGroupBox(tr("Profile"), this);
   QVBoxLayout *profileLay = new QVBoxLayout(profileGroup);
   profileLay->setMargin(6);
   profileLay->setSpacing(4);
@@ -842,7 +842,7 @@ NotificationSettings::NotificationSettings(QWidget *parent)
   QGridLayout *popupLay = new QGridLayout(d->popupGroup);
   popupLay->addWidget(d->timeOut, 0, 0, 1, 2);
   popupLay->addWidget(d->timeOutSpin, 0, 2);
-  popupLay->addItem(new QSpacerItem(32, 0), 1, 0);
+  popupLay->addItem(new QSpacerItem(20, 0), 1, 0);
   popupLay->addWidget(d->autoAway, 1, 1, 1, 2);
   popupLay->setColumnStretch(1, 1);
   popupLay->setMargin(6);
@@ -927,7 +927,7 @@ public:
 StatusesSettings::StatusesSettings(QWidget *parent)
   : AbstractSettingsPage(SettingsDialog::StatusesPage, parent), d(new Private)
 {
-  d->exitAwayOnSend = new QCheckBox(tr("Сбросить статусы после отправки сообщения"), this);
+  d->exitAwayOnSend = new QCheckBox(tr("Reset the status after sending the message"), this);
   d->exitAwayOnSend->setChecked(SimpleSettings->getBool("ExitAwayOnSend"));
 
   QLabel *statusLabel = new QLabel(tr("&Status:"), this);
@@ -938,10 +938,10 @@ StatusesSettings::StatusesSettings(QWidget *parent)
 
   statusLabel->setBuddy(d->statuses);
 
-  QGroupBox *group = new QGroupBox(tr("Опции статуса"), this);
+  QGroupBox *group = new QGroupBox(tr("Status options"), this);
 
-  d->autoAway = new QCheckBox(tr("Включить статус при простое:"), this);
-  d->autoAway->setToolTip(tr("Автоматически переходить в статус Отсутствую\nпри простое и возвращаться в обычный режим при появлении активности"));
+  d->autoAway = new QCheckBox(tr("Switch on the status after idle time:"), this);
+  d->autoAway->setToolTip(tr("Turn automatically status Away after idle time and return to the standard mode if the activity occurred"));
   d->autoAway->setChecked(SimpleSettings->getBool("AutoAway"));
 
   d->autoAwayTime = new QSpinBox(this);
@@ -949,12 +949,12 @@ StatusesSettings::StatusesSettings(QWidget *parent)
   d->autoAwayTime->setSuffix(tr(" min"));
   d->autoAwayTime->setValue(SimpleSettings->getInt("AutoAwayTime"));
 
-  d->muteInDnD = new QCheckBox(tr("Статус отключает звук"), this);
-  d->muteInDnD->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает звук"));
+  d->muteInDnD = new QCheckBox(tr("The status switches off the sound"), this);
+  d->muteInDnD->setToolTip(tr("Use of “Do Not Disturb” status switches off the sound"));
   d->muteInDnD->setChecked(SimpleSettings->getBool("Sound/MuteInDnD"));
 
-  d->dnd = new QCheckBox(tr("Статус отключает всплывающие окона"), this);
-  d->dnd->setToolTip(tr("Использование статуса \"Не беспокоить\" отключает всплывающие окона"));
+  d->dnd = new QCheckBox(tr("The status switches off the notification windows"), this);
+  d->dnd->setToolTip(tr("Use of “Do Not Disturb” status switches off the notification windows"));
   d->dnd->setChecked(SimpleSettings->getBool("NoNotificationInDnD"));
 
   connect(d->autoAway, SIGNAL(clicked(bool)), d->autoAwayTime, SLOT(setEnabled(bool)));

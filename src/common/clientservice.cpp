@@ -908,20 +908,6 @@ void ClientService::opcodeUniversal()
 
 
 /*!
- * Разбор универсального облегчённого пакета.
- */
-void ClientService::opcodeUniversalLite()
-{
-  quint16        subOpcode;
-  QList<quint32> data1;
-  m_stream >> subOpcode >> data1;
-  m_nextBlockSize = 0;
-
-  emit universalLite(subOpcode, data1);
-}
-
-
-/*!
  * Разбор пакета с опкодом `OpcodeUserLeave`.
  * В конце разбора высылается сигнал `userLeave(const QString &, const QString &, bool)`.
  */
