@@ -2,12 +2,11 @@
 <qresource prefix="/">
   <file alias="images/dialog-ok.png">images/dialog-ok-apply.png</file>
   <file alias="images/notification.png">images/preferences-desktop-notification.png</file>
-  <file alias="translations/en.png">images/lang/en.png</file>
-  <file alias="translations/ru.png">images/lang/ru.png</file>
   <file>css/popupwindow-flash.css</file>
   <file>css/popupwindow-normal.css</file>
   <file>css/richtext.css</file>
   <file>doc/members.html</file>
+  <file>doc/members_ru.html</file>
   <file>images/applications-graphics.png</file>
   <file>images/application-x-desktop.png</file>
   <file>images/arrow-down.png</file>
@@ -68,8 +67,11 @@
   <file>images/undo.png</file>
   <file>images/update.png</file>
   <file>images/warning.png</file>
+  <file>translations/en.png</file>
+  <file>translations/ru.png</file>
   <file>translations/qt_ru.qm</file>
   <file>translations/schat_en.qm</file>
   <file>translations/schat_ru.qm</file>
+  <file>translations/unknown.png</file>
 </qresource>
 </RCC>

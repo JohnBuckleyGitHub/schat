@@ -82,7 +82,7 @@ QString LanguageBox::languageIcon(const QString &file) const
   if (icon.endsWith("en.png"))
     return ":/translations/en.png";
 
-  return ":/images/lang/unknown.png";
+  return ":/translations/unknown.png";
 }
 
 

@@ -30,6 +30,11 @@
 #include "aboutdialog.h"
 #include "abstractsettings.h"
 
+#if defined(SCHAT_CLIENT)
+  #include "simplechatapp.h"
+  #include "translation.h"
+#endif
+
 #ifndef SCHAT_NO_UPDATE_WIDGET
   #include "update/updatewidget.h"
 #endif
@@ -193,7 +198,13 @@ AboutMembers::AboutMembers(QWidget *parent)
 {
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setOpenExternalLinks(true);
-  browser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
+
+  #if defined(SCHAT_CLIENT)
+  if (SimpleChatApp::instance()->translation()->name() == "ru")
+    browser->setSource(QUrl().fromLocalFile(":/doc/members_ru.html"));
+  else
+  #endif
+    browser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(browser);
