@@ -586,18 +586,18 @@
     <name>ProfileSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="124"/>
-        <source>Сообщение которое увидят другие пользователи если вы выйдете из чата</source>
-        <translation type="unfinished"></translation>
+        <source>The message is seen by the other users if you are left of the chat</source>
+        <translation>Сообщение, которое увидят другие пользователи, если вы выйдете из чата</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="129"/>
-        <source>Сообщение при &amp;выходе:</source>
-        <translation type="unfinished"></translation>
+        <source>Message at the exit:</source>
+        <translation>Сообщение при выходе:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="132"/>
-        <source>Профиль</source>
-        <translation type="unfinished"></translation>
+        <source>Profile</source>
+        <translation>Профиль</translation>
     </message>
 </context>
 <context>
@@ -1082,8 +1082,8 @@
     <name>StatusesSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="930"/>
-        <source>Сбросить статусы после отправки сообщения</source>
-        <translation type="unfinished"></translation>
+        <source>Reset the status after sending the message</source>
+        <translation>Сбросить статусы после отправки сообщения</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="933"/>
@@ -1102,44 +1102,43 @@
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="941"/>
-        <source>Опции статуса</source>
-        <translation type="unfinished"></translation>
+        <source>Status options</source>
+        <translation>Опции статуса</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="943"/>
-        <source>Включить статус при простое:</source>
-        <translation type="unfinished"></translation>
+        <source>Switch on the status after idle time:</source>
+        <translation>Включить статус при простое:</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="944"/>
-        <source>Автоматически переходить в статус Отсутствую
-при простое и возвращаться в обычный режим при появлении активности</source>
-        <translation type="unfinished"></translation>
+        <source>Turn automatically status Away after idle time and return to the standard mode if the activity occurred</source>
+        <translation>Автоматически переходить в статус Отсутствую при простое и возвращаться в обычный режим при появлении активности</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="952"/>
+        <source>The status switches off the sound</source>
+        <translation>Статус отключает звук</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="953"/>
+        <source>Use of “Do Not Disturb” status switches off the sound</source>
+        <translation>Использование статуса «Не беспокоить» отключает звук</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="956"/>
+        <source>The status switches off the notification windows</source>
+        <translation>Статус отключает всплывающие окна</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="957"/>
+        <source>Use of “Do Not Disturb” status switches off the notification windows</source>
+        <translation>Использование статуса «Не беспокоить» отключает всплывающие окна</translation>
     </message>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="949"/>
         <source> min</source>
         <translation> мин</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="952"/>
-        <source>Статус отключает звук</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="953"/>
-        <source>Использование статуса &quot;Не беспокоить&quot; отключает звук</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="956"/>
-        <source>Статус отключает всплывающие окона</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="957"/>
-        <source>Использование статуса &quot;Не беспокоить&quot; отключает всплывающие окона</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1147,7 +1146,7 @@
     <message>
         <location filename="../../src/common/languagebox.cpp" line="94"/>
         <location filename="../../src/common/translation.cpp" line="35"/>
-        <location filename="../../src/common/translation.cpp" line="112"/>
+        <location filename="../../src/common/translation.cpp" line="118"/>
         <source>English</source>
         <translation>Русский</translation>
     </message>
@@ -1287,42 +1286,42 @@ File size: %1</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="620"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="626"/>
         <source>Personal data...</source>
         <translation>Личные данные...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="622"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="628"/>
         <source>Private message</source>
         <translation>Приватное сообщение</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="624"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="630"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="629"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
         <source>Nick</source>
         <translation>Ник</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="632"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="638"/>
         <source>Name</source>
         <translation>ФИО</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="634"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="640"/>
         <source>Client</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="641"/>
         <source>Address</source>
         <translation>Адрес</translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="638"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="644"/>
         <source>Insert nick</source>
         <translation>Вставить ник</translation>
     </message>
