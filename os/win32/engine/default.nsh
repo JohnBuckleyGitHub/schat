@@ -36,7 +36,7 @@ ${def} SCHAT_OUTDIR        "out/"
 ${def} SCHAT_FINISH_RUN    1
 ${def} SCHAT_REGKEY        "Software\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_WEB_SITE      "http://impomezia.ru/"
-${def} SCHAT_COPYRIGHT     "Copyright © 2008 - 2010 IMPOMEZIA"
+${def} SCHAT_COPYRIGHT     "Copyright © 2008 - 2011 IMPOMEZIA"
 ${def} SCHAT_UNINST_KEY    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_INSTALLDIR    "$LOCALAPPDATA\IMPOMEZIA\${SCHAT_NAME_SHORT}"
 ${def} SCHAT_PAGE_OPTIONS  1
