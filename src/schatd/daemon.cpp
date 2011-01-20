@@ -67,7 +67,6 @@ Daemon::Daemon(QObject *parent)
   m_translation = new Translation(this);
   m_translation->setPrefix("schatd_");
   m_translation->setSearch(m_environment.value(EnvShare) + "/translations");
-  m_translation->load(m_settings->getString("Translation"));
 
   zombieTimer.setInterval(30000);
   connect(&m_server, SIGNAL(newConnection()), SLOT(incomingConnection()));
@@ -104,6 +103,7 @@ bool Daemon::start()
 {
   zombieTimer.start();
   m_settings->read();
+  m_translation->load(m_settings->getString("Translation"));
 
   logLevel = m_settings->getInt("LogLevel");
   if (logLevel > -1) {
@@ -155,11 +155,11 @@ bool Daemon::start()
   bool result     = m_server.listen(QHostAddress(address), port);
 
   if (result) {
-    LOG(0, tr("- Notice - `IMPOMEZIA Simple Chat Daemon` успешно запущен, адрес %1, порт %2").arg(address).arg(port));
+    SCHATD_LOG(0, DaemonLog::Notice, tr("\"IMPOMEZIA Simple Chat Daemon\" has been successfully started up, address %1, port %2").arg(address).arg(port));
     link();
   }
   else {
-    LOG(0, tr("- Error - Ошибка запуска `IMPOMEZIA Simple Chat Daemon`, [%1]").arg(m_server.errorString()));
+    SCHATD_LOG(0, DaemonLog::Error, tr("\"IMPOMEZIA Simple Chat Daemon\", start up error [%1]").arg(m_server.errorString()));
   }
 
   reload(-1);
@@ -181,7 +181,7 @@ void Daemon::reload(int code)
 
   NormalizeReader reader(m_normalize);
   if (!reader.readFile(envConfFile("NormalizeFile"))) {
-    LOG(0, tr("- Warning - Ошибка загрузки файла: %1, нормализация ников будет работать в ограниченном режиме")
+    SCHATD_LOG(0, DaemonLog::Warning, tr("Open file failed: %1, the normalization of nick operates within the limited mode")
                 .arg(envConfFile("NormalizeFile")));
   }
   m_motd = initMotd();
@@ -202,7 +202,7 @@ void Daemon::reload(int code)
       if (i.value()->service())
         i.value()->setFloodLimits(m_floodLimits);
     }
-    LOG(0, tr("- Notice - Мягкий перезапуск сервера завершён"));
+    SCHATD_LOG(0, DaemonLog::Notice, tr("Soft restart of the server completed"));
   }
 }
 
@@ -222,7 +222,7 @@ void Daemon::clientAccessGranted(const QString &network, const QString &server, 
   m_remoteNumeric = numeric;
   m_numerics << numeric;
 
-  LOG(0, tr("- Notice - Установлено соединение с корневым сервером: %1@%2").arg(numeric).arg(server));
+  SCHATD_LOG(0, DaemonLog::Notice, tr("Connected to the root server: %1@%2").arg(numeric).arg(server));
 }
 
 
@@ -246,7 +246,7 @@ void Daemon::clientServiceLeave(bool /*echo*/)
   while (i.hasNext()) {
     i.next();
     if (!m_numerics.contains(i.value()->numeric()))
-      removeUser(i.value()->profile()->nick(), tr("Потеряно соединение с корневым сервером"), 0);
+      removeUser(i.value()->profile()->nick(), tr("The connection to the root server has been lost"), 0);
   }
 }
 
@@ -344,7 +344,7 @@ void Daemon::clientUserLeave(const QString &nick, const QString &bye, quint8 fla
     unit->profile()->setByeMsg(bye);
   }
 
-  removeUser(nick, tr("Пользователь отключился от удалённого сервера"), flag);
+  removeUser(nick, tr("The user is disconnected from the remote server"), flag);
 }
 
 
@@ -400,7 +400,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
     if (flag == FlagLink) {
       quint16 err = greetingLink(list, service);
       if (err) {
-        LOG(0, tr("- Warning - Отказ в доступе серверу: %1@%2, код ошибки: %3")
+        SCHATD_LOG(0, DaemonLog::Warning, tr("Access is denied for the server: %1@%2, error code: %3")
             .arg(QString(list.at(AbstractProfile::Nick)))
             .arg(list.at(AbstractProfile::Host))
             .arg(err));
@@ -410,7 +410,7 @@ void Daemon::greeting(const QStringList &list, quint8 flag)
     else {
       quint16 err = greetingUser(list, service);
       if (err) {
-        LOG(0, tr("- Warning - Отказ в доступе пользователю: %1@%2, код ошибки: %3")
+        SCHATD_LOG(0, DaemonLog::Warning, tr("Access is denied for the user: %1@%2, error code: %3")
             .arg(QString(list.at(AbstractProfile::Nick)))
             .arg(list.at(AbstractProfile::Host))
             .arg(err));
@@ -464,7 +464,7 @@ void Daemon::linkLeave(quint8 numeric, const QString &network, const QString &ip
 void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QString &name)
 {
   if (m_channelLog)
-    m_channelLog->msg(tr("Сервер `%1` отключился от сети `%2`").arg(name).arg(network));
+    m_channelLog->msg(tr("Server \"%1\" disconnected from network \"%2\"").arg(name).arg(network));
 }
 
 
@@ -474,7 +474,7 @@ void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QStr
 void Daemon::logMessage(const QString &sender, const QString &message)
 {
   if (m_channelLog)
-    m_channelLog->msg(tr("%1: %2").arg(sender).arg(ChannelLog::toPlainText(message)));
+    m_channelLog->msg(QString("%1: %2").arg(sender).arg(ChannelLog::toPlainText(message)));
 }
 
 
@@ -484,7 +484,7 @@ void Daemon::logMessage(const QString &sender, const QString &message)
 void Daemon::logNewLink(quint8 /*numeric*/, const QString &network, const QString &name)
 {
   if (m_channelLog)
-    m_channelLog->msg(tr("Сервер `%1` подключился к сети `%2`").arg(name).arg(network));
+    m_channelLog->msg(tr("Server \"%1\" connected to network \"%2\"").arg(name).arg(network));
 }
 
 
@@ -495,7 +495,7 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
 {
   QString nick = list.at(AbstractProfile::Nick);
 
-  LOG(0, tr("- Notice - Connect [%1]: %2@%3, %4, %5, %6")
+  SCHATD_LOG(0, DaemonLog::Notice, tr("Connected [%1]: %2@%3, %4, %5, %6")
       .arg(numeric)
       .arg(nick)
       .arg(list.at(AbstractProfile::Host))
@@ -505,9 +505,9 @@ void Daemon::logNewUser(const QStringList &list, quint8 /*echo*/, quint8 numeric
 
   if (m_channelLog) {
     if (list.at(AbstractProfile::Gender) == "male")
-      m_channelLog->msg(tr("`%1` зашёл в чат").arg(nick));
+      m_channelLog->msg(tr("\"%1\" entered chat", "Male").arg(nick));
     else
-      m_channelLog->msg(tr("`%1` зашла в чат").arg(nick));
+      m_channelLog->msg(tr("\"%1\" entered chat", "Female").arg(nick));
   }
 }
 
@@ -545,7 +545,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   if (mute > 0) {
     DaemonService *service = user->service();
     if (service) {
-      service->sendServerMessage(tr("To prevent flood, you muted to <b>%n</ b> seconds", "", mute));
+      service->sendServerMessage(tr("To prevent flood, you muted to <b>%n</b> seconds", "", mute));
     }
     return;
   }
@@ -564,7 +564,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   }
   else if (m_users.contains(lowerChannel)) {
     if (m_privateLog)
-      m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(nick).arg(channel).arg(ChannelLog::toPlainText(msg)));
+      m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(nick).arg(channel).arg(ChannelLog::toPlainText(msg)));
 
     if (!parseCmd(nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
@@ -659,7 +659,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   quint8 numeric = m_users.value(lowerChannel)->numeric();
 
   if (m_privateLog)
-    m_privateLog->msg(tr("`%1` -> `%2`: %3").arg(sender).arg(channel).arg(ChannelLog::toPlainText(msg)));
+    m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(sender).arg(channel).arg(ChannelLog::toPlainText(msg)));
 
   if (numeric == m_numeric) {
     DaemonService *service = m_users.value(lowerChannel)->service();
@@ -949,7 +949,7 @@ QString Daemon::normalizeNick(const QString &nick) const
 QString Daemon::serverInfo() const
 {
   QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.ru'>http://impomezia.ru</a>"
-      "<table><tr><td class='info'>Платформа: </td><td><b>").arg(SCHAT_VERSION);
+      "<table><tr><td class='info'>%2 </td><td><b>").arg(SCHAT_VERSION).arg(tr("Platform:"));
 
 #if   defined(Q_OS_AIX)
   info += "AIX";
@@ -1009,15 +1009,15 @@ QString Daemon::serverInfo() const
   info += "Windows CE";
 #endif
 
-  info += tr(", Qt %1</b></td></tr>").arg(qVersion());
+  info += QString(", Qt %1</b></td></tr>").arg(qVersion());
   if (m_network) {
-    info += tr("<tr><td class='info'>Название сети: </td><td><b>%1</b></td></tr>").arg(m_network->name());
-    info += tr("<tr><td class='info'>Имя сервера: </td><td><b>%1</b></td></tr>").arg(m_settings->getString("Name"));
-    info += tr("<tr><td class='info'>Пользователей: </td><td><b>%1</b></td></tr>").arg(m_users.count());
-    info += tr("<tr><td class='info'>Серверов: </td><td><b>%1</b></td></tr></table>").arg(m_numerics.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Network name:")).arg(m_network->name());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Server name:")).arg(m_settings->getString("Name"));
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Users:")).arg(m_users.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr></table>").arg(tr("Servers:")).arg(m_numerics.count());
   }
   else
-    info += tr("<tr><td class='info'>Пользователей: </td><td><b>%1</b></td></tr></table>").arg(m_users.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr></table>").arg(tr("Users:")).arg(m_users.count());
 
   return info;
 }
@@ -1072,7 +1072,7 @@ quint16 Daemon::greetingLink(const QStringList &list, DaemonService *service)
   service->accessGranted(m_numeric);
   service->sendNumerics(m_numerics);
 
-  LOG(0, tr("- Notice - Connect Link: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
+  SCHATD_LOG(0, DaemonLog::Notice, tr("Connected server: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
   emit sendNewLink(numeric, m_network->name(), list.at(AbstractProfile::ByeMsg));
   sendAllUsers(service);
 
@@ -1215,11 +1215,11 @@ void Daemon::link()
     if (m_settings->getBool("Network")) {
       QString reason;
       if (m_numeric)
-        reason = tr("Пустое имя сервера");
+        reason = tr("Empty server name");
       else
-        reason = tr("Номер сервера равен 0");
+        reason = tr("Server number is 0");
 
-      LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1]").arg(reason));
+      SCHATD_LOG(0, DaemonLog::Error, tr("Error initializing network support, [%1]").arg(reason));
     }
 
     return;
@@ -1236,7 +1236,7 @@ void Daemon::link()
   m_network = new Network(QStringList(networkFilePath), this);
   m_network->setSingle(true);
   if (!m_network->fromFile(networkFile)) {
-    LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
+    SCHATD_LOG(0, DaemonLog::Error, tr("Error initializing network support, [%1: %2]").arg(m_settings->getString("NetworkFile")).arg(m_network->error()));
     delete m_network;
   }
   else {
@@ -1264,17 +1264,17 @@ void Daemon::link()
         connect(m_link, SIGNAL(universal(quint16, const QList<quint32> &, const QStringList &)), SLOT(universal(quint16, const QList<quint32> &, const QStringList &)));
         m_link->connectToHost();
         ServerInfo serverInfo = m_network->server();
-        LOG(0, tr("- Notice - Инициализировано соединение с корневым сервером, %1:%2").arg(serverInfo.address).arg(serverInfo.port));
+        SCHATD_LOG(0, DaemonLog::Notice, tr("The connection to the root server is initialized %1:%2").arg(serverInfo.address).arg(serverInfo.port));
       }
       else {
         delete m_network;
         delete m_profile;
-        LOG(0, tr("- Error - Ошибка инициализации поддержки сети, [Не указан адрес вышестоящего сервера]"));
+        SCHATD_LOG(0, DaemonLog::Error, tr("Error initializing network support, [no address of the parent server]"));
         return;
       }
     }
 
-    LOG(0, tr("- Notice - Поддержка сети успешно инициализирована, %1@%2 \"%3\"").arg(m_numeric).arg(m_settings->getString("Name")).arg(m_network->name()));
+    SCHATD_LOG(0, DaemonLog::Notice, tr("Network support successfully initialized, %1@%2 \"%3\"").arg(m_numeric).arg(m_settings->getString("Name")).arg(m_network->name()));
     SCHAT_DEBUG(this << "network up!" << m_settings->getString("Name") << m_numeric);
   }
 }
@@ -1300,7 +1300,7 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
       m_links.remove(numeric);
       m_numerics.removeAll(numeric);
 
-      LOG(0, tr("- Notice - Disconnect Link: %1@%2 [%3]").arg(nick).arg(unit->host()).arg(err));
+      SCHATD_LOG(0, DaemonLog::Notice, tr("Server disconnected: %1@%2 [%3]").arg(nick).arg(unit->host()).arg(err));
 
       emit sendLinkLeave(numeric, m_network->name(), unit->host());
 
@@ -1308,7 +1308,7 @@ void Daemon::linkLeave(const QString &nick, const QString &err)
       while (i.hasNext()) {
         i.next();
         if (i.value()->numeric() == numeric)
-          removeUser(i.value()->profile()->nick(), tr("Отключение сервера %1@%2").arg(nick).arg(unit->host()), 0);
+          removeUser(i.value()->profile()->nick(), tr("Server disconnected %1@%2").arg(nick).arg(unit->host()), 0);
       }
 
       delete unit;
@@ -1351,14 +1351,14 @@ void Daemon::removeUser(const QString &nick, const QString &err, quint8 flag)
       }
     }
 
-    LOG(0, tr("- Notice - Disconnect: %1@%2 [%3]").arg(nick).arg(user->profile()->host()).arg(err));
+    SCHATD_LOG(0, DaemonLog::Notice, tr("Disconnect: %1@%2 [%3]").arg(nick).arg(user->profile()->host()).arg(err));
 
     QString bye = user->profile()->byeMsg();
     if (m_channelLog) {
       if (user->profile()->isMale())
-        m_channelLog->msg(tr("`%1` вышел из чата: %2").arg(nick).arg(bye));
+        m_channelLog->msg(tr("\"%1\" left the chat: %2", "Male").arg(nick).arg(bye));
       else
-        m_channelLog->msg(tr("`%1` вышла из чата: %2").arg(nick).arg(bye));
+        m_channelLog->msg(tr("\"%1\" left the chat: %2", "Female").arg(nick).arg(bye));
     }
 
     emit userLeave(nick, bye, flag);
@@ -1470,9 +1470,9 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
   if (lowerNewNick.isEmpty()) {
     if (m_channelLog) {
       if (gender)
-        m_channelLog->msg(tr("`%1` изменила свой профиль").arg(nick));
+        m_channelLog->msg(tr("\"%1\" has changed his profile", "Female").arg(nick));
       else
-        m_channelLog->msg(tr("`%1` изменил свой профиль").arg(nick));
+        m_channelLog->msg(tr("\"%1\" has changed his profile", "Male").arg(nick));
     }
 
     UserUnit *unit = m_users.value(lowerNick);
@@ -1489,9 +1489,9 @@ void Daemon::syncProfile(quint8 gender, const QString &nick, const QString &nNic
   else if (!m_users.contains(lowerNewNick) || lowerNick == lowerNewNick) {
     if (m_channelLog) {
       if (gender)
-        m_channelLog->msg(tr("`%1` теперь известна как `%2`").arg(nick).arg(nNick));
+        m_channelLog->msg(tr("\"%1\" is now known as \"%2\"", "Female").arg(nick).arg(nNick));
       else
-        m_channelLog->msg(tr("`%1` теперь известен как `%2`").arg(nick).arg(nNick));
+        m_channelLog->msg(tr("\"%1\" is now known as \"%2\"", "Male").arg(nick).arg(nNick));
     }
 
     UserUnit *unit = m_users.value(lowerNick);

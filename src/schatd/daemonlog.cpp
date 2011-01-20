@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
+#include <QDir>
+#include <QDateTime>
 
 #include "daemonlog.h"
 
@@ -35,8 +36,6 @@ DaemonLog::DaemonLog(QObject *parent)
 
 bool DaemonLog::init(const QString &file)
 {
-  QString appPath = QCoreApplication::applicationDirPath();
-
   QDir dir(QFileInfo(file).absolutePath());
   if (!dir.exists())
     dir.mkpath(dir.absolutePath());
@@ -62,4 +61,18 @@ bool DaemonLog::init(const QString &file)
 void DaemonLog::append(const QString &text)
 {
   m_stream << QDateTime(QDateTime::currentDateTime()).toString("(yyyy.MM.dd hh:mm:ss) ") << text << endl;
+}
+
+
+void DaemonLog::append(Levels levels, const QString &text)
+{
+  QString prefix = "- ";
+  if (levels == Notice)
+    prefix += "Notice";
+  else if (levels == Warning)
+    prefix += "Warning";
+  else if (levels == Error)
+    prefix += "Error";
+
+  append(prefix + " - " + text);
 }
