@@ -40,7 +40,7 @@ class QLocalServer;
 class UserUnit;
 class Translation;
 
-#define LOG(x, y) if (logLevel >= x) m_log->append(y)
+#define SCHATD_LOG(x, y, z) if (logLevel >= x) m_log->append(y, z)
 
 /*!
  * \brief Сервер чата
