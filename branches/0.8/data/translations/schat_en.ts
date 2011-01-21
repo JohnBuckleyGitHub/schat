@@ -5,7 +5,7 @@
 <context>
     <name>AboutChangeLog</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="229"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="240"/>
         <source>File &lt;b&gt;%1&lt;/b&gt; not found!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13,32 +13,32 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="52"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="57"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="53"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="58"/>
         <source>Members</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="54"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="59"/>
         <source>Changelog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="55"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="60"/>
         <source>License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="57"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="62"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="78"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="83"/>
         <source>About Simple Chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -46,27 +46,27 @@
 <context>
     <name>AboutMain</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="134"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="139"/>
         <source>Official website</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="139"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="144"/>
         <source>Documentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="144"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="149"/>
         <source>This program uses library:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="145"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="150"/>
         <source>32 bit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="145"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="150"/>
         <source>64 bit</source>
         <translation type="unfinished"></translation>
     </message>

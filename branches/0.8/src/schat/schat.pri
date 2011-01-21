@@ -182,6 +182,7 @@ contains( SCHAT_WINCE_VGA, 1 ) {
   win32:RC_FILE = schat.rc
 }
 
+TRANSLATIONS += ../../data/translations/schat_en.ts
 TRANSLATIONS += ../../data/translations/schat_ru.ts
 CODECFORTR = UTF-8
 
