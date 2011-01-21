@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,7 @@ else {
   DEFINES += SCHAT_NO_LOCAL_SERVER
 }
 
+TRANSLATIONS += ../../data/translations/schatd_en.ts
 TRANSLATIONS += ../../data/translations/schatd_ru.ts
 CODECFORTR = UTF-8
 

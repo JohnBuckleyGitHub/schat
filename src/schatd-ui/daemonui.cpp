@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,11 @@ DaemonUi::DaemonUi(QWidget *parent)
   setWindowFlags(Qt::Tool);
 
   m_settings = new DaemonSettings(QApplication::applicationDirPath() + "/schatd.conf", this);
+
+  m_translation = new Translation(this);
+  m_translation->setPrefix("schatd-ui_");
+  m_translation->setSearch(QApplication::applicationDirPath() + "/translations");
+
   m_checkTimer.setInterval(5000);
   connect(&m_checkTimer, SIGNAL(timeout()), SLOT(checkStart()));
 
@@ -185,7 +190,7 @@ void DaemonUi::init()
   }
 
   m_settings->read();
-
+  m_translation->load(m_settings->getString("Translation"));
 
   #if !defined(SCHAT_NO_STYLE)
   QString schatConf;
