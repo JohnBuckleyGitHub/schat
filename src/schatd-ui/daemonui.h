@@ -53,6 +53,9 @@ public:
 public slots:
   void handleMessage(const QString& message);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void checkStart();
   void exit();
@@ -84,6 +87,7 @@ private:
   void createActions();
   void createButtons();
   void createTray();
+  void retranslateUi();
   void setActionsState(bool start = true, bool stop = true, bool restart = true, bool quit = true, bool settings = true);
   void setLedColor(LedColor color = Red);
   void setStatus(Status status);
@@ -97,6 +101,8 @@ private:
   QAction *m_settingsAction;
   QAction *m_startAction;
   QAction *m_stopAction;
+  QGroupBox *m_controlGroup;
+  QGroupBox *m_statusGroup;
   QLabel *m_aboutLabel;
   QLabel *m_ledLabel;
   QLabel *m_statusLabel;
