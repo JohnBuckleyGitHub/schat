@@ -21,6 +21,7 @@
 #include "daemonui.h"
 #include "version.h"
 #include "daemonsettings.h"
+#include "translation.h"
 
 #ifndef SCHATD_NO_SERVICE
   #include "QtServiceController"
@@ -54,8 +55,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   line1->setFrameShape(QFrame::VLine);
   line1->setFrameShadow(QFrame::Sunken);
 
-  QGroupBox *controlGroup = new QGroupBox(tr("Управление"), this);
-  QHBoxLayout *controlGroupLay = new QHBoxLayout(controlGroup);
+  m_controlGroup = new QGroupBox(this);
+  QHBoxLayout *controlGroupLay = new QHBoxLayout(m_controlGroup);
   controlGroupLay->setMargin(2);
   controlGroupLay->setSpacing(0);
   controlGroupLay->addWidget(m_startButton);
@@ -67,8 +68,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   // Отображение статуса
   m_statusLabel = new QLabel(this);
   m_ledLabel = new QLabel(this);
-  QGroupBox *statusGroup = new QGroupBox(tr("Статус"), this);
-  QHBoxLayout *statusGroupLay = new QHBoxLayout(statusGroup);
+  m_statusGroup = new QGroupBox(this);
+  QHBoxLayout *statusGroupLay = new QHBoxLayout(m_statusGroup);
   statusGroupLay->setMargin(2);
   statusGroupLay->setSpacing(0);
   statusGroupLay->addWidget(m_statusLabel);
@@ -76,8 +77,8 @@ DaemonUi::DaemonUi(QWidget *parent)
   statusGroupLay->addWidget(m_ledLabel);
 
   QHBoxLayout *controlLay = new QHBoxLayout;
-  controlLay->addWidget(controlGroup);
-  controlLay->addWidget(statusGroup);
+  controlLay->addWidget(m_controlGroup);
+  controlLay->addWidget(m_statusGroup);
 
   // Кнопки внизу окна
   QHBoxLayout *bottomLay = new QHBoxLayout;
@@ -116,7 +117,6 @@ DaemonUi::DaemonUi(QWidget *parent)
   createTray();
   setStatus(Unknown);
 
-  setWindowTitle(tr("Управление сервером"));
   setWindowIcon(QIcon(":/images/schat16-green.png"));
 
   m_appDir = qApp->applicationDirPath();
@@ -149,6 +149,15 @@ void DaemonUi::handleMessage(const QString& message)
 
   if (!arguments(args))
     showUi();
+}
+
+
+void DaemonUi::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QDialog::changeEvent(event);
 }
 
 
@@ -335,22 +344,22 @@ bool DaemonUi::arguments(const QStringList &args)
  */
 void DaemonUi::createActions()
 {
-  m_quitAllAction = new QAction(QIcon(":/images/shutdown.png"), tr("Выход с о&становкой сервера"), this);
+  m_quitAllAction = new QAction(QIcon(":/images/shutdown.png"), "", this);
   connect(m_quitAllAction, SIGNAL(triggered()), SLOT(exit()));
 
-  m_quitAction = new QAction(QIcon(":/images/exit.png"), tr("Выход"), this);
+  m_quitAction = new QAction(QIcon(":/images/exit.png"), "", this);
   connect(m_quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
-  m_restartAction = new QAction(QIcon(":/images/restart.png"), tr("&Перезапуск"), this);
+  m_restartAction = new QAction(QIcon(":/images/restart.png"), "", this);
   connect(m_restartAction, SIGNAL(triggered()), SLOT(restart()));
 
-  m_startAction = new QAction(QIcon(":/images/play.png"), tr("&Запуск"), this);
+  m_startAction = new QAction(QIcon(":/images/play.png"), "", this);
   connect(m_startAction, SIGNAL(triggered()), SLOT(start()));
 
-  m_stopAction = new QAction(QIcon(":/images/stop.png"), tr("&Остановка"), this);
+  m_stopAction = new QAction(QIcon(":/images/stop.png"), "", this);
   connect(m_stopAction, SIGNAL(triggered()), SLOT(stop()));
 
-  m_settingsAction = new QAction(QIcon(":/images/daemonsettings.png"), tr("&Настройка..."), this);
+  m_settingsAction = new QAction(QIcon(":/images/daemonsettings.png"), "", this);
   connect(m_settingsAction, SIGNAL(triggered()), SLOT(settings()));
 }
 
@@ -360,12 +369,10 @@ void DaemonUi::createActions()
  */
 void DaemonUi::createButtons()
 {
-  m_hideButton = new QPushButton(QIcon(":/images/dialog-ok.png"), tr("Скрыть"), this);
-  m_hideButton->setToolTip(tr("Скрыть окно программы"));
+  m_hideButton = new QPushButton(QIcon(":/images/dialog-ok.png"), "", this);
   connect(m_hideButton, SIGNAL(clicked(bool)), SLOT(hide()));
 
   m_quitButton = new QPushButton(QIcon(":/images/exit.png"), "", this);
-  m_quitButton->setToolTip(tr("Выход"));
   connect(m_quitButton, SIGNAL(clicked(bool)), QApplication::instance(), SLOT(quit()));
 
   m_startButton = new QToolButton(this);
@@ -403,11 +410,32 @@ void DaemonUi::createTray()
 
   m_tray = new QSystemTrayIcon(this);
   m_tray->setIcon(QIcon(":/images/schat16-gray.png"));
-  m_tray->setToolTip(tr("IMPOMEZIA Simple Chat Daemon UI %1").arg(SCHAT_VERSION));
+  m_tray->setToolTip(QString("IMPOMEZIA Simple Chat Daemon UI %1").arg(SCHAT_VERSION));
   m_tray->setContextMenu(m_menu);
 
   connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   m_tray->show();
+}
+
+
+void DaemonUi::retranslateUi()
+{
+  setWindowTitle(tr("Server control"));
+  m_controlGroup->setTitle(tr("Control"));
+  m_statusGroup->setTitle(tr("Status"));
+
+  m_quitAllAction->setText(tr("Quit and stop server"));
+  m_quitAction->setText(tr("Quit"));
+  m_restartAction->setText(tr("Restart"));
+  m_startAction->setText(tr("Start"));
+  m_stopAction->setText(tr("Stop"));
+  m_settingsAction->setText(tr("Settings..."));
+
+  m_hideButton->setText(tr("Hide"));
+  m_hideButton->setToolTip(tr("Hide the program window"));
+  m_quitButton->setToolTip(tr("Quit"));
+
+  setStatus(m_status);
 }
 
 
@@ -451,37 +479,37 @@ void DaemonUi::setStatus(DaemonUi::Status status)
     case Unknown:
       setActionsState(false, false, false, false, false);
       setLedColor(Yellow);
-      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Инициализация...</b>"));
+      m_statusLabel->setText("<b style='color:#bf8c00';>&nbsp;" + tr("Initialization...") + "</b>");
       break;
 
     case Error:
       setActionsState(false, false, false, false);
       setLedColor();
-      m_statusLabel->setText(tr("<b style='color:#c00;'>&nbsp;Ошибка</b>"));
+      m_statusLabel->setText("<b style='color:#c00;'>&nbsp;" + tr("Error") + "</b>");
       break;
 
     case Starting:
       setActionsState(false, false, false);
       setLedColor(Yellow);
-      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Запуск...</b>"));
+      m_statusLabel->setText("<b style='color:#bf8c00';>&nbsp;" + tr("Starting...") + "</b>");
       break;
 
     case Started:
       setActionsState(false);
       setLedColor(Green);
-      m_statusLabel->setText(tr("<b style='color:#090;'>&nbsp;Успешно запущен</b>"));
+      m_statusLabel->setText("<b style='color:#090;'>&nbsp;" + tr("Started successfully") + "</b>");
       break;
 
     case Stopped:
       setActionsState(true, false, true, false);
       setLedColor();
-      m_statusLabel->setText(tr("<b style='color:#c00;'>&nbsp;Остановлен</b>"));
+      m_statusLabel->setText("<b style='color:#c00;'>&nbsp;" + tr("Stopped") + "</b>");
       break;
 
     case Restarting:
       setActionsState(false, false, false, false);
       setLedColor(Yellow);
-      m_statusLabel->setText(tr("<b style='color:#bf8c00';>&nbsp;Перезапуск...</b>"));
+      m_statusLabel->setText("<b style='color:#bf8c00';>&nbsp;" + tr("Restart...") + "</b>");
       break;
 
     default:

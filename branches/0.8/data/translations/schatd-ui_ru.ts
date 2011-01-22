@@ -7,22 +7,22 @@
     <message>
         <location filename="../../src/common/abstractsettingsdialog.cpp" line="32"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>ОК</translation>
     </message>
     <message>
         <location filename="../../src/common/abstractsettingsdialog.cpp" line="33"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location filename="../../src/common/abstractsettingsdialog.cpp" line="35"/>
         <source>Restore default settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить настройки по умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/common/abstractsettingsdialog.cpp" line="67"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройка</translation>
     </message>
 </context>
 <context>
@@ -258,112 +258,107 @@
     <name>DaemonSettingsDialog</name>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="39"/>
-        <source>Общие</source>
-        <translation type="unfinished"></translation>
+        <source>General</source>
+        <translation>Общие</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="40"/>
-        <source>Сеть</source>
-        <translation type="unfinished"></translation>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="42"/>
-        <source>Сервис</source>
-        <translation type="unfinished"></translation>
+        <source>Service</source>
+        <translation>Сервис</translation>
     </message>
 </context>
 <context>
     <name>DaemonUi</name>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="52"/>
-        <source>Управление</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="424"/>
+        <source>Control</source>
+        <translation>Управление</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="65"/>
-        <source>Статус</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="425"/>
+        <source>Status</source>
+        <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="114"/>
-        <source>Управление сервером</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="423"/>
+        <source>Server control</source>
+        <translation>Управление сервером</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="333"/>
-        <source>Выход с о&amp;становкой сервера</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="427"/>
+        <source>Quit and stop server</source>
+        <translation>Выход с остановкой сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="336"/>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="363"/>
-        <source>Выход</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="428"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="436"/>
+        <source>Quit</source>
+        <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="339"/>
-        <source>&amp;Перезапуск</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="429"/>
+        <source>Restart</source>
+        <translation>Перезапуск</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="342"/>
-        <source>&amp;Запуск</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="430"/>
+        <source>Start</source>
+        <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="345"/>
-        <source>&amp;Остановка</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="431"/>
+        <source>Stop</source>
+        <translation>Остановка</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="348"/>
-        <source>&amp;Настройка...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="432"/>
+        <source>Settings...</source>
+        <translation>Настройка...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="358"/>
-        <source>Скрыть</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="434"/>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="359"/>
-        <source>Скрыть окно программы</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="435"/>
+        <source>Hide the program window</source>
+        <translation>Скрыть окно программы</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="401"/>
-        <source>IMPOMEZIA Simple Chat Daemon UI %1</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="482"/>
+        <source>Initialization...</source>
+        <translation>Инициализация...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="449"/>
-        <source>&lt;b style=&apos;color:#bf8c00&apos;;&gt;&amp;nbsp;Инициализация...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="488"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="455"/>
-        <source>&lt;b style=&apos;color:#c00;&apos;&gt;&amp;nbsp;Ошибка&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="494"/>
+        <source>Starting...</source>
+        <translation>Запуск...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="461"/>
-        <source>&lt;b style=&apos;color:#bf8c00&apos;;&gt;&amp;nbsp;Запуск...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="500"/>
+        <source>Started successfully</source>
+        <translation>Успешно запущен</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="467"/>
-        <source>&lt;b style=&apos;color:#090;&apos;&gt;&amp;nbsp;Успешно запущен&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="506"/>
+        <source>Stopped</source>
+        <translation>Остановлен</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="473"/>
-        <source>&lt;b style=&apos;color:#c00;&apos;&gt;&amp;nbsp;Остановлен&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="479"/>
-        <source>&lt;b style=&apos;color:#bf8c00&apos;;&gt;&amp;nbsp;Перезапуск...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="512"/>
+        <source>Restart...</source>
+        <translation>Перезапуск...</translation>
     </message>
 </context>
 <context>
