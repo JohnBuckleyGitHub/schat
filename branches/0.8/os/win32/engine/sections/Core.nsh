@@ -60,11 +60,16 @@ ${Uninstall}
   Delete "$INSTDIR\doc\*.html"
   Delete "$INSTDIR\networks\*.xml"
   Delete "$INSTDIR\sounds\*.wav"
+  Delete "$INSTDIR\translations\schat_en.qm"
+  Delete "$INSTDIR\translations\schat_ru.qm"
+  Delete "$INSTDIR\translations\en.png"
+  Delete "$INSTDIR\translations\ru.png"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\networks"
   RMDir "$INSTDIR\sounds"
   RMDir "$INSTDIR\styles"
+  RMDir "$INSTDIR\translations"
 
   DeleteRegKey HKCU "${SCHAT_REGKEY}"
 ${UninstallEnd}

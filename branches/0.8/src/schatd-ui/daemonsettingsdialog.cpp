@@ -61,22 +61,22 @@ DaemonCommonSettings::DaemonCommonSettings(QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::CommonPage, parent)
 {
   m_listen = new QComboBox(this);
-  m_listen->setToolTip(tr("Адрес на котором сервер будет ожидать подключения"));
+  m_listen->setToolTip(tr("The address for the server connection"));
 
   createListenList();
 
   m_port = new QSpinBox(this);
   m_port->setRange(1, 65536);
   m_port->setValue(DaemonSettingsInstance->getInt("ListenPort"));
-  m_port->setToolTip(tr("Порт на котором сервер будет ожидать подключения"));
+  m_port->setToolTip(tr("Port for the server connection"));
 
-  QLabel *listenLabel = new QLabel(tr("&Адрес:"), this);
+  QLabel *listenLabel = new QLabel(tr("&Address:"), this);
   listenLabel->setBuddy(m_listen);
 
-  QLabel *portLabel = new QLabel(tr("&Порт:"), this);
+  QLabel *portLabel = new QLabel(tr("&Port:"), this);
   portLabel->setBuddy(m_port);
 
-  QGroupBox *listenGroup = new QGroupBox(tr("Интерфейс сервера"), this);
+  QGroupBox *listenGroup = new QGroupBox(tr("Server interface"), this);
   QGridLayout *listenLay = new QGridLayout(listenGroup);
   listenLay->addWidget(listenLabel, 0, 0);
   listenLay->addWidget(m_listen, 0, 1);
@@ -89,16 +89,15 @@ DaemonCommonSettings::DaemonCommonSettings(QWidget *parent)
   m_logLevel = new QSpinBox(this);
   m_logLevel->setRange(-1, 0);
   m_logLevel->setValue(DaemonSettingsInstance->getInt("LogLevel"));
-  m_logLevel->setToolTip(tr("Уровень детализации журнала\n-1 журналирование отключено"));
+  m_logLevel->setToolTip(tr("Level of verbose logging\n-1 logging disabled"));
 
-  QLabel *logLabel = new QLabel(tr("&Уровень журналирования:"), this);
+  QLabel *logLabel = new QLabel(tr("Logging level:"), this);
   logLabel->setBuddy(m_logLevel);
 
-  m_channelLog = new QCheckBox(tr("Вести журнал &главного канала"), this);
+  m_channelLog = new QCheckBox(tr("Log the main channel"), this);
   m_channelLog->setChecked(DaemonSettingsInstance->getBool("ChannelLog"));
-  m_channelLog->setToolTip(tr("Управляет режимом записи событий основного\nканала в специальный журнал"));
 
-  QGroupBox *logGroup = new QGroupBox(tr("Журналирование"), this);
+  QGroupBox *logGroup = new QGroupBox(tr("Logging"), this);
   QGridLayout *logLay = new QGridLayout(logGroup);
   logLay->addWidget(logLabel, 0, 0);
   logLay->addWidget(m_logLevel, 0, 1, 1, 2);
@@ -110,19 +109,17 @@ DaemonCommonSettings::DaemonCommonSettings(QWidget *parent)
   m_maxUsers = new QSpinBox(this);
   m_maxUsers->setRange(0, 10000);
   m_maxUsers->setValue(DaemonSettingsInstance->getInt("MaxUsers"));
-  m_maxUsers->setToolTip(tr("Ограничение максимального количества\nпользователей которые могут быть подключены к серверу\n0 - без ограничений"));
 
   m_maxUsersPerIp = new QSpinBox(this);
   m_maxUsersPerIp->setRange(0, 10000);
   m_maxUsersPerIp->setValue(DaemonSettingsInstance->getInt("MaxUsersPerIp"));
-  m_maxUsersPerIp->setToolTip(tr("Ограничение максимального количества\nпользователей с одного адреса\n0 - без ограничений"));
 
-  QLabel *maxUsersLabel = new QLabel(tr("&Лимит пользователей:"), this);
+  QLabel *maxUsersLabel = new QLabel(tr("Users limit:"), this);
   maxUsersLabel->setBuddy(m_maxUsers);
-  QLabel *maxUsersPerIpLabel = new QLabel(tr("Лимит подключений с &одного адреса:"), this);
+  QLabel *maxUsersPerIpLabel = new QLabel(tr("Connection limit from the same address:"), this);
   maxUsersPerIpLabel->setBuddy(m_maxUsersPerIp);
 
-  QGroupBox *limitsGroup = new QGroupBox(tr("Ограничения"), this);
+  QGroupBox *limitsGroup = new QGroupBox(tr("Limits"), this);
   QGridLayout *limitsLay = new QGridLayout(limitsGroup);
   limitsLay->addWidget(maxUsersLabel, 0, 0);
   limitsLay->addWidget(m_maxUsers, 0, 1);
@@ -204,38 +201,34 @@ void DaemonCommonSettings::createListenList()
 DaemonNetSettings::DaemonNetSettings(QWidget *parent)
   : AbstractSettingsPage(DaemonSettingsDialog::NetPage, parent)
 {
-  m_network = new QCheckBox(tr("Разрешить поддержку &сети"), this);
+  m_network = new QCheckBox(tr("Enable the network support"), this);
   m_network->setChecked(DaemonSettingsInstance->getBool("Network"));
-  m_network->setToolTip(tr("Включить поддержку взаимодействия с другими серверами"));
   connect(m_network, SIGNAL(clicked(bool)), SLOT(enableAll()));
 
-  m_root = new QCheckBox(tr("&Корневой сервер"), this);
+  m_root = new QCheckBox(tr("Root server"), this);
   m_root->setChecked(DaemonSettingsInstance->getBool("RootServer"));
-  m_root->setToolTip(tr("Определяет роль этого сервера в сети"));
   connect(m_root, SIGNAL(clicked(bool)), SLOT(changeRole(bool)));
 
   m_netName = new QLineEdit("Unknown Network", this);
   m_netName->setMaxLength(Network::MaxName);
-  m_netName->setToolTip(tr("Название сети"));
+  m_netName->setToolTip(tr("Network name"));
   connect(m_netName, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
-  QLabel *netNameLabel = new QLabel(tr("&Название:"), this);
+  QLabel *netNameLabel = new QLabel(tr("&Name:"), this);
   netNameLabel->setBuddy(m_netName);
 
   m_key = new QLineEdit(this);
   m_key->setMaxLength(Network::MaxKey);
   m_key->setEchoMode(QLineEdit::Password);
-  m_key->setToolTip(tr("Уникальный ключ сети\nДолжен быть одинаков на всех серверах"));
   connect(m_key, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
-  QLabel *keyLabel = new QLabel(tr("&Ключ:"), this);
+  QLabel *keyLabel = new QLabel(tr("&Key:"), this);
   keyLabel->setBuddy(m_key);
 
   m_rootAddr = new QLineEdit(this);
-  m_rootAddr->setToolTip(tr("Адрес корневого сервера\nЭто поле не используется корневым сервером"));
   connect(m_rootAddr, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
-  QLabel *rootLabel = new QLabel(tr("Ко&рневой сервер:"), this);
+  QLabel *rootLabel = new QLabel(tr("Root server:"), this);
   rootLabel->setBuddy(m_rootAddr);
 
-  m_netGroup = new QGroupBox(tr("Сеть"), this);
+  m_netGroup = new QGroupBox(tr("Network"), this);
   QGridLayout *netLay = new QGridLayout(m_netGroup);
   netLay->addWidget(netNameLabel, 0, 0);
   netLay->addWidget(m_netName, 0, 1);
@@ -250,9 +243,8 @@ DaemonNetSettings::DaemonNetSettings(QWidget *parent)
   if (!DaemonSettingsInstance->getString("Name").isEmpty())
     m_name->setText(DaemonSettingsInstance->getString("Name"));
   m_name->setMaxLength(Network::MaxName);
-  m_name->setToolTip(tr("Имя данного сервера\nРекомендуется указывать реальное DNS имя"));
   connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(inputChanged(const QString &)));
-  QLabel *nameLabel = new QLabel(tr("Имя:"), this);
+  QLabel *nameLabel = new QLabel(tr("Name:"), this);
   nameLabel->setBuddy(m_name);
   QHBoxLayout *nameLay = new QHBoxLayout;
   nameLay->addWidget(nameLabel);
@@ -263,18 +255,16 @@ DaemonNetSettings::DaemonNetSettings(QWidget *parent)
   m_numeric = new QSpinBox(this);
   m_numeric->setRange(1, 255);
   m_numeric->setValue(DaemonSettingsInstance->getInt("Numeric"));
-  m_numeric->setToolTip(tr("Уникальный для сети номер сервера"));
-  QLabel *numericLabel = new QLabel(tr("Уникальный &номер:"), this);
+  QLabel *numericLabel = new QLabel(tr("Unique number:"), this);
   numericLabel->setBuddy(m_numeric);
 
   m_limit = new QSpinBox(this);
   m_limit->setRange(0, 255);
   m_limit->setValue(DaemonSettingsInstance->getInt("MaxLinks"));
-  m_limit->setToolTip(tr("Ограничение количества серверов которые могут быть подключены\nИспользуется только корневым сервером"));
-  QLabel *limitLabel = new QLabel(tr("&Максимум серверов:"), this);
+  QLabel *limitLabel = new QLabel(tr("Max servers:"), this);
   limitLabel->setBuddy(m_limit);
 
-  m_daemonGroup = new QGroupBox(tr("Сервер"), this);
+  m_daemonGroup = new QGroupBox(tr("Server"), this);
   QGridLayout *daemonLay = new QGridLayout(m_daemonGroup);
   daemonLay->addLayout(nameLay, 0, 0, 1, 3);
   daemonLay->addWidget(numericLabel, 1, 0);
@@ -295,7 +285,7 @@ DaemonNetSettings::DaemonNetSettings(QWidget *parent)
 
   m_normal = m_netName->palette();
   m_red = m_normal;
-  m_red.setColor(QPalette::Active, QPalette::Base, QColor("#f66"));
+  m_red.setColor(QPalette::Active, QPalette::Base, QColor(0xff, 0x66, 0x66));
 
   changeRole(m_root->isChecked());
   readNetwork();
@@ -469,20 +459,20 @@ DaemonServiceSettings::DaemonServiceSettings(QWidget *parent)
   m_controller(new QtServiceController("Simple Chat Daemon")),
   m_status(Unknown)
 {
-  m_stateLabel = new QLabel(QString("<b style='color:#c00;'>%1</b>").arg(tr("не установлен")), this);
+  m_stateLabel = new QLabel(QString("<b style='color:#c00;'>%1</b>").arg(tr("not installed")), this);
 
-  QGroupBox *infoGroup = new QGroupBox(tr("Информация"), this);
+  QGroupBox *infoGroup = new QGroupBox(tr("Information"), this);
   QFormLayout *infoLay = new QFormLayout(infoGroup);
-  infoLay->addRow(tr("Windows сервис:"), m_stateLabel);
+  infoLay->addRow(tr("Windows service:"), m_stateLabel);
   infoLay->setMargin(6);
   infoLay->setSpacing(4);
 
   m_serviceName = new QLabel("<b>" + m_controller->serviceName() + "</b>", this);
   m_install = new QCommandLinkButton(this);
 
-  m_installGroup = new QGroupBox(tr("Установка/Удаление"), this);
+  m_installGroup = new QGroupBox(tr("Install/Remove"), this);
   QFormLayout *installLay = new QFormLayout(m_installGroup);
-  installLay->addRow(tr("Имя сервиса:"), m_serviceName);
+  installLay->addRow(tr("Service name:"), m_serviceName);
   installLay->addRow(m_install);
   installLay->setMargin(6);
   installLay->setSpacing(4);
@@ -567,12 +557,12 @@ void DaemonServiceSettings::detect()
 void DaemonServiceSettings::setCommandLinkState()
 {
   if (m_status != Installed) {
-    m_install->setText(tr("Установить"));
-    m_install->setDescription(tr("Установить сервер как сервис"));
+    m_install->setText(tr("Install"));
+    m_install->setDescription(tr("Install server as service"));
   }
   else {
-    m_install->setText(tr("Удалить"));
-    m_install->setDescription(tr("Удалить сервис сервера чата"));
+    m_install->setText(tr("Remove"));
+    m_install->setDescription(tr("Remove service of chat server"));
   }
 }
 
@@ -583,16 +573,16 @@ void DaemonServiceSettings::setCommandLinkState()
 void DaemonServiceSettings::setState()
 {
   if (m_status == Installed) {
-    m_stateLabel->setText(QString("<b style='color:#090;'>%1</b>").arg("установлен"));
+    m_stateLabel->setText(QString("<b style='color:#090;'>%1</b>").arg(tr("installed")));
   }
   else if (m_status == ReadyToInstall) {
-    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("не установлен"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg(tr("not installed")));
   }
   else if (m_status == ErrorInstall) {
-    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("ошибка при установке"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg(tr("error during installation")));
   }
   else if (m_status == ErrorRemove) {
-    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg("ошибка при удалении"));
+    m_stateLabel->setText(QString("<b style='color:#c00;'>%1</b>").arg(tr("error when removing")));
   }
 
   if (m_status != ErrorRemove)

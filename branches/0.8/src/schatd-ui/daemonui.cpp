@@ -200,6 +200,7 @@ void DaemonUi::init()
 
   m_settings->read();
   m_translation->load(m_settings->getString("Translation"));
+  retranslateUi();
 
   #if !defined(SCHAT_NO_STYLE)
   QString schatConf;

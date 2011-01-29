@@ -29,229 +29,187 @@
     <name>DaemonCommonSettings</name>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="64"/>
-        <source>Адрес на котором сервер будет ожидать подключения</source>
-        <translation type="unfinished"></translation>
+        <source>The address for the server connection</source>
+        <translation>Адрес на котором сервер будет ожидать подключения</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="71"/>
-        <source>Порт на котором сервер будет ожидать подключения</source>
-        <translation type="unfinished"></translation>
+        <source>Port for the server connection</source>
+        <translation>Порт на котором сервер будет ожидать подключения</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="73"/>
-        <source>&amp;Адрес:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Address:</source>
+        <translation>&amp;Адрес:</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="76"/>
-        <source>&amp;Порт:</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Port:</source>
+        <translation>&amp;Порт:</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="79"/>
-        <source>Интерфейс сервера</source>
-        <translation type="unfinished"></translation>
+        <source>Server interface</source>
+        <translation>Интерфейс сервера</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="92"/>
-        <source>Уровень детализации журнала
--1 журналирование отключено</source>
-        <translation type="unfinished"></translation>
+        <source>Level of verbose logging
+-1 logging disabled</source>
+        <translation>Уровень детализации журнала
+-1 журналирование отключено</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="94"/>
-        <source>&amp;Уровень журналирования:</source>
-        <translation type="unfinished"></translation>
+        <source>Logging level:</source>
+        <translation>Уровень журналирования:</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="97"/>
-        <source>Вести журнал &amp;главного канала</source>
-        <translation type="unfinished"></translation>
+        <source>Log the main channel</source>
+        <translation>Вести журнал главного канала</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="99"/>
-        <source>Управляет режимом записи событий основного
-канала в специальный журнал</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="100"/>
+        <source>Logging</source>
+        <translation>Журналирование</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="101"/>
-        <source>Журналирование</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="117"/>
+        <source>Users limit:</source>
+        <translation>Лимит пользователей:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="113"/>
-        <source>Ограничение максимального количества
-пользователей которые могут быть подключены к серверу
-0 - без ограничений</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="118"/>
-        <source>Ограничение максимального количества
-пользователей с одного адреса
-0 - без ограничений</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="120"/>
-        <source>&amp;Лимит пользователей:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="119"/>
+        <source>Connection limit from the same address:</source>
+        <translation>Лимит подключений с одного адреса:</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="122"/>
-        <source>Лимит подключений с &amp;одного адреса:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="125"/>
-        <source>Ограничения</source>
-        <translation type="unfinished"></translation>
+        <source>Limits</source>
+        <translation>Ограничения</translation>
     </message>
 </context>
 <context>
     <name>DaemonNetSettings</name>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="207"/>
-        <source>Разрешить поддержку &amp;сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="204"/>
+        <source>Enable the network support</source>
+        <translation>Разрешить поддержку сети</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="209"/>
-        <source>Включить поддержку взаимодействия с другими серверами</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="212"/>
-        <source>&amp;Корневой сервер</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="208"/>
+        <source>Root server</source>
+        <translation>Корневой сервер</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="214"/>
-        <source>Определяет роль этого сервера в сети</source>
-        <translation type="unfinished"></translation>
+        <source>Network name</source>
+        <translation>Название сети</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="219"/>
-        <source>Название сети</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="216"/>
+        <source>&amp;Name:</source>
+        <translation>&amp;Название:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="221"/>
-        <source>&amp;Название:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="223"/>
+        <source>&amp;Key:</source>
+        <translation>&amp;Ключ:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="227"/>
-        <source>Уникальный ключ сети
-Должен быть одинаков на всех серверах</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="228"/>
+        <source>Root server:</source>
+        <translation>Корневой сервер:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="229"/>
-        <source>&amp;Ключ:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="231"/>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="233"/>
-        <source>Адрес корневого сервера
-Это поле не используется корневым сервером</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="247"/>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="235"/>
-        <source>Ко&amp;рневой сервер:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="258"/>
+        <source>Unique number:</source>
+        <translation>Уникальный номер:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="238"/>
-        <source>Сеть</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="253"/>
-        <source>Имя данного сервера
-Рекомендуется указывать реальное DNS имя</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="255"/>
-        <source>Имя:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="266"/>
-        <source>Уникальный для сети номер сервера</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="264"/>
+        <source>Max servers:</source>
+        <translation>Максимум серверов:</translation>
     </message>
     <message>
         <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="267"/>
-        <source>Уникальный &amp;номер:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="273"/>
-        <source>Ограничение количества серверов которые могут быть подключены
-Используется только корневым сервером</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="274"/>
-        <source>&amp;Максимум серверов:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="277"/>
-        <source>Сервер</source>
-        <translation type="unfinished"></translation>
+        <source>Server</source>
+        <translation>Сервер</translation>
     </message>
 </context>
 <context>
     <name>DaemonServiceSettings</name>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="472"/>
-        <source>не установлен</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="462"/>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="579"/>
+        <source>not installed</source>
+        <translation>не установлен</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="474"/>
-        <source>Информация</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="464"/>
+        <source>Information</source>
+        <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="476"/>
-        <source>Windows сервис:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="466"/>
+        <source>Windows service:</source>
+        <translation>Windows сервис:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="483"/>
-        <source>Установка/Удаление</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="473"/>
+        <source>Install/Remove</source>
+        <translation>Установка/Удаление</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="485"/>
-        <source>Имя сервиса:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="475"/>
+        <source>Service name:</source>
+        <translation>Имя сервиса:</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="570"/>
-        <source>Установить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="560"/>
+        <source>Install</source>
+        <translation>Установить</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="571"/>
-        <source>Установить сервер как сервис</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="561"/>
+        <source>Install server as service</source>
+        <translation>Установить сервер как сервис</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="574"/>
-        <source>Удалить</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="564"/>
+        <source>Remove</source>
+        <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="575"/>
-        <source>Удалить сервис сервера чата</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="565"/>
+        <source>Remove service of chat server</source>
+        <translation>Удалить сервис сервера чата</translation>
+    </message>
+    <message>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="576"/>
+        <source>installed</source>
+        <translation>установлен</translation>
+    </message>
+    <message>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="582"/>
+        <source>error during installation</source>
+        <translation>ошибка при установке</translation>
+    </message>
+    <message>
+        <location filename="../../src/schatd-ui/daemonsettingsdialog.cpp" line="585"/>
+        <source>error when removing</source>
+        <translation>ошибка при удалении</translation>
     </message>
 </context>
 <context>
@@ -275,88 +233,88 @@
 <context>
     <name>DaemonUi</name>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="424"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="425"/>
         <source>Control</source>
         <translation>Управление</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="425"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="426"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="423"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="424"/>
         <source>Server control</source>
         <translation>Управление сервером</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="427"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="428"/>
         <source>Quit and stop server</source>
         <translation>Выход с остановкой сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="428"/>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="436"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="429"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="437"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="429"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="430"/>
         <source>Restart</source>
         <translation>Перезапуск</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="430"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="431"/>
         <source>Start</source>
         <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="431"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="432"/>
         <source>Stop</source>
         <translation>Остановка</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="432"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="433"/>
         <source>Settings...</source>
         <translation>Настройка...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="434"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="435"/>
         <source>Hide</source>
         <translation>Скрыть</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="435"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="436"/>
         <source>Hide the program window</source>
         <translation>Скрыть окно программы</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="482"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="483"/>
         <source>Initialization...</source>
         <translation>Инициализация...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="488"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="489"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="494"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="495"/>
         <source>Starting...</source>
         <translation>Запуск...</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="500"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="501"/>
         <source>Started successfully</source>
         <translation>Успешно запущен</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="506"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="507"/>
         <source>Stopped</source>
         <translation>Остановлен</translation>
     </message>
     <message>
-        <location filename="../../src/schatd-ui/daemonui.cpp" line="512"/>
+        <location filename="../../src/schatd-ui/daemonui.cpp" line="513"/>
         <source>Restart...</source>
         <translation>Перезапуск...</translation>
     </message>
