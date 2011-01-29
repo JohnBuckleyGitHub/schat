@@ -185,6 +185,7 @@ ChatView::ChatView(QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
 
   createActions();
+  retranslateUi();
 }
 
 
@@ -428,7 +429,7 @@ void ChatView::setAllowStatusMessages()
   if (d->statusMessages)
     return;
 
-  d->statusMessages = new QAction(QIcon(":/images/im-user.png"), tr("Status messages"), this);
+  d->statusMessages = new QAction(QIcon(":/images/statuses.png"), tr("Status messages"), this);
   d->statusMessages->setCheckable(true);
   d->statusMessages->setChecked(SimpleSettings->getBool("StatusMessages"));
   connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
@@ -646,6 +647,9 @@ void ChatView::retranslateUi()
   d->autoScroll->setText(tr("Autoscroll"));
   d->copy->setText(tr("&Copy"));
   d->clear->setText(tr("Clear"));
+
+  if (d->statusMessages)
+    d->statusMessages->setText(tr("Status messages"));
 
   #ifdef SCHAT_NO_WEBKIT
   d->selectAll->setText(tr("Select All"));

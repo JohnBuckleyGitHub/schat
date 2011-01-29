@@ -97,73 +97,74 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="223"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="224"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="225"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="226"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="240"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="241"/>
         <source>%1 entered chat</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="242"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="243"/>
         <source>%1 entered chat</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="261"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="262"/>
         <source>%1 left the chat%2</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="263"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="264"/>
         <source>%1 left the chat%2</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="279"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="280"/>
         <source>Service message:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="431"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="432"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="652"/>
         <source>Status messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="502"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="503"/>
         <source>Copy &amp;link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="646"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
         <source>Autoscroll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="649"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="651"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="655"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
