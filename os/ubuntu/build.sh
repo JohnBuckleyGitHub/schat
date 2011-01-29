@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -16,14 +16,20 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+function build() {
+  local target=$1
+  mkdir src/$target/debian
+  cp -fr os/ubuntu/$target/* src/$target/debian
+  cd src/$target
+  dpkg-buildpackage -b
+  cd ../..
+}
+
 cd ../..
 patch -p0 -N -i os/ubuntu/ubuntu.patch
 qmake -r
 
-mkdir src/schat/debian
-cp -fr os/ubuntu/schat/* src/schat/debian
-cd src/schat
-dpkg-buildpackage -rfakeroot
+build "schat"
 
-cd ../..
 cp -f src/*.deb os/ubuntu/deb
+
