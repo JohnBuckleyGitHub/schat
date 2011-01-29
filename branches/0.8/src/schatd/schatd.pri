@@ -69,21 +69,16 @@ TRANSLATIONS += ../../data/translations/schatd_en.ts
 TRANSLATIONS += ../../data/translations/schatd_ru.ts
 CODECFORTR = UTF-8
 
-etc.files = ../../data/normalize.xml
-etc.files += ../../data/motd.html
-
 unix {
-  contains( SCHAT_EASY_DAEMON, 1 ) {
-    target.path += ~/schatd
-    etc.path = ~/schatd
-  }
-  else {
-    target.path += $$SCHAT_PREFIX/usr/bin
-    etc.path = $$SCHAT_PREFIX/etc/schat
-  }
+  etc.files = ../../data/normalize.xml
+  etc.files += ../../data/motd.html
+
+  target.path += $$SCHAT_PREFIX/usr/sbin
+  etc.path = $$SCHAT_PREFIX/etc/schat
 
   INSTALLS += target etc
 }
 
 include(../3rdparty/qtservice/src/qtservice.pri)
 include(../common/common.pri)
+
