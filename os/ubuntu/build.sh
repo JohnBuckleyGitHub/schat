@@ -21,7 +21,7 @@ function build() {
   mkdir src/$target/debian
   cp -fr os/ubuntu/$target/* src/$target/debian
   cd src/$target
-  dpkg-buildpackage -b
+  dpkg-buildpackage
   cd ../..
 }
 
@@ -29,7 +29,7 @@ cd ../..
 patch -p0 -N -i os/ubuntu/ubuntu.patch
 qmake -r
 
+build "schatd"
 build "schat"
 
 cp -f src/*.deb os/ubuntu/deb
-
