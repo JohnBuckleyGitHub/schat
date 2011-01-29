@@ -97,73 +97,74 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="223"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="224"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Female</comment>
         <translation>&lt;b&gt;%1&lt;/b&gt; теперь известна как %2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="225"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="226"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Male</comment>
         <translation>&lt;b&gt;%1&lt;/b&gt; теперь известен как %2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="240"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="241"/>
         <source>%1 entered chat</source>
         <comment>Female</comment>
         <translation>%1 зашла в чат</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="242"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="243"/>
         <source>%1 entered chat</source>
         <comment>Male</comment>
         <translation>%1 зашёл в чат</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="261"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="262"/>
         <source>%1 left the chat%2</source>
         <comment>Female</comment>
         <translation>%1 вышла из чата%2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="263"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="264"/>
         <source>%1 left the chat%2</source>
         <comment>Male</comment>
         <translation>%1 вышел из чата%2</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="279"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="280"/>
         <source>Service message:</source>
         <translation>Сервисное сообщение:</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="431"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="432"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="652"/>
         <source>Status messages</source>
         <translation>Статусные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="502"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="503"/>
         <source>Copy &amp;link</source>
         <translation>Копировать &amp;ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="646"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
         <source>Autoscroll</source>
         <translation>Автопрокрутка</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
         <source>&amp;Copy</source>
         <translation>&amp;Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="649"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="651"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="655"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
