@@ -72,9 +72,10 @@ CODECFORTR = UTF-8
 unix {
   etc.files = ../../data/normalize.xml
   etc.files += ../../data/motd.html
+  etc.files += ../../data/schatd.conf.example
 
   target.path += $$SCHAT_PREFIX/usr/sbin
-  etc.path = $$SCHAT_PREFIX/etc/schat
+  etc.path = $$SCHAT_PREFIX/etc/schatd
 
   INSTALLS += target etc
 }

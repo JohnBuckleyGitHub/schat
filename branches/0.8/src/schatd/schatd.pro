@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ SCHAT_RESOURCES   = 1
 SCHAT_RC_FILE     = 1
 SCHAT_LOCAL_IPC   = 1
 SCHAT_SINGLEAPP   = 0
-SCHAT_EASY_DAEMON = 1
+SCHAT_OS          = auto
 
 include(schatd.pri)
 
