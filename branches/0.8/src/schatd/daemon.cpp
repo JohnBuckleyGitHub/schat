@@ -1190,7 +1190,7 @@ void Daemon::environment()
   bool sbin = appDirPath == "/usr/sbin";
 
   m_environment.insert(EnvConfFile, envValue("SCHATD_CONF",  (sbin ? "/etc/schatd" : appDirPath) + "/schatd.conf"));
-  m_environment.insert(EnvPidFile,  envValue("SCHATD_PID",   (sbin ? "/var/run" : appDirPath) + "/schatd.pid"));
+  m_environment.insert(EnvPidFile,  envValue("SCHATD_PID",   (sbin ? "/var/run/schatd" : appDirPath) + "/schatd.pid"));
   m_environment.insert(EnvLogDir,   envValue("SCHATD_LOG",   sbin ? "/var/log/schatd" : appDirPath + "/log"));
   m_environment.insert(EnvVarDir,   envValue("SCHATD_VAR",   sbin ? "/var/lib/schatd" : appDirPath));
   m_environment.insert(EnvShare,    envValue("SCHATD_SHARE", sbin ? "/usr/share/schatd" : appDirPath));

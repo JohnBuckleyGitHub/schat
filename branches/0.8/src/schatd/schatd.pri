@@ -74,10 +74,19 @@ unix {
   etc.files += ../../data/motd.html
   etc.files += ../../data/schatd.conf.example
 
+  translations.files = ../../data/translations/schatd_en.qm
+  translations.files += ../../data/translations/schatd_ru.qm
+
+  userbar.files = ../../misc/tools/userbar/userbar.php
+  userbar.files += ../../misc/tools/userbar/userbar-template.png
+  userbar.files += ../../misc/tools/userbar/hoog_mini.ttf
+
   target.path += $$SCHAT_PREFIX/usr/sbin
   etc.path = $$SCHAT_PREFIX/etc/schatd
+  translations.path = $$SCHAT_PREFIX/usr/share/schatd/translations
+  userbar.path = $$SCHAT_PREFIX/usr/share/schatd/userbar
 
-  INSTALLS += target etc
+  INSTALLS += target etc translations userbar
 }
 
 include(../3rdparty/qtservice/src/qtservice.pri)
