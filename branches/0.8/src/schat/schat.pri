@@ -208,6 +208,7 @@ unix {
 
   translations.files = ../../data/translations/schat_en.qm
   translations.files += ../../data/translations/schat_ru.qm
+  translations.files += ../../data/translations/qt_ru.qm
   translations.files += ../../data/translations/en.png
   translations.files += ../../data/translations/ru.png
   translations.path = $$SCHAT_PREFIX/share/schat/translations

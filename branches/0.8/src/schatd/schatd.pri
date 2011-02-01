@@ -76,6 +76,7 @@ unix {
 
   translations.files = ../../data/translations/schatd_en.qm
   translations.files += ../../data/translations/schatd_ru.qm
+  translations.files += ../../data/translations/qt_ru.qm
 
   userbar.files = ../../misc/tools/userbar/userbar.php
   userbar.files += ../../misc/tools/userbar/userbar-template.png
