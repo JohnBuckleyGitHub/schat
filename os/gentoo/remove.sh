@@ -1,3 +1,4 @@
+#!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
@@ -15,4 +16,13 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHATD_USER="schatd"
+/etc/init.d/schatd stop
+
+rm -fr /var/run/schatd
+rm -fr /var/log/schatd
+rm -fr /var/lib/schatd
+
+userdel schatd || true
+
+rm /etc/conf.d/schatd
+rm /etc/init.d/schatd
