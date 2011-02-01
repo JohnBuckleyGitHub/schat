@@ -1,3 +1,4 @@
+#!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
@@ -15,4 +16,14 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHATD_USER="schatd"
+mkdir /var/run/schatd
+mkdir /var/log/schatd
+mkdir /var/lib/schatd
+
+if ! getent passwd | grep -q "^schatd:"; then
+  useradd --system --home-dir /var/run/schatd --no-create-home --user-group --shell /bin/false schatd || true
+fi
+
+chown schatd:schatd /var/run/schatd
+chown schatd:schatd /var/log/schatd
+chown schatd:schatd /var/lib/schatd
