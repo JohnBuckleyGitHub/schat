@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2010 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_VERSION="0.7.4.1350"
+SCHAT_VERSION="0.8.0.1427"
 TARGET="SimpleChat"
 
 cd ../..
@@ -29,10 +29,13 @@ macdeployqt schatd.app
 cp schatd-ui.app/Contents/MacOS/schatd-ui $TARGET.app/Contents/MacOS/
 cp schatd.app/Contents/MacOS/schatd $TARGET.app/Contents/MacOS/
 
-cp -fr ../../data/doc $TARGET.app/Contents/Resources/doc
-cp -fr ../../data/emoticons $TARGET.app/Contents/Resources/emoticons
-cp -fr ../../data/networks $TARGET.app/Contents/Resources/networks
-cp -fr ../../data/sounds $TARGET.app/Contents/Resources/sounds 
+cp -fR ../../data/doc $TARGET.app/Contents/Resources/doc
+cp -fR ../../data/emoticons $TARGET.app/Contents/Resources/emoticons
+cp -fR ../../data/networks $TARGET.app/Contents/Resources/networks
+cp -fR ../../data/sounds $TARGET.app/Contents/Resources/sounds
+mkdir $TARGET.app/Contents/Resources/translations
+cp -fr ../../data/translations/*.png $TARGET.app/Contents/Resources/translations/
+cp -fr ../../data/translations/*.qm $TARGET.app/Contents/Resources/translations/
 find $TARGET.app/Contents/Resources -name .svn -exec rm -rf {} \; > /dev/null 2>&1
 
 echo ""
