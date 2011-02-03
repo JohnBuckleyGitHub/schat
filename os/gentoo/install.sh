@@ -27,3 +27,6 @@ fi
 chown schatd:schatd /var/run/schatd
 chown schatd:schatd /var/log/schatd
 chown schatd:schatd /var/lib/schatd
+
+cp etc/conf.d/schatd /etc/conf.d/
+cp etc/init.d/schatd /etc/init.d/
