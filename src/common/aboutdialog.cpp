@@ -200,7 +200,7 @@ AboutMembers::AboutMembers(QWidget *parent)
   browser->setOpenExternalLinks(true);
 
   #if defined(SCHAT_CLIENT)
-  if (SimpleChatApp::instance()->translation()->name() == "ru")
+  if (SimpleChatApp::instance()->translation()->name().left(2) == "ru")
     browser->setSource(QUrl().fromLocalFile(":/doc/members_ru.html"));
   else
   #endif
