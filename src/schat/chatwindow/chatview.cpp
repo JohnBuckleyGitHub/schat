@@ -17,6 +17,7 @@
  */
 
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QDesktopServices>
 #include <QMenu>
 #include <QTextDocument>

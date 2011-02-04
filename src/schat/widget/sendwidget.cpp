@@ -553,7 +553,9 @@ void SendWidget::createPermanentButtons()
 
   menu->addSeparator();
   m_quitAction = menu->addAction(QIcon(":/images/exit.png"), "", this, SIGNAL(closeChat()));
+  #if QT_VERSION >= 0x040600
   m_quitAction->setShortcut(QKeySequence::Quit);
+  #endif
 
   m_settingsButton->setMenu(menu);
   m_soundAction = new SoundAction(this);

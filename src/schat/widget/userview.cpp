@@ -19,6 +19,7 @@
 #include <QClipboard>
 #include <QContextMenuEvent>
 #include <QMenu>
+#include <QPainter>
 #include <QScrollBar>
 #include <QTextDocument>
 
