@@ -17,10 +17,14 @@
  */
 
 #include <QAction>
+#include <QClipboard>
 #include <QContextMenuEvent>
 #include <QDesktopServices>
+#include <QDir>
 #include <QMenu>
+#include <QScrollBar>
 #include <QTextDocument>
+#include <QDebug>
 
 #ifndef SCHAT_NO_WEBKIT
   #include <QtWebKit>
