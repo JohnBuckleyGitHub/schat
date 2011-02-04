@@ -5,96 +5,101 @@
 <context>
     <name>AboutChangeLog</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="229"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="240"/>
         <source>File &lt;b&gt;%1&lt;/b&gt; not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл &lt;b&gt;%1&lt;/b&gt; не найден!</translation>
     </message>
 </context>
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="52"/>
-        <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="53"/>
-        <source>Members</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="54"/>
-        <source>Changelog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="55"/>
-        <source>License</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/common/aboutdialog.cpp" line="57"/>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
+        <source>About</source>
+        <translation>О Программе</translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="78"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="58"/>
+        <source>Members</source>
+        <translation>Участники</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/aboutdialog.cpp" line="59"/>
+        <source>Changelog</source>
+        <translation>История версий</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/aboutdialog.cpp" line="60"/>
+        <source>License</source>
+        <translation>Лицензия</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/aboutdialog.cpp" line="62"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/aboutdialog.cpp" line="83"/>
         <source>About Simple Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>О Simple Chat</translation>
     </message>
 </context>
 <context>
     <name>AboutMain</name>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="134"/>
-        <source>Official website</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/common/aboutdialog.cpp" line="139"/>
-        <source>Documentation</source>
-        <translation type="unfinished"></translation>
+        <source>Official website</source>
+        <translation>Официальный сайт</translation>
     </message>
     <message>
         <location filename="../../src/common/aboutdialog.cpp" line="144"/>
+        <source>Documentation</source>
+        <translation>Документация</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/aboutdialog.cpp" line="149"/>
         <source>This program uses library:</source>
-        <translation type="unfinished"></translation>
+        <translation>Эта программа использует библиотеку:</translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="145"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="150"/>
         <source>32 bit</source>
-        <translation type="unfinished"></translation>
+        <translation>32 битную</translation>
     </message>
     <message>
-        <location filename="../../src/common/aboutdialog.cpp" line="145"/>
+        <location filename="../../src/common/aboutdialog.cpp" line="150"/>
         <source>64 bit</source>
-        <translation type="unfinished"></translation>
+        <translation>64 битную</translation>
     </message>
 </context>
 <context>
     <name>CustomizeWizard</name>
     <message>
-        <location filename="../../src/customize/customizewizard.cpp" line="40"/>
-        <source>О Программе</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/customize/customizewizard.cpp" line="66"/>
-        <source>%1 Customize</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/customize/customizewizard.cpp" line="57"/>
+        <source>About</source>
+        <translation>О Программе</translation>
     </message>
 </context>
 <context>
     <name>IntroPage</name>
     <message>
         <location filename="../../src/customize/page/intropage.cpp" line="29"/>
-        <source>Вас приветствует мастер создания дистрибутива для вашей сети</source>
-        <translation type="unfinished"></translation>
+        <source>Welcome to the distribution package wizard for your network</source>
+        <translation>Вас приветствует мастер создания дистрибутива для вашей сети</translation>
     </message>
     <message>
         <location filename="../../src/customize/page/intropage.cpp" line="32"/>
-        <source>&lt;p&gt;Этот мастер поможет создать дистрибутив адаптированный для вашей сети, и даже создать локальное зеркало обновлений.&lt;/p&gt;Обратитесь к &lt;a href=&apos;http://simple.impomezia.com/Customize&apos; style=&apos;text-decoration:none; color:#1a4d82;&apos;&gt;документации&lt;/a&gt; за подробностями.&lt;p&gt;Нажмите кнопку &lt;b&gt;&amp;quot;Далее&amp;quot;&lt;/b&gt; для продолжения.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;p&gt;This wizard will create a distribution package, adapted to your network, and create a local mirror for updates.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Этот мастер поможет создать дистрибутив, адаптированный для вашей сети, а также создать локальное зеркало обновлений.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/intropage.cpp" line="35"/>
+        <source>For detailed information, please, refer to the &lt;a href=&apos;http://simple.impomezia.com/Customize&apos; style=&apos;text-decoration:none; color:#1a4d82;&apos;&gt;documentation&lt;/a&gt;.</source>
+        <translation>Обратитесь к &lt;a href=&apos;http://simple.impomezia.com/Customize&apos; style=&apos;text-decoration:none; color:#1a4d82;&apos;&gt;документации&lt;/a&gt; за подробностями.</translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/intropage.cpp" line="36"/>
+        <source>&lt;p&gt;Click &lt;b&gt;&amp;quot;Next&amp;quot;&lt;/b&gt; to continue.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Нажмите кнопку &lt;b&gt;&amp;quot;Далее&amp;quot;&lt;/b&gt; для продолжения.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -258,8 +263,6 @@
         <location filename="../../src/customize/page/progresspage.cpp" line="235"/>
         <source>Файл &lt;b&gt;%1&lt;/b&gt; создан, размер %n байт</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -473,6 +476,15 @@
         <location filename="../../src/customize/page/settingspage.cpp" line="54"/>
         <source>Основные настройки</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Translation</name>
+    <message>
+        <location filename="../../src/common/translation.cpp" line="35"/>
+        <location filename="../../src/common/translation.cpp" line="118"/>
+        <source>English</source>
+        <translation>Русский</translation>
     </message>
 </context>
 </TS>

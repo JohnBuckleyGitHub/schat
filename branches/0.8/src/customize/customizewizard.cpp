@@ -54,7 +54,7 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   m_translation->setSearch(QApplication::applicationDirPath() + "/translations");
   m_translation->load(m_settings->getString("Translation"));
 
-  setButtonText(QWizard::CustomButton1, tr("О Программе"));
+  setButtonText(QWizard::CustomButton1, tr("About"));
 
   setPage(Page_Intro,    new IntroPage(this));
   setPage(Page_Select,   new SelectPage(this));
@@ -70,7 +70,7 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   connect(this, SIGNAL(rejected()), SLOT(close()));
 
   setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
-  setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
+  setWindowTitle(QApplication::applicationName() + " Customize");
   setWizardStyle(QWizard::ModernStyle);
 
   connect(this, SIGNAL(customButtonClicked(int)), SLOT(customButtonClicked(int)));
