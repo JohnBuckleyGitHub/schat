@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,31 +29,26 @@ NsisPage::NsisPage(QWidget *parent)
 {
   m_settings = settings;
 
-  setTitle(tr("Дополнительные настройки инсталлятора"));
-  setSubTitle(tr("Переопределение дополнительных настроек инсталлятора"));
+  setTitle(tr("Configuration installer"));
+  setSubTitle(tr("Overriding the settings the installer"));
   setCommitPage(true);
 
-  m_desktop = new QCheckBox(tr("&Рабочий стол"), this);
+  m_desktop = new QCheckBox(tr("Desktop"), this);
   m_desktop->setChecked(m_settings->getBool("NsisDesktop"));
-  m_desktop->setToolTip(tr("Создать ярлык на рабочем столе"));
 
-  m_quickLaunch = new QCheckBox(tr("&Быстрый запуск"), this);
+  m_quickLaunch = new QCheckBox(tr("Quick Launch"), this);
   m_quickLaunch->setChecked(m_settings->getBool("NsisQuickLaunch"));
-  m_quickLaunch->setToolTip(tr("Создать ярлык в быстром запуске"));
 
-  m_allPrograms = new QCheckBox(tr("&Меню \"Все программы\""), this);
+  m_allPrograms = new QCheckBox(tr("Start Menu"), this);
   m_allPrograms->setChecked(m_settings->getBool("NsisAllPrograms"));
-  m_allPrograms->setToolTip(tr("Создать группу в меню \"Все программы\""));
 
-  m_autostart = new QCheckBox(tr("Добавить в &автозагрузку"), this);
+  m_autostart = new QCheckBox(tr("Add to autostart"), this);
   m_autostart->setChecked(m_settings->getBool("NsisAutostart"));
-  m_autostart->setToolTip(tr("Добавить чат в автозагрузку"));
 
-  m_autostartDaemon = new QCheckBox(tr("Добавить &сервер в автозагрузку"), this);
+  m_autostartDaemon = new QCheckBox(tr("Add server to autostart"), this);
   m_autostartDaemon->setChecked(m_settings->getBool("NsisAutostartDaemon"));
-  m_autostartDaemon->setToolTip(tr("Добавить сервер в автозагрузку,\nбудет доступно только если при\nустановке выбран сервер"));
 
-  QGroupBox *group = new QGroupBox(tr("Опции инсталлятора"), this);
+  QGroupBox *group = new QGroupBox(tr("Options installer"), this);
   group->setEnabled(!m_settings->dist());
   QVBoxLayout *groupLay = new QVBoxLayout(group);
   groupLay->addWidget(m_desktop);
@@ -63,9 +58,9 @@ NsisPage::NsisPage(QWidget *parent)
   groupLay->addWidget(m_autostartDaemon);
 
   m_nsis = new QLineEdit(m_settings->getString("MakensisFile"), this);
-  m_button = new QPushButton(tr("Обзор..."), this);
+  m_button = new QPushButton(tr("Browse..."), this);
 
-  QGroupBox *nsisGroup = new QGroupBox(tr("Путь к NSIS"), this);
+  QGroupBox *nsisGroup = new QGroupBox(tr("Path to NSIS"), this);
   QHBoxLayout *nsisLay = new QHBoxLayout(nsisGroup);
   nsisLay->addWidget(m_nsis);
   nsisLay->addWidget(m_button);
@@ -103,7 +98,7 @@ bool NsisPage::validatePage()
  */
 void NsisPage::getOpenFileName()
 {
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Путь к компилятору NSIS"), m_nsis->text(), tr("Исполняемые файлы (*.exe)"));
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Path to the NSIS compiler"), m_nsis->text(), tr("Executables (*.exe)"));
 
   if (!fileName.isEmpty())
     m_nsis->setText(QDir::toNativeSeparators(fileName));

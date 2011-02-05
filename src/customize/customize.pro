@@ -65,6 +65,7 @@ contains( SCHAT_STATIC, 1 ) {
 
 DEFINES += SCHAT_NO_UPDATE_WIDGET
 
+TRANSLATIONS += ../../data/translations/customize_en.ts
 TRANSLATIONS += ../../data/translations/customize_ru.ts
 CODECFORTR = UTF-8
 
