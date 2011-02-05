@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,29 +29,25 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
   m_settings = settings;
 
-  setTitle(tr("Переопределение настроек по умолчанию"));
-  setSubTitle(tr("Выберите какие основные настройки нужно переопределить"));
+  setTitle(tr("Overriding default settings"));
+  setSubTitle(tr("Select options to override the default settings"));
 
-  m_overrideNetwork = new QCheckBox(tr("&Файл сети"), this);
-  m_overrideNetwork->setToolTip(tr("Переопределить используемый по умолчанию файл сети"));
+  m_overrideNetwork = new QCheckBox(tr("Network:"), this);
   m_overrideNetwork->setChecked(m_settings->getBool("OverrideNetwork"));
   m_network = new QComboBox(this);
 
-  m_overrideEmoticons = new QCheckBox(tr("&Тема смайликов"), this);
-  m_overrideEmoticons->setToolTip(tr("Переопределить используемую по умолчанию тему смайликов\nВНИМАНИЕ: установка выбранной темы должна поддерживаться инсталлятором"));
+  m_overrideEmoticons = new QCheckBox(tr("Emoticons:"), this);
   m_overrideEmoticons->setChecked(m_settings->getBool("OverrideEmoticons"));
   m_emoticons = new QComboBox(this);
 
-  m_overrideMirror = new QCheckBox(tr("&Зеркало обновлений"), this);
-  m_overrideMirror->setToolTip(tr("Установить альтернативный адрес источника обновлений"));
+  m_overrideMirror = new QCheckBox(tr("Mirror updates:"), this);
   m_overrideMirror->setChecked(m_settings->getBool("OverrideMirror"));
   m_mirror = new QLineEdit(m_settings->getString("MirrorUrl"), this);
 
-  m_autoDownload = new QCheckBox(tr("Автоматически загружать &обновления"), this);
-  m_autoDownload->setToolTip(tr("Включить автоматическую загрузку обновлений по умолчанию"));
+  m_autoDownload = new QCheckBox(tr("Automatically download updates"), this);
   m_autoDownload->setChecked(m_settings->getBool("AutoDownloadUpdates"));
 
-  QGroupBox *group = new QGroupBox(tr("Основные настройки"), this);
+  QGroupBox *group = new QGroupBox(tr("Main settings"), this);
   QGridLayout *groupLay = new QGridLayout(group);
   groupLay->addWidget(m_overrideNetwork, 0, 0);
   groupLay->addWidget(m_network, 0, 1);

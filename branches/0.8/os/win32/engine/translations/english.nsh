@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
@@ -26,8 +26,8 @@ ${L} STR100                 "Shortcuts:"
 ${L} STR101                 "Desktop"
 ${L} STR102                 "Quick Launch"
 ${L} STR103                 "Start Menu"
-${L} STR104                 "To add in autostart"
-${L} STR105                 "To add daemon in autostart"
+${L} STR104                 "Add to autostart"
+${L} STR105                 "Add server to autostart"
 ${L} STR200                 "Select additional tasks"
 ${L} STR300                 "Uninstall"
 ${L} STR301                 "Management of a server"
