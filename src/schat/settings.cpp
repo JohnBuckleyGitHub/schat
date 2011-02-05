@@ -333,6 +333,9 @@ void Settings::read()
   m_profile->setByeMsg(m_settings->value("Bye",    "").toString());
   m_settings->endGroup();
 
+  if (m_profile->nick().isEmpty())
+    setBool("FirstRun", true);
+
   if (getInt("Profile/MaxRecentItems") < 0)
     setInt("Profile/MaxRecentItems", 0);
   NickEdit::modifyRecentList("Profile/RecentNicks",     m_profile->nick(), false);
