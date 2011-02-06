@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ Network::Network(QObject *parent)
 /*!
  * \brief Конструктор класса Network.
  *
- * \param path Путь в котором будут икаться файлы сети.
+ * \param paths  Пути в которых будут икаться файлы сети.
  * \param parent Указатель на родительский объект.
  */
 Network::Network(const QStringList &paths, QObject *parent)
@@ -79,7 +79,7 @@ bool Network::fromConfig(const QString &s)
 /*!
  * Читает файл сети.
  *
- * \param file Имя файла без пути.
+ * \param f Имя файла без пути.
  */
 bool Network::fromFile(const QString &f)
 {
