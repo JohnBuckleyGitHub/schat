@@ -148,7 +148,7 @@ void UserItem::setTab(PrivateTab *tab)
 /*!
  * Обновление информации о пользователе.
  *
- * \param Новый профиль.
+ * \param profile Новый профиль.
  */
 void UserItem::update(const AbstractProfile &profile)
 {
@@ -292,7 +292,8 @@ UserViewPrivate::~UserViewPrivate()
 /*!
  * Выполняет поиск пользователя в модели.
  *
- * \param nick Ник пользователя.
+ * \param nick  Ник пользователя.
+ * \param flags Опции поиска.
  * \return UserItem в случае успешного поиска, иначе 0.
  */
 UserItem* UserViewPrivate::item(const QString &nick, Qt::MatchFlags flags) const

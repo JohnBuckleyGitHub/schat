@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,9 +36,10 @@ UserUnit::UserUnit()
 
 /*!
  * \brief Конструктор класса UserUnit, полностью инициализирующий данные.
- * \param list Стандартный список, содержащий в себе полные данные пользователя.
- * \param service Указатель на сервис клиента.
- * \param numeric номер сервера к которому подключен клиент.
+ * \param list        Стандартный список, содержащий в себе полные данные пользователя.
+ * \param floodLimits Опции антифлуд защиты.
+ * \param service     Указатель на сервис клиента.
+ * \param numeric     Номер сервера к которому подключен клиент.
  */
 UserUnit::UserUnit(const QStringList &list, const FloodLimits &floodLimits, DaemonService *service, quint8 numeric)
   : m_profile(new AbstractProfile(list)),
