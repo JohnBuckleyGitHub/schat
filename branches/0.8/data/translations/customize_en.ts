@@ -367,23 +367,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="39"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="38"/>
         <source>Emoticons:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="43"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="42"/>
         <source>Mirror updates:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="47"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="46"/>
         <source>Automatically download updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="50"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="49"/>
         <source>Main settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="81"/>
+        <source>No network is selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="81"/>
+        <source>Need to create your network file and select it on this page of the wizard.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="82"/>
+        <source>More information</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
