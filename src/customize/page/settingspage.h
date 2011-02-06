@@ -23,6 +23,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QLabel;
 class QLineEdit;
 class WizardSettings;
 
@@ -44,9 +45,9 @@ private:
   QCheckBox *m_autoDownload;
   QCheckBox *m_overrideEmoticons;
   QCheckBox *m_overrideMirror;
-  QCheckBox *m_overrideNetwork;
   QComboBox *m_emoticons;
   QComboBox *m_network;
+  QLabel *m_overrideNetwork;
   QLineEdit *m_mirror;
   WizardSettings *m_settings;
 };

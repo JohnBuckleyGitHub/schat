@@ -368,24 +368,39 @@
         <translation>Сеть:</translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="39"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="38"/>
         <source>Emoticons:</source>
         <translation>Смайлики:</translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="43"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="42"/>
         <source>Mirror updates:</source>
         <translation>Зеркало обновлений:</translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="47"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="46"/>
         <source>Automatically download updates</source>
         <translation>Автоматически загружать обновления</translation>
     </message>
     <message>
-        <location filename="../../src/customize/page/settingspage.cpp" line="50"/>
+        <location filename="../../src/customize/page/settingspage.cpp" line="49"/>
         <source>Main settings</source>
         <translation>Основные настройки</translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="81"/>
+        <source>No network is selected</source>
+        <translation>Не выбран файл сети</translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="81"/>
+        <source>Need to create your network file and select it on this page of the wizard.</source>
+        <translation>Необходимо создать свой файл сети и выбрать его на этой странице мастера.</translation>
+    </message>
+    <message>
+        <location filename="../../src/customize/page/settingspage.cpp" line="82"/>
+        <source>More information</source>
+        <translation>Больше информации</translation>
     </message>
 </context>
 <context>
