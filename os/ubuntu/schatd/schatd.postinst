@@ -10,6 +10,8 @@ if [ "$1" = "configure" ]; then
   chown schatd:schatd /var/lib/schatd
 fi
 
+killall /usr/sbin/schatd || true
+
 #DEBHELPER#
 
 exit 0
