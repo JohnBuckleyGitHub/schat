@@ -80,17 +80,18 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
 
 /*!
  * Добавления события подключения нового пользователя.
- * Пользователь добавляется в очередь, для объединения этих событий в одно.
  */
 void MainChannel::addNewUser(quint8 gender, const QString &nick)
 {
-  m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
+  if (SimpleSettings->getBool("ServiceMessages"))
+    m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
 }
 
 
 void MainChannel::addUserLeft(quint8 gender, const QString &nick, const QString &bye)
 {
-  m_view->addServiceMsg(ChatView::statusUserLeft(gender, nick, bye));
+  if (SimpleSettings->getBool("ServiceMessages"))
+    m_view->addServiceMsg(ChatView::statusUserLeft(gender, nick, bye));
 }
 
 

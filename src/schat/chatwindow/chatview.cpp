@@ -47,7 +47,6 @@
 ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
   : empty(true),
   q(parent),
-  statusMessages(0),
   loaded(false),
   chatStyle(styleName),
   chatStyleVariant(styleVariant)
@@ -55,7 +54,6 @@ ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleV
 ChatViewPrivate::ChatViewPrivate(ChatView *parent)
   : empty(true),
   q(parent),
-  statusMessages(0)
 #endif
 {
   #ifndef SCHAT_NO_WEBKIT
@@ -203,11 +201,6 @@ ChatView::~ChatView()
   #endif
 }
 
-
-bool ChatView::allowStatusMessages() const
-{
-  return (bool) d->statusMessages;
-}
 
 
 QString ChatView::channel() const
@@ -427,21 +420,6 @@ void ChatView::scroll()
 
 
 /*!
- * Добавляет пункт в контекстное меню для включения/выключения статусных сообщений.
- */
-void ChatView::setAllowStatusMessages()
-{
-  if (d->statusMessages)
-    return;
-
-  d->statusMessages = new QAction(QIcon(":/images/statuses.png"), tr("Status messages"), this);
-  d->statusMessages->setCheckable(true);
-  d->statusMessages->setChecked(SimpleSettings->getBool("ServiceMessages"));
-  connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
-}
-
-
-/*!
  * Возвращает \a true в случае успешного копирования.
  */
 bool ChatView::copy()
@@ -530,10 +508,8 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addSeparator();
   menu.addAction(d->autoScroll);
-  if (d->statusMessages) {
-    menu.addAction(d->statusMessages);
-    menu.addSeparator();
-  }
+  menu.addAction(d->serviceMessages);
+  menu.addSeparator();
   menu.addAction(d->clear);
 
   #ifndef SCHAT_NO_WEBKIT
@@ -586,7 +562,7 @@ void ChatView::notify(int notify)
 }
 
 
-void ChatView::toggleStatusMessages(bool checked)
+void ChatView::toggleServiceMessages(bool checked)
 {
   SimpleSettings->setBool("ServiceMessages", checked);
 }
@@ -633,6 +609,11 @@ void ChatView::createActions()
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
+  d->serviceMessages = new QAction(QIcon(":/images/balloon-white.png"), "", this);
+  d->serviceMessages->setCheckable(true);
+  d->serviceMessages->setChecked(SimpleSettings->getBool("ServiceMessages"));
+  connect(d->serviceMessages, SIGNAL(toggled(bool)), SLOT(toggleServiceMessages(bool)));
+
   d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), "", this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
@@ -650,11 +631,9 @@ void ChatView::createActions()
 void ChatView::retranslateUi()
 {
   d->autoScroll->setText(tr("Autoscroll"));
+  d->serviceMessages->setText(tr("Service messages"));
   d->copy->setText(tr("&Copy"));
   d->clear->setText(tr("Clear"));
-
-  if (d->statusMessages)
-    d->statusMessages->setText(tr("Status messages"));
 
   #ifdef SCHAT_NO_WEBKIT
   d->selectAll->setText(tr("Select All"));

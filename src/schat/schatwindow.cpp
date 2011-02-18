@@ -1415,7 +1415,7 @@ void SChatWindow::userLeave(const QString &nick, const QString &bye, quint8 echo
 {
   if (d->users->isUser(nick)) {
 
-    if (echo == 1) {
+    if (echo == 1 && d->pref->getBool("ServiceMessages")) {
       AbstractProfile profile(d->users->profile(nick));
       PrivateTab *tab = d->users->privateTab(nick, false);
       if (tab)
