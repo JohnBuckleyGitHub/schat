@@ -394,7 +394,7 @@ bool UserView::add(const AbstractProfile &profile, quint8 echo)
     item->setTab(tab);
     item->update(profile);
 
-    if (echo == 1)
+    if (echo == 1 && SimpleSettings->getBool("ServiceMessages"))
       tab->msg(ChatView::statusNewUser(profile.genderNum(), nick));
   }
 

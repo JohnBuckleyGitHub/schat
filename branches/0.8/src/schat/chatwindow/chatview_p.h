@@ -46,7 +46,7 @@ public:
   QAction *autoScroll;
   QAction *clear;
   QAction *copy;
-  QAction *statusMessages;
+  QAction *serviceMessages;
   QPointer<ChannelLog> channelLog;
   QString channel;
 

@@ -97,74 +97,73 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="224"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="222"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="226"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="224"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is now known as %2</source>
         <comment>Male</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="239"/>
+        <source>%1 entered chat</source>
+        <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/chatwindow/chatview.cpp" line="241"/>
         <source>%1 entered chat</source>
-        <comment>Female</comment>
+        <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="243"/>
-        <source>%1 entered chat</source>
-        <comment>Male</comment>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="260"/>
+        <source>%1 left the chat%2</source>
+        <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/chatwindow/chatview.cpp" line="262"/>
         <source>%1 left the chat%2</source>
-        <comment>Female</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="264"/>
-        <source>%1 left the chat%2</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="280"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="278"/>
         <source>Service message:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="432"/>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="652"/>
-        <source>Status messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="503"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="486"/>
         <source>Copy &amp;link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="647"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="633"/>
         <source>Autoscroll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="648"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="634"/>
+        <source>Service messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="635"/>
         <source>&amp;Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="649"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="636"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/chatwindow/chatview.cpp" line="655"/>
+        <location filename="../../src/schat/chatwindow/chatview.cpp" line="639"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -327,17 +326,17 @@
 <context>
     <name>MainChannel</name>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="225"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="226"/>
         <source>Welcome</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="230"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="231"/>
         <source>Main (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/mainchannel.cpp" line="232"/>
+        <location filename="../../src/schat/mainchannel.cpp" line="233"/>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
@@ -505,22 +504,22 @@
 <context>
     <name>NickEdit</name>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="270"/>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="268"/>
         <source>Male</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="271"/>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="269"/>
         <source>Female</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="272"/>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="270"/>
         <source>Sex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/nickedit.cpp" line="276"/>
+        <location filename="../../src/schat/widget/nickedit.cpp" line="274"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
@@ -632,7 +631,7 @@
 <context>
     <name>QuickUserSearch</name>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="268"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="269"/>
         <source>Search...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -821,31 +820,31 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="435"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="436"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="613"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="437"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="614"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
         <source>Underline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="438"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="615"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
         <source>Strikeout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="440"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="598"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="600"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
@@ -861,7 +860,7 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="444"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="617"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="619"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -872,7 +871,7 @@
     </message>
     <message>
         <location filename="../../src/schat/widget/sendwidget.cpp" line="448"/>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="618"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="620"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
@@ -887,62 +886,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="597"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="599"/>
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="599"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="601"/>
         <source>About Simple Chat...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="600"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="602"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="603"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
         <source>Personal data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="604"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
         <source>Network...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="605"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
         <source>Interface...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="606"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
         <source>Emoticons...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="607"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
         <source>Sounds...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="608"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
         <source>Notifications...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="609"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="611"/>
         <source>Statuses...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="610"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="612"/>
         <source>Others...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/sendwidget.cpp" line="616"/>
+        <location filename="../../src/schat/widget/sendwidget.cpp" line="618"/>
         <source>Add emoticon</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1240,87 +1239,87 @@ File size: %1</source>
 <context>
     <name>UserView</name>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="83"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="84"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="88"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="89"/>
         <source>Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="90"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="91"/>
         <source>Client:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="92"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="93"/>
         <source>Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="95"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="96"/>
         <source>Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="97"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="98"/>
         <source>Away</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="99"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="100"/>
         <source>DND</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="101"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="102"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="103"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="104"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="626"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="628"/>
         <source>Personal data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="628"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="630"/>
         <source>Private message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="630"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="632"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="635"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="637"/>
         <source>Nick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="638"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="640"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="640"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="642"/>
         <source>Client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="641"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="643"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/widget/userview.cpp" line="644"/>
+        <location filename="../../src/schat/widget/userview.cpp" line="646"/>
         <source>Insert nick</source>
         <translation type="unfinished"></translation>
     </message>
