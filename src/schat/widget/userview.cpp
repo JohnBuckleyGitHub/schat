@@ -627,7 +627,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
     if (nick == d->profile->nick())
       profileAction = menu.addAction(QIcon(":/images/profile.png"), tr("Personal data..."));
     else
-      privateMsgAction = menu.addAction(QIcon(":/images/im-status-message-edit.png"), tr("Private message"));
+      privateMsgAction = menu.addAction(QIcon(":/images/balloon.png"), tr("Private message"));
 
     QMenu copyMenu(tr("Copy"), this);
     copyMenu.setIcon(SimpleChatApp::iconFromTheme("edit-copy"));

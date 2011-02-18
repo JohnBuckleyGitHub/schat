@@ -12,6 +12,8 @@
   <file>images/arrow-down.png</file>
   <file>images/arrow-right.png</file>
   <file>images/arrow-up.png</file>
+  <file>images/balloon.png</file>
+  <file>images/balloon-white.png</file>
   <file>images/book.png</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
@@ -37,7 +39,6 @@
   <file>images/go-jump-locationbar-v.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
-  <file>images/im-status-message-edit.png</file>
   <file>images/load.gif</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
@@ -45,7 +46,6 @@
   <file>images/network_connect.png</file>
   <file>images/network_disconnect.png</file>
   <file>images/note2.png</file>
-  <file>images/notice.png</file>
   <file>images/ok2.png</file>
   <file>images/player_play.png</file>
   <file>images/profile.png</file>

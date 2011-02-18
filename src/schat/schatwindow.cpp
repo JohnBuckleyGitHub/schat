@@ -187,7 +187,7 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
 
     if (!tab->notice()) {
       tab->notice(true);
-      tabs->setTabIcon(index, QIcon(":/images/notice.png"));
+      tabs->setTabIcon(index, QIcon(":/images/balloon.png"));
       tray->notice(true);
     }
     return true;
@@ -364,7 +364,7 @@ void SChatWindowPrivate::displayStatus(quint32 status, const QString &nick)
   if (!users->isUser(nick))
     return;
 
-  if (!pref->getBool("StatusMessages"))
+  if (!pref->getBool("ServiceMessages"))
     return;
 
   QString html;

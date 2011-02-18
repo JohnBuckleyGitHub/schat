@@ -212,7 +212,7 @@ void TrayIcon::displayMessage(Message message, bool force)
 void TrayIcon::init()
 {
   setToolTip(QApplication::applicationName() + " " + QApplication::applicationVersion());
-  m_noticeIcon = QIcon(":/images/notice.png");
+  m_noticeIcon = QIcon(":/images/balloon.png");
   m_timer = new QTimer(this);
   m_timer->setInterval(700);
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
