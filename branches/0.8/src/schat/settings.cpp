@@ -229,7 +229,7 @@ void Settings::read()
   setBool("PopupAutoClose",         true);
   setBool("NoPopupAutoCloseInAway", true);
   setBool("CompactGenderWidget",    false);
-  setBool("StatusMessages",         true);
+  setBool("ServiceMessages",        true);
   setBool("Maximized",              false);
   setInt("AutoAwayTime",            10);
   setInt("PopupAutoCloseTime",      10);

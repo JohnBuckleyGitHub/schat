@@ -436,7 +436,7 @@ void ChatView::setAllowStatusMessages()
 
   d->statusMessages = new QAction(QIcon(":/images/statuses.png"), tr("Status messages"), this);
   d->statusMessages->setCheckable(true);
-  d->statusMessages->setChecked(SimpleSettings->getBool("StatusMessages"));
+  d->statusMessages->setChecked(SimpleSettings->getBool("ServiceMessages"));
   connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
 }
 
@@ -588,7 +588,7 @@ void ChatView::notify(int notify)
 
 void ChatView::toggleStatusMessages(bool checked)
 {
-  SimpleSettings->setBool("StatusMessages", checked);
+  SimpleSettings->setBool("ServiceMessages", checked);
 }
 
 
