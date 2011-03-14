@@ -52,8 +52,8 @@ ${def} OPT_ALLPROGRAMS     1
 ${def} OPT_AUTOSTART       1
 ${def} OPT_AUTODAEMONSTART 0
 
-${def} SCHAT_QTDIR         "C:\Qt\4.7.1"
-${def} SCHAT_QT_BINDIR     "C:\Qt\4.7.1\bin"
+${def} SCHAT_QTDIR         "C:\Qt\${SCHAT_QT_VERSION}"
+${def} SCHAT_QT_BINDIR     "C:\Qt\${SCHAT_QT_VERSION}\bin"
 ${def} SCHAT_BINDIR        "..\..\out\release"
 ${def} SCHAT_DATADIR       "..\..\data"
 ${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
