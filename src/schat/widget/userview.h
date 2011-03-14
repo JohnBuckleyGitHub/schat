@@ -45,15 +45,18 @@ public:
   PrivateTab* privateTab(bool create = true);
   static QString userToolTip(const AbstractProfile &profile);
   void offline();
+  void pickUp();
   void setStatus(quint32 status);
   void setTab(PrivateTab *tab);
   void update(const AbstractProfile &profile);
 
 private:
   QIcon drawIcon() const;
+  void setSortData();
   void updateIcon();
   void updateToolTip();
 
+  bool m_upped;               ///< true если итем закреплён вверху списка.
   AbstractProfile m_profile;  ///< Профиль пользователя.
   QPointer<PrivateTab> m_tab; ///< Приват ассоциированный с этим пользователем.
   QTabWidget *m_tabs;         ///< Виджет хранящий приваты.

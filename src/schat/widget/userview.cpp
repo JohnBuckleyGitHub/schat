@@ -37,12 +37,14 @@
  */
 UserItem::UserItem(const AbstractProfile &profile, QTabWidget *tabs)
   : QStandardItem(profile.nick()),
+  m_upped(false),
   m_profile(profile),
   m_tab(0),
   m_tabs(tabs)
 {
   updateIcon();
   updateToolTip();
+  setSortData();
 }
 
 
@@ -119,6 +121,12 @@ void UserItem::offline()
 }
 
 
+void UserItem::pickUp()
+{
+  m_upped = true;
+  setSortData();
+}
+
 /*!
  * Установка нового статуса.
  *
@@ -159,6 +167,7 @@ void UserItem::update(const AbstractProfile &profile)
   m_profile = profile;
   updateIcon();
   updateToolTip();
+  setSortData();
 }
 
 
@@ -182,6 +191,15 @@ QIcon UserItem::drawIcon() const
 
   painter.end();
   return QIcon(pixmap);
+}
+
+
+void UserItem::setSortData()
+{
+  if (m_upped)
+    setData("!" + m_profile.nick().toLower());
+  else
+    setData("5" + m_profile.nick().toLower());
 }
 
 
@@ -281,6 +299,7 @@ UserViewPrivate::UserViewPrivate(const AbstractProfile *profile, QTabWidget *tab
   quickUserSearch(0)
 {
   sortTimer.setInterval(300);
+  model.setSortRole(Qt::UserRole + 1);
 }
 
 
@@ -382,9 +401,10 @@ bool UserView::add(const AbstractProfile &profile, quint8 echo)
 
   // Свой ник выделяем жирным и отключаем эхо.
   if (nick == d->profile->nick()) {
-    QFont font;
+    QFont font = item->font();
     font.setBold(true);
     item->setFont(font);
+    item->pickUp();
     echo = 0;
   }
 
