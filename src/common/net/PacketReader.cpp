@@ -16,17 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "net/PacketReader.h"
+#include "net/Protocol.h"
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+PacketReader::PacketReader(QDataStream *stream)
+  : m_stream(stream),
+    m_device(stream->device())
+{
+  m_device->seek(0);
+  quint8 reserved = 0;
+  *stream >> m_type >> m_subtype >> reserved >> m_headerOption;
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+  if (m_headerOption & Protocol::SenderField)
+    m_sender = id();
 
-#endif /*VERSION_H_*/
+  if (m_headerOption & Protocol::DestinationField)
+    m_dest = id();
+}

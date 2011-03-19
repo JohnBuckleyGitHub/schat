@@ -16,17 +16,44 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QAction>
+#include <QEvent>
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "ui/tabs/AbstractTab.h"
+#include "ui/TabWidget.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+AbstractTab::AbstractTab(const QByteArray &id, TabType type, TabWidget *parent)
+  : QWidget(parent)
+  , m_tabs(parent)
+  , m_id(id)
+  , m_type(type)
+{
+  m_action = new QAction(this);
+  connect(m_action, SIGNAL(triggered(bool)), SIGNAL(actionTriggered(bool)));
+}
 
-#endif /*VERSION_H_*/
+
+void AbstractTab::setOnline(bool online)
+{
+  int index = m_tabs->indexOf(this);
+  if (index == -1)
+    return;
+
+  if (online) {
+    m_tabs->setTabIcon(index, m_icon);
+  }
+}
+
+
+void AbstractTab::retranslateUi()
+{
+}
+
+
+void AbstractTab::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}

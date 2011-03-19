@@ -16,17 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef USERS_H_
+#define USERS_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "net/Packet.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class User;
 
-#endif /*VERSION_H_*/
+/*!
+ * - 01 byte  - options.
+ * - 01 byte  - reserved.
+ * - not fixed length (utf8) - Nickname.
+ */
+class UserData : public Packet
+{
+public:
+  UserData(PacketReader *reader);
+  UserData(User *user);
+  UserData(User *user, const QByteArray &channelId);
+  bool isValid() const;
+  inline int options() const { return m_options; }
+  User *user() { return m_user; }
+  void body();
+
+private:
+  quint8 m_options;
+  User *m_user;
+};
+
+#endif /* USERS_H_ */

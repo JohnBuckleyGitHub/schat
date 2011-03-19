@@ -16,17 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef SERVERCHANNEL_H_
+#define SERVERCHANNEL_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "Channel.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class ServerChannel: public Channel
+{
+public:
+  ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent = false);
+  ~ServerChannel();
+  inline QString normalName() const { return m_normalName; }
+  inline void setPermanent(bool permanent) { m_permanent = permanent; }
+  inline bool isPermanent() const { return m_permanent; }
 
-#endif /*VERSION_H_*/
+private:
+  bool m_permanent;     ///< Канал не будет удалён если из него выйдут все пользователи.
+  QString m_normalName; ///< Нормализованное имя канала.
+};
+
+#endif /* SERVERCHANNEL_H_ */

@@ -1,25 +1,3 @@
-#Fri Jan 02 18:15:46 MSK 2009
+#Fri Jan 07 05:36:57 ICT 2011
 eclipse.preferences.version=1
-encoding//os/win32/custom/setup-core.nsi=WINDOWS-1251
-encoding//os/win32/custom/setup-runtime.nsi=WINDOWS-1251
-encoding//os/win32/custom/setup.nsi=WINDOWS-1251
-encoding//os/win32/engine/core.nsh=WINDOWS-1251
-encoding//os/win32/engine/default.nsh=WINDOWS-1251
-encoding//os/win32/engine/page-options.nsh=WINDOWS-1251
-encoding//os/win32/engine/schat.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Core.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Customize.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Daemon.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Emoticons.Kolobok.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Emoticons.Simple.nsh=WINDOWS-1251
-encoding//os/win32/engine/sections/Qt.nsh=WINDOWS-1251
-encoding//os/win32/engine/translations.nsh=WINDOWS-1251
-encoding//os/win32/engine/translations/english.nsh=WINDOWS-1251
-encoding//os/win32/engine/translations/russian.nsh=WINDOWS-1251
-encoding//os/win32/engine/update.nsh=WINDOWS-1251
-encoding//os/win32/setup-core.nsi=WINDOWS-1251
-encoding//os/win32/setup-customize.nsi=WINDOWS-1251
-encoding//os/win32/setup-runtime.nsi=WINDOWS-1251
-encoding//os/win32/setup.nsi=WINDOWS-1251
 encoding/<project>=UTF-8

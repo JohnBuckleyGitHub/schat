@@ -16,17 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef DAEMONAPP_H_
+#define DAEMONAPP_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+class DaemonApp {
+public:
+  DaemonApp(int &argc, char **argv);
+  ~DaemonApp();
+};
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
-
-#endif /*VERSION_H_*/
+#endif /* DAEMONAPP_H_ */

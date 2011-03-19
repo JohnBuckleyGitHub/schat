@@ -16,17 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef TRANSPORTWRITER_H_
+#define TRANSPORTWRITER_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include <QDataStream>
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+#include "net/Protocol.h"
 
-#endif /*VERSION_H_*/
+/*!
+ * Класс, выполняющий запись транспортного пакета.
+ */
+class TransportWriter
+{
+public:
+  TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0, quint8 version = Protocol::V4);
+  inline QByteArray data() const
+  {
+    m_device->seek(0);
+    return m_device->peek(m_size + 4);
+  }
+
+private:
+  QIODevice *m_device; ///< output device.
+  quint32 m_size;      ///< size of packet body.
+};
+
+#endif /* TRANSPORTWRITER_H_ */

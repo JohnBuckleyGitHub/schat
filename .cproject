@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?>
 
-<cproject>
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 <storageModule moduleId="org.eclipse.cdt.core.settings">
-<cconfiguration id="org.eclipse.cdt.core.default.config.1745226493">
-<storageModule buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider" id="org.eclipse.cdt.core.default.config.1745226493" moduleId="org.eclipse.cdt.core.settings" name="Configuration">
+<cconfiguration id="org.eclipse.cdt.core.default.config.752166051">
+<storageModule buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider" id="org.eclipse.cdt.core.default.config.752166051" moduleId="org.eclipse.cdt.core.settings" name="Configuration">
 <externalSettings/>
 <extensions>
 <extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -12,9 +12,6 @@
 </extensions>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
-
-<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
-
 <storageModule moduleId="scannerConfiguration">
 <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
@@ -73,7 +70,7 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+<runAction arguments="-c 'gcc -E -P -v -dD &quot;${plugin_state_location}/${specs_file}&quot;'" command="sh" useDefault="true"/>
 <parser enabled="true"/>
 </scannerInfoProvider>
 </profile>
@@ -83,7 +80,7 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+<runAction arguments="-c 'g++ -E -P -v -dD &quot;${plugin_state_location}/specs.cpp&quot;'" command="sh" useDefault="true"/>
 <parser enabled="true"/>
 </scannerInfoProvider>
 </profile>
@@ -93,38 +90,11 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+<runAction arguments="-c 'gcc -E -P -v -dD &quot;${plugin_state_location}/specs.c&quot;'" command="sh" useDefault="true"/>
 <parser enabled="true"/>
 </scannerInfoProvider>
 </profile>
 </storageModule>
-
-
-
-
-
-
-
-
-<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
 <target name="Qt Release Build" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
@@ -146,40 +116,31 @@
 </buildTargets>
 </storageModule>
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
-<pathentry base-path="C:/qt/2009.05/qt/include" include="" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="ActiveQt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="phonon" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="phonon_compat" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="Qt" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="Qt3Support" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtAssistant" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtCore" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDBus" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDeclarative" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtDesigner" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtGui" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtHelp" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtMultimedia" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtNetwork" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtOpenGL" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtOpenVG" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtScript" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtScriptTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtSql" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtSvg" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtTest" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtUiTools" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtWebKit" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtXml" kind="inc" path="" system="true"/>
-<pathentry base-path="C:/qt/2009.05/qt/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/common" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/schat" kind="inc" path="" system="true"/>
-<pathentry include="C:/Qt/2009.05/mingw/include" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/customize" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/3rdparty/qtsingleapplication/src" kind="inc" path="" system="true"/>
-<pathentry base-path="schat" include="src/3rdparty/qtservice/src" kind="inc" path="" system="true"/>
-<pathentry kind="src" path=""/>
-<pathentry kind="out" path=""/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="ActiveQt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="phonon" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="phonon_compat" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="Qt" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="Qt3Support" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtCore" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtDBus" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtDeclarative" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtDesigner" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtGui" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtHelp" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtMultimedia" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtNetwork" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtOpenGL" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtOpenVG" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtScript" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtScriptTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtSql" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtSvg" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtTest" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtUiTools" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtWebKit" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtXml" kind="inc" path="" system="true"/>
+<pathentry base-path="C:/Qt/2010.05/qt/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
 </storageModule>
 </cconfiguration>
 </storageModule>

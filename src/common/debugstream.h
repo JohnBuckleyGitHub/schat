@@ -16,17 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#if defined(SCHAT_DEBUG) && !defined(SCHAT_DEBUG_STREAM)
+  #define SCHAT_DEBUG_STREAM(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
+  #include <QDebug>
+  #include <QTime>
+#else
+  #define SCHAT_DEBUG_STREAM(x)
+#endif
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
-
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
-
-#endif /*VERSION_H_*/
+#if defined(SCHAT_DISABLE_DEBUG) && defined(SCHAT_DEBUG_STREAM)
+  #undef SCHAT_DEBUG_STREAM
+  #define SCHAT_DEBUG_STREAM(x)
+#endif

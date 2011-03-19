@@ -16,17 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CHANNELS_H_
+#define CHANNELS_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "net/Packet.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class Channel;
 
-#endif /*VERSION_H_*/
+/*!
+ * - 20 bytes - Channel Id (SHA1).
+ * - not fixed length (utf8) - Channel Name.
+ * - not fixed length (utf8) - Channel Description.
+ * - not fixed length (utf8) - Channel Topic.
+ * - not fixed length (list of SHA1) - Channel Users.
+ */
+class JoinReply : public Packet
+{
+public:
+  JoinReply(Channel *channel);
+  JoinReply(PacketReader *reader);
+  bool isValid() const;
+  Channel *channel() { return m_channel; }
+  void body();
+
+private:
+  Channel *m_channel;
+};
+
+#endif /* CHANNELS_H_ */

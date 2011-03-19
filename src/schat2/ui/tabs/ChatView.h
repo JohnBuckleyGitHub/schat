@@ -16,17 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CHATVIEW_H_
+#define CHATVIEW_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include <QWidget>
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class ChatViewPrivate;
+class QVBoxLayout;
 
-#endif /*VERSION_H_*/
+class ChatView : public QWidget
+{
+public:
+  ChatView(QWidget *parent = 0);
+  QVBoxLayout* layout();
+  void appendRawText(const QString &text);
+
+private:
+  ChatViewPrivate *d;
+};
+
+#endif /* CHATVIEW_H_ */

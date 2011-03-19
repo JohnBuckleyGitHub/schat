@@ -16,17 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef CHATVIEWTAB_H_
+#define CHATVIEWTAB_H_
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "ui/tabs/ChatView.h"
+#include "ui/tabs/AbstractTab.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class ChatView;
 
-#endif /*VERSION_H_*/
+class ChatViewTab : public AbstractTab
+{
+  Q_OBJECT
+
+public:
+  ChatViewTab(const QByteArray &id, TabType type, TabWidget *parent);
+  void appendRawText(const QString &text);
+
+protected:
+  ChatView *m_chatView;
+};
+
+#endif /* CHATVIEWTAB_H_ */

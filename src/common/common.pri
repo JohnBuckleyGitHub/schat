@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
 DEPENDPATH += \
     . \
     ../common \
+    ../3rdparty \
 
 INCLUDEPATH += \
     . \
     ../common \
+    ../3rdparty \
 
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../tmp/$${TARGET}/debug/rcc
@@ -35,10 +37,6 @@ CONFIG(release, debug|release) {
   MOC_DIR = ../../tmp/$${TARGET}/release/moc
   OBJECTS_DIR = ../../tmp/$${TARGET}/release/obj
   DESTDIR = ../../out/release
-}
-
-contains( SCHAT_WINCE, 1 ) {
-  SCHAT_SINGLEAPP = 0
 }
 
 contains( SCHAT_SINGLEAPP, 0 ) {
@@ -59,6 +57,10 @@ contains( SCHAT_DEBUG, 1 ) {
   DEFINES += SCHAT_DEBUG
 }
 
+contains( SCHAT_USE_SSL, 0 ) {
+  DEFINES += SCHAT_NO_SSL
+}
+
 contains( SCHAT_RESOURCES, 1 ) {
   RESOURCES += ../../data/$${TARGET}.qrc
 }
@@ -71,4 +73,3 @@ contains( SCHAT_DEVEL_MODE, 1 ) {
   DEFINES += SCHAT_DEVEL_MODE
 }
 
-DEFINES += SCHAT_NO_DONATE

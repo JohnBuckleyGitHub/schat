@@ -16,17 +16,47 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QTextBrowser>
+#include <QVBoxLayout>
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "ui/tabs/ChatView.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class ChatViewPrivate
+{
+public:
+  ChatViewPrivate(ChatView *parent)
+    : q(parent)
+  {
+    browser = new QTextBrowser(q);
+    browser->setFrameShape(QFrame::NoFrame);
+    browser->document()->setDocumentMargin(2);
 
-#endif /*VERSION_H_*/
+    mainLay = new QVBoxLayout(q);
+    mainLay->addWidget(browser);
+    mainLay->setMargin(0);
+    mainLay->setSpacing(0);
+  }
+
+  ChatView *q;
+  QTextBrowser *browser;
+  QVBoxLayout *mainLay;
+};
+
+
+ChatView::ChatView(QWidget *parent)
+  : QWidget(parent)
+  , d(new ChatViewPrivate(this))
+{
+}
+
+
+QVBoxLayout* ChatView::layout()
+{
+  return d->mainLay;
+}
+
+
+void ChatView::appendRawText(const QString &text)
+{
+  d->browser->append(text);
+}

@@ -16,17 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "net/packets/auth.h"
+#include "ServerUser.h"
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
-
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
-
-#endif /*VERSION_H_*/
+ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequest *authRequest, int workerId, quint64 socketId)
+  : User()
+  , m_workerId(workerId)
+  , m_session(session)
+  , m_normalNick(normalNick)
+  , m_socketId(socketId)
+{
+  setId(id);
+  setNick(authRequest->nick());
+}

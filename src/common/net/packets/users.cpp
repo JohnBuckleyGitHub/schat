@@ -16,17 +16,40 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "net/packets/users.h"
+#include "net/PacketReader.h"
+#include "net/PacketWriter.h"
+#include "User.h"
 
-#define SCHAT_VERSION      "1.9.0 Beta"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+UserData::UserData(PacketReader *reader)
+  : Packet(reader)
+{
+  m_options = reader->get<quint8>();
+  reader->get<quint8>(); // reserved.
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+  m_user = new User();
+  m_user->setId(sender());
+  m_user->setNick(reader->text());
+}
 
-#endif /*VERSION_H_*/
+
+UserData::UserData(User *user, const QByteArray &channelId)
+  : Packet(Protocol::UserDataPacket, user->id(), channelId)
+  , m_options(0)
+  , m_user(user)
+{
+}
+
+
+bool UserData::isValid() const
+{
+  return m_user->isValid();
+}
+
+
+void UserData::body()
+{
+  m_writer->put(m_options);
+  m_writer->put(quint8(0));
+  m_writer->put(m_user->nick());
+}
