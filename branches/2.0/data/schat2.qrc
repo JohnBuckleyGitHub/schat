@@ -1,0 +1,19 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="images/channel.png">images/diagona/030.png</file>
+  <file alias="images/main-tab-menu.png">images/fugue/applications-stack.png</file>
+  <file alias="images/network-error.png">images/fugue/network-status-busy.png</file>
+  <file alias="images/offline.png">images/fugue/network-status-offline.png</file>
+  <file alias="images/online.png">images/fugue/network-status.png</file>
+  <file alias="images/plug.png">images/fugue/plug.png</file>
+  <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
+  <file alias="images/quit.png">images/crystal/exit.png</file>
+  <file alias="images/secure.png">images/fugue/lock.png</file>
+  <file alias="images/settings.png">images/diagona/086.png</file>
+  <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
+  <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
+  <file alias="images/users.png">images/fugue/users.png</file>
+  <file>images/schat16.png</file>
+  <file>images/schat16-ny.png</file>
+</qresource>
+</RCC>
