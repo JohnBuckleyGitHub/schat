@@ -31,6 +31,7 @@ class QToolButton;
 class SimpleClient;
 class SoundButton;
 class TabBar;
+class WelcomeTab;
 
 class TabWidget : public QTabWidget
 {
@@ -64,6 +65,7 @@ private:
   void createToolBars();
   void displayChannelUserCount(const QByteArray &channelId);
   void retranslateUi();
+  void showWelcome();
 
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
@@ -78,6 +80,7 @@ private:
   SimpleClient *m_client;                    ///< Клиент чата.
   SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
+  WelcomeTab *m_welcomeTab;                  ///< Вкладка приветствия.
 };
 
 #endif /* TABWIDGET_H_ */

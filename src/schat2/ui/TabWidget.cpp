@@ -30,6 +30,7 @@
 #include "ui/TabBar.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/UserView.h"
+#include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
 #include "User.h"
 
@@ -44,6 +45,9 @@ TabWidget::TabWidget(SimpleClient *client, QWidget *parent)
   #if !defined(Q_OS_MAC)
   setStyleSheet("QToolBar { margin:0px; border:0px; }");
   #endif
+
+  m_welcomeTab = new WelcomeTab(client, this);
+  addTab(m_welcomeTab, "Welcome");
 
   createToolBars();
   retranslateUi();
@@ -91,6 +95,8 @@ void TabWidget::closeTab(int index)
     removeTab(index);
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
   }
+
+  showWelcome();
 }
 
 
@@ -228,6 +234,8 @@ void TabWidget::createChannelTab(Channel *channel)
   tab->action()->setText(channel->name());
 
   connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openChannel()));
+
+  showWelcome();
 }
 
 
@@ -306,4 +314,17 @@ void TabWidget::retranslateUi()
   m_aboutAction->setText(tr("About..."));
   m_quitAction->setText(tr("Quit"));
   m_channelsMenu->setTitle(tr("Groups"));
+}
+
+
+void TabWidget::showWelcome()
+{
+  int index = indexOf(m_welcomeTab);
+
+  if (m_channels.size()) {
+    removeTab(index);
+  }
+  else {
+    addTab(m_welcomeTab, tr("Welcome"));
+  }
 }
