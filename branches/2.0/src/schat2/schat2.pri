@@ -47,6 +47,7 @@ HEADERS = \
     ui/tabs/ChatView.h \
     ui/tabs/ChatViewTab.h \
     ui/tabs/UserView.h \
+    ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
     User.h \
 
@@ -74,6 +75,7 @@ SOURCES = \
     ui/tabs/ChatView_basic.cpp \
     ui/tabs/ChatViewTab.cpp \
     ui/tabs/UserView.cpp \
+    ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
     User.cpp \
     

@@ -11,7 +11,7 @@
 
 #include "qtwin/qtwin.h"
 #include "net/SimpleClient.h"
-#include "ui/tabs/ChannelTab.h"
+#include "ui/tabs/WelcomeTab.h"
 #include "ui/StatusBar.h"
 #include "ui/TabWidget.h"
 #include "User.h"
@@ -39,9 +39,7 @@ ClientUI::ClientUI(QWidget *parent)
 
   m_url = new QLineEdit("schat://192.168.1.33:6999", this);
   m_statusBar->setUrl(m_url->text());
-  m_channelTab = new ChannelTab(QByteArray(), m_tabs);
 
-  m_tabs->addTab(m_channelTab, tr("Welcome"));
   m_send = new QLineEdit(this);
 
   setStatusBar(m_statusBar);

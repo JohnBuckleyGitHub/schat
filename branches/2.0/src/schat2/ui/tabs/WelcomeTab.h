@@ -16,48 +16,27 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ABSTRACTTAB_H_
-#define ABSTRACTTAB_H_
+#ifndef WELCOMETAB_H_
+#define WELCOMETAB_H_
 
-#include <QIcon>
-#include <QWidget>
+#include "ui/tabs/AbstractTab.h"
 
-class TabWidget;
+class QLineEdit;
+class SimpleClient;
 
-class AbstractTab : public QWidget
+class WelcomeTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
-  /// Тип виджета.
-  enum TabType {
-    UnknownType,
-    ChatViewType,
-    ChannelType,
-    PrivateType,
-    WelcomeType
-  };
+  WelcomeTab(SimpleClient *client, TabWidget *parent);
 
-  AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
-  inline QAction *action() const { return m_action; }
-  inline QByteArray id() const { return m_id; }
-  inline TabType type() const { return m_type; }
-  virtual void setOnline(bool online = true);
-
-signals:
-  void actionTriggered(bool checked = false);
-
-protected:
-  virtual void retranslateUi();
-  void changeEvent(QEvent *event);
-
-  QAction *m_action;
-  QIcon m_icon;
-  TabWidget *m_tabs;
+private slots:
+  void nickChanged(const QString &text);
 
 private:
-  QByteArray m_id;
-  TabType m_type;
+  QLineEdit *m_nickEdit;
+  SimpleClient *m_client;
 };
 
-#endif /* ABSTRACTTAB_H_ */
+#endif /* WELCOMETAB_H_ */

@@ -19,7 +19,7 @@ class QTextBrowser;
 class StatusBar;
 class QFrame;
 class TabWidget;
-class ChannelTab;
+class WelcomeTab;
 
 class ClientUI : public QMainWindow
 {
@@ -38,7 +38,6 @@ private:
   SimpleClient *m_client;
   StatusBar *m_statusBar;
   TabWidget *m_tabs;
-  ChannelTab *m_channelTab;
 };
 
 #endif /* CLIENTUI_H_ */
