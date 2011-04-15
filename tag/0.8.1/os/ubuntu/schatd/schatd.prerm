@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ -x "/etc/init.d/schatd" ]; then
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d schatd stop || exit 0
+	else
+		/etc/init.d/schatd stop || exit 0
+	fi
+	killall /usr/sbin/schatd || true
+fi
