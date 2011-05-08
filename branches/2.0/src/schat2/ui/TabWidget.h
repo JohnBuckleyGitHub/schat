@@ -25,6 +25,10 @@
 class AbstractTab;
 class Channel;
 class ChannelTab;
+class ClientMessage;
+class MessageAdapter;
+class MessageData;
+class PrivateTab;
 class QMenu;
 class QToolBar;
 class QToolButton;
@@ -33,6 +37,9 @@ class SoundButton;
 class TabBar;
 class WelcomeTab;
 
+/*!
+ * Класс, обеспечивающий отображение и управление вкладками.
+ */
 class TabWidget : public QTabWidget
 {
   Q_OBJECT
@@ -40,7 +47,9 @@ class TabWidget : public QTabWidget
 public:
   TabWidget(SimpleClient *client, QWidget *parent = 0);
   AbstractTab *widget(int index) const;
+  inline MessageAdapter *messageAdapter() { return m_messageAdapter; }
   inline TabBar *tabBar() { return m_tabBar; }
+  QByteArray currentId() const;
 
 signals:
   void requestAbout();
@@ -50,6 +59,7 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
+  void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
   void hideMainMenu();
   void openChannel();
@@ -58,18 +68,23 @@ private slots:
   void clientStateChanged(int state);
   void join(const QByteArray &channelId, const QByteArray &userId, int option = 0);
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
+  void message(int status, const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
 
 private:
+  ChannelTab *createChannelTab(const QByteArray &id);
+  PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void createChannelTab(Channel *channel);
   void createToolBars();
-  void displayChannelUserCount(const QByteArray &channelId);
+  void displayChannelUserCount(const QByteArray &id);
   void retranslateUi();
   void showWelcome();
 
+  MessageAdapter *m_messageAdapter;          ///< Адаптер отправки и получения сообщений.
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
+  QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.

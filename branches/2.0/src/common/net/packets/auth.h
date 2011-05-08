@@ -19,26 +19,20 @@
 #ifndef AUTH_H_
 #define AUTH_H_
 
-#include <QString>
+#include "net/PacketWriter.h"
 
-#include "net/Packet.h"
+class PacketReader;
 
 /*!
- * - 01 byte  - Status (AccessDenied), \sa Status.
- * - 01 byte  - Error code \sa Error.
- * or
- * - 01 byte  - Status (AccessGranted), \sa Status.
- * - 20 bytes - Server Id (SHA1).
- * - 20 bytes - Client Id (SHA1).
- * - 20 bytes - Session (SHA1).
+ * Данные ответа сервера на запрос авторизации.
  */
-class AuthReply : public Packet
+class AuthReplyData
 {
 public:
   /// Статус.
   enum Status {
-    AccessGranted = 0x11, ///< Доступ разрешён.
-    AccessDenied = 0x43   ///< Доступ запрещён.
+    AccessGranted = 71, ///< 'G' Доступ разрешён.
+    AccessDenied = 68   ///< 'D' Доступ запрещён.
   };
 
   /// Коды ошибок.
@@ -53,28 +47,103 @@ public:
     InternalServerError = 46     ///< Внутренняя ошибка сервера.
   };
 
-  AuthReply(const QByteArray &serverId, const QByteArray &clientId, const QByteArray &session);
-  AuthReply(Error error);
-  AuthReply(PacketReader *reader);
-  ~AuthReply();
-  inline int error() const { return m_error; }
-  inline int status() const { return m_status; }
-  inline QByteArray serverId() const { return m_serverId; }
-  inline QByteArray session() const { return m_session; }
-  inline QByteArray userId() const { return m_userId; }
-  void body();
+  AuthReplyData()
+  : error(0)
+  , status(0)
+  {}
 
-private:
-  QByteArray m_serverId;
-  QByteArray m_session;
-  QByteArray m_userId;
-  quint8 m_error;
-  quint8 m_status;
+  AuthReplyData(const QByteArray &serverId, const QByteArray &userId, const QByteArray &session);
+  AuthReplyData(const QByteArray &serverId, int error);
+
+  QByteArray serverId; ///< Идентификатор сервера.
+  QByteArray session;  ///< Сессия.
+  QByteArray userId;   ///< Идентификатор пользователя.
+  quint8 error;        ///< Код ошибки \sa Error.
+  quint8 status;       ///< Статус авторизации \sa Status.
 };
 
 
 /*!
- * Пакет запроса авторизации.
+ * Формирует пакет Protocol::AuthReplyPacket.
+ *
+ * - sender:  - Идентификатор сервера.
+ * - dest:    - Идентификатор, выданный сервером клиенту, в случае если статус AccessDenied это поле отсутствует.
+ * - 01 byte  - Статус аутентификации(AccessGranted или AccessDenied), \sa Status.
+ *
+ * Дальнейшие данные различны в зависимости от статуса.
+ * Если статус AccessGranted:
+ * - 21 byte  - Сессия.
+ *
+ * Если статус AccessDenied.
+ * - 01 byte  - Error code \sa Error.
+ */
+class AuthReplyWriter : public PacketWriter
+{
+public:
+  AuthReplyWriter(QDataStream *stream, const AuthReplyData &data);
+};
+
+
+/*!
+ * Читает пакет Protocol::AuthReplyPacket.
+ */
+class AuthReplyReader
+{
+public:
+  AuthReplyReader(PacketReader *reader);
+
+  AuthReplyData data;
+};
+
+
+/*!
+ * Данные запроса авторизации.
+ */
+class AuthRequestData
+{
+public:
+  /// Версия пакета.
+  enum AuthVersion {
+    V1 = 0x1
+  };
+
+  /// Тип авторизации.
+  enum AuthType {
+    Anonymous = 97,  ///< 'a' Анонимная авторизация по уникальному идентификатору.
+    Partially = 112, ///< 'p' Восстановление разорванного соединения, для авторизации используется сессия.
+    Cookie = 99,     ///< 'c' Сохранённая анонимная авторизация по ранее присвоеному долговременному Cookie.
+    Password = 80    ///< 'P' Авторизация по имени пользователя и паролю.
+  };
+
+  /// Возможности клиента.
+  enum ClientFeatures {
+    SupportRichText = 0x1 ///< Поддержка HTML текста.
+  };
+
+  AuthRequestData()
+  : features(0)
+  , authType(0)
+  , authVersion(0)
+  , maxProtoVersion(0)
+  {}
+
+  AuthRequestData(int authType, const QString &host, const QString &nick);
+  static QString genUserAgent();
+
+  QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
+  QString host;            ///< Адрес по которому клиент подключается к серверу.
+  QString nick;            ///< Ник.
+  QString userAgent;       ///< Идентификатор клиента пользователя.
+  quint32 features;        ///< Возможности клиента.
+  quint8 authType;         ///< Тип авторизации.
+  quint8 authVersion;      ///< Версия пакета.
+  quint8 language;         ///< Язык клиента.
+  quint8 maxProtoVersion;  ///< Max Supported Protocol Version.
+};
+
+
+/*!
+ * Формирует пакет Protocol::AuthRequestPacket.
  *
  * - 01 byte  - AuthVersion.
  * - 01 byte  - AuthType.
@@ -86,54 +155,22 @@ private:
  * - not fixed length (utf8) - Nickname.
  * - not fixed length (utf8) - User Agent.
  */
-class AuthRequest : public Packet
+class AuthRequestWriter : public PacketWriter
 {
 public:
-  /// Версия пакета.
-  enum AuthVersion {
-    V1 = 0x1
-  };
+  AuthRequestWriter(QDataStream *stream, const AuthRequestData &data);
+};
 
-  /// Тип авторизации.
-  enum AuthType {
-    Anonymous = 0x2A, ///< Анонимная авторизация по уникальному идентификатору.
-    Partially,        ///< Восстановление разорванного соединения, для авторизации используется сессия.
-    Cookie,           ///< Сохранённая анонимная авторизация по ранее присвоеному долговременному Cookie.
-    Password          ///< Авторизация по имени пользователя и паролю.
-  };
 
-  /// Возможности клиента.
-  enum ClientFeatures {
-    SupportRichText = 0x1 ///< Поддержка HTML текста.
-  };
+/*!
+ * Читает пакет Protocol::AuthRequestPacket.
+ */
+class AuthRequestReader
+{
+public:
+  AuthRequestReader(PacketReader *reader);
 
-  AuthRequest(PacketReader *reader);
-  AuthRequest(AuthType authType, const QString &host, const QString &nick);
-  ~AuthRequest();
-  bool isValid() const;
-  inline int authType() const { return m_authType; }
-  inline int authVersion() const { return m_authVersion; }
-  inline int features() const { return m_features; }
-  inline int language() const { return m_language; }
-  inline QByteArray uniqueId() const { return m_uniqueId; }
-  inline QString host() const { return m_host; }
-  inline QString nick() const { return m_nick; }
-  inline QString userAgent() const { return m_userAgent; }
-  static QByteArray genUniqueId();
-  static QString genUserAgent();
-  void body();
-
-private:
-  PacketReader *m_reader;    ///< Объект читающий пакет.
-  QByteArray m_uniqueId;     ///< Уникальный идентификатор клиента.
-  QString m_host;            ///< Адрес по которому клиент подключается к серверу.
-  QString m_nick;            ///< Ник.
-  QString m_userAgent;       ///< Идентификатор клиента пользователя.
-  quint32 m_features;        ///< Возможности клиента.
-  quint8 m_authType;         ///< Тип авторизации.
-  quint8 m_authVersion;      ///< Версия пакета.
-  quint8 m_language;         ///< Язык клиента.
-  quint8 m_maxProtoVersion;  ///< Max Supported Protocol Version.
+  AuthRequestData data;
 };
 
 #endif /* AUTH_H_ */

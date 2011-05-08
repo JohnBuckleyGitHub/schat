@@ -16,50 +16,73 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "debugstream.h"
 #include "net/PacketReader.h"
 #include "net/packets/message.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 
 
-Message::Message(const QString &command, const QString &message)
-  : Packet(Protocol::MessagePacket)
-  , m_command(command)
-  , m_message(message)
-  , m_options(ControlMessage)
+void MessageData::autoSetOptions()
 {
+  options = NoOptions;
+
+  if (!command.isEmpty())
+    options |= ControlOption;
+
+  if (name > 0)
+    options |= NameOption;
+
+  if (!text.isEmpty())
+    options |= TextOption;
 }
 
 
-Message::Message(const QString &message)
-  : Packet(Protocol::MessagePacket)
-  , m_message(message)
-  , m_options(GenericMessage)
+MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data)
+  : PacketWriter(stream, Protocol::MessagePacket, data.senderId, data.destId)
 {
+  put<quint8>(data.options);
+
+  if (data.options & MessageData::NameOption)
+    put<quint64>(data.name);
+
+  if (data.options & MessageData::ControlOption)
+    put(data.command);
+
+  if (data.options & MessageData::TextOption)
+    put(data.text);
 }
 
 
-Message::Message(PacketReader *reader)
-  : Packet(reader)
+MessageReader::MessageReader(PacketReader *reader)
 {
-  m_options = reader->get<quint8>();
-  if (m_options & ControlMessage)
-    m_command = reader->text();
+  data.senderId = reader->sender();
+  data.destId = reader->dest();
+  data.options = reader->get<quint8>();
 
-  m_message = reader->text();
+  if (data.options & MessageData::NameOption)
+    data.name = reader->get<quint64>();
+
+  if (data.options & MessageData::ControlOption)
+    data.command = reader->text();
+
+  if (data.options & MessageData::TextOption)
+    data.text = reader->text();
 }
 
 
-void Message::body()
+QString MessageUtils::toPlainText(const QString &text)
 {
-  if (!m_command.isEmpty())
-    m_options |= ControlMessage;
+  QString out = text;
+  out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
+  out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
+  out.remove(QRegExp(QLatin1String("<[^>]*>")));
 
-  m_writer->put(m_options);
-
-  if (m_options & ControlMessage)
-    m_writer->put(m_command);
-
-  m_writer->put(m_message);
+  out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
+  out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
+  out.replace(QLatin1String("&quot;"), QLatin1String("\""));
+  out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
+  out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
+  out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
+  out = out.trimmed();
+  return out;
 }

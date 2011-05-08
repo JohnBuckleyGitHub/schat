@@ -22,13 +22,17 @@
 #include <QWidget>
 
 class ChatViewPrivate;
+class MessageData;
 class QVBoxLayout;
+class User;
 
 class ChatView : public QWidget
 {
 public:
   ChatView(QWidget *parent = 0);
   QVBoxLayout* layout();
+  static QString timeStamp();
+  void append(int status, User *user, const MessageData &data);
   void appendRawText(const QString &text);
 
 private:

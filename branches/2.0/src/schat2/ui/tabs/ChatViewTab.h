@@ -30,7 +30,7 @@ class ChatViewTab : public AbstractTab
 
 public:
   ChatViewTab(const QByteArray &id, TabType type, TabWidget *parent);
-  void appendRawText(const QString &text);
+  inline ChatView *chatView() { return m_chatView; }
 
 protected:
   ChatView *m_chatView;

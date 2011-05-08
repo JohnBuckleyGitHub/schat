@@ -24,6 +24,7 @@
 #include <QDataStream>
 
 #include "net/Protocol.h"
+#include "net/SimpleID.h"
 
 /*!
  * Класс выполняющий запись виртуального пакета.
@@ -99,11 +100,11 @@ public:
   /// Запись Id.
   inline void putId(const QByteArray &data)
   {
-    if (data.size() == Protocol::IdSize) {
+    if (data.size() == SimpleID::DefaultSize) {
       m_device->write(data);
     }
     else {
-      m_device->write(QCryptographicHash::hash("", QCryptographicHash::Sha1) += Protocol::InvalidId);
+      m_device->write(QCryptographicHash::hash("", QCryptographicHash::Sha1) += SimpleID::InvalidId);
     }
   }
 
@@ -125,7 +126,7 @@ public:
     }
   }
 
-private:
+protected:
   QDataStream *m_stream; ///< output stream.
   QIODevice *m_device;   ///< output device.
 };

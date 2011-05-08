@@ -18,38 +18,23 @@
 
 #include "net/packets/users.h"
 #include "net/PacketReader.h"
-#include "net/PacketWriter.h"
 #include "User.h"
 
-UserData::UserData(PacketReader *reader)
-  : Packet(reader)
+UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options)
+  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), destId)
 {
-  m_options = reader->get<quint8>();
+  put<quint8>(options);
+  put<quint8>(0);
+  put(user->nick());
+}
+
+
+UserReader::UserReader(PacketReader *reader)
+{
+  options = reader->get<quint8>();
   reader->get<quint8>(); // reserved.
 
-  m_user = new User();
-  m_user->setId(sender());
-  m_user->setNick(reader->text());
-}
-
-
-UserData::UserData(User *user, const QByteArray &channelId)
-  : Packet(Protocol::UserDataPacket, user->id(), channelId)
-  , m_options(0)
-  , m_user(user)
-{
-}
-
-
-bool UserData::isValid() const
-{
-  return m_user->isValid();
-}
-
-
-void UserData::body()
-{
-  m_writer->put(m_options);
-  m_writer->put(quint8(0));
-  m_writer->put(m_user->nick());
+  user = new User();
+  user->setId(reader->sender());
+  user->setNick(reader->text());
 }

@@ -28,7 +28,7 @@ class AuthRequest;
 class ServerUser : public User
 {
 public:
-  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequest *authRequest, int workerId, quint64 socketId);
+  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId);
   inline int workerId() const { return m_workerId; }
   inline QByteArray session() const { return m_session; }
   inline QString normalNick() const { return m_normalNick; }

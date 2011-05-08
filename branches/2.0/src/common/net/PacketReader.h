@@ -21,7 +21,7 @@
 
 #include <QDataStream>
 
-#include "net/Protocol.h"
+#include "net/SimpleId.h"
 
 class PacketReader
 {
@@ -50,7 +50,7 @@ public:
   }
 
   inline QByteArray id() const {
-    return m_device->read(Protocol::IdSize);
+    return m_device->read(SimpleID::DefaultSize);
   }
 
   inline QList<QByteArray> idList() const {

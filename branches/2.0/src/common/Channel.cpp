@@ -18,7 +18,7 @@
 
 #include "Channel.h"
 #include "debugstream.h"
-#include "net/Protocol.h"
+#include "net/SimpleID.h"
 
 Channel::Channel()
   : m_valid(true)
@@ -43,7 +43,7 @@ Channel::~Channel()
 
 bool Channel::addUser(const QByteArray &id)
 {
-  if (id.size() != Protocol::IdSize)
+  if (id.size() != SimpleID::DefaultSize)
     return false;
 
   if (m_users.contains(id))
@@ -57,7 +57,7 @@ bool Channel::addUser(const QByteArray &id)
 
 bool Channel::removeUser(const QByteArray &id)
 {
-  if (id.size() != Protocol::IdSize)
+  if (id.size() != SimpleID::DefaultSize)
     return false;
 
   if (!m_users.contains(id))
@@ -85,7 +85,7 @@ bool Channel::setDesc(const QString &desc)
 bool Channel::setId(const QByteArray &id)
 {
   m_id = id;
-  return validate(id.size() == Protocol::IdSize);
+  return validate(id.size() == SimpleID::DefaultSize);
 }
 
 

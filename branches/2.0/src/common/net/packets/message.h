@@ -21,36 +21,94 @@
 
 #include <QStringList>
 
-#include "net/Packet.h"
+#include "net/PacketWriter.h"
 
 class PacketReader;
 
+
 /*!
- * - 01 byte  - MessageOptions.
- * - not fixed length (utf8) - Command (if set ControlMessage).
- * - not fixed length (utf8) - Message.
+ * Данные сообщения.
  */
-class Message : public Packet
+class MessageData
 {
 public:
-  /// Типы сообщения.
-  enum MessageOptions {
-    GenericMessage = 0, ///< Стандартное сообщение, содержит одну текстовую стоку.
-    ControlMessage = 1  ///< Содержит текстовую команду в виде независимой строки.
+  /// Опции сообщения.
+  enum Options {
+    NoOptions = 0,      ///< Сообщение содержит только текст.
+    ControlOption = 1,  ///< Сообщение содержит текстовую команду.
+    NameOption = 2,     ///< Сообщение содержит имя.
+    TextOption = 4      ///< Сообщение содержит текст сообщения.
   };
 
-  Message(const QString &command, const QString &message);
-  Message(const QString &message);
-  Message(PacketReader *reader);
-  inline int options() const { return m_options; }
-  inline QString command() const { return m_command; }
-  inline QString message() const { return m_message; }
-  void body();
+  MessageData()
+  : options(NoOptions)
+  , name(0)
+  {}
 
-protected:
-  QString m_command;
-  QString m_message;
-  quint8 m_options;
+  MessageData(const QByteArray &senderId, const QByteArray &destId, const QString &text)
+  : options(TextOption)
+  , destId(destId)
+  , senderId(senderId)
+  , text(text)
+  , name(0)
+  {}
+
+  MessageData(const QByteArray &senderId, const QByteArray &destId, const QString &command, const QString &text)
+  : options(ControlOption)
+  , destId(destId)
+  , senderId(senderId)
+  , command(command)
+  , text(text)
+  , name(0)
+  {
+    if (!text.isEmpty()) {
+      options |= TextOption;
+    }
+  }
+
+  void autoSetOptions();
+
+  int options;         ///< Опции сообщения.
+  QByteArray destId;   ///< Идентификатор назначения.
+  QByteArray senderId; ///< Идентификатор отправителя.
+  QString command;     ///< Текстовая команда.
+  QString text;        ///< Текст сообщения.
+  quint64 name;        ///< Уникальное имя-счётчик сообещения.
+};
+
+
+/*!
+ * Формирует пакет Protocol::MessagePacket.
+ *
+ * - 01 byte  - MessageData::Options.
+ * - 08 bytes - Имя-счётчик (if set MessageData::NameOption).
+ * - not fixed length (utf8) - Command (if set MessageData::ControlOption).
+ * - not fixed length (utf8) - Message.
+ */
+class MessageWriter : public PacketWriter
+{
+public:
+  MessageWriter(QDataStream *stream, const MessageData &data);
+};
+
+
+/*!
+ * Читает пакет Protocol::MessagePacket.
+ */
+class MessageReader
+{
+public:
+  MessageReader(PacketReader *reader);
+
+  MessageData data;
+};
+
+
+class MessageUtils
+{
+public:
+  MessageUtils() {}
+  static QString toPlainText(const QString &text);
 };
 
 #endif /* MESSAGE_H_ */

@@ -27,9 +27,11 @@
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/channels.h"
+#include "net/packets/message.h"
 #include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
+#include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 #include "Storage.h"
@@ -42,7 +44,7 @@ Core::Core(QObject *parent)
   : QObject(parent),
     m_thread(0)
 {
-  m_storage = new Storage(AuthRequest::genUniqueId());
+  m_storage = new Storage(SimpleID::uniqueId());
   m_storage->addChannel("Main", true);
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
@@ -101,7 +103,7 @@ void Core::workersStarted()
 
 
 /*!
- * Перенаправление полученного пакета в соответствии с адресом назначения.
+ * Маршрутизация входящих пакетов.
  */
 bool Core::route()
 {
@@ -109,26 +111,41 @@ bool Core::route()
   if (dest.isEmpty())
     return false;
 
-  int idType = Packet::idType(dest);
+  int idType = SimpleID::typeOf(dest);
 
-  if (idType == Protocol::ChannelId) {
-    ServerChannel *chan = m_storage->channel(dest);
-    if (!chan)
-      return false;
-
-    send(chan, m_readBuffer);
-    return true;
+  if (idType == SimpleID::ChannelId) {
+    return route(m_storage->channel(dest));
   }
-  else if (idType == Protocol::UserId) {
-    ServerUser *user = m_storage->user(dest);
-    if (!user)
-      return false;
 
-    send(user, m_readBuffer);
-    return true;
+  if (idType == SimpleID::UserId) {
+    return route(m_storage->user(dest));
   }
 
   return false;
+}
+
+
+/*!
+ * Маршрутизация входящего пакета адресом назначения, которого является канал.
+ */
+bool Core::route(ServerChannel *channel)
+{
+  if (!channel)
+    return false;
+
+  return send(channel, m_readBuffer);
+}
+
+
+/*!
+ * Маршрутизация входящего пакета адресом назначения, которого является пользователь.
+ */
+bool Core::route(ServerUser *user)
+{
+  if (!user)
+    return false;
+
+  return send(user, m_readBuffer);
 }
 
 
@@ -196,6 +213,8 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
   m_packetsEvent = event;
   QList<QByteArray> packets = event->packets;
 
+  SCHAT_DEBUG_STREAM(this << "newPacketsEvent()" << packets.size())
+
   while (!packets.isEmpty()) {
     m_readBuffer = packets.takeFirst();
     PacketReader reader(m_readStream);
@@ -217,15 +236,12 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
       if (event->userId() != reader.sender())
         continue;
 
-      int idType = Packet::idType(reader.dest());
+      int idType = SimpleID::typeOf(reader.dest());
 
-      if (idType == Protocol::InvalidId)
+      if (idType == SimpleID::InvalidId)
         continue;
 
-      if (idType == Protocol::ChannelId && m_storage->channel(reader.dest()) == 0)
-        continue;
-
-      if (idType == Protocol::UserId && m_storage->user(reader.dest()) == 0)
+      if (idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
         continue;
     }
 
@@ -254,9 +270,8 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
   if (!user)
     return;
 
-  PacketWriter leave(m_sendStream, Protocol::MessagePacket, user->id());
-  leave.put<quint8>(Packet::ControlMessage);
-  leave.put("leave");
+  MessageData message(user->id(), QByteArray(), "leave", "");
+  MessageWriter leave(m_sendStream, message);
   send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
 
   m_storage->remove(event->userId());
@@ -264,91 +279,54 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
 
 /*!
- * Обработка пакета Protocol::Message с опцией Packet::ControlMessage.
+ * Подключение пользователя к каналу.
+ *
+ * \param userId  Идентификатор пользователя.
+ * \param channel Указатель на канал.
+ *
+ * \return true в случае успеха.
  */
-bool Core::command()
+bool Core::join(const QByteArray &userId, const QByteArray &channelId)
 {
-  SCHAT_DEBUG_STREAM(this << "command()" << m_packetsEvent->userId().toHex())
-
-  QString command = m_reader->text();
-  if (command.isEmpty())
-    return false;
-
-  if (command == "join") {
-    readJoinCmd();
-  }
-  else if (command == "part") {
-    if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
-      route();
-  }
-  else
-    route();
-
-  return true;
-}
-
-
-/*!
- * Чтение пакета Packet::AuthRequest.
- */
-bool Core::readAuthRequest()
-{
-  AuthReply::Error error = static_cast<AuthReply::Error>(auth());
-  if (error == AuthReply::NoError)
-    return true;
-
-  AuthReply reply(error);
-  NewPacketsEvent *e = new NewPacketsEvent(m_packetsEvent->workerId(), m_packetsEvent->socketId(), reply.data(m_sendStream));
-
-  switch (error) {
-    case AuthReply::AuthTypeNotImplemented:
-    case AuthReply::UserIdAlreadyUse:
-    case AuthReply::InvalidUser:
-      e->option = NewPacketsEvent::KillSocketOption;
-      break;
-
-    default:
-      break;
-  }
-
-  QCoreApplication::postEvent(m_workers.at(m_packetsEvent->workerId()), e);
-  return false;
-}
-
-
-bool Core::readJoinCmd()
-{
-  QString param = m_reader->text();
-  bool newChannel = false;
-  ServerChannel *channel = m_storage->channel(param, true);
-
-  if (!channel) {
-    channel = m_storage->addChannel(param);
-    newChannel = true;
-  }
+  ServerChannel *channel = m_storage->channel(channelId);
 
   if (!channel)
     return false;
 
-  if (!channel->addUser(m_packetsEvent->userId()))
+  return join(userId, channel);
+}
+
+
+/*!
+ * Подключение пользователя к каналу.
+ * Пользователь будет добавлен в канал, затем ему будет отослана информация
+ * о канале.
+ * В случае если в канале находятся другие пользователи, им будет разослано
+ * уведомление о входе нового пользователя, после этого подключившемуся
+ * пользователю будут отосланы данные всех пользователей в канале.
+ *
+ * \param userId  Идентификатор пользователя.
+ * \param channel Указатель на канал.
+ *
+ * \return true в случае успеха.
+ */
+bool Core::join(const QByteArray &userId, ServerChannel *channel)
+{
+  if (!channel->addUser(userId))
     return false;
 
-  ServerUser *user = m_storage->user(m_packetsEvent->userId());
+  ServerUser *user = m_storage->user(userId);
   if (!user)
     return false;
 
   user->addChannel(channel->id());
 
-  // Отправка пользователю информации о канале.
-  JoinReply reply(channel);
-  send(user, reply.data(m_sendStream));
+  ChannelWriter writer(m_sendStream, channel);
+  send(user, writer.data());
 
-  // Отправка уведомления всем пользователям в канале о входе нового пользователя.
-  // Отправка пользователю всех пользователей в канале.
-  if (!newChannel && channel->userCount() > 1) {
-    UserData userData(user, channel->id());
-    send(channel, userData.data(m_sendStream));
-
+  if (channel->userCount() > 1) {
+    UserWriter writer(m_sendStream, user, channel->id());
+    send(channel, writer.data());
     sendChannel(channel, user);
   }
 
@@ -357,16 +335,116 @@ bool Core::readJoinCmd()
 
 
 /*!
+ * Возвращает канал, ассоциированный с именем \p name.
+ * В случае если \p create true то канал будет создан в случае необходимости.
+ *
+ * \param name   Не нормализованное имя канала.
+ * \param create true если канал не существует, то он будет создан.
+ *
+ * \return Указатель на канал или 0 в случае ошибки.
+ */
+ServerChannel *Core::channel(const QString &name, bool create)
+{
+  ServerChannel *channel = m_storage->channel(name, true);
+
+  if (!channel && create) {
+    channel = m_storage->addChannel(name);
+  }
+
+  return channel;
+}
+
+
+/*!
+ * Обработка команд.
+ *
+ * \return true в случае если команда была обработана, иначе false.
+ */
+bool Core::command()
+{
+  SCHAT_DEBUG_STREAM(this << "command()" << m_packetsEvent->userId().toHex())
+
+  QString command = m_messageData->command;
+
+  if (command.isEmpty())
+    return false;
+
+  if (command == "join") {
+    readJoinCmd();
+    return true;
+  }
+
+  else if (command == "part") {
+    if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
+      return false;
+    else
+      return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Чтение пакета Packet::AuthRequest.
+ */
+bool Core::readAuthRequest()
+{
+  int error = auth();
+
+  if (error == AuthReplyData::NoError)
+    return true;
+
+  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->id(), error)).data();
+  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->workerId(), m_packetsEvent->socketId(), packet);
+
+  switch (error) {
+    case AuthReplyData::AuthTypeNotImplemented:
+    case AuthReplyData::UserIdAlreadyUse:
+    case AuthReplyData::InvalidUser:
+      event->option = NewPacketsEvent::KillSocketOption;
+      break;
+
+    default:
+      break;
+  }
+
+  QCoreApplication::postEvent(m_workers.at(m_packetsEvent->workerId()), event);
+  return false;
+}
+
+
+/*!
+ * Обработка команды "join".
+ */
+bool Core::readJoinCmd()
+{
+  ServerChannel *chan = 0;
+  if (!m_messageData->destId.isEmpty())
+    chan = m_storage->channel(m_messageData->destId);
+
+  if (!chan)
+    chan = channel(m_messageData->text);
+
+  if (!chan)
+    return false;
+
+  return join(m_packetsEvent->userId(), chan);
+}
+
+
+/*!
  * Чтение пакета Protocol::Message.
  */
 bool Core::readMessage()
 {
-  int options = m_reader->get<quint8>();
+  MessageReader reader(m_reader);
+  m_messageData = &reader.data;
 
-  SCHAT_DEBUG_STREAM(this << "message()" << options);
+  SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
 
-  if (options == Packet::ControlMessage)
-    return command();
+  if (m_messageData->options & MessageData::ControlOption && command())
+    return true;
 
   return route();
 }
@@ -377,30 +455,32 @@ bool Core::readMessage()
  */
 int Core::auth()
 {
-  AuthRequest authRequest(m_reader);
+  AuthRequestData data = AuthRequestReader(m_reader).data;
 
-  SCHAT_DEBUG_STREAM(this << "auth" << authRequest.authType() << authRequest.host() << authRequest.nick() << authRequest.userAgent())
+  SCHAT_DEBUG_STREAM(this << "auth" << data.authType << data.host << data.nick << data.userAgent)
 
-  if (authRequest.authType() != AuthRequest::Anonymous)
-    return AuthReply::AuthTypeNotImplemented;
+  if (data.authType != AuthRequestData::Anonymous)
+    return AuthReplyData::AuthTypeNotImplemented;
 
-  QByteArray userId = m_storage->makeUserId(authRequest.authType(), authRequest.uniqueId());
+  QByteArray userId = m_storage->makeUserId(data.authType, data.uniqueId);
   ServerUser *user = m_storage->user(userId);
 
   if (user)
-    return AuthReply::UserIdAlreadyUse;
+    return AuthReplyData::UserIdAlreadyUse;
 
-  QString normalNick = m_storage->normalize(authRequest.nick());
+  QString normalNick = m_storage->normalize(data.nick);
   if (m_storage->user(normalNick, false))
-    return AuthReply::NickAlreadyUse;
+    return AuthReplyData::NickAlreadyUse;
 
-  user = new ServerUser(m_storage->session(), normalNick, userId, &authRequest, m_packetsEvent->workerId(), m_packetsEvent->socketId());
+  user = new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->workerId(), m_packetsEvent->socketId());
   if (!user->isValid())
-    return AuthReply::InvalidUser;
+    return AuthReplyData::InvalidUser;
 
   m_storage->add(user);
-  AuthReply reply(m_storage->id(), user->id(), user->session());
-  send(user, reply.data(m_sendStream), NewPacketsEvent::AuthorizeSocketOption);
+
+  AuthReplyData reply(m_storage->id(), user->id(), user->session());
+  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
+
   return 0;
 }
 
@@ -422,21 +502,19 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
   QByteArray channelId = channel->id();
   QList<QByteArray> packets;
 
-  PacketWriter begin(m_sendStream, Protocol::MessagePacket, user->id(), channelId);
-  begin.put<quint8>(Packet::ControlMessage);
-  begin.put("BSCh");
+  MessageData message(user->id(), channelId, "BSCh", "");
+  MessageWriter begin(m_sendStream, message);
   packets.append(begin.data());
 
   for (int i = 0; i < users.size(); ++i) {
     ServerUser *u = m_storage->user(users.at(i));
     if (u) {
-      packets.append(UserData(u, channelId).data(m_sendStream));
+      packets.append(UserWriter(m_sendStream, u, channelId).data());
     }
   }
 
-  PacketWriter end(m_sendStream, Protocol::MessagePacket, user->id(), channelId);
-  end.put<quint8>(Packet::ControlMessage);
-  end.put("ESCh");
+  message.command = "ESCh";
+  MessageWriter end(m_sendStream, message);
   packets.append(end.data());
 
   send(user, packets);

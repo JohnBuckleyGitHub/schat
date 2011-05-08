@@ -19,38 +19,24 @@
 #include "Channel.h"
 #include "net/PacketReader.h"
 #include "net/packets/channels.h"
-#include "net/PacketWriter.h"
 
-JoinReply::JoinReply(Channel *channel)
-  : Packet(Protocol::JoinReplyPacket)
-  , m_channel(channel)
+ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel)
+  : PacketWriter(stream, Protocol::ChannelPacket)
 {
+  putId(channel->id());
+  put(channel->name());
+  put(channel->desc());
+  put(channel->topic());
+  putId(channel->users());
 }
 
 
-JoinReply::JoinReply(PacketReader *reader)
-  : Packet(reader)
+ChannelReader::ChannelReader(PacketReader *reader)
 {
-  m_channel = new Channel();
-  m_channel->setId(reader->id());
-  m_channel->setName(reader->text());
-  m_channel->setDesc(reader->text());
-  m_channel->setTopic(reader->text());
-  m_channel->setUsers(reader->idList());
-}
-
-
-bool JoinReply::isValid() const
-{
-  return m_channel->isValid();
-}
-
-
-void JoinReply::body()
-{
-  m_writer->putId(m_channel->id());
-  m_writer->put(m_channel->name());
-  m_writer->put(m_channel->desc());
-  m_writer->put(m_channel->topic());
-  m_writer->putId(m_channel->users());
+  channel = new Channel();
+  channel->setId(reader->id());
+  channel->setName(reader->text());
+  channel->setDesc(reader->text());
+  channel->setTopic(reader->text());
+  channel->setUsers(reader->idList());
 }

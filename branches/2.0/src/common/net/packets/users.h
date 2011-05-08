@@ -19,29 +19,35 @@
 #ifndef USERS_H_
 #define USERS_H_
 
-#include "net/Packet.h"
+#include "net/PacketWriter.h"
 
+class PacketReader;
 class User;
 
 /*!
+ * Формирует пакет Protocol::UserDataPacket.
+ *
  * - 01 byte  - options.
  * - 01 byte  - reserved.
  * - not fixed length (utf8) - Nickname.
  */
-class UserData : public Packet
+class UserWriter : public PacketWriter
 {
 public:
-  UserData(PacketReader *reader);
-  UserData(User *user);
-  UserData(User *user, const QByteArray &channelId);
-  bool isValid() const;
-  inline int options() const { return m_options; }
-  User *user() { return m_user; }
-  void body();
+  UserWriter(QDataStream *stream, User *user, const QByteArray &destId = QByteArray(), int options = 0);
+};
 
-private:
-  quint8 m_options;
-  User *m_user;
+
+/*!
+ * Читает пакет Protocol::UserDataPacket.
+ */
+class UserReader
+{
+public:
+  UserReader(PacketReader *reader);
+
+  quint8 options;
+  User *user;
 };
 
 #endif /* USERS_H_ */

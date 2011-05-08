@@ -24,8 +24,23 @@
 #include "net/SimpleSocket.h"
 
 class Channel;
+class MessageData;
+class Packet;
 class PacketReader;
 class User;
+
+/*!
+ * Хранит данные синхронизации канала.
+ */
+class SyncChannelData
+{
+public:
+  SyncChannelData() {}
+
+  QByteArray id;           ///< Идентификатор синхронизируемого канала.
+  QList<QByteArray> users; ///< Идентификатры пользователей.
+};
+
 
 class SimpleClient : public SimpleSocket
 {
@@ -42,10 +57,11 @@ public:
 
   SimpleClient(User *user, quint64 id, QObject *parent = 0);
   ~SimpleClient();
+
   bool openUrl(const QUrl &url);
+  bool send(const MessageData &data);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
-  bool sendMessage(int destType, const QByteArray &dest, const QString &message);
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
   inline Channel* channel(const QByteArray &id) const { return m_channels.value(id); }
   inline ClientState clientState() const { return m_clientState; }
@@ -60,6 +76,7 @@ signals:
   void clientStateChanged(int state);
   void join(const QByteArray &channelId, const QByteArray &userId);
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
+  void message(const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
 
 protected:
@@ -71,26 +88,25 @@ private slots:
   void requestAuth();
 
 private:
+  bool addChannel(Channel *channel);
   bool removeUser(const QByteArray &userId);
   bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId);
   inline void lock() { m_sendLock = true; }
   void removeAllUsers();
   void setClientState(ClientState state);
+  void setServerId(const QByteArray &id);
   void unlock();
 
   bool command();
   bool readAuthReply();
-  bool readJoinReply();
+  bool readChannel();
   bool readMessage();
   bool readUserData();
-
-  bool m_syncChannelMode;                    ///< Состояние синхронизации канала.
-  QByteArray m_syncChannelId;                ///< Идентификатор синхронизируемого канала.
-  QList<QByteArray> m_syncChannelCache;      ///< Идентификатры пользователей.
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientState m_clientState;                 ///< Состояние клиента.
   int m_reconnects;                          ///< Число попыток восстановить соединение.
+  MessageData *m_messageData;                ///< Текущий прочитанный объект MessageData.
   PacketReader *m_reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *m_reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray m_serverId;                     ///< Идентификатор сервера.
@@ -98,6 +114,7 @@ private:
   QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
+  SyncChannelData *m_syncChannelData;
   User *m_user;                              ///< Пользователь.
 };
 

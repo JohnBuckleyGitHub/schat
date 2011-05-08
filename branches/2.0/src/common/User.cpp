@@ -18,7 +18,7 @@
 
 #include <QDir>
 
-#include "net/Protocol.h"
+#include "net/SimpleID.h"
 #include "User.h"
 
 User::User()
@@ -42,9 +42,15 @@ User::User(const User *other)
 }
 
 
+/*!
+ * Добавление идентификатора канала в список каналов, в которых находиться пользователь.
+ *
+ * \param id Идентификатор канала.
+ * \return true в случае успеха.
+ */
 bool User::addChannel(const QByteArray &id)
 {
-  if (id.size() != Protocol::IdSize)
+  if (id.size() != SimpleID::DefaultSize)
     return false;
 
   if (m_channels.contains(id))
@@ -55,9 +61,28 @@ bool User::addChannel(const QByteArray &id)
 }
 
 
+bool User::addTalk(const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (m_talks.contains(id))
+    return false;
+
+  m_talks.append(id);
+  return true;
+}
+
+
+/*!
+ * Удаление идентификатора канала из списока каналов, в которых находиться пользователь.
+ *
+ * \param id Идентификатор канала.
+ * \return true в случае успеха.
+ */
 bool User::removeChannel(const QByteArray &id)
 {
-  if (id.size() != Protocol::IdSize)
+  if (id.size() != SimpleID::DefaultSize)
     return false;
 
   if (!m_channels.contains(id))
@@ -68,10 +93,23 @@ bool User::removeChannel(const QByteArray &id)
 }
 
 
+bool User::removeTalk(const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (!m_talks.contains(id))
+    return false;
+
+  m_talks.removeAll(id);
+  return true;
+}
+
+
 bool User::setId(const QByteArray &id)
 {
   m_id = id;
-  return validate(id.size() == Protocol::IdSize);
+  return validate(id.size() == SimpleID::DefaultSize);
 }
 
 

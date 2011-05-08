@@ -16,38 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELS_H_
-#define CHANNELS_H_
+#ifndef PRIVATETAB_H_
+#define PRIVATETAB_H_
 
-#include "net/PacketWriter.h"
+#include "ui/tabs/ChatViewTab.h"
 
-class Channel;
-
-/*!
- * Формирует пакет Protocol::ChannelPacket.
- *
- * - 20 bytes - Channel Id (SHA1).
- * - not fixed length (utf8) - Channel Name.
- * - not fixed length (utf8) - Channel Description.
- * - not fixed length (utf8) - Channel Topic.
- * - not fixed length (list of SHA1) - Channel Users.
- */
-class ChannelWriter : public PacketWriter
+class PrivateTab : public ChatViewTab
 {
+  Q_OBJECT
+
 public:
-  ChannelWriter(QDataStream *stream, Channel *channel);
+  PrivateTab(const QByteArray &id, TabWidget *parent);
 };
 
-
-/*!
- * Читает пакет Protocol::ChannelPacket.
- */
-class ChannelReader
-{
-public:
-  ChannelReader(PacketReader *reader);
-
-  Channel *channel;
-};
-
-#endif /* CHANNELS_H_ */
+#endif /* PRIVATETAB_H_ */

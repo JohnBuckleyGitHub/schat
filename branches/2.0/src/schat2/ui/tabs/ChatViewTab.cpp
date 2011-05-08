@@ -23,9 +23,3 @@ ChatViewTab::ChatViewTab(const QByteArray &id, TabType type, TabWidget *parent)
 {
   m_chatView = new ChatView(this);
 }
-
-
-void ChatViewTab::appendRawText(const QString &text)
-{
-  m_chatView->appendRawText(text);
-}

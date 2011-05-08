@@ -32,7 +32,6 @@ public:
   /// Значения по умолчанию.
   enum Defaults {
     DefaultPort = 6999,          ///< Порт по умолчанию.
-    IdSize = 21,                 ///< Размер идентификатора в байтах.
     MaxProtocolVersion = 0x0,    ///< Максимальная поддерживаемая версия протколола.
     MaxAuthPacketVersion = 0x1,  ///< Максимальная версия авторизационного пакета.
     ConnectTime = 20000,         ///< Время ожидания перехода в состояние QAbstractSocket::ConnectedState для клиента.
@@ -98,7 +97,7 @@ public:
     /// Сообщение.
     MessagePacket = 0x6d, // m
     /// Данные канала \sa JoinReply.
-    JoinReplyPacket = 0x6a72, // jr
+    ChannelPacket = 0x63, // c
     UserDataPacket = 0x7564 // ud
   };
 
@@ -108,17 +107,6 @@ public:
     SenderField = 1,     ///< Пакет содержит идентификатор отправителя.
     DestinationField = 2 ///< Пакет содержит идентификатор получателя.
   };
-
-  /// Типы идентификаторов.
-  enum IdTypes {
-    InvalidId = 0x49,    ///< Неверный идентификатор ('I').
-    UniqueUserId = 0x55, ///< Уникальный идентификатор пользователя, использующийся при авторизации ('U').
-    UserId = 0x75,       ///< Стандартный идентификатор пользователя ('u').
-    ServerId = 0x53,     ///< Идентификатор сервера ('S').
-    SessionId = 0x73,    ///< Идентификатор сессии ('s').
-    ChannelId = 0x63,    ///< Идентификатор канала ('c').
-  };
-
 
   /// Опции виртуального пакета ProbeSecureConnection.
   enum ProbeSecureConnectionOption {
