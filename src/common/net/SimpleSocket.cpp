@@ -24,7 +24,6 @@
 #include <QTimerEvent>
 
 #include "debugstream.h"
-#include "net/Packet.h"
 #include "net/PacketReader.h"
 #include "net/PacketWriter.h"
 #include "net/SimpleSocket.h"
@@ -162,9 +161,6 @@ void SimpleSocket::setAuthorized(const QByteArray &userId)
     m_authorized = false;
     return;
   }
-
-  if (m_authorized)
-    return;
 
   m_userId = userId;
   m_authorized = true;

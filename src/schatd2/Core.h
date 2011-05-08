@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-class Message;
+class MessageData;
 class NewPacketsEvent;
 class PacketReader;
 class ServerChannel;
@@ -49,6 +49,8 @@ private slots:
 
 private:
   bool route();
+  bool route(ServerChannel *channel);
+  bool route(ServerUser *user);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   bool send(ServerChannel *channel, const QByteArray &packet);
   bool send(ServerChannel *channel, const QList<QByteArray> &packets);
@@ -58,6 +60,10 @@ private:
   void newPacketsEvent(NewPacketsEvent *event);
   void socketReleaseEvent(SocketReleaseEvent *event);
 
+  bool join(const QByteArray &userId, const QByteArray &channelId);
+  bool join(const QByteArray &userId, ServerChannel *channel);
+  ServerChannel *channel(const QString &name, bool create = true);
+
   bool command();
   bool readAuthRequest();
   bool readJoinCmd();
@@ -65,6 +71,7 @@ private:
   int auth();
   void sendChannel(ServerChannel *channel, ServerUser *user);
 
+  MessageData *m_messageData;      ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent; ///< Текущий объект NewPacketsEvent.
   PacketReader *m_reader;          ///< Текущий объект PacketReader выполняющий чтение пакета.
   QByteArray m_readBuffer;         ///< Буфер чтения виртуальных пакетов.

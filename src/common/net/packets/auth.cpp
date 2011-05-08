@@ -24,130 +24,72 @@
 #include "net/packets/auth.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
+#include "net/SimpleID.h"
 
-#define SCHAT_RANDOM_CLIENT_ID
-#include <QUuid>
-
-
-AuthReply::AuthReply(const QByteArray &serverId, const QByteArray &clientId, const QByteArray &session)
-  : Packet(Protocol::AuthReplyPacket)
-  , m_serverId(serverId)
-  , m_session(session)
-  , m_userId(clientId)
-  , m_error(0)
-  , m_status(AccessGranted)
+AuthReplyData::AuthReplyData(const QByteArray &serverId, const QByteArray &userId, const QByteArray &session)
+  : serverId(serverId)
+  , session(session)
+  , userId(userId)
+  , error(NoError)
+  , status(AccessGranted)
 {
 }
 
 
-AuthReply::AuthReply(Error error)
-  : Packet(Protocol::AuthReplyPacket)
-  , m_error(error)
-  , m_status(AccessDenied)
+AuthReplyData::AuthReplyData(const QByteArray &serverId, int error)
+  : serverId(serverId)
+  , error(error)
+  , status(AccessDenied)
 {
 }
 
 
-AuthReply::AuthReply(PacketReader *reader)
-  : Packet(Protocol::AuthReplyPacket)
-  , m_error(0)
+AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
+  : PacketWriter(stream, Protocol::AuthReplyPacket, data.serverId, data.userId)
 {
-  m_status = reader->get<quint8>();
-  if (m_status == AccessGranted) {
-    m_serverId = reader->id();
-    m_userId = reader->id();
-    m_session = reader->id();
+  put(data.status);
+
+  if (data.status == AuthReplyData::AccessGranted) {
+    putId(data.session);
   }
   else {
-    m_error = reader->get<quint8>();
+    put(data.error);
   }
 }
 
 
-AuthReply::~AuthReply()
+AuthReplyReader::AuthReplyReader(PacketReader *reader)
 {
-}
+  data.serverId = reader->sender();
+  data.userId = reader->dest();
+  data.error = 0;
+  data.status = reader->get<quint8>();
 
-
-void AuthReply::body()
-{
-  m_writer->put(m_status);
-  if (m_status == AccessGranted) {
-    m_writer->putId(m_serverId);
-    m_writer->putId(m_userId);
-    m_writer->putId(m_session);
+  if (data.status == AuthReplyData::AccessGranted) {
+    data.session = reader->id();
   }
   else {
-    m_writer->put(m_error);
+    data.error = reader->get<quint8>();
   }
 }
 
 
-
-
-AuthRequest::AuthRequest(PacketReader *reader)
-  : Packet(Protocol::AuthRequestPacket)
+AuthRequestData::AuthRequestData(int authType, const QString &host, const QString &nick)
+  : host(host)
+  , nick(nick)
+  , features(SupportRichText)
+  , authType(authType)
+  , authVersion(V1)
+  , maxProtoVersion(0x0)
 {
-  m_authVersion = reader->get<quint8>();
-  m_authType = reader->get<quint8>();
-  m_uniqueId = reader->id();
-  m_maxProtoVersion = reader->get<quint8>();
-  m_features = reader->get<quint32>();
-  m_language = reader->get<quint8>();
-  m_host = reader->text();
-  m_nick = reader->text();
-  m_userAgent = reader->text();
-}
-
-
-AuthRequest::AuthRequest(AuthType authType, const QString &host, const QString &nick)
-  : Packet(Protocol::AuthRequestPacket)
-  , m_reader(0)
-  , m_host(host)
-  , m_nick(nick)
-  , m_features(SupportRichText)
-  , m_authType(authType)
-  , m_authVersion(V1)
-  , m_maxProtoVersion(0x0)
-{
-  m_userAgent = genUserAgent();
-}
-
-
-AuthRequest::~AuthRequest()
-{
-}
-
-
-bool AuthRequest::isValid() const
-{
-  return true;
+  userAgent = genUserAgent();
 }
 
 
 /*!
- * Получение уникального идентификатора клиента на основе
- * mac адреса первого активного сетевого интерфейса.
+ * Получение строки UserAgent.
  */
-QByteArray AuthRequest::genUniqueId()
-{
-  #if !defined(SCHAT_DAEMON) && defined(SCHAT_RANDOM_CLIENT_ID)
-  return QCryptographicHash::hash(QUuid::createUuid().toString().toLatin1(), QCryptographicHash::Sha1);
-  #endif
-
-  QList<QNetworkInterface> all = QNetworkInterface::allInterfaces();
-  foreach (QNetworkInterface iface, all) {
-    QString hw = iface.hardwareAddress();
-    if (!hw.isEmpty() && iface.flags().testFlag(QNetworkInterface::IsUp) && iface.flags().testFlag(QNetworkInterface::IsRunning)) {
-      return QCryptographicHash::hash(hw.toLatin1(), QCryptographicHash::Sha1);
-    }
-  }
-
-  return QCryptographicHash::hash("", QCryptographicHash::Sha1);
-}
-
-
-QString AuthRequest::genUserAgent()
+QString AuthRequestData::genUserAgent()
 {
   #if defined(SCHAT_DAEMON)
   QString out = "ISCd/";
@@ -177,15 +119,30 @@ QString AuthRequest::genUserAgent()
 }
 
 
-void AuthRequest::body()
+AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData &data)
+  : PacketWriter(stream, Protocol::AuthRequestPacket)
 {
-  m_writer->put(m_authVersion);
-  m_writer->put(m_authType);
-  m_writer->putId(genUniqueId() += Protocol::UniqueUserId);
-  m_writer->put(m_maxProtoVersion);
-  m_writer->put(m_features);
-  m_writer->put(m_language);
-  m_writer->put(m_host);
-  m_writer->put(m_nick);
-  m_writer->put(m_userAgent);
+  put(data.authVersion);
+  put(data.authType);
+  putId(SimpleID::uniqueId());
+  put(data.maxProtoVersion);
+  put(data.features);
+  put(data.language);
+  put(data.host);
+  put(data.nick);
+  put(data.userAgent);
+}
+
+
+AuthRequestReader::AuthRequestReader(PacketReader *reader)
+{
+  data.authVersion = reader->get<quint8>();
+  data.authType = reader->get<quint8>();
+  data.uniqueId = reader->id();
+  data.maxProtoVersion = reader->get<quint8>();
+  data.features = reader->get<quint32>();
+  data.language = reader->get<quint8>();
+  data.host = reader->text();
+  data.nick = reader->text();
+  data.userAgent = reader->text();
 }

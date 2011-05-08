@@ -54,9 +54,17 @@ UserView::UserView(QWidget *parent)
   }
 
   m_model.setSortRole(Qt::UserRole + 1);
+
+  connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
 }
 
 
+/*!
+ * Добавление пользователя в список.
+ *
+ * \param user   Указатель на пользователя.
+ * \param option \sa AddOptions.
+ */
 bool UserView::add(User *user, int option)
 {
   if (!user) {
@@ -78,6 +86,9 @@ bool UserView::add(User *user, int option)
 }
 
 
+/*!
+ * Удаление пользователя из списка.
+ */
 bool UserView::remove(const QByteArray &id)
 {
   UserItem *item = m_users.value(id);
@@ -95,6 +106,17 @@ void UserView::clear()
 {
   m_model.clear();
   m_users.clear();
+}
+
+
+/*!
+ * Обработка дабл-клика по пользователю в списке,
+ * высылается сигнал с идентификатором пользователя.
+ */
+void UserView::addTab(const QModelIndex &index)
+{
+  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+  emit addTab(item->user()->id());
 }
 
 

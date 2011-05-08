@@ -16,10 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDateTime>
 #include <QTextBrowser>
 #include <QVBoxLayout>
 
+#include "MessageAdapter.h"
+#include "net/packets/message.h"
 #include "ui/tabs/ChatView.h"
+#include "User.h"
 
 class ChatViewPrivate
 {
@@ -53,6 +57,29 @@ ChatView::ChatView(QWidget *parent)
 QVBoxLayout* ChatView::layout()
 {
   return d->mainLay;
+}
+
+
+QString ChatView::timeStamp()
+{
+  return QDateTime::currentDateTime().toString("hh:mm:ss");
+}
+
+
+void ChatView::append(int status, User *user, const MessageData &data)
+{
+  if (status & MessageAdapter::PartiallyConfirmed)
+    return;
+
+  QString text;
+  if (status & MessageAdapter::OutgoingMessage)
+    text += "&lt;&lt; ";
+  else
+    text += "&gt;&gt; ";
+
+  text += timeStamp();
+
+  appendRawText(text + QString(" <b>%1</b>: %2 <i style=\"color:#CCC;\">%3</i>").arg(user->nick()).arg(data.text).arg(data.name));
 }
 
 

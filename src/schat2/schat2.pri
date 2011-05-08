@@ -26,7 +26,7 @@ HEADERS = \
     Channel.h \
     ClientUI.h \
     debugstream.h \
-    net/Packet.h \
+    MessageAdapter.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/channels.h \
@@ -34,6 +34,7 @@ HEADERS = \
     net/packets/users.h \
     net/PacketWriter.h \
     net/SimpleClient.h \
+    net/SimpleID.h \
     net/SimpleSocket.h \
     net/TransportReader.h \
     net/TransportWriter.h \
@@ -46,6 +47,7 @@ HEADERS = \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
     ui/tabs/ChatViewTab.h \
+    ui/tabs/PrivateTab.h \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
@@ -55,13 +57,14 @@ SOURCES = \
     Channel.cpp \
     ClientUI.cpp \
     main.cpp \
-    net/Packet.cpp \
+    MessageAdapter.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/channels.cpp \
     net/packets/message.cpp \
     net/packets/users.cpp \
     net/SimpleClient.cpp \
+    net/SimpleID.cpp \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
@@ -74,6 +77,7 @@ SOURCES = \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView_basic.cpp \
     ui/tabs/ChatViewTab.cpp \
+    ui/tabs/PrivateTab.cpp \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \

@@ -21,6 +21,9 @@
 
 #include <QString>
 
+/*!
+ * Пользователь.
+ */
 class User
 {
 public:
@@ -36,23 +39,30 @@ public:
   User(const User *other);
   virtual ~User() {}
   bool addChannel(const QByteArray &id);
+  bool addTalk(const QByteArray &id);
   bool removeChannel(const QByteArray &id);
+  bool removeTalk(const QByteArray &id);
   bool setId(const QByteArray &id);
   bool setNick(const QString &nick);
-  inline bool isValid() const { return m_valid; }
-  inline int channelCount() const { return m_channels.size(); }
-  inline QByteArray id() const { return m_id; }
-  inline QList<QByteArray> channels() const { return m_channels; }
-  inline QString nick() const { return m_nick; }
+  inline bool isJoined(const QByteArray &id) { return m_channels.contains(id); }
+  inline bool isValid() const                { return m_valid; }
+  inline int channelCount() const            { return m_channels.size(); }
+  inline QByteArray id() const               { return m_id; }
+  inline QList<QByteArray> channels() const  { return m_channels; }
+  inline QList<QByteArray> talks() const     { return m_talks; }
+  inline QString nick() const                { return m_nick; }
+  inline void clearChannels()                { m_channels.clear(); }
+  inline void clearTalks()                   { m_talks.clear(); }
   static QString defaultNick();
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_valid;                 ///< true все данные корректны.
-  QByteArray m_id;              ///< Идентификатор пользователя (part of core protocol).
-  QString m_nick;               ///< Ник пользователя (part of core protocol).
+  QByteArray m_id;              ///< Идентификатор пользователя.
   QList<QByteArray> m_channels; ///< Список каналов в которых находиться пользователь.
+  QList<QByteArray> m_talks;    ///< Список идентификаторов пользователей, с которыми открыт приватный разговор.
+  QString m_nick;               ///< Ник пользователя.
 };
 
 #endif /* USER_H_ */

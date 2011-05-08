@@ -9,10 +9,12 @@
 
 #include "ClientUI.h"
 
-#include "qtwin/qtwin.h"
+#include "MessageAdapter.h"
+#include "net/packets/message.h"
 #include "net/SimpleClient.h"
-#include "ui/tabs/WelcomeTab.h"
+#include "qtwin/qtwin.h"
 #include "ui/StatusBar.h"
+#include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
 #include "User.h"
 
@@ -60,6 +62,9 @@ void ClientUI::send()
   if (m_send->text().isEmpty())
     return;
 
-  m_client->sendMessage(0, QByteArray(), m_send->text());
+  MessageData data(QByteArray(), m_tabs->currentId(), m_send->text());
+  m_tabs->messageAdapter()->send(data);
+//  m_client->sendMessage(0, QByteArray(), m_send->text());
+//  m_client->parser()->parse(m_tabs->currentId(), m_send->text());
   m_send->clear();
 }

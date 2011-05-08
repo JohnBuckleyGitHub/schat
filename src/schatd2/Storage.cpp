@@ -22,6 +22,7 @@
 #include "debugstream.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
+#include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 #include "Storage.h"
@@ -29,8 +30,6 @@
 Storage::Storage(const QByteArray &id)
   : m_id(id)
 {
-  m_id += Protocol::ServerId;
-
   m_normalize.insert(0x0430, 'a'); // а
   m_normalize.insert(0x0435, 'e'); // е
   m_normalize.insert(0x0451, 'e'); // ё
@@ -65,8 +64,10 @@ bool Storage::add(ServerUser *user)
 
 
 /*!
- * Удаление пользователя, пользователь удаляется из таблиц m_users, m_nicks и m_sessions,
+ * Удаление пользователя.
+ * Пользователь удаляется из таблиц m_users, m_nicks и m_sessions,
  * а также из всех каналов, в которых он находиться.
+ *
  * \param id Идентификатор пользователя.
  */
 bool Storage::remove(const QByteArray &id)
@@ -75,16 +76,17 @@ bool Storage::remove(const QByteArray &id)
   if (!user)
     return false;
 
-  m_users.remove(id);
-  m_nicks.remove(user->normalNick());
-  m_sessions.remove(user->session());
-
   if (user->channelCount() > 0) {
     QList<QByteArray> channels = user->channels();
     for (int i = 0; i < channels.size(); ++i) {
       removeUserFromChannel(id, channels.at(i));
     }
   }
+
+  m_users.remove(id);
+  m_nicks.remove(user->normalNick());
+  m_sessions.remove(user->session());
+  delete user;
 
   return true;
 }
@@ -122,11 +124,11 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
 QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
 {
   QString prefix;
-  if (type == AuthRequest::Anonymous) {
+  if (type == AuthRequestData::Anonymous) {
     prefix = "anonymous:";
   }
 
-  return QCryptographicHash::hash(QString(prefix + m_id + clientId).toLatin1(), QCryptographicHash::Sha1) += Protocol::UserId;
+  return QCryptographicHash::hash(QString(prefix + m_id + clientId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
 }
 
 
@@ -134,7 +136,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
  * Получение списка идентификаторов сокетов всех пользователей
  * в каналах, которых находится данный пользователь.
  *
- * \param channel Указатель на пользователя.
+ * \param user Указатель на пользователя.
  */
 QList<quint64> Storage::socketsFromUser(ServerUser *user)
 {
@@ -239,7 +241,7 @@ ServerChannel* Storage::channel(const QString &name, bool normalize) const
 
 QByteArray Storage::session() const
 {
-  return QCryptographicHash::hash(QString(m_id + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += Protocol::SessionId;
+  return SimpleID::session(m_id);
 }
 
 
@@ -265,5 +267,5 @@ QString Storage::normalize(const QString &text) const
 
 QByteArray Storage::makeChannelId(const QString &name)
 {
-  return QCryptographicHash::hash(QString("channel:" + m_id + name).toUtf8(), QCryptographicHash::Sha1) += Protocol::ChannelId;
+  return QCryptographicHash::hash(QString("channel:" + m_id + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
 }

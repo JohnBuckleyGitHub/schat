@@ -24,17 +24,24 @@
 
 class User;
 
+/*!
+ * Итем в списке пользователей.
+ */
 class UserItem : public QStandardItem
 {
 public:
   UserItem(User *user, int option);
   ~UserItem();
+  User *user() { return m_user; }
 
 private:
   User *m_user;
 };
 
 
+/*!
+ * Отображает список пользователей.
+ */
 class UserView : public QListView
 {
   Q_OBJECT
@@ -49,7 +56,14 @@ public:
   UserView(QWidget *parent = 0);
   bool add(User *user, int option = 0);
   bool remove(const QByteArray &id);
+  inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
+
+signals:
+  void addTab(const QByteArray &id);
+
+private slots:
+  void addTab(const QModelIndex &index);
 
 private:
   void sort();

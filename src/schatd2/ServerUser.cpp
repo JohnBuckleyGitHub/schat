@@ -19,7 +19,7 @@
 #include "net/packets/auth.h"
 #include "ServerUser.h"
 
-ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequest *authRequest, int workerId, quint64 socketId)
+ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId)
   : User()
   , m_workerId(workerId)
   , m_session(session)
@@ -27,5 +27,5 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   , m_socketId(socketId)
 {
   setId(id);
-  setNick(authRequest->nick());
+  setNick(authRequestData->nick);
 }
