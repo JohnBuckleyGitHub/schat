@@ -18,22 +18,45 @@
 
 #include "debugstream.h"
 #include "ui/tabs/UserView.h"
+#include "ui/UserUtils.h"
 #include "User.h"
 
 UserItem::UserItem(User *user, int option)
-  : QStandardItem(user->nick())
+  : QStandardItem(UserUtils::icon(user), user->nick())
+  , m_self(false)
   , m_user(new User(user))
 {
   if (option & UserView::SelfNick)
-    setData("!" + user->nick().toLower());
-  else
-    setData("5" + user->nick().toLower());
+    m_self = true;
+
+  setSortData();
 }
 
 
 UserItem::~UserItem()
 {
   delete m_user;
+}
+
+
+bool UserItem::update(User *user)
+{
+  m_user->setNick(user->nick());
+  m_user->setRawGender(user->rawGender());
+
+  setText(m_user->nick());
+  setSortData();
+  setIcon(UserUtils::icon(m_user));
+  return true;
+}
+
+
+void UserItem::setSortData()
+{
+  if (m_self)
+    setData("!" + m_user->nick().toLower());
+  else
+    setData("5" + m_user->nick().toLower());
 }
 
 
@@ -98,6 +121,18 @@ bool UserView::remove(const QByteArray &id)
 
   m_model.removeRow(m_model.indexFromItem(item).row());
   m_users.remove(id);
+  return true;
+}
+
+
+bool UserView::update(User *user)
+{
+  UserItem *item = m_users.value(user->id());
+  if (!item)
+    return false;
+
+  item->update(user);
+  sort();
   return true;
 }
 

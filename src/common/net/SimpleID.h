@@ -26,7 +26,9 @@ class SimpleID
 public:
   /// Значения по умолчанию.
   enum Defaults {
-    DefaultSize = 21 ///< Размер идентификатора в байтах.
+    DefaultSize = 21,     ///< Размер идентификатора в байтах.
+    MinUserRoleId = 0xcc, ///< Минимальный идентификатор, используемый для пользовательский идентификаторов.
+    MaxUserRoleId = 0xee  ///< Максимальный идентификатор, используемый для пользовательский идентификаторов.
   };
 
   /// Типы идентификаторов.
@@ -37,13 +39,17 @@ public:
     ServerId = 0x53,         ///< 'S' Идентификатор сервера.
     SessionId = 0x73,        ///< 's' Идентификатор сессии.
     ChannelId = 0x63,        ///< 'c' Идентификатор канала.
-    PrivateChannelId = 0x50  ///< 'P' Идентификатор приватного канала.
+    ChannelListId = 0xcd,    ///< Список каналов.
+    TalksListId = 0xce,      ///< Список разговоров.
+    FriendsListId = 0xcf     ///< Список друзей.
   };
 
   SimpleID() {}
+  static bool isUserRoleId(const QByteArray &id);
+  static bool isUserRoleId(const QByteArray &userId, const QByteArray &id);
   static int typeOf(const QByteArray &id);
-  static QByteArray id(const QByteArray &userId1, const QByteArray &userId2);
   static QByteArray session(const QByteArray &id);
+  static QByteArray setType(int type, const QByteArray &id);
   static QByteArray uniqueId();
 };
 

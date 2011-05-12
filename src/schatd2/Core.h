@@ -48,9 +48,11 @@ private slots:
   void workersStarted();
 
 private:
+  bool broadcast();
   bool route();
   bool route(ServerChannel *channel);
   bool route(ServerUser *user);
+  bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   bool send(ServerChannel *channel, const QByteArray &packet);
   bool send(ServerChannel *channel, const QList<QByteArray> &packets);
@@ -62,12 +64,14 @@ private:
 
   bool join(const QByteArray &userId, const QByteArray &channelId);
   bool join(const QByteArray &userId, ServerChannel *channel);
+  QList<quint64> echoFilter(const QList<quint64> &sockets);
   ServerChannel *channel(const QString &name, bool create = true);
 
   bool command();
   bool readAuthRequest();
   bool readJoinCmd();
   bool readMessage();
+  bool readUserData();
   int auth();
   void sendChannel(ServerChannel *channel, ServerUser *user);
 

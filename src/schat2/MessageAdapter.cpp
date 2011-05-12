@@ -21,7 +21,9 @@
 #include "debugstream.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
+#include "net/packets/users.h"
 #include "net/SimpleClient.h"
+#include "User.h"
 
 MessageAdapter::MessageAdapter(SimpleClient *client)
   : QObject(client)
@@ -35,7 +37,9 @@ MessageAdapter::MessageAdapter(SimpleClient *client)
 
 
 /*!
- * Отправка сообщения, если в сообщении содержаться команды то они будут обработаны.
+ * Отправка сообщения, если в сообщении содержаться команды, то они будут обработаны.
+ * Команды:
+ * - /join <имя канала>
  */
 int MessageAdapter::send(MessageData &data)
 {
@@ -53,20 +57,58 @@ int MessageAdapter::send(MessageData &data)
 
   SCHAT_DEBUG_STREAM(this << "send()" << text)
 
-  if (text.at(0) != '/') {
+  if (text.at(0) != '/' || text.startsWith("/me", Qt::CaseInsensitive)) {
     sendText(data);
     return SentAsText;
   }
 
   if (text.startsWith("/join ", Qt::CaseInsensitive)) {
+    data.senderId.clear();
+    data.destId.clear();
     data.command = "join";
     data.text = text.mid(6);
     sendCommand(data);
+    return SentAsCommand;
   }
-  else
-    return NoSent;
 
-  return SentAsCommand;
+  if (text.startsWith("/nick ", Qt::CaseInsensitive)) {
+    QString nick = text.mid(6);
+
+    if (m_client->user()->nick() != nick && User::isValidNick(nick)) {
+      User user(m_client->user());
+      user.setNick(nick);
+      UserWriter writer(m_client->sendStream(), &user);
+      m_client->send(writer.data());
+      return SentAsCommand;
+    }
+    return CommandArgsError;
+  }
+
+  if (text.startsWith("/gender ", Qt::CaseInsensitive)) {
+    return setGender(text.mid(8).toLower(), "");
+  }
+
+  if (text.startsWith("/color ", Qt::CaseInsensitive)) {
+    return setGender("", text.mid(7).toLower());
+  }
+
+  if (text.startsWith("/male ", Qt::CaseInsensitive)) {
+    return setGender("male", text.mid(6).toLower());
+  }
+
+  if (text.startsWith("/female ", Qt::CaseInsensitive)) {
+    return setGender("female", text.mid(8).toLower());
+  }
+
+  if (text.startsWith("/male", Qt::CaseInsensitive)) {
+    return setGender("male", "");
+  }
+
+  if (text.startsWith("/female", Qt::CaseInsensitive)) {
+    return setGender("female", "");
+  }
+
+  return NoSent;
 }
 
 
@@ -104,10 +146,7 @@ void MessageAdapter::clientMessage(const MessageData &data)
 
 bool MessageAdapter::sendCommand(MessageData &data)
 {
-  data.senderId.clear();
-  data.destId.clear();
   data.autoSetOptions();
-
   return m_client->send(data);
 }
 
@@ -132,4 +171,56 @@ bool MessageAdapter::sendText(MessageData &data)
 
   --m_name;
   return false;
+}
+
+
+int MessageAdapter::setGender(const QString &gender, const QString &color)
+{
+  if (gender.isEmpty() && color.isEmpty())
+    return CommandArgsError;
+
+  User user(m_client->user());
+
+  if (!gender.isEmpty()) {
+    if (gender == "male")
+      user.setGender(User::Male);
+    else if (gender == "female")
+      user.setGender(User::Female);
+    else if (gender == "unknown")
+      user.setGender(User::Unknown);
+    else
+      return CommandArgsError;
+  }
+
+  if (!color.isEmpty()) {
+    if (color == "default")
+      user.setColor(User::Default);
+    else if (color == "black")
+      user.setColor(User::Black);
+    else if (color == "gray")
+      user.setColor(User::Gray);
+    else if (color == "green")
+      user.setColor(User::Green);
+    else if (color == "red")
+      user.setColor(User::Red);
+    else if (color == "white")
+      user.setColor(User::White);
+    else if (color == "yellow")
+      user.setColor(User::Yellow);
+    else if (color == "medical")
+      user.setColor(User::Medical);
+    else if (color == "nude")
+      user.setColor(User::Nude);
+    else if (color == "thief")
+      user.setColor(User::Thief);
+    else
+      return CommandArgsError;
+  }
+
+  if (m_client->user()->rawGender() == user.rawGender())
+    return NoSent;
+
+  UserWriter writer(m_client->sendStream(), &user);
+  m_client->send(writer.data());
+  return SentAsCommand;
 }

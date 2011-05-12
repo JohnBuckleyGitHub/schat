@@ -23,6 +23,8 @@ QT = core gui network
 TEMPLATE = app
 
 HEADERS = \
+    arora/lineedit.h \
+    arora/lineedit_p.h \
     Channel.h \
     ClientUI.h \
     debugstream.h \
@@ -40,6 +42,7 @@ HEADERS = \
     net/TransportWriter.h \
     QProgressIndicator/QProgressIndicator.h \
     qtwin/qtwin.h \
+    ui/NickEdit.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
     ui/TabBar.h \
@@ -51,9 +54,11 @@ HEADERS = \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
+    ui/UserUtils.h \
     User.h \
 
 SOURCES = \
+    arora/lineedit.cpp \
     Channel.cpp \
     ClientUI.cpp \
     main.cpp \
@@ -70,6 +75,7 @@ SOURCES = \
     net/TransportWriter.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     qtwin/qtwin.cpp \
+    ui/NickEdit.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \
     ui/TabBar.cpp \
@@ -81,6 +87,7 @@ SOURCES = \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
+    ui/UserUtils.cpp \
     User.cpp \
     
 TRANSLATIONS += ../../data/translations/client_en.ts

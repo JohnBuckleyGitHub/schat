@@ -27,7 +27,6 @@ class PacketReader
 {
 public:
   PacketReader(QDataStream *stream);
-  inline bool isBasic() const      { return !(bool) m_headerOption; }
   inline int headerOption() const  { return m_headerOption; }
   inline int subtype() const       { return m_subtype; }
   inline int type() const          { return m_type; }

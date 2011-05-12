@@ -22,6 +22,7 @@
 #include "net/PacketWriter.h"
 
 class PacketReader;
+class User;
 
 /*!
  * Данные ответа сервера на запрос авторизации.
@@ -127,7 +128,7 @@ public:
   , maxProtoVersion(0)
   {}
 
-  AuthRequestData(int authType, const QString &host, const QString &nick);
+  AuthRequestData(int authType, const QString &host, User *user);
   static QString genUserAgent();
 
   QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
@@ -137,6 +138,7 @@ public:
   quint32 features;        ///< Возможности клиента.
   quint8 authType;         ///< Тип авторизации.
   quint8 authVersion;      ///< Версия пакета.
+  quint8 gender;           ///< Пол и цвет пользователя.
   quint8 language;         ///< Язык клиента.
   quint8 maxProtoVersion;  ///< Max Supported Protocol Version.
 };
@@ -151,6 +153,7 @@ public:
  * - 01 byte  - Max Supported Protocol Version.
  * - 04 bytes - Client Features.
  * - 01 byte  - Language.
+ * - 01 byte  - Gender.
  * - not fixed length (utf8) - Server Host.
  * - not fixed length (utf8) - Nickname.
  * - not fixed length (utf8) - User Agent.

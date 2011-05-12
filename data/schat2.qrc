@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="images/channel.png">images/diagona/030.png</file>
+  <file alias="images/gear.png">images/fugue/gear.png</file>
   <file alias="images/main-tab-menu.png">images/fugue/applications-stack.png</file>
   <file alias="images/network-error.png">images/fugue/network-status-busy.png</file>
   <file alias="images/offline.png">images/fugue/network-status-offline.png</file>
@@ -12,7 +13,28 @@
   <file alias="images/settings.png">images/diagona/086.png</file>
   <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
   <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
+  <file alias="images/user.png">images/fugue/user.png</file>
+  <file alias="images/user-black.png">images/fugue/user-black.png</file>
+  <file alias="images/user-black-female.png">images/fugue/user-black-female.png</file>
+  <file alias="images/user-female.png">images/fugue/user-female.png</file>
+  <file alias="images/user-gray.png">images/fugue/user-gray.png</file>
+  <file alias="images/user-gray-female.png">images/fugue/user-gray-female.png</file>
+  <file alias="images/user-green.png">images/fugue/user-green.png</file>
+  <file alias="images/user-green-female.png">images/fugue/user-green-female.png</file>
+  <file alias="images/user-medical.png">images/fugue/user-medical.png</file>
+  <file alias="images/user-medical-female.png">images/fugue/user-medical-female.png</file>
+  <file alias="images/user-nude.png">images/fugue/user-nude.png</file>
+  <file alias="images/user-nude-female.png">images/fugue/user-nude-female.png</file>
+  <file alias="images/user-red.png">images/fugue/user-red.png</file>
+  <file alias="images/user-red-female.png">images/fugue/user-red-female.png</file>
   <file alias="images/users.png">images/fugue/users.png</file>
+  <file alias="images/user-thief.png">images/fugue/user-thief-baldie.png</file>
+  <file alias="images/user-thief-female.png">images/fugue/user-thief-female.png</file>
+  <file alias="images/user-unknown.png">images/fugue/user-silhouette-question.png</file>
+  <file alias="images/user-white.png">images/fugue/user-white.png</file>
+  <file alias="images/user-white-female.png">images/fugue/user-white-female.png</file>
+  <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
+  <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
 </qresource>

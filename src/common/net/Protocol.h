@@ -86,26 +86,29 @@ public:
     /// Отчёт о доставке пакетов, ("dc").
     /// - 02 bytes - reserved.
     /// - ...      - список пакетов QList<quint64>.
-    DeliveryConfirmationPacket = 0x7563, // dc
+    DeliveryConfirmationPacket = 0x7563, // 'dc'
     /// Проверка возможности установки безопасного соединения.
     /// - 02 bytes - option \sa ProbeSecureConnectionOption.
-    ProbeSecureConnectionPacket = 0x7073, // ps
+    ProbeSecureConnectionPacket = 0x7073, // 'ps'
     /// Запрос авторизации.
-    AuthRequestPacket = 0x6152, // aR
+    AuthRequestPacket = 0x6152, // 'aR'
     /// Ответ на запрос авторизации.
-    AuthReplyPacket = 0x6172, // ar
+    AuthReplyPacket = 0x6172, // 'ar'
     /// Сообщение.
-    MessagePacket = 0x6d, // m
+    MessagePacket = 0x6d, // 'm'
     /// Данные канала \sa JoinReply.
-    ChannelPacket = 0x63, // c
-    UserDataPacket = 0x7564 // ud
+    ChannelPacket = 0x63, // 'c'
+    /// Данные пользователя.
+    UserDataPacket = 0x7544, // 'uD'
   };
 
   /// Опция заголовка виртуального пакета.
   enum HeaderOption {
-    BasicHeader = 0,     ///< Базовый пакет, не содержит идентификатора отправителя и назначения.
-    SenderField = 1,     ///< Пакет содержит идентификатор отправителя.
-    DestinationField = 2 ///< Пакет содержит идентификатор получателя.
+    BasicHeader = 0,      ///< Базовый пакет, не содержит идентификатора отправителя и назначения.
+    SenderField = 1,      ///< Пакет содержит идентификатор отправителя.
+    DestinationField = 2, ///< Пакет содержит идентификатор получателя.
+    Broadcast = 4,        ///< Пакет будет разослан всем подписчикам пользователя.
+    EnableEcho = 8        ///< Пакет будет отослан обратно отправителю.
   };
 
   /// Опции виртуального пакета ProbeSecureConnection.

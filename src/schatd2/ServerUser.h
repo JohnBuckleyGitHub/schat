@@ -33,12 +33,22 @@ public:
   inline QByteArray session() const { return m_session; }
   inline QString normalNick() const { return m_normalNick; }
   inline quint64 socketId() const { return m_socketId; }
+  inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
+
+  // m_users.
+  bool addId(int type, const QByteArray &id);
+  bool addUser(const QByteArray &id);
+  bool removeUser(const QByteArray &id);
+  inline QList<QByteArray> users() const { return m_users; }
+  void addUsers(const QList<QByteArray> &users);
+  void removeUsers(const QList<QByteArray> &users);
 
 private:
-  int m_workerId;       ///< Идентификатор объекта Worker.
-  QByteArray m_session; ///< Сессия.
-  QString m_normalNick; ///< Нормализованный ник.
-  quint64 m_socketId;   ///< Идентификатор сокета.
+  int m_workerId;            ///< Идентификатор объекта Worker.
+  QByteArray m_session;      ///< Сессия.
+  QList<QByteArray> m_users; ///< Список идентификаторов ассоциированных пользователей.
+  QString m_normalNick;      ///< Нормализованный ник.
+  quint64 m_socketId;        ///< Идентификатор сокета.
 };
 
 #endif /* SERVERUSER_H_ */

@@ -57,6 +57,7 @@ public:
   inline bool isAuthorized() const { return m_authorized; }
   inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
   inline QByteArray userId() const { return m_userId; }
+  inline QDataStream *sendStream() { return m_sendStream; }
   inline quint64 rx() const { return m_rx; }
   inline quint64 tx() const { return m_tx; }
   void leave();

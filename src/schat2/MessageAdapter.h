@@ -35,7 +35,8 @@ public:
     NoSent,
     ErrorTextEmpty,
     SentAsText,
-    SentAsCommand
+    SentAsCommand,
+    CommandArgsError
   };
 
   /// Состояние доставки пакета.
@@ -61,6 +62,7 @@ private slots:
 private:
   bool sendCommand(MessageData &data);
   bool sendText(MessageData &data);
+  int setGender(const QString &gender, const QString &color);
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.

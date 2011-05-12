@@ -26,6 +26,43 @@
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 
+
+/*!
+ * Проверяет идентификатор на вхождение в диапазон пользовательских идентификаторов.
+ *
+ * \param id Проверяемый идентификатор.
+ * \return true если идентификатор входит в диапазон.
+ */
+bool SimpleID::isUserRoleId(const QByteArray &id)
+{
+  int type = typeOf(id);
+  if (type < MinUserRoleId || type > MaxUserRoleId)
+    return false;
+
+  return true;
+}
+
+
+/*!
+ * Проверяет идентификатор на вхождение в диапазон пользовательских идентификаторов,
+ * а также на принадлежность к пользователю \p userId.
+ *
+ * \param userId Идентификатор пользователя.
+ * \param id     Проверяемый идентификатор.
+ * \return true если идентификатор входит в диапазон.
+ */
+bool SimpleID::isUserRoleId(const QByteArray &userId, const QByteArray &id)
+{
+  if (!isUserRoleId(id))
+    return false;
+
+  if (userId.left(DefaultSize - 1) == id.left(DefaultSize - 1))
+    return true;
+
+  return false;
+}
+
+
 /*!
  * Возвращает тип идентификатора.
  */
@@ -34,28 +71,22 @@ int SimpleID::typeOf(const QByteArray &id)
   if (id.size() != DefaultSize)
     return InvalidId;
 
-  return id.at(DefaultSize - 1);
-}
-
-
-/*!
- * Получение идентификатора приватного канала, методом получения хеша из
- * сортированных идентификаторов пользователей.
- */
-QByteArray SimpleID::id(const QByteArray &userId1, const QByteArray &userId2)
-{
-  QList<QByteArray> tmp;
-  tmp.append(userId1);
-  tmp.append(userId2);
-  qSort(tmp);
-
-  return QCryptographicHash::hash(tmp.at(0) + tmp.at(1), QCryptographicHash::Sha1) += PrivateChannelId;
+  return quint8(id.at(DefaultSize - 1));
 }
 
 
 QByteArray SimpleID::session(const QByteArray &id)
 {
   return QCryptographicHash::hash(QString(id + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += SessionId;
+}
+
+
+QByteArray SimpleID::setType(int type, const QByteArray &id)
+{
+  if (id.size() != DefaultSize)
+    return id;
+
+  return id.left(DefaultSize - 1) += type;
 }
 
 

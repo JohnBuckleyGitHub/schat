@@ -37,8 +37,9 @@ public:
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   inline ServerUser* user(const QByteArray &id) const { return m_users.value(id); }
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
-  QList<quint64> socketsFromUser(ServerUser *user);
+  QList<quint64> socketsFromUser(ServerUser *usr);
   ServerUser* user(const QString &nick, bool normalize) const;
+  void rename(ServerUser *user);
 
   // channel management.
   bool removeChannel(const QByteArray &id);

@@ -428,6 +428,9 @@ bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, qu
   if (!isReady())
     return false;
 
+  if (packets.isEmpty())
+    return false;
+
   TransportWriter tp(m_txStream, packets, m_txSeq, options, type, subversion, version);
   QByteArray packet = tp.data();
 

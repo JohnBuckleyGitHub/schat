@@ -20,21 +20,26 @@
 #define USERS_H_
 
 #include "net/PacketWriter.h"
+#include "User.h"
 
 class PacketReader;
-class User;
 
 /*!
  * Формирует пакет Protocol::UserDataPacket.
  *
  * - 01 byte  - options.
  * - 01 byte  - reserved.
+ * - 01 byte  - Gender.
  * - not fixed length (utf8) - Nickname.
  */
 class UserWriter : public PacketWriter
 {
 public:
-  UserWriter(QDataStream *stream, User *user, const QByteArray &destId = QByteArray(), int options = 0);
+  UserWriter(QDataStream *stream, User *user);
+  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options = 0);
+
+private:
+  void write(User *user, int options);
 };
 
 
@@ -47,7 +52,7 @@ public:
   UserReader(PacketReader *reader);
 
   quint8 options;
-  User *user;
+  User user;
 };
 
 #endif /* USERS_H_ */

@@ -21,12 +21,18 @@
 
 #include "ui/tabs/ChatViewTab.h"
 
+class User;
+
 class PrivateTab : public ChatViewTab
 {
   Q_OBJECT
 
 public:
-  PrivateTab(const QByteArray &id, TabWidget *parent);
+  PrivateTab(User *user, TabWidget *parent);
+  bool update(User *user);
+
+private:
+  User *m_user;
 };
 
 #endif /* PRIVATETAB_H_ */

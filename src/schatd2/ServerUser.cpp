@@ -28,4 +28,59 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
 {
   setId(id);
   setNick(authRequestData->nick);
+  m_users.append(m_id);
+}
+
+
+bool ServerUser::addId(int type, const QByteArray &id)
+{
+  if (User::addId(type, id)) {
+    addUser(id);
+    return true;
+  }
+
+  return false;
+}
+
+
+bool ServerUser::addUser(const QByteArray &id)
+{
+  if (m_users.contains(id))
+    return false;
+
+  m_users.append(id);
+  return true;
+}
+
+
+bool ServerUser::removeUser(const QByteArray &id)
+{
+  if (!m_users.contains(id))
+    return false;
+
+  QHashIterator<int, QList<QByteArray> > i(m_ids);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value().contains(id))
+      return false;
+  }
+
+  m_users.removeAll(id);
+  return true;
+}
+
+
+void ServerUser::addUsers(const QList<QByteArray> &users)
+{
+  for (int i = 0; i < users.size(); ++i) {
+    addUser(users.at(i));
+  }
+}
+
+
+void ServerUser::removeUsers(const QList<QByteArray> &users)
+{
+  for (int i = 0; i < users.size(); ++i) {
+    removeUser(users.at(i));
+  }
 }

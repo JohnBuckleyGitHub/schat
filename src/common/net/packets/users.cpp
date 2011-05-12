@@ -20,11 +20,26 @@
 #include "net/PacketReader.h"
 #include "User.h"
 
+
+UserWriter::UserWriter(QDataStream *stream, User *user)
+  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), "bc", true)
+{
+  write(user, 0);
+}
+
+
 UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options)
   : PacketWriter(stream, Protocol::UserDataPacket, user->id(), destId)
 {
+  write(user, options);
+}
+
+
+void UserWriter::write(User *user, int options)
+{
   put<quint8>(options);
   put<quint8>(0);
+  put<quint8>(user->rawGender());
   put(user->nick());
 }
 
@@ -34,7 +49,7 @@ UserReader::UserReader(PacketReader *reader)
   options = reader->get<quint8>();
   reader->get<quint8>(); // reserved.
 
-  user = new User();
-  user->setId(reader->sender());
-  user->setNick(reader->text());
+  user.setId(reader->sender());
+  user.setRawGender(reader->get<quint8>());
+  user.setNick(reader->text());
 }

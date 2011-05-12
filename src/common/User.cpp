@@ -23,12 +23,14 @@
 
 User::User()
   : m_valid(true)
+  , m_gender(Male)
 {
 }
 
 
 User::User(const QString &nick)
   : m_valid(true)
+  , m_gender(Male)
 {
   setNick(nick);
 }
@@ -36,73 +38,10 @@ User::User(const QString &nick)
 
 User::User(const User *other)
   : m_valid(other->isValid())
+  , m_gender(other->rawGender())
   , m_id(other->id())
   , m_nick(other->nick())
 {
-}
-
-
-/*!
- * Добавление идентификатора канала в список каналов, в которых находиться пользователь.
- *
- * \param id Идентификатор канала.
- * \return true в случае успеха.
- */
-bool User::addChannel(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (m_channels.contains(id))
-    return false;
-
-  m_channels.append(id);
-  return true;
-}
-
-
-bool User::addTalk(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (m_talks.contains(id))
-    return false;
-
-  m_talks.append(id);
-  return true;
-}
-
-
-/*!
- * Удаление идентификатора канала из списока каналов, в которых находиться пользователь.
- *
- * \param id Идентификатор канала.
- * \return true в случае успеха.
- */
-bool User::removeChannel(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (!m_channels.contains(id))
-    return false;
-
-  m_channels.removeAll(id);
-  return true;
-}
-
-
-bool User::removeTalk(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (!m_talks.contains(id))
-    return false;
-
-  m_talks.removeAll(id);
-  return true;
 }
 
 
@@ -118,18 +57,168 @@ bool User::setNick(const QString &nick)
   if (nick.size() > (MaxNickLength * 2))
     return validate(false);
 
-  m_nick = nick.simplified().left(MaxNickLength);
-  if (nick.size() < MinNickLengh)
+  QString tmp = nick.simplified().left(MaxNickLength);
+  if (tmp.size() < MinNickLengh)
     return validate(false);
 
+  m_nick = tmp;
   return validate(true);
 }
 
 
+bool User::isValidNick(const QString &nick)
+{
+  if (nick.size() > (MaxNickLength * 2))
+    return false;
+
+  if (nick.simplified().left(MaxNickLength).size() < MinNickLengh)
+    return false;
+
+  return true;
+}
+
+
 /*!
- * \todo http://www.prog.org.ru/topic_7694_0.html;topicseen
+ * \todo ! http://www.prog.org.ru/topic_7694_0.html;topicseen
  */
 QString User::defaultNick()
 {
   return QDir::home().dirName();
 }
+
+
+int User::color() const
+{
+  int out = m_gender;
+  if (gender() == Female)
+    out -= Female;
+
+  if (out > Thief)
+    return Default;
+
+  return out;
+}
+
+
+int User::gender() const
+{
+  if (m_gender >= Unknown)
+    return Unknown;
+
+  if (m_gender < Female)
+    return Male;
+
+  return Female;
+}
+
+
+void User::setColor(Color color)
+{
+  m_gender = gender() + color;
+}
+
+
+/*!
+ * Установка пола.
+ */
+void User::setGender(Gender gender)
+{
+  if (gender == Unknown) {
+    m_gender = gender;
+  }
+  else if (gender == Male && m_gender >= Female) {
+    m_gender -= Female;
+  }
+  else if (gender == Female && m_gender < Female) {
+    m_gender += Female;
+  }
+}
+
+
+/*!
+ * Добавление идентификатора в список идентификаторов.
+ *
+ * \param type Имя списка, в котором будет сохранён идентификатор.
+ * \param id   Идентификатор.
+ * \return true в случае успеха.
+ */
+bool User::addId(int type, const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (type < SimpleID::MinUserRoleId || type > SimpleID::MaxUserRoleId)
+    return false;
+
+  if (m_ids.contains(type) && m_ids.value(type).contains(id))
+    return false;
+
+  m_ids[type].append(id);
+  return true;
+}
+
+
+bool User::containsId(int type, const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (!m_ids.contains(type))
+    return false;
+
+  return m_ids.value(type).contains(id);
+}
+
+
+/*!
+ * Удаление списка идентификаторов с именем \p type.
+ */
+bool User::remove(int type)
+{
+  if (m_ids.contains(type))
+    m_ids.remove(type);
+
+  return true;
+}
+
+
+/*!
+ * Удаление идентификатора из списка идентификаторов.
+ *
+ * \param type Имя списка, из которого будет удалён идентификатор.
+ * \param id   Идентификатор.
+ * \return true в случае успешного удаления или если идентификатор отсутствовал в списке.
+ */
+bool User::removeId(int type, const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (m_ids.contains(type) && m_ids.value(type).contains(id)) {
+    m_ids[type].removeAll(id);
+    if (m_ids.value(type).isEmpty())
+      m_ids.remove(type);
+    return true;
+  }
+
+  return true;
+}
+
+
+int User::count(int type)
+{
+  if (!m_ids.contains(type))
+    return 0;
+
+  return m_ids.value(type).size();
+}
+
+
+QList<QByteArray> User::ids(int type)
+{
+  if (!m_ids.contains(type))
+    return QList<QByteArray>();
+
+  return m_ids.value(type);
+}
+

@@ -41,6 +41,12 @@ void AbstractTab::setOnline(bool online)
 
   if (online) {
     m_tabs->setTabIcon(index, m_icon);
+    m_action->setIcon(m_icon);
+  }
+  else {
+    QIcon offline = QIcon(m_icon.pixmap(16, 16, QIcon::Disabled));
+    m_tabs->setTabIcon(index, offline);
+    m_action->setIcon(offline);
   }
 }
 
