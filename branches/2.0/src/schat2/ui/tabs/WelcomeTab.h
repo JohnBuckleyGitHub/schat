@@ -21,7 +21,7 @@
 
 #include "ui/tabs/AbstractTab.h"
 
-class QLineEdit;
+class NickEdit;
 class SimpleClient;
 
 class WelcomeTab : public AbstractTab
@@ -33,9 +33,10 @@ public:
 
 private slots:
   void nickChanged(const QString &text);
+  void updateUserData(const QByteArray &userId);
 
 private:
-  QLineEdit *m_nickEdit;
+  NickEdit *m_nickEdit;
   SimpleClient *m_client;
 };
 

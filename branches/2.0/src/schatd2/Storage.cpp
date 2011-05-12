@@ -76,8 +76,8 @@ bool Storage::remove(const QByteArray &id)
   if (!user)
     return false;
 
-  if (user->channelCount() > 0) {
-    QList<QByteArray> channels = user->channels();
+  if (user->count(SimpleID::ChannelListId) > 0) {
+    QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
     for (int i = 0; i < channels.size(); ++i) {
       removeUserFromChannel(id, channels.at(i));
     }
@@ -109,7 +109,8 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
     return false;
 
   bool result = chan->removeUser(userId);
-  user->removeChannel(channelId);
+  user->removeId(SimpleID::ChannelListId, channelId);
+  user->removeUsers(chan->users());
 
   if (chan->userCount() == 0 && !chan->isPermanent())
     removeChannel(chan->id());
@@ -136,27 +137,22 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
  * Получение списка идентификаторов сокетов всех пользователей
  * в каналах, которых находится данный пользователь.
  *
- * \param user Указатель на пользователя.
+ * \param usr Указатель на пользователя.
  */
-QList<quint64> Storage::socketsFromUser(ServerUser *user)
+QList<quint64> Storage::socketsFromUser(ServerUser *usr)
 {
   QList<quint64> out;
-  if (!user)
+  if (!usr)
     return out;
 
-  QList<QByteArray> channels = user->channels();
-
-  for (int i = 0; i < channels.size(); ++i) {
-    ServerChannel *chan = channel(channels.at(i));
-    if (!chan)
+  QList<QByteArray> users = usr->users();
+  for (int i = 0; i < users.size(); ++i) {
+    ServerUser *u = user(users.at(i));
+    if (!u)
       continue;
 
-    QList<quint64> list = socketsFromChannel(chan);
-
-    for (int k = 0; k < list.size(); ++k) {
-      if (!out.contains(list.at(k)))
-        out.append(list.at(k));
-    }
+    if (!out.contains(u->socketId()))
+      out.append(u->socketId());
   }
 
   return out;
@@ -169,6 +165,20 @@ ServerUser* Storage::user(const QString &nick, bool normalize) const
     return m_nicks.value(nick);
 
   return m_nicks.value(this->normalize(nick));
+}
+
+
+/*!
+ * Обработка смены ника пользователя.
+ */
+void Storage::rename(ServerUser *user)
+{
+  if (!m_users.contains(user->id()))
+    return;
+
+  m_nicks.remove(user->normalNick());
+  user->setNormalNick(normalize(user->nick()));
+  m_nicks.insert(user->normalNick(), user);
 }
 
 

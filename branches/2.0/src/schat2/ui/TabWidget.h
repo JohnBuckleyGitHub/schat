@@ -62,7 +62,7 @@ private slots:
   void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
   void hideMainMenu();
-  void openChannel();
+  void openTab();
   void showMainMenu();
 
   void clientStateChanged(int state);
@@ -70,11 +70,12 @@ private slots:
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(int status, const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
+  void updateUserData(const QByteArray &userId);
+  void userLeave(const QByteArray &userId);
 
 private:
   ChannelTab *createChannelTab(const QByteArray &id);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
-  void createChannelTab(Channel *channel);
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
   void retranslateUi();
@@ -88,6 +89,7 @@ private:
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.
+  QMenu *m_talksMenu;                        ///< Меню разговоров.
   QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
   QToolBar *m_rightToolBar;                  ///< Правая панель инструментов.
   QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.

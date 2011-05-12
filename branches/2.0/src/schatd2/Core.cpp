@@ -102,11 +102,24 @@ void Core::workersStarted()
 }
 
 
+bool Core::broadcast()
+{
+  ServerUser *user = m_storage->user(m_reader->sender());
+  if (!user)
+    return false;
+
+  return send(echoFilter(m_storage->socketsFromUser(user)), m_readBuffer);
+}
+
+
 /*!
  * Маршрутизация входящих пакетов.
  */
 bool Core::route()
 {
+  if (m_reader->headerOption() & Protocol::Broadcast)
+    return broadcast();
+
   QByteArray dest = m_reader->dest();
   if (dest.isEmpty())
     return false;
@@ -127,18 +140,22 @@ bool Core::route()
 
 /*!
  * Маршрутизация входящего пакета адресом назначения, которого является канал.
+ *
+ * \param channel Канал назначения.
  */
 bool Core::route(ServerChannel *channel)
 {
   if (!channel)
     return false;
 
-  return send(channel, m_readBuffer);
+  return send(echoFilter(m_storage->socketsFromChannel(channel)), m_readBuffer);
 }
 
 
 /*!
  * Маршрутизация входящего пакета адресом назначения, которого является пользователь.
+ *
+ * \param user Получатель сообщения.
  */
 bool Core::route(ServerUser *user)
 {
@@ -146,6 +163,12 @@ bool Core::route(ServerUser *user)
     return false;
 
   return send(user, m_readBuffer);
+}
+
+
+bool Core::send(const QList<quint64> &sockets, const QByteArray &packet)
+{
+  return send(sockets, QList<QByteArray>() << packet);
 }
 
 
@@ -189,6 +212,9 @@ bool Core::send(ServerChannel *channel, const QList<QByteArray> &packets)
  */
 bool Core::send(ServerUser *user, const QByteArray &packet, int option)
 {
+  if (!user)
+    return false;
+
   return send(user, QList<QByteArray>() << packet, option);
 }
 
@@ -198,6 +224,9 @@ bool Core::send(ServerUser *user, const QByteArray &packet, int option)
  */
 bool Core::send(ServerUser *user, const QList<QByteArray> &packets, int option)
 {
+  if (!user)
+    return false;
+
   NewPacketsEvent *event = new NewPacketsEvent(user->workerId(), user->socketId(), packets, user->id());
   event->option = option;
   QCoreApplication::postEvent(m_workers.at(user->workerId()), event);
@@ -232,17 +261,19 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     /// В случае если пакет содержит информацию об отправителе и получателе,
     /// идентификатор отправителя не должен быть поддельным и получатель
     /// должен быть известен серверу.
-    if (!reader.isBasic()) {
+    if (!reader.sender().isEmpty()) {
       if (event->userId() != reader.sender())
         continue;
 
-      int idType = SimpleID::typeOf(reader.dest());
+      if (!(reader.headerOption() & Protocol::Broadcast)) {
+        int idType = SimpleID::typeOf(reader.dest());
 
-      if (idType == SimpleID::InvalidId)
-        continue;
+        if (idType == SimpleID::InvalidId)
+          continue;
 
-      if (idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
-        continue;
+        if (idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
+          continue;
+      }
     }
 
     switch (reader.type()) {
@@ -251,6 +282,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
         break;
 
       case Protocol::UserDataPacket:
+        readUserData();
         break;
 
       default:
@@ -319,7 +351,7 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   if (!user)
     return false;
 
-  user->addChannel(channel->id());
+  user->addId(SimpleID::ChannelListId, channel->id());
 
   ChannelWriter writer(m_sendStream, channel);
   send(user, writer.data());
@@ -331,6 +363,30 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   }
 
   return true;
+}
+
+
+/*!
+ * Фильтрует список сокетов, в зависимости от необходимости эха.
+ */
+QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
+{
+  QList<quint64> out = sockets;
+  ServerUser *user = m_storage->user(m_reader->sender());
+
+  if (user) {
+    quint64 id = user->socketId();
+    if (m_reader->headerOption() & Protocol::EnableEcho) {
+      if (!out.contains(id)) {
+        out.append(id);
+      }
+    }
+    else {
+      out.removeAll(id);
+    }
+  }
+
+  return out;
 }
 
 
@@ -374,11 +430,33 @@ bool Core::command()
     return true;
   }
 
-  else if (command == "part") {
+  if (command == "part") {
     if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
       return false;
     else
       return true;
+  }
+
+  // \todo ! add Требуется дополнительная проверка идентификаторов.
+  if (command == "add") {
+
+    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest())) {
+
+      ServerUser *user = m_storage->user(m_reader->sender());
+
+      if (user) {
+        QList<QByteArray> ids = m_reader->idList();
+        if (ids.isEmpty())
+          return true;
+
+        int type = SimpleID::typeOf(m_reader->dest());
+        foreach (QByteArray id, ids) {
+          user->addId(type, id);
+        }
+      }
+    }
+
+    return true;
   }
 
   return false;
@@ -450,6 +528,30 @@ bool Core::readMessage()
 }
 
 
+bool Core::readUserData()
+{
+  UserReader reader(m_reader);
+
+  SCHAT_DEBUG_STREAM(this << "readUserData()" << reader.user.nick())
+
+  ServerUser *user = m_storage->user(m_reader->sender());
+  if (!user)
+    return false;
+
+  if (user->nick() != reader.user.nick()) {
+    if (m_storage->user(reader.user.nick(), true))
+      return false;
+  }
+
+  user->setNick(reader.user.nick());
+  user->setRawGender(reader.user.rawGender());
+  m_storage->rename(user);
+
+  route();
+  return true;
+}
+
+
 /*!
  * Процедура авторизации пользователя, чтение пакета Packet::AuthRequest.
  */
@@ -498,6 +600,7 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
 {
   QList<QByteArray> users = channel->users();
   users.removeAll(user->id());
+  user->addUsers(users);
 
   QByteArray channelId = channel->id();
   QList<QByteArray> packets;
@@ -509,6 +612,7 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
   for (int i = 0; i < users.size(); ++i) {
     ServerUser *u = m_storage->user(users.at(i));
     if (u) {
+      u->addUser(user->id());
       packets.append(UserWriter(m_sendStream, u, channelId).data());
     }
   }

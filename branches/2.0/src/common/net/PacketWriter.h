@@ -55,7 +55,7 @@ public:
    * \param sender   Идентификатор отправителя.
    * \param dest     Идентификатор получателя.
    */
-  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray())
+  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), bool echo = false)
     : m_stream(stream)
   {
     m_device = stream->device();
@@ -65,8 +65,15 @@ public:
     if (!sender.isEmpty())
       headerOption |= Protocol::SenderField;
 
-    if (!dest.isEmpty())
-      headerOption |= Protocol::DestinationField;
+    if (!dest.isEmpty()) {
+      if (dest == "bc")
+        headerOption |= Protocol::Broadcast;
+      else
+        headerOption |= Protocol::DestinationField;
+    }
+
+    if (echo)
+      headerOption |= Protocol::EnableEcho;
 
     *stream << type << quint8(0) << quint8(0) << headerOption;
 
@@ -106,13 +113,6 @@ public:
     else {
       m_device->write(QCryptographicHash::hash("", QCryptographicHash::Sha1) += SimpleID::InvalidId);
     }
-  }
-
-  /// Запись Id.
-  inline void putId(const QByteArray &data, quint8 idType)
-  {
-    QByteArray id = data;
-    putId(id += idType);
   }
 
   /// Запись Id.

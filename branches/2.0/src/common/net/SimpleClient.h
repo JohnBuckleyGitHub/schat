@@ -78,6 +78,8 @@ signals:
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
+  void userDataChanged(const QByteArray &userId);
+  void userLeave(const QByteArray &userId);
 
 protected:
   void newPacketsImpl();
@@ -92,6 +94,7 @@ private:
   bool removeUser(const QByteArray &userId);
   bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId);
   inline void lock() { m_sendLock = true; }
+  QByteArray addTalk(const QByteArray &destId);
   void removeAllUsers();
   void setClientState(ClientState state);
   void setServerId(const QByteArray &id);
@@ -102,6 +105,7 @@ private:
   bool readChannel();
   bool readMessage();
   bool readUserData();
+  bool updateUserData();
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientState m_clientState;                 ///< Состояние клиента.
@@ -110,11 +114,12 @@ private:
   PacketReader *m_reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *m_reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray m_serverId;                     ///< Идентификатор сервера.
+  QByteArray m_uniqueId;                     ///< Уникальный идентификатор пользователя.
   QHash<QByteArray, Channel*> m_channels;    ///< Таблица каналов.
   QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
-  SyncChannelData *m_syncChannelData;
+  SyncChannelData *m_syncChannelData;        ///< Данные синхронизации канала.
   User *m_user;                              ///< Пользователь.
 };
 

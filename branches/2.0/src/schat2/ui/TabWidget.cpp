@@ -35,6 +35,7 @@
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
+#include "ui/UserUtils.h"
 #include "User.h"
 
 TabWidget::TabWidget(SimpleClient *client, QWidget *parent)
@@ -61,6 +62,8 @@ TabWidget::TabWidget(SimpleClient *client, QWidget *parent)
   connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+  connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
 }
 
@@ -88,6 +91,9 @@ void TabWidget::changeEvent(QEvent *event)
 
 void TabWidget::addPrivateTab(const QByteArray &id)
 {
+  if (m_client->userId() == id)
+    return;
+
   privateTab(id, true, true);
 }
 
@@ -133,15 +139,16 @@ void TabWidget::hideMainMenu()
   SCHAT_DEBUG_STREAM(this << "hideMainMenu()")
   m_mainMenu->clear();
   m_channelsMenu->clear();
+  m_talksMenu->clear();
 }
 
 
 /*!
- * Установка индекса на этот канал.
+ * Установка индекса на вкладку.
  */
-void TabWidget::openChannel()
+void TabWidget::openTab()
 {
-  ChannelTab *tab = qobject_cast<ChannelTab *>(sender());
+  AbstractTab *tab = qobject_cast<AbstractTab *>(sender());
   if (tab) {
     setCurrentWidget(tab);
   }
@@ -153,28 +160,47 @@ void TabWidget::showMainMenu()
   SCHAT_DEBUG_STREAM(this << "showMainMenu()")
 
   // Создание меню каналов.
-  if (m_channels.size()) {
-    for (int i = 0; i < count(); ++i) {
-      AbstractTab *tab = widget(i);
-      if (tab->type() == AbstractTab::ChannelType)
-        m_channelsMenu->addAction(tab->action());
-    }
+
+  QList<QAction *> channels;
+  QList<QAction *> talks;
+
+  for (int i = 0; i < count(); ++i) {
+    AbstractTab *tab = widget(i);
+    if (tab->type() == AbstractTab::ChannelType)
+      channels.append(tab->action());
+    else if (tab->type() == AbstractTab::PrivateType)
+      talks.append(tab->action());
+  }
+
+  if (!channels.isEmpty()) {
+    m_channelsMenu->addActions(channels);
     m_mainMenu->addMenu(m_channelsMenu);
+  }
+
+  if (!talks.isEmpty()) {
+    m_talksMenu->addActions(talks);
+    m_mainMenu->addMenu(m_talksMenu);
   }
 }
 
 
+/*!
+ * Обработка изменения состояния клиента.
+ */
 void TabWidget::clientStateChanged(int state)
 {
   SCHAT_DEBUG_STREAM(this << "clientStateChanged()" << state);
 
-  bool online = state == SimpleClient::ClientOnline;
+  if (state == SimpleClient::ClientOnline)
+    return;
 
   foreach (ChannelTab *tab, m_channels) {
-    tab->setOnline(online);
-    if (!online) {
-      displayChannelUserCount(tab->id());
-    }
+    tab->setOnline(false);
+    displayChannelUserCount(tab->id());
+  }
+
+  foreach (PrivateTab *tab, m_talks) {
+    tab->setOnline(false);
   }
 }
 
@@ -212,6 +238,8 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId, int 
   User *user = m_client->user(userId);
 
   if (tab && user) {
+    privateTab(user->id(), false);
+
     if (!tab->userView()->add(user, option))
       return;
 
@@ -285,6 +313,41 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
 
 
 /*!
+ * Обновление информации о пользователе.
+ *
+ * \param userId Идентификатор пользователя, данные которого изменились.
+ */
+void TabWidget::updateUserData(const QByteArray &userId)
+{
+  User *user = m_client->user(userId);
+  if (!user)
+    return;
+
+  QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
+  foreach(QByteArray id, channels) {
+    ChannelTab *tab = m_channels.value(id);
+    if (tab) {
+      tab->userView()->update(user);
+    }
+  }
+
+  PrivateTab *tab = m_talks.value(userId);
+  if (!tab)
+    return;
+
+  tab->update(user);
+}
+
+
+void TabWidget::userLeave(const QByteArray &userId)
+{
+  PrivateTab *tab = m_talks.value(userId);
+  if (tab)
+    tab->setOnline(false);
+}
+
+
+/*!
  * Создание или повторная инициализация вкладки канала.
  *
  * \param id Идентификатор канала.
@@ -304,7 +367,7 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
     m_channels.insert(id, tab);
     setCurrentIndex(addTab(tab, channel->name()));
 
-    connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openChannel()));
+    connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
     connect(tab->userView(), SIGNAL(addTab(const QByteArray &)), SLOT(addPrivateTab(const QByteArray &)));
   }
   else {
@@ -344,10 +407,15 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   if (create) {
-    tab = new PrivateTab(id, this);
+    tab = new PrivateTab(user, this);
     m_talks.insert(id, tab);
     addTab(tab, user->nick());
     tab->setOnline();
+
+    connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
+  }
+  else if (tab) {
+    tab->update(user);
   }
 
   if (show && tab) {
@@ -355,27 +423,6 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   return tab;
-}
-
-
-/*!
- * Создание вкладки для канала.
- */
-void TabWidget::createChannelTab(Channel *channel)
-{
-  ChannelTab *tab = new ChannelTab(channel->id(), this);
-  m_channels.insert(channel->id(), tab);
-  setCurrentIndex(addTab(tab, channel->name()));
-
-  tab->setOnline();
-  tab->chatView()->appendRawText(tr("you're joined to <b>%1</b>").arg(channel->name()));
-  tab->userView()->add(m_client->user(), UserView::SelfNick);
-  tab->action()->setText(channel->name());
-
-  connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openChannel()));
-  connect(tab->userView(), SIGNAL(addTab(const QByteArray &)), SLOT(addPrivateTab(const QByteArray &)));
-
-  showWelcome();
 }
 
 
@@ -399,6 +446,10 @@ void TabWidget::createToolBars()
   m_menuButton->setMenu(m_mainMenu);
 
   m_channelsMenu = new QMenu(this);
+  m_channelsMenu->setIcon(QIcon(":/images/channel.png"));
+
+  m_talksMenu = new QMenu(this);
+  m_talksMenu->setIcon(QIcon(":/images/users.png"));
 
   connect(m_mainMenu, SIGNAL(aboutToHide()), SLOT(hideMainMenu()));
   connect(m_mainMenu, SIGNAL(aboutToShow()), SLOT(showMainMenu()));
@@ -455,7 +506,8 @@ void TabWidget::retranslateUi()
   m_settingsButton->setToolTip(tr("Preferences"));
   m_aboutAction->setText(tr("About..."));
   m_quitAction->setText(tr("Quit"));
-  m_channelsMenu->setTitle(tr("Groups"));
+  m_channelsMenu->setTitle(tr("Channels"));
+  m_talksMenu->setTitle(tr("Talks"));
 }
 
 

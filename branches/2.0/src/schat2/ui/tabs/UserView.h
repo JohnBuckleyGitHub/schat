@@ -32,10 +32,14 @@ class UserItem : public QStandardItem
 public:
   UserItem(User *user, int option);
   ~UserItem();
-  User *user() { return m_user; }
+  inline User *user() { return m_user; }
+  bool update(User *user);
 
 private:
-  User *m_user;
+  void setSortData();
+
+  bool m_self;  ///< true это данные текущего пользователя.
+  User *m_user; ///< Пользователь.
 };
 
 
@@ -56,6 +60,7 @@ public:
   UserView(QWidget *parent = 0);
   bool add(User *user, int option = 0);
   bool remove(const QByteArray &id);
+  bool update(User *user);
   inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
 

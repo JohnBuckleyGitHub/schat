@@ -25,6 +25,7 @@
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
+#include "User.h"
 
 AuthReplyData::AuthReplyData(const QByteArray &serverId, const QByteArray &userId, const QByteArray &session)
   : serverId(serverId)
@@ -74,12 +75,13 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 }
 
 
-AuthRequestData::AuthRequestData(int authType, const QString &host, const QString &nick)
+AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
   : host(host)
-  , nick(nick)
+  , nick(user->nick())
   , features(SupportRichText)
   , authType(authType)
   , authVersion(V1)
+  , gender(user->rawGender())
   , maxProtoVersion(0x0)
 {
   userAgent = genUserAgent();
@@ -124,10 +126,11 @@ AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData 
 {
   put(data.authVersion);
   put(data.authType);
-  putId(SimpleID::uniqueId());
+  putId(data.uniqueId);
   put(data.maxProtoVersion);
   put(data.features);
   put(data.language);
+  put(data.gender);
   put(data.host);
   put(data.nick);
   put(data.userAgent);
@@ -142,6 +145,7 @@ AuthRequestReader::AuthRequestReader(PacketReader *reader)
   data.maxProtoVersion = reader->get<quint8>();
   data.features = reader->get<quint32>();
   data.language = reader->get<quint8>();
+  data.gender = reader->get<quint8>();
   data.host = reader->text();
   data.nick = reader->text();
   data.userAgent = reader->text();

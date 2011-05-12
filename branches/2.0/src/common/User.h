@@ -19,7 +19,7 @@
 #ifndef USER_H_
 #define USER_H_
 
-#include <QString>
+#include <QHash>
 
 /*!
  * Пользователь.
@@ -34,35 +34,67 @@ public:
     MaxByeMsgLength = 128 ///< Максимальная длина сообщения при выходе.
   };
 
+  /// Пол пользователя.
+  enum Gender {
+    Male = 0,     ///< Мужской пол.
+    Female = 100, ///< Женский пол.
+    Unknown = 150 ///< Неизвестный пол.
+  };
+
+  /// Цветовой вариант иконки пола.
+  enum Color {
+    Default,
+    Black,
+    Gray,
+    Green,
+    Red,
+    White,
+    Yellow,
+    Medical,
+    Nude,
+    Thief
+  };
+
   User();
   User(const QString &nick);
   User(const User *other);
   virtual ~User() {}
-  bool addChannel(const QByteArray &id);
-  bool addTalk(const QByteArray &id);
-  bool removeChannel(const QByteArray &id);
-  bool removeTalk(const QByteArray &id);
+  inline bool isValid() const { return m_valid; }
+
+  // m_id.
   bool setId(const QByteArray &id);
+  inline QByteArray id() const { return m_id; }
+
+  // m_nick.
   bool setNick(const QString &nick);
-  inline bool isJoined(const QByteArray &id) { return m_channels.contains(id); }
-  inline bool isValid() const                { return m_valid; }
-  inline int channelCount() const            { return m_channels.size(); }
-  inline QByteArray id() const               { return m_id; }
-  inline QList<QByteArray> channels() const  { return m_channels; }
-  inline QList<QByteArray> talks() const     { return m_talks; }
-  inline QString nick() const                { return m_nick; }
-  inline void clearChannels()                { m_channels.clear(); }
-  inline void clearTalks()                   { m_talks.clear(); }
+  inline QString nick() const { return m_nick; }
+  static bool isValidNick(const QString &nick);
   static QString defaultNick();
 
-private:
+  // m_gender.
+  inline int rawGender() const         { return m_gender; }
+  inline void setRawGender(int gender) { m_gender = gender; }
+  int color() const;
+  int gender() const;
+  void setColor(Color color);
+  void setGender(Gender gender);
+
+  // m_ids.
+  bool addId(int type, const QByteArray &id);
+  bool containsId(int type, const QByteArray &id);
+  bool remove(int type);
+  bool removeId(int type, const QByteArray &id);
+  int count(int type);
+  QList<QByteArray> ids(int type);
+
+protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
-  bool m_valid;                 ///< true все данные корректны.
-  QByteArray m_id;              ///< Идентификатор пользователя.
-  QList<QByteArray> m_channels; ///< Список каналов в которых находиться пользователь.
-  QList<QByteArray> m_talks;    ///< Список идентификаторов пользователей, с которыми открыт приватный разговор.
-  QString m_nick;               ///< Ник пользователя.
+  bool m_valid;                         ///< true все данные корректны.
+  int m_gender;                         ///< Пол и цвет иконки.
+  QByteArray m_id;                      ///< Идентификатор пользователя.
+  QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
+  QString m_nick;                       ///< Ник пользователя.
 };
 
 #endif /* USER_H_ */

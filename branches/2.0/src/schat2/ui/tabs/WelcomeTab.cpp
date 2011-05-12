@@ -20,6 +20,7 @@
 #include <QLineEdit>
 
 #include "net/SimpleClient.h"
+#include "ui/NickEdit.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
 
@@ -27,16 +28,26 @@ WelcomeTab::WelcomeTab(SimpleClient *client, TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
   , m_client(client)
 {
-  m_nickEdit = new QLineEdit(client->user()->nick(), this);
+  m_nickEdit = new NickEdit(client->user()->nick(), this);
 
   QFormLayout *mainLay = new QFormLayout(this);
   mainLay->addRow("Nick:", m_nickEdit);
 
   connect(m_nickEdit, SIGNAL(textChanged(const QString &)), SLOT(nickChanged(const QString &)));
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
 
 
 void WelcomeTab::nickChanged(const QString &text)
 {
   m_client->user()->setNick(text);
+}
+
+
+void WelcomeTab::updateUserData(const QByteArray &userId)
+{
+  if (m_client->userId() != userId)
+    return;
+
+  m_nickEdit->setText(m_client->user()->nick());
 }

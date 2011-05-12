@@ -41,7 +41,6 @@ ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
   mainLay->setSpacing(0);
 
   m_icon = QIcon(":/images/channel.png");
-  m_action->setIcon(m_icon);
 }
 
 
