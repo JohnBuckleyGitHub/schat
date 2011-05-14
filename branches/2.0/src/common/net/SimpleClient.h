@@ -24,23 +24,12 @@
 #include "net/SimpleSocket.h"
 
 class Channel;
+class ClientOfflineCache;
 class MessageData;
 class Packet;
 class PacketReader;
+class SyncChannelCache;
 class User;
-
-/*!
- * Хранит данные синхронизации канала.
- */
-class SyncChannelData
-{
-public:
-  SyncChannelData() {}
-
-  QByteArray id;           ///< Идентификатор синхронизируемого канала.
-  QList<QByteArray> users; ///< Идентификатры пользователей.
-};
-
 
 class SimpleClient : public SimpleSocket
 {
@@ -91,11 +80,8 @@ private slots:
 
 private:
   bool addChannel(Channel *channel);
-  bool removeUser(const QByteArray &userId);
-  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId);
   inline void lock() { m_sendLock = true; }
-  QByteArray addTalk(const QByteArray &destId);
-  void removeAllUsers();
+  void clearClient(bool save = true);
   void setClientState(ClientState state);
   void setServerId(const QByteArray &id);
   void unlock();
@@ -104,10 +90,15 @@ private:
   bool readAuthReply();
   bool readChannel();
   bool readMessage();
+
+  // m_users.
   bool readUserData();
-  bool updateUserData();
+  bool removeUser(const QByteArray &userId);
+  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId);
+  void updateUserData(User *existUser, User *user);
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
+  ClientOfflineCache *m_offlineCache;        ///< Данные для восстановления состояния клиента, после переподключения к серверу.
   ClientState m_clientState;                 ///< Состояние клиента.
   int m_reconnects;                          ///< Число попыток восстановить соединение.
   MessageData *m_messageData;                ///< Текущий прочитанный объект MessageData.
@@ -119,7 +110,7 @@ private:
   QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
-  SyncChannelData *m_syncChannelData;        ///< Данные синхронизации канала.
+  SyncChannelCache *m_syncChannelCache;      ///< Данные синхронизации канала.
   User *m_user;                              ///< Пользователь.
 };
 

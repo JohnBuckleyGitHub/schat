@@ -28,7 +28,7 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
 {
   setId(id);
   setNick(authRequestData->nick);
-  m_users.append(m_id);
+  addUser(m_id);
 }
 
 
@@ -45,7 +45,7 @@ bool ServerUser::addId(int type, const QByteArray &id)
 
 bool ServerUser::addUser(const QByteArray &id)
 {
-  if (m_users.contains(id))
+  if (m_users.contains(id) || SimpleID::typeOf(id) != SimpleID::UserId)
     return false;
 
   m_users.append(id);

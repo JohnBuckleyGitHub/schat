@@ -268,32 +268,38 @@ void TabWidget::message(int status, const MessageData &data)
   if (SimpleID::typeOf(data.senderId) != SimpleID::UserId)
     return;
 
-  User *user = m_client->user(data.senderId);
-  if (!user)
-    return;
+  int type = SimpleID::typeOf(data.destId);
 
-  int idType = SimpleID::typeOf(data.destId);
+  if (type == SimpleID::ChannelId) {
+    User *user = m_client->user(data.senderId);
+    if (!user)
+      return;
 
-  if (idType == SimpleID::ChannelId) {
     ChannelTab *tab = m_channels.value(data.destId);
     if (tab) {
-//      tab->chatView()->appendRawText(tr("<b>%1</b>: %2").arg(user->nick()).arg(data.text));
       tab->chatView()->append(status, user, data);
     }
   }
-  else if (idType == SimpleID::UserId) {
+  else if (type == SimpleID::UserId) {
     QByteArray id;
+    User *user = 0;
 
-    if (status & MessageAdapter::IncomingMessage)
+    if (status & MessageAdapter::IncomingMessage) {
       id = data.senderId;
-    else if (status & MessageAdapter::OutgoingMessage)
+      user = m_client->user(id);
+    }
+    else if (status & MessageAdapter::OutgoingMessage) {
       id = data.destId;
+      user = m_client->user();
+    }
     else
+      return;
+
+    if (!user)
       return;
 
     PrivateTab *tab = privateTab(id);
     if (tab) {
-//      tab->chatView()->appendRawText(tr("<b>%1</b>: %2").arg(user->nick()).arg(data.text));
       tab->chatView()->append(status, user, data);
     }
   }
@@ -395,10 +401,6 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
  */
 PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 {
-  User *user = m_client->user(id);
-  if (!user)
-    return 0;
-
   PrivateTab *tab = 0;
 
   if (m_talks.contains(id)) {
@@ -407,6 +409,10 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   if (create) {
+    User *user = m_client->user(id);
+    if (!user)
+      return 0;
+
     tab = new PrivateTab(user, this);
     m_talks.insert(id, tab);
     addTab(tab, user->nick());
@@ -415,7 +421,7 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   }
   else if (tab) {
-    tab->update(user);
+    tab->update(m_client->user(id));
   }
 
   if (show && tab) {
@@ -484,6 +490,7 @@ void TabWidget::createToolBars()
  * Отображение в заголовке вкладки числа пользователей, если их больше 1.
  *
  * \param id Идентификатор канала.
+ * \bug После добавления класса ClientOfflineCache, при отключении от сервера число пользователей не обнуляется.
  */
 void TabWidget::displayChannelUserCount(const QByteArray &id)
 {

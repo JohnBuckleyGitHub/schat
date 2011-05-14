@@ -39,7 +39,7 @@ MessageAdapter::MessageAdapter(SimpleClient *client)
 /*!
  * Отправка сообщения, если в сообщении содержаться команды, то они будут обработаны.
  * Команды:
- * - /join <имя канала>
+ * - /join &lt;имя канала&gt;
  */
 int MessageAdapter::send(MessageData &data)
 {

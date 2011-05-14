@@ -39,6 +39,7 @@ public:
   bool addId(int type, const QByteArray &id);
   bool addUser(const QByteArray &id);
   bool removeUser(const QByteArray &id);
+  inline bool isUser(const QByteArray &id) const { return m_users.contains(id); }
   inline QList<QByteArray> users() const { return m_users; }
   void addUsers(const QList<QByteArray> &users);
   void removeUsers(const QList<QByteArray> &users);
