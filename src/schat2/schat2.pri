@@ -36,6 +36,7 @@ HEADERS = \
     net/packets/users.h \
     net/PacketWriter.h \
     net/SimpleClient.h \
+    net/SimpleClient_p.h \
     net/SimpleID.h \
     net/SimpleSocket.h \
     net/TransportReader.h \

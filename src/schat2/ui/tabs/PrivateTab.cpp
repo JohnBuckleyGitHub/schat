@@ -40,6 +40,9 @@ PrivateTab::PrivateTab(User *user, TabWidget *parent)
 
 bool PrivateTab::update(User *user)
 {
+  if (!user)
+    return false;
+
   m_user->setNick(user->nick());
   m_user->setRawGender(user->rawGender());
   m_action->setText(m_user->nick());

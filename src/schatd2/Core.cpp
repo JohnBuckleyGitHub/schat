@@ -162,6 +162,8 @@ bool Core::route(ServerUser *user)
   if (!user)
     return false;
 
+  bindTalks(m_storage->user(m_reader->sender()), user);
+
   return send(user, m_readBuffer);
 }
 
@@ -302,6 +304,16 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
   if (!user)
     return;
 
+  QByteArray id = user->id();
+
+  QList<QByteArray> talks = user->ids(SimpleID::TalksListId);
+  for (int i = 0; i < talks.size(); ++i) {
+    User *u = m_storage->user(talks.at(i));
+    if (u) {
+      u->removeId(SimpleID::TalksListId, id);
+    }
+  }
+
   MessageData message(user->id(), QByteArray(), "leave", "");
   MessageWriter leave(m_sendStream, message);
   send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
@@ -313,8 +325,8 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 /*!
  * Подключение пользователя к каналу.
  *
- * \param userId  Идентификатор пользователя.
- * \param channel Указатель на канал.
+ * \param userId    Идентификатор пользователя.
+ * \param channelId Идентификатор канала.
  *
  * \return true в случае успеха.
  */
@@ -437,23 +449,9 @@ bool Core::command()
       return true;
   }
 
-  // \todo ! add Требуется дополнительная проверка идентификаторов.
   if (command == "add") {
-
-    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest())) {
-
-      ServerUser *user = m_storage->user(m_reader->sender());
-
-      if (user) {
-        QList<QByteArray> ids = m_reader->idList();
-        if (ids.isEmpty())
-          return true;
-
-        int type = SimpleID::typeOf(m_reader->dest());
-        foreach (QByteArray id, ids) {
-          user->addId(type, id);
-        }
-      }
+    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
+      bindTalks();
     }
 
     return true;
@@ -595,6 +593,7 @@ int Core::auth()
  *
  * \param channel Канал, из которого будут отправлены данные пользователей.
  * \param user    Пользователь, которому будут отравлены данные.
+ * \todo ! Не отправлять клиенту информацию о тех пользователях информация о которых имеется у клиента.
  */
 void Core::sendChannel(ServerChannel *channel, ServerUser *user)
 {
@@ -622,4 +621,62 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
   packets.append(end.data());
 
   send(user, packets);
+}
+
+
+/*!
+ * При необходимости добавляет пользователя \p user2 в список разговоров пользователя \p user1.
+ * В случае успешного добавления пользователю \p user1 будет отослан пакет с данными \p user2.
+ */
+void Core::addTalk(ServerUser *user1, ServerUser *user2)
+{
+  if (!user1->containsId(SimpleID::TalksListId, user2->id())) {
+    if (user1->addId(SimpleID::TalksListId, user2->id())) {
+      send(user1, UserWriter(m_sendStream, user2, user1->id()).data());
+    }
+  }
+}
+
+
+/*!
+ * Синхронизация данных для обмена статусной информацией между пользователями.
+ * \todo ! Добавить возможность склейки пакетов.
+ */
+void Core::bindTalks()
+{
+  SCHAT_DEBUG_STREAM(this << "addUserRoleId()")
+
+  ServerUser *user = m_storage->user(m_reader->sender());
+  if (!user)
+    return;
+
+  QList<QByteArray> ids = m_reader->idList();
+  if (ids.isEmpty())
+    return;
+
+  ServerUser *destUser = 0;
+
+  for (int i = 0; i < ids.size(); ++i) {
+    destUser = m_storage->user(ids.at(i));
+    if (!destUser)
+      continue;
+
+    bindTalks(user, destUser);
+  }
+}
+
+
+/*!
+ * Взаимное добавление пользователей в список разговоров.
+ * \sa addTalk().
+ */
+void Core::bindTalks(ServerUser *senderUser, ServerUser *destUser)
+{
+  if (!senderUser || !destUser)
+    return;
+
+  SCHAT_DEBUG_STREAM(this << "bindTalks()")
+
+  addTalk(senderUser, destUser);
+  addTalk(destUser, senderUser);
 }

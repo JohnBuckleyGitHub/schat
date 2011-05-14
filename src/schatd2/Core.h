@@ -75,6 +75,11 @@ private:
   int auth();
   void sendChannel(ServerChannel *channel, ServerUser *user);
 
+  // u2u.
+  void addTalk(ServerUser *user1, ServerUser *user2);
+  void bindTalks();
+  void bindTalks(ServerUser *senderUser, ServerUser *destUser);
+
   MessageData *m_messageData;      ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent; ///< Текущий объект NewPacketsEvent.
   PacketReader *m_reader;          ///< Текущий объект PacketReader выполняющий чтение пакета.
