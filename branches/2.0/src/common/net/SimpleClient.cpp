@@ -582,7 +582,7 @@ bool SimpleClient::removeUser(const QByteArray &userId)
 
   QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
   for (int i = 0; i < channels.size(); ++i) {
-    removeUserFromChannel(channels.at(i), userId);
+    removeUserFromChannel(channels.at(i), userId, false);
   }
 
   delete user;
@@ -595,7 +595,7 @@ bool SimpleClient::removeUser(const QByteArray &userId)
 /*!
  * Удаление пользователя из канала.
  */
-bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId)
+bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
 {
   User *user = m_users.value(userId);
   Channel *channel = m_channels.value(channelId);
@@ -605,7 +605,7 @@ bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByt
     user->removeId(SimpleID::ChannelListId, channel->id());
     emit part(channel->id(), user->id());
 
-    if (!this->user()->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
+    if (clear && !this->user()->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
       removeUser(userId);
 
     return true;

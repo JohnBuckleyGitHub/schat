@@ -19,13 +19,15 @@ SCHAT_RESOURCES   = 1
 SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
 
-QT = core gui network
+QT = core gui network webkit
 TEMPLATE = app
 
 HEADERS = \
     arora/lineedit.h \
     arora/lineedit_p.h \
     Channel.h \
+    ChatCore.h \
+    ChatMessage.h \
     ClientUI.h \
     debugstream.h \
     MessageAdapter.h \
@@ -50,6 +52,7 @@ HEADERS = \
     ui/tabs/AbstractTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
+    ui/tabs/ChatView_p.h \
     ui/tabs/ChatViewTab.h \
     ui/tabs/PrivateTab.h \
     ui/tabs/UserView.h \
@@ -61,6 +64,8 @@ HEADERS = \
 SOURCES = \
     arora/lineedit.cpp \
     Channel.cpp \
+    ChatCore.cpp \
+    ChatMessage.cpp \
     ClientUI.cpp \
     main.cpp \
     MessageAdapter.cpp \
@@ -82,7 +87,7 @@ SOURCES = \
     ui/TabBar.cpp \
     ui/tabs/AbstractTab.cpp \
     ui/tabs/ChannelTab.cpp \
-    ui/tabs/ChatView_basic.cpp \
+    ui/tabs/ChatView.cpp \
     ui/tabs/ChatViewTab.cpp \
     ui/tabs/PrivateTab.cpp \
     ui/tabs/UserView.cpp \

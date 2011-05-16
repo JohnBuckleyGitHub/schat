@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="html/jquery.min.js">html/jquery-1.6.1.min.js</file>
   <file alias="images/channel.png">images/diagona/030.png</file>
   <file alias="images/gear.png">images/fugue/gear.png</file>
   <file alias="images/main-tab-menu.png">images/fugue/applications-stack.png</file>
@@ -35,6 +36,10 @@
   <file alias="images/user-white-female.png">images/fugue/user-white-female.png</file>
   <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
+  <file>html/ChatView.html</file>
+  <file>html/ChatView.js</file>
+  <file>html/style.css</file>
+  <file>html/templates/message.html</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
 </qresource>

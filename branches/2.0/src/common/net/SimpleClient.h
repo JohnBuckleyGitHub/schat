@@ -94,7 +94,7 @@ private:
   // m_users.
   bool readUserData();
   bool removeUser(const QByteArray &userId);
-  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId);
+  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
   void updateUserData(User *existUser, User *user);
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.

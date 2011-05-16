@@ -9,6 +9,7 @@
 
 #include "ClientUI.h"
 
+#include "ChatCore.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
@@ -22,22 +23,17 @@
 #include <QUuid>
 
 ClientUI::ClientUI(QWidget *parent)
-  : QMainWindow(parent),
-    m_client(0)
+  : QMainWindow(parent)
 {
   if (QtWin::isCompositionEnabled()) {
     QtWin::extendFrameIntoClientArea(this);
   }
 
-  m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
-  #if defined(SCHAT_RANDOM_CLIENT_ID)
-  m_client->user()->setNick(QUuid::createUuid().toString());
-  #endif
-
+  m_core = new ChatCore(this);
   m_central = new QFrame(this);
 
-  m_tabs = new TabWidget(m_client, this);
-  m_statusBar = new StatusBar(m_client, this);
+  m_tabs = new TabWidget(this);
+  m_statusBar = new StatusBar(m_core->client(), this);
 
   m_url = new QLineEdit("schat://192.168.1.33:6999", this);
   m_statusBar->setUrl(m_url->text());
