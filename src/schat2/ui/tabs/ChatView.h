@@ -19,24 +19,40 @@
 #ifndef CHATVIEW_H_
 #define CHATVIEW_H_
 
-#include <QWidget>
+#include <QQueue>
+#include <QWebView>
 
+class ChatMessage;
 class ChatViewPrivate;
-class MessageData;
-class QVBoxLayout;
-class User;
 
-class ChatView : public QWidget
+class ChatView : public QWebView
 {
+  Q_OBJECT
+
 public:
   ChatView(QWidget *parent = 0);
-  QVBoxLayout* layout();
-  static QString timeStamp();
-  void append(int status, User *user, const MessageData &data);
-  void appendRawText(const QString &text);
+  void append(const ChatMessage &message);
+  void appendRawMessage(const QString &message);
+
+signals:
+  void nickClicked(const QByteArray &userId);
+
+public slots:
+  void nickClicked(const QString &arg1);
+
+private slots:
+  void loadFinished();
+  void populateJavaScriptWindowObject();
 
 private:
-  ChatViewPrivate *d;
+  QByteArray userIdFromClass(const QString &text);
+  void appendUserMessage(const ChatMessage &message);
+  void setText(QString &html, const QString &text);
+  void setTimeStamp(QString &html);
+
+  bool m_loaded;               ///< true если документ загружен.
+  ChatViewPrivate *m_d;        ///< Приватный класс.
+  QQueue<QString> m_pendingJs; ///< Очередь сообщений ожидающих загрузки документа.
 };
 
 #endif /* CHATVIEW_H_ */

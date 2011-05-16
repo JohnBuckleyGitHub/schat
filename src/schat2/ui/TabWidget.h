@@ -45,7 +45,7 @@ class TabWidget : public QTabWidget
   Q_OBJECT
 
 public:
-  TabWidget(SimpleClient *client, QWidget *parent = 0);
+  TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
   inline MessageAdapter *messageAdapter() { return m_messageAdapter; }
   inline TabBar *tabBar() { return m_tabBar; }

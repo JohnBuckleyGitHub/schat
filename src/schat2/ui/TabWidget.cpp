@@ -23,8 +23,11 @@
 #include <QToolBar>
 #include <QToolButton>
 
-#include "Channel.h"
 #include "debugstream.h"
+
+#include "Channel.h"
+#include "ChatCore.h"
+#include "ChatMessage.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
@@ -38,9 +41,9 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-TabWidget::TabWidget(SimpleClient *client, QWidget *parent)
+TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
-  , m_client(client)
+  , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
   setTabBar(m_tabBar);
@@ -50,8 +53,8 @@ TabWidget::TabWidget(SimpleClient *client, QWidget *parent)
   setStyleSheet("QToolBar { margin:0px; border:0px; }");
   #endif
 
-  m_welcomeTab = new WelcomeTab(client, this);
-  m_messageAdapter = new MessageAdapter(client);
+  m_welcomeTab = new WelcomeTab(m_client, this);
+  m_messageAdapter = new MessageAdapter(m_client);
   addTab(m_welcomeTab, "Welcome");
 
   createToolBars();
@@ -247,7 +250,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId, int 
       return;
 
     displayChannelUserCount(channelId);
-    tab->chatView()->appendRawText(tr("<b>%1</b> joined to <b>%2</b>").arg(user->nick()).arg(chan->name()));
+    tab->chatView()->appendRawMessage(tr("<b>%1</b> joined to <b>%2</b>").arg(user->nick()).arg(chan->name()));
   }
 }
 
@@ -277,7 +280,8 @@ void TabWidget::message(int status, const MessageData &data)
 
     ChannelTab *tab = m_channels.value(data.destId);
     if (tab) {
-      tab->chatView()->append(status, user, data);
+      ChatMessage message(status, data);
+      tab->chatView()->append(message);
     }
   }
   else if (type == SimpleID::UserId) {
@@ -300,7 +304,7 @@ void TabWidget::message(int status, const MessageData &data)
 
     PrivateTab *tab = privateTab(id);
     if (tab) {
-      tab->chatView()->append(status, user, data);
+//      tab->chatView()->append(status, user, data);
     }
   }
 }
@@ -311,7 +315,7 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
   ChannelTab *tab = m_channels.value(channelId);
   User *user = m_client->user(userId);
   if (tab && user) {
-    tab->chatView()->appendRawText(tr("<b>%1</b> left").arg(user->nick()));
+    tab->chatView()->appendRawMessage(tr("<b>%1</b> left").arg(user->nick()));
     tab->userView()->remove(userId);
     displayChannelUserCount(channelId);
   }
@@ -381,7 +385,7 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
   }
 
   tab->setOnline();
-  tab->chatView()->appendRawText(tr("you're joined to <b>%1</b>").arg(channel->name()));
+  tab->chatView()->appendRawMessage(tr("you're joined to <b>%1</b>").arg(channel->name()));
   tab->userView()->add(m_client->user(), UserView::SelfNick);
   tab->action()->setText(channel->name());
 

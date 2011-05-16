@@ -1,0 +1,88 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+* {
+	word-wrap:break-word;
+}
+
+body {
+	margin:0;
+}
+
+#Chat {
+	margin:0;
+	padding:0;
+}
+
+img {
+	vertical-align: middle;
+}
+
+a {
+	text-decoration:none;
+}
+
+a:link, a:visited {
+	color:#2988d2;
+}
+
+a:active, a:hover {
+	color:#1e6396;
+}
+
+.message-container {
+	padding:1px;
+}
+
+.block {
+	padding-left:0;
+}
+
+.timestamp {
+	color:#a5b2c3;
+	font-size:x-small;
+}
+
+.outgoing {
+	background-color:#f2ffe1;
+	border:1px solid #ebffcd;
+}
+
+.outgoing:hover, .outgoing:focus {
+	background-color:#e3ffb9;
+	border:1px solid #ddffa5;
+}
+
+.undelivered {
+	background:url(images/progress.gif) top right no-repeat #f2ffe1;
+}
+
+.incoming {
+	background:#f7f8f9;
+	border:1px solid #f2f4f6;
+}
+
+.incoming:hover, .incoming:focus {
+	background:#e6f0f5;
+	border:1px solid #dbebf1;
+}
+
+.nick, .nick:link, .nick:visited {
+	font-weight:bold;
+	color:#113853;
+}

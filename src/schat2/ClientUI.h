@@ -10,6 +10,7 @@
 
 #include <QMainWindow>
 
+class ChatCore;
 class QPushButton;
 class SimpleClient;
 class QTabWidget;
@@ -32,10 +33,10 @@ private slots:
   void send();
 
 private:
-  QLineEdit *m_url;
-  QLineEdit *m_send;
+  ChatCore *m_core;
   QFrame *m_central;
-  SimpleClient *m_client;
+  QLineEdit *m_send;
+  QLineEdit *m_url;
   StatusBar *m_statusBar;
   TabWidget *m_tabs;
 };
