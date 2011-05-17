@@ -22,13 +22,13 @@
 #include "debugstream.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
+#include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 #include "Storage.h"
 
-Storage::Storage(const QByteArray &id)
-  : m_id(id)
+Storage::Storage()
 {
   m_normalize.insert(0x0430, 'a'); // а
   m_normalize.insert(0x0435, 'e'); // е
@@ -40,11 +40,14 @@ Storage::Storage(const QByteArray &id)
   m_normalize.insert(0x0443, 'y'); // у
   m_normalize.insert(0x0445, 'x'); // х
   m_normalize.insert('l', 'i');
+
+  m_serverData = new ServerData();
 }
 
 
 Storage::~Storage()
 {
+  delete m_serverData;
 }
 
 
@@ -130,7 +133,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
     prefix = "anonymous:";
   }
 
-  return QCryptographicHash::hash(QString(prefix + m_id + clientId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
+  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + clientId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
 }
 
 
@@ -220,6 +223,7 @@ QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
 
 /*!
  * Добавление нового канала.
+ * Первый постоянный канал станет основным каналом сервера.
  */
 ServerChannel* Storage::addChannel(const QString &name, bool permanent)
 {
@@ -252,7 +256,7 @@ ServerChannel* Storage::channel(const QString &name, bool normalize) const
 
 QByteArray Storage::session() const
 {
-  return SimpleID::session(m_id);
+  return SimpleID::session(m_serverData->privateId());
 }
 
 
@@ -278,5 +282,5 @@ QString Storage::normalize(const QString &text) const
 
 QByteArray Storage::makeChannelId(const QString &name)
 {
-  return QCryptographicHash::hash(QString("channel:" + m_id + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
+  return QCryptographicHash::hash(QString("channel:" + m_serverData->privateId() + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
 }

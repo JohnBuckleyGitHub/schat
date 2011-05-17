@@ -33,17 +33,4 @@ public:
   QList<QByteArray> users; ///< Идентификатры пользователей.
 };
 
-
-/*!
- * В случае разрыва соединения хранит данные для восстановления состояния клиента.
- */
-class ClientOfflineCache
-{
-public:
-  ClientOfflineCache() {}
-
-  QHash<int, QList<QByteArray> > ids;  ///< Списки идентификаторов.
-  QHash<QByteArray, QString> channels; ///< Каналы.
-};
-
 #endif /* SIMPLECLIENT_P_H_ */

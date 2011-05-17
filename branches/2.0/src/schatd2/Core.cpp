@@ -31,6 +31,7 @@
 #include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
+#include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
@@ -38,16 +39,17 @@
 #include "Worker.h"
 #include "WorkerThread.h"
 
-#define SCHAT_EVENT(x, y) case ServerEvent:: x: y (static_cast< xEvent *>(event)); break;
-
 Core::Core(QObject *parent)
   : QObject(parent),
     m_thread(0)
 {
-  m_storage = new Storage(SimpleID::uniqueId());
-  m_storage->addChannel("Main", true);
+  m_storage = new Storage();
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
+
+  m_options.insert(MainChannelName, "Main");
+  m_options.insert(ServerName, "");
+  m_options.insert(PrivateId, SimpleID::uniqueId());
 }
 
 
@@ -62,6 +64,13 @@ Core::~Core()
 
 int Core::start()
 {
+  m_storage->serverData()->setPrivateId(option(PrivateId).toByteArray());
+  m_storage->serverData()->setName(option(ServerName).toString());
+
+  if (!option(MainChannelName).toString().isEmpty()) {
+    m_storage->serverData()->setChannelId(m_storage->addChannel(option(MainChannelName).toString(), true)->id());
+  }
+
   m_thread = new WorkerThread(this);
   connect(m_thread, SIGNAL(workersStarted()), SLOT(workersStarted()));
   m_thread->start();
@@ -70,10 +79,31 @@ int Core::start()
 }
 
 
+QVariant Core::option(Options key) const
+{
+  return m_options.value(key);
+}
+
+
 void Core::quit()
 {
   m_thread->quit();
   m_thread->wait();
+}
+
+
+void Core::setOption(Options key, const QVariant &value)
+{
+  switch (key) {
+    case ServerName:
+      m_storage->serverData()->setName(value.toString());
+      break;
+
+    default:
+      break;
+  }
+
+  m_options[key] = value;
 }
 
 
@@ -471,7 +501,7 @@ bool Core::readAuthRequest()
   if (error == AuthReplyData::NoError)
     return true;
 
-  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->id(), error)).data();
+  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();
   NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->workerId(), m_packetsEvent->socketId(), packet);
 
   switch (error) {
@@ -578,7 +608,7 @@ int Core::auth()
 
   m_storage->add(user);
 
-  AuthReplyData reply(m_storage->id(), user->id(), user->session());
+  AuthReplyData reply(m_storage->serverData(), user->id(), user->session());
   send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
 
   return 0;

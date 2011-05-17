@@ -147,6 +147,9 @@ void ChatView::appendUserMessage(const ChatMessage &message)
   if (message.status() & ChatMessage::OutgoingMessage)
     extra += " outgoing";
 
+  if (message.status() & ChatMessage::Undelivered)
+    extra += " undelivered";
+
   QString html = m_d->tpl(ChatViewPrivate::UserMessage);
   setTimeStamp(html);
   setText(html, message.text());

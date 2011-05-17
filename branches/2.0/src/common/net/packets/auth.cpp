@@ -27,31 +27,42 @@
 #include "net/SimpleID.h"
 #include "User.h"
 
-AuthReplyData::AuthReplyData(const QByteArray &serverId, const QByteArray &userId, const QByteArray &session)
-  : serverId(serverId)
-  , session(session)
+AuthReplyData::AuthReplyData(ServerData *data, const QByteArray &userId, const QByteArray &session)
+  : session(session)
   , userId(userId)
   , error(NoError)
+  , protoVersion(Protocol::V4_0)
   , status(AccessGranted)
 {
+  serverData.setId(data->id());
+  serverData.setName(data->name());
+  serverData.setChannelId(data->channelId());
+  serverData.setFeatures(data->features());
 }
 
 
-AuthReplyData::AuthReplyData(const QByteArray &serverId, int error)
-  : serverId(serverId)
-  , error(error)
+AuthReplyData::AuthReplyData(ServerData *data, int error)
+  : error(error)
+  , protoVersion(Protocol::V4_0)
   , status(AccessDenied)
 {
+  serverData.setId(data->id());
 }
 
 
 AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
-  : PacketWriter(stream, Protocol::AuthReplyPacket, data.serverId, data.userId)
+  : PacketWriter(stream, Protocol::AuthReplyPacket, data.serverData.id(), data.userId)
 {
   put(data.status);
 
   if (data.status == AuthReplyData::AccessGranted) {
     putId(data.session);
+    put(data.protoVersion);
+    put<quint16>(0);
+    put<quint16>(0);
+    put(data.serverData.features());
+    putId(data.serverData.channelId());
+    put(data.serverData.name());
   }
   else {
     put(data.error);
@@ -61,13 +72,19 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
 
 AuthReplyReader::AuthReplyReader(PacketReader *reader)
 {
-  data.serverId = reader->sender();
+  data.serverData.setId(reader->sender());
   data.userId = reader->dest();
   data.error = 0;
   data.status = reader->get<quint8>();
 
   if (data.status == AuthReplyData::AccessGranted) {
     data.session = reader->id();
+    data.protoVersion = reader->get<quint8>();
+    reader->get<quint16>();
+    reader->get<quint16>();
+    data.serverData.setFeatures(reader->get<quint32>());
+    data.serverData.setChannelId(reader->id());
+    data.serverData.setName(reader->text());
   }
   else {
     data.error = reader->get<quint8>();
@@ -82,7 +99,7 @@ AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
   , authType(authType)
   , authVersion(V1)
   , gender(user->rawGender())
-  , maxProtoVersion(0x0)
+  , maxProtoVersion(Protocol::V4_0)
 {
   userAgent = genUserAgent();
 }
