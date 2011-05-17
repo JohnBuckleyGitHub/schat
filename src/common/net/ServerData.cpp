@@ -16,38 +16,41 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QAction>
-#include <QSplitter>
-#include <QVBoxLayout>
+#include <QCryptographicHash>
 
-#include "ui/tabs/ChannelTab.h"
-#include "ui/tabs/UserView.h"
-#include "User.h"
+#include "net/ServerData.h"
+#include "net/SimpleID.h"
 
-ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
-  : ChatViewTab(id, ChannelType, parent)
+ServerData::ServerData()
+  : m_features(NoFeatures)
 {
-  m_userView = new UserView(this);
-
-  m_splitter = new QSplitter(this);
-  m_splitter->addWidget(m_chatView);
-  m_splitter->addWidget(m_userView);
-  m_splitter->setStretchFactor(0, 1);
-  m_splitter->setStretchFactor(1, 1);
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_splitter);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
-
-  m_icon = QIcon(":/images/channel.png");
 }
 
 
-void ChannelTab::setOnline(bool online)
+bool ServerData::setChannelId(const QByteArray &id)
 {
-  if (!online)
-    m_userView->clear();
+  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+    return false;
 
-  ChatViewTab::setOnline(online);
+  m_channelId = id;
+  m_features |= AutoJoinSupport;
+  return true;
+}
+
+
+bool ServerData::setName(const QString &name)
+{
+  QString tmp = name.simplified().left(MaxNameLength);
+  if (tmp.size() < MinNameLengh)
+    return false;
+
+  m_name = tmp;
+  return true;
+}
+
+
+void ServerData::setPrivateId(const QByteArray &id)
+{
+  m_privateId = id;
+  m_id = QCryptographicHash::hash(id, QCryptographicHash::Sha1) += SimpleID::ServerId;
 }

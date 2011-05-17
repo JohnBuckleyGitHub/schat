@@ -272,6 +272,7 @@ void TabWidget::message(int status, const MessageData &data)
     return;
 
   int type = SimpleID::typeOf(data.destId);
+  ChatMessage message(status, data);
 
   if (type == SimpleID::ChannelId) {
     User *user = m_client->user(data.senderId);
@@ -280,7 +281,6 @@ void TabWidget::message(int status, const MessageData &data)
 
     ChannelTab *tab = m_channels.value(data.destId);
     if (tab) {
-      ChatMessage message(status, data);
       tab->chatView()->append(message);
     }
   }
@@ -288,11 +288,11 @@ void TabWidget::message(int status, const MessageData &data)
     QByteArray id;
     User *user = 0;
 
-    if (status & MessageAdapter::IncomingMessage) {
+    if (status & ChatMessage::IncomingMessage) {
       id = data.senderId;
       user = m_client->user(id);
     }
-    else if (status & MessageAdapter::OutgoingMessage) {
+    else if (status & ChatMessage::OutgoingMessage) {
       id = data.destId;
       user = m_client->user();
     }
@@ -304,7 +304,7 @@ void TabWidget::message(int status, const MessageData &data)
 
     PrivateTab *tab = privateTab(id);
     if (tab) {
-//      tab->chatView()->append(status, user, data);
+      tab->chatView()->append(message);
     }
   }
 }
@@ -494,7 +494,6 @@ void TabWidget::createToolBars()
  * Отображение в заголовке вкладки числа пользователей, если их больше 1.
  *
  * \param id Идентификатор канала.
- * \bug После добавления класса ClientOfflineCache, при отключении от сервера число пользователей не обнуляется.
  */
 void TabWidget::displayChannelUserCount(const QByteArray &id)
 {

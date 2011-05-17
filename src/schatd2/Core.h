@@ -19,7 +19,9 @@
 #ifndef CORE_H_
 #define CORE_H_
 
+#include <QHash>
 #include <QObject>
+#include <QVariant>
 
 class MessageData;
 class NewPacketsEvent;
@@ -36,10 +38,19 @@ class Core : public QObject
   Q_OBJECT
 
 public:
+  /// Опции.
+  enum Options {
+    MainChannelName, ///< (QString/static) Имя основного канала.
+    ServerName,      ///< (QString/dynamic) Имя сервера.
+    PrivateId        ///< (QByteArray/static) Приватный идентификатор сервера.
+  };
+
   Core(QObject *parent = 0);
   ~Core();
   int start();
+  QVariant option(Options key) const;
   void quit();
+  void setOption(Options key, const QVariant &value);
 
 protected:
   void customEvent(QEvent *event);
@@ -80,17 +91,17 @@ private:
   void bindTalks();
   void bindTalks(ServerUser *senderUser, ServerUser *destUser);
 
-  MessageData *m_messageData;      ///< Текущий прочитанный объект MessageData.
-  NewPacketsEvent *m_packetsEvent; ///< Текущий объект NewPacketsEvent.
-  PacketReader *m_reader;          ///< Текущий объект PacketReader выполняющий чтение пакета.
-  QByteArray m_readBuffer;         ///< Буфер чтения виртуальных пакетов.
-  QByteArray m_sendBuffer;         ///< Буфер отправки виртуальных пакетов.
-  QDataStream *m_readStream;       ///< Поток чтения виртуальных пакетов.
-  QDataStream *m_sendStream;       ///< Поток отправки виртуальных пакетов.
-  QList<Worker*> m_workers;        ///< Список объектов Worker.
-  Storage *m_storage;              ///< Хранилище данных.
-  WorkerThread *m_thread;          ///< Поток обслуживающий подключения.
-
+  MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
+  NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
+  PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
+  QByteArray m_readBuffer;            ///< Буфер чтения виртуальных пакетов.
+  QByteArray m_sendBuffer;            ///< Буфер отправки виртуальных пакетов.
+  QDataStream *m_readStream;          ///< Поток чтения виртуальных пакетов.
+  QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
+  QHash<Options, QVariant> m_options; ///< Опции.
+  QList<Worker*> m_workers;           ///< Список объектов Worker.
+  Storage *m_storage;                 ///< Хранилище данных.
+  WorkerThread *m_thread;             ///< Поток обслуживающий подключения.
 };
 
 #endif /* CORE_H_ */

@@ -20,6 +20,7 @@
 #define AUTH_H_
 
 #include "net/PacketWriter.h"
+#include "net/ServerData.h"
 
 class PacketReader;
 class User;
@@ -53,14 +54,15 @@ public:
   , status(0)
   {}
 
-  AuthReplyData(const QByteArray &serverId, const QByteArray &userId, const QByteArray &session);
-  AuthReplyData(const QByteArray &serverId, int error);
+  AuthReplyData(ServerData *data, const QByteArray &userId, const QByteArray &session);
+  AuthReplyData(ServerData *data, int error);
 
-  QByteArray serverId; ///< Идентификатор сервера.
-  QByteArray session;  ///< Сессия.
-  QByteArray userId;   ///< Идентификатор пользователя.
-  quint8 error;        ///< Код ошибки \sa Error.
-  quint8 status;       ///< Статус авторизации \sa Status.
+  QByteArray session;    ///< Сессия.
+  QByteArray userId;     ///< Идентификатор пользователя.
+  quint8 error;          ///< Код ошибки \sa Error.
+  quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
+  quint8 status;         ///< Статус авторизации \sa Status.
+  ServerData serverData; ///< Данные о сервере.
 };
 
 
@@ -74,6 +76,12 @@ public:
  * Дальнейшие данные различны в зависимости от статуса.
  * Если статус AccessGranted:
  * - 21 byte  - Сессия.
+ * - 01 byte  - Версия протокола.
+ * - 02 bytes - Разрешающие разрешения.
+ * - 02 bytes - Запрещающие разрешения.
+ * - 04 bytes - Возможности сервера.
+ * - 21 byte  - Идентификатор основного канала (если установлена опция ServerData::AutoJoinSupport)
+ * - utf8     - Имя сервера.
  *
  * Если статус AccessDenied.
  * - 01 byte  - Error code \sa Error.
@@ -140,7 +148,7 @@ public:
   quint8 authVersion;      ///< Версия пакета.
   quint8 gender;           ///< Пол и цвет пользователя.
   quint8 language;         ///< Язык клиента.
-  quint8 maxProtoVersion;  ///< Max Supported Protocol Version.
+  quint8 maxProtoVersion;  ///< Максимальная поддерживаемая версия протокола.
 };
 
 

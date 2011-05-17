@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     a.setApplicationName(SCHAT_NAME);
     a.setApplicationVersion(SCHAT_VERSION);
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     #if defined(SCHAT_BENCHMARK) && defined(Q_WS_WIN32)
     Sleep(5000);

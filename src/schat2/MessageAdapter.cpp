@@ -18,6 +18,7 @@
 
 #include <QHashIterator>
 
+#include "ChatMessage.h"
 #include "debugstream.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
@@ -33,6 +34,7 @@ MessageAdapter::MessageAdapter(SimpleClient *client)
 {
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
+  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
 }
 
 
@@ -118,19 +120,6 @@ int MessageAdapter::send(MessageData &data)
 void MessageAdapter::allDelivered(quint64 id)
 {
   Q_UNUSED(id)
-
-  if (m_undelivered.isEmpty())
-    return;
-
-  QHashIterator<quint64, QByteArray> i(m_undelivered);
-  while (i.hasNext()) {
-    i.next();
-    MessageData data(m_client->userId(), i.value(), "");
-    data.name = i.key();
-    emit message(OutgoingMessage | PartiallyConfirmed, data);
-  }
-
-  m_undelivered.clear();
 }
 
 
@@ -140,7 +129,16 @@ void MessageAdapter::allDelivered(quint64 id)
 void MessageAdapter::clientMessage(const MessageData &data)
 {
   if (data.senderId != m_client->userId())
-    emit message(IncomingMessage, data);
+    emit message(ChatMessage::IncomingMessage, data);
+}
+
+
+void MessageAdapter::clientStateChanged(int state)
+{
+  if (state == SimpleClient::ClientOnline)
+    return;
+
+  rejectAll(tr("Потерянно соединение с сервером"));
 }
 
 
@@ -164,7 +162,7 @@ bool MessageAdapter::sendText(MessageData &data)
   data.options |= MessageData::NameOption;
 
   if (m_client->send(data)) {
-    emit message(OutgoingMessage | Undelivered, data);
+    emit message(ChatMessage::OutgoingMessage | ChatMessage::Undelivered, data);
     m_undelivered.insert(m_name, data.destId);
     return true;
   }
@@ -223,4 +221,25 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   UserWriter writer(m_client->sendStream(), &user);
   m_client->send(writer.data());
   return SentAsCommand;
+}
+
+
+void MessageAdapter::rejectAll(const QString &reason)
+{
+  Q_UNUSED(reason)
+
+  if (m_undelivered.isEmpty())
+    return;
+
+//  MessageData data(m_client->userId(), QByteArray(), reason);
+//
+//  QHashIterator<quint64, QByteArray> i(m_undelivered);
+//  while (i.hasNext()) {
+//    i.next();
+//    data.name = i.key();
+//    data.destId = i.value();
+//    emit message(ChatMessage::OutgoingMessage | ChatMessage::Undelivered, data);
+//  }
+
+  m_undelivered.clear();
 }

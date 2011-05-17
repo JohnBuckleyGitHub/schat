@@ -23,12 +23,13 @@
 #include <QHash>
 
 class ServerChannel;
+class ServerData;
 class ServerUser;
 
 class Storage
 {
 public:
-  Storage(const QByteArray &id);
+  Storage();
   ~Storage();
 
   // user management.
@@ -48,20 +49,20 @@ public:
   ServerChannel* addChannel(const QString &name, bool permanent = false);
   ServerChannel* channel(const QString &name, bool normalize) const;
 
-  inline QByteArray id() const { return m_id; }
+  inline ServerData *serverData() { return m_serverData; }
   QByteArray session() const;
   QString normalize(const QString &text) const;
 
 private:
   QByteArray makeChannelId(const QString &name);
 
-  QByteArray m_id;                               ///< Уникальный идентификатор сервера.
   QHash<QByteArray, ServerChannel*> m_channels;  ///< Таблица каналов.
   QHash<QByteArray, ServerUser*> m_sessions;     ///< Таблица сессий.
   QHash<QByteArray, ServerUser*> m_users;        ///< Таблица пользователей.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
   QHash<QString, ServerChannel*> m_channelNames; ///< Имена каналов.
   QHash<QString, ServerUser*> m_nicks;           ///< Таблица ников.
+  ServerData *m_serverData;                      ///< Информация о сервере.
 };
 
 #endif /* STORAGE_H_ */

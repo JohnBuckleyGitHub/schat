@@ -33,6 +33,7 @@ HEADERS = \
     net/packets/message.h \
     net/packets/users.h \
     net/PacketWriter.h \
+    net/ServerData.h \
     net/SimpleID.h \
     net/SimpleSocket.h \
     net/TransportReader.h \
@@ -56,6 +57,7 @@ SOURCES = \
     net/packets/channels.cpp \
     net/packets/message.cpp \
     net/packets/users.cpp \
+    net/ServerData.cpp \
     net/SimpleID.cpp \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \

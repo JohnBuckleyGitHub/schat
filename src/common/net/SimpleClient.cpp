@@ -35,7 +35,6 @@
 SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)
   : SimpleSocket(id, parent)
   , m_sendLock(false)
-  , m_offlineCache(0)
   , m_clientState(ClientOffline)
   , m_reconnects(0)
   , m_syncChannelCache(0)
@@ -43,6 +42,7 @@ SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)
 {
   m_reconnectTimer = new QBasicTimer;
   m_uniqueId = SimpleID::uniqueId();
+  m_serverData = new ServerData();
 
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
@@ -56,6 +56,7 @@ SimpleClient::~SimpleClient()
 
   delete m_reconnectTimer;
   delete m_user;
+  delete m_serverData;
 }
 
 
@@ -286,26 +287,11 @@ bool SimpleClient::addChannel(Channel *channel)
 
 /*!
  * Очистка данных состояния клиента.
- *
- * \param save true для сохранения данных необходимых для восстановления состояния в m_offlineCache.
  */
-void SimpleClient::clearClient(bool save)
+void SimpleClient::clearClient()
 {
-  if (save && !m_offlineCache) {
-    m_offlineCache = new ClientOfflineCache();
-
-    if (user()->count(SimpleID::TalksListId))
-      m_offlineCache->ids.insert(SimpleID::TalksListId, user()->ids(SimpleID::TalksListId));
-
-    QHashIterator<QByteArray, Channel*> i(m_channels);
-    while (i.hasNext()) {
-      i.next();
-      m_offlineCache->channels.insert(i.key(), i.value()->name());
-    }
-  }
-
-  user()->remove(SimpleID::ChannelListId);
-  user()->remove(SimpleID::TalksListId);
+  m_user->remove(SimpleID::ChannelListId);
+  m_user->remove(SimpleID::TalksListId);
   m_users.remove(userId());
 
   qDeleteAll(m_users);
@@ -313,6 +299,44 @@ void SimpleClient::clearClient(bool save)
 
   qDeleteAll(m_channels);
   m_channels.clear();
+
+  m_users.insert(userId(), m_user);
+}
+
+
+/*!
+ * Восстановление состояния клиента после повторного подключения к предыдущему серверу.
+ */
+void SimpleClient::restore()
+{
+  QList<QByteArray> packets;
+
+  /// Происходит восстановление приватных разговоров.
+  if (user()->count(SimpleID::TalksListId)) {
+    MessageData data(userId(), SimpleID::setType(SimpleID::TalksListId, userId()), "add", "");
+    MessageWriter writer(m_sendStream, data);
+    writer.putId(user()->ids(SimpleID::TalksListId));
+    packets.append(writer.data());
+  }
+
+  /// Клиент заново входит в ранее открытие каналы.
+  if (!m_channels.isEmpty()) {
+    MessageData data(userId(), QByteArray(), "join", "");
+    data.options |= MessageData::TextOption;
+
+    QHashIterator<QByteArray, Channel*> i(m_channels);
+    while (i.hasNext()) {
+      i.next();
+      data.destId = i.key();
+      data.text = i.value()->name();
+      packets.append(MessageWriter(m_sendStream, data).data());
+    }
+  }
+
+  clearClient();
+
+  if (!packets.isEmpty())
+    send(packets);
 }
 
 
@@ -333,7 +357,9 @@ void SimpleClient::setClientState(ClientState state)
     m_users.insert(userId(), m_user);
   }
   else {
-    clearClient();
+    foreach (Channel *chan, m_channels) {
+      chan->clear();
+    }
   }
 
   emit clientStateChanged(m_clientState);
@@ -347,45 +373,29 @@ void SimpleClient::setClientState(ClientState state)
  * вход в раннее открытые каналы.
  * В случае если подключение происходит к новому серверу, таблица каналов очищается.
  *
- * \param id Новый идентификатор сервера.
+ * \param data Данные сервера.
  */
-void SimpleClient::setServerId(const QByteArray &id)
+void SimpleClient::setServerData(const ServerData &data)
 {
-  if (m_offlineCache && !m_serverId.isEmpty() && m_serverId == id) {
+  bool sameServer = false;
+  if (!m_serverData->id().isEmpty() && m_serverData->id() == data.id())
+    sameServer = true;
 
-    QList<QByteArray> packets;
+  m_serverData->setId(data.id());
+  m_serverData->setName(data.name());
+  m_serverData->setChannelId(data.channelId());
+  m_serverData->setFeatures(data.features());
 
-    if (!m_offlineCache->ids.value(SimpleID::TalksListId).isEmpty()) {
-      MessageData data(userId(), SimpleID::setType(SimpleID::TalksListId, userId()), "add", "");
-      MessageWriter writer(m_sendStream, data);
-      writer.putId(m_offlineCache->ids.value(SimpleID::TalksListId));
-      packets.append(writer.data());
+  if (!sameServer) {
+    clearClient();
+
+    if (m_serverData->features() & ServerData::AutoJoinSupport && !m_serverData->channelId().isEmpty()) {
+      MessageData data(userId(), m_serverData->channelId(), "join", "");
+      send(MessageWriter(m_sendStream, data).data());
     }
-
-    // Повторное подключение к каналам.
-    if (!m_offlineCache->channels.isEmpty()) {
-      MessageData data(userId(), QByteArray(), "join", "");
-      data.options |= MessageData::TextOption;
-
-      QHashIterator<QByteArray, QString> i(m_offlineCache->channels);
-      while (i.hasNext()) {
-        i.next();
-        data.destId = i.key();
-        data.text = i.value();
-        packets.append(MessageWriter(m_sendStream, data).data());
-      }
-    }
-
-    if (!packets.isEmpty())
-      send(packets);
   }
-
-  if (m_offlineCache) {
-    delete m_offlineCache;
-    m_offlineCache = 0;
-  }
-
-  m_serverId = id;
+  else
+    restore();
 }
 
 
@@ -458,7 +468,7 @@ bool SimpleClient::readAuthReply()
     setAuthorized(data.userId);
     m_user->setId(data.userId);
     setClientState(ClientOnline);
-    setServerId(data.serverId);
+    setServerData(data.serverData);
     return true;
   }
 

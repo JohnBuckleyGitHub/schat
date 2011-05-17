@@ -39,16 +39,6 @@ public:
     CommandArgsError
   };
 
-  /// Состояние доставки пакета.
-  enum DeliveryStatus {
-    UnknownStatus = 0,      ///< Не известное состояние.
-    OutgoingMessage = 1,    ///< Исходящее сообщение.
-    IncomingMessage = 2,    ///< Входящее сообщение.
-    Undelivered = 4,        ///< Сообщение было отправлено, подтверждение доставки не было получено.
-    PartiallyConfirmed = 8, ///< Сообщение было доставлено до сервера, на транспортном уровне.
-    Rejected = 16           ///< Сообщение было отвергнуто сервером.
-  };
-
   MessageAdapter(SimpleClient *client);
   int send(MessageData &data);
 
@@ -58,11 +48,13 @@ signals:
 private slots:
   void allDelivered(quint64 id);
   void clientMessage(const MessageData &data);
+  void clientStateChanged(int state);
 
 private:
   bool sendCommand(MessageData &data);
   bool sendText(MessageData &data);
   int setGender(const QString &gender, const QString &color);
+  void rejectAll(const QString &reason);
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.

@@ -30,6 +30,7 @@ class Packet;
 class PacketReader;
 class SyncChannelCache;
 class User;
+class ServerData;
 
 class SimpleClient : public SimpleSocket
 {
@@ -81,9 +82,10 @@ private slots:
 private:
   bool addChannel(Channel *channel);
   inline void lock() { m_sendLock = true; }
-  void clearClient(bool save = true);
+  void clearClient();
+  void restore();
   void setClientState(ClientState state);
-  void setServerId(const QByteArray &id);
+  void setServerData(const ServerData &data);
   void unlock();
 
   bool command();
@@ -98,18 +100,17 @@ private:
   void updateUserData(User *existUser, User *user);
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
-  ClientOfflineCache *m_offlineCache;        ///< Данные для восстановления состояния клиента, после переподключения к серверу.
   ClientState m_clientState;                 ///< Состояние клиента.
   int m_reconnects;                          ///< Число попыток восстановить соединение.
   MessageData *m_messageData;                ///< Текущий прочитанный объект MessageData.
   PacketReader *m_reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *m_reconnectTimer;             ///< Таймер управляющий попытками переподключения.
-  QByteArray m_serverId;                     ///< Идентификатор сервера.
   QByteArray m_uniqueId;                     ///< Уникальный идентификатор пользователя.
   QHash<QByteArray, Channel*> m_channels;    ///< Таблица каналов.
   QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
+  ServerData *m_serverData;                  ///< Данные о сервере.
   SyncChannelCache *m_syncChannelCache;      ///< Данные синхронизации канала.
   User *m_user;                              ///< Пользователь.
 };
