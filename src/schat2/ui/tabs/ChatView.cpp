@@ -137,6 +137,16 @@ void ChatView::appendUserMessage(const ChatMessage &message)
 {
   SCHAT_DEBUG_STREAM(this << "appendUserMessage()" << message.nick() << message.text());
 
+  if (message.status() & ChatMessage::Rejected) {
+    setMessageState(message.messageId(), "rejected");
+    return;
+  }
+
+  if (message.status() & ChatMessage::Delivered) {
+    setMessageState(message.messageId(), "delivered");
+    return;
+  }
+
   if (message.text().isEmpty())
     return;
 
@@ -160,6 +170,23 @@ void ChatView::appendUserMessage(const ChatMessage &message)
   html.replace("%messageId%", message.messageId());
 
   appendRawMessage(html);
+}
+
+
+/*!
+ * Устанавливает состояние сообщения и обновляет время.
+ *
+ * \param id    Идентификатор сообщения.
+ * \param state Имя CSS класса которое будет добавлено к блоку сообщения.
+ */
+void ChatView::setMessageState(const QString &id, const QString &state)
+{
+  QDateTime dateTime = QDateTime::currentDateTime();
+  page()->mainFrame()->evaluateJavaScript(QString("setMessageState('#%1', '%2', '%3', '%4');")
+      .arg(id)
+      .arg(state)
+      .arg(dateTime.toString("hh:mm"))
+      .arg(dateTime.toString(":ss")));
 }
 
 

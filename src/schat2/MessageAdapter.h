@@ -23,7 +23,9 @@
 #include <QObject>
 
 class MessageData;
+class NoticeData;
 class SimpleClient;
+
 
 class MessageAdapter : public QObject
 {
@@ -49,12 +51,13 @@ private slots:
   void allDelivered(quint64 id);
   void clientMessage(const MessageData &data);
   void clientStateChanged(int state);
+  void notice(const NoticeData &data);
 
 private:
   bool sendCommand(MessageData &data);
   bool sendText(MessageData &data);
   int setGender(const QString &gender, const QString &color);
-  void rejectAll(const QString &reason);
+  void setStateAll(int state, const QString &reason);
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.

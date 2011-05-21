@@ -76,3 +76,10 @@ function nickClicked() {
 	} catch (e) { alert(e); }
 	event.preventDefault();
 }
+
+function setMessageState(id, state, timestamp, seconds) {
+	$(id + ' > div.block').removeClass('undelivered');
+	$(id + ' > div.block').addClass(state);
+	$(id + ' > div.block > .timestamp').text(timestamp);
+	$(id + ' > div.block > .seconds').text(seconds);
+}

@@ -26,11 +26,12 @@
 class Channel;
 class ClientOfflineCache;
 class MessageData;
+class NoticeData;
 class Packet;
 class PacketReader;
+class ServerData;
 class SyncChannelCache;
 class User;
-class ServerData;
 
 class SimpleClient : public SimpleSocket
 {
@@ -67,6 +68,7 @@ signals:
   void join(const QByteArray &channelId, const QByteArray &userId);
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(const MessageData &data);
+  void notice(const NoticeData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void userDataChanged(const QByteArray &userId);
   void userLeave(const QByteArray &userId);
@@ -92,6 +94,7 @@ private:
   bool readAuthReply();
   bool readChannel();
   bool readMessage();
+  bool readNotice();
 
   // m_users.
   bool readUserData();

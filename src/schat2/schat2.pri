@@ -35,6 +35,7 @@ HEADERS = \
     net/packets/auth.h \
     net/packets/channels.h \
     net/packets/message.h \
+    net/packets/notices.h \
     net/packets/users.h \
     net/PacketWriter.h \
     net/ServerData.h \
@@ -74,6 +75,7 @@ SOURCES = \
     net/packets/auth.cpp \
     net/packets/channels.cpp \
     net/packets/message.cpp \
+    net/packets/notices.cpp \
     net/packets/users.cpp \
     net/ServerData.cpp \
     net/SimpleClient.cpp \
