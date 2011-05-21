@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ class QLabel;
 class QMenu;
 class QProcess;
 class QToolButton;
+class Translation;
 
 #ifndef SCHATD_NO_SERVICE
 class QtServiceController;
@@ -51,6 +52,9 @@ public:
 
 public slots:
   void handleMessage(const QString& message);
+
+protected:
+  void changeEvent(QEvent *event);
 
 private slots:
   void checkStart();
@@ -83,6 +87,7 @@ private:
   void createActions();
   void createButtons();
   void createTray();
+  void retranslateUi();
   void setActionsState(bool start = true, bool stop = true, bool restart = true, bool quit = true, bool settings = true);
   void setLedColor(LedColor color = Red);
   void setStatus(Status status);
@@ -96,6 +101,8 @@ private:
   QAction *m_settingsAction;
   QAction *m_startAction;
   QAction *m_stopAction;
+  QGroupBox *m_controlGroup;
+  QGroupBox *m_statusGroup;
   QLabel *m_aboutLabel;
   QLabel *m_ledLabel;
   QLabel *m_statusLabel;
@@ -112,6 +119,7 @@ private:
   QToolButton *m_startButton;
   QToolButton *m_stopButton;
   Status m_status;
+  Translation *m_translation;
   #ifndef SCHATD_NO_SERVICE
   QtServiceController *m_controller;
   #endif

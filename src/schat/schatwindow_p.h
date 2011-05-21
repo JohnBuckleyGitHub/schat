@@ -30,15 +30,17 @@
 
 class AboutDialog;
 class ClientService;
+class ConnectionStatus;
 class PopupManager;
 class SendWidget;
+class Settings;
 class SettingsDialog;
 class SettingsDialog;
+class SoundAction;
+class StatusMenu;
 class TrayIcon;
 class UserView;
 class WelcomeDialog;
-class SoundAction;
-class Settings;
 
 /*!
  * \brief Приватный D-класс для класса SChatWindow.
@@ -46,22 +48,12 @@ class Settings;
 class SChatWindowPrivate
 {
 public:
-  enum Status {
-    StatusOnline,
-    StatusAway,
-    StatusDnD,
-    StatusOffline
-  };
-
   SChatWindowPrivate(SChatWindow *parent);
   ~SChatWindowPrivate();
 
   bool parseCmd(AbstractTab *tab, const QString &message);
   bool sendStatus(quint32 status);
   bool startNotice(int index, const QString &key);
-  QPair<int, AbstractTab *> createPrivateTab(const QString &nick);
-  QPair<int, AbstractTab *> tabFromName(const QString &text, AbstractTab::Type type = AbstractTab::Private) const;
-  QPair<int, AbstractTab *> updatePrivateTab(const AbstractProfile &prof);
   QString channel();
   QString colorizedPing() const;
   static void cmdHelp(AbstractTab *tab, const QString &cmd);
@@ -92,23 +84,16 @@ public:
   bool exitAwayOnSend;
   bool motd;
   ClientService *clientService;
+  ConnectionStatus *connectionStatus; ///< Статус бар.
   Idle idleDetector;
   int autoAwayTime;
   MainChannel *main;
   PopupManager *popupManager;
-  QAction *awayAction;
   QAction *daemonAction;
-  QAction *dndAction;
-  QAction *offlineAction;
-  QAction *onlineAction;
   QAction *settingsAction;
   QAction *statusAction;
-  QLabel *connectLabel;
-  QLabel *connectMovie;
-  QLabel *statusLabel;
   QPointer<AboutDialog> about;
   QPointer<SettingsDialog> settingsDialog;
-  QStatusBar *statusBar;
   QTabWidget *tabs;
   QTime pingTime;
   QVBoxLayout *mainLay;
@@ -118,10 +103,10 @@ public:
   Settings *pref;
   SoundAction *soundAction;
   static QMap<QString, QString> cmds;
+  StatusMenu *statusMenu;
   TrayIcon *tray;
   UserView *users;
   #ifndef SCHAT_WINCE
-    QComboBox *statusCombo;
     QToolBar *toolBar;
   #endif
 };

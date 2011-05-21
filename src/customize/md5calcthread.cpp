@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,8 +45,6 @@ void Md5CalcThread::run()
           .arg(info.name));
       process.waitForStarted(10000);
       process.waitForFinished();
-//      qDebug() << process.readAllStandardError();
-//      qDebug() << process.readAllStandardOutput();
     }
   }
 
@@ -63,8 +61,7 @@ void Md5CalcThread::run()
 
 
 /*!
- * Подсчёт контрольной суммы файла
- * \todo Эта функция для подсчёта md5 суммы загружает файл целиком в память, это не оптимально.
+ * Подсчёт контрольной суммы файла.
  *
  * \param type Тип файла
  * \return \a true в случае успеха.
@@ -84,7 +81,11 @@ int Md5CalcThread::calc(ProgressPage::Nsi type)
   if(!file.open(QIODevice::ReadOnly))
     return 1;
 
+  while (file.bytesAvailable() > 65536) {
+    hash.addData(file.read(65536));
+  }
   hash.addData(file.readAll());
+
   result = hash.result();
   emit done(type, result, m_pfx ? QFileInfo(info.name).size() : 0);
 

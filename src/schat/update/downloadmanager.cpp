@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,18 @@
  * Конструктор класса Download.
  */
 DownloadManager::DownloadManager(const QString &targetPath, QObject *parent) :
-  QObject(parent), m_targetPath(targetPath)
+  QObject(parent),
+  m_getMirror(false),
+  m_targetPath(targetPath),
+  m_mirrorXml(0)
 {
+}
+
+
+DownloadManager::~DownloadManager()
+{
+  if (m_mirrorXml)
+    m_mirrorXml->remove();
 }
 
 
@@ -58,6 +68,14 @@ void DownloadManager::append(const QUrl &url)
 }
 
 
+QString DownloadManager::mirrorXml() const
+{
+  if (m_mirrorXml)
+    return m_mirrorXml->fileName();
+
+  return "";
+}
+
 /*!
  * Статическая функция извлекающая имя файла из Url.
  * Результат может быть пустой строкой, в случае некорректного адреса.
@@ -87,23 +105,37 @@ void DownloadManager::startNextDownload()
     return;
   }
 
-  // Ошибка если не удастся создать директория назначения.
-  if (!QDir().exists(m_targetPath))
-    if (!QDir().mkpath(m_targetPath)) {
+  m_getMirror = fileName == "mirror.xml";
+
+  if (!m_getMirror) {
+    if (!QDir().exists(m_targetPath)) {
+      if (!QDir().mkpath(m_targetPath)) {
+        emit error();
+        return;
+      }
+    }
+
+    m_output.setFileName(m_targetPath + "/" + fileName);
+
+    // Ошибка если не удалось открыть файл для записи.
+    if (!m_output.open(QIODevice::WriteOnly)) {
       emit error();
       return;
     }
+  }
+  else {
+    m_mirrorXml = new QTemporaryFile(QDir::tempPath() + "/" + fileName, this);
+    m_mirrorXml->setAutoRemove(false);
 
-  m_output.setFileName(m_targetPath + "/" + fileName);
-
-  // Ошибка если не удалось открыть файл для записи.
-  if (!m_output.open(QIODevice::WriteOnly)) {
-    emit error();
-    return;
+    if (!m_mirrorXml->open()) {
+      emit error();
+      return;
+    }
   }
 
   QNetworkRequest request(url);
   request.setRawHeader("Referer", url.toEncoded());
+  request.setRawHeader("User-Agent", QString("Mozilla/5.0 Qt/%1 %2/%3").arg(qVersion()).arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion()).toLatin1());
   m_current = m_manager.get(request);
   m_current->setReadBufferSize(65536);
 
@@ -117,7 +149,10 @@ void DownloadManager::startNextDownload()
  */
 void DownloadManager::downloadFinished()
 {
-  m_output.close();
+  if (m_getMirror && m_mirrorXml)
+    m_mirrorXml->close();
+  else
+    m_output.close();
 
   if (m_current->error()) {
     m_output.remove();
@@ -135,5 +170,8 @@ void DownloadManager::downloadFinished()
  */
 void DownloadManager::downloadReadyRead()
 {
-  m_output.write(m_current->readAll());
+  if (m_getMirror && m_mirrorXml)
+    m_mirrorXml->write(m_current->readAll());
+  else
+    m_output.write(m_current->readAll());
 }

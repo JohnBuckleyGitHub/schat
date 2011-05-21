@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  * This file based on "kopetechatwindowstyle.cpp" - A Chat Window Style.
  * Copyright © 2005      by Michaël Larouche      <larouche@kde.org>
@@ -21,6 +21,7 @@
  */
 
 #include "chatwindowstyle.h"
+#include "settings.h"
 
 #include <QtGui>
 
@@ -261,13 +262,19 @@ bool ChatWindowStyle::readStyleFile(QString &out, const QString &fileName, bool 
  */
 void ChatWindowStyle::init(const QString &styleName)
 {
-  QString basePath = QApplication::applicationDirPath() + "/styles/";
+  QString basePath;
+  bool valid = false;
 
-  bool valid;
-  if (styleName == "Default")
-    valid = false;
-  else
-    valid = isValid(basePath + styleName);
+  if (styleName != "Default") {
+    QStringList stylesPath = SimpleSettings->path(Settings::StylesPath);
+    for (int i = 0; i < stylesPath.size(); ++i) {
+      if (QDir().exists(stylesPath.at(i) + '/' + styleName) && isValid(stylesPath.at(i) + '/' + styleName)) {
+        basePath = stylesPath.at(i) + '/';
+        valid = true;
+        break;
+      }
+    }
+  }
 
   if (!valid) {
     d->styleName = "Default";
@@ -333,7 +340,7 @@ void ChatWindowStyle::readStyleFiles()
                                "  </span>\n"
                                " </div>\n"
                                "</div>" )
-                               .arg( QObject::tr( "Download" ), QObject::tr( "Cancel" ) );
+                               .arg("Download", "Cancel");
     d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
   }
 }

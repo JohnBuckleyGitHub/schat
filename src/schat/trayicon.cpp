@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QApplication>
+#include <QDesktopServices>
+#include <QFile>
+#include <QProcess>
+#include <QSound>
+#include <QTimer>
 
 #include "abstractprofile.h"
 #include "protocol.h"
@@ -87,7 +92,7 @@ void TrayIcon::messageClicked()
     #ifndef SCHAT_NO_UPDATE
       m_settings->updatesGet();
     #else
-      QDesktopServices::openUrl(QUrl("http://impomezia.com"));
+      QDesktopServices::openUrl(QUrl("http://impomezia.ru"));
     #endif
 }
 
@@ -123,13 +128,13 @@ void TrayIcon::notify(int code)
 void TrayIcon::setStatus(quint32 status)
 {
   if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    m_icon = QIcon(":/images/logo16-away.png");
+    m_icon = QIcon(":/images/schat16-away.png");
   else if (status == schat::StatusDnD)
-    m_icon = QIcon(":/images/logo16-dnd.png");
+    m_icon = QIcon(":/images/schat16-dnd.png");
   else if (Settings::isNewYear())
-    m_icon = QIcon(":/images/logo16-ny.png");
+    m_icon = QIcon(":/images/schat16-ny.png");
   else
-    m_icon = QIcon(":/images/logo16.png");
+    m_icon = QIcon(":/images/schat16.png");
 
   if (status != schat::StatusAutoAway && status != schat::StatusDnD && m_deferredMessage) {
     displayMessage(m_message);
@@ -176,15 +181,15 @@ void TrayIcon::displayMessage(Message message, bool force)
   if (message == UpdateAvailable) {
     #ifndef SCHAT_NO_UPDATE
     showMessage(
-      tr("Доступно обновление до версии %1").arg(version),
-      tr("Щёлкните здесь для того чтобы скачать это обновление прямо сейчас.\n"
-         "Размер файлов: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
+      tr("Update to version %1 is available").arg(version),
+      tr("Click here to download update right now.\n"
+         "File size: %1").arg(bytesToHuman(m_settings->getInt("Updates/DownloadSize"))),
       QSystemTrayIcon::Information,
       60000);
     #else
     showMessage(
-          tr("Доступна новая версия %1").arg(version),
-          tr("Щёлкните здесь для того чтобы перейти на страницу загрузки"),
+          tr("A new version %1 is available").arg(version),
+          tr("Click here to go to a download page"),
           QSystemTrayIcon::Information,
           60000);
     #endif
@@ -192,8 +197,8 @@ void TrayIcon::displayMessage(Message message, bool force)
   #ifndef SCHAT_NO_UPDATE
   else if (message == UpdateReady) {
     showMessage(
-        tr("Всё готово к установке версии %1").arg(version),
-        tr("Щёлкните здесь для того чтобы установить это обновление прямо сейчас."),
+        tr("Everything is ready to install version %1").arg(version),
+        tr("Click here to install the update right now."),
         QSystemTrayIcon::Information,
         60000);
   }
@@ -207,10 +212,9 @@ void TrayIcon::displayMessage(Message message, bool force)
 void TrayIcon::init()
 {
   setToolTip(QApplication::applicationName() + " " + QApplication::applicationVersion());
-  m_noticeIcon = QIcon(":/images/notice.png");
+  m_noticeIcon = QIcon(":/images/balloon.png");
   m_timer = new QTimer(this);
   m_timer->setInterval(700);
-  m_soundsPath = QApplication::applicationDirPath() + "/sounds/";
   connect(m_timer, SIGNAL(timeout()), SLOT(timeout()));
   connect(m_settings, SIGNAL(changed(int)), SLOT(notify(int)));
   connect(this, SIGNAL(messageClicked()), SLOT(messageClicked()));
@@ -225,14 +229,27 @@ void TrayIcon::playSound()
 {
   while (!m_soundQueue.isEmpty()) {
     QString key = m_soundQueue.dequeue();
-    QString file = m_soundsPath + m_settings->getString("Sound/" + key);
+    QString file = "/" + m_settings->getString("Sound/" + key);
+
+    if (!m_soundCache.contains(key)) {
+      QStringList sounds = m_settings->path(Settings::SoundsPath);
+      for (int i = 0; i < sounds.size(); ++i) {
+        if (QFile::exists(sounds.at(i) + file)) {
+          m_soundCache.insert(key, sounds.at(i) + file);
+          break;
+        }
+      }
+    }
+
+    if (!m_soundCache.contains(key))
+      return;
 
     #ifdef Q_WS_X11
     if (m_settings->getBool("Sound/UseExternalCmd") && !m_settings->getString("Sound/ExternalCmd").isEmpty())
-      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(file));
+      QProcess::startDetached(m_settings->getString("Sound/ExternalCmd").arg(m_soundCache.value(key)));
     else
     #endif
-      QSound::play(file);
+      QSound::play(m_soundCache.value(key));
   }
 }
 
@@ -258,10 +275,10 @@ void TrayIcon::updateAvailable(bool force)
 QString TrayIcon::bytesToHuman(int size)
 {
   if (size < 1024)
-    return tr("%n Байт", "", size);
+    return tr("%n Byte", "", size);
   else if (size < 1048576)
-    return tr("%1 Кб").arg((int) size / 1024);
+    return tr("%1 kB").arg((int) size / 1024);
   else
-    return tr("%1 Мб").arg((double) size / 1048576, 0, 'f', 2);
+    return tr("%1 MB").arg((double) size / 1048576, 0, 'f', 2);
 }
 #endif

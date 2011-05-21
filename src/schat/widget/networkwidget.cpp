@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QComboBox>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QToolButton>
+//#include <QDebug>
 
 #include "network.h"
 #include "networkwidget.h"
@@ -26,7 +31,8 @@
  * Конструктор класса NetworkWidget.
  */
 NetworkWidget::NetworkWidget(QWidget *parent, Options options)
-  : QWidget(parent),
+  : TranslateWidget(parent),
+  m_networkLabel(0),
   m_applyButton(0),
   m_settings(SimpleSettings)
 {
@@ -39,14 +45,14 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   #endif
   m_select->setModel(&m_settings->networksModel);
 
-  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  QHBoxLayout *mainLay = new QHBoxLayout;
   mainLay->setSpacing(2);
   mainLay->setMargin(0);
 
   if (options & NetworkLabel) {
-    QLabel *networkLabel = new QLabel(tr("&Сеть:"), this);
-    networkLabel->setBuddy(m_select);
-    mainLay->addWidget(networkLabel);
+    m_networkLabel = new QLabel(this);
+    m_networkLabel->setBuddy(m_select);
+    mainLay->addWidget(m_networkLabel);
   }
 
   mainLay->addWidget(m_select);
@@ -55,18 +61,26 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
   if (options & ApplyButton) {
     m_applyButton = new QToolButton(this);
     m_applyButton->setIcon(QIcon(":/images/arrow-right.png"));
-    m_applyButton->setToolTip(tr("Подключится к выбранной сети"));
     m_applyButton->setAutoRaise(true);
     mainLay->addWidget(m_applyButton);
 
     connect(m_applyButton, SIGNAL(clicked(bool)), SLOT(link()));
   }
 
+  if (options & AddStretch) {
+    QHBoxLayout *stretchLay = new QHBoxLayout(this);
+    stretchLay->addLayout(mainLay);
+    stretchLay->addStretch();
+  }
+  else
+    setLayout(mainLay);
+
   connect(m_select, SIGNAL(currentIndexChanged(int)), SLOT(currentIndexChanged(int)));
   connect(m_select, SIGNAL(editTextChanged(const QString &)), SLOT(editTextChanged(const QString &)));
   connect(m_settings, SIGNAL(networksModelIndexChanged(int)), SLOT(setCurrentIndex(int)));
 
   init();
+  retranslateUi();
 }
 
 
@@ -258,4 +272,14 @@ void NetworkWidget::init()
     addSingleServer(m_settings->network.server());
 
   m_initText = m_select->currentText();
+}
+
+
+void NetworkWidget::retranslateUi()
+{
+  if (m_networkLabel)
+    m_networkLabel->setText(tr("&Network:"));
+
+  if (m_applyButton)
+    m_applyButton->setToolTip(tr("Connect"));
 }

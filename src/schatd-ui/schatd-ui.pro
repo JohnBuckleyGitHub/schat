@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ HEADERS += \
     network.h \
     networkreader.h \
     networkwriter.h \
+    translation.h \
 
 SOURCES += \
     abstractsettings.cpp \
@@ -46,6 +47,7 @@ SOURCES += \
     network.cpp \
     networkreader.cpp \
     networkwriter.cpp \
+    translation.cpp \
 
 win32{
     include(../3rdparty/qtservice/src/qtservice.pri)
@@ -53,5 +55,8 @@ win32{
 else {
     DEFINES += SCHATD_NO_SERVICE
 }
+
+TRANSLATIONS += ../../data/translations/schatd-ui_ru.ts
+CODECFORTR = UTF-8
 
 include(../common/common.pri)

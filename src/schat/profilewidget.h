@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,33 +19,39 @@
 #ifndef PROFILEWIDGET_H_
 #define PROFILEWIDGET_H_
 
-#include <QWidget>
+#include "translatewidget.h"
 
 class AbstractProfile;
-class QComboBox;
-class QLineEdit;
 class NickEdit;
+class QComboBox;
+class QFormLayout;
+class QLineEdit;
 
 /*!
  * \brief Виджет обеспечивающий редактирование собственного профиля.
  */
-class ProfileWidget : public QWidget {
+class ProfileWidget : public TranslateWidget
+{
   Q_OBJECT
 
 public:
   ProfileWidget(bool compactGender, QWidget *parent = 0);
   int save();
+  void reload();
   void reset();
 
 signals:
   void validNick(bool valid);
 
 private:
+  void retranslateUi();
+
   AbstractProfile *m_profile;
   bool m_compactGenderWidget;
   bool m_maxRecentItems;
   NickEdit *m_nickEdit;
   QComboBox *m_gender;
+  QFormLayout *m_mainLay;
   QLineEdit *m_name;
 };
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,6 +41,13 @@ ${Section}
 
   SetOutPath "$INSTDIR\styles"
 
+  SetOutPath "$INSTDIR\translations"
+  File "${SCHAT_DATADIR}\translations\schat_en.qm"
+  File "${SCHAT_DATADIR}\translations\schat_ru.qm"
+  File "${SCHAT_DATADIR}\translations\qt_ru.qm"
+  File "${SCHAT_DATADIR}\translations\en.png"
+  File "${SCHAT_DATADIR}\translations\ru.png"
+
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
 ${SectionEnd}
@@ -54,11 +61,17 @@ ${Uninstall}
   Delete "$INSTDIR\doc\*.html"
   Delete "$INSTDIR\networks\*.xml"
   Delete "$INSTDIR\sounds\*.wav"
+  Delete "$INSTDIR\translations\schat_en.qm"
+  Delete "$INSTDIR\translations\schat_ru.qm"
+  Delete "$INSTDIR\translations\qt_ru.qm"
+  Delete "$INSTDIR\translations\en.png"
+  Delete "$INSTDIR\translations\ru.png"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\networks"
   RMDir "$INSTDIR\sounds"
   RMDir "$INSTDIR\styles"
+  RMDir "$INSTDIR\translations"
 
   DeleteRegKey HKCU "${SCHAT_REGKEY}"
 ${UninstallEnd}

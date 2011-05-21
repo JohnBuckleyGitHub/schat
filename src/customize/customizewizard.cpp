@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "page/progresspage.h"
 #include "page/selectpage.h"
 #include "page/settingspage.h"
+#include "translation.h"
 #include "wizardsettings.h"
 
 /**
@@ -37,7 +38,6 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   setOption(QWizard::HaveCustomButton1, true);
   setOption(QWizard::NoBackButtonOnStartPage, true);
   setOption(QWizard::DisabledBackButtonOnLastPage, true);
-  setButtonText(QWizard::CustomButton1, tr("О Программе"));
 
   QList<QWizard::WizardButton> layout;
   layout << QWizard::CustomButton1 << QWizard::Stretch
@@ -48,6 +48,13 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   m_settings = new WizardSettings(QApplication::applicationDirPath() + "/customize.conf", this);
   m_settings->read();
   m_dist = m_settings->dist();
+
+  m_translation = new Translation(this);
+  m_translation->setPrefix("customize_");
+  m_translation->setSearch(QApplication::applicationDirPath() + "/translations");
+  m_translation->load(m_settings->getString("Translation"));
+
+  setButtonText(QWizard::CustomButton1, tr("About"));
 
   setPage(Page_Intro,    new IntroPage(this));
   setPage(Page_Select,   new SelectPage(this));
@@ -63,7 +70,7 @@ CustomizeWizard::CustomizeWizard(QWidget *parent)
   connect(this, SIGNAL(rejected()), SLOT(close()));
 
   setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
-  setWindowTitle(tr("%1 Customize").arg(QApplication::applicationName()));
+  setWindowTitle(QApplication::applicationName() + " Customize");
   setWizardStyle(QWizard::ModernStyle);
 
   connect(this, SIGNAL(customButtonClicked(int)), SLOT(customButtonClicked(int)));

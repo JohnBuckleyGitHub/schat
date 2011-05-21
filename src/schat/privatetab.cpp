@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "settings.h"
 
 /*!
- * \brief Конструктор класса Tab.
+ * \brief Конструктор класса PrivateTab.
  */
 PrivateTab::PrivateTab(const QIcon &icon, QWidget *parent)
   : AbstractTab(Private, icon, parent)
@@ -32,7 +32,6 @@ PrivateTab::PrivateTab(const QIcon &icon, QWidget *parent)
   mainLay->setMargin(0);
 
   m_view->log(SimpleSettings->getBool("LogPrivate"));
-  m_view->setAllowStatusMessages();
   connect(SimpleSettings, SIGNAL(changed(int)), SLOT(notify(int)));
 }
 

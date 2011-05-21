@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,27 +19,22 @@
 #ifndef MAINCHANNEL_H_
 #define MAINCHANNEL_H_
 
-#include <QBasicTimer>
-#include <QHash>
-#include <QLineEdit>
 #include <QWidget>
 
 #include "abstracttab.h"
 
 class NetworkWidget;
-class QAction;
-class QHBoxLayout;
-class QLabel;
 class QSplitter;
 class QTabWidget;
-class QToolButton;
 class QVBoxLayout;
 class UserView;
+class WelcomeWidget;
 
 /*!
  * \brief Обеспечивает поддержку главного канала чата.
  */
-class MainChannel : public AbstractTab {
+class MainChannel : public AbstractTab
+{
   Q_OBJECT
 
 public:
@@ -47,29 +42,27 @@ public:
   void addNewUser(quint8 gender, const QString &nick);
   void addUserLeft(quint8 gender, const QString &nick, const QString &bye);
   void displayChoiceServer(bool display);
+  void displayWelcome(bool display);
 
-//protected:
-//  void timerEvent(QTimerEvent *event);
+protected:
+  void changeEvent(QEvent *event);
 
 private slots:
   void notify(int code);
-  void serverChanged();
   void splitterMoved();
   void usersCountChanged(int count);
 
 private:
-//  void addNewUsers(const QStringList &nicks);
   QWidget* createUserView();
+  void retranslateUi();
 
+  int m_count;
   NetworkWidget *m_networkWidget;
-  QHBoxLayout *m_networkLayout;
   QSplitter *m_splitter;
   QTabWidget *m_tabs;
   QVBoxLayout *m_mainLayout;
   UserView *m_userView;
-
-//  QHash<QString, quint8> m_newUsers;
-//  QBasicTimer m_usersJoin;
+  WelcomeWidget *m_welcome;
 };
 
 #endif /*MAINCHANNEL_H_*/

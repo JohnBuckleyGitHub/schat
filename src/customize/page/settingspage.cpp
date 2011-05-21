@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,29 +29,24 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
   m_settings = settings;
 
-  setTitle(tr("Переопределение настроек по умолчанию"));
-  setSubTitle(tr("Выберите какие основные настройки нужно переопределить"));
+  setTitle(tr("Overriding default settings"));
+  setSubTitle(tr("Select options to override the default settings"));
 
-  m_overrideNetwork = new QCheckBox(tr("&Файл сети"), this);
-  m_overrideNetwork->setToolTip(tr("Переопределить используемый по умолчанию файл сети"));
-  m_overrideNetwork->setChecked(m_settings->getBool("OverrideNetwork"));
+  m_overrideNetwork = new QLabel(tr("Network:"), this);
   m_network = new QComboBox(this);
 
-  m_overrideEmoticons = new QCheckBox(tr("&Тема смайликов"), this);
-  m_overrideEmoticons->setToolTip(tr("Переопределить используемую по умолчанию тему смайликов\nВНИМАНИЕ: установка выбранной темы должна поддерживаться инсталлятором"));
+  m_overrideEmoticons = new QCheckBox(tr("Emoticons:"), this);
   m_overrideEmoticons->setChecked(m_settings->getBool("OverrideEmoticons"));
   m_emoticons = new QComboBox(this);
 
-  m_overrideMirror = new QCheckBox(tr("&Зеркало обновлений"), this);
-  m_overrideMirror->setToolTip(tr("Установить альтернативный адрес источника обновлений"));
+  m_overrideMirror = new QCheckBox(tr("Mirror updates:"), this);
   m_overrideMirror->setChecked(m_settings->getBool("OverrideMirror"));
   m_mirror = new QLineEdit(m_settings->getString("MirrorUrl"), this);
 
-  m_autoDownload = new QCheckBox(tr("Автоматически загружать &обновления"), this);
-  m_autoDownload->setToolTip(tr("Включить автоматическую загрузку обновлений по умолчанию"));
+  m_autoDownload = new QCheckBox(tr("Automatically download updates"), this);
   m_autoDownload->setChecked(m_settings->getBool("AutoDownloadUpdates"));
 
-  QGroupBox *group = new QGroupBox(tr("Основные настройки"), this);
+  QGroupBox *group = new QGroupBox(tr("Main settings"), this);
   QGridLayout *groupLay = new QGridLayout(group);
   groupLay->addWidget(m_overrideNetwork, 0, 0);
   groupLay->addWidget(m_network, 0, 1);
@@ -69,7 +64,6 @@ SettingsPage::SettingsPage(QWidget *parent)
   connect(m_overrideEmoticons, SIGNAL(clicked(bool)), m_emoticons, SLOT(setEnabled(bool)));
   connect(m_overrideMirror,    SIGNAL(clicked(bool)), m_mirror, SLOT(setEnabled(bool)));
 
-  m_network->setEnabled(m_overrideNetwork->isChecked());
   m_emoticons->setEnabled(m_overrideEmoticons->isChecked());
   m_mirror->setEnabled(m_overrideMirror->isChecked());
 
@@ -83,8 +77,11 @@ SettingsPage::SettingsPage(QWidget *parent)
  */
 bool SettingsPage::validatePage()
 {
-  if (m_overrideNetwork->isChecked() && m_network->currentIndex() == -1)
+  if (m_network->currentIndex() == -1 || m_network->currentText() == "SimpleNet.xml") {
+    QMessageBox::critical(this, tr("No network is selected"), tr("Need to create your network file and select it on this page of the wizard.") +
+        "<br /><a href='http://impomezia.com/node/142'>" + tr("More information") + "</a>.");
     return false;
+  }
 
   if (m_overrideEmoticons->isChecked() && m_emoticons->currentIndex() == -1)
     return false;
@@ -92,7 +89,7 @@ bool SettingsPage::validatePage()
   if (m_overrideMirror->isChecked() && m_mirror->text().isEmpty())
     return false;
 
-  m_settings->setBool("OverrideNetwork",     m_overrideNetwork->isChecked());
+  m_settings->setBool("OverrideNetwork",     true);
   m_settings->setBool("OverrideEmoticons",   m_overrideEmoticons->isChecked());
   m_settings->setBool("OverrideMirror",      m_overrideMirror->isChecked());
   m_settings->setBool("AutoDownloadUpdates", m_autoDownload->isChecked());
@@ -132,7 +129,7 @@ void SettingsPage::emoticonsList()
 void SettingsPage::networkList()
 {
   QDir dir(QApplication::applicationDirPath() + "/networks");
-  QStringList list = dir.entryList(QStringList() << "*.xml", QDir::Files);
+  QStringList list = dir.entryList(QStringList("*.xml"), QDir::Files);
   if (!list.isEmpty())
     m_network->addItems(list);
 

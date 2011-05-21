@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public:
   };
 
   Network(QObject *parent = 0);
-  Network(const QString &path, QObject *parent = 0);
+  Network(const QStringList &paths, QObject *parent = 0);
   bool fromConfig(const QString &s);
   bool fromFile(const QString &file);
   bool fromString(const QString &s);
@@ -54,6 +54,7 @@ public:
   inline QString name() const        { return m_name; }
   inline QString site() const        { return m_site; }
   inline void setFailBack(bool b)    { m_failBack = b; }
+  inline void setPaths(const QStringList &paths) { m_networksPath = paths; }
   inline void setSingle(bool single) { m_single = single; }
   QString config() const;
   quint16 port() const;
@@ -67,6 +68,7 @@ public:
 private:
   bool m_failBack;
   bool m_network;
+  bool m_random;
   bool m_single;
   bool m_valid;
   QList<ServerInfo> m_servers;
@@ -75,8 +77,8 @@ private:
   QString m_file;
   QString m_key;
   QString m_name;
-  QString m_networksPath;
   QString m_site;
+  QStringList m_networksPath;
 };
 
 #endif /*NETWORK_H_*/

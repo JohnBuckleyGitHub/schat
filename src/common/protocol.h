@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
-
-#include <QDataStream>
 
 static const int     StreamVersion                   = QDataStream::Qt_4_4;
 static const quint16 ProtocolVersion                 = 3;
@@ -275,15 +273,6 @@ static const quint16 OpcodeSyncByeMsg                = 1120;
  */
 static const quint16 OpcodeUniversal                 = 7666;
 
-/*!
- * Универсальный облегчённый пакет.
- * quint16        -> размер пакета
- * quint16        -> опкод
- * quint16        -> субопкод
- * QList<quint32> -> контейнер для данных типа quint32
- */
-static const quint16 OpcodeUniversalLite             = 7667;
-
 
 namespace schat
 {
@@ -314,6 +303,7 @@ static const quint32 StatusNormal                   = 0;
 static const quint32 StatusAway                     = 1;
 static const quint32 StatusAutoAway                 = 2;
 static const quint32 StatusDnD                      = 3;
+static const quint32 StatusOffline                  = 32768;
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,16 @@
 #ifndef ABSTRACTSETTINGS_H_
 #define ABSTRACTSETTINGS_H_
 
+#if defined(Q_OS_MAC)
+  #define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+#else
+  #define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QDir::homePath() + "/.config/schat/" + x)
+  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/schat/" + x)
+  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/doc/schat/" + x)
+#endif
+
 #include <QMap>
 #include <QObject>
 #include <QSettings>
@@ -34,7 +44,7 @@ class AbstractSettings : public QObject
   Q_OBJECT
 
 public:
-  AbstractSettings(const QString &filename, QObject *parent = 0);
+  AbstractSettings(const QString &fileName, QObject *parent = 0);
   inline bool getBool(const QString &key) const                       { return m_bool.value(key); }
   inline int getInt(const QString &key) const                         { return m_int.value(key); }
   inline QSettings::Status status() const                             { return m_settings->status(); }
@@ -46,6 +56,7 @@ public:
   inline void setString(const QString &key, const QString &value)     { m_string[key] = value; }
   static AbstractSettings *instance()                                 { return m_self; }
   static bool isNewYear();
+  static bool isUnixLike();
   void read()                                                         { read(m_settings); }
 
   #ifndef SCHAT_NO_WRITE_SETTINGS

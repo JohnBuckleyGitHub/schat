@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ ProgressPage::ProgressPage(QWidget *parent)
   m_dist = m_settings->dist();
   m_rootPath = m_settings->rootPath();
 
-  setTitle(tr("Идёт создание дистрибутива"));
-  setSubTitle(tr("Подождите идёт создание дистрибутива"));
+  setTitle(tr("Creation distribution package is in progress"));
+  setSubTitle(tr("Please wait, creation distribution package is in progress"));
 
   m_label = new QLabel(this);
   m_progress = new QProgressBar(this);
@@ -121,9 +121,9 @@ void ProgressPage::calcDone(int type, const QByteArray &hash, qint64 size)
 void ProgressPage::calcDone(bool error)
 {
   if (error)
-    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при расчёте контрольных сумм</span>"));
+    m_log->append("<span style='color:#900;'>" + tr("An error occurred when calculating the checksum") + "</span>");
   else {
-    m_log->append(tr("Завершён подсчёт контрольных сумм"));
+    m_log->append(tr("Completed calculation of checksums"));
     m_progress->setValue(m_progress->value() + 10);
     QTimer::singleShot(0, this, SLOT(nextJob()));
   }
@@ -146,8 +146,8 @@ void ProgressPage::nextJob()
 {
   if (m_queue.isEmpty()) {
     wizard()->button(QWizard::FinishButton)->setEnabled(true);
-    m_label->setText(tr("Готово"));
-    m_log->append(tr("<b style='color:#090;'>Все задачи успешно выполнены</b>"));
+    m_label->setText(tr("Done"));
+    m_log->append("<b style='color:#090;'>" + tr("All tasks completed successfully") + "</b>");
     return;
   }
 
@@ -175,7 +175,7 @@ void ProgressPage::nextJob()
       return;
   }
   else if (job == CalcMd5) {
-    m_label->setText(tr("Подсчёт контрольных сумм"));
+    m_label->setText(tr("Calculation of checksums"));
     m_md5Calc = new Md5CalcThread(m_exe, m_settings->getString("PfxFile"), m_settings->getString("PfxPassword"), this);
     connect(m_md5Calc, SIGNAL(done(bool)), SLOT(calcDone(bool)));
     connect(m_md5Calc, SIGNAL(done(int, const QByteArray &, qint64)), SLOT(calcDone(int, const QByteArray &, qint64)));
@@ -183,14 +183,14 @@ void ProgressPage::nextJob()
     m_md5Calc->start();
   }
   else if (job == CreateMirrorXml) {
-    m_label->setText(tr("Создание mirror.xml"));
+    m_label->setText(tr("Creating mirror.xml"));
     if (createMirrorXml()) {
       m_progress->setValue(m_progress->value() + 2);
-      m_log->append(tr("Файл <b>mirror.xml</b> создан"));
+      m_log->append(tr("File <b>mirror.xml</b> is created"));
       QTimer::singleShot(0, this, SLOT(nextJob()));
     }
     else
-      m_log->append(tr("<span style='color:#900;'>Произошла ошибка при создании <b>mirror.xml</b></span>"));
+      m_log->append("<span style='color:#900;'>" + tr("An error occurred while creating <b>mirror.xml</b>") + "</span>");
   }
 }
 
@@ -203,9 +203,9 @@ void ProgressPage::processError()
   if (m_timer->isActive())
     m_timer->stop();
 
-  m_log->append(tr("<span style='color:#900;'>Произошла ошибка при запуске <b>%1</b> [%2]</span>")
+  m_log->append("<span style='color:#900;'>" + tr("An error occurred when running <b>%1</b> [%2]")
       .arg(m_makensisFile)
-      .arg(m_process->errorString()));
+      .arg(m_process->errorString()) + "</span>");
 }
 
 
@@ -220,19 +220,19 @@ void ProgressPage::processFinished(int exitCode, QProcess::ExitStatus exitStatus
     m_timer->stop();
 
   if (exitStatus == QProcess::CrashExit)
-    m_log->append(tr("<span style='color:#900;'>Произошёл сбой при запуске <b>%1</b> [%2]</span>")
+    m_log->append("<span style='color:#900;'>" + tr("Failed to start <b>%1</b> [%2]")
           .arg(m_makensisFile)
-          .arg(m_process->errorString()));
+          .arg(m_process->errorString()) + "</span>");
   else if (exitCode != 0)
-    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при выполнении <b>%1</b></span>")
-          .arg(m_makensisFile));
+    m_log->append("<span style='color:#900;'>" + tr("An error occurred while <b>%1</b>")
+          .arg(m_makensisFile) + "</span>");
   else {
     FileInfoLite liteInfo = m_exe.value(m_currentExe);
     QFileInfo info(liteInfo.name);
     liteInfo.size = info.size();
     m_exe.insert(m_currentExe, liteInfo);
 
-    m_log->append(tr("Файл <b>%1</b> создан, размер %n байт", "", liteInfo.size).arg(info.fileName()));
+    m_log->append(tr("File <b>%1 </b> is created, size is %n bytes", "", liteInfo.size).arg(info.fileName()));
     m_progress->setValue(m_progress->value() + m_step);
 
     if (m_nsi.isEmpty())
@@ -275,12 +275,12 @@ void ProgressPage::timer()
 bool ProgressPage::createExe()
 {
   if (m_makensisFile.isEmpty()) {
-    m_log->append(tr("<span style='color:#900;'>Не удалось определить путь к <b>makensis.exe</b></span>"));
+    m_log->append("<span style='color:#900;'>" + tr("Unable to determine the path to <b>makensis.exe</b>") + "</span>");
     return false;
   }
 
   if (!QFile::exists(m_makensisFile)) {
-    m_log->append(tr("<span style='color:#900;'>Не удалось найти файл <b>%1</b></span>").arg(m_makensisFile));
+    m_log->append("<span style='color:#900;'>" + tr("Could not find file <b>%1</b>").arg(m_makensisFile) + "</span>");
     return false;
   }
 
@@ -420,7 +420,7 @@ bool ProgressPage::createMirrorXml()
  */
 bool ProgressPage::createNsi()
 {
-  m_label->setText(tr("Создание NSI файлов..."));
+  m_label->setText(tr("Creating NSI files..."));
 
   if (!createNsi(Main))
     return false;
@@ -500,7 +500,7 @@ bool ProgressPage::createNsi(Nsi type)
            << "!define SCHAT_QT_BINDIR \"..\"" << endl
            << "!define SCHAT_BINDIR \"..\"" << endl
            << "!define SCHAT_DATADIR \"..\"" << endl
-           << "!define VC90_REDIST_DIR \"..\"" << endl
+           << "!define VC100_REDIST_DIR \"..\"" << endl
            << "!define OPT_DESKTOP " << bool2int("NsisDesktop") << endl
            << "!define OPT_QUICKLAUNCH " << bool2int("NsisQuickLaunch") << endl
            << "!define OPT_ALLPROGRAMS " << bool2int("NsisAllPrograms") << endl
@@ -508,12 +508,12 @@ bool ProgressPage::createNsi(Nsi type)
            << "!define OPT_AUTODAEMONSTART " << bool2int("NsisAutostartDaemon") << endl << endl
            << "!include \"engine\\core.nsh\"" << endl;
 
-    m_log->append(tr("Файл <b>%1</b> создан").arg(fileName));
+    m_log->append(tr("File <b>%1</b> is created").arg(fileName));
     m_progress->setValue(m_progress->value() + 2);
     return true;
   }
   else {
-    m_log->append(tr("<span style='color:#900;'>Ошибка создания файла <b>%1</b> [%2]</span>").arg(fileName).arg(file.errorString()));
+    m_log->append("<span style='color:#900;'>" + tr("Error creating file <b>%1</b> [%2]").arg(fileName).arg(file.errorString()) + "</span>");
     return false;
   }
 }
@@ -529,7 +529,7 @@ bool ProgressPage::createNsi(Nsi type)
  */
 bool ProgressPage::writeDefaultConf()
 {
-  m_label->setText(tr("Запись файла default.conf..."));
+  m_label->setText(tr("Write file default.conf..."));
   AbstractSettings s(m_rootPath + "/custom/default.conf", this);
 
   if (m_overrideNetwork) s.setString("Network", m_settings->getString("Network"));
@@ -557,11 +557,11 @@ bool ProgressPage::writeDefaultConf()
   s.write(true);
 
   if (s.status() != QSettings::NoError) {
-    m_log->append(tr("<span style='color:#900;'>Произошла ошибка при записи файла <b>default.conf</b></span>"));
+    m_log->append("<span style='color:#900;'>" + tr("An error occurred while writing the file <b>default.conf</b>") + "</span>");
     return false;
   }
 
-  m_log->append(tr("Файл <b>default.conf</b> записан"));
+  m_log->append(tr("File <b>default.conf</b> recorded"));
   m_progress->setValue(m_progress->value() + 2);
 
   return true;
@@ -627,7 +627,7 @@ void ProgressPage::compile()
   m_exe.insert(nsi, fileInfo);
   m_currentExe = nsi;
 
-  m_label->setText(tr("Создание %1...").arg(currentExe));
+  m_label->setText(tr("Creating %1...").arg(currentExe));
   m_timer->start();
   m_process->start('"' + m_makensisFile + '"', args);
 }

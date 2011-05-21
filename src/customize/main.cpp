@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,18 +36,6 @@ int main(int argc, char *argv[])
   app.setOrganizationDomain(SCHAT_DOMAIN);
   app.setQuitOnLastWindowClosed(true);
   app.addLibraryPath(appPath + "/plugins");
-
-  #ifndef Q_OS_WINCE
-    app.setStyle(new QPlastiqueStyle);
-  #endif
-
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_ru", ":/translations");
-  app.installTranslator(&qtTranslator);
-
-  QTranslator translator;
-  translator.load("customize_ru", ":/translations");
-  app.installTranslator(&translator);
 
   CustomizeWizard wizard;
   wizard.show();

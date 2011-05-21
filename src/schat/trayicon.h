@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #ifndef TRAYICON_H_
 #define TRAYICON_H_
 
+#include <QHash>
 #include <QQueue>
 #include <QSystemTrayIcon>
 
@@ -63,11 +64,11 @@ private:
   bool m_deferredMessage;
   bool m_normal;
   Message m_message;
+  QHash<QString, QString> m_soundCache;
   QIcon m_icon;
   QIcon m_noticeIcon;
   QQueue<QString> m_soundQueue;
   QString m_lastCheckedVersion;
-  QString m_soundsPath;
   QTimer *m_timer;
   Settings *m_settings;
 };

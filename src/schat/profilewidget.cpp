@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QComboBox>
+#include <QCompleter>
+#include <QEvent>
+#include <QFormLayout>
+#include <QLabel>
+#include <QLineEdit>
+//#include <QDebug>
 
 #include "abstractprofile.h"
 #include "profilewidget.h"
@@ -27,7 +33,7 @@
  * Конструктор класса ProfileWidget.
  */
 ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
-  : QWidget(parent),
+  : TranslateWidget(parent),
   m_profile(SimpleSettings->profile()),
   m_compactGenderWidget(compactGender),
   m_maxRecentItems(SimpleSettings->getInt("Profile/MaxRecentItems"))
@@ -36,7 +42,7 @@ ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
 
   m_nickEdit = new NickEdit(this, m_compactGenderWidget ? NickEdit::GenderButton : NickEdit::NoOptions);
 
-  m_name = new QLineEdit(m_profile->fullName(), this);
+  m_name = new QLineEdit(this);
   m_name->setMaxLength(AbstractProfile::MaxNameLength);
   if (m_maxRecentItems) {
     m_name->setCompleter(new QCompleter(SimpleSettings->getList("Profile/RecentRealNames"), m_name));
@@ -45,22 +51,24 @@ ProfileWidget::ProfileWidget(bool compactGender, QWidget *parent)
 
   if (!m_compactGenderWidget) {
     m_gender = new QComboBox(this);
-    m_gender->addItem(QIcon(":/images/male.png"),   tr("Мужской"));
-    m_gender->addItem(QIcon(":/images/female.png"), tr("Женский"));
-    m_gender->setCurrentIndex(m_profile->genderNum());
+    m_gender->addItem(QIcon(":/images/male.png"),   "");
+    m_gender->addItem(QIcon(":/images/female.png"), "");
   }
 
   connect(m_nickEdit, SIGNAL(validNick(bool)), SIGNAL(validNick(bool)));
 
-  QFormLayout *mainLay = new QFormLayout(this);
-  mainLay->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(5);
-  mainLay->addRow(tr("&Ник:"), m_nickEdit);
-  mainLay->addRow(tr("&ФИO:"), m_name);
+  m_mainLay = new QFormLayout(this);
+  m_mainLay->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+  m_mainLay->setMargin(0);
+  m_mainLay->setSpacing(5);
+  m_mainLay->addRow(" ", m_nickEdit);
+  m_mainLay->addRow(" ", m_name);
 
   if (!m_compactGenderWidget)
-    mainLay->addRow(tr("&Пол:"), m_gender);
+    m_mainLay->addRow(" ", m_gender);
+
+  reload();
+  retranslateUi();
 }
 
 
@@ -88,6 +96,17 @@ int ProfileWidget::save()
 }
 
 
+void ProfileWidget::reload()
+{
+  m_nickEdit->reload();
+
+  m_name->setText(m_profile->fullName());
+  if (!m_compactGenderWidget) {
+    m_gender->setCurrentIndex(m_profile->genderNum());
+  }
+}
+
+
 /*!
  * Сброс введённых данных на стандартные значения.
  */
@@ -98,4 +117,18 @@ void ProfileWidget::reset()
 
   if (!m_compactGenderWidget)
     m_gender->setCurrentIndex(0);
+}
+
+
+void ProfileWidget::retranslateUi()
+{
+  static_cast<QLabel *>(m_mainLay->labelForField(m_nickEdit))->setText(tr("&Nick:"));
+  static_cast<QLabel *>(m_mainLay->labelForField(m_name))->setText(tr("N&ame:"));
+
+  /// \bug При изменении языка не происходит изменения размера виджета выбора пола.
+  if (!m_compactGenderWidget) {
+    m_gender->setItemText(0, tr("Male"));
+    m_gender->setItemText(1, tr("Female"));
+    static_cast<QLabel *>(m_mainLay->labelForField(m_gender))->setText(tr("&Sex:"));
+  }
 }

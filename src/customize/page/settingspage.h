@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 - 2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QLabel;
 class QLineEdit;
 class WizardSettings;
 
@@ -44,9 +45,9 @@ private:
   QCheckBox *m_autoDownload;
   QCheckBox *m_overrideEmoticons;
   QCheckBox *m_overrideMirror;
-  QCheckBox *m_overrideNetwork;
   QComboBox *m_emoticons;
   QComboBox *m_network;
+  QLabel *m_overrideNetwork;
   QLineEdit *m_mirror;
   WizardSettings *m_settings;
 };

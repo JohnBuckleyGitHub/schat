@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,27 +22,36 @@
 #include "abstractprofile.h"
 #include "channellog.h"
 #include "daemonservice.h"
-#include "protocol/CorePackets.h"
-#include "schatmacro.h"
+
+#ifdef SCHAT_DEBUG
+  #undef SCHAT_DEBUG
+  #define SCHAT_DEBUG(x) qDebug() << QTime::currentTime().toString("hh:mm:ss.zzz") << x;
+  #include <QDebug>
+  #include <QTime>
+#else
+  #define SCHAT_DEBUG(x)
+#endif
 
 /*!
  * \brief Конструктор класса DaemonService.
  */
 DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
-  : ServiceCore(parent),
-  m_kill(false),
-  m_pings(0),
-  m_numeric(0)
+: QObject(parent), m_socket(socket)
 {
-  SCHAT_DEBUG(this)
-  m_socket = socket;
+  SCHAT_DEBUG(this);
 
   if (m_socket) {
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
     connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
+    m_accepted = false;
+    m_nextBlockSize = 0;
     m_stream.setDevice(m_socket);
+    m_stream.setVersion(StreamVersion);
+    m_pings = 0;
     m_ping.start(9000);
+    m_numeric = 0;
+    m_kill = false;
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
@@ -50,7 +59,29 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 }
 
 
-/** [public]
+/*!
+ * Возвращает \a true если сервис находится в активном состоянии.
+ */
+bool DaemonService::isReady() const
+{
+  if (m_socket) {
+    if (m_socket->state() == QTcpSocket::ConnectedState && m_accepted)
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+
+QString DaemonService::host() const
+{
+  return m_socket->peerAddress().toString();
+}
+
+
+/*!
  * Клиент получил отказ в доступе, `quint16 reason` - причина отказа.
  * Отсылаем ошибку и разрываем соединение.
  */
@@ -61,7 +92,7 @@ void DaemonService::accessDenied(quint16 reason)
 }
 
 
-/** [public]
+/*!
  * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
  * и устанавливаем флаг `m_accepted` в `true`.
  */
@@ -74,7 +105,7 @@ void DaemonService::accessGranted(quint16 numeric)
 }
 
 
-/** [public]
+/*!
  *
  */
 void DaemonService::quit(bool kill)
@@ -128,29 +159,6 @@ bool DaemonService::sendUniversal(quint16 sub, const QList<quint32> &data1, cons
 
 
 /*!
- * Отправка универсального облегчённого пакета.
- *
- * \param sub   Субопкод.
- * \param data1 Список данных типа quint32
- */
-bool DaemonService::sendUniversalLite(quint16 sub, const QList<quint32> &data1)
-{
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversalLite << sub << data1;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
-    return false;
-}
-
-
-/*!
  * \brief Отправка пакета с опкодом \b OpcodeNewNick.
  *
  */
@@ -183,7 +191,7 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
 }
 
 
-/*!
+/** [public slots]
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
@@ -282,11 +290,14 @@ void DaemonService::ping()
 }
 
 
+/** [public slots]
+ *
+ */
 void DaemonService::readyRead()
 {
   forever {
     if (!m_nextBlockSize) {
-      if (m_socket->bytesAvailable() < 2)
+      if (m_socket->bytesAvailable() < (int) sizeof(quint16))
         break;
 
       m_stream >> m_nextBlockSize;
@@ -295,21 +306,28 @@ void DaemonService::readyRead()
     if (m_socket->bytesAvailable() < m_nextBlockSize)
       break;
 
-    quint16 opcode;
-    m_stream >> opcode;
-    m_opcode = opcode;
+    m_stream >> m_opcode;
 
-    m_rx += m_nextBlockSize + 2;
-    QByteArray block;
+    if (m_opcode != 401) {
+      SCHAT_DEBUG(this << "opcode:" << m_opcode << "size:" << m_nextBlockSize)
+    }
 
     if (m_accepted) {
       switch (m_opcode) {
+        case OpcodeMessage:
+          opcodeMessage();
+          break;
+
         case OpcodePong:
           opcodePong();
           break;
 
         case OpcodeNewProfile:
           opcodeNewProfile();
+          break;
+
+        case OpcodeByeMsg:
+          opcodeByeMsg();
           break;
 
         case OpcodeRelayMessage:
@@ -336,21 +354,13 @@ void DaemonService::readyRead()
           opcodeUniversal();
           break;
 
-        case OpcodeUniversalLite:
-          opcodeUniversalLite();
-          break;
-
         default:
-          block = m_socket->read(m_nextBlockSize - 2);
-          m_nextBlockSize = 0;
-          rawPacket(opcode, block);
+          unknownOpcode();
           break;
       };
     }
-    else if (HandshakeRequest::opcodes().contains(opcode)) {
-      block = m_socket->read(m_nextBlockSize - 2);
-      m_nextBlockSize = 0;
-      if (!handshake(opcode, block)) {
+    else if (m_opcode == OpcodeGreeting) {
+      if (!opcodeGreeting()) {
         m_socket->disconnectFromHost();
         return;
       }
@@ -363,31 +373,39 @@ void DaemonService::readyRead()
 }
 
 
-/*!
- * \return \a false если произошла ошибка при рукопожатии и нужно разорвать соединение.
- */
-bool DaemonService::handshake(quint16 opcode, const QByteArray &block)
+bool DaemonService::opcodeGreeting()
 {
-  HandshakeRequest packet;
-  if (!packet.read(opcode, block))
-    return false;
+  SCHAT_DEBUG(this << "::opcodeGreeting()")
 
-  m_profile = packet.profile();
-  m_profile->setParent(this);
-  m_flag = packet.flag();
+  quint16 p_version;
+  quint8  p_gender;
+  QString p_nick;
+  QString p_name;
+  QString p_userAgent;
+  QString p_byeMsg;
+  quint16 err;
 
-  HandshakeRequest::Error err = packet.error();
+  m_stream >> p_version >> m_flag >> p_gender >> p_nick >> p_name >> p_userAgent >> p_byeMsg;
+  m_nextBlockSize = 0;
+
+  QStringList profile;
+  profile << p_nick << p_name << p_byeMsg << p_userAgent << m_socket->peerAddress().toString() << AbstractProfile::gender(p_gender);;
+  m_profile = new AbstractProfile(profile, this);
+
+  err = verifyGreeting(p_version);
+
   if (err) {
     accessDenied(err);
     return false;
   }
 
   emit greeting(m_profile->pack(), m_flag);
+
   return true;
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -542,14 +560,110 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
 }
 
 
-void DaemonService::emitPacket(AbstractRawPacket *p)
+/*!
+ * Обнаружение команды "/all".
+ */
+QString DaemonService::parseCmd(const QString &message) const
 {
-  emit packet(p);
+  QString text = ChannelLog::toPlainText(message).trimmed().toLower();
+  QString out = message;
+  if (text.startsWith("/all ", Qt::CaseInsensitive)) {
+    QString cmd = "/all ";
+    int index = out.indexOf(cmd, 0, Qt::CaseInsensitive);
+    if (index == -1) {
+      cmd = "/all";
+      index = out.indexOf(cmd, 0, Qt::CaseInsensitive);
+    }
+    if (index != -1)
+      out.remove(index, cmd.size());
+
+    out = "<b>" + m_profile->nick() + "</b> " + out;
+  }
+
+  return out;
+}
+
+
+/** [private]
+ * Верификация пакета `OpcodeGreeting`.
+ */
+quint16 DaemonService::verifyGreeting(quint16 version)
+{
+  if (version < ProtocolVersion)
+    return ErrorOldClientProtocol;
+
+  if (version > ProtocolVersion)
+    return ErrorOldServerProtocol;
+
+  if (!(m_flag == FlagNone || m_flag == FlagLink))
+    return ErrorBadGreetingFlag;
+
+  if (!m_profile->isValidNick() && m_flag == FlagNone)
+    return ErrorBadNickName;
+
+  if (!m_profile->isValidUserAgent())
+    return ErrorBadUserAgent;
+
+  if (m_flag == FlagLink) {
+    bool ok;
+    m_numeric = quint8(m_profile->nick().toInt(&ok));
+    if (ok) {
+      if (!m_numeric)
+        return ErrorBadNumeric;
+    }
+    else
+      return ErrorBadNumeric;
+  }
+
+  return 0;
+}
+
+
+/*!
+ * \brief Разбор пакета с опкодом \b OpcodeByeMsg.
+ */
+void DaemonService::opcodeByeMsg()
+{
+  QString p_bye;
+  m_stream >> p_bye;
+  m_nextBlockSize = 0;
+  m_profile->setByeMsg(p_bye);
+  emit newBye(m_profile->nick(), p_bye);
+}
+
+
+/*!
+ * \brief Разбор пакета \b OpcodeMessage, полученного от клиента.
+ *
+ * В случае успеха высылается сигнал message(const QString &channel, const QString &sender, const QString &message).
+ */
+void DaemonService::opcodeMessage()
+{
+  QString p_channel;
+  QString p_message;
+  m_stream >> p_channel >> p_message;
+  m_nextBlockSize = 0;
+
+  SCHAT_DEBUG(this << "::opcodeMessage()")
+  SCHAT_DEBUG("  CHANNEL:" << p_channel)
+  SCHAT_DEBUG("  SENDER: " << m_profile->nick())
+  SCHAT_DEBUG("  MESSAGE:" << p_message)
+
+  if (p_message.isEmpty())
+    return;
+
+  p_message = ChannelLog::htmlFilter(p_message);
+  if (p_message.isEmpty())
+    return;
+
+  emit message(p_channel, m_profile->nick(), p_message);
 }
 
 
 void DaemonService::opcodeNewNick()
 {
+  SCHAT_DEBUG(this << "::opcodeNewNick()")
+
   quint8 p_gender;
   QString p_nick;
   QString p_newNick;
@@ -562,6 +676,8 @@ void DaemonService::opcodeNewNick()
 
 /*!
  * \brief Разбор пакета с опкодом \b OpcodeNewProfile.
+ *
+ *
  */
 void DaemonService::opcodeNewProfile()
 {
@@ -583,6 +699,9 @@ void DaemonService::opcodeNewProfile()
 }
 
 
+/** [private]
+ *
+ */
 void DaemonService::opcodeNewUser()
 {
   quint8 p_flag;
@@ -603,7 +722,7 @@ void DaemonService::opcodeNewUser()
 }
 
 
-/*!
+/** [private]
  * Разбор пакета с опкодом `OpcodePong`.
  * Функция сбрасывает счётчик `OpcodePong`.
  */
@@ -627,10 +746,10 @@ void DaemonService::opcodeRelayMessage()
   m_stream >> p_channel >> p_sender >> p_message;
   m_nextBlockSize = 0;
 
-  SCHAT_DEBUG(this << "opcodeRelayMessage()")
-  SCHAT_DEBUG("  CHANNEL:" << p_channel)
-  SCHAT_DEBUG("  SENDER: " << p_sender)
-  SCHAT_DEBUG("  MESSAGE:" << p_message)
+  SCHAT_DEBUG(this << "::opcodeRelayMessage()")
+  SCHAT_DEBUG(this << "  CHANNEL:" << p_channel)
+  SCHAT_DEBUG(this << "  SENDER: " << p_sender)
+  SCHAT_DEBUG(this << "  MESSAGE:" << p_message)
 
   if (p_sender.isEmpty())
     return;
@@ -682,20 +801,6 @@ void DaemonService::opcodeUniversal()
 
 
 /*!
- * Разбор универсального облегчённого пакета.
- */
-void DaemonService::opcodeUniversalLite()
-{
-  quint16        subOpcode;
-  QList<quint32> data1;
-  m_stream >> subOpcode >> data1;
-  m_nextBlockSize = 0;
-
-  emit universalLite(subOpcode, data1);
-}
-
-
-/*!
  * \brief Разбор пакета с опкодом \b OpcodeUserLeave.
  *
  * В конце разбора высылается сигнал userLeave(const QString &, const QString &, bool).
@@ -709,28 +814,6 @@ void DaemonService::opcodeUserLeave()
   m_nextBlockSize = 0;
 
   emit userLeave(p_nick, p_bye, p_flag);
-}
-
-
-/*!
- * Получение нового сырого пакета.
- *
- * \param opcode Код пакета.
- * \param block  Тело пакета.
- */
-void DaemonService::rawPacket(quint16 opcode, const QByteArray &block)
-{
-  SCHAT_DEBUG(this << "rawPacket(" << opcode << ", size:" << block.size() << "| rx:" << m_rx << "tx:" << m_tx)
-
-  SCHAT_EMIT_PACKET(MessagePacket)
-  SCHAT_READ_PACKET(ByeMsgPacket)
-}
-
-
-void DaemonService::read(ByeMsgPacket *p)
-{
-  m_profile->setByeMsg(p->bye());
-  emit packet(p);
 }
 
 

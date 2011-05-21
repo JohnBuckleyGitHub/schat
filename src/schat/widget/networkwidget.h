@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 #ifndef NETWORKWIDGET_H_
 #define NETWORKWIDGET_H_
 
-#include <QString>
-#include <QWidget>
-
 #include "networkreader.h"
+#include "translatewidget.h"
 
 class QComboBox;
+class QLabel;
 class QLabel;
 class QSpinBox;
 class QStandardItemModel;
@@ -34,7 +33,7 @@ class Settings;
 /*!
  * \brief Виджет обеспечивающий выбор сети или одиночного сервера.
  */
-class NetworkWidget : public QWidget
+class NetworkWidget : public TranslateWidget
 {
   Q_OBJECT
 
@@ -43,7 +42,8 @@ public:
   enum OptionsFlag {
     NoOptions    = 0x0, ///< Нет опций.
     NetworkLabel = 0x1, ///< Добавить надпись \b Сеть.
-    ApplyButton  = 0x2  ///< Кнопка для применения настроек.
+    ApplyButton  = 0x2, ///< Кнопка для применения настроек.
+    AddStretch   = 0x4  ///< Добавляет растяжку.
   };
 
   Q_DECLARE_FLAGS(Options, OptionsFlag)
@@ -69,8 +69,10 @@ private:
   int addSingleServer(const QString &address, quint16 port, bool current = true);
   int findSingleServer(const QString &address, quint16 port) const;
   void init();
+  void retranslateUi();
 
   QComboBox *m_select;
+  QLabel *m_networkLabel;
   QString m_initText;
   QToolButton *m_applyButton;
   Settings *m_settings;

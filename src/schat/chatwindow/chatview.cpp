@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QAction>
+#include <QClipboard>
+#include <QContextMenuEvent>
+#include <QDesktopServices>
+#include <QDir>
+#include <QMenu>
+#include <QScrollBar>
+#include <QTextDocument>
+#include <QDebug>
 
 #ifndef SCHAT_NO_WEBKIT
   #include <QtWebKit>
@@ -30,6 +38,7 @@
 #include "chatview_p.h"
 #include "protocol.h"
 #include "settings.h"
+#include "simplechatapp.h"
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
@@ -38,7 +47,6 @@
 ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleVariant, ChatView *parent)
   : empty(true),
   q(parent),
-  statusMessages(0),
   loaded(false),
   chatStyle(styleName),
   chatStyleVariant(styleVariant)
@@ -46,7 +54,6 @@ ChatViewPrivate::ChatViewPrivate(const QString &styleName, const QString &styleV
 ChatViewPrivate::ChatViewPrivate(ChatView *parent)
   : empty(true),
   q(parent),
-  statusMessages(0)
 #endif
 {
   #ifndef SCHAT_NO_WEBKIT
@@ -81,9 +88,15 @@ bool ChatViewPrivate::prepareCmd(const QString &cmd, QString &msg, bool cut)
 {
   if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
     if (cut) {
-      int index = msg.indexOf(cmd, 0, Qt::CaseInsensitive);
+      QString c = cmd;
+      int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      if (index == -1 && c.endsWith(' ')) {
+        c = c.left(c.size() - 1);
+        index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+      }
+
       if (index != -1)
-        msg.remove(index, cmd.size());
+        msg.remove(index, c.size());
     }
     return true;
   }
@@ -99,7 +112,7 @@ void ChatViewPrivate::toLog(const QString &text)
 {
   if (log) {
     if (!channelLog) {
-      channelLog = new ChannelLog(q);
+      channelLog = new ChannelLog(SimpleSettings->isUnixLike() ? SCHAT_UNIX_CONFIG("log") : QApplication::applicationDirPath() + "/log", q);
       channelLog->setChannel(channel);
     }
     channelLog->msg(text);
@@ -157,6 +170,8 @@ ChatView::ChatView(QWidget *parent)
     setHtml(d->style->makeSkeleton());
     connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
     setAcceptDrops(false);
+
+    QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   #else
     d = new ChatViewPrivate(this);
 
@@ -173,6 +188,7 @@ ChatView::ChatView(QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
 
   createActions();
+  retranslateUi();
 }
 
 
@@ -186,11 +202,6 @@ ChatView::~ChatView()
 }
 
 
-bool ChatView::allowStatusMessages() const
-{
-  return (bool) d->statusMessages;
-}
-
 
 QString ChatView::channel() const
 {
@@ -203,18 +214,16 @@ QString ChatView::channel() const
  */
 QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick)
 {
-  QString nick    = Qt::escape(oldNick);
-  QString nickHex = newNick.toUtf8().toHex();
-  QString nickNew = Qt::escape(newNick);
-  QString html = "<span class='changedNick'>";
+  QString nick = Qt::escape(oldNick);
+  QString link = "<a href='nick:" + newNick.toUtf8().toHex() + "'>" + Qt::escape(newNick) + "</a>";
+  QString html;
 
   if (gender)
-    html += tr("<b>%1</b> теперь известна как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
+    html = tr("<b>%1</b> is now known as %2", "Female").arg(nick).arg(link);
   else
-    html += tr("<b>%1</b> теперь известен как <a href='nick:%2'>%3</a>").arg(nick).arg(nickHex).arg(nickNew);
+    html = tr("<b>%1</b> is now known as %2", "Male").arg(nick).arg(link);
 
-  html += "</span>";
-  return html;
+  return "<span class='changedNick'>" + html + "</span>";
 }
 
 
@@ -223,17 +232,15 @@ QString ChatView::statusChangedNick(quint8 gender, const QString &oldNick, const
  */
 QString ChatView::statusNewUser(quint8 gender, const QString &nick)
 {
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='newUser'>";
+  QString link = "<a href='nick:" + nick.toUtf8().toHex() + "'>" + Qt::escape(nick) + "</a>";
+  QString html;
 
   if (gender)
-    out += tr("<a href='nick:%1'>%2</a> зашла в чат").arg(nickHex).arg(escaped);
+    html = tr("%1 entered chat", "Female").arg(link);
   else
-    out += tr("<a href='nick:%1'>%2</a> зашёл в чат").arg(nickHex).arg(escaped);
+    html = tr("%1 entered chat", "Male").arg(link);
 
-  out += "</span>";
-  return out;
+  return "<span class='newUser'>" + html + "</span>";
 }
 
 
@@ -242,21 +249,19 @@ QString ChatView::statusNewUser(quint8 gender, const QString &nick)
  */
 QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QString &bye)
 {
-  QString escaped = Qt::escape(nick);
-  QString nickHex = nick.toUtf8().toHex();
-  QString out = "<span class='userLeft'>";
+  QString html;
+  QString link = "<a href='nick:" + nick.toUtf8().toHex() + "'>" + Qt::escape(nick) + "</a>";
 
   QString byeMsg;
   if (!bye.isEmpty())
     byeMsg = ": <span style='color:#909090;'>" + Qt::escape(bye) + "</span>";
 
   if (gender)
-    out += tr("<a href='nick:%1'>%2</a> вышла из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    html = tr("%1 left the chat%2", "Female").arg(link).arg(byeMsg);
   else
-    out += tr("<a href='nick:%1'>%2</a> вышел из чата%3").arg(nickHex).arg(escaped).arg(byeMsg);
+    html = tr("%1 left the chat%2", "Male").arg(link).arg(byeMsg);
 
-  out += "</span>";
-  return out;
+  return "<span class='userLeft'>" + html + "</span>";
 }
 
 
@@ -270,7 +275,7 @@ void ChatView::addFilteredMsg(const QString &msg, bool strict)
   doc.setHtml(msg);
 
   QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
-  html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Сервисное сообщение:")).arg(html);
+  html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Service message:")).arg(html);
 
   addServiceMsg(html);
 }
@@ -391,7 +396,7 @@ void ChatView::log(bool enable)
 
   if (enable) {
     if (!d->channelLog) {
-      d->channelLog = new ChannelLog(this);
+      d->channelLog = new ChannelLog(SimpleSettings->isUnixLike() ? SCHAT_UNIX_CONFIG("log") : QApplication::applicationDirPath() + "/log", this);
       d->channelLog->setChannel(d->channel);
     }
   }
@@ -411,21 +416,6 @@ void ChatView::scroll()
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());
   #endif
-}
-
-
-/*!
- * Добавляет пункт в контекстное меню для включения/выключения статусных сообщений.
- */
-void ChatView::setAllowStatusMessages()
-{
-  if (d->statusMessages)
-    return;
-
-  d->statusMessages = new QAction(QIcon(":/images/im-user.png"), tr("Статусные сообщения"), this);
-  d->statusMessages->setCheckable(true);
-  d->statusMessages->setChecked(SimpleSettings->getBool("StatusMessages"));
-  connect(d->statusMessages, SIGNAL(toggled(bool)), SLOT(toggleStatusMessages(bool)));
 }
 
 
@@ -471,6 +461,19 @@ void ChatView::clear()
 }
 
 
+void ChatView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  #ifndef SCHAT_NO_WEBKIT
+  QWebView::changeEvent(event);
+  #else
+  QTextBrowser::changeEvent(event);
+  #endif
+}
+
+
 void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
   #ifndef SCHAT_NO_WEBKIT
@@ -480,7 +483,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
     d->selectAll->setEnabled(!d->empty);
   #endif
 
-  QString copyLinkText = tr("Копировать &ссылку");
+  QString copyLinkText = tr("Copy &link");
   d->clear->setEnabled(!d->empty);
   QAction *copyLink = 0;
 
@@ -505,10 +508,8 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addSeparator();
   menu.addAction(d->autoScroll);
-  if (d->statusMessages) {
-    menu.addAction(d->statusMessages);
-    menu.addSeparator();
-  }
+  menu.addAction(d->serviceMessages);
+  menu.addSeparator();
   menu.addAction(d->clear);
 
   #ifndef SCHAT_NO_WEBKIT
@@ -561,9 +562,9 @@ void ChatView::notify(int notify)
 }
 
 
-void ChatView::toggleStatusMessages(bool checked)
+void ChatView::toggleServiceMessages(bool checked)
 {
-  SimpleSettings->setBool("StatusMessages", checked);
+  SimpleSettings->setBool("ServiceMessages", checked);
 }
 
 
@@ -604,19 +605,37 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 
 void ChatView::createActions()
 {
-  d->autoScroll = new QAction(QIcon(":/images/note2.png"), tr("Автопрокрутка"), this);
+  d->autoScroll = new QAction(QIcon(":/images/note2.png"), "", this);
   d->autoScroll->setCheckable(true);
   d->autoScroll->setChecked(true);
 
-  d->copy = new QAction(QIcon(":/images/edit-copy.png"), tr("&Копировать"), this);
+  d->serviceMessages = new QAction(QIcon(":/images/balloon-white.png"), "", this);
+  d->serviceMessages->setCheckable(true);
+  d->serviceMessages->setChecked(SimpleSettings->getBool("ServiceMessages"));
+  connect(d->serviceMessages, SIGNAL(toggled(bool)), SLOT(toggleServiceMessages(bool)));
+
+  d->copy = new QAction(SimpleChatApp::iconFromTheme("edit-copy"), "", this);
   d->copy->setShortcut(Qt::CTRL + Qt::Key_C);
   connect(d->copy, SIGNAL(triggered()), SLOT(copy()));
 
-  d->clear = new QAction(QIcon(":/images/edit-clear.png"), tr("&Очистить"), this);
+  d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
   #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(QIcon(":/images/edit-select-all.png"), tr("&Выделить всё"), this);
+    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
     connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
+  #endif
+}
+
+
+void ChatView::retranslateUi()
+{
+  d->autoScroll->setText(tr("Autoscroll"));
+  d->serviceMessages->setText(tr("Service messages"));
+  d->copy->setText(tr("&Copy"));
+  d->clear->setText(tr("Clear"));
+
+  #ifdef SCHAT_NO_WEBKIT
+  d->selectAll->setText(tr("Select All"));
   #endif
 }

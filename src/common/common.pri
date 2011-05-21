@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2009 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -41,6 +41,13 @@ contains( SCHAT_WINCE, 1 ) {
   SCHAT_SINGLEAPP = 0
 }
 
+macx {
+  DEFINES += SCHAT_NO_STYLE
+}
+else {
+  DEFINES += SCHAT_NO_MENU
+}
+
 contains( SCHAT_SINGLEAPP, 0 ) {
   DEFINES += SCHAT_NO_SINGLEAPP
 }
@@ -71,4 +78,3 @@ contains( SCHAT_DEVEL_MODE, 1 ) {
   DEFINES += SCHAT_DEVEL_MODE
 }
 
-DEFINES += SCHAT_NO_DONATE

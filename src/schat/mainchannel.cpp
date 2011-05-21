@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,46 +16,49 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QEvent>
+#include <QSplitter>
+#include <QVBoxLayout>
+//#include <QDebug>
 
 #include "mainchannel.h"
 #include "settings.h"
 #include "widget/networkwidget.h"
 #include "widget/userview.h"
+#include "widget/welcome.h"
 
 /*!
  * \brief Конструктор класса MainChannel.
  */
 MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *parent)
   : AbstractTab(Main, icon, parent),
-  m_tabs(parent),
-  m_userView(userView)
+    m_count(0),
+    m_networkWidget(0),
+    m_tabs(parent),
+    m_userView(userView),
+    m_welcome(0)
 {
   m_view->channel("#main");
   m_view->log(SimpleSettings->getBool("Log"));
 
-  m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel | NetworkWidget::ApplyButton);
-  m_networkWidget->setVisible(false);
-
-  m_networkLayout = new QHBoxLayout;
-  m_networkLayout->addWidget(m_networkWidget);
-  m_networkLayout->addStretch();
-  m_networkLayout->setMargin(0);
-
   m_splitter = new QSplitter(this);
   m_splitter->addWidget(m_view);
   m_splitter->addWidget(createUserView());
-  m_splitter->setStretchFactor(0, 3);
-  m_splitter->setStretchFactor(1, 2);
-  m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
+  m_splitter->setStretchFactor(0, 1);
+  m_splitter->setStretchFactor(1, 1);
 
-  m_mainLayout = new QVBoxLayout;
-  m_mainLayout->addLayout(m_networkLayout);
+  #if defined(Q_OS_MAC)
+  m_splitter->setHandleWidth(1);
+  m_splitter->setStyleSheet("QSplitter::handle { background: #919191; }");
+  #else
+  m_splitter->setHandleWidth(m_splitter->handleWidth() + 2);
+  #endif
+
+  m_mainLayout = new QVBoxLayout(this);
   m_mainLayout->addWidget(m_splitter);
   m_mainLayout->setStretchFactor(m_splitter, 999);
   m_mainLayout->setMargin(0);
   m_mainLayout->setSpacing(2);
-  setLayout(m_mainLayout);
 
   QStringList splitterSizes = SimpleSettings->getList("SplitterSizes");
   if (splitterSizes.size() == 2) {
@@ -68,28 +71,27 @@ MainChannel::MainChannel(const QIcon &icon, UserView *userView, QTabWidget *pare
   connect(m_splitter, SIGNAL(splitterMoved(int, int)), SLOT(splitterMoved()));
   connect(m_userView, SIGNAL(usersCountChanged(int)), SLOT(usersCountChanged(int)));
 
-  m_tabs->setCurrentIndex(m_tabs->addTab(this, tr("Общий")));
+  m_tabs->setCurrentIndex(m_tabs->addTab(this, ""));
   m_tabs->setTabIcon(m_tabs->indexOf(this), icon);
+
+  retranslateUi();
 }
 
 
 /*!
  * Добавления события подключения нового пользователя.
- * Пользователь добавляется в очередь, для объединения этих событий в одно.
  */
 void MainChannel::addNewUser(quint8 gender, const QString &nick)
 {
-  m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
-//  if (!m_usersJoin.isActive())
-//    m_usersJoin.start(1000, this);
-//
-//  m_newUsers.insert(nick, gender);
+  if (SimpleSettings->getBool("ServiceMessages"))
+    m_view->addServiceMsg(ChatView::statusNewUser(gender, nick));
 }
 
 
 void MainChannel::addUserLeft(quint8 gender, const QString &nick, const QString &bye)
 {
-  m_view->addServiceMsg(ChatView::statusUserLeft(gender, nick, bye));
+  if (SimpleSettings->getBool("ServiceMessages"))
+    m_view->addServiceMsg(ChatView::statusUserLeft(gender, nick, bye));
 }
 
 
@@ -100,45 +102,77 @@ void MainChannel::addUserLeft(quint8 gender, const QString &nick, const QString 
  */
 void MainChannel::displayChoiceServer(bool display)
 {
-  if (display)
-    m_networkLayout->setContentsMargins(4, 2, 4, 0);
-  else
-    m_networkLayout->setMargin(0);
+  if (display) {
+    if (!m_networkWidget) {
+      m_networkWidget = new NetworkWidget(this, NetworkWidget::NetworkLabel | NetworkWidget::ApplyButton | NetworkWidget::AddStretch);
+      m_networkWidget->layout()->setContentsMargins(4, 2, 4, 0);
+    }
+    m_mainLayout->insertWidget(0, m_networkWidget);
+    m_view->scroll();
+    return;
+  }
 
-    m_networkWidget->setVisible(display);
-
+  if (m_networkWidget) {
+    m_mainLayout->removeWidget(m_networkWidget);
+    m_networkWidget->deleteLater();
+    m_networkWidget = 0;
+  }
   m_view->scroll();
 }
 
 
-//void MainChannel::timerEvent(QTimerEvent *event)
-//{
-//  if (event->timerId() == m_usersJoin.timerId()) {
-//    m_usersJoin.stop();
-//    if (!m_newUsers.isEmpty()) {
-//      if (m_newUsers.size() == 1)
-//        m_view->addServiceMsg(ChatView::statusNewUser(m_newUsers.values().at(0), m_newUsers.keys().at(0)));
-//      else
-//        addNewUsers(m_newUsers.keys());
-//
-//      m_newUsers.clear();
-//    }
-//  } else
-//    AbstractTab::timerEvent(event);
-//}
+void MainChannel::displayWelcome(bool display)
+{
+  if (display) {
+    displayChoiceServer(false);
+    if (!m_welcome) {
+      m_welcome = new WelcomeWidget(this);
+    }
+    m_welcome->setFocus();
+    m_mainLayout->insertWidget(0, m_welcome);
+    m_mainLayout->removeWidget(m_splitter);
+    m_splitter->setVisible(false);
+    #if QT_VERSION >= 0x040500
+    m_tabs->setTabsClosable(false);
+    #endif
+    return;
+  }
+
+  if (m_welcome) {
+    m_mainLayout->removeWidget(m_welcome);
+    m_welcome->deleteLater();
+    m_welcome = 0;
+    m_mainLayout->insertWidget(0, m_splitter);
+    m_splitter->setVisible(true);
+    #if QT_VERSION >= 0x040500
+    m_tabs->setTabsClosable(true);
+    #endif
+  }
+
+  retranslateUi();
+}
+
+
+void MainChannel::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  AbstractTab::changeEvent(event);
+}
 
 
 void MainChannel::notify(int code)
 {
-  if (code == Settings::MiscSettingsChanged)
+  if (code == Settings::MiscSettingsChanged) {
     m_view->log(SimpleSettings->getBool("Log"));
-}
+  }
+  else if (code == Settings::ServerChanged) {
+    displayWelcome(false);
+  }
 
-
-void MainChannel::serverChanged()
-{
-  m_networkWidget->save();
-  SimpleSettings->notify(Settings::ServerChanged);
+  if (m_welcome)
+    m_welcome->notify(code);
 }
 
 
@@ -161,10 +195,8 @@ void MainChannel::splitterMoved()
  */
 void MainChannel::usersCountChanged(int count)
 {
-  if (count)
-    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий (%1)").arg(count));
-  else
-    m_tabs->setTabText(m_tabs->indexOf(this), tr("Общий"));
+  m_count = count;
+  retranslateUi();
 }
 
 
@@ -179,28 +211,24 @@ QWidget* MainChannel::createUserView()
   m_userView->setQuickSearch(userSearch);
   QVBoxLayout *userLay = new QVBoxLayout(userWidget);
   userLay->setMargin(0);
-  userLay->setSpacing(2);
+  userLay->setSpacing(1);
   userLay->addWidget(m_userView);
   userLay->addWidget(userSearch);
   return userWidget;
 }
 
 
-//void MainChannel::addNewUsers(const QStringList &nicks)
-//{
-//  QString out = "<span class='newUser'>";
-//
-//  if (nicks.size() > 10) {
-//    out += tr("<b>%n</b> пользователь заходят в чат", "", nicks.size());
-//  }
-//  else {
-//    out += QString("<a href='nick:%1'>%2</a>").arg(QString(nicks.at(0).toUtf8().toHex())).arg(Qt::escape(nicks.at(0)));
-//    for (int i = 1; i < nicks.size(); ++i) {
-//      out += QString(", <a href='nick:%1'>%2</a>").arg(QString(nicks.at(i).toUtf8().toHex())).arg(Qt::escape(nicks.at(i)));
-//    }
-//    out += tr(" заходят в чат");
-//  }
-//
-//  out += "</span>";
-//  m_view->addServiceMsg(out);
-//}
+void MainChannel::retranslateUi()
+{
+  int index = m_tabs->indexOf(this);
+
+  if (m_welcome) {
+    m_tabs->setTabText(index, tr("Welcome"));
+    return;
+  }
+
+  if (m_count)
+    m_tabs->setTabText(index, tr("Main (%1)").arg(m_count));
+  else
+    m_tabs->setTabText(index, tr("Main"));
+}

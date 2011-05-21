@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,53 +19,52 @@
 #ifndef DAEMONSERVICE_H_
 #define DAEMONSERVICE_H_
 
-#include <QObject>
+#include <QDataStream>
+#include <QTcpSocket>
+#include <QTimer>
 
 #include "protocol.h"
-#include "servicecore.h"
 
 class AbstractProfile;
-class AbstractRawPacket;
-class ByeMsgPacket;
-class MessagePacket;
 
 /*!
  * \brief Универсальный класс, обслуживающий клиентов.
  *
  * При наличии валидного сокета, инициализируется сокет.
  */
-class DaemonService : public ServiceCore
+class DaemonService : public QObject
 {
   Q_OBJECT
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
-  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, message); }
+  bool isReady() const;
+  inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
   inline void sendSyncUsersEnd()                                                           { send(OpcodeSyncUsersEnd); }
+  QString host() const;
   void accessDenied(quint16 reason = 0);
   void accessGranted(quint16 numeric = 0);
   void quit(bool kill = false);
   void sendNumerics(const QList<quint8> &numerics);
+
 signals:
   void greeting(const QStringList &list, quint8 flag);
   void leave(const QString &nick, quint8 flag, const QString &err);
+  void message(const QString &channel, const QString &sender, const QString &message);
   void newBye(const QString &nick, const QString &bye);
   void newNick(quint8 gender, const QString &nick, const QString &newNick, const QString &name);
   void newProfile(quint8 gender, const QString &nick, const QString &name);
   void newUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
-  void packet(AbstractRawPacket *packet);
   void relayMessage(const QString &channel, const QString &sender, const QString &message);
   void universal(quint16 sub, const QList<quint32> &data1, const QStringList &data2, quint8 numeric);
   void universal(quint16 sub, const QString &nick, const QList<quint32> &data1, const QStringList &data2);
-  void universalLite(quint16 sub, const QList<quint32> &data1);
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 public slots:
   bool sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2);
-  bool sendUniversalLite(quint16 sub, const QList<quint32> &data1);
   inline void sendLinkLeave(quint8 numeric, const QString &network, const QString &ip)     { send(OpcodeLinkLeave, numeric, network, ip); }
-  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, message); }
+  inline void sendMessage(const QString &sender, const QString &message)                   { send(OpcodeMessage, sender, parseCmd(message)); }
   inline void sendNewLink(quint8 numeric, const QString &network, const QString &ip)       { send(OpcodeNewLink, numeric, network, ip); }
   inline void sendSyncBye(const QString &nick, const QString &bye)                         { send(OpcodeSyncByeMsg, nick, bye); }
   inline void sendUserLeave(const QString &nick, const QString &bye, quint8 flag)          { send(OpcodeUserLeave, flag, nick, bye); }
@@ -80,14 +79,17 @@ private slots:
   void readyRead();
 
 private:
-  bool handshake(quint16 opcode, const QByteArray &block);
+  bool opcodeGreeting();
   bool send(quint16 opcode);
   bool send(quint16 opcode, const QString &msg);
   bool send(quint16 opcode, const QString &str1, const QString &str2);
   bool send(quint16 opcode, quint16 err);
   bool send(quint16 opcode, quint8 flag, const QString &nick, const QString &message);
   bool send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name);
-  void emitPacket(AbstractRawPacket *packet);
+  QString parseCmd(const QString &message) const;
+  quint16 verifyGreeting(quint16 version);
+  void opcodeByeMsg();
+  void opcodeMessage();
   void opcodeNewNick();
   void opcodeNewProfile();
   void opcodeNewUser();
@@ -95,15 +97,18 @@ private:
   void opcodeRelayMessage();
   void opcodeSyncByeMsg();
   void opcodeUniversal();
-  void opcodeUniversalLite();
   void opcodeUserLeave();
-  void rawPacket(quint16 opcode, const QByteArray &block);
-  void read(ByeMsgPacket *packet);
   void unknownOpcode();
 
+  AbstractProfile *m_profile;
+  bool m_accepted;
   bool m_kill;
   int m_pings;
+  QDataStream m_stream;
   QString m_error;
+  QTcpSocket *m_socket;
+  QTimer m_ping;
+  quint16 m_nextBlockSize;
   quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;
@@ -114,6 +119,14 @@ private:
  *
  * \param flag Флаг эха, если 1 то это подтверждение отправки сообщения.
  * \param nick Ник, отправившего сообщение (flag = 0), ник того кому предназначается сообщение (flag = 1).
+ * \param message Сообщение.
+ */
+
+/*! \fn void DaemonService::message(const QString &channel, const QString &sender, const QString &message)
+ * \brief Уведомление о новом сообщении от пользователя.
+ *
+ * \param channel Канал/ник для кого предназначено сообщение (пустая строка - главный канал).
+ * \param sender Ник отправителя сообщения.
  * \param message Сообщение.
  */
 

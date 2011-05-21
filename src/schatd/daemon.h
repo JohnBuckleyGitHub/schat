@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,22 +25,22 @@
 #include <QTimer>
 
 #include "network.h"
+#include "userunit.h"
 
 class AbstractProfile;
-class AbstractRawPacket;
-class ByeMsgPacket;
 class ChannelLog;
 class ClientService;
 class DaemonLog;
 class DaemonService;
 class DaemonSettings;
+class FloodOfflineItem;
 class LinkUnit;
-class MessagePacket;
 class Network;
 class QLocalServer;
 class UserUnit;
+class Translation;
 
-#define LOG(x, y) if (logLevel >= x) m_log->append(y)
+#define SCHATD_LOG(x, y, z) if (logLevel >= x) m_log->append(y, z)
 
 /*!
  * \brief Сервер чата
@@ -55,6 +55,7 @@ public:
   Daemon(QObject *parent = 0);
   ~Daemon();
   bool start();
+  static Daemon *instance() { return m_self; }
   void reload(int code);
 
 signals:
@@ -71,6 +72,7 @@ signals:
   void userLeave(const QString &nick, const QString &bye, quint8 flag);
 
 private slots:
+  inline void newBye(const QString &nick, const QString &bye)                                            { syncBye(nick, bye, true); }
   inline void newNick(quint8 gender, const QString &nick, const QString &nNick, const QString &name)     { syncProfile(gender, nick, nNick, name, true); }
   inline void newProfile(quint8 gender, const QString &nick, const QString &name)                        { syncProfile(gender, nick, "", name, true); }
   inline void syncBye(const QString &nick, const QString &bye)                                           { syncBye(nick, bye, false); }
@@ -89,8 +91,8 @@ private slots:
   void logMessage(const QString &sender, const QString &message);
   void logNewLink(quint8 numeric, const QString &network, const QString &name);
   void logNewUser(const QStringList &list, quint8 echo = 1, quint8 numeric = 0);
+  void message(const QString &channel, const QString &sender, const QString &message);
   void newLink(quint8 numeric, const QString &network, const QString &ip);
-  void packet(AbstractRawPacket *packet);
   void relayMessage(const QString &channel, const QString &sender, const QString &msg);
   void serviceLeave(const QString &nick, quint8 flag, const QString &err);
   void syncNumerics(const QList<quint8> &numerics);
@@ -107,7 +109,8 @@ private:
     EnvConfFile, ///< Полное имя конфигурационного файла.
     EnvPidFile,  ///< Полное имя PID-файла.
     EnvLogDir,   ///< Директория для записи журналов сервера.
-    EnvVarDir    ///< Директория для файлов изменяемых в процессе работы.
+    EnvVarDir,   ///< Директория для файлов изменяемых в процессе работы.
+    EnvShare     ///< Директория для общих файлов.
   };
 
   bool initMotd();
@@ -124,8 +127,6 @@ private:
   void environment();
   void link();
   void linkLeave(const QString &nick, const QString &err);
-  void read(ByeMsgPacket *packet);
-  void read(MessagePacket *packet);
   void removeUser(const QString &nick, const QString &err = QString(), quint8 flag = 1);
   void sendAllUsers(DaemonService *service);
   void syncBye(const QString &nick, const QString &bye, bool local);
@@ -141,12 +142,14 @@ private:
   ClientService *m_link;
   DaemonLog *m_log;
   DaemonSettings *m_settings;
+  FloodLimits m_floodLimits;
   int logLevel;
   int m_maxLinks;
   int m_maxUsers;
   int m_maxUsersPerIp;
   int m_statsInterval;
   QHash<QChar, QChar> m_normalize;
+  QHash<QString, FloodOfflineItem> m_floodOffline;
   QHash<QString, int> m_ipLimits;
   QHash<QString, UserUnit *> m_users;
   QHash<quint8, LinkUnit *> m_links;
@@ -159,6 +162,8 @@ private:
   QTimer zombieTimer;
   quint8 m_numeric;
   quint8 m_remoteNumeric;
+  Translation *m_translation;
+  static Daemon *m_self;
   #ifndef SCHAT_NO_LOCAL_SERVER
     QLocalServer *m_localServer;
   #endif

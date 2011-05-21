@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -54,7 +54,6 @@ public:
 
   ChatView(QWidget *parent = 0);
   ~ChatView();
-  bool allowStatusMessages() const;
   QString channel() const;
   static QString statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick);
   static QString statusNewUser(quint8 gender, const QString &nick);
@@ -65,7 +64,6 @@ public:
   void channel(const QString &ch);
   void log(bool enable);
   void scroll();
-  void setAllowStatusMessages();
 
 signals:
   void emoticonsClicked(const QString &emo);
@@ -77,12 +75,13 @@ public slots:
   void clear();
 
 protected:
+  void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
   void linkClicked(const QUrl &url);
   void notify(int notify);
-  void toggleStatusMessages(bool checked);
+  void toggleServiceMessages(bool checked);
   #ifndef SCHAT_NO_WEBKIT
     void loadFinished();
   #endif
@@ -90,6 +89,7 @@ private slots:
 private:
   void appendMessage(const QString &message, bool sameFrom = false);
   void createActions();
+  void retranslateUi();
 
   ChatViewPrivate *d;
 };

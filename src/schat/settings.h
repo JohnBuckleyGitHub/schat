@@ -33,7 +33,6 @@
 
 class AbstractProfile;
 
-#define settings (static_cast<Settings *>(AbstractSettings::instance())) /// \todo Удалить этот макрос.
 #define SimpleSettings (static_cast<Settings *>(AbstractSettings::instance()))
 
 namespace schat {
@@ -53,6 +52,7 @@ class Settings : public AbstractSettings {
   Q_OBJECT
 
 public:
+  /// Уведомления об изменении настроек.
   enum {
     NetworkSettingsChanged,
     NetworksModelIndexChanged,
@@ -77,20 +77,35 @@ public:
     #ifndef SCHAT_NO_WEBKIT
       InterfaceSettingsChanged,
     #endif
+
+    HideWelcomeChanged, ///< Состояние чекбокса "Всегда использовать это подключение".
   };
 
-  Settings(const QString &filename, QObject *parent = 0);
+  /// Пути.
+  enum Paths {
+    EmoticonsPath,   ///< Пути к смайликам.
+    NetworksPath,    ///< Путь к файлам сети.
+    SoundsPath,      ///< Пути к звукам.
+    StylesPath,      ///< Пути к стилям текста.
+    LogPath,         ///< Путь к журналу.
+    TranslationsPath ///< Путь к переводам.
+  };
+
+  Settings(bool unixLike, QObject *parent = 0);
   const QString& richTextCSS();
   inline AbstractProfile* profile()                    { return m_profile; }
+  inline bool unixLike() const { return m_unixLike; }
   inline Emoticons* emoticons() const                  { return m_emoticons; }
   inline QPoint pos() const                            { return m_pos; }
   inline QSize size() const                            { return m_size; }
   inline Update::State updateState() const             { if (m_update) return m_update->state(); else return Update::Unknown; }
   inline void setPos(const QPoint &pos)                { m_pos = pos; }
   inline void setSize(const QSize &size)               { m_size = size; }
+  inline void setUnixLike(bool unixLike) { m_unixLike = unixLike; }
   int save(const QString &key, bool value);
   int save(const QString &key, const QString &value);
   int save(const QString &key, int value);
+  QStringList path(Paths type) const;
   static QStandardItem* findItem(const QStandardItemModel *model, const QString &text, Qt::MatchFlags flags = Qt::MatchExactly, int column = 0);
   void notify(int notify);
   void notify(int notify, int index);
@@ -117,12 +132,14 @@ public slots:
 
 private:
   bool update(bool get = false);
+  QStringList path(const QString &base) const;
   void createServerList();
   void normalizeInterval();
   void saveRecentServers();
 
   AbstractProfile *m_profile;
   bool m_initRichTextCSS;
+  bool m_unixLike;
   QPoint m_pos;
   QPointer<Emoticons> m_emoticons;
   QPointer<Update> m_update;

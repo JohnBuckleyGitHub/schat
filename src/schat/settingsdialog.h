@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,11 +36,12 @@ public:
     EmoticonsPage,
     SoundPage,
     NotificationPage,
-    UpdatePage,
+    StatusesPage,
     MiscPage
   };
 
   SettingsDialog(QWidget *parent = 0);
+  static void openFolder(int path);
 
 public slots:
   void accept();
@@ -199,23 +200,22 @@ private:
 
 
 /*!
- * \brief Диалог "Настройка", страница "Обновления".
+ * \brief Диалог "Настройка", страница "Звуки".
  */
-class UpdateSettings : public AbstractSettingsPage
+class StatusesSettings : public AbstractSettingsPage
 {
   Q_OBJECT
 
 public:
-  UpdateSettings(QWidget *parent = 0);
-  ~UpdateSettings();
+  StatusesSettings(QWidget *parent = 0);
+  ~StatusesSettings();
 
 public slots:
   void reset(int page);
   void save();
 
 private slots:
-  void factorChanged(int index);
-  void intervalChanged(int i);
+  void showOptions(int index);
 
 private:
   class Private;
