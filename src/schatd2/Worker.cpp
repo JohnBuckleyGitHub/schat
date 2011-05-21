@@ -80,7 +80,7 @@ bool Worker::start()
   m_server = new Server;
   connect(m_server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
 
-  return m_server->listen(QHostAddress::Any, 6999);
+  return m_server->listen(QHostAddress::Any, 7667);
 }
 
 
