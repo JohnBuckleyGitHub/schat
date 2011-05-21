@@ -1,0 +1,3 @@
+var/run/schatd
+var/log/schatd
+var/lib/schatd
