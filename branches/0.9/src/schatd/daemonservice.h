@@ -38,6 +38,7 @@ class DaemonService : public QObject
 
 public:
   DaemonService(QTcpSocket *socket, QObject *parent = 0);
+  ~DaemonService();
   bool isReady() const;
   inline void sendPrivateMessage(quint8 flag, const QString &nick, const QString &message) { send(OpcodePrivateMessage, flag, nick, parseCmd(message)); }
   inline void sendServerMessage(const QString &msg)                                        { send(OpcodeServerMessage, msg); }
@@ -100,6 +101,9 @@ private:
   void opcodeUserLeave();
   void unknownOpcode();
 
+  // кандидаты в абстрактный класс.
+  bool send();
+
   AbstractProfile *m_profile;
   bool m_accepted;
   bool m_kill;
@@ -112,6 +116,10 @@ private:
   quint16 m_opcode;
   quint8 m_flag;
   quint8 m_numeric;
+
+  // кандидаты в абстрактный класс.
+  QByteArray m_sendBuffer;   ///< Буфер отправки пакетов.
+  QDataStream *m_sendStream; ///< Поток отправки пакетов.
 };
 
 /*! \fn void DaemonService::sendPrivateMessage(quint8 flag, const QString &nick, const QString &message)
