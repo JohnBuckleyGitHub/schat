@@ -35,7 +35,7 @@ ClientUI::ClientUI(QWidget *parent)
   m_tabs = new TabWidget(this);
   m_statusBar = new StatusBar(m_core->client(), this);
 
-  m_url = new QLineEdit("schat://192.168.1.33:6999", this);
+  m_url = new QLineEdit("schat://192.168.1.33:7667", this);
   m_statusBar->setUrl(m_url->text());
 
   m_send = new QLineEdit(this);

@@ -31,7 +31,7 @@ public:
 
   /// Значения по умолчанию.
   enum Defaults {
-    DefaultPort = 6999,          ///< Порт по умолчанию.
+    DefaultPort = 7667,          ///< Порт по умолчанию.
     MaxProtocolVersion = 0x0,    ///< Максимальная поддерживаемая версия протколола.
     MaxAuthPacketVersion = 0x1,  ///< Максимальная версия авторизационного пакета.
     ConnectTime = 20000,         ///< Время ожидания перехода в состояние QAbstractSocket::ConnectedState для клиента.
