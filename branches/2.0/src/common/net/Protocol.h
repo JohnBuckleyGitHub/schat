@@ -100,6 +100,7 @@ public:
     ChannelPacket = 0x63, // 'c'
     /// Данные пользователя.
     UserDataPacket = 0x7544, // 'uD'
+    NoticePacket = 0x6e // 'n'
   };
 
   /// Опция заголовка виртуального пакета.

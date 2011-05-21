@@ -28,6 +28,7 @@
 #include "net/packets/auth.h"
 #include "net/packets/channels.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
@@ -178,7 +179,11 @@ bool Core::route(ServerChannel *channel)
   if (!channel)
     return false;
 
-  return send(echoFilter(m_storage->socketsFromChannel(channel)), m_readBuffer);
+  QList<quint64> sockets = echoFilter(m_storage->socketsFromChannel(channel));
+  if (sockets.isEmpty())
+    return true;
+
+  return send(sockets, m_readBuffer);
 }
 
 
@@ -303,7 +308,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
         if (idType == SimpleID::InvalidId)
           continue;
 
-        if (idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
+        if (m_reader->type() != Protocol::MessagePacket && idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
           continue;
       }
     }
@@ -454,44 +459,6 @@ ServerChannel *Core::channel(const QString &name, bool create)
 
 
 /*!
- * Обработка команд.
- *
- * \return true в случае если команда была обработана, иначе false.
- */
-bool Core::command()
-{
-  SCHAT_DEBUG_STREAM(this << "command()" << m_packetsEvent->userId().toHex())
-
-  QString command = m_messageData->command;
-
-  if (command.isEmpty())
-    return false;
-
-  if (command == "join") {
-    readJoinCmd();
-    return true;
-  }
-
-  if (command == "part") {
-    if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
-      return false;
-    else
-      return true;
-  }
-
-  if (command == "add") {
-    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
-      bindTalks();
-    }
-
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
  * Чтение пакета Packet::AuthRequest.
  */
 bool Core::readAuthRequest()
@@ -517,42 +484,6 @@ bool Core::readAuthRequest()
 
   QCoreApplication::postEvent(m_workers.at(m_packetsEvent->workerId()), event);
   return false;
-}
-
-
-/*!
- * Обработка команды "join".
- */
-bool Core::readJoinCmd()
-{
-  ServerChannel *chan = 0;
-  if (!m_messageData->destId.isEmpty())
-    chan = m_storage->channel(m_messageData->destId);
-
-  if (!chan)
-    chan = channel(m_messageData->text);
-
-  if (!chan)
-    return false;
-
-  return join(m_packetsEvent->userId(), chan);
-}
-
-
-/*!
- * Чтение пакета Protocol::Message.
- */
-bool Core::readMessage()
-{
-  MessageReader reader(m_reader);
-  m_messageData = &reader.data;
-
-  SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
-
-  if (m_messageData->options & MessageData::ControlOption && command())
-    return true;
-
-  return route();
 }
 
 
@@ -709,4 +640,103 @@ void Core::bindTalks(ServerUser *senderUser, ServerUser *destUser)
 
   addTalk(senderUser, destUser);
   addTalk(destUser, senderUser);
+}
+
+
+/*!
+ * Обработка команд.
+ *
+ * \return true в случае если команда была обработана, иначе false.
+ */
+bool Core::command()
+{
+  SCHAT_DEBUG_STREAM(this << "command()" << m_packetsEvent->userId().toHex())
+
+  QString command = m_messageData->command;
+
+  if (command.isEmpty())
+    return false;
+
+  if (command == "join") {
+    readJoinCmd();
+    return true;
+  }
+
+  if (command == "part") {
+    if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
+      return false;
+    else
+      return true;
+  }
+
+  if (command == "add") {
+    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
+      bindTalks();
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Обработка команды "join".
+ */
+bool Core::readJoinCmd()
+{
+  ServerChannel *chan = 0;
+  if (!m_messageData->destId.isEmpty())
+    chan = m_storage->channel(m_messageData->destId);
+
+  if (!chan)
+    chan = channel(m_messageData->text);
+
+  if (!chan)
+    return false;
+
+  return join(m_packetsEvent->userId(), chan);
+}
+
+
+/*!
+ * Чтение пакета Protocol::MessagePacket.
+ */
+bool Core::readMessage()
+{
+  MessageReader reader(m_reader);
+  m_messageData = &reader.data;
+
+  SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
+
+  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0) {
+    rejectMessage(NoticeData::UserUnavailable);
+    return false;
+  }
+
+  if (m_messageData->options & MessageData::ControlOption && command())
+    return true;
+
+  if (m_messageData->name == 0)
+    return route();
+
+  if (!route()) {
+    rejectMessage(NoticeData::UnknownError);
+    return false;
+  }
+
+  return true;
+}
+
+
+void Core::rejectMessage(int reason)
+{
+  SCHAT_DEBUG_STREAM("rejectMessage()" << reason)
+
+  if (m_messageData->name == 0)
+    return;
+
+  NoticeData data(m_messageData->senderId, m_messageData->destId, NoticeData::MessageRejected, m_messageData->name, reason);
+  send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
 }

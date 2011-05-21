@@ -47,6 +47,7 @@ private slots:
 private:
   QByteArray userIdFromClass(const QString &text);
   void appendUserMessage(const ChatMessage &message);
+  void setMessageState(const QString &id, const QString &state);
   void setText(QString &html, const QString &text);
   void setTimeStamp(QString &html);
 

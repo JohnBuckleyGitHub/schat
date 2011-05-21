@@ -22,6 +22,7 @@
 #include "debugstream.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "net/SimpleClient.h"
 #include "User.h"
@@ -29,12 +30,13 @@
 MessageAdapter::MessageAdapter(SimpleClient *client)
   : QObject(client)
   , m_richText(false)
-  , m_name(0)
+  , m_name(1)
   , m_client(client)
 {
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(notice(const NoticeData &)), SLOT(notice(const NoticeData &)));
 }
 
 
@@ -120,6 +122,7 @@ int MessageAdapter::send(MessageData &data)
 void MessageAdapter::allDelivered(quint64 id)
 {
   Q_UNUSED(id)
+  setStateAll(ChatMessage::Delivered, "");
 }
 
 
@@ -138,7 +141,49 @@ void MessageAdapter::clientStateChanged(int state)
   if (state == SimpleClient::ClientOnline)
     return;
 
-  rejectAll(tr("Потерянно соединение с сервером"));
+  setStateAll(ChatMessage::Rejected, tr("Потерянно соединение с сервером"));
+}
+
+
+void MessageAdapter::notice(const NoticeData &data)
+{
+  SCHAT_DEBUG_STREAM(this << "notice()")
+
+  if (m_client->userId() != data.senderId)
+    return;
+
+  if (data.type == NoticeData::MessageRejected) {
+    MessageData msg(m_client->userId(), data.destId, "");
+    msg.name = data.messageName;
+    m_undelivered.remove(data.messageName);
+    emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
+  }
+
+//  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
+//    if (!m_undelivered.contains(data.messageName))
+//      return;
+//
+//    if (m_client->userId() != data.senderId)
+//      return;
+//
+//    MessageData msg(m_client->userId(), data.destId, "");
+//    msg.name = data.messageName;
+//
+//    if (data.type == NoticeData::MessageDelivered) {
+//      emit message(ChatMessage::OutgoingMessage | ChatMessage::Delivered, msg);
+//    }
+//
+//    if (data.type == NoticeData::MessageRejected) {
+//      emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
+//    }
+//  }
+//
+//  if (data.type == NoticeData::MessageRejected && m_undelivered.contains(data.messageName) && m_client->userId() == data.senderId) {
+//    MessageData msg(m_client->userId(), data.destId, "");
+//    msg.name = data.messageName;
+//    emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
+//    return;
+//  }
 }
 
 
@@ -224,22 +269,25 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 }
 
 
-void MessageAdapter::rejectAll(const QString &reason)
+/*!
+ * Устанавливает состояние для всех пакетов с неподтверждённой доставкой.
+ */
+void MessageAdapter::setStateAll(int state, const QString &reason)
 {
   Q_UNUSED(reason)
 
   if (m_undelivered.isEmpty())
     return;
 
-//  MessageData data(m_client->userId(), QByteArray(), reason);
-//
-//  QHashIterator<quint64, QByteArray> i(m_undelivered);
-//  while (i.hasNext()) {
-//    i.next();
-//    data.name = i.key();
-//    data.destId = i.value();
-//    emit message(ChatMessage::OutgoingMessage | ChatMessage::Undelivered, data);
-//  }
+  MessageData data(m_client->userId(), QByteArray(), reason);
+
+  QHashIterator<quint64, QByteArray> i(m_undelivered);
+  while (i.hasNext()) {
+    i.next();
+    data.name = i.key();
+    data.destId = i.value();
+    emit message(ChatMessage::OutgoingMessage | state, data);
+  }
 
   m_undelivered.clear();
 }

@@ -25,6 +25,7 @@
 #include "net/packets/auth.h"
 #include "net/packets/channels.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/SimpleClient.h"
@@ -182,6 +183,10 @@ void SimpleClient::newPacketsImpl()
 
       case Protocol::UserDataPacket:
         readUserData();
+        break;
+
+      case Protocol::NoticePacket:
+        readNotice();
         break;
 
       default:
@@ -514,6 +519,17 @@ bool SimpleClient::readMessage()
   SCHAT_DEBUG_STREAM("      " << reader.data.text)
 
   emit message(reader.data);
+  return true;
+}
+
+
+bool SimpleClient::readNotice()
+{
+  SCHAT_DEBUG_STREAM(this << "readNotice()")
+
+  NoticeReader reader(m_reader);
+  emit notice(reader.data);
+
   return true;
 }
 

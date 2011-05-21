@@ -19,7 +19,7 @@ SCHAT_RESOURCES   = 0
 SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
 
-QT = core gui network
+QT = core network
 TEMPLATE = app
 
 HEADERS = \
@@ -31,6 +31,7 @@ HEADERS = \
     net/packets/auth.h \
     net/packets/channels.h \
     net/packets/message.h \
+    net/packets/notices.h \
     net/packets/users.h \
     net/PacketWriter.h \
     net/ServerData.h \
@@ -38,7 +39,6 @@ HEADERS = \
     net/SimpleSocket.h \
     net/TransportReader.h \
     net/TransportWriter.h \
-    protov4.h \
     Server.h \
     ServerChannel.h \
     ServerUser.h \
@@ -56,13 +56,13 @@ SOURCES = \
     net/packets/auth.cpp \
     net/packets/channels.cpp \
     net/packets/message.cpp \
+    net/packets/notices.cpp \
     net/packets/users.cpp \
     net/ServerData.cpp \
     net/SimpleID.cpp \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
-    protov4.cpp \
     Server.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
@@ -70,8 +70,6 @@ SOURCES = \
     User.cpp \
     Worker.cpp \
     WorkerThread.cpp \
-    
-FORMS += protov4.ui
 
 DEFINES += SCHAT_DAEMON
 

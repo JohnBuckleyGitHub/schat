@@ -78,10 +78,7 @@ private:
   QList<quint64> echoFilter(const QList<quint64> &sockets);
   ServerChannel *channel(const QString &name, bool create = true);
 
-  bool command();
   bool readAuthRequest();
-  bool readJoinCmd();
-  bool readMessage();
   bool readUserData();
   int auth();
   void sendChannel(ServerChannel *channel, ServerUser *user);
@@ -90,6 +87,12 @@ private:
   void addTalk(ServerUser *user1, ServerUser *user2);
   void bindTalks();
   void bindTalks(ServerUser *senderUser, ServerUser *destUser);
+
+  // messages.
+  bool command();
+  bool readJoinCmd();
+  bool readMessage();
+  void rejectMessage(int reason);
 
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.

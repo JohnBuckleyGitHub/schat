@@ -1,5 +1,5 @@
-#include <QtGui>
-#include <QApplication>
+#include <QCoreApplication>
+#include <QTextCodec>
 
 #include "Core.h"
 #include "debugstream.h"
@@ -8,7 +8,6 @@
 #include "net/SimpleSocket.h"
 #include "net/TransportReader.h"
 #include "net/TransportWriter.h"
-#include "protov4.h"
 #include "Worker.h"
 #include "WorkerThread.h"
 #include "version.h"
@@ -20,7 +19,7 @@
 
 int main(int argc, char *argv[])
 {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   app.setApplicationName(SCHAT_NAME);
   app.setApplicationVersion(SCHAT_VERSION);
@@ -30,8 +29,8 @@ int main(int argc, char *argv[])
   Core *core = new Core;
   core->start();
 
-  protov4 w;
-  w.show();
+//  protov4 w;
+//  w.show();
   int result = app.exec();
   core->quit();
 

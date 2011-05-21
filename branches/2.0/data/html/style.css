@@ -58,8 +58,8 @@ a:active, a:hover {
 	font-size:x-small;
 }
 
-.outgoing {
-	background-color:#f2ffe1;
+.outgoing, .delivered {
+	background:#f2ffe1;
 	border:1px solid #ebffcd;
 }
 
