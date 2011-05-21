@@ -277,12 +277,12 @@ void SimpleSocket::readyRead()
   setTimerState(Idling);
 
   // Отправка подтверждения о доставке.
-  if (m_rxDeliveryConfirm.contains(m_rxSeq)) {
+  if (m_serverSide && !m_deliveryConfirm.isEmpty()) {
     PacketWriter writer(m_sendStream, Protocol::DeliveryConfirmationPacket);
-    writer.put(quint16(0));
-    writer.put(m_rxDeliveryConfirm);
+    writer.put<quint16>(0);
+    writer.put(m_deliveryConfirm);
     transmit(writer.data(), Protocol::ContainsInternalPacket);
-    m_rxDeliveryConfirm.clear();
+    m_deliveryConfirm.clear();
   }
 
   newPacketsImpl();
@@ -332,15 +332,20 @@ bool SimpleSocket::readTransport()
   if (type == Protocol::GenericTransport) {
     m_rxSeq = reader.sequence();
 
-    // Чтение стандартного транспортного пакета.
+    /// Из стандартного транспортного пакета, виртуальные пакеты извлекаются в очередь \p m_readQueue,
+    /// и если это серверный сокет sequence транспортного пакета будет добавлен в \p m_deliveryConfirm.
     int options = reader.options();
     if (options == Protocol::NoOptions) {
       m_readQueue += reader.read();
-      m_rxDeliveryConfirm += m_rxSeq;
+
+      if (m_serverSide)
+        m_deliveryConfirm += m_rxSeq;
+
       return true;
     }
+
     // Чтение служебного транспортного пакета.
-    else if (options == Protocol::ContainsInternalPacket) {
+    if (options == Protocol::ContainsInternalPacket) {
       setTimerState(Idling);
 
       // Отправка сервером пустого пакета в ответ на пустой пакет от клиента.
@@ -353,18 +358,20 @@ bool SimpleSocket::readTransport()
       PacketReader packet(m_readStream);
 
      // Подтверждение доставки.
-      if (packet.type() == Protocol::DeliveryConfirmationPacket) {
+      if (!m_serverSide && packet.type() == Protocol::DeliveryConfirmationPacket) {
         packet.get<quint16>();
         QList<quint64> list = packet.get<QList<quint64> >();
 
-        foreach (quint64 key, list) {
-          m_recovery.remove(key);
+        if (!list.isEmpty()) {
+          foreach (quint64 key, list) {
+            m_deliveryConfirm.removeAll(key);
+          }
+
+          if (m_deliveryConfirm.isEmpty())
+            emit allDelivered(m_id);
         }
 
-        if (m_recovery.size() == 0)
-          emit allDelivered(m_id);
-
-        SCHAT_DEBUG_STREAM(this << "DeliveryConfirmation" << list << "r. size:" << m_recovery.size());
+        SCHAT_DEBUG_STREAM(this << "DeliveryConfirmation" << list << "r. size:" << m_deliveryConfirm.size());
       }
       else if (packet.type() == Protocol::ProbeSecureConnectionPacket) {
         int option = packet.get<quint16>();
@@ -424,7 +431,7 @@ bool SimpleSocket::transmit(const QByteArray &packet, quint8 options, quint8 typ
 bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, quint8 type, quint8 subversion, quint8 version)
 {
   SCHAT_DEBUG_STREAM(this << "transmit(...)")
-  SCHAT_DEBUG_STREAM(this << "  >> seq:" << m_txSeq << "opt:" << options << "type:" << type << "sv:" << subversion << "v:" << version << "r. size:" << m_recovery.size());
+  SCHAT_DEBUG_STREAM(this << "  >> seq:" << m_txSeq << "opt:" << options << "type:" << type << "sv:" << subversion << "v:" << version << "r. size:" << m_deliveryConfirm.size());
   if (!isReady())
     return false;
 
@@ -434,8 +441,8 @@ bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, qu
   TransportWriter tp(m_txStream, packets, m_txSeq, options, type, subversion, version);
   QByteArray packet = tp.data();
 
-  if (options != Protocol::ContainsInternalPacket) {
-    m_recovery.insert(m_txSeq, packet);
+  if (!m_serverSide && options != Protocol::ContainsInternalPacket) {
+    m_deliveryConfirm.append(m_txSeq);
     m_txSeq++;
     setTimerState(WaitingReply);
   }
@@ -470,6 +477,7 @@ void SimpleSocket::release()
   m_sendBuffer.clear();
   m_readBuffer.clear();
   m_txBuffer.clear();
+  m_deliveryConfirm.clear();
 
   emit released(m_id);
 }

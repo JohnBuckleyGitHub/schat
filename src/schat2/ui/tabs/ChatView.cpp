@@ -53,12 +53,20 @@ ChatView::ChatView(QWidget *parent)
 {
   setAcceptDrops(false);
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
 
   setUrl(QUrl("qrc:/html/ChatView.html"));
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
+  setOption(ShowSeconds, true);
+  setOption(EnableDeveloper, true);
+  setOption(UserServerTime, true);
+}
+
+
+QVariant ChatView::option(Options key) const
+{
+  return m_options.value(key);
 }
 
 
@@ -85,6 +93,24 @@ void ChatView::appendRawMessage(const QString &message)
   }
   else
     m_pendingJs.enqueue(js);
+}
+
+
+void ChatView::setOption(Options key, const QVariant &value)
+{
+  switch (key) {
+    case EnableDeveloper:
+      QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, value.toBool());
+      break;
+
+    default:
+      break;
+  }
+
+  if (!m_options.contains(key))
+    m_options.insert(key, value);
+  else
+    m_options[key] = value;
 }
 
 

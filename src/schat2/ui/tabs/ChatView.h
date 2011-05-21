@@ -20,6 +20,7 @@
 #define CHATVIEW_H_
 
 #include <QQueue>
+#include <QVariant>
 #include <QWebView>
 
 class ChatMessage;
@@ -30,9 +31,18 @@ class ChatView : public QWebView
   Q_OBJECT
 
 public:
+  /// Опции.
+  enum Options {
+    ShowSeconds,     ///< Показывать секунды.
+    EnableDeveloper, ///< Разрешить использование средств разработки.
+    UserServerTime   ///< Использовать время сервера для сообщений.
+  };
+
   ChatView(QWidget *parent = 0);
+  QVariant option(Options key) const;
   void append(const ChatMessage &message);
   void appendRawMessage(const QString &message);
+  void setOption(Options key, const QVariant &value);
 
 signals:
   void nickClicked(const QByteArray &userId);
@@ -51,9 +61,10 @@ private:
   void setText(QString &html, const QString &text);
   void setTimeStamp(QString &html);
 
-  bool m_loaded;               ///< true если документ загружен.
-  ChatViewPrivate *m_d;        ///< Приватный класс.
-  QQueue<QString> m_pendingJs; ///< Очередь сообщений ожидающих загрузки документа.
+  bool m_loaded;                      ///< true если документ загружен.
+  ChatViewPrivate *m_d;               ///< Приватный класс.
+  QHash<Options, QVariant> m_options; ///< Опции.
+  QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
 
 #endif /* CHATVIEW_H_ */

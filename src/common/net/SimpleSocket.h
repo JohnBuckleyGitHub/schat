@@ -111,8 +111,7 @@ private:
   QByteArray m_userId;                   ///< Идентификатор клиента.
   QDataStream *m_rxStream;               ///< Поток чтения транспортных пакетов.
   QDataStream *m_txStream;               ///< Поток отправки транспортных пакетов.
-  QHash<quint64, QByteArray> m_recovery; ///< Отправленные транспортные пакеты для которых не пришло поддтвержедние о доставке.
-  QList<quint64> m_rxDeliveryConfirm;    ///< Список sequence полученных пакетов, для формирования отчёта о доставке.
+  QList<quint64> m_deliveryConfirm;      ///< Список sequence пакетов, используется сервером для формирования отчёта о доставке или клиентом для проверки доставки.
   quint32 m_nextBlockSize;               ///< Размер следующего блока данных.
   quint64 m_rx;                          ///< Счётчик полученных (receive) байт.
   quint64 m_rxSeq;                       ///< sequence полученных пакетов.
