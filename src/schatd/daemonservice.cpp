@@ -40,6 +40,8 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
 {
   SCHAT_DEBUG(this);
 
+  m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
+
   if (m_socket) {
     m_socket->setParent(this);
     connect(m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
@@ -52,10 +54,17 @@ DaemonService::DaemonService(QTcpSocket *socket, QObject *parent)
     m_ping.start(9000);
     m_numeric = 0;
     m_kill = false;
+
     connect(&m_ping, SIGNAL(timeout()), SLOT(ping()));
   }
   else
     deleteLater();
+}
+
+
+DaemonService::~DaemonService()
+{
+  delete m_sendStream;
 }
 
 
@@ -117,20 +126,17 @@ void DaemonService::quit(bool kill)
 }
 
 
-/** [public]
+/*!
  * Пакет `OpcodeSyncNumerics`.
  */
 void DaemonService::sendNumerics(const QList<quint8> &numerics)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeSyncNumerics << numerics;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  if (!isReady())
+    return;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << OpcodeSyncNumerics << numerics;
+  send();
 }
 
 
@@ -143,18 +149,12 @@ void DaemonService::sendNumerics(const QList<quint8> &numerics)
  */
 bool DaemonService::sendUniversal(quint16 sub, const QList<quint32> &data1, const QStringList &data2)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << OpcodeUniversal << sub << data1 << data2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << OpcodeUniversal << sub << data1 << data2;
+  return send();
 }
 
 
@@ -191,56 +191,46 @@ void DaemonService::sendNewProfile(quint8 gender, const QString &nick, const QSt
 }
 
 
-/** [public slots]
+/*!
  * Формирует и отправляет пакет с опкодом `OpcodeNewUser`.
  */
 void DaemonService::sendNewUser(const QStringList &list, quint8 echo, quint8 numeric)
 {
-  if (isReady()) {
+  if (!isReady())
+    return;
 
-    if (m_flag == FlagNone)
-      if (list.at(AbstractProfile::Nick) == m_profile->nick() && !echo)
-        return;
+  if (m_flag == FlagNone)
+    if (list.at(AbstractProfile::Nick) == m_profile->nick() && !echo)
+      return;
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeNewUser
-        << echo
-        << numeric
-        << AbstractProfile::genderNum(list.at(AbstractProfile::Gender))
-        << list.at(AbstractProfile::Nick)
-        << list.at(AbstractProfile::FullName)
-        << list.at(AbstractProfile::ByeMsg)
-        << list.at(AbstractProfile::UserAgent)
-        << list.at(AbstractProfile::Host);
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0)
+                << OpcodeNewUser
+                << echo
+                << numeric
+                << AbstractProfile::genderNum(list.at(AbstractProfile::Gender))
+                << list.at(AbstractProfile::Nick)
+                << list.at(AbstractProfile::FullName)
+                << list.at(AbstractProfile::ByeMsg)
+                << list.at(AbstractProfile::UserAgent)
+                << list.at(AbstractProfile::Host);
 
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  send();
 }
 
 
-/** [public slots]
- *
- */
 void DaemonService::sendRelayMessage(const QString &channel, const QString &sender, const QString &message)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0)
-        << OpcodeRelayMessage
-        << channel
-        << sender
-        << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-  }
+  if (!isReady())
+    return;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0)
+                << OpcodeRelayMessage
+                << channel
+                << sender
+                << message;
+  send();
 }
 
 
@@ -414,22 +404,16 @@ bool DaemonService::opcodeGreeting()
  */
 bool DaemonService::send(quint16 opcode)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode;
+  return send();
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -439,22 +423,16 @@ bool DaemonService::send(quint16 opcode)
  */
 bool DaemonService::send(quint16 opcode, const QString &msg)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << msg;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode << msg;
+  return send();
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -465,22 +443,16 @@ bool DaemonService::send(quint16 opcode, const QString &msg)
  */
 bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str2)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << str1 << str2;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode << str1 << str2;
+  return send();
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -490,22 +462,16 @@ bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str
  */
 bool DaemonService::send(quint16 opcode, quint16 err)
 {
-  if (m_socket->state() == QTcpSocket::ConnectedState) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << err;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (m_socket->state() != QTcpSocket::ConnectedState)
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode << err;
+  return send();
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -517,22 +483,16 @@ bool DaemonService::send(quint16 opcode, quint16 err)
  */
 bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const QString &message)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << flag << nick << message;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode << flag << nick << message;
+  return send();
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -545,18 +505,12 @@ bool DaemonService::send(quint16 opcode, quint8 flag, const QString &nick, const
  */
 bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, const QString &newNick, const QString &name)
 {
-  if (isReady()) {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(StreamVersion);
-    out << quint16(0) << opcode << gender << nick << newNick << name;
-    out.device()->seek(0);
-    out << quint16(block.size() - (int) sizeof(quint16));
-    m_socket->write(block);
-    return true;
-  }
-  else
+  if (!isReady())
     return false;
+
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(0) << opcode << gender << nick << newNick << name;
+  return send();
 }
 
 
@@ -827,4 +781,18 @@ void DaemonService::unknownOpcode()
 
   QByteArray block = m_socket->read(m_nextBlockSize - (int) sizeof(quint16));
   m_nextBlockSize = 0;
+}
+
+
+bool DaemonService::send()
+{
+  m_sendStream->device()->seek(0);
+  *m_sendStream << quint16(m_sendBuffer.size() - 2);
+  int bytes = m_socket->write(m_sendBuffer);
+  m_sendBuffer.clear();
+
+  if (bytes == -1)
+    return false;
+
+  return true;
 }
