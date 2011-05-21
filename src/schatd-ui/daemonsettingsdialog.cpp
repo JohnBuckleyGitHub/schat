@@ -147,7 +147,7 @@ void DaemonCommonSettings::reset(int page)
 {
   if (page == m_id) {
     m_listen->setCurrentIndex(0);
-    m_port->setValue(7666);
+    m_port->setValue(6999);
     m_logLevel->setValue(0);
     m_channelLog->setChecked(false);
     m_maxUsers->setValue(0);

@@ -20,8 +20,8 @@
 
 #include "network.h"
 
-const QString Network::failBackServer = "schat.impomezia.com";
-const quint16 Network::failBackPort   = 7666;
+const QString Network::failBackServer = "chat.impomezia.com";
+const quint16 Network::failBackPort   = 6999;
 
 /*!
  * \brief Конструктор класса Network.
@@ -174,7 +174,7 @@ ServerInfo Network::server() const
     else {
       ServerInfo info;
       info.address = "";
-      info.port    = 7666;
+      info.port    = failBackPort;
       return info;
     }
   }
