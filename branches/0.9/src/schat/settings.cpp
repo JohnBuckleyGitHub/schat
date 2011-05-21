@@ -533,7 +533,7 @@ void Settings::createServerList()
       QStringList list = server.split(':', QString::SkipEmptyParts);
       if (list.size() > 1) {
         ServerInfo info = NetworkWidget::singleServer(server);
-        if (info.port == 7666)
+        if (info.port == 6999)
           server = info.address;
         networksModel.appendRow(new QStandardItem(QIcon(":/images/computer.png"), server));
       }

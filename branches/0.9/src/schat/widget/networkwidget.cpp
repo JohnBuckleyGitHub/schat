@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, Options options)
 ServerInfo NetworkWidget::singleServer(const QString &url)
 {
   ServerInfo out;
-  out.port = 7666;
+  out.port = 6999;
   int lastIndex = url.lastIndexOf(':');
   if (lastIndex == -1) {
     out.address = url;
@@ -100,7 +100,7 @@ ServerInfo NetworkWidget::singleServer(const QString &url)
   out.address = url.left(lastIndex);
   out.port = QString(url.mid(lastIndex + 1)).toUInt();
   if (!out.port)
-    out.port = 7666;
+    out.port = 6999;
 
   return out;
 }
@@ -216,7 +216,7 @@ int NetworkWidget::addSingleServer(const QString &address, quint16 port, bool cu
 {
   int index = findSingleServer(address, port);
   if (index == -1) {
-    if (port == 7666)
+    if (port == 6999)
       m_select->addItem(QIcon(":/images/computer.png"), address);
     else
       m_select->addItem(QIcon(":/images/computer.png"), address + ":" + QString::number(port));
@@ -241,7 +241,7 @@ int NetworkWidget::addSingleServer(const QString &address, quint16 port, bool cu
 int NetworkWidget::findSingleServer(const QString &address, quint16 port) const
 {
   int index = -1;
-  if (port == 7666) {
+  if (port == 6999) {
     index = m_select->findText(address);
     if (index != -1)
       return index;

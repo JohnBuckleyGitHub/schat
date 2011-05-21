@@ -42,7 +42,7 @@ void DaemonSettings::read()
   setBool("RootServer",      false);
   setBool("Motd",            true);
   setBool("Stats",           true);
-  setInt("ListenPort",       7666);
+  setInt("ListenPort",       6999);
   setInt("LogLevel",         0);
   setInt("Numeric",          0);
   setInt("MaxUsers",         0);
