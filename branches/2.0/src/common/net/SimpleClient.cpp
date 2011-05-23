@@ -203,8 +203,6 @@ void SimpleClient::newPacketsImpl()
 
 void SimpleClient::timerEvent(QTimerEvent *event)
 {
-  SCHAT_DEBUG_STREAM(this << "timerEvent()" << m_reconnects)
-
   if (event->timerId() == m_reconnectTimer->timerId()) {
     openUrl(m_url);
     return;
@@ -511,6 +509,7 @@ bool SimpleClient::readMessage()
 
   MessageReader reader(m_reader);
   m_messageData = &reader.data;
+  m_messageData->timestamp = timestamp();
 
   if (m_messageData->options & MessageData::ControlOption && command()) {
     return true;
@@ -528,6 +527,7 @@ bool SimpleClient::readNotice()
   SCHAT_DEBUG_STREAM(this << "readNotice()")
 
   NoticeReader reader(m_reader);
+  reader.data.timestamp = timestamp();
   emit notice(reader.data);
 
   return true;

@@ -105,16 +105,18 @@ void Worker::customEvent(QEvent *event)
         if (!socket)
           continue;
 
+        socket->setTimestamp(e->timestamp);
         socket->send(e->packets);
       }
       return;
     }
 
-    // Обработка отправки пакетов одному отправтителю.
+    // Обработка отправки пакетов одному отправителю.
     SimpleSocket *socket = m_sockets.value(e->socketId());
     if (!socket)
       return;
 
+    socket->setTimestamp(e->timestamp);
     socket->send(e->packets);
     if (e->option) {
       if (e->option == NewPacketsEvent::KillSocketOption)

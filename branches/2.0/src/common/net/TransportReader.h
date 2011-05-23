@@ -29,6 +29,7 @@ class TransportReader
 public:
   TransportReader(quint32 size, QDataStream *stream);
   inline int options() const { return m_options; }
+  inline qint64 timestamp() const { return m_timestamp; }
   inline quint32 available() const { return m_available; }
   inline quint64 sequence() const { return m_sequence; }
   int readHeader();
@@ -39,15 +40,15 @@ public:
 private:
   quint32 createMap();
 
-  QDataStream *m_stream; ///< input stream.
-  QList<quint32> m_sizes;    ///< список размеров виртуальных пакетов.
-  quint32 m_available;   ///< число не прочитанных байт.
-  quint32 m_size;        ///< Size of packet.
-  quint64 m_sequence;    ///< счётчик пакетов.
-  quint8 m_options;      ///< packet options.
-  quint8 m_subversion;   ///< packet subversion.
-  quint8 m_type;         ///< packet type.
-  quint8 m_version;      ///< packet version.
+  QDataStream *m_stream;  ///< input stream.
+  qint64 m_timestamp;     ///< Отметка времени.
+  QList<quint32> m_sizes; ///< список размеров виртуальных пакетов.
+  quint32 m_available;    ///< число не прочитанных байт.
+  quint64 m_sequence;     ///< счётчик пакетов.
+  quint8 m_options;       ///< packet options.
+  quint8 m_subversion;    ///< packet subversion.
+  quint8 m_type;          ///< packet type.
+  quint8 m_version;       ///< packet version.
 };
 
 #endif /* TRANSPORTREADER_H_ */

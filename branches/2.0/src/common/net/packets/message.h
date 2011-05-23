@@ -42,6 +42,7 @@ public:
 
   MessageData()
   : options(NoOptions)
+  , timestamp(0)
   , name(0)
   {}
 
@@ -49,6 +50,7 @@ public:
   : options(TextOption)
   , destId(destId)
   , senderId(senderId)
+  , timestamp(0)
   , text(text)
   , name(0)
   {}
@@ -57,6 +59,7 @@ public:
   : options(ControlOption)
   , destId(destId)
   , senderId(senderId)
+  , timestamp(0)
   , command(command)
   , text(text)
   , name(0)
@@ -71,6 +74,7 @@ public:
   int options;         ///< Опции сообщения.
   QByteArray destId;   ///< Идентификатор назначения.
   QByteArray senderId; ///< Идентификатор отправителя.
+  qint64 timestamp;    ///< Отметка времени.
   QString command;     ///< Текстовая команда.
   QString text;        ///< Текст сообщения.
   quint64 name;        ///< Уникальное имя-счётчик сообещения.

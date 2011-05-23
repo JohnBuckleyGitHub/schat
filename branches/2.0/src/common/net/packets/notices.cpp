@@ -22,6 +22,7 @@
 NoticeData::NoticeData(const QByteArray &senderId, const QByteArray &destId, quint16 type, quint64 messageName, quint8 param1)
   : destId(destId)
   , senderId(senderId)
+  , timestamp(0)
   , type(type)
   , messageName(messageName)
   , param1(param1)

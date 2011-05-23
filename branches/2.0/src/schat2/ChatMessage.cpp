@@ -29,6 +29,7 @@ ChatMessage::ChatMessage()
   : m_status(UnknownStatus)
   , m_type(UnknownType)
   , m_parseOptions(NoParse)
+  , m_timestamp(0)
   , m_name(0)
 {
 }
@@ -40,6 +41,7 @@ ChatMessage::ChatMessage(int status, const MessageData &data)
   , m_parseOptions(RemoveUnSafeHtml)
   , m_destId(data.destId)
   , m_senderId(data.senderId)
+  , m_timestamp(data.timestamp)
   , m_name(data.name)
 {
   User *user = ChatCore::i()->client()->user(data.senderId);

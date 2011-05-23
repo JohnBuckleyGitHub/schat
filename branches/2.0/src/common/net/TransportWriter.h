@@ -29,7 +29,7 @@
 class TransportWriter
 {
 public:
-  TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0, quint8 version = Protocol::V4);
+  TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, qint64 timestamp = 0, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
   inline QByteArray data() const
   {
     m_device->seek(0);

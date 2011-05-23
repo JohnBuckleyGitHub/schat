@@ -56,10 +56,11 @@ private slots:
 
 private:
   QByteArray userIdFromClass(const QString &text);
+  QDateTime time(qint64 timestamp) const;
   void appendUserMessage(const ChatMessage &message);
-  void setMessageState(const QString &id, const QString &state);
+  void setMessageState(const QString &id, const QString &state, qint64 timestamp);
   void setText(QString &html, const QString &text);
-  void setTimeStamp(QString &html);
+  void setTimeStamp(QString &html, qint64 timestamp);
 
   bool m_loaded;                      ///< true если документ загружен.
   ChatViewPrivate *m_d;               ///< Приватный класс.

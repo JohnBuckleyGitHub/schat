@@ -64,6 +64,7 @@ public:
 
   const QList<QByteArray> packets;
   int option;
+  qint64 timestamp;
   QList<quint64> socketIds;
 };
 

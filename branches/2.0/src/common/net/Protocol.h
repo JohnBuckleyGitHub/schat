@@ -38,7 +38,7 @@ public:
     HandshakeTime = 20000,       ///< Время для авторизации.
     IdleTime = 20000,            ///< Время простоя после, которого клиент пошлёт пакет для проверки соединения.
     ReplyTime = 15000,           ///< Время в течении которого будет ожидаться подтверждение доставки пакета.
-    MaxServerIdleTime = 50000,   ///< Время по истечении, которого сервер разорвёт соединение если не происходит обмена данных.
+    MaxServerIdleTime = 40000,   ///< Время по истечении, которого сервер разорвёт соединение если не происходит обмена данных.
     FastReconnectTime = 1000,    ///< Задержка после разрыва соединения для быстрой попытки восстановить связь.
     MaxFastReconnects = 2,       ///< Максимальное количество попыток для использования FastReconnectTime.
     NormalReconnectTime = 10000, ///< Стандартный интервал попыток восстановить соединение.
@@ -55,6 +55,7 @@ public:
     - 01 byte  - packet subversion \sa Version.
     - 01 byte  - packet options \sa Options.
     - 08 bytes - sequence.
+    - 08 bytes - timestamp (is set TimeStamp).
     - 04 bytes - count of virtual packets.
     - 02 bytes ... list of sizes of virtual packets, or 4 bytes is used option HugePackets.
     - ...      - packet data.
@@ -65,9 +66,10 @@ public:
 
   /// Transport packet options.
   enum Options {
-    NoOptions = 0x0,              ///< No packet options.
-    ContainsInternalPacket = 0x1, ///< Содержит виртуальный пакет для внутреннего использования на транспортном уровне.
-    HugePackets = 0x2             ///< Поддержка больших виртуальных пакетов, для указания размера используется quint32.
+    NoOptions = 0,              ///< No packet options.
+    ContainsInternalPacket = 1, ///< Содержит виртуальный пакет для внутреннего использования на транспортном уровне.
+    HugePackets = 2,            ///< Поддержка больших виртуальных пакетов, для указания размера используется quint32.
+    TimeStamp = 4               ///< Содержит время в виде числа миллисекунд с 1970-01-01T00:00:00.000 UTC.
   };
 
   /*!

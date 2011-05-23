@@ -41,8 +41,9 @@
 #include "WorkerThread.h"
 
 Core::Core(QObject *parent)
-  : QObject(parent),
-    m_thread(0)
+  : QObject(parent)
+  , m_timestamp(0)
+  , m_thread(0)
 {
   m_storage = new Storage();
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
@@ -148,6 +149,9 @@ bool Core::broadcast()
  */
 bool Core::route()
 {
+  if (m_timestamp == 0)
+    m_timestamp = timestamp();
+
   if (m_reader->headerOption() & Protocol::Broadcast)
     return broadcast();
 
@@ -214,7 +218,11 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
   if (sockets.isEmpty())
     return false;
 
+  if (m_timestamp == 0)
+    m_timestamp = timestamp();
+
   NewPacketsEvent *event = new NewPacketsEvent(sockets, packets);
+  event->timestamp = m_timestamp;
   QCoreApplication::postEvent(m_workers.at(0), event);
   return true;
 }
@@ -264,10 +272,24 @@ bool Core::send(ServerUser *user, const QList<QByteArray> &packets, int option)
   if (!user)
     return false;
 
+  if (m_timestamp == 0)
+    m_timestamp = timestamp();
+
   NewPacketsEvent *event = new NewPacketsEvent(user->workerId(), user->socketId(), packets, user->id());
   event->option = option;
+  event->timestamp = m_timestamp;
   QCoreApplication::postEvent(m_workers.at(user->workerId()), event);
   return true;
+}
+
+
+qint64 Core::timestamp() const
+{
+  #if QT_VERSION >= 0x040700
+  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+  #else
+  return qint64(QDateTime::currentDateTimeUtc().toTime_t()) * 1000;
+  #endif
 }
 
 
@@ -312,6 +334,8 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
           continue;
       }
     }
+
+    m_timestamp = 0;
 
     switch (reader.type()) {
       case Protocol::MessagePacket:
@@ -459,7 +483,7 @@ ServerChannel *Core::channel(const QString &name, bool create)
 
 
 /*!
- * Чтение пакета Packet::AuthRequest.
+ * Чтение пакета Protocol::AuthRequestPacket.
  */
 bool Core::readAuthRequest()
 {
@@ -721,12 +745,15 @@ bool Core::readMessage()
   if (m_messageData->name == 0)
     return route();
 
-  if (!route()) {
+  if (route()) {
+    NoticeData data(m_messageData->senderId, m_messageData->destId, NoticeData::MessageDelivered, m_messageData->name);
+    send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
+    return true;
+  }
+  else {
     rejectMessage(NoticeData::UnknownError);
     return false;
   }
-
-  return true;
 }
 
 

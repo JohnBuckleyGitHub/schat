@@ -24,9 +24,9 @@
  * \param stream Поток для чтения данных.
  */
 TransportReader::TransportReader(quint32 size, QDataStream *stream)
-  : m_stream(stream),
-    m_available(size),
-    m_size(size)
+  : m_stream(stream)
+  , m_timestamp(0)
+  , m_available(size)
 {
 }
 
@@ -54,6 +54,11 @@ int TransportReader::readHeader()
 
   *m_stream >> m_options >> m_sequence;
   m_available -= 9;
+
+  if (m_options & Protocol::TimeStamp) {
+    *m_stream >> m_timestamp;
+    m_available -= 8;
+  }
 
   if (createMap() != m_available)
     return -3;

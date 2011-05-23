@@ -58,8 +58,10 @@ public:
   inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
   inline QByteArray userId() const { return m_userId; }
   inline QDataStream *sendStream() { return m_sendStream; }
+  inline qint64 timestamp() const { return m_timestamp; }
   inline quint64 rx() const { return m_rx; }
   inline quint64 tx() const { return m_tx; }
+  inline void setTimestamp(qint64 timestamp) { m_timestamp = timestamp; }
   void leave();
   void setAuthorized(const QByteArray &userId);
 
@@ -95,10 +97,11 @@ protected:
 
 private:
   bool readTransport();
-  bool transmit(const QByteArray &packet, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0, quint8 version = Protocol::V4);
-  bool transmit(const QList<QByteArray> &packets, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0, quint8 version = Protocol::V4);
+  bool transmit(const QByteArray &packet, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
+  bool transmit(const QList<QByteArray> &packets, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
   void release();
   void setTimerState(TimerState state);
+  void sslHandshake(int option);
 
   bool m_authorized;                     ///< true после авторизации.
   bool m_release;                        ///< true если сокет находится в состоянии закрытия.
@@ -111,6 +114,7 @@ private:
   QByteArray m_userId;                   ///< Идентификатор клиента.
   QDataStream *m_rxStream;               ///< Поток чтения транспортных пакетов.
   QDataStream *m_txStream;               ///< Поток отправки транспортных пакетов.
+  qint64 m_timestamp;                    ///< Отметка времени.
   QList<quint64> m_deliveryConfirm;      ///< Список sequence пакетов, используется сервером для формирования отчёта о доставке или клиентом для проверки доставки.
   quint32 m_nextBlockSize;               ///< Размер следующего блока данных.
   quint64 m_rx;                          ///< Счётчик полученных (receive) байт.

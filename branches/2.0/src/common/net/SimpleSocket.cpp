@@ -37,6 +37,7 @@ SimpleSocket::SimpleSocket(quint64 id, QObject *parent)
   , m_serverSide(false)
   , m_sslAvailable(false)
   , m_id(id)
+  , m_timestamp(0)
   , m_nextBlockSize(0)
   , m_rx(0)
   , m_rxSeq(0)
@@ -185,7 +186,7 @@ void SimpleSocket::timerEvent(QTimerEvent *event)
       return;
     }
 
-    // Отправка пустого транспортного пакета, клиент должен ответить на него таким же пустым пакетом.
+    // Отправка пустого транспортного пакета, сервер должен ответить на него таким же пустым пакетом.
     transmit(QByteArray(), Protocol::ContainsInternalPacket);
     setTimerState(WaitingReply);
     return;
@@ -274,7 +275,8 @@ void SimpleSocket::readyRead()
   if (m_readQueue.isEmpty())
     return;
 
-  setTimerState(Idling);
+  if (m_serverSide)
+    setTimerState(Idling);
 
   // Отправка подтверждения о доставке.
   if (m_serverSide && !m_deliveryConfirm.isEmpty()) {
@@ -332,26 +334,20 @@ bool SimpleSocket::readTransport()
   if (type == Protocol::GenericTransport) {
     m_rxSeq = reader.sequence();
 
-    /// Из стандартного транспортного пакета, виртуальные пакеты извлекаются в очередь \p m_readQueue,
-    /// и если это серверный сокет sequence транспортного пакета будет добавлен в \p m_deliveryConfirm.
     int options = reader.options();
-    if (options == Protocol::NoOptions) {
-      m_readQueue += reader.read();
-
-      if (m_serverSide)
-        m_deliveryConfirm += m_rxSeq;
-
-      return true;
-    }
+    if (options & Protocol::TimeStamp)
+      m_timestamp = reader.timestamp();
 
     // Чтение служебного транспортного пакета.
-    if (options == Protocol::ContainsInternalPacket) {
-      setTimerState(Idling);
+    if (options & Protocol::ContainsInternalPacket) {
+      if (m_serverSide)
+        setTimerState(Idling);
 
-      // Отправка сервером пустого пакета в ответ на пустой пакет от клиента.
-      if (m_nextBlockSize == 0 && m_serverSide) {
-        transmit(QByteArray(), Protocol::ContainsInternalPacket);
-        return true;
+      if (m_nextBlockSize == 0) {
+        if (m_serverSide)
+          transmit(QByteArray(), Protocol::ContainsInternalPacket);
+        else
+          setTimerState(Idling);
       }
 
       m_readBuffer = reader.readOne();
@@ -359,6 +355,7 @@ bool SimpleSocket::readTransport()
 
      // Подтверждение доставки.
       if (!m_serverSide && packet.type() == Protocol::DeliveryConfirmationPacket) {
+        setTimerState(Idling);
         packet.get<quint16>();
         QList<quint64> list = packet.get<QList<quint64> >();
 
@@ -374,46 +371,30 @@ bool SimpleSocket::readTransport()
         SCHAT_DEBUG_STREAM(this << "DeliveryConfirmation" << list << "r. size:" << m_deliveryConfirm.size());
       }
       else if (packet.type() == Protocol::ProbeSecureConnectionPacket) {
-        int option = packet.get<quint16>();
-
-        if (option == Protocol::SecureConnectionRequest && m_serverSide) {
-          quint16 answer = Protocol::SecureConnectionUnavailable;
-          if (m_sslAvailable)
-            answer = Protocol::SecureConnectionAvailable;
-
-          PacketWriter writer(m_sendStream, Protocol::ProbeSecureConnectionPacket);
-          writer.put(answer);
-          transmit(writer.data(), Protocol::ContainsInternalPacket);
-
-          #if !defined(SCHAT_NO_SSL)
-          if (m_sslAvailable)
-            startServerEncryption();
-          #endif
-        }
-        else if (option == Protocol::SecureConnectionAvailable && !m_serverSide) {
-          #if !defined(SCHAT_NO_SSL)
-          startClientEncryption();
-          #endif
-        }
-        else if (option == Protocol::SecureConnectionUnavailable && !m_serverSide) {
-          emit requestAuth(m_id);
-        }
+        sslHandshake(packet.get<quint16>());
       }
 
       reader.skipAll();
       return true;
     }
 
-    return false;
+    /// Из стандартного транспортного пакета, виртуальные пакеты извлекаются в очередь \p m_readQueue,
+    /// и если это серверный сокет sequence транспортного пакета будет добавлен в \p m_deliveryConfirm.
+    m_readQueue += reader.read();
+
+    if (m_serverSide)
+      m_deliveryConfirm += m_rxSeq;
+
+    return true;
   }
 
   return false;
 }
 
 
-bool SimpleSocket::transmit(const QByteArray &packet, quint8 options, quint8 type, quint8 subversion, quint8 version)
+bool SimpleSocket::transmit(const QByteArray &packet, quint8 options, quint8 type, quint8 subversion)
 {
-  return transmit(QList<QByteArray>() += packet, options, type, subversion, version);
+  return transmit(QList<QByteArray>() += packet, options, type, subversion);
 }
 
 
@@ -428,7 +409,7 @@ bool SimpleSocket::transmit(const QByteArray &packet, quint8 options, quint8 typ
  *
  * \return true если данные были записаны в сокет.
  */
-bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, quint8 type, quint8 subversion, quint8 version)
+bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, quint8 type, quint8 subversion)
 {
   SCHAT_DEBUG_STREAM(this << "transmit(...)")
   SCHAT_DEBUG_STREAM(this << "  >> seq:" << m_txSeq << "opt:" << options << "type:" << type << "sv:" << subversion << "v:" << version << "r. size:" << m_deliveryConfirm.size());
@@ -438,7 +419,11 @@ bool SimpleSocket::transmit(const QList<QByteArray> &packets, quint8 options, qu
   if (packets.isEmpty())
     return false;
 
-  TransportWriter tp(m_txStream, packets, m_txSeq, options, type, subversion, version);
+  qint64 timestamp = 0;
+  if (m_serverSide && options != Protocol::ContainsInternalPacket)
+    timestamp = m_timestamp;
+
+  TransportWriter tp(m_txStream, packets, m_txSeq, timestamp, options, type, subversion);
   QByteArray packet = tp.data();
 
   if (!m_serverSide && options != Protocol::ContainsInternalPacket) {
@@ -521,5 +506,36 @@ void SimpleSocket::setTimerState(TimerState state)
 
     case Leaving:
       break;
+  }
+}
+
+
+/*!
+ * Обработка запроса клиента на шифрованное подключение,
+ * в случае поддержкой сервером шифрования, он будет установлено.
+ */
+void SimpleSocket::sslHandshake(int option)
+{
+  if (option == Protocol::SecureConnectionRequest && m_serverSide) {
+    quint16 answer = Protocol::SecureConnectionUnavailable;
+    if (m_sslAvailable)
+      answer = Protocol::SecureConnectionAvailable;
+
+    PacketWriter writer(m_sendStream, Protocol::ProbeSecureConnectionPacket);
+    writer.put(answer);
+    transmit(writer.data(), Protocol::ContainsInternalPacket);
+
+    #if !defined(SCHAT_NO_SSL)
+    if (m_sslAvailable)
+      startServerEncryption();
+    #endif
+  }
+  else if (option == Protocol::SecureConnectionAvailable && !m_serverSide) {
+    #if !defined(SCHAT_NO_SSL)
+    startClientEncryption();
+    #endif
+  }
+  else if (option == Protocol::SecureConnectionUnavailable && !m_serverSide) {
+    emit requestAuth(m_id);
   }
 }
