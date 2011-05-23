@@ -159,17 +159,34 @@ QByteArray ChatView::userIdFromClass(const QString &text)
 }
 
 
+QDateTime ChatView::time(qint64 timestamp) const
+{
+  if (!option(UserServerTime).toBool())
+    timestamp = 0;
+
+  if (timestamp != 0) {
+    #if QT_VERSION >= 0x040700
+    return QDateTime::fromMSecsSinceEpoch(timestamp);
+    #else
+    return QDateTime::fromTime_t(timestamp / 1000);
+    #endif
+  }
+
+  return QDateTime::currentDateTime();
+}
+
+
 void ChatView::appendUserMessage(const ChatMessage &message)
 {
   SCHAT_DEBUG_STREAM(this << "appendUserMessage()" << message.nick() << message.text());
 
   if (message.status() & ChatMessage::Rejected) {
-    setMessageState(message.messageId(), "rejected");
+    setMessageState(message.messageId(), "rejected", message.timestamp());
     return;
   }
 
   if (message.status() & ChatMessage::Delivered) {
-    setMessageState(message.messageId(), "delivered");
+    setMessageState(message.messageId(), "delivered", message.timestamp());
     return;
   }
 
@@ -187,7 +204,7 @@ void ChatView::appendUserMessage(const ChatMessage &message)
     extra += " undelivered";
 
   QString html = m_d->tpl(ChatViewPrivate::UserMessage);
-  setTimeStamp(html);
+  setTimeStamp(html, message.timestamp());
   setText(html, message.text());
 
   html.replace("%nick%", message.nick());
@@ -205,9 +222,10 @@ void ChatView::appendUserMessage(const ChatMessage &message)
  * \param id    Идентификатор сообщения.
  * \param state Имя CSS класса которое будет добавлено к блоку сообщения.
  */
-void ChatView::setMessageState(const QString &id, const QString &state)
+void ChatView::setMessageState(const QString &id, const QString &state, qint64 timestamp)
 {
-  QDateTime dateTime = QDateTime::currentDateTime();
+  QDateTime dateTime = time(timestamp);
+
   page()->mainFrame()->evaluateJavaScript(QString("setMessageState('#%1', '%2', '%3', '%4');")
       .arg(id)
       .arg(state)
@@ -223,9 +241,16 @@ void ChatView::setText(QString &html, const QString &text)
 }
 
 
-void ChatView::setTimeStamp(QString &html)
+/*!
+ * Установка времени в новом сообщении.
+ *
+ * \param html      Текст, в котором будут заменены переменные %time% и %seconds%.
+ * \param timestamp Отметка времени.
+ */
+void ChatView::setTimeStamp(QString &html, qint64 timestamp)
 {
-  QDateTime dateTime = QDateTime::currentDateTime();
+  QDateTime dateTime = time(timestamp);
+
   html.replace("%time%", dateTime.toString("hh:mm"));
   html.replace("%seconds%", dateTime.toString(":ss"));
 }

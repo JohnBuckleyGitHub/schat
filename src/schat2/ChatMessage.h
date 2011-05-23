@@ -54,6 +54,7 @@ public:
   inline MessageType type() const { return m_type; }
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }
+  inline qint64 timestamp() const { return m_timestamp; }
   inline QString nick() const { return m_nick; }
   inline QString text() const { return m_text; }
   inline quint64 name() const { return m_name; }
@@ -67,6 +68,7 @@ private:
   ParseOptions m_parseOptions; ///< Опции обработки сообщения.
   QByteArray m_destId;         ///< Идентификатор назначения.
   QByteArray m_senderId;       ///< Идентификатор отправителя.
+  qint64 m_timestamp;          ///< Отметка времени.
   QString m_nick;              ///< Ник пользователя.
   QString m_text;              ///< Текст сообщения.
   quint64 m_name;              ///< Уникальное имя-счётчик сообещения.

@@ -122,7 +122,7 @@ int MessageAdapter::send(MessageData &data)
 void MessageAdapter::allDelivered(quint64 id)
 {
   Q_UNUSED(id)
-  setStateAll(ChatMessage::Delivered, "");
+//  setStateAll(ChatMessage::Delivered, "");
 }
 
 
@@ -152,38 +152,20 @@ void MessageAdapter::notice(const NoticeData &data)
   if (m_client->userId() != data.senderId)
     return;
 
-  if (data.type == NoticeData::MessageRejected) {
+  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
     MessageData msg(m_client->userId(), data.destId, "");
     msg.name = data.messageName;
-    m_undelivered.remove(data.messageName);
-    emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
-  }
+    msg.timestamp = data.timestamp;
 
-//  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
-//    if (!m_undelivered.contains(data.messageName))
-//      return;
-//
-//    if (m_client->userId() != data.senderId)
-//      return;
-//
-//    MessageData msg(m_client->userId(), data.destId, "");
-//    msg.name = data.messageName;
-//
-//    if (data.type == NoticeData::MessageDelivered) {
-//      emit message(ChatMessage::OutgoingMessage | ChatMessage::Delivered, msg);
-//    }
-//
-//    if (data.type == NoticeData::MessageRejected) {
-//      emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
-//    }
-//  }
-//
-//  if (data.type == NoticeData::MessageRejected && m_undelivered.contains(data.messageName) && m_client->userId() == data.senderId) {
-//    MessageData msg(m_client->userId(), data.destId, "");
-//    msg.name = data.messageName;
-//    emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
-//    return;
-//  }
+    m_undelivered.remove(data.messageName);
+
+    if (data.type == NoticeData::MessageDelivered) {
+      emit message(ChatMessage::OutgoingMessage | ChatMessage::Delivered, msg);
+    }
+    else {
+      emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
+    }
+  }
 }
 
 

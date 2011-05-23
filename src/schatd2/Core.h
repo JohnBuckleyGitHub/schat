@@ -69,6 +69,7 @@ private:
   bool send(ServerChannel *channel, const QList<QByteArray> &packets);
   bool send(ServerUser *user, const QByteArray &packet, int option = 0);
   bool send(ServerUser *user, const QList<QByteArray> &packets, int option = 0);
+  qint64 timestamp() const;
 
   void newPacketsEvent(NewPacketsEvent *event);
   void socketReleaseEvent(SocketReleaseEvent *event);
@@ -102,6 +103,7 @@ private:
   QDataStream *m_readStream;          ///< Поток чтения виртуальных пакетов.
   QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
   QHash<Options, QVariant> m_options; ///< Опции.
+  qint64 m_timestamp;                 ///< Отметка времени.
   QList<Worker*> m_workers;           ///< Список объектов Worker.
   Storage *m_storage;                 ///< Хранилище данных.
   WorkerThread *m_thread;             ///< Поток обслуживающий подключения.

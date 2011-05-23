@@ -39,7 +39,8 @@ public:
   };
 
   NoticeData()
-  : type(0)
+  : timestamp(0)
+  , type(0)
   , messageName(0)
   , param1(0)
   , param2(0)
@@ -49,6 +50,7 @@ public:
 
   QByteArray destId;   ///< Идентификатор назначения.
   QByteArray senderId; ///< Идентификатор отправителя.
+  qint64 timestamp;    ///< Отметка времени.
   quint16 type;        ///< Тип.
   quint64 messageName; ///< Имя-счётчик сообщения.
   quint8 param1;       ///< Не обязательный параметр №1

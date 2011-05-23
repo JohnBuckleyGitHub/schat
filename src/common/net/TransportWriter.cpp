@@ -15,6 +15,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "net/Protocol.h"
 #include "net/TransportWriter.h"
 
@@ -29,7 +30,7 @@
  * \param subversion packet subversion.
  * \param version    packet version.
  */
-TransportWriter::TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, quint8 options, quint8 type, quint8 subversion, quint8 version)
+TransportWriter::TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, qint64 timestamp, quint8 options, quint8 type, quint8 subversion)
   : m_device(stream->device()),
     m_size(16)
 {
@@ -38,7 +39,6 @@ TransportWriter::TransportWriter(QDataStream *stream, const QList<QByteArray> &p
   bool huge = options & Protocol::HugePackets;
 
   // Расчёт размера пакета и составление карты размеров виртуальных пакетов.
-
   if (huge)
     m_size += (size * 4);
   else
@@ -52,9 +52,18 @@ TransportWriter::TransportWriter(QDataStream *stream, const QList<QByteArray> &p
     m_size += s;
   }
 
-  // Запись заголовка пакета.
-  *stream << m_size << type << version << subversion << options << sequence << size;
+  if (timestamp != 0) {
+    options |= Protocol::TimeStamp;
+    m_size += 8;
+  }
 
+  // Запись заголовка пакета.
+  *stream << m_size << type << quint8(Protocol::V4) << subversion << options << sequence;
+
+  if (timestamp != 0)
+    *stream << timestamp;
+
+  *stream << size;
   // Запись карты размеров виртуальных пакетов.
   if (huge) {
     for (quint32 i = 0; i < size; ++i)
