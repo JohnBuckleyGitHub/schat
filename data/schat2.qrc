@@ -11,9 +11,14 @@
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>
+  <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
   <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
   <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
+  <file alias="images/text-bold.png">images/oxygen/format-text-bold.png</file>
+  <file alias="images/text-italic.png">images/oxygen/format-text-italic.png</file>
+  <file alias="images/text-strikethrough.png">images/oxygen/format-text-strikethrough.png</file>
+  <file alias="images/text-underline.png">images/oxygen/format-text-underline.png</file>
   <file alias="images/user.png">images/fugue/user.png</file>
   <file alias="images/user-black.png">images/fugue/user-black.png</file>
   <file alias="images/user-black-female.png">images/fugue/user-black-female.png</file>
@@ -41,6 +46,8 @@
   <file>html/images/progress.gif</file>
   <file>html/style.css</file>
   <file>html/templates/message.html</file>
+  <file>images/color.png</file>
+  <file>images/color-map.png</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
 </qresource>

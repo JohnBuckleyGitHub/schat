@@ -21,6 +21,7 @@ class StatusBar;
 class QFrame;
 class TabWidget;
 class WelcomeTab;
+class SendWidget;
 
 class ClientUI : public QMainWindow
 {
@@ -30,12 +31,12 @@ public:
   ClientUI(QWidget *parent = 0);
 
 private slots:
-  void send();
+  void send(const QString &text);
 
 private:
   ChatCore *m_core;
-  QFrame *m_central;
-  QLineEdit *m_send;
+  QWidget *m_central;
+  SendWidget *m_send;
   QLineEdit *m_url;
   StatusBar *m_statusBar;
   TabWidget *m_tabs;

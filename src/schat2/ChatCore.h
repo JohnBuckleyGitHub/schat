@@ -19,22 +19,52 @@
 #ifndef CHATCORE_H_
 #define CHATCORE_H_
 
+#include <QIcon>
 #include <QObject>
 
 class SimpleClient;
+
+#define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
 
 class ChatCore : public QObject
 {
   Q_OBJECT
 
 public:
+  /// Иконки.
+  enum IconName {
+    ChannelIcon,        ///< Иконка канала.
+    GearIcon,           ///< Иконка в виде шестерёнки.
+    MainTabMenuIcon,    ///< Иконка главного меню вкладок.
+    NetworkErrorIcon,   ///< Критическая ошибка подключения.
+    NetworkOfflineIcon, ///< Нет подключения.
+    NetworkOnlineIcon,  ///< Подключение установлено.
+    ConnectIcon,        ///< Подключение.
+    DisconnectIcon,     ///< Отключение.
+    QuitIcon,           ///< Выход.
+    SecureIcon,         ///< Шифрование.
+    SettingsIcon,       ///< Настройки.
+    SoundIcon,
+    SoundMuteIcon,
+    UsersIcon,
+    SmallLogoIcon,
+    SmallLogoNYIcon,
+    TextBoldIcon,
+    TextItalicIcon,
+    TextStrikeIcon,
+    TextUnderlineIcon,
+    SendIcon
+  };
+
   ChatCore(QObject *parent = 0);
-  SimpleClient *client() { return m_client; }
-  static ChatCore *i() { return m_self; }
+  inline SimpleClient *client() { return m_client; }
+  inline static ChatCore *i() { return m_self; }
+  static QIcon icon(IconName name);
 
 private:
   SimpleClient *m_client;
   static ChatCore *m_self;
+  static QStringList m_icons;
 };
 
 #endif /* CHATCORE_H_ */

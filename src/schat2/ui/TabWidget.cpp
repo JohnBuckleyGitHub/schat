@@ -47,10 +47,11 @@ TabWidget::TabWidget(QWidget *parent)
   , m_tabBar(new TabBar(this))
 {
   setTabBar(m_tabBar);
-  setDocumentMode(true);
 
-  #if !defined(Q_OS_MAC)
-  setStyleSheet("QToolBar { margin:0px; border:0px; }");
+  #if defined(Q_OS_MAC)
+  setDocumentMode(true);
+  #else
+  setStyleSheet("QTabWidget::pane { border:0; } QToolBar { margin:0px; border:0px; }" );
   #endif
 
   m_welcomeTab = new WelcomeTab(m_client, this);
@@ -446,7 +447,7 @@ void TabWidget::createToolBars()
   m_leftToolBar->setIconSize(QSize(16, 16));
 
   m_menuButton = new QToolButton(this);
-  m_menuButton->setIcon(QIcon(":/images/main-tab-menu.png"));
+  m_menuButton->setIcon(SCHAT_ICON(MainTabMenuIcon));
   m_menuButton->setAutoRaise(true);
   m_menuButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -456,10 +457,10 @@ void TabWidget::createToolBars()
   m_menuButton->setMenu(m_mainMenu);
 
   m_channelsMenu = new QMenu(this);
-  m_channelsMenu->setIcon(QIcon(":/images/channel.png"));
+  m_channelsMenu->setIcon(SCHAT_ICON(ChannelIcon));
 
   m_talksMenu = new QMenu(this);
-  m_talksMenu->setIcon(QIcon(":/images/users.png"));
+  m_talksMenu->setIcon(SCHAT_ICON(UsersIcon));
 
   connect(m_mainMenu, SIGNAL(aboutToHide()), SLOT(hideMainMenu()));
   connect(m_mainMenu, SIGNAL(aboutToShow()), SLOT(showMainMenu()));
@@ -470,12 +471,12 @@ void TabWidget::createToolBars()
 
   m_settingsMenu = new QMenu(this);
   // \todo isNewYear().
-  m_aboutAction = m_settingsMenu->addAction(QIcon(":/images/schat16.png"), "", this, SIGNAL(requestAbout()));
+  m_aboutAction = m_settingsMenu->addAction(SCHAT_ICON(SmallLogoIcon), "", this, SIGNAL(requestAbout()));
   m_settingsMenu->addSeparator();
-  m_quitAction = m_settingsMenu->addAction(QIcon(":/images/quit.png"), "", this, SIGNAL(requestQuit()));
+  m_quitAction = m_settingsMenu->addAction(SCHAT_ICON(QuitIcon), "", this, SIGNAL(requestQuit()));
 
   m_settingsButton = new QToolButton(this);
-  m_settingsButton->setIcon(QIcon(":/images/settings.png"));
+  m_settingsButton->setIcon(SCHAT_ICON(SettingsIcon));
   m_settingsButton->setAutoRaise(true);
   m_settingsButton->setPopupMode(QToolButton::InstantPopup);
   m_settingsButton->setMenu(m_settingsMenu);
