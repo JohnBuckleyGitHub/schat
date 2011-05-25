@@ -18,6 +18,7 @@
 
 #include "ChatCore.h"
 #include "net/SimpleClient.h"
+#include "ui/UserUtils.h"
 #include "User.h"
 
 #define SCHAT_RANDOM_CLIENT_ID
@@ -31,6 +32,7 @@ ChatCore::ChatCore(QObject *parent)
 {
   m_self = this;
 
+  m_userUtils = new UserUtils();
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
   #if defined(SCHAT_RANDOM_CLIENT_ID)
   m_client->user()->setNick(QUuid::createUuid().toString().mid(1, 8));
@@ -57,6 +59,12 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "text-strikethrough";
   m_icons += "text-underline";
   m_icons += "send";
+}
+
+
+ChatCore::~ChatCore()
+{
+  delete m_userUtils;
 }
 
 

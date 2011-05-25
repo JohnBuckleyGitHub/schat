@@ -23,6 +23,7 @@
 #include <QObject>
 
 class SimpleClient;
+class UserUtils;
 
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
 
@@ -57,6 +58,7 @@ public:
   };
 
   ChatCore(QObject *parent = 0);
+  ~ChatCore();
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   static QIcon icon(IconName name);
@@ -65,6 +67,7 @@ private:
   SimpleClient *m_client;
   static ChatCore *m_self;
   static QStringList m_icons;
+  UserUtils *m_userUtils;
 };
 
 #endif /* CHATCORE_H_ */

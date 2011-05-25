@@ -19,36 +19,52 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
+QStringList UserUtils::m_colors;
+
+UserUtils::UserUtils()
+{
+  m_colors += "default";
+  m_colors += "black";
+  m_colors += "gray";
+  m_colors += "green";
+  m_colors += "red";
+  m_colors += "white";
+  m_colors += "yellow";
+  m_colors += "medical";
+  m_colors += "nude";
+  m_colors += "thief";
+}
+
+
+int UserUtils::color(const QString &color)
+{
+  int index = m_colors.indexOf(color);
+  if (index == -1)
+    return User::Default;
+
+  return index;
+}
+
+
+
 QIcon UserUtils::icon(User *user)
 {
   QString file = ":/images/user";
   int gender = user->gender();
   int color  = user->color();
 
-  if (gender == User::Unknown)
+  if (gender == User::Unknown) {
     file += "-unknown";
-  else if (color == User::Black)
-    file += "-black";
-  else if (color == User::Gray)
-    file += "-gray";
-  else if (color == User::Green)
-    file += "-green";
-  else if (color == User::Red)
-    file += "-red";
-  else if (color == User::White)
-    file += "-white";
-  else if (color == User::Yellow)
-    file += "-yellow";
-  else if (color == User::Medical)
-    file += "-medical";
-  else if (color == User::Nude)
-    file += "-nude";
-  else if (color == User::Thief)
-    file += "-thief";
+  }
+  else if (gender == User::Ghost) {
+    file += "-ghost";
+  }
+  else if (color != User::Default) {
+    file += "-" + m_colors.at(color);
+  }
 
   if (gender == User::Female)
     file += "-female";
 
   return QIcon(file + ".png");
-
 }

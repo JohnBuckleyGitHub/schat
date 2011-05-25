@@ -41,7 +41,7 @@ protected:
 
 private slots:
   void newConnection(int socketDescriptor);
-  void newPackets(quint64 id, QList<QByteArray> packets);
+  void newPackets(quint64 id, const QList<QByteArray> &packets);
   void released(quint64 id);
 
 private:

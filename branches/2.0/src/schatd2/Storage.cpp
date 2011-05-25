@@ -267,10 +267,10 @@ QByteArray Storage::session() const
  */
 QString Storage::normalize(const QString &text) const
 {
-  if (text.isEmpty())
-    return "";
+  QString out = text.toLower().simplified();
+  if (out.isEmpty())
+    return out;
 
-  QString out = text.toLower();
   for (int i = 0; i < out.size(); ++i) {
     if (m_normalize.contains(out.at(i)))
       out[i] = m_normalize.value(out.at(i));
