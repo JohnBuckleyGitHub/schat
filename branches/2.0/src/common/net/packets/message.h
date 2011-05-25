@@ -112,6 +112,7 @@ class MessageUtils
 {
 public:
   MessageUtils() {}
+  static QString htmlFilter(const QString &html, int left = 2048, bool strict = true);
   static QString toPlainText(const QString &text);
 };
 

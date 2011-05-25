@@ -20,6 +20,7 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
+#include "ChatCore.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/UserView.h"
 #include "User.h"
@@ -40,7 +41,7 @@ ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  m_icon = QIcon(":/images/channel.png");
+  m_icon = SCHAT_ICON(ChannelIcon);
 }
 
 

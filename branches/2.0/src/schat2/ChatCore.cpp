@@ -24,6 +24,7 @@
 #include <QUuid>
 
 ChatCore *ChatCore::m_self = 0;
+QStringList ChatCore::m_icons;
 
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
@@ -34,4 +35,35 @@ ChatCore::ChatCore(QObject *parent)
   #if defined(SCHAT_RANDOM_CLIENT_ID)
   m_client->user()->setNick(QUuid::createUuid().toString().mid(1, 8));
   #endif
+
+  m_icons += "channel";
+  m_icons += "gear";
+  m_icons += "main-tab-menu";
+  m_icons += "network-error";
+  m_icons += "offline";
+  m_icons += "online";
+  m_icons += "plug";
+  m_icons += "plug-disconnect";
+  m_icons += "quit";
+  m_icons += "secure";
+  m_icons += "settings";
+  m_icons += "sound";
+  m_icons += "sound_mute";
+  m_icons += "users";
+  m_icons += "schat16";
+  m_icons += "schat16-ny";
+  m_icons += "text-bold";
+  m_icons += "text-italic";
+  m_icons += "text-strikethrough";
+  m_icons += "text-underline";
+  m_icons += "send";
+}
+
+
+QIcon ChatCore::icon(IconName name)
+{
+  if (name < m_icons.size())
+    return QIcon(":/images/" + m_icons.at(name) + ".png");
+
+  return QIcon();
 }

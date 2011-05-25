@@ -19,6 +19,7 @@
 #include <QToolButton>
 #include <QToolBar>
 
+#include "ChatCore.h"
 #include "ui/NickEdit.h"
 
 NickEdit::NickEdit(QWidget *parent)
@@ -45,7 +46,7 @@ void NickEdit::init()
   m_color->setCursor(Qt::ArrowCursor);
 
   m_config = new QToolButton(this);
-  m_config->setIcon(QIcon(":/images/gear.png"));
+  m_config->setIcon(SCHAT_ICON(GearIcon));
   m_config->setCursor(Qt::ArrowCursor);
 
   m_toolBar->addWidget(m_color);

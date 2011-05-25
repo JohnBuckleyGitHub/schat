@@ -24,6 +24,7 @@
 #include <QMouseEvent>
 
 #include "debugstream.h"
+#include "ChatCore.h"
 #include "net/SimpleClient.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/StatusBar.h"
@@ -89,15 +90,15 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 
   if (context || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_icon) || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_progress)) {
     if (m_clientState == SimpleClient::ClientOnline) {
-      mainAction = menu.addAction(QIcon(":/images/plug-disconnect.png"), tr("Disconnect"));
+      mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Disconnect"));
       mainActionState = 1;
     }
     else if (m_clientState == SimpleClient::ClientOffline || m_clientState == SimpleClient::ClientError) {
-      mainAction = menu.addAction(QIcon(":/images/plug.png"), tr("Connect"));
+      mainAction = menu.addAction(SCHAT_ICON(ConnectIcon), tr("Connect"));
       mainActionState = 2;
     }
     else if (m_clientState == SimpleClient::ClientConnecting) {
-      mainAction = menu.addAction(QIcon(":/images/plug-disconnect.png"), tr("Abort"));
+      mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Abort"));
       mainActionState = 1;
     }
   }

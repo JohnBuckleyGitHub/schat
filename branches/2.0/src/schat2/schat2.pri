@@ -47,7 +47,10 @@ HEADERS = \
     net/TransportWriter.h \
     QProgressIndicator/QProgressIndicator.h \
     qtwin/qtwin.h \
+    ui/ColorButton.h \
+    ui/InputWidget.h \
     ui/NickEdit.h \
+    ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
     ui/TabBar.h \
@@ -85,7 +88,10 @@ SOURCES = \
     net/TransportWriter.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     qtwin/qtwin.cpp \
+    ui/ColorButton.cpp \
+    ui/InputWidget.cpp \
     ui/NickEdit.cpp \
+    ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \
     ui/TabBar.cpp \
