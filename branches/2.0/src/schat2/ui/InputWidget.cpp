@@ -101,7 +101,7 @@ void InputWidget::send()
   if (out.isEmpty())
     return;
 
-  if (m_history.last() != html) {
+  if (m_history.isEmpty() || m_history.last() != html) {
     if (m_history.size() == 10)
       m_history.takeFirst();
 

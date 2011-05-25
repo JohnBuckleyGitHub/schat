@@ -288,7 +288,7 @@ qint64 Core::timestamp() const
   #if QT_VERSION >= 0x040700
   return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
   #else
-  return qint64(QDateTime::currentDateTimeUtc().toTime_t()) * 1000;
+  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
   #endif
 }
 
