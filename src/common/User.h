@@ -36,9 +36,10 @@ public:
 
   /// Пол пользователя.
   enum Gender {
-    Male = 0,     ///< Мужской пол.
-    Female = 100, ///< Женский пол.
-    Unknown = 150 ///< Неизвестный пол.
+    Male = 0,      ///< Мужской пол.
+    Female = 100,  ///< Женский пол.
+    Unknown = 150, ///< Неизвестный пол.
+    Ghost = 151    ///< Привидение.
   };
 
   /// Цветовой вариант иконки пола.
@@ -77,6 +78,7 @@ public:
   int color() const;
   int gender() const;
   void setColor(Color color);
+  void setColor(int color);
   void setGender(Gender gender);
 
   // m_ids.

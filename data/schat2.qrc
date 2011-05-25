@@ -23,6 +23,7 @@
   <file alias="images/user-black.png">images/fugue/user-black.png</file>
   <file alias="images/user-black-female.png">images/fugue/user-black-female.png</file>
   <file alias="images/user-female.png">images/fugue/user-female.png</file>
+  <file alias="images/user-ghost.png">images/fugue/ghost.png</file>
   <file alias="images/user-gray.png">images/fugue/user-gray.png</file>
   <file alias="images/user-gray-female.png">images/fugue/user-gray-female.png</file>
   <file alias="images/user-green.png">images/fugue/user-green.png</file>

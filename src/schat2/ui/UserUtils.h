@@ -26,8 +26,12 @@ class User;
 class UserUtils
 {
 public:
-  UserUtils() {}
+  UserUtils();
+  static int color(const QString &color);
   static QIcon icon(User *user);
+
+private:
+  static QStringList m_colors;
 };
 
 #endif /* USERUTILS_H_ */

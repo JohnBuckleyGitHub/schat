@@ -134,7 +134,7 @@ void Worker::newConnection(int socketDescriptor)
 
   SimpleSocket *socket = new SimpleSocket(m_nextSocketId, m_server);
   if (socket->setSocketDescriptor(socketDescriptor)) {
-    connect(socket, SIGNAL(newPackets(quint64, QList<QByteArray>)), SLOT(newPackets(quint64, QList<QByteArray>)), Qt::DirectConnection);
+    connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(newPackets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
     m_sockets.insert(m_nextSocketId, socket);
     ++m_nextSocketId;
@@ -144,7 +144,7 @@ void Worker::newConnection(int socketDescriptor)
 }
 
 
-void Worker::newPackets(quint64 id, QList<QByteArray> packets)
+void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
 {
   QCoreApplication::postEvent(m_core, new NewPacketsEvent(m_id, id, packets, m_sockets.value(id)->userId()));
 }

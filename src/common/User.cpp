@@ -89,6 +89,9 @@ QString User::defaultNick()
 
 int User::color() const
 {
+  if (m_gender >= Unknown)
+    return Default;
+
   int out = m_gender;
   if (gender() == Female)
     out -= Female;
@@ -102,7 +105,10 @@ int User::color() const
 
 int User::gender() const
 {
-  if (m_gender >= Unknown)
+  if (m_gender == Ghost)
+    return Ghost;
+
+  if (m_gender == Unknown || m_gender > Ghost)
     return Unknown;
 
   if (m_gender < Female)
@@ -114,7 +120,19 @@ int User::gender() const
 
 void User::setColor(Color color)
 {
+  if (m_gender >= Unknown)
+    return;
+
   m_gender = gender() + color;
+}
+
+
+void User::setColor(int color)
+{
+  if (color < 0 || color > Thief)
+    color = Default;
+
+  setColor(static_cast<Color>(color));
 }
 
 
@@ -123,15 +141,7 @@ void User::setColor(Color color)
  */
 void User::setGender(Gender gender)
 {
-  if (gender == Unknown) {
-    m_gender = gender;
-  }
-  else if (gender == Male && m_gender >= Female) {
-    m_gender -= Female;
-  }
-  else if (gender == Female && m_gender < Female) {
-    m_gender += Female;
-  }
+  m_gender = gender + color();
 }
 
 
