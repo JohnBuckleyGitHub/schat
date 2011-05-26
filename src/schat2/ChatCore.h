@@ -22,6 +22,8 @@
 #include <QIcon>
 #include <QObject>
 
+class MessageAdapter;
+class MessageData;
 class SimpleClient;
 class UserUtils;
 
@@ -62,12 +64,17 @@ public:
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   static QIcon icon(IconName name);
+  void send(const QByteArray &destId, const QString &text);
+
+signals:
+  void message(int status, const MessageData &data);
 
 private:
-  SimpleClient *m_client;
-  static ChatCore *m_self;
-  static QStringList m_icons;
-  UserUtils *m_userUtils;
+  MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
+  SimpleClient *m_client;           ///< Клиент.
+  static ChatCore *m_self;          ///< Указатель на себя.
+  static QStringList m_icons;       ///< Иконки.
+  UserUtils *m_userUtils;           ///< Утилиты манипуляции над пользователем.
 };
 
 #endif /* CHATCORE_H_ */

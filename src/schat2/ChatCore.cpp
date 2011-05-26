@@ -17,6 +17,8 @@
  */
 
 #include "ChatCore.h"
+#include "MessageAdapter.h"
+#include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "ui/UserUtils.h"
 #include "User.h"
@@ -34,6 +36,8 @@ ChatCore::ChatCore(QObject *parent)
 
   m_userUtils = new UserUtils();
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
+  m_messageAdapter = new MessageAdapter(m_client);
+
   #if defined(SCHAT_RANDOM_CLIENT_ID)
   m_client->user()->setNick(QUuid::createUuid().toString().mid(1, 8));
   #endif
@@ -59,6 +63,8 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "text-strikethrough";
   m_icons += "text-underline";
   m_icons += "send";
+
+  connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SIGNAL(message(int, const MessageData &)));
 }
 
 
@@ -74,4 +80,17 @@ QIcon ChatCore::icon(IconName name)
     return QIcon(":/images/" + m_icons.at(name) + ".png");
 
   return QIcon();
+}
+
+
+/*!
+ * Отправка сообщения.
+ */
+void ChatCore::send(const QByteArray &destId, const QString &text)
+{
+  if (text.isEmpty())
+    return;
+
+  MessageData data(QByteArray(), destId, text);
+  m_messageAdapter->send(data);
 }

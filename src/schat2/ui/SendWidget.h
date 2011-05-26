@@ -36,13 +36,16 @@ public:
   SendWidget(QWidget *parent = 0);
   inline InputWidget *input() { return m_input; }
 
+signals:
+  void send(const QString &text);
+
 protected:
   bool event(QEvent *event);
   void changeEvent(QEvent *event);
 
 private slots:
   void cursorPositionChanged();
-  void send();
+  void sendMsg(const QString &text);
   void setBold(bool b);
   void setItalic(bool b);
   void setStrike(bool b);

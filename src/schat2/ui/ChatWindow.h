@@ -16,22 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "version.h"
-#include "ui/ChatWindow.h"
+#ifndef CHATWINDOW_H_
+#define CHATWINDOW_H_
 
-#include <QTextCodec>
-#include <QApplication>
+#include <QMainWindow>
 
-int main(int argc, char *argv[])
+class ChatCore;
+class SendWidget;
+class StatusBar;
+class TabWidget;
+
+class ChatWindow : public QMainWindow
 {
-    QApplication app(argc, argv);
-    app.setApplicationName(SCHAT_NAME);
-    app.setApplicationVersion(SCHAT_VERSION);
+  Q_OBJECT
 
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+public:
+  ChatWindow(QWidget *parent = 0);
 
-    ChatWindow window;
-    window.show();
-    return app.exec();
-}
+private slots:
+  void send(const QString &text);
+
+private:
+  ChatCore *m_core;        ///< Глобальный объект.
+  QWidget *m_central;      ///< Центральный виджет.
+  SendWidget *m_send;      ///< Виджет отправки сообщения.
+  StatusBar *m_statusBar;  ///< Статус бар.
+  TabWidget *m_tabs;       ///< Вкладки.
+};
+
+#endif /* CHATWINDOW_H_ */

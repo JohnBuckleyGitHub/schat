@@ -28,7 +28,6 @@ HEADERS = \
     Channel.h \
     ChatCore.h \
     ChatMessage.h \
-    ClientUI.h \
     debugstream.h \
     MessageAdapter.h \
     net/PacketReader.h \
@@ -47,6 +46,7 @@ HEADERS = \
     net/TransportWriter.h \
     QProgressIndicator/QProgressIndicator.h \
     qtwin/qtwin.h \
+    ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/InputWidget.h \
     ui/NickEdit.h \
@@ -71,7 +71,6 @@ SOURCES = \
     Channel.cpp \
     ChatCore.cpp \
     ChatMessage.cpp \
-    ClientUI.cpp \
     main.cpp \
     MessageAdapter.cpp \
     net/PacketReader.cpp \
@@ -88,6 +87,7 @@ SOURCES = \
     net/TransportWriter.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     qtwin/qtwin.cpp \
+    ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/InputWidget.cpp \
     ui/NickEdit.cpp \
