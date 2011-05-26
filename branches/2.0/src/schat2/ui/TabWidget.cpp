@@ -28,7 +28,6 @@
 #include "Channel.h"
 #include "ChatCore.h"
 #include "ChatMessage.h"
-#include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "ui/SoundButton.h"
@@ -59,7 +58,6 @@ TabWidget::TabWidget(QWidget *parent)
   #endif
 
   m_welcomeTab = new WelcomeTab(m_client, this);
-  m_messageAdapter = new MessageAdapter(m_client);
   addTab(m_welcomeTab, "Welcome");
 
   createToolBars();
@@ -72,7 +70,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
-  connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
+  connect(ChatCore::i(), SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
 }
 
 

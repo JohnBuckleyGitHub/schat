@@ -26,7 +26,6 @@ class AbstractTab;
 class Channel;
 class ChannelTab;
 class ClientMessage;
-class MessageAdapter;
 class MessageData;
 class PrivateTab;
 class QMenu;
@@ -47,7 +46,6 @@ class TabWidget : public QTabWidget
 public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
-  inline MessageAdapter *messageAdapter() { return m_messageAdapter; }
   inline TabBar *tabBar() { return m_tabBar; }
   QByteArray currentId() const;
 
@@ -81,7 +79,6 @@ private:
   void retranslateUi();
   void showWelcome();
 
-  MessageAdapter *m_messageAdapter;          ///< Адаптер отправки и получения сообщений.
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.

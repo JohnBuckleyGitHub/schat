@@ -24,7 +24,9 @@
 #include <QUrl>
 
 class QLabel;
+class QLineEdit;
 class QProgressIndicator;
+class QWidgetAction;
 class SimpleClient;
 
 class StatusBar : public QStatusBar
@@ -33,9 +35,6 @@ class StatusBar : public QStatusBar
 
 public:
   StatusBar(SimpleClient *client, QWidget *parent = 0);
-
-public slots:
-  inline void setUrl(const QString &url) { m_url = url; }
 
 protected:
   bool event(QEvent *event);
@@ -53,8 +52,9 @@ private:
   QLabel *m_icon;                 ///< Главная иконка.
   QLabel *m_label;                ///< Информация о состоянии.
   QLabel *m_secure;               ///< Иконка безопасного соединения.
+  QLineEdit *m_url;               ///< Поле ввода адреса сервера.
   QProgressIndicator *m_progress; ///< Отображает состояние подключения.
-  QUrl m_url;
+  QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
   SimpleClient *m_client;         ///< Клиент.
 };
 

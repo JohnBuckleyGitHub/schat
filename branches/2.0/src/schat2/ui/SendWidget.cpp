@@ -50,7 +50,7 @@ SendWidget::SendWidget(QWidget *parent)
   fillToolBar();
   retranslateUi();
 
-  connect(m_input, SIGNAL(send(const QString &)), SLOT(send()));
+  connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 }
 
@@ -98,9 +98,10 @@ void SendWidget::cursorPositionChanged()
 }
 
 
-void SendWidget::send()
+void SendWidget::sendMsg(const QString &text)
 {
   m_history->clear();
+  emit send(text);
 
   if (m_sendButton->menu())
     return;

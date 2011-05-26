@@ -20,8 +20,10 @@
 #include <QApplication>
 #include <QEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QWidgetAction>
 
 #include "debugstream.h"
 #include "ChatCore.h"
@@ -42,6 +44,11 @@ StatusBar::StatusBar(SimpleClient *client, QWidget *parent)
   m_icon = new QLabel(this);
   m_secure = new QLabel(this);
   m_label = new QLabel(this);
+
+  m_url = new QLineEdit("schat://192.168.1.33:7667", this);
+  m_url->setMinimumWidth(m_url->width() * 2);
+  m_urlAction = new QWidgetAction(this);
+  m_urlAction->setDefaultWidget(m_url);
 
   addWidget(m_progress);
   addWidget(m_icon);
@@ -76,6 +83,9 @@ void StatusBar::changeEvent(QEvent *event)
 }
 
 
+/*!
+ * Показ меню.
+ */
 void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 {
   bool context = event->button() == Qt::RightButton;
@@ -86,20 +96,21 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 
   QMenu menu;
   QAction *mainAction = 0;
-  int mainActionState = -1;
 
+  /// Меню показывается либо по правой кнопке, либо по левой если клик произведён по виджету \p m_icon или \p m_progress
   if (context || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_icon) || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_progress)) {
     if (m_clientState == SimpleClient::ClientOnline) {
       mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Disconnect"));
-      mainActionState = 1;
+      mainAction->setData(1);
     }
     else if (m_clientState == SimpleClient::ClientOffline || m_clientState == SimpleClient::ClientError) {
+      menu.addAction(m_urlAction);
       mainAction = menu.addAction(SCHAT_ICON(ConnectIcon), tr("Connect"));
-      mainActionState = 2;
+      mainAction->setData(2);
     }
     else if (m_clientState == SimpleClient::ClientConnecting) {
       mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Abort"));
-      mainActionState = 1;
+      mainAction->setData(1);
     }
   }
 
@@ -109,10 +120,11 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
   QAction *action = menu.exec(event->globalPos());
   if (action) {
     if (action == mainAction){
-      if (mainActionState == 1)
+      int state = action->data().toInt();
+      if (state == 1)
         m_client->leave();
-      else if (mainActionState == 2)
-        m_client->openUrl(m_url);
+      else if (state == 2)
+        m_client->openUrl(m_url->text());
     }
   }
 
