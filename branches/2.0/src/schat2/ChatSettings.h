@@ -16,26 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "version.h"
-#include "ui/ChatWindow.h"
+#ifndef CHATSETTINGS_H_
+#define CHATSETTINGS_H_
 
-#include <QTextCodec>
-#include <QApplication>
+#include "AbstractSettings.h"
 
-int main(int argc, char *argv[])
+class ChatSettings : public AbstractSettings
 {
-  QApplication app(argc, argv);
-  app.setApplicationName(SCHAT_NAME);
-  app.setApplicationVersion(SCHAT_VERSION);
-  app.setOrganizationName(SCHAT_ORGANIZATION);
-  app.setOrganizationDomain(SCHAT_DOMAIN);
-  app.setQuitOnLastWindowClosed(false);
-  app.addLibraryPath(app.applicationDirPath() + "/plugins/qt");
+  Q_OBJECT
 
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+public:
+  /// Ключи настроек.
+  enum Keys {
+    Height, ///< Высота окна.
+    Maximized, ///< Окно развёрнуто на весь экран.
+    Width,  ///< Ширина окна.
+    WindowsAero, ///< При доступности будет использован интерфейс Windows Aero.
+  };
 
-  ChatWindow window;
-  window.showChat();
-  return app.exec();
-}
+  ChatSettings(QObject *parent = 0);
+};
+
+#endif /* CHATSETTINGS_H_ */

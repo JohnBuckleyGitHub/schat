@@ -49,12 +49,12 @@ TabWidget::TabWidget(QWidget *parent)
 
   #if defined(Q_WS_WIN)
   setDocumentMode(false);
-  setStyleSheet("QTabWidget::pane { border:0; } QToolBar { margin:0px; border:0px; }" );
   #else
   setDocumentMode(true);
+  #endif
+
   #if !defined(Q_WS_MAC)
   setStyleSheet("QToolBar { margin:0px; border:0px; }" );
-  #endif
   #endif
 
   m_welcomeTab = new WelcomeTab(m_client, this);

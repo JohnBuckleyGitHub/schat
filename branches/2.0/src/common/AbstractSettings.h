@@ -1,0 +1,69 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef ABSTRACTSETTINGS_H_
+#define ABSTRACTSETTINGS_H_
+
+#include <QHash>
+#include <QObject>
+#include <QStringList>
+#include <QVariant>
+
+class AbstractSettings : public QObject
+{
+  Q_OBJECT
+
+public:
+  /// Схема размещения файлов.
+  enum FileScheme {
+    Portable, ///< Стандартное размещение файлов, когда все файлы находятся в папке с исполняемым файлом чата, под Windows схема обеспечивает переносимость без установки.
+    UnixAdaptive, ///< Размещение файлов в unix стиле, если исполняемый файл находится в папке bin.
+    UnixStandard, ///< Размещение с использованием абсолютных путей если исполняемый файл размещается в /usr/bin или /usr/sbin.
+    AppBundle     ///< Размещение специфичное для Mac OS X.
+  };
+
+  AbstractSettings(QObject *parent = 0);
+  inline FileScheme fileScheme() const { return m_scheme; }
+  inline QString root() const { return m_root; }
+  int setDefault(const QString &key, const QVariant &value);
+  QVariant value(int key) const;
+  void notify();
+  void read(const QString &file = "");
+  void setValue(const QString &key, const QVariant &value, bool notice = true);
+  void setValue(int key, const QVariant &value, bool notice = false);
+  void write();
+
+signals:
+  void changed(const QList<int> &keys);
+
+protected:
+  QHash<int, QVariant> m_data;    ///< Таблица настроек.
+  QHash<int, QVariant> m_default; ///< Настройки по умолчанию.
+  QList<int> m_changed;           ///< Список изменившихся настроек.
+  QList<int> m_notify;            ///< Список изменившихся настроек.
+  QString m_appDirPath;           ///< Папка с исполняемым файлом чата.
+  QString m_baseName;             ///< Имя исполняемого файла без расширения.
+  QString m_confFile;             ///< Основной конфигурационный файл.
+  QString m_root;                 ///< Корневая директория настроек.
+  QStringList m_keys;             ///< Символьные ключи настроек.
+
+private:
+  FileScheme m_scheme; ///< Схема размещения файлов.
+};
+
+#endif /* ABSTRACTSETTINGS_H_ */

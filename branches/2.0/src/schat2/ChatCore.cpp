@@ -17,6 +17,7 @@
  */
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
@@ -35,6 +36,9 @@ ChatCore::ChatCore(QObject *parent)
   m_self = this;
 
   m_userUtils = new UserUtils();
+  m_settings = new ChatSettings(this);
+  m_settings->read();
+
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
   m_messageAdapter = new MessageAdapter(m_client);
 
