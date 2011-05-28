@@ -23,11 +23,13 @@ QT = core gui network webkit
 TEMPLATE = app
 
 HEADERS = \
+    AbstractSettings.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
     Channel.h \
     ChatCore.h \
     ChatMessage.h \
+    ChatSettings.h \
     debugstream.h \
     MessageAdapter.h \
     net/PacketReader.h \
@@ -45,7 +47,6 @@ HEADERS = \
     net/TransportReader.h \
     net/TransportWriter.h \
     QProgressIndicator/QProgressIndicator.h \
-    qtwin/qtwin.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/InputWidget.h \
@@ -67,10 +68,12 @@ HEADERS = \
     User.h \
 
 SOURCES = \
+    AbstractSettings.cpp \
     arora/lineedit.cpp \
     Channel.cpp \
     ChatCore.cpp \
     ChatMessage.cpp \
+    ChatSettings.cpp \
     main.cpp \
     MessageAdapter.cpp \
     net/PacketReader.cpp \
@@ -86,7 +89,6 @@ SOURCES = \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
-    qtwin/qtwin.cpp \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/InputWidget.cpp \
@@ -109,6 +111,11 @@ SOURCES = \
 TRANSLATIONS += ../../data/translations/client_en.ts
 TRANSLATIONS += ../../data/translations/client_ru.ts
 CODECFORTR = UTF-8
+
+win32 {
+    HEADERS += qtwin/qtwin.h
+    SOURCES += qtwin/qtwin.cpp
+}
 
 include(../common/common.pri)
 

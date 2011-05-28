@@ -22,6 +22,8 @@
 #include <QMainWindow>
 
 class ChatCore;
+class ChatSettings;
+class QVBoxLayout;
 class SendWidget;
 class StatusBar;
 class TabWidget;
@@ -32,16 +34,35 @@ class ChatWindow : public QMainWindow
 
 public:
   ChatWindow(QWidget *parent = 0);
+  void showChat();
+
+protected:
+  void closeEvent(QCloseEvent *event);
+  void keyPressEvent(QKeyEvent *event);
+  void resizeEvent(QResizeEvent *event);
+  void showEvent(QShowEvent *event);
+  #if defined(Q_WS_WIN)
+  bool winEvent(MSG *message, long *result);
+  #endif
 
 private slots:
   void send(const QString &text);
+  void settingsChanged(const QList<int> &keys);
 
 private:
-  ChatCore *m_core;        ///< Глобальный объект.
-  QWidget *m_central;      ///< Центральный виджет.
-  SendWidget *m_send;      ///< Виджет отправки сообщения.
-  StatusBar *m_statusBar;  ///< Статус бар.
-  TabWidget *m_tabs;       ///< Вкладки.
+  void hideChat();
+
+  #if defined(Q_WS_WIN)
+  void setWindowsAero();
+  #endif
+
+  ChatCore *m_core;         ///< Глобальный объект.
+  ChatSettings *m_settings; ///< Настройки.
+  QVBoxLayout *m_mainLay;   ///< Основной компоновщик.
+  QWidget *m_central;       ///< Центральный виджет.
+  SendWidget *m_send;       ///< Виджет отправки сообщения.
+  StatusBar *m_statusBar;   ///< Статус бар.
+  TabWidget *m_tabs;        ///< Вкладки.
 };
 
 #endif /* CHATWINDOW_H_ */

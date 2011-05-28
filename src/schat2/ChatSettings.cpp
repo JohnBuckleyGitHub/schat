@@ -16,26 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "version.h"
-#include "ui/ChatWindow.h"
+#include "ChatSettings.h"
 
-#include <QTextCodec>
-#include <QApplication>
-
-int main(int argc, char *argv[])
+ChatSettings::ChatSettings(QObject *parent)
+  : AbstractSettings(parent)
 {
-  QApplication app(argc, argv);
-  app.setApplicationName(SCHAT_NAME);
-  app.setApplicationVersion(SCHAT_VERSION);
-  app.setOrganizationName(SCHAT_ORGANIZATION);
-  app.setOrganizationDomain(SCHAT_DOMAIN);
-  app.setQuitOnLastWindowClosed(false);
-  app.addLibraryPath(app.applicationDirPath() + "/plugins/qt");
-
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-
-  ChatWindow window;
-  window.showChat();
-  return app.exec();
+  setDefault("Height", 420);
+  setDefault("Maximized", false);
+  setDefault("Width", 666);
+  setDefault("WindowsAero", true);
 }

@@ -53,7 +53,6 @@ private slots:
   void notice(const NoticeData &data);
 
 private:
-  bool sendCommand(MessageData &data);
   bool sendText(MessageData &data);
   int setGender(const QString &gender, const QString &color);
   void command(const QString &text);

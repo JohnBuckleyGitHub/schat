@@ -22,12 +22,14 @@
 #include <QIcon>
 #include <QObject>
 
+class ChatSettings;
 class MessageAdapter;
 class MessageData;
 class SimpleClient;
 class UserUtils;
 
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
+#define SCHAT_OPTION(x) ChatCore::i()->settings()->value(ChatSettings::x)
 
 class ChatCore : public QObject
 {
@@ -61,6 +63,7 @@ public:
 
   ChatCore(QObject *parent = 0);
   ~ChatCore();
+  inline ChatSettings *settings() { return m_settings; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   static QIcon icon(IconName name);
@@ -70,6 +73,7 @@ signals:
   void message(int status, const MessageData &data);
 
 private:
+  ChatSettings *m_settings;         ///< Настройки.
   MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
   SimpleClient *m_client;           ///< Клиент.
   static ChatCore *m_self;          ///< Указатель на себя.

@@ -18,8 +18,10 @@
 
 #include <QHashIterator>
 
-#include "debugstream.h"
+#include "ChatCore.h"
 #include "ChatMessage.h"
+#include "ChatSettings.h"
+#include "debugstream.h"
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
@@ -126,13 +128,6 @@ void MessageAdapter::notice(const NoticeData &data)
       emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
     }
   }
-}
-
-
-bool MessageAdapter::sendCommand(MessageData &data)
-{
-  data.autoSetOptions();
-  return m_client->send(data);
 }
 
 
@@ -250,6 +245,14 @@ void MessageAdapter::command(const QString &text)
   if (text.startsWith("female", Qt::CaseInsensitive)) {
     setGender("female", "");
     return;
+  }
+
+  if (text.startsWith("set ", Qt::CaseInsensitive)) {
+    int offset = 4;
+    QString key = text.mid(offset, text.indexOf(' ', offset) - offset);
+    QString value = text.mid(offset + key.size() + 1);
+
+    ChatCore::i()->settings()->setValue(key, value);
   }
 }
 

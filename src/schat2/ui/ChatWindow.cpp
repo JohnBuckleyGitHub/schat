@@ -16,23 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QKeyEvent>
 #include <QVBoxLayout>
 
+#include "debugstream.h"
 #include "ChatCore.h"
-#include "qtwin/qtwin.h"
+#include "ChatSettings.h"
 #include "ui/ChatWindow.h"
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/TabWidget.h"
 
+#if defined(Q_WS_WIN)
+  #include "qtwin/qtwin.h"
+  #include <qt_windows.h>
+  #define WM_DWMCOMPOSITIONCHANGED 0x031E // Composition changed window message
+#endif
+
+#if defined(SCHAT_OPTION)
+  #undef SCHAT_OPTION
+  #define SCHAT_OPTION(x) m_settings->value(ChatSettings::x)
+#endif
+
 ChatWindow::ChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
-  if (QtWin::isCompositionEnabled()) {
-    QtWin::extendFrameIntoClientArea(this);
-  }
-
   m_core = new ChatCore(this);
+  m_settings = m_core->settings();
   m_central = new QWidget(this);
 
   m_tabs = new TabWidget(this);
@@ -42,20 +52,131 @@ ChatWindow::ChatWindow(QWidget *parent)
 
   setStatusBar(m_statusBar);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(m_central);
-  mainLay->addWidget(m_tabs);
-  mainLay->addWidget(m_send);
-  mainLay->setStretchFactor(m_tabs, 999);
-  mainLay->setStretchFactor(m_send, 1);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
+  m_mainLay = new QVBoxLayout(m_central);
+  m_mainLay->addWidget(m_tabs);
+  m_mainLay->addWidget(m_send);
+  m_mainLay->setStretchFactor(m_tabs, 999);
+  m_mainLay->setStretchFactor(m_send, 1);
+  m_mainLay->setMargin(0);
+  m_mainLay->setSpacing(0);
   setCentralWidget(m_central);
 
+  #if defined(Q_WS_WIN)
+  setWindowsAero();
+  #endif
+
+  resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
   connect(m_send, SIGNAL(send(const QString &)), SLOT(send(const QString &)));
+  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
 }
+
+
+void ChatWindow::showChat()
+{
+  SCHAT_DEBUG_STREAM(this << "showChat()")
+
+  if (!SCHAT_OPTION(Maximized).toBool()) {
+    setWindowState(windowState() & ~Qt::WindowMinimized);
+    show();
+  }
+  else
+    showMaximized();
+
+  activateWindow();
+}
+
+
+void ChatWindow::closeEvent(QCloseEvent *event)
+{
+  SCHAT_DEBUG_STREAM(this << "closeEvent()")
+
+  hideChat();
+  QMainWindow::closeEvent(event);
+}
+
+
+void ChatWindow::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Escape)
+    hideChat();
+  else
+    QMainWindow::keyPressEvent(event);
+}
+
+
+void ChatWindow::resizeEvent(QResizeEvent *event)
+{
+  if (!isMaximized()) {
+    m_settings->setValue(ChatSettings::Width, width());
+    m_settings->setValue(ChatSettings::Height, height());
+  }
+
+  QMainWindow::resizeEvent(event);
+}
+
+
+void ChatWindow::showEvent(QShowEvent *event)
+{
+//  if (!isMaximized()) {
+//    resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
+//  }
+  QMainWindow::showEvent(event);
+}
+
+
+#if defined(Q_WS_WIN)
+bool ChatWindow::winEvent(MSG *message, long *result)
+{
+  if (message && message->message == WM_DWMCOMPOSITIONCHANGED) {
+    setWindowsAero();
+  }
+
+  return QMainWindow::winEvent(message, result);
+}
+#endif
 
 
 void ChatWindow::send(const QString &text)
 {
   m_core->send(m_tabs->currentId(), text);
 }
+
+
+void ChatWindow::settingsChanged(const QList<int> &keys)
+{
+  if (keys.contains(ChatSettings::Maximized)) {
+    if (SCHAT_OPTION(Maximized).toBool())
+      showMaximized();
+    else
+      showNormal();
+  }
+  else if (keys.contains(ChatSettings::Width) || keys.contains(ChatSettings::Height)) {
+    resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
+  }
+}
+
+
+/*!
+ * Скрытие окна чата.
+ */
+void ChatWindow::hideChat()
+{
+  SCHAT_DEBUG_STREAM(this << "hideChat()")
+  m_settings->setValue(ChatSettings::Maximized, isMaximized());
+  m_settings->write();
+  hide();
+}
+
+
+#if defined(Q_WS_WIN)
+void ChatWindow::setWindowsAero()
+{
+  if (SCHAT_OPTION(WindowsAero).toBool() && QtWin::isCompositionEnabled()) {
+    QtWin::extendFrameIntoClientArea(this);
+    m_mainLay->setMargin(0);
+  }
+  else {
+    m_mainLay->setContentsMargins(3, 3, 3, 0);
+  }
+}
+#endif
