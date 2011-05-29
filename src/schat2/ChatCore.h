@@ -21,6 +21,7 @@
 
 #include <QIcon>
 #include <QObject>
+#include <QVariant>
 
 class ChatSettings;
 class MessageAdapter;
@@ -61,16 +62,24 @@ public:
     SendIcon
   };
 
+  enum Notice {
+    AboutNotice,
+    QuitNotice,
+    ToggleVisibilityNotice
+  };
+
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline ChatSettings *settings() { return m_settings; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
+  inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
   static QIcon icon(IconName name);
   void send(const QByteArray &destId, const QString &text);
 
 signals:
   void message(int status, const MessageData &data);
+  void notify(int notice, const QVariant &data);
 
 private:
   ChatSettings *m_settings;         ///< Настройки.
