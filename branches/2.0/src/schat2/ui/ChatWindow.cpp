@@ -16,16 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QKeyEvent>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include "debugstream.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "net/SimpleClient.h"
 #include "ui/ChatWindow.h"
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/TabWidget.h"
+#include "ui/TrayIcon.h"
 
 #if defined(Q_WS_WIN)
   #include "qtwin/qtwin.h"
@@ -52,6 +56,9 @@ ChatWindow::ChatWindow(QWidget *parent)
 
   setStatusBar(m_statusBar);
 
+  m_tray = new TrayIcon(this);
+  QTimer::singleShot(0, m_tray, SLOT(show()));
+
   m_mainLay = new QVBoxLayout(m_central);
   m_mainLay->addWidget(m_tabs);
   m_mainLay->addWidget(m_send);
@@ -66,8 +73,12 @@ ChatWindow::ChatWindow(QWidget *parent)
   #endif
 
   resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
+
   connect(m_send, SIGNAL(send(const QString &)), SLOT(send(const QString &)));
+  connect(m_core, SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+
+  setWindowTitle(QApplication::applicationName());
 }
 
 
@@ -134,6 +145,34 @@ bool ChatWindow::winEvent(MSG *message, long *result)
   return QMainWindow::winEvent(message, result);
 }
 #endif
+
+
+/*!
+ * Закрытие чата.
+ */
+void ChatWindow::closeChat()
+{
+  m_core->client()->leave();
+  hideChat();
+
+  QApplication::quit();
+}
+
+
+void ChatWindow::notify(int notice, const QVariant &data)
+{
+  Q_UNUSED(data)
+
+  if (notice == ChatCore::QuitNotice) {
+    closeChat();
+  }
+  else if (notice == ChatCore::ToggleVisibilityNotice) {
+    if (isHidden())
+      showChat();
+    else
+      hideChat();
+  }
+}
 
 
 void ChatWindow::send(const QString &text)

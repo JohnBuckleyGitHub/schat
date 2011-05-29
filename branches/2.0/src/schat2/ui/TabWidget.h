@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QTabWidget>
 
+class AboutTab;
 class AbstractTab;
 class Channel;
 class ChannelTab;
@@ -57,10 +58,13 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
+  void about();
   void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
   void hideMainMenu();
+  void notify(int notice, const QVariant &data);
   void openTab();
+  void quit();
   void showMainMenu();
 
   void clientStateChanged(int state);
@@ -79,6 +83,7 @@ private:
   void retranslateUi();
   void showWelcome();
 
+  AboutTab *m_aboutTab;                      ///< О Simple Chat.
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.

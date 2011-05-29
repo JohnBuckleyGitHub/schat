@@ -55,6 +55,7 @@ HEADERS = \
     ui/SoundButton.h \
     ui/StatusBar.h \
     ui/TabBar.h \
+    ui/tabs/AboutTab.h \
     ui/tabs/AbstractTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
@@ -64,6 +65,7 @@ HEADERS = \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
+    ui/TrayIcon.h \
     ui/UserUtils.h \
     User.h \
 
@@ -97,6 +99,7 @@ SOURCES = \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \
     ui/TabBar.cpp \
+    ui/tabs/AboutTab.cpp \
     ui/tabs/AbstractTab.cpp \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \
@@ -105,6 +108,7 @@ SOURCES = \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
+    ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     User.cpp \
     

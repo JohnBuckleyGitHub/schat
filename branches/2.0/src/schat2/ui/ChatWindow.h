@@ -27,6 +27,7 @@ class QVBoxLayout;
 class SendWidget;
 class StatusBar;
 class TabWidget;
+class TrayIcon;
 
 class ChatWindow : public QMainWindow
 {
@@ -46,6 +47,8 @@ protected:
   #endif
 
 private slots:
+  void closeChat();
+  void notify(int notice, const QVariant &data);
   void send(const QString &text);
   void settingsChanged(const QList<int> &keys);
 
@@ -63,6 +66,7 @@ private:
   SendWidget *m_send;       ///< Виджет отправки сообщения.
   StatusBar *m_statusBar;   ///< Статус бар.
   TabWidget *m_tabs;        ///< Вкладки.
+  TrayIcon *m_tray;         ///< Иконка в трее.
 };
 
 #endif /* CHATWINDOW_H_ */

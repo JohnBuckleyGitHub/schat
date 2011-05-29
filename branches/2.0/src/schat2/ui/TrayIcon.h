@@ -16,17 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef TRAYICON_H_
+#define TRAYICON_H_
 
-#define SCHAT_VERSION      "1.9.0 Alpha"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include <QSystemTrayIcon>
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class TrayIcon : public QSystemTrayIcon
+{
+  Q_OBJECT
 
-#endif /*VERSION_H_*/
+public:
+  TrayIcon(QObject *parent = 0);
+
+private slots:
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
+};
+
+#endif /* TRAYICON_H_ */

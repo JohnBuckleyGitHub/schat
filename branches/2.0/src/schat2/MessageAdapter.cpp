@@ -253,6 +253,22 @@ void MessageAdapter::command(const QString &text)
     QString value = text.mid(offset + key.size() + 1);
 
     ChatCore::i()->settings()->setValue(key, value);
+    return;
+  }
+
+  if (text.startsWith("about", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::AboutNotice);
+    return;
+  }
+
+  if (text.startsWith("exit", Qt::CaseInsensitive) || text.startsWith("quit", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::QuitNotice);
+    return;
+  }
+
+  if (text.startsWith("hide", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
+    return;
   }
 }
 

@@ -35,7 +35,8 @@ public:
     ChatViewType,
     ChannelType,
     PrivateType,
-    WelcomeType
+    WelcomeType,
+    AboutType
   };
 
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);

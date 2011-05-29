@@ -32,6 +32,7 @@
 #include "net/SimpleClient.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
+#include "ui/tabs/AboutTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/tabs/UserView.h"
@@ -42,6 +43,7 @@
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
+  , m_aboutTab(0)
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
@@ -64,6 +66,8 @@ TabWidget::TabWidget(QWidget *parent)
   retranslateUi();
 
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+  connect(this, SIGNAL(requestAbout()), SLOT(about()));
+  connect(this, SIGNAL(requestQuit()), SLOT(quit()));
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
@@ -71,6 +75,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
+  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
 }
 
 
@@ -92,6 +97,12 @@ void TabWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QTabWidget::changeEvent(event);
+}
+
+
+void TabWidget::about()
+{
+  ChatCore::i()->startNotify(ChatCore::AboutNotice);
 }
 
 
@@ -135,6 +146,11 @@ void TabWidget::closeTab(int index)
     removeTab(index);
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
   }
+  else if (tab->type() == AbstractTab::AboutType) {
+    removeTab(index);
+    QTimer::singleShot(0, tab, SLOT(deleteLater()));
+    m_aboutTab = 0;
+  }
 
   showWelcome();
 }
@@ -149,6 +165,22 @@ void TabWidget::hideMainMenu()
 }
 
 
+void TabWidget::notify(int notice, const QVariant &data)
+{
+  Q_UNUSED(data)
+
+  if (notice == ChatCore::AboutNotice) {
+    if (!m_aboutTab) {
+      m_aboutTab = new AboutTab(this);
+      addTab(m_aboutTab, tr("About"));
+      m_aboutTab->setOnline();
+    }
+
+    setCurrentIndex(indexOf(m_aboutTab));
+  }
+}
+
+
 /*!
  * Установка индекса на вкладку.
  */
@@ -158,6 +190,12 @@ void TabWidget::openTab()
   if (tab) {
     setCurrentWidget(tab);
   }
+}
+
+
+void TabWidget::quit()
+{
+  ChatCore::i()->startNotify(ChatCore::QuitNotice);
 }
 
 

@@ -42,9 +42,13 @@
   <file alias="images/user-white-female.png">images/fugue/user-white-female.png</file>
   <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
+  <file>html/about.css</file>
+  <file>html/about.html</file>
   <file>html/ChatView.html</file>
   <file>html/ChatView.js</file>
   <file>html/images/progress.gif</file>
+  <file>html/images/external-link.png</file>
+  <file>html/images/logo128.png</file>
   <file>html/style.css</file>
   <file>html/templates/message.html</file>
   <file>images/color.png</file>
