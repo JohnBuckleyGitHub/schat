@@ -19,9 +19,9 @@
 #ifndef CHATSETTINGS_H_
 #define CHATSETTINGS_H_
 
-#include "AbstractSettings.h"
+#include "Settings.h"
 
-class ChatSettings : public AbstractSettings
+class ChatSettings : public Settings
 {
   Q_OBJECT
 

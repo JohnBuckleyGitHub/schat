@@ -22,9 +22,9 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include "AbstractSettings.h"
+#include "Settings.h"
 
-AbstractSettings::AbstractSettings(QObject *parent)
+Settings::Settings(QObject *parent)
   : QObject(parent)
 {
   m_appDirPath = QCoreApplication::applicationDirPath();
@@ -61,7 +61,7 @@ AbstractSettings::AbstractSettings(QObject *parent)
  *
  * \return Числовой ключ настройки или -1 в случае ошибки.
  */
-int AbstractSettings::setDefault(const QString &key, const QVariant &value)
+int Settings::setDefault(const QString &key, const QVariant &value)
 {
   int index = m_keys.size();
   if (m_default.contains(index))
@@ -73,13 +73,13 @@ int AbstractSettings::setDefault(const QString &key, const QVariant &value)
 }
 
 
-QVariant AbstractSettings::value(int key) const
+QVariant Settings::value(int key) const
 {
   return m_data.value(key);
 }
 
 
-void AbstractSettings::notify()
+void Settings::notify()
 {
   if (!m_notify.isEmpty()) {
     emit changed(m_notify);
@@ -91,7 +91,7 @@ void AbstractSettings::notify()
 /*!
  * Чтение настроек.
  */
-void AbstractSettings::read(const QString &file)
+void Settings::read(const QString &file)
 {
   Q_UNUSED(file)
 
@@ -107,7 +107,7 @@ void AbstractSettings::read(const QString &file)
 /*!
  * Установка опции.
  */
-void AbstractSettings::setValue(const QString &key, const QVariant &value, bool notice)
+void Settings::setValue(const QString &key, const QVariant &value, bool notice)
 {
   if (!m_keys.contains(key))
     return;
@@ -119,7 +119,7 @@ void AbstractSettings::setValue(const QString &key, const QVariant &value, bool 
 /*!
  * Установка опции.
  */
-void AbstractSettings::setValue(int key, const QVariant &value, bool notice)
+void Settings::setValue(int key, const QVariant &value, bool notice)
 {
   if (!m_data.contains(key))
     return;
@@ -143,7 +143,7 @@ void AbstractSettings::setValue(int key, const QVariant &value, bool notice)
 /*!
  * Запись настроек.
  */
-void AbstractSettings::write()
+void Settings::write()
 {
   QSettings settings(m_confFile, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
