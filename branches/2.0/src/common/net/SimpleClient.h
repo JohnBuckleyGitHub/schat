@@ -57,6 +57,7 @@ public:
   inline Channel* channel(const QByteArray &id) const { return m_channels.value(id); }
   inline ClientState clientState() const { return m_clientState; }
   inline QUrl url() const { return m_url; }
+  inline ServerData *serverData() { return m_serverData; }
   inline User *user() const { return m_user; }
   inline User* user(const QByteArray &id) const { return m_users.value(id); }
   void leave();

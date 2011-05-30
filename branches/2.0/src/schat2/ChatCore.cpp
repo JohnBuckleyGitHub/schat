@@ -21,6 +21,7 @@
 #include "MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -41,6 +42,7 @@ ChatCore::ChatCore(QObject *parent)
 
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
   m_messageAdapter = new MessageAdapter(m_client);
+  m_networkManager = new NetworkManager(this);
 
   #if defined(SCHAT_RANDOM_CLIENT_ID)
   m_client->user()->setNick(QUuid::createUuid().toString().mid(1, 8));
