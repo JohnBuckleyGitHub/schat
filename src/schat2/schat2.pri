@@ -46,6 +46,7 @@ HEADERS = \
     net/SimpleSocket.h \
     net/TransportReader.h \
     net/TransportWriter.h \
+    NetworkManager.h \
     QProgressIndicator/QProgressIndicator.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
@@ -111,6 +112,7 @@ SOURCES = \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     User.cpp \
+    NetworkManager.cpp \
     
 TRANSLATIONS += ../../data/translations/client_en.ts
 TRANSLATIONS += ../../data/translations/client_ru.ts

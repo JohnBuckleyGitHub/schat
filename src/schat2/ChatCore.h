@@ -26,6 +26,7 @@
 class ChatSettings;
 class MessageAdapter;
 class MessageData;
+class NetworkManager;
 class SimpleClient;
 class UserUtils;
 
@@ -84,6 +85,7 @@ signals:
 private:
   ChatSettings *m_settings;         ///< Настройки.
   MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
+  NetworkManager *m_networkManager; ///< Объект управляющих сетями.
   SimpleClient *m_client;           ///< Клиент.
   static ChatCore *m_self;          ///< Указатель на себя.
   static QStringList m_icons;       ///< Иконки.

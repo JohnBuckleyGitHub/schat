@@ -295,15 +295,20 @@ void SimpleClient::clearClient()
 {
   m_user->remove(SimpleID::ChannelListId);
   m_user->remove(SimpleID::TalksListId);
-  m_users.remove(userId());
 
-  qDeleteAll(m_users);
-  m_users.clear();
+  QMutableHashIterator<QByteArray, User*> i(m_users);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value() != m_user) {
+      delete i.value();
+    }
+    i.remove();
+  }
+
+  m_users.insert(userId(), m_user);
 
   qDeleteAll(m_channels);
   m_channels.clear();
-
-  m_users.insert(userId(), m_user);
 }
 
 
@@ -389,6 +394,8 @@ void SimpleClient::setServerData(const ServerData &data)
   m_serverData->setChannelId(data.channelId());
   m_serverData->setFeatures(data.features());
 
+  setClientState(ClientOnline);
+
   if (!sameServer) {
     clearClient();
 
@@ -470,7 +477,6 @@ bool SimpleClient::readAuthReply()
   if (data.status == AuthReplyData::AccessGranted) {
     setAuthorized(data.userId);
     m_user->setId(data.userId);
-    setClientState(ClientOnline);
     setServerData(data.serverData);
     return true;
   }

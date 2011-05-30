@@ -75,6 +75,15 @@ int SimpleID::typeOf(const QByteArray &id)
 }
 
 
+QByteArray SimpleID::fromBase64(const QByteArray &base64)
+{
+  QByteArray tmp = base64;
+  tmp.replace('-', '+');
+  tmp.replace('_', '/');
+  return QByteArray::fromBase64(tmp);
+}
+
+
 QByteArray SimpleID::session(const QByteArray &id)
 {
   return QCryptographicHash::hash(QString(id + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += SessionId;
@@ -87,6 +96,19 @@ QByteArray SimpleID::setType(int type, const QByteArray &id)
     return id;
 
   return id.left(DefaultSize - 1) += type;
+}
+
+
+/*!
+ * Выполняет преобразование в Base64 с заменой недопустимых для файловой системы символов,
+ * в соответствии с RFC3548 http://tools.ietf.org/html/rfc3548#page-6.
+ */
+QByteArray SimpleID::toBase64(const QByteArray &id)
+{
+  QByteArray out = id.toBase64();
+  out.replace('+', '-');
+  out.replace('/', '_');
+  return out;
 }
 
 
