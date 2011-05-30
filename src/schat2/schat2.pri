@@ -23,7 +23,6 @@ QT = core gui network webkit
 TEMPLATE = app
 
 HEADERS = \
-    AbstractSettings.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
     Channel.h \
@@ -48,6 +47,7 @@ HEADERS = \
     net/TransportWriter.h \
     NetworkManager.h \
     QProgressIndicator/QProgressIndicator.h \
+    Settings.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/InputWidget.h \
@@ -71,7 +71,6 @@ HEADERS = \
     User.h \
 
 SOURCES = \
-    AbstractSettings.cpp \
     arora/lineedit.cpp \
     Channel.cpp \
     ChatCore.cpp \
@@ -91,7 +90,9 @@ SOURCES = \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
+    NetworkManager.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
+    Settings.cpp \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/InputWidget.cpp \
@@ -112,7 +113,6 @@ SOURCES = \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     User.cpp \
-    NetworkManager.cpp \
     
 TRANSLATIONS += ../../data/translations/client_en.ts
 TRANSLATIONS += ../../data/translations/client_ru.ts

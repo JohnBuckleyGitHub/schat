@@ -16,15 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ABSTRACTSETTINGS_H_
-#define ABSTRACTSETTINGS_H_
+#ifndef SETTINGS_H_
+#define SETTINGS_H_
 
 #include <QHash>
 #include <QObject>
 #include <QStringList>
 #include <QVariant>
 
-class AbstractSettings : public QObject
+class Settings : public QObject
 {
   Q_OBJECT
 
@@ -37,7 +37,7 @@ public:
     AppBundle     ///< Размещение специфичное для Mac OS X.
   };
 
-  AbstractSettings(QObject *parent = 0);
+  Settings(QObject *parent = 0);
   inline FileScheme fileScheme() const { return m_scheme; }
   inline QString root() const { return m_root; }
   int setDefault(const QString &key, const QVariant &value);
@@ -66,4 +66,4 @@ private:
   FileScheme m_scheme; ///< Схема размещения файлов.
 };
 
-#endif /* ABSTRACTSETTINGS_H_ */
+#endif /* SETTINGS_H_ */

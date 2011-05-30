@@ -19,7 +19,7 @@
 #include "ChatSettings.h"
 
 ChatSettings::ChatSettings(QObject *parent)
-  : AbstractSettings(parent)
+  : Settings(parent)
 {
   setDefault("Height", 420);
   setDefault("Maximized", false);
