@@ -52,7 +52,6 @@ ChatView::ChatView(QWidget *parent)
   , m_d(new ChatViewPrivate())
 {
   setAcceptDrops(false);
-  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
 
   setUrl(QUrl("qrc:/html/ChatView.html"));
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
