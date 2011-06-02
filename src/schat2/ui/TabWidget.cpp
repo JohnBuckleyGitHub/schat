@@ -59,6 +59,9 @@ TabWidget::TabWidget(QWidget *parent)
   setStyleSheet("QToolBar { margin:0px; border:0px; }" );
   #endif
 
+  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
+  QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
+
   m_welcomeTab = new WelcomeTab(m_client, this);
   addTab(m_welcomeTab, "Welcome");
 

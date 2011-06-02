@@ -31,7 +31,6 @@ AboutTab::AboutTab(TabWidget *parent)
 {
   m_view = new QWebView(this);
   m_view->setAcceptDrops(false);
-  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
 
   QFile file(":/html/about.html");
   if (file.open(QIODevice::ReadOnly)) {

@@ -125,10 +125,10 @@ QByteArray SimpleID::uniqueId()
   QList<QNetworkInterface> all = QNetworkInterface::allInterfaces();
   foreach (QNetworkInterface iface, all) {
     QString hw = iface.hardwareAddress();
-    if (!hw.isEmpty() && iface.flags().testFlag(QNetworkInterface::IsUp) && iface.flags().testFlag(QNetworkInterface::IsRunning)) {
+    if (!hw.isEmpty() && !iface.flags().testFlag(QNetworkInterface::IsLoopBack) && iface.flags().testFlag(QNetworkInterface::IsUp) && iface.flags().testFlag(QNetworkInterface::IsRunning)) {
       return QCryptographicHash::hash(hw.toLatin1(), QCryptographicHash::Sha1) += UniqueUserId;
     }
   }
 
-  return QCryptographicHash::hash("", QCryptographicHash::Sha1);
+  return QCryptographicHash::hash("", QCryptographicHash::Sha1) += UniqueUserId;
 }
