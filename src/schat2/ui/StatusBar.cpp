@@ -20,16 +20,17 @@
 #include <QApplication>
 #include <QEvent>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QWidgetAction>
 
-#include "debugstream.h"
 #include "ChatCore.h"
+#include "debugstream.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/StatusBar.h"
+#include "ui/NetworkWidget.h"
 
 StatusBar::StatusBar(SimpleClient *client, QWidget *parent)
   : QStatusBar(parent),
@@ -45,7 +46,7 @@ StatusBar::StatusBar(SimpleClient *client, QWidget *parent)
   m_secure = new QLabel(this);
   m_label = new QLabel(this);
 
-  m_url = new QLineEdit("schat://192.168.1.33:7667", this);
+  m_url = new NetworkWidget(this);
   m_url->setMinimumWidth(m_url->width() * 2);
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);
@@ -124,7 +125,7 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
       if (state == 1)
         m_client->leave();
       else if (state == 2)
-        m_client->openUrl(m_url->text());
+        m_url->open();
     }
   }
 
@@ -184,7 +185,7 @@ void StatusBar::retranslateUi()
     m_label->setText(tr("Connecting..."));
   }
   else if (m_clientState == SimpleClient::ClientOnline) {
-    m_label->setText(m_client->url().host());
+    m_label->setText(NetworkManager::currentServerName());
     m_icon->setToolTip(tr("Connected"));
   }
   else if (m_clientState == SimpleClient::ClientError) {

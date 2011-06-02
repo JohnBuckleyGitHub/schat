@@ -32,6 +32,10 @@ int main(int argc, char *argv[])
   app.setQuitOnLastWindowClosed(false);
   app.addLibraryPath(app.applicationDirPath() + "/plugins/qt");
 
+  #if defined(Q_WS_X11)
+  app.setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  #endif
+
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 

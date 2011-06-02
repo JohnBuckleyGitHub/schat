@@ -25,4 +25,5 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("Maximized", false);
   setDefault("Width", 666);
   setDefault("WindowsAero", true);
+  setDefault("Networks", QStringList());
 }

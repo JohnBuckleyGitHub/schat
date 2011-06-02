@@ -70,21 +70,21 @@ bool SimpleClient::openUrl(const QUrl &url)
 
   m_url = url;
 
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
-
-  if (state() != QAbstractSocket::UnconnectedState)
-    return false;
-
   if (!m_url.isValid())
     return false;
 
   if (m_url.scheme() != "schat")
     return false;
 
+  if (m_reconnectTimer->isActive())
+    m_reconnectTimer->stop();
+
+  if (state() != QAbstractSocket::UnconnectedState) {
+    leave();
+  }
+
   setClientState(ClientConnecting);
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
-
   return true;
 }
 
@@ -122,6 +122,12 @@ bool SimpleClient::send(const QList<QByteArray> &packets)
   }
 
   return SimpleSocket::send(packets);
+}
+
+
+QByteArray SimpleClient::serverId() const
+{
+  return m_serverData->id();
 }
 
 

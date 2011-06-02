@@ -23,8 +23,8 @@
 #include <QStatusBar>
 #include <QUrl>
 
+class NetworkWidget;
 class QLabel;
-class QLineEdit;
 class QProgressIndicator;
 class QWidgetAction;
 class SimpleClient;
@@ -49,10 +49,10 @@ private:
   void updateStyleSheet();
 
   int m_clientState;              ///< Состояние клиента.
+  NetworkWidget *m_url;           ///< Поле ввода адреса сервера.
   QLabel *m_icon;                 ///< Главная иконка.
   QLabel *m_label;                ///< Информация о состоянии.
   QLabel *m_secure;               ///< Иконка безопасного соединения.
-  QLineEdit *m_url;               ///< Поле ввода адреса сервера.
   QProgressIndicator *m_progress; ///< Отображает состояние подключения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
   SimpleClient *m_client;         ///< Клиент.

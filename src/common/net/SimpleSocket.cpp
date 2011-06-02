@@ -147,12 +147,17 @@ void SimpleSocket::leave()
 {
   SCHAT_DEBUG_STREAM(this << "leave()")
 
-  if (state() != SimpleSocket::ConnectedState) {
+  if (state() == SimpleSocket::ConnectedState) {
+    disconnectFromHost();
+    if (!m_serverSide && state() != SimpleSocket::UnconnectedState) {
+      if (!waitForDisconnected(1000))
+        abort();
+    }
+  }
+  else {
     abort();
     release();
   }
-  else
-    disconnectFromHost();
 }
 
 

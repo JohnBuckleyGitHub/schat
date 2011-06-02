@@ -60,18 +60,23 @@ public:
     TextItalicIcon,
     TextStrikeIcon,
     TextUnderlineIcon,
-    SendIcon
+    SendIcon,
+    GlobeIcon,
+    AddIcon,
+    RemoveIcon
   };
 
   enum Notice {
     AboutNotice,
     QuitNotice,
-    ToggleVisibilityNotice
+    ToggleVisibilityNotice,
+    NetworkChangedNotice
   };
 
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline ChatSettings *settings() { return m_settings; }
+  inline NetworkManager *networks() const { return m_networkManager; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }

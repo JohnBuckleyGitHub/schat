@@ -23,15 +23,19 @@
 #include "ui/NickEdit.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
+#include "ui/NetworkWidget.h"
+
 
 WelcomeTab::WelcomeTab(SimpleClient *client, TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
   , m_client(client)
 {
+  m_networks = new NetworkWidget(this);
   m_nickEdit = new NickEdit(client->user()->nick(), this);
 
   QFormLayout *mainLay = new QFormLayout(this);
-  mainLay->addRow("Nick:", m_nickEdit);
+  mainLay->addRow(tr("Network:"), m_networks);
+  mainLay->addRow(tr("Nick:"), m_nickEdit);
 
   connect(m_nickEdit, SIGNAL(textChanged(const QString &)), SLOT(nickChanged(const QString &)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));

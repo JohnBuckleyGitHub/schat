@@ -38,8 +38,10 @@ public:
   };
 
   Settings(QObject *parent = 0);
+  Settings(const QString &group, QObject *parent = 0);
   inline FileScheme fileScheme() const { return m_scheme; }
   inline QString root() const { return m_root; }
+  inline void setGroup(const QString &group) { m_group = group; }
   int setDefault(const QString &key, const QVariant &value);
   QVariant value(int key) const;
   void notify();
@@ -52,6 +54,7 @@ signals:
   void changed(const QList<int> &keys);
 
 protected:
+  bool m_autoDefault;             ///< Автоматически создавать настройку по умолчанию при установке новой опции.
   QHash<int, QVariant> m_data;    ///< Таблица настроек.
   QHash<int, QVariant> m_default; ///< Настройки по умолчанию.
   QList<int> m_changed;           ///< Список изменившихся настроек.
@@ -59,10 +62,13 @@ protected:
   QString m_appDirPath;           ///< Папка с исполняемым файлом чата.
   QString m_baseName;             ///< Имя исполняемого файла без расширения.
   QString m_confFile;             ///< Основной конфигурационный файл.
+  QString m_group;                ///< Группа настроек.
   QString m_root;                 ///< Корневая директория настроек.
   QStringList m_keys;             ///< Символьные ключи настроек.
 
 private:
+  void init();
+
   FileScheme m_scheme; ///< Схема размещения файлов.
 };
 

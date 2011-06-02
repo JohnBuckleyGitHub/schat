@@ -16,30 +16,51 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOMETAB_H_
-#define WELCOMETAB_H_
+#ifndef NETWORKWIDGET_H_
+#define NETWORKWIDGET_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include <QWidget>
 
-class NetworkWidget;
-class NickEdit;
+class QComboBox;
+class QMenu;
+class QToolBar;
+class QToolButton;
 class SimpleClient;
 
-class WelcomeTab : public AbstractTab
+class NetworkWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  WelcomeTab(SimpleClient *client, TabWidget *parent);
+  NetworkWidget(QWidget *parent = 0);
+
+public slots:
+  void open();
+
+protected:
+  void changeEvent(QEvent *event);
+  void keyPressEvent(QKeyEvent *event);
 
 private slots:
-  void nickChanged(const QString &text);
-  void updateUserData(const QByteArray &userId);
+  void add();
+  void indexChanged(int index);
+  void notify(int notice, const QVariant &data);
+  void remove();
+  void showMenu();
 
 private:
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
+  int isCurrentActive() const;
+  void load();
+  void retranslateUi();
+
+  QAction *m_addAction;
+  QAction *m_connectAction;
+  QAction *m_removeAction;
+  QComboBox *m_combo;
+  QMenu *m_menu;
+  QToolBar *m_toolBar;
+  QToolButton *m_config;
   SimpleClient *m_client;
 };
 
-#endif /* WELCOMETAB_H_ */
+#endif /* NETWORKWIDGET_H_ */
