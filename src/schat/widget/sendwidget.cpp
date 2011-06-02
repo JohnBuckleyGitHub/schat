@@ -349,8 +349,7 @@ QAction* SendWidget::createAction(const QString &name, QAction *before)
   }
   else if (lowerName == "stretch") {
     QWidget *stretch = new QWidget(this);
-    QHBoxLayout *stretchLay = new QHBoxLayout(stretch);
-    stretchLay->addStretch();
+    stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     action = m_toolBar->addWidget(stretch);
   }
   else if (lowerName == "sound") {
