@@ -28,10 +28,11 @@ class ChatSettings : public Settings
 public:
   /// Ключи настроек.
   enum Keys {
-    Height, ///< Высота окна.
-    Maximized, ///< Окно развёрнуто на весь экран.
-    Width,  ///< Ширина окна.
+    Height,      ///< Высота окна.
+    Maximized,   ///< Окно развёрнуто на весь экран.
+    Width,       ///< Ширина окна.
     WindowsAero, ///< При доступности будет использован интерфейс Windows Aero.
+    Networks     ///< Список серверов.
   };
 
   ChatSettings(QObject *parent = 0);

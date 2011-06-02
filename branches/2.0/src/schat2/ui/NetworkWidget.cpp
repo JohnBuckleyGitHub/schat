@@ -1,0 +1,255 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <QDebug>
+
+#include <QComboBox>
+#include <QEvent>
+#include <QGridLayout>
+#include <QKeyEvent>
+#include <QMenu>
+#include <QToolBar>
+#include <QToolButton>
+
+#include "ChatCore.h"
+#include "net/SimpleClient.h"
+#include "net/SimpleID.h"
+#include "NetworkManager.h"
+#include "ui/NetworkWidget.h"
+
+NetworkWidget::NetworkWidget(QWidget *parent)
+  : QWidget(parent)
+{
+  m_client = ChatCore::i()->client();
+
+  m_combo = new QComboBox(this);
+
+  m_menu = new QMenu(this);
+  connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
+  m_connectAction = m_menu->addAction("", this, SLOT(open()));
+  m_menu->addSeparator();
+  m_addAction = m_menu->addAction(SCHAT_ICON(AddIcon), "Add", this, SLOT(add()));
+  m_removeAction = m_menu->addAction(SCHAT_ICON(RemoveIcon), "Remove", this, SLOT(remove()));
+
+  m_config = new QToolButton(this);
+  m_config->setIcon(SCHAT_ICON(GearIcon));
+  m_config->setMenu(m_menu);
+  m_config->setPopupMode(QToolButton::InstantPopup);
+
+  m_toolBar = new QToolBar(this);
+  m_toolBar->setIconSize(QSize(16, 16));
+  m_toolBar->addWidget(m_config);
+  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }" );
+
+  QGridLayout *mainLay = new QGridLayout(this);
+  mainLay->addWidget(m_combo, 0, 0);
+  mainLay->addWidget(m_toolBar, 0, 1);
+  mainLay->setColumnStretch(0, 1);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
+
+  load();
+
+  connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
+  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+}
+
+
+/*!
+ * Обработка действия для \p m_connectAction.
+ */
+void NetworkWidget::open()
+{
+  QMenu *popup = qobject_cast<QMenu *>(parentWidget());
+  if (popup && isVisible())
+    popup->close();
+
+  int index = m_combo->currentIndex();
+  if (index == -1)
+    return;
+
+  QByteArray id = m_combo->itemData(index).toByteArray();
+
+  if (isCurrentActive()) {
+    m_client->leave();
+    return;
+  }
+
+  if (id.isEmpty()) {
+    m_combo->setItemText(index, m_combo->currentText());
+    m_client->openUrl(m_combo->currentText());
+  }
+
+  ChatCore::i()->networks()->open(id);
+}
+
+
+void NetworkWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
+void NetworkWidget::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Return) {
+    open();
+  }
+  else
+    QWidget::keyPressEvent(event);
+}
+
+
+/*!
+ * Добавление нового подключения.
+ */
+void NetworkWidget::add()
+{
+  m_combo->insertItem(0, "schat://");
+  m_combo->setCurrentIndex(0);
+  m_combo->setFocus();
+}
+
+
+/*!
+ * Обработка изменения индекса, запрещается редактирование сохранённых сетей.
+ */
+void NetworkWidget::indexChanged(int index)
+{
+  m_combo->setEditable(m_combo->itemData(index).type() == QVariant::Invalid);
+}
+
+
+void NetworkWidget::notify(int notice, const QVariant &data)
+{
+  if (notice != ChatCore::NetworkChangedNotice)
+    return;
+
+  QByteArray id = data.toByteArray();
+
+  NetworkItem item = ChatCore::i()->networks()->item(id);
+  if (!item.isValid())
+    return;
+
+  int index = m_combo->findText(item.url());
+  if (index != -1)
+    m_combo->removeItem(index);
+
+  index = m_combo->findText("schat://");
+  if (index != -1)
+    m_combo->removeItem(index);
+
+  index = m_combo->findData(id);
+  if (index != -1) {
+    m_combo->removeItem(index);
+  }
+
+  m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
+  m_combo->setCurrentIndex(0);
+}
+
+
+void NetworkWidget::remove()
+{
+  int index = m_combo->currentIndex();
+  if (index == -1)
+    return;
+
+  QByteArray id = m_combo->itemData(index).toByteArray();
+  if (!id.isEmpty())
+    ChatCore::i()->networks()->removeItem(id);
+
+  m_combo->removeItem(index);
+}
+
+
+/*!
+ * Подготовка к показу меню.
+ */
+void NetworkWidget::showMenu()
+{
+  QByteArray id = m_combo->itemData(m_combo->currentIndex()).toByteArray();
+  int state = isCurrentActive();
+
+  if (state == 1) {
+    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setText(tr("Disconnect"));
+  }
+  else if (state == 2) {
+    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setText(tr("Abort"));
+  }
+  else {
+    m_connectAction->setIcon(SCHAT_ICON(ConnectIcon));
+    m_connectAction->setText(tr("Connect"));
+  }
+}
+
+
+int NetworkWidget::isCurrentActive() const
+{
+  int index = m_combo->currentIndex();
+  if (index == -1)
+    return 0;
+
+  QByteArray id = m_combo->itemData(index).toByteArray();
+
+  if (m_client->clientState() == SimpleClient::ClientOnline && !id.isEmpty() && id == m_client->serverId()) {
+    return 1;
+  }
+
+  if (m_client->clientState() == SimpleClient::ClientConnecting) {
+    QString url;
+    if (id.isEmpty())
+      url = m_combo->currentText();
+    else
+      url = ChatCore::i()->networks()->item(id).url();
+
+    if (m_client->url().toString() == url) {
+      return 2;
+    }
+  }
+
+  return 0;
+}
+
+
+/*!
+ * Загрузка списка серверов в виджет.
+ */
+void NetworkWidget::load()
+{
+  QList<NetworkItem> items = ChatCore::i()->networks()->items();
+
+  for (int i = 0; i < items.size(); ++i) {
+    m_combo->addItem(SCHAT_ICON(GlobeIcon), items.at(i).name(), items.at(i).id());
+  }
+
+  if (m_combo->count() == 0) {
+    m_combo->addItem("schat://chat.impomezia.com");
+    m_combo->setEditable(true);
+  }
+}
+
+
+void NetworkWidget::retranslateUi()
+{
+}

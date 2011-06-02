@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -26,30 +25,18 @@
 
 Settings::Settings(QObject *parent)
   : QObject(parent)
+  , m_autoDefault(false)
 {
-  m_appDirPath = QCoreApplication::applicationDirPath();
-  m_baseName = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
+  init();
+}
 
-  #if defined(Q_WS_MAC)
-  m_scheme = AppBundle;
-  #else
-  if (m_appDirPath == "/usr/bin" || m_appDirPath == "/usr/sbin")
-    m_scheme = UnixStandard;
-  else if (QDir(m_appDirPath).dirName() == "bin")
-    m_scheme = UnixAdaptive;
-  else {
-    m_scheme = Portable;
-  }
-  #endif
 
-  if (m_scheme == UnixStandard || m_scheme == UnixAdaptive)
-    m_root = QDir::homePath() + "/.config/" + m_baseName;
-  else if (m_scheme == AppBundle)
-    m_root = QDir::cleanPath(m_appDirPath + "/../Resources");
-  else
-    m_root = m_appDirPath;
-
-  m_confFile = m_root + "/" + m_baseName + ".conf";
+Settings::Settings(const QString &group, QObject *parent)
+  : QObject(parent)
+  , m_autoDefault(true)
+  , m_group(group)
+{
+  init();
 }
 
 
@@ -98,9 +85,15 @@ void Settings::read(const QString &file)
   QSettings settings(m_confFile, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
+  if (!m_group.isEmpty())
+    settings.beginGroup(m_group);
+
   for (int i = 0; i < m_keys.size(); ++i) {
     m_data[i] = settings.value(m_keys.at(i), m_default.value(i));
   }
+
+  if (!m_group.isEmpty())
+    settings.endGroup();
 }
 
 
@@ -109,8 +102,12 @@ void Settings::read(const QString &file)
  */
 void Settings::setValue(const QString &key, const QVariant &value, bool notice)
 {
-  if (!m_keys.contains(key))
-    return;
+  if (!m_keys.contains(key)) {
+    if (m_autoDefault)
+      setDefault(key, value);
+    else
+      return;
+  }
 
   setValue(m_keys.indexOf(key), value, notice);
 }
@@ -121,7 +118,7 @@ void Settings::setValue(const QString &key, const QVariant &value, bool notice)
  */
 void Settings::setValue(int key, const QVariant &value, bool notice)
 {
-  if (!m_data.contains(key))
+  if (!m_data.contains(key) && !m_autoDefault)
     return;
 
   if (m_data.value(key) == value)
@@ -148,9 +145,43 @@ void Settings::write()
   QSettings settings(m_confFile, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
+  if (!m_group.isEmpty())
+    settings.beginGroup(m_group);
+
   for (int i = 0; i < m_keys.size(); ++i) {
     QVariant data = m_data.value(i);
     if (m_changed.contains(i) || data != m_default.value(i))
       settings.setValue(m_keys.at(i), m_data.value(i));
   }
+
+  if (!m_group.isEmpty())
+    settings.endGroup();
+}
+
+
+void Settings::init()
+{
+  m_appDirPath = QCoreApplication::applicationDirPath();
+  m_baseName = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
+
+  #if defined(Q_WS_MAC)
+  m_scheme = AppBundle;
+  #else
+  if (m_appDirPath == "/usr/bin" || m_appDirPath == "/usr/sbin")
+    m_scheme = UnixStandard;
+  else if (QDir(m_appDirPath).dirName() == "bin")
+    m_scheme = UnixAdaptive;
+  else {
+    m_scheme = Portable;
+  }
+  #endif
+
+  if (m_scheme == UnixStandard || m_scheme == UnixAdaptive)
+    m_root = QDir::homePath() + "/.config/" + m_baseName;
+  else if (m_scheme == AppBundle)
+    m_root = QDir::cleanPath(m_appDirPath + "/../Resources");
+  else
+    m_root = m_appDirPath;
+
+  m_confFile = m_root + "/" + m_baseName + ".conf";
 }

@@ -51,6 +51,7 @@ HEADERS = \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/InputWidget.h \
+    ui/NetworkWidget.h \
     ui/NickEdit.h \
     ui/SendWidget.h \
     ui/SoundButton.h \
@@ -96,6 +97,7 @@ SOURCES = \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/InputWidget.cpp \
+    ui/NetworkWidget.cpp \
     ui/NickEdit.cpp \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \

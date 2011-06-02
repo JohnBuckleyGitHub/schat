@@ -27,13 +27,116 @@
 #include "ChatSettings.h"
 #include "net/SimpleID.h"
 
+
+NetworkItem::NetworkItem()
+{
+}
+
+
+NetworkItem::NetworkItem(const QByteArray &id)
+  : m_id(id)
+{
+  SimpleClient *client = ChatCore::i()->client();
+
+  m_auth = SimpleID::toBase64(client->userId());
+  m_name = NetworkManager::currentServerName();
+  m_url = client->url().toString();
+}
+
+
+NetworkItem::NetworkItem(const QByteArray &id, const Settings &settings)
+  : m_id(id)
+{
+  m_auth = settings.value(Auth).toString();
+  m_url = settings.value(Url).toString();
+  m_name = settings.value(Name).toString();
+}
+
+
+bool NetworkItem::isValid() const
+{
+  if (m_auth.isEmpty())
+    return false;
+
+  if (m_url.isEmpty())
+    return false;
+
+  if (m_name.isEmpty())
+    return false;
+
+  return true;
+}
+
+
 NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
 {
   m_settings = ChatCore::i()->settings();
   m_client = ChatCore::i()->client();
 
+  load();
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+}
+
+
+/*!
+ * Открытие нового соединения, используя идентификатор сервера.
+ *
+ * \param id Сохранённый идентификатор сервера.
+ * \return true в случае успеха.
+ */
+bool NetworkManager::open(const QByteArray &id)
+{
+  if (!m_items.contains(id))
+    return false;
+
+  NetworkItem item = m_items.value(id);
+  return m_client->openUrl(item.url());
+}
+
+
+NetworkItem NetworkManager::item(const QByteArray &id) const
+{
+  return m_items.value(id);
+}
+
+
+QList<NetworkItem> NetworkManager::items() const
+{
+  QList<NetworkItem> out;
+  for (int i = 0; i < m_networks.size(); ++i) {
+    QByteArray id = SimpleID::fromBase64(m_networks.at(i).toLatin1());
+    if (SimpleID::typeOf(id) == SimpleID::ServerId)
+      out.append(m_items.value(id));
+  }
+
+  return out;
+}
+
+
+
+/*!
+ * Возвращает имя текущего сервера.
+ */
+QString NetworkManager::currentServerName()
+{
+  QString name = ChatCore::i()->client()->serverData()->name();
+  if (name.isEmpty())
+    name = ChatCore::i()->client()->url().host();
+
+  return name;
+}
+
+
+/*!
+ * Удаление сервера.
+ *
+ * \todo ! Также реализовать полное удаление всех настроек этого сервера.
+ */
+void NetworkManager::removeItem(const QByteArray &id)
+{
+  m_networks.removeAll(SimpleID::toBase64(id));
+  m_settings->setValue(ChatSettings::Networks, m_networks);
 }
 
 
@@ -42,9 +145,15 @@ void NetworkManager::clientStateChanged(int state)
   if (state != SimpleClient::ClientOnline)
     return;
 
-  ServerData *data = m_client->serverData();
+  write();
 
-  root(data->id());
+//  root(data->id());
+}
+
+
+QString NetworkManager::authKey() const
+{
+  return SimpleID::toBase64(m_client->userId());
 }
 
 
@@ -54,6 +163,64 @@ QString NetworkManager::root(const QByteArray &id)
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
-  qDebug() << id.toBase64();
   return out;
+}
+
+
+/*!
+ * Формирование таблицы серверов при запуске.
+ */
+void NetworkManager::load()
+{
+  m_networks = m_settings->value(ChatSettings::Networks).toStringList();
+  if (m_networks.isEmpty())
+    return;
+
+  Settings settings("");
+  settings.setDefault("Auth", "");
+  settings.setDefault("Url", "");
+  settings.setDefault("Name", "");
+
+  for (int i = 0; i < m_networks.size(); ++i) {
+    QByteArray id = SimpleID::fromBase64(m_networks.at(i).toLatin1());
+    if (SimpleID::typeOf(id) != SimpleID::ServerId)
+      continue;
+
+    settings.setGroup(id.toHex());
+    settings.read();
+
+    NetworkItem item(id, settings);
+    if (!item.isValid())
+      continue;
+
+    m_items.insert(id, item);
+  }
+}
+
+
+/*!
+ * Запись информации о новом сервере.
+ */
+void NetworkManager::write()
+{
+  ServerData *data = m_client->serverData();
+  QByteArray id = data->id();
+  QString base64Id = SimpleID::toBase64(id);
+
+  m_networks.removeAll(base64Id);
+  m_networks.prepend(base64Id);
+  m_settings->setValue(ChatSettings::Networks, m_networks);
+
+  NetworkItem item(id);
+  m_items[id] = item;
+
+  Settings settings(id.toHex());
+  settings.setValue("Auth", item.auth());
+  settings.setValue("Url", item.url());
+  settings.setValue("Name", item.name());
+
+  m_settings->write();
+  settings.write();
+
+  ChatCore::i()->startNotify(ChatCore::NetworkChangedNotice, id);
 }

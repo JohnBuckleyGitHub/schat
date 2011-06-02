@@ -69,6 +69,9 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "text-strikethrough";
   m_icons += "text-underline";
   m_icons += "send";
+  m_icons += "globe";
+  m_icons += "add";
+  m_icons += "remove";
 
   connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SIGNAL(message(int, const MessageData &)));
 }
