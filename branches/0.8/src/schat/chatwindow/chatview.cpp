@@ -172,6 +172,7 @@ ChatView::ChatView(QWidget *parent)
     setAcceptDrops(false);
 
     QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
+    QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
   #else
     d = new ChatViewPrivate(this);
 
