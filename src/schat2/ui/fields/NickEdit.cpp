@@ -22,7 +22,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "ui/NickEdit.h"
+#include "ui/fields/NickEdit.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 

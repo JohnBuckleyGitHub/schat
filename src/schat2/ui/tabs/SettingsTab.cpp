@@ -29,7 +29,7 @@
 
 #include "ChatCore.h"
 #include "ui/NetworkWidget.h"
-#include "ui/NickEdit.h"
+#include "ui/fields/NickEdit.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 #include "User.h"

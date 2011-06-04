@@ -21,7 +21,6 @@
 
 #include <QIcon>
 
-class SimpleClient;
 class User;
 
 class UserUtils
