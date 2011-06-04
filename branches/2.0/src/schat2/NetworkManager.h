@@ -63,6 +63,7 @@ class NetworkManager : public QObject
 public:
   NetworkManager(QObject *parent = 0);
   bool open(const QByteArray &id);
+  bool open(const QString &url);
   NetworkItem item(const QByteArray &id) const;
   QList<NetworkItem> items() const;
   static QString currentServerName();
@@ -70,11 +71,13 @@ public:
 
 private slots:
   void clientStateChanged(int state);
+  void updateUserData(const QByteArray &userId);
 
 private:
   QString authKey() const;
   QString root(const QByteArray &id);
   void load();
+  void setUserData();
   void write();
 
   ChatSettings *m_settings; ///< Основные настройки.

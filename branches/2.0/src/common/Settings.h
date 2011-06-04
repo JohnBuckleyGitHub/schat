@@ -39,15 +39,16 @@ public:
 
   Settings(QObject *parent = 0);
   Settings(const QString &group, QObject *parent = 0);
+  bool setValue(const QString &key, const QVariant &value, bool notice = true);
+  bool setValue(int key, const QVariant &value, bool notice = false);
   inline FileScheme fileScheme() const { return m_scheme; }
   inline QString root() const { return m_root; }
+  inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
   inline void setGroup(const QString &group) { m_group = group; }
   int setDefault(const QString &key, const QVariant &value);
   QVariant value(int key) const;
   void notify();
   void read(const QString &file = "");
-  void setValue(const QString &key, const QVariant &value, bool notice = true);
-  void setValue(int key, const QVariant &value, bool notice = false);
   void write();
 
 signals:

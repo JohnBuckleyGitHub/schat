@@ -34,17 +34,17 @@
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
+  , m_manager(ChatCore::i()->networks())
+  , m_client(ChatCore::i()->client())
 {
-  m_client = ChatCore::i()->client();
-
   m_combo = new QComboBox(this);
 
   m_menu = new QMenu(this);
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
   m_connectAction = m_menu->addAction("", this, SLOT(open()));
   m_menu->addSeparator();
-  m_addAction = m_menu->addAction(SCHAT_ICON(AddIcon), "Add", this, SLOT(add()));
-  m_removeAction = m_menu->addAction(SCHAT_ICON(RemoveIcon), "Remove", this, SLOT(remove()));
+  m_addAction = m_menu->addAction(SCHAT_ICON(AddIcon), tr("Add"), this, SLOT(add()));
+  m_removeAction = m_menu->addAction(SCHAT_ICON(RemoveIcon), tr("Remove"), this, SLOT(remove()));
 
   m_config = new QToolButton(this);
   m_config->setIcon(SCHAT_ICON(GearIcon));
@@ -92,10 +92,10 @@ void NetworkWidget::open()
 
   if (id.isEmpty()) {
     m_combo->setItemText(index, m_combo->currentText());
-    m_client->openUrl(m_combo->currentText());
+    m_manager->open(m_combo->currentText());
   }
 
-  ChatCore::i()->networks()->open(id);
+  m_manager->open(id);
 }
 
 
@@ -145,7 +145,7 @@ void NetworkWidget::notify(int notice, const QVariant &data)
 
   QByteArray id = data.toByteArray();
 
-  NetworkItem item = ChatCore::i()->networks()->item(id);
+  NetworkItem item = m_manager->item(id);
   if (!item.isValid())
     return;
 
@@ -175,7 +175,7 @@ void NetworkWidget::remove()
 
   QByteArray id = m_combo->itemData(index).toByteArray();
   if (!id.isEmpty())
-    ChatCore::i()->networks()->removeItem(id);
+    m_manager->removeItem(id);
 
   m_combo->removeItem(index);
 }
@@ -221,7 +221,7 @@ int NetworkWidget::isCurrentActive() const
     if (id.isEmpty())
       url = m_combo->currentText();
     else
-      url = ChatCore::i()->networks()->item(id).url();
+      url = m_manager->item(id).url();
 
     if (m_client->url().toString() == url) {
       return 2;
@@ -237,7 +237,7 @@ int NetworkWidget::isCurrentActive() const
  */
 void NetworkWidget::load()
 {
-  QList<NetworkItem> items = ChatCore::i()->networks()->items();
+  QList<NetworkItem> items = m_manager->items();
 
   for (int i = 0; i < items.size(); ++i) {
     m_combo->addItem(SCHAT_ICON(GlobeIcon), items.at(i).name(), items.at(i).id());

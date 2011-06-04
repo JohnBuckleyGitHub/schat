@@ -21,6 +21,8 @@
 
 #include "Settings.h"
 
+class SimpleClient;
+
 class ChatSettings : public Settings
 {
   Q_OBJECT
@@ -28,14 +30,21 @@ class ChatSettings : public Settings
 public:
   /// Ключи настроек.
   enum Keys {
-    Height,      ///< Высота окна.
-    Maximized,   ///< Окно развёрнуто на весь экран.
-    Width,       ///< Ширина окна.
-    WindowsAero, ///< При доступности будет использован интерфейс Windows Aero.
-    Networks     ///< Список серверов.
+    Height,         ///< Высота окна.
+    Maximized,      ///< Окно развёрнуто на весь экран.
+    Width,          ///< Ширина окна.
+    WindowsAero,    ///< При доступности будет использован интерфейс Windows Aero.
+    Networks,       ///< Список серверов.
+    DefaultProfile, ///< Использовать профиль по умолчанию.
+    ProfileNick,    ///< Ник по умолчанию.
+    ProfileGender   ///< Пол по умолчанию.
   };
 
   ChatSettings(QObject *parent = 0);
+  void updateValue(int key, const QVariant &value);
+
+private:
+  void updateNick(SimpleClient *client, const QString &nick);
 };
 
 #endif /* CHATSETTINGS_H_ */

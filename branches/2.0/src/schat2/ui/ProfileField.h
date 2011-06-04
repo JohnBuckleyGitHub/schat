@@ -16,23 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERUTILS_H_
-#define USERUTILS_H_
+#ifndef PROFILEFIELD_H_
+#define PROFILEFIELD_H_
 
-#include <QIcon>
+#include "arora/lineedit.h"
 
-class SimpleClient;
-class User;
+class ChatSettings;
 
-class UserUtils
+class ProfileField : public LineEdit
 {
+  Q_OBJECT
+
 public:
-  UserUtils();
-  static int color(const QString &color);
-  static QIcon icon(User *user);
+  ProfileField(int key, QWidget *parent = 0);
+  ProfileField(int key, const QString &contents, QWidget *parent = 0);
+
+protected:
+  virtual void updateData();
+
+  ChatSettings *m_settings;
+  int m_key;
+
+private slots:
+  void editingFinished();
+  void settingsChanged(const QList<int> &keys);
 
 private:
-  static QStringList m_colors;
+  void init();
 };
 
-#endif /* USERUTILS_H_ */
+#endif /* PROFILEFIELD_H_ */

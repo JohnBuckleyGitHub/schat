@@ -77,6 +77,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   connect(m_send, SIGNAL(send(const QString &)), SLOT(send(const QString &)));
   connect(m_core, SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
 
   setWindowTitle(QApplication::applicationName());
 }
@@ -172,6 +173,14 @@ void ChatWindow::notify(int notice, const QVariant &data)
     else
       hideChat();
   }
+}
+
+
+void ChatWindow::pageChanged(int type, bool visible)
+{
+  Q_UNUSED(type)
+
+  m_send->setVisible(visible);
 }
 
 

@@ -200,15 +200,7 @@ void MessageAdapter::command(const QString &text)
   }
 
   if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
-    QString nick = text.mid(5);
-
-    if (m_client->user()->nick() != nick && User::isValidNick(nick)) {
-      User user(m_client->user());
-      user.setNick(nick);
-      UserWriter writer(m_client->sendStream(), &user);
-      m_client->send(writer.data());
-    }
-
+    ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
     return;
   }
 

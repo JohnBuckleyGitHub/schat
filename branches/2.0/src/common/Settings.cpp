@@ -41,6 +41,52 @@ Settings::Settings(const QString &group, QObject *parent)
 
 
 /*!
+ * Установка опции.
+ *
+ * \return true если опция была изменена.
+ */
+bool Settings::setValue(const QString &key, const QVariant &value, bool notice)
+{
+  if (!m_keys.contains(key)) {
+    if (m_autoDefault)
+      setDefault(key, value);
+    else
+      return false;
+  }
+
+  return setValue(m_keys.indexOf(key), value, notice);
+}
+
+
+/*!
+ * Установка опции.
+ *
+ * \return true если опция была изменена.
+ */
+bool Settings::setValue(int key, const QVariant &value, bool notice)
+{
+  if (!m_data.contains(key) && !m_autoDefault)
+    return false;
+
+  if (m_data.value(key) == value)
+    return false;
+
+  m_data[key] = value;
+
+  if (!m_changed.contains(key))
+    m_changed.append(key);
+
+  if (notice && !m_notify.contains(key))
+    m_notify.append(key);
+
+  if (notice)
+    notify();
+
+  return true;
+}
+
+
+/*!
  * Установка значения по умолчанию.
  *
  * \param key   Текстовый ключ настройки.
@@ -94,46 +140,6 @@ void Settings::read(const QString &file)
 
   if (!m_group.isEmpty())
     settings.endGroup();
-}
-
-
-/*!
- * Установка опции.
- */
-void Settings::setValue(const QString &key, const QVariant &value, bool notice)
-{
-  if (!m_keys.contains(key)) {
-    if (m_autoDefault)
-      setDefault(key, value);
-    else
-      return;
-  }
-
-  setValue(m_keys.indexOf(key), value, notice);
-}
-
-
-/*!
- * Установка опции.
- */
-void Settings::setValue(int key, const QVariant &value, bool notice)
-{
-  if (!m_data.contains(key) && !m_autoDefault)
-    return;
-
-  if (m_data.value(key) == value)
-    return;
-
-  m_data[key] = value;
-
-  if (!m_changed.contains(key))
-    m_changed.append(key);
-
-  if (!m_notify.contains(key))
-    m_notify.append(key);
-
-  if (notice)
-    notify();
 }
 
 

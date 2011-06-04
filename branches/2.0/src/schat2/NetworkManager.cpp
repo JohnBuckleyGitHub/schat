@@ -26,7 +26,7 @@
 #include "net/ServerData.h"
 #include "ChatSettings.h"
 #include "net/SimpleID.h"
-
+#include "User.h"
 
 NetworkItem::NetworkItem()
 {
@@ -76,6 +76,7 @@ NetworkManager::NetworkManager(QObject *parent)
 
   load();
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
 
 
@@ -90,8 +91,17 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
+  setUserData();
+
   NetworkItem item = m_items.value(id);
   return m_client->openUrl(item.url());
+}
+
+
+bool NetworkManager::open(const QString &url)
+{
+  setUserData();
+  return m_client->openUrl(url);
 }
 
 
@@ -151,6 +161,18 @@ void NetworkManager::clientStateChanged(int state)
 }
 
 
+/*!
+ * Обновление данных пользователя инициированное клиентом \p m_client.
+ */
+void NetworkManager::updateUserData(const QByteArray &userId)
+{
+  if (m_client->userId() != userId)
+    return;
+
+  m_settings->setValue(ChatSettings::ProfileNick, m_client->user()->nick(), true);
+}
+
+
 QString NetworkManager::authKey() const
 {
   return SimpleID::toBase64(m_client->userId());
@@ -169,6 +191,9 @@ QString NetworkManager::root(const QByteArray &id)
 
 /*!
  * Формирование таблицы серверов при запуске.
+ *
+ * Список серверов читается из настройки Networks, если сервер прошёл
+ * проверку на валидность то он добавляется в таблицу \p m_items.
  */
 void NetworkManager::load()
 {
@@ -181,6 +206,9 @@ void NetworkManager::load()
   settings.setDefault("Url", "");
   settings.setDefault("Name", "");
 
+  QStringList invalid;
+
+  // Чтение данных серверов.
   for (int i = 0; i < m_networks.size(); ++i) {
     QByteArray id = SimpleID::fromBase64(m_networks.at(i).toLatin1());
     if (SimpleID::typeOf(id) != SimpleID::ServerId)
@@ -190,11 +218,30 @@ void NetworkManager::load()
     settings.read();
 
     NetworkItem item(id, settings);
-    if (!item.isValid())
+    if (!item.isValid()) {
+      invalid.append(m_networks.at(i));
       continue;
+    }
 
     m_items.insert(id, item);
   }
+
+  // Удаление не валидных серверов.
+  if (!invalid.isEmpty()) {
+    for (int i = 0; i < invalid.size(); ++i) {
+      m_networks.removeAll(invalid.at(i));
+    }
+    m_settings->setValue(ChatSettings::Networks, m_networks);
+  }
+}
+
+
+/*!
+ * Установка данных пользователя при подключении.
+ */
+void NetworkManager::setUserData()
+{
+  m_client->user()->setNick(m_settings->value(ChatSettings::ProfileNick).toString());
 }
 
 
@@ -211,16 +258,17 @@ void NetworkManager::write()
   m_networks.prepend(base64Id);
   m_settings->setValue(ChatSettings::Networks, m_networks);
 
+  QString hexId = id.toHex();
   NetworkItem item(id);
   m_items[id] = item;
 
-  Settings settings(id.toHex());
-  settings.setValue("Auth", item.auth());
-  settings.setValue("Url", item.url());
-  settings.setValue("Name", item.name());
+  m_settings->setAutoDefault(true);
+  m_settings->setValue(hexId + "/Auth", item.auth(), false);
+  m_settings->setValue(hexId + "/Url", item.url(), false);
+  m_settings->setValue(hexId + "/Name", item.name(), false);
+  m_settings->setAutoDefault(false);
 
   m_settings->write();
-  settings.write();
 
   ChatCore::i()->startNotify(ChatCore::NetworkChangedNotice, id);
 }

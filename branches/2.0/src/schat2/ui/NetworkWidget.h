@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+class NetworkManager;
 class QComboBox;
 class QMenu;
 class QToolBar;
@@ -53,6 +54,7 @@ private:
   void load();
   void retranslateUi();
 
+  NetworkManager *m_manager;
   QAction *m_addAction;
   QAction *m_connectAction;
   QAction *m_removeAction;

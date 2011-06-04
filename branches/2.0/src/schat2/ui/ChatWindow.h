@@ -49,6 +49,7 @@ protected:
 private slots:
   void closeChat();
   void notify(int notice, const QVariant &data);
+  void pageChanged(int type, bool visible);
   void send(const QString &text);
   void settingsChanged(const QList<int> &keys);
 
