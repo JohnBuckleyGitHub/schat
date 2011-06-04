@@ -72,6 +72,8 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "globe";
   m_icons += "add";
   m_icons += "remove";
+  m_icons += "profile";
+  m_icons += "ok";
 
   connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SIGNAL(message(int, const MessageData &)));
 }

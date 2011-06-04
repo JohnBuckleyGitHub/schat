@@ -16,21 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
 #include <QToolButton>
 #include <QToolBar>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "ui/NickEdit.h"
+#include "ui/UserUtils.h"
+#include "User.h"
 
 NickEdit::NickEdit(QWidget *parent)
-  : LineEdit(parent)
+  : ProfileField(ChatSettings::ProfileNick, parent)
 {
   init();
 }
 
 
 NickEdit::NickEdit(const QString &contents, QWidget *parent)
-  : LineEdit(contents, parent)
+  : ProfileField(ChatSettings::ProfileNick, contents, parent)
 {
   init();
 }
@@ -38,6 +42,8 @@ NickEdit::NickEdit(const QString &contents, QWidget *parent)
 
 void NickEdit::init()
 {
+  setMaxLength(User::MaxNickLength);
+
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
 

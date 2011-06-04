@@ -8,9 +8,11 @@
   <file alias="images/main-tab-menu.png">images/fugue/applications-stack.png</file>
   <file alias="images/network-error.png">images/fugue/network-status-busy.png</file>
   <file alias="images/offline.png">images/fugue/network-status-offline.png</file>
+  <file alias="images/ok.png">images/diagona/102.png</file>
   <file alias="images/online.png">images/fugue/network-status.png</file>
   <file alias="images/plug.png">images/fugue/plug.png</file>
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
+  <file alias="images/profile.png">images/diagona/002.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/remove.png">images/diagona/101.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>

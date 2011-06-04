@@ -32,10 +32,6 @@ class WelcomeTab : public AbstractTab
 public:
   WelcomeTab(SimpleClient *client, TabWidget *parent);
 
-private slots:
-  void nickChanged(const QString &text);
-  void updateUserData(const QByteArray &userId);
-
 private:
   NetworkWidget *m_networks;
   NickEdit *m_nickEdit;

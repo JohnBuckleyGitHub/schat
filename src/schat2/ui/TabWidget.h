@@ -21,6 +21,7 @@
 
 #include <QHash>
 #include <QTabWidget>
+#include <QPointer>
 
 class AboutTab;
 class AbstractTab;
@@ -32,6 +33,7 @@ class PrivateTab;
 class QMenu;
 class QToolBar;
 class QToolButton;
+class SettingsTab;
 class SimpleClient;
 class SoundButton;
 class TabBar;
@@ -51,8 +53,7 @@ public:
   QByteArray currentId() const;
 
 signals:
-  void requestAbout();
-  void requestQuit();
+  void pageChanged(int type, bool visible);
 
 protected:
   void changeEvent(QEvent *event);
@@ -61,10 +62,12 @@ private slots:
   void about();
   void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
+  void currentChanged(int index);
   void hideMainMenu();
   void notify(int notice, const QVariant &data);
   void openTab();
   void quit();
+  void settings();
   void showMainMenu();
 
   void clientStateChanged(int state);
@@ -78,20 +81,24 @@ private slots:
 private:
   ChannelTab *createChannelTab(const QByteArray &id);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
+  void aboutTab();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
   void retranslateUi();
+  void settingsTab();
   void showWelcome();
 
-  AboutTab *m_aboutTab;                      ///< О Simple Chat.
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
+  QAction *m_settingsAction;                 ///< Settings.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
   QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.
   QMenu *m_talksMenu;                        ///< Меню разговоров.
+  QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
+  QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
   QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
   QToolBar *m_rightToolBar;                  ///< Правая панель инструментов.
   QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.

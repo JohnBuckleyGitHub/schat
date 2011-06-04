@@ -16,23 +16,38 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERUTILS_H_
-#define USERUTILS_H_
+#ifndef SETTINGSTAB_H_
+#define SETTINGSTAB_H_
 
-#include <QIcon>
+#include "ui/tabs/AbstractTab.h"
 
-class SimpleClient;
-class User;
+class QListWidget;
+class QStackedWidget;
+class QListWidgetItem;
+class QPushButton;
+class AbstractSettingsPage;
 
-class UserUtils
+class SettingsTab : public AbstractTab
 {
+  Q_OBJECT
+
 public:
-  UserUtils();
-  static int color(const QString &color);
-  static QIcon icon(User *user);
+  enum Pages {
+    Profile
+  };
+
+  SettingsTab(TabWidget *parent);
+
+protected:
+  void showEvent(QShowEvent *event);
 
 private:
-  static QStringList m_colors;
+  void addPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
+
+  QList<QListWidgetItem *> m_items;
+  QListWidget *m_contents;
+  QPushButton *m_apply;
+  QStackedWidget *m_pages;
 };
 
-#endif /* USERUTILS_H_ */
+#endif /* SETTINGSTAB_H_ */

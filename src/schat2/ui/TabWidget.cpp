@@ -35,6 +35,7 @@
 #include "ui/tabs/AboutTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/PrivateTab.h"
+#include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
@@ -43,7 +44,6 @@
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
-  , m_aboutTab(0)
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
@@ -63,14 +63,14 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
 
   m_welcomeTab = new WelcomeTab(m_client, this);
-  addTab(m_welcomeTab, "Welcome");
+  addTab(m_welcomeTab, tr("Welcome"));
+  m_welcomeTab->setOnline();
 
   createToolBars();
   retranslateUi();
 
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
-  connect(this, SIGNAL(requestAbout()), SLOT(about()));
-  connect(this, SIGNAL(requestQuit()), SLOT(quit()));
+  connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
@@ -137,25 +137,32 @@ void TabWidget::closeTab(int index)
     }
 
     m_client->part(tab->id());
-    removeTab(index);
-    QTimer::singleShot(0, tab, SLOT(deleteLater()));
   }
   // Закрытие приватного разговора.
-  else if (tab->type() == AbstractTab::PrivateType) {
-    if (m_talks.contains(tab->id())) {
-      m_talks.remove(tab->id());
-    }
-
-    removeTab(index);
-    QTimer::singleShot(0, tab, SLOT(deleteLater()));
+  else if (tab->type() == AbstractTab::PrivateType && m_talks.contains(tab->id())) {
+    m_talks.remove(tab->id());
   }
-  else if (tab->type() == AbstractTab::AboutType) {
+
+  if (tab->type() != AbstractTab::WelcomeType) {
     removeTab(index);
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
-    m_aboutTab = 0;
   }
 
   showWelcome();
+}
+
+
+void TabWidget::currentChanged(int index)
+{
+  if (index == -1)
+    return;
+
+  AbstractTab *tab = widget(index);
+  bool visible = true;
+  if (tab->type() == AbstractTab::SettingsType || tab->type() == AbstractTab::AboutType)
+    visible = false;
+
+  emit pageChanged(tab->type(), visible);
 }
 
 
@@ -173,13 +180,10 @@ void TabWidget::notify(int notice, const QVariant &data)
   Q_UNUSED(data)
 
   if (notice == ChatCore::AboutNotice) {
-    if (!m_aboutTab) {
-      m_aboutTab = new AboutTab(this);
-      addTab(m_aboutTab, tr("About"));
-      m_aboutTab->setOnline();
-    }
-
-    setCurrentIndex(indexOf(m_aboutTab));
+    aboutTab();
+  }
+  else if (notice == ChatCore::SettingsNotice) {
+    settingsTab();
   }
 }
 
@@ -199,6 +203,12 @@ void TabWidget::openTab()
 void TabWidget::quit()
 {
   ChatCore::i()->startNotify(ChatCore::QuitNotice);
+}
+
+
+void TabWidget::settings()
+{
+  ChatCore::i()->startNotify(ChatCore::SettingsNotice);
 }
 
 
@@ -480,6 +490,18 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
+void TabWidget::aboutTab()
+{
+  if (!m_aboutTab) {
+    m_aboutTab = new AboutTab(this);
+    addTab(m_aboutTab, tr("About"));
+    m_aboutTab->setOnline();
+  }
+
+  setCurrentIndex(indexOf(m_aboutTab));
+}
+
+
 /*!
  * Создание панелей инструментов.
  */
@@ -514,9 +536,11 @@ void TabWidget::createToolBars()
 
   m_settingsMenu = new QMenu(this);
   // \todo isNewYear().
-  m_aboutAction = m_settingsMenu->addAction(SCHAT_ICON(SmallLogoIcon), "", this, SIGNAL(requestAbout()));
+  m_settingsAction = m_settingsMenu->addAction(SCHAT_ICON(SettingsIcon), "", this, SLOT(settings()));
   m_settingsMenu->addSeparator();
-  m_quitAction = m_settingsMenu->addAction(SCHAT_ICON(QuitIcon), "", this, SIGNAL(requestQuit()));
+  m_aboutAction = m_settingsMenu->addAction(SCHAT_ICON(SmallLogoIcon), "", this, SLOT(about()));
+  m_settingsMenu->addSeparator();
+  m_quitAction = m_settingsMenu->addAction(SCHAT_ICON(QuitIcon), "", this, SLOT(quit()));
 
   m_settingsButton = new QToolButton(this);
   m_settingsButton->setIcon(SCHAT_ICON(SettingsIcon));
@@ -558,10 +582,23 @@ void TabWidget::retranslateUi()
 {
   m_menuButton->setToolTip(tr("Menu"));
   m_settingsButton->setToolTip(tr("Preferences"));
+  m_settingsAction->setText(tr("Preferences..."));
   m_aboutAction->setText(tr("About..."));
   m_quitAction->setText(tr("Quit"));
   m_channelsMenu->setTitle(tr("Channels"));
   m_talksMenu->setTitle(tr("Talks"));
+}
+
+
+void TabWidget::settingsTab()
+{
+  if (!m_settingsTab) {
+    m_settingsTab = new SettingsTab(this);
+    addTab(m_settingsTab, tr("Preferences"));
+    m_settingsTab->setOnline();
+  }
+
+  setCurrentIndex(indexOf(m_settingsTab));
 }
 
 
@@ -574,5 +611,6 @@ void TabWidget::showWelcome()
   }
   else {
     addTab(m_welcomeTab, tr("Welcome"));
+    m_welcomeTab->setOnline();
   }
 }

@@ -16,7 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ChatCore.h"
 #include "ChatSettings.h"
+#include "net/packets/users.h"
+#include "net/SimpleClient.h"
+#include "User.h"
 
 ChatSettings::ChatSettings(QObject *parent)
   : Settings(parent)
@@ -26,4 +30,44 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("Width", 666);
   setDefault("WindowsAero", true);
   setDefault("Networks", QStringList());
+  setDefault("DefaultProfile", true);
+  setDefault("Profile/Nick", User::defaultNick());
+  setDefault("Profile/Gender", 0);
+}
+
+
+/*!
+ * Обновление настройки профиля.
+ */
+void ChatSettings::updateValue(int key, const QVariant &value)
+{
+  SimpleClient *client = ChatCore::i()->client();
+
+  if (client->clientState() != SimpleClient::ClientOnline) {
+    setValue(key, value, true);
+    return;
+  }
+
+  if (this->value(key) == value)
+    return;
+
+  switch (key) {
+    case ProfileNick:
+      updateNick(client, value.toString());
+      break;
+
+    default:
+      break;
+  }
+}
+
+
+void ChatSettings::updateNick(SimpleClient *client, const QString &nick)
+{
+  if (client->user()->nick() != nick && User::isValidNick(nick)) {
+    User user(client->user());
+    user.setNick(nick);
+    UserWriter writer(client->sendStream(), &user);
+    client->send(writer.data());
+  }
 }

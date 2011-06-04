@@ -63,12 +63,15 @@ public:
     SendIcon,
     GlobeIcon,
     AddIcon,
-    RemoveIcon
+    RemoveIcon,
+    ProfileIcon,
+    OkIcon
   };
 
   enum Notice {
     AboutNotice,
     QuitNotice,
+    SettingsNotice,
     ToggleVisibilityNotice,
     NetworkChangedNotice
   };

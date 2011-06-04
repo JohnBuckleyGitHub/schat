@@ -53,6 +53,7 @@ HEADERS = \
     ui/InputWidget.h \
     ui/NetworkWidget.h \
     ui/NickEdit.h \
+    ui/ProfileField.h \
     ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
@@ -64,6 +65,8 @@ HEADERS = \
     ui/tabs/ChatView_p.h \
     ui/tabs/ChatViewTab.h \
     ui/tabs/PrivateTab.h \
+    ui/tabs/SettingsTab.h \
+    ui/tabs/SettingsTab_p.h \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
@@ -99,6 +102,7 @@ SOURCES = \
     ui/InputWidget.cpp \
     ui/NetworkWidget.cpp \
     ui/NickEdit.cpp \
+    ui/ProfileField.cpp \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \
@@ -109,6 +113,7 @@ SOURCES = \
     ui/tabs/ChatView.cpp \
     ui/tabs/ChatViewTab.cpp \
     ui/tabs/PrivateTab.cpp \
+    ui/tabs/SettingsTab.cpp \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \

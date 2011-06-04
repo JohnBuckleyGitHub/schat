@@ -16,50 +16,53 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ABSTRACTTAB_H_
-#define ABSTRACTTAB_H_
+#ifndef SETTINGSTAB_P_H_
+#define SETTINGSTAB_P_H_
 
-#include <QIcon>
 #include <QWidget>
 
-class TabWidget;
+class NetworkWidget;
+class NickEdit;
+class QCheckBox;
+class QLabel;
+class ChatSettings;
 
-class AbstractTab : public QWidget
+/*!
+ * Базовый класс для страниц настроек.
+ */
+class AbstractSettingsPage : public QWidget
 {
   Q_OBJECT
 
 public:
-  /// Тип виджета.
-  enum TabType {
-    UnknownType,
-    ChatViewType,
-    ChannelType,
-    PrivateType,
-    WelcomeType,
-    AboutType,
-    SettingsType
-  };
-
-  AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
-  inline QAction *action() const { return m_action; }
-  inline QByteArray id() const { return m_id; }
-  inline TabType type() const { return m_type; }
-  virtual void setOnline(bool online = true);
-
-signals:
-  void actionTriggered(bool checked = false);
+  AbstractSettingsPage(QWidget *parent = 0);
 
 protected:
-  virtual void retranslateUi();
+  virtual void retranslateUi() {}
   void changeEvent(QEvent *event);
 
-  QAction *m_action;
-  QIcon m_icon;
-  TabWidget *m_tabs;
-
-private:
-  QByteArray m_id;
-  TabType m_type;
+  ChatSettings *m_settings;
 };
 
-#endif /* ABSTRACTTAB_H_ */
+
+/*!
+ * Страница настройки профиля.
+ */
+class ProfilePage : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  ProfilePage(QWidget *parent = 0);
+
+private:
+  NetworkWidget *m_networks;
+  NickEdit *m_nickEdit;
+  QCheckBox *m_defaultProfile;
+  QLabel *m_networkLabel;
+  QLabel *m_nickLabel;
+  QLabel *m_profileLabel;
+};
+
+
+#endif /* SETTINGSTAB_P_H_ */
