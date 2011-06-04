@@ -50,10 +50,10 @@ HEADERS = \
     Settings.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
+    ui/fields/NickEdit.h \
+    ui/fields/ProfileField.h \
     ui/InputWidget.h \
     ui/NetworkWidget.h \
-    ui/NickEdit.h \
-    ui/ProfileField.h \
     ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
@@ -99,10 +99,10 @@ SOURCES = \
     Settings.cpp \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
+    ui/fields/NickEdit.cpp \
+    ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
     ui/NetworkWidget.cpp \
-    ui/NickEdit.cpp \
-    ui/ProfileField.cpp \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \

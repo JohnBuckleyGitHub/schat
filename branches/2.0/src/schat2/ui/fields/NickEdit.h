@@ -19,7 +19,7 @@
 #ifndef NICKEDIT_H_
 #define NICKEDIT_H_
 
-#include "ui/ProfileField.h"
+#include "ui/fields/ProfileField.h"
 
 class QToolBar;
 class QToolButton;

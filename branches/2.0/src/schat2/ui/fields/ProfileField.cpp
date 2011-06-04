@@ -18,7 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "ui/ProfileField.h"
+#include "ui/fields/ProfileField.h"
 
 ProfileField::ProfileField(int key, QWidget *parent)
   : LineEdit(ChatCore::i()->settings()->value(key).toString(), parent)

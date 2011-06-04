@@ -22,7 +22,7 @@
 #include "ChatCore.h"
 #include "net/SimpleClient.h"
 #include "ui/NetworkWidget.h"
-#include "ui/NickEdit.h"
+#include "ui/fields/NickEdit.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
 
