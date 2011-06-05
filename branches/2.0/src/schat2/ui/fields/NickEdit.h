@@ -34,10 +34,6 @@ public:
 
 private:
   void init();
-
-  QToolBar *m_toolBar;
-  QToolButton *m_color;
-  QToolButton *m_config;
 };
 
 #endif /* NICKEDIT_H_ */

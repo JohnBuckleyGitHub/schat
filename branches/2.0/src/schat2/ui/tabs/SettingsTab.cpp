@@ -34,6 +34,7 @@
 #include "ui/tabs/SettingsTab_p.h"
 #include "User.h"
 #include "ChatSettings.h"
+#include "ui/fields/GenderField.h"
 
 #if defined(SCHAT_OPTION)
   #undef SCHAT_OPTION
@@ -63,9 +64,14 @@ ProfilePage::ProfilePage(QWidget *parent)
   m_nickLabel = new QLabel(tr("Nick:"), this);
   m_nickEdit = new NickEdit(this);
 
+  m_genderLabel = new QLabel(tr("Gender:"), this);
+  m_genderField = new GenderField(this);
+
   QGridLayout *profileLay = new QGridLayout;
   profileLay->addWidget(m_nickLabel, 0, 0);
   profileLay->addWidget(m_nickEdit, 0, 1);
+  profileLay->addWidget(m_genderLabel, 1, 0);
+  profileLay->addWidget(m_genderField, 1, 1);
   profileLay->setContentsMargins(20, 0, 3, 16);
 
   m_networkLabel = new QLabel("<b>" + tr("Network") + "</b>", this);

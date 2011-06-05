@@ -22,6 +22,7 @@
 #include "Settings.h"
 
 class SimpleClient;
+class User;
 
 class ChatSettings : public Settings
 {
@@ -42,9 +43,14 @@ public:
 
   ChatSettings(QObject *parent = 0);
   void updateValue(int key, const QVariant &value);
+  inline void setClient(SimpleClient *client) { m_client = client; }
 
 private:
-  void updateNick(SimpleClient *client, const QString &nick);
+  void send(User *user);
+  void updateGender(int gender);
+  void updateNick(const QString &nick);
+
+  SimpleClient *m_client;
 };
 
 #endif /* CHATSETTINGS_H_ */
