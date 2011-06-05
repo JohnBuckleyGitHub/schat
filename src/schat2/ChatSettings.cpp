@@ -24,6 +24,7 @@
 
 ChatSettings::ChatSettings(QObject *parent)
   : Settings(parent)
+  , m_client(0)
 {
   setDefault("Height", 420);
   setDefault("Maximized", false);
@@ -41,9 +42,7 @@ ChatSettings::ChatSettings(QObject *parent)
  */
 void ChatSettings::updateValue(int key, const QVariant &value)
 {
-  SimpleClient *client = ChatCore::i()->client();
-
-  if (client->clientState() != SimpleClient::ClientOnline) {
+  if (m_client->clientState() != SimpleClient::ClientOnline) {
     setValue(key, value, true);
     return;
   }
@@ -53,7 +52,11 @@ void ChatSettings::updateValue(int key, const QVariant &value)
 
   switch (key) {
     case ProfileNick:
-      updateNick(client, value.toString());
+      updateNick(value.toString());
+      break;
+
+    case ProfileGender:
+      updateGender(value.toInt());
       break;
 
     default:
@@ -62,12 +65,28 @@ void ChatSettings::updateValue(int key, const QVariant &value)
 }
 
 
-void ChatSettings::updateNick(SimpleClient *client, const QString &nick)
+void ChatSettings::send(User *user)
 {
-  if (client->user()->nick() != nick && User::isValidNick(nick)) {
-    User user(client->user());
+  UserWriter writer(m_client->sendStream(), user);
+  m_client->send(writer.data());
+}
+
+
+void ChatSettings::updateGender(int gender)
+{
+  if (m_client->user()->rawGender() != gender) {
+    User user(m_client->user());
+    user.setRawGender(gender);
+    send(&user);
+  }
+}
+
+
+void ChatSettings::updateNick(const QString &nick)
+{
+  if (m_client->user()->nick() != nick && User::isValidNick(nick)) {
+    User user(m_client->user());
     user.setNick(nick);
-    UserWriter writer(client->sendStream(), &user);
-    client->send(writer.data());
+    send(&user);
   }
 }

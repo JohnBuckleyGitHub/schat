@@ -181,8 +181,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   if (m_client->user()->rawGender() == user.rawGender())
     return NoSent;
 
-  UserWriter writer(m_client->sendStream(), &user);
-  m_client->send(writer.data());
+  ChatCore::i()->settings()->updateValue(ChatSettings::ProfileGender, user.rawGender());
   return SentAsCommand;
 }
 

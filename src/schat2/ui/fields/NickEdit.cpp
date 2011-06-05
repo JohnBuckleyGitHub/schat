@@ -43,24 +43,4 @@ NickEdit::NickEdit(const QString &contents, QWidget *parent)
 void NickEdit::init()
 {
   setMaxLength(User::MaxNickLength);
-
-  m_toolBar = new QToolBar(this);
-  m_toolBar->setIconSize(QSize(16, 16));
-
-  #if defined(Q_OS_MAC)
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
-  #endif
-
-  m_color = new QToolButton(this);
-  m_color->setIcon(QIcon(":/images/user.png"));
-  m_color->setCursor(Qt::ArrowCursor);
-
-  m_config = new QToolButton(this);
-  m_config->setIcon(SCHAT_ICON(GearIcon));
-  m_config->setCursor(Qt::ArrowCursor);
-
-  m_toolBar->addWidget(m_color);
-  m_toolBar->addWidget(m_config);
-
-  addWidget(m_toolBar, RightSide);
 }

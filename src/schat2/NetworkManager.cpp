@@ -170,6 +170,7 @@ void NetworkManager::updateUserData(const QByteArray &userId)
     return;
 
   m_settings->setValue(ChatSettings::ProfileNick, m_client->user()->nick(), true);
+  m_settings->setValue(ChatSettings::ProfileGender, m_client->user()->rawGender(), true);
 }
 
 
@@ -242,6 +243,7 @@ void NetworkManager::load()
 void NetworkManager::setUserData()
 {
   m_client->user()->setNick(m_settings->value(ChatSettings::ProfileNick).toString());
+  m_client->user()->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
 }
 
 

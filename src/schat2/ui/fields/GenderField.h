@@ -16,56 +16,46 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGSTAB_P_H_
-#define SETTINGSTAB_P_H_
+#ifndef GENDERFIELD_H_
+#define GENDERFIELD_H_
 
 #include <QWidget>
 
-class ChatSettings;
-class GenderField;
-class NetworkWidget;
-class NickEdit;
-class QCheckBox;
-class QLabel;
+#include "User.h"
 
-/*!
- * Базовый класс для страниц настроек.
- */
-class AbstractSettingsPage : public QWidget
+class ChatSettings;
+class QComboBox;
+class QMenu;
+class QToolBar;
+class QToolButton;
+
+class GenderField : public QWidget
 {
   Q_OBJECT
 
 public:
-  AbstractSettingsPage(QWidget *parent = 0);
+  GenderField(QWidget *parent = 0);
 
 protected:
-  virtual void retranslateUi() {}
-  void changeEvent(QEvent *event);
+  virtual void updateData();
 
-  ChatSettings *m_settings;
-};
-
-
-/*!
- * Страница настройки профиля.
- */
-class ProfilePage : public AbstractSettingsPage
-{
-  Q_OBJECT
-
-public:
-  ProfilePage(QWidget *parent = 0);
+private slots:
+  void indexChanged(int index);
+  void setColor();
+  void settingsChanged(const QList<int> &keys);
 
 private:
-  GenderField *m_genderField;
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
-  QCheckBox *m_defaultProfile;
-  QLabel *m_genderLabel;
-  QLabel *m_networkLabel;
-  QLabel *m_nickLabel;
-  QLabel *m_profileLabel;
+  void addColor(const QString &name);
+  void setIcons();
+  void setState();
+
+  ChatSettings *m_settings;
+  QComboBox *m_combo;
+  QList<QAction *> m_colors;
+  QMenu *m_menu;
+  QToolBar *m_toolBar;
+  QToolButton *m_config;
+  User m_user;
 };
 
-
-#endif /* SETTINGSTAB_P_H_ */
+#endif /* GENDERFIELD_H_ */

@@ -537,7 +537,6 @@ void TabWidget::createToolBars()
   m_settingsMenu = new QMenu(this);
   // \todo isNewYear().
   m_settingsAction = m_settingsMenu->addAction(SCHAT_ICON(SettingsIcon), "", this, SLOT(settings()));
-  m_settingsMenu->addSeparator();
   m_aboutAction = m_settingsMenu->addAction(SCHAT_ICON(SmallLogoIcon), "", this, SLOT(about()));
   m_settingsMenu->addSeparator();
   m_quitAction = m_settingsMenu->addAction(SCHAT_ICON(QuitIcon), "", this, SLOT(quit()));
