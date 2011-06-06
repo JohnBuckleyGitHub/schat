@@ -44,6 +44,10 @@ void ChatSettings::updateValue(int key, const QVariant &value)
 {
   if (m_client->clientState() != SimpleClient::ClientOnline) {
     setValue(key, value, true);
+
+    if (key == ProfileNick)
+      m_client->setNick(value.toString());
+
     return;
   }
 

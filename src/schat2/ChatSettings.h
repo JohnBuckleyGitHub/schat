@@ -42,8 +42,8 @@ public:
   };
 
   ChatSettings(QObject *parent = 0);
-  void updateValue(int key, const QVariant &value);
   inline void setClient(SimpleClient *client) { m_client = client; }
+  void updateValue(int key, const QVariant &value);
 
 private:
   void send(User *user);

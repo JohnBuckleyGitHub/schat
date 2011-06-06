@@ -223,7 +223,7 @@ void SimpleSocket::connected()
 
   if (m_sslAvailable) {
     PacketWriter writer(m_sendStream, Protocol::ProbeSecureConnectionPacket);
-    writer.put(quint16(Protocol::SecureConnectionRequest));
+    writer.put<quint16>(Protocol::SecureConnectionRequest);
     transmit(writer.data(), Protocol::ContainsInternalPacket);
   }
   else {
