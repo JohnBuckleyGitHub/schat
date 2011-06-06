@@ -48,8 +48,8 @@ public:
   int setDefault(const QString &key, const QVariant &value);
   QVariant value(int key) const;
   void notify();
-  void read(const QString &file = "");
-  void write();
+  virtual void read(const QString &file = "");
+  virtual void write();
 
 signals:
   void changed(const QList<int> &keys);

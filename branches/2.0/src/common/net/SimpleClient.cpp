@@ -41,6 +41,8 @@ SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)
   , m_syncChannelCache(0)
   , m_user(user)
 {
+  setNick(user->nick());
+
   m_reconnectTimer = new QBasicTimer;
   m_uniqueId = SimpleID::uniqueId();
   m_serverData = new ServerData();
@@ -82,6 +84,9 @@ bool SimpleClient::openUrl(const QUrl &url)
   if (state() != QAbstractSocket::UnconnectedState) {
     leave();
   }
+
+  if (!m_nick.isEmpty())
+    m_user->setNick(m_nick);
 
   setClientState(ClientConnecting);
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
@@ -128,6 +133,26 @@ bool SimpleClient::send(const QList<QByteArray> &packets)
 QByteArray SimpleClient::serverId() const
 {
   return m_serverData->id();
+}
+
+
+/*!
+ * Получение оригинального ника, не искажённого функцией автоматического
+ * разрешения коллизий.
+ */
+QString SimpleClient::nick() const
+{
+  if (m_nick.isEmpty())
+    return m_user->nick();
+
+  return m_nick;
+}
+
+
+void SimpleClient::setNick(const QString &nick)
+{
+  m_user->setNick(nick);
+  m_nick = "";
 }
 
 
@@ -291,6 +316,16 @@ bool SimpleClient::addChannel(Channel *channel)
 
   emit join(id, QByteArray());
   return true;
+}
+
+
+QString SimpleClient::mangleNick()
+{
+  int rand = qrand() % 89 + 10;
+  if (m_nick.isEmpty())
+    m_nick = m_user->nick();
+
+  return m_nick.left(User::MaxNickLength - 2) + QString::number(rand);
 }
 
 
@@ -472,7 +507,7 @@ bool SimpleClient::command()
 
 
 /*!
- * Чтение пакета Packet::AuthReply.
+ * Чтение пакета AuthReplyPacket.
  */
 bool SimpleClient::readAuthReply()
 {
@@ -485,6 +520,12 @@ bool SimpleClient::readAuthReply()
     m_user->setId(data.userId);
     setServerData(data.serverData);
     return true;
+  }
+  else if (data.status == AuthReplyData::AccessDenied) {
+    if (data.error == AuthReplyData::NickAlreadyUse) {
+      m_user->setNick(mangleNick());
+      requestAuth();
+    }
   }
 
   return false;
@@ -658,6 +699,10 @@ bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByt
  */
 void SimpleClient::updateUserData(User *existUser, User *user)
 {
+  if (existUser == m_user && m_user->nick() != user->nick()) {
+    setNick(user->nick());
+  }
+
   existUser->setNick(user->nick());
   existUser->setRawGender(user->rawGender());
 

@@ -25,9 +25,6 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-#define SCHAT_RANDOM_CLIENT_ID
-#include <QUuid>
-
 ChatCore *ChatCore::m_self = 0;
 QStringList ChatCore::m_icons;
 
@@ -35,6 +32,7 @@ ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+  qsrand(QDateTime::currentDateTime().toTime_t());
 
   m_userUtils = new UserUtils();
   m_settings = new ChatSettings(this);
@@ -45,10 +43,6 @@ ChatCore::ChatCore(QObject *parent)
 
   m_messageAdapter = new MessageAdapter(m_client);
   m_networkManager = new NetworkManager(this);
-
-  #if defined(SCHAT_RANDOM_CLIENT_ID)
-  m_client->user()->setNick(QUuid::createUuid().toString().mid(1, 8));
-  #endif
 
   m_icons += "channel";
   m_icons += "gear";

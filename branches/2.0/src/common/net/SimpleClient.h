@@ -61,8 +61,10 @@ public:
   inline User *user() const { return m_user; }
   inline User* user(const QByteArray &id) const { return m_users.value(id); }
   QByteArray serverId() const;
-  void leave();
+  QString nick() const;
+  void setNick(const QString &nick);
 
+  void leave();
   void part(const QByteArray &channelId);
 
 signals:
@@ -86,6 +88,7 @@ private slots:
 private:
   bool addChannel(Channel *channel);
   inline void lock() { m_sendLock = true; }
+  QString mangleNick();
   void clearClient();
   void restore();
   void setClientState(ClientState state);
@@ -114,6 +117,7 @@ private:
   QHash<QByteArray, Channel*> m_channels;    ///< Таблица каналов.
   QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
+  QString m_nick;                            ///< Оригинальный ник пользователя.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
   ServerData *m_serverData;                  ///< Данные о сервере.
   SyncChannelCache *m_syncChannelCache;      ///< Данные синхронизации канала.
