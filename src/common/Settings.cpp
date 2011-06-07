@@ -112,15 +112,6 @@ QVariant Settings::value(int key) const
 }
 
 
-void Settings::notify()
-{
-  if (!m_notify.isEmpty()) {
-    emit changed(m_notify);
-    m_notify.clear();
-  }
-}
-
-
 /*!
  * Чтение настроек.
  */
@@ -165,6 +156,18 @@ void Settings::write()
 }
 
 
+void Settings::notify()
+{
+  if (!m_notify.isEmpty()) {
+    emit changed(m_notify);
+    m_notify.clear();
+  }
+}
+
+
+/*!
+ * Определение схемы размещения файлов и стандартных путей.
+ */
 void Settings::init()
 {
   m_appDirPath = QCoreApplication::applicationDirPath();

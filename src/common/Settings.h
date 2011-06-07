@@ -42,14 +42,16 @@ public:
   bool setValue(const QString &key, const QVariant &value, bool notice = true);
   bool setValue(int key, const QVariant &value, bool notice = false);
   inline FileScheme fileScheme() const { return m_scheme; }
+  inline FileScheme scheme() const { return m_scheme; }
+  inline QString baseName() const { return m_baseName; }
   inline QString root() const { return m_root; }
   inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
   inline void setGroup(const QString &group) { m_group = group; }
   int setDefault(const QString &key, const QVariant &value);
   QVariant value(int key) const;
-  void notify();
   virtual void read(const QString &file = "");
   virtual void write();
+  void notify();
 
 signals:
   void changed(const QList<int> &keys);

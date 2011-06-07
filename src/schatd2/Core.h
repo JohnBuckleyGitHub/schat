@@ -23,11 +23,12 @@
 #include <QObject>
 #include <QVariant>
 
+#include "ServerUser.h"
+
 class MessageData;
 class NewPacketsEvent;
 class PacketReader;
 class ServerChannel;
-class ServerUser;
 class SocketReleaseEvent;
 class Storage;
 class Worker;
@@ -62,13 +63,13 @@ private:
   bool broadcast();
   bool route();
   bool route(ServerChannel *channel);
-  bool route(ServerUser *user);
+  bool route(ChatUser user);
   bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   bool send(ServerChannel *channel, const QByteArray &packet);
   bool send(ServerChannel *channel, const QList<QByteArray> &packets);
-  bool send(ServerUser *user, const QByteArray &packet, int option = 0);
-  bool send(ServerUser *user, const QList<QByteArray> &packets, int option = 0);
+  bool send(ChatUser user, const QByteArray &packet, int option = 0);
+  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   qint64 timestamp() const;
 
   void newPacketsEvent(NewPacketsEvent *event);
@@ -82,12 +83,12 @@ private:
   bool readAuthRequest();
   bool readUserData();
   int auth();
-  void sendChannel(ServerChannel *channel, ServerUser *user);
+  void sendChannel(ServerChannel *channel, ChatUser user);
 
   // u2u.
-  void addTalk(ServerUser *user1, ServerUser *user2);
+  void addTalk(ChatUser user1, ChatUser user2);
   void bindTalks();
-  void bindTalks(ServerUser *senderUser, ServerUser *destUser);
+  void bindTalks(ChatUser senderUser, ChatUser destUser);
 
   // messages.
   bool command();

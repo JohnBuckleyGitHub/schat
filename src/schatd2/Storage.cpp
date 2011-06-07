@@ -19,17 +19,24 @@
 #include <QCryptographicHash>
 #include <QUuid>
 
+#include "DataBase.h"
 #include "debugstream.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
+#include "ServerSettings.h"
 #include "ServerUser.h"
 #include "Storage.h"
 
-Storage::Storage()
+Storage *Storage::m_self = 0;
+
+Storage::Storage(QObject *parent)
+  : QObject(parent)
 {
+  m_self = this;
+
   m_normalize.insert(0x0430, 'a'); // а
   m_normalize.insert(0x0435, 'e'); // е
   m_normalize.insert(0x0451, 'e'); // ё
@@ -42,6 +49,16 @@ Storage::Storage()
   m_normalize.insert('l', 'i');
 
   m_serverData = new ServerData();
+  m_settings = new ServerSettings(this);
+  m_db = new DataBase(this);
+}
+
+
+int Storage::start()
+{
+  m_settings->read();
+  m_db->start();
+  return 0;
 }
 
 
@@ -54,11 +71,12 @@ Storage::~Storage()
 /*!
  * Добавление нового пользователя.
  */
-bool Storage::add(ServerUser *user)
+bool Storage::add(ChatUser user)
 {
   if (m_users.contains(user->id()))
     return false;
 
+  m_db->add(user);
   m_users.insert(user->id(), user);
   m_nicks.insert(user->normalNick(), user);
   m_sessions.insert(user->session(), user);
@@ -69,27 +87,21 @@ bool Storage::add(ServerUser *user)
 /*!
  * Удаление пользователя.
  * Пользователь удаляется из таблиц m_users, m_nicks и m_sessions,
- * а также из всех каналов, в которых он находиться.
- *
- * \param id Идентификатор пользователя.
  */
-bool Storage::remove(const QByteArray &id)
+bool Storage::remove(ChatUser user)
 {
-  ServerUser *user = m_users.value(id);
-  if (!user)
-    return false;
-
   if (user->count(SimpleID::ChannelListId) > 0) {
     QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
     for (int i = 0; i < channels.size(); ++i) {
-      removeUserFromChannel(id, channels.at(i));
+      removeUserFromChannel(user->id(), channels.at(i));
     }
   }
 
-  m_users.remove(id);
+  m_users.remove(user->id());
   m_nicks.remove(user->normalNick());
   m_sessions.remove(user->session());
-  delete user;
+
+  m_db->update(user);
 
   return true;
 }
@@ -104,7 +116,7 @@ bool Storage::remove(const QByteArray &id)
  */
 bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId)
 {
-  ServerUser *user = this->user(userId);
+  ChatUser user = this->user(userId);
   if (!user)
     return false;
 
@@ -143,7 +155,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
  *
  * \param usr Указатель на пользователя.
  */
-QList<quint64> Storage::socketsFromUser(ServerUser *usr)
+QList<quint64> Storage::socketsFromUser(ChatUser usr)
 {
   QList<quint64> out;
   if (!usr)
@@ -151,7 +163,7 @@ QList<quint64> Storage::socketsFromUser(ServerUser *usr)
 
   QList<QByteArray> users = usr->users();
   for (int i = 0; i < users.size(); ++i) {
-    ServerUser *u = user(users.at(i));
+    ChatUser u = user(users.at(i));
     if (!u)
       continue;
 
@@ -163,7 +175,7 @@ QList<quint64> Storage::socketsFromUser(ServerUser *usr)
 }
 
 
-ServerUser* Storage::user(const QString &nick, bool normalize) const
+ChatUser Storage::user(const QString &nick, bool normalize) const
 {
   if (!normalize)
     return m_nicks.value(nick);
@@ -175,7 +187,7 @@ ServerUser* Storage::user(const QString &nick, bool normalize) const
 /*!
  * Обработка смены ника пользователя.
  */
-void Storage::rename(ServerUser *user)
+void Storage::rename(ChatUser user)
 {
   if (!m_users.contains(user->id()))
     return;
@@ -212,7 +224,7 @@ QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
 
   QList<QByteArray> users = channel->users();
   for (int i = 0; i < users.size(); ++i) {
-    ServerUser *user = this->user(users.at(i));
+    ChatUser user = this->user(users.at(i));
     if (user)
       out += user->socketId();
   }
