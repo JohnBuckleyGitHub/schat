@@ -19,21 +19,37 @@
 #ifndef SERVERUSER_H_
 #define SERVERUSER_H_
 
-#include <QList>
+#include <QSharedPointer>
 
 #include "User.h"
 
 class AuthRequest;
+class AuthRequestData;
+class QSqlQuery;
 
 class ServerUser : public User
 {
 public:
+  enum SqlColumns {
+    IdColumn,
+    UserIdColumn,
+    NickColumn,
+    NormalNickColumn,
+    GenderColumn
+  };
+
   ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId);
+  ServerUser(const QSqlQuery &query);
+  ~ServerUser();
+  inline bool isOnline() const { return m_online; }
   inline int workerId() const { return m_workerId; }
   inline QByteArray session() const { return m_session; }
+  inline qint64 key() const { return m_key; }
   inline QString normalNick() const { return m_normalNick; }
   inline quint64 socketId() const { return m_socketId; }
+  inline void setKey(qint64 key) { m_key = key; }
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
+  inline void setOnline(bool online) { m_online = online; }
 
   // m_users.
   bool addId(int type, const QByteArray &id);
@@ -45,11 +61,15 @@ public:
   void removeUsers(const QList<QByteArray> &users);
 
 private:
+  bool m_online;             ///< true если пользователь в сети.
   int m_workerId;            ///< Идентификатор объекта Worker.
   QByteArray m_session;      ///< Сессия.
+  qint64 m_key;              ///< Ключ в таблице users.
   QList<QByteArray> m_users; ///< Список идентификаторов ассоциированных пользователей.
   QString m_normalNick;      ///< Нормализованный ник.
   quint64 m_socketId;        ///< Идентификатор сокета.
 };
+
+typedef QSharedPointer<ServerUser> ChatUser;
 
 #endif /* SERVERUSER_H_ */

@@ -35,6 +35,7 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
+#include "ServerSettings.h"
 #include "ServerUser.h"
 #include "Storage.h"
 #include "Worker.h"
@@ -66,6 +67,8 @@ Core::~Core()
 
 int Core::start()
 {
+  m_storage->start();
+
   m_storage->serverData()->setPrivateId(option(PrivateId).toByteArray());
   m_storage->serverData()->setName(option(ServerName).toString());
 
@@ -136,7 +139,7 @@ void Core::workersStarted()
 
 bool Core::broadcast()
 {
-  ServerUser *user = m_storage->user(m_reader->sender());
+  ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
     return false;
 
@@ -196,7 +199,7 @@ bool Core::route(ServerChannel *channel)
  *
  * \param user Получатель сообщения.
  */
-bool Core::route(ServerUser *user)
+bool Core::route(ChatUser user)
 {
   if (!user)
     return false;
@@ -255,7 +258,7 @@ bool Core::send(ServerChannel *channel, const QList<QByteArray> &packets)
 /*!
  * Отправка пакетов пользователю.
  */
-bool Core::send(ServerUser *user, const QByteArray &packet, int option)
+bool Core::send(ChatUser user, const QByteArray &packet, int option)
 {
   if (!user)
     return false;
@@ -267,7 +270,7 @@ bool Core::send(ServerUser *user, const QByteArray &packet, int option)
 /*!
  * Отправка пакетов пользователю.
  */
-bool Core::send(ServerUser *user, const QList<QByteArray> &packets, int option)
+bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
 {
   if (!user)
     return false;
@@ -359,7 +362,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
  */
 void Core::socketReleaseEvent(SocketReleaseEvent *event)
 {
-  ServerUser *user = m_storage->user(event->userId());
+  ChatUser user = m_storage->user(event->userId());
   if (!user)
     return;
 
@@ -367,7 +370,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
   QList<QByteArray> talks = user->ids(SimpleID::TalksListId);
   for (int i = 0; i < talks.size(); ++i) {
-    User *u = m_storage->user(talks.at(i));
+    ChatUser u = m_storage->user(talks.at(i));
     if (u) {
       u->removeId(SimpleID::TalksListId, id);
     }
@@ -377,7 +380,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
   MessageWriter leave(m_sendStream, message);
   send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
 
-  m_storage->remove(event->userId());
+  m_storage->remove(user);
 }
 
 
@@ -418,7 +421,7 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   if (!channel->addUser(userId))
     return false;
 
-  ServerUser *user = m_storage->user(userId);
+  ChatUser user = m_storage->user(userId);
   if (!user)
     return false;
 
@@ -428,7 +431,7 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   send(user, writer.data());
 
   if (channel->userCount() > 1) {
-    UserWriter writer(m_sendStream, user, channel->id());
+    UserWriter writer(m_sendStream, user.data(), channel->id());
     send(channel, writer.data());
     sendChannel(channel, user);
   }
@@ -443,7 +446,7 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
 QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
 {
   QList<quint64> out = sockets;
-  ServerUser *user = m_storage->user(m_reader->sender());
+  ChatUser user = m_storage->user(m_reader->sender());
 
   if (user) {
     quint64 id = user->socketId();
@@ -517,7 +520,7 @@ bool Core::readUserData()
 
   SCHAT_DEBUG_STREAM(this << "readUserData()" << reader.user.nick())
 
-  ServerUser *user = m_storage->user(m_reader->sender());
+  ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
     return false;
 
@@ -548,7 +551,7 @@ int Core::auth()
     return AuthReplyData::AuthTypeNotImplemented;
 
   QByteArray userId = m_storage->makeUserId(data.authType, data.uniqueId);
-  ServerUser *user = m_storage->user(userId);
+  ChatUser user = m_storage->user(userId);
 
   if (user)
     return AuthReplyData::UserIdAlreadyUse;
@@ -557,7 +560,7 @@ int Core::auth()
   if (m_storage->user(normalNick, false))
     return AuthReplyData::NickAlreadyUse;
 
-  user = new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->workerId(), m_packetsEvent->socketId());
+  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->workerId(), m_packetsEvent->socketId()));
   if (!user->isValid())
     return AuthReplyData::InvalidUser;
 
@@ -580,7 +583,7 @@ int Core::auth()
  * \param user    Пользователь, которому будут отравлены данные.
  * \todo ! Не отправлять клиенту информацию о тех пользователях информация о которых имеется у клиента.
  */
-void Core::sendChannel(ServerChannel *channel, ServerUser *user)
+void Core::sendChannel(ServerChannel *channel, ChatUser user)
 {
   QList<QByteArray> users = channel->users();
   users.removeAll(user->id());
@@ -594,10 +597,10 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
   packets.append(begin.data());
 
   for (int i = 0; i < users.size(); ++i) {
-    ServerUser *u = m_storage->user(users.at(i));
+    ChatUser u = m_storage->user(users.at(i));
     if (u) {
       u->addUser(user->id());
-      packets.append(UserWriter(m_sendStream, u, channelId).data());
+      packets.append(UserWriter(m_sendStream, u.data(), channelId).data());
     }
   }
 
@@ -613,11 +616,11 @@ void Core::sendChannel(ServerChannel *channel, ServerUser *user)
  * При необходимости добавляет пользователя \p user2 в список разговоров пользователя \p user1.
  * В случае успешного добавления пользователю \p user1 будет отослан пакет с данными \p user2.
  */
-void Core::addTalk(ServerUser *user1, ServerUser *user2)
+void Core::addTalk(ChatUser user1, ChatUser user2)
 {
   if (!user1->containsId(SimpleID::TalksListId, user2->id())) {
     if (user1->addId(SimpleID::TalksListId, user2->id())) {
-      send(user1, UserWriter(m_sendStream, user2, user1->id()).data());
+      send(user1, UserWriter(m_sendStream, user2.data(), user1->id()).data());
     }
   }
 }
@@ -631,7 +634,7 @@ void Core::bindTalks()
 {
   SCHAT_DEBUG_STREAM(this << "addUserRoleId()")
 
-  ServerUser *user = m_storage->user(m_reader->sender());
+  ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
     return;
 
@@ -639,10 +642,8 @@ void Core::bindTalks()
   if (ids.isEmpty())
     return;
 
-  ServerUser *destUser = 0;
-
   for (int i = 0; i < ids.size(); ++i) {
-    destUser = m_storage->user(ids.at(i));
+    ChatUser destUser = m_storage->user(ids.at(i));
     if (!destUser)
       continue;
 
@@ -655,7 +656,7 @@ void Core::bindTalks()
  * Взаимное добавление пользователей в список разговоров.
  * \sa addTalk().
  */
-void Core::bindTalks(ServerUser *senderUser, ServerUser *destUser)
+void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
 {
   if (!senderUser || !destUser)
     return;

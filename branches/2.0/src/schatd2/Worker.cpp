@@ -144,9 +144,13 @@ void Worker::newConnection(int socketDescriptor)
 }
 
 
+/*!
+ * Обработка новых виртуальных пакетов.
+ */
 void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
 {
-  QCoreApplication::postEvent(m_core, new NewPacketsEvent(m_id, id, packets, m_sockets.value(id)->userId()));
+  NewPacketsEvent *event = new NewPacketsEvent(m_id, id, packets, m_sockets.value(id)->userId());
+  QCoreApplication::postEvent(m_core, event);
 }
 
 

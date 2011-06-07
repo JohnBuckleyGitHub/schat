@@ -19,12 +19,13 @@ SCHAT_RESOURCES   = 0
 SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
 
-QT = core network
+QT = core network sql
 TEMPLATE = app
 
 HEADERS = \
     Channel.h \
     Core.h \
+    DataBase.h \
     debugstream.h \
     events.h \
     net/PacketReader.h \
@@ -41,7 +42,9 @@ HEADERS = \
     net/TransportWriter.h \
     Server.h \
     ServerChannel.h \
+    ServerSettings.h \
     ServerUser.h \
+    Settings.h \
     Storage.h \
     User.h \
     Worker.h \
@@ -50,6 +53,7 @@ HEADERS = \
 SOURCES = \
     Channel.cpp \
     Core.cpp \
+    DataBase.cpp \
     events.cpp \
     main.cpp \
     net/PacketReader.cpp \
@@ -65,7 +69,9 @@ SOURCES = \
     net/TransportWriter.cpp \
     Server.cpp \
     ServerChannel.cpp \
+    ServerSettings.cpp \
     ServerUser.cpp \
+    Settings.cpp \
     Storage.cpp \
     User.cpp \
     Worker.cpp \

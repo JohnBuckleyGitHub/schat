@@ -22,25 +22,32 @@
 #include <QByteArray>
 #include <QHash>
 
+#include "ServerUser.h"
+
+class DataBase;
 class ServerChannel;
 class ServerData;
-class ServerUser;
+class ServerSettings;
 
-class Storage
+class Storage : public QObject
 {
+  Q_OBJECT
+
 public:
-  Storage();
+  Storage(QObject *parent = 0);
   ~Storage();
+  inline static Storage *i() { return m_self; }
+  int start();
 
   // user management.
-  bool add(ServerUser *user);
-  bool remove(const QByteArray &id);
+  bool add(ChatUser user);
+  bool remove(ChatUser user);
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
-  inline ServerUser* user(const QByteArray &id) const { return m_users.value(id); }
+  ChatUser user(const QString &nick, bool normalize) const;
+  inline ChatUser user(const QByteArray &id) const { return m_users.value(id); }
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
-  QList<quint64> socketsFromUser(ServerUser *usr);
-  ServerUser* user(const QString &nick, bool normalize) const;
-  void rename(ServerUser *user);
+  QList<quint64> socketsFromUser(ChatUser usr);
+  void rename(ChatUser user);
 
   // channel management.
   bool removeChannel(const QByteArray &id);
@@ -50,19 +57,23 @@ public:
   ServerChannel* channel(const QString &name, bool normalize) const;
 
   inline ServerData *serverData() { return m_serverData; }
+  inline ServerSettings *settings() { return m_settings; }
   QByteArray session() const;
   QString normalize(const QString &text) const;
 
 private:
   QByteArray makeChannelId(const QString &name);
 
+  DataBase *m_db;                                ///< База данных сервера.
+  QHash<QByteArray, ChatUser> m_sessions;        ///< Таблица сессий.
+  QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
   QHash<QByteArray, ServerChannel*> m_channels;  ///< Таблица каналов.
-  QHash<QByteArray, ServerUser*> m_sessions;     ///< Таблица сессий.
-  QHash<QByteArray, ServerUser*> m_users;        ///< Таблица пользователей.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
+  QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QHash<QString, ServerChannel*> m_channelNames; ///< Имена каналов.
-  QHash<QString, ServerUser*> m_nicks;           ///< Таблица ников.
   ServerData *m_serverData;                      ///< Информация о сервере.
+  ServerSettings *m_settings;                    ///< Настройки сервера.
+  static Storage *m_self;                        ///< Указатель на себя.
 };
 
 #endif /* STORAGE_H_ */

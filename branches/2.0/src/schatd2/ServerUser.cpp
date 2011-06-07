@@ -16,13 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QSqlQuery>
+#include <QVariant>
+
+#include "debugstream.h"
 #include "net/packets/auth.h"
 #include "ServerUser.h"
 
 ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId)
   : User()
+  , m_online(true)
   , m_workerId(workerId)
   , m_session(session)
+  , m_key(-1)
   , m_normalNick(normalNick)
   , m_socketId(socketId)
 {
@@ -30,6 +36,29 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   setNick(authRequestData->nick);
   setRawGender(authRequestData->gender);
   addUser(m_id);
+}
+
+
+ServerUser::ServerUser(const QSqlQuery &query)
+  : User()
+  , m_online(false)
+  , m_workerId(-1)
+  , m_key(query.value(IdColumn).toLongLong())
+  , m_normalNick(query.value(NormalNickColumn).toString())
+  , m_socketId(0)
+{
+  SCHAT_DEBUG_STREAM("new" << this);
+
+  setId(query.value(UserIdColumn).toByteArray());
+  setNick(query.value(NickColumn).toString());
+  setRawGender(query.value(GenderColumn).toInt());
+  addUser(m_id);
+}
+
+
+ServerUser::~ServerUser()
+{
+  SCHAT_DEBUG_STREAM("~" << this)
 }
 
 
