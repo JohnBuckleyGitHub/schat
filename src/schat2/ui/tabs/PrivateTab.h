@@ -19,6 +19,7 @@
 #ifndef PRIVATETAB_H_
 #define PRIVATETAB_H_
 
+#include "schat2.h"
 #include "ui/tabs/ChatViewTab.h"
 
 class User;
@@ -28,11 +29,12 @@ class PrivateTab : public ChatViewTab
   Q_OBJECT
 
 public:
-  PrivateTab(User *user, TabWidget *parent);
-  bool update(User *user);
+  PrivateTab(ChatUser user, TabWidget *parent);
+  bool update(ChatUser user);
+  void setOnline(bool online = true);
 
 private:
-  User *m_user;
+  ChatUser m_user;
 };
 
 #endif /* PRIVATETAB_H_ */

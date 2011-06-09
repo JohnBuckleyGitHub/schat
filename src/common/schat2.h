@@ -16,17 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef SCHAT2_H_
+#define SCHAT2_H_
 
-#define SCHAT_VERSION      "1.9.0"
-#define SCHAT_VERSION_RC   1,9,0,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include <QSharedPointer>
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+#include "User.h"
 
-#endif /*VERSION_H_*/
+typedef QSharedPointer<User> ChatUser;
+
+#endif /* SCHAT2_H_ */

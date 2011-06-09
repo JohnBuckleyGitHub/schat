@@ -36,12 +36,13 @@
 SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)
   : SimpleSocket(id, parent)
   , m_sendLock(false)
+  , m_user(user)
   , m_clientState(ClientOffline)
   , m_reconnects(0)
   , m_syncChannelCache(0)
-  , m_user(user)
 {
   setNick(user->nick());
+  user->setUserAgent(SimpleID::userAgent());
 
   m_reconnectTimer = new QBasicTimer;
   m_uniqueId = SimpleID::uniqueId();
@@ -58,7 +59,6 @@ SimpleClient::~SimpleClient()
     m_reconnectTimer->stop();
 
   delete m_reconnectTimer;
-  delete m_user;
   delete m_serverData;
 }
 
@@ -277,7 +277,7 @@ void SimpleClient::requestAuth()
 {
   SCHAT_DEBUG_STREAM(this << "requestAuth()")
 
-  AuthRequestData data(AuthRequestData::Anonymous, m_url.host(), m_user);
+  AuthRequestData data(AuthRequestData::Anonymous, m_url.host(), m_user.data());
   data.uniqueId = m_uniqueId;
   send(AuthRequestWriter(m_sendStream, data).data());
 }
@@ -337,15 +337,7 @@ void SimpleClient::clearClient()
   m_user->remove(SimpleID::ChannelListId);
   m_user->remove(SimpleID::TalksListId);
 
-  QMutableHashIterator<QByteArray, User*> i(m_users);
-  while (i.hasNext()) {
-    i.next();
-    if (i.value() != m_user) {
-      delete i.value();
-    }
-    i.remove();
-  }
-
+  m_users.clear();
   m_users.insert(userId(), m_user);
 
   qDeleteAll(m_channels);
@@ -518,6 +510,7 @@ bool SimpleClient::readAuthReply()
   if (data.status == AuthReplyData::AccessGranted) {
     setAuthorized(data.userId);
     m_user->setId(data.userId);
+    m_user->setHost(data.host);
     setServerData(data.serverData);
     return true;
   }
@@ -617,9 +610,9 @@ bool SimpleClient::readUserData()
 
   /// Если пользователь не существует, то он будет создан, иначе произойдёт обновление данных,
   /// В обоих случаях будет выслан сигнал userDataChanged().
-  User *user = m_users.value(id);
+  ChatUser user = m_users.value(id);
   if (!user) {
-    user = new User(&reader.user);
+    user = ChatUser(new User(&reader.user));
     m_users.insert(id, user);
 
     emit userDataChanged(id);
@@ -655,7 +648,7 @@ bool SimpleClient::readUserData()
  */
 bool SimpleClient::removeUser(const QByteArray &userId)
 {
-  User *user = m_users.value(userId);
+  ChatUser user = m_users.value(userId);
   if (!user)
     return false;
 
@@ -664,7 +657,6 @@ bool SimpleClient::removeUser(const QByteArray &userId)
     removeUserFromChannel(channels.at(i), userId, false);
   }
 
-  delete user;
   m_users.remove(userId);
   emit userLeave(userId);
   return true;
@@ -676,10 +668,10 @@ bool SimpleClient::removeUser(const QByteArray &userId)
  */
 bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
 {
-  User *user = m_users.value(userId);
+  ChatUser user = m_users.value(userId);
   Channel *channel = m_channels.value(channelId);
 
-  if (user && channel) {
+  if (!user.isNull() && channel) {
     channel->removeUser(user->id());
     user->removeId(SimpleID::ChannelListId, channel->id());
     emit part(channel->id(), user->id());
@@ -697,8 +689,10 @@ bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByt
 /*!
  * Обновление информации о пользователе.
  */
-void SimpleClient::updateUserData(User *existUser, User *user)
+void SimpleClient::updateUserData(ChatUser existUser, User *user)
 {
+  SCHAT_DEBUG_STREAM(this << "updateUserData()");
+
   if (existUser == m_user && m_user->nick() != user->nick()) {
     setNick(user->nick());
   }

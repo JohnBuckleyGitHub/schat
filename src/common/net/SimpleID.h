@@ -53,6 +53,10 @@ public:
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase64(const QByteArray &id);
   static QByteArray uniqueId();
+  static QString userAgent();
+
+private:
+  static QString m_userAgent;
 };
 
 #endif /* SIMPLEID_H_ */

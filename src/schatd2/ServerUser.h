@@ -35,7 +35,9 @@ public:
     UserIdColumn,
     NickColumn,
     NormalNickColumn,
-    GenderColumn
+    GenderColumn,
+    HostColumn,
+    UserAgentColumn
   };
 
   ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId);

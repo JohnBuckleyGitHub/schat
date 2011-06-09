@@ -52,6 +52,8 @@ ServerUser::ServerUser(const QSqlQuery &query)
   setId(query.value(UserIdColumn).toByteArray());
   setNick(query.value(NickColumn).toString());
   setRawGender(query.value(GenderColumn).toInt());
+  setHost(query.value(HostColumn).toString());
+  setUserAgent(query.value(UserAgentColumn).toString());
   addUser(m_id);
 }
 

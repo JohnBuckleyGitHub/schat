@@ -150,6 +150,11 @@ void Worker::newConnection(int socketDescriptor)
 void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
 {
   NewPacketsEvent *event = new NewPacketsEvent(m_id, id, packets, m_sockets.value(id)->userId());
+
+  SimpleSocket *socket = m_sockets.value(id);
+  if (socket && !socket->isAuthorized())
+    event->address = socket->peerAddress();
+
   QCoreApplication::postEvent(m_core, event);
 }
 

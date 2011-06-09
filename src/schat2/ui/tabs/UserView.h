@@ -22,7 +22,7 @@
 #include <QListView>
 #include <QStandardItemModel>
 
-class User;
+#include "schat2.h"
 
 /*!
  * Итем в списке пользователей.
@@ -30,16 +30,15 @@ class User;
 class UserItem : public QStandardItem
 {
 public:
-  UserItem(User *user, int option);
-  ~UserItem();
-  inline User *user() { return m_user; }
-  bool update(User *user);
+  UserItem(ChatUser user, int option);
+  inline ChatUser user() { return m_user; }
+  bool update();
 
 private:
   void setSortData();
 
-  bool m_self;  ///< true это данные текущего пользователя.
-  User *m_user; ///< Пользователь.
+  bool m_self;     ///< true это данные текущего пользователя.
+  ChatUser m_user; ///< Пользователь.
 };
 
 
@@ -58,9 +57,9 @@ public:
   };
 
   UserView(QWidget *parent = 0);
-  bool add(User *user, int option = 0);
+  bool add(ChatUser user, int option = 0);
   bool remove(const QByteArray &id);
-  bool update(User *user);
+  bool update(ChatUser user);
   inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
 

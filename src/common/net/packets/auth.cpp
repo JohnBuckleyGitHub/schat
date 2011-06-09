@@ -27,9 +27,19 @@
 #include "net/SimpleID.h"
 #include "User.h"
 
-AuthReplyData::AuthReplyData(ServerData *data, const QByteArray &userId, const QByteArray &session)
-  : session(session)
-  , userId(userId)
+AuthReplyData::AuthReplyData(ServerData *data, int error)
+  : error(error)
+  , protoVersion(Protocol::V4_0)
+  , status(AccessDenied)
+{
+  serverData.setId(data->id());
+}
+
+
+AuthReplyData::AuthReplyData(ServerData *data, User *user)
+  : session(user->id())
+  , userId(user->id())
+  , host(user->host())
   , error(NoError)
   , protoVersion(Protocol::V4_0)
   , status(AccessGranted)
@@ -38,15 +48,6 @@ AuthReplyData::AuthReplyData(ServerData *data, const QByteArray &userId, const Q
   serverData.setName(data->name());
   serverData.setChannelId(data->channelId());
   serverData.setFeatures(data->features());
-}
-
-
-AuthReplyData::AuthReplyData(ServerData *data, int error)
-  : error(error)
-  , protoVersion(Protocol::V4_0)
-  , status(AccessDenied)
-{
-  serverData.setId(data->id());
 }
 
 
@@ -63,6 +64,7 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
     put(data.serverData.features());
     putId(data.serverData.channelId());
     put(data.serverData.name());
+    put(data.host);
   }
   else {
     put(data.error);
@@ -85,6 +87,7 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
     data.serverData.setFeatures(reader->get<quint32>());
     data.serverData.setChannelId(reader->id());
     data.serverData.setName(reader->text());
+    data.host = reader->text();
   }
   else {
     data.error = reader->get<quint8>();
@@ -95,46 +98,13 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
   : host(host)
   , nick(user->nick())
+  , userAgent(SimpleID::userAgent())
   , features(SupportRichText)
   , authType(authType)
   , authVersion(V1)
   , gender(user->rawGender())
   , maxProtoVersion(Protocol::V4_0)
 {
-  userAgent = genUserAgent();
-}
-
-
-/*!
- * Получение строки UserAgent.
- */
-QString AuthRequestData::genUserAgent()
-{
-  #if defined(SCHAT_DAEMON)
-  QString out = "ISCd/";
-  #else
-  QString out = "ISC/";
-  #endif
-
-  out += QCoreApplication::applicationVersion();
-  #if defined(Q_OS_FREEBSD)
-  out += "/FreeBSD";
-  #elif defined(Q_OS_LINUX)
-  out += "/Linux";
-  #elif defined(Q_OS_MAC)
-  out += "/MacOSX";
-  #elif defined(Q_OS_NETBSD)
-  out += "/NetBSD";
-  #elif defined(Q_OS_OPENBSD)
-  out += "/OpenBSD";
-  #elif defined(Q_OS_WIN32)
-  out += "/Windows";
-  #endif
-
-  if (QSysInfo::WordSize == 64)
-    out += "/64bit";
-
-  return out;
 }
 
 

@@ -40,7 +40,7 @@ DataBase::DataBase(QObject *parent)
 ChatUser DataBase::user(const QByteArray &id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender FROM users WHERE userId = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender, ip, userAgent FROM users WHERE userId = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
@@ -61,7 +61,7 @@ ChatUser DataBase::user(const QByteArray &id)
 ChatUser DataBase::user(qint64 key)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender FROM users WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender, ip, userAgent FROM users WHERE id = ? LIMIT 1;"));
   query.addBindValue(key);
   query.exec();
 
@@ -88,7 +88,9 @@ int DataBase::start()
     "  userId     BLOB    NOT NULL UNIQUE,"
     "  nick       TEXT,"
     "  normalNick TEXT,"
-    "  gender     INTEGER DEFAULT ( 0 )"
+    "  gender     INTEGER DEFAULT ( 0 ),"
+    "  ip         TEXT,"
+    "  userAgent  TEXT"
     ");"));
   }
 
@@ -105,13 +107,15 @@ int DataBase::start()
 qint64 DataBase::add(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO users (userId, nick, normalNick, gender) "
-                     "VALUES (?, ?, ?, ?);"));
+  query.prepare(QLatin1String("INSERT INTO users (userId, nick, normalNick, gender, ip, userAgent) "
+                     "VALUES (?, ?, ?, ?, ?, ?);"));
 
   query.addBindValue(user->id());
   query.addBindValue(user->nick());
   query.addBindValue(user->normalNick());
   query.addBindValue(user->rawGender());
+  query.addBindValue(user->host());
+  query.addBindValue(user->userAgent());
   query.exec();
 
   if (query.numRowsAffected() == -1)
@@ -134,10 +138,12 @@ qint64 DataBase::add(ChatUser user)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET nick = ?, normalNick = ?, gender = ? WHERE id = ?;"));
+  query.prepare(QLatin1String("UPDATE users SET nick = ?, normalNick = ?, gender = ?, ip = ?, userAgent = ? WHERE id = ?;"));
   query.addBindValue(user->nick());
   query.addBindValue(user->normalNick());
   query.addBindValue(user->rawGender());
+  query.addBindValue(user->host());
+  query.addBindValue(user->userAgent());
   query.addBindValue(user->key());
   query.exec();
 }

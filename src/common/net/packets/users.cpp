@@ -21,6 +21,13 @@
 #include "User.h"
 
 
+/*!
+ * Специальный конструктор, формирующий широковещательный пакет.
+ *
+ * \param stream  ///< Поток записи.
+ * \param user    ///< Пользователь.
+ */
+
 UserWriter::UserWriter(QDataStream *stream, User *user)
   : PacketWriter(stream, Protocol::UserDataPacket, user->id(), "bc", true)
 {
@@ -28,6 +35,14 @@ UserWriter::UserWriter(QDataStream *stream, User *user)
 }
 
 
+/*!
+ * Основной конструктор.
+ *
+ * \param stream  ///< Поток записи.
+ * \param user    ///< Пользователь.
+ * \param destId  ///< Идентификатор назначения.
+ * \param options ///< Опции.
+ */
 UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options)
   : PacketWriter(stream, Protocol::UserDataPacket, user->id(), destId)
 {
@@ -41,6 +56,11 @@ void UserWriter::write(User *user, int options)
   put<quint8>(0);
   put<quint8>(user->rawGender());
   put(user->nick());
+
+  if (!(m_headerOption & Protocol::Broadcast)) {
+    put(user->userAgent());
+    put(user->host());
+  }
 }
 
 
@@ -52,4 +72,9 @@ UserReader::UserReader(PacketReader *reader)
   user.setId(reader->sender());
   user.setRawGender(reader->get<quint8>());
   user.setNick(reader->text());
+
+  if (!(reader->headerOption() & Protocol::Broadcast)) {
+    user.setUserAgent(reader->text());
+    user.setHost(reader->text());
+  }
 }

@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-#include "User.h"
+#include "schat2.h"
 
 class ChatSettings;
 class QComboBox;
@@ -50,12 +50,12 @@ private:
   void setState();
 
   ChatSettings *m_settings;
+  ChatUser m_user;
   QComboBox *m_combo;
   QList<QAction *> m_colors;
   QMenu *m_menu;
   QToolBar *m_toolBar;
   QToolButton *m_config;
-  User m_user;
 };
 
 #endif /* GENDERFIELD_H_ */

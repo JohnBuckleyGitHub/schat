@@ -24,9 +24,9 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-PrivateTab::PrivateTab(User *user, TabWidget *parent)
+PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
   : ChatViewTab(user->id(), PrivateType, parent)
-  , m_user(new User(user))
+  , m_user(user)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
@@ -38,13 +38,11 @@ PrivateTab::PrivateTab(User *user, TabWidget *parent)
 }
 
 
-bool PrivateTab::update(User *user)
+bool PrivateTab::update(ChatUser user)
 {
   if (!user)
     return false;
 
-  m_user->setNick(user->nick());
-  m_user->setRawGender(user->rawGender());
   m_action->setText(m_user->nick());
   m_icon = UserUtils::icon(m_user);
 
@@ -55,5 +53,12 @@ bool PrivateTab::update(User *user)
   m_tabs->setTabText(index, m_user->nick());
   setOnline(true);
   return true;
+}
+
+
+void PrivateTab::setOnline(bool online)
+{
+  m_tabs->setTabToolTip(m_tabs->indexOf(this), UserUtils::toolTip(m_user));
+  ChatViewTab::setOnline(online);
 }
 

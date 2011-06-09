@@ -159,7 +159,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   if (gender.isEmpty() && color.isEmpty())
     return CommandArgsError;
 
-  User user(m_client->user());
+  User user(m_client->user().data());
 
   if (!gender.isEmpty()) {
     if (gender == "male")

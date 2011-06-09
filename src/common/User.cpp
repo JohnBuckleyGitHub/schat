@@ -18,6 +18,7 @@
 
 #include <QDir>
 
+#include "debugstream.h"
 #include "net/SimpleID.h"
 #include "User.h"
 
@@ -40,8 +41,16 @@ User::User(const User *other)
   : m_valid(other->isValid())
   , m_gender(other->rawGender())
   , m_id(other->id())
+  , m_host(other->host())
   , m_nick(other->nick())
+  , m_userAgent(other->userAgent())
 {
+}
+
+
+User::~User()
+{
+  SCHAT_DEBUG_STREAM("~" << this << m_nick)
 }
 
 

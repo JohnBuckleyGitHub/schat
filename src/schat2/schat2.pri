@@ -47,6 +47,7 @@ HEADERS = \
     net/TransportWriter.h \
     NetworkManager.h \
     QProgressIndicator/QProgressIndicator.h \
+    schat2.h \
     Settings.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
@@ -131,6 +132,8 @@ win32 {
     HEADERS += qtwin/qtwin.h
     SOURCES += qtwin/qtwin.cpp
 }
+
+DEFINES += SCHAT_WEBKIT
 
 include(../common/common.pri)
 

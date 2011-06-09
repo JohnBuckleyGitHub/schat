@@ -539,13 +539,14 @@ bool Core::readUserData()
 
 
 /*!
- * Процедура авторизации пользователя, чтение пакета Packet::AuthRequest.
+ * Процедура авторизации пользователя, чтение пакета AuthRequestPacket.
+ * \todo ! Эта функция страшно выкллядит.
  */
 int Core::auth()
 {
   AuthRequestData data = AuthRequestReader(m_reader).data;
 
-  SCHAT_DEBUG_STREAM(this << "auth" << data.authType << data.host << data.nick << data.userAgent)
+  SCHAT_DEBUG_STREAM(this << "auth" << data.authType << data.host << data.nick << data.userAgent << m_packetsEvent->address)
 
   if (data.authType != AuthRequestData::Anonymous)
     return AuthReplyData::AuthTypeNotImplemented;
@@ -564,9 +565,12 @@ int Core::auth()
   if (!user->isValid())
     return AuthReplyData::InvalidUser;
 
+  user->setUserAgent(data.userAgent);
+  user->setHost(m_packetsEvent->address.toString());
+
   m_storage->add(user);
 
-  AuthReplyData reply(m_storage->serverData(), user->id(), user->session());
+  AuthReplyData reply(m_storage->serverData(), user.data());
   send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
 
   return 0;

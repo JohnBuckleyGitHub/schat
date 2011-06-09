@@ -21,10 +21,10 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-UserItem::UserItem(User *user, int option)
+UserItem::UserItem(ChatUser user, int option)
   : QStandardItem(UserUtils::icon(user), user->nick())
   , m_self(false)
-  , m_user(new User(user))
+  , m_user(user)
 {
   if (option & UserView::SelfNick)
     m_self = true;
@@ -33,17 +33,8 @@ UserItem::UserItem(User *user, int option)
 }
 
 
-UserItem::~UserItem()
+bool UserItem::update()
 {
-  delete m_user;
-}
-
-
-bool UserItem::update(User *user)
-{
-  m_user->setNick(user->nick());
-  m_user->setRawGender(user->rawGender());
-
   setText(m_user->nick());
   setSortData();
   setIcon(UserUtils::icon(m_user));
@@ -53,6 +44,8 @@ bool UserItem::update(User *user)
 
 void UserItem::setSortData()
 {
+  setToolTip(UserUtils::toolTip(m_user));
+
   if (m_self)
     setData("!" + m_user->nick().toLower());
   else
@@ -88,7 +81,7 @@ UserView::UserView(QWidget *parent)
  * \param user   Указатель на пользователя.
  * \param option \sa AddOptions.
  */
-bool UserView::add(User *user, int option)
+bool UserView::add(ChatUser user, int option)
 {
   if (!user) {
     sort();
@@ -99,6 +92,7 @@ bool UserView::add(User *user, int option)
     return false;
 
   UserItem *item = new UserItem(user, option);
+
   m_model.appendRow(item);
   m_users.insert(user->id(), item);
 
@@ -125,13 +119,13 @@ bool UserView::remove(const QByteArray &id)
 }
 
 
-bool UserView::update(User *user)
+bool UserView::update(ChatUser user)
 {
   UserItem *item = m_users.value(user->id());
   if (!item)
     return false;
 
-  item->update(user);
+  item->update();
   sort();
   return true;
 }

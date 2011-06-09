@@ -30,6 +30,7 @@
 #include "ChatMessage.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
+#include "schat2.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
@@ -40,7 +41,6 @@
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
-#include "User.h"
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
@@ -274,7 +274,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId, int 
   if (option & UserView::NoSort && userId.isEmpty()) {
     ChannelTab *tab = m_channels.value(channelId);
     if (tab) {
-      tab->userView()->add(0);
+      tab->userView()->add(ChatUser());
       displayChannelUserCount(channelId);
     }
 
@@ -292,9 +292,9 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId, int 
   }
 
   ChannelTab *tab = m_channels.value(channelId);
-  User *user = m_client->user(userId);
+  ChatUser user = m_client->user(userId);
 
-  if (tab && user) {
+  if (tab && !user.isNull()) {
     privateTab(user->id(), false);
 
     if (!tab->userView()->add(user, option))
@@ -329,7 +329,7 @@ void TabWidget::message(int status, const MessageData &data)
   ChatMessage message(status, data);
 
   if (type == SimpleID::ChannelId) {
-    User *user = m_client->user(data.senderId);
+    ChatUser user = m_client->user(data.senderId);
     if (!user)
       return;
 
@@ -340,7 +340,7 @@ void TabWidget::message(int status, const MessageData &data)
   }
   else if (type == SimpleID::UserId) {
     QByteArray id;
-    User *user = 0;
+    ChatUser user;
 
     if (status & ChatMessage::IncomingMessage) {
       id = data.senderId;
@@ -367,8 +367,8 @@ void TabWidget::message(int status, const MessageData &data)
 void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
 {
   ChannelTab *tab = m_channels.value(channelId);
-  User *user = m_client->user(userId);
-  if (tab && user) {
+  ChatUser user = m_client->user(userId);
+  if (tab && !user.isNull()) {
     tab->chatView()->appendRawMessage(tr("<b>%1</b> left").arg(user->nick()));
     tab->userView()->remove(userId);
     displayChannelUserCount(channelId);
@@ -383,7 +383,7 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
  */
 void TabWidget::updateUserData(const QByteArray &userId)
 {
-  User *user = m_client->user(userId);
+  ChatUser user = m_client->user(userId);
   if (!user)
     return;
 
@@ -467,7 +467,7 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   if (create) {
-    User *user = m_client->user(id);
+    ChatUser user = m_client->user(id);
     if (!user)
       return 0;
 
