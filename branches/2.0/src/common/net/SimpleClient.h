@@ -22,6 +22,7 @@
 #include <QUrl>
 
 #include "net/SimpleSocket.h"
+#include "schat2.h"
 
 class Channel;
 class ClientOfflineCache;
@@ -55,11 +56,11 @@ public:
   bool send(const QList<QByteArray> &packets);
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
   inline Channel* channel(const QByteArray &id) const { return m_channels.value(id); }
+  inline ChatUser user() const { return m_user; }
+  inline ChatUser user(const QByteArray &id) const { return m_users.value(id); }
   inline ClientState clientState() const { return m_clientState; }
   inline QUrl url() const { return m_url; }
   inline ServerData *serverData() { return m_serverData; }
-  inline User *user() const { return m_user; }
-  inline User* user(const QByteArray &id) const { return m_users.value(id); }
   QByteArray serverId() const;
   QString nick() const;
   void setNick(const QString &nick);
@@ -105,9 +106,10 @@ private:
   bool readUserData();
   bool removeUser(const QByteArray &userId);
   bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
-  void updateUserData(User *existUser, User *user);
+  void updateUserData(ChatUser existUser, User *user);
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
+  ChatUser m_user;                           ///< Пользователь.
   ClientState m_clientState;                 ///< Состояние клиента.
   int m_reconnects;                          ///< Число попыток восстановить соединение.
   MessageData *m_messageData;                ///< Текущий прочитанный объект MessageData.
@@ -115,13 +117,12 @@ private:
   QBasicTimer *m_reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray m_uniqueId;                     ///< Уникальный идентификатор пользователя.
   QHash<QByteArray, Channel*> m_channels;    ///< Таблица каналов.
-  QHash<QByteArray, User*> m_users;          ///< Таблица пользователей.
+  QHash<QByteArray, ChatUser> m_users;       ///< Таблица пользователей.
   QList<QByteArray> m_sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString m_nick;                            ///< Оригинальный ник пользователя.
   QUrl m_url;                                ///< Адрес, к которому будет подключен клиент.
   ServerData *m_serverData;                  ///< Данные о сервере.
   SyncChannelCache *m_syncChannelCache;      ///< Данные синхронизации канала.
-  User *m_user;                              ///< Пользователь.
 };
 
 #endif /* SIMPLECLIENT_H_ */

@@ -40,11 +40,12 @@ public:
    */
   inline PacketWriter(QDataStream *stream, quint16 type)
     : m_stream(stream)
+    , m_headerOption(Protocol::BasicHeader)
   {
     m_device = stream->device();
     m_device->seek(0);
 
-    *stream << type << quint8(0) << quint8(0) << quint8(Protocol::BasicHeader);
+    *stream << type << quint8(0) << quint8(0) << m_headerOption;
   }
 
   /*!
@@ -58,30 +59,30 @@ public:
    */
   inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), bool echo = false)
     : m_stream(stream)
+    , m_headerOption(Protocol::BasicHeader)
   {
     m_device = stream->device();
     m_device->seek(0);
 
-    quint8 headerOption = Protocol::BasicHeader;
     if (!sender.isEmpty())
-      headerOption |= Protocol::SenderField;
+      m_headerOption |= Protocol::SenderField;
 
     if (!dest.isEmpty()) {
       if (dest == "bc")
-        headerOption |= Protocol::Broadcast;
+        m_headerOption |= Protocol::Broadcast;
       else
-        headerOption |= Protocol::DestinationField;
+        m_headerOption |= Protocol::DestinationField;
     }
 
     if (echo)
-      headerOption |= Protocol::EnableEcho;
+      m_headerOption |= Protocol::EnableEcho;
 
-    *stream << type << quint8(0) << quint8(0) << headerOption;
+    *stream << type << quint8(0) << quint8(0) << m_headerOption;
 
-    if (headerOption & Protocol::SenderField)
+    if (m_headerOption & Protocol::SenderField)
       putId(sender);
 
-    if (headerOption & Protocol::DestinationField)
+    if (m_headerOption & Protocol::DestinationField)
       putId(dest);
   }
 
@@ -130,6 +131,7 @@ public:
 protected:
   QDataStream *m_stream; ///< output stream.
   QIODevice *m_device;   ///< output device.
+  quint8 m_headerOption; ///< Опция заголовка.
 };
 
 #endif /* PACKETWRITER_H_ */

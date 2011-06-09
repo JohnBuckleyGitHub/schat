@@ -59,7 +59,7 @@ public:
   User();
   User(const QString &nick);
   User(const User *other);
-  virtual ~User() {}
+  virtual ~User();
   inline bool isValid() const { return m_valid; }
 
   // m_id.
@@ -89,6 +89,12 @@ public:
   int count(int type);
   QList<QByteArray> ids(int type);
 
+  // network.
+  inline QString host() const { return m_host; }
+  inline QString userAgent() const { return m_userAgent; }
+  inline void setHost(const QString &adderss) { m_host = adderss; }
+  inline void setUserAgent(const QString &agent) { m_userAgent = agent; }
+
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
@@ -96,7 +102,9 @@ protected:
   int m_gender;                         ///< Пол и цвет иконки.
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
+  QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
+  QString m_userAgent;                  ///< User Agent пользователя.
 };
 
 #endif /* USER_H_ */

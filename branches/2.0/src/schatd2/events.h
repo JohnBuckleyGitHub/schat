@@ -20,8 +20,8 @@
 #define EVENTS_H_
 
 #include <QEvent>
+#include <QHostAddress>
 #include <QList>
-#include <QString>
 
 /*!
  * Базовый класс для событий сервера.
@@ -40,9 +40,9 @@ public:
   inline quint64 socketId() const { return m_socketId; }
 
 private:
-  const int m_workerId;        /// Идентификатор объекта Worker, к которому принадлежит сокет.
-  const QByteArray m_userId;   /// Идентификатор пользователя.
-  const quint64 m_socketId;    /// Идентификатор сокета.
+  const int m_workerId;        ///< Идентификатор объекта Worker, к которому принадлежит сокет.
+  const QByteArray m_userId;   ///< Идентификатор пользователя.
+  const quint64 m_socketId;    ///< Идентификатор сокета.
 };
 
 
@@ -62,10 +62,11 @@ public:
   NewPacketsEvent(int workerId, quint64 socketId, const QByteArray &packet, const QByteArray &clientId = QByteArray());
   NewPacketsEvent(int workerId, quint64 socketId, const QList<QByteArray> &packets, const QByteArray &clientId = QByteArray());
 
-  const QList<QByteArray> packets;
-  int option;
-  qint64 timestamp;
-  QList<quint64> socketIds;
+  const QList<QByteArray> packets; ///< Тела виртуальных пакетов.
+  int option;                      ///< Опция /sa Option.
+  QHostAddress address;            ///< Адрес сокета.
+  qint64 timestamp;                ///< Отметка времени.
+  QList<quint64> socketIds;        ///< Список сокетов.
 };
 
 

@@ -47,7 +47,7 @@ int UserUtils::color(const QString &color)
 
 
 
-QIcon UserUtils::icon(User *user)
+QIcon UserUtils::icon(ChatUser user)
 {
   QString file = ":/images/user";
   int gender = user->gender();
@@ -67,4 +67,13 @@ QIcon UserUtils::icon(User *user)
     file += "-female";
 
   return QIcon(file + ".png");
+}
+
+
+QString UserUtils::toolTip(ChatUser user)
+{
+  QString out = "<b>" + user->nick() + "</b><br />";
+  out += user->host() + "<br />";
+  out += user->userAgent();
+  return out;
 }

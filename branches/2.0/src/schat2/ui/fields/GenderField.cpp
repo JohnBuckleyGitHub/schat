@@ -31,6 +31,7 @@
 GenderField::GenderField(QWidget *parent)
   : QWidget(parent)
   , m_settings(ChatCore::i()->settings())
+  , m_user(new User())
 {
   m_combo = new QComboBox(this);
   m_combo->addItem(tr("Male"));
@@ -57,7 +58,7 @@ GenderField::GenderField(QWidget *parent)
   m_toolBar->addWidget(m_config);
   m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }" );
 
-  m_user.setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
+  m_user->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
   setState();
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
@@ -74,7 +75,7 @@ GenderField::GenderField(QWidget *parent)
 
 void GenderField::updateData()
 {
-  m_settings->updateValue(ChatSettings::ProfileGender, m_user.rawGender());
+  m_settings->updateValue(ChatSettings::ProfileGender, m_user->rawGender());
 }
 
 
@@ -84,9 +85,9 @@ void GenderField::indexChanged(int index)
     return;
 
   if (index == 0)
-    m_user.setGender(User::Male);
+    m_user->setGender(User::Male);
   else
-    m_user.setGender(User::Female);
+    m_user->setGender(User::Female);
 
   setState();
   updateData();
@@ -99,7 +100,7 @@ void GenderField::setColor()
   if (!action)
     return;
 
-  m_user.setColor(action->data().toInt());
+  m_user->setColor(action->data().toInt());
 
   setState();
   updateData();
@@ -111,7 +112,7 @@ void GenderField::settingsChanged(const QList<int> &keys)
   if (!keys.contains(ChatSettings::ProfileGender))
     return;
 
-  m_user.setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
+  m_user->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
   setState();
 }
 
@@ -127,23 +128,23 @@ void GenderField::addColor(const QString &name)
 
 void GenderField::setIcons()
 {
-  int gender = m_user.rawGender();
+  int gender = m_user->rawGender();
 
 
-  m_user.setGender(User::Male);
-  m_combo->setItemIcon(0, UserUtils::icon(&m_user));
+  m_user->setGender(User::Male);
+  m_combo->setItemIcon(0, UserUtils::icon(m_user));
 
-  m_user.setGender(User::Female);
-  m_combo->setItemIcon(1, UserUtils::icon(&m_user));
+  m_user->setGender(User::Female);
+  m_combo->setItemIcon(1, UserUtils::icon(m_user));
 
-  m_user.setRawGender(gender);
+  m_user->setRawGender(gender);
 
   for (int i = 0; i < m_colors.size(); ++i) {
-    m_user.setColor(i);
-    m_colors.at(i)->setIcon(UserUtils::icon(&m_user));
+    m_user->setColor(i);
+    m_colors.at(i)->setIcon(UserUtils::icon(m_user));
   }
 
-  m_user.setRawGender(gender);
+  m_user->setRawGender(gender);
 }
 
 
@@ -152,9 +153,9 @@ void GenderField::setState()
   setIcons();
   m_config->setEnabled(true);
 
-  if (m_user.gender() == User::Female)
+  if (m_user->gender() == User::Female)
     m_combo->setCurrentIndex(1);
-  else if (m_user.gender() == User::Male)
+  else if (m_user->gender() == User::Male)
     m_combo->setCurrentIndex(0);
   else {
     m_combo->setCurrentIndex(-1);
@@ -162,12 +163,12 @@ void GenderField::setState()
     return;
   }
 
-  if (m_user.color() < 0 || m_user.color() > User::Yellow)
+  if (m_user->color() < 0 || m_user->color() > User::Yellow)
     return;
 
   for (int i = 0; i < m_colors.size(); ++i) {
     m_colors.at(i)->setChecked(false);
   }
 
-  m_colors.at(m_user.color())->setChecked(true);
+  m_colors.at(m_user->color())->setChecked(true);
 }

@@ -21,14 +21,15 @@
 
 #include <QIcon>
 
-class User;
+#include "schat2.h"
 
 class UserUtils
 {
 public:
   UserUtils();
   static int color(const QString &color);
-  static QIcon icon(User *user);
+  static QIcon icon(ChatUser user);
+  static QString toolTip(ChatUser user);
 
 private:
   static QStringList m_colors;

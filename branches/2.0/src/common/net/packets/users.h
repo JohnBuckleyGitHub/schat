@@ -25,12 +25,14 @@
 class PacketReader;
 
 /*!
- * Формирует пакет Protocol::UserDataPacket.
+ * Формирует пакет Protocol::UserDataPacket, содержащий базовую информацию о пользователе.
  *
  * - 01 byte  - options.
  * - 01 byte  - reserved.
  * - 01 byte  - Gender.
- * - not fixed length (utf8) - Nickname.
+ * - utf8     - Nickname.
+ * - utf8     - UserAgent (is not set Protocol::Broadcast).
+ * - utf8     - Host (is not set Protocol::Broadcast).
  */
 class UserWriter : public PacketWriter
 {

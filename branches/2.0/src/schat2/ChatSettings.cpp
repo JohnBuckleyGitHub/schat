@@ -79,7 +79,7 @@ void ChatSettings::send(User *user)
 void ChatSettings::updateGender(int gender)
 {
   if (m_client->user()->rawGender() != gender) {
-    User user(m_client->user());
+    User user(m_client->user().data());
     user.setRawGender(gender);
     send(&user);
   }
@@ -89,7 +89,7 @@ void ChatSettings::updateGender(int gender)
 void ChatSettings::updateNick(const QString &nick)
 {
   if (m_client->user()->nick() != nick && User::isValidNick(nick)) {
-    User user(m_client->user());
+    User user(m_client->user().data());
     user.setNick(nick);
     send(&user);
   }

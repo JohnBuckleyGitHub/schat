@@ -54,11 +54,12 @@ public:
   , status(0)
   {}
 
-  AuthReplyData(ServerData *data, const QByteArray &userId, const QByteArray &session);
   AuthReplyData(ServerData *data, int error);
+  AuthReplyData(ServerData *data, User *user);
 
   QByteArray session;    ///< Сессия.
   QByteArray userId;     ///< Идентификатор пользователя.
+  QString host;          ///< Адрес пользователя.
   quint8 error;          ///< Код ошибки \sa Error.
   quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
   quint8 status;         ///< Статус авторизации \sa Status.
@@ -82,6 +83,7 @@ public:
  * - 04 bytes - Возможности сервера.
  * - 21 byte  - Идентификатор основного канала (если установлена опция ServerData::AutoJoinSupport)
  * - utf8     - Имя сервера.
+ * - utf8     - Адрес пользователя.
  *
  * Если статус AccessDenied.
  * - 01 byte  - Error code \sa Error.
@@ -137,7 +139,6 @@ public:
   {}
 
   AuthRequestData(int authType, const QString &host, User *user);
-  static QString genUserAgent();
 
   QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
   QString host;            ///< Адрес по которому клиент подключается к серверу.
@@ -162,9 +163,9 @@ public:
  * - 04 bytes - Client Features.
  * - 01 byte  - Language.
  * - 01 byte  - Gender.
- * - not fixed length (utf8) - Server Host.
- * - not fixed length (utf8) - Nickname.
- * - not fixed length (utf8) - User Agent.
+ * - utf8     - Server Host.
+ * - utf8     - Nickname.
+ * - utf8     - User Agent.
  */
 class AuthRequestWriter : public PacketWriter
 {

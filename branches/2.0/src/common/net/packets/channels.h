@@ -26,7 +26,7 @@ class Channel;
 /*!
  * Формирует пакет Protocol::ChannelPacket.
  *
- * - 20 bytes - Channel Id (SHA1).
+ * - 21 byte - Channel Id (SHA1).
  * - not fixed length (utf8) - Channel Name.
  * - not fixed length (utf8) - Channel Description.
  * - not fixed length (utf8) - Channel Topic.
