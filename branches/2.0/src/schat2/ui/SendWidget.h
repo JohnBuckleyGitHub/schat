@@ -39,6 +39,9 @@ public:
 signals:
   void send(const QString &text);
 
+public slots:
+  void insertHtml(const QString &text);
+
 protected:
   bool event(QEvent *event);
   void changeEvent(QEvent *event);

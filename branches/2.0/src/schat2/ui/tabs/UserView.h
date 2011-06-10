@@ -63,13 +63,14 @@ public:
   inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
 
-signals:
-  void addTab(const QByteArray &id);
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
   void addTab(const QModelIndex &index);
 
 private:
+  void nickClicked(const QString &nick);
   void sort();
 
   QHash<QByteArray, UserItem*> m_users; ///< Таблица для ускоренного поиска пользователей.
