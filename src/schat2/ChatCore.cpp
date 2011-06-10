@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTextDocument>
+
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "messages/MessageAdapter.h"
@@ -112,6 +114,12 @@ void ChatCore::nickClicked(const QString &text)
   QByteArray id = userIdFromClass(text);
   if (id.isEmpty())
     return;
+
+  ChatUser user = m_client->user(id);
+  if (!user)
+    return;
+
+  startNotify(InsertTextToSend, " <b>" + Qt::escape(user->nick()) + "</b> ");
 }
 
 

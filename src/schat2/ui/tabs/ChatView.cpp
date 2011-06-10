@@ -31,6 +31,10 @@ ChatView::ChatView(QWidget *parent)
   setUrl(QUrl("qrc:/html/ChatView.html"));
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
+
+  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+
+  setFocusPolicy(Qt::NoFocus);
 }
 
 

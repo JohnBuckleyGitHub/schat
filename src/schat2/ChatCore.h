@@ -73,7 +73,9 @@ public:
     QuitNotice,
     SettingsNotice,
     ToggleVisibilityNotice,
-    NetworkChangedNotice
+    NetworkChangedNotice,
+    InsertTextToSend,       ///< Запрос на вставку текста в поле отравки.
+    AddPrivateTab,          ///< Добавление приватного разговора и установка фокуса на него.
   };
 
   ChatCore(QObject *parent = 0);

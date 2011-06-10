@@ -185,6 +185,9 @@ void TabWidget::notify(int notice, const QVariant &data)
   else if (notice == ChatCore::SettingsNotice) {
     settingsTab();
   }
+  else if (notice == ChatCore::AddPrivateTab) {
+    addPrivateTab(data.toByteArray());
+  }
 }
 
 
@@ -432,7 +435,6 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
     setCurrentIndex(addTab(tab, channel->name()));
 
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
-    connect(tab->userView(), SIGNAL(addTab(const QByteArray &)), SLOT(addPrivateTab(const QByteArray &)));
   }
   else {
     tab = m_channels.value(id);

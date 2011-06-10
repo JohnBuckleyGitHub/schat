@@ -34,8 +34,6 @@ SendWidget::SendWidget(QWidget *parent)
   , m_strike(0)
 {
   m_toolBar = new QToolBar(this);
-//  m_toolBar->setAttribute(Qt::WA_NoSystemBackground, false);
-//  m_toolBar->installEventFilter(this);
   m_toolBar->setIconSize(QSize(16, 16));
 
   m_input = new InputWidget(this);
@@ -52,6 +50,12 @@ SendWidget::SendWidget(QWidget *parent)
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
   connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
+}
+
+
+void SendWidget::insertHtml(const QString &text)
+{
+  m_input->insertHtml(text);
 }
 
 

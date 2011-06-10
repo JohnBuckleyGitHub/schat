@@ -16,10 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMouseEvent>
+#include <QTextDocument>
+
+#include "ChatCore.h"
 #include "debugstream.h"
 #include "ui/tabs/UserView.h"
 #include "ui/UserUtils.h"
-#include "User.h"
 
 UserItem::UserItem(ChatUser user, int option)
   : QStandardItem(UserUtils::icon(user), user->nick())
@@ -138,6 +141,23 @@ void UserView::clear()
 }
 
 
+void UserView::mouseReleaseEvent(QMouseEvent *event)
+{
+  QModelIndex index = indexAt(event->pos());
+
+  if (index.isValid(), event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
+    QStandardItem *item = m_model.itemFromIndex(index);
+
+    nickClicked(item->text());
+  }
+  else if (event->button() == Qt::LeftButton && !index.isValid()) {
+    setCurrentIndex(QModelIndex());
+  }
+  else
+    QListView::mouseReleaseEvent(event);
+}
+
+
 /*!
  * Обработка дабл-клика по пользователю в списке,
  * высылается сигнал с идентификатором пользователя.
@@ -145,7 +165,13 @@ void UserView::clear()
 void UserView::addTab(const QModelIndex &index)
 {
   UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-  emit addTab(item->user()->id());
+  ChatCore::i()->startNotify(ChatCore::AddPrivateTab, item->user()->id());
+}
+
+
+void UserView::nickClicked(const QString &nick)
+{
+  ChatCore::i()->startNotify(ChatCore::InsertTextToSend, " <b>" + Qt::escape(nick) + "</b> ");
 }
 
 
