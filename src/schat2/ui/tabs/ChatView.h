@@ -23,7 +23,7 @@
 #include <QVariant>
 #include <QWebView>
 
-class ChatMessage;
+class UserMessage;
 class ChatViewPrivate;
 
 class ChatView : public QWebView
@@ -39,31 +39,15 @@ public:
   };
 
   ChatView(QWidget *parent = 0);
-  QVariant option(Options key) const;
-  void append(const ChatMessage &message);
   void appendRawMessage(const QString &message);
-  void setOption(Options key, const QVariant &value);
-
-signals:
-  void nickClicked(const QByteArray &userId);
-
-public slots:
-  void nickClicked(const QString &arg1);
+  void evaluateJavaScript(const QString &js);
 
 private slots:
   void loadFinished();
   void populateJavaScriptWindowObject();
 
 private:
-  QByteArray userIdFromClass(const QString &text);
-  QDateTime time(qint64 timestamp) const;
-  void appendUserMessage(const ChatMessage &message);
-  void setMessageState(const QString &id, const QString &state, qint64 timestamp);
-  void setText(QString &html, const QString &text);
-  void setTimeStamp(QString &html, qint64 timestamp);
-
   bool m_loaded;                      ///< true если документ загружен.
-  ChatViewPrivate *m_d;               ///< Приватный класс.
   QHash<Options, QVariant> m_options; ///< Опции.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };

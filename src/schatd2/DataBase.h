@@ -36,6 +36,7 @@ public:
   ChatUser user(qint64 key);
   int start();
   qint64 add(ChatUser user);
+  qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
   void update(ChatUser user);
 
 private:

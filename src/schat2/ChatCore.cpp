@@ -18,7 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "MessageAdapter.h"
+#include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "NetworkManager.h"
@@ -100,4 +100,28 @@ void ChatCore::send(const QByteArray &destId, const QString &text)
 
   MessageData data(QByteArray(), destId, text);
   m_messageAdapter->send(data);
+}
+
+
+/*!
+ * Обработка одиночного клика по нику.
+ * \todo ! Реализовать обработку двойного клика для открытия привата.
+ */
+void ChatCore::nickClicked(const QString &text)
+{
+  QByteArray id = userIdFromClass(text);
+  if (id.isEmpty())
+    return;
+}
+
+
+/*!
+ * Получение идентификатора пользователя из CSS класса.
+ */
+QByteArray ChatCore::userIdFromClass(const QString &text)
+{
+  if (text.size() < 47 || !text.startsWith("nick "))
+    return QByteArray();
+
+  return QByteArray::fromHex(text.mid(5, 42).toLatin1());
 }

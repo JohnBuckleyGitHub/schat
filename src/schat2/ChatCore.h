@@ -90,7 +90,12 @@ signals:
   void message(int status, const MessageData &data);
   void notify(int notice, const QVariant &data);
 
+public slots:
+  void nickClicked(const QString &text);
+
 private:
+  QByteArray userIdFromClass(const QString &text);
+
   ChatSettings *m_settings;         ///< Настройки.
   MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager; ///< Объект управляющих сетями.
