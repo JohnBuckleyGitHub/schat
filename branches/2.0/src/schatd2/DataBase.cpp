@@ -86,12 +86,28 @@ int DataBase::start()
     "CREATE TABLE users ( "
     "  id         INTEGER PRIMARY KEY,"
     "  userId     BLOB    NOT NULL UNIQUE,"
+    "  [group]    INTEGER DEFAULT ( 4 ),"
     "  nick       TEXT,"
     "  normalNick TEXT,"
     "  gender     INTEGER DEFAULT ( 0 ),"
     "  ip         TEXT,"
     "  userAgent  TEXT"
     ");"));
+  }
+
+  if (!tables.contains(QLatin1String("groups"))) {
+    QSqlQuery query(QLatin1String(
+    "CREATE TABLE groups ( "
+    "  id    INTEGER PRIMARY KEY,"
+    "  name  TEXT    UNIQUE,"
+    "  allow INTEGER DEFAULT ( 0 ),"
+    "  deny  INTEGER DEFAULT ( 0 )"
+    ");"));
+
+    addGroup("admin");
+    addGroup("moderator");
+    addGroup("user");
+    addGroup("anonymous");
   }
 
   return 0;
@@ -118,7 +134,7 @@ qint64 DataBase::add(ChatUser user)
   query.addBindValue(user->userAgent());
   query.exec();
 
-  if (query.numRowsAffected() == -1)
+  if (query.numRowsAffected() <= 0)
     return -1;
 
   query.exec(QLatin1String("SELECT last_insert_rowid();"));
@@ -129,6 +145,26 @@ qint64 DataBase::add(ChatUser user)
   user->setKey(key);
 
   return key;
+}
+
+
+qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
+{
+  QSqlQuery query;
+  query.prepare(QLatin1String("INSERT INTO groups (name, allow, deny) VALUES (?, ?, ?);"));
+  query.addBindValue(name);
+  query.addBindValue(allow);
+  query.addBindValue(deny);
+  query.exec();
+
+  if (query.numRowsAffected() <= 0)
+    return -1;
+
+  query.exec(QLatin1String("SELECT last_insert_rowid();"));
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
 }
 
 

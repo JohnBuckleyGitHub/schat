@@ -55,6 +55,7 @@
   <file>html/images/logo128.png</file>
   <file>html/images/progress.gif</file>
   <file>html/style.css</file>
+  <file>html/templates/generic.html</file>
   <file>html/templates/message.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>

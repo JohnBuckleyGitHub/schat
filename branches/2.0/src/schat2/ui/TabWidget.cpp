@@ -27,7 +27,7 @@
 
 #include "Channel.h"
 #include "ChatCore.h"
-#include "ChatMessage.h"
+#include "messages/UserMessage.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "schat2.h"
@@ -326,7 +326,7 @@ void TabWidget::message(int status, const MessageData &data)
     return;
 
   int type = SimpleID::typeOf(data.destId);
-  ChatMessage message(status, data);
+  UserMessage message(status, data);
 
   if (type == SimpleID::ChannelId) {
     ChatUser user = m_client->user(data.senderId);
@@ -335,18 +335,18 @@ void TabWidget::message(int status, const MessageData &data)
 
     ChannelTab *tab = m_channels.value(data.destId);
     if (tab) {
-      tab->chatView()->append(message);
+      tab->chatView()->evaluateJavaScript(message.js());
     }
   }
   else if (type == SimpleID::UserId) {
     QByteArray id;
     ChatUser user;
 
-    if (status & ChatMessage::IncomingMessage) {
+    if (status & UserMessage::IncomingMessage) {
       id = data.senderId;
       user = m_client->user(id);
     }
-    else if (status & ChatMessage::OutgoingMessage) {
+    else if (status & UserMessage::OutgoingMessage) {
       id = data.destId;
       user = m_client->user();
     }
@@ -358,7 +358,7 @@ void TabWidget::message(int status, const MessageData &data)
 
     PrivateTab *tab = privateTab(id);
     if (tab) {
-      tab->chatView()->append(message);
+      tab->chatView()->evaluateJavaScript(message.js());
     }
   }
 }

@@ -27,10 +27,11 @@ HEADERS = \
     arora/lineedit_p.h \
     Channel.h \
     ChatCore.h \
-    ChatMessage.h \
     ChatSettings.h \
     debugstream.h \
-    MessageAdapter.h \
+    messages/AbstractMessage.h \
+    messages/MessageAdapter.h \
+    messages/UserMessage.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/channels.h \
@@ -64,7 +65,6 @@ HEADERS = \
     ui/tabs/AbstractTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
-    ui/tabs/ChatView_p.h \
     ui/tabs/ChatViewTab.h \
     ui/tabs/PrivateTab.h \
     ui/tabs/SettingsTab.h \
@@ -80,10 +80,11 @@ SOURCES = \
     arora/lineedit.cpp \
     Channel.cpp \
     ChatCore.cpp \
-    ChatMessage.cpp \
     ChatSettings.cpp \
     main.cpp \
-    MessageAdapter.cpp \
+    messages/AbstractMessage.cpp \
+    messages/MessageAdapter.cpp \
+    messages/UserMessage.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/channels.cpp \

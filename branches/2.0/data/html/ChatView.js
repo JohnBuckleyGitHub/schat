@@ -72,7 +72,7 @@ function showSeconds(show) {
 
 function nickClicked() {
 	try {
-		ChatView.nickClicked($(this).attr('class'));
+		SimpleChat.nickClicked($(this).attr('class'));
 	} catch (e) { alert(e); }
 	event.preventDefault();
 }

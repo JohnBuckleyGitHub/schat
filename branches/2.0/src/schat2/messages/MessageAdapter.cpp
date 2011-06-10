@@ -19,10 +19,10 @@
 #include <QHashIterator>
 
 #include "ChatCore.h"
-#include "ChatMessage.h"
 #include "ChatSettings.h"
 #include "debugstream.h"
-#include "MessageAdapter.h"
+#include "messages/MessageAdapter.h"
+#include "messages/UserMessage.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
@@ -94,7 +94,7 @@ void MessageAdapter::allDelivered(quint64 id)
 void MessageAdapter::clientMessage(const MessageData &data)
 {
   if (data.senderId != m_client->userId())
-    emit message(ChatMessage::IncomingMessage, data);
+    emit message(UserMessage::IncomingMessage, data);
 }
 
 
@@ -103,7 +103,7 @@ void MessageAdapter::clientStateChanged(int state)
   if (state == SimpleClient::ClientOnline)
     return;
 
-  setStateAll(ChatMessage::Rejected, tr("Потерянно соединение с сервером"));
+  setStateAll(UserMessage::Rejected, tr("Потерянно соединение с сервером"));
 }
 
 
@@ -122,10 +122,10 @@ void MessageAdapter::notice(const NoticeData &data)
     m_undelivered.remove(data.messageName);
 
     if (data.type == NoticeData::MessageDelivered) {
-      emit message(ChatMessage::OutgoingMessage | ChatMessage::Delivered, msg);
+      emit message(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
     }
     else {
-      emit message(ChatMessage::OutgoingMessage | ChatMessage::Rejected, msg);
+      emit message(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
     }
   }
 }
@@ -144,7 +144,7 @@ bool MessageAdapter::sendText(MessageData &data)
   data.options |= MessageData::NameOption;
 
   if (m_client->send(data)) {
-    emit message(ChatMessage::OutgoingMessage | ChatMessage::Undelivered, data);
+    emit message(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
     m_undelivered.insert(m_name, data.destId);
     return true;
   }
@@ -281,7 +281,7 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
     i.next();
     data.name = i.key();
     data.destId = i.value();
-    emit message(ChatMessage::OutgoingMessage | state, data);
+    emit message(UserMessage::OutgoingMessage | state, data);
   }
 
   m_undelivered.clear();
