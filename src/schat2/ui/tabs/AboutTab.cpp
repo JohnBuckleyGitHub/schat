@@ -16,11 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QWebView>
-#include <QVBoxLayout>
+#include <QDesktopServices>
 #include <QFile>
 #include <QLibraryInfo>
+#include <QVBoxLayout>
 #include <qwebkitversion.h>
+#include <QWebView>
 
 #include "ChatCore.h"
 #include "ui/tabs/AboutTab.h"
@@ -31,6 +32,7 @@ AboutTab::AboutTab(TabWidget *parent)
 {
   m_view = new QWebView(this);
   m_view->setAcceptDrops(false);
+  m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 
   QFile file(":/html/about.html");
   if (file.open(QIODevice::ReadOnly)) {
@@ -51,4 +53,12 @@ AboutTab::AboutTab(TabWidget *parent)
   mainLay->setSpacing(0);
 
   m_icon = SCHAT_ICON(SmallLogoIcon);
+
+  connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+}
+
+
+void AboutTab::linkClicked(const QUrl &url)
+{
+  QDesktopServices::openUrl(url);
 }

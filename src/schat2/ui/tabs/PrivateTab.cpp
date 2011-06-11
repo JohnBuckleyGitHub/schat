@@ -19,15 +19,17 @@
 #include <QAction>
 #include <QVBoxLayout>
 
+#include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
-#include "User.h"
 
 PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
-  : ChatViewTab(user->id(), PrivateType, parent)
+  : AbstractTab(user->id(), PrivateType, parent)
   , m_user(user)
 {
+  m_chatView = new ChatView(this);
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
   mainLay->setMargin(0);
@@ -59,6 +61,6 @@ bool PrivateTab::update(ChatUser user)
 void PrivateTab::setOnline(bool online)
 {
   m_tabs->setTabToolTip(m_tabs->indexOf(this), UserUtils::toolTip(m_user));
-  ChatViewTab::setOnline(online);
+  AbstractTab::setOnline(online);
 }
 

@@ -21,6 +21,7 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+class QUrl;
 class QWebView;
 
 class AboutTab : public AbstractTab
@@ -29,6 +30,9 @@ class AboutTab : public AbstractTab
 
 public:
   AboutTab(TabWidget *parent);
+
+private slots:
+  void linkClicked(const QUrl &url);
 
 private:
   QWebView *m_view;

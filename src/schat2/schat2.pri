@@ -65,7 +65,6 @@ HEADERS = \
     ui/tabs/AbstractTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
-    ui/tabs/ChatViewTab.h \
     ui/tabs/PrivateTab.h \
     ui/tabs/SettingsTab.h \
     ui/tabs/SettingsTab_p.h \
@@ -115,7 +114,6 @@ SOURCES = \
     ui/tabs/AbstractTab.cpp \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \
-    ui/tabs/ChatViewTab.cpp \
     ui/tabs/PrivateTab.cpp \
     ui/tabs/SettingsTab.cpp \
     ui/tabs/UserView.cpp \

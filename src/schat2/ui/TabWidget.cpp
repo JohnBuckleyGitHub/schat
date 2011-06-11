@@ -35,6 +35,7 @@
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
 #include "ui/tabs/ChannelTab.h"
+#include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/UserView.h"
