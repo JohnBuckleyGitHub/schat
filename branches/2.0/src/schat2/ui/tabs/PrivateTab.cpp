@@ -35,8 +35,8 @@ PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  m_icon = UserUtils::icon(user);
-  m_action->setText(m_user->nick());
+  setIcon(UserUtils::icon(user));
+  setText(m_user->nick());
 }
 
 

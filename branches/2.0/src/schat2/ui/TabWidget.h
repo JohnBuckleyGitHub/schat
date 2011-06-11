@@ -25,6 +25,7 @@
 
 class AboutTab;
 class AbstractTab;
+class AlertTab;
 class Channel;
 class ChannelTab;
 class ClientMessage;
@@ -82,12 +83,14 @@ private:
   ChannelTab *createChannelTab(const QByteArray &id);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void aboutTab();
+  void chatTab(AbstractTab *tab, bool show = true);
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
   void retranslateUi();
   void settingsTab();
   void showWelcome();
 
+  AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   QAction *m_aboutAction;                    ///< О Simple Chat.
   QAction *m_quitAction;                     ///< Quit.
   QAction *m_settingsAction;                 ///< Settings.

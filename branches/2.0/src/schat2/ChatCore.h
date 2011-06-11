@@ -65,7 +65,8 @@ public:
     AddIcon,
     RemoveIcon,
     ProfileIcon,
-    OkIcon
+    OkIcon,
+    InfoBalloon
   };
 
   enum Notice {

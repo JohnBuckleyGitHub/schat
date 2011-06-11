@@ -72,6 +72,7 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "remove";
   m_icons += "profile";
   m_icons += "ok";
+  m_icons += "information-balloon";
 
   connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SIGNAL(message(int, const MessageData &)));
 }

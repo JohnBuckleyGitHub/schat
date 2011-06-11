@@ -24,22 +24,28 @@
 
 AbstractTab::AbstractTab(const QByteArray &id, TabType type, TabWidget *parent)
   : QWidget(parent)
+  , m_online(false)
   , m_tabs(parent)
   , m_id(id)
   , m_type(type)
 {
   m_action = new QAction(this);
+  m_action->setCheckable(true);
+
   connect(m_action, SIGNAL(triggered(bool)), SIGNAL(actionTriggered(bool)));
 }
 
 
 void AbstractTab::setOnline(bool online)
 {
+  m_online = online;
+
   int index = m_tabs->indexOf(this);
   if (index == -1)
     return;
 
-  if (online) {
+
+  if (m_online) {
     m_tabs->setTabIcon(index, m_icon);
     m_action->setIcon(m_icon);
   }
@@ -48,6 +54,20 @@ void AbstractTab::setOnline(bool online)
     m_tabs->setTabIcon(index, offline);
     m_action->setIcon(offline);
   }
+}
+
+
+void AbstractTab::setIcon(const QIcon &icon)
+{
+  m_icon = icon;
+  m_action->setIcon(icon);
+}
+
+
+void AbstractTab::setText(const QString &text)
+{
+  m_text = text;
+  m_action->setText(text);
 }
 
 

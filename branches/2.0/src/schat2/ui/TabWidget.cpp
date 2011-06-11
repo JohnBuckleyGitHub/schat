@@ -34,6 +34,7 @@
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
+#include "ui/tabs/AlertTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
@@ -45,6 +46,7 @@
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
+  , m_alertTab(0)
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
@@ -67,6 +69,9 @@ TabWidget::TabWidget(QWidget *parent)
   addTab(m_welcomeTab, tr("Welcome"));
   m_welcomeTab->setOnline();
 
+  m_alertTab = new AlertTab(this);
+  m_alertTab->setVisible(false);
+
   createToolBars();
   retranslateUi();
 
@@ -80,6 +85,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+  connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
 }
 
 
@@ -144,7 +150,11 @@ void TabWidget::closeTab(int index)
     m_talks.remove(tab->id());
   }
 
-  if (tab->type() != AbstractTab::WelcomeType) {
+  if (tab->type() == AbstractTab::AlertType) {
+    removeTab(index);
+    tab->setOnline(false);
+  }
+  else if (tab->type() != AbstractTab::WelcomeType) {
     removeTab(index);
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
   }
@@ -197,10 +207,7 @@ void TabWidget::notify(int notice, const QVariant &data)
  */
 void TabWidget::openTab()
 {
-  AbstractTab *tab = qobject_cast<AbstractTab *>(sender());
-  if (tab) {
-    setCurrentWidget(tab);
-  }
+  chatTab(qobject_cast<AbstractTab *>(sender()));
 }
 
 
@@ -225,23 +232,37 @@ void TabWidget::showMainMenu()
   QList<QAction *> channels;
   QList<QAction *> talks;
 
+  AbstractTab *currentTab = widget(currentIndex());
+
   for (int i = 0; i < count(); ++i) {
     AbstractTab *tab = widget(i);
     if (tab->type() == AbstractTab::ChannelType)
       channels.append(tab->action());
     else if (tab->type() == AbstractTab::PrivateType)
       talks.append(tab->action());
+
+    tab->action()->setChecked(currentTab == tab);
   }
+
+  bool separator = false;
 
   if (!channels.isEmpty()) {
     m_channelsMenu->addActions(channels);
     m_mainMenu->addMenu(m_channelsMenu);
+    separator = true;
   }
 
   if (!talks.isEmpty()) {
     m_talksMenu->addActions(talks);
     m_mainMenu->addMenu(m_talksMenu);
+    separator = true;
   }
+
+  if (separator)
+    m_mainMenu->addSeparator();
+
+  m_mainMenu->addAction(m_alertTab->action());
+  m_alertTab->action()->setChecked(currentTab == m_alertTab);
 }
 
 
@@ -502,6 +523,24 @@ void TabWidget::aboutTab()
   }
 
   setCurrentIndex(indexOf(m_aboutTab));
+}
+
+
+/*!
+ * Добавление вкладки.
+ */
+void TabWidget::chatTab(AbstractTab *tab, bool show)
+{
+  if (tab == 0)
+    return;
+
+  if (!tab->isOnline()) {
+    addTab(tab, tab->action()->icon(), tab->action()->text());
+    tab->setOnline();
+  }
+
+  if (show)
+    setCurrentIndex(indexOf(tab));
 }
 
 
