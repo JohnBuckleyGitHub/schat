@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QObject>
 
+class AbstractMessage;
 class MessageData;
 class NoticeData;
 class SimpleClient;
@@ -44,6 +45,7 @@ public:
   int send(MessageData &data);
 
 signals:
+  void message(const AbstractMessage &message);
   void message(int status, const MessageData &data);
 
 private slots:
@@ -59,6 +61,7 @@ private:
   void setStateAll(int state, const QString &reason);
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
+  QByteArray m_destId;                      ///< Текущий получатель сообщения.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
   quint64 m_name;                           ///< Счётчик последнего отправленного сообщения.
   SimpleClient *m_client;                   ///< Указатель на клиент.

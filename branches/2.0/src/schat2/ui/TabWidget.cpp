@@ -84,6 +84,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
+  connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
 }
@@ -338,6 +339,16 @@ void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &users
 {
   for (int i = 0; i < usersId.size(); ++i) {
     join(channelId, usersId.at(i), UserView::NoSort);
+  }
+}
+
+
+void TabWidget::message(const AbstractMessage &data)
+{
+  qDebug() << data.text();
+
+  if (data.destId().isEmpty()) {
+    m_alertTab->chatView()->evaluateJavaScript(data.js());
   }
 }
 

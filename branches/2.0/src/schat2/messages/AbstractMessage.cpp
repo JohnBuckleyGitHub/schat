@@ -22,11 +22,13 @@
 
 QHash<QString, QString> AbstractMessage::m_templates;
 
-AbstractMessage::AbstractMessage(int type)
-  : m_parseOptions(NoParse)
+AbstractMessage::AbstractMessage(int type, const QString &text, const QByteArray &destId, int parseOptions)
+  : m_parseOptions(parseOptions)
+  , m_destId(destId)
   , m_timestamp(0)
   , m_type(type)
 {
+  setText(text, parseOptions);
 }
 
 

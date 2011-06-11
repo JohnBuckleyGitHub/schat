@@ -24,6 +24,7 @@
 #include <QPointer>
 
 class AboutTab;
+class AbstractMessage;
 class AbstractTab;
 class AlertTab;
 class Channel;
@@ -39,7 +40,6 @@ class SimpleClient;
 class SoundButton;
 class TabBar;
 class WelcomeTab;
-
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
  */
@@ -74,6 +74,7 @@ private slots:
   void clientStateChanged(int state);
   void join(const QByteArray &channelId, const QByteArray &userId, int option = 0);
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
+  void message(const AbstractMessage &data);
   void message(int status, const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void updateUserData(const QByteArray &userId);
