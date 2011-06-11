@@ -16,24 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATVIEWTAB_H_
-#define CHATVIEWTAB_H_
+#ifndef ALERTTAB_H_
+#define ALERTTAB_H_
 
-#include "ui/tabs/ChatView.h"
 #include "ui/tabs/AbstractTab.h"
 
 class ChatView;
 
-class ChatViewTab : public AbstractTab
+class AlertTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
-  ChatViewTab(const QByteArray &id, TabType type, TabWidget *parent);
+  AlertTab(TabWidget *parent);
   inline ChatView *chatView() { return m_chatView; }
 
-protected:
+private:
   ChatView *m_chatView;
 };
 
-#endif /* CHATVIEWTAB_H_ */
+#endif /* ALERTTAB_H_ */

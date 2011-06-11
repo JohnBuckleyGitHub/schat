@@ -37,14 +37,18 @@ public:
     PrivateType,
     WelcomeType,
     AboutType,
-    SettingsType
+    SettingsType,
+    AlertType
   };
 
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
+  inline bool isOnline() const { return m_online; }
   inline QAction *action() const { return m_action; }
   inline QByteArray id() const { return m_id; }
   inline TabType type() const { return m_type; }
   virtual void setOnline(bool online = true);
+  void setIcon(const QIcon &icon);
+  void setText(const QString &text);
 
 signals:
   void actionTriggered(bool checked = false);
@@ -53,8 +57,10 @@ protected:
   virtual void retranslateUi();
   void changeEvent(QEvent *event);
 
+  bool m_online;
   QAction *m_action;
   QIcon m_icon;
+  QString m_text;
   TabWidget *m_tabs;
 
 private:

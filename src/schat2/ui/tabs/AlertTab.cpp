@@ -16,10 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ui/tabs/ChatViewTab.h"
+#include <QVBoxLayout>
 
-ChatViewTab::ChatViewTab(const QByteArray &id, TabType type, TabWidget *parent)
-  : AbstractTab(id, type, parent)
+#include "ChatCore.h"
+#include "ui/tabs/AlertTab.h"
+#include "ui/tabs/ChatView.h"
+
+AlertTab::AlertTab(TabWidget *parent)
+  : AbstractTab(QByteArray(), AlertType, parent)
 {
   m_chatView = new ChatView(this);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_chatView);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
+
+  setIcon(SCHAT_ICON(InfoBalloon));
+  setText(tr("Notifications"));
 }
