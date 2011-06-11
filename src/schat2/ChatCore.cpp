@@ -75,6 +75,7 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "information-balloon";
 
   connect(m_messageAdapter, SIGNAL(message(int, const MessageData &)), SIGNAL(message(int, const MessageData &)));
+  connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
 }
 
 

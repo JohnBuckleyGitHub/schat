@@ -27,7 +27,7 @@
 #include "User.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
-  : AbstractMessage(UserMessageType)
+  : AbstractMessage(UserMessageType, data.text, data.destId, NoParse)
   , m_status(static_cast<DeliveryStatus>(status))
   , m_name(data.name)
 {
@@ -35,12 +35,10 @@ UserMessage::UserMessage(int status, const MessageData &data)
   if (!user)
     return;
 
-  m_destId = data.destId;
   m_senderId = data.senderId;
   m_timestamp = data.timestamp;
 
   setNick(user->nick());
-  setText(data.text, NoParse);
 }
 
 

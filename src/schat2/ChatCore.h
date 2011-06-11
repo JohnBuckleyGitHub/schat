@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QVariant>
 
+class AbstractMessage;
 class ChatSettings;
 class MessageAdapter;
 class MessageData;
@@ -90,6 +91,7 @@ public:
   void send(const QByteArray &destId, const QString &text);
 
 signals:
+  void message(const AbstractMessage &message);
   void message(int status, const MessageData &data);
   void notify(int notice, const QVariant &data);
 

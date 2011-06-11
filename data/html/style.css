@@ -30,7 +30,7 @@ body {
 }
 
 img {
-	vertical-align: middle;
+	vertical-align:middle;
 }
 
 a {
@@ -95,4 +95,34 @@ a:active, a:hover {
 .nick, .nick:link, .nick:visited {
 	font-weight:bold;
 	color:#113853;
+}
+
+.information-alert .block {
+	background-color:#e8f2f8;
+	border:1px solid #e1edf5;
+}
+
+.information-alert .block .timestamp {
+	background:url(images/information-small.png) left no-repeat;
+	padding-left:12px;
+}
+
+.information-alert .block:hover, .information-alert .block:focus {
+	background-color:#d9e8f3;
+	border:1px solid #cde1ef;
+}
+
+.exclamation-alert .block {
+	background-color:#ffffe1;
+	border:1px solid #ffffcd;
+}
+
+.exclamation-alert .block:hover, .exclamation-alert .block:focus {
+	background-color:#ffffcd;
+	border:1px solid #fffeb9;
+}
+
+.exclamation-alert .block .timestamp {
+	background:url(images/exclamation-small.png) left no-repeat;
+	padding-left:12px;
 }

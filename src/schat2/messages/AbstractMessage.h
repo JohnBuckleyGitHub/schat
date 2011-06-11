@@ -28,8 +28,9 @@ class AbstractMessage
 public:
   /// Тип сообщения.
   enum MessageType {
-    UnknownType,    ///< Неизвестный тип.
-    UserMessageType ///< Сообщение от пользователя.
+    UnknownType,     ///< Неизвестный тип.
+    UserMessageType, ///< Сообщение от пользователя.
+    AlertMessageType ///< Уведомления.
   };
 
   /// Опции обработки текста.
@@ -39,7 +40,7 @@ public:
     RemoveUnSafeHtml = 2 ///< Удалить небезопасный html код.
   };
 
-  AbstractMessage(int type);
+  AbstractMessage(int type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
   inline int type() const { return m_type; }
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }

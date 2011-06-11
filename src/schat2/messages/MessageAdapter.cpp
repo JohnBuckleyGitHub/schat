@@ -21,12 +21,14 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "debugstream.h"
+#include "messages/AlertMessage.h"
 #include "messages/MessageAdapter.h"
 #include "messages/UserMessage.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -53,6 +55,7 @@ int MessageAdapter::send(MessageData &data)
   if (data.text.isEmpty())
     return ErrorTextEmpty;
 
+  m_destId = data.destId;
   QString text;
 
   if (m_richText) {
@@ -100,8 +103,15 @@ void MessageAdapter::clientMessage(const MessageData &data)
 
 void MessageAdapter::clientStateChanged(int state)
 {
-  if (state == SimpleClient::ClientOnline)
+  if (state == SimpleClient::ClientOnline) {
+    AlertMessage msg(AlertMessage::Information, tr("Успешно подключены к <b>%1</b>").arg(NetworkManager::currentServerName()));
+    emit message(msg);
     return;
+  }
+  else if (state == SimpleClient::ClientOffline) {
+    AlertMessage msg(AlertMessage::Exclamation, tr("Соединение потеряно"));
+    emit message(msg);
+  }
 
   setStateAll(UserMessage::Rejected, tr("Потерянно соединение с сервером"));
 }

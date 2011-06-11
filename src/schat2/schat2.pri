@@ -30,6 +30,7 @@ HEADERS = \
     ChatSettings.h \
     debugstream.h \
     messages/AbstractMessage.h \
+    messages/AlertMessage.h \
     messages/MessageAdapter.h \
     messages/UserMessage.h \
     net/PacketReader.h \
@@ -83,6 +84,7 @@ SOURCES = \
     ChatSettings.cpp \
     main.cpp \
     messages/AbstractMessage.cpp \
+    messages/AlertMessage.cpp \
     messages/MessageAdapter.cpp \
     messages/UserMessage.cpp \
     net/PacketReader.cpp \

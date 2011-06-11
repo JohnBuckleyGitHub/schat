@@ -256,8 +256,10 @@ void SimpleClient::released()
   if (m_clientState == ClientOffline)
     return;
 
-  if (m_clientState == ClientOnline)
+  if (m_clientState == ClientOnline) {
+    setClientState(ClientOffline);
     setClientState(ClientConnecting);
+  }
 
   if (m_reconnects < Protocol::MaxFastReconnects) {
     m_reconnectTimer->start(Protocol::FastReconnectTime, this);
