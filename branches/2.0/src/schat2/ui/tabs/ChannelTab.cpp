@@ -22,12 +22,13 @@
 
 #include "ChatCore.h"
 #include "ui/tabs/ChannelTab.h"
+#include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
-#include "User.h"
 
 ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
-  : ChatViewTab(id, ChannelType, parent)
+  : AbstractTab(id, ChannelType, parent)
 {
+  m_chatView = new ChatView(this);
   m_userView = new UserView(this);
 
   m_splitter = new QSplitter(this);
@@ -50,5 +51,5 @@ void ChannelTab::setOnline(bool online)
   if (!online)
     m_userView->clear();
 
-  ChatViewTab::setOnline(online);
+  AbstractTab::setOnline(online);
 }

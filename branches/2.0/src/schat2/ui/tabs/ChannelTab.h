@@ -19,22 +19,24 @@
 #ifndef CHANNELTAB_H_
 #define CHANNELTAB_H_
 
-#include "ui/tabs/ChatViewTab.h"
+#include "ui/tabs/AbstractTab.h"
 
+class ChatView;
 class QSplitter;
-class User;
 class UserView;
 
-class ChannelTab : public ChatViewTab
+class ChannelTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
   ChannelTab(const QByteArray &id, TabWidget *parent);
+  inline ChatView *chatView() { return m_chatView; }
   inline UserView *userView() { return m_userView; }
   void setOnline(bool online = true);
 
 private:
+  ChatView *m_chatView;
   QSplitter *m_splitter;
   UserView *m_userView;
 };

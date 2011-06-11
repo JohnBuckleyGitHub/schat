@@ -19,8 +19,8 @@
 #include <QWebFrame>
 
 #include "ChatCore.h"
-#include "ChatView.h"
 #include "debugstream.h"
+#include "ui/tabs/ChatView.h"
 
 ChatView::ChatView(QWidget *parent)
   : QWebView(parent)
