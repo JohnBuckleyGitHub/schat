@@ -21,6 +21,8 @@
 }
 
 body {
+	background:#fff;
+	color:#000;
 	margin:0;
 }
 
@@ -100,11 +102,7 @@ a:active, a:hover {
 .information-alert .block {
 	background-color:#e8f2f8;
 	border:1px solid #e1edf5;
-}
-
-.information-alert .block .timestamp {
-	background:url(images/information-small.png) left no-repeat;
-	padding-left:12px;
+	color:#143244;
 }
 
 .information-alert .block:hover, .information-alert .block:focus {
@@ -113,16 +111,12 @@ a:active, a:hover {
 }
 
 .exclamation-alert .block {
-	background-color:#ffffe1;
-	border:1px solid #ffffcd;
+	background-color:#fbfbd1;
+	border:1px solid #f8f7ac;
+	color:#515007;
 }
 
 .exclamation-alert .block:hover, .exclamation-alert .block:focus {
-	background-color:#ffffcd;
-	border:1px solid #fffeb9;
-}
-
-.exclamation-alert .block .timestamp {
-	background:url(images/exclamation-small.png) left no-repeat;
-	padding-left:12px;
+	background-color:#f8f7ac;
+	border:1px solid #f6f69a;
 }
