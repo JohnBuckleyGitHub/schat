@@ -33,7 +33,6 @@ class ChatView : public QWebView
 public:
   /// Опции.
   enum Options {
-    ShowSeconds,     ///< Показывать секунды.
     EnableDeveloper, ///< Разрешить использование средств разработки.
     UserServerTime   ///< Использовать время сервера для сообщений.
   };
@@ -45,8 +44,11 @@ public:
 private slots:
   void loadFinished();
   void populateJavaScriptWindowObject();
+  void settingsChanged(const QList<int> &keys);
 
 private:
+  void showSeconds(bool show);
+
   bool m_loaded;                      ///< true если документ загружен.
   QHash<Options, QVariant> m_options; ///< Опции.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.

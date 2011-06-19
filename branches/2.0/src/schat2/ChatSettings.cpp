@@ -31,6 +31,7 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("Width", 666);
   setDefault("WindowsAero", true);
   setDefault("Networks", QStringList());
+  setDefault("ShowSeconds", false);
   setDefault("DefaultProfile", true);
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
