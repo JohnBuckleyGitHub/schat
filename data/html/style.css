@@ -60,6 +60,10 @@ a:active, a:hover {
 	font-size:x-small;
 }
 
+.no-seconds .seconds {
+	display:none;
+}
+
 .outgoing, .delivered {
 	background:#f2ffe1;
 	border:1px solid #ebffcd;

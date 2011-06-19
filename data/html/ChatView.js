@@ -60,13 +60,16 @@ function scrollToBottom() {
 function appendMessage(html) {
 	var shouldScroll = nearBottom();
 	$('#Chat').append(html);
-	$('a.nick').unbind('click', nickClicked);
-	$('a.nick').bind('click', nickClicked);
+	$('.block > a.nick').unbind('click', nickClicked);
+	$('.block > a.nick').bind('click', nickClicked);
 	alignChat(shouldScroll);
 }
 
 function showSeconds(show) {
-	show ? $('.seconds').show() : $('.seconds').hide();
+	if (show)
+		$('#Chat').removeClass('no-seconds');
+	else
+		$('#Chat').addClass('no-seconds');
 }
 
 

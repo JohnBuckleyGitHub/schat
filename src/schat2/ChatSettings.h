@@ -36,6 +36,7 @@ public:
     Width,          ///< Ширина окна.
     WindowsAero,    ///< При доступности будет использован интерфейс Windows Aero.
     Networks,       ///< Список серверов.
+    ShowSeconds,    ///< Отображать секунды.
     DefaultProfile, ///< Использовать профиль по умолчанию.
     ProfileNick,    ///< Ник по умолчанию.
     ProfileGender   ///< Пол по умолчанию.

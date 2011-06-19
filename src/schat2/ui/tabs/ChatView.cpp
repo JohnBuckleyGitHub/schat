@@ -19,6 +19,7 @@
 #include <QWebFrame>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "debugstream.h"
 #include "ui/tabs/ChatView.h"
 
@@ -35,6 +36,8 @@ ChatView::ChatView(QWidget *parent)
   QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
 
   setFocusPolicy(Qt::NoFocus);
+
+  connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
 }
 
 
@@ -73,6 +76,7 @@ void ChatView::evaluateJavaScript(const QString &js)
 void ChatView::loadFinished()
 {
   m_loaded = true;
+  showSeconds(SCHAT_OPTION(ShowSeconds).toBool());
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
@@ -82,4 +86,24 @@ void ChatView::loadFinished()
 void ChatView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", ChatCore::i());
+}
+
+
+void ChatView::settingsChanged(const QList<int> &keys)
+{
+  if (keys.contains(ChatSettings::ShowSeconds)) {
+    showSeconds(SCHAT_OPTION(ShowSeconds).toBool());
+  }
+}
+
+
+/*!
+ * Отображает/скрывает секунды в окне чата.
+ */
+void ChatView::showSeconds(bool show)
+{
+  if (show)
+    evaluateJavaScript("showSeconds(true)");
+  else
+    evaluateJavaScript("showSeconds(false)");
 }
