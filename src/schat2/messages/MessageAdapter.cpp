@@ -97,7 +97,7 @@ void MessageAdapter::allDelivered(quint64 id)
 void MessageAdapter::clientMessage(const MessageData &data)
 {
   if (data.senderId != m_client->userId())
-    emit message(UserMessage::IncomingMessage, data);
+    newUserMessage(UserMessage::IncomingMessage, data);
 }
 
 
@@ -132,10 +132,10 @@ void MessageAdapter::notice(const NoticeData &data)
     m_undelivered.remove(data.messageName);
 
     if (data.type == NoticeData::MessageDelivered) {
-      emit message(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
     }
     else {
-      emit message(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
     }
   }
 }
@@ -154,7 +154,7 @@ bool MessageAdapter::sendText(MessageData &data)
   data.options |= MessageData::NameOption;
 
   if (m_client->send(data)) {
-    emit message(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
     m_undelivered.insert(m_name, data.destId);
     return true;
   }
@@ -275,6 +275,17 @@ void MessageAdapter::command(const QString &text)
 
 
 /*!
+ * Формирование сообщения с типом AbstractMessage::UserMessageType
+ * и отправка сообщения.
+ */
+void MessageAdapter::newUserMessage(int status, const MessageData &data)
+{
+  UserMessage msg(status, data);
+  emit message(msg);
+}
+
+
+/*!
  * Устанавливает состояние для всех пакетов с неподтверждённой доставкой.
  */
 void MessageAdapter::setStateAll(int state, const QString &reason)
@@ -291,7 +302,7 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
     i.next();
     data.name = i.key();
     data.destId = i.value();
-    emit message(UserMessage::OutgoingMessage | state, data);
+    newUserMessage(UserMessage::OutgoingMessage | state, data);
   }
 
   m_undelivered.clear();

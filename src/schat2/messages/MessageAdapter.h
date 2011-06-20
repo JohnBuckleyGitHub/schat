@@ -46,7 +46,6 @@ public:
 
 signals:
   void message(const AbstractMessage &message);
-  void message(int status, const MessageData &data);
 
 private slots:
   void allDelivered(quint64 id);
@@ -58,6 +57,7 @@ private:
   bool sendText(MessageData &data);
   int setGender(const QString &gender, const QString &color);
   void command(const QString &text);
+  void newUserMessage(int status, const MessageData &data);
   void setStateAll(int state, const QString &reason);
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
