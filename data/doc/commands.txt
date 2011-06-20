@@ -1,0 +1,10 @@
+/about
+/color
+/exit
+/female
+/gender
+/hide
+/join
+/male
+/nick
+/set

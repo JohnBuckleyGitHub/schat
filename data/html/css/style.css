@@ -75,7 +75,7 @@ a:active, a:hover {
 }
 
 .undelivered {
-	background:url(qrc:/html/images/progress.gif) top right no-repeat #f2ffe1;
+	background:url("qrc:/images/progress.gif") top right no-repeat #f2ffe1;
 }
 
 .rejected {

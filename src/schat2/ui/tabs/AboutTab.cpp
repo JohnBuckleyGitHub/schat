@@ -22,8 +22,10 @@
 #include <QVBoxLayout>
 #include <qwebkitversion.h>
 #include <QWebView>
+#include <QDir>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "ui/tabs/AboutTab.h"
 #include "version.h"
 
@@ -41,6 +43,11 @@ AboutTab::AboutTab(TabWidget *parent)
     page.replace("%copyright%", QString(SCHAT_COPYRIGHT) + ". " + tr("All rights reserved."));
     page.replace("%license%", tr("License"));
     page.replace("%site%", tr("Site"));
+    page.replace("%paths%", tr("Paths"));
+    page.replace("%3rdparty%", tr("Third parties"));
+    page.replace("%preferences%", tr("Preferences"));
+    page.replace("%preferences-file%", QDir::toNativeSeparators(ChatCore::i()->settings()->confFile()));
+
     page.replace("%edition%", QLibraryInfo::licensee());
     page.replace("%qt-version%", qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)")));
     page.replace("%webkit-version%", qWebKitVersion());

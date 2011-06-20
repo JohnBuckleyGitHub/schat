@@ -44,6 +44,7 @@ public:
   inline FileScheme fileScheme() const { return m_scheme; }
   inline FileScheme scheme() const { return m_scheme; }
   inline QString baseName() const { return m_baseName; }
+  inline QString confFile() const { return m_confFile; }
   inline QString root() const { return m_root; }
   inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
   inline void setGroup(const QString &group) { m_group = group; }

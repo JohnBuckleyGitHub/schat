@@ -1,0 +1,9 @@
+Height
+Maximized
+Networks
+ShowSeconds
+Width
+WindowsAero
+
+Profile/Gender
+Profile/Nick

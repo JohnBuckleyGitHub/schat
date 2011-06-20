@@ -22,7 +22,7 @@
 
 body {
 	margin:0;
-	background:#fff url("images/logo128.png") no-repeat top left;
+	background:#fff url("qrc:/images/logo128.png") no-repeat top left;
 }
 
 .align_center {
@@ -55,7 +55,7 @@ a {
 }
 
 a:link, a:visited {
-	color:#2988d2;
+	color:#2976d1;
 }
 
 a:active, a:hover {
@@ -64,6 +64,10 @@ a:active, a:hover {
 
 td {
 	padding-right:1em;
+}
+
+td.label {
+	color:#666;
 }
 
 #copyright {
@@ -86,11 +90,29 @@ td {
 }
 
 a.external {
-	background: url("images/external-link.png") no-repeat scroll right center transparent;
+	background: url("qrc:/images/external-small.png") no-repeat scroll right center transparent;
  	padding: 0 13px 0 0;
 }
 
-#qt {
-	margin-top:2em;
+.header {
+	padding-left:14px;
+	margin-top:1em;
+	cursor:pointer;
+}
+
+.toggle-expand {
+	background: url("qrc:/images/toggle-small-expand.png") no-repeat left center transparent;
+}
+
+.toggle {
+	background: url("qrc:/images/toggle-small.png") no-repeat left center transparent;
+}
+
+#paths-body, #other-body, #about {
+	display:none;
+}
+
+#other-body, td.label {
+	padding-left:10px;
 }
 

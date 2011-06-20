@@ -1,0 +1,10 @@
+Расширение полей пользователя:
+ + User()
+ + Core::auth()
+ + DataBase::add()
+ + DataBase::user()
+ + DataBase::update()
+ + UserWriter()
+ + UserReader()
+ + SimpleClient::updateUserData()
+ + UserUtils::toolTip()
