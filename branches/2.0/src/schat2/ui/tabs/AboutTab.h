@@ -35,6 +35,8 @@ private slots:
   void linkClicked(const QUrl &url);
 
 private:
+  QString fileUrl(const QString &fileName) const;
+
   QWebView *m_view;
 };
 

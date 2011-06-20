@@ -17,12 +17,12 @@
  */
 
 #include <QDesktopServices>
+#include <QDir>
 #include <QFile>
 #include <QLibraryInfo>
 #include <QVBoxLayout>
 #include <qwebkitversion.h>
 #include <QWebView>
-#include <QDir>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -34,7 +34,7 @@ AboutTab::AboutTab(TabWidget *parent)
 {
   m_view = new QWebView(this);
   m_view->setAcceptDrops(false);
-  m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+  m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
   QFile file(":/html/about.html");
   if (file.open(QIODevice::ReadOnly)) {
@@ -46,7 +46,7 @@ AboutTab::AboutTab(TabWidget *parent)
     page.replace("%paths%", tr("Paths"));
     page.replace("%3rdparty%", tr("Third parties"));
     page.replace("%preferences%", tr("Preferences"));
-    page.replace("%preferences-file%", QDir::toNativeSeparators(ChatCore::i()->settings()->confFile()));
+    page.replace("%preferences-file%", fileUrl(ChatCore::i()->settings()->confFile()));
 
     page.replace("%edition%", QLibraryInfo::licensee());
     page.replace("%qt-version%", qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)")));
@@ -68,4 +68,16 @@ AboutTab::AboutTab(TabWidget *parent)
 void AboutTab::linkClicked(const QUrl &url)
 {
   QDesktopServices::openUrl(url);
+}
+
+
+QString AboutTab::fileUrl(const QString &fileName) const
+{
+  QString out = "<a href=\"";
+  out += QUrl::fromLocalFile(fileName).toEncoded();
+  out += "\">";
+  out += QDir::toNativeSeparators(fileName);
+  out += "</a>";
+
+  return out;
 }
