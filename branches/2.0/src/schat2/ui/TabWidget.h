@@ -27,10 +27,7 @@ class AboutTab;
 class AbstractMessage;
 class AbstractTab;
 class AlertTab;
-class Channel;
 class ChannelTab;
-class ClientMessage;
-class MessageData;
 class PrivateTab;
 class QMenu;
 class QToolBar;
@@ -75,7 +72,6 @@ private slots:
   void join(const QByteArray &channelId, const QByteArray &userId, int option = 0);
   void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(const AbstractMessage &data);
-  void message(int status, const MessageData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void updateUserData(const QByteArray &userId);
   void userLeave(const QByteArray &userId);

@@ -92,7 +92,6 @@ public:
 
 signals:
   void message(const AbstractMessage &message);
-  void message(int status, const MessageData &data);
   void notify(int notice, const QVariant &data);
 
 public slots:

@@ -83,7 +83,6 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
-  connect(ChatCore::i(), SIGNAL(message(int, const MessageData &)), SLOT(message(int, const MessageData &)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
@@ -343,58 +342,57 @@ void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &users
 }
 
 
+/*!
+ * FIXME Удалить UserMessage
+ */
 void TabWidget::message(const AbstractMessage &data)
 {
   qDebug() << data.text();
 
   if (data.destId().isEmpty()) {
     m_alertTab->chatView()->evaluateJavaScript(data.js());
-  }
-}
-
-
-/*!
- * Обработка нового сообщения.
- */
-void TabWidget::message(int status, const MessageData &data)
-{
-  if (SimpleID::typeOf(data.senderId) != SimpleID::UserId)
     return;
+  }
 
-  int type = SimpleID::typeOf(data.destId);
-  UserMessage message(status, data);
+  int type = SimpleID::typeOf(data.destId());
 
   if (type == SimpleID::ChannelId) {
-    ChatUser user = m_client->user(data.senderId);
+    ChatUser user = m_client->user(data.senderId());
     if (!user)
       return;
 
-    ChannelTab *tab = m_channels.value(data.destId);
+    ChannelTab *tab = m_channels.value(data.destId());
     if (tab) {
-      tab->chatView()->evaluateJavaScript(message.js());
+      tab->chatView()->evaluateJavaScript(data.js());
     }
   }
   else if (type == SimpleID::UserId) {
     QByteArray id;
     ChatUser user;
 
-    if (status & UserMessage::IncomingMessage) {
-      id = data.senderId;
+    if (data.type() == AbstractMessage::UserMessageType) {
+      if (static_cast<const UserMessage &>(data).status() & UserMessage::IncomingMessage) {
+        id = data.senderId();
+        user = m_client->user(id);
+      }
+      else if (static_cast<const UserMessage &>(data).status() & UserMessage::OutgoingMessage) {
+        id = data.destId();
+        user = m_client->user();
+      }
+      else
+        return;
+    }
+    else {
+      id = data.destId();
       user = m_client->user(id);
     }
-    else if (status & UserMessage::OutgoingMessage) {
-      id = data.destId;
-      user = m_client->user();
-    }
-    else
-      return;
 
     if (!user)
       return;
 
     PrivateTab *tab = privateTab(id);
     if (tab) {
-      tab->chatView()->evaluateJavaScript(message.js());
+      tab->chatView()->evaluateJavaScript(data.js());
     }
   }
 }
