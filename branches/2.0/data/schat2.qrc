@@ -1,8 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="html/jquery.min.js">html/jquery-1.6.1.min.js</file>
+  <file alias="css/about.css">html/css/about.css</file>
+  <file alias="css/style.css">html/css/style.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/channel.png">images/diagona/030.png</file>
+  <file alias="images/external-small.png">images/fugue/external-small.png</file>
   <file alias="images/gear.png">images/fugue/gear.png</file>
   <file alias="images/globe.png">images/diagona/094.png</file>
   <file alias="images/information-balloon.png">images/fugue/information-balloon.png</file>
@@ -25,6 +27,8 @@
   <file alias="images/text-italic.png">images/oxygen/format-text-italic.png</file>
   <file alias="images/text-strikethrough.png">images/oxygen/format-text-strikethrough.png</file>
   <file alias="images/text-underline.png">images/oxygen/format-text-underline.png</file>
+  <file alias="images/toggle-small.png">images/fugue/toggle-small.png</file>
+  <file alias="images/toggle-small-expand.png">images/fugue/toggle-small-expand.png</file>
   <file alias="images/user.png">images/fugue/user.png</file>
   <file alias="images/user-black.png">images/fugue/user-black.png</file>
   <file alias="images/user-black-female.png">images/fugue/user-black-female.png</file>
@@ -48,19 +52,18 @@
   <file alias="images/user-white-female.png">images/fugue/user-white-female.png</file>
   <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
-  <file>html/about.css</file>
+  <file alias="js/about.js">html/js/about.js</file>
+  <file alias="js/ChatView.js">html/js/ChatView.js</file>
+  <file alias="js/jquery.js">html/js/jquery-1.6.1.min.js</file>
   <file>html/about.html</file>
   <file>html/ChatView.html</file>
-  <file>html/ChatView.js</file>
-  <file>html/images/external-link.png</file>
-  <file>html/images/logo128.png</file>
-  <file>html/images/progress.gif</file>
-  <file>html/style.css</file>
   <file>html/templates/alert.html</file>
   <file>html/templates/generic.html</file>
   <file>html/templates/message.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
+  <file>images/logo128.png</file>
+  <file>images/progress.gif</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
 </qresource>
