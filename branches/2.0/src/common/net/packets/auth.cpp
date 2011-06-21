@@ -96,15 +96,25 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 
 
 AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
-  : host(host)
+  : authVersion(V1)
+  , authType(authType)
+  , maxProtoVersion(Protocol::V4_0)
+  , features(SupportRichText)
+  , gender(user->rawGender())
+  , host(host)
   , nick(user->nick())
   , userAgent(SimpleID::userAgent())
-  , features(SupportRichText)
-  , authType(authType)
-  , authVersion(V1)
-  , gender(user->rawGender())
-  , maxProtoVersion(Protocol::V4_0)
 {
+  setStatus(user->status());
+}
+
+
+void AuthRequestData::setStatus(quint8 status)
+{
+  if (status == User::OfflineStatus)
+    status = User::OnlineStatus;
+
+  this->status = status;
 }
 
 
@@ -118,6 +128,7 @@ AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData 
   put(data.features);
   put(data.language);
   put(data.gender);
+  put(data.status);
   put(data.host);
   put(data.nick);
   put(data.userAgent);
@@ -133,6 +144,7 @@ AuthRequestReader::AuthRequestReader(PacketReader *reader)
   data.features = reader->get<quint32>();
   data.language = reader->get<quint8>();
   data.gender = reader->get<quint8>();
+  data.setStatus(reader->get<quint8>());
   data.host = reader->text();
   data.nick = reader->text();
   data.userAgent = reader->text();

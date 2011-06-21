@@ -132,24 +132,26 @@ public:
   };
 
   AuthRequestData()
-  : features(0)
+  : authVersion(0)
   , authType(0)
-  , authVersion(0)
   , maxProtoVersion(0)
+  , features(0)
   {}
 
   AuthRequestData(int authType, const QString &host, User *user);
+  void setStatus(quint8 status);
 
+  quint8 authVersion;      ///< Версия пакета.
+  quint8 authType;         ///< Тип авторизации.
   QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
+  quint8 maxProtoVersion;  ///< Максимальная поддерживаемая версия протокола.
+  quint32 features;        ///< Возможности клиента.
+  quint8 language;         ///< Язык клиента.
+  quint8 gender;           ///< Пол и цвет пользователя.
+  quint8 status;           ///< Статус пользователя.
   QString host;            ///< Адрес по которому клиент подключается к серверу.
   QString nick;            ///< Ник.
   QString userAgent;       ///< Идентификатор клиента пользователя.
-  quint32 features;        ///< Возможности клиента.
-  quint8 authType;         ///< Тип авторизации.
-  quint8 authVersion;      ///< Версия пакета.
-  quint8 gender;           ///< Пол и цвет пользователя.
-  quint8 language;         ///< Язык клиента.
-  quint8 maxProtoVersion;  ///< Максимальная поддерживаемая версия протокола.
 };
 
 
@@ -163,6 +165,7 @@ public:
  * - 04 bytes - Client Features.
  * - 01 byte  - Language.
  * - 01 byte  - Gender.
+ * - 01 byte  - User Status.
  * - utf8     - Server Host.
  * - utf8     - Nickname.
  * - utf8     - User Agent.
