@@ -38,6 +38,11 @@ UserMessage::UserMessage(int status, const MessageData &data)
   m_senderId = data.senderId;
   m_timestamp = data.timestamp;
 
+  if (status & OutgoingMessage)
+    m_direction = OutgoingDirection;
+  else if (status & IncomingMessage)
+    m_direction = IncomingDirection;
+
   setNick(user->nick());
 }
 

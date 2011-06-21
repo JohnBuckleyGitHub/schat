@@ -27,7 +27,7 @@
 
 #include "Channel.h"
 #include "ChatCore.h"
-#include "messages/UserMessage.h"
+#include "messages/AbstractMessage.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "schat2.h"
@@ -342,13 +342,8 @@ void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &users
 }
 
 
-/*!
- * FIXME Удалить UserMessage
- */
 void TabWidget::message(const AbstractMessage &data)
 {
-  qDebug() << data.text();
-
   if (data.destId().isEmpty()) {
     m_alertTab->chatView()->evaluateJavaScript(data.js());
     return;
@@ -368,27 +363,11 @@ void TabWidget::message(const AbstractMessage &data)
   }
   else if (type == SimpleID::UserId) {
     QByteArray id;
-    ChatUser user;
 
-    if (data.type() == AbstractMessage::UserMessageType) {
-      if (static_cast<const UserMessage &>(data).status() & UserMessage::IncomingMessage) {
-        id = data.senderId();
-        user = m_client->user(id);
-      }
-      else if (static_cast<const UserMessage &>(data).status() & UserMessage::OutgoingMessage) {
-        id = data.destId();
-        user = m_client->user();
-      }
-      else
-        return;
-    }
-    else {
+    if (data.direction() == AbstractMessage::IncomingDirection)
+      id = data.senderId();
+    else
       id = data.destId();
-      user = m_client->user(id);
-    }
-
-    if (!user)
-      return;
 
     PrivateTab *tab = privateTab(id);
     if (tab) {

@@ -37,6 +37,7 @@ class SimpleClient;
 class SoundButton;
 class TabBar;
 class WelcomeTab;
+
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
  */
