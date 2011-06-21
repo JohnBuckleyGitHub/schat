@@ -23,7 +23,8 @@
 QHash<QString, QString> AbstractMessage::m_templates;
 
 AbstractMessage::AbstractMessage(int type, const QString &text, const QByteArray &destId, int parseOptions)
-  : m_parseOptions(parseOptions)
+  : m_direction(UnknownDirection)
+  , m_parseOptions(parseOptions)
   , m_destId(destId)
   , m_timestamp(0)
   , m_type(type)

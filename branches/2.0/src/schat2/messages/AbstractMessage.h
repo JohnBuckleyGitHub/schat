@@ -40,7 +40,15 @@ public:
     RemoveUnSafeHtml = 2 ///< Удалить небезопасный html код.
   };
 
+  /// Направление сообщения.
+  enum Direction {
+    UnknownDirection,
+    OutgoingDirection,
+    IncomingDirection
+  };
+
   AbstractMessage(int type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
+  inline int direction() const { return m_direction; }
   inline int type() const { return m_type; }
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }
@@ -56,6 +64,7 @@ protected:
   void replaceText(QString &html) const;
   void replaceTimeStamp(QString &html) const;
 
+  int m_direction;       ///< Направление сообщения.
   int m_parseOptions;    ///< Опции обработки сообщения.
   QByteArray m_destId;   ///< Идентификатор назначения.
   QByteArray m_senderId; ///< Идентификатор отправителя.
