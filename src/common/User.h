@@ -56,6 +56,15 @@ public:
     Thief
   };
 
+  /// Статус.
+  enum Status {
+    OfflineStatus,
+    OnlineStatus,
+    AwayStatus,
+    AutoAwayStatus,
+    DnDStatus
+  };
+
   User();
   User(const QString &nick);
   User(const User *other);
@@ -95,11 +104,15 @@ public:
   inline void setHost(const QString &adderss) { m_host = adderss; }
   inline void setUserAgent(const QString &agent) { m_userAgent = agent; }
 
+  // m_status
+  inline int status() const { return m_status; }
+
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_valid;                         ///< true все данные корректны.
   int m_gender;                         ///< Пол и цвет иконки.
+  int m_status;                         ///< Код статуса.
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
   QString m_host;                       ///< Адрес пользователя.

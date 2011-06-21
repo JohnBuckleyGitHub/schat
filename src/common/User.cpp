@@ -25,6 +25,7 @@
 User::User()
   : m_valid(true)
   , m_gender(Male)
+  , m_status(OfflineStatus)
 {
 }
 
@@ -32,6 +33,7 @@ User::User()
 User::User(const QString &nick)
   : m_valid(true)
   , m_gender(Male)
+  , m_status(OfflineStatus)
 {
   setNick(nick);
 }
@@ -40,6 +42,7 @@ User::User(const QString &nick)
 User::User(const User *other)
   : m_valid(other->isValid())
   , m_gender(other->rawGender())
+  , m_status(other->status())
   , m_id(other->id())
   , m_host(other->host())
   , m_nick(other->nick())
