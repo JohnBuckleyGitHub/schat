@@ -7,4 +7,5 @@
 /join
 /male
 /nick
+/quit
 /set
