@@ -30,6 +30,7 @@ class PacketReader;
  * - 01 byte  - options.
  * - 01 byte  - reserved.
  * - 01 byte  - Gender.
+ * - 01 byte  - Status.
  * - utf8     - Nickname.
  * - utf8     - UserAgent (is not set Protocol::Broadcast).
  * - utf8     - Host (is not set Protocol::Broadcast).

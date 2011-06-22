@@ -74,6 +74,28 @@ QString UserUtils::toolTip(ChatUser user)
 {
   QString out = "<b>" + user->nick() + "</b><br />";
   out += user->host() + "<br />";
-  out += user->userAgent();
+  out += user->userAgent() + "<br />";
+
+  switch (user->status()) {
+    case User::OfflineStatus:
+      out += "Offline";
+      break;
+
+    case User::OnlineStatus:
+      out += "Online";
+      break;
+
+    case User::AwayStatus:
+    case User::AutoAwayStatus:
+      out += "Away";
+      break;
+
+    case User::DnDStatus:
+      out += "DnD";
+      break;
+
+    default:
+      break;
+  }
   return out;
 }

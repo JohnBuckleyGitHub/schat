@@ -55,6 +55,7 @@ void UserWriter::write(User *user, int options)
   put<quint8>(options);
   put<quint8>(0);
   put<quint8>(user->rawGender());
+  put<quint8>(user->status());
   put(user->nick());
 
   if (!(m_headerOption & Protocol::Broadcast)) {
@@ -71,10 +72,14 @@ UserReader::UserReader(PacketReader *reader)
 
   user.setId(reader->sender());
   user.setRawGender(reader->get<quint8>());
+  user.setStatus(reader->get<quint8>());
   user.setNick(reader->text());
 
   if (!(reader->headerOption() & Protocol::Broadcast)) {
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
   }
+
+  if (user.status() == User::OfflineStatus)
+    user.setStatus(User::OnlineStatus);
 }
