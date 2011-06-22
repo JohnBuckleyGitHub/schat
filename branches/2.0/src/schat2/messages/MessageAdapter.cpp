@@ -197,24 +197,23 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 
 
 /*!
- * Обработка комманд.
+ * Обработка комманд http://simple.impomezia.com/Commands
+ * - /about
+ * - /color
+ * - /exit
+ * - /female
+ * - /gender
+ * - /hide
+ * - /join
+ * - /male
+ * - /nick
+ * - /quit
+ * - /set
  */
 void MessageAdapter::command(const QString &text)
 {
-  if (text.startsWith("join ", Qt::CaseInsensitive) && text.size() > 7) {
-    MessageData data(QByteArray(), QByteArray(), "join", text.mid(5));
-    m_client->send(data);
-
-    return;
-  }
-
-  if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
-    ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
-    return;
-  }
-
-  if (text.startsWith("gender ", Qt::CaseInsensitive)) {
-    setGender(text.mid(7).toLower(), "");
+  if (text.startsWith("about", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::AboutNotice);
     return;
   }
 
@@ -228,8 +227,8 @@ void MessageAdapter::command(const QString &text)
     return;
   }
 
-  if (text.startsWith("male ", Qt::CaseInsensitive)) {
-    setGender("male", text.mid(5).toLower());
+  if (text.startsWith("exit", Qt::CaseInsensitive) || text.startsWith("quit", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::QuitNotice);
     return;
   }
 
@@ -238,13 +237,40 @@ void MessageAdapter::command(const QString &text)
     return;
   }
 
+  if (text.startsWith("female", Qt::CaseInsensitive)) {
+    setGender("female", "");
+    return;
+  }
+
+  if (text.startsWith("gender ", Qt::CaseInsensitive)) {
+    setGender(text.mid(7).toLower(), "");
+    return;
+  }
+
+  if (text.startsWith("hide", Qt::CaseInsensitive)) {
+    ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
+    return;
+  }
+
+  if (text.startsWith("join ", Qt::CaseInsensitive) && text.size() > 7) {
+    MessageData data(QByteArray(), QByteArray(), "join", text.mid(5));
+    m_client->send(data);
+
+    return;
+  }
+
+  if (text.startsWith("male ", Qt::CaseInsensitive)) {
+    setGender("male", text.mid(5).toLower());
+    return;
+  }
+
   if (text.startsWith("male", Qt::CaseInsensitive)) {
     setGender("male", "");
     return;
   }
 
-  if (text.startsWith("female", Qt::CaseInsensitive)) {
-    setGender("female", "");
+  if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
+    ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
     return;
   }
 
@@ -254,21 +280,6 @@ void MessageAdapter::command(const QString &text)
     QString value = text.mid(offset + key.size() + 1);
 
     ChatCore::i()->settings()->setValue(key, value);
-    return;
-  }
-
-  if (text.startsWith("about", Qt::CaseInsensitive)) {
-    ChatCore::i()->startNotify(ChatCore::AboutNotice);
-    return;
-  }
-
-  if (text.startsWith("exit", Qt::CaseInsensitive) || text.startsWith("quit", Qt::CaseInsensitive)) {
-    ChatCore::i()->startNotify(ChatCore::QuitNotice);
-    return;
-  }
-
-  if (text.startsWith("hide", Qt::CaseInsensitive)) {
-    ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
     return;
   }
 }
