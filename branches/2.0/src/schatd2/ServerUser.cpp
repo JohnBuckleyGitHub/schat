@@ -35,6 +35,8 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   setId(id);
   setNick(authRequestData->nick);
   setRawGender(authRequestData->gender);
+  setStatus(authRequestData->status);
+
   addUser(m_id);
 }
 

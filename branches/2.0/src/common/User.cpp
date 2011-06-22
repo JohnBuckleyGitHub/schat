@@ -244,3 +244,12 @@ QList<QByteArray> User::ids(int type)
   return m_ids.value(type);
 }
 
+
+void User::setStatus(quint8 status)
+{
+  if (status > DnDStatus)
+    status = OnlineStatus;
+
+  m_status = status;
+}
+

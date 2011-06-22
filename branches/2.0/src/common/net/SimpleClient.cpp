@@ -336,6 +336,7 @@ QString SimpleClient::mangleNick()
  */
 void SimpleClient::clearClient()
 {
+  m_user->setStatus(User::OfflineStatus);
   m_user->remove(SimpleID::ChannelListId);
   m_user->remove(SimpleID::TalksListId);
 
@@ -513,7 +514,12 @@ bool SimpleClient::readAuthReply()
     setAuthorized(data.userId);
     m_user->setId(data.userId);
     m_user->setHost(data.host);
+
     setServerData(data.serverData);
+
+    if (m_user->status() == User::OfflineStatus)
+      m_user->setStatus(User::OnlineStatus);
+
     return true;
   }
   else if (data.status == AuthReplyData::AccessDenied) {
@@ -701,6 +707,7 @@ void SimpleClient::updateUserData(ChatUser existUser, User *user)
 
   existUser->setNick(user->nick());
   existUser->setRawGender(user->rawGender());
+  existUser->setStatus(user->status());
 
   emit userDataChanged(existUser->id());
 }

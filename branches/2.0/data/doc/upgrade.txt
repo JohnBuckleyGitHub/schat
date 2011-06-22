@@ -6,5 +6,6 @@
  + DataBase::update()
  + UserWriter()
  + UserReader()
+ + SimpleClient::readAuthReply()
  + SimpleClient::updateUserData()
  + UserUtils::toolTip()
