@@ -336,7 +336,6 @@ QString SimpleClient::mangleNick()
  */
 void SimpleClient::clearClient()
 {
-  m_user->setStatus(User::OfflineStatus);
   m_user->remove(SimpleID::ChannelListId);
   m_user->remove(SimpleID::TalksListId);
 
@@ -434,6 +433,8 @@ void SimpleClient::setServerData(const ServerData &data)
 
   if (!sameServer) {
     clearClient();
+
+    m_user->setStatus(User::OnlineStatus);
 
     if (m_serverData->features() & ServerData::AutoJoinSupport && !m_serverData->channelId().isEmpty()) {
       MessageData data(userId(), m_serverData->channelId(), "join", "");

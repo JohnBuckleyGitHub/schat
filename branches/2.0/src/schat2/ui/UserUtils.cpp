@@ -81,10 +81,6 @@ QString UserUtils::toolTip(ChatUser user)
       out += "Offline";
       break;
 
-    case User::OnlineStatus:
-      out += "Online";
-      break;
-
     case User::AwayStatus:
     case User::AutoAwayStatus:
       out += "Away";
@@ -95,6 +91,7 @@ QString UserUtils::toolTip(ChatUser user)
       break;
 
     default:
+      out += "Online";
       break;
   }
   return out;
