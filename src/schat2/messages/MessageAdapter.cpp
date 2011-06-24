@@ -201,6 +201,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
  * - /about
  * - /away
  * - /color
+ * - /dnd
  * - /exit
  * - /female
  * - /gender
@@ -208,6 +209,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
  * - /join
  * - /male
  * - /nick
+ * - /online
  * - /quit
  * - /set
  */
@@ -230,6 +232,11 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("color", Qt::CaseInsensitive)) {
     setGender("", "default");
+    return;
+  }
+
+  if (text.startsWith("dnd", Qt::CaseInsensitive)) {
+    setStatus(User::DnDStatus);
     return;
   }
 
@@ -277,6 +284,11 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
     ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
+    return;
+  }
+
+  if (text.startsWith("online", Qt::CaseInsensitive)) {
+    setStatus(User::OnlineStatus);
     return;
   }
 

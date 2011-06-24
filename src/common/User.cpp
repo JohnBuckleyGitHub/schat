@@ -269,13 +269,3 @@ bool User::setStatus(const QString &text)
   setStatus(status);
   return true;
 }
-
-
-void User::setStatus(quint8 status)
-{
-  if (status > DnDStatus)
-    status = OnlineStatus;
-
-  m_status = status;
-}
-

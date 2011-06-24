@@ -107,7 +107,7 @@ public:
   // m_status
   bool setStatus(const QString &text);
   inline int status() const { return m_status; }
-  void setStatus(quint8 status);
+  inline void setStatus(quint8 status) { m_status = status; }
 
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
