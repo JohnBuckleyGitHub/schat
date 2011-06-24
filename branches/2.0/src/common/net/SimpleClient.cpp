@@ -497,6 +497,11 @@ bool SimpleClient::command()
     return true;
   }
 
+  if (command == "status") {
+    updateUserStatus(m_messageData->text);
+    return true;
+  }
+
   return false;
 }
 
@@ -710,4 +715,26 @@ void SimpleClient::updateUserData(ChatUser existUser, User *user)
   existUser->setStatus(user->status());
 
   emit userDataChanged(existUser->id());
+}
+
+
+/*!
+ * Обновление статуса пользователя.
+ */
+void SimpleClient::updateUserStatus(const QString &text)
+{
+  ChatUser user = this->user(m_reader->sender());
+  if (!user)
+    return;
+
+  if (!user->setStatus(text))
+    return;
+
+  if (user->status() == User::OfflineStatus) {
+    if (m_reader->headerOption() & Protocol::Broadcast) {
+      user->setStatus(User::OnlineStatus);
+    }
+  }
+
+  emit userDataChanged(user->id());
 }

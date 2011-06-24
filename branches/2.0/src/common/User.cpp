@@ -245,6 +245,32 @@ QList<QByteArray> User::ids(int type)
 }
 
 
+/*!
+ * Установка статуса пользователя из строки.
+ * Формат строки: число + разделитель ; + опциональный текст статуса.
+ *
+ * \return true в случае если строка корректна и статус установлен.
+ */
+bool User::setStatus(const QString &text)
+{
+  if (text.isEmpty())
+    return false;
+
+  int index = text.indexOf(QLatin1Char(';'));
+
+  if (index == -1)
+    return false;
+
+  bool ok;
+  int status = text.left(index).toUInt(&ok);
+  if (!ok)
+    return false;
+
+  setStatus(status);
+  return true;
+}
+
+
 void User::setStatus(quint8 status)
 {
   if (status > DnDStatus)

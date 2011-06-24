@@ -673,15 +673,36 @@ void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
 
 
 /*!
+ * Обновление статуса пользователя.
+ */
+bool Core::updateUserStatus(const QString &text)
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return true;
+
+  if (!user->setStatus(m_messageData->text))
+    return true;
+
+  if (user->status() == User::OfflineStatus) {
+    if (m_reader->headerOption() & Protocol::Broadcast) {
+      user->setStatus(User::OnlineStatus);
+    }
+  }
+
+  return false;
+}
+
+
+/*!
  * Обработка команд.
  *
  * \return true в случае если команда была обработана, иначе false.
  */
 bool Core::command()
 {
-  SCHAT_DEBUG_STREAM(this << "command()" << m_packetsEvent->userId().toHex())
-
   QString command = m_messageData->command;
+  SCHAT_DEBUG_STREAM(this << "command()" << command << m_packetsEvent->userId().toHex())
 
   if (command.isEmpty())
     return false;
@@ -694,8 +715,8 @@ bool Core::command()
   if (command == "part") {
     if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
       return false;
-    else
-      return true;
+
+    return true;
   }
 
   if (command == "add") {
@@ -704,6 +725,10 @@ bool Core::command()
     }
 
     return true;
+  }
+
+  if (command == "status") {
+    return updateUserStatus(m_messageData->text);
   }
 
   return false;

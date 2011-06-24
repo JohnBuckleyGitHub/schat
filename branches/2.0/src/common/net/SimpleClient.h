@@ -107,6 +107,7 @@ private:
   bool removeUser(const QByteArray &userId);
   bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
   void updateUserData(ChatUser existUser, User *user);
+  void updateUserStatus(const QString &text);
 
   bool m_sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ChatUser m_user;                           ///< Пользователь.

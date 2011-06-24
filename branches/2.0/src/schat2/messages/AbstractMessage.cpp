@@ -86,7 +86,7 @@ QDateTime AbstractMessage::dateTime() const
   #if QT_VERSION >= 0x040700
   return QDateTime::fromMSecsSinceEpoch(m_timestamp);
   #else
-  return QDateTime::fromTime_t(timestamp / 1000);
+  return QDateTime::fromTime_t(m_timestamp / 1000);
   #endif
 }
 

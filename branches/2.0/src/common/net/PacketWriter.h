@@ -68,8 +68,10 @@ public:
       m_headerOption |= Protocol::SenderField;
 
     if (!dest.isEmpty()) {
-      if (dest == "bc")
+      if (dest == "bc") {
         m_headerOption |= Protocol::Broadcast;
+        echo = true;
+      }
       else
         m_headerOption |= Protocol::DestinationField;
     }
