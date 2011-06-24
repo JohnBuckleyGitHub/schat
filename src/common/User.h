@@ -105,6 +105,7 @@ public:
   inline void setUserAgent(const QString &agent) { m_userAgent = agent; }
 
   // m_status
+  bool setStatus(const QString &text);
   inline int status() const { return m_status; }
   void setStatus(quint8 status);
 

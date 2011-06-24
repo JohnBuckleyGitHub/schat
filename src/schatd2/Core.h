@@ -90,6 +90,9 @@ private:
   void bindTalks();
   void bindTalks(ChatUser senderUser, ChatUser destUser);
 
+  // users.
+  bool updateUserStatus(const QString &text);
+
   // messages.
   bool command();
   bool readJoinCmd();

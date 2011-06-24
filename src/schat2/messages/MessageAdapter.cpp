@@ -199,6 +199,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 /*!
  * Обработка комманд http://simple.impomezia.com/Commands
  * - /about
+ * - /away
  * - /color
  * - /exit
  * - /female
@@ -214,6 +215,11 @@ void MessageAdapter::command(const QString &text)
 {
   if (text.startsWith("about", Qt::CaseInsensitive)) {
     ChatCore::i()->startNotify(ChatCore::AboutNotice);
+    return;
+  }
+
+  if (text.startsWith("away", Qt::CaseInsensitive)) {
+    setStatus(User::AwayStatus);
     return;
   }
 
@@ -317,4 +323,16 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
   }
 
   m_undelivered.clear();
+}
+
+
+void MessageAdapter::setStatus(int status, const QString &text)
+{
+  qDebug() << "setStatus()" << status;
+
+  QString t = text;
+  t.replace(";", "%3B");
+
+  MessageData data(m_client->userId(), "bc", "status", QString::number(status) + ";" + t);
+  m_client->send(data);
 }

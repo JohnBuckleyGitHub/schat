@@ -59,6 +59,7 @@ private:
   void command(const QString &text);
   void newUserMessage(int status, const MessageData &data);
   void setStateAll(int state, const QString &reason);
+  void setStatus(int status, const QString &text = "");
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
   QByteArray m_destId;                      ///< Текущий получатель сообщения.
