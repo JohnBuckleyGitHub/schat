@@ -16,6 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QPainter>
+
+#include "ChatCore.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -47,7 +50,7 @@ int UserUtils::color(const QString &color)
 
 
 
-QIcon UserUtils::icon(ChatUser user)
+QIcon UserUtils::icon(ChatUser user, bool status)
 {
   QString file = ":/images/user";
   int gender = user->gender();
@@ -66,7 +69,16 @@ QIcon UserUtils::icon(ChatUser user)
   if (gender == User::Female)
     file += "-female";
 
-  return QIcon(file + ".png");
+  file += ".png";
+
+  if (status) {
+    if (user->status() == User::AwayStatus || user->status() == User::AutoAwayStatus)
+      return ChatCore::icon(file, QLatin1String(":/images/away-small.png"));
+    else if (user->status() == User::DnDStatus)
+      return ChatCore::icon(file, QLatin1String(":/images/dnd-small.png"));
+  }
+
+  return QIcon(file);
 }
 
 

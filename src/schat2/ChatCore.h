@@ -87,6 +87,7 @@ public:
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
+  static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
   void send(const QByteArray &destId, const QString &text);
 
