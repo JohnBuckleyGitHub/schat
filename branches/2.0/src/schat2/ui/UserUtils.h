@@ -28,7 +28,7 @@ class UserUtils
 public:
   UserUtils();
   static int color(const QString &color);
-  static QIcon icon(ChatUser user);
+  static QIcon icon(ChatUser user, bool status = true);
   static QString toolTip(ChatUser user);
 
 private:

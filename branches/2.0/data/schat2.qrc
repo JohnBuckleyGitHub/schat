@@ -3,8 +3,11 @@
   <file alias="css/about.css">html/css/about.css</file>
   <file alias="css/style.css">html/css/style.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
+  <file alias="images/away-small.png">images/diagona/10/087.png</file>
   <file alias="images/channel.png">images/diagona/030.png</file>
+  <file alias="images/dnd-small.png">images/diagona/10/153.png</file>
   <file alias="images/external-small.png">images/fugue/external-small.png</file>
+  <file alias="images/ffc-small.png">images/diagona/10/036.png</file>
   <file alias="images/gear.png">images/fugue/gear.png</file>
   <file alias="images/globe.png">images/diagona/094.png</file>
   <file alias="images/information-balloon.png">images/fugue/information-balloon.png</file>
@@ -27,8 +30,8 @@
   <file alias="images/text-italic.png">images/oxygen/format-text-italic.png</file>
   <file alias="images/text-strikethrough.png">images/oxygen/format-text-strikethrough.png</file>
   <file alias="images/text-underline.png">images/oxygen/format-text-underline.png</file>
-  <file alias="images/toggle-small.png">images/fugue/toggle-small.png</file>
-  <file alias="images/toggle-small-expand.png">images/fugue/toggle-small-expand.png</file>
+  <file alias="images/toggle-small.png">images/diagona/10/130.png</file>
+  <file alias="images/toggle-small-expand.png">images/diagona/10/129.png</file>
   <file alias="images/user.png">images/fugue/user.png</file>
   <file alias="images/user-black.png">images/fugue/user-black.png</file>
   <file alias="images/user-black-female.png">images/fugue/user-black-female.png</file>

@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QPainter>
 #include <QTextDocument>
 
 #include "ChatCore.h"
@@ -81,6 +82,23 @@ ChatCore::ChatCore(QObject *parent)
 ChatCore::~ChatCore()
 {
   delete m_userUtils;
+}
+
+
+/*!
+ * Наложение маленькой иконки \p overlay на большую \p file в правый нижний угол.
+ *
+ * \param file    Файл иконки размером 16x16 пикселей.
+ * \param overlay Иконка-оверлей размером 10x10 пикселей.
+ */
+QIcon ChatCore::icon(const QString &file, const QString &overlay)
+{
+  QPixmap pixmap(file);
+  QPainter painter(&pixmap);
+  painter.drawPixmap(6, 6, QPixmap(overlay));
+  painter.end();
+
+  return QIcon(pixmap);
 }
 
 

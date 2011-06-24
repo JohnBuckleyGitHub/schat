@@ -38,6 +38,18 @@ UserItem::UserItem(ChatUser user, int option)
 
 bool UserItem::update()
 {
+  switch (m_user->status()) {
+    case User::AwayStatus:
+    case User::AutoAwayStatus:
+    case User::DnDStatus:
+      setForeground(QBrush(QColor(0x90a4b3)));
+      break;
+
+    default:
+      setForeground(QPalette().brush(QPalette::WindowText));
+      break;
+  }
+
   setText(m_user->nick());
   setSortData();
   setIcon(UserUtils::icon(m_user));
