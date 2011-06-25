@@ -21,6 +21,8 @@
 
 #include <QSystemTrayIcon>
 
+class SimpleClient;
+
 class TrayIcon : public QSystemTrayIcon
 {
   Q_OBJECT
@@ -30,6 +32,13 @@ public:
 
 private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void updateUserData(const QByteArray &userId);
+
+private:
+  void setTrayIcon(int status = -1);
+
+  QIcon m_icon;
+  SimpleClient *m_client;
 };
 
 #endif /* TRAYICON_H_ */

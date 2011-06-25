@@ -39,7 +39,8 @@ public:
     ShowSeconds,    ///< Отображать секунды.
     DefaultProfile, ///< Использовать профиль по умолчанию.
     ProfileNick,    ///< Ник по умолчанию.
-    ProfileGender   ///< Пол по умолчанию.
+    ProfileGender,  ///< Пол по умолчанию.
+    ProfileStatus   ///< Статус пользователя.
   };
 
   ChatSettings(QObject *parent = 0);

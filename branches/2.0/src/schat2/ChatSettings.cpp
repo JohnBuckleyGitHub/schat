@@ -35,6 +35,7 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("DefaultProfile", true);
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
+  setDefault("Profile/Status", User::OnlineStatus);
 }
 
 

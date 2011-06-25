@@ -9,3 +9,5 @@
  + SimpleClient::readAuthReply()
  + SimpleClient::updateUserData()
  + UserUtils::toolTip()
+ + NetworkManager::setUserData()
+ + NetworkManager::updateUserData()

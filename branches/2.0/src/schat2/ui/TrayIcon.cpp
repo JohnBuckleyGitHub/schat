@@ -18,11 +18,18 @@
 
 #include "ChatCore.h"
 #include "ui/TrayIcon.h"
+#include "ui/UserUtils.h"
+#include "net/SimpleClient.h"
 
 TrayIcon::TrayIcon(QObject *parent)
-  : QSystemTrayIcon(SCHAT_ICON(SmallLogoIcon), parent)
+  : QSystemTrayIcon(parent)
 {
+  m_client = ChatCore::i()->client();
+
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+
+  setTrayIcon();
 }
 
 
@@ -31,4 +38,24 @@ void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
   if (reason == QSystemTrayIcon::Trigger || QSystemTrayIcon::MiddleClick) {
     ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
   }
+}
+
+
+void TrayIcon::updateUserData(const QByteArray &userId)
+{
+  if (m_client->userId() == userId)
+    setTrayIcon(m_client->user()->status());
+}
+
+
+void TrayIcon::setTrayIcon(int status)
+{
+  if (status == -1) {
+    m_icon = SCHAT_ICON(SmallLogoIcon);
+  }
+  else {
+    m_icon = ChatCore::icon(":/images/schat16.png", UserUtils::overlay(status));
+  }
+
+  setIcon(m_icon);
 }
