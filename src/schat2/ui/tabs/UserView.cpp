@@ -61,10 +61,13 @@ void UserItem::setSortData()
 {
   setToolTip(UserUtils::toolTip(m_user));
 
+  QString prefix = "5";
   if (m_self)
-    setData("!" + m_user->nick().toLower());
-  else
-    setData("5" + m_user->nick().toLower());
+    prefix = "!";
+  else if (m_user->status() == User::FreeForChatStatus)
+    prefix = "3";
+
+  setData(prefix + m_user->nick().toLower());
 }
 
 

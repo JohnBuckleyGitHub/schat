@@ -62,7 +62,8 @@ public:
     OnlineStatus,
     AwayStatus,
     AutoAwayStatus,
-    DnDStatus
+    DnDStatus,
+    FreeForChatStatus
   };
 
   User();
