@@ -76,6 +76,8 @@ QIcon UserUtils::icon(ChatUser user, bool status)
       return ChatCore::icon(file, QLatin1String(":/images/away-small.png"));
     else if (user->status() == User::DnDStatus)
       return ChatCore::icon(file, QLatin1String(":/images/dnd-small.png"));
+    else if (user->status() == User::FreeForChatStatus)
+      return ChatCore::icon(file, QLatin1String(":/images/ffc-small.png"));
   }
 
   return QIcon(file);
@@ -100,6 +102,10 @@ QString UserUtils::toolTip(ChatUser user)
 
     case User::DnDStatus:
       out += "DnD";
+      break;
+
+    case User::FreeForChatStatus:
+      out += "Free for Chat";
       break;
 
     default:

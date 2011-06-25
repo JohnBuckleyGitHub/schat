@@ -204,6 +204,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
  * - /dnd
  * - /exit
  * - /female
+ * - /ffc
  * - /gender
  * - /hide
  * - /join
@@ -252,6 +253,11 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("female", Qt::CaseInsensitive)) {
     setGender("female", "");
+    return;
+  }
+
+  if (text.startsWith("ffc", Qt::CaseInsensitive)) {
+    setStatus(User::FreeForChatStatus);
     return;
   }
 
