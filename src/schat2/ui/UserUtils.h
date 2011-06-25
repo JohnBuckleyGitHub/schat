@@ -29,6 +29,7 @@ public:
   UserUtils();
   static int color(const QString &color);
   static QIcon icon(ChatUser user, bool status = true);
+  static QString overlay(int status);
   static QString toolTip(ChatUser user);
 
 private:

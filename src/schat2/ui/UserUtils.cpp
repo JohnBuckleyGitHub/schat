@@ -72,15 +72,23 @@ QIcon UserUtils::icon(ChatUser user, bool status)
   file += ".png";
 
   if (status) {
-    if (user->status() == User::AwayStatus || user->status() == User::AutoAwayStatus)
-      return ChatCore::icon(file, QLatin1String(":/images/away-small.png"));
-    else if (user->status() == User::DnDStatus)
-      return ChatCore::icon(file, QLatin1String(":/images/dnd-small.png"));
-    else if (user->status() == User::FreeForChatStatus)
-      return ChatCore::icon(file, QLatin1String(":/images/ffc-small.png"));
+    return ChatCore::icon(file, overlay(user->status()));
   }
 
   return QIcon(file);
+}
+
+
+QString UserUtils::overlay(int status)
+{
+  if (status == User::AwayStatus || status == User::AutoAwayStatus)
+    return QLatin1String(":/images/away-small.png");
+  else if (status == User::DnDStatus)
+    return QLatin1String(":/images/dnd-small.png");
+  else if (status == User::FreeForChatStatus)
+    return QLatin1String(":/images/ffc-small.png");
+  else
+    return QLatin1String("");
 }
 
 

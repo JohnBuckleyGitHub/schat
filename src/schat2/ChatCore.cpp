@@ -93,6 +93,9 @@ ChatCore::~ChatCore()
  */
 QIcon ChatCore::icon(const QString &file, const QString &overlay)
 {
+  if (overlay.isEmpty())
+    return QIcon(file);
+
   QPixmap pixmap(file);
   QPainter painter(&pixmap);
   painter.drawPixmap(6, 6, QPixmap(overlay));

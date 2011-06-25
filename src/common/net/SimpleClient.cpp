@@ -526,6 +526,7 @@ bool SimpleClient::readAuthReply()
     if (m_user->status() == User::OfflineStatus)
       m_user->setStatus(User::OnlineStatus);
 
+    emit userDataChanged(userId());
     return true;
   }
   else if (data.status == AuthReplyData::AccessDenied) {
