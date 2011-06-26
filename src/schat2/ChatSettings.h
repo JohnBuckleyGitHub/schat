@@ -20,9 +20,9 @@
 #define CHATSETTINGS_H_
 
 #include "Settings.h"
+#include "schat2.h"
 
 class SimpleClient;
-class User;
 
 class ChatSettings : public Settings
 {
@@ -44,14 +44,15 @@ public:
   };
 
   ChatSettings(QObject *parent = 0);
-  inline void setClient(SimpleClient *client) { m_client = client; }
+  void setClient(SimpleClient *client);
+  void update(User *user, bool sync = true);
   void updateValue(int key, const QVariant &value);
 
-private:
-  void send(User *user);
-  void updateGender(int gender);
-  void updateNick(const QString &nick);
+private slots:
+  void updateUserData(const QByteArray &userId);
 
+private:
+  ChatUser m_user;
   SimpleClient *m_client;
 };
 

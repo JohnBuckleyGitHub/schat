@@ -39,60 +39,82 @@ ChatSettings::ChatSettings(QObject *parent)
 }
 
 
+void ChatSettings::setClient(SimpleClient *client)
+{
+  m_client = client;
+
+  m_user = m_client->user();
+  m_user->setNick(value(ProfileNick).toString());
+  m_user->setRawGender(value(ProfileGender).toUInt());
+  m_user->setStatus(value(ProfileStatus).toUInt());
+
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+}
+
+
+/*!
+ * Обновление информации о пользователе.
+ * В случае если клиент подключен к серверу и \p sync = true, происходит отложенная синхронизация.
+ *
+ * \param user Указатель на пользователя с новыми данными.
+ * \param sync true Если необходимо синхронизировать изменения с сервером.
+ */
+void ChatSettings::update(User *user, bool sync)
+{
+  if (sync && m_client->clientState() == SimpleClient::ClientOnline) {
+    UserWriter writer(m_client->sendStream(), user);
+    m_client->send(writer.data());
+    return;
+  }
+
+  setValue(ProfileNick, user->nick(), true);
+  setValue(ProfileGender, user->rawGender(), true);
+  setValue(ProfileStatus, user->status(), true);
+
+  if (sync) {
+    m_client->setNick(user->nick());
+    m_user->setRawGender(user->rawGender());
+  }
+}
+
+
 /*!
  * Обновление настройки профиля.
  */
 void ChatSettings::updateValue(int key, const QVariant &value)
 {
-  if (m_client->clientState() != SimpleClient::ClientOnline) {
-    setValue(key, value, true);
-
-    if (key == ProfileNick)
-      m_client->setNick(value.toString());
-
-    return;
-  }
-
   if (this->value(key) == value)
     return;
 
+  if (key == ProfileNick && m_client->clientState() != SimpleClient::ClientOnline) {
+    setValue(key, value, true);
+    m_client->setNick(value.toString());
+    return;
+  }
+
+  User user(m_user.data());
+
   switch (key) {
     case ProfileNick:
-      updateNick(value.toString());
+      user.setNick(value.toString());
       break;
 
     case ProfileGender:
-      updateGender(value.toInt());
+      user.setRawGender(value.toInt());
       break;
 
     default:
       break;
   }
+
+  update(&user);
 }
 
 
-void ChatSettings::send(User *user)
+void ChatSettings::updateUserData(const QByteArray &userId)
 {
-  UserWriter writer(m_client->sendStream(), user);
-  m_client->send(writer.data());
-}
+  if (m_client->userId() != userId)
+    return;
 
-
-void ChatSettings::updateGender(int gender)
-{
-  if (m_client->user()->rawGender() != gender) {
-    User user(m_client->user().data());
-    user.setRawGender(gender);
-    send(&user);
-  }
-}
-
-
-void ChatSettings::updateNick(const QString &nick)
-{
-  if (m_client->user()->nick() != nick && User::isValidNick(nick)) {
-    User user(m_client->user().data());
-    user.setNick(nick);
-    send(&user);
-  }
+  update(m_user.data(), false);
 }

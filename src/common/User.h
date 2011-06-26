@@ -118,6 +118,7 @@ protected:
   int m_status;                         ///< Код статуса.
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
+  QHash<int, QString> m_statuses;       ///< Статусы.
   QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.

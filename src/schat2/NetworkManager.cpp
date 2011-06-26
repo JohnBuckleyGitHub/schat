@@ -76,7 +76,6 @@ NetworkManager::NetworkManager(QObject *parent)
 
   load();
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
-  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
 
 
@@ -91,8 +90,6 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
-  setUserData();
-
   NetworkItem item = m_items.value(id);
   return m_client->openUrl(item.url());
 }
@@ -100,7 +97,6 @@ bool NetworkManager::open(const QByteArray &id)
 
 bool NetworkManager::open(const QString &url)
 {
-  setUserData();
   return m_client->openUrl(url);
 }
 
@@ -156,22 +152,6 @@ void NetworkManager::clientStateChanged(int state)
     return;
 
   write();
-
-//  root(data->id());
-}
-
-
-/*!
- * Обновление данных пользователя инициированное клиентом \p m_client.
- */
-void NetworkManager::updateUserData(const QByteArray &userId)
-{
-  if (m_client->userId() != userId)
-    return;
-
-  m_settings->setValue(ChatSettings::ProfileNick, m_client->nick(), true);
-  m_settings->setValue(ChatSettings::ProfileGender, m_client->user()->rawGender(), true);
-  m_settings->setValue(ChatSettings::ProfileStatus, m_client->user()->status(), true);
 }
 
 
@@ -235,16 +215,6 @@ void NetworkManager::load()
     }
     m_settings->setValue(ChatSettings::Networks, m_networks);
   }
-}
-
-
-/*!
- * Установка данных пользователя при подключении.
- */
-void NetworkManager::setUserData()
-{
-  m_client->setNick(m_settings->value(ChatSettings::ProfileNick).toString());
-  m_client->user()->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
 }
 
 
