@@ -221,6 +221,11 @@ void MessageAdapter::command(const QString &text)
     return;
   }
 
+  if (text.startsWith("away ", Qt::CaseInsensitive)) {
+    setStatus(User::AwayStatus, text.mid(5));
+    return;
+  }
+
   if (text.startsWith("away", Qt::CaseInsensitive)) {
     setStatus(User::AwayStatus);
     return;
@@ -346,7 +351,7 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
 
 void MessageAdapter::setStatus(int status, const QString &text)
 {
-  qDebug() << "setStatus()" << status;
+  qDebug() << "setStatus()" << status << text;
 
   QString t = text;
   t.replace(";", "%3B");

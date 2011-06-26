@@ -71,13 +71,11 @@ public:
 
 private slots:
   void clientStateChanged(int state);
-  void updateUserData(const QByteArray &userId);
 
 private:
   QString authKey() const;
   QString root(const QByteArray &id);
   void load();
-  void setUserData();
   void write();
 
   ChatSettings *m_settings; ///< Основные настройки.
