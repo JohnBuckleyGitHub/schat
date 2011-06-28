@@ -241,6 +241,11 @@ void MessageAdapter::command(const QString &text)
     return;
   }
 
+  if (text.startsWith("dnd ", Qt::CaseInsensitive)) {
+    setStatus(User::DnDStatus, text.mid(4));
+    return;
+  }
+
   if (text.startsWith("dnd", Qt::CaseInsensitive)) {
     setStatus(User::DnDStatus);
     return;
@@ -258,6 +263,11 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("female", Qt::CaseInsensitive)) {
     setGender("female", "");
+    return;
+  }
+
+  if (text.startsWith("ffc ", Qt::CaseInsensitive)) {
+    setStatus(User::FreeForChatStatus, text.mid(4));
     return;
   }
 
@@ -295,6 +305,11 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
     ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
+    return;
+  }
+
+  if (text.startsWith("online ", Qt::CaseInsensitive)) {
+    setStatus(User::OnlineStatus, text.mid(7));
     return;
   }
 

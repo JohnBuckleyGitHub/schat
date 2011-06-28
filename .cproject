@@ -113,6 +113,8 @@
 </target>
 </buildTargets>
 </storageModule>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.core.pathentry">
 <pathentry base-path="C:/qt/4.7.3/include" include="" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/qt/4.7.3/include" include="ActiveQt" kind="inc" path="" system="true"/>
@@ -165,6 +167,8 @@
 <pathentry base-path="C:/Qt/2010.05/qt/include" include="QtWebKit" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/Qt/2010.05/qt/include" include="QtXml" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/Qt/2010.05/qt/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
+<pathentry kind="src" path=""/>
+<pathentry kind="out" path=""/>
 </storageModule>
 </cconfiguration>
 </storageModule>

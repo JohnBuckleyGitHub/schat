@@ -421,6 +421,7 @@ void SimpleClient::setClientState(ClientState state)
 void SimpleClient::setServerData(const ServerData &data)
 {
   bool sameServer = false;
+
   if (!m_serverData->id().isEmpty() && m_serverData->id() == data.id())
     sameServer = true;
 
@@ -433,8 +434,6 @@ void SimpleClient::setServerData(const ServerData &data)
 
   if (!sameServer) {
     clearClient();
-
-    m_user->setStatus(User::OnlineStatus);
 
     if (m_serverData->features() & ServerData::AutoJoinSupport && !m_serverData->channelId().isEmpty()) {
       MessageData data(userId(), m_serverData->channelId(), "join", "");

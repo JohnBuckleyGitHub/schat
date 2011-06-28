@@ -32,11 +32,24 @@ UserItem::UserItem(ChatUser user, int option)
   if (option & UserView::SelfNick)
     m_self = true;
 
+  if (m_user->status() != User::OnlineStatus)
+    setColor();
+
   setSortData();
 }
 
 
 bool UserItem::update()
+{
+  setText(m_user->nick());
+  setColor();
+  setSortData();
+  setIcon(UserUtils::icon(m_user));
+  return true;
+}
+
+
+void UserItem::setColor()
 {
   switch (m_user->status()) {
     case User::AwayStatus:
@@ -49,11 +62,6 @@ bool UserItem::update()
       setForeground(QPalette().brush(QPalette::WindowText));
       break;
   }
-
-  setText(m_user->nick());
-  setSortData();
-  setIcon(UserUtils::icon(m_user));
-  return true;
 }
 
 

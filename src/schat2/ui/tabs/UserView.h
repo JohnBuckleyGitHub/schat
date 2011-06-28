@@ -35,6 +35,7 @@ public:
   bool update();
 
 private:
+  void setColor();
   void setSortData();
 
   bool m_self;     ///< true это данные текущего пользователя.
