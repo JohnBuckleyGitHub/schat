@@ -120,5 +120,8 @@ QString UserUtils::toolTip(ChatUser user)
       out += "Online";
       break;
   }
+
+  out += " " + user->statusText();
+
   return out;
 }

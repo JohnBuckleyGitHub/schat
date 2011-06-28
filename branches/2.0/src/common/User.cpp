@@ -266,6 +266,26 @@ bool User::setStatus(const QString &text)
   if (!ok)
     return false;
 
-  setStatus(status);
+  if (text.size() - index == 1)
+    setStatus(status);
+  else
+    setStatus(status, text.mid(index + 1));
+
   return true;
+}
+
+
+QString User::statusText(int status)
+{
+  if (status < 0 || status > 255)
+    return m_statuses.value(m_status);
+
+  return m_statuses.value(status);
+}
+
+
+void User::setStatus(quint8 status, const QString &text)
+{
+  setStatus(status);
+  m_statuses[status] = text;
 }

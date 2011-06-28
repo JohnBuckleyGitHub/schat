@@ -109,6 +109,8 @@ public:
   bool setStatus(const QString &text);
   inline int status() const { return m_status; }
   inline void setStatus(quint8 status) { m_status = status; }
+  QString statusText(int status = -1);
+  void setStatus(quint8 status, const QString &text);
 
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
