@@ -23,6 +23,7 @@
 #include <QObject>
 
 class AbstractMessage;
+class ChatSettings;
 class MessageData;
 class NoticeData;
 class SimpleClient;
@@ -41,7 +42,7 @@ public:
     CommandArgsError
   };
 
-  MessageAdapter(SimpleClient *client);
+  MessageAdapter(QObject *parent = 0);
   int send(MessageData &data);
 
 signals:
@@ -62,6 +63,7 @@ private:
   void setStatus(int status, const QString &text = "");
 
   bool m_richText;                          ///< true если в командах может использоваться html текст.
+  ChatSettings *m_settings;                 ///< Настройки чата.
   QByteArray m_destId;                      ///< Текущий получатель сообщения.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
   quint64 m_name;                           ///< Счётчик последнего отправленного сообщения.

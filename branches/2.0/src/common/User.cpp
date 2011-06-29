@@ -248,6 +248,9 @@ QList<QByteArray> User::ids(int type)
 /*!
  * Установка статуса пользователя из строки.
  * Формат строки: число + разделитель ; + опциональный текст статуса.
+ * В тексте статуса не может содержаться символ ';', он должен быть заменён на %3B.
+ *
+ * \sa statusToString()
  *
  * \return true в случае если строка корректна и статус установлен.
  */
@@ -266,21 +269,35 @@ bool User::setStatus(const QString &text)
   if (!ok)
     return false;
 
+  index = text.lastIndexOf(QLatin1Char(';'));
+
   if (text.size() - index == 1)
     setStatus(status);
   else
-    setStatus(status, text.mid(index + 1));
+    setStatus(status, text.mid(index + 1).replace(QLatin1String("%3B"), QLatin1String(";")));
 
   return true;
 }
 
 
-QString User::statusText(int status)
+QString User::statusText(int status) const
 {
   if (status < 0 || status > 255)
     return m_statuses.value(m_status);
 
   return m_statuses.value(status);
+}
+
+
+/*!
+ * Формирует строку статуса.
+ */
+QString User::statusToString(quint8 status, const QString &text)
+{
+  QString t = text;
+  t.replace(";", "%3B");
+
+  return QString::number(status) + ";" + t;
 }
 
 

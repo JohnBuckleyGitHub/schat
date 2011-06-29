@@ -108,8 +108,10 @@ public:
   // m_status
   bool setStatus(const QString &text);
   inline int status() const { return m_status; }
+  inline QString statusToString() { return statusToString(m_status, m_statuses.value(m_status)); }
   inline void setStatus(quint8 status) { m_status = status; }
-  QString statusText(int status = -1);
+  QString statusText(int status = -1) const;
+  static QString statusToString(quint8 status, const QString &text);
   void setStatus(quint8 status, const QString &text);
 
 protected:

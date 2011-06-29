@@ -35,7 +35,7 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("DefaultProfile", true);
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
-  setDefault("Profile/Status", User::OnlineStatus);
+  setDefault("Profile/Status", "0;");
 }
 
 
@@ -46,7 +46,7 @@ void ChatSettings::setClient(SimpleClient *client)
   m_user = m_client->user();
   m_user->setNick(value(ProfileNick).toString());
   m_user->setRawGender(value(ProfileGender).toUInt());
-  m_user->setStatus(value(ProfileStatus).toUInt());
+  m_user->setStatus(value(ProfileStatus).toString());
 
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
@@ -69,7 +69,7 @@ void ChatSettings::update(User *user, bool sync)
 
   setValue(ProfileNick, user->nick(), true);
   setValue(ProfileGender, user->rawGender(), true);
-  setValue(ProfileStatus, user->status(), true);
+  setValue(ProfileStatus, user->statusToString(), true);
 
   if (sync) {
     m_client->setNick(user->nick());

@@ -32,11 +32,12 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-MessageAdapter::MessageAdapter(SimpleClient *client)
-  : QObject(client)
+MessageAdapter::MessageAdapter(QObject *parent)
+  : QObject(parent)
   , m_richText(true)
+  , m_settings(m_settings)
   , m_name(1)
-  , m_client(client)
+  , m_client(ChatCore::i()->client())
 {
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
@@ -191,7 +192,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   if (m_client->user()->rawGender() == user.rawGender())
     return NoSent;
 
-  ChatCore::i()->settings()->updateValue(ChatSettings::ProfileGender, user.rawGender());
+  m_settings->updateValue(ChatSettings::ProfileGender, user.rawGender());
   return SentAsCommand;
 }
 
@@ -304,7 +305,7 @@ void MessageAdapter::command(const QString &text)
   }
 
   if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
-    ChatCore::i()->settings()->updateValue(ChatSettings::ProfileNick, text.mid(5));
+    m_settings->updateValue(ChatSettings::ProfileNick, text.mid(5));
     return;
   }
 
@@ -323,7 +324,7 @@ void MessageAdapter::command(const QString &text)
     QString key = text.mid(offset, text.indexOf(' ', offset) - offset);
     QString value = text.mid(offset + key.size() + 1);
 
-    ChatCore::i()->settings()->setValue(key, value);
+    m_settings->setValue(key, value);
     return;
   }
 }
@@ -371,6 +372,6 @@ void MessageAdapter::setStatus(int status, const QString &text)
   QString t = text;
   t.replace(";", "%3B");
 
-  MessageData data(m_client->userId(), "bc", "status", QString::number(status) + ";" + t);
+  MessageData data(m_client->userId(), "bc", "status", User::statusToString(status, text));
   m_client->send(data);
 }
