@@ -109,10 +109,10 @@ public:
   bool setStatus(const QString &text);
   inline int status() const { return m_status; }
   inline QString statusToString() { return statusToString(m_status, m_statuses.value(m_status)); }
-  inline void setStatus(quint8 status) { m_status = status; }
+  inline void setStatus(int status) { m_status = status; }
   QString statusText(int status = -1) const;
-  static QString statusToString(quint8 status, const QString &text);
-  void setStatus(quint8 status, const QString &text);
+  static QString statusToString(int status, const QString &text);
+  void setStatus(int status, const QString &text);
 
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }

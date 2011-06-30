@@ -292,7 +292,7 @@ QString User::statusText(int status) const
 /*!
  * Формирует строку статуса.
  */
-QString User::statusToString(quint8 status, const QString &text)
+QString User::statusToString(int status, const QString &text)
 {
   QString t = text;
   t.replace(";", "%3B");
@@ -301,7 +301,7 @@ QString User::statusToString(quint8 status, const QString &text)
 }
 
 
-void User::setStatus(quint8 status, const QString &text)
+void User::setStatus(int status, const QString &text)
 {
   setStatus(status);
   m_statuses[status] = text;

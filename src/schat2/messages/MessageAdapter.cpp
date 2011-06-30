@@ -35,7 +35,7 @@
 MessageAdapter::MessageAdapter(QObject *parent)
   : QObject(parent)
   , m_richText(true)
-  , m_settings(m_settings)
+  , m_settings(ChatCore::i()->settings())
   , m_name(1)
   , m_client(ChatCore::i()->client())
 {
@@ -367,11 +367,8 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
 
 void MessageAdapter::setStatus(int status, const QString &text)
 {
-  qDebug() << "setStatus()" << status << text;
-
-  QString t = text;
-  t.replace(";", "%3B");
-
-  MessageData data(m_client->userId(), "bc", "status", User::statusToString(status, text));
-  m_client->send(data);
+  if (text.isEmpty())
+    m_settings->updateValue(ChatSettings::ProfileStatus, status);
+  else
+    m_settings->updateValue(ChatSettings::ProfileStatus, User::statusToString(status, text));
 }
