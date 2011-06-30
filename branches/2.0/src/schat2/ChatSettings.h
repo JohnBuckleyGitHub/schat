@@ -45,13 +45,15 @@ public:
 
   ChatSettings(QObject *parent = 0);
   void setClient(SimpleClient *client);
-  void update(User *user, bool sync = true);
   void updateValue(int key, const QVariant &value);
 
 private slots:
   void updateUserData(const QByteArray &userId);
 
 private:
+  void update(User *user, bool sync = true);
+  void updateStatus(const QVariant &value);
+
   ChatUser m_user;
   SimpleClient *m_client;
 };

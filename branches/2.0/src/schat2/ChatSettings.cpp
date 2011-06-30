@@ -18,6 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "net/packets/message.h"
 #include "net/packets/users.h"
 #include "net/SimpleClient.h"
 #include "User.h"
@@ -53,32 +54,6 @@ void ChatSettings::setClient(SimpleClient *client)
 
 
 /*!
- * Обновление информации о пользователе.
- * В случае если клиент подключен к серверу и \p sync = true, происходит отложенная синхронизация.
- *
- * \param user Указатель на пользователя с новыми данными.
- * \param sync true Если необходимо синхронизировать изменения с сервером.
- */
-void ChatSettings::update(User *user, bool sync)
-{
-  if (sync && m_client->clientState() == SimpleClient::ClientOnline) {
-    UserWriter writer(m_client->sendStream(), user);
-    m_client->send(writer.data());
-    return;
-  }
-
-  setValue(ProfileNick, user->nick(), true);
-  setValue(ProfileGender, user->rawGender(), true);
-  setValue(ProfileStatus, user->statusToString(), true);
-
-  if (sync) {
-    m_client->setNick(user->nick());
-    m_user->setRawGender(user->rawGender());
-  }
-}
-
-
-/*!
  * Обновление настройки профиля.
  */
 void ChatSettings::updateValue(int key, const QVariant &value)
@@ -89,6 +64,11 @@ void ChatSettings::updateValue(int key, const QVariant &value)
   if (key == ProfileNick && m_client->clientState() != SimpleClient::ClientOnline) {
     setValue(key, value, true);
     m_client->setNick(value.toString());
+    return;
+  }
+
+  if (key == ProfileStatus) {
+    updateStatus(value);
     return;
   }
 
@@ -117,4 +97,52 @@ void ChatSettings::updateUserData(const QByteArray &userId)
     return;
 
   update(m_user.data(), false);
+}
+
+
+/*!
+ * Обновление информации о пользователе.
+ * В случае если клиент подключен к серверу и \p sync = true, происходит отложенная синхронизация.
+ *
+ * \param user Указатель на пользователя с новыми данными.
+ * \param sync true Если необходимо синхронизировать изменения с сервером.
+ */
+void ChatSettings::update(User *user, bool sync)
+{
+  if (sync && m_client->clientState() == SimpleClient::ClientOnline) {
+    UserWriter writer(m_client->sendStream(), user);
+    m_client->send(writer.data());
+    return;
+  }
+
+  setValue(ProfileNick, user->nick(), true);
+  setValue(ProfileGender, user->rawGender(), true);
+  setValue(ProfileStatus, user->statusToString(), true);
+
+  if (sync) {
+    m_client->setNick(user->nick());
+    m_user->setRawGender(user->rawGender());
+  }
+}
+
+
+/*!
+ * Обновление статуса пользователя.
+ */
+void ChatSettings::updateStatus(const QVariant &value)
+{
+  QString status;
+  if (value.type() == QVariant::Int)
+    status = User::statusToString(value.toInt(), m_user->statusText(value.toInt()));
+  else
+    status = value.toString();
+
+  if (m_client->clientState() == SimpleClient::ClientOnline) {
+    MessageData data(m_client->userId(), "bc", "status", status);
+    m_client->send(data);
+    return;
+  }
+
+  setValue(ProfileStatus, status, true);
+  m_user->setStatus(status);
 }
