@@ -31,11 +31,12 @@
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/StatusBar.h"
 #include "ui/NetworkWidget.h"
+#include "ui/StatusWidget.h"
 
-StatusBar::StatusBar(SimpleClient *client, QWidget *parent)
-  : QStatusBar(parent),
-    m_clientState(SimpleClient::ClientOffline),
-    m_client(client)
+StatusBar::StatusBar(StatusMenu *menu, QWidget *parent)
+  : QStatusBar(parent)
+  , m_clientState(SimpleClient::ClientOffline)
+  , m_client(ChatCore::i()->client())
 {
   m_progress = new QProgressIndicator(this);
   m_progress->setAnimationDelay(100);
@@ -51,10 +52,13 @@ StatusBar::StatusBar(SimpleClient *client, QWidget *parent)
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);
 
+  m_status = new StatusWidget(menu, this);
+
   addWidget(m_progress);
   addWidget(m_icon);
   addWidget(m_secure);
   addWidget(m_label, 1);
+  addPermanentWidget(m_status);
 
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
 
@@ -90,7 +94,7 @@ void StatusBar::changeEvent(QEvent *event)
 void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 {
   bool context = event->button() == Qt::RightButton;
-  if (event->button() != Qt::LeftButton && !context) {
+  if ((event->button() != Qt::LeftButton && !context) || QApplication::widgetAt(event->globalPos()) == m_status) {
     QStatusBar::mouseReleaseEvent(event);
     return;
   }

@@ -92,36 +92,42 @@ QString UserUtils::overlay(int status)
 }
 
 
+/*!
+ * Имя статуса.
+ */
+QString UserUtils::statusTitle(int status)
+{
+  switch (status) {
+    case User::OfflineStatus:
+      return QObject::tr("Offline");
+      break;
+
+    case User::AwayStatus:
+    case User::AutoAwayStatus:
+      return QObject::tr("Away");
+      break;
+
+    case User::DnDStatus:
+      return QObject::tr("DnD");
+      break;
+
+    case User::FreeForChatStatus:
+      return QObject::tr("Free for Chat");
+      break;
+
+    default:
+      return QObject::tr("Online");
+      break;
+  }
+}
+
+
 QString UserUtils::toolTip(ChatUser user)
 {
   QString out = "<b>" + user->nick() + "</b><br />";
   out += user->host() + "<br />";
   out += user->userAgent() + "<br />";
-
-  switch (user->status()) {
-    case User::OfflineStatus:
-      out += "Offline";
-      break;
-
-    case User::AwayStatus:
-    case User::AutoAwayStatus:
-      out += "Away";
-      break;
-
-    case User::DnDStatus:
-      out += "DnD";
-      break;
-
-    case User::FreeForChatStatus:
-      out += "Free for Chat";
-      break;
-
-    default:
-      out += "Online";
-      break;
-  }
-
-  out += " " + user->statusText();
+  out += statusTitle(user->status()) + " " + user->statusText();
 
   return out;
 }
