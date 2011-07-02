@@ -26,6 +26,7 @@ class ChatSettings;
 class QVBoxLayout;
 class SendWidget;
 class StatusBar;
+class StatusMenu;
 class TabWidget;
 class TrayIcon;
 
@@ -66,6 +67,7 @@ private:
   QWidget *m_central;       ///< Центральный виджет.
   SendWidget *m_send;       ///< Виджет отправки сообщения.
   StatusBar *m_statusBar;   ///< Статус бар.
+  StatusMenu *m_statusMenu; ///< Статусное меню.
   TabWidget *m_tabs;        ///< Вкладки.
   TrayIcon *m_tray;         ///< Иконка в трее.
 };

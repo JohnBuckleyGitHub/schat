@@ -28,13 +28,15 @@ class QLabel;
 class QProgressIndicator;
 class QWidgetAction;
 class SimpleClient;
+class StatusMenu;
+class StatusWidget;
 
 class StatusBar : public QStatusBar
 {
   Q_OBJECT
 
 public:
-  StatusBar(SimpleClient *client, QWidget *parent = 0);
+  StatusBar(StatusMenu *menu, QWidget *parent = 0);
 
 protected:
   bool event(QEvent *event);
@@ -56,6 +58,7 @@ private:
   QProgressIndicator *m_progress; ///< Отображает состояние подключения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
   SimpleClient *m_client;         ///< Клиент.
+  StatusWidget *m_status;         ///< Виджет выбора статуса.
 };
 
 #endif /* STATUSBAR_H_ */

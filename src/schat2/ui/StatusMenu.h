@@ -16,25 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERUTILS_H_
-#define USERUTILS_H_
+#ifndef STATUSMENU_H_
+#define STATUSMENU_H_
 
-#include <QIcon>
+#include <QMenu>
 
-#include "schat2.h"
-
-class UserUtils
+class StatusMenu : public QMenu
 {
+  Q_OBJECT
+
 public:
-  UserUtils();
-  static int color(const QString &color);
-  static QIcon icon(ChatUser user, bool status = true);
-  static QString overlay(int status);
-  static QString statusTitle(int status);
-  static QString toolTip(ChatUser user);
+  StatusMenu(QWidget *parent = 0);
 
 private:
-  static QStringList m_colors;
+  void addStatus(int status);
+  void update();
+
+  QActionGroup *m_group;            ///< Группа для того чтобы можно было выбрать только один статус.
+  QHash<int, QAction *> m_statuses; ///< Статусы.
 };
 
-#endif /* USERUTILS_H_ */
+#endif /* STATUSMENU_H_ */

@@ -61,6 +61,8 @@ HEADERS = \
     ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
+    ui/StatusMenu.h \
+    ui/StatusWidget.h \
     ui/TabBar.h \
     ui/tabs/AboutTab.h \
     ui/tabs/AbstractTab.h \
@@ -112,6 +114,8 @@ SOURCES = \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \
+    ui/StatusMenu.cpp \
+    ui/StatusWidget.cpp \
     ui/TabBar.cpp \
     ui/tabs/AboutTab.cpp \
     ui/tabs/AbstractTab.cpp \

@@ -28,6 +28,7 @@
 #include "ui/ChatWindow.h"
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"
+#include "ui/StatusMenu.h"
 #include "ui/TabWidget.h"
 #include "ui/TrayIcon.h"
 
@@ -49,8 +50,9 @@ ChatWindow::ChatWindow(QWidget *parent)
   m_settings = m_core->settings();
   m_central = new QWidget(this);
 
+  m_statusMenu = new StatusMenu(this);
   m_tabs = new TabWidget(this);
-  m_statusBar = new StatusBar(m_core->client(), this);
+  m_statusBar = new StatusBar(m_statusMenu, this);
 
   m_send = new SendWidget(this);
 

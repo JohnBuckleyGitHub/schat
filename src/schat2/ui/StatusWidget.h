@@ -16,25 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERUTILS_H_
-#define USERUTILS_H_
+#ifndef STATUSWIDGET_H_
+#define STATUSWIDGET_H_
 
-#include <QIcon>
+#include <QWidget>
 
 #include "schat2.h"
 
-class UserUtils
+class QLabel;
+class StatusMenu;
+
+class StatusWidget: public QWidget
 {
+  Q_OBJECT
+
 public:
-  UserUtils();
-  static int color(const QString &color);
-  static QIcon icon(ChatUser user, bool status = true);
-  static QString overlay(int status);
-  static QString statusTitle(int status);
-  static QString toolTip(ChatUser user);
+  StatusWidget(StatusMenu *menu, QWidget *parent = 0);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-  static QStringList m_colors;
+  void update();
+
+  bool m_actualSize;
+  ChatUser m_user;    ///< Пользователь.
+  QLabel *m_icon;     ///< Видежт для отображения иконки статуса.
+  QLabel *m_label;    ///< Виджет для показа текста статуса.
+  StatusMenu *m_menu; ///< Статусное меню.
 };
 
-#endif /* USERUTILS_H_ */
+#endif /* STATUSWIDGET_H_ */
