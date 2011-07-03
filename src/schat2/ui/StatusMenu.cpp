@@ -55,10 +55,6 @@ void StatusMenu::settingsChanged(const QList<int> &keys)
 
 void StatusMenu::statusChanged(QAction *action)
 {
-  if (action->data().toInt() == User::OfflineStatus) {
-    ChatCore::i()->client()->leave();
-  }
-
   ChatCore::i()->settings()->updateValue(ChatSettings::ProfileStatus, action->data().toInt());
 }
 

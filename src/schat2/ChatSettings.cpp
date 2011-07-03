@@ -129,6 +129,8 @@ void ChatSettings::update(User *user, bool sync)
 
 /*!
  * Обновление статуса пользователя.
+ *
+ * \param value Новый статус, может быть числом или строкой.
  */
 void ChatSettings::updateStatus(const QVariant &value)
 {
@@ -139,11 +141,14 @@ void ChatSettings::updateStatus(const QVariant &value)
     status = value.toString();
 
   if (m_client->clientState() == SimpleClient::ClientOnline) {
-    MessageData data(m_client->userId(), "bc", "status", status);
+    MessageData data(m_client->userId(), "bc", QLatin1String("status"), status);
     m_client->send(data);
-    return;
   }
 
   m_user->setStatus(status);
+  if (m_user->status() == User::OfflineStatus) {
+    ChatCore::i()->client()->leave();
+  }
+
   setValue(ProfileStatus, status, true);
 }
