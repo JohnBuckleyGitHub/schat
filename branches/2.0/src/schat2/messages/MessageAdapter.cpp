@@ -211,6 +211,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
  * - /join
  * - /male
  * - /nick
+ * - /offline
  * - /online
  * - /quit
  * - /set
@@ -306,6 +307,16 @@ void MessageAdapter::command(const QString &text)
 
   if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
     m_settings->updateValue(ChatSettings::ProfileNick, text.mid(5));
+    return;
+  }
+
+  if (text.startsWith("offline ", Qt::CaseInsensitive)) {
+    setStatus(User::OfflineStatus, text.mid(8));
+    return;
+  }
+
+  if (text.startsWith("offline", Qt::CaseInsensitive)) {
+    setStatus(User::OfflineStatus);
     return;
   }
 
