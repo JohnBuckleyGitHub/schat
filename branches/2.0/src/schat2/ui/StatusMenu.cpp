@@ -17,6 +17,7 @@
  */
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "net/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/UserUtils.h"
@@ -35,6 +36,30 @@ StatusMenu::StatusMenu(QWidget *parent)
   addStatus(User::OfflineStatus);
 
   update();
+
+  connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
+}
+
+
+/*!
+ * Обработка изменения настроек статуса или пола.
+ */
+void StatusMenu::settingsChanged(const QList<int> &keys)
+{
+  if (keys.contains(ChatSettings::ProfileStatus) || keys.contains(ChatSettings::ProfileGender)) {
+    update();
+  }
+}
+
+
+void StatusMenu::statusChanged(QAction *action)
+{
+  if (action->data().toInt() == User::OfflineStatus) {
+    ChatCore::i()->client()->leave();
+  }
+
+  ChatCore::i()->settings()->updateValue(ChatSettings::ProfileStatus, action->data().toInt());
 }
 
 
@@ -50,6 +75,9 @@ void StatusMenu::addStatus(int status)
 }
 
 
+/*!
+ * Обновление меню.
+ */
 void StatusMenu::update()
 {
   ChatUser user(new User(ChatCore::i()->client()->user().data()));
@@ -61,7 +89,7 @@ void StatusMenu::update()
   while (i.hasNext()) {
     i.next();
     user->setStatus(i.key());
-    i.value()->setIcon(UserUtils::icon(user));
+    i.value()->setIcon(UserUtils::icon(user, true, true));
     i.value()->setText(UserUtils::statusTitle(i.key()));
   }
 }

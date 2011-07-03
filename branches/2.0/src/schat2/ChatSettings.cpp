@@ -115,14 +115,15 @@ void ChatSettings::update(User *user, bool sync)
     return;
   }
 
-  setValue(ProfileNick, user->nick(), true);
-  setValue(ProfileGender, user->rawGender(), true);
-  setValue(ProfileStatus, user->statusToString(), true);
-
   if (sync) {
     m_client->setNick(user->nick());
     m_user->setRawGender(user->rawGender());
+    m_user->setStatus(user->statusToString());
   }
+
+  setValue(ProfileNick, user->nick(), true);
+  setValue(ProfileGender, user->rawGender(), true);
+  setValue(ProfileStatus, user->statusToString(), true);
 }
 
 
@@ -143,6 +144,6 @@ void ChatSettings::updateStatus(const QVariant &value)
     return;
   }
 
-  setValue(ProfileStatus, status, true);
   m_user->setStatus(status);
+  setValue(ProfileStatus, status, true);
 }
