@@ -36,6 +36,10 @@ public:
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
+private slots:
+  void clientStateChanged(int state);
+  void settingsChanged(const QList<int> &keys);
+
 private:
   void update();
 

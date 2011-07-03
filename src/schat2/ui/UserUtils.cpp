@@ -49,29 +49,38 @@ int UserUtils::color(const QString &color)
 }
 
 
-
-QIcon UserUtils::icon(ChatUser user, bool status)
+/*!
+ * Иконка пользователя.
+ *
+ * \param user    Пользователь.
+ * \param status  true если необходимо отрисовывать статус.
+ * \param offline true если необходимо отрисовывать статус User::OfflineStatus.
+ */
+QIcon UserUtils::icon(ChatUser user, bool status, bool offline)
 {
-  QString file = ":/images/user";
+  QString file = QLatin1String(":/images/user");
   int gender = user->gender();
   int color  = user->color();
 
   if (gender == User::Unknown) {
-    file += "-unknown";
+    file += QLatin1String("-unknown");
   }
   else if (gender == User::Ghost) {
-    file += "-ghost";
+    file += QLatin1String("-ghost");
   }
   else if (color != User::Default) {
-    file += "-" + m_colors.at(color);
+    file += QLatin1String("-") + m_colors.at(color);
   }
 
   if (gender == User::Female)
-    file += "-female";
+    file += QLatin1String("-female");
 
-  file += ".png";
+  file += QLatin1String(".png");
 
   if (status) {
+    if (offline && user->status() == User::OfflineStatus)
+      return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
+
     return ChatCore::icon(file, overlay(user->status()));
   }
 
