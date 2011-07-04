@@ -38,6 +38,7 @@ public:
     Networks,       ///< Список серверов.
     ShowSeconds,    ///< Отображать секунды.
     DefaultProfile, ///< Использовать профиль по умолчанию.
+    AutoConnect,    ///< Автоматически подключатся.
     ProfileNick,    ///< Ник по умолчанию.
     ProfileGender,  ///< Пол по умолчанию.
     ProfileStatus   ///< Статус пользователя.

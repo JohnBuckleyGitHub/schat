@@ -18,6 +18,7 @@
 
 #include <QPainter>
 #include <QTextDocument>
+#include <QTimer>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -76,6 +77,8 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "information-balloon";
 
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -142,6 +145,12 @@ void ChatCore::nickClicked(const QString &text)
     return;
 
   startNotify(InsertTextToSend, " <b>" + Qt::escape(user->nick()) + "</b> ");
+}
+
+
+void ChatCore::start()
+{
+  m_networkManager->open();
 }
 
 

@@ -21,6 +21,7 @@
 #include "net/packets/message.h"
 #include "net/packets/users.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "User.h"
 
 ChatSettings::ChatSettings(QObject *parent)
@@ -34,6 +35,7 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("Networks", QStringList());
   setDefault("ShowSeconds", false);
   setDefault("DefaultProfile", true);
+  setDefault("AutoConnect", true);
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
   setDefault("Profile/Status", "0;");
@@ -151,4 +153,6 @@ void ChatSettings::updateStatus(const QVariant &value)
   }
 
   setValue(ProfileStatus, status, true);
+
+  ChatCore::i()->networks()->open();
 }

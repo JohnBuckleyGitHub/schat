@@ -98,6 +98,9 @@ signals:
 public slots:
   void nickClicked(const QString &text);
 
+private slots:
+  void start();
+
 private:
   QByteArray userIdFromClass(const QString &text);
 
