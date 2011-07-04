@@ -1,3 +1,4 @@
+AutoConnect
 Height
 Maximized
 Networks
