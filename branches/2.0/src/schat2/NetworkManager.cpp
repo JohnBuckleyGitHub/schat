@@ -70,12 +70,31 @@ bool NetworkItem::isValid() const
 
 NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
+  , m_settings(ChatCore::i()->settings())
+  , m_client(ChatCore::i()->client())
 {
-  m_settings = ChatCore::i()->settings();
-  m_client = ChatCore::i()->client();
-
   load();
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+}
+
+
+bool NetworkManager::open()
+{
+  if (m_client->clientState() != SimpleClient::ClientOffline)
+    return false;
+
+  if (m_settings->value(ChatSettings::AutoConnect).toBool() == false)
+    return false;
+
+  if (m_networks.isEmpty())
+    return false;
+
+  if (m_client->user()->status() == User::OfflineStatus)
+    return false;
+
+  open(SimpleID::fromBase64(m_networks.at(0).toLatin1()));
+
+  return true;
 }
 
 
@@ -95,6 +114,12 @@ bool NetworkManager::open(const QByteArray &id)
 }
 
 
+/*!
+ * Открытие нового соединения, URL адрес сервера.
+ *
+ * \param url Адрес сервера.
+ * \return true в случае успеха.
+ */
 bool NetworkManager::open(const QString &url)
 {
   return m_client->openUrl(url);

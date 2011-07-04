@@ -62,6 +62,7 @@ class NetworkManager : public QObject
 
 public:
   NetworkManager(QObject *parent = 0);
+  bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
   NetworkItem item(const QByteArray &id) const;
