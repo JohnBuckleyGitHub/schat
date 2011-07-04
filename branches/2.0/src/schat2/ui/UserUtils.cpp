@@ -117,7 +117,7 @@ QString UserUtils::statusTitle(int status)
       break;
 
     case User::DnDStatus:
-      return QObject::tr("DnD");
+      return QObject::tr("Do not disturb");
       break;
 
     case User::FreeForChatStatus:

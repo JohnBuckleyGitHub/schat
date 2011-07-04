@@ -149,7 +149,7 @@ void ChatSettings::updateStatus(const QVariant &value)
 
   m_user->setStatus(status);
   if (m_user->status() == User::OfflineStatus) {
-    ChatCore::i()->client()->leave();
+    m_client->leave();
   }
 
   setValue(ProfileStatus, status, true);
