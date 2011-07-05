@@ -17,6 +17,7 @@
  */
 
 #include <QPainter>
+#include <QTextDocument>
 
 #include "ChatCore.h"
 #include "ui/UserUtils.h"
@@ -133,10 +134,10 @@ QString UserUtils::statusTitle(int status)
 
 QString UserUtils::toolTip(ChatUser user)
 {
-  QString out = "<b>" + user->nick() + "</b><br />";
-  out += user->host() + "<br />";
-  out += user->userAgent() + "<br />";
-  out += statusTitle(user->status()) + " " + user->statusText();
+  QString out = "<b>" + Qt::escape(user->nick()) + "</b><br />";
+  out += Qt::escape(user->host()) + "<br />";
+  out += Qt::escape(user->userAgent()) + "<br />";
+  out += statusTitle(user->status()) + " " + Qt::escape(user->statusText());
 
   return out;
 }
