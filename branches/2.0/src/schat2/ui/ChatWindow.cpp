@@ -181,6 +181,9 @@ void ChatWindow::notify(int notice, const QVariant &data)
     else
       hideChat();
   }
+  else if (notice == ChatCore::ShowChatNotice) {
+    showChat();
+  }
   else if (notice == ChatCore::InsertTextToSend) {
     m_send->insertHtml(data.toString());
   }

@@ -61,6 +61,7 @@ void TrayIcon::retranslateUi()
 void TrayIcon::about()
 {
   ChatCore::i()->startNotify(ChatCore::AboutNotice);
+  ChatCore::i()->startNotify(ChatCore::ShowChatNotice);
 }
 
 
@@ -81,6 +82,7 @@ void TrayIcon::quit()
 void TrayIcon::settings()
 {
   ChatCore::i()->startNotify(ChatCore::SettingsNotice);
+  ChatCore::i()->startNotify(ChatCore::ShowChatNotice);
 }
 
 
