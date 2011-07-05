@@ -21,16 +21,11 @@
 #include <QMouseEvent>
 
 #include "ChatCore.h"
-#include "ChatSettings.h"
-#include "net/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/StatusWidget.h"
-#include "ui/UserUtils.h"
 
 StatusWidget::StatusWidget(QWidget *parent)
   : QWidget(parent)
-  , m_actualSize(false)
-  , m_user(ChatCore::i()->client()->user())
   , m_menu(ChatCore::i()->statusMenu())
 {
   m_icon = new QLabel(this);
@@ -45,8 +40,7 @@ StatusWidget::StatusWidget(QWidget *parent)
 
   update();
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_menu, SIGNAL(updated()), SLOT(update()));
 }
 
 
@@ -64,33 +58,9 @@ void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
-void StatusWidget::clientStateChanged(int state)
-{
-  Q_UNUSED(state);
-  update();
-}
-
-
-/*!
- * Обработка изменения настроек статуса или пола.
- */
-void StatusWidget::settingsChanged(const QList<int> &keys)
-{
-  if (keys.contains(ChatSettings::ProfileStatus) || keys.contains(ChatSettings::ProfileGender)) {
-    update();
-  }
-}
-
-
-
 void StatusWidget::update()
 {
-  ChatUser user(new User(ChatCore::i()->client()->user().data()));
-  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
-    user->setStatus(User::OfflineStatus);
-  }
-
-  m_icon->setPixmap(UserUtils::icon(user, true, true).pixmap(16));
-  m_label->setText(UserUtils::statusTitle(user->status()));
+  m_icon->setPixmap(m_menu->icon().pixmap(16));
+  m_label->setText(m_menu->title());
   adjustSize();
 }

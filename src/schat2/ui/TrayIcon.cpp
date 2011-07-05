@@ -19,9 +19,10 @@
 #include <QMenu>
 
 #include "ChatCore.h"
+#include "net/SimpleClient.h"
+#include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
 #include "ui/UserUtils.h"
-#include "net/SimpleClient.h"
 
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
@@ -35,9 +36,13 @@ TrayIcon::TrayIcon(QObject *parent)
 
   m_menu = new QMenu();
 
+  m_menu->addMenu(ChatCore::i()->statusMenu());
+  m_menu->addSeparator();
+
   m_settingsAction = m_menu->addAction(SCHAT_ICON(SettingsIcon), tr("Preferences..."), this, SLOT(settings()));
   m_aboutAction = m_menu->addAction(SCHAT_ICON(SmallLogoIcon), tr("About..."), this, SLOT(about()));
   m_menu->addSeparator();
+
   m_quitAction = m_menu->addAction(SCHAT_ICON(QuitIcon), tr("Quit"), this, SLOT(quit()));
 
   setContextMenu(m_menu);

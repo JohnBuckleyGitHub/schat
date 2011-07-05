@@ -28,7 +28,11 @@ class StatusMenu : public QMenu
 public:
   StatusMenu(QWidget *parent = 0);
 
+signals:
+  void updated();
+
 private slots:
+  void clientStateChanged(int state);
   void settingsChanged(const QList<int> &keys);
   void statusChanged(QAction *action);
 

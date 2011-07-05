@@ -38,7 +38,15 @@ StatusMenu::StatusMenu(QWidget *parent)
   update();
 
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
+}
+
+
+void StatusMenu::clientStateChanged(int state)
+{
+  Q_UNUSED(state);
+  update();
 }
 
 
@@ -81,6 +89,13 @@ void StatusMenu::update()
     m_statuses.value(user->status())->setChecked(true);
   }
 
+  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
+    user->setStatus(User::OfflineStatus);
+  }
+
+  setIcon(UserUtils::icon(user, true, true));
+  setTitle(UserUtils::statusTitle(user->status()));
+
   QHashIterator<int, QAction *> i(m_statuses);
   while (i.hasNext()) {
     i.next();
@@ -88,4 +103,6 @@ void StatusMenu::update()
     i.value()->setIcon(UserUtils::icon(user, true, true));
     i.value()->setText(UserUtils::statusTitle(i.key()));
   }
+
+  emit updated();
 }
