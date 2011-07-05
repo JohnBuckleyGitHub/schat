@@ -31,7 +31,7 @@ class StatusWidget: public QWidget
   Q_OBJECT
 
 public:
-  StatusWidget(StatusMenu *menu, QWidget *parent = 0);
+  StatusWidget(QWidget *parent = 0);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);

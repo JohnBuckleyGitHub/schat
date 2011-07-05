@@ -36,7 +36,7 @@ class StatusBar : public QStatusBar
   Q_OBJECT
 
 public:
-  StatusBar(StatusMenu *menu, QWidget *parent = 0);
+  StatusBar(QWidget *parent = 0);
 
 protected:
   bool event(QEvent *event);

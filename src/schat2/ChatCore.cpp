@@ -34,6 +34,7 @@ QStringList ChatCore::m_icons;
 
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
+  , m_statusMenu(0)
 {
   m_self = this;
   qsrand(QDateTime::currentDateTime().toTime_t());

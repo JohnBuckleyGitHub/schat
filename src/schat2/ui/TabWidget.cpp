@@ -42,6 +42,7 @@
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
+#include "ui/TrayIcon.h"
 #include "ui/UserUtils.h"
 
 TabWidget::TabWidget(QWidget *parent)
@@ -71,6 +72,9 @@ TabWidget::TabWidget(QWidget *parent)
 
   m_alertTab = new AlertTab(this);
   m_alertTab->setVisible(false);
+
+  m_tray = new TrayIcon(this);
+  QTimer::singleShot(0, m_tray, SLOT(show()));
 
   createToolBars();
   retranslateUi();
@@ -107,12 +111,6 @@ void TabWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QTabWidget::changeEvent(event);
-}
-
-
-void TabWidget::about()
-{
-  ChatCore::i()->startNotify(ChatCore::AboutNotice);
 }
 
 
@@ -179,7 +177,6 @@ void TabWidget::currentChanged(int index)
 
 void TabWidget::hideMainMenu()
 {
-  SCHAT_DEBUG_STREAM(this << "hideMainMenu()")
   m_mainMenu->clear();
   m_channelsMenu->clear();
   m_talksMenu->clear();
@@ -211,24 +208,9 @@ void TabWidget::openTab()
 }
 
 
-void TabWidget::quit()
-{
-  ChatCore::i()->startNotify(ChatCore::QuitNotice);
-}
-
-
-void TabWidget::settings()
-{
-  ChatCore::i()->startNotify(ChatCore::SettingsNotice);
-}
-
-
 void TabWidget::showMainMenu()
 {
-  SCHAT_DEBUG_STREAM(this << "showMainMenu()")
-
   // Создание меню каналов.
-
   QList<QAction *> channels;
   QList<QAction *> talks;
 
@@ -566,10 +548,10 @@ void TabWidget::createToolBars()
 
   m_settingsMenu = new QMenu(this);
   // \todo isNewYear().
-  m_settingsAction = m_settingsMenu->addAction(SCHAT_ICON(SettingsIcon), "", this, SLOT(settings()));
-  m_aboutAction = m_settingsMenu->addAction(SCHAT_ICON(SmallLogoIcon), "", this, SLOT(about()));
+  m_settingsMenu->addAction(m_tray->settingsAction());
+  m_settingsMenu->addAction(m_tray->aboutAction());
   m_settingsMenu->addSeparator();
-  m_quitAction = m_settingsMenu->addAction(SCHAT_ICON(QuitIcon), "", this, SLOT(quit()));
+  m_settingsMenu->addAction(m_tray->quitAction());
 
   m_settingsButton = new QToolButton(this);
   m_settingsButton->setIcon(SCHAT_ICON(SettingsIcon));
@@ -609,11 +591,10 @@ void TabWidget::displayChannelUserCount(const QByteArray &id)
 
 void TabWidget::retranslateUi()
 {
+  m_tray->retranslateUi();
+
   m_menuButton->setToolTip(tr("Menu"));
   m_settingsButton->setToolTip(tr("Preferences"));
-  m_settingsAction->setText(tr("Preferences..."));
-  m_aboutAction->setText(tr("About..."));
-  m_quitAction->setText(tr("Quit"));
   m_channelsMenu->setTitle(tr("Channels"));
   m_talksMenu->setTitle(tr("Talks"));
 }

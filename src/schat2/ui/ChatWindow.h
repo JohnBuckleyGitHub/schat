@@ -26,9 +26,7 @@ class ChatSettings;
 class QVBoxLayout;
 class SendWidget;
 class StatusBar;
-class StatusMenu;
 class TabWidget;
-class TrayIcon;
 
 class ChatWindow : public QMainWindow
 {
@@ -39,6 +37,7 @@ public:
   void showChat();
 
 protected:
+  void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
   void resizeEvent(QResizeEvent *event);
@@ -56,6 +55,7 @@ private slots:
 
 private:
   void hideChat();
+  void retranslateUi();
 
   #if defined(Q_WS_WIN)
   void setWindowsAero();
@@ -67,9 +67,7 @@ private:
   QWidget *m_central;       ///< Центральный виджет.
   SendWidget *m_send;       ///< Виджет отправки сообщения.
   StatusBar *m_statusBar;   ///< Статус бар.
-  StatusMenu *m_statusMenu; ///< Статусное меню.
   TabWidget *m_tabs;        ///< Вкладки.
-  TrayIcon *m_tray;         ///< Иконка в трее.
 };
 
 #endif /* CHATWINDOW_H_ */
