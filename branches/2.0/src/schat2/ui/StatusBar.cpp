@@ -33,7 +33,7 @@
 #include "ui/NetworkWidget.h"
 #include "ui/StatusWidget.h"
 
-StatusBar::StatusBar(StatusMenu *menu, QWidget *parent)
+StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
   , m_clientState(SimpleClient::ClientOffline)
   , m_client(ChatCore::i()->client())
@@ -52,7 +52,7 @@ StatusBar::StatusBar(StatusMenu *menu, QWidget *parent)
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);
 
-  m_status = new StatusWidget(menu, this);
+  m_status = new StatusWidget(this);
 
   addWidget(m_progress);
   addWidget(m_icon);

@@ -30,7 +30,6 @@
 #include "ui/StatusBar.h"
 #include "ui/StatusMenu.h"
 #include "ui/TabWidget.h"
-#include "ui/TrayIcon.h"
 
 #if defined(Q_WS_WIN)
   #include "qtwin/qtwin.h"
@@ -47,19 +46,17 @@ ChatWindow::ChatWindow(QWidget *parent)
   : QMainWindow(parent)
 {
   m_core = new ChatCore(this);
+  m_core->setStatusMenu(new StatusMenu(this));
+
   m_settings = m_core->settings();
   m_central = new QWidget(this);
 
-  m_statusMenu = new StatusMenu(this);
   m_tabs = new TabWidget(this);
-  m_statusBar = new StatusBar(m_statusMenu, this);
+  m_statusBar = new StatusBar(this);
 
   m_send = new SendWidget(this);
 
   setStatusBar(m_statusBar);
-
-  m_tray = new TrayIcon(this);
-  QTimer::singleShot(0, m_tray, SLOT(show()));
 
   m_mainLay = new QVBoxLayout(m_central);
   m_mainLay->addWidget(m_tabs);
@@ -97,6 +94,15 @@ void ChatWindow::showChat()
     showMaximized();
 
   activateWindow();
+}
+
+
+void ChatWindow::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QMainWindow::changeEvent(event);
 }
 
 
@@ -218,6 +224,11 @@ void ChatWindow::hideChat()
   m_settings->setValue(ChatSettings::Maximized, isMaximized());
   m_settings->write();
   hide();
+}
+
+
+void ChatWindow::retranslateUi()
+{
 }
 
 

@@ -29,6 +29,7 @@ class MessageAdapter;
 class MessageData;
 class NetworkManager;
 class SimpleClient;
+class StatusMenu;
 class UserUtils;
 
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
@@ -86,6 +87,8 @@ public:
   inline NetworkManager *networks() const { return m_networkManager; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
+  inline StatusMenu *statusMenu() { return m_statusMenu; }
+  inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
@@ -110,6 +113,7 @@ private:
   SimpleClient *m_client;           ///< Клиент.
   static ChatCore *m_self;          ///< Указатель на себя.
   static QStringList m_icons;       ///< Иконки.
+  StatusMenu *m_statusMenu;         ///< Меню статуса.
   UserUtils *m_userUtils;           ///< Утилиты манипуляции над пользователем.
 };
 

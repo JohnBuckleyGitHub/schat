@@ -27,11 +27,11 @@
 #include "ui/StatusWidget.h"
 #include "ui/UserUtils.h"
 
-StatusWidget::StatusWidget(StatusMenu *menu, QWidget *parent)
+StatusWidget::StatusWidget(QWidget *parent)
   : QWidget(parent)
   , m_actualSize(false)
   , m_user(ChatCore::i()->client()->user())
-  , m_menu(menu)
+  , m_menu(ChatCore::i()->statusMenu())
 {
   m_icon = new QLabel(this);
   m_label = new QLabel(this);

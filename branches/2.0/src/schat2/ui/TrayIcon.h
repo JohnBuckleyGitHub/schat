@@ -21,6 +21,7 @@
 
 #include <QSystemTrayIcon>
 
+class QAction;
 class SimpleClient;
 
 class TrayIcon : public QSystemTrayIcon
@@ -29,16 +30,28 @@ class TrayIcon : public QSystemTrayIcon
 
 public:
   TrayIcon(QObject *parent = 0);
+  ~TrayIcon();
+  inline QAction *aboutAction() { return m_aboutAction; }
+  inline QAction *quitAction() { return m_quitAction; }
+  inline QAction *settingsAction() { return m_settingsAction; }
+  void retranslateUi();
 
 private slots:
+  void about();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void quit();
+  void settings();
   void updateUserData(const QByteArray &userId);
 
 private:
   void setTrayIcon(int status = -1);
 
-  QIcon m_icon;
-  SimpleClient *m_client;
+  QAction *m_aboutAction;    ///< О Simple Chat.
+  QAction *m_quitAction;     ///< Quit.
+  QAction *m_settingsAction; ///< Settings.
+  QIcon m_icon;              ///< Иконка.
+  QMenu *m_menu;             ///< Меню.
+  SimpleClient *m_client;    ///< Указатель на клиент.
 };
 
 #endif /* TRAYICON_H_ */

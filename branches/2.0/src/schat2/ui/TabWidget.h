@@ -37,6 +37,7 @@ class SimpleClient;
 class SoundButton;
 class TabBar;
 class WelcomeTab;
+class TrayIcon;
 
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
@@ -58,15 +59,12 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  void about();
   void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
   void currentChanged(int index);
   void hideMainMenu();
   void notify(int notice, const QVariant &data);
   void openTab();
-  void quit();
-  void settings();
   void showMainMenu();
 
   void clientStateChanged(int state);
@@ -89,9 +87,6 @@ private:
   void showWelcome();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
-  QAction *m_aboutAction;                    ///< О Simple Chat.
-  QAction *m_quitAction;                     ///< Quit.
-  QAction *m_settingsAction;                 ///< Settings.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
   QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
@@ -107,6 +102,7 @@ private:
   SimpleClient *m_client;                    ///< Клиент чата.
   SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
+  TrayIcon *m_tray;                          ///< Иконка в трее.
   WelcomeTab *m_welcomeTab;                  ///< Вкладка приветствия.
 };
 

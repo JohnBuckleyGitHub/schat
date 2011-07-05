@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMenu>
+
 #include "ChatCore.h"
 #include "ui/TrayIcon.h"
 #include "ui/UserUtils.h"
@@ -30,14 +32,55 @@ TrayIcon::TrayIcon(QObject *parent)
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 
   setTrayIcon();
+
+  m_menu = new QMenu();
+
+  m_settingsAction = m_menu->addAction(SCHAT_ICON(SettingsIcon), tr("Preferences..."), this, SLOT(settings()));
+  m_aboutAction = m_menu->addAction(SCHAT_ICON(SmallLogoIcon), tr("About..."), this, SLOT(about()));
+  m_menu->addSeparator();
+  m_quitAction = m_menu->addAction(SCHAT_ICON(QuitIcon), tr("Quit"), this, SLOT(quit()));
+
+  setContextMenu(m_menu);
+}
+
+
+TrayIcon::~TrayIcon()
+{
+  delete m_menu;
+}
+
+
+void TrayIcon::retranslateUi()
+{
+  m_settingsAction->setText(tr("Preferences..."));
+  m_aboutAction->setText(tr("About..."));
+  m_quitAction->setText(tr("Quit"));
+}
+
+
+void TrayIcon::about()
+{
+  ChatCore::i()->startNotify(ChatCore::AboutNotice);
 }
 
 
 void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-  if (reason == QSystemTrayIcon::Trigger || QSystemTrayIcon::MiddleClick) {
+  if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::MiddleClick) {
     ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
   }
+}
+
+
+void TrayIcon::quit()
+{
+  ChatCore::i()->startNotify(ChatCore::QuitNotice);
+}
+
+
+void TrayIcon::settings()
+{
+  ChatCore::i()->startNotify(ChatCore::SettingsNotice);
 }
 
 
