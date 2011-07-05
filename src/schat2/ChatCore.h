@@ -79,6 +79,7 @@ public:
     NetworkChangedNotice,
     InsertTextToSend,       ///< Запрос на вставку текста в поле отравки.
     AddPrivateTab,          ///< Добавление приватного разговора и установка фокуса на него.
+    ShowChatNotice,         ///< Запрос на открытие и активацию окна чата.
   };
 
   ChatCore(QObject *parent = 0);
