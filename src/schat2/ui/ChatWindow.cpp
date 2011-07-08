@@ -44,16 +44,14 @@
 
 ChatWindow::ChatWindow(QWidget *parent)
   : QMainWindow(parent)
+  , m_core(ChatCore::i())
+  , m_settings(ChatCore::i()->settings())
 {
-  m_core = new ChatCore(this);
   m_core->setStatusMenu(new StatusMenu(this));
 
-  m_settings = m_core->settings();
   m_central = new QWidget(this);
-
   m_tabs = new TabWidget(this);
   m_statusBar = new StatusBar(this);
-
   m_send = new SendWidget(this);
 
   setStatusBar(m_statusBar);
