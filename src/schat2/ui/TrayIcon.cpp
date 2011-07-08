@@ -26,14 +26,8 @@
 
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
+  , m_client(ChatCore::i()->client())
 {
-  m_client = ChatCore::i()->client();
-
-  connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
-
-  setTrayIcon();
-
   m_menu = new QMenu();
 
   m_menu->addMenu(ChatCore::i()->statusMenu());
@@ -46,6 +40,11 @@ TrayIcon::TrayIcon(QObject *parent)
   m_quitAction = m_menu->addAction(SCHAT_ICON(QuitIcon), tr("Quit"), this, SLOT(quit()));
 
   setContextMenu(m_menu);
+
+  connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(ChatCore::i()->statusMenu(), SIGNAL(updated()), SLOT(update()));
+
+  update();
 }
 
 
@@ -91,15 +90,15 @@ void TrayIcon::settings()
 }
 
 
-void TrayIcon::updateUserData(const QByteArray &userId)
+/*!
+ * Обновление состояния в зависимости от статуса пользователя и подключения.
+ */
+void TrayIcon::update()
 {
-  if (m_client->userId() == userId)
-    setTrayIcon(m_client->user()->status());
-}
+  int status = m_client->user()->status();
+  if (m_client->clientState() != SimpleClient::ClientOnline)
+    status = -1;
 
-
-void TrayIcon::setTrayIcon(int status)
-{
   if (status == -1) {
     m_icon = SCHAT_ICON(SmallLogoIcon);
   }

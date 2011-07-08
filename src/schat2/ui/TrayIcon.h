@@ -41,11 +41,9 @@ private slots:
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void quit();
   void settings();
-  void updateUserData(const QByteArray &userId);
+  void update();
 
 private:
-  void setTrayIcon(int status = -1);
-
   QAction *m_aboutAction;    ///< О Simple Chat.
   QAction *m_quitAction;     ///< Quit.
   QAction *m_settingsAction; ///< Settings.
