@@ -16,10 +16,39 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatApp.h"
+#include <QTextCodec>
 
-int main(int argc, char *argv[])
+#include "ChatApp.h"
+#include "ChatCore.h"
+#include "version.h"
+#include "ui/ChatWindow.h"
+
+
+ChatApp::ChatApp(int &argc, char **argv)
+  : QApplication(argc, argv)
 {
-  ChatApp app(argc, argv);
-  return app.exec();
+  setApplicationName(SCHAT_NAME);
+  setApplicationVersion(SCHAT_VERSION);
+  setOrganizationName(SCHAT_ORGANIZATION);
+  setOrganizationDomain(SCHAT_DOMAIN);
+  setQuitOnLastWindowClosed(false);
+  addLibraryPath(applicationDirPath() + "/plugins/qt");
+
+  #if defined(Q_WS_X11)
+  setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  #endif
+
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+
+  m_core = new ChatCore(this);
+
+  m_window = new ChatWindow();
+  m_window->showChat();
+}
+
+
+ChatApp::~ChatApp()
+{
+  delete m_window;
 }

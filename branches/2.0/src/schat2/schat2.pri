@@ -78,6 +78,7 @@ HEADERS = \
     ui/TrayIcon.h \
     ui/UserUtils.h \
     User.h \
+    ChatApp.h \
 
 SOURCES = \
     arora/lineedit.cpp \
@@ -130,9 +131,10 @@ SOURCES = \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     User.cpp \
+    ChatApp.cpp \
     
-TRANSLATIONS += ../../data/translations/client_en.ts
-TRANSLATIONS += ../../data/translations/client_ru.ts
+TRANSLATIONS += ../../data/translations/schat2_en.ts
+TRANSLATIONS += ../../data/translations/schat2_ru.ts
 CODECFORTR = UTF-8
 
 win32 {

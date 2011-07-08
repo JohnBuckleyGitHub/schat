@@ -16,10 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatApp.h"
+#ifndef CHATAPP_H_
+#define CHATAPP_H_
 
-int main(int argc, char *argv[])
+#include <QApplication>
+
+class ChatCore;
+class ChatWindow;
+
+class ChatApp : public QApplication
 {
-  ChatApp app(argc, argv);
-  return app.exec();
-}
+  Q_OBJECT
+
+public:
+  ChatApp(int &argc, char **argv);
+  ~ChatApp();
+
+private:
+  ChatCore *m_core;     ///< Глобальный объект чата.
+  ChatWindow *m_window; ///< Главное окно.
+};
+
+#endif /* CHATAPP_H_ */
