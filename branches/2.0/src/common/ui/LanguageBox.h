@@ -16,30 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOMETAB_H_
-#define WELCOMETAB_H_
+#ifndef LANGUAGEBOX_H_
+#define LANGUAGEBOX_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include <QComboBox>
 
-class LanguageBox;
-class NetworkWidget;
-class NickEdit;
-class SimpleClient;
+class Translation;
 
-class WelcomeTab : public AbstractTab
+/*!
+ * Виджет выбора языка.
+ */
+class LanguageBox : public QComboBox
 {
   Q_OBJECT
 
 public:
-  WelcomeTab(SimpleClient *client, TabWidget *parent);
+  LanguageBox(Translation *translation, QWidget *parent = 0);
+  QString qmFile() const;
 
 private:
-  void retranslateUi();
+  QString languageIcon(const QString &file) const;
+  QString languageName(const QString &file) const;
+  QStringList findQmFiles() const;
 
-  LanguageBox *m_languageBox;
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
-  SimpleClient *m_client;
+  const QString m_language;   ///< Человеко-понятное переведённое имя языка.
+  const QString m_prefix;     ///< Префикс файлов перевода.
+  const QStringList m_search; ///< Список директорий для поиска переводов.
+  Translation *m_translation;
 };
 
-#endif /* WELCOMETAB_H_ */
+#endif /* LANGUAGEBOX_H_ */
