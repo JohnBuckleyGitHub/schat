@@ -16,30 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOMETAB_H_
-#define WELCOMETAB_H_
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "Translation.h"
+#include "ui/fields/LanguageField.h"
 
-#include "ui/tabs/AbstractTab.h"
-
-class LanguageField;
-class NetworkWidget;
-class NickEdit;
-class SimpleClient;
-
-class WelcomeTab : public AbstractTab
+LanguageField::LanguageField(QWidget *parent)
+  : LanguageBox(ChatCore::i()->translation(), parent)
 {
-  Q_OBJECT
+  connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged()));
+}
 
-public:
-  WelcomeTab(SimpleClient *client, TabWidget *parent);
 
-private:
-  void retranslateUi();
-
-  LanguageField *m_languageBox;
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
-  SimpleClient *m_client;
-};
-
-#endif /* WELCOMETAB_H_ */
+void LanguageField::indexChanged()
+{
+  if (save())
+    ChatCore::i()->settings()->setValue(ChatSettings::Translation, m_translation->name(), true);
+}

@@ -17,6 +17,7 @@
  */
 
 #include <QDir>
+#include <QEvent>
 #include <QTranslator>
 
 #include "Translation.h"
@@ -27,15 +28,13 @@
  */
 LanguageBox::LanguageBox(Translation *translation, QWidget *parent)
   : QComboBox(parent)
-  , m_language(translation->language())
-  , m_prefix(translation->prefix())
-  , m_search(translation->search())
   , m_translation(translation)
 {
-  addItem(QIcon(QLatin1String(":/translations/en.png")), QLatin1String("English"), QLatin1String(":/translations/") + m_prefix + QLatin1String("en.qm"));
+  QString prefix = translation->prefix();
+  addItem(QIcon(QLatin1String(":/translations/en.png")), QLatin1String("English"), QLatin1String(":/translations/") + prefix + QLatin1String("en.qm"));
 
   QStringList qmFiles = findQmFiles();
-  qmFiles.append(QLatin1String(":/translations/") + m_prefix + QLatin1String("ru.qm"));
+  qmFiles.append(QLatin1String(":/translations/") + prefix + QLatin1String("ru.qm"));
   bool canOverrideEnglish = true;
 
   for (int i = 0; i < qmFiles.size(); ++i) {
@@ -49,14 +48,24 @@ LanguageBox::LanguageBox(Translation *translation, QWidget *parent)
     if (findText(langName) == -1) {
       addItem(QIcon(languageIcon(file)), langName, file);
     }
-    else if (canOverrideEnglish && file.endsWith(m_prefix + QLatin1String("en.qm"))) {
+    else if (canOverrideEnglish && file.endsWith(prefix + QLatin1String("en.qm"))) {
       setItemIcon(0, QIcon(languageIcon(file)));
       setItemData(0, file);
       canOverrideEnglish = false;
     }
   }
 
-  setCurrentIndex(findText(m_language));
+  setCurrentIndex(findText(m_translation->language()));
+}
+
+
+bool LanguageBox::save()
+{
+  if (currentText() == m_translation->language())
+    return false;
+
+  m_translation->load(qmFile());
+  return true;
 }
 
 
@@ -66,13 +75,22 @@ QString LanguageBox::qmFile() const
 }
 
 
+void LanguageBox::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QComboBox::changeEvent(event);
+}
+
+
 /*!
  * Возвращает путь к файлу изображения флага языка.
  */
 QString LanguageBox::languageIcon(const QString &file) const
 {
   QFileInfo fi(file);
-  QString icon = fi.absolutePath() + QLatin1String("/") + fi.baseName().remove(0, m_prefix.size()) + QLatin1String(".png");
+  QString icon = fi.absolutePath() + QLatin1String("/") + fi.baseName().remove(0, m_translation->prefix().size()) + QLatin1String(".png");
 
   if (QFile::exists(icon))
     return icon;
@@ -103,9 +121,9 @@ QStringList LanguageBox::findQmFiles() const
 {
   QStringList fileNames;
 
-  foreach (QString d, m_search) {
+  foreach (QString d, m_translation->search()) {
     QDir dir(d);
-    QStringList fn = dir.entryList(QStringList(m_prefix + QLatin1String("*.qm")), QDir::Files, QDir::Name);
+    QStringList fn = dir.entryList(QStringList(m_translation->prefix() + QLatin1String("*.qm")), QDir::Files, QDir::Name);
     QMutableStringListIterator i(fn);
     while (i.hasNext()) {
         i.next();
@@ -115,4 +133,10 @@ QStringList LanguageBox::findQmFiles() const
   }
 
   return fileNames;
+}
+
+
+void LanguageBox::retranslateUi()
+{
+  setCurrentIndex(findText(m_translation->language()));
 }

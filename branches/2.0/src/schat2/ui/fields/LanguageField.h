@@ -16,30 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOMETAB_H_
-#define WELCOMETAB_H_
+#ifndef LANGUAGEFIELD_H_
+#define LANGUAGEFIELD_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include "ui/LanguageBox.h"
 
-class LanguageField;
-class NetworkWidget;
-class NickEdit;
-class SimpleClient;
-
-class WelcomeTab : public AbstractTab
+class LanguageField : public LanguageBox
 {
   Q_OBJECT
 
 public:
-  WelcomeTab(SimpleClient *client, TabWidget *parent);
+  LanguageField(QWidget *parent = 0);
 
-private:
-  void retranslateUi();
-
-  LanguageField *m_languageBox;
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
-  SimpleClient *m_client;
+private slots:
+  void indexChanged();
 };
 
-#endif /* WELCOMETAB_H_ */
+#endif /* LANGUAGEFIELD_H_ */
