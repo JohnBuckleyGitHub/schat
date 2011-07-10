@@ -21,8 +21,9 @@
 
 #include "ChatCore.h"
 #include "net/SimpleClient.h"
-#include "ui/NetworkWidget.h"
 #include "ui/fields/NickEdit.h"
+#include "ui/LanguageBox.h"
+#include "ui/NetworkWidget.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
 
@@ -32,10 +33,12 @@ WelcomeTab::WelcomeTab(SimpleClient *client, TabWidget *parent)
 {
   m_networks = new NetworkWidget(this);
   m_nickEdit = new NickEdit(this);
+  m_languageBox = new LanguageBox(ChatCore::i()->translation());
 
   QFormLayout *mainLay = new QFormLayout(this);
   mainLay->addRow(tr("Network:"), m_networks);
   mainLay->addRow(tr("Nick:"), m_nickEdit);
+  mainLay->addRow(tr("Language:"), m_languageBox);
 
   setIcon(SCHAT_ICON(SmallLogoIcon));
   setText(tr("Welcome"));
