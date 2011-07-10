@@ -69,5 +69,7 @@
   <file>images/progress.gif</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
+  <file>translations/schat2_en.qm</file>
+  <file>translations/schat2_ru.qm</file>
 </qresource>
 </RCC>

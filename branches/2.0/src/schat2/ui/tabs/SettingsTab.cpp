@@ -60,11 +60,11 @@ void AbstractSettingsPage::changeEvent(QEvent *event)
 ProfilePage::ProfilePage(QWidget *parent)
   : AbstractSettingsPage(parent)
 {
-  m_profileLabel = new QLabel("<b>" + tr("Default profile") + "</b>", this);
-  m_nickLabel = new QLabel(tr("Nick:"), this);
+  m_profileLabel = new QLabel(this);
+  m_nickLabel = new QLabel(this);
   m_nickEdit = new NickEdit(this);
 
-  m_genderLabel = new QLabel(tr("Gender:"), this);
+  m_genderLabel = new QLabel(this);
   m_genderField = new GenderField(this);
 
   QGridLayout *profileLay = new QGridLayout;
@@ -74,15 +74,11 @@ ProfilePage::ProfilePage(QWidget *parent)
   profileLay->addWidget(m_genderField, 1, 1);
   profileLay->setContentsMargins(20, 0, 3, 16);
 
-  m_networkLabel = new QLabel("<b>" + tr("Network") + "</b>", this);
+  m_networkLabel = new QLabel(this);
   m_networks = new NetworkWidget(this);
-  m_defaultProfile = new QCheckBox(tr("Use default profile"), this);
-  m_defaultProfile->setChecked(SCHAT_OPTION(DefaultProfile).toBool());
-  m_defaultProfile->setVisible(false);
 
   QVBoxLayout *networkLay = new QVBoxLayout;
   networkLay->addWidget(m_networks);
-  networkLay->addWidget(m_defaultProfile);
   networkLay->setContentsMargins(20, 0, 3, 6);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
@@ -91,6 +87,17 @@ ProfilePage::ProfilePage(QWidget *parent)
   mainLay->addWidget(m_networkLabel);
   mainLay->addLayout(networkLay);
   mainLay->addStretch();
+
+  retranslateUi();
+}
+
+
+void ProfilePage::retranslateUi()
+{
+  m_profileLabel->setText(QLatin1String("<b>") + tr("Profile") + QLatin1String("</b>"));
+  m_nickLabel->setText(tr("Nick:"));
+  m_genderLabel->setText(tr("Gender:"));
+  m_networkLabel->setText(QLatin1String("<b>") + tr("Network") + QLatin1String("</b>"));
 }
 
 
@@ -116,7 +123,8 @@ SettingsTab::SettingsTab(TabWidget *parent)
   addPage(SCHAT_ICON(ProfileIcon), tr("Profile"), new ProfilePage(this));
 
   m_contents->setCurrentRow(0);
-  m_icon = SCHAT_ICON(SettingsIcon);
+  setIcon(SCHAT_ICON(SettingsIcon));
+  setText(tr("Preferences"));
 }
 
 
@@ -140,4 +148,14 @@ void SettingsTab::addPage(const QIcon &icon, const QString &text, AbstractSettin
   scrool->setWidgetResizable(true);
   scrool->setFrameShape(QFrame::NoFrame);
   m_pages->addWidget(scrool);
+}
+
+
+void SettingsTab::retranslateUi()
+{
+  QListWidgetItem *item = m_contents->item(0);
+  item->setText(tr("Profile"));
+
+  m_apply->setText(tr("Apply"));
+  setText(tr("Preferences"));
 }

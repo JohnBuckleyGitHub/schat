@@ -31,12 +31,16 @@ public:
 signals:
   void updated();
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void clientStateChanged(int state);
   void settingsChanged(const QList<int> &keys);
   void statusChanged(QAction *action);
 
 private:
+  inline void retranslateUi() { update(); }
   void addStatus(int status);
   void update();
 

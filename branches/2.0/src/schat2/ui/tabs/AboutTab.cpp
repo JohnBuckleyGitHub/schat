@@ -36,32 +36,15 @@ AboutTab::AboutTab(TabWidget *parent)
   m_view->setAcceptDrops(false);
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-  QFile file(":/html/about.html");
-  if (file.open(QIODevice::ReadOnly)) {
-    QString page = file.readAll();
-    page.replace("%version%", SCHAT_VERSION);
-    page.replace("%copyright%", QString(SCHAT_COPYRIGHT) + ". " + tr("All rights reserved."));
-    page.replace("%license%", tr("License"));
-    page.replace("%site%", tr("Site"));
-    page.replace("%paths%", tr("Paths"));
-    page.replace("%3rdparty%", tr("Third parties"));
-    page.replace("%preferences%", tr("Preferences"));
-    page.replace("%preferences-file%", fileUrl(ChatCore::i()->settings()->confFile()));
-
-    page.replace("%edition%", QLibraryInfo::licensee());
-    page.replace("%qt-version%", qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)")));
-    page.replace("%webkit-version%", qWebKitVersion());
-    m_view->setHtml(page);
-  }
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_view);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  m_icon = SCHAT_ICON(SmallLogoIcon);
-
   connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+
+  setIcon(SCHAT_ICON(SmallLogoIcon));
+  retranslateUi();
 }
 
 
@@ -80,4 +63,28 @@ QString AboutTab::fileUrl(const QString &fileName) const
   out += "</a>";
 
   return out;
+}
+
+
+void AboutTab::retranslateUi()
+{
+  setText(tr("About"));
+
+  QFile file(":/html/about.html");
+  if (file.open(QIODevice::ReadOnly)) {
+    QString page = file.readAll();
+    page.replace("%version%", SCHAT_VERSION);
+    page.replace("%copyright%", QString(SCHAT_COPYRIGHT) + ". " + tr("All rights reserved."));
+    page.replace("%license%", tr("License"));
+    page.replace("%site%", tr("Site"));
+    page.replace("%paths%", tr("Paths"));
+    page.replace("%3rdparty%", tr("Third parties"));
+    page.replace("%preferences%", tr("Preferences"));
+    page.replace("%preferences-file%", fileUrl(ChatCore::i()->settings()->confFile()));
+
+    page.replace("%edition%", QLibraryInfo::licensee());
+    page.replace("%qt-version%", qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)")));
+    page.replace("%webkit-version%", qWebKitVersion());
+    m_view->setHtml(page);
+  }
 }

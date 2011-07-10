@@ -33,5 +33,11 @@ AlertTab::AlertTab(TabWidget *parent)
   mainLay->setSpacing(0);
 
   setIcon(SCHAT_ICON(InfoBalloon));
+  retranslateUi();
+}
+
+
+void AlertTab::retranslateUi()
+{
   setText(tr("Notifications"));
 }

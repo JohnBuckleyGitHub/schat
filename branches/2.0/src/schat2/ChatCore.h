@@ -105,6 +105,7 @@ public slots:
   void nickClicked(const QString &text);
 
 private slots:
+  void settingsChanged(const QList<int> &keys);
   void start();
 
 private:

@@ -45,6 +45,8 @@ public:
   inline bool isOnline() const { return m_online; }
   inline QAction *action() const { return m_action; }
   inline QByteArray id() const { return m_id; }
+  inline QIcon icon() const { return m_icon; }
+  inline QString text() const { return m_text; }
   inline TabType type() const { return m_type; }
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);

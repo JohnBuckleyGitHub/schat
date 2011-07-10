@@ -36,6 +36,7 @@ private slots:
 
 private:
   QString fileUrl(const QString &fileName) const;
+  void retranslateUi();
 
   QWebView *m_view;
 };

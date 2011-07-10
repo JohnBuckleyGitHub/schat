@@ -64,10 +64,17 @@ void AbstractTab::setIcon(const QIcon &icon)
 }
 
 
+/*!
+ * Установка текста вкладки.
+ */
 void AbstractTab::setText(const QString &text)
 {
   m_text = text;
   m_action->setText(text);
+
+  int index = m_tabs->indexOf(this);
+  if (index != -1)
+    m_tabs->setTabText(index, text);
 }
 
 

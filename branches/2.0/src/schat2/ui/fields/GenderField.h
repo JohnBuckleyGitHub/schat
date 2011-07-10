@@ -38,6 +38,7 @@ public:
 
 protected:
   virtual void updateData();
+  void changeEvent(QEvent *event);
 
 private slots:
   void indexChanged(int index);
@@ -46,6 +47,7 @@ private slots:
 
 private:
   void addColor(const QString &name);
+  void retranslateUi();
   void setIcons();
   void setState();
 

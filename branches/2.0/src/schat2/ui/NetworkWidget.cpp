@@ -54,7 +54,7 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
   m_toolBar->addWidget(m_config);
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }" );
+  m_toolBar->setStyleSheet(QLatin1String("QToolBar { margin:0px; border:0px; }"));
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_combo, 0, 0);
@@ -252,4 +252,6 @@ void NetworkWidget::load()
 
 void NetworkWidget::retranslateUi()
 {
+  m_addAction->setText(tr("Add"));
+  m_removeAction->setText(tr("Remove"));
 }
