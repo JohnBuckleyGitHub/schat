@@ -31,14 +31,14 @@ class ChatSettings : public Settings
 public:
   /// Ключи настроек.
   enum Keys {
+    AutoConnect,    ///< Автоматически подключатся.
     Height,         ///< Высота окна.
     Maximized,      ///< Окно развёрнуто на весь экран.
-    Width,          ///< Ширина окна.
-    WindowsAero,    ///< При доступности будет использован интерфейс Windows Aero.
     Networks,       ///< Список серверов.
     ShowSeconds,    ///< Отображать секунды.
-    AutoConnect,    ///< Автоматически подключатся.
     Translation,    ///< Перевод.
+    Width,          ///< Ширина окна.
+    WindowsAero,    ///< При доступности будет использован интерфейс Windows Aero.
     ProfileNick,    ///< Ник по умолчанию.
     ProfileGender,  ///< Пол по умолчанию.
     ProfileStatus   ///< Статус пользователя.

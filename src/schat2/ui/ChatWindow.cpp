@@ -92,6 +92,9 @@ void ChatWindow::showChat()
     showMaximized();
 
   activateWindow();
+
+  if (m_send->isVisible())
+    m_send->setInputFocus();
 }
 
 
@@ -193,6 +196,8 @@ void ChatWindow::pageChanged(int type, bool visible)
   Q_UNUSED(type)
 
   m_send->setVisible(visible);
+  if (visible)
+    m_send->setInputFocus();
 }
 
 
