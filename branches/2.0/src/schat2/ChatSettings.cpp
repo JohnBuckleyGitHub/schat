@@ -28,14 +28,14 @@ ChatSettings::ChatSettings(QObject *parent)
   : Settings(parent)
   , m_client(0)
 {
+  setDefault("AutoConnect", true);
   setDefault("Height", 420);
   setDefault("Maximized", false);
-  setDefault("Width", 666);
-  setDefault("WindowsAero", true);
   setDefault("Networks", QStringList());
   setDefault("ShowSeconds", false);
-  setDefault("AutoConnect", true);
   setDefault("Translation", "auto");
+  setDefault("Width", 666);
+  setDefault("WindowsAero", true);
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
   setDefault("Profile/Status", "0;");
@@ -123,7 +123,7 @@ void ChatSettings::update(User *user, bool sync)
     m_user->setStatus(user->statusToString());
   }
 
-  setValue(ProfileNick, user->nick(), true);
+  setValue(ProfileNick, m_client->nick(), true);
   setValue(ProfileGender, user->rawGender(), true);
   setValue(ProfileStatus, user->statusToString(), true);
 }

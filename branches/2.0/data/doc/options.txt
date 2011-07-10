@@ -3,6 +3,7 @@ Height
 Maximized
 Networks
 ShowSeconds
+Translation
 Width
 WindowsAero
 

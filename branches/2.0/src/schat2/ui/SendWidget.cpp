@@ -53,6 +53,12 @@ SendWidget::SendWidget(QWidget *parent)
 }
 
 
+void SendWidget::setInputFocus()
+{
+  m_input->setFocus();
+}
+
+
 void SendWidget::insertHtml(const QString &text)
 {
   m_input->insertHtml(text);

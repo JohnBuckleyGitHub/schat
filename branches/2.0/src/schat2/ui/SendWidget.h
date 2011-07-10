@@ -35,6 +35,7 @@ class SendWidget : public QWidget
 public:
   SendWidget(QWidget *parent = 0);
   inline InputWidget *input() { return m_input; }
+  void setInputFocus();
 
 signals:
   void send(const QString &text);
