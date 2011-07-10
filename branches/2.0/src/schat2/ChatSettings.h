@@ -39,6 +39,7 @@ public:
     ShowSeconds,    ///< Отображать секунды.
     DefaultProfile, ///< Использовать профиль по умолчанию.
     AutoConnect,    ///< Автоматически подключатся.
+    Translation,    ///< Перевод.
     ProfileNick,    ///< Ник по умолчанию.
     ProfileGender,  ///< Пол по умолчанию.
     ProfileStatus   ///< Статус пользователя.

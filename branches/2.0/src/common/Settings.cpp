@@ -176,21 +176,30 @@ void Settings::init()
   #if defined(Q_WS_MAC)
   m_scheme = AppBundle;
   #else
-  if (m_appDirPath == "/usr/bin" || m_appDirPath == "/usr/sbin")
+  if (m_appDirPath == "/usr/bin" || m_appDirPath == "/usr/sbin") {
     m_scheme = UnixStandard;
-  else if (QDir(m_appDirPath).dirName() == "bin")
+    m_share = "/usr/share/" + m_baseName;
+  }
+  else if (QDir(m_appDirPath).dirName() == "bin") {
     m_scheme = UnixAdaptive;
+    m_share = QDir::cleanPath(m_appDirPath + "/../share/" + m_baseName);
+  }
   else {
     m_scheme = Portable;
   }
   #endif
 
-  if (m_scheme == UnixStandard || m_scheme == UnixAdaptive)
+  if (m_scheme == UnixStandard || m_scheme == UnixAdaptive) {
     m_root = QDir::homePath() + "/.config/" + m_baseName;
-  else if (m_scheme == AppBundle)
+  }
+  else if (m_scheme == AppBundle) {
     m_root = QDir::cleanPath(m_appDirPath + "/../Resources");
-  else
+    m_share = m_root;
+  }
+  else {
     m_root = m_appDirPath;
+    m_share = m_root;
+  }
 
   m_confFile = m_root + "/" + m_baseName + ".conf";
 }

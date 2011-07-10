@@ -26,6 +26,7 @@ HEADERS = \
     arora/lineedit.h \
     arora/lineedit_p.h \
     Channel.h \
+    ChatApp.h \
     ChatCore.h \
     ChatSettings.h \
     debugstream.h \
@@ -51,6 +52,7 @@ HEADERS = \
     QProgressIndicator/QProgressIndicator.h \
     schat2.h \
     Settings.h \
+    Translation.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
@@ -78,11 +80,11 @@ HEADERS = \
     ui/TrayIcon.h \
     ui/UserUtils.h \
     User.h \
-    ChatApp.h \
 
 SOURCES = \
     arora/lineedit.cpp \
     Channel.cpp \
+    ChatApp.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
     main.cpp \
@@ -105,6 +107,7 @@ SOURCES = \
     NetworkManager.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     Settings.cpp \
+    Translation.cpp \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
@@ -131,7 +134,6 @@ SOURCES = \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     User.cpp \
-    ChatApp.cpp \
     
 TRANSLATIONS += ../../data/translations/schat2_en.ts
 TRANSLATIONS += ../../data/translations/schat2_ru.ts

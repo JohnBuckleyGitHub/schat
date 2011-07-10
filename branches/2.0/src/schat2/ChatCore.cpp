@@ -26,6 +26,7 @@
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "NetworkManager.h"
+#include "Translation.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -40,8 +41,11 @@ ChatCore::ChatCore(QObject *parent)
   qsrand(QDateTime::currentDateTime().toTime_t());
 
   m_userUtils = new UserUtils();
+
   m_settings = new ChatSettings(this);
   m_settings->read();
+
+  loadTranslation();
 
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
   m_settings->setClient(m_client);
@@ -164,4 +168,15 @@ QByteArray ChatCore::userIdFromClass(const QString &text)
     return QByteArray();
 
   return QByteArray::fromHex(text.mid(5, 42).toLatin1());
+}
+
+
+/*!
+ * Загрузка перевода пользовательского интерфейса.
+ */
+void ChatCore::loadTranslation()
+{
+  m_translation = new Translation(this);
+  m_translation->setSearch(QStringList() << (m_settings->share() + "/translations") << (m_settings->root() + "/translations"));
+  m_translation->load(m_settings->value(ChatSettings::Translation).toString());
 }
