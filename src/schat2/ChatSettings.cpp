@@ -36,6 +36,7 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("ShowSeconds", false);
   setDefault("DefaultProfile", true);
   setDefault("AutoConnect", true);
+  setDefault("Translation", "auto");
   setDefault("Profile/Nick", User::defaultNick());
   setDefault("Profile/Gender", 0);
   setDefault("Profile/Status", "0;");

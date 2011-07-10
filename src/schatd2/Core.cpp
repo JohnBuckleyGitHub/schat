@@ -675,7 +675,7 @@ void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
 /*!
  * Обновление статуса пользователя.
  */
-bool Core::updateUserStatus(const QString &text)
+bool Core::updateUserStatus()
 {
   ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
@@ -728,7 +728,7 @@ bool Core::command()
   }
 
   if (command == "status") {
-    return updateUserStatus(m_messageData->text);
+    return updateUserStatus();
   }
 
   return false;

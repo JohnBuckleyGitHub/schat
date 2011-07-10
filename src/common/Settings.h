@@ -31,7 +31,7 @@ class Settings : public QObject
 public:
   /// Схема размещения файлов.
   enum FileScheme {
-    Portable, ///< Стандартное размещение файлов, когда все файлы находятся в папке с исполняемым файлом чата, под Windows схема обеспечивает переносимость без установки.
+    Portable,     ///< Стандартное размещение файлов, когда все файлы находятся в папке с исполняемым файлом чата, под Windows схема обеспечивает переносимость без установки.
     UnixAdaptive, ///< Размещение файлов в unix стиле, если исполняемый файл находится в папке bin.
     UnixStandard, ///< Размещение с использованием абсолютных путей если исполняемый файл размещается в /usr/bin или /usr/sbin.
     AppBundle     ///< Размещение специфичное для Mac OS X.
@@ -46,6 +46,7 @@ public:
   inline QString baseName() const { return m_baseName; }
   inline QString confFile() const { return m_confFile; }
   inline QString root() const { return m_root; }
+  inline QString share() const { return m_share; }
   inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
   inline void setGroup(const QString &group) { m_group = group; }
   int setDefault(const QString &key, const QVariant &value);
@@ -68,6 +69,7 @@ protected:
   QString m_confFile;             ///< Основной конфигурационный файл.
   QString m_group;                ///< Группа настроек.
   QString m_root;                 ///< Корневая директория настроек.
+  QString m_share;                ///< Общие файлы.
   QStringList m_keys;             ///< Символьные ключи настроек.
 
 private:
