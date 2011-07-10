@@ -16,12 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
 #include <QComboBox>
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QToolButton>
 #include <QToolBar>
+#include <QToolButton>
 
 #include "ui/fields/GenderField.h"
 #include "ChatCore.h"
@@ -79,6 +79,15 @@ void GenderField::updateData()
 }
 
 
+void GenderField::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
 void GenderField::indexChanged(int index)
 {
   if (index == -1)
@@ -123,6 +132,21 @@ void GenderField::addColor(const QString &name)
   action->setCheckable(true);
   action->setData(m_colors.size());
   m_colors.append(action);
+}
+
+
+void GenderField::retranslateUi()
+{
+  m_combo->setItemText(0, tr("Male"));
+  m_combo->setItemText(1, tr("Female"));
+
+  m_colors.at(0)->setText(tr("Default"));
+  m_colors.at(1)->setText(tr("Black"));
+  m_colors.at(2)->setText(tr("Gray"));
+  m_colors.at(3)->setText(tr("Green"));
+  m_colors.at(4)->setText(tr("Red"));
+  m_colors.at(5)->setText(tr("White"));
+  m_colors.at(6)->setText(tr("Yellow"));
 }
 
 

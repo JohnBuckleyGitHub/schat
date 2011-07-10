@@ -82,6 +82,7 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "information-balloon";
 
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
+  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -150,6 +151,14 @@ void ChatCore::nickClicked(const QString &text)
     return;
 
   startNotify(InsertTextToSend, " <b>" + Qt::escape(user->nick()) + "</b> ");
+}
+
+
+void ChatCore::settingsChanged(const QList<int> &keys)
+{
+  if (keys.contains(ChatSettings::Translation)) {
+    m_translation->load(m_settings->value(ChatSettings::Translation).toString());
+  }
 }
 
 

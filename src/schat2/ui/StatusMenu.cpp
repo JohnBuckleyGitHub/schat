@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
+
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "net/SimpleClient.h"
@@ -40,6 +42,15 @@ StatusMenu::StatusMenu(QWidget *parent)
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
+}
+
+
+void StatusMenu::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QMenu::changeEvent(event);
 }
 
 

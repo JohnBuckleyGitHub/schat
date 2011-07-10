@@ -32,6 +32,8 @@ public:
   inline ChatView *chatView() { return m_chatView; }
 
 private:
+  void retranslateUi();
+
   ChatView *m_chatView;
 };
 

@@ -57,10 +57,11 @@ public:
   ProfilePage(QWidget *parent = 0);
 
 private:
+  void retranslateUi();
+
   GenderField *m_genderField;
   NetworkWidget *m_networks;
   NickEdit *m_nickEdit;
-  QCheckBox *m_defaultProfile;
   QLabel *m_genderLabel;
   QLabel *m_networkLabel;
   QLabel *m_nickLabel;

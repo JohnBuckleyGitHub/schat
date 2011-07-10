@@ -33,6 +33,8 @@ public:
   WelcomeTab(SimpleClient *client, TabWidget *parent);
 
 private:
+  void retranslateUi();
+
   NetworkWidget *m_networks;
   NickEdit *m_nickEdit;
   SimpleClient *m_client;

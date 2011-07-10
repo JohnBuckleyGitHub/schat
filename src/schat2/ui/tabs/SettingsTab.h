@@ -43,6 +43,7 @@ protected:
 
 private:
   void addPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
+  void retranslateUi();
 
   QList<QListWidgetItem *> m_items;
   QListWidget *m_contents;

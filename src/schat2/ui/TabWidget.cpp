@@ -67,7 +67,7 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
 
   m_welcomeTab = new WelcomeTab(m_client, this);
-  addTab(m_welcomeTab, tr("Welcome"));
+  addTab(m_welcomeTab, m_welcomeTab->text());
   m_welcomeTab->setOnline();
 
   m_alertTab = new AlertTab(this);
@@ -488,7 +488,7 @@ void TabWidget::aboutTab()
 {
   if (!m_aboutTab) {
     m_aboutTab = new AboutTab(this);
-    addTab(m_aboutTab, tr("About"));
+    addTab(m_aboutTab, m_aboutTab->text());
     m_aboutTab->setOnline();
   }
 
@@ -505,7 +505,7 @@ void TabWidget::chatTab(AbstractTab *tab, bool show)
     return;
 
   if (!tab->isOnline()) {
-    addTab(tab, tab->action()->icon(), tab->action()->text());
+    addTab(tab, tab->icon(), tab->text());
     tab->setOnline();
   }
 
@@ -604,7 +604,7 @@ void TabWidget::settingsTab()
 {
   if (!m_settingsTab) {
     m_settingsTab = new SettingsTab(this);
-    addTab(m_settingsTab, tr("Preferences"));
+    addTab(m_settingsTab, m_settingsTab->text());
     m_settingsTab->setOnline();
   }
 
@@ -620,7 +620,7 @@ void TabWidget::showWelcome()
     removeTab(index);
   }
   else {
-    addTab(m_welcomeTab, tr("Welcome"));
+    addTab(m_welcomeTab, m_welcomeTab->text());
     m_welcomeTab->setOnline();
   }
 }

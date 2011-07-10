@@ -34,7 +34,6 @@ ChatSettings::ChatSettings(QObject *parent)
   setDefault("WindowsAero", true);
   setDefault("Networks", QStringList());
   setDefault("ShowSeconds", false);
-  setDefault("DefaultProfile", true);
   setDefault("AutoConnect", true);
   setDefault("Translation", "auto");
   setDefault("Profile/Nick", User::defaultNick());

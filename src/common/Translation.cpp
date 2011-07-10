@@ -33,8 +33,8 @@ Translation::Translation(QObject *parent)
   m_empty(true)
 {
   m_language = tr("English");
-  m_name = "en";
-  m_prefix = "schat2_";
+  m_name = QLatin1String("en");
+  m_prefix = QLatin1String("schat2_");
   m_core = new QTranslator(this);
   m_qt = new QTranslator(this);
 }
@@ -59,14 +59,14 @@ void Translation::load(const QString &name)
   else
     m_empty = false;
 
-  if (name == "auto" || name.isEmpty()) {
+  if (name == QLatin1String("auto") || name.isEmpty()) {
     QLocale locale = QLocale::system();
     if (locale.language() == QLocale::C)
-      m_name = "en";
+      m_name = QLatin1String("en");
     else
       m_name = locale.name();
   }
-  else if (name.endsWith(".qm")) {
+  else if (name.endsWith(QLatin1String(".qm"))) {
     QFileInfo fileInfo = QFileInfo(name);
     m_name = fileInfo.baseName().mid(m_prefix.size());
     if (m_core->load(name)) {
@@ -92,8 +92,8 @@ void Translation::load(const QString &name)
   if (loaded) {
     loadQt();
   }
-  else if (m_name != "en")
-    load("en");
+  else if (m_name != QLatin1String("en"))
+    load(QLatin1String("en"));
 }
 
 
@@ -103,10 +103,15 @@ void Translation::setSearch(const QString &search)
 }
 
 
+/*!
+ * Установка списка поиска файлов.
+ */
 void Translation::setSearch(const QStringList &search)
 {
   m_search = search;
-  m_search.append(":/translations");
+  m_search.removeAll("");
+  m_search.removeDuplicates();
+  m_search.append(QLatin1String(":/translations"));
 }
 
 
@@ -122,7 +127,7 @@ void Translation::loadQt()
   search.append(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
   for (int i = 0; i < search.size(); ++i) {
-    if (m_qt->load("qt_" + m_name, search.at(i))) {
+    if (m_qt->load(QLatin1String("qt_") + m_name, search.at(i))) {
       QCoreApplication::installTranslator(m_qt);
       return;
     }

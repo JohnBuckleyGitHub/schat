@@ -183,7 +183,7 @@ void StatusBar::retranslateUi()
 
   if (m_clientState == SimpleClient::ClientOffline) {
     m_label->setText(tr("No connection"));
-    m_icon->setToolTip(tr("Unconnected"));
+    m_icon->setToolTip(tr("No connection"));
   }
   else if (m_clientState == SimpleClient::ClientConnecting) {
     m_label->setText(tr("Connecting..."));

@@ -37,7 +37,6 @@ public:
     WindowsAero,    ///< При доступности будет использован интерфейс Windows Aero.
     Networks,       ///< Список серверов.
     ShowSeconds,    ///< Отображать секунды.
-    DefaultProfile, ///< Использовать профиль по умолчанию.
     AutoConnect,    ///< Автоматически подключатся.
     Translation,    ///< Перевод.
     ProfileNick,    ///< Ник по умолчанию.

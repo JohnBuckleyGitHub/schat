@@ -37,5 +37,12 @@ WelcomeTab::WelcomeTab(SimpleClient *client, TabWidget *parent)
   mainLay->addRow(tr("Network:"), m_networks);
   mainLay->addRow(tr("Nick:"), m_nickEdit);
 
-  m_icon = SCHAT_ICON(SmallLogoIcon);
+  setIcon(SCHAT_ICON(SmallLogoIcon));
+  setText(tr("Welcome"));
+}
+
+
+void WelcomeTab::retranslateUi()
+{
+  setText(tr("Welcome"));
 }
