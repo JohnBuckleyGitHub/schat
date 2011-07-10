@@ -24,8 +24,6 @@
 
 class QTranslator;
 
-//#define CURRENT_LANG SimpleChatApp::instance()->translation()->language()
-
 class Translation : public QObject
 {
   Q_OBJECT

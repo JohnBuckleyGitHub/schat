@@ -88,7 +88,6 @@ int MessageAdapter::send(MessageData &data)
 void MessageAdapter::allDelivered(quint64 id)
 {
   Q_UNUSED(id)
-//  setStateAll(ChatMessage::Delivered, "");
 }
 
 
@@ -105,16 +104,16 @@ void MessageAdapter::clientMessage(const MessageData &data)
 void MessageAdapter::clientStateChanged(int state)
 {
   if (state == SimpleClient::ClientOnline) {
-    AlertMessage msg(AlertMessage::Information, tr("Успешно подключены к <b>%1</b>").arg(NetworkManager::currentServerName()));
+    AlertMessage msg(AlertMessage::Information, tr("Successfully connected to <b>%1</b>").arg(NetworkManager::currentServerName()));
     emit message(msg);
     return;
   }
   else if (state == SimpleClient::ClientOffline) {
-    AlertMessage msg(AlertMessage::Exclamation, tr("Соединение потеряно"));
+    AlertMessage msg(AlertMessage::Exclamation, tr("Connection lost"));
     emit message(msg);
   }
 
-  setStateAll(UserMessage::Rejected, tr("Потерянно соединение с сервером"));
+  setStateAll(UserMessage::Rejected, "rj");
 }
 
 

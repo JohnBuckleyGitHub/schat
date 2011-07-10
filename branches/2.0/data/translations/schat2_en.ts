@@ -126,18 +126,13 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="108"/>
-        <source>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</source>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="107"/>
+        <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="113"/>
-        <source>Соединение потеряно</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="117"/>
-        <source>Потерянно соединение с сервером</source>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="112"/>
+        <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -378,8 +373,8 @@
 <context>
     <name>Translation</name>
     <message>
-        <location filename="../../src/common/Translation.cpp" line="35"/>
-        <location filename="../../src/common/Translation.cpp" line="123"/>
+        <location filename="../../src/common/Translation.cpp" line="34"/>
+        <location filename="../../src/common/Translation.cpp" line="122"/>
         <source>English</source>
         <translation>English</translation>
     </message>

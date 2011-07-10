@@ -21,7 +21,6 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QLibraryInfo>
-//#include <QDebug>
 
 #include "Translation.h"
 
