@@ -32,17 +32,18 @@ class LanguageBox : public QComboBox
 
 public:
   LanguageBox(Translation *translation, QWidget *parent = 0);
+  bool save();
   QString qmFile() const;
+
+protected:
+  void changeEvent(QEvent *event);
+  Translation *m_translation;
 
 private:
   QString languageIcon(const QString &file) const;
   QString languageName(const QString &file) const;
   QStringList findQmFiles() const;
-
-  const QString m_language;   ///< Человеко-понятное переведённое имя языка.
-  const QString m_prefix;     ///< Префикс файлов перевода.
-  const QStringList m_search; ///< Список директорий для поиска переводов.
-  Translation *m_translation;
+  void retranslateUi();
 };
 
 #endif /* LANGUAGEBOX_H_ */

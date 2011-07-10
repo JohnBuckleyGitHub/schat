@@ -56,6 +56,7 @@ HEADERS = \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
+    ui/fields/LanguageField.h \
     ui/fields/NickEdit.h \
     ui/fields/ProfileField.h \
     ui/InputWidget.h \
@@ -112,6 +113,7 @@ SOURCES = \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
+    ui/fields/LanguageField.cpp \
     ui/fields/NickEdit.cpp \
     ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
