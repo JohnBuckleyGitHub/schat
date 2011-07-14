@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,14 +48,18 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
+private slots:
+  void textChanged();
+
 private:
   void createActions();
-  void detectMinimumHeight();
   void nextMsg();
   void prevMsg();
   void retranslateUi();
+  void setHeight(int lines);
 
   int m_current;
+  int m_lines;               ///< Высота текста в строчках.
   QAction *m_clearAction;
   QAction *m_copyAction;
   QAction *m_cutAction;
