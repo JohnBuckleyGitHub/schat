@@ -427,7 +427,7 @@ InterfaceSettings::InterfaceSettings(QWidget *parent)
   #endif
 
   QGroupBox *language = new QGroupBox(tr("Language"), this);
-  d->language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
+  d->language = new LanguageBox(SimpleChatApp::instance()->translation(), this);
 
   QHBoxLayout *languageLay = new QHBoxLayout(language);
   languageLay->addWidget(d->language);
@@ -529,10 +529,8 @@ void InterfaceSettings::save()
     SimpleSettings->notify(Settings::InterfaceSettingsChanged);
   #endif
 
-  if (d->language->currentText() != CURRENT_LANG) {
-    Translation *translation = SimpleChatApp::instance()->translation();
-    translation->load(d->language->qmFile());
-    SimpleSettings->setString("Translation", translation->name());
+  if (d->language->save()) {
+    SimpleSettings->setString("Translation", SimpleChatApp::instance()->translation()->name());
   }
 }
 
