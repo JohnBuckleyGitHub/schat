@@ -33,7 +33,7 @@ Translation::Translation(QObject *parent)
 {
   m_language = tr("English");
   m_name = QLatin1String("en");
-  m_prefix = QLatin1String("schat2_");
+  m_prefix = QLatin1String("schat_");
   m_core = new QTranslator(this);
   m_qt = new QTranslator(this);
 }

@@ -39,7 +39,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
   m_profile = new ProfileWidget(false, this);
   connect(m_profile, SIGNAL(validNick(bool)), this, SLOT(validNick(bool)));
 
-  m_language = new LanguageBox(CURRENT_LANG, "schat_", SimpleSettings->path(Settings::TranslationsPath), this);
+  m_language = new LanguageBox(SimpleChatApp::instance()->translation(), this);
   connect(m_language, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(languageChanged(const QString &)));
 
   m_network = new NetworkWidget(this, NetworkWidget::NetworkLabel);
@@ -90,10 +90,8 @@ void WelcomeWidget::keyPressEvent(QKeyEvent *event)
 
 void WelcomeWidget::languageChanged(const QString &text)
 {
-  if (text != CURRENT_LANG) {
-    Translation *translation = SimpleChatApp::instance()->translation();
-    translation->load(m_language->qmFile());
-    SimpleSettings->setString("Translation", translation->name());
+  if (m_language->save()) {
+    SimpleSettings->setString("Translation", SimpleChatApp::instance()->translation()->name());
   }
 }
 

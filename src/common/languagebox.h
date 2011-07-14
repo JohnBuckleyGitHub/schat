@@ -21,25 +21,29 @@
 
 #include <QComboBox>
 
+class Translation;
+
 /*!
- * \brief Виджет выбора языка.
+ * Виджет выбора языка.
  */
 class LanguageBox : public QComboBox
 {
   Q_OBJECT
 
 public:
-  LanguageBox(const QString &language, const QString &prefix, const QStringList &search, QWidget *parent = 0);
+  LanguageBox(Translation *translation, QWidget *parent = 0);
+  bool save();
   QString qmFile() const;
+
+protected:
+  void changeEvent(QEvent *event);
+  Translation *m_translation;
 
 private:
   QString languageIcon(const QString &file) const;
   QString languageName(const QString &file) const;
   QStringList findQmFiles() const;
-
-  const QString m_language;   ///< Человеко-понятное переведённое имя языка.
-  const QString m_prefix;     ///< Префикс файлов перевода.
-  const QStringList m_search; ///< Список директорий для поиска переводов.
+  void retranslateUi();
 };
 
 #endif /* LANGUAGEBOX_H_ */

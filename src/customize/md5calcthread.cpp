@@ -39,7 +39,7 @@ void Md5CalcThread::run()
   if (m_pfx) {
     foreach (FileInfoLite info, m_files) {
       QProcess process;
-      process.start(QString("SignTool.exe sign /f \"%1\" /p %2 /t http://timestamp.verisign.com/scripts/timestamp.dll \"%3\"")
+      process.start(QString("SignTool.exe sign /f \"%1\" /p %2 /t http://timestamp.comodoca.com/authenticode \"%3\"")
           .arg(m_pfxFile)
           .arg(m_pfxPassword)
           .arg(info.name));
