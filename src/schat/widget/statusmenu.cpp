@@ -83,9 +83,9 @@ QIcon StatusMenu::icon(Status status) const
   QPixmap pixmap(file);
   QPainter painter(&pixmap);
   if (status == StatusAway)
-    painter.drawPixmap(8, 8, QPixmap(":/images/status/small/away.png"));
+    painter.drawPixmap(6, 6, QPixmap(":/images/status/small/away.png"));
   else if (status == StatusDnD)
-    painter.drawPixmap(7, 7, QPixmap(":/images/status/small/dnd.png"));
+    painter.drawPixmap(6, 6, QPixmap(":/images/status/small/dnd.png"));
 
   painter.end();
   return QIcon(pixmap);
