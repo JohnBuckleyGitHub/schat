@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 #include <QContextMenuEvent>
 #include <QMenu>
-//#include <QDebug>
 
 #include "channellog.h"
 #include "simplechatapp.h"
@@ -36,7 +35,6 @@ InputWidget::InputWidget(QWidget *parent)
   setFrameShape(QFrame::NoFrame);
   setFrameShadow(QFrame::Plain);
   #endif
-  detectMinimumHeight();
   m_default = currentCharFormat();
   m_current = 0;
   document()->setDefaultStyleSheet("a {color:#815d53; text-decoration:none;}");
@@ -45,6 +43,9 @@ InputWidget::InputWidget(QWidget *parent)
   #endif
 
   createActions();
+  setHeight(1);
+
+  connect(this, SIGNAL(textChanged()), SLOT(textChanged()));
 }
 
 
@@ -60,8 +61,6 @@ void InputWidget::sendMsg()
   m_current = m_msg.count();
 
   emit sendMsg(html);
-
-//  qDebug() << html;
 }
 
 
@@ -138,10 +137,11 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (key == Qt::Key_Return && modifiers == Qt::NoModifier)
     sendMsg();
-  #if QT_VERSION >= 0x040500
-  else if (key == Qt::Key_Return && modifiers == Qt::ControlModifier)
-    QApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::ShiftModifier));
-  #endif
+  else if (key == Qt::Key_Return && (modifiers == Qt::ControlModifier || modifiers == Qt::ShiftModifier)) {
+    QKeyEvent *e = new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
+    QTextEdit::keyPressEvent(e);
+    delete e;
+  }
   else if (key == Qt::Key_Up && modifiers == Qt::ControlModifier)
     nextMsg();
   else if (key == Qt::Key_Down && modifiers == Qt::ControlModifier)
@@ -162,6 +162,14 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
   else
     QTextEdit::keyPressEvent(event);
+}
+
+
+void InputWidget::textChanged()
+{
+  int lineCount = document()->lineCount();
+  if (m_lines != lineCount)
+    setHeight(lineCount);
 }
 
 
@@ -188,28 +196,6 @@ void InputWidget::createActions()
   m_selectAllAction = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
   m_selectAllAction->setShortcut(QKeySequence::SelectAll);
   connect(m_selectAllAction, SIGNAL(triggered()), SLOT(selectAll()));
-}
-
-
-void InputWidget::detectMinimumHeight()
-{
-  #if defined(Q_OS_WINCE)
-   #if defined(SCHAT_WINCE_VGA)
-    static const int correction = 10;
-   #else
-    static const int correction = 4;
-   #endif
-  #else
-    #if defined(Q_OS_MAC)
-    static const int correction = 4;
-    #else
-    static const int correction = 0;
-    #endif
-  #endif
-  QFontInfo fontInfo(currentFont());
-  setMinimumHeight(fontInfo.pixelSize() * 2 - correction);
-  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 
@@ -248,4 +234,29 @@ void InputWidget::retranslateUi()
   m_pasteAction->setText(tr("&Paste"));
   m_clearAction->setText(tr("Clear"));
   m_selectAllAction->setText(tr("Select All"));
+}
+
+
+void InputWidget::setHeight(int lines)
+{
+  #if defined(Q_OS_MAC)
+  static const int correction = 4;
+  #else
+  static const int correction = 2;
+  #endif
+
+  if (lines > 4) {
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    lines = 4;
+  }
+  else
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  m_lines = lines;
+  --lines;
+  int fontSize = QFontInfo(currentFont()).pixelSize();
+  int height = (fontSize * 2 - correction) + fontSize * lines;
+
+  setMinimumHeight(height);
+  setMaximumHeight(height);
 }
