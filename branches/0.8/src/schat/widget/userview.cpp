@@ -185,9 +185,9 @@ QIcon UserItem::drawIcon() const
   QPixmap pixmap(file);
   QPainter painter(&pixmap);
   if (status == schat::StatusAway || status == schat::StatusAutoAway)
-    painter.drawPixmap(8, 8, QPixmap(":/images/status/small/away.png"));
+    painter.drawPixmap(6, 6, QPixmap(":/images/status/small/away.png"));
   else if (status == schat::StatusDnD)
-    painter.drawPixmap(7, 7, QPixmap(":/images/status/small/dnd.png"));
+    painter.drawPixmap(6, 6, QPixmap(":/images/status/small/dnd.png"));
 
   painter.end();
   return QIcon(pixmap);
