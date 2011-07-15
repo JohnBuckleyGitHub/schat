@@ -38,7 +38,8 @@ public:
     WelcomeType,
     AboutType,
     SettingsType,
-    AlertType
+    AlertType,
+    ProgressType
   };
 
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);

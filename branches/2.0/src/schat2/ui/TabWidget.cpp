@@ -38,6 +38,7 @@
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
+#include "ui/tabs/ProgressTab.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
@@ -616,4 +617,7 @@ void TabWidget::showWelcome()
 {
   m_welcomeTab = new WelcomeTab(this);
   addChatTab(m_welcomeTab);
+
+  m_progressTab = new ProgressTab(this);
+  addChatTab(m_progressTab);
 }

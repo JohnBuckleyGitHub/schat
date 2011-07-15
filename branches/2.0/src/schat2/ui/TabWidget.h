@@ -29,6 +29,7 @@ class AbstractTab;
 class AlertTab;
 class ChannelTab;
 class PrivateTab;
+class ProgressTab;
 class QMenu;
 class QToolBar;
 class QToolButton;
@@ -36,8 +37,8 @@ class SettingsTab;
 class SimpleClient;
 class SoundButton;
 class TabBar;
-class WelcomeTab;
 class TrayIcon;
+class WelcomeTab;
 
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
@@ -94,6 +95,7 @@ private:
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.
   QMenu *m_talksMenu;                        ///< Меню разговоров.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
+  QPointer<ProgressTab> m_progressTab;       ///< Вкладка идицирующая подключение к серверу.
   QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
   QPointer<WelcomeTab> m_welcomeTab;         ///< Вкладка приветствия.
   QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
