@@ -47,7 +47,6 @@
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
-  , m_alertTab(0)
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
@@ -66,12 +65,10 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
 
-  m_welcomeTab = new WelcomeTab(this);
-  addTab(m_welcomeTab, m_welcomeTab->text());
-  m_welcomeTab->setOnline();
-
   m_alertTab = new AlertTab(this);
   m_alertTab->setVisible(false);
+
+  showWelcome();
 
   m_tray = new TrayIcon(this);
   QTimer::singleShot(0, m_tray, SLOT(show()));
@@ -152,12 +149,12 @@ void TabWidget::closeTab(int index)
     removeTab(index);
     tab->setOnline(false);
   }
-  else if (tab->type() != AbstractTab::WelcomeType) {
+  else {
     removeTab(index);
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
   }
 
-  showWelcome();
+  lastTab();
 }
 
 
@@ -188,10 +185,16 @@ void TabWidget::notify(int notice, const QVariant &data)
   Q_UNUSED(data)
 
   if (notice == ChatCore::AboutNotice) {
-    aboutTab();
+    if (!m_aboutTab)
+      m_aboutTab = new AboutTab(this);
+
+    addChatTab(m_aboutTab);
   }
   else if (notice == ChatCore::SettingsNotice) {
-    settingsTab();
+    if (!m_settingsTab)
+      m_settingsTab = new SettingsTab(this);
+
+    addChatTab(m_settingsTab);
   }
   else if (notice == ChatCore::AddPrivateTab) {
     addPrivateTab(data.toByteArray());
@@ -204,7 +207,7 @@ void TabWidget::notify(int notice, const QVariant &data)
  */
 void TabWidget::openTab()
 {
-  chatTab(qobject_cast<AbstractTab *>(sender()));
+  addChatTab(qobject_cast<AbstractTab *>(sender()));
 }
 
 
@@ -437,7 +440,7 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
   tab->userView()->add(m_client->user(), UserView::SelfNick);
   tab->action()->setText(channel->name());
 
-  showWelcome();
+  closeWelcome();
   return tab;
 }
 
@@ -484,33 +487,35 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
-void TabWidget::aboutTab()
-{
-  if (!m_aboutTab) {
-    m_aboutTab = new AboutTab(this);
-    addTab(m_aboutTab, m_aboutTab->text());
-    m_aboutTab->setOnline();
-  }
-
-  setCurrentIndex(indexOf(m_aboutTab));
-}
-
-
 /*!
- * Добавление вкладки.
+ * Добавление вкладки и установка её текущей вкладкой.
+ * Если вкладка была добавлена ранее, то она просто становится текущей.
+ *
+ * \param tab Указатель на вкладку.
  */
-void TabWidget::chatTab(AbstractTab *tab, bool show)
+void TabWidget::addChatTab(AbstractTab *tab)
 {
   if (tab == 0)
     return;
 
-  if (!tab->isOnline()) {
-    addTab(tab, tab->icon(), tab->text());
+  int index = indexOf(tab);
+  if (index == -1) {
+    index = addTab(tab, tab->text());
     tab->setOnline();
   }
 
-  if (show)
-    setCurrentIndex(indexOf(tab));
+  setCurrentIndex(index);
+}
+
+
+void TabWidget::closeWelcome()
+{
+  if (!m_welcomeTab)
+    return;
+
+  int index = indexOf(m_welcomeTab);
+  if (index != -1)
+    closeTab(index);
 }
 
 
@@ -589,6 +594,13 @@ void TabWidget::displayChannelUserCount(const QByteArray &id)
 }
 
 
+void TabWidget::lastTab()
+{
+  if (count() == 0)
+    addChatTab(m_alertTab);
+}
+
+
 void TabWidget::retranslateUi()
 {
   m_tray->retranslateUi();
@@ -600,27 +612,8 @@ void TabWidget::retranslateUi()
 }
 
 
-void TabWidget::settingsTab()
-{
-  if (!m_settingsTab) {
-    m_settingsTab = new SettingsTab(this);
-    addTab(m_settingsTab, m_settingsTab->text());
-    m_settingsTab->setOnline();
-  }
-
-  setCurrentIndex(indexOf(m_settingsTab));
-}
-
-
 void TabWidget::showWelcome()
 {
-  int index = indexOf(m_welcomeTab);
-
-  if (m_channels.size()) {
-    removeTab(index);
-  }
-  else {
-    addTab(m_welcomeTab, m_welcomeTab->text());
-    m_welcomeTab->setOnline();
-  }
+  m_welcomeTab = new WelcomeTab(this);
+  addChatTab(m_welcomeTab);
 }

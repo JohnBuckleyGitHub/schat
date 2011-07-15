@@ -24,6 +24,7 @@
 
 #include "ChatCore.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
@@ -33,6 +34,8 @@
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
+  , m_languageBox(0)
+  , m_languageLabel(0)
   , m_client(ChatCore::i()->client())
 {
   m_networkLabel = new QLabel(this);
@@ -44,11 +47,14 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   networkLay->setContentsMargins(20, 0, 3, 6);
   networkLay->setColumnStretch(0, 1);
 
-  m_languageLabel = new QLabel(this);
-  m_languageBox = new LanguageField(this);
-  QGridLayout *languageLay = new QGridLayout;
-  languageLay->addWidget(m_languageBox);
-  languageLay->setContentsMargins(20, 0, 3, 6);
+  QGridLayout *languageLay = 0;
+  if (!ChatCore::i()->networks()->count()) {
+    m_languageLabel = new QLabel(this);
+    m_languageBox = new LanguageField(this);
+    languageLay = new QGridLayout;
+    languageLay->addWidget(m_languageBox);
+    languageLay->setContentsMargins(20, 0, 3, 6);
+  }
 
   m_profileLabel = new QLabel(this);
   m_nickLabel = new QLabel(this);
@@ -64,9 +70,15 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_networkLabel, 0, 0);
-  mainLay->addWidget(m_languageLabel, 0, 1);
+
+  if (m_languageLabel)
+    mainLay->addWidget(m_languageLabel, 0, 1);
+
   mainLay->addLayout(networkLay, 1, 0);
-  mainLay->addLayout(languageLay, 1, 1, Qt::AlignTop);
+
+  if (languageLay)
+    mainLay->addLayout(languageLay, 1, 1, Qt::AlignTop);
+
   mainLay->addWidget(m_profileLabel, 2, 0);
   mainLay->addLayout(profileLay, 3, 0);
   mainLay->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0);
@@ -91,10 +103,12 @@ void WelcomeTab::retranslateUi()
 {
   setText(tr("Welcome"));
   m_networkLabel->setText(QLatin1String("<b>") + tr("Network") + QLatin1String("</b>"));
-  m_languageLabel->setText(QLatin1String("<b>") + tr("Language") + QLatin1String("</b>"));
   m_profileLabel->setText(QLatin1String("<b>") + tr("Profile") + QLatin1String("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
+
+  if (m_languageLabel)
+    m_languageLabel->setText(QLatin1String("<b>") + tr("Language") + QLatin1String("</b>"));
 
   clientStateChanged();
 }
