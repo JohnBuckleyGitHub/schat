@@ -220,27 +220,27 @@
 <context>
     <name>SendWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="263"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="269"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="264"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="270"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="265"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="271"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="266"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="272"/>
         <source>Send</source>
         <translation>Отправить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="269"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="275"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -375,6 +375,7 @@
     <message>
         <location filename="../../src/common/Translation.cpp" line="34"/>
         <location filename="../../src/common/Translation.cpp" line="122"/>
+        <location filename="../../src/common/ui/LanguageBox.cpp" line="113"/>
         <source>English</source>
         <translation>Русский</translation>
     </message>
@@ -403,18 +404,37 @@
 <context>
     <name>WelcomeTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="37"/>
-        <source>Network:</source>
-        <translation>Сеть:</translation>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="83"/>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="38"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="84"/>
+        <source>Connect</source>
+        <translation>Подключиться</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="85"/>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="86"/>
+        <source>Profile</source>
+        <translation>Профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="87"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="41"/>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="47"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="88"/>
+        <source>Gender:</source>
+        <translation>Пол:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="82"/>
         <source>Welcome</source>
         <translation>Приветствие</translation>
     </message>

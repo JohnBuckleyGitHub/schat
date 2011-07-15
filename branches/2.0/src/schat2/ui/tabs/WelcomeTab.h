@@ -21,9 +21,12 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+class GenderField;
 class LanguageField;
 class NetworkWidget;
 class NickEdit;
+class QLabel;
+class QPushButton;
 class SimpleClient;
 
 class WelcomeTab : public AbstractTab
@@ -31,15 +34,22 @@ class WelcomeTab : public AbstractTab
   Q_OBJECT
 
 public:
-  WelcomeTab(SimpleClient *client, TabWidget *parent);
+  WelcomeTab(TabWidget *parent);
 
 private:
   void retranslateUi();
 
-  LanguageField *m_languageBox;
-  NetworkWidget *m_networks;
-  NickEdit *m_nickEdit;
-  SimpleClient *m_client;
+  GenderField *m_genderField;   ///< Виджет выбора пола.
+  LanguageField *m_languageBox; ///< Виджет выбора языка.
+  NetworkWidget *m_networks;    ///< Виджет выбора сети.
+  NickEdit *m_nickEdit;         ///< Поле редактирования ника.
+  QLabel *m_genderLabel;
+  QLabel *m_languageLabel;
+  QLabel *m_networkLabel;
+  QLabel *m_nickLabel;
+  QLabel *m_profileLabel;
+  QPushButton *m_connectButton; ///< Кнопка Connect.
+  SimpleClient *m_client;       ///< Указатель на клиент.
 };
 
 #endif /* WELCOMETAB_H_ */

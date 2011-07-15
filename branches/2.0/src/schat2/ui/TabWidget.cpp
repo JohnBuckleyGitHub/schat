@@ -66,7 +66,7 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
 
-  m_welcomeTab = new WelcomeTab(m_client, this);
+  m_welcomeTab = new WelcomeTab(this);
   addTab(m_welcomeTab, m_welcomeTab->text());
   m_welcomeTab->setOnline();
 
