@@ -34,6 +34,7 @@ class NetworkWidget : public QWidget
 
 public:
   NetworkWidget(QWidget *parent = 0);
+  QAction *connectAction();
 
 public slots:
   void open();
@@ -43,11 +44,11 @@ protected:
   void keyPressEvent(QKeyEvent *event);
 
 private slots:
+  inline void showMenu() { connectAction(); }
   void add();
   void indexChanged(int index);
   void notify(int notice, const QVariant &data);
   void remove();
-  void showMenu();
 
 private:
   int isCurrentActive() const;

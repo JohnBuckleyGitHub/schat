@@ -104,19 +104,16 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 
   /// Меню показывается либо по правой кнопке, либо по левой если клик произведён по виджету \p m_icon или \p m_progress
   if (context || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_icon) || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_progress)) {
-    if (m_clientState == SimpleClient::ClientOnline) {
-      mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Disconnect"));
-      mainAction->setData(1);
-    }
-    else if (m_clientState == SimpleClient::ClientOffline || m_clientState == SimpleClient::ClientError) {
+    QAction *action = m_url->connectAction();
+    int data = 1;
+
+    if (m_clientState == SimpleClient::ClientOffline || m_clientState == SimpleClient::ClientError) {
       menu.addAction(m_urlAction);
-      mainAction = menu.addAction(SCHAT_ICON(ConnectIcon), tr("Connect"));
-      mainAction->setData(2);
+      data = 2;
     }
-    else if (m_clientState == SimpleClient::ClientConnecting) {
-      mainAction = menu.addAction(SCHAT_ICON(DisconnectIcon), tr("Abort"));
-      mainAction->setData(1);
-    }
+
+    mainAction = menu.addAction(action->icon(), action->text());
+    mainAction->setData(data);
   }
 
   if (menu.actions().size() == 0)
