@@ -78,8 +78,8 @@ private slots:
 
 private:
   ChannelTab *createChannelTab(const QByteArray &id);
+  int addChatTab(AbstractTab *tab);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
-  void addChatTab(AbstractTab *tab);
   void closeWelcome();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);

@@ -53,6 +53,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   m_tabs = new TabWidget(this);
   m_statusBar = new StatusBar(this);
   m_send = new SendWidget(this);
+  pageChanged(-1, false);
 
   setStatusBar(m_statusBar);
 
