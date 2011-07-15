@@ -140,28 +140,28 @@
     <name>NetworkWidget</name>
     <message>
         <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="255"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="254"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="47"/>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="256"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="255"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="194"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="80"/>
         <source>Disconnect</source>
         <translation>Отключиться</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="198"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="84"/>
         <source>Abort</source>
         <translation>Прервать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="202"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="88"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>
@@ -187,6 +187,14 @@
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="100"/>
         <source>Network</source>
         <translation>Сеть</translation>
+    </message>
+</context>
+<context>
+    <name>ProgressTab</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ProgressTab.cpp" line="43"/>
+        <source>Connecting</source>
+        <translation>Подключение</translation>
     </message>
 </context>
 <context>
@@ -290,44 +298,29 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="108"/>
-        <source>Disconnect</source>
-        <translation>Отключиться</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="113"/>
-        <source>Connect</source>
-        <translation>Подключиться</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="117"/>
-        <source>Abort</source>
-        <translation>Прервать</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="182"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="179"/>
         <source>Encrypted connection</source>
         <translation>Зашифрованное соединение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="185"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="186"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="182"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
         <source>No connection</source>
         <translation>Нет подключения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="189"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="186"/>
         <source>Connecting...</source>
         <translation>Подключение...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="193"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="190"/>
         <source>Connected</source>
         <translation>Подключено</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="196"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="197"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="193"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="194"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -335,37 +328,37 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="314"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="324"/>
         <source>&lt;b&gt;%1&lt;/b&gt; joined to &lt;b&gt;%2&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="367"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="377"/>
         <source>&lt;b&gt;%1&lt;/b&gt; left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="436"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="446"/>
         <source>you&apos;re joined to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="596"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="621"/>
         <source>Menu</source>
         <translation>Меню</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="597"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="622"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="598"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="623"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="599"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="624"/>
         <source>Talks</source>
         <translation>Разговоры</translation>
     </message>
@@ -404,37 +397,32 @@
 <context>
     <name>WelcomeTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="83"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="105"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="84"/>
-        <source>Connect</source>
-        <translation>Подключиться</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="85"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="111"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="86"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="106"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="87"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="107"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="108"/>
         <source>Gender:</source>
         <translation>Пол:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="82"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="104"/>
         <source>Welcome</source>
         <translation>Приветствие</translation>
     </message>

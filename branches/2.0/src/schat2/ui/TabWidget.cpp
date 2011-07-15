@@ -27,9 +27,11 @@
 
 #include "Channel.h"
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "messages/AbstractMessage.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
+#include "NetworkManager.h"
 #include "schat2.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
@@ -166,8 +168,12 @@ void TabWidget::currentChanged(int index)
 
   AbstractTab *tab = widget(index);
   bool visible = true;
-  if (tab->type() == AbstractTab::SettingsType || tab->type() == AbstractTab::AboutType)
+  if (tab->type() == AbstractTab::SettingsType
+      || tab->type() == AbstractTab::AboutType
+      || tab->type() == AbstractTab::WelcomeType
+      || tab->type() == AbstractTab::ProgressType) {
     visible = false;
+  }
 
   emit pageChanged(tab->type(), visible);
 }
@@ -447,6 +453,28 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
 
 
 /*!
+ * Добавление вкладки и установка её текущей вкладкой.
+ * Если вкладка была добавлена ранее, то она просто становится текущей.
+ *
+ * \param tab Указатель на вкладку.
+ */
+int TabWidget::addChatTab(AbstractTab *tab)
+{
+  if (tab == 0)
+    return -1;
+
+  int index = indexOf(tab);
+  if (index == -1) {
+    index = addTab(tab, tab->text());
+    tab->setOnline();
+  }
+
+  setCurrentIndex(index);
+  return index;
+}
+
+
+/*!
  * Открытие или создание вкладки для приватного разговора.
  *
  * \param id     Идентификатор пользователя.
@@ -488,35 +516,19 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
-/*!
- * Добавление вкладки и установка её текущей вкладкой.
- * Если вкладка была добавлена ранее, то она просто становится текущей.
- *
- * \param tab Указатель на вкладку.
- */
-void TabWidget::addChatTab(AbstractTab *tab)
-{
-  if (tab == 0)
-    return;
-
-  int index = indexOf(tab);
-  if (index == -1) {
-    index = addTab(tab, tab->text());
-    tab->setOnline();
-  }
-
-  setCurrentIndex(index);
-}
-
-
 void TabWidget::closeWelcome()
 {
-  if (!m_welcomeTab)
-    return;
+  if (m_welcomeTab) {
+    int index = indexOf(m_welcomeTab);
+    if (index != -1)
+      closeTab(index);
+  }
 
-  int index = indexOf(m_welcomeTab);
-  if (index != -1)
-    closeTab(index);
+  if (m_progressTab) {
+    int index = indexOf(m_progressTab);
+    if (index != -1)
+      closeTab(index);
+  }
 }
 
 
@@ -615,9 +627,12 @@ void TabWidget::retranslateUi()
 
 void TabWidget::showWelcome()
 {
-  m_welcomeTab = new WelcomeTab(this);
-  addChatTab(m_welcomeTab);
-
-  m_progressTab = new ProgressTab(this);
-  addChatTab(m_progressTab);
+  if (SCHAT_OPTION(AutoConnect).toBool() && m_client->user()->status() != User::OfflineStatus && ChatCore::i()->networks()->count()) {
+    m_progressTab = new ProgressTab(this);
+    addChatTab(m_progressTab);
+  }
+  else {
+    m_welcomeTab = new WelcomeTab(this);
+    addChatTab(m_welcomeTab);
+  }
 }
