@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAction>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -36,7 +37,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
 {
   m_networkLabel = new QLabel(this);
   m_networks = new NetworkWidget(this);
-  m_connectButton = new QPushButton(SCHAT_ICON(ConnectIcon), "", this);
+  m_connectButton = new QPushButton(this);
   QGridLayout *networkLay = new QGridLayout;
   networkLay->addWidget(m_networks, 0, 0, 1, 2);
   networkLay->addWidget(m_connectButton, 1, 1);
@@ -74,6 +75,15 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   retranslateUi();
 
   connect(m_connectButton, SIGNAL(clicked()), m_networks, SLOT(open()));
+  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged()));
+}
+
+
+void WelcomeTab::clientStateChanged()
+{
+  QAction *action = m_networks->connectAction();
+  m_connectButton->setIcon(action->icon());
+  m_connectButton->setText(action->text());
 }
 
 
@@ -81,9 +91,10 @@ void WelcomeTab::retranslateUi()
 {
   setText(tr("Welcome"));
   m_networkLabel->setText(QLatin1String("<b>") + tr("Network") + QLatin1String("</b>"));
-  m_connectButton->setText(tr("Connect"));
   m_languageLabel->setText(QLatin1String("<b>") + tr("Language") + QLatin1String("</b>"));
   m_profileLabel->setText(QLatin1String("<b>") + tr("Profile") + QLatin1String("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
+
+  clientStateChanged();
 }

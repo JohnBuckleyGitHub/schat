@@ -29,12 +29,18 @@ class QLabel;
 class QPushButton;
 class SimpleClient;
 
+/*!
+ * Страница приветствия.
+ */
 class WelcomeTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
   WelcomeTab(TabWidget *parent);
+
+private slots:
+  void clientStateChanged();
 
 private:
   void retranslateUi();

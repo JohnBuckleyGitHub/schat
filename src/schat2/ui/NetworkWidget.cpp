@@ -70,6 +70,28 @@ NetworkWidget::NetworkWidget(QWidget *parent)
 }
 
 
+QAction *NetworkWidget::connectAction()
+{
+  QByteArray id = m_combo->itemData(m_combo->currentIndex()).toByteArray();
+  int state = isCurrentActive();
+
+  if (state == 1) {
+    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setText(tr("Disconnect"));
+  }
+  else if (state == 2) {
+    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setText(tr("Abort"));
+  }
+  else {
+    m_connectAction->setIcon(SCHAT_ICON(ConnectIcon));
+    m_connectAction->setText(tr("Connect"));
+  }
+
+  return m_connectAction;
+}
+
+
 /*!
  * Обработка действия для \p m_connectAction.
  */
@@ -178,29 +200,6 @@ void NetworkWidget::remove()
     m_manager->removeItem(id);
 
   m_combo->removeItem(index);
-}
-
-
-/*!
- * Подготовка к показу меню.
- */
-void NetworkWidget::showMenu()
-{
-  QByteArray id = m_combo->itemData(m_combo->currentIndex()).toByteArray();
-  int state = isCurrentActive();
-
-  if (state == 1) {
-    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
-    m_connectAction->setText(tr("Disconnect"));
-  }
-  else if (state == 2) {
-    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
-    m_connectAction->setText(tr("Abort"));
-  }
-  else {
-    m_connectAction->setIcon(SCHAT_ICON(ConnectIcon));
-    m_connectAction->setText(tr("Connect"));
-  }
 }
 
 
