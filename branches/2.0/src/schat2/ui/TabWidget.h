@@ -78,12 +78,12 @@ private slots:
 private:
   ChannelTab *createChannelTab(const QByteArray &id);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
-  void aboutTab();
-  void chatTab(AbstractTab *tab, bool show = true);
+  void addChatTab(AbstractTab *tab);
+  void closeWelcome();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
+  void lastTab();
   void retranslateUi();
-  void settingsTab();
   void showWelcome();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
@@ -95,6 +95,7 @@ private:
   QMenu *m_talksMenu;                        ///< Меню разговоров.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
   QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
+  QPointer<WelcomeTab> m_welcomeTab;         ///< Вкладка приветствия.
   QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
   QToolBar *m_rightToolBar;                  ///< Правая панель инструментов.
   QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.
@@ -103,7 +104,6 @@ private:
   SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
   TrayIcon *m_tray;                          ///< Иконка в трее.
-  WelcomeTab *m_welcomeTab;                  ///< Вкладка приветствия.
 };
 
 #endif /* TABWIDGET_H_ */

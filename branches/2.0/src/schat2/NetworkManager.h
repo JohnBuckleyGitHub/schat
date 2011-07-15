@@ -65,6 +65,7 @@ public:
   bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
+  inline int count() const { return m_items.count(); }
   NetworkItem item(const QByteArray &id) const;
   QList<NetworkItem> items() const;
   static QString currentServerName();

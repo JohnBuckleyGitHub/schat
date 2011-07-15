@@ -23,6 +23,22 @@ TabBar::TabBar(QWidget *parent)
 {
   setUsesScrollButtons(true);
   setElideMode(Qt::ElideRight);
-  setTabsClosable(true);
   setMovable(true);
+  setTabsClosable(true);
+}
+
+
+void TabBar::tabInserted(int index)
+{
+  setTabsClosable(count() > 1);
+
+  QTabBar::tabInserted(index);
+}
+
+
+void TabBar::tabRemoved(int index)
+{
+  setTabsClosable(count() > 1);
+
+  QTabBar::tabRemoved(index);
 }
