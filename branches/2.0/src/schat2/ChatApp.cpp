@@ -33,6 +33,7 @@ ChatApp::ChatApp(int &argc, char **argv)
   setOrganizationDomain(SCHAT_DOMAIN);
   setQuitOnLastWindowClosed(false);
   addLibraryPath(applicationDirPath() + "/plugins/qt");
+  addLibraryPath(applicationDirPath() + "/plugins/client");
 
   #if defined(Q_WS_X11)
   setAttribute(Qt::AA_DontShowIconsInMenus, false);

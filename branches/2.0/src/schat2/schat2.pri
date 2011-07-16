@@ -49,6 +49,8 @@ HEADERS = \
     net/TransportReader.h \
     net/TransportWriter.h \
     NetworkManager.h \
+    Plugins.h \
+    plugins/ClientInterface.h \
     QProgressIndicator/QProgressIndicator.h \
     schat2.h \
     Settings.h \
@@ -108,6 +110,7 @@ SOURCES = \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
     NetworkManager.cpp \
+    Plugins.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     Settings.cpp \
     Translation.cpp \

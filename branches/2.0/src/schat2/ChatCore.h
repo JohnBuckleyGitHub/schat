@@ -28,6 +28,7 @@ class ChatSettings;
 class MessageAdapter;
 class MessageData;
 class NetworkManager;
+class Plugins;
 class SimpleClient;
 class StatusMenu;
 class Translation;
@@ -115,6 +116,7 @@ private:
   ChatSettings *m_settings;         ///< Настройки.
   MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager; ///< Объект управляющих сетями.
+  Plugins *m_plugins;               ///< Загрузчик плагинов.
   SimpleClient *m_client;           ///< Клиент.
   static ChatCore *m_self;          ///< Указатель на себя.
   static QStringList m_icons;       ///< Иконки.
