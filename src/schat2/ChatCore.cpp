@@ -22,6 +22,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "FileLocations.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
@@ -190,6 +191,6 @@ QByteArray ChatCore::userIdFromClass(const QString &text)
 void ChatCore::loadTranslation()
 {
   m_translation = new Translation(this);
-  m_translation->setSearch(QStringList() << (m_settings->share() + "/translations") << (m_settings->root() + "/translations"));
+  m_translation->setSearch(QStringList() << (m_settings->locations()->path(FileLocations::SharePath) + "/translations") << (m_settings->locations()->path(FileLocations::ConfigPath) + "/translations"));
   m_translation->load(m_settings->value(ChatSettings::Translation).toString());
 }

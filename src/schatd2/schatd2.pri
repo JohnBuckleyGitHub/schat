@@ -28,6 +28,7 @@ HEADERS = \
     DataBase.h \
     debugstream.h \
     events.h \
+    FileLocations.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/channels.h \
@@ -55,6 +56,7 @@ SOURCES = \
     Core.cpp \
     DataBase.cpp \
     events.cpp \
+    FileLocations.cpp \
     main.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \

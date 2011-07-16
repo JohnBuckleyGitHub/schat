@@ -30,6 +30,7 @@ HEADERS = \
     ChatCore.h \
     ChatSettings.h \
     debugstream.h \
+    FileLocations.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/MessageAdapter.h \
@@ -92,6 +93,7 @@ SOURCES = \
     ChatApp.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
+    FileLocations.cpp \
     main.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \

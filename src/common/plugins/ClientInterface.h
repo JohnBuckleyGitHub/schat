@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+class Settings;
 class SimpleClient;
 
 class ClientInterface
@@ -29,6 +30,7 @@ public:
   virtual ~ClientInterface() {}
   virtual QString name() const = 0;
   virtual void setClient(SimpleClient *client) = 0;
+  virtual void setSettings(Settings *settings) = 0;
 };
 
 Q_DECLARE_INTERFACE(ClientInterface, "com.impomezia.schat.ClientInterface/1.0");

@@ -17,11 +17,19 @@
  */
 
 #include <QDebug>
-
+#include <QCoreApplication>
 #include <qplugin.h>
 
 #include "DebugClientPlugin.h"
+#include "FileLocations.h"
 #include "net/SimpleClient.h"
+#include "Settings.h"
+
+DebugClientPlugin::DebugClientPlugin()
+  : m_settings(0)
+  , m_client(0)
+{
+}
 
 QString DebugClientPlugin::name() const
 {
@@ -31,14 +39,23 @@ QString DebugClientPlugin::name() const
 
 void DebugClientPlugin::setClient(SimpleClient *client)
 {
+  qDebug() << "             " << m_client << m_settings;
   m_client = client;
   connect(m_client, SIGNAL(connected()), SLOT(connected()));
 }
 
 
+void DebugClientPlugin::setSettings(Settings *settings)
+{
+  qDebug() << "             " << m_client << m_settings;
+  m_settings = settings;
+}
+
+
 void DebugClientPlugin::connected()
 {
-  qDebug() << "                     connected()";
+//  FileLocations l;
+  qDebug() << "                     connected()" << QCoreApplication::applicationDirPath() << m_settings->locations()->path(FileLocations::ConfigFile);
 }
 
 Q_EXPORT_PLUGIN2(DebugClient, DebugClientPlugin);

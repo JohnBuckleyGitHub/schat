@@ -23,14 +23,4 @@
 ServerSettings::ServerSettings(QObject *parent)
   : Settings(parent)
 {
-  if (scheme() == UnixAdaptive) {
-    m_root = QDir::cleanPath(m_appDirPath + "/../etc/" + m_baseName);
-    m_var = QDir::cleanPath(m_appDirPath + "/../var/" + m_baseName);
-  }
-  else if (scheme() == UnixStandard) {
-    m_root = "/etc/" + m_baseName;
-    m_var = "/var/lib/" + m_baseName;
-  }
-  else
-    m_var = m_root;
 }

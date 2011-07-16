@@ -24,29 +24,18 @@
 #include <QStringList>
 #include <QVariant>
 
+class FileLocations;
+
 class Settings : public QObject
 {
   Q_OBJECT
 
 public:
-  /// Схема размещения файлов.
-  enum FileScheme {
-    Portable,     ///< Стандартное размещение файлов, когда все файлы находятся в папке с исполняемым файлом чата, под Windows схема обеспечивает переносимость без установки.
-    UnixAdaptive, ///< Размещение файлов в unix стиле, если исполняемый файл находится в папке bin.
-    UnixStandard, ///< Размещение с использованием абсолютных путей если исполняемый файл размещается в /usr/bin или /usr/sbin.
-    AppBundle     ///< Размещение специфичное для Mac OS X.
-  };
-
   Settings(QObject *parent = 0);
   Settings(const QString &group, QObject *parent = 0);
   bool setValue(const QString &key, const QVariant &value, bool notice = true);
   bool setValue(int key, const QVariant &value, bool notice = false);
-  inline FileScheme fileScheme() const { return m_scheme; }
-  inline FileScheme scheme() const { return m_scheme; }
-  inline QString baseName() const { return m_baseName; }
-  inline QString confFile() const { return m_confFile; }
-  inline QString root() const { return m_root; }
-  inline QString share() const { return m_share; }
+  FileLocations *locations() { return m_locations; }
   inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
   inline void setGroup(const QString &group) { m_group = group; }
   int setDefault(const QString &key, const QVariant &value);
@@ -64,18 +53,13 @@ protected:
   QHash<int, QVariant> m_default; ///< Настройки по умолчанию.
   QList<int> m_changed;           ///< Список изменившихся настроек.
   QList<int> m_notify;            ///< Список изменившихся настроек.
-  QString m_appDirPath;           ///< Папка с исполняемым файлом чата.
-  QString m_baseName;             ///< Имя исполняемого файла без расширения.
-  QString m_confFile;             ///< Основной конфигурационный файл.
   QString m_group;                ///< Группа настроек.
-  QString m_root;                 ///< Корневая директория настроек.
-  QString m_share;                ///< Общие файлы.
   QStringList m_keys;             ///< Символьные ключи настроек.
 
 private:
   void init();
 
-  FileScheme m_scheme; ///< Схема размещения файлов.
+  FileLocations *m_locations;     ///< Пути размещения файлов.
 };
 
 #endif /* SETTINGS_H_ */
