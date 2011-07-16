@@ -15,6 +15,25 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = src
+DEPENDPATH += \
+    . \
+    ../ \
+
+INCLUDEPATH += \
+    . \
+    ../ \
+
+CONFIG(debug, debug|release) { 
+  RCC_DIR = ../../../tmp/$${TARGET}/debug/rcc
+  MOC_DIR = ../../../tmp/$${TARGET}/debug/moc
+  OBJECTS_DIR = ../../../tmp/$${TARGET}/debug/obj
+  DESTDIR = ../../../out/debug/plugins/$${PLUGIN_GROUP}
+}
+
+CONFIG(release, debug|release) { 
+  RCC_DIR = ../../../tmp/$${TARGET}/release/rcc
+  MOC_DIR = ../../../tmp/$${TARGET}/release/moc
+  OBJECTS_DIR = ../../../tmp/$${TARGET}/release/obj
+  DESTDIR = ../../../out/release/plugins/$${PLUGIN_GROUP}
+}
+

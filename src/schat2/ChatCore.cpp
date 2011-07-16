@@ -26,6 +26,7 @@
 #include "net/packets/message.h"
 #include "net/SimpleClient.h"
 #include "NetworkManager.h"
+#include "Plugins.h"
 #include "Translation.h"
 #include "ui/UserUtils.h"
 #include "User.h"
@@ -52,6 +53,9 @@ ChatCore::ChatCore(QObject *parent)
 
   m_messageAdapter = new MessageAdapter(this);
   m_networkManager = new NetworkManager(this);
+
+  m_plugins = new Plugins(this);
+  m_plugins->load();
 
   m_icons += "channel";
   m_icons += "gear";

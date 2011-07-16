@@ -17,4 +17,7 @@
 
 CONFIG   += ordered
 TEMPLATE = subdirs
-SUBDIRS  = src
+SUBDIRS  = \
+    schatd2 \
+    schat2 \
+    common/plugins/DebugClientPlugin.pro

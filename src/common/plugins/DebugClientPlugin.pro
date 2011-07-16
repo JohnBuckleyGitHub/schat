@@ -15,6 +15,14 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = src
+PLUGIN_GROUP = "client"
+TEMPLATE = lib
+CONFIG   += plugin
+QT       += network
+TARGET   = $$qtLibraryTarget(DebugClient)
+
+win32:RC_FILE = DebugClient.rc
+HEADERS  = DebugClientPlugin.h
+SOURCES  = DebugClientPlugin.cpp
+
+include(../plugins.pri)
