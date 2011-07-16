@@ -276,6 +276,9 @@ void TabWidget::clientStateChanged(int state)
   foreach (PrivateTab *tab, m_talks) {
     tab->setOnline(false);
   }
+
+  if (state == SimpleClient::ClientOffline)
+    closeWelcome();
 }
 
 
@@ -516,6 +519,13 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
+/*!
+ * Закрытие вкладки приветствия или прогресса подключения.
+ * Если процесс подключения был прерван и отображается только вкладка прогресса
+ * подключения, то она будет заменена на вкладку приветствия.
+ *
+ * \sa showWelcome().
+ */
 void TabWidget::closeWelcome()
 {
   if (m_welcomeTab) {
@@ -526,8 +536,15 @@ void TabWidget::closeWelcome()
 
   if (m_progressTab) {
     int index = indexOf(m_progressTab);
-    if (index != -1)
+    if (index != -1) {
+      if (count() == 1 && m_client->clientState() == SimpleClient::ClientOffline) {
+        if (!m_welcomeTab)
+          m_welcomeTab = new WelcomeTab(this);
+        addChatTab(m_welcomeTab);
+      }
+
       closeTab(index);
+    }
   }
 }
 
@@ -625,6 +642,16 @@ void TabWidget::retranslateUi()
 }
 
 
+/*!
+ * Отображает вкладку приветствия или прогресса подключения в зависимости от состояния клиента.
+ *
+ * Вкладка прогресса подключения будет отображена в следующих случаях:
+ * - Конфигурационная опция AutoConnect равна true.
+ * - Статус пользователя не равен User::OfflineStatus.
+ * - Есть сохранённые сети.
+ *
+ * \sa closeWelcome().
+ */
 void TabWidget::showWelcome()
 {
   if (SCHAT_OPTION(AutoConnect).toBool() && m_client->user()->status() != User::OfflineStatus && ChatCore::i()->networks()->count()) {
