@@ -29,13 +29,16 @@ class DebugClientPlugin : public QObject, ClientInterface
   Q_INTERFACES(ClientInterface)
 
 public:
+  DebugClientPlugin();
   QString name() const;
   void setClient(SimpleClient *client);
+  void setSettings(Settings *settings);
 
 private slots:
   void connected();
 
 private:
+  Settings *m_settings;
   SimpleClient *m_client;
 };
 

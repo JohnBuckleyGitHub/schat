@@ -22,7 +22,11 @@ QT       += network
 TARGET   = $$qtLibraryTarget(DebugClient)
 
 win32:RC_FILE = DebugClient.rc
-HEADERS  = DebugClientPlugin.h
-SOURCES  = DebugClientPlugin.cpp
+
+HEADERS  = \
+   DebugClientPlugin.h \
+
+SOURCES  = \
+   DebugClientPlugin.cpp \
 
 include(../plugins.pri)

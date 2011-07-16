@@ -21,6 +21,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
+#include "FileLocations.h"
 #include "Settings.h"
 
 Settings::Settings(QObject *parent)
@@ -119,7 +120,7 @@ void Settings::read(const QString &file)
 {
   Q_UNUSED(file)
 
-  QSettings settings(m_confFile, QSettings::IniFormat);
+  QSettings settings(m_locations->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
   if (!m_group.isEmpty())
@@ -139,7 +140,7 @@ void Settings::read(const QString &file)
  */
 void Settings::write()
 {
-  QSettings settings(m_confFile, QSettings::IniFormat);
+  QSettings settings(m_locations->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
   if (!m_group.isEmpty())
@@ -170,36 +171,5 @@ void Settings::notify()
  */
 void Settings::init()
 {
-  m_appDirPath = QCoreApplication::applicationDirPath();
-  m_baseName = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
-
-  #if defined(Q_WS_MAC)
-  m_scheme = AppBundle;
-  #else
-  if (m_appDirPath == "/usr/bin" || m_appDirPath == "/usr/sbin") {
-    m_scheme = UnixStandard;
-    m_share = "/usr/share/" + m_baseName;
-  }
-  else if (QDir(m_appDirPath).dirName() == "bin") {
-    m_scheme = UnixAdaptive;
-    m_share = QDir::cleanPath(m_appDirPath + "/../share/" + m_baseName);
-  }
-  else {
-    m_scheme = Portable;
-  }
-  #endif
-
-  if (m_scheme == UnixStandard || m_scheme == UnixAdaptive) {
-    m_root = QDir::homePath() + "/.config/" + m_baseName;
-  }
-  else if (m_scheme == AppBundle) {
-    m_root = QDir::cleanPath(m_appDirPath + "/../Resources");
-    m_share = m_root;
-  }
-  else {
-    m_root = m_appDirPath;
-    m_share = m_root;
-  }
-
-  m_confFile = m_root + "/" + m_baseName + ".conf";
+  m_locations = new FileLocations(this);
 }

@@ -24,9 +24,10 @@
 #include <QStringList>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
+#include "net/SimpleClient.h"
 #include "Plugins.h"
 #include "plugins/ClientInterface.h"
-#include "net/SimpleClient.h"
 
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
@@ -55,6 +56,7 @@ void Plugins::load(const QString &path)
       ClientInterface *interface = qobject_cast<ClientInterface *> (plugin);
       if (interface) {
         qDebug() << interface->name();
+        interface->setSettings(ChatCore::i()->settings());
         interface->setClient(ChatCore::i()->client());
         m_clientPlugins.append(interface);
         continue;

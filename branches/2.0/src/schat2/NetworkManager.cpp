@@ -19,13 +19,14 @@
 #include <QFile>
 #include <QDir>
 
-#include "debugstream.h"
 #include "ChatCore.h"
-#include "NetworkManager.h"
-#include "net/SimpleClient.h"
-#include "net/ServerData.h"
 #include "ChatSettings.h"
+#include "debugstream.h"
+#include "FileLocations.h"
+#include "net/ServerData.h"
+#include "net/SimpleClient.h"
 #include "net/SimpleID.h"
+#include "NetworkManager.h"
 #include "User.h"
 
 NetworkItem::NetworkItem()
@@ -188,7 +189,7 @@ QString NetworkManager::authKey() const
 
 QString NetworkManager::root(const QByteArray &id)
 {
-  QString out = m_settings->root() + "/.networks/" + SimpleID::toBase64(id);
+  QString out = m_settings->locations()->path(FileLocations::ConfigPath) + "/.networks/" + SimpleID::toBase64(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 

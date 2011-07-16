@@ -20,6 +20,7 @@
 #include <QSqlQuery>
 
 #include "DataBase.h"
+#include "FileLocations.h"
 #include "net/SimpleID.h"
 #include "ServerSettings.h"
 #include "Storage.h"
@@ -75,7 +76,7 @@ ChatUser DataBase::user(qint64 key)
 int DataBase::start()
 {
   m_db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
-  m_db.setDatabaseName(m_settings->var() + "/" + m_settings->baseName() + QLatin1String(".sqlite"));
+  m_db.setDatabaseName(m_settings->var() + "/" + m_settings->locations()->path(FileLocations::BaseName) + QLatin1String(".sqlite"));
   if (!m_db.open())
     return -1;
 
