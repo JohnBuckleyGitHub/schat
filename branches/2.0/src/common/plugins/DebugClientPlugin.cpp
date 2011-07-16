@@ -18,44 +18,75 @@
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QFile>
+#include <QHostAddress>
 #include <qplugin.h>
+#include <QTextStream>
 
 #include "DebugClientPlugin.h"
+#include "DebugClientPlugin_p.h"
 #include "FileLocations.h"
 #include "net/SimpleClient.h"
 #include "Settings.h"
 
-DebugClientPlugin::DebugClientPlugin()
-  : m_settings(0)
-  , m_client(0)
+DebugClient::DebugClient(SimpleClient *client, Settings *settings)
+  : QObject(client)
+  , m_stream(0)
+  , m_settings(settings)
+  , m_client(client)
 {
+  bool bom = false;
+  m_file.setFileName(m_settings->locations()->path(FileLocations::VarPath) + QLatin1String("/DebugClient.log"));
+  if (!m_file.exists())
+    bom = true;
+
+  if (m_file.open(QIODevice::Append)) {
+    m_stream = new QTextStream(&m_file);
+    m_stream->setGenerateByteOrderMark(bom);
+    m_stream->setCodec("UTF-8");
+  }
+
+  connect(m_client, SIGNAL(connected()), SLOT(connected()));
+  connect(m_client, SIGNAL(disconnected()), SLOT(disconnected()));
 }
+
+
+void DebugClient::connected()
+{
+  append(QString("connected() peerAddress: %1, peerPort: %2, localAddress: %3, localPort: %4")
+      .arg(m_client->peerAddress().toString())
+      .arg(m_client->peerPort())
+      .arg(m_client->localAddress().toString())
+      .arg(m_client->localPort()));
+}
+
+
+void DebugClient::disconnected()
+{
+  append(QString("disconnected() %1")
+      .arg(m_client->errorString()));
+}
+
+
+void DebugClient::append(const QString &text)
+{
+  if (!m_stream)
+    return;
+
+  *m_stream << QDateTime(QDateTime::currentDateTime()).toString("yyyy.MM.dd hh:mm:ss.zzz ") << text << endl;
+}
+
+
+QObject *DebugClientPlugin::create(SimpleClient *client, Settings *settings)
+{
+  d = new DebugClient(client, settings);
+  return d;
+}
+
 
 QString DebugClientPlugin::name() const
 {
   return "Debug Client";
-}
-
-
-void DebugClientPlugin::setClient(SimpleClient *client)
-{
-  qDebug() << "             " << m_client << m_settings;
-  m_client = client;
-  connect(m_client, SIGNAL(connected()), SLOT(connected()));
-}
-
-
-void DebugClientPlugin::setSettings(Settings *settings)
-{
-  qDebug() << "             " << m_client << m_settings;
-  m_settings = settings;
-}
-
-
-void DebugClientPlugin::connected()
-{
-//  FileLocations l;
-  qDebug() << "                     connected()" << QCoreApplication::applicationDirPath() << m_settings->locations()->path(FileLocations::ConfigFile);
 }
 
 Q_EXPORT_PLUGIN2(DebugClient, DebugClientPlugin);
