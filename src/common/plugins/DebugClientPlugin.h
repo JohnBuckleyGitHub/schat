@@ -23,23 +23,19 @@
 
 #include "ClientInterface.h"
 
+class DebugClient;
+
 class DebugClientPlugin : public QObject, ClientInterface
 {
   Q_OBJECT
   Q_INTERFACES(ClientInterface)
 
 public:
-  DebugClientPlugin();
+  QObject *create(SimpleClient *client, Settings *settings);
   QString name() const;
-  void setClient(SimpleClient *client);
-  void setSettings(Settings *settings);
-
-private slots:
-  void connected();
 
 private:
-  Settings *m_settings;
-  SimpleClient *m_client;
+  DebugClient *d;
 };
 
 #endif /* DEBUGCLIENTPLUGIN_H_ */

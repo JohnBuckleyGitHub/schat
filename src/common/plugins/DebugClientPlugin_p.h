@@ -16,22 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLIENTINTERFACE_H_
-#define CLIENTINTERFACE_H_
+#ifndef DEBUGCLIENTPLUGIN_P_H_
+#define DEBUGCLIENTPLUGIN_P_H_
 
+#include <QFile>
 #include <QObject>
 
+class QTextStream;
 class Settings;
 class SimpleClient;
 
-class ClientInterface
+class DebugClient : public QObject
 {
+  Q_OBJECT
+
 public:
-  virtual ~ClientInterface() {}
-  virtual QObject *create(SimpleClient *client, Settings *settings) = 0;
-  virtual QString name() const = 0;
+  DebugClient(SimpleClient *client, Settings *settings);
+
+private slots:
+  void connected();
+  void disconnected();
+
+private:
+  void append(const QString &text);
+
+  QFile m_file;
+  QTextStream *m_stream;
+  Settings *m_settings;
+  SimpleClient *m_client;
 };
 
-Q_DECLARE_INTERFACE(ClientInterface, "com.impomezia.schat.ClientInterface/1.0");
-
-#endif /* CLIENTINTERFACE_H_ */
+#endif /* DEBUGCLIENTPLUGIN_P_H_ */

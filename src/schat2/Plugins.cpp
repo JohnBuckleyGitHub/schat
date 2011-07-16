@@ -56,8 +56,7 @@ void Plugins::load(const QString &path)
       ClientInterface *interface = qobject_cast<ClientInterface *> (plugin);
       if (interface) {
         qDebug() << interface->name();
-        interface->setSettings(ChatCore::i()->settings());
-        interface->setClient(ChatCore::i()->client());
+        interface->create(ChatCore::i()->client(), ChatCore::i()->settings());
         m_clientPlugins.append(interface);
         continue;
       }

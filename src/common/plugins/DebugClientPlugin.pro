@@ -25,6 +25,7 @@ win32:RC_FILE = DebugClient.rc
 
 HEADERS  = \
    DebugClientPlugin.h \
+   DebugClientPlugin_p.h \
 
 SOURCES  = \
    DebugClientPlugin.cpp \
