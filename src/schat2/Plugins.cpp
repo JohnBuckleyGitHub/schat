@@ -28,6 +28,7 @@
 #include "net/SimpleClient.h"
 #include "Plugins.h"
 #include "plugins/ClientInterface.h"
+#include "plugins/CoreInterface.h"
 
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
@@ -53,13 +54,18 @@ void Plugins::load(const QString &path)
     QObject *plugin = pluginLoader.instance();
 
     if (plugin) {
-      ClientInterface *interface = qobject_cast<ClientInterface *> (plugin);
-      if (interface) {
-        qDebug() << interface->name();
-        interface->create(ChatCore::i()->client(), ChatCore::i()->settings());
-        m_clientPlugins.append(interface);
+      CoreInterface *core = qobject_cast<CoreInterface *> (plugin);
+      if (!core)
         continue;
-      }
+
+      qDebug() << core->id() << core->name();
+
+      ClientInterface *client = qobject_cast<ClientInterface *> (plugin);
+      if (!client)
+        continue;
+
+      client->create(ChatCore::i()->client(), ChatCore::i()->settings());
+      m_clientPlugins.append(client);
     }
   }
 }

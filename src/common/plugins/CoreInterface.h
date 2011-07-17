@@ -16,28 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEBUGCLIENTPLUGIN_H_
-#define DEBUGCLIENTPLUGIN_H_
+#ifndef COREINTERFACE_H_
+#define COREINTERFACE_H_
 
 #include <QObject>
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
-
-class DebugClient;
-
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
+/*!
+ * Базовый интерфейс для всех типов плагинов.
+ */
+class CoreInterface
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
-
 public:
-  QObject *create(SimpleClient *client, Settings *settings);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
-
-private:
-  DebugClient *d;
+  virtual ~CoreInterface() {}
+  virtual QString id() const = 0;   ///< Машинное имя плагина.
+  virtual QString name() const = 0; ///< Имя плагина.
 };
 
-#endif /* DEBUGCLIENTPLUGIN_H_ */
+Q_DECLARE_INTERFACE(CoreInterface, "com.impomezia.schat.CoreInterface/1.0");
+
+#endif /* COREINTERFACE_H_ */

@@ -19,6 +19,7 @@
 #ifndef DEBUGCLIENTPLUGIN_P_H_
 #define DEBUGCLIENTPLUGIN_P_H_
 
+#include <QAbstractSocket>
 #include <QFile>
 #include <QObject>
 
@@ -36,6 +37,9 @@ public:
 private slots:
   void connected();
   void disconnected();
+  void error(QAbstractSocket::SocketError socketError);
+  void requestAuth(quint64 id);
+  void stateChanged(QAbstractSocket::SocketState socketState);
 
 private:
   void append(const QString &text);

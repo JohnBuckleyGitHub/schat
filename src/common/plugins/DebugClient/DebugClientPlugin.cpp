@@ -48,6 +48,9 @@ DebugClient::DebugClient(SimpleClient *client, Settings *settings)
 
   connect(m_client, SIGNAL(connected()), SLOT(connected()));
   connect(m_client, SIGNAL(disconnected()), SLOT(disconnected()));
+  connect(m_client, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error(QAbstractSocket::SocketError)));
+  connect(m_client, SIGNAL(requestAuth(quint64)), SLOT(requestAuth(quint64)));
+  connect(m_client, SIGNAL(stateChanged(QAbstractSocket::SocketState)), SLOT(stateChanged(QAbstractSocket::SocketState)));
 }
 
 
@@ -68,6 +71,29 @@ void DebugClient::disconnected()
 }
 
 
+void DebugClient::error(QAbstractSocket::SocketError socketError)
+{
+  append(QString("error() %1 %2")
+      .arg(socketError)
+      .arg(m_client->errorString()));
+}
+
+
+void DebugClient::requestAuth(quint64 id)
+{
+  Q_UNUSED(id)
+
+  append(QString("requestAuth()"));
+}
+
+
+void DebugClient::stateChanged(QAbstractSocket::SocketState socketState)
+{
+  append(QString("stateChanged() %1")
+      .arg(socketState));
+}
+
+
 void DebugClient::append(const QString &text)
 {
   if (!m_stream)
@@ -81,12 +107,6 @@ QObject *DebugClientPlugin::create(SimpleClient *client, Settings *settings)
 {
   d = new DebugClient(client, settings);
   return d;
-}
-
-
-QString DebugClientPlugin::name() const
-{
-  return "Debug Client";
 }
 
 Q_EXPORT_PLUGIN2(DebugClient, DebugClientPlugin);
