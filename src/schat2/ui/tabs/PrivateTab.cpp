@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QVBoxLayout>
 
+#include "ChatCore.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
@@ -44,7 +45,7 @@ bool PrivateTab::update(ChatUser user)
     return false;
 
   m_action->setText(m_user->nick());
-  m_icon = UserUtils::icon(m_user);
+  m_icon = userIcon();
 
   int index = m_tabs->indexOf(this);
   if (index == -1)
@@ -56,9 +57,29 @@ bool PrivateTab::update(ChatUser user)
 }
 
 
+void PrivateTab::alert(bool start)
+{
+  ChatViewTab::alert(start);
+
+  if (m_alerts > 1)
+    return;
+
+  setIcon(userIcon());
+}
+
+
 void PrivateTab::setOnline(bool online)
 {
   m_tabs->setTabToolTip(m_tabs->indexOf(this), UserUtils::toolTip(m_user));
   AbstractTab::setOnline(online);
+}
+
+
+QIcon PrivateTab::userIcon() const
+{
+  if (m_alerts)
+    return ChatCore::icon(UserUtils::icon(m_user, false), ":/images/message-small.png");
+  else
+    return UserUtils::icon(m_user);
 }
 

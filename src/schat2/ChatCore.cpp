@@ -100,6 +100,20 @@ ChatCore::~ChatCore()
 }
 
 
+QIcon ChatCore::icon(const QIcon &icon, const QString &overlay)
+{
+  if (overlay.isEmpty())
+    return icon;
+
+  QPixmap pixmap = icon.pixmap(16, 16);
+  QPainter painter(&pixmap);
+  painter.drawPixmap(6, 6, QPixmap(overlay));
+  painter.end();
+
+  return QIcon(pixmap);
+}
+
+
 /*!
  * Наложение маленькой иконки \p overlay на большую \p file в правый нижний угол.
  *

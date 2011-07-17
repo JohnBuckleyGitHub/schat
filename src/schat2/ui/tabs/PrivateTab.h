@@ -31,9 +31,12 @@ class PrivateTab : public ChatViewTab
 public:
   PrivateTab(ChatUser user, TabWidget *parent);
   bool update(ChatUser user);
+  void alert(bool start = true);
   void setOnline(bool online = true);
 
 private:
+  QIcon userIcon() const;
+
   ChatUser m_user;
 };
 
