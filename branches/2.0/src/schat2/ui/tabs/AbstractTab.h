@@ -43,6 +43,7 @@ public:
   };
 
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
+  inline bool isDeleteOnClose() const { return m_deleteOnClose; }
   inline bool isOnline() const { return m_online; }
   inline QAction *action() const { return m_action; }
   inline QByteArray id() const { return m_id; }
@@ -60,11 +61,12 @@ protected:
   virtual void retranslateUi();
   void changeEvent(QEvent *event);
 
-  bool m_online;
-  QAction *m_action;
-  QIcon m_icon;
-  QString m_text;
-  TabWidget *m_tabs;
+  bool m_deleteOnClose; ///< true если вкладку нужно удалить после закрытия.
+  bool m_online;        ///< true если вкладка "В сети".
+  QAction *m_action;    ///< Действие используемое для открытие вкладки.
+  QIcon m_icon;         ///< Нормальная иконка вкладки.
+  QString m_text;       ///< Заголовок вкладки.
+  TabWidget *m_tabs;    ///< Указатель на виджет вкладок.
 
 private:
   QByteArray m_id;

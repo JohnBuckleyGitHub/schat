@@ -26,9 +26,8 @@
 #include "ui/tabs/UserView.h"
 
 ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
-  : AbstractTab(id, ChannelType, parent)
+  : ChatViewTab("qrc:/html/ChatView.html", id, ChannelType, parent)
 {
-  m_chatView = new ChatView(this);
   m_userView = new UserView(this);
 
   m_splitter = new QSplitter(this);

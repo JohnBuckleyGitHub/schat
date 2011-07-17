@@ -19,22 +19,19 @@
 #ifndef ALERTTAB_H_
 #define ALERTTAB_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include "ui/tabs/ChatViewTab.h"
 
 class ChatView;
 
-class AlertTab : public AbstractTab
+class AlertTab : public ChatViewTab
 {
   Q_OBJECT
 
 public:
   AlertTab(TabWidget *parent);
-  inline ChatView *chatView() { return m_chatView; }
 
 private:
   void retranslateUi();
-
-  ChatView *m_chatView;
 };
 
 #endif /* ALERTTAB_H_ */

@@ -25,11 +25,9 @@
 #include "ui/UserUtils.h"
 
 PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
-  : AbstractTab(user->id(), PrivateType, parent)
+  : ChatViewTab("qrc:/html/ChatView.html", user->id(), PrivateType, parent)
   , m_user(user)
 {
-  m_chatView = new ChatView(this);
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
   mainLay->setMargin(0);

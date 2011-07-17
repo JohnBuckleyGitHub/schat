@@ -24,6 +24,7 @@
 
 AbstractTab::AbstractTab(const QByteArray &id, TabType type, TabWidget *parent)
   : QWidget(parent)
+  , m_deleteOnClose(true)
   , m_online(false)
   , m_tabs(parent)
   , m_id(id)
