@@ -95,6 +95,7 @@ public:
   inline Translation *translation() { return m_translation; }
   inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
+  static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
   void send(const QByteArray &destId, const QString &text);
