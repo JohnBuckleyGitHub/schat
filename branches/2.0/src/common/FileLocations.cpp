@@ -54,13 +54,11 @@ FileLocations::FileLocations(QObject *parent)
     case UnixAdaptive:
       m_paths.insert(ConfigPath, QDir::homePath() + QLatin1String("/.config/") + baseName);
       m_paths.insert(SharePath, QDir::cleanPath(appDirPath + QLatin1String("/../share/") + baseName));
-      m_paths.insert(VarPath, m_paths.value(ConfigPath));
       break;
 
     case UnixStandard:
       m_paths.insert(ConfigPath, QDir::homePath() + QLatin1String("/.config/") + baseName);
       m_paths.insert(SharePath, QLatin1String("/usr/share/") + baseName);
-      m_paths.insert(VarPath, m_paths.value(ConfigPath));
       break;
 
     case UnixDaemon:
@@ -78,6 +76,13 @@ FileLocations::FileLocations(QObject *parent)
     m_paths.insert(SharePath, m_paths.value(ConfigPath));
     m_paths.insert(VarPath, m_paths.value(ConfigPath));
   }
+  else if (scheme == UnixAdaptive || scheme == UnixStandard) {
+    m_paths.insert(VarPath, m_paths.value(ConfigPath));
+    QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/client"));
+    QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/qt"));
+  }
 
   m_paths.insert(ConfigFile, m_paths.value(ConfigPath) + QLatin1String("/") + baseName + QLatin1String(".conf"));
+  QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/client"));
+  QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/qt"));
 }

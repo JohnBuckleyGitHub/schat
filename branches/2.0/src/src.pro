@@ -20,4 +20,4 @@ TEMPLATE = subdirs
 SUBDIRS  = \
     schatd2 \
     schat2 \
-    common/plugins/DebugClientPlugin.pro
+    common/plugins/DebugClient \
