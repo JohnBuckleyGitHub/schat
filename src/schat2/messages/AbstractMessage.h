@@ -47,8 +47,18 @@ public:
     IncomingDirection
   };
 
+  ///< Приоритет сообщения.
+  enum Priority {
+    IdlePriority = 4,
+    LowPriority = 6,
+    NormalPriority = 8,
+    HighPriority = 10,
+    HighestPriority = 13
+  };
+
   AbstractMessage(int type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
   inline int direction() const { return m_direction; }
+  inline int priority() const { return m_priority; }
   inline int type() const { return m_type; }
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }
@@ -66,6 +76,7 @@ protected:
 
   int m_direction;       ///< Направление сообщения.
   int m_parseOptions;    ///< Опции обработки сообщения.
+  int m_priority;        ///< Приоритет сообщения.
   QByteArray m_destId;   ///< Идентификатор назначения.
   QByteArray m_senderId; ///< Идентификатор отправителя.
   qint64 m_timestamp;    ///< Отметка времени.

@@ -30,9 +30,12 @@ class ChatViewTab : public AbstractTab
 public:
   ChatViewTab(const QString &url, const QByteArray &id, TabType type, TabWidget *parent);
   inline ChatView *chatView() { return m_chatView; }
+  inline int alerts() const { return m_alerts; }
+  virtual void alert(bool start = true);
 
 protected:
-  ChatView *m_chatView;
+  ChatView *m_chatView; ///< Виджет отображающий текст чата.
+  int m_alerts;         ///< Количество непрочитанных уведомлений.
 };
 
 #endif /* CHATVIEWTAB_H_ */

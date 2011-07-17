@@ -57,6 +57,7 @@ signals:
   void pageChanged(int type, bool visible);
 
 protected:
+  bool event(QEvent *event);
   void changeEvent(QEvent *event);
 
 private slots:
@@ -86,6 +87,7 @@ private:
   void lastTab();
   void retranslateUi();
   void showWelcome();
+  void stopAlert();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.

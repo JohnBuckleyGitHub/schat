@@ -80,9 +80,11 @@ FileLocations::FileLocations(QObject *parent)
     m_paths.insert(VarPath, m_paths.value(ConfigPath));
     QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/client"));
     QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/qt"));
+    QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins"));
   }
 
   m_paths.insert(ConfigFile, m_paths.value(ConfigPath) + QLatin1String("/") + baseName + QLatin1String(".conf"));
   QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/client"));
   QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/qt"));
+  QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins"));
 }

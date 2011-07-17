@@ -105,6 +105,15 @@ QByteArray TabWidget::currentId() const
 }
 
 
+bool TabWidget::event(QEvent *event)
+{
+  if (event->type() == QEvent::WindowActivate)
+    stopAlert();
+
+  return QTabWidget::event(event);
+}
+
+
 void TabWidget::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
@@ -172,6 +181,7 @@ void TabWidget::currentChanged(int index)
     visible = false;
   }
 
+  stopAlert();
   emit pageChanged(tab->type(), visible);
 }
 
@@ -341,35 +351,46 @@ void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &users
  */
 void TabWidget::message(const AbstractMessage &data)
 {
+  ChatViewTab *tab = 0;
+
   if (data.destId().isEmpty()) {
-    m_alertTab->chatView()->evaluateJavaScript(data.js());
+    tab = m_alertTab;
+  }
+  else {
+    int type = SimpleID::typeOf(data.destId());
+
+    if (type == SimpleID::ChannelId) {
+      ChatUser user = m_client->user(data.senderId());
+      if (!user)
+        return;
+
+      tab = m_channels.value(data.destId());
+    }
+    else if (type == SimpleID::UserId) {
+      QByteArray id;
+
+      if (data.direction() == AbstractMessage::IncomingDirection)
+        id = data.senderId();
+      else
+        id = data.destId();
+
+      tab = privateTab(id);
+    }
+  }
+
+  if (!tab)
     return;
-  }
 
-  int type = SimpleID::typeOf(data.destId());
+  tab->chatView()->evaluateJavaScript(data.js());
 
-  if (type == SimpleID::ChannelId) {
-    ChatUser user = m_client->user(data.senderId());
-    if (!user)
-      return;
+  if (data.priority() < AbstractMessage::NormalPriority)
+    return;
 
-    ChannelTab *tab = m_channels.value(data.destId());
-    if (tab) {
-      tab->chatView()->evaluateJavaScript(data.js());
-    }
-  }
-  else if (type == SimpleID::UserId) {
-    QByteArray id;
-
-    if (data.direction() == AbstractMessage::IncomingDirection)
-      id = data.senderId();
-    else
-      id = data.destId();
-
-    PrivateTab *tab = privateTab(id);
-    if (tab) {
-      tab->chatView()->evaluateJavaScript(data.js());
-    }
+  int index = indexOf(tab);
+  bool alert = false;
+  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
+    alert = true;
+    tab->alert();
   }
 }
 
@@ -664,4 +685,15 @@ void TabWidget::showWelcome()
     m_welcomeTab = new WelcomeTab(this);
     addChatTab(m_welcomeTab);
   }
+}
+
+
+void TabWidget::stopAlert()
+{
+  ChatViewTab *tab = qobject_cast<ChatViewTab *>(currentWidget());
+  if (!tab)
+    return;
+
+  if (tab->alerts())
+    tab->alert(false);
 }
