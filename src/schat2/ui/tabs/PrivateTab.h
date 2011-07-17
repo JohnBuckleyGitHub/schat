@@ -20,23 +20,21 @@
 #define PRIVATETAB_H_
 
 #include "schat2.h"
-#include "ui/tabs/AbstractTab.h"
+#include "ui/tabs/ChatViewTab.h"
 
 class ChatView;
 
-class PrivateTab : public AbstractTab
+class PrivateTab : public ChatViewTab
 {
   Q_OBJECT
 
 public:
   PrivateTab(ChatUser user, TabWidget *parent);
   bool update(ChatUser user);
-  inline ChatView *chatView() { return m_chatView; }
   void setOnline(bool online = true);
 
 private:
   ChatUser m_user;
-  ChatView *m_chatView;
 };
 
 #endif /* PRIVATETAB_H_ */

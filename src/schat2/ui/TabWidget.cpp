@@ -148,14 +148,11 @@ void TabWidget::closeTab(int index)
     m_talks.remove(tab->id());
   }
 
-  if (tab->type() == AbstractTab::AlertType) {
-    removeTab(index);
-    tab->setOnline(false);
-  }
-  else {
-    removeTab(index);
+  removeTab(index);
+  if (tab->isDeleteOnClose())
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
-  }
+  else
+    tab->setOnline(false);
 
   lastTab();
 }
@@ -337,6 +334,11 @@ void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &users
 }
 
 
+/*!
+ * Отображение сообщения.
+ *
+ * \param data Абстрактное сообщение.
+ */
 void TabWidget::message(const AbstractMessage &data)
 {
   if (data.destId().isEmpty()) {
