@@ -29,7 +29,6 @@ class ClientInterface
 public:
   virtual ~ClientInterface() {}
   virtual QObject *create(SimpleClient *client, Settings *settings) = 0;
-  virtual QString name() const = 0;
 };
 
 Q_DECLARE_INTERFACE(ClientInterface, "com.impomezia.schat.ClientInterface/1.0");

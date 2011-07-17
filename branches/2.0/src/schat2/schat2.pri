@@ -52,6 +52,7 @@ HEADERS = \
     NetworkManager.h \
     Plugins.h \
     plugins/ClientInterface.h \
+    plugins/CoreInterface.h \
     QProgressIndicator/QProgressIndicator.h \
     schat2.h \
     Settings.h \
