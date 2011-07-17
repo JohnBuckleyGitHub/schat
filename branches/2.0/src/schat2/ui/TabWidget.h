@@ -28,6 +28,7 @@ class AbstractMessage;
 class AbstractTab;
 class AlertTab;
 class ChannelTab;
+class ChatViewTab;
 class PrivateTab;
 class ProgressTab;
 class QMenu;
@@ -92,6 +93,7 @@ private:
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
   QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
+  QList<ChatViewTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.

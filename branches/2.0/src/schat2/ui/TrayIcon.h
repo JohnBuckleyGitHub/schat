@@ -22,6 +22,7 @@
 #include <QSystemTrayIcon>
 
 class QAction;
+class QBasicTimer;
 class SimpleClient;
 
 class TrayIcon : public QSystemTrayIcon
@@ -34,7 +35,11 @@ public:
   inline QAction *aboutAction() { return m_aboutAction; }
   inline QAction *quitAction() { return m_quitAction; }
   inline QAction *settingsAction() { return m_settingsAction; }
+  void alert(bool start = true);
   void retranslateUi();
+
+protected:
+  void timerEvent(QTimerEvent *event);
 
 private slots:
   void about();
@@ -44,9 +49,11 @@ private slots:
   void update();
 
 private:
+  int m_alertIcon;           ///< Номер текущей иконки, при отображении уведомлений.
   QAction *m_aboutAction;    ///< О Simple Chat.
   QAction *m_quitAction;     ///< Quit.
   QAction *m_settingsAction; ///< Settings.
+  QBasicTimer *m_timer;      ///< Таймер анимации.
   QIcon m_icon;              ///< Иконка.
   QMenu *m_menu;             ///< Меню.
   SimpleClient *m_client;    ///< Указатель на клиент.

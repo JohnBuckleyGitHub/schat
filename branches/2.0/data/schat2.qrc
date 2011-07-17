@@ -13,6 +13,8 @@
   <file alias="images/globe.png">images/diagona/094.png</file>
   <file alias="images/information-balloon.png">images/fugue/information-balloon.png</file>
   <file alias="images/main-tab-menu.png">images/fugue/applications-stack.png</file>
+  <file alias="images/message.png">images/diagona/004.png</file>
+  <file alias="images/message-active.png">images/diagona/003.png</file>
   <file alias="images/message-small.png">images/diagona/10/003.png</file>
   <file alias="images/network-error.png">images/fugue/network-status-busy.png</file>
   <file alias="images/offline.png">images/fugue/network-status-offline.png</file>
