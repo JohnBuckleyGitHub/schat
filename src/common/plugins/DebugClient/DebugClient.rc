@@ -22,7 +22,7 @@
 #  include <winver.h>
 # endif
 
-#include "../version.h"
+#include "../../version.h"
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION SCHAT_VERSION_RC

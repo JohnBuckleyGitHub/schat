@@ -18,22 +18,24 @@
 DEPENDPATH += \
     . \
     ../ \
+    ../../ \
 
 INCLUDEPATH += \
     . \
     ../ \
+    ../../ \
 
 CONFIG(debug, debug|release) { 
-  RCC_DIR = ../../../tmp/$${TARGET}/debug/rcc
-  MOC_DIR = ../../../tmp/$${TARGET}/debug/moc
-  OBJECTS_DIR = ../../../tmp/$${TARGET}/debug/obj
-  DESTDIR = ../../../out/debug/plugins/$${PLUGIN_GROUP}
+  RCC_DIR = ../../../../tmp/$${TARGET}/debug/rcc
+  MOC_DIR = ../../../../tmp/$${TARGET}/debug/moc
+  OBJECTS_DIR = ../../../../tmp/$${TARGET}/debug/obj
+  DESTDIR = ../../../../out/debug/plugins/$${PLUGIN_GROUP}
 }
 
 CONFIG(release, debug|release) { 
-  RCC_DIR = ../../../tmp/$${TARGET}/release/rcc
-  MOC_DIR = ../../../tmp/$${TARGET}/release/moc
-  OBJECTS_DIR = ../../../tmp/$${TARGET}/release/obj
-  DESTDIR = ../../../out/release/plugins/$${PLUGIN_GROUP}
+  RCC_DIR = ../../../../tmp/$${TARGET}/release/rcc
+  MOC_DIR = ../../../../tmp/$${TARGET}/release/moc
+  OBJECTS_DIR = ../../../../tmp/$${TARGET}/release/obj
+  DESTDIR = ../../../../out/release/plugins/$${PLUGIN_GROUP}
 }
 
