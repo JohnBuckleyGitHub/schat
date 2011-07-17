@@ -41,7 +41,21 @@ ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  m_icon = SCHAT_ICON(ChannelIcon);
+  setIcon(SCHAT_ICON(ChannelIcon));
+}
+
+
+void ChannelTab::alert(bool start)
+{
+  ChatViewTab::alert(start);
+
+  if (m_alerts > 1)
+    return;
+
+  if (start)
+    setIcon(SCHAT_ICON(ChannelAlertIcon));
+  else
+    setIcon(SCHAT_ICON(ChannelIcon));
 }
 
 

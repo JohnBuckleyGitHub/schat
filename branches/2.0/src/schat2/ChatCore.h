@@ -45,6 +45,7 @@ public:
   /// Иконки.
   enum IconName {
     ChannelIcon,        ///< Иконка канала.
+    ChannelAlertIcon,
     GearIcon,           ///< Иконка в виде шестерёнки.
     MainTabMenuIcon,    ///< Иконка главного меню вкладок.
     NetworkErrorIcon,   ///< Критическая ошибка подключения.

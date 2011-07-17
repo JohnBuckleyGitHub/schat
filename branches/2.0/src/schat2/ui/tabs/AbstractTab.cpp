@@ -58,10 +58,17 @@ void AbstractTab::setOnline(bool online)
 }
 
 
+/*!
+ * Установка иконки вкладки.
+ */
 void AbstractTab::setIcon(const QIcon &icon)
 {
   m_icon = icon;
   m_action->setIcon(icon);
+
+  int index = m_tabs->indexOf(this);
+  if (index != -1)
+    m_tabs->setTabIcon(index, m_icon);
 }
 
 

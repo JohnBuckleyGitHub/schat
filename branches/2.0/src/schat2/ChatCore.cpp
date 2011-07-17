@@ -59,6 +59,7 @@ ChatCore::ChatCore(QObject *parent)
   m_plugins->load();
 
   m_icons += "channel";
+  m_icons += "channel-alert";
   m_icons += "gear";
   m_icons += "main-tab-menu";
   m_icons += "network-error";

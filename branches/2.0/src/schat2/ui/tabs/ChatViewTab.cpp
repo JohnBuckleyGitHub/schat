@@ -21,8 +21,18 @@
 
 ChatViewTab::ChatViewTab(const QString &url, const QByteArray &id, TabType type, TabWidget *parent)
   : AbstractTab(id, type, parent)
+  , m_alerts(0)
 {
   Q_UNUSED(url)
 
   m_chatView = new ChatView(this);
+}
+
+
+void ChatViewTab::alert(bool start)
+{
+  if (start)
+    m_alerts++;
+  else
+    m_alerts = 0;
 }
