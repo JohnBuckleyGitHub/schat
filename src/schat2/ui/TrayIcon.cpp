@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QBasicTimer>
 #include <QMenu>
+#include <QTimerEvent>
 
 #include "ChatCore.h"
 #include "net/SimpleClient.h"
@@ -26,9 +28,11 @@
 
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
+  , m_alertIcon(0)
   , m_client(ChatCore::i()->client())
 {
   m_menu = new QMenu();
+  m_timer = new QBasicTimer();
 
   m_menu->addMenu(ChatCore::i()->statusMenu());
   m_menu->addSeparator();
@@ -50,7 +54,24 @@ TrayIcon::TrayIcon(QObject *parent)
 
 TrayIcon::~TrayIcon()
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  delete m_timer;
   delete m_menu;
+}
+
+
+void TrayIcon::alert(bool start)
+{
+  if (!start) {
+    m_timer->stop();
+    setIcon(m_icon);
+    m_alertIcon = 0;
+  }
+  else if (!m_timer->isActive()) {
+    m_timer->start(666, this);
+  }
 }
 
 
@@ -59,6 +80,24 @@ void TrayIcon::retranslateUi()
   m_settingsAction->setText(tr("Preferences..."));
   m_aboutAction->setText(tr("About..."));
   m_quitAction->setText(tr("Quit"));
+}
+
+
+void TrayIcon::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_timer->timerId()) {
+    if (m_alertIcon) {
+      m_alertIcon = 0;
+      setIcon(m_icon);
+    }
+    else {
+      m_alertIcon = 1;
+      setIcon(QIcon(":/images/message-active.png"));
+    }
+    return;
+  }
+
+  QSystemTrayIcon::timerEvent(event);
 }
 
 
@@ -106,5 +145,6 @@ void TrayIcon::update()
     m_icon = ChatCore::icon(":/images/schat16.png", UserUtils::overlay(status));
   }
 
-  setIcon(m_icon);
+  if (!m_timer->isActive())
+    setIcon(m_icon);
 }

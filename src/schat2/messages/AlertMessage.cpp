@@ -22,6 +22,7 @@ AlertMessage::AlertMessage(AlertType alertType, const QString &text, const QByte
   : AbstractMessage(AlertMessageType, text, destId)
   , m_alertType(alertType)
 {
+  m_priority = LowPriority;
 }
 
 
