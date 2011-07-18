@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-#include "schat2.h"
+#include "User.h"
 
 class ChatSettings;
 class QComboBox;
@@ -52,7 +52,7 @@ private:
   void setState();
 
   ChatSettings *m_settings;
-  ChatUser m_user;
+  ClientUser m_user;
   QComboBox *m_combo;
   QList<QAction *> m_colors;
   QMenu *m_menu;

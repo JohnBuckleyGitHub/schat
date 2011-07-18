@@ -20,6 +20,7 @@
 #define USER_H_
 
 #include <QHash>
+#include <QSharedPointer>
 
 /*!
  * Пользователь.
@@ -127,5 +128,7 @@ protected:
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.
 };
+
+typedef QSharedPointer<User> ClientUser;
 
 #endif /* USER_H_ */

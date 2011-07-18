@@ -20,7 +20,7 @@
 #define CHATSETTINGS_H_
 
 #include "Settings.h"
-#include "schat2.h"
+#include "User.h"
 
 class SimpleClient;
 
@@ -55,7 +55,7 @@ private:
   void update(User *user, bool sync = true);
   void updateStatus(const QVariant &value);
 
-  ChatUser m_user;
+  ClientUser m_user;
   SimpleClient *m_client;
 };
 

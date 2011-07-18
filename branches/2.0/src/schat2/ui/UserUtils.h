@@ -21,17 +21,17 @@
 
 #include <QIcon>
 
-#include "schat2.h"
+#include "User.h"
 
 class UserUtils
 {
 public:
   UserUtils();
   static int color(const QString &color);
-  static QIcon icon(ChatUser user, bool status = true, bool offline = false);
+  static QIcon icon(ClientUser user, bool status = true, bool offline = false);
   static QString overlay(int status);
   static QString statusTitle(int status);
-  static QString toolTip(ChatUser user);
+  static QString toolTip(ClientUser user);
 
 private:
   static QStringList m_colors;

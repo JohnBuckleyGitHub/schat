@@ -23,7 +23,6 @@
 #include "debugstream.h"
 #include "messages/UserMessage.h"
 #include "net/packets/message.h"
-#include "schat2.h"
 #include "User.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
@@ -31,7 +30,7 @@ UserMessage::UserMessage(int status, const MessageData &data)
   , m_status(static_cast<DeliveryStatus>(status))
   , m_name(data.name)
 {
-  ChatUser user = ChatCore::i()->client()->user(data.senderId);
+  ClientUser user = ChatCore::i()->client()->user(data.senderId);
   if (!user)
     return;
 
