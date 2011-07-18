@@ -24,7 +24,7 @@
 #include "ui/tabs/UserView.h"
 #include "ui/UserUtils.h"
 
-UserItem::UserItem(ChatUser user, int option)
+UserItem::UserItem(ClientUser user, int option)
   : QStandardItem(UserUtils::icon(user), user->nick())
   , m_self(false)
   , m_user(user)
@@ -107,7 +107,7 @@ UserView::UserView(QWidget *parent)
  * \param user   Указатель на пользователя.
  * \param option \sa AddOptions.
  */
-bool UserView::add(ChatUser user, int option)
+bool UserView::add(ClientUser user, int option)
 {
   if (!user) {
     sort();
@@ -145,7 +145,7 @@ bool UserView::remove(const QByteArray &id)
 }
 
 
-bool UserView::update(ChatUser user)
+bool UserView::update(ClientUser user)
 {
   UserItem *item = m_users.value(user->id());
   if (!item)

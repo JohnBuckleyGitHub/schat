@@ -95,7 +95,7 @@ void StatusMenu::addStatus(int status)
  */
 void StatusMenu::update()
 {
-  ChatUser user(new User(ChatCore::i()->client()->user().data()));
+  ClientUser user(new User(ChatCore::i()->client()->user().data()));
   if (m_statuses.contains(user->status())) {
     m_statuses.value(user->status())->setChecked(true);
   }

@@ -25,38 +25,19 @@ TEMPLATE = app
 HEADERS = \
     arora/lineedit.h \
     arora/lineedit_p.h \
-    Channel.h \
     ChatApp.h \
     ChatCore.h \
     ChatSettings.h \
-    client/ClientCmd.h \
-    client/ClientHelper.h \
-    client/SimpleClient.h \
-    client/SimpleClient_p.h \
     debugstream.h \
-    FileLocations.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/MessageAdapter.h \
     messages/UserMessage.h \
-    net/PacketReader.h \
-    net/packets/auth.h \
-    net/packets/channels.h \
-    net/packets/message.h \
-    net/packets/notices.h \
-    net/packets/users.h \
-    net/PacketWriter.h \
-    net/ServerData.h \
-    net/SimpleID.h \
-    net/SimpleSocket.h \
-    net/TransportReader.h \
-    net/TransportWriter.h \
     NetworkManager.h \
     Plugins.h \
     plugins/ClientInterface.h \
     plugins/CoreInterface.h \
     QProgressIndicator/QProgressIndicator.h \
-    schat2.h \
     Settings.h \
     Translation.h \
     ui/ChatWindow.h \
@@ -89,34 +70,17 @@ HEADERS = \
     ui/TabWidget.h \
     ui/TrayIcon.h \
     ui/UserUtils.h \
-    User.h \
 
 SOURCES = \
     arora/lineedit.cpp \
-    Channel.cpp \
     ChatApp.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
-    client/ClientCmd.cpp \
-    client/ClientHelper.cpp \
-    client/SimpleClient.cpp \
-    FileLocations.cpp \
     main.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/MessageAdapter.cpp \
     messages/UserMessage.cpp \
-    net/PacketReader.cpp \
-    net/packets/auth.cpp \
-    net/packets/channels.cpp \
-    net/packets/message.cpp \
-    net/packets/notices.cpp \
-    net/packets/users.cpp \
-    net/ServerData.cpp \
-    net/SimpleID.cpp \
-    net/SimpleSocket.cpp \
-    net/TransportReader.cpp \
-    net/TransportWriter.cpp \
     NetworkManager.cpp \
     Plugins.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
@@ -151,7 +115,6 @@ SOURCES = \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
-    User.cpp \
     
 TRANSLATIONS += ../../data/translations/schat2_en.ts
 TRANSLATIONS += ../../data/translations/schat2_ru.ts
@@ -164,5 +127,6 @@ win32 {
 
 DEFINES += SCHAT_WEBKIT
 
+include(../common/client.pri)
 include(../common/common.pri)
 

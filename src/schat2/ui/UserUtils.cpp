@@ -57,7 +57,7 @@ int UserUtils::color(const QString &color)
  * \param status  true если необходимо отрисовывать статус.
  * \param offline true если необходимо отрисовывать статус User::OfflineStatus.
  */
-QIcon UserUtils::icon(ChatUser user, bool status, bool offline)
+QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
 {
   QString file = QLatin1String(":/images/user");
   int gender = user->gender();
@@ -132,7 +132,7 @@ QString UserUtils::statusTitle(int status)
 }
 
 
-QString UserUtils::toolTip(ChatUser user)
+QString UserUtils::toolTip(ClientUser user)
 {
   QString out = "<b>" + Qt::escape(user->nick()) + "</b><br />";
   out += Qt::escape(user->host()) + "<br />";

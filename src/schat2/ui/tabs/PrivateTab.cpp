@@ -25,7 +25,7 @@
 #include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
 
-PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
+PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   : ChatViewTab("qrc:/html/ChatView.html", user->id(), PrivateType, parent)
   , m_user(user)
 {
@@ -39,7 +39,7 @@ PrivateTab::PrivateTab(ChatUser user, TabWidget *parent)
 }
 
 
-bool PrivateTab::update(ChatUser user)
+bool PrivateTab::update(ClientUser user)
 {
   if (!user)
     return false;

@@ -166,7 +166,7 @@ void ChatCore::nickClicked(const QString &text)
   if (id.isEmpty())
     return;
 
-  ChatUser user = m_client->user(id);
+  ClientUser user = m_client->user(id);
   if (!user)
     return;
 

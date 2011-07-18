@@ -624,9 +624,9 @@ bool SimpleClient::readUserData()
 
   /// Если пользователь не существует, то он будет создан, иначе произойдёт обновление данных,
   /// В обоих случаях будет выслан сигнал userDataChanged().
-  ChatUser user = m_users.value(id);
+  ClientUser user = m_users.value(id);
   if (!user) {
-    user = ChatUser(new User(&reader.user));
+    user = ClientUser(new User(&reader.user));
     m_users.insert(id, user);
 
     emit userDataChanged(id);
@@ -662,7 +662,7 @@ bool SimpleClient::readUserData()
  */
 bool SimpleClient::removeUser(const QByteArray &userId)
 {
-  ChatUser user = m_users.value(userId);
+  ClientUser user = m_users.value(userId);
   if (!user)
     return false;
 
@@ -682,7 +682,7 @@ bool SimpleClient::removeUser(const QByteArray &userId)
  */
 bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
 {
-  ChatUser user = m_users.value(userId);
+  ClientUser user = m_users.value(userId);
   Channel *channel = m_channels.value(channelId);
 
   if (!user.isNull() && channel) {
@@ -703,7 +703,7 @@ bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByt
 /*!
  * Обновление информации о пользователе.
  */
-void SimpleClient::updateUserData(ChatUser existUser, User *user)
+void SimpleClient::updateUserData(ClientUser existUser, User *user)
 {
   SCHAT_DEBUG_STREAM(this << "updateUserData()");
 
@@ -724,7 +724,7 @@ void SimpleClient::updateUserData(ChatUser existUser, User *user)
  */
 void SimpleClient::updateUserStatus(const QString &text)
 {
-  ChatUser user = this->user(m_reader->sender());
+  ClientUser user = this->user(m_reader->sender());
   if (!user)
     return;
 
