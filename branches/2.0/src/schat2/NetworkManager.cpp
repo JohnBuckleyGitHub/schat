@@ -21,10 +21,10 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "FileLocations.h"
 #include "net/ServerData.h"
-#include "net/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "User.h"

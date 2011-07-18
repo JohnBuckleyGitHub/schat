@@ -20,7 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/UserUtils.h"
 #include "User.h"

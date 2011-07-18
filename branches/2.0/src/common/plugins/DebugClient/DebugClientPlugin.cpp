@@ -23,10 +23,10 @@
 #include <qplugin.h>
 #include <QTextStream>
 
+#include "client/SimpleClient.h"
 #include "DebugClientPlugin.h"
 #include "DebugClientPlugin_p.h"
 #include "FileLocations.h"
-#include "net/SimpleClient.h"
 #include "Settings.h"
 
 DebugClient::DebugClient(SimpleClient *client, Settings *settings)

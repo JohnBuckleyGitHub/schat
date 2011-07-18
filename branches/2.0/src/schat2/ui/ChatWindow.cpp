@@ -21,10 +21,10 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#include "debugstream.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
+#include "debugstream.h"
 #include "ui/ChatWindow.h"
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"

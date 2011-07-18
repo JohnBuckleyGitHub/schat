@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "messages/AlertMessage.h"
 #include "messages/MessageAdapter.h"
@@ -27,7 +28,6 @@
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
-#include "net/SimpleClient.h"
 #include "NetworkManager.h"
 #include "ui/UserUtils.h"
 #include "User.h"

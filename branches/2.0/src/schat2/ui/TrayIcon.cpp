@@ -21,7 +21,7 @@
 #include <QTimerEvent>
 
 #include "ChatCore.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
 #include "ui/UserUtils.h"

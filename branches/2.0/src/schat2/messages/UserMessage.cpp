@@ -19,10 +19,10 @@
 #include <QTextDocument>
 
 #include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "messages/UserMessage.h"
 #include "net/packets/message.h"
-#include "net/SimpleClient.h"
 #include "schat2.h"
 #include "User.h"
 

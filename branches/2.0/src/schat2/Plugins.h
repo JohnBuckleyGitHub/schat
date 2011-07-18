@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-class ClientInterface;
+class CoreInterface;
 
 class Plugins : public QObject
 {
@@ -34,7 +34,7 @@ public:
 private:
   void load(const QString &path);
 
-  QList<ClientInterface *> m_clientPlugins;
+  QList<CoreInterface *> m_plugins; ///< Все загруженные плагины.
 };
 
 #endif /* PLUGINS_H_ */

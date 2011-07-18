@@ -25,7 +25,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
 #include "Plugins.h"
 #include "plugins/ClientInterface.h"
 #include "plugins/CoreInterface.h"
@@ -36,6 +36,9 @@ Plugins::Plugins(QObject *parent)
 }
 
 
+/*!
+ * Загрузка плагинов.
+ */
 void Plugins::load()
 {
   foreach (const QString &path, QApplication::libraryPaths())
@@ -43,29 +46,29 @@ void Plugins::load()
 }
 
 
+/*!
+ * Загрузка плагинов с интерфейсом CoreInterface из папки \p path
+ * в список плагинов \p m_plugins.
+ */
 void Plugins::load(const QString &path)
 {
-  qDebug() << path;
-
   QDir dir(path);
 
-  foreach (QString fileName, dir.entryList(QDir::Files)) {
-    QPluginLoader pluginLoader(dir.absoluteFilePath(fileName));
-    QObject *plugin = pluginLoader.instance();
+  QStringList files = dir.entryList(QDir::Files | QDir::NoDot | QDir::NoDotDot);
 
-    if (plugin) {
-      CoreInterface *core = qobject_cast<CoreInterface *> (plugin);
-      if (!core)
-        continue;
+  for (int i = 0; i < files.size(); ++i) {
+    QPluginLoader loader(dir.absoluteFilePath(files.at(i)));
+    QObject *plugin = loader.instance();
 
-      qDebug() << core->id() << core->name();
+    if (!plugin)
+      continue;
 
-      ClientInterface *client = qobject_cast<ClientInterface *> (plugin);
-      if (!client)
-        continue;
-
-      client->create(ChatCore::i()->client(), ChatCore::i()->settings());
-      m_clientPlugins.append(client);
+    CoreInterface *core = qobject_cast<CoreInterface *> (plugin);
+    if (!core) {
+      loader.unload();
+      continue;
     }
+
+    m_plugins.append(core);
   }
 }

@@ -22,10 +22,10 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
-#include "net/SimpleClient.h"
 #include "NetworkManager.h"
 #include "Plugins.h"
 #include "Translation.h"
