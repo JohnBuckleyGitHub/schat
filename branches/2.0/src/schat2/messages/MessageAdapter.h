@@ -22,13 +22,14 @@
 #include <QHash>
 #include <QObject>
 
+#include "client/ClientHelper.h"
+
 class AbstractMessage;
 class ChatSettings;
-class MessageData;
 class NoticeData;
 class SimpleClient;
 
-class MessageAdapter : public QObject
+class MessageAdapter : public ClientHelper
 {
   Q_OBJECT
 
@@ -42,8 +43,9 @@ public:
     CommandArgsError
   };
 
-  MessageAdapter(QObject *parent = 0);
-  int send(MessageData &data);
+  MessageAdapter();
+  bool sendText(MessageData &data);
+  void command(const QString &text);
 
 signals:
   void message(const AbstractMessage &message);
@@ -55,19 +57,13 @@ private slots:
   void notice(const NoticeData &data);
 
 private:
-  bool sendText(MessageData &data);
   int setGender(const QString &gender, const QString &color);
-  void command(const QString &text);
   void newUserMessage(int status, const MessageData &data);
   void setStateAll(int state, const QString &reason);
   void setStatus(int status, const QString &text = "");
 
-  bool m_richText;                          ///< true если в командах может использоваться html текст.
   ChatSettings *m_settings;                 ///< Настройки чата.
-  QByteArray m_destId;                      ///< Текущий получатель сообщения.
   QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
-  quint64 m_name;                           ///< Счётчик последнего отправленного сообщения.
-  SimpleClient *m_client;                   ///< Указатель на клиент.
 };
 
 #endif /* MESSAGEADAPTER_H_ */

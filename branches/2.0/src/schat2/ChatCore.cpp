@@ -52,7 +52,7 @@ ChatCore::ChatCore(QObject *parent)
   m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
   m_settings->setClient(m_client);
 
-  m_messageAdapter = new MessageAdapter(this);
+  m_messageAdapter = new MessageAdapter();
   m_networkManager = new NetworkManager(this);
 
   m_plugins = new Plugins(this);
