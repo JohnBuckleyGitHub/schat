@@ -25,12 +25,12 @@
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
-#include "net/SimpleClient.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "ui/StatusBar.h"
 #include "ui/NetworkWidget.h"
+#include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
 
 StatusBar::StatusBar(QWidget *parent)

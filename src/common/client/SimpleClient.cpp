@@ -20,6 +20,8 @@
 #include <QTimerEvent>
 
 #include "Channel.h"
+#include "client/SimpleClient.h"
+#include "client/SimpleClient_p.h"
 #include "debugstream.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
@@ -28,9 +30,7 @@
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "net/PacketWriter.h"
-#include "net/SimpleClient.h"
-#include "net/SimpleClient_p.h"
-#include "Protocol.h"
+#include "net/Protocol.h"
 #include "User.h"
 
 SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)

@@ -27,7 +27,7 @@
 #include <QToolButton>
 
 #include "ChatCore.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "ui/NetworkWidget.h"

@@ -29,6 +29,8 @@ HEADERS = \
     ChatApp.h \
     ChatCore.h \
     ChatSettings.h \
+    client/SimpleClient.h \
+    client/SimpleClient_p.h \
     debugstream.h \
     FileLocations.h \
     messages/AbstractMessage.h \
@@ -43,8 +45,6 @@ HEADERS = \
     net/packets/users.h \
     net/PacketWriter.h \
     net/ServerData.h \
-    net/SimpleClient.h \
-    net/SimpleClient_p.h \
     net/SimpleID.h \
     net/SimpleSocket.h \
     net/TransportReader.h \
@@ -95,6 +95,7 @@ SOURCES = \
     ChatApp.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
+    client/SimpleClient.cpp \
     FileLocations.cpp \
     main.cpp \
     messages/AbstractMessage.cpp \
@@ -108,7 +109,6 @@ SOURCES = \
     net/packets/notices.cpp \
     net/packets/users.cpp \
     net/ServerData.cpp \
-    net/SimpleClient.cpp \
     net/SimpleID.cpp \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \

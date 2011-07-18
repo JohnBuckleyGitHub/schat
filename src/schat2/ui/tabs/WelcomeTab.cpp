@@ -23,7 +23,7 @@
 #include <QPushButton>
 
 #include "ChatCore.h"
-#include "net/SimpleClient.h"
+#include "client/SimpleClient.h"
 #include "NetworkManager.h"
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"

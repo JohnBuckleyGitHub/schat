@@ -18,9 +18,9 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/SimpleClient.h"
 #include "net/packets/message.h"
 #include "net/packets/users.h"
-#include "net/SimpleClient.h"
 #include "NetworkManager.h"
 #include "User.h"
 
