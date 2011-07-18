@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "client/ClientCmd.h"
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "net/packets/message.h"
@@ -52,7 +53,9 @@ bool ClientHelper::send(MessageData &data)
 
   QStringList commands = (QLatin1String(" ") + text).split(QLatin1String(" /"), QString::SkipEmptyParts);
   for (int i = 0; i < commands.size(); ++i) {
-    command(commands.at(i));
+    ClientCmd cmd(commands.at(i));
+    if (cmd.isValid())
+      command(cmd);
   }
 
   return true;
@@ -80,7 +83,7 @@ bool ClientHelper::sendText(MessageData &data)
 }
 
 
-void ClientHelper::command(const QString &text)
+void ClientHelper::command(const ClientCmd &cmd)
 {
 
 }

@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ClientCmd.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "messages/AlertMessage.h"
@@ -75,126 +76,90 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /quit
  * - /set
  */
-void MessageAdapter::command(const QString &text)
+void MessageAdapter::command(const ClientCmd &cmd)
 {
-  if (text.startsWith("about", Qt::CaseInsensitive)) {
+  QString command = cmd.command().toLower();
+
+  if (command == "about") {
     ChatCore::i()->startNotify(ChatCore::AboutNotice);
     return;
   }
 
-  if (text.startsWith("away ", Qt::CaseInsensitive)) {
-    setStatus(User::AwayStatus, text.mid(5));
+  if (command == "away") {
+    setStatus(User::AwayStatus, cmd.body());
     return;
   }
 
-  if (text.startsWith("away", Qt::CaseInsensitive)) {
-    setStatus(User::AwayStatus);
+  if (command == "color") {
+    if (cmd.isBody())
+      setGender("", cmd.body());
+    else
+      setGender("", "default");
+
     return;
   }
 
-  if (text.startsWith("color ", Qt::CaseInsensitive)) {
-    setGender("", text.mid(6).toLower());
+  if (command == "dnd") {
+    setStatus(User::DnDStatus, cmd.body());
     return;
   }
 
-  if (text.startsWith("color", Qt::CaseInsensitive)) {
-    setGender("", "default");
-    return;
-  }
-
-  if (text.startsWith("dnd ", Qt::CaseInsensitive)) {
-    setStatus(User::DnDStatus, text.mid(4));
-    return;
-  }
-
-  if (text.startsWith("dnd", Qt::CaseInsensitive)) {
-    setStatus(User::DnDStatus);
-    return;
-  }
-
-  if (text.startsWith("exit", Qt::CaseInsensitive) || text.startsWith("quit", Qt::CaseInsensitive)) {
+  if (command == "exit" || command == "quit") {
     ChatCore::i()->startNotify(ChatCore::QuitNotice);
     return;
   }
 
-  if (text.startsWith("female ", Qt::CaseInsensitive)) {
-    setGender("female", text.mid(7).toLower());
+  if (command == "female") {
+    setGender("female", cmd.body());
     return;
   }
 
-  if (text.startsWith("female", Qt::CaseInsensitive)) {
-    setGender("female", "");
+  if (command == "ffc") {
+    setStatus(User::FreeForChatStatus, cmd.body());
     return;
   }
 
-  if (text.startsWith("ffc ", Qt::CaseInsensitive)) {
-    setStatus(User::FreeForChatStatus, text.mid(4));
+  if (command == "gender" && cmd.isBody()) {
+    setGender(cmd.body(), "");
     return;
   }
 
-  if (text.startsWith("ffc", Qt::CaseInsensitive)) {
-    setStatus(User::FreeForChatStatus);
-    return;
-  }
-
-  if (text.startsWith("gender ", Qt::CaseInsensitive)) {
-    setGender(text.mid(7).toLower(), "");
-    return;
-  }
-
-  if (text.startsWith("hide", Qt::CaseInsensitive)) {
+  if (command == "hide") {
     ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
     return;
   }
 
-  if (text.startsWith("join ", Qt::CaseInsensitive) && text.size() > 7) {
-    MessageData data(QByteArray(), QByteArray(), "join", text.mid(5));
+  if (command == "join" && cmd.isBody() && cmd.body().size() >= 3) {
+    MessageData data(QByteArray(), QByteArray(), command, cmd.body());
     m_client->send(data);
-
     return;
   }
 
-  if (text.startsWith("male ", Qt::CaseInsensitive)) {
-    setGender("male", text.mid(5).toLower());
+  if (command == "male") {
+    setGender("male", cmd.body());
     return;
   }
 
-  if (text.startsWith("male", Qt::CaseInsensitive)) {
-    setGender("male", "");
+  if (command == "nick" && cmd.isBody() && cmd.body().size() >= 3) {
+    m_settings->updateValue(ChatSettings::ProfileNick, cmd.body());
     return;
   }
 
-  if (text.startsWith("nick ", Qt::CaseInsensitive) && text.size() > 7) {
-    m_settings->updateValue(ChatSettings::ProfileNick, text.mid(5));
+  if (command == "offline") {
+    setStatus(User::OfflineStatus, cmd.body());
     return;
   }
 
-  if (text.startsWith("offline ", Qt::CaseInsensitive)) {
-    setStatus(User::OfflineStatus, text.mid(8));
+  if (command == "online") {
+    setStatus(User::OnlineStatus, cmd.body());
     return;
   }
 
-  if (text.startsWith("offline", Qt::CaseInsensitive)) {
-    setStatus(User::OfflineStatus);
-    return;
-  }
+  if (command == "set") {
+    ClientCmd body(cmd.body());
+    if (body.isValid() && body.isBody())
+      m_settings->setValue(body.command(), body.body());
 
-  if (text.startsWith("online ", Qt::CaseInsensitive)) {
-    setStatus(User::OnlineStatus, text.mid(7));
-    return;
-  }
-
-  if (text.startsWith("online", Qt::CaseInsensitive)) {
-    setStatus(User::OnlineStatus);
-    return;
-  }
-
-  if (text.startsWith("set ", Qt::CaseInsensitive)) {
-    int offset = 4;
-    QString key = text.mid(offset, text.indexOf(' ', offset) - offset);
-    QString value = text.mid(offset + key.size() + 1);
-
-    m_settings->setValue(key, value);
     return;
   }
 }
