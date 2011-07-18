@@ -35,6 +35,7 @@ class ClientHelper : public QObject
 public:
   ClientHelper(SimpleClient *client);
   bool send(MessageData &data);
+  inline SimpleClient *client() { return m_client; }
   virtual bool sendText(MessageData &data);
   virtual void command(const ClientCmd &cmd);
 

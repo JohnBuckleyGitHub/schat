@@ -15,10 +15,25 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2 \
-    schat2 \
-    schat2-bot \
-    common/plugins/DebugClient \
+SCHAT_RESOURCES   = 0
+SCHAT_RC_FILE     = 1
+SCHAT_SINGLEAPP   = 0
+
+QT = core network
+TEMPLATE = app
+
+HEADERS = \
+   BotApp.h \
+   version.h \
+
+SOURCES = \
+   BotApp.cpp \
+   main.cpp \
+  
+TRANSLATIONS += ../../data/translations/schat2-bot_en.ts
+TRANSLATIONS += ../../data/translations/schat2-bot_ru.ts
+CODECFORTR = UTF-8
+
+include(../common/client.pri)
+include(../common/common.pri)
+
