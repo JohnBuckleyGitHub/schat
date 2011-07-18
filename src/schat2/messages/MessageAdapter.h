@@ -45,7 +45,7 @@ public:
 
   MessageAdapter();
   bool sendText(MessageData &data);
-  void command(const QString &text);
+  void command(const ClientCmd &cmd);
 
 signals:
   void message(const AbstractMessage &message);

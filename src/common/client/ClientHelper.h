@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+class ClientCmd;
 class MessageData;
 class SimpleClient;
 
@@ -35,7 +36,7 @@ public:
   ClientHelper(SimpleClient *client);
   bool send(MessageData &data);
   virtual bool sendText(MessageData &data);
-  virtual void command(const QString &text);
+  virtual void command(const ClientCmd &cmd);
 
 protected:
   bool m_richText;        ///< true если в командах может использоваться html текст.
