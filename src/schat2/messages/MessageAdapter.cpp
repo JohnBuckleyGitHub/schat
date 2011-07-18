@@ -32,13 +32,11 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
-MessageAdapter::MessageAdapter(QObject *parent)
-  : QObject(parent)
-  , m_richText(true)
+MessageAdapter::MessageAdapter()
+  : ClientHelper(ChatCore::i()->client())
   , m_settings(ChatCore::i()->settings())
-  , m_name(1)
-  , m_client(ChatCore::i()->client())
 {
+  m_richText = true;
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
@@ -46,153 +44,15 @@ MessageAdapter::MessageAdapter(QObject *parent)
 }
 
 
-/*!
- * Отправка сообщения, если в сообщении содержаться команды, то они будут обработаны.
- * Команды:
- * - /join &lt;имя канала&gt;
- */
-int MessageAdapter::send(MessageData &data)
-{
-  if (data.text.isEmpty())
-    return ErrorTextEmpty;
-
-  m_destId = data.destId;
-  QString text;
-
-  if (m_richText) {
-    text = MessageUtils::toPlainText(data.text);
-  }
-  else {
-    text = data.text.simplified();
-  }
-
-  SCHAT_DEBUG_STREAM(this << "send()" << text)
-
-  if (text.at(0) != '/' || text.startsWith("/me", Qt::CaseInsensitive)) {
-    sendText(data);
-    return SentAsText;
-  }
-
-  QStringList commands = (" " + text).split(" /", QString::SkipEmptyParts);
-  for (int i = 0; i < commands.size(); ++i) {
-    command(commands.at(i));
-  }
-
-  return SentAsCommand;
-}
-
-
-/*!
- * Обработка уведомления о доставке пакетов на транспортном уровне.
- */
-void MessageAdapter::allDelivered(quint64 id)
-{
-  Q_UNUSED(id)
-}
-
-
-/*!
- * Обработка получения нового сообщения от клиента.
- */
-void MessageAdapter::clientMessage(const MessageData &data)
-{
-  if (data.senderId != m_client->userId())
-    newUserMessage(UserMessage::IncomingMessage, data);
-}
-
-
-void MessageAdapter::clientStateChanged(int state)
-{
-  if (state == SimpleClient::ClientOnline) {
-    AlertMessage msg(AlertMessage::Information, tr("Successfully connected to <b>%1</b>").arg(NetworkManager::currentServerName()));
-    emit message(msg);
-    return;
-  }
-  else if (state == SimpleClient::ClientOffline) {
-    AlertMessage msg(AlertMessage::Exclamation, tr("Connection lost"));
-    emit message(msg);
-  }
-
-  setStateAll(UserMessage::Rejected, "rj");
-}
-
-
-void MessageAdapter::notice(const NoticeData &data)
-{
-  SCHAT_DEBUG_STREAM(this << "notice()")
-
-  if (m_client->userId() != data.senderId)
-    return;
-
-  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
-    MessageData msg(m_client->userId(), data.destId, "");
-    msg.name = data.messageName;
-    msg.timestamp = data.timestamp;
-
-    m_undelivered.remove(data.messageName);
-
-    if (data.type == NoticeData::MessageDelivered) {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
-    }
-    else {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
-    }
-  }
-}
-
-
-/*!
- * Отправка сообщения.
- */
 bool MessageAdapter::sendText(MessageData &data)
 {
-  if (data.senderId.isEmpty())
-    data.senderId = m_client->userId();
-
-  ++m_name;
-  data.name = m_name;
-  data.options |= MessageData::NameOption;
-
-  if (m_client->send(data)) {
+  if (ClientHelper::sendText(data)) {
     newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
     m_undelivered.insert(m_name, data.destId);
     return true;
   }
 
-  --m_name;
   return false;
-}
-
-
-int MessageAdapter::setGender(const QString &gender, const QString &color)
-{
-  if (gender.isEmpty() && color.isEmpty())
-    return CommandArgsError;
-
-  User user(m_client->user().data());
-
-  if (!gender.isEmpty()) {
-    if (gender == "male")
-      user.setGender(User::Male);
-    else if (gender == "female")
-      user.setGender(User::Female);
-    else if (gender == "ghost")
-      user.setGender(User::Ghost);
-    else if (gender == "unknown")
-      user.setGender(User::Unknown);
-    else
-      return CommandArgsError;
-  }
-
-  if (!color.isEmpty()) {
-    user.setColor(UserUtils::color(color));
-  }
-
-  if (m_client->user()->rawGender() == user.rawGender())
-    return NoSent;
-
-  m_settings->updateValue(ChatSettings::ProfileGender, user.rawGender());
-  return SentAsCommand;
 }
 
 
@@ -337,6 +197,97 @@ void MessageAdapter::command(const QString &text)
     m_settings->setValue(key, value);
     return;
   }
+}
+
+
+/*!
+ * Обработка уведомления о доставке пакетов на транспортном уровне.
+ */
+void MessageAdapter::allDelivered(quint64 id)
+{
+  Q_UNUSED(id)
+}
+
+
+/*!
+ * Обработка получения нового сообщения от клиента.
+ */
+void MessageAdapter::clientMessage(const MessageData &data)
+{
+  if (data.senderId != m_client->userId())
+    newUserMessage(UserMessage::IncomingMessage, data);
+}
+
+
+void MessageAdapter::clientStateChanged(int state)
+{
+  if (state == SimpleClient::ClientOnline) {
+    AlertMessage msg(AlertMessage::Information, tr("Successfully connected to <b>%1</b>").arg(NetworkManager::currentServerName()));
+    emit message(msg);
+    return;
+  }
+  else if (state == SimpleClient::ClientOffline) {
+    AlertMessage msg(AlertMessage::Exclamation, tr("Connection lost"));
+    emit message(msg);
+  }
+
+  setStateAll(UserMessage::Rejected, "rj");
+}
+
+
+void MessageAdapter::notice(const NoticeData &data)
+{
+  SCHAT_DEBUG_STREAM(this << "notice()")
+
+  if (m_client->userId() != data.senderId)
+    return;
+
+  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
+    MessageData msg(m_client->userId(), data.destId, "");
+    msg.name = data.messageName;
+    msg.timestamp = data.timestamp;
+
+    m_undelivered.remove(data.messageName);
+
+    if (data.type == NoticeData::MessageDelivered) {
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
+    }
+    else {
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
+    }
+  }
+}
+
+
+int MessageAdapter::setGender(const QString &gender, const QString &color)
+{
+  if (gender.isEmpty() && color.isEmpty())
+    return CommandArgsError;
+
+  User user(m_client->user().data());
+
+  if (!gender.isEmpty()) {
+    if (gender == "male")
+      user.setGender(User::Male);
+    else if (gender == "female")
+      user.setGender(User::Female);
+    else if (gender == "ghost")
+      user.setGender(User::Ghost);
+    else if (gender == "unknown")
+      user.setGender(User::Unknown);
+    else
+      return CommandArgsError;
+  }
+
+  if (!color.isEmpty()) {
+    user.setColor(UserUtils::color(color));
+  }
+
+  if (m_client->user()->rawGender() == user.rawGender())
+    return NoSent;
+
+  m_settings->updateValue(ChatSettings::ProfileGender, user.rawGender());
+  return SentAsCommand;
 }
 
 

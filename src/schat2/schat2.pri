@@ -29,6 +29,7 @@ HEADERS = \
     ChatApp.h \
     ChatCore.h \
     ChatSettings.h \
+    client/ClientHelper.h \
     client/SimpleClient.h \
     client/SimpleClient_p.h \
     debugstream.h \
@@ -95,6 +96,7 @@ SOURCES = \
     ChatApp.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
+    client/ClientHelper.cpp \
     client/SimpleClient.cpp \
     FileLocations.cpp \
     main.cpp \
