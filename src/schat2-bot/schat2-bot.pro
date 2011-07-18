@@ -15,10 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2 \
-    schat2 \
-    schat2-bot \
-    common/plugins/DebugClient \
+SCHAT_CONSOLE = 1
+SCHAT_DEBUG   = 1
+SCHAT_USE_SSL = 1
+
+include(schat2-bot.pri)
