@@ -15,11 +15,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2 \
-    schat2 \
-    schat2-bot \
-    common/plugins/DebugClient \
-    common/plugins/BotCore \
+PLUGIN_GROUP = ""
+TEMPLATE = lib
+CONFIG   += plugin
+QT       += network
+TARGET   = $$qtLibraryTarget(BotCore)
+
+win32:RC_FILE = BotCore.rc
+
+HEADERS  = \
+   BotCorePlugin.h \
+
+SOURCES  = \
+   BotCorePlugin.cpp \
+
+include(../plugins.pri)

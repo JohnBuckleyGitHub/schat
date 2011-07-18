@@ -16,26 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEBUGCLIENTPLUGIN_H_
-#define DEBUGCLIENTPLUGIN_H_
+#include "BotPlugins.h"
+#include "client/ClientHelper.h"
+#include "client/SimpleClient.h"
+#include "FileLocations.h"
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
-
-class DebugClient;
-
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
+BotPlugins::BotPlugins(QObject *parent)
+  : Plugins(parent)
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
+  m_client = new SimpleClient(new User("Bot"), 0, this);
+  m_helper = new ClientHelper(m_client);
+  m_locations = new FileLocations(this);
 
-public:
-  QObject *create(SimpleClient *client, Settings *settings);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
+  m_providers.insert("BotCore", 0);
+}
 
-private:
-  DebugClient *d;
-};
 
-#endif /* DEBUGCLIENTPLUGIN_H_ */
+void BotPlugins::init()
+{
+  m_client->openUrl("schat://192.168.1.33");
+}

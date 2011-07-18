@@ -16,26 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEBUGCLIENTPLUGIN_H_
-#define DEBUGCLIENTPLUGIN_H_
+#ifndef BOTCOREPLUGIN_H_
+#define BOTCOREPLUGIN_H_
 
 #include "ClientInterface.h"
 #include "CoreInterface.h"
 
-class DebugClient;
-
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
+class BotCorePlugin : public QObject, CoreInterface
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
+  Q_INTERFACES(CoreInterface)
 
 public:
-  QObject *create(SimpleClient *client, Settings *settings);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
-
-private:
-  DebugClient *d;
+  QString id() const { return "BotCore"; }
+  QString name() const { return "Bot Core"; }
+  QStringList provides() const { return QStringList("BotCore"); }
 };
 
-#endif /* DEBUGCLIENTPLUGIN_H_ */
+#endif /* BOTCOREPLUGIN_H_ */

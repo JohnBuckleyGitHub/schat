@@ -17,17 +17,11 @@
  */
 
 #include <QDebug>
-
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDir>
 #include <QPluginLoader>
-#include <QStringList>
 
-#include "ChatCore.h"
-#include "ChatSettings.h"
-#include "client/SimpleClient.h"
 #include "Plugins.h"
-#include "plugins/ClientInterface.h"
 #include "plugins/CoreInterface.h"
 
 Plugins::Plugins(QObject *parent)
@@ -41,9 +35,12 @@ Plugins::Plugins(QObject *parent)
  */
 void Plugins::load()
 {
-  foreach (const QString &path, QApplication::libraryPaths())
+  foreach (const QString &path, QCoreApplication::libraryPaths())
     load(path);
+
+  init();
 }
+
 
 
 /*!
@@ -69,6 +66,38 @@ void Plugins::load(const QString &path)
       continue;
     }
 
+    if (core->id().isEmpty() || core->name().isEmpty()) {
+      loader.unload();
+      continue;
+    }
+
+    QStringList provides = core->provides();
+    if (!provides.isEmpty()) {
+      bool error = false;
+
+      QString provider;
+      for (int i = 0; i < provides.size(); ++i) {
+        provider = provides.at(i);
+        if (!m_providers.contains(provider)) {
+          error = true;
+          break;
+        }
+
+        if (m_providers.value(provider)) {
+          error = true;
+          break;
+        }
+
+        m_providers[provider] = core;
+      }
+
+      if (error) {
+        loader.unload();
+        continue;
+      }
+    }
+
+    qDebug() << core->id() << core->name() << core->version();
     m_plugins.append(core);
   }
 }

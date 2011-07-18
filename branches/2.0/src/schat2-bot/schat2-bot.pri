@@ -24,11 +24,15 @@ TEMPLATE = app
 
 HEADERS = \
    BotApp.h \
+   BotPlugins.h \
+   Plugins.h \
    version.h \
 
 SOURCES = \
    BotApp.cpp \
+   BotPlugins.cpp \
    main.cpp \
+   Plugins.cpp \
   
 TRANSLATIONS += ../../data/translations/schat2-bot_en.ts
 TRANSLATIONS += ../../data/translations/schat2-bot_ru.ts

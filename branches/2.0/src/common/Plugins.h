@@ -16,26 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEBUGCLIENTPLUGIN_H_
-#define DEBUGCLIENTPLUGIN_H_
+#ifndef PLUGINS_H_
+#define PLUGINS_H_
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
+#include <QObject>
+#include <QHash>
 
-class DebugClient;
+class CoreInterface;
 
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
+class Plugins : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
 
 public:
-  QObject *create(SimpleClient *client, Settings *settings);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
+  Plugins(QObject *parent = 0);
+  void load();
 
-private:
-  DebugClient *d;
+protected:
+  virtual void init() {}
+  void load(const QString &path);
+
+  QHash<QString, CoreInterface *> m_providers;
+  QList<CoreInterface *> m_plugins; ///< Все загруженные плагины.
 };
 
-#endif /* DEBUGCLIENTPLUGIN_H_ */
+#endif /* PLUGINS_H_ */

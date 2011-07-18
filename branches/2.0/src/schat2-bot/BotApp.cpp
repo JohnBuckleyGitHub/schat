@@ -21,8 +21,7 @@
 #include <QTimer>
 
 #include "BotApp.h"
-#include "client/ClientHelper.h"
-#include "client/SimpleClient.h"
+#include "BotPlugins.h"
 #include "version.h"
 
 BotApp::BotApp(int &argc, char **argv)
@@ -38,8 +37,7 @@ BotApp::BotApp(int &argc, char **argv)
 
   qsrand(QDateTime::currentDateTime().toTime_t());
 
-  m_client = new SimpleClient(new User("Bot"), 0, this);
-  m_helper = new ClientHelper(m_client);
+  m_plugins = new BotPlugins(this);
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -47,5 +45,5 @@ BotApp::BotApp(int &argc, char **argv)
 
 void BotApp::start()
 {
-  m_client->openUrl("schat://192.168.1.33");
+  m_plugins->load();
 }
