@@ -15,27 +15,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <qplugin.h>
 
-#ifndef DEBUGCLIENTPLUGIN_H_
-#define DEBUGCLIENTPLUGIN_H_
+#include "BotCorePlugin.h"
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
-
-class DebugClient;
-
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
-{
-  Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
-
-public:
-  QObject *create(SimpleClient *client, Settings *settings);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
-
-private:
-  DebugClient *d;
-};
-
-#endif /* DEBUGCLIENTPLUGIN_H_ */
+Q_EXPORT_PLUGIN2(BotCore, BotCorePlugin);

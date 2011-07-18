@@ -21,8 +21,7 @@
 
 #include <QCoreApplication>
 
-class ClientHelper;
-class SimpleClient;
+class BotPlugins;
 
 class BotApp : public QCoreApplication
 {
@@ -35,8 +34,7 @@ private slots:
   void start();
 
 private:
-  ClientHelper *m_helper; ///< Обвёртка над клиентом.
-  SimpleClient *m_client; ///< Клиент.
+  BotPlugins *m_plugins;
 };
 
 #endif /* BOTAPP_H_ */

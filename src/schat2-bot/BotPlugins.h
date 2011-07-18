@@ -16,25 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLUGINS_H_
-#define PLUGINS_H_
+#ifndef BOTPLUGINS_H_
+#define BOTPLUGINS_H_
 
-#include <QObject>
+#include "Plugins.h"
 
-class CoreInterface;
+class ClientHelper;
+class FileLocations;
+class SimpleClient;
 
-class Plugins : public QObject
+class BotPlugins : public Plugins
 {
   Q_OBJECT
 
 public:
-  Plugins(QObject *parent = 0);
-  void load();
+  BotPlugins(QObject *parent = 0);
+
+protected:
+  void init();
 
 private:
-  void load(const QString &path);
-
-  QList<CoreInterface *> m_plugins; ///< Все загруженные плагины.
+  ClientHelper *m_helper;     ///< Обвёртка над клиентом.
+  FileLocations *m_locations; ///< Схема размещения файлов.
+  SimpleClient *m_client;     ///< Клиент.
 };
 
-#endif /* PLUGINS_H_ */
+#endif /* BOTPLUGINS_H_ */

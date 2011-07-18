@@ -20,6 +20,7 @@
 #define COREINTERFACE_H_
 
 #include <QObject>
+#include <QStringList>
 
 /*!
  * Базовый интерфейс для всех типов плагинов.
@@ -28,8 +29,12 @@ class CoreInterface
 {
 public:
   virtual ~CoreInterface() {}
+  virtual QString description() const { return ""; }
   virtual QString id() const = 0;   ///< Машинное имя плагина.
   virtual QString name() const = 0; ///< Имя плагина.
+  virtual QString version() const { return ""; }
+  virtual QStringList provides() const { return QStringList(); }
+  virtual QStringList required() const { return QStringList(); }
 };
 
 Q_DECLARE_INTERFACE(CoreInterface, "com.impomezia.schat.CoreInterface/1.0");
