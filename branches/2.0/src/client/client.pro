@@ -24,6 +24,7 @@ QT = core network
 TARGET = $$qtLibraryTarget(schat2-client)
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = client.rc
+!win32:VERSION = 1.9.0
 
 include(../common/client.pri)
 include(../common/common.pri)

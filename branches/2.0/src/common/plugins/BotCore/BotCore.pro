@@ -20,6 +20,7 @@ TEMPLATE = lib
 CONFIG   += plugin
 QT       += network
 TARGET   = $$qtLibraryTarget(BotCore)
+DEFINES  += SCHAT_NO_DLL
 
 win32:RC_FILE = BotCore.rc
 

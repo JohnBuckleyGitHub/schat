@@ -110,7 +110,7 @@ void Plugins::load(const QString &path)
 {
   QDir dir(path);
 
-  QStringList files = dir.entryList(QDir::Files | QDir::NoDot | QDir::NoDotDot);
+  QStringList files = dir.entryList(QDir::Files);
 
   for (int i = 0; i < files.size(); ++i) {
     QPluginLoader loader(dir.absoluteFilePath(files.at(i)));
