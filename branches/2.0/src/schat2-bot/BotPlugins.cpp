@@ -20,6 +20,8 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
+#include "plugins/ClientInterface.h"
+#include "plugins/CoreInterface.h"
 
 BotPlugins::BotPlugins(QObject *parent)
   : Plugins(parent)
@@ -34,5 +36,10 @@ BotPlugins::BotPlugins(QObject *parent)
 
 void BotPlugins::init()
 {
-  m_client->openUrl("schat://192.168.1.33");
+  for (int i = 0; i < m_plugins.size(); ++i) {
+    ClientInterface *client = qobject_cast<ClientInterface *>(m_plugins.at(i));
+    qDebug() << client;
+    if (client)
+      client->init(m_helper, m_locations);
+  }
 }

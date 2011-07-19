@@ -15,8 +15,30 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <QUrl>
 #include <qplugin.h>
 
 #include "BotCorePlugin.h"
+#include "BotCorePlugin_p.h"
+#include "client/ClientHelper.h"
+#include "client/SimpleClient.h"
+#include "FileLocations.h"
+
+BotCore::BotCore(ClientHelper *helper, FileLocations *locations)
+  : QObject(helper)
+  , m_helper(helper)
+  , m_locations(locations)
+  , m_client(helper->client())
+{
+//  m_client->openUrl(QUrl("schat://192.168.1.33"));
+}
+
+
+QObject *BotCorePlugin::init(ClientHelper *helper, FileLocations *locations)
+{
+  m_core = new BotCore(helper, locations);
+  return m_core;
+}
 
 Q_EXPORT_PLUGIN2(BotCore, BotCorePlugin);

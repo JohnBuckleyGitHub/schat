@@ -103,10 +103,10 @@ void DebugClient::append(const QString &text)
 }
 
 
-QObject *DebugClientPlugin::create(SimpleClient *client, Settings *settings)
-{
-  d = new DebugClient(client, settings);
-  return d;
-}
+//QObject *DebugClientPlugin::create(SimpleClient *client, Settings *settings)
+//{
+//  d = new DebugClient(client, settings);
+//  return d;
+//}
 
 Q_EXPORT_PLUGIN2(DebugClient, DebugClientPlugin);
