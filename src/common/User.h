@@ -21,11 +21,12 @@
 
 #include <QHash>
 #include <QSharedPointer>
+#include "schat.h"
 
 /*!
  * Пользователь.
  */
-class User
+class SCHAT_EXPORT User
 {
 public:
   /// Ограничения.

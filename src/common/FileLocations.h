@@ -22,7 +22,9 @@
 #include <QObject>
 #include <QHash>
 
-class FileLocations : public QObject
+#include "schat.h"
+
+class SCHAT_EXPORT FileLocations : public QObject
 {
   Q_OBJECT
 

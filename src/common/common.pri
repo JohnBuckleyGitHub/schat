@@ -30,20 +30,11 @@ CONFIG(debug, debug|release) {
   MOC_DIR = ../../tmp/$${TARGET}/debug/moc
   OBJECTS_DIR = ../../tmp/$${TARGET}/debug/obj
   DESTDIR = ../../out/debug
-}
-
-CONFIG(release, debug|release) { 
+} else { 
   RCC_DIR = ../../tmp/$${TARGET}/release/rcc
   MOC_DIR = ../../tmp/$${TARGET}/release/moc
   OBJECTS_DIR = ../../tmp/$${TARGET}/release/obj
-  DESTDIR = ../../out/release
-}
-
-contains( SCHAT_SINGLEAPP, 0 ) {
-  DEFINES += SCHAT_NO_SINGLEAPP
-}
-else {
-  include(../3rdparty/qtsingleapplication/src/qtsingleapplication.pri)
+  DESTDIR = ../../out
 }
 
 contains( SCHAT_CONSOLE, 1 ) {

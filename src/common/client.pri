@@ -34,6 +34,7 @@ HEADERS += \
     net/SimpleSocket.h \
     net/TransportReader.h \
     net/TransportWriter.h \
+    schat.h \
     User.h \
 
 SOURCES += \

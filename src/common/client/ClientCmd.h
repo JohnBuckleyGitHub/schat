@@ -21,7 +21,9 @@
 
 #include <QString>
 
-class ClientCmd
+#include "schat.h"
+
+class SCHAT_EXPORT ClientCmd
 {
 public:
   ClientCmd(const QString &text);
