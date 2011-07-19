@@ -19,10 +19,14 @@
 #ifndef SCHAT_H_
 #define SCHAT_H_
 
-#if defined(SCHAT_LIBRARY)
-#  define SCHAT_EXPORT Q_DECL_EXPORT
-#else
+#if defined(SCHAT_NO_DLL) || !defined(Q_CC_MSVC)
 #  define SCHAT_EXPORT
+#else
+#  if defined(SCHAT_LIBRARY)
+#    define SCHAT_EXPORT Q_DECL_EXPORT
+#  else
+#    define SCHAT_EXPORT Q_DECL_IMPORT
+#  endif
 #endif
 
 #endif /* SCHAT_H_ */

@@ -80,6 +80,7 @@ SOURCES = \
     WorkerThread.cpp \
 
 DEFINES += SCHAT_DAEMON
+DEFINES += SCHAT_NO_DLL
 
 TRANSLATIONS += ../../data/translations/schatd2_en.ts
 TRANSLATIONS += ../../data/translations/schatd2_ru.ts
