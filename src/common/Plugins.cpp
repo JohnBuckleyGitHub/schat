@@ -31,6 +31,21 @@ Plugins::Plugins(QObject *parent)
 
 
 /*!
+ * Добавляет провайдера в список поддерживаемых,
+ * эта функция должна вызываться до загрузки плагинов.
+ */
+bool Plugins::addProvider(const QString &name)
+{
+  if (m_providers.contains(name) || m_providersList.contains(name))
+    return false;
+
+  m_providers.insert(name, 0);
+  m_providersList.append(name);
+  return true;
+}
+
+
+/*!
  * Загрузка плагинов.
  */
 void Plugins::load()
@@ -38,7 +53,46 @@ void Plugins::load()
   foreach (const QString &path, QCoreApplication::libraryPaths())
     load(path);
 
+  m_ids.clear();
+
+  sort();
   init();
+}
+
+
+/*!
+ * Выполняет проверку интерфейса плагина.
+ *
+ * \return true если плагин прошёл проверку.
+ */
+bool Plugins::checkPlugin(CoreInterface *core)
+{
+  if (!core)
+    return false;
+
+  if (core->id().isEmpty() || core->name().isEmpty())
+    return false;
+
+  if (m_ids.contains(core->id()))
+    return false;
+
+  QStringList provides = core->provides();
+  if (provides.isEmpty())
+    return true;
+
+  QString provider;
+  for (int i = 0; i < provides.size(); ++i) {
+    provider = provides.at(i);
+    if (!m_providers.contains(provider))
+      return false;
+
+    if (m_providers.value(provider))
+      return false;
+
+    m_providers[provider] = core;
+  }
+
+  return true;
 }
 
 
@@ -61,43 +115,39 @@ void Plugins::load(const QString &path)
       continue;
 
     CoreInterface *core = qobject_cast<CoreInterface *> (plugin);
-    if (!core) {
+    if (!checkPlugin(core)) {
       loader.unload();
       continue;
-    }
-
-    if (core->id().isEmpty() || core->name().isEmpty()) {
-      loader.unload();
-      continue;
-    }
-
-    QStringList provides = core->provides();
-    if (!provides.isEmpty()) {
-      bool error = false;
-
-      QString provider;
-      for (int i = 0; i < provides.size(); ++i) {
-        provider = provides.at(i);
-        if (!m_providers.contains(provider)) {
-          error = true;
-          break;
-        }
-
-        if (m_providers.value(provider)) {
-          error = true;
-          break;
-        }
-
-        m_providers[provider] = core;
-      }
-
-      if (error) {
-        loader.unload();
-        continue;
-      }
     }
 
     qDebug() << core->id() << core->name() << core->version();
+    m_ids.append(core->id());
     m_plugins.append(core);
   }
+}
+
+
+/*!
+ * Выполняет сортировку списка плагинов.
+ */
+void Plugins::sort()
+{
+  if (m_providersList.isEmpty())
+    return;
+
+  CoreInterface *core = 0;
+
+  for (int i = m_providersList.size() - 1; i >= 0; --i) {
+    core = m_providers.value(m_providersList.at(i));
+    if (!core)
+      continue;
+
+    int index = m_plugins.indexOf(core);
+    if (index == -1)
+      continue;
+
+    m_plugins.swap(0, index);
+  }
+
+  m_providersList.clear();
 }

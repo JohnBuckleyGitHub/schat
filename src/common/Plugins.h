@@ -19,8 +19,9 @@
 #ifndef PLUGINS_H_
 #define PLUGINS_H_
 
-#include <QObject>
 #include <QHash>
+#include <QObject>
+#include <QStringList>
 
 class CoreInterface;
 
@@ -30,14 +31,22 @@ class Plugins : public QObject
 
 public:
   Plugins(QObject *parent = 0);
+  bool addProvider(const QString &name);
   void load();
 
 protected:
   virtual void init() {}
-  void load(const QString &path);
 
   QHash<QString, CoreInterface *> m_providers;
   QList<CoreInterface *> m_plugins; ///< Все загруженные плагины.
+
+private:
+  bool checkPlugin(CoreInterface *core);
+  void load(const QString &path);
+  void sort();
+
+  QStringList m_ids;
+  QStringList m_providersList;
 };
 
 #endif /* PLUGINS_H_ */
