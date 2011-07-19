@@ -30,5 +30,11 @@ HEADERS  = \
 
 SOURCES  = \
    BotCorePlugin.cpp \
+   
+CONFIG(debug, debug|release) { 
+  LIBS += -L../../../../out/debug -lschat2-clientd 
+} else { 
+  LIBS += -L../../../../out -lschat2-client  
+}
 
 include(../plugins.pri)
