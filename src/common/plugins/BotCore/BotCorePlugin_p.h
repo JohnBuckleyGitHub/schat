@@ -16,37 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLUGINS_H_
-#define PLUGINS_H_
+#ifndef BOTCOREPLUGIN_P_H_
+#define BOTCOREPLUGIN_P_H_
 
-#include <QHash>
 #include <QObject>
-#include <QStringList>
 
-class CoreInterface;
+class ClientHelper;
+class FileLocations;
+class SimpleClient;
 
-class Plugins : public QObject
+class BotCore : public QObject
 {
   Q_OBJECT
 
 public:
-  Plugins(QObject *parent = 0);
-  bool addProvider(const QString &name);
-  void load();
-
-protected:
-  virtual void init() {}
-
-  QHash<QString, QObject *> m_providers;
-  QList<QObject *> m_plugins; ///< Все загруженные плагины.
+  BotCore(ClientHelper *helper, FileLocations *locations);
 
 private:
-  CoreInterface* checkPlugin(QObject *plugin);
-  void load(const QString &path);
-  void sort();
-
-  QStringList m_ids;
-  QStringList m_providersList;
+  ClientHelper *m_helper;
+  FileLocations *m_locations;
+  SimpleClient *m_client;
 };
 
-#endif /* PLUGINS_H_ */
+#endif /* BOTCOREPLUGIN_P_H_ */

@@ -25,6 +25,7 @@ win32:RC_FILE = BotCore.rc
 
 HEADERS  = \
    BotCorePlugin.h \
+   BotCorePlugin_p.h \
 
 SOURCES  = \
    BotCorePlugin.cpp \

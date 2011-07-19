@@ -65,34 +65,39 @@ void Plugins::load()
  *
  * \return true если плагин прошёл проверку.
  */
-bool Plugins::checkPlugin(CoreInterface *core)
+CoreInterface* Plugins::checkPlugin(QObject *plugin)
 {
+  if (!plugin)
+    return 0;
+
+  CoreInterface *core = qobject_cast<CoreInterface *>(plugin);
   if (!core)
-    return false;
+    return 0;
 
   if (core->id().isEmpty() || core->name().isEmpty())
-    return false;
+    return 0;
 
   if (m_ids.contains(core->id()))
-    return false;
+    return 0;
 
   QStringList provides = core->provides();
-  if (provides.isEmpty())
-    return true;
+  if (provides.isEmpty()) {
+    return core;
+  }
 
   QString provider;
   for (int i = 0; i < provides.size(); ++i) {
     provider = provides.at(i);
     if (!m_providers.contains(provider))
-      return false;
+      return 0;
 
     if (m_providers.value(provider))
-      return false;
+      return 0;
 
-    m_providers[provider] = core;
+    m_providers[provider] = plugin;
   }
 
-  return true;
+  return core;
 }
 
 
@@ -109,20 +114,16 @@ void Plugins::load(const QString &path)
 
   for (int i = 0; i < files.size(); ++i) {
     QPluginLoader loader(dir.absoluteFilePath(files.at(i)));
+
     QObject *plugin = loader.instance();
-
-    if (!plugin)
-      continue;
-
-    CoreInterface *core = qobject_cast<CoreInterface *> (plugin);
-    if (!checkPlugin(core)) {
+    CoreInterface *core = checkPlugin(plugin);
+    if (!core) {
       loader.unload();
       continue;
     }
 
-    qDebug() << core->id() << core->name() << core->version();
     m_ids.append(core->id());
-    m_plugins.append(core);
+    m_plugins.append(plugin);
   }
 }
 
@@ -135,7 +136,7 @@ void Plugins::sort()
   if (m_providersList.isEmpty())
     return;
 
-  CoreInterface *core = 0;
+  QObject *core = 0;
 
   for (int i = m_providersList.size() - 1; i >= 0; --i) {
     core = m_providers.value(m_providersList.at(i));

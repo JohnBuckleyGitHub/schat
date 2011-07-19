@@ -22,15 +22,21 @@
 #include "ClientInterface.h"
 #include "CoreInterface.h"
 
-class BotCorePlugin : public QObject, CoreInterface
+class BotCore;
+
+class BotCorePlugin : public QObject, CoreInterface, ClientInterface
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface)
+  Q_INTERFACES(CoreInterface ClientInterface)
 
 public:
+  QObject *init(ClientHelper *helper, FileLocations *locations);
   QString id() const { return "BotCore"; }
   QString name() const { return "Bot Core"; }
   QStringList provides() const { return QStringList("BotCore"); }
+
+private:
+  BotCore *m_core;
 };
 
 #endif /* BOTCOREPLUGIN_H_ */

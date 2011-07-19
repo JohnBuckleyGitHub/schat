@@ -21,14 +21,14 @@
 
 #include <QObject>
 
-class Settings;
-class SimpleClient;
+class ClientHelper;
+class FileLocations;
 
 class ClientInterface
 {
 public:
   virtual ~ClientInterface() {}
-  virtual QObject *create(SimpleClient *client, Settings *settings) = 0;
+  virtual QObject *init(ClientHelper *helper, FileLocations *locations) = 0;
 };
 
 Q_DECLARE_INTERFACE(ClientInterface, "com.impomezia.schat.ClientInterface/1.0");
