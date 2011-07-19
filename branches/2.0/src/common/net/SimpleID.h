@@ -21,7 +21,9 @@
 
 #include <QByteArray>
 
-class SimpleID
+#include "schat.h"
+
+class SCHAT_EXPORT SimpleID
 {
 public:
   /// Значения по умолчанию.

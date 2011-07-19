@@ -15,34 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
-SCHAT_RC_FILE     = 1
-SCHAT_SINGLEAPP   = 0
+SCHAT_CONSOLE = 1
+SCHAT_DEBUG   = 1
+SCHAT_USE_SSL = 1
 
+TEMPLATE = lib
 QT = core network
-TEMPLATE = app
+TARGET = $$qtLibraryTarget(schat2-client)
+DEFINES += SCHAT_LIBRARY
+win32:RC_FILE = client.rc
 
-HEADERS = \
-   BotApp.h \
-   BotPlugins.h \
-   Plugins.h \
-   version.h \
-
-SOURCES = \
-   BotApp.cpp \
-   BotPlugins.cpp \
-   main.cpp \
-   Plugins.cpp \
-  
-TRANSLATIONS += ../../data/translations/schat2-bot_en.ts
-TRANSLATIONS += ../../data/translations/schat2-bot_ru.ts
-CODECFORTR = UTF-8
-
-CONFIG(debug, debug|release) { 
-  LIBS += -L../../out/debug -lschat2-clientd 
-} else { 
-  LIBS += -L../../out -lschat2-client  
-}
-
+include(../common/client.pri)
 include(../common/common.pri)
-

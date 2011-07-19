@@ -127,6 +127,11 @@ win32 {
 
 DEFINES += SCHAT_WEBKIT
 
-include(../common/client.pri)
+CONFIG(debug, debug|release) { 
+  LIBS += -L../../out/debug -lschat2-clientd 
+} else { 
+  LIBS += -L../../out -lschat2-client  
+}
+
 include(../common/common.pri)
 

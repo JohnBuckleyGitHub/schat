@@ -108,7 +108,7 @@ public:
 };
 
 
-class MessageUtils
+class SCHAT_EXPORT MessageUtils
 {
 public:
   MessageUtils() {}

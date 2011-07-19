@@ -23,6 +23,7 @@
 
 #include "net/SimpleSocket.h"
 #include "User.h"
+#include "schat.h"
 
 class Channel;
 class ClientOfflineCache;
@@ -34,7 +35,7 @@ class ServerData;
 class SyncChannelCache;
 class User;
 
-class SimpleClient : public SimpleSocket
+class SCHAT_EXPORT SimpleClient : public SimpleSocket
 {
   Q_OBJECT
 

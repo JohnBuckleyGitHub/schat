@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include "schat.h"
+
 class ClientCmd;
 class MessageData;
 class SimpleClient;
@@ -28,7 +30,7 @@ class SimpleClient;
 /*!
  * Дополнительный слой абстракции между клиентом и приложением.
  */
-class ClientHelper : public QObject
+class SCHAT_EXPORT ClientHelper : public QObject
 {
   Q_OBJECT
 

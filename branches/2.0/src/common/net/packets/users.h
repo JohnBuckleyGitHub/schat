@@ -35,7 +35,7 @@ class PacketReader;
  * - utf8     - UserAgent (is not set Protocol::Broadcast).
  * - utf8     - Host (is not set Protocol::Broadcast).
  */
-class UserWriter : public PacketWriter
+class SCHAT_EXPORT UserWriter : public PacketWriter
 {
 public:
   UserWriter(QDataStream *stream, User *user);
