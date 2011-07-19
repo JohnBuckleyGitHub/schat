@@ -20,6 +20,7 @@
 #define BOTCOREPLUGIN_P_H_
 
 #include <QObject>
+#include <QVariant>
 
 class ClientHelper;
 class FileLocations;
@@ -32,9 +33,15 @@ class BotCore : public QObject
 public:
   BotCore(ClientHelper *helper, FileLocations *locations);
 
+private slots:
+  void start();
+
 private:
+  void readSettings();
+
   ClientHelper *m_helper;
   FileLocations *m_locations;
+  QVariantHash m_settings;
   SimpleClient *m_client;
 };
 

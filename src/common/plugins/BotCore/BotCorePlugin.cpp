@@ -18,6 +18,8 @@
 
 #include <QUrl>
 #include <qplugin.h>
+#include <QTimer>
+#include <QSettings>
 
 #include "BotCorePlugin.h"
 #include "BotCorePlugin_p.h"
@@ -31,7 +33,39 @@ BotCore::BotCore(ClientHelper *helper, FileLocations *locations)
   , m_locations(locations)
   , m_client(helper->client())
 {
-//  m_client->openUrl(QUrl("schat://192.168.1.33"));
+  m_settings.insert("Url", "schat://chat.impomezia.com");
+  m_settings.insert("Nick", "Bot");
+  m_settings.insert("Gender", 0);
+  m_settings.insert("Status", "1;");
+
+  readSettings();
+  QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+void BotCore::start()
+{
+  m_client->openUrl(m_settings.value("Url").toString());
+}
+
+
+void BotCore::readSettings()
+{
+  QSettings settings(m_locations->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  settings.setIniCodec("UTF-8");
+  settings.beginGroup("BotCore");
+
+  QMutableHashIterator<QString, QVariant> i(m_settings);
+  while (i.hasNext()) {
+    i.next();
+    m_settings[i.key()] = settings.value(i.key(), i.value());
+  }
+
+  m_client->setNick(m_settings.value("Nick").toString());
+
+  ClientUser user = m_client->user();
+  user->setRawGender(m_settings.value("Gender").toInt());
+  user->setStatus(m_settings.value("Status").toString());
 }
 
 
