@@ -19,10 +19,10 @@ SCHAT_CLIENT_LIB = 1
 QT = core network
 
 HEADERS  = \
-   BotCorePlugin.h \
-   BotCorePlugin_p.h \
+   BotEchoPlugin.h \
+   BotEchoPlugin_p.h \
 
 SOURCES  = \
-   BotCorePlugin.cpp \
+   BotEchoPlugin.cpp \
 
 include(../plugins.pri)

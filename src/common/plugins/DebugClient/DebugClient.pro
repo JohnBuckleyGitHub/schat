@@ -15,14 +15,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-PLUGIN_GROUP = "client"
 TEMPLATE = lib
-CONFIG   += plugin
-QT       += network
-TARGET   = $$qtLibraryTarget(DebugClient)
+QT = core network
 DEFINES  += SCHAT_NO_DLL
-
-win32:RC_FILE = DebugClient.rc
 
 HEADERS  = \
    DebugClientPlugin.h \

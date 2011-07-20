@@ -22,5 +22,5 @@ SUBDIRS  = \
     schatd2 \
     schat2 \
     schat2-bot \
-    common/plugins/DebugClient \
-    common/plugins/BotCore \
+
+include(common/plugins.pri)
