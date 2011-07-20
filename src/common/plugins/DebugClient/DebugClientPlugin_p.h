@@ -23,8 +23,9 @@
 #include <QFile>
 #include <QObject>
 
+class ClientHelper;
+class FileLocations;
 class QTextStream;
-class Settings;
 class SimpleClient;
 
 class DebugClient : public QObject
@@ -32,7 +33,7 @@ class DebugClient : public QObject
   Q_OBJECT
 
 public:
-  DebugClient(SimpleClient *client, Settings *settings);
+  DebugClient(ClientHelper *helper, FileLocations *locations);
 
 private slots:
   void connected();
@@ -44,9 +45,10 @@ private slots:
 private:
   void append(const QString &text);
 
+  ClientHelper *m_helper;
+  FileLocations *m_locations;
   QFile m_file;
   QTextStream *m_stream;
-  Settings *m_settings;
   SimpleClient *m_client;
 };
 
