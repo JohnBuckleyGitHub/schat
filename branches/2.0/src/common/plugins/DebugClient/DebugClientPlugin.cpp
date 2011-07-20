@@ -16,27 +16,27 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QCoreApplication>
 #include <QFile>
 #include <QHostAddress>
 #include <qplugin.h>
 #include <QTextStream>
 
+#include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "DebugClientPlugin.h"
 #include "DebugClientPlugin_p.h"
 #include "FileLocations.h"
-#include "Settings.h"
+#include "FileLocations.h"
 
-DebugClient::DebugClient(SimpleClient *client, Settings *settings)
-  : QObject(client)
+DebugClient::DebugClient(ClientHelper *helper, FileLocations *locations)
+  : QObject(helper)
+  , m_helper(helper)
+  , m_locations(locations)
   , m_stream(0)
-  , m_settings(settings)
-  , m_client(client)
+  , m_client(helper->client())
 {
   bool bom = false;
-  m_file.setFileName(m_settings->locations()->path(FileLocations::VarPath) + QLatin1String("/DebugClient.log"));
+  m_file.setFileName(m_locations->path(FileLocations::VarPath) + QLatin1String("/DebugClient.log"));
   if (!m_file.exists())
     bom = true;
 
@@ -103,10 +103,10 @@ void DebugClient::append(const QString &text)
 }
 
 
-//QObject *DebugClientPlugin::create(SimpleClient *client, Settings *settings)
-//{
-//  d = new DebugClient(client, settings);
-//  return d;
-//}
+QObject *DebugClientPlugin::init(ClientHelper *helper, FileLocations *locations)
+{
+  d = new DebugClient(helper, locations);
+  return d;
+}
 
 Q_EXPORT_PLUGIN2(DebugClient, DebugClientPlugin);

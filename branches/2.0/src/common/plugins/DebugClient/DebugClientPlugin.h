@@ -30,8 +30,7 @@ class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
   Q_INTERFACES(CoreInterface ClientInterface)
 
 public:
-  QObject *init(ClientHelper *helper, FileLocations *locations) { return 0; }
-//  QObject *create(SimpleClient *client, Settings *settings);
+  QObject *init(ClientHelper *helper, FileLocations *locations);
   QString id() const { return "DebugClient"; }
   QString name() const { return "Debug Client"; }
 
