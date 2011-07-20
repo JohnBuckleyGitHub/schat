@@ -69,6 +69,9 @@ QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
   else if (gender == User::Ghost) {
     file += QLatin1String("-ghost");
   }
+  else if (gender == User::Bot) {
+    file += QLatin1String("-bot");
+  }
   else if (color != User::Default) {
     file += QLatin1String("-") + m_colors.at(color);
   }

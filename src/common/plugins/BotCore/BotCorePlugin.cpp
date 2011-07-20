@@ -35,7 +35,7 @@ BotCore::BotCore(ClientHelper *helper, FileLocations *locations)
 {
   m_settings.insert("Url", "schat://chat.impomezia.com");
   m_settings.insert("Nick", "Bot");
-  m_settings.insert("Gender", 0);
+  m_settings.insert("Gender", 152);
   m_settings.insert("Status", "1;");
 
   readSettings();
