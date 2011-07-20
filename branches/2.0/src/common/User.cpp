@@ -117,10 +117,10 @@ int User::color() const
 
 int User::gender() const
 {
-  if (m_gender == Ghost)
-    return Ghost;
+  if (m_gender >= Unknown && m_gender <= Bot)
+    return m_gender;
 
-  if (m_gender == Unknown || m_gender > Ghost)
+  if (m_gender > Bot)
     return Unknown;
 
   if (m_gender < Female)
@@ -153,7 +153,10 @@ void User::setColor(int color)
  */
 void User::setGender(Gender gender)
 {
-  m_gender = gender + color();
+  if (gender >= Unknown)
+    m_gender = gender;
+  else
+    m_gender = gender + color();
 }
 
 

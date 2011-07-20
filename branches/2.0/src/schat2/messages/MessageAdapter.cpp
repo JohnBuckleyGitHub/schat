@@ -240,6 +240,8 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
       user.setGender(User::Ghost);
     else if (gender == "unknown")
       user.setGender(User::Unknown);
+    else if (gender == "bot")
+      user.setGender(User::Bot);
     else
       return CommandArgsError;
   }
