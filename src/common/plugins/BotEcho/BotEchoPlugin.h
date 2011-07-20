@@ -22,15 +22,20 @@
 #include "ClientInterface.h"
 #include "CoreInterface.h"
 
+class BotEcho;
+
 class BotEchoPlugin : public QObject, CoreInterface, ClientInterface
 {
   Q_OBJECT
   Q_INTERFACES(CoreInterface ClientInterface)
 
 public:
-  QObject *init(ClientHelper *helper, FileLocations *locations) { return 0; }
+  QObject *init(ClientHelper *helper, FileLocations *locations);
   QString id() const { return "BotEcho"; }
   QString name() const { return "Bot Echo"; }
+
+private:
+  BotEcho *m_echo;
 };
 
 #endif /* BOTECHOPLUGIN_H_ */
