@@ -15,14 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CLIENT_LIB = 1
-QT = core network
-
-HEADERS  = \
-   BotCorePlugin.h \
-   BotCorePlugin_p.h \
-
-SOURCES  = \
-   BotCorePlugin.cpp \
-
-include(../plugins.pri)
+SUBDIRS += \
+    common/plugins/BotCore \
+    common/plugins/BotEcho \
+    common/plugins/DebugClient \

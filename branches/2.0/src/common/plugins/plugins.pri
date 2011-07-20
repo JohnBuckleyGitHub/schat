@@ -37,3 +37,16 @@ CONFIG(debug, debug|release) {
   DESTDIR = ../../../../out/plugins
 }
 
+contains( SCHAT_CLIENT_LIB, 1 ) {
+  CONFIG(debug, debug|release) { 
+    LIBS += -L../../../../out/debug -lschat2-clientd 
+  } else { 
+    LIBS += -L../../../../out -lschat2-client  
+  }
+}
+
+TEMPLATE = lib
+CONFIG   += plugin
+win32:RC_FILE = $${TARGET}.rc
+TARGET   = $$qtLibraryTarget($${TARGET})
+
