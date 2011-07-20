@@ -15,8 +15,65 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <qplugin.h>
 
 #include "BotEchoPlugin.h"
+#include "BotEchoPlugin_p.h"
+#include "client/ClientHelper.h"
+#include "client/SimpleClient.h"
+#include "FileLocations.h"
+#include "net/packets/message.h"
+
+BotEcho::BotEcho(ClientHelper *helper, FileLocations *locations)
+  : QObject(helper)
+  , m_helper(helper)
+  , m_locations(locations)
+  , m_client(helper->client())
+{
+  connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
+  connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
+  connect(m_client, SIGNAL(message(const MessageData &)), SLOT(message(const MessageData &)));
+}
+
+
+void BotEcho::join(const QByteArray &channelId, const QByteArray &userId)
+{
+  if (userId.isEmpty() || userId == m_client->userId())
+    return;
+
+  ClientUser user = m_client->user(userId);
+  if (!user)
+    return;
+
+  MessageData message(m_client->userId(), channelId, QString("Hello <b>%1</b>!").arg(user->nick()));
+  m_client->send(message);
+}
+
+
+void BotEcho::join(const QByteArray &channelId, const QList<QByteArray> &usersId)
+{
+  MessageData message(m_client->userId(), channelId, QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
+  m_client->send(message);
+}
+
+
+void BotEcho::message(const MessageData &data)
+{
+  ClientUser user = m_client->user(data.senderId);
+  if (!user)
+    return;
+
+  MessageData message(m_client->userId(), data.senderId, data.text);
+  m_client->send(message);
+}
+
+
+QObject *BotEchoPlugin::init(ClientHelper *helper, FileLocations *locations)
+{
+  m_echo = new BotEcho(helper, locations);
+  return m_echo;
+}
+
 
 Q_EXPORT_PLUGIN2(BotEcho, BotEchoPlugin);

@@ -19,5 +19,29 @@
 #ifndef BOTECHOPLUGIN_P_H_
 #define BOTECHOPLUGIN_P_H_
 
+#include <QObject>
+
+class ClientHelper;
+class FileLocations;
+class MessageData;
+class SimpleClient;
+
+class BotEcho : public QObject
+{
+  Q_OBJECT
+
+public:
+  BotEcho(ClientHelper *helper, FileLocations *locations);
+
+private slots:
+  void join(const QByteArray &channelId, const QByteArray &userId);
+  void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
+  void message(const MessageData &data);
+
+private:
+  ClientHelper *m_helper;
+  FileLocations *m_locations;
+  SimpleClient *m_client;
+};
 
 #endif /* BOTECHOPLUGIN_P_H_ */
