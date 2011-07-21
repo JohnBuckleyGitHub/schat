@@ -312,6 +312,7 @@ bool SimpleClient::addChannel(Channel *channel)
     }
   }
 
+  qDebug() << "###" << channel->userCount();
   m_channels.insert(id, channel);
   channel->addUser(userId());
   user()->addId(SimpleID::ChannelListId, id);
@@ -548,7 +549,7 @@ bool SimpleClient::readChannel()
 {
   ChannelReader reader(m_reader);
 
-  SCHAT_DEBUG_STREAM(this << "readJoinReply()" << reader.channel->id().toHex())
+  SCHAT_DEBUG_STREAM(this << "readChannel()" << reader.channel->id().toHex())
 
   if (!reader.channel->isValid())
     return false;

@@ -48,6 +48,7 @@ public:
   bool setName(const QString &name);
   bool setTopic(const QString &topic);
   bool setUsers(const QList<QByteArray> &users);
+  inline bool isSynced() const { return m_synced; }
   inline bool isValid() const { return m_valid; }
   inline int userCount() const { return m_users.size(); }
   inline QByteArray id() const { return m_id; }
@@ -56,10 +57,12 @@ public:
   inline QString name() const { return m_name; }
   inline QString topic() const { return m_topic; }
   inline void clear() { m_users.clear(); }
+  inline void setSynced(bool synced) { m_synced = synced; }
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
+  bool m_synced;             ///< true если канал синхронизирован.
   bool m_valid;              ///< true все данные корректны.
   ChannelType m_type;        ///< Тип канала.
   QByteArray m_id;           ///< Идентификатор канала.
