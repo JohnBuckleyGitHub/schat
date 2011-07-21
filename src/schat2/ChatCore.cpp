@@ -49,7 +49,7 @@ ChatCore::ChatCore(QObject *parent)
 
   loadTranslation();
 
-  m_client = new SimpleClient(new User("IMPOMEZIA"), 0, this);
+  m_client = new SimpleClient(this);
   m_settings->setClient(m_client);
 
   m_messageAdapter = new MessageAdapter();

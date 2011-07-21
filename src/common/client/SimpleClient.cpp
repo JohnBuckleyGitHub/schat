@@ -33,16 +33,29 @@
 #include "net/Protocol.h"
 #include "User.h"
 
-SimpleClient::SimpleClient(User *user, quint64 id, QObject *parent)
-  : SimpleSocket(id, parent)
+SimpleClient::SimpleClient(QObject *parent)
+  : SimpleSocket(*new SimpleSocketPrivate(), parent)
   , m_sendLock(false)
-  , m_user(user)
+  , m_user(new User())
   , m_clientState(ClientOffline)
   , m_reconnects(0)
   , m_syncChannelCache(0)
 {
-  setNick(user->nick());
-  user->setUserAgent(SimpleID::userAgent());
+  m_user->setUserAgent(SimpleID::userAgent());
+
+  m_reconnectTimer = new QBasicTimer;
+  m_uniqueId = SimpleID::uniqueId();
+  m_serverData = new ServerData();
+
+  connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
+  connect(this, SIGNAL(released(quint64)), SLOT(released()));
+}
+
+
+SimpleClient::SimpleClient(SimpleClientPrivate &dd, QObject *parent)
+  : SimpleSocket(dd, parent)
+{
+  m_user->setUserAgent(SimpleID::userAgent());
 
   m_reconnectTimer = new QBasicTimer;
   m_uniqueId = SimpleID::uniqueId();
@@ -99,10 +112,11 @@ bool SimpleClient::openUrl(const QUrl &url)
  */
 bool SimpleClient::send(const MessageData &data)
 {
+  Q_D(SimpleClient);
   QList<QByteArray> packets;
   QByteArray dest = data.destId;
 
-  packets.append(MessageWriter(m_sendStream, data).data());
+  packets.append(MessageWriter(d->sendStream, data).data());
   return send(packets);
 }
 
@@ -192,11 +206,12 @@ void SimpleClient::part(const QByteArray &channelId)
  */
 void SimpleClient::newPacketsImpl()
 {
-  SCHAT_DEBUG_STREAM(this << "newPacketsImpl()" << m_readQueue.size())
+  Q_D(SimpleClient);
+  SCHAT_DEBUG_STREAM(this << "newPacketsImpl()" << d->readQueue.size())
 
-  while (!m_readQueue.isEmpty()) {
-    m_readBuffer = m_readQueue.takeFirst();
-    PacketReader reader(m_readStream);
+  while (!d->readQueue.isEmpty()) {
+    d->readBuffer = d->readQueue.takeFirst();
+    PacketReader reader(d->readStream);
     m_reader = &reader;
 
     switch (reader.type()) {
@@ -279,9 +294,10 @@ void SimpleClient::requestAuth()
 {
   SCHAT_DEBUG_STREAM(this << "requestAuth()")
 
+  Q_D(SimpleClient);
   AuthRequestData data(AuthRequestData::Anonymous, m_url.host(), m_user.data());
   data.uniqueId = m_uniqueId;
-  send(AuthRequestWriter(m_sendStream, data).data());
+  send(AuthRequestWriter(d->sendStream, data).data());
 }
 
 
@@ -353,12 +369,13 @@ void SimpleClient::clearClient()
  */
 void SimpleClient::restore()
 {
+  Q_D(SimpleClient);
   QList<QByteArray> packets;
 
   /// Происходит восстановление приватных разговоров.
   if (user()->count(SimpleID::TalksListId)) {
     MessageData data(userId(), SimpleID::setType(SimpleID::TalksListId, userId()), "add", "");
-    MessageWriter writer(m_sendStream, data);
+    MessageWriter writer(d->sendStream, data);
     writer.putId(user()->ids(SimpleID::TalksListId));
     packets.append(writer.data());
   }
@@ -373,7 +390,7 @@ void SimpleClient::restore()
       i.next();
       data.destId = i.key();
       data.text = i.value()->name();
-      packets.append(MessageWriter(m_sendStream, data).data());
+      packets.append(MessageWriter(d->sendStream, data).data());
     }
   }
 
@@ -421,6 +438,7 @@ void SimpleClient::setClientState(ClientState state)
  */
 void SimpleClient::setServerData(const ServerData &data)
 {
+  Q_D(SimpleClient);
   bool sameServer = false;
 
   if (!m_serverData->id().isEmpty() && m_serverData->id() == data.id())
@@ -438,7 +456,7 @@ void SimpleClient::setServerData(const ServerData &data)
 
     if (m_serverData->features() & ServerData::AutoJoinSupport && !m_serverData->channelId().isEmpty()) {
       MessageData data(userId(), m_serverData->channelId(), "join", "");
-      send(MessageWriter(m_sendStream, data).data());
+      send(MessageWriter(d->sendStream, data).data());
     }
   }
   else

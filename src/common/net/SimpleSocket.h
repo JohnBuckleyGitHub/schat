@@ -29,13 +29,15 @@
 #include <QTime>
 
 #include "net/Protocol.h"
+#include "schat.h"
 
 class QBasicTimer;
+class SimpleSocketPrivate;
 
 /*!
  * Наследник QTcpSocket выполняющий все операции на транспортном уровне протокола чата.
  */
-class SimpleSocket : public QSslSocket
+class SCHAT_EXPORT SimpleSocket : public QSslSocket
 {
   Q_OBJECT
 
@@ -49,21 +51,22 @@ public:
     Leaving           ///< Состояние завершения соединения.
   };
 
-  SimpleSocket(quint64 id, QObject *parent = 0);
+  explicit SimpleSocket(QObject *parent = 0);
   ~SimpleSocket();
+  bool isAuthorized() const;
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
   bool setSocketDescriptor(int socketDescriptor);
-  inline bool isAuthorized() const { return m_authorized; }
   inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
-  inline QByteArray userId() const { return m_userId; }
-  inline QDataStream *sendStream() { return m_sendStream; }
-  inline qint64 timestamp() const { return m_timestamp; }
-  inline quint64 rx() const { return m_rx; }
-  inline quint64 tx() const { return m_tx; }
-  inline void setTimestamp(qint64 timestamp) { m_timestamp = timestamp; }
+  QByteArray userId() const;
+  QDataStream *sendStream();
+  qint64 timestamp() const;
+  quint64 rx() const;
+  quint64 tx() const;
   void leave();
   void setAuthorized(const QByteArray &userId);
+  void setId(quint64 id);
+  void setTimestamp(qint64 timestamp);
 
 signals:
   void allDelivered(quint64 id);
@@ -72,6 +75,8 @@ signals:
   void requestAuth(quint64 id);
 
 protected:
+  SimpleSocket(SimpleSocketPrivate &dd, QObject *parent);
+  SimpleSocketPrivate *const d_ptr;
   virtual void newPacketsImpl();
   void timerEvent(QTimerEvent *event);
 
@@ -89,39 +94,8 @@ private slots:
   void sslErrors(const QList<QSslError> &errors);
   #endif
 
-protected:
-  QByteArray m_readBuffer;               ///< Буфер чтения виртуальных пакетов.
-  QDataStream *m_readStream;             ///< Поток чтения виртуальных пакетов.
-  QDataStream *m_sendStream;             ///< Поток отправки виртуальных пакетов.
-  QList<QByteArray> m_readQueue;         ///< Список прочитанных виртуальных пакетов.
-
 private:
-  bool readTransport();
-  bool transmit(const QByteArray &packet, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
-  bool transmit(const QList<QByteArray> &packets, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
-  void release();
-  void setTimerState(TimerState state);
-  void sslHandshake(int option);
-
-  bool m_authorized;                     ///< true после авторизации.
-  bool m_release;                        ///< true если сокет находится в состоянии закрытия.
-  bool m_serverSide;                     ///< true если сокет работает на стороне сервера, иначе на строне клиента.
-  bool m_sslAvailable;                   ///< true если доступна поддержка SSL.
-  const quint64 m_id;                    ///< Идентификационный номер сокета.
-  QBasicTimer *m_timer;                  ///< Таймер обслуживающий соединение.
-  QByteArray m_sendBuffer;               ///< Буфер отправки виртуальных пакетов.
-  QByteArray m_txBuffer;                 ///< Буфер отправки транспортных пакетов.
-  QByteArray m_userId;                   ///< Идентификатор клиента.
-  QDataStream *m_rxStream;               ///< Поток чтения транспортных пакетов.
-  QDataStream *m_txStream;               ///< Поток отправки транспортных пакетов.
-  qint64 m_timestamp;                    ///< Отметка времени.
-  QList<quint64> m_deliveryConfirm;      ///< Список sequence пакетов, используется сервером для формирования отчёта о доставке или клиентом для проверки доставки.
-  quint32 m_nextBlockSize;               ///< Размер следующего блока данных.
-  quint64 m_rx;                          ///< Счётчик полученных (receive) байт.
-  quint64 m_rxSeq;                       ///< sequence полученных пакетов.
-  quint64 m_tx;                          ///< Счётчик отправленных (transmit) байт.
-  quint64 m_txSeq;                       ///< sequence отправленных пакетов.
-  TimerState m_timerState;               ///< Состояние таймера.
+  Q_DECLARE_PRIVATE(SimpleSocket);
 };
 
 #endif /* SIMPLESOCKET_H_ */

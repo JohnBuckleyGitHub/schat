@@ -132,7 +132,8 @@ void Worker::newConnection(int socketDescriptor)
 {
   SCHAT_DEBUG_STREAM(this << "newConnection()" << "id:" << m_nextSocketId)
 
-  SimpleSocket *socket = new SimpleSocket(m_nextSocketId, m_server);
+  SimpleSocket *socket = new SimpleSocket(m_server);
+  socket->setId(m_nextSocketId);
   if (socket->setSocketDescriptor(socketDescriptor)) {
     connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(newPackets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
