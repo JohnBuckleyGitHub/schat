@@ -32,6 +32,7 @@ HEADERS += \
     net/ServerData.h \
     net/SimpleID.h \
     net/SimpleSocket.h \
+    net/SimpleSocket_p.h \
     net/TransportReader.h \
     net/TransportWriter.h \
     schat.h \

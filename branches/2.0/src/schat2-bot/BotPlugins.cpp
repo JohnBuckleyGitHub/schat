@@ -26,7 +26,7 @@
 BotPlugins::BotPlugins(QObject *parent)
   : Plugins(parent)
 {
-  m_client = new SimpleClient(new User("Bot"), 0, this);
+  m_client = new SimpleClient(this);
   m_helper = new ClientHelper(m_client);
   m_locations = new FileLocations(this);
 

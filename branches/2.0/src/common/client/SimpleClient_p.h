@@ -21,6 +21,18 @@
 
 #include <QHash>
 
+#include "client/SimpleClient.h"
+#include "net/SimpleSocket_p.h"
+
+
+class SimpleClientPrivate : public SimpleSocketPrivate
+{
+  Q_DECLARE_PUBLIC(SimpleClient);
+
+public:
+  SimpleClientPrivate() {}
+};
+
 /*!
  * Хранит данные синхронизации канала.
  */

@@ -32,6 +32,7 @@ class NoticeData;
 class Packet;
 class PacketReader;
 class ServerData;
+class SimpleClientPrivate;
 class SyncChannelCache;
 class User;
 
@@ -48,7 +49,7 @@ public:
     ClientError        ///< Критическая ошибка.
   };
 
-  SimpleClient(User *user, quint64 id, QObject *parent = 0);
+  explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
 
   bool openUrl(const QUrl &url);
@@ -57,9 +58,9 @@ public:
   bool send(const QList<QByteArray> &packets);
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
   inline Channel* channel(const QByteArray &id) const { return m_channels.value(id); }
+  inline ClientState clientState() const { return m_clientState; }
   inline ClientUser user() const { return m_user; }
   inline ClientUser user(const QByteArray &id) const { return m_users.value(id); }
-  inline ClientState clientState() const { return m_clientState; }
   inline QUrl url() const { return m_url; }
   inline ServerData *serverData() { return m_serverData; }
   QByteArray serverId() const;
@@ -81,6 +82,7 @@ signals:
   void userLeave(const QByteArray &userId);
 
 protected:
+  SimpleClient(SimpleClientPrivate &dd, QObject * parent);
   void newPacketsImpl();
   void timerEvent(QTimerEvent *event);
 
@@ -89,6 +91,8 @@ private slots:
   void requestAuth();
 
 private:
+  Q_DECLARE_PRIVATE(SimpleClient);
+
   bool addChannel(Channel *channel);
   inline void lock() { m_sendLock = true; }
   QString mangleNick();
