@@ -80,8 +80,8 @@ public:
       - 01 byte  - subtype, reserved.
       - 01 byte  - reserved.
       - 01 byte  - header option.
-      - 20 bytes - sender (SHA1 hash).
-      - 20 bytes - destination (SHA1 hash).
+      - 21 bytes - sender (SHA1 hash).
+      - 21 bytes - destination (SHA1 hash).
       - ...      - packet data.
     */
   enum VirtualPackets {

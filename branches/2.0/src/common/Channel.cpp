@@ -21,14 +21,16 @@
 #include "net/SimpleID.h"
 
 Channel::Channel()
-  : m_valid(true)
+  : m_synced(false)
+  , m_valid(true)
   , m_type(GenericChannel)
 {
 }
 
 
 Channel::Channel(const QByteArray &id, const QString &name)
-  : m_valid(true)
+  : m_synced(false)
+  , m_valid(true)
   , m_type(GenericChannel)
 {
   setId(id);
