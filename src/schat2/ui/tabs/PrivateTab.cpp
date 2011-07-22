@@ -38,11 +38,14 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   setText(m_user->nick());
 }
 
-// FIXME Исправить обновление.
+
 bool PrivateTab::update(ClientUser user)
 {
   if (!user)
     return false;
+
+  if (m_user != user)
+    m_user = user;
 
   m_action->setText(m_user->nick());
   m_icon = userIcon();
