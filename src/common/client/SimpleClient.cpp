@@ -125,19 +125,20 @@ void SimpleClientPrivate::clearClient()
  */
 void SimpleClientPrivate::restore()
 {
-  QList<QByteArray> packets;
+  Q_Q(SimpleClient);
+  q->lock();
 
   /// Происходит восстановление приватных разговоров.
   if (user->count(SimpleID::TalksListId)) {
-    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), "add", "");
+    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), QLatin1String("add"), QLatin1String(""));
     MessageWriter writer(sendStream, data);
     writer.putId(user->ids(SimpleID::TalksListId));
-    packets.append(writer.data());
+    q->send(writer.data());
   }
 
   /// Клиент заново входит в ранее открытие каналы.
   if (!channels.isEmpty()) {
-    MessageData data(userId, QByteArray(), "join", "");
+    MessageData data(userId, QByteArray(), QLatin1String("join"), QLatin1String(""));
     data.options |= MessageData::TextOption;
 
     QHashIterator<QByteArray, Channel*> i(channels);
@@ -145,15 +146,12 @@ void SimpleClientPrivate::restore()
       i.next();
       data.destId = i.key();
       data.text = i.value()->name();
-      packets.append(MessageWriter(sendStream, data).data());
+      q->send(MessageWriter(sendStream, data).data());
     }
   }
 
   clearClient();
-
-  Q_Q(SimpleClient);
-  if (!packets.isEmpty())
-    q->send(packets);
+  q->unlock();
 }
 
 
