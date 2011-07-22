@@ -33,20 +33,495 @@
 #include "net/Protocol.h"
 #include "User.h"
 
-SimpleClient::SimpleClient(QObject *parent)
-  : SimpleSocket(*new SimpleSocketPrivate(), parent)
-  , m_sendLock(false)
-  , m_user(new User())
-  , m_clientState(ClientOffline)
-  , m_reconnects(0)
-  , m_syncChannelCache(0)
+
+SimpleClientPrivate::SimpleClientPrivate()
+  : sendLock(false)
+  , user(new User())
+  , reconnects(0)
+  , reconnectTimer(new QBasicTimer())
+  , uniqueId(SimpleID::uniqueId())
+  , serverData(new ServerData())
+  , clientState(SimpleClient::ClientOffline)
+  , syncChannelCache(0)
 {
-  m_user->setUserAgent(SimpleID::userAgent());
+  qDebug() << "SimpleClientPrivate()";
+  user->setUserAgent(SimpleID::userAgent());
+}
 
-  m_reconnectTimer = new QBasicTimer;
-  m_uniqueId = SimpleID::uniqueId();
-  m_serverData = new ServerData();
 
+SimpleClientPrivate::~SimpleClientPrivate()
+{
+  if (reconnectTimer->isActive())
+    reconnectTimer->stop();
+
+  delete reconnectTimer;
+  delete serverData;
+}
+
+
+QString SimpleClientPrivate::mangleNick()
+{
+  int rand = qrand() % 89 + 10;
+  if (nick.isEmpty())
+    nick = user->nick();
+
+  return nick.left(User::MaxNickLength - 2) + QString::number(rand);
+}
+
+
+/*!
+ * Чтение пакета AuthReplyPacket.
+ */
+bool SimpleClientPrivate::readAuthReply()
+{
+  AuthReplyData data = AuthReplyReader(reader).data;
+
+  SCHAT_DEBUG_STREAM(this << "AuthReply" << data.status << data.error << data.userId.toHex())
+
+  Q_Q(SimpleClient);
+
+  if (data.status == AuthReplyData::AccessGranted) {
+    q->setAuthorized(data.userId);
+    user->setId(data.userId);
+    user->setHost(data.host);
+
+    setServerData(data.serverData);
+
+    if (user->status() == User::OfflineStatus)
+      user->setStatus(User::OnlineStatus);
+
+    emit(q->userDataChanged(user->id()));
+    return true;
+  }
+  else if (data.status == AuthReplyData::AccessDenied) {
+    if (data.error == AuthReplyData::NickAlreadyUse) {
+      user->setNick(mangleNick());
+      q->requestAuth();
+    }
+  }
+
+  return false;
+}
+
+
+/*!
+ * Очистка данных состояния клиента.
+ */
+void SimpleClientPrivate::clearClient()
+{
+  user->remove(SimpleID::ChannelListId);
+  user->remove(SimpleID::TalksListId);
+
+  users.clear();
+  users.insert(user->id(), user);
+
+  qDeleteAll(channels);
+  channels.clear();
+}
+
+
+/*!
+ * Восстановление состояния клиента после повторного подключения к предыдущему серверу.
+ */
+void SimpleClientPrivate::restore()
+{
+  QList<QByteArray> packets;
+
+  /// Происходит восстановление приватных разговоров.
+  if (user->count(SimpleID::TalksListId)) {
+    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), "add", "");
+    MessageWriter writer(sendStream, data);
+    writer.putId(user->ids(SimpleID::TalksListId));
+    packets.append(writer.data());
+  }
+
+  /// Клиент заново входит в ранее открытие каналы.
+  if (!channels.isEmpty()) {
+    MessageData data(userId, QByteArray(), "join", "");
+    data.options |= MessageData::TextOption;
+
+    QHashIterator<QByteArray, Channel*> i(channels);
+    while (i.hasNext()) {
+      i.next();
+      data.destId = i.key();
+      data.text = i.value()->name();
+      packets.append(MessageWriter(sendStream, data).data());
+    }
+  }
+
+  clearClient();
+
+  Q_Q(SimpleClient);
+  if (!packets.isEmpty())
+    q->send(packets);
+}
+
+
+/*!
+ * Установка состояния клиента.
+ */
+void SimpleClientPrivate::setClientState(SimpleClient::ClientState state)
+{
+  if (clientState == state)
+    return;
+
+  clientState = state;
+
+  if (state == SimpleClient::ClientOnline || state == SimpleClient::ClientOffline)
+    reconnects = 0;
+
+  if (state == SimpleClient::ClientOnline) { /// FIXME Проверить правильность этого кода.
+    users.insert(user->id(), user);
+  }
+  else {
+    foreach (Channel *chan, channels) {
+      chan->clear();
+    }
+  }
+
+  Q_Q(SimpleClient);
+  emit(q->clientStateChanged(state));
+}
+
+
+/*!
+ * Установка идентификатора сервера, при успешной авторизации.
+ *
+ * В случае повторного подключения к предыдущему серверу происходит,
+ * вход в раннее открытые каналы.
+ * В случае если подключение происходит к новому серверу, таблица каналов очищается.
+ *
+ * \param data Данные сервера.
+ */
+void SimpleClientPrivate::setServerData(const ServerData &data)
+{
+  bool sameServer = false;
+
+  if (!serverData->id().isEmpty() && serverData->id() == data.id())
+    sameServer = true;
+
+  serverData->setId(data.id());
+  serverData->setName(data.name());
+  serverData->setChannelId(data.channelId());
+  serverData->setFeatures(data.features());
+
+  setClientState(SimpleClient::ClientOnline);
+
+  Q_Q(SimpleClient);
+
+  if (!sameServer) {
+    clearClient();
+
+    if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
+      MessageData data(user->id(), serverData->channelId(), "join", "");
+      q->send(MessageWriter(sendStream, data).data());
+    }
+  }
+  else
+    restore();
+}
+
+
+/*!
+ * Добавление нового канала.
+ * В случае если идентификатор канала уже используется, возможны 2 сценария:
+ * - Если существующий канал содержит пользователей, добавления не произойдёт,
+ * объект \p channel будет удалён и функция возвратит false.
+ * - Существующий канал не содержит пользователей, что означает его не валидность,
+ * объект канала будет удалён и его место в таблице каналов займёт \p channel.
+ *
+ * \return true в случае успешного добавления канала.
+ * \todo ! Высылать сигнал о новых пользователях канала если информация о них уже имеется у клиента.
+ */
+bool SimpleClientPrivate::addChannel(Channel *channel)
+{
+  QByteArray id = channel->id();
+  Channel *ch = channels.value(id);
+
+  if (ch) {
+    if (ch->userCount()) {
+      delete channel;
+      return false;
+    }
+    else {
+      channels.remove(id);
+      delete ch;
+    }
+  }
+
+  channels.insert(id, channel);
+  channel->addUser(user->id());
+  user->addId(SimpleID::ChannelListId, id);
+
+  Q_Q(SimpleClient);
+  emit(q->join(id, QByteArray()));
+
+  return true;
+}
+
+
+/*!
+ * Обработка подключения к каналу, в случае успеха канал добавляется в таблицу каналов.
+ */
+bool SimpleClientPrivate::readChannel()
+{
+  ChannelReader reader(this->reader);
+
+  SCHAT_DEBUG_STREAM(this << "readChannel()" << reader.channel->id().toHex())
+
+  if (!reader.channel->isValid())
+    return false;
+
+  addChannel(reader.channel);
+  return true;
+}
+
+
+/*!
+ * Обработка команд.
+ *
+ * \return true в случае если команда была обработана, иначе false.
+ */
+bool SimpleClientPrivate::command()
+{
+  Q_Q(SimpleClient);
+  QString command = messageData->command;
+  SCHAT_DEBUG_STREAM(this << "command()" << command)
+
+  if (command == "part") {
+    removeUserFromChannel(reader->dest(), reader->sender());
+    return true;
+  }
+
+  if (command == "BSCh") {
+    syncChannelCache = new SyncChannelCache();
+    syncChannelCache->id = reader->dest();
+    return true;
+  }
+
+  if (command == "ESCh") {
+    syncChannelCache->users.append(QByteArray());
+
+    if (!syncChannelCache->users.isEmpty()) {
+      emit(q->join(syncChannelCache->id, syncChannelCache->users));
+      syncChannelCache->users.clear();
+    }
+
+    delete syncChannelCache;
+    syncChannelCache = 0;
+    return true;
+  }
+
+  if (command == "leave") {
+    removeUser(reader->sender());
+    return true;
+  }
+
+  if (command == "status") {
+    updateUserStatus(messageData->text);
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Чтение сообщения и обработка поддерживаемых команд.
+ * В случае если сообщении не содержало команд или команда
+ * не была обработана, высылается сигнал о новом сообщении.
+ */
+bool SimpleClientPrivate::readMessage()
+{
+  SCHAT_DEBUG_STREAM(this << "readMessage()")
+
+  MessageReader reader(this->reader);
+  messageData = &reader.data;
+  messageData->timestamp = timestamp;
+
+  if (messageData->options & MessageData::ControlOption && command()) {
+    return true;
+  }
+
+  SCHAT_DEBUG_STREAM("      " << reader.data.text)
+
+  Q_Q(SimpleClient);
+  emit(q->message(reader.data));
+
+  return true;
+}
+
+
+bool SimpleClientPrivate::readNotice()
+{
+  SCHAT_DEBUG_STREAM(this << "readNotice()")
+
+  Q_Q(SimpleClient);
+  NoticeReader reader(this->reader);
+  reader.data.timestamp = timestamp;
+  emit(q->notice(reader.data));
+
+  return true;
+}
+
+
+/*!
+ * Чтение пакета Packet::UserData.
+ *
+ * В случае если адрес назначения канал, то требуется чтобы текущий пользователь был подключен к нему заранее,
+ * также будет произведена попытка добавления пользователя в него и в случае успеха будет выслан сигнал.
+ * Идентификатор нового пользователя не может быть пустым и в случае если новый пользователь отсутствует
+ * в таблице пользователей, то будет произведена попытка его добавить.
+ */
+bool SimpleClientPrivate::readUserData()
+{
+  SCHAT_DEBUG_STREAM(this << "readUserData()")
+
+  QByteArray dest = reader->dest();
+  int type = SimpleID::typeOf(dest);
+
+  /// Если идентификатор назначения канал, то это канал должен быть известен клиенту.
+  if (type == SimpleID::ChannelId && !channels.contains(dest))
+    return false;
+
+  /// Идентификатор отправителя не может быть пустым.
+  QByteArray id = reader->sender();
+  if (id.isEmpty())
+    return false;
+
+  UserReader reader(this->reader);
+  if (!reader.user.isValid())
+    return false;
+
+  /// Если пользователь не существует, то он будет создан, иначе произойдёт обновление данных,
+  /// В обоих случаях будет выслан сигнал userDataChanged().
+  Q_Q(SimpleClient);
+  ClientUser user = users.value(id);
+  if (!user) {
+    user = ClientUser(new User(&reader.user));
+    users.insert(id, user);
+
+    emit(q->userDataChanged(id));
+  }
+  else {
+    updateUserData(user, &reader.user);
+  }
+
+  /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
+  if (type == SimpleID::ChannelId) {
+    Channel *chan = channels.value(dest);
+    if (!chan)
+      return false;
+
+    user->addId(SimpleID::ChannelListId, dest);
+    chan->addUser(id);
+
+    if (syncChannelCache)
+      syncChannelCache->users.append(id);
+    else
+      emit(q->join(dest, id));
+  }
+  else if (type == SimpleID::UserId) {
+    this->user->addId(SimpleID::TalksListId, id);
+  }
+
+  return true;
+}
+
+
+/*!
+ * Удаление пользователя.
+ */
+bool SimpleClientPrivate::removeUser(const QByteArray &userId)
+{
+  ClientUser user = users.value(userId);
+  if (!user)
+    return false;
+
+  QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
+  for (int i = 0; i < channels.size(); ++i) {
+    removeUserFromChannel(channels.at(i), userId, false);
+  }
+
+  Q_Q(SimpleClient);
+  users.remove(userId);
+  emit(q->userLeave(userId));
+
+  return true;
+}
+
+
+/*!
+ * Удаление пользователя из канала.
+ */
+bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
+{
+  Q_Q(SimpleClient);
+  ClientUser user = users.value(userId);
+  Channel *channel = channels.value(channelId);
+
+  if (!user.isNull() && channel) {
+    channel->removeUser(user->id());
+    user->removeId(SimpleID::ChannelListId, channel->id());
+    emit(q->part(channel->id(), user->id()));
+
+    if (clear && !this->user->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
+      removeUser(userId);
+
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Обновление информации о пользователе.
+ */
+void SimpleClientPrivate::updateUserData(ClientUser existUser, User *user)
+{
+  SCHAT_DEBUG_STREAM(this << "updateUserData()");
+
+  Q_Q(SimpleClient);
+  if (existUser == this->user && this->user->nick() != user->nick()) {
+    q->setNick(user->nick());
+  }
+
+  existUser->setNick(user->nick());
+  existUser->setRawGender(user->rawGender());
+  existUser->setStatus(user->status());
+
+  emit(q->userDataChanged(existUser->id()));
+}
+
+
+/*!
+ * Обновление статуса пользователя.
+ */
+void SimpleClientPrivate::updateUserStatus(const QString &text)
+{
+  Q_Q(SimpleClient);
+
+  ClientUser user = q->user(reader->sender());
+  if (!user)
+    return;
+
+  if (!user->setStatus(text))
+    return;
+
+  if (user->status() == User::OfflineStatus) {
+    if (reader->headerOption() & Protocol::Broadcast) {
+      user->setStatus(User::OnlineStatus);
+    }
+  }
+
+  emit(q->userDataChanged(user->id()));
+}
+
+
+SimpleClient::SimpleClient(QObject *parent)
+  : SimpleSocket(*new SimpleClientPrivate(), parent)
+{
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
 }
@@ -55,12 +530,6 @@ SimpleClient::SimpleClient(QObject *parent)
 SimpleClient::SimpleClient(SimpleClientPrivate &dd, QObject *parent)
   : SimpleSocket(dd, parent)
 {
-  m_user->setUserAgent(SimpleID::userAgent());
-
-  m_reconnectTimer = new QBasicTimer;
-  m_uniqueId = SimpleID::uniqueId();
-  m_serverData = new ServerData();
-
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
 }
@@ -68,11 +537,6 @@ SimpleClient::SimpleClient(SimpleClientPrivate &dd, QObject *parent)
 
 SimpleClient::~SimpleClient()
 {
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
-
-  delete m_reconnectTimer;
-  delete m_serverData;
 }
 
 
@@ -83,25 +547,26 @@ bool SimpleClient::openUrl(const QUrl &url)
 {
   SCHAT_DEBUG_STREAM(this << "openUrl()" << url.toString())
 
-  m_url = url;
+  Q_D(SimpleClient);
+  d->url = url;
 
-  if (!m_url.isValid())
+  if (!d->url.isValid())
     return false;
 
-  if (m_url.scheme() != "schat")
+  if (d->url.scheme() != "schat")
     return false;
 
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
+  if (d->reconnectTimer->isActive())
+    d->reconnectTimer->stop();
 
   if (state() != QAbstractSocket::UnconnectedState) {
     leave();
   }
 
-  if (!m_nick.isEmpty())
-    m_user->setNick(m_nick);
+  if (!d->nick.isEmpty())
+    d->user->setNick(d->nick);
 
-  setClientState(ClientConnecting);
+  d->setClientState(ClientConnecting);
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
   return true;
 }
@@ -117,14 +582,15 @@ bool SimpleClient::send(const MessageData &data)
   QByteArray dest = data.destId;
 
   packets.append(MessageWriter(d->sendStream, data).data());
-  return send(packets);
+  return SimpleSocket::send(packets); // FIXME исправить
 }
 
 
 bool SimpleClient::send(const QByteArray &packet)
 {
-  if (m_sendLock) {
-    m_sendQueue.append(packet);
+  Q_D(SimpleClient);
+  if (d->sendLock) {
+    d->sendQueue.append(packet);
     return true;
   }
 
@@ -135,8 +601,9 @@ bool SimpleClient::send(const QByteArray &packet)
 
 bool SimpleClient::send(const QList<QByteArray> &packets)
 {
-  if (m_sendLock) {
-    m_sendQueue.append(packets);
+  Q_D(SimpleClient);
+  if (d->sendLock) {
+    d->sendQueue.append(packets);
     return true;
   }
 
@@ -144,9 +611,38 @@ bool SimpleClient::send(const QList<QByteArray> &packets)
 }
 
 
+Channel* SimpleClient::channel(const QByteArray &id) const
+{
+  Q_D(const SimpleClient);
+  return d->channels.value(id);
+}
+
+
+SimpleClient::ClientState SimpleClient::clientState() const
+{
+  Q_D(const SimpleClient);
+  return d->clientState;
+}
+
+
+ClientUser SimpleClient::user() const
+{
+  Q_D(const SimpleClient);
+  return d->user;
+}
+
+
+ClientUser SimpleClient::user(const QByteArray &id) const
+{
+  Q_D(const SimpleClient);
+  return d->users.value(id);
+}
+
+
 QByteArray SimpleClient::serverId() const
 {
-  return m_serverData->id();
+  Q_D(const SimpleClient);
+  return d->serverData->id();
 }
 
 
@@ -156,17 +652,52 @@ QByteArray SimpleClient::serverId() const
  */
 QString SimpleClient::nick() const
 {
-  if (m_nick.isEmpty())
-    return m_user->nick();
+  Q_D(const SimpleClient);
+  if (d->nick.isEmpty())
+    return d->user->nick();
 
-  return m_nick;
+  return d->nick;
+}
+
+
+QUrl SimpleClient::url() const
+{
+  Q_D(const SimpleClient);
+  return d->url;
+}
+
+
+ServerData *SimpleClient::serverData()
+{
+  Q_D(const SimpleClient);
+  return d->serverData;
+}
+
+
+void SimpleClient::lock()
+{
+  Q_D(SimpleClient);
+  d->sendLock = true;
 }
 
 
 void SimpleClient::setNick(const QString &nick)
 {
-  m_user->setNick(nick);
-  m_nick = "";
+  Q_D(SimpleClient);
+  d->user->setNick(nick);
+  d->nick = "";
+}
+
+
+void SimpleClient::unlock()
+{
+  Q_D(SimpleClient);
+  if (!d->sendQueue.isEmpty()) {
+    SimpleSocket::send(d->sendQueue);
+    d->sendQueue.clear();
+  }
+
+  d->sendLock = false;
 }
 
 
@@ -174,10 +705,12 @@ void SimpleClient::leave()
 {
   SCHAT_DEBUG_STREAM(this << "leave()")
 
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
+  Q_D(SimpleClient);
 
-  setClientState(ClientOffline);
+  if (d->reconnectTimer->isActive())
+    d->reconnectTimer->stop();
+
+  d->setClientState(ClientOffline);
   SimpleSocket::leave();
   setAuthorized(QByteArray());
 }
@@ -190,10 +723,12 @@ void SimpleClient::part(const QByteArray &channelId)
 {
   SCHAT_DEBUG_STREAM(this << "part()" << channelId.toHex())
 
-  if (!m_channels.contains(channelId))
+  Q_D(SimpleClient);
+
+  if (!d->channels.contains(channelId))
     return;
 
-  m_channels.remove(channelId);
+  d->channels.remove(channelId);
   user()->removeId(SimpleID::ChannelListId, channelId);
 
   MessageData message(userId(), channelId, "part", "");
@@ -212,27 +747,27 @@ void SimpleClient::newPacketsImpl()
   while (!d->readQueue.isEmpty()) {
     d->readBuffer = d->readQueue.takeFirst();
     PacketReader reader(d->readStream);
-    m_reader = &reader;
+    d->reader = &reader;
 
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
-        readAuthReply();
+        d->readAuthReply();
         break;
 
       case Protocol::ChannelPacket:
-        readChannel();
+        d->readChannel();
         break;
 
       case Protocol::MessagePacket:
-        readMessage();
+        d->readMessage();
         break;
 
       case Protocol::UserDataPacket:
-        readUserData();
+        d->readUserData();
         break;
 
       case Protocol::NoticePacket:
-        readNotice();
+        d->readNotice();
         break;
 
       default:
@@ -240,17 +775,18 @@ void SimpleClient::newPacketsImpl()
     }
   }
 
-  if (m_syncChannelCache && !m_syncChannelCache->users.isEmpty()) {
-    emit join(m_syncChannelCache->id, m_syncChannelCache->users);
-    m_syncChannelCache->users.clear();
+  if (d->syncChannelCache && !d->syncChannelCache->users.isEmpty()) {
+    emit join(d->syncChannelCache->id, d->syncChannelCache->users);
+    d->syncChannelCache->users.clear();
   }
 }
 
 
 void SimpleClient::timerEvent(QTimerEvent *event)
 {
-  if (event->timerId() == m_reconnectTimer->timerId()) {
-    openUrl(m_url);
+  Q_D(SimpleClient);
+  if (event->timerId() == d->reconnectTimer->timerId()) {
+    openUrl(d->url);
     return;
   }
 
@@ -265,28 +801,29 @@ void SimpleClient::released()
 {
   SCHAT_DEBUG_STREAM(this << "released()" << errorString() << isAuthorized())
 
-  if (m_reconnectTimer->isActive())
-    m_reconnectTimer->stop();
+  Q_D(SimpleClient);
+  if (d->reconnectTimer->isActive())
+    d->reconnectTimer->stop();
 
-  if (m_clientState == ClientOffline)
+  if (d->clientState == ClientOffline)
     return;
 
-  if (m_clientState == ClientOnline) {
-    setClientState(ClientOffline);
-    setClientState(ClientConnecting);
+  if (d->clientState == ClientOnline) {
+    d->setClientState(ClientOffline);
+    d->setClientState(ClientConnecting);
   }
 
-  if (m_reconnects < Protocol::MaxFastReconnects) {
-    m_reconnectTimer->start(Protocol::FastReconnectTime, this);
+  if (d->reconnects < Protocol::MaxFastReconnects) {
+    d->reconnectTimer->start(Protocol::FastReconnectTime, this);
   }
-  else if (m_reconnects < Protocol::MaxFastReconnects + Protocol::MaxNormalReconnects) {
-    m_reconnectTimer->start(Protocol::NormalReconnectTime, this);
+  else if (d->reconnects < Protocol::MaxFastReconnects + Protocol::MaxNormalReconnects) {
+    d->reconnectTimer->start(Protocol::NormalReconnectTime, this);
   }
   else {
-    m_reconnectTimer->start(Protocol::SlowReconnectTime, this);
+    d->reconnectTimer->start(Protocol::SlowReconnectTime, this);
   }
 
-  ++m_reconnects;
+  ++d->reconnects;
 }
 
 
@@ -295,466 +832,7 @@ void SimpleClient::requestAuth()
   SCHAT_DEBUG_STREAM(this << "requestAuth()")
 
   Q_D(SimpleClient);
-  AuthRequestData data(AuthRequestData::Anonymous, m_url.host(), m_user.data());
-  data.uniqueId = m_uniqueId;
+  AuthRequestData data(AuthRequestData::Anonymous, d->url.host(), d->user.data());
+  data.uniqueId = d->uniqueId;
   send(AuthRequestWriter(d->sendStream, data).data());
-}
-
-
-/*!
- * Добавление нового канала.
- * В случае если идентификатор канала уже используется, возможны 2 сценария:
- * - Если существующий канал содержит пользователей, добавления не произойдёт,
- * объект \p channel будет удалён и функция возвратит false.
- * - Существующий канал не содержит пользователей, что означает его не валидность,
- * объект канала будет удалён и его место в таблице каналов займёт \p channel.
- *
- * \return true в случае успешного добавления канала.
- * \todo ! Высылать сигнал о новых пользователях канала если информация о них уже имеется у клиента.
- */
-bool SimpleClient::addChannel(Channel *channel)
-{
-  QByteArray id = channel->id();
-  Channel *ch = m_channels.value(id);
-
-  if (ch) {
-    if (ch->userCount()) {
-      delete channel;
-      return false;
-    }
-    else {
-      m_channels.remove(id);
-      delete ch;
-    }
-  }
-
-  qDebug() << "###" << channel->userCount();
-  m_channels.insert(id, channel);
-  channel->addUser(userId());
-  user()->addId(SimpleID::ChannelListId, id);
-
-  emit join(id, QByteArray());
-  return true;
-}
-
-
-QString SimpleClient::mangleNick()
-{
-  int rand = qrand() % 89 + 10;
-  if (m_nick.isEmpty())
-    m_nick = m_user->nick();
-
-  return m_nick.left(User::MaxNickLength - 2) + QString::number(rand);
-}
-
-
-/*!
- * Очистка данных состояния клиента.
- */
-void SimpleClient::clearClient()
-{
-  m_user->remove(SimpleID::ChannelListId);
-  m_user->remove(SimpleID::TalksListId);
-
-  m_users.clear();
-  m_users.insert(userId(), m_user);
-
-  qDeleteAll(m_channels);
-  m_channels.clear();
-}
-
-
-/*!
- * Восстановление состояния клиента после повторного подключения к предыдущему серверу.
- */
-void SimpleClient::restore()
-{
-  Q_D(SimpleClient);
-  QList<QByteArray> packets;
-
-  /// Происходит восстановление приватных разговоров.
-  if (user()->count(SimpleID::TalksListId)) {
-    MessageData data(userId(), SimpleID::setType(SimpleID::TalksListId, userId()), "add", "");
-    MessageWriter writer(d->sendStream, data);
-    writer.putId(user()->ids(SimpleID::TalksListId));
-    packets.append(writer.data());
-  }
-
-  /// Клиент заново входит в ранее открытие каналы.
-  if (!m_channels.isEmpty()) {
-    MessageData data(userId(), QByteArray(), "join", "");
-    data.options |= MessageData::TextOption;
-
-    QHashIterator<QByteArray, Channel*> i(m_channels);
-    while (i.hasNext()) {
-      i.next();
-      data.destId = i.key();
-      data.text = i.value()->name();
-      packets.append(MessageWriter(d->sendStream, data).data());
-    }
-  }
-
-  clearClient();
-
-  if (!packets.isEmpty())
-    send(packets);
-}
-
-
-/*!
- * Установка состояния клиента.
- */
-void SimpleClient::setClientState(ClientState state)
-{
-  if (m_clientState == state)
-    return;
-
-  m_clientState = state;
-
-  if (state == ClientOnline || state == ClientOffline)
-    m_reconnects = 0;
-
-  if (state == ClientOnline) {
-    m_users.insert(userId(), m_user);
-  }
-  else {
-    foreach (Channel *chan, m_channels) {
-      chan->clear();
-    }
-  }
-
-  emit clientStateChanged(m_clientState);
-}
-
-
-/*!
- * Установка идентификатора сервера, при успешной авторизации.
- *
- * В случае повторного подключения к предыдущему серверу происходит,
- * вход в раннее открытые каналы.
- * В случае если подключение происходит к новому серверу, таблица каналов очищается.
- *
- * \param data Данные сервера.
- */
-void SimpleClient::setServerData(const ServerData &data)
-{
-  Q_D(SimpleClient);
-  bool sameServer = false;
-
-  if (!m_serverData->id().isEmpty() && m_serverData->id() == data.id())
-    sameServer = true;
-
-  m_serverData->setId(data.id());
-  m_serverData->setName(data.name());
-  m_serverData->setChannelId(data.channelId());
-  m_serverData->setFeatures(data.features());
-
-  setClientState(ClientOnline);
-
-  if (!sameServer) {
-    clearClient();
-
-    if (m_serverData->features() & ServerData::AutoJoinSupport && !m_serverData->channelId().isEmpty()) {
-      MessageData data(userId(), m_serverData->channelId(), "join", "");
-      send(MessageWriter(d->sendStream, data).data());
-    }
-  }
-  else
-    restore();
-}
-
-
-void SimpleClient::unlock()
-{
-  if (!m_sendQueue.isEmpty()) {
-    SimpleSocket::send(m_sendQueue);
-    m_sendQueue.clear();
-  }
-
-  m_sendLock = false;
-}
-
-
-/*!
- * Обработка команд.
- *
- * \return true в случае если команда была обработана, иначе false.
- */
-bool SimpleClient::command()
-{
-  QString command = m_messageData->command;
-  SCHAT_DEBUG_STREAM(this << "command()" << command)
-
-  if (command == "part") {
-    removeUserFromChannel(m_reader->dest(), m_reader->sender());
-    return true;
-  }
-
-  if (command == "BSCh") {
-    lock();
-    m_syncChannelCache = new SyncChannelCache();
-    m_syncChannelCache->id = m_reader->dest();
-    return true;
-  }
-
-  if (command == "ESCh") {
-    unlock();
-    m_syncChannelCache->users.append(QByteArray());
-
-    if (!m_syncChannelCache->users.isEmpty()) {
-      emit join(m_syncChannelCache->id, m_syncChannelCache->users);
-      m_syncChannelCache->users.clear();
-    }
-
-    delete m_syncChannelCache;
-    m_syncChannelCache = 0;
-    return true;
-  }
-
-  if (command == "leave") {
-    removeUser(m_reader->sender());
-    return true;
-  }
-
-  if (command == "status") {
-    updateUserStatus(m_messageData->text);
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
- * Чтение пакета AuthReplyPacket.
- */
-bool SimpleClient::readAuthReply()
-{
-  AuthReplyData data = AuthReplyReader(m_reader).data;
-
-  SCHAT_DEBUG_STREAM(this << "AuthReply" << data.status << data.error << data.userId.toHex())
-
-  if (data.status == AuthReplyData::AccessGranted) {
-    setAuthorized(data.userId);
-    m_user->setId(data.userId);
-    m_user->setHost(data.host);
-
-    setServerData(data.serverData);
-
-    if (m_user->status() == User::OfflineStatus)
-      m_user->setStatus(User::OnlineStatus);
-
-    emit userDataChanged(userId());
-    return true;
-  }
-  else if (data.status == AuthReplyData::AccessDenied) {
-    if (data.error == AuthReplyData::NickAlreadyUse) {
-      m_user->setNick(mangleNick());
-      requestAuth();
-    }
-  }
-
-  return false;
-}
-
-
-/*!
- * Чтение пакета Packet::JoinReply.
- *
- * Обработка подключения к каналу, в случае успеха канал добавляется в таблицу каналов.
- */
-bool SimpleClient::readChannel()
-{
-  ChannelReader reader(m_reader);
-
-  SCHAT_DEBUG_STREAM(this << "readChannel()" << reader.channel->id().toHex())
-
-  if (!reader.channel->isValid())
-    return false;
-
-  addChannel(reader.channel);
-  return true;
-}
-
-
-/*!
- * Чтение сообщения и обработка поддерживаемых команд.
- * В случае если сообщении не содержало команд или команда
- * не была обработана, высылается сигнал о новом сообщении.
- */
-bool SimpleClient::readMessage()
-{
-  SCHAT_DEBUG_STREAM(this << "readMessage()")
-
-  MessageReader reader(m_reader);
-  m_messageData = &reader.data;
-  m_messageData->timestamp = timestamp();
-
-  if (m_messageData->options & MessageData::ControlOption && command()) {
-    return true;
-  }
-
-  SCHAT_DEBUG_STREAM("      " << reader.data.text)
-
-  emit message(reader.data);
-  return true;
-}
-
-
-bool SimpleClient::readNotice()
-{
-  SCHAT_DEBUG_STREAM(this << "readNotice()")
-
-  NoticeReader reader(m_reader);
-  reader.data.timestamp = timestamp();
-  emit notice(reader.data);
-
-  return true;
-}
-
-
-/*!
- * Чтение пакета Packet::UserData.
- *
- * В случае если адрес назначения канал, то требуется чтобы текущий пользователь был подключен к нему заранее,
- * также будет произведена попытка добавления пользователя в него и в случае успеха будет выслан сигнал.
- * Идентификатор нового пользователя не может быть пустым и в случае если новый пользователь отсутствует
- * в таблице пользователей, то будет произведена попытка его добавить.
- */
-bool SimpleClient::readUserData()
-{
-  SCHAT_DEBUG_STREAM(this << "readUserData()")
-
-  QByteArray dest = m_reader->dest();
-  int type = SimpleID::typeOf(dest);
-
-  /// Если идентификатор назначения канал, то это канал должен быть известен клиенту.
-  if (type == SimpleID::ChannelId && !m_channels.contains(dest))
-    return false;
-
-  /// Идентификатор отправителя не может быть пустым.
-  QByteArray id = m_reader->sender();
-  if (id.isEmpty())
-    return false;
-
-  UserReader reader(m_reader);
-  if (!reader.user.isValid())
-    return false;
-
-  /// Если пользователь не существует, то он будет создан, иначе произойдёт обновление данных,
-  /// В обоих случаях будет выслан сигнал userDataChanged().
-  ClientUser user = m_users.value(id);
-  if (!user) {
-    user = ClientUser(new User(&reader.user));
-    m_users.insert(id, user);
-
-    emit userDataChanged(id);
-  }
-  else {
-    updateUserData(user, &reader.user);
-  }
-
-  /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
-  if (type == SimpleID::ChannelId) {
-    Channel *chan = m_channels.value(dest);
-    if (!chan)
-      return false;
-
-    user->addId(SimpleID::ChannelListId, dest);
-    chan->addUser(id);
-
-    if (m_syncChannelCache)
-      m_syncChannelCache->users.append(id);
-    else
-      emit join(dest, id);
-  }
-  else if (type == SimpleID::UserId) {
-    this->user()->addId(SimpleID::TalksListId, id);
-  }
-
-  return true;
-}
-
-
-/*!
- * Удаление пользователя.
- */
-bool SimpleClient::removeUser(const QByteArray &userId)
-{
-  ClientUser user = m_users.value(userId);
-  if (!user)
-    return false;
-
-  QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
-  for (int i = 0; i < channels.size(); ++i) {
-    removeUserFromChannel(channels.at(i), userId, false);
-  }
-
-  m_users.remove(userId);
-  emit userLeave(userId);
-  return true;
-}
-
-
-/*!
- * Удаление пользователя из канала.
- */
-bool SimpleClient::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
-{
-  ClientUser user = m_users.value(userId);
-  Channel *channel = m_channels.value(channelId);
-
-  if (!user.isNull() && channel) {
-    channel->removeUser(user->id());
-    user->removeId(SimpleID::ChannelListId, channel->id());
-    emit part(channel->id(), user->id());
-
-    if (clear && !this->user()->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
-      removeUser(userId);
-
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
- * Обновление информации о пользователе.
- */
-void SimpleClient::updateUserData(ClientUser existUser, User *user)
-{
-  SCHAT_DEBUG_STREAM(this << "updateUserData()");
-
-  if (existUser == m_user && m_user->nick() != user->nick()) {
-    setNick(user->nick());
-  }
-
-  existUser->setNick(user->nick());
-  existUser->setRawGender(user->rawGender());
-  existUser->setStatus(user->status());
-
-  emit userDataChanged(existUser->id());
-}
-
-
-/*!
- * Обновление статуса пользователя.
- */
-void SimpleClient::updateUserStatus(const QString &text)
-{
-  ClientUser user = this->user(m_reader->sender());
-  if (!user)
-    return;
-
-  if (!user->setStatus(text))
-    return;
-
-  if (user->status() == User::OfflineStatus) {
-    if (m_reader->headerOption() & Protocol::Broadcast) {
-      user->setStatus(User::OnlineStatus);
-    }
-  }
-
-  emit userDataChanged(user->id());
 }

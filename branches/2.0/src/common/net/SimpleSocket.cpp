@@ -54,6 +54,8 @@ SimpleSocketPrivate::SimpleSocketPrivate()
 
 SimpleSocketPrivate::~SimpleSocketPrivate()
 {
+  qDebug() << "~SimpleSocketPrivate()";
+
   if (timer->isActive())
     timer->stop();
 
@@ -364,7 +366,8 @@ SimpleSocket::SimpleSocket(SimpleSocketPrivate &dd, QObject *parent)
 
 SimpleSocket::~SimpleSocket()
 {
-  SCHAT_DEBUG_STREAM("~" << this)
+  SCHAT_DEBUG_STREAM("~SimpleSocket" << this)
+  qDebug() << "~SimpleSocket";
   delete d_ptr;
 }
 

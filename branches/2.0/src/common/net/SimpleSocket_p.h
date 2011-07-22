@@ -21,6 +21,8 @@
 
 #include "net/SimpleSocket.h"
 
+class QBasicTimer;
+
 class SimpleSocketPrivate
 {
   Q_DECLARE_PUBLIC(SimpleSocket);
