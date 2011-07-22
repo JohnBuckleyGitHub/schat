@@ -70,16 +70,17 @@ private slots:
   void openTab();
   void showMainMenu();
 
-  void clientStateChanged(int state);
-  void join(const QByteArray &channelId, const QByteArray &userId, int option = 0);
-  void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
-  void message(const AbstractMessage &data);
+  void join(const QByteArray &channelId, const QByteArray &userId);
   void part(const QByteArray &channelId, const QByteArray &userId);
+  void synced(const QByteArray &channelId);
+
+  void clientStateChanged(int state);
+  void message(const AbstractMessage &data);
   void updateUserData(const QByteArray &userId);
   void userLeave(const QByteArray &userId);
 
 private:
-  ChannelTab *createChannelTab(const QByteArray &id);
+  ChannelTab *channelTab(const QByteArray &id);
   int addChatTab(AbstractTab *tab);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void closeWelcome();

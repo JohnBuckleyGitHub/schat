@@ -83,6 +83,7 @@ void UserItem::setSortData()
 
 UserView::UserView(QWidget *parent)
   : QListView(parent)
+  , m_sortable(false)
 {
   setModel(&m_model);
   setFocusPolicy(Qt::TabFocus);
@@ -109,22 +110,24 @@ UserView::UserView(QWidget *parent)
  * \param user   Указатель на пользователя.
  * \param option \sa AddOptions.
  */
-bool UserView::add(ClientUser user, int option)
+bool UserView::add(ClientUser user)
 {
-  if (!user) {
-    sort();
+  if (!user)
     return false;
-  }
 
   if (m_users.contains(user->id()))
     return false;
+
+  int option = NoOptions;
+  if (m_users.isEmpty())
+    option = SelfNick;
 
   UserItem *item = new UserItem(user, option);
 
   m_model.appendRow(item);
   m_users.insert(user->id(), item);
 
-  if (!(option & NoSort))
+  if (m_sortable)
     sort();
 
   return true;
@@ -161,8 +164,18 @@ bool UserView::update(ClientUser user)
 
 void UserView::clear()
 {
+  m_sortable = false;
   m_model.clear();
   m_users.clear();
+}
+
+
+void UserView::sort()
+{
+  SCHAT_DEBUG_STREAM(this << "sort()");
+
+  m_sortable = true;
+  m_model.sort(0);
 }
 
 
@@ -197,12 +210,4 @@ void UserView::addTab(const QModelIndex &index)
 void UserView::nickClicked(const QString &nick)
 {
   ChatCore::i()->startNotify(ChatCore::InsertTextToSend, " <b>" + Qt::escape(nick) + "</b> ");
-}
-
-
-void UserView::sort()
-{
-  SCHAT_DEBUG_STREAM(this << "sort()");
-
-  m_model.sort(0);
 }

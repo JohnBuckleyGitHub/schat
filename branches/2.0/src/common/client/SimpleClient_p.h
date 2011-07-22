@@ -47,6 +47,7 @@ public:
   // Каналы.
   bool addChannel(Channel *channel);
   bool readChannel();
+  void endSyncChannel(const QByteArray &id);
 
   // Сообщения.
   bool command();
@@ -75,7 +76,6 @@ public:
   QUrl url;                                ///< Адрес, к которому будет подключен клиент.
   ServerData *serverData;                  ///< Данные о сервере.
   SimpleClient::ClientState clientState;   ///< Состояние клиента.
-  SyncChannelCache *syncChannelCache;      ///< Данные синхронизации канала.
 };
 
 

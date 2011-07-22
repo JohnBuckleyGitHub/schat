@@ -58,11 +58,12 @@ public:
   };
 
   UserView(QWidget *parent = 0);
-  bool add(ClientUser user, int option = 0);
+  bool add(ClientUser user);
   bool remove(const QByteArray &id);
   bool update(ClientUser user);
   inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
+  void sort();
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
@@ -72,8 +73,8 @@ private slots:
 
 private:
   void nickClicked(const QString &nick);
-  void sort();
 
+  bool m_sortable;                      ///< true если список пользователей нужно сортировать при добавлении пользователя.
   QHash<QByteArray, UserItem*> m_users; ///< Таблица для ускоренного поиска пользователей.
   QStandardItemModel m_model;           ///< Модель для отображения списка пользователей.
 };

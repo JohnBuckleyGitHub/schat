@@ -82,7 +82,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
-  connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
+  connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
@@ -266,6 +266,78 @@ void TabWidget::showMainMenu()
 
 
 /*!
+ * Обработка входа пользователя в канал.
+ *
+ * \param channelId Идентификатор канала.
+ * \param userId    Идентификатор пользователя.
+ */
+void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
+{
+  qDebug() << "join()";
+  Channel *chan = m_client->channel(channelId);
+  if (!chan)
+    return;
+
+  ChannelTab *tab = m_channels.value(channelId);
+  ClientUser user = m_client->user(userId);
+
+  if (tab && user) {
+    privateTab(user->id(), false);
+
+    if (!tab->userView()->add(user))
+      return;
+
+    displayChannelUserCount(channelId);
+    tab->chatView()->appendRawMessage(tr("<b>%1</b> joined to <b>%2</b>").arg(user->nick()).arg(chan->name()));
+  }
+}
+
+
+void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
+{
+  ChannelTab *tab = m_channels.value(channelId);
+  ClientUser user = m_client->user(userId);
+  if (tab && user) {
+    tab->chatView()->appendRawMessage(tr("<b>%1</b> left").arg(user->nick()));
+    tab->userView()->remove(userId);
+    displayChannelUserCount(channelId);
+  }
+}
+
+
+/*!
+ * Обработка завершения синхронизации канала.
+ *
+ * \param channelId Идентификатор канала.
+ */
+void TabWidget::synced(const QByteArray &channelId)
+{
+  Channel *channel = m_client->channel(channelId);
+  if (!channel)
+    return;
+
+  ChannelTab *tab = channelTab(channelId);
+
+  if (channel->userCount() == 1) {
+    tab->userView()->sort();
+    return;
+  }
+
+  QList<QByteArray> users = channel->users();
+  for (int i = 0; i < users.size(); ++i) {
+    ClientUser user = m_client->user(users.at(i));
+    if (!user)
+      continue;
+
+    privateTab(user->id(), false);
+    tab->userView()->add(user);
+  }
+
+  tab->userView()->sort();
+}
+
+
+/*!
  * Обработка изменения состояния клиента.
  */
 void TabWidget::clientStateChanged(int state)
@@ -286,61 +358,6 @@ void TabWidget::clientStateChanged(int state)
 
   if (state == SimpleClient::ClientOffline)
     closeWelcome();
-}
-
-
-/*!
- * \param channelId Идентификатор канала.
- * \param userId    Идентификатор пользователя.
- * \param option    Опция добавления пользователя.
- */
-void TabWidget::join(const QByteArray &channelId, const QByteArray &userId, int option)
-{
-  // Принудительная сортировка списка пользователей, без добавления нового пользователя,
-  // используется при завершении синхронизации канала.
-  if (option & UserView::NoSort && userId.isEmpty()) {
-    ChannelTab *tab = m_channels.value(channelId);
-    if (tab) {
-      tab->userView()->add(ClientUser());
-      displayChannelUserCount(channelId);
-    }
-
-    return;
-  }
-
-  Channel *chan = m_client->channel(channelId);
-  if (!chan)
-    return;
-
-  // Добавления собственного профиля в канал.
-  if (userId.isEmpty()) {
-    createChannelTab(channelId);
-    return;
-  }
-
-  ChannelTab *tab = m_channels.value(channelId);
-  ClientUser user = m_client->user(userId);
-
-  if (tab && !user.isNull()) {
-    privateTab(user->id(), false);
-
-    if (!tab->userView()->add(user, option))
-      return;
-
-    if (option & UserView::NoSort)
-      return;
-
-    displayChannelUserCount(channelId);
-    tab->chatView()->appendRawMessage(tr("<b>%1</b> joined to <b>%2</b>").arg(user->nick()).arg(chan->name()));
-  }
-}
-
-
-void TabWidget::join(const QByteArray &channelId, const QList<QByteArray> &usersId)
-{
-  for (int i = 0; i < usersId.size(); ++i) {
-    join(channelId, usersId.at(i), UserView::NoSort);
-  }
 }
 
 
@@ -399,18 +416,6 @@ void TabWidget::message(const AbstractMessage &data)
 }
 
 
-void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
-{
-  ChannelTab *tab = m_channels.value(channelId);
-  ClientUser user = m_client->user(userId);
-  if (tab && !user.isNull()) {
-    tab->chatView()->appendRawMessage(tr("<b>%1</b> left").arg(user->nick()));
-    tab->userView()->remove(userId);
-    displayChannelUserCount(channelId);
-  }
-}
-
-
 /*!
  * Обновление информации о пользователе.
  *
@@ -430,17 +435,15 @@ void TabWidget::updateUserData(const QByteArray &userId)
     }
   }
 
-  PrivateTab *tab = m_talks.value(userId);
-  if (!tab)
-    return;
-
-  tab->update(user);
+  PrivateTab *tab = privateTab(userId, false);
+  if (tab)
+    tab->update(user);
 }
 
 
 void TabWidget::userLeave(const QByteArray &userId)
 {
-  PrivateTab *tab = m_talks.value(userId);
+  PrivateTab *tab = privateTab(userId, false);
   if (tab)
     tab->setOnline(false);
 }
@@ -453,7 +456,7 @@ void TabWidget::userLeave(const QByteArray &userId)
  *
  * \return Возвращает указатель на вкладку или 0 в случае ошибки.
  */
-ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
+ChannelTab *TabWidget::channelTab(const QByteArray &id)
 {
   Channel *channel = m_client->channel(id);
   if (!channel)
@@ -474,7 +477,7 @@ ChannelTab *TabWidget::createChannelTab(const QByteArray &id)
 
   tab->setOnline();
   tab->chatView()->appendRawMessage(tr("you're joined to <b>%1</b>").arg(channel->name()));
-  tab->userView()->add(m_client->user(), UserView::SelfNick);
+  tab->userView()->add(m_client->user());
   tab->action()->setText(channel->name());
 
   closeWelcome();
