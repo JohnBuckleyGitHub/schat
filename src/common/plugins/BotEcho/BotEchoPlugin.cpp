@@ -32,7 +32,7 @@ BotEcho::BotEcho(ClientHelper *helper, FileLocations *locations)
   , m_client(helper->client())
 {
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
-  connect(m_client, SIGNAL(join(const QByteArray &, const QList<QByteArray> &)), SLOT(join(const QByteArray &, const QList<QByteArray> &)));
+  connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(message(const MessageData &)));
 }
 
@@ -51,20 +51,23 @@ void BotEcho::join(const QByteArray &channelId, const QByteArray &userId)
 }
 
 
-void BotEcho::join(const QByteArray &channelId, const QList<QByteArray> &usersId)
-{
-  MessageData message(m_client->userId(), channelId, QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
-  m_client->send(message);
-}
-
-
 void BotEcho::message(const MessageData &data)
 {
   ClientUser user = m_client->user(data.senderId);
   if (!user)
     return;
 
+  if (data.destId != m_client->userId())
+    return;
+
   MessageData message(m_client->userId(), data.senderId, data.text);
+  m_client->send(message);
+}
+
+
+void BotEcho::synced(const QByteArray &channelId)
+{
+  MessageData message(m_client->userId(), channelId, QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
   m_client->send(message);
 }
 

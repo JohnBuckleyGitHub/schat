@@ -252,8 +252,8 @@ bool SimpleClientPrivate::addChannel(Channel *channel)
   Q_Q(SimpleClient);
 
   if (channel->userCount() == 1) {
+    channel->setSynced(true);
     emit(q->synced(id));
-    return true;
   }
 
   return true;
@@ -415,13 +415,15 @@ bool SimpleClientPrivate::readUserData()
 
   /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
   if (type == SimpleID::ChannelId) {
-    Channel *chan = channels.value(dest);
-    if (!chan)
+    Channel *channel = channels.value(dest);
+    if (!channel)
       return false;
 
     user->addId(SimpleID::ChannelListId, dest);
-    chan->addUser(id);
-    emit(q->join(dest, id));
+    channel->addUser(id);
+
+    if (channel->isSynced())
+      emit(q->join(dest, id));
   }
   else if (type == SimpleID::UserId) {
     this->user->addId(SimpleID::TalksListId, id);
