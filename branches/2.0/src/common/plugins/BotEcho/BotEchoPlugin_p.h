@@ -35,8 +35,8 @@ public:
 
 private slots:
   void join(const QByteArray &channelId, const QByteArray &userId);
-  void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(const MessageData &data);
+  void synced(const QByteArray &channelId);
 
 private:
   ClientHelper *m_helper;
