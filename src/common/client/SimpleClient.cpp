@@ -42,9 +42,7 @@ SimpleClientPrivate::SimpleClientPrivate()
   , uniqueId(SimpleID::uniqueId())
   , serverData(new ServerData())
   , clientState(SimpleClient::ClientOffline)
-  , syncChannelCache(0)
 {
-  qDebug() << "SimpleClientPrivate()";
   user->setUserAgent(SimpleID::userAgent());
 }
 
@@ -168,7 +166,7 @@ void SimpleClientPrivate::setClientState(SimpleClient::ClientState state)
   if (state == SimpleClient::ClientOnline || state == SimpleClient::ClientOffline)
     reconnects = 0;
 
-  if (state == SimpleClient::ClientOnline) { /// FIXME Проверить правильность этого кода.
+  if (state == SimpleClient::ClientOnline) {
     users.insert(user->id(), user);
   }
   else {
@@ -252,7 +250,11 @@ bool SimpleClientPrivate::addChannel(Channel *channel)
   user->addId(SimpleID::ChannelListId, id);
 
   Q_Q(SimpleClient);
-  emit(q->join(id, QByteArray()));
+
+  if (channel->userCount() == 1) {
+    emit(q->synced(id));
+    return true;
+  }
 
   return true;
 }
@@ -275,6 +277,23 @@ bool SimpleClientPrivate::readChannel()
 }
 
 
+void SimpleClientPrivate::endSyncChannel(const QByteArray &id)
+{
+  qDebug() << "endSyncChannel()" << id.toHex();
+  Channel *channel = channels.value(id);
+  if (!channel)
+    return;
+
+  if (channel->isSynced())
+    return;
+
+  channel->setSynced(true);
+
+  Q_Q(SimpleClient);
+  emit(q->synced(id));
+}
+
+
 /*!
  * Обработка команд.
  *
@@ -282,7 +301,6 @@ bool SimpleClientPrivate::readChannel()
  */
 bool SimpleClientPrivate::command()
 {
-  Q_Q(SimpleClient);
   QString command = messageData->command;
   SCHAT_DEBUG_STREAM(this << "command()" << command)
 
@@ -291,22 +309,12 @@ bool SimpleClientPrivate::command()
     return true;
   }
 
-  if (command == "BSCh") {
-    syncChannelCache = new SyncChannelCache();
-    syncChannelCache->id = reader->dest();
+  if (command == "BSCh") { // FIXME Удалить эту команду.
     return true;
   }
 
   if (command == "ESCh") {
-    syncChannelCache->users.append(QByteArray());
-
-    if (!syncChannelCache->users.isEmpty()) {
-      emit(q->join(syncChannelCache->id, syncChannelCache->users));
-      syncChannelCache->users.clear();
-    }
-
-    delete syncChannelCache;
-    syncChannelCache = 0;
+    endSyncChannel(reader->dest());
     return true;
   }
 
@@ -413,11 +421,7 @@ bool SimpleClientPrivate::readUserData()
 
     user->addId(SimpleID::ChannelListId, dest);
     chan->addUser(id);
-
-    if (syncChannelCache)
-      syncChannelCache->users.append(id);
-    else
-      emit(q->join(dest, id));
+    emit(q->join(dest, id));
   }
   else if (type == SimpleID::UserId) {
     this->user->addId(SimpleID::TalksListId, id);
@@ -580,7 +584,7 @@ bool SimpleClient::send(const MessageData &data)
   QByteArray dest = data.destId;
 
   packets.append(MessageWriter(d->sendStream, data).data());
-  return SimpleSocket::send(packets); // FIXME исправить
+  return send(packets);
 }
 
 
@@ -771,11 +775,6 @@ void SimpleClient::newPacketsImpl()
       default:
         break;
     }
-  }
-
-  if (d->syncChannelCache && !d->syncChannelCache->users.isEmpty()) {
-    emit join(d->syncChannelCache->id, d->syncChannelCache->users);
-    d->syncChannelCache->users.clear();
   }
 }
 

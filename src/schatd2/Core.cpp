@@ -431,8 +431,8 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   send(user, writer.data());
 
   if (channel->userCount() > 1) {
-//    UserWriter writer(m_sendStream, user.data(), channel->id());
-//    send(channel, writer.data());
+    UserWriter writer(m_sendStream, user.data(), channel->id());
+    send(channel, writer.data());
     sendChannel(channel, user);
   }
 

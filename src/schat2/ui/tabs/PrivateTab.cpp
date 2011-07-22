@@ -38,7 +38,7 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   setText(m_user->nick());
 }
 
-
+// FIXME Исправить обновление.
 bool PrivateTab::update(ClientUser user)
 {
   if (!user)

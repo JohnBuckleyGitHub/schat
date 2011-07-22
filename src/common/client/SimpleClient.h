@@ -70,7 +70,6 @@ public:
 signals:
   void clientStateChanged(int state);
   void join(const QByteArray &channelId, const QByteArray &userId);
-  void join(const QByteArray &channelId, const QList<QByteArray> &usersId);
   void message(const MessageData &data);
   void notice(const NoticeData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
