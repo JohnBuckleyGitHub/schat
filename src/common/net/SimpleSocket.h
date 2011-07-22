@@ -26,12 +26,9 @@
   #include <QSslSocket>
 #endif
 
-#include <QTime>
-
 #include "net/Protocol.h"
 #include "schat.h"
 
-class QBasicTimer;
 class SimpleSocketPrivate;
 
 /*!
