@@ -60,8 +60,8 @@ function scrollToBottom() {
 function appendMessage(html) {
 	var shouldScroll = nearBottom();
 	$('#Chat').append(html);
-	$('.block > a.nick').unbind('click', nickClicked);
-	$('.block > a.nick').bind('click', nickClicked);
+	$('.nick-block > a.nick').unbind('click', nickClicked);
+	$('.nick-block > a.nick').bind('click', nickClicked);
 	alignChat(shouldScroll);
 }
 
@@ -80,9 +80,14 @@ function nickClicked() {
 	event.preventDefault();
 }
 
+// Удаление статуса сообщения "Не доставлено" и установка времени доставки.
 function setMessageState(id, state, timestamp, seconds) {
-	$(id + ' > div.block').removeClass('undelivered');
-	$(id + ' > div.block').addClass(state);
-	$(id + ' > div.block > .timestamp').text(timestamp);
-	$(id + ' > div.block > .seconds').text(seconds);
+	var prefix = id + ' > div.blocks';
+	
+	$(prefix).removeClass('undelivered');
+	$(prefix).addClass(state);
+	
+	prefix += ' > .date-time-block > ';
+	$(prefix + '.timestamp').text(timestamp);
+	$(prefix + '.seconds').text(seconds);
 }

@@ -37,8 +37,7 @@ QString AlertMessage::js() const
     alertType = "exclamation-alert";
 
   replaceTimeStamp(html);
-  html.replace("%extra%", "");
-  html.replace("%alertType%", alertType);
+  html.replace("%extra%", alertType);
 
   replaceText(html);
 

@@ -75,7 +75,6 @@ QString UserMessage::js() const
   html.replace("%extra%", extra);
   html.replace("%userId%", m_senderId.toHex());
   html.replace("%messageId%", messageId());
-  html.replace("%messageType%", "user-message");
 
   return appendMessage(html);
 }
