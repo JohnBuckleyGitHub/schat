@@ -249,12 +249,26 @@ bool SimpleClientPrivate::addChannel(Channel *channel)
   channel->addUser(user->id());
   user->addId(SimpleID::ChannelListId, id);
 
-  Q_Q(SimpleClient);
-
   if (channel->userCount() == 1) {
-    channel->setSynced(true);
-    emit(q->synced(id));
+    endSyncChannel(channel);
+    return true;
   }
+
+  QList<QByteArray> list = channel->users();
+  list.removeAll(userId);
+  int unsync = 0;
+
+  for (int i = 0; i < list.size(); ++i) {
+    ClientUser u = users.value(list.at(i));
+    if (u) {
+      u->addId(SimpleID::ChannelListId, id);
+    }
+    else
+      unsync++;
+  }
+
+  if (unsync == 0)
+    endSyncChannel(channel);
 
   return true;
 }
@@ -277,10 +291,11 @@ bool SimpleClientPrivate::readChannel()
 }
 
 
-void SimpleClientPrivate::endSyncChannel(const QByteArray &id)
+/*!
+ * Завершение синхронизации канала.
+ */
+void SimpleClientPrivate::endSyncChannel(Channel *channel)
 {
-  qDebug() << "endSyncChannel()" << id.toHex();
-  Channel *channel = channels.value(id);
   if (!channel)
     return;
 
@@ -290,7 +305,16 @@ void SimpleClientPrivate::endSyncChannel(const QByteArray &id)
   channel->setSynced(true);
 
   Q_Q(SimpleClient);
-  emit(q->synced(id));
+  emit(q->synced(channel->id()));
+}
+
+
+/*!
+ * Завершение синхронизации канала.
+ */
+void SimpleClientPrivate::endSyncChannel(const QByteArray &id)
+{
+  endSyncChannel(channels.value(id));
 }
 
 
@@ -309,11 +333,7 @@ bool SimpleClientPrivate::command()
     return true;
   }
 
-  if (command == "BSCh") { // FIXME Удалить эту команду.
-    return true;
-  }
-
-  if (command == "ESCh") {
+  if (command == QLatin1String("synced")) {
     endSyncChannel(reader->dest());
     return true;
   }
@@ -420,9 +440,7 @@ bool SimpleClientPrivate::readUserData()
       return false;
 
     user->addId(SimpleID::ChannelListId, dest);
-    channel->addUser(id);
-
-    if (channel->isSynced())
+    if (channel->addUser(id) || channel->isSynced())
       emit(q->join(dest, id));
   }
   else if (type == SimpleID::UserId) {
