@@ -591,26 +591,23 @@ void Core::sendChannel(ServerChannel *channel, ChatUser user)
 {
   QList<QByteArray> users = channel->users();
   users.removeAll(user->id());
-  user->addUsers(users);
 
   QByteArray channelId = channel->id();
   QList<QByteArray> packets;
 
-  MessageData message(user->id(), channelId, "BSCh", "");
-  MessageWriter begin(m_sendStream, message);
-  packets.append(begin.data());
-
   for (int i = 0; i < users.size(); ++i) {
     ChatUser u = m_storage->user(users.at(i));
-    if (u) {
-      u->addUser(user->id());
+    if (!u)
+      continue;
+
+    u->addUser(user->id());
+    if (!user->isUser(u->id()))
       packets.append(UserWriter(m_sendStream, u.data(), channelId).data());
-    }
   }
 
-  message.command = "ESCh";
-  MessageWriter end(m_sendStream, message);
-  packets.append(end.data());
+  user->addUsers(users);
+  MessageData message(user->id(), channelId, QLatin1String("synced"), QLatin1String(""));
+  packets.append(MessageWriter(m_sendStream, message).data());
 
   send(user, packets);
 }
