@@ -47,15 +47,19 @@ a:active, a:hover {
 	color:#1e6396;
 }
 
-.message-container {
+.container {
 	padding:1px;
 }
 
-.block {
+.blocks {
 	padding-left:0;
 }
 
-.timestamp, .seconds {
+.date-time-block, .nick-block, .msg-body-block {
+	display:inline;
+}
+
+.date-time-block {
 	color:#a5b2c3;
 	font-size:x-small;
 }
@@ -103,24 +107,24 @@ a:active, a:hover {
 	color:#113853;
 }
 
-.information-alert .block {
+.information-alert {
 	background-color:#e8f2f8;
 	border:1px solid #e1edf5;
 	color:#143244;
 }
 
-.information-alert .block:hover, .information-alert .block:focus {
+.information-alert:hover, .information-alert:focus {
 	background-color:#d9e8f3;
 	border:1px solid #cde1ef;
 }
 
-.exclamation-alert .block {
+.exclamation-alert {
 	background-color:#fbfbd1;
 	border:1px solid #f8f7ac;
 	color:#515007;
 }
 
-.exclamation-alert .block:hover, .exclamation-alert .block:focus {
+.exclamation-alert:hover, .exclamation-alert:focus {
 	background-color:#f8f7ac;
 	border:1px solid #f6f69a;
 }

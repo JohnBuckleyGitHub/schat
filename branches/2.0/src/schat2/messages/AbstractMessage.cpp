@@ -63,7 +63,6 @@ QString AbstractMessage::js() const
   QString html = tpl("generic");
 
   html.replace("%extra%", "generic");
-  html.replace("%messageType%", "generic");
 
   replaceTimeStamp(html);
   replaceText(html);
