@@ -16,79 +16,38 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTextDocument>
-
-#include "ChatCore.h"
-#include "client/SimpleClient.h"
-#include "debugstream.h"
 #include "messages/UserMessage.h"
-#include "net/packets/message.h"
-#include "User.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
-  : AbstractMessage(UserMessageType, data.text, data.destId, NoParse)
+  : AbstractMessage(QLatin1String("user-type"), data, NoParse)
   , m_status(static_cast<DeliveryStatus>(status))
-  , m_name(data.name)
 {
-  ClientUser user = ChatCore::i()->client()->user(data.senderId);
-  if (!user)
-    return;
-
-  m_senderId = data.senderId;
-  m_timestamp = data.timestamp;
-
-  if (status & OutgoingMessage)
+  if (status & OutgoingMessage) {
     m_direction = OutgoingDirection;
-  else if (status & IncomingMessage)
+    m_extra += QLatin1String(" outgoing");
+  }
+  else if (status & IncomingMessage) {
     m_direction = IncomingDirection;
+    m_extra += QLatin1String(" incoming");
+  }
 
-  setNick(user->nick());
+  if (m_status & UserMessage::Undelivered)
+    m_extra += QLatin1String(" undelivered");
 }
 
 
 QString UserMessage::js() const
 {
   if (m_status & Rejected)
-    return setMessageState("rejected");
+    return setMessageState(QLatin1String("rejected"));
 
   if (m_status & Delivered)
-    return setMessageState("delivered");
+    return setMessageState(QLatin1String("delivered"));
 
   if (m_text.isEmpty())
     return "";
 
-  QString html = tpl("message");
-  replaceTimeStamp(html);
-  replaceText(html);
-
-  QString extra;
-  if (m_status & UserMessage::IncomingMessage)
-    extra += " incoming";
-
-  if (m_status & UserMessage::OutgoingMessage)
-    extra += " outgoing";
-
-  if (m_status & UserMessage::Undelivered)
-    extra += " undelivered";
-
-  html.replace("%nick%", nick());
-  html.replace("%extra%", extra);
-  html.replace("%userId%", m_senderId.toHex());
-  html.replace("%messageId%", messageId());
-
-  return appendMessage(html);
-}
-
-
-QString UserMessage::messageId() const
-{
-  return m_senderId.toHex() + "-" + QString::number(m_name);
-}
-
-
-void UserMessage::setNick(const QString &nick)
-{
-  m_nick = Qt::escape(nick);
+  return AbstractMessage::js();
 }
 
 
@@ -97,8 +56,8 @@ QString UserMessage::setMessageState(const QString &state) const
   QDateTime dt = dateTime();
 
   return QString("setMessageState('#%1', '%2', '%3', '%4');")
-      .arg(messageId())
+      .arg(m_id)
       .arg(state)
-      .arg(dt.toString("hh:mm"))
-      .arg(dt.toString(":ss"));
+      .arg(dt.toString(QLatin1String("hh:mm")))
+      .arg(dt.toString(QLatin1String(":ss")));
 }

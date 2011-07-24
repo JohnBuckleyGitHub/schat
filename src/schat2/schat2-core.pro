@@ -15,9 +15,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE = 1
-SCHAT_DEBUG   = 1
-SCHAT_USE_SSL = 1
+SCHAT_RESOURCES = 1
+SCHAT_DEBUG     = 1
+SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
 QT = core gui network
@@ -34,8 +34,8 @@ HEADERS = \
     messages/MessageAdapter.h \
     messages/UserMessage.h \
     NetworkManager.h \
-    ui/UserUtils.h \
     schat.h \
+    ui/UserUtils.h \
 
 SOURCES = \
     ChatCore.cpp \
