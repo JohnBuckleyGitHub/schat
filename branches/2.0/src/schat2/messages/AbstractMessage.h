@@ -25,14 +25,17 @@
 
 #include "schat.h"
 
+class MessageData;
+
 class SCHAT_CORE_EXPORT AbstractMessage
 {
 public:
   /// Тип сообщения.
   enum MessageType {
-    UnknownType,     ///< Неизвестный тип.
-    UserMessageType, ///< Сообщение от пользователя.
-    AlertMessageType ///< Уведомления.
+    UnknownType,      ///< Неизвестный тип.
+    UserMessageType,  ///< Сообщение от пользователя.
+    AlertMessageType, ///< Уведомления.
+    ServiceMessageType
   };
 
   /// Опции обработки текста.
@@ -58,14 +61,15 @@ public:
     HighestPriority = 13
   };
 
-  AbstractMessage(int type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
+  AbstractMessage(const QString &type, const MessageData &data, int parseOptions = NoParse);
+  AbstractMessage(const QString &type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
   inline int direction() const { return m_direction; }
   inline int priority() const { return m_priority; }
-  inline int type() const { return m_type; }
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }
   inline qint64 timestamp() const { return m_timestamp; }
   inline QString text() const { return m_text; }
+  inline QString type() const { return m_type; }
   static QString tpl(const QString &fileName);
   virtual QString js() const;
   void setText(const QString &text, int parseOptions);
@@ -73,8 +77,12 @@ public:
 protected:
   QDateTime dateTime() const;
   QString appendMessage(QString &html) const;
-  void replaceText(QString &html) const;
-  void replaceTimeStamp(QString &html) const;
+  void extra(QString &html) const;
+  void id(QString &html) const;
+  void nick(QString &html) const;
+  void text(QString &html) const;
+  void time(QString &html) const;
+  void type(QString &html) const;
 
   int m_direction;       ///< Направление сообщения.
   int m_parseOptions;    ///< Опции обработки сообщения.
@@ -82,10 +90,13 @@ protected:
   QByteArray m_destId;   ///< Идентификатор назначения.
   QByteArray m_senderId; ///< Идентификатор отправителя.
   qint64 m_timestamp;    ///< Отметка времени.
+  QString m_extra;       ///< Дополнительные css классы.
+  QString m_id;          ///< Уникальный идентификатор сообщения.
+  QString m_template;    ///< Базовый шаблон сообщения.
   QString m_text;        ///< Текст сообщения.
+  QString m_type;        ///< Имя css класса типа сообщения.
 
 private:
-  int m_type;                                 ///< Тип сообщения.
   static QHash<QString, QString> m_templates; ///< Таблица шаблонов для сообщений.
 };
 

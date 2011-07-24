@@ -30,10 +30,6 @@ public:
   };
 
   AlertMessage(AlertType alertType, const QString &text, const QByteArray &destId = QByteArray());
-  QString js() const;
-
-private:
-  AlertType m_alertType;
 };
 
 #endif /* ALERTMESSAGE_H_ */

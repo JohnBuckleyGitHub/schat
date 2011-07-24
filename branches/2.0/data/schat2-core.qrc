@@ -62,12 +62,13 @@
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
   <file alias="js/about.js">html/js/about.js</file>
   <file alias="js/ChatView.js">html/js/ChatView.js</file>
-  <file alias="js/jquery.js">html/js/jquery-1.6.1.min.js</file>
+  <file alias="js/jquery.js">html/js/jquery-1.6.2.min.js</file>
   <file>html/about.html</file>
   <file>html/ChatView.html</file>
-  <file>html/templates/alert.html</file>
+  <file>html/templates/body.html</file>
   <file>html/templates/generic.html</file>
-  <file>html/templates/message.html</file>
+  <file>html/templates/nick.html</file>
+  <file>html/templates/time.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
   <file>images/logo128.png</file>

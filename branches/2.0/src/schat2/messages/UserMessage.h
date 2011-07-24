@@ -38,19 +38,12 @@ public:
   };
 
   UserMessage(int status, const MessageData &data);
-  inline DeliveryStatus status() const { return m_status; }
-  inline QString nick() const { return m_nick; }
-  inline quint64 name() const { return m_name; }
   QString js() const;
-  QString messageId() const;
-  void setNick(const QString &nick);
 
 private:
   QString setMessageState(const QString &state) const;
 
   DeliveryStatus m_status;     ///< Состояние доставки сообщения.
-  QString m_nick;              ///< Ник пользователя.
-  quint64 m_name;              ///< Уникальное имя-счётчик сообещения.
 };
 
 #endif /* USERMESSAGE_H_ */

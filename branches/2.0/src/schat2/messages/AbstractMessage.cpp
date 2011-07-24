@@ -17,17 +17,39 @@
  */
 
 #include <QFile>
+#include <QTextDocument>
 
+#include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
+#include "net/packets/message.h"
 
 QHash<QString, QString> AbstractMessage::m_templates;
 
-AbstractMessage::AbstractMessage(int type, const QString &text, const QByteArray &destId, int parseOptions)
+AbstractMessage::AbstractMessage(const QString &type, const MessageData &data, int parseOptions)
+  : m_direction(UnknownDirection)
+  , m_parseOptions(parseOptions)
+  , m_priority(NormalPriority)
+  , m_destId(data.destId)
+  , m_senderId(data.senderId)
+  , m_timestamp(data.timestamp)
+  , m_template(QLatin1String("generic"))
+  , m_type(type)
+{
+  if (data.name)
+    m_id = m_senderId.toHex() + QLatin1String("-") + QString::number(data.name);
+
+  setText(data.text, parseOptions);
+}
+
+
+AbstractMessage::AbstractMessage(const QString &type, const QString &text, const QByteArray &destId, int parseOptions)
   : m_direction(UnknownDirection)
   , m_parseOptions(parseOptions)
   , m_priority(NormalPriority)
   , m_destId(destId)
   , m_timestamp(0)
+  , m_template(QLatin1String("generic"))
   , m_type(type)
 {
   setText(text, parseOptions);
@@ -44,14 +66,14 @@ QString AbstractMessage::tpl(const QString &fileName)
   if (m_templates.contains(fileName))
     return m_templates.value(fileName);
 
-  QFile file(":/html/templates/" + fileName + ".html");
+  QFile file(QLatin1String(":/html/templates/") + fileName + QLatin1String(".html"));
   if (file.open(QIODevice::ReadOnly)) {
     QString tpl = file.readAll();
     m_templates.insert(fileName, tpl);
     return tpl;
   }
   else
-    return tpl("generic");
+    return tpl(QLatin1String("generic"));
 }
 
 
@@ -60,12 +82,13 @@ QString AbstractMessage::tpl(const QString &fileName)
  */
 QString AbstractMessage::js() const
 {
-  QString html = tpl("generic");
-
-  html.replace("%extra%", "generic");
-
-  replaceTimeStamp(html);
-  replaceText(html);
+  QString html = tpl(m_template);
+  type(html);
+  id(html);
+  extra(html);
+  time(html);
+  nick(html);
+  text(html);
 
   return appendMessage(html);
 }
@@ -96,29 +119,86 @@ QDateTime AbstractMessage::dateTime() const
  */
 QString AbstractMessage::appendMessage(QString &html) const
 {
-  html.replace("\"","\\\"");
-  html.replace("\n","\\n");
-  return "appendMessage(\"" + html + "\");";
+  html.replace(QLatin1String("\""), QLatin1String("\\\""));
+  html.replace(QLatin1String("\n"), QLatin1String("\\n"));
+  return QLatin1String("appendMessage(\"") + html + QLatin1String("\");");
 }
 
 
-/*!
- * Установка текста.
- */
-void AbstractMessage::replaceText(QString &html) const
+void AbstractMessage::extra(QString &html) const
 {
-  QString msg = m_text;
-  html.replace("%message%", msg.replace("\\", "\\\\").remove('\r').replace("%", "&#37;"));
+  html.replace(QLatin1String("%extra%"), m_extra);
 }
 
 
-/*!
- * Установка времени в HTML шаблоне.
- */
-void AbstractMessage::replaceTimeStamp(QString &html) const
+void AbstractMessage::id(QString &html) const
 {
+  if (m_id.isEmpty())
+    html.remove(QLatin1String("id=\"%message-id%\""));
+  else
+    html.replace(QLatin1String("%message-id%"), m_id);
+}
+
+
+void AbstractMessage::nick(QString &html) const
+{
+  if (!html.contains(QLatin1String("%nick%")))
+    return;
+
+  QString nick;
+  if (!m_senderId.isEmpty()) {
+    ClientUser user = ChatCore::i()->client()->user(m_senderId);
+    if (user)
+      nick = Qt::escape(user->nick());
+  }
+
+  if (nick.isEmpty()) {
+    html.remove(QLatin1String("%nick%"));
+    return;
+  }
+
+  QString t = tpl(QLatin1String("nick"));
+  t.replace(QLatin1String("%nick%"), nick);
+  t.replace(QLatin1String("%userId%"), m_senderId.toHex());
+
+  html.replace(QLatin1String("%nick%"), t);
+}
+
+
+void AbstractMessage::text(QString &html) const
+{
+  if (!html.contains(QLatin1String("%body%")))
+    return;
+
+  if (m_text.isEmpty()) {
+    html.remove(QLatin1String("%body%"));
+    return;
+  }
+
+  QString t = tpl(QLatin1String("body"));
+
+  QString text = m_text;
+  t.replace(QLatin1String("%message%"), text.replace("\\", "\\\\").remove('\r').replace("%", "&#37;"));
+
+  html.replace(QLatin1String("%body%"), t);
+}
+
+
+void AbstractMessage::time(QString &html) const
+{
+  if (!html.contains(QLatin1String("%time%")))
+    return;
+
+  QString t = tpl(QLatin1String("time"));
   QDateTime dt = dateTime();
+  t.replace(QLatin1String("%time%"), dt.toString(QLatin1String("hh:mm")));
+  t.replace(QLatin1String("%seconds%"), dt.toString(QLatin1String(":ss")));
 
-  html.replace("%time%", dt.toString("hh:mm"));
-  html.replace("%seconds%", dt.toString(":ss"));
+  html.replace(QLatin1String("%time%"), t);
+}
+
+
+void AbstractMessage::type(QString &html) const
+{
+  html.replace(QLatin1String("%message-type%"), m_type);
 }

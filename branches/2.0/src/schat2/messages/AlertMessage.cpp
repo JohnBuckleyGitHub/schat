@@ -19,27 +19,12 @@
 #include "messages/AlertMessage.h"
 
 AlertMessage::AlertMessage(AlertType alertType, const QString &text, const QByteArray &destId)
-  : AbstractMessage(AlertMessageType, text, destId)
-  , m_alertType(alertType)
+  : AbstractMessage(QLatin1String("alert-type"), text, destId)
 {
   m_priority = LowPriority;
-}
 
-
-QString AlertMessage::js() const
-{
-  QString html = tpl("alert");
-
-  QString alertType;
-  if (m_alertType == Information)
-    alertType = "information-alert";
-  else if (m_alertType == Exclamation)
-    alertType = "exclamation-alert";
-
-  replaceTimeStamp(html);
-  html.replace("%extra%", alertType);
-
-  replaceText(html);
-
-  return appendMessage(html);
+  if (alertType == Information)
+    m_extra = QLatin1String("information-alert");
+  else if (alertType == Exclamation)
+    m_extra = QLatin1String("exclamation-alert");
 }
