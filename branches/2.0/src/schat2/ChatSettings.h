@@ -24,7 +24,7 @@
 
 class SimpleClient;
 
-class ChatSettings : public Settings
+class SCHAT_CORE_EXPORT ChatSettings : public Settings
 {
   Q_OBJECT
 

@@ -21,7 +21,7 @@ SCHAT_USE_SSL = 1
 
 TEMPLATE = lib
 QT = core network
-TARGET = $$qtLibraryTarget(schat2-client)
+TARGET = schat2-client
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = client.rc
 !win32:VERSION = 1.9.0

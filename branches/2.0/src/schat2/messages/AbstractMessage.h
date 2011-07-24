@@ -23,7 +23,9 @@
 #include <QHash>
 #include <QString>
 
-class AbstractMessage
+#include "schat.h"
+
+class SCHAT_CORE_EXPORT AbstractMessage
 {
 public:
   /// Тип сообщения.

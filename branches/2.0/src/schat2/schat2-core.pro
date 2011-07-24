@@ -15,28 +15,38 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
-SCHAT_RC_FILE     = 1
-SCHAT_SINGLEAPP   = 0
+SCHAT_CONSOLE = 1
+SCHAT_DEBUG   = 1
+SCHAT_USE_SSL = 1
 
-QT = core network
-TEMPLATE = app
+TEMPLATE = lib
+QT = core gui network
+TARGET = schat2-core
+DEFINES += SCHAT_CORE_LIBRARY
+win32:RC_FILE = schat2-core.rc
+!win32:VERSION = 1.9.0
 
 HEADERS = \
-   BotApp.h \
-   BotPlugins.h \
-   version.h \
+    ChatCore.h \
+    ChatSettings.h \
+    messages/AbstractMessage.h \
+    messages/AlertMessage.h \
+    messages/MessageAdapter.h \
+    messages/UserMessage.h \
+    NetworkManager.h \
+    ui/UserUtils.h \
+    schat.h \
 
 SOURCES = \
-   BotApp.cpp \
-   BotPlugins.cpp \
-   main.cpp \
-  
-TRANSLATIONS += ../../data/translations/schat2-bot_en.ts
-TRANSLATIONS += ../../data/translations/schat2-bot_ru.ts
-CODECFORTR = UTF-8
-
+    ChatCore.cpp \
+    ChatSettings.cpp \
+    messages/AbstractMessage.cpp \
+    messages/AlertMessage.cpp \
+    messages/MessageAdapter.cpp \
+    messages/UserMessage.cpp \
+    NetworkManager.cpp \
+    ui/UserUtils.cpp \
+    
 SCHAT_CLIENT_LIB = 1
 
 include(../common/common.pri)
-

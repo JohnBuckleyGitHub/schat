@@ -21,7 +21,7 @@
 
 #include "messages/AbstractMessage.h"
 
-class AlertMessage : public AbstractMessage
+class SCHAT_CORE_EXPORT AlertMessage : public AbstractMessage
 {
 public:
   enum AlertType {

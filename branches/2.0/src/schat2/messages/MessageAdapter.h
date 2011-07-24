@@ -29,7 +29,7 @@ class ChatSettings;
 class NoticeData;
 class SimpleClient;
 
-class MessageAdapter : public ClientHelper
+class SCHAT_CORE_EXPORT MessageAdapter : public ClientHelper
 {
   Q_OBJECT
 

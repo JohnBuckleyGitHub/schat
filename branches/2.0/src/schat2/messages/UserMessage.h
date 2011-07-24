@@ -24,7 +24,7 @@
 class MessageData;
 class SimpleClient;
 
-class UserMessage : public AbstractMessage
+class SCHAT_CORE_EXPORT UserMessage : public AbstractMessage
 {
 public:
   /// Состояние доставки пакета.

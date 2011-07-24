@@ -20,6 +20,7 @@ TEMPLATE = subdirs
 SUBDIRS  = \
     client \
     schatd2 \
+    schat2/schat2-core.pro \
     schat2 \
     schat2-bot \
 

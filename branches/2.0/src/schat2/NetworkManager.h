@@ -23,11 +23,13 @@
 #include <QStringList>
 #include <QHash>
 
+#include "schat.h"
+
 class ChatSettings;
 class SimpleClient;
 class Settings;
 
-class NetworkItem
+class SCHAT_CORE_EXPORT NetworkItem
 {
 public:
   enum SettingsKeys {
@@ -56,7 +58,7 @@ private:
 /*!
  * Менеджер подключений.
  */
-class NetworkManager : public QObject
+class SCHAT_CORE_EXPORT NetworkManager : public QObject
 {
   Q_OBJECT
 
