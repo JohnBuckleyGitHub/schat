@@ -55,18 +55,12 @@ a:active, a:hover {
 	padding-left:0;
 }
 
-.date-time-block, .nick-block, .msg-body-block {
-	display:inline;
-}
-
 .date-time-block {
 	color:#a5b2c3;
 	font-size:x-small;
 }
 
-.no-seconds .seconds {
-	display:none;
-}
+.no-seconds .seconds { display:none; }
 
 .outgoing, .delivered {
 	background:#f2ffe1;
@@ -87,17 +81,17 @@ a:active, a:hover {
 	border:1px solid #ffd7d8;
 }
 
-.rejected:hover, .rejected:focus {
+.rejected:hover {
 	background:#ffc3c5;
 	border:1px solid #ffb9bb;
 }
 
-.incoming {
+.incoming, .service-type .blocks:hover {
 	background-color:#f7f8f9;
 	border:1px solid #f2f4f6;
 }
 
-.incoming:hover, .incoming:focus {
+.incoming:hover {
 	background-color:#e6f0f5;
 	border:1px solid #dbebf1;
 }
@@ -113,7 +107,7 @@ a:active, a:hover {
 	color:#143244;
 }
 
-.information-alert:hover, .information-alert:focus {
+.information-alert:hover {
 	background-color:#d9e8f3;
 	border:1px solid #cde1ef;
 }
@@ -124,7 +118,10 @@ a:active, a:hover {
 	color:#515007;
 }
 
-.exclamation-alert:hover, .exclamation-alert:focus {
+.exclamation-alert:hover {
 	background-color:#f8f7ac;
 	border:1px solid #f6f69a;
 }
+
+.service-type .blocks { border:1px solid #fff; color:#a5b2c3; }
+.service-type .nick { color:#a5b2c3; }

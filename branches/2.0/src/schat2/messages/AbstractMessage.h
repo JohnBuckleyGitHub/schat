@@ -70,6 +70,7 @@ public:
   inline qint64 timestamp() const { return m_timestamp; }
   inline QString text() const { return m_text; }
   inline QString type() const { return m_type; }
+  inline void setPriority(int priority) { m_priority = priority; }
   static QString tpl(const QString &fileName);
   virtual QString js() const;
   void setText(const QString &text, int parseOptions);

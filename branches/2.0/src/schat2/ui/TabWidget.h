@@ -83,6 +83,7 @@ private:
   ChannelTab *channelTab(const QByteArray &id);
   int addChatTab(AbstractTab *tab);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
+  void addServiceMsg(const QByteArray &senderId, const QByteArray &destId, const QString &text);
   void closeWelcome();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
