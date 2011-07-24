@@ -273,7 +273,6 @@ void TabWidget::showMainMenu()
  */
 void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 {
-  qDebug() << "join()";
   Channel *chan = m_client->channel(channelId);
   if (!chan)
     return;
@@ -288,7 +287,14 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
       return;
 
     displayChannelUserCount(channelId);
-    tab->chatView()->appendRawMessage(tr("<b>%1</b> joined to <b>%2</b>").arg(user->nick()).arg(chan->name()));
+
+    QString text;
+    if (user->gender() == User::Female)
+      text = tr("has joined", "Female");
+    else
+      text = tr("has joined", "Male");
+
+    addServiceMsg(userId, channelId, text);
   }
 }
 
@@ -476,9 +482,16 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   }
 
   tab->setOnline();
-  tab->chatView()->appendRawMessage(tr("you're joined to <b>%1</b>").arg(channel->name()));
   tab->userView()->add(m_client->user());
   tab->action()->setText(channel->name());
+
+  QString text;
+  if (m_client->user()->gender() == User::Female)
+    text = tr("has joined", "Female");
+  else
+    text = tr("has joined", "Male");
+
+  addServiceMsg(m_client->userId(), id, text);
 
   closeWelcome();
   return tab;
@@ -546,6 +559,21 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   return tab;
+}
+
+
+/*!
+ * Добавление сервисного сообщения.
+ */
+void TabWidget::addServiceMsg(const QByteArray &senderId, const QByteArray &destId, const QString &text)
+{
+  MessageData data(senderId, destId, text);
+  data.timestamp = m_client->timestamp();
+
+  AbstractMessage msg(QLatin1String("service-type"), data);
+  msg.setPriority(AbstractMessage::LowPriority);
+
+  message(msg);
 }
 
 
