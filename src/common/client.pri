@@ -35,7 +35,10 @@ HEADERS += \
     net/SimpleSocket_p.h \
     net/TransportReader.h \
     net/TransportWriter.h \
+    Plugins.h \
     schat.h \
+    Settings.h \
+    Translation.h \
     User.h \
 
 SOURCES += \
@@ -55,4 +58,8 @@ SOURCES += \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
+    Plugins.cpp \
+    Settings.cpp \
+    Translation.cpp \
     User.cpp \
+

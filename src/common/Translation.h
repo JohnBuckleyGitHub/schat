@@ -22,9 +22,11 @@
 #include <QObject>
 #include <QStringList>
 
+#include "schat.h"
+
 class QTranslator;
 
-class Translation : public QObject
+class SCHAT_EXPORT Translation : public QObject
 {
   Q_OBJECT
 

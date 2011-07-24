@@ -26,14 +26,14 @@ INCLUDEPATH += \
     ../3rdparty \
 
 CONFIG(debug, debug|release) { 
-  RCC_DIR = ../../tmp/$${TARGET}/debug/rcc
-  MOC_DIR = ../../tmp/$${TARGET}/debug/moc
-  OBJECTS_DIR = ../../tmp/$${TARGET}/debug/obj
+  RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
+  MOC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/moc
+  OBJECTS_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/obj
   DESTDIR = ../../out/debug
 } else { 
-  RCC_DIR = ../../tmp/$${TARGET}/release/rcc
-  MOC_DIR = ../../tmp/$${TARGET}/release/moc
-  OBJECTS_DIR = ../../tmp/$${TARGET}/release/obj
+  RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/rcc
+  MOC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/moc
+  OBJECTS_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/obj
   DESTDIR = ../../out
 }
 
@@ -62,5 +62,21 @@ contains( SCHAT_RC_FILE, 1 ) {
 
 contains( SCHAT_DEVEL_MODE, 1 ) {
   DEFINES += SCHAT_DEVEL_MODE
+}
+
+contains( SCHAT_CLIENT_LIB, 1 ) {
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../out/debug -lschat2-client
+  } else {
+    LIBS += -L../../out -lschat2-client
+  }
+}
+
+contains( SCHAT_CORE_LIB, 1 ) {
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../out/debug -lschat2-core
+  } else {
+    LIBS += -L../../out -lschat2-core
+  }
 }
 

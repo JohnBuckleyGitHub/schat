@@ -23,9 +23,11 @@
 #include <QObject>
 #include <QStringList>
 
+#include "schat.h"
+
 class CoreInterface;
 
-class Plugins : public QObject
+class SCHAT_EXPORT Plugins : public QObject
 {
   Q_OBJECT
 

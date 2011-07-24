@@ -15,6 +15,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+TEMPLATE = lib
+CONFIG   += plugin
+
 DEPENDPATH += \
     . \
     ../ \
@@ -26,27 +29,24 @@ INCLUDEPATH += \
     ../../ \
 
 CONFIG(debug, debug|release) { 
-  RCC_DIR = ../../../../tmp/$${TARGET}/debug/rcc
-  MOC_DIR = ../../../../tmp/$${TARGET}/debug/moc
-  OBJECTS_DIR = ../../../../tmp/$${TARGET}/debug/obj
+  RCC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
+  MOC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/moc
+  OBJECTS_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/obj
   DESTDIR = ../../../../out/debug/plugins
 } else { 
-  RCC_DIR = ../../../../tmp/$${TARGET}/release/rcc
-  MOC_DIR = ../../../../tmp/$${TARGET}/release/moc
-  OBJECTS_DIR = ../../../../tmp/$${TARGET}/release/obj
+  RCC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/rcc
+  MOC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/moc
+  OBJECTS_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/obj
   DESTDIR = ../../../../out/plugins
 }
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) { 
-    LIBS += -L../../../../out/debug -lschat2-clientd 
+    LIBS += -L../../../../out/debug -lschat2-client 
   } else { 
     LIBS += -L../../../../out -lschat2-client  
   }
 }
 
-TEMPLATE = lib
-CONFIG   += plugin
 win32:RC_FILE = $${TARGET}.rc
-TARGET   = $$qtLibraryTarget($${TARGET})
 

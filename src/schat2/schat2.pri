@@ -26,20 +26,10 @@ HEADERS = \
     arora/lineedit.h \
     arora/lineedit_p.h \
     ChatApp.h \
-    ChatCore.h \
-    ChatSettings.h \
     debugstream.h \
-    messages/AbstractMessage.h \
-    messages/AlertMessage.h \
-    messages/MessageAdapter.h \
-    messages/UserMessage.h \
-    NetworkManager.h \
-    Plugins.h \
     plugins/ClientInterface.h \
     plugins/CoreInterface.h \
     QProgressIndicator/QProgressIndicator.h \
-    Settings.h \
-    Translation.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
@@ -69,23 +59,12 @@ HEADERS = \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
     ui/TrayIcon.h \
-    ui/UserUtils.h \
 
 SOURCES = \
     arora/lineedit.cpp \
     ChatApp.cpp \
-    ChatCore.cpp \
-    ChatSettings.cpp \
     main.cpp \
-    messages/AbstractMessage.cpp \
-    messages/AlertMessage.cpp \
-    messages/MessageAdapter.cpp \
-    messages/UserMessage.cpp \
-    NetworkManager.cpp \
-    Plugins.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
-    Settings.cpp \
-    Translation.cpp \
     ui/ChatWindow.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
@@ -114,7 +93,6 @@ SOURCES = \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
-    ui/UserUtils.cpp \
     
 TRANSLATIONS += ../../data/translations/schat2_en.ts
 TRANSLATIONS += ../../data/translations/schat2_ru.ts
@@ -127,11 +105,8 @@ win32 {
 
 DEFINES += SCHAT_WEBKIT
 
-CONFIG(debug, debug|release) { 
-  LIBS += -L../../out/debug -lschat2-clientd 
-} else { 
-  LIBS += -L../../out -lschat2-client  
-}
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
 
 include(../common/common.pri)
 

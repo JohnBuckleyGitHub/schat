@@ -24,9 +24,11 @@
 #include <QStringList>
 #include <QVariant>
 
+#include "schat.h"
+
 class FileLocations;
 
-class Settings : public QObject
+class SCHAT_EXPORT Settings : public QObject
 {
   Q_OBJECT
 

@@ -21,9 +21,10 @@
 
 #include <QIcon>
 
+#include "schat.h"
 #include "User.h"
 
-class UserUtils
+class SCHAT_CORE_EXPORT UserUtils
 {
 public:
   UserUtils();

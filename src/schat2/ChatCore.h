@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include "schat.h"
+
 class AbstractMessage;
 class ChatSettings;
 class MessageAdapter;
@@ -37,7 +39,7 @@ class UserUtils;
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
 #define SCHAT_OPTION(x) ChatCore::i()->settings()->value(ChatSettings::x)
 
-class ChatCore : public QObject
+class SCHAT_CORE_EXPORT ChatCore : public QObject
 {
   Q_OBJECT
 
