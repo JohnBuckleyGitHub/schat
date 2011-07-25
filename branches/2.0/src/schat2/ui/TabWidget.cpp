@@ -287,14 +287,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
       return;
 
     displayChannelUserCount(channelId);
-
-    QString text;
-    if (user->gender() == User::Female)
-      text = tr("has joined", "Female");
-    else
-      text = tr("has joined", "Male");
-
-    addServiceMsg(userId, channelId, text);
+    addJoinMsg(user->id(), channelId);
   }
 }
 
@@ -304,7 +297,8 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
   ChannelTab *tab = m_channels.value(channelId);
   ClientUser user = m_client->user(userId);
   if (tab && user) {
-    tab->chatView()->appendRawMessage(tr("<b>%1</b> left").arg(user->nick()));
+
+    addQuitMsg(userId, channelId);
     tab->userView()->remove(userId);
     displayChannelUserCount(channelId);
   }
@@ -449,9 +443,7 @@ void TabWidget::updateUserData(const QByteArray &userId)
 
 void TabWidget::userLeave(const QByteArray &userId)
 {
-  PrivateTab *tab = privateTab(userId, false);
-  if (tab)
-    tab->setOnline(false);
+  addQuitMsg(userId, userId);
 }
 
 
@@ -485,14 +477,7 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   tab->userView()->add(m_client->user());
   tab->action()->setText(channel->name());
 
-  QString text;
-  if (m_client->user()->gender() == User::Female)
-    text = tr("has joined", "Female");
-  else
-    text = tr("has joined", "Male");
-
-  addServiceMsg(m_client->userId(), id, text);
-
+  addJoinMsg(m_client->userId(), id);
   closeWelcome();
   return tab;
 }
@@ -538,11 +523,16 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     create = false;
   }
 
-  if (create) {
-    ClientUser user = m_client->user(id);
-    if (!user)
-      return 0;
+  ClientUser user = m_client->user(id);
+  if (!user) {
+    create = false;
+    return 0;
+  }
 
+  if (user->status() == User::OfflineStatus)
+    create = false;
+
+  if (create) {
     tab = new PrivateTab(user, this);
     m_talks.insert(id, tab);
     addTab(tab, user->nick());
@@ -551,7 +541,11 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   }
   else if (tab) {
+    bool addJoin = tab->user() != user;
     tab->update(m_client->user(id));
+
+    if (addJoin)
+      addJoinMsg(id, id);
   }
 
   if (show && tab) {
@@ -562,12 +556,55 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
+void TabWidget::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
+{
+  ClientUser user = m_client->user(userId);
+  if (!user)
+    return;
+
+  QString text;
+  if (user->gender() == User::Female)
+    text = tr("has joined", "Female");
+  else
+    text = tr("has joined", "Male");
+
+  addServiceMsg(userId, destId, text);
+}
+
+
+/*!
+ * Сообщение о выходе пользователя из канала или чата.
+ */
+void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
+{
+  ClientUser user = m_client->user(userId);
+  if (!user)
+    return;
+
+  QString text;
+  if (user->gender() == User::Female) {
+    if (user->status() == User::OfflineStatus)
+      text = tr("has quit chat", "Female");
+    else
+      text = tr("has left", "Female");
+  }
+  else {
+    if (user->status() == User::OfflineStatus)
+      text = tr("has quit chat", "Male");
+    else
+      text = tr("has left", "Male");
+  }
+
+  addServiceMsg(userId, destId, text);
+}
+
+
 /*!
  * Добавление сервисного сообщения.
  */
-void TabWidget::addServiceMsg(const QByteArray &senderId, const QByteArray &destId, const QString &text)
+void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text)
 {
-  MessageData data(senderId, destId, text);
+  MessageData data(userId, destId, text);
   data.timestamp = m_client->timestamp();
 
   AbstractMessage msg(QLatin1String("service-type"), data);

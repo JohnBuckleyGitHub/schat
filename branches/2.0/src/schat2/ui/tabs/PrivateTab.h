@@ -31,6 +31,7 @@ class PrivateTab : public ChatViewTab
 public:
   PrivateTab(ClientUser user, TabWidget *parent);
   bool update(ClientUser user);
+  inline ClientUser user() const { return m_user; }
   void alert(bool start = true);
   void setOnline(bool online = true);
 
