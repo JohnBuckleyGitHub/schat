@@ -70,6 +70,23 @@ MessageReader::MessageReader(PacketReader *reader)
 }
 
 
+bool MessageUtils::remove(const QString &cmd, QString &msg)
+{
+  QString c = cmd;
+  int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+  if (index == -1 && c.endsWith(' ')) {
+    c = c.left(c.size() - 1);
+    index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+  }
+
+  if (index == -1)
+    return false;
+
+  msg.remove(index, c.size());
+  return true;
+}
+
+
 QString MessageUtils::htmlFilter(const QString &html, int left, bool strict)
 {
   QString out = html;

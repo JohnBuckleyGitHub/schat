@@ -125,3 +125,8 @@ a:active, a:hover {
 
 .service-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick { color:#a5b2c3; }
+
+.action-type .nick, .action-type .blocks { color:#be00c4; }
+.action-type .blocks { background:#ffebff; border:1px solid #ffe1ff; }
+.action-type .blocks:hover { background:#ffe1ff; border:1px solid #fed7ff; }
+.action-type .undelivered { background:url("qrc:/images/progress-pink.gif") top right no-repeat #ffebff; }

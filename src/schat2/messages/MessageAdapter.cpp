@@ -70,6 +70,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /hide
  * - /join
  * - /male
+ * - /me
  * - /nick
  * - /offline
  * - /online

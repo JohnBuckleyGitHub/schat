@@ -17,6 +17,7 @@
  */
 
 #include "messages/UserMessage.h"
+#include "net/packets/message.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
   : AbstractMessage(QLatin1String("user-type"), data, NoParse)
@@ -33,6 +34,12 @@ UserMessage::UserMessage(int status, const MessageData &data)
 
   if (m_status & UserMessage::Undelivered)
     m_extra += QLatin1String(" undelivered");
+
+  if (data.command.isEmpty())
+    return;
+
+  if (data.command == QLatin1String("me"))
+    m_type = QLatin1String("action-type");
 }
 
 
