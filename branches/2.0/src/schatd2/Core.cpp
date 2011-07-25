@@ -525,7 +525,7 @@ bool Core::readUserData()
     return false;
 
   if (user->nick() != reader.user.nick()) {
-    if (m_storage->user(reader.user.nick(), true))
+    if (m_storage->user(reader.user.nick(), true) != user)
       return false;
   }
 
