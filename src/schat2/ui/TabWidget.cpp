@@ -84,7 +84,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
-  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
@@ -287,7 +287,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
       return;
 
     displayChannelUserCount(channelId);
-    addJoinMsg(user->id(), channelId);
+    addJoinMsg(user->id(), channelId, tab);
   }
 }
 
@@ -298,7 +298,7 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
   ClientUser user = m_client->user(userId);
   if (tab && user) {
 
-    addQuitMsg(userId, channelId);
+    addQuitMsg(userId, channelId, tab);
     tab->userView()->remove(userId);
     displayChannelUserCount(channelId);
   }
@@ -340,24 +340,34 @@ void TabWidget::synced(const QByteArray &channelId)
 /*!
  * Обработка изменения состояния клиента.
  */
-void TabWidget::clientStateChanged(int state)
+void TabWidget::clientStateChanged(int state, int previousState)
 {
   SCHAT_DEBUG_STREAM(this << "clientStateChanged()" << state);
 
   if (state == SimpleClient::ClientOnline)
     return;
 
+  QByteArray id = m_client->userId();
+  bool quitMsg = state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline;
+
   foreach (ChannelTab *tab, m_channels) {
     tab->setOnline(false);
     displayChannelUserCount(tab->id());
+
+    if (quitMsg)
+      addQuitMsg(id, tab->id(), tab);
   }
 
   foreach (PrivateTab *tab, m_talks) {
     tab->setOnline(false);
+
+    if (quitMsg)
+      addQuitMsg(id, id, tab);
   }
 
-  if (state == SimpleClient::ClientOffline)
+  if (state == SimpleClient::ClientOffline) {
     closeWelcome();
+  }
 }
 
 
@@ -398,21 +408,7 @@ void TabWidget::message(const AbstractMessage &data)
   if (!tab)
     return;
 
-  tab->chatView()->evaluateJavaScript(data.js());
-
-  if (data.priority() < AbstractMessage::NormalPriority)
-    return;
-
-  int index = indexOf(tab);
-  bool alert = false;
-  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
-    alert = true;
-    tab->alert();
-    m_tray->alert();
-
-    if (!m_alerts.contains(tab))
-      m_alerts.append(tab);
-  }
+  message(tab, data);
 }
 
 
@@ -477,7 +473,7 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   tab->userView()->add(m_client->user());
   tab->action()->setText(channel->name());
 
-  addJoinMsg(m_client->userId(), id);
+  addJoinMsg(m_client->userId(), id, tab);
   closeWelcome();
   return tab;
 }
@@ -545,7 +541,7 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     tab->update(m_client->user(id));
 
     if (addJoin)
-      addJoinMsg(id, id);
+      addJoinMsg(id, id, tab);
   }
 
   if (show && tab) {
@@ -556,7 +552,7 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 }
 
 
-void TabWidget::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
+void TabWidget::addJoinMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab)
 {
   ClientUser user = m_client->user(userId);
   if (!user)
@@ -568,41 +564,41 @@ void TabWidget::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
   else
     text = tr("has joined", "Male");
 
-  addServiceMsg(userId, destId, text);
+  addServiceMsg(userId, destId, text, tab);
 }
 
 
 /*!
  * Сообщение о выходе пользователя из канала или чата.
  */
-void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
+void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab)
 {
   ClientUser user = m_client->user(userId);
   if (!user)
     return;
 
   QString text;
-  if (user->gender() == User::Female) {
-    if (user->status() == User::OfflineStatus)
+  if (user->status() == User::OfflineStatus || m_client->userId() == userId) {
+    if (user->gender() == User::Female)
       text = tr("has quit chat", "Female");
     else
-      text = tr("has left", "Female");
+      text = tr("has quit chat", "Male");
   }
   else {
-    if (user->status() == User::OfflineStatus)
-      text = tr("has quit chat", "Male");
+    if (user->gender() == User::Female)
+      text = tr("has left", "Female");
     else
       text = tr("has left", "Male");
   }
 
-  addServiceMsg(userId, destId, text);
+  addServiceMsg(userId, destId, text, tab);
 }
 
 
 /*!
  * Добавление сервисного сообщения.
  */
-void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text)
+void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab)
 {
   MessageData data(userId, destId, text);
   data.timestamp = m_client->timestamp();
@@ -610,7 +606,7 @@ void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId
   AbstractMessage msg(QLatin1String("service-type"), data);
   msg.setPriority(AbstractMessage::LowPriority);
 
-  message(msg);
+  message(tab, msg);
 }
 
 
@@ -723,6 +719,31 @@ void TabWidget::lastTab()
 {
   if (count() == 0)
     addChatTab(m_alertTab);
+}
+
+
+void TabWidget::message(ChatViewTab *tab, const AbstractMessage &data)
+{
+  if (!tab) {
+    message(data);
+    return;
+  }
+
+  tab->chatView()->evaluateJavaScript(data.js());
+
+  if (data.priority() < AbstractMessage::NormalPriority)
+    return;
+
+  int index = indexOf(tab);
+  bool alert = false;
+  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
+    alert = true;
+    tab->alert();
+    m_tray->alert();
+
+    if (!m_alerts.contains(tab))
+      m_alerts.append(tab);
+  }
 }
 
 

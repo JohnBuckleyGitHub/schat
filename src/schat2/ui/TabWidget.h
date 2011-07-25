@@ -74,7 +74,7 @@ private slots:
   void part(const QByteArray &channelId, const QByteArray &userId);
   void synced(const QByteArray &channelId);
 
-  void clientStateChanged(int state);
+  void clientStateChanged(int state, int previousState);
   void message(const AbstractMessage &data);
   void updateUserData(const QByteArray &userId);
   void userLeave(const QByteArray &userId);
@@ -83,13 +83,14 @@ private:
   ChannelTab *channelTab(const QByteArray &id);
   int addChatTab(AbstractTab *tab);
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
-  void addJoinMsg(const QByteArray &userId, const QByteArray &destId);
-  void addQuitMsg(const QByteArray &userId, const QByteArray &destId);
-  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text);
+  void addJoinMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab = 0);
+  void addQuitMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab = 0);
+  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
   void closeWelcome();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
   void lastTab();
+  void message(ChatViewTab *tab, const AbstractMessage &data);
   void retranslateUi();
   void showWelcome();
   void stopAlert();

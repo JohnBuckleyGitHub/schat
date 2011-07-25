@@ -77,6 +77,7 @@ public:
   QUrl url;                                ///< Адрес, к которому будет подключен клиент.
   ServerData *serverData;                  ///< Данные о сервере.
   SimpleClient::ClientState clientState;   ///< Состояние клиента.
+  SimpleClient::ClientState previousState; ///< Предыдущее состояние клиента.
 };
 
 

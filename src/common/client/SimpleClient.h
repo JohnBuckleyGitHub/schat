@@ -68,7 +68,7 @@ public:
   void part(const QByteArray &channelId);
 
 signals:
-  void clientStateChanged(int state);
+  void clientStateChanged(int state, int previousState);
   void join(const QByteArray &channelId, const QByteArray &userId);
   void message(const MessageData &data);
   void notice(const NoticeData &data);

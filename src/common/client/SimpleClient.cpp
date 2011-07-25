@@ -42,6 +42,7 @@ SimpleClientPrivate::SimpleClientPrivate()
   , uniqueId(SimpleID::uniqueId())
   , serverData(new ServerData())
   , clientState(SimpleClient::ClientOffline)
+  , previousState(SimpleClient::ClientOffline)
 {
   user->setUserAgent(SimpleID::userAgent());
 }
@@ -161,6 +162,7 @@ void SimpleClientPrivate::setClientState(SimpleClient::ClientState state)
   if (clientState == state)
     return;
 
+  previousState = clientState;
   clientState = state;
 
   if (state == SimpleClient::ClientOnline || state == SimpleClient::ClientOffline)
@@ -176,7 +178,7 @@ void SimpleClientPrivate::setClientState(SimpleClient::ClientState state)
   }
 
   Q_Q(SimpleClient);
-  emit(q->clientStateChanged(state));
+  emit(q->clientStateChanged(state, previousState));
 }
 
 
