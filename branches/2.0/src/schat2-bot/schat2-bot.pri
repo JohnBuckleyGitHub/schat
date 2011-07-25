@@ -32,10 +32,6 @@ SOURCES = \
    BotPlugins.cpp \
    main.cpp \
   
-TRANSLATIONS += ../../data/translations/schat2-bot_en.ts
-TRANSLATIONS += ../../data/translations/schat2-bot_ru.ts
-CODECFORTR = UTF-8
-
 SCHAT_CLIENT_LIB = 1
 
 include(../common/common.pri)
