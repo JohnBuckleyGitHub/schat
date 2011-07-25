@@ -328,7 +328,7 @@ bool SimpleClientPrivate::command()
   QString command = messageData->command;
   SCHAT_DEBUG_STREAM(this << "command()" << command)
 
-  if (command == "part") {
+  if (command == QLatin1String("part")) {
     removeUserFromChannel(reader->dest(), reader->sender());
     return true;
   }
@@ -338,7 +338,7 @@ bool SimpleClientPrivate::command()
     return true;
   }
 
-  if (command == "leave") {
+  if (command == QLatin1String("leave")) {
     removeUser(reader->sender());
     return true;
   }
@@ -460,15 +460,17 @@ bool SimpleClientPrivate::removeUser(const QByteArray &userId)
   if (!user)
     return false;
 
+  user->setStatus(User::OfflineStatus);
+
+  Q_Q(SimpleClient);
+  emit(q->userLeave(userId));
+
   QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
   for (int i = 0; i < channels.size(); ++i) {
     removeUserFromChannel(channels.at(i), userId, false);
   }
 
-  Q_Q(SimpleClient);
   users.remove(userId);
-  emit(q->userLeave(userId));
-
   return true;
 }
 
@@ -485,8 +487,8 @@ bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, con
   if (!user.isNull() && channel) {
     channel->removeUser(user->id());
     user->removeId(SimpleID::ChannelListId, channel->id());
-    emit(q->part(channel->id(), user->id()));
 
+    emit(q->part(channel->id(), user->id()));
     if (clear && !this->user->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
       removeUser(userId);
 
