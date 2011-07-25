@@ -40,7 +40,7 @@ MessageAdapter::MessageAdapter()
   m_richText = true;
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
-  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_client, SIGNAL(notice(const NoticeData &)), SLOT(notice(const NoticeData &)));
 }
 
@@ -184,14 +184,14 @@ void MessageAdapter::clientMessage(const MessageData &data)
 }
 
 
-void MessageAdapter::clientStateChanged(int state)
+void MessageAdapter::clientStateChanged(int state, int previousState)
 {
   if (state == SimpleClient::ClientOnline) {
     AlertMessage msg(AlertMessage::Information, tr("Successfully connected to <b>%1</b>").arg(NetworkManager::currentServerName()));
     emit message(msg);
     return;
   }
-  else if (state == SimpleClient::ClientOffline) {
+  else if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
     AlertMessage msg(AlertMessage::Exclamation, tr("Connection lost"));
     emit message(msg);
   }

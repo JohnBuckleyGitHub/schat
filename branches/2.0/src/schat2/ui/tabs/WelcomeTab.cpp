@@ -87,7 +87,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   retranslateUi();
 
   connect(m_connectButton, SIGNAL(clicked()), m_networks, SLOT(open()));
-  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged()));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
 }
 
 

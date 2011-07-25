@@ -75,7 +75,7 @@ NetworkManager::NetworkManager(QObject *parent)
   , m_client(ChatCore::i()->client())
 {
   load();
-  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 }
 
 

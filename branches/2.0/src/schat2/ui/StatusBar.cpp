@@ -60,7 +60,7 @@ StatusBar::StatusBar(QWidget *parent)
   addWidget(m_label, 1);
   addPermanentWidget(m_status);
 
-  connect(m_client, SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 
   updateStyleSheet();
   clientStateChanged(m_clientState);

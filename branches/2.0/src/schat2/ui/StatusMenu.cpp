@@ -40,7 +40,7 @@ StatusMenu::StatusMenu(QWidget *parent)
   update();
 
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int)), SLOT(clientStateChanged(int)));
+  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
 }
 

@@ -53,7 +53,7 @@ signals:
 private slots:
   void allDelivered(quint64 id);
   void clientMessage(const MessageData &data);
-  void clientStateChanged(int state);
+  void clientStateChanged(int state, int previousState);
   void notice(const NoticeData &data);
 
 private:
