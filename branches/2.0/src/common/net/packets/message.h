@@ -112,6 +112,7 @@ class SCHAT_EXPORT MessageUtils
 {
 public:
   MessageUtils() {}
+  static bool remove(const QString &cmd, QString &msg);
   static QString htmlFilter(const QString &html, int left = 2048, bool strict = true);
   static QString toPlainText(const QString &text);
 };

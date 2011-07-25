@@ -46,7 +46,15 @@ bool ClientHelper::send(MessageData &data)
   else
     text = data.text.simplified();
 
-  if (text.at(0) != QLatin1Char('/') || text.startsWith(QLatin1String("/me"), Qt::CaseInsensitive)) {
+  if (text.startsWith(QLatin1String("/me "), Qt::CaseInsensitive)) {
+    if (MessageUtils::remove(QLatin1String("/me "), data.text))
+      data.command = QLatin1String("me");
+
+    sendText(data);
+    return true;
+  }
+
+  if (text.at(0) != QLatin1Char('/')) {
     sendText(data);
     return true;
   }
@@ -72,7 +80,7 @@ bool ClientHelper::sendText(MessageData &data)
 
   ++m_name;
   data.name = m_name;
-  data.options |= MessageData::NameOption;
+  data.autoSetOptions();
 
   if (!m_client->send(data)) {
     --m_name;

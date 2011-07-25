@@ -60,7 +60,7 @@ void BotEcho::message(const MessageData &data)
   if (data.destId != m_client->userId())
     return;
 
-  MessageData message(m_client->userId(), data.senderId, data.text);
+  MessageData message(m_client->userId(), data.senderId, data.command, data.text);
   m_client->send(message);
 }
 
