@@ -279,58 +279,58 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="563"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="562"/>
         <source>has joined</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="565"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="564"/>
         <source>has joined</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="583"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="582"/>
         <source>has quit chat</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="585"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="584"/>
         <source>has quit chat</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="589"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="588"/>
         <source>has left</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="591"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="590"/>
         <source>has left</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="754"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="753"/>
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="755"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="754"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="756"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="755"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="757"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="756"/>
         <source>Talks</source>
         <translation type="unfinished"></translation>
     </message>

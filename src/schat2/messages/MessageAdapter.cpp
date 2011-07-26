@@ -129,7 +129,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("help")) {
-    MessageBox box(QLatin1String("yes-no-box"), tr("Would you like to see help for commands on site: <a href=\"http://simple.impomezia.com/Commands\">http://simple.impomezia.com</a>?"), m_destId);
+    MessageBox box(QLatin1String("yes-no-box"), tr("Would you like to see help for commands on site <a href='http://simple.impomezia.com/Commands'>http://simple.impomezia.com</a>?"), m_destId);
     UrlAction *action = new UrlAction(QUrl(QLatin1String("http://simple.impomezia.com/Commands")));
     ChatCore::i()->addChatViewAction(box.id(), action);
     emit message(box);
