@@ -88,6 +88,11 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "profile";
   m_icons += "ok";
   m_icons += "information-balloon";
+  m_icons += "edit-clear";
+  m_icons += "edit-copy";
+  m_icons += "edit-cut";
+  m_icons += "edit-paste";
+  m_icons += "edit-select-all";
 
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
   connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
@@ -137,12 +142,15 @@ QIcon ChatCore::icon(const QString &file, const QString &overlay)
 }
 
 
+/*!
+ * \todo Добавить поддержку получения иконки из темы.
+ */
 QIcon ChatCore::icon(IconName name)
 {
-  if (name < m_icons.size())
-    return QIcon(":/images/" + m_icons.at(name) + ".png");
+  if (name >= m_icons.size())
+    return QIcon();
 
-  return QIcon();
+  return QIcon(QLatin1String(":/images/") + m_icons.at(name) + QLatin1String(".png"));
 }
 
 

@@ -74,7 +74,12 @@ public:
     RemoveIcon,
     ProfileIcon,
     OkIcon,
-    InfoBalloon
+    InfoBalloon,
+    EditClear,
+    EditCopy,
+    EditCut,
+    EditPaste,
+    EditSelectAll
   };
 
   enum Notice {

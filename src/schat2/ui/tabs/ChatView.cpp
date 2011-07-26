@@ -16,7 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAction>
+#include <QContextMenuEvent>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QMenu>
 #include <QWebFrame>
 
 #include "ChatCore.h"
@@ -41,25 +45,9 @@ ChatView::ChatView(QWidget *parent)
 
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
-}
 
-
-/*!
- * Базовая функция добавления сообщения.
- * \deprecated ChatView::appendRawMessage().
- */
-void ChatView::appendRawMessage(const QString &message)
-{
-  QString js = message;
-  js.replace("\"","\\\"");
-  js.replace("\n","\\n");
-  js = QString("appendMessage(\"%1\");").arg(js);
-
-  if (m_loaded) {
-    page()->mainFrame()->evaluateJavaScript(js);
-  }
-  else
-    m_pendingJs.enqueue(js);
+  createActions();
+  retranslateUi();
 }
 
 
@@ -73,6 +61,35 @@ void ChatView::evaluateJavaScript(const QString &js)
 }
 
 
+void ChatView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWebView::changeEvent(event);
+}
+
+
+/*!
+ * Показ контекстного меню.
+ */
+void ChatView::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu menu(this);
+
+  if (!selectedText().isEmpty())
+    menu.addAction(m_copy);
+
+  menu.addSeparator();
+  menu.addAction(m_clear);
+  menu.addAction(m_selectAll);
+
+  connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+
+  menu.exec(event->globalPos());
+}
+
+
 /*!
  * Завершение загрузки документа.
  */
@@ -83,6 +100,17 @@ void ChatView::loadFinished()
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
+}
+
+
+void ChatView::menuTriggered(QAction *action)
+{
+  qDebug() << "menuTriggered()" << action;
+
+  if (action == m_clear) {
+    m_loaded = false;
+    page()->triggerAction(QWebPage::ReloadAndBypassCache);
+  }
 }
 
 
@@ -103,6 +131,26 @@ void ChatView::settingsChanged(const QList<int> &keys)
   if (keys.contains(ChatSettings::ShowSeconds)) {
     showSeconds(SCHAT_OPTION(ShowSeconds).toBool());
   }
+}
+
+
+void ChatView::createActions()
+{
+  m_copy = pageAction(QWebPage::Copy);
+  m_copy->setIcon(SCHAT_ICON(EditCopy));
+
+  m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
+
+  m_selectAll = pageAction(QWebPage::SelectAll);
+  m_selectAll->setIcon(SCHAT_ICON(EditSelectAll));
+}
+
+
+void ChatView::retranslateUi()
+{
+  m_copy->setText(tr("Copy"));
+  m_clear->setText(tr("Clear"));
+  m_selectAll->setText(tr("Select All"));
 }
 
 
