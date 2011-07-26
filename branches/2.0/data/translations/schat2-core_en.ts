@@ -5,12 +5,17 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="190"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="132"/>
+        <source>Would you like to see help for commands on site &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="202"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="195"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="207"/>
         <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
@@ -40,6 +45,16 @@
     <message>
         <location filename="../../src/schat2/ui/UserUtils.cpp" line="132"/>
         <source>Online</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/MessageBox.cpp" line="38"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/MessageBox.cpp" line="39"/>
+        <source>No</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
