@@ -31,27 +31,29 @@ class ChatView : public QWebView
   Q_OBJECT
 
 public:
-  /// Опции.
-  enum Options {
-    EnableDeveloper, ///< Разрешить использование средств разработки.
-    UserServerTime   ///< Использовать время сервера для сообщений.
-  };
-
   ChatView(QWidget *parent = 0);
-  void appendRawMessage(const QString &message);
   void evaluateJavaScript(const QString &js);
+
+protected:
+  void changeEvent(QEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
   void loadFinished();
+  void menuTriggered(QAction *action);
   void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
   void settingsChanged(const QList<int> &keys);
 
 private:
+  void createActions();
+  void retranslateUi();
   void showSeconds(bool show);
 
   bool m_loaded;                      ///< true если документ загружен.
-  QHash<Options, QVariant> m_options; ///< Опции.
+  QAction *m_clear;                   ///< Очистить.
+  QAction *m_copy;                    ///< Копировать.
+  QAction *m_selectAll;               ///< Выделить всё
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
 
