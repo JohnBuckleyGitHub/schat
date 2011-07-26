@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDesktopServices>
 #include <QWebFrame>
 
 #include "ChatCore.h"
@@ -28,6 +29,7 @@ ChatView::ChatView(QWidget *parent)
   , m_loaded(false)
 {
   setAcceptDrops(false);
+  page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
   setUrl(QUrl("qrc:/html/ChatView.html"));
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
@@ -38,12 +40,13 @@ ChatView::ChatView(QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
 
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
 }
 
 
 /*!
  * Базовая функция добавления сообщения.
- * \todo Удалить эту функцию.
+ * \deprecated ChatView::appendRawMessage().
  */
 void ChatView::appendRawMessage(const QString &message)
 {
@@ -80,6 +83,12 @@ void ChatView::loadFinished()
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
+}
+
+
+void ChatView::openUrl(const QUrl &url)
+{
+  QDesktopServices::openUrl(url);
 }
 
 

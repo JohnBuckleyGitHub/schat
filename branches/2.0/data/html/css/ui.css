@@ -49,5 +49,4 @@ button:disabled {
 }
 
 .button-box { float:right; }
-
-.content-small { float:left; padding:4px; }
+.window-content { padding:4px 0 0 4px; }

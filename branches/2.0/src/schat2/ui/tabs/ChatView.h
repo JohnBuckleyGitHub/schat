@@ -43,6 +43,7 @@ public:
 
 private slots:
   void loadFinished();
+  void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
   void settingsChanged(const QList<int> &keys);
 

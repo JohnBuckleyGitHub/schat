@@ -59,11 +59,12 @@ function scrollToBottom() {
 
 //Appending new content to the message view
 function appendMessage(html) {
-	var shouldScroll = nearBottom();
+	//var shouldScroll = nearBottom();
 	$('#Chat').append(html);
 	$('.nick-block > a.nick').unbind('click', nickClicked);
 	$('.nick-block > a.nick').bind('click', nickClicked);
-	alignChat(shouldScroll);
+	
+	alignChat(true);
 }
 
 function showSeconds(show) {
