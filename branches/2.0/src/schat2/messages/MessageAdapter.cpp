@@ -129,10 +129,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("help")) {
-    MessageBox box(QLatin1String("yes-no-box"), tr("Would you like to see help for commands on site <a href='http://simple.impomezia.com/Commands'>http://simple.impomezia.com</a>?"), m_destId);
-    UrlAction *action = new UrlAction(QUrl(QLatin1String("http://simple.impomezia.com/Commands")));
-    ChatCore::i()->addChatViewAction(box.id(), action);
-    emit message(box);
+    commandHelpHint("");
     return;
   }
 
@@ -174,6 +171,8 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
     return;
   }
+
+  commandHelpHint(command);
 }
 
 
@@ -267,6 +266,21 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 
   m_settings->updateValue(ChatSettings::ProfileGender, user.rawGender());
   return SentAsCommand;
+}
+
+
+void MessageAdapter::commandHelpHint(const QString &command)
+{
+  QString text;
+  if (!command.isEmpty())
+    text += tr("Unknown command <b>/%1</b>.<br />").arg(command);
+
+  text += tr("Would you like to see help for commands on site <a href='http://simple.impomezia.com/Commands'>http://simple.impomezia.com</a>?");
+  MessageBox box(QLatin1String("yes-no-box"), text, m_destId);
+  UrlAction *action = new UrlAction(QUrl(QLatin1String("http://simple.impomezia.com/Commands")));
+  ChatCore::i()->addChatViewAction(box.id(), action);
+
+  emit message(box);
 }
 
 

@@ -5,18 +5,23 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="132"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="278"/>
         <source>Would you like to see help for commands on site &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="202"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="201"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="207"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="206"/>
         <source>Connection lost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="276"/>
+        <source>Unknown command &lt;b&gt;/%1&lt;/b&gt;.&lt;br /&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
