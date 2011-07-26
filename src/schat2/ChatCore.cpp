@@ -21,6 +21,7 @@
 #include <QTextDocument>
 #include <QTimer>
 
+#include "actions/ChatViewAction.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
@@ -97,6 +98,7 @@ ChatCore::ChatCore(QObject *parent)
 
 ChatCore::~ChatCore()
 {
+  qDeleteAll(m_actions);
   delete m_userUtils;
 }
 
@@ -159,6 +161,20 @@ void ChatCore::send(const QByteArray &destId, const QString &text)
 
 void ChatCore::click(const QString &id, const QString &button)
 {
+  QList<ChatViewAction *> actions = m_actions.values(id);
+  if (actions.isEmpty())
+    return;
+
+  ChatViewAction *action = 0;
+  for (int i = 0; i < actions.size(); ++i) {
+    action = actions.at(i);
+    if (action && action->exec(id, button)) {
+      m_actions.remove(id, action);
+      delete action;
+      action = 0;
+    }
+  }
+
   qDebug() << "click()" << button << id << sender();
 }
 

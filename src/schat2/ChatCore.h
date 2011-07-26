@@ -27,6 +27,7 @@
 
 class AbstractMessage;
 class ChatSettings;
+class ChatViewAction;
 class MessageAdapter;
 class MessageData;
 class NetworkManager;
@@ -95,6 +96,7 @@ public:
   inline static ChatCore *i() { return m_self; }
   inline StatusMenu *statusMenu() { return m_statusMenu; }
   inline Translation *translation() { return m_translation; }
+  inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
   static QIcon icon(const QIcon &icon, const QString &overlay);
@@ -118,16 +120,17 @@ private:
   QByteArray userIdFromClass(const QString &text);
   void loadTranslation();
 
-  ChatSettings *m_settings;         ///< Настройки.
-  MessageAdapter *m_messageAdapter; ///< Адаптер отправки и получения сообщений.
-  NetworkManager *m_networkManager; ///< Объект управляющих сетями.
-  Plugins *m_plugins;               ///< Загрузчик плагинов.
-  SimpleClient *m_client;           ///< Клиент.
-  static ChatCore *m_self;          ///< Указатель на себя.
-  static QStringList m_icons;       ///< Иконки.
-  StatusMenu *m_statusMenu;         ///< Меню статуса.
-  Translation *m_translation;       ///< Модуль загрузки переводов.
-  UserUtils *m_userUtils;           ///< Утилиты манипуляции над пользователем.
+  ChatSettings *m_settings;                       ///< Настройки.
+  MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
+  NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
+  Plugins *m_plugins;                             ///< Загрузчик плагинов.
+  QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
+  SimpleClient *m_client;                         ///< Клиент.
+  static ChatCore *m_self;                        ///< Указатель на себя.
+  static QStringList m_icons;                     ///< Иконки.
+  StatusMenu *m_statusMenu;                       ///< Меню статуса.
+  Translation *m_translation;                     ///< Модуль загрузки переводов.
+  UserUtils *m_userUtils;                         ///< Утилиты манипуляции над пользователем.
 };
 
 #endif /* CHATCORE_H_ */

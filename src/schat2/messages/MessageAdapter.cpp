@@ -18,6 +18,7 @@
 
 #include <QHashIterator>
 
+#include "actions/ChatViewAction.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/ClientCmd.h"
@@ -127,11 +128,10 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == "help") {
-    qDebug() << "help";
-    MessageBox box("yes-no-box", "text", m_destId);
-    qDebug() << box.id().size();
-    qDebug() << box.id();
+  if (command == QLatin1String("help")) {
+    MessageBox box(QLatin1String("yes-no-box"), tr("Would you like to see help for commands on site: <a href=\"http://simple.impomezia.com/Commands\">http://simple.impomezia.com</a>?"), m_destId);
+    UrlAction *action = new UrlAction(QUrl(QLatin1String("http://simple.impomezia.com/Commands")));
+    ChatCore::i()->addChatViewAction(box.id(), action);
     emit message(box);
     return;
   }

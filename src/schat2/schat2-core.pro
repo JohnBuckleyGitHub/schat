@@ -27,6 +27,7 @@ win32:RC_FILE = schat2-core.rc
 !win32:VERSION = 1.9.0
 
 HEADERS = \
+    actions/ChatViewAction.h \
     ChatCore.h \
     ChatSettings.h \
     messages/AbstractMessage.h \
@@ -39,6 +40,7 @@ HEADERS = \
     ui/UserUtils.h \
 
 SOURCES = \
+    actions/ChatViewAction.cpp \
     ChatCore.cpp \
     ChatSettings.cpp \
     messages/AbstractMessage.cpp \
