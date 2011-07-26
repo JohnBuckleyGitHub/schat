@@ -165,7 +165,7 @@ void AbstractMessage::nick(QString &html) const
 }
 
 
-void AbstractMessage::text(QString &html) const
+void AbstractMessage::text(QString &html, const QString &bodyTpl) const
 {
   if (!html.contains(QLatin1String("%body%")))
     return;
@@ -175,7 +175,7 @@ void AbstractMessage::text(QString &html) const
     return;
   }
 
-  QString t = tpl(QLatin1String("body"));
+  QString t = tpl(bodyTpl);
 
   QString text = m_text;
   t.replace(QLatin1String("%message%"), text.replace("\\", "\\\\").remove('\r').replace("%", "&#37;"));

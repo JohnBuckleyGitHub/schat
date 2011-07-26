@@ -387,8 +387,7 @@ void TabWidget::message(const AbstractMessage &data)
     int type = SimpleID::typeOf(data.destId());
 
     if (type == SimpleID::ChannelId) {
-      ClientUser user = m_client->user(data.senderId());
-      if (!user)
+      if (!data.senderId().isEmpty() && !m_client->user(data.senderId()))
         return;
 
       tab = m_channels.value(data.destId());

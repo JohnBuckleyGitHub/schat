@@ -157,6 +157,12 @@ void ChatCore::send(const QByteArray &destId, const QString &text)
 }
 
 
+void ChatCore::click(const QString &id, const QString &button)
+{
+  qDebug() << "click()" << button << id << sender();
+}
+
+
 /*!
  * Обработка одиночного клика по нику.
  * \todo ! Реализовать обработку двойного клика для открытия привата.
