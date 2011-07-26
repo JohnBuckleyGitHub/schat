@@ -32,6 +32,7 @@ HEADERS = \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/MessageAdapter.h \
+    messages/MessageBox.h \
     messages/UserMessage.h \
     NetworkManager.h \
     schat.h \
@@ -43,6 +44,7 @@ SOURCES = \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/MessageAdapter.cpp \
+    messages/MessageBox.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
     ui/UserUtils.cpp \

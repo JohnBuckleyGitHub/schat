@@ -107,6 +107,7 @@ signals:
   void notify(int notice, const QVariant &data);
 
 public slots:
+  void click(const QString &id, const QString &button);
   void nickClicked(const QString &text);
 
 private slots:

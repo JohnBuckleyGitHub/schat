@@ -17,13 +17,14 @@
  */
 
 $(document).ready(function() {
-	$.fx.off = true;
+	//$.fx.off = true;
 
 	$(window).resize(function() {
 		alignChat(true);
 	});
 	
 	$('a.nick').click(nickClicked);
+	$('button').click(handleButton);
 
 	alignChat(true);
 });
@@ -90,4 +91,28 @@ function setMessageState(id, state, timestamp, seconds) {
 	prefix += ' > .date-time-block > ';
 	$(prefix + '.timestamp').text(timestamp);
 	$(prefix + '.seconds').text(seconds);
+}
+
+// Повторно устанавливает обработчик кнопок.
+function rebindButtonHandlers() {
+	$('button').unbind('click', handleButton);
+	$('button').bind('click', handleButton);
+}
+
+// Обработчик нажатия кнопки.
+function handleButton() {
+	var button = $(event.target);
+	var data = button.attr('id').split(';');
+	var id = data[0];
+	var type = data[1];
+
+	if (type == 'yes' || type == 'no') {
+		$('#' + id).fadeOut('fast', function() {
+			alignChat(true);
+		});
+	}
+	
+	try {
+		SimpleChat.click(id, type);
+	} catch (e) {}
 }

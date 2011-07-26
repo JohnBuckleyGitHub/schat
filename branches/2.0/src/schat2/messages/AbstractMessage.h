@@ -68,6 +68,7 @@ public:
   inline QByteArray destId() const { return m_destId; }
   inline QByteArray senderId() const { return m_senderId; }
   inline qint64 timestamp() const { return m_timestamp; }
+  inline QString id() const { return m_id; }
   inline QString text() const { return m_text; }
   inline QString type() const { return m_type; }
   inline void setPriority(int priority) { m_priority = priority; }
@@ -81,7 +82,7 @@ protected:
   void extra(QString &html) const;
   void id(QString &html) const;
   void nick(QString &html) const;
-  void text(QString &html) const;
+  void text(QString &html, const QString &bodyTpl = QLatin1String("body")) const;
   void time(QString &html) const;
   void type(QString &html) const;
 

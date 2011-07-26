@@ -25,6 +25,7 @@
 #include "debugstream.h"
 #include "messages/AlertMessage.h"
 #include "messages/MessageAdapter.h"
+#include "messages/MessageBox.h"
 #include "messages/UserMessage.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
@@ -67,6 +68,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /female
  * - /ffc
  * - /gender
+ * - /help
  * - /hide
  * - /join
  * - /male
@@ -122,6 +124,15 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == "gender" && cmd.isBody()) {
     setGender(cmd.body(), "");
+    return;
+  }
+
+  if (command == "help") {
+    qDebug() << "help";
+    MessageBox box("yes-no-box", "text", m_destId);
+    qDebug() << box.id().size();
+    qDebug() << box.id();
+    emit message(box);
     return;
   }
 
