@@ -54,6 +54,7 @@ private:
   QAction *m_clear;                   ///< Очистить.
   QAction *m_copy;                    ///< Копировать.
   QAction *m_copyLink;                ///< Копировать ссылку.
+  QAction *m_seconds;                 ///< Секунды.
   QAction *m_selectAll;               ///< Выделить всё.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
