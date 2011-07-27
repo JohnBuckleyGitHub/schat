@@ -86,6 +86,11 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
     menu.addAction(m_copyLink);
   }
 
+  QMenu display(tr("Display"), this);
+  menu.addSeparator();
+  menu.addMenu(&display);
+  display.addAction(m_seconds);
+
   menu.addSeparator();
   menu.addAction(m_clear);
   menu.addAction(m_selectAll);
@@ -116,6 +121,9 @@ void ChatView::menuTriggered(QAction *action)
   if (action == m_clear) {
     m_loaded = false;
     page()->triggerAction(QWebPage::ReloadAndBypassCache);
+  }
+  else if (action == m_seconds) {
+    ChatCore::i()->settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
   }
 }
 
@@ -152,6 +160,9 @@ void ChatView::createActions()
 
   m_selectAll = pageAction(QWebPage::SelectAll);
   m_selectAll->setIcon(SCHAT_ICON(EditSelectAll));
+
+  m_seconds = new QAction(tr("Seconds"), this);
+  m_seconds->setCheckable(true);
 }
 
 
@@ -169,8 +180,10 @@ void ChatView::retranslateUi()
  */
 void ChatView::showSeconds(bool show)
 {
+  m_seconds->setChecked(show);
+
   if (show)
-    evaluateJavaScript("showSeconds(true)");
+    evaluateJavaScript(QLatin1String("showSeconds(true)"));
   else
-    evaluateJavaScript("showSeconds(false)");
+    evaluateJavaScript(QLatin1String("showSeconds(false)"));
 }

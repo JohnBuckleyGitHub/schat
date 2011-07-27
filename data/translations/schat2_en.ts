@@ -61,23 +61,33 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="151"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="162"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="89"/>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="159"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="173"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="160"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="164"/>
+        <source>Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="171"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="161"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="172"/>
         <source>Copy Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="163"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="174"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
