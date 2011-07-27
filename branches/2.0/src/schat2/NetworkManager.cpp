@@ -37,20 +37,6 @@ NetworkItem::NetworkItem()
 NetworkItem::NetworkItem(const QByteArray &id)
   : m_id(id)
 {
-  SimpleClient *client = ChatCore::i()->client();
-
-  m_auth = SimpleID::toBase64(client->userId());
-  m_name = NetworkManager::currentServerName();
-  m_url = client->url().toString();
-}
-
-
-NetworkItem::NetworkItem(const QByteArray &id, const Settings &settings)
-  : m_id(id)
-{
-  m_auth = settings.value(Auth).toString();
-  m_url = settings.value(Url).toString();
-  m_name = settings.value(Name).toString();
 }
 
 
@@ -72,6 +58,7 @@ bool NetworkItem::isValid() const
 NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::i()->settings())
+  , m_locations(ChatCore::i()->locations())
   , m_client(ChatCore::i()->client())
 {
   load();
@@ -87,13 +74,14 @@ bool NetworkManager::open()
   if (m_settings->value(ChatSettings::AutoConnect).toBool() == false)
     return false;
 
-  if (m_networks.isEmpty())
-    return false;
-
   if (m_client->user()->status() == User::OfflineStatus)
     return false;
 
-  open(SimpleID::fromBase64(m_networks.at(0).toLatin1()));
+  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  if (networks.isEmpty())
+    return false;
+
+  open(SimpleID::fromBase64(networks.at(0).toLatin1()));
 
   return true;
 }
@@ -127,17 +115,13 @@ bool NetworkManager::open(const QString &url)
 }
 
 
-NetworkItem NetworkManager::item(const QByteArray &id) const
-{
-  return m_items.value(id);
-}
-
-
 QList<NetworkItem> NetworkManager::items() const
 {
+  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
   QList<NetworkItem> out;
-  for (int i = 0; i < m_networks.size(); ++i) {
-    QByteArray id = SimpleID::fromBase64(m_networks.at(i).toLatin1());
+
+  for (int i = 0; i < networks.size(); ++i) {
+    QByteArray id = SimpleID::fromBase64(networks.at(i).toLatin1());
     if (SimpleID::typeOf(id) == SimpleID::ServerId)
       out.append(m_items.value(id));
   }
@@ -167,8 +151,10 @@ QString NetworkManager::currentServerName()
  */
 void NetworkManager::removeItem(const QByteArray &id)
 {
-  m_networks.removeAll(SimpleID::toBase64(id));
-  m_settings->setValue(ChatSettings::Networks, m_networks);
+  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+
+  networks.removeAll(SimpleID::toBase64(id));
+  m_settings->setValue(ChatSettings::Networks, networks);
 }
 
 
@@ -189,7 +175,7 @@ QString NetworkManager::authKey() const
 
 QString NetworkManager::root(const QByteArray &id)
 {
-  QString out = m_settings->locations()->path(FileLocations::ConfigPath) + "/.networks/" + SimpleID::toBase64(id);
+  QString out = m_locations->path(FileLocations::ConfigPath) + QLatin1String("/networks/") + SimpleID::toBase64(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
@@ -205,41 +191,42 @@ QString NetworkManager::root(const QByteArray &id)
  */
 void NetworkManager::load()
 {
-  m_networks = m_settings->value(ChatSettings::Networks).toStringList();
-  if (m_networks.isEmpty())
+  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList(); // \deprecated m_settings->value(ChatSettings::Networks).toStringList();
+  if (networks.isEmpty())
     return;
 
-  Settings settings("");
-  settings.setDefault("Auth", "");
-  settings.setDefault("Url", "");
-  settings.setDefault("Name", "");
-
   QStringList invalid;
+  Settings settings(m_locations->path(FileLocations::ConfigFile), this);
 
   // Чтение данных серверов.
-  for (int i = 0; i < m_networks.size(); ++i) {
-    QByteArray id = SimpleID::fromBase64(m_networks.at(i).toLatin1());
-    if (SimpleID::typeOf(id) != SimpleID::ServerId)
+  for (int i = 0; i < networks.size(); ++i) {
+    QByteArray id = SimpleID::fromBase64(networks.at(i).toLatin1());
+    if (SimpleID::typeOf(id) != SimpleID::ServerId) {
+      invalid.append(networks.at(i));
       continue;
+    }
 
-    settings.setGroup(id.toHex());
-    settings.read();
+    NetworkItem item(id);
+    settings.beginGroup(id.toHex());
+    item.m_auth = settings.value(QLatin1String("Auth"), item.auth()).toString();
+    item.m_url  = settings.value(QLatin1String("Url"),  item.url()).toString();
+    item.m_name = settings.value(QLatin1String("Name"), item.name()).toString();
+    settings.endGroup();
 
-    NetworkItem item(id, settings);
     if (!item.isValid()) {
-      invalid.append(m_networks.at(i));
+      invalid.append(networks.at(i));
       continue;
     }
 
     m_items.insert(id, item);
   }
 
-  // Удаление не валидных серверов.
+  // Удаление невалидных серверов.
   if (!invalid.isEmpty()) {
     for (int i = 0; i < invalid.size(); ++i) {
-      m_networks.removeAll(invalid.at(i));
+      networks.removeAll(invalid.at(i));
     }
-    m_settings->setValue(ChatSettings::Networks, m_networks);
+    m_settings->setValue(ChatSettings::Networks, networks); // \deprecated m_settings->setValue(ChatSettings::Networks, m_networks);
   }
 }
 
@@ -249,25 +236,28 @@ void NetworkManager::load()
  */
 void NetworkManager::write()
 {
-  ServerData *data = m_client->serverData();
-  QByteArray id = data->id();
-  QString base64Id = SimpleID::toBase64(id);
+  QByteArray id  = m_client->serverData()->id();
+  QString base64 = SimpleID::toBase64(id);
 
-  m_networks.removeAll(base64Id);
-  m_networks.prepend(base64Id);
-  m_settings->setValue(ChatSettings::Networks, m_networks);
+  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  networks.removeAll(base64);
+  networks.prepend(base64);
+  m_settings->setValue(ChatSettings::Networks, networks); // \deprecated m_settings->setValue(ChatSettings::Networks, m_networks);
 
-  QString hexId = id.toHex();
-  NetworkItem item(id);
+  NetworkItem item = m_items.value(id);
+  item.m_id   = id;
+  item.m_auth = SimpleID::toBase64(m_client->userId());
+  item.m_name = currentServerName();
+  item.m_url  = m_client->url().toString();
+
+  Settings settings(m_locations->path(FileLocations::ConfigFile), this);
+  settings.beginGroup(id.toHex());
+  settings.setValue(QLatin1String("Auth"), item.auth());
+  settings.setValue(QLatin1String("Url"),  item.url());
+  settings.setValue(QLatin1String("Name"), item.name());
+  settings.endGroup();
+
   m_items[id] = item;
-
-  m_settings->setAutoDefault(true);
-  m_settings->setValue(hexId + "/Auth", item.auth(), false);
-  m_settings->setValue(hexId + "/Url", item.url(), false);
-  m_settings->setValue(hexId + "/Name", item.name(), false);
-  m_settings->setAutoDefault(false);
-
-  m_settings->write();
-
+  root(id);
   ChatCore::i()->startNotify(ChatCore::NetworkChangedNotice, id);
 }

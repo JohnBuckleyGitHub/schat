@@ -16,11 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDir>
-
 #include "ServerSettings.h"
 
-ServerSettings::ServerSettings(QObject *parent)
-  : Settings(parent)
+ServerSettings::ServerSettings(const QString &fileName, QObject *parent)
+  : Settings(fileName, parent)
 {
 }

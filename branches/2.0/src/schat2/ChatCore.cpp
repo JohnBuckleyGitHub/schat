@@ -46,6 +46,7 @@ ChatCore::ChatCore(QObject *parent)
 
   m_userUtils = new UserUtils();
 
+  m_locations = new FileLocations(this);
   m_settings = new ChatSettings(this);
   m_settings->read();
 

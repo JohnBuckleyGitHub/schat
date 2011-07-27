@@ -53,7 +53,8 @@ private:
   bool m_loaded;                      ///< true если документ загружен.
   QAction *m_clear;                   ///< Очистить.
   QAction *m_copy;                    ///< Копировать.
-  QAction *m_selectAll;               ///< Выделить всё
+  QAction *m_copyLink;                ///< Копировать ссылку.
+  QAction *m_selectAll;               ///< Выделить всё.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
 

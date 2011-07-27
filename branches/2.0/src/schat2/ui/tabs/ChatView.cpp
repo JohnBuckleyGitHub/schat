@@ -80,6 +80,12 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   if (!selectedText().isEmpty())
     menu.addAction(m_copy);
 
+  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  QUrl url = r.linkUrl();
+  if (!url.isEmpty()) {
+    menu.addAction(m_copyLink);
+  }
+
   menu.addSeparator();
   menu.addAction(m_clear);
   menu.addAction(m_selectAll);
@@ -139,6 +145,9 @@ void ChatView::createActions()
   m_copy = pageAction(QWebPage::Copy);
   m_copy->setIcon(SCHAT_ICON(EditCopy));
 
+  m_copyLink = pageAction(QWebPage::CopyLinkToClipboard);
+  m_copyLink->setIcon(SCHAT_ICON(EditCopy));
+
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
 
   m_selectAll = pageAction(QWebPage::SelectAll);
@@ -149,6 +158,7 @@ void ChatView::createActions()
 void ChatView::retranslateUi()
 {
   m_copy->setText(tr("Copy"));
+  m_copyLink->setText(tr("Copy Link"));
   m_clear->setText(tr("Clear"));
   m_selectAll->setText(tr("Select All"));
 }

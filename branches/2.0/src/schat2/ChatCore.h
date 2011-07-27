@@ -28,6 +28,7 @@
 class AbstractMessage;
 class ChatSettings;
 class ChatViewAction;
+class FileLocations;
 class MessageAdapter;
 class MessageData;
 class NetworkManager;
@@ -96,6 +97,7 @@ public:
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline ChatSettings *settings() { return m_settings; }
+  inline FileLocations *locations() const { return m_locations; }
   inline NetworkManager *networks() const { return m_networkManager; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
@@ -126,6 +128,7 @@ private:
   void loadTranslation();
 
   ChatSettings *m_settings;                       ///< Настройки.
+  FileLocations *m_locations;                     ///< Схема размещения файлов.
   MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   Plugins *m_plugins;                             ///< Загрузчик плагинов.

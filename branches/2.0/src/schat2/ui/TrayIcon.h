@@ -52,7 +52,7 @@ private:
   int m_alertIcon;           ///< Номер текущей иконки, при отображении уведомлений.
   QAction *m_aboutAction;    ///< О Simple Chat.
   QAction *m_quitAction;     ///< Quit.
-  QAction *m_settingsAction; ///< Settings.
+  QAction *m_settingsAction; ///< SettingsLegacy.
   QBasicTimer *m_timer;      ///< Таймер анимации.
   QIcon m_icon;              ///< Иконка.
   QMenu *m_menu;             ///< Меню.

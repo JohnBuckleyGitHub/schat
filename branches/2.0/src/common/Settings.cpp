@@ -24,7 +24,7 @@
 #include "FileLocations.h"
 #include "Settings.h"
 
-Settings::Settings(QObject *parent)
+SettingsLegacy::SettingsLegacy(QObject *parent)
   : QObject(parent)
   , m_autoDefault(false)
 {
@@ -32,7 +32,7 @@ Settings::Settings(QObject *parent)
 }
 
 
-Settings::Settings(const QString &group, QObject *parent)
+SettingsLegacy::SettingsLegacy(const QString &group, QObject *parent)
   : QObject(parent)
   , m_autoDefault(true)
   , m_group(group)
@@ -46,7 +46,7 @@ Settings::Settings(const QString &group, QObject *parent)
  *
  * \return true если опция была изменена.
  */
-bool Settings::setValue(const QString &key, const QVariant &value, bool notice)
+bool SettingsLegacy::setValue(const QString &key, const QVariant &value, bool notice)
 {
   if (!m_keys.contains(key)) {
     if (m_autoDefault)
@@ -64,7 +64,7 @@ bool Settings::setValue(const QString &key, const QVariant &value, bool notice)
  *
  * \return true если опция была изменена.
  */
-bool Settings::setValue(int key, const QVariant &value, bool notice)
+bool SettingsLegacy::setValue(int key, const QVariant &value, bool notice)
 {
   if (!m_data.contains(key) && !m_autoDefault)
     return false;
@@ -95,7 +95,7 @@ bool Settings::setValue(int key, const QVariant &value, bool notice)
  *
  * \return Числовой ключ настройки или -1 в случае ошибки.
  */
-int Settings::setDefault(const QString &key, const QVariant &value)
+int SettingsLegacy::setDefault(const QString &key, const QVariant &value)
 {
   int index = m_keys.size();
   if (m_default.contains(index))
@@ -107,7 +107,7 @@ int Settings::setDefault(const QString &key, const QVariant &value)
 }
 
 
-QVariant Settings::value(int key) const
+QVariant SettingsLegacy::value(int key) const
 {
   return m_data.value(key);
 }
@@ -116,7 +116,7 @@ QVariant Settings::value(int key) const
 /*!
  * Чтение настроек.
  */
-void Settings::read(const QString &file)
+void SettingsLegacy::read(const QString &file)
 {
   Q_UNUSED(file)
 
@@ -138,7 +138,7 @@ void Settings::read(const QString &file)
 /*!
  * Запись настроек.
  */
-void Settings::write()
+void SettingsLegacy::write()
 {
   QSettings settings(m_locations->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
@@ -157,7 +157,7 @@ void Settings::write()
 }
 
 
-void Settings::notify()
+void SettingsLegacy::notify()
 {
   if (!m_notify.isEmpty()) {
     emit changed(m_notify);
@@ -169,7 +169,41 @@ void Settings::notify()
 /*!
  * Определение схемы размещения файлов и стандартных путей.
  */
-void Settings::init()
+void SettingsLegacy::init()
 {
   m_locations = new FileLocations(this);
+}
+
+
+Settings::Settings(const QString &fileName, QObject *parent)
+  : QSettings(fileName, QSettings::IniFormat, parent)
+{
+  setIniCodec("UTF-8");
+}
+
+
+QVariant Settings::value(const QString &key, const QVariant &defaultValue) const
+{
+  m_default[key] = defaultValue;
+  return QSettings::value(key, defaultValue);
+}
+
+
+void Settings::setDefault(const QString &key, const QVariant &value)
+{
+  m_default[key] = value;
+}
+
+
+void Settings::setValue(const QString &key, const QVariant &value)
+{
+  if (value == QSettings::value(key, m_default.value(key)))
+    return;
+
+  if (m_default.contains(key) && m_default.value(key) == value)
+    QSettings::remove(key);
+  else
+    QSettings::setValue(key, value);
+
+  emit changed(key, value);
 }

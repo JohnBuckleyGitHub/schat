@@ -21,6 +21,7 @@
 
 #include "DataBase.h"
 #include "debugstream.h"
+#include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
 #include "net/ServerData.h"
@@ -49,14 +50,14 @@ Storage::Storage(QObject *parent)
   m_normalize.insert('l', 'i');
 
   m_serverData = new ServerData();
-  m_settings = new ServerSettings(this);
+  m_locations = new FileLocations(this);
+  m_settings = new ServerSettings(m_locations->path(FileLocations::ConfigFile), this);
   m_db = new DataBase(this);
 }
 
 
 int Storage::start()
 {
-  m_settings->read();
   m_db->start();
   return 0;
 }

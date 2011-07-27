@@ -26,11 +26,7 @@ class ServerSettings : public Settings
   Q_OBJECT
 
 public:
-  ServerSettings(QObject *parent = 0);
-  inline QString var() const { return m_var; }
-
-private:
-  QString m_var;
+  ServerSettings(const QString &fileName, QObject *parent = 0);
 };
 
 #endif /* SERVERSETTINGS_H_ */

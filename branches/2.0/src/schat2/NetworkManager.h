@@ -26,26 +26,23 @@
 #include "schat.h"
 
 class ChatSettings;
+class FileLocations;
+class NetworkManager;
+class SettingsLegacy;
 class SimpleClient;
-class Settings;
 
 class SCHAT_CORE_EXPORT NetworkItem
 {
 public:
-  enum SettingsKeys {
-    Auth,
-    Url,
-    Name
-  };
-
   NetworkItem();
   NetworkItem(const QByteArray &id);
-  NetworkItem(const QByteArray &id, const Settings &settings);
   bool isValid() const;
   inline QByteArray id() const { return m_id; }
   inline QString auth() const { return m_auth; }
   inline QString name() const { return m_name; }
   inline QString url() const { return m_url; }
+
+  friend class NetworkManager;
 
 private:
   QByteArray m_id; ///< Идентификатор сервера.
@@ -68,7 +65,7 @@ public:
   bool open(const QByteArray &id);
   bool open(const QString &url);
   inline int count() const { return m_items.count(); }
-  NetworkItem item(const QByteArray &id) const;
+  inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
   QList<NetworkItem> items() const;
   static QString currentServerName();
   void removeItem(const QByteArray &id);
@@ -83,8 +80,8 @@ private:
   void write();
 
   ChatSettings *m_settings; ///< Основные настройки.
+  FileLocations *m_locations;
   QHash<QByteArray, NetworkItem> m_items;
-  QStringList m_networks;   ///< Список серверов.
   SimpleClient *m_client;   ///< Указатель на клиент.
 };
 
