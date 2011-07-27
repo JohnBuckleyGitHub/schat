@@ -27,7 +27,7 @@
 /*!
  * Базовый класс настроек.
  */
-class Settings : public QSettings
+class SCHAT_EXPORT Settings : public QSettings
 {
   Q_OBJECT
 
