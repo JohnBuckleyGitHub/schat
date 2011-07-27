@@ -76,6 +76,7 @@ private slots:
 private:
   QString authKey() const;
   QString root(const QByteArray &id);
+  QStringList networkList() const;
   void load();
   void write();
 

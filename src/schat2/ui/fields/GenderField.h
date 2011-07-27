@@ -43,7 +43,7 @@ protected:
 private slots:
   void indexChanged(int index);
   void setColor();
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   void addColor(const QString &name);

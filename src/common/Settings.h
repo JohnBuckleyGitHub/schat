@@ -21,48 +21,8 @@
 
 #include <QHash>
 #include <QSettings>
-#include <QStringList>
 
 #include "schat.h"
-
-class FileLocations;
-
-class SCHAT_EXPORT SettingsLegacy : public QObject
-{
-  Q_OBJECT
-
-public:
-  SettingsLegacy(QObject *parent = 0);
-  SettingsLegacy(const QString &group, QObject *parent = 0);
-  bool setValue(const QString &key, const QVariant &value, bool notice = true);
-  bool setValue(int key, const QVariant &value, bool notice = false);
-  FileLocations *locations() { return m_locations; }
-  inline void setAutoDefault(bool enable) { m_autoDefault = enable; }
-  inline void setGroup(const QString &group) { m_group = group; }
-  int setDefault(const QString &key, const QVariant &value);
-  QVariant value(int key) const;
-  virtual void read(const QString &file = "");
-  virtual void write();
-  void notify();
-
-signals:
-  void changed(const QList<int> &keys);
-
-protected:
-  bool m_autoDefault;             ///< Автоматически создавать настройку по умолчанию при установке новой опции.
-  QHash<int, QVariant> m_data;    ///< Таблица настроек.
-  QHash<int, QVariant> m_default; ///< Настройки по умолчанию.
-  QList<int> m_changed;           ///< Список изменившихся настроек.
-  QList<int> m_notify;            ///< Список изменившихся настроек.
-  QString m_group;                ///< Группа настроек.
-  QStringList m_keys;             ///< Символьные ключи настроек.
-
-private:
-  void init();
-
-  FileLocations *m_locations;     ///< Пути размещения файлов.
-};
-
 
 /*!
  * Базовый класс настроек.

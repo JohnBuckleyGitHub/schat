@@ -24,21 +24,21 @@
 #include "NetworkManager.h"
 #include "User.h"
 
-ChatSettings::ChatSettings(QObject *parent)
-  : SettingsLegacy(parent)
+ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
+  : Settings(fileName, parent)
   , m_client(0)
 {
-  setDefault("AutoConnect", true);
-  setDefault("Height", 420);
-  setDefault("Maximized", false);
-  setDefault("Networks", QStringList());
-  setDefault("ShowSeconds", false);
-  setDefault("Translation", "auto");
-  setDefault("Width", 666);
-  setDefault("WindowsAero", true);
-  setDefault("Profile/Nick", User::defaultNick());
-  setDefault("Profile/Gender", 0);
-  setDefault("Profile/Status", "0;");
+  setDefault(QLatin1String("AutoConnect"),    true);
+  setDefault(QLatin1String("Height"),         420);
+  setDefault(QLatin1String("Maximized"),      false);
+  setDefault(QLatin1String("Networks"),       QStringList());
+  setDefault(QLatin1String("ShowSeconds"),    false);
+  setDefault(QLatin1String("Translation"),    "auto");
+  setDefault(QLatin1String("Width"),          666);
+  setDefault(QLatin1String("WindowsAero"),    true);
+  setDefault(QLatin1String("Profile/Nick"),   User::defaultNick());
+  setDefault(QLatin1String("Profile/Gender"), 0);
+  setDefault(QLatin1String("Profile/Status"), "1;");
 }
 
 
@@ -47,9 +47,9 @@ void ChatSettings::setClient(SimpleClient *client)
   m_client = client;
 
   m_user = m_client->user();
-  m_user->setNick(value(ProfileNick).toString());
-  m_user->setRawGender(value(ProfileGender).toUInt());
-  m_user->setStatus(value(ProfileStatus).toString());
+  m_user->setNick(value(QLatin1String("Profile/Nick")).toString());
+  m_user->setRawGender(value(QLatin1String("Profile/Gender")).toUInt());
+  m_user->setStatus(value(QLatin1String("Profile/Status")).toString());
 
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
@@ -58,36 +58,28 @@ void ChatSettings::setClient(SimpleClient *client)
 /*!
  * Обновление настройки профиля.
  */
-void ChatSettings::updateValue(int key, const QVariant &value)
+void ChatSettings::updateValue(const QString &key, const QVariant &value)
 {
   if (this->value(key) == value)
     return;
 
-  if (key == ProfileNick && m_client->clientState() != SimpleClient::ClientOnline) {
-    setValue(key, value, true);
+  if (key == QLatin1String("Profile/Nick") && m_client->clientState() != SimpleClient::ClientOnline) {
+    setValue(key, value);
     m_client->setNick(value.toString());
     return;
   }
 
-  if (key == ProfileStatus) {
+  if (key == QLatin1String("Profile/Status")) {
     updateStatus(value);
     return;
   }
 
   User user(m_user.data());
 
-  switch (key) {
-    case ProfileNick:
-      user.setNick(value.toString());
-      break;
-
-    case ProfileGender:
-      user.setRawGender(value.toInt());
-      break;
-
-    default:
-      break;
-  }
+  if (key == QLatin1String("Profile/Nick"))
+    user.setNick(value.toString());
+  else if (key == QLatin1String("Profile/Gender"))
+    user.setRawGender(value.toInt());
 
   update(&user);
 }
@@ -123,9 +115,9 @@ void ChatSettings::update(User *user, bool sync)
     m_user->setStatus(user->statusToString());
   }
 
-  setValue(ProfileNick, m_client->nick(), true);
-  setValue(ProfileGender, user->rawGender(), true);
-  setValue(ProfileStatus, user->statusToString(), true);
+  setValue(QLatin1String("Profile/Nick"), m_client->nick());
+  setValue(QLatin1String("Profile/Gender"), user->rawGender());
+  setValue(QLatin1String("Profile/Status"), user->statusToString());
 }
 
 
@@ -152,7 +144,7 @@ void ChatSettings::updateStatus(const QVariant &value)
     m_client->leave();
   }
 
-  setValue(ProfileStatus, status, true);
+  setValue(QLatin1String("Profile/Status"), status);
 
   ChatCore::i()->networks()->open();
 }

@@ -36,7 +36,7 @@ protected:
 
 private slots:
   void clientStateChanged(int state);
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
   void statusChanged(QAction *action);
 
 private:

@@ -20,7 +20,7 @@
 #include "ChatSettings.h"
 #include "ui/fields/ProfileField.h"
 
-ProfileField::ProfileField(int key, QWidget *parent)
+ProfileField::ProfileField(QString key, QWidget *parent)
   : LineEdit(ChatCore::i()->settings()->value(key).toString(), parent)
   , m_settings(ChatCore::i()->settings())
   , m_key(key)
@@ -29,7 +29,7 @@ ProfileField::ProfileField(int key, QWidget *parent)
 }
 
 
-ProfileField::ProfileField(int key, const QString &contents, QWidget *parent)
+ProfileField::ProfileField(QString key, const QString &contents, QWidget *parent)
   : LineEdit(contents, parent)
   , m_settings(ChatCore::i()->settings())
   , m_key(key)
@@ -50,18 +50,16 @@ void ProfileField::editingFinished()
 }
 
 
-void ProfileField::settingsChanged(const QList<int> &keys)
+void ProfileField::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (!keys.contains(m_key))
-    return;
-
-  setText(m_settings->value(m_key).toString());
+  if (key == m_key)
+    setText(value.toString());
 }
 
 
 void ProfileField::init()
 {
-  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(this, SIGNAL(editingFinished()), SLOT(editingFinished()));
 }
 

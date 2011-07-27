@@ -28,18 +28,18 @@ class ProfileField : public LineEdit
   Q_OBJECT
 
 public:
-  ProfileField(int key, QWidget *parent = 0);
-  ProfileField(int key, const QString &contents, QWidget *parent = 0);
+  ProfileField(QString key, QWidget *parent = 0);
+  ProfileField(QString key, const QString &contents, QWidget *parent = 0);
 
 protected:
   virtual void updateData();
 
   ChatSettings *m_settings;
-  int m_key;
+  QString m_key;
 
 private slots:
   void editingFinished();
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   void init();

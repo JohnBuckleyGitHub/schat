@@ -43,7 +43,7 @@ private slots:
   void menuTriggered(QAction *action);
   void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   void createActions();
