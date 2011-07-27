@@ -20,21 +20,20 @@
 #define SETTINGS_H_
 
 #include <QHash>
-#include <QObject>
+#include <QSettings>
 #include <QStringList>
-#include <QVariant>
 
 #include "schat.h"
 
 class FileLocations;
 
-class SCHAT_EXPORT Settings : public QObject
+class SCHAT_EXPORT SettingsLegacy : public QObject
 {
   Q_OBJECT
 
 public:
-  Settings(QObject *parent = 0);
-  Settings(const QString &group, QObject *parent = 0);
+  SettingsLegacy(QObject *parent = 0);
+  SettingsLegacy(const QString &group, QObject *parent = 0);
   bool setValue(const QString &key, const QVariant &value, bool notice = true);
   bool setValue(int key, const QVariant &value, bool notice = false);
   FileLocations *locations() { return m_locations; }
@@ -62,6 +61,27 @@ private:
   void init();
 
   FileLocations *m_locations;     ///< Пути размещения файлов.
+};
+
+
+/*!
+ * Базовый класс настроек.
+ */
+class Settings : public QSettings
+{
+  Q_OBJECT
+
+public:
+  Settings(const QString &fileName, QObject *parent = 0);
+  QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+  void setDefault(const QString &key, const QVariant &value);
+  void setValue(const QString &key, const QVariant &value);
+
+signals:
+  void changed(const QString &key, const QVariant &value);
+
+protected:
+  mutable QHash<QString, QVariant> m_default; ///< Настройки по умолчанию.
 };
 
 #endif /* SETTINGS_H_ */

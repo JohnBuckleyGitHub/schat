@@ -25,6 +25,7 @@
 #include "ServerUser.h"
 
 class DataBase;
+class FileLocations;
 class ServerChannel;
 class ServerData;
 class ServerSettings;
@@ -56,6 +57,7 @@ public:
   ServerChannel* addChannel(const QString &name, bool permanent = false);
   ServerChannel* channel(const QString &name, bool normalize) const;
 
+  inline FileLocations *locations() const { return m_locations; }
   inline ServerData *serverData() { return m_serverData; }
   inline ServerSettings *settings() { return m_settings; }
   QByteArray session() const;
@@ -65,6 +67,7 @@ private:
   QByteArray makeChannelId(const QString &name);
 
   DataBase *m_db;                                ///< База данных сервера.
+  FileLocations *m_locations;                    ///< Схема размещения файлов.
   QHash<QByteArray, ChatUser> m_sessions;        ///< Таблица сессий.
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
   QHash<QByteArray, ServerChannel*> m_channels;  ///< Таблица каналов.

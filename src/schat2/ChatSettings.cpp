@@ -25,7 +25,7 @@
 #include "User.h"
 
 ChatSettings::ChatSettings(QObject *parent)
-  : Settings(parent)
+  : SettingsLegacy(parent)
   , m_client(0)
 {
   setDefault("AutoConnect", true);
