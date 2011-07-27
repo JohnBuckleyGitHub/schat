@@ -39,7 +39,7 @@
 
 #if defined(SCHAT_OPTION)
   #undef SCHAT_OPTION
-  #define SCHAT_OPTION(x) m_settings->value(ChatSettings::x)
+  #define SCHAT_OPTION(x) m_settings->value(QLatin1String(x))
 #endif
 
 ChatWindow::ChatWindow(QWidget *parent)
@@ -70,11 +70,11 @@ ChatWindow::ChatWindow(QWidget *parent)
   setWindowsAero();
   #endif
 
-  resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
+  resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
 
   connect(m_send, SIGNAL(send(const QString &)), SLOT(send(const QString &)));
   connect(m_core, SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
-  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
 
   setWindowTitle(QApplication::applicationName());
@@ -85,7 +85,7 @@ void ChatWindow::showChat()
 {
   SCHAT_DEBUG_STREAM(this << "showChat()")
 
-  if (!SCHAT_OPTION(Maximized).toBool()) {
+  if (!SCHAT_OPTION("Maximized").toBool()) {
     setWindowState(windowState() & ~Qt::WindowMinimized);
     show();
   }
@@ -126,11 +126,14 @@ void ChatWindow::keyPressEvent(QKeyEvent *event)
 }
 
 
+/*!
+ * \bug Имеются проблемы с опцией "Maximized" при использовании команды /set.
+ */
 void ChatWindow::resizeEvent(QResizeEvent *event)
 {
-  if (!isMaximized()) {
-    m_settings->setValue(ChatSettings::Width, width());
-    m_settings->setValue(ChatSettings::Height, height());
+  if (!SCHAT_OPTION("Maximized").toBool()) {
+    m_settings->setValue(QLatin1String("Width"), width());
+    m_settings->setValue(QLatin1String("Height"), height());
   }
 
   QMainWindow::resizeEvent(event);
@@ -208,16 +211,16 @@ void ChatWindow::send(const QString &text)
 }
 
 
-void ChatWindow::settingsChanged(const QList<int> &keys)
+void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (keys.contains(ChatSettings::Maximized)) {
-    if (SCHAT_OPTION(Maximized).toBool())
+  if (key == QLatin1String("Maximized")) {
+    if (value.toBool())
       showMaximized();
     else
       showNormal();
   }
-  else if (keys.contains(ChatSettings::Width) || keys.contains(ChatSettings::Height)) {
-    resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
+  else if (key == QLatin1String("Width") || key == QLatin1String("Height")) {
+    resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
   }
 }
 
@@ -228,8 +231,7 @@ void ChatWindow::settingsChanged(const QList<int> &keys)
 void ChatWindow::hideChat()
 {
   SCHAT_DEBUG_STREAM(this << "hideChat()")
-  m_settings->setValue(ChatSettings::Maximized, isMaximized());
-  m_settings->write();
+  m_settings->setValue(QLatin1String("Maximized"), isMaximized());
   hide();
 }
 
@@ -242,7 +244,7 @@ void ChatWindow::retranslateUi()
 #if defined(Q_WS_WIN)
 void ChatWindow::setWindowsAero()
 {
-  if (SCHAT_OPTION(WindowsAero).toBool() && QtWin::isCompositionEnabled()) {
+  if (SCHAT_OPTION("WindowsAero").toBool() && QtWin::isCompositionEnabled()) {
     QtWin::extendFrameIntoClientArea(this);
     m_mainLay->setMargin(0);
   }

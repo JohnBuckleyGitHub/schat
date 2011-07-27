@@ -229,7 +229,6 @@ void SimpleClientPrivate::setServerData(const ServerData &data)
  * объект канала будет удалён и его место в таблице каналов займёт \p channel.
  *
  * \return true в случае успешного добавления канала.
- * \todo ! Высылать сигнал о новых пользователях канала если информация о них уже имеется у клиента.
  */
 bool SimpleClientPrivate::addChannel(Channel *channel)
 {

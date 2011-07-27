@@ -150,7 +150,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == "nick" && cmd.isBody() && cmd.body().size() >= 3) {
-    m_settings->updateValue(ChatSettings::ProfileNick, cmd.body());
+    m_settings->updateValue(QLatin1String("Profile/Nick"), cmd.body());
     return;
   }
 
@@ -264,7 +264,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   if (m_client->user()->rawGender() == user.rawGender())
     return NoSent;
 
-  m_settings->updateValue(ChatSettings::ProfileGender, user.rawGender());
+  m_settings->updateValue(QLatin1String("Profile/Gender"), user.rawGender());
   return SentAsCommand;
 }
 
@@ -322,7 +322,7 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
 void MessageAdapter::setStatus(int status, const QString &text)
 {
   if (text.isEmpty())
-    m_settings->updateValue(ChatSettings::ProfileStatus, status);
+    m_settings->updateValue(QLatin1String("Profile/Status"), status);
   else
-    m_settings->updateValue(ChatSettings::ProfileStatus, User::statusToString(status, text));
+    m_settings->updateValue(QLatin1String("Profile/Status"), User::statusToString(status, text));
 }

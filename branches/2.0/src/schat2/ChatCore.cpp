@@ -47,8 +47,7 @@ ChatCore::ChatCore(QObject *parent)
   m_userUtils = new UserUtils();
 
   m_locations = new FileLocations(this);
-  m_settings = new ChatSettings(this);
-  m_settings->read();
+  m_settings = new ChatSettings(m_locations->path(FileLocations::ConfigFile), this);
 
   loadTranslation();
 
@@ -96,7 +95,7 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "edit-select-all";
 
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
-  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -206,10 +205,10 @@ void ChatCore::nickClicked(const QString &text)
 }
 
 
-void ChatCore::settingsChanged(const QList<int> &keys)
+void ChatCore::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (keys.contains(ChatSettings::Translation)) {
-    m_translation->load(m_settings->value(ChatSettings::Translation).toString());
+  if (key == QLatin1String("Translation")) {
+    m_translation->load(value.toString());
   }
 }
 
@@ -238,6 +237,6 @@ QByteArray ChatCore::userIdFromClass(const QString &text)
 void ChatCore::loadTranslation()
 {
   m_translation = new Translation(this);
-  m_translation->setSearch(QStringList() << (m_settings->locations()->path(FileLocations::SharePath) + "/translations") << (m_settings->locations()->path(FileLocations::ConfigPath) + "/translations"));
-  m_translation->load(m_settings->value(ChatSettings::Translation).toString());
+  m_translation->setSearch(QStringList() << (m_locations->path(FileLocations::SharePath) + QLatin1String("/translations")) << (m_locations->path(FileLocations::ConfigPath) + QLatin1String("/translations")));
+  m_translation->load(m_settings->value(QLatin1String("Translation")).toString());
 }

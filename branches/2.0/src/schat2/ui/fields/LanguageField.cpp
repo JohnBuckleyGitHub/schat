@@ -31,5 +31,5 @@ LanguageField::LanguageField(QWidget *parent)
 void LanguageField::indexChanged()
 {
   if (save())
-    ChatCore::i()->settings()->setValue(ChatSettings::Translation, m_translation->name(), true);
+    ChatCore::i()->settings()->setValue(QLatin1String("Translation"), m_translation->name());
 }

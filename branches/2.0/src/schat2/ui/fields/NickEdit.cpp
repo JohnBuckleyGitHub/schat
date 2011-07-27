@@ -24,17 +24,16 @@
 #include "ChatSettings.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/UserUtils.h"
-#include "User.h"
 
 NickEdit::NickEdit(QWidget *parent)
-  : ProfileField(ChatSettings::ProfileNick, parent)
+  : ProfileField(QLatin1String("Profile/Nick"), parent)
 {
   init();
 }
 
 
 NickEdit::NickEdit(const QString &contents, QWidget *parent)
-  : ProfileField(ChatSettings::ProfileNick, contents, parent)
+  : ProfileField(QLatin1String("Profile/Nick"), contents, parent)
 {
   init();
 }

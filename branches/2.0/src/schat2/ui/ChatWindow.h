@@ -51,7 +51,7 @@ private slots:
   void notify(int notice, const QVariant &data);
   void pageChanged(int type, bool visible);
   void send(const QString &text);
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   void hideChat();

@@ -39,7 +39,7 @@ class Translation;
 class UserUtils;
 
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
-#define SCHAT_OPTION(x) ChatCore::i()->settings()->value(ChatSettings::x)
+#define SCHAT_OPTION(x) ChatCore::i()->settings()->value(QLatin1String(x))
 
 class SCHAT_CORE_EXPORT ChatCore : public QObject
 {
@@ -120,7 +120,7 @@ public slots:
   void nickClicked(const QString &text);
 
 private slots:
-  void settingsChanged(const QList<int> &keys);
+  void settingsChanged(const QString &key, const QVariant &value);
   void start();
 
 private:

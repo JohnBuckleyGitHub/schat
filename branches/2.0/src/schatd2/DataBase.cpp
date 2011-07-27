@@ -18,6 +18,7 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QStringList>
 
 #include "DataBase.h"
 #include "FileLocations.h"

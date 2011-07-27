@@ -43,7 +43,7 @@ ChatView::ChatView(QWidget *parent)
 
   setFocusPolicy(Qt::NoFocus);
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
 
   createActions();
@@ -102,7 +102,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 void ChatView::loadFinished()
 {
   m_loaded = true;
-  showSeconds(SCHAT_OPTION(ShowSeconds).toBool());
+  showSeconds(SCHAT_OPTION("ShowSeconds").toBool());
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
@@ -132,10 +132,10 @@ void ChatView::populateJavaScriptWindowObject()
 }
 
 
-void ChatView::settingsChanged(const QList<int> &keys)
+void ChatView::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (keys.contains(ChatSettings::ShowSeconds)) {
-    showSeconds(SCHAT_OPTION(ShowSeconds).toBool());
+  if (key == QLatin1String("ShowSeconds")) {
+    showSeconds(value.toBool());
   }
 }
 

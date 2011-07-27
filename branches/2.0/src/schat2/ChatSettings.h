@@ -24,7 +24,7 @@
 
 class SimpleClient;
 
-class SCHAT_CORE_EXPORT ChatSettings : public SettingsLegacy
+class SCHAT_CORE_EXPORT ChatSettings : public Settings
 {
   Q_OBJECT
 
@@ -44,9 +44,9 @@ public:
     ProfileStatus   ///< Статус пользователя.
   };
 
-  ChatSettings(QObject *parent = 0);
+  ChatSettings(const QString &fileName, QObject *parent = 0);
   void setClient(SimpleClient *client);
-  void updateValue(int key, const QVariant &value);
+  void updateValue(const QString &key, const QVariant &value);
 
 private slots:
   void updateUserData(const QByteArray &userId);

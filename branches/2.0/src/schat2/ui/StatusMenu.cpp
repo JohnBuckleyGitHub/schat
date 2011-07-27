@@ -39,7 +39,7 @@ StatusMenu::StatusMenu(QWidget *parent)
 
   update();
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
 }
@@ -64,9 +64,11 @@ void StatusMenu::clientStateChanged(int state)
 /*!
  * Обработка изменения настроек статуса или пола.
  */
-void StatusMenu::settingsChanged(const QList<int> &keys)
+void StatusMenu::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (keys.contains(ChatSettings::ProfileStatus) || keys.contains(ChatSettings::ProfileGender)) {
+  Q_UNUSED(value)
+
+  if (key == QLatin1String("Profile/Status") || key == QLatin1String("Profile/Gender")) {
     update();
   }
 }
@@ -74,7 +76,7 @@ void StatusMenu::settingsChanged(const QList<int> &keys)
 
 void StatusMenu::statusChanged(QAction *action)
 {
-  ChatCore::i()->settings()->updateValue(ChatSettings::ProfileStatus, action->data().toInt());
+  ChatCore::i()->settings()->updateValue(QLatin1String("Profile/Status"), action->data().toInt());
 }
 
 

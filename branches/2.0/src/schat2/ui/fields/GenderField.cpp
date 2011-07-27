@@ -58,7 +58,7 @@ GenderField::GenderField(QWidget *parent)
   m_toolBar->addWidget(m_config);
   m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }" );
 
-  m_user->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
+  m_user->setRawGender(m_settings->value(QLatin1String("Profile/Gender")).toInt());
   setState();
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
@@ -69,13 +69,13 @@ GenderField::GenderField(QWidget *parent)
   mainLay->setSpacing(0);
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(m_settings, SIGNAL(changed(const QList<int> &)), SLOT(settingsChanged(const QList<int> &)));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
 void GenderField::updateData()
 {
-  m_settings->updateValue(ChatSettings::ProfileGender, m_user->rawGender());
+  m_settings->updateValue(QLatin1String("Profile/Gender"), m_user->rawGender());
 }
 
 
@@ -116,13 +116,12 @@ void GenderField::setColor()
 }
 
 
-void GenderField::settingsChanged(const QList<int> &keys)
+void GenderField::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (!keys.contains(ChatSettings::ProfileGender))
-    return;
-
-  m_user->setRawGender(m_settings->value(ChatSettings::ProfileGender).toInt());
-  setState();
+  if (key == QLatin1String("Profile/Gender")) {
+    m_user->setRawGender(value.toInt());
+    setState();
+  }
 }
 
 

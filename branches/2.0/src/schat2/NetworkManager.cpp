@@ -71,13 +71,13 @@ bool NetworkManager::open()
   if (m_client->clientState() != SimpleClient::ClientOffline)
     return false;
 
-  if (m_settings->value(ChatSettings::AutoConnect).toBool() == false)
+  if (m_settings->value(QLatin1String("AutoConnect")).toBool() == false)
     return false;
 
   if (m_client->user()->status() == User::OfflineStatus)
     return false;
 
-  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  QStringList networks = networkList();
   if (networks.isEmpty())
     return false;
 
@@ -117,7 +117,7 @@ bool NetworkManager::open(const QString &url)
 
 QList<NetworkItem> NetworkManager::items() const
 {
-  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  QStringList networks = networkList();
   QList<NetworkItem> out;
 
   for (int i = 0; i < networks.size(); ++i) {
@@ -151,10 +151,10 @@ QString NetworkManager::currentServerName()
  */
 void NetworkManager::removeItem(const QByteArray &id)
 {
-  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  QStringList networks = networkList();
 
   networks.removeAll(SimpleID::toBase64(id));
-  m_settings->setValue(ChatSettings::Networks, networks);
+  m_settings->setValue(QLatin1String("Networks"), networks);
 }
 
 
@@ -183,6 +183,12 @@ QString NetworkManager::root(const QByteArray &id)
 }
 
 
+QStringList NetworkManager::networkList() const
+{
+  return m_settings->value(QLatin1String("Networks")).toStringList();
+}
+
+
 /*!
  * Формирование таблицы серверов при запуске.
  *
@@ -191,7 +197,7 @@ QString NetworkManager::root(const QByteArray &id)
  */
 void NetworkManager::load()
 {
-  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList(); // \deprecated m_settings->value(ChatSettings::Networks).toStringList();
+  QStringList networks = networkList();
   if (networks.isEmpty())
     return;
 
@@ -226,7 +232,7 @@ void NetworkManager::load()
     for (int i = 0; i < invalid.size(); ++i) {
       networks.removeAll(invalid.at(i));
     }
-    m_settings->setValue(ChatSettings::Networks, networks); // \deprecated m_settings->setValue(ChatSettings::Networks, m_networks);
+    m_settings->setValue(QLatin1String("Networks"), networks);
   }
 }
 
@@ -239,10 +245,10 @@ void NetworkManager::write()
   QByteArray id  = m_client->serverData()->id();
   QString base64 = SimpleID::toBase64(id);
 
-  QStringList networks = m_settings->value(ChatSettings::Networks).toStringList();
+  QStringList networks = networkList();
   networks.removeAll(base64);
   networks.prepend(base64);
-  m_settings->setValue(ChatSettings::Networks, networks); // \deprecated m_settings->setValue(ChatSettings::Networks, m_networks);
+  m_settings->setValue(QLatin1String("Networks"), networks);
 
   NetworkItem item = m_items.value(id);
   item.m_id   = id;

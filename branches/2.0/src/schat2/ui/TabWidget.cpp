@@ -769,7 +769,7 @@ void TabWidget::retranslateUi()
  */
 void TabWidget::showWelcome()
 {
-  if (SCHAT_OPTION(AutoConnect).toBool() && m_client->user()->status() != User::OfflineStatus && ChatCore::i()->networks()->count()) {
+  if (SCHAT_OPTION("AutoConnect").toBool() && m_client->user()->status() != User::OfflineStatus && ChatCore::i()->networks()->count()) {
     m_progressTab = new ProgressTab(this);
     addChatTab(m_progressTab);
   }
