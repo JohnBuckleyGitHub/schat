@@ -59,6 +59,30 @@
     </message>
 </context>
 <context>
+    <name>ChatView</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="162"/>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="160"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="161"/>
+        <source>Copy Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="163"/>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ColorButton</name>
     <message>
         <location filename="../../src/schat2/ui/ColorButton.cpp" line="140"/>
@@ -70,55 +94,55 @@
     <name>GenderField</name>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="37"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="140"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="139"/>
         <source>Male</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="38"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="141"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="140"/>
         <source>Female</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="43"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="143"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="142"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="44"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="144"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="143"/>
         <source>Black</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="45"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="145"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="144"/>
         <source>Gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="146"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="145"/>
         <source>Green</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="47"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="147"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="146"/>
         <source>Red</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="48"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="148"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="147"/>
         <source>White</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="49"/>
-        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="149"/>
+        <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="148"/>
         <source>Yellow</source>
         <translation type="unfinished"></translation>
     </message>
