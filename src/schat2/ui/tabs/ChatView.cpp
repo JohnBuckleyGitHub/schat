@@ -87,9 +87,11 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   }
 
   QMenu display(tr("Display"), this);
+  display.setIcon(SCHAT_ICON(GearIcon));
   menu.addSeparator();
   menu.addMenu(&display);
   display.addAction(m_seconds);
+  display.addAction(m_service);
 
   menu.addSeparator();
   menu.addAction(m_clear);
@@ -108,6 +110,7 @@ void ChatView::loadFinished()
 {
   m_loaded = true;
   showSeconds(SCHAT_OPTION("ShowSeconds").toBool());
+  showService(SCHAT_OPTION("ShowServiceMessages").toBool());
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
@@ -124,6 +127,9 @@ void ChatView::menuTriggered(QAction *action)
   }
   else if (action == m_seconds) {
     ChatCore::i()->settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
+  }
+  else if (action == m_service) {
+    ChatCore::i()->settings()->setValue(QLatin1String("ShowServiceMessages"), action->isChecked());
   }
 }
 
@@ -145,6 +151,9 @@ void ChatView::settingsChanged(const QString &key, const QVariant &value)
   if (key == QLatin1String("ShowSeconds")) {
     showSeconds(value.toBool());
   }
+  else if (key == QLatin1String("ShowServiceMessages")) {
+    showService(value.toBool());
+  }
 }
 
 
@@ -163,6 +172,9 @@ void ChatView::createActions()
 
   m_seconds = new QAction(tr("Seconds"), this);
   m_seconds->setCheckable(true);
+
+  m_service = new QAction(tr("Service messages"), this);
+  m_service->setCheckable(true);
 }
 
 
@@ -186,4 +198,15 @@ void ChatView::showSeconds(bool show)
     evaluateJavaScript(QLatin1String("showSeconds(true)"));
   else
     evaluateJavaScript(QLatin1String("showSeconds(false)"));
+}
+
+
+void ChatView::showService(bool show)
+{
+  m_service->setChecked(show);
+
+  if (show)
+    evaluateJavaScript(QLatin1String("showService(true)"));
+  else
+    evaluateJavaScript(QLatin1String("showService(false)"));
 }
