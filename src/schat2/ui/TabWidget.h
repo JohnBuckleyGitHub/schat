@@ -60,6 +60,8 @@ signals:
 protected:
   bool event(QEvent *event);
   void changeEvent(QEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
   void addPrivateTab(const QByteArray &id);
