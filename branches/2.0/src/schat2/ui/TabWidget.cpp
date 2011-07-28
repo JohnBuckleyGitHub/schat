@@ -125,9 +125,31 @@ void TabWidget::changeEvent(QEvent *event)
 }
 
 
+/*!
+ * Контекстное меню для вкладки.
+ */
 void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  QTabWidget::contextMenuEvent(event);
+  int index = m_tabBar->tabAt(event->pos());
+  if (index == -1) {
+    QTabWidget::contextMenuEvent(event);
+    return;
+  }
+
+  QMenu menu(this);
+  QAction *closeAction = 0;
+  if (tabsClosable()) {
+    closeAction = menu.addAction(tr("Close Tab"));
+  }
+
+  if (!menu.actions().isEmpty()) {
+    QAction *action = menu.exec(event->globalPos());
+    if (action == 0)
+      return;
+
+    if (action == closeAction)
+      closeTab(index);
+  }
 }
 
 

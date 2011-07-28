@@ -122,8 +122,6 @@ void ChatView::loadFinished()
 
 void ChatView::menuTriggered(QAction *action)
 {
-  qDebug() << "menuTriggered()" << action;
-
   if (action == m_clear) {
     m_loaded = false;
     page()->triggerAction(QWebPage::ReloadAndBypassCache);
