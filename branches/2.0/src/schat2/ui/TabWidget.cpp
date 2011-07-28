@@ -17,6 +17,7 @@
  */
 
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
 #include <QTimer>
@@ -121,6 +122,25 @@ void TabWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QTabWidget::changeEvent(event);
+}
+
+
+void TabWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+  QTabWidget::contextMenuEvent(event);
+}
+
+
+/*!
+ * Закрытие вкладок средней кнопкой мыши.
+ */
+void TabWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  int index = m_tabBar->tabAt(event->pos());
+  if (index != -1 && tabsClosable() && event->button() == Qt::MiddleButton)
+    closeTab(index);
+  else
+    QTabWidget::mouseReleaseEvent(event);
 }
 
 
