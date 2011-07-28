@@ -60,7 +60,7 @@ a:active, a:hover {
 	font-size:x-small;
 }
 
-.no-seconds .seconds { display:none; }
+.no-seconds .seconds, .no-service .service-type { display:none; }
 
 .outgoing, .delivered {
 	background:#f2ffe1;

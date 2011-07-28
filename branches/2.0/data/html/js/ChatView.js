@@ -75,6 +75,16 @@ function showSeconds(show) {
 }
 
 
+function showService(show) {
+	if (show)
+		$('#Chat').removeClass('no-service');
+	else
+		$('#Chat').addClass('no-service');
+	
+	alignChat(true);
+}
+
+
 function nickClicked() {
 	try {
 		SimpleChat.nickClicked($(this).attr('class'));

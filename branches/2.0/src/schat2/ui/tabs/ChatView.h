@@ -49,6 +49,7 @@ private:
   void createActions();
   void retranslateUi();
   void showSeconds(bool show);
+  void showService(bool show);
 
   bool m_loaded;                      ///< true если документ загружен.
   QAction *m_clear;                   ///< Очистить.
@@ -56,6 +57,7 @@ private:
   QAction *m_copyLink;                ///< Копировать ссылку.
   QAction *m_seconds;                 ///< Секунды.
   QAction *m_selectAll;               ///< Выделить всё.
+  QAction *m_service;                 ///< Сервисные сообщения.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
 
