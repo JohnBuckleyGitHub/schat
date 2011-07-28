@@ -39,8 +39,6 @@ ChatView::ChatView(QWidget *parent)
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-
   setFocusPolicy(Qt::NoFocus);
 
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
@@ -92,6 +90,11 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   menu.addMenu(&display);
   display.addAction(m_seconds);
   display.addAction(m_service);
+
+  if (QWebSettings::globalSettings()->testAttribute(QWebSettings::DeveloperExtrasEnabled)) {
+    display.addSeparator();
+    display.addAction(pageAction(QWebPage::InspectElement));
+  }
 
   menu.addSeparator();
   menu.addAction(m_clear);
