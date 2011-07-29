@@ -66,14 +66,13 @@ public:
   void sort();
 
 protected:
+  void contextMenuEvent(QContextMenuEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
   void addTab(const QModelIndex &index);
 
 private:
-  void nickClicked(const QString &nick);
-
   bool m_sortable;                      ///< true если список пользователей нужно сортировать при добавлении пользователя.
   QHash<QByteArray, UserItem*> m_users; ///< Таблица для ускоренного поиска пользователей.
   QStandardItemModel m_model;           ///< Модель для отображения списка пользователей.
