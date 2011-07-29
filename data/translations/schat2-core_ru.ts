@@ -63,4 +63,12 @@
         <translation>Нет</translation>
     </message>
 </context>
+<context>
+    <name>UserMenu</name>
+    <message>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="29"/>
+        <source>Insert nick</source>
+        <translation>Вставить ник</translation>
+    </message>
+</context>
 </TS>

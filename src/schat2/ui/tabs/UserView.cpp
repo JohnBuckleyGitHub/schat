@@ -16,9 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMenu>
 #include <QMouseEvent>
-#include <QTextDocument>
 
+#include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "debugstream.h"
 #include "ui/tabs/UserView.h"
@@ -69,13 +70,13 @@ void UserItem::setSortData()
 {
   setToolTip(UserUtils::toolTip(m_user));
 
-  QString prefix = "6";
+  QString prefix = QLatin1String("6");
   if (m_self)
-    prefix = "!";
+    prefix = QLatin1String("!");
   else if (m_user->status() == User::FreeForChatStatus)
-    prefix = "4";
+    prefix = QLatin1String("4");
   else if (m_user->gender() == User::Bot)
-    prefix = "2";
+    prefix = QLatin1String("2");
 
   setData(prefix + m_user->nick().toLower());
 }
@@ -179,6 +180,24 @@ void UserView::sort()
 }
 
 
+void UserView::contextMenuEvent(QContextMenuEvent *event)
+{
+  QModelIndex index = indexAt(event->pos());
+
+  if (!index.isValid()) {
+    QListView::contextMenuEvent(event);
+    return;
+  }
+
+  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+  QMenu menu(this);
+  UserMenu userMenu(item->user(), this);
+  userMenu.bind(&menu);
+
+  menu.exec(event->globalPos());
+}
+
+
 void UserView::mouseReleaseEvent(QMouseEvent *event)
 {
   QModelIndex index = indexAt(event->pos());
@@ -186,7 +205,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   if (index.isValid(), event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
     QStandardItem *item = m_model.itemFromIndex(index);
 
-    nickClicked(item->text());
+    UserMenu::insertNick(item->text());
   }
   else if (event->button() == Qt::LeftButton && !index.isValid()) {
     setCurrentIndex(QModelIndex());
@@ -204,10 +223,4 @@ void UserView::addTab(const QModelIndex &index)
 {
   UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
   ChatCore::i()->startNotify(ChatCore::AddPrivateTab, item->user()->id());
-}
-
-
-void UserView::nickClicked(const QString &nick)
-{
-  ChatCore::i()->startNotify(ChatCore::InsertTextToSend, " <b>" + Qt::escape(nick) + "</b> ");
 }
