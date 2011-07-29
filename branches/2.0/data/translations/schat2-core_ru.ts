@@ -66,8 +66,13 @@
 <context>
     <name>UserMenu</name>
     <message>
-        <location filename="../../src/schat2/actions/UserMenu.cpp" line="29"/>
-        <source>Insert nick</source>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="31"/>
+        <source>Private Talk</source>
+        <translation>Приватный разговор</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="32"/>
+        <source>Insert Nick</source>
         <translation>Вставить ник</translation>
     </message>
 </context>

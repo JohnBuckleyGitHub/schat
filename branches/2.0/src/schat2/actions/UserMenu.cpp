@@ -21,12 +21,15 @@
 
 #include "ChatCore.h"
 #include "actions/UserMenu.h"
+#include "client/SimpleClient.h"
 
 UserMenu::UserMenu(ClientUser user, QObject *parent)
   : MenuBuilder(parent)
   , m_user(user)
 {
-  m_insert = new QAction(tr("Insert nick"), this);
+  m_self = m_user->id() == ChatCore::i()->client()->userId();
+  m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
+  m_insert = new QAction(tr("Insert Nick"), this);
 }
 
 
@@ -40,12 +43,20 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
+  if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
+    menu->addAction(m_talk);
+  }
+
   menu->addAction(m_insert);
 }
 
 
 void UserMenu::triggered(QAction *action)
 {
-  if (action == m_insert)
+  if (action == m_insert) {
     insertNick(m_user->nick());
+  }
+  else if (action == m_talk) {
+    ChatCore::i()->startNotify(ChatCore::AddPrivateTab, m_user->id());
+  }
 }

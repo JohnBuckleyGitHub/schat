@@ -80,7 +80,8 @@ public:
     EditCopy,
     EditCut,
     EditPaste,
-    EditSelectAll
+    EditSelectAll,
+    Balloon
   };
 
   enum Notice {

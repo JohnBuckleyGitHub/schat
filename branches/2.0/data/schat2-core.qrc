@@ -5,6 +5,7 @@
   <file alias="css/ui.css">html/css/ui.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/away-small.png">images/diagona/10/087.png</file>
+  <file alias="images/balloon.png">images/fugue/balloon.png</file>
   <file alias="images/channel.png">images/diagona/030.png</file>
   <file alias="images/channel-alert.png">images/diagona/029.png</file>
   <file alias="images/dnd-small.png">images/fugue/cross-circle-small.png</file>
