@@ -96,5 +96,5 @@ bool ClientHelper::sendText(MessageData &data)
 
 void ClientHelper::command(const ClientCmd &cmd)
 {
-
+  Q_UNUSED(cmd)
 }

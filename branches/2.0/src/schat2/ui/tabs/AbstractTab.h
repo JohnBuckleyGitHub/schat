@@ -22,10 +22,12 @@
 #include <QIcon>
 #include <QWidget>
 
+#include "schat.h"
+
 class MenuBuilder;
 class TabWidget;
 
-class AbstractTab : public QWidget
+class SCHAT_CORE_EXPORT AbstractTab : public QWidget
 {
   Q_OBJECT
 

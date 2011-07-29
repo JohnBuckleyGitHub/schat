@@ -46,7 +46,6 @@ HEADERS = \
     ui/StatusWidget.h \
     ui/TabBar.h \
     ui/tabs/AboutTab.h \
-    ui/tabs/AbstractTab.h \
     ui/tabs/AlertTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
@@ -81,7 +80,6 @@ SOURCES = \
     ui/StatusWidget.cpp \
     ui/TabBar.cpp \
     ui/tabs/AboutTab.cpp \
-    ui/tabs/AbstractTab.cpp \
     ui/tabs/AlertTab.cpp \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \

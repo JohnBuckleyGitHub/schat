@@ -35,6 +35,8 @@ UrlAction::UrlAction(const QUrl &url, ChatView *view)
 
 bool UrlAction::exec(const QString &id, const QString &button)
 {
+  Q_UNUSED(id)
+
   if (button == QLatin1String("yes"))
     QDesktopServices::openUrl(m_url);
 
