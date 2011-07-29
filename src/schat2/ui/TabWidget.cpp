@@ -51,6 +51,7 @@
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
+  , m_core(ChatCore::i())
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
@@ -98,12 +99,6 @@ TabWidget::TabWidget(QWidget *parent)
 AbstractTab *TabWidget::widget(int index) const
 {
   return static_cast<AbstractTab*>(QTabWidget::widget(index));
-}
-
-
-QByteArray TabWidget::currentId() const
-{
-  return widget(currentIndex())->id();
 }
 
 
@@ -223,6 +218,8 @@ void TabWidget::currentChanged(int index)
       || tab->type() == AbstractTab::ProgressType) {
     visible = false;
   }
+
+  m_core->setCurrentId(tab->id());
 
   stopAlert();
   emit pageChanged(tab->type(), visible);

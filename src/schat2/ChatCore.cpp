@@ -154,19 +154,6 @@ QIcon ChatCore::icon(IconName name)
 }
 
 
-/*!
- * Отправка сообщения.
- */
-void ChatCore::send(const QByteArray &destId, const QString &text)
-{
-  if (text.isEmpty())
-    return;
-
-  MessageData data(QByteArray(), destId, text);
-  m_messageAdapter->send(data);
-}
-
-
 void ChatCore::click(const QString &id, const QString &button)
 {
   QList<ChatViewAction *> actions = m_actions.values(id);
@@ -182,8 +169,6 @@ void ChatCore::click(const QString &id, const QString &button)
       action = 0;
     }
   }
-
-  qDebug() << "click()" << button << id << sender();
 }
 
 
@@ -202,6 +187,19 @@ void ChatCore::nickClicked(const QString &text)
     return;
 
   startNotify(InsertTextToSend, " <b>" + Qt::escape(user->nick()) + "</b> ");
+}
+
+
+/*!
+ * Отправка сообщения.
+ */
+void ChatCore::send(const QString &text)
+{
+  if (text.isEmpty())
+    return;
+
+  MessageData data(QByteArray(), m_currentId, text);
+  m_messageAdapter->send(data);
 }
 
 

@@ -99,17 +99,18 @@ public:
   inline ChatSettings *settings() { return m_settings; }
   inline FileLocations *locations() const { return m_locations; }
   inline NetworkManager *networks() const { return m_networkManager; }
+  inline QByteArray currentId() const { return m_currentId; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   inline StatusMenu *statusMenu() { return m_statusMenu; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
+  inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
   inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
   inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
   static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
-  void send(const QByteArray &destId, const QString &text);
 
 signals:
   void message(const AbstractMessage &message);
@@ -118,6 +119,7 @@ signals:
 public slots:
   void click(const QString &id, const QString &button);
   void nickClicked(const QString &text);
+  void send(const QString &text);
 
 private slots:
   void settingsChanged(const QString &key, const QVariant &value);
@@ -132,6 +134,7 @@ private:
   MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   Plugins *m_plugins;                             ///< Загрузчик плагинов.
+  QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.

@@ -28,6 +28,7 @@ class AbstractMessage;
 class AbstractTab;
 class AlertTab;
 class ChannelTab;
+class ChatCore;
 class ChatViewTab;
 class PrivateTab;
 class ProgressTab;
@@ -52,7 +53,6 @@ public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
   inline TabBar *tabBar() { return m_tabBar; }
-  QByteArray currentId() const;
 
 signals:
   void pageChanged(int type, bool visible);
@@ -98,6 +98,7 @@ private:
   void stopAlert();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
+  ChatCore *m_core;                          ///< Указатель на объект ChatCore.
   QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
   QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
   QList<ChatViewTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
