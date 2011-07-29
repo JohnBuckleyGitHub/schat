@@ -72,7 +72,7 @@ ChatWindow::ChatWindow(QWidget *parent)
 
   resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
 
-  connect(m_send, SIGNAL(send(const QString &)), SLOT(send(const QString &)));
+  connect(m_send, SIGNAL(send(const QString &)), m_core, SLOT(send(const QString &)));
   connect(m_core, SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
@@ -202,12 +202,6 @@ void ChatWindow::pageChanged(int type, bool visible)
   m_send->setVisible(visible);
   if (visible)
     m_send->setInputFocus();
-}
-
-
-void ChatWindow::send(const QString &text)
-{
-  m_core->send(m_tabs->currentId(), text);
 }
 
 

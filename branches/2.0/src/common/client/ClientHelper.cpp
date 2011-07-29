@@ -75,6 +75,9 @@ bool ClientHelper::send(MessageData &data)
  */
 bool ClientHelper::sendText(MessageData &data)
 {
+  if (data.destId.isEmpty())
+    return false;
+
   if (data.senderId.isEmpty())
     data.senderId = m_client->userId();
 
