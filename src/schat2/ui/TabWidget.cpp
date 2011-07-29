@@ -26,6 +26,7 @@
 
 #include "debugstream.h"
 
+#include "actions/MenuBuilder.h"
 #include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -133,6 +134,13 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 
   QMenu menu(this);
   QAction *closeAction = 0;
+  MenuBuilder *builder = widget(index)->menu();
+
+  if (builder) {
+    builder->bind(&menu);
+    menu.addSeparator();
+  }
+
   if (tabsClosable()) {
     closeAction = menu.addAction(tr("Close Tab"));
   }

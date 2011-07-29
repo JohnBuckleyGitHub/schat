@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QVBoxLayout>
 
+#include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
@@ -33,6 +34,8 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   mainLay->addWidget(m_chatView);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
+
+  m_menu = new UserMenu(user, this);
 
   setIcon(UserUtils::icon(user));
   setText(m_user->nick());

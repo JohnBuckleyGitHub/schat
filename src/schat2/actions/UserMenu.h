@@ -35,8 +35,10 @@ public slots:
   void triggered(QAction *action);
 
 private:
+  bool m_self;
   ClientUser m_user;
   QAction *m_insert;
+  QAction *m_talk;
 };
 
 #endif /* USERMENU_H_ */

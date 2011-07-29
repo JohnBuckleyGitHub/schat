@@ -22,6 +22,7 @@
 #include <QIcon>
 #include <QWidget>
 
+class MenuBuilder;
 class TabWidget;
 
 class AbstractTab : public QWidget
@@ -45,6 +46,7 @@ public:
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
   inline bool isDeleteOnClose() const { return m_deleteOnClose; }
   inline bool isOnline() const { return m_online; }
+  inline MenuBuilder *menu() { return m_menu; }
   inline QAction *action() const { return m_action; }
   inline QByteArray id() const { return m_id; }
   inline QIcon icon() const { return m_icon; }
@@ -63,6 +65,7 @@ protected:
 
   bool m_deleteOnClose; ///< true если вкладку нужно удалить после закрытия.
   bool m_online;        ///< true если вкладка "В сети".
+  MenuBuilder *m_menu;  ///< Конструктор меню.
   QAction *m_action;    ///< Действие используемое для открытие вкладки.
   QIcon m_icon;         ///< Нормальная иконка вкладки.
   QString m_text;       ///< Заголовок вкладки.
