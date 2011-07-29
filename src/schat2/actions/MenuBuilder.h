@@ -21,10 +21,12 @@
 
 #include <QObject>
 
+#include "schat.h"
+
 class QAction;
 class QMenu;
 
-class MenuBuilder : public QObject
+class SCHAT_CORE_EXPORT MenuBuilder : public QObject
 {
   Q_OBJECT
 
@@ -35,7 +37,7 @@ public:
   virtual void retranslateUi() {}
 
 public slots:
-  virtual void triggered(QAction *action) {}
+  virtual void triggered(QAction * /*action*/ ) {}
 
 protected:
   QMenu *m_menu;

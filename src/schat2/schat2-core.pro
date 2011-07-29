@@ -39,6 +39,7 @@ HEADERS = \
     messages/UserMessage.h \
     NetworkManager.h \
     schat.h \
+    ui/tabs/AbstractTab.h \
     ui/UserUtils.h \
 
 SOURCES = \
@@ -53,6 +54,7 @@ SOURCES = \
     messages/MessageBox.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
+    ui/tabs/AbstractTab.cpp \
     ui/UserUtils.cpp \
     
 SCHAT_CLIENT_LIB = 1

@@ -22,7 +22,7 @@
 #include "actions/MenuBuilder.h"
 #include "User.h"
 
-class UserMenu : public MenuBuilder
+class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
 {
   Q_OBJECT
 

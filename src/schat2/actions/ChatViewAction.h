@@ -28,7 +28,7 @@ class ChatViewAction
 public:
   ChatViewAction(ChatView *view = 0);
   virtual ~ChatViewAction() {}
-  virtual bool exec(const QString &id, const QString &button) { return true; }
+  virtual bool exec(const QString & /*id*/, const QString & /*button*/) { return true; }
 
 protected:
   ChatView *m_view;
