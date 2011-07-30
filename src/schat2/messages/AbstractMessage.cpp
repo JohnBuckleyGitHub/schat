@@ -149,7 +149,7 @@ void AbstractMessage::nick(QString &html) const
   if (!m_senderId.isEmpty()) {
     ClientUser user = ChatCore::i()->client()->user(m_senderId);
     if (user)
-      nick = Qt::escape(user->nick());
+      nick = user->nick();
   }
 
   if (nick.isEmpty()) {
@@ -158,8 +158,9 @@ void AbstractMessage::nick(QString &html) const
   }
 
   QString t = tpl(QLatin1String("nick"));
-  t.replace(QLatin1String("%nick%"), nick);
-  t.replace(QLatin1String("%userId%"), m_senderId.toHex());
+  t.replace(QLatin1String("%nick%"), Qt::escape(nick));
+  t.replace(QLatin1String("%user-id%"), m_senderId.toHex());
+  t.replace(QLatin1String("%nick-hex%"), nick.toUtf8().toHex());
 
   html.replace(QLatin1String("%nick%"), t);
 }

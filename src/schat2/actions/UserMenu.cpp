@@ -19,17 +19,28 @@
 #include <QMenu>
 #include <QTextDocument>
 
-#include "ChatCore.h"
 #include "actions/UserMenu.h"
+#include "ChatCore.h"
 #include "client/SimpleClient.h"
 
 UserMenu::UserMenu(ClientUser user, QObject *parent)
   : MenuBuilder(parent)
+  , m_self(false)
   , m_user(user)
 {
-  m_self = m_user->id() == ChatCore::i()->client()->userId();
-  m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
-  m_insert = new QAction(tr("Insert Nick"), this);
+  init();
+}
+
+
+UserMenu::UserMenu(const QUrl &url, QObject *parent)
+  : MenuBuilder(parent)
+  , m_self(false)
+{
+  m_user = ChatCore::i()->client()->user(QByteArray::fromHex(url.host().toLatin1()));
+  if (!m_user)
+    m_nick = QByteArray::fromHex(url.path().remove(0, 1).toLatin1());
+
+  init();
 }
 
 
@@ -43,7 +54,7 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
+  if (m_user && !m_self && ChatCore::i()->currentId() != m_user->id()) {
     menu->addAction(m_talk);
   }
 
@@ -54,9 +65,23 @@ void UserMenu::bind(QMenu *menu)
 void UserMenu::triggered(QAction *action)
 {
   if (action == m_insert) {
-    insertNick(m_user->nick());
+    if (m_user)
+      insertNick(m_user->nick());
+    else
+      insertNick(m_nick);
   }
   else if (action == m_talk) {
     ChatCore::i()->startNotify(ChatCore::AddPrivateTab, m_user->id());
   }
+}
+
+
+void UserMenu::init()
+{
+  if (m_user) {
+    m_self = m_user->id() == ChatCore::i()->client()->userId();
+    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
+  }
+
+  m_insert = new QAction(tr("Insert Nick"), this);
 }

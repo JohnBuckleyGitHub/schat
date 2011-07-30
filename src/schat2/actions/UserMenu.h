@@ -22,12 +22,15 @@
 #include "actions/MenuBuilder.h"
 #include "User.h"
 
+class QUrl;
+
 class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
 {
   Q_OBJECT
 
 public:
   UserMenu(ClientUser user, QObject *parent = 0);
+  UserMenu(const QUrl &url, QObject *parent = 0);
   static void insertNick(const QString &nick);
   void bind(QMenu *menu);
 
@@ -35,10 +38,13 @@ public slots:
   void triggered(QAction *action);
 
 private:
+  void init();
+
   bool m_self;
   ClientUser m_user;
   QAction *m_insert;
   QAction *m_talk;
+  QString m_nick;
 };
 
 #endif /* USERMENU_H_ */
