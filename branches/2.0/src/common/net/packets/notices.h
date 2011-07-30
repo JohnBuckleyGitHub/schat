@@ -34,8 +34,9 @@ public:
   };
 
   enum Param1 {
-    UnknownError,   ///< Неизвестная ошибка.
-    UserUnavailable ///< Пользователь недоступен.
+    UnknownError,    ///< Неизвестная ошибка.
+    UserUnavailable, ///< Пользователь недоступен.
+    Ignored,         ///< Сообщение было игнорированно.
   };
 
   NoticeData()

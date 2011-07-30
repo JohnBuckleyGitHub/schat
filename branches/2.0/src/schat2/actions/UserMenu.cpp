@@ -65,7 +65,7 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  if (m_user && !m_self && ChatCore::i()->currentId() != m_user->id()) {
+  if (m_user && !m_self && ChatCore::i()->currentId() != m_user->id() && m_user->status() != User::OfflineStatus) {
     menu->addAction(m_talk);
   }
 

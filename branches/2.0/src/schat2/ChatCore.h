@@ -97,6 +97,7 @@ public:
 
   ChatCore(QObject *parent = 0);
   ~ChatCore();
+  bool isIgnored(const QByteArray &id);
   inline ChatSettings *settings() { return m_settings; }
   inline FileLocations *locations() const { return m_locations; }
   inline NetworkManager *networks() const { return m_networkManager; }
@@ -108,10 +109,12 @@ public:
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
   inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
-  inline void startNotify(int notice, const QVariant &data = QVariant()) { emit notify(notice, data); }
   static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
+  void ignore(const QByteArray &id);
+  void startNotify(int notice, const QVariant &data = QVariant());
+  void unignore(const QByteArray &id);
 
 signals:
   void message(const AbstractMessage &message);
@@ -126,7 +129,9 @@ private slots:
   void start();
 
 private:
+  void loadIgnoreList();
   void loadTranslation();
+  void writeIgnoreList();
 
   ChatSettings *m_settings;                       ///< Настройки.
   FileLocations *m_locations;                     ///< Схема размещения файлов.
@@ -134,6 +139,7 @@ private:
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   Plugins *m_plugins;                             ///< Загрузчик плагинов.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
+  QList<QByteArray> m_ignoreList;                 ///< Чёрный список.
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.
