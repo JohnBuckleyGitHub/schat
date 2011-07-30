@@ -119,7 +119,6 @@ signals:
 
 public slots:
   void click(const QString &id, const QString &button);
-  void nickClicked(const QString &text);
   void send(const QString &text);
 
 private slots:
@@ -127,7 +126,6 @@ private slots:
   void start();
 
 private:
-  QByteArray userIdFromClass(const QString &text);
   void loadTranslation();
 
   ChatSettings *m_settings;                       ///< Настройки.

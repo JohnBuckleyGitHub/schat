@@ -174,24 +174,6 @@ void ChatCore::click(const QString &id, const QString &button)
 
 
 /*!
- * Обработка одиночного клика по нику.
- * \todo ! Реализовать обработку двойного клика для открытия привата.
- */
-void ChatCore::nickClicked(const QString &text)
-{
-  QByteArray id = userIdFromClass(text);
-  if (id.isEmpty())
-    return;
-
-  ClientUser user = m_client->user(id);
-  if (!user)
-    return;
-
-  startNotify(InsertTextToSend, " <b>" + Qt::escape(user->nick()) + "</b> ");
-}
-
-
-/*!
  * Отправка сообщения.
  */
 void ChatCore::send(const QString &text)
@@ -215,18 +197,6 @@ void ChatCore::settingsChanged(const QString &key, const QVariant &value)
 void ChatCore::start()
 {
   m_networkManager->open();
-}
-
-
-/*!
- * Получение идентификатора пользователя из CSS класса.
- */
-QByteArray ChatCore::userIdFromClass(const QString &text)
-{
-  if (text.size() < 47 || !text.startsWith("nick "))
-    return QByteArray();
-
-  return QByteArray::fromHex(text.mid(5, 42).toLatin1());
 }
 
 

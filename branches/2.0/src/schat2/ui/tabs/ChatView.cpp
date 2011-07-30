@@ -153,6 +153,11 @@ void ChatView::menuTriggered(QAction *action)
 
 void ChatView::openUrl(const QUrl &url)
 {
+  if (url.scheme() == QLatin1String("user")) {
+    UserMenu::insertNick(url);
+    return;
+  }
+
   QDesktopServices::openUrl(url);
 }
 
