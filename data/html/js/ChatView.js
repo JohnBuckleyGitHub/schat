@@ -22,9 +22,6 @@ $(document).ready(function() {
 	$(window).resize(function() {
 		alignChat(true);
 	});
-	
-	$('a.nick').click(nickClicked);
-	$('button').click(handleButton);
 
 	alignChat(true);
 });
@@ -59,10 +56,7 @@ function scrollToBottom() {
 
 //Appending new content to the message view
 function appendMessage(html) {
-	//var shouldScroll = nearBottom();
 	$('#Chat').append(html);
-	$('.nick-block > a.nick').unbind('click', nickClicked);
-	$('.nick-block > a.nick').bind('click', nickClicked);
 	
 	alignChat(true);
 }
@@ -82,14 +76,6 @@ function showService(show) {
 		$('#Chat').addClass('no-service');
 	
 	alignChat(true);
-}
-
-
-function nickClicked() {
-	try {
-		SimpleChat.nickClicked($(this).attr('class'));
-	} catch (e) { alert(e); }
-	event.preventDefault();
 }
 
 // Удаление статуса сообщения "Не доставлено" и установка времени доставки.

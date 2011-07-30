@@ -50,6 +50,17 @@ void UserMenu::insertNick(const QString &nick)
 }
 
 
+void UserMenu::insertNick(const QUrl &url)
+{
+  QString nick;
+  ClientUser user = ChatCore::i()->client()->user(QByteArray::fromHex(url.host().toLatin1()));
+  if (user)
+    insertNick(user->nick());
+  else
+    insertNick(QByteArray::fromHex(url.path().remove(0, 1).toLatin1()));
+}
+
+
 void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
