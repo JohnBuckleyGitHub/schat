@@ -61,38 +61,38 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="87"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="100"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="169"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="186"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="185"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="202"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="174"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="190"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="177"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="193"/>
         <source>Service messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="200"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="185"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="201"/>
         <source>Copy Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="187"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="203"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>

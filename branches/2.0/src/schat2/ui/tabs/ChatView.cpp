@@ -23,6 +23,7 @@
 #include <QMenu>
 #include <QWebFrame>
 
+#include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "debugstream.h"
@@ -80,9 +81,21 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
+  UserMenu *userMenu = 0;
   if (!url.isEmpty()) {
-    menu.addAction(m_copyLink);
+    if (url.scheme() == QLatin1String("user")) {
+      menu.addSeparator();
+      userMenu = new UserMenu(url, this);
+      userMenu->bind(&menu);
+      url.clear();
+    }
+    else {
+      menu.addAction(m_copyLink);
+    }
   }
+
+  if (!url.isEmpty())
+    menu.addAction(m_copyLink);
 
   QMenu display(tr("Display"), this);
   display.setIcon(SCHAT_ICON(GearIcon));
@@ -103,6 +116,9 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 
   menu.exec(event->globalPos());
+
+  if (userMenu)
+    userMenu->deleteLater();
 }
 
 

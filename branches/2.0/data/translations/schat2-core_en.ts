@@ -66,12 +66,12 @@
 <context>
     <name>UserMenu</name>
     <message>
-        <location filename="../../src/schat2/actions/UserMenu.cpp" line="31"/>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="83"/>
         <source>Private Talk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/actions/UserMenu.cpp" line="32"/>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="86"/>
         <source>Insert Nick</source>
         <translation type="unfinished"></translation>
     </message>
