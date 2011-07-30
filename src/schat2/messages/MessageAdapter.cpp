@@ -50,7 +50,7 @@ MessageAdapter::MessageAdapter()
 bool MessageAdapter::sendText(MessageData &data)
 {
   if (ClientHelper::sendText(data)) {
-    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data, UserMessage::NormalPriority);
     m_undelivered.insert(m_name, data.destId);
     return true;
   }
@@ -71,6 +71,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /gender
  * - /help
  * - /hide
+ * - /ignore
  * - /join
  * - /male
  * - /me
@@ -79,6 +80,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /online
  * - /quit
  * - /set
+ * - /unignore
  */
 void MessageAdapter::command(const ClientCmd &cmd)
 {
@@ -138,6 +140,11 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
+  if (command == QLatin1String("ignore")) {
+    ChatCore::i()->ignore(m_destId);
+    return;
+  }
+
   if (command == "join" && cmd.isBody() && cmd.body().size() >= 3) {
     MessageData data(QByteArray(), QByteArray(), command, cmd.body());
     m_client->send(data);
@@ -172,6 +179,11 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
+  if (command == QLatin1String("unignore")) {
+    ChatCore::i()->unignore(m_destId);
+    return;
+  }
+
   commandHelpHint(command);
 }
 
@@ -190,8 +202,16 @@ void MessageAdapter::allDelivered(quint64 id)
  */
 void MessageAdapter::clientMessage(const MessageData &data)
 {
-  if (data.senderId != m_client->userId())
-    newUserMessage(UserMessage::IncomingMessage, data);
+  if (data.senderId == m_client->userId())
+    return;
+
+  if (ChatCore::i()->isIgnored(data.senderId)) {
+    NoticeData reply(m_client->userId(), data.senderId, NoticeData::MessageRejected, data.name, NoticeData::Ignored);
+    m_client->send(NoticeWriter(m_client->sendStream(), reply).data());
+    return;
+  }
+
+  newUserMessage(UserMessage::IncomingMessage, data, UserMessage::NormalPriority);
 }
 
 
@@ -215,21 +235,25 @@ void MessageAdapter::notice(const NoticeData &data)
 {
   SCHAT_DEBUG_STREAM(this << "notice()")
 
-  if (m_client->userId() != data.senderId)
-    return;
+//  if (m_client->userId() != data.senderId)
+//    return;
 
   if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
-    MessageData msg(m_client->userId(), data.destId, "");
+    QByteArray destId = data.destId;
+    if (data.param1 == NoticeData::Ignored && data.destId == m_client->userId())
+      destId = data.senderId;
+
+    MessageData msg(m_client->userId(), destId, "");
     msg.name = data.messageName;
     msg.timestamp = data.timestamp;
 
     m_undelivered.remove(data.messageName);
 
     if (data.type == NoticeData::MessageDelivered) {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg, UserMessage::IdlePriority);
     }
     else {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg, UserMessage::IdlePriority);
     }
   }
 }
@@ -288,9 +312,10 @@ void MessageAdapter::commandHelpHint(const QString &command)
  * Формирование сообщения с типом AbstractMessage::UserMessageType
  * и отправка сообщения.
  */
-void MessageAdapter::newUserMessage(int status, const MessageData &data)
+void MessageAdapter::newUserMessage(int status, const MessageData &data, int priority)
 {
   UserMessage msg(status, data);
+  msg.setPriority(priority);
   emit message(msg);
 }
 
@@ -312,7 +337,7 @@ void MessageAdapter::setStateAll(int state, const QString &reason)
     i.next();
     data.name = i.key();
     data.destId = i.value();
-    newUserMessage(UserMessage::OutgoingMessage | state, data);
+    newUserMessage(UserMessage::OutgoingMessage | state, data, UserMessage::IdlePriority);
   }
 
   m_undelivered.clear();

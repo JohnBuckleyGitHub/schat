@@ -59,7 +59,7 @@ private slots:
 private:
   int setGender(const QString &gender, const QString &color);
   void commandHelpHint(const QString &command);
-  void newUserMessage(int status, const MessageData &data);
+  void newUserMessage(int status, const MessageData &data, int priority);
   void setStateAll(int state, const QString &reason);
   void setStatus(int status, const QString &text = "");
 
