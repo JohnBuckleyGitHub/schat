@@ -27,8 +27,6 @@ HEADERS = \
     arora/lineedit_p.h \
     ChatApp.h \
     debugstream.h \
-    plugins/ClientInterface.h \
-    plugins/CoreInterface.h \
     QProgressIndicator/QProgressIndicator.h \
     ui/ChatWindow.h \
     ui/ColorButton.h \

@@ -19,15 +19,15 @@
 #ifndef DEBUGCLIENTPLUGIN_H_
 #define DEBUGCLIENTPLUGIN_H_
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
+#include "ClientApi.h"
+#include "CoreApi.h"
 
 class DebugClient;
 
-class DebugClientPlugin : public QObject, CoreInterface, ClientInterface
+class DebugClientPlugin : public QObject, CoreApi, ClientApi
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
+  Q_INTERFACES(CoreApi ClientApi)
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);

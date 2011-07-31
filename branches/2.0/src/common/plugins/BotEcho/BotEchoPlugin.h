@@ -19,15 +19,15 @@
 #ifndef BOTECHOPLUGIN_H_
 #define BOTECHOPLUGIN_H_
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
+#include "ClientApi.h"
+#include "CoreApi.h"
 
 class BotEcho;
 
-class BotEchoPlugin : public QObject, CoreInterface, ClientInterface
+class BotEchoPlugin : public QObject, CoreApi, ClientApi
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
+  Q_INTERFACES(CoreApi ClientApi)
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);

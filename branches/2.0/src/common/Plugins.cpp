@@ -22,7 +22,7 @@
 #include <QPluginLoader>
 
 #include "Plugins.h"
-#include "plugins/CoreInterface.h"
+#include "plugins/CoreApi.h"
 
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
@@ -65,12 +65,12 @@ void Plugins::load()
  *
  * \return true если плагин прошёл проверку.
  */
-CoreInterface* Plugins::checkPlugin(QObject *plugin)
+CoreApi* Plugins::checkPlugin(QObject *plugin)
 {
   if (!plugin)
     return 0;
 
-  CoreInterface *core = qobject_cast<CoreInterface *>(plugin);
+  CoreApi *core = qobject_cast<CoreApi *>(plugin);
   if (!core)
     return 0;
 
@@ -116,7 +116,7 @@ void Plugins::load(const QString &path)
     QPluginLoader loader(dir.absoluteFilePath(files.at(i)));
 
     QObject *plugin = loader.instance();
-    CoreInterface *core = checkPlugin(plugin);
+    CoreApi *core = checkPlugin(plugin);
     if (!core) {
       loader.unload();
       continue;
