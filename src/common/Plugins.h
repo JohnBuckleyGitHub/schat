@@ -25,7 +25,7 @@
 
 #include "schat.h"
 
-class CoreInterface;
+class CoreApi;
 
 class SCHAT_EXPORT Plugins : public QObject
 {
@@ -43,7 +43,7 @@ protected:
   QList<QObject *> m_plugins; ///< Все загруженные плагины.
 
 private:
-  CoreInterface* checkPlugin(QObject *plugin);
+  CoreApi* checkPlugin(QObject *plugin);
   void load(const QString &path);
   void sort();
 

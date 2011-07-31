@@ -25,10 +25,10 @@
 /*!
  * Базовый интерфейс для всех типов плагинов.
  */
-class CoreInterface
+class CoreApi
 {
 public:
-  virtual ~CoreInterface() {}
+  virtual ~CoreApi() {}
   virtual QString description() const { return ""; }
   virtual QString id() const = 0;   ///< Машинное имя плагина.
   virtual QString name() const = 0; ///< Имя плагина.
@@ -37,6 +37,6 @@ public:
   virtual QStringList required() const { return QStringList(); }
 };
 
-Q_DECLARE_INTERFACE(CoreInterface, "com.impomezia.schat.CoreInterface/1.0");
+Q_DECLARE_INTERFACE(CoreApi, "com.impomezia.schat.CoreApi/1.0");
 
 #endif /* COREINTERFACE_H_ */

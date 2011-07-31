@@ -24,13 +24,13 @@
 class ClientHelper;
 class FileLocations;
 
-class ClientInterface
+class ClientApi
 {
 public:
-  virtual ~ClientInterface() {}
+  virtual ~ClientApi() {}
   virtual QObject *init(ClientHelper *helper, FileLocations *locations) = 0;
 };
 
-Q_DECLARE_INTERFACE(ClientInterface, "com.impomezia.schat.ClientInterface/1.0");
+Q_DECLARE_INTERFACE(ClientApi, "com.impomezia.schat.ClientApi/1.0");
 
 #endif /* CLIENTINTERFACE_H_ */

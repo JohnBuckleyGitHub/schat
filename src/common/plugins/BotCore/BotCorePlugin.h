@@ -19,15 +19,15 @@
 #ifndef BOTCOREPLUGIN_H_
 #define BOTCOREPLUGIN_H_
 
-#include "ClientInterface.h"
-#include "CoreInterface.h"
+#include "ClientApi.h"
+#include "CoreApi.h"
 
 class BotCore;
 
-class BotCorePlugin : public QObject, CoreInterface, ClientInterface
+class BotCorePlugin : public QObject, CoreApi, ClientApi
 {
   Q_OBJECT
-  Q_INTERFACES(CoreInterface ClientInterface)
+  Q_INTERFACES(CoreApi ClientApi)
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);

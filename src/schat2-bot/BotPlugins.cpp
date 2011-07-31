@@ -20,8 +20,8 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
-#include "plugins/ClientInterface.h"
-#include "plugins/CoreInterface.h"
+#include "plugins/ClientApi.h"
+#include "plugins/CoreApi.h"
 
 BotPlugins::BotPlugins(QObject *parent)
   : Plugins(parent)
@@ -37,7 +37,7 @@ BotPlugins::BotPlugins(QObject *parent)
 void BotPlugins::init()
 {
   for (int i = 0; i < m_plugins.size(); ++i) {
-    ClientInterface *client = qobject_cast<ClientInterface *>(m_plugins.at(i));
+    ClientApi *client = qobject_cast<ClientApi *>(m_plugins.at(i));
     qDebug() << client;
     if (client)
       client->init(m_helper, m_locations);
