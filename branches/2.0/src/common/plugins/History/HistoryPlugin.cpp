@@ -16,27 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATPLUGINS_H_
-#define CHATPLUGINS_H_
+#include <QDebug>
 
-#include "Plugins.h"
+#include <qplugin.h>
 
-class ChatCore;
-class ChatPlugin;
+#include "ChatCore.h"
+#include "client/SimpleClient.h"
+#include "HistoryPlugin.h"
+#include "HistoryPlugin_p.h"
 
-class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
+History::History(ChatCore *core)
+  : ChatPlugin(core)
 {
-  Q_OBJECT
+  qDebug() << m_core->client()->serverId().toHex();
+}
 
-public:
-  ChatPlugins(QObject *parent = 0);
 
-protected:
-  void init();
+ChatPlugin *HistoryPlugin::init(ChatCore *core)
+{
+  return new History(core);
+}
 
-private:
-  ChatCore *m_core;
-  QList<ChatPlugin *> m_chatPlugins;
-};
-
-#endif /* CHATPLUGINS_H_ */
+Q_EXPORT_PLUGIN2(History, HistoryPlugin);

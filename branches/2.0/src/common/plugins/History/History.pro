@@ -15,8 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/BotCore \
-    common/plugins/BotEcho \
-    common/plugins/History \
-    common/plugins/DebugClient \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network
+
+HEADERS  = \
+   HistoryPlugin.h \
+   HistoryPlugin_p.h \
+
+SOURCES  = \
+   HistoryPlugin.cpp \
+
+include(../plugins.pri)

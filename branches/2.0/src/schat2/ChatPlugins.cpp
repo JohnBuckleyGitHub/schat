@@ -16,15 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include "ChatCore.h"
 #include "ChatPlugins.h"
+#include "plugins/ChatApi.h"
+#include "plugins/ChatPlugin.h"
+#include "plugins/CoreApi.h"
 
 ChatPlugins::ChatPlugins(QObject *parent)
   : Plugins(parent)
+  , m_core(ChatCore::i())
 {
 }
 
 
 void ChatPlugins::init()
 {
-
+  for (int i = 0; i < m_plugins.size(); ++i) {
+    ChatApi *api = qobject_cast<ChatApi *>(m_plugins.at(i));
+    if (api) {
+      m_chatPlugins.append(api->init(m_core));
+      qDebug() << api;
+    }
+  }
 }
