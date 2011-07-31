@@ -26,13 +26,13 @@
 #include "schat.h"
 
 class AbstractMessage;
+class ChatPlugins;
 class ChatSettings;
 class ChatViewAction;
 class FileLocations;
 class MessageAdapter;
 class MessageData;
 class NetworkManager;
-class Plugins;
 class SimpleClient;
 class StatusMenu;
 class Translation;
@@ -134,11 +134,11 @@ private:
   void loadTranslation();
   void writeIgnoreList();
 
+  ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
   ChatSettings *m_settings;                       ///< Настройки.
   FileLocations *m_locations;                     ///< Схема размещения файлов.
   MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
-  Plugins *m_plugins;                             ///< Загрузчик плагинов.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
   QList<QByteArray> m_ignoreList;                 ///< Чёрный список.
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.

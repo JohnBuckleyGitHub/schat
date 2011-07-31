@@ -23,13 +23,13 @@
 
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
+#include "ChatPlugins.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
 #include "NetworkManager.h"
-#include "Plugins.h"
 #include "Translation.h"
 #include "ui/UserUtils.h"
 #include "User.h"
@@ -57,7 +57,7 @@ ChatCore::ChatCore(QObject *parent)
   m_messageAdapter = new MessageAdapter();
   m_networkManager = new NetworkManager(this);
 
-  m_plugins = new Plugins(this);
+  m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
   m_icons += "channel";

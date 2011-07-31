@@ -103,7 +103,7 @@ CoreApi* Plugins::checkPlugin(QObject *plugin)
 
 
 /*!
- * Загрузка плагинов с интерфейсом CoreInterface из папки \p path
+ * Загрузка плагинов с интерфейсом CoreApi из папки \p path
  * в список плагинов \p m_plugins.
  */
 void Plugins::load(const QString &path)

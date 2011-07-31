@@ -31,6 +31,7 @@ HEADERS = \
     actions/MenuBuilder.h \
     actions/UserMenu.h \
     ChatCore.h \
+    ChatPlugins.h \
     ChatSettings.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
@@ -38,6 +39,7 @@ HEADERS = \
     messages/MessageBox.h \
     messages/UserMessage.h \
     NetworkManager.h \
+    plugins/ChatPlugin.h \
     schat.h \
     ui/tabs/AbstractTab.h \
     ui/UserUtils.h \
@@ -47,6 +49,7 @@ SOURCES = \
     actions/MenuBuilder.cpp \
     actions/UserMenu.cpp \
     ChatCore.cpp \
+    ChatPlugins.cpp \
     ChatSettings.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
@@ -54,6 +57,7 @@ SOURCES = \
     messages/MessageBox.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
+    plugins/ChatPlugin.cpp \
     ui/tabs/AbstractTab.cpp \
     ui/UserUtils.cpp \
     
