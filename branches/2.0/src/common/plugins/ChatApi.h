@@ -16,29 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BotPlugins.h"
-#include "client/ClientHelper.h"
-#include "client/SimpleClient.h"
-#include "FileLocations.h"
-#include "plugins/ClientApi.h"
-#include "plugins/CoreApi.h"
+#ifndef CHATAPI_H_
+#define CHATAPI_H_
 
-BotPlugins::BotPlugins(QObject *parent)
-  : Plugins(parent)
+#include <QObject>
+
+class ChatCore;
+
+class ChatApi
 {
-  m_client = new SimpleClient(this);
-  m_helper = new ClientHelper(m_client);
-  m_locations = new FileLocations(this);
+public:
+  virtual ~ChatApi() {}
+  virtual ChatPlugin *init(ChatCore *core) = 0;
+};
 
-  addProvider("BotCore");
-}
+Q_DECLARE_INTERFACE(ChatApi, "com.impomezia.schat.ChatApi/1.0");
 
-
-void BotPlugins::init()
-{
-  for (int i = 0; i < m_plugins.size(); ++i) {
-    ClientApi *client = qobject_cast<ClientApi *>(m_plugins.at(i));
-    if (client)
-      client->init(m_helper, m_locations);
-  }
-}
+#endif /* CHATAPI_H_ */
