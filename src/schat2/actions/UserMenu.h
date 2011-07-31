@@ -43,9 +43,9 @@ private:
 
   bool m_self;
   ClientUser m_user;
+  QAction *m_ignore;
   QAction *m_insert;
   QAction *m_talk;
-  QString m_nick;
 };
 
 #endif /* USERMENU_H_ */

@@ -66,33 +66,33 @@
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="185"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="202"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="190"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="207"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="190"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="195"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="193"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="198"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="200"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="205"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="201"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="206"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="203"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="208"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -323,58 +323,58 @@
         <translation>Закрыть вкладку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="610"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="613"/>
         <source>has joined</source>
         <comment>Female</comment>
         <translation>зашла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="612"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="615"/>
         <source>has joined</source>
         <comment>Male</comment>
         <translation>зашёл</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="630"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="633"/>
         <source>has quit chat</source>
         <comment>Female</comment>
         <translation>вышла из чата</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="632"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="635"/>
         <source>has quit chat</source>
         <comment>Male</comment>
         <translation>вышел из чата</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="636"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="639"/>
         <source>has left</source>
         <comment>Female</comment>
         <translation>вышла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="638"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="641"/>
         <source>has left</source>
         <comment>Male</comment>
         <translation>вышел</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="801"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="804"/>
         <source>Menu</source>
         <translation>Меню</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="802"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="805"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="803"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="806"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="804"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="807"/>
         <source>Talks</source>
         <translation>Разговоры</translation>
     </message>

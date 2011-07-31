@@ -40,6 +40,7 @@ public slots:
   virtual void triggered(QAction * /*action*/ ) {}
 
 protected:
+  bool m_bind;
   QMenu *m_menu;
 };
 

@@ -22,6 +22,7 @@
 
 MenuBuilder::MenuBuilder(QObject *parent)
   : QObject(parent)
+  , m_bind(false)
   , m_menu(0)
 {
 }
@@ -29,6 +30,7 @@ MenuBuilder::MenuBuilder(QObject *parent)
 
 void MenuBuilder::bind(QMenu *menu)
 {
+  m_bind = true;
   m_menu = menu;
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
 }

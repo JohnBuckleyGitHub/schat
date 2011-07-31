@@ -206,6 +206,9 @@ void MessageAdapter::clientMessage(const MessageData &data)
     return;
 
   if (ChatCore::i()->isIgnored(data.senderId)) {
+    if (data.destId != m_client->userId())
+      return;
+
     NoticeData reply(m_client->userId(), data.senderId, NoticeData::MessageRejected, data.name, NoticeData::Ignored);
     m_client->send(NoticeWriter(m_client->sendStream(), reply).data());
     return;

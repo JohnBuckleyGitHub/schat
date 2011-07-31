@@ -94,6 +94,7 @@ ChatCore::ChatCore(QObject *parent)
   m_icons += "edit-paste";
   m_icons += "edit-select-all";
   m_icons += "balloon";
+  m_icons += "slash";
 
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
