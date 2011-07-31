@@ -16,27 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATPLUGINS_H_
-#define CHATPLUGINS_H_
+#ifndef HISTORYPLUGIN_H_
+#define HISTORYPLUGIN_H_
 
-#include "Plugins.h"
+#include "ChatApi.h"
+#include "CoreApi.h"
 
-class ChatCore;
 class ChatPlugin;
 
-class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
+class HistoryPlugin : public QObject, CoreApi, ChatApi
 {
   Q_OBJECT
+  Q_INTERFACES(CoreApi ChatApi)
 
 public:
-  ChatPlugins(QObject *parent = 0);
-
-protected:
-  void init();
-
-private:
-  ChatCore *m_core;
-  QList<ChatPlugin *> m_chatPlugins;
+  ChatPlugin *init(ChatCore *core);
+  QString id() const { return "History"; }
+  QString name() const { return "History"; }
 };
 
-#endif /* CHATPLUGINS_H_ */
+#endif /* HISTORYPLUGIN_H_ */

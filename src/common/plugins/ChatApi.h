@@ -22,6 +22,7 @@
 #include <QObject>
 
 class ChatCore;
+class ChatPlugin;
 
 class ChatApi
 {

@@ -48,5 +48,19 @@ contains( SCHAT_CLIENT_LIB, 1 ) {
   }
 }
 
+contains( SCHAT_CORE_LIB, 1 ) {
+  DEPENDPATH += \
+    ../../../schat2 \
+
+  INCLUDEPATH += \
+    ../../../schat2 \
+    
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../../../out/debug -lschat2-core
+  } else {
+    LIBS += -L../../../../out -lschat2-core
+  }
+}
+
 win32:RC_FILE = $${TARGET}.rc
 
