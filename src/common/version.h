@@ -19,8 +19,8 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION      "1.9.0"
-#define SCHAT_VERSION_RC   1,9,0,0
+#define SCHAT_VERSION      "1.9.1"
+#define SCHAT_VERSION_RC   1,9,1,0
 #define SCHAT_NAME         "Simple Chat"
 #define SCHAT_ORGANIZATION "IMPOMEZIA"
 #define SCHAT_DOMAIN       "impomezia.com"

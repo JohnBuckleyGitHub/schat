@@ -20,10 +20,11 @@
 #define NOTICES_H_
 
 #include "net/PacketWriter.h"
+#include "schat.h"
 
 class PacketReader;
 
-class NoticeData
+class SCHAT_EXPORT NoticeData
 {
 public:
   /// Тип уведомления.
@@ -62,7 +63,7 @@ public:
 /*!
  * Формирует пакет Protocol::NoticePacket.
  */
-class NoticeWriter : public PacketWriter
+class SCHAT_EXPORT NoticeWriter : public PacketWriter
 {
 public:
   NoticeWriter(QDataStream *stream, const NoticeData &data);
@@ -72,7 +73,7 @@ public:
 /*!
  * Читает пакет Protocol::NoticePacket.
  */
-class NoticeReader
+class SCHAT_EXPORT NoticeReader
 {
 public:
   NoticeReader(PacketReader *reader);
