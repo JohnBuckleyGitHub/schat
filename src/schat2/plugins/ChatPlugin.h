@@ -32,6 +32,10 @@ class SCHAT_CORE_EXPORT ChatPlugin : public QObject
 public:
   ChatPlugin(ChatCore *core);
 
+public slots:
+  virtual void notify(int /*notice*/, const QVariant & /*data*/) {}
+  virtual void settingsChanged(const QString & /*key*/, const QVariant & /*value*/) {}
+
 protected:
   ChatCore *m_core;
 };

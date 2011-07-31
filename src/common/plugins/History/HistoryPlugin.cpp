@@ -22,13 +22,32 @@
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
+#include "HistoryDB.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
+#include "NetworkManager.h"
 
 History::History(ChatCore *core)
   : ChatPlugin(core)
 {
-  qDebug() << m_core->client()->serverId().toHex();
+  m_db = new HistoryDB(this);
+  openDb();
+}
+
+
+void History::notify(int notice, const QVariant &data)
+{
+  if (notice == ChatCore::NetworkChangedNotice) {
+    openDb();
+  }
+}
+
+
+void History::openDb()
+{
+  QByteArray id = m_core->networks()->serverId();
+  if (!id.isEmpty())
+    m_db->open(id, m_core->networks()->root());
 }
 
 

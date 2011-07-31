@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatPlugins.h"
+#include "ChatSettings.h"
 #include "plugins/ChatApi.h"
 #include "plugins/ChatPlugin.h"
 #include "plugins/CoreApi.h"
@@ -27,7 +28,9 @@
 ChatPlugins::ChatPlugins(QObject *parent)
   : Plugins(parent)
   , m_core(ChatCore::i())
+  , m_settings(ChatCore::i()->settings())
 {
+  addProvider("History");
 }
 
 
@@ -36,8 +39,10 @@ void ChatPlugins::init()
   for (int i = 0; i < m_plugins.size(); ++i) {
     ChatApi *api = qobject_cast<ChatApi *>(m_plugins.at(i));
     if (api) {
-      m_chatPlugins.append(api->init(m_core));
-      qDebug() << api;
+      ChatPlugin *plugin = api->init(m_core);
+      m_chatPlugins.append(plugin);
+      connect(m_core, SIGNAL(notify(int, const QVariant &)), plugin, SLOT(notify(int, const QVariant &)));
+      connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));
     }
   }
 }
