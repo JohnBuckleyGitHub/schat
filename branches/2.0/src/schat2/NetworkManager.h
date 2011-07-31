@@ -66,7 +66,9 @@ public:
   bool open(const QString &url);
   inline int count() const { return m_items.count(); }
   inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
+  QByteArray serverId() const;
   QList<NetworkItem> items() const;
+  QString root() const;
   static QString currentServerName();
   void removeItem(const QByteArray &id);
 
@@ -75,7 +77,7 @@ private slots:
 
 private:
   QString authKey() const;
-  QString root(const QByteArray &id);
+  QString root(const QByteArray &id) const;
   QStringList networkList() const;
   void load();
   void write();

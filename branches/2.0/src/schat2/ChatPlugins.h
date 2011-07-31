@@ -23,6 +23,7 @@
 
 class ChatCore;
 class ChatPlugin;
+class ChatSettings;
 
 class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 {
@@ -36,6 +37,7 @@ protected:
 
 private:
   ChatCore *m_core;
+  ChatSettings *m_settings;
   QList<ChatPlugin *> m_chatPlugins;
 };
 

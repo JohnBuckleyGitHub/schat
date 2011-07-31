@@ -16,24 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HISTORYPLUGIN_H_
-#define HISTORYPLUGIN_H_
+#ifndef HISTORYDB_H_
+#define HISTORYDB_H_
 
-#include "ChatApi.h"
-#include "CoreApi.h"
+#include <QObject>
 
-class ChatPlugin;
-
-class HistoryPlugin : public QObject, CoreApi, ChatApi
+class HistoryDB : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(CoreApi ChatApi)
 
 public:
-  ChatPlugin *init(ChatCore *core);
-  QString id() const { return "History"; }
-  QString name() const { return "History"; }
-  QStringList provides() const { return QStringList("History"); }
+  HistoryDB(QObject *parent = 0);
+  void open(const QByteArray &id, const QString &dir);
+
+private:
+  void close();
+
+  QString m_id;
 };
 
-#endif /* HISTORYPLUGIN_H_ */
+#endif /* HISTORYDB_H_ */

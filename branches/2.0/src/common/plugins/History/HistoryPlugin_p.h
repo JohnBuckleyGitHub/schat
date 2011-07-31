@@ -21,12 +21,20 @@
 
 #include "plugins/ChatPlugin.h"
 
+class HistoryDB;
+
 class History : public ChatPlugin
 {
   Q_OBJECT
 
 public:
   History(ChatCore *core);
+  void notify(int notice, const QVariant &data);
+
+private:
+  void openDb();
+
+  HistoryDB *m_db;
 };
 
 

@@ -115,6 +115,24 @@ bool NetworkManager::open(const QString &url)
 }
 
 
+/*!
+ * Получение идентификатора сервера.
+ *
+ * \return Идентификатор сервера или пустой массив, если клиент никогда не был подключен к серверу.
+ */
+QByteArray NetworkManager::serverId() const
+{
+  QByteArray id = m_client->serverId();
+  if (id.isEmpty()) {
+    QStringList networks = networkList();
+    if (!networks.isEmpty())
+      return SimpleID::fromBase64(networks.at(0).toLatin1());
+  }
+
+  return id;
+}
+
+
 QList<NetworkItem> NetworkManager::items() const
 {
   QStringList networks = networkList();
@@ -129,6 +147,14 @@ QList<NetworkItem> NetworkManager::items() const
   return out;
 }
 
+
+/*!
+ * Получение директории с рабочими файлами для текущего сервера.
+ */
+QString NetworkManager::root() const
+{
+  return root(serverId());
+}
 
 
 /*!
@@ -173,7 +199,7 @@ QString NetworkManager::authKey() const
 }
 
 
-QString NetworkManager::root(const QByteArray &id)
+QString NetworkManager::root(const QByteArray &id) const
 {
   QString out = m_locations->path(FileLocations::ConfigPath) + QLatin1String("/networks/") + SimpleID::toBase64(id);
   if (!QFile::exists(out))
