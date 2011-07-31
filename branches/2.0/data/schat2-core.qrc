@@ -35,6 +35,7 @@
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
+  <file alias="images/slash.png">images/fugue/slash.png</file>
   <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
   <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
   <file alias="images/text-bold.png">images/oxygen/format-text-bold.png</file>

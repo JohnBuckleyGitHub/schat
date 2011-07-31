@@ -153,6 +153,9 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
     if (action == closeAction)
       closeTab(index);
   }
+
+  if (builder)
+    builder->deleteLater();
 }
 
 

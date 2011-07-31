@@ -5,22 +5,22 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="278"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="305"/>
         <source>Would you like to see help for commands on site &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="201"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="224"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="206"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="229"/>
         <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="276"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="303"/>
         <source>Unknown command &lt;b&gt;/%1&lt;/b&gt;.&lt;br /&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -66,12 +66,17 @@
 <context>
     <name>UserMenu</name>
     <message>
-        <location filename="../../src/schat2/actions/UserMenu.cpp" line="83"/>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="79"/>
         <source>Private Talk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/actions/UserMenu.cpp" line="86"/>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="84"/>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/actions/UserMenu.cpp" line="90"/>
         <source>Insert Nick</source>
         <translation type="unfinished"></translation>
     </message>

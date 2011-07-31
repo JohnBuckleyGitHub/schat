@@ -81,7 +81,8 @@ public:
     EditCut,
     EditPaste,
     EditSelectAll,
-    Balloon
+    Balloon,
+    Slash
   };
 
   enum Notice {

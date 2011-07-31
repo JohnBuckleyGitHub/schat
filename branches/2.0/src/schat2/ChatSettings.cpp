@@ -31,6 +31,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(QLatin1String("AutoConnect"),         true);
   setDefault(QLatin1String("DeveloperExtras"),     false);
   setDefault(QLatin1String("Height"),              420);
+  setDefault(QLatin1String("HideIgnore"),          true);
   setDefault(QLatin1String("Maximized"),           false);
   setDefault(QLatin1String("Networks"),            QStringList());
   setDefault(QLatin1String("ShowSeconds"),         false);

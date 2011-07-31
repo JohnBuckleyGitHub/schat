@@ -21,12 +21,16 @@
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/SimpleClient.h"
 
 UserMenu::UserMenu(ClientUser user, QObject *parent)
   : MenuBuilder(parent)
   , m_self(false)
   , m_user(user)
+  , m_ignore(0)
+  , m_insert(0)
+  , m_talk(0)
 {
   init();
 }
@@ -35,10 +39,16 @@ UserMenu::UserMenu(ClientUser user, QObject *parent)
 UserMenu::UserMenu(const QUrl &url, QObject *parent)
   : MenuBuilder(parent)
   , m_self(false)
+  , m_ignore(0)
+  , m_insert(0)
+  , m_talk(0)
 {
-  m_user = ChatCore::i()->client()->user(QByteArray::fromHex(url.host().toLatin1()));
-  if (!m_user)
-    m_nick = QByteArray::fromHex(url.path().remove(0, 1).toLatin1());
+  QByteArray id = QByteArray::fromHex(url.host().toLatin1());
+  m_user = ChatCore::i()->client()->user(id);
+  if (!m_user) {
+    m_user = ClientUser(new User(QByteArray::fromHex(url.path().remove(0, 1).toLatin1())));
+    m_user->setId(id);
+  }
 
   init();
 }
@@ -65,34 +75,44 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  if (m_user && !m_self && ChatCore::i()->currentId() != m_user->id() && m_user->status() != User::OfflineStatus) {
+  if (!m_self && ChatCore::i()->currentId() != m_user->id() && m_user->status() != User::OfflineStatus) {
+    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
     menu->addAction(m_talk);
   }
 
+  if (!m_self && (!SCHAT_OPTION("HideIgnore").toBool() || ChatCore::i()->isIgnored(m_user->id()))) {
+    m_ignore = new QAction(SCHAT_ICON(Slash), tr("Ignore"), this);
+    m_ignore->setCheckable(true);
+    m_ignore->setChecked(ChatCore::i()->isIgnored(m_user->id()));
+    menu->addAction(m_ignore);
+  }
+
+  m_insert = new QAction(tr("Insert Nick"), this);
   menu->addAction(m_insert);
 }
 
 
 void UserMenu::triggered(QAction *action)
 {
+  if (!m_bind)
+    return;
+
   if (action == m_insert) {
-    if (m_user)
-      insertNick(m_user->nick());
-    else
-      insertNick(m_nick);
+    insertNick(m_user->nick());
   }
   else if (action == m_talk) {
     ChatCore::i()->startNotify(ChatCore::AddPrivateTab, m_user->id());
+  }
+  else if (action == m_ignore) {
+    if (m_ignore->isChecked())
+      ChatCore::i()->ignore(m_user->id());
+    else
+      ChatCore::i()->unignore(m_user->id());
   }
 }
 
 
 void UserMenu::init()
 {
-  if (m_user) {
-    m_self = m_user->id() == ChatCore::i()->client()->userId();
-    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
-  }
-
-  m_insert = new QAction(tr("Insert Nick"), this);
+  m_self = m_user->id() == ChatCore::i()->client()->userId();
 }

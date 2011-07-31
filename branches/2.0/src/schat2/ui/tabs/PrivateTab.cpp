@@ -35,8 +35,6 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  m_menu = new UserMenu(user, this);
-
   setIcon(UserUtils::icon(user));
   setText(m_user->nick());
 }
@@ -60,6 +58,12 @@ bool PrivateTab::update(ClientUser user)
   m_tabs->setTabText(index, m_user->nick());
   setOnline(true);
   return true;
+}
+
+
+MenuBuilder *PrivateTab::menu()
+{
+  return new UserMenu(m_user, this);
 }
 
 
