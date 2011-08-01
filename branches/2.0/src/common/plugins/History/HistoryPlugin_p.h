@@ -29,6 +29,8 @@ class History : public ChatPlugin
 
 public:
   History(ChatCore *core);
+  QList<HookData::Type> hooks() const;
+  void hook(const HookData &data);
   void notify(int notice, const QVariant &data);
 
 private:

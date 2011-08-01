@@ -34,15 +34,40 @@ ChatPlugins::ChatPlugins(QObject *parent)
 }
 
 
+void ChatPlugins::hook(const HookData &data)
+{
+  if (!m_hooks.contains(data.type()))
+    return;
+
+  QList<ChatPlugin *> list = m_hooks.value(data.type());
+  for (int i = 0; i < list.size(); ++i) {
+    list.at(i)->hook(data);
+  }
+}
+
+
+/*!
+ * Загрузка плагинов.
+ */
 void ChatPlugins::init()
 {
   for (int i = 0; i < m_plugins.size(); ++i) {
     ChatApi *api = qobject_cast<ChatApi *>(m_plugins.at(i));
-    if (api) {
-      ChatPlugin *plugin = api->init(m_core);
-      m_chatPlugins.append(plugin);
-      connect(m_core, SIGNAL(notify(int, const QVariant &)), plugin, SLOT(notify(int, const QVariant &)));
-      connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));
+
+    if (!api)
+      continue;
+
+    ChatPlugin *plugin = api->init(m_core);
+    m_chatPlugins.append(plugin);
+    connect(m_core, SIGNAL(notify(int, const QVariant &)), plugin, SLOT(notify(int, const QVariant &)));
+    connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));
+
+    QList<HookData::Type> hooks = plugin->hooks();
+    if (hooks.isEmpty())
+      continue;
+
+    foreach (HookData::Type hook, hooks) {
+      m_hooks[hook].append(plugin);
     }
   }
 }

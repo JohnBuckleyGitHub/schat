@@ -16,32 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATPLUGIN_H_
-#define CHATPLUGIN_H_
+#ifndef HOOKDATA_H_
+#define HOOKDATA_H_
 
-#include <QObject>
-
-#include "schat.h"
-#include "plugins/HookData.h"
-
-class ChatCore;
-class MessageData;
-
-class SCHAT_CORE_EXPORT ChatPlugin : public QObject
+class HookData
 {
-  Q_OBJECT
-
 public:
-  ChatPlugin(ChatCore *core);
-  virtual QList<HookData::Type> hooks() const { return QList<HookData::Type>(); }
-  virtual void hook(const HookData & /*data*/) {}
+  enum Type {
+    RawUserMessage ///< Обработка низкоуровневых пользователський сообщений.
+  };
 
-public slots:
-  virtual void notify(int /*notice*/, const QVariant & /*data*/) {}
-  virtual void settingsChanged(const QString & /*key*/, const QVariant & /*value*/) {}
+  virtual ~HookData() {}
+  inline Type type() const { return m_type; }
 
 protected:
-  ChatCore *m_core;
+  HookData(Type type)
+  : m_type(type)
+  {}
+
+  Type m_type;
 };
 
-#endif /* CHATPLUGIN_H_ */
+#endif /* HOOKDATA_H_ */

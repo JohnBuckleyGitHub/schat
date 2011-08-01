@@ -35,6 +35,21 @@ History::History(ChatCore *core)
 }
 
 
+QList<HookData::Type> History::hooks() const
+{
+  QList<HookData::Type> out;
+  out += HookData::RawUserMessage;
+
+  return out;
+}
+
+
+void History::hook(const HookData &data)
+{
+  qDebug() << "hook" << data.type();
+}
+
+
 void History::notify(int notice, const QVariant &data)
 {
   if (notice == ChatCore::NetworkChangedNotice) {
