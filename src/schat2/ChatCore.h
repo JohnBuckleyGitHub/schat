@@ -99,6 +99,7 @@ public:
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   bool isIgnored(const QByteArray &id);
+  inline ChatPlugins *plugins() { return m_plugins; }
   inline ChatSettings *settings() { return m_settings; }
   inline FileLocations *locations() const { return m_locations; }
   inline NetworkManager *networks() const { return m_networkManager; }

@@ -20,10 +20,14 @@
 #define CHATPLUGINS_H_
 
 #include "Plugins.h"
+#include "plugins/HookData.h"
+
+#include <QDebug>
 
 class ChatCore;
 class ChatPlugin;
 class ChatSettings;
+class MessageData;
 
 class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 {
@@ -31,6 +35,12 @@ class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 
 public:
   ChatPlugins(QObject *parent = 0);
+  void hook(const HookData &data);
+
+//  void rawUserMessage(int status, const MessageData &data, int priority);
+//
+//  template<class T1>
+//  bool hook(int d, T1) { qDebug() << d; }
 
 protected:
   void init();
@@ -38,6 +48,7 @@ protected:
 private:
   ChatCore *m_core;
   ChatSettings *m_settings;
+  QHash<HookData::Type, QList<ChatPlugin *> > m_hooks;
   QList<ChatPlugin *> m_chatPlugins;
 };
 

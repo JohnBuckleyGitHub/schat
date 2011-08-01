@@ -20,6 +20,7 @@
 
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
+#include "ChatPlugins.h"
 #include "ChatSettings.h"
 #include "client/ClientCmd.h"
 #include "client/SimpleClient.h"
@@ -32,6 +33,7 @@
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "NetworkManager.h"
+#include "plugins/hooks.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -317,6 +319,10 @@ void MessageAdapter::commandHelpHint(const QString &command)
  */
 void MessageAdapter::newUserMessage(int status, const MessageData &data, int priority)
 {
+  RawUserMessageHook hook(status, data, priority);
+//  ChatCore::i()->plugins()->rawUserMessage(status, data, priority);
+  ChatCore::i()->plugins()->hook(hook);
+
   UserMessage msg(status, data);
   msg.setPriority(priority);
   emit message(msg);
