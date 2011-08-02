@@ -18,15 +18,13 @@
 
 #include <QDebug>
 
+#include <QTime>
 #include <qplugin.h>
 
 #include "ChatCore.h"
-#include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
-#include "messages/UserMessage.h"
-#include "net/packets/message.h"
 #include "NetworkManager.h"
 #include "plugins/hooks.h"
 
@@ -69,18 +67,10 @@ void History::notify(int notice, const QVariant &data)
 
 void History::add(const RawUserMessageHook &data)
 {
-  /// FIXME Добавлять канал в историю.
-
-  QString nick;
-  ClientUser user = m_core->client()->user(data.data.senderId);
-  if (user) {
-    nick = user->nick();
-    // FIXME Добавить добавление пользователя в историю в случае приватного разговора.
-  }
   QTime t;
   t.start();
-  qDebug() << m_db->add(data.status, data.data, nick, MessageUtils::toPlainText(data.data.text));
-  qDebug() << "add time:" << t.elapsed() << "ms";
+  m_db->add(data.status, data.data);
+  qDebug() << "[History Plugin] message added at:" << t.elapsed() << "ms";
 }
 
 
