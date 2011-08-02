@@ -37,11 +37,6 @@ public:
   ChatPlugins(QObject *parent = 0);
   void hook(const HookData &data);
 
-//  void rawUserMessage(int status, const MessageData &data, int priority);
-//
-//  template<class T1>
-//  bool hook(int d, T1) { qDebug() << d; }
-
 protected:
   void init();
 

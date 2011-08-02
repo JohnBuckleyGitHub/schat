@@ -29,7 +29,6 @@
 #include "messages/MessageAdapter.h"
 #include "messages/MessageBox.h"
 #include "messages/UserMessage.h"
-#include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "NetworkManager.h"
@@ -52,8 +51,7 @@ MessageAdapter::MessageAdapter()
 bool MessageAdapter::sendText(MessageData &data)
 {
   if (ClientHelper::sendText(data)) {
-    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data, UserMessage::NormalPriority);
-    m_undelivered.insert(m_name, data.destId);
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
     return true;
   }
 
@@ -216,7 +214,7 @@ void MessageAdapter::clientMessage(const MessageData &data)
     return;
   }
 
-  newUserMessage(UserMessage::IncomingMessage, data, UserMessage::NormalPriority);
+  newUserMessage(UserMessage::IncomingMessage, data);
 }
 
 
@@ -232,16 +230,13 @@ void MessageAdapter::clientStateChanged(int state, int previousState)
     emit message(msg);
   }
 
-  setStateAll(UserMessage::Rejected, "rj");
+  setStateAll(UserMessage::Rejected);
 }
 
 
 void MessageAdapter::notice(const NoticeData &data)
 {
   SCHAT_DEBUG_STREAM(this << "notice()")
-
-//  if (m_client->userId() != data.senderId)
-//    return;
 
   if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
     QByteArray destId = data.destId;
@@ -252,13 +247,11 @@ void MessageAdapter::notice(const NoticeData &data)
     msg.name = data.messageName;
     msg.timestamp = data.timestamp;
 
-    m_undelivered.remove(data.messageName);
-
     if (data.type == NoticeData::MessageDelivered) {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg, UserMessage::IdlePriority);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
     }
     else {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg, UserMessage::IdlePriority);
+      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
     }
   }
 }
@@ -272,15 +265,15 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   User user(m_client->user().data());
 
   if (!gender.isEmpty()) {
-    if (gender == "male")
+    if (gender == QLatin1String("male"))
       user.setGender(User::Male);
-    else if (gender == "female")
+    else if (gender == QLatin1String("female"))
       user.setGender(User::Female);
-    else if (gender == "ghost")
+    else if (gender == QLatin1String("ghost"))
       user.setGender(User::Ghost);
-    else if (gender == "unknown")
+    else if (gender == QLatin1String("unknown"))
       user.setGender(User::Unknown);
-    else if (gender == "bot")
+    else if (gender == QLatin1String("bot"))
       user.setGender(User::Bot);
     else
       return CommandArgsError;
@@ -314,42 +307,59 @@ void MessageAdapter::commandHelpHint(const QString &command)
 
 
 /*!
- * Формирование сообщения с типом AbstractMessage::UserMessageType
- * и отправка сообщения.
+ * Формирование нового сообщения от пользователя.
  */
-void MessageAdapter::newUserMessage(int status, const MessageData &data, int priority)
+void MessageAdapter::newUserMessage(int status, const MessageData &data)
 {
-  RawUserMessageHook hook(status, data, priority);
-//  ChatCore::i()->plugins()->rawUserMessage(status, data, priority);
-  ChatCore::i()->plugins()->hook(hook);
+  int priority = UserMessage::NormalPriority;
+
+  if (status & UserMessage::OutgoingMessage && !(status & UserMessage::Undelivered)) {
+    priority = UserMessage::IdlePriority;
+
+    if (m_undelivered.contains(data.name)) {
+      MessageData old = m_undelivered.value(data.name);
+      old.timestamp = data.timestamp;
+
+      UserMessage msg(status, old);
+      msg.setPriority(priority);
+
+      emit message(msg);
+
+      RawUserMessageHook hook(status, old);
+      ChatCore::i()->plugins()->hook(hook);
+      m_undelivered.remove(data.name);
+      return;
+    }
+  }
 
   UserMessage msg(status, data);
   msg.setPriority(priority);
   emit message(msg);
+
+  if (status & UserMessage::OutgoingMessage && status & UserMessage::Undelivered) {
+    m_undelivered[data.name] = data;
+  }
+  else {
+    RawUserMessageHook hook(status, data);
+    ChatCore::i()->plugins()->hook(hook);
+  }
 }
 
 
 /*!
  * Устанавливает состояние для всех пакетов с неподтверждённой доставкой.
+ * \todo Повторно проверить работу этой функции.
  */
-void MessageAdapter::setStateAll(int state, const QString &reason)
+void MessageAdapter::setStateAll(int state)
 {
-  Q_UNUSED(reason)
-
   if (m_undelivered.isEmpty())
     return;
 
-  MessageData data(m_client->userId(), QByteArray(), reason);
-
-  QHashIterator<quint64, QByteArray> i(m_undelivered);
+  QHashIterator<quint64, MessageData> i(m_undelivered);
   while (i.hasNext()) {
     i.next();
-    data.name = i.key();
-    data.destId = i.value();
-    newUserMessage(UserMessage::OutgoingMessage | state, data, UserMessage::IdlePriority);
+    newUserMessage(UserMessage::OutgoingMessage | state, i.value());
   }
-
-  m_undelivered.clear();
 }
 
 

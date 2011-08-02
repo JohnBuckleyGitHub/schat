@@ -23,6 +23,7 @@
 #include <QObject>
 
 #include "client/ClientHelper.h"
+#include "net/packets/message.h"
 
 class AbstractMessage;
 class ChatSettings;
@@ -59,12 +60,12 @@ private slots:
 private:
   int setGender(const QString &gender, const QString &color);
   void commandHelpHint(const QString &command);
-  void newUserMessage(int status, const MessageData &data, int priority);
-  void setStateAll(int state, const QString &reason);
+  void newUserMessage(int status, const MessageData &data);
+  void setStateAll(int state);
   void setStatus(int status, const QString &text = "");
 
-  ChatSettings *m_settings;                 ///< Настройки чата.
-  QHash<quint64, QByteArray> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
+  ChatSettings *m_settings;                  ///< Настройки чата.
+  QHash<quint64, MessageData> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 #endif /* MESSAGEADAPTER_H_ */

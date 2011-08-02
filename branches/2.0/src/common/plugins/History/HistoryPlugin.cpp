@@ -25,7 +25,10 @@
 #include "HistoryDB.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
+#include "messages/UserMessage.h"
+#include "net/packets/message.h"
 #include "NetworkManager.h"
+#include "plugins/hooks.h"
 
 History::History(ChatCore *core)
   : ChatPlugin(core)
@@ -46,7 +49,13 @@ QList<HookData::Type> History::hooks() const
 
 void History::hook(const HookData &data)
 {
-  qDebug() << "hook" << data.type();
+  switch (data.type()) {
+    case HookData::RawUserMessage:
+      add(static_cast<const RawUserMessageHook &>(data));
+      break;
+    default:
+      break;
+  }
 }
 
 
@@ -55,6 +64,23 @@ void History::notify(int notice, const QVariant &data)
   if (notice == ChatCore::NetworkChangedNotice) {
     openDb();
   }
+}
+
+
+void History::add(const RawUserMessageHook &data)
+{
+  /// FIXME Добавлять канал в историю.
+
+  QString nick;
+  ClientUser user = m_core->client()->user(data.data.senderId);
+  if (user) {
+    nick = user->nick();
+    // FIXME Добавить добавление пользователя в историю в случае приватного разговора.
+  }
+  QTime t;
+  t.start();
+  qDebug() << m_db->add(data.status, data.data, nick, MessageUtils::toPlainText(data.data.text));
+  qDebug() << "add time:" << t.elapsed() << "ms";
 }
 
 
