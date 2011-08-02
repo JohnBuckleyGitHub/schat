@@ -16,13 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
 #include <QVariant>
 
+#include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "net/packets/message.h"
+#include "User.h"
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
@@ -35,12 +40,16 @@ HistoryDB::HistoryDB(QObject *parent)
  */
 qint64 HistoryDB::add(int status, const MessageData &data, const QString &nick, const QString &plainText)
 {
+  qint64 result = addUser(data.senderId);
+  if (result == -1)
+    return -1;
+
   QSqlQuery query(QSqlDatabase::database(m_id));
 
   query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, name, nick, command, text, plainText) "
                      "VALUES (:senderId, :destId, :status, :timestamp, :name, :nick, :command, :text, :plainText);"));
 
-  query.bindValue(QLatin1String(":senderId"), data.senderId);
+  query.bindValue(QLatin1String(":senderId"), result);
   query.bindValue(QLatin1String(":destId"), data.destId);
   query.bindValue(QLatin1String(":status"), status);
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
@@ -62,6 +71,95 @@ qint64 HistoryDB::add(int status, const MessageData &data, const QString &nick, 
 }
 
 
+qint64 HistoryDB::addUser(const QByteArray &id)
+{
+  ClientUser user = ChatCore::i()->client()->user(id);
+  if (!user)
+    return -1;
+
+  if (m_cache.contains(id))
+    return m_cache.value(id);
+
+  qint64 result = updateUser(id);
+  if (result != -1)
+    return result;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("INSERT INTO users (userId, nick, gender, host, status, userAgent) "
+                     "VALUES (:userId, :nick, :gender, :host, :status, :userAgent);"));
+
+  query.bindValue(QLatin1String(":userId"), id);
+  query.bindValue(QLatin1String(":nick"), user->nick());
+  query.bindValue(QLatin1String(":gender"), user->rawGender());
+  query.bindValue(QLatin1String(":host"), user->host());
+  query.bindValue(QLatin1String(":status"), user->statusToString());
+  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
+  query.exec();
+
+  if (query.numRowsAffected() <= 0)
+    return -1;
+
+  query.exec(QLatin1String("SELECT last_insert_rowid();"));
+  if (!query.first())
+    return -1;
+
+  result = query.value(0).toLongLong();
+//  m_cache[id] = result;
+  return result;
+}
+
+
+qint64 HistoryDB::isUser(const QByteArray &id) const
+{
+  return 0;
+}
+
+
+/*!
+ * Обновление информации о пользователе.
+ *
+ * \param id Идентификатор пользователя.
+ */
+qint64 HistoryDB::updateUser(const QByteArray &id)
+{
+  ClientUser user = ChatCore::i()->client()->user(id);
+  if (!user)
+    return -1;
+
+  qint64 index = -1;
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  if (!m_cache.contains(id)) {
+    query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
+    query.addBindValue(id);
+    query.exec();
+
+    if (query.first())
+      index = query.value(0).toLongLong();
+  }
+  else
+    index = m_cache.value(id);
+
+  if (index == -1)
+    return -1;
+
+  query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
+  query.bindValue(QLatin1String(":nick"), user->nick());
+  query.bindValue(QLatin1String(":gender"), user->rawGender());
+  query.bindValue(QLatin1String(":host"), user->host());
+  query.bindValue(QLatin1String(":status"), user->statusToString());
+  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
+  query.bindValue(QLatin1String(":id"), index);
+  query.exec();
+
+  return index;
+}
+
+
+/*!
+ * Открытие базы данных.
+ */
 void HistoryDB::open(const QByteArray &id, const QString &dir)
 {
   if (!m_id.isEmpty())
@@ -82,7 +180,7 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
     "  id         INTEGER PRIMARY KEY,"
     "  userId     BLOB    NOT NULL UNIQUE,"
     "  nick       TEXT,"
-    "  gender     INTEGER DEFAULT ( 0 ),"
+    "  gender     INTEGER,"
     "  host       TEXT,"
     "  status     TEXT,"
     "  userAgent  TEXT"
@@ -98,7 +196,7 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
   query.exec(QLatin1String(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  senderId   BLOB,"
+    "  senderId   INTEGER,"
     "  destId     BLOB,"
     "  status     INTEGER,"
     "  timestamp  INTEGER,"
