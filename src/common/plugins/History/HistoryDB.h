@@ -21,12 +21,15 @@
 
 #include <QObject>
 
+class MessageData;
+
 class HistoryDB : public QObject
 {
   Q_OBJECT
 
 public:
   HistoryDB(QObject *parent = 0);
+  qint64 add(int status, const MessageData &data, const QString &nick, const QString &plainText);
   void open(const QByteArray &id, const QString &dir);
 
 private:

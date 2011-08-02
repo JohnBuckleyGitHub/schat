@@ -22,6 +22,7 @@
 #include "plugins/ChatPlugin.h"
 
 class HistoryDB;
+class RawUserMessageHook;
 
 class History : public ChatPlugin
 {
@@ -34,6 +35,7 @@ public:
   void notify(int notice, const QVariant &data);
 
 private:
+  void add(const RawUserMessageHook &data);
   void openDb();
 
   HistoryDB *m_db;

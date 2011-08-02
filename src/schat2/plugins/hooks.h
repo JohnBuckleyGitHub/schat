@@ -24,14 +24,12 @@
 class RawUserMessageHook : public HookData
 {
 public:
-  RawUserMessageHook(int status, const MessageData &data, int priority)
+  RawUserMessageHook(int status, const MessageData &data)
   : HookData(RawUserMessage)
-  , priority(priority)
   , status(status)
   , data(data)
   {}
 
-  const int priority;
   const int status;
   const MessageData &data;
 };
