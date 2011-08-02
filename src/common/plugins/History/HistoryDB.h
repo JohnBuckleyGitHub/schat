@@ -19,6 +19,7 @@
 #ifndef HISTORYDB_H_
 #define HISTORYDB_H_
 
+#include <QHash>
 #include <QObject>
 
 class MessageData;
@@ -30,11 +31,15 @@ class HistoryDB : public QObject
 public:
   HistoryDB(QObject *parent = 0);
   qint64 add(int status, const MessageData &data, const QString &nick, const QString &plainText);
+  qint64 addUser(const QByteArray &id);
+  qint64 isUser(const QByteArray &id) const;
+  qint64 updateUser(const QByteArray &id);
   void open(const QByteArray &id, const QString &dir);
 
 private:
   void close();
 
+  QHash<QByteArray, qint64> m_cache;
   QString m_id;
 };
 
