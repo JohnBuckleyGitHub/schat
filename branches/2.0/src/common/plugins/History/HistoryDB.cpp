@@ -23,6 +23,7 @@
 #include <QStringList>
 #include <QVariant>
 
+#include "Channel.h"
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
@@ -32,32 +33,36 @@
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
 {
+  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+  connect(ChatCore::i()->client(), SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
 }
 
 
 /*!
  * Добавление сообщения в историю.
  */
-qint64 HistoryDB::add(int status, const MessageData &data, const QString &nick, const QString &plainText)
+qint64 HistoryDB::add(int status, const MessageData &data)
 {
-  qint64 result = addUser(data.senderId);
-  if (result == -1)
+  qint64 senderId = addUser(data.senderId);
+  if (senderId == -1)
     return -1;
+
+  if (SimpleID::typeOf(data.destId) == SimpleID::UserId)
+    addUser(data.destId);
 
   QSqlQuery query(QSqlDatabase::database(m_id));
 
-  query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, name, nick, command, text, plainText) "
-                     "VALUES (:senderId, :destId, :status, :timestamp, :name, :nick, :command, :text, :plainText);"));
+  query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text, plainText) "
+                     "VALUES (:senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
 
-  query.bindValue(QLatin1String(":senderId"), result);
+  query.bindValue(QLatin1String(":senderId"), senderId);
   query.bindValue(QLatin1String(":destId"), data.destId);
   query.bindValue(QLatin1String(":status"), status);
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
-  query.bindValue(QLatin1String(":name"), data.name);
-  query.bindValue(QLatin1String(":nick"), nick);
   query.bindValue(QLatin1String(":command"), data.command);
   query.bindValue(QLatin1String(":text"), data.text);
-  query.bindValue(QLatin1String(":plainText"), plainText);
+  query.bindValue(QLatin1String(":plainText"), MessageUtils::toPlainText(data.text));
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -71,6 +76,9 @@ qint64 HistoryDB::add(int status, const MessageData &data, const QString &nick, 
 }
 
 
+/*!
+ * Добавление пользователя в базу данных.
+ */
 qint64 HistoryDB::addUser(const QByteArray &id)
 {
   ClientUser user = ChatCore::i()->client()->user(id);
@@ -105,14 +113,8 @@ qint64 HistoryDB::addUser(const QByteArray &id)
     return -1;
 
   result = query.value(0).toLongLong();
-//  m_cache[id] = result;
+  m_cache[id] = result;
   return result;
-}
-
-
-qint64 HistoryDB::isUser(const QByteArray &id) const
-{
-  return 0;
 }
 
 
@@ -159,6 +161,16 @@ qint64 HistoryDB::updateUser(const QByteArray &id)
 
 /*!
  * Открытие базы данных.
+ *
+ * Причина использования "PRAGMA synchronous = OFF": https://plus.google.com/109693334715857802924/posts/jEmzo7JRkWy
+ * Если база уже была открыта, предыдущее соединение закрывается.
+ * В случае необходимости создаются таблицы:
+ * - users
+ * - channels
+ * - messages
+ *
+ * \param id  Идентификатор сервера, используется для формирования имени соединения с базой.
+ * \param dir Папка, в которой находится база.
  */
 void HistoryDB::open(const QByteArray &id, const QString &dir)
 {
@@ -200,8 +212,6 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
     "  destId     BLOB,"
     "  status     INTEGER,"
     "  timestamp  INTEGER,"
-    "  name       INTEGER,"
-    "  nick       TEXT,"
     "  command    TEXT,"
     "  text       TEXT,"
     "  plainText  TEXT"
@@ -209,7 +219,49 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
 }
 
 
+/*!
+ * Обработка изменения состояния клиента, в случае перехода
+ * в состояние "В сети" очищается кэш.
+ */
+void HistoryDB::clientStateChanged(int state)
+{
+  if (state == SimpleClient::ClientOnline)
+    m_cache.clear();
+}
+
+
+void HistoryDB::synced(const QByteArray &channelId)
+{
+  Channel *channel = ChatCore::i()->client()->channel(channelId);
+  if (!channel)
+    return;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("INSERT INTO channels (channelId, name) "
+                     "VALUES (:channelId, :name);"));
+
+  query.bindValue(QLatin1String(":channelId"), channelId);
+  query.bindValue(QLatin1String(":name"), channel->name());
+  query.exec();
+}
+
+
+/*!
+ * Обновление информации о пользователе, в случае если он находится в кэше.
+ */
+void HistoryDB::updateUserData(const QByteArray &userId)
+{
+  if (m_cache.contains(userId))
+    updateUser(userId);
+}
+
+
+/*!
+ * Закрытие базы данных и очистка кэша.
+ */
 void HistoryDB::close()
 {
+  m_cache.clear();
   QSqlDatabase::removeDatabase(m_id);
 }

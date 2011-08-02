@@ -81,10 +81,12 @@ int DataBase::start()
   if (!m_db.open())
     return -1;
 
+  QSqlQuery query;
+  query.exec(QLatin1String("PRAGMA synchronous = OFF"));
   QStringList tables = m_db.tables();
 
   if (!tables.contains(QLatin1String("users"))) {
-    QSqlQuery query(QLatin1String(
+    query.exec(QLatin1String(
     "CREATE TABLE users ( "
     "  id         INTEGER PRIMARY KEY,"
     "  userId     BLOB    NOT NULL UNIQUE,"
@@ -98,7 +100,7 @@ int DataBase::start()
   }
 
   if (!tables.contains(QLatin1String("groups"))) {
-    QSqlQuery query(QLatin1String(
+    query.exec(QLatin1String(
     "CREATE TABLE groups ( "
     "  id    INTEGER PRIMARY KEY,"
     "  name  TEXT    UNIQUE,"
