@@ -27,6 +27,7 @@
 #include "HistoryPlugin_p.h"
 #include "NetworkManager.h"
 #include "plugins/hooks.h"
+#include "ui/tabs/PrivateTab.h"
 
 History::History(ChatCore *core)
   : ChatPlugin(core)
@@ -40,6 +41,7 @@ QList<HookData::Type> History::hooks() const
 {
   QList<HookData::Type> out;
   out += HookData::RawUserMessage;
+  out += HookData::PrivateTabCreated;
 
   return out;
 }
@@ -51,6 +53,11 @@ void History::hook(const HookData &data)
     case HookData::RawUserMessage:
       add(static_cast<const RawUserMessageHook &>(data));
       break;
+
+    case HookData::PrivateTabCreated:
+      m_db->loadLast(const_cast<PrivateTab *>(static_cast<const PrivateTabHook &>(data).tab));
+      break;
+
     default:
       break;
   }

@@ -27,7 +27,10 @@
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
+#include "HistoryUserMessage.h"
 #include "net/packets/message.h"
+#include "ui/tabs/ChatView.h"
+#include "ui/tabs/PrivateTab.h"
 #include "User.h"
 
 HistoryDB::HistoryDB(QObject *parent)
@@ -44,8 +47,7 @@ HistoryDB::HistoryDB(QObject *parent)
  */
 qint64 HistoryDB::add(int status, const MessageData &data)
 {
-  qint64 senderId = addUser(data.senderId);
-  if (senderId == -1)
+  if (addUser(data.senderId) == -1)
     return -1;
 
   if (SimpleID::typeOf(data.destId) == SimpleID::UserId)
@@ -56,7 +58,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text, plainText) "
                      "VALUES (:senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
 
-  query.bindValue(QLatin1String(":senderId"), senderId);
+  query.bindValue(QLatin1String(":senderId"), data.senderId);
   query.bindValue(QLatin1String(":destId"), data.destId);
   query.bindValue(QLatin1String(":status"), status);
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
@@ -129,22 +131,11 @@ qint64 HistoryDB::updateUser(const QByteArray &id)
   if (!user)
     return -1;
 
-  qint64 index = -1;
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  if (!m_cache.contains(id)) {
-    query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
-    query.addBindValue(id);
-    query.exec();
-
-    if (query.first())
-      index = query.value(0).toLongLong();
-  }
-  else
-    index = m_cache.value(id);
-
+  qint64 index = userId(id);
   if (index == -1)
     return -1;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
 
   query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
   query.bindValue(QLatin1String(":nick"), user->nick());
@@ -156,6 +147,43 @@ qint64 HistoryDB::updateUser(const QByteArray &id)
   query.exec();
 
   return index;
+}
+
+
+/*!
+ * Загрузка последних сообщений в приватный разговор.
+ */
+void HistoryDB::loadLast(PrivateTab *tab)
+{
+  QByteArray senderId = tab->id();
+  qint64 index = userId(senderId);
+  if (index == -1)
+    return;
+
+  int count = 10;
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE senderId = :senderId OR destId = :destId ORDER BY id DESC LIMIT ")
+      + QString::number(count) + QLatin1String(") ORDER BY id;"));
+
+  query.bindValue(QLatin1String(":senderId"), senderId);
+  query.bindValue(QLatin1String(":destId"), senderId);
+  query.exec();
+
+  if (!query.isActive())
+    return;
+
+  ClientUser user = ChatCore::i()->client()->user(senderId);
+  if (!user)
+    return;
+
+  while (query.next()) {
+    QByteArray id;
+    MessageData data(query.value(1).toByteArray(), query.value(2).toByteArray(), query.value(5).toString(), query.value(6).toString());
+    data.timestamp = query.value(4).toULongLong();
+
+    HistoryUserMessage msg(query.value(3).toULongLong(), data);
+    tab->chatView()->evaluateJavaScript(msg.js());
+  }
 }
 
 
@@ -208,7 +236,7 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
   query.exec(QLatin1String(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  senderId   INTEGER,"
+    "  senderId   BLOB,"
     "  destId     BLOB,"
     "  status     INTEGER,"
     "  timestamp  INTEGER,"
@@ -254,6 +282,24 @@ void HistoryDB::updateUserData(const QByteArray &userId)
 {
   if (m_cache.contains(userId))
     updateUser(userId);
+}
+
+
+qint64 HistoryDB::userId(const QByteArray &id)
+{
+  if (m_cache.contains(id))
+    return m_cache.value(id);
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
+  query.addBindValue(id);
+  query.exec();
+
+  if (query.first())
+    return query.value(0).toLongLong();
+  else
+    return -1;
 }
 
 

@@ -16,26 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HOOKDATA_H_
-#define HOOKDATA_H_
+#include "HistoryUserMessage.h"
 
-class HookData
+HistoryUserMessage::HistoryUserMessage(int status, const MessageData &data)
+  : UserMessage(status, data)
 {
-public:
-  enum Type {
-    RawUserMessage,   ///< Обработка низкоуровневых пользователський сообщений.
-    PrivateTabCreated ///< Хук вызывается в конструкторе класса PrivateTab.
-  };
+}
 
-  virtual ~HookData() {}
-  inline Type type() const { return m_type; }
 
-protected:
-  HookData(Type type)
-  : m_type(type)
-  {}
-
-  Type m_type;
-};
-
-#endif /* HOOKDATA_H_ */
+QString HistoryUserMessage::js() const
+{
+  return AbstractMessage::js();
+}

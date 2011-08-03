@@ -23,7 +23,7 @@
 
 class ChatView;
 
-class ChatViewTab : public AbstractTab
+class SCHAT_CORE_EXPORT ChatViewTab : public AbstractTab
 {
   Q_OBJECT
 

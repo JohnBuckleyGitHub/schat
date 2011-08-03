@@ -21,6 +21,7 @@
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
+#include "ChatPlugins.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
@@ -37,6 +38,9 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
 
   setIcon(UserUtils::icon(user));
   setText(m_user->nick());
+
+  PrivateTabHook hook(this);
+  ChatCore::i()->plugins()->hook(hook);
 }
 
 

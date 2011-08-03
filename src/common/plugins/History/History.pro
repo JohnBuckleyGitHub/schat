@@ -17,15 +17,17 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core gui network sql
+QT = core gui network sql webkit
 
 HEADERS  = \
    HistoryDB.h \
    HistoryPlugin.h \
    HistoryPlugin_p.h \
+   HistoryUserMessage.h \
 
 SOURCES  = \
    HistoryDB.cpp \
    HistoryPlugin.cpp \
+   HistoryUserMessage.cpp \
 
 include(../plugins.pri)

@@ -23,6 +23,7 @@
 #include <QObject>
 
 class MessageData;
+class PrivateTab;
 
 class HistoryDB : public QObject
 {
@@ -33,6 +34,7 @@ public:
   qint64 add(int status, const MessageData &data);
   qint64 addUser(const QByteArray &id);
   qint64 updateUser(const QByteArray &id);
+  void loadLast(PrivateTab *tab);
   void open(const QByteArray &id, const QString &dir);
 
 private slots:
@@ -41,6 +43,7 @@ private slots:
   void updateUserData(const QByteArray &userId);
 
 private:
+  qint64 userId(const QByteArray &id);
   void close();
 
   QHash<QByteArray, qint64> m_cache;
