@@ -39,6 +39,7 @@ HEADERS = \
     messages/MessageBox.h \
     messages/UserMessage.h \
     NetworkManager.h \
+    plugins/AbstractHistory.h \
     plugins/ChatPlugin.h \
     schat.h \
     ui/tabs/AbstractTab.h \
@@ -60,6 +61,7 @@ SOURCES = \
     messages/MessageBox.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
+    plugins/AbstractHistory.cpp \
     plugins/ChatPlugin.cpp \
     ui/tabs/AbstractTab.cpp \
     ui/tabs/ChatView.cpp \

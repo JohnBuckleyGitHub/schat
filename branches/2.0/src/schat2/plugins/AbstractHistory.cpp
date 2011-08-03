@@ -16,38 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATPLUGINS_H_
-#define CHATPLUGINS_H_
+#include "plugins/AbstractHistory.h"
 
-#include "Plugins.h"
-#include "plugins/HookData.h"
-
-#include <QDebug>
-
-class AbstractHistory;
-class ChatCore;
-class ChatPlugin;
-class ChatSettings;
-class MessageData;
-
-class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
+AbstractHistory::AbstractHistory(ChatCore *core)
+  : ChatPlugin(core)
 {
-  Q_OBJECT
 
-public:
-  ChatPlugins(QObject *parent = 0);
-  inline AbstractHistory *history() { return m_history; }
-  void hook(const HookData &data);
-
-protected:
-  void init();
-
-private:
-  AbstractHistory *m_history;
-  ChatCore *m_core;
-  ChatSettings *m_settings;
-  QHash<HookData::Type, QList<ChatPlugin *> > m_hooks;
-  QList<ChatPlugin *> m_chatPlugins;
-};
-
-#endif /* CHATPLUGINS_H_ */
+}

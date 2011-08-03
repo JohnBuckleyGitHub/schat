@@ -30,7 +30,7 @@
 #include "ui/tabs/PrivateTab.h"
 
 History::History(ChatCore *core)
-  : ChatPlugin(core)
+  : AbstractHistory(core)
 {
   m_db = new HistoryDB(this);
   openDb();

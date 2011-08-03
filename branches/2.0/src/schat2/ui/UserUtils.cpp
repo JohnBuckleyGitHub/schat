@@ -20,23 +20,35 @@
 #include <QTextDocument>
 
 #include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "ui/UserUtils.h"
-#include "User.h"
 
 QStringList UserUtils::m_colors;
 
 UserUtils::UserUtils()
 {
-  m_colors += "default";
-  m_colors += "black";
-  m_colors += "gray";
-  m_colors += "green";
-  m_colors += "red";
-  m_colors += "white";
-  m_colors += "yellow";
-  m_colors += "medical";
-  m_colors += "nude";
-  m_colors += "thief";
+  m_colors += QLatin1String("default");
+  m_colors += QLatin1String("black");
+  m_colors += QLatin1String("gray");
+  m_colors += QLatin1String("green");
+  m_colors += QLatin1String("red");
+  m_colors += QLatin1String("white");
+  m_colors += QLatin1String("yellow");
+  m_colors += QLatin1String("medical");
+  m_colors += QLatin1String("nude");
+  m_colors += QLatin1String("thief");
+}
+
+
+ClientUser UserUtils::user()
+{
+  return ChatCore::i()->client()->user();
+}
+
+
+ClientUser UserUtils::user(const QByteArray &id)
+{
+  return ChatCore::i()->client()->user(id);
 }
 
 
@@ -47,6 +59,17 @@ int UserUtils::color(const QString &color)
     return User::Default;
 
   return index;
+}
+
+
+/*!
+ * Получение собственного идентификатора.
+ *
+ * \todo Реализовать получение идентификатора до подключения к серверу.
+ */
+QByteArray UserUtils::userId()
+{
+  return ChatCore::i()->client()->userId();
 }
 
 

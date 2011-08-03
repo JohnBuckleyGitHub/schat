@@ -19,12 +19,12 @@
 #ifndef HISTORYPLUGIN_P_H_
 #define HISTORYPLUGIN_P_H_
 
-#include "plugins/ChatPlugin.h"
+#include "plugins/AbstractHistory.h"
 
 class HistoryDB;
 class RawUserMessageHook;
 
-class History : public ChatPlugin
+class History : public AbstractHistory
 {
   Q_OBJECT
 
