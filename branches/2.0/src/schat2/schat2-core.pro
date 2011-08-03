@@ -20,7 +20,7 @@ SCHAT_DEBUG     = 1
 SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
-QT = core gui network
+QT = core gui network webkit
 TARGET = schat2-core
 DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
@@ -42,6 +42,9 @@ HEADERS = \
     plugins/ChatPlugin.h \
     schat.h \
     ui/tabs/AbstractTab.h \
+    ui/tabs/ChatView.h \
+    ui/tabs/ChatViewTab.h \
+    ui/tabs/PrivateTab.h \
     ui/UserUtils.h \
 
 SOURCES = \
@@ -59,6 +62,9 @@ SOURCES = \
     NetworkManager.cpp \
     plugins/ChatPlugin.cpp \
     ui/tabs/AbstractTab.cpp \
+    ui/tabs/ChatView.cpp \
+    ui/tabs/ChatViewTab.cpp \
+    ui/tabs/PrivateTab.cpp \
     ui/UserUtils.cpp \
     
 SCHAT_CLIENT_LIB = 1

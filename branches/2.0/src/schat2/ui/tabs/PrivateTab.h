@@ -19,12 +19,13 @@
 #ifndef PRIVATETAB_H_
 #define PRIVATETAB_H_
 
+#include "plugins/HookData.h"
 #include "ui/tabs/ChatViewTab.h"
 #include "User.h"
 
 class ChatView;
 
-class PrivateTab : public ChatViewTab
+class SCHAT_CORE_EXPORT PrivateTab : public ChatViewTab
 {
   Q_OBJECT
 
@@ -40,6 +41,18 @@ private:
   QIcon userIcon() const;
 
   ClientUser m_user;
+};
+
+
+class PrivateTabHook : public HookData
+{
+public:
+  PrivateTabHook(PrivateTab *tab)
+  : HookData(PrivateTabCreated)
+  , tab(tab)
+  {}
+
+  const PrivateTab *tab;
 };
 
 #endif /* PRIVATETAB_H_ */

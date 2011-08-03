@@ -23,10 +23,12 @@
 #include <QVariant>
 #include <QWebView>
 
+#include "schat.h"
+
 class UserMessage;
 class ChatViewPrivate;
 
-class ChatView : public QWebView
+class SCHAT_CORE_EXPORT ChatView : public QWebView
 {
   Q_OBJECT
 
