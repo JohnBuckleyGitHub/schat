@@ -28,7 +28,10 @@ class SCHAT_CORE_EXPORT UserUtils
 {
 public:
   UserUtils();
+  static ClientUser user();
+  static ClientUser user(const QByteArray &id);
   static int color(const QString &color);
+  static QByteArray userId();
   static QIcon icon(ClientUser user, bool status = true, bool offline = false);
   static QString overlay(int status);
   static QString statusTitle(int status);

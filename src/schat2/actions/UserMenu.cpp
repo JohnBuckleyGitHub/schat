@@ -18,11 +18,12 @@
 
 #include <QMenu>
 #include <QTextDocument>
+#include <QUrl>
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "client/SimpleClient.h"
+#include "ui/UserUtils.h"
 
 UserMenu::UserMenu(ClientUser user, QObject *parent)
   : MenuBuilder(parent)
@@ -43,8 +44,8 @@ UserMenu::UserMenu(const QUrl &url, QObject *parent)
   , m_insert(0)
   , m_talk(0)
 {
-  QByteArray id = QByteArray::fromHex(url.host().toLatin1());
-  m_user = ChatCore::i()->client()->user(id);
+  QByteArray id = QByteArray::fromHex(url.host().toLatin1()); // FIXME Изменить работу с адресом.
+  m_user = UserUtils::user(id);
   if (!m_user) {
     m_user = ClientUser(new User(QByteArray::fromHex(url.path().remove(0, 1).toLatin1())));
     m_user->setId(id);
@@ -63,7 +64,7 @@ void UserMenu::insertNick(const QString &nick)
 void UserMenu::insertNick(const QUrl &url)
 {
   QString nick;
-  ClientUser user = ChatCore::i()->client()->user(QByteArray::fromHex(url.host().toLatin1()));
+  ClientUser user = UserUtils::user(QByteArray::fromHex(url.host().toLatin1())); // FIXME Изменить работу с адресом.
   if (user)
     insertNick(user->nick());
   else
@@ -114,5 +115,5 @@ void UserMenu::triggered(QAction *action)
 
 void UserMenu::init()
 {
-  m_self = m_user->id() == ChatCore::i()->client()->userId();
+  m_self = m_user->id() == UserUtils::userId();
 }
