@@ -28,6 +28,7 @@
 #include "ChatSettings.h"
 #include "debugstream.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/UserUtils.h"
 
 ChatView::ChatView(QWidget *parent)
   : QWebView(parent)
@@ -82,20 +83,23 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
   UserMenu *userMenu = 0;
+
   if (!url.isEmpty()) {
-    if (url.scheme() == QLatin1String("user")) {
-      menu.addSeparator();
-      userMenu = new UserMenu(url, this);
-      userMenu->bind(&menu);
-      url.clear();
+    if (url.scheme() == QLatin1String("chat")) {
+
+      if (url.host() == QLatin1String("user")) {
+        ClientUser user = UserUtils::user(url);
+        if (user) {
+          menu.addSeparator();
+          userMenu = new UserMenu(user, this);
+          userMenu->bind(&menu);
+        }
+      }
     }
     else {
       menu.addAction(m_copyLink);
     }
   }
-
-  if (!url.isEmpty())
-    menu.addAction(m_copyLink);
 
   QMenu display(tr("Display"), this);
   display.setIcon(SCHAT_ICON(GearIcon));

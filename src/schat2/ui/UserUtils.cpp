@@ -22,9 +22,11 @@
 #include "ChatCore.h"
 #include "ChatPlugins.h"
 #include "client/SimpleClient.h"
+#include "net/SimpleID.h"
 #include "plugins/AbstractHistory.h"
 #include "ui/UserUtils.h"
 
+QHash<QByteArray, ClientUser> UserUtils::m_users;
 QStringList UserUtils::m_colors;
 
 UserUtils::UserUtils()
@@ -50,11 +52,55 @@ ClientUser UserUtils::user()
 
 ClientUser UserUtils::user(const QByteArray &id)
 {
+  if (id.isEmpty())
+    return ClientUser();
+
   ClientUser user = ChatCore::i()->client()->user(id);
   if (user || !ChatCore::i()->plugins()->history())
     return user;
 
-  return ChatCore::i()->plugins()->history()->user(id);
+  user = ChatCore::i()->plugins()->history()->user(id);
+  if (!user)
+    user = m_users.value(id);
+
+  return user;
+}
+
+
+/*!
+ * Получение пользователя из url адреса.
+ */
+ClientUser UserUtils::user(const QUrl &url)
+{
+  ClientUser user;
+  if (url.scheme() != QLatin1String("chat") || url.host() != QLatin1String("user"))
+    return user;
+
+  QString path = url.path().remove(0, 1);
+  QByteArray id;
+
+  if (path.contains(QLatin1String("/")))
+    id = SimpleID::fromBase64(path.split(QLatin1String("/")).at(0).toLatin1());
+  else
+    id = SimpleID::fromBase64(path.toLatin1());
+
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return user;
+
+  user = UserUtils::user(id);
+  if (user)
+    return user;
+
+  user = ClientUser(new User());
+  user->setId(id);
+  user->setNick(SimpleID::fromBase64(url.queryItemValue("nick").toLatin1()));
+
+  if (user->isValid()) {
+    m_users[id] = user;
+    return user;
+  }
+  else
+    return ClientUser();
 }
 
 
@@ -172,4 +218,27 @@ QString UserUtils::toolTip(ClientUser user)
   out += statusTitle(user->status()) + " " + Qt::escape(user->statusText());
 
   return out;
+}
+
+
+/*!
+ * Получение локального url адреса пользователя.
+ */
+QUrl UserUtils::toUrl(ClientUser user, const QString &action)
+{
+  QUrl out(QLatin1String("chat://user"));
+  out.setPath(SimpleID::toBase64(user->id()) + (action.isEmpty() ? QString() : QLatin1String("/") + action));
+
+  QList<QPair<QString, QString> > queries;
+  queries.append(QPair<QString, QString>(QLatin1String("nick"), SimpleID::toBase64(user->nick().toUtf8())));
+
+  out.setQueryItems(queries);
+
+  return out;
+}
+
+
+void UserUtils::clear()
+{
+  m_users.clear();
 }
