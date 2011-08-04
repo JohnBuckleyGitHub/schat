@@ -37,6 +37,12 @@ History::History(ChatCore *core)
 }
 
 
+ClientUser History::user(const QByteArray &id) const
+{
+  return m_db->user(id);
+}
+
+
 QList<HookData::Type> History::hooks() const
 {
   QList<HookData::Type> out;
@@ -91,7 +97,8 @@ void History::openDb()
 
 ChatPlugin *HistoryPlugin::init(ChatCore *core)
 {
-  return new History(core);
+  m_plugin = new History(core);
+  return m_plugin;
 }
 
 Q_EXPORT_PLUGIN2(History, HistoryPlugin);

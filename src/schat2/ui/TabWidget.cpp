@@ -489,6 +489,9 @@ void TabWidget::updateUserData(const QByteArray &userId)
 
 void TabWidget::userLeave(const QByteArray &userId)
 {
+  if (!m_talks.contains(userId))
+    return;
+
   addQuitMsg(userId, userId);
 }
 
@@ -569,14 +572,9 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     create = false;
   }
 
-  ClientUser user = m_client->user(id);
-  if (!user) {
-    create = false;
+  ClientUser user = UserUtils::user(id);
+  if (!user)
     return 0;
-  }
-
-  if (user->status() == User::OfflineStatus)
-    create = false;
 
   if (create) {
     tab = new PrivateTab(user, this);

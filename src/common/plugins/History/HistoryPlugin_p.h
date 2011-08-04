@@ -30,6 +30,7 @@ class History : public AbstractHistory
 
 public:
   History(ChatCore *core);
+  ClientUser user(const QByteArray &id) const;
   QList<HookData::Type> hooks() const;
   void hook(const HookData &data);
   void notify(int notice, const QVariant &data);
