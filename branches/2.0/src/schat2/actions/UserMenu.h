@@ -30,7 +30,6 @@ class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
 
 public:
   UserMenu(ClientUser user, QObject *parent = 0);
-  UserMenu(const QUrl &url, QObject *parent = 0);
   static void insertNick(const QString &nick);
   static void insertNick(const QUrl &url);
   void bind(QMenu *menu);

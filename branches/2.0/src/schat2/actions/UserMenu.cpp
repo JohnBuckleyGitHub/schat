@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QMenu>
 #include <QTextDocument>
 #include <QUrl>
@@ -33,24 +35,6 @@ UserMenu::UserMenu(ClientUser user, QObject *parent)
   , m_insert(0)
   , m_talk(0)
 {
-  init();
-}
-
-
-UserMenu::UserMenu(const QUrl &url, QObject *parent)
-  : MenuBuilder(parent)
-  , m_self(false)
-  , m_ignore(0)
-  , m_insert(0)
-  , m_talk(0)
-{
-  QByteArray id = QByteArray::fromHex(url.host().toLatin1()); // FIXME Изменить работу с адресом.
-  m_user = UserUtils::user(id);
-  if (!m_user) {
-    m_user = ClientUser(new User(QByteArray::fromHex(url.path().remove(0, 1).toLatin1())));
-    m_user->setId(id);
-  }
-
   init();
 }
 

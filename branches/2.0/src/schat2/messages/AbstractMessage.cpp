@@ -23,6 +23,7 @@
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
 #include "net/packets/message.h"
+#include "ui/UserUtils.h"
 
 QHash<QString, QString> AbstractMessage::m_templates;
 
@@ -145,22 +146,16 @@ void AbstractMessage::nick(QString &html) const
   if (!html.contains(QLatin1String("%nick%")))
     return;
 
-  QString nick;
-  if (!m_senderId.isEmpty()) {
-    ClientUser user = ChatCore::i()->client()->user(m_senderId);
-    if (user)
-      nick = user->nick();
-  }
-
-  if (nick.isEmpty()) {
+  ClientUser user = UserUtils::user(m_senderId);
+  if (!user) {
     html.remove(QLatin1String("%nick%"));
     return;
   }
 
   QString t = tpl(QLatin1String("nick"));
-  t.replace(QLatin1String("%nick%"), Qt::escape(nick));
-  t.replace(QLatin1String("%user-id%"), m_senderId.toHex());
-  t.replace(QLatin1String("%nick-hex%"), nick.toUtf8().toHex());
+  t.replace(QLatin1String("%user-id%"), SimpleID::toBase64(m_senderId));
+  t.replace(QLatin1String("%user-url%"), UserUtils::toUrl(user, QLatin1String("insert")).toString());
+  t.replace(QLatin1String("%user-nick%"), Qt::escape(user->nick()));
 
   html.replace(QLatin1String("%nick%"), t);
 }

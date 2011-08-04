@@ -30,15 +30,19 @@ public:
   UserUtils();
   static ClientUser user();
   static ClientUser user(const QByteArray &id);
+  static ClientUser user(const QUrl &url);
   static int color(const QString &color);
   static QByteArray userId();
   static QIcon icon(ClientUser user, bool status = true, bool offline = false);
   static QString overlay(int status);
   static QString statusTitle(int status);
   static QString toolTip(ClientUser user);
+  static QUrl toUrl(ClientUser user, const QString &action = QString());
+  static void clear();
 
 private:
-  static QStringList m_colors;
+  static QHash<QByteArray, ClientUser> m_users; ///< Оффлайновые пользователи отсутствующие в истории.
+  static QStringList m_colors; ///< Цвета.
 };
 
 #endif /* USERUTILS_H_ */
