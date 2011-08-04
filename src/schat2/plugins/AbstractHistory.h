@@ -28,7 +28,7 @@ class SCHAT_CORE_EXPORT AbstractHistory : public ChatPlugin
 
 public:
   AbstractHistory(ChatCore *core);
-  virtual ClientUser user(const QByteArray &id) const { return ClientUser(); }
+  virtual ClientUser user(const QByteArray & /*id*/) const { return ClientUser(); }
 };
 
 #endif /* ABSTRACTHISTORY_H_ */
