@@ -29,6 +29,10 @@ class ChatApi
 public:
   virtual ~ChatApi() {}
   virtual ChatPlugin *init(ChatCore *core) = 0;
+  inline ChatPlugin *plugin() const { return m_plugin; }
+
+protected:
+  ChatPlugin *m_plugin;
 };
 
 Q_DECLARE_INTERFACE(ChatApi, "com.impomezia.schat.ChatApi/1.0");

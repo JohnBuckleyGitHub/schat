@@ -20,7 +20,9 @@
 #include <QTextDocument>
 
 #include "ChatCore.h"
+#include "ChatPlugins.h"
 #include "client/SimpleClient.h"
+#include "plugins/AbstractHistory.h"
 #include "ui/UserUtils.h"
 
 QStringList UserUtils::m_colors;
@@ -48,7 +50,11 @@ ClientUser UserUtils::user()
 
 ClientUser UserUtils::user(const QByteArray &id)
 {
-  return ChatCore::i()->client()->user(id);
+  ClientUser user = ChatCore::i()->client()->user(id);
+  if (user || !ChatCore::i()->plugins()->history())
+    return user;
+
+  return ChatCore::i()->plugins()->history()->user(id);
 }
 
 

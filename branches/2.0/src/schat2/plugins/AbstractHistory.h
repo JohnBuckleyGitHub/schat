@@ -20,6 +20,7 @@
 #define ABSTRACTHISTORY_H_
 
 #include "plugins/ChatPlugin.h"
+#include "User.h"
 
 class SCHAT_CORE_EXPORT AbstractHistory : public ChatPlugin
 {
@@ -27,6 +28,7 @@ class SCHAT_CORE_EXPORT AbstractHistory : public ChatPlugin
 
 public:
   AbstractHistory(ChatCore *core);
+  virtual ClientUser user(const QByteArray &id) const { return ClientUser(); }
 };
 
 #endif /* ABSTRACTHISTORY_H_ */

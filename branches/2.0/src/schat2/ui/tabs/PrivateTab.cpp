@@ -36,7 +36,7 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  setIcon(UserUtils::icon(user));
+  setIcon(userIcon());
   setText(m_user->nick());
 
   PrivateTabHook hook(this);

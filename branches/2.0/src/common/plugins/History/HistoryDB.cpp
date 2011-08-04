@@ -31,6 +31,7 @@
 #include "net/packets/message.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
+#include "ui/UserUtils.h"
 #include "User.h"
 
 HistoryDB::HistoryDB(QObject *parent)
@@ -38,7 +39,34 @@ HistoryDB::HistoryDB(QObject *parent)
 {
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
   connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(ChatCore::i()->client(), SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
+}
+
+
+ClientUser HistoryDB::user(const QByteArray &id) const
+{
+  qint64 index = userId(id);
+  if (index == -1)
+    return ClientUser();
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("SELECT nick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.addBindValue(index);
+  query.exec();
+
+  if (!query.first())
+    return ClientUser();
+
+  ClientUser user(new User());
+  user->setId(id);
+  user->setNick(query.value(0).toString());
+  user->setRawGender(query.value(1).toULongLong());
+  user->setHost(query.value(2).toString());
+  user->setUserAgent(query.value(3).toString());
+
+  return user;
 }
 
 
@@ -83,7 +111,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
  */
 qint64 HistoryDB::addUser(const QByteArray &id)
 {
-  ClientUser user = ChatCore::i()->client()->user(id);
+  ClientUser user = UserUtils::user(id);
   if (!user)
     return -1;
 
@@ -172,7 +200,7 @@ void HistoryDB::loadLast(PrivateTab *tab)
   if (!query.isActive())
     return;
 
-  ClientUser user = ChatCore::i()->client()->user(senderId);
+  ClientUser user = UserUtils::user(senderId);
   if (!user)
     return;
 
@@ -280,12 +308,11 @@ void HistoryDB::synced(const QByteArray &channelId)
  */
 void HistoryDB::updateUserData(const QByteArray &userId)
 {
-  if (m_cache.contains(userId))
-    updateUser(userId);
+  updateUser(userId);
 }
 
 
-qint64 HistoryDB::userId(const QByteArray &id)
+qint64 HistoryDB::userId(const QByteArray &id) const
 {
   if (m_cache.contains(id))
     return m_cache.value(id);

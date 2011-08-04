@@ -48,6 +48,19 @@ void ChatPlugins::hook(const HookData &data)
 }
 
 
+ChatPlugin *ChatPlugins::provider(const QString &id) const
+{
+  if (!m_providers.contains(id))
+    return 0;
+
+  ChatApi *api = qobject_cast<ChatApi *>(m_providers.value(id));
+  if (!api)
+    return 0;
+
+  return api->plugin();
+}
+
+
 /*!
  * Загрузка плагинов.
  */
@@ -73,5 +86,5 @@ void ChatPlugins::init()
     }
   }
 
-  m_history = qobject_cast<AbstractHistory *>(m_providers.value(QLatin1String("History")));
+  m_history = qobject_cast<AbstractHistory *>(provider(QLatin1String("History")));
 }

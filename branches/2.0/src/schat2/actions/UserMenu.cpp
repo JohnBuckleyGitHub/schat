@@ -76,7 +76,7 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  if (!m_self && ChatCore::i()->currentId() != m_user->id() && m_user->status() != User::OfflineStatus) {
+  if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
     m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
     menu->addAction(m_talk);
   }
