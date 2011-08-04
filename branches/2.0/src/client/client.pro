@@ -21,10 +21,9 @@ SCHAT_USE_SSL = 1
 
 TEMPLATE = lib
 QT = core network
-TARGET = schat2-client
+TARGET = schat-client
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = client.rc
-!win32:VERSION = 1.9.0
 
 include(../common/client.pri)
 include(../common/common.pri)

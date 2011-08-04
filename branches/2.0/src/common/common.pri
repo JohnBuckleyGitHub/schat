@@ -25,6 +25,8 @@ INCLUDEPATH += \
     ../common \
     ../3rdparty \
 
+!win32:VERSION = 1.9.1
+
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
   MOC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/moc
@@ -66,17 +68,17 @@ contains( SCHAT_DEVEL_MODE, 1 ) {
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat2-client
+    LIBS += -L../../out/debug -lschat-client
   } else {
-    LIBS += -L../../out -lschat2-client
+    LIBS += -L../../out -lschat-client
   }
 }
 
 contains( SCHAT_CORE_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat2-core
+    LIBS += -L../../out/debug -lschat
   } else {
-    LIBS += -L../../out -lschat2-core
+    LIBS += -L../../out -lschat
   }
 }
 

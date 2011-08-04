@@ -45,7 +45,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "FileDescription",  "Simple Chat Core Library"
         VALUE "FileVersion",      SCHAT_VERSION
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
-        VALUE "OriginalFilename", "schat2-core.dll"
+        VALUE "OriginalFilename", "schat.dll"
         VALUE "ProductName",      SCHAT_NAME
         VALUE "ProductVersion",   SCHAT_VERSION
       END

@@ -21,7 +21,7 @@ SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
 QT = core gui network webkit
-TARGET = schat2-core
+TARGET = schat
 DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
 !win32:VERSION = 1.9.0
