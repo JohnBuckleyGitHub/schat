@@ -16,33 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERMENU_H_
-#define USERMENU_H_
+#ifndef CHATCORE_P_H_
+#define CHATCORE_P_H_
 
-#include "actions/MenuBuilder.h"
-#include "User.h"
 
-class QUrl;
-
-class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
+class ChatCorePrivate
 {
-  Q_OBJECT
-
 public:
-  UserMenu(ClientUser user, QObject *parent = 0);
-  void bind(QMenu *menu);
+  ChatCorePrivate();
+  ~ChatCorePrivate();
 
-public slots:
-  void triggered(QAction *action);
+  QString urlAction(const QUrl &url);
+  void openUserUrl(const QUrl &url);
 
-private:
-  void init();
-
-  bool m_self;
-  ClientUser m_user;
-  QAction *m_ignore;
-  QAction *m_insert;
-  QAction *m_talk;
+  ChatCore *q;              ///< Указатель на объект ChatCore.
+  static QStringList icons; ///< Иконки.
+  UserUtils *userUtils;     ///< Утилиты манипуляции над пользователем.
 };
 
-#endif /* USERMENU_H_ */
+
+#endif /* CHATCORE_P_H_ */

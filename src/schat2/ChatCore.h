@@ -26,6 +26,7 @@
 #include "schat.h"
 
 class AbstractMessage;
+class ChatCorePrivate;
 class ChatPlugins;
 class ChatSettings;
 class ChatViewAction;
@@ -124,6 +125,7 @@ signals:
 
 public slots:
   void click(const QString &id, const QString &button);
+  void openUrl(const QUrl &url);
   void send(const QString &text);
 
 private slots:
@@ -135,6 +137,7 @@ private:
   void loadTranslation();
   void writeIgnoreList();
 
+  ChatCorePrivate *d;                             ///< Приватный класс.
   ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
   ChatSettings *m_settings;                       ///< Настройки.
   FileLocations *m_locations;                     ///< Схема размещения файлов.
@@ -145,10 +148,8 @@ private:
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.
-  static QStringList m_icons;                     ///< Иконки.
   StatusMenu *m_statusMenu;                       ///< Меню статуса.
   Translation *m_translation;                     ///< Модуль загрузки переводов.
-  UserUtils *m_userUtils;                         ///< Утилиты манипуляции над пользователем.
 };
 
 #endif /* CHATCORE_H_ */

@@ -18,6 +18,7 @@
 
 #include <QMenu>
 #include <QMouseEvent>
+#include <QUrl>
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
@@ -203,9 +204,9 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   QModelIndex index = indexAt(event->pos());
 
   if (index.isValid(), event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
-    QStandardItem *item = m_model.itemFromIndex(index);
+    UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
 
-    UserMenu::insertNick(item->text());
+    ChatCore::i()->openUrl(UserUtils::toUrl(item->user(), QLatin1String("insert")));
   }
   else if (event->button() == Qt::LeftButton && !index.isValid()) {
     setCurrentIndex(QModelIndex());

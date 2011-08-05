@@ -17,6 +17,7 @@
  */
 
 #include <QApplication>
+#include <QFile>
 #include <QKeyEvent>
 
 #include "net/packets/message.h"
@@ -35,7 +36,11 @@ InputWidget::InputWidget(QWidget *parent)
 
   setHeight(1);
 
-//  document()->setDefaultStyleSheet("a {color:#815d53; text-decoration:none;}");
+  QFile file(QLatin1String(":/css/input.css"));
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    document()->setDefaultStyleSheet(file.readAll());
+  }
+
   document()->setDocumentMargin(2);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

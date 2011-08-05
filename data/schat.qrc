@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.css</file>
+  <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/style.css">html/css/style.css</file>
   <file alias="css/ui.css">html/css/ui.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>

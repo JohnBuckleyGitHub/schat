@@ -31,6 +31,7 @@ HEADERS = \
     actions/MenuBuilder.h \
     actions/UserMenu.h \
     ChatCore.h \
+    ChatCore_p.h \
     ChatPlugins.h \
     ChatSettings.h \
     messages/AbstractMessage.h \
