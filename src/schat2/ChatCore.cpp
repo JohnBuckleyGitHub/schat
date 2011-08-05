@@ -112,6 +112,25 @@ QString ChatCorePrivate::urlAction(const QUrl &url)
 }
 
 
+void ChatCorePrivate::ignore(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return;
+
+  if (!ignoreList.contains(id))
+    ignoreList.prepend(id);
+
+  writeIgnoreList();
+}
+
+
+void ChatCorePrivate::loadIgnoreList()
+{
+  ignoreList.clear();
+  QStringList list = q->settings()->value(q->networks()->serverId().toHex() + QLatin1String("/IgnoreList"), QStringList()).toStringList();
+}
+
+
 void ChatCorePrivate::openUserUrl(const QUrl &url)
 {
   QString action = urlAction(url);
@@ -125,6 +144,37 @@ void ChatCorePrivate::openUserUrl(const QUrl &url)
   if (action == QLatin1String("insert")) {
     q->startNotify(ChatCore::InsertTextToSend, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(user->nick())));
   }
+  else if (action == QLatin1String("talk")) {
+    q->startNotify(ChatCore::AddPrivateTab, user->id());
+  }
+  else if (action == QLatin1String("ignore")) {
+    ignore(user->id());
+  }
+  else if (action == QLatin1String("unignore")) {
+    unignore(user->id());
+  }
+}
+
+
+void ChatCorePrivate::unignore(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return;
+
+  ignoreList.removeAll(id);
+
+  writeIgnoreList();
+}
+
+
+void ChatCorePrivate::writeIgnoreList()
+{
+  QStringList list;
+  for (int i = 0; i < ignoreList.size(); ++i) {
+    list.append(SimpleID::toBase64(ignoreList.at(i)));
+  }
+
+  q->settings()->setValue(q->networks()->serverId().toHex() + QLatin1String("/IgnoreList"), list);
 }
 
 
@@ -168,7 +218,7 @@ ChatCore::~ChatCore()
 
 bool ChatCore::isIgnored(const QByteArray &id)
 {
-  return m_ignoreList.contains(id);
+  return d->ignoreList.contains(id);
 }
 
 
@@ -218,36 +268,13 @@ QIcon ChatCore::icon(IconName name)
 }
 
 
-void ChatCore::ignore(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return;
-
-  if (!m_ignoreList.contains(id))
-    m_ignoreList.prepend(id);
-
-  writeIgnoreList();
-}
-
-
 void ChatCore::startNotify(int notice, const QVariant &data)
 {
   if (notice == NetworkChangedNotice) {
-    loadIgnoreList();
+    d->loadIgnoreList();
   }
 
   emit notify(notice, data);
-}
-
-
-void ChatCore::unignore(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return;
-
-  m_ignoreList.removeAll(id);
-
-  writeIgnoreList();
 }
 
 
@@ -316,13 +343,6 @@ void ChatCore::start()
 }
 
 
-void ChatCore::loadIgnoreList()
-{
-  m_ignoreList.clear();
-  QStringList list = m_settings->value(m_client->serverId().toHex() + QLatin1String("/IgnoreList"), QStringList()).toStringList();
-}
-
-
 /*!
  * Загрузка перевода пользовательского интерфейса.
  */
@@ -331,15 +351,4 @@ void ChatCore::loadTranslation()
   m_translation = new Translation(this);
   m_translation->setSearch(QStringList() << (m_locations->path(FileLocations::SharePath) + QLatin1String("/translations")) << (m_locations->path(FileLocations::ConfigPath) + QLatin1String("/translations")));
   m_translation->load(m_settings->value(QLatin1String("Translation")).toString());
-}
-
-
-void ChatCore::writeIgnoreList()
-{
-  QStringList list;
-  for (int i = 0; i < m_ignoreList.size(); ++i) {
-    list.append(SimpleID::toBase64(m_ignoreList.at(i)));
-  }
-
-  m_settings->setValue(m_client->serverId().toHex() + QLatin1String("/IgnoreList"), list);
 }

@@ -32,12 +32,7 @@ public:
   UserMenu(ClientUser user, QObject *parent = 0);
   void bind(QMenu *menu);
 
-public slots:
-  void triggered(QAction *action);
-
 private:
-  void init();
-
   bool m_self;
   ClientUser m_user;
   QAction *m_ignore;

@@ -17,8 +17,10 @@
  */
 
 #include <QMenu>
+#include <QUrl>
 
 #include "actions/MenuBuilder.h"
+#include "ChatCore.h"
 
 MenuBuilder::MenuBuilder(QObject *parent)
   : QObject(parent)
@@ -33,4 +35,16 @@ void MenuBuilder::bind(QMenu *menu)
   m_bind = true;
   m_menu = menu;
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
+}
+
+
+void MenuBuilder::triggered(QAction *action)
+{
+  if (!m_bind)
+    return;
+
+  if (action->data().type() == QVariant::Url) {
+    ChatCore::i()->openUrl(action->data().toUrl());
+    return;
+  }
 }

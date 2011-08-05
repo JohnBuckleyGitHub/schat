@@ -37,7 +37,7 @@ public:
   virtual void retranslateUi() {}
 
 public slots:
-  virtual void triggered(QAction * /*action*/ ) {}
+  virtual void triggered(QAction *action);
 
 protected:
   bool m_bind;
