@@ -76,7 +76,10 @@ ClientUser UserUtils::user(const QUrl &url)
   if (url.scheme() != QLatin1String("chat") || url.host() != QLatin1String("user"))
     return user;
 
-  QString path = url.path().remove(0, 1);
+  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
+  if (path.startsWith(QLatin1String("/")))
+    path.remove(0, 1);
+
   QByteArray id;
 
   if (path.contains(QLatin1String("/")))

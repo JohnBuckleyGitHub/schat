@@ -78,7 +78,7 @@ signals:
   void userLeave(const QByteArray &userId);
 
 protected:
-  SimpleClient(SimpleClientPrivate &dd, QObject * parent);
+  SimpleClient(SimpleClientPrivate &dd, QObject *parent);
   void newPacketsImpl();
   void timerEvent(QTimerEvent *event);
 

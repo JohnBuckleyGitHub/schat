@@ -39,23 +39,6 @@ UserMenu::UserMenu(ClientUser user, QObject *parent)
 }
 
 
-void UserMenu::insertNick(const QString &nick)
-{
-  ChatCore::i()->startNotify(ChatCore::InsertTextToSend, QLatin1String(" <b>") + Qt::escape(nick) + QLatin1String("</b> "));
-}
-
-
-void UserMenu::insertNick(const QUrl &url)
-{
-  QString nick;
-  ClientUser user = UserUtils::user(QByteArray::fromHex(url.host().toLatin1())); // FIXME Изменить работу с адресом.
-  if (user)
-    insertNick(user->nick());
-  else
-    insertNick(QByteArray::fromHex(url.path().remove(0, 1).toLatin1()));
-}
-
-
 void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
@@ -73,6 +56,7 @@ void UserMenu::bind(QMenu *menu)
   }
 
   m_insert = new QAction(tr("Insert Nick"), this);
+  m_insert->setData(UserUtils::toUrl(m_user, QLatin1String("insert")));
   menu->addAction(m_insert);
 }
 
@@ -82,10 +66,12 @@ void UserMenu::triggered(QAction *action)
   if (!m_bind)
     return;
 
-  if (action == m_insert) {
-    insertNick(m_user->nick());
+  if (action->data().type() == QVariant::Url) {
+    ChatCore::i()->openUrl(action->data().toUrl());
+    return;
   }
-  else if (action == m_talk) {
+
+  if (action == m_talk) {
     ChatCore::i()->startNotify(ChatCore::AddPrivateTab, m_user->id());
   }
   else if (action == m_ignore) {

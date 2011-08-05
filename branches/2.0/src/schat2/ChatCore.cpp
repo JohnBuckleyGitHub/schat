@@ -17,12 +17,14 @@
  */
 
 #include <QDateTime>
+#include <QDesktopServices>
 #include <QPainter>
 #include <QTextDocument>
 #include <QTimer>
 
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
+#include "ChatCore_p.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
@@ -35,16 +37,106 @@
 #include "User.h"
 
 ChatCore *ChatCore::m_self = 0;
-QStringList ChatCore::m_icons;
+QStringList ChatCorePrivate::icons;
+
+
+ChatCorePrivate::ChatCorePrivate()
+{
+  userUtils = new UserUtils();
+
+  icons += QLatin1String("channel");
+  icons += QLatin1String("channel-alert");
+  icons += QLatin1String("gear");
+  icons += QLatin1String("main-tab-menu");
+  icons += QLatin1String("network-error");
+  icons += QLatin1String("offline");
+  icons += QLatin1String("online");
+  icons += QLatin1String("plug");
+  icons += QLatin1String("plug-disconnect");
+  icons += QLatin1String("quit");
+  icons += QLatin1String("secure");
+  icons += QLatin1String("settings");
+  icons += QLatin1String("sound");
+  icons += QLatin1String("sound_mute");
+  icons += QLatin1String("users");
+  icons += QLatin1String("schat16");
+  icons += QLatin1String("schat16-ny");
+  icons += QLatin1String("text-bold");
+  icons += QLatin1String("text-italic");
+  icons += QLatin1String("text-strikethrough");
+  icons += QLatin1String("text-underline");
+  icons += QLatin1String("send");
+  icons += QLatin1String("globe");
+  icons += QLatin1String("add");
+  icons += QLatin1String("remove");
+  icons += QLatin1String("profile");
+  icons += QLatin1String("ok");
+  icons += QLatin1String("information-balloon");
+  icons += QLatin1String("edit-clear");
+  icons += QLatin1String("edit-copy");
+  icons += QLatin1String("edit-cut");
+  icons += QLatin1String("edit-paste");
+  icons += QLatin1String("edit-select-all");
+  icons += QLatin1String("balloon");
+  icons += QLatin1String("slash");
+}
+
+
+ChatCorePrivate::~ChatCorePrivate()
+{
+  delete userUtils;
+}
+
+
+QString ChatCorePrivate::urlAction(const QUrl &url)
+{
+  if (url.scheme() != QLatin1String("chat"))
+    return QString();
+
+  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
+  if (path.startsWith(QLatin1String("/")))
+    path.remove(0, 1);
+
+  if (url.host() == QLatin1String("user")) {
+    if (!path.contains(QLatin1String("/")))
+      return QString();
+
+    QStringList split = path.split(QLatin1String("/"));
+    if (split.size() > 1)
+      return split.at(1);
+    else
+      return QString();
+  }
+
+  return path;
+}
+
+
+void ChatCorePrivate::openUserUrl(const QUrl &url)
+{
+  QString action = urlAction(url);
+  if (action.isEmpty())
+    return;
+
+  ClientUser user = UserUtils::user(url);
+  if (!user)
+    return;
+
+  if (action == QLatin1String("insert")) {
+    q->startNotify(ChatCore::InsertTextToSend, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(user->nick())));
+  }
+}
+
 
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
+  , d(new ChatCorePrivate())
   , m_statusMenu(0)
 {
   m_self = this;
-  qsrand(QDateTime::currentDateTime().toTime_t());
+  d->q = this;
 
-  m_userUtils = new UserUtils();
+  qsrand(QDateTime::currentDateTime().toTime_t());
 
   m_locations = new FileLocations(this);
   m_settings = new ChatSettings(m_locations->path(FileLocations::ConfigFile), this);
@@ -60,42 +152,6 @@ ChatCore::ChatCore(QObject *parent)
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
-  m_icons += "channel";
-  m_icons += "channel-alert";
-  m_icons += "gear";
-  m_icons += "main-tab-menu";
-  m_icons += "network-error";
-  m_icons += "offline";
-  m_icons += "online";
-  m_icons += "plug";
-  m_icons += "plug-disconnect";
-  m_icons += "quit";
-  m_icons += "secure";
-  m_icons += "settings";
-  m_icons += "sound";
-  m_icons += "sound_mute";
-  m_icons += "users";
-  m_icons += "schat16";
-  m_icons += "schat16-ny";
-  m_icons += "text-bold";
-  m_icons += "text-italic";
-  m_icons += "text-strikethrough";
-  m_icons += "text-underline";
-  m_icons += "send";
-  m_icons += "globe";
-  m_icons += "add";
-  m_icons += "remove";
-  m_icons += "profile";
-  m_icons += "ok";
-  m_icons += "information-balloon";
-  m_icons += "edit-clear";
-  m_icons += "edit-copy";
-  m_icons += "edit-cut";
-  m_icons += "edit-paste";
-  m_icons += "edit-select-all";
-  m_icons += "balloon";
-  m_icons += "slash";
-
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
@@ -105,8 +161,8 @@ ChatCore::ChatCore(QObject *parent)
 
 ChatCore::~ChatCore()
 {
+  delete d;
   qDeleteAll(m_actions);
-  delete m_userUtils;
 }
 
 
@@ -155,10 +211,10 @@ QIcon ChatCore::icon(const QString &file, const QString &overlay)
  */
 QIcon ChatCore::icon(IconName name)
 {
-  if (name >= m_icons.size())
+  if (name >= ChatCorePrivate::icons.size())
     return QIcon();
 
-  return QIcon(QLatin1String(":/images/") + m_icons.at(name) + QLatin1String(".png"));
+  return QIcon(QLatin1String(":/images/") + ChatCorePrivate::icons.at(name) + QLatin1String(".png"));
 }
 
 
@@ -209,6 +265,26 @@ void ChatCore::click(const QString &id, const QString &button)
       delete action;
       action = 0;
     }
+  }
+}
+
+
+/*!
+ * Обработчик ссылок.
+ */
+void ChatCore::openUrl(const QUrl &url)
+{
+  qDebug() << "";
+  qDebug() << url;
+  qDebug() << "";
+
+  if (url.scheme() != QLatin1String("chat")) {
+    QDesktopServices::openUrl(url);
+    return;
+  }
+
+  if (url.host() == QLatin1String("user")) {
+    d->openUserUrl(url);
   }
 }
 
