@@ -140,8 +140,9 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == QLatin1String("ignore")) {
-    ChatCore::i()->ignore(m_destId);
+  if (command == QLatin1String("ignore") || command == QLatin1String("unignore")) {
+    if (SimpleID::typeOf(m_destId) == SimpleID::UserId)
+      ChatCore::i()->openUrl(UserUtils::toUrl(UserUtils::user(m_destId), command));
     return;
   }
 
@@ -176,11 +177,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
     if (body.isValid() && body.isBody())
       m_settings->setValue(body.command(), body.body());
 
-    return;
-  }
-
-  if (command == QLatin1String("unignore")) {
-    ChatCore::i()->unignore(m_destId);
     return;
   }
 

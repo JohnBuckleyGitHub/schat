@@ -115,9 +115,7 @@ public:
   static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
-  void ignore(const QByteArray &id);
   void startNotify(int notice, const QVariant &data = QVariant());
-  void unignore(const QByteArray &id);
 
 signals:
   void message(const AbstractMessage &message);
@@ -133,9 +131,7 @@ private slots:
   void start();
 
 private:
-  void loadIgnoreList();
   void loadTranslation();
-  void writeIgnoreList();
 
   ChatCorePrivate *d;                             ///< Приватный класс.
   ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
@@ -144,7 +140,6 @@ private:
   MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
-  QList<QByteArray> m_ignoreList;                 ///< Чёрный список.
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.

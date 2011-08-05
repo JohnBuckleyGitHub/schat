@@ -27,11 +27,16 @@ public:
   ~ChatCorePrivate();
 
   QString urlAction(const QUrl &url);
+  void ignore(const QByteArray &id);
+  void loadIgnoreList();
   void openUserUrl(const QUrl &url);
+  void unignore(const QByteArray &id);
+  void writeIgnoreList();
 
-  ChatCore *q;              ///< Указатель на объект ChatCore.
-  static QStringList icons; ///< Иконки.
-  UserUtils *userUtils;     ///< Утилиты манипуляции над пользователем.
+  ChatCore *q;                    ///< Указатель на объект ChatCore.
+  static QStringList icons;       ///< Иконки.
+  UserUtils *userUtils;           ///< Утилиты манипуляции над пользователем.
+  QList<QByteArray> ignoreList;   ///< Чёрный список.
 };
 
 

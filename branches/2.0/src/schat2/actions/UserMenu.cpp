@@ -35,7 +35,7 @@ UserMenu::UserMenu(ClientUser user, QObject *parent)
   , m_insert(0)
   , m_talk(0)
 {
-  init();
+  m_self = m_user->id() == UserUtils::userId();
 }
 
 
@@ -45,6 +45,7 @@ void UserMenu::bind(QMenu *menu)
 
   if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
     m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
+    m_talk->setData(UserUtils::toUrl(m_user, QLatin1String("talk")));
     menu->addAction(m_talk);
   }
 
@@ -52,38 +53,12 @@ void UserMenu::bind(QMenu *menu)
     m_ignore = new QAction(SCHAT_ICON(Slash), tr("Ignore"), this);
     m_ignore->setCheckable(true);
     m_ignore->setChecked(ChatCore::i()->isIgnored(m_user->id()));
+    m_ignore->setData(UserUtils::toUrl(m_user, m_ignore->isChecked() ? QLatin1String("unignore") : QLatin1String("ignore")));
+
     menu->addAction(m_ignore);
   }
 
   m_insert = new QAction(tr("Insert Nick"), this);
   m_insert->setData(UserUtils::toUrl(m_user, QLatin1String("insert")));
   menu->addAction(m_insert);
-}
-
-
-void UserMenu::triggered(QAction *action)
-{
-  if (!m_bind)
-    return;
-
-  if (action->data().type() == QVariant::Url) {
-    ChatCore::i()->openUrl(action->data().toUrl());
-    return;
-  }
-
-  if (action == m_talk) {
-    ChatCore::i()->startNotify(ChatCore::AddPrivateTab, m_user->id());
-  }
-  else if (action == m_ignore) {
-    if (m_ignore->isChecked())
-      ChatCore::i()->ignore(m_user->id());
-    else
-      ChatCore::i()->unignore(m_user->id());
-  }
-}
-
-
-void UserMenu::init()
-{
-  m_self = m_user->id() == UserUtils::userId();
 }
