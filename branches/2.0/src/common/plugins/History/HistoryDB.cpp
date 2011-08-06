@@ -25,6 +25,7 @@
 
 #include "Channel.h"
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "HistoryUserMessage.h"
@@ -41,6 +42,8 @@ HistoryDB::HistoryDB(QObject *parent)
   connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(ChatCore::i()->client(), SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
+
+  m_lastMessages = ChatCore::i()->settings()->value("History/LastMessages", 10).toInt();
 }
 
 
@@ -188,10 +191,9 @@ void HistoryDB::loadLast(PrivateTab *tab)
   if (index == -1)
     return;
 
-  int count = 10;
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE senderId = :senderId OR destId = :destId ORDER BY id DESC LIMIT ")
-      + QString::number(count) + QLatin1String(") ORDER BY id;"));
+      + QString::number(m_lastMessages) + QLatin1String(") ORDER BY id;"));
 
   query.bindValue(QLatin1String(":senderId"), senderId);
   query.bindValue(QLatin1String(":destId"), senderId);

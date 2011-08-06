@@ -25,7 +25,7 @@ class SCHAT_CORE_EXPORT MessageBox : public AbstractMessage
 {
 public:
   MessageBox(const QString &tpl, const QString &text, const QByteArray &destId = QByteArray());
-  QString js() const;
+  QString js(bool add = true) const;
 };
 
 #endif /* MESSAGEBOX_H_ */
