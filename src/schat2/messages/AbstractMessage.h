@@ -73,7 +73,7 @@ public:
   inline QString type() const { return m_type; }
   inline void setPriority(int priority) { m_priority = priority; }
   static QString tpl(const QString &fileName);
-  virtual QString js() const;
+  virtual QString js(bool add = true) const;
   void setText(const QString &text, int parseOptions);
 
 protected:
@@ -82,7 +82,7 @@ protected:
   void extra(QString &html) const;
   void id(QString &html) const;
   void nick(QString &html) const;
-  void text(QString &html, const QString &bodyTpl = QLatin1String("body")) const;
+  void text(QString &html) const;
   void time(QString &html) const;
   void type(QString &html) const;
 
@@ -92,10 +92,12 @@ protected:
   QByteArray m_destId;   ///< Идентификатор назначения.
   QByteArray m_senderId; ///< Идентификатор отправителя.
   qint64 m_timestamp;    ///< Отметка времени.
+  QString m_bodyTpl;     ///< Шаблон тела сообщения.
   QString m_extra;       ///< Дополнительные css классы.
   QString m_id;          ///< Уникальный идентификатор сообщения.
   QString m_template;    ///< Базовый шаблон сообщения.
   QString m_text;        ///< Текст сообщения.
+  QString m_timeTpl;     ///< Шаблон времени.
   QString m_type;        ///< Имя css класса типа сообщения.
 
 private:

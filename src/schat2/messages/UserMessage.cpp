@@ -43,16 +43,18 @@ UserMessage::UserMessage(int status, const MessageData &data)
 }
 
 
-QString UserMessage::js() const
+QString UserMessage::js(bool add) const
 {
-  if (m_status & Rejected)
-    return setMessageState(QLatin1String("rejected"));
+  if (add) {
+    if (m_status & Rejected)
+      return setMessageState(QLatin1String("rejected"));
 
-  if (m_status & Delivered)
-    return setMessageState(QLatin1String("delivered"));
+    if (m_status & Delivered)
+      return setMessageState(QLatin1String("delivered"));
 
-  if (m_text.isEmpty())
-    return "";
+    if (m_text.isEmpty())
+      return "";
+  }
 
   return AbstractMessage::js();
 }

@@ -34,7 +34,9 @@ AbstractMessage::AbstractMessage(const QString &type, const MessageData &data, i
   , m_destId(data.destId)
   , m_senderId(data.senderId)
   , m_timestamp(data.timestamp)
+  , m_bodyTpl(QLatin1String("body"))
   , m_template(QLatin1String("generic"))
+  , m_timeTpl(QLatin1String("time"))
   , m_type(type)
 {
   if (data.name)
@@ -50,7 +52,9 @@ AbstractMessage::AbstractMessage(const QString &type, const QString &text, const
   , m_priority(NormalPriority)
   , m_destId(destId)
   , m_timestamp(0)
+  , m_bodyTpl(QLatin1String("body"))
   , m_template(QLatin1String("generic"))
+  , m_timeTpl(QLatin1String("time"))
   , m_type(type)
 {
   setText(text, parseOptions);
@@ -80,8 +84,10 @@ QString AbstractMessage::tpl(const QString &fileName)
 
 /*!
  * JavaScript код.
+ *
+ * \param add true если нужно добавить код вставки в станицу.
  */
-QString AbstractMessage::js() const
+QString AbstractMessage::js(bool add) const
 {
   QString html = tpl(m_template);
   type(html);
@@ -91,7 +97,10 @@ QString AbstractMessage::js() const
   nick(html);
   text(html);
 
-  return appendMessage(html);
+  if (add)
+    return appendMessage(html);
+  else
+    return html;
 }
 
 
@@ -161,7 +170,10 @@ void AbstractMessage::nick(QString &html) const
 }
 
 
-void AbstractMessage::text(QString &html, const QString &bodyTpl) const
+/*!
+ * Установка тела сообщения.
+ */
+void AbstractMessage::text(QString &html) const
 {
   if (!html.contains(QLatin1String("%body%")))
     return;
@@ -171,7 +183,7 @@ void AbstractMessage::text(QString &html, const QString &bodyTpl) const
     return;
   }
 
-  QString t = tpl(bodyTpl);
+  QString t = tpl(m_bodyTpl);
 
   QString text = m_text;
   t.replace(QLatin1String("%message%"), text.replace("\\", "\\\\").remove('\r').replace("%", "&#37;"));
@@ -180,13 +192,19 @@ void AbstractMessage::text(QString &html, const QString &bodyTpl) const
 }
 
 
+/*!
+ * Установка времени сообщения.
+ */
 void AbstractMessage::time(QString &html) const
 {
   if (!html.contains(QLatin1String("%time%")))
     return;
 
-  QString t = tpl(QLatin1String("time"));
+  QString t = tpl(m_timeTpl);
   QDateTime dt = dateTime();
+  if (t.contains(QLatin1String("%date%")))
+    t.replace(QLatin1String("%date%"), dt.toString(QLatin1String("dd:MM:yyyy")));
+
   t.replace(QLatin1String("%time%"), dt.toString(QLatin1String("hh:mm")));
   t.replace(QLatin1String("%seconds%"), dt.toString(QLatin1String(":ss")));
 

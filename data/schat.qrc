@@ -79,6 +79,7 @@
   <file>html/templates/generic.html</file>
   <file>html/templates/nick.html</file>
   <file>html/templates/time.html</file>
+  <file>html/templates/time-date.html</file>
   <file>html/templates/yes-no-box.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>

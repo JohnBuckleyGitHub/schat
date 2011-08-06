@@ -25,7 +25,7 @@ class HistoryUserMessage : public UserMessage
 {
 public:
   HistoryUserMessage(int status, const MessageData &data);
-  QString js() const;
+  QString js(bool add = true) const;
 };
 
 #endif /* HISTORYUSERMESSAGE_H_ */

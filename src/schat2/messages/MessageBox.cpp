@@ -25,18 +25,22 @@ MessageBox::MessageBox(const QString &tpl, const QString &text, const QByteArray
 {
   m_id = QUuid::createUuid().toString().mid(1, 36);
   m_template = tpl;
+  m_bodyTpl = QLatin1String("content-small");
 }
 
 
-QString MessageBox::js() const
+QString MessageBox::js(bool add) const
 {
   QString html = tpl(m_template);
   type(html);
   id(html);
-  text(html, QLatin1String("content-small"));
+  text(html);
 
   html.replace(QLatin1String("%yes%"), QObject::tr("Yes"));
   html.replace(QLatin1String("%no%"), QObject::tr("No"));
 
-  return appendMessage(html) + QLatin1String(" rebindButtonHandlers();");
+  if (add)
+    return appendMessage(html) + QLatin1String(" rebindButtonHandlers();");
+
+  return html;
 }

@@ -38,12 +38,13 @@ public:
   };
 
   UserMessage(int status, const MessageData &data);
-  QString js() const;
+  QString js(bool add = true) const;
+
+protected:
+  DeliveryStatus m_status; ///< Состояние доставки сообщения.
 
 private:
   QString setMessageState(const QString &state) const;
-
-  DeliveryStatus m_status;     ///< Состояние доставки сообщения.
 };
 
 #endif /* USERMESSAGE_H_ */

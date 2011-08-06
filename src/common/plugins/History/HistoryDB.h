@@ -49,6 +49,7 @@ private:
   qint64 userId(const QByteArray &id) const;
   void close();
 
+  int m_lastMessages;
   QHash<QByteArray, qint64> m_cache;
   QString m_id;
 };
