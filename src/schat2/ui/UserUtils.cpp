@@ -107,6 +107,17 @@ ClientUser UserUtils::user(const QUrl &url)
 }
 
 
+ClientUser UserUtils::user(const QVariant &id)
+{
+  if (id.type() == QVariant::Url)
+    return user(id.toUrl());
+  else if (id.type() == QVariant::ByteArray)
+    return user(id.toByteArray());
+
+  return ClientUser();
+}
+
+
 int UserUtils::color(const QString &color)
 {
   int index = m_colors.indexOf(color);

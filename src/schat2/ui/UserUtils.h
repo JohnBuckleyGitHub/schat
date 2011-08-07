@@ -31,6 +31,7 @@ public:
   static ClientUser user();
   static ClientUser user(const QByteArray &id);
   static ClientUser user(const QUrl &url);
+  static ClientUser user(const QVariant &id);
   static int color(const QString &color);
   static QByteArray userId();
   static QIcon icon(ClientUser user, bool status = true, bool offline = false);

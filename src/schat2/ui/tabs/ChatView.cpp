@@ -26,17 +26,19 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "debugstream.h"
+#include "net/SimpleID.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/UserUtils.h"
 
-ChatView::ChatView(QWidget *parent)
+ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   : QWebView(parent)
   , m_loaded(false)
+  , m_id(id)
 {
   setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-  setUrl(QUrl("qrc:/html/ChatView.html"));
+  setUrl(QUrl(url));
   connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
@@ -81,23 +83,22 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
-  UserMenu *userMenu = 0;
+  if (!url.isEmpty() && url.scheme() != QLatin1String("chat")) {
+    menu.addAction(m_copyLink);
+  }
+  menu.addSeparator();
 
+  MenuBuilder *builder = 0;
   if (!url.isEmpty()) {
     if (url.scheme() == QLatin1String("chat")) {
-
       if (url.host() == QLatin1String("user")) {
-        ClientUser user = UserUtils::user(url);
-        if (user) {
-          menu.addSeparator();
-          userMenu = new UserMenu(user, this);
-          userMenu->bind(&menu);
-        }
+        builder = UserMenu::bind(&menu, url);
       }
     }
-    else {
-      menu.addAction(m_copyLink);
-    }
+  }
+  else if (!builder) {
+    if (SimpleID::typeOf(m_id) == SimpleID::UserId)
+      builder = UserMenu::bind(&menu, m_id);
   }
 
   QMenu display(tr("Display"), this);
@@ -120,8 +121,8 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   menu.exec(event->globalPos());
 
-  if (userMenu)
-    userMenu->deleteLater();
+  if (builder)
+    builder->deleteLater();
 }
 
 
