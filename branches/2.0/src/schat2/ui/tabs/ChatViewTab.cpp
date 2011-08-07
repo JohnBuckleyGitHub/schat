@@ -25,7 +25,7 @@ ChatViewTab::ChatViewTab(const QString &url, const QByteArray &id, TabType type,
 {
   Q_UNUSED(url)
 
-  m_chatView = new ChatView(this);
+  m_chatView = new ChatView(id, url, this);
 }
 
 

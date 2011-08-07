@@ -39,6 +39,19 @@ UserMenu::UserMenu(ClientUser user, QObject *parent)
 }
 
 
+UserMenu *UserMenu::bind(QMenu *menu, const QVariant &id)
+{
+  ClientUser user = UserUtils::user(id);
+  if (!user)
+    return 0;
+
+  UserMenu *out = new UserMenu(user, menu);
+  out->bind(menu);
+
+  return out;
+}
+
+
 void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);

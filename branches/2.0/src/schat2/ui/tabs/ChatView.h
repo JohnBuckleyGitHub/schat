@@ -33,7 +33,7 @@ class SCHAT_CORE_EXPORT ChatView : public QWebView
   Q_OBJECT
 
 public:
-  ChatView(QWidget *parent = 0);
+  ChatView(const QByteArray &id, const QString &url, QWidget *parent = 0);
   void evaluateJavaScript(const QString &js);
 
 protected:
@@ -60,6 +60,7 @@ private:
   QAction *m_seconds;                 ///< Секунды.
   QAction *m_selectAll;               ///< Выделить всё.
   QAction *m_service;                 ///< Сервисные сообщения.
+  QByteArray m_id;                    ///< Идентификатор.
   QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
 };
 

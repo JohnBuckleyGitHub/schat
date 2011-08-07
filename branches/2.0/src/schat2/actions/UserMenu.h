@@ -30,6 +30,7 @@ class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
 
 public:
   UserMenu(ClientUser user, QObject *parent = 0);
+  static UserMenu *bind(QMenu *menu, const QVariant &id);
   void bind(QMenu *menu);
 
 private:
