@@ -21,6 +21,7 @@
 
 #include <QIcon>
 #include <QObject>
+#include <QUrl>
 #include <QVariant>
 
 #include "schat.h"
@@ -122,6 +123,7 @@ signals:
   void notify(int notice, const QVariant &data);
 
 public slots:
+  inline void openUrl(const QString &url) { openUrl(QUrl(url)); }
   void click(const QString &id, const QString &button);
   void openUrl(const QUrl &url);
   void send(const QString &text);
