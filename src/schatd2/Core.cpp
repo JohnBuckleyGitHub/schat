@@ -35,7 +35,6 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
-#include "ServerSettings.h"
 #include "ServerUser.h"
 #include "Storage.h"
 #include "Worker.h"
@@ -46,19 +45,13 @@ Core::Core(QObject *parent)
   , m_timestamp(0)
   , m_thread(0)
 {
-  m_storage = new Storage();
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
-
-  m_options.insert(MainChannelName, "Main");
-  m_options.insert(ServerName, "");
-  m_options.insert(PrivateId, SimpleID::uniqueId());
 }
 
 
 Core::~Core()
 {
-  delete m_storage;
   delete m_sendStream;
   delete m_readStream;
   delete m_thread;
@@ -69,13 +62,6 @@ int Core::start()
 {
   m_storage->start();
 
-  m_storage->serverData()->setPrivateId(option(PrivateId).toByteArray());
-  m_storage->serverData()->setName(option(ServerName).toString());
-
-  if (!option(MainChannelName).toString().isEmpty()) {
-    m_storage->serverData()->setChannelId(m_storage->addChannel(option(MainChannelName).toString(), true)->id());
-  }
-
   m_thread = new WorkerThread(this);
   connect(m_thread, SIGNAL(workersStarted()), SLOT(workersStarted()));
   m_thread->start();
@@ -84,31 +70,10 @@ int Core::start()
 }
 
 
-QVariant Core::option(Options key) const
-{
-  return m_options.value(key);
-}
-
-
 void Core::quit()
 {
   m_thread->quit();
   m_thread->wait();
-}
-
-
-void Core::setOption(Options key, const QVariant &value)
-{
-  switch (key) {
-    case ServerName:
-      m_storage->serverData()->setName(value.toString());
-      break;
-
-    default:
-      break;
-  }
-
-  m_options[key] = value;
 }
 
 
@@ -130,7 +95,7 @@ void Core::customEvent(QEvent *event)
   }
 }
 
-
+// FIXME Удалить workersStarted()
 void Core::workersStarted()
 {
   m_workers = m_thread->workers();

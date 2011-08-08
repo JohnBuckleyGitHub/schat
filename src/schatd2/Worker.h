@@ -46,7 +46,7 @@ private slots:
 
 private:
   const int m_id;                          ///< Идентификатор.
-  Core *m_core;                            ///< Указатель на объект Core для посылки эвентов.
+  Core *m_core;                            ///< Указатель на объект Core для посылки событий.
   QHash<quint64, SimpleSocket*> m_sockets; ///< Список сокетов.
   quint64 m_nextSocketId;                  ///< Идентификатор следующего сокета.
   Server *m_server;                        ///< Объект Server принимающий новые подключения.

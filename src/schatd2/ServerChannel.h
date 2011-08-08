@@ -21,7 +21,7 @@
 
 #include "Channel.h"
 
-class ServerChannel: public Channel
+class SCHAT_EXPORT ServerChannel: public Channel
 {
 public:
   ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent = false);

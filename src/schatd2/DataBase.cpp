@@ -19,16 +19,15 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
+#include <QVariant>
 
 #include "DataBase.h"
 #include "FileLocations.h"
 #include "net/SimpleID.h"
-#include "ServerSettings.h"
 #include "Storage.h"
 
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
-  , m_settings(Storage::i()->settings())
 {
 }
 

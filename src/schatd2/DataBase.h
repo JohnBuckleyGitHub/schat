@@ -24,9 +24,7 @@
 
 #include "ServerUser.h"
 
-class ServerSettings;
-
-class DataBase : public QObject
+class SCHAT_EXPORT DataBase : public QObject
 {
   Q_OBJECT
 
@@ -41,7 +39,6 @@ public:
 
 private:
   QSqlDatabase m_db;
-  ServerSettings *m_settings;
 };
 
 #endif /* DATABASE_H_ */
