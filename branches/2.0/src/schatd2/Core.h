@@ -39,19 +39,11 @@ class Core : public QObject
   Q_OBJECT
 
 public:
-  /// Опции.
-  enum Options {
-    MainChannelName, ///< (QString/static) Имя основного канала.
-    ServerName,      ///< (QString/dynamic) Имя сервера.
-    PrivateId        ///< (QByteArray/static) Приватный идентификатор сервера.
-  };
-
   Core(QObject *parent = 0);
   ~Core();
+  inline void setStorage(Storage *storage) { m_storage = storage; }
   int start();
-  QVariant option(Options key) const;
   void quit();
-  void setOption(Options key, const QVariant &value);
 
 protected:
   void customEvent(QEvent *event);
@@ -106,7 +98,6 @@ private:
   QByteArray m_sendBuffer;            ///< Буфер отправки виртуальных пакетов.
   QDataStream *m_readStream;          ///< Поток чтения виртуальных пакетов.
   QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
-  QHash<Options, QVariant> m_options; ///< Опции.
   qint64 m_timestamp;                 ///< Отметка времени.
   QList<Worker*> m_workers;           ///< Список объектов Worker.
   Storage *m_storage;                 ///< Хранилище данных.

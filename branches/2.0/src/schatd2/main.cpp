@@ -8,9 +8,10 @@
 #include "net/SimpleSocket.h"
 #include "net/TransportReader.h"
 #include "net/TransportWriter.h"
+#include "NodeInit.h"
+#include "version.h"
 #include "Worker.h"
 #include "WorkerThread.h"
-#include "version.h"
 
 #if defined(Q_WS_WIN32)
 #include "qt_windows.h"
@@ -27,15 +28,17 @@ int main(int argc, char *argv[])
 
   Worker::setDefaultSslConf(app.applicationDirPath() + "/server.crt", app.applicationDirPath() + "/server.key");
 
-  Core *core = new Core;
-  core->start();
+  NodeInit *init = new NodeInit();
+//  Core *core = new Core;
+//  core->start();
 
 //  protov4 w;
 //  w.show();
   int result = app.exec();
-  core->quit();
+//  core->quit();
 
-  delete core;
+  delete init;
+//  delete core;
 
   return result;
 }

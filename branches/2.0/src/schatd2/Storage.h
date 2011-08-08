@@ -28,9 +28,9 @@ class DataBase;
 class FileLocations;
 class ServerChannel;
 class ServerData;
-class ServerSettings;
+class Settings;
 
-class Storage : public QObject
+class SCHAT_EXPORT Storage : public QObject
 {
   Q_OBJECT
 
@@ -59,7 +59,7 @@ public:
 
   inline FileLocations *locations() const { return m_locations; }
   inline ServerData *serverData() { return m_serverData; }
-  inline ServerSettings *settings() { return m_settings; }
+  inline Settings *settings() { return m_settings; }
   QByteArray session() const;
   QString normalize(const QString &text) const;
 
@@ -75,7 +75,7 @@ private:
   QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QHash<QString, ServerChannel*> m_channelNames; ///< Имена каналов.
   ServerData *m_serverData;                      ///< Информация о сервере.
-  ServerSettings *m_settings;                    ///< Настройки сервера.
+  Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.
 };
 

@@ -27,7 +27,7 @@ class AuthRequest;
 class AuthRequestData;
 class QSqlQuery;
 
-class ServerUser : public User
+class SCHAT_EXPORT ServerUser : public User
 {
 public:
   enum SqlColumns {

@@ -16,17 +16,38 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERSETTINGS_H_
-#define SERVERSETTINGS_H_
+#include <QTimer>
 
-#include "Settings.h"
+#include "debugstream.h"
 
-class ServerSettings : public Settings
+#include "Core.h"
+#include "NodeInit.h"
+#include "Storage.h"
+
+/*!
+ * Инициализация сервера.
+ */
+NodeInit::NodeInit(QObject *parent)
+  : QObject(parent)
 {
-  Q_OBJECT
+  m_storage = new Storage(this);
 
-public:
-  ServerSettings(const QString &fileName, QObject *parent = 0);
-};
+  m_core = new Core(this); // FIXME Создание Core.
+  m_core->setStorage(m_storage);
 
-#endif /* SERVERSETTINGS_H_ */
+  QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+void NodeInit::quit()
+{
+
+}
+
+
+void NodeInit::start()
+{
+  m_core->start();
+
+  SCHAT_DEBUG_STREAM("NODE STARTED");
+}

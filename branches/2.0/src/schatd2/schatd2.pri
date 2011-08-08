@@ -24,27 +24,19 @@ TEMPLATE = app
 
 HEADERS = \
     Core.h \
-    DataBase.h \
     debugstream.h \
     events.h \
+    NodeInit.h \
     Server.h \
-    ServerChannel.h \
-    ServerSettings.h \
-    ServerUser.h \
-    Storage.h \
     Worker.h \
     WorkerThread.h \
 
 SOURCES = \
     Core.cpp \
-    DataBase.cpp \
     events.cpp \
     main.cpp \
+    NodeInit.cpp \
     Server.cpp \
-    ServerChannel.cpp \
-    ServerSettings.cpp \
-    ServerUser.cpp \
-    Storage.cpp \
     Worker.cpp \
     WorkerThread.cpp \
 

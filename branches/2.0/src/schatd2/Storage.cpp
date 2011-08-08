@@ -17,6 +17,7 @@
  */
 
 #include <QCryptographicHash>
+#include <QStringList>
 #include <QUuid>
 
 #include "DataBase.h"
@@ -27,7 +28,7 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
-#include "ServerSettings.h"
+#include "Settings.h"
 #include "ServerUser.h"
 #include "Storage.h"
 
@@ -38,6 +39,7 @@ Storage::Storage(QObject *parent)
 {
   m_self = this;
 
+  /// \todo Сделать возможность использования внешнего файла с картой нормализации.
   m_normalize.insert(0x0430, 'a'); // а
   m_normalize.insert(0x0435, 'e'); // е
   m_normalize.insert(0x0451, 'e'); // ё
@@ -51,13 +53,29 @@ Storage::Storage(QObject *parent)
 
   m_serverData = new ServerData();
   m_locations = new FileLocations(this);
-  m_settings = new ServerSettings(m_locations->path(FileLocations::ConfigFile), this);
+
+  // Инициализация настроек по умолчанию.
+  m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
+  m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
+  m_settings->setDefault(QLatin1String("MainChannel"), QLatin1String("Main"));
+  m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::toBase64(SimpleID::uniqueId())));
+  m_settings->setDefault(QLatin1String("ServerName"),  QString());
+
   m_db = new DataBase(this);
 }
 
 
 int Storage::start()
 {
+  m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
+  m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
+
+  // FIXME Создание основного канала.
+  QString mainChannel = m_settings->value(QLatin1String("MainChannel")).toString();
+  if (!mainChannel.isEmpty()) {
+    m_serverData->setChannelId(addChannel(mainChannel, true)->id());
+  }
+
   m_db->start();
   return 0;
 }

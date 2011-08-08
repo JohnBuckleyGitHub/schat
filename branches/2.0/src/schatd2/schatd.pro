@@ -26,8 +26,16 @@ DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = schatd.rc
 
 HEADERS = \
+    DataBase.h \
+    ServerChannel.h \
+    ServerUser.h \
+    Storage.h \
 
 SOURCES = \
+    DataBase.cpp \
+    ServerChannel.cpp \
+    ServerUser.cpp \
+    Storage.cpp \
 
 include(../common/client.pri)
 
