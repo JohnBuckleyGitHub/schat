@@ -49,7 +49,7 @@ private:
 /*!
  * Читает пакет Protocol::UserDataPacket.
  */
-class UserReader
+class SCHAT_EXPORT UserReader
 {
 public:
   UserReader(PacketReader *reader);

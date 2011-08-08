@@ -32,7 +32,7 @@ class Channel;
  * - not fixed length (utf8) - Channel Topic.
  * - not fixed length (list of SHA1) - Channel Users.
  */
-class ChannelWriter : public PacketWriter
+class SCHAT_EXPORT ChannelWriter : public PacketWriter
 {
 public:
   ChannelWriter(QDataStream *stream, Channel *channel);
@@ -42,7 +42,7 @@ public:
 /*!
  * Читает пакет Protocol::ChannelPacket.
  */
-class ChannelReader
+class SCHAT_EXPORT ChannelReader
 {
 public:
   ChannelReader(PacketReader *reader);

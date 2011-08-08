@@ -89,7 +89,7 @@ public:
  * - not fixed length (utf8) - Command (if set MessageData::ControlOption).
  * - not fixed length (utf8) - Message.
  */
-class MessageWriter : public PacketWriter
+class SCHAT_EXPORT MessageWriter : public PacketWriter
 {
 public:
   MessageWriter(QDataStream *stream, const MessageData &data);
@@ -99,7 +99,7 @@ public:
 /*!
  * Читает пакет Protocol::MessagePacket.
  */
-class MessageReader
+class SCHAT_EXPORT MessageReader
 {
 public:
   MessageReader(PacketReader *reader);

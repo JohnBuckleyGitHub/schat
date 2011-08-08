@@ -82,3 +82,11 @@ contains( SCHAT_CORE_LIB, 1 ) {
   }
 }
 
+contains( SCHAT_DAEMON_LIB, 1 ) {
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../out/debug -lschatd
+  } else {
+    LIBS += -L../../out -lschatd
+  }
+}
+
