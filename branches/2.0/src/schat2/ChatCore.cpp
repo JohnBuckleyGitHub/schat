@@ -305,6 +305,11 @@ void ChatCore::openUrl(const QUrl &url)
   qDebug() << url;
   qDebug() << "";
 
+  if (url.scheme() == QLatin1String("schat")) {
+    m_client->openUrl(url);
+    return;
+  }
+
   if (url.scheme() != QLatin1String("chat")) {
     QDesktopServices::openUrl(url);
     return;
@@ -312,6 +317,12 @@ void ChatCore::openUrl(const QUrl &url)
 
   if (url.host() == QLatin1String("user")) {
     d->openUserUrl(url);
+  }
+  else if (url.host() == QLatin1String("about")) {
+    startNotify(ChatCore::AboutNotice);
+  }
+  else if (url.host() == QLatin1String("settings")) {
+    startNotify(ChatCore::SettingsNotice);
   }
 }
 

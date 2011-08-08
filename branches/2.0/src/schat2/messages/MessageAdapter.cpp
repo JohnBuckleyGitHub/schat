@@ -78,6 +78,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /nick
  * - /offline
  * - /online
+ * - /open
  * - /quit
  * - /set
  * - /unignore
@@ -86,56 +87,56 @@ void MessageAdapter::command(const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
 
-  if (command == "about") {
-    ChatCore::i()->startNotify(ChatCore::AboutNotice);
+  if (command == QLatin1String("about")) {
+    ChatCore::i()->openUrl(QLatin1String("chat://about"));
     return;
   }
 
-  if (command == "away") {
+  if (command == QLatin1String("away")) {
     setStatus(User::AwayStatus, cmd.body());
     return;
   }
 
-  if (command == "color") {
+  if (command == QLatin1String("color")) {
     if (cmd.isBody())
-      setGender("", cmd.body());
+      setGender(QString(), cmd.body());
     else
-      setGender("", "default");
+      setGender(QString(), QLatin1String("default"));
 
     return;
   }
 
-  if (command == "dnd") {
+  if (command == QLatin1String("dnd")) {
     setStatus(User::DnDStatus, cmd.body());
     return;
   }
 
-  if (command == "exit" || command == "quit") {
+  if (command == QLatin1String("exit") || command == QLatin1String("quit")) {
     ChatCore::i()->startNotify(ChatCore::QuitNotice);
     return;
   }
 
-  if (command == "female") {
-    setGender("female", cmd.body());
+  if (command == QLatin1String("female")) {
+    setGender(command, cmd.body());
     return;
   }
 
-  if (command == "ffc") {
+  if (command == QLatin1String("ffc")) {
     setStatus(User::FreeForChatStatus, cmd.body());
     return;
   }
 
-  if (command == "gender" && cmd.isBody()) {
-    setGender(cmd.body(), "");
+  if (command == QLatin1String("gender") && cmd.isBody()) {
+    setGender(cmd.body(), QString());
     return;
   }
 
   if (command == QLatin1String("help")) {
-    commandHelpHint("");
+    commandHelpHint(QString());
     return;
   }
 
-  if (command == "hide") {
+  if (command == QLatin1String("hide")) {
     ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
     return;
   }
@@ -146,33 +147,38 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == "join" && cmd.isBody() && cmd.body().size() >= 3) {
+  if (command == QLatin1String("join") && cmd.isBody() && cmd.body().size() >= 3) {
     MessageData data(QByteArray(), QByteArray(), command, cmd.body());
     m_client->send(data);
     return;
   }
 
-  if (command == "male") {
-    setGender("male", cmd.body());
+  if (command == QLatin1String("male")) {
+    setGender(command, cmd.body());
     return;
   }
 
-  if (command == "nick" && cmd.isBody() && cmd.body().size() >= 3) {
+  if (command == QLatin1String("nick") && cmd.isBody() && cmd.body().size() >= 3) {
     m_settings->updateValue(QLatin1String("Profile/Nick"), cmd.body());
     return;
   }
 
-  if (command == "offline") {
+  if (command == QLatin1String("offline")) {
     setStatus(User::OfflineStatus, cmd.body());
     return;
   }
 
-  if (command == "online") {
+  if (command == QLatin1String("online")) {
     setStatus(User::OnlineStatus, cmd.body());
     return;
   }
 
-  if (command == "set") {
+  if (command == QLatin1String("open") && cmd.isBody()) {
+    ChatCore::i()->openUrl(cmd.body());
+    return;
+  }
+
+  if (command == QLatin1String("set")) {
     ClientCmd body(cmd.body());
     if (body.isValid() && body.isBody())
       m_settings->setValue(body.command(), body.body());
