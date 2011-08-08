@@ -28,7 +28,7 @@ class User;
 /*!
  * Данные ответа сервера на запрос авторизации.
  */
-class AuthReplyData
+class SCHAT_EXPORT AuthReplyData
 {
 public:
   /// Статус.
@@ -88,7 +88,7 @@ public:
  * Если статус AccessDenied.
  * - 01 byte  - Error code \sa Error.
  */
-class AuthReplyWriter : public PacketWriter
+class SCHAT_EXPORT AuthReplyWriter : public PacketWriter
 {
 public:
   AuthReplyWriter(QDataStream *stream, const AuthReplyData &data);
@@ -98,7 +98,7 @@ public:
 /*!
  * Читает пакет Protocol::AuthReplyPacket.
  */
-class AuthReplyReader
+class SCHAT_EXPORT AuthReplyReader
 {
 public:
   AuthReplyReader(PacketReader *reader);
@@ -110,7 +110,7 @@ public:
 /*!
  * Данные запроса авторизации.
  */
-class AuthRequestData
+class SCHAT_EXPORT AuthRequestData
 {
 public:
   /// Версия пакета.
@@ -170,7 +170,7 @@ public:
  * - utf8     - Nickname.
  * - utf8     - User Agent.
  */
-class AuthRequestWriter : public PacketWriter
+class SCHAT_EXPORT AuthRequestWriter : public PacketWriter
 {
 public:
   AuthRequestWriter(QDataStream *stream, const AuthRequestData &data);
@@ -180,7 +180,7 @@ public:
 /*!
  * Читает пакет Protocol::AuthRequestPacket.
  */
-class AuthRequestReader
+class SCHAT_EXPORT AuthRequestReader
 {
 public:
   AuthRequestReader(PacketReader *reader);

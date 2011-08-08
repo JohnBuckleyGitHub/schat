@@ -22,7 +22,9 @@
 #include <QList>
 #include <QString>
 
-class Channel
+#include "schat.h"
+
+class SCHAT_EXPORT Channel
 {
 public:
   /// Ограничения.

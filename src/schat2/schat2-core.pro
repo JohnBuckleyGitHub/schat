@@ -24,7 +24,6 @@ QT = core gui network webkit
 TARGET = schat
 DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
-!win32:VERSION = 1.9.0
 
 HEADERS = \
     actions/ChatViewAction.h \

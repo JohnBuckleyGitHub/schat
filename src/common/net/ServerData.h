@@ -21,7 +21,9 @@
 
 #include <QString>
 
-class ServerData
+#include "schat.h"
+
+class SCHAT_EXPORT ServerData
 {
 public:
   /// Ограничения.

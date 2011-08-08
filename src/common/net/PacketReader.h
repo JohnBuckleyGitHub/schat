@@ -23,7 +23,7 @@
 
 #include "net/SimpleID.h"
 
-class PacketReader
+class SCHAT_EXPORT PacketReader
 {
 public:
   PacketReader(QDataStream *stream);

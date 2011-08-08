@@ -15,45 +15,24 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
-SCHAT_RC_FILE     = 1
-SCHAT_SINGLEAPP   = 0
+SCHAT_RESOURCES = 0
+SCHAT_DEBUG     = 1
+SCHAT_USE_SSL   = 1
 
+TEMPLATE = lib
 QT = core network sql
-TEMPLATE = app
+TARGET = schatd
+DEFINES += SCHAT_LIBRARY
+win32:RC_FILE = schatd.rc
 
 HEADERS = \
-    Core.h \
-    DataBase.h \
-    debugstream.h \
-    events.h \
-    Server.h \
-    ServerChannel.h \
-    ServerSettings.h \
-    ServerUser.h \
-    Storage.h \
-    Worker.h \
-    WorkerThread.h \
 
 SOURCES = \
-    Core.cpp \
-    DataBase.cpp \
-    events.cpp \
-    main.cpp \
-    Server.cpp \
-    ServerChannel.cpp \
-    ServerSettings.cpp \
-    ServerUser.cpp \
-    Storage.cpp \
-    Worker.cpp \
-    WorkerThread.cpp \
 
-DEFINES += SCHAT_DAEMON
-SCHAT_DAEMON_LIB = 1
+include(../common/client.pri)
 
-TRANSLATIONS += ../../data/translations/schatd2_en.ts
-TRANSLATIONS += ../../data/translations/schatd2_ru.ts
+TRANSLATIONS += ../../data/translations/schatd-lib_en.ts
+TRANSLATIONS += ../../data/translations/schatd-lib_ru.ts
 CODECFORTR = UTF-8
 
 include(../common/common.pri)
-
