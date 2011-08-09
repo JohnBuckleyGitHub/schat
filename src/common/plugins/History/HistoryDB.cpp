@@ -192,11 +192,12 @@ void HistoryDB::loadLast(PrivateTab *tab)
     return;
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE senderId = :senderId OR destId = :destId ORDER BY id DESC LIMIT ")
+  query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE destId = :destId OR senderId = :senderId AND destId = :myId ORDER BY id DESC LIMIT ")
       + QString::number(m_lastMessages) + QLatin1String(") ORDER BY id;"));
 
-  query.bindValue(QLatin1String(":senderId"), senderId);
   query.bindValue(QLatin1String(":destId"), senderId);
+  query.bindValue(QLatin1String(":senderId"), senderId);
+  query.bindValue(QLatin1String(":myId"), UserUtils::userId());
   query.exec();
 
   if (!query.isActive())
