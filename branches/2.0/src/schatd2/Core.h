@@ -42,14 +42,14 @@ public:
   Core(QObject *parent = 0);
   ~Core();
   inline void setStorage(Storage *storage) { m_storage = storage; }
-  int start();
-  void quit();
+  virtual int start() { return 0; }
+  virtual void quit() {}
+
+public slots:
+  inline void workersReady(QObject *listener) { m_listener = listener; }
 
 protected:
   void customEvent(QEvent *event);
-
-private slots:
-  void workersStarted();
 
 private:
   bool broadcast();
@@ -99,9 +99,8 @@ private:
   QDataStream *m_readStream;          ///< Поток чтения виртуальных пакетов.
   QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
   qint64 m_timestamp;                 ///< Отметка времени.
-  QList<Worker*> m_workers;           ///< Список объектов Worker.
+  QObject *m_listener;                ///< Слушатель сообщений.
   Storage *m_storage;                 ///< Хранилище данных.
-  WorkerThread *m_thread;             ///< Поток обслуживающий подключения.
 };
 
 #endif /* CORE_H_ */

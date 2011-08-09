@@ -22,18 +22,17 @@
 #include <QSslKey>
 #include <QThread>
 
-#include "Core.h"
 #include "debugstream.h"
 #include "events.h"
 #include "net/SimpleSocket.h"
 #include "Server.h"
 #include "Worker.h"
+#include "WorkerThread.h"
 
-Worker::Worker(int id, Core *parent)
-  : QObject(0),
-    m_id(id),
-    m_core(parent),
-    m_nextSocketId(0)
+Worker::Worker(WorkerEventListener *listener, QObject *parent)
+  : QObject(parent)
+  , m_core(listener->core())
+  , m_listener(listener)
 {
 }
 
@@ -75,70 +74,38 @@ void Worker::setDefaultSslConf(const QString &crtFile, const QString &keyFile)
 }
 
 
-bool Worker::start()
+bool Worker::start(const QString &listen)
 {
+  int index = listen.lastIndexOf(QLatin1String(":"));
+  if (index == -1)
+    return false;
+
+  QHostAddress address = QHostAddress(listen.left(index));
+  if (address.isNull())
+    return false;
+
+  quint16 port = listen.mid(index + 1).toUInt();
+  if (!port)
+    return false;
+
   m_server = new Server;
   connect(m_server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
 
-  return m_server->listen(QHostAddress::Any, 7667);
-}
-
-
-/*!
- * Обработка событий.
- */
-void Worker::customEvent(QEvent *event)
-{
-  SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type() << QThread::currentThread())
-
-  int type = event->type();
-
-  // Отправка пакетов.
-  if (type == ServerEvent::NewPackets) {
-
-    NewPacketsEvent *e = static_cast<NewPacketsEvent*>(event);
-
-    // Обработка отправки пакетов нескольким отправителям.
-    if (e->workerId() == -1) {
-      for (int i = 0; i < e->socketIds.size(); ++i) {
-        SimpleSocket *socket = m_sockets.value(e->socketIds.at(i));
-        if (!socket)
-          continue;
-
-        socket->setTimestamp(e->timestamp);
-        socket->send(e->packets);
-      }
-      return;
-    }
-
-    // Обработка отправки пакетов одному отправителю.
-    SimpleSocket *socket = m_sockets.value(e->socketId());
-    if (!socket)
-      return;
-
-    socket->setTimestamp(e->timestamp);
-    socket->send(e->packets);
-    if (e->option) {
-      if (e->option == NewPacketsEvent::KillSocketOption)
-        socket->leave();
-      else if (e->option == NewPacketsEvent::AuthorizeSocketOption)
-        socket->setAuthorized(e->userId());
-    }
-  }
+  return m_server->listen(address, port);
 }
 
 
 void Worker::newConnection(int socketDescriptor)
 {
-  SCHAT_DEBUG_STREAM(this << "newConnection()" << "id:" << m_nextSocketId)
+  SCHAT_DEBUG_STREAM(this << "newConnection()" << "id:" << QThread::currentThread())
 
   SimpleSocket *socket = new SimpleSocket(m_server);
-  socket->setId(m_nextSocketId);
+  socket->setId(m_listener->counter());
+
   if (socket->setSocketDescriptor(socketDescriptor)) {
     connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(newPackets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
-    m_sockets.insert(m_nextSocketId, socket);
-    ++m_nextSocketId;
+    m_listener->add(socket);
   }
   else
     socket->deleteLater();
@@ -150,9 +117,12 @@ void Worker::newConnection(int socketDescriptor)
  */
 void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
 {
-  NewPacketsEvent *event = new NewPacketsEvent(m_id, id, packets, m_sockets.value(id)->userId());
+  SimpleSocket *socket = m_listener->socket(id);
+  if (!socket)
+    return;
 
-  SimpleSocket *socket = m_sockets.value(id);
+  NewPacketsEvent *event = new NewPacketsEvent(id, packets, socket->userId());
+
   if (socket && !socket->isAuthorized())
     event->address = socket->peerAddress();
 
@@ -164,12 +134,11 @@ void Worker::released(quint64 id)
 {
   SCHAT_DEBUG_STREAM(this << "released()" << id)
 
-  SimpleSocket *socket = m_sockets.value(id);
-  if (socket->isAuthorized()) {
-    SocketReleaseEvent *event = new SocketReleaseEvent(m_id, id, socket->errorString(), socket->userId());
+  SimpleSocket *socket = m_listener->socket(id);
+  if (socket && socket->isAuthorized()) {
+    SocketReleaseEvent *event = new SocketReleaseEvent(id, socket->errorString(), socket->userId());
     QCoreApplication::postEvent(m_core, event);
   }
 
-  m_sockets.remove(id);
-  socket->deleteLater();
+  m_listener->release(id);
 }

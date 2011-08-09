@@ -23,10 +23,9 @@
 #include "net/packets/auth.h"
 #include "ServerUser.h"
 
-ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId)
+ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, quint64 socketId)
   : User()
   , m_online(true)
-  , m_workerId(workerId)
   , m_session(session)
   , m_key(-1)
   , m_normalNick(normalNick)
@@ -44,7 +43,6 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
 ServerUser::ServerUser(const QSqlQuery &query)
   : User()
   , m_online(false)
-  , m_workerId(-1)
   , m_key(query.value(IdColumn).toLongLong())
   , m_normalNick(query.value(NormalNickColumn).toString())
   , m_socketId(0)
