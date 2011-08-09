@@ -16,33 +16,93 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Core.h"
 #include "debugstream.h"
+#include "events.h"
+#include "net/SimpleSocket.h"
 #include "Worker.h"
 #include "WorkerThread.h"
 
-WorkerThread::WorkerThread(Core *parent)
-  : QThread(0),
-    m_core(parent)
+WorkerThread::WorkerThread(const QStringList &listen, QObject *core, QObject *parent)
+  : QThread(parent)
+  , m_core(core)
+  , m_listen(listen)
 {
-}
-
-
-WorkerThread::~WorkerThread()
-{
-  SCHAT_DEBUG_STREAM("~" << this)
-
-  qDeleteAll(m_workers);
 }
 
 
 void WorkerThread::run()
 {
-  int workerId = 0;
-  m_workers.append(new Worker(workerId, m_core));
-  m_workers.at(workerId)->start();
+  WorkerEventListener listener(m_core);
+//  listener.add("0.0.0.0:7667");
+  foreach (QString listen, m_listen) {
+    listener.add(listen);
+  }
 
-  emit workersStarted();
-
+  emit ready(&listener);
   exec();
+}
+
+
+WorkerEventListener::WorkerEventListener(QObject *core, QObject *parent)
+  : QObject(parent)
+  , m_core(core)
+  , m_counter(1)
+{
+}
+
+
+WorkerEventListener::~WorkerEventListener()
+{
+  qDeleteAll(m_workers);
+}
+
+
+bool WorkerEventListener::add(const QString &listen)
+{
+  Worker *worker = new Worker(this);
+  m_workers.append(worker);
+
+  return worker->start(listen);
+}
+
+
+void WorkerEventListener::release(quint64 id)
+{
+  SimpleSocket *socket = this->socket(id);
+  m_sockets.remove(id);
+
+  if (socket)
+    socket->deleteLater();
+}
+
+
+void WorkerEventListener::customEvent(QEvent *event)
+{
+  SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type() << QThread::currentThread())
+
+  int type = event->type();
+
+  // Отправка пакетов.
+  if (type == ServerEvent::NewPackets) {
+    NewPacketsEvent *e = static_cast<NewPacketsEvent*>(event);
+
+    QList<quint64> sockets = e->sockets();
+
+    for (int i = 0; i < sockets.size(); ++i) {
+      SimpleSocket *socket = this->socket(sockets.at(i));
+      if (!socket)
+        continue;
+
+      socket->setTimestamp(e->timestamp);
+      socket->send(e->packets);
+
+      if (!e->option)
+        continue;
+
+      if (e->option == NewPacketsEvent::KillSocketOption)
+        socket->leave();
+      else if (e->option == NewPacketsEvent::AuthorizeSocketOption)
+        socket->setAuthorized(e->userId());
+    }
+  }
 }

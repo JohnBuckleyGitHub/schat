@@ -37,13 +37,11 @@
 #include "ServerChannel.h"
 #include "ServerUser.h"
 #include "Storage.h"
-#include "Worker.h"
-#include "WorkerThread.h"
 
 Core::Core(QObject *parent)
   : QObject(parent)
   , m_timestamp(0)
-  , m_thread(0)
+  , m_listener(0)
 {
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
@@ -54,26 +52,6 @@ Core::~Core()
 {
   delete m_sendStream;
   delete m_readStream;
-  delete m_thread;
-}
-
-
-int Core::start()
-{
-  m_storage->start();
-
-  m_thread = new WorkerThread(this);
-  connect(m_thread, SIGNAL(workersStarted()), SLOT(workersStarted()));
-  m_thread->start();
-
-  return 0;
-}
-
-
-void Core::quit()
-{
-  m_thread->quit();
-  m_thread->wait();
 }
 
 
@@ -93,12 +71,6 @@ void Core::customEvent(QEvent *event)
     default:
       break;
   }
-}
-
-// FIXME Удалить workersStarted()
-void Core::workersStarted()
-{
-  m_workers = m_thread->workers();
 }
 
 
@@ -191,7 +163,7 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 
   NewPacketsEvent *event = new NewPacketsEvent(sockets, packets);
   event->timestamp = m_timestamp;
-  QCoreApplication::postEvent(m_workers.at(0), event);
+  QCoreApplication::postEvent(m_listener, event);
   return true;
 }
 
@@ -243,10 +215,10 @@ bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
   if (m_timestamp == 0)
     m_timestamp = timestamp();
 
-  NewPacketsEvent *event = new NewPacketsEvent(user->workerId(), user->socketId(), packets, user->id());
+  NewPacketsEvent *event = new NewPacketsEvent(user->socketId(), packets, user->id());
   event->option = option;
   event->timestamp = m_timestamp;
-  QCoreApplication::postEvent(m_workers.at(user->workerId()), event);
+  QCoreApplication::postEvent(m_listener, event);
   return true;
 }
 
@@ -461,7 +433,7 @@ bool Core::readAuthRequest()
     return true;
 
   QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();
-  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->workerId(), m_packetsEvent->socketId(), packet);
+  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
 
   switch (error) {
     case AuthReplyData::AuthTypeNotImplemented:
@@ -474,7 +446,7 @@ bool Core::readAuthRequest()
       break;
   }
 
-  QCoreApplication::postEvent(m_workers.at(m_packetsEvent->workerId()), event);
+  QCoreApplication::postEvent(m_listener, event);
   return false;
 }
 
@@ -527,7 +499,7 @@ int Core::auth()
   if (m_storage->user(normalNick, false))
     return AuthReplyData::NickAlreadyUse;
 
-  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->workerId(), m_packetsEvent->socketId()));
+  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->socket()));
   if (!user->isValid())
     return AuthReplyData::InvalidUser;
 

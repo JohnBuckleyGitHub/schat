@@ -22,22 +22,19 @@
 #include <QHash>
 #include <QObject>
 
-class Core;
 class Server;
 class SimpleSocket;
+class WorkerEventListener;
 
 class Worker : public QObject
 {
   Q_OBJECT
 
 public:
-  Worker(int id, Core *parent = 0);
+  Worker(WorkerEventListener *listener, QObject *parent = 0);
   ~Worker();
   static void setDefaultSslConf(const QString &crtFile, const QString &keyFile);
-  bool start();
-
-protected:
-  void customEvent(QEvent *event);
+  bool start(const QString &listen);
 
 private slots:
   void newConnection(int socketDescriptor);
@@ -45,11 +42,9 @@ private slots:
   void released(quint64 id);
 
 private:
-  const int m_id;                          ///< Идентификатор.
-  Core *m_core;                            ///< Указатель на объект Core для посылки событий.
-  QHash<quint64, SimpleSocket*> m_sockets; ///< Список сокетов.
-  quint64 m_nextSocketId;                  ///< Идентификатор следующего сокета.
-  Server *m_server;                        ///< Объект Server принимающий новые подключения.
+  QObject *m_core;                 ///< Указатель на объект Core для посылки событий.
+  Server *m_server;                ///< Объект Server принимающий новые подключения.
+  WorkerEventListener *m_listener; ///< Слушатель событий.
 };
 
 #endif /* WORKER_H_ */

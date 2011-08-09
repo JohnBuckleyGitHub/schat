@@ -34,15 +34,15 @@ public:
     SocketRelease = 7667
   };
 
-  ServerEvent(ServerEvents type, int workerId, quint64 socketId, const QByteArray &clientId = QByteArray());
-  inline int workerId() const { return m_workerId; }
+  ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &userId = QByteArray());
+  ServerEvent(ServerEvents type, quint64 socket, const QByteArray &userId = QByteArray());
   inline QByteArray userId() const { return m_userId; }
-  inline quint64 socketId() const { return m_socketId; }
+  inline QList<quint64> sockets() const { return m_sockets; }
+  quint64 socket() const;
 
-private:
-  const int m_workerId;        ///< Идентификатор объекта Worker, к которому принадлежит сокет.
-  const QByteArray m_userId;   ///< Идентификатор пользователя.
-  const quint64 m_socketId;    ///< Идентификатор сокета.
+protected:
+  QByteArray m_userId;      ///< Идентификатор пользователя.
+  QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
 
 
@@ -59,21 +59,20 @@ public:
 
   NewPacketsEvent(const QList<quint64> &socketIds, const QByteArray &packet);
   NewPacketsEvent(const QList<quint64> &socketIds, const QList<QByteArray> &packets);
-  NewPacketsEvent(int workerId, quint64 socketId, const QByteArray &packet, const QByteArray &clientId = QByteArray());
-  NewPacketsEvent(int workerId, quint64 socketId, const QList<QByteArray> &packets, const QByteArray &clientId = QByteArray());
+  NewPacketsEvent(quint64 socket, const QByteArray &packet, const QByteArray &userId = QByteArray());
+  NewPacketsEvent(quint64 socket, const QList<QByteArray> &packets, const QByteArray &userId = QByteArray());
 
   const QList<QByteArray> packets; ///< Тела виртуальных пакетов.
   int option;                      ///< Опция /sa Option.
   QHostAddress address;            ///< Адрес сокета.
   qint64 timestamp;                ///< Отметка времени.
-  QList<quint64> socketIds;        ///< Список сокетов.
 };
 
 
 class SocketReleaseEvent : public ServerEvent
 {
 public:
-  SocketReleaseEvent(int workerId, quint64 socketId, const QString &errorString, const QByteArray &clientId = QByteArray());
+  SocketReleaseEvent(quint64 sockets, const QString &errorString, const QByteArray &userId = QByteArray());
 
   const QString errorString;
 };

@@ -22,7 +22,9 @@
 
 #include "Core.h"
 #include "NodeInit.h"
+#include "Settings.h"
 #include "Storage.h"
+#include "WorkerThread.h"
 
 /*!
  * Инициализация сервера.
@@ -35,19 +37,27 @@ NodeInit::NodeInit(QObject *parent)
   m_core = new Core(this); // FIXME Создание Core.
   m_core->setStorage(m_storage);
 
+  m_thread = new WorkerThread(m_storage->settings()->value(QLatin1String("Listen")).toStringList(), m_core);
+  connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
 void NodeInit::quit()
 {
+  m_thread->quit();
+  m_thread->wait();
 
+  m_core->quit();
 }
 
 
 void NodeInit::start()
 {
+  m_storage->start();
   m_core->start();
+  m_thread->start();
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

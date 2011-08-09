@@ -40,11 +40,10 @@ public:
     UserAgentColumn
   };
 
-  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, int workerId, quint64 socketId);
+  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, quint64 socketId);
   ServerUser(const QSqlQuery &query);
   ~ServerUser();
   inline bool isOnline() const { return m_online; }
-  inline int workerId() const { return m_workerId; }
   inline QByteArray session() const { return m_session; }
   inline qint64 key() const { return m_key; }
   inline QString normalNick() const { return m_normalNick; }
@@ -64,7 +63,6 @@ public:
 
 private:
   bool m_online;             ///< true если пользователь в сети.
-  int m_workerId;            ///< Идентификатор объекта Worker.
   QByteArray m_session;      ///< Сессия.
   qint64 m_key;              ///< Ключ в таблице users.
   QList<QByteArray> m_users; ///< Список идентификаторов ассоциированных пользователей.
