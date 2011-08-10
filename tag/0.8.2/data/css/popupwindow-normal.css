@@ -1,0 +1,17 @@
+#PopupWindow {
+  border:1px solid #7581a9;
+}
+#PopupWindow QLabel {
+  padding:2px;
+  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #efeffd, stop: 1.0 #e4e5fd);
+  border-bottom:1px solid #d7d8fb;
+}
+#NickLabel {
+  font-weight:bold;
+}
+#PopupWindow QTextBrowser {
+  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e4e5fd, stop: 1.0 #f6f6fe);
+  border:none;
+  border-top:1px solid #f6f6fe;
+  padding:2px;
+}

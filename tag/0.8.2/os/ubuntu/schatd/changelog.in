@@ -1,0 +1,29 @@
+schatd (0.8.2.1620-1~##DIST##) unstable; urgency=low
+
+  * Official release of 0.8.2.
+
+ -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
+
+schatd (0.8.2.1620-1~lucid) unstable; urgency=low
+
+  * Official release of 0.8.2.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Wed, 10 Aug 2011 09:06:31 +0700
+
+schatd (0.8.1.1452-1) unstable; urgency=low
+
+  * Official release of 0.8.1.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Fri, 15 Apr 2011 13:42:18 +0700
+
+schatd (0.8.0.1438-2) unstable; urgency=low
+
+  * Fix: sometime daemon do not started after install.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Tue, 15 Feb 2011 20:58:30 +0700
+
+schatd (0.8.0.1438-1) unstable; urgency=low
+
+  * Official release of 0.8.0.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Fri, 11 Feb 2011 02:37:16 +0700
