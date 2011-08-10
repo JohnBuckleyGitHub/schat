@@ -21,6 +21,7 @@ function build() {
   mkdir src/$target/debian
   cp -fr os/ubuntu/$target/* src/$target/debian
   cd src/$target
+  cat debian/changelog.in | sed "s/##REVISION##/`svnversion -n`/g" | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
   dpkg-buildpackage
   cd ../..
 }
