@@ -16,12 +16,12 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_VERSION="0.8.1.1452"
+VERSION="0.8.2.1620"
 TARGET="SimpleChat"
 
 cd ../..
 qmake -r
-make -j 3
+make -j3
 cd out/release
 macdeployqt $TARGET.app
 macdeployqt schatd-ui.app
@@ -38,24 +38,18 @@ cp -fr ../../data/translations/*.png $TARGET.app/Contents/Resources/translations
 cp -fr ../../data/translations/*.qm $TARGET.app/Contents/Resources/translations/
 find $TARGET.app/Contents/Resources -name .svn -exec rm -rf {} \; > /dev/null 2>&1
 
-echo ""
-echo -e "\x1b[32m***\x1b[0m Please create volume named \x1b[1mSimpleChat\x1b[0m and store as file \x1b[1m~/Desktop/schat.dmg\x1b[0m"
-read -p "Press Enter key to continue..."
+DIR="bundle"
+mkdir $DIR
+cp -fr $TARGET.app $DIR
+ln -s /Applications $DIR/Applications
+rm -fr $DIR/.fseventsd
+mkdir $DIR/.background
+cp ../../os/macosx/mac.png $DIR/.background/
+cp ../../os/macosx/DS_Store $DIR/.DS_Store
 
-VOLUME="/Volumes/$TARGET"
-cp -fr $TARGET.app $VOLUME/
-ln -s /Applications $VOLUME/Applications
-rm -fr $VOLUME/.fseventsd
-mkdir $VOLUME/.background
-cp ../../os/macosx/mac.png $VOLUME/.background/
-cp ../../os/macosx/DS_Store $VOLUME/.DS_Store
+hdiutil create -ov -srcfolder $DIR -format UDBZ -volname "$TARGET $VERSION" "$TARGET-$VERSION.dmg"
+hdiutil internet-enable -yes "$TARGET-$VERSION.dmg"
 
-echo ""
-echo -e "\x1b[32m***\x1b[0m Please unmount volume \x1b[1mSimpleChat\x1b[0m"
-read -p "Press Enter key to continue..."
+cp "$TARGET-$VERSION.dmg" ../../os/macosx/dmg
 
-cd ../../os/macosx/dmg
-hdiutil convert ~/Desktop/schat.dmg -format UDBZ -o "schat-$SCHAT_VERSION-x86_64.dmg"
-hdiutil internet-enable -yes "schat-$SCHAT_VERSION-x86_64.dmg"
-rm -fr ~/Desktop/schat.dmg
 
