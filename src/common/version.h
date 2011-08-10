@@ -27,6 +27,6 @@
 #define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
 
 static const int UpdateLevelQt   = 2011041500;
-static const int UpdateLevelCore = 2011071400;
+static const int UpdateLevelCore = 2011081000;
 
 #endif /*VERSION_H_*/
