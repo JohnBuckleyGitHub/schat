@@ -1,3 +1,9 @@
+schat (0.8.2.##REVISION##-1~##DIST##) unstable; urgency=low
+
+  * Official release of 0.8.2.
+
+ -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
+
 schat (0.8.1.1452-1) unstable; urgency=low
 
   * Official release of 0.8.1.
