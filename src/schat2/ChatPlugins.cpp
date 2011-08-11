@@ -53,7 +53,7 @@ ChatPlugin *ChatPlugins::provider(const QString &id) const
   if (!m_providers.contains(id))
     return 0;
 
-  ChatApi *api = qobject_cast<ChatApi *>(m_providers.value(id));
+  ChatApi *api = qobject_cast<ChatApi *>(m_providers.value(id)->plugin());
   if (!api)
     return 0;
 
@@ -66,8 +66,8 @@ ChatPlugin *ChatPlugins::provider(const QString &id) const
  */
 void ChatPlugins::init()
 {
-  for (int i = 0; i < m_plugins.size(); ++i) {
-    ChatApi *api = qobject_cast<ChatApi *>(m_plugins.at(i));
+  for (int i = 0; i < m_sorted.size(); ++i) {
+    ChatApi *api = qobject_cast<ChatApi *>(m_plugins.value(m_sorted.at(i))->plugin());
 
     if (!api)
       continue;

@@ -31,9 +31,9 @@ class HistoryPlugin : public QObject, CoreApi, ChatApi
 
 public:
   ChatPlugin *init(ChatCore *core);
-  QString id() const { return "History"; }
-  QString name() const { return "History"; }
-  QStringList provides() const { return QStringList("History"); }
+  QString id() const { return QLatin1String("History"); }
+  QString name() const { return id(); }
+  QStringList provides() const { return QStringList(id()); }
 };
 
 #endif /* HISTORYPLUGIN_H_ */

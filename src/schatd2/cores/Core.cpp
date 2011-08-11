@@ -21,7 +21,7 @@
 #include <QEvent>
 #include <QThread>
 
-#include "Core.h"
+#include "cores/Core.h"
 #include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"

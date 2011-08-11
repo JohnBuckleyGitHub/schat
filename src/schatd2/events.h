@@ -23,10 +23,12 @@
 #include <QHostAddress>
 #include <QList>
 
+#include "schat.h"
+
 /*!
  * Базовый класс для событий сервера.
  */
-class ServerEvent : public QEvent
+class SCHAT_EXPORT ServerEvent : public QEvent
 {
 public:
   enum ServerEvents {
@@ -49,7 +51,7 @@ protected:
 /*!
  * Отправка пакетов между одиночным сокетом и ядром чата и наоборот.
  */
-class NewPacketsEvent : public ServerEvent
+class SCHAT_EXPORT NewPacketsEvent : public ServerEvent
 {
 public:
   enum Option {
@@ -69,7 +71,7 @@ public:
 };
 
 
-class SocketReleaseEvent : public ServerEvent
+class SCHAT_EXPORT SocketReleaseEvent : public ServerEvent
 {
 public:
   SocketReleaseEvent(quint64 sockets, const QString &errorString, const QByteArray &userId = QByteArray());

@@ -26,12 +26,16 @@ DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = schatd.rc
 
 HEADERS = \
+    cores/Core.h \
+    events.h \
     DataBase.h \
     ServerChannel.h \
     ServerUser.h \
     Storage.h \
 
 SOURCES = \
+    cores/Core.cpp \
+    events.cpp \
     DataBase.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \

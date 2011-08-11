@@ -19,6 +19,8 @@
 #ifndef COREINTERFACE_H_
 #define COREINTERFACE_H_
 
+#include <QDate>
+#include <QLocale>
 #include <QObject>
 #include <QStringList>
 
@@ -29,10 +31,12 @@ class CoreApi
 {
 public:
   virtual ~CoreApi() {}
-  virtual QString description() const { return ""; }
-  virtual QString id() const = 0;   ///< Машинное имя плагина.
-  virtual QString name() const = 0; ///< Имя плагина.
-  virtual QString version() const { return ""; }
+  virtual QString author() const       { return QLatin1String("IMPOMEZIA"); }
+  virtual QString description() const  { return QString(); }
+  virtual QString id() const           = 0;
+  virtual QString name() const         = 0;
+  virtual QString site() const         { return QLatin1String("http://impomezia.com"); }
+  virtual QString version() const      { return QLocale(QLocale::C).toDate(QString(__DATE__).simplified(), QLatin1String("MMM d yyyy")).toString(QLatin1String("yyyy.MM.dd")); }
   virtual QStringList provides() const { return QStringList(); }
   virtual QStringList required() const { return QStringList(); }
 };

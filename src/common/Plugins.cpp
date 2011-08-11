@@ -24,6 +24,52 @@
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
 
+/*!
+ * Загружает плагин с именем \p fileName.
+ *
+ * В случае успешной загрузки метод isValid() вернёт true.
+ */
+PluginItem::PluginItem(const QString &fileName)
+  : m_valid(false)
+  , m_api(0)
+  , m_plugin(0)
+{
+  m_loader.setFileName(fileName);
+  if (!m_loader.load())
+    return;
+
+  m_plugin = m_loader.instance();
+  if (!m_plugin)
+    return;
+
+  m_api = qobject_cast<CoreApi *>(m_plugin);
+  if (!m_api)
+    return;
+
+  if (m_api->id().isEmpty() || m_api->name().isEmpty())
+    return;
+
+  qDebug() << "ITEM CREATED" << m_api->id() << m_api->version();
+  m_valid = true;
+}
+
+
+PluginItem::~PluginItem()
+{
+  if (m_loader.isLoaded())
+    m_loader.unload();
+}
+
+
+QString PluginItem::id() const
+{
+  if (isValid())
+    return m_api->id();
+
+  return QString();
+}
+
+
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
@@ -50,10 +96,12 @@ bool Plugins::addProvider(const QString &name)
  */
 void Plugins::load()
 {
-  foreach (const QString &path, QCoreApplication::libraryPaths())
-    load(path);
+  QStringList paths = QCoreApplication::libraryPaths();
+  paths.removeAll(QCoreApplication::applicationDirPath());
 
-  m_ids.clear();
+  foreach (const QString &path, paths) {
+    load(path);
+  }
 
   sort();
   init();
@@ -65,39 +113,28 @@ void Plugins::load()
  *
  * \return true если плагин прошёл проверку.
  */
-CoreApi* Plugins::checkPlugin(QObject *plugin)
+bool Plugins::checkPlugin(PluginItem *plugin)
 {
-  if (!plugin)
-    return 0;
+  if (m_plugins.contains(plugin->id()))
+    return false;
 
-  CoreApi *core = qobject_cast<CoreApi *>(plugin);
-  if (!core)
-    return 0;
-
-  if (core->id().isEmpty() || core->name().isEmpty())
-    return 0;
-
-  if (m_ids.contains(core->id()))
-    return 0;
-
-  QStringList provides = core->provides();
-  if (provides.isEmpty()) {
-    return core;
-  }
+  QStringList provides = plugin->api()->provides();
+  if (provides.isEmpty())
+    return true;
 
   QString provider;
   for (int i = 0; i < provides.size(); ++i) {
     provider = provides.at(i);
     if (!m_providers.contains(provider))
-      return 0;
+      return false;
 
     if (m_providers.value(provider))
-      return 0;
+      return false;
 
     m_providers[provider] = plugin;
   }
 
-  return core;
+  return true;
 }
 
 
@@ -109,21 +146,33 @@ CoreApi* Plugins::checkPlugin(QObject *plugin)
 void Plugins::load(const QString &path)
 {
   QDir dir(path);
+  QStringList filters;
 
-  QStringList files = dir.entryList(QDir::Files);
+# if defined(Q_WS_WIN) || defined(Q_OS_SYMBIAN)
+  filters.append(QLatin1String("*.dll"));
+# elif defined(Q_WS_MAC)
+  filters.append(QLatin1String("*.dylib"));
+  filters.append(QLatin1String("*.so"));
+# else
+  filters.append(QLatin1String("*.so"));
+# endif
+
+  QStringList files = dir.entryList(filters, QDir::Files);
 
   for (int i = 0; i < files.size(); ++i) {
-    QPluginLoader loader(dir.absoluteFilePath(files.at(i)));
-
-    QObject *plugin = loader.instance();
-    CoreApi *core = checkPlugin(plugin);
-    if (!core) {
-      loader.unload();
+    PluginItem *item = new PluginItem(dir.absoluteFilePath(files.at(i)));
+    if (!item->isValid()) {
+      delete item;
       continue;
     }
 
-    m_ids.append(core->id());
-    m_plugins.append(plugin);
+    if (!checkPlugin(item)) {
+      delete item;
+      continue;
+    }
+
+    m_plugins[item->id()] = item;
+    m_sorted.append(item->id());
   }
 }
 
@@ -136,19 +185,20 @@ void Plugins::sort()
   if (m_providersList.isEmpty())
     return;
 
-  QObject *core = 0;
+  PluginItem *item = 0;
 
   for (int i = m_providersList.size() - 1; i >= 0; --i) {
-    core = m_providers.value(m_providersList.at(i));
-    if (!core)
+    item = m_providers.value(m_providersList.at(i));
+    if (!item)
       continue;
 
-    int index = m_plugins.indexOf(core);
+    int index = m_sorted.indexOf(item->id());
     if (index == -1)
       continue;
 
-    m_plugins.swap(0, index);
+    m_sorted.swap(0, index);
   }
 
   m_providersList.clear();
+  qDebug() << m_sorted;
 }

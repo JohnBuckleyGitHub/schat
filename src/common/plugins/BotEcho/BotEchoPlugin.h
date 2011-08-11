@@ -31,8 +31,8 @@ class BotEchoPlugin : public QObject, CoreApi, ClientApi
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);
-  QString id() const { return "BotEcho"; }
-  QString name() const { return "Bot Echo"; }
+  QString id() const { return QLatin1String("BotEcho"); }
+  QString name() const { return QLatin1String("Bot Echo"); }
 
 private:
   BotEcho *m_echo;
