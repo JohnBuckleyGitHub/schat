@@ -27,6 +27,7 @@ win32:RC_FILE = schatd.rc
 
 HEADERS = \
     cores/Core.h \
+    cores/GenericCore.h \
     events.h \
     DataBase.h \
     ServerChannel.h \
@@ -35,6 +36,7 @@ HEADERS = \
 
 SOURCES = \
     cores/Core.cpp \
+    cores/GenericCore.cpp \
     events.cpp \
     DataBase.cpp \
     ServerChannel.cpp \

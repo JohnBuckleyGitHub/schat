@@ -15,34 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
-SCHAT_RC_FILE     = 1
-SCHAT_SINGLEAPP   = 0
-
-QT = core network sql
-TEMPLATE = app
-
-HEADERS = \
-    NodeInit.h \
-    NodePlugins.h \
-    Server.h \
-    Worker.h \
-    WorkerThread.h \
-
-SOURCES = \
-    main.cpp \
-    NodeInit.cpp \
-    NodePlugins.cpp \
-    Server.cpp \
-    Worker.cpp \
-    WorkerThread.cpp \
-
-DEFINES += SCHAT_DAEMON
 SCHAT_DAEMON_LIB = 1
+QT = core network
 
-TRANSLATIONS += ../../data/translations/schatd2_en.ts
-TRANSLATIONS += ../../data/translations/schatd2_ru.ts
-CODECFORTR = UTF-8
+HEADERS  = \
+   cores/SlaveNode.h \
+   SlaveNodePlugin.h \
 
-include(../common/common.pri)
+SOURCES  = \
+   cores/SlaveNode.cpp \
+   SlaveNodePlugin.cpp \
 
+include(../plugins.pri)

@@ -41,6 +41,6 @@ public:
   virtual QStringList required() const { return QStringList(); }
 };
 
-Q_DECLARE_INTERFACE(CoreApi, "com.impomezia.schat.CoreApi/1.0");
+Q_DECLARE_INTERFACE(CoreApi, "me.schat.CoreApi/1.0");
 
 #endif /* COREINTERFACE_H_ */

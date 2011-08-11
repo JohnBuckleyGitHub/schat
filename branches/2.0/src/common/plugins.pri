@@ -20,3 +20,4 @@ SUBDIRS += \
     common/plugins/BotEcho \
     common/plugins/History \
     common/plugins/DebugClient \
+    common/plugins/SlaveNode \

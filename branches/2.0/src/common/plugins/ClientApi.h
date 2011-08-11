@@ -31,6 +31,6 @@ public:
   virtual QObject *init(ClientHelper *helper, FileLocations *locations) = 0;
 };
 
-Q_DECLARE_INTERFACE(ClientApi, "com.impomezia.schat.ClientApi/1.0");
+Q_DECLARE_INTERFACE(ClientApi, "me.schat.ClientApi/1.0");
 
 #endif /* CLIENTINTERFACE_H_ */

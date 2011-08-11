@@ -41,7 +41,6 @@ class SCHAT_EXPORT Core : public QObject
 public:
   Core(QObject *parent = 0);
   ~Core();
-  inline void setStorage(Storage *storage) { m_storage = storage; }
   virtual int start() { return 0; }
   virtual void quit() {}
 

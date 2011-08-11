@@ -16,35 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#ifndef SLAVENODE_H_
+#define SLAVENODE_H_
 
-#include <QObject>
+#include "cores/GenericCore.h"
 
-class Core;
-class NodePlugins;
-class Storage;
-class WorkerThread;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+class SlaveNode : public GenericCore
 {
-  Q_OBJECT
-
 public:
-  NodeInit(QObject *parent = 0);
-  void quit();
-
-public slots:
-  void start();
-
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
+  explicit SlaveNode(QObject *parent = 0);
 };
 
-#endif /* NODEINIT_H_ */
+#endif /* SLAVECORE_H_ */

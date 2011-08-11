@@ -62,5 +62,19 @@ contains( SCHAT_CORE_LIB, 1 ) {
   }
 }
 
+contains( SCHAT_DAEMON_LIB, 1 ) {
+  DEPENDPATH += \
+    ../../../schatd2 \
+
+  INCLUDEPATH += \
+    ../../../schatd2 \
+    
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../../../out/debug -lschatd
+  } else {
+    LIBS += -L../../../../out -lschatd
+  }
+}
+
 win32:RC_FILE = $${TARGET}.rc
 

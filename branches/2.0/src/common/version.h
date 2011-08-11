@@ -23,7 +23,7 @@
 #define SCHAT_VERSION_RC   1,9,1,0
 #define SCHAT_NAME         "Simple Chat"
 #define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "impomezia.com"
+#define SCHAT_DOMAIN       "schat.me"
 #define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
 
 static const int UpdateLevelQt   = 2011022000;
