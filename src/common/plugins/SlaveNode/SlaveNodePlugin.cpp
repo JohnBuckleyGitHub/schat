@@ -16,35 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#include <qplugin.h>
 
-#include <QObject>
+#include "cores/SlaveNode.h"
+#include "SlaveNodePlugin.h"
 
-class Core;
-class NodePlugins;
-class Storage;
-class WorkerThread;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+Core *SlaveNodePlugin::init()
 {
-  Q_OBJECT
+  return new SlaveNode(this);
+}
 
-public:
-  NodeInit(QObject *parent = 0);
-  void quit();
-
-public slots:
-  void start();
-
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
-};
-
-#endif /* NODEINIT_H_ */
+Q_EXPORT_PLUGIN2(SlaveNode, SlaveNodePlugin);

@@ -20,8 +20,9 @@
 
 #include "debugstream.h"
 
-#include "cores/Core.h"
+#include "cores/GenericCore.h"
 #include "NodeInit.h"
+#include "NodePlugins.h"
 #include "Settings.h"
 #include "Storage.h"
 #include "WorkerThread.h"
@@ -31,14 +32,11 @@
  */
 NodeInit::NodeInit(QObject *parent)
   : QObject(parent)
+  , m_core(0)
+  , m_thread(0)
 {
   m_storage = new Storage(this);
-
-  m_core = new Core(this); // FIXME Создание Core.
-  m_core->setStorage(m_storage);
-
-  m_thread = new WorkerThread(m_storage->settings()->value(QLatin1String("Listen")).toStringList(), m_core);
-  connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
+  m_plugins = new NodePlugins(this);
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -46,16 +44,25 @@ NodeInit::NodeInit(QObject *parent)
 
 void NodeInit::quit()
 {
-  m_thread->quit();
-  m_thread->wait();
+  if (m_thread) {
+    m_thread->quit();
+    m_thread->wait();
+  }
 
-  m_core->quit();
+  if (m_core)
+    m_core->quit();
 }
 
 
 void NodeInit::start()
 {
   m_storage->start();
+
+  m_plugins->load();
+  m_core = m_plugins->kernel();
+  m_thread = new WorkerThread(m_storage->settings()->value(QLatin1String("Listen")).toStringList(), m_core);
+  connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
+
   m_core->start();
   m_thread->start();
 

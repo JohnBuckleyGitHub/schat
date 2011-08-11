@@ -16,35 +16,39 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#include <QDebug>
 
-#include <QObject>
+#include "cores/GenericCore.h"
+#include "NodePlugins.h"
+#include "plugins/NodeKernelApi.h"
+#include "Settings.h"
+#include "Storage.h"
 
-class Core;
-class NodePlugins;
-class Storage;
-class WorkerThread;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+NodePlugins::NodePlugins(QObject *parent)
+  : Plugins(parent)
+  , m_core(0)
 {
-  Q_OBJECT
+  m_kernelId = Storage::i()->settings()->value(QLatin1String("Kernel")).toString();
+  if (!m_kernelId.isEmpty())
+    addProvider(m_kernelId);
+}
 
-public:
-  NodeInit(QObject *parent = 0);
-  void quit();
 
-public slots:
-  void start();
+Core *NodePlugins::kernel()
+{
+  if (!m_core)
+    m_core = new GenericCore(this);
 
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
-};
+  return m_core;
+}
 
-#endif /* NODEINIT_H_ */
+
+void NodePlugins::init()
+{
+  if (!m_kernelId.isEmpty() && m_providers.value(m_kernelId)) {
+    NodeKernelApi *api = qobject_cast<NodeKernelApi *>(m_providers.value(m_kernelId)->plugin());
+    m_core = api->init();
+  }
+
+  kernel();
+}

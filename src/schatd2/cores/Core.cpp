@@ -43,8 +43,9 @@ Core::Core(QObject *parent)
   , m_timestamp(0)
   , m_listener(0)
 {
-  m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
-  m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
+  m_storage = Storage::i();
+  m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::WriteOnly);
+  m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadOnly);
 }
 
 

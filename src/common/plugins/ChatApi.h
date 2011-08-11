@@ -35,6 +35,6 @@ protected:
   ChatPlugin *m_plugin;
 };
 
-Q_DECLARE_INTERFACE(ChatApi, "com.impomezia.schat.ChatApi/1.0");
+Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.0");
 
 #endif /* CHATAPI_H_ */
