@@ -148,12 +148,18 @@ bool Core::route(ChatUser user)
 }
 
 
+/*!
+ * Отправка пакета списку сокетов.
+ */
 bool Core::send(const QList<quint64> &sockets, const QByteArray &packet)
 {
   return send(sockets, QList<QByteArray>() << packet);
 }
 
 
+/*!
+ * Отправка пакетов списку сокетов.
+ */
 bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 {
   if (sockets.isEmpty())
@@ -171,9 +177,10 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 
 /*!
  * Отправка пакета всем пользователям в канале.
+ *
  * \param channel Канал.
  * \param packet  Пакет.
- * \return false в случае ошибки, иначе true.
+ * \return false в случае ошибки.
  */
 bool Core::send(ServerChannel *channel, const QByteArray &packet)
 {
@@ -428,7 +435,7 @@ ServerChannel *Core::channel(const QString &name, bool create)
  */
 bool Core::readAuthRequest()
 {
-  int error = auth();
+  int error = auth(AuthRequestReader(m_reader).data);
 
   if (error == AuthReplyData::NoError)
     return true;
@@ -481,9 +488,9 @@ bool Core::readUserData()
  * Процедура авторизации пользователя, чтение пакета AuthRequestPacket.
  * \todo ! Эта функция страшно выглядит.
  */
-int Core::auth()
+int Core::auth(const AuthRequestData &data)
 {
-  AuthRequestData data = AuthRequestReader(m_reader).data;
+//  AuthRequestData data = AuthRequestReader(m_reader).data;
 
   SCHAT_DEBUG_STREAM(this << "auth" << data.authType << data.host << data.nick << data.userAgent << m_packetsEvent->address)
 
@@ -500,7 +507,7 @@ int Core::auth()
   if (m_storage->user(normalNick, false))
     return AuthReplyData::NickAlreadyUse;
 
-  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, &data, m_packetsEvent->socket()));
+  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, data, m_packetsEvent->socket()));
   if (!user->isValid())
     return AuthReplyData::InvalidUser;
 
@@ -513,6 +520,16 @@ int Core::auth()
   send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
 
   return 0;
+}
+
+
+void Core::rejectAuth(int error, int option)
+{
+  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();
+  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
+  event->option = option;
+
+  QCoreApplication::postEvent(m_listener, event);
 }
 
 

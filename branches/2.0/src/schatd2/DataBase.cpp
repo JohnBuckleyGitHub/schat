@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
@@ -40,15 +42,16 @@ DataBase::DataBase(QObject *parent)
  */
 ChatUser DataBase::user(const QByteArray &id)
 {
+  qDebug() << "DataBase::user()" << id.toHex();
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender, ip, userAgent FROM users WHERE userId = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
   if (!query.first())
     return ChatUser();
 
-  return ChatUser(new ServerUser(query));
+  return user(query.value(0).toULongLong());
 }
 
 
@@ -58,18 +61,26 @@ ChatUser DataBase::user(const QByteArray &id)
  * \param key Ключ в таблице users.
  * \return Указатель на пользователя или 0 если он не был найден.
  */
-
-ChatUser DataBase::user(qint64 key)
+ChatUser DataBase::user(qint64 id)
 {
+  qDebug() << "DataBase::user()" << id;
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id, userId, nick, normalNick, gender, ip, userAgent FROM users WHERE id = ? LIMIT 1;"));
-  query.addBindValue(key);
+  query.prepare(QLatin1String("SELECT userId, nick, normalNick, gender, ip, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.addBindValue(id);
   query.exec();
 
   if (!query.first())
     return ChatUser();
 
-  return ChatUser(new ServerUser(query));
+  ChatUser user(new ServerUser(query.value(0).toByteArray()));
+  user->setKey(id);
+  user->setNick(query.value(1).toString());
+  user->setNormalNick(query.value(2).toString());
+  user->setRawGender(query.value(3).toInt());
+  user->setHost(query.value(4).toString());
+  user->setUserAgent(query.value(5).toString());
+
+  return user;
 }
 
 
@@ -127,14 +138,14 @@ qint64 DataBase::add(ChatUser user)
 {
   QSqlQuery query;
   query.prepare(QLatin1String("INSERT INTO users (userId, nick, normalNick, gender, ip, userAgent) "
-                     "VALUES (?, ?, ?, ?, ?, ?);"));
+                     "VALUES (:userId, :nick, :normalNick, :gender, :ip, :userAgent);"));
 
-  query.addBindValue(user->id());
-  query.addBindValue(user->nick());
-  query.addBindValue(user->normalNick());
-  query.addBindValue(user->rawGender());
-  query.addBindValue(user->host());
-  query.addBindValue(user->userAgent());
+  query.bindValue(QLatin1String(":userId"),     user->id());
+  query.bindValue(QLatin1String(":nick"),       user->nick());
+  query.bindValue(QLatin1String(":normalNick"), user->normalNick());
+  query.bindValue(QLatin1String(":gender"),     user->rawGender());
+  query.bindValue(QLatin1String(":ip"),         user->host());
+  query.bindValue(QLatin1String(":userAgent"),  user->userAgent());
   query.exec();
 
   if (query.numRowsAffected() <= 0)
