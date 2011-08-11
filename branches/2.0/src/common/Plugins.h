@@ -21,12 +21,37 @@
 
 #include <QHash>
 #include <QObject>
+#include <QPluginLoader>
 #include <QStringList>
 
 #include "schat.h"
 
 class CoreApi;
 
+/*!
+ * Загружает плагин и хранит о нём информацию.
+ */
+class SCHAT_EXPORT PluginItem
+{
+public:
+  PluginItem(const QString &fileName);
+  ~PluginItem();
+  inline bool isValid() const { return m_valid; }
+  inline CoreApi *api() { return m_api; }
+  inline QObject *plugin() { return m_plugin; }
+  QString id() const;
+
+private:
+  bool m_valid;
+  CoreApi *m_api;
+  QObject *m_plugin;
+  QPluginLoader m_loader;
+};
+
+
+/*!
+ * Базовый класс, обеспечивающий загрузку плагинов.
+ */
 class SCHAT_EXPORT Plugins : public QObject
 {
   Q_OBJECT
@@ -39,15 +64,15 @@ public:
 protected:
   virtual void init() {}
 
-  QHash<QString, QObject *> m_providers;
-  QList<QObject *> m_plugins; ///< Все загруженные плагины.
+  QHash<QString, PluginItem *> m_plugins;   ///< Таблица плагинов.
+  QHash<QString, PluginItem *> m_providers; ///< Поддерживаемые провайдеры.
+  QStringList m_sorted;                     ///< Сортированный список плагинов, этот список определяет очерёдность загрузки наследниками этого класса.
 
 private:
-  CoreApi* checkPlugin(QObject *plugin);
+  bool checkPlugin(PluginItem *plugin);
   void load(const QString &path);
   void sort();
 
-  QStringList m_ids;
   QStringList m_providersList;
 };
 

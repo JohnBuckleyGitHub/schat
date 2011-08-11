@@ -31,8 +31,8 @@ class DebugClientPlugin : public QObject, CoreApi, ClientApi
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);
-  QString id() const { return "DebugClient"; }
-  QString name() const { return "Debug Client"; }
+  QString id() const { return QLatin1String("DebugClient"); }
+  QString name() const { return QLatin1String("Debug Client"); }
 
 private:
   DebugClient *d;

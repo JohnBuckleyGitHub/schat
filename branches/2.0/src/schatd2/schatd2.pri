@@ -23,17 +23,13 @@ QT = core network sql
 TEMPLATE = app
 
 HEADERS = \
-    Core.h \
     debugstream.h \
-    events.h \
     NodeInit.h \
     Server.h \
     Worker.h \
     WorkerThread.h \
 
 SOURCES = \
-    Core.cpp \
-    events.cpp \
     main.cpp \
     NodeInit.cpp \
     Server.cpp \

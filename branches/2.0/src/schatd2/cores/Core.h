@@ -34,7 +34,7 @@ class Storage;
 class Worker;
 class WorkerThread;
 
-class Core : public QObject
+class SCHAT_EXPORT Core : public QObject
 {
   Q_OBJECT
 

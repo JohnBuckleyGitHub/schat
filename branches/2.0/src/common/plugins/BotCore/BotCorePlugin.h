@@ -31,9 +31,9 @@ class BotCorePlugin : public QObject, CoreApi, ClientApi
 
 public:
   QObject *init(ClientHelper *helper, FileLocations *locations);
-  QString id() const { return "BotCore"; }
-  QString name() const { return "Bot Core"; }
-  QStringList provides() const { return QStringList("BotCore"); }
+  QString id() const { return QLatin1String("BotCore"); }
+  QString name() const { return QLatin1String("Bot Core"); }
+  QStringList provides() const { return QStringList(id()); }
 
 private:
   BotCore *m_core;

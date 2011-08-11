@@ -36,8 +36,8 @@ BotPlugins::BotPlugins(QObject *parent)
 
 void BotPlugins::init()
 {
-  for (int i = 0; i < m_plugins.size(); ++i) {
-    ClientApi *client = qobject_cast<ClientApi *>(m_plugins.at(i));
+  for (int i = 0; i < m_sorted.size(); ++i) {
+    ClientApi *client = qobject_cast<ClientApi *>(m_plugins.value(m_sorted.at(i))->plugin());
     if (client)
       client->init(m_helper, m_locations);
   }
