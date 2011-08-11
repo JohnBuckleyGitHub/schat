@@ -23,7 +23,19 @@
 #include "net/packets/auth.h"
 #include "ServerUser.h"
 
-ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, quint64 socketId)
+ServerUser::ServerUser(const QByteArray &id)
+  : User()
+  , m_online(false)
+  , m_key(-1)
+  , m_socketId(0)
+{
+  SCHAT_DEBUG_STREAM("USER CREATED" << this);
+  setId(id);
+  addUser(id);
+}
+
+
+ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, const AuthRequestData &authRequestData, quint64 socketId)
   : User()
   , m_online(true)
   , m_session(session)
@@ -32,28 +44,10 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   , m_socketId(socketId)
 {
   setId(id);
-  setNick(authRequestData->nick);
-  setRawGender(authRequestData->gender);
-  setStatus(authRequestData->status);
+  setNick(authRequestData.nick);
+  setRawGender(authRequestData.gender);
+  setStatus(authRequestData.status);
 
-  addUser(m_id);
-}
-
-
-ServerUser::ServerUser(const QSqlQuery &query)
-  : User()
-  , m_online(false)
-  , m_key(query.value(IdColumn).toLongLong())
-  , m_normalNick(query.value(NormalNickColumn).toString())
-  , m_socketId(0)
-{
-  SCHAT_DEBUG_STREAM("new" << this);
-
-  setId(query.value(UserIdColumn).toByteArray());
-  setNick(query.value(NickColumn).toString());
-  setRawGender(query.value(GenderColumn).toInt());
-  setHost(query.value(HostColumn).toString());
-  setUserAgent(query.value(UserAgentColumn).toString());
   addUser(m_id);
 }
 

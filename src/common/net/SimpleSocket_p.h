@@ -69,7 +69,7 @@ public:
   quint64 rxSeq;                       ///< sequence полученных пакетов.
   quint64 tx;                          ///< Счётчик отправленных (transmit) байт.
   quint64 txSeq;                       ///< sequence отправленных пакетов.
-  SimpleSocket *q_ptr;                 ///< D указатель.
+  SimpleSocket *q_ptr;                 ///< Q указатель.
   TimerState timerState;               ///< Состояние таймера.
 };
 

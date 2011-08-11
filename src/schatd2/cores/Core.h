@@ -51,10 +51,10 @@ protected:
   void customEvent(QEvent *event);
 
 private:
-  bool broadcast();
-  bool route();
-  bool route(ServerChannel *channel);
-  bool route(ChatUser user);
+  virtual bool broadcast();
+  virtual bool route();
+  virtual bool route(ServerChannel *channel);
+  virtual bool route(ChatUser user);
   bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   bool send(ServerChannel *channel, const QByteArray &packet);
@@ -71,9 +71,11 @@ private:
   QList<quint64> echoFilter(const QList<quint64> &sockets);
   ServerChannel *channel(const QString &name, bool create = true);
 
+  // auth.
   bool readAuthRequest();
   bool readUserData();
-  int auth();
+  int auth(const AuthRequestData &data);
+  void rejectAuth(int error, int option = 2);
   void sendChannel(ServerChannel *channel, ChatUser user);
 
   // u2u.

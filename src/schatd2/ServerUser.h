@@ -30,18 +30,8 @@ class QSqlQuery;
 class SCHAT_EXPORT ServerUser : public User
 {
 public:
-  enum SqlColumns {
-    IdColumn,
-    UserIdColumn,
-    NickColumn,
-    NormalNickColumn,
-    GenderColumn,
-    HostColumn,
-    UserAgentColumn
-  };
-
-  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, AuthRequestData *authRequestData, quint64 socketId);
-  ServerUser(const QSqlQuery &query);
+  ServerUser(const QByteArray &id);
+  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, const AuthRequestData &authRequestData, quint64 socketId);
   ~ServerUser();
   inline bool isOnline() const { return m_online; }
   inline QByteArray session() const { return m_session; }
