@@ -21,10 +21,24 @@
 
 #include "cores/GenericCore.h"
 
+class AbstractClient;
+
 class SlaveNode : public GenericCore
 {
+  Q_OBJECT
+
 public:
-  explicit SlaveNode(QObject *parent = 0);
+  SlaveNode(QObject *parent = 0);
+  int start();
+
+private slots:
+  void uplinkAuth();
+  void uplinkReady();
+
+private:
+  void acceptAuth(ChatUser user);
+
+  AbstractClient *m_uplink;
 };
 
 #endif /* SLAVECORE_H_ */
