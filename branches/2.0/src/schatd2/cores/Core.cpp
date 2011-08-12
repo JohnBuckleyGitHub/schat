@@ -516,13 +516,25 @@ int Core::auth(const AuthRequestData &data)
 
   m_storage->add(user);
 
-  AuthReplyData reply(m_storage->serverData(), user.data());
-  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
+  acceptAuth(user);
 
   return 0;
 }
 
 
+void Core::acceptAuth(ChatUser user)
+{
+  AuthReplyData reply(m_storage->serverData(), user.data());
+  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
+}
+
+
+/*!
+ * Отклонение авторизации.
+ *
+ * \param error  Код ошибки \sa AuthReplyData::Error.
+ * \param option Действие над сокетом которое необходимо предпринять, по умолчанию разорвать соединение. \sa NewPacketsEvent::Option.
+ */
 void Core::rejectAuth(int error, int option)
 {
   QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();

@@ -50,7 +50,7 @@ public slots:
 protected:
   void customEvent(QEvent *event);
 
-private:
+protected:
   virtual bool broadcast();
   virtual bool route();
   virtual bool route(ServerChannel *channel);
@@ -75,7 +75,8 @@ private:
   bool readAuthRequest();
   bool readUserData();
   int auth(const AuthRequestData &data);
-  void rejectAuth(int error, int option = 2);
+  virtual void acceptAuth(ChatUser user);
+  virtual void rejectAuth(int error, int option = 2);
   void sendChannel(ServerChannel *channel, ChatUser user);
 
   // u2u.

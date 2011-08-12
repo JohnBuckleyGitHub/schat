@@ -17,6 +17,8 @@
 
 HEADERS += \
     Channel.h \
+    client/AbstractClient.h \
+    client/AbstractClient_p.h \
     client/ClientCmd.h \
     client/ClientHelper.h \
     client/SimpleClient.h \
@@ -43,6 +45,7 @@ HEADERS += \
 
 SOURCES += \
     Channel.cpp \
+    client/AbstractClient.cpp \
     client/ClientCmd.cpp \
     client/ClientHelper.cpp \
     client/SimpleClient.cpp \
