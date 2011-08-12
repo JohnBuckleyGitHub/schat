@@ -16,42 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef SLAVENODEPLUGIN_H_
+#define SLAVENODEPLUGIN_H_
 
-#include "cores/SlaveNode.h"
-#include "client/AbstractClient.h"
+#include "CoreApi.h"
+#include "NodeKernelApi.h"
 
-SlaveNode::SlaveNode(QObject *parent)
-  : GenericCore(parent)
+class MasterNodePlugin : public QObject, CoreApi, NodeKernelApi
 {
-  qDebug() << "SLAVE NODE";
+  Q_OBJECT
+  Q_INTERFACES(CoreApi NodeKernelApi)
 
-  m_uplink = new AbstractClient(this);
-  m_uplink->setNick("Slave");
+public:
+  Core *init();
+  QString id() const { return QLatin1String("MasterNode"); }
+  QString name() const { return QLatin1String("MasterNode Kernel"); }
+  QStringList provides() const { return QStringList(id()); }
+};
 
-  connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
-  connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
-}
-
-
-int SlaveNode::start()
-{
-  m_uplink->openUrl("schat://localhost:7668");
-  return 0;
-}
-
-
-void SlaveNode::uplinkAuth()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK AUTH";
-  qDebug() << "";
-}
-
-
-void SlaveNode::uplinkReady()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK READY";
-  qDebug() << "";
-}
+#endif /* SLAVENODEPLUGIN_H_ */

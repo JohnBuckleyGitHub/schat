@@ -22,6 +22,7 @@
 #include <QThread>
 
 #include "cores/Core.h"
+#include "cores/NodeAuth.h"
 #include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"
@@ -53,6 +54,7 @@ Core::~Core()
 {
   delete m_sendStream;
   delete m_readStream;
+  qDeleteAll(m_auth);
 }
 
 
@@ -435,27 +437,55 @@ ServerChannel *Core::channel(const QString &name, bool create)
  */
 bool Core::readAuthRequest()
 {
-  int error = auth(AuthRequestReader(m_reader).data);
+  qDebug() << "Core::readAuthRequest()";
 
-  if (error == AuthReplyData::NoError)
+  AuthRequestData data = AuthRequestReader(m_reader).data;
+  for (int i = 0; i < m_auth.size(); ++i) {
+    if (data.authType != m_auth.at(i)->type())
+      continue;
+
+    AuthResult result = m_auth.at(i)->auth(data);
+    if (result.action == AuthResult::Reject) {
+      rejectAuth(result);
+      return false;
+    }
+    else if (result.action == AuthResult::Accept)
+      acceptAuth(result);
+
     return true;
-
-  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();
-  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
-
-  switch (error) {
-    case AuthReplyData::AuthTypeNotImplemented:
-    case AuthReplyData::UserIdAlreadyUse:
-    case AuthReplyData::InvalidUser:
-      event->option = NewPacketsEvent::KillSocketOption;
-      break;
-
-    default:
-      break;
   }
 
-  QCoreApplication::postEvent(m_listener, event);
+  AuthResult result(AuthReplyData::AuthTypeNotImplemented);
+  rejectAuth(result);
+
   return false;
+}
+
+
+/*!
+ * Успешная авторизация пользователя.
+ */
+void Core::acceptAuth(const AuthResult &result)
+{
+  ChatUser user = m_storage->user(result.id);
+  if (!user)
+    return;
+
+  AuthReplyData reply(m_storage->serverData(), user.data());
+  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
+}
+
+
+/*!
+ * Отклонение авторизации.
+ */
+void Core::rejectAuth(const AuthResult &result)
+{
+  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), result.error)).data();
+  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
+  event->option = result.option;
+
+  QCoreApplication::postEvent(m_listener, event);
 }
 
 
@@ -485,71 +515,9 @@ bool Core::readUserData()
 
 
 /*!
- * Процедура авторизации пользователя, чтение пакета AuthRequestPacket.
- * \todo ! Эта функция страшно выглядит.
- */
-int Core::auth(const AuthRequestData &data)
-{
-//  AuthRequestData data = AuthRequestReader(m_reader).data;
-
-  SCHAT_DEBUG_STREAM(this << "auth" << data.authType << data.host << data.nick << data.userAgent << m_packetsEvent->address)
-
-  if (data.authType != AuthRequestData::Anonymous)
-    return AuthReplyData::AuthTypeNotImplemented;
-
-  QByteArray userId = m_storage->makeUserId(data.authType, data.uniqueId);
-  ChatUser user = m_storage->user(userId);
-
-  if (user)
-    return AuthReplyData::UserIdAlreadyUse;
-
-  QString normalNick = m_storage->normalize(data.nick);
-  if (m_storage->user(normalNick, false))
-    return AuthReplyData::NickAlreadyUse;
-
-  user = ChatUser(new ServerUser(m_storage->session(), normalNick, userId, data, m_packetsEvent->socket()));
-  if (!user->isValid())
-    return AuthReplyData::InvalidUser;
-
-  user->setUserAgent(data.userAgent);
-  user->setHost(m_packetsEvent->address.toString());
-
-  m_storage->add(user);
-
-  acceptAuth(user);
-
-  return 0;
-}
-
-
-void Core::acceptAuth(ChatUser user)
-{
-  AuthReplyData reply(m_storage->serverData(), user.data());
-  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
-}
-
-
-/*!
- * Отклонение авторизации.
- *
- * \param error  Код ошибки \sa AuthReplyData::Error.
- * \param option Действие над сокетом которое необходимо предпринять, по умолчанию разорвать соединение. \sa NewPacketsEvent::Option.
- */
-void Core::rejectAuth(int error, int option)
-{
-  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), error)).data();
-  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
-  event->option = option;
-
-  QCoreApplication::postEvent(m_listener, event);
-}
-
-
-/*!
  * Отправка данных пользователей в канале.
- * - Первым пакетом будет команда "BSCh" (Begin Sync Channel).
- * - Затем идут данные пользователей в виде пакетов UserData.
- * - Завершающий пакет, это команда "ESCh" (End Sync Channel).
+ * - Данные пользователей в виде пакетов UserData.
+ * - Завершающий пакет, это команда "synced".
  *
  * \param channel Канал, из которого будут отправлены данные пользователей.
  * \param user    Пользователь, которому будут отравлены данные.

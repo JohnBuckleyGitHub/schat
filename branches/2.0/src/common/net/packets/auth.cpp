@@ -148,4 +148,7 @@ AuthRequestReader::AuthRequestReader(PacketReader *reader)
   data.host = reader->text();
   data.nick = reader->text();
   data.userAgent = reader->text();
+
+  if (data.authType == AuthRequestData::SlaveNode)
+    data.privateId = reader->text();
 }

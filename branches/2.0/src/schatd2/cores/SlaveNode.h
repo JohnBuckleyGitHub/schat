@@ -36,8 +36,6 @@ private slots:
   void uplinkReady();
 
 private:
-  void acceptAuth(ChatUser user);
-
   AbstractClient *m_uplink;
 };
 

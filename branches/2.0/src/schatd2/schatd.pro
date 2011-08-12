@@ -26,8 +26,10 @@ DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = schatd.rc
 
 HEADERS = \
+    cores/AnonymousAuth.h \
     cores/Core.h \
     cores/GenericCore.h \
+    cores/NodeAuth.h \
     events.h \
     DataBase.h \
     ServerChannel.h \
@@ -35,6 +37,7 @@ HEADERS = \
     Storage.h \
 
 SOURCES = \
+    cores/AnonymousAuth.cpp \
     cores/Core.cpp \
     cores/GenericCore.cpp \
     events.cpp \
