@@ -16,42 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <qplugin.h>
 
-#include "cores/SlaveNode.h"
-#include "client/AbstractClient.h"
+#include "cores/MasterNode.h"
+#include "MasterNodePlugin.h"
 
-SlaveNode::SlaveNode(QObject *parent)
-  : GenericCore(parent)
+Core *MasterNodePlugin::init()
 {
-  qDebug() << "SLAVE NODE";
-
-  m_uplink = new AbstractClient(this);
-  m_uplink->setNick("Slave");
-
-  connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
-  connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
+  return new MasterNode(this);
 }
 
-
-int SlaveNode::start()
-{
-  m_uplink->openUrl("schat://localhost:7668");
-  return 0;
-}
-
-
-void SlaveNode::uplinkAuth()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK AUTH";
-  qDebug() << "";
-}
-
-
-void SlaveNode::uplinkReady()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK READY";
-  qDebug() << "";
-}
+Q_EXPORT_PLUGIN2(MasterNode, MasterNodePlugin);

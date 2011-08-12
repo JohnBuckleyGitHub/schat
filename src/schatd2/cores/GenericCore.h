@@ -21,6 +21,8 @@
 
 #include "cores/Core.h"
 
+class AuthRequestData;
+
 class SCHAT_EXPORT GenericCore : public Core
 {
 public:

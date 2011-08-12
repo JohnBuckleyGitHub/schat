@@ -30,7 +30,7 @@ class SlaveNodePlugin : public QObject, CoreApi, NodeKernelApi
 public:
   Core *init();
   QString id() const { return QLatin1String("SlaveNode"); }
-  QString name() const { return QLatin1String("Slave Node Kernel"); }
+  QString name() const { return QLatin1String("SlaveNode Kernel"); }
   QStringList provides() const { return QStringList(id()); }
 };
 

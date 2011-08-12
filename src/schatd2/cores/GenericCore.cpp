@@ -16,11 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "debugstream.h"
+#include <QCoreApplication>
+
+#include "cores/AnonymousAuth.h"
 #include "cores/GenericCore.h"
+#include "debugstream.h"
+#include "net/packets/auth.h"
+#include "Storage.h"
+#include "events.h"
+
 
 GenericCore::GenericCore(QObject *parent)
   : Core(parent)
 {
   SCHAT_DEBUG_STREAM(this << "GENERIC CORE");
+
+  addAuth(new AnonymousAuth(this));
 }

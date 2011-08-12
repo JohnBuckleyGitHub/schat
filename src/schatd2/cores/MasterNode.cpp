@@ -18,40 +18,11 @@
 
 #include <QDebug>
 
-#include "cores/SlaveNode.h"
-#include "client/AbstractClient.h"
+#include "cores/MasterNode.h"
 
-SlaveNode::SlaveNode(QObject *parent)
+MasterNode::MasterNode(QObject *parent)
   : GenericCore(parent)
 {
-  qDebug() << "SLAVE NODE";
+  qDebug() << "MASTER NODE";
 
-  m_uplink = new AbstractClient(this);
-  m_uplink->setNick("Slave");
-
-  connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
-  connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
-}
-
-
-int SlaveNode::start()
-{
-  m_uplink->openUrl("schat://localhost:7668");
-  return 0;
-}
-
-
-void SlaveNode::uplinkAuth()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK AUTH";
-  qDebug() << "";
-}
-
-
-void SlaveNode::uplinkReady()
-{
-  qDebug() << "";
-  qDebug() << "UPLINK READY";
-  qDebug() << "";
 }

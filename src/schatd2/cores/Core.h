@@ -25,8 +25,10 @@
 
 #include "ServerUser.h"
 
+class AuthResult;
 class MessageData;
 class NewPacketsEvent;
+class NodeAuth;
 class PacketReader;
 class ServerChannel;
 class SocketReleaseEvent;
@@ -41,6 +43,8 @@ class SCHAT_EXPORT Core : public QObject
 public:
   Core(QObject *parent = 0);
   ~Core();
+  inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
+  inline void addAuth(NodeAuth *auth) { m_auth.append(auth); }
   virtual int start() { return 0; }
   virtual void quit() {}
 
@@ -71,12 +75,11 @@ protected:
   QList<quint64> echoFilter(const QList<quint64> &sockets);
   ServerChannel *channel(const QString &name, bool create = true);
 
-  // auth.
-  bool readAuthRequest();
+  // Авторизация.
   bool readUserData();
-  int auth(const AuthRequestData &data);
-  virtual void acceptAuth(ChatUser user);
-  virtual void rejectAuth(int error, int option = 2);
+  virtual bool readAuthRequest();
+  virtual void acceptAuth(const AuthResult &result);
+  virtual void rejectAuth(const AuthResult &result);
   void sendChannel(ServerChannel *channel, ChatUser user);
 
   // u2u.
@@ -101,6 +104,7 @@ protected:
   QDataStream *m_readStream;          ///< Поток чтения виртуальных пакетов.
   QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
   qint64 m_timestamp;                 ///< Отметка времени.
+  QList<NodeAuth *> m_auth;           ///< Модули авторизации.
   QObject *m_listener;                ///< Слушатель сообщений.
   Storage *m_storage;                 ///< Хранилище данных.
 };

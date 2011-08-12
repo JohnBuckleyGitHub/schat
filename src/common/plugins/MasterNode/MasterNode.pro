@@ -15,10 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/BotCore \
-    common/plugins/BotEcho \
-    common/plugins/History \
-    common/plugins/DebugClient \
-    common/plugins/MasterNode \
-    common/plugins/SlaveNode \
+SCHAT_DAEMON_LIB = 1
+QT = core network
+
+HEADERS  = \
+   cores/MasterNode.h \
+   MasterNodePlugin.h \
+
+SOURCES  = \
+   cores/MasterNode.cpp \
+   MasterNodePlugin.cpp \
+
+include(../plugins.pri)
