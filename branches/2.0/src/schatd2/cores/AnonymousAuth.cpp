@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "events.h"
@@ -50,6 +52,7 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
   user->setHost(m_core->packetsEvent()->address.toString());
   storage->add(user); // FIXME не происходит обновление информации о пользователе.
 
+  qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << user->userAgent();
   return AuthResult(userId);
 }
 

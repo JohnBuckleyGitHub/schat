@@ -105,57 +105,6 @@ bool AbstractClientPrivate::readAuthReply()
 
 
 /*!
- * Очистка данных состояния клиента.
- */
-void AbstractClientPrivate::clearClient()
-{
-  user->remove(SimpleID::ChannelListId);
-  user->remove(SimpleID::TalksListId);
-
-  users.clear();
-  users.insert(user->id(), user);
-
-  qDeleteAll(channels);
-  channels.clear();
-}
-
-
-/*!
- * Восстановление состояния клиента после повторного подключения к предыдущему серверу.
- */
-void AbstractClientPrivate::restore()
-{
-  Q_Q(AbstractClient);
-  q->lock();
-
-  /// Происходит восстановление приватных разговоров.
-  if (user->count(SimpleID::TalksListId)) {
-    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), QLatin1String("add"), QLatin1String(""));
-    MessageWriter writer(sendStream, data);
-    writer.putId(user->ids(SimpleID::TalksListId));
-    q->send(writer.data());
-  }
-
-  /// Клиент заново входит в ранее открытие каналы.
-  if (!channels.isEmpty()) {
-    MessageData data(userId, QByteArray(), QLatin1String("join"), QLatin1String(""));
-    data.options |= MessageData::TextOption;
-
-    QHashIterator<QByteArray, Channel*> i(channels);
-    while (i.hasNext()) {
-      i.next();
-      data.destId = i.key();
-      data.text = i.value()->name();
-      q->send(MessageWriter(sendStream, data).data());
-    }
-  }
-
-  clearClient();
-  q->unlock();
-}
-
-
-/*!
  * Установка состояния клиента.
  */
 void AbstractClientPrivate::setClientState(AbstractClient::ClientState state)
@@ -206,16 +155,8 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
 
   setClientState(AbstractClient::ClientOnline);
 
-  Q_Q(AbstractClient);
-
-  if (!sameServer) {
-    clearClient();
-
-    if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
-      MessageData data(user->id(), serverData->channelId(), "join", "");
-      q->send(MessageWriter(sendStream, data).data());
-    }
-  }
+  if (!sameServer)
+    setup();
   else
     restore();
 }

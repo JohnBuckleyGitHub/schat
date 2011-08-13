@@ -39,8 +39,8 @@ public:
   // Установка и завершение соединения.
   bool readAuthReply();
   QString mangleNick();
-  void clearClient();
-  void restore();
+  virtual void restore() {}
+  virtual void setup() {}
   void setClientState(AbstractClient::ClientState state);
   void setServerData(const ServerData &data);
 

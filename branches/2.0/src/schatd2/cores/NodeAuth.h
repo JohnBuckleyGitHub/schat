@@ -28,9 +28,10 @@ class AuthResult
 {
 public:
   enum Action {
-    Reject,
-    Accept,
-    Nothing
+    Reject,  ///< Пользователь не авторизирован.
+    Accept,  ///< Пользователь авторизирован.
+    Pending, ///< Авторизация отложена.
+    Nothing, ///< Действие не требуется.
   };
 
   AuthResult()

@@ -450,10 +450,12 @@ bool Core::readAuthRequest()
       rejectAuth(result);
       return false;
     }
-    else if (result.action == AuthResult::Accept)
+    else if (result.action == AuthResult::Accept) {
       acceptAuth(result);
-
-    return true;
+      return true;
+    }
+    else if (result.action == AuthResult::Pending)
+      return true;
   }
 
   AuthResult result(AuthReplyData::AuthTypeNotImplemented);

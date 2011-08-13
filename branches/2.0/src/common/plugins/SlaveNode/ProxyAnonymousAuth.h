@@ -16,27 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLAVENODE_H_
-#define SLAVENODE_H_
+#ifndef PROXYANONYMOUSAUTH_H_
+#define PROXYANONYMOUSAUTH_H_
 
-#include "cores/GenericCore.h"
+#include "cores/AnonymousAuth.h"
 
-class AbstractClient;
+class SlaveNode;
 
-class SlaveNode : public GenericCore
+class ProxyAnonymousAuth : public AnonymousAuth
 {
-  Q_OBJECT
-
 public:
-  SlaveNode(QObject *parent = 0);
-  int start();
+  ProxyAnonymousAuth(SlaveNode *node);
+  AuthResult auth(const AuthRequestData &data);
 
-private slots:
-  void uplinkAuth();
-  void uplinkReady();
-
-private:
-  AbstractClient *m_uplink;
+protected:
+  SlaveNode *m_node;
 };
 
-#endif /* SLAVECORE_H_ */
+#endif /* PROXYANONYMOUSAUTH_H_ */
