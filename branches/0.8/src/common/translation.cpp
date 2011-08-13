@@ -109,7 +109,9 @@ void Translation::setSearch(const QStringList &search)
 {
   m_search = search;
   m_search.removeAll("");
+# if QT_VERSION >= 0x040500
   m_search.removeDuplicates();
+# endif
   m_search.append(QLatin1String(":/translations"));
 }
 
