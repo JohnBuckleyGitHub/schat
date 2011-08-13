@@ -18,11 +18,27 @@
 
 #include <QDebug>
 
-#include "cores/MasterNode.h"
+#include "net/packets/auth.h"
+#include "SlaveAuth.h"
+#include "Storage.h"
 
-MasterNode::MasterNode(QObject *parent)
-  : GenericCore(parent)
+SlaveAuth::SlaveAuth(Core *core)
+  : AnonymousAuth(core)
 {
-  qDebug() << "MASTER NODE";
+}
 
+
+AuthResult SlaveAuth::auth(const AuthRequestData &data)
+{
+  qDebug() << "SLAVE AUTH";
+  if (Storage::i()->serverData()->privateId() != data.privateId)
+    return AuthResult(AuthReplyData::Forbidden);
+
+  return AnonymousAuth::auth(data);
+}
+
+
+int SlaveAuth::type() const
+{
+  return AuthRequestData::SlaveNode;
 }

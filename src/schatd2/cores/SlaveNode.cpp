@@ -18,8 +18,11 @@
 
 #include <QDebug>
 
-#include "cores/SlaveNode.h"
 #include "client/AbstractClient.h"
+#include "cores/SlaveNode.h"
+#include "net/packets/auth.h"
+#include "Settings.h"
+#include "Storage.h"
 
 SlaveNode::SlaveNode(QObject *parent)
   : GenericCore(parent)
@@ -27,7 +30,7 @@ SlaveNode::SlaveNode(QObject *parent)
   qDebug() << "SLAVE NODE";
 
   m_uplink = new AbstractClient(this);
-  m_uplink->setNick("Slave");
+  m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
 
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
@@ -46,6 +49,11 @@ void SlaveNode::uplinkAuth()
   qDebug() << "";
   qDebug() << "UPLINK AUTH";
   qDebug() << "";
+
+  AuthRequestData data(AuthRequestData::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
+  data.uniqueId = m_uplink->uniqueId();
+  data.privateId = m_storage->serverData()->privateId();
+  m_uplink->send(AuthRequestWriter(m_uplink->sendStream(), data).data());
 }
 
 

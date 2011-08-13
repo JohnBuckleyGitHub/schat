@@ -40,13 +40,14 @@ public:
   /// Коды ошибок.
   enum Error {
     NoError = 0,
-    AuthTypeNotImplemented = 40, ///< Выбранный тип авторизации не реализован.
-    AuthTypeNotAllowed = 41,     ///< Выбранный тип авторизации запрещён на сервере.
-    UserIdAlreadyUse = 42,       ///< Идентификатор пользователя уже используется.
-    NickAlreadyUse = 43,         ///< Ник уже используется.
-    InvalidAuthRequest = 44,     ///< Некорректный пакет AuthRequest.
-    InvalidUser = 45,            ///< Некорректные данные пользователя.
-    InternalServerError = 46     ///< Внутренняя ошибка сервера.
+    Forbidden = 40,               ///< Доступ запрещён.
+    AuthTypeNotAllowed = 41,      ///< Выбранный тип авторизации запрещён на сервере.
+    UserIdAlreadyUse = 42,        ///< Идентификатор пользователя уже используется.
+    NickAlreadyUse = 43,          ///< Ник уже используется.
+    BadAuthRequest = 44,          ///< Некорректный пакет AuthRequest.
+    BadUser = 45,                 ///< Некорректные данные пользователя.
+    InternalServerError = 100,    ///< Внутренняя ошибка сервера.
+    AuthTypeNotImplemented = 101, ///< Выбранный тип авторизации не реализован.
   };
 
   AuthReplyData()

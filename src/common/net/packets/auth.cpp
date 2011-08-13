@@ -132,6 +132,9 @@ AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData 
   put(data.host);
   put(data.nick);
   put(data.userAgent);
+
+  if (data.authType == AuthRequestData::SlaveNode)
+    put(data.privateId);
 }
 
 
