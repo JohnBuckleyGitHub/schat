@@ -24,6 +24,7 @@ QT = core network sql
 TARGET = schatd
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = schatd.rc
+DEFINES += SCHAT_DAEMON
 
 HEADERS = \
     cores/AnonymousAuth.h \

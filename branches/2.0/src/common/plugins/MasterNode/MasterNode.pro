@@ -19,11 +19,13 @@ SCHAT_DAEMON_LIB = 1
 QT = core network
 
 HEADERS  = \
-   cores/MasterNode.h \
+   MasterNode.h \
    MasterNodePlugin.h \
+   SlaveAuth.h \
 
 SOURCES  = \
-   cores/MasterNode.cpp \
+   MasterNode.cpp \
    MasterNodePlugin.cpp \
+   SlaveAuth.cpp \
 
 include(../plugins.pri)

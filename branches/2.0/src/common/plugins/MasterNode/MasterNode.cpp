@@ -16,18 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ANONYMOUSAUTH_H_
-#define ANONYMOUSAUTH_H_
+#include <QDebug>
 
-#include "cores/NodeAuth.h"
-#include "schat.h"
+#include "MasterNode.h"
+#include "SlaveAuth.h"
 
-class SCHAT_EXPORT AnonymousAuth : public NodeAuth
+MasterNode::MasterNode(QObject *parent)
+  : GenericCore(parent)
 {
-public:
-  AnonymousAuth(Core *core);
-  AuthResult auth(const AuthRequestData &data);
-  int type() const;
-};
-
-#endif /* ANONYMOUSAUTH_H_ */
+  qDebug() << "MASTER NODE";
+  addAuth(new SlaveAuth(this));
+}

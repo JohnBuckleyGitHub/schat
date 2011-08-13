@@ -31,6 +31,7 @@ class NewPacketsEvent;
 class NodeAuth;
 class PacketReader;
 class ServerChannel;
+class Settings;
 class SocketReleaseEvent;
 class Storage;
 class Worker;
@@ -106,6 +107,7 @@ protected:
   qint64 m_timestamp;                 ///< Отметка времени.
   QList<NodeAuth *> m_auth;           ///< Модули авторизации.
   QObject *m_listener;                ///< Слушатель сообщений.
+  Settings *m_settings;               ///< Настройки.
   Storage *m_storage;                 ///< Хранилище данных.
 };
 

@@ -16,18 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ANONYMOUSAUTH_H_
-#define ANONYMOUSAUTH_H_
+#ifndef SLAVEAUTH_H_
+#define SLAVEAUTH_H_
 
-#include "cores/NodeAuth.h"
-#include "schat.h"
+#include "cores/AnonymousAuth.h"
 
-class SCHAT_EXPORT AnonymousAuth : public NodeAuth
+class SlaveAuth : public AnonymousAuth
 {
 public:
-  AnonymousAuth(Core *core);
+  SlaveAuth(Core *core);
   AuthResult auth(const AuthRequestData &data);
   int type() const;
 };
 
-#endif /* ANONYMOUSAUTH_H_ */
+#endif /* SLAVEAUTH_H_ */

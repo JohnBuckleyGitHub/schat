@@ -44,7 +44,7 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 
   user = ChatUser(new ServerUser(storage->session(), normalNick, userId, data, m_core->packetsEvent()->socket()));
   if (!user->isValid())
-    return AuthResult(AuthReplyData::InvalidUser);
+    return AuthResult(AuthReplyData::BadUser);
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
