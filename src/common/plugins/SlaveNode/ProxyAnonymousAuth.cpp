@@ -16,27 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SIMPLECLIENT_P_H_
-#define SIMPLECLIENT_P_H_
+#include "client/AbstractClient.h"
+#include "ProxyAnonymousAuth.h"
+#include "SlaveNode.h"
 
-#include "client/AbstractClient_p.h"
-#include "client/SimpleClient.h"
-
-class PacketReader;
-class SyncChannelCache;
-
-
-class SimpleClientPrivate : public AbstractClientPrivate
+ProxyAnonymousAuth::ProxyAnonymousAuth(SlaveNode *node)
+  : AnonymousAuth(node)
+  , m_node(node)
 {
-  Q_DECLARE_PUBLIC(SimpleClient);
+}
 
-public:
-  SimpleClientPrivate();
-  virtual ~SimpleClientPrivate();
 
-  void clearClient();
-  void restore();
-  void setup();
-};
-
-#endif /* SIMPLECLIENT_P_H_ */
+AuthResult ProxyAnonymousAuth::auth(const AuthRequestData &data)
+{
+  if (m_node->mode() == SlaveNode::ProxyMode) {
+    m_node->uplink()->send(m_node->readBuffer());
+  }
+  return AnonymousAuth::auth(data);
+}

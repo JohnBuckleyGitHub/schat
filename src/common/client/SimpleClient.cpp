@@ -18,9 +18,11 @@
 
 #include "debugstream.h"
 
+#include "Channel.h"
 #include "client/SimpleClient.h"
 #include "client/SimpleClient_p.h"
 #include "net/packets/auth.h"
+#include "net/packets/message.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
 {
@@ -29,6 +31,69 @@ SimpleClientPrivate::SimpleClientPrivate()
 
 SimpleClientPrivate::~SimpleClientPrivate()
 {
+}
+
+
+/*!
+ * Очистка данных состояния клиента.
+ */
+void SimpleClientPrivate::clearClient()
+{
+  user->remove(SimpleID::ChannelListId);
+  user->remove(SimpleID::TalksListId);
+
+  users.clear();
+  users.insert(user->id(), user);
+
+  qDeleteAll(channels);
+  channels.clear();
+}
+
+
+/*!
+ * Восстановление состояния клиента после повторного подключения к предыдущему серверу.
+ */
+void SimpleClientPrivate::restore()
+{
+  Q_Q(SimpleClient);
+  q->lock();
+
+  /// Происходит восстановление приватных разговоров.
+  if (user->count(SimpleID::TalksListId)) {
+    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), QLatin1String("add"), QString());
+    MessageWriter writer(sendStream, data);
+    writer.putId(user->ids(SimpleID::TalksListId));
+    q->send(writer.data());
+  }
+
+  /// Клиент заново входит в ранее открытие каналы.
+  if (!channels.isEmpty()) {
+    MessageData data(userId, QByteArray(), QLatin1String("join"), QString());
+    data.options |= MessageData::TextOption;
+
+    QHashIterator<QByteArray, Channel*> i(channels);
+    while (i.hasNext()) {
+      i.next();
+      data.destId = i.key();
+      data.text = i.value()->name();
+      q->send(MessageWriter(sendStream, data).data());
+    }
+  }
+
+  clearClient();
+  q->unlock();
+}
+
+
+void SimpleClientPrivate::setup()
+{
+  clearClient();
+
+  Q_Q(SimpleClient);
+  if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
+    MessageData data(user->id(), serverData->channelId(), QLatin1String("join"), QString());
+    q->send(MessageWriter(sendStream, data).data());
+  }
 }
 
 

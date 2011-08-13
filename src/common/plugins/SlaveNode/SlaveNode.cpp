@@ -19,15 +19,19 @@
 #include <QDebug>
 
 #include "client/AbstractClient.h"
-#include "cores/SlaveNode.h"
+#include "SlaveNode.h"
 #include "net/packets/auth.h"
 #include "Settings.h"
 #include "Storage.h"
+#include "ProxyAnonymousAuth.h"
 
 SlaveNode::SlaveNode(QObject *parent)
   : GenericCore(parent)
+  , m_mode(FailbackMode)
 {
   qDebug() << "SLAVE NODE";
+
+  m_auth.prepend(new ProxyAnonymousAuth(this));
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
@@ -39,17 +43,16 @@ SlaveNode::SlaveNode(QObject *parent)
 
 int SlaveNode::start()
 {
-  m_uplink->openUrl("schat://localhost:7668");
+  m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
 }
 
 
+/*!
+ * Отправка запроса авторизации.
+ */
 void SlaveNode::uplinkAuth()
 {
-  qDebug() << "";
-  qDebug() << "UPLINK AUTH";
-  qDebug() << "";
-
   AuthRequestData data(AuthRequestData::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
   data.uniqueId = m_uplink->uniqueId();
   data.privateId = m_storage->serverData()->privateId();
@@ -59,7 +62,14 @@ void SlaveNode::uplinkAuth()
 
 void SlaveNode::uplinkReady()
 {
+  setMode(ProxyMode);
   qDebug() << "";
   qDebug() << "UPLINK READY";
   qDebug() << "";
+}
+
+
+void SlaveNode::setMode(Mode mode)
+{
+  m_mode = mode;
 }

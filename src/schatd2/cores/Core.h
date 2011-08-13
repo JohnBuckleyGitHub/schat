@@ -45,6 +45,7 @@ public:
   Core(QObject *parent = 0);
   ~Core();
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
+  inline QByteArray readBuffer() const { return m_readBuffer; }
   inline void addAuth(NodeAuth *auth) { m_auth.append(auth); }
   virtual int start() { return 0; }
   virtual void quit() {}
