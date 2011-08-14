@@ -255,7 +255,6 @@ QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
 
 /*!
  * Добавление нового канала.
- * Первый постоянный канал станет основным каналом сервера.
  */
 ServerChannel* Storage::addChannel(const QString &name, bool permanent)
 {

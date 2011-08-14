@@ -148,7 +148,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("join") && cmd.isBody() && cmd.body().size() >= 3) {
-    MessageData data(QByteArray(), QByteArray(), command, cmd.body());
+    MessageData data(UserUtils::userId(), QByteArray(), command, cmd.body());
     m_client->send(data);
     return;
   }

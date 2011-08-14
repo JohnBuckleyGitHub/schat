@@ -359,12 +359,12 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
 
   user->addId(SimpleID::ChannelListId, channel->id());
 
-  ChannelWriter writer(m_sendStream, channel);
+  ChannelWriter writer(m_sendStream, channel, user->id());
   send(user, writer.data());
 
   if (channel->userCount() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id());
-    send(channel, writer.data());
+    send(channel, writer.data()); // Отправка всем пользователям в канале данных нового пользователя.
     sendChannel(channel, user);
   }
 
@@ -524,11 +524,11 @@ void Core::sendChannel(ServerChannel *channel, ChatUser user)
 
     u->addUser(user->id());
     if (!user->isUser(u->id()))
-      packets.append(UserWriter(m_sendStream, u.data(), channelId).data());
+      packets.append(UserWriter(m_sendStream, u.data(), user->id(), channelId).data());
   }
 
   user->addUsers(users);
-  MessageData message(user->id(), channelId, QLatin1String("synced"), QLatin1String(""));
+  MessageData message(channelId, user->id(), QLatin1String("synced"), QString());
   packets.append(MessageWriter(m_sendStream, message).data());
 
   send(user, packets);

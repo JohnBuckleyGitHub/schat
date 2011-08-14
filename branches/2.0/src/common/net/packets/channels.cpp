@@ -20,8 +20,8 @@
 #include "net/PacketReader.h"
 #include "net/packets/channels.h"
 
-ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel)
-  : PacketWriter(stream, Protocol::ChannelPacket)
+ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel, const QByteArray &dest)
+  : PacketWriter(stream, Protocol::ChannelPacket, channel->id(), dest)
 {
   putId(channel->id());
   put(channel->name());

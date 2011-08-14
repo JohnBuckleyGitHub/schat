@@ -277,7 +277,7 @@ bool AbstractClientPrivate::command()
   }
 
   if (command == QLatin1String("synced")) {
-    endSyncChannel(reader->dest());
+    endSyncChannel(reader->sender());
     return true;
   }
 
@@ -346,11 +346,11 @@ bool AbstractClientPrivate::readUserData()
 {
   SCHAT_DEBUG_STREAM(this << "readUserData()")
 
-  QByteArray dest = reader->dest();
-  int type = SimpleID::typeOf(dest);
+  QByteArray channelId = reader->channel();
+  if (SimpleID::typeOf(reader->dest()) == SimpleID::ChannelId)
+    channelId = reader->dest();
 
-  /// Если идентификатор назначения канал, то это канал должен быть известен клиенту.
-  if (type == SimpleID::ChannelId && !channels.contains(dest))
+  if (!channelId.isEmpty() && !channels.contains(channelId))
     return false;
 
   /// Идентификатор отправителя не может быть пустым.
@@ -377,16 +377,16 @@ bool AbstractClientPrivate::readUserData()
   }
 
   /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
-  if (type == SimpleID::ChannelId) {
-    Channel *channel = channels.value(dest);
+  if (!channelId.isEmpty()) {
+    Channel *channel = channels.value(channelId);
     if (!channel)
       return false;
 
-    user->addId(SimpleID::ChannelListId, dest);
+    user->addId(SimpleID::ChannelListId, channelId);
     if (channel->addUser(id) || channel->isSynced())
-      emit(q->join(dest, id));
+      emit(q->join(channelId, id));
   }
-  else if (type == SimpleID::UserId) {
+  else if (SimpleID::typeOf(this->reader->dest()) == SimpleID::UserId) {
     this->user->addId(SimpleID::TalksListId, id);
   }
 

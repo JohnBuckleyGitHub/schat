@@ -50,7 +50,10 @@ private slots:
 private:
   void setMode(Mode mode);
   void uplinkAuthReply();
+  void uplinkReadChannel();
   void uplinkRoute();
+  void uplinkRouteChannel(const QByteArray &id);
+  void uplinkRouteUser(const QByteArray &id);
 
   AbstractClient *m_uplink; ///< Подключение к корневому серверу.
   Mode m_mode;              ///< Режим работы сервера.

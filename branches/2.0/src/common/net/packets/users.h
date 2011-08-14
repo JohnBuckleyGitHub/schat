@@ -39,6 +39,7 @@ class SCHAT_EXPORT UserWriter : public PacketWriter
 {
 public:
   UserWriter(QDataStream *stream, User *user);
+  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, const QByteArray &channelId, int options = 0);
   UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options = 0);
 
 private:

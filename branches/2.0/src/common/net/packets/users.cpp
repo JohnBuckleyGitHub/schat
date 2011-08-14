@@ -37,6 +37,22 @@ UserWriter::UserWriter(QDataStream *stream, User *user)
 /*!
  * Основной конструктор.
  *
+ * \param stream    ///< Поток записи.
+ * \param user      ///< Пользователь.
+ * \param destId    ///< Идентификатор назначения.
+ * \param channelId ///< Идентификатор канала.
+ * \param options   ///< Опции.
+ */
+UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId, const QByteArray &channelId, int options)
+  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), destId, channelId)
+{
+  write(user, options);
+}
+
+
+/*!
+ * Основной конструктор.
+ *
  * \param stream  ///< Поток записи.
  * \param user    ///< Пользователь.
  * \param destId  ///< Идентификатор назначения.
