@@ -22,7 +22,9 @@
 #include "events.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
+#include "net/packets/channels.h"
 #include "ProxyAnonymousAuth.h"
+#include "ServerChannel.h"
 #include "Settings.h"
 #include "SlaveNode.h"
 #include "Storage.h"
@@ -53,12 +55,16 @@ int SlaveNode::start()
 
 void SlaveNode::readPacket(int type)
 {
-  m_uplink->send(m_readBuffer);
+  qDebug() << "SlaveNode::readPacket()" << type;
+  if (mode() == ProxyMode)
+    m_uplink->send(m_readBuffer);
+  else
+    GenericCore::readPacket(type);
 }
 
 
 /*!
- * Отправка запроса авторизации.
+ * Отправка запроса авторизации на корневой сервер.
  */
 void SlaveNode::uplinkAuth()
 {
@@ -73,10 +79,14 @@ void SlaveNode::uplinkPacketReady(int type)
 {
   qDebug() << "";
   qDebug() << "UPLINK PACKET READY" << type;
+  qDebug() << m_uplink->reader()->sender().toHex();
+  qDebug() << m_uplink->reader()->dest().toHex();
   qDebug() << "";
 
   if (type == Protocol::AuthReplyPacket)
     uplinkAuthReply();
+  else if (type == Protocol::ChannelPacket)
+    uplinkReadChannel();
   else
     uplinkRoute();
 }
@@ -122,8 +132,63 @@ void SlaveNode::uplinkAuthReply()
 }
 
 
+/*!
+ * Получение ответа от корневого сервера на запрос подключения к каналу.
+ */
+void SlaveNode::uplinkReadChannel()
+{
+  qDebug() << "SlaveNode::uplinkReadChannel()";
+  ChatUser user = m_storage->user(m_uplink->reader()->dest());
+  if (!user)
+    return;
+
+  ChannelReader reader(m_uplink->reader());
+  if (!reader.channel->isValid())
+    return;
+
+  ServerChannel *channel = this->channel(reader.channel->name());
+  if (!channel)
+    return;
+
+  if (channel->id() != reader.channel->id())
+    return;
+
+  channel->addUser(user->id());
+  user->addId(SimpleID::ChannelListId, channel->id());
+
+  uplinkRoute();
+}
+
+
 void SlaveNode::uplinkRoute()
 {
-  qDebug() << m_uplink->reader()->sender().toHex();
-  qDebug() << m_uplink->reader()->dest().toHex();
+  int type = SimpleID::typeOf(m_uplink->reader()->dest());
+
+  if (type == SimpleID::UserId)
+    uplinkRouteUser(m_uplink->reader()->dest());
+  else if (type == SimpleID::ChannelId)
+    uplinkRouteChannel(m_uplink->reader()->dest());
+}
+
+
+
+void SlaveNode::uplinkRouteChannel(const QByteArray &id)
+{
+  ServerChannel *channel = m_storage->channel(id);
+  if (!channel)
+    return;
+
+  m_timestamp = m_uplink->timestamp();
+  send(m_storage->socketsFromChannel(channel), m_uplink->readBuffer());
+}
+
+
+void SlaveNode::uplinkRouteUser(const QByteArray &id)
+{
+  ChatUser user = m_storage->user(id);
+  if (!user)
+    return;
+
+  m_timestamp = m_uplink->timestamp();
+  send(user, m_uplink->readBuffer());
 }

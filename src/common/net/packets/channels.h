@@ -19,9 +19,8 @@
 #ifndef CHANNELS_H_
 #define CHANNELS_H_
 
+#include "Channel.h"
 #include "net/PacketWriter.h"
-
-class Channel;
 
 /*!
  * Формирует пакет Protocol::ChannelPacket.
@@ -35,7 +34,7 @@ class Channel;
 class SCHAT_EXPORT ChannelWriter : public PacketWriter
 {
 public:
-  ChannelWriter(QDataStream *stream, Channel *channel);
+  ChannelWriter(QDataStream *stream, Channel *channel, const QByteArray &dest);
 };
 
 
@@ -47,7 +46,7 @@ class SCHAT_EXPORT ChannelReader
 public:
   ChannelReader(PacketReader *reader);
 
-  Channel *channel;
+  Channel *channel; // FIXME Не создавать канал в куче или гарантировать корректное удаление.
 };
 
 #endif /* CHANNELS_H_ */

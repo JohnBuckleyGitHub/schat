@@ -37,21 +37,25 @@ GenericCore::GenericCore(QObject *parent)
 
 bool GenericCore::checkPacket()
 {
+//  qDebug() << "GenericCore::checkPacket()";
+
   if (m_reader->sender().isEmpty())
     return false;
 
+//  qDebug() << "#1";
   if (m_packetsEvent->userId() != m_reader->sender())
     return false;
 
-  if (!(m_reader->headerOption() & Protocol::Broadcast)) {
-    int idType = SimpleID::typeOf(m_reader->dest());
-
-    if (idType == SimpleID::InvalidId)
-      return false;
-
-    if (m_reader->type() != Protocol::MessagePacket && idType == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0)
-      return false;
-  }
+//  qDebug() << "#2";
+//  if (!(m_reader->headerOption() & Protocol::Broadcast)) {
+//    int idType = SimpleID::typeOf(m_reader->dest());
+//
+//    if (idType == SimpleID::InvalidId)
+//      return false;
+//
+//    if (m_reader->type() != Protocol::MessagePacket && idType == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0)
+//      return false;
+//  }
 
   return true;
 }
@@ -59,6 +63,8 @@ bool GenericCore::checkPacket()
 
 void GenericCore::readPacket(int type)
 {
+  qDebug() << "GenericCore::readPacket()" << type;
+
   switch (type) {
     case Protocol::MessagePacket:
       readMessage();
