@@ -21,12 +21,17 @@
 
 #include "cores/AnonymousAuth.h"
 
+class MasterNode;
+
 class SlaveAuth : public AnonymousAuth
 {
 public:
-  SlaveAuth(Core *core);
+  SlaveAuth(MasterNode *node);
   AuthResult auth(const AuthRequestData &data);
   int type() const;
+
+private:
+  MasterNode *m_node;
 };
 
 #endif /* SLAVEAUTH_H_ */

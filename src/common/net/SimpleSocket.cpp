@@ -453,6 +453,13 @@ QByteArray SimpleSocket::userId() const
 }
 
 
+QByteArray SimpleSocket::readBuffer() const
+{
+  Q_D(const SimpleSocket);
+  return d->readBuffer;
+}
+
+
 QDataStream *SimpleSocket::sendStream()
 {
   Q_D(SimpleSocket);

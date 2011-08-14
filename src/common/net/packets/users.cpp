@@ -27,9 +27,8 @@
  * \param stream  ///< Поток записи.
  * \param user    ///< Пользователь.
  */
-
 UserWriter::UserWriter(QDataStream *stream, User *user)
-  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), "bc", true)
+  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), "bc", QByteArray(), true)
 {
   write(user, 0);
 }

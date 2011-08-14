@@ -37,6 +37,9 @@ protected:
 protected slots:
   void requestAuth();
 
+protected:
+  void newPacketsImpl();
+
 private:
   Q_DECLARE_PRIVATE(SimpleClient);
 };

@@ -29,8 +29,12 @@ ProxyAnonymousAuth::ProxyAnonymousAuth(SlaveNode *node)
 
 AuthResult ProxyAnonymousAuth::auth(const AuthRequestData &data)
 {
-  if (m_node->mode() == SlaveNode::ProxyMode) {
-    m_node->uplink()->send(m_node->readBuffer());
+  AuthResult result = AnonymousAuth::auth(data);
+  if (result.action == AuthResult::Reject || m_node->mode() == SlaveNode::FailbackMode) {
+    return result;
   }
-  return AnonymousAuth::auth(data);
+
+  m_node->uplink()->send(m_node->readBuffer()); // FIXME добавить передачу ип адреса.
+  result.action = AuthResult::Pending;
+  return result;
 }

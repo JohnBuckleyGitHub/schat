@@ -18,12 +18,14 @@
 
 #include <QDebug>
 
+#include "MasterNode.h"
 #include "net/packets/auth.h"
 #include "SlaveAuth.h"
 #include "Storage.h"
 
-SlaveAuth::SlaveAuth(Core *core)
-  : AnonymousAuth(core)
+SlaveAuth::SlaveAuth(MasterNode *node)
+  : AnonymousAuth(node)
+  , m_node(node)
 {
 }
 
@@ -34,7 +36,11 @@ AuthResult SlaveAuth::auth(const AuthRequestData &data)
   if (Storage::i()->serverData()->privateId() != data.privateId)
     return AuthResult(AuthReplyData::Forbidden);
 
-  return AnonymousAuth::auth(data);
+  AuthResult result = AnonymousAuth::auth(data);
+  if (result.action == AuthResult::Accept)
+    m_node->addSlave(result.id);
+
+  return result;
 }
 
 

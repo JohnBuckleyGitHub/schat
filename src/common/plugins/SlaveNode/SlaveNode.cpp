@@ -19,11 +19,13 @@
 #include <QDebug>
 
 #include "client/AbstractClient.h"
-#include "SlaveNode.h"
+#include "events.h"
+#include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "Settings.h"
-#include "Storage.h"
 #include "ProxyAnonymousAuth.h"
+#include "Settings.h"
+#include "SlaveNode.h"
+#include "Storage.h"
 
 SlaveNode::SlaveNode(QObject *parent)
   : GenericCore(parent)
@@ -37,6 +39,7 @@ SlaveNode::SlaveNode(QObject *parent)
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
 
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
+  connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));
   connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
 }
 
@@ -45,6 +48,12 @@ int SlaveNode::start()
 {
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
+}
+
+
+void SlaveNode::readPacket(int type)
+{
+  m_uplink->send(m_readBuffer);
 }
 
 
@@ -60,6 +69,19 @@ void SlaveNode::uplinkAuth()
 }
 
 
+void SlaveNode::uplinkPacketReady(int type)
+{
+  qDebug() << "";
+  qDebug() << "UPLINK PACKET READY" << type;
+  qDebug() << "";
+
+  if (type == Protocol::AuthReplyPacket)
+    uplinkAuthReply();
+  else
+    uplinkRoute();
+}
+
+
 void SlaveNode::uplinkReady()
 {
   setMode(ProxyMode);
@@ -72,4 +94,36 @@ void SlaveNode::uplinkReady()
 void SlaveNode::setMode(Mode mode)
 {
   m_mode = mode;
+}
+
+
+/*!
+ * Получение ответа от корневого сервера на запрос авторизации локального клиента.
+ */
+void SlaveNode::uplinkAuthReply()
+{
+  ChatUser user = m_storage->user(m_uplink->reader()->dest());
+  if (!user)
+    return;
+
+  qDebug() << "uplinkAuthReply()" << user;
+
+  AuthReplyData data = AuthReplyReader(m_uplink->reader()).data;
+  int option = 0;
+  if (data.status == AuthReplyData::AccessGranted) {
+    option = NewPacketsEvent::AuthorizeSocketOption;
+  }
+
+  m_timestamp = m_uplink->timestamp();
+  send(user, m_uplink->readBuffer(), option);
+
+  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse)
+    m_storage->remove(user);
+}
+
+
+void SlaveNode::uplinkRoute()
+{
+  qDebug() << m_uplink->reader()->sender().toHex();
+  qDebug() << m_uplink->reader()->dest().toHex();
 }

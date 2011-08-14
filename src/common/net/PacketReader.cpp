@@ -32,4 +32,7 @@ PacketReader::PacketReader(QDataStream *stream)
 
   if (m_headerOption & Protocol::DestinationField)
     m_dest = id();
+
+  if (m_headerOption & Protocol::ChannelField)
+    m_channel = id();
 }

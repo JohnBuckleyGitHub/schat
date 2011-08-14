@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "events.h"
 #include "MasterNode.h"
 #include "SlaveAuth.h"
 
@@ -26,4 +27,29 @@ MasterNode::MasterNode(QObject *parent)
 {
   qDebug() << "MASTER NODE";
   addAuth(new SlaveAuth(this));
+}
+
+
+void MasterNode::addSlave(const QByteArray &id)
+{
+  if (m_slaves.contains(id))
+    return;
+
+  m_slaves.append(id);
+}
+
+
+bool MasterNode::checkPacket()
+{
+  if (m_slaves.contains(m_packetsEvent->userId()))
+    return true;
+
+  return GenericCore::checkPacket();
+}
+
+
+void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
+{
+  qDebug() << "SOCKET RELEASE";
+  Core::socketReleaseEvent(event);
 }

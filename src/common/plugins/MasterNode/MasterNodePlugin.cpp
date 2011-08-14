@@ -18,7 +18,7 @@
 
 #include <qplugin.h>
 
-#include "cores/MasterNode.h"
+#include "MasterNode.h"
 #include "MasterNodePlugin.h"
 
 Core *MasterNodePlugin::init()

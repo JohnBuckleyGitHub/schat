@@ -69,8 +69,10 @@ protected:
   bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   qint64 timestamp() const;
 
-  void newPacketsEvent(NewPacketsEvent *event);
-  void socketReleaseEvent(SocketReleaseEvent *event);
+  virtual bool checkPacket();
+  virtual void newPacketsEvent(NewPacketsEvent *event);
+  virtual void readPacket(int type);
+  virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
   bool join(const QByteArray &userId, const QByteArray &channelId);
   bool join(const QByteArray &userId, ServerChannel *channel);
