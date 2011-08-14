@@ -244,6 +244,12 @@ qint64 Core::timestamp() const
 }
 
 
+bool Core::checkPacket()
+{
+  return true;
+}
+
+
 /*!
  * Обработка новых пакетов.
  */
@@ -261,47 +267,25 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 
     if (reader.type() == Protocol::AuthRequestPacket) {
       readAuthRequest();
-      return;
+      continue;
     }
 
     /// Идентификатор клиента не должен быть пустым или не верным.
     if (event->userId().isEmpty() || m_storage->user(event->userId()) == 0)
       continue;
 
-    /// В случае если пакет содержит информацию об отправителе и получателе,
-    /// идентификатор отправителя не должен быть поддельным и получатель
-    /// должен быть известен серверу.
-    if (!reader.sender().isEmpty()) {
-      if (event->userId() != reader.sender())
-        continue;
-
-      if (!(reader.headerOption() & Protocol::Broadcast)) {
-        int idType = SimpleID::typeOf(reader.dest());
-
-        if (idType == SimpleID::InvalidId)
-          continue;
-
-        if (m_reader->type() != Protocol::MessagePacket && idType == SimpleID::UserId && m_storage->user(reader.dest()) == 0)
-          continue;
-      }
-    }
+    if (!checkPacket())
+      continue;
 
     m_timestamp = 0;
-
-    switch (reader.type()) {
-      case Protocol::MessagePacket:
-        readMessage();
-        break;
-
-      case Protocol::UserDataPacket:
-        readUserData();
-        break;
-
-      default:
-        route();
-        break;
-    }
+    readPacket(reader.type());
   }
+}
+
+
+void Core::readPacket(int type)
+{
+  Q_UNUSED(type)
 }
 
 
@@ -324,7 +308,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
     }
   }
 
-  MessageData message(user->id(), QByteArray(), "leave", "");
+  MessageData message(user->id(), QByteArray(), QLatin1String("leave"), QString());
   MessageWriter leave(m_sendStream, message);
   send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
 

@@ -27,6 +27,14 @@ class MasterNode : public GenericCore
 
 public:
   MasterNode(QObject *parent = 0);
+  void addSlave(const QByteArray &id);
+
+protected:
+  bool checkPacket();
+  void socketReleaseEvent(SocketReleaseEvent *event);
+
+private:
+  QList<QByteArray> m_slaves; /// Список вторичных серверов.
 };
 
 #endif /* MASTERNODE_H_ */

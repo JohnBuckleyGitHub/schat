@@ -18,7 +18,7 @@
 
 #include <qplugin.h>
 
-#include "cores/SlaveNode.h"
+#include "SlaveNode.h"
 #include "SlaveNodePlugin.h"
 
 Core *SlaveNodePlugin::init()

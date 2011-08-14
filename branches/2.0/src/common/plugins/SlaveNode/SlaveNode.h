@@ -39,12 +39,18 @@ public:
   inline Mode mode() const { return m_mode; }
   int start();
 
+protected:
+  void readPacket(int type);
+
 private slots:
   void uplinkAuth();
+  void uplinkPacketReady(int type);
   void uplinkReady();
 
 private:
   void setMode(Mode mode);
+  void uplinkAuthReply();
+  void uplinkRoute();
 
   AbstractClient *m_uplink; ///< Подключение к корневому серверу.
   Mode m_mode;              ///< Режим работы сервера.

@@ -21,6 +21,7 @@
 #include "Channel.h"
 #include "client/SimpleClient.h"
 #include "client/SimpleClient_p.h"
+#include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/message.h"
 
@@ -123,4 +124,45 @@ void SimpleClient::requestAuth()
   AuthRequestData data(AuthRequestData::Anonymous, d->url.host(), d->user.data());
   data.uniqueId = d->uniqueId;
   send(AuthRequestWriter(d->sendStream, data).data());
+}
+
+
+/*!
+ * Обработка пакетов.
+ */
+void SimpleClient::newPacketsImpl()
+{
+  Q_D(SimpleClient);
+  SCHAT_DEBUG_STREAM(this << "newPacketsImpl()" << d->readQueue.size())
+
+  while (!d->readQueue.isEmpty()) {
+    d->readBuffer = d->readQueue.takeFirst();
+    PacketReader reader(d->readStream);
+    d->reader = &reader;
+
+    switch (reader.type()) {
+      case Protocol::AuthReplyPacket:
+        d->readAuthReply();
+        break;
+
+      case Protocol::ChannelPacket:
+        d->readChannel();
+        break;
+
+      case Protocol::MessagePacket:
+        d->readMessage();
+        break;
+
+      case Protocol::UserDataPacket:
+        d->readUserData();
+        break;
+
+      case Protocol::NoticePacket:
+        d->readNotice();
+        break;
+
+      default:
+        break;
+    }
+  }
 }

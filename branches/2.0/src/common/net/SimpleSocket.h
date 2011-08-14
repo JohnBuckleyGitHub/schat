@@ -55,6 +55,7 @@ public:
   bool send(const QList<QByteArray> &packets);
   bool setSocketDescriptor(int socketDescriptor);
   inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
+  QByteArray readBuffer() const;
   QByteArray userId() const;
   QDataStream *sendStream();
   qint64 timestamp() const;

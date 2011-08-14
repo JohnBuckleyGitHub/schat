@@ -27,11 +27,13 @@ class SCHAT_EXPORT PacketReader
 {
 public:
   PacketReader(QDataStream *stream);
-  inline int headerOption() const  { return m_headerOption; }
-  inline int subtype() const       { return m_subtype; }
-  inline int type() const          { return m_type; }
-  inline QByteArray dest() const   { return m_dest; }
-  inline QByteArray sender() const { return m_sender; }
+  inline int headerOption() const   { return m_headerOption; }
+  inline int subtype() const        { return m_subtype; }
+  inline int type() const           { return m_type; }
+  inline QByteArray channel() const { return m_channel; }
+  inline QByteArray dest() const    { return m_dest; }
+  inline QByteArray sender() const  { return m_sender; }
+
 
   inline QString text() const {
     QByteArray data;
@@ -66,13 +68,14 @@ public:
   }
 
 private:
+  quint16 m_type;
+  quint8 m_subtype;
+  quint8 m_headerOption;
   QByteArray m_dest;
   QByteArray m_sender;
+  QByteArray m_channel;
   QDataStream *m_stream;
   QIODevice *m_device;
-  quint16 m_type;
-  quint8 m_headerOption;
-  quint8 m_subtype;
 };
 
 #endif /* PACKETREADER_H_ */

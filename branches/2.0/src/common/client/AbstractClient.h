@@ -29,6 +29,7 @@ class AbstractClientPrivate;
 class Channel;
 class MessageData;
 class NoticeData;
+class PacketReader;
 class ServerData;
 
 class SCHAT_EXPORT AbstractClient : public SimpleSocket
@@ -56,6 +57,7 @@ public:
   ClientUser user() const;
   ClientUser user(const QByteArray &id) const;
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
+  PacketReader *reader();
   QByteArray serverId() const;
   QByteArray uniqueId() const;
   QString nick() const;
@@ -73,6 +75,7 @@ signals:
   void join(const QByteArray &channelId, const QByteArray &userId);
   void message(const MessageData &data);
   void notice(const NoticeData &data);
+  void packetReady(int type);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void ready();
   void requestClientAuth();

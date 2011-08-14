@@ -21,10 +21,10 @@
 #include "cores/AnonymousAuth.h"
 #include "cores/GenericCore.h"
 #include "debugstream.h"
+#include "events.h"
+#include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "Storage.h"
-#include "events.h"
-
 
 GenericCore::GenericCore(QObject *parent)
   : Core(parent)
@@ -32,4 +32,44 @@ GenericCore::GenericCore(QObject *parent)
   SCHAT_DEBUG_STREAM(this << "GENERIC CORE");
 
   addAuth(new AnonymousAuth(this));
+}
+
+
+bool GenericCore::checkPacket()
+{
+  if (m_reader->sender().isEmpty())
+    return false;
+
+  if (m_packetsEvent->userId() != m_reader->sender())
+    return false;
+
+  if (!(m_reader->headerOption() & Protocol::Broadcast)) {
+    int idType = SimpleID::typeOf(m_reader->dest());
+
+    if (idType == SimpleID::InvalidId)
+      return false;
+
+    if (m_reader->type() != Protocol::MessagePacket && idType == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0)
+      return false;
+  }
+
+  return true;
+}
+
+
+void GenericCore::readPacket(int type)
+{
+  switch (type) {
+    case Protocol::MessagePacket:
+      readMessage();
+      break;
+
+    case Protocol::UserDataPacket:
+      readUserData();
+      break;
+
+    default:
+      route();
+      break;
+  }
 }

@@ -606,6 +606,13 @@ ClientUser AbstractClient::user(const QByteArray &id) const
 }
 
 
+PacketReader *AbstractClient::reader()
+{
+  Q_D(const AbstractClient);
+  return d->reader;
+}
+
+
 QByteArray AbstractClient::serverId() const
 {
   Q_D(const AbstractClient);
@@ -723,30 +730,10 @@ void AbstractClient::newPacketsImpl()
     PacketReader reader(d->readStream);
     d->reader = &reader;
 
-    switch (reader.type()) {
-      case Protocol::AuthReplyPacket:
-        d->readAuthReply();
-        break;
-
-      case Protocol::ChannelPacket:
-        d->readChannel();
-        break;
-
-      case Protocol::MessagePacket:
-        d->readMessage();
-        break;
-
-      case Protocol::UserDataPacket:
-        d->readUserData();
-        break;
-
-      case Protocol::NoticePacket:
-        d->readNotice();
-        break;
-
-      default:
-        break;
-    }
+    if (isAuthorized())
+      emit packetReady(reader.type());
+    else if (reader.type() == Protocol::AuthReplyPacket)
+      d->readAuthReply();
   }
 }
 

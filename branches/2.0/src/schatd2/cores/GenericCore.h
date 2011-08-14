@@ -27,6 +27,10 @@ class SCHAT_EXPORT GenericCore : public Core
 {
 public:
   GenericCore(QObject *parent = 0);
+
+protected:
+  bool checkPacket();
+  void readPacket(int type);
 };
 
 #endif /* GENERICCORE_H_ */

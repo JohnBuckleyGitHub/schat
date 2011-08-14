@@ -55,9 +55,10 @@ public:
    * \param type     Тип пакета.
    * \param sender   Идентификатор отправителя.
    * \param dest     Идентификатор получателя, специальное значение "bc" устанавливает опцию Protocol::Broadcast.
+   * \param channel  Идентификатор канала.
    * \param echo     true для включения опции Protocol::EnableEcho.
    */
-  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), bool echo = false)
+  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), const QByteArray &channel = QByteArray(), bool echo = false)
     : m_stream(stream)
     , m_headerOption(Protocol::BasicHeader)
   {
@@ -76,6 +77,9 @@ public:
         m_headerOption |= Protocol::DestinationField;
     }
 
+    if (!channel.isEmpty())
+      m_headerOption |= Protocol::ChannelField;
+
     if (echo)
       m_headerOption |= Protocol::EnableEcho;
 
@@ -86,6 +90,9 @@ public:
 
     if (m_headerOption & Protocol::DestinationField)
       putId(dest);
+
+    if (m_headerOption & Protocol::ChannelField)
+      putId(channel);
   }
 
   /*!
