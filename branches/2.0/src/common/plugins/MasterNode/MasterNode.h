@@ -19,9 +19,9 @@
 #ifndef MASTERNODE_H_
 #define MASTERNODE_H_
 
-#include "cores/GenericCore.h"
+#include "cores/Core.h"
 
-class MasterNode : public GenericCore
+class MasterNode : public Core
 {
   Q_OBJECT
 

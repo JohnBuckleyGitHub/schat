@@ -19,11 +19,11 @@
 #ifndef SLAVENODE_H_
 #define SLAVENODE_H_
 
-#include "cores/GenericCore.h"
+#include "cores/Core.h"
 
 class AbstractClient;
 
-class SlaveNode : public GenericCore
+class SlaveNode : public Core
 {
   Q_OBJECT
 

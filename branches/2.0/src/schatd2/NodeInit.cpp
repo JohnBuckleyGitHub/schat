@@ -20,7 +20,7 @@
 
 #include "debugstream.h"
 
-#include "cores/GenericCore.h"
+#include "cores/Core.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
 #include "Settings.h"

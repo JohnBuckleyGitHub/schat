@@ -21,6 +21,7 @@
 #include <QEvent>
 #include <QThread>
 
+#include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "cores/NodeAuth.h"
 #include "debugstream.h"
@@ -46,6 +47,8 @@ Core::Core(QObject *parent)
   , m_settings(Storage::i()->settings())
   , m_storage(Storage::i())
 {
+  addAuth(new AnonymousAuth(this));
+
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::WriteOnly);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadOnly);
 }
@@ -246,6 +249,12 @@ qint64 Core::timestamp() const
 
 bool Core::checkPacket()
 {
+  if (m_reader->sender().isEmpty())
+    return false;
+
+  if (m_packetsEvent->userId() != m_reader->sender())
+    return false;
+
   return true;
 }
 
@@ -285,7 +294,21 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 
 void Core::readPacket(int type)
 {
-  Q_UNUSED(type)
+  qDebug() << "Core::readPacket()" << type;
+
+  switch (type) {
+    case Protocol::MessagePacket:
+      readMessage();
+      break;
+
+    case Protocol::UserDataPacket:
+      readUserData();
+      break;
+
+    default:
+      route();
+      break;
+  }
 }
 
 

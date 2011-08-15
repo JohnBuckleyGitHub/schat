@@ -29,7 +29,6 @@ DEFINES += SCHAT_DAEMON
 HEADERS = \
     cores/AnonymousAuth.h \
     cores/Core.h \
-    cores/GenericCore.h \
     cores/NodeAuth.h \
     events.h \
     DataBase.h \
@@ -40,7 +39,6 @@ HEADERS = \
 SOURCES = \
     cores/AnonymousAuth.cpp \
     cores/Core.cpp \
-    cores/GenericCore.cpp \
     events.cpp \
     DataBase.cpp \
     ServerChannel.cpp \

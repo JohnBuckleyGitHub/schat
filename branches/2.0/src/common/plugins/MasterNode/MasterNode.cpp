@@ -25,7 +25,7 @@
 
 
 MasterNode::MasterNode(QObject *parent)
-  : GenericCore(parent)
+  : Core(parent)
 {
   qDebug() << "MASTER NODE";
   addAuth(new SlaveAuth(this));
@@ -47,7 +47,7 @@ bool MasterNode::checkPacket()
   if (m_slaves.contains(m_packetsEvent->userId()))
     return true;
 
-  return GenericCore::checkPacket();
+  return Core::checkPacket();
 }
 
 
