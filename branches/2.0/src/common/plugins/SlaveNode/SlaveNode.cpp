@@ -35,7 +35,7 @@ SlaveNode::SlaveNode(QObject *parent)
 {
   qDebug() << "SLAVE NODE";
 
-  m_auth.prepend(new ProxyAnonymousAuth(this));
+  addAuth(new ProxyAnonymousAuth(this));
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
@@ -139,6 +139,7 @@ void SlaveNode::uplinkReadChannel()
 {
   qDebug() << "SlaveNode::uplinkReadChannel()";
   ChatUser user = m_storage->user(m_uplink->reader()->dest());
+  qDebug() << user;
   if (!user)
     return;
 
@@ -155,6 +156,15 @@ void SlaveNode::uplinkReadChannel()
 
   channel->addUser(user->id());
   user->addId(SimpleID::ChannelListId, channel->id());
+
+  QList<QByteArray> users = reader.channel->users();
+  for (int i = 0; i < users.size(); ++i) {
+    ChatUser u = m_storage->user(users.at(i));
+    if (!u)
+      continue;
+
+    u->addUser(user->id());
+  }
 
   uplinkRoute();
 }

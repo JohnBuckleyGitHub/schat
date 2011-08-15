@@ -33,7 +33,6 @@ AnonymousAuth::AnonymousAuth(Core *core)
 AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 {
   Storage *storage = Storage::i();
-
   QByteArray userId = storage->makeUserId(data.authType, data.uniqueId);
   ChatUser user = storage->user(userId);
 

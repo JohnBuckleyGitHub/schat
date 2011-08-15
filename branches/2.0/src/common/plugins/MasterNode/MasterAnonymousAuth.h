@@ -16,43 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef MASTERANONYMOUSAUTH_H_
+#define MASTERANONYMOUSAUTH_H_
 
-#include "events.h"
-#include "MasterAnonymousAuth.h"
-#include "MasterNode.h"
-#include "SlaveAuth.h"
+#include "cores/AnonymousAuth.h"
 
+class MasterNode;
 
-MasterNode::MasterNode(QObject *parent)
-  : GenericCore(parent)
+class MasterAnonymousAuth : public AnonymousAuth
 {
-  qDebug() << "MASTER NODE";
-  addAuth(new SlaveAuth(this));
-  addAuth(new MasterAnonymousAuth(this));
-}
+public:
+  MasterAnonymousAuth(MasterNode *node);
+  AuthResult auth(const AuthRequestData &data);
 
+private:
+  MasterNode *m_node;
+};
 
-void MasterNode::addSlave(const QByteArray &id)
-{
-  if (m_slaves.contains(id))
-    return;
-
-  m_slaves.append(id);
-}
-
-
-bool MasterNode::checkPacket()
-{
-  if (m_slaves.contains(m_packetsEvent->userId()))
-    return true;
-
-  return GenericCore::checkPacket();
-}
-
-
-void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
-{
-  qDebug() << "SOCKET RELEASE";
-  Core::socketReleaseEvent(event);
-}
+#endif /* MASTERANONYMOUSAUTH_H_ */

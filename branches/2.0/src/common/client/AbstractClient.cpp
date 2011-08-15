@@ -712,7 +712,7 @@ void AbstractClient::part(const QByteArray &channelId)
   d->channels.remove(channelId);
   user()->removeId(SimpleID::ChannelListId, channelId);
 
-  MessageData message(userId(), channelId, "part", "");
+  MessageData message(userId(), channelId, QLatin1String("part"), QString());
   send(message);
 }
 

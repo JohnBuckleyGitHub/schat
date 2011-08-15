@@ -37,14 +37,19 @@ GenericCore::GenericCore(QObject *parent)
 
 bool GenericCore::checkPacket()
 {
-//  qDebug() << "GenericCore::checkPacket()";
-
-  if (m_reader->sender().isEmpty())
+  qDebug() << "";
+  if (m_reader->sender().isEmpty()) {
+    qDebug() << "SENDER EMPTY";
     return false;
+  }
 
 //  qDebug() << "#1";
-  if (m_packetsEvent->userId() != m_reader->sender())
+  if (m_packetsEvent->userId() != m_reader->sender()) {
+    qDebug() << "INVALID SENDER";
+    qDebug() << m_packetsEvent->userId().toHex();
+    qDebug() << m_reader->sender().toHex();
     return false;
+  }
 
 //  qDebug() << "#2";
 //  if (!(m_reader->headerOption() & Protocol::Broadcast)) {
@@ -57,6 +62,7 @@ bool GenericCore::checkPacket()
 //      return false;
 //  }
 
+  qDebug() << "";
   return true;
 }
 

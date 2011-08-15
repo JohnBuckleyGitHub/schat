@@ -16,43 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "events.h"
 #include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
-#include "SlaveAuth.h"
 
-
-MasterNode::MasterNode(QObject *parent)
-  : GenericCore(parent)
+MasterAnonymousAuth::MasterAnonymousAuth(MasterNode *node)
+  : AnonymousAuth(node)
+  , m_node(node)
 {
-  qDebug() << "MASTER NODE";
-  addAuth(new SlaveAuth(this));
-  addAuth(new MasterAnonymousAuth(this));
 }
 
-
-void MasterNode::addSlave(const QByteArray &id)
+AuthResult MasterAnonymousAuth::auth(const AuthRequestData &data)
 {
-  if (m_slaves.contains(id))
-    return;
+  if (!m_node->isSlave(m_node->packetsEvent()->userId()))
+    return AnonymousAuth::auth(data);
 
-  m_slaves.append(id);
-}
+  AuthResult result = AnonymousAuth::auth(data);
+  result.option = 0;
 
-
-bool MasterNode::checkPacket()
-{
-  if (m_slaves.contains(m_packetsEvent->userId()))
-    return true;
-
-  return GenericCore::checkPacket();
-}
-
-
-void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
-{
-  qDebug() << "SOCKET RELEASE";
-  Core::socketReleaseEvent(event);
+  return result;
 }
