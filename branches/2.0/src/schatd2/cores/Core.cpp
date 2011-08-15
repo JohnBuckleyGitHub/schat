@@ -718,14 +718,20 @@ bool Core::readMessage()
     return route();
 
   if (route()) {
-    NoticeData data(m_messageData->senderId, m_messageData->destId, NoticeData::MessageDelivered, m_messageData->name);
-    send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
+    acceptMessage();
     return true;
   }
   else {
     rejectMessage(NoticeData::UnknownError);
     return false;
   }
+}
+
+
+void Core::acceptMessage()
+{
+  NoticeData data(m_messageData->destId, m_messageData->senderId, NoticeData::MessageDelivered, m_messageData->name);
+  send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
 }
 
 
@@ -736,6 +742,6 @@ void Core::rejectMessage(int reason)
   if (m_messageData->name == 0)
     return;
 
-  NoticeData data(m_messageData->senderId, m_messageData->destId, NoticeData::MessageRejected, m_messageData->name, reason);
+  NoticeData data(m_messageData->destId, m_messageData->senderId, NoticeData::MessageRejected, m_messageData->name, reason);
   send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
 }
