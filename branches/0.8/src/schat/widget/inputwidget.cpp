@@ -167,7 +167,12 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
 void InputWidget::textChanged()
 {
+# if QT_VERSION >= 0x040500
   int lineCount = document()->lineCount();
+# else
+  int lineCount = document()->blockCount();
+# endif
+
   if (m_lines != lineCount)
     setHeight(lineCount);
 }
