@@ -30,7 +30,7 @@
 #include "Storage.h"
 
 SlaveNode::SlaveNode(QObject *parent)
-  : GenericCore(parent)
+  : Core(parent)
   , m_mode(FailbackMode)
 {
   qDebug() << "SLAVE NODE";
@@ -59,7 +59,7 @@ void SlaveNode::readPacket(int type)
   if (mode() == ProxyMode)
     m_uplink->send(m_readBuffer);
   else
-    GenericCore::readPacket(type);
+    Core::readPacket(type);
 }
 
 

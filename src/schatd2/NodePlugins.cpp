@@ -18,7 +18,7 @@
 
 #include <QDebug>
 
-#include "cores/GenericCore.h"
+#include "cores/Core.h"
 #include "NodePlugins.h"
 #include "plugins/NodeKernelApi.h"
 #include "Settings.h"
@@ -37,7 +37,7 @@ NodePlugins::NodePlugins(QObject *parent)
 Core *NodePlugins::kernel()
 {
   if (!m_core)
-    m_core = new GenericCore(this);
+    m_core = new Core(this);
 
   return m_core;
 }
