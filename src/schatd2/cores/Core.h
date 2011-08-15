@@ -46,7 +46,7 @@ public:
   ~Core();
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
   inline QByteArray readBuffer() const { return m_readBuffer; }
-  inline void addAuth(NodeAuth *auth) { m_auth.append(auth); }
+  inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
   virtual int start() { return 0; }
   virtual void quit() {}
 

@@ -27,6 +27,7 @@ class MasterNode : public GenericCore
 
 public:
   MasterNode(QObject *parent = 0);
+  inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
   void addSlave(const QByteArray &id);
 
 protected:

@@ -459,7 +459,7 @@ void Core::acceptAuth(const AuthResult &result)
     return;
 
   AuthReplyData reply(m_storage->serverData(), user.data());
-  send(user, AuthReplyWriter(m_sendStream, reply).data(), NewPacketsEvent::AuthorizeSocketOption);
+  send(user, AuthReplyWriter(m_sendStream, reply).data(), result.option);
 }
 
 
@@ -626,19 +626,19 @@ bool Core::command()
   if (command.isEmpty())
     return false;
 
-  if (command == "join") {
+  if (command == QLatin1String("join")) {
     readJoinCmd();
     return true;
   }
 
-  if (command == "part") {
-    if (m_storage->removeUserFromChannel(m_packetsEvent->userId(), m_reader->dest()))
+  if (command == QLatin1String("part")) {
+    if (m_storage->removeUserFromChannel(m_reader->sender(), m_reader->dest()))
       return false;
 
     return true;
   }
 
-  if (command == "add") {
+  if (command == QLatin1String("add")) {
     if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
       bindTalks();
     }
@@ -646,7 +646,7 @@ bool Core::command()
     return true;
   }
 
-  if (command == "status") {
+  if (command == QLatin1String("status")) {
     return updateUserStatus();
   }
 
@@ -669,7 +669,7 @@ bool Core::readJoinCmd()
   if (!chan)
     return false;
 
-  return join(m_packetsEvent->userId(), chan);
+  return join(m_reader->sender(), chan);
 }
 
 
