@@ -241,11 +241,10 @@ void MessageAdapter::notice(const NoticeData &data)
   SCHAT_DEBUG_STREAM(this << "notice()")
 
   if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
-    QByteArray destId = data.destId;
-    if (data.param1 == NoticeData::Ignored && data.destId == m_client->userId())
-      destId = data.senderId;
+    if (data.destId != UserUtils::userId())
+      return;
 
-    MessageData msg(m_client->userId(), destId, "");
+    MessageData msg(m_client->userId(), data.senderId, QString());
     msg.name = data.messageName;
     msg.timestamp = data.timestamp;
 

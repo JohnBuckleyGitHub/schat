@@ -23,6 +23,8 @@
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/channels.h"
+#include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "ProxyAnonymousAuth.h"
 #include "ServerChannel.h"
 #include "Settings.h"
@@ -56,10 +58,49 @@ int SlaveNode::start()
 void SlaveNode::readPacket(int type)
 {
   qDebug() << "SlaveNode::readPacket()" << type;
-  if (mode() == ProxyMode)
+  if (mode() == ProxyMode) {
+    if (type == Protocol::MessagePacket && readMessage()) {
+      return;
+    }
+
     m_uplink->send(m_readBuffer);
+  }
   else
     Core::readPacket(type);
+}
+
+
+/*!
+ * \return true если сообщение обработано и дальнейшая его пересылка не требуется.
+ */
+bool SlaveNode::readMessage()
+{
+  qDebug() << "SlaveNode::readMessage()";
+
+  // Сообщение для неизвестного пользователя перенаправляется на мастер-сервер.
+  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && !m_storage->user(m_reader->dest())) {
+    return false;
+  }
+
+  MessageReader reader(m_reader);
+  m_messageData = &reader.data;
+
+  if (m_messageData->name == 0)
+    return false;
+
+  if (route()) {
+    acceptMessage();
+    if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId)
+      return true;
+    else
+      return false;
+  }
+  else {
+    rejectMessage(NoticeData::UnknownError);
+    return true;
+  }
+
+  return false;
 }
 
 

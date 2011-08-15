@@ -41,6 +41,7 @@ public:
 
 protected:
   void readPacket(int type);
+  bool readMessage();
 
 private slots:
   void uplinkAuth();
