@@ -88,21 +88,21 @@ public:
     /// Отчёт о доставке пакетов, ("dc").
     /// - 02 bytes - reserved.
     /// - ...      - список пакетов QList<quint64>.
-    DeliveryConfirmationPacket = 0x7563, // 'dc'
+    DeliveryConfirmationPacket = 0x7563, // "dc" or 30051
     /// Проверка возможности установки безопасного соединения.
     /// - 02 bytes - option \sa ProbeSecureConnectionOption.
-    ProbeSecureConnectionPacket = 0x7073, // 'ps'
+    ProbeSecureConnectionPacket = 0x7073, // "ps" or 28787
     /// Запрос авторизации.
-    AuthRequestPacket = 0x6152, // 'aR'
+    AuthRequestPacket = 0x6152, // "aR" or 24914
     /// Ответ на запрос авторизации.
-    AuthReplyPacket = 0x6172, // 'ar'
+    AuthReplyPacket = 0x6172, // "ar" or 24946
     /// Сообщение.
-    MessagePacket = 0x6d, // 'm'
+    MessagePacket = 0x6d, // "m" or 109
     /// Данные канала \sa JoinReply.
-    ChannelPacket = 0x63, // 'c'
+    ChannelPacket = 0x63, // "c" or 99
     /// Данные пользователя.
-    UserDataPacket = 0x7544, // 'uD'
-    NoticePacket = 0x6e // 'n'
+    UserDataPacket = 0x7544, // "uD" or 30020
+    NoticePacket = 0x6e // "n" or 110
   };
 
   /// Опция заголовка виртуального пакета.

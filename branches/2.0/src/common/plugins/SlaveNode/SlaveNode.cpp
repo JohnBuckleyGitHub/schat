@@ -71,6 +71,8 @@ void SlaveNode::readPacket(int type)
 
 
 /*!
+ * Обработка сообщений от локальных пользователей.
+ *
  * \return true если сообщение обработано и дальнейшая его пересылка не требуется.
  */
 bool SlaveNode::readMessage()
@@ -90,10 +92,7 @@ bool SlaveNode::readMessage()
 
   if (route()) {
     acceptMessage();
-    if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId)
-      return true;
-    else
-      return false;
+    return false;
   }
   else {
     rejectMessage(NoticeData::UnknownError);

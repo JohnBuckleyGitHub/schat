@@ -150,6 +150,9 @@ bool Core::route(ChatUser user)
 
   bindTalks(m_storage->user(m_reader->sender()), user);
 
+  if (isSameSlave(m_reader->sender(), user->id()))
+    return true;
+
   return send(user, m_readBuffer);
 }
 
@@ -615,6 +618,29 @@ void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
 
 
 /*!
+ * Проверка на принадлежность пользователей одному вторичному серверу.
+ * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
+ *
+ * \return true если пользователи находятся на одном вторичном сервере или один или оба не являются валидными.
+ */
+bool Core::isSameSlave(const QByteArray &id1, const QByteArray &id2)
+{
+  ChatUser user1 = m_storage->user(id1);
+  if (!user1)
+    return true;
+
+  ChatUser user2 = m_storage->user(id2);
+  if (!user2)
+    return true;
+
+  if (user1->socketId() == user2->socketId())
+    return true;
+
+  return false;
+}
+
+
+/*!
  * Обновление статуса пользователя.
  */
 bool Core::updateUserStatus()
@@ -730,8 +756,11 @@ bool Core::readMessage()
 
 void Core::acceptMessage()
 {
-  NoticeData data(m_messageData->destId, m_messageData->senderId, NoticeData::MessageDelivered, m_messageData->name);
-  send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
+  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && isSameSlave(m_reader->dest(), m_reader->sender()))
+    return;
+
+  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageDelivered, m_messageData->name);
+  send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
 }
 
 
@@ -742,6 +771,6 @@ void Core::rejectMessage(int reason)
   if (m_messageData->name == 0)
     return;
 
-  NoticeData data(m_messageData->destId, m_messageData->senderId, NoticeData::MessageRejected, m_messageData->name, reason);
-  send(m_storage->user(m_messageData->senderId), NoticeWriter(m_sendStream, data).data());
+  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageRejected, m_messageData->name, reason);
+  send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
 }

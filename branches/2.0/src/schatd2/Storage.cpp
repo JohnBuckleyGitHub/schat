@@ -245,7 +245,7 @@ QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
   QList<QByteArray> users = channel->users();
   for (int i = 0; i < users.size(); ++i) {
     ChatUser user = this->user(users.at(i));
-    if (user)
+    if (user && !out.contains(user->socketId()))
       out += user->socketId();
   }
 
