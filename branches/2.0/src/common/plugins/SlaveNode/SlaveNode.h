@@ -22,6 +22,7 @@
 #include "cores/Core.h"
 
 class AbstractClient;
+class MessageData;
 
 class SlaveNode : public Core
 {
@@ -49,12 +50,14 @@ private slots:
   void uplinkReady();
 
 private:
+  bool uplinkRoute();
+  bool uplinkRouteChannel(const QByteArray &id);
+  bool uplinkRouteUser(const QByteArray &id);
   void setMode(Mode mode);
   void uplinkAuthReply();
   void uplinkReadChannel();
-  void uplinkRoute();
-  void uplinkRouteChannel(const QByteArray &id);
-  void uplinkRouteUser(const QByteArray &id);
+  void uplinkReadMessage();
+  void uplinkRejectMessage(const MessageData &msg, int reason);
 
   AbstractClient *m_uplink; ///< Подключение к корневому серверу.
   Mode m_mode;              ///< Режим работы сервера.
