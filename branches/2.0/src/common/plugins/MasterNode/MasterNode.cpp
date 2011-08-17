@@ -22,37 +22,14 @@
 #include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
 #include "SlaveAuth.h"
-
+#include "Storage.h"
 
 MasterNode::MasterNode(QObject *parent)
   : Core(parent)
 {
   qDebug() << "MASTER NODE";
+  m_storage->setAllowSlaves();
+
   addAuth(new SlaveAuth(this));
   addAuth(new MasterAnonymousAuth(this));
-}
-
-
-void MasterNode::addSlave(const QByteArray &id)
-{
-  if (m_slaves.contains(id))
-    return;
-
-  m_slaves.append(id);
-}
-
-
-bool MasterNode::checkPacket()
-{
-  if (m_slaves.contains(m_packetsEvent->userId()))
-    return true;
-
-  return Core::checkPacket();
-}
-
-
-void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
-{
-  qDebug() << "SOCKET RELEASE";
-  Core::socketReleaseEvent(event);
 }

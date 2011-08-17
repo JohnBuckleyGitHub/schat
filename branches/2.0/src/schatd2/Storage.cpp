@@ -36,6 +36,7 @@ Storage *Storage::m_self = 0;
 
 Storage::Storage(QObject *parent)
   : QObject(parent)
+  , m_allowSlaves(false)
 {
   m_self = this;
 
@@ -82,6 +83,15 @@ int Storage::start()
 }
 
 
+void Storage::addSlave(const QByteArray &id)
+{
+  if (m_slaves.contains(id))
+    return;
+
+  m_slaves.append(id);
+}
+
+
 Storage::~Storage()
 {
   delete m_serverData;
@@ -101,6 +111,29 @@ bool Storage::add(ChatUser user)
   m_nicks.insert(user->normalNick(), user);
   m_sessions.insert(user->session(), user);
   return true;
+}
+
+
+/*!
+ * Проверка на принадлежность пользователей одному вторичному серверу.
+ * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
+ *
+ * \return true если пользователи находятся на одном вторичном сервере или один или оба не являются валидными.
+ */
+bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
+{
+  ChatUser user1 = user(id1);
+  if (!user1)
+    return true;
+
+  ChatUser user2 = user(id2);
+  if (!user2)
+    return true;
+
+  if (isAllowSlaves() && user1->socketId() == user2->socketId())
+    return true;
+
+  return false;
 }
 
 

@@ -92,7 +92,6 @@ protected:
   void bindTalks(ChatUser senderUser, ChatUser destUser);
 
   // users.
-  bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
   bool updateUserStatus();
 
   // messages.

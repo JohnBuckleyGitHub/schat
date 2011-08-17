@@ -37,11 +37,16 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
+  inline bool isAllowSlaves() const { return m_allowSlaves; }
+  inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
   inline static Storage *i() { return m_self; }
+  inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
+  void addSlave(const QByteArray &id);
 
   // user management.
   bool add(ChatUser user);
+  bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
   bool remove(ChatUser user);
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   ChatUser user(const QString &nick, bool normalize) const;
@@ -66,6 +71,7 @@ public:
 private:
   QByteArray makeChannelId(const QString &name);
 
+  bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   QHash<QByteArray, ChatUser> m_sessions;        ///< Таблица сессий.
@@ -74,6 +80,7 @@ private:
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
   QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QHash<QString, ServerChannel*> m_channelNames; ///< Имена каналов.
+  QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.
