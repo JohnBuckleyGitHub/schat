@@ -125,6 +125,8 @@ void SlaveNode::uplinkPacketReady(int type)
 
   if (type == Protocol::AuthReplyPacket)
     uplinkAuthReply();
+  else if (type == Protocol::MessagePacket)
+    uplinkReadMessage();
   else if (type == Protocol::ChannelPacket)
     uplinkReadChannel();
   else
@@ -138,6 +140,43 @@ void SlaveNode::uplinkReady()
   qDebug() << "";
   qDebug() << "UPLINK READY";
   qDebug() << "";
+}
+
+
+bool SlaveNode::uplinkRoute()
+{
+  int type = SimpleID::typeOf(m_uplink->reader()->dest());
+
+  if (type == SimpleID::UserId)
+    return uplinkRouteUser(m_uplink->reader()->dest());
+
+  if (type == SimpleID::ChannelId)
+    return uplinkRouteChannel(m_uplink->reader()->dest());
+
+  return false;
+}
+
+
+
+bool SlaveNode::uplinkRouteChannel(const QByteArray &id)
+{
+  ServerChannel *channel = m_storage->channel(id);
+  if (!channel)
+    return false;
+
+  m_timestamp = m_uplink->timestamp();
+  return send(m_storage->socketsFromChannel(channel), m_uplink->readBuffer());
+}
+
+
+bool SlaveNode::uplinkRouteUser(const QByteArray &id)
+{
+  ChatUser user = m_storage->user(id);
+  if (!user)
+    return false;
+
+  m_timestamp = m_uplink->timestamp();
+  return send(user, m_uplink->readBuffer());
 }
 
 
@@ -210,35 +249,24 @@ void SlaveNode::uplinkReadChannel()
 }
 
 
-void SlaveNode::uplinkRoute()
+void SlaveNode::uplinkReadMessage()
 {
-  int type = SimpleID::typeOf(m_uplink->reader()->dest());
+  if (SimpleID::typeOf(m_uplink->reader()->dest()) == SimpleID::UserId) {
+    if (!uplinkRouteUser(m_uplink->reader()->dest()))
+      uplinkRejectMessage(MessageReader(m_uplink->reader()).data, NoticeData::UnknownError);
 
-  if (type == SimpleID::UserId)
-    uplinkRouteUser(m_uplink->reader()->dest());
-  else if (type == SimpleID::ChannelId)
-    uplinkRouteChannel(m_uplink->reader()->dest());
+    return;
+  }
+
+  uplinkRoute();
 }
 
 
-
-void SlaveNode::uplinkRouteChannel(const QByteArray &id)
+void SlaveNode::uplinkRejectMessage(const MessageData &msg, int reason)
 {
-  ServerChannel *channel = m_storage->channel(id);
-  if (!channel)
+  if (msg.name == 0)
     return;
 
-  m_timestamp = m_uplink->timestamp();
-  send(m_storage->socketsFromChannel(channel), m_uplink->readBuffer());
-}
-
-
-void SlaveNode::uplinkRouteUser(const QByteArray &id)
-{
-  ChatUser user = m_storage->user(id);
-  if (!user)
-    return;
-
-  m_timestamp = m_uplink->timestamp();
-  send(user, m_uplink->readBuffer());
+  NoticeData data(m_uplink->reader()->dest(), m_uplink->reader()->sender(), NoticeData::MessageRejected, msg.name, reason);
+  m_uplink->send(NoticeWriter(m_uplink->sendStream(), data).data());
 }
