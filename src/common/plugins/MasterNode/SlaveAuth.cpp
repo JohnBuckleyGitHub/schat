@@ -38,7 +38,7 @@ AuthResult SlaveAuth::auth(const AuthRequestData &data)
 
   AuthResult result = AnonymousAuth::auth(data);
   if (result.action == AuthResult::Accept)
-    m_node->addSlave(result.id);
+    Storage::i()->addSlave(result.id);
 
   return result;
 }

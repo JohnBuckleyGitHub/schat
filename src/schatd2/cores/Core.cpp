@@ -150,7 +150,7 @@ bool Core::route(ChatUser user)
 
   bindTalks(m_storage->user(m_reader->sender()), user);
 
-  if (isSameSlave(m_reader->sender(), user->id()))
+  if (m_storage->isSameSlave(m_reader->sender(), user->id()))
     return true;
 
   return send(user, m_readBuffer);
@@ -252,6 +252,9 @@ qint64 Core::timestamp() const
 
 bool Core::checkPacket()
 {
+  if (m_storage->isAllowSlaves() && m_storage->isSlave(m_packetsEvent->userId()))
+    return true;
+
   if (m_reader->sender().isEmpty())
     return false;
 
@@ -618,29 +621,6 @@ void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
 
 
 /*!
- * Проверка на принадлежность пользователей одному вторичному серверу.
- * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
- *
- * \return true если пользователи находятся на одном вторичном сервере или один или оба не являются валидными.
- */
-bool Core::isSameSlave(const QByteArray &id1, const QByteArray &id2)
-{
-  ChatUser user1 = m_storage->user(id1);
-  if (!user1)
-    return true;
-
-  ChatUser user2 = m_storage->user(id2);
-  if (!user2)
-    return true;
-
-  if (user1->socketId() == user2->socketId())
-    return true;
-
-  return false;
-}
-
-
-/*!
  * Обновление статуса пользователя.
  */
 bool Core::updateUserStatus()
@@ -740,9 +720,6 @@ bool Core::readMessage()
   if (m_messageData->options & MessageData::ControlOption && command())
     return true;
 
-  if (m_messageData->name == 0)
-    return route();
-
   if (route()) {
     acceptMessage();
     return true;
@@ -756,7 +733,10 @@ bool Core::readMessage()
 
 void Core::acceptMessage()
 {
-  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && isSameSlave(m_reader->dest(), m_reader->sender()))
+  if (m_messageData->name == 0)
+    return;
+
+  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
     return;
 
   NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageDelivered, m_messageData->name);

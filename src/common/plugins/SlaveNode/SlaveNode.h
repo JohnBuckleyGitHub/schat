@@ -51,6 +51,7 @@ private slots:
 
 private:
   bool uplinkRoute();
+  bool uplinkRouteBroadcast();
   bool uplinkRouteChannel(const QByteArray &id);
   bool uplinkRouteUser(const QByteArray &id);
   void setMode(Mode mode);

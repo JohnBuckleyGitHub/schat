@@ -27,15 +27,6 @@ class MasterNode : public Core
 
 public:
   MasterNode(QObject *parent = 0);
-  inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
-  void addSlave(const QByteArray &id);
-
-protected:
-  bool checkPacket();
-  void socketReleaseEvent(SocketReleaseEvent *event);
-
-private:
-  QList<QByteArray> m_slaves; /// Список вторичных серверов.
 };
 
 #endif /* MASTERNODE_H_ */

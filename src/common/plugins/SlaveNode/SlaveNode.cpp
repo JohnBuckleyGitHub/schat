@@ -62,6 +62,12 @@ void SlaveNode::readPacket(int type)
     if (type == Protocol::MessagePacket && readMessage()) {
       return;
     }
+    else if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->user(m_reader->dest())) {
+      route();
+      return;
+    }
+    else if (m_reader->headerOption() == Protocol::Broadcast)
+      route();
 
     m_uplink->send(m_readBuffer);
   }
@@ -86,9 +92,6 @@ bool SlaveNode::readMessage()
 
   MessageReader reader(m_reader);
   m_messageData = &reader.data;
-
-  if (m_messageData->name == 0)
-    return false;
 
   if (route()) {
     acceptMessage();
@@ -153,6 +156,25 @@ bool SlaveNode::uplinkRoute()
   if (type == SimpleID::ChannelId)
     return uplinkRouteChannel(m_uplink->reader()->dest());
 
+  if (m_uplink->reader()->headerOption() & Protocol::Broadcast)
+    return uplinkRouteBroadcast();
+
+  return false;
+}
+
+
+bool SlaveNode::uplinkRouteBroadcast()
+{
+  qDebug() << "";
+  qDebug() << "ROUTE BROADCAST";
+  qDebug() << "";
+//  ChatUser user = m_storage->user(m_uplink->reader()->sender());
+//  qDebug() << user;
+//  if (!user)
+//    return false;
+//
+//  qDebug() << m_storage->socketsFromUser(user);
+//  return send(m_storage->socketsFromUser(user), m_uplink->readBuffer());
   return false;
 }
 
@@ -245,6 +267,7 @@ void SlaveNode::uplinkReadChannel()
     u->addUser(user->id());
   }
 
+  user->addUsers(users);
   uplinkRoute();
 }
 

@@ -19,6 +19,7 @@
 #include "events.h"
 #include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
+#include "Storage.h"
 
 MasterAnonymousAuth::MasterAnonymousAuth(MasterNode *node)
   : AnonymousAuth(node)
@@ -28,7 +29,7 @@ MasterAnonymousAuth::MasterAnonymousAuth(MasterNode *node)
 
 AuthResult MasterAnonymousAuth::auth(const AuthRequestData &data)
 {
-  if (!m_node->isSlave(m_node->packetsEvent()->userId()))
+  if (!Storage::i()->isSlave(m_node->packetsEvent()->userId()))
     return AnonymousAuth::auth(data);
 
   AuthResult result = AnonymousAuth::auth(data);
