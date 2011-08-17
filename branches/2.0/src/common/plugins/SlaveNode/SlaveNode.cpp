@@ -168,14 +168,15 @@ bool SlaveNode::uplinkRouteBroadcast()
   qDebug() << "";
   qDebug() << "ROUTE BROADCAST";
   qDebug() << "";
-//  ChatUser user = m_storage->user(m_uplink->reader()->sender());
-//  qDebug() << user;
-//  if (!user)
-//    return false;
-//
+  ChatUser user = m_storage->user(m_uplink->reader()->sender());
+  qDebug() << user;
+  if (user)
+    return true;
+
+  m_broadcast = m_uplink->readBuffer();
 //  qDebug() << m_storage->socketsFromUser(user);
 //  return send(m_storage->socketsFromUser(user), m_uplink->readBuffer());
-  return false;
+  return true;
 }
 
 
@@ -279,6 +280,31 @@ void SlaveNode::uplinkReadMessage()
       uplinkRejectMessage(MessageReader(m_uplink->reader()).data, NoticeData::UnknownError);
 
     return;
+  }
+  else if (m_uplink->reader()->headerOption() & Protocol::Broadcast) {
+    if (m_storage->user(m_uplink->reader()->sender()))
+      return;
+
+    MessageData data = MessageReader(m_uplink->reader()).data;
+//    QList<QByteArray> ids = m_uplink
+    qDebug() << "!!!!";
+    qDebug() << data.command;
+    qDebug() << "!!!!";
+    if (data.command == QLatin1String("x-broadcast")) {
+      if (m_broadcast.isEmpty())
+        return;
+
+      QList<quint64> sockets;
+      foreach(QByteArray id, m_uplink->reader()->idList()) {
+        ChatUser u = m_storage->user(id);
+        if (u && !sockets.contains(u->socketId()))
+          sockets.append(u->socketId());
+      }
+      send(sockets, m_broadcast);
+      m_broadcast.clear();
+      qDebug() << m_broadcast.size();
+//      qDebug() << m_uplink->reader()->idList().size();
+    }
   }
 
   uplinkRoute();

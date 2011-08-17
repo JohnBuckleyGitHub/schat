@@ -57,17 +57,18 @@ protected:
   void customEvent(QEvent *event);
 
 protected:
-  virtual bool broadcast();
-  virtual bool route();
-  virtual bool route(ServerChannel *channel);
-  virtual bool route(ChatUser user);
+  bool broadcast();
+  bool route();
+  bool route(ChatUser user);
+  bool route(ServerChannel *channel);
+  bool send(ChatUser user, const QByteArray &packet, int option = 0);
+  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   bool send(ServerChannel *channel, const QByteArray &packet);
   bool send(ServerChannel *channel, const QList<QByteArray> &packets);
-  bool send(ChatUser user, const QByteArray &packet, int option = 0);
-  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   qint64 timestamp() const;
+  void slaveBroadcast();
 
   virtual bool checkPacket();
   virtual void newPacketsEvent(NewPacketsEvent *event);
