@@ -287,9 +287,10 @@ void Core::slaveBroadcast()
     if (users.isEmpty())
       continue;
 
-    MessageData message(user->id(), "bc", QLatin1String("x-broadcast"), QString());
+    MessageData message(user->id(), QLatin1String("bc"), QLatin1String("x-broadcast"), QString());
     MessageWriter writer(m_sendStream, message);
     writer.putId(out);
+    send(slave, writer.data());
   }
 }
 

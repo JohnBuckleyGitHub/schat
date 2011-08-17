@@ -286,10 +286,7 @@ void SlaveNode::uplinkReadMessage()
       return;
 
     MessageData data = MessageReader(m_uplink->reader()).data;
-//    QList<QByteArray> ids = m_uplink
-    qDebug() << "!!!!";
-    qDebug() << data.command;
-    qDebug() << "!!!!";
+
     if (data.command == QLatin1String("x-broadcast")) {
       if (m_broadcast.isEmpty())
         return;
@@ -302,8 +299,7 @@ void SlaveNode::uplinkReadMessage()
       }
       send(sockets, m_broadcast);
       m_broadcast.clear();
-      qDebug() << m_broadcast.size();
-//      qDebug() << m_uplink->reader()->idList().size();
+      return;
     }
   }
 
