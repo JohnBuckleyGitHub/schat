@@ -87,7 +87,15 @@ bool Core::broadcast()
   if (!user)
     return false;
 
-  return send(echoFilter(m_storage->socketsFromUser(user)), m_readBuffer);
+  if (send(echoFilter(m_storage->socketsFromUser(user)), m_readBuffer)) {
+    if (!m_storage->isAllowSlaves())
+      return true;
+
+    slaveBroadcast();
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -247,6 +255,42 @@ qint64 Core::timestamp() const
   #else
   return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
   #endif
+}
+
+
+void Core::slaveBroadcast()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return;
+
+  QList<QByteArray> users = user->users();
+  QList<QByteArray> slaves = m_storage->slaves();
+
+  for (int i = 0; i < slaves.size(); ++i) {
+    ChatUser slave = m_storage->user(slaves.at(i));
+    if (!slave)
+      continue;
+
+    if (m_storage->isSameSlave(user->id(), slave->id()))
+      continue;
+
+    QList<QByteArray> out;
+    foreach (QByteArray id, slave->users()) {
+      if (users.contains(id)) {
+        out.append(id);
+        users.removeAll(id);
+      }
+    }
+
+    users.removeAll(slave->id());
+    if (users.isEmpty())
+      continue;
+
+    MessageData message(user->id(), "bc", QLatin1String("x-broadcast"), QString());
+    MessageWriter writer(m_sendStream, message);
+    writer.putId(out);
+  }
 }
 
 

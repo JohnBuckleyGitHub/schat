@@ -62,6 +62,7 @@ private:
 
   AbstractClient *m_uplink; ///< Подключение к корневому серверу.
   Mode m_mode;              ///< Режим работы сервера.
+  QByteArray m_broadcast;   ///< Буфер broadcast пакета.
 };
 
 #endif /* SLAVECORE_H_ */

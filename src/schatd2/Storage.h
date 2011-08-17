@@ -39,6 +39,7 @@ public:
   ~Storage();
   inline bool isAllowSlaves() const { return m_allowSlaves; }
   inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
+  inline QList<QByteArray> slaves() const { return m_slaves; }
   inline static Storage *i() { return m_self; }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();

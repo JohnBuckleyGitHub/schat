@@ -29,11 +29,17 @@ MasterAnonymousAuth::MasterAnonymousAuth(MasterNode *node)
 
 AuthResult MasterAnonymousAuth::auth(const AuthRequestData &data)
 {
-  if (!Storage::i()->isSlave(m_node->packetsEvent()->userId()))
+  if (!Storage::i()->isSlave(m_core->packetsEvent()->userId()))
     return AnonymousAuth::auth(data);
 
   AuthResult result = AnonymousAuth::auth(data);
   result.option = 0;
+
+  if (result.action == AuthResult::Accept) {
+    ChatUser user = Storage::i()->user(m_core->packetsEvent()->userId());
+    if (user)
+      user->addUser(result.id);
+  }
 
   return result;
 }
