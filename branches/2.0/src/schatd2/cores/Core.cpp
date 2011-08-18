@@ -36,7 +36,6 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
-#include "ServerChannel.h"
 #include "ServerUser.h"
 #include "Storage.h"
 
@@ -133,7 +132,7 @@ bool Core::route()
  *
  * \param channel Канал назначения.
  */
-bool Core::route(ServerChannel *channel)
+bool Core::route(ChatChannel channel)
 {
   if (!channel)
     return false;
@@ -166,6 +165,31 @@ bool Core::route(ChatUser user)
 
 
 /*!
+ * Отправка пакета всем пользователям в канале.
+ *
+ * \param channel Канал.
+ * \param packet  Пакет.
+ * \return false в случае ошибки.
+ */
+bool Core::send(ChatChannel channel, const QByteArray &packet)
+{
+  return send(m_storage->socketsFromChannel(channel), QList<QByteArray>() << packet);
+}
+
+
+/*!
+ * Отправка пакетов всем пользователям в канале.
+ * \param channel Канал.
+ * \param packets Пакеты.
+ * \return false в случае ошибки, иначе true.
+ */
+bool Core::send(ChatChannel channel, const QList<QByteArray> &packets)
+{
+  return send(m_storage->socketsFromChannel(channel), packets);
+}
+
+
+/*!
  * Отправка пакета списку сокетов.
  */
 bool Core::send(const QList<quint64> &sockets, const QByteArray &packet)
@@ -189,31 +213,6 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
   event->timestamp = m_timestamp;
   QCoreApplication::postEvent(m_listener, event);
   return true;
-}
-
-
-/*!
- * Отправка пакета всем пользователям в канале.
- *
- * \param channel Канал.
- * \param packet  Пакет.
- * \return false в случае ошибки.
- */
-bool Core::send(ServerChannel *channel, const QByteArray &packet)
-{
-  return send(m_storage->socketsFromChannel(channel), QList<QByteArray>() << packet);
-}
-
-
-/*!
- * Отправка пакетов всем пользователям в канале.
- * \param channel Канал.
- * \param packets Пакеты.
- * \return false в случае ошибки, иначе true.
- */
-bool Core::send(ServerChannel *channel, const QList<QByteArray> &packets)
-{
-  return send(m_storage->socketsFromChannel(channel), packets);
 }
 
 
@@ -382,7 +381,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
     }
   }
 
-  MessageData message(user->id(), QByteArray(), QLatin1String("leave"), QString());
+  MessageData message(id, "bc", QLatin1String("leave"), QString());
   MessageWriter leave(m_sendStream, message);
   send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
 
@@ -400,7 +399,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
  */
 bool Core::join(const QByteArray &userId, const QByteArray &channelId)
 {
-  ServerChannel *channel = m_storage->channel(channelId);
+  ChatChannel channel = m_storage->channel(channelId);
 
   if (!channel)
     return false;
@@ -422,7 +421,7 @@ bool Core::join(const QByteArray &userId, const QByteArray &channelId)
  *
  * \return true в случае успеха.
  */
-bool Core::join(const QByteArray &userId, ServerChannel *channel)
+bool Core::join(const QByteArray &userId, ChatChannel channel)
 {
   if (!channel->addUser(userId))
     return false;
@@ -433,7 +432,7 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
 
   user->addId(SimpleID::ChannelListId, channel->id());
 
-  ChannelWriter writer(m_sendStream, channel, user->id());
+  ChannelWriter writer(m_sendStream, channel.data(), user->id());
   send(user, writer.data());
 
   if (channel->userCount() > 1) {
@@ -443,6 +442,27 @@ bool Core::join(const QByteArray &userId, ServerChannel *channel)
   }
 
   return true;
+}
+
+
+/*!
+ * Возвращает канал, ассоциированный с именем \p name.
+ * В случае если \p create true то канал будет создан в случае необходимости.
+ *
+ * \param name   Не нормализованное имя канала.
+ * \param create true если канал не существует, то он будет создан.
+ *
+ * \return Указатель на канал или 0 в случае ошибки.
+ */
+ChatChannel Core::channel(const QString &name, bool create)
+{
+  ChatChannel channel = m_storage->channel(name, true);
+
+  if (!channel && create) {
+    channel = m_storage->addChannel(name);
+  }
+
+  return channel;
 }
 
 
@@ -467,27 +487,6 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
   }
 
   return out;
-}
-
-
-/*!
- * Возвращает канал, ассоциированный с именем \p name.
- * В случае если \p create true то канал будет создан в случае необходимости.
- *
- * \param name   Не нормализованное имя канала.
- * \param create true если канал не существует, то он будет создан.
- *
- * \return Указатель на канал или 0 в случае ошибки.
- */
-ServerChannel *Core::channel(const QString &name, bool create)
-{
-  ServerChannel *channel = m_storage->channel(name, true);
-
-  if (!channel && create) {
-    channel = m_storage->addChannel(name);
-  }
-
-  return channel;
 }
 
 
@@ -583,7 +582,7 @@ bool Core::readUserData()
  * \param channel Канал, из которого будут отправлены данные пользователей.
  * \param user    Пользователь, которому будут отравлены данные.
  */
-void Core::sendChannel(ServerChannel *channel, ChatUser user)
+void Core::sendChannel(ChatChannel channel, ChatUser user)
 {
   QList<QByteArray> users = channel->users();
   users.removeAll(user->id());
@@ -733,7 +732,7 @@ bool Core::command()
  */
 bool Core::readJoinCmd()
 {
-  ServerChannel *chan = 0;
+  ChatChannel chan;
   if (!m_messageData->destId.isEmpty())
     chan = m_storage->channel(m_messageData->destId);
 

@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QVariant>
 
+#include "ServerChannel.h"
 #include "ServerUser.h"
 
 class AuthResult;
@@ -30,7 +31,6 @@ class MessageData;
 class NewPacketsEvent;
 class NodeAuth;
 class PacketReader;
-class ServerChannel;
 class Settings;
 class SocketReleaseEvent;
 class Storage;
@@ -59,14 +59,14 @@ protected:
 protected:
   bool broadcast();
   bool route();
+  bool route(ChatChannel channel);
   bool route(ChatUser user);
-  bool route(ServerChannel *channel);
+  bool send(ChatChannel channel, const QByteArray &packet);
+  bool send(ChatChannel channel, const QList<QByteArray> &packets);
   bool send(ChatUser user, const QByteArray &packet, int option = 0);
   bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
-  bool send(ServerChannel *channel, const QByteArray &packet);
-  bool send(ServerChannel *channel, const QList<QByteArray> &packets);
   qint64 timestamp() const;
   void slaveBroadcast();
 
@@ -76,16 +76,16 @@ protected:
   virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
   bool join(const QByteArray &userId, const QByteArray &channelId);
-  bool join(const QByteArray &userId, ServerChannel *channel);
+  bool join(const QByteArray &userId, ChatChannel channel);
+  ChatChannel channel(const QString &name, bool create = true);
   QList<quint64> echoFilter(const QList<quint64> &sockets);
-  ServerChannel *channel(const QString &name, bool create = true);
 
   // Авторизация.
   bool readUserData();
   virtual bool readAuthRequest();
   virtual void acceptAuth(const AuthResult &result);
   virtual void rejectAuth(const AuthResult &result);
-  void sendChannel(ServerChannel *channel, ChatUser user);
+  void sendChannel(ChatChannel channel, ChatUser user);
 
   // u2u.
   void addTalk(ChatUser user1, ChatUser user2);

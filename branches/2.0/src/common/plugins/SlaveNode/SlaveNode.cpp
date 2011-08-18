@@ -26,7 +26,6 @@
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "ProxyAnonymousAuth.h"
-#include "ServerChannel.h"
 #include "Settings.h"
 #include "SlaveNode.h"
 #include "Storage.h"
@@ -215,7 +214,7 @@ bool SlaveNode::uplinkRouteBroadcast()
 
 bool SlaveNode::uplinkRouteChannel(const QByteArray &id)
 {
-  ServerChannel *channel = m_storage->channel(id);
+  ChatChannel channel = m_storage->channel(id);
   if (!channel)
     return false;
 
@@ -281,7 +280,7 @@ void SlaveNode::uplinkReadChannel()
   if (!reader.channel->isValid())
     return;
 
-  ServerChannel *channel = this->channel(reader.channel->name());
+  ChatChannel channel = this->channel(reader.channel->name());
   if (!channel)
     return;
 

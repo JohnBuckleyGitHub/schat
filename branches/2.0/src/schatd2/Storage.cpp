@@ -27,7 +27,6 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
-#include "ServerChannel.h"
 #include "Settings.h"
 #include "ServerUser.h"
 #include "Storage.h"
@@ -173,7 +172,7 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
   if (!user)
     return false;
 
-  ServerChannel *chan = channel(channelId);
+  ChatChannel chan = channel(channelId);
   if (!chan)
     return false;
 
@@ -253,7 +252,7 @@ void Storage::rename(ChatUser user)
 
 bool Storage::removeChannel(const QByteArray &id)
 {
-  ServerChannel *channel = m_channels.value(id);
+  ChatChannel channel = m_channels.value(id);
   if (!channel)
     return false;
 
@@ -266,10 +265,40 @@ bool Storage::removeChannel(const QByteArray &id)
 
 
 /*!
+ * Добавление нового канала.
+ */
+ChatChannel Storage::addChannel(const QString &name, bool permanent)
+{
+  QString normalName = normalize(name);
+  if (m_channelNames.contains(normalName))
+    return ChatChannel();
+
+  ChatChannel ch = ChatChannel(new ServerChannel(makeChannelId(normalName), normalName, name, permanent));
+  if (!ch->isValid())
+    return ChatChannel();
+
+  m_channels.insert(ch->id(), ch);
+  m_channelNames.insert(normalName, ch);
+
+  SCHAT_DEBUG_STREAM(this << "addChannel()" << normalName << name << permanent << ch->id().toHex())
+  return ch;
+}
+
+
+ChatChannel Storage::channel(const QString &name, bool normalize) const
+{
+  if (!normalize)
+    return m_channelNames.value(name);
+
+  return m_channelNames.value(this->normalize(name));
+}
+
+
+/*!
  * Получение списка идентификаторов сокетов пользователей в канале.
  * \param channel Указатель на канал.
  */
-QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
+QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
 {
   QList<quint64> out;
   if (!channel)
@@ -283,38 +312,6 @@ QList<quint64> Storage::socketsFromChannel(ServerChannel *channel)
   }
 
   return out;
-}
-
-
-/*!
- * Добавление нового канала.
- */
-ServerChannel* Storage::addChannel(const QString &name, bool permanent)
-{
-  QString normalName = normalize(name);
-  if (m_channelNames.contains(normalName))
-    return 0;
-
-  ServerChannel *ch = new ServerChannel(makeChannelId(normalName), normalName, name, permanent);
-  if (!ch->isValid()) {
-    delete ch;
-    return 0;
-  }
-
-  m_channels.insert(ch->id(), ch);
-  m_channelNames.insert(normalName, ch);
-
-  SCHAT_DEBUG_STREAM(this << "addChannel()" << normalName << name << permanent << ch->id().toHex())
-  return ch;
-}
-
-
-ServerChannel* Storage::channel(const QString &name, bool normalize) const
-{
-  if (!normalize)
-    return m_channelNames.value(name);
-
-  return m_channelNames.value(this->normalize(name));
 }
 
 
