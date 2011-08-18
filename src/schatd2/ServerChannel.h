@@ -35,4 +35,6 @@ private:
   QString m_normalName; ///< Нормализованное имя канала.
 };
 
+typedef QSharedPointer<ServerChannel> ChatChannel;
+
 #endif /* SERVERCHANNEL_H_ */

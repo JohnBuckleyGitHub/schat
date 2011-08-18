@@ -22,11 +22,11 @@
 #include <QByteArray>
 #include <QHash>
 
+#include "ServerChannel.h"
 #include "ServerUser.h"
 
 class DataBase;
 class FileLocations;
-class ServerChannel;
 class ServerData;
 class Settings;
 
@@ -58,10 +58,10 @@ public:
 
   // channel management.
   bool removeChannel(const QByteArray &id);
-  inline ServerChannel* channel(const QByteArray &id) const { return m_channels.value(id); }
-  QList<quint64> socketsFromChannel(ServerChannel *channel);
-  ServerChannel* addChannel(const QString &name, bool permanent = false);
-  ServerChannel* channel(const QString &name, bool normalize) const;
+  ChatChannel addChannel(const QString &name, bool permanent = false);
+  ChatChannel channel(const QString &name, bool normalize) const;
+  inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
+  QList<quint64> socketsFromChannel(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }
   inline ServerData *serverData() { return m_serverData; }
@@ -75,12 +75,12 @@ private:
   bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
+  QHash<QByteArray, ChatChannel> m_channels;     ///< Таблица каналов.
   QHash<QByteArray, ChatUser> m_sessions;        ///< Таблица сессий.
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
-  QHash<QByteArray, ServerChannel*> m_channels;  ///< Таблица каналов.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
+  QHash<QString, ChatChannel> m_channelNames;    ///< Имена каналов.
   QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
-  QHash<QString, ServerChannel*> m_channelNames; ///< Имена каналов.
   QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.

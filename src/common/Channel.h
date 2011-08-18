@@ -20,7 +20,7 @@
 #define CHANNEL_H_
 
 #include <QList>
-#include <QString>
+#include <QSharedPointer>
 
 #include "schat.h"
 
@@ -30,7 +30,7 @@ public:
   /// Ограничения.
   enum Limits {
     MinNameLengh = 3,     ///< Минимальная длина имени.
-    MaxNameLength = 20,   ///< Максимальная длина имени.
+    MaxNameLength = 21,   ///< Максимальная длина имени.
     MaxDescLength = 128,  ///< Максимальная длина описания.
     MaxTopicLength = 1024 ///< Максимальная длина темы канала.
   };
@@ -73,5 +73,7 @@ private:
   QString m_name;            ///< Имя канала.
   QString m_topic;           ///< Тема канала.
 };
+
+typedef QSharedPointer<Channel> ClientChannel;
 
 #endif /* CHANNEL_H_ */
