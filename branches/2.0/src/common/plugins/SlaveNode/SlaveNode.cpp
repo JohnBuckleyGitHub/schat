@@ -45,6 +45,7 @@ SlaveNode::SlaveNode(QObject *parent)
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));
   connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
+  connect(m_uplink, SIGNAL(clientStateChanged(int, int)), SLOT(uplinkStateChanged(int)));
 }
 
 
@@ -76,6 +77,27 @@ void SlaveNode::readPacket(int type)
 }
 
 
+bool SlaveNode::command()
+{
+  QString command = m_messageData->command;
+
+  if (command == QLatin1String("add")) {
+    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
+      bindTalks();
+    }
+
+    return false;
+  }
+
+  if (command == QLatin1String("status")) {
+    updateUserStatus();
+    return false;
+  }
+
+  return false;
+}
+
+
 /*!
  * Обработка сообщений от локальных пользователей.
  *
@@ -93,11 +115,14 @@ bool SlaveNode::readMessage()
   MessageReader reader(m_reader);
   m_messageData = &reader.data;
 
+  if (m_messageData->options & MessageData::ControlOption && command())
+    return true;
+
   if (route()) {
     acceptMessage();
     return false;
   }
-  else {
+  else if (m_messageData->name) {
     rejectMessage(NoticeData::UnknownError);
     return true;
   }
@@ -143,6 +168,13 @@ void SlaveNode::uplinkReady()
   qDebug() << "";
   qDebug() << "UPLINK READY";
   qDebug() << "";
+}
+
+
+void SlaveNode::uplinkStateChanged(int state)
+{
+  if (state != AbstractClient::ClientOnline)
+    setMode(FailbackMode);
 }
 
 
