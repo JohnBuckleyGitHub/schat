@@ -41,13 +41,15 @@ public:
   int start();
 
 protected:
-  void readPacket(int type);
+  bool command();
   bool readMessage();
+  void readPacket(int type);
 
 private slots:
   void uplinkAuth();
   void uplinkPacketReady(int type);
   void uplinkReady();
+  void uplinkStateChanged(int state);
 
 private:
   bool uplinkRoute();
