@@ -531,6 +531,7 @@ void Core::acceptAuth(const AuthResult &result)
   if (!user)
     return;
 
+  m_storage->addChannel(user);
   AuthReplyData reply(m_storage->serverData(), user.data());
   send(user, AuthReplyWriter(m_sendStream, reply).data(), result.option);
 }

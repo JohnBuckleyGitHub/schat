@@ -58,6 +58,7 @@ public:
 
   // channel management.
   bool removeChannel(const QByteArray &id);
+  ChatChannel addChannel(ChatUser user);
   ChatChannel addChannel(const QString &name, bool permanent = false);
   ChatChannel channel(const QString &name, bool normalize) const;
   inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
