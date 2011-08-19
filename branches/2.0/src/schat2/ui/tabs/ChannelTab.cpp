@@ -21,6 +21,7 @@
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
@@ -43,6 +44,12 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   mainLay->setSpacing(0);
 
   setIcon(SCHAT_ICON(ChannelIcon));
+}
+
+
+ChannelTab::~ChannelTab()
+{
+  ChatCore::i()->client()->part(m_channel->id());
 }
 
 
