@@ -194,12 +194,8 @@ void TabWidget::closeTab(int index)
   AbstractTab *tab = widget(index);
 
   // Закрытие канала.
-  if (tab->type() == AbstractTab::ChannelType) {
-    if (m_channels.contains(tab->id())) {
-      m_channels.remove(tab->id());
-    }
-
-    m_client->part(tab->id());
+  if (tab->type() == AbstractTab::ChannelType && m_channels.contains(tab->id())) {
+    m_channels.remove(tab->id());
   }
   // Закрытие приватного разговора.
   else if (tab->type() == AbstractTab::PrivateType && m_talks.contains(tab->id())) {

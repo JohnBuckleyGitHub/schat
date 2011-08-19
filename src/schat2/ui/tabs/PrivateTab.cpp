@@ -22,6 +22,8 @@
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatPlugins.h"
+#include "client/SimpleClient.h"
+#include "net/packets/message.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
@@ -39,8 +41,17 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   setIcon(userIcon());
   setText(m_user->nick());
 
+  MessageData data(UserUtils::userId(), SimpleID::setType(SimpleID::ChannelId, user->id()), QLatin1String("join"), QLatin1String("~") + user->nick());
+  ChatCore::i()->client()->send(data);
+
   PrivateTabHook hook(this);
   ChatCore::i()->plugins()->hook(hook);
+}
+
+
+PrivateTab::~PrivateTab()
+{
+  ChatCore::i()->client()->part(SimpleID::setType(SimpleID::ChannelId, m_user->id()));
 }
 
 

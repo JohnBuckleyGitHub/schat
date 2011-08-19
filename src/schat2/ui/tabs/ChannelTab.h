@@ -32,6 +32,7 @@ class ChannelTab : public ChatViewTab
 
 public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
+  ~ChannelTab();
   inline UserView *userView() { return m_userView; }
   void alert(bool start = true);
   void setOnline(bool online = true);
