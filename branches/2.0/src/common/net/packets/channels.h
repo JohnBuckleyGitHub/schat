@@ -46,7 +46,7 @@ class SCHAT_EXPORT ChannelReader
 public:
   ChannelReader(PacketReader *reader);
 
-  Channel *channel; // FIXME Не создавать канал в куче или гарантировать корректное удаление.
+  Channel *channel;
 };
 
 #endif /* CHANNELS_H_ */

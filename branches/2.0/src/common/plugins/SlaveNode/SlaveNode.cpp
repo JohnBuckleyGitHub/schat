@@ -234,6 +234,19 @@ bool SlaveNode::uplinkRouteUser(const QByteArray &id)
 }
 
 
+ChatChannel SlaveNode::uplinkAddChannel()
+{
+  ChannelReader reader(m_uplink->reader());
+  if (!reader.channel->isValid())
+    return ChatChannel();
+
+  ChatChannel channel = ChatChannel(new ServerChannel(ClientChannel(reader.channel)));
+  m_storage->addChannel(channel);
+
+  return channel;
+}
+
+
 void SlaveNode::setMode(Mode mode)
 {
   m_mode = mode;
@@ -255,6 +268,7 @@ void SlaveNode::uplinkAuthReply()
   int option = 0;
   if (data.status == AuthReplyData::AccessGranted) {
     option = NewPacketsEvent::AuthorizeSocketOption;
+    addChannel(user);
   }
 
   m_timestamp = m_uplink->timestamp();
@@ -276,21 +290,14 @@ void SlaveNode::uplinkReadChannel()
   if (!user)
     return;
 
-  ChannelReader reader(m_uplink->reader());
-  if (!reader.channel->isValid())
-    return;
-
-  ChatChannel channel = this->channel(reader.channel->name());
+  ChatChannel channel = uplinkAddChannel();
   if (!channel)
-    return;
-
-  if (channel->id() != reader.channel->id())
     return;
 
   channel->addUser(user->id());
   user->addId(SimpleID::ChannelListId, channel->id());
 
-  QList<QByteArray> users = reader.channel->users();
+  QList<QByteArray> users = channel->users();
   for (int i = 0; i < users.size(); ++i) {
     ChatUser u = m_storage->user(users.at(i));
     if (!u)

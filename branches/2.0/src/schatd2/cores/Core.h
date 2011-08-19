@@ -75,8 +75,9 @@ protected:
   virtual void readPacket(int type);
   virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
-  bool join(const QByteArray &userId, const QByteArray &channelId);
   bool join(const QByteArray &userId, ChatChannel channel);
+  bool join(const QByteArray &userId, const QByteArray &channelId);
+  ChatChannel addChannel(ChatUser user);
   ChatChannel channel(const QString &name, bool create = true);
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 

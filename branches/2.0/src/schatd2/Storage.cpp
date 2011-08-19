@@ -339,6 +339,14 @@ QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
 }
 
 
+void Storage::addChannel(ChatChannel channel)
+{
+  channel->setNormalName(normalize(channel->name()));
+  m_channels[channel->id()] = channel;
+  m_channelNames[channel->normalName()] = channel;
+}
+
+
 QByteArray Storage::session() const
 {
   return SimpleID::session(m_serverData->privateId());

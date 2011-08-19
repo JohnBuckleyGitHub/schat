@@ -445,6 +445,18 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 }
 
 
+ChatChannel Core::addChannel(ChatUser user)
+{
+  ChatChannel channel = m_storage->addChannel(user);
+  if (channel->userCount() > 1) {
+    UserWriter writer(m_sendStream, user.data(), channel->id());
+    send(channel, writer.data());
+  }
+
+  return channel;
+}
+
+
 /*!
  * Возвращает канал, ассоциированный с именем \p name.
  * В случае если \p create true то канал будет создан в случае необходимости.
@@ -456,6 +468,9 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
  */
 ChatChannel Core::channel(const QString &name, bool create)
 {
+  if (create && name.startsWith(QLatin1String("~")))
+    create = false;
+
   ChatChannel channel = m_storage->channel(name, true);
 
   if (!channel && create) {
@@ -531,7 +546,8 @@ void Core::acceptAuth(const AuthResult &result)
   if (!user)
     return;
 
-  m_storage->addChannel(user);
+  addChannel(user);
+
   AuthReplyData reply(m_storage->serverData(), user.data());
   send(user, AuthReplyWriter(m_sendStream, reply).data(), result.option);
 }
