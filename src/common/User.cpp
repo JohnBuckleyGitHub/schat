@@ -27,6 +27,7 @@ User::User()
   , m_gender(Male)
   , m_status(OfflineStatus)
 {
+  m_channels.append(m_id);
 }
 
 
@@ -36,6 +37,7 @@ User::User(const QString &nick)
   , m_status(OfflineStatus)
 {
   setNick(nick);
+  m_channels.append(m_id);
 }
 
 
@@ -48,6 +50,7 @@ User::User(const User *other)
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
 {
+  m_channels.append(SimpleID::setType(SimpleID::ChannelId, m_id));
 }
 
 
@@ -57,9 +60,17 @@ User::~User()
 }
 
 
+void User::clear()
+{
+  m_channels.clear();
+  m_channels.append(SimpleID::setType(SimpleID::ChannelId, m_id));
+}
+
+
 bool User::setId(const QByteArray &id)
 {
   m_id = id;
+  m_channels[0] = SimpleID::setType(SimpleID::ChannelId, m_id);
   return validate(id.size() == SimpleID::DefaultSize);
 }
 
@@ -245,6 +256,38 @@ QList<QByteArray> User::ids(int type)
     return QList<QByteArray>();
 
   return m_ids.value(type);
+}
+
+
+bool User::addChannel(const QByteArray &id)
+{
+  if (id.size() != SimpleID::DefaultSize)
+    return false;
+
+  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+    return false;
+
+  if (m_channels.contains(id))
+    return true;
+
+  m_channels.append(id);
+  return true;
+}
+
+
+bool User::removeChannel(const QByteArray &id)
+{
+  if (m_channels.size() == 1)
+    return false;
+
+  if (!m_channels.contains(id))
+    return false;
+
+  if (channel() == id)
+    return false;
+
+  m_channels.removeAll(id);
+  return true;
 }
 
 

@@ -469,7 +469,7 @@ void TabWidget::updateUserData(const QByteArray &userId)
   if (!user)
     return;
 
-  QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
+  QList<QByteArray> channels = user->channels();
   foreach(QByteArray id, channels) {
     ChannelTab *tab = m_channels.value(id);
     if (tab) {

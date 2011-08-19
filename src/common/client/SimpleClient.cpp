@@ -39,7 +39,7 @@ SimpleClientPrivate::~SimpleClientPrivate()
  */
 void SimpleClientPrivate::clearClient()
 {
-  user->remove(SimpleID::ChannelListId);
+  user->clear();
   user->remove(SimpleID::TalksListId);
 
   users.clear();

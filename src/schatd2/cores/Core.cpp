@@ -430,7 +430,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   if (!user)
     return false;
 
-  user->addId(SimpleID::ChannelListId, channel->id());
+  user->addChannel(channel->id());
 
   ChannelWriter writer(m_sendStream, channel.data(), user->id());
   send(user, writer.data());
