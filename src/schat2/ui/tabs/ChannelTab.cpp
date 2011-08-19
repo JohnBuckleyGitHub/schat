@@ -25,8 +25,9 @@
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
 
-ChannelTab::ChannelTab(const QByteArray &id, TabWidget *parent)
-  : ChatViewTab("qrc:/html/ChatView.html", id, ChannelType, parent)
+ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
+  : ChatViewTab("qrc:/html/ChatView.html", channel->id(), ChannelType, parent)
+  , m_channel(channel)
 {
   m_userView = new UserView(this);
 

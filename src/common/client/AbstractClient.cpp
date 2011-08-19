@@ -122,7 +122,7 @@ void AbstractClientPrivate::setClientState(AbstractClient::ClientState state)
     users.insert(user->id(), user);
   }
   else {
-    foreach (Channel *chan, channels) {
+    foreach (ClientChannel chan, channels) {
       chan->clear();
     }
   }
@@ -172,23 +172,15 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
  *
  * \return true в случае успешного добавления канала.
  */
-bool AbstractClientPrivate::addChannel(Channel *channel)
+bool AbstractClientPrivate::addChannel(ClientChannel channel)
 {
   QByteArray id = channel->id();
-  Channel *ch = channels.value(id);
+  ClientChannel ch = channels.value(id);
 
-  if (ch) {
-    if (ch->userCount()) {
-      delete channel;
-      return false;
-    }
-    else {
-      channels.remove(id);
-      delete ch;
-    }
-  }
+  if (ch && ch->userCount())
+    return false;
 
-  channels.insert(id, channel);
+  channels[id] = channel;
   channel->addUser(user->id());
   user->addId(SimpleID::ChannelListId, id);
 
@@ -229,7 +221,7 @@ bool AbstractClientPrivate::readChannel()
   if (!reader.channel->isValid())
     return false;
 
-  addChannel(reader.channel);
+  addChannel(ClientChannel(reader.channel));
   return true;
 }
 
@@ -237,7 +229,7 @@ bool AbstractClientPrivate::readChannel()
 /*!
  * Завершение синхронизации канала.
  */
-void AbstractClientPrivate::endSyncChannel(Channel *channel)
+void AbstractClientPrivate::endSyncChannel(ClientChannel channel)
 {
   if (!channel)
     return;
@@ -378,7 +370,7 @@ bool AbstractClientPrivate::readUserData()
 
   /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
   if (!channelId.isEmpty()) {
-    Channel *channel = channels.value(channelId);
+    ClientChannel channel = channels.value(channelId);
     if (!channel)
       return false;
 
@@ -425,7 +417,7 @@ bool AbstractClientPrivate::removeUserFromChannel(const QByteArray &channelId, c
 {
   Q_Q(AbstractClient);
   ClientUser user = users.value(userId);
-  Channel *channel = channels.value(channelId);
+  ClientChannel channel = channels.value(channelId);
 
   if (!user.isNull() && channel) {
     channel->removeUser(user->id());
@@ -578,7 +570,7 @@ bool AbstractClient::send(const QList<QByteArray> &packets)
 }
 
 
-Channel* AbstractClient::channel(const QByteArray &id) const
+ClientChannel AbstractClient::channel(const QByteArray &id) const
 {
   Q_D(const AbstractClient);
   return d->channels.value(id);

@@ -21,9 +21,10 @@
 
 #include <QUrl>
 
+#include "Channel.h"
 #include "net/SimpleSocket.h"
-#include "User.h"
 #include "schat.h"
+#include "User.h"
 
 class AbstractClientPrivate;
 class Channel;
@@ -52,7 +53,7 @@ public:
   bool send(const MessageData &data);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
-  Channel* channel(const QByteArray &id) const;
+  ClientChannel channel(const QByteArray &id) const;
   ClientState clientState() const;
   ClientUser user() const;
   ClientUser user(const QByteArray &id) const;

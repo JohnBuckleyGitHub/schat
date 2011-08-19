@@ -21,6 +21,7 @@
 
 #include <QHash>
 
+#include "Channel.h"
 #include "client/AbstractClient.h"
 #include "net/SimpleSocket_p.h"
 
@@ -45,9 +46,9 @@ public:
   void setServerData(const ServerData &data);
 
   // Каналы.
-  bool addChannel(Channel *channel);
+  bool addChannel(ClientChannel channel);
   bool readChannel();
-  void endSyncChannel(Channel *channel);
+  void endSyncChannel(ClientChannel channel);
   void endSyncChannel(const QByteArray &id);
 
   // Сообщения.
@@ -70,7 +71,7 @@ public:
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray uniqueId;                     ///< Уникальный идентификатор пользователя.
-  QHash<QByteArray, Channel*> channels;    ///< Таблица каналов.
+  QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
   QHash<QByteArray, ClientUser> users;     ///< Таблица пользователей.
   QList<QByteArray> sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString nick;                            ///< Оригинальный ник пользователя.
