@@ -19,6 +19,7 @@
 #ifndef CHANNELTAB_H_
 #define CHANNELTAB_H_
 
+#include "Channel.h"
 #include "ui/tabs/ChatViewTab.h"
 
 class ChatView;
@@ -30,12 +31,13 @@ class ChannelTab : public ChatViewTab
   Q_OBJECT
 
 public:
-  ChannelTab(const QByteArray &id, TabWidget *parent);
+  ChannelTab(ClientChannel channel, TabWidget *parent);
   inline UserView *userView() { return m_userView; }
   void alert(bool start = true);
   void setOnline(bool online = true);
 
 private:
+  ClientChannel m_channel;
   QSplitter *m_splitter;
   UserView *m_userView;
 };

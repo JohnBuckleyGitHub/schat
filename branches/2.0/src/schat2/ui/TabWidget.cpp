@@ -324,7 +324,7 @@ void TabWidget::showMainMenu()
  */
 void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 {
-  Channel *chan = m_client->channel(channelId);
+  ClientChannel chan = m_client->channel(channelId);
   if (!chan)
     return;
 
@@ -363,7 +363,7 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
  */
 void TabWidget::synced(const QByteArray &channelId)
 {
-  Channel *channel = m_client->channel(channelId);
+  ClientChannel channel = m_client->channel(channelId);
   if (!channel)
     return;
 
@@ -505,14 +505,14 @@ void TabWidget::userLeave(const QByteArray &userId)
  */
 ChannelTab *TabWidget::channelTab(const QByteArray &id)
 {
-  Channel *channel = m_client->channel(id);
+  ClientChannel channel = m_client->channel(id);
   if (!channel)
     return 0;
 
   ChannelTab *tab = 0;
 
   if (!m_channels.contains(id)) {
-    tab = new ChannelTab(id, this);
+    tab = new ChannelTab(channel, this);
     m_channels.insert(id, tab);
     setCurrentIndex(addTab(tab, channel->name()));
 
@@ -751,7 +751,7 @@ void TabWidget::createToolBars()
 void TabWidget::displayChannelUserCount(const QByteArray &id)
 {
   ChannelTab *tab = m_channels.value(id);
-  Channel *chan = m_client->channel(id);
+  ClientChannel chan = m_client->channel(id);
 
   if (tab && chan) {
     int index = indexOf(tab);

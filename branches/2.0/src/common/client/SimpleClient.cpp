@@ -18,7 +18,6 @@
 
 #include "debugstream.h"
 
-#include "Channel.h"
 #include "client/SimpleClient.h"
 #include "client/SimpleClient_p.h"
 #include "net/PacketReader.h"
@@ -46,7 +45,6 @@ void SimpleClientPrivate::clearClient()
   users.clear();
   users.insert(user->id(), user);
 
-  qDeleteAll(channels);
   channels.clear();
 }
 
@@ -72,7 +70,7 @@ void SimpleClientPrivate::restore()
     MessageData data(userId, QByteArray(), QLatin1String("join"), QString());
     data.options |= MessageData::TextOption;
 
-    QHashIterator<QByteArray, Channel*> i(channels);
+    QHashIterator<QByteArray, ClientChannel> i(channels);
     while (i.hasNext()) {
       i.next();
       data.destId = i.key();

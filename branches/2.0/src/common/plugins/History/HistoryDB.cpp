@@ -291,7 +291,7 @@ void HistoryDB::clientStateChanged(int state)
 
 void HistoryDB::synced(const QByteArray &channelId)
 {
-  Channel *channel = ChatCore::i()->client()->channel(channelId);
+  ClientChannel channel = ChatCore::i()->client()->channel(channelId);
   if (!channel)
     return;
 
