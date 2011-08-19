@@ -185,7 +185,7 @@ bool AbstractClientPrivate::addChannel(ClientChannel channel)
 
   channels[id] = channel;
   channel->addUser(user->id());
-  user->addId(SimpleID::ChannelListId, id);
+  user->addChannel(id);
 
   if (channel->userCount() == 1) {
     endSyncChannel(channel);
@@ -199,7 +199,7 @@ bool AbstractClientPrivate::addChannel(ClientChannel channel)
   for (int i = 0; i < list.size(); ++i) {
     ClientUser u = users.value(list.at(i));
     if (u) {
-      u->addId(SimpleID::ChannelListId, id);
+      u->addChannel(id);
     }
     else
       unsync++;
@@ -377,7 +377,7 @@ bool AbstractClientPrivate::readUserData()
     if (!channel)
       return false;
 
-    user->addId(SimpleID::ChannelListId, channelId);
+    user->addChannel(channelId);
     if (channel->addUser(id) || channel->isSynced())
       emit(q->join(channelId, id));
   }
@@ -403,7 +403,7 @@ bool AbstractClientPrivate::removeUser(const QByteArray &userId)
   Q_Q(AbstractClient);
   emit(q->userLeave(userId));
 
-  QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
+  QList<QByteArray> channels = user->channels();
   for (int i = 0; i < channels.size(); ++i) {
     removeUserFromChannel(channels.at(i), userId, false);
   }
@@ -424,10 +424,10 @@ bool AbstractClientPrivate::removeUserFromChannel(const QByteArray &channelId, c
 
   if (!user.isNull() && channel) {
     channel->removeUser(user->id());
-    user->removeId(SimpleID::ChannelListId, channel->id());
+    user->removeChannel(channel->id());
 
     emit(q->part(channel->id(), user->id()));
-    if (clear && !this->user->containsId(SimpleID::TalksListId, userId) && user->count(SimpleID::ChannelListId) == 0)
+    if (clear && !this->user->containsId(SimpleID::TalksListId, userId) && user->channelsCount() == 1)
       removeUser(userId);
 
     return true;
@@ -705,7 +705,7 @@ void AbstractClient::part(const QByteArray &channelId)
     return;
 
   d->channels.remove(channelId);
-  user()->removeId(SimpleID::ChannelListId, channelId);
+  d->user->removeChannel(channelId);
 
   MessageData message(userId(), channelId, QLatin1String("part"), QString());
   send(message);

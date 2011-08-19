@@ -142,8 +142,8 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
  */
 bool Storage::remove(ChatUser user)
 {
-  if (user->count(SimpleID::ChannelListId) > 0) {
-    QList<QByteArray> channels = user->ids(SimpleID::ChannelListId);
+  if (user->channelsCount() > 1) {
+    QList<QByteArray> channels = user->channels();
     for (int i = 0; i < channels.size(); ++i) {
       removeUserFromChannel(user->id(), channels.at(i));
     }
@@ -177,7 +177,7 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
     return false;
 
   bool result = chan->removeUser(userId);
-  user->removeId(SimpleID::ChannelListId, channelId);
+  user->removeChannel(channelId);
   user->removeUsers(chan->users());
 
   if (chan->userCount() == 0 && !chan->isPermanent())
@@ -281,7 +281,7 @@ ChatChannel Storage::addChannel(ChatUser user)
     m_channelNames[normalName] = channel;
   }
 
-  user->addId(SimpleID::ChannelListId, id);
+  user->addChannel(id);
   channel->addUser(user->id());
 
   return channel;

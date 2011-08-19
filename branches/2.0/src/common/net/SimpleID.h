@@ -41,7 +41,7 @@ public:
     ServerId = 0x53,         ///< 'S' Идентификатор сервера.
     SessionId = 0x73,        ///< 's' Идентификатор сессии.
     ChannelId = 0x63,        ///< 'c' Идентификатор канала.
-    ChannelListId = 0xcd,    ///< Список каналов.
+//    ChannelListId = 0xcd,    ///< Список каналов.
     TalksListId = 0xce,      ///< Список разговоров.
     FriendsListId = 0xcf     ///< Список друзей.
   };

@@ -295,7 +295,7 @@ void SlaveNode::uplinkReadChannel()
     return;
 
   channel->addUser(user->id());
-  user->addId(SimpleID::ChannelListId, channel->id());
+  user->addChannel(channel->id());
 
   QList<QByteArray> users = channel->users();
   for (int i = 0; i < users.size(); ++i) {

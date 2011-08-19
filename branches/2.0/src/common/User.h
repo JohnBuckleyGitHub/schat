@@ -74,6 +74,7 @@ public:
   User(const User *other);
   virtual ~User();
   inline bool isValid() const { return m_valid; }
+  void clear();
 
   // m_id.
   bool setId(const QByteArray &id);
@@ -102,6 +103,14 @@ public:
   int count(int type);
   QList<QByteArray> ids(int type);
 
+  // m_channels.
+  bool addChannel(const QByteArray &id);
+  bool removeChannel(const QByteArray &id);
+  inline bool isChannel(const QByteArray &id) { return m_channels.contains(id); }
+  inline int channelsCount() const { return m_channels.size(); }
+  inline QByteArray channel() const { return m_channels.at(0); }
+  inline QList<QByteArray> channels() const { return m_channels; }
+
   // network.
   inline QString host() const { return m_host; }
   inline QString userAgent() const { return m_userAgent; }
@@ -126,6 +135,7 @@ protected:
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
   QHash<int, QString> m_statuses;       ///< Статусы.
+  QList<QByteArray> m_channels;         ///< Каналы.
   QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.
