@@ -56,6 +56,7 @@ private:
   bool uplinkRouteBroadcast();
   bool uplinkRouteChannel(const QByteArray &id);
   bool uplinkRouteUser(const QByteArray &id);
+  ChatChannel uplinkAddChannel();
   void setMode(Mode mode);
   void uplinkAuthReply();
   void uplinkReadChannel();

@@ -89,6 +89,9 @@ bool AbstractClientPrivate::readAuthReply()
     if (user->status() == User::OfflineStatus)
       user->setStatus(User::OnlineStatus);
 
+    ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
+    addChannel(channel);
+
     emit(q->userDataChanged(user->id()));
     emit(q->ready());
     return true;

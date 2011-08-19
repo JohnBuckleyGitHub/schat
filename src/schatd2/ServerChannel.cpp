@@ -18,6 +18,17 @@
 
 #include "ServerChannel.h"
 
+ServerChannel::ServerChannel(ClientChannel channel)
+  : Channel(channel->id(), channel->name())
+  , m_permanent(false)
+  , m_normalName(channel->name())
+{
+  setDesc(channel->desc());
+  setTopic(channel->topic());
+  setUsers(channel->users());
+}
+
+
 ServerChannel::ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent)
   : Channel(id, name)
   , m_permanent(permanent)
