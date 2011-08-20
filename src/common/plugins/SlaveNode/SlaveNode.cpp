@@ -301,10 +301,10 @@ void SlaveNode::uplinkReadChannel()
     if (!u)
       continue;
 
-    u->addUser(user->id());
+//    u->addUser(user->id());
   }
 
-  user->addUsers(users);
+//  user->addUsers(users);
   uplinkRoute();
 }
 

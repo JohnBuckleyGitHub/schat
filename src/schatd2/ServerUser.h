@@ -42,20 +42,10 @@ public:
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
   inline void setOnline(bool online) { m_online = online; }
 
-  // m_users.
-  bool addId(int type, const QByteArray &id);
-  bool addUser(const QByteArray &id);
-  bool removeUser(const QByteArray &id);
-  inline bool isUser(const QByteArray &id) const { return m_users.contains(id); }
-  inline QList<QByteArray> users() const { return m_users; }
-  void addUsers(const QList<QByteArray> &users);
-  void removeUsers(const QList<QByteArray> &users);
-
 private:
   bool m_online;             ///< true если пользователь в сети.
   QByteArray m_session;      ///< Сессия.
   qint64 m_key;              ///< Ключ в таблице users.
-  QList<QByteArray> m_users; ///< Список идентификаторов ассоциированных пользователей.
   QString m_normalNick;      ///< Нормализованный ник.
   quint64 m_socketId;        ///< Идентификатор сокета.
 };

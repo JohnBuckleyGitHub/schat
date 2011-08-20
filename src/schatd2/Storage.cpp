@@ -178,7 +178,6 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
 
   bool result = chan->removeUser(userId);
   user->removeChannel(channelId);
-  user->removeUsers(chan->users());
 
   if (chan->userCount() == 0 && !chan->isPermanent())
     removeChannel(chan->id());

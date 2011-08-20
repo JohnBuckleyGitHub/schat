@@ -327,6 +327,10 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 }
 
 
+/*!
+ * Создание приватного канала для вновь подключившегося пользователя.
+ * Если в канале находятся пользователи, то они получает уведомление о входе нового пользователя.
+ */
 ChatChannel Core::addChannel(ChatUser user)
 {
   ChatChannel channel = m_storage->addChannel(user);
@@ -428,10 +432,25 @@ void Core::acceptAuth(const AuthResult &result)
   if (!user)
     return;
 
-  addChannel(user);
+  ChatChannel channel = addChannel(user);
+  QList<QByteArray> packets;
 
-  AuthReplyData reply(m_storage->serverData(), user.data());
-  send(user, AuthReplyWriter(m_sendStream, reply).data(), result.option);
+  if (channel->userCount() > 1) {
+    QList<QByteArray> users = channel->users();
+    users.removeAll(user->id());
+
+    for (int i = 0; i < users.size(); ++i) {
+      ChatUser u = m_storage->user(users.at(i));
+      if (u)
+        packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id()).data());
+    }
+
+    MessageData message(channel->id(), user->id(), QLatin1String("synced"), QString());
+    packets.append(MessageWriter(m_sendStream, message).data());
+  }
+
+  packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data())).data());
+  send(user, packets, result.option);
 }
 
 
@@ -494,12 +513,12 @@ void Core::sendChannel(ChatChannel channel, ChatUser user)
     if (!u)
       continue;
 
-    u->addUser(user->id());
-    if (!user->isUser(u->id()))
+//    u->addUser(user->id());
+//    if (!user->isUser(u->id()))
       packets.append(UserWriter(m_sendStream, u.data(), user->id(), channelId).data());
   }
 
-  user->addUsers(users);
+//  user->addUsers(users);
   MessageData message(channelId, user->id(), QLatin1String("synced"), QString());
   packets.append(MessageWriter(m_sendStream, message).data());
 
