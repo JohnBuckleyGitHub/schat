@@ -40,12 +40,12 @@ public:
    */
   inline PacketWriter(QDataStream *stream, quint16 type)
     : m_stream(stream)
-    , m_headerOption(Protocol::BasicHeader)
+    , m_option(Protocol::BasicHeader)
   {
     m_device = stream->device();
     m_device->seek(0);
 
-    *stream << type << quint8(0) << quint8(0) << m_headerOption;
+    *stream << type << quint8(0) << m_option;
   }
 
   /*!
@@ -60,38 +60,32 @@ public:
    */
   inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), const QByteArray &channel = QByteArray(), bool echo = false)
     : m_stream(stream)
-    , m_headerOption(Protocol::BasicHeader)
+    , m_option(Protocol::BasicHeader)
   {
     m_device = stream->device();
     m_device->seek(0);
 
     if (!sender.isEmpty())
-      m_headerOption |= Protocol::SenderField;
+      m_option |= Protocol::SenderField;
 
-    if (!dest.isEmpty()) {
-      if (dest == "bc") {
-        m_headerOption |= Protocol::Broadcast;
-        echo = true;
-      }
-      else
-        m_headerOption |= Protocol::DestinationField;
-    }
+    if (!dest.isEmpty())
+      m_option |= Protocol::DestinationField;
 
     if (!channel.isEmpty())
-      m_headerOption |= Protocol::ChannelField;
+      m_option |= Protocol::ChannelField;
 
     if (echo)
-      m_headerOption |= Protocol::EnableEcho;
+      m_option |= Protocol::EnableEcho;
 
-    *stream << type << quint8(0) << quint8(0) << m_headerOption;
+    *stream << type << quint8(0) << m_option;
 
-    if (m_headerOption & Protocol::SenderField)
+    if (m_option & Protocol::SenderField)
       putId(sender);
 
-    if (m_headerOption & Protocol::ChannelField)
+    if (m_option & Protocol::ChannelField)
       putId(channel);
 
-    if (m_headerOption & Protocol::DestinationField)
+    if (m_option & Protocol::DestinationField)
       putId(QList<QByteArray>() << dest);
   }
 
@@ -107,21 +101,24 @@ public:
    */
   inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>(), bool echo = false)
     : m_stream(stream)
-    , m_headerOption(Protocol::SenderField)
+    , m_option(Protocol::SenderField)
   {
     m_device = stream->device();
     m_device->seek(0);
 
-    if (!dest.isEmpty())
-      m_headerOption |= Protocol::DestinationField;
+    if (!dest.isEmpty()) {
+      m_option |= Protocol::DestinationField;
+      if (dest.size() > 1)
+        m_option |= Protocol::Multicast;
+    }
 
     if (echo)
-      m_headerOption |= Protocol::EnableEcho;
+      m_option |= Protocol::EnableEcho;
 
-    *stream << type << quint8(0) << quint8(0) << m_headerOption;
+    *stream << type << quint8(0) << m_option;
      putId(sender);
 
-    if (m_headerOption & Protocol::DestinationField)
+    if (m_option & Protocol::DestinationField)
       putId(dest);
   }
 
@@ -167,10 +164,12 @@ public:
     }
   }
 
+  inline bool is(int option) { return m_option & option; }
+
 protected:
   QDataStream *m_stream; ///< output stream.
   QIODevice *m_device;   ///< output device.
-  quint8 m_headerOption; ///< Опция заголовка.
+  quint16 m_option;      ///< Опция заголовка.
 };
 
 #endif /* PACKETWRITER_H_ */

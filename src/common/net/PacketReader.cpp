@@ -24,15 +24,14 @@ PacketReader::PacketReader(QDataStream *stream)
     m_device(stream->device())
 {
   m_device->seek(0);
-  quint8 reserved = 0;
-  *stream >> m_type >> m_subtype >> reserved >> m_headerOption;
+  *stream >> m_type >> m_subtype >> m_option;
 
-  if (m_headerOption & Protocol::SenderField)
+  if (m_option & Protocol::SenderField)
     m_sender = id();
 
-  if (m_headerOption & Protocol::ChannelField)
+  if (m_option & Protocol::ChannelField)
     m_channel = id();
 
-  if (m_headerOption & Protocol::DestinationField)
+  if (m_option & Protocol::DestinationField)
     m_dest = idList();
 }

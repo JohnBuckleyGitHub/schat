@@ -73,7 +73,7 @@ void UserWriter::write(User *user, int options)
   put<quint8>(user->status());
   put(user->nick());
 
-  if (!(m_headerOption & Protocol::Broadcast)) {
+  if (!is(Protocol::Multicast)) {
     put(user->userAgent());
     put(user->host());
   }
@@ -90,7 +90,7 @@ UserReader::UserReader(PacketReader *reader)
   user.setStatus(reader->get<quint8>());
   user.setNick(reader->text());
 
-  if (!(reader->headerOption() & Protocol::Broadcast)) {
+  if (!reader->is(Protocol::Multicast)) {
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
   }

@@ -66,8 +66,9 @@ void SlaveNode::readPacket(int type)
       route();
       return;
     }
-    else if (m_reader->headerOption() == Protocol::Broadcast)
-      route();
+    // FIXME Broadcast
+//    else if (m_reader->headerOption() == Protocol::Broadcast)
+//      route();
 
     m_uplink->send(m_readBuffer);
   }
@@ -187,8 +188,9 @@ bool SlaveNode::uplinkRoute()
   if (type == SimpleID::ChannelId)
     return uplinkRouteChannel(m_uplink->reader()->dest());
 
-  if (m_uplink->reader()->headerOption() & Protocol::Broadcast)
-    return uplinkRouteBroadcast();
+  // FIXME Broadcast
+//  if (m_uplink->reader()->headerOption() & Protocol::Broadcast)
+//    return uplinkRouteBroadcast();
 
   return false;
 }
@@ -319,27 +321,28 @@ void SlaveNode::uplinkReadMessage()
 
     return;
   }
-  else if (m_uplink->reader()->headerOption() & Protocol::Broadcast) {
-    if (m_storage->user(m_uplink->reader()->sender()))
-      return;
-
-    MessageData data = MessageReader(m_uplink->reader()).data;
-
-    if (data.command == QLatin1String("x-broadcast")) {
-      if (m_broadcast.isEmpty())
-        return;
-
-      QList<quint64> sockets;
-      foreach(QByteArray id, m_uplink->reader()->idList()) {
-        ChatUser u = m_storage->user(id);
-        if (u && !sockets.contains(u->socketId()))
-          sockets.append(u->socketId());
-      }
-      send(sockets, m_broadcast);
-      m_broadcast.clear();
-      return;
-    }
-  }
+  // FIXME Broadcast
+//  else if (m_uplink->reader()->headerOption() & Protocol::Broadcast) {
+//    if (m_storage->user(m_uplink->reader()->sender()))
+//      return;
+//
+//    MessageData data = MessageReader(m_uplink->reader()).data;
+//
+//    if (data.command == QLatin1String("x-broadcast")) {
+//      if (m_broadcast.isEmpty())
+//        return;
+//
+//      QList<quint64> sockets;
+//      foreach(QByteArray id, m_uplink->reader()->idList()) {
+//        ChatUser u = m_storage->user(id);
+//        if (u && !sockets.contains(u->socketId()))
+//          sockets.append(u->socketId());
+//      }
+//      send(sockets, m_broadcast);
+//      m_broadcast.clear();
+//      return;
+//    }
+//  }
 
   uplinkRoute();
 }
