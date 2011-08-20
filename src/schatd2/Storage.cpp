@@ -217,9 +217,19 @@ void Storage::rename(ChatUser user)
   if (!m_users.contains(user->id()))
     return;
 
+  ChatChannel channel = m_channels.value(user->channel());
+  if (!channel)
+    return;
+
   m_nicks.remove(user->normalNick());
+  m_channelNames.remove(QLatin1String("~") + user->normalNick());
+
   user->setNormalNick(normalize(user->nick()));
-  m_nicks.insert(user->normalNick(), user);
+  channel->setName(QLatin1String("~") + user->nick());
+  channel->setNormalName(QLatin1String("~") + user->normalNick());
+
+  m_nicks[user->normalNick()] = user;
+  m_channelNames[channel->normalName()] = channel;
 }
 
 
