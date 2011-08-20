@@ -31,7 +31,6 @@ ServerUser::ServerUser(const QByteArray &id)
 {
   SCHAT_DEBUG_STREAM("USER CREATED" << this);
   setId(id);
-  addUser(id);
 }
 
 
@@ -47,66 +46,10 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   setNick(authRequestData.nick);
   setRawGender(authRequestData.gender);
   setStatus(authRequestData.status);
-
-  addUser(m_id);
 }
 
 
 ServerUser::~ServerUser()
 {
   SCHAT_DEBUG_STREAM("~" << this)
-}
-
-
-bool ServerUser::addId(int type, const QByteArray &id)
-{
-  if (User::addId(type, id)) {
-    addUser(id);
-    return true;
-  }
-
-  return false;
-}
-
-
-bool ServerUser::addUser(const QByteArray &id)
-{
-  if (m_users.contains(id) || SimpleID::typeOf(id) != SimpleID::UserId)
-    return false;
-
-  m_users.append(id);
-  return true;
-}
-
-
-bool ServerUser::removeUser(const QByteArray &id)
-{
-  if (!m_users.contains(id))
-    return false;
-
-  QHashIterator<int, QList<QByteArray> > i(m_ids);
-  while (i.hasNext()) {
-    i.next();
-    if (i.value().contains(id))
-      return false;
-  }
-
-  m_users.removeAll(id);
-  return true;
-}
-
-
-void ServerUser::addUsers(const QList<QByteArray> &users)
-{
-  for (int i = 0; i < users.size(); ++i) {
-    addUser(users.at(i));
-  }
-}
-
-
-void ServerUser::removeUsers(const QList<QByteArray> &users)
-{
-  for (int i = 0; i < users.size(); ++i) {
-    removeUser(users.at(i));
-  }
 }
