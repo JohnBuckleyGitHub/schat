@@ -81,14 +81,6 @@ bool SlaveNode::command()
 {
   QString command = m_messageData->command;
 
-//  if (command == QLatin1String("add")) {
-//    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
-//      bindTalks();
-//    }
-//
-//    return false;
-//  }
-
   if (command == QLatin1String("status")) {
     updateUserStatus();
     return false;
@@ -119,6 +111,7 @@ bool SlaveNode::readMessage()
     return true;
 
   if (route()) {
+    qDebug() << "ACCEPT";
     acceptMessage();
     return false;
   }
@@ -180,19 +173,22 @@ void SlaveNode::uplinkStateChanged(int state)
 
 bool SlaveNode::uplinkRoute()
 {
-  int type = SimpleID::typeOf(m_uplink->reader()->dest());
+//  int type = SimpleID::typeOf(m_uplink->reader()->dest());
 
-  if (type == SimpleID::UserId)
-    return uplinkRouteUser(m_uplink->reader()->dest());
+  m_timestamp = m_uplink->timestamp();
+  return send(m_storage->socketsFromIds(m_uplink->reader()->destinations()), m_uplink->readBuffer());
 
-  if (type == SimpleID::ChannelId)
-    return uplinkRouteChannel(m_uplink->reader()->dest());
+//  if (type == SimpleID::UserId)
+//    return uplinkRouteUser(m_uplink->reader()->dest());
+//
+//  if (type == SimpleID::ChannelId)
+//    return uplinkRouteChannel(m_uplink->reader()->dest());
 
   // FIXME Broadcast
 //  if (m_uplink->reader()->headerOption() & Protocol::Broadcast)
 //    return uplinkRouteBroadcast();
 
-  return false;
+//  return false;
 }
 
 

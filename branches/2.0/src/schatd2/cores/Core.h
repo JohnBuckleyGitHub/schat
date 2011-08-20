@@ -57,10 +57,7 @@ protected:
   void customEvent(QEvent *event);
 
 protected:
-  bool broadcast();
   bool route();
-  bool route(ChatChannel channel);
-  bool route(ChatUser user);
   bool send(ChatChannel channel, const QByteArray &packet);
   bool send(ChatChannel channel, const QList<QByteArray> &packets);
   bool send(ChatUser user, const QByteArray &packet, int option = 0);
@@ -68,7 +65,6 @@ protected:
   bool send(const QList<quint64> &sockets, const QByteArray &packet);
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   qint64 timestamp() const;
-  void slaveBroadcast();
 
   virtual bool checkPacket();
   virtual void newPacketsEvent(NewPacketsEvent *event);
@@ -87,11 +83,6 @@ protected:
   virtual void acceptAuth(const AuthResult &result);
   virtual void rejectAuth(const AuthResult &result);
   void sendChannel(ChatChannel channel, ChatUser user);
-
-  // u2u.
-  void addTalk(ChatUser user1, ChatUser user2);
-  void bindTalks();
-  void bindTalks(ChatUser senderUser, ChatUser destUser);
 
   // users.
   bool updateUserStatus();

@@ -53,7 +53,6 @@ public:
   ChatUser user(const QString &nick, bool normalize) const;
   inline ChatUser user(const QByteArray &id) const { return m_users.value(id); }
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
-  QList<quint64> socketsFromUser(ChatUser usr);
   void rename(ChatUser user);
 
   // channel management.

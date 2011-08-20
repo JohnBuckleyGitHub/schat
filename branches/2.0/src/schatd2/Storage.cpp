@@ -201,32 +201,6 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
 }
 
 
-/*!
- * Получение списка идентификаторов сокетов всех пользователей
- * в каналах, которых находится данный пользователь.
- *
- * \param usr Указатель на пользователя.
- */
-QList<quint64> Storage::socketsFromUser(ChatUser usr)
-{
-  QList<quint64> out;
-  if (!usr)
-    return out;
-
-  QList<QByteArray> users = usr->users();
-  for (int i = 0; i < users.size(); ++i) {
-    ChatUser u = user(users.at(i));
-    if (!u)
-      continue;
-
-    if (!out.contains(u->socketId()))
-      out.append(u->socketId());
-  }
-
-  return out;
-}
-
-
 ChatUser Storage::user(const QString &nick, bool normalize) const
 {
   if (!normalize)
