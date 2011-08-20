@@ -501,7 +501,7 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
     return out;
 
   quint64 id = user->socketId();
-  if (m_reader->headerOption() & Protocol::EnableEcho) {
+  if (m_reader->is(Protocol::EnableEcho)) {
     if (!out.contains(id))
       out.append(id);
   }
@@ -701,11 +701,8 @@ bool Core::updateUserStatus()
   if (!user->setStatus(m_messageData->text))
     return true;
 
-  if (user->status() == User::OfflineStatus) {
-    if (m_reader->headerOption() & Protocol::Broadcast) {
-      user->setStatus(User::OnlineStatus);
-    }
-  }
+  if (user->status() == User::OfflineStatus)
+    user->setStatus(User::OnlineStatus);
 
   return false;
 }

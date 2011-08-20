@@ -27,7 +27,8 @@ class SCHAT_EXPORT PacketReader
 {
 public:
   PacketReader(QDataStream *stream);
-  inline int headerOption() const   { return m_headerOption; }
+  inline bool is(int option)        { return m_option & option; }
+  inline int option() const         { return m_option; }
   inline int subtype() const        { return m_subtype; }
   inline int type() const           { return m_type; }
   inline QByteArray channel() const { return m_channel; }
@@ -70,7 +71,7 @@ public:
 private:
   quint16 m_type;
   quint8 m_subtype;
-  quint8 m_headerOption;
+  quint16 m_option;
   QByteArray m_sender;
   QByteArray m_channel;
   QList<QByteArray> m_dest;
