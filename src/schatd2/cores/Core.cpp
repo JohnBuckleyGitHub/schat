@@ -80,24 +80,6 @@ void Core::customEvent(QEvent *event)
 }
 
 
-bool Core::broadcast()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return false;
-
-  if (send(echoFilter(m_storage->socketsFromUser(user)), m_readBuffer)) {
-    if (!m_storage->isAllowSlaves())
-      return true;
-
-    slaveBroadcast();
-    return true;
-  }
-
-  return false;
-}
-
-
 /*!
  * Маршрутизация входящих пакетов.
  */
@@ -106,69 +88,7 @@ bool Core::route()
   if (m_timestamp == 0)
     m_timestamp = timestamp();
 
-//  if (m_reader->headerOption() & Protocol::Broadcast)
-//    return broadcast();
-
-  qDebug() << "";
-  qDebug() << "";
-  qDebug() << m_reader->destinations().size();
-  qDebug() << "";
-  qDebug() << "";
-
   return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
-
-//  QByteArray dest = m_reader->dest();
-//  if (dest.isEmpty())
-//    return false;
-//
-//  int idType = SimpleID::typeOf(dest);
-//
-//  if (idType == SimpleID::ChannelId) {
-//    return route(m_storage->channel(dest));
-//  }
-//
-//  if (idType == SimpleID::UserId) {
-//    return route(m_storage->user(dest));
-//  }
-//
-//  return false;
-}
-
-
-/*!
- * Маршрутизация входящего пакета адресом назначения, которого является канал.
- *
- * \param channel Канал назначения.
- */
-bool Core::route(ChatChannel channel)
-{
-  if (!channel)
-    return false;
-
-  QList<quint64> sockets = echoFilter(m_storage->socketsFromChannel(channel));
-  if (sockets.isEmpty())
-    return true;
-
-  return send(sockets, m_readBuffer);
-}
-
-
-/*!
- * Маршрутизация входящего пакета адресом назначения, которого является пользователь.
- *
- * \param user Получатель сообщения.
- */
-bool Core::route(ChatUser user)
-{
-  if (!user)
-    return false;
-
-  bindTalks(m_storage->user(m_reader->sender()), user);
-
-  if (m_storage->isSameSlave(m_reader->sender(), user->id()))
-    return true;
-
-  return send(user, m_readBuffer);
 }
 
 
@@ -265,43 +185,6 @@ qint64 Core::timestamp() const
 }
 
 
-void Core::slaveBroadcast()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return;
-
-  QList<QByteArray> users = user->users();
-  QList<QByteArray> slaves = m_storage->slaves();
-
-  for (int i = 0; i < slaves.size(); ++i) {
-    ChatUser slave = m_storage->user(slaves.at(i));
-    if (!slave)
-      continue;
-
-    if (m_storage->isSameSlave(user->id(), slave->id()))
-      continue;
-
-    QList<QByteArray> out;
-    foreach (QByteArray id, slave->users()) {
-      if (users.contains(id)) {
-        out.append(id);
-        users.removeAll(id);
-      }
-    }
-
-    users.removeAll(slave->id());
-    if (users.isEmpty())
-      continue;
-
-    MessageData message(user->id(), "bc", QLatin1String("x-broadcast"), QString());
-    MessageWriter writer(m_sendStream, message);
-    writer.putId(out);
-    send(slave, writer.data());
-  }
-}
-
-
 bool Core::checkPacket()
 {
   if (m_storage->isAllowSlaves() && m_storage->isSlave(m_packetsEvent->userId()))
@@ -380,19 +263,10 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
     return;
 
   QByteArray id = user->id();
-
-//  QList<QByteArray> talks = user->ids(SimpleID::TalksListId);
-//  for (int i = 0; i < talks.size(); ++i) {
-//    ChatUser u = m_storage->user(talks.at(i));
-//    if (u) {
-//      u->removeId(SimpleID::TalksListId, id);
-//    }
-//  }
-
-  MessageData message(id, "bc", QLatin1String("leave"), QString());
+  MessageData message(id, user->channels(), QLatin1String("leave"), QString());
   MessageWriter leave(m_sendStream, message);
-  send(m_storage->socketsFromUser(user), QList<QByteArray>() << leave.data());
 
+  send(m_storage->socketsFromIds(user->channels()), QList<QByteArray>() << leave.data());
   m_storage->remove(user);
 }
 
@@ -634,62 +508,6 @@ void Core::sendChannel(ChatChannel channel, ChatUser user)
 
 
 /*!
- * При необходимости добавляет пользователя \p user2 в список разговоров пользователя \p user1.
- * В случае успешного добавления пользователю \p user1 будет отослан пакет с данными \p user2.
- */
-void Core::addTalk(ChatUser user1, ChatUser user2)
-{
-//  if (!user1->containsId(SimpleID::TalksListId, user2->id())) {
-//    if (user1->addId(SimpleID::TalksListId, user2->id())) {
-//      send(user1, UserWriter(m_sendStream, user2.data(), user1->id()).data());
-//    }
-//  }
-}
-
-
-/*!
- * Синхронизация данных для обмена статусной информацией между пользователями.
- * \todo ! Добавить возможность склейки пакетов.
- */
-void Core::bindTalks()
-{
-  SCHAT_DEBUG_STREAM(this << "bindTalks()")
-
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return;
-
-  QList<QByteArray> ids = m_reader->idList();
-  if (ids.isEmpty())
-    return;
-
-  for (int i = 0; i < ids.size(); ++i) {
-    ChatUser destUser = m_storage->user(ids.at(i));
-    if (!destUser)
-      continue;
-
-    bindTalks(user, destUser);
-  }
-}
-
-
-/*!
- * Взаимное добавление пользователей в список разговоров.
- * \sa addTalk().
- */
-void Core::bindTalks(ChatUser senderUser, ChatUser destUser)
-{
-  if (!senderUser || !destUser)
-    return;
-
-  SCHAT_DEBUG_STREAM(this << "bindTalks()")
-
-  addTalk(senderUser, destUser);
-  addTalk(destUser, senderUser);
-}
-
-
-/*!
  * Обновление статуса пользователя.
  */
 bool Core::updateUserStatus()
@@ -732,14 +550,6 @@ bool Core::command()
 
     return true;
   }
-
-//  if (command == QLatin1String("add")) {
-//    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
-//      bindTalks();
-//    }
-//
-//    return true;
-//  }
 
   if (command == QLatin1String("status")) {
     return updateUserStatus();
