@@ -335,7 +335,7 @@ void ChatCore::send(const QString &text)
   if (text.isEmpty())
     return;
 
-  MessageData data(QByteArray(), m_currentId, text);
+  MessageData data(QByteArray(), m_currentId, QString(), text);
   m_messageAdapter->send(data);
 }
 

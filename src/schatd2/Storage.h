@@ -63,6 +63,7 @@ public:
   ChatChannel channel(const QString &name, bool normalize) const;
   inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
   QList<quint64> socketsFromChannel(ChatChannel channel);
+  QList<quint64> socketsFromIds(const QList<QByteArray> &ids);
   void addChannel(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }

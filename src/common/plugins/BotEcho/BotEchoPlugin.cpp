@@ -46,7 +46,7 @@ void BotEcho::join(const QByteArray &channelId, const QByteArray &userId)
   if (!user)
     return;
 
-  MessageData message(m_client->userId(), channelId, QString("Hello <b>%1</b>!").arg(user->nick()));
+  MessageData message(m_client->userId(), channelId, QString(), QString("Hello <b>%1</b>!").arg(user->nick()));
   m_client->send(message);
 }
 
@@ -57,7 +57,7 @@ void BotEcho::message(const MessageData &data)
   if (!user)
     return;
 
-  if (data.destId != m_client->userId())
+  if (data.destId() != m_client->userId())
     return;
 
   MessageData message(m_client->userId(), data.senderId, data.command, data.text);
@@ -67,7 +67,7 @@ void BotEcho::message(const MessageData &data)
 
 void BotEcho::synced(const QByteArray &channelId)
 {
-  MessageData message(m_client->userId(), channelId, QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
+  MessageData message(m_client->userId(), channelId, QString(), QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
   m_client->send(message);
 }
 

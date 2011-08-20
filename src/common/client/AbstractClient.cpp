@@ -341,13 +341,6 @@ bool AbstractClientPrivate::readUserData()
 {
   SCHAT_DEBUG_STREAM(this << "readUserData()")
 
-  QByteArray channelId = reader->channel();
-  if (SimpleID::typeOf(reader->dest()) == SimpleID::ChannelId)
-    channelId = reader->dest();
-
-  if (!channelId.isEmpty() && !channels.contains(channelId))
-    return false;
-
   /// Идентификатор отправителя не может быть пустым.
   QByteArray id = reader->sender();
   if (id.isEmpty())
@@ -371,7 +364,10 @@ bool AbstractClientPrivate::readUserData()
     updateUserData(user, &reader.user);
   }
 
-  /// Если идентификатор назначения канал, то пользователь будет добавлен в него.
+  QByteArray channelId = this->reader->channel();
+  if (channelId.isEmpty() && SimpleID::typeOf(this->reader->dest()) == SimpleID::ChannelId)
+      channelId = this->reader->dest();
+
   if (!channelId.isEmpty()) {
     ClientChannel channel = channels.value(channelId);
     if (!channel)
@@ -380,9 +376,6 @@ bool AbstractClientPrivate::readUserData()
     user->addChannel(channelId);
     if (channel->addUser(id) || channel->isSynced())
       emit(q->join(channelId, id));
-  }
-  else if (SimpleID::typeOf(this->reader->dest()) == SimpleID::UserId) {
-    this->user->addId(SimpleID::TalksListId, id);
   }
 
   return true;
@@ -427,7 +420,7 @@ bool AbstractClientPrivate::removeUserFromChannel(const QByteArray &channelId, c
     user->removeChannel(channel->id());
 
     emit(q->part(channel->id(), user->id()));
-    if (clear && !this->user->containsId(SimpleID::TalksListId, userId) && user->channelsCount() == 1)
+    if (clear && user->channelsCount() == 1)
       removeUser(userId);
 
     return true;
@@ -472,9 +465,7 @@ void AbstractClientPrivate::updateUserStatus(const QString &text)
     return;
 
   if (user->status() == User::OfflineStatus) {
-    if (reader->headerOption() & Protocol::Broadcast) {
-      user->setStatus(User::OnlineStatus);
-    }
+    user->setStatus(User::OnlineStatus);
   }
 
   emit(q->userDataChanged(user->id()));
@@ -537,14 +528,10 @@ bool AbstractClient::openUrl(const QUrl &url)
 /*!
  * Отправка сообщения.
  */
-bool AbstractClient::send(const MessageData &data)
+bool AbstractClient::send(const MessageData &data, bool echo)
 {
   Q_D(AbstractClient);
-  QList<QByteArray> packets;
-  QByteArray dest = data.destId;
-
-  packets.append(MessageWriter(d->sendStream, data).data());
-  return send(packets);
+  return send(MessageWriter(d->sendStream, data, echo).data());
 }
 
 

@@ -81,8 +81,8 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   if (addUser(data.senderId) == -1)
     return -1;
 
-  if (SimpleID::typeOf(data.destId) == SimpleID::UserId)
-    addUser(data.destId);
+  if (SimpleID::typeOf(data.destId()) == SimpleID::UserId)
+    addUser(data.destId());
 
   QSqlQuery query(QSqlDatabase::database(m_id));
 
@@ -90,7 +90,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
                      "VALUES (:senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
 
   query.bindValue(QLatin1String(":senderId"), data.senderId);
-  query.bindValue(QLatin1String(":destId"), data.destId);
+  query.bindValue(QLatin1String(":destId"), data.destId());
   query.bindValue(QLatin1String(":status"), status);
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
   query.bindValue(QLatin1String(":command"), data.command);

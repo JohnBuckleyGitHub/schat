@@ -88,11 +88,41 @@ public:
     if (m_headerOption & Protocol::SenderField)
       putId(sender);
 
-    if (m_headerOption & Protocol::DestinationField)
-      putId(dest);
-
     if (m_headerOption & Protocol::ChannelField)
       putId(channel);
+
+    if (m_headerOption & Protocol::DestinationField)
+      putId(QList<QByteArray>() << dest);
+  }
+
+  /*!
+   * Создание виртуального пакета и запись заголовка.
+   *
+   * \param stream   output stream.
+   * \param type     Тип пакета.
+   * \param sender   Идентификатор отправителя.
+   * \param dest     Идентификатор получателя, специальное значение "bc" устанавливает опцию Protocol::Broadcast.
+   * \param channel  Идентификатор канала.
+   * \param echo     true для включения опции Protocol::EnableEcho.
+   */
+  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>(), bool echo = false)
+    : m_stream(stream)
+    , m_headerOption(Protocol::SenderField)
+  {
+    m_device = stream->device();
+    m_device->seek(0);
+
+    if (!dest.isEmpty())
+      m_headerOption |= Protocol::DestinationField;
+
+    if (echo)
+      m_headerOption |= Protocol::EnableEcho;
+
+    *stream << type << quint8(0) << quint8(0) << m_headerOption;
+     putId(sender);
+
+    if (m_headerOption & Protocol::DestinationField)
+      putId(dest);
   }
 
   /*!

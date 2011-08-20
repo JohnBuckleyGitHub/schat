@@ -80,13 +80,13 @@ bool SlaveNode::command()
 {
   QString command = m_messageData->command;
 
-  if (command == QLatin1String("add")) {
-    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
-      bindTalks();
-    }
-
-    return false;
-  }
+//  if (command == QLatin1String("add")) {
+//    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
+//      bindTalks();
+//    }
+//
+//    return false;
+//  }
 
   if (command == QLatin1String("status")) {
     updateUserStatus();

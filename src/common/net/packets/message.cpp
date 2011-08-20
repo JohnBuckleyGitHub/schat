@@ -21,24 +21,8 @@
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 
-
-void MessageData::autoSetOptions()
-{
-  options = NoOptions;
-
-  if (!command.isEmpty())
-    options |= ControlOption;
-
-  if (name > 0)
-    options |= NameOption;
-
-  if (!text.isEmpty())
-    options |= TextOption;
-}
-
-
-MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data)
-  : PacketWriter(stream, Protocol::MessagePacket, data.senderId, data.destId)
+MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data, bool echo)
+  : PacketWriter(stream, Protocol::MessagePacket, data.senderId, data.dest, echo)
 {
   put<quint8>(data.options);
 
@@ -56,7 +40,7 @@ MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data)
 MessageReader::MessageReader(PacketReader *reader)
 {
   data.senderId = reader->sender();
-  data.destId = reader->dest();
+  data.dest = reader->destinations();
   data.options = reader->get<quint8>();
 
   if (data.options & MessageData::NameOption)

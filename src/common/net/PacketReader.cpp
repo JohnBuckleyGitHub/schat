@@ -30,9 +30,9 @@ PacketReader::PacketReader(QDataStream *stream)
   if (m_headerOption & Protocol::SenderField)
     m_sender = id();
 
-  if (m_headerOption & Protocol::DestinationField)
-    m_dest = id();
-
   if (m_headerOption & Protocol::ChannelField)
     m_channel = id();
+
+  if (m_headerOption & Protocol::DestinationField)
+    m_dest = idList();
 }

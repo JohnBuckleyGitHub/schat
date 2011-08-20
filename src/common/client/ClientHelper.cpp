@@ -38,7 +38,7 @@ bool ClientHelper::send(MessageData &data)
   if (data.text.isEmpty())
     return false;
 
-  m_destId = data.destId;
+  m_destId = data.destId();
   QString text;
 
   if (m_richText)
@@ -75,7 +75,7 @@ bool ClientHelper::send(MessageData &data)
  */
 bool ClientHelper::sendText(MessageData &data)
 {
-  if (data.destId.isEmpty())
+  if (data.destId().isEmpty())
     return false;
 
   if (data.senderId.isEmpty())

@@ -46,38 +46,59 @@ public:
   , name(0)
   {}
 
-  MessageData(const QByteArray &senderId, const QByteArray &destId, const QString &text)
-  : options(TextOption)
-  , destId(destId)
-  , senderId(senderId)
-  , timestamp(0)
-  , text(text)
-  , name(0)
-  {}
-
   MessageData(const QByteArray &senderId, const QByteArray &destId, const QString &command, const QString &text)
-  : options(ControlOption)
-  , destId(destId)
+  : options(NoOptions)
   , senderId(senderId)
   , timestamp(0)
+  , dest(QList<QByteArray>() << destId)
   , command(command)
   , text(text)
   , name(0)
   {
-    if (!text.isEmpty()) {
-      options |= TextOption;
-    }
+    autoSetOptions();
   }
 
-  void autoSetOptions();
+  MessageData(const QByteArray &senderId, const QList<QByteArray> &dest, const QString &command, const QString &text)
+  : options(NoOptions)
+  , senderId(senderId)
+  , timestamp(0)
+  , dest(dest)
+  , command(command)
+  , text(text)
+  , name(0)
+  {
+    autoSetOptions();
+  }
 
-  int options;         ///< Опции сообщения.
-  QByteArray destId;   ///< Идентификатор назначения.
-  QByteArray senderId; ///< Идентификатор отправителя.
-  qint64 timestamp;    ///< Отметка времени.
-  QString command;     ///< Текстовая команда.
-  QString text;        ///< Текст сообщения.
-  quint64 name;        ///< Уникальное имя-счётчик сообещения.
+  void autoSetOptions()
+  {
+    options = NoOptions;
+
+    if (!command.isEmpty())
+      options |= ControlOption;
+
+    if (name > 0)
+      options |= NameOption;
+
+    if (!text.isEmpty())
+      options |= TextOption;
+  }
+
+  QByteArray destId() const
+  {
+    if (dest.size())
+      return dest.at(0);
+
+    return QByteArray();
+  }
+
+  int options;            ///< Опции сообщения.
+  QByteArray senderId;    ///< Идентификатор отправителя.
+  qint64 timestamp;       ///< Отметка времени.
+  QList<QByteArray> dest; ///< Идентификаторы назначения.
+  QString command;        ///< Текстовая команда.
+  QString text;           ///< Текст сообщения.
+  quint64 name;           ///< Уникальное имя-счётчик сообещения.
 };
 
 
@@ -92,7 +113,7 @@ public:
 class SCHAT_EXPORT MessageWriter : public PacketWriter
 {
 public:
-  MessageWriter(QDataStream *stream, const MessageData &data);
+  MessageWriter(QDataStream *stream, const MessageData &data, bool echo = false);
 };
 
 

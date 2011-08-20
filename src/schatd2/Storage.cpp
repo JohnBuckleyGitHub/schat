@@ -339,6 +339,46 @@ QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
 }
 
 
+/*!
+ * Получение списка идентификаторов сокетов.
+ */
+QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
+{
+  qDebug() << "socketsFromIds()";
+  QList<quint64> out;
+  if (ids.isEmpty())
+    return out;
+
+  foreach (QByteArray id, ids) {
+    int type = SimpleID::typeOf(id);
+
+    if (type == SimpleID::ChannelId) {
+      ChatChannel channel = this->channel(id);
+      qDebug() << "channel";
+      if (channel) {
+        QList<QByteArray> users = channel->users();
+
+        for (int i = 0; i < users.size(); ++i) {
+          ChatUser user = this->user(users.at(i));
+          if (user && !out.contains(user->socketId()))
+            out += user->socketId();
+        }
+      }
+    }
+    else if (type == SimpleID::UserId) {
+      qDebug() << "user";
+      ChatUser user = this->user(id);
+      if (user && !out.contains(user->socketId()))
+        out += user->socketId();
+    }
+  }
+
+  qDebug() << out;
+
+  return out;
+}
+
+
 void Storage::addChannel(ChatChannel channel)
 {
   channel->setNormalName(normalize(channel->name()));

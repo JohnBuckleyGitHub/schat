@@ -106,24 +106,32 @@ bool Core::route()
   if (m_timestamp == 0)
     m_timestamp = timestamp();
 
-  if (m_reader->headerOption() & Protocol::Broadcast)
-    return broadcast();
+//  if (m_reader->headerOption() & Protocol::Broadcast)
+//    return broadcast();
 
-  QByteArray dest = m_reader->dest();
-  if (dest.isEmpty())
-    return false;
+  qDebug() << "";
+  qDebug() << "";
+  qDebug() << m_reader->destinations().size();
+  qDebug() << "";
+  qDebug() << "";
 
-  int idType = SimpleID::typeOf(dest);
+  return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
 
-  if (idType == SimpleID::ChannelId) {
-    return route(m_storage->channel(dest));
-  }
-
-  if (idType == SimpleID::UserId) {
-    return route(m_storage->user(dest));
-  }
-
-  return false;
+//  QByteArray dest = m_reader->dest();
+//  if (dest.isEmpty())
+//    return false;
+//
+//  int idType = SimpleID::typeOf(dest);
+//
+//  if (idType == SimpleID::ChannelId) {
+//    return route(m_storage->channel(dest));
+//  }
+//
+//  if (idType == SimpleID::UserId) {
+//    return route(m_storage->user(dest));
+//  }
+//
+//  return false;
 }
 
 
@@ -204,7 +212,7 @@ bool Core::send(const QList<quint64> &sockets, const QByteArray &packet)
 bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 {
   if (sockets.isEmpty())
-    return false;
+    return true;
 
   if (m_timestamp == 0)
     m_timestamp = timestamp();
@@ -373,13 +381,13 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
   QByteArray id = user->id();
 
-  QList<QByteArray> talks = user->ids(SimpleID::TalksListId);
-  for (int i = 0; i < talks.size(); ++i) {
-    ChatUser u = m_storage->user(talks.at(i));
-    if (u) {
-      u->removeId(SimpleID::TalksListId, id);
-    }
-  }
+//  QList<QByteArray> talks = user->ids(SimpleID::TalksListId);
+//  for (int i = 0; i < talks.size(); ++i) {
+//    ChatUser u = m_storage->user(talks.at(i));
+//    if (u) {
+//      u->removeId(SimpleID::TalksListId, id);
+//    }
+//  }
 
   MessageData message(id, "bc", QLatin1String("leave"), QString());
   MessageWriter leave(m_sendStream, message);
@@ -489,16 +497,16 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
   QList<quint64> out = sockets;
   ChatUser user = m_storage->user(m_reader->sender());
 
-  if (user) {
-    quint64 id = user->socketId();
-    if (m_reader->headerOption() & Protocol::EnableEcho) {
-      if (!out.contains(id)) {
-        out.append(id);
-      }
-    }
-    else {
-      out.removeAll(id);
-    }
+  if (!user)
+    return out;
+
+  quint64 id = user->socketId();
+  if (m_reader->headerOption() & Protocol::EnableEcho) {
+    if (!out.contains(id))
+      out.append(id);
+  }
+  else {
+    out.removeAll(id);
   }
 
   return out;
@@ -631,11 +639,11 @@ void Core::sendChannel(ChatChannel channel, ChatUser user)
  */
 void Core::addTalk(ChatUser user1, ChatUser user2)
 {
-  if (!user1->containsId(SimpleID::TalksListId, user2->id())) {
-    if (user1->addId(SimpleID::TalksListId, user2->id())) {
-      send(user1, UserWriter(m_sendStream, user2.data(), user1->id()).data());
-    }
-  }
+//  if (!user1->containsId(SimpleID::TalksListId, user2->id())) {
+//    if (user1->addId(SimpleID::TalksListId, user2->id())) {
+//      send(user1, UserWriter(m_sendStream, user2.data(), user1->id()).data());
+//    }
+//  }
 }
 
 
@@ -728,13 +736,13 @@ bool Core::command()
     return true;
   }
 
-  if (command == QLatin1String("add")) {
-    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
-      bindTalks();
-    }
-
-    return true;
-  }
+//  if (command == QLatin1String("add")) {
+//    if (SimpleID::isUserRoleId(m_reader->sender(), m_reader->dest()) && SimpleID::typeOf(m_reader->dest()) == SimpleID::TalksListId) {
+//      bindTalks();
+//    }
+//
+//    return true;
+//  }
 
   if (command == QLatin1String("status")) {
     return updateUserStatus();
@@ -750,8 +758,8 @@ bool Core::command()
 bool Core::readJoinCmd()
 {
   ChatChannel chan;
-  if (!m_messageData->destId.isEmpty())
-    chan = m_storage->channel(m_messageData->destId);
+  if (!m_messageData->destId().isEmpty())
+    chan = m_storage->channel(m_messageData->destId());
 
   if (!chan)
     chan = channel(m_messageData->text);

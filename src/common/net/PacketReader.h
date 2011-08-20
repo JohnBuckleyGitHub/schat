@@ -31,9 +31,9 @@ public:
   inline int subtype() const        { return m_subtype; }
   inline int type() const           { return m_type; }
   inline QByteArray channel() const { return m_channel; }
-  inline QByteArray dest() const    { return m_dest; }
+  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
   inline QByteArray sender() const  { return m_sender; }
-
+  inline QList<QByteArray> destinations() const { return m_dest; }
 
   inline QString text() const {
     QByteArray data;
@@ -71,9 +71,9 @@ private:
   quint16 m_type;
   quint8 m_subtype;
   quint8 m_headerOption;
-  QByteArray m_dest;
   QByteArray m_sender;
   QByteArray m_channel;
+  QList<QByteArray> m_dest;
   QDataStream *m_stream;
   QIODevice *m_device;
 };
