@@ -22,6 +22,7 @@
 #include "net/packets/message.h"
 #include "net/packets/users.h"
 #include "NetworkManager.h"
+#include "ui/UserUtils.h"
 #include "User.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
@@ -138,8 +139,8 @@ void ChatSettings::updateStatus(const QVariant &value)
     status = value.toString();
 
   if (m_client->clientState() == SimpleClient::ClientOnline) {
-    MessageData data(m_client->userId(), "bc", QLatin1String("status"), status);
-    m_client->send(data);
+    MessageData data(UserUtils::userId(), m_client->user()->channels(), QLatin1String("status"), status);
+    m_client->send(data, true);
   }
 
   m_user->setStatus(status);

@@ -50,7 +50,7 @@ public:
   ~AbstractClient();
 
   bool openUrl(const QUrl &url);
-  bool send(const MessageData &data);
+  bool send(const MessageData &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
   ClientChannel channel(const QByteArray &id) const;

@@ -46,11 +46,11 @@ User::User(const User *other)
   , m_gender(other->rawGender())
   , m_status(other->status())
   , m_id(other->id())
+  , m_channels(other->channels())
   , m_host(other->host())
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
 {
-  m_channels.append(SimpleID::setType(SimpleID::ChannelId, m_id));
 }
 
 

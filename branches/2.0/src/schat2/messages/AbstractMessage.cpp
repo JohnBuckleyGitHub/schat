@@ -31,7 +31,7 @@ AbstractMessage::AbstractMessage(const QString &type, const MessageData &data, i
   : m_direction(UnknownDirection)
   , m_parseOptions(parseOptions)
   , m_priority(NormalPriority)
-  , m_destId(data.destId)
+  , m_destId(data.destId())
   , m_senderId(data.senderId)
   , m_timestamp(data.timestamp)
   , m_bodyTpl(QLatin1String("body"))

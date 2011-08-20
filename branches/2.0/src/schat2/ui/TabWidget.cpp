@@ -644,7 +644,7 @@ void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId, C
  */
 void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab)
 {
-  MessageData data(userId, destId, text);
+  MessageData data(userId, destId, QString(), text);
   data.timestamp = m_client->timestamp();
 
   AbstractMessage msg(QLatin1String("service-type"), data);

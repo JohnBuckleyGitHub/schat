@@ -208,7 +208,7 @@ void MessageAdapter::clientMessage(const MessageData &data)
     return;
 
   if (ChatCore::i()->isIgnored(data.senderId)) {
-    if (data.destId != m_client->userId())
+    if (data.destId() != m_client->userId())
       return;
 
     NoticeData reply(m_client->userId(), data.senderId, NoticeData::MessageRejected, data.name, NoticeData::Ignored);
@@ -244,7 +244,7 @@ void MessageAdapter::notice(const NoticeData &data)
     if (data.destId != UserUtils::userId())
       return;
 
-    MessageData msg(m_client->userId(), data.senderId, QString());
+    MessageData msg(m_client->userId(), data.senderId, QString(), QString());
     msg.name = data.messageName;
     msg.timestamp = data.timestamp;
 
