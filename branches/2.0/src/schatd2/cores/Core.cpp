@@ -469,23 +469,25 @@ void Core::rejectAuth(const AuthResult &result)
 
 bool Core::readUserData()
 {
-  UserReader reader(m_reader);
-
-  SCHAT_DEBUG_STREAM(this << "readUserData()" << reader.user.nick())
-
   ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
     return false;
+
+  UserReader reader(m_reader);
+  bool rename = false;
 
   if (user->nick() != reader.user.nick()) {
     ChatUser u = m_storage->user(reader.user.nick(), true);
     if (u && u != user)
       return false;
+
+    rename = true;
   }
 
   user->setNick(reader.user.nick());
   user->setRawGender(reader.user.rawGender());
-  m_storage->rename(user);
+  if (rename)
+    m_storage->rename(user);
 
   route();
   return true;

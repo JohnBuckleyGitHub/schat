@@ -16,9 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QSqlQuery>
-#include <QVariant>
-
 #include "debugstream.h"
 #include "net/packets/auth.h"
 #include "ServerUser.h"
