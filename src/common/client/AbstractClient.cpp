@@ -281,7 +281,7 @@ bool AbstractClientPrivate::command()
     return true;
   }
 
-  if (command == "status") {
+  if (command == QLatin1String("status")) {
     updateUserStatus(messageData->text);
     return true;
   }
@@ -675,7 +675,6 @@ void AbstractClient::leave()
 
   d->setClientState(ClientOffline);
   SimpleSocket::leave();
-  setAuthorized(QByteArray());
 }
 
 

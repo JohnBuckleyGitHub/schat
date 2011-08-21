@@ -113,6 +113,15 @@ SimpleClient::~SimpleClient()
 }
 
 
+void SimpleClient::leave()
+{
+  MessageData data(userId(), user()->channels(), QLatin1String("leave"), QString());
+  send(data);
+
+  AbstractClient::leave();
+}
+
+
 void SimpleClient::requestAuth()
 {
   SCHAT_DEBUG_STREAM(this << "requestAuth()")

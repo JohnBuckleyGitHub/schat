@@ -33,7 +33,6 @@ WorkerThread::WorkerThread(const QStringList &listen, QObject *core, QObject *pa
 void WorkerThread::run()
 {
   WorkerEventListener listener(m_core);
-//  listener.add("0.0.0.0:7667");
   foreach (QString listen, m_listen) {
     listener.add(listen);
   }

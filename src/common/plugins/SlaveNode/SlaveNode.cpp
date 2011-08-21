@@ -79,6 +79,23 @@ void SlaveNode::readPacket(int type)
 }
 
 
+void SlaveNode::socketReleaseEvent(SocketReleaseEvent *event)
+{
+  ChatUser user = m_storage->user(event->userId());
+  if (!user)
+    return;
+
+  if (mode() == ProxyMode) {
+    QByteArray packet = MessageWriter(m_sendStream, MessageData(user->id(), user->channels(), QLatin1String("leave"), QString())).data();
+    send(m_storage->socketsFromIds(user->channels()), packet);
+    m_uplink->send(packet);
+    m_storage->remove(user);
+  }
+  else
+    Core::socketReleaseEvent(event);
+}
+
+
 bool SlaveNode::command()
 {
   QString command = m_messageData->command;
@@ -87,6 +104,9 @@ bool SlaveNode::command()
     updateUserStatus();
     return false;
   }
+
+  if (command == QLatin1String("leave"))
+    return readLeaveCmd();
 
   return false;
 }

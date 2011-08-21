@@ -30,6 +30,7 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
 public:
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
+  void leave();
 
 protected:
   SimpleClient(SimpleClientPrivate &dd, QObject *parent);
