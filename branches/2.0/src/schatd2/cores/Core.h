@@ -79,12 +79,13 @@ protected:
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 
   // Авторизация.
-  bool readUserData();
   virtual bool readAuthRequest();
   virtual void acceptAuth(const AuthResult &result);
   virtual void rejectAuth(const AuthResult &result);
 
   // users.
+  bool readUserData();
+  bool updateUserData(ChatUser user, User *other);
   bool updateUserStatus();
 
   // messages.

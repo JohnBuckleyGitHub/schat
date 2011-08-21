@@ -25,6 +25,7 @@
 #include "net/packets/channels.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
+#include "net/packets/users.h"
 #include "ProxyAnonymousAuth.h"
 #include "Settings.h"
 #include "SlaveNode.h"
@@ -59,16 +60,17 @@ void SlaveNode::readPacket(int type)
 {
   qDebug() << "SlaveNode::readPacket()" << type;
   if (mode() == ProxyMode) {
-    if (type == Protocol::MessagePacket && readMessage()) {
-      return;
+    if (type == Protocol::MessagePacket) {
+      if (readMessage())
+        return;
+    }
+    else if (type == Protocol::UserDataPacket) {
+      readUserData();
     }
     else if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->user(m_reader->dest())) {
       route();
       return;
     }
-    // FIXME Broadcast
-//    else if (m_reader->headerOption() == Protocol::Broadcast)
-//      route();
 
     m_uplink->send(m_readBuffer);
   }
@@ -115,8 +117,33 @@ bool SlaveNode::readMessage()
     acceptMessage();
     return false;
   }
-  else if (m_messageData->name) {
+  else {
     rejectMessage(NoticeData::UnknownError);
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Если пользователь изменил ник, вторичный сервер отправляет данные
+ * на корневой сервер и не применяет изменения, т.к. корневой сервер может
+ * отклонить пакет из-за конфликта ников.
+ * Вторичный сервер самостоятельно отследить коллизию ников не может.
+ */
+bool SlaveNode::readUserData()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return false;
+
+  UserReader reader(m_reader);
+  if (user->nick() != reader.user.nick())
+    return false;
+
+  if (updateUserData(user, &reader.user)) {
+    route();
     return true;
   }
 
@@ -148,6 +175,8 @@ void SlaveNode::uplinkPacketReady(int type)
     uplinkAuthReply();
   else if (type == Protocol::MessagePacket)
     uplinkReadMessage();
+  else if (type == Protocol::UserDataPacket)
+    uplinkReadUserData();
   else if (type == Protocol::ChannelPacket)
     uplinkReadChannel();
   else
@@ -173,51 +202,8 @@ void SlaveNode::uplinkStateChanged(int state)
 
 bool SlaveNode::uplinkRoute()
 {
-//  int type = SimpleID::typeOf(m_uplink->reader()->dest());
-
   m_timestamp = m_uplink->timestamp();
   return send(m_storage->socketsFromIds(m_uplink->reader()->destinations()), m_uplink->readBuffer());
-
-//  if (type == SimpleID::UserId)
-//    return uplinkRouteUser(m_uplink->reader()->dest());
-//
-//  if (type == SimpleID::ChannelId)
-//    return uplinkRouteChannel(m_uplink->reader()->dest());
-
-  // FIXME Broadcast
-//  if (m_uplink->reader()->headerOption() & Protocol::Broadcast)
-//    return uplinkRouteBroadcast();
-
-//  return false;
-}
-
-
-bool SlaveNode::uplinkRouteBroadcast()
-{
-  qDebug() << "";
-  qDebug() << "ROUTE BROADCAST";
-  qDebug() << "";
-  ChatUser user = m_storage->user(m_uplink->reader()->sender());
-  qDebug() << user;
-  if (user)
-    return true;
-
-  m_broadcast = m_uplink->readBuffer();
-//  qDebug() << m_storage->socketsFromUser(user);
-//  return send(m_storage->socketsFromUser(user), m_uplink->readBuffer());
-  return true;
-}
-
-
-
-bool SlaveNode::uplinkRouteChannel(const QByteArray &id)
-{
-  ChatChannel channel = m_storage->channel(id);
-  if (!channel)
-    return false;
-
-  m_timestamp = m_uplink->timestamp();
-  return send(m_storage->socketsFromChannel(channel), m_uplink->readBuffer());
 }
 
 
@@ -284,7 +270,6 @@ void SlaveNode::uplinkReadChannel()
 {
   qDebug() << "SlaveNode::uplinkReadChannel()";
   ChatUser user = m_storage->user(m_uplink->reader()->dest());
-  qDebug() << user;
   if (!user)
     return;
 
@@ -295,16 +280,6 @@ void SlaveNode::uplinkReadChannel()
   channel->addUser(user->id());
   user->addChannel(channel->id());
 
-  QList<QByteArray> users = channel->users();
-  for (int i = 0; i < users.size(); ++i) {
-    ChatUser u = m_storage->user(users.at(i));
-    if (!u)
-      continue;
-
-//    u->addUser(user->id());
-  }
-
-//  user->addUsers(users);
   uplinkRoute();
 }
 
@@ -317,28 +292,21 @@ void SlaveNode::uplinkReadMessage()
 
     return;
   }
-  // FIXME Broadcast
-//  else if (m_uplink->reader()->headerOption() & Protocol::Broadcast) {
-//    if (m_storage->user(m_uplink->reader()->sender()))
-//      return;
-//
-//    MessageData data = MessageReader(m_uplink->reader()).data;
-//
-//    if (data.command == QLatin1String("x-broadcast")) {
-//      if (m_broadcast.isEmpty())
-//        return;
-//
-//      QList<quint64> sockets;
-//      foreach(QByteArray id, m_uplink->reader()->idList()) {
-//        ChatUser u = m_storage->user(id);
-//        if (u && !sockets.contains(u->socketId()))
-//          sockets.append(u->socketId());
-//      }
-//      send(sockets, m_broadcast);
-//      m_broadcast.clear();
-//      return;
-//    }
-//  }
+
+  uplinkRoute();
+}
+
+
+void SlaveNode::uplinkReadUserData()
+{
+  ChatUser user = m_storage->user(m_uplink->reader()->sender());
+  if (user) {
+    UserReader reader(m_uplink->reader());
+    if (user->nick() == reader.user.nick() && m_uplink->reader()->is(Protocol::Multicast))
+      return;
+
+    updateUserData(user, &reader.user);
+  }
 
   uplinkRoute();
 }
