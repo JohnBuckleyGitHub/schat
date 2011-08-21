@@ -320,7 +320,10 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   if (channel->userCount() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id());
     send(channel, writer.data()); // Отправка всем пользователям в канале данных нового пользователя.
-    sendChannel(channel, user);
+
+    QList<QByteArray> packets = userDataToSync(channel, user);
+    if (!packets.isEmpty())
+      send(user, packets);
   }
 
   return true;
@@ -364,6 +367,56 @@ ChatChannel Core::channel(const QString &name, bool create)
   }
 
   return channel;
+}
+
+
+/*!
+ * Формирование списка пакетов для синхронизации списка пользователей в канале.
+ * Будут отправлены только данные пользователей, которые не известны получателю.
+ *
+ * \param channel Канал, который необходимо синхронизировать.
+ * \param user    Получатель пакетов.
+ */
+QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
+{
+  QList<QByteArray> channels = user->channels();
+  channels.removeAll(channel->id());
+
+  QList<QByteArray> users; // Список пользователей данные о которых имеются у \p user.
+  for (int i = 0; i < channels.size(); ++i) {
+    ChatChannel channel = m_storage->channel(channels.at(i));
+    if (!channel)
+      continue;
+
+    foreach (QByteArray id, channel->users()) {
+      if (!users.contains(id))
+        users.append(id);
+    }
+  }
+
+  QList<QByteArray> diff; // Список пользователей данные о которых не имеются у \p user.
+  foreach (QByteArray id, channel->users()) {
+    if (!users.contains(id))
+      diff.append(id);
+  }
+
+  if (diff.isEmpty())
+    return diff;
+
+  QList<QByteArray> packets;
+
+  for (int i = 0; i < diff.size(); ++i) {
+    ChatUser u = m_storage->user(diff.at(i));
+    if (!u)
+      continue;
+
+    packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id()).data());
+  }
+
+  MessageData message(channel->id(), user->id(), QLatin1String("synced"), QString());
+  packets.append(MessageWriter(m_sendStream, message).data());
+
+  return packets;
 }
 
 
@@ -435,19 +488,8 @@ void Core::acceptAuth(const AuthResult &result)
   ChatChannel channel = addChannel(user);
   QList<QByteArray> packets;
 
-  if (channel->userCount() > 1) {
-    QList<QByteArray> users = channel->users();
-    users.removeAll(user->id());
-
-    for (int i = 0; i < users.size(); ++i) {
-      ChatUser u = m_storage->user(users.at(i));
-      if (u)
-        packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id()).data());
-    }
-
-    MessageData message(channel->id(), user->id(), QLatin1String("synced"), QString());
-    packets.append(MessageWriter(m_sendStream, message).data());
-  }
+  if (channel->userCount() > 1)
+    packets = userDataToSync(channel, user);
 
   packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data())).data());
   send(user, packets, result.option);
@@ -491,40 +533,6 @@ bool Core::readUserData()
 
   route();
   return true;
-}
-
-
-/*!
- * Отправка данных пользователей в канале.
- * - Данные пользователей в виде пакетов UserData.
- * - Завершающий пакет, это команда "synced".
- *
- * \param channel Канал, из которого будут отправлены данные пользователей.
- * \param user    Пользователь, которому будут отравлены данные.
- */
-void Core::sendChannel(ChatChannel channel, ChatUser user)
-{
-  QList<QByteArray> users = channel->users();
-  users.removeAll(user->id());
-
-  QByteArray channelId = channel->id();
-  QList<QByteArray> packets;
-
-  for (int i = 0; i < users.size(); ++i) {
-    ChatUser u = m_storage->user(users.at(i));
-    if (!u)
-      continue;
-
-//    u->addUser(user->id());
-//    if (!user->isUser(u->id()))
-      packets.append(UserWriter(m_sendStream, u.data(), user->id(), channelId).data());
-  }
-
-//  user->addUsers(users);
-  MessageData message(channelId, user->id(), QLatin1String("synced"), QString());
-  packets.append(MessageWriter(m_sendStream, message).data());
-
-  send(user, packets);
 }
 
 

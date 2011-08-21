@@ -75,6 +75,7 @@ protected:
   bool join(const QByteArray &userId, const QByteArray &channelId);
   ChatChannel addChannel(ChatUser user);
   ChatChannel channel(const QString &name, bool create = true);
+  QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 
   // Авторизация.
@@ -82,7 +83,6 @@ protected:
   virtual bool readAuthRequest();
   virtual void acceptAuth(const AuthResult &result);
   virtual void rejectAuth(const AuthResult &result);
-  void sendChannel(ChatChannel channel, ChatUser user);
 
   // users.
   bool updateUserStatus();
