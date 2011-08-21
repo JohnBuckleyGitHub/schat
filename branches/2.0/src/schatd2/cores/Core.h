@@ -91,6 +91,7 @@ protected:
   // messages.
   bool command();
   bool readJoinCmd();
+  bool readLeaveCmd();
   bool readMessage();
   void acceptMessage();
   void rejectMessage(int reason);

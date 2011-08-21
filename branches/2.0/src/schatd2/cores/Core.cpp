@@ -262,11 +262,9 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
   if (!user)
     return;
 
-  QByteArray id = user->id();
-  MessageData message(id, user->channels(), QLatin1String("leave"), QString());
-  MessageWriter leave(m_sendStream, message);
+  MessageData message(user->id(), user->channels(), QLatin1String("leave"), QString());
 
-  send(m_storage->socketsFromIds(user->channels()), QList<QByteArray>() << leave.data());
+  send(m_storage->socketsFromIds(user->channels()), MessageWriter(m_sendStream, message).data());
   m_storage->remove(user);
 }
 
@@ -598,6 +596,9 @@ bool Core::command()
     return updateUserStatus();
   }
 
+  if (command == QLatin1String("leave"))
+    return readLeaveCmd();
+
   return false;
 }
 
@@ -618,6 +619,20 @@ bool Core::readJoinCmd()
     return false;
 
   return join(m_reader->sender(), chan);
+}
+
+
+bool Core::readLeaveCmd()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return true;
+
+  if (!m_storage->isSlave(m_packetsEvent->userId()))
+    send(user, QByteArray(), NewPacketsEvent::KillSocketOption);
+
+  m_storage->remove(user);
+  return false;
 }
 
 

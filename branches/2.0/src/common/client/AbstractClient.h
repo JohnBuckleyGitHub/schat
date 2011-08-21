@@ -68,7 +68,7 @@ public:
   void setNick(const QString &nick);
   void unlock();
 
-  void leave();
+  virtual void leave();
   void part(const QByteArray &channelId);
 
 signals:

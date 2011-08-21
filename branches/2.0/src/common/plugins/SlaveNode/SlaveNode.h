@@ -45,6 +45,7 @@ protected:
   bool readMessage();
   bool readUserData();
   void readPacket(int type);
+  void socketReleaseEvent(SocketReleaseEvent *event);
 
 private slots:
   void uplinkAuth();
