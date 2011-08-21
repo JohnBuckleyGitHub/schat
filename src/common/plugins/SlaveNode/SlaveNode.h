@@ -43,6 +43,7 @@ public:
 protected:
   bool command();
   bool readMessage();
+  bool readUserData();
   void readPacket(int type);
 
 private slots:
@@ -53,19 +54,17 @@ private slots:
 
 private:
   bool uplinkRoute();
-  bool uplinkRouteBroadcast();
-  bool uplinkRouteChannel(const QByteArray &id);
   bool uplinkRouteUser(const QByteArray &id);
   ChatChannel uplinkAddChannel();
   void setMode(Mode mode);
   void uplinkAuthReply();
   void uplinkReadChannel();
   void uplinkReadMessage();
+  void uplinkReadUserData();
   void uplinkRejectMessage(const MessageData &msg, int reason);
 
   AbstractClient *m_uplink; ///< Подключение к корневому серверу.
   Mode m_mode;              ///< Режим работы сервера.
-  QByteArray m_broadcast;   ///< Буфер broadcast пакета.
 };
 
 #endif /* SLAVECORE_H_ */

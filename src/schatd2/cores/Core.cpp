@@ -516,22 +516,36 @@ bool Core::readUserData()
     return false;
 
   UserReader reader(m_reader);
+  if (updateUserData(user, &reader.user)) {
+    route();
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
+ * Обновление данных о пользователе.
+ */
+bool Core::updateUserData(ChatUser user, User *other)
+{
   bool rename = false;
 
-  if (user->nick() != reader.user.nick()) {
-    ChatUser u = m_storage->user(reader.user.nick(), true);
+  if (user->nick() != other->nick()) {
+    ChatUser u = m_storage->user(other->nick(), true);
     if (u && u != user)
       return false;
 
     rename = true;
   }
 
-  user->setNick(reader.user.nick());
-  user->setRawGender(reader.user.rawGender());
-  if (rename)
+  user->setRawGender(other->rawGender());
+  if (rename) {
+    user->setNick(other->nick());
     m_storage->rename(user);
+  }
 
-  route();
   return true;
 }
 
