@@ -32,15 +32,21 @@ class PacketReader;
  * - 01 byte  - Gender.
  * - 01 byte  - Status.
  * - utf8     - Nickname.
- * - utf8     - UserAgent (is not set Protocol::Broadcast).
- * - utf8     - Host (is not set Protocol::Broadcast).
+ * - utf8     - UserAgent (is not set Protocol::Multicast).
+ * - utf8     - Host (is not set Protocol::Multicast).
  */
 class SCHAT_EXPORT UserWriter : public PacketWriter
 {
 public:
+  /// Опции данных.
+  enum Options {
+    NoOptions,
+    StaticData ///< Пакет содержит не изменяемую информацию о пользователе, например UserAgent, адрес и т.д.
+  };
+
   UserWriter(QDataStream *stream, User *user);
-  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, const QByteArray &channelId, int options = 0);
-  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options = 0);
+  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, const QByteArray &channelId, int options);
+  UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options);
 
 private:
   void write(User *user, int options);

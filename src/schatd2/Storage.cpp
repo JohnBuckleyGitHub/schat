@@ -105,6 +105,8 @@ bool Storage::add(ChatUser user)
   if (m_users.contains(user->id()))
     return false;
 
+  user->setServerNumber(m_serverData->number());
+
   m_db->add(user);
   m_users.insert(user->id(), user);
   m_nicks.insert(user->normalNick(), user);
@@ -327,7 +329,6 @@ QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
  */
 QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
 {
-  qDebug() << "socketsFromIds()";
   QList<quint64> out;
   if (ids.isEmpty())
     return out;
@@ -337,7 +338,6 @@ QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
 
     if (type == SimpleID::ChannelId) {
       ChatChannel channel = this->channel(id);
-      qDebug() << "channel";
       if (channel) {
         QList<QByteArray> users = channel->users();
 
@@ -349,14 +349,11 @@ QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
       }
     }
     else if (type == SimpleID::UserId) {
-      qDebug() << "user";
       ChatUser user = this->user(id);
       if (user && !out.contains(user->socketId()))
         out += user->socketId();
     }
   }
-
-  qDebug() << out;
 
   return out;
 }

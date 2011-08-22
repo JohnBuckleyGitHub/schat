@@ -35,5 +35,13 @@ AuthResult MasterAnonymousAuth::auth(const AuthRequestData &data)
   AuthResult result = AnonymousAuth::auth(data);
   result.option = 0;
 
+  if (result.action == AuthResult::Accept) {
+    ChatUser slave = Storage::i()->user(m_core->packetsEvent()->userId());
+    ChatUser user = Storage::i()->user(result.id);
+    if (slave && user) {
+      user->setServerNumber(slave->rawGender());
+    }
+  }
+
   return result;
 }

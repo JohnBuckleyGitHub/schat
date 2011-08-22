@@ -41,6 +41,8 @@ SlaveNode::SlaveNode(QObject *parent)
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
+  m_uplink->user()->setRawGender(m_settings->value(QLatin1String("SlaveNode/Number"), 1).toInt());
+  m_storage->serverData()->setNumber(m_uplink->user()->rawGender());
 
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));
@@ -322,7 +324,7 @@ void SlaveNode::uplinkReadUserData()
   ChatUser user = m_storage->user(m_uplink->reader()->sender());
   if (user) {
     UserReader reader(m_uplink->reader());
-    if (user->nick() == reader.user.nick() && m_uplink->reader()->isMulticast())
+    if (user->nick() == reader.user.nick() && !(reader.options & UserWriter::StaticData))
       return;
 
     updateUserData(user, &reader.user);

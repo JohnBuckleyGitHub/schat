@@ -74,6 +74,8 @@ public:
   User(const User *other);
   virtual ~User();
   inline bool isValid() const { return m_valid; }
+  inline quint8 serverNumber() const { return m_serverNumber; }
+  inline void setServerNumber(quint8 number) { m_serverNumber = number; }
   void clear();
 
   // m_id.
@@ -139,6 +141,7 @@ protected:
   QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.
+  quint8 m_serverNumber;                ///< Номер сервера.
 };
 
 typedef QSharedPointer<User> ClientUser;

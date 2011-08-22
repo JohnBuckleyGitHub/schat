@@ -68,8 +68,11 @@ public:
     if (!sender.isEmpty())
       m_option |= Protocol::SenderField;
 
-    if (!dest.isEmpty())
+    if (!dest.isEmpty()) {
       m_option |= Protocol::DestinationField;
+      if (dest.size() > 1 || SimpleID::typeOf(dest) == SimpleID::ChannelId)
+        m_option |= Protocol::Multicast;
+    }
 
     if (!channel.isEmpty())
       m_option |= Protocol::ChannelField;
@@ -108,7 +111,7 @@ public:
 
     if (!dest.isEmpty()) {
       m_option |= Protocol::DestinationField;
-      if (dest.size() > 1)
+      if (dest.size() > 1 || SimpleID::typeOf(dest.at(0)) == SimpleID::ChannelId)
         m_option |= Protocol::Multicast;
     }
 

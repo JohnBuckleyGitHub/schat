@@ -316,7 +316,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   send(user, writer.data());
 
   if (channel->userCount() > 1) {
-    UserWriter writer(m_sendStream, user.data(), channel->id());
+    UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
     send(channel, writer.data()); // Отправка всем пользователям в канале данных нового пользователя.
 
     QList<QByteArray> packets = userDataToSync(channel, user);
@@ -336,7 +336,7 @@ ChatChannel Core::addChannel(ChatUser user)
 {
   ChatChannel channel = m_storage->addChannel(user);
   if (channel->userCount() > 1) {
-    UserWriter writer(m_sendStream, user.data(), channel->id());
+    UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
     send(channel, writer.data());
   }
 
@@ -408,7 +408,7 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
     if (!u)
       continue;
 
-    packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id()).data());
+    packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id(), UserWriter::StaticData).data());
   }
 
   MessageData message(channel->id(), user->id(), QLatin1String("synced"), QString());

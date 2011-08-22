@@ -229,7 +229,8 @@ QString UserUtils::toolTip(ClientUser user)
   QString out = "<b>" + Qt::escape(user->nick()) + "</b><br />";
   out += Qt::escape(user->host()) + "<br />";
   out += Qt::escape(user->userAgent()) + "<br />";
-  out += statusTitle(user->status()) + " " + Qt::escape(user->statusText());
+  out += statusTitle(user->status()) + " " + Qt::escape(user->statusText()) + "<br />";
+  out += QString("Server: %1").arg(user->serverNumber());
 
   return out;
 }
