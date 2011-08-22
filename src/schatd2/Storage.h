@@ -62,6 +62,7 @@ public:
   ChatChannel addChannel(const QString &name, bool permanent = false);
   ChatChannel channel(const QString &name, bool normalize) const;
   inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
+  inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
   QList<quint64> socketsFromChannel(ChatChannel channel);
   QList<quint64> socketsFromIds(const QList<QByteArray> &ids);
   void addChannel(ChatChannel channel);

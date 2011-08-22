@@ -34,9 +34,35 @@ public:
   SimpleClientPrivate();
   virtual ~SimpleClientPrivate();
 
+  // Установка и завершение соединения.
+  bool readAuthReply();
   void clearClient();
   void restore();
+  void setClientState(AbstractClient::ClientState state);
   void setup();
+
+  // Каналы.
+  bool addChannel(ClientChannel channel);
+  bool readChannel();
+  void endSyncChannel(ClientChannel channel);
+  void endSyncChannel(const QByteArray &id);
+
+  // Сообщения.
+  bool command();
+  bool readMessage();
+
+  bool readNotice();
+
+  // Пользователи.
+  bool readUserData();
+  bool removeUser(const QByteArray &userId);
+  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
+  void updateUserData(ClientUser existUser, User *user);
+  void updateUserStatus(const QString &text);
+
+  MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
+  QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
+  QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
 };
 
 #endif /* SIMPLECLIENT_P_H_ */

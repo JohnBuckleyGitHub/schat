@@ -51,9 +51,11 @@ private slots:
   void uplinkAuth();
   void uplinkPacketReady(int type);
   void uplinkReady();
-  void uplinkStateChanged(int state);
+  void uplinkStateChanged(int state, int previousState);
 
 private:
+  void split();
+
   bool uplinkRoute();
   bool uplinkRouteUser(const QByteArray &id);
   ChatChannel uplinkAddChannel();
