@@ -37,8 +37,18 @@ AuthResult SlaveAuth::auth(const AuthRequestData &data)
     return AuthResult(AuthReplyData::Forbidden);
 
   AuthResult result = AnonymousAuth::auth(data);
-  if (result.action == AuthResult::Accept)
+  if (result.action == AuthResult::Accept) {
+    Storage *storage = Storage::i();
+    QList<QByteArray> slaves = storage->slaves();
+
+    for (int i = 0; i < slaves.size(); ++i) { // Вторичные серверы не могут использовать один номер сервера.
+      ChatUser slave = storage->user(slaves.at(i));
+      if (slave && slave->rawGender() == data.gender)
+        return AuthResult(AuthReplyData::Forbidden);
+    }
+
     Storage::i()->addSlave(result.id);
+  }
 
   return result;
 }
