@@ -28,21 +28,21 @@
 #include "User.h"
 
 AuthReplyData::AuthReplyData(ServerData *data, int error)
-  : error(error)
+  : status(AccessDenied)
   , protoVersion(Protocol::V4_0)
-  , status(AccessDenied)
+  , error(error)
 {
   serverData.setId(data->id());
 }
 
 
 AuthReplyData::AuthReplyData(ServerData *data, User *user)
-  : session(user->id())
-  , userId(user->id())
+  : userId(user->id())
+  , status(AccessGranted)
+  , session(user->id())
+  , protoVersion(Protocol::V4_0)
   , host(user->host())
   , error(NoError)
-  , protoVersion(Protocol::V4_0)
-  , status(AccessGranted)
 {
   serverData.setId(data->id());
   serverData.setName(data->name());
@@ -55,6 +55,7 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
   : PacketWriter(stream, Protocol::AuthReplyPacket, data.serverData.id(), data.userId)
 {
   put(data.status);
+  put(data.serverData.number());
 
   if (data.status == AuthReplyData::AccessGranted) {
     putId(data.session);
@@ -62,7 +63,10 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
     put<quint16>(0);
     put<quint16>(0);
     put(data.serverData.features());
-    putId(data.serverData.channelId());
+
+    if (data.serverData.is(ServerData::AutoJoinSupport))
+      putId(data.serverData.channelId());
+
     put(data.serverData.name());
     put(data.host);
   }
@@ -78,6 +82,7 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
   data.userId = reader->dest();
   data.error = 0;
   data.status = reader->get<quint8>();
+  data.serverData.setNumber(reader->get<quint8>());
 
   if (data.status == AuthReplyData::AccessGranted) {
     data.session = reader->id();
@@ -85,7 +90,10 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
     reader->get<quint16>();
     reader->get<quint16>();
     data.serverData.setFeatures(reader->get<quint32>());
-    data.serverData.setChannelId(reader->id());
+
+    if (data.serverData.is(ServerData::AutoJoinSupport))
+      data.serverData.setChannelId(reader->id());
+
     data.serverData.setName(reader->text());
     data.host = reader->text();
   }

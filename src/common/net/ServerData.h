@@ -41,13 +41,16 @@ public:
   ServerData();
   bool setChannelId(const QByteArray &id);
   bool setName(const QString &name);
+  inline bool is(quint32 feature) const { return m_features & feature; }
   inline QByteArray channelId() const { return m_channelId; }
   inline QByteArray id() const { return m_id; }
   inline QByteArray privateId() const { return m_privateId; }
   inline QString name() const { return m_name; }
   inline quint32 features() const { return m_features; }
+  inline quint8 number() const { return m_number; }
   inline void setFeatures(quint32 features) { m_features = features; }
   inline void setId(const QByteArray &id) { m_id = id; }
+  inline void setNumber(quint8 number) { m_number = number; }
   void setPrivateId(const QByteArray &id);
 
 private:
@@ -56,6 +59,7 @@ private:
   QByteArray m_privateId; ///< Приватный идентификатор сервера.
   QString m_name;         ///< Имя сервера.
   quint32 m_features;     ///< Возможности сервера.
+  quint8 m_number;        ///< Номер сервера, по умолчанию 0, для вторичных серверов должно быть уникальное в пределах сети значение отличное от 0.
 };
 
 #endif /* SERVERDATA_H_ */

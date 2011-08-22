@@ -23,6 +23,7 @@
 
 ServerData::ServerData()
   : m_features(NoFeatures)
+  , m_number(0)
 {
 }
 

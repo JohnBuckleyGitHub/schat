@@ -51,19 +51,19 @@ public:
   };
 
   AuthReplyData()
-  : error(0)
-  , status(0)
+  : status(0)
+  , error(0)
   {}
 
   AuthReplyData(ServerData *data, int error);
   AuthReplyData(ServerData *data, User *user);
 
+  QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
+  quint8 status;         ///< Статус авторизации \sa Status.
   QByteArray session;    ///< Сессия.
-  QByteArray userId;     ///< Идентификатор пользователя.
+  quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
   QString host;          ///< Адрес пользователя.
   quint8 error;          ///< Код ошибки \sa Error.
-  quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
-  quint8 status;         ///< Статус авторизации \sa Status.
   ServerData serverData; ///< Данные о сервере.
 };
 
@@ -74,6 +74,7 @@ public:
  * - sender:  - Идентификатор сервера.
  * - dest:    - Идентификатор, выданный сервером клиенту, в случае если статус AccessDenied это поле отсутствует.
  * - 01 byte  - Статус аутентификации(AccessGranted или AccessDenied), \sa Status.
+ * - 01 byte  - номер сервера.
  *
  * Дальнейшие данные различны в зависимости от статуса.
  * Если статус AccessGranted:
