@@ -26,6 +26,7 @@ User::User()
   : m_valid(true)
   , m_gender(Male)
   , m_status(OfflineStatus)
+  , m_serverNumber(0)
 {
   m_channels.append(m_id);
 }
@@ -35,6 +36,7 @@ User::User(const QString &nick)
   : m_valid(true)
   , m_gender(Male)
   , m_status(OfflineStatus)
+  , m_serverNumber(0)
 {
   setNick(nick);
   m_channels.append(m_id);
@@ -50,6 +52,7 @@ User::User(const User *other)
   , m_host(other->host())
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
+  , m_serverNumber(other->serverNumber())
 {
 }
 

@@ -48,6 +48,7 @@ AuthReplyData::AuthReplyData(ServerData *data, User *user)
   serverData.setName(data->name());
   serverData.setChannelId(data->channelId());
   serverData.setFeatures(data->features());
+  serverData.setNumber(user->serverNumber());
 }
 
 

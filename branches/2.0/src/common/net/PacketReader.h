@@ -27,7 +27,6 @@ class SCHAT_EXPORT PacketReader
 {
 public:
   PacketReader(QDataStream *stream);
-  bool isMulticast() const;
   inline bool is(int option) const  { return m_option & option; }
   inline int option() const         { return m_option; }
   inline int subtype() const        { return m_subtype; }

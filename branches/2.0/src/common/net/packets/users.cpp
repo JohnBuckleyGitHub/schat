@@ -73,9 +73,10 @@ void UserWriter::write(User *user, int options)
   put<quint8>(user->status());
   put(user->nick());
 
-  if (!is(Protocol::Multicast)) {
+  if (options & StaticData) {
     put(user->userAgent());
     put(user->host());
+    put(user->serverNumber());
   }
 }
 
@@ -90,9 +91,10 @@ UserReader::UserReader(PacketReader *reader)
   user.setStatus(reader->get<quint8>());
   user.setNick(reader->text());
 
-  if (!reader->is(Protocol::Multicast)) {
+  if (options & UserWriter::StaticData) {
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
+    user.setServerNumber(reader->get<quint8>());
   }
 
   if (user.status() == User::OfflineStatus)

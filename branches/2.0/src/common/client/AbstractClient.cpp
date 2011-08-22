@@ -83,6 +83,7 @@ bool AbstractClientPrivate::readAuthReply()
     q->setAuthorized(data.userId);
     user->setId(data.userId);
     user->setHost(data.host);
+    user->setServerNumber(data.serverData.number());
 
     setServerData(data.serverData);
 
@@ -155,6 +156,7 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
   serverData->setName(data.name());
   serverData->setChannelId(data.channelId());
   serverData->setFeatures(data.features());
+  serverData->setNumber(data.number());
 
   setClientState(AbstractClient::ClientOnline);
 
