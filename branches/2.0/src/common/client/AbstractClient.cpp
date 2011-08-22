@@ -25,10 +25,7 @@
 #include "debugstream.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/channels.h"
 #include "net/packets/message.h"
-#include "net/packets/notices.h"
-#include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "User.h"
@@ -78,7 +75,6 @@ bool AbstractClientPrivate::readAuthReply()
   SCHAT_DEBUG_STREAM(this << "AuthReply" << data.status << data.error << data.userId.toHex())
 
   Q_Q(AbstractClient);
-
   if (data.status == AuthReplyData::AccessGranted) {
     q->setAuthorized(data.userId);
     user->setId(data.userId);
@@ -90,10 +86,6 @@ bool AbstractClientPrivate::readAuthReply()
     if (user->status() == User::OfflineStatus)
       user->setStatus(User::OnlineStatus);
 
-    ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
-    addChannel(channel);
-
-    emit(q->userDataChanged(user->id()));
     emit(q->ready());
     return true;
   }
@@ -121,15 +113,6 @@ void AbstractClientPrivate::setClientState(AbstractClient::ClientState state)
 
   if (state == AbstractClient::ClientOnline || state == AbstractClient::ClientOffline)
     reconnects = 0;
-
-  if (state == AbstractClient::ClientOnline) {
-    users.insert(user->id(), user);
-  }
-  else {
-    foreach (ClientChannel chan, channels) {
-      chan->clear();
-    }
-  }
 
   Q_Q(AbstractClient);
   emit(q->clientStateChanged(state, previousState));
@@ -164,313 +147,6 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
     setup();
   else
     restore();
-}
-
-
-/*!
- * Добавление нового канала.
- * В случае если идентификатор канала уже используется, возможны 2 сценария:
- * - Если существующий канал содержит пользователей, добавления не произойдёт,
- * объект \p channel будет удалён и функция возвратит false.
- * - Существующий канал не содержит пользователей, что означает его не валидность,
- * объект канала будет удалён и его место в таблице каналов займёт \p channel.
- *
- * \return true в случае успешного добавления канала.
- */
-bool AbstractClientPrivate::addChannel(ClientChannel channel)
-{
-  QByteArray id = channel->id();
-  ClientChannel ch = channels.value(id);
-
-  if (ch && ch->userCount())
-    return false;
-
-  channels[id] = channel;
-  channel->addUser(user->id());
-  user->addChannel(id);
-
-  if (channel->userCount() == 1) {
-    endSyncChannel(channel);
-    return true;
-  }
-
-  QList<QByteArray> list = channel->users();
-  list.removeAll(userId);
-  int unsync = 0;
-
-  for (int i = 0; i < list.size(); ++i) {
-    ClientUser u = users.value(list.at(i));
-    if (u) {
-      u->addChannel(id);
-    }
-    else
-      unsync++;
-  }
-
-  if (unsync == 0)
-    endSyncChannel(channel);
-
-  return true;
-}
-
-
-/*!
- * Обработка подключения к каналу, в случае успеха канал добавляется в таблицу каналов.
- */
-bool AbstractClientPrivate::readChannel()
-{
-  ChannelReader reader(this->reader);
-
-  SCHAT_DEBUG_STREAM(this << "readChannel()" << reader.channel->id().toHex())
-
-  if (!reader.channel->isValid())
-    return false;
-
-  addChannel(ClientChannel(reader.channel));
-  return true;
-}
-
-
-/*!
- * Завершение синхронизации канала.
- */
-void AbstractClientPrivate::endSyncChannel(ClientChannel channel)
-{
-  if (!channel)
-    return;
-
-  if (channel->isSynced())
-    return;
-
-  channel->setSynced(true);
-
-  Q_Q(AbstractClient);
-  emit(q->synced(channel->id()));
-}
-
-
-/*!
- * Завершение синхронизации канала.
- */
-void AbstractClientPrivate::endSyncChannel(const QByteArray &id)
-{
-  endSyncChannel(channels.value(id));
-}
-
-
-/*!
- * Обработка команд.
- *
- * \return true в случае если команда была обработана, иначе false.
- */
-bool AbstractClientPrivate::command()
-{
-  QString command = messageData->command;
-  SCHAT_DEBUG_STREAM(this << "command()" << command)
-
-  if (command == QLatin1String("part")) {
-    removeUserFromChannel(reader->dest(), reader->sender());
-    return true;
-  }
-
-  if (command == QLatin1String("synced")) {
-    endSyncChannel(reader->sender());
-    return true;
-  }
-
-  if (command == QLatin1String("leave")) {
-    removeUser(reader->sender());
-    return true;
-  }
-
-  if (command == QLatin1String("status")) {
-    updateUserStatus(messageData->text);
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
- * Чтение сообщения и обработка поддерживаемых команд.
- * В случае если сообщении не содержало команд или команда
- * не была обработана, высылается сигнал о новом сообщении.
- */
-bool AbstractClientPrivate::readMessage()
-{
-  SCHAT_DEBUG_STREAM(this << "readMessage()")
-
-  MessageReader reader(this->reader);
-  messageData = &reader.data;
-  messageData->timestamp = timestamp;
-
-  if (messageData->options & MessageData::ControlOption && command()) {
-    return true;
-  }
-
-  SCHAT_DEBUG_STREAM("      " << reader.data.text)
-
-  Q_Q(AbstractClient);
-  emit(q->message(reader.data));
-
-  return true;
-}
-
-
-bool AbstractClientPrivate::readNotice()
-{
-  SCHAT_DEBUG_STREAM(this << "readNotice()")
-
-  Q_Q(AbstractClient);
-  NoticeReader reader(this->reader);
-  reader.data.timestamp = timestamp;
-  emit(q->notice(reader.data));
-
-  return true;
-}
-
-
-/*!
- * Чтение пакета Packet::UserData.
- *
- * В случае если адрес назначения канал, то требуется чтобы текущий пользователь был подключен к нему заранее,
- * также будет произведена попытка добавления пользователя в него и в случае успеха будет выслан сигнал.
- * Идентификатор нового пользователя не может быть пустым и в случае если новый пользователь отсутствует
- * в таблице пользователей, то будет произведена попытка его добавить.
- */
-bool AbstractClientPrivate::readUserData()
-{
-  SCHAT_DEBUG_STREAM(this << "readUserData()")
-
-  /// Идентификатор отправителя не может быть пустым.
-  QByteArray id = reader->sender();
-  if (id.isEmpty())
-    return false;
-
-  UserReader reader(this->reader);
-  if (!reader.user.isValid())
-    return false;
-
-  /// Если пользователь не существует, то он будет создан, иначе произойдёт обновление данных,
-  /// В обоих случаях будет выслан сигнал userDataChanged().
-  Q_Q(AbstractClient);
-  ClientUser user = users.value(id);
-  if (!user) {
-    user = ClientUser(new User(&reader.user));
-    users.insert(id, user);
-
-    emit(q->userDataChanged(id));
-  }
-  else {
-    updateUserData(user, &reader.user);
-  }
-
-  QByteArray channelId = this->reader->channel();
-  if (channelId.isEmpty() && SimpleID::typeOf(this->reader->dest()) == SimpleID::ChannelId)
-      channelId = this->reader->dest();
-
-  if (!channelId.isEmpty()) {
-    ClientChannel channel = channels.value(channelId);
-    if (!channel)
-      return false;
-
-    user->addChannel(channelId);
-    if (channel->addUser(id) || channel->isSynced())
-      emit(q->join(channelId, id));
-  }
-
-  return true;
-}
-
-
-/*!
- * Удаление пользователя.
- */
-bool AbstractClientPrivate::removeUser(const QByteArray &userId)
-{
-  ClientUser user = users.value(userId);
-  if (!user)
-    return false;
-
-  user->setStatus(User::OfflineStatus);
-
-  Q_Q(AbstractClient);
-  emit(q->userLeave(userId));
-
-  QList<QByteArray> channels = user->channels();
-  for (int i = 0; i < channels.size(); ++i) {
-    removeUserFromChannel(channels.at(i), userId, false);
-  }
-
-  users.remove(userId);
-  return true;
-}
-
-
-/*!
- * Удаление пользователя из канала.
- */
-bool AbstractClientPrivate::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
-{
-  Q_Q(AbstractClient);
-  ClientUser user = users.value(userId);
-  ClientChannel channel = channels.value(channelId);
-
-  if (!user.isNull() && channel) {
-    channel->removeUser(user->id());
-    user->removeChannel(channel->id());
-
-    emit(q->part(channel->id(), user->id()));
-    if (clear && user->channelsCount() == 1)
-      removeUser(userId);
-
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
- * Обновление информации о пользователе.
- */
-void AbstractClientPrivate::updateUserData(ClientUser existUser, User *user)
-{
-  SCHAT_DEBUG_STREAM(this << "updateUserData()");
-
-  Q_Q(AbstractClient);
-  if (existUser == this->user && this->user->nick() != user->nick()) {
-    q->setNick(user->nick());
-  }
-
-  existUser->setNick(user->nick());
-  existUser->setRawGender(user->rawGender());
-  existUser->setStatus(user->status());
-
-  emit(q->userDataChanged(existUser->id()));
-}
-
-
-/*!
- * Обновление статуса пользователя.
- */
-void AbstractClientPrivate::updateUserStatus(const QString &text)
-{
-  Q_Q(AbstractClient);
-
-  ClientUser user = q->user(reader->sender());
-  if (!user)
-    return;
-
-  if (!user->setStatus(text))
-    return;
-
-  if (user->status() == User::OfflineStatus) {
-    user->setStatus(User::OnlineStatus);
-  }
-
-  emit(q->userDataChanged(user->id()));
 }
 
 
@@ -562,13 +238,6 @@ bool AbstractClient::send(const QList<QByteArray> &packets)
 }
 
 
-ClientChannel AbstractClient::channel(const QByteArray &id) const
-{
-  Q_D(const AbstractClient);
-  return d->channels.value(id);
-}
-
-
 AbstractClient::ClientState AbstractClient::clientState() const
 {
   Q_D(const AbstractClient);
@@ -580,13 +249,6 @@ ClientUser AbstractClient::user() const
 {
   Q_D(const AbstractClient);
   return d->user;
-}
-
-
-ClientUser AbstractClient::user(const QByteArray &id) const
-{
-  Q_D(const AbstractClient);
-  return d->users.value(id);
 }
 
 
@@ -677,26 +339,6 @@ void AbstractClient::leave()
 
   d->setClientState(ClientOffline);
   SimpleSocket::leave();
-}
-
-
-/*!
- * Отключение от канала.
- */
-void AbstractClient::part(const QByteArray &channelId)
-{
-  SCHAT_DEBUG_STREAM(this << "part()" << channelId.toHex())
-
-  Q_D(AbstractClient);
-
-  if (!d->channels.contains(channelId))
-    return;
-
-  d->channels.remove(channelId);
-  d->user->removeChannel(channelId);
-
-  MessageData message(userId(), channelId, QLatin1String("part"), QString());
-  send(message);
 }
 
 

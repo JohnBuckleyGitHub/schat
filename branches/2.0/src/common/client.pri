@@ -19,10 +19,6 @@ HEADERS += \
     Channel.h \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
-    client/ClientCmd.h \
-    client/ClientHelper.h \
-    client/SimpleClient.h \
-    client/SimpleClient_p.h \
     FileLocations.h \
     net/PacketReader.h \
     net/packets/auth.h \
@@ -46,9 +42,6 @@ HEADERS += \
 SOURCES += \
     Channel.cpp \
     client/AbstractClient.cpp \
-    client/ClientCmd.cpp \
-    client/ClientHelper.cpp \
-    client/SimpleClient.cpp \
     FileLocations.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
@@ -65,4 +58,17 @@ SOURCES += \
     Settings.cpp \
     Translation.cpp \
     User.cpp \
+
+!contains( SCHAT_LITTLE_CLIENT, 1 ) {
+  HEADERS += \
+    client/ClientCmd.h \
+    client/ClientHelper.h \
+    client/SimpleClient.h \
+    client/SimpleClient_p.h \
+    
+  SOURCES += \
+    client/ClientCmd.cpp \
+    client/ClientHelper.cpp \
+    client/SimpleClient.cpp \
+}
 

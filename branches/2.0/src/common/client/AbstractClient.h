@@ -53,10 +53,8 @@ public:
   bool send(const MessageData &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
-  ClientChannel channel(const QByteArray &id) const;
   ClientState clientState() const;
   ClientUser user() const;
-  ClientUser user(const QByteArray &id) const;
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
   PacketReader *reader();
   QByteArray serverId() const;
@@ -69,20 +67,13 @@ public:
   void unlock();
 
   virtual void leave();
-  void part(const QByteArray &channelId);
 
 signals:
   void clientStateChanged(int state, int previousState);
-  void join(const QByteArray &channelId, const QByteArray &userId);
   void message(const MessageData &data);
-  void notice(const NoticeData &data);
   void packetReady(int type);
-  void part(const QByteArray &channelId, const QByteArray &userId);
   void ready();
   void requestClientAuth();
-  void synced(const QByteArray &channelId);
-  void userDataChanged(const QByteArray &userId);
-  void userLeave(const QByteArray &userId);
 
 protected:
   AbstractClient(AbstractClientPrivate &dd, QObject *parent);

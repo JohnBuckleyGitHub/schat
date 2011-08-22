@@ -30,7 +30,19 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
 public:
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
+  ClientChannel channel(const QByteArray &id) const;
+  ClientUser user() const;
+  ClientUser user(const QByteArray &id) const;
   void leave();
+  void part(const QByteArray &channelId);
+
+signals:
+  void join(const QByteArray &channelId, const QByteArray &userId);
+  void notice(const NoticeData &data);
+  void part(const QByteArray &channelId, const QByteArray &userId);
+  void synced(const QByteArray &channelId);
+  void userDataChanged(const QByteArray &userId);
+  void userLeave(const QByteArray &userId);
 
 protected:
   SimpleClient(SimpleClientPrivate &dd, QObject *parent);

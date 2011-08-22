@@ -38,41 +38,19 @@ public:
   virtual ~AbstractClientPrivate();
 
   // Установка и завершение соединения.
-  bool readAuthReply();
   QString mangleNick();
+  virtual bool readAuthReply();
   virtual void restore() {}
+  virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}
-  void setClientState(AbstractClient::ClientState state);
   void setServerData(const ServerData &data);
-
-  // Каналы.
-  bool addChannel(ClientChannel channel);
-  bool readChannel();
-  void endSyncChannel(ClientChannel channel);
-  void endSyncChannel(const QByteArray &id);
-
-  // Сообщения.
-  bool command();
-  bool readMessage();
-
-  bool readNotice();
-
-  // Пользователи.
-  bool readUserData();
-  bool removeUser(const QByteArray &userId);
-  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
-  void updateUserData(ClientUser existUser, User *user);
-  void updateUserStatus(const QString &text);
 
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientUser user;                         ///< Пользователь.
   int reconnects;                          ///< Число попыток восстановить соединение.
-  MessageData *messageData;                ///< Текущий прочитанный объект MessageData.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray uniqueId;                     ///< Уникальный идентификатор пользователя.
-  QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
-  QHash<QByteArray, ClientUser> users;     ///< Таблица пользователей.
   QList<QByteArray> sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString nick;                            ///< Оригинальный ник пользователя.
   QUrl url;                                ///< Адрес, к которому будет подключен клиент.

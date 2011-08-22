@@ -47,7 +47,7 @@ SlaveNode::SlaveNode(QObject *parent)
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));
   connect(m_uplink, SIGNAL(ready()), SLOT(uplinkReady()));
-  connect(m_uplink, SIGNAL(clientStateChanged(int, int)), SLOT(uplinkStateChanged(int)));
+  connect(m_uplink, SIGNAL(clientStateChanged(int, int)), SLOT(uplinkStateChanged(int, int)));
 }
 
 
@@ -215,10 +215,25 @@ void SlaveNode::uplinkReady()
 }
 
 
-void SlaveNode::uplinkStateChanged(int state)
+void SlaveNode::uplinkStateChanged(int state, int previousState)
 {
   if (state != AbstractClient::ClientOnline)
     setMode(FailbackMode);
+
+  if (previousState == AbstractClient::ClientOnline)
+    split();
+}
+
+
+void SlaveNode::split()
+{
+  qDebug() << "--------------------------------------";
+  qDebug() << "SPLIT";
+  qDebug() << "--------------------------------------";
+  QList<QByteArray> channels = m_storage->channels().keys();
+  MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), "хуй");
+
+  send(m_storage->socketsFromIds(channels), MessageWriter(m_sendStream, message).data());
 }
 
 

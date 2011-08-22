@@ -25,6 +25,7 @@ TARGET = schatd
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = schatd.rc
 DEFINES += SCHAT_DAEMON
+SCHAT_LITTLE_CLIENT = 1
 
 HEADERS = \
     cores/AnonymousAuth.h \
