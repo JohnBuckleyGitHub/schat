@@ -27,6 +27,9 @@ class MasterNode : public Core
 
 public:
   MasterNode(QObject *parent = 0);
+
+protected:
+  void socketReleaseEvent(SocketReleaseEvent *event);
 };
 
 #endif /* MASTERNODE_H_ */

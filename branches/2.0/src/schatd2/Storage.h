@@ -52,6 +52,7 @@ public:
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   ChatUser user(const QString &nick, bool normalize) const;
   inline ChatUser user(const QByteArray &id) const { return m_users.value(id); }
+  inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
   void rename(ChatUser user);
 

@@ -322,7 +322,7 @@ void SlaveNode::uplinkReadUserData()
   ChatUser user = m_storage->user(m_uplink->reader()->sender());
   if (user) {
     UserReader reader(m_uplink->reader());
-    if (user->nick() == reader.user.nick() && m_uplink->reader()->is(Protocol::Multicast))
+    if (user->nick() == reader.user.nick() && m_uplink->reader()->isMulticast())
       return;
 
     updateUserData(user, &reader.user);

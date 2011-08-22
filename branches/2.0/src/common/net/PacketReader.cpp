@@ -35,3 +35,18 @@ PacketReader::PacketReader(QDataStream *stream)
   if (m_option & Protocol::DestinationField)
     m_dest = idList();
 }
+
+
+bool PacketReader::isMulticast() const
+{
+  if (m_dest.isEmpty())
+    return false;
+
+  if (is(Protocol::Multicast))
+    return true;
+
+  if (SimpleID::typeOf(dest()))
+    return true;
+
+  return false;
+}

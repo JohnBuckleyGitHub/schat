@@ -33,3 +33,34 @@ MasterNode::MasterNode(QObject *parent)
   addAuth(new SlaveAuth(this));
   addAuth(new MasterAnonymousAuth(this));
 }
+
+
+void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
+{
+//  if (m_storage->isSlave(event->userId())) {
+//    qDebug() << "";
+//    qDebug() << "";
+//    qDebug() << "SLAVE LEAVE";
+//    qDebug() << "";
+//    ChatUser slave = m_storage->user(event->userId());
+//    if (!slave)
+//      return;
+//
+//    quint64 socket = slave->socketId();
+//    QHash<QByteArray, ChatUser> all = m_storage->users();
+//    all.remove(event->userId());
+//
+//    QList<ChatUser> users;
+//
+//    QHashIterator<QByteArray, ChatUser> i(all); // Поиск всех пользователей с вторичного сервера.
+//    while (i.hasNext()) {
+//      i.next();
+//      if (i.value()->socketId() == socket)
+//        users.append(i.value());
+//    }
+//
+//    qDebug() << "USERS TOTAL:" << users.size();
+//  }
+//  else
+    Core::socketReleaseEvent(event);
+}
