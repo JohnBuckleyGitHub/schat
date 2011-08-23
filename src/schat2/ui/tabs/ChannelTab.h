@@ -35,9 +35,13 @@ public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   ~ChannelTab();
   bool add(ClientUser user);
+  bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }
   void alert(bool start = true);
   void setOnline(bool online = true);
+
+private slots:
+  void userLeave(const QByteArray &userId);
 
 private:
   ClientChannel m_channel;

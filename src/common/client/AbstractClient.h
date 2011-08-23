@@ -54,6 +54,7 @@ public:
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
   ClientState clientState() const;
+  ClientState previousState() const;
   ClientUser user() const;
   inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
   PacketReader *reader();

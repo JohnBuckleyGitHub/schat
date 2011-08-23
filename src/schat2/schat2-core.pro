@@ -123,8 +123,8 @@ SOURCES = \
     
 SCHAT_CLIENT_LIB = 1
 
-TRANSLATIONS += ../../data/translations/schat2-core_en.ts
-TRANSLATIONS += ../../data/translations/schat2-core_ru.ts
+TRANSLATIONS += ../../data/translations/schat2_en.ts
+TRANSLATIONS += ../../data/translations/schat2_ru.ts
 CODECFORTR = UTF-8
 
 include(../common/common.pri)

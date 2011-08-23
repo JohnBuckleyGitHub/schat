@@ -30,7 +30,7 @@
 #include "ui/UserUtils.h"
 
 PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
-  : ChatViewTab("qrc:/html/ChatView.html", user->id(), PrivateType, parent)
+  : ChatViewTab(QLatin1String("qrc:/html/ChatView.html"), user->id(), PrivateType, parent)
   , m_user(user)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
@@ -46,6 +46,8 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
 
   PrivateTabHook hook(this);
   ChatCore::i()->plugins()->hook(hook);
+
+  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
 }
 
 
@@ -60,8 +62,10 @@ bool PrivateTab::update(ClientUser user)
   if (!user)
     return false;
 
-  if (m_user != user)
+  if (m_user != user) {
+    addJoinMsg(user->id(), user->id());
     m_user = user;
+  }
 
   m_action->setText(m_user->nick());
   m_icon = userIcon();
@@ -97,6 +101,13 @@ void PrivateTab::setOnline(bool online)
 {
   m_tabs->setTabToolTip(m_tabs->indexOf(this), UserUtils::toolTip(m_user));
   AbstractTab::setOnline(online);
+}
+
+
+void PrivateTab::userLeave(const QByteArray &userId)
+{
+  if (id() == userId)
+    addQuitMsg(userId, userId);
 }
 
 

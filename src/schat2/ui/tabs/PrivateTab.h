@@ -38,6 +38,9 @@ public:
   void alert(bool start = true);
   void setOnline(bool online = true);
 
+private slots:
+  void userLeave(const QByteArray &userId);
+
 private:
   QIcon userIcon() const;
 

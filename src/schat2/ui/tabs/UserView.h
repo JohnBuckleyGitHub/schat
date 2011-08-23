@@ -61,6 +61,7 @@ public:
   bool add(ClientUser user);
   bool remove(const QByteArray &id);
   bool update(ClientUser user);
+  inline bool isSortable() const { return m_sortable; }
   inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
   void sort();
