@@ -23,6 +23,8 @@
 #include <QStatusBar>
 #include <QUrl>
 
+#include "schat.h"
+
 class NetworkWidget;
 class QLabel;
 class QProgressIndicator;
@@ -31,7 +33,7 @@ class SimpleClient;
 class StatusMenu;
 class StatusWidget;
 
-class StatusBar : public QStatusBar
+class SCHAT_CORE_EXPORT StatusBar : public QStatusBar
 {
   Q_OBJECT
 

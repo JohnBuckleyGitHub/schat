@@ -21,7 +21,9 @@
 
 #include <QMenu>
 
-class StatusMenu : public QMenu
+#include "schat.h"
+
+class SCHAT_CORE_EXPORT StatusMenu : public QMenu
 {
   Q_OBJECT
 

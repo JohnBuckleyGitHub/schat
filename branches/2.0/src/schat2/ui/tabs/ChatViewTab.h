@@ -21,6 +21,7 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+
 class ChatView;
 
 class SCHAT_CORE_EXPORT ChatViewTab : public AbstractTab
@@ -32,6 +33,7 @@ public:
   inline ChatView *chatView() { return m_chatView; }
   inline int alerts() const { return m_alerts; }
   virtual void alert(bool start = true);
+  void addJoinMsg(const QByteArray &userId, const QByteArray &destId);
 
 protected:
   ChatView *m_chatView; ///< Виджет отображающий текст чата.

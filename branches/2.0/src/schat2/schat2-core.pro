@@ -29,6 +29,8 @@ HEADERS = \
     actions/ChatViewAction.h \
     actions/MenuBuilder.h \
     actions/UserMenu.h \
+    arora/lineedit.h \
+    arora/lineedit_p.h \
     ChatCore.h \
     ChatCore_p.h \
     ChatPlugins.h \
@@ -41,17 +43,43 @@ HEADERS = \
     NetworkManager.h \
     plugins/AbstractHistory.h \
     plugins/ChatPlugin.h \
+    QProgressIndicator/QProgressIndicator.h \
     schat.h \
+    ui/ColorButton.h \
+    ui/fields/GenderField.h \
+    ui/fields/LanguageField.h \
+    ui/fields/NickEdit.h \
+    ui/fields/ProfileField.h \
+    ui/InputWidget.h \
+    ui/LanguageBox.h \
+    ui/NetworkWidget.h \
+    ui/SendWidget.h \
+    ui/SoundButton.h \
+    ui/StatusBar.h \
+    ui/StatusMenu.h \
+    ui/StatusWidget.h \
+    ui/TabBar.h \
+    ui/tabs/AboutTab.h \
     ui/tabs/AbstractTab.h \
+    ui/tabs/AlertTab.h \
+    ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
     ui/tabs/ChatViewTab.h \
     ui/tabs/PrivateTab.h \
+    ui/tabs/ProgressTab.h \
+    ui/tabs/SettingsTab.h \
+    ui/tabs/SettingsTab_p.h \
+    ui/tabs/UserView.h \
+    ui/tabs/WelcomeTab.h \
+    ui/TabWidget.h \
+    ui/TrayIcon.h \
     ui/UserUtils.h \
 
 SOURCES = \
     actions/ChatViewAction.cpp \
     actions/MenuBuilder.cpp \
     actions/UserMenu.cpp \
+    arora/lineedit.cpp \
     ChatCore.cpp \
     ChatPlugins.cpp \
     ChatSettings.cpp \
@@ -63,10 +91,34 @@ SOURCES = \
     NetworkManager.cpp \
     plugins/AbstractHistory.cpp \
     plugins/ChatPlugin.cpp \
+    QProgressIndicator/QProgressIndicator.cpp \
+    ui/ColorButton.cpp \
+    ui/fields/GenderField.cpp \
+    ui/fields/LanguageField.cpp \
+    ui/fields/NickEdit.cpp \
+    ui/fields/ProfileField.cpp \
+    ui/InputWidget.cpp \
+    ui/LanguageBox.cpp \
+    ui/NetworkWidget.cpp \
+    ui/SendWidget.cpp \
+    ui/SoundButton.cpp \
+    ui/StatusBar.cpp \
+    ui/StatusMenu.cpp \
+    ui/StatusWidget.cpp \
+    ui/TabBar.cpp \
+    ui/tabs/AboutTab.cpp \
     ui/tabs/AbstractTab.cpp \
+    ui/tabs/AlertTab.cpp \
+    ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \
     ui/tabs/ChatViewTab.cpp \
     ui/tabs/PrivateTab.cpp \
+    ui/tabs/ProgressTab.cpp \
+    ui/tabs/SettingsTab.cpp \
+    ui/tabs/UserView.cpp \
+    ui/tabs/WelcomeTab.cpp \
+    ui/TabWidget.cpp \
+    ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
     
 SCHAT_CLIENT_LIB = 1

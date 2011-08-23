@@ -18,6 +18,8 @@
 
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/ChatViewTab.h"
+#include "ui/TabWidget.h"
+#include "ui/UserUtils.h"
 
 ChatViewTab::ChatViewTab(const QString &url, const QByteArray &id, TabType type, TabWidget *parent)
   : AbstractTab(id, type, parent)
@@ -35,4 +37,20 @@ void ChatViewTab::alert(bool start)
     m_alerts++;
   else
     m_alerts = 0;
+}
+
+
+void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
+{
+  ClientUser user = UserUtils::user(userId);
+  if (!user)
+    return;
+
+  QString text;
+  if (user->gender() == User::Female)
+    text = tr("has joined", "Female");
+  else
+    text = tr("has joined", "Male");
+
+  m_tabs->addServiceMsg(userId, destId, text, this);
 }

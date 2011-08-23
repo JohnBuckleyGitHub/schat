@@ -23,66 +23,14 @@ QT = core gui network webkit
 TEMPLATE = app
 
 HEADERS = \
-    arora/lineedit.h \
-    arora/lineedit_p.h \
     ChatApp.h \
     debugstream.h \
-    QProgressIndicator/QProgressIndicator.h \
     ui/ChatWindow.h \
-    ui/ColorButton.h \
-    ui/fields/GenderField.h \
-    ui/fields/LanguageField.h \
-    ui/fields/NickEdit.h \
-    ui/fields/ProfileField.h \
-    ui/InputWidget.h \
-    ui/LanguageBox.h \
-    ui/NetworkWidget.h \
-    ui/SendWidget.h \
-    ui/SoundButton.h \
-    ui/StatusBar.h \
-    ui/StatusMenu.h \
-    ui/StatusWidget.h \
-    ui/TabBar.h \
-    ui/tabs/AboutTab.h \
-    ui/tabs/AlertTab.h \
-    ui/tabs/ChannelTab.h \
-    ui/tabs/ProgressTab.h \
-    ui/tabs/SettingsTab.h \
-    ui/tabs/SettingsTab_p.h \
-    ui/tabs/UserView.h \
-    ui/tabs/WelcomeTab.h \
-    ui/TabWidget.h \
-    ui/TrayIcon.h \
 
 SOURCES = \
-    arora/lineedit.cpp \
     ChatApp.cpp \
     main.cpp \
-    QProgressIndicator/QProgressIndicator.cpp \
     ui/ChatWindow.cpp \
-    ui/ColorButton.cpp \
-    ui/fields/GenderField.cpp \
-    ui/fields/LanguageField.cpp \
-    ui/fields/NickEdit.cpp \
-    ui/fields/ProfileField.cpp \
-    ui/InputWidget.cpp \
-    ui/LanguageBox.cpp \
-    ui/NetworkWidget.cpp \
-    ui/SendWidget.cpp \
-    ui/SoundButton.cpp \
-    ui/StatusBar.cpp \
-    ui/StatusMenu.cpp \
-    ui/StatusWidget.cpp \
-    ui/TabBar.cpp \
-    ui/tabs/AboutTab.cpp \
-    ui/tabs/AlertTab.cpp \
-    ui/tabs/ChannelTab.cpp \
-    ui/tabs/ProgressTab.cpp \
-    ui/tabs/SettingsTab.cpp \
-    ui/tabs/UserView.cpp \
-    ui/tabs/WelcomeTab.cpp \
-    ui/TabWidget.cpp \
-    ui/TrayIcon.cpp \
     
 TRANSLATIONS += ../../data/translations/schat2_en.ts
 TRANSLATIONS += ../../data/translations/schat2_ru.ts

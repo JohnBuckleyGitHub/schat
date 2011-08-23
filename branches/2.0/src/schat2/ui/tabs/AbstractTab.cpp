@@ -45,7 +45,6 @@ void AbstractTab::setOnline(bool online)
   if (index == -1)
     return;
 
-
   if (m_online) {
     m_tabs->setTabIcon(index, m_icon);
     m_action->setIcon(m_icon);
