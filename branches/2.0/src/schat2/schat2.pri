@@ -32,10 +32,6 @@ SOURCES = \
     main.cpp \
     ui/ChatWindow.cpp \
     
-TRANSLATIONS += ../../data/translations/schat2_en.ts
-TRANSLATIONS += ../../data/translations/schat2_ru.ts
-CODECFORTR = UTF-8
-
 win32 {
     HEADERS += qtwin/qtwin.h
     SOURCES += qtwin/qtwin.cpp

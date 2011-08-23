@@ -384,9 +384,11 @@ bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, con
     channel->removeUser(user->id());
     user->removeChannel(channel->id());
 
-    emit(q->part(channel->id(), user->id()));
-    if (clear && user->channelsCount() == 1)
-      removeUser(userId);
+    if (clear) {
+      emit(q->part(channel->id(), user->id()));
+      if (user->channelsCount() == 1)
+        removeUser(userId);
+    }
 
     return true;
   }

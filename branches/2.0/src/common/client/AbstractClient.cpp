@@ -245,6 +245,13 @@ AbstractClient::ClientState AbstractClient::clientState() const
 }
 
 
+AbstractClient::ClientState AbstractClient::previousState() const
+{
+  Q_D(const AbstractClient);
+  return d->previousState;
+}
+
+
 ClientUser AbstractClient::user() const
 {
   Q_D(const AbstractClient);

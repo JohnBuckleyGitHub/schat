@@ -25,9 +25,10 @@
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
+#include "ui/UserUtils.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
-  : ChatViewTab("qrc:/html/ChatView.html", channel->id(), ChannelType, parent)
+  : ChatViewTab(QLatin1String("qrc:/html/ChatView.html"), channel->id(), ChannelType, parent)
   , m_channel(channel)
 {
   m_userView = new UserView(this);
@@ -45,6 +46,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
+
+  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
 }
 
 
@@ -59,6 +62,19 @@ bool ChannelTab::add(ClientUser user)
   if (!m_userView->add(user))
     return false;
 
+  if (m_userView->isSortable() || UserUtils::userId() == user->id())
+    addJoinMsg(user->id(), m_channel->id());
+
+  return true;
+}
+
+
+bool ChannelTab::remove(const QByteArray &id)
+{
+  if (!m_userView->remove(id))
+    return false;
+
+  addLeftMsg(id, m_channel->id());
   return true;
 }
 
@@ -79,8 +95,18 @@ void ChannelTab::alert(bool start)
 
 void ChannelTab::setOnline(bool online)
 {
-  if (!online)
+  if (!online) {
     m_userView->clear();
+    if (ChatCore::i()->client()->previousState() == SimpleClient::ClientOnline)
+      addQuitMsg(UserUtils::userId(), m_channel->id());
+  }
 
   AbstractTab::setOnline(online);
+}
+
+
+void ChannelTab::userLeave(const QByteArray &userId)
+{
+  if (m_userView->remove(userId))
+    addQuitMsg(userId, m_channel->id());
 }

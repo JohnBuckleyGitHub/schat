@@ -90,7 +90,6 @@ TabWidget::TabWidget(QWidget *parent)
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
-  connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
@@ -349,7 +348,6 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
       return;
 
     displayChannelUserCount(channelId);
-    addJoinMsg(user->id(), channelId, tab);
   }
 }
 
@@ -359,9 +357,7 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
   ChannelTab *tab = m_channels.value(channelId);
   ClientUser user = m_client->user(userId);
   if (tab && user) {
-
-    addQuitMsg(userId, channelId, tab);
-    tab->userView()->remove(userId);
+    tab->remove(userId);
     displayChannelUserCount(channelId);
   }
 }
@@ -414,21 +410,14 @@ void TabWidget::clientStateChanged(int state, int previousState)
     return;
 
   QByteArray id = m_client->userId();
-  bool quitMsg = state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline;
 
   foreach (ChannelTab *tab, m_channels) {
     tab->setOnline(false);
     displayChannelUserCount(tab->id());
-
-    if (quitMsg)
-      addQuitMsg(id, tab->id(), tab);
   }
 
   foreach (PrivateTab *tab, m_talks) {
     tab->setOnline(false);
-
-    if (quitMsg)
-      addQuitMsg(id, id, tab);
   }
 
   if (state == SimpleClient::ClientOffline) {
@@ -502,20 +491,12 @@ void TabWidget::updateUserData(const QByteArray &userId)
 }
 
 
-void TabWidget::userLeave(const QByteArray &userId)
-{
-  if (!m_talks.contains(userId))
-    return;
-
-  addQuitMsg(userId, userId);
-}
-
-
 /*!
  * Создание или повторная инициализация вкладки канала.
  *
  * \param id Идентификатор канала.
  *
+ * \todo Обновлять внутренний объект канала.
  * \return Возвращает указатель на вкладку или 0 в случае ошибки.
  */
 ChannelTab *TabWidget::channelTab(const QByteArray &id)
@@ -540,7 +521,6 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   tab->setOnline();
   tab->add(m_client->user());
 
-  addJoinMsg(m_client->userId(), id, tab);
   closeWelcome();
   return tab;
 }
@@ -599,11 +579,7 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   }
   else if (tab) {
-    bool addJoin = tab->user() != user;
-    tab->update(m_client->user(id));
-
-    if (addJoin)
-      addJoinMsg(id, id, tab);
+    tab->update(user);
   }
 
   if (show && tab) {
@@ -611,49 +587,6 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
   }
 
   return tab;
-}
-
-
-void TabWidget::addJoinMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab)
-{
-  ClientUser user = m_client->user(userId);
-  if (!user)
-    return;
-
-  QString text;
-  if (user->gender() == User::Female)
-    text = tr("has joined", "Female");
-  else
-    text = tr("has joined", "Male");
-
-  addServiceMsg(userId, destId, text, tab);
-}
-
-
-/*!
- * Сообщение о выходе пользователя из канала или чата.
- */
-void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab)
-{
-  ClientUser user = m_client->user(userId);
-  if (!user)
-    return;
-
-  QString text;
-  if (user->status() == User::OfflineStatus || m_client->userId() == userId) {
-    if (user->gender() == User::Female)
-      text = tr("has quit chat", "Female");
-    else
-      text = tr("has quit chat", "Male");
-  }
-  else {
-    if (user->gender() == User::Female)
-      text = tr("has left", "Female");
-    else
-      text = tr("has left", "Male");
-  }
-
-  addServiceMsg(userId, destId, text, tab);
 }
 
 
