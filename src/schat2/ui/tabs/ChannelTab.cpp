@@ -44,12 +44,22 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   mainLay->setSpacing(0);
 
   setIcon(SCHAT_ICON(ChannelIcon));
+  setText(channel->name());
 }
 
 
 ChannelTab::~ChannelTab()
 {
   ChatCore::i()->client()->part(m_channel->id());
+}
+
+
+bool ChannelTab::add(ClientUser user)
+{
+  if (!m_userView->add(user))
+    return false;
+
+  return true;
 }
 
 

@@ -21,6 +21,8 @@
 
 #include <QWidget>
 
+#include "schat.h"
+
 class ColorButton;
 class InputWidget;
 class QMenu;
@@ -28,7 +30,7 @@ class QToolBar;
 class QToolButton;
 class QTextCharFormat;
 
-class SendWidget : public QWidget
+class SCHAT_CORE_EXPORT SendWidget : public QWidget
 {
   Q_OBJECT
 

@@ -21,6 +21,7 @@
 
 #include "Channel.h"
 #include "ui/tabs/ChatViewTab.h"
+#include "User.h"
 
 class ChatView;
 class QSplitter;
@@ -33,6 +34,7 @@ class ChannelTab : public ChatViewTab
 public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   ~ChannelTab();
+  bool add(ClientUser user);
   inline UserView *userView() { return m_userView; }
   void alert(bool start = true);
   void setOnline(bool online = true);

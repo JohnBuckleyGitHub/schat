@@ -103,6 +103,21 @@ AbstractTab *TabWidget::widget(int index) const
 }
 
 
+/*!
+ * Добавление сервисного сообщения.
+ */
+void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab)
+{
+  MessageData data(userId, destId, QString(), text);
+  data.timestamp = m_client->timestamp();
+
+  AbstractMessage msg(QLatin1String("service-type"), data);
+  msg.setPriority(AbstractMessage::LowPriority);
+
+  message(tab, msg);
+}
+
+
 bool TabWidget::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
@@ -330,7 +345,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
   if (tab && user) {
     privateTab(user->id(), false);
 
-    if (!tab->userView()->add(user))
+    if (!tab->add(user))
       return;
 
     displayChannelUserCount(channelId);
@@ -359,12 +374,15 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
  */
 void TabWidget::synced(const QByteArray &channelId)
 {
+  QTime t;
+  t.start();
   ClientChannel channel = m_client->channel(channelId);
   if (!channel)
     return;
 
   ChannelTab *tab = channelTab(channelId);
 
+  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
   if (channel->userCount() == 1) {
     tab->userView()->sort();
     return;
@@ -377,10 +395,11 @@ void TabWidget::synced(const QByteArray &channelId)
       continue;
 
     privateTab(user->id(), false);
-    tab->userView()->add(user);
+    tab->add(user);
   }
 
   tab->userView()->sort();
+  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
 }
 
 
@@ -519,8 +538,7 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   }
 
   tab->setOnline();
-  tab->userView()->add(m_client->user());
-  tab->action()->setText(channel->name());
+  tab->add(m_client->user());
 
   addJoinMsg(m_client->userId(), id, tab);
   closeWelcome();
@@ -636,21 +654,6 @@ void TabWidget::addQuitMsg(const QByteArray &userId, const QByteArray &destId, C
   }
 
   addServiceMsg(userId, destId, text, tab);
-}
-
-
-/*!
- * Добавление сервисного сообщения.
- */
-void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab)
-{
-  MessageData data(userId, destId, QString(), text);
-  data.timestamp = m_client->timestamp();
-
-  AbstractMessage msg(QLatin1String("service-type"), data);
-  msg.setPriority(AbstractMessage::LowPriority);
-
-  message(tab, msg);
 }
 
 

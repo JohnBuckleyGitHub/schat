@@ -23,6 +23,8 @@
 #include <QTabWidget>
 #include <QPointer>
 
+#include "schat.h"
+
 class AboutTab;
 class AbstractMessage;
 class AbstractTab;
@@ -45,7 +47,7 @@ class WelcomeTab;
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
  */
-class TabWidget : public QTabWidget
+class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 {
   Q_OBJECT
 
@@ -53,6 +55,7 @@ public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
   inline TabBar *tabBar() { return m_tabBar; }
+  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
 
 signals:
   void pageChanged(int type, bool visible);
@@ -87,7 +90,6 @@ private:
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void addJoinMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab = 0);
   void addQuitMsg(const QByteArray &userId, const QByteArray &destId, ChatViewTab *tab = 0);
-  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
   void closeWelcome();
   void createToolBars();
   void displayChannelUserCount(const QByteArray &id);
