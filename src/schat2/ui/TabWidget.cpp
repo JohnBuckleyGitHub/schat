@@ -343,11 +343,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 
   if (tab && user) {
     privateTab(user->id(), false);
-
-    if (!tab->add(user))
-      return;
-
-    displayChannelUserCount(channelId);
+    tab->add(user);
   }
 }
 
@@ -356,10 +352,8 @@ void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
 {
   ChannelTab *tab = m_channels.value(channelId);
   ClientUser user = m_client->user(userId);
-  if (tab && user) {
+  if (tab && user)
     tab->remove(userId);
-    displayChannelUserCount(channelId);
-  }
 }
 
 
@@ -380,7 +374,7 @@ void TabWidget::synced(const QByteArray &channelId)
 
   qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
   if (channel->userCount() == 1) {
-    tab->userView()->sort();
+    tab->synced();
     return;
   }
 
@@ -394,7 +388,7 @@ void TabWidget::synced(const QByteArray &channelId)
     tab->add(user);
   }
 
-  tab->userView()->sort();
+  tab->synced();
   qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
 }
 
@@ -413,7 +407,6 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   foreach (ChannelTab *tab, m_channels) {
     tab->setOnline(false);
-    displayChannelUserCount(tab->id());
   }
 
   foreach (PrivateTab *tab, m_talks) {
@@ -496,7 +489,6 @@ void TabWidget::updateUserData(const QByteArray &userId)
  *
  * \param id Идентификатор канала.
  *
- * \todo Обновлять внутренний объект канала.
  * \return Возвращает указатель на вкладку или 0 в случае ошибки.
  */
 ChannelTab *TabWidget::channelTab(const QByteArray &id)
@@ -672,26 +664,6 @@ void TabWidget::createToolBars()
 
   setCornerWidget(m_leftToolBar, Qt::TopLeftCorner);
   setCornerWidget(m_rightToolBar, Qt::TopRightCorner);
-}
-
-
-/*!
- * Отображение в заголовке вкладки числа пользователей, если их больше 1.
- *
- * \param id Идентификатор канала.
- */
-void TabWidget::displayChannelUserCount(const QByteArray &id)
-{
-  ChannelTab *tab = m_channels.value(id);
-  ClientChannel chan = m_client->channel(id);
-
-  if (tab && chan) {
-    int index = indexOf(tab);
-    if (chan->userCount() > 1)
-      setTabText(index, QString("%1 (%2)").arg(chan->name()).arg(chan->userCount()));
-    else
-      setTabText(index, chan->name());
-  }
 }
 
 

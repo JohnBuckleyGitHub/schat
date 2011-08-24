@@ -39,11 +39,16 @@ public:
   inline UserView *userView() { return m_userView; }
   void alert(bool start = true);
   void setOnline(bool online = true);
+  void synced();
 
 private slots:
+  void settingsChanged(const QString &key, const QVariant &value);
   void userLeave(const QByteArray &userId);
 
 private:
+  void displayUserCount();
+
+  bool m_userCount;
   ClientChannel m_channel;
   QSplitter *m_splitter;
   UserView *m_userView;

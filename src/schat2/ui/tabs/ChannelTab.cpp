@@ -21,10 +21,12 @@
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/SimpleClient.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
+#include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
@@ -39,6 +41,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   m_splitter->setStretchFactor(0, 1);
   m_splitter->setStretchFactor(1, 1);
 
+  m_userCount = SCHAT_OPTION("ChannelUserCount").toBool();
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_splitter);
   mainLay->setMargin(0);
@@ -48,6 +52,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setText(channel->name());
 
   connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
+  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
@@ -62,8 +67,10 @@ bool ChannelTab::add(ClientUser user)
   if (!m_userView->add(user))
     return false;
 
-  if (m_userView->isSortable() || UserUtils::userId() == user->id())
+  if (m_userView->isSortable() || UserUtils::userId() == user->id()) {
     addJoinMsg(user->id(), m_channel->id());
+    displayUserCount();
+  }
 
   return true;
 }
@@ -75,6 +82,7 @@ bool ChannelTab::remove(const QByteArray &id)
     return false;
 
   addLeftMsg(id, m_channel->id());
+  displayUserCount();
   return true;
 }
 
@@ -97,16 +105,54 @@ void ChannelTab::setOnline(bool online)
 {
   if (!online) {
     m_userView->clear();
+    displayUserCount();
+
     if (ChatCore::i()->client()->previousState() == SimpleClient::ClientOnline)
       addQuitMsg(UserUtils::userId(), m_channel->id());
+  }
+  else {
+    ClientChannel channel = ChatCore::i()->client()->channel(id());
+    if (channel && channel != m_channel)
+      m_channel = channel;
   }
 
   AbstractTab::setOnline(online);
 }
 
 
+void ChannelTab::synced()
+{
+  displayUserCount();
+  m_userView->sort();
+}
+
+
+void ChannelTab::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == QLatin1String("ChannelUserCount")) {
+    m_userCount = value.toBool();
+    displayUserCount();
+  }
+}
+
+
 void ChannelTab::userLeave(const QByteArray &userId)
 {
-  if (m_userView->remove(userId))
+  if (m_userView->remove(userId)) {
     addQuitMsg(userId, m_channel->id());
+    displayUserCount();
+  }
+}
+
+
+void ChannelTab::displayUserCount()
+{
+  int index = m_tabs->indexOf(this);
+  if (index == -1)
+    return;
+
+  if (m_userCount && m_userView->userCount() > 1)
+    m_tabs->setTabText(index, QString("%1 (%2)").arg(m_channel->name()).arg(m_userView->userCount()));
+  else
+    m_tabs->setTabText(index, m_channel->name());
 }
