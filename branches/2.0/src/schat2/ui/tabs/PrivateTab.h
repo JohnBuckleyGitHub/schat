@@ -39,6 +39,7 @@ public:
   void setOnline(bool online = true);
 
 private slots:
+  void split(const QList<QByteArray> &users);
   void userLeave(const QByteArray &userId);
 
 private:

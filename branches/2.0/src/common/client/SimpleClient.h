@@ -40,6 +40,7 @@ signals:
   void join(const QByteArray &channelId, const QByteArray &userId);
   void notice(const NoticeData &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
+  void split(const QList<QByteArray> &users);
   void synced(const QByteArray &channelId);
   void userDataChanged(const QByteArray &userId);
   void userLeave(const QByteArray &userId);

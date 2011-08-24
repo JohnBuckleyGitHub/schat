@@ -251,6 +251,11 @@ bool SimpleClientPrivate::command()
     return true;
   }
 
+  if (command == QLatin1String("split") && SimpleID::typeOf(reader->sender()) == SimpleID::ServerId) {
+    split();
+    return true;
+  }
+
   return false;
 }
 
@@ -278,6 +283,41 @@ bool SimpleClientPrivate::readMessage()
   emit(q->message(reader.data));
 
   return true;
+}
+
+
+void SimpleClientPrivate::split()
+{
+  qDebug() << "-----------------------------";
+  qDebug() << "SPLIT" << serverData->number();
+  qDebug() << "-----------------------------";
+
+  QList<QByteArray> out;
+  int number = serverData->number();
+  QHashIterator<QByteArray, ClientUser> i(users);
+
+  if (number == 0) {
+
+  }
+  else {
+    while (i.hasNext()) {
+      i.next();
+      if (i.value()->serverNumber() != number)
+        out.append(i.key());
+    }
+  }
+
+  if (out.isEmpty())
+    return;
+
+  Q_Q(SimpleClient);
+  emit(q->split(out));
+
+  for (int i = 0; i < out.size(); ++i) {
+    users.remove(out.at(i));
+  }
+
+  qDebug() << out.size();
 }
 
 
