@@ -89,7 +89,6 @@ private:
   PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void closeWelcome();
   void createToolBars();
-  void displayChannelUserCount(const QByteArray &id);
   void lastTab();
   void message(ChatViewTab *tab, const AbstractMessage &data);
   void retranslateUi();

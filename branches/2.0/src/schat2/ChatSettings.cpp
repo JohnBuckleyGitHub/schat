@@ -30,6 +30,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   , m_client(0)
 {
   setDefault(QLatin1String("AutoConnect"),         true);
+  setDefault(QLatin1String("ChannelUserCount"),    false);
   setDefault(QLatin1String("DeveloperExtras"),     false);
   setDefault(QLatin1String("Height"),              420);
   setDefault(QLatin1String("HideIgnore"),          true);
