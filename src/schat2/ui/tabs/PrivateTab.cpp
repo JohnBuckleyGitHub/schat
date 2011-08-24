@@ -48,6 +48,7 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
   ChatCore::i()->plugins()->hook(hook);
 
   connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
+  connect(ChatCore::i()->client(), SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
 }
 
 
@@ -104,10 +105,19 @@ void PrivateTab::setOnline(bool online)
 }
 
 
+void PrivateTab::split(const QList<QByteArray> &users)
+{
+  if (users.contains(id()))
+    userLeave(id());
+}
+
+
 void PrivateTab::userLeave(const QByteArray &userId)
 {
-  if (id() == userId)
+  if (id() == userId) {
     addQuitMsg(userId, userId);
+    setOnline(false);
+  }
 }
 
 

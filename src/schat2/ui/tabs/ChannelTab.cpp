@@ -52,6 +52,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setText(channel->name());
 
   connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
+  connect(ChatCore::i()->client(), SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
@@ -132,6 +133,14 @@ void ChannelTab::settingsChanged(const QString &key, const QVariant &value)
   if (key == QLatin1String("ChannelUserCount")) {
     m_userCount = value.toBool();
     displayUserCount();
+  }
+}
+
+
+void ChannelTab::split(const QList<QByteArray> &users)
+{
+  for (int i = 0; i < users.size(); ++i) {
+    m_userView->remove(users.at(i));
   }
 }
 

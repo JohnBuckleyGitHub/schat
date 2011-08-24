@@ -46,6 +46,9 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
   if (!user)
     return;
 
+  if (user->status() == User::OfflineStatus)
+    return;
+
   QString text;
   if (user->gender() == User::Female)
     text = tr("has joined", "Female");

@@ -50,6 +50,7 @@ public:
   // Сообщения.
   bool command();
   bool readMessage();
+  void split();
 
   bool readNotice();
 
