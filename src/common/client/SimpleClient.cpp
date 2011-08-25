@@ -292,7 +292,7 @@ void SimpleClientPrivate::split()
   int number = serverData->number();
   QHashIterator<QByteArray, ClientUser> i(users);
 
-  if (number == 0) {
+  if (!messageData->text.isEmpty()) {
     number = messageData->text.toInt();
     if (number == 0)
       return;
