@@ -100,6 +100,9 @@ void PrivateTab::alert(bool start)
 
 void PrivateTab::setOnline(bool online)
 {
+  if (!online)
+    m_user->setStatus(User::OfflineStatus);
+
   m_tabs->setTabToolTip(m_tabs->indexOf(this), UserUtils::toolTip(m_user));
   AbstractTab::setOnline(online);
 }

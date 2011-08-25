@@ -288,16 +288,20 @@ bool SimpleClientPrivate::readMessage()
 
 void SimpleClientPrivate::split()
 {
-  qDebug() << "-----------------------------";
-  qDebug() << "SPLIT" << serverData->number();
-  qDebug() << "-----------------------------";
-
   QList<QByteArray> out;
   int number = serverData->number();
   QHashIterator<QByteArray, ClientUser> i(users);
 
   if (number == 0) {
+    number = messageData->text.toInt();
+    if (number == 0)
+      return;
 
+    while (i.hasNext()) {
+      i.next();
+      if (i.value()->serverNumber() == number)
+        out.append(i.key());
+    }
   }
   else {
     while (i.hasNext()) {
@@ -316,8 +320,6 @@ void SimpleClientPrivate::split()
   for (int i = 0; i < out.size(); ++i) {
     users.remove(out.at(i));
   }
-
-  qDebug() << out.size();
 }
 
 
