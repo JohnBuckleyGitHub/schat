@@ -227,11 +227,8 @@ void SlaveNode::uplinkStateChanged(int state, int previousState)
 
 void SlaveNode::split()
 {
-  qDebug() << "--------------------------------------";
-  qDebug() << "SPLIT";
-  qDebug() << "--------------------------------------";
   QList<QByteArray> channels = m_storage->channels().keys();
-  MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), "хуй");
+  MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString());
 
   send(m_storage->socketsFromIds(channels), MessageWriter(m_sendStream, message).data());
 }

@@ -21,6 +21,8 @@
 #include "events.h"
 #include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
+#include "net/packets/message.h"
+#include "net/ServerData.h"
 #include "SlaveAuth.h"
 #include "Storage.h"
 
@@ -37,30 +39,42 @@ MasterNode::MasterNode(QObject *parent)
 
 void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
 {
-//  if (m_storage->isSlave(event->userId())) {
-//    qDebug() << "";
-//    qDebug() << "";
-//    qDebug() << "SLAVE LEAVE";
-//    qDebug() << "";
-//    ChatUser slave = m_storage->user(event->userId());
-//    if (!slave)
-//      return;
-//
-//    quint64 socket = slave->socketId();
-//    QHash<QByteArray, ChatUser> all = m_storage->users();
-//    all.remove(event->userId());
-//
-//    QList<ChatUser> users;
-//
-//    QHashIterator<QByteArray, ChatUser> i(all); // Поиск всех пользователей с вторичного сервера.
-//    while (i.hasNext()) {
-//      i.next();
-//      if (i.value()->socketId() == socket)
-//        users.append(i.value());
-//    }
-//
-//    qDebug() << "USERS TOTAL:" << users.size();
-//  }
-//  else
+  if (m_storage->isSlave(event->userId())) {
+    ChatUser slave = m_storage->user(event->userId());
+    if (!slave)
+      return;
+
+    quint8 number = slave->rawGender();
+    QHash<QByteArray, ChatUser> all = m_storage->users();
+    all.remove(event->userId());
+
+    QList<ChatUser> users;
+
+    // Поиск всех пользователей с вторичного сервера.
+    QHashIterator<QByteArray, ChatUser> i(all);
+    while (i.hasNext()) {
+      i.next();
+      if (i.value()->serverNumber() == number)
+        users.append(i.value());
+    }
+
+    if (users.isEmpty())
+      return;
+
+    // Поиск всех каналов в которых находились пользователи со вторичного сервера.
+    QList<QByteArray> channels;
+    for (int i = 0; i < users.size(); ++i) {
+      foreach (QByteArray id, users.at(i)->channels()) {
+        if (!channels.contains(id))
+          channels.append(id);
+      }
+
+      m_storage->remove(users.at(i));
+    }
+
+    MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));
+    send(m_storage->socketsFromIds(channels), MessageWriter(m_sendStream, message).data());
+  }
+  else
     Core::socketReleaseEvent(event);
 }
