@@ -67,6 +67,7 @@ else {
 
 TRANSLATIONS += ../../data/translations/schatd_en.ts
 TRANSLATIONS += ../../data/translations/schatd_ru.ts
+TRANSLATIONS += ../../data/translations/schatd_uk.ts
 CODECFORTR = UTF-8
 
 unix {
@@ -76,7 +77,9 @@ unix {
 
   translations.files = ../../data/translations/schatd_en.qm
   translations.files += ../../data/translations/schatd_ru.qm
+  translations.files += ../../data/translations/schatd_uk.qm
   translations.files += ../../data/translations/qt_ru.qm
+  translations.files += ../../data/translations/qt_uk.qm
 
   userbar.files = ../../misc/tools/userbar/userbar.php
   userbar.files += ../../misc/tools/userbar/userbar-template.png

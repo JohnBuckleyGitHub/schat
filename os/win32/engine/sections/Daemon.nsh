@@ -28,8 +28,11 @@ ${Section}
   SetOutPath "$INSTDIR\translations"
   File "${SCHAT_DATADIR}\translations\schatd_en.qm"
   File "${SCHAT_DATADIR}\translations\schatd_ru.qm"
+  File "${SCHAT_DATADIR}\translations\schatd_uk.qm"
   File "${SCHAT_DATADIR}\translations\qt_ru.qm"
+  File "${SCHAT_DATADIR}\translations\qt_uk.qm"
   File "${SCHAT_DATADIR}\translations\schatd-ui_ru.qm"
+  File "${SCHAT_DATADIR}\translations\schatd-ui_uk.qm"
 
   SetOverwrite ifnewer
   File "${SCHAT_DATADIR}\motd.html"
@@ -42,8 +45,11 @@ ${Uninstall}
 
   Delete "$INSTDIR\translations\schatd_en.qm"
   Delete "$INSTDIR\translations\schatd_ru.qm"
+  Delete "$INSTDIR\translations\schatd_uk.qm"
   Delete "$INSTDIR\translations\qt_ru.qm"
+  Delete "$INSTDIR\translations\qt_uk.qm"
   Delete "$INSTDIR\translations\schatd-ui_ru.qm"
+  Delete "$INSTDIR\translations\schatd-ui_uk.qm"
   RMDir "$INSTDIR\translations"
 
   Delete "$INSTDIR\schatd.exe"

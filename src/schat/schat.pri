@@ -184,6 +184,7 @@ contains( SCHAT_WINCE_VGA, 1 ) {
 
 TRANSLATIONS += ../../data/translations/schat_en.ts
 TRANSLATIONS += ../../data/translations/schat_ru.ts
+TRANSLATIONS += ../../data/translations/schat_uk.ts
 CODECFORTR = UTF-8
 
 unix {
@@ -208,9 +209,12 @@ unix {
 
   translations.files = ../../data/translations/schat_en.qm
   translations.files += ../../data/translations/schat_ru.qm
+  translations.files += ../../data/translations/schat_uk.qm
   translations.files += ../../data/translations/qt_ru.qm
+  translations.files += ../../data/translations/qt_uk.qm
   translations.files += ../../data/translations/en.png
   translations.files += ../../data/translations/ru.png
+  translations.files += ../../data/translations/uk.png
   translations.path = $$SCHAT_PREFIX/share/schat/translations
 
   pixmaps.files = ../../data/images/schat.png

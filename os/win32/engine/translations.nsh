@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,14 @@
   LangString ${_NAME} ${LANG_RUSSIAN} "${_TEXT}"
 !macroend
 
+!macro L_UK _NAME _TEXT
+  LangString ${_NAME} ${LANG_UKRAINIAN} "${_TEXT}"
+!macroend
+
 !macro INSERT_TRANSLATIONS
   !include "engine\translations\english.nsh"
   !include "engine\translations\russian.nsh"
+  !include "engine\translations\ukrainian.nsh"
 !macroend
 
 !endif /* TRANSLATIONS_NSH_ */

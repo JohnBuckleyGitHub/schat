@@ -57,6 +57,7 @@ else {
 }
 
 TRANSLATIONS += ../../data/translations/schatd-ui_ru.ts
+TRANSLATIONS += ../../data/translations/schatd-ui_uk.ts
 CODECFORTR = UTF-8
 
 include(../common/common.pri)

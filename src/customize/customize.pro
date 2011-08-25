@@ -67,6 +67,7 @@ DEFINES += SCHAT_NO_UPDATE_WIDGET
 
 TRANSLATIONS += ../../data/translations/customize_en.ts
 TRANSLATIONS += ../../data/translations/customize_ru.ts
+TRANSLATIONS += ../../data/translations/customize_uk.ts
 CODECFORTR = UTF-8
 
 include(../common/common.pri)
