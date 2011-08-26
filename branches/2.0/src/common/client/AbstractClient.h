@@ -67,7 +67,7 @@ public:
   void setNick(const QString &nick);
   void unlock();
 
-  void leave();
+  virtual void leave();
 
 signals:
   void clientStateChanged(int state, int previousState);
