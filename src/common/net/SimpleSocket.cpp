@@ -493,7 +493,6 @@ void SimpleSocket::leave()
   SCHAT_DEBUG_STREAM(this << "leave()")
 
   Q_D(SimpleSocket);
-  setAuthorized(QByteArray());
 
   if (state() == SimpleSocket::ConnectedState) {
     flush();

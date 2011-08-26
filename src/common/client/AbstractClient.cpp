@@ -346,6 +346,7 @@ void AbstractClient::leave()
 
   d->setClientState(ClientOffline);
   SimpleSocket::leave();
+  setAuthorized(QByteArray());
 }
 
 

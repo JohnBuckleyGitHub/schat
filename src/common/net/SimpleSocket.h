@@ -61,7 +61,7 @@ public:
   qint64 timestamp() const;
   quint64 rx() const;
   quint64 tx() const;
-  void leave();
+  virtual void leave();
   void setAuthorized(const QByteArray &userId);
   void setId(quint64 id);
   void setTimestamp(qint64 timestamp);
