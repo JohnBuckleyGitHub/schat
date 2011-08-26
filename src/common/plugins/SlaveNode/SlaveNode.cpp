@@ -225,6 +225,38 @@ void SlaveNode::uplinkStateChanged(int state, int previousState)
 }
 
 
+void SlaveNode::reAuth()
+{
+  qDebug() << "-------------------";
+  qDebug() << "RE AUTH" << m_storage->users().size();
+  qDebug() << "-------------------";
+
+  QHash<QByteArray, ChatUser> users = m_storage->users();
+  if (users.isEmpty())
+    return;
+
+  NoticeData notice(NoticeData::SlaveNodeXHost, Storage::i()->serverData()->id(), QByteArray(), QString());
+  QList<QByteArray> packets;
+
+  QHashIterator<QByteArray, ChatUser> i(users);
+  while (i.hasNext()) {
+    i.next();
+    if (!i.value()->isOnline())
+      continue;
+
+    notice.destId = i.value()->id();
+    notice.text = i.value()->host();
+    packets.append(NoticeWriter(m_uplink->sendStream(), notice).data());
+
+    AuthRequestData data(AuthRequestData::Anonymous, QString(), i.value().data());
+    data.uniqueId = i.value()->uniqueId();
+    packets.append(AuthRequestWriter(m_sendStream, data).data());
+  }
+
+  m_uplink->send(packets);
+}
+
+
 void SlaveNode::split()
 {
   QList<QByteArray> channels = m_storage->channels().keys();
@@ -268,6 +300,11 @@ ChatChannel SlaveNode::uplinkAddChannel()
 void SlaveNode::setMode(Mode mode)
 {
   m_mode = mode;
+
+  if (mode == ProxyMode)
+    reAuth();
+  else
+    m_uplink->setAuthorized(QByteArray());
 }
 
 

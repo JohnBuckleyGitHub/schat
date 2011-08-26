@@ -35,6 +35,7 @@ ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, con
   : User()
   , m_online(true)
   , m_session(session)
+  , m_uniqueId(authRequestData.uniqueId)
   , m_key(-1)
   , m_normalNick(normalNick)
   , m_socketId(socketId)

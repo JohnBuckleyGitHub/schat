@@ -54,6 +54,7 @@ private slots:
   void uplinkStateChanged(int state, int previousState);
 
 private:
+  void reAuth();
   void split();
 
   bool uplinkRoute();
