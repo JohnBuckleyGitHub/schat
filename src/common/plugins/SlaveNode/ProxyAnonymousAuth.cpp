@@ -17,8 +17,12 @@
  */
 
 #include "client/AbstractClient.h"
+#include "events.h"
+#include "net/packets/notices.h"
+#include "net/ServerData.h"
 #include "ProxyAnonymousAuth.h"
 #include "SlaveNode.h"
+#include "Storage.h"
 
 ProxyAnonymousAuth::ProxyAnonymousAuth(SlaveNode *node)
   : AnonymousAuth(node)
@@ -34,7 +38,11 @@ AuthResult ProxyAnonymousAuth::auth(const AuthRequestData &data)
     return result;
   }
 
-  m_node->uplink()->send(m_node->readBuffer()); // FIXME добавить передачу ип адреса.
+  NoticeData notice(NoticeData::SlaveNodeXHost, Storage::i()->serverData()->id(), result.id, m_core->packetsEvent()->address.toString());
+  QList<QByteArray> packets;
+  packets.append(NoticeWriter(m_node->uplink()->sendStream(), notice).data());
+  m_node->uplink()->send(packets);
+
   result.action = AuthResult::Pending;
   return result;
 }
