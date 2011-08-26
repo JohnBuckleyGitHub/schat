@@ -41,10 +41,12 @@ public:
   inline void setKey(qint64 key) { m_key = key; }
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
   inline void setOnline(bool online) { m_online = online; }
+  inline QByteArray uniqueId() const { return m_uniqueId; }
 
 private:
   bool m_online;             ///< true если пользователь в сети.
   QByteArray m_session;      ///< Сессия.
+  QByteArray m_uniqueId;     ///< Уникальный идентификатор пользователя.
   qint64 m_key;              ///< Ключ в таблице users.
   QString m_normalNick;      ///< Нормализованный ник.
   quint64 m_socketId;        ///< Идентификатор сокета.
