@@ -19,6 +19,19 @@
 #include "net/PacketReader.h"
 #include "net/packets/notices.h"
 
+
+NoticeData::NoticeData(quint16 type, const QByteArray &senderId, const QByteArray &destId, const QString &text)
+  : destId(destId)
+  , senderId(senderId)
+  , timestamp(0)
+  , type(type)
+  , messageName(0)
+  , param1(0)
+  , param2(0)
+  , text(text)
+{
+}
+
 NoticeData::NoticeData(const QByteArray &senderId, const QByteArray &destId, quint16 type, quint64 messageName, quint8 param1)
   : destId(destId)
   , senderId(senderId)
@@ -39,6 +52,8 @@ NoticeWriter::NoticeWriter(QDataStream *stream, const NoticeData &data)
 
   if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected)
     put(data.messageName);
+
+  put(data.text);
 }
 
 
@@ -52,4 +67,6 @@ NoticeReader::NoticeReader(PacketReader *reader)
 
   if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected)
     data.messageName = reader->get<quint64>();
+
+  data.text = reader->text();
 }

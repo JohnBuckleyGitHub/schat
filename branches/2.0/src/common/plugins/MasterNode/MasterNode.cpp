@@ -21,7 +21,9 @@
 #include "events.h"
 #include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
+#include "net/PacketReader.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "net/ServerData.h"
 #include "SlaveAuth.h"
 #include "Storage.h"
@@ -34,6 +36,44 @@ MasterNode::MasterNode(QObject *parent)
 
   addAuth(new SlaveAuth(this));
   addAuth(new MasterAnonymousAuth(this));
+}
+
+
+bool MasterNode::readNotice()
+{
+  if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
+    NoticeData data = NoticeReader(m_reader).data;
+    if (data.type == NoticeData::SlaveNodeXHost) {
+      m_hosts[m_reader->dest()] = data.text;
+      return true;
+    }
+  }
+
+  return route();
+}
+
+
+void MasterNode::acceptAuth(const AuthResult &result)
+{
+  ChatUser user = m_storage->user(result.id);
+  if (!user)
+    return;
+
+  if (m_hosts.contains(result.id)) {
+    user->setHost(m_hosts.value(result.id));
+    m_hosts.remove(result.id);
+  }
+
+  Core::acceptAuth(result);
+}
+
+
+void MasterNode::readPacket(int type)
+{
+  if (type == Protocol::NoticePacket)
+    readNotice();
+  else
+    Core::readPacket(type);
 }
 
 

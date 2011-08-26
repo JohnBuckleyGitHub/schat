@@ -29,7 +29,13 @@ public:
   MasterNode(QObject *parent = 0);
 
 protected:
+  bool readNotice();
+  void acceptAuth(const AuthResult &result);
+  void readPacket(int type);
   void socketReleaseEvent(SocketReleaseEvent *event);
+
+private:
+  QHash<QByteArray, QString> m_hosts; ///< Таблица адресов пользователей, используется при авторизации клиентов с вторичного сервера.
 };
 
 #endif /* MASTERNODE_H_ */

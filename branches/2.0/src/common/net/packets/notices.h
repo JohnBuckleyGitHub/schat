@@ -32,6 +32,7 @@ public:
     Invalid,          ///< Некорректный тип.
     MessageDelivered, ///< Сообщение было доставлено.
     MessageRejected,  ///< Сообщение было отклонено.
+    SlaveNodeXHost    ///< Оригинальный адрес пользователя.
   };
 
   enum Param1 {
@@ -48,15 +49,17 @@ public:
   , param2(0)
   {}
 
+  NoticeData(quint16 type, const QByteArray &senderId, const QByteArray &destId, const QString &text);
   NoticeData(const QByteArray &senderId, const QByteArray &destId, quint16 type, quint64 messageName, quint8 param1 = 0);
 
   QByteArray destId;   ///< Идентификатор назначения.
   QByteArray senderId; ///< Идентификатор отправителя.
   qint64 timestamp;    ///< Отметка времени.
   quint16 type;        ///< Тип.
-  quint64 messageName; ///< Имя-счётчик сообщения.
+  quint64 messageName; ///< Имя-счётчик сообщения, только для типов MessageDelivered и MessageRejected.
   quint8 param1;       ///< Не обязательный параметр №1
   quint8 param2;       ///< Не обязательный параметр №2
+  QString text;        ///< Текстовое содержимое.
 };
 
 

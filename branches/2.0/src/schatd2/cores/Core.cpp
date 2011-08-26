@@ -592,9 +592,8 @@ bool Core::command()
     return true;
   }
 
-  if (command == QLatin1String("status")) {
+  if (command == QLatin1String("status"))
     return updateUserStatus();
-  }
 
   if (command == QLatin1String("leave"))
     return readLeaveCmd();
@@ -673,7 +672,7 @@ void Core::acceptMessage()
   if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
     return;
 
-  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageDelivered, m_messageData->name);
+  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageDelivered, m_messageData->name, 0);
   send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
 }
 
