@@ -41,6 +41,7 @@ public:
   inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
   inline QList<QByteArray> slaves() const { return m_slaves; }
   inline static Storage *i() { return m_self; }
+  inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
   void addSlave(const QByteArray &id);
