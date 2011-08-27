@@ -59,9 +59,11 @@ ClientUser UserUtils::user(const QByteArray &id)
   if (user || !ChatCore::i()->plugins()->history())
     return user;
 
-  user = ChatCore::i()->plugins()->history()->user(id);
-  if (!user)
-    user = m_users.value(id);
+  if (ChatCore::i()->plugins()->history()) {
+    user = ChatCore::i()->plugins()->history()->user(id);
+    if (!user)
+      user = m_users.value(id);
+  }
 
   return user;
 }
