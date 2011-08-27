@@ -84,10 +84,11 @@ void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
     if (!slave)
       return;
 
+    m_storage->remove(slave);
+    m_storage->removeSlave(event->userId());
+
     quint8 number = slave->rawGender();
     QHash<QByteArray, ChatUser> all = m_storage->users();
-    all.remove(event->userId());
-
     QList<ChatUser> users;
 
     // Поиск всех пользователей с вторичного сервера.
