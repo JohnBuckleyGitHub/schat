@@ -50,7 +50,7 @@ void ChatPlugins::hook(const HookData &data)
 
 ChatPlugin *ChatPlugins::provider(const QString &id) const
 {
-  if (!m_providers.contains(id))
+  if (!m_providers.value(id))
     return 0;
 
   ChatApi *api = qobject_cast<ChatApi *>(m_providers.value(id)->plugin());

@@ -398,7 +398,7 @@ void TabWidget::synced(const QByteArray &channelId)
  */
 void TabWidget::clientStateChanged(int state, int previousState)
 {
-  SCHAT_DEBUG_STREAM(this << "clientStateChanged()" << state);
+  Q_UNUSED(previousState)
 
   if (state == SimpleClient::ClientOnline)
     return;
