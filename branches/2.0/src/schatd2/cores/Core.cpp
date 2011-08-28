@@ -48,8 +48,8 @@ Core::Core(QObject *parent)
 {
   addAuth(new AnonymousAuth(this));
 
-  m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::WriteOnly);
-  m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadOnly);
+  m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
+  m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
 }
 
 

@@ -16,9 +16,9 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS += \
+    common/plugins/MasterNode \
+    common/plugins/SlaveNode \
     common/plugins/BotCore \
     common/plugins/BotEcho \
     common/plugins/History \
     common/plugins/DebugClient \
-    common/plugins/MasterNode \
-    common/plugins/SlaveNode \

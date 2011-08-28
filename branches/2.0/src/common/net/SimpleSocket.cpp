@@ -47,8 +47,8 @@ SimpleSocketPrivate::SimpleSocketPrivate()
 {
   timer = new QBasicTimer();
   txStream = new QDataStream(&txBuffer, QIODevice::ReadWrite);
-  sendStream = new QDataStream(&sendBuffer, QIODevice::WriteOnly);
-  readStream = new QDataStream(&readBuffer, QIODevice::ReadOnly);
+  sendStream = new QDataStream(&sendBuffer, QIODevice::ReadWrite);
+  readStream = new QDataStream(&readBuffer, QIODevice::ReadWrite);
 }
 
 
