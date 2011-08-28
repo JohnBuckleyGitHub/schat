@@ -73,14 +73,6 @@ void SimpleClientPrivate::restore()
   Q_Q(SimpleClient);
   q->lock();
 
-  /// Происходит восстановление приватных разговоров.
-//  if (user->count(SimpleID::TalksListId)) {
-//    MessageData data(userId, SimpleID::setType(SimpleID::TalksListId, userId), QLatin1String("add"), QString());
-//    MessageWriter writer(sendStream, data);
-//    writer.putId(user->ids(SimpleID::TalksListId));
-//    q->send(writer.data());
-//  }
-
   /// Клиент заново входит в ранее открытие каналы.
   if (!channels.isEmpty()) {
     MessageData data(userId, QByteArray(), QLatin1String("join"), QString());
@@ -152,7 +144,12 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
   channel->addUser(user->id());
   user->addChannel(id);
 
+  Q_Q(SimpleClient);
+
   if (channel->userCount() == 1) {
+    if (!channel->name().startsWith(QLatin1String("~")))
+      emit(q->join(id));
+
     endSyncChannel(channel);
     return true;
   }
@@ -169,6 +166,9 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
     else
       unsync++;
   }
+
+  if (!channel->name().startsWith(QLatin1String("~")))
+    emit(q->join(id));
 
   if (unsync == 0)
     endSyncChannel(channel);
@@ -206,6 +206,9 @@ void SimpleClientPrivate::endSyncChannel(ClientChannel channel)
     return;
 
   channel->setSynced(true);
+
+  if (channel->name().startsWith(QLatin1String("~")))
+    return;
 
   Q_Q(SimpleClient);
   emit(q->synced(channel->id()));

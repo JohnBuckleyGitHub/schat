@@ -32,6 +32,7 @@
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   : ChatViewTab(QLatin1String("qrc:/html/ChatView.html"), channel->id(), ChannelType, parent)
   , m_channel(channel)
+  , m_client(ChatCore::i()->client())
 {
   m_userView = new UserView(this);
 
@@ -51,8 +52,9 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
 
-  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
-  connect(ChatCore::i()->client(), SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
+  connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
+  connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
+  connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
@@ -125,6 +127,17 @@ void ChannelTab::synced()
 {
   displayUserCount();
   m_userView->sort();
+}
+
+
+void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
+{
+  if (id() != channelId)
+    return;
+
+  ClientUser user = m_client->user(userId);
+  if (user)
+    remove(userId);
 }
 
 

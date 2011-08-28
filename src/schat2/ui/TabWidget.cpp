@@ -86,8 +86,8 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
+  connect(m_client, SIGNAL(join(const QByteArray &)), SLOT(join(const QByteArray &)));
   connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
-  connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
@@ -326,6 +326,16 @@ void TabWidget::showMainMenu()
 }
 
 
+void TabWidget::join(const QByteArray &channelId)
+{
+  ClientChannel channel = m_client->channel(channelId);
+  if (!channel)
+    return;
+
+  channelTab(channelId);
+}
+
+
 /*!
  * Обработка входа пользователя в канал.
  *
@@ -348,15 +358,6 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 }
 
 
-void TabWidget::part(const QByteArray &channelId, const QByteArray &userId)
-{
-  ChannelTab *tab = m_channels.value(channelId);
-  ClientUser user = m_client->user(userId);
-  if (tab && user)
-    tab->remove(userId);
-}
-
-
 /*!
  * Обработка завершения синхронизации канала.
  *
@@ -370,7 +371,9 @@ void TabWidget::synced(const QByteArray &channelId)
   if (!channel)
     return;
 
-  ChannelTab *tab = channelTab(channelId);
+  ChannelTab *tab = m_channels.value(channelId);
+  if (!tab)
+    return;
 
   qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
   if (channel->userCount() == 1) {
