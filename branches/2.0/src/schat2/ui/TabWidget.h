@@ -75,8 +75,8 @@ private slots:
   void openTab();
   void showMainMenu();
 
+  void join(const QByteArray &channelId);
   void join(const QByteArray &channelId, const QByteArray &userId);
-  void part(const QByteArray &channelId, const QByteArray &userId);
   void synced(const QByteArray &channelId);
 
   void clientStateChanged(int state, int previousState);

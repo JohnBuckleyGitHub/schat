@@ -25,6 +25,7 @@
 
 class ChatView;
 class QSplitter;
+class SimpleClient;
 class UserView;
 
 class ChannelTab : public ChatViewTab
@@ -42,6 +43,7 @@ public:
   void synced();
 
 private slots:
+  void part(const QByteArray &channelId, const QByteArray &userId);
   void settingsChanged(const QString &key, const QVariant &value);
   void split(const QList<QByteArray> &users);
   void userLeave(const QByteArray &userId);
@@ -52,6 +54,7 @@ private:
   bool m_userCount;
   ClientChannel m_channel;
   QSplitter *m_splitter;
+  SimpleClient *m_client;
   UserView *m_userView;
 };
 
