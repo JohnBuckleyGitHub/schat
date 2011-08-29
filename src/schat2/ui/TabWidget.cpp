@@ -179,7 +179,7 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   int index = m_tabBar->tabAt(event->pos());
-  if (index != -1 && tabsClosable() && event->button() == Qt::MiddleButton)
+  if (index != -1 && tabsClosable() && event->button() == Qt::MidButton)
     closeTab(index);
   else
     QTabWidget::mouseReleaseEvent(event);
