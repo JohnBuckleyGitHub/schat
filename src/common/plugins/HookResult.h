@@ -16,42 +16,35 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEHOOKS_H_
-#define NODEHOOKS_H_
+#ifndef HOOKRESULT_H_
+#define HOOKRESULT_H_
 
-class MessageData;
-
-class NodeHook
+class HookResult
 {
-public:
-  enum Type {
-    AcceptedMessage ///< Успешно доставленное сообщение.
+  enum Status {
+    Ok,
+    Error
   };
 
-  virtual ~NodeHook() {}
-  inline Type type() const { return m_type; }
-
-protected:
-  NodeHook(Type type)
-  : m_type(type)
-  {}
-
-  Type m_type;
-};
-
-
-class MessageHook : public NodeHook
-{
 public:
-  MessageHook(MessageData *data)
-  : NodeHook(AcceptedMessage)
-  , m_data(data)
+  HookResult()
+  : m_matches(0)
+  , m_status(Ok)
   {}
 
-  inline MessageData *data() const { return m_data; }
+  HookResult(int matches)
+  : m_matches(matches)
+  , m_status(Ok)
+  {}
+
+  inline int matches() const { return m_matches; }
+  inline Status status() const { return m_status; }
+  inline void setMatches(int matches) { m_matches = matches; }
+  inline void setStatus(Status status) { m_status = status; }
 
 protected:
-  MessageData *m_data;
+  int m_matches;
+  Status m_status;
 };
 
-#endif /* NODEHOOKS_H_ */
+#endif /* HOOKRESULT_H_ */

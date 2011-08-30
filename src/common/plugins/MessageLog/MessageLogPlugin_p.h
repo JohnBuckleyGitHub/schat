@@ -16,5 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plugins/NodeHooks.h"
+#ifndef MESSAGELOGPLUGIN_P_H_
+#define MESSAGELOGPLUGIN_P_H_
 
+#include "plugins/NodePlugin.h"
+
+class MessageLog : public NodePlugin
+{
+  Q_OBJECT
+
+public:
+  MessageLog(Core *core);
+  HookResult hook(const NodeHook &data);
+  QList<NodeHook::Type> hooks() const;
+};
+
+
+#endif /* MESSAGELOGPLUGIN_P_H_ */

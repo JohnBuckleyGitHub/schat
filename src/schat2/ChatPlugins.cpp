@@ -73,6 +73,9 @@ void ChatPlugins::init()
       continue;
 
     ChatPlugin *plugin = api->init(m_core);
+    if (!plugin)
+      continue;
+
     m_chatPlugins.append(plugin);
     connect(m_core, SIGNAL(notify(int, const QVariant &)), plugin, SLOT(notify(int, const QVariant &)));
     connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));

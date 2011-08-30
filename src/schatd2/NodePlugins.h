@@ -20,16 +20,21 @@
 #define NODEPLUGINS_H_
 
 #include "Plugins.h"
+#include "plugins/HookResult.h"
+#include "plugins/NodeHooks.h"
+#include "schat.h"
 
 class Core;
+class NodePlugin;
 
-class NodePlugins : public Plugins
+class SCHAT_EXPORT NodePlugins : public Plugins
 {
   Q_OBJECT
 
 public:
   NodePlugins(QObject *parent = 0);
   Core *kernel();
+  HookResult hook(const NodeHook &data);
 
 protected:
   void init();
@@ -37,6 +42,8 @@ protected:
 private:
   Core *m_core;
   QString m_kernelId;
+  QHash<NodeHook::Type, QList<NodePlugin *> > m_hooks;
+  QList<NodePlugin *> m_nodePlugins;
 };
 
 #endif /* NODEPLUGINS_H_ */

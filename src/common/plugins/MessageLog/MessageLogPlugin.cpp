@@ -16,13 +16,41 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <qplugin.h>
 
 #include "MessageLogPlugin.h"
+#include "MessageLogPlugin_p.h"
+
+MessageLog::MessageLog(Core *core)
+  : NodePlugin(core)
+{
+}
+
+
+HookResult MessageLog::hook(const NodeHook &data)
+{
+  qDebug() << "------------------------";
+  qDebug() << "HOOK";
+  qDebug() << "------------------------";
+  return HookResult(1);
+}
+
+
+QList<NodeHook::Type> MessageLog::hooks() const
+{
+  QList<NodeHook::Type> out;
+  out += NodeHook::AcceptedMessage;
+
+  return out;
+}
+
 
 NodePlugin *MessageLogPlugin::init(Core *core)
 {
-  return 0;
+  m_plugin = new MessageLog(core);
+  return m_plugin;
 }
 
 Q_EXPORT_PLUGIN2(MessageLog, MessageLogPlugin);

@@ -20,7 +20,9 @@
 
 #include "cores/Core.h"
 #include "NodePlugins.h"
+#include "plugins/NodeApi.h"
 #include "plugins/NodeKernelApi.h"
+#include "plugins/NodePlugin.h"
 #include "Settings.h"
 #include "Storage.h"
 
@@ -36,10 +38,26 @@ NodePlugins::NodePlugins(QObject *parent)
 
 Core *NodePlugins::kernel()
 {
-  if (!m_core)
+  if (!m_core) {
     m_core = new Core(this);
+    m_core->setPlugins(this);
+  }
 
   return m_core;
+}
+
+
+HookResult NodePlugins::hook(const NodeHook &data)
+{
+  if (!m_hooks.contains(data.type()))
+    return HookResult();
+
+  QList<NodePlugin *> list = m_hooks.value(data.type());
+  for (int i = 0; i < list.size(); ++i) {
+    list.at(i)->hook(data);
+  }
+
+  return HookResult(list.size());
 }
 
 
@@ -48,6 +66,30 @@ void NodePlugins::init()
   if (!m_kernelId.isEmpty() && m_providers.value(m_kernelId)) {
     NodeKernelApi *api = qobject_cast<NodeKernelApi *>(m_providers.value(m_kernelId)->plugin());
     m_core = api->init();
+    m_core->setPlugins(this);
+  }
+
+  for (int i = 0; i < m_sorted.size(); ++i) {
+    NodeApi *api = qobject_cast<NodeApi *>(m_plugins.value(m_sorted.at(i))->plugin());
+
+    if (!api)
+      continue;
+
+    qDebug() << "API OK";
+
+    NodePlugin *plugin = api->init(m_core);
+    if (!plugin)
+      continue;
+
+    m_nodePlugins.append(plugin);
+
+    QList<NodeHook::Type> hooks = plugin->hooks();
+    if (hooks.isEmpty())
+      continue;
+
+    foreach (NodeHook::Type hook, hooks) {
+      m_hooks[hook].append(plugin);
+    }
   }
 
   kernel();

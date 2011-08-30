@@ -27,7 +27,7 @@
 #include <qwebkitversion.h>
 #endif
 
-//#define SCHAT_RANDOM_CLIENT_ID
+#define SCHAT_RANDOM_CLIENT_ID
 
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
@@ -125,7 +125,7 @@ QByteArray SimpleID::toBase64(const QByteArray &id)
  */
 QByteArray SimpleID::uniqueId()
 {
-  #if !defined(SCHAT_DAEMON) && defined(SCHAT_RANDOM_CLIENT_ID)
+  #if defined(SCHAT_RANDOM_CLIENT_ID)
   return QCryptographicHash::hash(QUuid::createUuid().toString().toLatin1(), QCryptographicHash::Sha1) += UniqueUserId;
   #endif
 
