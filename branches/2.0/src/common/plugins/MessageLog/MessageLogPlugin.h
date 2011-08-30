@@ -16,17 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef MESSAGELOGPLUGIN_H_
+#define MESSAGELOGPLUGIN_H_
 
-#define SCHAT_VERSION      "1.9.3"
-#define SCHAT_VERSION_RC   1,9,3,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#include "CoreApi.h"
+#include "NodeApi.h"
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+class NodePlugin;
 
-#endif /*VERSION_H_*/
+class MessageLogPlugin : public QObject, CoreApi, NodeApi
+{
+  Q_OBJECT
+  Q_INTERFACES(CoreApi NodeApi)
+
+public:
+  NodePlugin *init(Core *core);
+  QString id() const { return QLatin1String("MessageLog"); }
+  QString name() const { return QLatin1String("Message Log"); }
+};
+
+#endif /* MESSAGELOGPLUGIN_H_ */

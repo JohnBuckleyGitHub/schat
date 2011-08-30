@@ -16,17 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef NODEHOOKS_H_
+#define NODEHOOKS_H_
 
-#define SCHAT_VERSION      "1.9.3"
-#define SCHAT_VERSION_RC   1,9,3,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+class NodeHook
+{
+public:
+  enum Type {
+    AcceptedMessage ///< Успешно доставленное сообщение.
+  };
 
-static const int UpdateLevelQt   = 2011022000;
-static const int UpdateLevelCore = 2011022000;
+  virtual ~NodeHook() {}
+  inline Type type() const { return m_type; }
 
-#endif /*VERSION_H_*/
+protected:
+  NodeHook(Type type)
+  : m_type(type)
+  {}
+
+  Type m_type;
+};
+
+#endif /* NODEHOOKS_H_ */

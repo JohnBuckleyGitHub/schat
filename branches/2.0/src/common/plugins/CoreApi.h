@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QStringList>
 
+#include "version.h"
+
 /*!
  * Базовый интерфейс для всех типов плагинов.
  */
@@ -36,7 +38,8 @@ public:
   virtual QString id() const           = 0;
   virtual QString name() const         = 0;
   virtual QString site() const         { return QLatin1String("http://impomezia.com"); }
-  virtual QString version() const      { return QLocale(QLocale::C).toDate(QString(__DATE__).simplified(), QLatin1String("MMM d yyyy")).toString(QLatin1String("yyyy.MM.dd")); }
+//  virtual QString version() const      { return QLocale(QLocale::C).toDate(QString(__DATE__).simplified(), QLatin1String("MMM d yyyy")).toString(QLatin1String("yyyy.MM.dd")); }
+  virtual QString version() const      { return SCHAT_VERSION; }
   virtual QStringList provides() const { return QStringList(); }
   virtual QStringList required() const { return QStringList(); }
 };

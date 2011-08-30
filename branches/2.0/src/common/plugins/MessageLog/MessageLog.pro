@@ -15,11 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/MasterNode \
-    common/plugins/SlaveNode \
-    common/plugins/MessageLog \
-    common/plugins/BotCore \
-    common/plugins/BotEcho \
-    common/plugins/History \
-    common/plugins/DebugClient \
+SCHAT_DAEMON_LIB = 1
+QT = core network
+
+HEADERS  = \
+   MessageLogPlugin.h \
+   plugins/NodePlugin.h \
+
+SOURCES  = \
+   MessageLogPlugin.cpp \
+   plugins/NodePlugin.cpp \
+
+include(../plugins.pri)
