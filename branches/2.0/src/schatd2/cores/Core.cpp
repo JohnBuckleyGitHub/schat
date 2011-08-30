@@ -36,11 +36,14 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
+#include "NodePlugins.h"
+#include "plugins/NodeHooks.h"
 #include "ServerUser.h"
 #include "Storage.h"
 
 Core::Core(QObject *parent)
   : QObject(parent)
+  , m_plugins(0)
   , m_timestamp(0)
   , m_listener(0)
   , m_settings(Storage::i()->settings())
@@ -668,6 +671,11 @@ void Core::acceptMessage()
 {
   if (m_messageData->name == 0)
     return;
+
+  if (m_plugins) {
+    MessageHook hook(m_messageData);
+    m_plugins->hook(hook);
+  }
 
   if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
     return;

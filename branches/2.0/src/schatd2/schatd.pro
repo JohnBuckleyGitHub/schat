@@ -31,8 +31,9 @@ HEADERS = \
     cores/AnonymousAuth.h \
     cores/Core.h \
     cores/NodeAuth.h \
-    events.h \
     DataBase.h \
+    events.h \
+    NodePlugins.h \
     ServerChannel.h \
     ServerUser.h \
     Storage.h \
@@ -40,8 +41,9 @@ HEADERS = \
 SOURCES = \
     cores/AnonymousAuth.cpp \
     cores/Core.cpp \
-    events.cpp \
     DataBase.cpp \
+    events.cpp \
+    NodePlugins.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
     Storage.cpp \

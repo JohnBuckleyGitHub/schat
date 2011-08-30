@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+#include "plugins/HookResult.h"
 #include "plugins/NodeHooks.h"
 #include "schat.h"
 
@@ -32,9 +33,8 @@ class SCHAT_EXPORT NodePlugin : public QObject
 
 public:
   NodePlugin(Core *core);
+  virtual HookResult hook(const NodeHook & /*data*/) { return HookResult(); }
   virtual QList<NodeHook::Type> hooks() const { return QList<NodeHook::Type>(); }
-  virtual void hook(const NodeHook & /*data*/) {}
-  virtual void hook(NodeHook & /*data*/) {}
 
 protected:
   Core *m_core;

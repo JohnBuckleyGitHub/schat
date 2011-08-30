@@ -20,6 +20,7 @@ QT = core network
 
 HEADERS  = \
    MessageLogPlugin.h \
+   MessageLogPlugin_p.h \
    plugins/NodePlugin.h \
 
 SOURCES  = \

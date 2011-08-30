@@ -30,6 +30,7 @@ class AuthResult;
 class MessageData;
 class NewPacketsEvent;
 class NodeAuth;
+class NodePlugins;
 class PacketReader;
 class Settings;
 class SocketReleaseEvent;
@@ -47,6 +48,7 @@ public:
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
   inline QByteArray readBuffer() const { return m_readBuffer; }
   inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
+  inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
   virtual int start() { return 0; }
   virtual void quit() {}
 
@@ -98,6 +100,7 @@ protected:
 
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
+  NodePlugins *m_plugins;              ///< Плагины.
   PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
   QByteArray m_readBuffer;            ///< Буфер чтения виртуальных пакетов.
   QByteArray m_sendBuffer;            ///< Буфер отправки виртуальных пакетов.

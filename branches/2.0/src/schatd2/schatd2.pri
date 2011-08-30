@@ -24,7 +24,7 @@ TEMPLATE = app
 
 HEADERS = \
     NodeInit.h \
-    NodePlugins.h \
+    plugins/NodePlugin.h \
     Server.h \
     Worker.h \
     WorkerThread.h \
