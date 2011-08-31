@@ -673,7 +673,7 @@ void Core::acceptMessage()
     return;
 
   if (m_plugins) {
-    MessageHook hook(m_messageData);
+    MessageHook hook(m_messageData, m_timestamp);
     m_plugins->hook(hook);
   }
 

@@ -43,15 +43,21 @@ protected:
 class MessageHook : public NodeHook
 {
 public:
-  MessageHook(MessageData *data)
+  MessageHook(MessageData *data, qint64 timestamp)
   : NodeHook(AcceptedMessage)
+  , m_status(0)
   , m_data(data)
+  , m_timestamp(timestamp)
   {}
 
+  inline int status() const { return m_status; }
   inline MessageData *data() const { return m_data; }
+  inline qint64 timestamp() const { return m_timestamp; }
 
 protected:
+  int m_status;
   MessageData *m_data;
+  qint64 m_timestamp;
 };
 
 #endif /* NODEHOOKS_H_ */
