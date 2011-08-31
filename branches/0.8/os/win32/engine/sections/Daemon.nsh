@@ -24,6 +24,11 @@ ${Section}
   SetOutPath "$INSTDIR"
   File "${SCHAT_BINDIR}\schatd.exe"
   File "${SCHAT_BINDIR}\schatd-ui.exe"
+  
+  SetOverwrite ifnewer
+  File "${SCHAT_DATADIR}\motd.html"
+  File "${SCHAT_DATADIR}\normalize.xml"
+  SetOverwrite on
 
   SetOutPath "$INSTDIR\translations"
   File "${SCHAT_DATADIR}\translations\schatd_en.qm"
@@ -33,11 +38,6 @@ ${Section}
   File "${SCHAT_DATADIR}\translations\qt_uk.qm"
   File "${SCHAT_DATADIR}\translations\schatd-ui_ru.qm"
   File "${SCHAT_DATADIR}\translations\schatd-ui_uk.qm"
-
-  SetOverwrite ifnewer
-  File "${SCHAT_DATADIR}\motd.html"
-  File "${SCHAT_DATADIR}\normalize.xml"
-  SetOverwrite on
 ${SectionEnd}
 ${BodyEnd}
 
