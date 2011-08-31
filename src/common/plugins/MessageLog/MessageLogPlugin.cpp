@@ -27,15 +27,22 @@
 #include "MessageLogPlugin.h"
 #include "MessageLogPlugin_p.h"
 #include "net/packets/message.h"
+#include "Settings.h"
 #include "Storage.h"
 
 MessageLog::MessageLog(Core *core)
   : NodePlugin(core)
   , m_isOpen(false)
-  , m_logPrivate(true)
-  , m_logPublic(true)
+  , m_offlineLog(true)
+  , m_privateLog(false)
+  , m_publicLog(true)
   , m_id(QLatin1String("messages"))
+  , m_settings(Storage::i()->settings())
 {
+  m_settings->setDefault(QLatin1String("MessageLog/OfflineLog"), true);
+  m_settings->setDefault(QLatin1String("MessageLog/PrivateLog"), false);
+  m_settings->setDefault(QLatin1String("MessageLog/PublicLog"), true);
+  reload();
 }
 
 
@@ -60,16 +67,27 @@ QList<NodeHook::Type> MessageLog::hooks() const
 }
 
 
+void MessageLog::reload()
+{
+  m_offlineLog = m_settings->value(QLatin1String("MessageLog/OfflineLog")).toBool();
+  m_privateLog = m_settings->value(QLatin1String("MessageLog/PrivateLog")).toBool();
+  m_publicLog  = m_settings->value(QLatin1String("MessageLog/PublicLog")).toBool();
+}
+
+
+/*!
+ * Добавление сообщения в историю.
+ */
 void MessageLog::add(const MessageHook &data)
 {
   MessageData *msg = data.data();
   if (msg->dest.size() > 1)
     return;
 
-  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::ChannelId && !m_logPublic)
+  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::ChannelId && !m_publicLog)
     return;
 
-  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId && !m_logPrivate)
+  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId && !m_privateLog)
     return;
 
   QSqlQuery query(QSqlDatabase::database(m_id));

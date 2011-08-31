@@ -35,6 +35,7 @@ public:
   NodePlugin(Core *core);
   virtual HookResult hook(const NodeHook & /*data*/) { return HookResult(); }
   virtual QList<NodeHook::Type> hooks() const { return QList<NodeHook::Type>(); }
+  virtual void reload() {}
 
 protected:
   Core *m_core;
