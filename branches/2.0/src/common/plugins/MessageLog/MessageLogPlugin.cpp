@@ -18,22 +18,35 @@
 
 #include <QDebug>
 
-#include <qplugin.h>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QtPlugin>
+#include <QVariant>
 
+#include "FileLocations.h"
 #include "MessageLogPlugin.h"
 #include "MessageLogPlugin_p.h"
+#include "net/packets/message.h"
+#include "Storage.h"
 
 MessageLog::MessageLog(Core *core)
   : NodePlugin(core)
+  , m_isOpen(false)
+  , m_logPrivate(true)
+  , m_logPublic(true)
+  , m_id(QLatin1String("messages"))
 {
 }
 
 
 HookResult MessageLog::hook(const NodeHook &data)
 {
-  qDebug() << "------------------------";
-  qDebug() << "HOOK";
-  qDebug() << "------------------------";
+  if (!m_isOpen)
+    open();
+
+  if (data.type() == NodeHook::AcceptedMessage)
+    add(static_cast<const MessageHook &>(data));
+
   return HookResult(1);
 }
 
@@ -44,6 +57,60 @@ QList<NodeHook::Type> MessageLog::hooks() const
   out += NodeHook::AcceptedMessage;
 
   return out;
+}
+
+
+void MessageLog::add(const MessageHook &data)
+{
+  MessageData *msg = data.data();
+  if (msg->dest.size() > 1)
+    return;
+
+  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::ChannelId && !m_logPublic)
+    return;
+
+  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId && !m_logPrivate)
+    return;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text) "
+                     "VALUES (:senderId, :destId, :status, :timestamp, :command, :text);"));
+
+  query.bindValue(QLatin1String(":senderId"),  msg->senderId);
+  query.bindValue(QLatin1String(":destId"),    msg->destId());
+  query.bindValue(QLatin1String(":status"),    data.status());
+  query.bindValue(QLatin1String(":timestamp"), data.timestamp());
+  query.bindValue(QLatin1String(":command"),   msg->command);
+  query.bindValue(QLatin1String(":text"),      msg->text);
+  query.exec();
+}
+
+
+/*!
+ * Открытие базы данных.
+ */
+void MessageLog::open()
+{
+  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), m_id);
+  db.setDatabaseName(Storage::i()->locations()->path(FileLocations::VarPath) + QLatin1String("/messages.sqlite"));
+  if (!db.open())
+    return;
+
+  QSqlQuery query(db);
+  query.exec(QLatin1String("PRAGMA synchronous = OFF"));
+
+  query.exec(QLatin1String(
+    "CREATE TABLE IF NOT EXISTS messages ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  senderId   BLOB,"
+    "  destId     BLOB,"
+    "  status     INTEGER DEFAULT ( 0 ),"
+    "  timestamp  INTEGER,"
+    "  command    TEXT,"
+    "  text       TEXT"
+    ");"));
+
+  m_isOpen = true;
 }
 
 

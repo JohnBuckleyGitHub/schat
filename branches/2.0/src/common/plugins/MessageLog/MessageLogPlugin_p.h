@@ -21,6 +21,8 @@
 
 #include "plugins/NodePlugin.h"
 
+class MessageHook;
+
 class MessageLog : public NodePlugin
 {
   Q_OBJECT
@@ -29,6 +31,15 @@ public:
   MessageLog(Core *core);
   HookResult hook(const NodeHook &data);
   QList<NodeHook::Type> hooks() const;
+
+private:
+  void add(const MessageHook &data);
+  void open();
+
+  bool m_isOpen;     ///< true если база открыта.
+  bool m_logPrivate;
+  bool m_logPublic;
+  QString m_id;
 };
 
 

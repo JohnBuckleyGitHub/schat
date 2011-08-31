@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -35,13 +37,13 @@ FileLocations::FileLocations(QObject *parent)
   #if defined(Q_WS_MAC)
   scheme = AppBundle;
   #else
-  if (appDirPath == "/usr/bin") {
+  if (appDirPath == QLatin1String("/usr/bin")) {
     scheme = UnixStandard;
   }
-  else if (appDirPath == "/usr/sbin") {
+  else if (appDirPath == QLatin1String("/usr/sbin")) {
     scheme = UnixDaemon;
   }
-  else if (QDir(appDirPath).dirName() == "bin") {
+  else if (QDir(appDirPath).dirName() == QLatin1String("bin")) {
     scheme = UnixAdaptive;
   }
   #endif
@@ -65,6 +67,7 @@ FileLocations::FileLocations(QObject *parent)
       m_paths.insert(ConfigPath, QLatin1String("/etc/") + baseName);
       m_paths.insert(SharePath, QLatin1String("/usr/share/") + baseName);
       m_paths.insert(VarPath, QLatin1String("/var/lib/") + baseName);
+      m_paths.insert(LogPath, QLatin1String("/var/log/") + baseName);
       break;
 
     case AppBundle:
@@ -73,18 +76,29 @@ FileLocations::FileLocations(QObject *parent)
   }
 
   if (scheme == Portable || scheme == AppBundle) {
-    m_paths.insert(SharePath, m_paths.value(ConfigPath));
-    m_paths.insert(VarPath, m_paths.value(ConfigPath));
+    QString configPath = m_paths.value(ConfigPath);
+    m_paths.insert(SharePath, configPath);
+    m_paths.insert(VarPath, configPath);
+    m_paths.insert(LogPath, configPath);
   }
   else if (scheme == UnixAdaptive || scheme == UnixStandard) {
     m_paths.insert(VarPath, m_paths.value(ConfigPath));
-    QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/client"));
+    m_paths.insert(LogPath, m_paths.value(ConfigPath));
     QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins/qt"));
     QCoreApplication::addLibraryPath(m_paths.value(ConfigPath) + QLatin1String("/plugins"));
   }
 
   m_paths.insert(ConfigFile, m_paths.value(ConfigPath) + QLatin1String("/") + baseName + QLatin1String(".conf"));
-  QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/client"));
   QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins/qt"));
   QCoreApplication::addLibraryPath(m_paths.value(SharePath) + QLatin1String("/plugins"));
+
+  qDebug() << "---------------------------";
+  qDebug() << "AppDirPath" << path(AppDirPath);
+  qDebug() << "BaseName  " << path(BaseName);
+  qDebug() << "ConfigPath" << path(ConfigPath);
+  qDebug() << "ConfigFile" << path(ConfigFile);
+  qDebug() << "SharePath " << path(SharePath);
+  qDebug() << "VarPath   " << path(VarPath);
+  qDebug() << "LogPath   " << path(LogPath);
+  qDebug() << "---------------------------";
 }
