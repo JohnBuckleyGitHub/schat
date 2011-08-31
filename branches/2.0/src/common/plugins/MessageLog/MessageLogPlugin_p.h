@@ -22,6 +22,7 @@
 #include "plugins/NodePlugin.h"
 
 class MessageHook;
+class Settings;
 
 class MessageLog : public NodePlugin
 {
@@ -31,15 +32,18 @@ public:
   MessageLog(Core *core);
   HookResult hook(const NodeHook &data);
   QList<NodeHook::Type> hooks() const;
+  void reload();
 
 private:
   void add(const MessageHook &data);
   void open();
 
-  bool m_isOpen;     ///< true если база открыта.
-  bool m_logPrivate;
-  bool m_logPublic;
-  QString m_id;
+  bool m_isOpen;        ///< true если база открыта.
+  bool m_offlineLog;    ///< true если необходима поддержка доставки офлайновых сообщений.
+  bool m_privateLog;    ///< true если необходимо вести журнал приватных разговоров.
+  bool m_publicLog;     ///< true если необходимо вести журнал публичных сообщений в каналах.
+  QString m_id;         ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
+  Settings *m_settings; ///< Настройки сервера.
 };
 
 
