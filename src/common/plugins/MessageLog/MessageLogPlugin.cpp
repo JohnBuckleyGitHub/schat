@@ -63,6 +63,9 @@ QList<NodeHook::Type> MessageLog::hooks() const
   QList<NodeHook::Type> out;
   out += NodeHook::AcceptedMessage;
 
+  if (m_offlineLog)
+    out += NodeHook::OfflineDelivery;
+
   return out;
 }
 
@@ -87,8 +90,13 @@ void MessageLog::add(const MessageHook &data)
   if (SimpleID::typeOf(data.data()->destId()) == SimpleID::ChannelId && !m_publicLog)
     return;
 
-  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId && !m_privateLog)
-    return;
+  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId) {
+    if (data.status() && !m_offlineLog)
+      return;
+
+    if (data.status() == 0 && !m_privateLog)
+      return;
+  }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text) "

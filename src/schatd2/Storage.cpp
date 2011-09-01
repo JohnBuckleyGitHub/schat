@@ -202,6 +202,24 @@ QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
 }
 
 
+/*!
+ * Получение пользователя по идентификатору.
+ *
+ * \param id      Идентификатор пользователя.
+ * \param offline true в случае если пользователь не найден, то будет произведена попытка получить его из базы.
+ */
+ChatUser Storage::user(const QByteArray &id, bool offline) const
+{
+  if (m_users.contains(id))
+    return m_users.value(id);
+
+  if (!offline)
+    return ChatUser();
+
+  return m_db->user(id);
+}
+
+
 ChatUser Storage::user(const QString &nick, bool normalize) const
 {
   if (!normalize)
