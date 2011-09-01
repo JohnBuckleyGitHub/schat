@@ -35,6 +35,7 @@ public:
   NodePlugins(QObject *parent = 0);
   Core *kernel();
   HookResult hook(const NodeHook &data);
+  inline bool has(NodeHook::Type type) { return m_hooks.contains(type); }
 
 protected:
   void init();

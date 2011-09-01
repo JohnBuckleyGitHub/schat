@@ -25,7 +25,8 @@ class NodeHook
 {
 public:
   enum Type {
-    AcceptedMessage ///< Успешно доставленное сообщение.
+    AcceptedMessage, ///< Успешно доставленное сообщение.
+    OfflineDelivery  ///< Поддержка оффлайн-доставки сообщений.
   };
 
   virtual ~NodeHook() {}
@@ -43,9 +44,9 @@ protected:
 class MessageHook : public NodeHook
 {
 public:
-  MessageHook(MessageData *data, qint64 timestamp)
+  MessageHook(MessageData *data, qint64 timestamp, int status)
   : NodeHook(AcceptedMessage)
-  , m_status(0)
+  , m_status(status)
   , m_data(data)
   , m_timestamp(timestamp)
   {}

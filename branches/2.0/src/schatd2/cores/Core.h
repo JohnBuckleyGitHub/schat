@@ -95,7 +95,7 @@ protected:
   bool readJoinCmd();
   bool readLeaveCmd();
   bool readMessage();
-  void acceptMessage();
+  void acceptMessage(int reason = 0);
   void rejectMessage(int reason);
 
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
