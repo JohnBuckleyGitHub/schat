@@ -34,6 +34,7 @@ HEADERS = \
     DataBase.h \
     events.h \
     NodePlugins.h \
+    plugins/NodePlugin.h \
     ServerChannel.h \
     ServerUser.h \
     Storage.h \
@@ -44,6 +45,7 @@ SOURCES = \
     DataBase.cpp \
     events.cpp \
     NodePlugins.cpp \
+    plugins/NodePlugin.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
     Storage.cpp \

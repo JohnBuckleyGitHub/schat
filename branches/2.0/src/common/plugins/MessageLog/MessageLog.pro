@@ -21,10 +21,8 @@ QT = core network sql
 HEADERS  = \
    MessageLogPlugin.h \
    MessageLogPlugin_p.h \
-   plugins/NodePlugin.h \
 
 SOURCES  = \
    MessageLogPlugin.cpp \
-   plugins/NodePlugin.cpp \
 
 include(../plugins.pri)

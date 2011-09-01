@@ -24,7 +24,6 @@ TEMPLATE = app
 
 HEADERS = \
     NodeInit.h \
-    plugins/NodePlugin.h \
     Server.h \
     Worker.h \
     WorkerThread.h \
@@ -32,7 +31,6 @@ HEADERS = \
 SOURCES = \
     main.cpp \
     NodeInit.cpp \
-    NodePlugins.cpp \
     Server.cpp \
     Worker.cpp \
     WorkerThread.cpp \
