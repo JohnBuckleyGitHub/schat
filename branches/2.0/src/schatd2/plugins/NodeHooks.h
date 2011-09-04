@@ -26,7 +26,8 @@ class NodeHook
 public:
   enum Type {
     AcceptedMessage, ///< Успешно доставленное сообщение.
-    OfflineDelivery  ///< Поддержка оффлайн-доставки сообщений.
+    OfflineDelivery, ///< Поддержка оффлайн-доставки сообщений.
+    AcceptedUser     ///< Успешно авторизированный пользователь.
   };
 
   virtual ~NodeHook() {}

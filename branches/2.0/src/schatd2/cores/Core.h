@@ -45,8 +45,15 @@ class SCHAT_EXPORT Core : public QObject
 public:
   Core(QObject *parent = 0);
   ~Core();
+  bool send(ChatChannel channel, const QByteArray &packet);
+  bool send(ChatChannel channel, const QList<QByteArray> &packets);
+  bool send(ChatUser user, const QByteArray &packet, int option = 0);
+  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
+  bool send(const QList<quint64> &sockets, const QByteArray &packet);
+  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
   inline QByteArray readBuffer() const { return m_readBuffer; }
+  inline QDataStream *sendStream() { return m_sendStream; }
   inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
   inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
   virtual int start() { return 0; }
@@ -60,12 +67,6 @@ protected:
 
 protected:
   bool route();
-  bool send(ChatChannel channel, const QByteArray &packet);
-  bool send(ChatChannel channel, const QList<QByteArray> &packets);
-  bool send(ChatUser user, const QByteArray &packet, int option = 0);
-  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
-  bool send(const QList<quint64> &sockets, const QByteArray &packet);
-  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
   qint64 timestamp() const;
 
   virtual bool checkPacket();

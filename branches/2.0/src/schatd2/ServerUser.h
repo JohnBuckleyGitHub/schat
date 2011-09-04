@@ -21,6 +21,7 @@
 
 #include <QSharedPointer>
 
+#include "plugins/NodeHooks.h"
 #include "User.h"
 
 class AuthRequest;
@@ -53,5 +54,17 @@ private:
 };
 
 typedef QSharedPointer<ServerUser> ChatUser;
+
+
+class UserHook : public NodeHook
+{
+public:
+  UserHook(ChatUser user)
+  : NodeHook(AcceptedUser)
+  , user(user)
+  {}
+
+  ChatUser user;
+};
 
 #endif /* SERVERUSER_H_ */

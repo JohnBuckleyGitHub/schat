@@ -23,6 +23,7 @@
 
 class MessageHook;
 class Settings;
+class UserHook;
 
 class MessageLog : public NodePlugin
 {
@@ -36,6 +37,7 @@ public:
 
 private:
   void add(const MessageHook &data);
+  void add(const UserHook &data);
   void open();
 
   bool m_isOpen;        ///< true если база открыта.

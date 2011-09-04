@@ -29,6 +29,9 @@ MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data, bool 
   if (data.options & MessageData::NameOption)
     put<quint64>(data.name);
 
+  if (data.options & MessageData::ExtraFlagsOption)
+    put<quint16>(data.flags);
+
   if (data.options & MessageData::ControlOption)
     put(data.command);
 
@@ -45,6 +48,9 @@ MessageReader::MessageReader(PacketReader *reader)
 
   if (data.options & MessageData::NameOption)
     data.name = reader->get<quint64>();
+
+  if (data.options & MessageData::ExtraFlagsOption)
+    data.flags = reader->get<quint16>();
 
   if (data.options & MessageData::ControlOption)
     data.command = reader->text();
