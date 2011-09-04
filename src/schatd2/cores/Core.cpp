@@ -64,37 +64,6 @@ Core::~Core()
 }
 
 
-void Core::customEvent(QEvent *event)
-{
-  SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type())
-
-  switch (event->type()) {
-    case ServerEvent::NewPackets:
-      newPacketsEvent(static_cast<NewPacketsEvent*>(event));
-      break;
-
-    case ServerEvent::SocketRelease:
-      socketReleaseEvent(static_cast<SocketReleaseEvent*>(event));
-      break;
-
-    default:
-      break;
-  }
-}
-
-
-/*!
- * Маршрутизация входящих пакетов.
- */
-bool Core::route()
-{
-  if (m_timestamp == 0)
-    m_timestamp = timestamp();
-
-  return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
-}
-
-
 /*!
  * Отправка пакета всем пользователям в канале.
  *
@@ -175,6 +144,37 @@ bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
   event->timestamp = m_timestamp;
   QCoreApplication::postEvent(m_listener, event);
   return true;
+}
+
+
+void Core::customEvent(QEvent *event)
+{
+  SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type())
+
+  switch (event->type()) {
+    case ServerEvent::NewPackets:
+      newPacketsEvent(static_cast<NewPacketsEvent*>(event));
+      break;
+
+    case ServerEvent::SocketRelease:
+      socketReleaseEvent(static_cast<SocketReleaseEvent*>(event));
+      break;
+
+    default:
+      break;
+  }
+}
+
+
+/*!
+ * Маршрутизация входящих пакетов.
+ */
+bool Core::route()
+{
+  if (m_timestamp == 0)
+    m_timestamp = timestamp();
+
+  return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
 }
 
 
@@ -494,6 +494,11 @@ void Core::acceptAuth(const AuthResult &result)
 
   packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data())).data());
   send(user, packets, result.option);
+
+  if (m_plugins) {
+    UserHook hook(user);
+    m_plugins->hook(hook);
+  }
 }
 
 

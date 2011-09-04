@@ -22,10 +22,13 @@
 #include <QSqlQuery>
 #include <QtPlugin>
 #include <QVariant>
+#include <QSqlError>
 
+#include "cores/Core.h"
 #include "FileLocations.h"
 #include "MessageLogPlugin.h"
 #include "MessageLogPlugin_p.h"
+#include "net/packets/message.h"
 #include "net/packets/message.h"
 #include "Settings.h"
 #include "Storage.h"
@@ -53,6 +56,9 @@ HookResult MessageLog::hook(const NodeHook &data)
 
   if (data.type() == NodeHook::AcceptedMessage)
     add(static_cast<const MessageHook &>(data));
+  else if (data.type() == NodeHook::AcceptedUser && m_offlineLog) {
+    add(static_cast<const UserHook &>(data));
+  }
 
   return HookResult(1);
 }
@@ -62,6 +68,7 @@ QList<NodeHook::Type> MessageLog::hooks() const
 {
   QList<NodeHook::Type> out;
   out += NodeHook::AcceptedMessage;
+  out += NodeHook::AcceptedUser;
 
   if (m_offlineLog)
     out += NodeHook::OfflineDelivery;
@@ -109,6 +116,39 @@ void MessageLog::add(const MessageHook &data)
   query.bindValue(QLatin1String(":command"),   msg->command);
   query.bindValue(QLatin1String(":text"),      msg->text);
   query.exec();
+}
+
+
+void MessageLog::add(const UserHook &data)
+{
+  qDebug() << "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+  qDebug() << data.user->nick();
+  qDebug() << "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("SELECT senderId, destId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
+  query.bindValue(QLatin1String(":destId"), data.user->id());
+  query.exec();
+
+  qDebug() << query.lastError();
+
+  if (!query.isActive())
+    return;
+
+  QList<QByteArray> packets;
+  qDebug() << m_core;
+  QDataStream *stream = m_core->sendStream();
+
+  while (query.next()) {
+    MessageData msg(query.value(0).toByteArray(), query.value(1).toByteArray(), query.value(3).toString(), query.value(4).toString());
+    msg.flags = MessageData::OfflineFlag;
+    msg.name = query.value(2).toULongLong();
+    packets.append(MessageWriter(stream, msg).data());
+  }
+
+//  if (!packets.isEmpty())
+//    m_core->send(data.user, packets);
 }
 
 

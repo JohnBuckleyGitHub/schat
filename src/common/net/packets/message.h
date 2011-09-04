@@ -34,38 +34,47 @@ class MessageData
 public:
   /// Опции сообщения.
   enum Options {
-    NoOptions = 0,      ///< Сообщение содержит только текст.
-    ControlOption = 1,  ///< Сообщение содержит текстовую команду.
-    NameOption = 2,     ///< Сообщение содержит имя.
-    TextOption = 4      ///< Сообщение содержит текст сообщения.
+    NoOptions = 0,       ///< Сообщение содержит только текст.
+    ControlOption = 1,   ///< Сообщение содержит текстовую команду.
+    NameOption = 2,      ///< Сообщение содержит имя.
+    TextOption = 4,      ///< Сообщение содержит текст сообщения.
+    ExtraFlagsOption = 8
+  };
+
+  enum Flags {
+    NoFlags = 0,
+    OfflineFlag = 1
   };
 
   MessageData()
-  : options(NoOptions)
-  , timestamp(0)
+  : timestamp(0)
+  , options(NoOptions)
   , name(0)
+  , flags(0)
   {}
 
   MessageData(const QByteArray &senderId, const QByteArray &destId, const QString &command, const QString &text)
-  : options(NoOptions)
-  , senderId(senderId)
-  , timestamp(0)
+  : senderId(senderId)
   , dest(QList<QByteArray>() << destId)
+  , timestamp(0)
+  , options(NoOptions)
+  , name(0)
+  , flags(0)
   , command(command)
   , text(text)
-  , name(0)
   {
     autoSetOptions();
   }
 
   MessageData(const QByteArray &senderId, const QList<QByteArray> &dest, const QString &command, const QString &text)
-  : options(NoOptions)
-  , senderId(senderId)
-  , timestamp(0)
+  : senderId(senderId)
   , dest(dest)
+  , timestamp(0)
+  , options(NoOptions)
+  , name(0)
+  , flags(0)
   , command(command)
   , text(text)
-  , name(0)
   {
     autoSetOptions();
   }
@@ -74,11 +83,14 @@ public:
   {
     options = NoOptions;
 
-    if (!command.isEmpty())
-      options |= ControlOption;
-
     if (name > 0)
       options |= NameOption;
+
+    if (flags > 0)
+      options |= ExtraFlagsOption;
+
+    if (!command.isEmpty())
+      options |= ControlOption;
 
     if (!text.isEmpty())
       options |= TextOption;
@@ -92,13 +104,14 @@ public:
     return QByteArray();
   }
 
-  int options;            ///< Опции сообщения.
   QByteArray senderId;    ///< Идентификатор отправителя.
-  qint64 timestamp;       ///< Отметка времени.
   QList<QByteArray> dest; ///< Идентификаторы назначения.
+  qint64 timestamp;       ///< Отметка времени.
+  int options;            ///< Опции сообщения.
+  quint64 name;           ///< Уникальное имя-счётчик сообещения.
+  quint16 flags;          ///< Дополнительные флаги сообщения.
   QString command;        ///< Текстовая команда.
   QString text;           ///< Текст сообщения.
-  quint64 name;           ///< Уникальное имя-счётчик сообещения.
 };
 
 
