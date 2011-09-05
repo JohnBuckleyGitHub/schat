@@ -27,7 +27,7 @@
 #include <qwebkitversion.h>
 #endif
 
-#define SCHAT_RANDOM_CLIENT_ID
+//#define SCHAT_RANDOM_CLIENT_ID
 
 #include "net/Protocol.h"
 #include "net/SimpleID.h"

@@ -27,7 +27,8 @@ public:
   enum Type {
     AcceptedMessage, ///< Успешно доставленное сообщение.
     OfflineDelivery, ///< Поддержка оффлайн-доставки сообщений.
-    AcceptedUser     ///< Успешно авторизированный пользователь.
+    AcceptedUser,    ///< Успешно авторизированный пользователь.
+    UserReady        ///< Получение команды "ready" от пользователя.
   };
 
   virtual ~NodeHook() {}
