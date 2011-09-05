@@ -380,7 +380,7 @@ bool SimpleClientPrivate::readUserData()
     emit(q->userDataChanged(id));
   }
   else {
-    updateUserData(user, &reader.user);
+    updateUserData(user, reader);
   }
 
   QByteArray channelId = this->reader->channel();
@@ -454,10 +454,11 @@ bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, con
 /*!
  * Обновление информации о пользователе.
  */
-void SimpleClientPrivate::updateUserData(ClientUser existUser, User *user)
+void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reader)
 {
   SCHAT_DEBUG_STREAM(this << "updateUserData()");
 
+  User *user = &reader.user;
   Q_Q(SimpleClient);
   if (existUser == this->user && this->user->nick() != user->nick()) {
     q->setNick(user->nick());
@@ -466,6 +467,12 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, User *user)
   existUser->setNick(user->nick());
   existUser->setRawGender(user->rawGender());
   existUser->setStatus(user->status());
+
+  if (reader.options && UserWriter::StaticData) {
+    existUser->setUserAgent(user->userAgent());
+    existUser->setHost(user->host());
+    existUser->setServerNumber(user->serverNumber());
+  }
 
   emit(q->userDataChanged(existUser->id()));
 }

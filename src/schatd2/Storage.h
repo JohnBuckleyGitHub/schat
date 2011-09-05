@@ -55,6 +55,7 @@ public:
   ChatUser user(const QString &nick, bool normalize) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
+  QList<QByteArray> users(const QByteArray &id) const;
   void rename(ChatUser user);
 
   // channel management.

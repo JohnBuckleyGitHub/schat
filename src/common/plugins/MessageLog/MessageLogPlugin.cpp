@@ -22,7 +22,6 @@
 #include <QSqlQuery>
 #include <QtPlugin>
 #include <QVariant>
-#include <QSqlError>
 
 #include "cores/Core.h"
 #include "FileLocations.h"
@@ -30,6 +29,7 @@
 #include "MessageLogPlugin_p.h"
 #include "net/packets/message.h"
 #include "net/packets/message.h"
+#include "net/packets/users.h"
 #include "Settings.h"
 #include "Storage.h"
 
@@ -131,9 +131,10 @@ void MessageLog::add(const UserHook &data)
 void MessageLog::offlineDelivery(const UserReadyHook &data)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
+  QByteArray id = data.user->id();
 
-  query.prepare(QLatin1String("SELECT senderId, destId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
-  query.bindValue(QLatin1String(":destId"), data.user->id());
+  query.prepare(QLatin1String("SELECT senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
+  query.bindValue(QLatin1String(":destId"), id);
   query.exec();
 
   if (!query.isActive())
@@ -141,11 +142,24 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
 
   QList<QByteArray> packets;
   QDataStream *stream = m_core->sendStream();
+  QList<QByteArray> users = Storage::i()->users(id);
 
+  // Цикл формирующий пакеты.
   while (query.next()) {
-    MessageData msg(query.value(0).toByteArray(), query.value(1).toByteArray(), query.value(3).toString(), query.value(4).toString());
+    QByteArray sender = query.value(0).toByteArray();
+
+    // Если получателю не известны данные отправителя, то ему будут отосланы данные пользователя.
+    if (!users.contains(sender)) {
+      users.append(sender);
+      ChatUser user = Storage::i()->user(sender, true);
+      if (user)
+        packets.append(UserWriter(stream, user.data(), id, UserWriter::StaticData).data());
+    }
+
+    // Формирование пакета с сообщением.
+    MessageData msg(sender, id, query.value(2).toString(), query.value(3).toString());
     msg.flags = MessageData::OfflineFlag;
-    msg.name = query.value(2).toULongLong();
+    msg.name = query.value(1).toULongLong();
     msg.autoSetOptions();
 
     packets.append(MessageWriter(stream, msg).data());

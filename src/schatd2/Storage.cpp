@@ -229,6 +229,30 @@ ChatUser Storage::user(const QString &nick, bool normalize) const
 }
 
 
+QList<QByteArray> Storage::users(const QByteArray &id) const
+{
+  QList<QByteArray> out;
+  ChatUser user = this->user(id);
+  if (!user)
+    return out;
+
+  QList<QByteArray> channels = user->channels();
+
+  for (int i = 0; i < channels.size(); ++i) {
+    ChatChannel channel = this->channel(channels.at(i));
+    if (!channel)
+      continue;
+
+    foreach (QByteArray id, channel->users()) {
+      if (!out.contains(id))
+        out.append(id);
+    }
+  }
+
+  return out;
+}
+
+
 /*!
  * Обработка смены ника пользователя.
  */
