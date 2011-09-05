@@ -96,7 +96,6 @@ UserReader::UserReader(PacketReader *reader)
     user.setHost(reader->text());
     user.setServerNumber(reader->get<quint8>());
   }
-
-  if (user.status() == User::OfflineStatus)
+  else if (user.status() == User::OfflineStatus)
     user.setStatus(User::OnlineStatus);
 }

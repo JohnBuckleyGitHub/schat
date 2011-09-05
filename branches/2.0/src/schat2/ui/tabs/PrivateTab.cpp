@@ -127,7 +127,7 @@ void PrivateTab::userLeave(const QByteArray &userId)
 QIcon PrivateTab::userIcon() const
 {
   if (m_alerts)
-    return ChatCore::icon(UserUtils::icon(m_user, false), QLatin1String(":/images/message-small.png"));
+    return ChatCore::icon(UserUtils::icon(m_user, false, true), QLatin1String(":/images/message-small.png"));
   else
     return UserUtils::icon(m_user, true, true);
 }

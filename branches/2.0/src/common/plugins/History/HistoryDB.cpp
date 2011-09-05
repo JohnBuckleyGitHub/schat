@@ -188,8 +188,10 @@ void HistoryDB::loadLast(PrivateTab *tab)
 {
   QByteArray senderId = tab->id();
   qint64 index = userId(senderId);
-  if (index == -1)
+  if (index == -1) {
+    addUser(senderId);
     return;
+  }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE destId = :destId OR senderId = :senderId AND destId = :myId ORDER BY id DESC LIMIT ")
