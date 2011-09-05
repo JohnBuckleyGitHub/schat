@@ -49,7 +49,7 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
-  storage->add(user); // FIXME не происходит обновление информации о пользователе.
+  storage->add(user);
 
   qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
   return AuthResult(userId);

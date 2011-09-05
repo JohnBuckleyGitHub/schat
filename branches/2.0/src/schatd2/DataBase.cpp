@@ -42,16 +42,11 @@ DataBase::DataBase(QObject *parent)
  */
 ChatUser DataBase::user(const QByteArray &id)
 {
-  qDebug() << "DataBase::user()" << id.toHex();
-  QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
-  query.addBindValue(id);
-  query.exec();
-
-  if (!query.first())
+  qint64 key = userKey(id);
+  if (key == -1)
     return ChatUser();
 
-  return user(query.value(0).toULongLong());
+  return user(key);
 }
 
 
@@ -136,6 +131,13 @@ int DataBase::start()
  */
 qint64 DataBase::add(ChatUser user)
 {
+  qint64 key = userKey(user->id());
+  if (key != -1) {
+    user->setKey(key);
+    update(user);
+    return key;
+  }
+
   QSqlQuery query;
   query.prepare(QLatin1String("INSERT INTO users (userId, nick, normalNick, gender, ip, userAgent) "
                      "VALUES (:userId, :nick, :normalNick, :gender, :ip, :userAgent);"));
@@ -155,7 +157,7 @@ qint64 DataBase::add(ChatUser user)
   if (!query.first())
     return -1;
 
-  qint64 key = query.value(0).toLongLong();
+  key = query.value(0).toLongLong();
   user->setKey(key);
 
   return key;
@@ -179,6 +181,20 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
     return -1;
 
   return query.value(0).toLongLong();
+}
+
+
+qint64 DataBase::userKey(const QByteArray &id)
+{
+  QSqlQuery query;
+  query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
+  query.addBindValue(id);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toULongLong();
 }
 
 
