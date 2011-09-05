@@ -67,4 +67,20 @@ public:
   ChatUser user;
 };
 
+
+class UserReadyHook : public NodeHook
+{
+public:
+  UserReadyHook(ChatUser user, const QString &type, const QByteArray &dest)
+  : NodeHook(UserReady)
+  , user(user)
+  , dest(dest)
+  , type(type)
+  {}
+
+  ChatUser user;
+  QByteArray dest;
+  QString type;
+};
+
 #endif /* SERVERUSER_H_ */

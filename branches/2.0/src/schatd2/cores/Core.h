@@ -99,6 +99,9 @@ protected:
   void acceptMessage(int reason = 0);
   void rejectMessage(int reason);
 
+  virtual void acceptedMessageHook(int reason);
+  virtual void userReadyHook();
+
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
   NodePlugins *m_plugins;              ///< Плагины.

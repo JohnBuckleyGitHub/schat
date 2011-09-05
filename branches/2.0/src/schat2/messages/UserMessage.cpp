@@ -35,6 +35,9 @@ UserMessage::UserMessage(int status, const MessageData &data)
   if (m_status & UserMessage::Undelivered)
     m_extra += QLatin1String(" undelivered");
 
+  if (data.flags & MessageData::OfflineFlag)
+    m_timeTpl = QLatin1String("time-date");
+
   if (data.command.isEmpty())
     return;
 
@@ -53,7 +56,7 @@ QString UserMessage::js(bool add) const
       return setMessageState(QLatin1String("delivered"));
 
     if (m_text.isEmpty())
-      return "";
+      return QString();
   }
 
   return AbstractMessage::js();

@@ -57,6 +57,9 @@ MessageReader::MessageReader(PacketReader *reader)
 
   if (data.options & MessageData::TextOption)
     data.text = reader->text();
+
+  if (data.flags & MessageData::OfflineFlag)
+    data.timestamp = data.name;
 }
 
 

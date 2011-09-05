@@ -88,6 +88,8 @@ void SimpleClientPrivate::restore()
   }
 
   clearClient();
+
+  q->send(MessageWriter(sendStream, MessageData(userId, QByteArray(), QLatin1String("ready"), QLatin1String("restore"))).data());
   q->unlock();
 }
 
@@ -115,10 +117,15 @@ void SimpleClientPrivate::setup()
   clearClient();
 
   Q_Q(SimpleClient);
+  q->lock();
+
   if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
     MessageData data(user->id(), serverData->channelId(), QLatin1String("join"), QString());
     q->send(MessageWriter(sendStream, data).data());
   }
+
+  q->send(MessageWriter(sendStream, MessageData(userId, QByteArray(), QLatin1String("ready"), QLatin1String("setup"))).data());
+  q->unlock();
 }
 
 
@@ -274,7 +281,9 @@ bool SimpleClientPrivate::readMessage()
 
   MessageReader reader(this->reader);
   messageData = &reader.data;
-  messageData->timestamp = timestamp;
+
+  if (!(messageData->flags & MessageData::OfflineFlag))
+    messageData->timestamp = timestamp;
 
   if (messageData->options & MessageData::ControlOption && command()) {
     return true;

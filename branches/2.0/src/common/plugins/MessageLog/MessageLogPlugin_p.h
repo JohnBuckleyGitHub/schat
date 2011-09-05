@@ -24,6 +24,7 @@
 class MessageHook;
 class Settings;
 class UserHook;
+class UserReadyHook;
 
 class MessageLog : public NodePlugin
 {
@@ -38,7 +39,9 @@ public:
 private:
   void add(const MessageHook &data);
   void add(const UserHook &data);
+  void offlineDelivery(const UserReadyHook &data);
   void open();
+  void userReady(const UserReadyHook &data);
 
   bool m_isOpen;        ///< true если база открыта.
   bool m_offlineLog;    ///< true если необходима поддержка доставки офлайновых сообщений.

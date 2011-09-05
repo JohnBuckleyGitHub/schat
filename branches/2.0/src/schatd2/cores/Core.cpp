@@ -606,6 +606,11 @@ bool Core::command()
   if (command == QLatin1String("leave"))
     return readLeaveCmd();
 
+  if (command == QLatin1String("ready")) {
+    userReadyHook();
+    return true;
+  }
+
   return false;
 }
 
@@ -680,10 +685,7 @@ void Core::acceptMessage(int reason)
   if (m_messageData->name == 0)
     return;
 
-  if (m_plugins) {
-    MessageHook hook(m_messageData, m_timestamp, reason);
-    m_plugins->hook(hook);
-  }
+  acceptedMessageHook(reason);
 
   if (reason == 0 && SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
     return;
@@ -714,4 +716,28 @@ void Core::rejectMessage(int reason)
 
   NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageRejected, m_messageData->name, reason);
   send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
+}
+
+
+void Core::acceptedMessageHook(int reason)
+{
+  if (!m_plugins)
+    return;
+
+  MessageHook hook(m_messageData, m_timestamp, reason);
+  m_plugins->hook(hook);
+}
+
+
+void Core::userReadyHook()
+{
+  if (!m_plugins)
+    return;
+
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return;
+
+  UserReadyHook hook(user, m_messageData->text, m_reader->dest());
+  m_plugins->hook(hook);
 }
