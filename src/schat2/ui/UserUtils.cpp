@@ -172,6 +172,9 @@ QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
 
   file += QLatin1String(".png");
 
+  if (offline && user->status() == User::OfflineStatus)
+    status = true;
+
   if (status) {
     if (offline && user->status() == User::OfflineStatus)
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
