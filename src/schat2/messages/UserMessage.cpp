@@ -23,20 +23,15 @@ UserMessage::UserMessage(int status, const MessageData &data)
   : AbstractMessage(QLatin1String("user-type"), data, NoParse)
   , m_status(static_cast<DeliveryStatus>(status))
 {
-  if (status & OutgoingMessage) {
+  if (status & OutgoingMessage)
     m_direction = OutgoingDirection;
-    m_extra += QLatin1String(" outgoing");
-  }
-  else if (status & IncomingMessage) {
+  else if (status & IncomingMessage)
     m_direction = IncomingDirection;
-    m_extra += QLatin1String(" incoming");
-  }
-
-  if (m_status & UserMessage::Undelivered)
-    m_extra += QLatin1String(" undelivered");
 
   if (data.flags & MessageData::OfflineFlag)
     m_timeTpl = QLatin1String("time-date");
+
+  m_extra = extra(m_status);
 
   if (data.command.isEmpty())
     return;
@@ -49,11 +44,8 @@ UserMessage::UserMessage(int status, const MessageData &data)
 QString UserMessage::js(bool add) const
 {
   if (add) {
-    if (m_status & Rejected)
-      return setMessageState(QLatin1String("rejected"));
-
-    if (m_status & Delivered)
-      return setMessageState(QLatin1String("delivered"));
+    if (m_status & Rejected || m_status & Delivered)
+      return setMessageState();
 
     if (m_text.isEmpty())
       return QString();
@@ -63,13 +55,38 @@ QString UserMessage::js(bool add) const
 }
 
 
-QString UserMessage::setMessageState(const QString &state) const
+QString UserMessage::extra(DeliveryStatus status)
+{
+  QString out;
+  if (status & OutgoingMessage) {
+    out += QLatin1String(" outgoing");
+  }
+  else if (status & IncomingMessage) {
+    out += QLatin1String(" incoming");
+  }
+
+  if (status & Undelivered)
+    out += QLatin1String(" undelivered");
+
+  if (status & Offline)
+    out += QLatin1String(" offline");
+
+  if (status & Rejected)
+    out += QLatin1String(" rejected");
+  else if (status & Delivered)
+    out += QLatin1String(" delivered");
+
+  return out;
+}
+
+
+QString UserMessage::setMessageState() const
 {
   QDateTime dt = dateTime();
 
   return QString("setMessageState('#%1', '%2', '%3', '%4');")
       .arg(m_id)
-      .arg(state)
+      .arg(extra(m_status))
       .arg(dt.toString(QLatin1String("hh:mm")))
       .arg(dt.toString(QLatin1String(":ss")));
 }

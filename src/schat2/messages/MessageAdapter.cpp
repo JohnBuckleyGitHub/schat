@@ -249,7 +249,11 @@ void MessageAdapter::notice(const NoticeData &data)
     msg.timestamp = data.timestamp;
 
     if (data.type == NoticeData::MessageDelivered) {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered, msg);
+      int status = UserMessage::OutgoingMessage | UserMessage::Delivered;
+      if (data.param1 == NoticeData::UserUnavailable)
+        status += UserMessage::Offline;
+
+      newUserMessage(status, msg);
     }
     else {
       newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
