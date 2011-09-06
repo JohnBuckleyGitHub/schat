@@ -35,42 +35,6 @@
 QString SimpleID::m_userAgent;
 
 /*!
- * Проверяет идентификатор на вхождение в диапазон пользовательских идентификаторов.
- *
- * \param id Проверяемый идентификатор.
- * \return true если идентификатор входит в диапазон.
- */
-bool SimpleID::isUserRoleId(const QByteArray &id)
-{
-  int type = typeOf(id);
-  if (type < MinUserRoleId || type > MaxUserRoleId)
-    return false;
-
-  return true;
-}
-
-
-/*!
- * Проверяет идентификатор на вхождение в диапазон пользовательских идентификаторов,
- * а также на принадлежность к пользователю \p userId.
- *
- * \param userId Идентификатор пользователя.
- * \param id     Проверяемый идентификатор.
- * \return true если идентификатор входит в диапазон.
- */
-bool SimpleID::isUserRoleId(const QByteArray &userId, const QByteArray &id)
-{
-  if (!isUserRoleId(id))
-    return false;
-
-  if (userId.left(DefaultSize - 1) == id.left(DefaultSize - 1))
-    return true;
-
-  return false;
-}
-
-
-/*!
  * Возвращает тип идентификатора.
  */
 int SimpleID::typeOf(const QByteArray &id)

@@ -97,14 +97,6 @@ public:
   void setColor(int color);
   void setGender(Gender gender);
 
-  // m_ids.
-  bool addId(int type, const QByteArray &id);
-  bool containsId(int type, const QByteArray &id);
-  bool remove(int type);
-  bool removeId(int type, const QByteArray &id);
-  int count(int type);
-  QList<QByteArray> ids(int type);
-
   // m_channels.
   bool addChannel(const QByteArray &id);
   bool removeChannel(const QByteArray &id);
@@ -135,7 +127,6 @@ protected:
   int m_gender;                         ///< Пол и цвет иконки.
   int m_status;                         ///< Код статуса.
   QByteArray m_id;                      ///< Идентификатор пользователя.
-  QHash<int, QList<QByteArray> > m_ids; ///< Списки идентификаторов.
   QHash<int, QString> m_statuses;       ///< Статусы.
   QList<QByteArray> m_channels;         ///< Каналы.
   QString m_host;                       ///< Адрес пользователя.
