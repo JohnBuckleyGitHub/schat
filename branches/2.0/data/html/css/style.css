@@ -94,13 +94,14 @@ a:active, a:hover {
 	border:1px solid #cde1ef;
 }
 
-.exclamation-alert {
+.exclamation-alert { color:#515007; }
+
+.exclamation-alert, .offline {
 	background-color:#fbfbd1;
 	border:1px solid #f8f7ac;
-	color:#515007;
 }
 
-.exclamation-alert:hover {
+.exclamation-alert:hover, .offline:hover {
 	background-color:#f8f7ac;
 	border:1px solid #f6f69a;
 }

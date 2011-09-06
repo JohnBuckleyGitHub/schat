@@ -34,17 +34,19 @@ public:
     IncomingMessage = 2,    ///< Входящее сообщение.
     Undelivered = 4,        ///< Сообщение было отправлено, подтверждение доставки не было получено.
     Delivered = 8,          ///< Сообщение было доставлено до адресата.
-    Rejected = 16           ///< Сообщение было отвергнуто сервером.
+    Rejected = 16,          ///< Сообщение было отвергнуто сервером.
+    Offline = 32            ///< Офлайн-сообщение.
   };
 
   UserMessage(int status, const MessageData &data);
   QString js(bool add = true) const;
+  static QString extra(DeliveryStatus status);
 
 protected:
   DeliveryStatus m_status; ///< Состояние доставки сообщения.
 
 private:
-  QString setMessageState(const QString &state) const;
+  QString setMessageState() const;
 };
 
 #endif /* USERMESSAGE_H_ */

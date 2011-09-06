@@ -21,11 +21,6 @@
 HistoryUserMessage::HistoryUserMessage(int status, const MessageData &data)
   : UserMessage(status, data)
 {
-  if (m_status & Rejected)
-    m_extra += QLatin1String(" rejected");
-  else if (m_status & Delivered)
-    m_extra += QLatin1String(" delivered");
-
   m_timeTpl = QLatin1String("time-date");
 }
 

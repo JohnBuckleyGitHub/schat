@@ -78,12 +78,11 @@ function showService(show) {
 	alignChat(true);
 }
 
-// Удаление статуса сообщения "Не доставлено" и установка времени доставки.
-function setMessageState(id, state, timestamp, seconds) {
+// Удаление статуса сообщения и времени доставки.
+function setMessageState(id, classes, timestamp, seconds) {
 	var prefix = id + ' > div.blocks';
 	
-	$(prefix).removeClass('undelivered');
-	$(prefix).addClass(state);
+	$(prefix).attr('class', 'blocks ' + classes);
 	
 	prefix += ' > .date-time-block > ';
 	$(prefix + '.timestamp').text(timestamp);
