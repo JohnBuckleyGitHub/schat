@@ -106,9 +106,10 @@ void MessageLog::add(const MessageHook &data)
   }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text) "
-                     "VALUES (:senderId, :destId, :status, :timestamp, :command, :text);"));
+  query.prepare(QLatin1String("INSERT INTO messages (messageId, senderId, destId, status, timestamp, command, text) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :timestamp, :command, :text);"));
 
+  query.bindValue(QLatin1String(":messageId"), msg->id);
   query.bindValue(QLatin1String(":senderId"),  msg->senderId);
   query.bindValue(QLatin1String(":destId"),    msg->destId());
   query.bindValue(QLatin1String(":status"),    data.status());
@@ -133,7 +134,7 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
   QSqlQuery query(QSqlDatabase::database(m_id));
   QByteArray id = data.user->id();
 
-  query.prepare(QLatin1String("SELECT senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
+  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
   query.bindValue(QLatin1String(":destId"), id);
   query.exec();
 
@@ -146,7 +147,7 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
 
   // Цикл формирующий пакеты.
   while (query.next()) {
-    QByteArray sender = query.value(0).toByteArray();
+    QByteArray sender = query.value(1).toByteArray();
 
     // Если получателю не известны данные отправителя, то ему будут отосланы данные пользователя.
     if (!users.contains(sender)) {
@@ -157,9 +158,10 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
     }
 
     // Формирование пакета с сообщением.
-    MessageData msg(sender, id, query.value(2).toString(), query.value(3).toString());
+    MessageData msg(sender, id, query.value(3).toString(), query.value(4).toString());
     msg.flags = MessageData::OfflineFlag;
-//    msg.name = query.value(1).toULongLong(); // FIXME !
+    msg.timestamp = query.value(2).toULongLong();
+    msg.id = query.value(0).toByteArray();
     msg.autoSetOptions();
 
     packets.append(MessageWriter(stream, msg).data());
@@ -186,6 +188,7 @@ void MessageLog::open()
   query.exec(QLatin1String(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
+    "  messageId  BLOB,"
     "  senderId   BLOB,"
     "  destId     BLOB,"
     "  status     INTEGER DEFAULT ( 0 ),"

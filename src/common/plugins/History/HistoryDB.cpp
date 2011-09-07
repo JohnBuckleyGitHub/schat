@@ -86,9 +86,10 @@ qint64 HistoryDB::add(int status, const MessageData &data)
 
   QSqlQuery query(QSqlDatabase::database(m_id));
 
-  query.prepare(QLatin1String("INSERT INTO messages (senderId, destId, status, timestamp, command, text, plainText) "
-                     "VALUES (:senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
+  query.prepare(QLatin1String("INSERT INTO messages (messageId, senderId, destId, status, timestamp, command, text, plainText) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
 
+  query.bindValue(QLatin1String(":messageId"), data.id);
   query.bindValue(QLatin1String(":senderId"), data.senderId);
   query.bindValue(QLatin1String(":destId"), data.destId());
   query.bindValue(QLatin1String(":status"), status);
@@ -194,7 +195,7 @@ void HistoryDB::loadLast(PrivateTab *tab)
   }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(QLatin1String("SELECT * FROM (SELECT id, senderId, destId, status, timestamp, command, text FROM messages WHERE destId = :destId OR senderId = :senderId AND destId = :myId ORDER BY id DESC LIMIT ")
+  query.prepare(QLatin1String("SELECT * FROM (SELECT id, messageId, senderId, destId, status, timestamp, command, text FROM messages WHERE destId = :destId OR senderId = :senderId AND destId = :myId ORDER BY id DESC LIMIT ")
       + QString::number(m_lastMessages) + QLatin1String(") ORDER BY id;"));
 
   query.bindValue(QLatin1String(":destId"), senderId);
@@ -211,10 +212,11 @@ void HistoryDB::loadLast(PrivateTab *tab)
 
   while (query.next()) {
     QByteArray id;
-    MessageData data(query.value(1).toByteArray(), query.value(2).toByteArray(), query.value(5).toString(), query.value(6).toString());
-    data.timestamp = query.value(4).toULongLong();
+    MessageData data(query.value(2).toByteArray(), query.value(3).toByteArray(), query.value(6).toString(), query.value(7).toString());
+    data.timestamp = query.value(5).toULongLong();
+    data.id = query.value(1).toByteArray();
 
-    HistoryUserMessage msg(query.value(3).toULongLong(), data);
+    HistoryUserMessage msg(query.value(4).toULongLong(), data);
     tab->chatView()->evaluateJavaScript(msg.js());
   }
 }
@@ -269,6 +271,7 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
   query.exec(QLatin1String(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
+    "  messageId  BLOB,"
     "  senderId   BLOB,"
     "  destId     BLOB,"
     "  status     INTEGER,"
