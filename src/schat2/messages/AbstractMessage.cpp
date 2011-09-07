@@ -39,8 +39,8 @@ AbstractMessage::AbstractMessage(const QString &type, const MessageData &data, i
   , m_timeTpl(QLatin1String("time"))
   , m_type(type)
 {
-  if (data.name)
-    m_id = m_senderId.toHex() + QLatin1String("-") + QString::number(data.name);
+  if (!data.id.isEmpty())
+    m_id = SimpleID::toBase64(data.id);
 
   setText(data.text, parseOptions);
 }

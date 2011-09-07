@@ -55,9 +55,9 @@ QByteArray SimpleID::fromBase64(const QByteArray &base64)
 }
 
 
-QByteArray SimpleID::session(const QByteArray &id)
+QByteArray SimpleID::randomId(IdTypes type, const QByteArray &salt)
 {
-  return QCryptographicHash::hash(QString(id + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += SessionId;
+  return QCryptographicHash::hash(QString(salt + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += type;
 }
 
 

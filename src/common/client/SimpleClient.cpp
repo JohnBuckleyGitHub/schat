@@ -337,12 +337,15 @@ void SimpleClientPrivate::split()
 
 bool SimpleClientPrivate::readNotice()
 {
-  SCHAT_DEBUG_STREAM(this << "readNotice()")
-
   Q_Q(SimpleClient);
-  NoticeReader reader(this->reader);
-  reader.data.timestamp = timestamp;
-  emit(q->notice(reader.data));
+
+  quint16 type = reader->get<quint16>();
+  if (type == AbstractNotice::MessageNoticeType) {
+    MessageNotice notice(type, reader);
+    emit(q->notice(notice));
+  }
+  else
+    emit(q->notice(type));
 
   return true;
 }

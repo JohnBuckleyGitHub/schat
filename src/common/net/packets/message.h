@@ -34,11 +34,12 @@ class MessageData
 public:
   /// Опции сообщения.
   enum Options {
-    NoOptions = 0,       ///< Сообщение содержит только текст.
-    ControlOption = 1,   ///< Сообщение содержит текстовую команду.
-    NameOption = 2,      ///< Сообщение содержит имя.
-    TextOption = 4,      ///< Сообщение содержит текст сообщения.
-    ExtraFlagsOption = 8
+    NoOptions = 0,        ///< Сообщение содержит только текст.
+    ControlOption = 1,    ///< Сообщение содержит текстовую команду.
+    TimeOption = 2,       ///< Сообщение содержит отметку времени.
+    TextOption = 4,       ///< Сообщение содержит текст сообщения.
+    ExtraFlagsOption = 8,
+    IdOption = 16
   };
 
   enum Flags {
@@ -49,7 +50,6 @@ public:
   MessageData()
   : timestamp(0)
   , options(NoOptions)
-  , name(0)
   , flags(0)
   {}
 
@@ -58,7 +58,6 @@ public:
   , dest(QList<QByteArray>() << destId)
   , timestamp(0)
   , options(NoOptions)
-  , name(0)
   , flags(0)
   , command(command)
   , text(text)
@@ -71,7 +70,6 @@ public:
   , dest(dest)
   , timestamp(0)
   , options(NoOptions)
-  , name(0)
   , flags(0)
   , command(command)
   , text(text)
@@ -83,11 +81,14 @@ public:
   {
     options = NoOptions;
 
-    if (name > 0)
-      options |= NameOption;
+    if (timestamp > 0)
+      options |= TimeOption;
 
     if (flags > 0)
       options |= ExtraFlagsOption;
+
+    if (!id.isEmpty())
+      options |= IdOption;
 
     if (!command.isEmpty())
       options |= ControlOption;
@@ -106,10 +107,10 @@ public:
 
   QByteArray senderId;    ///< Идентификатор отправителя.
   QList<QByteArray> dest; ///< Идентификаторы назначения.
-  qint64 timestamp;       ///< Отметка времени.
+  quint64 timestamp;       ///< Отметка времени.
   int options;            ///< Опции сообщения.
-  quint64 name;           ///< Уникальное имя-счётчик сообещения.
   quint16 flags;          ///< Дополнительные флаги сообщения.
+  QByteArray id;          ///< Идентификатор сообщения.
   QString command;        ///< Текстовая команда.
   QString text;           ///< Текст сообщения.
 };

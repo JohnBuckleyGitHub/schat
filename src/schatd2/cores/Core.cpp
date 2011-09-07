@@ -682,7 +682,7 @@ bool Core::readMessage()
  */
 void Core::acceptMessage(int reason)
 {
-  if (m_messageData->name == 0)
+  if (m_messageData->id.isEmpty())
     return;
 
   acceptedMessageHook(reason);
@@ -690,8 +690,8 @@ void Core::acceptMessage(int reason)
   if (reason == 0 && SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
     return;
 
-  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageDelivered, m_messageData->name, reason);
-  send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
+  MessageNotice notice(MessageNotice::Delivered, m_reader->dest(), m_reader->sender(), m_messageData->id, reason);
+  send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
 }
 
 
@@ -702,7 +702,7 @@ void Core::rejectMessage(int reason)
 {
   SCHAT_DEBUG_STREAM("rejectMessage()" << reason)
 
-  if (m_messageData->name == 0)
+  if (m_messageData->id.isEmpty())
     return;
 
   if (reason == NoticeData::UserUnavailable && m_plugins->has(NodeHook::OfflineDelivery)) {
@@ -714,8 +714,8 @@ void Core::rejectMessage(int reason)
     }
   }
 
-  NoticeData data(m_reader->dest(), m_reader->sender(), NoticeData::MessageRejected, m_messageData->name, reason);
-  send(m_storage->user(m_reader->sender()), NoticeWriter(m_sendStream, data).data());
+  MessageNotice notice(MessageNotice::Rejected, m_reader->dest(), m_reader->sender(), m_messageData->id, reason);
+  send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
 }
 
 

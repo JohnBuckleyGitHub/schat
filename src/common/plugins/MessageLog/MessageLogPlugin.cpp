@@ -159,7 +159,7 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
     // Формирование пакета с сообщением.
     MessageData msg(sender, id, query.value(2).toString(), query.value(3).toString());
     msg.flags = MessageData::OfflineFlag;
-    msg.name = query.value(1).toULongLong();
+//    msg.name = query.value(1).toULongLong(); // FIXME !
     msg.autoSetOptions();
 
     packets.append(MessageWriter(stream, msg).data());
