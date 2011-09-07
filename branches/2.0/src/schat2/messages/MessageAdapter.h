@@ -26,8 +26,9 @@
 #include "net/packets/message.h"
 
 class AbstractMessage;
+class AbstractNotice;
 class ChatSettings;
-class NoticeData;
+class MessageNotice;
 class SimpleClient;
 
 class SCHAT_CORE_EXPORT MessageAdapter : public ClientHelper
@@ -55,17 +56,18 @@ private slots:
   void allDelivered(quint64 id);
   void clientMessage(const MessageData &data);
   void clientStateChanged(int state, int previousState);
-  void notice(const NoticeData &data);
+  void notice(const AbstractNotice &notice);
 
 private:
   int setGender(const QString &gender, const QString &color);
   void commandHelpHint(const QString &command);
   void newUserMessage(int status, const MessageData &data);
+  void notice(const MessageNotice &notice);
   void setStateAll(int state);
-  void setStatus(int status, const QString &text = "");
+  void setStatus(int status, const QString &text = QString());
 
   ChatSettings *m_settings;                  ///< Настройки чата.
-  QHash<quint64, MessageData> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
+  QHash<QByteArray, MessageData> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 #endif /* MESSAGEADAPTER_H_ */

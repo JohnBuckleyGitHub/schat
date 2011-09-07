@@ -23,6 +23,7 @@
 #include "schat.h"
 
 class PacketReader;
+class MessageData;
 
 class SCHAT_EXPORT NoticeData
 {
@@ -60,6 +61,76 @@ public:
   quint8 param1;       ///< Не обязательный параметр №1
   quint8 param2;       ///< Не обязательный параметр №2
   QString text;        ///< Текстовое содержимое.
+};
+
+
+/*!
+ * Абстрактное уведомление.
+ */
+class AbstractNotice
+{
+public:
+  enum Type {
+    MessageNoticeType = 0x6D ///< 'm'.
+  };
+
+  AbstractNotice(quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray())
+  : m_sender(sender)
+  , m_dest(QList<QByteArray>() << dest)
+  , m_type(type)
+  {}
+
+  AbstractNotice(quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>())
+  : m_sender(sender)
+  , m_dest(dest)
+  , m_type(type)
+  {}
+
+  inline int type() const { return m_type; }
+  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
+  inline QByteArray sender() const  { return m_sender; }
+  inline QList<QByteArray> destinations() const { return m_dest; }
+
+protected:
+  QByteArray m_sender;
+  QList<QByteArray> m_dest;
+  quint16 m_type;
+};
+
+
+/*!
+ * Пакет Protocol::NoticePacket с типом MessageNoticeType.
+ */
+class SCHAT_EXPORT MessageNotice : public AbstractNotice
+{
+public:
+  enum Status {
+    Delivered, ///< Сообщение было доставлено.
+    Rejected,  ///< Сообщение было отклонено.
+  };
+
+  enum Error {
+    NoError,         ///< Нет ошибки.
+    UnknownError,    ///< Неизвестная ошибка.
+    UserUnavailable, ///< Пользователь недоступен.
+    Ignored,         ///< Сообщение было игнорированно.
+  };
+
+  MessageNotice(quint16 type, PacketReader *reader);
+  MessageNotice(quint8 status, const QByteArray &sender, const QByteArray &dest, const QByteArray &id, quint8 error = NoError);
+  MessageNotice(quint8 status, MessageData *data, quint8 error = NoError);
+  inline int error() const { return m_error; }
+  inline int fields() const { return m_fields; }
+  inline int status() const { return m_status; }
+  inline QByteArray id() const { return m_id; }
+  QByteArray data(QDataStream *stream) const;
+
+private:
+  bool m_valid;    ///< true если данные корректны.
+  quint8 m_fields; ///< Дополнительные поля данных.
+  quint8 m_status; ///< Тип, \sa Status.
+  quint8 m_error;  ///< Код ошибки, \sa Error.
+  QByteArray m_id; ///< Идентификатор сообщения.
 };
 
 

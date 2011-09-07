@@ -18,6 +18,68 @@
 
 #include "net/PacketReader.h"
 #include "net/packets/notices.h"
+#include "net/packets/message.h"
+
+MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
+  : AbstractNotice(type, reader->sender(), reader->destinations())
+  , m_valid(false)
+  , m_fields(0)
+  , m_status(0)
+  , m_error(0)
+{
+  m_fields = reader->get<quint8>();
+  m_status = reader->get<quint8>();
+  m_error = reader->get<quint8>();
+  m_id = reader->id();
+
+  if (SimpleID::typeOf(m_id) != SimpleID::MessageId)
+    return;
+
+  m_valid = true;
+}
+
+
+MessageNotice::MessageNotice(quint8 status, MessageData *data, quint8 error)
+  : AbstractNotice(MessageNoticeType, data->senderId, data->dest)
+  , m_valid(false)
+  , m_fields(0)
+  , m_status(status)
+  , m_error(error)
+  , m_id(data->id)
+{
+  if (SimpleID::typeOf(m_id) != SimpleID::MessageId)
+    return;
+
+  m_valid = true;
+}
+
+
+MessageNotice::MessageNotice(quint8 status, const QByteArray &sender, const QByteArray &dest, const QByteArray &id, quint8 error)
+  : AbstractNotice(MessageNoticeType, sender, dest)
+  , m_valid(false)
+  , m_fields(0)
+  , m_status(status)
+  , m_error(error)
+  , m_id(id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::MessageId)
+    return;
+
+  m_valid = true;
+}
+
+
+QByteArray MessageNotice::data(QDataStream *stream) const
+{
+  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest);
+  writer.put(m_type);
+  writer.put(m_fields);
+  writer.put(m_status);
+  writer.put(m_error);
+  writer.putId(m_id);
+
+  return writer.data();
+}
 
 
 NoticeData::NoticeData(quint16 type, const QByteArray &senderId, const QByteArray &destId, const QString &text)

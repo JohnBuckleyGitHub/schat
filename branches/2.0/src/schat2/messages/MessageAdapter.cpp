@@ -44,7 +44,7 @@ MessageAdapter::MessageAdapter()
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
-  connect(m_client, SIGNAL(notice(const NoticeData &)), SLOT(notice(const NoticeData &)));
+  connect(m_client, SIGNAL(notice(const AbstractNotice &)), SLOT(notice(const AbstractNotice &)));
 }
 
 
@@ -211,8 +211,8 @@ void MessageAdapter::clientMessage(const MessageData &data)
     if (data.destId() != m_client->userId())
       return;
 
-    NoticeData reply(m_client->userId(), data.senderId, NoticeData::MessageRejected, data.name, NoticeData::Ignored);
-    m_client->send(NoticeWriter(m_client->sendStream(), reply).data());
+    MessageNotice notice(MessageNotice::Delivered, m_client->userId(), data.senderId, data.id, MessageNotice::Ignored);
+    m_client->send(notice.data(m_client->sendStream()));
     return;
   }
 
@@ -236,29 +236,12 @@ void MessageAdapter::clientStateChanged(int state, int previousState)
 }
 
 
-void MessageAdapter::notice(const NoticeData &data)
+void MessageAdapter::notice(const AbstractNotice &notice)
 {
   SCHAT_DEBUG_STREAM(this << "notice()")
 
-  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected) {
-    if (data.destId != UserUtils::userId())
-      return;
-
-    MessageData msg(m_client->userId(), data.senderId, QString(), QString());
-    msg.name = data.messageName;
-    msg.timestamp = data.timestamp;
-
-    if (data.type == NoticeData::MessageDelivered) {
-      int status = UserMessage::OutgoingMessage | UserMessage::Delivered;
-      if (data.param1 == NoticeData::UserUnavailable)
-        status += UserMessage::Offline;
-
-      newUserMessage(status, msg);
-    }
-    else {
-      newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
-    }
-  }
+  if (notice.type() == AbstractNotice::MessageNoticeType)
+    this->notice(static_cast<const MessageNotice &>(notice));
 }
 
 
@@ -321,8 +304,8 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
   if (status & UserMessage::OutgoingMessage && !(status & UserMessage::Undelivered)) {
     priority = UserMessage::IdlePriority;
 
-    if (m_undelivered.contains(data.name)) {
-      MessageData old = m_undelivered.value(data.name);
+    if (m_undelivered.contains(data.id)) {
+      MessageData old = m_undelivered.value(data.id);
       old.timestamp = data.timestamp;
 
       UserMessage msg(status, old);
@@ -332,7 +315,7 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
 
       RawUserMessageHook hook(status, old);
       ChatCore::i()->plugins()->hook(hook);
-      m_undelivered.remove(data.name);
+      m_undelivered.remove(data.id);
       return;
     }
   }
@@ -342,11 +325,33 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
   emit message(msg);
 
   if (status & UserMessage::OutgoingMessage && status & UserMessage::Undelivered) {
-    m_undelivered[data.name] = data;
+    m_undelivered[data.id] = data;
   }
   else {
     RawUserMessageHook hook(status, data);
     ChatCore::i()->plugins()->hook(hook);
+  }
+}
+
+
+void MessageAdapter::notice(const MessageNotice &notice)
+{
+  if (notice.dest() != UserUtils::userId())
+    return;
+
+  MessageData msg(m_client->userId(), notice.sender(), QString(), QString());
+  msg.id = notice.id();
+  msg.timestamp = m_client->timestamp();
+
+  if (notice.status() == MessageNotice::Delivered) {
+    int status = UserMessage::OutgoingMessage | UserMessage::Delivered;
+    if (notice.error() == NoticeData::UserUnavailable)
+      status += UserMessage::Offline;
+
+    newUserMessage(status, msg);
+  }
+  else if (notice.status() == MessageNotice::Rejected) {
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
   }
 }
 
@@ -360,7 +365,7 @@ void MessageAdapter::setStateAll(int state)
   if (m_undelivered.isEmpty())
     return;
 
-  QHashIterator<quint64, MessageData> i(m_undelivered);
+  QHashIterator<QByteArray, MessageData> i(m_undelivered);
   while (i.hasNext()) {
     i.next();
     newUserMessage(UserMessage::OutgoingMessage | state, i.value());

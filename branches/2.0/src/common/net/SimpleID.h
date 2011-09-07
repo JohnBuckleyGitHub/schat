@@ -39,12 +39,13 @@ public:
     ServerId = 0x53,         ///< 'S' Идентификатор сервера.
     SessionId = 0x73,        ///< 's' Идентификатор сессии.
     ChannelId = 0x63,        ///< 'c' Идентификатор канала.
+    MessageId = 0x6d         ///< 'm' Идентификатор сообщения.
   };
 
   SimpleID() {}
   static int typeOf(const QByteArray &id);
   static QByteArray fromBase64(const QByteArray &base64);
-  static QByteArray session(const QByteArray &id);
+  static QByteArray randomId(IdTypes type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase64(const QByteArray &id);
   static QByteArray uniqueId();

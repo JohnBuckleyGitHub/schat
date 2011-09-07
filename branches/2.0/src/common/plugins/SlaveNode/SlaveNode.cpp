@@ -385,9 +385,9 @@ void SlaveNode::uplinkReadUserData()
 
 void SlaveNode::uplinkRejectMessage(const MessageData &msg, int reason)
 {
-  if (msg.name == 0)
+  if (msg.id.isEmpty())
     return;
 
-  NoticeData data(m_uplink->reader()->dest(), m_uplink->reader()->sender(), NoticeData::MessageRejected, msg.name, reason);
-  m_uplink->send(NoticeWriter(m_uplink->sendStream(), data).data());
+  MessageNotice notice(MessageNotice::Rejected, m_uplink->reader()->dest(), m_uplink->reader()->sender(), m_messageData->id, reason);
+  m_uplink->send(notice.data(m_sendStream));
 }

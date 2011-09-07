@@ -21,6 +21,7 @@
 
 #include "client/AbstractClient.h"
 
+class AbstractNotice;
 class SimpleClientPrivate;
 
 class SCHAT_EXPORT SimpleClient : public AbstractClient
@@ -39,7 +40,8 @@ public:
 signals:
   void join(const QByteArray &channelId);
   void join(const QByteArray &channelId, const QByteArray &userId);
-  void notice(const NoticeData &data);
+  void notice(const AbstractNotice &notice);
+  void notice(quint16 type);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void split(const QList<QByteArray> &users);
   void synced(const QByteArray &channelId);

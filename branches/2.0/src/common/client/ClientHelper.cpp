@@ -82,7 +82,7 @@ bool ClientHelper::sendText(MessageData &data)
     data.senderId = m_client->userId();
 
   ++m_name;
-  data.name = m_name;
+  data.id = SimpleID::randomId(SimpleID::MessageId, m_client->userId());
   data.autoSetOptions();
 
   if (!m_client->send(data)) {

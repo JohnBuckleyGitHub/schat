@@ -411,7 +411,7 @@ void Storage::addChannel(ChatChannel channel)
 
 QByteArray Storage::session() const
 {
-  return SimpleID::session(m_serverData->privateId());
+  return SimpleID::randomId(SimpleID::SessionId, m_serverData->privateId());
 }
 
 

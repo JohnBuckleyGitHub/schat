@@ -26,11 +26,14 @@ MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data, bool 
 {
   put<quint8>(data.options);
 
-  if (data.options & MessageData::NameOption)
-    put<quint64>(data.name);
+  if (data.options & MessageData::TimeOption)
+    put<quint64>(data.timestamp);
 
   if (data.options & MessageData::ExtraFlagsOption)
     put<quint16>(data.flags);
+
+  if (data.options & MessageData::IdOption)
+    putId(data.id);
 
   if (data.options & MessageData::ControlOption)
     put(data.command);
@@ -46,20 +49,20 @@ MessageReader::MessageReader(PacketReader *reader)
   data.dest = reader->destinations();
   data.options = reader->get<quint8>();
 
-  if (data.options & MessageData::NameOption)
-    data.name = reader->get<quint64>();
+  if (data.options & MessageData::TimeOption)
+    data.timestamp = reader->get<quint64>();
 
   if (data.options & MessageData::ExtraFlagsOption)
     data.flags = reader->get<quint16>();
+
+  if (data.options & MessageData::IdOption)
+    data.id = reader->id();
 
   if (data.options & MessageData::ControlOption)
     data.command = reader->text();
 
   if (data.options & MessageData::TextOption)
     data.text = reader->text();
-
-  if (data.flags & MessageData::OfflineFlag)
-    data.timestamp = data.name;
 }
 
 
