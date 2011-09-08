@@ -127,9 +127,9 @@ void MessageLog::cleanup(const QByteArray &destId)
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   if (m_privateLog)
-    query.prepare(QLatin1String("UPDATE messages SET status = 0 WHERE destId = :destId AND status = 1;"));
+    query.prepare(QLatin1String("UPDATE messages SET status = 0 WHERE destId = :destId AND status = 85;"));
   else
-    query.prepare(QLatin1String("DELETE FROM messages WHERE destId = :destId AND status = 1;"));
+    query.prepare(QLatin1String("DELETE FROM messages WHERE destId = :destId AND status = 85;"));
 
   query.bindValue(QLatin1String(":destId"), destId);
   query.exec();
@@ -144,7 +144,7 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
   QSqlQuery query(QSqlDatabase::database(m_id));
   QByteArray id = data.user->id();
 
-  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 1;"));
+  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 85;"));
   query.bindValue(QLatin1String(":destId"), id);
   query.exec();
 

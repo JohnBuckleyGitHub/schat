@@ -159,7 +159,9 @@ bool UserView::update(ClientUser user)
     return false;
 
   item->update();
-  sort();
+  if (m_sortable)
+    sort();
+
   return true;
 }
 
