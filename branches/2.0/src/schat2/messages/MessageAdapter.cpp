@@ -345,7 +345,7 @@ void MessageAdapter::notice(const MessageNotice &notice)
 
   if (notice.status() == MessageNotice::Delivered) {
     int status = UserMessage::OutgoingMessage | UserMessage::Delivered;
-    if (notice.error() == NoticeData::UserUnavailable)
+    if (notice.error() == MessageNotice::UserUnavailable)
       status += UserMessage::Offline;
 
     newUserMessage(status, msg);

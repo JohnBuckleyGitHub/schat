@@ -19,50 +19,12 @@
 #ifndef NOTICES_H_
 #define NOTICES_H_
 
+#include "net/PacketReader.h"
 #include "net/PacketWriter.h"
 #include "schat.h"
 
 class PacketReader;
 class MessageData;
-
-class SCHAT_EXPORT NoticeData
-{
-public:
-  /// Тип уведомления.
-  enum Type {
-    Invalid,          ///< Некорректный тип.
-    MessageDelivered, ///< Сообщение было доставлено.
-    MessageRejected,  ///< Сообщение было отклонено.
-    SlaveNodeXHost    ///< Оригинальный адрес пользователя.
-  };
-
-  enum Param1 {
-    UnknownError,    ///< Неизвестная ошибка.
-    UserUnavailable, ///< Пользователь недоступен.
-    Ignored,         ///< Сообщение было игнорированно.
-  };
-
-  NoticeData()
-  : timestamp(0)
-  , type(0)
-  , messageName(0)
-  , param1(0)
-  , param2(0)
-  {}
-
-  NoticeData(quint16 type, const QByteArray &senderId, const QByteArray &destId, const QString &text);
-  NoticeData(const QByteArray &senderId, const QByteArray &destId, quint16 type, quint64 messageName, quint8 param1 = 0);
-
-  QByteArray destId;   ///< Идентификатор назначения.
-  QByteArray senderId; ///< Идентификатор отправителя.
-  qint64 timestamp;    ///< Отметка времени.
-  quint16 type;        ///< Тип.
-  quint64 messageName; ///< Имя-счётчик сообщения, только для типов MessageDelivered и MessageRejected.
-  quint8 param1;       ///< Не обязательный параметр №1
-  quint8 param2;       ///< Не обязательный параметр №2
-  QString text;        ///< Текстовое содержимое.
-};
-
 
 /*!
  * Абстрактное уведомление.
@@ -71,30 +33,46 @@ class AbstractNotice
 {
 public:
   enum Type {
-    MessageNoticeType = 0x6D ///< 'm'.
+    MessageNoticeType = 0x6D, ///< 'm'.
+    TextNoticeType = 0x74     ///< 't'
   };
+
+  AbstractNotice(quint16 type, PacketReader *reader)
+  : m_sender(reader->sender())
+  , m_dest(reader->destinations())
+  , m_type(type)
+  , m_fields(0)
+  {
+    m_fields = reader->get<quint8>();
+  }
 
   AbstractNotice(quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray())
   : m_sender(sender)
   , m_dest(QList<QByteArray>() << dest)
   , m_type(type)
+  , m_fields(0)
   {}
 
   AbstractNotice(quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>())
   : m_sender(sender)
   , m_dest(dest)
   , m_type(type)
+  , m_fields(0)
   {}
 
-  inline int type() const { return m_type; }
+  inline int fields() const         { return m_fields; }
+  inline int type() const           { return m_type; }
   inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
   inline QByteArray sender() const  { return m_sender; }
   inline QList<QByteArray> destinations() const { return m_dest; }
+  inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
+  inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
 
 protected:
   QByteArray m_sender;
   QList<QByteArray> m_dest;
   quint16 m_type;
+  quint8 m_fields; ///< Дополнительные поля данных.
 };
 
 
@@ -105,54 +83,49 @@ class SCHAT_EXPORT MessageNotice : public AbstractNotice
 {
 public:
   enum Status {
-    Delivered, ///< Сообщение было доставлено.
-    Rejected,  ///< Сообщение было отклонено.
+    Delivered = 0x64, ///< 'd' Сообщение было доставлено.
+    Rejected = 0x72   ///< 'r' Сообщение было отклонено.
   };
 
   enum Error {
-    NoError,         ///< Нет ошибки.
-    UnknownError,    ///< Неизвестная ошибка.
-    UserUnavailable, ///< Пользователь недоступен.
-    Ignored,         ///< Сообщение было игнорированно.
+    NoError = 0,            ///< Нет ошибки.
+    UnknownError = 0x75,    ///< 'u' Неизвестная ошибка.
+    UserUnavailable = 0x55, ///< 'U' Пользователь недоступен.
+    Ignored = 0x69          ///< 'i' Сообщение было игнорированно.
   };
 
   MessageNotice(quint16 type, PacketReader *reader);
   MessageNotice(quint8 status, const QByteArray &sender, const QByteArray &dest, const QByteArray &id, quint8 error = NoError);
-  MessageNotice(quint8 status, MessageData *data, quint8 error = NoError);
   inline int error() const { return m_error; }
-  inline int fields() const { return m_fields; }
   inline int status() const { return m_status; }
   inline QByteArray id() const { return m_id; }
   QByteArray data(QDataStream *stream) const;
 
 private:
   bool m_valid;    ///< true если данные корректны.
-  quint8 m_fields; ///< Дополнительные поля данных.
   quint8 m_status; ///< Тип, \sa Status.
   quint8 m_error;  ///< Код ошибки, \sa Error.
   QByteArray m_id; ///< Идентификатор сообщения.
 };
 
 
-/*!
- * Формирует пакет Protocol::NoticePacket.
- */
-class SCHAT_EXPORT NoticeWriter : public PacketWriter
+class SCHAT_EXPORT TextNotice : public AbstractNotice
 {
 public:
-  NoticeWriter(QDataStream *stream, const NoticeData &data);
-};
+  enum SubType {
+    SlaveNodeXHost = 0x5848 ///< 'XH'
+  };
 
+  TextNotice(quint16 type, PacketReader *reader);
+  TextNotice(quint16 sybtype, const QByteArray &sender, const QByteArray &dest, const QString &text);
+  inline int subtype() const { return m_subtype; }
+  inline QString text() const { return m_text; }
+  inline void setText(const QString &text) { m_text = text; }
+  QByteArray data(QDataStream *stream) const;
 
-/*!
- * Читает пакет Protocol::NoticePacket.
- */
-class SCHAT_EXPORT NoticeReader
-{
-public:
-  NoticeReader(PacketReader *reader);
-
-  NoticeData data;
+private:
+  quint16 m_subtype; ///< Тип.
+  QString m_text;    ///< Текст.
 };
 
 #endif /* NOTICES_H_ */

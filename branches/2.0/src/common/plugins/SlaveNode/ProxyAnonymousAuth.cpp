@@ -38,9 +38,8 @@ AuthResult ProxyAnonymousAuth::auth(const AuthRequestData &data)
     return result;
   }
 
-  NoticeData notice(NoticeData::SlaveNodeXHost, Storage::i()->serverData()->id(), result.id, m_core->packetsEvent()->address.toString());
   QList<QByteArray> packets;
-  packets.append(NoticeWriter(m_node->uplink()->sendStream(), notice).data());
+  packets.append(TextNotice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), result.id, m_core->packetsEvent()->address.toString()).data(m_node->uplink()->sendStream()));
   packets.append(m_node->readBuffer());
   m_node->uplink()->send(packets);
 
