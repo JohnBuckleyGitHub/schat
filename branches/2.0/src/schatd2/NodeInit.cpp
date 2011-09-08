@@ -58,8 +58,9 @@ void NodeInit::start()
 {
   m_storage->start();
 
-  m_core = m_plugins->kernel();
   m_plugins->load();
+  m_core = m_plugins->kernel();
+
   m_thread = new WorkerThread(m_storage->settings()->value(QLatin1String("Listen")).toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
 
