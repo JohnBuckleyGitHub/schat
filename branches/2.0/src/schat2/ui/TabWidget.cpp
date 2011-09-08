@@ -50,12 +50,15 @@
 #include "ui/UserUtils.h"
 #include "User.h"
 
+TabWidget *TabWidget::m_self = 0;
+
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
   , m_core(ChatCore::i())
   , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
+  m_self = this;
   setTabBar(m_tabBar);
 
   #if defined(Q_WS_WIN)
@@ -99,6 +102,15 @@ TabWidget::TabWidget(QWidget *parent)
 AbstractTab *TabWidget::widget(int index) const
 {
   return static_cast<AbstractTab*>(QTabWidget::widget(index));
+}
+
+
+ClientUser TabWidget::user(const QByteArray &id)
+{
+  if (!m_talks.contains(id))
+    return ClientUser();
+
+  return m_talks.value(id)->user();
 }
 
 

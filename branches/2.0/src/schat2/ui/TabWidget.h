@@ -24,6 +24,7 @@
 #include <QPointer>
 
 #include "schat.h"
+#include "User.h"
 
 class AboutTab;
 class AbstractMessage;
@@ -54,7 +55,9 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
+  ClientUser user(const QByteArray &id);
   inline TabBar *tabBar() { return m_tabBar; }
+  static TabWidget *i() { return m_self; }
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
 
 signals:
@@ -114,6 +117,7 @@ private:
   QToolButton *m_settingsButton;             ///< Кнопка с меню настроек.
   SimpleClient *m_client;                    ///< Клиент чата.
   SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
+  static TabWidget *m_self;                  ///< Указатель на себя.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
   TrayIcon *m_tray;                          ///< Иконка в трее.
 };

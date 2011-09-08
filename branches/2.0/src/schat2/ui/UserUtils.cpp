@@ -24,6 +24,7 @@
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "plugins/AbstractHistory.h"
+#include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
 
 QHash<QByteArray, ClientUser> UserUtils::m_users;
@@ -56,16 +57,20 @@ ClientUser UserUtils::user(const QByteArray &id)
     return ClientUser();
 
   ClientUser user = ChatCore::i()->client()->user(id);
-  if (user || !ChatCore::i()->plugins()->history())
+  if (user)
     return user;
 
   if (ChatCore::i()->plugins()->history()) {
     user = ChatCore::i()->plugins()->history()->user(id);
-    if (!user)
-      user = m_users.value(id);
+    if (user)
+      return user;
   }
 
-  return user;
+  user = TabWidget::i()->user(id);
+  if (user)
+    return user;
+
+  return m_users.value(id);
 }
 
 
