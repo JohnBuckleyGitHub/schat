@@ -38,7 +38,7 @@ public:
 
 private:
   void add(const MessageHook &data);
-  void add(const UserHook &data);
+  void cleanup(const QByteArray &destId);
   void offlineDelivery(const UserReadyHook &data);
   void open();
   void userReady(const UserReadyHook &data);

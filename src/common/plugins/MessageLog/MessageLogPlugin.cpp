@@ -120,9 +120,19 @@ void MessageLog::add(const MessageHook &data)
 }
 
 
-void MessageLog::add(const UserHook &data)
+void MessageLog::cleanup(const QByteArray &destId)
 {
+  if (!m_offlineLog)
+    return;
 
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  if (m_privateLog)
+    query.prepare(QLatin1String("UPDATE messages SET status = 0 WHERE destId = :destId AND status = 1;"));
+  else
+    query.prepare(QLatin1String("DELETE FROM messages WHERE destId = :destId AND status = 1;"));
+
+  query.bindValue(QLatin1String(":destId"), destId);
+  query.exec();
 }
 
 
@@ -169,6 +179,8 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
 
   if (!packets.isEmpty())
     m_core->send(data.user, packets);
+
+  cleanup(id);
 }
 
 
