@@ -42,11 +42,16 @@ MasterNode::MasterNode(QObject *parent)
 bool MasterNode::readNotice()
 {
   if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
-    NoticeData data = NoticeReader(m_reader).data;
-    if (data.type == NoticeData::SlaveNodeXHost) {
-      m_hosts[m_reader->dest()] = data.text;
-      return true;
+    quint16 type = m_reader->get<quint16>();
+
+    if (type == AbstractNotice::TextNoticeType) {
+      TextNotice notice(type, m_reader);
+      if (notice.subtype() == TextNotice::SlaveNodeXHost) {
+        m_hosts[m_reader->dest()] = notice.text();
+      }
     }
+
+    return true;
   }
 
   return route();

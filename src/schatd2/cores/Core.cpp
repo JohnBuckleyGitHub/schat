@@ -659,7 +659,7 @@ bool Core::readMessage()
   SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
 
   if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0) {
-    rejectMessage(NoticeData::UserUnavailable);
+    rejectMessage(MessageNotice::UserUnavailable);
     return false;
   }
 
@@ -671,7 +671,7 @@ bool Core::readMessage()
     return true;
   }
   else {
-    rejectMessage(NoticeData::UnknownError);
+    rejectMessage(MessageNotice::UnknownError);
     return false;
   }
 }
@@ -705,7 +705,7 @@ void Core::rejectMessage(int reason)
   if (m_messageData->id.isEmpty())
     return;
 
-  if (reason == NoticeData::UserUnavailable && m_plugins->has(NodeHook::OfflineDelivery)) {
+  if (reason == MessageNotice::UserUnavailable && m_plugins->has(NodeHook::OfflineDelivery)) {
     ChatUser user = m_storage->user(m_reader->dest(), true);
     if (user) {
       m_timestamp = timestamp();

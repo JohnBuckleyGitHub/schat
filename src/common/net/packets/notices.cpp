@@ -21,13 +21,11 @@
 #include "net/packets/message.h"
 
 MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
-  : AbstractNotice(type, reader->sender(), reader->destinations())
+  : AbstractNotice(type, reader)
   , m_valid(false)
-  , m_fields(0)
   , m_status(0)
   , m_error(0)
 {
-  m_fields = reader->get<quint8>();
   m_status = reader->get<quint8>();
   m_error = reader->get<quint8>();
   m_id = reader->id();
@@ -39,25 +37,9 @@ MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
 }
 
 
-MessageNotice::MessageNotice(quint8 status, MessageData *data, quint8 error)
-  : AbstractNotice(MessageNoticeType, data->senderId, data->dest)
-  , m_valid(false)
-  , m_fields(0)
-  , m_status(status)
-  , m_error(error)
-  , m_id(data->id)
-{
-  if (SimpleID::typeOf(m_id) != SimpleID::MessageId)
-    return;
-
-  m_valid = true;
-}
-
-
 MessageNotice::MessageNotice(quint8 status, const QByteArray &sender, const QByteArray &dest, const QByteArray &id, quint8 error)
   : AbstractNotice(MessageNoticeType, sender, dest)
   , m_valid(false)
-  , m_fields(0)
   , m_status(status)
   , m_error(error)
   , m_id(id)
@@ -82,53 +64,30 @@ QByteArray MessageNotice::data(QDataStream *stream) const
 }
 
 
-NoticeData::NoticeData(quint16 type, const QByteArray &senderId, const QByteArray &destId, const QString &text)
-  : destId(destId)
-  , senderId(senderId)
-  , timestamp(0)
-  , type(type)
-  , messageName(0)
-  , param1(0)
-  , param2(0)
-  , text(text)
+TextNotice::TextNotice(quint16 type, PacketReader *reader)
+  : AbstractNotice(type, reader)
+  , m_subtype(0)
 {
-}
-
-NoticeData::NoticeData(const QByteArray &senderId, const QByteArray &destId, quint16 type, quint64 messageName, quint8 param1)
-  : destId(destId)
-  , senderId(senderId)
-  , timestamp(0)
-  , type(type)
-  , messageName(messageName)
-  , param1(param1)
-  , param2(0)
-{
-}
-
-NoticeWriter::NoticeWriter(QDataStream *stream, const NoticeData &data)
-  : PacketWriter(stream, Protocol::NoticePacket, data.senderId, data.destId)
-{
-  put(data.type);
-  put(data.param1);
-  put(data.param2);
-
-  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected)
-    put(data.messageName);
-
-  put(data.text);
+  m_subtype = reader->get<quint16>();
+  m_text = reader->text();
 }
 
 
-NoticeReader::NoticeReader(PacketReader *reader)
+TextNotice::TextNotice(quint16 sybtype, const QByteArray &sender, const QByteArray &dest, const QString &text)
+  : AbstractNotice(TextNoticeType, sender, dest)
+  , m_subtype(sybtype)
+  , m_text(text)
 {
-  data.senderId = reader->sender();
-  data.destId = reader->dest();
-  data.type = reader->get<quint16>();
-  data.param1 = reader->get<quint8>();
-  data.param2 = reader->get<quint8>();
+}
 
-  if (data.type == NoticeData::MessageDelivered || data.type == NoticeData::MessageRejected)
-    data.messageName = reader->get<quint64>();
 
-  data.text = reader->text();
+QByteArray TextNotice::data(QDataStream *stream) const
+{
+  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest);
+  writer.put(m_type);
+  writer.put(m_fields);
+  writer.put(m_subtype);
+  writer.put(m_text);
+
+  return writer.data();
 }

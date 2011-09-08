@@ -135,12 +135,11 @@ bool SlaveNode::readMessage()
     return true;
 
   if (route()) {
-    qDebug() << "ACCEPT";
     acceptMessage();
     return false;
   }
   else {
-    rejectMessage(NoticeData::UnknownError);
+    rejectMessage(MessageNotice::UnknownError);
     return true;
   }
 
@@ -235,7 +234,7 @@ void SlaveNode::reAuth()
   if (users.isEmpty())
     return;
 
-  NoticeData notice(NoticeData::SlaveNodeXHost, Storage::i()->serverData()->id(), QByteArray(), QString());
+  TextNotice notice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), QByteArray(), QString());
   QList<QByteArray> packets;
 
   QHashIterator<QByteArray, ChatUser> i(users);
@@ -244,9 +243,9 @@ void SlaveNode::reAuth()
     if (!i.value()->isOnline())
       continue;
 
-    notice.destId = i.value()->id();
-    notice.text = i.value()->host();
-    packets.append(NoticeWriter(m_uplink->sendStream(), notice).data());
+    notice.setDest(i.value()->id());
+    notice.setText(i.value()->host());
+    packets.append(notice.data(m_uplink->sendStream()));
 
     AuthRequestData data(AuthRequestData::Anonymous, QString(), i.value().data());
     data.uniqueId = i.value()->uniqueId();
@@ -359,7 +358,7 @@ void SlaveNode::uplinkReadMessage()
 {
   if (SimpleID::typeOf(m_uplink->reader()->dest()) == SimpleID::UserId) {
     if (!uplinkRouteUser(m_uplink->reader()->dest()))
-      uplinkRejectMessage(MessageReader(m_uplink->reader()).data, NoticeData::UnknownError);
+      uplinkRejectMessage(MessageReader(m_uplink->reader()).data, MessageNotice::UnknownError);
 
     return;
   }
