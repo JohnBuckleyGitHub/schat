@@ -77,7 +77,7 @@ void NodePlugins::init()
 
     qDebug() << "API OK";
 
-    NodePlugin *plugin = api->init(m_core);
+    NodePlugin *plugin = api->init(kernel());
     if (!plugin)
       continue;
 
