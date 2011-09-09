@@ -105,10 +105,8 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 
 
 AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
-  : authVersion(V1)
+  : fields(0)
   , authType(authType)
-  , maxProtoVersion(Protocol::V4_0)
-  , features(SupportRichText)
   , gender(user->rawGender())
   , host(host)
   , nick(user->nick())
@@ -130,12 +128,12 @@ void AuthRequestData::setStatus(quint8 status)
 AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData &data)
   : PacketWriter(stream, Protocol::AuthRequestPacket)
 {
-  put(data.authVersion);
+  put(data.fields);
   put(data.authType);
   putId(data.uniqueId);
-  put(data.maxProtoVersion);
-  put(data.features);
-  put(data.language);
+  put<quint8>(0);
+  put<quint32>(0);
+  put<quint8>(0);
   put(data.gender);
   put(data.status);
   put(data.host);
@@ -149,12 +147,12 @@ AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData 
 
 AuthRequestReader::AuthRequestReader(PacketReader *reader)
 {
-  data.authVersion = reader->get<quint8>();
+  data.fields = reader->get<quint8>();
   data.authType = reader->get<quint8>();
   data.uniqueId = reader->id();
-  data.maxProtoVersion = reader->get<quint8>();
-  data.features = reader->get<quint32>();
-  data.language = reader->get<quint8>();
+  reader->get<quint8>();
+  reader->get<quint32>();
+  reader->get<quint8>();
   data.gender = reader->get<quint8>();
   data.setStatus(reader->get<quint8>());
   data.host = reader->text();

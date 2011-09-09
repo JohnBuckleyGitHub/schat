@@ -115,42 +115,25 @@ public:
 class SCHAT_EXPORT AuthRequestData
 {
 public:
-  /// Версия пакета.
-  enum AuthVersion {
-    V1 = 0x1
-  };
-
   /// Тип авторизации.
   enum AuthType {
     Anonymous = 0x61,  ///< 'a' Анонимная авторизация по уникальному идентификатору.
     SlaveNode = 0x73,  ///< 's' Авторизация по приватному идентификатору сервера.
-    Partially = 0x70,  ///< 'p' Восстановление разорванного соединения, для авторизации используется сессия.
     Cookie = 0x63,     ///< 'c' Сохранённая анонимная авторизация по ранее присвоеному долговременному Cookie.
-    Password = 0x50    ///< 'P' Авторизация по имени пользователя и паролю.
-  };
-
-  /// Возможности клиента.
-  enum ClientFeatures {
-    NoFeatures,
-    SupportRichText ///< Поддержка HTML текста.
+    Password = 0x70    ///< 'p' Авторизация по имени пользователя и паролю.
   };
 
   AuthRequestData()
-  : authVersion(0)
+  : fields(0)
   , authType(0)
-  , maxProtoVersion(0)
-  , features(0)
   {}
 
   AuthRequestData(int authType, const QString &host, User *user);
   void setStatus(quint8 status);
 
-  quint8 authVersion;      ///< Версия пакета.
+  quint8 fields;           ///< Битовая маска дополнительный полей пакета.
   quint8 authType;         ///< Тип авторизации.
   QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
-  quint8 maxProtoVersion;  ///< Максимальная поддерживаемая версия протокола.
-  quint32 features;        ///< Возможности клиента.
-  quint8 language;         ///< Язык клиента.
   quint8 gender;           ///< Пол и цвет пользователя.
   quint8 status;           ///< Статус пользователя.
   QString host;            ///< Адрес по которому клиент подключается к серверу.
@@ -163,12 +146,12 @@ public:
 /*!
  * Формирует пакет Protocol::AuthRequestPacket.
  *
- * - 01 byte  - AuthVersion.
+ * - 01 byte  - Fields.
  * - 01 byte  - AuthType.
  * - 21 byte  - Unique User Id.
- * - 01 byte  - Max Supported Protocol Version.
- * - 04 bytes - Client Features.
- * - 01 byte  - Language.
+ * - 01 byte  - reserved.
+ * - 04 bytes - reserved.
+ * - 01 byte  - reserved.
  * - 01 byte  - Gender.
  * - 01 byte  - User Status.
  * - utf8     - Server Host.
