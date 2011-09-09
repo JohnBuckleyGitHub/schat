@@ -31,19 +31,18 @@ ServerUser::ServerUser(const QByteArray &id)
 }
 
 
-ServerUser::ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, const AuthRequestData &authRequestData, quint64 socketId)
+ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequestData &data, quint64 socketId)
   : User()
   , m_online(true)
-  , m_session(session)
-  , m_uniqueId(authRequestData.uniqueId)
+  , m_uniqueId(data.uniqueId)
   , m_key(-1)
   , m_normalNick(normalNick)
   , m_socketId(socketId)
 {
   setId(id);
-  setNick(authRequestData.nick);
-  setRawGender(authRequestData.gender);
-  setStatus(authRequestData.status);
+  setNick(data.nick);
+  setRawGender(data.gender);
+  setStatus(data.status);
 }
 
 

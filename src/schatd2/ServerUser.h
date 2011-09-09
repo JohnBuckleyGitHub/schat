@@ -32,21 +32,22 @@ class SCHAT_EXPORT ServerUser : public User
 {
 public:
   ServerUser(const QByteArray &id);
-  ServerUser(const QByteArray &session, const QString &normalNick, const QByteArray &id, const AuthRequestData &authRequestData, quint64 socketId);
+  ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequestData &data, quint64 socketId);
   ~ServerUser();
   inline bool isOnline() const { return m_online; }
-  inline QByteArray session() const { return m_session; }
+  inline QByteArray cookie() const { return m_cookie; }
+  inline QByteArray uniqueId() const { return m_uniqueId; }
   inline qint64 key() const { return m_key; }
   inline QString normalNick() const { return m_normalNick; }
   inline quint64 socketId() const { return m_socketId; }
+  inline void setCookie(const QByteArray &cookie) { m_cookie = cookie; }
   inline void setKey(qint64 key) { m_key = key; }
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
   inline void setOnline(bool online) { m_online = online; }
-  inline QByteArray uniqueId() const { return m_uniqueId; }
 
 private:
   bool m_online;             ///< true если пользователь в сети.
-  QByteArray m_session;      ///< Сессия.
+  QByteArray m_cookie;       ///< Cookie.
   QByteArray m_uniqueId;     ///< Уникальный идентификатор пользователя.
   qint64 m_key;              ///< Ключ в таблице users.
   QString m_normalNick;      ///< Нормализованный ник.

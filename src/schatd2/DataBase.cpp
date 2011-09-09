@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QSqlDatabase>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QStringList>
 #include <QVariant>
@@ -60,7 +61,7 @@ ChatUser DataBase::user(qint64 id)
 {
   qDebug() << "DataBase::user()" << id;
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT userId, nick, normalNick, gender, ip, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT userId, cookie, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
@@ -69,11 +70,12 @@ ChatUser DataBase::user(qint64 id)
 
   ChatUser user(new ServerUser(query.value(0).toByteArray()));
   user->setKey(id);
-  user->setNick(query.value(1).toString());
-  user->setNormalNick(query.value(2).toString());
-  user->setRawGender(query.value(3).toInt());
-  user->setHost(query.value(4).toString());
-  user->setUserAgent(query.value(5).toString());
+  user->setCookie(query.value(1).toByteArray());
+  user->setNick(query.value(2).toString());
+  user->setNormalNick(query.value(3).toString());
+  user->setRawGender(query.value(4).toInt());
+  user->setHost(query.value(5).toString());
+  user->setUserAgent(query.value(6).toString());
 
   return user;
 }
@@ -95,11 +97,12 @@ int DataBase::start()
     "CREATE TABLE users ( "
     "  id         INTEGER PRIMARY KEY,"
     "  userId     BLOB    NOT NULL UNIQUE,"
+    "  cookie     BLOB    NOT NULL UNIQUE,"
     "  [group]    INTEGER DEFAULT ( 4 ),"
     "  nick       TEXT,"
     "  normalNick TEXT,"
     "  gender     INTEGER DEFAULT ( 0 ),"
-    "  ip         TEXT,"
+    "  host       TEXT,"
     "  userAgent  TEXT"
     ");"));
   }
@@ -139,14 +142,15 @@ qint64 DataBase::add(ChatUser user)
   }
 
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO users (userId, nick, normalNick, gender, ip, userAgent) "
-                     "VALUES (:userId, :nick, :normalNick, :gender, :ip, :userAgent);"));
+  query.prepare(QLatin1String("INSERT INTO users (userId, cookie, nick, normalNick, gender, host, userAgent) "
+                     "VALUES (:userId, :cookie, :nick, :normalNick, :gender, :host, :userAgent);"));
 
   query.bindValue(QLatin1String(":userId"),     user->id());
+  query.bindValue(QLatin1String(":cookie"),     user->cookie());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"),     user->rawGender());
-  query.bindValue(QLatin1String(":ip"),         user->host());
+  query.bindValue(QLatin1String(":host"),       user->host());
   query.bindValue(QLatin1String(":userAgent"),  user->userAgent());
   query.exec();
 
@@ -204,7 +208,7 @@ qint64 DataBase::userKey(const QByteArray &id)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET nick = ?, normalNick = ?, gender = ?, ip = ?, userAgent = ? WHERE id = ?;"));
+  query.prepare(QLatin1String("UPDATE users SET nick = ?, normalNick = ?, gender = ?, host = ?, userAgent = ? WHERE id = ?;"));
   query.addBindValue(user->nick());
   query.addBindValue(user->normalNick());
   query.addBindValue(user->rawGender());

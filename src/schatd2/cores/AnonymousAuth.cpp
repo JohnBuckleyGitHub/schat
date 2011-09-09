@@ -43,12 +43,13 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
   if (storage->user(normalNick, false))
     return AuthResult(AuthReplyData::NickAlreadyUse, 0);
 
-  user = ChatUser(new ServerUser(storage->session(), normalNick, userId, data, m_core->packetsEvent()->socket()));
+  user = ChatUser(new ServerUser(normalNick, userId, data, m_core->packetsEvent()->socket()));
   if (!user->isValid())
     return AuthResult(AuthReplyData::BadUser);
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
+  user->setCookie(storage->cookie());
   storage->add(user);
 
   qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
