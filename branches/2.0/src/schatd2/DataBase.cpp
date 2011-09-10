@@ -138,8 +138,19 @@ qint64 DataBase::add(ChatUser user)
   if (key != -1) {
     user->setKey(key);
     update(user);
+
+    QSqlQuery query;
+    query.prepare(QLatin1String("SELECT cookie FROM users WHERE id = :id LIMIT 1;"));
+    query.bindValue(QLatin1String(":id"), key);
+    query.exec();
+
+    if (query.first())
+      user->setCookie(query.value(0).toByteArray());
+
     return key;
   }
+
+  user->setCookie(Storage::i()->cookie());
 
   QSqlQuery query;
   query.prepare(QLatin1String("INSERT INTO users (userId, cookie, nick, normalNick, gender, host, userAgent) "
@@ -208,12 +219,12 @@ qint64 DataBase::userKey(const QByteArray &id)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET nick = ?, normalNick = ?, gender = ?, host = ?, userAgent = ? WHERE id = ?;"));
-  query.addBindValue(user->nick());
-  query.addBindValue(user->normalNick());
-  query.addBindValue(user->rawGender());
-  query.addBindValue(user->host());
-  query.addBindValue(user->userAgent());
-  query.addBindValue(user->key());
+  query.prepare(QLatin1String("UPDATE users SET nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
+  query.bindValue(QLatin1String(":nick"), user->nick());
+  query.bindValue(QLatin1String(":normalNick"), user->normalNick());
+  query.bindValue(QLatin1String(":gender"), user->rawGender());
+  query.bindValue(QLatin1String(":host"), user->host());
+  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
+  query.bindValue(QLatin1String(":id"), user->key());
   query.exec();
 }

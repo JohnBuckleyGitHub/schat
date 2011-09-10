@@ -49,7 +49,6 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
-  user->setCookie(storage->cookie());
   storage->add(user);
 
   qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
