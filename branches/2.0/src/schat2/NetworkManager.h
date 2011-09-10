@@ -37,18 +37,25 @@ public:
   NetworkItem();
   NetworkItem(const QByteArray &id);
   bool isValid() const;
+  inline QByteArray cookie() const { return m_cookie; }
   inline QByteArray id() const { return m_id; }
-  inline QString auth() const { return m_auth; }
   inline QString name() const { return m_name; }
   inline QString url() const { return m_url; }
+  static NetworkItem item();
+  void read();
+  void write();
 
   friend class NetworkManager;
 
 private:
-  QByteArray m_id; ///< Идентификатор сервера.
-  QString m_auth;  ///< Строка аутентификации.
-  QString m_name;  ///< Имя сервера.
-  QString m_url;   ///< Адрес сервера.
+  QString auth();
+  void setAuth(const QString &auth);
+
+  QByteArray m_cookie; ///< Cookie.
+  QByteArray m_id;     ///< Идентификатор сервера.
+  QByteArray m_userId; ///< Идентификатор пользователя.
+  QString m_name;      ///< Имя сервера.
+  QString m_url;       ///< Адрес сервера.
 };
 
 

@@ -492,7 +492,9 @@ void Core::acceptAuth(const AuthResult &result)
   if (channel->userCount() > 1)
     packets = userDataToSync(channel, user);
 
-  packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data())).data());
+  if (result.packet)
+    packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data(), user->cookie())).data());
+
   send(user, packets, result.option);
 
   if (m_plugins) {

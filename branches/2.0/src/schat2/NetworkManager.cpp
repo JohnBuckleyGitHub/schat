@@ -42,16 +42,87 @@ NetworkItem::NetworkItem(const QByteArray &id)
 
 bool NetworkItem::isValid() const
 {
-  if (m_auth.isEmpty())
+  if (m_id.isEmpty() || m_userId.isEmpty() || m_cookie.isEmpty() || m_url.isEmpty() || m_name.isEmpty())
     return false;
 
-  if (m_url.isEmpty())
+  if (SimpleID::typeOf(m_id) != SimpleID::ServerId)
     return false;
 
-  if (m_name.isEmpty())
+  if (SimpleID::typeOf(m_cookie) != SimpleID::CookieId)
+    return false;
+
+  if (SimpleID::typeOf(m_userId) != SimpleID::UserId)
     return false;
 
   return true;
+}
+
+
+/*!
+ *
+ */
+NetworkItem NetworkItem::item()
+{
+  SimpleClient *client = ChatCore::i()->client();
+  NetworkItem item(client->serverData()->id());
+
+  QString name = client->serverData()->name();
+  if (name.isEmpty())
+    name = client->url().host();
+
+  item.m_name = name;
+  item.m_url = client->url().toString();
+  item.m_cookie = client->cookie();
+  item.m_userId = client->userId();
+
+  return item;
+}
+
+
+void NetworkItem::read()
+{
+  QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  settings.setIniCodec("UTF-8");
+
+  settings.beginGroup(m_id.toHex());
+  setAuth(settings.value(QLatin1String("Auth")).toString());
+  m_url  = settings.value(QLatin1String("Url")).toString();
+  m_name = settings.value(QLatin1String("Name")).toString();
+  settings.endGroup();
+}
+
+
+void NetworkItem::write()
+{
+  QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  settings.setIniCodec("UTF-8");
+
+  settings.beginGroup(m_id.toHex());
+  settings.setValue(QLatin1String("Auth"), auth());
+  settings.setValue(QLatin1String("Url"),  m_url);
+  settings.setValue(QLatin1String("Name"), m_name);
+  settings.endGroup();
+}
+
+
+QString NetworkItem::auth()
+{
+  if (!isValid())
+    return QString();
+
+  QByteArray auth = m_id + m_userId + m_cookie;
+  return SimpleID::toBase64(auth);
+}
+
+
+void NetworkItem::setAuth(const QString &auth)
+{
+  QByteArray data = SimpleID::fromBase64(auth.toLatin1());
+  if (data.size() != SimpleID::DefaultSize * 3)
+    return;
+
+  m_userId = data.mid(SimpleID::DefaultSize, SimpleID::DefaultSize);
+  m_cookie = data.mid(SimpleID::DefaultSize * 2, SimpleID::DefaultSize);
 }
 
 
@@ -239,11 +310,7 @@ void NetworkManager::load()
     }
 
     NetworkItem item(id);
-    settings.beginGroup(id.toHex());
-    item.m_auth = settings.value(QLatin1String("Auth"), item.auth()).toString();
-    item.m_url  = settings.value(QLatin1String("Url"),  item.url()).toString();
-    item.m_name = settings.value(QLatin1String("Name"), item.name()).toString();
-    settings.endGroup();
+    item.read();
 
     if (!item.isValid()) {
       invalid.append(networks.at(i));
@@ -276,18 +343,8 @@ void NetworkManager::write()
   networks.prepend(base64);
   m_settings->setValue(QLatin1String("Networks"), networks);
 
-  NetworkItem item = m_items.value(id);
-  item.m_id   = id;
-  item.m_auth = SimpleID::toBase64(m_client->userId());
-  item.m_name = currentServerName();
-  item.m_url  = m_client->url().toString();
-
-  Settings settings(m_locations->path(FileLocations::ConfigFile), this);
-  settings.beginGroup(id.toHex());
-  settings.setValue(QLatin1String("Auth"), item.auth());
-  settings.setValue(QLatin1String("Url"),  item.url());
-  settings.setValue(QLatin1String("Name"), item.name());
-  settings.endGroup();
+  NetworkItem item = NetworkItem::item();
+  item.write();
 
   m_items[id] = item;
   root(id);

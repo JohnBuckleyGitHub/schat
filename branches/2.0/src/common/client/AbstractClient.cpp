@@ -32,14 +32,14 @@
 
 
 AbstractClientPrivate::AbstractClientPrivate()
-  : sendLock(false)
+  : clientState(AbstractClient::ClientOffline)
+  , previousState(AbstractClient::ClientOffline)
+  , sendLock(false)
   , user(new User())
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
   , serverData(new ServerData())
-  , clientState(AbstractClient::ClientOffline)
-  , previousState(AbstractClient::ClientOffline)
 {
   user->setUserAgent(SimpleID::userAgent());
 }
@@ -68,20 +68,19 @@ QString AbstractClientPrivate::mangleNick()
 /*!
  * Чтение пакета AuthReplyPacket.
  */
-bool AbstractClientPrivate::readAuthReply()
+bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
 {
-  AuthReplyData data = AuthReplyReader(reader).data;
-
-  SCHAT_DEBUG_STREAM(this << "AuthReply" << data.status << data.error << data.userId.toHex())
+  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << reply.error << reply.userId.toHex())
 
   Q_Q(AbstractClient);
-  if (data.status == AuthReplyData::AccessGranted) {
-    q->setAuthorized(data.userId);
-    user->setId(data.userId);
-    user->setHost(data.host);
-    user->setServerNumber(data.serverData.number());
+  if (reply.status == AuthReplyData::AccessGranted) {
+    q->setAuthorized(reply.userId);
+    user->setId(reply.userId);
+    user->setHost(reply.host);
+    user->setServerNumber(reply.serverData.number());
+    cookie = reply.cookie;
 
-    setServerData(data.serverData);
+    setServerData(reply.serverData);
 
     if (user->status() == User::OfflineStatus)
       user->setStatus(User::OnlineStatus);
@@ -89,8 +88,8 @@ bool AbstractClientPrivate::readAuthReply()
     emit(q->ready());
     return true;
   }
-  else if (data.status == AuthReplyData::AccessDenied) {
-    if (data.error == AuthReplyData::NickAlreadyUse) {
+  else if (reply.status == AuthReplyData::AccessDenied) {
+    if (reply.error == AuthReplyData::NickAlreadyUse) {
       user->setNick(mangleNick());
       q->requestAuth();
     }
@@ -174,11 +173,12 @@ AbstractClient::~AbstractClient()
 /*!
  * Установка подключения к серверу.
  */
-bool AbstractClient::openUrl(const QUrl &url)
+bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie)
 {
   SCHAT_DEBUG_STREAM(this << "openUrl()" << url.toString())
-
   Q_D(AbstractClient);
+
+  d->cookie = cookie;
   d->url = url;
 
   if (!d->url.isValid())
@@ -263,6 +263,13 @@ PacketReader *AbstractClient::reader()
 {
   Q_D(const AbstractClient);
   return d->reader;
+}
+
+
+QByteArray AbstractClient::cookie() const
+{
+  Q_D(const AbstractClient);
+  return d->cookie;
 }
 
 
@@ -366,7 +373,7 @@ void AbstractClient::newPacketsImpl()
     if (isAuthorized())
       emit packetReady(reader.type());
     else if (reader.type() == Protocol::AuthReplyPacket)
-      d->readAuthReply();
+      d->readAuthReply(AuthReplyReader(d->reader).data);
   }
 }
 
@@ -375,7 +382,7 @@ void AbstractClient::timerEvent(QTimerEvent *event)
 {
   Q_D(AbstractClient);
   if (event->timerId() == d->reconnectTimer->timerId()) {
-    openUrl(d->url);
+    openUrl(d->url, d->cookie);
     return;
   }
 

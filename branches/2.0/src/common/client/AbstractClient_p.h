@@ -25,9 +25,9 @@
 #include "client/AbstractClient.h"
 #include "net/SimpleSocket_p.h"
 
+class AuthReplyData;
 class PacketReader;
 class SyncChannelCache;
-
 
 class AbstractClientPrivate : public SimpleSocketPrivate
 {
@@ -39,24 +39,25 @@ public:
 
   // Установка и завершение соединения.
   QString mangleNick();
-  virtual bool readAuthReply();
+  virtual bool readAuthReply(const AuthReplyData &reply);
   virtual void restore() {}
   virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}
   void setServerData(const ServerData &data);
 
+  AbstractClient::ClientState clientState;   ///< Состояние клиента.
+  AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientUser user;                         ///< Пользователь.
   int reconnects;                          ///< Число попыток восстановить соединение.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;             ///< Таймер управляющий попытками переподключения.
+  QByteArray cookie;                       ///< Cookie.
   QByteArray uniqueId;                     ///< Уникальный идентификатор пользователя.
   QList<QByteArray> sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString nick;                            ///< Оригинальный ник пользователя.
   QUrl url;                                ///< Адрес, к которому будет подключен клиент.
   ServerData *serverData;                  ///< Данные о сервере.
-  AbstractClient::ClientState clientState;   ///< Состояние клиента.
-  AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
 };
 
 #endif /* ABSTRACTCLIENT_P_H_ */
