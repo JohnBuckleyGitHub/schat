@@ -49,15 +49,16 @@ public:
   explicit AbstractClient(QObject *parent = 0);
   ~AbstractClient();
 
-  bool openUrl(const QUrl &url);
+  bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray());
   bool send(const MessageData &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
   ClientState clientState() const;
   ClientState previousState() const;
   ClientUser user() const;
-  inline bool openUrl(const QString &url) { return openUrl(QUrl(url)); }
+  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray()) { return openUrl(QUrl(url), cookie); }
   PacketReader *reader();
+  QByteArray cookie() const;
   QByteArray serverId() const;
   QByteArray uniqueId() const;
   QString nick() const;

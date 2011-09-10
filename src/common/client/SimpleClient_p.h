@@ -35,7 +35,7 @@ public:
   virtual ~SimpleClientPrivate();
 
   // Установка и завершение соединения.
-  bool readAuthReply();
+  bool readAuthReply(const AuthReplyData &reply);
   void clearClient();
   void restore();
   void setClientState(AbstractClient::ClientState state);

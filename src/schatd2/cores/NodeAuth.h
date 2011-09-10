@@ -36,18 +36,21 @@ public:
 
   AuthResult()
   : action(Nothing)
+  , packet(true)
   , error(0)
   , option(0)
   {}
 
   AuthResult(int error, int option = 2)
   : action(Reject)
+  , packet(true)
   , error(error)
   , option(option)
   {}
 
   AuthResult(const QByteArray &id)
   : action(Accept)
+  , packet(true)
   , error(0)
   , option(1)
   , id(id)
@@ -56,6 +59,7 @@ public:
   virtual ~AuthResult() {}
 
   Action action; ///< Действие.
+  bool packet;   ///< true если нужно отправить стандартный AuthReplyPacket.
   int error;     ///< Код ошибки.
   int option;    ///< Дополнительная опция для установки состояния сокета.
   QByteArray id; ///< Идентификатор пользователя.

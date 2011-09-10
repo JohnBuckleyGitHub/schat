@@ -56,11 +56,11 @@ public:
   {}
 
   AuthReplyData(ServerData *data, int error);
-  AuthReplyData(ServerData *data, User *user);
+  AuthReplyData(ServerData *data, User *user, const QByteArray &cookie);
 
   QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
   quint8 status;         ///< Статус авторизации \sa Status.
-  QByteArray session;    ///< Сессия.
+  QByteArray cookie;     ///< Сессия.
   quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
   QString host;          ///< Адрес пользователя.
   quint8 error;          ///< Код ошибки \sa Error.

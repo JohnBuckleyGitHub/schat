@@ -36,10 +36,10 @@ AuthReplyData::AuthReplyData(ServerData *data, int error)
 }
 
 
-AuthReplyData::AuthReplyData(ServerData *data, User *user)
+AuthReplyData::AuthReplyData(ServerData *data, User *user, const QByteArray &cookie)
   : userId(user->id())
   , status(AccessGranted)
-  , session(user->id())
+  , cookie(cookie)
   , protoVersion(Protocol::V4_0)
   , host(user->host())
   , error(NoError)
@@ -59,7 +59,7 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
   put(data.serverData.number());
 
   if (data.status == AuthReplyData::AccessGranted) {
-    putId(data.session);
+    putId(data.cookie);
     put(data.protoVersion);
     put<quint16>(0);
     put<quint16>(0);
@@ -86,7 +86,7 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
   data.serverData.setNumber(reader->get<quint8>());
 
   if (data.status == AuthReplyData::AccessGranted) {
-    data.session = reader->id();
+    data.cookie = reader->id();
     data.protoVersion = reader->get<quint8>();
     reader->get<quint16>();
     reader->get<quint16>();

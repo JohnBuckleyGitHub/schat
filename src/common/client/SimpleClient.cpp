@@ -50,9 +50,9 @@ void SimpleClientPrivate::clearClient()
 }
 
 
-bool SimpleClientPrivate::readAuthReply()
+bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
 {
-  if (AbstractClientPrivate::readAuthReply()) {
+  if (AbstractClientPrivate::readAuthReply(reply)) {
     Q_Q(SimpleClient);
     ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
     addChannel(channel);
@@ -596,7 +596,7 @@ void SimpleClient::newPacketsImpl()
 
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
-        d->readAuthReply();
+        d->readAuthReply(AuthReplyReader(d->reader).data);
         break;
 
       case Protocol::ChannelPacket:
