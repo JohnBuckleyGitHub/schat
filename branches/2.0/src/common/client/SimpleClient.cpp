@@ -28,6 +28,7 @@
 #include "net/packets/users.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
+  : cookieAuth(false)
 {
 }
 
@@ -566,6 +567,13 @@ void SimpleClient::part(const QByteArray &channelId)
 
   MessageData message(userId(), channelId, QLatin1String("part"), QString());
   send(message);
+}
+
+
+void SimpleClient::setCookieAuth(bool allow)
+{
+  Q_D(SimpleClient);
+  d->cookieAuth = allow;
 }
 
 

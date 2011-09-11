@@ -31,6 +31,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
 {
   setDefault(QLatin1String("AutoConnect"),         true);
   setDefault(QLatin1String("ChannelUserCount"),    false);
+  setDefault(QLatin1String("CookieAuth"),          true);
   setDefault(QLatin1String("DeveloperExtras"),     false);
   setDefault(QLatin1String("Height"),              420);
   setDefault(QLatin1String("HideIgnore"),          true);
@@ -38,12 +39,12 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(QLatin1String("Networks"),            QStringList());
   setDefault(QLatin1String("ShowSeconds"),         false);
   setDefault(QLatin1String("ShowServiceMessages"), false);
-  setDefault(QLatin1String("Translation"),         "auto");
+  setDefault(QLatin1String("Translation"),         QLatin1String("auto"));
   setDefault(QLatin1String("Width"),               666);
   setDefault(QLatin1String("WindowsAero"),         true);
   setDefault(QLatin1String("Profile/Gender"),      0);
   setDefault(QLatin1String("Profile/Nick"),        User::defaultNick());
-  setDefault(QLatin1String("Profile/Status"),      "1;");
+  setDefault(QLatin1String("Profile/Status"),      QLatin1String("1;"));
 }
 
 
