@@ -60,7 +60,7 @@ public:
 
   QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
   quint8 status;         ///< Статус авторизации \sa Status.
-  QByteArray cookie;     ///< Сессия.
+  QByteArray cookie;     ///< Cookie.
   quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
   QString host;          ///< Адрес пользователя.
   quint8 error;          ///< Код ошибки \sa Error.
@@ -140,6 +140,7 @@ public:
   QString nick;            ///< Ник.
   QString userAgent;       ///< Идентификатор клиента пользователя.
   QString privateId;       ///< Приватный идентификатор сервера, только для типа авторизации AuthRequestData::SlaveNode.
+  QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequestData::SlaveNode.
 };
 
 

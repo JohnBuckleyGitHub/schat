@@ -38,7 +38,7 @@ DataBase::DataBase(QObject *parent)
 /*!
  * Поиск пользователя по уникальному идентификатору.
  *
- * \param id Идентификатор пользователя.
+ * \param id Идентификатор пользователя или идентификатор cookie.
  * \return Указатель на пользователя или 0 если он не был найден.
  */
 ChatUser DataBase::user(const QByteArray &id)
@@ -139,13 +139,15 @@ qint64 DataBase::add(ChatUser user)
     user->setKey(key);
     update(user);
 
-    QSqlQuery query;
-    query.prepare(QLatin1String("SELECT cookie FROM users WHERE id = :id LIMIT 1;"));
-    query.bindValue(QLatin1String(":id"), key);
-    query.exec();
+    if (user->cookie().isEmpty()) {
+      QSqlQuery query;
+      query.prepare(QLatin1String("SELECT cookie FROM users WHERE id = :id LIMIT 1;"));
+      query.bindValue(QLatin1String(":id"), key);
+      query.exec();
 
-    if (query.first())
-      user->setCookie(query.value(0).toByteArray());
+      if (query.first())
+        user->setCookie(query.value(0).toByteArray());
+    }
 
     return key;
   }
@@ -202,7 +204,15 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
 qint64 DataBase::userKey(const QByteArray &id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
+
+  int type = SimpleID::typeOf(id);
+  if (type == SimpleID::UserId)
+    query.prepare(QLatin1String("SELECT id FROM users WHERE userId = ? LIMIT 1;"));
+  else if (type == SimpleID::CookieId)
+    query.prepare(QLatin1String("SELECT id FROM users WHERE cookie = ? LIMIT 1;"));
+  else
+    return -1;
+
   query.addBindValue(id);
   query.exec();
 

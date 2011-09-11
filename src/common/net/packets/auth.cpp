@@ -142,6 +142,10 @@ AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData 
 
   if (data.authType == AuthRequestData::SlaveNode)
     put(data.privateId);
+
+  if (data.authType == AuthRequestData::Cookie) {
+    putId(data.cookie);
+  }
 }
 
 
@@ -161,4 +165,7 @@ AuthRequestReader::AuthRequestReader(PacketReader *reader)
 
   if (data.authType == AuthRequestData::SlaveNode)
     data.privateId = reader->text();
+
+  if (data.authType == AuthRequestData::Cookie)
+    data.cookie = reader->id();
 }

@@ -22,6 +22,7 @@
 #include <QThread>
 
 #include "cores/AnonymousAuth.h"
+#include "cores/CookieAuth.h"
 #include "cores/Core.h"
 #include "cores/NodeAuth.h"
 #include "debugstream.h"
@@ -50,6 +51,8 @@ Core::Core(QObject *parent)
   , m_storage(Storage::i())
 {
   addAuth(new AnonymousAuth(this));
+  addAuth(new BypassCookieAuth(this));
+  addAuth(new CookieAuth(this));
 
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
