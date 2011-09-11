@@ -220,31 +220,16 @@ QList<NetworkItem> NetworkManager::items() const
 
 
 /*!
- * Получение директории с рабочими файлами для текущего сервера.
- */
-QString NetworkManager::root() const
-{
-  return root(serverId());
-}
-
-
-/*!
  * Возвращает имя текущего сервера.
  */
 QString NetworkManager::currentServerName()
 {
-  QString name = ChatCore::i()->client()->serverData()->name();
-  if (name.isEmpty())
-    name = ChatCore::i()->client()->url().host();
-
-  return name;
+  return ChatCore::i()->networks()->item().name();
 }
 
 
 /*!
  * Удаление сервера.
- *
- * \todo ! Также реализовать полное удаление всех настроек этого сервера.
  */
 void NetworkManager::removeItem(const QByteArray &id)
 {
@@ -252,6 +237,7 @@ void NetworkManager::removeItem(const QByteArray &id)
 
   networks.removeAll(SimpleID::toBase64(id));
   m_settings->setValue(QLatin1String("Networks"), networks);
+  m_settings->remove(id.toHex());
 }
 
 
@@ -261,12 +247,6 @@ void NetworkManager::clientStateChanged(int state)
     return;
 
   write();
-}
-
-
-QString NetworkManager::authKey() const
-{
-  return SimpleID::toBase64(m_client->userId());
 }
 
 
