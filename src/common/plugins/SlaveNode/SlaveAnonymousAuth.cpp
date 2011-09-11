@@ -16,13 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/AbstractClient.h"
-#include "events.h"
-#include "net/packets/notices.h"
-#include "net/ServerData.h"
+#include "net/packets/auth.h"
 #include "SlaveAnonymousAuth.h"
 #include "SlaveNode.h"
-#include "Storage.h"
 
 SlaveAnonymousAuth::SlaveAnonymousAuth(SlaveNode *node)
   : AnonymousAuth(node)
@@ -34,14 +30,11 @@ SlaveAnonymousAuth::SlaveAnonymousAuth(SlaveNode *node)
 AuthResult SlaveAnonymousAuth::auth(const AuthRequestData &data)
 {
   AuthResult result = AnonymousAuth::auth(data);
-  if (result.action == AuthResult::Reject || m_node->mode() == SlaveNode::FailbackMode) {
+  if (result.action == AuthResult::Reject)
     return result;
-  }
 
-  QList<QByteArray> packets;
-  packets.append(TextNotice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), result.id, m_core->packetsEvent()->address.toString()).data(m_node->uplink()->sendStream()));
-  packets.append(m_node->readBuffer());
-  m_node->uplink()->send(packets);
+  if (m_node->mode() == SlaveNode::FailbackMode)
+    return AuthResult(AuthReplyData::AuthTypeNotAllowed);
 
   result.action = AuthResult::Pending;
   return result;

@@ -53,13 +53,22 @@ SlaveNode::SlaveNode(QObject *parent)
 
 bool SlaveNode::add(ChatUser user, int authType)
 {
-  if (mode() == FailbackMode)
+  if (mode() == FailbackMode) {
+    if (authType == AuthRequestData::Anonymous)
+      return false;
+
     return Core::add(user, authType);
+  }
 
   if (authType == AuthRequestData::Anonymous)
     m_pending[user->id()] = user;
   else if (authType == AuthRequestData::Cookie)
     m_pending[user->cookie()] = user;
+
+  QList<QByteArray> packets;
+  packets.append(TextNotice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), user->id(), m_packetsEvent->address.toString()).data(uplink()->sendStream()));
+  packets.append(m_readBuffer);
+  m_uplink->send(packets);
 
   return true;
 }
