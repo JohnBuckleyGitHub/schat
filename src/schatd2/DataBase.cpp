@@ -137,7 +137,6 @@ qint64 DataBase::add(ChatUser user)
   qint64 key = userKey(user->id());
   if (key != -1) {
     user->setKey(key);
-    update(user);
 
     if (user->cookie().isEmpty()) {
       QSqlQuery query;
@@ -149,6 +148,7 @@ qint64 DataBase::add(ChatUser user)
         user->setCookie(query.value(0).toByteArray());
     }
 
+    update(user);
     return key;
   }
 
@@ -229,7 +229,8 @@ qint64 DataBase::userKey(const QByteArray &id)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
+  query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
+  query.bindValue(QLatin1String(":cookie"), user->cookie());
   query.bindValue(QLatin1String(":nick"), user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"), user->rawGender());

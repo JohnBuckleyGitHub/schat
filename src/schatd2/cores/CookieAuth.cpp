@@ -54,7 +54,7 @@ AuthResult CookieAuth::auth(const AuthRequestData &data)
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
   user->setCookie(exist->cookie());
-  storage->add(user);
+  m_core->add(user, data.authType);
 
   qDebug() << "COOKIE AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
   return AuthResult(user->id());

@@ -119,6 +119,13 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 }
 
 
+bool Core::add(ChatUser user, int authType)
+{
+  Q_UNUSED(authType);
+  return m_storage->add(user);
+}
+
+
 /*!
  * Отправка пакетов пользователю.
  */

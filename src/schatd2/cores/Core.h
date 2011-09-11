@@ -56,6 +56,7 @@ public:
   inline QDataStream *sendStream() { return m_sendStream; }
   inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
   inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
+  virtual bool add(ChatUser user, int authType);
   virtual int start() { return 0; }
   virtual void quit() {}
 
