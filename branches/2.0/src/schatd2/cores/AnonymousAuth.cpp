@@ -49,7 +49,7 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
-  storage->add(user);
+  m_core->add(user, data.authType);
 
   qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
   return AuthResult(userId);

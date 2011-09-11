@@ -57,6 +57,7 @@ public:
   QByteArray makeUserId(int type, const QByteArray &clientId) const;
   QList<QByteArray> users(const QByteArray &id) const;
   void rename(ChatUser user);
+  void update(ChatUser user);
 
   // channel management.
   bool removeChannel(const QByteArray &id);

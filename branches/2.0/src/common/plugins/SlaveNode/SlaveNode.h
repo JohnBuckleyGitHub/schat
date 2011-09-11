@@ -36,6 +36,7 @@ public:
   };
 
   SlaveNode(QObject *parent = 0);
+  bool add(ChatUser user, int authType);
   inline AbstractClient *uplink() { return m_uplink; }
   inline Mode mode() const { return m_mode; }
   int start();
@@ -67,8 +68,9 @@ private:
   void uplinkReadUserData();
   void uplinkRejectMessage(const MessageData &msg, int reason);
 
-  AbstractClient *m_uplink; ///< Подключение к корневому серверу.
-  Mode m_mode;              ///< Режим работы сервера.
+  AbstractClient *m_uplink;              ///< Подключение к корневому серверу.
+  Mode m_mode;                           ///< Режим работы сервера.
+  QHash<QByteArray, ChatUser> m_pending; ///< Таблица пользователей ожидающих авторизации.
 };
 
 #endif /* SLAVECORE_H_ */

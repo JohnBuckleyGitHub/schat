@@ -51,6 +51,20 @@ SlaveNode::SlaveNode(QObject *parent)
 }
 
 
+bool SlaveNode::add(ChatUser user, int authType)
+{
+  if (mode() == FailbackMode)
+    return Core::add(user, authType);
+
+  if (authType == AuthRequestData::Anonymous)
+    m_pending[user->id()] = user;
+  else if (authType == AuthRequestData::Cookie)
+    m_pending[user->cookie()] = user;
+
+  return true;
+}
+
+
 int SlaveNode::start()
 {
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
@@ -312,16 +326,34 @@ void SlaveNode::setMode(Mode mode)
  */
 void SlaveNode::uplinkAuthReply()
 {
-  ChatUser user = m_storage->user(m_uplink->reader()->dest());
-  if (!user)
-    return;
-
-  qDebug() << "uplinkAuthReply()" << user;
-
   AuthReplyData data = AuthReplyReader(m_uplink->reader()).data;
+
+  bool update = false;
+  ChatUser user = m_storage->user(data.userId);
+  if (user) {
+    update = true;
+  }
+  else {
+    user = m_pending.value(m_uplink->reader()->dest());
+
+    if (!user)
+      user = m_pending.value(data.cookie);
+
+    if (!user)
+      return;
+  }
+
   int option = 0;
   if (data.status == AuthReplyData::AccessGranted) {
     option = NewPacketsEvent::AuthorizeSocketOption;
+    user->setId(data.userId);
+    user->setCookie(data.cookie);
+
+    if (update)
+      m_storage->update(user);
+    else
+      m_storage->add(user);
+
     addChannel(user);
   }
 

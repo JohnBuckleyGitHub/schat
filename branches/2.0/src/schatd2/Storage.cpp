@@ -277,6 +277,12 @@ void Storage::rename(ChatUser user)
 }
 
 
+void Storage::update(ChatUser user)
+{
+  m_db->update(user);
+}
+
+
 bool Storage::removeChannel(const QByteArray &id)
 {
   ChatChannel channel = m_channels.value(id);
