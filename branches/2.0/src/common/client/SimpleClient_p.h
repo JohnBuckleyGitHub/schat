@@ -62,6 +62,7 @@ public:
   void updateUserStatus(const QString &text);
 
   bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
+  int authType;                              ///< Тип авторизации.
   MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
   QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
   QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.

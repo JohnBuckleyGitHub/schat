@@ -29,6 +29,7 @@ SCHAT_LITTLE_CLIENT = 1
 
 HEADERS = \
     cores/AnonymousAuth.h \
+    cores/CookieAuth.h \
     cores/Core.h \
     cores/NodeAuth.h \
     DataBase.h \
@@ -41,6 +42,7 @@ HEADERS = \
 
 SOURCES = \
     cores/AnonymousAuth.cpp \
+    cores/CookieAuth.cpp \
     cores/Core.cpp \
     DataBase.cpp \
     events.cpp \

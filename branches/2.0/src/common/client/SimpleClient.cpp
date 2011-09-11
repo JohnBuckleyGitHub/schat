@@ -62,6 +62,13 @@ bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
     return true;
   }
 
+  if (reply.status == AuthReplyData::AccessDenied) {
+    if (reply.error == AuthReplyData::AuthTypeNotImplemented || reply.error == AuthReplyData::AuthTypeNotAllowed) {
+      if (authType == AuthRequestData::Cookie)
+        cookieAuth = false;
+    }
+  }
+
   return false;
 }
 
@@ -583,8 +590,13 @@ void SimpleClient::requestAuth()
 
   Q_D(SimpleClient);
 
-  AuthRequestData data(AuthRequestData::Anonymous, d->url.host(), d->user.data());
+  d->authType = AuthRequestData::Anonymous;
+  if (d->cookieAuth && !d->cookie.isEmpty())
+    d->authType = AuthRequestData::Cookie;
+
+  AuthRequestData data(d->authType, d->url.host(), d->user.data());
   data.uniqueId = d->uniqueId;
+  data.cookie = d->cookie;
   send(AuthRequestWriter(d->sendStream, data).data());
 }
 
