@@ -19,12 +19,12 @@ SCHAT_DAEMON_LIB = 1
 QT = core network
 
 HEADERS  = \
-   ProxyAnonymousAuth.h \
+   SlaveAnonymousAuth.h \
    SlaveNode.h \
    SlaveNodePlugin.h \
 
 SOURCES  = \
-   ProxyAnonymousAuth.cpp \
+   SlaveAnonymousAuth.cpp \
    SlaveNode.cpp \
    SlaveNodePlugin.cpp \
 

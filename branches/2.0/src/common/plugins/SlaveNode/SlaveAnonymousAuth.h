@@ -23,10 +23,10 @@
 
 class SlaveNode;
 
-class ProxyAnonymousAuth : public AnonymousAuth
+class SlaveAnonymousAuth : public AnonymousAuth
 {
 public:
-  ProxyAnonymousAuth(SlaveNode *node);
+  SlaveAnonymousAuth(SlaveNode *node);
   AuthResult auth(const AuthRequestData &data);
 
 protected:
