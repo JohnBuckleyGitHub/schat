@@ -184,7 +184,7 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie)
   if (!d->url.isValid())
     return false;
 
-  if (d->url.scheme() != "schat")
+  if (d->url.scheme() != QLatin1String("schat"))
     return false;
 
   if (d->reconnectTimer->isActive())

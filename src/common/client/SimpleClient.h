@@ -36,6 +36,7 @@ public:
   ClientUser user(const QByteArray &id) const;
   void leave();
   void part(const QByteArray &channelId);
+  void setCookieAuth(bool allow);
 
 signals:
   void join(const QByteArray &channelId);

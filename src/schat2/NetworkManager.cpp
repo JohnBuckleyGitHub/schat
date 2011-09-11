@@ -169,8 +169,9 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
+  m_client->setCookieAuth(m_settings->value(QLatin1String("CookieAuth")).toBool());
   NetworkItem item = m_items.value(id);
-  return m_client->openUrl(item.url());
+  return m_client->openUrl(item.url(), item.cookie());
 }
 
 
