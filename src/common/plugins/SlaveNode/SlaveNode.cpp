@@ -26,8 +26,8 @@
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
-#include "ProxyAnonymousAuth.h"
 #include "Settings.h"
+#include "SlaveAnonymousAuth.h"
 #include "SlaveNode.h"
 #include "Storage.h"
 
@@ -37,7 +37,7 @@ SlaveNode::SlaveNode(QObject *parent)
 {
   qDebug() << "SLAVE NODE";
 
-  addAuth(new ProxyAnonymousAuth(this));
+  addAuth(new SlaveAnonymousAuth(this));
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());

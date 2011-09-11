@@ -20,18 +20,18 @@
 #include "events.h"
 #include "net/packets/notices.h"
 #include "net/ServerData.h"
-#include "ProxyAnonymousAuth.h"
+#include "SlaveAnonymousAuth.h"
 #include "SlaveNode.h"
 #include "Storage.h"
 
-ProxyAnonymousAuth::ProxyAnonymousAuth(SlaveNode *node)
+SlaveAnonymousAuth::SlaveAnonymousAuth(SlaveNode *node)
   : AnonymousAuth(node)
   , m_node(node)
 {
 }
 
 
-AuthResult ProxyAnonymousAuth::auth(const AuthRequestData &data)
+AuthResult SlaveAnonymousAuth::auth(const AuthRequestData &data)
 {
   AuthResult result = AnonymousAuth::auth(data);
   if (result.action == AuthResult::Reject || m_node->mode() == SlaveNode::FailbackMode) {
