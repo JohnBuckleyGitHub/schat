@@ -191,14 +191,15 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
 /*!
  * Создание идентификатора пользователя.
  */
-QByteArray Storage::makeUserId(int type, const QByteArray &clientId) const
+QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 {
   QString prefix;
-  if (type == AuthRequestData::Anonymous) {
-    prefix = "anonymous:";
-  }
+  if (type == AuthRequestData::Anonymous)
+    prefix = QLatin1String("anonymous:");
+  else if (type == AuthRequestData::SlaveNode)
+    prefix = QLatin1String("slave:");
 
-  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + clientId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
+  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + userId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
 }
 
 

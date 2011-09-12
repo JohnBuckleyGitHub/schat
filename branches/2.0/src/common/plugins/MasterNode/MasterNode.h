@@ -32,6 +32,7 @@ protected:
   bool readNotice();
   void acceptAuth(const AuthResult &result);
   void readPacket(int type);
+  void rejectAuth(const AuthResult &result);
   void socketReleaseEvent(SocketReleaseEvent *event);
 
 private:
