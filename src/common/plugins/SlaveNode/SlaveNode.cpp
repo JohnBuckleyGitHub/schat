@@ -28,6 +28,7 @@
 #include "net/packets/users.h"
 #include "Settings.h"
 #include "SlaveAnonymousAuth.h"
+#include "SlaveCookieAuth.h"
 #include "SlaveNode.h"
 #include "Storage.h"
 
@@ -37,7 +38,12 @@ SlaveNode::SlaveNode(QObject *parent)
 {
   qDebug() << "SLAVE NODE";
 
+  qDeleteAll(m_auth);
+  m_auth.clear();
+
   addAuth(new SlaveAnonymousAuth(this));
+  addAuth(new BypassSlaveCookieAuth(this));
+  addAuth(new SlaveCookieAuth(this));
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
