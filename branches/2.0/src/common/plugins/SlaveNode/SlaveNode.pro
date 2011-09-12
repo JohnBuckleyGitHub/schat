@@ -20,11 +20,13 @@ QT = core network
 
 HEADERS  = \
    SlaveAnonymousAuth.h \
+   SlaveCookieAuth.h \
    SlaveNode.h \
    SlaveNodePlugin.h \
 
 SOURCES  = \
    SlaveAnonymousAuth.cpp \
+   SlaveCookieAuth.cpp \
    SlaveNode.cpp \
    SlaveNodePlugin.cpp \
 
