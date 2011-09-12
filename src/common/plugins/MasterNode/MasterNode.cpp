@@ -19,7 +19,6 @@
 #include <QDebug>
 
 #include "events.h"
-#include "MasterAnonymousAuth.h"
 #include "MasterNode.h"
 #include "net/PacketReader.h"
 #include "net/packets/message.h"
@@ -35,7 +34,6 @@ MasterNode::MasterNode(QObject *parent)
   m_storage->setAllowSlaves();
 
   addAuth(new SlaveAuth(this));
-  addAuth(new MasterAnonymousAuth(this));
 }
 
 
@@ -69,6 +67,17 @@ void MasterNode::acceptAuth(const AuthResult &result)
     m_hosts.remove(result.id);
   }
 
+  if (m_storage->isSlave(m_packetsEvent->userId())) {
+    ChatUser slave = Storage::i()->user(m_packetsEvent->userId());
+    if (slave)
+      user->setServerNumber(slave->rawGender());
+
+    AuthResult r = result;
+    r.option = 0;
+    Core::acceptAuth(r);
+    return;
+  }
+
   Core::acceptAuth(result);
 }
 
@@ -79,6 +88,19 @@ void MasterNode::readPacket(int type)
     readNotice();
   else
     Core::readPacket(type);
+}
+
+
+void MasterNode::rejectAuth(const AuthResult &result)
+{
+  if (m_storage->isSlave(m_packetsEvent->userId())) {
+    AuthResult r = result;
+    r.option = 0;
+    Core::rejectAuth(r);
+    return;
+  }
+
+  Core::rejectAuth(result);
 }
 
 

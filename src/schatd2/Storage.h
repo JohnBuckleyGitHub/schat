@@ -54,7 +54,7 @@ public:
   ChatUser user(const QByteArray &id, bool offline = false) const;
   ChatUser user(const QString &nick, bool normalize) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
-  QByteArray makeUserId(int type, const QByteArray &clientId) const;
+  QByteArray makeUserId(int type, const QByteArray &userId) const;
   QList<QByteArray> users(const QByteArray &id) const;
   void rename(ChatUser user);
   void update(ChatUser user);

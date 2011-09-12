@@ -66,9 +66,8 @@ bool SlaveNode::add(ChatUser user, int authType)
     return Core::add(user, authType);
   }
 
-  if (authType == AuthRequestData::Anonymous)
-    m_pending[user->id()] = user;
-  else if (authType == AuthRequestData::Cookie)
+  m_pending[user->id()] = user;
+  if (authType == AuthRequestData::Cookie)
     m_pending[user->cookie()] = user;
 
   QList<QByteArray> packets;
@@ -276,8 +275,9 @@ void SlaveNode::reAuth()
     notice.setText(i.value()->host());
     packets.append(notice.data(m_uplink->sendStream()));
 
-    AuthRequestData data(AuthRequestData::Anonymous, QString(), i.value().data());
+    AuthRequestData data(AuthRequestData::Cookie, QString(), i.value().data());
     data.uniqueId = i.value()->uniqueId();
+    data.cookie = i.value()->cookie();
     packets.append(AuthRequestWriter(m_sendStream, data).data());
   }
 
@@ -372,11 +372,15 @@ void SlaveNode::uplinkAuthReply()
     addChannel(user);
   }
 
+  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse) {
+    m_storage->remove(user);
+    m_pending.remove(user->id());
+    m_pending.remove(user->cookie());
+    option = NewPacketsEvent::KillSocketOption;
+  }
+
   m_timestamp = m_uplink->timestamp();
   send(user, m_uplink->readBuffer(), option);
-
-  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse)
-    m_storage->remove(user);
 }
 
 
