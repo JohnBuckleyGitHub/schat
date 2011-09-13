@@ -70,5 +70,7 @@ SOURCES += \
     client/ClientCmd.cpp \
     client/ClientHelper.cpp \
     client/SimpleClient.cpp \
+
+  include(../3rdparty/jdns/jdns.pri)
 }
 
