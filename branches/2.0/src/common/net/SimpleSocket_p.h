@@ -57,8 +57,8 @@ public:
   QByteArray txBuffer;                 ///< Буфер отправки транспортных пакетов.
   QByteArray userId;                   ///< Идентификатор клиента.
   QDataStream *readStream;             ///< Поток чтения виртуальных пакетов.
-  QDataStream *sendStream;             ///< Поток отправки виртуальных пакетов.
   QDataStream *rxStream;               ///< Поток чтения транспортных пакетов.
+  QDataStream *sendStream;             ///< Поток отправки виртуальных пакетов.
   QDataStream *txStream;               ///< Поток отправки транспортных пакетов.
   qint64 timestamp;                    ///< Отметка времени.
   QList<QByteArray> readQueue;         ///< Список прочитанных виртуальных пакетов.

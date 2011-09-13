@@ -631,6 +631,9 @@ void SimpleSocket::readyRead()
         break;
 
       *d->rxStream >> d->nextBlockSize;
+      if (!d->authorized && d->nextBlockSize == 1195725856) { // Обработка HTTP GET.
+        disconnectFromHost();
+      }
     }
 
     if (bytesAvailable() < d->nextBlockSize)
