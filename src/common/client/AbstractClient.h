@@ -46,17 +46,23 @@ public:
     ClientError        ///< Критическая ошибка.
   };
 
+  /// Опции открытия адреса.
+  enum OpenOptions {
+    NoOptions = 0, ///< Нет опций.
+    SaveUrl = 1    ///< Сохранить URL адрес как основной.
+  };
+
   explicit AbstractClient(QObject *parent = 0);
   ~AbstractClient();
 
-  bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray());
+  bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl);
   bool send(const MessageData &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
   ClientState clientState() const;
   ClientState previousState() const;
   ClientUser user() const;
-  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray()) { return openUrl(QUrl(url), cookie); }
+  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
   QByteArray cookie() const;
   QByteArray serverId() const;
@@ -83,8 +89,8 @@ protected:
   void timerEvent(QTimerEvent *event);
 
 protected slots:
-  void released();
   virtual void requestAuth();
+  void released();
 
 private:
   Q_DECLARE_PRIVATE(AbstractClient);

@@ -26,10 +26,45 @@
 #ifndef QJDNS_H
 #define QJDNS_H
 
-#include <QtCore>
-#include <QtNetwork>
+#include <QHostAddress>
+#include <QObject>
 
-class QJDns : public QObject
+#include "schat.h"
+
+class QJDnsRecord
+{
+public:
+  QByteArray owner;
+  int ttl;
+  int type;
+  QByteArray rdata;
+  bool haveKnown;
+
+  // known
+  QHostAddress address;    // for A, Aaaa
+  QByteArray name;         // for Mx, Srv, Cname, Ptr, Ns
+  int priority;            // for Mx, Srv
+  int weight;              // for Srv
+  int port;                // for Srv
+  QList<QByteArray> texts; // for Txt
+  QByteArray cpu;          // for Hinfo
+  QByteArray os;           // for Hinfo
+
+  QJDnsRecord();
+  bool verify() const;
+};
+
+
+class QJDnsResponse
+{
+public:
+  QList<QJDnsRecord> answerRecords;
+  QList<QJDnsRecord> authorityRecords;
+  QList<QJDnsRecord> additionalRecords;
+};
+
+
+class SCHAT_EXPORT QJDns : public QObject
 {
 	Q_OBJECT
 public:
@@ -74,6 +109,10 @@ public:
 		int port;
 
 		NameServer();
+		NameServer(const QHostAddress &address, int port = 53)
+		: address(address)
+		, port(port)
+		{}
 	};
 
 	class DnsHost
@@ -89,37 +128,6 @@ public:
 		QList<NameServer> nameServers;
 		QList<QByteArray> domains;
 		QList<DnsHost> hosts;
-	};
-
-	class Record
-	{
-	public:
-		QByteArray owner;
-		int ttl;
-		int type;
-		QByteArray rdata;
-		bool haveKnown;
-
-		// known
-		QHostAddress address;    // for A, Aaaa
-		QByteArray name;         // for Mx, Srv, Cname, Ptr, Ns
-		int priority;            // for Mx, Srv
-		int weight;              // for Srv
-		int port;                // for Srv
-		QList<QByteArray> texts; // for Txt
-		QByteArray cpu;          // for Hinfo
-		QByteArray os;           // for Hinfo
-
-		Record();
-		bool verify() const;
-	};
-
-	class Response
-	{
-	public:
-		QList<Record> answerRecords;
-		QList<Record> authorityRecords;
-		QList<Record> additionalRecords;
 	};
 
 	QJDns(QObject *parent = 0);
@@ -138,14 +146,14 @@ public:
 	void queryCancel(int id);
 
 	// for multicast mode only
-	int publishStart(PublishMode m, const Record &record);
-	void publishUpdate(int id, const Record &record);
+	int publishStart(PublishMode m, const QJDnsRecord &record);
+	void publishUpdate(int id, const QJDnsRecord &record);
 	void publishCancel(int id);
 
 signals:
-	void resultsReady(int id, const QJDns::Response &results);
+	void resultsReady(int id, const QJDnsResponse &results);
 	void published(int id);
-	void error(int id, QJDns::Error e);
+	void error(int id, int e);
 	void shutdownFinished();
 	void debugLinesReady();
 

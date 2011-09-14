@@ -19,6 +19,7 @@ HEADERS += \
     Channel.h \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
+    client/NetworkPool.h \
     FileLocations.h \
     net/PacketReader.h \
     net/packets/auth.h \
@@ -42,6 +43,7 @@ HEADERS += \
 SOURCES += \
     Channel.cpp \
     client/AbstractClient.cpp \
+    client/NetworkPool.cpp \
     FileLocations.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
@@ -70,7 +72,6 @@ SOURCES += \
     client/ClientCmd.cpp \
     client/ClientHelper.cpp \
     client/SimpleClient.cpp \
-
-  include(../3rdparty/jdns/jdns.pri)
 }
 
+include(../3rdparty/jdns/jdns.pri)
