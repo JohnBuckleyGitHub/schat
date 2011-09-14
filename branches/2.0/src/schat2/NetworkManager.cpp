@@ -225,7 +225,11 @@ QList<NetworkItem> NetworkManager::items() const
  */
 QString NetworkManager::currentServerName()
 {
-  return ChatCore::i()->networks()->item().name();
+  QString name = ChatCore::i()->client()->serverData()->name();
+  if (name.isEmpty())
+    name = ChatCore::i()->client()->url().host();
+
+  return name;
 }
 
 
