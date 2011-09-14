@@ -35,7 +35,7 @@ bool NetworkPool::open(const QUrl &url)
   if (url.port() != -1)
     return false;
 
-  if (isPrivateNet(url.host()))
+  if (!QHostAddress(url.host()).isNull())
     return false;
 
   if (m_url != url) {
@@ -106,29 +106,6 @@ QUrl NetworkPool::random() const
 
   m_current = rand;
   return m_urls.at(m_current);
-}
-
-
-bool NetworkPool::isPrivateNet(const QString &host)
-{
-  QHostAddress addr(host);
-
-  if (addr.isNull())
-    return false;
-
-  if (host.startsWith(QLatin1String("10.")))
-    return true;
-
-  if (host.startsWith(QLatin1String("172.16.")))
-    return true;
-
-  if (host.startsWith(QLatin1String("192.168.")))
-    return true;
-
-  if (host.startsWith(QLatin1String("127.")))
-    return true;
-
-  return false;
 }
 
 

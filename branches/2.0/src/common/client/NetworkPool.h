@@ -40,7 +40,6 @@ public:
   QUrl last() const;
   QUrl next() const;
   QUrl random() const;
-  static bool isPrivateNet(const QString &host);
   void reset();
 
 private slots:
