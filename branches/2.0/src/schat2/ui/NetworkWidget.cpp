@@ -243,7 +243,7 @@ void NetworkWidget::load()
   }
 
   if (m_combo->count() == 0) {
-    m_combo->addItem("schat://main.schat.me");
+    m_combo->addItem("schat://schat.me");
     m_combo->setEditable(true);
   }
 }

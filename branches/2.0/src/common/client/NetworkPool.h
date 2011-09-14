@@ -33,7 +33,15 @@ class NetworkPool : public QObject
 public:
   NetworkPool(AbstractClient *client);
   bool open(const QUrl &url);
+  inline bool hasLast() const { return m_last != -1; }
+  inline int count() const { return m_urls.size(); }
+  inline QUrl url() const { return m_url; }
+  inline void setLast() { m_last = m_current; }
+  QUrl last() const;
+  QUrl next() const;
   QUrl random() const;
+  static bool isPrivateNet(const QString &host);
+  void reset();
 
 private slots:
   void error(int id, int e);
@@ -43,11 +51,12 @@ private slots:
 private:
   QJDns *dns();
 
-  AbstractClient *m_client;
-  mutable int m_current; ///< Индекс текущего Url.
-  QJDns *m_jdns;         ///< JDNS объект.
-  QList<QUrl> m_urls;    ///< Пул адресов.
-  QUrl m_url;            ///< Главный url адрес.
+  AbstractClient *m_client; ///< Указатель на объект клиента чата.
+  int m_last;               ///< Индекс последнего сервера к которому было осуществлено успешное подключение.
+  mutable int m_current;    ///< Индекс текущего Url.
+  QJDns *m_jdns;            ///< JDNS объект.
+  QList<QUrl> m_urls;       ///< Пул адресов.
+  QUrl m_url;               ///< Главный url адрес.
 };
 
 #endif /* NETWORKPOOL_H_ */

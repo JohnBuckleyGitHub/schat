@@ -33,7 +33,7 @@ BotCore::BotCore(ClientHelper *helper, FileLocations *locations)
   , m_locations(locations)
   , m_client(helper->client())
 {
-  m_settings.insert("Url", "schat://main.schat.me");
+  m_settings.insert("Url", "schat://schat.me");
   m_settings.insert("Nick", "Bot");
   m_settings.insert("Gender", 152);
   m_settings.insert("Status", "1;");

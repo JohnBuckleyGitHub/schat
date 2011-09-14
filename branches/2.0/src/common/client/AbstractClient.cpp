@@ -79,6 +79,7 @@ bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
     user->setHost(reply.host);
     user->setServerNumber(reply.serverData.number());
     cookie = reply.cookie;
+    pool->setLast();
 
     setServerData(reply.serverData);
 
@@ -149,6 +150,29 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
 }
 
 
+/*!
+ * Запуск таймера повторного подключения.
+ */
+void AbstractClientPrivate::startReconnectTimer()
+{
+  if (reconnectTimer->isActive())
+    reconnectTimer->stop();
+
+  Q_Q(AbstractClient);
+  if (reconnects < pool->count() + Protocol::MaxFastReconnects) {
+    reconnectTimer->start(Protocol::FastReconnectTime, q);
+  }
+  else if (reconnects < pool->count() + Protocol::MaxFastReconnects + Protocol::MaxNormalReconnects) {
+    reconnectTimer->start(Protocol::NormalReconnectTime, q);
+  }
+  else {
+    reconnectTimer->start(Protocol::SlowReconnectTime, q);
+  }
+
+  ++reconnects;
+}
+
+
 AbstractClient::AbstractClient(QObject *parent)
   : SimpleSocket(*new AbstractClientPrivate(), parent)
 {
@@ -206,8 +230,11 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
 
   d->setClientState(ClientConnecting);
 
-  if (url.port() == -1 && d->pool->open(url))
+  if (d->pool->open(url))
     return true;
+
+  if (options & SaveUrl)
+    d->pool->reset();
 
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
   return true;
@@ -393,10 +420,16 @@ void AbstractClient::timerEvent(QTimerEvent *event)
 {
   Q_D(AbstractClient);
   if (event->timerId() == d->reconnectTimer->timerId()) {
-    qDebug() << "________________________________";
-    qDebug() << "________________________________"  << isAuthorized();
+    QUrl url;
+    if (d->reconnects <= Protocol::MaxFastReconnects && d->pool->hasLast())
+      url = d->pool->last();
+    else
+      url = d->pool->next();
 
-    openUrl(d->url, d->cookie);
+    if (url.isEmpty())
+      url = d->url;
+
+    openUrl(url, d->cookie, NoOptions);
     return;
   }
 
@@ -429,15 +462,5 @@ void AbstractClient::released()
     d->setClientState(ClientConnecting);
   }
 
-  if (d->reconnects < Protocol::MaxFastReconnects) {
-    d->reconnectTimer->start(Protocol::FastReconnectTime, this);
-  }
-  else if (d->reconnects < Protocol::MaxFastReconnects + Protocol::MaxNormalReconnects) {
-    d->reconnectTimer->start(Protocol::NormalReconnectTime, this);
-  }
-  else {
-    d->reconnectTimer->start(Protocol::SlowReconnectTime, this);
-  }
-
-  ++d->reconnects;
+  d->startReconnectTimer();
 }
