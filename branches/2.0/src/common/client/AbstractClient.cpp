@@ -29,7 +29,7 @@
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "User.h"
-
+#include "client/NetworkPool.h"
 
 AbstractClientPrivate::AbstractClientPrivate()
   : clientState(AbstractClient::ClientOffline)
@@ -154,6 +154,9 @@ AbstractClient::AbstractClient(QObject *parent)
 {
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
+
+  Q_D(AbstractClient);
+  d->pool = new NetworkPool(this);
 }
 
 
@@ -162,6 +165,9 @@ AbstractClient::AbstractClient(AbstractClientPrivate &dd, QObject *parent)
 {
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
+
+  Q_D(AbstractClient);
+  d->pool = new NetworkPool(this);
 }
 
 
@@ -173,31 +179,36 @@ AbstractClient::~AbstractClient()
 /*!
  * Установка подключения к серверу.
  */
-bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie)
+bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOptions options)
 {
   SCHAT_DEBUG_STREAM(this << "openUrl()" << url.toString())
   Q_D(AbstractClient);
 
   d->cookie = cookie;
-  d->url = url;
 
-  if (!d->url.isValid())
+  if (options & SaveUrl)
+    d->url = url;
+
+  if (!url.isValid())
     return false;
 
-  if (d->url.scheme() != QLatin1String("schat"))
+  if (url.scheme() != QLatin1String("schat"))
     return false;
 
   if (d->reconnectTimer->isActive())
     d->reconnectTimer->stop();
 
-  if (state() != QAbstractSocket::UnconnectedState) {
+  if (state() != QAbstractSocket::UnconnectedState)
     leave();
-  }
 
   if (!d->nick.isEmpty())
     d->user->setNick(d->nick);
 
   d->setClientState(ClientConnecting);
+
+  if (url.port() == -1 && d->pool->open(url))
+    return true;
+
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
   return true;
 }
@@ -382,11 +393,20 @@ void AbstractClient::timerEvent(QTimerEvent *event)
 {
   Q_D(AbstractClient);
   if (event->timerId() == d->reconnectTimer->timerId()) {
+    qDebug() << "________________________________";
+    qDebug() << "________________________________"  << isAuthorized();
+
     openUrl(d->url, d->cookie);
     return;
   }
 
   SimpleSocket::timerEvent(event);
+}
+
+
+void AbstractClient::requestAuth()
+{
+  emit requestClientAuth();
 }
 
 
@@ -420,10 +440,4 @@ void AbstractClient::released()
   }
 
   ++d->reconnects;
-}
-
-
-void AbstractClient::requestAuth()
-{
-  emit requestClientAuth();
 }

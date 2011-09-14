@@ -27,7 +27,7 @@
 
 class AuthReplyData;
 class PacketReader;
-class SyncChannelCache;
+class NetworkPool;
 
 class AbstractClientPrivate : public SimpleSocketPrivate
 {
@@ -50,6 +50,7 @@ public:
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientUser user;                         ///< Пользователь.
   int reconnects;                          ///< Число попыток восстановить соединение.
+  NetworkPool *pool;                       ///< Пул адресов серверов.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;             ///< Таймер управляющий попытками переподключения.
   QByteArray cookie;                       ///< Cookie.

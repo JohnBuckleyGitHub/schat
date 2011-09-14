@@ -21,6 +21,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <QMetaType>
+#include <QPointer>
+#include <QStringList>
+#include <QTime>
+#include <QTimer>
+#include <QUdpSocket>
+
 #include "qjdns.h"
 
 #include <time.h>
@@ -113,9 +120,9 @@ static QHostAddress addr2qt(const jdns_address_t *addr)
 		return QHostAddress(addr->addr.v4);
 }
 
-static QJDns::Record import_record(const jdns_rr_t *in)
+static QJDnsRecord import_record(const jdns_rr_t *in)
 {
-	QJDns::Record out;
+	QJDnsRecord out;
 
 	out.owner = QByteArray((const char *)in->owner);
 	out.ttl = in->ttl;
@@ -169,7 +176,7 @@ static QJDns::Record import_record(const jdns_rr_t *in)
 	return out;
 }
 
-static jdns_rr_t *export_record(const QJDns::Record &in)
+static jdns_rr_t *export_record(const QJDnsRecord &in)
 {
 	jdns_rr_t *out = jdns_rr_new();
 
@@ -251,14 +258,14 @@ QJDns::NameServer::NameServer()
 //----------------------------------------------------------------------------
 // QJDns::Record
 //----------------------------------------------------------------------------
-QJDns::Record::Record()
+QJDnsRecord::QJDnsRecord()
 {
 	ttl = 0;
 	type = -1;
 	haveKnown = false;
 }
 
-bool QJDns::Record::verify() const
+bool QJDnsRecord::verify() const
 {
 	jdns_rr_t *rr = export_record(*this);
 	int ok = jdns_rr_verify(rr);
@@ -300,7 +307,7 @@ public:
 	{
 	public:
 		int id;
-		QJDns::Response response;
+		QJDnsResponse response;
 		bool do_cancel;
 	};
 
@@ -531,7 +538,7 @@ public:
 				}
 				else
 				{
-					QJDns::Response out_response;
+					QJDnsResponse out_response;
 					for(int n = 0; n < e->response->answerCount; ++n)
 						out_response.answerRecords += import_record(e->response->answerRecords[n]);
 					LateResponse lr;
@@ -1012,7 +1019,7 @@ void QJDns::queryCancel(int id)
 	d->process();
 }
 
-int QJDns::publishStart(PublishMode m, const Record &record)
+int QJDns::publishStart(PublishMode m, const QJDnsRecord &record)
 {
 	jdns_rr_t *rr = export_record(record);
 
@@ -1028,7 +1035,7 @@ int QJDns::publishStart(PublishMode m, const Record &record)
 	return id;
 }
 
-void QJDns::publishUpdate(int id, const Record &record)
+void QJDns::publishUpdate(int id, const QJDnsRecord &record)
 {
 	jdns_rr_t *rr = export_record(record);
 
