@@ -44,6 +44,7 @@ public:
   virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}
   void setServerData(const ServerData &data);
+  void startReconnectTimer();
 
   AbstractClient::ClientState clientState;   ///< Состояние клиента.
   AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.

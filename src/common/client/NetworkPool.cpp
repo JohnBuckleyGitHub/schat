@@ -23,6 +23,7 @@
 NetworkPool::NetworkPool(AbstractClient *client)
   : QObject(client)
   , m_client(client)
+  , m_last(-1)
   , m_current(-1)
   , m_jdns(0)
 {
@@ -31,11 +32,18 @@ NetworkPool::NetworkPool(AbstractClient *client)
 
 bool NetworkPool::open(const QUrl &url)
 {
+  if (url.port() != -1)
+    return false;
+
+  if (isPrivateNet(url.host()))
+    return false;
+
   if (m_url != url) {
     m_current = -1;
     m_urls.clear();
   }
 
+  m_last = -1;
   m_url = url;
   dns();
 
@@ -53,12 +61,37 @@ bool NetworkPool::open(const QUrl &url)
 }
 
 
+QUrl NetworkPool::last() const
+{
+  if (m_last == -1 || m_last >= m_urls.size())
+    return next();
+
+  return m_urls.at(m_last);
+}
+
+
+QUrl NetworkPool::next() const
+{
+  if (m_urls.isEmpty())
+    return m_url;
+
+  if (m_urls.size() == 1)
+    return m_urls.at(0);
+
+  m_current++;
+  if (m_current == m_urls.size())
+    m_current = 0;
+
+  return m_urls.at(m_current);
+}
+
+
 /*!
  * Получение адреса случайного сервера.
  */
 QUrl NetworkPool::random() const
 {
-  if (m_url.isEmpty())
+  if (m_urls.isEmpty())
     return m_url;
 
   if (m_urls.size() == 1)
@@ -76,16 +109,50 @@ QUrl NetworkPool::random() const
 }
 
 
+bool NetworkPool::isPrivateNet(const QString &host)
+{
+  QHostAddress addr(host);
+
+  if (addr.isNull())
+    return false;
+
+  if (host.startsWith(QLatin1String("10.")))
+    return true;
+
+  if (host.startsWith(QLatin1String("172.16.")))
+    return true;
+
+  if (host.startsWith(QLatin1String("192.168.")))
+    return true;
+
+  if (host.startsWith(QLatin1String("127.")))
+    return true;
+
+  return false;
+}
+
+
+void NetworkPool::reset()
+{
+  m_url.clear();
+  m_urls.clear();
+  m_current = -1;
+  m_last = -1;
+}
+
+
 void NetworkPool::error(int id, int e)
 {
-  qDebug() << "NetworkPool::dnsError()" << e;
   m_jdns->shutdown();
+
+  QUrl url = m_url;
+  url.setPort(Protocol::DefaultPort);
+  m_client->openUrl(url, m_client->cookie(), AbstractClient::NoOptions);
 }
 
 
 void NetworkPool::ready(int id, const QJDnsResponse &results)
 {
-  qDebug() << "NetworkPool::dnsReady()";
   for (int i = 0; i < results.answerRecords.count(); ++i) {
     QJDnsRecord r = results.answerRecords.at(i);
 
@@ -98,10 +165,6 @@ void NetworkPool::ready(int id, const QJDnsResponse &results)
         m_urls.append(url);
     }
   }
-
-//  for (int i = 0; i < 99; ++i) {
-//    qDebug() << random();
-//  }
 
   m_jdns->shutdown();
   m_client->openUrl(random(), m_client->cookie(), AbstractClient::NoOptions);
