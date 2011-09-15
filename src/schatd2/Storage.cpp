@@ -194,7 +194,7 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
 QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 {
   QString prefix;
-  if (type == AuthRequestData::Anonymous)
+  if (type == AuthRequestData::Anonymous || type == AuthRequestData::Cookie)
     prefix = QLatin1String("anonymous:");
   else if (type == AuthRequestData::SlaveNode)
     prefix = QLatin1String("slave:");
