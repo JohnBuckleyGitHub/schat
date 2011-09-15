@@ -51,6 +51,16 @@ BypassSlaveCookieAuth::BypassSlaveCookieAuth(SlaveNode *node)
 }
 
 
+AuthResult BypassSlaveCookieAuth::auth(const AuthRequestData &data)
+{
+  AuthResult result = SlaveAnonymousAuth::auth(data);
+  if (result.action == AuthResult::Pending && SimpleID::typeOf(data.cookie) == SimpleID::CookieId)
+    m_node->setPendingCookie(result.id, data.cookie);
+
+  return result;
+}
+
+
 int BypassSlaveCookieAuth::type() const
 {
   return AuthRequestData::Cookie;
