@@ -67,7 +67,7 @@ bool SlaveNode::add(ChatUser user, int authType)
   }
 
   m_pending[user->id()] = user;
-  if (authType == AuthRequestData::Cookie)
+  if (authType == AuthRequestData::Cookie && !user->cookie().isEmpty())
     m_pending[user->cookie()] = user;
 
   QList<QByteArray> packets;
@@ -83,6 +83,17 @@ int SlaveNode::start()
 {
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
+}
+
+
+void SlaveNode::setPendingCookie(const QByteArray &id, const QByteArray &cookie)
+{
+  ChatUser user = m_pending.value(id);
+  if (!user)
+    return;
+
+  user->setCookie(cookie);
+  m_pending[cookie] = user;
 }
 
 
@@ -358,7 +369,9 @@ void SlaveNode::uplinkAuthReply()
       return;
   }
 
+  QByteArray id = user->id();
   int option = 0;
+
   if (data.status == AuthReplyData::AccessGranted) {
     option = NewPacketsEvent::AuthorizeSocketOption;
     user->setId(data.userId);
@@ -374,9 +387,13 @@ void SlaveNode::uplinkAuthReply()
 
   if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse) {
     m_storage->remove(user);
-    m_pending.remove(user->id());
-    m_pending.remove(user->cookie());
     option = NewPacketsEvent::KillSocketOption;
+  }
+
+  if (data.error != AuthReplyData::NickAlreadyUse) {
+    m_pending.remove(user->id());
+    m_pending.remove(id);
+    m_pending.remove(user->cookie());
   }
 
   m_timestamp = m_uplink->timestamp();

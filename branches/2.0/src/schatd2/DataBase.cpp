@@ -152,7 +152,8 @@ qint64 DataBase::add(ChatUser user)
     return key;
   }
 
-  user->setCookie(Storage::i()->cookie());
+  if (user->cookie().isEmpty())
+    user->setCookie(Storage::i()->cookie());
 
   QSqlQuery query;
   query.prepare(QLatin1String("INSERT INTO users (userId, cookie, nick, normalNick, gender, host, userAgent) "

@@ -40,6 +40,7 @@ public:
   inline AbstractClient *uplink() { return m_uplink; }
   inline Mode mode() const { return m_mode; }
   int start();
+  void setPendingCookie(const QByteArray &id, const QByteArray &cookie);
 
 protected:
   bool command();
