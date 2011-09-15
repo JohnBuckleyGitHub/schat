@@ -21,6 +21,7 @@
 #include "events.h"
 #include "MasterNode.h"
 #include "net/PacketReader.h"
+#include "net/packets/auth.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/ServerData.h"
@@ -62,12 +63,16 @@ void MasterNode::acceptAuth(const AuthResult &result)
   if (!user)
     return;
 
-  if (m_hosts.contains(result.id)) {
-    user->setHost(m_hosts.value(result.id));
-    m_hosts.remove(result.id);
-  }
-
   if (m_storage->isSlave(m_packetsEvent->userId())) {
+    QByteArray id = result.id;
+    if (!m_hosts.contains(id))
+      id = m_storage->makeUserId(AuthRequestData::Anonymous, user->uniqueId());
+
+    if (m_hosts.contains(id)) {
+      user->setHost(m_hosts.value(id));
+      m_hosts.remove(id);
+    }
+
     ChatUser slave = Storage::i()->user(m_packetsEvent->userId());
     if (slave)
       user->setServerNumber(slave->rawGender());
