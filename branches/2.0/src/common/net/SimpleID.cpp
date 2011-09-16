@@ -19,7 +19,9 @@
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QCryptographicHash>
+#include <QFile>
 #include <QNetworkInterface>
+#include <QSettings>
 #include <QSysInfo>
 #include <QUuid>
 
@@ -119,7 +121,7 @@ QString SimpleID::userAgent()
   #if defined(Q_OS_FREEBSD)
   out += QLatin1String("FreeBSD");
   #elif defined(Q_OS_LINUX)
-  out += QLatin1String("Linux");
+  out += linuxType();
 
   #elif defined(Q_OS_MAC)
   out += QLatin1String("Mac OS X");
@@ -169,3 +171,29 @@ QString SimpleID::userAgent()
 
   return out;
 }
+
+
+#if defined(Q_OS_LINUX)
+QString SimpleID::linuxType()
+{
+  QString out = QLatin1String("Linux");
+
+  if (QFile::exists(QLatin1String("/etc/lsb-release"))) { // Ubuntu Linux
+    QSettings s(QLatin1String("/etc/lsb-release"), QSettings::IniFormat);
+    QString tmp = s.value(QLatin1String("DISTRIB_ID")).toString();
+    if (tmp.isEmpty())
+      return out;
+
+    out = tmp;
+    tmp = s.value(QLatin1String("DISTRIB_RELEASE")).toString();
+    qDebug() << tmp;
+    if (!tmp.isEmpty())
+      out += QLatin1String(" ") + tmp;
+  }
+  else if (QFile::exists(QLatin1String("/etc/gentoo-release"))) {
+    return QLatin1String("Gentoo Linux");
+  }
+
+  return out;
+}
+#endif
