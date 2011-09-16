@@ -124,6 +124,7 @@ public:
 
   // m_groups
   inline QStringList groups() const { return m_groups; }
+  inline void setGroups(const QString &groups) { m_groups = groups.split(QLatin1String(","), QString::SkipEmptyParts); }
   inline void setGroups(const QStringList &groups) { m_groups = groups; }
 
 protected:
