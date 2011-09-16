@@ -506,6 +506,7 @@ void Core::acceptAuth(const AuthResult &result)
   if (result.packet)
     packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data(), user->cookie())).data());
 
+  packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
   send(user, packets, result.option);
 
   if (m_plugins) {

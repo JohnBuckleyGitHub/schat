@@ -76,7 +76,6 @@ bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
   if (reply.status == AuthReplyData::AccessGranted) {
     q->setAuthorized(reply.userId);
     user->setId(reply.userId);
-    user->setHost(reply.host);
     user->setServerNumber(reply.serverData.number());
     cookie = reply.cookie;
     pool->setLast();
