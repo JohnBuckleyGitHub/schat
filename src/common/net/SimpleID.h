@@ -51,6 +51,10 @@ public:
   static QByteArray uniqueId();
   static QString userAgent();
 
+# if defined(Q_OS_LINUX)
+  static QString linuxType();
+# endif
+
 private:
   static QString m_userAgent;
 };
