@@ -29,6 +29,7 @@ User::User()
   , m_serverNumber(0)
 {
   m_channels.append(m_id);
+  m_groups.append(QLatin1String("regular"));
 }
 
 
@@ -40,6 +41,7 @@ User::User(const QString &nick)
 {
   setNick(nick);
   m_channels.append(m_id);
+  m_groups.append(QLatin1String("regular"));
 }
 
 
@@ -54,6 +56,7 @@ User::User(const User *other)
   , m_userAgent(other->userAgent())
   , m_serverNumber(other->serverNumber())
 {
+  m_groups.append(QLatin1String("regular"));
 }
 
 

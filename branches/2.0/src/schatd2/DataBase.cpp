@@ -61,7 +61,7 @@ ChatUser DataBase::user(qint64 id)
 {
   qDebug() << "DataBase::user()" << id;
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT userId, cookie, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
@@ -71,11 +71,12 @@ ChatUser DataBase::user(qint64 id)
   ChatUser user(new ServerUser(query.value(0).toByteArray()));
   user->setKey(id);
   user->setCookie(query.value(1).toByteArray());
-  user->setNick(query.value(2).toString());
-  user->setNormalNick(query.value(3).toString());
-  user->setRawGender(query.value(4).toInt());
-  user->setHost(query.value(5).toString());
-  user->setUserAgent(query.value(6).toString());
+  user->setGroups(query.value(2).toString().split(QLatin1String(","), QString::SkipEmptyParts));
+  user->setNick(query.value(3).toString());
+  user->setNormalNick(query.value(4).toString());
+  user->setRawGender(query.value(5).toInt());
+  user->setHost(query.value(6).toString());
+  user->setUserAgent(query.value(7).toString());
 
   return user;
 }
@@ -98,7 +99,7 @@ int DataBase::start()
     "  id         INTEGER PRIMARY KEY,"
     "  userId     BLOB    NOT NULL UNIQUE,"
     "  cookie     BLOB    NOT NULL UNIQUE,"
-    "  [group]    INTEGER DEFAULT ( 4 ),"
+    "  groups     TEXT,"
     "  nick       TEXT,"
     "  normalNick TEXT,"
     "  gender     INTEGER DEFAULT ( 0 ),"
@@ -110,16 +111,14 @@ int DataBase::start()
   if (!tables.contains(QLatin1String("groups"))) {
     query.exec(QLatin1String(
     "CREATE TABLE groups ( "
-    "  id    INTEGER PRIMARY KEY,"
-    "  name  TEXT    UNIQUE,"
-    "  allow INTEGER DEFAULT ( 0 ),"
-    "  deny  INTEGER DEFAULT ( 0 )"
+    "  id      INTEGER PRIMARY KEY,"
+    "  name    TEXT    NOT NULL UNIQUE ,"
+    "  allow   INTEGER DEFAULT ( 0 ),"
+    "  deny    INTEGER DEFAULT ( 0 )"
     ");"));
 
-    addGroup("admin");
-    addGroup("moderator");
-    addGroup("user");
-    addGroup("anonymous");
+    addGroup(QLatin1String("master"));
+    addGroup(QLatin1String("regular"));
   }
 
   return 0;
@@ -156,11 +155,12 @@ qint64 DataBase::add(ChatUser user)
     user->setCookie(Storage::i()->cookie());
 
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO users (userId, cookie, nick, normalNick, gender, host, userAgent) "
-                     "VALUES (:userId, :cookie, :nick, :normalNick, :gender, :host, :userAgent);"));
+  query.prepare(QLatin1String("INSERT INTO users (userId, cookie, groups, nick, normalNick, gender, host, userAgent) "
+                     "VALUES (:userId, :cookie, :groups, :nick, :normalNick, :gender, :host, :userAgent);"));
 
   query.bindValue(QLatin1String(":userId"),     user->id());
   query.bindValue(QLatin1String(":cookie"),     user->cookie());
+  query.bindValue(QLatin1String(":groups"),     user->groups().join(QLatin1String(",")));
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"),     user->rawGender());
@@ -185,10 +185,10 @@ qint64 DataBase::add(ChatUser user)
 qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO groups (name, allow, deny) VALUES (?, ?, ?);"));
-  query.addBindValue(name);
-  query.addBindValue(allow);
-  query.addBindValue(deny);
+  query.prepare(QLatin1String("INSERT INTO groups (name, allow, deny) VALUES (:name, :allow, :deny);"));
+  query.bindValue(QLatin1String(":name"), name);
+  query.bindValue(QLatin1String(":allow"), allow);
+  query.bindValue(QLatin1String(":deny"), deny);
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -230,8 +230,9 @@ qint64 DataBase::userKey(const QByteArray &id)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
+  query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, groups = :groups, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
   query.bindValue(QLatin1String(":cookie"), user->cookie());
+  query.bindValue(QLatin1String(":groups"), user->groups().join(QLatin1String(",")));
   query.bindValue(QLatin1String(":nick"), user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"), user->rawGender());
