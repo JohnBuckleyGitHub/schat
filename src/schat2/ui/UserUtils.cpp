@@ -240,7 +240,8 @@ QString UserUtils::toolTip(ClientUser user)
   out += Qt::escape(user->host()) + "<br />";
   out += Qt::escape(user->userAgent()) + "<br />";
   out += statusTitle(user->status()) + " " + Qt::escape(user->statusText()) + "<br />";
-  out += QString("Server: %1").arg(user->serverNumber());
+  out += QString("Server: %1").arg(user->serverNumber()) + "<br />";
+  out += QString("Groups: %1").arg(user->groups().join(","));
 
   return out;
 }

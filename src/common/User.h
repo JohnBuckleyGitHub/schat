@@ -21,6 +21,8 @@
 
 #include <QHash>
 #include <QSharedPointer>
+#include <QStringList>
+
 #include "schat.h"
 
 /*!
@@ -120,6 +122,10 @@ public:
   static QString statusToString(int status, const QString &text);
   void setStatus(int status, const QString &text);
 
+  // m_groups
+  inline QStringList groups() const { return m_groups; }
+  inline void setGroups(const QStringList &groups) { m_groups = groups; }
+
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
@@ -132,6 +138,7 @@ protected:
   QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.
+  QStringList m_groups;                 ///< Группы в которых находится пользователь
   quint8 m_serverNumber;                ///< Номер сервера.
 };
 
