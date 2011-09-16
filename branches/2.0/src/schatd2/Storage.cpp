@@ -278,6 +278,12 @@ void Storage::rename(ChatUser user)
 }
 
 
+void Storage::store(ChatUser user)
+{
+  m_db->add(user);
+}
+
+
 void Storage::update(ChatUser user)
 {
   m_db->update(user);

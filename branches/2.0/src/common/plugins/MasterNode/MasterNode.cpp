@@ -24,6 +24,7 @@
 #include "net/packets/auth.h"
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
+#include "net/packets/users.h"
 #include "net/ServerData.h"
 #include "SlaveAuth.h"
 #include "Storage.h"
@@ -81,6 +82,13 @@ void MasterNode::acceptAuth(const AuthResult &result)
     r.option = 0;
     Core::acceptAuth(r);
     return;
+  }
+  else {
+    QList<QByteArray> slaves = m_storage->slaves();
+    if (!slaves.isEmpty()) {
+      UserWriter writer(m_sendStream, user.data(), slaves, user->cookie());
+      send(m_storage->socketsFromIds(slaves), writer.data());
+    }
   }
 
   Core::acceptAuth(result);

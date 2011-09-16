@@ -65,6 +65,22 @@ UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId
 }
 
 
+/*!
+ * Специальный конструктор для передачи данных пользователя и авторизационной информации.
+ *
+ * \param stream  ///< Поток записи.
+ * \param user    ///< Пользователь.
+ * \param destId  ///< Идентификатор назначения.
+ * \param options ///< Опции.
+ */
+UserWriter::UserWriter(QDataStream *stream, User *user, const QList<QByteArray> dest, const QByteArray &cookie)
+  : PacketWriter(stream, Protocol::UserDataPacket, user->id(), dest)
+{
+  write(user, StaticData | AuthData);
+  putId(cookie);
+}
+
+
 void UserWriter::write(User *user, int options)
 {
   put<quint8>(options);
@@ -100,4 +116,7 @@ UserReader::UserReader(PacketReader *reader)
   }
   else if (user.status() == User::OfflineStatus)
     user.setStatus(User::OnlineStatus);
+
+  if (options & UserWriter::AuthData)
+    cookie = reader->id();
 }
