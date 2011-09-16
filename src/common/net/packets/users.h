@@ -40,13 +40,15 @@ class SCHAT_EXPORT UserWriter : public PacketWriter
 public:
   /// Опции данных.
   enum Options {
-    NoOptions,
-    StaticData ///< Пакет содержит не изменяемую информацию о пользователе, например UserAgent, адрес и т.д.
+    NoOptions = 0,
+    StaticData = 1, ///< Пакет содержит не изменяемую информацию о пользователе, например UserAgent, адрес и т.д.
+    AuthData = 2    ///< Пакет содержит авторизационную информацию.
   };
 
   UserWriter(QDataStream *stream, User *user);
   UserWriter(QDataStream *stream, User *user, const QByteArray &destId, const QByteArray &channelId, int options);
   UserWriter(QDataStream *stream, User *user, const QByteArray &destId, int options);
+  UserWriter(QDataStream *stream, User *user, const QList<QByteArray> dest, const QByteArray &cookie);
 
 private:
   void write(User *user, int options);
@@ -63,6 +65,7 @@ public:
 
   quint8 options;
   User user;
+  QByteArray cookie;
 };
 
 #endif /* USERS_H_ */

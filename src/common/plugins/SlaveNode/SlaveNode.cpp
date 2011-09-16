@@ -445,6 +445,15 @@ void SlaveNode::uplinkReadUserData()
 
     updateUserData(user, &reader.user);
   }
+  else if (m_uplink->reader()->sender() != m_uplink->userId() && m_uplink->reader()->destinations().contains(m_uplink->userId())) {
+    UserReader reader(m_uplink->reader());
+    if (reader.user.isValid()) {
+      ChatUser user(new ServerUser(&reader.user));
+      user->setCookie(reader.cookie);
+      user->setNormalNick(m_storage->normalize(user->nick()));
+      m_storage->store(user);
+    }
+  }
 
   uplinkRoute();
 }

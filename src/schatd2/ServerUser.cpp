@@ -46,6 +46,12 @@ ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const Au
 }
 
 
+ServerUser::ServerUser(const User *user)
+  : User(user)
+{
+}
+
+
 ServerUser::~ServerUser()
 {
   SCHAT_DEBUG_STREAM("~" << this)
