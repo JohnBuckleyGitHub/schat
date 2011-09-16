@@ -41,7 +41,6 @@ AuthReplyData::AuthReplyData(ServerData *data, User *user, const QByteArray &coo
   , status(AccessGranted)
   , cookie(cookie)
   , protoVersion(Protocol::V4_0)
-  , host(user->host())
   , error(NoError)
 {
   serverData.setId(data->id());
@@ -69,7 +68,6 @@ AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
       putId(data.serverData.channelId());
 
     put(data.serverData.name());
-    put(data.host);
   }
   else {
     put(data.error);
@@ -96,7 +94,6 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
       data.serverData.setChannelId(reader->id());
 
     data.serverData.setName(reader->text());
-    data.host = reader->text();
   }
   else {
     data.error = reader->get<quint8>();

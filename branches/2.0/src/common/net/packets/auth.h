@@ -51,8 +51,7 @@ public:
   };
 
   AuthReplyData()
-  : status(0)
-  , error(0)
+  : error(0)
   {}
 
   AuthReplyData(ServerData *data, int error);
@@ -62,7 +61,6 @@ public:
   quint8 status;         ///< Статус авторизации \sa Status.
   QByteArray cookie;     ///< Cookie.
   quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
-  QString host;          ///< Адрес пользователя.
   quint8 error;          ///< Код ошибки \sa Error.
   ServerData serverData; ///< Данные о сервере.
 };
@@ -78,7 +76,7 @@ public:
  *
  * Дальнейшие данные различны в зависимости от статуса.
  * Если статус AccessGranted:
- * - 21 byte  - Сессия.
+ * - 21 byte  - Cookie.
  * - 01 byte  - Версия протокола.
  * - 02 bytes - Разрешающие разрешения.
  * - 02 bytes - Запрещающие разрешения.

@@ -54,11 +54,9 @@ void SimpleClientPrivate::clearClient()
 bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
 {
   if (AbstractClientPrivate::readAuthReply(reply)) {
-    Q_Q(SimpleClient);
     ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
     addChannel(channel);
 
-    emit(q->userDataChanged(user->id()));
     return true;
   }
 
@@ -479,10 +477,11 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
   existUser->setRawGender(user->rawGender());
   existUser->setStatus(user->status());
 
-  if (reader.options && UserWriter::StaticData) {
+  if (reader.options & UserWriter::StaticData) {
     existUser->setUserAgent(user->userAgent());
     existUser->setHost(user->host());
     existUser->setServerNumber(user->serverNumber());
+    existUser->setGroups(user->groups());
   }
 
   emit(q->userDataChanged(existUser->id()));
