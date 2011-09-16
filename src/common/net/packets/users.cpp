@@ -77,6 +77,7 @@ void UserWriter::write(User *user, int options)
     put(user->userAgent());
     put(user->host());
     put(user->serverNumber());
+    put(user->groups().join(QLatin1String(",")));
   }
 }
 
@@ -95,6 +96,7 @@ UserReader::UserReader(PacketReader *reader)
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
     user.setServerNumber(reader->get<quint8>());
+    user.setGroups(reader->text());
   }
   else if (user.status() == User::OfflineStatus)
     user.setStatus(User::OnlineStatus);

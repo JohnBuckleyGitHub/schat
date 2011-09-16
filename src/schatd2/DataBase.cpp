@@ -71,7 +71,7 @@ ChatUser DataBase::user(qint64 id)
   ChatUser user(new ServerUser(query.value(0).toByteArray()));
   user->setKey(id);
   user->setCookie(query.value(1).toByteArray());
-  user->setGroups(query.value(2).toString().split(QLatin1String(","), QString::SkipEmptyParts));
+  user->setGroups(query.value(2).toString());
   user->setNick(query.value(3).toString());
   user->setNormalNick(query.value(4).toString());
   user->setRawGender(query.value(5).toInt());
