@@ -42,5 +42,16 @@ DEFINES += SCHAT_WEBKIT
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
+unix {
+  pixmaps.files = ../../data/images/schat2.png
+  pixmaps.path = $$SCHAT_PREFIX/usr/share/pixmaps
+
+  applications.files = ../../os/ubuntu/schat2.desktop
+  applications.path = $$SCHAT_PREFIX/usr/share/applications
+  
+  target.path += $$SCHAT_PREFIX/usr/bin
+  INSTALLS += target pixmaps applications
+}
+
 include(../common/common.pri)
 

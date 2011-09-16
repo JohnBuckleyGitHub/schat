@@ -120,6 +120,8 @@ void NetworkPool::reset()
 
 void NetworkPool::error(int id, int e)
 {
+  Q_UNUSED(id)
+  Q_UNUSED(e)
   m_jdns->shutdown();
 
   QUrl url = m_url;
@@ -130,6 +132,8 @@ void NetworkPool::error(int id, int e)
 
 void NetworkPool::ready(int id, const QJDnsResponse &results)
 {
+  Q_UNUSED(id)
+
   for (int i = 0; i < results.answerRecords.count(); ++i) {
     QJDnsRecord r = results.answerRecords.at(i);
 
