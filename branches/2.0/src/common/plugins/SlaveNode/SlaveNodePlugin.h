@@ -31,6 +31,7 @@ public:
   Core *init();
   QString id() const { return QLatin1String("SlaveNode"); }
   QString name() const { return QLatin1String("SlaveNode Kernel"); }
+  QString version() const { return QLatin1String("1.0.0"); }
   QStringList provides() const { return QStringList(id()); }
 };
 
