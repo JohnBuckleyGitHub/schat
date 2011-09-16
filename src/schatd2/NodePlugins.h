@@ -36,6 +36,7 @@ public:
   Core *kernel();
   HookResult hook(const NodeHook &data);
   inline bool has(NodeHook::Type type) { return m_hooks.contains(type); }
+  inline void removeHook(NodeHook::Type type) { m_hooks.remove(type); }
 
 protected:
   void init();

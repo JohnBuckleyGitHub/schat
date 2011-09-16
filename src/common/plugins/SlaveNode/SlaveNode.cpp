@@ -26,6 +26,7 @@
 #include "net/packets/message.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
+#include "NodePlugins.h"
 #include "Settings.h"
 #include "SlaveAnonymousAuth.h"
 #include "SlaveCookieAuth.h"
@@ -81,6 +82,7 @@ bool SlaveNode::add(ChatUser user, int authType)
 
 int SlaveNode::start()
 {
+  m_plugins->removeHook(NodeHook::OfflineDelivery);
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
 }
