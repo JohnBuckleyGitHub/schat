@@ -1,3 +1,4 @@
+#!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
@@ -15,22 +16,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_DAEMON_LIB = 1
-QT = core network
-
-HEADERS  = \
-   MasterNode.h \
-   MasterNodePlugin.h \
-   SlaveAuth.h \
-
-SOURCES  = \
-   MasterNode.cpp \
-   MasterNodePlugin.cpp \
-   SlaveAuth.cpp \
-   
-unix {
-  target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
-  INSTALLS += target
+function build() {
+  local target=$1
+  mkdir debian
+  cp -fr ../os/ubuntu/$target/* debian
+  cp -f $target.pro src.pro
+  cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
+  dpkg-buildpackage
+  rm -Rf debian
 }
 
-include(../plugins.pri)
+cd ../../src
+
+build "schatd2"
+
+cp -f ../*.deb ../os/ubuntu/deb

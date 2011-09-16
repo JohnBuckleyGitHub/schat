@@ -29,5 +29,10 @@ SOURCES  = \
    SlaveCookieAuth.cpp \
    SlaveNode.cpp \
    SlaveNodePlugin.cpp \
+   
+unix {
+  target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
+  INSTALLS += target
+}
 
 include(../plugins.pri)

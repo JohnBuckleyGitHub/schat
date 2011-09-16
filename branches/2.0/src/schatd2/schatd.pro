@@ -58,4 +58,9 @@ TRANSLATIONS += ../../data/translations/schatd-lib_en.ts
 TRANSLATIONS += ../../data/translations/schatd-lib_ru.ts
 CODECFORTR = UTF-8
 
+unix {
+  target.path += $$SCHAT_PREFIX/usr/lib
+  INSTALLS += target
+}
+
 include(../common/common.pri)
