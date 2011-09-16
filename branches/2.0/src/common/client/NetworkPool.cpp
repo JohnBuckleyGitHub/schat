@@ -55,7 +55,7 @@ bool NetworkPool::open(const QUrl &url)
     addrs.append(QJDns::NameServer(QHostAddress("208.67.222.222")));
 
   m_jdns->setNameServers(addrs);
-  m_jdns->queryStart(QUrl::toAce(QLatin1String("_schat._tcp.") + url.host()), QJDns::Srv);
+  m_jdns->queryStart("_schat._tcp." + url.host().toLatin1(), QJDns::Srv);
 
   return true;
 }
