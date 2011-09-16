@@ -1,4 +1,3 @@
-#!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
@@ -16,19 +15,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-function build() {
-  local target=$1
-  mkdir debian
-  cp -fr ../os/ubuntu/$target/* debian
-  cp -f $target.pro src.pro
-  cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
-  dpkg-buildpackage
-  rm -Rf debian
-}
-
-cd ../../src
-
-build "schatd2"
-build "schat2"
-
-cp -f ../*.deb ../os/ubuntu/deb
+CONFIG   += ordered
+TEMPLATE = subdirs
+SUBDIRS  = \
+    client \
+    schat2/schat2-core.pro \
+    schat2 \
+    common/plugins/History \

@@ -25,5 +25,10 @@ TARGET = schat-client
 DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = client.rc
 
+unix {
+  target.path += $$SCHAT_PREFIX/usr/lib
+  INSTALLS += target
+}
+
 include(../common/client.pri)
 include(../common/common.pri)

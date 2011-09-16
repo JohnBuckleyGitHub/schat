@@ -30,4 +30,9 @@ SOURCES  = \
    HistoryPlugin.cpp \
    HistoryUserMessage.cpp \
 
+unix {
+  target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
+  INSTALLS += target
+}
+
 include(../plugins.pri)
