@@ -23,6 +23,7 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
+#include "ui/tabs/ChannelBar.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
@@ -34,10 +35,22 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   , m_channel(channel)
   , m_client(ChatCore::i()->client())
 {
+  m_bar = new ChannelBar(this);
+  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
+
   m_userView = new UserView(this);
 
+  m_leftLayout = new QVBoxLayout(this);
+  m_leftLayout->addWidget(m_bar);
+  m_leftLayout->addWidget(m_chatView);
+  m_leftLayout->setMargin(0);
+  m_leftLayout->setSpacing(0);
+
+  QWidget *left = new QWidget(this);
+  left->setLayout(m_leftLayout);
+
   m_splitter = new QSplitter(this);
-  m_splitter->addWidget(m_chatView);
+  m_splitter->addWidget(left);
   m_splitter->addWidget(m_userView);
   m_splitter->setStretchFactor(0, 1);
   m_splitter->setStretchFactor(1, 1);
