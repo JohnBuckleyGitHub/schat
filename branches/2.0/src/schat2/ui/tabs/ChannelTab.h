@@ -23,8 +23,10 @@
 #include "ui/tabs/ChatViewTab.h"
 #include "User.h"
 
+class ChannelBar;
 class ChatView;
 class QSplitter;
+class QVBoxLayout;
 class SimpleClient;
 class UserView;
 
@@ -52,8 +54,10 @@ private:
   void displayUserCount();
 
   bool m_userCount;
+  ChannelBar *m_bar;
   ClientChannel m_channel;
   QSplitter *m_splitter;
+  QVBoxLayout *m_leftLayout;
   SimpleClient *m_client;
   UserView *m_userView;
 };
