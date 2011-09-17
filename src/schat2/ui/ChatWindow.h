@@ -41,7 +41,6 @@ protected:
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
   void resizeEvent(QResizeEvent *event);
-  void showEvent(QShowEvent *event);
   #if defined(Q_WS_WIN)
   bool winEvent(MSG *message, long *result);
   #endif

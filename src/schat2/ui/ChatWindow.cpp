@@ -126,26 +126,14 @@ void ChatWindow::keyPressEvent(QKeyEvent *event)
 }
 
 
-/*!
- * \bug Имеются проблемы с опцией "Maximized" при использовании команды /set.
- */
 void ChatWindow::resizeEvent(QResizeEvent *event)
 {
   if (!SCHAT_OPTION("Maximized").toBool()) {
-    m_settings->setValue(QLatin1String("Width"), width());
-    m_settings->setValue(QLatin1String("Height"), height());
+    m_settings->setValue(QLatin1String("Width"), width(), false);
+    m_settings->setValue(QLatin1String("Height"), height(), false);
   }
 
   QMainWindow::resizeEvent(event);
-}
-
-
-void ChatWindow::showEvent(QShowEvent *event)
-{
-//  if (!isMaximized()) {
-//    resize(SCHAT_OPTION(Width).toInt(), SCHAT_OPTION(Height).toInt());
-//  }
-  QMainWindow::showEvent(event);
 }
 
 
@@ -225,7 +213,7 @@ void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 void ChatWindow::hideChat()
 {
   SCHAT_DEBUG_STREAM(this << "hideChat()")
-  m_settings->setValue(QLatin1String("Maximized"), isMaximized());
+  m_settings->setValue(QLatin1String("Maximized"), isMaximized(), false);
   hide();
 }
 

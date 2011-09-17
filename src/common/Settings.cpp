@@ -43,7 +43,7 @@ void Settings::setDefault(const QString &key, const QVariant &value)
 }
 
 
-void Settings::setValue(const QString &key, const QVariant &value)
+void Settings::setValue(const QString &key, const QVariant &value, bool notify)
 {
   if (value == QSettings::value(key, m_default.value(key)))
     return;
@@ -53,6 +53,6 @@ void Settings::setValue(const QString &key, const QVariant &value)
   else
     QSettings::setValue(key, value);
 
-  emit changed(key, value);
-
+  if (notify)
+    emit changed(key, value);
 }
