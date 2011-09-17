@@ -84,7 +84,6 @@ private:
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   QHash<QByteArray, ChatChannel> m_channels;     ///< Таблица каналов.
-//  QHash<QByteArray, ChatUser> m_sessions;        ///< Таблица сессий. \deprecated m_sessions
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
   QHash<QString, ChatChannel> m_channelNames;    ///< Имена каналов.

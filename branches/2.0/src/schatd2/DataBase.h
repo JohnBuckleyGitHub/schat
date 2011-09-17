@@ -20,7 +20,6 @@
 #define DATABASE_H_
 
 #include <QObject>
-#include <QSqlDatabase>
 
 #include "ServerUser.h"
 
@@ -37,9 +36,6 @@ public:
   qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
   qint64 userKey(const QByteArray &id);
   void update(ChatUser user);
-
-private:
-  QSqlDatabase m_db;
 };
 
 #endif /* DATABASE_H_ */
