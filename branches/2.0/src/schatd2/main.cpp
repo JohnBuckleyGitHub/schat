@@ -30,9 +30,6 @@ int main(int argc, char *argv[])
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   app.setApplicationName(SCHAT_NAME);
   app.setApplicationVersion(SCHAT_VERSION);
-  app.addLibraryPath(app.applicationDirPath() + "/plugins/qt");
-
-  Worker::setDefaultSslConf(app.applicationDirPath() + "/server.crt", app.applicationDirPath() + "/server.key");
 
   NodeInit *init = new NodeInit();
   int result = app.exec();

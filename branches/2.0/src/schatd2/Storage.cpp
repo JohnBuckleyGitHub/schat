@@ -17,6 +17,9 @@
  */
 
 #include <QCryptographicHash>
+#include <QFile>
+#include <QSslConfiguration>
+#include <QSslKey>
 #include <QStringList>
 #include <QUuid>
 
@@ -56,10 +59,12 @@ Storage::Storage(QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
+  m_settings->setDefault(QLatin1String("Certificate"), QLatin1String("server.crt"));
   m_settings->setDefault(QLatin1String("Kernel"),      QString());
   m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
   m_settings->setDefault(QLatin1String("MainChannel"), QLatin1String("Main")); /// \deprecated Изменить создание и работу с основным каналом.
   m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::toBase64(SimpleID::uniqueId())));
+  m_settings->setDefault(QLatin1String("PrivateKey"),  QLatin1String("server.key"));
   m_settings->setDefault(QLatin1String("ServerName"),  QString());
 
   m_db = new DataBase(this);
@@ -68,10 +73,11 @@ Storage::Storage(QObject *parent)
 
 int Storage::start()
 {
+  setDefaultSslConf();
+
   m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
   m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
 
-  // FIXME Создание основного канала.
   QString mainChannel = m_settings->value(QLatin1String("MainChannel")).toString();
   if (!mainChannel.isEmpty()) {
     m_serverData->setChannelId(addChannel(mainChannel, true)->id());
@@ -451,4 +457,37 @@ QString Storage::normalize(const QString &text) const
 QByteArray Storage::makeChannelId(const QString &name)
 {
   return QCryptographicHash::hash(QString("channel:" + m_serverData->privateId() + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
+}
+
+
+void Storage::setDefaultSslConf()
+{
+# if !defined(SCHAT_NO_SSL)
+  if (!QSslSocket::supportsSsl())
+    return;
+
+  QString crtFile = m_locations->file(FileLocations::ConfigPath, m_settings->value(QLatin1String("Certificate")).toString());
+  if (crtFile.isEmpty())
+    return;
+
+  QString keyFile = m_locations->file(FileLocations::ConfigPath, m_settings->value(QLatin1String("PrivateKey")).toString());
+  if (crtFile.isEmpty())
+    return;
+
+  QSslConfiguration conf = QSslConfiguration::defaultConfiguration();
+
+  QFile file(crtFile);
+  if (file.open(QIODevice::ReadOnly)) {
+    conf.setLocalCertificate(QSslCertificate(&file));
+    file.close();
+  }
+
+  file.setFileName(keyFile);
+  if (file.open(QIODevice::ReadOnly)) {
+    conf.setPrivateKey(QSslKey(&file, QSsl::Rsa));
+    file.close();
+  }
+
+  QSslConfiguration::setDefaultConfiguration(conf);
+# endif
 }

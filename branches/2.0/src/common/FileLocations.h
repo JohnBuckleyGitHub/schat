@@ -50,7 +50,8 @@ public:
   };
 
   FileLocations(QObject *parent = 0);
-  QString path(Paths path) const { return m_paths.value(path); }
+  inline QString path(Paths path) const { return m_paths.value(path); }
+  QString file(Paths hint, const QString &name) const;
 
 private:
   QHash<Paths, QString> m_paths;

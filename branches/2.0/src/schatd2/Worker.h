@@ -33,7 +33,6 @@ class Worker : public QObject
 public:
   Worker(WorkerEventListener *listener, QObject *parent = 0);
   ~Worker();
-  static void setDefaultSslConf(const QString &crtFile, const QString &keyFile);
   bool start(const QString &listen);
 
 private slots:
