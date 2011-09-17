@@ -58,7 +58,7 @@ Storage::Storage(QObject *parent)
   m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
   m_settings->setDefault(QLatin1String("Kernel"),      QString());
   m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
-  m_settings->setDefault(QLatin1String("MainChannel"), QLatin1String("Main"));
+  m_settings->setDefault(QLatin1String("MainChannel"), QLatin1String("Main")); // \deprecated Изменить создание и работу с основным каналом.
   m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::toBase64(SimpleID::uniqueId())));
   m_settings->setDefault(QLatin1String("ServerName"),  QString());
 

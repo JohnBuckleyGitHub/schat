@@ -25,10 +25,10 @@
  * \param stream     output stream.
  * \param packets    raw virtual packets.
  * \param sequence   packet sequence.
+ * \param timestamp  отметка времени.
  * \param options    packet options.
  * \param type       packet type.
  * \param subversion packet subversion.
- * \param version    packet version.
  */
 TransportWriter::TransportWriter(QDataStream *stream, const QList<QByteArray> &packets, quint64 sequence, qint64 timestamp, quint8 options, quint8 type, quint8 subversion)
   : m_device(stream->device()),

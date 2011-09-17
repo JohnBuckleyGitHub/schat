@@ -70,8 +70,8 @@ UserWriter::UserWriter(QDataStream *stream, User *user, const QByteArray &destId
  *
  * \param stream  ///< Поток записи.
  * \param user    ///< Пользователь.
- * \param destId  ///< Идентификатор назначения.
- * \param options ///< Опции.
+ * \param dest    ///< Идентификаторы назначения.
+ * \param cookie  ///< Cookie.
  */
 UserWriter::UserWriter(QDataStream *stream, User *user, const QList<QByteArray> dest, const QByteArray &cookie)
   : PacketWriter(stream, Protocol::UserDataPacket, user->id(), dest)

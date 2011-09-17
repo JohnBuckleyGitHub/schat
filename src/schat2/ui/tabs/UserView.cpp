@@ -109,8 +109,7 @@ UserView::UserView(QWidget *parent)
 /*!
  * Добавление пользователя в список.
  *
- * \param user   Указатель на пользователя.
- * \param option \sa AddOptions.
+ * \param user Указатель на пользователя.
  */
 bool UserView::add(ClientUser user)
 {
