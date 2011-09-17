@@ -35,7 +35,7 @@ public:
   Settings(const QString &fileName, QObject *parent = 0);
   QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
   void setDefault(const QString &key, const QVariant &value);
-  void setValue(const QString &key, const QVariant &value);
+  void setValue(const QString &key, const QVariant &value, bool notify = true);
 
 signals:
   void changed(const QString &key, const QVariant &value);
