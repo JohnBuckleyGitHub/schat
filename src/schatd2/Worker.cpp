@@ -43,37 +43,6 @@ Worker::~Worker()
 }
 
 
-void Worker::setDefaultSslConf(const QString &crtFile, const QString &keyFile)
-{
-  #if !defined(SCHAT_NO_SSL)
-  if (!QSslSocket::supportsSsl())
-    return;
-
-  if (crtFile.isEmpty() || keyFile.isEmpty())
-    return;
-
-  QSslConfiguration conf = QSslConfiguration::defaultConfiguration();
-
-  QFile file(crtFile);
-  if (file.open(QIODevice::ReadOnly)) {
-    conf.setLocalCertificate(QSslCertificate(&file));
-    file.close();
-  }
-
-  file.setFileName(keyFile);
-  if (file.open(QIODevice::ReadOnly)) {
-    conf.setPrivateKey(QSslKey(&file, QSsl::Rsa));
-    file.close();
-  }
-
-  QSslConfiguration::setDefaultConfiguration(conf);
-  #else
-  Q_UNUSED(crtFile)
-  Q_UNUSED(keyFile)
-  #endif
-}
-
-
 bool Worker::start(const QString &listen)
 {
   int index = listen.lastIndexOf(QLatin1String(":"));

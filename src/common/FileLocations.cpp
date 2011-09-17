@@ -102,3 +102,20 @@ FileLocations::FileLocations(QObject *parent)
   qDebug() << "LogPath   " << path(LogPath);
   qDebug() << "---------------------------";
 }
+
+
+/*!
+ * Получение полного имени к файлу.
+ * Если \p name относительный путь к файлу, то будет использоваться
+ * подсказка \p hint для определения полного имени файла.
+ */
+QString FileLocations::file(Paths hint, const QString &name) const
+{
+  if (name.isEmpty())
+    return name;
+
+  if (!QFileInfo(name).isRelative())
+    return name;
+
+  return QDir::cleanPath(path(hint) + QLatin1String("/") + name);
+}

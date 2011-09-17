@@ -79,6 +79,7 @@ public:
 
 private:
   QByteArray makeChannelId(const QString &name);
+  void setDefaultSslConf();
 
   bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
   DataBase *m_db;                                ///< База данных сервера.

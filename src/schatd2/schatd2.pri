@@ -43,8 +43,12 @@ TRANSLATIONS += ../../data/translations/schatd2_ru.ts
 CODECFORTR = UTF-8
 
 unix {
+  ssl.files = ../../misc/tools/server.crt
+  ssl.files += ../../misc/tools/server.key
+  ssl.path = $$SCHAT_PREFIX/etc/schatd2
+  
   target.path += $$SCHAT_PREFIX/usr/sbin
-  INSTALLS += target
+  INSTALLS += target ssl
 }
 
 include(../common/common.pri)
