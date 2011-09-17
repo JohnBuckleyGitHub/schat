@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include <QDir>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -84,14 +85,18 @@ ChatUser DataBase::user(qint64 id)
 
 int DataBase::start()
 {
-  m_db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
-  m_db.setDatabaseName(Storage::i()->locations()->path(FileLocations::VarPath) + QLatin1String("/") + Storage::i()->locations()->path(FileLocations::BaseName) + QLatin1String(".sqlite"));
-  if (!m_db.open())
+  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
+  QDir dir(Storage::i()->locations()->path(FileLocations::VarPath));
+  if (!dir.exists())
+    dir.mkpath(dir.absolutePath());
+
+  db.setDatabaseName(dir.absolutePath() + QLatin1String("/") + Storage::i()->locations()->path(FileLocations::BaseName) + QLatin1String(".sqlite"));
+  if (!db.open())
     return -1;
 
   QSqlQuery query;
   query.exec(QLatin1String("PRAGMA synchronous = OFF"));
-  QStringList tables = m_db.tables();
+  QStringList tables = db.tables();
 
   if (!tables.contains(QLatin1String("users"))) {
     query.exec(QLatin1String(

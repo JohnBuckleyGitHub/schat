@@ -110,7 +110,6 @@ bool Storage::add(ChatUser user)
   m_db->add(user);
   m_users.insert(user->id(), user);
   m_nicks.insert(user->normalNick(), user);
-//  m_sessions.insert(user->session(), user); \deprecated m_sessions
   return true;
 }
 
@@ -153,8 +152,6 @@ bool Storage::remove(ChatUser user)
 
   m_users.remove(user->id());
   m_nicks.remove(user->normalNick());
-//  m_sessions.remove(user->session()); \deprecated m_sessions
-
   m_db->update(user);
 
   return true;
