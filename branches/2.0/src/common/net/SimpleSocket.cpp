@@ -157,7 +157,6 @@ bool SimpleSocketPrivate::transmit(const QByteArray &packet, quint8 options, qui
  * \param options    packet options.
  * \param type       packet type.
  * \param subversion packet subversion.
- * \param version    packet version.
  *
  * \return true если данные были записаны в сокет.
  */

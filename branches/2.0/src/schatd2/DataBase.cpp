@@ -55,7 +55,7 @@ ChatUser DataBase::user(const QByteArray &id)
 /*!
  * Поиск пользователя по ключу в таблице users.
  *
- * \param key Ключ в таблице users.
+ * \param id Ключ в таблице users.
  * \return Указатель на пользователя или 0 если он не был найден.
  */
 ChatUser DataBase::user(qint64 id)

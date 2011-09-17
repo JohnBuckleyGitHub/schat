@@ -99,7 +99,6 @@ public:
    * \param type     Тип пакета.
    * \param sender   Идентификатор отправителя.
    * \param dest     Идентификатор получателя, специальное значение "bc" устанавливает опцию Protocol::Broadcast.
-   * \param channel  Идентификатор канала.
    * \param echo     true для включения опции Protocol::EnableEcho.
    */
   inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>(), bool echo = false)
