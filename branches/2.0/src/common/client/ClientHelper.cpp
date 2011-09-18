@@ -20,7 +20,7 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "net/packets/message.h"
-#include "text/BasicPlainTextFilter.h"
+#include "text/PlainTextFilter.h"
 
 ClientHelper::ClientHelper(SimpleClient *client)
   : QObject(client)
@@ -44,8 +44,8 @@ bool ClientHelper::send(MessageData &data)
   m_destId = data.destId();
   QString text;
 
-  if (m_richText) { // FIXME ! BasicPlainText
-    BasicPlainTextFilter filter;
+  if (m_richText) {
+    PlainTextFilter filter;
     text = filter.filter(data.text);
   }
   else

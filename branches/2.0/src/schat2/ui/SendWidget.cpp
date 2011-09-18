@@ -206,8 +206,8 @@ void SendWidget::showHistoryMenu()
   QFontMetrics fm = fontMetrics();
   QAction *action = 0;
 
-  for (int i = history.size() - 1; i >= 0; --i) { /// FIXME ! BasicPlainText
-    action = m_history->addAction(fm.elidedText(TextFilter::filter(QLatin1String("BasicPlainText"), history.at(i)), Qt::ElideMiddle, 150));
+  for (int i = history.size() - 1; i >= 0; --i) {
+    action = m_history->addAction(fm.elidedText(TextFilter::filter(QLatin1String("PlainText"), history.at(i)), Qt::ElideMiddle, 150));
     action->setData(i);
     connect(action, SIGNAL(triggered()), SLOT(showHistoryItem()));
   }

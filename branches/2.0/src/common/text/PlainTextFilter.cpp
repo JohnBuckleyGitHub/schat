@@ -18,23 +18,39 @@
 
 #include <QRegExp>
 
-#include "text/BasicPlainTextFilter.h"
+#include "text/PlainTextFilter.h"
 
-BasicPlainTextFilter::BasicPlainTextFilter()
-  : AbstractFilter(QLatin1String("BasicPlainText"))
+PlainTextFilter::PlainTextFilter()
+  : AbstractFilter(QLatin1String("PlainText"))
 {
 }
 
 
-QString BasicPlainTextFilter::filter(const QString &text, QVariantHash options) const
+QString PlainTextFilter::filter(const QString &text, QVariantHash options) const
 {
   Q_UNUSED(options)
   QString out = text;
 
+  out.replace(QLatin1Char('\n'), "");
+  out.replace(QLatin1String("</p>"), QLatin1String("\n"), Qt::CaseInsensitive);
   out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
-  out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
-  out.remove(QRegExp(QLatin1String("<style.*</style>")));
-  out.remove(QRegExp(QLatin1String("<[^>]*>")));
+
+  removeTag(out, QLatin1String("style"));
+  removeTag(out, QLatin1String("script"));
+
+  int lt = 0;
+  int gt = 0;
+  forever {
+    lt = out.indexOf(QLatin1Char('<'), lt);
+    if (lt == -1)
+      break;
+
+    gt = out.indexOf(QLatin1Char('>'), lt);
+    if (gt == -1)
+      gt = out.size() - lt;
+
+    out.remove(lt, gt - lt + 1);
+  }
 
   out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
   out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
@@ -44,4 +60,19 @@ QString BasicPlainTextFilter::filter(const QString &text, QVariantHash options) 
   out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
   out = out.trimmed();
   return out;
+}
+
+
+void PlainTextFilter::removeTag(QString &text, const QString &tag) const
+{
+  int lt = 0;
+  int gt = 0;
+  forever {
+    lt = text.indexOf(QLatin1String("<") + tag, 0, Qt::CaseInsensitive);
+    if (lt == -1)
+      break;
+
+    gt = text.indexOf(QLatin1String("</") + tag + QLatin1String(">"), lt, Qt::CaseInsensitive);
+    text.remove(lt, gt - lt + tag.size() + 3);
+  }
 }
