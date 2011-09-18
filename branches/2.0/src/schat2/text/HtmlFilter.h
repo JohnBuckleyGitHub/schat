@@ -16,23 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLAINTEXTFILTER_H_
-#define PLAINTEXTFILTER_H_
-
-#include <QVariant>
+#ifndef HTMLFILTER_H_
+#define HTMLFILTER_H_
 
 #include "text/TextFilter.h"
 #include "schat.h"
 
-/*!
- * Фильтр преобразует HTML текст в обычный.
- */
-class SCHAT_EXPORT PlainTextFilter : public AbstractFilter
+class SCHAT_CORE_EXPORT HtmlFilter : public AbstractFilter
 {
 public:
-  PlainTextFilter();
+  HtmlFilter();
   QString filter(const QString &text, QVariantHash options = QVariantHash()) const;
-  static void removeTag(QString &text, const QString &tag);
 };
 
-#endif /* PLAINTEXTFILTER_H_ */
+#endif /* HTMLFILTER_H_ */

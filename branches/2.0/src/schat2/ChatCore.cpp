@@ -32,6 +32,7 @@
 #include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
 #include "NetworkManager.h"
+#include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "text/TextFilter.h"
 #include "Translation.h"
@@ -83,6 +84,7 @@ ChatCorePrivate::ChatCorePrivate()
   icons += QLatin1String("slash");
 
   TextFilter::add(new PlainTextFilter());
+  TextFilter::add(new HtmlFilter());
 }
 
 
