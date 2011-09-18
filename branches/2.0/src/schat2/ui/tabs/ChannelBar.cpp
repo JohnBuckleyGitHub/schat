@@ -34,7 +34,36 @@ ChannelBar::ChannelBar(QWidget *parent)
 
 void ChannelBar::init()
 {
-  setIconSize(QSize(16, 16));
+  setIconSize(QSize(10, 10));
   setObjectName(QLatin1String("ChannelBar"));
   setStyleSheet(QString("ChannelBar { background-color:%1; margin:0px; border:0px; }").arg(palette().color(QPalette::Base).name()));
+
+  m_topic = new ChannelTopic(this);
+  addWidget(m_topic);
+}
+
+
+
+ChannelTopic::ChannelTopic(QWidget *parent, Qt::WindowFlags f)
+  : QLabel(parent, f)
+{
+  init();
+}
+
+
+ChannelTopic::ChannelTopic(const QString &text, QWidget *parent, Qt::WindowFlags f)
+  : QLabel(text, parent, f)
+{
+  init();
+}
+
+
+void ChannelTopic::init()
+{
+  setMargin(1);
+  setTextFormat(Qt::RichText);
+  setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+  setOpenExternalLinks(true);
+  setWordWrap(true);
+  setSizePolicy(QSizePolicy::Expanding, sizePolicy().verticalPolicy());
 }

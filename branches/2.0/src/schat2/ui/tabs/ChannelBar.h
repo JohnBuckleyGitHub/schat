@@ -20,6 +20,9 @@
 #define CHANNELBAR_H_
 
 #include <QToolBar>
+#include <QLabel>
+
+class ChannelTopic;
 
 class ChannelBar : public QToolBar
 {
@@ -28,6 +31,21 @@ class ChannelBar : public QToolBar
 public:
   ChannelBar(const QString &title, QWidget *parent = 0);
   ChannelBar(QWidget *parent = 0);
+  inline ChannelTopic *topic() { return m_topic; }
+
+private:
+  void init();
+  ChannelTopic *m_topic;
+};
+
+
+class ChannelTopic : public QLabel
+{
+  Q_OBJECT
+
+public:
+  ChannelTopic(QWidget *parent = 0, Qt::WindowFlags f = 0);
+  ChannelTopic(const QString &text, QWidget *parent = 0, Qt::WindowFlags f = 0);
 
 private:
   void init();

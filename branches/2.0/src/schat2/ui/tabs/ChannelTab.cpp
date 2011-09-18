@@ -36,7 +36,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   , m_client(ChatCore::i()->client())
 {
   m_bar = new ChannelBar(this);
-  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
+//  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
 
   m_userView = new UserView(this);
 
