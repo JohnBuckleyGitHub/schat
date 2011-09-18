@@ -34,6 +34,7 @@
 #include "ui/tabs/PrivateTab.h"
 #include "ui/UserUtils.h"
 #include "User.h"
+#include "text/TextFilter.h"
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
@@ -96,7 +97,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
   query.bindValue(QLatin1String(":command"), data.command);
   query.bindValue(QLatin1String(":text"), data.text);
-  query.bindValue(QLatin1String(":plainText"), MessageUtils::toPlainText(data.text));
+  query.bindValue(QLatin1String(":plainText"), TextFilter::filter(QLatin1String("BasicPlainText"), data.text)); /// FIXME ! BasicPlainText
   query.exec();
 
   if (query.numRowsAffected() <= 0)

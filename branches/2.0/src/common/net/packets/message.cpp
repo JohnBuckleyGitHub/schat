@@ -172,30 +172,8 @@ QString MessageUtils::htmlFilter(const QString &html, int left, bool strict)
   badStuff.setPattern("\\s?font-size:[^;]*;|\\s?background-color:[^;]*;|\\s?font-family:[^;]*;");
   out.remove(badStuff);
 
-  if (toPlainText(out).isEmpty())
-    return "";
+//  if (toPlainText(out).isEmpty()) /// FIXME ! toPlainText
+//    return "";
 
-  return out;
-}
-
-
-/*!
- * Преобразует HTML текст в простой текст.
- */
-QString MessageUtils::toPlainText(const QString &text)
-{
-  QString out = text;
-  out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
-  out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
-  out.remove(QRegExp(QLatin1String("<style.*</style>")));
-  out.remove(QRegExp(QLatin1String("<[^>]*>")));
-
-  out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
-  out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
-  out.replace(QLatin1String("&quot;"), QLatin1String("\""));
-  out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
-  out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
-  out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
-  out = out.trimmed();
   return out;
 }

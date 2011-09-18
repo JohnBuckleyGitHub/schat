@@ -24,6 +24,7 @@
 
 #include "ChatCore.h"
 #include "net/packets/message.h"
+#include "text/TextFilter.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
@@ -205,8 +206,8 @@ void SendWidget::showHistoryMenu()
   QFontMetrics fm = fontMetrics();
   QAction *action = 0;
 
-  for (int i = history.size() - 1; i >= 0; --i) {
-    action = m_history->addAction(fm.elidedText(MessageUtils::toPlainText(history.at(i)), Qt::ElideMiddle, 150));
+  for (int i = history.size() - 1; i >= 0; --i) { /// FIXME ! BasicPlainText
+    action = m_history->addAction(fm.elidedText(TextFilter::filter(QLatin1String("BasicPlainText"), history.at(i)), Qt::ElideMiddle, 150));
     action->setData(i);
     connect(action, SIGNAL(triggered()), SLOT(showHistoryItem()));
   }

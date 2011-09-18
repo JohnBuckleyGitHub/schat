@@ -32,6 +32,8 @@
 #include "messages/MessageAdapter.h"
 #include "net/packets/message.h"
 #include "NetworkManager.h"
+#include "text/BasicPlainTextFilter.h"
+#include "text/TextFilter.h"
 #include "Translation.h"
 #include "ui/UserUtils.h"
 #include "User.h"
@@ -79,11 +81,14 @@ ChatCorePrivate::ChatCorePrivate()
   icons += QLatin1String("edit-select-all");
   icons += QLatin1String("balloon");
   icons += QLatin1String("slash");
+
+  TextFilter::add(new BasicPlainTextFilter());
 }
 
 
 ChatCorePrivate::~ChatCorePrivate()
 {
+  TextFilter::removeAll();
   delete userUtils;
 }
 
