@@ -21,6 +21,7 @@
 #include <QKeyEvent>
 
 #include "net/packets/message.h"
+#include "text/TextFilter.h"
 #include "ui/InputWidget.h"
 
 InputWidget::InputWidget(QWidget *parent)
@@ -100,7 +101,7 @@ void InputWidget::clear()
 void InputWidget::send()
 {
   QString html = toHtml();
-  QString out = MessageUtils::htmlFilter(html);
+  QString out = TextFilter::filter(QLatin1String("Html"), html);
   clear();
 
   if (out.isEmpty())

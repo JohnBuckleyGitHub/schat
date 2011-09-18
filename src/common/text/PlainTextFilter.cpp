@@ -63,7 +63,7 @@ QString PlainTextFilter::filter(const QString &text, QVariantHash options) const
 }
 
 
-void PlainTextFilter::removeTag(QString &text, const QString &tag) const
+void PlainTextFilter::removeTag(QString &text, const QString &tag)
 {
   int lt = 0;
   int gt = 0;
