@@ -59,6 +59,20 @@ bool MessageAdapter::sendText(MessageData &data)
 }
 
 
+int MessageAdapter::command(MessageData &data, const QString &cmd, const QString &text)
+{
+  int result = ClientHelper::command(data, cmd, text);
+
+  if (result == 1 && cmd == QLatin1String("topic")) {
+    MessageData msg(UserUtils::userId(), m_destId, data.command, data.text);
+    m_client->send(msg, true);
+    return 2;
+  }
+
+  return result;
+}
+
+
 /*!
  * Обработка комманд http://simple.impomezia.com/Commands
  * - /about
@@ -81,6 +95,7 @@ bool MessageAdapter::sendText(MessageData &data)
  * - /open
  * - /quit
  * - /set
+ * - /topic
  * - /unignore
  */
 void MessageAdapter::command(const ClientCmd &cmd)
@@ -204,6 +219,11 @@ void MessageAdapter::allDelivered(quint64 id)
  */
 void MessageAdapter::clientMessage(const MessageData &data)
 {
+  if (data.command == QLatin1String("topic")) {
+    readTopic(data);
+    return;
+  }
+
   if (data.senderId == m_client->userId())
     return;
 
@@ -356,9 +376,22 @@ void MessageAdapter::notice(const MessageNotice &notice)
 }
 
 
+void MessageAdapter::readTopic(const MessageData &data)
+{
+  ClientChannel channel = m_client->channel(data.destId());
+  if (!channel)
+    return;
+
+  if (channel->topic() == data.text)
+    return;
+
+  channel->setTopic(data.text);
+  emit channelDataChanged(channel->id());
+}
+
+
 /*!
  * Устанавливает состояние для всех пакетов с неподтверждённой доставкой.
- * \todo Повторно проверить работу этой функции.
  */
 void MessageAdapter::setStateAll(int state)
 {

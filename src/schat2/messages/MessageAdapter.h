@@ -47,9 +47,11 @@ public:
 
   MessageAdapter();
   bool sendText(MessageData &data);
+  int command(MessageData &data, const QString &cmd, const QString &text);
   void command(const ClientCmd &cmd);
 
 signals:
+  void channelDataChanged(const QByteArray &channelId);
   void message(const AbstractMessage &message);
 
 private slots:
@@ -63,10 +65,11 @@ private:
   void commandHelpHint(const QString &command);
   void newUserMessage(int status, const MessageData &data);
   void notice(const MessageNotice &notice);
+  void readTopic(const MessageData &data);
   void setStateAll(int state);
   void setStatus(int status, const QString &text = QString());
 
-  ChatSettings *m_settings;                  ///< Настройки чата.
+  ChatSettings *m_settings;                     ///< Настройки чата.
   QHash<QByteArray, MessageData> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 

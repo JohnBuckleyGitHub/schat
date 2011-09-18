@@ -20,6 +20,7 @@
 #define CLIENTHELPER_H_
 
 #include <QObject>
+#include <QStringList>
 
 #include "schat.h"
 
@@ -39,11 +40,13 @@ public:
   bool send(MessageData &data);
   inline SimpleClient *client() { return m_client; }
   virtual bool sendText(MessageData &data);
+  virtual int command(MessageData &data, const QString &cmd, const QString &text);
   virtual void command(const ClientCmd &cmd);
 
 protected:
   bool m_richText;        ///< true если в командах может использоваться html текст.
   QByteArray m_destId;    ///< Текущий получатель сообщения.
+  QStringList m_commands; ///< Список специальных команд таких как "/me".
   quint64 m_name;         ///< Счётчик последнего отправленного сообщения.
   SimpleClient *m_client; ///< Указатель на клиент.
 };

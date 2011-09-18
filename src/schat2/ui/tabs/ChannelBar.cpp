@@ -58,6 +58,12 @@ ChannelTopic::ChannelTopic(const QString &text, QWidget *parent, Qt::WindowFlags
 }
 
 
+void ChannelTopic::setTopic(const QString &topic)
+{
+  setText(topic);
+}
+
+
 void ChannelTopic::init()
 {
   setMargin(1);

@@ -45,6 +45,7 @@ public:
   void synced();
 
 private slots:
+  void dataChanged(const QByteArray &channelId);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void settingsChanged(const QString &key, const QVariant &value);
   void split(const QList<QByteArray> &users);
