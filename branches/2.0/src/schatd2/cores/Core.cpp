@@ -625,6 +625,9 @@ bool Core::command()
     return true;
   }
 
+  if (command == QLatin1String("topic"))
+    return readTopic();
+
   return false;
 }
 
@@ -688,6 +691,25 @@ bool Core::readMessage()
     rejectMessage(MessageNotice::UnknownError);
     return false;
   }
+}
+
+
+/*!
+ * Чтение команды изменения топика.
+ * Если топик был изменён функция возвратит false для того чтобы команда
+ * была отослана дальше.
+ */
+bool Core::readTopic()
+{
+  if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
+    return true;
+
+  ChatChannel channel = m_storage->channel(m_reader->dest());
+  if (!channel)
+    return true;
+
+  channel->setTopic(m_messageData->text);
+  return false;
 }
 
 

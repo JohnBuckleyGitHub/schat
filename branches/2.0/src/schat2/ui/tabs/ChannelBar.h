@@ -46,6 +46,7 @@ class ChannelTopic : public QLabel
 public:
   ChannelTopic(QWidget *parent = 0, Qt::WindowFlags f = 0);
   ChannelTopic(const QString &text, QWidget *parent = 0, Qt::WindowFlags f = 0);
+  void setTopic(const QString &topic);
 
 private:
   void init();

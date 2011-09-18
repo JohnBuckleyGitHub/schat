@@ -97,6 +97,7 @@ protected:
   bool readJoinCmd();
   bool readLeaveCmd();
   bool readMessage();
+  bool readTopic();
   void acceptMessage(int reason = 0);
   void rejectMessage(int reason);
 
@@ -105,7 +106,7 @@ protected:
 
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
-  NodePlugins *m_plugins;              ///< Плагины.
+  NodePlugins *m_plugins;             ///< Плагины.
   PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
   QByteArray m_readBuffer;            ///< Буфер чтения виртуальных пакетов.
   QByteArray m_sendBuffer;            ///< Буфер отправки виртуальных пакетов.

@@ -36,6 +36,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   , m_client(ChatCore::i()->client())
 {
   m_bar = new ChannelBar(this);
+  m_bar->topic()->setTopic(channel->topic());
+
 //  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
 
   m_userView = new UserView(this);
@@ -68,6 +70,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
+  connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &)), SLOT(dataChanged(const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
@@ -140,6 +143,15 @@ void ChannelTab::synced()
 {
   displayUserCount();
   m_userView->sort();
+}
+
+
+void ChannelTab::dataChanged(const QByteArray &channelId)
+{
+  if (id() != channelId)
+    return;
+
+  m_bar->topic()->setTopic(m_channel->topic());
 }
 
 

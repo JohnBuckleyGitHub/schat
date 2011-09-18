@@ -27,6 +27,8 @@ ClientHelper::ClientHelper(SimpleClient *client)
   , m_name(1)
   , m_client(client)
 {
+  m_commands.append(QLatin1String("me"));
+  m_commands.append(QLatin1String("topic"));
 }
 
 
@@ -46,12 +48,18 @@ bool ClientHelper::send(MessageData &data)
   else
     text = data.text.simplified();
 
-  if (text.startsWith(QLatin1String("/me "), Qt::CaseInsensitive)) {
-    if (MessageUtils::remove(QLatin1String("/me "), data.text))
-      data.command = QLatin1String("me");
+  for (int i = 0; i < m_commands.size(); ++i) {
+    int result = command(data, m_commands.at(i), text);
+    if (result == 0)
+      continue;
 
-    sendText(data);
-    return true;
+    if (result == 1) {
+      sendText(data);
+      return true;
+    }
+
+    if (result == 2)
+      return false;
   }
 
   if (text.at(0) != QLatin1Char('/')) {
@@ -91,6 +99,32 @@ bool ClientHelper::sendText(MessageData &data)
   }
 
   return true;
+}
+
+
+/*!
+ * Обработчик команд требующих полную поддержку html текста, например команда "/me".
+ *
+ * \param data Данные сообщения.
+ * \param cmd  Команда без начального слэша.
+ * \param text Текст, очищенный от html тегов.
+ *
+ * \return Результат обработки команды
+ *  - 0 команда не найдена,
+ *  - 1 команда найдена
+ *  - 2 команда найдена и обработана.
+ */
+int ClientHelper::command(MessageData &data, const QString &cmd, const QString &text)
+{
+  QString full = QLatin1String("/") + cmd + QLatin1String(" ");
+  if (text.startsWith(full, Qt::CaseInsensitive)) {
+    if (MessageUtils::remove(full, data.text))
+      data.command = cmd;
+
+    return 1;
+  }
+
+  return 0;
 }
 
 
