@@ -20,6 +20,7 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "net/packets/message.h"
+#include "text/BasicPlainTextFilter.h"
 
 ClientHelper::ClientHelper(SimpleClient *client)
   : QObject(client)
@@ -43,8 +44,10 @@ bool ClientHelper::send(MessageData &data)
   m_destId = data.destId();
   QString text;
 
-  if (m_richText)
-    text = MessageUtils::toPlainText(data.text);
+  if (m_richText) { // FIXME ! BasicPlainText
+    BasicPlainTextFilter filter;
+    text = filter.filter(data.text);
+  }
   else
     text = data.text.simplified();
 
