@@ -22,11 +22,88 @@
 #include "text/TextFilter.h"
 #include "schat.h"
 
+class QStringList;
+
+class HtmlToken
+{
+public:
+  enum Type {
+    Undefined,
+    StartTag,
+    EndTag,
+    Text,
+    Tag
+  };
+
+  inline HtmlToken()
+  : simple(true)
+  , type(Undefined)
+  {}
+
+  inline HtmlToken(const QString &text)
+  : simple(true)
+  , text(text)
+  , type(Text)
+  {}
+
+  inline HtmlToken(Type type, const QString &text)
+  : simple(true)
+  , text(text)
+  , type(type)
+  {
+    if (type != Tag)
+      return;
+
+    tag = text.mid(1, text.size() - 2);
+    if (tag.startsWith(QLatin1Char('/'))) {
+      this->type = EndTag;
+      tag.remove(0, 1);
+    }
+    else {
+      this->type = StartTag;
+      int space = tag.indexOf(QLatin1Char(' '));
+      if (space != -1) {
+        simple = false;
+        tag.remove(space, tag.size() - space);
+      }
+    }
+
+    if (tag.isEmpty())
+      this->type = Undefined;
+
+    tag = tag.toLower();
+  }
+
+  QString toEndTag() const
+  {
+    if (type != StartTag)
+      return QString();
+
+    return QLatin1String("</") + tag + QLatin1Char('>');
+  }
+
+  bool simple;  ///< false в случае если начальный тег содержит дополнительные данные.
+  QString tag;  ///< Тег, в нижнем регистре и без обрамления.
+  QString text; ///< Текстовое содержимое.
+  Type type;    ///< Тип.
+};
+
+/*!
+ * Фильтрует и вырезает всё лишнее из HTML оставляя только минимальное
+ * безопасное содержимое.
+ */
 class SCHAT_CORE_EXPORT HtmlFilter : public AbstractFilter
 {
 public:
   HtmlFilter();
   QString filter(const QString &text, QVariantHash options = QVariantHash()) const;
+  static void removeTags(QString &text, const QStringList &exclude);
+
+private:
+  void optimize(QList<HtmlToken> &tokens) const;
+  void tokenize(const QString &text, QList<HtmlToken> &tokens) const;
+
+  mutable bool m_optimize; ///< true если требуется оптимизация тегов.
 };
 
 #endif /* HTMLFILTER_H_ */
