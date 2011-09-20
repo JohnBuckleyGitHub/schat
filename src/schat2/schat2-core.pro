@@ -45,8 +45,6 @@ HEADERS = \
     plugins/ChatPlugin.h \
     QProgressIndicator/QProgressIndicator.h \
     schat.h \
-    text/HtmlFilter.h \
-    text/HtmlToken.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
     ui/fields/LanguageField.h \
@@ -95,7 +93,6 @@ SOURCES = \
     plugins/AbstractHistory.cpp \
     plugins/ChatPlugin.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
-    text/HtmlFilter.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
     ui/fields/LanguageField.cpp \
