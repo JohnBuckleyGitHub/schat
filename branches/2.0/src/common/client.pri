@@ -37,8 +37,9 @@ HEADERS += \
     Plugins.h \
     schat.h \
     Settings.h \
+    text/HtmlFilter.h \
+    text/HtmlToken.h \
     text/PlainTextFilter.h \
-    text/TextFilter.h \
     Translation.h \
     User.h \
 
@@ -60,8 +61,8 @@ SOURCES += \
     net/TransportWriter.cpp \
     Plugins.cpp \
     Settings.cpp \
+    text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
-    text/TextFilter.cpp \
     Translation.cpp \
     User.cpp \
 

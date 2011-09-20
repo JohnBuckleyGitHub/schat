@@ -21,14 +21,12 @@
 #include "text/PlainTextFilter.h"
 
 PlainTextFilter::PlainTextFilter()
-  : AbstractFilter(QLatin1String("PlainText"))
 {
 }
 
 
-QString PlainTextFilter::filter(const QString &text, QVariantHash options) const
+QString PlainTextFilter::filter(const QString &text) const
 {
-  Q_UNUSED(options)
   QString out = text;
 
   out.replace(QLatin1Char('\n'), "");

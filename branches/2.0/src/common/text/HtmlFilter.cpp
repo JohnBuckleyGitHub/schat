@@ -24,7 +24,6 @@
 #include "text/PlainTextFilter.h"
 
 HtmlFilter::HtmlFilter()
-  : AbstractFilter(QLatin1String("Html"))
 {
 }
 
@@ -46,10 +45,8 @@ int HtmlFilter::endTag(const QString &tag, QList<HtmlToken> &tokens, int pos) co
 }
 
 
-QString HtmlFilter::filter(const QString &text, QVariantHash options) const
+QString HtmlFilter::filter(const QString &text) const
 {
-  Q_UNUSED(options)
-
   QString out = text.simplified();
   m_optimize = false;
 

@@ -19,19 +19,16 @@
 #ifndef PLAINTEXTFILTER_H_
 #define PLAINTEXTFILTER_H_
 
-#include <QVariant>
-
-#include "text/TextFilter.h"
 #include "schat.h"
 
 /*!
  * Фильтр преобразует HTML текст в обычный.
  */
-class SCHAT_EXPORT PlainTextFilter : public AbstractFilter
+class SCHAT_EXPORT PlainTextFilter
 {
 public:
   PlainTextFilter();
-  QString filter(const QString &text, QVariantHash options = QVariantHash()) const;
+  QString filter(const QString &text) const;
   static void removeTag(QString &text, const QString &tag);
 };
 

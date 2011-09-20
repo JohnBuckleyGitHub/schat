@@ -30,7 +30,7 @@
 #include "HistoryDB.h"
 #include "HistoryUserMessage.h"
 #include "net/packets/message.h"
-#include "text/TextFilter.h"
+#include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/UserUtils.h"
@@ -97,7 +97,9 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
   query.bindValue(QLatin1String(":command"), data.command);
   query.bindValue(QLatin1String(":text"), data.text);
-  query.bindValue(QLatin1String(":plainText"), TextFilter::filter(QLatin1String("PlainText"), data.text));
+
+  PlainTextFilter filter;
+  query.bindValue(QLatin1String(":plainText"), filter.filter(data.text));
   query.exec();
 
   if (query.numRowsAffected() <= 0)

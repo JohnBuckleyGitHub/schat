@@ -21,7 +21,6 @@
 
 #include "schat.h"
 #include "text/HtmlToken.h"
-#include "text/TextFilter.h"
 
 class QStringList;
 
@@ -29,12 +28,12 @@ class QStringList;
  * Фильтрует и вырезает всё лишнее из HTML оставляя только минимальное
  * безопасное содержимое.
  */
-class SCHAT_CORE_EXPORT HtmlFilter : public AbstractFilter
+class SCHAT_EXPORT HtmlFilter
 {
 public:
   HtmlFilter();
   int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
-  QString filter(const QString &text, QVariantHash options = QVariantHash()) const;
+  QString filter(const QString &text) const;
   static void removeTags(QString &text, const QStringList &exclude);
 
 private:
