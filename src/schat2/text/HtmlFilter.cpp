@@ -29,6 +29,23 @@ HtmlFilter::HtmlFilter()
 }
 
 
+/*!
+ * Поиск закрывающего тега для элемента.
+ */
+int HtmlFilter::endTag(const QString &tag, QList<HtmlToken> &tokens, int pos) const
+{
+  int gt = -1;
+  for (int i = pos; i < tokens.size(); ++i) {
+    if (tokens.at(i).type == HtmlToken::EndTag && tokens.at(i).tag == tag) {
+      gt = i;
+      break;
+    }
+  }
+
+  return gt;
+}
+
+
 QString HtmlFilter::filter(const QString &text, QVariantHash options) const
 {
   Q_UNUSED(options)
@@ -44,8 +61,15 @@ QString HtmlFilter::filter(const QString &text, QVariantHash options) const
   tokenize(out, tokens);
   out.clear();
 
+//  foreach (HtmlToken token, tokens) {
+//    qDebug() << token.text;
+//  }
+
+//  qDebug() << "TOKENS TOTAL:" << tokens.size();
   if (m_optimize)
     optimize(tokens);
+
+//  qDebug() << "TOKENS TOTAL:" << tokens.size();
 
   for (int i = 0; i < tokens.size(); ++i) {
     out += tokens.at(i).text;
@@ -143,6 +167,9 @@ void HtmlFilter::removeTags(QString &text, const QStringList &exclude)
 }
 
 
+/*!
+ * Оптимизация и дополнительная фильтрация токенов.
+ */
 void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
 {
   int index = -1;
@@ -158,10 +185,42 @@ void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
 
   HtmlToken token = tokens.at(index);
 
-  if (token.tag == QLatin1String("a")) {
+  if (token.tag == QLatin1String("a") || token.tag == QLatin1String("font")) {
     tokens[index].simple = true;
+    int gt = endTag(token.tag, tokens, index);
+
+    // Если закрывающий тег не найден или он следует сразу после открывающего, удаляем тег.
+    if (gt == -1 || gt - index == 1) {
+      tokens.removeAt(index);
+      return optimize(tokens);
+    }
+
+    // Удаляем все не текстовые токены внутри тега.
+    for (int i = gt - 1; i > index; --i) {
+      if (tokens.at(i).type != HtmlToken::Text) {
+        tokens.removeAt(i);
+        gt--;
+      }
+    }
+
+    AbstractTag *tag = 0;
+    if (token.tag == QLatin1String("a"))
+      tag = new HtmlATag(token);
+    else if (token.tag == QLatin1String("font"))
+      tag = new HtmlFontTag(token);
+
+    if (!tag->valid || gt - index == 1) {
+      tokens.removeAt(gt);
+      tokens.removeAt(index);
+    }
+    else
+      tokens[index].text = tag->toText();
+
+    delete tag;
     return optimize(tokens);
   }
+  /// Тег span в зависимости от css стилей преобразуется в теги b, i, u, s и font
+  /// и полностью удаляется из текста. Тег font используется для установки цвета элемента.
   else if (token.tag == QLatin1String("span")) {
     QList<HtmlToken> tags;
 
@@ -190,14 +249,7 @@ void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
     }
 
     tokens.removeAt(index);
-    int gt = -1;
-
-    for (int i = index; i < tokens.size(); ++i) {
-      if (tokens.at(i).type == HtmlToken::EndTag && tokens.at(i).tag == token.tag) {
-        gt = i;
-        break;
-      }
-    }
+    int gt = endTag(token.tag, tokens, index);
 
     if (gt == -1)
       return optimize(tokens);
@@ -217,10 +269,10 @@ void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
 
     return optimize(tokens);
   }
-  else if (token.tag == QLatin1String("font")) {
-    tokens[index].simple = true;
-    return optimize(tokens);
-  }
+//  else if (token.tag == QLatin1String("font")) {
+//    tokens[index].simple = true;
+//    return optimize(tokens);
+//  }
 }
 
 
@@ -254,27 +306,60 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     }
 
     if (lt != pos) {
-      HtmlToken token(text.mid(pos, lt - pos));
-      tokens.append(token);
+      if (tokens.isEmpty()) {
+        HtmlToken token(text.mid(pos, lt - pos));
+        tokens.append(token);
+      }
+      else {
+        QString t = text.mid(pos, lt - pos);
+        if (tokens.last().type != HtmlToken::Text) {
+          HtmlToken token(t);
+          tokens.append(token);
+        }
+        else {
+          if (!(t == QLatin1String(" ") && tokens.last().text == t))
+            tokens.last().text.append(t);
+        }
+      }
     }
 
     gt = text.indexOf(QLatin1Char('>'), lt);
     pos = gt + 1;
     HtmlToken token(HtmlToken::Tag, text.mid(lt, pos - lt));
 
+    // Закрывающий тег p преобразуется в тег br.
     if (token.type == HtmlToken::EndTag && token.tag == QLatin1String("p")) {
-      token.simple = true;
-      token.type = HtmlToken::StartTag;
-      token.tag = QLatin1String("br");
-      token.text = QLatin1String("<br>");
-      tokens.append(token);
+      if (!tokens.isEmpty()) {
+        if (tokens.last().tag == QLatin1String("br"))
+          continue;
+
+        if (tokens.last().text == QLatin1String(" "))
+          continue;
+
+        token.simple = true;
+        token.type = HtmlToken::StartTag;
+        token.tag = QLatin1String("br");
+        token.text = QLatin1String("<br>");
+        tokens.append(token);
+      }
       continue;
     }
 
+    // Обработка простых тегов, начальный тег принудительно приводится к простому виду.
     if (simple.contains(token.tag)) {
       if (token.type == HtmlToken::StartTag && !token.simple) {
         token.simple = true;
         token.text = QLatin1Char('<') + token.tag + QLatin1Char('>');
+      }
+
+      if (token.tag == QLatin1String("br")) {
+        if (!tokens.isEmpty()) {
+          if (tokens.last().tag == QLatin1String("br"))
+            continue;
+
+          if (tokens.last().text == QLatin1String(" "))
+            continue;
+        }
       }
 
       tokens.append(token);
@@ -285,4 +370,13 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
       tokens.append(token);
     }
   }
+
+  if (!tokens.isEmpty() && tokens.first().text == QLatin1String(" "))
+    tokens.removeFirst();
+
+  if (!tokens.isEmpty() && tokens.last().text.isEmpty())
+    tokens.removeLast();
+
+  if (!tokens.isEmpty() && tokens.last().tag == QLatin1String("br"))
+    tokens.removeLast();
 }
