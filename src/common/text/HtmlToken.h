@@ -79,10 +79,11 @@ public:
     return HtmlToken(HtmlToken::EndTag, QLatin1String("</") + tag + QLatin1Char('>'));
   }
 
-  bool simple;  ///< false в случае если начальный тег содержит дополнительные данные.
-  QString tag;  ///< Тег, в нижнем регистре и без обрамления.
-  QString text; ///< Текстовое содержимое.
-  Type type;    ///< Тип.
+  bool simple;    ///< false в случае если начальный тег содержит дополнительные данные.
+  QString parent; ///< Родительский тег.
+  QString tag;    ///< Тег, в нижнем регистре и без обрамления.
+  QString text;   ///< Текстовое содержимое.
+  Type type;      ///< Тип.
 };
 
 

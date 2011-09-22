@@ -184,6 +184,9 @@ void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
         tokens.removeAt(i);
         gt--;
       }
+      else {
+        tokens[i].parent = token.tag;
+      }
     }
 
     AbstractTag *tag = 0;
