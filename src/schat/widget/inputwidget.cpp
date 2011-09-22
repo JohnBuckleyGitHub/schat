@@ -22,6 +22,7 @@
 
 #include "channellog.h"
 #include "simplechatapp.h"
+#include "text/HtmlFilter.h"
 #include "widget/inputwidget.h"
 
 /*!
@@ -51,8 +52,8 @@ InputWidget::InputWidget(QWidget *parent)
 
 void InputWidget::sendMsg()
 {
-  QString html = toHtml();
-  html = ChannelLog::htmlFilter(html);
+  HtmlFilter filter(HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
+  QString html = filter.filter(toHtml());
 
   if (html.isEmpty())
     return;

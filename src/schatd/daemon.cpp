@@ -29,6 +29,7 @@
 #include "linkunit.h"
 #include "normalizereader.h"
 #include "protocol.h"
+#include "text/PlainTextFilter.h"
 #include "translation.h"
 #include "userunit.h"
 #include "version.h"
@@ -474,7 +475,7 @@ void Daemon::logLinkLeave(quint8 /*numeric*/, const QString &network, const QStr
 void Daemon::logMessage(const QString &sender, const QString &message)
 {
   if (m_channelLog)
-    m_channelLog->msg(QString("%1: %2").arg(sender).arg(ChannelLog::toPlainText(message)));
+    m_channelLog->msg(QString("%1: %2").arg(sender).arg(PlainTextFilter::filter(message)));
 }
 
 
@@ -564,7 +565,7 @@ void Daemon::message(const QString &channel, const QString &nick, const QString 
   }
   else if (m_users.contains(lowerChannel)) {
     if (m_privateLog)
-      m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(nick).arg(channel).arg(ChannelLog::toPlainText(msg)));
+      m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(nick).arg(channel).arg(PlainTextFilter::filter(msg)));
 
     if (!parseCmd(nick, msg)) {
       quint16 numeric = m_users.value(lowerChannel)->numeric();
@@ -659,7 +660,7 @@ void Daemon::relayMessage(const QString &channel, const QString &sender, const Q
   quint8 numeric = m_users.value(lowerChannel)->numeric();
 
   if (m_privateLog)
-    m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(sender).arg(channel).arg(ChannelLog::toPlainText(msg)));
+    m_privateLog->msg(QString("\"%1\" -> \"%2\": %3").arg(sender).arg(channel).arg(PlainTextFilter::filter(msg)));
 
   if (numeric == m_numeric) {
     DaemonService *service = m_users.value(lowerChannel)->service();
@@ -851,7 +852,7 @@ bool Daemon::parseCmd(const QString &nick, const QString &msg)
   if (!service)
     return false;
 
-  QString text = ChannelLog::toPlainText(msg).trimmed().toLower();
+  QString text = PlainTextFilter::filter(msg).toLower();
 
   /// Команда "/server"
   if (text == "/server") {

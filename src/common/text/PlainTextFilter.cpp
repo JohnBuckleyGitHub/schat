@@ -16,16 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QRegExp>
-
 #include "text/PlainTextFilter.h"
 
-PlainTextFilter::PlainTextFilter()
-{
-}
-
-
-QString PlainTextFilter::filter(const QString &text) const
+QString PlainTextFilter::filter(const QString &text)
 {
   QString out = text;
 
