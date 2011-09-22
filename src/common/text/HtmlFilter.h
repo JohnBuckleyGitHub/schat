@@ -31,16 +31,32 @@ class QStringList;
 class SCHAT_EXPORT HtmlFilter
 {
 public:
-  HtmlFilter();
-  int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
+  /// Опции фильтрации.
+  enum Options {
+    NoOptions = 0,           ///< Нет специальных опций.
+    ConvertSpacesToNbsp = 1, ///< Конвертировать двойные пробелы в неразрывный пробел.
+    AllowSpanTag = 2         ///< Разрешить поддержку тега span.
+  };
+
+  HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 20);
+  QList<HtmlToken> tokenize(const QString &text) const;
   QString filter(const QString &text) const;
-  static void removeTags(QString &text, const QStringList &exclude);
+  static QString build(const QList<HtmlToken> &tokens);
 
 private:
+  bool isLastIsBreak(const QList<HtmlToken> &tokens) const;
+  int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
+  QString prepare(const QString &text) const;
   void optimize(QList<HtmlToken> &tokens) const;
   void tokenize(const QString &text, QList<HtmlToken> &tokens) const;
+  void truncate(QList<HtmlToken> &tokens, int pos) const;
 
+  int m_breaksLimit;       ///< Ограничение на число переносов строк.
+  int m_options;           ///< Опции фильтрации.
+  int m_sizeLimit;         ///< Мягкое ограничение на размер, может быть незначительно превышено для того чтобы не портить разметку.
   mutable bool m_optimize; ///< true если требуется оптимизация тегов.
+  mutable int m_breaks;    ///< Текущее число переносов строк.
+  mutable int m_size;      ///< Текущий результирующий объём текста.
 };
 
 #endif /* HTMLFILTER_H_ */
