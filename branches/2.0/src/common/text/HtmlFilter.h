@@ -47,6 +47,7 @@ private:
   bool isLastIsBreak(const QList<HtmlToken> &tokens) const;
   int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
   QString prepare(const QString &text) const;
+  void makeTextToken(QList<HtmlToken> &tokens, const QString &text) const;
   void optimize(QList<HtmlToken> &tokens) const;
   void tokenize(const QString &text, QList<HtmlToken> &tokens) const;
   void truncate(QList<HtmlToken> &tokens, int pos) const;
@@ -55,6 +56,7 @@ private:
   int m_options;           ///< Опции фильтрации.
   int m_sizeLimit;         ///< Мягкое ограничение на размер, может быть незначительно превышено для того чтобы не портить разметку.
   mutable bool m_optimize; ///< true если требуется оптимизация тегов.
+  mutable int m_br;
   mutable int m_breaks;    ///< Текущее число переносов строк.
   mutable int m_size;      ///< Текущий результирующий объём текста.
 };
