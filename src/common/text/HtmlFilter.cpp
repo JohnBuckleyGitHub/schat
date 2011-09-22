@@ -93,10 +93,7 @@ bool HtmlFilter::isLastIsBreak(const QList<HtmlToken> &tokens) const
   if (m_breaksLimit > 0 && m_breaksLimit == m_breaks)
     return true;
 
-   if (tokens.last().tag == QLatin1String("br"))
-    return true;
-
-  if (tokens.last().text == QLatin1String(" "))
+  if (m_br > 1)
     return true;
 
   if (tokens.last().text.contains(QString("&nbsp;"))) {
@@ -141,12 +138,39 @@ QString HtmlFilter::prepare(const QString &text) const
   m_optimize = false;
   m_breaks = 0;
   m_size = 0;
+  m_br = 0;
 
   PlainTextFilter::removeTag(out, QLatin1String("head"));
   PlainTextFilter::removeTag(out, QLatin1String("style"));
   PlainTextFilter::removeTag(out, QLatin1String("script"));
 
   return out;
+}
+
+
+void HtmlFilter::makeTextToken(QList<HtmlToken> &tokens, const QString &text) const
+{
+  HtmlToken token(text);
+
+  if (tokens.isEmpty()) {
+    tokens.append(token);
+    m_br = 0;
+    return;
+  }
+
+  if (tokens.last().type == HtmlToken::Text) {
+    if (text == QLatin1String(" ") && tokens.last().text == text)
+      return;
+
+    tokens.last().text.append(text);
+    return;
+  }
+
+  if (tokens.last().type == HtmlToken::StartTag && text == QLatin1String(" ") && tokens.last().tag == QLatin1String("br"))
+    return;
+
+  tokens.append(token);
+  m_br = 0;
 }
 
 
@@ -286,25 +310,12 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     if (lt == -1) {
       HtmlToken token(text.mid(pos));
       tokens.append(token);
+      m_br = 0;
       break;
     }
 
     if (lt != pos) {
-      if (tokens.isEmpty()) {
-        HtmlToken token(text.mid(pos, lt - pos));
-        tokens.append(token);
-      }
-      else {
-        QString t = text.mid(pos, lt - pos);
-        if (tokens.last().type != HtmlToken::Text) {
-          HtmlToken token(t);
-          tokens.append(token);
-        }
-        else {
-          if (!(t == QLatin1String(" ") && tokens.last().text == t))
-            tokens.last().text.append(t);
-        }
-      }
+      makeTextToken(tokens, text.mid(pos, lt - pos));
     }
 
     gt = text.indexOf(QLatin1Char('>'), lt);
@@ -317,11 +328,9 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
         if (isLastIsBreak(tokens))
           continue;
 
-        token.simple = true;
-        token.type = HtmlToken::StartTag;
-        token.tag = QLatin1String("br");
-        token.text = QLatin1String("<br>");
+        HtmlToken token(HtmlToken::Tag, QLatin1String("<br>"));
         tokens.append(token);
+        m_br++;
         m_breaks++;
       }
       continue;
@@ -338,6 +347,7 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
         if (isLastIsBreak(tokens))
           continue;
 
+        m_br++;
         m_breaks++;
       }
 
@@ -347,6 +357,7 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     if (safe.contains(token.tag)) {
       m_optimize = true;
       tokens.append(token);
+      m_br = 0;
     }
   }
 
