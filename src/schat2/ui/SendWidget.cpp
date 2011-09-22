@@ -207,8 +207,7 @@ void SendWidget::showHistoryMenu()
   QAction *action = 0;
 
   for (int i = history.size() - 1; i >= 0; --i) {
-    PlainTextFilter filter;
-    action = m_history->addAction(fm.elidedText(filter.filter(history.at(i)), Qt::ElideMiddle, 150));
+    action = m_history->addAction(fm.elidedText(PlainTextFilter::filter(history.at(i)), Qt::ElideMiddle, 150));
     action->setData(i);
     connect(action, SIGNAL(triggered()), SLOT(showHistoryItem()));
   }
