@@ -40,6 +40,7 @@
 #include "settingsdialog.h"
 #include "simplechatapp.h"
 #include "soundaction.h"
+#include "text/PlainTextFilter.h"
 #include "trayicon.h"
 #include "widget/connectionstatus.h"
 #include "widget/sendwidget.h"
@@ -75,7 +76,7 @@ SChatWindowPrivate::~SChatWindowPrivate()
  */
 bool SChatWindowPrivate::parseCmd(AbstractTab *tab, const QString &message)
 {
-  QString text     = ChannelLog::toPlainText(message).trimmed();
+  QString text     = PlainTextFilter::filter(message);
   QString textFull = text;
   text = text.toLower();
 

@@ -39,6 +39,8 @@
 #include "protocol.h"
 #include "settings.h"
 #include "simplechatapp.h"
+#include "text/HtmlFilter.h"
+#include "text/PlainTextFilter.h"
 
 /*!
  * \brief Конструктор класса ChatViewPrivate.
@@ -86,7 +88,7 @@ ChatViewPrivate::~ChatViewPrivate()
  */
 bool ChatViewPrivate::prepareCmd(const QString &cmd, QString &msg, bool cut)
 {
-  if (ChannelLog::toPlainText(msg).startsWith(cmd, Qt::CaseInsensitive)) {
+  if (PlainTextFilter::filter(msg).startsWith(cmd, Qt::CaseInsensitive)) {
     if (cut) {
       QString c = cmd;
       int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
@@ -269,13 +271,10 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
 /*!
  * Универсальное фильтрованное сервисное сообщение.
  */
-void ChatView::addFilteredMsg(const QString &msg, bool strict)
+void ChatView::addFilteredMsg(const QString &msg)
 {
-  QTextDocument doc;
-  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
-  doc.setHtml(msg);
-
-  QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
+  HtmlFilter filter;
+  QString html = filter.filter(msg);
   html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Service message:")).arg(html);
 
   addServiceMsg(html);
@@ -291,11 +290,8 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
   if (SimpleSettings->profile()->nick() == sender)
     d->autoScroll->setChecked(true);
 
-  QTextDocument doc;
-  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
-  doc.setHtml(message);
-
-  QString html = ChannelLog::htmlFilter(doc.toHtml());
+  HtmlFilter filter;
+  QString html = filter.filter(message);
   html = ChannelLog::parseLinks(html);
 
   QString escapedNick = Qt::escape(sender);

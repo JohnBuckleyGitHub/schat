@@ -44,100 +44,7 @@ ChannelLog::ChannelLog(const QString &logPath, QObject *parent)
 }
 
 
-QString ChannelLog::htmlFilter(const QString &html, int left, bool strict)
-{
-  QString out = html;
 
-  /// Очищает html документ от неотображаемой информации.
-  QRegExp badStuff(QLatin1String("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>|</?p[^<>]*>"));
-  badStuff.setCaseSensitivity(Qt::CaseInsensitive);
-  out.remove(badStuff);
-  out = out.trimmed();
-
-  if (out.isEmpty())
-    return "";
-
-  out.remove('\r');
-
-  /// Обрезает до максимальной длинны.
-  if (left)
-    out = out.left(left);
-
-  if (!strict)
-    return out;
-
-  /// Удаляет запрещённые теги.
-  QList<QLatin1String> otherBadTags;
-  otherBadTags << QLatin1String("address")
-               << QLatin1String("big")
-               << QLatin1String("blockquote")
-               << QLatin1String("center")
-               << QLatin1String("dd")
-               << QLatin1String("div")
-               << QLatin1String("dl")
-               << QLatin1String("dt")
-               << QLatin1String("font")
-               << QLatin1String("h1")
-               << QLatin1String("h2")
-               << QLatin1String("h3")
-               << QLatin1String("h4")
-               << QLatin1String("h5")
-               << QLatin1String("h6")
-               << QLatin1String("hr")
-               << QLatin1String("kbd")
-               << QLatin1String("li")
-               << QLatin1String("ol")
-               << QLatin1String("qt")
-               << QLatin1String("small")
-               << QLatin1String("sub")
-               << QLatin1String("sup")
-               << QLatin1String("table")
-               << QLatin1String("tbody")
-               << QLatin1String("td")
-               << QLatin1String("tfoot")
-               << QLatin1String("th")
-               << QLatin1String("thead")
-               << QLatin1String("tr")
-               << QLatin1String("img")
-               << QLatin1String("ul");
-
-  foreach (QString tag, otherBadTags) {
-    badStuff.setPattern(QString("</?%1[^<>]*>").arg(tag));
-    out.remove(badStuff);
-  }
-
-  /// Удаляет пустые ссылки.
-  badStuff.setPattern(QLatin1String("<a[^<]*>[\\s]*</a>"));
-  out.remove(badStuff);
-
-  out.replace("  ", "&nbsp;&nbsp;");
-
-  /// Заменяет перенос строк на соответствующий html код.
-  out.replace(QLatin1String("\n"), QLatin1String("<br />"));
-
-  /// Заменяет двойные переносы строк на одинарные.
-  while (out.contains(QLatin1String("<br /><br /><br />")))
-    out.replace(QLatin1String("<br /><br /><br />"), QLatin1String("<br /><br />"));
-
-  /// Удаляет код переноса строки если тот находится в конце сообщения.
-  out.replace(QLatin1String("<br /><br /></span>"), QLatin1String("<br /></span>"));
-  out.replace(QLatin1String("<br /></span>"), QLatin1String("</span>"));
-
-  if (out.endsWith(QLatin1String("<br /><br />")))
-    out = out.left(out.size() - 12);
-  if (out.endsWith(QLatin1String("<br />")))
-    out = out.left(out.size() - 6);
-
-  /// Удаляет запрещённые css стили.
-  /// \todo Эта функция также удалит заданные селекторы из текста, что не допустимо.
-  badStuff.setPattern("\\s?font-size:[^;]*;|\\s?background-color:[^;]*;|\\s?font-family:[^;]*;");
-  out.remove(badStuff);
-
-  if (toPlainText(out).isEmpty())
-    return "";
-
-  return out;
-}
 
 
 /*!
@@ -223,24 +130,6 @@ QString ChannelLog::parseLinks(const QString &message, bool plain)
   result.replace(QRegExp(QLatin1String("(<a href=\"[^\"]+)(&nbsp;)(\")")), QLatin1String("\\1\\3"));
 
   return result;
-}
-
-
-QString ChannelLog::toPlainText(const QString &str)
-{
-  QString out = str;
-  out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
-  out.remove(QLatin1String("</span>"), Qt::CaseInsensitive);
-  out.remove(QRegExp(QLatin1String("<[^>]*>")));
-
-  out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
-  out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
-  out.replace(QLatin1String("&quot;"), QLatin1String("\""));
-  out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
-  out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
-  out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
-  out = out.trimmed();
-  return out;
 }
 
 

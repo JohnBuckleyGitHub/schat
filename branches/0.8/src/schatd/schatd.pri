@@ -35,6 +35,8 @@ HEADERS = \
     networkreader.h \
     normalizereader.h \
     protocol.h \
+    text/HtmlFilter.h \
+    text/PlainTextFilter.h \
     translation.h \
     userunit.h \
     version.h \
@@ -54,6 +56,8 @@ SOURCES = \
     network.cpp \
     networkreader.cpp \
     normalizereader.cpp \
+    text/HtmlFilter.cpp \
+    text/PlainTextFilter.cpp \
     translation.cpp \
     userunit.cpp \
 

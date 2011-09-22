@@ -20,8 +20,9 @@
 #include <QtNetwork>
 
 #include "abstractprofile.h"
-#include "channellog.h"
 #include "daemonservice.h"
+#include "text/HtmlFilter.h"
+#include "text/PlainTextFilter.h"
 
 #ifdef SCHAT_DEBUG
   #undef SCHAT_DEBUG
@@ -565,7 +566,7 @@ bool DaemonService::send(quint16 opcode, quint8 gender, const QString &nick, con
  */
 QString DaemonService::parseCmd(const QString &message) const
 {
-  QString text = ChannelLog::toPlainText(message).trimmed().toLower();
+  QString text = PlainTextFilter::filter(message).trimmed().toLower();
   QString out = message;
   if (text.startsWith("/all ", Qt::CaseInsensitive)) {
     QString cmd = "/all ";
@@ -652,7 +653,8 @@ void DaemonService::opcodeMessage()
   if (p_message.isEmpty())
     return;
 
-  p_message = ChannelLog::htmlFilter(p_message);
+  HtmlFilter filter;
+  p_message = filter.filter(p_message);
   if (p_message.isEmpty())
     return;
 
@@ -757,7 +759,8 @@ void DaemonService::opcodeRelayMessage()
   if (p_message.isEmpty())
     return;
 
-  p_message = ChannelLog::htmlFilter(p_message);
+  HtmlFilter filter;
+  p_message = filter.filter(p_message);
   if (p_message.isEmpty())
     return;
 

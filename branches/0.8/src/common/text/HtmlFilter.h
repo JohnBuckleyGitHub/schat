@@ -19,7 +19,6 @@
 #ifndef HTMLFILTER_H_
 #define HTMLFILTER_H_
 
-#include "schat.h"
 #include "text/HtmlToken.h"
 
 class QStringList;
@@ -28,7 +27,7 @@ class QStringList;
  * Фильтрует и вырезает всё лишнее из HTML оставляя только минимальное
  * безопасное содержимое.
  */
-class SCHAT_EXPORT HtmlFilter
+class HtmlFilter
 {
 public:
   /// Опции фильтрации.
@@ -38,7 +37,7 @@ public:
     AllowSpanTag = 2         ///< Разрешить поддержку тега span.
   };
 
-  HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 20);
+  HtmlFilter(int options = AllowSpanTag, int sizeLimit = 6666, int breaksLimit = 20);
   QList<HtmlToken> tokenize(const QString &text) const;
   QString filter(const QString &text) const;
   static QString build(const QList<HtmlToken> &tokens);
