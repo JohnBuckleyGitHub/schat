@@ -97,9 +97,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   query.bindValue(QLatin1String(":timestamp"), data.timestamp);
   query.bindValue(QLatin1String(":command"), data.command);
   query.bindValue(QLatin1String(":text"), data.text);
-
-  PlainTextFilter filter;
-  query.bindValue(QLatin1String(":plainText"), filter.filter(data.text));
+  query.bindValue(QLatin1String(":plainText"), PlainTextFilter::filter(data.text));
   query.exec();
 
   if (query.numRowsAffected() <= 0)

@@ -45,8 +45,7 @@ bool ClientHelper::send(MessageData &data)
   QString text;
 
   if (m_richText) {
-    PlainTextFilter filter;
-    text = filter.filter(data.text);
+    text = PlainTextFilter::filter(data.text);
   }
   else
     text = data.text.simplified();

@@ -19,6 +19,8 @@
 #ifndef PLAINTEXTFILTER_H_
 #define PLAINTEXTFILTER_H_
 
+#include <QString>
+
 #include "schat.h"
 
 /*!
@@ -26,9 +28,11 @@
  */
 class SCHAT_EXPORT PlainTextFilter
 {
+private:
+  PlainTextFilter() {}
+
 public:
-  PlainTextFilter();
-  QString filter(const QString &text) const;
+  static QString filter(const QString &text);
   static void removeTag(QString &text, const QString &tag);
 };
 
