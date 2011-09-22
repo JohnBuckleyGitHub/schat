@@ -6,6 +6,7 @@
   </meta>
   <servers random="false">
     <host>schat.impomezia.com</host>
+    <host>de.schat.impomezia.com</host>
     <host>us.schat.impomezia.com</host>
   </servers>
 </network>
