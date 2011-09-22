@@ -71,12 +71,12 @@ public:
     tag = tag.toLower();
   }
 
-  QString toEndTag() const
+  HtmlToken toEndTag() const
   {
     if (type != StartTag)
       return QString();
 
-    return QLatin1String("</") + tag + QLatin1Char('>');
+    return HtmlToken(HtmlToken::EndTag, QLatin1String("</") + tag + QLatin1Char('>'));
   }
 
   bool simple;  ///< false в случае если начальный тег содержит дополнительные данные.

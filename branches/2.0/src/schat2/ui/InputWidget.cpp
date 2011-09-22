@@ -101,7 +101,7 @@ void InputWidget::clear()
 void InputWidget::send()
 {
   QString html = toHtml();
-  HtmlFilter filter;
+  HtmlFilter filter(HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
   QString out = filter.filter(html);
   clear();
 
