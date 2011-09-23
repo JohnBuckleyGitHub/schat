@@ -38,13 +38,6 @@ public:
     ServiceMessageType
   };
 
-  /// Опции обработки текста.
-  enum ParseOptions {
-    NoParse = 0,         ///< Не обрабатывать.
-    RemoveAllHtml = 1,   ///< Удалить весь html код.
-    RemoveUnSafeHtml = 2 ///< Удалить небезопасный html код.
-  };
-
   /// Направление сообщения.
   enum Direction {
     UnknownDirection,
@@ -61,8 +54,8 @@ public:
     HighestPriority = 13
   };
 
-  AbstractMessage(const QString &type, const MessageData &data, int parseOptions = NoParse);
-  AbstractMessage(const QString &type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = NoParse);
+  AbstractMessage(const QString &type, const MessageData &data, int parseOptions = 0);
+  AbstractMessage(const QString &type, const QString &text = QString(), const QByteArray &destId = QByteArray(), int parseOptions = 0);
   inline int direction() const { return m_direction; }
   inline int priority() const { return m_priority; }
   inline QByteArray destId() const { return m_destId; }

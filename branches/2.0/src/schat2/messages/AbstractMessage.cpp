@@ -23,6 +23,8 @@
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
 #include "net/packets/message.h"
+#include "text/HtmlFilter.h"
+#include "text/TokenFilter.h"
 #include "ui/UserUtils.h"
 
 QHash<QString, QString> AbstractMessage::m_templates;
@@ -106,8 +108,20 @@ QString AbstractMessage::js(bool add) const
 
 void AbstractMessage::setText(const QString &text, int parseOptions)
 {
-  Q_UNUSED(parseOptions);
-  m_text = text;
+  QStringList filters = TokenFilter::defaults(m_type);
+  if (filters.isEmpty()) {
+    m_text = text;
+    return;
+  }
+
+  HtmlFilter filter(parseOptions);
+  QList<HtmlToken> tokens = filter.tokenize(text);
+
+  for (int i = 0; i < filters.size(); ++i) {
+    TokenFilter::filter(filters.at(i), tokens);
+  }
+
+  m_text = HtmlFilter::build(tokens);
 }
 
 

@@ -20,7 +20,7 @@
 #include "net/packets/message.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
-  : AbstractMessage(QLatin1String("user-type"), data, NoParse)
+  : AbstractMessage(QLatin1String("user-type"), data)
   , m_status(static_cast<DeliveryStatus>(status))
 {
   if (status & OutgoingMessage)
