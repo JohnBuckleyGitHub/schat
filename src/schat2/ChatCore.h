@@ -119,7 +119,7 @@ public:
   void startNotify(int notice, const QVariant &data = QVariant());
 
 signals:
-  void channelDataChanged(const QByteArray &channelId);
+  void channelDataChanged(const QByteArray &senderId, const QByteArray &channelId);
   void message(const AbstractMessage &message);
   void notify(int notice, const QVariant &data);
 

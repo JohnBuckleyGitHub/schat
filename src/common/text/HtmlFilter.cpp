@@ -87,6 +87,9 @@ QString HtmlFilter::build(const QList<HtmlToken> &tokens)
 
 bool HtmlFilter::isLastIsBreak(const QList<HtmlToken> &tokens) const
 {
+  if (m_breaksLimit == 0)
+    return true;
+
   if (tokens.isEmpty())
     return false;
 

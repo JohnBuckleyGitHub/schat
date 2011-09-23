@@ -108,6 +108,9 @@ QString AbstractMessage::js(bool add) const
 
 void AbstractMessage::setText(const QString &text, int parseOptions)
 {
+  if (text.isEmpty())
+    return;
+
   QStringList filters = TokenFilter::defaults(m_type);
   if (filters.isEmpty()) {
     m_text = text;
@@ -141,11 +144,11 @@ QDateTime AbstractMessage::dateTime() const
 /*!
  * Добавление сообщения в чат.
  */
-QString AbstractMessage::appendMessage(QString &html) const
+QString AbstractMessage::appendMessage(QString &html, const QString &func) const
 {
   html.replace(QLatin1String("\""), QLatin1String("\\\""));
   html.replace(QLatin1String("\n"), QLatin1String("\\n"));
-  return QLatin1String("appendMessage(\"") + html + QLatin1String("\");");
+  return func + QLatin1String("(\"") + html + QLatin1String("\");");
 }
 
 

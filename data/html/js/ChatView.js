@@ -112,3 +112,13 @@ function handleButton() {
 		SimpleChat.click(id, type);
 	} catch (e) {}
 }
+
+function setTopic(topic)
+{
+	$('#topic').html(topic);
+	
+	if (topic === '')
+		$('#topic-wrapper').hide();
+	else
+		$('#topic-wrapper').show();
+}
