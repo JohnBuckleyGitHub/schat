@@ -59,6 +59,7 @@ public:
   inline TabBar *tabBar() { return m_tabBar; }
   static TabWidget *i() { return m_self; }
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
+  void message(ChatViewTab *tab, const AbstractMessage &data);
 
 signals:
   void pageChanged(int type, bool visible);
@@ -93,7 +94,6 @@ private:
   void closeWelcome();
   void createToolBars();
   void lastTab();
-  void message(ChatViewTab *tab, const AbstractMessage &data);
   void retranslateUi();
   void showWelcome();
   void stopAlert();

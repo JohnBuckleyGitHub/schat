@@ -129,6 +129,32 @@ void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId
 }
 
 
+void TabWidget::message(ChatViewTab *tab, const AbstractMessage &data)
+{
+  if (!tab) {
+    message(data);
+    return;
+  }
+
+  tab->chatView()->evaluateJavaScript(data.js());
+
+  if (data.priority() < AbstractMessage::NormalPriority)
+    return;
+
+  int index = indexOf(tab);
+  bool alert = false;
+  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
+    alert = true;
+    tab->alert();
+    m_tray->alert();
+
+    if (!m_alerts.contains(tab))
+      m_alerts.append(tab);
+  }
+}
+
+
+
 bool TabWidget::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate)
@@ -686,31 +712,6 @@ void TabWidget::lastTab()
 {
   if (count() == 0)
     addChatTab(m_alertTab);
-}
-
-
-void TabWidget::message(ChatViewTab *tab, const AbstractMessage &data)
-{
-  if (!tab) {
-    message(data);
-    return;
-  }
-
-  tab->chatView()->evaluateJavaScript(data.js());
-
-  if (data.priority() < AbstractMessage::NormalPriority)
-    return;
-
-  int index = indexOf(tab);
-  bool alert = false;
-  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
-    alert = true;
-    tab->alert();
-    m_tray->alert();
-
-    if (!m_alerts.contains(tab))
-      m_alerts.append(tab);
-  }
 }
 
 

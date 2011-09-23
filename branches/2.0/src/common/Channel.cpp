@@ -16,9 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Channel.h"
 #include "debugstream.h"
+
+#include "Channel.h"
 #include "net/SimpleID.h"
+#include "text/HtmlFilter.h"
 
 Channel::Channel()
   : m_synced(false)
@@ -109,13 +111,12 @@ bool Channel::setName(const QString &name)
 
 bool Channel::setTopic(const QString &topic)
 {
+  HtmlFilter filter(0, MaxTopicLength, 0);
+  m_topic = filter.filter(topic);
+
   if (topic.isEmpty())
     return validate(true);
 
-  if (topic.size() > MaxTopicLength)
-    return validate(false);
-
-  m_topic = topic.simplified();
   return validate(true);
 }
 

@@ -28,6 +28,7 @@
 #include "messages/AlertMessage.h"
 #include "messages/MessageAdapter.h"
 #include "messages/MessageBox.h"
+#include "messages/TopicMessage.h"
 #include "messages/UserMessage.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
@@ -392,7 +393,9 @@ void MessageAdapter::readTopic(const MessageData &data)
     return;
 
   channel->setTopic(data.text);
-  emit channelDataChanged(channel->id());
+  TopicMessage msg(data, channel);
+  emit message(msg);
+  emit channelDataChanged(data.senderId, channel->id());
 }
 
 

@@ -39,6 +39,7 @@ HEADERS = \
     messages/AlertMessage.h \
     messages/MessageAdapter.h \
     messages/MessageBox.h \
+    messages/TopicMessage.h \
     messages/UserMessage.h \
     NetworkManager.h \
     plugins/AbstractHistory.h \
@@ -91,6 +92,7 @@ SOURCES = \
     messages/AlertMessage.cpp \
     messages/MessageAdapter.cpp \
     messages/MessageBox.cpp \
+    messages/TopicMessage.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
     plugins/AbstractHistory.cpp \

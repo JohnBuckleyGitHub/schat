@@ -32,7 +32,7 @@ public:
     MinNameLengh = 3,     ///< Минимальная длина имени.
     MaxNameLength = 21,   ///< Максимальная длина имени.
     MaxDescLength = 128,  ///< Максимальная длина описания.
-    MaxTopicLength = 1024 ///< Максимальная длина темы канала.
+    MaxTopicLength = 1000 ///< Максимальная длина темы канала.
   };
 
   enum ChannelType {

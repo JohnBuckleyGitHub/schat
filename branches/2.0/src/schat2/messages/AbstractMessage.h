@@ -71,7 +71,7 @@ public:
 
 protected:
   QDateTime dateTime() const;
-  QString appendMessage(QString &html) const;
+  QString appendMessage(QString &html, const QString &func = QLatin1String("appendMessage")) const;
   void extra(QString &html) const;
   void id(QString &html) const;
   void nick(QString &html) const;

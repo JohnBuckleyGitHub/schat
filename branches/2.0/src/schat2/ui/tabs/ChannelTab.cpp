@@ -23,6 +23,7 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
+#include "messages/TopicMessage.h"
 #include "ui/tabs/ChannelBar.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
@@ -36,7 +37,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   , m_client(ChatCore::i()->client())
 {
   m_bar = new ChannelBar(this);
-  m_bar->topic()->setTopic(channel->topic());
+  m_bar->setVisible(false);
+//  m_bar->topic()->setTopic(channel->topic());
 
 //  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
 
@@ -67,10 +69,13 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
 
+  TopicMessage msg(m_channel);
+  m_tabs->message(this, msg);
+
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
-  connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &)), SLOT(dataChanged(const QByteArray &)));
+  connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SLOT(dataChanged(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
@@ -146,7 +151,7 @@ void ChannelTab::synced()
 }
 
 
-void ChannelTab::dataChanged(const QByteArray &channelId)
+void ChannelTab::dataChanged(const QByteArray &senderId, const QByteArray &channelId)
 {
   if (id() != channelId)
     return;
