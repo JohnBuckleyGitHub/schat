@@ -45,7 +45,9 @@ HEADERS = \
     plugins/ChatPlugin.h \
     QProgressIndicator/QProgressIndicator.h \
     schat.h \
+    text/LinksFilter.h \
     text/TokenFilter.h \
+    text/UrlFilter.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
     ui/fields/LanguageField.h \
@@ -94,7 +96,9 @@ SOURCES = \
     plugins/AbstractHistory.cpp \
     plugins/ChatPlugin.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
+    text/LinksFilter.cpp \
     text/TokenFilter.cpp \
+    text/UrlFilter.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
     ui/fields/LanguageField.cpp \
@@ -124,7 +128,7 @@ SOURCES = \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
     ui/UserUtils.cpp \
-
+    
 SCHAT_CLIENT_LIB = 1
 
 TRANSLATIONS += ../../data/translations/schat2_en.ts

@@ -129,7 +129,7 @@ QString HtmlFilter::prepare(const QString &text) const
   QString out;
   if (m_options & ConvertSpacesToNbsp) {
     out = text;
-    out.replace(QLatin1String("  "), QLatin1String("&nbsp;&nbsp;"));
+    out.replace(QLatin1String("  "), QLatin1String("&nbsp; "));
     out = out.simplified();
   }
   else

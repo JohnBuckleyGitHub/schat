@@ -22,34 +22,36 @@ QHash<QString, AbstractFilter *> TokenFilter::m_filters;
 QHash<QString, QStringList> TokenFilter::m_default;
 
 
-TokenFilter::TokenFilter(QObject *parent)
-  : QObject(parent)
-{
-}
-
-
 /*!
  * Добавление нового фильтра.
  */
 bool TokenFilter::add(AbstractFilter *filter)
 {
-  if (filter->name().isEmpty())
+  if (filter->name().isEmpty() || m_filters.contains(filter->name())) {
+    delete filter;
     return false;
-
-  if (m_filters.contains(filter->name()))
-    return false;
+  }
 
   m_filters[filter->name()] = filter;
   return true;
 }
 
 
-bool TokenFilter::add(const QString &name, const QString &filter)
+bool TokenFilter::add(const QString &type, AbstractFilter *filter)
 {
-  if (m_default.contains(name) && m_default.value(name).contains(filter))
+  if (add(filter))
+    return add(type, filter->name());
+
+  return false;
+}
+
+
+bool TokenFilter::add(const QString &type, const QString &filter)
+{
+  if (m_default.contains(type) && m_default.value(type).contains(filter))
     return false;
 
-  m_default[name].append(filter);
+  m_default[type].append(filter);
   return true;
 }
 

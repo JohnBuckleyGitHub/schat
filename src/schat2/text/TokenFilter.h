@@ -20,7 +20,6 @@
 #define TOKENFILTER_H_
 
 #include <QHash>
-#include <QObject>
 #include <QStringList>
 #include <QVariant>
 
@@ -40,6 +39,7 @@ public:
   : m_name(name)
   {}
 
+  virtual ~AbstractFilter() {}
   inline QString name() const { return m_name; }
   virtual bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const = 0;
 
@@ -48,14 +48,14 @@ protected:
 };
 
 
-class SCHAT_EXPORT TokenFilter : public QObject
+class SCHAT_CORE_EXPORT TokenFilter
 {
-  Q_OBJECT
+  TokenFilter() {}
 
 public:
-  TokenFilter(QObject *parent = 0);
   static bool add(AbstractFilter *filter);
-  static bool add(const QString &name, const QString &filter);
+  static bool add(const QString &type, AbstractFilter *filter);
+  static bool add(const QString &type, const QString &filter);
   static bool filter(const QString &name, QList<HtmlToken> &tokens, QVariantHash options = QVariantHash());
   static QStringList defaults(const QString &name);
   static void remove(const QString &name);
