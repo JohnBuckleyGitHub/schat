@@ -110,6 +110,7 @@ public:
   }
 
   bool valid;
+  QString classes;
 };
 
 
@@ -132,7 +133,12 @@ public:
 
   QString toText() const
   {
-    return QLatin1String("<a href=\"") + url + QLatin1String("\">");
+    QString out = QLatin1String("<a href=\"") + url + QLatin1String("\"");
+    if (!classes.isEmpty())
+      out += QLatin1String(" class=\"") + classes + QLatin1String("\"");
+
+    out += QLatin1String(">");
+    return out;
   }
 
   QString url;

@@ -33,6 +33,9 @@
 #include "net/packets/users.h"
 #include "NetworkManager.h"
 #include "plugins/hooks.h"
+#include "text/LinksFilter.h"
+#include "text/TokenFilter.h"
+#include "text/UrlFilter.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -40,6 +43,9 @@ MessageAdapter::MessageAdapter()
   : ClientHelper(ChatCore::i()->client())
   , m_settings(ChatCore::i()->settings())
 {
+  TokenFilter::add(QLatin1String("user-type"), new LinksFilter());
+  TokenFilter::add(QLatin1String("user-type"), new UrlFilter());
+
   m_richText = true;
   connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
