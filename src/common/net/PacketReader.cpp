@@ -18,6 +18,7 @@
 
 #include "net/PacketReader.h"
 #include "net/Protocol.h"
+#include "SimpleJSon.h"
 
 PacketReader::PacketReader(QDataStream *stream)
   : m_stream(stream),
@@ -34,4 +35,12 @@ PacketReader::PacketReader(QDataStream *stream)
 
   if (m_option & Protocol::DestinationField)
     m_dest = idList();
+}
+
+
+QVariant PacketReader::json() const
+{
+  QByteArray data;
+  *m_stream >> data;
+  return SimpleJSon::parse(data);
 }

@@ -25,6 +25,7 @@
 
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
+#include "SimpleJSon.h"
 
 /*!
  * Класс выполняющий запись виртуального пакета.
@@ -137,6 +138,10 @@ public:
   /// Запись UTF-8 строки.
   inline void put(const QString &text) {
     *m_stream << text.toUtf8();
+  }
+
+  inline void put(const QVariant &data) {
+    *m_stream << SimpleJSon::generate(data);
   }
 
   template<class T>
