@@ -35,6 +35,7 @@ public:
   inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
   inline QByteArray sender() const  { return m_sender; }
   inline QList<QByteArray> destinations() const { return m_dest; }
+  QVariant json() const;
 
   inline QString text() const {
     QByteArray data;

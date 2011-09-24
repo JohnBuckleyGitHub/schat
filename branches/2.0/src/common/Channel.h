@@ -21,6 +21,7 @@
 
 #include <QList>
 #include <QSharedPointer>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -58,7 +59,9 @@ public:
   inline QString desc() const { return m_desc; }
   inline QString name() const { return m_name; }
   inline QString topic() const { return m_topic; }
+  inline QVariant data() const { return m_data; }
   inline void clear() { m_users.clear(); }
+  inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setSynced(bool synced) { m_synced = synced; }
 
 private:
@@ -72,6 +75,7 @@ private:
   QString m_desc;            ///< Описание канала.
   QString m_name;            ///< Имя канала.
   QString m_topic;           ///< Тема канала.
+  QVariantMap m_data;        ///< JSON данные канала.
 };
 
 typedef QSharedPointer<Channel> ClientChannel;
