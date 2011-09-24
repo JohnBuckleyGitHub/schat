@@ -15,12 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+DEFINES += K8JSON_INCLUDE_GENERATOR
+
 HEADERS += \
     Channel.h \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
     client/NetworkPool.h \
     FileLocations.h \
+    k8json/k8json.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/channels.h \
@@ -37,6 +40,7 @@ HEADERS += \
     Plugins.h \
     schat.h \
     Settings.h \
+    SimpleJSon.h \
     text/HtmlFilter.h \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
@@ -48,6 +52,7 @@ SOURCES += \
     client/AbstractClient.cpp \
     client/NetworkPool.cpp \
     FileLocations.cpp \
+    k8json/k8json.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/channels.cpp \
@@ -61,6 +66,7 @@ SOURCES += \
     net/TransportWriter.cpp \
     Plugins.cpp \
     Settings.cpp \
+    SimpleJSon.cpp \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
     Translation.cpp \
