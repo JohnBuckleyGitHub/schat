@@ -284,9 +284,14 @@ ChatChannel DataBase::channel(qint64 id)
 }
 
 
-qint64 DataBase::addChannel(ChatChannel channel)
+qint64 DataBase::add(ChatChannel channel)
 {
-  qint64 key = -1;
+  qint64 key = channelKey(channel->id());
+  if (key != -1) {
+    channel->setKey(key);
+    update(channel);
+    return key;
+  }
 
   QSqlQuery query;
   query.prepare(QLatin1String("INSERT INTO channels (channelId, name, normalName, expired, topic, data) "
@@ -329,5 +334,14 @@ qint64 DataBase::channelKey(const QByteArray &id)
 
 void DataBase::update(ChatChannel channel)
 {
-
+  QSqlQuery query;
+  query.prepare(QLatin1String("UPDATE channels SET channelId = :channelId, name = :name, normalName = :normalName, expired = :expired, topic = :topic, data = :data WHERE id = :id;"));
+  query.bindValue(QLatin1String(":channelId"), channel->id());
+  query.bindValue(QLatin1String(":name"), channel->name());
+  query.bindValue(QLatin1String(":normalName"), channel->normalName());
+  query.bindValue(QLatin1String(":expired"), 0);
+  query.bindValue(QLatin1String(":topic"), channel->topic());
+  query.bindValue(QLatin1String(":data"), SimpleJSon::generate(channel->data()));
+  query.bindValue(QLatin1String(":id"), channel->key());
+  query.exec();
 }

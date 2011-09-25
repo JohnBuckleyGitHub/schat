@@ -76,7 +76,6 @@ protected:
   virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
   bool join(const QByteArray &userId, ChatChannel channel);
-  bool join(const QByteArray &userId, const QByteArray &channelId);
   ChatChannel addChannel(ChatUser user);
   QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
   QList<quint64> echoFilter(const QList<quint64> &sockets);

@@ -284,25 +284,6 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
 /*!
  * Подключение пользователя к каналу.
- *
- * \param userId    Идентификатор пользователя.
- * \param channelId Идентификатор канала.
- *
- * \return true в случае успеха.
- */
-bool Core::join(const QByteArray &userId, const QByteArray &channelId)
-{
-  ChatChannel channel = m_storage->channel(channelId); /// FIXME !!
-
-  if (!channel)
-    return false;
-
-  return join(userId, channel);
-}
-
-
-/*!
- * Подключение пользователя к каналу.
  * Пользователь будет добавлен в канал, затем ему будет отослана информация
  * о канале.
  * В случае если в канале находятся другие пользователи, им будет разослано
@@ -316,6 +297,9 @@ bool Core::join(const QByteArray &userId, const QByteArray &channelId)
  */
 bool Core::join(const QByteArray &userId, ChatChannel channel)
 {
+  if (!channel)
+    return false;
+
   if (!channel->addUser(userId))
     return false;
 
@@ -347,7 +331,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
  */
 ChatChannel Core::addChannel(ChatUser user)
 {
-  ChatChannel channel = m_storage->addChannel(user);
+  ChatChannel channel = m_storage->channel(user);
   if (channel->userCount() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
     send(channel, writer.data());
@@ -371,7 +355,7 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
 
   QList<QByteArray> users; // Список пользователей данные о которых имеются у \p user.
   for (int i = 0; i < channels.size(); ++i) {
-    ChatChannel channel = m_storage->channel(channels.at(i)); /// FIXME !!
+    ChatChannel channel = m_storage->channel(channels.at(i));
     if (!channel)
       continue;
 
@@ -613,17 +597,17 @@ bool Core::command()
  */
 bool Core::readJoinCmd()
 {
-  ChatChannel chan;
+  ChatChannel channel;
   if (!m_messageData->destId().isEmpty())
-    chan = m_storage->channel(m_messageData->destId());
+    channel = m_storage->channel(m_messageData->destId());
 
-  if (!chan)
-    chan = m_storage->channel(m_messageData->text);
+  if (!channel)
+    channel = m_storage->channel(m_messageData->text);
 
-  if (!chan)
+  if (!channel)
     return false;
 
-  return join(m_reader->sender(), chan);
+  return join(m_reader->sender(), channel);
 }
 
 
@@ -680,11 +664,12 @@ bool Core::readTopic()
   if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
     return true;
 
-  ChatChannel channel = m_storage->channel(m_reader->dest()); /// FIXME !!
+  ChatChannel channel = m_storage->channel(m_reader->dest());
   if (!channel)
     return true;
 
   channel->setTopic(m_messageData->text);
+  m_storage->update(channel);
   return false;
 }
 

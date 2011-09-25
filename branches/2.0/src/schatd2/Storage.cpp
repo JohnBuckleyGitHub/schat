@@ -314,7 +314,7 @@ bool Storage::removeChannel(const QByteArray &id)
  * Создание специального приватного канала для пользователя.
  * Данный канал служит для обмена статусной информацией.
  */
-ChatChannel Storage::addChannel(ChatUser user)
+ChatChannel Storage::channel(ChatUser user)
 {
   QByteArray id = SimpleID::setType(SimpleID::ChannelId, user->id());
   ChatChannel channel = m_channels.value(id);
@@ -340,7 +340,13 @@ ChatChannel Storage::channel(const QByteArray &id)
   if (channel)
     return channel;
 
-  return m_db->channel(id);
+  channel = m_db->channel(id);
+  if (channel) {
+    m_channels[id] = channel;
+    m_channelNames[channel->normalName()] = channel;
+  }
+
+  return channel;
 }
 
 
@@ -355,11 +361,10 @@ ChatChannel Storage::channel(const QString &name)
   channel = this->channel(id);
   if (!channel) {
     channel = ChatChannel(new ServerChannel(id, normalName, name, true));
-    m_db->addChannel(channel);
+    m_db->add(channel);
+    m_channels[id] = channel;
+    m_channelNames[normalName] = channel;
   }
-
-  m_channels[id] = channel;
-  m_channelNames[normalName] = channel;
 
   return channel;
 }
@@ -432,6 +437,13 @@ void Storage::addChannel(ChatChannel channel)
   channel->setNormalName(normalize(channel->name()));
   m_channels[channel->id()] = channel;
   m_channelNames[channel->normalName()] = channel;
+  m_db->add(channel);
+}
+
+
+void Storage::update(ChatChannel channel)
+{
+  m_db->update(channel);
 }
 
 
