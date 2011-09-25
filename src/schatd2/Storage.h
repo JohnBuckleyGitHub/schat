@@ -62,7 +62,7 @@ public:
 
   // channel management.
   bool removeChannel(const QByteArray &id);
-  ChatChannel addChannel(ChatUser user);
+  ChatChannel channel(ChatUser user);
   ChatChannel channel(const QByteArray &id);
   ChatChannel channel(const QString &name);
   ChatChannel channel(qint64 id);
@@ -70,6 +70,7 @@ public:
   QList<quint64> socketsFromChannel(ChatChannel channel);
   QList<quint64> socketsFromIds(const QList<QByteArray> &ids);
   void addChannel(ChatChannel channel);
+  void update(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }
   inline ServerData *serverData() { return m_serverData; }
