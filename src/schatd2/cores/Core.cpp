@@ -119,6 +119,16 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 }
 
 
+qint64 Core::timestamp()
+{
+  #if QT_VERSION >= 0x040700
+  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+  #else
+  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
+  #endif
+}
+
+
 bool Core::add(ChatUser user, int authType)
 {
   Q_UNUSED(authType);
@@ -185,16 +195,6 @@ bool Core::route()
     m_timestamp = timestamp();
 
   return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
-}
-
-
-qint64 Core::timestamp() const
-{
-  #if QT_VERSION >= 0x040700
-  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-  #else
-  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
-  #endif
 }
 
 
@@ -292,7 +292,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
  */
 bool Core::join(const QByteArray &userId, const QByteArray &channelId)
 {
-  ChatChannel channel = m_storage->channel(channelId);
+  ChatChannel channel = m_storage->channel(channelId); /// FIXME !!
 
   if (!channel)
     return false;
@@ -395,7 +395,7 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
 
   QList<QByteArray> users; // Список пользователей данные о которых имеются у \p user.
   for (int i = 0; i < channels.size(); ++i) {
-    ChatChannel channel = m_storage->channel(channels.at(i));
+    ChatChannel channel = m_storage->channel(channels.at(i)); /// FIXME !!
     if (!channel)
       continue;
 
@@ -639,10 +639,10 @@ bool Core::readJoinCmd()
 {
   ChatChannel chan;
   if (!m_messageData->destId().isEmpty())
-    chan = m_storage->channel(m_messageData->destId());
+    chan = m_storage->channel(m_messageData->destId()); /// FIXME !!
 
   if (!chan)
-    chan = channel(m_messageData->text);
+    chan = channel(m_messageData->text); /// FIXME !!
 
   if (!chan)
     return false;
@@ -704,7 +704,7 @@ bool Core::readTopic()
   if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
     return true;
 
-  ChatChannel channel = m_storage->channel(m_reader->dest());
+  ChatChannel channel = m_storage->channel(m_reader->dest()); /// FIXME !!
   if (!channel)
     return true;
 

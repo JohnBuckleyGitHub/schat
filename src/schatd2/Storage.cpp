@@ -346,6 +346,7 @@ ChatChannel Storage::addChannel(const QString &name, bool permanent)
 
   m_channels.insert(ch->id(), ch);
   m_channelNames.insert(normalName, ch);
+  m_db->addChannel(ch);
 
   SCHAT_DEBUG_STREAM(this << "addChannel()" << normalName << name << permanent << ch->id().toHex())
   return ch;

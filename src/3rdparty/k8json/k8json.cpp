@@ -9,12 +9,11 @@
  */
 //#include <QtDebug>
 
+#include "k8json.h"
+
 #if defined(K8JSON_INCLUDE_COMPLEX_GENERATOR) || defined(K8JSON_INCLUDE_GENERATOR)
 # include <QStringList>
 #endif
-
-#include "k8json.h"
-
 
 namespace K8JSON {
 

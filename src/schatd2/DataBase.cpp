@@ -28,6 +28,7 @@
 #include "DataBase.h"
 #include "FileLocations.h"
 #include "net/SimpleID.h"
+#include "SimpleJSon.h"
 #include "Storage.h"
 
 DataBase::DataBase(QObject *parent)
@@ -60,7 +61,6 @@ ChatUser DataBase::user(const QByteArray &id)
  */
 ChatUser DataBase::user(qint64 id)
 {
-  qDebug() << "DataBase::user()" << id;
   QSqlQuery query;
   query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
@@ -126,6 +126,20 @@ int DataBase::start()
     addGroup(QLatin1String("regular"));
   }
 
+  if (!tables.contains(QLatin1String("channels"))) {
+    query.exec(QLatin1String(
+    "CREATE TABLE channels ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channelId  BLOB    NOT NULL UNIQUE,"
+    "  name       TEXT,"
+    "  normalName TEXT,"
+    "  expired    INTEGER DEFAULT ( 0 ),"
+    "  data       TEXT"
+    ");"));
+
+    Storage::i()->addChannel(QLatin1String("Main"), true);
+  }
+
   return 0;
 }
 
@@ -176,11 +190,7 @@ qint64 DataBase::add(ChatUser user)
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  query.exec(QLatin1String("SELECT last_insert_rowid();"));
-  if (!query.first())
-    return -1;
-
-  key = query.value(0).toLongLong();
+  key = query.lastInsertId().toLongLong();
   user->setKey(key);
 
   return key;
@@ -199,11 +209,7 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  query.exec(QLatin1String("SELECT last_insert_rowid();"));
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
+  return query.lastInsertId().toLongLong();
 }
 
 
@@ -225,7 +231,7 @@ qint64 DataBase::userKey(const QByteArray &id)
   if (!query.first())
     return -1;
 
-  return query.value(0).toULongLong();
+  return query.value(0).toLongLong();
 }
 
 
@@ -245,4 +251,74 @@ void DataBase::update(ChatUser user)
   query.bindValue(QLatin1String(":userAgent"), user->userAgent());
   query.bindValue(QLatin1String(":id"), user->key());
   query.exec();
+}
+
+
+ChatChannel DataBase::channel(const QByteArray &id)
+{
+  qint64 key = channelKey(id);
+  if (key == -1)
+    return ChatChannel();
+
+  return channel(key);
+}
+
+
+ChatChannel DataBase::channel(qint64 id)
+{
+  QSqlQuery query;
+  query.prepare(QLatin1String("SELECT channelId, name, normalName, expired, data FROM channels WHERE id = ? LIMIT 1;"));
+  query.addBindValue(id);
+  query.exec();
+
+  if (!query.first())
+    return ChatChannel();
+
+  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(2).toString(), query.value(1).toString()));
+  channel->setKey(id);
+  channel->setData(SimpleJSon::parse(query.value(4).toByteArray()).toMap());
+
+  return channel;
+}
+
+
+qint64 DataBase::addChannel(ChatChannel channel)
+{
+  qint64 key = -1;
+
+  QSqlQuery query;
+  query.prepare(QLatin1String("INSERT INTO channels (channelId, name, normalName, expired, data) "
+                     "VALUES (:channelId, :name, :normalName, :expired, :data);"));
+
+  query.bindValue(QLatin1String(":channelId"),  channel->id());
+  query.bindValue(QLatin1String(":name"),       channel->name());
+  query.bindValue(QLatin1String(":normalName"), channel->normalName());
+  query.bindValue(QLatin1String(":expired"),    0);
+  query.bindValue(QLatin1String(":data"),       SimpleJSon::generate(channel->data()));
+  query.exec();
+
+  if (query.numRowsAffected() <= 0)
+    return -1;
+
+  key = query.lastInsertId().toLongLong();
+  channel->setKey(key);
+
+  return key;
+}
+
+
+qint64 DataBase::channelKey(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+    return -1;
+
+  QSqlQuery query;
+  query.prepare(QLatin1String("SELECT id FROM channels WHERE channelId = ? LIMIT 1;"));
+  query.addBindValue(id);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
 }
