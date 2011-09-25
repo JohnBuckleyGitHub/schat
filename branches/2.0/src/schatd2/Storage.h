@@ -55,7 +55,7 @@ public:
   ChatUser user(const QString &nick, bool normalize) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   QByteArray makeUserId(int type, const QByteArray &userId) const;
-  QList<QByteArray> users(const QByteArray &id) const;
+  QList<QByteArray> users(const QByteArray &id);
   void rename(ChatUser user);
   void store(ChatUser user);
   void update(ChatUser user);
@@ -63,9 +63,9 @@ public:
   // channel management.
   bool removeChannel(const QByteArray &id);
   ChatChannel addChannel(ChatUser user);
-  ChatChannel addChannel(const QString &name, bool permanent = false);
-  ChatChannel channel(const QString &name, bool normalize) const;
-  inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
+  ChatChannel channel(const QByteArray &id);
+  ChatChannel channel(const QString &name);
+  ChatChannel channel(qint64 id);
   inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
   QList<quint64> socketsFromChannel(ChatChannel channel);
   QList<quint64> socketsFromIds(const QList<QByteArray> &ids);
@@ -78,7 +78,7 @@ public:
   QString normalize(const QString &text) const;
 
 private:
-  QByteArray makeChannelId(const QString &name);
+  QByteArray makeChannelId(const QString &name) const;
   void setDefaultSslConf();
 
   bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.

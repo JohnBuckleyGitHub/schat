@@ -358,30 +358,6 @@ ChatChannel Core::addChannel(ChatUser user)
 
 
 /*!
- * Возвращает канал, ассоциированный с именем \p name.
- * В случае если \p create true то канал будет создан в случае необходимости.
- *
- * \param name   Не нормализованное имя канала.
- * \param create true если канал не существует, то он будет создан.
- *
- * \return Указатель на канал или 0 в случае ошибки.
- */
-ChatChannel Core::channel(const QString &name, bool create)
-{
-  if (create && name.startsWith(QLatin1String("~")))
-    create = false;
-
-  ChatChannel channel = m_storage->channel(name, true);
-
-  if (!channel && create) {
-    channel = m_storage->addChannel(name);
-  }
-
-  return channel;
-}
-
-
-/*!
  * Формирование списка пакетов для синхронизации списка пользователей в канале.
  * Будут отправлены только данные пользователей, которые не известны получателю.
  *
@@ -639,10 +615,10 @@ bool Core::readJoinCmd()
 {
   ChatChannel chan;
   if (!m_messageData->destId().isEmpty())
-    chan = m_storage->channel(m_messageData->destId()); /// FIXME !!
+    chan = m_storage->channel(m_messageData->destId());
 
   if (!chan)
-    chan = channel(m_messageData->text); /// FIXME !!
+    chan = m_storage->channel(m_messageData->text);
 
   if (!chan)
     return false;
