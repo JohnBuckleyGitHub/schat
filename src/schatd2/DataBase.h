@@ -42,6 +42,7 @@ public:
   ChatChannel channel(qint64 id);
   qint64 addChannel(ChatChannel channel);
   qint64 channelKey(const QByteArray &id);
+  void update(ChatChannel channel);
 };
 
 #endif /* DATABASE_H_ */

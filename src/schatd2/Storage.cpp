@@ -62,7 +62,7 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault(QLatin1String("Certificate"), QLatin1String("server.crt"));
   m_settings->setDefault(QLatin1String("Kernel"),      QString());
   m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
-  m_settings->setDefault(QLatin1String("MainChannel"), QLatin1String("Main")); /// \deprecated Изменить создание и работу с основным каналом.
+  m_settings->setDefault(QLatin1String("MainChannel"), 1);
   m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::toBase64(SimpleID::uniqueId())));
   m_settings->setDefault(QLatin1String("PrivateKey"),  QLatin1String("server.key"));
   m_settings->setDefault(QLatin1String("ServerName"),  QString());
@@ -78,12 +78,15 @@ int Storage::start()
   m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
   m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
 
-  QString mainChannel = m_settings->value(QLatin1String("MainChannel")).toString();
-  if (!mainChannel.isEmpty()) {
-    m_serverData->setChannelId(addChannel(mainChannel, true)->id());
+  m_db->start();
+
+  qint64 key = m_settings->value(QLatin1String("MainChannel")).toLongLong();
+  if (key > 0) {
+    ChatChannel channel = this->channel(key);
+    if (channel)
+      m_serverData->setChannelId(channel->id());
   }
 
-  m_db->start();
   return 0;
 }
 
@@ -233,7 +236,7 @@ ChatUser Storage::user(const QString &nick, bool normalize) const
 }
 
 
-QList<QByteArray> Storage::users(const QByteArray &id) const
+QList<QByteArray> Storage::users(const QByteArray &id)
 {
   QList<QByteArray> out;
   ChatUser user = this->user(id);
@@ -331,34 +334,40 @@ ChatChannel Storage::addChannel(ChatUser user)
 }
 
 
-/*!
- * Добавление нового канала.
- */
-ChatChannel Storage::addChannel(const QString &name, bool permanent)
+ChatChannel Storage::channel(const QByteArray &id)
 {
-  QString normalName = normalize(name);
-  if (m_channelNames.contains(normalName))
-    return ChatChannel();
+  ChatChannel channel = m_channels.value(id);
+  if (channel)
+    return channel;
 
-  ChatChannel ch = ChatChannel(new ServerChannel(makeChannelId(normalName), normalName, name, permanent));
-  if (!ch->isValid())
-    return ChatChannel();
-
-  m_channels.insert(ch->id(), ch);
-  m_channelNames.insert(normalName, ch);
-  m_db->addChannel(ch);
-
-  SCHAT_DEBUG_STREAM(this << "addChannel()" << normalName << name << permanent << ch->id().toHex())
-  return ch;
+  return m_db->channel(id);
 }
 
 
-ChatChannel Storage::channel(const QString &name, bool normalize) const
+ChatChannel Storage::channel(const QString &name)
 {
-  if (!normalize)
-    return m_channelNames.value(name);
+  QString normalName = normalize(name);
+  ChatChannel channel = m_channelNames.value(normalName);
+  if (channel || name.startsWith(QLatin1Char('~')))
+    return channel;
 
-  return m_channelNames.value(this->normalize(name));
+  QByteArray id = makeChannelId(normalName);
+  channel = this->channel(id);
+  if (!channel) {
+    channel = ChatChannel(new ServerChannel(id, normalName, name, true));
+    m_db->addChannel(channel);
+  }
+
+  m_channels[id] = channel;
+  m_channelNames[normalName] = channel;
+
+  return channel;
+}
+
+
+ChatChannel Storage::channel(qint64 id)
+{
+  return m_db->channel(id);
 }
 
 
@@ -455,7 +464,7 @@ QString Storage::normalize(const QString &text) const
 }
 
 
-QByteArray Storage::makeChannelId(const QString &name)
+QByteArray Storage::makeChannelId(const QString &name) const
 {
   return QCryptographicHash::hash(QString("channel:" + m_serverData->privateId() + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
 }
