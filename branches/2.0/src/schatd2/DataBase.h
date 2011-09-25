@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+#include "ServerChannel.h"
 #include "ServerUser.h"
 
 class SCHAT_EXPORT DataBase : public QObject
@@ -30,12 +31,17 @@ class SCHAT_EXPORT DataBase : public QObject
 public:
   DataBase(QObject *parent = 0);
   ChatUser user(const QByteArray &id);
-  ChatUser user(qint64 key);
+  ChatUser user(qint64 id);
   int start();
   qint64 add(ChatUser user);
   qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
   qint64 userKey(const QByteArray &id);
   void update(ChatUser user);
+
+  ChatChannel channel(const QByteArray &id);
+  ChatChannel channel(qint64 id);
+  qint64 addChannel(ChatChannel channel);
+  qint64 channelKey(const QByteArray &id);
 };
 
 #endif /* DATABASE_H_ */

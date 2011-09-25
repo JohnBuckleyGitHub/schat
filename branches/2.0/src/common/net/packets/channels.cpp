@@ -25,10 +25,9 @@ ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel, const QByteA
 {
   putId(channel->id());
   put(channel->name());
-  put(channel->desc());
+  put(channel->data());
   put(channel->topic());
   putId(channel->users());
-  put(channel->data());
 }
 
 
@@ -37,8 +36,7 @@ ChannelReader::ChannelReader(PacketReader *reader)
   channel = new Channel();
   channel->setId(reader->id());
   channel->setName(reader->text());
-  channel->setDesc(reader->text());
+  channel->setData(reader->json().toMap());
   channel->setTopic(reader->text());
   channel->setUsers(reader->idList());
-  channel->setData(reader->json().toMap());
 }
