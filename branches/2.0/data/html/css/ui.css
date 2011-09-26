@@ -57,19 +57,8 @@ button:disabled {
 	left:0;
 	z-index:10;
 	padding:2px;
-	display:none;
 }
 
 #topic {
-	padding:1px 3px;
-	border-radius:5px;
-	border-top:1px solid #efedce;
-	border-left:1px solid #ebe8c1;
-	border-right:1px solid #ebe8c1;
-	border-bottom:1px solid #e3e0ad;
-	background:-webkit-gradient(linear,0% 0%,0% 100%,from(#f9f8eb),to(#efedce));
-}
-
-#topic:hover {
-	background:-webkit-gradient(linear,0% 0%,0% 100%,from(#f6f4e0),to(#ebe8c3));
+	padding:2px 4px;
 }

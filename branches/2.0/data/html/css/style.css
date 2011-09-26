@@ -42,7 +42,7 @@ a:active, a:hover {
 	font-size:x-small;
 }
 
-.no-seconds .seconds, .no-service .service-type { display:none; }
+.no-seconds .seconds, .no-service .service-type, .no-topic-author #topic-extra { display:none; }
 
 .outgoing, .delivered {
 	background:#f2ffe1;
@@ -107,7 +107,7 @@ a:active, a:hover {
 }
 
 .service-type .blocks { border:1px solid #fff; color:#a5b2c3; }
-.service-type .nick { color:#a5b2c3; }
+.service-type .nick, #topic-extra .nick { color:#a5b2c3; }
 
 .action-type .nick, .action-type .blocks { color:#be00c4; }
 .action-type .blocks { background:#ffebff; border:1px solid #ffe1ff; }

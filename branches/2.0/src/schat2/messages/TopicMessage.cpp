@@ -25,11 +25,20 @@ TopicMessage::TopicMessage(const Topic &topic)
 {
   m_senderId = topic.author;
   m_timestamp = topic.timestamp;
+  m_template = QLatin1String("topic");
 }
 
 
 QString TopicMessage::js(bool add) const
 {
-  QString html = m_text;
+  if (m_text.isEmpty()) {
+    QString html;
+    return appendMessage(html, QLatin1String("setTopic"));
+  }
+
+  QString html = tpl(m_template);
+  time(html);
+  nick(html);
+  text(html);
   return appendMessage(html, QLatin1String("setTopic"));
 }
