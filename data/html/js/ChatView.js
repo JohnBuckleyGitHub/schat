@@ -23,13 +23,24 @@ $(document).ready(function() {
 		alignChat(true);
 	});
 
+	$('#topic-wrapper').hover(
+		function () {
+			$('#body').removeClass("no-topic-author");
+		},
+		function () {
+			window.setTimeout(function() {
+				$('#body').addClass("no-topic-author");
+			}, 1000);
+		}
+	);
+
 	alignChat(true);
 });
 
 //Align our chat to the bottom of the window.  If true is passed, view will also be scrolled down
 function alignChat(shouldScroll) {
 	var windowHeight = window.innerHeight;
-	
+
 	if (windowHeight > 0) {
 		var contentElement = document.getElementById('Chat');
 		var contentHeight = contentElement.offsetHeight;
@@ -40,7 +51,7 @@ function alignChat(shouldScroll) {
 			contentElement.style.position = 'static';
 		}
 	}
-	
+
 	if (shouldScroll)
 		scrollToBottom();
 }
@@ -57,33 +68,33 @@ function scrollToBottom() {
 //Appending new content to the message view
 function appendMessage(html) {
 	$('#Chat').append(html);
-	
+
 	alignChat(true);
 }
 
 function showSeconds(show) {
 	if (show)
-		$('#Chat').removeClass('no-seconds');
+		$('#body').removeClass('no-seconds');
 	else
-		$('#Chat').addClass('no-seconds');
+		$('#body').addClass('no-seconds');
 }
 
 
 function showService(show) {
 	if (show)
-		$('#Chat').removeClass('no-service');
+		$('#body').removeClass('no-service');
 	else
-		$('#Chat').addClass('no-service');
-	
+		$('#body').addClass('no-service');
+
 	alignChat(true);
 }
 
 // Удаление статуса сообщения и времени доставки.
 function setMessageState(id, classes, timestamp, seconds) {
 	var prefix = id + ' > div.blocks';
-	
+
 	$(prefix).attr('class', 'blocks ' + classes);
-	
+
 	prefix += ' > .date-time-block > ';
 	$(prefix + '.timestamp').text(timestamp);
 	$(prefix + '.seconds').text(seconds);
@@ -107,7 +118,7 @@ function handleButton() {
 			alignChat(true);
 		});
 	}
-	
+
 	try {
 		SimpleChat.click(id, type);
 	} catch (e) {}
@@ -115,10 +126,11 @@ function handleButton() {
 
 function setTopic(topic)
 {
-	$('#topic').html(topic);
-	
+	$('#topic-wrapper').html(topic);
+
 	if (topic === '')
 		$('#topic-wrapper').hide();
 	else
 		$('#topic-wrapper').show();
 }
+
