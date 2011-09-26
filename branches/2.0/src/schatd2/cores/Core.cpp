@@ -299,6 +299,10 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 
   user->addChannel(channel->id());
 
+  ChatUser author = Storage::i()->user(channel->topic().author, true);
+  if (author)
+    send(user, UserWriter(m_sendStream, author.data(), userId, UserWriter::StaticData).data());
+
   ChannelWriter writer(m_sendStream, channel.data(), user->id());
   send(user, writer.data());
 
