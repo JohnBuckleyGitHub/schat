@@ -91,6 +91,16 @@ int Storage::start()
 }
 
 
+qint64 Storage::timestamp()
+{
+  #if QT_VERSION >= 0x040700
+  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+  #else
+  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
+  #endif
+}
+
+
 void Storage::addSlave(const QByteArray &id)
 {
   if (m_slaves.contains(id))

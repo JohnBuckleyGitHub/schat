@@ -389,11 +389,11 @@ void MessageAdapter::readTopic(const MessageData &data)
   if (!channel)
     return;
 
-  if (channel->topic() == data.text)
+  if (channel->topic().topic == data.text)
     return;
 
-  channel->setTopic(data.text);
-  TopicMessage msg(data, channel);
+  channel->setTopic(data.text, data.senderId, data.timestamp);
+  TopicMessage msg(channel->topic());
   emit message(msg);
   emit channelDataChanged(data.senderId, channel->id());
 }

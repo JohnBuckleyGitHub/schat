@@ -114,10 +114,21 @@ bool Channel::setTopic(const QString &topic)
   HtmlFilter filter(0, MaxTopicLength, 0);
   m_topic = filter.filter(topic);
 
-  if (topic.isEmpty())
-    return validate(true);
-
   return validate(true);
+}
+
+
+bool Channel::setTopic(const QString &topic, const QByteArray &authorId, qint64 timestamp)
+{
+  if (SimpleID::typeOf(authorId) != SimpleID::UserId || timestamp == 0)
+    return false;
+
+  QVariantMap map = m_data["topic"].toMap();
+  map["author"] = QString(SimpleID::toBase64(authorId));
+  map["timestamp"] = QString::number(timestamp);
+  m_data["topic"] = map;
+
+  return setTopic(topic);
 }
 
 
@@ -128,4 +139,15 @@ bool Channel::setUsers(const QList<QByteArray> &users)
 
   m_users = users;
   return validate(true);
+}
+
+
+Topic Channel::topic() const
+{
+  Topic topic;
+  topic.channel = m_id;
+  topic.author = SimpleID::fromBase64(m_data["topic"].toMap()["author"].toByteArray());
+  topic.timestamp = m_data["topic"].toMap()["timestamp"].toLongLong();
+  topic.topic = m_topic;
+  return topic;
 }

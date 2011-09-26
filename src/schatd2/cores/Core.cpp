@@ -110,22 +110,12 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
     return true;
 
   if (m_timestamp == 0)
-    m_timestamp = timestamp();
+    m_timestamp = Storage::timestamp();
 
   NewPacketsEvent *event = new NewPacketsEvent(sockets, packets);
   event->timestamp = m_timestamp;
   QCoreApplication::postEvent(m_listener, event);
   return true;
-}
-
-
-qint64 Core::timestamp()
-{
-  #if QT_VERSION >= 0x040700
-  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-  #else
-  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
-  #endif
 }
 
 
@@ -157,7 +147,7 @@ bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
     return false;
 
   if (m_timestamp == 0)
-    m_timestamp = timestamp();
+    m_timestamp = Storage::timestamp();
 
   NewPacketsEvent *event = new NewPacketsEvent(user->socketId(), packets, user->id());
   event->option = option;
@@ -192,7 +182,7 @@ void Core::customEvent(QEvent *event)
 bool Core::route()
 {
   if (m_timestamp == 0)
-    m_timestamp = timestamp();
+    m_timestamp = Storage::timestamp();
 
   return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
 }
@@ -668,7 +658,11 @@ bool Core::readTopic()
   if (!channel)
     return true;
 
-  channel->setTopic(m_messageData->text);
+  if (channel->topic().topic == m_messageData->text)
+    return true;
+
+  m_timestamp = Storage::timestamp();
+  channel->setTopic(m_messageData->text, m_reader->sender(), m_timestamp);
   m_storage->update(channel);
   return false;
 }
@@ -705,7 +699,7 @@ void Core::rejectMessage(int reason)
   if (reason == MessageNotice::UserUnavailable && m_plugins->has(NodeHook::OfflineDelivery)) {
     ChatUser user = m_storage->user(m_reader->dest(), true);
     if (user) {
-      m_timestamp = timestamp();
+      m_timestamp = Storage::timestamp();
       acceptMessage(reason);
       return;
     }

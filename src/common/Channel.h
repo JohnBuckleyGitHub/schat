@@ -25,6 +25,27 @@
 
 #include "schat.h"
 
+class Topic
+{
+public:
+  Topic()
+  : timestamp(0)
+  {}
+
+  Topic(const QByteArray &channel, const QByteArray &author, const QString &topic, qint64 timestamp)
+  : author(author)
+  , channel(channel)
+  , timestamp(0)
+  , topic(topic)
+  {}
+
+  QByteArray author;
+  QByteArray channel;
+  qint64 timestamp;
+  QString topic;
+};
+
+
 class SCHAT_EXPORT Channel
 {
 public:
@@ -50,6 +71,7 @@ public:
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
   bool setTopic(const QString &topic);
+  bool setTopic(const QString &topic, const QByteArray &authorId, qint64 timestamp = 0);
   bool setUsers(const QList<QByteArray> &users);
   inline bool isSynced() const { return m_synced; }
   inline bool isValid() const { return m_valid; }
@@ -58,11 +80,11 @@ public:
   inline QList<QByteArray> users() { return m_users; }
   inline QString desc() const { return m_desc; }
   inline QString name() const { return m_name; }
-  inline QString topic() const { return m_topic; }
   inline QVariant data() const { return m_data; }
   inline void clear() { m_users.clear(); }
   inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setSynced(bool synced) { m_synced = synced; }
+  Topic topic() const;
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }

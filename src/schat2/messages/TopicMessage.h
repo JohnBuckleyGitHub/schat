@@ -25,8 +25,7 @@
 class SCHAT_CORE_EXPORT TopicMessage : public AbstractMessage
 {
 public:
-  TopicMessage(ClientChannel channel);
-  TopicMessage(const MessageData &data, ClientChannel channel);
+  TopicMessage(const Topic &topic);
   QString js(bool add = true) const;
 };
 

@@ -23,8 +23,9 @@ ServerChannel::ServerChannel(ClientChannel channel)
   , m_permanent(false)
   , m_normalName(channel->name())
 {
+  setData(channel->data().toMap());
   setDesc(channel->desc());
-  setTopic(channel->topic());
+  setTopic(channel->topic().topic);
   setUsers(channel->users());
 }
 

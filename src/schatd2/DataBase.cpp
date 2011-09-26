@@ -277,8 +277,8 @@ ChatChannel DataBase::channel(qint64 id)
 
   ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(2).toString(), query.value(1).toString()));
   channel->setKey(id);
-  channel->setTopic(query.value(4).toString());
   channel->setData(SimpleJSon::parse(query.value(5).toByteArray()).toMap());
+  channel->setTopic(query.value(4).toString());
 
   return channel;
 }
@@ -301,7 +301,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.bindValue(QLatin1String(":name"),       channel->name());
   query.bindValue(QLatin1String(":normalName"), channel->normalName());
   query.bindValue(QLatin1String(":expired"),    0);
-  query.bindValue(QLatin1String(":topic"),      channel->topic());
+  query.bindValue(QLatin1String(":topic"),      channel->topic().topic);
   query.bindValue(QLatin1String(":data"),       SimpleJSon::generate(channel->data()));
   query.exec();
 
@@ -340,7 +340,7 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(QLatin1String(":name"), channel->name());
   query.bindValue(QLatin1String(":normalName"), channel->normalName());
   query.bindValue(QLatin1String(":expired"), 0);
-  query.bindValue(QLatin1String(":topic"), channel->topic());
+  query.bindValue(QLatin1String(":topic"), channel->topic().topic);
   query.bindValue(QLatin1String(":data"), SimpleJSon::generate(channel->data()));
   query.bindValue(QLatin1String(":id"), channel->key());
   query.exec();
