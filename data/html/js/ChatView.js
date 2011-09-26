@@ -23,12 +23,14 @@ $(document).ready(function() {
 		alignChat(true);
 	});
 
+	var timeoutID;
 	$('#topic-wrapper').hover(
 		function () {
+			window.clearTimeout(timeoutID);
 			$('#body').removeClass("no-topic-author");
 		},
 		function () {
-			window.setTimeout(function() {
+			timeoutID = window.setTimeout(function() {
 				$('#body').addClass("no-topic-author");
 			}, 1000);
 		}
