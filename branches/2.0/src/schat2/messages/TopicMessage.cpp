@@ -19,17 +19,12 @@
 #include "messages/TopicMessage.h"
 #include "net/packets/message.h"
 
-TopicMessage::TopicMessage(ClientChannel channel)
-  : AbstractMessage(QLatin1String("user-type"), channel->topic(), channel->id())
-{
-}
 
-
-TopicMessage::TopicMessage(const MessageData &data, ClientChannel channel)
-  : AbstractMessage(QLatin1String("user-type"), channel->topic(), channel->id())
+TopicMessage::TopicMessage(const Topic &topic)
+  : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
 {
-  m_senderId = data.senderId;
-  m_timestamp = data.timestamp;
+  m_senderId = topic.author;
+  m_timestamp = topic.timestamp;
 }
 
 

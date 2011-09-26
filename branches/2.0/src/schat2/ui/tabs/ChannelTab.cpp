@@ -69,7 +69,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
 
-  TopicMessage msg(m_channel);
+  TopicMessage msg(m_channel->topic());
   m_tabs->message(this, msg);
 
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
@@ -156,7 +156,7 @@ void ChannelTab::dataChanged(const QByteArray &senderId, const QByteArray &chann
   if (id() != channelId)
     return;
 
-  m_bar->topic()->setTopic(m_channel->topic());
+//  m_bar->topic()->setTopic(m_channel->topic());
 }
 
 

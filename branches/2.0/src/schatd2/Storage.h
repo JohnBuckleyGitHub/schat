@@ -44,6 +44,7 @@ public:
   inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
+  static qint64 timestamp();
   void addSlave(const QByteArray &id);
 
   // user management.

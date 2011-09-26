@@ -26,7 +26,7 @@ ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel, const QByteA
   putId(channel->id());
   put(channel->name());
   put(channel->data());
-  put(channel->topic());
+  put(channel->topic().topic);
   putId(channel->users());
 }
 
