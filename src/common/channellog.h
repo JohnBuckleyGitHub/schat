@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@
  * Поддерживаются простой текстовый формат логов таки html-формат.
  * Из имён каналов удаляются символы недопустимые для имён файлов.
  */
-class ChannelLog : public QObject
-{
+class ChannelLog : public QObject {
   Q_OBJECT
 
 public:
@@ -45,6 +44,7 @@ public:
   ChannelLog(const QString &logPath, QObject *parent = 0);
   inline QString channel()                       { return m_channel; }
   inline void setMode(Mode mode)                 { m_mode = mode; }
+  static QString htmlFilter(const QString &html, int left = 7000, bool strict = true);
   static QString parseLinks(const QString &message, bool plain = false);
   void msg(const QString &text);
   void setChannel(const QString &channel);

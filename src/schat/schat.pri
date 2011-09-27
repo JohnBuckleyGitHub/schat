@@ -70,7 +70,6 @@ HEADERS += \
     settingsdialog.h \
     simplechatapp.h \
     soundaction.h \
-    text/HtmlFilter.h \
     text/PlainTextFilter.h \
     translatewidget.h \
     translation.h \
@@ -125,7 +124,6 @@ SOURCES += \
     settingsdialog.cpp \
     simplechatapp.cpp \
     soundaction.cpp \
-    text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
     translatewidget.cpp \
     translation.cpp \

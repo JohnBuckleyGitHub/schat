@@ -949,8 +949,8 @@ QString Daemon::normalizeNick(const QString &nick) const
  */
 QString Daemon::serverInfo() const
 {
-  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.com'>http://impomezia.com</a><br>").arg(SCHAT_VERSION);
-  info += "&bull; <font color='#5096cf'>" + tr("Platform:") + "</font> ";
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.ru'>http://impomezia.ru</a>"
+      "<table><tr><td class='info'>%2 </td><td><b>").arg(SCHAT_VERSION).arg(tr("Platform:"));
 
 #if   defined(Q_OS_AIX)
   info += "AIX";
@@ -1010,16 +1010,15 @@ QString Daemon::serverInfo() const
   info += "Windows CE";
 #endif
 
-  info += QString(", Qt %1<br>").arg(qVersion());
-
+  info += QString(", Qt %1</b></td></tr>").arg(qVersion());
   if (m_network) {
-    info += QString("&bull; <font color='#5096cf'>%1</font> %2<br>").arg(tr("Network name:")).arg(m_network->name());
-    info += QString("&bull; <font color='#5096cf'>%1</font> %2<br>").arg(tr("Server name:")).arg(m_settings->getString("Name"));
-    info += QString("&bull; <font color='#5096cf'>%1</font> %2<br>").arg(tr("Users:")).arg(m_users.count());
-    info += QString("&bull; <font color='#5096cf'>%1</font> %2<br>").arg(tr("Servers:")).arg(m_numerics.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Network name:")).arg(m_network->name());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Server name:")).arg(m_settings->getString("Name"));
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr>").arg(tr("Users:")).arg(m_users.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr></table>").arg(tr("Servers:")).arg(m_numerics.count());
   }
   else
-    info += QString("&bull; <font color='#5096cf'>%1</font> %2<br>").arg(tr("Users:")).arg(m_users.count());
+    info += QString("<tr><td class='info'>%1 </td><td><b>%2</b></td></tr></table>").arg(tr("Users:")).arg(m_users.count());
 
   return info;
 }

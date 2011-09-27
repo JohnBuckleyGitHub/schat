@@ -39,7 +39,6 @@
 #include "protocol.h"
 #include "settings.h"
 #include "simplechatapp.h"
-#include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 
 /*!
@@ -271,10 +270,13 @@ QString ChatView::statusUserLeft(quint8 gender, const QString &nick, const QStri
 /*!
  * Универсальное фильтрованное сервисное сообщение.
  */
-void ChatView::addFilteredMsg(const QString &msg)
+void ChatView::addFilteredMsg(const QString &msg, bool strict)
 {
-  HtmlFilter filter;
-  QString html = filter.filter(msg);
+  QTextDocument doc;
+  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
+  doc.setHtml(msg);
+
+  QString html = ChannelLog::htmlFilter(doc.toHtml(), 0, strict);
   html = QString("<span class='preSb'>%1</span><div class='sb'>%2</div>").arg(tr("Service message:")).arg(html);
 
   addServiceMsg(html);
@@ -290,8 +292,11 @@ void ChatView::addMsg(const QString &sender, const QString &message, int options
   if (SimpleSettings->profile()->nick() == sender)
     d->autoScroll->setChecked(true);
 
-  HtmlFilter filter;
-  QString html = filter.filter(message);
+  QTextDocument doc;
+  doc.setDefaultStyleSheet(SimpleSettings->richTextCSS());
+  doc.setHtml(message);
+
+  QString html = ChannelLog::htmlFilter(doc.toHtml());
   html = ChannelLog::parseLinks(html);
 
   QString escapedNick = Qt::escape(sender);

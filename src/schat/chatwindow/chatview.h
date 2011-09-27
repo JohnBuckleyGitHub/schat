@@ -58,7 +58,7 @@ public:
   static QString statusChangedNick(quint8 gender, const QString &oldNick, const QString &newNick);
   static QString statusNewUser(quint8 gender, const QString &nick);
   static QString statusUserLeft(quint8 gender, const QString &nick, const QString &bye);
-  void addFilteredMsg(const QString &msg);
+  void addFilteredMsg(const QString &msg, bool strict = false);
   void addMsg(const QString &sender, const QString &message, int options = MsgSend, bool notice = false);
   void addServiceMsg(const QString &msg);
   void channel(const QString &ch);
