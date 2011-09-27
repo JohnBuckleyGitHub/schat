@@ -41,7 +41,7 @@ public:
   inline bool notice() const                                          { return m_notice; }
   inline QIcon icon() const                                           { return m_icon; }
   inline Type type() const                                            { return m_type; }
-  inline void addFilteredMsg(const QString &msg)                      { if (m_view) m_view->addFilteredMsg(msg); }
+  inline void addFilteredMsg(const QString &msg, bool strict = false) { if (m_view) m_view->addFilteredMsg(msg, strict); }
   inline void msg(const QString &text)                                { if (m_view) m_view->addServiceMsg(text); }
   inline void notice(bool enable)                                     { m_notice = enable; }
   inline void setChannel(const QString &ch)                           { if (m_view) m_view->channel(ch); }

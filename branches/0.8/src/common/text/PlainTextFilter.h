@@ -26,8 +26,10 @@
  */
 class PlainTextFilter
 {
-public:
+private:
   PlainTextFilter() {}
+
+public:
   static QString filter(const QString &text);
   static void removeTag(QString &text, const QString &tag);
 };
