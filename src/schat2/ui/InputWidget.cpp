@@ -16,10 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAction>
 #include <QApplication>
 #include <QFile>
 #include <QKeyEvent>
+#include <QMenu>
 
+#include "ChatCore.h"
 #include "net/packets/message.h"
 #include "text/HtmlFilter.h"
 #include "ui/InputWidget.h"
@@ -46,6 +49,8 @@ InputWidget::InputWidget(QWidget *parent)
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   connect(this, SIGNAL(textChanged()), SLOT(textChanged()));
+
+  createActions();
 }
 
 
@@ -56,6 +61,40 @@ void InputWidget::setMsg(int index)
     setHtml(m_history.at(m_current));
     moveCursor(QTextCursor::End);
   }
+}
+
+
+void InputWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QTextEdit::changeEvent(event);
+}
+
+
+void InputWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+  bool selection = textCursor().hasSelection();
+  QMenu menu(this);
+  connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+
+  if (selection) {
+    menu.addAction(m_cut);
+    menu.addAction(m_copy);
+  }
+
+  if (canPaste())
+    menu.addAction(m_paste);
+
+  if (document()->toPlainText().size()) {
+    menu.addSeparator();
+    menu.addAction(m_clear);
+    menu.addAction(m_selectAll);
+  }
+
+  if (menu.actions().size())
+    menu.exec(event->globalPos());
 }
 
 
@@ -98,6 +137,18 @@ void InputWidget::clear()
 }
 
 
+void InputWidget::paste()
+{
+  if (!canPaste())
+    return;
+
+  QTextCharFormat format = currentCharFormat();
+  QTextEdit::paste();
+  setCurrentCharFormat(format);
+  emit cursorPositionChanged();
+}
+
+
 void InputWidget::send()
 {
   QString html = toHtml();
@@ -120,11 +171,41 @@ void InputWidget::send()
 }
 
 
+void InputWidget::menuTriggered(QAction *action)
+{
+  if (action == m_cut) {
+    cut();
+  }
+  else if (action == m_copy) {
+    copy();
+  }
+  else if (action == m_paste) {
+    paste();
+  }
+  else if (action == m_clear) {
+    clear();
+  }
+  else if (action == m_selectAll) {
+    selectAll();
+  }
+}
+
+
 void InputWidget::textChanged()
 {
   int lineCount = document()->lineCount();
   if (m_lines != lineCount)
     setHeight(lineCount);
+}
+
+
+void InputWidget::createActions()
+{
+  m_cut = new QAction(SCHAT_ICON(EditCut), tr("Cut"), this);
+  m_copy = new QAction(SCHAT_ICON(EditCopy), tr("Copy"), this);
+  m_paste = new QAction(SCHAT_ICON(EditPaste), tr("Paste"), this);
+  m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
+  m_selectAll = new QAction(SCHAT_ICON(EditSelectAll), tr("Select All"), this);
 }
 
 
@@ -151,6 +232,16 @@ void InputWidget::prevMsg()
       setMsg(m_current);
     }
   }
+}
+
+
+void InputWidget::retranslateUi()
+{
+  m_cut->setText(tr("Cut"));
+  m_copy->setText(tr("Copy"));
+  m_paste->setText(tr("Paste"));
+  m_clear->setText(tr("Clear"));
+  m_selectAll->setText(tr("Select All"));
 }
 
 

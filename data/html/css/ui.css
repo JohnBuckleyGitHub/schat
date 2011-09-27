@@ -57,6 +57,7 @@ button:disabled {
 	left:0;
 	z-index:10;
 	padding:2px;
+	display:none;
 }
 
 #topic {
