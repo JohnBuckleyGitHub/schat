@@ -34,22 +34,33 @@ signals:
   void send(const QString &text);
 
 protected:
+  void changeEvent(QEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
 public slots:
   void clear();
+  void paste();
   void send();
 
 private slots:
+  void menuTriggered(QAction *action);
   void textChanged();
 
 private:
+  void createActions();
   void nextMsg();
   void prevMsg();
+  void retranslateUi();
   void setHeight(int lines);
 
   int m_current;             ///< Текущее сообщение в истории.
   int m_lines;               ///< Высота текста в строчках.
+  QAction *m_clear;          ///< Clear.
+  QAction *m_copy;           ///< Copy.
+  QAction *m_cut;            ///< Cut.
+  QAction *m_paste;          ///< Paste.
+  QAction *m_selectAll;      ///< Select All.
   QStringList m_history;     ///< Отправленные сообщения.
   QTextCharFormat m_default; ///< Формат текста по умолчанию.
 };
