@@ -31,8 +31,6 @@
 
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
-  , m_color(0)
-  , m_strike(0)
 {
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -50,7 +48,6 @@ SendWidget::SendWidget(QWidget *parent)
   retranslateUi();
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
-  connect(m_input, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 }
 
 
@@ -87,28 +84,6 @@ void SendWidget::changeEvent(QEvent *event)
 }
 
 
-void SendWidget::cursorPositionChanged()
-{
-  QTextCursor cursor = m_input->textCursor();
-  if (cursor.hasSelection()) {
-    int position = cursor.position();
-    if (position < cursor.anchor())
-      cursor.setPosition(position + 1);
-  }
-
-  QTextCharFormat charFormat = cursor.charFormat();
-  m_bold->setChecked(charFormat.font().bold());
-  m_italic->setChecked(charFormat.font().italic());
-  m_underline->setChecked(charFormat.font().underline());
-
-  if (m_strike)
-    m_strike->setChecked(charFormat.font().strikeOut());
-
-  if (m_color)
-    m_color->setAltColor(charFormat.foreground().color());
-}
-
-
 void SendWidget::sendMsg(const QString &text)
 {
   m_history->clear();
@@ -121,66 +96,6 @@ void SendWidget::sendMsg(const QString &text)
   m_sendButton->setMenu(m_history);
   m_toolBar->removeAction(m_sendAction);
   m_toolBar->addAction(m_sendAction);
-}
-
-
-/*!
- * Изменение состояние текса "Полужирный" \a Ctrl+B.
- */
-void SendWidget::setBold(bool b)
-{
-  QTextCharFormat format;
-  format.setFontWeight(b ? QFont::Bold : QFont::Normal);
-
-  mergeFormat(format);
-}
-
-
-/*!
- * \brief Изменение состояние текса "Курсив" \a Ctrl+I.
- */
-void SendWidget::setItalic(bool b)
-{
-  QTextCharFormat format;
-  format.setFontItalic(b);
-
-  mergeFormat(format);
-}
-
-
-/*!
- * Изменение состояние текса "Зачёркнутый".
- */
-void SendWidget::setStrike(bool b)
-{
-  QTextCharFormat format;
-  format.setFontStrikeOut(b);
-
-  mergeFormat(format);
-}
-
-
-void SendWidget::setTextColor(const QColor &color)
-{
-  if (!color.isValid())
-    return;
-
-  QTextCharFormat format;
-  format.setForeground(color);
-
-  mergeFormat(format);
-}
-
-
-/*!
- * Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
- */
-void SendWidget::setUnderline(bool b)
-{
-  QTextCharFormat format;
-  format.setFontUnderline(b);
-
-  mergeFormat(format);
 }
 
 
@@ -219,26 +134,12 @@ void SendWidget::showHistoryMenu()
  */
 void SendWidget::fillToolBar()
 {
-  m_bold = m_toolBar->addAction(SCHAT_ICON(TextBoldIcon), "", this, SLOT(setBold(bool)));
-  m_bold->setCheckable(true);
-  m_bold->setShortcut(Qt::CTRL + Qt::Key_B);
-
-  m_italic = m_toolBar->addAction(SCHAT_ICON(TextItalicIcon), "", this, SLOT(setItalic(bool)));
-  m_italic->setCheckable(true);
-  m_italic->setShortcut(Qt::CTRL + Qt::Key_I);
-
-  m_underline = m_toolBar->addAction(SCHAT_ICON(TextUnderlineIcon), "", this, SLOT(setUnderline(bool)));
-  m_underline->setCheckable(true);
-  m_underline->setShortcut(Qt::CTRL + Qt::Key_U);
-
-  m_strike = m_toolBar->addAction(SCHAT_ICON(TextStrikeIcon), "", this, SLOT(setStrike(bool)));
-  m_strike->setCheckable(true);
-
+  m_toolBar->addAction(m_input->action(InputWidget::Bold));
+  m_toolBar->addAction(m_input->action(InputWidget::Italic));
+  m_toolBar->addAction(m_input->action(InputWidget::Underline));
+  m_toolBar->addAction(m_input->action(InputWidget::Strike));
   m_toolBar->addSeparator();
-
-  m_color = new ColorButton(m_input->textColor(), this);
-  connect(m_color, SIGNAL(newColor(const QColor &)), SLOT(setTextColor(const QColor &)));
-  m_toolBar->addWidget(m_color);
+  m_toolBar->addWidget(m_input->color());
 
   m_history = new QMenu(this);
 
@@ -256,24 +157,9 @@ void SendWidget::fillToolBar()
 }
 
 
-void SendWidget::mergeFormat(const QTextCharFormat &format)
-{
-  QTextCursor cursor = m_input->textCursor();
-
-  cursor.mergeCharFormat(format);
-  m_input->mergeCurrentCharFormat(format);
-}
-
-
 void SendWidget::retranslateUi()
 {
-  m_bold->setText(tr("Bold"));
-  m_italic->setText(tr("Italic"));
-  m_underline->setText(tr("Underline"));
   m_sendButton->setToolTip(tr("Send"));
-
-  if (m_strike)
-    m_strike->setText(tr("Strikeout"));
 }
 
 

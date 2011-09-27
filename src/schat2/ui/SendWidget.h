@@ -23,12 +23,10 @@
 
 #include "schat.h"
 
-class ColorButton;
 class InputWidget;
 class QMenu;
 class QToolBar;
 class QToolButton;
-class QTextCharFormat;
 
 class SCHAT_CORE_EXPORT SendWidget : public QWidget
 {
@@ -50,29 +48,17 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  void cursorPositionChanged();
   void sendMsg(const QString &text);
-  void setBold(bool b);
-  void setItalic(bool b);
-  void setStrike(bool b);
-  void setTextColor(const QColor &color);
-  void setUnderline(bool b);
   void showHistoryItem();
   void showHistoryMenu();
 
 private:
   void fillToolBar();
-  void mergeFormat(const QTextCharFormat &format);
   void retranslateUi();
   void updateStyleSheet();
 
-  ColorButton *m_color;      ///< Кнопка выбора цвета.
   InputWidget *m_input;      ///< Виджет ввода текста.
-  QAction *m_bold;           ///< "Полужирный".
-  QAction *m_italic;         ///< "Курсив".
   QAction *m_sendAction;     ///< Кнопка отправки.
-  QAction *m_strike;         ///< "Зачёркнутый".
-  QAction *m_underline;      ///< "Подчёркнутый".
   QMenu *m_history;          ///< Меню отправленных сообщений.
   QToolBar *m_toolBar;       ///< Панель инструментов.
   QToolButton *m_sendButton; ///< Кнопка отправки.

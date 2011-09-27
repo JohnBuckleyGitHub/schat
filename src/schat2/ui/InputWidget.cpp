@@ -21,10 +21,13 @@
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QToolBar>
+#include <QWidgetAction>
 
 #include "ChatCore.h"
 #include "net/packets/message.h"
 #include "text/HtmlFilter.h"
+#include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 
 InputWidget::InputWidget(QWidget *parent)
@@ -49,6 +52,7 @@ InputWidget::InputWidget(QWidget *parent)
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   connect(this, SIGNAL(textChanged()), SLOT(textChanged()));
+  connect(this, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 
   createActions();
 }
@@ -78,6 +82,9 @@ void InputWidget::contextMenuEvent(QContextMenuEvent *event)
   bool selection = textCursor().hasSelection();
   QMenu menu(this);
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+
+  menu.addAction(m_action);
+  menu.addSeparator();
 
   if (selection) {
     menu.addAction(m_cut);
@@ -171,6 +178,24 @@ void InputWidget::send()
 }
 
 
+void InputWidget::cursorPositionChanged()
+{
+  QTextCursor cursor = textCursor();
+  if (cursor.hasSelection()) {
+    int position = cursor.position();
+    if (position < cursor.anchor())
+      cursor.setPosition(position + 1);
+  }
+
+  QTextCharFormat charFormat = cursor.charFormat();
+  m_format.at(Bold)->setChecked(charFormat.font().bold());
+  m_format.at(Italic)->setChecked(charFormat.font().italic());
+  m_format.at(Underline)->setChecked(charFormat.font().underline());
+  m_format.at(Strike)->setChecked(charFormat.font().strikeOut());
+  m_color->setAltColor(charFormat.foreground().color());
+}
+
+
 void InputWidget::menuTriggered(QAction *action)
 {
   if (action == m_cut) {
@@ -191,6 +216,66 @@ void InputWidget::menuTriggered(QAction *action)
 }
 
 
+/*!
+ * Изменение состояние текса "Полужирный" \a Ctrl+B.
+ */
+void InputWidget::setBold(bool bold)
+{
+  QTextCharFormat format;
+  format.setFontWeight(bold ? QFont::Bold : QFont::Normal);
+
+  mergeFormat(format);
+}
+
+
+/*!
+ * Изменение состояние текса "Курсив" \a Ctrl+I.
+ */
+void InputWidget::setItalic(bool italic)
+{
+  QTextCharFormat format;
+  format.setFontItalic(italic);
+
+  mergeFormat(format);
+}
+
+
+/*!
+ * Изменение состояние текса "Зачёркнутый".
+ */
+void InputWidget::setStrike(bool strike)
+{
+  QTextCharFormat format;
+  format.setFontStrikeOut(strike);
+
+  mergeFormat(format);
+}
+
+
+void InputWidget::setTextColor(const QColor &color)
+{
+  if (!color.isValid())
+    return;
+
+  QTextCharFormat format;
+  format.setForeground(color);
+
+  mergeFormat(format);
+}
+
+
+/*!
+ * Изменение состояние текса "Подчёркнутый" \a Ctrl+U.
+ */
+void InputWidget::setUnderline(bool underline)
+{
+  QTextCharFormat format;
+  format.setFontUnderline(underline);
+
+  mergeFormat(format);
+}
+
+
 void InputWidget::textChanged()
 {
   int lineCount = document()->lineCount();
@@ -206,6 +291,53 @@ void InputWidget::createActions()
   m_paste = new QAction(SCHAT_ICON(EditPaste), tr("Paste"), this);
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
   m_selectAll = new QAction(SCHAT_ICON(EditSelectAll), tr("Select All"), this);
+
+  m_toolBar = new QToolBar(this);
+  m_toolBar->setIconSize(QSize(16, 16));
+  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+
+  m_action = new QWidgetAction(this);
+  m_action->setDefaultWidget(m_toolBar);
+
+  QAction *action;
+  action = new QAction(SCHAT_ICON(TextBoldIcon), tr("Bold"), this);
+  action->setCheckable(true);
+  action->setShortcut(Qt::CTRL + Qt::Key_B);
+  connect(action, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
+  m_toolBar->addAction(action);
+  m_format[Bold] = action;
+
+  action = new QAction(SCHAT_ICON(TextItalicIcon), tr("Italic"), this);
+  action->setCheckable(true);
+  action->setShortcut(Qt::CTRL + Qt::Key_I);
+  connect(action, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
+  m_toolBar->addAction(action);
+  m_format[Italic] = action;
+
+  action = new QAction(SCHAT_ICON(TextUnderlineIcon), tr("Underline"), this);
+  action->setCheckable(true);
+  action->setShortcut(Qt::CTRL + Qt::Key_U);
+  connect(action, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
+  m_toolBar->addAction(action);
+  m_format[Underline] = action;
+
+  action = m_toolBar->addAction(SCHAT_ICON(TextStrikeIcon), tr("Strikeout"), this, SLOT(setStrike(bool)));
+  action->setCheckable(true);
+  connect(action, SIGNAL(triggered(bool)), SLOT(setStrike(bool)));
+  m_toolBar->addAction(action);
+  m_format[Strike] = action;
+
+  m_color = new ColorButton(textColor(), this);
+  connect(m_color, SIGNAL(newColor(const QColor &)), SLOT(setTextColor(const QColor &)));
+}
+
+
+void InputWidget::mergeFormat(const QTextCharFormat &format)
+{
+  QTextCursor cursor = textCursor();
+
+  cursor.mergeCharFormat(format);
+  mergeCurrentCharFormat(format);
 }
 
 
@@ -242,6 +374,10 @@ void InputWidget::retranslateUi()
   m_paste->setText(tr("Paste"));
   m_clear->setText(tr("Clear"));
   m_selectAll->setText(tr("Select All"));
+  m_format.at(Bold)->setText(tr("Bold"));
+  m_format.at(Italic)->setText(tr("Italic"));
+  m_format.at(Underline)->setText(tr("Underline"));
+  m_format.at(Strike)->setText(tr("Strikeout"));
 }
 
 

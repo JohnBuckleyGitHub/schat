@@ -21,12 +21,25 @@
 
 #include <QTextEdit>
 
+class ColorButton;
+class QToolBar;
+class QWidgetAction;
+
 class InputWidget : public QTextEdit
 {
   Q_OBJECT
 
 public:
+  enum Actions {
+    Bold,
+    Italic,
+    Underline,
+    Strike
+  };
+
   InputWidget(QWidget *parent = 0);
+  inline ColorButton *color() { return m_color; }
+  inline QAction *action(Actions action) { return m_format.at(action); }
   inline QStringList history() const { return m_history; }
   void setMsg(int index);
 
@@ -44,16 +57,24 @@ public slots:
   void send();
 
 private slots:
+  void cursorPositionChanged();
   void menuTriggered(QAction *action);
+  void setBold(bool bold);
+  void setItalic(bool italic);
+  void setStrike(bool strike);
+  void setTextColor(const QColor &color);
+  void setUnderline(bool underline);
   void textChanged();
 
 private:
   void createActions();
+  void mergeFormat(const QTextCharFormat &format);
   void nextMsg();
   void prevMsg();
   void retranslateUi();
   void setHeight(int lines);
 
+  ColorButton *m_color;      ///< Кнопка выбора цвета.
   int m_current;             ///< Текущее сообщение в истории.
   int m_lines;               ///< Высота текста в строчках.
   QAction *m_clear;          ///< Clear.
@@ -61,8 +82,11 @@ private:
   QAction *m_cut;            ///< Cut.
   QAction *m_paste;          ///< Paste.
   QAction *m_selectAll;      ///< Select All.
+  QList<QAction *> m_format; ///< Действия связанные с форматированием текста.
   QStringList m_history;     ///< Отправленные сообщения.
   QTextCharFormat m_default; ///< Формат текста по умолчанию.
+  QToolBar *m_toolBar;       ///< Панель инструментов в контекстом меню.
+  QWidgetAction *m_action;   ///< Действие для добавления панели инструментов в меню.
 };
 
 #endif /* INPUTWIDGET_H_ */

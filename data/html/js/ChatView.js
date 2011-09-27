@@ -32,7 +32,7 @@ $(document).ready(function() {
 		function () {
 			timeoutID = window.setTimeout(function() {
 				$('#body').addClass("no-topic-author");
-			}, 1000);
+			}, 2000);
 		}
 	);
 
