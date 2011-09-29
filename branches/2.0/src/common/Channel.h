@@ -35,7 +35,7 @@ public:
   Topic(const QByteArray &channel, const QByteArray &author, const QString &topic, qint64 timestamp)
   : author(author)
   , channel(channel)
-  , timestamp(0)
+  , timestamp(timestamp)
   , topic(topic)
   {}
 

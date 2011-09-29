@@ -16,30 +16,35 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "messages/TopicMessage.h"
-#include "net/packets/message.h"
+#include <QMenu>
 
+#include "actions/ChannelMenu.h"
+#include "ui/ChannelUtils.h"
 
-TopicMessage::TopicMessage(const Topic &topic)
-  : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
+ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
+  : MenuBuilder(parent)
+  , m_channel(channel)
 {
-  m_senderId = topic.author;
-  m_timestamp = topic.timestamp;
-  m_template = QLatin1String("topic");
-  m_timeTpl = QLatin1String("time-date");
 }
 
 
-QString TopicMessage::js(bool add) const
+ChannelMenu *ChannelMenu::bind(QMenu *menu, const QVariant &id)
 {
-  if (m_text.isEmpty()) {
-    QString html;
-    return appendMessage(html, QLatin1String("setTopic"));
-  }
+  ClientChannel channel = ChannelUtils::channel(id.toByteArray());
+  if (!channel)
+    return 0;
 
-  QString html = tpl(m_template);
-  time(html);
-  nick(html);
-  text(html);
-  return appendMessage(html, QLatin1String("setTopic"));
+  ChannelMenu *out = new ChannelMenu(channel, menu);
+  out->bind(menu);
+
+  return out;
+}
+
+
+void ChannelMenu::bind(QMenu *menu)
+{
+  MenuBuilder::bind(menu);
+
+  m_topic = new QAction(tr("Topic..."), this);
+  menu->addAction(m_topic);
 }

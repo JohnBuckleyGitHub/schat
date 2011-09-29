@@ -16,30 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "messages/TopicMessage.h"
-#include "net/packets/message.h"
+#ifndef CHANNELUTILS_H_
+#define CHANNELUTILS_H_
 
+#include "Channel.h"
+#include "schat.h"
 
-TopicMessage::TopicMessage(const Topic &topic)
-  : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
+class SCHAT_CORE_EXPORT ChannelUtils
 {
-  m_senderId = topic.author;
-  m_timestamp = topic.timestamp;
-  m_template = QLatin1String("topic");
-  m_timeTpl = QLatin1String("time-date");
-}
+private:
+  ChannelUtils() {}
 
+public:
+  static ClientChannel channel(const QByteArray &id);
+};
 
-QString TopicMessage::js(bool add) const
-{
-  if (m_text.isEmpty()) {
-    QString html;
-    return appendMessage(html, QLatin1String("setTopic"));
-  }
-
-  QString html = tpl(m_template);
-  time(html);
-  nick(html);
-  text(html);
-  return appendMessage(html, QLatin1String("setTopic"));
-}
+#endif /* CHANNELUTILS_H_ */

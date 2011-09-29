@@ -16,30 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "messages/TopicMessage.h"
-#include "net/packets/message.h"
+#include "ChatCore.h"
+#include "client/SimpleClient.h"
+#include "net/SimpleID.h"
+#include "ui/ChannelUtils.h"
 
-
-TopicMessage::TopicMessage(const Topic &topic)
-  : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
+ClientChannel ChannelUtils::channel(const QByteArray &id)
 {
-  m_senderId = topic.author;
-  m_timestamp = topic.timestamp;
-  m_template = QLatin1String("topic");
-  m_timeTpl = QLatin1String("time-date");
-}
+  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+    return ClientChannel();
 
+  ClientChannel channel = ChatCore::i()->client()->channel(id);
+  if (channel)
+    return channel;
 
-QString TopicMessage::js(bool add) const
-{
-  if (m_text.isEmpty()) {
-    QString html;
-    return appendMessage(html, QLatin1String("setTopic"));
-  }
-
-  QString html = tpl(m_template);
-  time(html);
-  nick(html);
-  text(html);
-  return appendMessage(html, QLatin1String("setTopic"));
+  return channel;
 }

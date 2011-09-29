@@ -53,7 +53,7 @@ ClientUser UserUtils::user()
 
 ClientUser UserUtils::user(const QByteArray &id)
 {
-  if (id.isEmpty())
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
     return ClientUser();
 
   ClientUser user = ChatCore::i()->client()->user(id);

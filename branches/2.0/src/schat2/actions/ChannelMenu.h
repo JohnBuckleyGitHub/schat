@@ -16,30 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "messages/TopicMessage.h"
-#include "net/packets/message.h"
+#ifndef CHANNELMENU_H_
+#define CHANNELMENU_H_
 
+#include "actions/MenuBuilder.h"
+#include "Channel.h"
+#include "User.h"
 
-TopicMessage::TopicMessage(const Topic &topic)
-  : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
+class SCHAT_CORE_EXPORT ChannelMenu : public MenuBuilder
 {
-  m_senderId = topic.author;
-  m_timestamp = topic.timestamp;
-  m_template = QLatin1String("topic");
-  m_timeTpl = QLatin1String("time-date");
-}
+  Q_OBJECT
 
+public:
+  ChannelMenu(ClientChannel channel, QObject *parent = 0);
+  static ChannelMenu *bind(QMenu *menu, const QVariant &id);
+  void bind(QMenu *menu);
 
-QString TopicMessage::js(bool add) const
-{
-  if (m_text.isEmpty()) {
-    QString html;
-    return appendMessage(html, QLatin1String("setTopic"));
-  }
+private:
+  ClientChannel m_channel;
+  QAction *m_topic;
+};
 
-  QString html = tpl(m_template);
-  time(html);
-  nick(html);
-  text(html);
-  return appendMessage(html, QLatin1String("setTopic"));
-}
+#endif /* CHANNELMENU_H_ */
