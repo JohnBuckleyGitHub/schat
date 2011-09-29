@@ -26,6 +26,7 @@ DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
 
 HEADERS = \
+    actions/ChannelMenu.h \
     actions/ChatViewAction.h \
     actions/MenuBuilder.h \
     actions/UserMenu.h \
@@ -49,6 +50,7 @@ HEADERS = \
     text/LinksFilter.h \
     text/TokenFilter.h \
     text/UrlFilter.h \
+    ui/ChannelUtils.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
     ui/fields/LanguageField.h \
@@ -81,6 +83,7 @@ HEADERS = \
     ui/UserUtils.h \
 
 SOURCES = \
+    actions/ChannelMenu.cpp \
     actions/ChatViewAction.cpp \
     actions/MenuBuilder.cpp \
     actions/UserMenu.cpp \
@@ -101,6 +104,7 @@ SOURCES = \
     text/LinksFilter.cpp \
     text/TokenFilter.cpp \
     text/UrlFilter.cpp \
+    ui/ChannelUtils.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
     ui/fields/LanguageField.cpp \

@@ -20,6 +20,7 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
+#include "actions/ChannelMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
@@ -108,6 +109,12 @@ bool ChannelTab::remove(const QByteArray &id)
   addLeftMsg(id, m_channel->id());
   displayUserCount();
   return true;
+}
+
+
+MenuBuilder *ChannelTab::menu()
+{
+  return new ChannelMenu(m_channel, this);
 }
 
 

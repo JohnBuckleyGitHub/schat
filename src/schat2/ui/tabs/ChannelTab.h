@@ -40,6 +40,7 @@ public:
   bool add(ClientUser user);
   bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }
+  MenuBuilder *menu();
   void alert(bool start = true);
   void setOnline(bool online = true);
   void synced();
