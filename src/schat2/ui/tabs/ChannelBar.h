@@ -23,6 +23,7 @@
 #include <QLabel>
 
 class ChannelTopic;
+class InputWidget;
 
 class ChannelBar : public QToolBar
 {
@@ -31,25 +32,11 @@ class ChannelBar : public QToolBar
 public:
   ChannelBar(const QString &title, QWidget *parent = 0);
   ChannelBar(QWidget *parent = 0);
-  inline ChannelTopic *topic() { return m_topic; }
+  inline InputWidget *topic() { return m_topic; }
 
 private:
   void init();
-  ChannelTopic *m_topic;
-};
-
-
-class ChannelTopic : public QLabel
-{
-  Q_OBJECT
-
-public:
-  ChannelTopic(QWidget *parent = 0, Qt::WindowFlags f = 0);
-  ChannelTopic(const QString &text, QWidget *parent = 0, Qt::WindowFlags f = 0);
-  void setTopic(const QString &topic);
-
-private:
-  void init();
+  InputWidget *m_topic;
 };
 
 #endif /* CHANNELBAR_H_ */

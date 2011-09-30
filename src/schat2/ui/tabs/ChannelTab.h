@@ -49,6 +49,7 @@ private slots:
   void dataChanged(const QByteArray &senderId, const QByteArray &channelId);
   void notify(int notice, const QVariant &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
+  void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
   void split(const QList<QByteArray> &users);
   void userLeave(const QByteArray &userId);
