@@ -32,7 +32,10 @@
 
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
+  , m_emptySend(false)
   , m_current(0)
+  , m_lines(0)
+  , m_maxLines(4)
 {
   #if defined(Q_OS_MAC)
   setAttribute(Qt::WA_MacShowFocusRect, true);
@@ -55,6 +58,13 @@ InputWidget::InputWidget(QWidget *parent)
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
 
   createActions();
+}
+
+
+ColorButton *InputWidget::color()
+{
+  m_color->setVisible(true);
+  return m_color;
 }
 
 
@@ -163,8 +173,12 @@ void InputWidget::send()
   QString out = filter.filter(html);
   clear();
 
-  if (out.isEmpty())
+  if (out.isEmpty()) {
+    if (m_emptySend)
+      emit send(out);
+
     return;
+  }
 
   if (m_history.isEmpty() || m_history.last() != html) {
     if (m_history.size() == 10)
@@ -328,6 +342,7 @@ void InputWidget::createActions()
   m_format[Strike] = action;
 
   m_color = new ColorButton(textColor(), this);
+  m_color->setVisible(false);
   connect(m_color, SIGNAL(newColor(const QColor &)), SLOT(setTextColor(const QColor &)));
 }
 
@@ -389,12 +404,16 @@ void InputWidget::setHeight(int lines)
   static const int correction = 2;
   #endif
 
-  if (lines > 4) {
-    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    lines = 4;
+  if (lines > m_maxLines) {
+    lines = m_maxLines;
+    if (lines > 2)
+      setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   }
   else
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  if (m_lines == lines)
+    return;
 
   m_lines = lines;
   --lines;

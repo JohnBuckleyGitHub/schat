@@ -25,6 +25,8 @@
 #include "ChatSettings.h"
 #include "client/SimpleClient.h"
 #include "messages/TopicMessage.h"
+#include "net/packets/message.h"
+#include "ui/InputWidget.h"
 #include "ui/tabs/ChannelBar.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
@@ -79,6 +81,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SLOT(dataChanged(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+  connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
 }
 
 
@@ -177,6 +180,10 @@ void ChannelTab::notify(int notice, const QVariant &data)
       return;
 
     m_tabs->setCurrentWidget(this);
+    m_bar->setVisible(true);
+    m_bar->topic()->clear();
+    m_bar->topic()->insertHtml(m_channel->topic().topic);
+    m_bar->topic()->setFocus();
   }
 }
 
@@ -189,6 +196,14 @@ void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
   ClientUser user = m_client->user(userId);
   if (user)
     remove(userId);
+}
+
+
+void ChannelTab::sendTopic(const QString &text)
+{
+  m_bar->setVisible(false);
+  MessageData msg(UserUtils::userId(), id(), "topic", text);
+  m_client->send(msg, true);
 }
 
 

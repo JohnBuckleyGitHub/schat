@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ui/InputWidget.h"
 #include "ui/tabs/ChannelBar.h"
 
 ChannelBar::ChannelBar(const QString &title, QWidget *parent)
@@ -36,40 +37,10 @@ void ChannelBar::init()
 {
   setIconSize(QSize(10, 10));
   setObjectName(QLatin1String("ChannelBar"));
-  setStyleSheet(QString("ChannelBar { background-color:%1; margin:0px; border:0px; }").arg(palette().color(QPalette::Base).name()));
+  setStyleSheet(QString("ChannelBar { background-color:%1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
 
-  m_topic = new ChannelTopic(this);
+  m_topic = new InputWidget(this);
+  m_topic->setMaxLines(1);
+  m_topic->setEmptySend(true);
   addWidget(m_topic);
-}
-
-
-
-ChannelTopic::ChannelTopic(QWidget *parent, Qt::WindowFlags f)
-  : QLabel(parent, f)
-{
-  init();
-}
-
-
-ChannelTopic::ChannelTopic(const QString &text, QWidget *parent, Qt::WindowFlags f)
-  : QLabel(text, parent, f)
-{
-  init();
-}
-
-
-void ChannelTopic::setTopic(const QString &topic)
-{
-  setText(topic);
-}
-
-
-void ChannelTopic::init()
-{
-  setMargin(1);
-  setTextFormat(Qt::RichText);
-  setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-  setOpenExternalLinks(true);
-  setWordWrap(true);
-  setSizePolicy(QSizePolicy::Expanding, sizePolicy().verticalPolicy());
 }
