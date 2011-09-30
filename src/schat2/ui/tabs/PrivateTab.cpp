@@ -58,6 +58,14 @@ PrivateTab::~PrivateTab()
 }
 
 
+bool PrivateTab::bindMenu(QMenu *menu)
+{
+  UserMenu *builder = new UserMenu(m_user, this);
+  builder->bind(menu);
+  return true;
+}
+
+
 bool PrivateTab::update(ClientUser user)
 {
   if (!user)
@@ -78,12 +86,6 @@ bool PrivateTab::update(ClientUser user)
   m_tabs->setTabText(index, m_user->nick());
   setOnline(true);
   return true;
-}
-
-
-MenuBuilder *PrivateTab::menu()
-{
-  return new UserMenu(m_user, this);
 }
 
 

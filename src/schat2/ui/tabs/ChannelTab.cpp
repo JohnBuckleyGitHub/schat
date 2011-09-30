@@ -101,6 +101,14 @@ bool ChannelTab::add(ClientUser user)
 }
 
 
+bool ChannelTab::bindMenu(QMenu *menu)
+{
+  ChannelMenu *builder = new ChannelMenu(m_channel, this);
+  builder->bind(menu);
+  return true;
+}
+
+
 bool ChannelTab::remove(const QByteArray &id)
 {
   if (!m_userView->remove(id))
@@ -109,12 +117,6 @@ bool ChannelTab::remove(const QByteArray &id)
   addLeftMsg(id, m_channel->id());
   displayUserCount();
   return true;
-}
-
-
-MenuBuilder *ChannelTab::menu()
-{
-  return new ChannelMenu(m_channel, this);
 }
 
 
