@@ -59,9 +59,17 @@
     </message>
 </context>
 <context>
+    <name>ChannelMenu</name>
+    <message>
+        <location filename="../../src/schat2/actions/ChannelMenu.cpp" line="49"/>
+        <source>Edit topic...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="107"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,27 +463,27 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="197"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="194"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="722"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="715"/>
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="723"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="716"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="724"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="717"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="725"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="718"/>
         <source>Talks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -513,7 +521,7 @@
     <name>UserMenu</name>
     <message>
         <location filename="../../src/schat2/actions/UserMenu.cpp" line="60"/>
-        <source>Private Talk</source>
+        <source>Talk...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

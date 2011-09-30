@@ -57,7 +57,7 @@ void UserMenu::bind(QMenu *menu)
   MenuBuilder::bind(menu);
 
   if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
-    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Private Talk"), this);
+    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Talk..."), this);
     m_talk->setData(UserUtils::toUrl(m_user, QLatin1String("talk")));
     menu->addAction(m_talk);
   }

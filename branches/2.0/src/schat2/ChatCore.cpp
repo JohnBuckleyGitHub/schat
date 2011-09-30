@@ -35,6 +35,7 @@
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
+#include "ui/ChannelUtils.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -91,27 +92,29 @@ ChatCorePrivate::~ChatCorePrivate()
 }
 
 
-QString ChatCorePrivate::urlAction(const QUrl &url)
+/*!
+ * Возвращает действие и список параметров из адреса.
+ */
+QStringList ChatCorePrivate::urlAction(const QUrl &url)
 {
   if (url.scheme() != QLatin1String("chat"))
-    return QString();
+    return QStringList();
 
   QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
   if (path.startsWith(QLatin1String("/")))
     path.remove(0, 1);
 
-  if (url.host() == QLatin1String("user")) {
-    if (!path.contains(QLatin1String("/")))
-      return QString();
+  QStringList out = path.split(QLatin1String("/"), QString::SkipEmptyParts);
 
-    QStringList split = path.split(QLatin1String("/"));
-    if (split.size() > 1)
-      return split.at(1);
-    else
-      return QString();
+  if (url.host() == QLatin1String("user") || url.host() == QLatin1String("channel")) {
+    if (out.size() < 2)
+      return QStringList();
+
+    out.removeFirst();
+    return out;
   }
 
-  return path;
+  return out;
 }
 
 
@@ -134,26 +137,52 @@ void ChatCorePrivate::loadIgnoreList()
 }
 
 
+/*!
+ * Открытия адресов вида chat://channel/идентификатор канала/действие.
+ */
+void ChatCorePrivate::openChannelUrl(const QUrl &url)
+{
+  QStringList actions = urlAction(url);
+  if (actions.isEmpty())
+    return;
+
+  ClientChannel channel = ChannelUtils::channel(url);
+  if (!channel)
+    return;
+
+  if (actions.first() == "edit") {
+    if (actions.size() == 1)
+      return;
+
+    if (actions.at(1) == "topic")
+      q->startNotify(ChatCore::EditTopicNotice, channel->id());
+  }
+}
+
+
+/*!
+ * Открытия адресов вида chat://user/идентификатор пользователя/действие.
+ */
 void ChatCorePrivate::openUserUrl(const QUrl &url)
 {
-  QString action = urlAction(url);
-  if (action.isEmpty())
+  QStringList actions = urlAction(url);
+  if (actions.isEmpty())
     return;
 
   ClientUser user = UserUtils::user(url);
   if (!user)
     return;
 
-  if (action == QLatin1String("insert")) {
+  if (actions.first() == QLatin1String("insert")) {
     q->startNotify(ChatCore::InsertTextToSend, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(user->nick())));
   }
-  else if (action == QLatin1String("talk")) {
+  else if (actions.first() == QLatin1String("talk")) {
     q->startNotify(ChatCore::AddPrivateTab, user->id());
   }
-  else if (action == QLatin1String("ignore")) {
+  else if (actions.first() == QLatin1String("ignore")) {
     ignore(user->id());
   }
-  else if (action == QLatin1String("unignore")) {
+  else if (actions.first() == QLatin1String("unignore")) {
     unignore(user->id());
   }
 }
@@ -305,9 +334,7 @@ void ChatCore::click(const QString &id, const QString &button)
  */
 void ChatCore::openUrl(const QUrl &url)
 {
-  qDebug() << "";
-  qDebug() << url;
-  qDebug() << "";
+  qDebug() << "-----" << url;
 
   if (url.scheme() == QLatin1String("schat")) {
     m_client->openUrl(url);
@@ -321,6 +348,9 @@ void ChatCore::openUrl(const QUrl &url)
 
   if (url.host() == QLatin1String("user")) {
     d->openUserUrl(url);
+  }
+  else if (url.host() == QLatin1String("channel")) {
+    d->openChannelUrl(url);
   }
   else if (url.host() == QLatin1String("about")) {
     startNotify(ChatCore::AboutNotice);

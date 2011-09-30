@@ -29,6 +29,8 @@ private:
 
 public:
   static ClientChannel channel(const QByteArray &id);
+  static ClientChannel channel(const QUrl &url);
+  static QUrl toUrl(ClientChannel channel, const QString &action = QString());
 };
 
 #endif /* CHANNELUTILS_H_ */

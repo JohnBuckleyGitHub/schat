@@ -46,6 +46,7 @@ void ChannelMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Topic..."), this);
+  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
+  m_topic->setData(ChannelUtils::toUrl(m_channel, QLatin1String("edit/topic")));
   menu->addAction(m_topic);
 }

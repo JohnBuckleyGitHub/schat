@@ -78,6 +78,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SLOT(dataChanged(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
 }
 
 
@@ -166,6 +167,17 @@ void ChannelTab::dataChanged(const QByteArray &senderId, const QByteArray &chann
     return;
 
 //  m_bar->topic()->setTopic(m_channel->topic());
+}
+
+
+void ChannelTab::notify(int notice, const QVariant &data)
+{
+  if (notice == ChatCore::EditTopicNotice) {
+    if (data.toByteArray() != id())
+      return;
+
+    m_tabs->setCurrentWidget(this);
+  }
 }
 
 
