@@ -80,7 +80,7 @@ ClientUser UserUtils::user(const QByteArray &id)
 ClientUser UserUtils::user(const QUrl &url)
 {
   ClientUser user;
-  if (url.scheme() != QLatin1String("chat") || url.host() != QLatin1String("user"))
+  if (url.scheme() != QLatin1String("chat") && url.host() != QLatin1String("user"))
     return user;
 
   QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
@@ -109,8 +109,8 @@ ClientUser UserUtils::user(const QUrl &url)
     m_users[id] = user;
     return user;
   }
-  else
-    return ClientUser();
+
+  return ClientUser();
 }
 
 

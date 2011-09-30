@@ -26,9 +26,10 @@ public:
   ChatCorePrivate();
   ~ChatCorePrivate();
 
-  QString urlAction(const QUrl &url);
+  QStringList urlAction(const QUrl &url);
   void ignore(const QByteArray &id);
   void loadIgnoreList();
+  void openChannelUrl(const QUrl &url);
   void openUserUrl(const QUrl &url);
   void unignore(const QByteArray &id);
   void writeIgnoreList();
