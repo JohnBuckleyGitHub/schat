@@ -35,6 +35,7 @@ void MenuBuilder::bind(QMenu *menu)
   m_bind = true;
   m_menu = menu;
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
+  connect(m_menu, SIGNAL(destroyed(QObject *)), SLOT(deleteLater()));
 }
 
 

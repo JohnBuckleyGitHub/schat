@@ -24,7 +24,7 @@
 
 #include "schat.h"
 
-class MenuBuilder;
+class QMenu;
 class TabWidget;
 
 class SCHAT_CORE_EXPORT AbstractTab : public QWidget
@@ -54,7 +54,7 @@ public:
   inline QIcon icon() const { return m_icon; }
   inline QString text() const { return m_text; }
   inline TabType type() const { return m_type; }
-  virtual MenuBuilder *menu() { return 0; }
+  virtual bool bindMenu(QMenu *menu) { Q_UNUSED(menu) return false; }
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);
   void setText(const QString &text);

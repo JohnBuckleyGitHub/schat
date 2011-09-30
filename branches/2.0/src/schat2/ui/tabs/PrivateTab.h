@@ -32,9 +32,9 @@ class SCHAT_CORE_EXPORT PrivateTab : public ChatViewTab
 public:
   PrivateTab(ClientUser user, TabWidget *parent);
   ~PrivateTab();
+  bool bindMenu(QMenu *menu);
   bool update(ClientUser user);
   inline ClientUser user() const { return m_user; }
-  MenuBuilder *menu();
   void alert(bool start = true);
   void setOnline(bool online = true);
 

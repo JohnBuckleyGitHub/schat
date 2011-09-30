@@ -81,6 +81,7 @@ ChatCorePrivate::ChatCorePrivate()
   icons += QLatin1String("edit-select-all");
   icons += QLatin1String("balloon");
   icons += QLatin1String("slash");
+  icons += QLatin1String("topic-edit");
 }
 
 

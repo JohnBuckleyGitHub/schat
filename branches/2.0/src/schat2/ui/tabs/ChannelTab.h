@@ -38,9 +38,9 @@ public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   ~ChannelTab();
   bool add(ClientUser user);
+  bool bindMenu(QMenu *menu);
   bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }
-  MenuBuilder *menu();
   void alert(bool start = true);
   void setOnline(bool online = true);
   void synced();

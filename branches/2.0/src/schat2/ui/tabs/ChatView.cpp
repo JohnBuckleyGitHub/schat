@@ -123,9 +123,6 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 
   menu.exec(event->globalPos());
-
-  if (builder)
-    builder->deleteLater();
 }
 
 

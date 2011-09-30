@@ -186,16 +186,12 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 
   QMenu menu(this);
   QAction *closeAction = 0;
-  MenuBuilder *builder = widget(index)->menu();
 
-  if (builder) {
-    builder->bind(&menu);
+  if (widget(index)->bindMenu(&menu))
     menu.addSeparator();
-  }
 
-  if (tabsClosable()) {
+  if (tabsClosable())
     closeAction = menu.addAction(tr("Close Tab"));
-  }
 
   if (!menu.actions().isEmpty()) {
     QAction *action = menu.exec(event->globalPos());
@@ -205,9 +201,6 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
     if (action == closeAction)
       closeTab(index);
   }
-
-  if (builder)
-    builder->deleteLater();
 }
 
 

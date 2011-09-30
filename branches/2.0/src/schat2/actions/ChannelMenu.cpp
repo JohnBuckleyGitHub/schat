@@ -19,6 +19,7 @@
 #include <QMenu>
 
 #include "actions/ChannelMenu.h"
+#include "ChatCore.h"
 #include "ui/ChannelUtils.h"
 
 ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
@@ -45,6 +46,6 @@ void ChannelMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  m_topic = new QAction(tr("Topic..."), this);
+  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Topic..."), this);
   menu->addAction(m_topic);
 }
