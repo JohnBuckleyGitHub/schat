@@ -87,6 +87,10 @@ void InputWidget::changeEvent(QEvent *event)
 }
 
 
+/*!
+ * Показ контекстного меню.
+ * \todo Добавить возможность устанавливать произвольную высоту текста по умолчанию.
+ */
 void InputWidget::contextMenuEvent(QContextMenuEvent *event)
 {
   bool selection = textCursor().hasSelection();
@@ -133,6 +137,18 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
   }
   else if (key == Qt::Key_Down && modifiers == Qt::ControlModifier) {
     prevMsg();
+  }
+  else if (key == Qt::Key_B && modifiers == Qt::ControlModifier) {
+    m_format.at(Bold)->toggle();
+    setBold(m_format.at(Bold)->isChecked());
+  }
+  else if (key == Qt::Key_I && modifiers == Qt::ControlModifier) {
+    m_format.at(Italic)->toggle();
+    setItalic(m_format.at(Italic)->isChecked());
+  }
+  else if (key == Qt::Key_U && modifiers == Qt::ControlModifier) {
+    m_format.at(Underline)->toggle();
+    setUnderline(m_format.at(Underline)->isChecked());
   }
   else if (key == Qt::Key_Tab) {
     QWidget::keyPressEvent(event);
@@ -316,21 +332,18 @@ void InputWidget::createActions()
   QAction *action;
   action = new QAction(SCHAT_ICON(TextBoldIcon), tr("Bold"), this);
   action->setCheckable(true);
-  action->setShortcut(Qt::CTRL + Qt::Key_B);
   connect(action, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
   m_toolBar->addAction(action);
   m_format[Bold] = action;
 
   action = new QAction(SCHAT_ICON(TextItalicIcon), tr("Italic"), this);
   action->setCheckable(true);
-  action->setShortcut(Qt::CTRL + Qt::Key_I);
   connect(action, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
   m_toolBar->addAction(action);
   m_format[Italic] = action;
 
   action = new QAction(SCHAT_ICON(TextUnderlineIcon), tr("Underline"), this);
   action->setCheckable(true);
-  action->setShortcut(Qt::CTRL + Qt::Key_U);
   connect(action, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
   m_toolBar->addAction(action);
   m_format[Underline] = action;
