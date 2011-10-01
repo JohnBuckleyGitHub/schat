@@ -91,6 +91,13 @@ function showService(show) {
 	alignChat(true);
 }
 
+function showTopic(show) {
+	if (show)
+		$('#topic-wrapper').show();
+	else
+		$('#topic-wrapper').hide();
+}
+
 // Удаление статуса сообщения и времени доставки.
 function setMessageState(id, classes, timestamp, seconds) {
 	var prefix = id + ' > div.blocks';

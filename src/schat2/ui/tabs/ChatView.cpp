@@ -53,6 +53,12 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 }
 
 
+void ChatView::evaluateJavaScript(const QString &func, const QVariant &param)
+{
+  evaluateJavaScript(func + "(" + param.toString() + ");");
+}
+
+
 void ChatView::evaluateJavaScript(const QString &js)
 {
   if (m_loaded) {
@@ -132,8 +138,11 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 void ChatView::loadFinished()
 {
   m_loaded = true;
-  showSeconds(SCHAT_OPTION("ShowSeconds").toBool());
-  showService(SCHAT_OPTION("ShowServiceMessages").toBool());
+  m_seconds->setChecked(SCHAT_OPTION("ShowSeconds").toBool());
+  m_service->setChecked(SCHAT_OPTION("ShowServiceMessages").toBool());
+
+  evaluateJavaScript("showSeconds", m_seconds->isChecked());
+  evaluateJavaScript("showService", m_service->isChecked());
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
@@ -170,10 +179,12 @@ void ChatView::populateJavaScriptWindowObject()
 void ChatView::settingsChanged(const QString &key, const QVariant &value)
 {
   if (key == QLatin1String("ShowSeconds")) {
-    showSeconds(value.toBool());
+    m_seconds->setChecked(value.toBool());
+    evaluateJavaScript("showSeconds", value);
   }
   else if (key == QLatin1String("ShowServiceMessages")) {
-    showService(value.toBool());
+    m_service->setChecked(value.toBool());
+    evaluateJavaScript("showService", value);
   }
 }
 
@@ -205,29 +216,4 @@ void ChatView::retranslateUi()
   m_copyLink->setText(tr("Copy Link"));
   m_clear->setText(tr("Clear"));
   m_selectAll->setText(tr("Select All"));
-}
-
-
-/*!
- * Отображает/скрывает секунды в окне чата.
- */
-void ChatView::showSeconds(bool show)
-{
-  m_seconds->setChecked(show);
-
-  if (show)
-    evaluateJavaScript(QLatin1String("showSeconds(true)"));
-  else
-    evaluateJavaScript(QLatin1String("showSeconds(false)"));
-}
-
-
-void ChatView::showService(bool show)
-{
-  m_service->setChecked(show);
-
-  if (show)
-    evaluateJavaScript(QLatin1String("showService(true)"));
-  else
-    evaluateJavaScript(QLatin1String("showService(false)"));
 }

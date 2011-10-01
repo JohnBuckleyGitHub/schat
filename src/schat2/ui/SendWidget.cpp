@@ -48,6 +48,7 @@ SendWidget::SendWidget(QWidget *parent)
   retranslateUi();
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
+  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
 }
 
 
@@ -81,6 +82,14 @@ void SendWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QWidget::changeEvent(event);
+}
+
+
+void SendWidget::notify(int notice, const QVariant &data)
+{
+  if (notice == ChatCore::SetSendFocusNotice) {
+    m_input->setFocus();
+  }
 }
 
 
