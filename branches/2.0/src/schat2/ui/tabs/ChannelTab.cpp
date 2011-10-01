@@ -179,6 +179,7 @@ void ChannelTab::notify(int notice, const QVariant &data)
     if (data.toByteArray() != id())
       return;
 
+    m_chatView->evaluateJavaScript("showTopic", false);
     m_tabs->setCurrentWidget(this);
     m_bar->setVisible(true);
     m_bar->topic()->clear();
@@ -202,6 +203,10 @@ void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
 void ChannelTab::sendTopic(const QString &text)
 {
   m_bar->setVisible(false);
+  if (!text.isEmpty())
+    m_chatView->evaluateJavaScript("showTopic", true);
+
+  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
   MessageData msg(UserUtils::userId(), id(), "topic", text);
   m_client->send(msg, true);
 }

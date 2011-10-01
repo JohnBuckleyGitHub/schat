@@ -48,6 +48,7 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
+  void notify(int notice, const QVariant &data);
   void sendMsg(const QString &text);
   void showHistoryItem();
   void showHistoryMenu();

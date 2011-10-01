@@ -34,6 +34,7 @@ class SCHAT_CORE_EXPORT ChatView : public QWebView
 
 public:
   ChatView(const QByteArray &id, const QString &url, QWidget *parent = 0);
+  void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);
 
 protected:
@@ -50,8 +51,6 @@ private slots:
 private:
   void createActions();
   void retranslateUi();
-  void showSeconds(bool show);
-  void showService(bool show);
 
   bool m_loaded;                      ///< true если документ загружен.
   QAction *m_clear;                   ///< Очистить.
