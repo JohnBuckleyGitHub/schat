@@ -21,7 +21,7 @@
 
 #include <QDateTime>
 #include <QHash>
-#include <QString>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -65,6 +65,7 @@ public:
   inline QString text() const { return m_text; }
   inline QString type() const { return m_type; }
   inline void setPriority(int priority) { m_priority = priority; }
+  static QString escape(const QString &text);
   static QString tpl(const QString &fileName);
   virtual QString js(bool add = true) const;
   void setText(const QString &text, int parseOptions);
@@ -72,9 +73,12 @@ public:
 protected:
   QDateTime dateTime() const;
   QString appendMessage(QString &html, const QString &func = QLatin1String("appendMessage")) const;
+  QString button(const QVariant &data) const;
+  QStringList vars(const QString &text) const;
   void extra(QString &html) const;
   void id(QString &html) const;
   void nick(QString &html) const;
+  void replace(QString &text, const QVariantMap map) const;
   void text(QString &html) const;
   void time(QString &html) const;
   void type(QString &html) const;

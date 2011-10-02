@@ -27,6 +27,9 @@ class SCHAT_CORE_EXPORT TopicMessage : public AbstractMessage
 public:
   TopicMessage(const Topic &topic);
   QString js(bool add = true) const;
+
+private:
+  void buttons(QString &html) const;
 };
 
 #endif /* TOPICMESSAGE_H_ */
