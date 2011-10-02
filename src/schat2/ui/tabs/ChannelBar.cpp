@@ -40,7 +40,6 @@ void ChannelBar::init()
   setStyleSheet(QString("ChannelBar { background-color:%1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
 
   m_topic = new InputWidget(this);
-  m_topic->setMaxLines(1);
   m_topic->setEmptySend(true);
   addWidget(m_topic);
 }

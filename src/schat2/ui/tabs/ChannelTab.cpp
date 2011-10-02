@@ -181,9 +181,10 @@ void ChannelTab::notify(int notice, const QVariant &data)
 
     m_chatView->evaluateJavaScript("showTopic", false);
     m_tabs->setCurrentWidget(this);
-    m_bar->setVisible(true);
     m_bar->topic()->clear();
     m_bar->topic()->insertHtml(m_channel->topic().topic);
+    m_bar->setVisible(true);
+    m_bar->topic()->adjustHeight();
     m_bar->topic()->setFocus();
   }
 }

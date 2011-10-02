@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QScrollBar>
 #include <QToolBar>
 #include <QWidgetAction>
 
@@ -33,9 +34,10 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
   , m_emptySend(false)
+  , m_scalable(true)
   , m_current(0)
   , m_lines(0)
-  , m_maxLines(4)
+  , m_maxLines(5)
 {
   #if defined(Q_OS_MAC)
   setAttribute(Qt::WA_MacShowFocusRect, true);
@@ -65,6 +67,18 @@ ColorButton *InputWidget::color()
 {
   m_color->setVisible(true);
   return m_color;
+}
+
+
+void InputWidget::adjustHeight()
+{
+  m_scalable = false;
+  setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+  while (verticalScrollBar()->isVisible() && m_lines < m_maxLines) {
+    setHeight(m_lines + 1);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  }
 }
 
 
@@ -188,6 +202,7 @@ void InputWidget::send()
   HtmlFilter filter(HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
   QString out = filter.filter(html);
   clear();
+  setHeight(1);
 
   if (out.isEmpty()) {
     if (m_emptySend)
@@ -308,6 +323,9 @@ void InputWidget::setUnderline(bool underline)
 
 void InputWidget::textChanged()
 {
+  if (!m_scalable)
+    return;
+
   int lineCount = document()->lineCount();
   if (m_lines != lineCount)
     setHeight(lineCount);
@@ -334,25 +352,25 @@ void InputWidget::createActions()
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
   m_toolBar->addAction(action);
-  m_format[Bold] = action;
+  m_format.append(action);
 
   action = new QAction(SCHAT_ICON(TextItalicIcon), tr("Italic"), this);
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
   m_toolBar->addAction(action);
-  m_format[Italic] = action;
+  m_format.append(action);
 
   action = new QAction(SCHAT_ICON(TextUnderlineIcon), tr("Underline"), this);
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
   m_toolBar->addAction(action);
-  m_format[Underline] = action;
+  m_format.append(action);
 
   action = m_toolBar->addAction(SCHAT_ICON(TextStrikeIcon), tr("Strikeout"), this, SLOT(setStrike(bool)));
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setStrike(bool)));
   m_toolBar->addAction(action);
-  m_format[Strike] = action;
+  m_format.append(action);
 
   m_color = new ColorButton(textColor(), this);
   m_color->setVisible(false);
@@ -432,6 +450,9 @@ void InputWidget::setHeight(int lines)
   --lines;
   int fontSize = QFontInfo(currentFont()).pixelSize();
   int height = (fontSize * 2 - correction) + fontSize * lines;
+  if (m_lines > 1) {
+    height += 2 * m_lines;
+  }
 
   setMinimumHeight(height);
   setMaximumHeight(height);

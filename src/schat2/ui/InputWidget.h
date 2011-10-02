@@ -43,6 +43,7 @@ public:
   inline QStringList history() const { return m_history; }
   inline void setEmptySend(bool enable) { m_emptySend = enable; }
   inline void setMaxLines(int lines) { m_maxLines = lines; }
+  void adjustHeight();
   void setMsg(int index);
 
 signals:
@@ -77,6 +78,7 @@ private:
   void setHeight(int lines);
 
   bool m_emptySend;          ///< true если разрешена отправка пустого текста.
+  bool m_scalable;           ///< true если виджет может автоматически изменять свои размеры.
   ColorButton *m_color;      ///< Кнопка выбора цвета.
   int m_current;             ///< Текущее сообщение в истории.
   int m_lines;               ///< Высота текста в строчках.
