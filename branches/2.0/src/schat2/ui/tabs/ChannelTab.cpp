@@ -82,6 +82,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
+  connect(m_bar->topic(), SIGNAL(focusOut()), SLOT(topicFocusOut()));
 }
 
 
@@ -207,6 +208,9 @@ void ChannelTab::sendTopic(const QString &text)
   if (!text.isEmpty())
     m_chatView->evaluateJavaScript("showTopic", true);
 
+  if (m_channel->topic().topic == text)
+    return;
+
   ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
   MessageData msg(UserUtils::userId(), id(), "topic", text);
   m_client->send(msg, true);
@@ -227,6 +231,14 @@ void ChannelTab::split(const QList<QByteArray> &users)
   for (int i = 0; i < users.size(); ++i) {
     m_userView->remove(users.at(i));
   }
+}
+
+
+void ChannelTab::topicFocusOut()
+{
+  m_bar->setVisible(false);
+  if (!m_channel->topic().topic.isEmpty())
+    m_chatView->evaluateJavaScript("showTopic", true);
 }
 
 

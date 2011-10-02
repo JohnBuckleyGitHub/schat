@@ -52,6 +52,7 @@ private slots:
   void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
   void split(const QList<QByteArray> &users);
+  void topicFocusOut();
   void userLeave(const QByteArray &userId);
 
 private:

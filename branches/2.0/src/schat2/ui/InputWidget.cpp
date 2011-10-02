@@ -38,6 +38,7 @@ InputWidget::InputWidget(QWidget *parent)
   , m_current(0)
   , m_lines(0)
   , m_maxLines(5)
+  , m_menu(0)
 {
   #if defined(Q_OS_MAC)
   setAttribute(Qt::WA_MacShowFocusRect, true);
@@ -108,28 +109,40 @@ void InputWidget::changeEvent(QEvent *event)
 void InputWidget::contextMenuEvent(QContextMenuEvent *event)
 {
   bool selection = textCursor().hasSelection();
-  QMenu menu(this);
-  connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+  m_menu = new QMenu(this);
+  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 
-  menu.addAction(m_action);
-  menu.addSeparator();
+  m_menu->addAction(m_action);
+  m_menu->addSeparator();
 
   if (selection) {
-    menu.addAction(m_cut);
-    menu.addAction(m_copy);
+    m_menu->addAction(m_cut);
+    m_menu->addAction(m_copy);
   }
 
   if (canPaste())
-    menu.addAction(m_paste);
+    m_menu->addAction(m_paste);
 
   if (document()->toPlainText().size()) {
-    menu.addSeparator();
-    menu.addAction(m_clear);
-    menu.addAction(m_selectAll);
+    m_menu->addSeparator();
+    m_menu->addAction(m_clear);
+    m_menu->addAction(m_selectAll);
   }
 
-  if (menu.actions().size())
-    menu.exec(event->globalPos());
+  if (m_menu->actions().size())
+    m_menu->exec(event->globalPos());
+
+  m_menu->deleteLater();
+  m_menu = 0;
+}
+
+
+void InputWidget::focusOutEvent(QFocusEvent *event)
+{
+  QTextEdit::focusOutEvent(event);
+
+  if (!m_menu)
+    emit focusOut();
 }
 
 
