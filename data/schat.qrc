@@ -76,6 +76,7 @@
   <file>html/about.html</file>
   <file>html/ChatView.html</file>
   <file>html/templates/body.html</file>
+  <file>html/templates/button.html</file>
   <file>html/templates/content-small.html</file>
   <file>html/templates/generic.html</file>
   <file>html/templates/nick.html</file>

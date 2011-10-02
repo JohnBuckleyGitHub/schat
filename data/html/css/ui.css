@@ -57,9 +57,26 @@ button:disabled {
 	left:0;
 	z-index:10;
 	padding:2px;
-	display:none;
 }
 
 #topic {
 	padding:2px 4px;
+}
+
+#topic-extra {
+	border-top:1px solid #d7dfe5;
+	margin-top:3px;
+}
+
+#topic-buttons {
+	padding-left:10px;
+	float:right;
+}
+
+#topic-author {
+	float:left;
+}
+
+#topic-author .date-time-block, #topic-author .nick-block {
+	vertical-align:middle;
 }

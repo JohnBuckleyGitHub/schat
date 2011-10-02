@@ -66,6 +66,19 @@ ClientChannel ChannelUtils::channel(const QUrl &url)
 }
 
 
+QString ChannelUtils::webIcon(const QString &action)
+{
+  QString icon;
+  if (action == "edit/topic")
+    icon = "topic-edit";
+
+  if (icon.isEmpty())
+    return icon;
+
+  return "qrc:/images/" + icon + ".png";
+}
+
+
 QUrl ChannelUtils::toUrl(ClientChannel channel, const QString &action)
 {
   QUrl out(QLatin1String("chat://channel"));
@@ -77,4 +90,18 @@ QUrl ChannelUtils::toUrl(ClientChannel channel, const QString &action)
   out.setQueryItems(queries);
 
   return out;
+}
+
+
+QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &action, const QString &title)
+{
+  QVariantMap map;
+  ClientChannel channel = ChannelUtils::channel(id);
+  if (!channel)
+    return map;
+
+  map["url"] = toUrl(channel, action);
+  map["icon"] = webIcon(action);
+  map["title"] = title;
+  return map;
 }

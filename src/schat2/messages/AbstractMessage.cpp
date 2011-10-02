@@ -63,6 +63,20 @@ AbstractMessage::AbstractMessage(const QString &type, const QString &text, const
 }
 
 
+QString AbstractMessage::escape(const QString &text)
+{
+  if (text.isEmpty())
+    return text;
+
+  QString out = text;
+  out.replace("\\", "\\\\");
+  out.remove('\n');
+  out.remove('\r');
+  out.replace("%", "&#37;");
+  return out;
+}
+
+
 /*!
  * Получение текста шаблона, текст кэшируется в статическом члене \p m_templates.
  *
@@ -152,6 +166,60 @@ QString AbstractMessage::appendMessage(QString &html, const QString &func) const
 }
 
 
+QString AbstractMessage::button(const QVariant &data) const
+{
+  if (data.type() != QVariant::Map)
+    return QString();
+
+  QVariantMap map = data.toMap();
+  if (map.isEmpty())
+    return QString();
+
+  if (!map.contains("template") || map.value("template").toString().isEmpty())
+    map["template"] = "button";
+
+  QString t = tpl(map.value("template").toString());
+  if (t.isEmpty())
+    return QString();
+
+  replace(t, map);
+  return t;
+}
+
+
+/*!
+ * Получения списка переменных вида %var% из строки \p text.
+ *
+ * \return Список переменных без начальных и конечных символов %.
+ */
+QStringList AbstractMessage::vars(const QString &text) const
+{
+  QStringList out;
+  QString var;
+  int start = 0;
+  int end = 0;
+
+  forever {
+    start = text.indexOf('%', end);
+    if (start == -1)
+      break;
+
+    ++start;
+    end = text.indexOf('%', start);
+    if (end == -1)
+      break;
+
+    ++end;
+
+    var = text.mid(start, end - start - 1);
+    if (!out.contains(var))
+      out.append(var);
+  }
+
+  return out;
+}
+
+
 void AbstractMessage::extra(QString &html) const
 {
   html.replace(QLatin1String("%extra%"), m_extra);
@@ -187,6 +255,18 @@ void AbstractMessage::nick(QString &html) const
 }
 
 
+void AbstractMessage::replace(QString &text, const QVariantMap map) const
+{
+  QStringList vars = this->vars(text);
+  if (vars.isEmpty())
+    return;
+
+  for (int i = 0; i < vars.size(); ++i) {
+    text.replace('%' + vars.at(i) + '%', map.value(vars.at(i)).toString());
+  }
+}
+
+
 /*!
  * Установка тела сообщения.
  */
@@ -201,9 +281,7 @@ void AbstractMessage::text(QString &html) const
   }
 
   QString t = tpl(m_bodyTpl);
-
-  QString text = m_text;
-  t.replace(QLatin1String("%message%"), text.replace("\\", "\\\\").remove('\r').replace("%", "&#37;"));
+  t.replace(QLatin1String("%message%"), escape(m_text));
 
   html.replace(QLatin1String("%body%"), t);
 }

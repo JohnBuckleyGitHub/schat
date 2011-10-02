@@ -18,7 +18,7 @@
 
 #include "messages/TopicMessage.h"
 #include "net/packets/message.h"
-
+#include "ui/ChannelUtils.h"
 
 TopicMessage::TopicMessage(const Topic &topic)
   : AbstractMessage(QLatin1String("user-type"), topic.topic, topic.channel)
@@ -40,6 +40,19 @@ QString TopicMessage::js(bool add) const
   QString html = tpl(m_template);
   time(html);
   nick(html);
+  buttons(html);
   text(html);
   return appendMessage(html, QLatin1String("setTopic"));
+}
+
+
+void TopicMessage::buttons(QString &html) const
+{
+  if (!html.contains(QLatin1String("%buttons%")))
+    return;
+
+  QString t;
+  t += button(ChannelUtils::toWebButton(m_destId, "edit/topic", QObject::tr("Edit topic...")));
+
+  html.replace("%buttons%", t);
 }

@@ -30,7 +30,9 @@ private:
 public:
   static ClientChannel channel(const QByteArray &id);
   static ClientChannel channel(const QUrl &url);
+  static QString webIcon(const QString &action);
   static QUrl toUrl(ClientChannel channel, const QString &action = QString());
+  static QVariantMap toWebButton(const QByteArray &id, const QString &action, const QString &title);
 };
 
 #endif /* CHANNELUTILS_H_ */
