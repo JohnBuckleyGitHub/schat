@@ -40,6 +40,10 @@ ChatApp::ChatApp(int &argc, char **argv)
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
+  QPalette palette = this->palette();
+  palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Highlight));
+  setPalette(palette);
+
   m_core = new ChatCore(this);
 
   m_window = new ChatWindow();
