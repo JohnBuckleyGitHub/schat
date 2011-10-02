@@ -47,11 +47,13 @@ public:
   void setMsg(int index);
 
 signals:
+  void focusOut();
   void send(const QString &text);
 
 protected:
   void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
+  void focusOutEvent(QFocusEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
 public slots:
@@ -89,6 +91,7 @@ private:
   QAction *m_paste;          ///< Paste.
   QAction *m_selectAll;      ///< Select All.
   QList<QAction *> m_format; ///< Действия связанные с форматированием текста.
+  QMenu *m_menu;             ///< Контекстное меню.
   QStringList m_history;     ///< Отправленные сообщения.
   QTextCharFormat m_default; ///< Формат текста по умолчанию.
   QToolBar *m_toolBar;       ///< Панель инструментов в контекстом меню.
