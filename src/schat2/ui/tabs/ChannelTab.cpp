@@ -83,6 +83,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
   connect(m_bar->topic(), SIGNAL(focusOut()), SLOT(topicFocusOut()));
+  connect(m_chatView, SIGNAL(reloaded()), SLOT(reloaded()));
 }
 
 
@@ -202,6 +203,13 @@ void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
 }
 
 
+void ChannelTab::reloaded()
+{
+  TopicMessage msg(m_channel->topic());
+  m_chatView->evaluateJavaScript(msg.js());
+}
+
+
 void ChannelTab::sendTopic(const QString &text)
 {
   m_bar->setVisible(false);
@@ -239,6 +247,8 @@ void ChannelTab::topicFocusOut()
   m_bar->setVisible(false);
   if (!m_channel->topic().topic.isEmpty())
     m_chatView->evaluateJavaScript("showTopic", true);
+
+  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
 }
 
 

@@ -154,6 +154,7 @@ void ChatView::menuTriggered(QAction *action)
   if (action == m_clear) {
     m_loaded = false;
     page()->triggerAction(QWebPage::ReloadAndBypassCache);
+    emit reloaded();
   }
   else if (action == m_seconds) {
     ChatCore::i()->settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
