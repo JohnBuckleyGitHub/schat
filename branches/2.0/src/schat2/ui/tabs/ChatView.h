@@ -37,6 +37,9 @@ public:
   void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);
 
+signals:
+  void reloaded();
+
 protected:
   void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
