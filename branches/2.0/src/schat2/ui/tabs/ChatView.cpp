@@ -138,6 +138,13 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
+void ChatView::showEvent(QShowEvent *event)
+{
+  evaluateJavaScript("alignChat();");
+  QWebView::showEvent(event);
+}
+
+
 /*!
  * Завершение загрузки документа.
  */

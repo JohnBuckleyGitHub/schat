@@ -44,6 +44,7 @@ signals:
 protected:
   void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
+  void showEvent(QShowEvent *event);
 
 private slots:
   void loadFinished();
