@@ -208,6 +208,15 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
+  if (command == "topic") {
+    if (SimpleID::typeOf(m_destId) == SimpleID::ChannelId) {
+      MessageData msg(UserUtils::userId(), m_destId, command, QString());
+      m_client->send(msg, true);
+    }
+
+    return;
+  }
+
   commandHelpHint(command);
 }
 
