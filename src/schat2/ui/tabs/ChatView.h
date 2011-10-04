@@ -34,6 +34,7 @@ class SCHAT_CORE_EXPORT ChatView : public QWebView
 
 public:
   ChatView(const QByteArray &id, const QString &url, QWidget *parent = 0);
+  void copy();
   void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);
 

@@ -153,29 +153,51 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (key == Qt::Key_Return && modifiers == Qt::NoModifier) {
     send();
+    return;
   }
-  else if (key == Qt::Key_Return && (modifiers == Qt::ControlModifier || modifiers == Qt::ShiftModifier)) {
+
+  if (key == Qt::Key_Return && (modifiers == Qt::ControlModifier || modifiers == Qt::ShiftModifier)) {
     QKeyEvent *e = new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
     QTextEdit::keyPressEvent(e);
     delete e;
+    return;
   }
-  else if (key == Qt::Key_Up && modifiers == Qt::ControlModifier) {
-    nextMsg();
+
+  if (event->matches(QKeySequence::Copy)) {
+    if (textCursor().hasSelection())
+      QTextEdit::keyPressEvent(event);
+    else
+      ChatCore::i()->startNotify(ChatCore::CopyRequestNotice);
+
+    return;
   }
-  else if (key == Qt::Key_Down && modifiers == Qt::ControlModifier) {
-    prevMsg();
+
+  if (event->matches(QKeySequence::Paste)) {
+    paste();
+    return;
   }
-  else if (key == Qt::Key_B && modifiers == Qt::ControlModifier) {
-    m_format.at(Bold)->toggle();
-    setBold(m_format.at(Bold)->isChecked());
-  }
-  else if (key == Qt::Key_I && modifiers == Qt::ControlModifier) {
-    m_format.at(Italic)->toggle();
-    setItalic(m_format.at(Italic)->isChecked());
-  }
-  else if (key == Qt::Key_U && modifiers == Qt::ControlModifier) {
-    m_format.at(Underline)->toggle();
-    setUnderline(m_format.at(Underline)->isChecked());
+
+  if (modifiers == Qt::ControlModifier) {
+    if (key == Qt::Key_Up) {
+      nextMsg();
+    }
+    else if (key == Qt::Key_Down) {
+      prevMsg();
+    }
+    else if (key == Qt::Key_B) {
+      m_format.at(Bold)->toggle();
+      setBold(m_format.at(Bold)->isChecked());
+    }
+    else if (key == Qt::Key_I) {
+      m_format.at(Italic)->toggle();
+      setItalic(m_format.at(Italic)->isChecked());
+    }
+    else if (key == Qt::Key_U) {
+      m_format.at(Underline)->toggle();
+      setUnderline(m_format.at(Underline)->isChecked());
+    }
+    else
+      return QTextEdit::keyPressEvent(event);
   }
   else if (key == Qt::Key_Tab) {
     QWidget::keyPressEvent(event);

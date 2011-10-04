@@ -305,6 +305,13 @@ void TabWidget::notify(int notice, const QVariant &data)
   else if (notice == ChatCore::AddPrivateTab) {
     addPrivateTab(data.toByteArray());
   }
+  else if (notice == ChatCore::CopyRequestNotice) {
+    ChatViewTab *tab = qobject_cast<ChatViewTab *>(currentWidget());
+    if (!tab)
+      return;
+
+    tab->chatView()->copy();
+  }
 }
 
 
