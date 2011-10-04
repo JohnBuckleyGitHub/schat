@@ -20,7 +20,7 @@ $(document).ready(function() {
 	//$.fx.off = true;
 
 	$(window).resize(function() {
-		alignChat(true);
+		alignChat();
 	});
 
 	var timeoutID;
@@ -36,11 +36,11 @@ $(document).ready(function() {
 		}
 	);
 
-	alignChat(true);
+	alignChat();
 });
 
 //Align our chat to the bottom of the window.  If true is passed, view will also be scrolled down
-function alignChat(shouldScroll) {
+function alignChat() {
 	var windowHeight = window.innerHeight;
 
 	if (windowHeight > 0) {
@@ -54,8 +54,7 @@ function alignChat(shouldScroll) {
 		}
 	}
 
-	if (shouldScroll)
-		scrollToBottom();
+	scrollToBottom();
 }
 
 //Auto-scroll to bottom.  Use nearBottom to determine if a scrollToBottom is desired.
@@ -71,7 +70,7 @@ function scrollToBottom() {
 function appendMessage(html) {
 	$('#Chat').append(html);
 
-	alignChat(true);
+	alignChat();
 }
 
 function showSeconds(show) {
@@ -88,7 +87,7 @@ function showService(show) {
 	else
 		$('#body').addClass('no-service');
 
-	alignChat(true);
+	alignChat();
 }
 
 function showTopic(show) {
@@ -124,7 +123,7 @@ function handleButton() {
 
 	if (type == 'yes' || type == 'no') {
 		$('#' + id).fadeOut('fast', function() {
-			alignChat(true);
+			alignChat();
 		});
 	}
 
