@@ -53,6 +53,12 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 }
 
 
+void ChatView::copy()
+{
+  triggerPageAction(QWebPage::Copy);
+}
+
+
 void ChatView::evaluateJavaScript(const QString &func, const QVariant &param)
 {
   evaluateJavaScript(func + "(" + param.toString() + ");");
