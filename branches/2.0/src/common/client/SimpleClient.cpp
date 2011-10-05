@@ -386,7 +386,7 @@ bool SimpleClientPrivate::readUserData()
     user = ClientUser(new User(&reader.user));
     users.insert(id, user);
 
-    emit(q->userDataChanged(id));
+    emit(q->userDataChanged(id, SimpleClient::UserCompletelyChanged));
   }
   else {
     updateUserData(user, reader);
@@ -469,11 +469,18 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
 
   User *user = &reader.user;
   Q_Q(SimpleClient);
+  int changed = SimpleClient::UserBasicDataChanged;
+
   if (existUser == this->user && this->user->nick() != user->nick()) {
     q->setNick(user->nick());
+    changed |= SimpleClient::UserNickChanged;
   }
 
-  existUser->setNick(user->nick());
+  if (existUser->nick() != user->nick()) {
+    existUser->setNick(user->nick());
+    changed |= SimpleClient::UserNickChanged;
+  }
+
   existUser->setRawGender(user->rawGender());
   existUser->setStatus(user->status());
 
@@ -482,9 +489,10 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
     existUser->setHost(user->host());
     existUser->setServerNumber(user->serverNumber());
     existUser->setGroups(user->groups());
+    changed |= SimpleClient::UserStaticDataChanged;
   }
 
-  emit(q->userDataChanged(existUser->id()));
+  emit(q->userDataChanged(existUser->id(), changed));
 }
 
 
@@ -506,7 +514,7 @@ void SimpleClientPrivate::updateUserStatus(const QString &text)
     user->setStatus(User::OnlineStatus);
   }
 
-  emit(q->userDataChanged(user->id()));
+  emit(q->userDataChanged(user->id(), SimpleClient::UserStatusChanged));
 }
 
 

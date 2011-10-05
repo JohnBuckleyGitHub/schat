@@ -29,6 +29,16 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
   Q_OBJECT
 
 public:
+  ///< Данные пользователя которые были изменены.
+  enum UserChangeData {
+    UserNotChanged = 0,        ///< Данные пользователя не изменены.
+    UserBasicDataChanged = 1,  ///< Изменены основные данные пользователя.
+    UserNickChanged = 2,       ///< Изменён ник пользователя.
+    UserStaticDataChanged = 4, ///< Изменены статические данные пользователя.
+    UserStatusChanged = 8,     ///< Изменён текстовый статус пользователя.
+    UserCompletelyChanged = 15 ///< Данные пользователя полностью изменены.
+  };
+
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
   ClientChannel channel(const QByteArray &id) const;
@@ -46,7 +56,7 @@ signals:
   void part(const QByteArray &channelId, const QByteArray &userId);
   void split(const QList<QByteArray> &users);
   void synced(const QByteArray &channelId);
-  void userDataChanged(const QByteArray &userId);
+  void userDataChanged(const QByteArray &userId, int changed = 0);
   void userLeave(const QByteArray &userId);
 
 protected:

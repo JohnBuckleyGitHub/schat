@@ -40,6 +40,7 @@ public:
 
 private slots:
   void split(const QList<QByteArray> &users);
+  void userDataChanged(const QByteArray &userId, int changed);
   void userLeave(const QByteArray &userId);
 
 private:
