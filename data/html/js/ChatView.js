@@ -142,9 +142,9 @@ function setTopic(topic)
 		$('#topic-wrapper').show();
 }
 
-
-function updateUserNick(id, nick)
+function updateUserNick(id, url, nick)
 {
-
+	var a = $('a.' + id);
+	a.attr('href', url);
+	a.html(nick);
 }
-

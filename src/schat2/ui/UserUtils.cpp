@@ -22,8 +22,10 @@
 #include "ChatCore.h"
 #include "ChatPlugins.h"
 #include "client/SimpleClient.h"
+#include "messages/AbstractMessage.h"
 #include "net/SimpleID.h"
 #include "plugins/AbstractHistory.h"
+#include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
 
@@ -267,4 +269,14 @@ QUrl UserUtils::toUrl(ClientUser user, const QString &action)
 void UserUtils::clear()
 {
   m_users.clear();
+}
+
+
+void UserUtils::updateUserNick(ChatView *view, ClientUser user)
+{
+  QString param = '"' + SimpleID::toBase64(user->id()) + "\", ";
+  param += '"' + UserUtils::toUrl(user, "insert").toString() + "\", ";
+  param += '"' + AbstractMessage::quote(Qt::escape(user->nick())) + '"';
+
+  view->evaluateJavaScript("updateUserNick", param);
 }

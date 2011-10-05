@@ -41,9 +41,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 {
   m_bar = new ChannelBar(this);
   m_bar->setVisible(false);
-//  m_bar->topic()->setTopic(channel->topic());
-
-//  m_bar->addAction(SCHAT_ICON(ChannelIcon), "Test");
 
   m_userView = new UserView(this);
 
@@ -78,6 +75,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
   connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SLOT(dataChanged(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
@@ -249,6 +247,22 @@ void ChannelTab::topicFocusOut()
     m_chatView->evaluateJavaScript("showTopic", true);
 
   ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
+}
+
+
+void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
+{
+  if (!(changed & SimpleClient::UserNickChanged))
+    return;
+
+  if (!m_channel->users().contains(userId))
+    return;
+
+  ClientUser user = UserUtils::user(userId);
+  if (!user)
+    return;
+
+  UserUtils::updateUserNick(m_chatView, user);
 }
 
 
