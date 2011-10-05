@@ -67,6 +67,9 @@ public:
   void clear();
   void sort();
 
+private slots:
+  void userDataChanged(const QByteArray &userId, int changed);
+
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);

@@ -59,13 +59,13 @@ button:disabled {
 	padding:2px;
 }
 
-#topic {
-	padding:2px 4px;
-}
+#topic { padding:2px 4px; }
+#topic-extra { margin-top:3px; }
 
-#topic-extra {
+#topic-separator {
 	border-top:1px solid #d7dfe5;
-	margin-top:3px;
+	border-bottom:1px solid #f9fbfb;
+	height:0px;
 }
 
 #topic-buttons {
@@ -73,9 +73,7 @@ button:disabled {
 	float:right;
 }
 
-#topic-author {
-	float:left;
-}
+#topic-author { float:left; }
 
 #topic-author .date-time-block, #topic-author .nick-block {
 	vertical-align:middle;

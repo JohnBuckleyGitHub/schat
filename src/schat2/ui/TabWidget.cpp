@@ -503,6 +503,7 @@ void TabWidget::message(const AbstractMessage &data)
 /*!
  * Обновление информации о пользователе.
  *
+ * \deprecated Необходимо обрабатывать изменения непосредственно внутри вкладок.
  * \param userId Идентификатор пользователя, данные которого изменились.
  */
 void TabWidget::updateUserData(const QByteArray &userId)
@@ -511,13 +512,13 @@ void TabWidget::updateUserData(const QByteArray &userId)
   if (!user)
     return;
 
-  QList<QByteArray> channels = user->channels();
-  foreach(QByteArray id, channels) {
-    ChannelTab *tab = m_channels.value(id);
-    if (tab) {
-      tab->userView()->update(user);
-    }
-  }
+//  QList<QByteArray> channels = user->channels();
+//  foreach(QByteArray id, channels) {
+//    ChannelTab *tab = m_channels.value(id);
+//    if (tab) {
+//      tab->userView()->update(user);
+//    }
+//  }
 
   PrivateTab *tab = privateTab(userId, false);
   if (tab)

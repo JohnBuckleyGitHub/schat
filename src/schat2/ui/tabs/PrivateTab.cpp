@@ -49,6 +49,7 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
 
   connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(ChatCore::i()->client(), SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
+  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
 }
 
 
@@ -114,6 +115,26 @@ void PrivateTab::split(const QList<QByteArray> &users)
 {
   if (users.contains(id()))
     userLeave(id());
+}
+
+
+void PrivateTab::userDataChanged(const QByteArray &userId, int changed)
+{
+  if (!(changed & SimpleClient::UserNickChanged))
+    return;
+
+  ClientUser user;
+  if (UserUtils::userId() == userId)
+    user = UserUtils::user();
+  else if (id() == userId)
+    user = UserUtils::user(userId);
+
+  if (!user)
+    return;
+
+  qDebug() << "**";
+  qDebug() << "UPDATE ME";
+  qDebug() << "**";
 }
 
 

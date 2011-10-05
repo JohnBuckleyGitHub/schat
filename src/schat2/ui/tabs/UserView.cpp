@@ -22,6 +22,7 @@
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "ui/tabs/UserView.h"
 #include "ui/UserUtils.h"
@@ -103,6 +104,7 @@ UserView::UserView(QWidget *parent)
   m_model.setSortRole(Qt::UserRole + 1);
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
+  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
 }
 
 
@@ -179,6 +181,18 @@ void UserView::sort()
 
   m_sortable = true;
   m_model.sort(0);
+}
+
+
+void UserView::userDataChanged(const QByteArray &userId, int changed)
+{
+  UserItem *item = m_users.value(userId);
+  if (!item)
+    return;
+
+  item->update();
+  if (m_sortable && changed & SimpleClient::UserNickChanged)
+    sort();
 }
 
 
