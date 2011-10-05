@@ -65,7 +65,7 @@ public:
   inline QString text() const { return m_text; }
   inline QString type() const { return m_type; }
   inline void setPriority(int priority) { m_priority = priority; }
-  static QString escape(const QString &text);
+  static QString quote(const QString &text);
   static QString tpl(const QString &fileName);
   virtual QString js(bool add = true) const;
   void setText(const QString &text, int parseOptions);

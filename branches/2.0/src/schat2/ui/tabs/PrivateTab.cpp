@@ -18,6 +18,7 @@
 
 #include <QAction>
 #include <QVBoxLayout>
+#include <QTextDocument>
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
@@ -132,9 +133,7 @@ void PrivateTab::userDataChanged(const QByteArray &userId, int changed)
   if (!user)
     return;
 
-  qDebug() << "**";
-  qDebug() << "UPDATE ME";
-  qDebug() << "**";
+  UserUtils::updateUserNick(m_chatView, user);
 }
 
 

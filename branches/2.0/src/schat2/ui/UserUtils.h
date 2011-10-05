@@ -24,6 +24,8 @@
 #include "schat.h"
 #include "User.h"
 
+class ChatView;
+
 class SCHAT_CORE_EXPORT UserUtils
 {
 public:
@@ -40,6 +42,7 @@ public:
   static QString toolTip(ClientUser user);
   static QUrl toUrl(ClientUser user, const QString &action = QString());
   static void clear();
+  static void updateUserNick(ChatView *view, ClientUser user);
 
 private:
   static QHash<QByteArray, ClientUser> m_users; ///< Оффлайновые пользователи отсутствующие в истории.

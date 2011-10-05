@@ -63,17 +63,43 @@ AbstractMessage::AbstractMessage(const QString &type, const QString &text, const
 }
 
 
-QString AbstractMessage::escape(const QString &text)
+QString AbstractMessage::quote(const QString &text)
 {
-  if (text.isEmpty())
-    return text;
+  int len = text.length(), c;
+  QString res;
+  res.reserve(len + 128);
 
-  QString out = text;
-  out.replace("\\", "\\\\");
-  out.remove('\n');
-  out.remove('\r');
-  out.replace("%", "&#37;");
-  return out;
+  for (int f = 0; f < len; f++) {
+    QChar ch(text[f]);
+    ushort uc = ch.unicode();
+    if (uc < 32) {
+      // control char
+      switch (uc) {
+        case '\b': res += "\\b"; break;
+        case '\f': res += "\\f"; break;
+        case '\n': res += "\\n"; break;
+        case '\r': res += "\\r"; break;
+        case '\t': res += "\\t"; break;
+        default:
+          res += "\\u";
+          for (c = 4; c > 0; c--) {
+            ushort n = (uc>>12)&0x0f;
+            n += '0'+(n>9?7:0);
+            res += (uchar)n;
+          }
+          break;
+      }
+    } else {
+      // normal char
+      switch (uc) {
+        case '"': res += "\\\""; break;
+        case '\\': res += "\\\\"; break;
+        default: res += ch; break;
+      }
+    }
+  }
+
+  return res;
 }
 
 
@@ -160,9 +186,7 @@ QDateTime AbstractMessage::dateTime() const
  */
 QString AbstractMessage::appendMessage(QString &html, const QString &func) const
 {
-  html.replace(QLatin1String("\""), QLatin1String("\\\""));
-  html.replace(QLatin1String("\n"), QLatin1String("\\n"));
-  return func + QLatin1String("(\"") + html + QLatin1String("\");");
+  return func + "(\"" + quote(html) + "\");";
 }
 
 
@@ -281,7 +305,7 @@ void AbstractMessage::text(QString &html) const
   }
 
   QString t = tpl(m_bodyTpl);
-  t.replace(QLatin1String("%message%"), escape(m_text));
+  t.replace(QLatin1String("%message%"), m_text);
 
   html.replace(QLatin1String("%body%"), t);
 }
