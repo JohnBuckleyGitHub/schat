@@ -16,9 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <QUrl>
 
+#include "net/SimpleID.h"
 #include "text/UrlFilter.h"
+#include "ui/UserUtils.h"
 
 UrlFilter::UrlFilter()
   : AbstractFilter(QLatin1String("Url"))
@@ -28,15 +30,21 @@ UrlFilter::UrlFilter()
 
 bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 {
-  qDebug() << "UrlFilter::filter()";
   for (int i = 0; i < tokens.size(); ++i) {
     if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == QLatin1String("a")) {
       HtmlATag tag(tokens.at(i));
+
       if (tag.url.startsWith("chat://user/")) {
-        tag.classes += QLatin1String("nick");
+        tag.classes = "nick";
+        ClientUser user = UserUtils::user(QUrl(tag.url));
+        if (user)
+          tag.classes += " " + SimpleID::toBase64(user->id());
+
         tokens[i].text = tag.toText();
       }
+
     }
   }
+
   return true;
 }
