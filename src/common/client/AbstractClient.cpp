@@ -388,6 +388,7 @@ void AbstractClient::leave()
   if (d->reconnectTimer->isActive())
     d->reconnectTimer->stop();
 
+  d->timestamp = 0;
   d->setClientState(ClientOffline);
   SimpleSocket::leave();
   setAuthorized(QByteArray());

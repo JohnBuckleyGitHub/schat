@@ -210,6 +210,7 @@ void SimpleSocketPrivate::releaseSocket()
   if (timer->isActive())
     timer->stop();
 
+  timestamp = 0;
   sendBuffer.clear();
   readBuffer.clear();
   txBuffer.clear();
