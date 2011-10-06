@@ -256,6 +256,9 @@ void MessageAdapter::clientMessage(const MessageData &data)
 }
 
 
+/*!
+ * \todo Улучшить функциональность уведомлений об подключении и отключении.
+ */
 void MessageAdapter::clientStateChanged(int state, int previousState)
 {
   if (state == SimpleClient::ClientOnline) {
