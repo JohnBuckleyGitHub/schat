@@ -28,8 +28,11 @@ public:
   bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
 
 private:
-  void parse(QList<HtmlToken> &tokens, const QString &text) const;
+  QString url(const QString &text, int index, int &last) const;
   void makeUrl(QList<HtmlToken> &tokens, const QString &url, const QString &text) const;
+  void parse(QList<HtmlToken> &tokens, const QString &text) const;
+
+  QStringList m_scheme;
 };
 
 #endif /* LINKSFILTER_H_ */

@@ -23,6 +23,10 @@
 LinksFilter::LinksFilter()
   : AbstractFilter(QLatin1String("Links"))
 {
+  m_scheme += "http://";
+  m_scheme += "https://";
+  m_scheme += "ftp://";
+  m_scheme += "mailto:";
 }
 
 
@@ -47,31 +51,12 @@ bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 }
 
 
-void LinksFilter::parse(QList<HtmlToken> &tokens, const QString &text) const
+QString LinksFilter::url(const QString &text, int index, int &last) const
 {
-  int index = -1;
+  last = text.indexOf(' ', index);
   QString url;
-
-  index = text.indexOf("http://");
-  if (index != -1) {
-    if (index > 0)
-      tokens.append(HtmlToken(text.left(index)));
-
-    int last = text.indexOf(' ', index);
-    if (last == -1) {
-      url = text.mid(index);
-      makeUrl(tokens, url, url);
-      return;
-    }
-    else {
-      url = text.mid(index, last - index);
-      makeUrl(tokens, url, url);
-      return parse(tokens, text.mid(last));
-    }
-  }
-
-
-  tokens.append(HtmlToken(text));
+  last == -1 ? url = text.mid(index) : url = text.mid(index, last - index);
+  return url;
 }
 
 
@@ -85,4 +70,87 @@ void LinksFilter::makeUrl(QList<HtmlToken> &tokens, const QString &url, const QS
   tokens.append(tag);
 
   tokens.append(a.toEndTag());
+}
+
+
+/*!
+ * Поиск ссылок в тексте и автоматическое преобразование их в html ссылки.
+ */
+void LinksFilter::parse(QList<HtmlToken> &tokens, const QString &text) const
+{
+  int index = -1;
+  int last = -1;
+  QString url;
+
+  /// - http/https/ftp полный список в \p m_scheme.
+  for (int i = 0; i < m_scheme.size(); ++i) {
+    index = text.indexOf(m_scheme.at(i));
+    if (index != -1) {
+      if (index > 0)
+        tokens.append(HtmlToken(text.left(index)));
+
+      url = this->url(text, index, last);
+      makeUrl(tokens, url, url);
+
+      if (last != -1)
+        return parse(tokens, text.mid(last));
+
+      return;
+    }
+  }
+
+
+  /// - Ссылки вида www.exampe.com в преобразуются в http.
+  index = text.indexOf("www.");
+  if (index != -1) {
+    url = this->url(text, index, last);
+
+    if (url.count('.') > 1) {
+      if (index > 0)
+        tokens.append(HtmlToken(text.left(index)));
+
+      makeUrl(tokens, "http://" + url, url);
+
+      if (last != -1)
+        return parse(tokens, text.mid(last));
+
+      return;
+    }
+
+    if (last != -1) {
+      tokens.append(HtmlToken(text.left(last)));
+      return parse(tokens, text.mid(last));
+    }
+  }
+
+  /// - Ссылки вида user@example.com преобразуются в mailto.
+  index = text.indexOf("@");
+  if (index != -1) {
+    int start = text.lastIndexOf(' ', index);
+    QString name = text.mid(start + 1, index - start - 1);
+    last = -1;
+
+    if (!name.isEmpty()) {
+      url = this->url(text, index, last);
+      if (url.contains('.')) {
+        if (index > 0) {
+          tokens.append(HtmlToken(text.left(index - name.size())));
+
+          makeUrl(tokens, "mailto:" + name + url, name + url);
+
+          if (last != -1)
+            return parse(tokens, text.mid(last));
+
+          return;
+        }
+      }
+    }
+
+    if (last != -1) {
+      tokens.append(HtmlToken(text.left(last)));
+      return parse(tokens, text.mid(last));
+    }
+  }
+
+  tokens.append(HtmlToken(text));
 }
