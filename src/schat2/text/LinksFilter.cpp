@@ -29,5 +29,60 @@ LinksFilter::LinksFilter()
 bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 {
   qDebug() << "LinksFilter::filter()";
+
+  QList<HtmlToken> out;
+
+  for (int i = 0; i < tokens.size(); ++i) {
+    HtmlToken token = tokens.at(i);
+    if (token.type == HtmlToken::Text && token.parent != "a")
+      parse(out, token.text);
+    else
+      out.append(token);
+
+//    qDebug() << "--" << tokens.at(i).parent << tokens.at(i).text;
+  }
+
+  tokens = out;
   return false;
+}
+
+
+void LinksFilter::parse(QList<HtmlToken> &tokens, const QString &text) const
+{
+  int index = -1;
+  QString url;
+
+  index = text.indexOf("http://");
+  if (index != -1) {
+    if (index > 0)
+      tokens.append(HtmlToken(text.left(index)));
+
+    int last = text.indexOf(' ', index);
+    if (last == -1) {
+      url = text.mid(index);
+      makeUrl(tokens, url, url);
+      return;
+    }
+    else {
+      url = text.mid(index, last - index);
+      makeUrl(tokens, url, url);
+      return parse(tokens, text.mid(last));
+    }
+  }
+
+
+  tokens.append(HtmlToken(text));
+}
+
+
+void LinksFilter::makeUrl(QList<HtmlToken> &tokens, const QString &url, const QString &text) const
+{
+  HtmlToken a(HtmlToken::Tag, HtmlATag(url).toText());
+  tokens.append(a);
+
+  HtmlToken tag(text);
+  tag.parent = "a";
+  tokens.append(tag);
+
+  tokens.append(a.toEndTag());
 }
