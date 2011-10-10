@@ -117,6 +117,11 @@ public:
 class HtmlATag : public AbstractTag
 {
 public:
+  HtmlATag(const QString &url)
+  : AbstractTag()
+  , url(url)
+  {}
+
   HtmlATag(const HtmlToken &token)
   : AbstractTag()
   {

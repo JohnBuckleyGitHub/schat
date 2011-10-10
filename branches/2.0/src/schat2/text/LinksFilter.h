@@ -26,6 +26,10 @@ class LinksFilter : public AbstractFilter
 public:
   LinksFilter();
   bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+
+private:
+  void parse(QList<HtmlToken> &tokens, const QString &text) const;
+  void makeUrl(QList<HtmlToken> &tokens, const QString &url, const QString &text) const;
 };
 
 #endif /* LINKSFILTER_H_ */
