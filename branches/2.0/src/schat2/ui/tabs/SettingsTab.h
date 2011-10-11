@@ -37,12 +37,15 @@ public:
   };
 
   SettingsTab(TabWidget *parent);
+  void addPage(AbstractSettingsPage *page);
 
 protected:
   void showEvent(QShowEvent *event);
 
+private slots:
+  void pageChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
 private:
-  void addPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page);
   void retranslateUi();
 
   QList<QListWidgetItem *> m_items;
