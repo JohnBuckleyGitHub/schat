@@ -20,6 +20,7 @@
 #define SETTINGSTAB_P_H_
 
 #include <QWidget>
+#include <QIcon>
 
 class ChatSettings;
 class GenderField;
@@ -36,13 +37,20 @@ class AbstractSettingsPage : public QWidget
   Q_OBJECT
 
 public:
+  AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent = 0);
   AbstractSettingsPage(QWidget *parent = 0);
+  inline QIcon icon() const { return m_icon; }
+  inline QString id() const { return m_id; }
+  inline QString name() const { return m_name; }
 
 protected:
   virtual void retranslateUi() {}
   void changeEvent(QEvent *event);
 
-  ChatSettings *m_settings;
+  ChatSettings *m_settings; ///< Указатель на объект настроек.
+  QIcon m_icon;             ///< Иконка.
+  QString m_id;             ///< Идентификатор.
+  QString m_name;           ///< Имя страницы настроек.
 };
 
 
@@ -66,6 +74,21 @@ private:
   QLabel *m_networkLabel;
   QLabel *m_nickLabel;
   QLabel *m_profileLabel;
+};
+
+
+/*!
+ * Страница настройки профиля.
+ */
+class NetworkPage : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  NetworkPage(QWidget *parent = 0);
+
+private:
+  void retranslateUi();
 };
 
 

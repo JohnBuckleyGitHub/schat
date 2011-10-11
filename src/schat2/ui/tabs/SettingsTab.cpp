@@ -41,6 +41,15 @@
   #define SCHAT_OPTION(x) m_settings->value(ChatSettings::x)
 #endif
 
+AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
+  : QWidget(parent)
+  , m_settings(ChatCore::i()->settings())
+  , m_icon(icon)
+  , m_id(id)
+{
+}
+
+
 AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
   : QWidget(parent)
   , m_settings(ChatCore::i()->settings())
@@ -58,7 +67,7 @@ void AbstractSettingsPage::changeEvent(QEvent *event)
 
 
 ProfilePage::ProfilePage(QWidget *parent)
-  : AbstractSettingsPage(parent)
+  : AbstractSettingsPage(SCHAT_ICON(ProfileIcon), "profile", parent)
 {
   m_profileLabel = new QLabel(this);
   m_nickLabel = new QLabel(this);
@@ -94,10 +103,25 @@ ProfilePage::ProfilePage(QWidget *parent)
 
 void ProfilePage::retranslateUi()
 {
+  m_name = tr("Profile");
+
   m_profileLabel->setText(QLatin1String("<b>") + tr("Profile") + QLatin1String("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
   m_networkLabel->setText(QLatin1String("<b>") + tr("Network") + QLatin1String("</b>"));
+}
+
+
+NetworkPage::NetworkPage(QWidget *parent)
+  : AbstractSettingsPage(SCHAT_ICON(GlobeIcon), "network", parent)
+{
+  retranslateUi();
+}
+
+
+void NetworkPage::retranslateUi()
+{
+  m_name = tr("Network");
 }
 
 
@@ -120,11 +144,27 @@ SettingsTab::SettingsTab(TabWidget *parent)
   mainLay->setColumnStretch(0, 1);
   mainLay->setColumnStretch(1, 4);
 
-  addPage(SCHAT_ICON(ProfileIcon), tr("Profile"), new ProfilePage(this));
+  addPage(new ProfilePage(this));
+  addPage(new NetworkPage(this));
 
   m_contents->setCurrentRow(0);
   setIcon(SCHAT_ICON(SettingsIcon));
   setText(tr("Preferences"));
+
+  connect(m_contents, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(pageChanged(QListWidgetItem *, QListWidgetItem*)));
+}
+
+
+void SettingsTab::addPage(AbstractSettingsPage *page)
+{
+  QListWidgetItem *item = new QListWidgetItem(page->icon(), page->name(), m_contents);
+  m_items.append(item);
+
+  QScrollArea *scrool = new QScrollArea(this);
+  scrool->setWidget(page);
+  scrool->setWidgetResizable(true);
+  scrool->setFrameShape(QFrame::NoFrame);
+  m_pages->addWidget(scrool);
 }
 
 
@@ -138,16 +178,12 @@ void SettingsTab::showEvent(QShowEvent *event)
 }
 
 
-void SettingsTab::addPage(const QIcon &icon, const QString &text, AbstractSettingsPage *page)
+void SettingsTab::pageChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
-  QListWidgetItem *item = new QListWidgetItem(icon, text, m_contents);
-  m_items.append(item);
+  if (!current)
+    current = previous;
 
-  QScrollArea *scrool = new QScrollArea(this);
-  scrool->setWidget(page);
-  scrool->setWidgetResizable(true);
-  scrool->setFrameShape(QFrame::NoFrame);
-  m_pages->addWidget(scrool);
+  m_pages->setCurrentIndex(m_contents->row(current));
 }
 
 
