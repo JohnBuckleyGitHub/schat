@@ -157,8 +157,12 @@ SettingsTab::SettingsTab(TabWidget *parent)
 
 void SettingsTab::addPage(AbstractSettingsPage *page)
 {
+  if (m_ids.contains(page->id()))
+    return;
+
   QListWidgetItem *item = new QListWidgetItem(page->icon(), page->name(), m_contents);
   m_items.append(item);
+  m_ids.append(page->id());
 
   QScrollArea *scrool = new QScrollArea(this);
   scrool->setWidget(page);
@@ -168,11 +172,25 @@ void SettingsTab::addPage(AbstractSettingsPage *page)
 }
 
 
+void SettingsTab::openUrl(const QUrl &url)
+{
+  if (url.isEmpty() || url.scheme() != "chat" || url.host() != "settings")
+    return;
+
+  QStringList path = ChatCore::urlPath(url);
+  if (path.isEmpty())
+    return;
+
+  int page = m_ids.indexOf(path.at(0));
+  if (page != -1)
+    m_contents->setCurrentRow(page);
+}
+
+
 void SettingsTab::showEvent(QShowEvent *event)
 {
-  while (m_contents->horizontalScrollBar()->isVisible()) {
+  while (m_contents->horizontalScrollBar()->isVisible())
     m_contents->setMinimumWidth(m_contents->width() + 16);
-  }
 
   AbstractTab::showEvent(event);
 }

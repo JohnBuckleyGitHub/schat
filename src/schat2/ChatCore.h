@@ -120,6 +120,7 @@ public:
   static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
+  static QStringList urlPath(const QUrl &url);
   void startNotify(int notice, const QVariant &data = QVariant());
 
 signals:

@@ -300,6 +300,7 @@ void TabWidget::notify(int notice, const QVariant &data)
     if (!m_settingsTab)
       m_settingsTab = new SettingsTab(this);
 
+    m_settingsTab->openUrl(data.toUrl());
     addChatTab(m_settingsTab);
   }
   else if (notice == ChatCore::AddPrivateTab) {
