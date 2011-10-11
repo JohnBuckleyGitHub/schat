@@ -57,15 +57,6 @@ AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
 }
 
 
-void AbstractSettingsPage::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWidget::changeEvent(event);
-}
-
-
 ProfilePage::ProfilePage(QWidget *parent)
   : AbstractSettingsPage(SCHAT_ICON(ProfileIcon), "profile", parent)
 {
@@ -81,20 +72,11 @@ ProfilePage::ProfilePage(QWidget *parent)
   profileLay->addWidget(m_nickEdit, 0, 1);
   profileLay->addWidget(m_genderLabel, 1, 0);
   profileLay->addWidget(m_genderField, 1, 1);
-  profileLay->setContentsMargins(20, 0, 3, 16);
-
-  m_networkLabel = new QLabel(this);
-  m_networks = new NetworkWidget(this);
-
-  QVBoxLayout *networkLay = new QVBoxLayout;
-  networkLay->addWidget(m_networks);
-  networkLay->setContentsMargins(20, 0, 3, 6);
+  profileLay->setContentsMargins(10, 0, 3, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_profileLabel);
   mainLay->addLayout(profileLay);
-  mainLay->addWidget(m_networkLabel);
-  mainLay->addLayout(networkLay);
   mainLay->addStretch();
 
   retranslateUi();
@@ -105,16 +87,27 @@ void ProfilePage::retranslateUi()
 {
   m_name = tr("Profile");
 
-  m_profileLabel->setText(QLatin1String("<b>") + tr("Profile") + QLatin1String("</b>"));
+  m_profileLabel->setText("<b>" + tr("Profile") + "</b>");
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
-  m_networkLabel->setText(QLatin1String("<b>") + tr("Network") + QLatin1String("</b>"));
 }
 
 
 NetworkPage::NetworkPage(QWidget *parent)
   : AbstractSettingsPage(SCHAT_ICON(GlobeIcon), "network", parent)
 {
+  m_networkLabel = new QLabel(this);
+  m_networks = new NetworkWidget(this);
+
+  QVBoxLayout *networkLay = new QVBoxLayout;
+  networkLay->addWidget(m_networks);
+  networkLay->setContentsMargins(10, 0, 3, 0);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_networkLabel);
+  mainLay->addLayout(networkLay);
+  mainLay->addStretch();
+
   retranslateUi();
 }
 
@@ -122,6 +115,7 @@ NetworkPage::NetworkPage(QWidget *parent)
 void NetworkPage::retranslateUi()
 {
   m_name = tr("Network");
+  m_networkLabel->setText("<b>" + tr("Network") + "</b>");
 }
 
 
@@ -207,8 +201,11 @@ void SettingsTab::pageChanged(QListWidgetItem *current, QListWidgetItem *previou
 
 void SettingsTab::retranslateUi()
 {
-  QListWidgetItem *item = m_contents->item(0);
-  item->setText(tr("Profile"));
+  for (int i = 0; i < m_ids.size(); ++i) {
+    AbstractSettingsPage *page = static_cast<AbstractSettingsPage *>(static_cast<QScrollArea *>(m_pages->widget(i))->widget());
+    page->retranslateUi();
+    m_contents->item(i)->setText(page->name()); /// /set Translation en
+  }
 
   m_apply->setText(tr("Apply"));
   setText(tr("Preferences"));

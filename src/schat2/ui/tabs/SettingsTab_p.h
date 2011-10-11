@@ -42,11 +42,9 @@ public:
   inline QIcon icon() const { return m_icon; }
   inline QString id() const { return m_id; }
   inline QString name() const { return m_name; }
+  virtual void retranslateUi() {}
 
 protected:
-  virtual void retranslateUi() {}
-  void changeEvent(QEvent *event);
-
   ChatSettings *m_settings; ///< Указатель на объект настроек.
   QIcon m_icon;             ///< Иконка.
   QString m_id;             ///< Идентификатор.
@@ -68,10 +66,8 @@ private:
   void retranslateUi();
 
   GenderField *m_genderField;
-  NetworkWidget *m_networks;
   NickEdit *m_nickEdit;
   QLabel *m_genderLabel;
-  QLabel *m_networkLabel;
   QLabel *m_nickLabel;
   QLabel *m_profileLabel;
 };
@@ -89,6 +85,9 @@ public:
 
 private:
   void retranslateUi();
+
+  NetworkWidget *m_networks;
+  QLabel *m_networkLabel;
 };
 
 
