@@ -100,11 +100,7 @@ QStringList ChatCorePrivate::urlAction(const QUrl &url)
   if (url.scheme() != QLatin1String("chat"))
     return QStringList();
 
-  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
-  if (path.startsWith(QLatin1String("/")))
-    path.remove(0, 1);
-
-  QStringList out = path.split(QLatin1String("/"), QString::SkipEmptyParts);
+  QStringList out = ChatCore::urlPath(url);
 
   if (url.host() == QLatin1String("user") || url.host() == QLatin1String("channel")) {
     if (out.size() < 2)
@@ -301,6 +297,19 @@ QIcon ChatCore::icon(IconName name)
 }
 
 
+/*!
+ * Возвращает список элементов пути из адреса.
+ */
+QStringList ChatCore::urlPath(const QUrl &url)
+{
+  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
+  if (path.startsWith('/'))
+    path.remove(0, 1);
+
+  return path.split('/', QString::SkipEmptyParts);
+}
+
+
 void ChatCore::startNotify(int notice, const QVariant &data)
 {
   if (notice == NetworkChangedNotice) {
@@ -356,7 +365,7 @@ void ChatCore::openUrl(const QUrl &url)
     startNotify(ChatCore::AboutNotice);
   }
   else if (url.host() == QLatin1String("settings")) {
-    startNotify(ChatCore::SettingsNotice);
+    startNotify(ChatCore::SettingsNotice, url);
   }
 }
 

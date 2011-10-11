@@ -21,11 +21,12 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+class AbstractSettingsPage;
 class QListWidget;
-class QStackedWidget;
 class QListWidgetItem;
 class QPushButton;
-class AbstractSettingsPage;
+class QStackedWidget;
+class QUrl;
 
 class SettingsTab : public AbstractTab
 {
@@ -38,6 +39,7 @@ public:
 
   SettingsTab(TabWidget *parent);
   void addPage(AbstractSettingsPage *page);
+  void openUrl(const QUrl &url);
 
 protected:
   void showEvent(QShowEvent *event);
@@ -52,6 +54,7 @@ private:
   QListWidget *m_contents;
   QPushButton *m_apply;
   QStackedWidget *m_pages;
+  QStringList m_ids; ///< Идентификаторы страниц настроек.
 };
 
 #endif /* SETTINGSTAB_H_ */
