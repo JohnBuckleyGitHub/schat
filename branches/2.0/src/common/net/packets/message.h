@@ -38,8 +38,9 @@ public:
     ControlOption = 1,    ///< Сообщение содержит текстовую команду.
     TimeOption = 2,       ///< Сообщение содержит отметку времени.
     TextOption = 4,       ///< Сообщение содержит текст сообщения.
-    ExtraFlagsOption = 8,
-    IdOption = 16
+    ExtraFlagsOption = 8, ///< Дополнительные флаги сообщения.
+    IdOption = 16,        ///< Содержит идентификатор сообщения
+    JSonOption = 32       ///< Пакет содержит JSON данные.
   };
 
   enum Flags {
@@ -95,6 +96,9 @@ public:
 
     if (!text.isEmpty())
       options |= TextOption;
+
+    if (!json.isNull())
+      options |= JSonOption;
   }
 
   QByteArray destId() const
@@ -113,6 +117,7 @@ public:
   QByteArray id;          ///< Идентификатор сообщения.
   QString command;        ///< Текстовая команда.
   QString text;           ///< Текст сообщения.
+  QVariant json;          ///< Дополнительные данные в формате JSON.
 };
 
 

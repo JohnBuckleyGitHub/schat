@@ -107,6 +107,12 @@ QByteArray SimpleID::uniqueId()
 }
 
 
+QString SimpleID::password(const QString &password, const QByteArray &salt)
+{
+  return QCryptographicHash::hash(password.toUtf8() + salt, QCryptographicHash::Sha1) += PasswordId;
+}
+
+
 /*!
  * Строка UserAgent по умолчанию.
  */

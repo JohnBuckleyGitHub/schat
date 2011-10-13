@@ -40,6 +40,9 @@ MessageWriter::MessageWriter(QDataStream *stream, const MessageData &data, bool 
 
   if (data.options & MessageData::TextOption)
     put(data.text);
+
+  if (data.options & MessageData::JSonOption)
+    put(data.json);
 }
 
 
@@ -63,6 +66,9 @@ MessageReader::MessageReader(PacketReader *reader)
 
   if (data.options & MessageData::TextOption)
     data.text = reader->text();
+
+  if (data.options & MessageData::JSonOption)
+    data.json = reader->json();
 }
 
 
