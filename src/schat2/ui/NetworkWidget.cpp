@@ -43,6 +43,8 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
   m_connectAction = m_menu->addAction("", this, SLOT(open()));
   m_menu->addSeparator();
+  m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
+  m_menu->addSeparator();
   m_addAction = m_menu->addAction(SCHAT_ICON(AddIcon), tr("Add"), this, SLOT(add()));
   m_removeAction = m_menu->addAction(SCHAT_ICON(RemoveIcon), tr("Remove"), this, SLOT(remove()));
 
@@ -152,6 +154,29 @@ void NetworkWidget::add()
 
 
 /*!
+ * Редактирование адреса сети.
+ */
+void NetworkWidget::edit()
+{
+  int index = m_combo->currentIndex();
+  if (index == -1)
+    return;
+
+  QByteArray id = m_combo->itemData(index).toByteArray();
+  if (SimpleID::typeOf(id) != SimpleID::ServerId)
+    return;
+
+  NetworkItem item = m_manager->item(id);
+  if (!item.isValid())
+    return;
+
+  m_combo->setItemText(index, item.url());
+  m_combo->setEditable(true);
+  m_combo->setFocus();
+}
+
+
+/*!
  * Обработка изменения индекса, запрещается редактирование сохранённых сетей.
  */
 void NetworkWidget::indexChanged(int index)
@@ -189,6 +214,9 @@ void NetworkWidget::notify(int notice, const QVariant &data)
 }
 
 
+/*!
+ * Удаление сервера.
+ */
 void NetworkWidget::remove()
 {
   int index = m_combo->currentIndex();
@@ -203,6 +231,27 @@ void NetworkWidget::remove()
 }
 
 
+void NetworkWidget::showMenu()
+{
+  int index = m_combo->currentIndex();
+  if (index == -1 || m_combo->itemData(index).type() != QVariant::ByteArray || m_combo->isEditable())
+    m_edit->setVisible(false);
+  else
+    m_edit->setVisible(true);
+
+  QByteArray id = m_combo->itemData(index).toByteArray();
+  connectAction();
+}
+
+
+/*!
+ * Возвращает состояние текущего выбранного итема.
+ *
+ * \return Возвращаемые значения:
+ * - 0 Подключение не ассоциировано с выбранным итемом.
+ * - 1 Подключение активно для текущего итема.
+ * - 2 Идёт подключение.
+ */
 int NetworkWidget::isCurrentActive() const
 {
   int index = m_combo->currentIndex();
@@ -251,6 +300,7 @@ void NetworkWidget::load()
 
 void NetworkWidget::retranslateUi()
 {
+  m_edit->setText(tr("Edit"));
   m_addAction->setText(tr("Add"));
   m_removeAction->setText(tr("Remove"));
 }

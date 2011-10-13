@@ -44,11 +44,12 @@ protected:
   void keyPressEvent(QKeyEvent *event);
 
 private slots:
-  inline void showMenu() { connectAction(); }
   void add();
+  void edit();
   void indexChanged(int index);
   void notify(int notice, const QVariant &data);
   void remove();
+  void showMenu();
 
 private:
   int isCurrentActive() const;
@@ -58,6 +59,7 @@ private:
   NetworkManager *m_manager;
   QAction *m_addAction;
   QAction *m_connectAction;
+  QAction *m_edit;
   QAction *m_removeAction;
   QComboBox *m_combo;
   QMenu *m_menu;

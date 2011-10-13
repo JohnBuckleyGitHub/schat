@@ -23,6 +23,9 @@ QByteArray SimpleJSon::generate(const QVariant &data)
 {
   QByteArray res;
   K8JSON::generate(res, data, 0);
+  if (res == "{}")
+    return QByteArray();
+
   return res;
 }
 
@@ -35,6 +38,9 @@ QString SimpleJSon::quote(const QString &text)
 QVariant SimpleJSon::parse(const QByteArray &data)
 {
   QVariant res;
+  if (data.isEmpty())
+    return res;
+
   int size = data.size();
   K8JSON::parseRecord(res, reinterpret_cast<const uchar *>(data.constData()), &size);
   return res;
