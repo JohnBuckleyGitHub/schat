@@ -302,28 +302,34 @@
     <name>NetworkWidget</name>
     <message>
         <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="254"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="303"/>
+        <source>Edit</source>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="48"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="304"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="47"/>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="255"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="49"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="305"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="80"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="82"/>
         <source>Disconnect</source>
         <translation>Отключиться</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="84"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="86"/>
         <source>Abort</source>
         <translation>Прервать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/NetworkWidget.cpp" line="90"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>

@@ -31,6 +31,10 @@ class NetworkManager;
 class SettingsLegacy;
 class SimpleClient;
 
+/*!
+ * Используется для хранения информации о подключении.
+ * Поддерживает запись и чтение информации из конфигурационного файла.
+ */
 class SCHAT_CORE_EXPORT NetworkItem
 {
 public:
