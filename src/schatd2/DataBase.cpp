@@ -141,6 +141,16 @@ int DataBase::start()
     Storage::i()->channel(QLatin1String("Main"));
   }
 
+  if (!tables.contains(QLatin1String("accounts"))) {
+    query.exec(QLatin1String(
+    "CREATE TABLE accounts ( "
+    "  id       INTEGER PRIMARY KEY,"
+    "  userId   BLOB    NOT NULL UNIQUE,"
+    "  name     TEXT    NOT NULL UNIQUE,"
+    "  password BLOB"
+    ");"));
+  }
+
   return 0;
 }
 

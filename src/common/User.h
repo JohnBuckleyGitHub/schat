@@ -127,6 +127,10 @@ public:
   inline void setGroups(const QString &groups) { m_groups = groups.split(QLatin1String(","), QString::SkipEmptyParts); }
   inline void setGroups(const QStringList &groups) { m_groups = groups; }
 
+  // m_account
+  inline QString account() const { return m_account; }
+  inline void setAccount(const QString &account) { m_account = account; }
+
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
@@ -136,6 +140,7 @@ protected:
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QString> m_statuses;       ///< Статусы.
   QList<QByteArray> m_channels;         ///< Каналы.
+  QString m_account;                    ///< Зарегистрированное имя пользователя.
   QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя.

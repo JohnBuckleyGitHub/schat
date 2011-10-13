@@ -39,7 +39,8 @@ public:
     ServerId = 0x53,         ///< 'S' Идентификатор сервера.
     CookieId = 0x43,         ///< 'C' Идентификатор Cookie.
     ChannelId = 0x63,        ///< 'c' Идентификатор канала.
-    MessageId = 0x6d         ///< 'm' Идентификатор сообщения.
+    MessageId = 0x6d,        ///< 'm' Идентификатор сообщения.
+    PasswordId = 0x70        ///< 'p' Идентификатор пароля.
   };
 
   SimpleID() {}
@@ -49,6 +50,7 @@ public:
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase64(const QByteArray &id);
   static QByteArray uniqueId();
+  static QString password(const QString &password, const QByteArray &salt = QByteArray());
   static QString userAgent();
 
 # if defined(Q_OS_LINUX)
