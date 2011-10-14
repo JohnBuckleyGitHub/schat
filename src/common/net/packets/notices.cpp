@@ -91,3 +91,81 @@ QByteArray TextNotice::data(QDataStream *stream) const
 
   return writer.data();
 }
+
+
+/*!
+ * Конструктор чтения.
+ */
+Notice::Notice(quint16 type, PacketReader *reader)
+  : AbstractNotice(type, reader)
+{
+  m_time = reader->get<qint64>();
+
+  if (m_fields & IdField)
+    m_id = reader->id();
+
+  m_command = reader->text();
+  m_raw = reader->get<QByteArray>();
+}
+
+
+/*!
+ * Базовый конструктор.
+ */
+Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
+  : AbstractNotice(GenericNoticeType, sender, dest)
+  , m_time(time)
+  , m_id(id)
+  , m_command(command)
+  , m_data(data)
+{
+  if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
+    m_fields |= IdField;
+}
+
+
+bool Notice::isValid() const
+{
+  if (m_command.isEmpty())
+    return false;
+
+  if (m_data.isNull() || m_raw.isEmpty())
+    return false;
+
+  if (m_fields & IdField && SimpleID::typeOf(m_id) != SimpleID::MessageId)
+    return false;
+
+  return true;
+}
+
+
+/*!
+ * Запись пакета.
+ */
+QByteArray Notice::data(QDataStream *stream) const
+{
+  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest);
+  writer.put(m_type);
+  writer.put(m_fields);
+  writer.put(m_time);
+
+  if (m_fields & IdField)
+    writer.putId(m_id);
+
+  writer.put(m_command);
+  writer.put(m_data);
+
+  return writer.data();
+}
+
+
+/*!
+ * Получение JSON данных пакета.
+ */
+QVariant Notice::json() const
+{
+  if (!m_raw.isEmpty())
+    return SimpleJSon::parse(m_raw);
+
+  return m_data;
+}
