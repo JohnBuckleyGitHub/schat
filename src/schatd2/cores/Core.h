@@ -31,6 +31,7 @@ class MessageData;
 class NewPacketsEvent;
 class NodeAuth;
 class NodePlugins;
+class Notice;
 class PacketReader;
 class Settings;
 class SocketReleaseEvent;
@@ -94,10 +95,13 @@ protected:
   bool readJoinCmd();
   bool readLeaveCmd();
   bool readMessage();
-  bool readReg();
   bool readTopic();
   void acceptMessage(int reason = 0);
   void rejectMessage(int reason);
+
+  // notices.
+  bool readReg();
+  void readNotice();
 
   virtual void acceptedMessageHook(int reason);
   virtual void userReadyHook();
@@ -105,6 +109,7 @@ protected:
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
   NodePlugins *m_plugins;             ///< Плагины.
+  Notice *m_notice;                   ///< Текущий прочитанный объект Notice.
   PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
   QByteArray m_readBuffer;            ///< Буфер чтения виртуальных пакетов.
   QByteArray m_sendBuffer;            ///< Буфер отправки виртуальных пакетов.

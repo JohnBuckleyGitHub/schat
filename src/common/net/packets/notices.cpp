@@ -129,7 +129,7 @@ bool Notice::isValid() const
   if (m_command.isEmpty())
     return false;
 
-  if (m_data.isNull() || m_raw.isEmpty())
+  if (m_data.isNull() && m_raw.isEmpty())
     return false;
 
   if (m_fields & IdField && SimpleID::typeOf(m_id) != SimpleID::MessageId)
@@ -142,9 +142,9 @@ bool Notice::isValid() const
 /*!
  * Запись пакета.
  */
-QByteArray Notice::data(QDataStream *stream) const
+QByteArray Notice::data(QDataStream *stream, bool echo) const
 {
-  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest);
+  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest, echo);
   writer.put(m_type);
   writer.put(m_fields);
   writer.put(m_time);
