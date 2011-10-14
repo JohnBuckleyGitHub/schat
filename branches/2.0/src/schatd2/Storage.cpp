@@ -270,7 +270,7 @@ QList<QByteArray> Storage::users(const QByteArray &id)
 }
 
 
-RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
+RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password, const QByteArray &id)
 {
   qDebug() << name;
   return RegReply();

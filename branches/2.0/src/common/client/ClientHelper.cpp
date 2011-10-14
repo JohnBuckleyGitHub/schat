@@ -16,10 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDateTime>
+
 #include "client/ClientCmd.h"
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "text/PlainTextFilter.h"
 
 ClientHelper::ClientHelper(SimpleClient *client)
@@ -80,6 +83,40 @@ bool ClientHelper::send(MessageData &data)
 }
 
 
+QByteArray ClientHelper::randomId() const
+{
+  return SimpleID::randomId(SimpleID::MessageId, m_client->userId());
+}
+
+
+/*!
+ * Регистрация имени пользователя на сервере.
+ */
+QByteArray ClientHelper::reg(const QString &name, const QString &password)
+{
+  qDebug() << "|||||||||||||||||||||||||||||||||||||||||||||" << name << password;
+
+  QVariantMap map;
+  map["name"] = name;
+
+  Notice notice(m_client->userId(), SimpleID::password(password), "reg", map, timestamp(), randomId());
+  if (m_client->send(notice))
+    return notice.id();
+
+  return QByteArray();
+}
+
+
+qint64 ClientHelper::timestamp()
+{
+# if QT_VERSION >= 0x040700
+  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+# else
+  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
+# endif
+}
+
+
 /*!
  * Отправка сообщения без обработки команд и без изменения текста.
  */
@@ -92,7 +129,7 @@ bool ClientHelper::sendText(MessageData &data)
     data.senderId = m_client->userId();
 
   ++m_name;
-  data.id = SimpleID::randomId(SimpleID::MessageId, m_client->userId());
+  data.id = randomId();
   data.autoSetOptions();
 
   if (!m_client->send(data)) {

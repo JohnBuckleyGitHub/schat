@@ -39,6 +39,9 @@ MasterNode::MasterNode(QObject *parent)
 }
 
 
+/*!
+ * \bug Эта функция больше не работает корректно в связи с тем что базовый класс теперь обрабатывает пакеты этого типа.
+ */
 bool MasterNode::readNotice()
 {
   if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {

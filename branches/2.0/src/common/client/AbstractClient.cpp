@@ -22,14 +22,15 @@
 #include "Channel.h"
 #include "client/AbstractClient.h"
 #include "client/AbstractClient_p.h"
+#include "client/NetworkPool.h"
 #include "debugstream.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/message.h"
+#include "net/packets/notices.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "User.h"
-#include "client/NetworkPool.h"
 
 AbstractClientPrivate::AbstractClientPrivate()
   : clientState(AbstractClient::ClientOffline)
@@ -247,6 +248,13 @@ bool AbstractClient::send(const MessageData &data, bool echo)
 {
   Q_D(AbstractClient);
   return send(MessageWriter(d->sendStream, data, echo).data());
+}
+
+
+bool AbstractClient::send(const Notice &data, bool echo)
+{
+  Q_D(AbstractClient);
+  return send(data.data(d->sendStream, echo));
 }
 
 

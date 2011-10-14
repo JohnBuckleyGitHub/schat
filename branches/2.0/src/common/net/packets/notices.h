@@ -149,7 +149,7 @@ public:
   inline QByteArray raw() const { return m_raw; }
   inline qint64 time() const { return m_time; }
   inline QString command() const { return m_command; }
-  QByteArray data(QDataStream *stream) const;
+  QByteArray data(QDataStream *stream, bool echo = false) const;
   QVariant json() const;
 
 private:

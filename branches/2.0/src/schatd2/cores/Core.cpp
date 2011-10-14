@@ -249,6 +249,10 @@ void Core::readPacket(int type)
       readUserData();
       break;
 
+    case Protocol::NoticePacket:
+      readNotice();
+      break;
+
     default:
       route();
       break;
@@ -579,9 +583,6 @@ bool Core::command()
     return true;
   }
 
-  if (command == "reg")
-    return readReg();
-
   if (command == QLatin1String("topic"))
     return readTopic();
 
@@ -651,17 +652,6 @@ bool Core::readMessage()
 }
 
 
-bool Core::readReg()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return true;
-
-  m_storage->reg(user, m_messageData->text, m_reader->dest());
-  return true;
-}
-
-
 /*!
  * Чтение команды изменения топика.
  * Если топик был изменён функция возвратит false для того чтобы команда
@@ -725,6 +715,41 @@ void Core::rejectMessage(int reason)
 
   MessageNotice notice(MessageNotice::Rejected, m_reader->dest(), m_reader->sender(), m_messageData->id, reason);
   send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
+}
+
+
+/*!
+ * Обработка запроса на авторизацию.
+ */
+bool Core::readReg()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return true;
+
+  m_storage->reg(user, m_notice->json().toMap()["name"].toString(), m_reader->dest(), m_notice->id());
+  return true;
+}
+
+
+void Core::readNotice()
+{
+  quint16 type = m_reader->get<quint16>();
+  if (type == AbstractNotice::GenericNoticeType) {
+    Notice notice(type, m_reader);
+    if (!notice.isValid())
+      return;
+
+    m_notice = &notice;
+    QString command = m_notice->command();
+
+    if (command == "reg") {
+      readReg();
+      return;
+    }
+  }
+
+  route();
 }
 
 

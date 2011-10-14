@@ -203,11 +203,8 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == "reg") {
     ClientCmd body(cmd.body());
-    if (body.isValid() && body.isBody()) {
-      qDebug() << "|||||||||||||||||||||||||||||||||||||||||||||" << body.command() << body.body();
-      MessageData data(UserUtils::userId(), SimpleID::password(body.body()), command, body.command());
-      m_client->send(data);
-    }
+    if (body.isValid() && body.isBody())
+      reg(body.command(), body.body());
 
     return;
   }
