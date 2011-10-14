@@ -34,7 +34,8 @@ class AbstractNotice
 public:
   enum Type {
     MessageNoticeType = 0x6D, ///< 'm'.
-    TextNoticeType = 0x74     ///< 't'
+    TextNoticeType = 0x74,    ///< 't'
+    GenericNoticeType = 0x67  ///< 'g'
   };
 
   AbstractNotice(quint16 type, PacketReader *reader)
@@ -126,6 +127,37 @@ public:
 private:
   quint16 m_subtype; ///< Тип.
   QString m_text;    ///< Текст.
+};
+
+
+/*!
+ * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
+ */
+class SCHAT_EXPORT Notice : public AbstractNotice
+{
+public:
+  /// Дополнительные поля данных.
+  enum Fields {
+    NoFields = 0, ///< Нет дополнительных полей.
+    IdField = 1   ///< Содержит идентификатор сообщения.
+  };
+
+  Notice(quint16 type, PacketReader *reader);
+  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time = 0, const QByteArray &id = QByteArray());
+  bool isValid() const;
+  inline QByteArray id() const { return m_id; }
+  inline QByteArray raw() const { return m_raw; }
+  inline qint64 time() const { return m_time; }
+  inline QString command() const { return m_command; }
+  QByteArray data(QDataStream *stream) const;
+  QVariant json() const;
+
+private:
+  qint64 m_time;     ///< Отметка времени.
+  QByteArray m_id;   ///< Опциональный идентификатор сообщения.
+  QString m_command; ///< Текстовая команда.
+  QVariant m_data;   ///< JSON данные пакета.
+  QByteArray m_raw;  ///< Сырые данные, поле используется только при чтении пакета, для того чтобы не запускать разбор JSON без необходимости.
 };
 
 #endif /* NOTICES_H_ */

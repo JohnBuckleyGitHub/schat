@@ -108,6 +108,7 @@ public:
   inline ChatPlugins *plugins() { return m_plugins; }
   inline ChatSettings *settings() { return m_settings; }
   inline FileLocations *locations() const { return m_locations; }
+  inline MessageAdapter *adapter() const { return m_messageAdapter; }
   inline NetworkManager *networks() const { return m_networkManager; }
   inline QByteArray currentId() const { return m_currentId; }
   inline SimpleClient *client() { return m_client; }
