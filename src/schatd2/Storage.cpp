@@ -270,6 +270,13 @@ QList<QByteArray> Storage::users(const QByteArray &id)
 }
 
 
+RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
+{
+  qDebug() << name;
+  return RegReply();
+}
+
+
 /*!
  * Обработка смены ника пользователя.
  */

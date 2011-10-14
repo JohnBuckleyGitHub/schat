@@ -101,6 +101,7 @@ int MessageAdapter::command(MessageData &data, const QString &cmd, const QString
  * - /online
  * - /open
  * - /quit
+ * - /reg
  * - /set
  * - /topic
  * - /unignore
@@ -197,6 +198,17 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("open") && cmd.isBody()) {
     ChatCore::i()->openUrl(cmd.body());
+    return;
+  }
+
+  if (command == "reg") {
+    ClientCmd body(cmd.body());
+    if (body.isValid() && body.isBody()) {
+      qDebug() << "|||||||||||||||||||||||||||||||||||||||||||||" << body.command() << body.body();
+      MessageData data(UserUtils::userId(), SimpleID::password(body.body()), command, body.command());
+      m_client->send(data);
+    }
+
     return;
   }
 

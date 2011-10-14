@@ -23,6 +23,7 @@ HEADERS += \
     FileLocations.h \
     k8json/k8json.h \
     net/PacketReader.h \
+    net/packets/accounts.h \
     net/packets/auth.h \
     net/packets/channels.h \
     net/packets/message.h \
@@ -52,6 +53,7 @@ SOURCES += \
     FileLocations.cpp \
     k8json/k8json.cpp \
     net/PacketReader.cpp \
+    net/packets/accounts.cpp  \
     net/packets/auth.cpp \
     net/packets/channels.cpp \
     net/packets/message.cpp \

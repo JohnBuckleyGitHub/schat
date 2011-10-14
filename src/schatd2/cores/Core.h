@@ -94,6 +94,7 @@ protected:
   bool readJoinCmd();
   bool readLeaveCmd();
   bool readMessage();
+  bool readReg();
   bool readTopic();
   void acceptMessage(int reason = 0);
   void rejectMessage(int reason);
