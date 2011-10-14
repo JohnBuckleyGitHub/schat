@@ -29,6 +29,7 @@ class AbstractMessage;
 class AbstractNotice;
 class ChatSettings;
 class MessageNotice;
+class Notice;
 class SimpleClient;
 
 class SCHAT_CORE_EXPORT MessageAdapter : public ClientHelper
@@ -65,6 +66,7 @@ private:
   void commandHelpHint(const QString &command);
   void newUserMessage(int status, const MessageData &data);
   void notice(const MessageNotice &notice);
+  void notice(const Notice &notice);
   void readTopic(const MessageData &data);
   void setStateAll(int state);
   void setStatus(int status, const QString &text = QString());

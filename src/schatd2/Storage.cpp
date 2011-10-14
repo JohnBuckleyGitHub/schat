@@ -270,9 +270,12 @@ QList<QByteArray> Storage::users(const QByteArray &id)
 }
 
 
-RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password, const QByteArray &id)
+RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
 {
-  qDebug() << name;
+  QString login = RegReply::filter(name);
+  if (login.isEmpty())
+    return RegReply(RegReply::BadName);
+
   return RegReply();
 }
 

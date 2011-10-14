@@ -79,6 +79,7 @@ protected:
 
 /*!
  * Пакет Protocol::NoticePacket с типом MessageNoticeType.
+ * \deprecated Заменить этот класс на Notice.
  */
 class SCHAT_EXPORT MessageNotice : public AbstractNotice
 {
@@ -110,6 +111,9 @@ private:
 };
 
 
+/*!
+ * \deprecated Заменить этот класс на Notice.
+ */
 class SCHAT_EXPORT TextNotice : public AbstractNotice
 {
 public:

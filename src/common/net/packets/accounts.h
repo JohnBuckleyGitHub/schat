@@ -19,19 +19,47 @@
 #ifndef ACCOUNTS_H_
 #define ACCOUNTS_H_
 
-class RegReply
+#include <QVariant>
+
+#include "schat.h"
+
+/*!
+ * Ответ на запрос регистрации.
+ */
+class SCHAT_EXPORT RegReply
 {
 public:
-  /// Код ответа на запрос регистрации.
-  enum Reply {
-    Invalid = 105 ///< 'i' Данные регистрации не корректны.
+  /// Результат регистрации.
+  enum Result {
+    Error = 101, ///< При регистрации произошла ошибка.
+    OK = 111     ///< Регистрация успешна.
+  };
+
+  /// Тип ошибки.
+  enum ErrorType {
+    Unknown, ///< Неизвестная ошибка.
+    BadName  ///< Некорректное имя пользователя.
   };
 
   RegReply()
-  : reply(Invalid)
+  : m_error(Unknown)
+  , m_result(Error)
   {}
 
-  int reply;
+  RegReply(ErrorType error)
+  : m_error(error)
+  , m_result(Error)
+  {}
+
+  inline int result() const { return m_result; }
+  inline QString name() const { return m_name; }
+  QVariant json() const;
+  static QString filter(const QString &name);
+
+private:
+  int m_error;    ///< Тип ошибки.
+  int m_result;   ///< Результат регистрации.
+  QString m_name; ///< Имя присвоенное при регистрации.
 };
 
 #endif /* ACCOUNTS_H_ */
