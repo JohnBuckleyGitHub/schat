@@ -22,6 +22,7 @@
 #include <QByteArray>
 #include <QHash>
 
+#include "net/packets/accounts.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 
@@ -57,6 +58,7 @@ public:
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   QByteArray makeUserId(int type, const QByteArray &userId) const;
   QList<QByteArray> users(const QByteArray &id);
+  RegReply reg(ChatUser user, const QString &name, const QByteArray &password);
   void rename(ChatUser user);
   void store(ChatUser user);
   void update(ChatUser user);

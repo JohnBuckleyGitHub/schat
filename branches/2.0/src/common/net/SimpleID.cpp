@@ -57,6 +57,12 @@ QByteArray SimpleID::fromBase64(const QByteArray &base64)
 }
 
 
+QByteArray SimpleID::password(const QString &password, const QByteArray &salt)
+{
+  return QCryptographicHash::hash(password.toUtf8() + salt, QCryptographicHash::Sha1) += PasswordId;
+}
+
+
 QByteArray SimpleID::randomId(IdTypes type, const QByteArray &salt)
 {
   return QCryptographicHash::hash(QString(salt + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += type;
@@ -104,12 +110,6 @@ QByteArray SimpleID::uniqueId()
   }
 
   return QCryptographicHash::hash("", QCryptographicHash::Sha1) += UniqueUserId;
-}
-
-
-QString SimpleID::password(const QString &password, const QByteArray &salt)
-{
-  return QCryptographicHash::hash(password.toUtf8() + salt, QCryptographicHash::Sha1) += PasswordId;
 }
 
 

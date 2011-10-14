@@ -579,6 +579,9 @@ bool Core::command()
     return true;
   }
 
+  if (command == "reg")
+    return readReg();
+
   if (command == QLatin1String("topic"))
     return readTopic();
 
@@ -645,6 +648,17 @@ bool Core::readMessage()
     rejectMessage(MessageNotice::UnknownError);
     return false;
   }
+}
+
+
+bool Core::readReg()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return true;
+
+  m_storage->reg(user, m_messageData->text, m_reader->dest());
+  return true;
 }
 
 

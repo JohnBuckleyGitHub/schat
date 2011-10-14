@@ -46,11 +46,11 @@ public:
   SimpleID() {}
   static int typeOf(const QByteArray &id);
   static QByteArray fromBase64(const QByteArray &base64);
+  static QByteArray password(const QString &password, const QByteArray &salt = QByteArray());
   static QByteArray randomId(IdTypes type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase64(const QByteArray &id);
   static QByteArray uniqueId();
-  static QString password(const QString &password, const QByteArray &salt = QByteArray());
   static QString userAgent();
 
 # if defined(Q_OS_LINUX)
