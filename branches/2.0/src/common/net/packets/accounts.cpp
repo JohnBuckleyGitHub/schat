@@ -17,3 +17,41 @@
  */
 
 #include "net/packets/accounts.h"
+
+/*!
+ * Сериализация в JSON.
+ */
+QVariant RegReply::json() const
+{
+  QVariantMap map;
+
+  if (m_result == OK) {
+    map["result"] = "ok";
+
+    if (!m_name.isEmpty())
+      map["name"] = m_name;
+  }
+  else {
+    map["result"] = "error";
+
+    QString error;
+    if (m_error == BadName)
+      error = "bad name";
+    else
+      error = "unknown";
+
+    map["error"] = error;
+  }
+
+  return map;
+}
+
+
+QString RegReply::filter(const QString &name)
+{
+  QString out = name.simplified();
+  out.remove(' ');
+  out.remove('@');
+
+  return out.left(64);
+}

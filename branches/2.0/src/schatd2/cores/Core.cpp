@@ -720,6 +720,7 @@ void Core::rejectMessage(int reason)
 
 /*!
  * Обработка запроса на авторизацию.
+ * В ответ клиенту высылается уведомление "reg.reply".
  */
 bool Core::readReg()
 {
@@ -727,7 +728,9 @@ bool Core::readReg()
   if (!user)
     return true;
 
-  m_storage->reg(user, m_notice->json().toMap()["name"].toString(), m_reader->dest(), m_notice->id());
+  RegReply reply = m_storage->reg(user, m_notice->json().toMap()["name"].toString(), m_reader->dest());
+  Notice notice(m_storage->serverData()->id(), user->id(), "reg.reply", reply.json(), Storage::timestamp(), m_notice->id());
+  send(user, notice.data(m_sendStream));
   return true;
 }
 
