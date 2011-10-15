@@ -66,7 +66,6 @@ private:
   void commandHelpHint(const QString &command);
   void newUserMessage(int status, const MessageData &data);
   void notice(const MessageNotice &notice);
-  void notice(const Notice &notice);
   void readTopic(const MessageData &data);
   void setStateAll(int state);
   void setStatus(int status, const QString &text = QString());

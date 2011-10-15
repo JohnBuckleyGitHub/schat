@@ -26,6 +26,7 @@
 
 class ClientCmd;
 class MessageData;
+class Notice;
 class SimpleClient;
 
 /*!
@@ -46,7 +47,12 @@ public:
   virtual int command(MessageData &data, const QString &cmd, const QString &text);
   virtual void command(const ClientCmd &cmd);
 
+protected slots:
+  void notice(const Notice &notice);
+
 protected:
+  virtual bool regReply(const Notice &notice);
+
   bool m_richText;        ///< true если в командах может использоваться html текст.
   QByteArray m_destId;    ///< Текущий получатель сообщения.
   QStringList m_commands; ///< Список специальных команд таких как "/me".
