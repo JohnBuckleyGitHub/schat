@@ -33,8 +33,10 @@ public:
   ChatUser user(const QByteArray &id);
   ChatUser user(qint64 id);
   int start();
+  qint64 account(const QString &name) const;
   qint64 add(ChatUser user);
   qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
+  qint64 reg(ChatUser user, const QString &name, const QByteArray &password);
   qint64 userKey(const QByteArray &id);
   void update(ChatUser user);
 
