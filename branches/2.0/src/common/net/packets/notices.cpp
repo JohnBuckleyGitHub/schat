@@ -100,12 +100,19 @@ Notice::Notice(quint16 type, PacketReader *reader)
   : AbstractNotice(type, reader)
 {
   m_time = reader->get<qint64>();
+  m_version = reader->get<quint8>();
+  m_status = reader->get<quint16>();
 
   if (m_fields & IdField)
     m_id = reader->id();
 
   m_command = reader->text();
-  m_raw = reader->get<QByteArray>();
+
+  if (m_fields & JSonField)
+    m_raw = reader->get<QByteArray>();
+
+  if (m_fields & TextField)
+    m_text = reader->text();
 }
 
 
@@ -114,6 +121,8 @@ Notice::Notice(quint16 type, PacketReader *reader)
  */
 Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
   : AbstractNotice(GenericNoticeType, sender, dest)
+  , m_version(0)
+  , m_status(OK)
   , m_time(time)
   , m_id(id)
   , m_command(command)
@@ -121,6 +130,9 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
 {
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
+
+  if (!data.isNull())
+    m_fields |= JSonField;
 }
 
 
@@ -129,10 +141,13 @@ bool Notice::isValid() const
   if (m_command.isEmpty())
     return false;
 
-  if (m_data.isNull() && m_raw.isEmpty())
+  if (m_fields & IdField && SimpleID::typeOf(m_id) != SimpleID::MessageId)
     return false;
 
-  if (m_fields & IdField && SimpleID::typeOf(m_id) != SimpleID::MessageId)
+  if (m_fields & JSonField && (m_data.isNull() && m_raw.isEmpty()))
+    return false;
+
+  if (m_fields & TextField && m_text.isEmpty())
     return false;
 
   return true;
@@ -147,13 +162,20 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
   PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest, echo);
   writer.put(m_type);
   writer.put(m_fields);
+  writer.put(m_version);
+  writer.put(m_status);
   writer.put(m_time);
 
   if (m_fields & IdField)
     writer.putId(m_id);
 
   writer.put(m_command);
-  writer.put(m_data);
+
+  if (m_fields & JSonField)
+    writer.put(m_data);
+
+  if (m_fields & TextField)
+    writer.put(m_text);
 
   return writer.data();
 }
@@ -168,4 +190,62 @@ QVariant Notice::json() const
     return SimpleJSon::parse(m_raw);
 
   return m_data;
+}
+
+
+QString Notice::status(int status)
+{
+  switch (status) {
+    case OK:
+      return QObject::tr("OK");
+
+    case BadRequest:
+      return QObject::tr("Bad Request");
+
+    case Unauthorized:
+      return QObject::tr("Unauthorized");
+
+    case Forbidden:
+      return QObject::tr("Forbidden");
+
+    case NotFound:
+      return QObject::tr("Not Found");
+
+    case InternalError:
+      return QObject::tr("Internal Error");
+
+    case NotImplemented:
+      return QObject::tr("Not Implemented");
+
+    case BadGateway:
+      return QObject::tr("Bad Gateway");
+
+    case ServiceUnavailable:
+      return QObject::tr("Service Unavailable");
+
+    case GatewayTimeout:
+      return QObject::tr("Gateway Timeout");
+
+    case VersionNotSupported:
+      return QObject::tr("Version Not Supported");
+
+    case UserAlreadyExists:
+      return QObject::tr("User Already Exists");
+
+    case UserNotExists:
+      return QObject::tr("User Not Exists");
+
+    case NickAlreadyUse:
+      return QObject::tr("Nick Already In Use");
+
+    default:
+      return QObject::tr("Unknown");
+  }
+}
+
+
+void Notice::setText(const QString &text)
+{
+  m_fields |= TextField;
+  m_text = text;
 }
