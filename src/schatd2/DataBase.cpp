@@ -155,6 +155,20 @@ int DataBase::start()
 }
 
 
+qint64 DataBase::account(const QString &name) const
+{
+  QSqlQuery query;
+  query.prepare("SELECT id FROM accounts WHERE name = :name LIMIT 1;");
+  query.bindValue(":name", name);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
 /*!
  * Добавление нового пользователя в базу данных.
  *
@@ -221,6 +235,33 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
     return -1;
 
   return query.lastInsertId().toLongLong();
+}
+
+
+/*!
+ * Регистрация пользователя.
+ */
+qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password)
+{
+  if (account(name) != -1)
+    return -2;
+
+  QSqlQuery query;
+  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password) VALUES (:userId, :name, :password);"));
+  query.bindValue(QLatin1String(":userId"), user->id());
+  query.bindValue(QLatin1String(":name"), name);
+  query.bindValue(QLatin1String(":password"), password);
+  query.exec();
+
+  if (query.numRowsAffected() <= 0)
+    return -1;
+
+  qint64 result = query.lastInsertId().toLongLong();
+  if (result == -1)
+    return result;
+
+  user->setAccount(name);
+  return result;
 }
 
 

@@ -37,8 +37,12 @@ public:
 
   /// Тип ошибки.
   enum ErrorType {
-    Unknown, ///< Неизвестная ошибка.
-    BadName  ///< Некорректное имя пользователя.
+    Unknown = 117,            ///< 'u' Неизвестная ошибка.
+    BadName = 110,            ///< 'n' Некорректное имя пользователя.
+    BadPassword = 112,        ///< 'p' Некорректный пароль.
+    ServiceUnavailable = 85,  ///< 'U' Регистрация не доступна.
+    InternalError = 105,      ///< 'i' Внутренняя ошибка сервера.
+    UserAlreadyExists = 101   ///< 'e' Пользователь уже зарегистрирован.
   };
 
   RegReply()
@@ -51,9 +55,16 @@ public:
   , m_result(Error)
   {}
 
+  RegReply(const QString &name)
+  : m_error(Unknown)
+  , m_result(OK)
+  , m_name(name)
+  {}
+
   inline int result() const { return m_result; }
   inline QString name() const { return m_name; }
   QVariant json() const;
+  static QString error(int error);
   static QString filter(const QString &name);
 
 private:

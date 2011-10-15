@@ -33,23 +33,41 @@ QVariant RegReply::json() const
   }
   else {
     map["result"] = "error";
-
-    QString error;
-    if (m_error == BadName)
-      error = "bad name";
-    else
-      error = "unknown";
-
-    map["error"] = error;
+    map["error"] = m_error;
+    map["error-desc"] = error(m_error);
   }
 
   return map;
 }
 
 
+/*!
+ * Получение текстового описания ошибки на основе кода ошибки.
+ */
+QString RegReply::error(int error)
+{
+  switch (error) {
+    case BadName:
+      return QObject::tr("Bad Name");
+
+    case BadPassword:
+      return QObject::tr("Bad Password");
+
+    case ServiceUnavailable:
+      return QObject::tr("Service Unavailable");
+
+    case UserAlreadyExists:
+      return QObject::tr("User Already Exists");
+
+    default:
+      return QObject::tr("Unknown");
+  }
+}
+
+
 QString RegReply::filter(const QString &name)
 {
-  QString out = name.simplified();
+  QString out = name.simplified().toLower();
   out.remove(' ');
   out.remove('@');
 
