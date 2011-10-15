@@ -64,7 +64,6 @@ public:
   inline int result() const { return m_result; }
   inline QString name() const { return m_name; }
   QVariant json() const;
-  static QString error(int error);
   static QString filter(const QString &name);
 
 private:

@@ -136,32 +136,62 @@ private:
 
 /*!
  * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
+ * Этот пакет является универсальным высокоуровневым транспортом чата, для расширений протокола.
  */
 class SCHAT_EXPORT Notice : public AbstractNotice
 {
 public:
   /// Дополнительные поля данных.
   enum Fields {
-    NoFields = 0, ///< Нет дополнительных полей.
-    IdField = 1   ///< Содержит идентификатор сообщения.
+    NoFields = 0,  ///< Нет дополнительных полей.
+    IdField = 1,   ///< Содержит идентификатор сообщения \sa m_id.
+    JSonField = 2, ///< Содержит JSON данные \sa m_data, m_raw.
+    TextField = 4  ///< Содержит сырые текстовые данные \sa m_text.
+  };
+
+  ///< Коды состояния.
+  enum StatusCodes {
+    OK                  = 200, ///< OK.
+    BadRequest          = 400, ///< Bad Request.
+    Unauthorized        = 401, ///< Unauthorized.
+    Forbidden           = 402, ///< Forbidden.
+    NotFound            = 403, ///< Not Found.
+    InternalError       = 500, ///< Internal Error.
+    NotImplemented      = 501, ///< Not Implemented.
+    BadGateway          = 502, ///< Bad Gateway.
+    ServiceUnavailable  = 503, ///< Service Unavailable.
+    GatewayTimeout      = 504, ///< Gateway Timeout.
+    VersionNotSupported = 505, ///< Version Not Supported.
+    UserAlreadyExists   = 506, ///< User Already Exists.
+    UserNotExists       = 507, ///< User Not Exists.
+    NickAlreadyUse      = 508  ///< Nick Already In Use.
   };
 
   Notice(quint16 type, PacketReader *reader);
-  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time = 0, const QByteArray &id = QByteArray());
+  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());
   bool isValid() const;
+  inline int status() const { return m_status; }
+  inline int version() const { return m_version; }
   inline QByteArray id() const { return m_id; }
   inline QByteArray raw() const { return m_raw; }
   inline qint64 time() const { return m_time; }
   inline QString command() const { return m_command; }
+  inline QString text() const { return m_text; }
+  inline void setStatus(int status) { m_status = status; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
   QVariant json() const;
+  static QString status(int status);
+  void setText(const QString &text);
 
 private:
-  qint64 m_time;     ///< Отметка времени.
-  QByteArray m_id;   ///< Опциональный идентификатор сообщения.
-  QString m_command; ///< Текстовая команда.
-  QVariant m_data;   ///< JSON данные пакета.
+  quint8 m_version;  ///< Версия пакета, обязательное поле.
+  quint16 m_status;  ///< Статус \sa StatusCodes, обязательное поле.
+  qint64 m_time;     ///< Отметка времени, обязательное поле.
+  QByteArray m_id;   ///< Идентификатор сообщения, не обязательное поле.
+  QString m_command; ///< Текстовая команда, обязательное поле.
+  QVariant m_data;   ///< JSON данные пакета, не обязательное поле.
   QByteArray m_raw;  ///< Сырые данные, поле используется только при чтении пакета, для того чтобы не запускать разбор JSON без необходимости.
+  QString m_text;    ///< Сырой текст, не обязательное поле.
 };
 
 #endif /* NOTICES_H_ */
