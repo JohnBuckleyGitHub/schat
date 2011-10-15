@@ -80,7 +80,6 @@ public:
 
 signals:
   void clientStateChanged(int state, int previousState);
-  void message(const MessageData &data);
   void packetReady(int type);
   void ready();
   void requestClientAuth();

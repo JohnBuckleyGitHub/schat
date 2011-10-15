@@ -290,8 +290,6 @@ void MessageAdapter::notice(const AbstractNotice &notice)
 
   if (notice.type() == AbstractNotice::MessageNoticeType)
     this->notice(static_cast<const MessageNotice &>(notice));
-  else if (notice.type() == AbstractNotice::GenericNoticeType)
-    this->notice(static_cast<const Notice &>(notice));
 }
 
 
@@ -403,14 +401,6 @@ void MessageAdapter::notice(const MessageNotice &notice)
   else if (notice.status() == MessageNotice::Rejected) {
     newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
   }
-}
-
-
-void MessageAdapter::notice(const Notice &notice)
-{
-  qDebug() << notice.command() << Notice::status(notice.status()) << notice.status();
-  qDebug() << notice.raw();
-  qDebug() << notice.text() << notice.fields();
 }
 
 

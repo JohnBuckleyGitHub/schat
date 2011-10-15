@@ -33,6 +33,8 @@ ClientHelper::ClientHelper(SimpleClient *client)
 {
   m_commands.append(QLatin1String("me"));
   m_commands.append(QLatin1String("topic"));
+
+  connect(m_client, SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 }
 
 
@@ -91,11 +93,14 @@ QByteArray ClientHelper::randomId() const
 
 /*!
  * Регистрация имени пользователя на сервере.
+ *
+ * \param name Имя пользователя, имя пользователя может быть только в нижнем регистре, может содержать любые Unicode символы кроме пробела и '@'.
+ * \param password Пароль, может содержать любые символы.
+ *
+ * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
  */
 QByteArray ClientHelper::reg(const QString &name, const QString &password)
 {
-  qDebug() << "|||||||||||||||||||||||||||||||||||||||||||||" << name << password;
-
   Notice notice(m_client->userId(), SimpleID::password(password), "reg", QVariant(), timestamp(), randomId());
   notice.setText(name);
   if (m_client->send(notice))
@@ -168,4 +173,33 @@ int ClientHelper::command(MessageData &data, const QString &cmd, const QString &
 void ClientHelper::command(const ClientCmd &cmd)
 {
   Q_UNUSED(cmd)
+}
+
+
+void ClientHelper::notice(const Notice &notice)
+{
+  if (!notice.isValid())
+    return;
+
+  QString command = notice.command();
+  if (command == "reg.reply")
+    regReply(notice);
+}
+
+
+bool ClientHelper::regReply(const Notice &notice)
+{
+  if (notice.status() != Notice::OK)
+    return false;
+
+  if (notice.dest() != m_client->userId())
+    return false;
+
+  if (SimpleID::typeOf(notice.sender()) != SimpleID::PasswordId)
+    return false;
+
+  if (notice.text().isEmpty())
+    return false;
+
+  return true;
 }

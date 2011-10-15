@@ -735,7 +735,7 @@ bool Core::readReg()
     return true;
 
   RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest());
-  Notice notice(id(), user->id(), "reg.reply", QVariant(), Storage::timestamp(), m_notice->id());
+  Notice notice(m_reader->dest(), user->id(), "reg.reply", QVariant(), Storage::timestamp(), m_notice->id());
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
