@@ -18,29 +18,6 @@
 
 #include "net/packets/accounts.h"
 
-/*!
- * Сериализация в JSON.
- */
-QVariant RegReply::json() const
-{
-  QVariantMap map;
-
-  if (m_result == OK) {
-    map["result"] = "ok";
-
-    if (!m_name.isEmpty())
-      map["name"] = m_name;
-  }
-  else {
-    map["result"] = "error";
-    map["error"] = m_error;
-//    map["error-desc"] = error(m_error);
-  }
-
-  return map;
-}
-
-
 QString RegReply::filter(const QString &name)
 {
   QString out = name.simplified().toLower();

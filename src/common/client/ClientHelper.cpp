@@ -96,10 +96,8 @@ QByteArray ClientHelper::reg(const QString &name, const QString &password)
 {
   qDebug() << "|||||||||||||||||||||||||||||||||||||||||||||" << name << password;
 
-  QVariantMap map;
-  map["name"] = name;
-
-  Notice notice(m_client->userId(), SimpleID::password(password), "reg", map, timestamp(), randomId());
+  Notice notice(m_client->userId(), SimpleID::password(password), "reg", QVariant(), timestamp(), randomId());
+  notice.setText(name);
   if (m_client->send(notice))
     return notice.id();
 

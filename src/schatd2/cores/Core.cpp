@@ -119,6 +119,12 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
 }
 
 
+QByteArray Core::id() const
+{
+  return m_storage->serverData()->id();
+}
+
+
 bool Core::add(ChatUser user, int authType)
 {
   Q_UNUSED(authType);
@@ -728,8 +734,11 @@ bool Core::readReg()
   if (!user)
     return true;
 
-  RegReply reply = m_storage->reg(user, m_notice->json().toMap()["name"].toString(), m_reader->dest());
-  Notice notice(m_storage->serverData()->id(), user->id(), "reg.reply", reply.json(), Storage::timestamp(), m_notice->id());
+  RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest());
+  Notice notice(id(), user->id(), "reg.reply", QVariant(), Storage::timestamp(), m_notice->id());
+  notice.setStatus(reply.status());
+  notice.setText(reply.name());
+
   send(user, notice.data(m_sendStream));
   return true;
 }
@@ -740,10 +749,13 @@ void Core::readNotice()
   quint16 type = m_reader->get<quint16>();
   if (type == AbstractNotice::GenericNoticeType) {
     Notice notice(type, m_reader);
-    if (!notice.isValid())
-      return;
-
     m_notice = &notice;
+
+    if (!m_notice->isValid()) {
+      rejectNotice(Notice::BadRequest);
+      return;
+    }
+
     QString command = m_notice->command();
 
     if (command == "reg") {
@@ -753,6 +765,26 @@ void Core::readNotice()
   }
 
   route();
+}
+
+
+/*!
+ * Отклонение входящего пакета Notice.
+ *
+ * \param status Причина отклонения, \sa Notice::StatusCodes.
+ */
+void Core::rejectNotice(int status)
+{
+  if (SimpleID::typeOf(m_notice->id()) != SimpleID::MessageId)
+    return;
+
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return;
+
+  Notice notice(id(), m_reader->sender(), m_notice->command(), QVariant(), Storage::timestamp(), m_notice->id());
+  notice.setStatus(status);
+  send(user, notice.data(m_sendStream));
 }
 
 

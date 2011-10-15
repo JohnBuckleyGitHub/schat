@@ -21,6 +21,7 @@
 
 #include <QVariant>
 
+#include "net/packets/notices.h"
 #include "schat.h"
 
 /*!
@@ -29,46 +30,25 @@
 class SCHAT_EXPORT RegReply
 {
 public:
-  /// Результат регистрации.
-  enum Result {
-    Error = 101, ///< При регистрации произошла ошибка.
-    OK = 111     ///< Регистрация успешна.
-  };
-
-  /// Тип ошибки.
-  enum ErrorType {
-    Unknown = 117,            ///< 'u' Неизвестная ошибка.
-    BadName = 110,            ///< 'n' Некорректное имя пользователя.
-    BadPassword = 112,        ///< 'p' Некорректный пароль.
-    ServiceUnavailable = 85,  ///< 'U' Регистрация не доступна.
-    InternalError = 105,      ///< 'i' Внутренняя ошибка сервера.
-    UserAlreadyExists = 101   ///< 'e' Пользователь уже зарегистрирован.
-  };
-
   RegReply()
-  : m_error(Unknown)
-  , m_result(Error)
+  : m_status(Notice::InternalError)
   {}
 
-  RegReply(ErrorType error)
-  : m_error(error)
-  , m_result(Error)
+  RegReply(int status)
+  : m_status(status)
   {}
 
   RegReply(const QString &name)
-  : m_error(Unknown)
-  , m_result(OK)
+  : m_status(Notice::OK)
   , m_name(name)
   {}
 
-  inline int result() const { return m_result; }
+  inline int status() const { return m_status; }
   inline QString name() const { return m_name; }
-  QVariant json() const;
   static QString filter(const QString &name);
 
 private:
-  int m_error;    ///< Тип ошибки.
-  int m_result;   ///< Результат регистрации.
+  int m_status;   ///< Статус регистрации, \sa Notice::StatusCodes.
   QString m_name; ///< Имя присвоенное при регистрации.
 };
 

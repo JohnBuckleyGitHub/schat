@@ -99,9 +99,9 @@ QByteArray TextNotice::data(QDataStream *stream) const
 Notice::Notice(quint16 type, PacketReader *reader)
   : AbstractNotice(type, reader)
 {
-  m_time = reader->get<qint64>();
   m_version = reader->get<quint8>();
   m_status = reader->get<quint16>();
+  m_time = reader->get<qint64>();
 
   if (m_fields & IdField)
     m_id = reader->id();
@@ -246,6 +246,9 @@ QString Notice::status(int status)
 
 void Notice::setText(const QString &text)
 {
+  if (text.isEmpty())
+    return;
+
   m_fields |= TextField;
   m_text = text;
 }

@@ -273,20 +273,20 @@ QList<QByteArray> Storage::users(const QByteArray &id)
 RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
 {
   if (m_serverData->name().isEmpty())
-    return RegReply(RegReply::ServiceUnavailable);
+    return RegReply(Notice::ServiceUnavailable);
 
   QString login = RegReply::filter(name);
   if (login.isEmpty())
-    return RegReply(RegReply::BadName);
+    return RegReply(Notice::BadRequest);
 
   if (SimpleID::typeOf(password) != SimpleID::PasswordId)
-    return RegReply(RegReply::BadPassword);
+    return RegReply(Notice::BadRequest);
 
   login += '@' + m_serverData->name();
 
   qint64 result = m_db->reg(user, login, password);
   if (result == -2)
-    return RegReply(RegReply::UserAlreadyExists);
+    return RegReply(Notice::UserAlreadyExists);
 
   return RegReply(login);
 }
