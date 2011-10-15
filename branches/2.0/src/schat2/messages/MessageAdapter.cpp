@@ -408,8 +408,9 @@ void MessageAdapter::notice(const MessageNotice &notice)
 
 void MessageAdapter::notice(const Notice &notice)
 {
-  qDebug() << notice.command();
+  qDebug() << notice.command() << Notice::status(notice.status()) << notice.status();
   qDebug() << notice.raw();
+  qDebug() << notice.text() << notice.fields();
 }
 
 

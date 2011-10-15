@@ -57,6 +57,7 @@ public:
   inline QDataStream *sendStream() { return m_sendStream; }
   inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
   inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
+  QByteArray id() const;
   virtual bool add(ChatUser user, int authType);
   virtual int start() { return 0; }
   virtual void quit() {}
@@ -102,6 +103,7 @@ protected:
   // notices.
   bool readReg();
   void readNotice();
+  void rejectNotice(int status);
 
   virtual void acceptedMessageHook(int reason);
   virtual void userReadyHook();
