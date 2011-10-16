@@ -24,6 +24,7 @@
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "FileLocations.h"
+#include "messages/MessageAdapter.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -130,10 +131,12 @@ NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::i()->settings())
   , m_locations(ChatCore::i()->locations())
+  , m_adapter(ChatCore::i()->adapter())
   , m_client(ChatCore::i()->client())
 {
   load();
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(m_adapter, SIGNAL(registered(const QString &, const QByteArray &)), SLOT(registered(const QString &, const QByteArray &)));
 }
 
 
@@ -252,6 +255,12 @@ void NetworkManager::clientStateChanged(int state)
     return;
 
   write();
+}
+
+
+void NetworkManager::registered(const QString &name, const QByteArray &password)
+{
+  qDebug() << name << SimpleID::toBase64(password);
 }
 
 

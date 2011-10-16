@@ -27,6 +27,7 @@
 
 class ChatSettings;
 class FileLocations;
+class MessageAdapter;
 class NetworkManager;
 class SettingsLegacy;
 class SimpleClient;
@@ -43,6 +44,7 @@ public:
   bool isValid() const;
   inline QByteArray cookie() const { return m_cookie; }
   inline QByteArray id() const { return m_id; }
+  inline QString account() const { return m_account; }
   inline QString name() const { return m_name; }
   inline QString url() const { return m_url; }
   static NetworkItem item();
@@ -55,11 +57,12 @@ private:
   QString auth();
   void setAuth(const QString &auth);
 
-  QByteArray m_cookie; ///< Cookie.
-  QByteArray m_id;     ///< Идентификатор сервера.
-  QByteArray m_userId; ///< Идентификатор пользователя.
-  QString m_name;      ///< Имя сервера.
-  QString m_url;       ///< Адрес сервера.
+  QByteArray m_cookie;   ///< Cookie.
+  QByteArray m_id;       ///< Идентификатор сервера.
+  QByteArray m_userId;   ///< Идентификатор пользователя.
+  QString m_account;     ///< Имя пользователя.
+  QString m_name;        ///< Имя сервера.
+  QString m_url;         ///< Адрес сервера.
 };
 
 
@@ -86,6 +89,7 @@ public:
 
 private slots:
   void clientStateChanged(int state);
+  void registered(const QString &name, const QByteArray &password);
 
 private:
   QString root(const QByteArray &id) const;
@@ -95,6 +99,7 @@ private:
 
   ChatSettings *m_settings; ///< Основные настройки.
   FileLocations *m_locations;
+  MessageAdapter *m_adapter;
   QHash<QByteArray, NetworkItem> m_items;
   SimpleClient *m_client;   ///< Указатель на клиент.
 };
