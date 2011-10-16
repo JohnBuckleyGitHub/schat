@@ -201,5 +201,6 @@ bool ClientHelper::regReply(const Notice &notice)
   if (notice.text().isEmpty())
     return false;
 
+  emit registered(notice.text(), notice.sender());
   return true;
 }

@@ -47,6 +47,9 @@ public:
   virtual int command(MessageData &data, const QString &cmd, const QString &text);
   virtual void command(const ClientCmd &cmd);
 
+signals:
+  void registered(const QString &name, const QByteArray &password);
+
 protected slots:
   void notice(const Notice &notice);
 
