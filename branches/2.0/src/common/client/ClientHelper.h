@@ -40,8 +40,9 @@ public:
   ClientHelper(SimpleClient *client);
   bool send(MessageData &data);
   inline SimpleClient *client() { return m_client; }
+  QByteArray login(const QString &command, const QString &name, const QString &password);
   QByteArray randomId() const;
-  QByteArray reg(const QString &name, const QString &password);
+//  QByteArray reg(const QString &name, const QString &password);
   static qint64 timestamp();
   virtual bool sendText(MessageData &data);
   virtual int command(MessageData &data, const QString &cmd, const QString &text);

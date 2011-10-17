@@ -18,6 +18,8 @@
 
 #include <QDateTime>
 
+#include "debugstream.h"
+
 #include "client/ClientCmd.h"
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
@@ -85,6 +87,26 @@ bool ClientHelper::send(MessageData &data)
 }
 
 
+/*!
+ * Универсальная функция для регистрации или авторизации пользователя.
+ *
+ * \param command  Команда, например "reg" или "login".
+ * \param name     Имя пользователя, функция не проверяет корректность этого параметра.
+ * \param password Пароль, может содержать любые символы.
+ *
+ * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
+ */
+QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password)
+{
+  Notice notice(m_client->userId(), SimpleID::password(password), command, QVariant(), timestamp(), randomId());
+  notice.setText(name);
+  if (m_client->send(notice))
+    return notice.id();
+
+  return QByteArray();
+}
+
+
 QByteArray ClientHelper::randomId() const
 {
   return SimpleID::randomId(SimpleID::MessageId, m_client->userId());
@@ -99,15 +121,15 @@ QByteArray ClientHelper::randomId() const
  *
  * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
  */
-QByteArray ClientHelper::reg(const QString &name, const QString &password)
-{
-  Notice notice(m_client->userId(), SimpleID::password(password), "reg", QVariant(), timestamp(), randomId());
-  notice.setText(name);
-  if (m_client->send(notice))
-    return notice.id();
-
-  return QByteArray();
-}
+//QByteArray ClientHelper::reg(const QString &name, const QString &password)
+//{
+//  Notice notice(m_client->userId(), SimpleID::password(password), "reg", QVariant(), timestamp(), randomId());
+//  notice.setText(name);
+//  if (m_client->send(notice))
+//    return notice.id();
+//
+//  return QByteArray();
+//}
 
 
 qint64 ClientHelper::timestamp()
@@ -180,6 +202,8 @@ void ClientHelper::notice(const Notice &notice)
 {
   if (!notice.isValid())
     return;
+
+  SCHAT_DEBUG_STREAM("NOTICE" << notice.command() << notice.text() << notice.raw())
 
   QString command = notice.command();
   if (command == "reg.reply")

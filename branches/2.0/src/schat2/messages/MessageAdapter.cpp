@@ -94,6 +94,7 @@ int MessageAdapter::command(MessageData &data, const QString &cmd, const QString
  * - /hide
  * - /ignore
  * - /join
+ * - /login
  * - /male
  * - /me
  * - /nick
@@ -170,9 +171,20 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == QLatin1String("join") && cmd.isBody() && cmd.body().size() >= 3) {
-    MessageData data(UserUtils::userId(), QByteArray(), command, cmd.body());
-    m_client->send(data);
+  if (command == "join") {
+    if (cmd.isBody() && cmd.body().size() >= 3) {
+      MessageData data(UserUtils::userId(), QByteArray(), command, cmd.body());
+      m_client->send(data);
+    }
+
+    return;
+  }
+
+  if (command == "login" || command == "reg") {
+    ClientCmd body(cmd.body());
+    if (body.isValid() && body.isBody())
+      login(command, body.command(), body.body());
+
     return;
   }
 
@@ -198,14 +210,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("open") && cmd.isBody()) {
     ChatCore::i()->openUrl(cmd.body());
-    return;
-  }
-
-  if (command == "reg") {
-    ClientCmd body(cmd.body());
-    if (body.isValid() && body.isBody())
-      reg(body.command(), body.body());
-
     return;
   }
 

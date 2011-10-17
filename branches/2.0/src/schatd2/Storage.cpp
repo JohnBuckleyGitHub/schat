@@ -205,21 +205,6 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
 
 
 /*!
- * Создание идентификатора пользователя.
- */
-QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
-{
-  QString prefix;
-  if (type == AuthRequestData::Anonymous || type == AuthRequestData::Cookie)
-    prefix = QLatin1String("anonymous:");
-  else if (type == AuthRequestData::SlaveNode)
-    prefix = QLatin1String("slave:");
-
-  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + userId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
-}
-
-
-/*!
  * Получение пользователя по идентификатору.
  *
  * \param id      Идентификатор пользователя.
@@ -243,6 +228,43 @@ ChatUser Storage::user(const QString &nick, bool normalize) const
     return m_nicks.value(nick);
 
   return m_nicks.value(this->normalize(nick));
+}
+
+
+LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &password)
+{
+  if (m_serverData->name().isEmpty())
+    return LoginReply(Notice::ServiceUnavailable);
+
+  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
+    return LoginReply(Notice::BadRequest);
+
+  QString login = RegReply::filter(name);
+  if (login.isEmpty())
+    return LoginReply(Notice::BadRequest);
+
+//  login += '@' + m_serverData->name();
+//
+//  qint64 result = m_db->reg(user, login, password);
+//  if (result == -2)
+//    return RegReply(Notice::UserAlreadyExists);
+
+  return LoginReply();
+}
+
+
+/*!
+ * Создание идентификатора пользователя.
+ */
+QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
+{
+  QString prefix;
+  if (type == AuthRequestData::Anonymous || type == AuthRequestData::Cookie)
+    prefix = QLatin1String("anonymous:");
+  else if (type == AuthRequestData::SlaveNode)
+    prefix = QLatin1String("slave:");
+
+  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + userId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
 }
 
 
@@ -270,16 +292,23 @@ QList<QByteArray> Storage::users(const QByteArray &id)
 }
 
 
+/*!
+ * Регистрация пользователя.
+ *
+ * \param user     Пользователь.
+ * \param name     Имя аккаунта пользователя.
+ * \param password Пароль.
+ */
 RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
 {
   if (m_serverData->name().isEmpty())
     return RegReply(Notice::ServiceUnavailable);
 
-  QString login = RegReply::filter(name);
-  if (login.isEmpty())
+  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
     return RegReply(Notice::BadRequest);
 
-  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
+  QString login = RegReply::filter(name);
+  if (login.isEmpty())
     return RegReply(Notice::BadRequest);
 
   login += '@' + m_serverData->name();

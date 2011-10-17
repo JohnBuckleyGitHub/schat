@@ -101,8 +101,9 @@ protected:
   void rejectMessage(int reason);
 
   // notices.
-  bool readReg();
-  void readNotice();
+  bool login();
+  bool reg();
+  void notice();
   void rejectNotice(int status);
 
   virtual void acceptedMessageHook(int reason);

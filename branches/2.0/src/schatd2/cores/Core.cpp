@@ -256,7 +256,7 @@ void Core::readPacket(int type)
       break;
 
     case Protocol::NoticePacket:
-      readNotice();
+      notice();
       break;
 
     default:
@@ -724,15 +724,25 @@ void Core::rejectMessage(int reason)
 }
 
 
+bool Core::login()
+{
+  ChatUser user = m_storage->user(m_reader->sender());
+  if (!user)
+    return false;
+
+  LoginReply reply = m_storage->login(user, m_notice->text(), m_reader->dest());
+  return true;
+}
+
 /*!
  * Обработка запроса на авторизацию.
  * В ответ клиенту высылается уведомление "reg.reply".
  */
-bool Core::readReg()
+bool Core::reg()
 {
   ChatUser user = m_storage->user(m_reader->sender());
   if (!user)
-    return true;
+    return false;
 
   RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest());
   Notice notice(m_reader->dest(), user->id(), "reg.reply", QVariant(), Storage::timestamp(), m_notice->id());
@@ -744,7 +754,7 @@ bool Core::readReg()
 }
 
 
-void Core::readNotice()
+void Core::notice()
 {
   quint16 type = m_reader->get<quint16>();
   if (type == AbstractNotice::GenericNoticeType) {
@@ -757,9 +767,15 @@ void Core::readNotice()
     }
 
     QString command = m_notice->command();
+    SCHAT_DEBUG_STREAM(command << notice.text() << notice.raw())
 
     if (command == "reg") {
-      readReg();
+      reg();
+      return;
+    }
+
+    if (command == "login") {
+      login();
       return;
     }
   }

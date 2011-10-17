@@ -17,6 +17,7 @@
  */
 
 #include "net/packets/accounts.h"
+#include "User.h"
 
 QString RegReply::filter(const QString &name)
 {
@@ -24,5 +25,15 @@ QString RegReply::filter(const QString &name)
   out.remove(' ');
   out.remove('@');
 
-  return out.left(64);
+  return out.left(User::MaxNickLength);
+}
+
+
+QString LoginReply::filter(const QString &name)
+{
+  QString out = name.simplified().toLower();
+  out.remove(' ');
+  out.remove('@');
+
+  return out.left(User::MaxNickLength);
 }
