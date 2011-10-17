@@ -197,7 +197,7 @@ bool SimpleClientPrivate::readChannel()
 {
   ChannelReader reader(this->reader);
 
-  SCHAT_DEBUG_STREAM(this << "readChannel()" << reader.channel->id().toHex())
+  SCHAT_DEBUG_STREAM(this << "readChannel()" << SimpleID::encode(reader.channel->id()))
 
   if (!reader.channel->isValid())
     return false;
@@ -573,7 +573,7 @@ void SimpleClient::leave()
  */
 void SimpleClient::part(const QByteArray &channelId)
 {
-  SCHAT_DEBUG_STREAM(this << "part()" << channelId.toHex())
+  SCHAT_DEBUG_STREAM(this << "part()" << SimpleID::encode(channelId))
 
   Q_D(SimpleClient);
 

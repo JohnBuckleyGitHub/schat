@@ -57,7 +57,7 @@ AuthResult CookieAuth::auth(const AuthRequestData &data)
   user->setGroups(exist->groups());
   m_core->add(user, data.authType);
 
-  qDebug() << "COOKIE AUTH" << user->nick() << user->host() << user->id().toHex() << user->userAgent();
+  qDebug() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
   return AuthResult(user->id());
 }
 

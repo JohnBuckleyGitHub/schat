@@ -561,7 +561,7 @@ bool Core::updateUserStatus()
 bool Core::command()
 {
   QString command = m_messageData->command;
-  SCHAT_DEBUG_STREAM(this << "command()" << command << m_packetsEvent->userId().toHex())
+  SCHAT_DEBUG_STREAM(this << "command()" << command << SimpleID::encode(m_packetsEvent->userId()))
 
   if (command.isEmpty())
     return false;

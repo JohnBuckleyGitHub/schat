@@ -129,7 +129,7 @@ void ChatCorePrivate::ignore(const QByteArray &id)
 void ChatCorePrivate::loadIgnoreList()
 {
   ignoreList.clear();
-  QStringList list = q->settings()->value(q->networks()->serverId().toHex() + QLatin1String("/IgnoreList"), QStringList()).toStringList();
+  QStringList list = q->settings()->value(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), QStringList()).toStringList();
 }
 
 
@@ -202,7 +202,7 @@ void ChatCorePrivate::writeIgnoreList()
     list.append(SimpleID::encode(ignoreList.at(i)));
   }
 
-  q->settings()->setValue(q->networks()->serverId().toHex() + QLatin1String("/IgnoreList"), list);
+  q->settings()->setValue(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), list);
 }
 
 
