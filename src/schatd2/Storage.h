@@ -56,6 +56,7 @@ public:
   ChatUser user(const QByteArray &id, bool offline = false) const;
   ChatUser user(const QString &nick, bool normalize) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
+  LoginReply login(ChatUser user, const QString &name, const QByteArray &password);
   QByteArray makeUserId(int type, const QByteArray &userId) const;
   QList<QByteArray> users(const QByteArray &id);
   RegReply reg(ChatUser user, const QString &name, const QByteArray &password);

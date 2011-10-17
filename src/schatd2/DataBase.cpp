@@ -109,6 +109,7 @@ int DataBase::start()
     "  normalNick TEXT,"
     "  gender     INTEGER DEFAULT ( 0 ),"
     "  host       TEXT,"
+    "  account    TEXT,"
     "  userAgent  TEXT"
     ");"));
   }
@@ -155,6 +156,12 @@ int DataBase::start()
 }
 
 
+/*!
+ * Получение ключа в таблице \p accounts для имени аккаунта пользователя.
+ *
+ * \param name Аккаунт пользователя вида имя@example.com.
+ * \return Ключ в таблице или -1 если аккаунт не найден.
+ */
 qint64 DataBase::account(const QString &name) const
 {
   QSqlQuery query;
@@ -240,6 +247,13 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
 
 /*!
  * Регистрация пользователя.
+ * Эта функция не проверяет корректность имени аккаунта и пароля.
+ *
+ * \param user Пользователь.
+ * \param name Имя аккаунта пользователя.
+ * \param password Пароль.
+ *
+ * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
  */
 qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password)
 {
@@ -260,7 +274,6 @@ qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &passw
   if (result == -1)
     return result;
 
-  user->setAccount(name);
   return result;
 }
 

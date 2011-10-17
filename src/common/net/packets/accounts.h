@@ -52,4 +52,26 @@ private:
   QString m_name; ///< Имя присвоенное при регистрации.
 };
 
+
+/*!
+ * Ответ на запрос регистрации.
+ */
+class SCHAT_EXPORT LoginReply
+{
+public:
+  LoginReply()
+  : m_status(Notice::InternalError)
+  {}
+
+  LoginReply(int status)
+  : m_status(status)
+  {}
+
+  inline int status() const { return m_status; }
+  static QString filter(const QString &name);
+
+private:
+  int m_status; ///< Статус регистрации, \sa Notice::StatusCodes.
+};
+
 #endif /* ACCOUNTS_H_ */
