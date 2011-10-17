@@ -31,6 +31,7 @@
 
 //#define SCHAT_RANDOM_CLIENT_ID
 
+#include "base32/base32.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 
@@ -45,6 +46,25 @@ int SimpleID::typeOf(const QByteArray &id)
     return InvalidId;
 
   return quint8(id.at(DefaultSize - 1));
+}
+
+
+QByteArray SimpleID::decode(const QByteArray &id)
+{
+  char outbuf[21];
+  if (base32_decode(reinterpret_cast<const uchar *>(id.toUpper().constData()), reinterpret_cast<uchar *>(outbuf)) != 21)
+    return QByteArray();
+
+  return QByteArray(outbuf, 21);
+}
+
+
+QByteArray SimpleID::encode(const QByteArray &id)
+{
+  char outbuf[40];
+  base32_encode(reinterpret_cast<const uchar *>(id.constData()), 21, reinterpret_cast<uchar *>(outbuf));
+
+  return QByteArray(outbuf, 34).toLower();
 }
 
 

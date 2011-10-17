@@ -16,6 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 HEADERS += \
+    base32/base32.h \
     Channel.h \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
@@ -47,6 +48,7 @@ HEADERS += \
     User.h \
 
 SOURCES += \
+    base32/base32.cpp \
     Channel.cpp \
     client/AbstractClient.cpp \
     client/NetworkPool.cpp \
