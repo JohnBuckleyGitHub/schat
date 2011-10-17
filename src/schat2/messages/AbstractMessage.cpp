@@ -42,7 +42,7 @@ AbstractMessage::AbstractMessage(const QString &type, const MessageData &data, i
   , m_type(type)
 {
   if (!data.id.isEmpty())
-    m_id = SimpleID::toBase64(data.id);
+    m_id = SimpleID::encode(data.id);
 
   setText(data.text, parseOptions);
 }
@@ -271,7 +271,7 @@ void AbstractMessage::nick(QString &html) const
   }
 
   QString t = tpl(QLatin1String("nick"));
-  t.replace(QLatin1String("%user-id%"), SimpleID::toBase64(m_senderId));
+  t.replace(QLatin1String("%user-id%"), SimpleID::encode(m_senderId));
   t.replace(QLatin1String("%user-url%"), UserUtils::toUrl(user, QLatin1String("insert")).toString());
   t.replace(QLatin1String("%user-nick%"), Qt::escape(user->nick()));
 

@@ -29,6 +29,7 @@ public:
   /// Значения по умолчанию.
   enum Defaults {
     DefaultSize = 21, ///< Размер идентификатора в байтах.
+    EncodedSize = 34  ///< Размер идентификатора кодированного в Base32.
   };
 
   /// Типы идентификаторов.
@@ -47,11 +48,11 @@ public:
   static int typeOf(const QByteArray &id);
   static QByteArray decode(const QByteArray &id);
   static QByteArray encode(const QByteArray &id);
-  static QByteArray fromBase64(const QByteArray &base64);
+  static QByteArray fromBase32(const QByteArray &base32);
   static QByteArray password(const QString &password, const QByteArray &salt = QByteArray());
   static QByteArray randomId(IdTypes type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
-  static QByteArray toBase64(const QByteArray &id);
+  static QByteArray toBase32(const QByteArray &data);
   static QByteArray uniqueId();
   static QString userAgent();
 

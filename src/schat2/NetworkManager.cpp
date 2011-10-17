@@ -85,7 +85,7 @@ void NetworkItem::read()
   QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
-  settings.beginGroup(m_id.toHex());
+  settings.beginGroup(SimpleID::encode(m_id));
   setAuth(settings.value(QLatin1String("Auth")).toString());
   m_url  = settings.value(QLatin1String("Url")).toString();
   m_name = settings.value(QLatin1String("Name")).toString();
@@ -98,7 +98,7 @@ void NetworkItem::write()
   QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
-  settings.beginGroup(m_id.toHex());
+  settings.beginGroup(SimpleID::encode(m_id));
   settings.setValue(QLatin1String("Auth"), auth());
   settings.setValue(QLatin1String("Url"),  m_url);
   settings.setValue(QLatin1String("Name"), m_name);
@@ -112,13 +112,16 @@ QString NetworkItem::auth()
     return QString();
 
   QByteArray auth = m_id + m_userId + m_cookie;
-  return SimpleID::toBase64(auth);
+  return SimpleID::toBase32(auth);
 }
 
 
+/*!
+ * FIXME эта функция перестала работать.
+ */
 void NetworkItem::setAuth(const QString &auth)
 {
-  QByteArray data = SimpleID::fromBase64(auth.toLatin1());
+  QByteArray data = SimpleID::fromBase32(auth.toLatin1());
   if (data.size() != SimpleID::DefaultSize * 3)
     return;
 
@@ -155,7 +158,7 @@ bool NetworkManager::open()
   if (networks.isEmpty())
     return false;
 
-  open(SimpleID::fromBase64(networks.at(0).toLatin1()));
+  open(SimpleID::decode(networks.at(0).toLatin1()));
 
   return true;
 }
@@ -201,7 +204,7 @@ QByteArray NetworkManager::serverId() const
   if (id.isEmpty()) {
     QStringList networks = networkList();
     if (!networks.isEmpty())
-      return SimpleID::fromBase64(networks.at(0).toLatin1());
+      return SimpleID::decode(networks.at(0).toLatin1());
   }
 
   return id;
@@ -214,7 +217,7 @@ QList<NetworkItem> NetworkManager::items() const
   QList<NetworkItem> out;
 
   for (int i = 0; i < networks.size(); ++i) {
-    QByteArray id = SimpleID::fromBase64(networks.at(i).toLatin1());
+    QByteArray id = SimpleID::decode(networks.at(i).toLatin1());
     if (SimpleID::typeOf(id) == SimpleID::ServerId)
       out.append(m_items.value(id));
   }
@@ -243,9 +246,9 @@ void NetworkManager::removeItem(const QByteArray &id)
 {
   QStringList networks = networkList();
 
-  networks.removeAll(SimpleID::toBase64(id));
+  networks.removeAll(SimpleID::encode(id));
   m_settings->setValue(QLatin1String("Networks"), networks);
-  m_settings->remove(id.toHex());
+  m_settings->remove(SimpleID::encode(id));
 }
 
 
@@ -260,13 +263,13 @@ void NetworkManager::clientStateChanged(int state)
 
 void NetworkManager::registered(const QString &name, const QByteArray &password)
 {
-  qDebug() << name << SimpleID::toBase64(password);
+  qDebug() << name << SimpleID::encode(password);
 }
 
 
 QString NetworkManager::root(const QByteArray &id) const
 {
-  QString out = m_locations->path(FileLocations::ConfigPath) + QLatin1String("/networks/") + SimpleID::toBase64(id);
+  QString out = m_locations->path(FileLocations::ConfigPath) + QLatin1String("/networks/") + SimpleID::encode(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
@@ -297,7 +300,7 @@ void NetworkManager::load()
 
   // Чтение данных серверов.
   for (int i = 0; i < networks.size(); ++i) {
-    QByteArray id = SimpleID::fromBase64(networks.at(i).toLatin1());
+    QByteArray id = SimpleID::decode(networks.at(i).toLatin1());
     if (SimpleID::typeOf(id) != SimpleID::ServerId) {
       invalid.append(networks.at(i));
       continue;
@@ -330,7 +333,7 @@ void NetworkManager::load()
 void NetworkManager::write()
 {
   QByteArray id  = m_client->serverData()->id();
-  QString base64 = SimpleID::toBase64(id);
+  QString base64 = SimpleID::encode(id);
 
   QStringList networks = networkList();
   networks.removeAll(base64);

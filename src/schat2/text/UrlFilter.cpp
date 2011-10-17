@@ -38,7 +38,7 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
         tag.classes = "nick";
         ClientUser user = UserUtils::user(QUrl(tag.url));
         if (user)
-          tag.classes += " " + SimpleID::toBase64(user->id());
+          tag.classes += " " + SimpleID::encode(user->id());
 
         tokens[i].text = tag.toText();
       }
