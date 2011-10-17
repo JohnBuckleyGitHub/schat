@@ -49,31 +49,53 @@ int SimpleID::typeOf(const QByteArray &id)
 }
 
 
+/*!
+ * Декодирование идентификатора из Base32.
+ *
+ * \param id Идентификатор, размер должен быть равен EncodedSize.
+ * \return Кодированный идентификатор или пустой массив в случае ошибки.
+ */
 QByteArray SimpleID::decode(const QByteArray &id)
 {
-  char outbuf[21];
-  if (base32_decode(reinterpret_cast<const uchar *>(id.toUpper().constData()), reinterpret_cast<uchar *>(outbuf)) != 21)
+  if (id.size() != EncodedSize)
     return QByteArray();
 
-  return QByteArray(outbuf, 21);
+  char outbuf[DefaultSize];
+  if (base32_decode(reinterpret_cast<const uchar *>(id.toUpper().constData()), reinterpret_cast<uchar *>(outbuf)) != DefaultSize)
+    return QByteArray();
+
+  return QByteArray(outbuf, DefaultSize);
 }
 
 
+/*!
+ * Кодирование идентификатора в Base32.
+ * Для результата используется символы в нижнем регистре, могут быть проблемы со сторонними реализациями Base32.
+ *
+ * \param id Идентификатор, размер должен быть равен DefaultSize.
+ * \return Кодированный идентификатор или пустой массив в случае ошибки.
+ */
 QByteArray SimpleID::encode(const QByteArray &id)
 {
-  char outbuf[40];
-  base32_encode(reinterpret_cast<const uchar *>(id.constData()), 21, reinterpret_cast<uchar *>(outbuf));
+  if (id.size() != DefaultSize)
+    return QByteArray();
 
-  return QByteArray(outbuf, 34).toLower();
+  char outbuf[40];
+  base32_encode(reinterpret_cast<const uchar *>(id.constData()), DefaultSize, reinterpret_cast<uchar *>(outbuf));
+
+  return QByteArray(outbuf, EncodedSize).toLower();
 }
 
 
-QByteArray SimpleID::fromBase64(const QByteArray &base64)
+QByteArray SimpleID::fromBase32(const QByteArray &base32)
 {
-  QByteArray tmp = base64;
-  tmp.replace('-', '+');
-  tmp.replace('_', '/');
-  return QByteArray::fromBase64(tmp);
+  char *outbuf = new char[base32.size()];
+
+  int len = base32_decode(reinterpret_cast<const uchar *>(base32.constData()), reinterpret_cast<uchar *>(outbuf));
+
+  QByteArray out = QByteArray(outbuf, len);
+  delete [] outbuf;
+  return out;
 }
 
 
@@ -98,15 +120,16 @@ QByteArray SimpleID::setType(int type, const QByteArray &id)
 }
 
 
-/*!
- * Выполняет преобразование в Base64 с заменой недопустимых для файловой системы символов,
- * в соответствии с RFC3548 http://tools.ietf.org/html/rfc3548#page-6.
- */
-QByteArray SimpleID::toBase64(const QByteArray &id)
+QByteArray SimpleID::toBase32(const QByteArray &data)
 {
-  QByteArray out = id.toBase64();
-  out.replace('+', '-');
-  out.replace('/', '_');
+  int size = BASE32_LEN(data.size());
+  char *outbuf = new char[size];
+
+  base32_encode(reinterpret_cast<const uchar *>(data.constData()), data.size(), reinterpret_cast<uchar *>(outbuf));
+
+  QByteArray out = QByteArray(outbuf, size);
+  out.replace('=', "");
+  delete [] outbuf;
   return out;
 }
 

@@ -63,7 +63,7 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault(QLatin1String("Kernel"),      QString());
   m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
   m_settings->setDefault(QLatin1String("MainChannel"), 1);
-  m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::toBase64(SimpleID::uniqueId())));
+  m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault(QLatin1String("PrivateKey"),  QLatin1String("server.key"));
   m_settings->setDefault(QLatin1String("ServerName"),  QString());
 

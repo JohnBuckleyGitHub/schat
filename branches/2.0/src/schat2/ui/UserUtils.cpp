@@ -92,9 +92,9 @@ ClientUser UserUtils::user(const QUrl &url)
   QByteArray id;
 
   if (path.contains(QLatin1String("/")))
-    id = SimpleID::fromBase64(path.split(QLatin1String("/")).at(0).toLatin1());
+    id = SimpleID::decode(path.split(QLatin1String("/")).at(0).toLatin1());
   else
-    id = SimpleID::fromBase64(path.toLatin1());
+    id = SimpleID::decode(path.toLatin1());
 
   if (SimpleID::typeOf(id) != SimpleID::UserId)
     return user;
@@ -105,7 +105,7 @@ ClientUser UserUtils::user(const QUrl &url)
 
   user = ClientUser(new User());
   user->setId(id);
-  user->setNick(SimpleID::fromBase64(url.queryItemValue("nick").toLatin1()));
+  user->setNick(SimpleID::fromBase32(url.queryItemValue("nick").toLatin1()));
 
   if (user->isValid()) {
     m_users[id] = user;
@@ -255,10 +255,10 @@ QString UserUtils::toolTip(ClientUser user)
 QUrl UserUtils::toUrl(ClientUser user, const QString &action)
 {
   QUrl out(QLatin1String("chat://user"));
-  out.setPath(SimpleID::toBase64(user->id()) + (action.isEmpty() ? QString() : QLatin1String("/") + action));
+  out.setPath(SimpleID::encode(user->id()) + (action.isEmpty() ? QString() : QLatin1String("/") + action));
 
   QList<QPair<QString, QString> > queries;
-  queries.append(QPair<QString, QString>(QLatin1String("nick"), SimpleID::toBase64(user->nick().toUtf8())));
+  queries.append(QPair<QString, QString>(QLatin1String("nick"), SimpleID::toBase32(user->nick().toUtf8())));
 
   out.setQueryItems(queries);
 
@@ -274,7 +274,7 @@ void UserUtils::clear()
 
 void UserUtils::updateUserNick(ChatView *view, ClientUser user)
 {
-  QString param = '"' + SimpleID::toBase64(user->id()) + "\", ";
+  QString param = '"' + SimpleID::encode(user->id()) + "\", ";
   param += '"' + UserUtils::toUrl(user, "insert").toString() + "\", ";
   param += '"' + AbstractMessage::quote(Qt::escape(user->nick())) + '"';
 

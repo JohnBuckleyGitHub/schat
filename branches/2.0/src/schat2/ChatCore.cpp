@@ -199,7 +199,7 @@ void ChatCorePrivate::writeIgnoreList()
 {
   QStringList list;
   for (int i = 0; i < ignoreList.size(); ++i) {
-    list.append(SimpleID::toBase64(ignoreList.at(i)));
+    list.append(SimpleID::encode(ignoreList.at(i)));
   }
 
   q->settings()->setValue(q->networks()->serverId().toHex() + QLatin1String("/IgnoreList"), list);
