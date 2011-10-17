@@ -229,8 +229,8 @@ void SlaveNode::uplinkPacketReady(int type)
 {
   qDebug() << "";
   qDebug() << "UPLINK PACKET READY" << type;
-  qDebug() << m_uplink->reader()->sender().toHex();
-  qDebug() << m_uplink->reader()->dest().toHex();
+  qDebug() << SimpleID::encode(m_uplink->reader()->sender());
+  qDebug() << SimpleID::encode(m_uplink->reader()->dest());
   qDebug() << "";
 
   if (type == Protocol::AuthReplyPacket)

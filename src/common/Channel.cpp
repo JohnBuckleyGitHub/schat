@@ -53,7 +53,7 @@ bool Channel::addUser(const QByteArray &id)
   if (m_users.contains(id))
     return false;
 
-  SCHAT_DEBUG_STREAM(this << "Channel::addUser()" << id.toHex())
+  SCHAT_DEBUG_STREAM(this << "Channel::addUser()" << SimpleID::encode(id))
   m_users.append(id);
   return true;
 }
@@ -67,7 +67,7 @@ bool Channel::removeUser(const QByteArray &id)
   if (!m_users.contains(id))
     return false;
 
-  SCHAT_DEBUG_STREAM(this << "Channel::removeUser()" << id.toHex())
+  SCHAT_DEBUG_STREAM(this << "Channel::removeUser()" << SimpleID::encode(id))
   m_users.removeAll(id);
   return true;
 }

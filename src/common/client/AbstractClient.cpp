@@ -71,7 +71,7 @@ QString AbstractClientPrivate::mangleNick()
  */
 bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
 {
-  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << reply.error << reply.userId.toHex())
+  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << reply.error << SimpleID::encode(reply.userId))
 
   Q_Q(AbstractClient);
   if (reply.status == AuthReplyData::AccessGranted) {
