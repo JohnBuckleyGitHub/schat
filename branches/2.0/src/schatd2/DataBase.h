@@ -24,27 +24,48 @@
 #include "ServerChannel.h"
 #include "ServerUser.h"
 
+class SCHAT_EXPORT Account
+{
+public:
+  Account()
+  : id(-1)
+  {}
+
+  bool isValid() const;
+
+  qint64 id;
+  QByteArray userId;
+  QString name;
+  QByteArray password;
+};
+
+
 class SCHAT_EXPORT DataBase : public QObject
 {
   Q_OBJECT
 
 public:
   DataBase(QObject *parent = 0);
+  int start();
+
+  // users.
   ChatUser user(const QByteArray &id);
   ChatUser user(qint64 id);
-  int start();
-  qint64 account(const QString &name) const;
   qint64 add(ChatUser user);
   qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
-  qint64 reg(ChatUser user, const QString &name, const QByteArray &password);
   qint64 userKey(const QByteArray &id);
   void update(ChatUser user);
 
+  // channels.
   ChatChannel channel(const QByteArray &id);
   ChatChannel channel(qint64 id);
   qint64 add(ChatChannel channel);
   qint64 channelKey(const QByteArray &id);
   void update(ChatChannel channel);
+
+  // accounts.
+  Account account(const QString &name) const;
+  qint64 reg(ChatUser user, const QString &name, const QByteArray &password);
 };
 
 #endif /* DATABASE_H_ */
