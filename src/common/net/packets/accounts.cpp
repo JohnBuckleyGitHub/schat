@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "net/packets/accounts.h"
 #include "User.h"
 
@@ -29,11 +31,25 @@ QString RegReply::filter(const QString &name)
 }
 
 
-QString LoginReply::filter(const QString &name)
+QString LoginReply::filter(const QString &name, const QString &serverName)
 {
   QString out = name.simplified().toLower();
   out.remove(' ');
-  out.remove('@');
 
-  return out.left(User::MaxNickLength);
+  int index = out.indexOf('@');
+  if (index == -1) {
+    out = out.left(User::MaxNickLength);
+  }
+  else if (index == 0) {
+    return QString();
+  }
+  else {
+    if (out.mid(index + 1) != serverName)
+      return QString();
+
+    out = out.left(index).left(User::MaxNickLength);
+  }
+
+  out += "@" + serverName;
+  return out;
 }

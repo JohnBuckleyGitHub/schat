@@ -67,11 +67,19 @@ public:
   : m_status(status)
   {}
 
+  LoginReply(const QString &name)
+  : m_status(Notice::OK)
+  , m_name(name)
+  {}
+
   inline int status() const { return m_status; }
-  static QString filter(const QString &name);
+  inline QString name() const { return m_name; }
+  inline void setStatus(int status) { m_status = status; }
+  static QString filter(const QString &name, const QString &serverName);
 
 private:
-  int m_status; ///< Статус регистрации, \sa Notice::StatusCodes.
+  int m_status;   ///< Статус регистрации, \sa Notice::StatusCodes.
+  QString m_name; ///< Имя пользователя.
 };
 
 #endif /* ACCOUNTS_H_ */

@@ -31,55 +31,28 @@
 #include "SimpleJSon.h"
 #include "Storage.h"
 
+
+bool Account::isValid() const
+{
+  if (id == -1)
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  if (SimpleID::typeOf(userId) != SimpleID::UserId)
+    return false;
+
+  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
+    return false;
+
+  return true;
+}
+
+
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
 {
-}
-
-
-/*!
- * Поиск пользователя по уникальному идентификатору.
- *
- * \param id Идентификатор пользователя или идентификатор cookie.
- * \return Указатель на пользователя или 0 если он не был найден.
- */
-ChatUser DataBase::user(const QByteArray &id)
-{
-  qint64 key = userKey(id);
-  if (key == -1)
-    return ChatUser();
-
-  return user(key);
-}
-
-
-/*!
- * Поиск пользователя по ключу в таблице users.
- *
- * \param id Ключ в таблице users.
- * \return Указатель на пользователя или 0 если он не был найден.
- */
-ChatUser DataBase::user(qint64 id)
-{
-  QSqlQuery query;
-  query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
-  query.addBindValue(id);
-  query.exec();
-
-  if (!query.first())
-    return ChatUser();
-
-  ChatUser user(new ServerUser(query.value(0).toByteArray()));
-  user->setKey(id);
-  user->setCookie(query.value(1).toByteArray());
-  user->setGroups(query.value(2).toString());
-  user->setNick(query.value(3).toString());
-  user->setNormalNick(query.value(4).toString());
-  user->setRawGender(query.value(5).toInt());
-  user->setHost(query.value(6).toString());
-  user->setUserAgent(query.value(7).toString());
-
-  return user;
 }
 
 
@@ -157,22 +130,48 @@ int DataBase::start()
 
 
 /*!
- * Получение ключа в таблице \p accounts для имени аккаунта пользователя.
+ * Поиск пользователя по уникальному идентификатору.
  *
- * \param name Аккаунт пользователя вида имя@example.com.
- * \return Ключ в таблице или -1 если аккаунт не найден.
+ * \param id Идентификатор пользователя или идентификатор cookie.
+ * \return Указатель на пользователя или 0 если он не был найден.
  */
-qint64 DataBase::account(const QString &name) const
+ChatUser DataBase::user(const QByteArray &id)
+{
+  qint64 key = userKey(id);
+  if (key == -1)
+    return ChatUser();
+
+  return user(key);
+}
+
+
+/*!
+ * Поиск пользователя по ключу в таблице users.
+ *
+ * \param id Ключ в таблице users.
+ * \return Указатель на пользователя или 0 если он не был найден.
+ */
+ChatUser DataBase::user(qint64 id)
 {
   QSqlQuery query;
-  query.prepare("SELECT id FROM accounts WHERE name = :name LIMIT 1;");
-  query.bindValue(":name", name);
+  query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.addBindValue(id);
   query.exec();
 
   if (!query.first())
-    return -1;
+    return ChatUser();
 
-  return query.value(0).toLongLong();
+  ChatUser user(new ServerUser(query.value(0).toByteArray()));
+  user->setKey(id);
+  user->setCookie(query.value(1).toByteArray());
+  user->setGroups(query.value(2).toString());
+  user->setNick(query.value(3).toString());
+  user->setNormalNick(query.value(4).toString());
+  user->setRawGender(query.value(5).toInt());
+  user->setHost(query.value(6).toString());
+  user->setUserAgent(query.value(7).toString());
+
+  return user;
 }
 
 
@@ -242,39 +241,6 @@ qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
     return -1;
 
   return query.lastInsertId().toLongLong();
-}
-
-
-/*!
- * Регистрация пользователя.
- * Эта функция не проверяет корректность имени аккаунта и пароля.
- *
- * \param user Пользователь.
- * \param name Имя аккаунта пользователя.
- * \param password Пароль.
- *
- * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
- */
-qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password)
-{
-  if (account(name) != -1)
-    return -2;
-
-  QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password) VALUES (:userId, :name, :password);"));
-  query.bindValue(QLatin1String(":userId"), user->id());
-  query.bindValue(QLatin1String(":name"), name);
-  query.bindValue(QLatin1String(":password"), password);
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
-    return -1;
-
-  qint64 result = query.lastInsertId().toLongLong();
-  if (result == -1)
-    return result;
-
-  return result;
 }
 
 
@@ -408,4 +374,63 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(QLatin1String(":data"), SimpleJSon::generate(channel->data()));
   query.bindValue(QLatin1String(":id"), channel->key());
   query.exec();
+}
+
+
+/*!
+ * Получение ключа в таблице \p accounts для имени аккаунта пользователя.
+ *
+ * \param name Аккаунт пользователя вида имя@example.com.
+ * \return Объект Account.
+ */
+Account DataBase::account(const QString &name) const
+{
+  QSqlQuery query;
+  query.prepare("SELECT id, userId, password FROM accounts WHERE name = :name LIMIT 1;");
+  query.bindValue(":name", name);
+  query.exec();
+
+  if (!query.first())
+    return Account();
+
+  Account account;
+  account.id = query.value(0).toLongLong();
+  account.userId = query.value(1).toByteArray();
+  account.name = name;
+  account.password = query.value(2).toByteArray();
+
+  return account;
+}
+
+
+/*!
+ * Регистрация пользователя.
+ * Эта функция не проверяет корректность имени аккаунта и пароля.
+ *
+ * \param user Пользователь.
+ * \param name Имя аккаунта пользователя.
+ * \param password Пароль.
+ *
+ * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
+ */
+qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password)
+{
+  if (account(name).id != -1)
+    return -2;
+
+  QSqlQuery query;
+  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password) VALUES (:userId, :name, :password);"));
+  query.bindValue(QLatin1String(":userId"), user->id());
+  query.bindValue(QLatin1String(":name"), name);
+  query.bindValue(QLatin1String(":password"), password);
+  query.exec();
+
+  if (query.numRowsAffected() <= 0)
+    return -1;
+
+  qint64 result = query.lastInsertId().toLongLong();
+  if (result == -1)
+    return result;
+
+  return result;
 }

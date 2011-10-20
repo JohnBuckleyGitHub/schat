@@ -731,6 +731,11 @@ bool Core::login()
     return false;
 
   LoginReply reply = m_storage->login(user, m_notice->text(), m_reader->dest());
+  Notice notice(m_reader->dest(), user->id(), "login.reply", QVariant(), Storage::timestamp(), m_notice->id());
+  notice.setStatus(reply.status());
+  notice.setText(reply.name());
+
+  send(user, notice.data(m_sendStream));
   return true;
 }
 

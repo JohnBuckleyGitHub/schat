@@ -239,17 +239,22 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   if (SimpleID::typeOf(password) != SimpleID::PasswordId)
     return LoginReply(Notice::BadRequest);
 
-  QString login = RegReply::filter(name);
+  QString login = LoginReply::filter(name, m_serverData->name());
   if (login.isEmpty())
     return LoginReply(Notice::BadRequest);
 
-//  login += '@' + m_serverData->name();
-//
-//  qint64 result = m_db->reg(user, login, password);
-//  if (result == -2)
-//    return RegReply(Notice::UserAlreadyExists);
+  Account account = m_db->account(login);
+  if (!account.isValid())
+    return LoginReply(Notice::Forbidden);
 
-  return LoginReply();
+  LoginReply reply(login);
+
+  if (user->id() != account.userId) {
+    reply.setStatus(Notice::UserNotExists);
+    return reply;
+  }
+
+  return reply;
 }
 
 
