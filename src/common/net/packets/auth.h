@@ -110,7 +110,7 @@ public:
 /*!
  * Данные запроса авторизации.
  */
-class SCHAT_EXPORT AuthRequestData
+class SCHAT_EXPORT AuthRequest
 {
 public:
   /// Тип авторизации.
@@ -121,12 +121,14 @@ public:
     Password = 0x70    ///< 'p' Авторизация по имени пользователя и паролю.
   };
 
-  AuthRequestData()
+  AuthRequest()
   : fields(0)
   , authType(0)
   {}
 
-  AuthRequestData(int authType, const QString &host, User *user);
+  AuthRequest(int authType, const QString &host, User *user);
+  AuthRequest(PacketReader *reader);
+  QByteArray data(QDataStream *stream) const;
   void setStatus(quint8 status);
 
   quint8 fields;           ///< Битовая маска дополнительный полей пакета.
@@ -139,40 +141,6 @@ public:
   QString userAgent;       ///< Идентификатор клиента пользователя.
   QString privateId;       ///< Приватный идентификатор сервера, только для типа авторизации AuthRequestData::SlaveNode.
   QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequestData::SlaveNode.
-};
-
-
-/*!
- * Формирует пакет Protocol::AuthRequestPacket.
- *
- * - 01 byte  - Fields.
- * - 01 byte  - AuthType.
- * - 21 byte  - Unique User Id.
- * - 01 byte  - reserved.
- * - 04 bytes - reserved.
- * - 01 byte  - reserved.
- * - 01 byte  - Gender.
- * - 01 byte  - User Status.
- * - utf8     - Server Host.
- * - utf8     - Nickname.
- * - utf8     - User Agent.
- */
-class SCHAT_EXPORT AuthRequestWriter : public PacketWriter
-{
-public:
-  AuthRequestWriter(QDataStream *stream, const AuthRequestData &data);
-};
-
-
-/*!
- * Читает пакет Protocol::AuthRequestPacket.
- */
-class SCHAT_EXPORT AuthRequestReader
-{
-public:
-  AuthRequestReader(PacketReader *reader);
-
-  AuthRequestData data;
 };
 
 #endif /* AUTH_H_ */

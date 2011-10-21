@@ -26,7 +26,7 @@ class SCHAT_EXPORT AnonymousAuth : public NodeAuth
 {
 public:
   AnonymousAuth(Core *core);
-  AuthResult auth(const AuthRequestData &data);
+  AuthResult auth(const AuthRequest &data);
   int type() const;
 };
 

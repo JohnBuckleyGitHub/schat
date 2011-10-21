@@ -241,6 +241,7 @@ QString UserUtils::toolTip(ClientUser user)
   QString out = "<b>" + Qt::escape(user->nick()) + "</b><br />";
   out += Qt::escape(user->host()) + "<br />";
   out += Qt::escape(user->userAgent()) + "<br />";
+  out += Qt::escape(user->account()) + "<br />";
   out += statusTitle(user->status()) + " " + Qt::escape(user->statusText()) + "<br />";
   out += QString("Server: %1").arg(user->serverNumber()) + "<br />";
   out += QString("Groups: %1").arg(user->groups().join(","));

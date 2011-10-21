@@ -30,7 +30,7 @@ SlaveAuth::SlaveAuth(MasterNode *node)
 }
 
 
-AuthResult SlaveAuth::auth(const AuthRequestData &data)
+AuthResult SlaveAuth::auth(const AuthRequest &data)
 {
   qDebug() << "SLAVE AUTH";
   if (Storage::i()->serverData()->privateId() != data.privateId)
@@ -56,5 +56,5 @@ AuthResult SlaveAuth::auth(const AuthRequestData &data)
 
 int SlaveAuth::type() const
 {
-  return AuthRequestData::SlaveNode;
+  return AuthRequest::SlaveNode;
 }

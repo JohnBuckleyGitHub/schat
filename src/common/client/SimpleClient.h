@@ -36,7 +36,8 @@ public:
     UserNickChanged = 2,       ///< Изменён ник пользователя.
     UserStaticDataChanged = 4, ///< Изменены статические данные пользователя.
     UserStatusChanged = 8,     ///< Изменён текстовый статус пользователя.
-    UserCompletelyChanged = 15 ///< Данные пользователя полностью изменены.
+    JSonDataChanged = 16,
+    UserCompletelyChanged = UserBasicDataChanged | UserNickChanged | UserStaticDataChanged | UserStatusChanged | JSonDataChanged ///< Данные пользователя полностью изменены.
   };
 
   explicit SimpleClient(QObject *parent = 0);

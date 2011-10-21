@@ -271,9 +271,9 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
 QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 {
   QString prefix;
-  if (type == AuthRequestData::Anonymous || type == AuthRequestData::Cookie)
+  if (type == AuthRequest::Anonymous || type == AuthRequest::Cookie)
     prefix = QLatin1String("anonymous:");
-  else if (type == AuthRequestData::SlaveNode)
+  else if (type == AuthRequest::SlaveNode)
     prefix = QLatin1String("slave:");
 
   return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + userId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;

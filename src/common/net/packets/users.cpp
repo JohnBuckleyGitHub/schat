@@ -93,14 +93,18 @@ void UserWriter::write(User *user, int options)
     put(user->userAgent());
     put(user->host());
     put(user->serverNumber());
-    put(user->groups().join(QLatin1String(",")));
+    put(user->groupsToString());
+    put(user->account());
   }
+
+  if (options & JSonData)
+    put(user->json());
 }
 
 
 UserReader::UserReader(PacketReader *reader)
 {
-  options = reader->get<quint8>();
+  fields = reader->get<quint8>();
   reader->get<quint8>(); // reserved.
 
   user.setId(reader->sender());
@@ -108,15 +112,19 @@ UserReader::UserReader(PacketReader *reader)
   user.setStatus(reader->get<quint8>());
   user.setNick(reader->text());
 
-  if (options & UserWriter::StaticData) {
+  if (fields & UserWriter::StaticData) {
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
     user.setServerNumber(reader->get<quint8>());
     user.setGroups(reader->text());
+    user.setAccount(reader->text());
   }
   else if (user.status() == User::OfflineStatus)
     user.setStatus(User::OnlineStatus);
 
-  if (options & UserWriter::AuthData)
+  if (fields & UserWriter::JSonData)
+    user.setJson(reader->json());
+
+  if (fields & UserWriter::AuthData)
     cookie = reader->id();
 }

@@ -101,7 +101,7 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 }
 
 
-AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
+AuthRequest::AuthRequest(int authType, const QString &host, User *user)
   : fields(0)
   , authType(authType)
   , gender(user->rawGender())
@@ -113,56 +113,58 @@ AuthRequestData::AuthRequestData(int authType, const QString &host, User *user)
 }
 
 
-void AuthRequestData::setStatus(quint8 status)
+AuthRequest::AuthRequest(PacketReader *reader)
+{
+  fields = reader->get<quint8>();
+  authType = reader->get<quint8>();
+  uniqueId = reader->id();
+  reader->get<quint8>();
+  reader->get<quint32>();
+  reader->get<quint8>();
+  gender = reader->get<quint8>();
+  setStatus(reader->get<quint8>());
+  host = reader->text();
+  nick = reader->text();
+  userAgent = reader->text();
+
+  if (authType == SlaveNode)
+    privateId = reader->text();
+
+  if (authType == Cookie)
+    cookie = reader->id();
+}
+
+
+QByteArray AuthRequest::data(QDataStream *stream) const
+{
+  PacketWriter writer(stream, Protocol::AuthRequestPacket);
+
+  writer.put(fields);
+  writer.put(authType);
+  writer.putId(uniqueId);
+  writer.put<quint8>(0);
+  writer.put<quint32>(0);
+  writer.put<quint8>(0);
+  writer.put(gender);
+  writer.put(status);
+  writer.put(host);
+  writer.put(nick);
+  writer.put(userAgent);
+
+  if (authType == SlaveNode)
+    writer.put(privateId);
+
+  if (authType == Cookie)
+    writer.putId(cookie);
+
+  return writer.data();
+}
+
+
+void AuthRequest::setStatus(quint8 status)
 {
   if (status == User::OfflineStatus)
     status = User::OnlineStatus;
 
   this->status = status;
-}
-
-
-AuthRequestWriter::AuthRequestWriter(QDataStream *stream, const AuthRequestData &data)
-  : PacketWriter(stream, Protocol::AuthRequestPacket)
-{
-  put(data.fields);
-  put(data.authType);
-  putId(data.uniqueId);
-  put<quint8>(0);
-  put<quint32>(0);
-  put<quint8>(0);
-  put(data.gender);
-  put(data.status);
-  put(data.host);
-  put(data.nick);
-  put(data.userAgent);
-
-  if (data.authType == AuthRequestData::SlaveNode)
-    put(data.privateId);
-
-  if (data.authType == AuthRequestData::Cookie) {
-    putId(data.cookie);
-  }
-}
-
-
-AuthRequestReader::AuthRequestReader(PacketReader *reader)
-{
-  data.fields = reader->get<quint8>();
-  data.authType = reader->get<quint8>();
-  data.uniqueId = reader->id();
-  reader->get<quint8>();
-  reader->get<quint32>();
-  reader->get<quint8>();
-  data.gender = reader->get<quint8>();
-  data.setStatus(reader->get<quint8>());
-  data.host = reader->text();
-  data.nick = reader->text();
-  data.userAgent = reader->text();
-
-  if (data.authType == AuthRequestData::SlaveNode)
-    data.privateId = reader->text();
-
-  if (data.authType == AuthRequestData::Cookie)
-    data.cookie = reader->id();
 }

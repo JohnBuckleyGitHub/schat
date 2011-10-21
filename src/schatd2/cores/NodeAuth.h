@@ -21,7 +21,7 @@
 
 #include <QByteArray>
 
-class AuthRequestData;
+class AuthRequest;
 class Core;
 
 class AuthResult
@@ -77,7 +77,7 @@ public:
   {}
 
   virtual ~NodeAuth() {}
-  virtual AuthResult auth(const AuthRequestData &data) = 0;
+  virtual AuthResult auth(const AuthRequest &data) = 0;
   virtual int type() const = 0;
 
 protected:

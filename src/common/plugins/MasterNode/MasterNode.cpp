@@ -70,7 +70,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
   if (m_storage->isSlave(m_packetsEvent->userId())) {
     QByteArray id = result.id;
     if (!m_hosts.contains(id))
-      id = m_storage->makeUserId(AuthRequestData::Anonymous, user->uniqueId());
+      id = m_storage->makeUserId(AuthRequest::Anonymous, user->uniqueId());
 
     if (m_hosts.contains(id)) {
       user->setHost(m_hosts.value(id));

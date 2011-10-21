@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QSharedPointer>
 #include <QStringList>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -134,6 +135,10 @@ public:
   inline QString account() const { return m_account; }
   inline void setAccount(const QString &account) { m_account = account; }
 
+  // m_json
+  inline QVariant json() const { return m_json; }
+  inline void setJson(const QVariant &json) { m_json = json; }
+
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
@@ -144,11 +149,12 @@ protected:
   QHash<int, QString> m_statuses;       ///< Статусы.
   QList<QByteArray> m_channels;         ///< Каналы.
   QString m_account;                    ///< Зарегистрированное имя пользователя.
-  QString m_host;                       ///< Адрес пользователя.
+  QString m_host;                       ///< Адрес пользователя. \deprecated Необходима поддержка множественного входа пользователя.
   QString m_nick;                       ///< Ник пользователя.
-  QString m_userAgent;                  ///< User Agent пользователя.
+  QString m_userAgent;                  ///< User Agent пользователя. \deprecated Необходима поддержка множественного входа пользователя.
   QStringList m_groups;                 ///< Группы в которых находится пользователь
   quint8 m_serverNumber;                ///< Номер сервера.
+  QVariant m_json;                      ///< JSON данные.
 };
 
 typedef QSharedPointer<User> ClientUser;

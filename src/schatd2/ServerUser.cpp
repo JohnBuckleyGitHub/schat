@@ -31,7 +31,7 @@ ServerUser::ServerUser(const QByteArray &id)
 }
 
 
-ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequestData &data, quint64 socketId)
+ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socketId)
   : User()
   , m_online(true)
   , m_uniqueId(data.uniqueId)
