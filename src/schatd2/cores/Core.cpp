@@ -724,6 +724,15 @@ void Core::rejectMessage(int reason)
 }
 
 
+/*!
+ * Процедура авторизации анонимного пользователя во время работы.
+ * В случае если пользователь успешно авторизирован, но текущий идентификатор
+ * не совпадает с зарегистрированным, то пользователь будет принудительно отключен от сервера.
+ *
+ * В ответ клиенту высылается уведомление "login.reply"
+ *
+ * \sa Storage::login().
+ */
 bool Core::login()
 {
   ChatUser user = m_storage->user(m_reader->sender());
@@ -735,13 +744,20 @@ bool Core::login()
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
-  send(user, notice.data(m_sendStream));
+  int option = NewPacketsEvent::NoSocketOption;
+  if (notice.status() == Notice::UserNotExists && !m_storage->isSlave(m_packetsEvent->userId()))
+    option = NewPacketsEvent::KillSocketOption;
+
+  send(user, notice.data(m_sendStream), option);
   return true;
 }
+
 
 /*!
  * Обработка запроса на авторизацию.
  * В ответ клиенту высылается уведомление "reg.reply".
+ * \todo Добавить корректное уведомление об ошибке если этот идентификатор пользователя уже зарегистрирован.
+ * \todo Добавить автоматический вход с свежезарегистрированным логином.
  */
 bool Core::reg()
 {
