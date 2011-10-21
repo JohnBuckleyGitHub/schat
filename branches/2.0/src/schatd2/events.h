@@ -55,7 +55,8 @@ class SCHAT_EXPORT NewPacketsEvent : public ServerEvent
 {
 public:
   enum Option {
-    AuthorizeSocketOption = 1,
+    NoSocketOption,
+    AuthorizeSocketOption,
     KillSocketOption
   };
 

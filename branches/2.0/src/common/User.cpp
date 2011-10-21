@@ -29,7 +29,7 @@ User::User()
   , m_serverNumber(0)
 {
   m_channels.append(m_id);
-  m_groups.append(QLatin1String("regular"));
+  m_groups.append(QLatin1String("anonymous"));
 }
 
 
@@ -41,7 +41,7 @@ User::User(const QString &nick)
 {
   setNick(nick);
   m_channels.append(m_id);
-  m_groups.append(QLatin1String("regular"));
+  m_groups.append(QLatin1String("anonymous"));
 }
 
 

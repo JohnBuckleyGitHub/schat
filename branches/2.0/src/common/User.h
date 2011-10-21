@@ -123,8 +123,11 @@ public:
   void setStatus(int status, const QString &text);
 
   // m_groups
+  inline QString groupsToString() const { return m_groups.join(","); }
   inline QStringList groups() const { return m_groups; }
-  inline void setGroups(const QString &groups) { m_groups = groups.split(QLatin1String(","), QString::SkipEmptyParts); }
+  inline void addGroup(const QString &name) { if (!m_groups.contains(name)) m_groups.append(name); }
+  inline void removeGroup(const QString &name) { m_groups.removeAll(name); }
+  inline void setGroups(const QString &groups) { m_groups = groups.split(",", QString::SkipEmptyParts); }
   inline void setGroups(const QStringList &groups) { m_groups = groups; }
 
   // m_account

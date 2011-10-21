@@ -52,7 +52,7 @@ public:
   ChatUser user(const QByteArray &id);
   ChatUser user(qint64 id);
   qint64 add(ChatUser user);
-  qint64 addGroup(const QString &name, qint64 allow = 0, qint64 deny = 0);
+  qint64 addGroup(const QString &name, const QString &permissions = QString());
   qint64 userKey(const QByteArray &id);
   void update(ChatUser user);
 

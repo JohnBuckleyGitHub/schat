@@ -90,14 +90,14 @@ int DataBase::start()
   if (!tables.contains(QLatin1String("groups"))) {
     query.exec(QLatin1String(
     "CREATE TABLE groups ( "
-    "  id      INTEGER PRIMARY KEY,"
-    "  name    TEXT    NOT NULL UNIQUE ,"
-    "  allow   INTEGER DEFAULT ( 0 ),"
-    "  deny    INTEGER DEFAULT ( 0 )"
+    "  id          INTEGER PRIMARY KEY,"
+    "  name        TEXT    NOT NULL UNIQUE ,"
+    "  permissions TEXT"
     ");"));
 
-    addGroup(QLatin1String("master"));
-    addGroup(QLatin1String("regular"));
+    addGroup("master");
+    addGroup("registered");
+    addGroup("anonymous");
   }
 
   if (!tables.contains(QLatin1String("channels"))) {
@@ -154,7 +154,7 @@ ChatUser DataBase::user(const QByteArray &id)
 ChatUser DataBase::user(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT userId, cookie, groups, nick, normalNick, gender, host, account, userAgent FROM users WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
@@ -169,7 +169,8 @@ ChatUser DataBase::user(qint64 id)
   user->setNormalNick(query.value(4).toString());
   user->setRawGender(query.value(5).toInt());
   user->setHost(query.value(6).toString());
-  user->setUserAgent(query.value(7).toString());
+  user->setAccount(query.value(7).toString());
+  user->setUserAgent(query.value(8).toString());
 
   return user;
 }
@@ -210,7 +211,7 @@ qint64 DataBase::add(ChatUser user)
 
   query.bindValue(QLatin1String(":userId"),     user->id());
   query.bindValue(QLatin1String(":cookie"),     user->cookie());
-  query.bindValue(QLatin1String(":groups"),     user->groups().join(QLatin1String(",")));
+  query.bindValue(QLatin1String(":groups"),     user->groupsToString());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"),     user->rawGender());
@@ -228,13 +229,12 @@ qint64 DataBase::add(ChatUser user)
 }
 
 
-qint64 DataBase::addGroup(const QString &name, qint64 allow, qint64 deny)
+qint64 DataBase::addGroup(const QString &name, const QString &permissions)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO groups (name, allow, deny) VALUES (:name, :allow, :deny);"));
+  query.prepare(QLatin1String("INSERT INTO groups (name, permissions) VALUES (:name, :permissions);"));
   query.bindValue(QLatin1String(":name"), name);
-  query.bindValue(QLatin1String(":allow"), allow);
-  query.bindValue(QLatin1String(":deny"), deny);
+  query.bindValue(QLatin1String(":permissions"), permissions);
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -272,15 +272,16 @@ qint64 DataBase::userKey(const QByteArray &id)
 void DataBase::update(ChatUser user)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, groups = :groups, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, userAgent = :userAgent WHERE id = :id;"));
-  query.bindValue(QLatin1String(":cookie"), user->cookie());
-  query.bindValue(QLatin1String(":groups"), user->groups().join(QLatin1String(",")));
-  query.bindValue(QLatin1String(":nick"), user->nick());
+  query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, groups = :groups, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, account = :account, userAgent = :userAgent WHERE id = :id;"));
+  query.bindValue(QLatin1String(":cookie"),     user->cookie());
+  query.bindValue(QLatin1String(":groups"),     user->groupsToString());
+  query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
-  query.bindValue(QLatin1String(":gender"), user->rawGender());
-  query.bindValue(QLatin1String(":host"), user->host());
-  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
-  query.bindValue(QLatin1String(":id"), user->key());
+  query.bindValue(QLatin1String(":gender"),     user->rawGender());
+  query.bindValue(QLatin1String(":host"),       user->host());
+  query.bindValue(QLatin1String(":account"),    user->account());
+  query.bindValue(QLatin1String(":userAgent"),  user->userAgent());
+  query.bindValue(QLatin1String(":id"),         user->key());
   query.exec();
 }
 
@@ -407,8 +408,8 @@ Account DataBase::account(const QString &name) const
  * Регистрация пользователя.
  * Эта функция не проверяет корректность имени аккаунта и пароля.
  *
- * \param user Пользователь.
- * \param name Имя аккаунта пользователя.
+ * \param user     Пользователь.
+ * \param name     Имя аккаунта пользователя.
  * \param password Пароль.
  *
  * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
@@ -428,9 +429,5 @@ qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &passw
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  qint64 result = query.lastInsertId().toLongLong();
-  if (result == -1)
-    return result;
-
-  return result;
+  return query.lastInsertId().toLongLong();
 }

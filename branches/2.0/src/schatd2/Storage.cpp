@@ -231,6 +231,9 @@ ChatUser Storage::user(const QString &nick, bool normalize) const
 }
 
 
+/*!
+ * Процедура авторизации анонимного пользователя во время работы.
+ */
 LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &password)
 {
   if (m_serverData->name().isEmpty())
@@ -248,6 +251,10 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
     return LoginReply(Notice::Forbidden);
 
   LoginReply reply(login);
+  user->setAccount(login);
+  user->removeGroup("anonymous");
+  user->addGroup("registered");
+  m_db->update(user);
 
   if (user->id() != account.userId) {
     reply.setStatus(Notice::UserNotExists);
@@ -321,6 +328,9 @@ RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &pass
   qint64 result = m_db->reg(user, login, password);
   if (result == -2)
     return RegReply(Notice::UserAlreadyExists);
+
+  if (result == -1)
+    return RegReply(Notice::InternalError);
 
   return RegReply(login);
 }
