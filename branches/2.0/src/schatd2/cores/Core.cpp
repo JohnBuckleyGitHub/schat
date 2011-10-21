@@ -426,7 +426,7 @@ bool Core::readAuthRequest()
 {
   qDebug() << "Core::readAuthRequest()";
 
-  AuthRequestData data = AuthRequestReader(m_reader).data;
+  AuthRequest data(m_reader);
 
   for (int i = 0; i < m_auth.size(); ++i) {
     if (data.authType != m_auth.at(i)->type())

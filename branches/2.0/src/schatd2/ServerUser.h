@@ -25,14 +25,13 @@
 #include "User.h"
 
 class AuthRequest;
-class AuthRequestData;
 class QSqlQuery;
 
 class SCHAT_EXPORT ServerUser : public User
 {
 public:
   ServerUser(const QByteArray &id);
-  ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequestData &data, quint64 socketId);
+  ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socketId);
   ServerUser(const User *user);
   ~ServerUser();
   inline bool isOnline() const { return m_online; }

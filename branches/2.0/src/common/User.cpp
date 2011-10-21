@@ -51,11 +51,13 @@ User::User(const User *other)
   , m_status(other->status())
   , m_id(other->id())
   , m_channels(other->channels())
+  , m_account(other->account())
   , m_host(other->host())
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
   , m_groups(other->groups())
   , m_serverNumber(other->serverNumber())
+  , m_json(other->json())
 {
 }
 

@@ -61,14 +61,14 @@ SlaveNode::SlaveNode(QObject *parent)
 bool SlaveNode::add(ChatUser user, int authType)
 {
   if (mode() == FailbackMode) {
-    if (authType == AuthRequestData::Anonymous)
+    if (authType == AuthRequest::Anonymous)
       return false;
 
     return Core::add(user, authType);
   }
 
   m_pending[user->id()] = user;
-  if (authType == AuthRequestData::Cookie && !user->cookie().isEmpty())
+  if (authType == AuthRequest::Cookie && !user->cookie().isEmpty())
     m_pending[user->cookie()] = user;
 
   QList<QByteArray> packets;
@@ -218,10 +218,10 @@ bool SlaveNode::readUserData()
  */
 void SlaveNode::uplinkAuth()
 {
-  AuthRequestData data(AuthRequestData::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
+  AuthRequest data(AuthRequest::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
   data.uniqueId = m_uplink->uniqueId();
   data.privateId = m_storage->serverData()->privateId();
-  m_uplink->send(AuthRequestWriter(m_uplink->sendStream(), data).data());
+  m_uplink->send(data.data(m_uplink->sendStream()));
 }
 
 
@@ -288,10 +288,10 @@ void SlaveNode::reAuth()
     notice.setText(i.value()->host());
     packets.append(notice.data(m_uplink->sendStream()));
 
-    AuthRequestData data(AuthRequestData::Cookie, QString(), i.value().data());
+    AuthRequest data(AuthRequest::Cookie, QString(), i.value().data());
     data.uniqueId = i.value()->uniqueId();
     data.cookie = i.value()->cookie();
-    packets.append(AuthRequestWriter(m_sendStream, data).data());
+    packets.append(data.data(m_sendStream));
   }
 
   m_uplink->send(packets);
@@ -442,7 +442,7 @@ void SlaveNode::uplinkReadUserData()
   ChatUser user = m_storage->user(m_uplink->reader()->sender());
   if (user) {
     UserReader reader(m_uplink->reader());
-    if (user->nick() == reader.user.nick() && !(reader.options & UserWriter::StaticData))
+    if (user->nick() == reader.user.nick() && !(reader.fields & UserWriter::StaticData))
       return;
 
     updateUserData(user, &reader.user);

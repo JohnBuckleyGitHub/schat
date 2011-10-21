@@ -62,7 +62,7 @@ bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
 
   if (reply.status == AuthReplyData::AccessDenied) {
     if (reply.error == AuthReplyData::AuthTypeNotImplemented || reply.error == AuthReplyData::AuthTypeNotAllowed) {
-      if (authType == AuthRequestData::Cookie)
+      if (authType == AuthRequest::Cookie)
         cookieAuth = false;
     }
   }
@@ -488,12 +488,18 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
   existUser->setRawGender(user->rawGender());
   existUser->setStatus(user->status());
 
-  if (reader.options & UserWriter::StaticData) {
+  if (reader.fields & UserWriter::StaticData) {
     existUser->setUserAgent(user->userAgent());
     existUser->setHost(user->host());
     existUser->setServerNumber(user->serverNumber());
     existUser->setGroups(user->groups());
+    existUser->setAccount(user->account());
     changed |= SimpleClient::UserStaticDataChanged;
+  }
+
+  if (reader.fields & UserWriter::JSonData) {
+    existUser->setJson(user->json());
+    changed |= SimpleClient::JSonDataChanged;
   }
 
   emit(q->userDataChanged(existUser->id(), changed));
@@ -601,14 +607,14 @@ void SimpleClient::requestAuth()
 
   Q_D(SimpleClient);
 
-  d->authType = AuthRequestData::Anonymous;
+  d->authType = AuthRequest::Anonymous;
   if (d->cookieAuth && !d->cookie.isEmpty())
-    d->authType = AuthRequestData::Cookie;
+    d->authType = AuthRequest::Cookie;
 
-  AuthRequestData data(d->authType, d->url.host(), d->user.data());
+  AuthRequest data(d->authType, d->url.host(), d->user.data());
   data.uniqueId = d->uniqueId;
   data.cookie = d->cookie;
-  send(AuthRequestWriter(d->sendStream, data).data());
+  send(data.data(d->sendStream));
 }
 
 

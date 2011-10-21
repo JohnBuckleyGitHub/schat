@@ -27,22 +27,26 @@ class PacketReader;
 /*!
  * Формирует пакет Protocol::UserDataPacket, содержащий базовую информацию о пользователе.
  *
- * - 01 byte  - options.
- * - 01 byte  - reserved.
- * - 01 byte  - Gender.
- * - 01 byte  - Status.
+ * - quint8   - Fields.
+ * - quint8   - reserved.
+ * - quint8   - Gender.
+ * - quint8   - Status.
  * - utf8     - Nickname.
- * - utf8     - UserAgent (is not set Protocol::Multicast).
- * - utf8     - Host (is not set Protocol::Multicast).
+ * - utf8     - UserAgent (если установлен флаг StaticData).
+ * - utf8     - Host (если установлен флаг StaticData).
+ * - utf8     - Группы пользователя (если установлен флаг StaticData).
+ * - utf8     - Аккаунт пользователя (если установлен флаг StaticData).
+ * - utf8     - JSON данные (если установлен флаг JSonData).
  */
 class SCHAT_EXPORT UserWriter : public PacketWriter
 {
 public:
   /// Опции данных.
-  enum Options {
+  enum Fields {
     NoOptions = 0,
     StaticData = 1, ///< Пакет содержит не изменяемую информацию о пользователе, например UserAgent, адрес и т.д.
-    AuthData = 2    ///< Пакет содержит авторизационную информацию.
+    AuthData = 2,   ///< Пакет содержит авторизационную информацию, используется только для синхронизации данных пользователей между серверами.
+    JSonData = 4    ///< Пакет содержит JSON данные содержащую дополнительную информацию о пользователе.
   };
 
   UserWriter(QDataStream *stream, User *user);
@@ -63,7 +67,7 @@ class SCHAT_EXPORT UserReader
 public:
   UserReader(PacketReader *reader);
 
-  quint8 options;
+  quint8 fields;
   User user;
   QByteArray cookie;
 };

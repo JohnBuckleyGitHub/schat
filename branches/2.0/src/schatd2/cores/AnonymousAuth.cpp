@@ -30,7 +30,7 @@ AnonymousAuth::AnonymousAuth(Core *core)
 }
 
 
-AuthResult AnonymousAuth::auth(const AuthRequestData &data)
+AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
   Storage *storage = Storage::i();
   QByteArray userId = storage->makeUserId(data.authType, data.uniqueId);
@@ -58,5 +58,5 @@ AuthResult AnonymousAuth::auth(const AuthRequestData &data)
 
 int AnonymousAuth::type() const
 {
-  return AuthRequestData::Anonymous;
+  return AuthRequest::Anonymous;
 }

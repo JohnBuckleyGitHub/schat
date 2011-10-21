@@ -30,7 +30,7 @@ CookieAuth::CookieAuth(Core *core)
 }
 
 
-AuthResult CookieAuth::auth(const AuthRequestData &data)
+AuthResult CookieAuth::auth(const AuthRequest &data)
 {
   if (data.cookie.isEmpty() || SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AuthResult();
@@ -55,6 +55,8 @@ AuthResult CookieAuth::auth(const AuthRequestData &data)
   user->setHost(m_core->packetsEvent()->address.toString());
   user->setCookie(exist->cookie());
   user->setGroups(exist->groups());
+  user->setAccount(exist->account());
+  qDebug() << user->account();
   m_core->add(user, data.authType);
 
   qDebug() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
@@ -64,7 +66,7 @@ AuthResult CookieAuth::auth(const AuthRequestData &data)
 
 int CookieAuth::type() const
 {
-  return AuthRequestData::Cookie;
+  return AuthRequest::Cookie;
 }
 
 
@@ -76,5 +78,5 @@ BypassCookieAuth::BypassCookieAuth(Core *core)
 
 int BypassCookieAuth::type() const
 {
-  return AuthRequestData::Cookie;
+  return AuthRequest::Cookie;
 }

@@ -27,7 +27,7 @@ SlaveAnonymousAuth::SlaveAnonymousAuth(SlaveNode *node)
 }
 
 
-AuthResult SlaveAnonymousAuth::auth(const AuthRequestData &data)
+AuthResult SlaveAnonymousAuth::auth(const AuthRequest &data)
 {
   AuthResult result = AnonymousAuth::auth(data);
   if (result.action == AuthResult::Reject)

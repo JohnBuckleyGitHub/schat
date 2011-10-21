@@ -26,7 +26,7 @@ SlaveCookieAuth::SlaveCookieAuth(SlaveNode *node)
 {
 }
 
-AuthResult SlaveCookieAuth::auth(const AuthRequestData &data)
+AuthResult SlaveCookieAuth::auth(const AuthRequest &data)
 {
   AuthResult result = CookieAuth::auth(data);
   if (result.action == AuthResult::Reject)
@@ -41,7 +41,7 @@ AuthResult SlaveCookieAuth::auth(const AuthRequestData &data)
 
 int SlaveCookieAuth::type() const
 {
-  return AuthRequestData::Cookie;
+  return AuthRequest::Cookie;
 }
 
 
@@ -51,7 +51,7 @@ BypassSlaveCookieAuth::BypassSlaveCookieAuth(SlaveNode *node)
 }
 
 
-AuthResult BypassSlaveCookieAuth::auth(const AuthRequestData &data)
+AuthResult BypassSlaveCookieAuth::auth(const AuthRequest &data)
 {
   AuthResult result = SlaveAnonymousAuth::auth(data);
   if (result.action == AuthResult::Pending && SimpleID::typeOf(data.cookie) == SimpleID::CookieId)
@@ -63,5 +63,5 @@ AuthResult BypassSlaveCookieAuth::auth(const AuthRequestData &data)
 
 int BypassSlaveCookieAuth::type() const
 {
-  return AuthRequestData::Cookie;
+  return AuthRequest::Cookie;
 }

@@ -28,7 +28,7 @@ class SlaveCookieAuth : public CookieAuth
 {
 public:
   SlaveCookieAuth(SlaveNode *node);
-  AuthResult auth(const AuthRequestData &data);
+  AuthResult auth(const AuthRequest &data);
   int type() const;
 
 protected:
@@ -40,7 +40,7 @@ class BypassSlaveCookieAuth : public SlaveAnonymousAuth
 {
 public:
   BypassSlaveCookieAuth(SlaveNode *node);
-  AuthResult auth(const AuthRequestData &data);
+  AuthResult auth(const AuthRequest &data);
   int type() const;
 };
 

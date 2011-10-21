@@ -27,7 +27,7 @@ class SlaveAuth : public AnonymousAuth
 {
 public:
   SlaveAuth(MasterNode *node);
-  AuthResult auth(const AuthRequestData &data);
+  AuthResult auth(const AuthRequest &data);
   int type() const;
 
 private:
