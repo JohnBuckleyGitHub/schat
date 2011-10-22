@@ -27,6 +27,87 @@
 #include "net/SimpleID.h"
 #include "User.h"
 
+AuthReply::AuthReply(PacketReader *reader)
+  : AbstractPacket(reader)
+{
+  serverData.setId(reader->sender());
+  userId = reader->dest();
+
+  fields = reader->get<quint8>();
+  status = reader->get<quint16>();
+  id = reader->id();
+
+  if (status == Notice::OK) {
+    cookie = reader->id();
+    serverData.setFeatures(reader->get<quint32>());
+    serverData.setNumber(reader->get<quint8>());
+    serverData.setName(reader->text());
+  }
+
+  if (fields & JSonField)
+    json = reader->json();
+
+  if (status == Notice::OK) {
+    if (serverData.is(ServerData::AutoJoinSupport))
+      serverData.setChannelId(reader->id());
+  }
+}
+
+
+AuthReply::AuthReply(ServerData *data, int status, const QByteArray &id, const QVariant &json)
+  : AbstractPacket(json)
+  , status(status)
+  , id(id)
+{
+  serverData.setId(data->id());
+  serverData.setName(data->name());
+}
+
+
+AuthReply::AuthReply(ServerData *data, User *user, const QByteArray &cookie, const QByteArray &id, const QVariant &json)
+  : AbstractPacket(json)
+  , userId(user->id())
+  , status(Notice::OK)
+  , cookie(cookie)
+  , id(id)
+{
+  serverData.setId(data->id());
+  serverData.setName(data->name());
+  serverData.setChannelId(data->channelId());
+  serverData.setFeatures(data->features());
+  serverData.setNumber(user->serverNumber());
+}
+
+
+QByteArray AuthReply::data(QDataStream *stream) const
+{
+  if (!json.isNull())
+    fields |= JSonField;
+
+  PacketWriter writer(stream, Protocol::AuthReplyPacket, serverData.id(), userId);
+  writer.put(fields);
+  writer.put(status);
+  writer.putId(id);
+
+  if (status == Notice::OK) {
+    writer.putId(cookie);
+    writer.put(serverData.features());
+    writer.put(serverData.number());
+    writer.put(serverData.name());
+  }
+
+  if (fields & JSonField)
+    writer.put(json);
+
+  if (status == Notice::OK) {
+    if (serverData.is(ServerData::AutoJoinSupport))
+      writer.putId(serverData.channelId());
+  }
+
+  return writer.data();
+}
+
+
 AuthReplyData::AuthReplyData(ServerData *data, int error)
   : status(AccessDenied)
   , protoVersion(Protocol::V4_0)
@@ -101,8 +182,8 @@ AuthReplyReader::AuthReplyReader(PacketReader *reader)
 }
 
 
-AuthRequest::AuthRequest(int authType, const QString &host, User *user)
-  : fields(0)
+AuthRequest::AuthRequest(int authType, const QString &host, User *user, const QVariant &json)
+  : AbstractPacket(json)
   , authType(authType)
   , gender(user->rawGender())
   , host(host)
@@ -114,10 +195,12 @@ AuthRequest::AuthRequest(int authType, const QString &host, User *user)
 
 
 AuthRequest::AuthRequest(PacketReader *reader)
+  : AbstractPacket(reader)
 {
   fields = reader->get<quint8>();
   authType = reader->get<quint8>();
   uniqueId = reader->id();
+  id = reader->id();
   reader->get<quint8>();
   reader->get<quint32>();
   reader->get<quint8>();
@@ -132,16 +215,26 @@ AuthRequest::AuthRequest(PacketReader *reader)
 
   if (authType == Cookie)
     cookie = reader->id();
+
+  if (fields & JSonField)
+    json = reader->json();
 }
 
 
 QByteArray AuthRequest::data(QDataStream *stream) const
 {
+  if (!json.isNull())
+    fields |= JSonField;
+
+  if (id.isEmpty())
+    id = SimpleID::randomId(SimpleID::MessageId);
+
   PacketWriter writer(stream, Protocol::AuthRequestPacket);
 
   writer.put(fields);
   writer.put(authType);
   writer.putId(uniqueId);
+  writer.putId(id);
   writer.put<quint8>(0);
   writer.put<quint32>(0);
   writer.put<quint8>(0);
@@ -156,6 +249,9 @@ QByteArray AuthRequest::data(QDataStream *stream) const
 
   if (authType == Cookie)
     writer.putId(cookie);
+
+  if (fields & JSonField)
+    writer.put(json);
 
   return writer.data();
 }

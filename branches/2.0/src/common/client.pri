@@ -24,6 +24,7 @@ HEADERS += \
     FileLocations.h \
     k8json/k8json.h \
     net/PacketReader.h \
+    net/packets/AbstractPacket.h \
     net/packets/accounts.h \
     net/packets/auth.h \
     net/packets/channels.h \
