@@ -211,6 +211,15 @@ QString Notice::status(int status)
     case NotFound:
       return QObject::tr("Not Found");
 
+    case UserAlreadyExists:
+      return QObject::tr("User Already Exists");
+
+    case UserNotExists:
+      return QObject::tr("User Not Exists");
+
+    case NickAlreadyUse:
+      return QObject::tr("Nick Already In Use");
+
     case InternalError:
       return QObject::tr("Internal Error");
 
@@ -225,18 +234,6 @@ QString Notice::status(int status)
 
     case GatewayTimeout:
       return QObject::tr("Gateway Timeout");
-
-    case VersionNotSupported:
-      return QObject::tr("Version Not Supported");
-
-    case UserAlreadyExists:
-      return QObject::tr("User Already Exists");
-
-    case UserNotExists:
-      return QObject::tr("User Not Exists");
-
-    case NickAlreadyUse:
-      return QObject::tr("Nick Already In Use");
 
     default:
       return QObject::tr("Unknown");

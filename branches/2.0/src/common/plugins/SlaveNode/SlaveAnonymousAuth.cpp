@@ -34,7 +34,7 @@ AuthResult SlaveAnonymousAuth::auth(const AuthRequest &data)
     return result;
 
   if (m_node->mode() == SlaveNode::FailbackMode)
-    return AuthResult(AuthReplyData::AuthTypeNotAllowed);
+    return AuthResult(Notice::Forbidden, data.id);
 
   result.action = AuthResult::Pending;
   return result;

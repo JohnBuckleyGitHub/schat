@@ -33,7 +33,7 @@ AuthResult SlaveCookieAuth::auth(const AuthRequest &data)
     return result;
 
   if (result.action == AuthResult::Nothing && m_node->mode() == SlaveNode::FailbackMode)
-    return AuthResult(AuthReplyData::Forbidden);
+    return AuthResult(Notice::Forbidden, data.id);
 
   return result;
 }

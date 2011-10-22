@@ -445,7 +445,7 @@ bool Core::readAuthRequest()
       return true;
   }
 
-  AuthResult result(AuthReplyData::AuthTypeNotImplemented);
+  AuthResult result(Notice::NotImplemented, data.id);
   rejectAuth(result);
 
   return false;
@@ -467,8 +467,10 @@ void Core::acceptAuth(const AuthResult &result)
   if (channel->userCount() > 1)
     packets = userDataToSync(channel, user);
 
-  if (result.packet)
-    packets.prepend(AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), user.data(), user->cookie())).data());
+  if (result.packet) {
+    AuthReply reply(m_storage->serverData(), user.data(), user->cookie(), result.authId, result.json);
+    packets.prepend(reply.data(m_sendStream));
+  }
 
   packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
   send(user, packets, result.option);
@@ -485,8 +487,9 @@ void Core::acceptAuth(const AuthResult &result)
  */
 void Core::rejectAuth(const AuthResult &result)
 {
-  QByteArray packet = AuthReplyWriter(m_sendStream, AuthReplyData(m_storage->serverData(), result.error)).data();
-  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), packet);
+  AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
+
+  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), reply.data(m_sendStream));
   event->option = result.option;
 
   QCoreApplication::postEvent(m_listener, event);

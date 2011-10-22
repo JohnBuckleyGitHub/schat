@@ -41,15 +41,15 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
     return AuthResult();
 
   if (storage->user(exist->id()))
-    return AuthResult(AuthReplyData::UserIdAlreadyUse);
+    return AuthResult(Notice::UserAlreadyExists, data.id); ///< \deprecated Необходима поддержка множественного входа.
 
   QString normalNick = storage->normalize(data.nick);
   if (storage->user(normalNick, false))
-    return AuthResult(AuthReplyData::NickAlreadyUse, 0);
+    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
   ChatUser user = ChatUser(new ServerUser(normalNick, exist->id(), data, m_core->packetsEvent()->socket()));
   if (!user->isValid())
-    return AuthResult(AuthReplyData::BadUser);
+    return AuthResult(Notice::BadRequest, data.id);
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
@@ -60,7 +60,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
   m_core->add(user, data.authType);
 
   qDebug() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
-  return AuthResult(user->id());
+  return AuthResult(user->id(), data.id);
 }
 
 

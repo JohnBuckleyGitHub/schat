@@ -354,7 +354,7 @@ void SlaveNode::setMode(Mode mode)
  */
 void SlaveNode::uplinkAuthReply()
 {
-  AuthReplyData data = AuthReplyReader(m_uplink->reader()).data;
+  AuthReply data(m_uplink->reader());
 
   bool update = false;
   ChatUser user = m_storage->user(data.userId);
@@ -374,7 +374,7 @@ void SlaveNode::uplinkAuthReply()
   QByteArray id = user->id();
   int option = 0;
 
-  if (data.status == AuthReplyData::AccessGranted) {
+  if (data.status == Notice::OK) {
     option = NewPacketsEvent::AuthorizeSocketOption;
     user->setId(data.userId);
     user->setCookie(data.cookie);
@@ -387,16 +387,17 @@ void SlaveNode::uplinkAuthReply()
     addChannel(user);
   }
 
-  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse) {
-    m_storage->remove(user);
-    option = NewPacketsEvent::KillSocketOption;
-  }
-
-  if (data.error != AuthReplyData::NickAlreadyUse) {
-    m_pending.remove(user->id());
-    m_pending.remove(id);
-    m_pending.remove(user->cookie());
-  }
+  // FIXME ! Исправить
+//  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse) {
+//    m_storage->remove(user);
+//    option = NewPacketsEvent::KillSocketOption;
+//  }
+//
+//  if (data.error != AuthReplyData::NickAlreadyUse) {
+//    m_pending.remove(user->id());
+//    m_pending.remove(id);
+//    m_pending.remove(user->cookie());
+//  }
 
   m_timestamp = m_uplink->timestamp();
   send(user, m_uplink->readBuffer(), option);
