@@ -51,7 +51,7 @@ void SimpleClientPrivate::clearClient()
 }
 
 
-bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
+bool SimpleClientPrivate::readAuthReply(const AuthReply &reply)
 {
   if (AbstractClientPrivate::readAuthReply(reply)) {
     ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
@@ -60,8 +60,8 @@ bool SimpleClientPrivate::readAuthReply(const AuthReplyData &reply)
     return true;
   }
 
-  if (reply.status == AuthReplyData::AccessDenied) {
-    if (reply.error == AuthReplyData::AuthTypeNotImplemented || reply.error == AuthReplyData::AuthTypeNotAllowed) {
+  if (reply.status != Notice::OK) {
+    if (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden) {
       if (authType == AuthRequest::Cookie)
         cookieAuth = false;
     }
@@ -633,7 +633,7 @@ void SimpleClient::newPacketsImpl()
 
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
-        d->readAuthReply(AuthReplyReader(d->reader).data);
+        d->readAuthReply(AuthReply(d->reader));
         break;
 
       case Protocol::ChannelPacket:

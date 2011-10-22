@@ -37,22 +37,22 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   ChatUser user = storage->user(userId);
 
   if (user)
-    return AuthResult(AuthReplyData::UserIdAlreadyUse);
+    return AuthResult(Notice::UserAlreadyExists, data.id); ///< \deprecated Необходима поддержка множественного входа.
 
   QString normalNick = storage->normalize(data.nick);
   if (storage->user(normalNick, false))
-    return AuthResult(AuthReplyData::NickAlreadyUse, 0);
+    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
   user = ChatUser(new ServerUser(normalNick, userId, data, m_core->packetsEvent()->socket()));
   if (!user->isValid())
-    return AuthResult(AuthReplyData::BadUser);
+    return AuthResult(Notice::BadRequest, data.id);
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
   m_core->add(user, data.authType);
 
   qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
-  return AuthResult(userId);
+  return AuthResult(userId, data.id);
 }
 
 

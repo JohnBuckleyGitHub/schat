@@ -156,15 +156,14 @@ public:
     Unauthorized        = 401, ///< Unauthorized.
     Forbidden           = 402, ///< Forbidden.
     NotFound            = 403, ///< Not Found.
+    UserAlreadyExists   = 404, ///< User Already Exists.
+    UserNotExists       = 405, ///< User Not Exists.
+    NickAlreadyUse      = 406, ///< Nick Already In Use.
     InternalError       = 500, ///< Internal Error.
     NotImplemented      = 501, ///< Not Implemented.
     BadGateway          = 502, ///< Bad Gateway.
     ServiceUnavailable  = 503, ///< Service Unavailable.
-    GatewayTimeout      = 504, ///< Gateway Timeout.
-    VersionNotSupported = 505, ///< Version Not Supported.
-    UserAlreadyExists   = 506, ///< User Already Exists.
-    UserNotExists       = 507, ///< User Not Exists.
-    NickAlreadyUse      = 508  ///< Nick Already In Use.
+    GatewayTimeout      = 504 ///< Gateway Timeout.
   };
 
   Notice(quint16 type, PacketReader *reader);

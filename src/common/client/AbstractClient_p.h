@@ -25,7 +25,7 @@
 #include "client/AbstractClient.h"
 #include "net/SimpleSocket_p.h"
 
-class AuthReplyData;
+class AuthReply;
 class PacketReader;
 class NetworkPool;
 
@@ -39,7 +39,7 @@ public:
 
   // Установка и завершение соединения.
   QString mangleNick();
-  virtual bool readAuthReply(const AuthReplyData &reply);
+  virtual bool readAuthReply(const AuthReply &reply);
   virtual void restore() {}
   virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}

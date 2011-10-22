@@ -69,12 +69,12 @@ QString AbstractClientPrivate::mangleNick()
 /*!
  * Чтение пакета AuthReplyPacket.
  */
-bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
+bool AbstractClientPrivate::readAuthReply(const AuthReply &reply)
 {
-  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << reply.error << SimpleID::encode(reply.userId))
+  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
 
   Q_Q(AbstractClient);
-  if (reply.status == AuthReplyData::AccessGranted) {
+  if (reply.status == Notice::OK) {
     q->setAuthorized(reply.userId);
     user->setId(reply.userId);
     user->setServerNumber(reply.serverData.number());
@@ -89,11 +89,9 @@ bool AbstractClientPrivate::readAuthReply(const AuthReplyData &reply)
     emit(q->ready());
     return true;
   }
-  else if (reply.status == AuthReplyData::AccessDenied) {
-    if (reply.error == AuthReplyData::NickAlreadyUse) {
-      user->setNick(mangleNick());
-      q->requestAuth();
-    }
+  else if (reply.status == Notice::NickAlreadyUse) {
+    user->setNick(mangleNick());
+    q->requestAuth();
   }
 
   return false;
@@ -416,10 +414,12 @@ void AbstractClient::newPacketsImpl()
     PacketReader reader(d->readStream);
     d->reader = &reader;
 
-    if (isAuthorized())
+    if (isAuthorized()) {
       emit packetReady(reader.type());
-    else if (reader.type() == Protocol::AuthReplyPacket)
-      d->readAuthReply(AuthReplyReader(d->reader).data);
+    }
+    else if (reader.type() == Protocol::AuthReplyPacket) {
+      d->readAuthReply(AuthReply(d->reader));
+    }
   }
 }
 

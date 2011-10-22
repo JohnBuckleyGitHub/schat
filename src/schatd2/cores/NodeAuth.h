@@ -19,7 +19,7 @@
 #ifndef NODEAUTH_H_
 #define NODEAUTH_H_
 
-#include <QByteArray>
+#include <QVariant>
 
 class AuthRequest;
 class Core;
@@ -37,32 +37,36 @@ public:
   AuthResult()
   : action(Nothing)
   , packet(true)
-  , error(0)
   , option(0)
+  , status(200)
   {}
 
-  AuthResult(int error, int option = 2)
+  AuthResult(int status, const QByteArray &authId, int option = 2)
   : action(Reject)
   , packet(true)
-  , error(error)
   , option(option)
+  , status(status)
+  , authId(authId)
   {}
 
-  AuthResult(const QByteArray &id)
+  AuthResult(const QByteArray &id, const QByteArray &authId)
   : action(Accept)
   , packet(true)
-  , error(0)
   , option(1)
+  , status(200)
+  , authId(authId)
   , id(id)
   {}
 
   virtual ~AuthResult() {}
 
-  Action action; ///< Действие.
-  bool packet;   ///< true если нужно отправить стандартный AuthReplyPacket.
-  int error;     ///< Код ошибки.
-  int option;    ///< Дополнительная опция для установки состояния сокета.
-  QByteArray id; ///< Идентификатор пользователя.
+  Action action;     ///< Действие.
+  bool packet;       ///< true если нужно отправить стандартный AuthReplyPacket.
+  int option;        ///< Дополнительная опция для установки состояния сокета.
+  int status;        ///< Статус.
+  QByteArray authId; ///< Идентификатор авторизации.
+  QByteArray id;     ///< Идентификатор пользователя.
+  QVariant json;     ///< JSON данные.
 };
 
 

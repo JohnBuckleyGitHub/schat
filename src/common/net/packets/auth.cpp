@@ -42,6 +42,7 @@ AuthReply::AuthReply(PacketReader *reader)
     serverData.setFeatures(reader->get<quint32>());
     serverData.setNumber(reader->get<quint8>());
     serverData.setName(reader->text());
+    account = reader->text();
   }
 
   if (fields & JSonField)
@@ -59,8 +60,7 @@ AuthReply::AuthReply(ServerData *data, int status, const QByteArray &id, const Q
   , status(status)
   , id(id)
 {
-  serverData.setId(data->id());
-  serverData.setName(data->name());
+  serverData = *data;
 }
 
 
@@ -71,11 +71,8 @@ AuthReply::AuthReply(ServerData *data, User *user, const QByteArray &cookie, con
   , cookie(cookie)
   , id(id)
 {
-  serverData.setId(data->id());
-  serverData.setName(data->name());
-  serverData.setChannelId(data->channelId());
-  serverData.setFeatures(data->features());
-  serverData.setNumber(user->serverNumber());
+  account = user->account();
+  serverData = *data;
 }
 
 
@@ -94,6 +91,7 @@ QByteArray AuthReply::data(QDataStream *stream) const
     writer.put(serverData.features());
     writer.put(serverData.number());
     writer.put(serverData.name());
+    writer.put(account);
   }
 
   if (fields & JSonField)
@@ -105,80 +103,6 @@ QByteArray AuthReply::data(QDataStream *stream) const
   }
 
   return writer.data();
-}
-
-
-AuthReplyData::AuthReplyData(ServerData *data, int error)
-  : status(AccessDenied)
-  , protoVersion(Protocol::V4_0)
-  , error(error)
-{
-  serverData.setId(data->id());
-}
-
-
-AuthReplyData::AuthReplyData(ServerData *data, User *user, const QByteArray &cookie)
-  : userId(user->id())
-  , status(AccessGranted)
-  , cookie(cookie)
-  , protoVersion(Protocol::V4_0)
-  , error(NoError)
-{
-  serverData.setId(data->id());
-  serverData.setName(data->name());
-  serverData.setChannelId(data->channelId());
-  serverData.setFeatures(data->features());
-  serverData.setNumber(user->serverNumber());
-}
-
-
-AuthReplyWriter::AuthReplyWriter(QDataStream *stream, const AuthReplyData &data)
-  : PacketWriter(stream, Protocol::AuthReplyPacket, data.serverData.id(), data.userId)
-{
-  put(data.status);
-  put(data.serverData.number());
-
-  if (data.status == AuthReplyData::AccessGranted) {
-    putId(data.cookie);
-    put(data.protoVersion);
-    put<quint16>(0);
-    put<quint16>(0);
-    put(data.serverData.features());
-
-    if (data.serverData.is(ServerData::AutoJoinSupport))
-      putId(data.serverData.channelId());
-
-    put(data.serverData.name());
-  }
-  else {
-    put(data.error);
-  }
-}
-
-
-AuthReplyReader::AuthReplyReader(PacketReader *reader)
-{
-  data.serverData.setId(reader->sender());
-  data.userId = reader->dest();
-  data.error = 0;
-  data.status = reader->get<quint8>();
-  data.serverData.setNumber(reader->get<quint8>());
-
-  if (data.status == AuthReplyData::AccessGranted) {
-    data.cookie = reader->id();
-    data.protoVersion = reader->get<quint8>();
-    reader->get<quint16>();
-    reader->get<quint16>();
-    data.serverData.setFeatures(reader->get<quint32>());
-
-    if (data.serverData.is(ServerData::AutoJoinSupport))
-      data.serverData.setChannelId(reader->id());
-
-    data.serverData.setName(reader->text());
-  }
-  else {
-    data.error = reader->get<quint8>();
-  }
 }
 
 

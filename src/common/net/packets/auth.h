@@ -41,6 +41,7 @@ class User;
  *    - \b quint32 - Битовая маска стандартных возможностей сервера ServerData::Features (\p status == Notice::OK).
  *    - \b quint8  - Номер сервера (\p status & AuthReply::JSonField).
  *    - \b utf8    - Имя сервера (\p status & AuthReply::JSonField).
+ *    - \b utf8    - Имя аккаунта пользователя если пользователь зарегистрирован или пустая строка (\p status & AuthReply::JSonField).
  *  - \b utf8      - JSON данные (\p status & AuthReply::JSonField).
  *    - \b id      - Идентификатор основного канала (\p status == Notice::OK и опции сервера содержат ServerData::AutoJoinSupport).
  */
@@ -68,88 +69,7 @@ public:
   QByteArray cookie;     ///< Cookie.
   QByteArray id;         ///< Уникальный идентификатор авторизации.
   ServerData serverData; ///< Данные о сервере.
-};
-
-
-/*!
- * Данные ответа сервера на запрос авторизации.
- */
-class SCHAT_EXPORT AuthReplyData
-{
-public:
-  /// Статус.
-  enum Status {
-    AccessGranted = 71, ///< 'G' Доступ разрешён.
-    AccessDenied = 68   ///< 'D' Доступ запрещён.
-  };
-
-  /// Коды ошибок.
-  enum Error {
-    NoError = 0,
-    Forbidden = 40,               ///< Доступ запрещён.
-    AuthTypeNotAllowed = 41,      ///< Выбранный тип авторизации запрещён на сервере.
-    UserIdAlreadyUse = 42,        ///< Идентификатор пользователя уже используется.
-    NickAlreadyUse = 43,          ///< Ник уже используется.
-    BadAuthRequest = 44,          ///< Некорректный пакет AuthRequest.
-    BadUser = 45,                 ///< Некорректные данные пользователя.
-    InternalServerError = 100,    ///< Внутренняя ошибка сервера.
-    AuthTypeNotImplemented = 101, ///< Выбранный тип авторизации не реализован.
-  };
-
-  AuthReplyData()
-  : error(0)
-  {}
-
-  AuthReplyData(ServerData *data, int error);
-  AuthReplyData(ServerData *data, User *user, const QByteArray &cookie);
-
-  QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
-  quint8 status;         ///< Статус авторизации \sa Status.
-  QByteArray cookie;     ///< Cookie.
-  quint8 protoVersion;   ///< Максимальная поддерживаемая версия протокола.
-  quint8 error;          ///< Код ошибки \sa Error.
-  ServerData serverData; ///< Данные о сервере.
-};
-
-
-/*!
- * Формирует пакет Protocol::AuthReplyPacket.
- *
- * - sender:  - Идентификатор сервера.
- * - dest:    - Идентификатор, выданный сервером клиенту, в случае если статус AccessDenied это поле отсутствует.
- * - 01 byte  - Статус аутентификации(AccessGranted или AccessDenied), \sa Status.
- * - 01 byte  - номер сервера.
- *
- * Дальнейшие данные различны в зависимости от статуса.
- * Если статус AccessGranted:
- * - 21 byte  - Cookie.
- * - 01 byte  - Версия протокола.
- * - 02 bytes - Разрешающие разрешения.
- * - 02 bytes - Запрещающие разрешения.
- * - 04 bytes - Возможности сервера.
- * - 21 byte  - Идентификатор основного канала (если установлена опция ServerData::AutoJoinSupport)
- * - utf8     - Имя сервера.
- * - utf8     - Адрес пользователя.
- *
- * Если статус AccessDenied.
- * - 01 byte  - Error code \sa Error.
- */
-class SCHAT_EXPORT AuthReplyWriter : public PacketWriter
-{
-public:
-  AuthReplyWriter(QDataStream *stream, const AuthReplyData &data);
-};
-
-
-/*!
- * Читает пакет Protocol::AuthReplyPacket.
- */
-class SCHAT_EXPORT AuthReplyReader
-{
-public:
-  AuthReplyReader(PacketReader *reader);
-
-  AuthReplyData data;
+  QString account;       ///< Имя аккаунта пользователя.
 };
 
 
