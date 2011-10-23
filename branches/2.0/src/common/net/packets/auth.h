@@ -42,7 +42,7 @@ class User;
  *    - \b quint8  - Номер сервера (\p status & AuthReply::JSonField).
  *    - \b utf8    - Имя сервера (\p status & AuthReply::JSonField).
  *    - \b utf8    - Имя аккаунта пользователя если пользователь зарегистрирован или пустая строка (\p status & AuthReply::JSonField).
- *  - \b utf8      - JSON данные (\p status & AuthReply::JSonField).
+ *  - \b json      - JSON данные (\p status & AuthReply::JSonField).
  *    - \b id      - Идентификатор основного канала (\p status == Notice::OK и опции сервера содержат ServerData::AutoJoinSupport).
  */
 class SCHAT_EXPORT AuthReply : public AbstractPacket
@@ -75,6 +75,20 @@ public:
 
 /*!
  * Данные запроса авторизации.
+ *
+ * Поля данных:
+ *  - \b quint8    - Битовая маска AuthRequest::fields дополнительный полей пакета.
+ *  - \b quint8    - Тип авторизации AuthRequest::authType.
+ *  - \b id        - Уникальный идентификатор клиента AuthRequest::uniqueId.
+ *  - \b id        - Уникальный идентификатор авторизации AuthRequest::id.
+ *  - \b quint8    - Пол и цвет пользователя AuthRequest::gender.
+ *  - \b quint8    - Статус пользователя AuthRequest::status.
+ *  - \b utf8      - Адрес по которому клиент подключается к серверу AuthRequest::host.
+ *  - \b utf8      - Ник AuthRequest::nick.
+ *  - \b utf8      - Идентификатор клиента пользователя AuthRequest::userAgent.
+ *    - \b utf8    - AuthRequest::privateId, (\p authType == AuthRequest::SlaveNode).
+ *    - \b id      - AuthRequest::cookie, (\p authType == AuthRequest::Cookie).
+ *    - \b json    - AuthRequest::json, (AuthRequest::fields & AuthRequest::JSonField)
  */
 class SCHAT_EXPORT AuthRequest : public AbstractPacket
 {
@@ -100,6 +114,7 @@ public:
 
   AuthRequest(int authType, const QString &host, User *user, const QVariant &json = QVariant());
   AuthRequest(PacketReader *reader);
+  bool isValid() const;
   QByteArray data(QDataStream *stream) const;
   void setStatus(quint8 status);
 
@@ -111,8 +126,8 @@ public:
   QString host;            ///< Адрес по которому клиент подключается к серверу.
   QString nick;            ///< Ник.
   QString userAgent;       ///< Идентификатор клиента пользователя.
-  QString privateId;       ///< Приватный идентификатор сервера, только для типа авторизации AuthRequestData::SlaveNode.
-  QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequestData::SlaveNode.
+  QString privateId;       ///< Приватный идентификатор сервера, только для типа авторизации AuthRequest::SlaveNode.
+  QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequest::Cookie.
 };
 
 #endif /* AUTH_H_ */

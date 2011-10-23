@@ -424,9 +424,13 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
  */
 bool Core::readAuthRequest()
 {
-  qDebug() << "Core::readAuthRequest()";
-
   AuthRequest data(m_reader);
+
+  if (!data.isValid()) {
+    AuthResult result(Notice::BadRequest, data.id);
+    rejectAuth(result);
+    return false;
+  }
 
   for (int i = 0; i < m_auth.size(); ++i) {
     if (data.authType != m_auth.at(i)->type())
@@ -447,7 +451,6 @@ bool Core::readAuthRequest()
 
   AuthResult result(Notice::NotImplemented, data.id);
   rejectAuth(result);
-
   return false;
 }
 
@@ -460,6 +463,8 @@ void Core::acceptAuth(const AuthResult &result)
   ChatUser user = m_storage->user(result.id);
   if (!user)
     return;
+
+  SCHAT_DEBUG_STREAM(this << "ACCEPT AUTH" << user->nick() << SimpleID::encode(result.authId) << SimpleID::encode(user->id()))
 
   ChatChannel channel = addChannel(user);
   QList<QByteArray> packets;
@@ -487,6 +492,8 @@ void Core::acceptAuth(const AuthResult &result)
  */
 void Core::rejectAuth(const AuthResult &result)
 {
+  SCHAT_DEBUG_STREAM(this << "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId))
+
   AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
 
   NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), reply.data(m_sendStream));
