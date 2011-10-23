@@ -125,9 +125,6 @@ AuthRequest::AuthRequest(PacketReader *reader)
   authType = reader->get<quint8>();
   uniqueId = reader->id();
   id = reader->id();
-  reader->get<quint8>();
-  reader->get<quint32>();
-  reader->get<quint8>();
   gender = reader->get<quint8>();
   setStatus(reader->get<quint8>());
   host = reader->text();
@@ -145,6 +142,30 @@ AuthRequest::AuthRequest(PacketReader *reader)
 }
 
 
+bool AuthRequest::isValid() const
+{
+  if (SimpleID::typeOf(uniqueId) != SimpleID::UniqueUserId)
+    return false;
+
+  if (SimpleID::typeOf(id) != SimpleID::MessageId)
+    return false;
+
+  if (host.isEmpty() || userAgent.isEmpty())
+    return false;
+
+  if (!User::isValidNick(nick))
+    return false;
+
+  if (authType == Cookie && SimpleID::typeOf(cookie) != SimpleID::CookieId)
+    return false;
+
+  if (fields & JSonField && json.isNull())
+    return false;
+
+  return true;
+}
+
+
 QByteArray AuthRequest::data(QDataStream *stream) const
 {
   if (!json.isNull())
@@ -159,9 +180,6 @@ QByteArray AuthRequest::data(QDataStream *stream) const
   writer.put(authType);
   writer.putId(uniqueId);
   writer.putId(id);
-  writer.put<quint8>(0);
-  writer.put<quint32>(0);
-  writer.put<quint8>(0);
   writer.put(gender);
   writer.put(status);
   writer.put(host);
