@@ -82,6 +82,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
     cookie = reply.cookie;
     pool->setLast();
+    authId.clear();
 
     setServerData(reply.serverData);
 
@@ -92,6 +93,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     return true;
   }
   else if (reply.status == Notice::NickAlreadyUse) {
+    authId = reply.id;
     user->setNick(mangleNick());
     q->requestAuth();
   }

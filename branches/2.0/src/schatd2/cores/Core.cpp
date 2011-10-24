@@ -126,9 +126,10 @@ QByteArray Core::id() const
 }
 
 
-bool Core::add(ChatUser user, int authType)
+bool Core::add(ChatUser user, int authType, const QByteArray &authId)
 {
   Q_UNUSED(authType);
+  Q_UNUSED(authId)
   return m_storage->add(user);
 }
 

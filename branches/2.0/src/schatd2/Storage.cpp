@@ -63,11 +63,11 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault("Certificate", QLatin1String("server.crt"));
   m_settings->setDefault("Kernel",      QString());
   m_settings->setDefault("Listen",      QStringList("0.0.0.0:7667"));
+  m_settings->setDefault("LogLevel",    2);
   m_settings->setDefault("MainChannel", 1);
   m_settings->setDefault("PrivateId",   QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault("PrivateKey",  QLatin1String("server.key"));
   m_settings->setDefault("ServerName",  QString());
-  m_settings->setDefault("LogLevel",    2);
 
   m_log = new NodeLog;
   m_db = new DataBase(this);

@@ -40,7 +40,6 @@ class BypassSlaveCookieAuth : public SlaveAnonymousAuth
 {
 public:
   BypassSlaveCookieAuth(SlaveNode *node);
-  AuthResult auth(const AuthRequest &data);
   int type() const;
 };
 

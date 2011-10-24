@@ -16,12 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "events.h"
 #include "net/packets/auth.h"
+#include "NodeLog.h"
 #include "Storage.h"
 
 AnonymousAuth::AnonymousAuth(Core *core)
@@ -49,9 +48,9 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
-  m_core->add(user, data.authType);
+  m_core->add(user, data.authType, data.id);
 
-  qDebug() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
+  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent();
   return AuthResult(userId, data.id);
 }
 
