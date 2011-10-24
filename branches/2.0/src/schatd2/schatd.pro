@@ -34,6 +34,7 @@ HEADERS = \
     cores/NodeAuth.h \
     DataBase.h \
     events.h \
+    NodeLog.h \
     NodePlugins.h \
     plugins/NodePlugin.h \
     ServerChannel.h \
@@ -46,6 +47,7 @@ SOURCES = \
     cores/Core.cpp \
     DataBase.cpp \
     events.cpp \
+    NodeLog.cpp \
     NodePlugins.cpp \
     plugins/NodePlugin.cpp \
     ServerChannel.cpp \

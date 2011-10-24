@@ -30,8 +30,9 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
-#include "Settings.h"
+#include "NodeLog.h"
 #include "ServerUser.h"
+#include "Settings.h"
 #include "Storage.h"
 
 Storage *Storage::m_self = 0;
@@ -59,20 +60,31 @@ Storage::Storage(QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
-  m_settings->setDefault(QLatin1String("Certificate"), QLatin1String("server.crt"));
-  m_settings->setDefault(QLatin1String("Kernel"),      QString());
-  m_settings->setDefault(QLatin1String("Listen"),      QStringList("0.0.0.0:7667"));
-  m_settings->setDefault(QLatin1String("MainChannel"), 1);
-  m_settings->setDefault(QLatin1String("PrivateId"),   QString(SimpleID::encode(SimpleID::uniqueId())));
-  m_settings->setDefault(QLatin1String("PrivateKey"),  QLatin1String("server.key"));
-  m_settings->setDefault(QLatin1String("ServerName"),  QString());
+  m_settings->setDefault("Certificate", QLatin1String("server.crt"));
+  m_settings->setDefault("Kernel",      QString());
+  m_settings->setDefault("Listen",      QStringList("0.0.0.0:7667"));
+  m_settings->setDefault("MainChannel", 1);
+  m_settings->setDefault("PrivateId",   QString(SimpleID::encode(SimpleID::uniqueId())));
+  m_settings->setDefault("PrivateKey",  QLatin1String("server.key"));
+  m_settings->setDefault("ServerName",  QString());
+  m_settings->setDefault("LogLevel",    2);
 
+  m_log = new NodeLog;
   m_db = new DataBase(this);
+}
+
+
+Storage::~Storage()
+{
+  delete m_log;
+  delete m_serverData;
 }
 
 
 int Storage::start()
 {
+  m_log->open(m_locations->file(FileLocations::LogPath, m_locations->path(FileLocations::BaseName) + ".log"), static_cast<NodeLog::Level>(m_settings->value("LogLevel").toInt()));
+
   setDefaultSslConf();
 
   m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
@@ -83,8 +95,10 @@ int Storage::start()
   qint64 key = m_settings->value(QLatin1String("MainChannel")).toLongLong();
   if (key > 0) {
     ChatChannel channel = this->channel(key);
-    if (channel)
+    if (channel) {
       m_serverData->setChannelId(channel->id());
+      SCHAT_LOG_DEBUG() << "Main channel:" << channel->name() << "id:" << SimpleID::encode(channel->id());
+    }
   }
 
   return 0;
@@ -107,12 +121,6 @@ void Storage::addSlave(const QByteArray &id)
     return;
 
   m_slaves.append(id);
-}
-
-
-Storage::~Storage()
-{
-  delete m_serverData;
 }
 
 
@@ -579,11 +587,17 @@ void Storage::setDefaultSslConf()
     conf.setLocalCertificate(QSslCertificate(&file));
     file.close();
   }
+  else {
+    SCHAT_LOG_WARN() << "Could not open Certificate file" << file.fileName() << ":" << file.errorString();
+  }
 
   file.setFileName(keyFile);
   if (file.open(QIODevice::ReadOnly)) {
     conf.setPrivateKey(QSslKey(&file, QSsl::Rsa));
     file.close();
+  }
+  else {
+    SCHAT_LOG_WARN() << "Could not open Private Key file" << file.fileName() << ":" << file.errorString();
   }
 
   QSslConfiguration::setDefaultConfiguration(conf);
