@@ -37,6 +37,7 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
+#include "NodeLog.h"
 #include "NodePlugins.h"
 #include "plugins/NodeHooks.h"
 #include "ServerUser.h"
@@ -492,7 +493,7 @@ void Core::acceptAuth(const AuthResult &result)
  */
 void Core::rejectAuth(const AuthResult &result)
 {
-  SCHAT_DEBUG_STREAM(this << "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId))
+  SCHAT_LOG_DEBUG() << "Reject Auth" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId);
 
   AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
 

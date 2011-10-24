@@ -16,8 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include <QCoreApplication>
 #include <QDir>
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -28,9 +27,9 @@
 #include "DataBase.h"
 #include "FileLocations.h"
 #include "net/SimpleID.h"
+#include "NodeLog.h"
 #include "SimpleJSon.h"
 #include "Storage.h"
-
 
 bool Account::isValid() const
 {
@@ -64,8 +63,11 @@ int DataBase::start()
     dir.mkpath(dir.absolutePath());
 
   db.setDatabaseName(dir.absolutePath() + QLatin1String("/") + Storage::i()->locations()->path(FileLocations::BaseName) + QLatin1String(".sqlite"));
-  if (!db.open())
+  if (!db.open()) {
+    SCHAT_LOG_FATAL() << "Could not open DataBase file" << db.databaseName() << ":" << db.lastError();
+    QCoreApplication::exit(-1);
     return -1;
+  }
 
   QSqlQuery query;
   query.exec(QLatin1String("PRAGMA synchronous = OFF"));

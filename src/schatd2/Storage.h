@@ -28,6 +28,7 @@
 
 class DataBase;
 class FileLocations;
+class NodeLog;
 class ServerData;
 class Settings;
 
@@ -89,6 +90,7 @@ private:
   bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
+  NodeLog *m_log;                                ///< Журнал.
   QHash<QByteArray, ChatChannel> m_channels;     ///< Таблица каналов.
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
