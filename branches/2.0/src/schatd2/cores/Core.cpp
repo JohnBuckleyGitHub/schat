@@ -465,7 +465,7 @@ void Core::acceptAuth(const AuthResult &result)
   if (!user)
     return;
 
-  SCHAT_DEBUG_STREAM(this << "ACCEPT AUTH" << user->nick() << SimpleID::encode(result.authId) << SimpleID::encode(user->id()))
+  SCHAT_LOG_INFO() << "Accept Auth" << user->nick() << user->host() << "id:" << SimpleID::encode(user->id()) << "cookie:" << SimpleID::encode(user->cookie()) << "auth id:" << SimpleID::encode(result.authId);
 
   ChatChannel channel = addChannel(user);
   QList<QByteArray> packets;

@@ -61,7 +61,7 @@ QByteArray SimpleID::decode(const QByteArray &id)
     return QByteArray();
 
   char outbuf[DefaultSize + 1];
-  if (base32_decode(reinterpret_cast<const uchar *>(id.toUpper().constData()), reinterpret_cast<uchar *>(outbuf)) != DefaultSize)
+  if (base32_decode(reinterpret_cast<const uchar *>(id.constData()), reinterpret_cast<uchar *>(outbuf)) != DefaultSize)
     return QByteArray();
 
   return QByteArray(outbuf, DefaultSize);
@@ -83,7 +83,7 @@ QByteArray SimpleID::encode(const QByteArray &id)
   char outbuf[41];
   base32_encode(reinterpret_cast<const uchar *>(id.constData()), DefaultSize, reinterpret_cast<uchar *>(outbuf));
 
-  return QByteArray(outbuf, EncodedSize).toLower();
+  return QByteArray(outbuf, EncodedSize);
 }
 
 
@@ -128,7 +128,7 @@ QByteArray SimpleID::toBase32(const QByteArray &data)
 
   base32_encode(reinterpret_cast<const uchar *>(data.constData()), data.size(), reinterpret_cast<uchar *>(outbuf));
 
-  QByteArray out = QByteArray(outbuf, size);
+  QByteArray out = QByteArray(outbuf, size - 1);
   out.replace('=', "");
   delete [] outbuf;
   return out;
