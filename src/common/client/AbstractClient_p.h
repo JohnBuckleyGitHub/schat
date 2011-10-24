@@ -54,6 +54,7 @@ public:
   NetworkPool *pool;                       ///< Пул адресов серверов.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;             ///< Таймер управляющий попытками переподключения.
+  QByteArray authId;                       ///< Идентификатор авторизации.
   QByteArray cookie;                       ///< Cookie.
   QByteArray uniqueId;                     ///< Уникальный идентификатор пользователя.
   QList<QByteArray> sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.

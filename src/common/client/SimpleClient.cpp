@@ -614,6 +614,7 @@ void SimpleClient::requestAuth()
   AuthRequest data(d->authType, d->url.host(), d->user.data());
   data.uniqueId = d->uniqueId;
   data.cookie = d->cookie;
+  data.id = d->authId;
   send(data.data(d->sendStream));
 }
 

@@ -58,20 +58,18 @@ SlaveNode::SlaveNode(QObject *parent)
 }
 
 
-bool SlaveNode::add(ChatUser user, int authType)
+bool SlaveNode::add(ChatUser user, int authType, const QByteArray &authId)
 {
   if (mode() == FailbackMode) {
     if (authType == AuthRequest::Anonymous)
       return false;
 
-    return Core::add(user, authType);
+    return Core::add(user, authType, authId);
   }
 
-  m_pending[user->id()] = user;
-  if (authType == AuthRequest::Cookie && !user->cookie().isEmpty())
-    m_pending[user->cookie()] = user;
+  m_pending[authId] = user;
 
-  QList<QByteArray> packets;
+  QList<QByteArray> packets; /// \deprecated TextNotice.
   packets.append(TextNotice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), user->id(), m_packetsEvent->address.toString()).data(uplink()->sendStream()));
   packets.append(m_readBuffer);
   m_uplink->send(packets);
@@ -85,17 +83,6 @@ int SlaveNode::start()
   m_plugins->removeHook(NodeHook::OfflineDelivery);
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
-}
-
-
-void SlaveNode::setPendingCookie(const QByteArray &id, const QByteArray &cookie)
-{
-  ChatUser user = m_pending.value(id);
-  if (!user)
-    return;
-
-  user->setCookie(cookie);
-  m_pending[cookie] = user;
 }
 
 
@@ -362,10 +349,7 @@ void SlaveNode::uplinkAuthReply()
     update = true;
   }
   else {
-    user = m_pending.value(m_uplink->reader()->dest());
-
-    if (!user)
-      user = m_pending.value(data.cookie);
+    user = m_pending.value(data.id);
 
     if (!user)
       return;
@@ -386,18 +370,11 @@ void SlaveNode::uplinkAuthReply()
 
     addChannel(user);
   }
-
-  // FIXME ! Исправить
-//  if (data.status == AuthReplyData::AccessDenied && data.error != AuthReplyData::NickAlreadyUse) {
-//    m_storage->remove(user);
-//    option = NewPacketsEvent::KillSocketOption;
-//  }
-//
-//  if (data.error != AuthReplyData::NickAlreadyUse) {
-//    m_pending.remove(user->id());
-//    m_pending.remove(id);
-//    m_pending.remove(user->cookie());
-//  }
+  else if (data.status != Notice::NickAlreadyUse) {
+    option = NewPacketsEvent::KillSocketOption;
+    m_storage->remove(user);
+    m_pending.remove(data.id);
+  }
 
   m_timestamp = m_uplink->timestamp();
   send(user, m_uplink->readBuffer(), option);
