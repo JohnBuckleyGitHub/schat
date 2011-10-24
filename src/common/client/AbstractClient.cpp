@@ -69,7 +69,7 @@ QString AbstractClientPrivate::mangleNick()
 /*!
  * Чтение пакета AuthReplyPacket.
  */
-bool AbstractClientPrivate::readAuthReply(const AuthReply &reply)
+bool AbstractClientPrivate::authReply(const AuthReply &reply)
 {
   SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
 
@@ -78,6 +78,8 @@ bool AbstractClientPrivate::readAuthReply(const AuthReply &reply)
     q->setAuthorized(reply.userId);
     user->setId(reply.userId);
     user->setServerNumber(reply.serverData.number());
+    user->setAccount(reply.account);
+
     cookie = reply.cookie;
     pool->setLast();
 
@@ -418,7 +420,7 @@ void AbstractClient::newPacketsImpl()
       emit packetReady(reader.type());
     }
     else if (reader.type() == Protocol::AuthReplyPacket) {
-      d->readAuthReply(AuthReply(d->reader));
+      d->authReply(AuthReply(d->reader));
     }
   }
 }

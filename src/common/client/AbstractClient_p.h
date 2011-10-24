@@ -39,7 +39,7 @@ public:
 
   // Установка и завершение соединения.
   QString mangleNick();
-  virtual bool readAuthReply(const AuthReply &reply);
+  virtual bool authReply(const AuthReply &reply);
   virtual void restore() {}
   virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}

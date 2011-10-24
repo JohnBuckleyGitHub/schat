@@ -59,9 +59,6 @@ bool NetworkItem::isValid() const
 }
 
 
-/*!
- *
- */
 NetworkItem NetworkItem::item()
 {
   SimpleClient *client = ChatCore::i()->client();
@@ -75,6 +72,7 @@ NetworkItem NetworkItem::item()
   item.m_url = client->url().toString();
   item.m_cookie = client->cookie();
   item.m_userId = client->userId();
+  item.m_account = client->user()->account();
 
   return item;
 }
@@ -86,9 +84,10 @@ void NetworkItem::read()
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
-  setAuth(settings.value(QLatin1String("Auth")).toString());
-  m_url  = settings.value(QLatin1String("Url")).toString();
-  m_name = settings.value(QLatin1String("Name")).toString();
+  m_account = settings.value("Account").toString();
+  setAuth(settings.value("Auth").toString());
+  m_name = settings.value("Name").toString();
+  m_url  = settings.value("Url").toString();
   settings.endGroup();
 }
 
@@ -99,9 +98,10 @@ void NetworkItem::write()
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
-  settings.setValue(QLatin1String("Auth"), auth());
-  settings.setValue(QLatin1String("Url"),  m_url);
-  settings.setValue(QLatin1String("Name"), m_name);
+  settings.setValue("Account", m_account);
+  settings.setValue("Auth",    auth());
+  settings.setValue("Name",    m_name);
+  settings.setValue("Url",     m_url);
   settings.endGroup();
 }
 
@@ -116,9 +116,6 @@ QString NetworkItem::auth()
 }
 
 
-/*!
- * FIXME эта функция перестала работать.
- */
 void NetworkItem::setAuth(const QString &auth)
 {
   QByteArray data = SimpleID::fromBase32(auth.toLatin1());
@@ -139,7 +136,7 @@ NetworkManager::NetworkManager(QObject *parent)
 {
   load();
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-  connect(m_adapter, SIGNAL(registered(const QString &, const QByteArray &)), SLOT(registered(const QString &, const QByteArray &)));
+  connect(m_adapter, SIGNAL(loggedIn(const QString &)), SLOT(loggedIn(const QString &)));
 }
 
 
@@ -261,9 +258,11 @@ void NetworkManager::clientStateChanged(int state)
 }
 
 
-void NetworkManager::registered(const QString &name, const QByteArray &password)
+void NetworkManager::loggedIn(const QString &name)
 {
-  qDebug() << name << SimpleID::encode(password);
+  NetworkItem& item = m_items[serverId()];
+  item.setAccount(name);
+  item.write();
 }
 
 

@@ -42,19 +42,20 @@ public:
   inline SimpleClient *client() { return m_client; }
   QByteArray login(const QString &command, const QString &name, const QString &password);
   QByteArray randomId() const;
-//  QByteArray reg(const QString &name, const QString &password);
   static qint64 timestamp();
   virtual bool sendText(MessageData &data);
   virtual int command(MessageData &data, const QString &cmd, const QString &text);
   virtual void command(const ClientCmd &cmd);
 
 signals:
+  void loggedIn(const QString &name);
   void registered(const QString &name, const QByteArray &password);
 
 protected slots:
   void notice(const Notice &notice);
 
 protected:
+  virtual bool loginReply(const Notice &notice);
   virtual bool regReply(const Notice &notice);
 
   bool m_richText;        ///< true если в командах может использоваться html текст.

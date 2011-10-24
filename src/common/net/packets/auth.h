@@ -39,9 +39,9 @@ class User;
  *  - \b id        - Уникальный идентификатор авторизации, поле совпадает с таковым из AuthRequest.
  *    - \b id      - Cookie (\p status == Notice::OK).
  *    - \b quint32 - Битовая маска стандартных возможностей сервера ServerData::Features (\p status == Notice::OK).
- *    - \b quint8  - Номер сервера (\p status & AuthReply::JSonField).
- *    - \b utf8    - Имя сервера (\p status & AuthReply::JSonField).
- *    - \b utf8    - Имя аккаунта пользователя если пользователь зарегистрирован или пустая строка (\p status & AuthReply::JSonField).
+ *    - \b quint8  - Номер сервера (\p status & Notice::OK).
+ *    - \b utf8    - Имя сервера (\p status & Notice::OK).
+ *    - \b utf8    - Имя аккаунта пользователя если пользователь зарегистрирован или пустая строка (\p status & Notice::OK).
  *  - \b json      - JSON данные (\p status & AuthReply::JSonField).
  *    - \b id      - Идентификатор основного канала (\p status == Notice::OK и опции сервера содержат ServerData::AutoJoinSupport).
  */
