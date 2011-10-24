@@ -113,25 +113,6 @@ QByteArray ClientHelper::randomId() const
 }
 
 
-/*!
- * Регистрация имени пользователя на сервере.
- *
- * \param name Имя пользователя, имя пользователя может быть только в нижнем регистре, может содержать любые Unicode символы кроме пробела и '@'.
- * \param password Пароль, может содержать любые символы.
- *
- * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
- */
-//QByteArray ClientHelper::reg(const QString &name, const QString &password)
-//{
-//  Notice notice(m_client->userId(), SimpleID::password(password), "reg", QVariant(), timestamp(), randomId());
-//  notice.setText(name);
-//  if (m_client->send(notice))
-//    return notice.id();
-//
-//  return QByteArray();
-//}
-
-
 qint64 ClientHelper::timestamp()
 {
 # if QT_VERSION >= 0x040700
@@ -208,6 +189,27 @@ void ClientHelper::notice(const Notice &notice)
   QString command = notice.command();
   if (command == "reg.reply")
     regReply(notice);
+  else if (command == "login.reply")
+    loginReply(notice);
+}
+
+
+bool ClientHelper::loginReply(const Notice &notice)
+{
+  if (notice.status() != Notice::OK)
+    return false;
+
+  if (notice.dest() != m_client->userId())
+    return false;
+
+  if (SimpleID::typeOf(notice.sender()) != SimpleID::PasswordId)
+    return false;
+
+  if (notice.text().isEmpty())
+    return false;
+
+  emit loggedIn(notice.text());
+  return true;
 }
 
 

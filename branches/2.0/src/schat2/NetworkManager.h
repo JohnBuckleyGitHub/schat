@@ -47,6 +47,7 @@ public:
   inline QString account() const { return m_account; }
   inline QString name() const { return m_name; }
   inline QString url() const { return m_url; }
+  inline void setAccount(const QString &account) { m_account = account; }
   static NetworkItem item();
   void read();
   void write();
@@ -89,7 +90,7 @@ public:
 
 private slots:
   void clientStateChanged(int state);
-  void registered(const QString &name, const QByteArray &password);
+  void loggedIn(const QString &name);
 
 private:
   QString root(const QByteArray &id) const;
