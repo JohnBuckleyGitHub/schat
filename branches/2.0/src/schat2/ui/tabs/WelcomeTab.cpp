@@ -28,7 +28,7 @@
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
-#include "ui/NetworkWidget.h"
+#include "ui/NetworkEditor.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
 
@@ -36,14 +36,11 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
   , m_languageBox(0)
   , m_languageLabel(0)
-  , m_client(ChatCore::i()->client())
 {
   m_networkLabel = new QLabel(this);
-  m_networks = new NetworkWidget(this);
-  m_connectButton = new QPushButton(this);
+  m_network = new NetworkEditor(this);
   QGridLayout *networkLay = new QGridLayout;
-  networkLay->addWidget(m_networks, 0, 0, 1, 2);
-  networkLay->addWidget(m_connectButton, 1, 1);
+  networkLay->addWidget(m_network, 0, 0, 1, 2);
   networkLay->setContentsMargins(20, 0, 3, 6);
   networkLay->setColumnStretch(0, 1);
 
@@ -85,17 +82,6 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
 
   setIcon(SCHAT_ICON(SmallLogoIcon));
   retranslateUi();
-
-  connect(m_connectButton, SIGNAL(clicked()), m_networks, SLOT(open()));
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
-}
-
-
-void WelcomeTab::clientStateChanged()
-{
-  QAction *action = m_networks->connectAction();
-  m_connectButton->setIcon(action->icon());
-  m_connectButton->setText(action->text());
 }
 
 
@@ -109,6 +95,4 @@ void WelcomeTab::retranslateUi()
 
   if (m_languageLabel)
     m_languageLabel->setText(QLatin1String("<b>") + tr("Language") + QLatin1String("</b>"));
-
-  clientStateChanged();
 }
