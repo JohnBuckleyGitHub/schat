@@ -28,7 +28,7 @@
 #include <QStackedWidget>
 
 #include "ChatCore.h"
-#include "ui/NetworkEditor.h"
+#include "ui/network/NetworkEditor.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"

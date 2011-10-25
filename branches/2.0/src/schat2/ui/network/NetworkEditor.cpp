@@ -16,34 +16,42 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QGridLayout>
 #include "QCheckBox"
 #include "QPushButton"
 #include <QAction>
 #include <QEvent>
+#include <QGridLayout>
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
-#include "ui/NetworkEditor.h"
-#include "ui/NetworkWidget.h"
+#include "ui/network/NetworkEditor.h"
+#include "ui/network/NetworkWidget.h"
 
-NetworkEditor::NetworkEditor(QWidget *parent)
+NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)
+  , m_layout(layout)
+  , m_connect(0)
 {
   m_network = new NetworkWidget(this);
   m_anonymous = new QCheckBox(this);
-  m_connect = new QPushButton(this);
+
+  if (m_layout & ConnectButtonLayout) {
+    m_connect = new QPushButton(this);
+    connect(m_connect, SIGNAL(clicked()), m_network, SLOT(open()));
+  }
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_network, 0, 0, 1, 2);
   mainLay->addWidget(m_anonymous, 1, 0);
-  mainLay->addWidget(m_connect, 1, 1);
+
+  if (m_layout & ConnectButtonLayout)
+    mainLay->addWidget(m_connect, 1, 1);
+
   mainLay->setColumnStretch(0, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(4);
 
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
-  connect(m_connect, SIGNAL(clicked()), m_network, SLOT(open()));
 
   retranslateUi();
 }
@@ -60,9 +68,11 @@ void NetworkEditor::changeEvent(QEvent *event)
 
 void NetworkEditor::clientStateChanged()
 {
-  QAction *action = m_network->connectAction();
-  m_connect->setIcon(action->icon());
-  m_connect->setText(action->text());
+  if (m_layout & ConnectButtonLayout) {
+    QAction *action = m_network->connectAction();
+    m_connect->setIcon(action->icon());
+    m_connect->setText(action->text());
+  }
 }
 
 

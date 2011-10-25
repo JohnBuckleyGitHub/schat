@@ -30,7 +30,13 @@ class NetworkEditor : public QWidget
   Q_OBJECT
 
 public:
-  NetworkEditor(QWidget *parent = 0);
+  /// Настройка внешнего вида виджета.
+  enum EditorLayout {
+    BasicLayout = 0,
+    ConnectButtonLayout = 1 ///< Добавить кнопку подключения.
+  };
+
+  NetworkEditor(QWidget *parent = 0, EditorLayout layout = BasicLayout);
 
 protected:
   void changeEvent(QEvent *event);
@@ -41,6 +47,7 @@ private slots:
 private:
   void retranslateUi();
 
+  EditorLayout m_layout;
   NetworkWidget *m_network;    ///< Виджет выбора сети.
   QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
   QPushButton *m_connect;      ///< Кнопка Connect.

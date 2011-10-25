@@ -29,7 +29,7 @@
 #include "debugstream.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "ui/NetworkWidget.h"
+#include "ui/network/NetworkWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
 

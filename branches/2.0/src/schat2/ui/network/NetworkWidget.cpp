@@ -30,7 +30,7 @@
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
-#include "ui/NetworkWidget.h"
+#include "ui/network/NetworkWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
