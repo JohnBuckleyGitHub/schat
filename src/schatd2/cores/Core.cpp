@@ -802,7 +802,7 @@ void Core::notice()
     }
 
     QString command = m_notice->command();
-    SCHAT_DEBUG_STREAM(command << notice.text() << notice.raw())
+    SCHAT_LOG_TRACE() << "NOTICE PACKET" << command << notice.text() << notice.raw();
 
     if (command == "reg") {
       reg();

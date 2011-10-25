@@ -69,8 +69,12 @@ bool SlaveNode::add(ChatUser user, int authType, const QByteArray &authId)
 
   m_pending[authId] = user;
 
-  QList<QByteArray> packets; /// \deprecated TextNotice.
-  packets.append(TextNotice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), user->id(), m_packetsEvent->address.toString()).data(uplink()->sendStream()));
+  QList<QByteArray> packets;
+  Notice notice(Storage::i()->serverData()->id(), authId, "slave.user.host");
+  notice.setText(m_packetsEvent->address.toString());
+
+  packets.append(notice.data(uplink()->sendStream()));
+
   packets.append(m_readBuffer);
   m_uplink->send(packets);
 
@@ -262,7 +266,7 @@ void SlaveNode::reAuth()
   if (users.isEmpty())
     return;
 
-  TextNotice notice(TextNotice::SlaveNodeXHost, Storage::i()->serverData()->id(), QByteArray(), QString());
+  Notice notice(Storage::i()->serverData()->id(), QByteArray(), "slave.user.host");
   QList<QByteArray> packets;
 
   QHashIterator<QByteArray, ChatUser> i(users);
@@ -271,14 +275,16 @@ void SlaveNode::reAuth()
     if (!i.value()->isOnline())
       continue;
 
-    notice.setDest(i.value()->id());
+    notice.setDest(SimpleID::randomId(SimpleID::MessageId));
     notice.setText(i.value()->host());
     packets.append(notice.data(m_uplink->sendStream()));
 
     AuthRequest data(AuthRequest::Cookie, QString(), i.value().data());
     data.uniqueId = i.value()->uniqueId();
     data.cookie = i.value()->cookie();
-    packets.append(data.data(m_sendStream));
+    data.id = notice.dest();
+
+    packets.append(data.data(m_uplink->sendStream()));
   }
 
   m_uplink->send(packets);

@@ -64,35 +64,6 @@ QByteArray MessageNotice::data(QDataStream *stream) const
 }
 
 
-TextNotice::TextNotice(quint16 type, PacketReader *reader)
-  : AbstractNotice(type, reader)
-  , m_subtype(0)
-{
-  m_subtype = reader->get<quint16>();
-  m_text = reader->text();
-}
-
-
-TextNotice::TextNotice(quint16 sybtype, const QByteArray &sender, const QByteArray &dest, const QString &text)
-  : AbstractNotice(TextNoticeType, sender, dest)
-  , m_subtype(sybtype)
-  , m_text(text)
-{
-}
-
-
-QByteArray TextNotice::data(QDataStream *stream) const
-{
-  PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest);
-  writer.put(m_type);
-  writer.put(m_fields);
-  writer.put(m_subtype);
-  writer.put(m_text);
-
-  return writer.data();
-}
-
-
 /*!
  * Конструктор чтения.
  */

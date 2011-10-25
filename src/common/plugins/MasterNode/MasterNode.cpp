@@ -39,28 +39,6 @@ MasterNode::MasterNode(QObject *parent)
 }
 
 
-/*!
- * \bug Эта функция больше не работает корректно в связи с тем что базовый класс теперь обрабатывает пакеты этого типа.
- */
-bool MasterNode::readNotice()
-{
-  if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
-    quint16 type = m_reader->get<quint16>();
-
-    if (type == AbstractNotice::TextNoticeType) {
-      TextNotice notice(type, m_reader);
-      if (notice.subtype() == TextNotice::SlaveNodeXHost) {
-        m_hosts[m_reader->dest()] = notice.text();
-      }
-    }
-
-    return true;
-  }
-
-  return route();
-}
-
-
 void MasterNode::acceptAuth(const AuthResult &result)
 {
   ChatUser user = m_storage->user(result.id);
@@ -68,13 +46,9 @@ void MasterNode::acceptAuth(const AuthResult &result)
     return;
 
   if (m_storage->isSlave(m_packetsEvent->userId())) {
-    QByteArray id = result.id;
-    if (!m_hosts.contains(id))
-      id = m_storage->makeUserId(AuthRequest::Anonymous, user->uniqueId());
-
-    if (m_hosts.contains(id)) {
-      user->setHost(m_hosts.value(id));
-      m_hosts.remove(id);
+    if (m_hosts.contains(result.authId)) {
+      user->setHost(m_hosts.value(result.authId));
+      m_hosts.remove(result.authId);
     }
 
     ChatUser slave = Storage::i()->user(m_packetsEvent->userId());
@@ -98,10 +72,33 @@ void MasterNode::acceptAuth(const AuthResult &result)
 }
 
 
+void MasterNode::notice()
+{
+  if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
+    quint16 type = m_reader->get<quint16>();
+
+    if (type == AbstractNotice::GenericNoticeType) {
+      Notice notice(type, m_reader);
+      m_notice = &notice;
+
+      if (!m_notice->isValid()) {
+        rejectNotice(Notice::BadRequest);
+        return;
+      }
+
+      if (m_notice->command() == "slave.user.host")
+        m_hosts[m_reader->dest()] = notice.text();
+    }
+  }
+  else
+    Core::notice();
+}
+
+
 void MasterNode::readPacket(int type)
 {
   if (type == Protocol::NoticePacket)
-    readNotice();
+    notice();
   else
     Core::readPacket(type);
 }

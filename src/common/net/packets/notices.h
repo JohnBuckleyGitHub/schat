@@ -112,29 +112,6 @@ private:
 
 
 /*!
- * \deprecated Заменить этот класс на Notice.
- */
-class SCHAT_EXPORT TextNotice : public AbstractNotice
-{
-public:
-  enum SubType {
-    SlaveNodeXHost = 0x5848 ///< 'XH'
-  };
-
-  TextNotice(quint16 type, PacketReader *reader);
-  TextNotice(quint16 sybtype, const QByteArray &sender, const QByteArray &dest, const QString &text);
-  inline int subtype() const { return m_subtype; }
-  inline QString text() const { return m_text; }
-  inline void setText(const QString &text) { m_text = text; }
-  QByteArray data(QDataStream *stream) const;
-
-private:
-  quint16 m_subtype; ///< Тип.
-  QString m_text;    ///< Текст.
-};
-
-
-/*!
  * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
  * Этот пакет является универсальным высокоуровневым транспортом чата, для расширений протокола.
  */
