@@ -29,8 +29,8 @@ public:
   MasterNode(QObject *parent = 0);
 
 protected:
-  bool readNotice();
   void acceptAuth(const AuthResult &result);
+  void notice();
   void readPacket(int type);
   void rejectAuth(const AuthResult &result);
   void socketReleaseEvent(SocketReleaseEvent *event);

@@ -73,6 +73,7 @@ AuthReply::AuthReply(ServerData *data, User *user, const QByteArray &cookie, con
 {
   account = user->account();
   serverData = *data;
+  serverData.setNumber(user->serverNumber());
 }
 
 
@@ -150,7 +151,7 @@ bool AuthRequest::isValid() const
   if (SimpleID::typeOf(id) != SimpleID::MessageId)
     return false;
 
-  if (host.isEmpty() || userAgent.isEmpty())
+  if (userAgent.isEmpty())
     return false;
 
   if (!User::isValidNick(nick))
