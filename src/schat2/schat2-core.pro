@@ -58,8 +58,8 @@ HEADERS = \
     ui/fields/ProfileField.h \
     ui/InputWidget.h \
     ui/LanguageBox.h \
-    ui/NetworkEditor.h \
-    ui/NetworkWidget.h \
+    ui/network/NetworkEditor.h \
+    ui/network/NetworkWidget.h \
     ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
@@ -113,8 +113,8 @@ SOURCES = \
     ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
     ui/LanguageBox.cpp \
-    ui/NetworkEditor.cpp \
-    ui/NetworkWidget.cpp \
+    ui/network/NetworkEditor.cpp \
+    ui/network/NetworkWidget.cpp \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \

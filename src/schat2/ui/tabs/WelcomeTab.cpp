@@ -28,7 +28,7 @@
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
-#include "ui/NetworkEditor.h"
+#include "ui/network/NetworkEditor.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "User.h"
 
@@ -38,7 +38,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   , m_languageLabel(0)
 {
   m_networkLabel = new QLabel(this);
-  m_network = new NetworkEditor(this);
+  m_network = new NetworkEditor(this, NetworkEditor::ConnectButtonLayout);
   QGridLayout *networkLay = new QGridLayout;
   networkLay->addWidget(m_network, 0, 0, 1, 2);
   networkLay->setContentsMargins(20, 0, 3, 6);
