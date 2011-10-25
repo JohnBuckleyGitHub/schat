@@ -24,7 +24,7 @@
 
 class ChatSettings;
 class GenderField;
-class NetworkWidget;
+class NetworkEditor;
 class NickEdit;
 class QCheckBox;
 class QLabel;
@@ -86,7 +86,7 @@ public:
 private:
   void retranslateUi();
 
-  NetworkWidget *m_networks;
+  NetworkEditor *m_network;
   QLabel *m_networkLabel;
 };
 

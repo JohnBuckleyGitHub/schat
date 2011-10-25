@@ -269,23 +269,31 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="265"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="278"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="270"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="283"/>
         <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="325"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="338"/>
         <source>Unknown command &lt;b&gt;/%1&lt;/b&gt;.&lt;br /&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="327"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="340"/>
         <source>Would you like to see help for commands on site &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NetworkEditor</name>
+    <message>
+        <location filename="../../src/schat2/ui/NetworkEditor.cpp" line="71"/>
+        <source>Anonymous connection</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -548,32 +556,32 @@
 <context>
     <name>WelcomeTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="105"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="91"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="111"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="97"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="106"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="92"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="107"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="93"/>
         <source>Nick:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="108"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="94"/>
         <source>Gender:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="90"/>
         <source>Welcome</source>
         <translation type="unfinished"></translation>
     </message>

@@ -28,7 +28,7 @@
 #include <QStackedWidget>
 
 #include "ChatCore.h"
-#include "ui/NetworkWidget.h"
+#include "ui/NetworkEditor.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
@@ -97,10 +97,10 @@ NetworkPage::NetworkPage(QWidget *parent)
   : AbstractSettingsPage(SCHAT_ICON(GlobeIcon), "network", parent)
 {
   m_networkLabel = new QLabel(this);
-  m_networks = new NetworkWidget(this);
+  m_network = new NetworkEditor(this);
 
   QVBoxLayout *networkLay = new QVBoxLayout;
-  networkLay->addWidget(m_networks);
+  networkLay->addWidget(m_network);
   networkLay->setContentsMargins(10, 0, 3, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);

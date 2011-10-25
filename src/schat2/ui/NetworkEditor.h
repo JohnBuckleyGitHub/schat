@@ -16,41 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WELCOMETAB_H_
-#define WELCOMETAB_H_
+#ifndef NETWORKEDITOR_H_
+#define NETWORKEDITOR_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include <QWidget>
 
-class GenderField;
-class LanguageField;
-class NetworkEditor;
-class NickEdit;
-class QLabel;
+class NetworkWidget;
+class QCheckBox;
 class QPushButton;
-class SimpleClient;
 
-/*!
- * Страница приветствия.
- */
-class WelcomeTab : public AbstractTab
+class NetworkEditor : public QWidget
 {
   Q_OBJECT
 
 public:
-  WelcomeTab(TabWidget *parent);
+  NetworkEditor(QWidget *parent = 0);
+
+protected:
+  void changeEvent(QEvent *event);
+
+private slots:
+  void clientStateChanged();
 
 private:
   void retranslateUi();
 
-  GenderField *m_genderField;   ///< Виджет выбора пола.
-  LanguageField *m_languageBox; ///< Виджет выбора языка.
-  NetworkEditor *m_network;    ///< Виджет выбора сети.
-  NickEdit *m_nickEdit;         ///< Поле редактирования ника.
-  QLabel *m_genderLabel;
-  QLabel *m_languageLabel;
-  QLabel *m_networkLabel;
-  QLabel *m_nickLabel;
-  QLabel *m_profileLabel;
+  NetworkWidget *m_network;    ///< Виджет выбора сети.
+  QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
+  QPushButton *m_connect;      ///< Кнопка Connect.
 };
 
-#endif /* WELCOMETAB_H_ */
+#endif /* NETWORKEDITOR_H_ */

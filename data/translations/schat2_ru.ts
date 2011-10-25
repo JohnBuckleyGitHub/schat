@@ -269,24 +269,32 @@
 <context>
     <name>MessageAdapter</name>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="265"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="278"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="270"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="283"/>
         <source>Connection lost</source>
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="325"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="338"/>
         <source>Unknown command &lt;b&gt;/%1&lt;/b&gt;.&lt;br /&gt;</source>
         <translation>Неизвестная команда &lt;b&gt;/%1&lt;/b&gt;.&lt;br /&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="327"/>
+        <location filename="../../src/schat2/messages/MessageAdapter.cpp" line="340"/>
         <source>Would you like to see help for commands on site &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</source>
         <translation>Просмотреть справку по командам на сайте &lt;a href=&apos;http://simple.impomezia.com/Commands&apos;&gt;http://simple.impomezia.com&lt;/a&gt;?</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkEditor</name>
+    <message>
+        <location filename="../../src/schat2/ui/NetworkEditor.cpp" line="71"/>
+        <source>Anonymous connection</source>
+        <translation>Анонимное подключение</translation>
     </message>
 </context>
 <context>
@@ -548,32 +556,32 @@
 <context>
     <name>WelcomeTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="105"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="91"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="111"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="97"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="106"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="92"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="107"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="93"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="108"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="94"/>
         <source>Gender:</source>
         <translation>Пол:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="90"/>
         <source>Welcome</source>
         <translation>Приветствие</translation>
     </message>
