@@ -21,11 +21,14 @@
 #include <QAction>
 #include <QEvent>
 #include <QGridLayout>
+#include <QTabWidget>
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
+#include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkEditor.h"
 #include "ui/network/NetworkWidget.h"
+#include "ui/network/SignUpWidget.h"
 
 NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)
@@ -40,6 +43,13 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
     connect(m_connect, SIGNAL(clicked()), m_network, SLOT(open()));
   }
 
+  m_tabs = new QTabWidget(this);
+  m_login = new LoginWidget(this);
+  m_signup = new SignUpWidget(this);
+
+  m_tabs->addTab(m_login, tr("Log In"));
+  m_tabs->addTab(m_signup, tr("Sign Up"));
+
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_network, 0, 0, 1, 2);
   mainLay->addWidget(m_anonymous, 1, 0);
@@ -47,6 +57,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   if (m_layout & ConnectButtonLayout)
     mainLay->addWidget(m_connect, 1, 1);
 
+  mainLay->addWidget(m_tabs, 2, 0, 1, 2);
   mainLay->setColumnStretch(0, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(4);
