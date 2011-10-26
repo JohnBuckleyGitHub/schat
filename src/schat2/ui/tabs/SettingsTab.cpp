@@ -158,11 +158,11 @@ void SettingsTab::addPage(AbstractSettingsPage *page)
   m_items.append(item);
   m_ids.append(page->id());
 
-  QScrollArea *scrool = new QScrollArea(this);
-  scrool->setWidget(page);
-  scrool->setWidgetResizable(true);
-  scrool->setFrameShape(QFrame::NoFrame);
-  m_pages->addWidget(scrool);
+  QScrollArea *scroll = new QScrollArea(this);
+  scroll->setWidget(page);
+  scroll->setWidgetResizable(true);
+  scroll->setFrameShape(QFrame::NoFrame);
+  m_pages->addWidget(scroll);
 }
 
 
