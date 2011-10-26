@@ -21,6 +21,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QScrollArea>
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
@@ -37,6 +38,8 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   , m_languageBox(0)
   , m_languageLabel(0)
 {
+  QWidget *widget = new QWidget(this);
+
   m_networkLabel = new QLabel(this);
   m_network = new NetworkEditor(this, NetworkEditor::ConnectButtonLayout);
   QGridLayout *networkLay = new QGridLayout;
@@ -65,7 +68,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   profileLay->addWidget(m_genderField, 1, 1);
   profileLay->setContentsMargins(20, 0, 3, 6);
 
-  QGridLayout *mainLay = new QGridLayout(this);
+  QGridLayout *mainLay = new QGridLayout(widget);
   mainLay->addWidget(m_networkLabel, 0, 0);
 
   if (m_languageLabel)
@@ -79,6 +82,15 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   mainLay->addWidget(m_profileLabel, 2, 0);
   mainLay->addLayout(profileLay, 3, 0);
   mainLay->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0);
+
+  QScrollArea *scroll = new QScrollArea(this);
+  scroll->setWidget(widget);
+  scroll->setWidgetResizable(true);
+  scroll->setFrameShape(QFrame::NoFrame);
+
+  QVBoxLayout *scrollLay = new QVBoxLayout(this);
+  scrollLay->setMargin(0);
+  scrollLay->addWidget(scroll);
 
   setIcon(SCHAT_ICON(SmallLogoIcon));
   retranslateUi();
