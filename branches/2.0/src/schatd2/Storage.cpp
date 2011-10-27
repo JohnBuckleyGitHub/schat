@@ -258,6 +258,9 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   if (!account.isValid())
     return LoginReply(Notice::Forbidden);
 
+  if (account.password != password)
+    return LoginReply(Notice::Forbidden);
+
   LoginReply reply(login);
   user->setAccount(login);
   user->removeGroup("anonymous");
