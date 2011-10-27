@@ -24,9 +24,8 @@
 class NetworkWidget;
 class QCheckBox;
 class QPushButton;
-class LoginWidget;
 class QTabWidget;
-class SignUpWidget;
+class NetworkTabs;
 
 class NetworkEditor : public QWidget
 {
@@ -51,12 +50,10 @@ private:
   void retranslateUi();
 
   EditorLayout m_layout;       ///< Настройка внешнего вида виджета.
-  LoginWidget *m_login;        ///< Виджет входа.
   NetworkWidget *m_network;    ///< Виджет выбора сети.
   QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
   QPushButton *m_connect;      ///< Кнопка Connect.
-  QTabWidget *m_tabs;          ///< Вкладки.
-  SignUpWidget *m_signup;      ///< Виджет регистрации.
+  NetworkTabs *m_tabs;         ///< Вкладки.
 };
 
 #endif /* NETWORKEDITOR_H_ */

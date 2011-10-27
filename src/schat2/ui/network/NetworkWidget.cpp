@@ -181,7 +181,16 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-  m_combo->setEditable(m_combo->itemData(index).type() == QVariant::Invalid);
+  QVariant param = m_combo->itemData(index);
+
+  if (param.type() == QVariant::Invalid) {
+    m_combo->setEditable(true);
+    param = m_combo->itemText(index);
+  }
+  else
+    m_combo->setEditable(false);
+
+  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, param);
 }
 
 

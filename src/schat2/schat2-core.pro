@@ -60,6 +60,7 @@ HEADERS = \
     ui/LanguageBox.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkEditor.h \
+    ui/network/NetworkTabs.h \
     ui/network/NetworkWidget.h \
     ui/network/SignUpWidget.h \
     ui/SendWidget.h \
@@ -117,6 +118,7 @@ SOURCES = \
     ui/LanguageBox.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkEditor.cpp \
+    ui/network/NetworkTabs.cpp \
     ui/network/NetworkWidget.cpp \
     ui/network/SignUpWidget.cpp \
     ui/SendWidget.cpp \

@@ -16,9 +16,48 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+
+#include "ChatCore.h"
 #include "ui/network/LoginWidget.h"
+#include "NetworkManager.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
 {
+  m_nameLabel = new QLabel(this);
+  m_nameEdit = new QLineEdit(this);
+
+  m_passwordLabel = new QLabel(this);
+  m_passwordEdit = new QLineEdit(this);
+  m_passwordEdit->setEchoMode(QLineEdit::Password);
+
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(m_nameLabel);
+  mainLay->addWidget(m_nameEdit);
+  mainLay->addWidget(m_passwordLabel);
+  mainLay->addWidget(m_passwordEdit);
+  mainLay->setMargin(4);
+
+  retranslateUi();
+}
+
+
+void LoginWidget::retranslateUi()
+{
+  m_nameLabel->setText(tr("Name"));
+  m_passwordLabel->setText(tr("Password"));
+}
+
+
+void LoginWidget::update(const QByteArray &id)
+{
+  NetworkItem item = ChatCore::i()->networks()->item(id);
+  qDebug() << item.name();
+  m_nameEdit->setText(item.account());
+  m_passwordEdit->setText(QString());
 }

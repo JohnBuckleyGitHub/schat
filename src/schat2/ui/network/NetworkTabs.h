@@ -16,28 +16,36 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LOGINWIDGET_H_
-#define LOGINWIDGET_H_
+#ifndef NETWORKTABS_H_
+#define NETWORKTABS_H_
 
-#include <QWidget>
+#include <QTabWidget>
 
-class QLabel;
-class QLineEdit;
+class LoginWidget;
+class SignUpWidget;
 
-class LoginWidget : public QWidget
+class NetworkTabs : public QTabWidget
 {
   Q_OBJECT
 
 public:
-  LoginWidget(QWidget *parent = 0);
-  void retranslateUi();
-  void update(const QByteArray &id);
+  NetworkTabs(QWidget *parent = 0);
+  bool canSignUp(const QByteArray &id = QByteArray()) const;
+
+protected:
+  void changeEvent(QEvent *event);
+
+private slots:
+  void clientStateChanged(int state);
+  void notify(int notice, const QVariant &data);
 
 private:
-  QLabel *m_nameLabel;
-  QLabel *m_passwordLabel;
-  QLineEdit *m_nameEdit;
-  QLineEdit *m_passwordEdit;
+  void retranslateUi();
+  void update(const QByteArray &id);
+  void updateSignUp(const QByteArray &id = QByteArray());
+
+  LoginWidget *m_login;   ///< Виджет входа.
+  SignUpWidget *m_signup; ///< Виджет регистрации.
 };
 
-#endif /* LOGINWIDGET_H_ */
+#endif /* NETWORKTABS_H_ */
