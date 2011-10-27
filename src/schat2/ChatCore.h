@@ -86,7 +86,8 @@ public:
     Balloon,
     Slash,
     TopicEdit,
-    KeyIcon
+    KeyIcon,
+    ExclamationRedIcon
   };
 
   enum Notice {
