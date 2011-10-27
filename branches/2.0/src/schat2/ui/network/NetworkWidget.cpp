@@ -190,7 +190,7 @@ void NetworkWidget::indexChanged(int index)
   else
     m_combo->setEditable(false);
 
-  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, param);
+  m_manager->setSelected(param);
 }
 
 
