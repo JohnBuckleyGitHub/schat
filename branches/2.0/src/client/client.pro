@@ -30,5 +30,9 @@ unix {
   INSTALLS += target
 }
 
+TRANSLATIONS += ../../data/translations/schat2-client_en.ts
+TRANSLATIONS += ../../data/translations/schat2-client_ru.ts
+CODECFORTR = UTF-8
+
 include(../common/client.pri)
 include(../common/common.pri)

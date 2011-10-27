@@ -84,6 +84,7 @@ ChatCorePrivate::ChatCorePrivate()
   icons += QLatin1String("slash");
   icons += QLatin1String("topic-edit");
   icons += QLatin1String("key");
+  icons += QLatin1String("exclamation-red");
 }
 
 

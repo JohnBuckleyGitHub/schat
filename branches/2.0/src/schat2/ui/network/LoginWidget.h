@@ -25,6 +25,7 @@ class QLabel;
 class QLineEdit;
 class QToolButton;
 class QProgressIndicator;
+class Notice;
 
 class LoginWidget : public QWidget
 {
@@ -41,6 +42,7 @@ protected:
 
 private slots:
   void login();
+  void notice(const Notice &notice);
   void textChanged();
 
 private:
@@ -49,6 +51,7 @@ private:
   QLineEdit *m_nameEdit;
   QLineEdit *m_passwordEdit;
   QProgressIndicator *m_progress; ///< Прогресс бар.
+  QToolButton *m_error;
   QToolButton *m_login;
 };
 

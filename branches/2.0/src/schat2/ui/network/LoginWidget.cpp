@@ -30,6 +30,7 @@
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/LoginWidget.h"
 #include "ui/UserUtils.h"
+#include "net/packets/notices.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
@@ -45,6 +46,11 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_login->setIcon(SCHAT_ICON(KeyIcon));
   m_login->setAutoRaise(true);
 
+  m_error = new QToolButton(this);
+  m_error->setIcon(SCHAT_ICON(ExclamationRedIcon));
+  m_error->setAutoRaise(true);
+  m_error->setVisible(false);
+
   m_progress = new QProgressIndicator(this);
   m_progress->setAnimationDelay(100);
   m_progress->setMaximumSize(16, 16);
@@ -56,12 +62,14 @@ LoginWidget::LoginWidget(QWidget *parent)
   mainLay->addWidget(m_passwordLabel);
   mainLay->addWidget(m_passwordEdit);
   mainLay->addWidget(m_login);
+  mainLay->addWidget(m_error);
   mainLay->addWidget(m_progress);
   mainLay->setMargin(4);
 
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(m_login, SIGNAL(clicked()), SLOT(login()));
+  connect(ChatCore::i()->client(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
   textChanged();
   retranslateUi();
@@ -131,6 +139,7 @@ void LoginWidget::update()
 void LoginWidget::showEvent(QShowEvent *event)
 {
   m_login->setMaximumHeight(m_passwordEdit->height());
+  m_error->setMaximumHeight(m_passwordEdit->height());
 
   QWidget::showEvent(event);
 }
@@ -146,10 +155,25 @@ void LoginWidget::login()
 }
 
 
+void LoginWidget::notice(const Notice &notice)
+{
+  m_progress->setVisible(false);
+
+  if (notice.status() != Notice::OK) {
+    m_error->setVisible(true);
+    m_error->setToolTip(Notice::status(notice.status()));
+  }
+  else
+    update();
+}
+
+
 void LoginWidget::textChanged()
 {
   if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty() || !canLogIn())
     m_login->setVisible(false);
   else
     m_login->setVisible(true);
+
+  m_error->setVisible(false);
 }
