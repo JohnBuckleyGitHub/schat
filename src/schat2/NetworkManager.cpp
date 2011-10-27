@@ -249,6 +249,13 @@ void NetworkManager::removeItem(const QByteArray &id)
 }
 
 
+void NetworkManager::setSelected(const QVariant &selected)
+{
+  m_selected = selected;
+  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, selected);
+}
+
+
 void NetworkManager::clientStateChanged(int state)
 {
   if (state != SimpleClient::ClientOnline)
@@ -332,6 +339,7 @@ void NetworkManager::load()
 void NetworkManager::write()
 {
   QByteArray id  = m_client->serverData()->id();
+  m_selected = id;
   QString base64 = SimpleID::encode(id);
 
   QStringList networks = networkList();

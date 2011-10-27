@@ -85,7 +85,8 @@ public:
     EditSelectAll,
     Balloon,
     Slash,
-    TopicEdit
+    TopicEdit,
+    KeyIcon
   };
 
   enum Notice {

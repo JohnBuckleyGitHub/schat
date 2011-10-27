@@ -23,6 +23,8 @@
 
 class QLabel;
 class QLineEdit;
+class QToolButton;
+class QProgressIndicator;
 
 class LoginWidget : public QWidget
 {
@@ -30,14 +32,24 @@ class LoginWidget : public QWidget
 
 public:
   LoginWidget(QWidget *parent = 0);
+  bool canLogIn() const;
   void retranslateUi();
-  void update(const QByteArray &id);
+  void update();
+
+protected:
+  void showEvent(QShowEvent *event);
+
+private slots:
+  void login();
+  void textChanged();
 
 private:
   QLabel *m_nameLabel;
   QLabel *m_passwordLabel;
   QLineEdit *m_nameEdit;
   QLineEdit *m_passwordEdit;
+  QProgressIndicator *m_progress; ///< Прогресс бар.
+  QToolButton *m_login;
 };
 
 #endif /* LOGINWIDGET_H_ */

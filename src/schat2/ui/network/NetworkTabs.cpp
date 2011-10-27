@@ -33,7 +33,6 @@ NetworkTabs::NetworkTabs(QWidget *parent)
   setSizePolicy(sizePolicy().horizontalPolicy(), QSizePolicy::Maximum);
 
   addTab(m_login, tr("Log In"));
-//  addTab(m_signup, tr("Sign Up"));
 
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
@@ -43,6 +42,12 @@ NetworkTabs::NetworkTabs(QWidget *parent)
 }
 
 
+/*!
+ * Проверка возможности регистрации.
+ *
+ * \param id Идентификатор сервера.
+ * \return true если регистрация возможна.
+ */
 bool NetworkTabs::canSignUp(const QByteArray &id) const
 {
   if (id.isEmpty())
@@ -96,7 +101,7 @@ void NetworkTabs::update(const QByteArray &id)
   if (!ChatCore::i()->networks()->isItem(id))
     return;
 
-  m_login->update(id);
+  m_login->update();
   updateSignUp(id);
 }
 

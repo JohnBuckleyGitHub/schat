@@ -19,9 +19,10 @@
 #ifndef NETWORKMANAGER_H_
 #define NETWORKMANAGER_H_
 
+#include <QHash>
 #include <QObject>
 #include <QStringList>
-#include <QHash>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -46,8 +47,10 @@ public:
   inline QByteArray id() const { return m_id; }
   inline QString account() const { return m_account; }
   inline QString name() const { return m_name; }
+  inline QString password() const { return m_password; }
   inline QString url() const { return m_url; }
   inline void setAccount(const QString &account) { m_account = account; }
+  inline void setPassword(const QString &password) { m_password = password; }
   static NetworkItem item();
   void read();
   void write();
@@ -63,6 +66,7 @@ private:
   QByteArray m_userId;   ///< Идентификатор пользователя.
   QString m_account;     ///< Имя пользователя.
   QString m_name;        ///< Имя сервера.
+  QString m_password;    ///< Пароль.
   QString m_url;         ///< Адрес сервера.
 };
 
@@ -84,10 +88,12 @@ public:
   inline NetworkItem item() { return item(serverId()); }
   inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
   inline QString root() const { return root(serverId()); }
+  inline QVariant selected() const { return m_selected; }
   QByteArray serverId() const;
   QList<NetworkItem> items() const;
   static QString currentServerName();
   void removeItem(const QByteArray &id);
+  void setSelected(const QVariant &selected);
 
 private slots:
   void clientStateChanged(int state);
@@ -103,6 +109,7 @@ private:
   FileLocations *m_locations;
   MessageAdapter *m_adapter;
   QHash<QByteArray, NetworkItem> m_items;
+  QVariant m_selected;      ///< Текущая выбранная сеть в настройках, значние может быть идентификатором сервера или url адресом.
   SimpleClient *m_client;   ///< Указатель на клиент.
 };
 
