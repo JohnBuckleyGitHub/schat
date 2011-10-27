@@ -107,6 +107,7 @@ NetworkPage::NetworkPage(QWidget *parent)
   mainLay->addWidget(m_networkLabel);
   mainLay->addLayout(networkLay);
   mainLay->addStretch();
+  mainLay->addStretch();
 
   retranslateUi();
 }

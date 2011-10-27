@@ -79,9 +79,10 @@ public:
   bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
+  inline bool isItem(const QByteArray &id) const { return m_items.contains(id); }
   inline int count() const { return m_items.count(); }
-  inline NetworkItem& item() { return item(serverId()); }
-  inline NetworkItem& item(const QByteArray &id) { return m_items[id]; }
+  inline NetworkItem item() { return item(serverId()); }
+  inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
   inline QString root() const { return root(serverId()); }
   QByteArray serverId() const;
   QList<NetworkItem> items() const;
