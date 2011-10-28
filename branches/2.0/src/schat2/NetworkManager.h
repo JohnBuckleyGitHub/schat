@@ -80,6 +80,7 @@ class SCHAT_CORE_EXPORT NetworkManager : public QObject
 
 public:
   NetworkManager(QObject *parent = 0);
+  bool isAutoConnect() const;
   bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
@@ -107,6 +108,7 @@ private:
 
   ChatSettings *m_settings; ///< Основные настройки.
   FileLocations *m_locations;
+  int m_invalids;
   MessageAdapter *m_adapter;
   QHash<QByteArray, NetworkItem> m_items;
   QVariant m_selected;      ///< Текущая выбранная сеть в настройках, значние может быть идентификатором сервера или url адресом.

@@ -455,7 +455,7 @@ void TabWidget::clientStateChanged(int state, int previousState)
     tab->setOnline(false);
   }
 
-  if (state == SimpleClient::ClientOffline) {
+  if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
     closeWelcome();
   }
 }
@@ -740,7 +740,7 @@ void TabWidget::retranslateUi()
  */
 void TabWidget::showWelcome()
 {
-  if (SCHAT_OPTION("AutoConnect").toBool() && m_client->user()->status() != User::OfflineStatus && ChatCore::i()->networks()->count()) {
+  if (ChatCore::i()->networks()->isAutoConnect()) {
     m_progressTab = new ProgressTab(this);
     addChatTab(m_progressTab);
   }

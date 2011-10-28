@@ -131,6 +131,7 @@ NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::i()->settings())
   , m_locations(ChatCore::i()->locations())
+  , m_invalids(0)
   , m_adapter(ChatCore::i()->adapter())
   , m_client(ChatCore::i()->client())
 {
@@ -140,12 +141,15 @@ NetworkManager::NetworkManager(QObject *parent)
 }
 
 
-bool NetworkManager::open()
+bool NetworkManager::isAutoConnect() const
 {
   if (m_client->clientState() != SimpleClient::ClientOffline)
     return false;
 
-  if (m_settings->value(QLatin1String("AutoConnect")).toBool() == false)
+  if (m_invalids)
+    return false;
+
+  if (!m_settings->value(QLatin1String("AutoConnect")).toBool())
     return false;
 
   if (m_client->user()->status() == User::OfflineStatus)
@@ -155,9 +159,16 @@ bool NetworkManager::open()
   if (networks.isEmpty())
     return false;
 
-  open(SimpleID::decode(networks.at(0).toLatin1()));
-
   return true;
+}
+
+
+bool NetworkManager::open()
+{
+  if (isAutoConnect())
+    return open(SimpleID::decode(networkList().at(0).toLatin1()));
+
+  return false;
 }
 
 
@@ -328,6 +339,8 @@ void NetworkManager::load()
     for (int i = 0; i < invalid.size(); ++i) {
       networks.removeAll(invalid.at(i));
     }
+
+    m_invalids = invalid.size();
     m_settings->setValue(QLatin1String("Networks"), networks);
   }
 }
