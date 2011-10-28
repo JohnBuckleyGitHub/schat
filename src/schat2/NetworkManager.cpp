@@ -107,10 +107,12 @@ void NetworkItem::write()
 
   settings.beginGroup(SimpleID::encode(m_id));
 
-  if (m_account.isEmpty())
-    settings.remove("Account");
-  else
+  if (!m_account.isEmpty()) {
     settings.setValue("Account", m_account);
+    m_authorized = true;
+  }
+  else
+    settings.remove("Account");
 
   settings.setValue("Auth",    auth());
   settings.setValue("Name",    m_name);
