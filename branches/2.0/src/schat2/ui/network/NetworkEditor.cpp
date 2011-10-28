@@ -25,6 +25,7 @@
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
+#include "messages/MessageAdapter.h"
 #include "NetworkManager.h"
 #include "ui/network/NetworkEditor.h"
 #include "ui/network/NetworkTabs.h"
@@ -60,6 +61,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   mainLay->setSpacing(4);
 
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(update()));
+  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(update()));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_anonymous, SIGNAL(toggled(bool)), SLOT(anonymousToggled(bool)));
 
