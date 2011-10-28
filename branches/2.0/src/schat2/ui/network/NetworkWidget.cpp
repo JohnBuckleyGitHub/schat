@@ -181,45 +181,59 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-  QVariant param = m_combo->itemData(index);
+  QVariantMap map;
+  QVariant data = m_combo->itemData(index);
 
-  if (param.type() == QVariant::Invalid) {
+  map["id"] = data.toByteArray();
+
+  if (data.type() == QVariant::Invalid) {
     m_combo->setEditable(true);
-    param = m_combo->itemText(index);
+    map["url"] = m_combo->itemText(index);
   }
   else
     m_combo->setEditable(false);
 
-  m_manager->setSelected(param);
+  m_manager->setSelected(map);
 }
 
 
 void NetworkWidget::notify(int notice, const QVariant &data)
 {
-  if (notice != ChatCore::NetworkChangedNotice)
-    return;
+  if (notice == ChatCore::NetworkChangedNotice) {
+    QByteArray id = data.toByteArray();
+    NetworkItem item = m_manager->item(id);
 
-  QByteArray id = data.toByteArray();
+    if (!item.isValid())
+      return;
 
-  NetworkItem item = m_manager->item(id);
-  if (!item.isValid())
-    return;
+    int index = m_combo->findText(item.url());
+    if (index != -1)
+      m_combo->removeItem(index);
 
-  int index = m_combo->findText(item.url());
-  if (index != -1)
-    m_combo->removeItem(index);
+    index = m_combo->findText("schat://");
+    if (index != -1)
+      m_combo->removeItem(index);
 
-  index = m_combo->findText("schat://");
-  if (index != -1)
-    m_combo->removeItem(index);
+    index = m_combo->findData(id);
+    if (index != -1)
+      m_combo->removeItem(index);
 
-  index = m_combo->findData(id);
-  if (index != -1) {
-    m_combo->removeItem(index);
+    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
+    m_combo->setCurrentIndex(0);
   }
+  else if (notice == ChatCore::NetworkSelectedNotice) {
+    qDebug() << "+++";
+    if (data.type() != QVariant::Map)
+      return;
 
-  m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
-  m_combo->setCurrentIndex(0);
+    QByteArray id = data.toMap().value("id").toByteArray();
+    if (id.isEmpty())
+      return;
+
+    int index = m_combo->findData(id);
+    if (index != -1 && index != m_combo->currentIndex())
+      m_combo->setCurrentIndex(index);
+  }
 }
 
 
