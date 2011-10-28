@@ -43,6 +43,7 @@ public:
   NetworkItem();
   NetworkItem(const QByteArray &id);
   bool isValid() const;
+  inline bool isAuthorized() const { return m_authorized; }
   inline QByteArray cookie() const { return m_cookie; }
   inline QByteArray id() const { return m_id; }
   inline QString account() const { return m_account; }
@@ -61,6 +62,7 @@ private:
   QString auth();
   void setAuth(const QString &auth);
 
+  bool m_authorized;     ///< \p true если пользователь авторизирован.
   QByteArray m_cookie;   ///< Cookie.
   QByteArray m_id;       ///< Идентификатор сервера.
   QByteArray m_userId;   ///< Идентификатор пользователя.

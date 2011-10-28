@@ -31,12 +31,14 @@
 #include "User.h"
 
 NetworkItem::NetworkItem()
+  : m_authorized(false)
 {
 }
 
 
 NetworkItem::NetworkItem(const QByteArray &id)
-  : m_id(id)
+  : m_authorized(false)
+  , m_id(id)
 {
 }
 
@@ -74,6 +76,9 @@ NetworkItem NetworkItem::item()
   item.m_userId = client->userId();
   item.m_account = client->user()->account();
 
+  if (!item.m_account.isEmpty())
+    item.m_authorized = true;
+
   return item;
 }
 
@@ -89,6 +94,9 @@ void NetworkItem::read()
   m_name = settings.value("Name").toString();
   m_url  = settings.value("Url").toString();
   settings.endGroup();
+
+  if (!m_account.isEmpty())
+    m_authorized = true;
 }
 
 
@@ -98,7 +106,12 @@ void NetworkItem::write()
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
-  settings.setValue("Account", m_account);
+
+  if (m_account.isEmpty())
+    settings.remove("Account");
+  else
+    settings.setValue("Account", m_account);
+
   settings.setValue("Auth",    auth());
   settings.setValue("Name",    m_name);
   settings.setValue("Url",     m_url);
@@ -185,7 +198,10 @@ bool NetworkManager::open(const QByteArray &id)
 
   m_client->setCookieAuth(m_settings->value(QLatin1String("CookieAuth")).toBool());
   NetworkItem item = m_items.value(id);
-  return m_client->openUrl(item.url(), item.cookie());
+  QUrl url = item.url();
+
+  qDebug() << url << item.account().toUtf8().toPercentEncoding();
+  return m_client->openUrl(url, item.cookie());
 }
 
 
@@ -355,6 +371,9 @@ void NetworkManager::load()
     m_invalids = invalid.size();
     m_settings->setValue(QLatin1String("Networks"), networks);
   }
+
+  if (!networks.isEmpty())
+    setSelected(SimpleID::decode(networks.at(0).toLatin1()));
 }
 
 
@@ -363,7 +382,7 @@ void NetworkManager::load()
  */
 void NetworkManager::write()
 {
-  QByteArray id  = m_client->serverData()->id();
+  QByteArray id = m_client->serverData()->id();
   m_selected = id;
   QString base64 = SimpleID::encode(id);
 

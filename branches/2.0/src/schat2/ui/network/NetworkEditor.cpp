@@ -36,6 +36,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   , m_layout(layout)
   , m_connect(0)
 {
+  m_manager = ChatCore::i()->networks();
   m_network = new NetworkWidget(this);
   m_anonymous = new QCheckBox(this);
 
@@ -98,16 +99,12 @@ void NetworkEditor::update()
 
   m_tabs->update();
 
-  QByteArray id = ChatCore::i()->networks()->selectedId();
-  if (ChatCore::i()->networks()->isItem(id)) {
-    NetworkItem item = ChatCore::i()->networks()->item(id);
-    m_anonymous->setChecked(item.account().isEmpty());
-  }
-  else
-    m_anonymous->setChecked(true);
+  NetworkItem item = m_manager->item(m_manager->selectedId());
+  m_anonymous->setChecked(item.account().isEmpty());
+  m_anonymous->setVisible(!item.isAuthorized());
 
-  if (m_anonymous->isChecked())
-    m_anonymous->setVisible(true);
+  if (item.isAuthorized())
+    m_tabs->setVisible(false);
 }
 
 
