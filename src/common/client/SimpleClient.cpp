@@ -611,7 +611,7 @@ void SimpleClient::requestAuth()
   if (d->cookieAuth && !d->cookie.isEmpty())
     d->authType = AuthRequest::Cookie;
 
-  AuthRequest data(d->authType, d->url.host(), d->user.data());
+  AuthRequest data(d->authType, d->url.toString(), d->user.data());
   data.uniqueId = d->uniqueId;
   data.cookie = d->cookie;
   data.id = d->authId;

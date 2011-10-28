@@ -21,11 +21,11 @@
 
 #include <QWidget>
 
+class NetworkManager;
+class NetworkTabs;
 class NetworkWidget;
 class QCheckBox;
 class QPushButton;
-class QTabWidget;
-class NetworkTabs;
 
 class NetworkEditor : public QWidget
 {
@@ -52,10 +52,11 @@ private:
   void retranslateUi();
 
   EditorLayout m_layout;       ///< Настройка внешнего вида виджета.
+  NetworkManager *m_manager;   ///< Менеджер подключений.
+  NetworkTabs *m_tabs;         ///< Вкладки.
   NetworkWidget *m_network;    ///< Виджет выбора сети.
   QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
   QPushButton *m_connect;      ///< Кнопка Connect.
-  NetworkTabs *m_tabs;         ///< Вкладки.
 };
 
 #endif /* NETWORKEDITOR_H_ */

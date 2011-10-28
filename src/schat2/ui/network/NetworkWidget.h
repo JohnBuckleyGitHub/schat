@@ -55,6 +55,7 @@ private:
   int isCurrentActive() const;
   void load();
   void retranslateUi();
+  void setCurrentIndex(const QVariant &data);
 
   NetworkManager *m_manager;
   QAction *m_addAction;
