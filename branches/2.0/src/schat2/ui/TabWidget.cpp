@@ -634,10 +634,10 @@ PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
  */
 void TabWidget::closeWelcome()
 {
-  if (m_welcomeTab) {
-    int index = indexOf(m_welcomeTab);
-    if (index != -1)
-      closeTab(index);
+  if (m_welcomeTab) { /// FIXME !! Не забыть восстановить.
+//    int index = indexOf(m_welcomeTab);
+//    if (index != -1)
+//      closeTab(index);
   }
 
   if (m_progressTab) {
