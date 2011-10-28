@@ -44,7 +44,9 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  void clientStateChanged();
+  void anonymousToggled(bool checked);
+  void notify(int notice, const QVariant &data);
+  void update();
 
 private:
   void retranslateUi();

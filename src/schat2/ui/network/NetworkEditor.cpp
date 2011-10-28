@@ -25,9 +25,11 @@
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
+#include "NetworkManager.h"
 #include "ui/network/NetworkEditor.h"
-#include "ui/network/NetworkWidget.h"
 #include "ui/network/NetworkTabs.h"
+#include "ui/network/NetworkWidget.h"
+#include "ui/UserUtils.h"
 
 NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)
@@ -56,7 +58,9 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   mainLay->setMargin(0);
   mainLay->setSpacing(4);
 
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
+  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(update()));
+  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+  connect(m_anonymous, SIGNAL(toggled(bool)), SLOT(anonymousToggled(bool)));
 
   retranslateUi();
 }
@@ -71,18 +75,44 @@ void NetworkEditor::changeEvent(QEvent *event)
 }
 
 
-void NetworkEditor::clientStateChanged()
+void NetworkEditor::anonymousToggled(bool checked)
+{
+  m_tabs->setVisible(!checked);
+}
+
+
+void NetworkEditor::notify(int notice, const QVariant &data)
+{
+  if (notice == ChatCore::NetworkSelectedNotice || notice == ChatCore::NetworkChangedNotice)
+    update();
+}
+
+
+void NetworkEditor::update()
 {
   if (m_layout & ConnectButtonLayout) {
     QAction *action = m_network->connectAction();
     m_connect->setIcon(action->icon());
     m_connect->setText(action->text());
   }
+
+  m_tabs->update();
+
+  QByteArray id = ChatCore::i()->networks()->selectedId();
+  if (ChatCore::i()->networks()->isItem(id)) {
+    NetworkItem item = ChatCore::i()->networks()->item(id);
+    m_anonymous->setChecked(item.account().isEmpty());
+  }
+  else
+    m_anonymous->setChecked(true);
+
+  if (m_anonymous->isChecked())
+    m_anonymous->setVisible(true);
 }
 
 
 void NetworkEditor::retranslateUi()
 {
   m_anonymous->setText(tr("Anonymous connection"));
-  clientStateChanged();
+  update();
 }

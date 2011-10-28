@@ -30,18 +30,15 @@ class NetworkTabs : public QTabWidget
 
 public:
   NetworkTabs(QWidget *parent = 0);
+  bool canLogIn() const;
   bool canSignUp(const QByteArray &id = QByteArray()) const;
+  void update();
 
 protected:
   void changeEvent(QEvent *event);
 
-private slots:
-  void clientStateChanged(int state);
-  void notify(int notice, const QVariant &data);
-
 private:
   void retranslateUi();
-  void update(const QByteArray &id);
   void updateSignUp(const QByteArray &id = QByteArray());
 
   LoginWidget *m_login;   ///< Виджет входа.

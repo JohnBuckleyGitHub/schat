@@ -34,11 +34,17 @@ NetworkTabs::NetworkTabs(QWidget *parent)
 
   addTab(m_login, tr("Log In"));
 
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-
-  update(ChatCore::i()->networks()->serverId());
+  update();
   retranslateUi();
+}
+
+
+/*!
+ * \sa LoginWidget::canLogIn().
+ */
+bool NetworkTabs::canLogIn() const
+{
+  return m_login->canLogIn();
 }
 
 
@@ -66,6 +72,13 @@ bool NetworkTabs::canSignUp(const QByteArray &id) const
 }
 
 
+void NetworkTabs::update()
+{
+  m_login->update();
+  updateSignUp();
+}
+
+
 void NetworkTabs::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
@@ -75,34 +88,9 @@ void NetworkTabs::changeEvent(QEvent *event)
 }
 
 
-void NetworkTabs::clientStateChanged(int state)
-{
-  update(ChatCore::i()->networks()->serverId());
-}
-
-
-void NetworkTabs::notify(int notice, const QVariant &data)
-{
-  if (notice == ChatCore::NetworkSelectedNotice || notice == ChatCore::NetworkChangedNotice) {
-    if (data.type() == QVariant::ByteArray)
-      update(data.toByteArray());
-  }
-}
-
-
 void NetworkTabs::retranslateUi()
 {
   m_login->retranslateUi();
-}
-
-
-void NetworkTabs::update(const QByteArray &id)
-{
-  if (!ChatCore::i()->networks()->isItem(id))
-    return;
-
-  m_login->update();
-  updateSignUp(id);
 }
 
 

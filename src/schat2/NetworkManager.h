@@ -84,12 +84,13 @@ public:
   bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
-  inline bool isItem(const QByteArray &id) const { return m_items.contains(id); }
+  inline bool isItem(const QByteArray &id) const { if (id.isEmpty()) return false; return m_items.contains(id); }
   inline int count() const { return m_items.count(); }
   inline NetworkItem item() { return item(serverId()); }
   inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
   inline QString root() const { return root(serverId()); }
   inline QVariant selected() const { return m_selected; }
+  QByteArray selectedId() const;
   QByteArray serverId() const;
   QList<NetworkItem> items() const;
   static QString currentServerName();

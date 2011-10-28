@@ -201,6 +201,15 @@ bool NetworkManager::open(const QString &url)
 }
 
 
+QByteArray NetworkManager::selectedId() const
+{
+  if (m_selected.type() == QVariant::ByteArray)
+    return m_selected.toByteArray();
+
+  return QByteArray();
+}
+
+
 /*!
  * Получение идентификатора сервера.
  *
@@ -262,6 +271,9 @@ void NetworkManager::removeItem(const QByteArray &id)
 
 void NetworkManager::setSelected(const QVariant &selected)
 {
+  if (m_selected == selected)
+    return;
+
   m_selected = selected;
   ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, selected);
 }

@@ -181,59 +181,45 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-  QVariantMap map;
-  QVariant data = m_combo->itemData(index);
+  QVariant param = m_combo->itemData(index);
 
-  map["id"] = data.toByteArray();
-
-  if (data.type() == QVariant::Invalid) {
+  if (param.type() == QVariant::Invalid) {
     m_combo->setEditable(true);
-    map["url"] = m_combo->itemText(index);
+    param = m_combo->itemText(index);
   }
   else
     m_combo->setEditable(false);
 
-  m_manager->setSelected(map);
+  m_manager->setSelected(param);
 }
 
 
 void NetworkWidget::notify(int notice, const QVariant &data)
 {
-  if (notice == ChatCore::NetworkChangedNotice) {
-    QByteArray id = data.toByteArray();
-    NetworkItem item = m_manager->item(id);
+  if (notice != ChatCore::NetworkChangedNotice)
+    return;
 
-    if (!item.isValid())
-      return;
+  QByteArray id = data.toByteArray();
 
-    int index = m_combo->findText(item.url());
-    if (index != -1)
-      m_combo->removeItem(index);
+  NetworkItem item = m_manager->item(id);
+  if (!item.isValid())
+    return;
 
-    index = m_combo->findText("schat://");
-    if (index != -1)
-      m_combo->removeItem(index);
+  int index = m_combo->findText(item.url());
+  if (index != -1)
+    m_combo->removeItem(index);
 
-    index = m_combo->findData(id);
-    if (index != -1)
-      m_combo->removeItem(index);
+  index = m_combo->findText("schat://");
+  if (index != -1)
+    m_combo->removeItem(index);
 
-    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
-    m_combo->setCurrentIndex(0);
+  index = m_combo->findData(id);
+  if (index != -1) {
+    m_combo->removeItem(index);
   }
-  else if (notice == ChatCore::NetworkSelectedNotice) {
-    qDebug() << "+++";
-    if (data.type() != QVariant::Map)
-      return;
 
-    QByteArray id = data.toMap().value("id").toByteArray();
-    if (id.isEmpty())
-      return;
-
-    int index = m_combo->findData(id);
-    if (index != -1 && index != m_combo->currentIndex())
-      m_combo->setCurrentIndex(index);
-  }
+  m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
+  m_combo->setCurrentIndex(0);
 }
 
 
