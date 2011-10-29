@@ -67,7 +67,10 @@ LoginWidget::LoginWidget(QWidget *parent)
   mainLay->setMargin(4);
 
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
+  connect(m_nameEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
+  connect(m_passwordEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+
   connect(m_login, SIGNAL(clicked()), SLOT(login()));
   connect(ChatCore::i()->client(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
@@ -78,18 +81,11 @@ LoginWidget::LoginWidget(QWidget *parent)
 
 /*!
  * Возвращает \p true если в текущий момент времени возможна авторизация.
- *
- * Авторизация возможна в следующих случаях:
- * - При создании нового подключения, в случае если клиент отключен от сети.
- * - Если клиент подключен к текущему серверу и не авторизирован.
  */
 bool LoginWidget::canLogIn() const
 {
   QVariant selected = ChatCore::i()->networks()->selected();
   SimpleClient *client = ChatCore::i()->client();
-
-  if (selected.type() == QVariant::String && client->clientState() == SimpleClient::ClientOffline)
-    return true;
 
   if (selected.type() != QVariant::ByteArray)
     return false;
@@ -149,6 +145,20 @@ void LoginWidget::showEvent(QShowEvent *event)
   m_error->setMaximumHeight(m_passwordEdit->height());
 
   QWidget::showEvent(event);
+}
+
+
+void LoginWidget::editingFinished()
+{
+  qDebug() << "LoginWidget::editingFinished()" << m_nameEdit->text() << m_passwordEdit->text();
+
+  if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty())
+    return;
+
+  QVariant selected = ChatCore::i()->networks()->selected();
+  if (selected.type() == QVariant::String) {
+    ChatCore::i()->client()->setAccount(m_nameEdit->text(), m_passwordEdit->text());
+  }
 }
 
 

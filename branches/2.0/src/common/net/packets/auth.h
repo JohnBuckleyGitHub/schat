@@ -87,7 +87,9 @@ public:
  *  - \b utf8      - Ник AuthRequest::nick.
  *  - \b utf8      - Идентификатор клиента пользователя AuthRequest::userAgent.
  *    - \b utf8    - AuthRequest::privateId, (\p authType == AuthRequest::SlaveNode).
- *    - \b id      - AuthRequest::cookie, (\p authType == AuthRequest::Cookie).
+ *    - \b utf8    - AuthRequest::account, (\p authType == AuthRequest::Password).
+ *    - \b id      - AuthRequest::password, (\p authType == AuthRequest::Password).
+ *    - \b id      - AuthRequest::cookie, (\p authType == AuthRequest::Cookie или \p authType == AuthRequest::Password).
  *    - \b json    - AuthRequest::json, (AuthRequest::fields & AuthRequest::JSonField)
  */
 class SCHAT_EXPORT AuthRequest : public AbstractPacket
@@ -128,6 +130,8 @@ public:
   QString userAgent;       ///< Идентификатор клиента пользователя.
   QString privateId;       ///< Приватный идентификатор сервера, только для типа авторизации AuthRequest::SlaveNode.
   QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequest::Cookie.
+  QString account;         ///< Зарегистрированное имя пользователя.
+  QByteArray password;     ///< Пароль.
 };
 
 #endif /* AUTH_H_ */

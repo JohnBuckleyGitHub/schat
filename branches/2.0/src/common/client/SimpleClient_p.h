@@ -64,8 +64,10 @@ public:
   bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
   int authType;                              ///< Тип авторизации.
   MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
+  QByteArray password;
   QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
   QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
+  QString account;
 };
 
 #endif /* SIMPLECLIENT_P_H_ */

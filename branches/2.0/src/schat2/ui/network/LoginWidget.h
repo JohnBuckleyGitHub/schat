@@ -41,6 +41,7 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
+  void editingFinished();
   void login();
   void notice(const Notice &notice);
   void textChanged();
