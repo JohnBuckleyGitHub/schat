@@ -202,7 +202,6 @@ bool NetworkManager::open(const QByteArray &id)
   NetworkItem item = m_items.value(id);
   QUrl url = item.url();
 
-  qDebug() << url << item.account().toUtf8().toPercentEncoding();
   return m_client->openUrl(url, item.cookie());
 }
 

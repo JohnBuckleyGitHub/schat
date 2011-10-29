@@ -47,6 +47,7 @@ public:
   ClientUser user(const QByteArray &id) const;
   void leave();
   void part(const QByteArray &channelId);
+  void setAccount(const QString &account, const QString &password);
   void setCookieAuth(bool allow);
 
 signals:

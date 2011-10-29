@@ -57,6 +57,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
     addChannel(channel);
 
+    account.clear();
+    password.clear();
     return true;
   }
 
@@ -594,6 +596,14 @@ void SimpleClient::part(const QByteArray &channelId)
 }
 
 
+void SimpleClient::setAccount(const QString &account, const QString &password)
+{
+  Q_D(SimpleClient);
+  d->account = account;
+  d->password = SimpleID::password(password);
+}
+
+
 void SimpleClient::setCookieAuth(bool allow)
 {
   Q_D(SimpleClient);
@@ -601,20 +611,26 @@ void SimpleClient::setCookieAuth(bool allow)
 }
 
 
+/*!
+ * Формирование пакета запроса авторизации.
+ */
 void SimpleClient::requestAuth()
 {
-  SCHAT_DEBUG_STREAM(this << "requestAuth()")
-
   Q_D(SimpleClient);
 
   d->authType = AuthRequest::Anonymous;
-  if (d->cookieAuth && !d->cookie.isEmpty())
+
+  if (!d->account.isEmpty() && SimpleID::typeOf(d->password) == SimpleID::PasswordId)
+    d->authType = AuthRequest::Password;
+  else if (d->cookieAuth && !d->cookie.isEmpty())
     d->authType = AuthRequest::Cookie;
 
   AuthRequest data(d->authType, d->url.toString(), d->user.data());
   data.uniqueId = d->uniqueId;
   data.cookie = d->cookie;
   data.id = d->authId;
+  data.account = d->account;
+  data.password = d->password;
   send(data.data(d->sendStream));
 }
 

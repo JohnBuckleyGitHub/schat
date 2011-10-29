@@ -305,6 +305,7 @@ void NetworkWidget::load()
   if (m_combo->count() == 0) {
     m_combo->addItem("schat://schat.me");
     m_combo->setEditable(true);
+    m_manager->setSelected(m_combo->itemText(0));
   }
 
   setCurrentIndex(m_manager->selected());
