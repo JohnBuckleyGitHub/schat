@@ -90,7 +90,7 @@ void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
   if (!socket)
     return;
 
-  NewPacketsEvent *event = new NewPacketsEvent(id, packets, socket->userId());
+  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << id, packets, socket->userId());
 
   if (socket && !socket->isAuthorized())
     event->address = socket->peerAddress();

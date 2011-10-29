@@ -55,7 +55,6 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
   user->setCookie(exist->cookie());
   user->setGroups(exist->groups());
   user->setAccount(exist->account());
-  qDebug() << user->account();
   m_core->add(user, data.authType, data.id);
 
   SCHAT_LOG_DEBUG() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;

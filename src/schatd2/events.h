@@ -60,10 +60,8 @@ public:
     KillSocketOption
   };
 
-  NewPacketsEvent(const QList<quint64> &socketIds, const QByteArray &packet);
-  NewPacketsEvent(const QList<quint64> &socketIds, const QList<QByteArray> &packets);
-  NewPacketsEvent(quint64 socket, const QByteArray &packet, const QByteArray &userId = QByteArray());
-  NewPacketsEvent(quint64 socket, const QList<QByteArray> &packets, const QByteArray &userId = QByteArray());
+  NewPacketsEvent(const QList<quint64> &sockets, const QByteArray &packet, const QByteArray &userId = QByteArray());
+  NewPacketsEvent(const QList<quint64> &sockets, const QList<QByteArray> &packets, const QByteArray &userId = QByteArray());
 
   const QList<QByteArray> packets; ///< Тела виртуальных пакетов.
   int option;                      ///< Опция /sa Option.

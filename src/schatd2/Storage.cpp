@@ -115,6 +115,15 @@ qint64 Storage::timestamp()
 }
 
 
+void Storage::merge(QList<quint64> &out, const QList<quint64> sockets)
+{
+  foreach (quint64 socket, sockets) {
+    if (!out.contains(socket))
+      out.append(socket);
+  }
+}
+
+
 void Storage::addSlave(const QByteArray &id)
 {
   if (m_slaves.contains(id))
@@ -146,6 +155,7 @@ bool Storage::add(ChatUser user)
  * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
  *
  * \return true если пользователи находятся на одном вторичном сервере или один или оба не являются валидными.
+ * \bug Нарушена совместимость с вторичным сервером.
  */
 bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
 {
@@ -157,8 +167,8 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
   if (!user2)
     return true;
 
-  if (isAllowSlaves() && user1->socketId() == user2->socketId())
-    return true;
+//  if (isAllowSlaves() && user1->socketId() == user2->socketId())
+//    return true;
 
   return false;
 }
@@ -282,7 +292,7 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
 QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 {
   QString prefix;
-  if (type == AuthRequest::Anonymous || type == AuthRequest::Cookie)
+  if (type == AuthRequest::Anonymous || type == AuthRequest::Cookie || type == AuthRequest::Password)
     prefix = QLatin1String("anonymous:");
   else if (type == AuthRequest::SlaveNode)
     prefix = QLatin1String("slave:");
@@ -467,7 +477,7 @@ ChatChannel Storage::channel(qint64 id)
  * Получение списка идентификаторов сокетов пользователей в канале.
  * \param channel Указатель на канал.
  */
-QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
+QList<quint64> Storage::sockets(ChatChannel channel)
 {
   QList<quint64> out;
   if (!channel)
@@ -476,8 +486,8 @@ QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
   QList<QByteArray> users = channel->users();
   for (int i = 0; i < users.size(); ++i) {
     ChatUser user = this->user(users.at(i));
-    if (user && !out.contains(user->socketId()))
-      out += user->socketId();
+    if (user)
+      merge(out, user->sockets());
   }
 
   return out;
@@ -487,7 +497,7 @@ QList<quint64> Storage::socketsFromChannel(ChatChannel channel)
 /*!
  * Получение списка идентификаторов сокетов.
  */
-QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
+QList<quint64> Storage::sockets(const QList<QByteArray> &ids)
 {
   QList<quint64> out;
   if (ids.isEmpty())
@@ -497,21 +507,12 @@ QList<quint64> Storage::socketsFromIds(const QList<QByteArray> &ids)
     int type = SimpleID::typeOf(id);
 
     if (type == SimpleID::ChannelId) {
-      ChatChannel channel = this->channel(id);
-      if (channel) {
-        QList<QByteArray> users = channel->users();
-
-        for (int i = 0; i < users.size(); ++i) {
-          ChatUser user = this->user(users.at(i));
-          if (user && !out.contains(user->socketId()))
-            out += user->socketId();
-        }
-      }
+      merge(out, sockets(this->channel(id)));
     }
     else if (type == SimpleID::UserId) {
       ChatUser user = this->user(id);
-      if (user && !out.contains(user->socketId()))
-        out += user->socketId();
+      if (user)
+        merge(out, user->sockets());
     }
   }
 

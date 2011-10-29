@@ -77,7 +77,7 @@ Core::~Core()
  */
 bool Core::send(ChatChannel channel, const QByteArray &packet)
 {
-  return send(m_storage->socketsFromChannel(channel), QList<QByteArray>() << packet);
+  return send(m_storage->sockets(channel), QList<QByteArray>() << packet);
 }
 
 
@@ -89,23 +89,53 @@ bool Core::send(ChatChannel channel, const QByteArray &packet)
  */
 bool Core::send(ChatChannel channel, const QList<QByteArray> &packets)
 {
-  return send(m_storage->socketsFromChannel(channel), packets);
+  return send(m_storage->sockets(channel), packets);
+}
+
+
+/*!
+ * Отправка пакетов пользователю.
+ */
+bool Core::send(ChatUser user, const QByteArray &packet, int option)
+{
+  if (!user)
+    return false;
+
+  return send(user->sockets(), QList<QByteArray>() << packet, option, user->id());
+}
+
+
+/*!
+ * Отправка пакетов пользователю.
+ */
+bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
+{
+  if (!user)
+    return false;
+
+  return send(user->sockets(), packets, option, user->id());
 }
 
 
 /*!
  * Отправка пакета списку сокетов.
  */
-bool Core::send(const QList<quint64> &sockets, const QByteArray &packet)
+bool Core::send(const QList<quint64> &sockets, const QByteArray &packet, int option, const QByteArray &userId)
 {
-  return send(sockets, QList<QByteArray>() << packet);
+  return send(sockets, QList<QByteArray>() << packet, option, userId);
 }
 
 
 /*!
- * Отправка пакетов списку сокетов.
+ * Базовая функция отправки пакетов.
+ * Эта функция используется всеми остальными функциями отправки пакетов.
+ *
+ * \param sockets Список номеров сокетов.
+ * \param packets Готовые сформированные пакеты.
+ * \param option  Опция сокета NewPacketsEvent::Option.
+ * \param userId  Идентификатор пользователя.
  */
-bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
+bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option, const QByteArray &userId)
 {
   if (sockets.isEmpty())
     return true;
@@ -113,8 +143,10 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets)
   if (m_timestamp == 0)
     m_timestamp = Storage::timestamp();
 
-  NewPacketsEvent *event = new NewPacketsEvent(sockets, packets);
+  NewPacketsEvent *event = new NewPacketsEvent(sockets, packets, userId);
   event->timestamp = m_timestamp;
+  event->option = option;
+
   QCoreApplication::postEvent(m_listener, event);
   return true;
 }
@@ -131,37 +163,6 @@ bool Core::add(ChatUser user, int authType, const QByteArray &authId)
   Q_UNUSED(authType);
   Q_UNUSED(authId)
   return m_storage->add(user);
-}
-
-
-/*!
- * Отправка пакетов пользователю.
- */
-bool Core::send(ChatUser user, const QByteArray &packet, int option)
-{
-  if (!user)
-    return false;
-
-  return send(user, QList<QByteArray>() << packet, option);
-}
-
-
-/*!
- * Отправка пакетов пользователю.
- */
-bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
-{
-  if (!user)
-    return false;
-
-  if (m_timestamp == 0)
-    m_timestamp = Storage::timestamp();
-
-  NewPacketsEvent *event = new NewPacketsEvent(user->socketId(), packets, user->id());
-  event->option = option;
-  event->timestamp = m_timestamp;
-  QCoreApplication::postEvent(m_listener, event);
-  return true;
 }
 
 
@@ -192,7 +193,7 @@ bool Core::route()
   if (m_timestamp == 0)
     m_timestamp = Storage::timestamp();
 
-  return send(echoFilter(m_storage->socketsFromIds(m_reader->destinations())), m_readBuffer);
+  return send(echoFilter(m_storage->sockets(m_reader->destinations())), m_readBuffer);
 }
 
 
@@ -279,7 +280,7 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
   MessageData message(user->id(), user->channels(), QLatin1String("leave"), QString());
 
-  send(m_storage->socketsFromIds(user->channels()), MessageWriter(m_sendStream, message).data());
+  send(m_storage->sockets(user->channels()), MessageWriter(m_sendStream, message).data());
   m_storage->remove(user);
 }
 
@@ -402,20 +403,21 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
  */
 QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
 {
-  QList<quint64> out = sockets;
   ChatUser user = m_storage->user(m_reader->sender());
 
   if (!user)
-    return out;
+    return sockets;
 
-  quint64 id = user->socketId();
-  if (m_reader->is(Protocol::EnableEcho)) {
-    if (!out.contains(id))
-      out.append(id);
+  QList<quint64> out = sockets;
+
+  if (!m_reader->is(Protocol::EnableEcho)) {
+    QList<quint64> sockets = user->sockets();
+    foreach (quint64 socket, sockets) {
+      out.removeAll(socket);
+    }
   }
-  else {
-    out.removeAll(id);
-  }
+  else
+    Storage::merge(out, user->sockets());
 
   return out;
 }
@@ -427,9 +429,10 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
 bool Core::readAuthRequest()
 {
   AuthRequest data(m_reader);
+  quint64 socket = m_packetsEvent->socket();
 
   if (!data.isValid()) {
-    AuthResult result(Notice::BadRequest, data.id);
+    AuthResult result(Notice::BadRequest, data.id, socket);
     rejectAuth(result);
     return false;
   }
@@ -451,7 +454,7 @@ bool Core::readAuthRequest()
       return true;
   }
 
-  AuthResult result(Notice::NotImplemented, data.id);
+  AuthResult result(Notice::NotImplemented, data.id, socket);
   rejectAuth(result);
   return false;
 }
@@ -480,7 +483,7 @@ void Core::acceptAuth(const AuthResult &result)
   }
 
   packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
-  send(user, packets, result.option);
+  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, user->id());
 
   if (m_plugins) {
     UserHook hook(user);
@@ -498,7 +501,7 @@ void Core::rejectAuth(const AuthResult &result)
 
   AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
 
-  NewPacketsEvent *event = new NewPacketsEvent(m_packetsEvent->socket(), reply.data(m_sendStream));
+  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));
   event->option = result.option;
 
   QCoreApplication::postEvent(m_listener, event);

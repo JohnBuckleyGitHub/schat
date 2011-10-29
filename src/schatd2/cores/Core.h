@@ -50,8 +50,8 @@ public:
   bool send(ChatChannel channel, const QList<QByteArray> &packets);
   bool send(ChatUser user, const QByteArray &packet, int option = 0);
   bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
-  bool send(const QList<quint64> &sockets, const QByteArray &packet);
-  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets);
+  bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
+  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
   inline QByteArray readBuffer() const { return m_readBuffer; }
   inline QDataStream *sendStream() { return m_sendStream; }

@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "events.h"
@@ -29,29 +31,41 @@ AnonymousAuth::AnonymousAuth(Core *core)
 }
 
 
+/*!
+ * \todo Реализовать поддержку различных агентов и адреса пользователя для различных подключений одного из них.
+ */
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
-  Storage *storage = Storage::i();
-  QByteArray userId = storage->makeUserId(data.authType, data.uniqueId);
-  ChatUser user = storage->user(userId);
-
-  if (user)
-    return AuthResult(Notice::UserAlreadyExists, data.id); ///< \deprecated Необходима поддержка множественного входа.
-
+  Storage *storage   = Storage::i();
+  QByteArray id      = storage->makeUserId(data.authType, data.uniqueId);
   QString normalNick = storage->normalize(data.nick);
-  if (storage->user(normalNick, false))
+  ChatUser user      = storage->user(normalNick, false);
+
+  // Если пользователь с указанным ником подключен к серверу и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
+  if (user && user->id() != id)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-  user = ChatUser(new ServerUser(normalNick, userId, data, m_core->packetsEvent()->socket()));
-  if (!user->isValid())
-    return AuthResult(Notice::BadRequest, data.id);
 
-  user->setUserAgent(data.userAgent);
-  user->setHost(m_core->packetsEvent()->address.toString());
+  user = storage->user(id, true);
+  if (!user) {
+    qDebug() << "CREATE";
+    user = ChatUser(new ServerUser(normalNick, id, data, m_core->packetsEvent()->socket()));
+    if (!user->isValid())
+      return AuthResult(Notice::BadRequest, data.id);
+  }
+  else {
+    user->setNick(data.nick);
+    user->setRawGender(data.gender);
+    user->setStatus(data.status);
+    user->addSocket(m_core->packetsEvent()->socket());
+    user->setUserAgent(data.userAgent);
+    user->setHost(m_core->packetsEvent()->address.toString());
+  }
+
   m_core->add(user, data.authType, data.id);
 
   SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;
-  return AuthResult(userId, data.id);
+  return AuthResult(id, data.id);
 }
 
 

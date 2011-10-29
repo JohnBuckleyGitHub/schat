@@ -46,8 +46,8 @@ quint64 ServerEvent::socket() const
 }
 
 
-NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QByteArray &packet)
-  : ServerEvent(NewPackets, sockets)
+NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QByteArray &packet, const QByteArray &userId)
+  : ServerEvent(NewPackets, sockets, userId)
   , packets(QList<QByteArray>() << packet)
   , option(0)
   , timestamp(0)
@@ -55,26 +55,8 @@ NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QByteArray
 }
 
 
-NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QList<QByteArray> &packets)
-  : ServerEvent(NewPackets, sockets)
-  , packets(packets)
-  , option(0)
-  , timestamp(0)
-{
-}
-
-
-NewPacketsEvent::NewPacketsEvent(quint64 socket, const QByteArray &packet, const QByteArray &userId)
-  : ServerEvent(NewPackets, socket, userId)
-  , packets(QList<QByteArray>() << packet)
-  , option(0)
-  , timestamp(0)
-{
-}
-
-
-NewPacketsEvent::NewPacketsEvent(quint64 socket, const QList<QByteArray> &packets, const QByteArray &userId)
-  : ServerEvent(NewPackets, socket, userId)
+NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QList<QByteArray> &packets, const QByteArray &userId)
+  : ServerEvent(NewPackets, sockets, userId)
   , packets(packets)
   , option(0)
   , timestamp(0)
