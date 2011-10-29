@@ -24,25 +24,24 @@ ServerUser::ServerUser(const QByteArray &id)
   : User()
   , m_online(false)
   , m_key(-1)
-  , m_socketId(0)
 {
   SCHAT_DEBUG_STREAM("USER CREATED" << this);
   setId(id);
 }
 
 
-ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socketId)
+ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socket)
   : User()
   , m_online(true)
   , m_uniqueId(data.uniqueId)
   , m_key(-1)
   , m_normalNick(normalNick)
-  , m_socketId(socketId)
 {
   setId(id);
   setNick(data.nick);
   setRawGender(data.gender);
   setStatus(data.status);
+  addSocket(socket);
 }
 
 

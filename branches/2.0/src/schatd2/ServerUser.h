@@ -31,27 +31,30 @@ class SCHAT_EXPORT ServerUser : public User
 {
 public:
   ServerUser(const QByteArray &id);
-  ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socketId);
+  ServerUser(const QString &normalNick, const QByteArray &id, const AuthRequest &data, quint64 socket);
   ServerUser(const User *user);
   ~ServerUser();
   inline bool isOnline() const { return m_online; }
   inline QByteArray cookie() const { return m_cookie; }
   inline QByteArray uniqueId() const { return m_uniqueId; }
   inline qint64 key() const { return m_key; }
+  inline QList<quint64> sockets() const { return m_sockets; }
   inline QString normalNick() const { return m_normalNick; }
-  inline quint64 socketId() const { return m_socketId; }
+  inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
+  inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
   inline void setCookie(const QByteArray &cookie) { m_cookie = cookie; }
   inline void setKey(qint64 key) { m_key = key; }
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }
   inline void setOnline(bool online) { m_online = online; }
+  inline void setSockets(const QList<quint64> &sockets) { m_sockets = sockets; }
 
 private:
   bool m_online;             ///< true если пользователь в сети.
   QByteArray m_cookie;       ///< Cookie.
   QByteArray m_uniqueId;     ///< Уникальный идентификатор пользователя.
   qint64 m_key;              ///< Ключ в таблице users.
+  QList<quint64> m_sockets;  ///< Идентификаторы сокетов.
   QString m_normalNick;      ///< Нормализованный ник.
-  quint64 m_socketId;        ///< Идентификатор сокета.
 };
 
 typedef QSharedPointer<ServerUser> ChatUser;

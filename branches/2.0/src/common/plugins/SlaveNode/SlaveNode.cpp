@@ -121,7 +121,7 @@ void SlaveNode::socketReleaseEvent(SocketReleaseEvent *event)
 
   if (mode() == ProxyMode) {
     QByteArray packet = MessageWriter(m_sendStream, MessageData(user->id(), user->channels(), QLatin1String("leave"), QString())).data();
-    send(m_storage->socketsFromIds(user->channels()), packet);
+    send(m_storage->sockets(user->channels()), packet);
     m_uplink->send(packet);
     m_storage->remove(user);
   }
@@ -296,14 +296,14 @@ void SlaveNode::split()
   QList<QByteArray> channels = m_storage->channels().keys();
   MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString());
 
-  send(m_storage->socketsFromIds(channels), MessageWriter(m_sendStream, message).data());
+  send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
 }
 
 
 bool SlaveNode::uplinkRoute()
 {
   m_timestamp = m_uplink->timestamp();
-  return send(m_storage->socketsFromIds(m_uplink->reader()->destinations()), m_uplink->readBuffer());
+  return send(m_storage->sockets(m_uplink->reader()->destinations()), m_uplink->readBuffer());
 }
 
 

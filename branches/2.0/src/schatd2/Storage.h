@@ -47,6 +47,7 @@ public:
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
   static qint64 timestamp();
+  static void merge(QList<quint64> &out, const QList<quint64> sockets);
   void addSlave(const QByteArray &id);
 
   // user management.
@@ -72,8 +73,8 @@ public:
   ChatChannel channel(const QString &name);
   ChatChannel channel(qint64 id);
   inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
-  QList<quint64> socketsFromChannel(ChatChannel channel);
-  QList<quint64> socketsFromIds(const QList<QByteArray> &ids);
+  QList<quint64> sockets(ChatChannel channel);
+  QList<quint64> sockets(const QList<QByteArray> &ids);
   void addChannel(ChatChannel channel);
   void update(ChatChannel channel);
 

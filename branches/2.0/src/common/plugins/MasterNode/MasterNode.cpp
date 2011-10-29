@@ -64,7 +64,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
     QList<QByteArray> slaves = m_storage->slaves();
     if (!slaves.isEmpty()) {
       UserWriter writer(m_sendStream, user.data(), slaves, user->cookie());
-      send(m_storage->socketsFromIds(slaves), writer.data());
+      send(m_storage->sockets(slaves), writer.data());
     }
   }
 
@@ -154,7 +154,7 @@ void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
     }
 
     MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));
-    send(m_storage->socketsFromIds(channels), MessageWriter(m_sendStream, message).data());
+    send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
   }
   else
     Core::socketReleaseEvent(event);
