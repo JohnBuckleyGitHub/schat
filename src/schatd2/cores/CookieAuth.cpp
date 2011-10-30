@@ -31,7 +31,7 @@ CookieAuth::CookieAuth(Core *core)
 
 AuthResult CookieAuth::auth(const AuthRequest &data)
 {
-  if (data.cookie.isEmpty() || SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
+  if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AuthResult();
 
   Storage *storage = Storage::i();
@@ -39,22 +39,22 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
   if (!exist)
     return AuthResult();
 
-  if (storage->user(exist->id()))
-    return AuthResult(Notice::UserAlreadyExists, data.id); ///< \deprecated Необходима поддержка множественного входа.
-
   QString normalNick = storage->normalize(data.nick);
-  if (storage->user(normalNick, false))
+  ChatUser user      = storage->user(normalNick, false);
+
+  // Если пользователь с указанным ником подключен к серверу
+  // и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
+  if (user && user->id() != exist->id())
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-  ChatUser user = ChatUser(new ServerUser(normalNick, exist->id(), data, m_core->packetsEvent()->socket()));
-  if (!user->isValid())
-    return AuthResult(Notice::BadRequest, data.id);
-
+  user = exist;
+  user->setNick(data.nick);
+  user->setRawGender(data.gender);
+  user->setStatus(data.status);
+  user->addSocket(m_core->packetsEvent()->socket());
   user->setUserAgent(data.userAgent);
   user->setHost(m_core->packetsEvent()->address.toString());
-  user->setCookie(exist->cookie());
-  user->setGroups(exist->groups());
-  user->setAccount(exist->account());
+
   m_core->add(user, data.authType, data.id);
 
   SCHAT_LOG_DEBUG() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;

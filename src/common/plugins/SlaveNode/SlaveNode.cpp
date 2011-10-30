@@ -171,7 +171,7 @@ bool SlaveNode::readMessage()
     return false;
   }
   else {
-    rejectMessage(MessageNotice::UnknownError);
+    rejectMessage(Notice::InternalError);
     return true;
   }
 
@@ -412,7 +412,7 @@ void SlaveNode::uplinkReadMessage()
 {
   if (SimpleID::typeOf(m_uplink->reader()->dest()) == SimpleID::UserId) {
     if (!uplinkRouteUser(m_uplink->reader()->dest()))
-      uplinkRejectMessage(MessageReader(m_uplink->reader()).data, MessageNotice::UnknownError);
+      uplinkRejectMessage(MessageReader(m_uplink->reader()).data, Notice::InternalError);
 
     return;
   }
@@ -450,6 +450,6 @@ void SlaveNode::uplinkRejectMessage(const MessageData &msg, int reason)
   if (msg.id.isEmpty())
     return;
 
-  MessageNotice notice(MessageNotice::Rejected, m_uplink->reader()->dest(), m_uplink->reader()->sender(), m_messageData->id, reason);
-  m_uplink->send(notice.data(m_sendStream));
+//  MessageNotice notice(MessageNotice::Rejected, m_uplink->reader()->dest(), m_uplink->reader()->sender(), m_messageData->id, reason);
+//  m_uplink->send(notice.data(m_sendStream));
 }

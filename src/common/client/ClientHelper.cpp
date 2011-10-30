@@ -30,7 +30,6 @@
 ClientHelper::ClientHelper(SimpleClient *client)
   : QObject(client)
   , m_richText(false)
-  , m_name(1)
   , m_client(client)
 {
   m_commands.append(QLatin1String("me"));
@@ -134,16 +133,10 @@ bool ClientHelper::sendText(MessageData &data)
   if (data.senderId.isEmpty())
     data.senderId = m_client->userId();
 
-  ++m_name;
   data.id = randomId();
   data.autoSetOptions();
 
-  if (!m_client->send(data)) {
-    --m_name;
-    return false;
-  }
-
-  return true;
+  return m_client->send(data, true);
 }
 
 
@@ -186,11 +179,14 @@ void ClientHelper::notice(const Notice &notice)
 
   SCHAT_DEBUG_STREAM(">> NOTICE <<" << notice.status() << notice.status(notice.status()) << notice.command() << notice.text() << notice.raw())
 
+  m_notice = &notice;
   QString command = notice.command();
   if (command == "reg.reply")
     regReply(notice);
   else if (command == "login.reply")
     loginReply(notice);
+  else
+    this->notice();
 }
 
 

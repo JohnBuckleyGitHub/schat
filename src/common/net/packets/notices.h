@@ -78,40 +78,6 @@ protected:
 
 
 /*!
- * Пакет Protocol::NoticePacket с типом MessageNoticeType.
- * \deprecated Заменить этот класс на Notice.
- */
-class SCHAT_EXPORT MessageNotice : public AbstractNotice
-{
-public:
-  enum Status {
-    Delivered = 0x64, ///< 'd' Сообщение было доставлено.
-    Rejected = 0x72   ///< 'r' Сообщение было отклонено.
-  };
-
-  enum Error {
-    NoError = 0,            ///< Нет ошибки.
-    UnknownError = 0x75,    ///< 'u' Неизвестная ошибка.
-    UserUnavailable = 0x55, ///< 'U' Пользователь недоступен.
-    Ignored = 0x69          ///< 'i' Сообщение было игнорированно.
-  };
-
-  MessageNotice(quint16 type, PacketReader *reader);
-  MessageNotice(quint8 status, const QByteArray &sender, const QByteArray &dest, const QByteArray &id, quint8 error = NoError);
-  inline int error() const { return m_error; }
-  inline int status() const { return m_status; }
-  inline QByteArray id() const { return m_id; }
-  QByteArray data(QDataStream *stream) const;
-
-private:
-  bool m_valid;    ///< true если данные корректны.
-  quint8 m_status; ///< Тип, \sa Status.
-  quint8 m_error;  ///< Код ошибки, \sa Error.
-  QByteArray m_id; ///< Идентификатор сообщения.
-};
-
-
-/*!
  * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
  * Этот пакет является универсальным высокоуровневым транспортом чата, для расширений протокола.
  */
@@ -136,6 +102,7 @@ public:
     UserAlreadyExists   = 404, ///< User Already Exists.
     UserNotExists       = 405, ///< User Not Exists.
     NickAlreadyUse      = 406, ///< Nick Already In Use.
+    UserOffline         = 407, ///< User Offline.
     InternalError       = 500, ///< Internal Error.
     NotImplemented      = 501, ///< Not Implemented.
     BadGateway          = 502, ///< Bad Gateway.

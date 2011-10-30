@@ -48,10 +48,8 @@ MessageAdapter::MessageAdapter()
   TokenFilter::add(QLatin1String("user-type"), new UrlFilter());
 
   m_richText = true;
-  connect(m_client, SIGNAL(allDelivered(quint64)), SLOT(allDelivered(quint64)));
-  connect(m_client, SIGNAL(message(const MessageData &)), SLOT(clientMessage(const MessageData &)));
+  connect(m_client, SIGNAL(message(const MessageData &)), SLOT(message(const MessageData &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
-  connect(m_client, SIGNAL(notice(const AbstractNotice &)), SLOT(notice(const AbstractNotice &)));
 }
 
 
@@ -234,38 +232,47 @@ void MessageAdapter::command(const ClientCmd &cmd)
 }
 
 
-/*!
- * Обработка уведомления о доставке пакетов на транспортном уровне.
- */
-void MessageAdapter::allDelivered(quint64 id)
+void MessageAdapter::notice()
 {
-  Q_UNUSED(id)
+  QString command = m_notice->command();
+
+  if (command == "msg.rejected") {
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msgFromNotice());
+  }
+  else if (command == "msg.accepted" && m_notice->status() == Notice::UserOffline) {
+    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered | UserMessage::Offline, msgFromNotice());
+  }
 }
 
 
 /*!
  * Обработка получения нового сообщения от клиента.
  */
-void MessageAdapter::clientMessage(const MessageData &data)
+void MessageAdapter::message(const MessageData &data)
 {
   if (data.command == QLatin1String("topic")) {
     readTopic(data);
     return;
   }
 
-  if (data.senderId == m_client->userId())
-    return;
-
   if (ChatCore::i()->isIgnored(data.senderId)) {
     if (data.destId() != m_client->userId())
       return;
 
-    MessageNotice notice(MessageNotice::Delivered, m_client->userId(), data.senderId, data.id, MessageNotice::Ignored);
+    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", QVariant(), data.timestamp, data.id);
+    notice.setStatus(Notice::Forbidden);
     m_client->send(notice.data(m_client->sendStream()));
     return;
   }
 
-  newUserMessage(UserMessage::IncomingMessage, data);
+  int status = UserMessage::IncomingMessage;
+  if (data.senderId == UserUtils::userId()) {
+    status = UserMessage::OutgoingMessage;
+    if (m_undelivered.contains(data.id))
+      status |= UserMessage::Delivered;
+  }
+
+  newUserMessage(status, data);
 }
 
 
@@ -285,15 +292,6 @@ void MessageAdapter::clientStateChanged(int state, int previousState)
   }
 
   setStateAll(UserMessage::Rejected);
-}
-
-
-void MessageAdapter::notice(const AbstractNotice &notice)
-{
-  SCHAT_DEBUG_STREAM(this << "notice()")
-
-  if (notice.type() == AbstractNotice::MessageNoticeType)
-    this->notice(static_cast<const MessageNotice &>(notice));
 }
 
 
@@ -331,6 +329,15 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 }
 
 
+MessageData MessageAdapter::msgFromNotice() const
+{
+  MessageData msg(m_client->userId(), m_notice->sender(), QString(), QString());
+  msg.id = m_notice->id();
+  msg.timestamp = m_notice->time();
+  return msg;
+}
+
+
 void MessageAdapter::commandHelpHint(const QString &command)
 {
   QString text;
@@ -357,15 +364,12 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
     priority = UserMessage::IdlePriority;
 
     if (m_undelivered.contains(data.id)) {
-      MessageData old = m_undelivered.value(data.id);
-      old.timestamp = data.timestamp;
-
-      UserMessage msg(status, old);
+      UserMessage msg(status, data);
       msg.setPriority(priority);
 
       emit message(msg);
 
-      RawUserMessageHook hook(status, old);
+      RawUserMessageHook hook(status, data);
       ChatCore::i()->plugins()->hook(hook);
       m_undelivered.remove(data.id);
       return;
@@ -382,28 +386,6 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
   else {
     RawUserMessageHook hook(status, data);
     ChatCore::i()->plugins()->hook(hook);
-  }
-}
-
-
-void MessageAdapter::notice(const MessageNotice &notice)
-{
-  if (notice.dest() != UserUtils::userId())
-    return;
-
-  MessageData msg(m_client->userId(), notice.sender(), QString(), QString());
-  msg.id = notice.id();
-  msg.timestamp = m_client->timestamp();
-
-  if (notice.status() == MessageNotice::Delivered) {
-    int status = UserMessage::OutgoingMessage | UserMessage::Delivered;
-    if (notice.error() == MessageNotice::UserUnavailable)
-      status += UserMessage::Offline;
-
-    newUserMessage(status, msg);
-  }
-  else if (notice.status() == MessageNotice::Rejected) {
-    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Rejected, msg);
   }
 }
 

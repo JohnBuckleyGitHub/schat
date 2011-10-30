@@ -28,7 +28,6 @@
 class AbstractMessage;
 class AbstractNotice;
 class ChatSettings;
-class MessageNotice;
 class Notice;
 class SimpleClient;
 
@@ -55,17 +54,18 @@ signals:
   void channelDataChanged(const QByteArray &senderId, const QByteArray &channelId);
   void message(const AbstractMessage &message);
 
+protected:
+  void notice();
+
 private slots:
-  void allDelivered(quint64 id);
-  void clientMessage(const MessageData &data);
+  void message(const MessageData &data);
   void clientStateChanged(int state, int previousState);
-  void notice(const AbstractNotice &notice);
 
 private:
   int setGender(const QString &gender, const QString &color);
+  MessageData msgFromNotice() const;
   void commandHelpHint(const QString &command);
   void newUserMessage(int status, const MessageData &data);
-  void notice(const MessageNotice &notice);
   void readTopic(const MessageData &data);
   void setStateAll(int state);
   void setStatus(int status, const QString &text = QString());

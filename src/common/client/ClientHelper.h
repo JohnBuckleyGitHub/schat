@@ -57,11 +57,12 @@ protected slots:
 protected:
   virtual bool loginReply(const Notice &notice);
   virtual bool regReply(const Notice &notice);
+  virtual void notice() {}
 
   bool m_richText;        ///< true если в командах может использоваться html текст.
+  const Notice *m_notice; ///< Текущий прочитанный объект Notice.
   QByteArray m_destId;    ///< Текущий получатель сообщения.
   QStringList m_commands; ///< Список специальных команд таких как "/me".
-  quint64 m_name;         ///< Счётчик последнего отправленного сообщения.
   SimpleClient *m_client; ///< Указатель на клиент.
 };
 

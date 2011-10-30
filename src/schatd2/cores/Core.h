@@ -76,6 +76,7 @@ protected:
   virtual void readPacket(int type);
   virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
+  bool join();
   bool join(const QByteArray &userId, ChatChannel channel);
   ChatChannel addChannel(ChatUser user);
   QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
@@ -93,12 +94,11 @@ protected:
 
   // messages.
   bool command();
-  bool readJoinCmd();
   bool readLeaveCmd();
-  bool readMessage();
+  bool message();
   bool readTopic();
-  void acceptMessage(int reason = 0);
-  void rejectMessage(int reason);
+  void acceptMessage(int status = 200);
+  void rejectMessage(int status);
 
   // notices.
   bool login();

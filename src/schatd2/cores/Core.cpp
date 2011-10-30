@@ -251,7 +251,7 @@ void Core::readPacket(int type)
 
   switch (type) {
     case Protocol::MessagePacket:
-      readMessage();
+      message();
       break;
 
     case Protocol::UserDataPacket:
@@ -286,6 +286,25 @@ void Core::socketReleaseEvent(SocketReleaseEvent *event)
 
 
 /*!
+ * Обработка команды "join".
+ */
+bool Core::join()
+{
+  ChatChannel channel;
+  if (!m_messageData->destId().isEmpty())
+    channel = m_storage->channel(m_messageData->destId());
+
+  if (!channel)
+    channel = m_storage->channel(m_messageData->text);
+
+  if (!channel)
+    return false;
+
+  return join(m_reader->sender(), channel);
+}
+
+
+/*!
  * Подключение пользователя к каналу.
  * Пользователь будет добавлен в канал, затем ему будет отослана информация
  * о канале.
@@ -303,13 +322,11 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   if (!channel)
     return false;
 
-  if (!channel->addUser(userId))
-    return false;
-
   ChatUser user = m_storage->user(userId);
   if (!user)
     return false;
 
+  channel->addUser(userId);
   user->addChannel(channel->id());
 
   ChatUser author = Storage::i()->user(channel->topic().author, true);
@@ -582,7 +599,7 @@ bool Core::command()
     return false;
 
   if (command == QLatin1String("join")) {
-    readJoinCmd();
+    join();
     return true;
   }
 
@@ -611,25 +628,6 @@ bool Core::command()
 }
 
 
-/*!
- * Обработка команды "join".
- */
-bool Core::readJoinCmd()
-{
-  ChatChannel channel;
-  if (!m_messageData->destId().isEmpty())
-    channel = m_storage->channel(m_messageData->destId());
-
-  if (!channel)
-    channel = m_storage->channel(m_messageData->text);
-
-  if (!channel)
-    return false;
-
-  return join(m_reader->sender(), channel);
-}
-
-
 bool Core::readLeaveCmd()
 {
   ChatUser user = m_storage->user(m_reader->sender());
@@ -647,15 +645,15 @@ bool Core::readLeaveCmd()
 /*!
  * Чтение пакета Protocol::MessagePacket.
  */
-bool Core::readMessage()
+bool Core::message()
 {
   MessageReader reader(m_reader);
   m_messageData = &reader.data;
 
   SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
 
-  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->user(m_reader->dest()) == 0) {
-    rejectMessage(MessageNotice::UserUnavailable);
+  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && !m_storage->user(m_reader->dest())) {
+    rejectMessage(Notice::UserNotExists);
     return false;
   }
 
@@ -667,7 +665,7 @@ bool Core::readMessage()
     return true;
   }
   else {
-    rejectMessage(MessageNotice::UnknownError);
+    rejectMessage(Notice::InternalError);
     return false;
   }
 }
@@ -700,41 +698,47 @@ bool Core::readTopic()
 /*!
  * Подтверждение доставки сообщения.
  */
-void Core::acceptMessage(int reason)
+void Core::acceptMessage(int status)
 {
   if (m_messageData->id.isEmpty())
     return;
 
-  acceptedMessageHook(reason);
+  acceptedMessageHook(status);
 
-  if (reason == 0 && SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && m_storage->isSameSlave(m_reader->dest(), m_reader->sender()))
-    return;
+  if (status == Notice::UserOffline) {
+    m_timestamp = Storage::timestamp();
+    Notice notice(m_reader->dest(), m_reader->sender(), "msg.accepted", QVariant(), m_timestamp, m_messageData->id);
+    notice.setStatus(status);
 
-  MessageNotice notice(MessageNotice::Delivered, m_reader->dest(), m_reader->sender(), m_messageData->id, reason);
-  send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
+    QList<QByteArray> packets;
+    packets.append(m_readBuffer);
+    packets.append(notice.data(m_sendStream));
+    send(m_storage->user(m_reader->sender()), packets);
+  }
 }
 
 
 /*!
  * Отклонение сообщения.
  */
-void Core::rejectMessage(int reason)
+void Core::rejectMessage(int status)
 {
-  SCHAT_DEBUG_STREAM("rejectMessage()" << reason)
+  SCHAT_DEBUG_STREAM("rejectMessage()" << status)
 
   if (m_messageData->id.isEmpty())
     return;
 
-  if (reason == MessageNotice::UserUnavailable && m_plugins->has(NodeHook::OfflineDelivery)) {
+  if (status == Notice::UserNotExists && m_plugins->has(NodeHook::OfflineDelivery)) {
     ChatUser user = m_storage->user(m_reader->dest(), true);
     if (user) {
-      m_timestamp = Storage::timestamp();
-      acceptMessage(reason);
+      acceptMessage(Notice::UserOffline);
       return;
     }
   }
 
-  MessageNotice notice(MessageNotice::Rejected, m_reader->dest(), m_reader->sender(), m_messageData->id, reason);
+  m_timestamp = Storage::timestamp();
+  Notice notice(m_reader->dest(), m_reader->sender(), "msg.rejected", QVariant(), m_timestamp, m_messageData->id);
+  notice.setStatus(status);
   send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
 }
 

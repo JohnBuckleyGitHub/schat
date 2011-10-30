@@ -41,26 +41,24 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   QString normalNick = storage->normalize(data.nick);
   ChatUser user      = storage->user(normalNick, false);
 
-  // Если пользователь с указанным ником подключен к серверу и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
+  // Если пользователь с указанным ником подключен к серверу
+  // и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
   if (user && user->id() != id)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-
   user = storage->user(id, true);
   if (!user) {
-    qDebug() << "CREATE";
     user = ChatUser(new ServerUser(normalNick, id, data, m_core->packetsEvent()->socket()));
     if (!user->isValid())
       return AuthResult(Notice::BadRequest, data.id);
   }
-  else {
-    user->setNick(data.nick);
-    user->setRawGender(data.gender);
-    user->setStatus(data.status);
-    user->addSocket(m_core->packetsEvent()->socket());
-    user->setUserAgent(data.userAgent);
-    user->setHost(m_core->packetsEvent()->address.toString());
-  }
+
+  user->setNick(data.nick);
+  user->setRawGender(data.gender);
+  user->setStatus(data.status);
+  user->addSocket(m_core->packetsEvent()->socket());
+  user->setUserAgent(data.userAgent);
+  user->setHost(m_core->packetsEvent()->address.toString());
 
   m_core->add(user, data.authType, data.id);
 

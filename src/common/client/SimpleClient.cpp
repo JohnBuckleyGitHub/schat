@@ -348,16 +348,10 @@ bool SimpleClientPrivate::readNotice()
   Q_Q(SimpleClient);
 
   quint16 type = reader->get<quint16>();
-  if (type == AbstractNotice::MessageNoticeType) {
-    MessageNotice notice(type, reader);
-    emit(q->notice(notice));
-  }
-  else if (type == AbstractNotice::GenericNoticeType) {
+  if (type == AbstractNotice::GenericNoticeType) {
     Notice notice(type, reader);
     emit(q->notice(notice));
   }
-  else
-    emit(q->notice(type));
 
   return true;
 }
