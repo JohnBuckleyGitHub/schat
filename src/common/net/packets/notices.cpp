@@ -21,6 +21,46 @@
 #include "net/packets/message.h"
 
 /*!
+ * Базовый конструктор.
+ */
+Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
+  : AbstractNotice(GenericNoticeType, sender, dest)
+  , m_version(0)
+  , m_status(OK)
+  , m_time(time)
+  , m_id(id)
+  , m_command(command)
+  , m_data(data)
+{
+  if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
+    m_fields |= IdField;
+
+  if (!data.isNull())
+    m_fields |= JSonField;
+}
+
+
+/*!
+ * Базовый конструктор.
+ */
+Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
+  : AbstractNotice(GenericNoticeType, sender, dest)
+  , m_version(0)
+  , m_status(OK)
+  , m_time(time)
+  , m_id(id)
+  , m_command(command)
+  , m_data(data)
+{
+  if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
+    m_fields |= IdField;
+
+  if (!data.isNull())
+    m_fields |= JSonField;
+}
+
+
+/*!
  * Конструктор чтения.
  */
 Notice::Notice(quint16 type, PacketReader *reader)
@@ -40,26 +80,6 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   if (m_fields & TextField)
     m_text = reader->text();
-}
-
-
-/*!
- * Базовый конструктор.
- */
-Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
-  : AbstractNotice(GenericNoticeType, sender, dest)
-  , m_version(0)
-  , m_status(OK)
-  , m_time(time)
-  , m_id(id)
-  , m_command(command)
-  , m_data(data)
-{
-  if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
-    m_fields |= IdField;
-
-  if (!data.isNull())
-    m_fields |= JSonField;
 }
 
 

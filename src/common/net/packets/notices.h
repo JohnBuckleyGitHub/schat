@@ -110,8 +110,9 @@ public:
     GatewayTimeout      = 504 ///< Gateway Timeout.
   };
 
-  Notice(quint16 type, PacketReader *reader);
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());
+  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());
+  Notice(quint16 type, PacketReader *reader);
   bool isValid() const;
   inline int status() const { return m_status; }
   inline int version() const { return m_version; }

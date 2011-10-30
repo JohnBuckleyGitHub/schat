@@ -259,11 +259,6 @@ bool SimpleClientPrivate::command()
     return true;
   }
 
-  if (command == QLatin1String("leave")) {
-    removeUser(reader->sender());
-    return true;
-  }
-
   if (command == QLatin1String("status")) {
     updateUserStatus(messageData->text);
     return true;
@@ -343,13 +338,24 @@ void SimpleClientPrivate::split()
 }
 
 
-bool SimpleClientPrivate::readNotice()
+/*!
+ * Чтение пакетов типа Protocol::NoticePacket.
+ * \sa Notice.
+ */
+bool SimpleClientPrivate::notice()
 {
   Q_Q(SimpleClient);
 
   quint16 type = reader->get<quint16>();
   if (type == AbstractNotice::GenericNoticeType) {
     Notice notice(type, reader);
+    if (!notice.isValid())
+      return false;
+
+    QString command = notice.command();
+    if (command == "leave")
+      removeUser(reader->sender());
+
     emit(q->notice(notice));
   }
 
@@ -563,8 +569,8 @@ ClientUser SimpleClient::user(const QByteArray &id) const
 
 void SimpleClient::leave()
 {
-  MessageData data(userId(), AbstractClient::user()->channels(), QLatin1String("leave"), QString());
-  send(data);
+  Notice notice(userId(), user()->channels(), "leave");
+  send(notice);
 
   AbstractClient::leave();
 }
@@ -660,7 +666,7 @@ void SimpleClient::newPacketsImpl()
         break;
 
       case Protocol::NoticePacket:
-        d->readNotice();
+        d->notice();
         break;
 
       default:
