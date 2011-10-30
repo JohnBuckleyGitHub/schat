@@ -33,7 +33,7 @@ public:
   ChatPlugin *init(ChatCore *core);
   QString id() const { return QLatin1String("History"); }
   QString name() const { return id(); }
-  QString version() const { return QLatin1String("1.0.0"); }
+  QString version() const { return QLatin1String("1.1.0"); }
   QStringList provides() const { return QStringList(id()); }
 };
 

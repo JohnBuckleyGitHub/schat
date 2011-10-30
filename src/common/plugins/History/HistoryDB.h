@@ -46,6 +46,8 @@ private slots:
   void updateUserData(const QByteArray &userId);
 
 private:
+  qint64 messageId(const QByteArray &id) const;
+  qint64 update(int status, const MessageData &data);
   qint64 userId(const QByteArray &id) const;
   void close();
 

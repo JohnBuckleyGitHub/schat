@@ -85,6 +85,9 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   if (SimpleID::typeOf(data.destId()) == SimpleID::UserId)
     addUser(data.destId());
 
+  if (data.text.isEmpty())
+    return update(status, data);
+
   QSqlQuery query(QSqlDatabase::database(m_id));
 
   query.prepare(QLatin1String("INSERT INTO messages (messageId, senderId, destId, status, timestamp, command, text, plainText) "
@@ -103,11 +106,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  query.exec(QLatin1String("SELECT last_insert_rowid();"));
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
+  return query.lastInsertId().toLongLong();
 }
 
 
@@ -272,9 +271,9 @@ void HistoryDB::open(const QByteArray &id, const QString &dir)
   query.exec(QLatin1String(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  messageId  BLOB,"
-    "  senderId   BLOB,"
-    "  destId     BLOB,"
+    "  messageId  BLOB NOT NULL UNIQUE,"
+    "  senderId   BLOB NOT NULL,"
+    "  destId     BLOB NOT NULL,"
     "  status     INTEGER,"
     "  timestamp  INTEGER,"
     "  command    TEXT,"
@@ -321,6 +320,38 @@ void HistoryDB::updateUserData(const QByteArray &userId)
 }
 
 
+qint64 HistoryDB::messageId(const QByteArray &id) const
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));
+  query.bindValue(":messageId", id);
+  query.exec();
+
+  if (query.first())
+    return query.value(0).toLongLong();
+
+  return -1;
+}
+
+
+qint64 HistoryDB::update(int status, const MessageData &data)
+{
+  qint64 id = messageId(data.id);
+  if (id == -1)
+    return -1;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+
+  query.prepare(QLatin1String("UPDATE messages SET status = :status WHERE id = :id;"));
+  query.bindValue(QLatin1String(":status"), status);
+  query.bindValue(QLatin1String(":id"), id);
+  query.exec();
+
+  return id;
+}
+
+
 qint64 HistoryDB::userId(const QByteArray &id) const
 {
   if (m_cache.contains(id))
@@ -334,8 +365,8 @@ qint64 HistoryDB::userId(const QByteArray &id) const
 
   if (query.first())
     return query.value(0).toLongLong();
-  else
-    return -1;
+
+  return -1;
 }
 
 
