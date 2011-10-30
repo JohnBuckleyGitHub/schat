@@ -33,7 +33,7 @@ public:
   NodePlugin *init(Core *core);
   QString id() const { return QLatin1String("MessageLog"); }
   QString name() const { return QLatin1String("Message Log"); }
-  QString version() const { return QLatin1String("1.0.0"); }
+  QString version() const { return QLatin1String("1.1.0"); }
 };
 
 #endif /* MESSAGELOGPLUGIN_H_ */

@@ -660,6 +660,8 @@ bool Core::message()
   if (m_messageData->options & MessageData::ControlOption && command())
     return true;
 
+  m_timestamp = Storage::timestamp();
+
   if (route()) {
     acceptMessage();
     return true;
@@ -703,10 +705,7 @@ void Core::acceptMessage(int status)
   if (m_messageData->id.isEmpty())
     return;
 
-  acceptedMessageHook(status);
-
   if (status == Notice::UserOffline) {
-    m_timestamp = Storage::timestamp();
     Notice notice(m_reader->dest(), m_reader->sender(), "msg.accepted", QVariant(), m_timestamp, m_messageData->id);
     notice.setStatus(status);
 
@@ -715,6 +714,8 @@ void Core::acceptMessage(int status)
     packets.append(notice.data(m_sendStream));
     send(m_storage->user(m_reader->sender()), packets);
   }
+
+  acceptedMessageHook(status);
 }
 
 
@@ -736,7 +737,6 @@ void Core::rejectMessage(int status)
     }
   }
 
-  m_timestamp = Storage::timestamp();
   Notice notice(m_reader->dest(), m_reader->sender(), "msg.rejected", QVariant(), m_timestamp, m_messageData->id);
   notice.setStatus(status);
   send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));

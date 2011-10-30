@@ -98,10 +98,10 @@ void MessageLog::add(const MessageHook &data)
     return;
 
   if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId) {
-    if (data.status() && !m_offlineLog)
+    if (data.status() == Notice::UserOffline && !m_offlineLog)
       return;
 
-    if (data.status() == 0 && !m_privateLog)
+    if (data.status() == Notice::OK && !m_privateLog)
       return;
   }
 
@@ -127,9 +127,9 @@ void MessageLog::cleanup(const QByteArray &destId)
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   if (m_privateLog)
-    query.prepare(QLatin1String("UPDATE messages SET status = 0 WHERE destId = :destId AND status = 85;"));
+    query.prepare(QLatin1String("UPDATE messages SET status = 200 WHERE destId = :destId AND status = 407;"));
   else
-    query.prepare(QLatin1String("DELETE FROM messages WHERE destId = :destId AND status = 85;"));
+    query.prepare(QLatin1String("DELETE FROM messages WHERE destId = :destId AND status = 407;"));
 
   query.bindValue(QLatin1String(":destId"), destId);
   query.exec();
@@ -144,7 +144,7 @@ void MessageLog::offlineDelivery(const UserReadyHook &data)
   QSqlQuery query(QSqlDatabase::database(m_id));
   QByteArray id = data.user->id();
 
-  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 85;"));
+  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 407;"));
   query.bindValue(QLatin1String(":destId"), id);
   query.exec();
 
@@ -203,7 +203,7 @@ void MessageLog::open()
     "  messageId  BLOB,"
     "  senderId   BLOB,"
     "  destId     BLOB,"
-    "  status     INTEGER DEFAULT ( 0 ),"
+    "  status     INTEGER DEFAULT ( 200 ),"
     "  timestamp  INTEGER,"
     "  command    TEXT,"
     "  text       TEXT"
