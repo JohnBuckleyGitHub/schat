@@ -117,7 +117,7 @@ void MasterNode::rejectAuth(const AuthResult &result)
 }
 
 
-void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
+void MasterNode::release(SocketReleaseEvent *event)
 {
   if (m_storage->isSlave(event->userId())) {
     ChatUser slave = m_storage->user(event->userId());
@@ -157,5 +157,5 @@ void MasterNode::socketReleaseEvent(SocketReleaseEvent *event)
     send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
   }
   else
-    Core::socketReleaseEvent(event);
+    Core::release(event);
 }

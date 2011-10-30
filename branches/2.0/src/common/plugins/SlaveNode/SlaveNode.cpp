@@ -113,7 +113,7 @@ void SlaveNode::readPacket(int type)
 }
 
 
-void SlaveNode::socketReleaseEvent(SocketReleaseEvent *event)
+void SlaveNode::release(SocketReleaseEvent *event)
 {
   ChatUser user = m_storage->user(event->userId());
   if (!user)
@@ -126,7 +126,7 @@ void SlaveNode::socketReleaseEvent(SocketReleaseEvent *event)
     m_storage->remove(user);
   }
   else
-    Core::socketReleaseEvent(event);
+    Core::release(event);
 }
 
 
@@ -138,9 +138,6 @@ bool SlaveNode::command()
     updateUserStatus();
     return false;
   }
-
-  if (command == QLatin1String("leave"))
-    return readLeaveCmd();
 
   return false;
 }

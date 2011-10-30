@@ -176,7 +176,7 @@ void Core::customEvent(QEvent *event)
       break;
 
     case ServerEvent::SocketRelease:
-      socketReleaseEvent(static_cast<SocketReleaseEvent*>(event));
+      release(static_cast<SocketReleaseEvent*>(event));
       break;
 
     default:
@@ -266,22 +266,6 @@ void Core::readPacket(int type)
       route();
       break;
   }
-}
-
-
-/*!
- * Обработка отключения пользователя.
- */
-void Core::socketReleaseEvent(SocketReleaseEvent *event)
-{
-  ChatUser user = m_storage->user(event->userId());
-  if (!user)
-    return;
-
-  MessageData message(user->id(), user->channels(), QLatin1String("leave"), QString());
-
-  send(m_storage->sockets(user->channels()), MessageWriter(m_sendStream, message).data());
-  m_storage->remove(user);
 }
 
 
@@ -585,6 +569,31 @@ bool Core::updateUserStatus()
 }
 
 
+void Core::leave(ChatUser user, quint64 socket)
+{
+  if (!user)
+    return;
+
+  user->removeSocket(socket);
+  if (user->sockets().size())
+    return;
+
+  m_storage->remove(user);
+
+  Notice notice(user->id(), user->channels(), "leave", QVariant(), Storage::timestamp());
+  send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
+}
+
+
+/*!
+ * Обработка отключения пользователя.
+ */
+void Core::release(SocketReleaseEvent *event)
+{
+  leave(m_storage->user(event->userId()), event->socket());
+}
+
+
 /*!
  * Обработка команд.
  *
@@ -613,9 +622,6 @@ bool Core::command()
   if (command == QLatin1String("status"))
     return updateUserStatus();
 
-  if (command == QLatin1String("leave"))
-    return readLeaveCmd();
-
   if (command == QLatin1String("ready")) {
     userReadyHook();
     return true;
@@ -624,20 +630,6 @@ bool Core::command()
   if (command == QLatin1String("topic"))
     return readTopic();
 
-  return false;
-}
-
-
-bool Core::readLeaveCmd()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return true;
-
-  if (!m_storage->isSlave(m_packetsEvent->userId()))
-    send(user, QByteArray(), NewPacketsEvent::KillSocketOption);
-
-  m_storage->remove(user);
   return false;
 }
 
@@ -776,7 +768,6 @@ bool Core::login()
  * Обработка запроса на авторизацию.
  * В ответ клиенту высылается уведомление "reg.reply".
  * \todo Добавить корректное уведомление об ошибке если этот идентификатор пользователя уже зарегистрирован.
- * \todo Добавить автоматический вход с свежезарегистрированным логином.
  */
 bool Core::reg()
 {
@@ -790,8 +781,8 @@ bool Core::reg()
   notice.setText(reply.name());
 
   send(user, notice.data(m_sendStream));
-
   login();
+
   return true;
 }
 
@@ -799,6 +790,7 @@ bool Core::reg()
 void Core::notice()
 {
   quint16 type = m_reader->get<quint16>();
+
   if (type == AbstractNotice::GenericNoticeType) {
     Notice notice(type, m_reader);
     m_notice = &notice;
@@ -811,13 +803,17 @@ void Core::notice()
     QString command = m_notice->command();
     SCHAT_LOG_TRACE() << "NOTICE PACKET" << command << notice.text() << notice.raw();
 
-    if (command == "reg") {
+    if (command == "reg")
       reg();
-      return;
-    }
 
-    if (command == "login") {
+    else if (command == "login")
       login();
+
+    else if (command == "leave")
+      leave(m_storage->user(m_reader->sender()), m_packetsEvent->socket());
+
+    else {
+      route();
       return;
     }
   }

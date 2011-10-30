@@ -33,7 +33,7 @@ protected:
   void notice();
   void readPacket(int type);
   void rejectAuth(const AuthResult &result);
-  void socketReleaseEvent(SocketReleaseEvent *event);
+  void release(SocketReleaseEvent *event);
 
 private:
   QHash<QByteArray, QString> m_hosts; ///< Таблица адресов пользователей, используется при авторизации клиентов с вторичного сервера.

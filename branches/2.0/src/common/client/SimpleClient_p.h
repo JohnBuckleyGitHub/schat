@@ -52,7 +52,7 @@ public:
   bool readMessage();
   void split();
 
-  bool readNotice();
+  bool notice();
 
   // Пользователи.
   bool readUserData();

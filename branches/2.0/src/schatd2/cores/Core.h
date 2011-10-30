@@ -46,12 +46,15 @@ class SCHAT_EXPORT Core : public QObject
 public:
   Core(QObject *parent = 0);
   ~Core();
-  bool send(ChatChannel channel, const QByteArray &packet);
-  bool send(ChatChannel channel, const QList<QByteArray> &packets);
-  bool send(ChatUser user, const QByteArray &packet, int option = 0);
-  bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
-  bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
-  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
+
+  // Функции отправки пакетов.
+  virtual bool send(ChatChannel channel, const QByteArray &packet);
+  virtual bool send(ChatChannel channel, const QList<QByteArray> &packets);
+  virtual bool send(ChatUser user, const QByteArray &packet, int option = 0);
+  virtual bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
+  virtual bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
+  virtual bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
+
   inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
   inline QByteArray readBuffer() const { return m_readBuffer; }
   inline QDataStream *sendStream() { return m_sendStream; }
@@ -74,7 +77,6 @@ protected:
   virtual bool checkPacket();
   virtual void newPacketsEvent(NewPacketsEvent *event);
   virtual void readPacket(int type);
-  virtual void socketReleaseEvent(SocketReleaseEvent *event);
 
   bool join();
   bool join(const QByteArray &userId, ChatChannel channel);
@@ -91,10 +93,11 @@ protected:
   bool readUserData();
   bool updateUserData(ChatUser user, User *other);
   bool updateUserStatus();
+  virtual void leave(ChatUser user, quint64 socket);
+  void release(SocketReleaseEvent *event);
 
   // messages.
   bool command();
-  bool readLeaveCmd();
   bool message();
   bool readTopic();
   void acceptMessage(int status = 200);
