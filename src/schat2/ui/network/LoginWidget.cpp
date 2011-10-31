@@ -155,10 +155,10 @@ void LoginWidget::editingFinished()
   if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty())
     return;
 
-  QVariant selected = ChatCore::i()->networks()->selected();
-  if (selected.type() == QVariant::String) {
+//  QVariant selected = ChatCore::i()->networks()->selected();
+//  if (selected.type() == QVariant::String) {
     ChatCore::i()->client()->setAccount(m_nameEdit->text(), m_passwordEdit->text());
-  }
+//  }
 }
 
 

@@ -53,13 +53,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
       return AuthResult(Notice::BadRequest, data.id);
   }
 
-  user->setNick(data.nick);
-  user->setRawGender(data.gender);
-  user->setStatus(data.status);
-  user->addSocket(m_core->packetsEvent()->socket());
-  user->setUserAgent(data.userAgent);
-  user->setHost(m_core->packetsEvent()->address.toString());
-
+  update(user.data(), data);
   m_core->add(user, data.authType, data.id);
 
   SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;
@@ -70,4 +64,21 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 int AnonymousAuth::type() const
 {
   return AuthRequest::Anonymous;
+}
+
+
+/*!
+ * Обновление данных пользователя при авторизации.
+ *
+ * \param user Пользователь.
+ * \param data Авторизационные данные.
+ */
+void AnonymousAuth::update(ServerUser *user, const AuthRequest &data)
+{
+  user->setNick(data.nick);
+  user->setRawGender(data.gender);
+  user->setStatus(data.status);
+  user->addSocket(m_core->packetsEvent()->socket());
+  user->setUserAgent(data.userAgent);
+  user->setHost(m_core->packetsEvent()->address.toString());
 }

@@ -24,7 +24,7 @@
 #include "Storage.h"
 
 CookieAuth::CookieAuth(Core *core)
-  : NodeAuth(core)
+  : AnonymousAuth(core)
 {
 }
 
@@ -48,13 +48,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
   user = exist;
-  user->setNick(data.nick);
-  user->setRawGender(data.gender);
-  user->setStatus(data.status);
-  user->addSocket(m_core->packetsEvent()->socket());
-  user->setUserAgent(data.userAgent);
-  user->setHost(m_core->packetsEvent()->address.toString());
-
+  update(user.data(), data);
   m_core->add(user, data.authType, data.id);
 
   SCHAT_LOG_DEBUG() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;

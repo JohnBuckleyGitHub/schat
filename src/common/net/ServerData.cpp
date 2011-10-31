@@ -39,12 +39,40 @@ bool ServerData::setChannelId(const QByteArray &id)
 }
 
 
+/*!
+ * Установка имени сервера.
+ *
+ * Имя сервера должно удовлетворять FQDN (Fully Qualified Domain Name),
+ * однако имя, заканчивающееся на точку, будет признано некорректным.
+ * Также имя не может начинаться с точки и содержать две точки подряд,
+ * длина суффикса домена должна быть минимум 2 символа, например example.ru
+ * или example.com корректные имена, а example.r некорректное.
+ *
+ * В случае отсутствия имени сервера регистрация будет не доступна.
+ *
+ * \return false если произошла ошибка.
+ */
 bool ServerData::setName(const QString &name)
 {
   QString tmp = name.simplified().left(MaxNameLength);
+
   if (tmp.size() < MinNameLengh)
     return false;
 
+  if (tmp.indexOf("..") != -1)
+    return false;
+
+  if (tmp.startsWith('.'))
+    return false;
+
+  if (tmp.endsWith('.'))
+    return false;
+
+  int index = tmp.lastIndexOf('.');
+  if (index == -1 || tmp.size() - index < 3)
+    return false;
+
+  m_features |= PasswordAuthSupport;
   m_name = tmp;
   return true;
 }
