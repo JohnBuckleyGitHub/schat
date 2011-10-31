@@ -16,25 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COOKIEAUTH_H_
-#define COOKIEAUTH_H_
+#ifndef PASSWORDAUTH_H_
+#define PASSWORDAUTH_H_
 
-#include "cores/AnonymousAuth.h"
+#include "cores/CookieAuth.h"
 
-class SCHAT_EXPORT CookieAuth : public AnonymousAuth
+class SCHAT_EXPORT PasswordAuth : public CookieAuth
 {
 public:
-  CookieAuth(Core *core);
+  PasswordAuth(Core *core);
   AuthResult auth(const AuthRequest &data);
   int type() const;
 };
 
-
-class BypassCookieAuth : public AnonymousAuth
-{
-public:
-  BypassCookieAuth(Core *core);
-  int type() const;
-};
-
-#endif /* COOKIEAUTH_H_ */
+#endif /* PASSWORDAUTH_H_ */

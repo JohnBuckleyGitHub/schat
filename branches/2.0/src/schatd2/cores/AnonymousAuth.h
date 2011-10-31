@@ -22,12 +22,17 @@
 #include "cores/NodeAuth.h"
 #include "schat.h"
 
+class ServerUser;
+
 class SCHAT_EXPORT AnonymousAuth : public NodeAuth
 {
 public:
   AnonymousAuth(Core *core);
   AuthResult auth(const AuthRequest &data);
   int type() const;
+
+protected:
+  void update(ServerUser *user, const AuthRequest &data);
 };
 
 #endif /* ANONYMOUSAUTH_H_ */

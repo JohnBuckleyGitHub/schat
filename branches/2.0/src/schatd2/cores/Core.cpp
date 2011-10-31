@@ -24,7 +24,7 @@
 #include "cores/AnonymousAuth.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
-#include "cores/NodeAuth.h"
+#include "cores/PasswordAuth.h"
 #include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"
@@ -54,6 +54,9 @@ Core::Core(QObject *parent)
   addAuth(new AnonymousAuth(this));
   addAuth(new BypassCookieAuth(this));
   addAuth(new CookieAuth(this));
+
+  if (Storage::i()->serverData()->is(ServerData::PasswordAuthSupport))
+    addAuth(new PasswordAuth(this));
 
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
@@ -228,7 +231,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     m_reader = &reader;
 
     if (reader.type() == Protocol::AuthRequestPacket) {
-      readAuthRequest();
+      authRequest();
       continue;
     }
 
@@ -426,17 +429,20 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
 
 /*!
  * Чтение пакета Protocol::AuthRequestPacket.
+ *
+ * \return false если произошла ошибка.
  */
-bool Core::readAuthRequest()
+bool Core::authRequest()
 {
   AuthRequest data(m_reader);
-  quint64 socket = m_packetsEvent->socket();
 
   if (!data.isValid()) {
-    AuthResult result(Notice::BadRequest, data.id, socket);
+    AuthResult result(Notice::BadRequest, data.id, NewPacketsEvent::KillSocketOption);
     rejectAuth(result);
     return false;
   }
+
+  qDebug() << "AUTH REQUEST" << data.authType;
 
   for (int i = 0; i < m_auth.size(); ++i) {
     if (data.authType != m_auth.at(i)->type())
@@ -455,7 +461,7 @@ bool Core::readAuthRequest()
       return true;
   }
 
-  AuthResult result(Notice::NotImplemented, data.id, socket);
+  AuthResult result(Notice::NotImplemented, data.id, NewPacketsEvent::KillSocketOption);
   rejectAuth(result);
   return false;
 }
@@ -463,6 +469,7 @@ bool Core::readAuthRequest()
 
 /*!
  * Успешная авторизация пользователя.
+ * \todo Улучшить поддержку множественного входа, в настоящее время данные не корректно синхронизируются.
  */
 void Core::acceptAuth(const AuthResult &result)
 {
@@ -586,7 +593,7 @@ void Core::leave(ChatUser user, quint64 socket)
 
 
 /*!
- * Обработка отключения пользователя.
+ * Обработка физического отключения пользователя от сервера.
  */
 void Core::release(SocketReleaseEvent *event)
 {
@@ -787,6 +794,10 @@ bool Core::reg()
 }
 
 
+/*!
+ * Чтение пакетов типа Protocol::NoticePacket.
+ * \sa Notice.
+ */
 void Core::notice()
 {
   quint16 type = m_reader->get<quint16>();

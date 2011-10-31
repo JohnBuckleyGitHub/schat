@@ -81,6 +81,9 @@ Storage::~Storage()
 }
 
 
+/*!
+ * Запуск сервера, функция производит инициализацию состояния и объектов сервера.
+ */
 int Storage::start()
 {
   m_log->open(m_locations->file(FileLocations::LogPath, m_locations->path(FileLocations::BaseName) + ".log"), static_cast<NodeLog::Level>(m_settings->value("LogLevel").toInt()));
@@ -258,7 +261,7 @@ ChatUser Storage::user(const QString &nick, bool normalize) const
  */
 LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &password)
 {
-  if (m_serverData->name().isEmpty())
+  if (!m_serverData->is(ServerData::PasswordAuthSupport))
     return LoginReply(Notice::ServiceUnavailable);
 
   if (SimpleID::typeOf(password) != SimpleID::PasswordId)
@@ -338,7 +341,7 @@ QList<QByteArray> Storage::users(const QByteArray &id)
  */
 RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
 {
-  if (m_serverData->name().isEmpty())
+  if (!m_serverData->is(ServerData::PasswordAuthSupport))
     return RegReply(Notice::ServiceUnavailable);
 
   if (SimpleID::typeOf(password) != SimpleID::PasswordId)

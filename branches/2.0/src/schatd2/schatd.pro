@@ -32,6 +32,7 @@ HEADERS = \
     cores/CookieAuth.h \
     cores/Core.h \
     cores/NodeAuth.h \
+    cores/PasswordAuth.h \
     DataBase.h \
     events.h \
     NodeLog.h \
@@ -45,6 +46,7 @@ SOURCES = \
     cores/AnonymousAuth.cpp \
     cores/CookieAuth.cpp \
     cores/Core.cpp \
+    cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
     NodeLog.cpp \
