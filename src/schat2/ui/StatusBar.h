@@ -47,13 +47,15 @@ protected:
 
 private slots:
   void clientStateChanged(int state);
+  void menuTriggered(QAction *action);
 
 private:
+  void menu(const QPoint &point);
   void retranslateUi();
   void updateStyleSheet();
 
-  int m_clientState;              ///< Состояние клиента.
   NetworkWidget *m_url;           ///< Поле ввода адреса сервера.
+  QAction *m_connect;             ///< Главное действие связанное с сетевым подключением.
   QLabel *m_icon;                 ///< Главная иконка.
   QLabel *m_label;                ///< Информация о состоянии.
   QLabel *m_secure;               ///< Иконка безопасного соединения.
