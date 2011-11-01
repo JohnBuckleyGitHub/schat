@@ -241,7 +241,7 @@ ChatUser Storage::user(const QByteArray &id, bool offline) const
 
   ChatUser user = m_db->user(id);
   if (user && m_users.contains(user->id()))
-    return m_users.value(id);
+    return m_users.value(user->id());
 
   return user;
 }
