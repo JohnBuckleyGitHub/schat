@@ -26,7 +26,6 @@
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
-#include "debugstream.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/NetworkWidget.h"
@@ -35,7 +34,6 @@
 
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
-  , m_clientState(SimpleClient::ClientOffline)
   , m_client(ChatCore::i()->client())
 {
   m_progress = new QProgressIndicator(this);
@@ -63,7 +61,7 @@ StatusBar::StatusBar(QWidget *parent)
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 
   updateStyleSheet();
-  clientStateChanged(m_clientState);
+  clientStateChanged(SimpleClient::ClientOffline);
 }
 
 
@@ -93,53 +91,16 @@ void StatusBar::changeEvent(QEvent *event)
  */
 void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 {
-  bool context = event->button() == Qt::RightButton;
-  if ((event->button() != Qt::LeftButton && !context) || QApplication::widgetAt(event->globalPos()) == m_status) {
+  if (childAt(event->pos()) == m_icon || event->button() == Qt::RightButton)
+    menu(event->globalPos());
+  else
     QStatusBar::mouseReleaseEvent(event);
-    return;
-  }
-
-  QMenu menu;
-  QAction *mainAction = 0;
-
-  /// Меню показывается либо по правой кнопке, либо по левой если клик произведён по виджету \p m_icon или \p m_progress
-  if (context || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_icon) || (event->button() == Qt::LeftButton && QApplication::widgetAt(event->globalPos()) == m_progress)) {
-    QAction *action = m_url->connectAction();
-    int data = 1;
-
-    if (m_clientState == SimpleClient::ClientOffline || m_clientState == SimpleClient::ClientError) {
-      menu.addAction(m_urlAction);
-      data = 2;
-    }
-
-    mainAction = menu.addAction(action->icon(), action->text());
-    mainAction->setData(data);
-  }
-
-  if (menu.actions().size() == 0)
-    return;
-
-  QAction *action = menu.exec(event->globalPos());
-  if (action) {
-    if (action == mainAction){
-      int state = action->data().toInt();
-      if (state == 1)
-        m_client->leave();
-      else if (state == 2)
-        m_url->open();
-    }
-  }
-
-  if (mainAction)
-    delete mainAction;
 }
 
 
 void StatusBar::clientStateChanged(int state)
 {
-  m_clientState = state;
-
-  if (m_clientState == SimpleClient::ClientConnecting) {
+  if (state == SimpleClient::ClientConnecting) {
     m_icon->setVisible(false);
     m_progress->setVisible(true);
     m_progress->startAnimation();
@@ -150,13 +111,13 @@ void StatusBar::clientStateChanged(int state)
     m_progress->stopAnimation();
   }
 
-  if (m_clientState != SimpleClient::ClientOnline)
+  if (state != SimpleClient::ClientOnline)
     m_secure->setVisible(false);
 
-  if (m_clientState == SimpleClient::ClientOffline) {
+  if (state == SimpleClient::ClientOffline) {
     m_icon->setPixmap(QPixmap(":/images/offline.png"));
   }
-  else if (m_clientState == SimpleClient::ClientOnline) {
+  else if (state == SimpleClient::ClientOnline) {
     m_icon->setPixmap(QPixmap(":/images/online.png"));
 
     #if !defined(SCHAT_NO_SSL)
@@ -166,7 +127,7 @@ void StatusBar::clientStateChanged(int state)
     }
     #endif
   }
-  else if (m_clientState == SimpleClient::ClientError) {
+  else if (state == SimpleClient::ClientError) {
     m_icon->setPixmap(QPixmap(":/images/network-error.png"));
   }
 
@@ -174,22 +135,44 @@ void StatusBar::clientStateChanged(int state)
 }
 
 
+void StatusBar::menuTriggered(QAction *action)
+{
+  if (action == m_connect)
+    m_url->open();
+}
+
+
+void StatusBar::menu(const QPoint &point)
+{
+  QMenu menu(this);
+  if (m_client->clientState() == SimpleClient::ClientOffline)
+    menu.addAction(m_urlAction);
+
+  QAction *action = m_url->connectAction();
+  m_connect = menu.addAction(action->icon(), action->text());
+
+  connect(&menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
+  menu.exec(point);
+}
+
+
 void StatusBar::retranslateUi()
 {
   m_secure->setToolTip(tr("Encrypted connection"));
+  int state = m_client->clientState();
 
-  if (m_clientState == SimpleClient::ClientOffline) {
+  if (state == SimpleClient::ClientOffline) {
     m_label->setText(tr("No connection"));
     m_icon->setToolTip(tr("No connection"));
   }
-  else if (m_clientState == SimpleClient::ClientConnecting) {
+  else if (state == SimpleClient::ClientConnecting) {
     m_label->setText(tr("Connecting..."));
   }
-  else if (m_clientState == SimpleClient::ClientOnline) {
+  else if (state == SimpleClient::ClientOnline) {
     m_label->setText(NetworkManager::currentServerName());
     m_icon->setToolTip(tr("Connected"));
   }
-  else if (m_clientState == SimpleClient::ClientError) {
+  else if (state == SimpleClient::ClientError) {
     m_label->setText(tr("Error"));
     m_icon->setToolTip(tr("Error"));
   }
