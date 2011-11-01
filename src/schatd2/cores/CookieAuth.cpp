@@ -32,7 +32,7 @@ CookieAuth::CookieAuth(Core *core)
 AuthResult CookieAuth::auth(const AuthRequest &data)
 {
   if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
-    return AuthResult();
+    return AnonymousAuth::auth(data);
 
   return auth(data, Storage::i()->user(data.cookie, true));
 }
@@ -47,7 +47,7 @@ int CookieAuth::type() const
 AuthResult CookieAuth::auth(const AuthRequest &data, ChatUser user)
 {
   if (!user)
-    return AuthResult();
+    return AnonymousAuth::auth(data);
 
   Storage *storage = Storage::i();
   QString normalNick = storage->normalize(data.nick);
@@ -61,16 +61,4 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatUser user)
 
   SCHAT_LOG_DEBUG() << "COOKIE AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
   return AuthResult(user->id(), data.id);
-}
-
-
-BypassCookieAuth::BypassCookieAuth(Core *core)
-  : AnonymousAuth(core)
-{
-}
-
-
-int BypassCookieAuth::type() const
-{
-  return AuthRequest::Cookie;
 }

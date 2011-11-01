@@ -52,7 +52,6 @@ Core::Core(QObject *parent)
   , m_storage(Storage::i())
 {
   addAuth(new AnonymousAuth(this));
-  addAuth(new BypassCookieAuth(this));
   addAuth(new CookieAuth(this));
 
   if (Storage::i()->serverData()->is(ServerData::PasswordAuthSupport))
