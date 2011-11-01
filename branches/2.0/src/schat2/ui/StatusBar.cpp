@@ -26,11 +26,13 @@
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
+#include "messages/MessageAdapter.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
+#include "ui/UserUtils.h"
 
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
@@ -42,8 +44,11 @@ StatusBar::StatusBar(QWidget *parent)
   m_progress->startAnimation();
 
   m_icon = new QLabel(this);
+  m_login = new QLabel(this);
   m_secure = new QLabel(this);
   m_label = new QLabel(this);
+
+  m_login->setPixmap(QPixmap(":/images/key.png"));
 
   m_url = new NetworkWidget(this);
   m_url->setMinimumWidth(m_url->width() * 2);
@@ -54,11 +59,13 @@ StatusBar::StatusBar(QWidget *parent)
 
   addWidget(m_progress);
   addWidget(m_icon);
+  addWidget(m_login);
   addWidget(m_secure);
   addWidget(m_label, 1);
   addPermanentWidget(m_status);
 
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString&)), SLOT(loggedIn(const QString&)));
 
   updateStyleSheet();
   clientStateChanged(SimpleClient::ClientOffline);
@@ -111,14 +118,19 @@ void StatusBar::clientStateChanged(int state)
     m_progress->stopAnimation();
   }
 
-  if (state != SimpleClient::ClientOnline)
+  if (state != SimpleClient::ClientOnline) {
+    m_login->setVisible(false);
     m_secure->setVisible(false);
+  }
 
   if (state == SimpleClient::ClientOffline) {
     m_icon->setPixmap(QPixmap(":/images/offline.png"));
   }
   else if (state == SimpleClient::ClientOnline) {
     m_icon->setPixmap(QPixmap(":/images/online.png"));
+
+    if (!UserUtils::user()->account().isEmpty())
+      loggedIn(UserUtils::user()->account());
 
     #if !defined(SCHAT_NO_SSL)
     if (m_client->isEncrypted()) {
@@ -132,6 +144,13 @@ void StatusBar::clientStateChanged(int state)
   }
 
   retranslateUi();
+}
+
+
+void StatusBar::loggedIn(const QString &name)
+{
+  m_login->setToolTip(name);
+  m_login->setVisible(true);
 }
 
 
