@@ -44,15 +44,14 @@ AuthResult PasswordAuth::auth(const AuthRequest &data)
   if (!account.isValid())
     return AuthResult(Notice::Forbidden, data.id);
 
+  if (account.password != data.password)
+    return AuthResult(Notice::Forbidden, data.id);
+
   ChatUser user = storage->user(account.userId, true);
   if (!user)
     return AuthResult(Notice::InternalError, data.id);
 
-  AuthRequest d = data;
-  d.authType = AuthRequest::Cookie;
-  d.cookie = user->cookie();
-
-  return CookieAuth::auth(d);
+  return CookieAuth::auth(data, user);
 }
 
 

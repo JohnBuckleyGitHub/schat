@@ -56,7 +56,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   update(user.data(), data);
   m_core->add(user, data.authType, data.id);
 
-  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;
+  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
   return AuthResult(id, data.id);
 }
 

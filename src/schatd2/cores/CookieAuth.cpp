@@ -34,31 +34,33 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
   if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AuthResult();
 
-  Storage *storage = Storage::i();
-  ChatUser exist = storage->user(data.cookie, true);
-  if (!exist)
-    return AuthResult();
-
-  QString normalNick = storage->normalize(data.nick);
-  ChatUser user      = storage->user(normalNick, false);
-
-  // Если пользователь с указанным ником подключен к серверу
-  // и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
-  if (user && user->id() != exist->id())
-    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
-
-  user = exist;
-  update(user.data(), data);
-  m_core->add(user, data.authType, data.id);
-
-  SCHAT_LOG_DEBUG() << "COOKIE AUTH" << user->nick() << user->host() << SimpleID::encode(user->id()) << user->userAgent() << data.host;
-  return AuthResult(user->id(), data.id);
+  return auth(data, Storage::i()->user(data.cookie, true));
 }
 
 
 int CookieAuth::type() const
 {
   return AuthRequest::Cookie;
+}
+
+
+AuthResult CookieAuth::auth(const AuthRequest &data, ChatUser user)
+{
+  if (!user)
+    return AuthResult();
+
+  Storage *storage = Storage::i();
+  QString normalNick = storage->normalize(data.nick);
+
+  ChatUser u = storage->user(normalNick, false);
+  if (u && u->id() != user->id())
+    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
+
+  update(user.data(), data);
+  m_core->add(user, data.authType, data.id);
+
+  SCHAT_LOG_DEBUG() << "COOKIE AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
+  return AuthResult(user->id(), data.id);
 }
 
 
