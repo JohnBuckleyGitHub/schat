@@ -33,12 +33,4 @@ protected:
   AuthResult auth(const AuthRequest &data, ChatUser user);
 };
 
-
-class BypassCookieAuth : public AnonymousAuth
-{
-public:
-  BypassCookieAuth(Core *core);
-  int type() const;
-};
-
 #endif /* COOKIEAUTH_H_ */
