@@ -53,7 +53,9 @@ void SimpleClientPrivate::clearClient()
 
 bool SimpleClientPrivate::authReply(const AuthReply &reply)
 {
-  if (AbstractClientPrivate::authReply(reply)) {
+  AbstractClientPrivate::authReply(reply);
+
+  if (reply.status == Notice::OK) {
     ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
     addChannel(channel);
 
@@ -62,11 +64,17 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return true;
   }
 
-  if (reply.status != Notice::OK) {
-    if (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden) {
-      if (authType == AuthRequest::Cookie)
-        cookieAuth = false;
-    }
+  if (reply.status == Notice::NickAlreadyUse)
+    return false;
+
+  if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {
+    cookieAuth = false;
+    return false;
+  }
+
+  if (authType == AuthRequest::Password) {
+    m_authError = AuthError(authType, reply.status);
+    setClientState(SimpleClient::ClientError);
   }
 
   return false;
@@ -564,6 +572,13 @@ ClientUser SimpleClient::user(const QByteArray &id) const
 {
   Q_D(const SimpleClient);
   return d->users.value(id);
+}
+
+
+const AuthError& SimpleClient::authError() const
+{
+  Q_D(const SimpleClient);
+  return d->m_authError;
 }
 
 

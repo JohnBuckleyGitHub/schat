@@ -67,7 +67,7 @@ QString AbstractClientPrivate::mangleNick()
 
 
 /*!
- * Чтение пакета AuthReplyPacket.
+ * Чтение пакета Protocol::AuthReplyPacket.
  */
 bool AbstractClientPrivate::authReply(const AuthReply &reply)
 {
@@ -92,7 +92,8 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     emit(q->ready());
     return true;
   }
-  else if (reply.status == Notice::NickAlreadyUse) {
+
+  if (reply.status == Notice::NickAlreadyUse) {
     authId = reply.id;
     user->setNick(mangleNick());
     q->requestAuth();
@@ -466,7 +467,7 @@ void AbstractClient::released()
   if (d->reconnectTimer->isActive())
     d->reconnectTimer->stop();
 
-  if (d->clientState == ClientOffline)
+  if (d->clientState == ClientOffline || d->clientState == ClientError)
     return;
 
   if (d->clientState == ClientOnline) {

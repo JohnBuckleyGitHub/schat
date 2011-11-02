@@ -24,6 +24,24 @@
 class AbstractNotice;
 class SimpleClientPrivate;
 
+class AuthError
+{
+public:
+  AuthError()
+  : authType(-1)
+  , status(-1)
+  {}
+
+  AuthError(int authType, int status)
+  : authType(authType)
+  , status(status)
+  {}
+
+  int authType;
+  int status;
+};
+
+
 class SCHAT_EXPORT SimpleClient : public AbstractClient
 {
   Q_OBJECT
@@ -45,6 +63,7 @@ public:
   ClientChannel channel(const QByteArray &id) const;
   ClientUser user() const;
   ClientUser user(const QByteArray &id) const;
+  const AuthError& authError() const;
   void leave();
   void part(const QByteArray &channelId);
   void setAccount(const QString &account, const QString &password);

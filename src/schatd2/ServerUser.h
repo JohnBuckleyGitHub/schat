@@ -40,8 +40,8 @@ public:
   inline qint64 key() const { return m_key; }
   inline QList<quint64> sockets() const { return m_sockets; }
   inline QString normalNick() const { return m_normalNick; }
-  inline void addSocket(quint64 socket) { m_sockets.append(socket); }
-  inline void removeSocket(quint64 socket) { m_sockets.removeOne(socket); }
+  inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
+  inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
   inline void setCookie(const QByteArray &cookie) { m_cookie = cookie; }
   inline void setKey(qint64 key) { m_key = key; }
   inline void setNormalNick(const QString &nick) { m_normalNick = nick; }

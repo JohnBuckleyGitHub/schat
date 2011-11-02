@@ -61,13 +61,14 @@ public:
   void updateUserData(ClientUser existUser, UserReader &reader);
   void updateUserStatus(const QString &text);
 
+  AuthError m_authError;                     ///< Информация об ошибки подключения.
   bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
   int authType;                              ///< Тип авторизации.
   MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
-  QByteArray password;
+  QByteArray password;                       ///< Пароль.
   QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
   QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
-  QString account;
+  QString account;                           ///< Имя аккаунта пользователя.
 };
 
 #endif /* SIMPLECLIENT_P_H_ */

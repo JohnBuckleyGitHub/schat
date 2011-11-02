@@ -27,6 +27,7 @@
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
+#include "net/packets/notices.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/NetworkWidget.h"
@@ -140,7 +141,7 @@ void StatusBar::clientStateChanged(int state)
     #endif
   }
   else if (state == SimpleClient::ClientError) {
-    m_icon->setPixmap(QPixmap(":/images/network-error.png"));
+    m_icon->setPixmap(QPixmap(":/images/exclamation-red.png"));
   }
 
   retranslateUi();
@@ -193,7 +194,7 @@ void StatusBar::retranslateUi()
   }
   else if (state == SimpleClient::ClientError) {
     m_label->setText(tr("Error"));
-    m_icon->setToolTip(tr("Error"));
+    m_icon->setToolTip(Notice::status(m_client->authError().status));
   }
 }
 
