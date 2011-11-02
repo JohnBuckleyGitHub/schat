@@ -220,7 +220,7 @@ void NetworkWidget::notify(int notice, const QVariant &data)
     m_combo->setCurrentIndex(0);
   }
   else if (notice == ChatCore::NetworkSelectedNotice) {
-    setCurrentIndex(data);
+    updateIndex();
   }
 }
 
@@ -308,7 +308,7 @@ void NetworkWidget::load()
     m_manager->setSelected(m_combo->itemText(0));
   }
 
-  setCurrentIndex(m_manager->selected());
+  updateIndex();
 }
 
 
@@ -320,17 +320,44 @@ void NetworkWidget::retranslateUi()
 }
 
 
-void NetworkWidget::setCurrentIndex(const QVariant &data)
+/*!
+ * Обновление выбора текущей сети.
+ * Необходимо для синхронизации выбора сети во всех виджетах.
+ */
+void NetworkWidget::updateIndex()
 {
-  int index = -1;
+  QVariant data = m_manager->selected();
   if (data.type() == QVariant::ByteArray)
-    index = m_combo->findData(data);
+    updateIndex(data.toByteArray());
   else if (data.type() == QVariant::String)
-    index = m_combo->findText(data.toString());
+    updateIndex(data.toString());
+}
 
+
+void NetworkWidget::updateIndex(const QByteArray &id)
+{
+  int index = m_combo->findData(id);
   if (index == -1)
     return;
 
+  if (m_combo->currentIndex() == index)
+    return;
+
+  m_combo->setCurrentIndex(index);
+}
+
+
+void NetworkWidget::updateIndex(const QString &url)
+{
+  int index = m_combo->findData(QVariant());
+
+  if (index == -1) {
+    m_combo->addItem(url);
+    m_combo->setCurrentIndex(m_combo->findText(url));
+    return;
+  }
+
+  m_combo->setItemText(index, url);
   if (m_combo->currentIndex() == index)
     return;
 

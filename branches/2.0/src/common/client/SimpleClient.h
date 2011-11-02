@@ -64,6 +64,7 @@ public:
   ClientUser user() const;
   ClientUser user(const QByteArray &id) const;
   const AuthError& authError() const;
+  const QString &account() const;
   void leave();
   void part(const QByteArray &channelId);
   void setAccount(const QString &account, const QString &password);

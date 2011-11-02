@@ -102,11 +102,13 @@ void NetworkEditor::update()
   m_tabs->update();
 
   NetworkItem item = m_manager->item(m_manager->selectedId());
-  m_anonymous->setChecked(item.account().isEmpty());
-  m_anonymous->setVisible(!item.isAuthorized());
+  if (item.isValid()) {
+    m_anonymous->setChecked(item.account().isEmpty());
+    m_anonymous->setVisible(!item.isAuthorized());
 
-  if (item.isAuthorized())
-    m_tabs->setVisible(false);
+//  if (item.isAuthorized() )
+//    m_tabs->setVisible(false);
+  }
 }
 
 

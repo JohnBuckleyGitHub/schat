@@ -582,6 +582,13 @@ const AuthError& SimpleClient::authError() const
 }
 
 
+const QString &SimpleClient::account() const
+{
+  Q_D(const SimpleClient);
+  return d->account;
+}
+
+
 void SimpleClient::leave()
 {
   Notice notice(userId(), user()->channels(), "leave");
