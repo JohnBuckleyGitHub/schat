@@ -147,8 +147,13 @@ void NetworkWidget::keyPressEvent(QKeyEvent *event)
  */
 void NetworkWidget::add()
 {
-  m_combo->insertItem(0, "schat://");
-  m_combo->setCurrentIndex(0);
+  int index = m_combo->findData(QVariant());
+  if (index == -1) {
+    m_combo->insertItem(0, "schat://");
+    index = 0;
+  }
+
+  m_combo->setCurrentIndex(index);
   m_combo->setFocus();
 }
 

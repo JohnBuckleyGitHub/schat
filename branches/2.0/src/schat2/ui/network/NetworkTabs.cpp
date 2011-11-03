@@ -72,6 +72,9 @@ bool NetworkTabs::canSignUp(const QByteArray &id) const
 }
 
 
+/*!
+ * Обновление состояния виджета.
+ */
 void NetworkTabs::reload()
 {
   m_login->reload();

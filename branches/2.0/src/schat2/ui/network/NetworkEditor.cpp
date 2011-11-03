@@ -36,6 +36,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)
   , m_layout(layout)
   , m_connect(0)
+  , m_client(ChatCore::i()->client())
 {
   m_manager = ChatCore::i()->networks();
   m_network = new NetworkWidget(this);
@@ -91,6 +92,9 @@ void NetworkEditor::notify(int notice, const QVariant &data)
 }
 
 
+/*!
+ * Обновление состояния виджета.
+ */
 void NetworkEditor::reload()
 {
   if (m_layout & ConnectButtonLayout) {
@@ -100,13 +104,17 @@ void NetworkEditor::reload()
   }
 
   m_tabs->reload();
+  m_anonymous->setEnabled(true);
 
   NetworkItem item = m_manager->item(m_manager->selectedId());
   if (item.isValid()) {
+    if (m_client->clientState() == SimpleClient::ClientOnline && m_client->serverId() == item.id() && item.isAuthorized())
+      m_anonymous->setEnabled(false);
+
     m_anonymous->setChecked(item.account().isEmpty());
   }
   else
-    m_anonymous->setChecked(ChatCore::i()->client()->account().isEmpty());
+    m_anonymous->setChecked(m_client->account().isEmpty());
 }
 
 

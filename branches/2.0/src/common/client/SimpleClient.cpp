@@ -622,7 +622,11 @@ void SimpleClient::setAccount(const QString &account, const QString &password)
 {
   Q_D(SimpleClient);
   d->account = account;
-  d->password = SimpleID::password(password);
+
+  if (!password.isEmpty())
+    d->password = SimpleID::password(password);
+  else
+    d->password.clear();
 }
 
 
