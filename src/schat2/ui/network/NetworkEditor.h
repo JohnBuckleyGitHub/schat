@@ -26,6 +26,7 @@ class NetworkTabs;
 class NetworkWidget;
 class QCheckBox;
 class QPushButton;
+class SimpleClient;
 
 class NetworkEditor : public QWidget
 {
@@ -57,6 +58,7 @@ private:
   NetworkWidget *m_network;    ///< Виджет выбора сети.
   QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
   QPushButton *m_connect;      ///< Кнопка Connect.
+  SimpleClient *m_client;      ///< Указатель на клиент.
 };
 
 #endif /* NETWORKEDITOR_H_ */

@@ -200,9 +200,9 @@ bool NetworkManager::open(const QByteArray &id)
 
   m_client->setCookieAuth(m_settings->value(QLatin1String("CookieAuth")).toBool());
   NetworkItem item = m_items.value(id);
-  QUrl url = item.url();
+  m_client->setAccount(item.account(), item.password());
 
-  return m_client->openUrl(url, item.cookie());
+  return m_client->openUrl(item.url(), item.cookie());
 }
 
 

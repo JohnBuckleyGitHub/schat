@@ -59,7 +59,7 @@ private:
   void updateIndex(const QByteArray &id);
   void updateIndex(const QString &url);
 
-  NetworkManager *m_manager;
+  NetworkManager *m_manager; ///< Указатель на менеджер сетевых подключений.
   QAction *m_addAction;
   QAction *m_connectAction;
   QAction *m_edit;
@@ -68,7 +68,7 @@ private:
   QMenu *m_menu;
   QToolBar *m_toolBar;
   QToolButton *m_config;
-  SimpleClient *m_client;
+  SimpleClient *m_client;   ///< Указатель на клиент.
 };
 
 #endif /* NETWORKWIDGET_H_ */

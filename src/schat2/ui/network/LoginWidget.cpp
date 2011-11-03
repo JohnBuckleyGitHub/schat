@@ -113,6 +113,9 @@ void LoginWidget::retranslateUi()
 }
 
 
+/*!
+ * Обновление состояния виджета.
+ */
 void LoginWidget::reload()
 {
   NetworkItem item = m_manager->item(m_manager->selectedId());
