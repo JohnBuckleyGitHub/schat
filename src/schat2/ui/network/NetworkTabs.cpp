@@ -34,7 +34,7 @@ NetworkTabs::NetworkTabs(QWidget *parent)
 
   addTab(m_login, tr("Log In"));
 
-  update();
+  reload();
   retranslateUi();
 }
 
@@ -72,9 +72,9 @@ bool NetworkTabs::canSignUp(const QByteArray &id) const
 }
 
 
-void NetworkTabs::update()
+void NetworkTabs::reload()
 {
-  m_login->update();
+  m_login->reload();
   updateSignUp();
 }
 
