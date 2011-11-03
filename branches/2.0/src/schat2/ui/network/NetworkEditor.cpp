@@ -60,8 +60,8 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   mainLay->setMargin(0);
   mainLay->setSpacing(4);
 
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(update()));
-  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(update()));
+  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
+  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(reload()));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_anonymous, SIGNAL(toggled(bool)), SLOT(anonymousToggled(bool)));
 
@@ -87,11 +87,11 @@ void NetworkEditor::anonymousToggled(bool checked)
 void NetworkEditor::notify(int notice, const QVariant &data)
 {
   if (notice == ChatCore::NetworkSelectedNotice || notice == ChatCore::NetworkChangedNotice)
-    update();
+    reload();
 }
 
 
-void NetworkEditor::update()
+void NetworkEditor::reload()
 {
   if (m_layout & ConnectButtonLayout) {
     QAction *action = m_network->connectAction();
@@ -99,21 +99,19 @@ void NetworkEditor::update()
     m_connect->setText(action->text());
   }
 
-  m_tabs->update();
+  m_tabs->reload();
 
   NetworkItem item = m_manager->item(m_manager->selectedId());
   if (item.isValid()) {
     m_anonymous->setChecked(item.account().isEmpty());
-    m_anonymous->setVisible(!item.isAuthorized());
-
-//  if (item.isAuthorized() )
-//    m_tabs->setVisible(false);
   }
+  else
+    m_anonymous->setChecked(ChatCore::i()->client()->account().isEmpty());
 }
 
 
 void NetworkEditor::retranslateUi()
 {
   m_anonymous->setText(tr("Anonymous connection"));
-  update();
+  reload();
 }

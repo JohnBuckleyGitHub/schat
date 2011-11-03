@@ -21,11 +21,12 @@
 
 #include <QWidget>
 
+class NetworkManager;
+class Notice;
 class QLabel;
 class QLineEdit;
-class QToolButton;
 class QProgressIndicator;
-class Notice;
+class QToolButton;
 
 class LoginWidget : public QWidget
 {
@@ -35,7 +36,7 @@ public:
   LoginWidget(QWidget *parent = 0);
   bool canLogIn() const;
   void retranslateUi();
-  void update();
+  void reload();
 
 protected:
   void showEvent(QShowEvent *event);
@@ -47,13 +48,14 @@ private slots:
   void textChanged();
 
 private:
-  QLabel *m_nameLabel;
-  QLabel *m_passwordLabel;
-  QLineEdit *m_nameEdit;
-  QLineEdit *m_passwordEdit;
+  NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
+  QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
+  QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
+  QLineEdit *m_nameEdit;          ///< Поле редактирования имени.
+  QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
   QProgressIndicator *m_progress; ///< Прогресс бар.
-  QToolButton *m_error;
-  QToolButton *m_login;
+  QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
+  QToolButton *m_login;           ///< Кнопка немедленного входа.
 };
 
 #endif /* LOGINWIDGET_H_ */

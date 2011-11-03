@@ -32,7 +32,7 @@ public:
   NetworkTabs(QWidget *parent = 0);
   bool canLogIn() const;
   bool canSignUp(const QByteArray &id = QByteArray()) const;
-  void update();
+  void reload();
 
 protected:
   void changeEvent(QEvent *event);

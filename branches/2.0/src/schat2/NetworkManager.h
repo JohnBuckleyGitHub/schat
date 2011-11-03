@@ -90,6 +90,7 @@ public:
   inline int count() const { return m_items.count(); }
   inline NetworkItem item() const { return item(serverId()); }
   inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
+  inline NetworkItem& edit(const QByteArray &id) { return m_items[id]; }
   inline QString root() const { return root(serverId()); }
   inline QVariant selected() const { return m_selected; }
   QByteArray selectedId() const;

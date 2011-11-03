@@ -34,6 +34,7 @@
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
+  , m_manager(ChatCore::i()->networks())
 {
   m_nameLabel = new QLabel(this);
   m_nameEdit = new QLineEdit(this);
@@ -112,26 +113,15 @@ void LoginWidget::retranslateUi()
 }
 
 
-void LoginWidget::update()
+void LoginWidget::reload()
 {
-  QVariant selected = ChatCore::i()->networks()->selected();
-  m_nameEdit->setEnabled(true);
-  m_passwordEdit->setEnabled(true);
-
-  if (selected.type() == QVariant::ByteArray && ChatCore::i()->networks()->isItem(selected.toByteArray())) {
-    QByteArray id = selected.toByteArray();
-
-    NetworkItem item = ChatCore::i()->networks()->item(id);
+  NetworkItem item = m_manager->item(m_manager->selectedId());
+  if (item.isValid()) {
     m_nameEdit->setText(item.account());
     m_passwordEdit->setText(item.password());
-
-    if (ChatCore::i()->networks()->serverId() == id && !UserUtils::user()->account().isEmpty()) {
-      m_nameEdit->setEnabled(false);
-      m_passwordEdit->setEnabled(false);
-    }
   }
   else {
-    m_nameEdit->setText(QString());
+    m_nameEdit->setText(ChatCore::i()->client()->account());
     m_passwordEdit->setText(QString());
   }
 
@@ -150,15 +140,16 @@ void LoginWidget::showEvent(QShowEvent *event)
 
 void LoginWidget::editingFinished()
 {
-  qDebug() << "LoginWidget::editingFinished()" << m_nameEdit->text() << m_passwordEdit->text();
-
   if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty())
     return;
 
-//  QVariant selected = ChatCore::i()->networks()->selected();
-//  if (selected.type() == QVariant::String) {
+  if (m_manager->isItem(m_manager->selectedId())) {
+    NetworkItem& item = m_manager->edit(m_manager->selectedId());
+    item.setAccount(m_nameEdit->text());
+    item.setPassword(m_passwordEdit->text());
+  }
+  else
     ChatCore::i()->client()->setAccount(m_nameEdit->text(), m_passwordEdit->text());
-//  }
 }
 
 
@@ -181,7 +172,7 @@ void LoginWidget::notice(const Notice &notice)
     m_error->setToolTip(Notice::status(notice.status()));
   }
   else
-    update();
+    reload();
 }
 
 

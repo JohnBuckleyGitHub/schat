@@ -46,7 +46,7 @@ protected:
 private slots:
   void anonymousToggled(bool checked);
   void notify(int notice, const QVariant &data);
-  void update();
+  void reload();
 
 private:
   void retranslateUi();
