@@ -70,7 +70,6 @@ QByteArray SimpleID::decode(const QByteArray &id)
 
 /*!
  * Кодирование идентификатора в Base32.
- * Для результата используется символы в нижнем регистре, могут быть проблемы со сторонними реализациями Base32.
  *
  * \param id Идентификатор, размер должен быть равен DefaultSize.
  * \return Кодированный идентификатор или пустой массив в случае ошибки.
@@ -100,15 +99,27 @@ QByteArray SimpleID::fromBase32(const QByteArray &base32)
 }
 
 
-QByteArray SimpleID::password(const QString &password, const QByteArray &salt)
+/*!
+ * Создание идентификатора.
+ *
+ * \param data Данные на основе которых будет создан идентификатор.
+ * \param type Тип идентификатора.
+ */
+QByteArray SimpleID::make(const QByteArray &data, Types type)
 {
-  return QCryptographicHash::hash(password.toUtf8() + salt, QCryptographicHash::Sha1) += PasswordId;
+  return QCryptographicHash::hash(data, QCryptographicHash::Sha1) += type;
 }
 
 
-QByteArray SimpleID::randomId(IdTypes type, const QByteArray &salt)
+QByteArray SimpleID::password(const QString &password, const QByteArray &salt)
 {
-  return QCryptographicHash::hash(QString(salt + QUuid::createUuid()).toLatin1(), QCryptographicHash::Sha1) += type;
+  return make(password.toUtf8() + salt, PasswordId);
+}
+
+
+QByteArray SimpleID::randomId(Types type, const QByteArray &salt)
+{
+  return make(salt + QUuid::createUuid().toString().toLatin1(), type);
 }
 
 
@@ -149,11 +160,11 @@ QByteArray SimpleID::uniqueId()
   foreach (QNetworkInterface iface, all) {
     QString hw = iface.hardwareAddress();
     if (!hw.isEmpty() && !iface.flags().testFlag(QNetworkInterface::IsLoopBack) && iface.flags().testFlag(QNetworkInterface::IsUp) && iface.flags().testFlag(QNetworkInterface::IsRunning)) {
-      return QCryptographicHash::hash(hw.toLatin1(), QCryptographicHash::Sha1) += UniqueUserId;
+      return make(hw.toLatin1(), UniqueUserId);
     }
   }
 
-  return QCryptographicHash::hash("", QCryptographicHash::Sha1) += UniqueUserId;
+  return make("", UniqueUserId);
 }
 
 

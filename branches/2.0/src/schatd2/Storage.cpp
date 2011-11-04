@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QCryptographicHash>
 #include <QFile>
 #include <QSslConfiguration>
 #include <QSslKey>
@@ -298,13 +297,13 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
  */
 QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 {
-  QString prefix;
+  QByteArray prefix;
   if (type == AuthRequest::Anonymous || type == AuthRequest::Cookie || type == AuthRequest::Password)
-    prefix = QLatin1String("anonymous:");
+    prefix = "anonymous:";
   else if (type == AuthRequest::SlaveNode)
-    prefix = QLatin1String("slave:");
+    prefix = "slave:";
 
-  return QCryptographicHash::hash(QString(prefix + m_serverData->privateId() + userId).toLatin1(), QCryptographicHash::Sha1) += SimpleID::UserId;
+  return SimpleID::make(prefix + m_serverData->privateId() + userId, SimpleID::UserId);
 }
 
 
@@ -573,7 +572,7 @@ QString Storage::normalize(const QString &text) const
 
 QByteArray Storage::makeChannelId(const QString &name) const
 {
-  return QCryptographicHash::hash(QString("channel:" + m_serverData->privateId() + name).toUtf8(), QCryptographicHash::Sha1) += SimpleID::ChannelId;
+  return SimpleID::make("channel:" + m_serverData->privateId() + name.toUtf8(), SimpleID::ChannelId);
 }
 
 

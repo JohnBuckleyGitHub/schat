@@ -17,7 +17,6 @@
  */
 
 #include <QCoreApplication>
-#include <QCryptographicHash>
 #include <QNetworkInterface>
 
 #include "net/PacketReader.h"

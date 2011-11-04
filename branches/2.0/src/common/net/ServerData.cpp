@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QCryptographicHash>
-
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 
@@ -81,5 +79,5 @@ bool ServerData::setName(const QString &name)
 void ServerData::setPrivateId(const QByteArray &id)
 {
   m_privateId = id;
-  m_id = QCryptographicHash::hash(id, QCryptographicHash::Sha1) += SimpleID::ServerId;
+  m_id = SimpleID::make(id, SimpleID::ServerId);
 }

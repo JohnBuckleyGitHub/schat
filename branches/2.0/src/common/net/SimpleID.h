@@ -33,7 +33,7 @@ public:
   };
 
   /// Типы идентификаторов.
-  enum IdTypes {
+  enum Types {
     InvalidId = 0x49,        ///< 'I' Неверный идентификатор.
     UniqueUserId = 0x55,     ///< 'U' Уникальный идентификатор пользователя, использующийся при авторизации.
     UserId = 0x75,           ///< 'u' Стандартный идентификатор пользователя.
@@ -49,8 +49,9 @@ public:
   static QByteArray decode(const QByteArray &id);
   static QByteArray encode(const QByteArray &id);
   static QByteArray fromBase32(const QByteArray &base32);
+  static QByteArray make(const QByteArray &data, Types type);
   static QByteArray password(const QString &password, const QByteArray &salt = QByteArray());
-  static QByteArray randomId(IdTypes type, const QByteArray &salt = QByteArray());
+  static QByteArray randomId(Types type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase32(const QByteArray &data);
   static QByteArray uniqueId();

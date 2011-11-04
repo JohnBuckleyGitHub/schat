@@ -17,7 +17,6 @@
  */
 
 #include <QCoreApplication>
-#include <QCryptographicHash>
 #include <QEvent>
 #include <QThread>
 

@@ -20,7 +20,6 @@
 #define PACKETWRITER_H_
 
 #include <QByteArray>
-#include <QCryptographicHash>
 #include <QDataStream>
 
 #include "net/Protocol.h"
@@ -152,12 +151,10 @@ public:
   /// Запись Id.
   inline void putId(const QByteArray &data)
   {
-    if (data.size() == SimpleID::DefaultSize) {
+    if (data.size() == SimpleID::DefaultSize)
       m_device->write(data);
-    }
-    else {
-      m_device->write(QCryptographicHash::hash("", QCryptographicHash::Sha1) += SimpleID::InvalidId);
-    }
+    else
+      m_device->write(SimpleID::make("", SimpleID::InvalidId));
   }
 
   /// Запись Id.
