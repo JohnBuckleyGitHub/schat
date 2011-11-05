@@ -52,6 +52,7 @@ public:
   inline QString url() const { return m_url; }
   inline void setAccount(const QString &account) { m_account = account; }
   inline void setPassword(const QString &password) { m_password = password; }
+  inline void setUrl(const QString &url) { m_url = url; }
   static NetworkItem item();
   void read();
   void write();
@@ -87,18 +88,19 @@ public:
   bool open(const QByteArray &id);
   bool open(const QString &url);
   inline bool isItem(const QByteArray &id) const { if (id.isEmpty()) return false; return m_items.contains(id); }
+  inline const QByteArray& tmpId() const { return m_tmpId; }
   inline int count() const { return m_items.count(); }
   inline NetworkItem item() const { return item(serverId()); }
   inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
   inline NetworkItem& edit(const QByteArray &id) { return m_items[id]; }
+  inline QByteArray selected() const { return m_selected; }
   inline QString root() const { return root(serverId()); }
-  inline QVariant selected() const { return m_selected; }
-  QByteArray selectedId() const;
+  int isSelectedActive() const;
   QByteArray serverId() const;
   QList<NetworkItem> items() const;
   static QString currentServerName();
   void removeItem(const QByteArray &id);
-  void setSelected(const QVariant &selected);
+  void setSelected(const QByteArray &id);
 
 private slots:
   void clientStateChanged(int state);
@@ -114,8 +116,9 @@ private:
   FileLocations *m_locations;
   int m_invalids;
   MessageAdapter *m_adapter;
+  QByteArray m_tmpId;       ///< Временный идентификатор для текущего редактируемой сети.
   QHash<QByteArray, NetworkItem> m_items;
-  QVariant m_selected;      ///< Текущая выбранная сеть в настройках, значние может быть идентификатором сервера или url адресом.
+  QByteArray m_selected;     ///< Текущая выбранная сеть в настройках.
   SimpleClient *m_client;   ///< Указатель на клиент.
 };
 

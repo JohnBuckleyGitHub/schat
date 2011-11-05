@@ -218,12 +218,26 @@ bool NetworkManager::open(const QString &url)
 }
 
 
-QByteArray NetworkManager::selectedId() const
+/*!
+ * Возвращает состояние текущего выбранного итема.
+ *
+ * \return Возвращаемые значения:
+ * - 0 Подключение не ассоциировано с выбранным итемом.
+ * - 1 Подключение активно для текущего итема.
+ * - 2 Идёт подключение.
+ */
+int NetworkManager::isSelectedActive() const
 {
-  if (m_selected.type() == QVariant::ByteArray)
-    return m_selected.toByteArray();
+  if (m_selected == m_tmpId)
+    return 0;
 
-  return QByteArray();
+  if (m_client->clientState() == SimpleClient::ClientOnline && m_selected == m_client->serverId())
+    return 1;
+
+  if (m_client->clientState() == SimpleClient::ClientConnecting && m_client->url().toString() == item(m_selected).url())
+    return 2;
+
+  return 0;
 }
 
 
@@ -245,15 +259,18 @@ QByteArray NetworkManager::serverId() const
 }
 
 
+/*!
+ * Получение списка идентификаторов сетей, сохранённых в настройках.
+ */
 QList<NetworkItem> NetworkManager::items() const
 {
   QStringList networks = networkList();
   QList<NetworkItem> out;
 
   for (int i = 0; i < networks.size(); ++i) {
-    QByteArray id = SimpleID::decode(networks.at(i).toLatin1());
-    if (SimpleID::typeOf(id) == SimpleID::ServerId)
-      out.append(m_items.value(id));
+    NetworkItem item = m_items.value(SimpleID::decode(networks.at(i).toLatin1()));
+    if (item.isValid())
+      out.append(item);
   }
 
   return out;
@@ -286,13 +303,13 @@ void NetworkManager::removeItem(const QByteArray &id)
 }
 
 
-void NetworkManager::setSelected(const QVariant &selected)
+void NetworkManager::setSelected(const QByteArray &id)
 {
-  if (m_selected == selected)
+  if (m_selected == id)
     return;
 
-  m_selected = selected;
-  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, selected);
+  m_selected = id;
+  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, id);
 }
 
 
@@ -360,7 +377,7 @@ void NetworkManager::load()
       continue;
     }
 
-    m_items.insert(id, item);
+    m_items[id] = item;
   }
 
   // Удаление невалидных серверов.
@@ -375,6 +392,11 @@ void NetworkManager::load()
 
   if (!networks.isEmpty())
     setSelected(SimpleID::decode(networks.at(0).toLatin1()));
+
+  m_tmpId = SimpleID::make("", SimpleID::ServerId);
+  NetworkItem item(m_tmpId);
+  item.setUrl("schat://");
+  m_items[m_tmpId] = item;
 }
 
 

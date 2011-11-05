@@ -40,11 +40,11 @@ public slots:
   void open();
 
 protected:
+  bool eventFilter(QObject *watched, QEvent *event);
   void changeEvent(QEvent *event);
-  void keyPressEvent(QKeyEvent *event);
 
 private slots:
-  void add();
+  int add(const QString &url = "schat://");
   void edit();
   void indexChanged(int index);
   void notify(int notice, const QVariant &data);
@@ -52,12 +52,9 @@ private slots:
   void showMenu();
 
 private:
-  int isCurrentActive() const;
   void load();
   void retranslateUi();
   void updateIndex();
-  void updateIndex(const QByteArray &id);
-  void updateIndex(const QString &url);
 
   NetworkManager *m_manager; ///< Указатель на менеджер сетевых подключений.
   QAction *m_addAction;
