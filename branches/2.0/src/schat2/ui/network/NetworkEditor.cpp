@@ -106,15 +106,15 @@ void NetworkEditor::reload()
   m_tabs->reload();
   m_anonymous->setEnabled(true);
 
-  NetworkItem item = m_manager->item(m_manager->selectedId());
-  if (item.isValid()) {
+  NetworkItem item = m_manager->item(m_manager->selected());
+//  if (item.isValid()) {
     if (m_client->clientState() == SimpleClient::ClientOnline && m_client->serverId() == item.id() && item.isAuthorized())
       m_anonymous->setEnabled(false);
 
     m_anonymous->setChecked(item.account().isEmpty());
-  }
-  else
-    m_anonymous->setChecked(m_client->account().isEmpty());
+//  }
+//  else
+//    m_anonymous->setChecked(m_client->account().isEmpty());
 }
 
 

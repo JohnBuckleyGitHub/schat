@@ -38,6 +38,7 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   , m_client(ChatCore::i()->client())
 {
   m_combo = new QComboBox(this);
+  m_combo->installEventFilter(this);
 
   m_menu = new QMenu(this);
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
@@ -74,8 +75,7 @@ NetworkWidget::NetworkWidget(QWidget *parent)
 
 QAction *NetworkWidget::connectAction()
 {
-  QByteArray id = m_combo->itemData(m_combo->currentIndex()).toByteArray();
-  int state = isCurrentActive();
+  int state = m_manager->isSelectedActive();
 
   if (state == 1) {
     m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
@@ -107,19 +107,32 @@ void NetworkWidget::open()
   if (index == -1)
     return;
 
-  QByteArray id = m_combo->itemData(index).toByteArray();
-
-  if (isCurrentActive()) {
+  if (m_manager->isSelectedActive()) {
     m_client->leave();
     return;
   }
 
-  if (id.isEmpty()) {
-    m_combo->setItemText(index, m_combo->currentText());
-    m_manager->open(m_combo->currentText());
+  NetworkItem& item = m_manager->edit(m_manager->selected());
+  if (item.id() == m_manager->tmpId()) {
+    item.setUrl(m_combo->currentText());
+    m_combo->setItemText(index, item.url());
   }
 
-  m_manager->open(id);
+  m_manager->open(item.id());
+}
+
+
+bool NetworkWidget::eventFilter(QObject *watched, QEvent *event)
+{
+  if (watched == m_combo && event->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->key() == Qt::Key_Return) {
+      open();
+      return true;
+    }
+  }
+
+  return QWidget::eventFilter(watched, event);
 }
 
 
@@ -132,29 +145,32 @@ void NetworkWidget::changeEvent(QEvent *event)
 }
 
 
-void NetworkWidget::keyPressEvent(QKeyEvent *event)
-{
-  if (event->key() == Qt::Key_Return) {
-    open();
-  }
-  else
-    QWidget::keyPressEvent(event);
-}
-
-
 /*!
  * Добавление нового подключения.
  */
-void NetworkWidget::add()
+int NetworkWidget::add(const QString &url)
 {
-  int index = m_combo->findData(QVariant());
+  qDebug() << "-----" << "ADD" << url;
+  NetworkItem &item = m_manager->edit(m_manager->tmpId());
+
+  int index = m_combo->findData(item.id());
   if (index == -1) {
-    m_combo->insertItem(0, "schat://");
+    if (!url.isEmpty()) {
+      item.setUrl(url);
+      item.setAccount(QString());
+      item.setPassword(QString());
+    }
+
+    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.url(), item.id());
     index = 0;
   }
 
-  m_combo->setCurrentIndex(index);
+  if (m_combo->currentIndex() != index)
+    m_combo->setCurrentIndex(index);
+
   m_combo->setFocus();
+  m_combo->setEditable(true);
+  return index;
 }
 
 
@@ -186,16 +202,10 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-  QVariant param = m_combo->itemData(index);
+  QByteArray id = m_combo->itemData(index).toByteArray();
+  m_combo->setEditable(id == m_manager->tmpId());
 
-  if (param.type() == QVariant::Invalid) {
-    m_combo->setEditable(true);
-    param = m_combo->itemText(index);
-  }
-  else
-    m_combo->setEditable(false);
-
-  m_manager->setSelected(param);
+  m_manager->setSelected(id);
 }
 
 
@@ -261,42 +271,6 @@ void NetworkWidget::showMenu()
 
 
 /*!
- * Возвращает состояние текущего выбранного итема.
- *
- * \return Возвращаемые значения:
- * - 0 Подключение не ассоциировано с выбранным итемом.
- * - 1 Подключение активно для текущего итема.
- * - 2 Идёт подключение.
- */
-int NetworkWidget::isCurrentActive() const
-{
-  int index = m_combo->currentIndex();
-  if (index == -1)
-    return 0;
-
-  QByteArray id = m_combo->itemData(index).toByteArray();
-
-  if (m_client->clientState() == SimpleClient::ClientOnline && !id.isEmpty() && id == m_client->serverId()) {
-    return 1;
-  }
-
-  if (m_client->clientState() == SimpleClient::ClientConnecting) {
-    QString url;
-    if (id.isEmpty())
-      url = m_combo->currentText();
-    else
-      url = m_manager->item(id).url();
-
-    if (m_client->url().toString() == url) {
-      return 2;
-    }
-  }
-
-  return 0;
-}
-
-
-/*!
  * Загрузка списка серверов в виджет.
  */
 void NetworkWidget::load()
@@ -308,9 +282,8 @@ void NetworkWidget::load()
   }
 
   if (m_combo->count() == 0) {
-    m_combo->addItem("schat://schat.me");
-    m_combo->setEditable(true);
-    m_manager->setSelected(m_combo->itemText(0));
+    add("schat://schat.me");
+    m_manager->setSelected(m_manager->tmpId());
   }
 
   updateIndex();
@@ -331,40 +304,16 @@ void NetworkWidget::retranslateUi()
  */
 void NetworkWidget::updateIndex()
 {
-  QVariant data = m_manager->selected();
-  if (data.type() == QVariant::ByteArray)
-    updateIndex(data.toByteArray());
-  else if (data.type() == QVariant::String)
-    updateIndex(data.toString());
-}
+  NetworkItem item = m_manager->item(m_manager->selected());
 
-
-void NetworkWidget::updateIndex(const QByteArray &id)
-{
-  int index = m_combo->findData(id);
-  if (index == -1)
-    return;
-
-  if (m_combo->currentIndex() == index)
-    return;
-
-  m_combo->setCurrentIndex(index);
-}
-
-
-void NetworkWidget::updateIndex(const QString &url)
-{
-  int index = m_combo->findData(QVariant());
-
+  int index = m_combo->findData(item.id());
   if (index == -1) {
-    m_combo->addItem(url);
-    m_combo->setCurrentIndex(m_combo->findText(url));
-    return;
+    if (m_manager->tmpId() == item.id())
+      index = add();
+    else
+      return;
   }
 
-  m_combo->setItemText(index, url);
-  if (m_combo->currentIndex() == index)
-    return;
-
-  m_combo->setCurrentIndex(index);
+  if (m_combo->currentIndex() != index)
+    m_combo->setCurrentIndex(index);
 }

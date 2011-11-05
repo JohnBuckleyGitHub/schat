@@ -118,15 +118,9 @@ void LoginWidget::retranslateUi()
  */
 void LoginWidget::reload()
 {
-  NetworkItem item = m_manager->item(m_manager->selectedId());
-  if (item.isValid()) {
-    m_nameEdit->setText(item.account());
-    m_passwordEdit->setText(item.password());
-  }
-  else {
-    m_nameEdit->setText(ChatCore::i()->client()->account());
-    m_passwordEdit->setText(QString());
-  }
+  NetworkItem item = m_manager->item(m_manager->selected());
+  m_nameEdit->setText(item.account());
+  m_passwordEdit->setText(item.password());
 
   textChanged();
 }
@@ -146,13 +140,9 @@ void LoginWidget::editingFinished()
   if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty())
     return;
 
-  if (m_manager->isItem(m_manager->selectedId())) {
-    NetworkItem& item = m_manager->edit(m_manager->selectedId());
-    item.setAccount(m_nameEdit->text());
-    item.setPassword(m_passwordEdit->text());
-  }
-  else
-    ChatCore::i()->client()->setAccount(m_nameEdit->text(), m_passwordEdit->text());
+  NetworkItem& item = m_manager->edit(m_manager->selected());
+  item.setAccount(m_nameEdit->text());
+  item.setPassword(m_passwordEdit->text());
 }
 
 
