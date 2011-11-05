@@ -228,9 +228,6 @@ bool NetworkManager::open(const QString &url)
  */
 int NetworkManager::isSelectedActive() const
 {
-  if (m_selected == m_tmpId)
-    return 0;
-
   if (m_client->clientState() == SimpleClient::ClientOnline && m_selected == m_client->serverId())
     return 1;
 
@@ -295,11 +292,17 @@ QString NetworkManager::currentServerName()
  */
 void NetworkManager::removeItem(const QByteArray &id)
 {
+  if (id == m_tmpId)
+    return;
+
   QStringList networks = networkList();
 
   networks.removeAll(SimpleID::encode(id));
   m_settings->setValue(QLatin1String("Networks"), networks);
   m_settings->remove(SimpleID::encode(id));
+
+  if (id == m_client->serverId() && m_client->clientState() != SimpleClient::ClientOffline)
+    m_client->leave();
 }
 
 
@@ -354,6 +357,11 @@ QStringList NetworkManager::networkList() const
  */
 void NetworkManager::load()
 {
+  m_tmpId = SimpleID::make("", SimpleID::ServerId);
+  NetworkItem item(m_tmpId);
+  item.setUrl("schat://");
+  m_items[m_tmpId] = item;
+
   QStringList networks = networkList();
   if (networks.isEmpty())
     return;
@@ -392,11 +400,6 @@ void NetworkManager::load()
 
   if (!networks.isEmpty())
     setSelected(SimpleID::decode(networks.at(0).toLatin1()));
-
-  m_tmpId = SimpleID::make("", SimpleID::ServerId);
-  NetworkItem item(m_tmpId);
-  item.setUrl("schat://");
-  m_items[m_tmpId] = item;
 }
 
 
