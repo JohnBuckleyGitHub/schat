@@ -150,7 +150,6 @@ void NetworkWidget::changeEvent(QEvent *event)
  */
 int NetworkWidget::add(const QString &url)
 {
-  qDebug() << "-----" << "ADD" << url;
   NetworkItem &item = m_manager->edit(m_manager->tmpId());
 
   int index = m_combo->findData(item.id());
@@ -212,24 +211,15 @@ void NetworkWidget::indexChanged(int index)
 void NetworkWidget::notify(int notice, const QVariant &data)
 {
   if (notice == ChatCore::NetworkChangedNotice) {
+    int index = m_combo->findData(m_manager->tmpId());
+    if (index != -1)
+      m_combo->removeItem(index);
+
     QByteArray id = data.toByteArray();
     NetworkItem item = m_manager->item(id);
 
     if (!item.isValid())
       return;
-
-    int index = m_combo->findText(item.url());
-    if (index != -1)
-      m_combo->removeItem(index);
-
-    index = m_combo->findText("schat://");
-    if (index != -1)
-      m_combo->removeItem(index);
-
-    index = m_combo->findData(id);
-    if (index != -1) {
-      m_combo->removeItem(index);
-    }
 
     m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
     m_combo->setCurrentIndex(0);
@@ -246,14 +236,17 @@ void NetworkWidget::notify(int notice, const QVariant &data)
 void NetworkWidget::remove()
 {
   int index = m_combo->currentIndex();
+  qDebug() << "@@@@@@" << index;
   if (index == -1)
     return;
 
   QByteArray id = m_combo->itemData(index).toByteArray();
-  if (!id.isEmpty())
-    m_manager->removeItem(id);
-
+  m_manager->removeItem(id);
   m_combo->removeItem(index);
+
+  qDebug() << m_combo->count();
+  if (!m_combo->count())
+    add();
 }
 
 
@@ -309,7 +302,7 @@ void NetworkWidget::updateIndex()
   int index = m_combo->findData(item.id());
   if (index == -1) {
     if (m_manager->tmpId() == item.id())
-      index = add();
+      index = add(QString());
     else
       return;
   }
