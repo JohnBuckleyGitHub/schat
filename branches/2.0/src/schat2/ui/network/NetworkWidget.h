@@ -61,6 +61,7 @@ private:
   QAction *m_connectAction;
   QAction *m_edit;
   QAction *m_removeAction;
+  QByteArray m_editing;     ///< Идентификатор редактируемой сети.
   QComboBox *m_combo;
   QMenu *m_menu;
   QToolBar *m_toolBar;

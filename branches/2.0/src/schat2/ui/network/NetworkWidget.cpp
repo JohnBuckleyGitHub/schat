@@ -117,6 +117,12 @@ void NetworkWidget::open()
     item.setUrl(m_combo->currentText());
     m_combo->setItemText(index, item.url());
   }
+  else if (!m_editing.isEmpty() && item.id() == m_editing) {
+    item.setUrl(m_combo->currentText());
+    m_combo->setItemText(index, item.name());
+    m_editing.clear();
+    m_combo->setEditable(false);
+  }
 
   m_manager->open(item.id());
 }
@@ -182,14 +188,11 @@ void NetworkWidget::edit()
   if (index == -1)
     return;
 
-  QByteArray id = m_combo->itemData(index).toByteArray();
-  if (SimpleID::typeOf(id) != SimpleID::ServerId)
-    return;
-
-  NetworkItem item = m_manager->item(id);
+  NetworkItem item = m_manager->item(m_combo->itemData(index).toByteArray());
   if (!item.isValid())
     return;
 
+  m_editing = item.id();
   m_combo->setItemText(index, item.url());
   m_combo->setEditable(true);
   m_combo->setFocus();
@@ -197,12 +200,22 @@ void NetworkWidget::edit()
 
 
 /*!
- * Обработка изменения индекса, запрещается редактирование сохранённых сетей.
+ * Обработка изменения текущего индекса.
  */
 void NetworkWidget::indexChanged(int index)
 {
   QByteArray id = m_combo->itemData(index).toByteArray();
   m_combo->setEditable(id == m_manager->tmpId());
+
+  if (!m_editing.isEmpty()) {
+    int index = m_combo->findData(m_editing);
+    if (index != -1) {
+      NetworkItem item = m_manager->item(m_editing);
+      m_combo->setItemText(index, item.name());
+    }
+
+    m_editing.clear();
+  }
 
   m_manager->setSelected(id);
 }
@@ -221,6 +234,10 @@ void NetworkWidget::notify(int notice, const QVariant &data)
     if (!item.isValid())
       return;
 
+    index = m_combo->findData(item.id());
+    if (index != -1)
+      m_combo->removeItem(index);
+
     m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
     m_combo->setCurrentIndex(0);
   }
@@ -236,7 +253,6 @@ void NetworkWidget::notify(int notice, const QVariant &data)
 void NetworkWidget::remove()
 {
   int index = m_combo->currentIndex();
-  qDebug() << "@@@@@@" << index;
   if (index == -1)
     return;
 
@@ -244,7 +260,6 @@ void NetworkWidget::remove()
   m_manager->removeItem(id);
   m_combo->removeItem(index);
 
-  qDebug() << m_combo->count();
   if (!m_combo->count())
     add();
 }
