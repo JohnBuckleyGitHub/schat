@@ -30,8 +30,7 @@ public:
 
 protected:
   void acceptAuth(const AuthResult &result);
-  void notice();
-  void readPacket(int type);
+  void notice(quint16 type);
   void rejectAuth(const AuthResult &result);
   void release(SocketReleaseEvent *event);
 

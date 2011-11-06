@@ -72,7 +72,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
 }
 
 
-void MasterNode::notice()
+void MasterNode::notice(quint16 type)
 {
   if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
     quint16 type = m_reader->get<quint16>();
@@ -91,16 +91,7 @@ void MasterNode::notice()
     }
   }
   else
-    Core::notice();
-}
-
-
-void MasterNode::readPacket(int type)
-{
-  if (type == Protocol::NoticePacket)
-    notice();
-  else
-    Core::readPacket(type);
+    Core::notice(type);
 }
 
 

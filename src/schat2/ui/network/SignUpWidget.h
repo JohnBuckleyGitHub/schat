@@ -21,12 +21,38 @@
 
 #include <QWidget>
 
+class NetworkManager;
+class QComboBox;
+class QLabel;
+class QLineEdit;
+class QProgressIndicator;
+class QPushButton;
+class SimpleClient;
+
 class SignUpWidget : public QWidget
 {
   Q_OBJECT
 
 public:
   SignUpWidget(QWidget *parent = 0);
+  bool canSignUp() const;
+  void reload();
+  void retranslateUi();
+  void setSmall(bool small = true);
+
+private:
+  NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
+  QComboBox *m_question;          ///< Секретный вопрос.
+  QLabel *m_answerLabel;
+  QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
+  QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
+  QLabel *m_questionLabel;
+  QLineEdit *m_answerEdit;        ///< Поле редактирования секретного вопроса.
+  QLineEdit *m_nameEdit;          ///< Поле редактирования имени.
+  QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
+  QProgressIndicator *m_progress; ///< Прогресс бар.
+  QPushButton *m_signUp;
+  SimpleClient *m_client;         ///< Указатель на клиент.
 };
 
 #endif /* SIGNUPWIDGET_H_ */

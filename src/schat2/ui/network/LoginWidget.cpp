@@ -107,8 +107,8 @@ bool LoginWidget::canLogIn() const
 
 void LoginWidget::retranslateUi()
 {
-  m_nameLabel->setText(tr("Name"));
-  m_passwordLabel->setText(tr("Password"));
+  m_nameLabel->setText(tr("Name:"));
+  m_passwordLabel->setText(tr("Password:"));
   m_login->setToolTip(tr("Log In"));
 }
 
