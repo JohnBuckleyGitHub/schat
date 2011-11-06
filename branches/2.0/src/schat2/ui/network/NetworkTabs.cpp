@@ -30,12 +30,15 @@ NetworkTabs::NetworkTabs(QWidget *parent)
 {
   m_login = new LoginWidget(this);
   m_signup = new SignUpWidget(this);
+  m_signup->setVisible(false);
   setSizePolicy(sizePolicy().horizontalPolicy(), QSizePolicy::Maximum);
 
   addTab(m_login, tr("Log In"));
 
   reload();
   retranslateUi();
+
+  connect(this, SIGNAL(currentChanged(int)), SLOT(indexChanged(int)));
 }
 
 
@@ -49,36 +52,19 @@ bool NetworkTabs::canLogIn() const
 
 
 /*!
- * Проверка возможности регистрации.
- *
- * \param id Идентификатор сервера.
- * \return true если регистрация возможна.
- */
-bool NetworkTabs::canSignUp(const QByteArray &id) const
-{
-  if (id.isEmpty())
-    return false;
-
-  if (!ChatCore::i()->networks()->isItem(id))
-    return false;
-
-  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline)
-    return false;
-
-  if (ChatCore::i()->client()->serverId() != id)
-    return false;
-
-  return true;
-}
-
-
-/*!
  * Обновление состояния виджета.
  */
 void NetworkTabs::reload()
 {
   m_login->reload();
-  updateSignUp();
+
+  if (m_signup->canSignUp())
+    addTab(m_signup, tr("Sign Up"));
+  else
+    removeTab(indexOf(m_signup));
+
+  m_signup->reload();
+  m_signup->setVisible(false);
 }
 
 
@@ -91,17 +77,20 @@ void NetworkTabs::changeEvent(QEvent *event)
 }
 
 
-void NetworkTabs::retranslateUi()
+void NetworkTabs::indexChanged(int index)
 {
-  m_login->retranslateUi();
+//  m_signup->setVisible(indexOf(m_signup) == index);
+//  qDebug() << m_signup->sizeHint() << m_signup->minimumSize();
+//  m_login->adjustSize();
+//  adjustSize();
+  m_signup->setSmall(indexOf(m_signup) != index);
+  m_login->adjustSize();
+  adjustSize();
 }
 
 
-void NetworkTabs::updateSignUp(const QByteArray &id)
+void NetworkTabs::retranslateUi()
 {
-  int index = indexOf(m_signup);
-  if (canSignUp(id) && index == -1)
-    addTab(m_signup, tr("Sign Up"));
-  else if (index != -1)
-    removeTab(index);
+  m_login->retranslateUi();
+  m_signup->retranslateUi();
 }

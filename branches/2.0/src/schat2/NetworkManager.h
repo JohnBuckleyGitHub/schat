@@ -45,14 +45,14 @@ public:
   bool isValid() const;
   inline bool isAuthorized() const { return m_authorized; }
   inline QByteArray cookie() const { return m_cookie; }
-  inline QByteArray id() const { return m_id; }
-  inline QString account() const { return m_account; }
-  inline QString name() const { return m_name; }
-  inline QString password() const { return m_password; }
-  inline QString url() const { return m_url; }
-  inline void setAccount(const QString &account) { m_account = account; }
+  inline QByteArray id() const     { return m_id; }
+  inline QString account() const   { return m_account; }
+  inline QString name() const      { return m_name; }
+  inline QString password() const  { return m_password; }
+  inline QString url() const       { return m_url; }
+  inline void setAccount(const QString &account)   { m_account = account; }
   inline void setPassword(const QString &password) { m_password = password; }
-  inline void setUrl(const QString &url) { m_url = url; }
+  inline void setUrl(const QString &url)           { m_url = url; }
   static NetworkItem item();
   void read();
   void write();
@@ -63,7 +63,7 @@ private:
   QString auth();
   void setAuth(const QString &auth);
 
-  bool m_authorized;     ///< \p true если пользователь авторизирован.
+  bool m_authorized;     ///< \b true если пользователь авторизирован.
   QByteArray m_cookie;   ///< Cookie.
   QByteArray m_id;       ///< Идентификатор сервера.
   QByteArray m_userId;   ///< Идентификатор пользователя.
@@ -112,14 +112,14 @@ private:
   void load();
   void write();
 
-  ChatSettings *m_settings; ///< Основные настройки.
+  ChatSettings *m_settings;  ///< Основные настройки.
   FileLocations *m_locations;
   int m_invalids;
   MessageAdapter *m_adapter;
-  QByteArray m_tmpId;       ///< Временный идентификатор для текущего редактируемой сети.
+  QByteArray m_tmpId;        ///< Временный идентификатор для текущего редактируемой сети.
   QHash<QByteArray, NetworkItem> m_items;
   QByteArray m_selected;     ///< Текущая выбранная сеть в настройках.
-  SimpleClient *m_client;   ///< Указатель на клиент.
+  SimpleClient *m_client;    ///< Указатель на клиент.
 };
 
 #endif /* NETWORKMANAGER_H_ */

@@ -260,7 +260,7 @@ void Core::readPacket(int type)
       break;
 
     case Protocol::NoticePacket:
-      notice();
+      notice(m_reader->get<quint16>());
       break;
 
     default:
@@ -796,10 +796,8 @@ bool Core::reg()
  * Чтение пакетов типа Protocol::NoticePacket.
  * \sa Notice.
  */
-void Core::notice()
+void Core::notice(quint16 type)
 {
-  quint16 type = m_reader->get<quint16>();
-
   if (type == AbstractNotice::GenericNoticeType) {
     Notice notice(type, m_reader);
     m_notice = &notice;

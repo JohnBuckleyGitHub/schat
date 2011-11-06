@@ -106,7 +106,7 @@ protected:
   // notices.
   bool login();
   bool reg();
-  void notice();
+  virtual void notice(quint16 type);
   void rejectNotice(int status);
 
   virtual void acceptedMessageHook(int reason);
