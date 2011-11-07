@@ -103,11 +103,12 @@ public:
     UserNotExists       = 405, ///< User Not Exists.
     NickAlreadyUse      = 406, ///< Nick Already In Use.
     UserOffline         = 407, ///< User Offline.
+    Conflict            = 408, ///< Conflict.
     InternalError       = 500, ///< Internal Error.
     NotImplemented      = 501, ///< Not Implemented.
     BadGateway          = 502, ///< Bad Gateway.
     ServiceUnavailable  = 503, ///< Service Unavailable.
-    GatewayTimeout      = 504 ///< Gateway Timeout.
+    GatewayTimeout      = 504  ///< Gateway Timeout.
   };
 
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());

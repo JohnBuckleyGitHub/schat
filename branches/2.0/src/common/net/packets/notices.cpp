@@ -170,6 +170,9 @@ QString Notice::status(int status)
     case UserOffline:
       return QObject::tr("User Offline");
 
+    case Conflict:
+      return QObject::tr("Conflict");
+
     case InternalError:
       return QObject::tr("Internal Error");
 

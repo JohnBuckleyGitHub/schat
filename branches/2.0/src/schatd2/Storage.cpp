@@ -272,7 +272,7 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
 
   Account account = m_db->account(login);
   if (!account.isValid())
-    return LoginReply(Notice::Forbidden);
+    return LoginReply(Notice::UserNotExists);
 
   if (account.password != password)
     return LoginReply(Notice::Forbidden);
@@ -284,7 +284,7 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   m_db->update(user);
 
   if (user->id() != account.userId) {
-    reply.setStatus(Notice::UserNotExists);
+    reply.setStatus(Notice::Conflict);
     return reply;
   }
 
