@@ -21,6 +21,7 @@
 #include <QPainter>
 #include <QTextDocument>
 #include <QTimer>
+#include <QWidget>
 
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
@@ -310,6 +311,19 @@ QStringList ChatCore::urlPath(const QUrl &url)
     path.remove(0, 1);
 
   return path.split('/', QString::SkipEmptyParts);
+}
+
+
+void ChatCore::makeRed(QWidget *widget, bool red)
+{
+  QPalette palette = widget->palette();
+
+  if (red)
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+
+  widget->setPalette(palette);
 }
 
 

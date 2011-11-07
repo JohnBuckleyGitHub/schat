@@ -59,24 +59,21 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   nameLay->addWidget(m_nameEdit);
   nameLay->addWidget(m_passwordLabel);
   nameLay->addWidget(m_passwordEdit);
-  nameLay->setMargin(4);
-
-  QFormLayout *formLay = new QFormLayout;
-  formLay->addRow(m_questionLabel, m_question);
-  formLay->addRow(m_answerLabel, m_answerEdit);
-  formLay->setMargin(4);
+  nameLay->setMargin(0);
 
   QHBoxLayout *buttonLay = new QHBoxLayout;
-  buttonLay->addStretch();
   buttonLay->addWidget(m_progress);
   buttonLay->addWidget(m_signUp);
-  buttonLay->setContentsMargins(4, 0, 4, 0);
+  buttonLay->setMargin(0);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addLayout(nameLay);
-  mainLay->addLayout(formLay);
-  mainLay->addLayout(buttonLay);
-  mainLay->setMargin(0);
+  QGridLayout *mainLay = new QGridLayout(this);
+  mainLay->addLayout(nameLay, 0, 0, 1, 3);
+  mainLay->addWidget(m_questionLabel, 1, 0);
+  mainLay->addWidget(m_question, 1, 1, 1, 2);
+  mainLay->addWidget(m_answerLabel, 2, 0);
+  mainLay->addWidget(m_answerEdit, 2, 1);
+  mainLay->addLayout(buttonLay, 2, 2);
+  mainLay->setMargin(4);
 
   setSmall();
 }

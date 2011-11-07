@@ -126,6 +126,7 @@ public:
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
   static QStringList urlPath(const QUrl &url);
+  static void makeRed(QWidget *widget, bool red = true);
   void startNotify(int notice, const QVariant &data = QVariant());
 
 signals:

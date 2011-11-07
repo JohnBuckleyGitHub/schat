@@ -137,9 +137,6 @@ void LoginWidget::showEvent(QShowEvent *event)
 
 void LoginWidget::editingFinished()
 {
-  if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty())
-    return;
-
   NetworkItem& item = m_manager->edit(m_manager->selected());
   item.setAccount(m_nameEdit->text());
   item.setPassword(m_passwordEdit->text());
@@ -160,12 +157,18 @@ void LoginWidget::notice(const Notice &notice)
 {
   m_progress->setVisible(false);
 
-  if (notice.status() != Notice::OK) {
-    m_error->setVisible(true);
-    m_error->setToolTip(Notice::status(notice.status()));
-  }
-  else
+  if (notice.status() == Notice::OK) {
     reload();
+    return;
+  }
+
+  m_error->setVisible(true);
+  m_error->setToolTip(Notice::status(notice.status()));
+
+  if (notice.status() == Notice::UserNotExists)
+    ChatCore::makeRed(m_nameEdit);
+  else if (notice.status() == Notice::Forbidden)
+    ChatCore::makeRed(m_passwordEdit);
 }
 
 
@@ -177,4 +180,7 @@ void LoginWidget::textChanged()
     m_login->setVisible(true);
 
   m_error->setVisible(false);
+
+  ChatCore::makeRed(m_nameEdit, false);
+  ChatCore::makeRed(m_passwordEdit, false);
 }

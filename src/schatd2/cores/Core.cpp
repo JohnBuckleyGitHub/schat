@@ -761,7 +761,7 @@ bool Core::login()
   notice.setText(reply.name());
 
   int option = NewPacketsEvent::NoSocketOption;
-  if (notice.status() == Notice::UserNotExists && !m_storage->isSlave(m_packetsEvent->userId()))
+  if (notice.status() == Notice::Conflict && !m_storage->isSlave(m_packetsEvent->userId()))
     option = NewPacketsEvent::KillSocketOption;
 
   send(user, notice.data(m_sendStream), option);
