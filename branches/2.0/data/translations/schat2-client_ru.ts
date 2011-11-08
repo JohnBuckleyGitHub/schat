@@ -51,31 +51,36 @@
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="174"/>
+        <source>Conflict</source>
+        <translation>Конфликт</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/net/packets/notices.cpp" line="177"/>
         <source>Internal Error</source>
         <translation>Внутренняя ошибка</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="177"/>
+        <location filename="../../src/common/net/packets/notices.cpp" line="180"/>
         <source>Not Implemented</source>
         <translation>Не реализовано</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="180"/>
+        <location filename="../../src/common/net/packets/notices.cpp" line="183"/>
         <source>Bad Gateway</source>
         <translation>Плохой шлюз</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="183"/>
+        <location filename="../../src/common/net/packets/notices.cpp" line="186"/>
         <source>Service Unavailable</source>
         <translation>Сервис недоступен</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="186"/>
+        <location filename="../../src/common/net/packets/notices.cpp" line="189"/>
         <source>Gateway Timeout</source>
         <translation>Шлюз не отвечает</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="189"/>
+        <location filename="../../src/common/net/packets/notices.cpp" line="192"/>
         <source>Unknown</source>
         <translation>Неизвестная ошибка</translation>
     </message>

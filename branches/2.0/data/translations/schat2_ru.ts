@@ -270,13 +270,13 @@
     <name>LoginWidget</name>
     <message>
         <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="110"/>
-        <source>Name</source>
-        <translation>Имя</translation>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="111"/>
-        <source>Password</source>
-        <translation>Пароль</translation>
+        <source>Password:</source>
+        <translation>Пароль:</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="112"/>
@@ -327,12 +327,12 @@
 <context>
     <name>NetworkTabs</name>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkTabs.cpp" line="35"/>
+        <location filename="../../src/schat2/ui/network/NetworkTabs.cpp" line="34"/>
         <source>Log In</source>
         <translation>Вход</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkTabs.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/network/NetworkTabs.cpp" line="62"/>
         <source>Sign Up</source>
         <translation>Регистрация</translation>
     </message>
@@ -464,6 +464,65 @@
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="212"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
+    </message>
+</context>
+<context>
+    <name>SignUpWidget</name>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="69"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="163"/>
+        <source>Sign Up</source>
+        <translation>Регистрация</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="159"/>
+        <source>Name:</source>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="160"/>
+        <source>Password:</source>
+        <translation>Пароль:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="161"/>
+        <source>Security question:</source>
+        <translation>Секретный вопрос:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="162"/>
+        <source>Answer:</source>
+        <translation>Ответ:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="165"/>
+        <source>Choose a question ...</source>
+        <translation>Выберите вопрос ...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="166"/>
+        <source>What is the name of your best friend from childhood?</source>
+        <translation>Имя моего лучшего друга детства?</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="167"/>
+        <source>What was the name of your first teacher?</source>
+        <translation>Имя моей первой учительницы?</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="168"/>
+        <source>What is the name of your manager at your first job?</source>
+        <translation>Имя моего начальника на первом месте работы?</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="169"/>
+        <source>What was your first phone number?</source>
+        <translation>Номер моего первого телефона?</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="170"/>
+        <source>What is your vehicle registration number?</source>
+        <translation>Номер моей машины?</translation>
     </message>
 </context>
 <context>
