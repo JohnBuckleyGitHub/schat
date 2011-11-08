@@ -32,6 +32,8 @@ TopicMessage::TopicMessage(const Topic &topic)
 
 QString TopicMessage::js(bool add) const
 {
+  Q_UNUSED(add)
+
   if (m_text.isEmpty()) {
     QString html;
     return appendMessage(html, QLatin1String("setTopic"));

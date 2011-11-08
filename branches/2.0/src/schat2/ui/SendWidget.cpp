@@ -87,6 +87,8 @@ void SendWidget::changeEvent(QEvent *event)
 
 void SendWidget::notify(int notice, const QVariant &data)
 {
+  Q_UNUSED(data)
+
   if (notice == ChatCore::SetSendFocusNotice) {
     m_input->setFocus();
   }

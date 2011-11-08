@@ -24,6 +24,9 @@
 #include "ServerChannel.h"
 #include "ServerUser.h"
 
+/*!
+ * Информация об аккаунте пользователя.
+ */
 class SCHAT_EXPORT Account
 {
 public:
@@ -41,6 +44,9 @@ public:
 };
 
 
+/*!
+ * База данных сервера.
+ */
 class SCHAT_EXPORT DataBase : public QObject
 {
   Q_OBJECT

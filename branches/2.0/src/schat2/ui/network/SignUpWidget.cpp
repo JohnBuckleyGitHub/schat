@@ -135,7 +135,6 @@ bool SignUpWidget::ready() const
 /*!
  * Проверка возможности регистрации.
  *
- * \param id Идентификатор сервера.
  * \return true если регистрация возможна.
  */
 bool SignUpWidget::canSignUp()

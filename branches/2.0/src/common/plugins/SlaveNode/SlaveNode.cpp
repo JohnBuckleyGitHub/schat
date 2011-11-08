@@ -442,10 +442,15 @@ void SlaveNode::uplinkReadUserData()
 }
 
 
+/*!
+ * \deprecated Эту функцию необходимо переписать, т.к. изменён способ уведомления об отклонении сообщений.
+ */
 void SlaveNode::uplinkRejectMessage(const MessageData &msg, int reason)
 {
-  if (msg.id.isEmpty())
-    return;
+  Q_UNUSED(msg)
+  Q_UNUSED(reason)
+//  if (msg.id.isEmpty())
+//    return;
 
 //  MessageNotice notice(MessageNotice::Rejected, m_uplink->reader()->dest(), m_uplink->reader()->sender(), m_messageData->id, reason);
 //  m_uplink->send(notice.data(m_sendStream));
