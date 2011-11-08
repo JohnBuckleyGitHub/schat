@@ -51,31 +51,36 @@
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="174"/>
-        <source>Internal Error</source>
+        <source>Conflict</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="177"/>
-        <source>Not Implemented</source>
+        <source>Internal Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="180"/>
-        <source>Bad Gateway</source>
+        <source>Not Implemented</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="183"/>
-        <source>Service Unavailable</source>
+        <source>Bad Gateway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="186"/>
-        <source>Gateway Timeout</source>
+        <source>Service Unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/notices.cpp" line="189"/>
+        <source>Gateway Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/common/net/packets/notices.cpp" line="192"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
