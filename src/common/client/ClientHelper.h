@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -40,7 +41,7 @@ public:
   ClientHelper(SimpleClient *client);
   bool send(MessageData &data);
   inline SimpleClient *client() { return m_client; }
-  QByteArray login(const QString &command, const QString &name, const QString &password);
+  QByteArray login(const QString &command, const QString &name, const QString &password, const QVariant &json = QVariant());
   QByteArray randomId() const;
   static qint64 timestamp();
   virtual bool sendText(MessageData &data);

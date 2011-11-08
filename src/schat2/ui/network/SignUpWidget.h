@@ -34,13 +34,28 @@ class SignUpWidget : public QWidget
   Q_OBJECT
 
 public:
+  /// Состояние виджета.
+  enum WidgetState {
+    Idle,    ///< Ожидание действий пользователя.
+    Progress ///< Запущен процесс регистрации.
+  };
+
   SignUpWidget(QWidget *parent = 0);
-  bool canSignUp() const;
-  void reload();
+  ~SignUpWidget();
+  bool ready() const;
+  static bool canSignUp();
   void retranslateUi();
   void setSmall(bool small = true);
 
+public slots:
+  void reload();
+
+private slots:
+  void signUp();
+
 private:
+  void setState(WidgetState state);
+
   NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
   QComboBox *m_question;          ///< Секретный вопрос.
   QLabel *m_answerLabel;
@@ -53,6 +68,7 @@ private:
   QProgressIndicator *m_progress; ///< Прогресс бар.
   QPushButton *m_signUp;
   SimpleClient *m_client;         ///< Указатель на клиент.
+  WidgetState m_state;
 };
 
 #endif /* SIGNUPWIDGET_H_ */

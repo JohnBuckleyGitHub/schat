@@ -29,10 +29,8 @@ NetworkTabs::NetworkTabs(QWidget *parent)
   : QTabWidget(parent)
 {
   m_login = new LoginWidget(this);
-  m_signup = new SignUpWidget(this);
-  m_signup->setVisible(false);
-  setSizePolicy(sizePolicy().horizontalPolicy(), QSizePolicy::Maximum);
 
+  setSizePolicy(sizePolicy().horizontalPolicy(), QSizePolicy::Maximum);
   addTab(m_login, tr("Log In"));
 
   reload();
@@ -58,13 +56,21 @@ void NetworkTabs::reload()
 {
   m_login->reload();
 
-  if (m_signup->canSignUp())
-    addTab(m_signup, tr("Sign Up"));
-  else
-    removeTab(indexOf(m_signup));
+  if (SignUpWidget::canSignUp()) {
+    if (!m_signup) {
+      m_signup = new SignUpWidget(this);
+      addTab(m_signup, tr("Sign Up"));
+    }
+  }
+  else {
+    if (m_signup) {
+      removeTab(indexOf(m_signup));
+      delete m_signup;
+    }
+  }
 
-  m_signup->reload();
-  m_signup->setVisible(false);
+  if (m_signup)
+    m_signup->reload();
 }
 
 
@@ -79,11 +85,9 @@ void NetworkTabs::changeEvent(QEvent *event)
 
 void NetworkTabs::indexChanged(int index)
 {
-//  m_signup->setVisible(indexOf(m_signup) == index);
-//  qDebug() << m_signup->sizeHint() << m_signup->minimumSize();
-//  m_login->adjustSize();
-//  adjustSize();
-  m_signup->setSmall(indexOf(m_signup) != index);
+  if (m_signup)
+    m_signup->setSmall(indexOf(m_signup) != index);
+
   m_login->adjustSize();
   adjustSize();
 }
@@ -92,5 +96,7 @@ void NetworkTabs::indexChanged(int index)
 void NetworkTabs::retranslateUi()
 {
   m_login->retranslateUi();
-  m_signup->retranslateUi();
+
+  if (m_signup)
+    m_signup->retranslateUi();
 }

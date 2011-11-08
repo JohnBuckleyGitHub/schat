@@ -92,12 +92,13 @@ bool ClientHelper::send(MessageData &data)
  * \param command  Команда, например "reg" или "login".
  * \param name     Имя пользователя, функция не проверяет корректность этого параметра.
  * \param password Пароль, может содержать любые символы.
+ * \param json     JSON данные.
  *
  * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
  */
-QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password)
+QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password, const QVariant &json)
 {
-  Notice notice(m_client->userId(), SimpleID::password(password), command, QVariant(), timestamp(), randomId());
+  Notice notice(m_client->userId(), SimpleID::password(password), command, json, timestamp(), randomId());
   notice.setText(name);
   if (m_client->send(notice))
     return notice.id();
