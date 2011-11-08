@@ -27,7 +27,9 @@ class QLabel;
 class QLineEdit;
 class QProgressIndicator;
 class QPushButton;
+class QToolButton;
 class SimpleClient;
+class Notice;
 
 class SignUpWidget : public QWidget
 {
@@ -36,8 +38,9 @@ class SignUpWidget : public QWidget
 public:
   /// Состояние виджета.
   enum WidgetState {
-    Idle,    ///< Ожидание действий пользователя.
-    Progress ///< Запущен процесс регистрации.
+    Idle,     ///< Ожидание действий пользователя.
+    Progress, ///< Запущен процесс регистрации.
+    Error     ///< Ошибка регистрации.
   };
 
   SignUpWidget(QWidget *parent = 0);
@@ -51,6 +54,7 @@ public slots:
   void reload();
 
 private slots:
+  void notice(const Notice &notice);
   void signUp();
 
 private:
@@ -67,8 +71,9 @@ private:
   QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
   QProgressIndicator *m_progress; ///< Прогресс бар.
   QPushButton *m_signUp;
+  QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
   SimpleClient *m_client;         ///< Указатель на клиент.
-  WidgetState m_state;
+  WidgetState m_state;            ///< Состояние виджета.
 };
 
 #endif /* SIGNUPWIDGET_H_ */

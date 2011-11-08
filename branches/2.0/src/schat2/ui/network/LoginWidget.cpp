@@ -155,6 +155,9 @@ void LoginWidget::login()
 
 void LoginWidget::notice(const Notice &notice)
 {
+  if (notice.command() != "login.reply")
+    return;
+
   m_progress->setVisible(false);
 
   if (notice.status() == Notice::OK) {
