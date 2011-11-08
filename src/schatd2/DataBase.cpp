@@ -123,7 +123,8 @@ int DataBase::start()
     "  id       INTEGER PRIMARY KEY,"
     "  userId   BLOB    NOT NULL UNIQUE,"
     "  name     TEXT    NOT NULL UNIQUE,"
-    "  password BLOB"
+    "  password BLOB,"
+    "  data     TEXT"
     ");"));
   }
 
@@ -389,7 +390,7 @@ void DataBase::update(ChatChannel channel)
 Account DataBase::account(const QString &name) const
 {
   QSqlQuery query;
-  query.prepare("SELECT id, userId, password FROM accounts WHERE name = :name LIMIT 1;");
+  query.prepare("SELECT id, userId, password, data FROM accounts WHERE name = :name LIMIT 1;");
   query.bindValue(":name", name);
   query.exec();
 
@@ -401,6 +402,7 @@ Account DataBase::account(const QString &name) const
   account.userId = query.value(1).toByteArray();
   account.name = name;
   account.password = query.value(2).toByteArray();
+  account.data = SimpleJSon::parse(query.value(3).toString().toUtf8());
 
   return account;
 }
@@ -416,16 +418,17 @@ Account DataBase::account(const QString &name) const
  *
  * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
  */
-qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password)
+qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
 {
   if (account(name).id != -1)
     return -2;
 
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password) VALUES (:userId, :name, :password);"));
-  query.bindValue(QLatin1String(":userId"), user->id());
-  query.bindValue(QLatin1String(":name"), name);
-  query.bindValue(QLatin1String(":password"), password);
+  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password, data) VALUES (:userId, :name, :password, :data);"));
+  query.bindValue(":userId", user->id());
+  query.bindValue(":name", name);
+  query.bindValue(":password", password);
+  query.bindValue(":data", SimpleJSon::generate(data));
   query.exec();
 
   if (query.numRowsAffected() <= 0)

@@ -338,7 +338,7 @@ QList<QByteArray> Storage::users(const QByteArray &id)
  * \param name     Имя аккаунта пользователя.
  * \param password Пароль.
  */
-RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password)
+RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
 {
   if (!m_serverData->is(ServerData::PasswordAuthSupport))
     return RegReply(Notice::ServiceUnavailable);
@@ -352,7 +352,7 @@ RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &pass
 
   login += '@' + m_serverData->name();
 
-  qint64 result = m_db->reg(user, login, password);
+  qint64 result = m_db->reg(user, login, password, data);
   if (result == -2)
     return RegReply(Notice::UserAlreadyExists);
 

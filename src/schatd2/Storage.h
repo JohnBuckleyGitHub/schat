@@ -62,7 +62,7 @@ public:
   LoginReply login(ChatUser user, const QString &name, const QByteArray &password);
   QByteArray makeUserId(int type, const QByteArray &userId) const;
   QList<QByteArray> users(const QByteArray &id);
-  RegReply reg(ChatUser user, const QString &name, const QByteArray &password);
+  RegReply reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
   void rename(ChatUser user);
   void store(ChatUser user);
   void update(ChatUser user);
