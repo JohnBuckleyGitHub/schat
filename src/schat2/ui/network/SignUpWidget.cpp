@@ -16,11 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QComboBox>
+#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QFormLayout>
-#include <QComboBox>
 #include <QPushButton>
+#include <QToolButton>
 
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
@@ -28,6 +29,7 @@
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/SignUpWidget.h"
+#include "net/packets/notices.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)
@@ -42,17 +44,22 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
-  m_progress = new QProgressIndicator(this);
-  m_progress->setAnimationDelay(100);
-  m_progress->setMaximumSize(16, 16);
-  m_progress->setVisible(false);
-
   m_questionLabel = new QLabel(this);
   m_question = new QComboBox(this);
   m_question->addItem(tr("Choose a question ..."));
 
   m_answerLabel = new QLabel(this);
   m_answerEdit = new QLineEdit(this);
+
+  m_error = new QToolButton(this);
+  m_error->setIcon(SCHAT_ICON(ExclamationRedIcon));
+  m_error->setAutoRaise(true);
+  m_error->setVisible(false);
+
+  m_progress = new QProgressIndicator(this);
+  m_progress->setAnimationDelay(100);
+  m_progress->setMaximumSize(16, 16);
+  m_progress->setVisible(false);
 
   m_signUp = new QPushButton(SCHAT_ICON(ArrowRightIcon), tr("Sign Up"), this);
   m_signUp->setEnabled(false);
@@ -65,6 +72,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   nameLay->setMargin(0);
 
   QHBoxLayout *buttonLay = new QHBoxLayout;
+  buttonLay->addWidget(m_error);
   buttonLay->addWidget(m_progress);
   buttonLay->addWidget(m_signUp);
   buttonLay->setMargin(0);
@@ -84,6 +92,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_answerEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
+  connect(m_client, SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
   retranslateUi();
 }
@@ -169,9 +178,24 @@ void SignUpWidget::reload()
 }
 
 
+void SignUpWidget::notice(const Notice &notice)
+{
+  if (notice.command() != "reg.reply")
+    return;
+
+  setState(Idle);
+  if (notice.status() == Notice::OK)
+    return;
+
+  m_error->setToolTip(Notice::status(notice.status()));
+
+  setState(Error);
+}
+
+
 void SignUpWidget::signUp()
 {
-  qDebug() << "SIGN UP";
+  setState(Progress);
 
   ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text());
 }
@@ -180,4 +204,31 @@ void SignUpWidget::signUp()
 void SignUpWidget::setState(WidgetState state)
 {
   m_state = state;
+
+  if (m_state == Idle) {
+    m_nameEdit->setEnabled(true);
+    m_passwordEdit->setEnabled(true);
+    m_question->setEnabled(true);
+    m_answerEdit->setEnabled(true);
+    m_signUp->setEnabled(ready());
+
+    m_progress->setVisible(false);
+    m_progress->stopAnimation();
+    m_error->setVisible(false);
+  }
+  else if (m_state == Progress) {
+    m_nameEdit->setEnabled(false);
+    m_passwordEdit->setEnabled(false);
+    m_question->setEnabled(false);
+    m_answerEdit->setEnabled(false);
+    m_signUp->setEnabled(false);
+
+    m_progress->setVisible(true);
+    m_progress->startAnimation();
+    m_error->setVisible(false);
+  }
+  else if (m_state == Error) {
+    m_signUp->setEnabled(false);
+    m_error->setVisible(true);
+  }
 }

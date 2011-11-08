@@ -786,7 +786,8 @@ bool Core::reg()
   notice.setText(reply.name());
 
   send(user, notice.data(m_sendStream));
-  login();
+  if (reply.status() == Notice::OK)
+    login();
 
   return true;
 }
