@@ -37,6 +37,7 @@ public:
   QByteArray userId;
   QString name;
   QByteArray password;
+  QVariant data;
 };
 
 
@@ -65,7 +66,7 @@ public:
 
   // accounts.
   Account account(const QString &name) const;
-  qint64 reg(ChatUser user, const QString &name, const QByteArray &password);
+  qint64 reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
 };
 
 #endif /* DATABASE_H_ */

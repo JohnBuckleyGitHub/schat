@@ -46,7 +46,12 @@ SignUpWidget::SignUpWidget(QWidget *parent)
 
   m_questionLabel = new QLabel(this);
   m_question = new QComboBox(this);
-  m_question->addItem(tr("Choose a question ..."));
+  m_question->addItem("");
+  m_question->addItem("");
+  m_question->addItem("");
+  m_question->addItem("");
+  m_question->addItem("");
+  m_question->addItem("");
 
   m_answerLabel = new QLabel(this);
   m_answerEdit = new QLineEdit(this);
@@ -91,6 +96,8 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_answerEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
+  connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(reload()));
+
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
   connect(m_client, SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
@@ -116,6 +123,9 @@ bool SignUpWidget::ready() const
     return false;
 
   if (m_answerEdit->text().isEmpty())
+    return false;
+
+  if (m_question->currentIndex() < 1)
     return false;
 
   return true;
@@ -153,6 +163,11 @@ void SignUpWidget::retranslateUi()
   m_signUp->setText(tr("Sign Up"));
 
   m_question->setItemText(0, tr("Choose a question ..."));
+  m_question->setItemText(1, tr("What is the name of your best friend from childhood?"));
+  m_question->setItemText(2, tr("What was the name of your first teacher?"));
+  m_question->setItemText(3, tr("What is the name of your manager at your first job?"));
+  m_question->setItemText(4, tr("What was your first phone number?"));
+  m_question->setItemText(5, tr("What is your vehicle registration number?"));
 }
 
 
@@ -162,7 +177,6 @@ void SignUpWidget::setSmall(bool small)
   m_nameEdit->setVisible(!small);
   m_passwordLabel->setVisible(!small);
   m_passwordEdit->setVisible(!small);
-//  m_progress->setVisible(!small);
   m_questionLabel->setVisible(!small);
   m_question->setVisible(!small);
   m_answerLabel->setVisible(!small);
@@ -187,8 +201,10 @@ void SignUpWidget::notice(const Notice &notice)
   if (notice.status() == Notice::OK)
     return;
 
-  m_error->setToolTip(Notice::status(notice.status()));
+  if (notice.status() == Notice::UserAlreadyExists)
+    ChatCore::makeRed(m_nameEdit);
 
+  m_error->setToolTip(Notice::status(notice.status()));
   setState(Error);
 }
 
@@ -197,7 +213,14 @@ void SignUpWidget::signUp()
 {
   setState(Progress);
 
-  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text());
+  QVariantMap map;
+  map["q"] = QString::number(m_question->currentIndex());
+  map["a"] = m_answerEdit->text();
+
+  QVariantMap json;
+  json["recovery"] = map;
+
+  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text(), json);
 }
 
 
