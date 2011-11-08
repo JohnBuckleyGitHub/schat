@@ -19,6 +19,7 @@
 #ifndef NETWORKTABS_H_
 #define NETWORKTABS_H_
 
+#include <QPointer>
 #include <QTabWidget>
 
 class LoginWidget;
@@ -42,8 +43,8 @@ private slots:
 private:
   void retranslateUi();
 
-  LoginWidget *m_login;   ///< Виджет входа.
-  SignUpWidget *m_signup; ///< Виджет регистрации.
+  LoginWidget *m_login;            ///< Виджет входа.
+  QPointer<SignUpWidget> m_signup; ///< Виджет регистрации.
 };
 
 #endif /* NETWORKTABS_H_ */
