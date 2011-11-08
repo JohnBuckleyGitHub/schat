@@ -76,7 +76,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
   connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
-  connect(ChatCore::i(), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SLOT(dataChanged(const QByteArray &, const QByteArray &)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
@@ -161,15 +160,6 @@ void ChannelTab::synced()
 {
   displayUserCount();
   m_userView->sort();
-}
-
-
-void ChannelTab::dataChanged(const QByteArray &senderId, const QByteArray &channelId)
-{
-  if (id() != channelId)
-    return;
-
-//  m_bar->topic()->setTopic(m_channel->topic());
 }
 
 

@@ -384,7 +384,7 @@ void DataBase::update(ChatChannel channel)
 /*!
  * Получение ключа в таблице \p accounts для имени аккаунта пользователя.
  *
- * \param name Аккаунт пользователя вида имя@example.com.
+ * \param name Аккаунт пользователя вида.
  * \return Объект Account.
  */
 Account DataBase::account(const QString &name) const
@@ -415,6 +415,7 @@ Account DataBase::account(const QString &name) const
  * \param user     Пользователь.
  * \param name     Имя аккаунта пользователя.
  * \param password Пароль.
+ * \param data     JSON данные.
  *
  * \return Возвращает ключ в таблице \p accounts или -1 если произошла ошибка при вставке в таблицу или -2 если аккаунт уже зарегистрирован.
  */

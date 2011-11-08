@@ -337,6 +337,7 @@ QList<QByteArray> Storage::users(const QByteArray &id)
  * \param user     Пользователь.
  * \param name     Имя аккаунта пользователя.
  * \param password Пароль.
+ * \param data     JSON данные.
  */
 RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
 {

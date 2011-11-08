@@ -87,6 +87,8 @@ void NetworkEditor::anonymousToggled(bool checked)
 
 void NetworkEditor::notify(int notice, const QVariant &data)
 {
+  Q_UNUSED(data)
+
   if (notice == ChatCore::NetworkSelectedNotice || notice == ChatCore::NetworkChangedNotice)
     reload();
 }

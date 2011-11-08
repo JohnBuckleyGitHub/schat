@@ -27,5 +27,6 @@ HistoryUserMessage::HistoryUserMessage(int status, const MessageData &data)
 
 QString HistoryUserMessage::js(bool add) const
 {
+  Q_UNUSED(add)
   return AbstractMessage::js();
 }

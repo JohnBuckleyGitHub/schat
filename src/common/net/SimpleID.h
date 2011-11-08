@@ -23,6 +23,9 @@
 
 #include "schat.h"
 
+/*!
+ * Работка с идентификаторами.
+ */
 class SCHAT_EXPORT SimpleID
 {
 public:
