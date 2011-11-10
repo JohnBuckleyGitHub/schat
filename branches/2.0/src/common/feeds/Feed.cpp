@@ -16,26 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ServerChannel.h"
+#include "feeds/Feed.h"
 
-ServerChannel::ServerChannel(ClientChannel channel)
-  : Channel(channel->id(), channel->name())
-  , m_permanent(false)
-  , m_normalName(channel->name())
-{
-  setData(channel->data().toMap());
-  setTopic(channel->topic().topic);
-  setUsers(channel->users());
-}
-
-
-ServerChannel::ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent)
-  : Channel(id, name)
-  , m_permanent(permanent)
-  , m_normalName(normalName)
-{
-}
-
-ServerChannel::~ServerChannel()
+Feed::Feed()
+  : m_time(0)
 {
 }
