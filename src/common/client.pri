@@ -21,6 +21,7 @@ HEADERS += \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
     client/NetworkPool.h \
+    feeds/Feed.h \
     FileLocations.h \
     k8json/k8json.h \
     net/PacketReader.h \
@@ -53,6 +54,7 @@ SOURCES += \
     Channel.cpp \
     client/AbstractClient.cpp \
     client/NetworkPool.cpp \
+    feeds/Feed.cpp \
     FileLocations.cpp \
     k8json/k8json.cpp \
     net/PacketReader.cpp \

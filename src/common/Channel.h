@@ -19,7 +19,7 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#include <QList>
+#include <QStringList>
 #include <QSharedPointer>
 #include <QVariant>
 
@@ -57,11 +57,6 @@ public:
     MaxTopicLength = 1000 ///< Максимальная длина темы канала.
   };
 
-  enum ChannelType {
-    GenericChannel = 0x67,
-    PrivateChannel = 0x70
-  };
-
   Channel();
   Channel(const QByteArray &id, const QString &name);
   ~Channel();
@@ -78,7 +73,6 @@ public:
   inline int userCount() const { return m_users.size(); }
   inline QByteArray id() const { return m_id; }
   inline QList<QByteArray> users() { return m_users; }
-  inline QString desc() const { return m_desc; }
   inline QString name() const { return m_name; }
   inline QVariant data() const { return m_data; }
   inline void clear() { m_users.clear(); }
@@ -91,12 +85,11 @@ private:
 
   bool m_synced;             ///< true если канал синхронизирован.
   bool m_valid;              ///< true все данные корректны.
-  ChannelType m_type;        ///< Тип канала.
   QByteArray m_id;           ///< Идентификатор канала.
   QList<QByteArray> m_users; ///< Список идентификаторов пользователей в канале.
-  QString m_desc;            ///< Описание канала.
   QString m_name;            ///< Имя канала.
   QString m_topic;           ///< Тема канала.
+  QStringList m_feeds;       ///< Каналы данных.
   QVariantMap m_data;        ///< JSON данные канала.
 };
 

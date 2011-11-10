@@ -25,7 +25,6 @@
 Channel::Channel()
   : m_synced(false)
   , m_valid(true)
-  , m_type(GenericChannel)
 {
 }
 
@@ -33,7 +32,6 @@ Channel::Channel()
 Channel::Channel(const QByteArray &id, const QString &name)
   : m_synced(false)
   , m_valid(true)
-  , m_type(GenericChannel)
 {
   setId(id);
   setName(name);
@@ -73,17 +71,17 @@ bool Channel::removeUser(const QByteArray &id)
 }
 
 
-bool Channel::setDesc(const QString &desc)
-{
-  if (desc.isEmpty())
-    return validate(true);
-
-  if (desc.size() > MaxDescLength)
-    return validate(false);
-
-  m_desc = desc.simplified();
-  return validate(true);
-}
+//bool Channel::setDesc(const QString &desc)
+//{
+//  if (desc.isEmpty())
+//    return validate(true);
+//
+//  if (desc.size() > MaxDescLength)
+//    return validate(false);
+//
+//  m_desc = desc.simplified();
+//  return validate(true);
+//}
 
 
 bool Channel::setId(const QByteArray &id)
