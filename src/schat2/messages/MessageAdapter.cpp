@@ -259,7 +259,7 @@ void MessageAdapter::message(const MessageData &data)
     if (data.destId() != m_client->userId())
       return;
 
-    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", QVariant(), data.timestamp, data.id);
+    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", data.timestamp, data.id);
     notice.setStatus(Notice::Forbidden);
     m_client->send(notice.data(m_client->sendStream()));
     return;

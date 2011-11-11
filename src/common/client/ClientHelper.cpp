@@ -98,7 +98,7 @@ bool ClientHelper::send(MessageData &data)
  */
 QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password, const QVariant &json)
 {
-  Notice notice(m_client->userId(), SimpleID::password(password), command, json, timestamp(), randomId());
+  Notice notice(m_client->userId(), SimpleID::password(password), command, timestamp(), randomId(), json);
   notice.setText(name);
   if (m_client->send(notice))
     return notice.id();

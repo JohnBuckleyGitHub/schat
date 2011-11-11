@@ -24,7 +24,7 @@
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
+Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time, const QByteArray &id, const QVariant &data)
   : m_sender(sender)
   , m_dest(QList<QByteArray>() << dest)
   , m_fields(0)
@@ -48,7 +48,7 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
+Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time, const QByteArray &id, const QVariant &data)
   : m_sender(sender)
   , m_dest(dest)
   , m_fields(0)
