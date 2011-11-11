@@ -24,6 +24,7 @@
 #include "schat.h"
 
 class PacketReader;
+class PacketWriter;
 
 /*!
  * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
@@ -63,8 +64,8 @@ public:
     GatewayTimeout      = 504  ///< Gateway Timeout.
   };
 
-  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariant &data = QVariant());
-  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariant &data = QVariant());
+  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
+  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
 
   virtual bool isValid() const;
@@ -75,14 +76,14 @@ public:
   inline const QList<QByteArray>& destinations() const { return m_dest; }
   inline const QString& command() const    { return m_command; }
   inline const QString& text() const       { return m_text; }
-  inline int fields() const         { return m_fields; }
-  inline int status() const         { return m_status; }
-  inline int type() const           { return m_type; }
-  inline int version() const        { return m_version; }
-  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
-  inline qint64 time() const        { return m_time; }
+  inline const QVariantMap& json() const   { return m_data; }
+  inline int fields() const                { return m_fields; }
+  inline int status() const                { return m_status; }
+  inline int type() const                  { return m_type; }
+  inline int version() const               { return m_version; }
+  inline QByteArray dest() const           { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
+  inline qint64 time() const               { return m_time; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
-  QVariant json() const;
 
   static QString status(int status);
 
@@ -92,6 +93,9 @@ public:
   void setText(const QString &text);
 
 protected:
+  virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
+  virtual void read(PacketReader *reader) { Q_UNUSED(reader) }
+
   QByteArray m_sender;      ///< Идентификатор отправителя.
   QList<QByteArray> m_dest; ///< Идентификаторы получателей.
   quint16 m_type;           ///< Тип пакета Notice::Type.
@@ -101,8 +105,8 @@ protected:
   qint64 m_time;            ///< Отметка времени, обязательное поле.
   QByteArray m_id;          ///< Идентификатор сообщения, не обязательное поле.
   QString m_command;        ///< Текстовая команда, обязательное поле.
-  QVariant m_data;          ///< JSON данные пакета, не обязательное поле.
-  QByteArray m_raw;         ///< Сырые данные, поле используется только при чтении пакета, для того чтобы не запускать разбор JSON без необходимости.
+  QVariantMap m_data;       ///< JSON данные пакета, не обязательное поле.
+  QByteArray m_raw;         ///< Сырые JSON данные.
   QString m_text;           ///< Сырой текст, не обязательное поле.
 };
 

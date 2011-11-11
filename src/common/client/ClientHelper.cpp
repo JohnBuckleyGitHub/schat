@@ -96,7 +96,7 @@ bool ClientHelper::send(MessageData &data)
  *
  * \return Идентификатор сообщения или пустой массив, если произошла ошибка.
  */
-QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password, const QVariant &json)
+QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password, const QVariantMap &json)
 {
   Notice notice(m_client->userId(), SimpleID::password(password), command, timestamp(), randomId(), json);
   notice.setText(name);
