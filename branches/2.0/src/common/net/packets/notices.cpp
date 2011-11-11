@@ -24,7 +24,7 @@
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time, const QByteArray &id, const QVariant &data)
+Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(QList<QByteArray>() << dest)
   , m_fields(0)
@@ -40,7 +40,7 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
-  if (!data.isNull())
+  if (!data.isEmpty())
     m_fields |= JSonField;
 }
 
@@ -48,7 +48,7 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time, const QByteArray &id, const QVariant &data)
+Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(dest)
   , m_fields(0)
@@ -64,7 +64,7 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
-  if (!data.isNull())
+  if (!data.isEmpty())
     m_fields |= JSonField;
 }
 
@@ -88,11 +88,15 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   m_command = reader->text();
 
-  if (m_fields & JSonField)
+  if (m_fields & JSonField) {
     m_raw = reader->get<QByteArray>();
+    m_data = SimpleJSon::parse(m_raw).toMap();
+  }
 
   if (m_fields & TextField)
     m_text = reader->text();
+
+  read(reader);
 }
 
 
@@ -104,7 +108,7 @@ bool Notice::isValid() const
   if (m_fields & IdField && SimpleID::typeOf(m_id) != SimpleID::MessageId)
     return false;
 
-  if (m_fields & JSonField && (m_data.isNull() && m_raw.isEmpty()))
+  if (m_fields & JSonField && (m_data.isEmpty() && m_raw.isEmpty()))
     return false;
 
   if (m_fields & TextField && m_text.isEmpty())
@@ -132,24 +136,14 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
   writer.put(m_command);
 
   if (m_fields & JSonField)
-    writer.put(m_data);
+    writer.put(QVariant(m_data));
 
   if (m_fields & TextField)
     writer.put(m_text);
 
+  write(&writer);
+
   return writer.data();
-}
-
-
-/*!
- * Получение JSON данных пакета.
- */
-QVariant Notice::json() const
-{
-  if (!m_raw.isEmpty())
-    return SimpleJSon::parse(m_raw);
-
-  return m_data;
 }
 
 
