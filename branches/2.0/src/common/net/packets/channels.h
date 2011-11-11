@@ -21,6 +21,27 @@
 
 #include "Channel.h"
 #include "net/PacketWriter.h"
+#include "net/packets/notices.h"
+
+class SCHAT_EXPORT ChannelPacket : public Notice
+{
+public:
+  ChannelPacket(ClientChannel channel, const QByteArray &dest, const QString &command, quint64 time = 0);
+  ChannelPacket(quint16 type, PacketReader *reader);
+
+  inline const QByteArray& channelId() const { return m_channelId; }
+  inline const QString& name() const { return m_name; }
+  inline const QList<QByteArray>& users() const { return m_users; }
+
+protected:
+  void read(PacketReader *reader);
+  void write(PacketWriter *writer) const;
+
+  QByteArray m_channelId;          ///< Идентификатор канала.
+  QString m_name;                  ///< Имя канала.
+  QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
+};
+
 
 /*!
  * Формирует пакет Protocol::ChannelPacket.

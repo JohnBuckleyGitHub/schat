@@ -178,7 +178,7 @@ void ClientHelper::notice(const Notice &notice)
   if (!notice.isValid())
     return;
 
-  SCHAT_DEBUG_STREAM(">> NOTICE <<" << notice.status() << notice.status(notice.status()) << notice.command() << notice.text() << notice.raw())
+  SCHAT_DEBUG_STREAM(">> NOTICE <<" << notice.type() << notice.status() << notice.status(notice.status()) << notice.command() << notice.text() << notice.raw())
 
   m_notice = &notice;
   QString command = notice.command();

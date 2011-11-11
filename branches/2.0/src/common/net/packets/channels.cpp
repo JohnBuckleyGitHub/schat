@@ -20,6 +20,36 @@
 #include "net/PacketReader.h"
 #include "net/packets/channels.h"
 
+ChannelPacket::ChannelPacket(ClientChannel channel, const QByteArray &dest, const QString &command, quint64 time)
+  : Notice(channel->id(), dest, command, time)
+  , m_channelId(channel->id())
+  , m_name(channel->name())
+  , m_users(channel->users())
+{
+  m_type = ChannelType;
+}
+
+
+ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
+  : Notice(type, reader)
+{
+  if (SimpleID::typeOf(reader->sender()) == SimpleID::ChannelId)
+    m_channelId = reader->sender();
+  else if (SimpleID::typeOf(reader->dest()) == SimpleID::ChannelId)
+    m_channelId = reader->dest();
+
+  m_name  = reader->text();
+  m_users = reader->idList();
+}
+
+
+void ChannelPacket::write(PacketWriter *writer) const
+{
+  writer->put(m_name);
+  writer->put(m_users);
+}
+
+
 ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel, const QByteArray &dest)
   : PacketWriter(stream, Protocol::ChannelPacket, channel->id(), dest)
 {

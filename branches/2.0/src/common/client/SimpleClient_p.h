@@ -43,6 +43,7 @@ public:
 
   // Каналы.
   bool addChannel(ClientChannel channel);
+  bool header();
   bool readChannel();
   void endSyncChannel(ClientChannel channel);
   void endSyncChannel(const QByteArray &id);
@@ -65,6 +66,7 @@ public:
   bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
   int authType;                              ///< Тип авторизации.
   MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
+  Notice *m_notice;                          ///< Текущий прочитанный объект Notice.
   QByteArray password;                       ///< Пароль.
   QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
   QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
