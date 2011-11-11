@@ -206,7 +206,7 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
  * \sa ChannelPacket.
  * \return \b false если произошла ошибка.
  */
-bool SimpleClientPrivate::header()
+bool SimpleClientPrivate::channel()
 {
   ChannelPacket *packet = static_cast<ChannelPacket *>(m_notice);
   ClientChannel channel = ClientChannel(new Channel(packet->channelId(), packet->name()));
@@ -216,23 +216,6 @@ bool SimpleClientPrivate::header()
   channel->setUsers(packet->users());
   addChannel(channel);
 
-  return true;
-}
-
-
-/*!
- * Обработка подключения к каналу, в случае успеха канал добавляется в таблицу каналов.
- */
-bool SimpleClientPrivate::readChannel()
-{
-  ChannelReader reader(this->reader);
-
-  SCHAT_DEBUG_STREAM(this << "readChannel()" << SimpleID::encode(reader.channel->id()))
-
-  if (!reader.channel->isValid())
-    return false;
-
-  addChannel(ClientChannel(reader.channel));
   return true;
 }
 
@@ -397,8 +380,8 @@ bool SimpleClientPrivate::notice()
     m_notice = &notice;
     QString cmd = notice.command();
 
-    if (cmd == "header")
-      header();
+    if (cmd == "channel")
+      channel();
 
     emit(q->notice(notice));
   }
@@ -713,10 +696,6 @@ void SimpleClient::newPacketsImpl()
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
         d->authReply(AuthReply(d->reader));
-        break;
-
-      case Protocol::ChannelPacket:
-        d->readChannel();
         break;
 
       case Protocol::MessagePacket:

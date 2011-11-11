@@ -321,7 +321,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 //  ChannelWriter writer(m_sendStream, channel.data(), user->id());
 //  send(user, writer.data());
 
-  ChannelPacket header(channel, userId, "header");
+  ChannelPacket header(channel, userId, "channel", Storage::timestamp());
   send(user, header.data(m_sendStream));
 
   if (channel->userCount() > 1) {

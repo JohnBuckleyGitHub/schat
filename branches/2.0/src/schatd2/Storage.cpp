@@ -109,11 +109,16 @@ int Storage::start()
 
 qint64 Storage::timestamp()
 {
-  #if QT_VERSION >= 0x040700
+# if QT_VERSION >= 0x040700
   return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-  #else
-  return qint64(QDateTime::currentDateTime().toUTC().toTime_t()) * 1000;
-  #endif
+# else
+  QDateTime dt = QDateTime::currentDateTime().toUTC();
+  qint64 t = dt.toTime_t();
+  t *= 1000;
+  t += dt.time().msec();
+  return t;
+# endif
+
 }
 
 

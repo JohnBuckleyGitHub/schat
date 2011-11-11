@@ -23,10 +23,10 @@
 ChannelPacket::ChannelPacket(ClientChannel channel, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(channel->id(), dest, command, time)
   , m_channelId(channel->id())
-  , m_name(channel->name())
   , m_users(channel->users())
 {
   m_type = ChannelType;
+  setText(channel->name());
 }
 
 
@@ -38,35 +38,11 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   else if (SimpleID::typeOf(reader->dest()) == SimpleID::ChannelId)
     m_channelId = reader->dest();
 
-  m_name  = reader->text();
   m_users = reader->idList();
 }
 
 
 void ChannelPacket::write(PacketWriter *writer) const
 {
-  writer->put(m_name);
   writer->put(m_users);
-}
-
-
-ChannelWriter::ChannelWriter(QDataStream *stream, Channel *channel, const QByteArray &dest)
-  : PacketWriter(stream, Protocol::ChannelPacket, channel->id(), dest)
-{
-  putId(channel->id());
-  put(channel->name());
-  put(channel->data());
-  put(channel->topic().topic);
-  putId(channel->users());
-}
-
-
-ChannelReader::ChannelReader(PacketReader *reader)
-{
-  channel = new Channel();
-  channel->setId(reader->id());
-  channel->setName(reader->text());
-  channel->setData(reader->json().toMap());
-  channel->setTopic(reader->text());
-  channel->setUsers(reader->idList());
 }

@@ -227,8 +227,8 @@ void SlaveNode::uplinkPacketReady(int type)
     uplinkReadMessage();
   else if (type == Protocol::UserDataPacket)
     uplinkReadUserData();
-  else if (type == Protocol::ChannelPacket)
-    uplinkReadChannel();
+//  else if (type == Protocol::ChannelPacket)
+//    uplinkReadChannel();
   else
     uplinkRoute();
 }
@@ -315,16 +315,19 @@ bool SlaveNode::uplinkRouteUser(const QByteArray &id)
 }
 
 
+/*!
+ * \deprecated Эта функция больше не работает.
+ */
 ChatChannel SlaveNode::uplinkAddChannel()
 {
-  ChannelReader reader(m_uplink->reader());
-  if (!reader.channel->isValid())
-    return ChatChannel();
+//  ChannelReader reader(m_uplink->reader());
+//  if (!reader.channel->isValid())
+//    return ChatChannel();
+//
+//  ChatChannel channel = ChatChannel(new ServerChannel(ClientChannel(reader.channel)));
+//  m_storage->addChannel(channel);
 
-  ChatChannel channel = ChatChannel(new ServerChannel(ClientChannel(reader.channel)));
-  m_storage->addChannel(channel);
-
-  return channel;
+  return ChatChannel();
 }
 
 
