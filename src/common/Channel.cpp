@@ -149,3 +149,24 @@ Topic Channel::topic() const
   topic.topic = m_topic;
   return topic;
 }
+
+
+/*!
+ * Добавления фида, если фид с этим именем уже существует, то он будет заменён.
+ *
+ * \param feed Указатель на фид.
+ * \return \b false если фид не корректен и не был добавлен.
+ */
+bool Channel::addFeed(FeedPtr feed)
+{
+  if (!feed)
+    return false;
+
+  feed->setId(m_id);
+
+  if (!feed->isValid())
+    return false;
+
+  m_feeds[feed->name()] = feed;
+  return true;
+}

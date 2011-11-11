@@ -799,7 +799,7 @@ bool Core::reg()
  */
 void Core::notice(quint16 type)
 {
-  if (type == AbstractNotice::GenericNoticeType) {
+  if (type == Notice::GenericType) {
     Notice notice(type, m_reader);
     m_notice = &notice;
 
