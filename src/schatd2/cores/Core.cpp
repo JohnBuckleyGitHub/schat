@@ -314,12 +314,15 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   channel->addUser(userId);
   user->addChannel(channel->id());
 
-  ChatUser author = Storage::i()->user(channel->topic().author, true);
-  if (author)
-    send(user, UserWriter(m_sendStream, author.data(), userId, UserWriter::StaticData).data());
+//  ChatUser author = Storage::i()->user(channel->topic().author, true);
+//  if (author)
+//    send(user, UserWriter(m_sendStream, author.data(), userId, UserWriter::StaticData).data());
 
-  ChannelWriter writer(m_sendStream, channel.data(), user->id());
-  send(user, writer.data());
+//  ChannelWriter writer(m_sendStream, channel.data(), user->id());
+//  send(user, writer.data());
+
+  ChannelPacket header(channel, userId, "header");
+  send(user, header.data(m_sendStream));
 
   if (channel->userCount() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);

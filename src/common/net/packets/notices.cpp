@@ -95,8 +95,6 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   if (m_fields & TextField)
     m_text = reader->text();
-
-  read(reader);
 }
 
 

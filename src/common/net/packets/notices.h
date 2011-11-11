@@ -34,7 +34,8 @@ class SCHAT_EXPORT Notice
 {
 public:
   enum Type {
-    GenericType = 0x103  ///< 'g'
+    GenericType = 103,  ///< 'g'
+    ChannelType = 99    ///< 'c'
   };
 
   /// Дополнительные поля данных.
@@ -67,6 +68,7 @@ public:
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
+  virtual ~Notice() {}
 
   virtual bool isValid() const;
 
@@ -94,7 +96,6 @@ public:
 
 protected:
   virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
-  virtual void read(PacketReader *reader) { Q_UNUSED(reader) }
 
   QByteArray m_sender;      ///< Идентификатор отправителя.
   QList<QByteArray> m_dest; ///< Идентификаторы получателей.

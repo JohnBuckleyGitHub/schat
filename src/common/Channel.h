@@ -94,6 +94,7 @@ private:
   QHash<QString, FeedPtr> m_feeds; ///< Каналы данных.
   QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
   QString m_name;                  ///< Имя канала.
+
   QString m_topic;                 ///< Тема канала. \deprecated Перенести хранение топика в фид.
   QVariantMap m_data;              ///< JSON данные канала. \deprecated Перенести хранение данныех в фиды.
 };

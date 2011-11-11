@@ -201,6 +201,26 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
 
 
 /*!
+ * Чтение заголовка канала.
+ *
+ * \sa ChannelPacket.
+ * \return \b false если произошла ошибка.
+ */
+bool SimpleClientPrivate::header()
+{
+  ChannelPacket *packet = static_cast<ChannelPacket *>(m_notice);
+  ClientChannel channel = ClientChannel(new Channel(packet->channelId(), packet->name()));
+  if (!channel->isValid())
+    return false;
+
+  channel->setUsers(packet->users());
+  addChannel(channel);
+
+  return true;
+}
+
+
+/*!
  * Обработка подключения к каналу, в случае успеха канал добавляется в таблицу каналов.
  */
 bool SimpleClientPrivate::readChannel()
@@ -353,16 +373,32 @@ void SimpleClientPrivate::split()
 bool SimpleClientPrivate::notice()
 {
   Q_Q(SimpleClient);
-
   quint16 type = reader->get<quint16>();
+  m_notice = 0;
+
   if (type == Notice::GenericType) {
     Notice notice(type, reader);
     if (!notice.isValid())
       return false;
 
-    QString command = notice.command();
-    if (command == "leave")
+    m_notice = &notice;
+    QString cmd = notice.command();
+
+    if (cmd == "leave")
       removeUser(reader->sender());
+
+    emit(q->notice(notice));
+  }
+  else if (type == Notice::ChannelType) {
+    ChannelPacket notice(type, reader);
+    if (!notice.isValid())
+      return false;
+
+    m_notice = &notice;
+    QString cmd = notice.command();
+
+    if (cmd == "header")
+      header();
 
     emit(q->notice(notice));
   }
