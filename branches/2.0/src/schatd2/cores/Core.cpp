@@ -585,7 +585,7 @@ void Core::leave(ChatUser user, quint64 socket)
 
   m_storage->remove(user);
 
-  Notice notice(user->id(), user->channels(), "leave", QVariant(), Storage::timestamp());
+  Notice notice(user->id(), user->channels(), "leave", Storage::timestamp());
   send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
 }
 
@@ -703,7 +703,7 @@ void Core::acceptMessage(int status)
     return;
 
   if (status == Notice::UserOffline) {
-    Notice notice(m_reader->dest(), m_reader->sender(), "msg.accepted", QVariant(), m_timestamp, m_messageData->id);
+    Notice notice(m_reader->dest(), m_reader->sender(), "msg.accepted", m_timestamp, m_messageData->id);
     notice.setStatus(status);
 
     QList<QByteArray> packets;
@@ -734,7 +734,7 @@ void Core::rejectMessage(int status)
     }
   }
 
-  Notice notice(m_reader->dest(), m_reader->sender(), "msg.rejected", QVariant(), m_timestamp, m_messageData->id);
+  Notice notice(m_reader->dest(), m_reader->sender(), "msg.rejected", m_timestamp, m_messageData->id);
   notice.setStatus(status);
   send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
 }
@@ -756,7 +756,7 @@ bool Core::login()
     return false;
 
   LoginReply reply = m_storage->login(user, m_notice->text(), m_reader->dest());
-  Notice notice(m_reader->dest(), user->id(), "login.reply", QVariant(), Storage::timestamp(), m_notice->id());
+  Notice notice(m_reader->dest(), user->id(), "login.reply", Storage::timestamp(), m_notice->id());
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
@@ -781,7 +781,7 @@ bool Core::reg()
     return false;
 
   RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest(), m_notice->json());
-  Notice notice(m_reader->dest(), user->id(), "reg.reply", QVariant(), Storage::timestamp(), m_notice->id());
+  Notice notice(m_reader->dest(), user->id(), "reg.reply", Storage::timestamp(), m_notice->id());
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
@@ -844,7 +844,7 @@ void Core::rejectNotice(int status)
   if (!user)
     return;
 
-  Notice notice(id(), m_reader->sender(), m_notice->command(), QVariant(), Storage::timestamp(), m_notice->id());
+  Notice notice(id(), m_reader->sender(), m_notice->command(), Storage::timestamp(), m_notice->id());
   notice.setStatus(status);
   send(user, notice.data(m_sendStream));
 }
