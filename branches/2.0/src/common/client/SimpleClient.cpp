@@ -355,7 +355,7 @@ bool SimpleClientPrivate::notice()
   Q_Q(SimpleClient);
 
   quint16 type = reader->get<quint16>();
-  if (type == AbstractNotice::GenericNoticeType) {
+  if (type == Notice::GenericType) {
     Notice notice(type, reader);
     if (!notice.isValid())
       return false;

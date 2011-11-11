@@ -19,12 +19,15 @@
 #include "net/PacketReader.h"
 #include "net/packets/notices.h"
 #include "net/packets/message.h"
+#include "net/PacketWriter.h"
 
 /*!
  * Базовый конструктор.
  */
 Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
-  : AbstractNotice(GenericNoticeType, sender, dest)
+  : m_sender(sender)
+  , m_dest(QList<QByteArray>() << dest)
+  , m_fields(0)
   , m_version(0)
   , m_status(OK)
   , m_time(time)
@@ -32,6 +35,8 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
   , m_command(command)
   , m_data(data)
 {
+  m_type = GenericType;
+
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
@@ -44,7 +49,9 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
  * Базовый конструктор.
  */
 Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, const QVariant &data, quint64 time, const QByteArray &id)
-  : AbstractNotice(GenericNoticeType, sender, dest)
+  : m_sender(sender)
+  , m_dest(dest)
+  , m_fields(0)
   , m_version(0)
   , m_status(OK)
   , m_time(time)
@@ -52,6 +59,8 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
   , m_command(command)
   , m_data(data)
 {
+  m_type = GenericType;
+
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
@@ -64,8 +73,12 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
  * Конструктор чтения.
  */
 Notice::Notice(quint16 type, PacketReader *reader)
-  : AbstractNotice(type, reader)
+  : m_sender(reader->sender())
+  , m_dest(reader->destinations())
+  , m_type(type)
+  , m_fields(0)
 {
+  m_fields = reader->get<quint8>();
   m_version = reader->get<quint8>();
   m_status = reader->get<quint16>();
   m_time = reader->get<qint64>();

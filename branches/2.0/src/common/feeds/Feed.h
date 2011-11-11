@@ -25,23 +25,44 @@
 #include "schat.h"
 
 /*!
+ * Заголовок фида.
+ */
+class SCHAT_EXPORT FeedHeader
+{
+public:
+  FeedHeader();
+  QString toString() const;
+  bool setName(const QString &name);
+
+  QString name; ///< Имя фида.
+  qint64 time;  ///< Время последнего обновления фида.
+};
+
+
+/*!
  * Базовый класс для фидов.
  */
 class SCHAT_EXPORT Feed
 {
 public:
   Feed();
+  Feed(const QString &name);
   virtual ~Feed() {}
 
-  inline const QByteArray& channel() const { return m_channel; }
-  inline const QString& name() const       { return m_name; }
+  virtual bool isValid() const;
+
+  inline const FeedHeader& header() const  { return m_header; }
+  inline const QByteArray& id() const      { return m_id; }
+  inline const QString& name() const       { return m_header.name; }
   inline const QVariantMap& data() const   { return m_data; }
-  inline qint64 time() const               { return m_time; }
+  inline qint64 time() const               { return m_header.time; }
+
+  inline bool setName(const QString &name) { return m_header.setName(name); }
+  inline void setId(const QByteArray &id)  { m_id = id; }
 
 private:
-  QByteArray m_channel; ///< Идентификатор канала фида.
-  qint64 m_time;        ///< Время последнего обновления фида.
-  QString m_name;       ///< Имя фида.
+  FeedHeader m_header;  ///< Заголовок фида.
+  QByteArray m_id;      ///< Идентификатор канала фида.
   QVariantMap m_data;   ///< JSON данные фида.
 };
 

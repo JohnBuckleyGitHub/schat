@@ -77,7 +77,7 @@ void MasterNode::notice(quint16 type)
   if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
     quint16 type = m_reader->get<quint16>();
 
-    if (type == AbstractNotice::GenericNoticeType) {
+    if (type == Notice::GenericType) {
       Notice notice(type, m_reader);
       m_notice = &notice;
 

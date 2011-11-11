@@ -19,71 +19,23 @@
 #ifndef NOTICES_H_
 #define NOTICES_H_
 
-#include "net/PacketReader.h"
-#include "net/PacketWriter.h"
+#include <QVariant>
+
 #include "schat.h"
 
 class PacketReader;
-class MessageData;
-
-/*!
- * Абстрактное уведомление.
- */
-class AbstractNotice
-{
-public:
-  enum Type {
-    MessageNoticeType = 0x6D, ///< 'm'.
-    TextNoticeType = 0x74,    ///< 't'
-    GenericNoticeType = 0x67  ///< 'g'
-  };
-
-  AbstractNotice(quint16 type, PacketReader *reader)
-  : m_sender(reader->sender())
-  , m_dest(reader->destinations())
-  , m_type(type)
-  , m_fields(0)
-  {
-    m_fields = reader->get<quint8>();
-  }
-
-  AbstractNotice(quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray())
-  : m_sender(sender)
-  , m_dest(QList<QByteArray>() << dest)
-  , m_type(type)
-  , m_fields(0)
-  {}
-
-  AbstractNotice(quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>())
-  : m_sender(sender)
-  , m_dest(dest)
-  , m_type(type)
-  , m_fields(0)
-  {}
-
-  inline int fields() const         { return m_fields; }
-  inline int type() const           { return m_type; }
-  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
-  inline QByteArray sender() const  { return m_sender; }
-  inline QList<QByteArray> destinations() const { return m_dest; }
-  inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
-  inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
-
-protected:
-  QByteArray m_sender;
-  QList<QByteArray> m_dest;
-  quint16 m_type;
-  quint8 m_fields; ///< Дополнительные поля данных.
-};
-
 
 /*!
  * Универсальное уведомление, содержит данные в JSON формате, текстовый тип, отметку времени и уникальный идентификатор.
  * Этот пакет является универсальным высокоуровневым транспортом чата, для расширений протокола.
  */
-class SCHAT_EXPORT Notice : public AbstractNotice
+class SCHAT_EXPORT Notice
 {
 public:
+  enum Type {
+    GenericType = 0x103  ///< 'g'
+  };
+
   /// Дополнительные поля данных.
   enum Fields {
     NoFields = 0,  ///< Нет дополнительных полей.
@@ -114,29 +66,44 @@ public:
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());
   Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, const QVariant &data = QVariant(), quint64 time = 0, const QByteArray &id = QByteArray());
   Notice(quint16 type, PacketReader *reader);
-  bool isValid() const;
-  inline int status() const { return m_status; }
-  inline int version() const { return m_version; }
-  inline QByteArray id() const { return m_id; }
-  inline QByteArray raw() const { return m_raw; }
-  inline qint64 time() const { return m_time; }
-  inline QString command() const { return m_command; }
-  inline QString text() const { return m_text; }
-  inline void setStatus(int status) { m_status = status; }
+
+  virtual bool isValid() const;
+
+  inline int fields() const         { return m_fields; }
+  inline int status() const         { return m_status; }
+  inline int type() const           { return m_type; }
+  inline int version() const        { return m_version; }
+  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
+  inline QByteArray id() const      { return m_id; }
+  inline QByteArray raw() const     { return m_raw; }
+  inline QByteArray sender() const  { return m_sender; }
+  inline qint64 time() const        { return m_time; }
+  inline QList<QByteArray> destinations() const { return m_dest; }
+  inline QString command() const    { return m_command; }
+  inline QString text() const       { return m_text; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
   QVariant json() const;
+
   static QString status(int status);
+
+  inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
+  inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
+  inline void setStatus(int status) { m_status = status; }
   void setText(const QString &text);
 
-private:
-  quint8 m_version;  ///< Версия пакета, обязательное поле.
-  quint16 m_status;  ///< Статус \sa StatusCodes, обязательное поле.
-  qint64 m_time;     ///< Отметка времени, обязательное поле.
-  QByteArray m_id;   ///< Идентификатор сообщения, не обязательное поле.
-  QString m_command; ///< Текстовая команда, обязательное поле.
-  QVariant m_data;   ///< JSON данные пакета, не обязательное поле.
-  QByteArray m_raw;  ///< Сырые данные, поле используется только при чтении пакета, для того чтобы не запускать разбор JSON без необходимости.
-  QString m_text;    ///< Сырой текст, не обязательное поле.
+protected:
+  QByteArray m_sender;      ///< Идентификатор отправителя.
+  QList<QByteArray> m_dest; ///< Идентификаторы получателей.
+  quint16 m_type;           ///< Тип пакета Notice::Type.
+  quint8 m_fields;          ///< Дополнительные поля данных.
+  quint8 m_version;         ///< Версия пакета, обязательное поле.
+  quint16 m_status;         ///< Статус \sa StatusCodes, обязательное поле.
+  qint64 m_time;            ///< Отметка времени, обязательное поле.
+  QByteArray m_id;          ///< Идентификатор сообщения, не обязательное поле.
+  QString m_command;        ///< Текстовая команда, обязательное поле.
+  QVariant m_data;          ///< JSON данные пакета, не обязательное поле.
+  QByteArray m_raw;         ///< Сырые данные, поле используется только при чтении пакета, для того чтобы не запускать разбор JSON без необходимости.
+  QString m_text;           ///< Сырой текст, не обязательное поле.
 };
 
 #endif /* NOTICES_H_ */

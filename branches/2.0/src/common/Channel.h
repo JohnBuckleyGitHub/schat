@@ -19,11 +19,11 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#include <QStringList>
+#include <QList>
 #include <QSharedPointer>
 #include <QVariant>
 
-#include "schat.h"
+#include "feeds/Feed.h"
 
 class Topic
 {
@@ -80,17 +80,22 @@ public:
   inline void setSynced(bool synced) { m_synced = synced; }
   Topic topic() const;
 
+  // feeds.
+  bool addFeed(FeedPtr feed);
+  inline bool addFeed(Feed *feed) { return addFeed(FeedPtr(feed)); }
+  inline const QHash<QString, FeedPtr>& feeds() const { return m_feeds; }
+
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
-  bool m_synced;             ///< true если канал синхронизирован.
-  bool m_valid;              ///< true все данные корректны.
-  QByteArray m_id;           ///< Идентификатор канала.
-  QList<QByteArray> m_users; ///< Список идентификаторов пользователей в канале.
-  QString m_name;            ///< Имя канала.
-  QString m_topic;           ///< Тема канала.
-  QStringList m_feeds;       ///< Каналы данных.
-  QVariantMap m_data;        ///< JSON данные канала.
+  bool m_synced;                   ///< true если канал синхронизирован.
+  bool m_valid;                    ///< true все данные корректны.
+  QByteArray m_id;                 ///< Идентификатор канала.
+  QHash<QString, FeedPtr> m_feeds; ///< Каналы данных.
+  QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
+  QString m_name;                  ///< Имя канала.
+  QString m_topic;                 ///< Тема канала. \deprecated Перенести хранение топика в фид.
+  QVariantMap m_data;              ///< JSON данные канала. \deprecated Перенести хранение данныех в фиды.
 };
 
 typedef QSharedPointer<Channel> ClientChannel;

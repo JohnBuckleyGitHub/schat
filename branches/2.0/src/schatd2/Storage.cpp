@@ -454,6 +454,9 @@ ChatChannel Storage::channel(const QByteArray &id)
 }
 
 
+/*!
+ * \todo Добавить хук на создание канала.
+ */
 ChatChannel Storage::channel(const QString &name)
 {
   QString normalName = normalize(name);
@@ -468,6 +471,11 @@ ChatChannel Storage::channel(const QString &name)
     m_db->add(channel);
     m_channels[id] = channel;
     m_channelNames[normalName] = channel;
+    channel->addFeed(new Feed("topic:666"));
+
+    qDebug() << " ---";
+    qDebug() << " ---" << channel->feeds().keys();
+    qDebug() << " ---";
   }
 
   return channel;
