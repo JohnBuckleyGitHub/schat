@@ -98,8 +98,6 @@ public:
     AuthReplyPacket = 0x6172, // "ar" or 24946
     /// Сообщение.
     MessagePacket = 0x6d, // "m" or 109
-    /// Данные канала \sa JoinReply.
-    ChannelPacket = 0x63, // "c" or 99
     /// Данные пользователя.
     UserDataPacket = 0x7544, // "uD" or 30020
     NoticePacket = 0x6e // "n" or 110

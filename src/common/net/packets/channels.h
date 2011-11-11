@@ -30,7 +30,7 @@ public:
   ChannelPacket(quint16 type, PacketReader *reader);
 
   inline const QByteArray& channelId() const { return m_channelId; }
-  inline const QString& name() const { return m_name; }
+  inline const QString& name() const { return m_text; }
   inline const QList<QByteArray>& users() const { return m_users; }
 
 protected:
@@ -38,36 +38,7 @@ protected:
   void write(PacketWriter *writer) const;
 
   QByteArray m_channelId;          ///< Идентификатор канала.
-  QString m_name;                  ///< Имя канала.
   QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
-};
-
-
-/*!
- * Формирует пакет Protocol::ChannelPacket.
- *
- * - 21 byte - Channel Id (SHA1).
- * - not fixed length (utf8) - Channel Name.
- * - not fixed length (utf8) - Channel Description.
- * - not fixed length (utf8) - Channel Topic.
- * - not fixed length (list of SHA1) - Channel Users.
- */
-class SCHAT_EXPORT ChannelWriter : public PacketWriter
-{
-public:
-  ChannelWriter(QDataStream *stream, Channel *channel, const QByteArray &dest);
-};
-
-
-/*!
- * Читает пакет Protocol::ChannelPacket.
- */
-class SCHAT_EXPORT ChannelReader
-{
-public:
-  ChannelReader(PacketReader *reader);
-
-  Channel *channel;
 };
 
 #endif /* CHANNELS_H_ */
