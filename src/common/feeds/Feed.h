@@ -24,6 +24,7 @@
 
 #include "acl/Acl.h"
 #include "schat.h"
+#include "User.h"
 
 /*!
  * Заголовок фида.
@@ -32,14 +33,23 @@ class SCHAT_EXPORT FeedHeader
 {
 public:
   FeedHeader();
-  bool setName(const QString &name);
-  inline Acl& acl()                  { return m_acl; }
-  inline const Acl& acl() const      { return m_acl; }
-  QString toString() const;
+  inline Acl& acl() { return m_acl; }
+  inline const Acl& acl() const { return m_acl; }
+  inline const QByteArray& id() const { return m_id; }
+  inline const QString& name() const { return m_name; }
+  inline qint64 date() const { return m_date; }
+  QVariantMap json(ClientUser user = ClientUser()) const;
+  bool isValid() const;
 
-  Acl m_acl;    ///< Права доступа к фиду.
-  qint64 time;  ///< Время последнего обновления фида.
-  QString name; ///< Имя фида.
+  inline void setDate(qint64 date) { m_date = date; }
+  inline void setId(const QByteArray &id) { m_id = id; }
+  inline void setName(const QString &name) { m_name = name; }
+
+private:
+  Acl m_acl;         ///< Права доступа к фиду.
+  QByteArray m_id;   ///< Идентификатор канала фида.
+  qint64 m_date;     ///< Время последнего обновления фида.
+  QString m_name;    ///< Имя фида.
 };
 
 
@@ -54,20 +64,12 @@ public:
   virtual ~Feed() {}
 
   virtual bool isValid() const;
-
-  inline const FeedHeader& header() const  { return m_header; }
-  inline const QByteArray& id() const      { return m_id; }
-  inline const QString& name() const       { return m_header.name; }
+  inline const FeedHeader& h() const       { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
-  inline FeedHeader& header()              { return m_header; }
-  inline qint64 time() const               { return m_header.time; }
-
-  inline bool setName(const QString &name) { return m_header.setName(name); }
-  inline void setId(const QByteArray &id)  { m_id = id; }
+  inline FeedHeader& h()                   { return m_header; }
 
 private:
   FeedHeader m_header;  ///< Заголовок фида.
-  QByteArray m_id;      ///< Идентификатор канала фида.
   QVariantMap m_data;   ///< JSON данные фида.
 };
 

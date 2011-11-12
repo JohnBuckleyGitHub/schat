@@ -50,7 +50,7 @@ public:
   inline Groups& groups() { return m_groups; }
   inline int acl() const { return m_acl; }
   inline void setAcl(int acl) { m_acl = acl; }
-  int match(ClientUser user);
+  int match(ClientUser user) const;
 
 private:
   Groups m_groups; ///< Группы.

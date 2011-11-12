@@ -85,6 +85,7 @@ public:
   inline int version() const               { return m_version; }
   inline QByteArray dest() const           { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
   inline qint64 time() const               { return m_time; }
+  inline QVariantMap& json()               { return m_data; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
 
   static QString status(int status);
@@ -92,7 +93,7 @@ public:
   inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
   inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
   inline void setStatus(int status) { m_status = status; }
-  void setText(const QString &text);
+  inline void setText(const QString &text) { m_text = text; }
 
 protected:
   virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
@@ -100,7 +101,7 @@ protected:
   QByteArray m_sender;      ///< Идентификатор отправителя.
   QList<QByteArray> m_dest; ///< Идентификаторы получателей.
   quint16 m_type;           ///< Тип пакета Notice::Type.
-  quint8 m_fields;          ///< Дополнительные поля данных.
+  mutable quint8 m_fields;  ///< Дополнительные поля данных.
   quint8 m_version;         ///< Версия пакета, обязательное поле.
   quint16 m_status;         ///< Статус \sa StatusCodes, обязательное поле.
   qint64 m_time;            ///< Отметка времени, обязательное поле.

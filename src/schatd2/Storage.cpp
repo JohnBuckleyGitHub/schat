@@ -476,6 +476,7 @@ ChatChannel Storage::channel(const QString &name)
     m_channels[id] = channel;
     m_channelNames[normalName] = channel;
     channel->addFeed(new Feed("topic:666"));
+    channel->addFeed(new Feed("rating:" + QString::number(Storage::timestamp())));
 
     qDebug() << " ---";
     qDebug() << " ---" << channel->feeds().keys();

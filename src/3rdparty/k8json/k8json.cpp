@@ -572,9 +572,9 @@ static const uchar *parseNumber (QVariant &num, const uchar *s, int *maxLength) 
 backanddone:
   s--; maxLen++;
 done:
-  if (!fr && fnum > 2147483647.0) fr = true;
+//  if (!fr && fnum > 2147483647.0) fr = true;
   if (negative) fnum = -fnum;
-  if (fr) num = fnum; else num = (qint32)fnum;
+  if (fr) num = fnum; else num = (qint64)fnum;
   *maxLength = maxLen;
   return s;
 }
