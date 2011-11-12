@@ -26,60 +26,39 @@
  * Конструктор создающий пустой объект.
  */
 FeedHeader::FeedHeader()
-  : time(0)
+  : m_date(0)
 {
 }
 
 
-/*!
- * Преобразование заголовка в строку.
- *
- * Если фид содержит отметку времени отличную от 0 то она будет добавлена
- * к имени фида через символ двоеточия.
- */
-QString FeedHeader::toString() const
+QVariantMap FeedHeader::json(ClientUser user) const
 {
-  QString out = name;
-  if (time != 0)
-    out += ":" + QString::number(time);
+  QVariantMap out;
+  int acl = m_acl.acl();
+  if (user) {
+    acl = m_acl.match(user);
+    if (!acl)
+      return out;
+  }
+
+  out["acl"]  = acl;
+  out["date"] = m_date;
 
   return out;
 }
 
 
-/*!
- * Установка имени фида.
- *
- * Имя не может быть пустым и содержать символ запятой.
- * Если имя содержит символа двоеточия, то текст после него преобразуется в отметку времени.
- *
- * \param Имя фида.
- * \return \b false если имя фида некорректно.
- */
-bool FeedHeader::setName(const QString &name)
+bool FeedHeader::isValid() const
 {
-  if (name.isEmpty())
+  if (m_name.isEmpty())
     return false;
 
-  if (name.contains(','))
+  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
     return false;
-
-  int index = name.indexOf(':');
-  if (index != -1) {
-    bool ok = false;
-    time = name.mid(index + 1).toLongLong(&ok);
-    if (!ok)
-      return false;
-
-    this->name = name.left(index);
-    if (this->name.isEmpty())
-      return false;
-  }
-  else
-    this->name = name;
 
   return true;
 }
+
 
 Feed::Feed()
 {
@@ -88,7 +67,7 @@ Feed::Feed()
 
 Feed::Feed(const QString &name)
 {
-  setName(name);
+  m_header.setName(name);
 }
 
 
@@ -97,11 +76,5 @@ Feed::Feed(const QString &name)
  */
 bool Feed::isValid() const
 {
-  if (m_header.name.isEmpty())
-    return false;
-
-  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
-    return false;
-
-  return true;
+  return m_header.isValid();
 }

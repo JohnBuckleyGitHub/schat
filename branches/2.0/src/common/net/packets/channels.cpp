@@ -40,26 +40,30 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   else if (SimpleID::typeOf(reader->dest()) == SimpleID::ChannelId)
     m_channelId = reader->dest();
 
-  m_users = reader->idList();
+  if (m_command == "channel") {
+    m_users = reader->idList();
+  }
 }
 
 
+/*!
+ * Возвращает список фидов доступных данному пользователю.
+ *
+ * \param channel Канал фида.
+ * \param user    Пользователь.
+ */
 QVariantMap ChannelPacket::feeds(ClientChannel channel, ClientUser user)
 {
   QVariantMap map;
-//  int acl;
-//  QHashIterator<QString, FeedPtr> i(channel->feeds());
-//
-//  while (i.hasNext()) {
-//    i.next();
-//    acl = i.value()->acl().match(user);
-//    if (acl) {
-//      QVariantMap header;
-//      header["time"] = QString::number(i.value()->time());
-//      header["acl"] = acl;
-//      map[i.key()] = header;
-//    }
-//  }
+
+  QHashIterator<QString, FeedPtr> i(channel->feeds());
+  while (i.hasNext()) {
+    i.next();
+    QVariantMap header = i.value()->h().json(user);
+    if (!header.isEmpty()) {
+      map[i.key()] = header;
+    }
+  }
 
   return map;
 }
@@ -67,5 +71,7 @@ QVariantMap ChannelPacket::feeds(ClientChannel channel, ClientUser user)
 
 void ChannelPacket::write(PacketWriter *writer) const
 {
-  writer->put(m_users);
+  if (m_command == "channel") {
+    writer->put(m_users);
+  }
 }

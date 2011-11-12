@@ -24,7 +24,7 @@ Acl::Acl(int acl)
 }
 
 
-int Acl::match(ClientUser user)
+int Acl::match(ClientUser user) const
 {
   return 4;
 }

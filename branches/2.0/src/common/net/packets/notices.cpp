@@ -121,6 +121,12 @@ bool Notice::isValid() const
  */
 QByteArray Notice::data(QDataStream *stream, bool echo) const
 {
+  if (!m_data.isEmpty())
+    m_fields |= JSonField;
+
+  if (!m_text.isEmpty())
+    m_fields |= TextField;
+
   PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest, echo);
   writer.put(m_type);
   writer.put(m_fields);
@@ -196,14 +202,4 @@ QString Notice::status(int status)
     default:
       return QObject::tr("Unknown");
   }
-}
-
-
-void Notice::setText(const QString &text)
-{
-  if (text.isEmpty())
-    return;
-
-  m_fields |= TextField;
-  m_text = text;
 }

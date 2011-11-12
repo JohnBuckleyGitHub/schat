@@ -149,11 +149,11 @@ bool Channel::addFeed(FeedPtr feed)
   if (!feed)
     return false;
 
-  feed->setId(m_id);
+  feed->h().setId(m_id);
 
   if (!feed->isValid())
     return false;
 
-  m_feeds[feed->name()] = feed;
+  m_feeds[feed->h().name()] = feed;
   return true;
 }
