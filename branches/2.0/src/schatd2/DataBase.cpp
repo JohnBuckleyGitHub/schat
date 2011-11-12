@@ -167,7 +167,7 @@ ChatUser DataBase::user(qint64 id)
   ChatUser user(new ServerUser(query.value(0).toByteArray()));
   user->setKey(id);
   user->setCookie(query.value(1).toByteArray());
-  user->setGroups(query.value(2).toString());
+  user->groups().set(query.value(2).toString());
   user->setNick(query.value(3).toString());
   user->setNormalNick(query.value(4).toString());
   user->setRawGender(query.value(5).toInt());
@@ -214,7 +214,7 @@ qint64 DataBase::add(ChatUser user)
 
   query.bindValue(QLatin1String(":userId"),     user->id());
   query.bindValue(QLatin1String(":cookie"),     user->cookie());
-  query.bindValue(QLatin1String(":groups"),     user->groupsToString());
+  query.bindValue(QLatin1String(":groups"),     user->groups().toString());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"),     user->rawGender());
@@ -277,7 +277,7 @@ void DataBase::update(ChatUser user)
   QSqlQuery query;
   query.prepare(QLatin1String("UPDATE users SET cookie = :cookie, groups = :groups, nick = :nick, normalNick = :normalNick, gender = :gender, host = :host, account = :account, userAgent = :userAgent WHERE id = :id;"));
   query.bindValue(QLatin1String(":cookie"),     user->cookie());
-  query.bindValue(QLatin1String(":groups"),     user->groupsToString());
+  query.bindValue(QLatin1String(":groups"),     user->groups().toString());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
   query.bindValue(QLatin1String(":gender"),     user->rawGender());

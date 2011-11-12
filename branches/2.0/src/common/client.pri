@@ -23,6 +23,7 @@ HEADERS += \
     client/NetworkPool.h \
     feeds/Feed.h \
     FileLocations.h \
+    Groups.h \
     k8json/k8json.h \
     net/PacketReader.h \
     net/packets/AbstractPacket.h \

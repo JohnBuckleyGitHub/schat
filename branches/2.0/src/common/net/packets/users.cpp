@@ -93,7 +93,7 @@ void UserWriter::write(User *user, int options)
     put(user->userAgent());
     put(user->host());
     put(user->serverNumber());
-    put(user->groupsToString());
+    put(user->groups().toString());
     put(user->account());
   }
 
@@ -116,7 +116,7 @@ UserReader::UserReader(PacketReader *reader)
     user.setUserAgent(reader->text());
     user.setHost(reader->text());
     user.setServerNumber(reader->get<quint8>());
-    user.setGroups(reader->text());
+    user.groups().set(reader->text());
     user.setAccount(reader->text());
   }
   else if (user.status() == User::OfflineStatus)

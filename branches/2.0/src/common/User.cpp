@@ -29,7 +29,7 @@ User::User()
   , m_serverNumber(0)
 {
   m_channels.append(m_id);
-  m_groups.append(QLatin1String("anonymous"));
+  m_groups.add("anonymous");
 }
 
 
@@ -41,12 +41,13 @@ User::User(const QString &nick)
 {
   setNick(nick);
   m_channels.append(m_id);
-  m_groups.append(QLatin1String("anonymous"));
+  m_groups.add("anonymous");
 }
 
 
 User::User(const User *other)
   : m_valid(other->isValid())
+  , m_groups(other->groups())
   , m_gender(other->rawGender())
   , m_status(other->status())
   , m_id(other->id())
@@ -55,7 +56,6 @@ User::User(const User *other)
   , m_host(other->host())
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
-  , m_groups(other->groups())
   , m_serverNumber(other->serverNumber())
   , m_json(other->json())
 {

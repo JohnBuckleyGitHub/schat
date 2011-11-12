@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QVariant>
 
+#include "Groups.h"
 #include "schat.h"
 
 /*!
@@ -123,13 +124,9 @@ public:
   static QString statusToString(int status, const QString &text);
   void setStatus(int status, const QString &text);
 
-  // m_groups
-  inline QString groupsToString() const { return m_groups.join(","); }
-  inline QStringList groups() const { return m_groups; }
-  inline void addGroup(const QString &name) { if (!m_groups.contains(name)) m_groups.append(name); }
-  inline void removeGroup(const QString &name) { m_groups.removeAll(name); }
-  inline void setGroups(const QString &groups) { m_groups = groups.split(",", QString::SkipEmptyParts); }
-  inline void setGroups(const QStringList &groups) { m_groups = groups; }
+  // groups.
+  inline const Groups& groups() const { return m_groups; }
+  inline Groups& groups() { return m_groups; }
 
   // m_account
   inline QString account() const { return m_account; }
@@ -143,6 +140,7 @@ protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_valid;                         ///< true все данные корректны.
+  Groups m_groups;                      ///< Группы пользователя.
   int m_gender;                         ///< Пол и цвет иконки.
   int m_status;                         ///< Код статуса.
   QByteArray m_id;                      ///< Идентификатор пользователя.
@@ -152,7 +150,6 @@ protected:
   QString m_host;                       ///< Адрес пользователя. \deprecated Необходима поддержка множественного входа пользователя.
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя. \deprecated Необходима поддержка множественного входа пользователя.
-  QStringList m_groups;                 ///< Группы в которых находится пользователь
   quint8 m_serverNumber;                ///< Номер сервера.
   QVariant m_json;                      ///< JSON данные.
 };
