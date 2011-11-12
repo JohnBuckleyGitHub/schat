@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "Channel.h"
 #include "net/PacketReader.h"
 #include "net/packets/channels.h"
@@ -39,6 +41,27 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
     m_channelId = reader->dest();
 
   m_users = reader->idList();
+}
+
+
+QVariantMap ChannelPacket::feeds(ClientChannel channel, ClientUser user)
+{
+  QVariantMap map;
+//  int acl;
+//  QHashIterator<QString, FeedPtr> i(channel->feeds());
+//
+//  while (i.hasNext()) {
+//    i.next();
+//    acl = i.value()->acl().match(user);
+//    if (acl) {
+//      QVariantMap header;
+//      header["time"] = QString::number(i.value()->time());
+//      header["acl"] = acl;
+//      map[i.key()] = header;
+//    }
+//  }
+
+  return map;
 }
 
 

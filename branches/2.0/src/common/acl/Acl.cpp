@@ -16,24 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GROUPS_H_
-#define GROUPS_H_
+#include "acl/Acl.h"
 
-#include <QStringList>
-
-class Groups
+Acl::Acl(int acl)
+  : m_acl(acl)
 {
-public:
-  Groups() {}
-  inline const QStringList& groups() const { return m_groups; }
-  inline QString toString() const { return m_groups.join(","); }
-  inline void add(const QString &name) { if (!m_groups.contains(name)) m_groups.append(name); }
-  inline void remove(const QString &name) { m_groups.removeAll(name); }
-  inline void set(const QString &groups) { m_groups = groups.split(",", QString::SkipEmptyParts); }
-  inline void set(const QStringList &groups) { m_groups = groups; }
+}
 
-private:
-  QStringList m_groups; ///< Список групп.
-};
 
-#endif /* GROUPS_H_ */
+int Acl::match(ClientUser user)
+{
+  return 4;
+}
