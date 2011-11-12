@@ -22,6 +22,7 @@
 #include <QSharedPointer>
 #include <QVariant>
 
+#include "acl/Acl.h"
 #include "schat.h"
 
 /*!
@@ -31,11 +32,14 @@ class SCHAT_EXPORT FeedHeader
 {
 public:
   FeedHeader();
-  QString toString() const;
   bool setName(const QString &name);
+  inline Acl& acl()                  { return m_acl; }
+  inline const Acl& acl() const      { return m_acl; }
+  QString toString() const;
 
-  QString name; ///< Имя фида.
+  Acl m_acl;    ///< Права доступа к фиду.
   qint64 time;  ///< Время последнего обновления фида.
+  QString name; ///< Имя фида.
 };
 
 
@@ -55,6 +59,7 @@ public:
   inline const QByteArray& id() const      { return m_id; }
   inline const QString& name() const       { return m_header.name; }
   inline const QVariantMap& data() const   { return m_data; }
+  inline FeedHeader& header()              { return m_header; }
   inline qint64 time() const               { return m_header.time; }
 
   inline bool setName(const QString &name) { return m_header.setName(name); }

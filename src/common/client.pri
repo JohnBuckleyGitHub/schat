@@ -16,6 +16,8 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 HEADERS += \
+    acl/Acl.h \
+    acl/Groups.h \
     base32/base32.h \
     Channel.h \
     client/AbstractClient.h \
@@ -23,7 +25,6 @@ HEADERS += \
     client/NetworkPool.h \
     feeds/Feed.h \
     FileLocations.h \
-    Groups.h \
     k8json/k8json.h \
     net/PacketReader.h \
     net/packets/AbstractPacket.h \
@@ -51,6 +52,7 @@ HEADERS += \
     User.h \
 
 SOURCES += \
+    acl/Acl.cpp \
     base32/base32.cpp \
     Channel.cpp \
     client/AbstractClient.cpp \

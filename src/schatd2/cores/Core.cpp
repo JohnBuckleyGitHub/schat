@@ -322,6 +322,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 //  send(user, writer.data());
 
   ChannelPacket header(channel, userId, "channel", Storage::timestamp());
+  qDebug() << SimpleJSon::generate(header.feeds(channel, user));
   send(user, header.data(m_sendStream));
 
   if (channel->userCount() > 1) {

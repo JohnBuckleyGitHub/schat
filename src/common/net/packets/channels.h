@@ -20,8 +20,9 @@
 #define CHANNELS_H_
 
 #include "Channel.h"
-#include "net/PacketWriter.h"
 #include "net/packets/notices.h"
+#include "net/PacketWriter.h"
+#include "User.h"
 
 class SCHAT_EXPORT ChannelPacket : public Notice
 {
@@ -30,11 +31,11 @@ public:
   ChannelPacket(quint16 type, PacketReader *reader);
 
   inline const QByteArray& channelId() const { return m_channelId; }
-  inline const QString& name() const { return m_text; }
   inline const QList<QByteArray>& users() const { return m_users; }
+  inline const QString& name() const { return m_text; }
+  static QVariantMap feeds(ClientChannel channel, ClientUser user);
 
 protected:
-  void read(PacketReader *reader);
   void write(PacketWriter *writer) const;
 
   QByteArray m_channelId;          ///< Идентификатор канала.

@@ -24,7 +24,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "Groups.h"
+#include "acl/Groups.h"
 #include "schat.h"
 
 /*!
