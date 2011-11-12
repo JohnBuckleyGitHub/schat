@@ -71,19 +71,6 @@ bool Channel::removeUser(const QByteArray &id)
 }
 
 
-//bool Channel::setDesc(const QString &desc)
-//{
-//  if (desc.isEmpty())
-//    return validate(true);
-//
-//  if (desc.size() > MaxDescLength)
-//    return validate(false);
-//
-//  m_desc = desc.simplified();
-//  return validate(true);
-//}
-
-
 bool Channel::setId(const QByteArray &id)
 {
   m_id = id;

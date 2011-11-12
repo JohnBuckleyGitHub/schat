@@ -521,7 +521,7 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
     existUser->setUserAgent(user->userAgent());
     existUser->setHost(user->host());
     existUser->setServerNumber(user->serverNumber());
-    existUser->setGroups(user->groups());
+    existUser->groups().set(user->groups().groups());
     existUser->setAccount(user->account());
     changed |= SimpleClient::UserStaticDataChanged;
   }

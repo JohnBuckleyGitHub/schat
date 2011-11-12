@@ -62,7 +62,6 @@ public:
   ~Channel();
   bool addUser(const QByteArray &id);
   bool removeUser(const QByteArray &id);
-  bool setDesc(const QString &desc);
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
   bool setTopic(const QString &topic);
@@ -72,8 +71,8 @@ public:
   inline bool isValid() const { return m_valid; }
   inline int userCount() const { return m_users.size(); }
   inline QByteArray id() const { return m_id; }
-  inline QList<QByteArray> users() { return m_users; }
-  inline QString name() const { return m_name; }
+  inline const QList<QByteArray>& users() { return m_users; }
+  inline const QString& name() const { return m_name; }
   inline QVariant data() const { return m_data; }
   inline void clear() { m_users.clear(); }
   inline void setData(const QVariantMap &data) { m_data = data; }
@@ -89,7 +88,7 @@ private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_synced;                   ///< true если канал синхронизирован.
-  bool m_valid;                    ///< true все данные корректны.
+  bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
   QByteArray m_id;                 ///< Идентификатор канала.
   QHash<QString, FeedPtr> m_feeds; ///< Каналы данных.
   QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.

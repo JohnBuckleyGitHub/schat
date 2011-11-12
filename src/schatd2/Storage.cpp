@@ -284,8 +284,7 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
 
   LoginReply reply(login);
   user->setAccount(login);
-  user->removeGroup("anonymous");
-  user->addGroup("registered");
+  user->groups().add("registered");
   m_db->update(user);
 
   if (user->id() != account.userId) {
