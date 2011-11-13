@@ -33,7 +33,6 @@ public:
   inline const QByteArray& channelId() const { return m_channelId; }
   inline const QList<QByteArray>& users() const { return m_users; }
   inline const QString& name() const { return m_text; }
-  static QVariantMap feeds(ClientChannel channel, ClientUser user);
 
 protected:
   void write(PacketWriter *writer) const;

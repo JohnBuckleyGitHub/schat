@@ -222,7 +222,7 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
   bool result = chan->removeUser(userId);
   user->removeChannel(channelId);
 
-  if (chan->userCount() == 0 && !chan->isPermanent())
+  if (chan->userCount() == 0)
     removeChannel(chan->id());
 
   return result;
@@ -385,7 +385,6 @@ void Storage::rename(ChatUser user)
 
   user->setNormalNick(normalize(user->nick()));
   channel->setName(QLatin1String("~") + user->nick());
-  channel->setNormalName(QLatin1String("~") + user->normalNick());
 
   m_nicks[user->normalNick()] = user;
   m_channelNames[channel->normalName()] = channel;
@@ -429,7 +428,7 @@ ChatChannel Storage::channel(ChatUser user)
 
   if (!channel) {
     QString normalName = QLatin1String("~") + user->normalNick();
-    channel = ChatChannel(new ServerChannel(id, normalName, QLatin1String("~") + user->nick()));
+    channel = ChatChannel(new ServerChannel(id, QLatin1String("~") + user->nick()));
 
     m_channels[id] = channel;
     m_channelNames[normalName] = channel;
@@ -471,15 +470,17 @@ ChatChannel Storage::channel(const QString &name)
   QByteArray id = makeChannelId(normalName);
   channel = this->channel(id);
   if (!channel) {
-    channel = ChatChannel(new ServerChannel(id, normalName, name, true));
+    channel = ChatChannel(new ServerChannel(id, name));
+    channel->addFeed(new Feed("topic", 667));
+    channel->addFeed(new Feed("rating", Storage::timestamp()));
+
     m_db->add(channel);
     m_channels[id] = channel;
     m_channelNames[normalName] = channel;
-    channel->addFeed(new Feed("topic:666"));
-    channel->addFeed(new Feed("rating:" + QString::number(Storage::timestamp())));
+
 
     qDebug() << " ---";
-    qDebug() << " ---" << channel->feeds().keys();
+    qDebug() << " ---" << channel->feeds().all().keys();
     qDebug() << " ---";
   }
 
@@ -542,7 +543,7 @@ QList<quint64> Storage::sockets(const QList<QByteArray> &ids)
 
 void Storage::addChannel(ChatChannel channel)
 {
-  channel->setNormalName(normalize(channel->name()));
+//  channel->setNormalName(normalize(channel->name()));
   m_channels[channel->id()] = channel;
   m_channelNames[channel->normalName()] = channel;
   m_db->add(channel);
@@ -566,8 +567,10 @@ QByteArray Storage::cookie() const
 
 
 /*!
- * Выполняет нормализацию ника или канала, для использования его в качестве ключа
- * в соответствующих таблицах.
+ * Выполняет нормализацию текста.
+ * Текст приводится к нижнему регистру и визуально похожие символы заменяются.
+ *
+ * \param text Исходный текст.
  */
 QString Storage::normalize(const QString &text) const
 {

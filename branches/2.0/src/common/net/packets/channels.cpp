@@ -46,29 +46,6 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
 }
 
 
-/*!
- * Возвращает список фидов доступных данному пользователю.
- *
- * \param channel Канал фида.
- * \param user    Пользователь.
- */
-QVariantMap ChannelPacket::feeds(ClientChannel channel, ClientUser user)
-{
-  QVariantMap map;
-
-  QHashIterator<QString, FeedPtr> i(channel->feeds());
-  while (i.hasNext()) {
-    i.next();
-    QVariantMap header = i.value()->h().json(user);
-    if (!header.isEmpty()) {
-      map[i.key()] = header;
-    }
-  }
-
-  return map;
-}
-
-
 void ChannelPacket::write(PacketWriter *writer) const
 {
   if (m_command == "channel") {
