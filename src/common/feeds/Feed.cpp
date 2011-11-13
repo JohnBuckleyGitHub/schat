@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <QDateTime>
 
 #include "feeds/Feed.h"
 #include "net/SimpleID.h"
@@ -48,6 +48,20 @@ QVariantMap FeedHeader::json(ClientUser user) const
 }
 
 
+qint64 FeedHeader::timestamp()
+{
+# if QT_VERSION >= 0x040700
+  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+# else
+  QDateTime dt = QDateTime::currentDateTime().toUTC();
+  qint64 t = dt.toTime_t();
+  t *= 1000;
+  t += dt.time().msec();
+  return t;
+# endif
+}
+
+
 bool FeedHeader::isValid() const
 {
   if (m_name.isEmpty())
@@ -65,9 +79,10 @@ Feed::Feed()
 }
 
 
-Feed::Feed(const QString &name)
+Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
+  m_header.setDate(date);
 }
 
 
@@ -77,4 +92,54 @@ Feed::Feed(const QString &name)
 bool Feed::isValid() const
 {
   return m_header.isValid();
+}
+
+
+bool Feeds::add(FeedPtr feed)
+{
+  if (!feed)
+    return false;
+
+  if (!feed->isValid())
+    return false;
+
+  m_feeds[feed->h().name()] = feed;
+  return true;
+}
+
+
+QVariantMap Feeds::headers(ClientUser user) const
+{
+  QVariantMap map;
+
+  QHashIterator<QString, FeedPtr> i(m_feeds);
+  while (i.hasNext()) {
+    i.next();
+    QVariantMap header = i.value()->h().json(user);
+    if (!header.isEmpty()) {
+      map[i.key()] = header;
+    }
+  }
+
+  return map;
+}
+
+
+bool Feeds::merge(const QString &key, QVariantMap &out, const QVariantMap &in)
+{
+  if (in.isEmpty())
+    return false;
+
+  out[key] = in;
+  return true;
+}
+
+
+QVariantMap Feeds::merge(const QString &key, const QVariantMap &in)
+{
+  QVariantMap out;
+  if (!in.isEmpty())
+    out[key] = in;
+
+  return out;
 }

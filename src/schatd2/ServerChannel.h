@@ -25,17 +25,14 @@ class SCHAT_EXPORT ServerChannel: public Channel
 {
 public:
   ServerChannel(ClientChannel channel);
-  ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent = false);
+  ServerChannel(const QByteArray &id, const QString &name);
   ~ServerChannel();
-  inline bool isPermanent() const { return m_permanent; }
+  bool setName(const QString &name);
   inline qint64 key() const { return m_key; }
   inline QString normalName() const { return m_normalName; }
   inline void setKey(qint64 key) { m_key = key; }
-  inline void setNormalName(const QString &name) { m_normalName = name; }
-  inline void setPermanent(bool permanent) { m_permanent = permanent; }
 
 private:
-  bool m_permanent;     ///< Канал не будет удалён если из него выйдут все пользователи.
   qint64 m_key;         ///< Ключ в таблице channels.
   QString m_normalName; ///< Нормализованное имя канала.
 };

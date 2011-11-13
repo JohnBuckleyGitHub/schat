@@ -82,15 +82,15 @@ public:
   // feeds.
   bool addFeed(FeedPtr feed);
   inline bool addFeed(Feed *feed) { return addFeed(FeedPtr(feed)); }
-  inline const QHash<QString, FeedPtr>& feeds() const { return m_feeds; }
+  inline const Feeds& feeds() const { return m_feeds; }
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_synced;                   ///< true если канал синхронизирован.
   bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
+  Feeds m_feeds;                   ///< Фиды.
   QByteArray m_id;                 ///< Идентификатор канала.
-  QHash<QString, FeedPtr> m_feeds; ///< Каналы данных.
   QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
   QString m_name;                  ///< Имя канала.
 

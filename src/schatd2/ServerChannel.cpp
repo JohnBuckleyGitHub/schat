@@ -17,25 +17,36 @@
  */
 
 #include "ServerChannel.h"
+#include "Storage.h"
 
 ServerChannel::ServerChannel(ClientChannel channel)
   : Channel(channel->id(), channel->name())
-  , m_permanent(false)
-  , m_normalName(channel->name())
 {
+  m_normalName = Storage::i()->normalize(name());
+
   setData(channel->data().toMap());
   setTopic(channel->topic().topic);
   setUsers(channel->users());
 }
 
 
-ServerChannel::ServerChannel(const QByteArray &id, const QString &normalName, const QString &name, bool permanent)
+ServerChannel::ServerChannel(const QByteArray &id, const QString &name)
   : Channel(id, name)
-  , m_permanent(permanent)
-  , m_normalName(normalName)
 {
+  m_normalName = Storage::i()->normalize(this->name());
 }
 
 ServerChannel::~ServerChannel()
 {
+}
+
+
+bool ServerChannel::setName(const QString &name)
+{
+  if (Channel::setName(name)) {
+    m_normalName = Storage::i()->normalize(this->name());
+    return true;
+  }
+
+  return false;
 }

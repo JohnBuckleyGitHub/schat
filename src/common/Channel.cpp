@@ -140,6 +140,7 @@ Topic Channel::topic() const
 
 /*!
  * Добавления фида, если фид с этим именем уже существует, то он будет заменён.
+ * Канал становится владельцем фида.
  *
  * \param feed Указатель на фид.
  * \return \b false если фид не корректен и не был добавлен.
@@ -151,9 +152,5 @@ bool Channel::addFeed(FeedPtr feed)
 
   feed->h().setId(m_id);
 
-  if (!feed->isValid())
-    return false;
-
-  m_feeds[feed->h().name()] = feed;
-  return true;
+  return m_feeds.add(feed);
 }

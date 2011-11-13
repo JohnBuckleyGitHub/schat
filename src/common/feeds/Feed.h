@@ -33,13 +33,14 @@ class SCHAT_EXPORT FeedHeader
 {
 public:
   FeedHeader();
+  bool isValid() const;
   inline Acl& acl() { return m_acl; }
   inline const Acl& acl() const { return m_acl; }
   inline const QByteArray& id() const { return m_id; }
   inline const QString& name() const { return m_name; }
   inline qint64 date() const { return m_date; }
   QVariantMap json(ClientUser user = ClientUser()) const;
-  bool isValid() const;
+  static qint64 timestamp();
 
   inline void setDate(qint64 date) { m_date = date; }
   inline void setId(const QByteArray &id) { m_id = id; }
@@ -60,7 +61,7 @@ class SCHAT_EXPORT Feed
 {
 public:
   Feed();
-  Feed(const QString &name);
+  Feed(const QString &name, qint64 date = 0);
   virtual ~Feed() {}
 
   virtual bool isValid() const;
@@ -74,5 +75,23 @@ private:
 };
 
 typedef QSharedPointer<Feed> FeedPtr;
+
+
+/*!
+ * Хранилище фидов.
+ */
+class SCHAT_EXPORT Feeds
+{
+public:
+  Feeds() {}
+  bool add(FeedPtr feed);
+  inline const QHash<QString, FeedPtr>& all() const { return m_feeds; }
+  QVariantMap headers(ClientUser user = ClientUser()) const;
+  static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
+  static QVariantMap merge(const QString &key, const QVariantMap &in);
+
+private:
+  QHash<QString, FeedPtr> m_feeds;
+};
 
 #endif /* FEED_H_ */
