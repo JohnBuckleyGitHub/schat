@@ -239,6 +239,7 @@ QString UserUtils::statusTitle(int status)
 QString UserUtils::toolTip(ClientUser user)
 {
   QString out = "<b>" + Qt::escape(user->nick()) + "</b><br />";
+  out += QString("Id: %1").arg(QString(SimpleID::encode(user->id()))) + "<br />";
   out += Qt::escape(user->host()) + "<br />";
   out += Qt::escape(user->userAgent()) + "<br />";
   out += Qt::escape(user->account()) + "<br />";

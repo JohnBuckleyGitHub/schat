@@ -401,7 +401,7 @@ void SlaveNode::uplinkReadChannel()
   if (!channel)
     return;
 
-  channel->addUser(user->id());
+  channel->add(user->id());
   user->addChannel(channel->id());
 
   uplinkRoute();

@@ -55,27 +55,27 @@ public:
   /// Ограничения.
   enum Limits {
     MinNameLengh = 3,     ///< Минимальная длина имени.
-    MaxNameLength = 21,   ///< Максимальная длина имени.
-    MaxDescLength = 128,  ///< Максимальная длина описания.
-    MaxTopicLength = 1000 ///< Максимальная длина темы канала.
+    MaxNameLength = 20,   ///< Максимальная длина имени.
   };
 
   Channel();
   Channel(const QByteArray &id, const QString &name);
-  ~Channel();
-  bool addUser(const QByteArray &id);
-  bool removeUser(const QByteArray &id);
+  virtual ~Channel();
+
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
-  bool setUsers(const QList<QByteArray> &users);
   inline bool isSynced() const { return m_synced; }
   inline bool isValid() const { return m_valid; }
-  inline int userCount() const { return m_users.size(); }
   inline QByteArray id() const { return m_id; }
-  inline const QList<QByteArray>& users() { return m_users; }
   inline const QString& name() const { return m_name; }
-  inline void clear() { m_users.clear(); }
   inline void setSynced(bool synced) { m_synced = synced; }
+
+  // channels.
+  bool add(const QByteArray &id);
+  inline const QList<QByteArray>& channels() const { return m_channels; }
+  inline void clear()                              { m_channels.clear(); }
+  inline void remove(const QByteArray &id)         { m_channels.removeAll(id); }
+  inline void setChannels(const QList<QByteArray> &channels) { m_channels = channels; }
 
   // feeds.
   inline const Feeds& feeds() const { return m_feeds; }
@@ -86,9 +86,9 @@ private:
 
   bool m_synced;                   ///< true если канал синхронизирован.
   bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
-  Feeds m_feeds;                   ///< Фиды.
-  QByteArray m_id;                 ///< Идентификатор канала.
-  QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
+  Feeds m_feeds;                   ///< Таблица фидов.
+  QByteArray m_id;                 ///< Уникальный идентификатор канала.
+  QList<QByteArray> m_channels;    ///< Список идентификаторов каналов-подписчиков.
   QString m_name;                  ///< Имя канала.
 };
 

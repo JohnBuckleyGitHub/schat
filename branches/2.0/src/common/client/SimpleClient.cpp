@@ -160,16 +160,16 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
   QByteArray id = channel->id();
   ClientChannel ch = channels.value(id);
 
-  if (ch && ch->userCount())
+  if (ch && ch->channels().size())
     return false;
 
   channels[id] = channel;
-  channel->addUser(user->id());
+  channel->add(user->id());
   user->addChannel(id);
 
   Q_Q(SimpleClient);
 
-  if (channel->userCount() == 1) {
+  if (channel->channels().size() == 1) {
     if (!channel->name().startsWith(QLatin1String("~")))
       emit(q->join(id));
 
@@ -177,7 +177,7 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
     return true;
   }
 
-  QList<QByteArray> list = channel->users();
+  QList<QByteArray> list = channel->channels();
   list.removeAll(userId);
   int unsync = 0;
 
@@ -213,7 +213,7 @@ bool SimpleClientPrivate::channel()
   if (!channel->isValid())
     return false;
 
-  channel->setUsers(packet->users());
+  channel->setChannels(packet->users());
   addChannel(channel);
 
   return true;
@@ -435,7 +435,7 @@ bool SimpleClientPrivate::readUserData()
       return false;
 
     user->addChannel(channelId);
-    if (channel->addUser(id) || channel->isSynced())
+    if (channel->add(id) || channel->isSynced())
       emit(q->join(channelId, id));
   }
 
@@ -477,7 +477,7 @@ bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, con
   ClientChannel channel = channels.value(channelId);
 
   if (!user.isNull() && channel) {
-    channel->removeUser(user->id());
+    channel->remove(user->id());
     user->removeChannel(channel->id());
 
     if (clear) {
