@@ -74,6 +74,7 @@ bool Channel::removeUser(const QByteArray &id)
 bool Channel::setId(const QByteArray &id)
 {
   m_id = id;
+  m_feeds.setId(id);
   return validate(id.size() == SimpleID::DefaultSize);
 }
 
@@ -135,22 +136,4 @@ Topic Channel::topic() const
   topic.timestamp = m_data["topic"].toMap()["timestamp"].toLongLong();
   topic.topic = m_topic;
   return topic;
-}
-
-
-/*!
- * Добавления фида, если фид с этим именем уже существует, то он будет заменён.
- * Канал становится владельцем фида.
- *
- * \param feed Указатель на фид.
- * \return \b false если фид не корректен и не был добавлен.
- */
-bool Channel::addFeed(FeedPtr feed)
-{
-  if (!feed)
-    return false;
-
-  feed->h().setId(m_id);
-
-  return m_feeds.add(feed);
 }

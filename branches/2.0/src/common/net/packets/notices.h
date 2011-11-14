@@ -90,6 +90,7 @@ public:
 
   static QString status(int status);
 
+  inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
   inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
   inline void setStatus(int status) { m_status = status; }
