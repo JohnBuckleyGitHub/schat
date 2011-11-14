@@ -133,13 +133,13 @@ public:
   inline void setAccount(const QString &account) { m_account = account; }
 
   // m_json
-  inline QVariant json() const { return m_json; }
-  inline void setJson(const QVariant &json) { m_json = json; }
+//  inline QVariant json() const { return m_json; }
+//  inline void setJson(const QVariant &json) { m_json = json; }
 
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
-  bool m_valid;                         ///< true все данные корректны.
+  bool m_valid;                         ///< true все данные корректны. \deprecated Не использовать эту переменную.
   Groups m_groups;                      ///< Группы пользователя.
   int m_gender;                         ///< Пол и цвет иконки.
   int m_status;                         ///< Код статуса.
@@ -151,7 +151,6 @@ protected:
   QString m_nick;                       ///< Ник пользователя.
   QString m_userAgent;                  ///< User Agent пользователя. \deprecated Необходима поддержка множественного входа пользователя.
   quint8 m_serverNumber;                ///< Номер сервера.
-  QVariant m_json;                      ///< JSON данные.
 };
 
 typedef QSharedPointer<User> ClientUser;

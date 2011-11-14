@@ -153,7 +153,7 @@ QVariantMap Feeds::json(const QStringList &feeds, ClientUser user, bool body)
 
     QVariantMap current;
     if (b)
-      current = feed->data();
+      current = feed->json();
 
     if (!feed->h().json(current, user))
       continue;

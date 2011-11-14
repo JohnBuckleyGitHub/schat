@@ -22,6 +22,9 @@
 #include "Channel.h"
 #include "messages/AbstractMessage.h"
 
+/*!
+ * \deprecated Этот класс является устаревшим, в связи с заменой топика на фид.
+ */
 class SCHAT_CORE_EXPORT TopicMessage : public AbstractMessage
 {
 public:

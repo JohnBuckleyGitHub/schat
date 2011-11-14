@@ -69,8 +69,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
 
-  TopicMessage msg(m_channel->topic());
-  m_tabs->message(this, msg);
+//  TopicMessage msg(m_channel->topic());
+//  m_tabs->message(this, msg);
 
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
@@ -172,7 +172,7 @@ void ChannelTab::notify(int notice, const QVariant &data)
     m_chatView->evaluateJavaScript("showTopic", false);
     m_tabs->setCurrentWidget(this);
     m_bar->topic()->clear();
-    m_bar->topic()->insertHtml(m_channel->topic().topic + " ");
+//    m_bar->topic()->insertHtml(m_channel->topic().topic + " ");
     m_bar->setVisible(true);
     m_bar->topic()->adjustHeight();
     m_bar->topic()->setFocus();
@@ -193,23 +193,23 @@ void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
 
 void ChannelTab::reloaded()
 {
-  TopicMessage msg(m_channel->topic());
-  m_chatView->evaluateJavaScript(msg.js());
+//  TopicMessage msg(m_channel->topic());
+//  m_chatView->evaluateJavaScript(msg.js());
 }
 
 
 void ChannelTab::sendTopic(const QString &text)
 {
-  m_bar->setVisible(false);
-  if (!text.isEmpty())
-    m_chatView->evaluateJavaScript("showTopic", true);
-
-  if (m_channel->topic().topic == text)
-    return;
-
-  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
-  MessageData msg(UserUtils::userId(), id(), "topic", text);
-  m_client->send(msg, true);
+//  m_bar->setVisible(false);
+//  if (!text.isEmpty())
+//    m_chatView->evaluateJavaScript("showTopic", true);
+//
+//  if (m_channel->topic().topic == text)
+//    return;
+//
+//  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
+//  MessageData msg(UserUtils::userId(), id(), "topic", text);
+//  m_client->send(msg, true);
 }
 
 
@@ -232,11 +232,11 @@ void ChannelTab::split(const QList<QByteArray> &users)
 
 void ChannelTab::topicFocusOut()
 {
-  m_bar->setVisible(false);
-  if (!m_channel->topic().topic.isEmpty())
-    m_chatView->evaluateJavaScript("showTopic", true);
-
-  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
+//  m_bar->setVisible(false);
+//  if (!m_channel->topic().topic.isEmpty())
+//    m_chatView->evaluateJavaScript("showTopic", true);
+//
+//  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
 }
 
 

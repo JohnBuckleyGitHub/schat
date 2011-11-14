@@ -527,7 +527,6 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
   }
 
   if (reader.fields & UserWriter::JSonData) {
-    existUser->setJson(user->json());
     changed |= SimpleClient::JSonDataChanged;
   }
 

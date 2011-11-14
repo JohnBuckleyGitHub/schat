@@ -24,8 +24,6 @@ ServerChannel::ServerChannel(ClientChannel channel)
 {
   m_normalName = Storage::i()->normalize(name());
 
-  setData(channel->data().toMap());
-  setTopic(channel->topic().topic);
   setUsers(channel->users());
 }
 
