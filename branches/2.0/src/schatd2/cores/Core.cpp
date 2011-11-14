@@ -681,20 +681,21 @@ bool Core::message()
  */
 bool Core::readTopic()
 {
-  if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
-    return true;
-
-  ChatChannel channel = m_storage->channel(m_reader->dest());
-  if (!channel)
-    return true;
-
-  if (channel->topic().topic == m_messageData->text)
-    return true;
-
-  m_timestamp = Storage::timestamp();
-  channel->setTopic(m_messageData->text, m_reader->sender(), m_timestamp);
-  m_storage->update(channel);
-  return false;
+  return true;
+//  if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
+//    return true;
+//
+//  ChatChannel channel = m_storage->channel(m_reader->dest());
+//  if (!channel)
+//    return true;
+//
+//  if (channel->topic().topic == m_messageData->text)
+//    return true;
+//
+//  m_timestamp = Storage::timestamp();
+//  channel->setTopic(m_messageData->text, m_reader->sender(), m_timestamp);
+//  m_storage->update(channel);
+//  return false;
 }
 
 

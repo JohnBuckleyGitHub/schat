@@ -66,6 +66,7 @@ public:
   virtual ~Feed() {}
 
   virtual bool isValid() const;
+  virtual QVariantMap json() const { return m_data; }
 
   inline const FeedHeader& h() const       { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }

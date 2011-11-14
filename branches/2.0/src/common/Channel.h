@@ -25,6 +25,9 @@
 
 #include "feeds/Feed.h"
 
+/*!
+ * \deprecated Этот класс является устаревшим, в связи с заменой топика на фид.
+ */
 class Topic
 {
 public:
@@ -64,8 +67,6 @@ public:
   bool removeUser(const QByteArray &id);
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
-  bool setTopic(const QString &topic);
-  bool setTopic(const QString &topic, const QByteArray &authorId, qint64 timestamp = 0);
   bool setUsers(const QList<QByteArray> &users);
   inline bool isSynced() const { return m_synced; }
   inline bool isValid() const { return m_valid; }
@@ -73,11 +74,8 @@ public:
   inline QByteArray id() const { return m_id; }
   inline const QList<QByteArray>& users() { return m_users; }
   inline const QString& name() const { return m_name; }
-  inline QVariant data() const { return m_data; }
   inline void clear() { m_users.clear(); }
-  inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setSynced(bool synced) { m_synced = synced; }
-  Topic topic() const;
 
   // feeds.
   inline const Feeds& feeds() const { return m_feeds; }
@@ -92,9 +90,6 @@ private:
   QByteArray m_id;                 ///< Идентификатор канала.
   QList<QByteArray> m_users;       ///< Список идентификаторов пользователей в канале.
   QString m_name;                  ///< Имя канала.
-
-  QString m_topic;                 ///< Тема канала. \deprecated Перенести хранение топика в фид.
-  QVariantMap m_data;              ///< JSON данные канала. \deprecated Перенести хранение данныех в фиды.
 };
 
 typedef QSharedPointer<Channel> ClientChannel;

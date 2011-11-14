@@ -96,9 +96,6 @@ void UserWriter::write(User *user, int options)
     put(user->groups().toString());
     put(user->account());
   }
-
-  if (options & JSonData)
-    put(user->json());
 }
 
 
@@ -121,9 +118,6 @@ UserReader::UserReader(PacketReader *reader)
   }
   else if (user.status() == User::OfflineStatus)
     user.setStatus(User::OnlineStatus);
-
-  if (fields & UserWriter::JSonData)
-    user.setJson(reader->json());
 
   if (fields & UserWriter::AuthData)
     cookie = reader->id();

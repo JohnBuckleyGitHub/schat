@@ -57,7 +57,6 @@ User::User(const User *other)
   , m_nick(other->nick())
   , m_userAgent(other->userAgent())
   , m_serverNumber(other->serverNumber())
-  , m_json(other->json())
 {
 }
 

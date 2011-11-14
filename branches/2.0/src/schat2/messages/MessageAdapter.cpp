@@ -392,17 +392,17 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
 
 void MessageAdapter::readTopic(const MessageData &data)
 {
-  ClientChannel channel = m_client->channel(data.destId());
-  if (!channel)
-    return;
-
-  if (channel->topic().topic == data.text)
-    return;
-
-  channel->setTopic(data.text, data.senderId, data.timestamp);
-  TopicMessage msg(channel->topic());
-  emit message(msg);
-  emit channelDataChanged(data.senderId, channel->id());
+//  ClientChannel channel = m_client->channel(data.destId());
+//  if (!channel)
+//    return;
+//
+//  if (channel->topic().topic == data.text)
+//    return;
+//
+//  channel->setTopic(data.text, data.senderId, data.timestamp);
+//  TopicMessage msg(channel->topic());
+//  emit message(msg);
+//  emit channelDataChanged(data.senderId, channel->id());
 }
 
 

@@ -183,7 +183,7 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
 
 /*!
  * Удаление пользователя.
- * Пользователь удаляется из таблиц m_users, m_nicks и m_sessions,
+ * Пользователь удаляется из таблиц m_users, m_nicks,
  */
 bool Storage::remove(ChatUser user)
 {
