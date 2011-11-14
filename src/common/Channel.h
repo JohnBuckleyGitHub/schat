@@ -80,9 +80,8 @@ public:
   Topic topic() const;
 
   // feeds.
-  bool addFeed(FeedPtr feed);
-  inline bool addFeed(Feed *feed) { return addFeed(FeedPtr(feed)); }
   inline const Feeds& feeds() const { return m_feeds; }
+  inline Feeds& feeds() { return m_feeds; }
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }

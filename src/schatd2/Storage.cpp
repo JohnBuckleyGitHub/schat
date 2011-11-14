@@ -471,8 +471,8 @@ ChatChannel Storage::channel(const QString &name)
   channel = this->channel(id);
   if (!channel) {
     channel = ChatChannel(new ServerChannel(id, name));
-    channel->addFeed(new Feed("topic", 667));
-    channel->addFeed(new Feed("rating", Storage::timestamp()));
+    channel->feeds().add(new Feed("topic", 667));
+    channel->feeds().add(new Feed("rating", Storage::timestamp()));
 
     m_db->add(channel);
     m_channels[id] = channel;

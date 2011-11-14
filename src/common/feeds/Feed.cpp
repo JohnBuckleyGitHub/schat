@@ -31,19 +31,43 @@ FeedHeader::FeedHeader()
 }
 
 
-QVariantMap FeedHeader::json(ClientUser user) const
+bool FeedHeader::isValid() const
 {
-  QVariantMap out;
+  if (m_name.isEmpty())
+    return false;
+
+  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
+    return false;
+
+  return true;
+}
+
+
+bool FeedHeader::json(QVariantMap &out, ClientUser user) const
+{
   int acl = m_acl.acl();
   if (user) {
     acl = m_acl.match(user);
     if (!acl)
-      return out;
+      return false;
   }
 
   out["acl"]  = acl;
   out["date"] = m_date;
 
+  return true;
+}
+
+
+/*!
+ * Получение заголовка фида в JSON формате.
+ *
+ * \return JSON данные или пустые данные, если фид не доступен для данного пользователя.
+ */
+QVariantMap FeedHeader::json(ClientUser user) const
+{
+  QVariantMap out;
+  json(out, user);
   return out;
 }
 
@@ -62,18 +86,6 @@ qint64 FeedHeader::timestamp()
 }
 
 
-bool FeedHeader::isValid() const
-{
-  if (m_name.isEmpty())
-    return false;
-
-  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
-    return false;
-
-  return true;
-}
-
-
 Feed::Feed()
 {
 }
@@ -83,6 +95,7 @@ Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
   m_header.setDate(date);
+  m_data["example"] = true;
 }
 
 
@@ -100,6 +113,8 @@ bool Feeds::add(FeedPtr feed)
   if (!feed)
     return false;
 
+  feed->h().setId(m_id);
+
   if (!feed->isValid())
     return false;
 
@@ -108,20 +123,45 @@ bool Feeds::add(FeedPtr feed)
 }
 
 
-QVariantMap Feeds::headers(ClientUser user) const
+QVariantMap Feeds::json(ClientUser user, bool body)
 {
-  QVariantMap map;
+  return json(m_feeds.keys(), user, body);
+}
 
-  QHashIterator<QString, FeedPtr> i(m_feeds);
-  while (i.hasNext()) {
-    i.next();
-    QVariantMap header = i.value()->h().json(user);
-    if (!header.isEmpty()) {
-      map[i.key()] = header;
+
+QVariantMap Feeds::json(const QStringList &feeds, ClientUser user, bool body)
+{
+  if (feeds.isEmpty())
+    return QVariantMap();
+
+  QVariantMap json;
+  for (int i = 0; i < feeds.size(); ++i) {
+    FeedPtr feed = m_feeds.value(feeds.at(i));
+    if (!feed)
+      continue;
+
+    bool b = body;
+
+    if (user) {
+      int acl = feed->h().acl().match(user);
+      if (!acl)
+        continue;
+
+      if (!(acl & Acl::Read))
+        b = false;
     }
+
+    QVariantMap current;
+    if (b)
+      current = feed->data();
+
+    if (!feed->h().json(current, user))
+      continue;
+
+    json[feeds.at(i)] = current;
   }
 
-  return map;
+  return merge("feeds", json);
 }
 
 
