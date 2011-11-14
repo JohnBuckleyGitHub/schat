@@ -43,34 +43,6 @@ Channel::~Channel()
 }
 
 
-bool Channel::addUser(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (m_users.contains(id))
-    return false;
-
-  SCHAT_DEBUG_STREAM(this << "Channel::addUser()" << SimpleID::encode(id))
-  m_users.append(id);
-  return true;
-}
-
-
-bool Channel::removeUser(const QByteArray &id)
-{
-  if (id.size() != SimpleID::DefaultSize)
-    return false;
-
-  if (!m_users.contains(id))
-    return false;
-
-  SCHAT_DEBUG_STREAM(this << "Channel::removeUser()" << SimpleID::encode(id))
-  m_users.removeAll(id);
-  return true;
-}
-
-
 bool Channel::setId(const QByteArray &id)
 {
   m_id = id;
@@ -95,11 +67,15 @@ bool Channel::setName(const QString &name)
 }
 
 
-bool Channel::setUsers(const QList<QByteArray> &users)
+bool Channel::add(const QByteArray &id)
 {
-  if (users.size() == 0)
-    return validate(false);
+  int type = SimpleID::typeOf(id);
+  if (type != SimpleID::ChannelId && type != SimpleID::UserId)
+    return false;
 
-  m_users = users;
-  return validate(true);
+  if (m_channels.contains(id))
+    return false;
+
+  m_channels.append(id);
+  return true;
 }

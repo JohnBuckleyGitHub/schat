@@ -415,12 +415,12 @@ void TabWidget::synced(const QByteArray &channelId)
     return;
 
   qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
-  if (channel->userCount() == 1) {
+  if (channel->channels().size() == 1) {
     tab->synced();
     return;
   }
 
-  QList<QByteArray> users = channel->users();
+  QList<QByteArray> users = channel->channels();
   for (int i = 0; i < users.size(); ++i) {
     ClientUser user = m_client->user(users.at(i));
     if (!user)

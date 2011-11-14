@@ -245,7 +245,7 @@ void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
   if (!(changed & SimpleClient::UserNickChanged))
     return;
 
-  if (!m_channel->users().contains(userId))
+  if (!m_channel->channels().contains(userId))
     return;
 
   ClientUser user = UserUtils::user(userId);

@@ -311,7 +311,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   if (!user)
     return false;
 
-  channel->addUser(userId);
+  channel->add(userId);
   user->addChannel(channel->id());
 
 //  ChatUser author = Storage::i()->user(channel->topic().author, true);
@@ -325,7 +325,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
   header.setData(channel->feeds().json(user, false));
   send(user, header.data(m_sendStream));
 
-  if (channel->userCount() > 1) {
+  if (channel->channels().size() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
     send(channel, writer.data()); // Отправка всем пользователям в канале данных нового пользователя.
 
@@ -345,7 +345,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 ChatChannel Core::addChannel(ChatUser user)
 {
   ChatChannel channel = m_storage->channel(user);
-  if (channel->userCount() > 1) {
+  if (channel->channels().size() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
     send(channel, writer.data());
   }
@@ -372,14 +372,14 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
     if (!channel)
       continue;
 
-    foreach (QByteArray id, channel->users()) {
+    foreach (QByteArray id, channel->channels()) {
       if (!users.contains(id))
         users.append(id);
     }
   }
 
   QList<QByteArray> diff; // Список пользователей данные о которых не имеются у \p user.
-  foreach (QByteArray id, channel->users()) {
+  foreach (QByteArray id, channel->channels()) {
     if (!users.contains(id))
       diff.append(id);
   }
@@ -484,7 +484,7 @@ void Core::acceptAuth(const AuthResult &result)
   ChatChannel channel = addChannel(user);
   QList<QByteArray> packets;
 
-  if (channel->userCount() > 1)
+  if (channel->channels().size() > 1)
     packets = userDataToSync(channel, user);
 
   if (result.packet) {

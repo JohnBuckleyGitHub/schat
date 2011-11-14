@@ -25,7 +25,7 @@
 ChannelPacket::ChannelPacket(ClientChannel channel, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(channel->id(), dest, command, time)
   , m_channelId(channel->id())
-  , m_users(channel->users())
+  , m_users(channel->channels())
 {
   m_type = ChannelType;
   setText(channel->name());
