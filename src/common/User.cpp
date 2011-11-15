@@ -24,7 +24,6 @@
 
 User::User()
   : m_valid(true)
-  , m_gender(Male)
   , m_status(OfflineStatus)
   , m_serverNumber(0)
 {
@@ -35,7 +34,6 @@ User::User()
 
 User::User(const QString &nick)
   : m_valid(true)
-  , m_gender(Male)
   , m_status(OfflineStatus)
   , m_serverNumber(0)
 {
@@ -48,7 +46,7 @@ User::User(const QString &nick)
 User::User(const User *other)
   : m_valid(other->isValid())
   , m_groups(other->groups())
-  , m_gender(other->rawGender())
+  , m_gender(other->gender().raw())
   , m_status(other->status())
   , m_id(other->id())
   , m_channels(other->channels())
@@ -117,65 +115,65 @@ QString User::defaultNick()
 }
 
 
-int User::color() const
-{
-  if (m_gender >= Unknown)
-    return Default;
-
-  int out = m_gender;
-  if (gender() == Female)
-    out -= Female;
-
-  if (out > Thief)
-    return Default;
-
-  return out;
-}
-
-
-int User::gender() const
-{
-  if (m_gender >= Unknown && m_gender <= Bot)
-    return m_gender;
-
-  if (m_gender > Bot)
-    return Unknown;
-
-  if (m_gender < Female)
-    return Male;
-
-  return Female;
-}
+//int User::color() const
+//{
+//  if (m_gender >= Unknown)
+//    return Default;
+//
+//  int out = m_gender;
+//  if (gender() == Female)
+//    out -= Female;
+//
+//  if (out > Thief)
+//    return Default;
+//
+//  return out;
+//}
 
 
-void User::setColor(Color color)
-{
-  if (m_gender >= Unknown)
-    return;
+//int User::gender() const
+//{
+//  if (m_gender >= Unknown && m_gender <= Bot)
+//    return m_gender;
+//
+//  if (m_gender > Bot)
+//    return Unknown;
+//
+//  if (m_gender < Female)
+//    return Male;
+//
+//  return Female;
+//}
 
-  m_gender = gender() + color;
-}
+
+//void User::setColor(Color color)
+//{
+//  if (m_gender >= Unknown)
+//    return;
+//
+//  m_gender = gender() + color;
+//}
 
 
-void User::setColor(int color)
-{
-  if (color < 0 || color > Thief)
-    color = Default;
-
-  setColor(static_cast<Color>(color));
-}
+//void User::setColor(int color)
+//{
+//  if (color < 0 || color > Thief)
+//    color = Default;
+//
+//  setColor(static_cast<Color>(color));
+//}
 
 
 /*!
  * Установка пола.
  */
-void User::setGender(Gender gender)
-{
-  if (gender >= Unknown)
-    m_gender = gender;
-  else
-    m_gender = gender + color();
-}
+//void User::setGender(Gender gender)
+//{
+//  if (gender >= Unknown)
+//    m_gender = gender;
+//  else
+//    m_gender = gender + color();
+//}
 
 
 bool User::addChannel(const QByteArray &id)

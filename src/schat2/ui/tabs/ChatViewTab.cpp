@@ -50,7 +50,7 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
     return;
 
   QString text;
-  if (user->gender() == User::Female)
+  if (user->gender().value() == Gender::Female)
     text = tr("has joined", "Female");
   else
     text = tr("has joined", "Male");
@@ -66,7 +66,7 @@ void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
     return;
 
   QString text;
-  if (user->gender() == User::Female)
+  if (user->gender().value() == Gender::Female)
     text = tr("has left", "Female");
   else
     text = tr("has left", "Male");
@@ -82,7 +82,7 @@ void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
     return;
 
   QString text;
-  if (user->gender() == User::Female)
+  if (user->gender().value() == Gender::Female)
     text = tr("has quit chat", "Female");
   else
     text = tr("has quit chat", "Male");

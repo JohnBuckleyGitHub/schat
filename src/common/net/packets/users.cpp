@@ -85,7 +85,7 @@ void UserWriter::write(User *user, int options)
 {
   put<quint8>(options);
   put<quint8>(0);
-  put<quint8>(user->rawGender());
+  put<quint8>(user->gender().raw());
   put<quint8>(user->status());
   put(user->nick());
 
@@ -105,7 +105,7 @@ UserReader::UserReader(PacketReader *reader)
   reader->get<quint8>(); // reserved.
 
   user.setId(reader->sender());
-  user.setRawGender(reader->get<quint8>());
+  user.gender().setRaw(reader->get<quint8>());
   user.setStatus(reader->get<quint8>());
   user.setNick(reader->text());
 

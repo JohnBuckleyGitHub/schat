@@ -66,7 +66,7 @@ ClientUser HistoryDB::user(const QByteArray &id) const
   ClientUser user(new User());
   user->setId(id);
   user->setNick(query.value(0).toString());
-  user->setRawGender(query.value(1).toULongLong());
+  user->gender().setRaw(query.value(1).toULongLong());
   user->setHost(query.value(2).toString());
   user->setUserAgent(query.value(3).toString());
 
@@ -133,7 +133,7 @@ qint64 HistoryDB::addUser(const QByteArray &id)
 
   query.bindValue(QLatin1String(":userId"), id);
   query.bindValue(QLatin1String(":nick"), user->nick());
-  query.bindValue(QLatin1String(":gender"), user->rawGender());
+  query.bindValue(QLatin1String(":gender"), user->gender().raw());
   query.bindValue(QLatin1String(":host"), user->host());
   query.bindValue(QLatin1String(":status"), user->statusToString());
   query.bindValue(QLatin1String(":userAgent"), user->userAgent());
@@ -171,7 +171,7 @@ qint64 HistoryDB::updateUser(const QByteArray &id)
 
   query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
   query.bindValue(QLatin1String(":nick"), user->nick());
-  query.bindValue(QLatin1String(":gender"), user->rawGender());
+  query.bindValue(QLatin1String(":gender"), user->gender().raw());
   query.bindValue(QLatin1String(":host"), user->host());
   query.bindValue(QLatin1String(":status"), user->statusToString());
   query.bindValue(QLatin1String(":userAgent"), user->userAgent());

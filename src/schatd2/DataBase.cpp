@@ -168,7 +168,7 @@ ChatUser DataBase::user(qint64 id)
   user->groups().set(query.value(2).toString());
   user->setNick(query.value(3).toString());
   user->setNormalNick(query.value(4).toString());
-  user->setRawGender(query.value(5).toInt());
+  user->gender().setRaw(query.value(5).toInt());
   user->setHost(query.value(6).toString());
   user->setAccount(query.value(7).toString());
   user->setUserAgent(query.value(8).toString());
@@ -215,7 +215,7 @@ qint64 DataBase::add(ChatUser user)
   query.bindValue(QLatin1String(":groups"),     user->groups().toString());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
-  query.bindValue(QLatin1String(":gender"),     user->rawGender());
+  query.bindValue(QLatin1String(":gender"),     user->gender().raw());
   query.bindValue(QLatin1String(":host"),       user->host());
   query.bindValue(QLatin1String(":userAgent"),  user->userAgent());
   query.exec();
@@ -278,7 +278,7 @@ void DataBase::update(ChatUser user)
   query.bindValue(QLatin1String(":groups"),     user->groups().toString());
   query.bindValue(QLatin1String(":nick"),       user->nick());
   query.bindValue(QLatin1String(":normalNick"), user->normalNick());
-  query.bindValue(QLatin1String(":gender"),     user->rawGender());
+  query.bindValue(QLatin1String(":gender"),     user->gender().raw());
   query.bindValue(QLatin1String(":host"),       user->host());
   query.bindValue(QLatin1String(":account"),    user->account());
   query.bindValue(QLatin1String(":userAgent"),  user->userAgent());

@@ -549,7 +549,7 @@ bool Core::updateUserData(ChatUser user, User *other)
     rename = true;
   }
 
-  user->setRawGender(other->rawGender());
+  user->gender().setRaw(other->gender().raw());
   if (rename) {
     user->setNick(other->nick());
     m_storage->rename(user);

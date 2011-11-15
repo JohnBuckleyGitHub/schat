@@ -25,6 +25,7 @@
 #include <QVariant>
 
 #include "acl/Groups.h"
+#include "Gender.h"
 #include "schat.h"
 
 /*!
@@ -41,27 +42,27 @@ public:
   };
 
   /// Пол пользователя.
-  enum Gender {
-    Male = 0,      ///< Мужской пол.
-    Female = 100,  ///< Женский пол.
-    Unknown = 150, ///< Неизвестный пол.
-    Ghost = 151,   ///< Привидение.
-    Bot = 152      ///< Бот.
-  };
+//  enum Gender {
+//    Male = 0,      ///< Мужской пол.
+//    Female = 100,  ///< Женский пол.
+//    Unknown = 150, ///< Неизвестный пол.
+//    Ghost = 151,   ///< Привидение.
+//    Bot = 152      ///< Бот.
+//  };
 
   /// Цветовой вариант иконки пола.
-  enum Color {
-    Default,
-    Black,
-    Gray,
-    Green,
-    Red,
-    White,
-    Yellow,
-    Medical,
-    Nude,
-    Thief
-  };
+//  enum Color {
+//    Default,
+//    Black,
+//    Gray,
+//    Green,
+//    Red,
+//    White,
+//    Yellow,
+//    Medical,
+//    Nude,
+//    Thief
+//  };
 
   /// Статус.
   enum Status {
@@ -92,14 +93,8 @@ public:
   static bool isValidNick(const QString &nick);
   static QString defaultNick();
 
-  // m_gender.
-  inline int rawGender() const         { return m_gender; }
-  inline void setRawGender(int gender) { m_gender = gender; }
-  int color() const;
-  int gender() const;
-  void setColor(Color color);
-  void setColor(int color);
-  void setGender(Gender gender);
+  inline const Gender& gender() const { return m_gender; }
+  inline Gender& gender() { return m_gender; }
 
   // m_channels.
   bool addChannel(const QByteArray &id);
@@ -132,16 +127,12 @@ public:
   inline QString account() const { return m_account; }
   inline void setAccount(const QString &account) { m_account = account; }
 
-  // m_json
-//  inline QVariant json() const { return m_json; }
-//  inline void setJson(const QVariant &json) { m_json = json; }
-
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_valid;                         ///< true все данные корректны. \deprecated Не использовать эту переменную.
   Groups m_groups;                      ///< Группы пользователя.
-  int m_gender;                         ///< Пол и цвет иконки.
+  Gender m_gender;                      ///< Пол и цвет иконки.
   int m_status;                         ///< Код статуса.
   QByteArray m_id;                      ///< Идентификатор пользователя.
   QHash<int, QString> m_statuses;       ///< Статусы.

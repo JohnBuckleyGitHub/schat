@@ -48,8 +48,8 @@ SlaveNode::SlaveNode(QObject *parent)
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
-  m_uplink->user()->setRawGender(m_settings->value(QLatin1String("SlaveNode/Number"), 1).toInt());
-  m_storage->serverData()->setNumber(m_uplink->user()->rawGender());
+  m_uplink->user()->gender().setRaw(m_settings->value(QLatin1String("SlaveNode/Number"), 1).toInt());
+  m_storage->serverData()->setNumber(m_uplink->user()->gender().raw());
 
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));

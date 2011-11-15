@@ -53,7 +53,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
 
     ChatUser slave = Storage::i()->user(m_packetsEvent->userId());
     if (slave)
-      user->setServerNumber(slave->rawGender());
+      user->setServerNumber(slave->gender().raw());
 
     AuthResult r = result;
     r.option = 0;
@@ -118,7 +118,7 @@ void MasterNode::release(SocketReleaseEvent *event)
     m_storage->remove(slave);
     m_storage->removeSlave(event->userId());
 
-    quint8 number = slave->rawGender();
+    quint8 number = slave->gender().raw();
     QHash<QByteArray, ChatUser> all = m_storage->users();
     QList<ChatUser> users;
 

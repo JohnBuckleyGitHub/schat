@@ -76,7 +76,7 @@ int AnonymousAuth::type() const
 void AnonymousAuth::update(ServerUser *user, const AuthRequest &data)
 {
   user->setNick(data.nick);
-  user->setRawGender(data.gender);
+  user->gender().setRaw(data.gender);
   user->setStatus(data.status);
   user->addSocket(m_core->packetsEvent()->socket());
   user->setUserAgent(data.userAgent);
