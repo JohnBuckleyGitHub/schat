@@ -219,10 +219,10 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
   if (!chan)
     return false;
 
-  chan->remove(userId);
+  chan->channels().remove(userId);
   user->removeChannel(channelId);
 
-  if (chan->channels().size() == 0)
+  if (chan->channels().all().size() == 0)
     removeChannel(chan->id());
 
   return true;
@@ -325,7 +325,7 @@ QList<QByteArray> Storage::users(const QByteArray &id)
     if (!channel)
       continue;
 
-    foreach (QByteArray id, channel->channels()) {
+    foreach (QByteArray id, channel->channels().all()) {
       if (!out.contains(id))
         out.append(id);
     }
@@ -435,7 +435,7 @@ ChatChannel Storage::channel(ChatUser user)
   }
 
   user->addChannel(id);
-  channel->add(user->id());
+  channel->channels().add(user->id());
 
   return channel;
 }
@@ -504,7 +504,7 @@ QList<quint64> Storage::sockets(ChatChannel channel)
   if (!channel)
     return out;
 
-  QList<QByteArray> users = channel->channels();
+  QList<QByteArray> users = channel->channels().all();
   for (int i = 0; i < users.size(); ++i) {
     ChatUser user = this->user(users.at(i));
     if (user)

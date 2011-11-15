@@ -22,6 +22,23 @@
 #include "net/SimpleID.h"
 #include "text/HtmlFilter.h"
 
+
+/*!
+ * Добавление идентификатора в список каналов.
+ */
+bool Channels::add(const QByteArray &id)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (m_channels.contains(id))
+    return false;
+
+  m_channels.append(id);
+  return true;
+}
+
+
 Channel::Channel()
   : m_synced(false)
   , m_valid(true)
@@ -67,15 +84,17 @@ bool Channel::setName(const QString &name)
 }
 
 
-bool Channel::add(const QByteArray &id)
+/*!
+ * Проверка идентификатора на принадлежность к допустимому типу.
+ *
+ * \param id Проверяемый идентификатор.
+ * \return Тип идентификатора, если он допустимый или 0.
+ */
+int Channel::isCompatibleId(const QByteArray &id)
 {
   int type = SimpleID::typeOf(id);
-  if (type != SimpleID::ChannelId && type != SimpleID::UserId)
-    return false;
+  if (type != SimpleID::ChannelId && type != SimpleID::UserId && type != SimpleID::ServerId)
+    return type;
 
-  if (m_channels.contains(id))
-    return false;
-
-  m_channels.append(id);
-  return true;
+  return 0;
 }
