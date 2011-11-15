@@ -49,6 +49,28 @@ public:
 };
 
 
+/*!
+ * Список каналов.
+ */
+class Channels
+{
+public:
+  Channels() {}
+
+  bool add(const QByteArray &id);
+  inline const QList<QByteArray>& all() const        { return m_channels; }
+  inline void clear()                                { m_channels.clear(); }
+  inline void remove(const QByteArray &id)           { m_channels.removeAll(id); }
+  inline void set(const QList<QByteArray> &channels) { m_channels = channels; }
+
+private:
+  QList<QByteArray> m_channels; ///< Список идентификаторов каналов-подписчиков.
+};
+
+
+/*!
+ * Базовый класс канала.
+ */
 class SCHAT_EXPORT Channel
 {
 public:
@@ -70,25 +92,21 @@ public:
   inline const QString& name() const { return m_name; }
   inline void setSynced(bool synced) { m_synced = synced; }
 
-  // channels.
-  bool add(const QByteArray &id);
-  inline const QList<QByteArray>& channels() const { return m_channels; }
-  inline void clear()                              { m_channels.clear(); }
-  inline void remove(const QByteArray &id)         { m_channels.removeAll(id); }
-  inline void setChannels(const QList<QByteArray> &channels) { m_channels = channels; }
-
-  // feeds.
+  inline Channels& channels() { return m_channels; }
+  inline const Channels& channels() const { return m_channels; }
   inline const Feeds& feeds() const { return m_feeds; }
   inline Feeds& feeds() { return m_feeds; }
+
+  static int isCompatibleId(const QByteArray &id);
 
 private:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
   bool m_synced;                   ///< true если канал синхронизирован.
   bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
+  Channels m_channels;             ///< Список каналов.
   Feeds m_feeds;                   ///< Таблица фидов.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
-  QList<QByteArray> m_channels;    ///< Список идентификаторов каналов-подписчиков.
   QString m_name;                  ///< Имя канала.
 };
 
