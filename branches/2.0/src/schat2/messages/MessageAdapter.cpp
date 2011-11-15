@@ -304,27 +304,27 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 
   if (!gender.isEmpty()) {
     if (gender == QLatin1String("male"))
-      user.setGender(User::Male);
+      user.gender().set(Gender::Male);
     else if (gender == QLatin1String("female"))
-      user.setGender(User::Female);
+      user.gender().set(Gender::Female);
     else if (gender == QLatin1String("ghost"))
-      user.setGender(User::Ghost);
+      user.gender().set(Gender::Ghost);
     else if (gender == QLatin1String("unknown"))
-      user.setGender(User::Unknown);
+      user.gender().set(Gender::Unknown);
     else if (gender == QLatin1String("bot"))
-      user.setGender(User::Bot);
+      user.gender().set(Gender::Bot);
     else
       return CommandArgsError;
   }
 
   if (!color.isEmpty()) {
-    user.setColor(UserUtils::color(color));
+    user.gender().setColor(UserUtils::color(color));
   }
 
-  if (m_client->user()->rawGender() == user.rawGender())
+  if (m_client->user()->gender().raw() == user.gender().raw())
     return NoSent;
 
-  m_settings->updateValue(QLatin1String("Profile/Gender"), user.rawGender());
+  m_settings->updateValue(QLatin1String("Profile/Gender"), user.gender().raw());
   return SentAsCommand;
 }
 

@@ -77,7 +77,7 @@ void UserItem::setSortData()
     prefix = QLatin1String("!");
   else if (m_user->status() == User::FreeForChatStatus)
     prefix = QLatin1String("4");
-  else if (m_user->gender() == User::Bot)
+  else if (m_user->gender().value() == Gender::Bot)
     prefix = QLatin1String("2");
 
   setData(prefix + m_user->nick().toLower());

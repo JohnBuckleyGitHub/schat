@@ -39,7 +39,7 @@ ServerUser::ServerUser(const QString &normalNick, const QByteArray &id, const Au
 {
   setId(id);
   setNick(data.nick);
-  setRawGender(data.gender);
+  m_gender.setRaw(data.gender);
   setStatus(data.status);
   addSocket(socket);
 }

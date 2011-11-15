@@ -109,7 +109,7 @@ QByteArray AuthReply::data(QDataStream *stream) const
 AuthRequest::AuthRequest(int authType, const QString &host, User *user, const QVariant &json)
   : AbstractPacket(json)
   , authType(authType)
-  , gender(user->rawGender())
+  , gender(user->gender().raw())
   , host(host)
   , nick(user->nick())
   , userAgent(SimpleID::userAgent())

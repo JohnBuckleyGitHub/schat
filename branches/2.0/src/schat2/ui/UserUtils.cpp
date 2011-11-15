@@ -131,7 +131,7 @@ int UserUtils::color(const QString &color)
 {
   int index = m_colors.indexOf(color);
   if (index == -1)
-    return User::Default;
+    return Gender::Default;
 
   return index;
 }
@@ -158,23 +158,23 @@ QByteArray UserUtils::userId()
 QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
 {
   QString file = QLatin1String(":/images/user");
-  int gender = user->gender();
-  int color  = user->color();
+  int gender = user->gender().value();
+  int color  = user->gender().color();
 
-  if (gender == User::Unknown) {
+  if (gender == Gender::Unknown) {
     file += QLatin1String("-unknown");
   }
-  else if (gender == User::Ghost) {
+  else if (gender == Gender::Ghost) {
     file += QLatin1String("-ghost");
   }
-  else if (gender == User::Bot) {
+  else if (gender == Gender::Bot) {
     file += QLatin1String("-bot");
   }
-  else if (color != User::Default) {
+  else if (color != Gender::Default) {
     file += QLatin1String("-") + m_colors.at(color);
   }
 
-  if (gender == User::Female)
+  if (gender == Gender::Female)
     file += QLatin1String("-female");
 
   file += QLatin1String(".png");

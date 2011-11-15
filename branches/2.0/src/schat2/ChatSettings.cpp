@@ -54,7 +54,7 @@ void ChatSettings::setClient(SimpleClient *client)
 
   m_user = m_client->user();
   m_user->setNick(value(QLatin1String("Profile/Nick")).toString());
-  m_user->setRawGender(value(QLatin1String("Profile/Gender")).toUInt());
+  m_user->gender().setRaw(value(QLatin1String("Profile/Gender")).toUInt());
   m_user->setStatus(value(QLatin1String("Profile/Status")).toString());
 
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
@@ -85,7 +85,7 @@ void ChatSettings::updateValue(const QString &key, const QVariant &value)
   if (key == QLatin1String("Profile/Nick"))
     user.setNick(value.toString());
   else if (key == QLatin1String("Profile/Gender"))
-    user.setRawGender(value.toInt());
+    user.gender().setRaw(value.toInt());
 
   update(&user);
 }
@@ -117,12 +117,12 @@ void ChatSettings::update(User *user, bool sync)
 
   if (sync) {
     m_client->setNick(user->nick());
-    m_user->setRawGender(user->rawGender());
+    m_user->gender().setRaw(user->gender().raw());
     m_user->setStatus(user->statusToString());
   }
 
   setValue(QLatin1String("Profile/Nick"), m_client->nick());
-  setValue(QLatin1String("Profile/Gender"), user->rawGender());
+  setValue(QLatin1String("Profile/Gender"), user->gender().raw());
   setValue(QLatin1String("Profile/Status"), user->statusToString());
 }
 

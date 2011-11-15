@@ -514,7 +514,7 @@ void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reade
     changed |= SimpleClient::UserNickChanged;
   }
 
-  existUser->setRawGender(user->rawGender());
+  existUser->gender().setRaw(user->gender().raw());
   existUser->setStatus(user->status());
 
   if (reader.fields & UserWriter::StaticData) {

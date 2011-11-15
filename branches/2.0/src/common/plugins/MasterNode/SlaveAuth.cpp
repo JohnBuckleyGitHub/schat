@@ -43,7 +43,7 @@ AuthResult SlaveAuth::auth(const AuthRequest &data)
 
     for (int i = 0; i < slaves.size(); ++i) { // Вторичные серверы не могут использовать один номер сервера.
       ChatUser slave = storage->user(slaves.at(i));
-      if (slave && slave->rawGender() == data.gender)
+      if (slave && slave->gender().raw() == data.gender)
         return AuthResult(Notice::Forbidden, data.id);
     }
 

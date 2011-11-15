@@ -25,6 +25,7 @@ HEADERS += \
     client/NetworkPool.h \
     feeds/Feed.h \
     FileLocations.h \
+    Gender.h \
     k8json/k8json.h \
     net/PacketReader.h \
     net/packets/AbstractPacket.h \
@@ -59,6 +60,7 @@ SOURCES += \
     client/NetworkPool.cpp \
     feeds/Feed.cpp \
     FileLocations.cpp \
+    Gender.cpp \
     k8json/k8json.cpp \
     net/PacketReader.cpp \
     net/packets/accounts.cpp  \

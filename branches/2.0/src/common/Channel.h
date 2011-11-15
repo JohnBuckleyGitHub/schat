@@ -24,6 +24,7 @@
 #include <QVariant>
 
 #include "feeds/Feed.h"
+#include "Gender.h"
 
 /*!
  * \deprecated Этот класс является устаревшим, в связи с заменой топика на фид.
@@ -52,7 +53,7 @@ public:
 /*!
  * Список каналов.
  */
-class Channels
+class SCHAT_EXPORT Channels
 {
 public:
   Channels() {}
@@ -95,7 +96,9 @@ public:
   inline Channels& channels() { return m_channels; }
   inline const Channels& channels() const { return m_channels; }
   inline const Feeds& feeds() const { return m_feeds; }
+  inline const Gender& gender() const { return m_gender; }
   inline Feeds& feeds() { return m_feeds; }
+  inline Gender& gender() { return m_gender; }
 
   static int isCompatibleId(const QByteArray &id);
 
@@ -106,6 +109,7 @@ private:
   bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
   Channels m_channels;             ///< Список каналов.
   Feeds m_feeds;                   ///< Таблица фидов.
+  Gender m_gender;                 ///< Пол и цвет иконки.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
   QString m_name;                  ///< Имя канала.
 };
