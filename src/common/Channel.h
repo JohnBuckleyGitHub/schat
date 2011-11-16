@@ -83,14 +83,16 @@ public:
 
   Channel();
   Channel(const QByteArray &id, const QString &name);
-  virtual ~Channel();
+  virtual ~Channel() {}
+  virtual bool isValid() const;
+
+  inline bool isSynced() const { return m_synced; }
+  inline const QString& name() const { return m_name; }
+  inline int type() const { return m_type; }
+  inline QByteArray id() const { return m_id; }
 
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
-  inline bool isSynced() const { return m_synced; }
-  inline bool isValid() const { return m_valid; }
-  inline QByteArray id() const { return m_id; }
-  inline const QString& name() const { return m_name; }
   inline void setSynced(bool synced) { m_synced = synced; }
 
   inline Channels& channels() { return m_channels; }
@@ -103,13 +105,11 @@ public:
   static int isCompatibleId(const QByteArray &id);
 
 private:
-  inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
-
   bool m_synced;                   ///< true если канал синхронизирован.
-  bool m_valid;                    ///< true все данные корректны. \deprecated Не использовать эту переменную.
   Channels m_channels;             ///< Список каналов.
   Feeds m_feeds;                   ///< Таблица фидов.
   Gender m_gender;                 ///< Пол и цвет иконки.
+  int m_type;                      ///< Тип канала, соответствует типу идентификатора канала \sa SimpleID::Types.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
   QString m_name;                  ///< Имя канала.
 };

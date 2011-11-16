@@ -109,7 +109,7 @@ int DataBase::start()
     "  channelId  BLOB    NOT NULL UNIQUE,"
     "  name       TEXT    UNIQUE,"
     "  expired    INTEGER DEFAULT ( 0 ),"
-    "  feeds      TEXT"
+    "  feeds      BLOB"
     ");"));
 
     Storage::i()->channel(QLatin1String("Main"));
