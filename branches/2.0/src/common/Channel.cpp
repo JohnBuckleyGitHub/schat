@@ -28,7 +28,7 @@
  */
 bool Channels::add(const QByteArray &id)
 {
-  if (!Channel::isCompatibleId(id))
+  if (Channel::isCompatibleId(id) == SimpleID::InvalidId)
     return false;
 
   if (m_channels.contains(id))
@@ -41,46 +41,59 @@ bool Channels::add(const QByteArray &id)
 
 Channel::Channel()
   : m_synced(false)
-  , m_valid(true)
+  , m_type(SimpleID::InvalidId)
 {
 }
 
 
 Channel::Channel(const QByteArray &id, const QString &name)
   : m_synced(false)
-  , m_valid(true)
+  , m_type(SimpleID::InvalidId)
 {
   setId(id);
   setName(name);
 }
 
 
-Channel::~Channel()
+bool Channel::isValid() const
 {
+  if (m_name.isEmpty())
+    return false;
+
+  if (m_id.isEmpty())
+    return false;
+
+  return true;
 }
 
 
+/*!
+ * Установка идентификатора канала.
+ */
 bool Channel::setId(const QByteArray &id)
 {
+  int type = Channel::isCompatibleId(id);
+  if (type == SimpleID::InvalidId)
+    return false;
+
   m_id = id;
+  m_type = type;
   m_feeds.setId(id);
-  return validate(id.size() == SimpleID::DefaultSize);
+  return true;
 }
 
 
 bool Channel::setName(const QString &name)
 {
   if (name.isEmpty())
-    return validate(false);
+    return false;
 
-  if (name.size() > (MaxNameLength * 2))
-    return validate(false);
+  QString tmp = name.simplified().left(MaxNameLength);
+  if (tmp.size() < MinNameLengh)
+    return false;
 
-  m_name = name.simplified().left(MaxNameLength);
-  if (name.size() < MinNameLengh)
-    return validate(false);
-
-  return validate(true);
+  m_name = tmp;
+  return true;
 }
 
 
@@ -88,13 +101,13 @@ bool Channel::setName(const QString &name)
  * Проверка идентификатора на принадлежность к допустимому типу.
  *
  * \param id Проверяемый идентификатор.
- * \return Тип идентификатора, если он допустимый или 0.
+ * \return Тип идентификатора или SimpleID::InvalidId если идентификатор не совместим или не корректен.
  */
 int Channel::isCompatibleId(const QByteArray &id)
 {
   int type = SimpleID::typeOf(id);
-  if (type != SimpleID::ChannelId && type != SimpleID::UserId && type != SimpleID::ServerId)
+  if (type == SimpleID::ChannelId || type == SimpleID::UserId || type == SimpleID::ServerId)
     return type;
 
-  return 0;
+  return SimpleID::InvalidId;
 }

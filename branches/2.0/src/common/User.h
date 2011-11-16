@@ -41,29 +41,6 @@ public:
     MaxByeMsgLength = 128 ///< Максимальная длина сообщения при выходе.
   };
 
-  /// Пол пользователя.
-//  enum Gender {
-//    Male = 0,      ///< Мужской пол.
-//    Female = 100,  ///< Женский пол.
-//    Unknown = 150, ///< Неизвестный пол.
-//    Ghost = 151,   ///< Привидение.
-//    Bot = 152      ///< Бот.
-//  };
-
-  /// Цветовой вариант иконки пола.
-//  enum Color {
-//    Default,
-//    Black,
-//    Gray,
-//    Green,
-//    Red,
-//    White,
-//    Yellow,
-//    Medical,
-//    Nude,
-//    Thief
-//  };
-
   /// Статус.
   enum Status {
     OfflineStatus,
