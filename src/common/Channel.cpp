@@ -28,7 +28,7 @@
  */
 bool Channels::add(const QByteArray &id)
 {
-  if (Channel::isCompatibleId(id) == SimpleID::InvalidId)
+  if (!Channel::isCompatibleId(id))
     return false;
 
   if (m_channels.contains(id))
@@ -73,7 +73,7 @@ bool Channel::isValid() const
 bool Channel::setId(const QByteArray &id)
 {
   int type = Channel::isCompatibleId(id);
-  if (type == SimpleID::InvalidId)
+  if (type == 0)
     return false;
 
   m_id = id;
@@ -101,7 +101,7 @@ bool Channel::setName(const QString &name)
  * Проверка идентификатора на принадлежность к допустимому типу.
  *
  * \param id Проверяемый идентификатор.
- * \return Тип идентификатора или SimpleID::InvalidId если идентификатор не совместим или не корректен.
+ * \return Тип идентификатора или 0 если идентификатор не совместим или не корректен.
  */
 int Channel::isCompatibleId(const QByteArray &id)
 {
@@ -109,5 +109,5 @@ int Channel::isCompatibleId(const QByteArray &id)
   if (type == SimpleID::ChannelId || type == SimpleID::UserId || type == SimpleID::ServerId)
     return type;
 
-  return SimpleID::InvalidId;
+  return 0;
 }

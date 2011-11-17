@@ -66,7 +66,7 @@ public:
     FreeForChat
   };
 
-  Status(quint8 status)
+  Status(quint8 status = Offline)
   : m_status(status)
   {}
 
@@ -127,8 +127,10 @@ public:
   inline const Channels& channels() const { return m_channels; }
   inline const Feeds& feeds() const { return m_feeds; }
   inline const Gender& gender() const { return m_gender; }
+  inline const Status& status() const { return m_status; }
   inline Feeds& feeds() { return m_feeds; }
   inline Gender& gender() { return m_gender; }
+  inline Status& status() { return m_status; }
 
   static int isCompatibleId(const QByteArray &id);
 
@@ -140,6 +142,7 @@ private:
   int m_type;                      ///< Тип канала, соответствует типу идентификатора канала \sa SimpleID::Types.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
   QString m_name;                  ///< Имя канала.
+  Status m_status;                 ///< Статус пользователя.
 };
 
 typedef QSharedPointer<Channel> ClientChannel;
