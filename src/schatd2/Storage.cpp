@@ -389,7 +389,7 @@ void Storage::rename(ChatUser user)
   channel->setName(QLatin1String("~") + user->nick());
 
   m_nicks[user->normalNick()] = user;
-  m_channelNames[channel->normalName()] = channel;
+//  m_channelNames[channel->normalName()] = channel;
 }
 
 
@@ -414,7 +414,7 @@ bool Storage::removeChannel(const QByteArray &id)
   SCHAT_DEBUG_STREAM(this << "removeChannel()" << channel->name())
 
   m_channels.remove(id);
-  m_channelNames.remove(channel->normalName());
+//  m_channelNames.remove(channel->normalName());
   return true;
 }
 
@@ -452,7 +452,7 @@ ChatChannel Storage::channel(const QByteArray &id)
   channel = m_db->channel(id);
   if (channel) {
     m_channels[id] = channel;
-    m_channelNames[channel->normalName()] = channel;
+//    m_channelNames[channel->normalName()] = channel;
   }
 
   return channel;
@@ -547,7 +547,7 @@ void Storage::addChannel(ChatChannel channel)
 {
 //  channel->setNormalName(normalize(channel->name()));
   m_channels[channel->id()] = channel;
-  m_channelNames[channel->normalName()] = channel;
+//  m_channelNames[channel->normalName()] = channel;
   m_db->add(channel);
 }
 

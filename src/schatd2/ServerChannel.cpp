@@ -17,12 +17,12 @@
  */
 
 #include "ServerChannel.h"
-#include "Storage.h"
+#include "Normalize.h"
 
 ServerChannel::ServerChannel(ClientChannel channel)
   : Channel(channel->id(), channel->name())
 {
-  m_normalName = Storage::i()->normalize(name());
+  m_normalized = Normalize::toId(this->name());
 
   channels().set(channel->channels().all());
 }
@@ -31,7 +31,7 @@ ServerChannel::ServerChannel(ClientChannel channel)
 ServerChannel::ServerChannel(const QByteArray &id, const QString &name)
   : Channel(id, name)
 {
-  m_normalName = Storage::i()->normalize(this->name());
+  m_normalized = Normalize::toId(this->name());
 }
 
 ServerChannel::~ServerChannel()
@@ -42,7 +42,7 @@ ServerChannel::~ServerChannel()
 bool ServerChannel::setName(const QString &name)
 {
   if (Channel::setName(name)) {
-    m_normalName = Storage::i()->normalize(this->name());
+    m_normalized = Normalize::toId(this->name());
     return true;
   }
 

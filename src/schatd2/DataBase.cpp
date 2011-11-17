@@ -107,6 +107,7 @@ int DataBase::start()
     "CREATE TABLE channels ( "
     "  id         INTEGER PRIMARY KEY,"
     "  channelId  BLOB    NOT NULL UNIQUE,"
+    "  normalized BLOB    NOT NULL UNIQUE,"
     "  type       INTEGER DEFAULT ( 73 ),"
     "  gender     INTEGER DEFAULT ( 0 ),"
     "  status     INTEGER DEFAULT ( 0 ),"
@@ -339,10 +340,11 @@ qint64 DataBase::add(ChatChannel channel)
   }
 
   QSqlQuery query;
-  query.prepare("INSERT INTO channels (channelId, type, gender, status, name, data) "
-                     "VALUES (:channelId, :type, :gender, :status, :name, :data);");
+  query.prepare("INSERT INTO channels (channelId, normalized, type, gender, status, name, data) "
+                     "VALUES (:channelId, :normalized, :type, :gender, :status, :name, :data);");
 
   query.bindValue(":channelId",  channel->id());
+  query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
   query.bindValue(":status",     channel->status().value());
@@ -388,14 +390,15 @@ qint64 DataBase::channelKey(const QByteArray &id)
 void DataBase::update(ChatChannel channel)
 {
   QSqlQuery query;
-  query.prepare("UPDATE channels SET channelId = :channelId, type = :type, gender = :gender, status = :status, name = :name, data = :data, WHERE id = :id;");
-  query.bindValue(":channelId", channel->id());
-  query.bindValue(":type",      channel->type());
-  query.bindValue(":gender",    channel->gender().raw());
-  query.bindValue(":status",    channel->status().value());
-  query.bindValue(":name",      channel->name());
-  query.bindValue(":data",      SimpleJSon::generate(channel->feeds().json()));
-  query.bindValue(":id",        channel->key());
+  query.prepare("UPDATE channels SET channelId = :channelId, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data, WHERE id = :id;");
+  query.bindValue(":channelId",  channel->id());
+  query.bindValue(":normalized", channel->normalized());
+  query.bindValue(":type",       channel->type());
+  query.bindValue(":gender",     channel->gender().raw());
+  query.bindValue(":status",     channel->status().value());
+  query.bindValue(":name",       channel->name());
+  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().json()));
+  query.bindValue(":id",         channel->key());
   query.exec();
 }
 
