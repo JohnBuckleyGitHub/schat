@@ -30,6 +30,7 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
+#include "Normalize.h"
 #include "ServerUser.h"
 #include "Settings.h"
 #include "Storage.h"
@@ -41,6 +42,7 @@ Storage::Storage(QObject *parent)
   , m_allowSlaves(false)
 {
   m_self = this;
+  Normalize::init();
 
   /// \todo Сделать возможность использования внешнего файла с картой нормализации.
   m_normalize.insert(0x0430, 'a'); // а
