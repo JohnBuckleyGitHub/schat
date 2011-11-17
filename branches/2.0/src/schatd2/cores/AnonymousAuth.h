@@ -22,6 +22,7 @@
 #include "cores/NodeAuth.h"
 #include "schat.h"
 
+class ServerChannel;
 class ServerUser;
 
 class SCHAT_EXPORT AnonymousAuth : public NodeAuth
@@ -32,6 +33,7 @@ public:
   int type() const;
 
 protected:
+  void update(ServerChannel *channel, const AuthRequest &data);
   void update(ServerUser *user, const AuthRequest &data);
 };
 
