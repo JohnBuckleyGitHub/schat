@@ -18,11 +18,12 @@
 
 #include "ServerChannel.h"
 #include "Normalize.h"
+#include "net/SimpleID.h"
 
 ServerChannel::ServerChannel(ClientChannel channel)
   : Channel(channel->id(), channel->name())
 {
-  m_normalized = Normalize::toId(this->name());
+  normalize();
 
   channels().set(channel->channels().all());
 }
@@ -31,7 +32,7 @@ ServerChannel::ServerChannel(ClientChannel channel)
 ServerChannel::ServerChannel(const QByteArray &id, const QString &name)
   : Channel(id, name)
 {
-  m_normalized = Normalize::toId(this->name());
+  normalize();
 }
 
 ServerChannel::~ServerChannel()
@@ -42,9 +43,19 @@ ServerChannel::~ServerChannel()
 bool ServerChannel::setName(const QString &name)
 {
   if (Channel::setName(name)) {
-    m_normalized = Normalize::toId(this->name());
+    normalize();
     return true;
   }
 
   return false;
+}
+
+
+void ServerChannel::normalize()
+{
+  QString name = this->name();
+  if (type() == SimpleID::UserId)
+    name.prepend('~');
+
+  m_normalized = Normalize::toId(name);
 }

@@ -290,9 +290,12 @@ void DataBase::update(ChatUser user)
 }
 
 
-ChatChannel DataBase::channel(const QByteArray &id)
+/*!
+ * Получение канала на основе идентификатора канала или нормализированного имени и типа канала.
+ */
+ChatChannel DataBase::channel(const QByteArray &id, int type)
 {
-  qint64 key = channelKey(id);
+  qint64 key = channelKey(id, type);
   if (key == -1)
     return ChatChannel();
 
@@ -332,7 +335,7 @@ ChatChannel DataBase::channel(qint64 id)
  */
 qint64 DataBase::add(ChatChannel channel)
 {
-  qint64 key = channelKey(channel->id());
+  qint64 key = channelKey(channel->id(), channel->type());
   if (key != -1) {
     channel->setKey(key);
     update(channel);
@@ -365,16 +368,32 @@ qint64 DataBase::add(ChatChannel channel)
 
 
 /*!
- * Возвращает ключ в таблице \b channels на основе идентификатора канала.
+ * Возвращает ключ в таблице \b channels на основе идентификатора канала или нормализированного имени.
+ *
+ * \param id   Идентификатор по которому будет производится поиск.
+ * \param type Тип канала.
+ *
+ * \return Ключ в таблице или -1 в случае ошибки.
+ *
+ * \sa Normalize.
+ * \sa SimpleID.
  */
-qint64 DataBase::channelKey(const QByteArray &id)
+qint64 DataBase::channelKey(const QByteArray &id, int type)
 {
-  if (!Channel::isCompatibleId(id))
+  if (Channel::isCompatibleId(id) == 0 && SimpleID::typeOf(id) != SimpleID::NormalizedId)
     return -1;
 
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT id FROM channels WHERE channelId = ? LIMIT 1;"));
-  query.addBindValue(id);
+
+  if (SimpleID::typeOf(id) == SimpleID::NormalizedId) {
+    query.prepare("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;");
+  }
+  else {
+    query.prepare("SELECT id FROM channels WHERE channelId = :id AND type = :type LIMIT 1;");
+  }
+
+  query.bindValue(":id",   id);
+  query.bindValue(":type", type);
   query.exec();
 
   if (!query.first())
@@ -390,7 +409,7 @@ qint64 DataBase::channelKey(const QByteArray &id)
 void DataBase::update(ChatChannel channel)
 {
   QSqlQuery query;
-  query.prepare("UPDATE channels SET channelId = :channelId, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data, WHERE id = :id;");
+  query.prepare("UPDATE channels SET channelId = :channelId, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data WHERE id = :id;");
   query.bindValue(":channelId",  channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());

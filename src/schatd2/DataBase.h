@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+#include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 
@@ -64,10 +65,10 @@ public:
   void update(ChatUser user);
 
   // channels.
-  ChatChannel channel(const QByteArray &id);
+  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(qint64 id);
   qint64 add(ChatChannel channel);
-  qint64 channelKey(const QByteArray &id);
+  qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   void update(ChatChannel channel);
 
   // accounts.

@@ -405,6 +405,17 @@ void Storage::update(ChatUser user)
 }
 
 
+bool Storage::add(ChatChannel channel)
+{
+  if (m_db->add(channel) == -1)
+    return false;
+
+  m_channels[channel->id()] = channel;
+  m_channels[channel->normalized()] = channel;
+  return true;
+}
+
+
 bool Storage::removeChannel(const QByteArray &id)
 {
   ChatChannel channel = m_channels.value(id);
@@ -443,16 +454,16 @@ ChatChannel Storage::channel(ChatUser user)
 }
 
 
-ChatChannel Storage::channel(const QByteArray &id)
+ChatChannel Storage::channel(const QByteArray &id, int type)
 {
   ChatChannel channel = m_channels.value(id);
   if (channel)
     return channel;
 
-  channel = m_db->channel(id);
+  channel = m_db->channel(id, type);
   if (channel) {
-    m_channels[id] = channel;
-//    m_channelNames[channel->normalName()] = channel;
+    m_channels[channel->id()] = channel;
+    m_channels[channel->normalized()] = channel;
   }
 
   return channel;
@@ -540,15 +551,6 @@ QList<quint64> Storage::sockets(const QList<QByteArray> &ids)
   }
 
   return out;
-}
-
-
-void Storage::addChannel(ChatChannel channel)
-{
-//  channel->setNormalName(normalize(channel->name()));
-  m_channels[channel->id()] = channel;
-//  m_channelNames[channel->normalName()] = channel;
-  m_db->add(channel);
 }
 
 

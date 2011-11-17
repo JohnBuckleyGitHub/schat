@@ -27,16 +27,22 @@ public:
   ServerChannel(ClientChannel channel);
   ServerChannel(const QByteArray &id, const QString &name);
   ~ServerChannel();
-  bool setName(const QString &name);
-  inline qint64 key() const { return m_key; }
-//  inline QString normalName() const { return m_normalName; }
-  inline void setKey(qint64 key) { m_key = key; }
+
   inline const QByteArray& normalized() const { return m_normalized; }
+  inline const QList<quint64>& sockets() const { return m_sockets; }
+  inline qint64 key() const { return m_key; }
+
+  bool setName(const QString &name);
+  inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
+  inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
+  inline void setKey(qint64 key) { m_key = key; }
 
 private:
-  qint64 m_key;            ///< Ключ в таблице channels.
-  QByteArray m_normalized; ///< Нормализованное имя канала.
-//  QString m_normalName; ///< Нормализованное имя канала.
+  void normalize();
+
+  QByteArray m_normalized;  ///< Нормализованное имя канала.
+  qint64 m_key;             ///< Ключ в таблице channels.
+  QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
 
 typedef QSharedPointer<ServerChannel> ChatChannel;

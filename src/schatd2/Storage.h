@@ -23,6 +23,7 @@
 #include <QHash>
 
 #include "net/packets/accounts.h"
+#include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
 
@@ -68,15 +69,15 @@ public:
   void update(ChatUser user);
 
   // channel management.
+  bool add(ChatChannel channel);
   bool removeChannel(const QByteArray &id);
   ChatChannel channel(ChatUser user);
-  ChatChannel channel(const QByteArray &id);
+  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
   ChatChannel channel(qint64 id);
   inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
   QList<quint64> sockets(ChatChannel channel);
   QList<quint64> sockets(const QList<QByteArray> &ids);
-  void addChannel(ChatChannel channel);
   void update(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }

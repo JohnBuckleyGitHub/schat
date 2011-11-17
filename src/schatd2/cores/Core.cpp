@@ -159,6 +159,17 @@ QByteArray Core::id() const
 }
 
 
+bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
+{
+  Q_UNUSED(authType);
+  Q_UNUSED(authId)
+  return m_storage->add(channel);
+}
+
+
+/*!
+ *  \deprecated Эта функция устарела.
+ */
 bool Core::add(ChatUser user, int authType, const QByteArray &authId)
 {
   Q_UNUSED(authType);
@@ -475,30 +486,30 @@ bool Core::authRequest()
  */
 void Core::acceptAuth(const AuthResult &result)
 {
-  ChatUser user = m_storage->user(result.id);
-  if (!user)
-    return;
+//  ChatUser user = m_storage->user(result.id);
+//  if (!user)
+//    return;
 
-  SCHAT_LOG_INFO() << "Accept Auth" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << "cookie:" << SimpleID::encode(user->cookie());
+//  SCHAT_LOG_INFO() << "Accept Auth" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << "cookie:" << SimpleID::encode(user->cookie());
 
-  ChatChannel channel = addChannel(user);
-  QList<QByteArray> packets;
-
-  if (channel->channels().all().size() > 1)
-    packets = userDataToSync(channel, user);
-
-  if (result.packet) {
-    AuthReply reply(m_storage->serverData(), user.data(), user->cookie(), result.authId, result.json);
-    packets.prepend(reply.data(m_sendStream));
-  }
-
-  packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
-  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, user->id());
-
-  if (m_plugins) {
-    UserHook hook(user);
-    m_plugins->hook(hook);
-  }
+//  ChatChannel channel = addChannel(user);
+//  QList<QByteArray> packets;
+//
+//  if (channel->channels().all().size() > 1)
+//    packets = userDataToSync(channel, user);
+//
+//  if (result.packet) {
+//    AuthReply reply(m_storage->serverData(), user.data(), user->cookie(), result.authId, result.json);
+//    packets.prepend(reply.data(m_sendStream));
+//  }
+//
+//  packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
+//  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, user->id());
+//
+//  if (m_plugins) {
+//    UserHook hook(user);
+//    m_plugins->hook(hook);
+//  }
 }
 
 

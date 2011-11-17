@@ -24,6 +24,7 @@
 #include "net/packets/auth.h"
 #include "NodeLog.h"
 #include "Storage.h"
+#include "Normalize.h"
 
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
@@ -36,27 +37,28 @@ AnonymousAuth::AnonymousAuth(Core *core)
  */
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
-  Storage *storage   = Storage::i();
-  QByteArray id      = storage->makeUserId(data.authType, data.uniqueId);
-  QString normalNick = storage->normalize(data.nick);
-  ChatUser user      = storage->user(normalNick, false);
+  Storage *storage      = Storage::i();
+  QByteArray id         = storage->makeUserId(data.authType, data.uniqueId);
+  QByteArray normalized = Normalize::toId('~' + data.nick);
+  ChatChannel channel   = storage->channel(normalized, SimpleID::UserId);
 
-  // Если пользователь с указанным ником подключен к серверу
-  // и его идентификатор не равен идентификатору пользователя, отклоняем авторизацию.
-  if (user && user->id() != id)
+  if (channel && channel->id() != id)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-  user = storage->user(id, true);
-  if (!user) {
-    user = ChatUser(new ServerUser(normalNick, id, data, m_core->packetsEvent()->socket()));
-    if (!user->isValid())
-      return AuthResult(Notice::BadRequest, data.id);
-  }
+  if (!channel)
+    channel = storage->channel(id, SimpleID::UserId);
 
-  update(user.data(), data);
-  m_core->add(user, data.authType, data.id);
+  if (!channel)
+    channel = ChatChannel(new ServerChannel(id, data.nick));
 
-  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
+  update(channel.data(), data);
+
+  if (!channel->isValid())
+    return AuthResult(Notice::BadRequest, data.id);
+
+  m_core->add(channel, data.authType, data.id);
+
+//  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
   return AuthResult(id, data.id);
 }
 
@@ -68,7 +70,20 @@ int AnonymousAuth::type() const
 
 
 /*!
+ * \todo Добавить обновление информации об адресе и клиенте пользователя.
+ */
+void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
+{
+  channel->setName(data.nick);
+  channel->gender().setRaw(data.gender);
+  channel->status().set(data.status);
+  channel->addSocket(m_core->packetsEvent()->socket());
+}
+
+
+/*!
  * Обновление данных пользователя при авторизации.
+ * \deprecated Эта функция устарела.
  *
  * \param user Пользователь.
  * \param data Авторизационные данные.
