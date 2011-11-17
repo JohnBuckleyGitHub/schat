@@ -179,11 +179,11 @@ QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
 
   file += QLatin1String(".png");
 
-  if (offline && user->status() == User::OfflineStatus)
+  if (offline && user->status() == Status::Offline)
     status = true;
 
   if (status) {
-    if (offline && user->status() == User::OfflineStatus)
+    if (offline && user->status() == Status::Offline)
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
     return ChatCore::icon(file, overlay(user->status()));
@@ -195,11 +195,11 @@ QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
 
 QString UserUtils::overlay(int status)
 {
-  if (status == User::AwayStatus || status == User::AutoAwayStatus)
+  if (status == Status::Away || status == Status::AutoAway)
     return QLatin1String(":/images/away-small.png");
-  else if (status == User::DnDStatus)
+  else if (status == Status::DnD)
     return QLatin1String(":/images/dnd-small.png");
-  else if (status == User::FreeForChatStatus)
+  else if (status == Status::FreeForChat)
     return QLatin1String(":/images/ffc-small.png");
   else
     return QLatin1String("");
@@ -212,20 +212,20 @@ QString UserUtils::overlay(int status)
 QString UserUtils::statusTitle(int status)
 {
   switch (status) {
-    case User::OfflineStatus:
+    case Status::Offline:
       return QObject::tr("Offline");
       break;
 
-    case User::AwayStatus:
-    case User::AutoAwayStatus:
+    case Status::Away:
+    case Status::AutoAway:
       return QObject::tr("Away");
       break;
 
-    case User::DnDStatus:
+    case Status::DnD:
       return QObject::tr("Do not disturb");
       break;
 
-    case User::FreeForChatStatus:
+    case Status::FreeForChat:
       return QObject::tr("Free for Chat");
       break;
 

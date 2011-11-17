@@ -86,8 +86,8 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
     setServerData(reply.serverData);
 
-    if (user->status() == User::OfflineStatus)
-      user->setStatus(User::OnlineStatus);
+    if (user->status() == Status::Offline)
+      user->setStatus(Status::Online);
 
     emit(q->ready());
     return true;

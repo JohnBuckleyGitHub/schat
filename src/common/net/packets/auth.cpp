@@ -25,6 +25,7 @@
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 #include "User.h"
+#include "Channel.h"
 
 AuthReply::AuthReply(PacketReader *reader)
   : AbstractPacket(reader)
@@ -213,8 +214,8 @@ QByteArray AuthRequest::data(QDataStream *stream) const
 
 void AuthRequest::setStatus(quint8 status)
 {
-  if (status == User::OfflineStatus)
-    status = User::OnlineStatus;
+  if (status == Status::Offline)
+    status = Status::Online;
 
   this->status = status;
 }

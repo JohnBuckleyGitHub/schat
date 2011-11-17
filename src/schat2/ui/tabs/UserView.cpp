@@ -35,7 +35,7 @@ UserItem::UserItem(ClientUser user, int option)
   if (option & UserView::SelfNick)
     m_self = true;
 
-  if (m_user->status() != User::OnlineStatus)
+  if (m_user->status() != Status::Online)
     setColor();
 
   setSortData();
@@ -55,9 +55,9 @@ bool UserItem::update()
 void UserItem::setColor()
 {
   switch (m_user->status()) {
-    case User::AwayStatus:
-    case User::AutoAwayStatus:
-    case User::DnDStatus:
+    case Status::Away:
+    case Status::AutoAway:
+    case Status::DnD:
       setForeground(QBrush(QColor(0x90a4b3)));
       break;
 
@@ -75,7 +75,7 @@ void UserItem::setSortData()
   QString prefix = QLatin1String("6");
   if (m_self)
     prefix = QLatin1String("!");
-  else if (m_user->status() == User::FreeForChatStatus)
+  else if (m_user->status() == Status::FreeForChat)
     prefix = QLatin1String("4");
   else if (m_user->gender().value() == Gender::Bot)
     prefix = QLatin1String("2");

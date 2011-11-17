@@ -146,7 +146,7 @@ void ChatSettings::updateStatus(const QVariant &value)
   }
 
   m_user->setStatus(status);
-  if (m_user->status() == User::OfflineStatus) {
+  if (m_user->status() == ::Status::Offline) {
     m_client->leave();
   }
 

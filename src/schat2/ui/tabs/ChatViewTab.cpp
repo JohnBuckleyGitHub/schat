@@ -20,6 +20,7 @@
 #include "ui/tabs/ChatViewTab.h"
 #include "ui/TabWidget.h"
 #include "ui/UserUtils.h"
+#include "Channel.h"
 
 ChatViewTab::ChatViewTab(const QString &url, const QByteArray &id, TabType type, TabWidget *parent)
   : AbstractTab(id, type, parent)
@@ -46,7 +47,7 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
   if (!user)
     return;
 
-  if (user->status() == User::OfflineStatus)
+  if (user->status() == Status::Offline)
     return;
 
   QString text;

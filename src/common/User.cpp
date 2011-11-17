@@ -21,10 +21,11 @@
 #include "debugstream.h"
 #include "net/SimpleID.h"
 #include "User.h"
+#include "Channel.h"
 
 User::User()
   : m_valid(true)
-  , m_status(OfflineStatus)
+  , m_status(Status::Offline)
   , m_serverNumber(0)
 {
   m_channels.append(m_id);
@@ -34,7 +35,7 @@ User::User()
 
 User::User(const QString &nick)
   : m_valid(true)
-  , m_status(OfflineStatus)
+  , m_status(Status::Offline)
   , m_serverNumber(0)
 {
   setNick(nick);
@@ -113,67 +114,6 @@ QString User::defaultNick()
 {
   return QDir::home().dirName();
 }
-
-
-//int User::color() const
-//{
-//  if (m_gender >= Unknown)
-//    return Default;
-//
-//  int out = m_gender;
-//  if (gender() == Female)
-//    out -= Female;
-//
-//  if (out > Thief)
-//    return Default;
-//
-//  return out;
-//}
-
-
-//int User::gender() const
-//{
-//  if (m_gender >= Unknown && m_gender <= Bot)
-//    return m_gender;
-//
-//  if (m_gender > Bot)
-//    return Unknown;
-//
-//  if (m_gender < Female)
-//    return Male;
-//
-//  return Female;
-//}
-
-
-//void User::setColor(Color color)
-//{
-//  if (m_gender >= Unknown)
-//    return;
-//
-//  m_gender = gender() + color;
-//}
-
-
-//void User::setColor(int color)
-//{
-//  if (color < 0 || color > Thief)
-//    color = Default;
-//
-//  setColor(static_cast<Color>(color));
-//}
-
-
-/*!
- * Установка пола.
- */
-//void User::setGender(Gender gender)
-//{
-//  if (gender >= Unknown)
-//    m_gender = gender;
-//  else
-//    m_gender = gender + color();
-//}
 
 
 bool User::addChannel(const QByteArray &id)
