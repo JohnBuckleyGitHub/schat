@@ -51,6 +51,34 @@ public:
 
 
 /*!
+ * Базовый статус пользователя.
+ */
+class Status
+{
+public:
+  /// Статус.
+  enum Statuses {
+    Offline,
+    Online,
+    Away,
+    AutoAway,
+    DnD,
+    FreeForChat
+  };
+
+  Status(quint8 status)
+  : m_status(status)
+  {}
+
+  inline quint8 value() const    { return m_status; }
+  inline void set(quint8 status) { m_status = status; }
+
+private:
+  quint8 m_status;
+};
+
+
+/*!
  * Список каналов.
  */
 class SCHAT_EXPORT Channels

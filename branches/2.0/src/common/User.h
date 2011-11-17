@@ -41,16 +41,6 @@ public:
     MaxByeMsgLength = 128 ///< Максимальная длина сообщения при выходе.
   };
 
-  /// Статус.
-  enum Status {
-    OfflineStatus,
-    OnlineStatus,
-    AwayStatus,
-    AutoAwayStatus,
-    DnDStatus,
-    FreeForChatStatus
-  };
-
   User();
   User(const QString &nick);
   User(const User *other);

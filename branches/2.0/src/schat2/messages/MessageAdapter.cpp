@@ -115,7 +115,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("away")) {
-    setStatus(User::AwayStatus, cmd.body());
+    setStatus(Status::Away, cmd.body());
     return;
   }
 
@@ -129,7 +129,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("dnd")) {
-    setStatus(User::DnDStatus, cmd.body());
+    setStatus(Status::DnD, cmd.body());
     return;
   }
 
@@ -144,7 +144,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("ffc")) {
-    setStatus(User::FreeForChatStatus, cmd.body());
+    setStatus(Status::FreeForChat, cmd.body());
     return;
   }
 
@@ -197,12 +197,12 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("offline")) {
-    setStatus(User::OfflineStatus, cmd.body());
+    setStatus(Status::Offline, cmd.body());
     return;
   }
 
   if (command == QLatin1String("online")) {
-    setStatus(User::OnlineStatus, cmd.body());
+    setStatus(Status::Online, cmd.body());
     return;
   }
 

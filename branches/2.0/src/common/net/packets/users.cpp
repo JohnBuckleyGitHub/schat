@@ -19,7 +19,7 @@
 #include "net/packets/users.h"
 #include "net/PacketReader.h"
 #include "User.h"
-
+#include "Channel.h"
 
 /*!
  * Специальный конструктор, формирующий широковещательный пакет.
@@ -116,8 +116,8 @@ UserReader::UserReader(PacketReader *reader)
     user.groups().set(reader->text());
     user.setAccount(reader->text());
   }
-  else if (user.status() == User::OfflineStatus)
-    user.setStatus(User::OnlineStatus);
+  else if (user.status() == Status::Offline)
+    user.setStatus(Status::Online);
 
   if (fields & UserWriter::AuthData)
     cookie = reader->id();

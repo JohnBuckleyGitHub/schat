@@ -167,7 +167,7 @@ bool NetworkManager::isAutoConnect() const
   if (!m_settings->value(QLatin1String("AutoConnect")).toBool())
     return false;
 
-  if (m_client->user()->status() == User::OfflineStatus)
+  if (m_client->user()->status() == Status::Offline)
     return false;
 
   QStringList networks = networkList();

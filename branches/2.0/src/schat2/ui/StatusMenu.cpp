@@ -30,12 +30,12 @@ StatusMenu::StatusMenu(QWidget *parent)
 {
   m_group = new QActionGroup(this);
 
-  addStatus(User::OnlineStatus);
-  addStatus(User::AwayStatus);
-  addStatus(User::DnDStatus);
-  addStatus(User::FreeForChatStatus);
+  addStatus(Status::Online);
+  addStatus(Status::Away);
+  addStatus(Status::DnD);
+  addStatus(Status::FreeForChat);
   addSeparator();
-  addStatus(User::OfflineStatus);
+  addStatus(Status::Offline);
 
   update();
 
@@ -103,7 +103,7 @@ void StatusMenu::update()
   }
 
   if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
-    user->setStatus(User::OfflineStatus);
+    user->setStatus(Status::Offline);
   }
 
   setIcon(UserUtils::icon(user, true, true));

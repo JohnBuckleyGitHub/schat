@@ -452,7 +452,7 @@ bool SimpleClientPrivate::removeUser(const QByteArray &userId)
   if (!user)
     return false;
 
-  user->setStatus(User::OfflineStatus);
+  user->setStatus(Status::Offline);
 
   Q_Q(SimpleClient);
   emit(q->userLeave(userId));
@@ -548,8 +548,8 @@ void SimpleClientPrivate::updateUserStatus(const QString &text)
   if (!user->setStatus(text))
     return;
 
-  if (user->status() == User::OfflineStatus) {
-    user->setStatus(User::OnlineStatus);
+  if (user->status() == Status::Offline) {
+    user->setStatus(Status::Online);
   }
 
   emit(q->userDataChanged(user->id(), SimpleClient::UserStatusChanged));

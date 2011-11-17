@@ -571,8 +571,8 @@ bool Core::updateUserStatus()
   if (!user->setStatus(m_messageData->text))
     return true;
 
-  if (user->status() == User::OfflineStatus)
-    user->setStatus(User::OnlineStatus);
+  if (user->status() == Status::Offline)
+    user->setStatus(Status::Online);
 
   return false;
 }
