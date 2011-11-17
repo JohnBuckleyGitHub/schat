@@ -37,6 +37,7 @@ HEADERS = \
     events.h \
     NodeLog.h \
     NodePlugins.h \
+    Normalize.h \
     plugins/NodePlugin.h \
     ServerChannel.h \
     ServerUser.h \
@@ -51,6 +52,7 @@ SOURCES = \
     events.cpp \
     NodeLog.cpp \
     NodePlugins.cpp \
+    Normalize.cpp \
     plugins/NodePlugin.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
