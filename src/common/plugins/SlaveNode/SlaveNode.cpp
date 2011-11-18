@@ -58,28 +58,28 @@ SlaveNode::SlaveNode(QObject *parent)
 }
 
 
-bool SlaveNode::add(ChatUser user, int authType, const QByteArray &authId)
-{
-  if (mode() == FailbackMode) {
-    if (authType == AuthRequest::Anonymous)
-      return false;
-
-    return Core::add(user, authType, authId);
-  }
-
-  m_pending[authId] = user;
-
-  QList<QByteArray> packets;
-  Notice notice(Storage::i()->serverData()->id(), authId, "slave.user.host");
-  notice.setText(m_packetsEvent->address.toString());
-
-  packets.append(notice.data(uplink()->sendStream()));
-
-  packets.append(m_readBuffer);
-  m_uplink->send(packets);
-
-  return true;
-}
+//bool SlaveNode::add(ChatUser user, int authType, const QByteArray &authId)
+//{
+//  if (mode() == FailbackMode) {
+//    if (authType == AuthRequest::Anonymous)
+//      return false;
+//
+//    return Core::add(user, authType, authId);
+//  }
+//
+//  m_pending[authId] = user;
+//
+//  QList<QByteArray> packets;
+//  Notice notice(Storage::i()->serverData()->id(), authId, "slave.user.host");
+//  notice.setText(m_packetsEvent->address.toString());
+//
+//  packets.append(notice.data(uplink()->sendStream()));
+//
+//  packets.append(m_readBuffer);
+//  m_uplink->send(packets);
+//
+//  return true;
+//}
 
 
 int SlaveNode::start()
@@ -369,10 +369,10 @@ void SlaveNode::uplinkAuthReply()
     user->setId(data.userId);
     user->setCookie(data.cookie);
 
-    if (update)
-      m_storage->update(user);
-    else
-      m_storage->add(user);
+//    if (update)
+//      m_storage->update(user);
+//    else
+//      m_storage->add(user); /// \bug Добавление пользователя больше не работает.
 
     addChannel(user);
   }

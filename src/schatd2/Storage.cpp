@@ -143,23 +143,6 @@ void Storage::addSlave(const QByteArray &id)
 
 
 /*!
- * Добавление нового пользователя.
- */
-bool Storage::add(ChatUser user)
-{
-  if (m_users.contains(user->id()))
-    return false;
-
-  user->setServerNumber(m_serverData->number());
-
-  m_db->add(user);
-  m_users.insert(user->id(), user);
-  m_nicks.insert(user->normalNick(), user);
-  return true;
-}
-
-
-/*!
  * Проверка на принадлежность пользователей одному вторичному серверу.
  * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
  *

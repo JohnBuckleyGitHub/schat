@@ -167,17 +167,6 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 }
 
 
-/*!
- *  \deprecated Эта функция устарела.
- */
-bool Core::add(ChatUser user, int authType, const QByteArray &authId)
-{
-  Q_UNUSED(authType);
-  Q_UNUSED(authId)
-  return m_storage->add(user);
-}
-
-
 void Core::customEvent(QEvent *event)
 {
   SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type())
@@ -486,6 +475,18 @@ bool Core::authRequest()
  */
 void Core::acceptAuth(const AuthResult &result)
 {
+  ChatChannel channel = m_storage->channel(result.id);
+  if (!channel)
+    return;
+
+  QList<QByteArray> packets;
+  if (result.packet) {
+    AuthReply reply(m_storage->serverData(), channel.data(), QByteArray(), result.authId, result.json);
+    packets.prepend(reply.data(m_sendStream));
+  }
+
+  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, channel->id());
+
 //  ChatUser user = m_storage->user(result.id);
 //  if (!user)
 //    return;

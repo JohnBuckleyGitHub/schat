@@ -62,7 +62,6 @@ public:
   inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
   QByteArray id() const;
   virtual bool add(ChatChannel channel, int authType, const QByteArray &authId);
-  virtual bool add(ChatUser user, int authType, const QByteArray &authId);
   virtual int start() { return 0; }
   virtual void quit() {}
 
