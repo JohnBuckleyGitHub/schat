@@ -21,28 +21,10 @@
 
 #include <QObject>
 
+#include "Account.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "ServerUser.h"
-
-/*!
- * Информация об аккаунте пользователя.
- */
-class SCHAT_EXPORT Account
-{
-public:
-  Account()
-  : id(-1)
-  {}
-
-  bool isValid() const;
-
-  qint64 id;
-  QByteArray userId;
-  QString name;
-  QByteArray password;
-  QVariant data;
-};
 
 
 /*!

@@ -40,18 +40,19 @@ AuthResult PasswordAuth::auth(const AuthRequest &data)
   if (login.isEmpty())
     return AuthResult(Notice::BadRequest, data.id);
 
-  Account account = storage->db()->account(login);
-  if (!account.isValid())
-    return AuthResult(Notice::Forbidden, data.id);
+//  Account account = storage->db()->account(login);
+//  if (!account.isValid())
+//    return AuthResult(Notice::Forbidden, data.id);
+//
+//  if (account.password != data.password)
+//    return AuthResult(Notice::Forbidden, data.id);
+//
+//  ChatUser user = storage->user(account.userId, true);
+//  if (!user)
+//    return AuthResult(Notice::InternalError, data.id);
 
-  if (account.password != data.password)
-    return AuthResult(Notice::Forbidden, data.id);
-
-  ChatUser user = storage->user(account.userId, true);
-  if (!user)
-    return AuthResult(Notice::InternalError, data.id);
-
-  return CookieAuth::auth(data, user);
+//  return CookieAuth::auth(data, user);
+  return CookieAuth::auth(data);
 }
 
 

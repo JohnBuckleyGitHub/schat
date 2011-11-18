@@ -31,23 +31,6 @@
 #include "SimpleJSon.h"
 #include "Storage.h"
 
-bool Account::isValid() const
-{
-  if (id == -1)
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  if (SimpleID::typeOf(userId) != SimpleID::UserId)
-    return false;
-
-  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
-    return false;
-
-  return true;
-}
-
 
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
@@ -73,19 +56,16 @@ int DataBase::start()
   query.exec(QLatin1String("PRAGMA synchronous = OFF"));
   QStringList tables = db.tables();
 
-  if (!tables.contains(QLatin1String("users"))) {
+  if (!tables.contains(QLatin1String("accounts"))) {
     query.exec(QLatin1String(
-    "CREATE TABLE users ( "
+    "CREATE TABLE accounts ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  userId     BLOB    NOT NULL UNIQUE,"
+    "  channel    INTEGER DEFAULT ( 0 ),"
+    "  date       INTEGER DEFAULT ( 0 ),"
     "  cookie     BLOB    NOT NULL UNIQUE,"
-    "  groups     TEXT,"
-    "  nick       TEXT,"
-    "  normalNick TEXT,"
-    "  gender     INTEGER DEFAULT ( 0 ),"
-    "  host       TEXT,"
-    "  account    TEXT,"
-    "  userAgent  TEXT"
+    "  name       TEXT,"
+    "  password   BLOB,"
+    "  groups     TEXT"
     ");"));
   }
 
@@ -106,27 +86,17 @@ int DataBase::start()
     query.exec(QLatin1String(
     "CREATE TABLE channels ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  channelId  BLOB    NOT NULL UNIQUE,"
+    "  channel    BLOB    NOT NULL UNIQUE,"
     "  normalized BLOB    NOT NULL UNIQUE,"
     "  type       INTEGER DEFAULT ( 73 ),"
     "  gender     INTEGER DEFAULT ( 0 ),"
     "  status     INTEGER DEFAULT ( 0 ),"
+    "  account    INTEGER DEFAULT ( 0 ),"
     "  name       TEXT    NOT NULL,"
     "  data       BLOB"
     ");"));
 
     Storage::i()->channel(QLatin1String("Main"));
-  }
-
-  if (!tables.contains(QLatin1String("accounts"))) {
-    query.exec(QLatin1String(
-    "CREATE TABLE accounts ( "
-    "  id       INTEGER PRIMARY KEY,"
-    "  userId   BLOB    NOT NULL UNIQUE,"
-    "  name     TEXT    NOT NULL UNIQUE,"
-    "  password BLOB,"
-    "  data     TEXT"
-    ");"));
   }
 
   return 0;
@@ -306,7 +276,7 @@ ChatChannel DataBase::channel(const QByteArray &id, int type)
 ChatChannel DataBase::channel(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT channelId, gender, status, name, data FROM channels WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT channel, gender, status, name, data FROM channels WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
@@ -343,10 +313,10 @@ qint64 DataBase::add(ChatChannel channel)
   }
 
   QSqlQuery query;
-  query.prepare("INSERT INTO channels (channelId, normalized, type, gender, status, name, data) "
-                     "VALUES (:channelId, :normalized, :type, :gender, :status, :name, :data);");
+  query.prepare("INSERT INTO channels (channel, normalized, type, gender, status, name, data) "
+                     "VALUES (:channel, :normalized, :type, :gender, :status, :name, :data);");
 
-  query.bindValue(":channelId",  channel->id());
+  query.bindValue(":channel",    channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
@@ -389,7 +359,7 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
     query.prepare("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;");
   }
   else {
-    query.prepare("SELECT id FROM channels WHERE channelId = :id AND type = :type LIMIT 1;");
+    query.prepare("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;");
   }
 
   query.bindValue(":id",   id);
@@ -409,8 +379,8 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
 void DataBase::update(ChatChannel channel)
 {
   QSqlQuery query;
-  query.prepare("UPDATE channels SET channelId = :channelId, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data WHERE id = :id;");
-  query.bindValue(":channelId",  channel->id());
+  query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data WHERE id = :id;");
+  query.bindValue(":channel",  channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
@@ -439,11 +409,10 @@ Account DataBase::account(const QString &name) const
     return Account();
 
   Account account;
-  account.id = query.value(0).toLongLong();
-  account.userId = query.value(1).toByteArray();
-  account.name = name;
-  account.password = query.value(2).toByteArray();
-  account.data = SimpleJSon::parse(query.value(3).toString().toUtf8());
+  account.setId(query.value(0).toLongLong());
+  account.setName(name);
+  account.setPassword(query.value(2).toByteArray());
+//  account.data = SimpleJSon::parse(query.value(3).toString().toUtf8());
 
   return account;
 }
@@ -462,7 +431,7 @@ Account DataBase::account(const QString &name) const
  */
 qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
 {
-  if (account(name).id != -1)
+  if (account(name).id() != -1)
     return -2;
 
   QSqlQuery query;

@@ -264,7 +264,7 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   if (!account.isValid())
     return LoginReply(Notice::UserNotExists);
 
-  if (account.password != password)
+  if (account.password() != password)
     return LoginReply(Notice::Forbidden);
 
   LoginReply reply(login);
@@ -272,10 +272,10 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   user->groups().add("registered");
   m_db->update(user);
 
-  if (user->id() != account.userId) {
-    reply.setStatus(Notice::Conflict);
-    return reply;
-  }
+//  if (user->id() != account.userId) {
+//    reply.setStatus(Notice::Conflict);
+//    return reply;
+//  }
 
   return reply;
 }
@@ -437,6 +437,9 @@ ChatChannel Storage::channel(ChatUser user)
 }
 
 
+/*!
+ * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
+ */
 ChatChannel Storage::channel(const QByteArray &id, int type)
 {
   ChatChannel channel = m_channels.value(id);

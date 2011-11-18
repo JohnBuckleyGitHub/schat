@@ -16,6 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 HEADERS += \
+    Account.h \
     acl/Acl.h \
     acl/Groups.h \
     base32/base32.h \
@@ -53,6 +54,7 @@ HEADERS += \
     User.h \
 
 SOURCES += \
+    Account.cpp \
     acl/Acl.cpp \
     base32/base32.cpp \
     Channel.cpp \
