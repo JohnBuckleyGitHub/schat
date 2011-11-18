@@ -24,6 +24,7 @@
 #include "net/ServerData.h"
 #include "net/packets/AbstractPacket.h"
 
+class Channel;
 class PacketReader;
 class User;
 
@@ -61,7 +62,7 @@ public:
 
   AuthReply(PacketReader *reader);
   AuthReply(ServerData *data, int status, const QByteArray &id, const QVariant &json = QVariant());
-  AuthReply(ServerData *data, User *user, const QByteArray &cookie, const QByteArray &id, const QVariant &json = QVariant());
+  AuthReply(ServerData *data, Channel *channel, const QByteArray &cookie, const QByteArray &id, const QVariant &json = QVariant());
   QByteArray data(QDataStream *stream) const;
 
   QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.

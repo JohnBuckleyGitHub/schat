@@ -64,16 +64,16 @@ AuthReply::AuthReply(ServerData *data, int status, const QByteArray &id, const Q
 }
 
 
-AuthReply::AuthReply(ServerData *data, User *user, const QByteArray &cookie, const QByteArray &id, const QVariant &json)
+AuthReply::AuthReply(ServerData *data, Channel *channel, const QByteArray &cookie, const QByteArray &id, const QVariant &json)
   : AbstractPacket(json)
-  , userId(user->id())
+  , userId(channel->id())
   , status(Notice::OK)
   , cookie(cookie)
   , id(id)
 {
-  account = user->account();
+//  account = user->account();
   serverData = *data;
-  serverData.setNumber(user->serverNumber());
+//  serverData.setNumber(user->serverNumber());
 }
 
 

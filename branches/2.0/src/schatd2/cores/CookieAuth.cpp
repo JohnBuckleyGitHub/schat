@@ -57,7 +57,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatUser user)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
   update(user.data(), data);
-  m_core->add(user, data.authType, data.id);
+//  m_core->add(user, data.authType, data.id); /// \bug Cookie авторизация больше не работает.
 
   SCHAT_LOG_DEBUG() << "COOKIE AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
   return AuthResult(user->id(), data.id);

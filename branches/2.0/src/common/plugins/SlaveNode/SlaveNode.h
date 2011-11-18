@@ -36,7 +36,7 @@ public:
   };
 
   SlaveNode(QObject *parent = 0);
-  bool add(ChatUser user, int authType, const QByteArray &authId);
+//  bool add(ChatUser user, int authType, const QByteArray &authId);
   inline AbstractClient *uplink() { return m_uplink; }
   inline Mode mode() const { return m_mode; }
   int start();

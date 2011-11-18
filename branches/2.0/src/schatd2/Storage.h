@@ -53,7 +53,6 @@ public:
   void addSlave(const QByteArray &id);
 
   // user management.
-  bool add(ChatUser user);
   bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
   bool remove(ChatUser user);
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
