@@ -48,7 +48,6 @@ public:
   inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
-  static qint64 timestamp();
   static void merge(QList<quint64> &out, const QList<quint64> sockets);
   void addSlave(const QByteArray &id);
 

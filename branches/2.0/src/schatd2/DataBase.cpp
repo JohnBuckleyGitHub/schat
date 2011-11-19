@@ -25,12 +25,12 @@
 #include <QVariant>
 
 #include "DataBase.h"
+#include "DateTime.h"
 #include "FileLocations.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "SimpleJSon.h"
 #include "Storage.h"
-
 
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
@@ -344,6 +344,8 @@ qint64 DataBase::add(ChatChannel channel)
   if (SimpleID::typeOf(channel->id()) == SimpleID::UserId && !channel->account()) {
     Account account;
     account.setChannel(key);
+    account.setDate(DateTime::utc());
+    account.groups() += "anonymous";
 
     if (add(&account) != -1) {
       channel->setAccount(&account);
@@ -396,6 +398,7 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
 
 /*!
  * Обновление информации об канале.
+ * Если канал также содержит пользовательский аккаунт, то он также будет обновлён.
  */
 void DataBase::update(ChatChannel channel)
 {
@@ -412,13 +415,15 @@ void DataBase::update(ChatChannel channel)
   query.exec();
 
   if (channel->account() && channel->account()->id() > 0) {
+    channel->account()->setDate(DateTime::utc());
+
     query.prepare("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;");
-    query.bindValue(":date",       0);
+    query.bindValue(":date",       channel->account()->date());
     query.bindValue(":cookie",     channel->account()->cookie());
     query.bindValue(":name",       channel->account()->name());
     query.bindValue(":password",   channel->account()->password());
     query.bindValue(":groups",     channel->account()->groups().toString());
-    query.bindValue(":id",         channel->id());
+    query.bindValue(":id",         channel->account()->id());
     query.exec();
   }
 }
@@ -447,7 +452,6 @@ Account DataBase::account(qint64 key)
   account.setName(query.value(3).toString());
   account.setPassword(query.value(4).toByteArray());
   account.groups().set(query.value(5).toString());
-  account.setPassword(query.value(2).toByteArray());
 
   return account;
 }
@@ -526,7 +530,7 @@ qint64 DataBase::add(Account *account)
                      "VALUES (:channel, :date, :cookie, :name, :password, :groups);");
 
   query.bindValue(":channel",    account->channel());
-  query.bindValue(":date",       0);
+  query.bindValue(":date",       account->date());
   query.bindValue(":cookie",     account->cookie());
   query.bindValue(":name",       account->name());
   query.bindValue(":password",   account->password());

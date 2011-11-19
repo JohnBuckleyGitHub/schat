@@ -23,6 +23,7 @@
 #include <QUuid>
 
 #include "DataBase.h"
+#include "DateTime.h"
 #include "debugstream.h"
 #include "FileLocations.h"
 #include "net/packets/auth.h"
@@ -106,21 +107,6 @@ int Storage::start()
   }
 
   return 0;
-}
-
-
-qint64 Storage::timestamp()
-{
-# if QT_VERSION >= 0x040700
-  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-# else
-  QDateTime dt = QDateTime::currentDateTime().toUTC();
-  qint64 t = dt.toTime_t();
-  t *= 1000;
-  t += dt.time().msec();
-  return t;
-# endif
-
 }
 
 
@@ -471,7 +457,7 @@ ChatChannel Storage::channel(const QString &name)
   if (!channel) {
     channel = ChatChannel(new ServerChannel(id, name));
     channel->feeds().add(new Feed("topic", 667));
-    channel->feeds().add(new Feed("rating", Storage::timestamp()));
+    channel->feeds().add(new Feed("rating", DateTime::utc()));
 
     m_db->add(channel);
     m_channels[id] = channel;

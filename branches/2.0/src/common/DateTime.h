@@ -16,26 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GROUPS_H_
-#define GROUPS_H_
+#ifndef DATETIME_H_
+#define DATETIME_H_
 
-#include <QStringList>
+#include "schat.h"
 
-class Groups
+class SCHAT_EXPORT DateTime
 {
 public:
-  Groups() {}
-  inline const QStringList& all() const      { return m_groups; }
-  inline Groups &add(const QString &name)    { if (!m_groups.contains(name) && !name.contains(",")) m_groups.append(name); return *this; }
-  inline QString toString() const            { return m_groups.join(","); }
-  inline void remove(const QString &name)    { m_groups.removeAll(name); }
-  inline void set(const QString &groups)     { m_groups = groups.split(",", QString::SkipEmptyParts); }
-  inline void set(const QStringList &groups) { m_groups = groups; }
+  DateTime();
 
-  inline Groups &operator+=(const QString &name) { return add(name); }
-
-private:
-  QStringList m_groups; ///< Список групп.
+  static qint64 utc();
 };
 
-#endif /* GROUPS_H_ */
+#endif /* DATETIME_H_ */

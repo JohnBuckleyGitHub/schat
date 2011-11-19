@@ -25,6 +25,7 @@
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
 #include "cores/PasswordAuth.h"
+#include "DateTime.h"
 #include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"
@@ -143,7 +144,7 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets,
     return true;
 
   if (m_timestamp == 0)
-    m_timestamp = Storage::timestamp();
+    m_timestamp = DateTime::utc();
 
   NewPacketsEvent *event = new NewPacketsEvent(sockets, packets, userId);
   event->timestamp = m_timestamp;
@@ -193,7 +194,7 @@ void Core::customEvent(QEvent *event)
 bool Core::route()
 {
   if (m_timestamp == 0)
-    m_timestamp = Storage::timestamp();
+    m_timestamp = DateTime::utc();
 
   return send(echoFilter(m_storage->sockets(m_reader->destinations())), m_readBuffer);
 }
@@ -322,7 +323,7 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 //  ChannelWriter writer(m_sendStream, channel.data(), user->id());
 //  send(user, writer.data());
 
-  ChannelPacket header(channel, userId, "channel", Storage::timestamp());
+  ChannelPacket header(channel, userId, "channel", DateTime::utc());
   header.setData(channel->feeds().json(user, false));
   send(user, header.data(m_sendStream));
 
@@ -605,7 +606,7 @@ void Core::leave(ChatUser user, quint64 socket)
 
   m_storage->remove(user);
 
-  Notice notice(user->id(), user->channels(), "leave", Storage::timestamp());
+  Notice notice(user->id(), user->channels(), "leave", DateTime::utc());
   send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
 }
 
@@ -677,7 +678,7 @@ bool Core::message()
   if (m_messageData->options & MessageData::ControlOption && command())
     return true;
 
-  m_timestamp = Storage::timestamp();
+  m_timestamp = DateTime::utc();
 
   if (route()) {
     acceptMessage();
@@ -777,7 +778,7 @@ bool Core::login()
     return false;
 
   LoginReply reply = m_storage->login(user, m_notice->text(), m_reader->dest());
-  Notice notice(m_reader->dest(), user->id(), "login.reply", Storage::timestamp(), m_notice->id());
+  Notice notice(m_reader->dest(), user->id(), "login.reply", DateTime::utc(), m_notice->id());
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
@@ -802,7 +803,7 @@ bool Core::reg()
     return false;
 
   RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest(), m_notice->json());
-  Notice notice(m_reader->dest(), user->id(), "reg.reply", Storage::timestamp(), m_notice->id());
+  Notice notice(m_reader->dest(), user->id(), "reg.reply", DateTime::utc(), m_notice->id());
   notice.setStatus(reply.status());
   notice.setText(reply.name());
 
@@ -865,7 +866,7 @@ void Core::rejectNotice(int status)
   if (!user)
     return;
 
-  Notice notice(id(), m_reader->sender(), m_notice->command(), Storage::timestamp(), m_notice->id());
+  Notice notice(id(), m_reader->sender(), m_notice->command(), DateTime::utc(), m_notice->id());
   notice.setStatus(status);
   send(user, notice.data(m_sendStream));
 }
