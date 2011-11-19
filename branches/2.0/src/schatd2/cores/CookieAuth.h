@@ -20,7 +20,7 @@
 #define COOKIEAUTH_H_
 
 #include "cores/AnonymousAuth.h"
-#include "ServerUser.h"
+#include "ServerChannel.h"
 
 class SCHAT_EXPORT CookieAuth : public AnonymousAuth
 {
@@ -30,7 +30,7 @@ public:
   int type() const;
 
 protected:
-  AuthResult auth(const AuthRequest &data, ChatUser user);
+  AuthResult auth(const AuthRequest &data, ChatChannel channel);
 };
 
 #endif /* COOKIEAUTH_H_ */

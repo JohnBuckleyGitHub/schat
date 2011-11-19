@@ -21,6 +21,7 @@
 #include "events.h"
 #include "net/packets/auth.h"
 #include "NodeLog.h"
+#include "Normalize.h"
 #include "Storage.h"
 
 CookieAuth::CookieAuth(Core *core)
@@ -34,7 +35,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data)
   if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AnonymousAuth::auth(data);
 
-  return auth(data, Storage::i()->user(data.cookie, true));
+  return auth(data, Storage::i()->channel(data.cookie, SimpleID::UserId));
 }
 
 
@@ -44,21 +45,22 @@ int CookieAuth::type() const
 }
 
 
-AuthResult CookieAuth::auth(const AuthRequest &data, ChatUser user)
+AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
 {
-  if (!user)
+  if (!channel)
     return AnonymousAuth::auth(data);
 
-  Storage *storage = Storage::i();
-  QString normalNick = storage->normalize(data.nick);
-
-  ChatUser u = storage->user(normalNick, false);
-  if (u && u->id() != user->id())
+  ChatChannel exist   = Storage::i()->channel(Normalize::toId('~' + data.nick), SimpleID::UserId);
+  if (exist && exist->id() != channel->id())
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-  update(user.data(), data);
-//  m_core->add(user, data.authType, data.id); /// \bug Cookie авторизация больше не работает.
+  update(channel.data(), data);
 
-  SCHAT_LOG_DEBUG() << "COOKIE AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
-  return AuthResult(user->id(), data.id);
+  if (!channel->isValid())
+    return AuthResult(Notice::BadRequest, data.id);
+
+  m_core->add(channel, data.authType, data.id);
+
+  SCHAT_LOG_DEBUG() << "COOKIE AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host;
+  return AuthResult(channel->id(), data.id);
 }

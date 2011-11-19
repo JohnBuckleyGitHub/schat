@@ -53,9 +53,5 @@ bool ServerChannel::setName(const QString &name)
 
 void ServerChannel::normalize()
 {
-  QString name = this->name();
-  if (type() == SimpleID::UserId)
-    name.prepend('~');
-
-  m_normalized = Normalize::toId(name);
+  m_normalized = Normalize::toId((type() == SimpleID::UserId ? '~' : '#') + this->name());
 }
