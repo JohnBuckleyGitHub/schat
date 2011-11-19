@@ -34,7 +34,6 @@ public:
 
 protected:
   void update(ServerChannel *channel, const AuthRequest &data);
-  void update(ServerUser *user, const AuthRequest &data);
 };
 
 #endif /* ANONYMOUSAUTH_H_ */

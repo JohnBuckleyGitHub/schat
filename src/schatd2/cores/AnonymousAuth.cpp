@@ -23,8 +23,8 @@
 #include "events.h"
 #include "net/packets/auth.h"
 #include "NodeLog.h"
-#include "Storage.h"
 #include "Normalize.h"
+#include "Storage.h"
 
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
@@ -58,7 +58,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 
   m_core->add(channel, data.authType, data.id);
 
-//  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << user->userAgent() << data.host;
+  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host;
   return AuthResult(id, data.id);
 }
 
@@ -78,22 +78,4 @@ void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
   channel->gender().setRaw(data.gender);
   channel->status().set(data.status);
   channel->addSocket(m_core->packetsEvent()->socket());
-}
-
-
-/*!
- * Обновление данных пользователя при авторизации.
- * \deprecated Эта функция устарела.
- *
- * \param user Пользователь.
- * \param data Авторизационные данные.
- */
-void AnonymousAuth::update(ServerUser *user, const AuthRequest &data)
-{
-  user->setNick(data.nick);
-  user->gender().setRaw(data.gender);
-  user->setStatus(data.status);
-  user->addSocket(m_core->packetsEvent()->socket());
-  user->setUserAgent(data.userAgent);
-  user->setHost(m_core->packetsEvent()->address.toString());
 }

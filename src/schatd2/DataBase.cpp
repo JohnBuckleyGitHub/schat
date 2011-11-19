@@ -373,6 +373,22 @@ qint64 DataBase::add(ChatChannel channel)
  */
 qint64 DataBase::channelKey(const QByteArray &id, int type)
 {
+  if (SimpleID::typeOf(id) == SimpleID::CookieId) {
+    qint64 key = accountKey(id);
+    if (key == -1)
+      return key;
+
+    QSqlQuery query;
+    query.prepare("SELECT channel FROM accounts WHERE id = :id LIMIT 1;");
+    query.bindValue(":id", key);
+    query.exec();
+
+    if (!query.first())
+      return -1;
+
+    return query.value(0).toLongLong();
+  }
+
   if (Channel::isCompatibleId(id) == 0 && SimpleID::typeOf(id) != SimpleID::NormalizedId)
     return -1;
 

@@ -71,7 +71,6 @@ public:
   void removeChannel(const QByteArray &id);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
-//  inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
   QList<quint64> sockets(ChatChannel channel);
   QList<quint64> sockets(const QList<QByteArray> &ids);
   void update(ChatChannel channel);
