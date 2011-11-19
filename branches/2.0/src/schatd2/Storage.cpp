@@ -99,7 +99,7 @@ int Storage::start()
 
   qint64 key = m_settings->value(QLatin1String("MainChannel")).toLongLong();
   if (key > 0) {
-    ChatChannel channel = this->channel(key);
+    ChatChannel channel = DataBase::channel(key);
     if (channel) {
       m_serverData->setChannelId(channel->id());
       SCHAT_LOG_DEBUG() << "Main channel:" << channel->name() << "id:" << SimpleID::encode(channel->id());
@@ -347,18 +347,16 @@ void Storage::rename(ChatUser user)
   if (!m_users.contains(user->id()))
     return;
 
-  ChatChannel channel = m_channels.value(user->channel());
+  ChatChannel channel = m_cache.channel(user->channel());
   if (!channel)
     return;
 
   m_nicks.remove(user->normalNick());
-  m_channelNames.remove(QLatin1String("~") + user->normalNick());
 
   user->setNormalNick(normalize(user->nick()));
   channel->setName(QLatin1String("~") + user->nick());
 
   m_nicks[user->normalNick()] = user;
-//  m_channelNames[channel->normalName()] = channel;
 }
 
 
@@ -374,108 +372,67 @@ void Storage::update(ChatUser user)
 }
 
 
+/*!
+ * Добавление канала.
+ */
 bool Storage::add(ChatChannel channel)
 {
   if (m_db->add(channel) == -1)
     return false;
 
-  m_channels[channel->id()] = channel;
-  m_channels[channel->normalized()] = channel;
+  m_cache.add(channel);
   return true;
 }
 
 
-bool Storage::removeChannel(const QByteArray &id)
+void Storage::removeChannel(const QByteArray &id)
 {
-  ChatChannel channel = m_channels.value(id);
-  if (!channel)
-    return false;
-
-  SCHAT_DEBUG_STREAM(this << "removeChannel()" << channel->name())
-
-  m_channels.remove(id);
-//  m_channelNames.remove(channel->normalName());
-  return true;
+  m_cache.remove(id);
 }
 
 
 /*!
- * Создание специального приватного канала для пользователя.
- * Данный канал служит для обмена статусной информацией.
- */
-ChatChannel Storage::channel(ChatUser user)
-{
-  QByteArray id = SimpleID::setType(SimpleID::ChannelId, user->id());
-  ChatChannel channel = m_channels.value(id);
-
-  if (!channel) {
-    QString normalName = QLatin1String("~") + user->normalNick();
-    channel = ChatChannel(new ServerChannel(id, QLatin1String("~") + user->nick()));
-
-    m_channels[id] = channel;
-    m_channelNames[normalName] = channel;
-  }
-
-  user->addChannel(id);
-  channel->channels().add(user->id());
-
-  return channel;
-}
-
-
-/*!
+ * Получение канала по идентификатору канала или идентификатору нормализированного имени либо Сookie.
+ *
  * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
  */
 ChatChannel Storage::channel(const QByteArray &id, int type)
 {
-  ChatChannel channel = m_channels.value(id);
+  ChatChannel channel = m_cache.channel(id);
   if (channel)
     return channel;
 
-  channel = m_db->channel(id, type);
-  if (channel) {
-    m_channels[channel->id()] = channel;
-    m_channels[channel->normalized()] = channel;
-  }
+  channel = DataBase::channel(id, type);
+  m_cache.add(channel);
 
   return channel;
 }
 
 
-/*!
- * \todo Добавить хук на создание канала.
- */
 ChatChannel Storage::channel(const QString &name)
 {
-  QString normalName = normalize(name);
-  ChatChannel channel = m_channelNames.value(normalName);
-  if (channel || name.startsWith(QLatin1Char('~')))
-    return channel;
-
-  QByteArray id = makeChannelId(normalName);
-  channel = this->channel(id);
-  if (!channel) {
-    channel = ChatChannel(new ServerChannel(id, name));
-    channel->feeds().add(new Feed("topic", 667));
-    channel->feeds().add(new Feed("rating", DateTime::utc()));
-
-    m_db->add(channel);
-    m_channels[id] = channel;
-    m_channelNames[normalName] = channel;
-
-
-    qDebug() << " ---";
-    qDebug() << " ---" << channel->feeds().all().keys();
-    qDebug() << " ---";
-  }
-
-  return channel;
-}
-
-
-ChatChannel Storage::channel(qint64 id)
-{
-  return m_db->channel(id);
+//  QString normalName = normalize(name);
+//  ChatChannel channel = m_channelNames.value(normalName);
+//  if (channel || name.startsWith(QLatin1Char('~')))
+//    return channel;
+//
+//  QByteArray id = makeChannelId(normalName);
+//  channel = this->channel(id);
+//  if (!channel) {
+//    channel = ChatChannel(new ServerChannel(id, name));
+//    channel->feeds().add(new Feed("topic", 667));
+//    channel->feeds().add(new Feed("rating", DateTime::utc()));
+//
+//    m_db->add(channel);
+//    m_cache.add(channel);
+//
+//    qDebug() << " ---";
+//    qDebug() << " ---" << channel->feeds().all().keys();
+//    qDebug() << " ---";
+//  }
+//
+//  return channel;
+  return ChatChannel();
 }
 
 
@@ -605,4 +562,39 @@ void Storage::setDefaultSslConf()
 
   QSslConfiguration::setDefaultConfiguration(conf);
 # endif
+}
+
+
+/*!
+ * Добавление канала в кеш.
+ */
+void Storage::Cache::add(ChatChannel channel)
+{
+  if (!channel)
+    return;
+
+  m_channels[channel->id()] = channel;
+  m_channels[channel->normalized()] = channel;
+
+  if (channel->account())
+    m_channels[channel->account()->cookie()] = channel;
+}
+
+
+/*!
+ * Удаление канала из кэша.
+ */
+void Storage::Cache::remove(const QByteArray &id)
+{
+  ChatChannel channel = this->channel(id);
+  if (!channel)
+    return;
+
+  m_channels.remove(channel->id());
+  m_channels.remove(channel->normalized());
+
+  if (channel->account())
+    m_channels.remove(channel->account()->cookie());
+
+  return;
 }

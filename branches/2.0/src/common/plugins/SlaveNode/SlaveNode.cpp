@@ -290,10 +290,10 @@ void SlaveNode::reAuth()
 
 void SlaveNode::split()
 {
-  QList<QByteArray> channels = m_storage->channels().keys();
-  MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString());
-
-  send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
+//  QList<QByteArray> channels = m_storage->channels().keys();
+//  MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString());
+//
+//  send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
 }
 
 
@@ -374,7 +374,7 @@ void SlaveNode::uplinkAuthReply()
 //    else
 //      m_storage->add(user); /// \bug Добавление пользователя больше не работает.
 
-    addChannel(user);
+//    addChannel(user);
   }
   else if (data.status != Notice::NickAlreadyUse) {
     option = NewPacketsEvent::KillSocketOption;
