@@ -24,6 +24,7 @@ HEADERS += \
     client/AbstractClient.h \
     client/AbstractClient_p.h \
     client/NetworkPool.h \
+    DateTime.h \
     feeds/Feed.h \
     FileLocations.h \
     Gender.h \
@@ -60,6 +61,7 @@ SOURCES += \
     Channel.cpp \
     client/AbstractClient.cpp \
     client/NetworkPool.cpp \
+    DateTime.cpp \
     feeds/Feed.cpp \
     FileLocations.cpp \
     Gender.cpp \

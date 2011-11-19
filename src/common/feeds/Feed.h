@@ -41,7 +41,6 @@ public:
   inline const QString& name() const { return m_name; }
   inline qint64 date() const { return m_date; }
   QVariantMap json(ClientUser user = ClientUser()) const;
-  static qint64 timestamp();
 
   inline void setDate(qint64 date) { m_date = date; }
   inline void setId(const QByteArray &id) { m_id = id; }

@@ -72,20 +72,6 @@ QVariantMap FeedHeader::json(ClientUser user) const
 }
 
 
-qint64 FeedHeader::timestamp()
-{
-# if QT_VERSION >= 0x040700
-  return QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
-# else
-  QDateTime dt = QDateTime::currentDateTime().toUTC();
-  qint64 t = dt.toTime_t();
-  t *= 1000;
-  t += dt.time().msec();
-  return t;
-# endif
-}
-
-
 Feed::Feed()
 {
 }
