@@ -20,6 +20,7 @@
 #include <QEvent>
 #include <QThread>
 
+#include "Account.h"
 #include "cores/AnonymousAuth.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
@@ -479,9 +480,12 @@ void Core::acceptAuth(const AuthResult &result)
   if (!channel)
     return;
 
+  if (!channel->account())
+    return;
+
   QList<QByteArray> packets;
   if (result.packet) {
-    AuthReply reply(m_storage->serverData(), channel.data(), QByteArray(), result.authId, result.json);
+    AuthReply reply(m_storage->serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
     packets.prepend(reply.data(m_sendStream));
   }
 

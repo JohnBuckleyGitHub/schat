@@ -31,9 +31,9 @@ class SCHAT_EXPORT Account
 {
 public:
   Account()
-  : m_channel(-1)
+  : m_channel(0)
   , m_date(0)
-  , m_id(-1)
+  , m_id(0)
   {}
 
   bool isValid() const;
