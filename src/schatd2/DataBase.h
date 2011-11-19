@@ -47,15 +47,19 @@ public:
   void update(ChatUser user);
 
   // channels.
-  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
-  ChatChannel channel(qint64 id);
-  qint64 add(ChatChannel channel);
-  qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
-  void update(ChatChannel channel);
+  static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
+  static ChatChannel channel(qint64 id);
+  static qint64 add(ChatChannel channel);
+  static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
+  static void update(ChatChannel channel);
 
   // accounts.
-  Account account(const QString &name) const;
-  qint64 reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
+  static Account account(qint64 key);
+  static qint64 accountKey(const QByteArray &cookie);
+  static qint64 accountKey(const QString &name);
+  static qint64 accountKey(qint64 channel);
+  static qint64 add(Account *account);
+  static qint64 reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
 };
 
 #endif /* DATABASE_H_ */

@@ -260,17 +260,17 @@ LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &
   if (login.isEmpty())
     return LoginReply(Notice::BadRequest);
 
-  Account account = m_db->account(login);
-  if (!account.isValid())
-    return LoginReply(Notice::UserNotExists);
-
-  if (account.password() != password)
-    return LoginReply(Notice::Forbidden);
-
+//  Account account = m_db->account(login);
+//  if (!account.isValid())
+//    return LoginReply(Notice::UserNotExists);
+//
+//  if (account.password() != password)
+//    return LoginReply(Notice::Forbidden);
+//
   LoginReply reply(login);
-  user->setAccount(login);
-  user->groups().add("registered");
-  m_db->update(user);
+//  user->setAccount(login);
+//  user->groups().add("registered");
+//  m_db->update(user);
 
 //  if (user->id() != account.userId) {
 //    reply.setStatus(Notice::Conflict);

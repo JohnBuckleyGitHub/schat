@@ -273,22 +273,29 @@ ChatChannel DataBase::channel(const QByteArray &id, int type)
 }
 
 
+/*!
+ * Получение канала на основе первичного ключа в таблице \b channels.
+ */
 ChatChannel DataBase::channel(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT channel, gender, status, name, data FROM channels WHERE id = ? LIMIT 1;"));
+  query.prepare(QLatin1String("SELECT channel, gender, status, account, name, data FROM channels WHERE id = ? LIMIT 1;"));
   query.addBindValue(id);
   query.exec();
 
   if (!query.first())
     return ChatChannel();
 
-  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(3).toString()));
+  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(4).toString()));
   channel->setKey(id);
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->status().set(query.value(2).toLongLong());
-//  channel->setData(SimpleJSon::parse(query.value(4).toByteArray()).toMap());
-//  channel->setTopic(SimpleJSon::parse(query.value(3).toString().toUtf8()));
+
+  qint64 accountId = query.value(3).toLongLong();
+  if (accountId > 0) {
+    Account account = DataBase::account(accountId);
+    channel->setAccount(&account);
+  }
 
   return channel;
 }
@@ -332,6 +339,20 @@ qint64 DataBase::add(ChatChannel channel)
 
   key = query.lastInsertId().toLongLong();
   channel->setKey(key);
+
+  // Создание нового аккаунта.
+  if (SimpleID::typeOf(channel->id()) == SimpleID::UserId && !channel->account()) {
+    Account account;
+    account.setChannel(key);
+
+    if (add(&account) != -1) {
+      channel->setAccount(&account);
+      query.prepare("UPDATE channels SET account = :account WHERE id = :id;");
+      query.bindValue(":account", channel->account()->id());
+      query.bindValue(":id", key);
+      query.exec();
+    }
+  }
 
   return key;
 }
@@ -380,7 +401,7 @@ void DataBase::update(ChatChannel channel)
 {
   QSqlQuery query;
   query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data WHERE id = :id;");
-  query.bindValue(":channel",  channel->id());
+  query.bindValue(":channel",    channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
@@ -389,32 +410,138 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(":data",       SimpleJSon::generate(channel->feeds().json()));
   query.bindValue(":id",         channel->key());
   query.exec();
+
+  if (channel->account() && channel->account()->id() > 0) {
+    query.prepare("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;");
+    query.bindValue(":date",       0);
+    query.bindValue(":cookie",     channel->account()->cookie());
+    query.bindValue(":name",       channel->account()->name());
+    query.bindValue(":password",   channel->account()->password());
+    query.bindValue(":groups",     channel->account()->groups().toString());
+    query.bindValue(":id",         channel->id());
+    query.exec();
+  }
 }
 
 
 /*!
- * Получение ключа в таблице \p accounts для имени аккаунта пользователя.
+ * Получение аккаунта пользователя.
  *
- * \param name Аккаунт пользователя вида.
- * \return Объект Account.
+ * \param key Ключ в таблице \b accounts.
  */
-Account DataBase::account(const QString &name) const
+Account DataBase::account(qint64 key)
 {
   QSqlQuery query;
-  query.prepare("SELECT id, userId, password, data FROM accounts WHERE name = :name LIMIT 1;");
-  query.bindValue(":name", name);
+  query.prepare("SELECT channel, date, cookie, name, password, groups FROM accounts WHERE id = :id LIMIT 1;");
+  query.bindValue(":id", key);
   query.exec();
 
   if (!query.first())
     return Account();
 
   Account account;
-  account.setId(query.value(0).toLongLong());
-  account.setName(name);
+  account.setId(key);
+  account.setChannel(query.value(0).toLongLong());
+  account.setDate(query.value(1).toLongLong());
+  account.setCookie(query.value(2).toByteArray());
+  account.setName(query.value(3).toString());
+  account.setPassword(query.value(4).toByteArray());
+  account.groups().set(query.value(5).toString());
   account.setPassword(query.value(2).toByteArray());
-//  account.data = SimpleJSon::parse(query.value(3).toString().toUtf8());
 
   return account;
+}
+
+
+/*!
+ * Получение ключа в таблице \b accounts на основе Сookie пользователя.
+ */
+qint64 DataBase::accountKey(const QByteArray &cookie)
+{
+  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
+    return -1;
+
+  QSqlQuery query;
+  query.prepare("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;");
+  query.bindValue(":cookie", cookie);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+/*!
+ * Получение ключа в таблице \b accounts на основе зарегистрированного имени пользователя.
+ */
+qint64 DataBase::accountKey(const QString &name)
+{
+  if (name.isEmpty())
+    return -1;
+
+  QSqlQuery query;
+  query.prepare("SELECT id FROM accounts WHERE name = :name LIMIT 1;");
+  query.bindValue(":name", name);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+/*!
+ * Получение ключа в таблице \b accounts на основе номера канала.
+ */
+qint64 DataBase::accountKey(qint64 channel)
+{
+  if (channel < 1)
+    return -1;
+
+  QSqlQuery query;
+  query.prepare("SELECT id FROM accounts WHERE channel = :channel LIMIT 1;");
+  query.bindValue(":channel", channel);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+qint64 DataBase::add(Account *account)
+{
+  if (!account->channel())
+    return -1;
+
+  if (account->cookie().isEmpty())
+    account->setCookie(Storage::i()->cookie());
+
+  QSqlQuery query;
+  query.prepare("INSERT INTO accounts (channel, date, cookie, name, password, groups) "
+                     "VALUES (:channel, :date, :cookie, :name, :password, :groups);");
+
+  query.bindValue(":channel",    account->channel());
+  query.bindValue(":date",       0);
+  query.bindValue(":cookie",     account->cookie());
+  query.bindValue(":name",       account->name());
+  query.bindValue(":password",   account->password());
+  query.bindValue(":groups",     account->groups().toString());
+  query.exec();
+
+  if (query.numRowsAffected() <= 0) {
+    SCHAT_LOG_ERROR() << "Could not add account:" << query.lastError();
+    return -1;
+  }
+
+  qint64 key = query.lastInsertId().toLongLong();
+  account->setId(key);
+
+  return key;
 }
 
 
@@ -431,19 +558,20 @@ Account DataBase::account(const QString &name) const
  */
 qint64 DataBase::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
 {
-  if (account(name).id() != -1)
-    return -2;
-
-  QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password, data) VALUES (:userId, :name, :password, :data);"));
-  query.bindValue(":userId", user->id());
-  query.bindValue(":name", name);
-  query.bindValue(":password", password);
-  query.bindValue(":data", SimpleJSon::generate(data));
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
-    return -1;
-
-  return query.lastInsertId().toLongLong();
+//  if (account(name).id() != -1)
+//    return -2;
+//
+//  QSqlQuery query;
+//  query.prepare(QLatin1String("INSERT INTO accounts (userId, name, password, data) VALUES (:userId, :name, :password, :data);"));
+//  query.bindValue(":userId", user->id());
+//  query.bindValue(":name", name);
+//  query.bindValue(":password", password);
+//  query.bindValue(":data", SimpleJSon::generate(data));
+//  query.exec();
+//
+//  if (query.numRowsAffected() <= 0)
+//    return -1;
+//
+//  return query.lastInsertId().toLongLong();
+  return -1;
 }

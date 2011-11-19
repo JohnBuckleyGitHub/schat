@@ -18,10 +18,10 @@
 
 #include "debugstream.h"
 
+#include "Account.h"
 #include "Channel.h"
 #include "net/SimpleID.h"
 #include "text/HtmlFilter.h"
-
 
 /*!
  * Добавление идентификатора в список каналов.
@@ -40,18 +40,27 @@ bool Channels::add(const QByteArray &id)
 
 
 Channel::Channel()
-  : m_synced(false)
+  : m_account(0)
+  , m_synced(false)
   , m_type(SimpleID::InvalidId)
 {
 }
 
 
 Channel::Channel(const QByteArray &id, const QString &name)
-  : m_synced(false)
+  : m_account(0)
+  , m_synced(false)
   , m_type(SimpleID::InvalidId)
 {
   setId(id);
   setName(name);
+}
+
+
+Channel::~Channel()
+{
+  if (m_account)
+    delete m_account;
 }
 
 
@@ -94,6 +103,15 @@ bool Channel::setName(const QString &name)
 
   m_name = tmp;
   return true;
+}
+
+
+void Channel::setAccount(Account *account)
+{
+  if (!m_account)
+    m_account = new Account();
+
+  *m_account = *account;
 }
 
 
