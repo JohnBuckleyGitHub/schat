@@ -341,22 +341,6 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 
 
 /*!
- * Создание приватного канала для вновь подключившегося пользователя.
- * Если в канале находятся пользователи, то они получает уведомление о входе нового пользователя.
- */
-ChatChannel Core::addChannel(ChatUser user)
-{
-  ChatChannel channel = m_storage->channel(user);
-  if (channel->channels().all().size() > 1) {
-    UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
-    send(channel, writer.data());
-  }
-
-  return channel;
-}
-
-
-/*!
  * Формирование списка пакетов для синхронизации списка пользователей в канале.
  * Будут отправлены только данные пользователей, которые не известны получателю.
  *

@@ -80,7 +80,6 @@ protected:
 
   bool join();
   bool join(const QByteArray &userId, ChatChannel channel);
-  ChatChannel addChannel(ChatUser user);
   QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 

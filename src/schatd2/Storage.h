@@ -68,12 +68,10 @@ public:
 
   // channel management.
   bool add(ChatChannel channel);
-  bool removeChannel(const QByteArray &id);
-  ChatChannel channel(ChatUser user);
+  void removeChannel(const QByteArray &id);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
-  ChatChannel channel(qint64 id);
-  inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
+//  inline QHash<QByteArray, ChatChannel> channels() const { return m_channels; }
   QList<quint64> sockets(ChatChannel channel);
   QList<quint64> sockets(const QList<QByteArray> &ids);
   void update(ChatChannel channel);
@@ -88,14 +86,26 @@ private:
   QByteArray makeChannelId(const QString &name) const;
   void setDefaultSslConf();
 
+  /// Внутренний кэш хранилища.
+  class Cache
+  {
+  public:
+    Cache() {}
+    inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
+    void add(ChatChannel channel);
+    void remove(const QByteArray &id);
+
+  private:
+    QHash<QByteArray, ChatChannel> m_channels;
+  };
+
   bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
+  Cache m_cache;                                 ///< Кеш хранилища.
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
-  QHash<QByteArray, ChatChannel> m_channels;     ///< Таблица каналов.
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
   QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
-  QHash<QString, ChatChannel> m_channelNames;    ///< Имена каналов.
   QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
