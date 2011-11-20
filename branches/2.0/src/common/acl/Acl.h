@@ -19,7 +19,10 @@
 #ifndef ACL_H_
 #define ACL_H_
 
-#include "User.h"
+#include "acl/Groups.h"
+#include "schat.h"
+
+class Channel;
 
 class SCHAT_EXPORT Acl
 {
@@ -50,7 +53,7 @@ public:
   inline Groups& groups() { return m_groups; }
   inline int acl() const { return m_acl; }
   inline void setAcl(int acl) { m_acl = acl; }
-  int match(ClientUser user) const;
+  int match(Channel *channel) const;
 
 private:
   Groups m_groups; ///< Группы.

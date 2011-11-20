@@ -24,7 +24,7 @@ Acl::Acl(int acl)
 }
 
 
-int Acl::match(ClientUser user) const
+int Acl::match(Channel *channel) const
 {
   return 4;
 }

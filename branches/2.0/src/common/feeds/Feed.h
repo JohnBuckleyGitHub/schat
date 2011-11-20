@@ -22,7 +22,6 @@
 #include <QSharedPointer>
 #include <QVariant>
 
-#include "User.h"
 #include "feeds/FeedHeader.h"
 
 /*!
