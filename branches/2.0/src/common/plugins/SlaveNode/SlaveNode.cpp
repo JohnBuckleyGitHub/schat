@@ -123,7 +123,7 @@ void SlaveNode::release(SocketReleaseEvent *event)
     QByteArray packet = MessageWriter(m_sendStream, MessageData(user->id(), user->channels(), QLatin1String("leave"), QString())).data();
     send(m_storage->sockets(user->channels()), packet);
     m_uplink->send(packet);
-    m_storage->remove(user);
+//    m_storage->remove(user);
   }
   else
     Core::release(event);
@@ -378,7 +378,7 @@ void SlaveNode::uplinkAuthReply()
   }
   else if (data.status != Notice::NickAlreadyUse) {
     option = NewPacketsEvent::KillSocketOption;
-    m_storage->remove(user);
+//    m_storage->remove(user);
     m_pending.remove(data.id);
   }
 

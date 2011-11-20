@@ -20,11 +20,31 @@
 #include "net/SimpleID.h"
 
 
+/*!
+ * Создание пустого фида.
+ */
 Feed::Feed()
 {
 }
 
 
+/*!
+ * Создание фида на основе JSON данных.
+ *
+ * \param name Имя фида.
+ * \param data JSON данные.
+ */
+Feed::Feed(const QString &name, const QVariantMap &data)
+{
+  m_header.setName(name);
+  m_header.setData(data);
+  m_data = data;
+}
+
+
+/*!
+ * Создание пустого именованного фида.
+ */
 Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
@@ -40,3 +60,18 @@ bool Feed::isValid() const
 {
   return m_header.isValid();
 }
+
+
+/*!
+ * Создание фида на основе сохранённых JSON данных.
+ *
+ * \param name Имя фида.
+ * \param data JSON данные.
+ */
+Feed* Feed::load(const QString &name, const QVariantMap &data)
+{
+  Q_UNUSED(data)
+
+  return new Feed(name, data);
+}
+

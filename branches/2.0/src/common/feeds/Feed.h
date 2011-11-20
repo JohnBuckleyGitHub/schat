@@ -31,10 +31,12 @@ class SCHAT_EXPORT Feed
 {
 public:
   Feed();
+  Feed(const QString &name, const QVariantMap &data);
   Feed(const QString &name, qint64 date = 0);
   virtual ~Feed() {}
 
   virtual bool isValid() const;
+  virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual QVariantMap json() const { return m_data; }
 
   inline const FeedHeader& h() const       { return m_header; }

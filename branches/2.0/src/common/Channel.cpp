@@ -116,6 +116,18 @@ void Channel::setAccount(Account *account)
 
 
 /*!
+ * Загрузка JSON данных.
+ */
+void Channel::setData(const QVariantMap &data)
+{
+  if (data.isEmpty())
+    return;
+
+  m_feeds.load(data["feeds"].toMap());
+}
+
+
+/*!
  * Проверка идентификатора на принадлежность к допустимому типу.
  *
  * \param id Проверяемый идентификатор.

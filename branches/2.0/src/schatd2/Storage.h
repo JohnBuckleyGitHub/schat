@@ -53,7 +53,6 @@ public:
 
   // user management.
   bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
-  bool remove(ChatUser user);
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   ChatUser user(const QByteArray &id, bool offline = false) const;
   ChatUser user(const QString &nick, bool normalize) const;
@@ -68,7 +67,7 @@ public:
 
   // channel management.
   bool add(ChatChannel channel);
-  void removeChannel(const QByteArray &id);
+  void remove(ChatChannel channel);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
   QList<quint64> sockets(ChatChannel channel);
