@@ -65,6 +65,14 @@ public:
     GatewayTimeout      = 504  ///< Gateway Timeout.
   };
 
+  /// Направление пакета.
+  enum Direction {
+    Client2Server = 115, ///< 's'
+    Server2Client = 99,  ///< 'c'
+    Client2Client = 67,  ///< 'C'
+    Server2Server = 83   ///< 'S'
+  };
+
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
@@ -79,6 +87,7 @@ public:
   inline const QString& command() const    { return m_command; }
   inline const QString& text() const       { return m_text; }
   inline const QVariantMap& json() const   { return m_data; }
+  inline int direction() const             { return m_direction; }
   inline int fields() const                { return m_fields; }
   inline int status() const                { return m_status; }
   inline int type() const                  { return m_type; }
@@ -90,11 +99,12 @@ public:
 
   static QString status(int status);
 
-  inline void setData(const QVariantMap &data) { m_data = data; }
-  inline void setDest(const QByteArray &dest) { m_dest = QList<QByteArray>() << dest; }
+  inline void setData(const QVariantMap &data)       { m_data = data; }
+  inline void setDest(const QByteArray &dest)        { m_dest = QList<QByteArray>() << dest; }
   inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
-  inline void setStatus(int status) { m_status = status; }
-  inline void setText(const QString &text) { m_text = text; }
+  inline void setDirection(int direction)            { m_direction = direction; }
+  inline void setStatus(int status)                  { m_status = status; }
+  inline void setText(const QString &text)           { m_text = text; }
 
 protected:
   virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
@@ -102,6 +112,7 @@ protected:
   QByteArray m_sender;      ///< Идентификатор отправителя.
   QList<QByteArray> m_dest; ///< Идентификаторы получателей.
   quint16 m_type;           ///< Тип пакета Notice::Type.
+  mutable quint8 m_direction; ///< Направление пакета.
   mutable quint8 m_fields;  ///< Дополнительные поля данных.
   quint8 m_version;         ///< Версия пакета, обязательное поле.
   quint16 m_status;         ///< Статус \sa StatusCodes, обязательное поле.
