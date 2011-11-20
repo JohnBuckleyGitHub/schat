@@ -30,7 +30,7 @@ class SCHAT_CORE_EXPORT UserUtils
 {
 public:
   UserUtils();
-  static ClientUser user();
+//  static ClientUser user();
   static ClientUser user(const QByteArray &id);
   static ClientUser user(const QUrl &url);
   static ClientUser user(const QVariant &id);

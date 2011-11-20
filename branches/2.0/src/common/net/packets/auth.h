@@ -115,7 +115,7 @@ public:
   , authType(0)
   {}
 
-  AuthRequest(int authType, const QString &host, User *user, const QVariant &json = QVariant());
+  AuthRequest(int authType, const QString &host, Channel *channel, const QVariant &json = QVariant());
   AuthRequest(PacketReader *reader);
   bool isValid() const;
   QByteArray data(QDataStream *stream) const;

@@ -300,31 +300,31 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
   if (gender.isEmpty() && color.isEmpty())
     return CommandArgsError;
 
-  User user(m_client->user().data());
-
-  if (!gender.isEmpty()) {
-    if (gender == QLatin1String("male"))
-      user.gender().set(Gender::Male);
-    else if (gender == QLatin1String("female"))
-      user.gender().set(Gender::Female);
-    else if (gender == QLatin1String("ghost"))
-      user.gender().set(Gender::Ghost);
-    else if (gender == QLatin1String("unknown"))
-      user.gender().set(Gender::Unknown);
-    else if (gender == QLatin1String("bot"))
-      user.gender().set(Gender::Bot);
-    else
-      return CommandArgsError;
-  }
-
-  if (!color.isEmpty()) {
-    user.gender().setColor(UserUtils::color(color));
-  }
-
-  if (m_client->user()->gender().raw() == user.gender().raw())
-    return NoSent;
-
-  m_settings->updateValue(QLatin1String("Profile/Gender"), user.gender().raw());
+//  User user(m_client->user().data());
+//
+//  if (!gender.isEmpty()) {
+//    if (gender == QLatin1String("male"))
+//      user.gender().set(Gender::Male);
+//    else if (gender == QLatin1String("female"))
+//      user.gender().set(Gender::Female);
+//    else if (gender == QLatin1String("ghost"))
+//      user.gender().set(Gender::Ghost);
+//    else if (gender == QLatin1String("unknown"))
+//      user.gender().set(Gender::Unknown);
+//    else if (gender == QLatin1String("bot"))
+//      user.gender().set(Gender::Bot);
+//    else
+//      return CommandArgsError;
+//  }
+//
+//  if (!color.isEmpty()) {
+//    user.gender().setColor(UserUtils::color(color));
+//  }
+//
+//  if (m_client->user()->gender().raw() == user.gender().raw())
+//    return NoSent;
+//
+//  m_settings->updateValue(QLatin1String("Profile/Gender"), user.gender().raw());
   return SentAsCommand;
 }
 

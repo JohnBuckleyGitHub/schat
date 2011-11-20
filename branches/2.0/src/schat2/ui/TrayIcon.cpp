@@ -134,16 +134,16 @@ void TrayIcon::settings()
  */
 void TrayIcon::update()
 {
-  int status = m_client->user()->status();
-  if (m_client->clientState() != SimpleClient::ClientOnline)
-    status = -1;
-
-  if (status == -1) {
-    m_icon = SCHAT_ICON(SmallLogoIcon);
-  }
-  else {
-    m_icon = ChatCore::icon(":/images/schat16.png", UserUtils::overlay(status));
-  }
+//  int status = m_client->user()->status();
+//  if (m_client->clientState() != SimpleClient::ClientOnline)
+//    status = -1;
+//
+//  if (status == -1) {
+//    m_icon = SCHAT_ICON(SmallLogoIcon);
+//  }
+//  else {
+//    m_icon = ChatCore::icon(":/images/schat16.png", UserUtils::overlay(status));
+//  }
 
   if (!m_timer->isActive())
     setIcon(m_icon);

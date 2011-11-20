@@ -231,7 +231,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     m_reader = &reader;
 
     if (reader.type() == Protocol::AuthRequestPacket) {
-      authRequest();
+      auth();
       continue;
     }
 
@@ -416,17 +416,15 @@ QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
 
 
 /*!
- * Чтение пакета Protocol::AuthRequestPacket.
- *
- * \return false если произошла ошибка.
+ * Обработка авторизации пользователя.
  */
-bool Core::authRequest()
+bool Core::auth()
 {
   AuthRequest data(m_reader);
 
   if (!data.isValid()) {
     AuthResult result(Notice::BadRequest, data.id, NewPacketsEvent::KillSocketOption);
-    rejectAuth(result);
+    reject(result);
     return false;
   }
 
@@ -438,11 +436,11 @@ bool Core::authRequest()
 
     AuthResult result = m_auth.at(i)->auth(data);
     if (result.action == AuthResult::Reject) {
-      rejectAuth(result);
+      reject(result);
       return false;
     }
     else if (result.action == AuthResult::Accept) {
-      acceptAuth(result);
+      accept(result);
       return true;
     }
     else if (result.action == AuthResult::Pending)
@@ -450,7 +448,7 @@ bool Core::authRequest()
   }
 
   AuthResult result(Notice::NotImplemented, data.id, NewPacketsEvent::KillSocketOption);
-  rejectAuth(result);
+  reject(result);
   return false;
 }
 
@@ -459,7 +457,7 @@ bool Core::authRequest()
  * Успешная авторизация пользователя.
  * \todo Улучшить поддержку множественного входа, в настоящее время данные не корректно синхронизируются.
  */
-void Core::acceptAuth(const AuthResult &result)
+void Core::accept(const AuthResult &result)
 {
   ChatChannel channel = m_storage->channel(result.id);
   if (!channel)
@@ -506,9 +504,9 @@ void Core::acceptAuth(const AuthResult &result)
 /*!
  * Отклонение авторизации.
  */
-void Core::rejectAuth(const AuthResult &result)
+void Core::reject(const AuthResult &result)
 {
-  SCHAT_LOG_DEBUG() << "Reject Auth" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId);
+  SCHAT_LOG_DEBUG() << "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId);
 
   AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
 

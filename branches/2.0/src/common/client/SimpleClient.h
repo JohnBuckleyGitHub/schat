@@ -60,8 +60,8 @@ public:
 
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
+  ClientChannel channel() const;
   ClientChannel channel(const QByteArray &id) const;
-  ClientUser user() const;
   ClientUser user(const QByteArray &id) const;
   const AuthError& authError() const;
   const QString &account() const;

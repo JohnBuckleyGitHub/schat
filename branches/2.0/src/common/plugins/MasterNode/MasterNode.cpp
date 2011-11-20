@@ -39,7 +39,7 @@ MasterNode::MasterNode(QObject *parent)
 }
 
 
-void MasterNode::acceptAuth(const AuthResult &result)
+void MasterNode::accept(const AuthResult &result)
 {
   ChatUser user = m_storage->user(result.id);
   if (!user)
@@ -57,7 +57,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
 
     AuthResult r = result;
     r.option = 0;
-    Core::acceptAuth(r);
+    Core::accept(r);
     return;
   }
   else {
@@ -68,7 +68,7 @@ void MasterNode::acceptAuth(const AuthResult &result)
     }
   }
 
-  Core::acceptAuth(result);
+  Core::accept(result);
 }
 
 
@@ -95,16 +95,16 @@ void MasterNode::notice(quint16 type)
 }
 
 
-void MasterNode::rejectAuth(const AuthResult &result)
+void MasterNode::reject(const AuthResult &result)
 {
   if (m_storage->isSlave(m_packetsEvent->userId())) {
     AuthResult r = result;
     r.option = 0;
-    Core::rejectAuth(r);
+    Core::reject(r);
     return;
   }
 
-  Core::rejectAuth(result);
+  Core::reject(result);
 }
 
 

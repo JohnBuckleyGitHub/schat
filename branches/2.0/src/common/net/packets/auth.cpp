@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 #include <QNetworkInterface>
 
+#include "Account.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/PacketWriter.h"
@@ -107,15 +108,15 @@ QByteArray AuthReply::data(QDataStream *stream) const
 }
 
 
-AuthRequest::AuthRequest(int authType, const QString &host, User *user, const QVariant &json)
+AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariant &json)
   : AbstractPacket(json)
   , authType(authType)
-  , gender(user->gender().raw())
+  , gender(channel->gender().raw())
   , host(host)
-  , nick(user->nick())
+  , nick(channel->name())
   , userAgent(SimpleID::userAgent())
 {
-  setStatus(user->status());
+  setStatus(channel->status().value());
 }
 
 

@@ -43,9 +43,9 @@ SimpleClientPrivate::~SimpleClientPrivate()
  */
 void SimpleClientPrivate::clearClient()
 {
-  user->clear();
+//  user->clear();
   users.clear();
-  users.insert(user->id(), user);
+//  users.insert(user->id(), user);
 
   channels.clear();
 }
@@ -56,8 +56,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   AbstractClientPrivate::authReply(reply);
 
   if (reply.status == Notice::OK) {
-    ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
-    addChannel(channel);
+//    ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
+//    addChannel(channel);
 
     account.clear();
     password.clear();
@@ -116,7 +116,7 @@ void SimpleClientPrivate::setClientState(AbstractClient::ClientState state)
     return;
 
   if (state == AbstractClient::ClientOnline) {
-    users.insert(user->id(), user);
+//    users.insert(user->id(), user);
   }
   else {
     foreach (ClientChannel chan, channels) {
@@ -135,10 +135,10 @@ void SimpleClientPrivate::setup()
   Q_Q(SimpleClient);
   q->lock();
 
-  if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
-    MessageData data(user->id(), serverData->channelId(), QLatin1String("join"), QString());
-    q->send(MessageWriter(sendStream, data).data());
-  }
+//  if (serverData->features() & ServerData::AutoJoinSupport && !serverData->channelId().isEmpty()) {
+//    MessageData data(user->id(), serverData->channelId(), QLatin1String("join"), QString());
+//    q->send(MessageWriter(sendStream, data).data());
+//  }
 
   q->send(MessageWriter(sendStream, MessageData(userId, QByteArray(), QLatin1String("ready"), QLatin1String("setup"))).data());
   q->unlock();
@@ -164,8 +164,8 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
     return false;
 
   channels[id] = channel;
-  channel->channels().add(user->id());
-  user->addChannel(id);
+//  channel->channels().add(user->id());
+//  user->addChannel(id);
 
   Q_Q(SimpleClient);
 
@@ -206,18 +206,18 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
  * \sa ChannelPacket.
  * \return \b false если произошла ошибка.
  */
-bool SimpleClientPrivate::channel()
-{
-  ChannelPacket *packet = static_cast<ChannelPacket *>(m_notice);
-  ClientChannel channel = ClientChannel(new Channel(packet->channelId(), packet->name()));
-  if (!channel->isValid())
-    return false;
-
-  channel->channels().set(packet->users());
-  addChannel(channel);
-
-  return true;
-}
+//bool SimpleClientPrivate::channel()
+//{
+//  ChannelPacket *packet = static_cast<ChannelPacket *>(m_notice);
+//  ClientChannel channel = ClientChannel(new Channel(packet->channelId(), packet->name()));
+//  if (!channel->isValid())
+//    return false;
+//
+//  channel->channels().set(packet->users());
+//  addChannel(channel);
+//
+//  return true;
+//}
 
 
 /*!
@@ -380,8 +380,8 @@ bool SimpleClientPrivate::notice()
     m_notice = &notice;
     QString cmd = notice.command();
 
-    if (cmd == "channel")
-      channel();
+//    if (cmd == "channel")
+//      channel();
 
     emit(q->notice(notice));
   }
@@ -495,42 +495,43 @@ bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, con
 
 /*!
  * Обновление информации о пользователе.
+ * \bug Эта функция больше не работает.
  */
 void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reader)
 {
   SCHAT_DEBUG_STREAM(this << "updateUserData()");
 
-  User *user = &reader.user;
-  Q_Q(SimpleClient);
-  int changed = SimpleClient::UserBasicDataChanged;
-
-  if (existUser == this->user && this->user->nick() != user->nick()) {
-    q->setNick(user->nick());
-    changed |= SimpleClient::UserNickChanged;
-  }
-
-  if (existUser->nick() != user->nick()) {
-    existUser->setNick(user->nick());
-    changed |= SimpleClient::UserNickChanged;
-  }
-
-  existUser->gender().setRaw(user->gender().raw());
-  existUser->setStatus(user->status());
-
-  if (reader.fields & UserWriter::StaticData) {
-    existUser->setUserAgent(user->userAgent());
-    existUser->setHost(user->host());
-    existUser->setServerNumber(user->serverNumber());
-    existUser->groups().set(user->groups().all());
-    existUser->setAccount(user->account());
-    changed |= SimpleClient::UserStaticDataChanged;
-  }
-
-  if (reader.fields & UserWriter::JSonData) {
-    changed |= SimpleClient::JSonDataChanged;
-  }
-
-  emit(q->userDataChanged(existUser->id(), changed));
+//  User *user = &reader.user;
+//  Q_Q(SimpleClient);
+//  int changed = SimpleClient::UserBasicDataChanged;
+//
+//  if (existUser == this->user && this->user->nick() != user->nick()) {
+//    q->setNick(user->nick());
+//    changed |= SimpleClient::UserNickChanged;
+//  }
+//
+//  if (existUser->nick() != user->nick()) {
+//    existUser->setNick(user->nick());
+//    changed |= SimpleClient::UserNickChanged;
+//  }
+//
+//  existUser->gender().setRaw(user->gender().raw());
+//  existUser->setStatus(user->status());
+//
+//  if (reader.fields & UserWriter::StaticData) {
+//    existUser->setUserAgent(user->userAgent());
+//    existUser->setHost(user->host());
+//    existUser->setServerNumber(user->serverNumber());
+//    existUser->groups().set(user->groups().all());
+//    existUser->setAccount(user->account());
+//    changed |= SimpleClient::UserStaticDataChanged;
+//  }
+//
+//  if (reader.fields & UserWriter::JSonData) {
+//    changed |= SimpleClient::JSonDataChanged;
+//  }
+//
+//  emit(q->userDataChanged(existUser->id(), changed));
 }
 
 
@@ -574,15 +575,16 @@ SimpleClient::~SimpleClient()
 }
 
 
+ClientChannel SimpleClient::channel() const
+{
+  return AbstractClient::channel();
+}
+
+
 ClientChannel SimpleClient::channel(const QByteArray &id) const
 {
   Q_D(const SimpleClient);
   return d->channels.value(id);
-}
-
-ClientUser SimpleClient::user() const
-{
-  return AbstractClient::user();
 }
 
 
@@ -609,8 +611,8 @@ const QString &SimpleClient::account() const
 
 void SimpleClient::leave()
 {
-  Notice notice(userId(), user()->channels(), "leave");
-  send(notice);
+//  Notice notice(userId(), user()->channels(), "leave");
+//  send(notice);
 
   AbstractClient::leave();
 }
@@ -629,7 +631,7 @@ void SimpleClient::part(const QByteArray &channelId)
     return;
 
   d->channels.remove(channelId);
-  d->user->removeChannel(channelId);
+//  d->user->removeChannel(channelId);
 
   MessageData message(userId(), channelId, QLatin1String("part"), QString());
   send(message);
@@ -669,7 +671,7 @@ void SimpleClient::requestAuth()
   else if (d->cookieAuth && !d->cookie.isEmpty())
     d->authType = AuthRequest::Cookie;
 
-  AuthRequest data(d->authType, d->url.toString(), d->user.data());
+  AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId;
   data.cookie = d->cookie;
   data.id = d->authId;

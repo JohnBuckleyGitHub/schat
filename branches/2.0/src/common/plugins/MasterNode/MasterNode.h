@@ -29,9 +29,9 @@ public:
   MasterNode(QObject *parent = 0);
 
 protected:
-  void acceptAuth(const AuthResult &result);
+  void accept(const AuthResult &result);
   void notice(quint16 type);
-  void rejectAuth(const AuthResult &result);
+  void reject(const AuthResult &result);
   void release(SocketReleaseEvent *event);
 
 private:

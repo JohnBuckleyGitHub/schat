@@ -205,7 +205,7 @@ bool ClientHelper::loginReply(const Notice &notice)
   if (notice.text().isEmpty())
     return false;
 
-  m_client->user()->setAccount(notice.text());
+//  m_client->setAccount(notice.text());
   emit loggedIn(notice.text());
   return true;
 }

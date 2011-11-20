@@ -19,6 +19,7 @@
 #ifndef CHATSETTINGS_H_
 #define CHATSETTINGS_H_
 
+#include "Channel.h"
 #include "Settings.h"
 #include "User.h"
 
@@ -55,7 +56,7 @@ private:
   void update(User *user, bool sync = true);
   void updateStatus(const QVariant &value);
 
-  ClientUser m_user;
+  ClientChannel m_channel;
   SimpleClient *m_client;
 };
 

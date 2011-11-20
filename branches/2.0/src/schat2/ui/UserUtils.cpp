@@ -47,10 +47,10 @@ UserUtils::UserUtils()
 }
 
 
-ClientUser UserUtils::user()
-{
-  return ChatCore::i()->client()->user();
-}
+//ClientUser UserUtils::user()
+//{
+//  return ChatCore::i()->client()->user();
+//}
 
 
 ClientUser UserUtils::user(const QByteArray &id)

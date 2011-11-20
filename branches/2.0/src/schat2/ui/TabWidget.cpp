@@ -554,7 +554,7 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
   }
 
   tab->setOnline();
-  tab->add(m_client->user());
+//  tab->add(m_client->user());
 
   closeWelcome();
   return tab;

@@ -84,9 +84,9 @@ protected:
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 
   // Авторизация.
-  virtual bool authRequest();
-  virtual void acceptAuth(const AuthResult &result);
-  virtual void rejectAuth(const AuthResult &result);
+  virtual bool auth();
+  virtual void accept(const AuthResult &result);
+  virtual void reject(const AuthResult &result);
 
   // users.
   bool readUserData();

@@ -22,12 +22,12 @@
 #include "net/packets/message.h"
 #include "net/packets/users.h"
 #include "NetworkManager.h"
+#include "ui/ChannelUtils.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
-  , m_client(0)
 {
   setDefault(QLatin1String("AutoConnect"),         true);
   setDefault(QLatin1String("ChannelUserCount"),    false);
@@ -44,7 +44,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(QLatin1String("WindowsAero"),         true);
   setDefault(QLatin1String("Profile/Gender"),      0);
   setDefault(QLatin1String("Profile/Nick"),        User::defaultNick());
-  setDefault(QLatin1String("Profile/Status"),      QLatin1String("1;"));
+  setDefault(QLatin1String("Profile/Status"),      1);
 }
 
 
@@ -52,10 +52,10 @@ void ChatSettings::setClient(SimpleClient *client)
 {
   m_client = client;
 
-  m_user = m_client->user();
-  m_user->setNick(value(QLatin1String("Profile/Nick")).toString());
-  m_user->gender().setRaw(value(QLatin1String("Profile/Gender")).toUInt());
-  m_user->setStatus(value(QLatin1String("Profile/Status")).toString());
+  m_channel = ChannelUtils::channel();
+  m_channel->setName(value("Profile/Nick").toString());
+  m_channel->gender().setRaw(value("Profile/Gender").toInt());
+  m_channel->status().set(value("Profile/Status").toInt());
 
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
@@ -66,28 +66,28 @@ void ChatSettings::setClient(SimpleClient *client)
  */
 void ChatSettings::updateValue(const QString &key, const QVariant &value)
 {
-  if (this->value(key) == value)
-    return;
-
-  if (key == QLatin1String("Profile/Nick") && m_client->clientState() != SimpleClient::ClientOnline) {
-    setValue(key, value);
-    m_client->setNick(value.toString());
-    return;
-  }
-
-  if (key == QLatin1String("Profile/Status")) {
-    updateStatus(value);
-    return;
-  }
-
-  User user(m_user.data());
-
-  if (key == QLatin1String("Profile/Nick"))
-    user.setNick(value.toString());
-  else if (key == QLatin1String("Profile/Gender"))
-    user.gender().setRaw(value.toInt());
-
-  update(&user);
+//  if (this->value(key) == value)
+//    return;
+//
+//  if (key == QLatin1String("Profile/Nick") && m_client->clientState() != SimpleClient::ClientOnline) {
+//    setValue(key, value);
+//    m_client->setNick(value.toString());
+//    return;
+//  }
+//
+//  if (key == QLatin1String("Profile/Status")) {
+//    updateStatus(value);
+//    return;
+//  }
+//
+//  User user(m_user.data());
+//
+//  if (key == QLatin1String("Profile/Nick"))
+//    user.setNick(value.toString());
+//  else if (key == QLatin1String("Profile/Gender"))
+//    user.gender().setRaw(value.toInt());
+//
+//  update(&user);
 }
 
 
@@ -96,7 +96,7 @@ void ChatSettings::updateUserData(const QByteArray &userId)
   if (m_client->userId() != userId)
     return;
 
-  update(m_user.data(), false);
+//  update(m_user.data(), false);
 }
 
 
@@ -117,8 +117,8 @@ void ChatSettings::update(User *user, bool sync)
 
   if (sync) {
     m_client->setNick(user->nick());
-    m_user->gender().setRaw(user->gender().raw());
-    m_user->setStatus(user->statusToString());
+//    m_user->gender().setRaw(user->gender().raw());
+//    m_user->setStatus(user->statusToString());
   }
 
   setValue(QLatin1String("Profile/Nick"), m_client->nick());
@@ -135,20 +135,20 @@ void ChatSettings::update(User *user, bool sync)
 void ChatSettings::updateStatus(const QVariant &value)
 {
   QString status;
-  if (value.type() == QVariant::Int)
-    status = User::statusToString(value.toInt(), m_user->statusText(value.toInt()));
-  else
-    status = value.toString();
+//  if (value.type() == QVariant::Int)
+//    status = User::statusToString(value.toInt(), m_user->statusText(value.toInt()));
+//  else
+//    status = value.toString();
 
   if (m_client->clientState() == SimpleClient::ClientOnline) {
-    MessageData data(UserUtils::userId(), m_client->user()->channels(), QLatin1String("status"), status);
-    m_client->send(data, true);
+//    MessageData data(UserUtils::userId(), m_client->user()->channels(), QLatin1String("status"), status);
+//    m_client->send(data, true);
   }
 
-  m_user->setStatus(status);
-  if (m_user->status() == ::Status::Offline) {
-    m_client->leave();
-  }
+//  m_user->setStatus(status);
+//  if (m_user->status() == ::Status::Offline) {
+//    m_client->leave();
+//  }
 
   setValue(QLatin1String("Profile/Status"), status);
 
