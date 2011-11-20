@@ -115,7 +115,7 @@ void MasterNode::release(SocketReleaseEvent *event)
     if (!slave)
       return;
 
-    m_storage->remove(slave);
+//    m_storage->remove(slave);
     m_storage->removeSlave(event->userId());
 
     quint8 number = slave->gender().raw();
@@ -141,7 +141,7 @@ void MasterNode::release(SocketReleaseEvent *event)
           channels.append(id);
       }
 
-      m_storage->remove(users.at(i));
+//      m_storage->remove(users.at(i));
     }
 
     MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));

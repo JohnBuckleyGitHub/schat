@@ -68,3 +68,13 @@ QVariantMap FeedHeader::json(Channel *channel) const
   json(out, channel);
   return out;
 }
+
+
+/*!
+ * Установка данных заголовка фида на основе JSON данных.
+ */
+void FeedHeader::setData(const QVariantMap &data)
+{
+  m_acl.setAcl(data["acl"].toLongLong());
+  m_date = data["date"].toLongLong();
+}

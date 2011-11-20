@@ -126,6 +126,7 @@ public:
   bool setName(const QString &name);
   inline void setSynced(bool synced)      { m_synced = synced; }
   void setAccount(Account *account);
+  void setData(const QVariantMap &data);
 
   inline Channels& channels()             { return m_channels; }
   inline const Channels& channels() const { return m_channels; }

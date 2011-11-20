@@ -297,6 +297,10 @@ ChatChannel DataBase::channel(qint64 id)
     channel->setAccount(&account);
   }
 
+  channel->setData(SimpleJSon::parse(query.value(5).toByteArray()).toMap());
+//  qDebug() << SimpleJSon::parse(query.value(5).toByteArray()).toMap();
+//  qDebug() << query.value(5).toByteArray();
+
   return channel;
 }
 

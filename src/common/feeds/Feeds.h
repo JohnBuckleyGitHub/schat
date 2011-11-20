@@ -37,6 +37,7 @@ public:
   inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
   inline const QHash<QString, FeedPtr>& all() const { return m_feeds; }
   inline void setChannel(Channel *channel) { m_channel = channel; }
+  void load(const QVariantMap &data);
 
   QVariantMap json(Channel *channel = 0, bool body = true);
   QVariantMap json(const QStringList &feeds, Channel *channel = 0, bool body = true);

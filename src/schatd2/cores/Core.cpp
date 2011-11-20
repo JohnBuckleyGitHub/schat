@@ -473,6 +473,8 @@ void Core::accept(const AuthResult &result)
   }
 
   channel->feeds().add(new Feed("rating", DateTime::utc()));
+  channel->feeds().add(new Feed("topic", DateTime::utc()));
+  channel->feeds().add(new Feed("test", DateTime::utc()));
 
   packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
 
@@ -581,19 +583,19 @@ bool Core::updateUserStatus()
 }
 
 
-void Core::leave(ChatUser user, quint64 socket)
+void Core::leave(ChatChannel channel, quint64 socket)
 {
-  if (!user)
+  if (!channel)
     return;
 
-  user->removeSocket(socket);
-  if (user->sockets().size())
+  channel->removeSocket(socket);
+  if (channel->sockets().size())
     return;
 
-  m_storage->remove(user);
+  m_storage->remove(channel);
 
-  Notice notice(user->id(), user->channels(), "leave", DateTime::utc());
-  send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
+//  Notice notice(user->id(), user->channels(), "leave", DateTime::utc());
+//  send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
 }
 
 
@@ -602,7 +604,7 @@ void Core::leave(ChatUser user, quint64 socket)
  */
 void Core::release(SocketReleaseEvent *event)
 {
-  leave(m_storage->user(event->userId()), event->socket());
+  leave(m_storage->channel(event->userId()), event->socket());
 }
 
 
@@ -826,7 +828,7 @@ void Core::notice(quint16 type)
       login();
 
     else if (command == "leave")
-      leave(m_storage->user(m_reader->sender()), m_packetsEvent->socket());
+      leave(m_storage->channel(m_reader->sender()), m_packetsEvent->socket());
 
     else {
       route();

@@ -16,7 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+#include "SimpleJSon.h"
+
 #include "feeds/Feeds.h"
+#include "feeds/FeedFactory.h"
 
 bool Feeds::add(FeedPtr feed)
 {
@@ -33,6 +37,28 @@ bool Feeds::add(FeedPtr feed)
 
   m_feeds[feed->h().name()] = feed;
   return true;
+}
+
+
+/*!
+ * Загрузка фидов из JSON данных.
+ *
+ * \param data JSON данные.
+ */
+void Feeds::load(const QVariantMap &data)
+{
+  qDebug() << "LOAD" << data.size();
+
+  if (data.isEmpty())
+    return;
+
+  QMapIterator<QString, QVariant> i(data);
+  while (i.hasNext()) {
+    i.next();
+    add(FeedFactory::load(i.key(), i.value().toMap()));
+  }
+
+  qDebug() << SimpleJSon::generate(json());
 }
 
 

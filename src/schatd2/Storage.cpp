@@ -156,21 +156,21 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
  * Удаление пользователя.
  * Пользователь удаляется из таблиц m_users, m_nicks,
  */
-bool Storage::remove(ChatUser user)
-{
-  if (user->channelsCount() > 1) {
-    QList<QByteArray> channels = user->channels();
-    for (int i = 0; i < channels.size(); ++i) {
-      removeUserFromChannel(user->id(), channels.at(i));
-    }
-  }
-
-  m_users.remove(user->id());
-  m_nicks.remove(user->normalNick());
-  m_db->update(user);
-
-  return true;
-}
+//bool Storage::remove(ChatUser user)
+//{
+//  if (user->channelsCount() > 1) {
+//    QList<QByteArray> channels = user->channels();
+//    for (int i = 0; i < channels.size(); ++i) {
+//      removeUserFromChannel(user->id(), channels.at(i));
+//    }
+//  }
+//
+//  m_users.remove(user->id());
+//  m_nicks.remove(user->normalNick());
+//  m_db->update(user);
+//
+//  return true;
+//}
 
 
 /*!
@@ -194,7 +194,7 @@ bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &
   user->removeChannel(channelId);
 
   if (chan->channels().all().size() == 0)
-    removeChannel(chan->id());
+    remove(chan);
 
   return true;
 }
@@ -385,9 +385,14 @@ bool Storage::add(ChatChannel channel)
 }
 
 
-void Storage::removeChannel(const QByteArray &id)
+/*!
+ * Удаление канала.
+ */
+void Storage::remove(ChatChannel channel)
 {
-  m_cache.remove(id);
+  DataBase::update(channel);
+
+  m_cache.remove(channel->id());
 }
 
 
