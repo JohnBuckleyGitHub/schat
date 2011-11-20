@@ -27,6 +27,8 @@
 Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(QList<QByteArray>() << dest)
+  , m_type(GenericType)
+  , m_direction(Client2Server)
   , m_fields(0)
   , m_version(0)
   , m_status(OK)
@@ -35,8 +37,6 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
   , m_command(command)
   , m_data(data)
 {
-  m_type = GenericType;
-
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
@@ -51,6 +51,8 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
 Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(dest)
+  , m_type(GenericType)
+  , m_direction(Client2Server)
   , m_fields(0)
   , m_version(0)
   , m_status(OK)
@@ -59,8 +61,6 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
   , m_command(command)
   , m_data(data)
 {
-  m_type = GenericType;
-
   if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
     m_fields |= IdField;
 
@@ -78,6 +78,7 @@ Notice::Notice(quint16 type, PacketReader *reader)
   , m_type(type)
   , m_fields(0)
 {
+  m_direction = reader->get<quint8>();
   m_fields = reader->get<quint8>();
   m_version = reader->get<quint8>();
   m_status = reader->get<quint16>();
@@ -129,6 +130,7 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
 
   PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest, echo);
   writer.put(m_type);
+  writer.put(m_direction);
   writer.put(m_fields);
   writer.put(m_version);
   writer.put(m_status);

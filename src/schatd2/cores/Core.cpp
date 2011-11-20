@@ -323,9 +323,9 @@ bool Core::join(const QByteArray &userId, ChatChannel channel)
 //  ChannelWriter writer(m_sendStream, channel.data(), user->id());
 //  send(user, writer.data());
 
-  ChannelPacket header(channel, userId, "channel", DateTime::utc());
+//  ChannelPacket header(channel, userId, "channel", DateTime::utc());
 //  header.setData(channel->feeds().json(user, false));
-  send(user, header.data(m_sendStream));
+//  send(user, header.data(m_sendStream));
 
   if (channel->channels().all().size() > 1) {
     UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
@@ -469,10 +469,14 @@ void Core::accept(const AuthResult &result)
   QList<QByteArray> packets;
   if (result.packet) {
     AuthReply reply(m_storage->serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
-    packets.prepend(reply.data(m_sendStream));
+    packets.append(reply.data(m_sendStream));
   }
 
-  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, channel->id());
+  channel->feeds().add(new Feed("rating", DateTime::utc()));
+
+  packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
+
+  send(channel->sockets(), packets, result.option, channel->id());
 
 //  ChatUser user = m_storage->user(result.id);
 //  if (!user)
