@@ -63,9 +63,9 @@ void BotCore::readSettings()
 
   m_client->setNick(m_settings.value("Nick").toString());
 
-  ClientUser user = m_client->user();
-  user->gender().setRaw(m_settings.value("Gender").toInt());
-  user->setStatus(m_settings.value("Status").toString());
+//  ClientUser user = m_client->user();
+//  user->gender().setRaw(m_settings.value("Gender").toInt());
+//  user->setStatus(m_settings.value("Status").toString());
 }
 
 

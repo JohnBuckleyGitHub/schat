@@ -28,6 +28,7 @@ private:
   ChannelUtils() {}
 
 public:
+  static ClientChannel channel();
   static ClientChannel channel(const QByteArray &id);
   static ClientChannel channel(const QUrl &url);
   static QString webIcon(const QString &action);

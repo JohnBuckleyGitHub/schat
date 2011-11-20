@@ -97,25 +97,25 @@ void StatusMenu::addStatus(int status)
  */
 void StatusMenu::update()
 {
-  ClientUser user(new User(ChatCore::i()->client()->user().data()));
-  if (m_statuses.contains(user->status())) {
-    m_statuses.value(user->status())->setChecked(true);
-  }
-
-  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
-    user->setStatus(Status::Offline);
-  }
-
-  setIcon(UserUtils::icon(user, true, true));
-  setTitle(UserUtils::statusTitle(user->status()));
-
-  QHashIterator<int, QAction *> i(m_statuses);
-  while (i.hasNext()) {
-    i.next();
-    user->setStatus(i.key());
-    i.value()->setIcon(UserUtils::icon(user, true, true));
-    i.value()->setText(UserUtils::statusTitle(i.key()));
-  }
-
-  emit updated();
+//  ClientUser user(new User(ChatCore::i()->client()->user().data()));
+//  if (m_statuses.contains(user->status())) {
+//    m_statuses.value(user->status())->setChecked(true);
+//  }
+//
+//  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
+//    user->setStatus(Status::Offline);
+//  }
+//
+//  setIcon(UserUtils::icon(user, true, true));
+//  setTitle(UserUtils::statusTitle(user->status()));
+//
+//  QHashIterator<int, QAction *> i(m_statuses);
+//  while (i.hasNext()) {
+//    i.next();
+//    user->setStatus(i.key());
+//    i.value()->setIcon(UserUtils::icon(user, true, true));
+//    i.value()->setText(UserUtils::statusTitle(i.key()));
+//  }
+//
+//  emit updated();
 }

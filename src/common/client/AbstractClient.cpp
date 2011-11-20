@@ -19,6 +19,7 @@
 #include <QBasicTimer>
 #include <QTimerEvent>
 
+#include "Account.h"
 #include "Channel.h"
 #include "client/AbstractClient.h"
 #include "client/AbstractClient_p.h"
@@ -36,13 +37,16 @@ AbstractClientPrivate::AbstractClientPrivate()
   : clientState(AbstractClient::ClientOffline)
   , previousState(AbstractClient::ClientOffline)
   , sendLock(false)
-  , user(new User())
+  , channel(new Channel())
+//  , user(new User())
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
   , serverData(new ServerData())
 {
-  user->setUserAgent(SimpleID::userAgent());
+  Account account;
+  channel->setAccount(&account);
+//  user->setUserAgent(SimpleID::userAgent()); /// \bug !!!
 }
 
 
@@ -60,7 +64,7 @@ QString AbstractClientPrivate::mangleNick()
 {
   int rand = qrand() % 89 + 10;
   if (nick.isEmpty())
-    nick = user->nick();
+    nick = channel->name();
 
   return nick.left(User::MaxNickLength - 2) + QString::number(rand);
 }
@@ -76,9 +80,13 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
   Q_Q(AbstractClient);
   if (reply.status == Notice::OK) {
     q->setAuthorized(reply.userId);
-    user->setId(reply.userId);
-    user->setServerNumber(reply.serverData.number());
-    user->setAccount(reply.account);
+    channel->setId(reply.userId);
+    channel->account()->setName(reply.account);
+    channel->account()->setCookie(reply.cookie);
+
+//    user->setId(reply.userId);
+//    user->setServerNumber(reply.serverData.number()); /// \bug !!!
+//    user->setAccount(reply.account); /// \bug !!!
 
     cookie = reply.cookie;
     pool->setLast();
@@ -86,8 +94,8 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
     setServerData(reply.serverData);
 
-    if (user->status() == Status::Offline)
-      user->setStatus(Status::Online);
+    if (channel->status().value() == Status::Offline)
+      channel->status().set(Status::Online);
 
     emit(q->ready());
     return true;
@@ -95,7 +103,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
   if (reply.status == Notice::NickAlreadyUse) {
     authId = reply.id;
-    user->setNick(mangleNick());
+    channel->setName(mangleNick());
     q->requestAuth();
   }
 
@@ -229,7 +237,7 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
     leave();
 
   if (!d->nick.isEmpty())
-    d->user->setNick(d->nick);
+    d->channel->setName(d->nick);
 
   d->setClientState(ClientConnecting);
 
@@ -300,11 +308,18 @@ AbstractClient::ClientState AbstractClient::previousState() const
 }
 
 
-ClientUser AbstractClient::user() const
+ClientChannel AbstractClient::channel() const
 {
   Q_D(const AbstractClient);
-  return d->user;
+  return d->channel;
 }
+
+
+//ClientUser AbstractClient::user() const
+//{
+//  Q_D(const AbstractClient);
+//  return d->user;
+//}
 
 
 PacketReader *AbstractClient::reader()
@@ -336,20 +351,20 @@ QByteArray AbstractClient::uniqueId() const
 
 
 /*!
- * Получение оригинального ника, не искажённого функцией автоматического
- * разрешения коллизий.
+ * Получение оригинального ника, не искажённого функцией
+ * автоматического разрешения коллизий.
  */
-QString AbstractClient::nick() const
+const QString& AbstractClient::nick() const
 {
   Q_D(const AbstractClient);
   if (d->nick.isEmpty())
-    return d->user->nick();
+    return d->channel->name();
 
   return d->nick;
 }
 
 
-QUrl AbstractClient::url() const
+const QUrl& AbstractClient::url() const
 {
   Q_D(const AbstractClient);
   return d->url;
@@ -373,8 +388,8 @@ void AbstractClient::lock()
 void AbstractClient::setNick(const QString &nick)
 {
   Q_D(AbstractClient);
-  d->user->setNick(nick);
-  d->nick = "";
+  d->channel->setName(nick);
+  d->nick = QString();
 }
 
 

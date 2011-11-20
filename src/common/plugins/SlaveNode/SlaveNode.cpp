@@ -48,8 +48,8 @@ SlaveNode::SlaveNode(QObject *parent)
 
   m_uplink = new AbstractClient(this);
   m_uplink->setNick(m_settings->value(QLatin1String("SlaveNode/Name"), QLatin1String("Slave")).toString());
-  m_uplink->user()->gender().setRaw(m_settings->value(QLatin1String("SlaveNode/Number"), 1).toInt());
-  m_storage->serverData()->setNumber(m_uplink->user()->gender().raw());
+//  m_uplink->user()->gender().setRaw(m_settings->value(QLatin1String("SlaveNode/Number"), 1).toInt());
+//  m_storage->serverData()->setNumber(m_uplink->user()->gender().raw());
 
   connect(m_uplink, SIGNAL(requestClientAuth()), SLOT(uplinkAuth()));
   connect(m_uplink, SIGNAL(packetReady(int)), SLOT(uplinkPacketReady(int)));
@@ -206,10 +206,10 @@ bool SlaveNode::readUserData()
  */
 void SlaveNode::uplinkAuth()
 {
-  AuthRequest data(AuthRequest::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
-  data.uniqueId = m_uplink->uniqueId();
-  data.privateId = m_storage->serverData()->privateId();
-  m_uplink->send(data.data(m_uplink->sendStream()));
+//  AuthRequest data(AuthRequest::SlaveNode, m_uplink->url().host(), m_uplink->user().data());
+//  data.uniqueId = m_uplink->uniqueId();
+//  data.privateId = m_storage->serverData()->privateId();
+//  m_uplink->send(data.data(m_uplink->sendStream()));
 }
 
 
@@ -276,12 +276,12 @@ void SlaveNode::reAuth()
     notice.setText(i.value()->host());
     packets.append(notice.data(m_uplink->sendStream()));
 
-    AuthRequest data(AuthRequest::Cookie, QString(), i.value().data());
-    data.uniqueId = i.value()->uniqueId();
-    data.cookie = i.value()->cookie();
-    data.id = notice.dest();
+//    AuthRequest data(AuthRequest::Cookie, QString(), i.value().data());
+//    data.uniqueId = i.value()->uniqueId();
+//    data.cookie = i.value()->cookie();
+//    data.id = notice.dest();
 
-    packets.append(data.data(m_uplink->sendStream()));
+//    packets.append(data.data(m_uplink->sendStream()));
   }
 
   m_uplink->send(packets);

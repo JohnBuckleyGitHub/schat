@@ -21,6 +21,16 @@
 #include "net/SimpleID.h"
 #include "ui/ChannelUtils.h"
 
+
+/*!
+ * Возвращает канал пользовователя.
+ */
+ClientChannel ChannelUtils::channel()
+{
+  return ChatCore::i()->client()->channel();
+}
+
+
 ClientChannel ChannelUtils::channel(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) != SimpleID::ChannelId)

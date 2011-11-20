@@ -130,8 +130,8 @@ void StatusBar::clientStateChanged(int state)
   else if (state == SimpleClient::ClientOnline) {
     m_icon->setPixmap(QPixmap(":/images/online.png"));
 
-    if (!UserUtils::user()->account().isEmpty())
-      loggedIn(UserUtils::user()->account());
+//    if (!UserUtils::user()->account().isEmpty())
+//      loggedIn(UserUtils::user()->account());
 
     #if !defined(SCHAT_NO_SSL)
     if (m_client->isEncrypted()) {

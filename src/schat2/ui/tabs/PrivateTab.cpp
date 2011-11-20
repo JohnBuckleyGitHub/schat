@@ -124,16 +124,16 @@ void PrivateTab::userDataChanged(const QByteArray &userId, int changed)
   if (!(changed & SimpleClient::UserNickChanged))
     return;
 
-  ClientUser user;
-  if (UserUtils::userId() == userId)
-    user = UserUtils::user();
-  else if (id() == userId)
-    user = UserUtils::user(userId);
-
-  if (!user)
-    return;
-
-  UserUtils::updateUserNick(m_chatView, user);
+//  ClientUser user;
+//  if (UserUtils::userId() == userId)
+//    user = UserUtils::user();
+//  else if (id() == userId)
+//    user = UserUtils::user(userId);
+//
+//  if (!user)
+//    return;
+//
+//  UserUtils::updateUserNick(m_chatView, user);
 }
 
 

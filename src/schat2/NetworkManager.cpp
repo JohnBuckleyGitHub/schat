@@ -74,7 +74,7 @@ NetworkItem NetworkItem::item()
   item.m_url = client->url().toString();
   item.m_cookie = client->cookie();
   item.m_userId = client->userId();
-  item.m_account = client->user()->account();
+//  item.m_account = client->user()->account();
 
   if (!item.m_account.isEmpty())
     item.m_authorized = true;
@@ -167,8 +167,8 @@ bool NetworkManager::isAutoConnect() const
   if (!m_settings->value(QLatin1String("AutoConnect")).toBool())
     return false;
 
-  if (m_client->user()->status() == Status::Offline)
-    return false;
+//  if (m_client->user()->status() == Status::Offline)
+//    return false;
 
   QStringList networks = networkList();
   if (networks.isEmpty())

@@ -98,8 +98,8 @@ bool LoginWidget::canLogIn() const
   if (client->clientState() != SimpleClient::ClientOnline)
     return false;
 
-  if (!client->user()->account().isEmpty())
-    return false;
+//  if (!client->user()->account().isEmpty())
+//    return false;
 
   return true;
 }

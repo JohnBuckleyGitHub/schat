@@ -49,7 +49,8 @@ public:
   AbstractClient::ClientState clientState;   ///< Состояние клиента.
   AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
-  ClientUser user;                         ///< Пользователь.
+  ClientChannel channel;                   ///< Канал пользователя.
+//  ClientUser user;                         ///< Пользователь.
   int reconnects;                          ///< Число попыток восстановить соединение.
   NetworkPool *pool;                       ///< Пул адресов серверов.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.

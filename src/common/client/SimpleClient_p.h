@@ -43,7 +43,7 @@ public:
 
   // Каналы.
   bool addChannel(ClientChannel channel);
-  bool channel();
+//  bool channel();
   void endSyncChannel(ClientChannel channel);
   void endSyncChannel(const QByteArray &id);
 
