@@ -26,6 +26,7 @@ HEADERS += \
     client/NetworkPool.h \
     DateTime.h \
     feeds/Feed.h \
+    feeds/Feeds.h \
     FileLocations.h \
     Gender.h \
     k8json/k8json.h \
@@ -63,6 +64,7 @@ SOURCES += \
     client/NetworkPool.cpp \
     DateTime.cpp \
     feeds/Feed.cpp \
+    feeds/Feeds.cpp \
     FileLocations.cpp \
     Gender.cpp \
     k8json/k8json.cpp \

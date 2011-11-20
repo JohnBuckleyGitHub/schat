@@ -88,6 +88,7 @@ bool Channel::setId(const QByteArray &id)
   m_id = id;
   m_type = type;
   m_feeds.setId(id);
+  m_feeds.setChannel(this);
   return true;
 }
 
