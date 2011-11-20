@@ -23,7 +23,7 @@
 #include <QSharedPointer>
 #include <QVariant>
 
-#include "feeds/Feed.h"
+#include "feeds/Feeds.h"
 #include "Gender.h"
 
 class Account;

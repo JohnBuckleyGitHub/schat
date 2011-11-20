@@ -23,7 +23,6 @@
 #include <QVariant>
 
 #include "acl/Acl.h"
-#include "schat.h"
 #include "User.h"
 
 /*!
@@ -77,30 +76,5 @@ private:
 };
 
 typedef QSharedPointer<Feed> FeedPtr;
-
-
-/*!
- * Хранилище фидов.
- */
-class SCHAT_EXPORT Feeds
-{
-public:
-  Feeds() {}
-  bool add(FeedPtr feed);
-  inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
-  inline const QByteArray& id() const { return m_id; }
-  inline const QHash<QString, FeedPtr>& all() const { return m_feeds; }
-  inline void setId(const QByteArray &id) { m_id = id; }
-
-  QVariantMap json(ClientUser user = ClientUser(), bool body = true);
-  QVariantMap json(const QStringList &feeds, ClientUser user = ClientUser(), bool body = true);
-
-  static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
-  static QVariantMap merge(const QString &key, const QVariantMap &in);
-
-private:
-  QByteArray m_id;                 ///< Идентификатор канала.
-  QHash<QString, FeedPtr> m_feeds; ///< Таблица фидов.
-};
 
 #endif /* FEED_H_ */
