@@ -26,6 +26,7 @@ HEADERS += \
     client/NetworkPool.h \
     DateTime.h \
     feeds/Feed.h \
+    feeds/FeedHeader.h \
     feeds/Feeds.h \
     FileLocations.h \
     Gender.h \
@@ -64,6 +65,7 @@ SOURCES += \
     client/NetworkPool.cpp \
     DateTime.cpp \
     feeds/Feed.cpp \
+    feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
     FileLocations.cpp \
     Gender.cpp \
