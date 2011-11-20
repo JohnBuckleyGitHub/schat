@@ -20,10 +20,13 @@
 
 bool Feeds::add(FeedPtr feed)
 {
+  if (!m_channel)
+    return false;
+
   if (!feed)
     return false;
 
-  feed->h().setId(m_id);
+  feed->h().setChannel(m_channel);
 
   if (!feed->isValid())
     return false;
@@ -33,13 +36,13 @@ bool Feeds::add(FeedPtr feed)
 }
 
 
-QVariantMap Feeds::json(ClientUser user, bool body)
+QVariantMap Feeds::json(Channel *channel, bool body)
 {
-  return json(m_feeds.keys(), user, body);
+  return json(m_feeds.keys(), channel, body);
 }
 
 
-QVariantMap Feeds::json(const QStringList &feeds, ClientUser user, bool body)
+QVariantMap Feeds::json(const QStringList &feeds, Channel *channel, bool body)
 {
   if (feeds.isEmpty())
     return QVariantMap();
@@ -52,8 +55,8 @@ QVariantMap Feeds::json(const QStringList &feeds, ClientUser user, bool body)
 
     bool b = body;
 
-    if (user) {
-      int acl = feed->h().acl().match(user);
+    if (channel) {
+      int acl = feed->h().acl().match(channel);
       if (!acl)
         continue;
 
@@ -65,7 +68,7 @@ QVariantMap Feeds::json(const QStringList &feeds, ClientUser user, bool body)
     if (b)
       current = feed->json();
 
-    if (!feed->h().json(current, user))
+    if (!feed->h().json(current, channel))
       continue;
 
     json[feeds.at(i)] = current;

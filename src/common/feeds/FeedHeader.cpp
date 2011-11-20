@@ -23,7 +23,8 @@
  * Конструктор создающий пустой объект.
  */
 FeedHeader::FeedHeader()
-  : m_date(0)
+  : m_channel(0)
+  , m_date(0)
 {
 }
 
@@ -33,18 +34,18 @@ bool FeedHeader::isValid() const
   if (m_name.isEmpty())
     return false;
 
-  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
+  if (!m_channel)
     return false;
 
   return true;
 }
 
 
-bool FeedHeader::json(QVariantMap &out, ClientUser user) const
+bool FeedHeader::json(QVariantMap &out, Channel *channel) const
 {
   int acl = m_acl.acl();
-  if (user) {
-    acl = m_acl.match(user);
+  if (channel) {
+    acl = m_acl.match(channel);
     if (!acl)
       return false;
   }
@@ -61,9 +62,9 @@ bool FeedHeader::json(QVariantMap &out, ClientUser user) const
  *
  * \return JSON данные или пустые данные, если фид не доступен для данного пользователя.
  */
-QVariantMap FeedHeader::json(ClientUser user) const
+QVariantMap FeedHeader::json(Channel *channel) const
 {
   QVariantMap out;
-  json(out, user);
+  json(out, channel);
   return out;
 }

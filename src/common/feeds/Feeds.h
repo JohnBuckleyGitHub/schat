@@ -35,20 +35,17 @@ public:
 
   bool add(FeedPtr feed);
   inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
-  inline const QByteArray& id() const { return m_id; }
   inline const QHash<QString, FeedPtr>& all() const { return m_feeds; }
-  inline void setId(const QByteArray &id) { m_id = id; }
   inline void setChannel(Channel *channel) { m_channel = channel; }
 
-  QVariantMap json(ClientUser user = ClientUser(), bool body = true);
-  QVariantMap json(const QStringList &feeds, ClientUser user = ClientUser(), bool body = true);
+  QVariantMap json(Channel *channel = 0, bool body = true);
+  QVariantMap json(const QStringList &feeds, Channel *channel = 0, bool body = true);
 
   static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
   static QVariantMap merge(const QString &key, const QVariantMap &in);
 
 private:
   Channel *m_channel;              ///< Канал фидов.
-  QByteArray m_id;                 ///< Идентификатор канала.
   QHash<QString, FeedPtr> m_feeds; ///< Таблица фидов.
 };
 
