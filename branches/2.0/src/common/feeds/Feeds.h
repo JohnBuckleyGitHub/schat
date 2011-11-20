@@ -29,7 +29,10 @@ class Channel;
 class SCHAT_EXPORT Feeds
 {
 public:
-  Feeds() {}
+  Feeds()
+  : m_channel(0)
+  {}
+
   bool add(FeedPtr feed);
   inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
   inline const QByteArray& id() const { return m_id; }

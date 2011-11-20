@@ -22,36 +22,8 @@
 #include <QSharedPointer>
 #include <QVariant>
 
-#include "acl/Acl.h"
 #include "User.h"
-
-/*!
- * Заголовок фида.
- */
-class SCHAT_EXPORT FeedHeader
-{
-public:
-  FeedHeader();
-  bool isValid() const;
-  bool json(QVariantMap &out, ClientUser user = ClientUser()) const;
-  inline Acl& acl() { return m_acl; }
-  inline const Acl& acl() const { return m_acl; }
-  inline const QByteArray& id() const { return m_id; }
-  inline const QString& name() const { return m_name; }
-  inline qint64 date() const { return m_date; }
-  QVariantMap json(ClientUser user = ClientUser()) const;
-
-  inline void setDate(qint64 date) { m_date = date; }
-  inline void setId(const QByteArray &id) { m_id = id; }
-  inline void setName(const QString &name) { m_name = name; }
-
-private:
-  Acl m_acl;         ///< Права доступа к фиду.
-  QByteArray m_id;   ///< Идентификатор канала фида.
-  qint64 m_date;     ///< Время последнего обновления фида.
-  QString m_name;    ///< Имя фида.
-};
-
+#include "feeds/FeedHeader.h"
 
 /*!
  * Базовый класс для фидов.

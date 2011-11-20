@@ -16,60 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDateTime>
-
 #include "feeds/Feed.h"
 #include "net/SimpleID.h"
-
-
-/*!
- * Конструктор создающий пустой объект.
- */
-FeedHeader::FeedHeader()
-  : m_date(0)
-{
-}
-
-
-bool FeedHeader::isValid() const
-{
-  if (m_name.isEmpty())
-    return false;
-
-  if (SimpleID::typeOf(m_id) != SimpleID::ChannelId)
-    return false;
-
-  return true;
-}
-
-
-bool FeedHeader::json(QVariantMap &out, ClientUser user) const
-{
-  int acl = m_acl.acl();
-  if (user) {
-    acl = m_acl.match(user);
-    if (!acl)
-      return false;
-  }
-
-  out["acl"]  = acl;
-  out["date"] = m_date;
-
-  return true;
-}
-
-
-/*!
- * Получение заголовка фида в JSON формате.
- *
- * \return JSON данные или пустые данные, если фид не доступен для данного пользователя.
- */
-QVariantMap FeedHeader::json(ClientUser user) const
-{
-  QVariantMap out;
-  json(out, user);
-  return out;
-}
 
 
 Feed::Feed()
