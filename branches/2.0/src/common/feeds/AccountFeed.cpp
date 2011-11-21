@@ -16,39 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Account.h"
-#include "DateTime.h"
+#include "Channel.h"
 #include "feeds/AccountFeed.h"
-#include "net/packets/notices.h"
-#include "plugins/StorageHooks.h"
-#include "Storage.h"
 
-StorageHooks::StorageHooks()
-  : m_storage(Storage::i())
+AccountFeed::AccountFeed(qint64 date)
+  : Feed("account", date)
 {
 }
 
 
-/*!
- * Создание нового канала.
- * Эта функция будет вызвана только для только что созданных каналов, до добавления их в базу данных.
- */
-int StorageHooks::createdNewChannel(ChatChannel channel)
+void AccountFeed::setChannel(Channel *channel)
 {
-  qDebug() << " -- HOOK: NEW CHANNEL" << channel->name();
+  Feed::setChannel(channel);
 
-  qint64 date = DateTime::utc();
-
-  if (channel->type() == SimpleID::UserId) {
-    Account account;
-    account.setDate(date);
-    account.groups() += "anonymous";
-
-    channel->setAccount(&account);
-    channel->feeds().add(new AccountFeed(date));
-  }
-
-  return Notice::OK;
+  m_data["account"] = channel->account()->name();
+  m_data["groups"]  = channel->account()->groups().toString();
 }

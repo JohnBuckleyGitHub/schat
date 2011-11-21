@@ -16,26 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEEDFACTORY_H_
-#define FEEDFACTORY_H_
-
-#include <QVariant>
+#ifndef ACCOUNTFEED_H_
+#define ACCOUNTFEED_H_
 
 #include "feeds/Feed.h"
-#include "schat.h"
 
-class Feed;
-
-class SCHAT_EXPORT FeedFactory
+class SCHAT_EXPORT AccountFeed : public Feed
 {
-  FeedFactory() {}
-
 public:
-  static Feed* load(const QString &name, const QVariantMap &data);
-//  static void add(const QString &name, Feed *feed);
-
-private:
-  static QHash<QString, FeedPtr> m_feeds;
+  AccountFeed(qint64 date = 0);
+  void setChannel(Channel *channel);
 };
 
-#endif /* FEEDFACTORY_H_ */
+#endif /* ACCOUNTFEED_H_ */

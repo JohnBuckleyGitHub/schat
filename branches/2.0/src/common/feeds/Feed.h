@@ -30,7 +30,7 @@
 class SCHAT_EXPORT Feed
 {
 public:
-  Feed();
+  Feed(qint64 date = 0);
   Feed(const QString &name, const QVariantMap &data);
   Feed(const QString &name, qint64 date = 0);
   virtual ~Feed() {}
@@ -39,16 +39,16 @@ public:
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual QVariantMap get(Channel *channel) const;
   virtual QVariantMap save() const;
+  virtual void setChannel(Channel *channel);
 
-//  virtual QVariantMap json() const { return m_data; }
-
+  bool canRead(Channel *channel) const;
   inline const FeedHeader& h() const       { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& h()                   { return m_header; }
 
   static void merge(QVariantMap &out, const QVariantMap &in);
 
-private:
+protected:
   FeedHeader m_header;  ///< Заголовок фида.
   QVariantMap m_data;   ///< JSON данные фида.
 };

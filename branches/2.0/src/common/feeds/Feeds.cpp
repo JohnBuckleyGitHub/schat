@@ -30,7 +30,7 @@ bool Feeds::add(FeedPtr feed)
   if (!feed)
     return false;
 
-  feed->h().setChannel(m_channel);
+  feed->setChannel(m_channel);
 
   if (!feed->isValid())
     return false;

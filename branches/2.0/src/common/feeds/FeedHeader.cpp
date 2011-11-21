@@ -56,10 +56,12 @@ QVariantMap FeedHeader::get(Channel *channel)
 }
 
 
-void FeedHeader::save(QVariantMap &out) const
+QVariantMap FeedHeader::save() const
 {
+  QVariantMap out;
   out["acl"] = m_acl.acl();
   out["date"] = m_date;
+  return out;
 }
 
 

@@ -25,6 +25,7 @@ HEADERS += \
     client/AbstractClient_p.h \
     client/NetworkPool.h \
     DateTime.h \
+    feeds/AccountFeed.h \
     feeds/Feed.h \
     feeds/FeedFactory.h \
     feeds/FeedHeader.h \
@@ -65,6 +66,7 @@ SOURCES += \
     client/AbstractClient.cpp \
     client/NetworkPool.cpp \
     DateTime.cpp \
+    feeds/AccountFeed.cpp \
     feeds/Feed.cpp \
     feeds/FeedFactory.cpp \
     feeds/FeedHeader.cpp \

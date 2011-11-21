@@ -472,9 +472,9 @@ void Core::accept(const AuthResult &result)
     packets.append(reply.data(m_sendStream));
   }
 
-  channel->feeds().add(new Feed("rating", DateTime::utc()));
-  channel->feeds().add(new Feed("topic", DateTime::utc()));
-  channel->feeds().add(new Feed("test", DateTime::utc()));
+//  channel->feeds().add(new Feed("rating", DateTime::utc()));
+//  channel->feeds().add(new Feed("topic", DateTime::utc()));
+//  channel->feeds().add(new Feed("test", DateTime::utc()));
 
   packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
 
