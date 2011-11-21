@@ -81,7 +81,7 @@ public:
   QString normalize(const QString &text) const;
 
 private:
-  QByteArray makeChannelId(const QString &name) const;
+  QByteArray makeId(const QByteArray &normalized) const;
   void setDefaultSslConf();
 
   /// Внутренний кэш хранилища.

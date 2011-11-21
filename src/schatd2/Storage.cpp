@@ -414,30 +414,20 @@ ChatChannel Storage::channel(const QByteArray &id, int type)
 }
 
 
+/*!
+ * Получение канала по имени.
+ */
 ChatChannel Storage::channel(const QString &name)
 {
-//  QString normalName = normalize(name);
-//  ChatChannel channel = m_channelNames.value(normalName);
-//  if (channel || name.startsWith(QLatin1Char('~')))
-//    return channel;
-//
-//  QByteArray id = makeChannelId(normalName);
-//  channel = this->channel(id);
-//  if (!channel) {
-//    channel = ChatChannel(new ServerChannel(id, name));
-//    channel->feeds().add(new Feed("topic", 667));
-//    channel->feeds().add(new Feed("rating", DateTime::utc()));
-//
-//    m_db->add(channel);
-//    m_cache.add(channel);
-//
-//    qDebug() << " ---";
-//    qDebug() << " ---" << channel->feeds().all().keys();
-//    qDebug() << " ---";
-//  }
-//
-//  return channel;
-  return ChatChannel();
+  QByteArray normalized = Normalize::toId('#' + name);
+  ChatChannel channel = this->channel(normalized);
+
+  if (!channel) {
+    channel = ChatChannel(new ServerChannel(makeId(normalized), name));
+    add(channel);
+  }
+
+  return channel;
 }
 
 
@@ -525,9 +515,9 @@ QString Storage::normalize(const QString &text) const
 }
 
 
-QByteArray Storage::makeChannelId(const QString &name) const
+QByteArray Storage::makeId(const QByteArray &normalized) const
 {
-  return SimpleID::make("channel:" + m_serverData->privateId() + name.toUtf8(), SimpleID::ChannelId);
+  return SimpleID::make("channel:" + m_serverData->privateId() + normalized, SimpleID::ChannelId);
 }
 
 
