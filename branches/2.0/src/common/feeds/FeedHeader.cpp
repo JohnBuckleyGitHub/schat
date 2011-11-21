@@ -41,32 +41,25 @@ bool FeedHeader::isValid() const
 }
 
 
-bool FeedHeader::json(QVariantMap &out, Channel *channel) const
+QVariantMap FeedHeader::get(Channel *channel)
 {
-  int acl = m_acl.acl();
-  if (channel) {
-    acl = m_acl.match(channel);
-    if (!acl)
-      return false;
+  int acl = m_acl.match(channel);
+
+  QVariantMap out;
+
+  if (acl & Acl::Read) {
+    out["acl"]  = acl;
+    out["date"] = m_date;
   }
 
-  out["acl"]  = acl;
-  out["date"] = m_date;
-
-  return true;
+  return out;
 }
 
 
-/*!
- * Получение заголовка фида в JSON формате.
- *
- * \return JSON данные или пустые данные, если фид не доступен для данного пользователя.
- */
-QVariantMap FeedHeader::json(Channel *channel) const
+void FeedHeader::save(QVariantMap &out) const
 {
-  QVariantMap out;
-  json(out, channel);
-  return out;
+  out["acl"] = m_acl.acl();
+  out["date"] = m_date;
 }
 
 

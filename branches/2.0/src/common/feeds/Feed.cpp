@@ -75,3 +75,35 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
   return new Feed(name, data);
 }
 
+
+QVariantMap Feed::get(Channel *channel) const
+{
+  int acl = m_header.acl().match(channel);
+
+  if (acl & Acl::Read)
+    return m_data;
+
+  return QVariantMap();
+}
+
+
+/*!
+ * Получение JSON данных фида для сохранения в базе данных.
+ */
+QVariantMap Feed::save() const
+{
+  QVariantMap out = m_data;
+  m_header.save(out);
+  return out;
+}
+
+
+void Feed::merge(QVariantMap &out, const QVariantMap &in)
+{
+  QMapIterator<QString, QVariant> i(in);
+  while (i.hasNext()) {
+    i.next();
+    out[i.key()] = i.value();
+  }
+}
+

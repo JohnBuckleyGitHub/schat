@@ -58,46 +58,72 @@ void Feeds::load(const QVariantMap &data)
     add(FeedFactory::load(i.key(), i.value().toMap()));
   }
 
-  qDebug() << SimpleJSon::generate(json());
+  qDebug() << SimpleJSon::generate(save());
 }
 
 
-QVariantMap Feeds::json(Channel *channel, bool body)
-{
-  return json(m_feeds.keys(), channel, body);
-}
-
-
-QVariantMap Feeds::json(const QStringList &feeds, Channel *channel, bool body)
+/*!
+ * Получение фидов для одиночного пользователя.
+ *
+ * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит фиды если у него нет прав на чтение.
+ * \param feeds   Список имён фидов, если список пуст будут получены все фиды.
+ * \param body    false если не нужно получать тело фидов.
+ *
+ * \sa headers().
+ */
+QVariantMap Feeds::get(Channel *channel, const QStringList &feeds, bool body) const
 {
   if (feeds.isEmpty())
-    return QVariantMap();
+    return headers(channel, m_feeds.keys());
 
   QVariantMap json;
+
   for (int i = 0; i < feeds.size(); ++i) {
     FeedPtr feed = m_feeds.value(feeds.at(i));
     if (!feed)
       continue;
 
-    bool b = body;
-
-    if (channel) {
-      int acl = feed->h().acl().match(channel);
-      if (!acl)
-        continue;
-
-      if (!(acl & Acl::Read))
-        b = false;
-    }
-
-    QVariantMap current;
-    if (b)
-      current = feed->json();
-
-    if (!feed->h().json(current, channel))
+    QVariantMap header = feed->h().get(channel);
+    if (header.isEmpty())
       continue;
 
-    json[feeds.at(i)] = current;
+    QVariantMap data;
+    if (body)
+      data = feed->get(channel);
+
+    Feed::merge(data, header);
+    merge(feeds.at(i), json, data);
+  }
+
+  return merge("feeds", json);
+}
+
+
+/*!
+ * Получение заголовков фидов для одиночного пользователя.
+ *
+ * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит список фидов если у него нет прав на чтение.
+ * \param feeds   Список имён фидов, если список пуст будут получены заголовки всех доступных фидов.
+ *
+ * \sa get().
+ */
+QVariantMap Feeds::headers(Channel *channel, const QStringList &feeds) const
+{
+  return get(channel, feeds, false);
+}
+
+
+/*!
+ * Получение JSON данных фидов для сохранения в базе данных.
+ */
+QVariantMap Feeds::save() const
+{
+  QVariantMap json;
+
+  QMapIterator<QString, FeedPtr> i(m_feeds);
+  while (i.hasNext()) {
+    i.next();
+    json[i.key()] = i.value()->save();
   }
 
   return merge("feeds", json);

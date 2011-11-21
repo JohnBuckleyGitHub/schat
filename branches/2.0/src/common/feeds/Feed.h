@@ -37,11 +37,16 @@ public:
 
   virtual bool isValid() const;
   virtual Feed* load(const QString &name, const QVariantMap &data);
-  virtual QVariantMap json() const { return m_data; }
+  virtual QVariantMap get(Channel *channel) const;
+  virtual QVariantMap save() const;
+
+//  virtual QVariantMap json() const { return m_data; }
 
   inline const FeedHeader& h() const       { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& h()                   { return m_header; }
+
+  static void merge(QVariantMap &out, const QVariantMap &in);
 
 private:
   FeedHeader m_header;  ///< Заголовок фида.
