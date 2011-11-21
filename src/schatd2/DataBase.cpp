@@ -343,14 +343,10 @@ qint64 DataBase::add(ChatChannel channel)
   channel->setKey(key);
 
   // Создание нового аккаунта.
-  if (SimpleID::typeOf(channel->id()) == SimpleID::UserId && !channel->account()) {
-    Account account;
-    account.setChannel(key);
-    account.setDate(DateTime::utc());
-    account.groups() += "anonymous";
+  if (SimpleID::typeOf(channel->id()) == SimpleID::UserId && channel->account()) {
+    channel->account()->setChannel(key);
 
-    if (add(&account) != -1) {
-      channel->setAccount(&account);
+    if (add(channel->account()) != -1) {
       query.prepare("UPDATE channels SET account = :account WHERE id = :id;");
       query.bindValue(":account", channel->account()->id());
       query.bindValue(":id", key);

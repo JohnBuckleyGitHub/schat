@@ -23,8 +23,9 @@
 /*!
  * Создание пустого фида.
  */
-Feed::Feed()
+Feed::Feed(qint64 date)
 {
+  m_header.setDate(date);
 }
 
 
@@ -49,7 +50,6 @@ Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
   m_header.setDate(date);
-  m_data["example"] = true;
 }
 
 
@@ -78,9 +78,7 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 
 QVariantMap Feed::get(Channel *channel) const
 {
-  int acl = m_header.acl().match(channel);
-
-  if (acl & Acl::Read)
+  if (canRead(channel))
     return m_data;
 
   return QVariantMap();
@@ -93,8 +91,20 @@ QVariantMap Feed::get(Channel *channel) const
 QVariantMap Feed::save() const
 {
   QVariantMap out = m_data;
-  m_header.save(out);
+  merge(out, m_header.save());
   return out;
+}
+
+
+void Feed::setChannel(Channel *channel)
+{
+  m_header.setChannel(channel);
+}
+
+
+bool Feed::canRead(Channel *channel) const
+{
+  return m_header.acl().match(channel) & Acl::Read;
 }
 
 

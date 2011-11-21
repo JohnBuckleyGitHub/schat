@@ -39,7 +39,7 @@ public:
   inline qint64 date() const               { return m_date; }
 
   QVariantMap get(Channel *channel);
-  void save(QVariantMap &out) const;
+  QVariantMap save() const;
 
   inline void setChannel(Channel *channel) { m_channel = channel; }
   inline void setDate(qint64 date)         { m_date = date; }
