@@ -436,7 +436,7 @@ void SlaveNode::uplinkReadUserData()
     if (reader.user.isValid()) {
       ChatUser user(new ServerUser(&reader.user));
       user->setCookie(reader.cookie);
-      user->setNormalNick(m_storage->normalize(user->nick()));
+//      user->setNormalNick(m_storage->normalize(user->nick()));
       m_storage->store(user);
     }
   }

@@ -32,6 +32,7 @@ class FileLocations;
 class NodeLog;
 class ServerData;
 class Settings;
+class StorageHooks;
 
 class SCHAT_EXPORT Storage : public QObject
 {
@@ -45,6 +46,7 @@ public:
   inline DataBase *db() const { return m_db; }
   inline QList<QByteArray> slaves() const { return m_slaves; }
   inline static Storage *i() { return m_self; }
+  inline StorageHooks *hooks() const { return m_hooks; }
   inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
@@ -55,7 +57,6 @@ public:
   bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
   bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   ChatUser user(const QByteArray &id, bool offline = false) const;
-  ChatUser user(const QString &nick, bool normalize) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   LoginReply login(ChatUser user, const QString &name, const QByteArray &password);
   QByteArray makeUserId(int type, const QByteArray &userId) const;
@@ -78,7 +79,6 @@ public:
   inline ServerData *serverData() { return m_serverData; }
   inline Settings *settings() { return m_settings; }
   QByteArray cookie() const;
-  QString normalize(const QString &text) const;
 
 private:
   QByteArray makeId(const QByteArray &normalized) const;
@@ -103,12 +103,12 @@ private:
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
   QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
-  QHash<QChar, QChar> m_normalize;               ///< Карта замены символов при нормализации ника.
   QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.
+  StorageHooks *m_hooks;                         ///< Обработчик хуков.
 };
 
 #endif /* STORAGE_H_ */

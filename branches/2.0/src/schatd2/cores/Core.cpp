@@ -544,21 +544,21 @@ bool Core::readUserData()
  */
 bool Core::updateUserData(ChatUser user, User *other)
 {
-  bool rename = false;
+//  bool rename = false;
 
-  if (user->nick() != other->nick()) {
-    ChatUser u = m_storage->user(other->nick(), true);
-    if (u && u != user)
-      return false;
-
-    rename = true;
-  }
-
-  user->gender().setRaw(other->gender().raw());
-  if (rename) {
-    user->setNick(other->nick());
-    m_storage->rename(user);
-  }
+//  if (user->nick() != other->nick()) {
+//    ChatUser u = m_storage->user(other->nick(), true);
+//    if (u && u != user)
+//      return false;
+//
+//    rename = true;
+//  }
+//
+//  user->gender().setRaw(other->gender().raw());
+//  if (rename) {
+//    user->setNick(other->nick());
+//    m_storage->rename(user);
+//  }
 
   return true;
 }
