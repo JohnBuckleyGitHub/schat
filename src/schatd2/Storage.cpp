@@ -32,6 +32,7 @@
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "Normalize.h"
+#include "plugins/StorageHooks.h"
 #include "ServerUser.h"
 #include "Settings.h"
 #include "Storage.h"
@@ -43,20 +44,10 @@ Storage::Storage(QObject *parent)
   , m_allowSlaves(false)
 {
   m_self = this;
+
   Normalize::init();
 
-  /// \todo Сделать возможность использования внешнего файла с картой нормализации.
-  m_normalize.insert(0x0430, 'a'); // а
-  m_normalize.insert(0x0435, 'e'); // е
-  m_normalize.insert(0x0451, 'e'); // ё
-  m_normalize.insert(0x043C, 'm'); // м
-  m_normalize.insert(0x0440, 'p'); // р
-  m_normalize.insert(0x0441, 'c'); // с
-  m_normalize.insert(0x043E, 'o'); // о
-  m_normalize.insert(0x0443, 'y'); // у
-  m_normalize.insert(0x0445, 'x'); // х
-  m_normalize.insert('l', 'i');
-
+  m_hooks = new StorageHooks();
   m_serverData = new ServerData();
   m_locations = new FileLocations(this);
 
@@ -78,6 +69,7 @@ Storage::Storage(QObject *parent)
 
 Storage::~Storage()
 {
+  delete m_hooks;
   delete m_log;
   delete m_serverData;
 }
@@ -153,27 +145,6 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
 
 
 /*!
- * Удаление пользователя.
- * Пользователь удаляется из таблиц m_users, m_nicks,
- */
-//bool Storage::remove(ChatUser user)
-//{
-//  if (user->channelsCount() > 1) {
-//    QList<QByteArray> channels = user->channels();
-//    for (int i = 0; i < channels.size(); ++i) {
-//      removeUserFromChannel(user->id(), channels.at(i));
-//    }
-//  }
-//
-//  m_users.remove(user->id());
-//  m_nicks.remove(user->normalNick());
-//  m_db->update(user);
-//
-//  return true;
-//}
-
-
-/*!
  * Удаление пользователя из канала. Если канал не постоянный
  * и в нём больше нет пользователей, то канал также будет удалён.
  *
@@ -219,15 +190,6 @@ ChatUser Storage::user(const QByteArray &id, bool offline) const
     return m_users.value(user->id());
 
   return user;
-}
-
-
-ChatUser Storage::user(const QString &nick, bool normalize) const
-{
-  if (!normalize)
-    return m_nicks.value(nick);
-
-  return m_nicks.value(this->normalize(nick));
 }
 
 
@@ -353,7 +315,7 @@ void Storage::rename(ChatUser user)
 
   m_nicks.remove(user->normalNick());
 
-  user->setNormalNick(normalize(user->nick()));
+//  user->setNormalNick(normalize(user->nick()));
   channel->setName(QLatin1String("~") + user->nick());
 
   m_nicks[user->normalNick()] = user;
@@ -424,6 +386,7 @@ ChatChannel Storage::channel(const QString &name)
 
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
+    m_hooks->createdNewChannel(channel);
     add(channel);
   }
 
@@ -490,28 +453,6 @@ void Storage::update(ChatChannel channel)
 QByteArray Storage::cookie() const
 {
   return SimpleID::randomId(SimpleID::CookieId, m_serverData->privateId());
-}
-
-
-
-/*!
- * Выполняет нормализацию текста.
- * Текст приводится к нижнему регистру и визуально похожие символы заменяются.
- *
- * \param text Исходный текст.
- */
-QString Storage::normalize(const QString &text) const
-{
-  QString out = text.toLower().simplified();
-  if (out.isEmpty())
-    return out;
-
-  for (int i = 0; i < out.size(); ++i) {
-    if (m_normalize.contains(out.at(i)))
-      out[i] = m_normalize.value(out.at(i));
-  }
-
-  return out;
 }
 
 

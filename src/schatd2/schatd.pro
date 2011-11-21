@@ -39,6 +39,7 @@ HEADERS = \
     NodePlugins.h \
     Normalize.h \
     plugins/NodePlugin.h \
+    plugins/StorageHooks.h \
     ServerChannel.h \
     ServerUser.h \
     Storage.h \
@@ -54,6 +55,7 @@ SOURCES = \
     NodePlugins.cpp \
     Normalize.cpp \
     plugins/NodePlugin.cpp \
+    plugins/StorageHooks.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
     Storage.cpp \

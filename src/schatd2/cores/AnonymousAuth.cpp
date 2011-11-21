@@ -16,14 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "events.h"
 #include "net/packets/auth.h"
 #include "NodeLog.h"
 #include "Normalize.h"
+#include "plugins/StorageHooks.h"
 #include "Storage.h"
 
 AnonymousAuth::AnonymousAuth(Core *core)
@@ -48,13 +47,19 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   if (!channel)
     channel = storage->channel(id, SimpleID::UserId);
 
-  if (!channel)
+  bool created = false;
+  if (!channel) {
     channel = ChatChannel(new ServerChannel(id, data.nick));
+    created = true;
+  }
 
   update(channel.data(), data);
 
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
+
+  if (created)
+    storage->hooks()->createdNewChannel(channel);
 
   m_core->add(channel, data.authType, data.id);
 
