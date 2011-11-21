@@ -73,7 +73,7 @@ QByteArray ChannelPacket::s2c(ClientChannel channel, const QByteArray &dest, con
   ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
-  packet.setData(channel->feeds().json(channel.data(), false));
+  packet.setData(channel->feeds().get(channel.data()));
   packet.m_gender = channel->gender().raw();
   packet.m_status = channel->status().value();
 

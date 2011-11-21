@@ -24,7 +24,16 @@ Acl::Acl(int acl)
 }
 
 
+/*!
+ * Возвращает права доступа для конкретного пользователя.
+ *
+ * \param Канал-пользователь.
+ * \return Acl::ResultAcl.
+ */
 int Acl::match(Channel *channel) const
 {
-  return 4;
+  if (!channel)
+    return 04;
+
+  return 04;
 }

@@ -32,13 +32,14 @@ class SCHAT_EXPORT FeedHeader
 public:
   FeedHeader();
   bool isValid() const;
-  bool json(QVariantMap &out, Channel *channel = 0) const;
   inline Acl& acl()                        { return m_acl; }
   inline Channel *channel() const          { return m_channel; }
   inline const Acl& acl() const            { return m_acl; }
   inline const QString& name() const       { return m_name; }
   inline qint64 date() const               { return m_date; }
-  QVariantMap json(Channel *channel = 0) const;
+
+  QVariantMap get(Channel *channel);
+  void save(QVariantMap &out) const;
 
   inline void setChannel(Channel *channel) { m_channel = channel; }
   inline void setDate(qint64 date)         { m_date = date; }

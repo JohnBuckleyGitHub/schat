@@ -298,8 +298,6 @@ ChatChannel DataBase::channel(qint64 id)
   }
 
   channel->setData(SimpleJSon::parse(query.value(5).toByteArray()).toMap());
-//  qDebug() << SimpleJSon::parse(query.value(5).toByteArray()).toMap();
-//  qDebug() << query.value(5).toByteArray();
 
   return channel;
 }
@@ -333,7 +331,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.bindValue(":gender",     channel->gender().raw());
   query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().json()));
+  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().save()));
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -430,7 +428,7 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(":gender",     channel->gender().raw());
   query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().json()));
+  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().save()));
   query.bindValue(":id",         channel->key());
   query.exec();
 
