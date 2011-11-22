@@ -89,11 +89,21 @@ private:
 #define SCHAT_LOG_INFO()  \
   if (NodeLog::level() < NodeLog::InfoLevel) {} \
   else NodeLog::Helper(NodeLog::InfoLevel).stream()
-#define SCHAT_LOG_DEBUG()  \
+
+#if defined(SCHAT_DEBUG)
+# define SCHAT_LOG_DEBUG(x)  \
   if (NodeLog::level() < NodeLog::DebugLevel) {} \
-  else NodeLog::Helper(NodeLog::DebugLevel).stream()
-#define SCHAT_LOG_TRACE()  \
+  else NodeLog::Helper(NodeLog::DebugLevel).stream() x
+#else
+# define SCHAT_LOG_DEBUG(x)
+#endif
+
+#if defined(SCHAT_DEBUG)
+# define SCHAT_LOG_TRACE(x)  \
   if (NodeLog::level() < NodeLog::TraceLevel) {} \
-  else NodeLog::Helper(NodeLog::TraceLevel).stream()
+  else NodeLog::Helper(NodeLog::TraceLevel).stream() x
+#else
+# define SCHAT_LOG_TRACE(x)
+#endif
 
 #endif /* NODELOG_H_ */

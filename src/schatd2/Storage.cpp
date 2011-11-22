@@ -94,7 +94,7 @@ int Storage::start()
     ChatChannel channel = DataBase::channel(key);
     if (channel) {
       m_serverData->setChannelId(channel->id());
-      SCHAT_LOG_DEBUG() << "Main channel:" << channel->name() << "id:" << SimpleID::encode(channel->id());
+      SCHAT_LOG_DEBUG(<< "Main channel:" << channel->name() << "id:" << SimpleID::encode(channel->id()));
     }
   }
 
@@ -378,6 +378,8 @@ ChatChannel Storage::channel(const QByteArray &id, int type)
 
 /*!
  * Получение канала по имени.
+ *
+ * \sa StorageHooks::createdNewChannel().
  */
 ChatChannel Storage::channel(const QString &name)
 {

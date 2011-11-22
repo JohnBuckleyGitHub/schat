@@ -512,7 +512,7 @@ void Core::accept(const AuthResult &result)
  */
 void Core::reject(const AuthResult &result)
 {
-  SCHAT_LOG_DEBUG() << "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId);
+  SCHAT_LOG_DEBUG(<< "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId));
 
   AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
 
@@ -819,7 +819,7 @@ void Core::notice(quint16 type)
     }
 
     QString command = m_notice->command();
-    SCHAT_LOG_TRACE() << "NOTICE PACKET" << command << notice.text() << notice.raw();
+    SCHAT_LOG_TRACE(<< "NOTICE PACKET" << command << notice.text() << notice.raw());
 
     if (command == "reg")
       reg();

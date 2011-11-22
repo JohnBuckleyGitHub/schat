@@ -16,14 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Account.h"
 #include "DateTime.h"
 #include "feeds/AccountFeed.h"
 #include "net/packets/notices.h"
 #include "plugins/StorageHooks.h"
 #include "Storage.h"
+#include "NodeLog.h"
+#include "net/packets/auth.h"
 
 StorageHooks::StorageHooks()
   : m_storage(Storage::i())
@@ -32,23 +32,45 @@ StorageHooks::StorageHooks()
 
 
 /*!
- * Создание нового канала.
+ * Создание нового канала типа SimpleID::ChannelId.
  * Эта функция будет вызвана только для только что созданных каналов, до добавления их в базу данных.
+ *
+ * \param channel Созданный канал.
+ *
+ * \sa Storage::channel(const QString &name).
  */
 int StorageHooks::createdNewChannel(ChatChannel channel)
 {
-  qDebug() << " -- HOOK: NEW CHANNEL" << channel->name();
+  SCHAT_LOG_TRACE(<< "HOOK: NEW CHANNEL" << (channel->name() + "/" + SimpleID::encode(channel->id())));
+
+  return Notice::OK;
+}
+
+
+/*!
+ * Создание нового канала типа SimpleID::UserId.
+ * Эта функция будет вызвана только для только что созданных каналов, до добавления их в базу данных.
+ *
+ * \param channel Созданный канал.
+ * \param data    Данные авторизационного пакета.
+ * \param host    Адрес пользователя.
+ *
+ * \sa AnonymousAuth::auth().
+ */
+int StorageHooks::createdNewUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host)
+{
+  Q_UNUSED(data)
+  Q_UNUSED(host)
+  SCHAT_LOG_TRACE(<< "HOOK: NEW USER CHANNEL" << (channel->name() + "@" + host + "/" + SimpleID::encode(channel->id())) << data.userAgent);
 
   qint64 date = DateTime::utc();
 
-  if (channel->type() == SimpleID::UserId) {
-    Account account;
-    account.setDate(date);
-    account.groups() += "anonymous";
+  Account account;
+  account.setDate(date);
+  account.groups() += "anonymous";
 
-    channel->setAccount(&account);
-    channel->feeds().add(new AccountFeed(date));
-  }
+  channel->setAccount(&account);
+  channel->feeds().add(new AccountFeed(date));
 
   return Notice::OK;
 }
