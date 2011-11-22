@@ -30,6 +30,7 @@ HEADERS += \
     feeds/FeedFactory.h \
     feeds/FeedHeader.h \
     feeds/Feeds.h \
+    feeds/TopicFeed.h \
     FileLocations.h \
     Gender.h \
     k8json/k8json.h \
@@ -71,6 +72,7 @@ SOURCES += \
     feeds/FeedFactory.cpp \
     feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
+    feeds/TopicFeed.cpp \
     FileLocations.cpp \
     Gender.cpp \
     k8json/k8json.cpp \

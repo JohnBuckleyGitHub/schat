@@ -19,11 +19,12 @@
 #include "Account.h"
 #include "DateTime.h"
 #include "feeds/AccountFeed.h"
+#include "feeds/TopicFeed.h"
+#include "net/packets/auth.h"
 #include "net/packets/notices.h"
+#include "NodeLog.h"
 #include "plugins/StorageHooks.h"
 #include "Storage.h"
-#include "NodeLog.h"
-#include "net/packets/auth.h"
 
 StorageHooks::StorageHooks()
   : m_storage(Storage::i())
@@ -42,6 +43,10 @@ StorageHooks::StorageHooks()
 int StorageHooks::createdNewChannel(ChatChannel channel)
 {
   SCHAT_LOG_TRACE(<< "HOOK: NEW CHANNEL" << (channel->name() + "/" + SimpleID::encode(channel->id())));
+
+  qint64 date = DateTime::utc();
+
+  channel->feeds().add(new TopicFeed(date));
 
   return Notice::OK;
 }
