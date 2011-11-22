@@ -22,6 +22,7 @@
 #include "ServerChannel.h"
 #include "schat.h"
 
+class AuthRequest;
 class Storage;
 
 class SCHAT_EXPORT StorageHooks
@@ -30,6 +31,7 @@ public:
   StorageHooks();
 
   int createdNewChannel(ChatChannel channel);
+  int createdNewUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host);
 
 private:
   Storage *m_storage;

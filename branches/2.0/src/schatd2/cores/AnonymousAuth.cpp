@@ -33,6 +33,8 @@ AnonymousAuth::AnonymousAuth(Core *core)
 
 /*!
  * \todo Реализовать поддержку различных агентов и адреса пользователя для различных подключений одного из них.
+ *
+ * \sa StorageHooks::createdNewUserChannel().
  */
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
@@ -59,11 +61,11 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     return AuthResult(Notice::BadRequest, data.id);
 
   if (created)
-    storage->hooks()->createdNewChannel(channel);
+    storage->hooks()->createdNewUserChannel(channel, data, m_core->packetsEvent()->address.toString());
 
   m_core->add(channel, data.authType, data.id);
 
-  SCHAT_LOG_DEBUG() << "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host;
+  SCHAT_LOG_DEBUG(<< "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host);
   return AuthResult(id, data.id);
 }
 
