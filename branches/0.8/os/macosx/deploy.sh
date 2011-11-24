@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION="0.8.2.1620"
+VERSION="0.8.3.1895"
 TARGET="SimpleChat"
 
 cd ../..
