@@ -45,13 +45,13 @@ void MasterNode::accept(const AuthResult &result)
   if (!user)
     return;
 
-  if (m_storage->isSlave(m_packetsEvent->userId())) {
+  if (m_storage->isSlave(m_packetsEvent->channelId())) {
     if (m_hosts.contains(result.authId)) {
       user->setHost(m_hosts.value(result.authId));
       m_hosts.remove(result.authId);
     }
 
-    ChatUser slave = Storage::i()->user(m_packetsEvent->userId());
+    ChatUser slave = Storage::i()->user(m_packetsEvent->channelId());
     if (slave)
       user->setServerNumber(slave->gender().raw());
 
@@ -74,7 +74,7 @@ void MasterNode::accept(const AuthResult &result)
 
 void MasterNode::notice(quint16 type)
 {
-  if (m_storage->isSlave(m_packetsEvent->userId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
+  if (m_storage->isSlave(m_packetsEvent->channelId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
     quint16 type = m_reader->get<quint16>();
 
     if (type == Notice::GenericType) {
@@ -97,7 +97,7 @@ void MasterNode::notice(quint16 type)
 
 void MasterNode::reject(const AuthResult &result)
 {
-  if (m_storage->isSlave(m_packetsEvent->userId())) {
+  if (m_storage->isSlave(m_packetsEvent->channelId())) {
     AuthResult r = result;
     r.option = 0;
     Core::reject(r);
@@ -110,13 +110,13 @@ void MasterNode::reject(const AuthResult &result)
 
 void MasterNode::release(SocketReleaseEvent *event)
 {
-  if (m_storage->isSlave(event->userId())) {
-    ChatUser slave = m_storage->user(event->userId());
+  if (m_storage->isSlave(event->channelId())) {
+    ChatUser slave = m_storage->user(event->channelId());
     if (!slave)
       return;
 
 //    m_storage->remove(slave);
-    m_storage->removeSlave(event->userId());
+    m_storage->removeSlave(event->channelId());
 
     quint8 number = slave->gender().raw();
     QHash<QByteArray, ChatUser> all = m_storage->users();

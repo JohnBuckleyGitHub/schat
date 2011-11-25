@@ -55,7 +55,7 @@ public:
   QByteArray readBuffer;               ///< Буфер чтения виртуальных пакетов.
   QByteArray sendBuffer;               ///< Буфер отправки виртуальных пакетов.
   QByteArray txBuffer;                 ///< Буфер отправки транспортных пакетов.
-  QByteArray userId;                   ///< Идентификатор клиента.
+  QByteArray channelId;                ///< Идентификатор клиента.
   QDataStream *readStream;             ///< Поток чтения виртуальных пакетов.
   QDataStream *rxStream;               ///< Поток чтения транспортных пакетов.
   QDataStream *sendStream;             ///< Поток отправки виртуальных пакетов.

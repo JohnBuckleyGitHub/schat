@@ -219,7 +219,7 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void TabWidget::addPrivateTab(const QByteArray &id)
 {
-  if (m_client->userId() == id)
+  if (m_client->channelId() == id)
     return;
 
   privateTab(id, true, true);
@@ -445,7 +445,7 @@ void TabWidget::clientStateChanged(int state, int previousState)
   if (state == SimpleClient::ClientOnline)
     return;
 
-  QByteArray id = m_client->userId();
+  QByteArray id = m_client->channelId();
 
   foreach (ChannelTab *tab, m_channels) {
     tab->setOnline(false);

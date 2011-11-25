@@ -93,7 +93,7 @@ void ChatSettings::updateValue(const QString &key, const QVariant &value)
 
 void ChatSettings::updateUserData(const QByteArray &userId)
 {
-  if (m_client->userId() != userId)
+  if (m_client->channelId() != userId)
     return;
 
 //  update(m_user.data(), false);

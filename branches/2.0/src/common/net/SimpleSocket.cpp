@@ -446,10 +446,10 @@ bool SimpleSocket::setSocketDescriptor(int socketDescriptor)
 }
 
 
-QByteArray SimpleSocket::userId() const
+const QByteArray& SimpleSocket::channelId() const
 {
   Q_D(const SimpleSocket);
-  return d->userId;
+  return d->channelId;
 }
 
 
@@ -518,7 +518,7 @@ void SimpleSocket::setAuthorized(const QByteArray &userId)
     return;
   }
 
-  d->userId = userId;
+  d->channelId = userId;
   d->authorized = true;
   d->setTimerState(SimpleSocketPrivate::Idling);
 }

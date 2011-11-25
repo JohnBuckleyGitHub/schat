@@ -18,17 +18,17 @@
 
 #include "events.h"
 
-ServerEvent::ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &userId)
+ServerEvent::ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &channelId)
   : QEvent(static_cast<QEvent::Type>(type))
-  , m_userId(userId)
+  , m_channelId(channelId)
   , m_sockets(sockets)
 {
 }
 
 
-ServerEvent::ServerEvent(ServerEvents type, quint64 socket, const QByteArray &userId)
+ServerEvent::ServerEvent(ServerEvents type, quint64 socket, const QByteArray &channelId)
   : QEvent(static_cast<QEvent::Type>(type))
-  , m_userId(userId)
+  , m_channelId(channelId)
 {
   m_sockets.append(socket);
 }

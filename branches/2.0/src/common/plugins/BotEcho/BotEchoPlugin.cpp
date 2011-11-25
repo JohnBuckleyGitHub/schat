@@ -39,14 +39,14 @@ BotEcho::BotEcho(ClientHelper *helper, FileLocations *locations)
 
 void BotEcho::join(const QByteArray &channelId, const QByteArray &userId)
 {
-  if (userId.isEmpty() || userId == m_client->userId())
+  if (userId.isEmpty() || userId == m_client->channelId())
     return;
 
   ClientUser user = m_client->user(userId);
   if (!user)
     return;
 
-  MessageData message(m_client->userId(), channelId, QString(), QString("Hello <b>%1</b>!").arg(user->nick()));
+  MessageData message(m_client->channelId(), channelId, QString(), QString("Hello <b>%1</b>!").arg(user->nick()));
   m_client->send(message);
 }
 
@@ -57,17 +57,17 @@ void BotEcho::message(const MessageData &data)
   if (!user)
     return;
 
-  if (data.destId() != m_client->userId())
+  if (data.destId() != m_client->channelId())
     return;
 
-  MessageData message(m_client->userId(), data.senderId, data.command, data.text);
+  MessageData message(m_client->channelId(), data.senderId, data.command, data.text);
   m_client->send(message);
 }
 
 
 void BotEcho::synced(const QByteArray &channelId)
 {
-  MessageData message(m_client->userId(), channelId, QString(), QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
+  MessageData message(m_client->channelId(), channelId, QString(), QString("Hello! I am <b>%1</b>").arg(m_client->nick()));
   m_client->send(message);
 }
 

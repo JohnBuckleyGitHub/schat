@@ -36,7 +36,8 @@ public:
   inline quint8 status() const { return m_status; }
 
   static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream);
-  static QByteArray s2c(ClientChannel channel, const QByteArray &dest, const QByteArray &command, QDataStream *stream);
+  static QByteArray join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
+  static QByteArray s2c(ClientChannel channel, const QByteArray &dest, const QByteArray &command, bool feeds, QDataStream *stream);
 
 protected:
   void write(PacketWriter *writer) const;

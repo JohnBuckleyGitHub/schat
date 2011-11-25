@@ -36,14 +36,14 @@ public:
     SocketRelease = 7667
   };
 
-  ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &userId = QByteArray());
-  ServerEvent(ServerEvents type, quint64 socket, const QByteArray &userId = QByteArray());
-  inline QByteArray userId() const { return m_userId; }
-  inline QList<quint64> sockets() const { return m_sockets; }
+  ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &m_channelId = QByteArray());
+  ServerEvent(ServerEvents type, quint64 socket, const QByteArray &m_channelId = QByteArray());
+  inline const QByteArray& channelId() const { return m_channelId; }
+  inline const QList<quint64>& sockets() const { return m_sockets; }
   quint64 socket() const;
 
 protected:
-  QByteArray m_userId;      ///< Идентификатор пользователя.
+  QByteArray m_channelId;      ///< Идентификатор пользователя.
   QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
 

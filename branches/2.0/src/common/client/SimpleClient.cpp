@@ -91,7 +91,7 @@ void SimpleClientPrivate::restore()
 
   /// Клиент заново входит в ранее открытие каналы.
   if (!channels.isEmpty()) {
-    MessageData data(userId, QByteArray(), QLatin1String("join"), QString());
+    MessageData data(channelId, QByteArray(), QLatin1String("join"), QString());
     data.options |= MessageData::TextOption;
 
     QHashIterator<QByteArray, ClientChannel> i(channels);
@@ -105,7 +105,7 @@ void SimpleClientPrivate::restore()
 
   clearClient();
 
-  q->send(MessageWriter(sendStream, MessageData(userId, QByteArray(), QLatin1String("ready"), QLatin1String("restore"))).data());
+  q->send(MessageWriter(sendStream, MessageData(channelId, QByteArray(), QLatin1String("ready"), QLatin1String("restore"))).data());
   q->unlock();
 }
 
@@ -140,7 +140,7 @@ void SimpleClientPrivate::setup()
 //    q->send(MessageWriter(sendStream, data).data());
 //  }
 
-  q->send(MessageWriter(sendStream, MessageData(userId, QByteArray(), QLatin1String("ready"), QLatin1String("setup"))).data());
+  q->send(MessageWriter(sendStream, MessageData(channelId, QByteArray(), QLatin1String("ready"), QLatin1String("setup"))).data());
   q->unlock();
 }
 
@@ -178,7 +178,7 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
   }
 
   QList<QByteArray> list = channel->channels().all();
-  list.removeAll(userId);
+  list.removeAll(channelId);
   int unsync = 0;
 
   for (int i = 0; i < list.size(); ++i) {
@@ -633,7 +633,7 @@ void SimpleClient::part(const QByteArray &channelId)
   d->channels.remove(channelId);
 //  d->user->removeChannel(channelId);
 
-  MessageData message(userId(), channelId, QLatin1String("part"), QString());
+  MessageData message(this->channelId(), channelId, QLatin1String("part"), QString());
   send(message);
 }
 

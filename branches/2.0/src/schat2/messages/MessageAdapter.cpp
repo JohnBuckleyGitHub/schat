@@ -30,6 +30,7 @@
 #include "messages/MessageBox.h"
 #include "messages/TopicMessage.h"
 #include "messages/UserMessage.h"
+#include "net/packets/channels.h"
 #include "net/packets/notices.h"
 #include "net/packets/users.h"
 #include "NetworkManager.h"
@@ -37,6 +38,7 @@
 #include "text/LinksFilter.h"
 #include "text/TokenFilter.h"
 #include "text/UrlFilter.h"
+#include "ui/ChannelUtils.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -170,10 +172,8 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == "join") {
-    if (cmd.isBody() && cmd.body().size() >= 3) {
-      MessageData data(UserUtils::userId(), QByteArray(), command, cmd.body());
-      m_client->send(data);
-    }
+    if (cmd.isBody() && cmd.body().size() >= 3)
+      m_client->send(ChannelPacket::join(ChannelUtils::id(), QByteArray(), cmd.body(), m_client->sendStream()));
 
     return;
   }
@@ -256,7 +256,7 @@ void MessageAdapter::message(const MessageData &data)
   }
 
   if (ChatCore::i()->isIgnored(data.senderId)) {
-    if (data.destId() != m_client->userId())
+    if (data.destId() != m_client->channelId())
       return;
 
     Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", data.timestamp, data.id);
@@ -331,7 +331,7 @@ int MessageAdapter::setGender(const QString &gender, const QString &color)
 
 MessageData MessageAdapter::msgFromNotice() const
 {
-  MessageData msg(m_client->userId(), m_notice->sender(), QString(), QString());
+  MessageData msg(m_client->channelId(), m_notice->sender(), QString(), QString());
   msg.id = m_notice->id();
   msg.timestamp = m_notice->time();
   return msg;

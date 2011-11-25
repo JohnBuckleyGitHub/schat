@@ -90,7 +90,7 @@ void Worker::newPackets(quint64 id, const QList<QByteArray> &packets)
   if (!socket)
     return;
 
-  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << id, packets, socket->userId());
+  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << id, packets, socket->channelId());
 
   if (socket && !socket->isAuthorized())
     event->address = socket->peerAddress();
@@ -105,7 +105,7 @@ void Worker::released(quint64 id)
 
   SimpleSocket *socket = m_listener->socket(id);
   if (socket && socket->isAuthorized()) {
-    SocketReleaseEvent *event = new SocketReleaseEvent(id, socket->errorString(), socket->userId());
+    SocketReleaseEvent *event = new SocketReleaseEvent(id, socket->errorString(), socket->channelId());
     QCoreApplication::postEvent(m_core, event);
   }
 
