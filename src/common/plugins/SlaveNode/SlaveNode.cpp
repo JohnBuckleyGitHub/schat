@@ -109,13 +109,13 @@ void SlaveNode::readPacket(int type)
     m_uplink->send(m_readBuffer);
   }
   else
-    Core::readPacket(type);
+    Core::packet(type);
 }
 
 
 void SlaveNode::release(SocketReleaseEvent *event)
 {
-  ChatUser user = m_storage->user(event->userId());
+  ChatUser user = m_storage->user(event->channelId());
   if (!user)
     return;
 
@@ -431,7 +431,7 @@ void SlaveNode::uplinkReadUserData()
 
     updateUserData(user, &reader.user);
   }
-  else if (m_uplink->reader()->sender() != m_uplink->userId() && m_uplink->reader()->destinations().contains(m_uplink->userId())) {
+  else if (m_uplink->reader()->sender() != m_uplink->channelId() && m_uplink->reader()->destinations().contains(m_uplink->channelId())) {
     UserReader reader(m_uplink->reader());
     if (reader.user.isValid()) {
       ChatUser user(new ServerUser(&reader.user));

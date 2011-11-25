@@ -144,7 +144,7 @@ int UserUtils::color(const QString &color)
  */
 QByteArray UserUtils::userId()
 {
-  return ChatCore::i()->client()->userId();
+  return ChatCore::i()->client()->channelId();
 }
 
 

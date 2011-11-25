@@ -98,7 +98,7 @@ bool ClientHelper::send(MessageData &data)
  */
 QByteArray ClientHelper::login(const QString &command, const QString &name, const QString &password, const QVariantMap &json)
 {
-  Notice notice(m_client->userId(), SimpleID::password(password), command, timestamp(), randomId(), json);
+  Notice notice(m_client->channelId(), SimpleID::password(password), command, timestamp(), randomId(), json);
   notice.setText(name);
   if (m_client->send(notice))
     return notice.id();
@@ -109,7 +109,7 @@ QByteArray ClientHelper::login(const QString &command, const QString &name, cons
 
 QByteArray ClientHelper::randomId() const
 {
-  return SimpleID::randomId(SimpleID::MessageId, m_client->userId());
+  return SimpleID::randomId(SimpleID::MessageId, m_client->channelId());
 }
 
 
@@ -132,7 +132,7 @@ bool ClientHelper::sendText(MessageData &data)
     return false;
 
   if (data.senderId.isEmpty())
-    data.senderId = m_client->userId();
+    data.senderId = m_client->channelId();
 
   data.id = randomId();
   data.autoSetOptions();
@@ -196,7 +196,7 @@ bool ClientHelper::loginReply(const Notice &notice)
   if (notice.status() != Notice::OK)
     return false;
 
-  if (notice.dest() != m_client->userId())
+  if (notice.dest() != m_client->channelId())
     return false;
 
   if (SimpleID::typeOf(notice.sender()) != SimpleID::PasswordId)
@@ -216,7 +216,7 @@ bool ClientHelper::regReply(const Notice &notice)
   if (notice.status() != Notice::OK)
     return false;
 
-  if (notice.dest() != m_client->userId())
+  if (notice.dest() != m_client->channelId())
     return false;
 
   if (SimpleID::typeOf(notice.sender()) != SimpleID::PasswordId)

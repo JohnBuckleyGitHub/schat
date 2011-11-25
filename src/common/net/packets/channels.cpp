@@ -61,21 +61,35 @@ void ChannelPacket::write(PacketWriter *writer) const
 
 /*!
  * Формирование пакета \b channel для отправки клиенту заголовка канала.
+ *
+ * \param channel Канал.
+ * \param dest    Идентификатор получателя.
+ * \param stream  Поток записи пакета.
  */
 QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream)
 {
-  return s2c(channel, dest, "channel", stream);
+  return s2c(channel, dest, "channel", true, stream);
 }
 
 
-QByteArray ChannelPacket::s2c(ClientChannel channel, const QByteArray &dest, const QByteArray &command, QDataStream *stream)
+QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+{
+  ChannelPacket packet(user, channel, "join", DateTime::utc());
+  packet.setText(name);
+  return packet.data(stream);
+}
+
+
+QByteArray ChannelPacket::s2c(ClientChannel channel, const QByteArray &dest, const QByteArray &command, bool feeds, QDataStream *stream)
 {
   ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
-  packet.setData(channel->feeds().get(channel.data()));
   packet.m_gender = channel->gender().raw();
   packet.m_status = channel->status().value();
+
+  if (feeds)
+    packet.setData(channel->feeds().get(channel.data()));
 
   return packet.data(stream);
 }

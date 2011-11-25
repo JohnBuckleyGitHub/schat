@@ -202,13 +202,13 @@ bool Core::route()
 
 bool Core::checkPacket()
 {
-  if (m_storage->isAllowSlaves() && m_storage->isSlave(m_packetsEvent->userId()))
+  if (m_storage->isAllowSlaves() && m_storage->isSlave(m_packetsEvent->channelId()))
     return true;
 
   if (m_reader->sender().isEmpty())
     return false;
 
-  if (m_packetsEvent->userId() != m_reader->sender())
+  if (m_packetsEvent->channelId() != m_reader->sender())
     return false;
 
   return true;
@@ -236,19 +236,19 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     }
 
     /// Идентификатор клиента не должен быть пустым или не верным.
-    if (event->userId().isEmpty() || m_storage->user(event->userId()) == 0)
+    if (event->channelId().isEmpty() || m_storage->channel(event->channelId()) == 0)
       continue;
 
     if (!checkPacket())
       continue;
 
     m_timestamp = 0;
-    readPacket(reader.type());
+    packet(reader.type());
   }
 }
 
 
-void Core::readPacket(int type)
+void Core::packet(int type)
 {
   qDebug() << "Core::readPacket()" << type;
 
@@ -428,8 +428,6 @@ bool Core::auth()
     return false;
   }
 
-  qDebug() << "AUTH REQUEST" << data.authType;
-
   for (int i = 0; i < m_auth.size(); ++i) {
     if (data.authType != m_auth.at(i)->type())
       continue;
@@ -471,10 +469,6 @@ void Core::accept(const AuthResult &result)
     AuthReply reply(m_storage->serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
     packets.append(reply.data(m_sendStream));
   }
-
-//  channel->feeds().add(new Feed("rating", DateTime::utc()));
-//  channel->feeds().add(new Feed("topic", DateTime::utc()));
-//  channel->feeds().add(new Feed("test", DateTime::utc()));
 
   packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
 
@@ -604,7 +598,7 @@ void Core::leave(ChatChannel channel, quint64 socket)
  */
 void Core::release(SocketReleaseEvent *event)
 {
-  leave(m_storage->channel(event->userId()), event->socket());
+  leave(m_storage->channel(event->channelId()), event->socket());
 }
 
 
@@ -616,7 +610,7 @@ void Core::release(SocketReleaseEvent *event)
 bool Core::command()
 {
   QString command = m_messageData->command;
-  SCHAT_DEBUG_STREAM(this << "command()" << command << SimpleID::encode(m_packetsEvent->userId()))
+  SCHAT_DEBUG_STREAM(this << "command()" << command << SimpleID::encode(m_packetsEvent->channelId()))
 
   if (command.isEmpty())
     return false;
@@ -771,7 +765,7 @@ bool Core::login()
   notice.setText(reply.name());
 
   int option = NewPacketsEvent::NoSocketOption;
-  if (notice.status() == Notice::Conflict && !m_storage->isSlave(m_packetsEvent->userId()))
+  if (notice.status() == Notice::Conflict && !m_storage->isSlave(m_packetsEvent->channelId()))
     option = NewPacketsEvent::KillSocketOption;
 
   send(user, notice.data(m_sendStream), option);

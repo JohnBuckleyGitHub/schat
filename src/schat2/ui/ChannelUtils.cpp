@@ -76,6 +76,12 @@ ClientChannel ChannelUtils::channel(const QUrl &url)
 }
 
 
+QByteArray ChannelUtils::id()
+{
+  return ChatCore::i()->client()->channelId();
+}
+
+
 QString ChannelUtils::webIcon(const QString &action)
 {
   QString icon;

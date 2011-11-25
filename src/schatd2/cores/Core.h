@@ -76,7 +76,7 @@ protected:
 
   virtual bool checkPacket();
   virtual void newPacketsEvent(NewPacketsEvent *event);
-  virtual void readPacket(int type);
+  virtual void packet(int type);
 
   bool join();
   bool join(const QByteArray &userId, ChatChannel channel);

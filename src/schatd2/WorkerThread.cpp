@@ -101,7 +101,7 @@ void WorkerEventListener::customEvent(QEvent *event)
       if (e->option == NewPacketsEvent::KillSocketOption)
         socket->leave();
       else if (e->option == NewPacketsEvent::AuthorizeSocketOption)
-        socket->setAuthorized(e->userId());
+        socket->setAuthorized(e->channelId());
     }
   }
 }

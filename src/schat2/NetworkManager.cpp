@@ -73,7 +73,7 @@ NetworkItem NetworkItem::item()
   item.m_name = name;
   item.m_url = client->url().toString();
   item.m_cookie = client->cookie();
-  item.m_userId = client->userId();
+  item.m_userId = client->channelId();
 //  item.m_account = client->user()->account();
 
   if (!item.m_account.isEmpty())
