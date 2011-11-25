@@ -64,6 +64,8 @@ public:
   void setColor(Colors color);
   void setColor(quint8 color);
 
+  Gender& operator=(int other);
+
 private:
   quint8 m_gender;
 };

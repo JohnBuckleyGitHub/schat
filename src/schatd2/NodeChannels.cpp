@@ -67,8 +67,8 @@ bool NodeChannels::join()
   if (!channel)
     return false;
 
-  channel->channels().add(user->id());
-  user->channels().add(channel->id());
+  channel->channels() += user->id();
+  user->channels()    += channel->id();
 
   m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
 

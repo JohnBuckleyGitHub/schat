@@ -21,8 +21,9 @@
 
 #include <QObject>
 
-#include "schat.h"
+#include "Channel.h"
 
+class ChannelPacket;
 class SimpleClient;
 
 class SCHAT_EXPORT ClientChannels : public QObject
@@ -31,13 +32,22 @@ class SCHAT_EXPORT ClientChannels : public QObject
 
 public:
   ClientChannels(QObject *parent = 0);
+  ClientChannel get(const QByteArray &id);
   void join(const QString &name);
+
+signals:
+  void channel(const QByteArray &id);
+  void notice(const ChannelPacket &notice);
 
 private slots:
   void notice(int type);
 
 private:
-  SimpleClient *m_client; ///< Клиент чата.
+  void channel();
+
+  ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
+  QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
+  SimpleClient *m_client;                      ///< Клиент чата.
 };
 
 #endif /* CLIENTCHANNELS_H_ */

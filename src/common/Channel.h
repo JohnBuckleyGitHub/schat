@@ -75,6 +75,12 @@ public:
   inline quint8 value() const    { return m_status; }
   inline void set(quint8 status) { m_status = status; }
 
+  Status& operator=(int other)
+  {
+    m_status = other;
+    return *this;
+  }
+
 private:
   quint8 m_status;
 };
@@ -93,6 +99,9 @@ public:
   inline void clear()                                { m_channels.clear(); }
   inline void remove(const QByteArray &id)           { m_channels.removeAll(id); }
   inline void set(const QList<QByteArray> &channels) { m_channels = channels; }
+
+  Channels& operator+=(const QByteArray &id);
+  Channels& operator=(const QList<QByteArray> &channels);
 
 private:
   QList<QByteArray> m_channels; ///< Список идентификаторов каналов-подписчиков.

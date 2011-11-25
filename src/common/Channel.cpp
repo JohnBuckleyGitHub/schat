@@ -39,6 +39,21 @@ bool Channels::add(const QByteArray &id)
 }
 
 
+Channels& Channels::operator+=(const QByteArray &id)
+{
+  add(id);
+  return *this;
+}
+
+
+Channels& Channels::operator=(const QList<QByteArray> &channels)
+{
+  set(channels);
+  return *this;
+}
+
+
+
 Channel::Channel()
   : m_account(0)
   , m_synced(false)

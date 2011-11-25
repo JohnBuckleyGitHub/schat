@@ -30,6 +30,8 @@
 #include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
 #include "net/packets/message.h"
@@ -89,7 +91,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
-  connect(m_client, SIGNAL(join(const QByteArray &)), SLOT(join(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(channel(const QByteArray &)));
   connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
@@ -365,13 +367,10 @@ void TabWidget::showMainMenu()
 }
 
 
-void TabWidget::join(const QByteArray &channelId)
+void TabWidget::channel(const QByteArray &id)
 {
-  ClientChannel channel = m_client->channel(channelId);
-  if (!channel)
-    return;
-
-  channelTab(channelId);
+  if (SimpleID::typeOf(id) == SimpleID::ChannelId)
+    channelTab(id);
 }
 
 
@@ -536,7 +535,7 @@ void TabWidget::updateUserData(const QByteArray &userId)
  */
 ChannelTab *TabWidget::channelTab(const QByteArray &id)
 {
-  ClientChannel channel = m_client->channel(id);
+  ClientChannel channel = ChatClient::channels()->get(id);
   if (!channel)
     return 0;
 

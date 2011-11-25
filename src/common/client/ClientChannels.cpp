@@ -32,6 +32,18 @@ ClientChannels::ClientChannels(QObject *parent)
 
 
 /*!
+ * Получение канал по идентификатору.
+ *
+ * \param id Идентификатор канала.
+ * \return Канал или пустой канал, если поиск неудачен.
+ */
+ClientChannel ClientChannels::get(const QByteArray &id)
+{
+  return m_channels.value(id);
+}
+
+
+/*!
  * Подключение к обычному каналу по имени.
  *
  * \param name Имя канала.
@@ -45,13 +57,48 @@ void ClientChannels::join(const QString &name)
 }
 
 
+/*!
+ * Обработка получения нового уведомления.
+ *
+ * \param type Тип уведомления, должен быть равен Notice::ChannelType.
+ */
 void ClientChannels::notice(int type)
 {
-  qDebug() << "NOTICE" << type;
-
-  ChannelPacket notice(type, ChatClient::io()->reader());
-  if (!notice.isValid())
+  if (type != Notice::ChannelType)
     return;
 
-  qDebug() << notice.command();
+  ChannelPacket packet(type, ChatClient::io()->reader());
+  if (!packet.isValid())
+    return;
+
+  m_packet = &packet;
+  QString cmd = m_packet->command();
+
+  if (cmd == "channel")
+    channel();
+
+  emit notice(packet);
+}
+
+
+/*!
+ * Чтение заголовка канала.
+ */
+void ClientChannels::channel()
+{
+  QByteArray id = m_packet->channelId();
+  if (!Channel::isCompatibleId(id))
+    return;
+
+  ClientChannel channel = m_channels.value(id);
+  if (!channel) {
+    channel = ClientChannel(new Channel(id, m_packet->text()));
+    m_channels[id] = channel;
+  }
+
+  channel->setName(m_packet->text());
+  channel->gender() = m_packet->gender();
+  channel->status() = m_packet->status();
+
+  emit this->channel(channel->id());
 }
