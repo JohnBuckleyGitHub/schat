@@ -19,6 +19,8 @@
 #include <QDebug>
 
 #include "cores/Core.h"
+#include "net/PacketReader.h"
+#include "net/packets/channels.h"
 #include "net/packets/notices.h"
 #include "NodeChannels.h"
 #include "Storage.h"
@@ -31,6 +33,44 @@ NodeChannels::NodeChannels(Core *core)
 
 bool NodeChannels::read(PacketReader *reader)
 {
-  qDebug() << "RRREEEAAAADDDDDD!!!!";
+  if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
+    return false;
+
+  ChannelPacket packet(m_type, reader);
+  m_packet = &packet;
+
+  QString cmd = m_packet->command();
+
+  if (cmd == "join")
+    return join();
+
+  return false;
+}
+
+
+/*!
+ * Обработка запроса пользователя подключения к каналу.
+ */
+bool NodeChannels::join()
+{
+  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  if (!user)
+    return false;
+
+  ChatChannel channel;
+  if (Channel::isCompatibleId(m_packet->dest()) != SimpleID::InvalidId)
+    channel = m_storage->channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
+
+  if (!channel)
+    channel = m_storage->channel(m_packet->text());
+
+  if (!channel)
+    return false;
+
+  channel->channels().add(user->id());
+  user->channels().add(channel->id());
+
+  m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
+
   return false;
 }
