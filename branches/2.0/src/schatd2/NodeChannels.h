@@ -21,6 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
+class ChannelPacket;
 class Core;
 class Storage;
 
@@ -29,6 +30,11 @@ class SCHAT_EXPORT NodeChannels : public NodeNoticeReader
 public:
   NodeChannels(Core *core);
   bool read(PacketReader *reader);
+
+private:
+  bool join();
+
+  ChannelPacket *m_packet;
 };
 
 #endif /* NODECHANNELS_H_ */
