@@ -35,7 +35,9 @@ HEADERS = \
     cores/PasswordAuth.h \
     DataBase.h \
     events.h \
+    NodeChannels.h \
     NodeLog.h \
+    NodeNoticeReader.h \
     NodePlugins.h \
     Normalize.h \
     plugins/NodePlugin.h \
@@ -51,7 +53,9 @@ SOURCES = \
     cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
+    NodeChannels.cpp \
     NodeLog.cpp \
+    NodeNoticeReader.cpp \
     NodePlugins.cpp \
     Normalize.cpp \
     plugins/NodePlugin.cpp \
