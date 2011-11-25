@@ -137,6 +137,7 @@ public:
   inline Gender& gender()                 { return m_gender; }
   inline Status& status()                 { return m_status; }
 
+  static bool isValidName(const QString &name);
   static int isCompatibleId(const QByteArray &id);
 
 private:

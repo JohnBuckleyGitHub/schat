@@ -98,12 +98,16 @@ SOURCES += \
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
   HEADERS += \
+    client/ChatClient.h \
+    client/ClientChannels.h \
     client/ClientCmd.h \
     client/ClientHelper.h \
     client/SimpleClient.h \
     client/SimpleClient_p.h \
     
   SOURCES += \
+    client/ChatClient.cpp \
+    client/ClientChannels.cpp \
     client/ClientCmd.cpp \
     client/ClientHelper.cpp \
     client/SimpleClient.cpp \

@@ -28,6 +28,7 @@
 #include "ChatCore_p.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
@@ -225,7 +226,9 @@ ChatCore::ChatCore(QObject *parent)
 
   loadTranslation();
 
-  m_client = new SimpleClient(this);
+  new ChatClient(this);
+
+  m_client = ChatClient::io();
   m_settings->setClient(m_client);
 
   m_messageAdapter = new MessageAdapter();
