@@ -128,6 +128,23 @@ void Channel::setData(const QVariantMap &data)
 
 
 /*!
+ * Проверка имени канала на корректность.
+ */
+bool Channel::isValidName(const QString &name)
+{
+  QString tmp = name.simplified();
+
+  if (tmp.size() > MaxNameLength)
+    return false;
+
+  if (tmp.size() < MinNameLengh)
+    return false;
+
+  return true;
+}
+
+
+/*!
  * Проверка идентификатора на принадлежность к допустимому типу.
  *
  * \param id Проверяемый идентификатор.

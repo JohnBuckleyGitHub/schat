@@ -372,18 +372,20 @@ bool SimpleClientPrivate::notice()
 
     emit(q->notice(notice));
   }
-  else if (type == Notice::ChannelType) {
-    ChannelPacket notice(type, reader);
-    if (!notice.isValid())
-      return false;
+  else {
+    emit(q->notice(type));
 
-    m_notice = &notice;
-    QString cmd = notice.command();
+//    ChannelPacket notice(type, reader);
+//    if (!notice.isValid())
+//      return false;
+//
+//    m_notice = &notice;
+//    QString cmd = notice.command();
 
 //    if (cmd == "channel")
 //      channel();
 
-    emit(q->notice(notice));
+//    emit(q->notice(notice));
   }
 
   return true;

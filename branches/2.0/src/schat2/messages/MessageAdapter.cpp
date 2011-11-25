@@ -22,6 +22,8 @@
 #include "ChatCore.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
@@ -172,9 +174,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == "join") {
-    if (cmd.isBody() && cmd.body().size() >= 3)
-      m_client->send(ChannelPacket::join(ChannelUtils::id(), QByteArray(), cmd.body(), m_client->sendStream()));
-
+    ChatClient::channels()->join(cmd.body());
     return;
   }
 
