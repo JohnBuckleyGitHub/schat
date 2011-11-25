@@ -167,11 +167,11 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
 //  channel->channels().add(user->id());
 //  user->addChannel(id);
 
-  Q_Q(SimpleClient);
+//  Q_Q(SimpleClient);
 
   if (channel->channels().all().size() == 1) {
-    if (!channel->name().startsWith(QLatin1String("~")))
-      emit(q->join(id));
+//    if (!channel->name().startsWith(QLatin1String("~")))
+//      emit(q->join(id));
 
     endSyncChannel(channel);
     return true;
@@ -190,8 +190,8 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
       unsync++;
   }
 
-  if (!channel->name().startsWith(QLatin1String("~")))
-    emit(q->join(id));
+//  if (!channel->name().startsWith(QLatin1String("~")))
+//    emit(q->join(id));
 
   if (unsync == 0)
     endSyncChannel(channel);
@@ -437,8 +437,8 @@ bool SimpleClientPrivate::readUserData()
       return false;
 
     user->addChannel(channelId);
-    if (channel->channels().add(id) || channel->isSynced())
-      emit(q->join(channelId, id));
+//    if (channel->channels().add(id) || channel->isSynced())
+//      emit(q->join(channelId, id));
   }
 
   return true;

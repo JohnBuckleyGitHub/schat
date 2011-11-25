@@ -77,3 +77,10 @@ void Gender::setColor(quint8 color)
 
   setColor(static_cast<Colors>(color));
 }
+
+
+Gender& Gender::operator=(int other)
+{
+  m_gender = other;
+  return *this;
+}

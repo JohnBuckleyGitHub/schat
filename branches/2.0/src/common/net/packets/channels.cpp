@@ -37,18 +37,16 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   , m_gender(0)
   , m_status(0)
 {
-  m_channel = ClientChannel(new Channel());
   if (m_direction == Server2Client)
-    m_channel->setId(reader->sender());
+    m_channelId = reader->sender();
   else
-    m_channel->setId(reader->dest());
+    m_channelId = reader->dest();
 
-  m_channel->setName(m_text);
   m_gender = reader->get<quint8>();
   m_status = reader->get<quint8>();
 
-  m_channel->gender().setRaw(m_gender);
-  m_channel->status().set(m_status);
+  if (m_command == "channel")
+    m_channels = reader->idList();
 }
 
 
@@ -56,6 +54,9 @@ void ChannelPacket::write(PacketWriter *writer) const
 {
   writer->put(m_gender);
   writer->put(m_status);
+
+  if (m_command == "channel")
+    writer->putId(m_channels);
 }
 
 
@@ -68,7 +69,15 @@ void ChannelPacket::write(PacketWriter *writer) const
  */
 QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream)
 {
-  return s2c(channel, dest, "channel", true, stream);
+  ChannelPacket packet(channel->id(), dest, "channel", DateTime::utc());
+  packet.setDirection(Server2Client);
+  packet.setText(channel->name());
+  packet.m_gender   = channel->gender().raw();
+  packet.m_status   = channel->status().value();
+  packet.m_channels = channel->channels().all();
+  packet.setData(channel->feeds().get(channel.data()));
+
+  return packet.data(stream);
 }
 
 
@@ -76,20 +85,5 @@ QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel
 {
   ChannelPacket packet(user, channel, "join", DateTime::utc());
   packet.setText(name);
-  return packet.data(stream);
-}
-
-
-QByteArray ChannelPacket::s2c(ClientChannel channel, const QByteArray &dest, const QByteArray &command, bool feeds, QDataStream *stream)
-{
-  ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
-  packet.setDirection(Server2Client);
-  packet.setText(channel->name());
-  packet.m_gender = channel->gender().raw();
-  packet.m_status = channel->status().value();
-
-  if (feeds)
-    packet.setData(channel->feeds().get(channel.data()));
-
   return packet.data(stream);
 }
