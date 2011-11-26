@@ -22,6 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/packets/channels.h"
+#include "net/SimpleID.h"
 
 ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
@@ -82,13 +83,13 @@ void ClientChannels::notice(int type)
 
 
 /*!
- * Чтение заголовка канала.
+ * Добавление канала в таблицу каналов.
  */
-void ClientChannels::channel()
+ClientChannel ClientChannels::add()
 {
   QByteArray id = m_packet->channelId();
   if (!Channel::isCompatibleId(id))
-    return;
+    return ClientChannel();
 
   ClientChannel channel = m_channels.value(id);
   if (!channel) {
@@ -99,6 +100,25 @@ void ClientChannels::channel()
   channel->setName(m_packet->text());
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->status();
+
+  return channel;
+}
+
+
+/*!
+ * Чтение заголовка канала.
+ */
+void ClientChannels::channel()
+{
+  ClientChannel channel = add();
+  if (!channel)
+    return;
+
+  if (channel->type() == SimpleID::ChannelId) {
+    channel->channels() = m_packet->channels();
+  }
+
+  qDebug() << "CHANNELS SIZE:" << channel->channels().all().size();
 
   emit this->channel(channel->id());
 }

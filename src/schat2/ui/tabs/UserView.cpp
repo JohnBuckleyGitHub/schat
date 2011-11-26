@@ -22,39 +22,40 @@
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "ui/tabs/UserView.h"
 #include "ui/UserUtils.h"
 
-UserItem::UserItem(ClientUser user, int option)
-  : QStandardItem(UserUtils::icon(user), user->nick())
+UserItem::UserItem(ClientChannel channel, int option)
+  : QStandardItem(channel->name())
   , m_self(false)
-  , m_user(user)
+  , m_channel(channel)
 {
   if (option & UserView::SelfNick)
     m_self = true;
 
-  if (m_user->status() != Status::Online)
+  if (m_channel->status().value() != Status::Online)
     setColor();
 
   setSortData();
 }
 
 
-bool UserItem::update()
+bool UserItem::reload()
 {
-  setText(m_user->nick());
+  setText(m_channel->name());
   setColor();
   setSortData();
-  setIcon(UserUtils::icon(m_user));
+//  setIcon(UserUtils::icon(m_user));
   return true;
 }
 
 
 void UserItem::setColor()
 {
-  switch (m_user->status()) {
+  switch (m_channel->status().value()) {
     case Status::Away:
     case Status::AutoAway:
     case Status::DnD:
@@ -70,17 +71,17 @@ void UserItem::setColor()
 
 void UserItem::setSortData()
 {
-  setToolTip(UserUtils::toolTip(m_user));
+//  setToolTip(UserUtils::toolTip(m_user));
 
-  QString prefix = QLatin1String("6");
+  QString prefix = "6";
   if (m_self)
-    prefix = QLatin1String("!");
-  else if (m_user->status() == Status::FreeForChat)
-    prefix = QLatin1String("4");
-  else if (m_user->gender().value() == Gender::Bot)
-    prefix = QLatin1String("2");
+    prefix = "!";
+  else if (m_channel->status().value() == Status::FreeForChat)
+    prefix = "4";
+  else if (m_channel->gender().value() == Gender::Bot)
+    prefix = "2";
 
-  setData(prefix + m_user->nick().toLower());
+  setData(prefix + m_channel->name().toLower());
 }
 
 
@@ -109,27 +110,41 @@ UserView::UserView(QWidget *parent)
 
 
 /*!
- * Добавление пользователя в список.
+ * Добавление канала-пользователя в список.
  *
- * \param user Указатель на пользователя.
+ * \param channel Указатель на канал.
  */
-bool UserView::add(ClientUser user)
+bool UserView::add(ClientChannel channel)
 {
-  if (!user)
+  if (!channel)
     return false;
 
-  if (m_users.contains(user->id()))
-    return false;
+  if (m_channels.contains(channel->id()))
+    return reload(channel);
 
   int option = NoOptions;
-  if (m_users.isEmpty())
+  if (m_channels.isEmpty())
     option = SelfNick;
 
-  UserItem *item = new UserItem(user, option);
+  UserItem *item = new UserItem(channel, option);
 
   m_model.appendRow(item);
-  m_users.insert(user->id(), item);
+  m_channels[channel->id()] = item;
 
+  if (m_sortable)
+    sort();
+
+  return true;
+}
+
+
+bool UserView::reload(ClientChannel channel)
+{
+  UserItem *item = m_channels.value(channel->id());
+  if (!item)
+    return false;
+
+  item->reload();
   if (m_sortable)
     sort();
 
@@ -142,27 +157,13 @@ bool UserView::add(ClientUser user)
  */
 bool UserView::remove(const QByteArray &id)
 {
-  UserItem *item = m_users.value(id);
+  UserItem *item = m_channels.value(id);
 
   if (!item)
     return false;
 
   m_model.removeRow(m_model.indexFromItem(item).row());
-  m_users.remove(id);
-  return true;
-}
-
-
-bool UserView::update(ClientUser user)
-{
-  UserItem *item = m_users.value(user->id());
-  if (!item)
-    return false;
-
-  item->update();
-  if (m_sortable)
-    sort();
-
+  m_channels.remove(id);
   return true;
 }
 
@@ -171,7 +172,7 @@ void UserView::clear()
 {
   m_sortable = false;
   m_model.clear();
-  m_users.clear();
+  m_channels.clear();
 }
 
 
@@ -184,13 +185,16 @@ void UserView::sort()
 }
 
 
+/*!
+ * \deprecated Эта функция больше не используется.
+ */
 void UserView::userDataChanged(const QByteArray &userId, int changed)
 {
-  UserItem *item = m_users.value(userId);
+  UserItem *item = m_channels.value(userId);
   if (!item)
     return;
 
-  item->update();
+  item->reload();
   if (m_sortable && changed & SimpleClient::UserNickChanged)
     sort();
 }
@@ -198,19 +202,19 @@ void UserView::userDataChanged(const QByteArray &userId, int changed)
 
 void UserView::contextMenuEvent(QContextMenuEvent *event)
 {
-  QModelIndex index = indexAt(event->pos());
-
-  if (!index.isValid()) {
-    QListView::contextMenuEvent(event);
-    return;
-  }
-
-  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-  QMenu menu(this);
-  UserMenu userMenu(item->user(), this);
-  userMenu.bind(&menu);
-
-  menu.exec(event->globalPos());
+//  QModelIndex index = indexAt(event->pos());
+//
+//  if (!index.isValid()) {
+//    QListView::contextMenuEvent(event);
+//    return;
+//  }
+//
+//  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+//  QMenu menu(this);
+//  UserMenu userMenu(item->user(), this);
+//  userMenu.bind(&menu);
+//
+//  menu.exec(event->globalPos());
 }
 
 
@@ -219,9 +223,9 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   QModelIndex index = indexAt(event->pos());
 
   if (index.isValid(), event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
-    UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+//    UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
 
-    ChatCore::i()->openUrl(UserUtils::toUrl(item->user(), QLatin1String("insert")));
+//    ChatCore::i()->openUrl(UserUtils::toUrl(item->user(), QLatin1String("insert")));
   }
   else if (event->button() == Qt::LeftButton && !index.isValid()) {
     setCurrentIndex(QModelIndex());
@@ -237,6 +241,6 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
  */
 void UserView::addTab(const QModelIndex &index)
 {
-  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-  ChatCore::i()->startNotify(ChatCore::AddPrivateTab, item->user()->id());
+//  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+//  ChatCore::i()->startNotify(ChatCore::AddPrivateTab, item->user()->id());
 }

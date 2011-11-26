@@ -23,6 +23,7 @@
 #include <QStandardItemModel>
 
 #include "User.h"
+#include "Channel.h"
 
 /*!
  * Итем в списке пользователей.
@@ -30,16 +31,16 @@
 class UserItem : public QStandardItem
 {
 public:
-  UserItem(ClientUser user, int option);
-  inline ClientUser user() { return m_user; }
-  bool update();
+  UserItem(ClientChannel channel, int option);
+  inline ClientChannel channel() { return m_channel; }
+  bool reload();
 
 private:
   void setColor();
   void setSortData();
 
-  bool m_self;     ///< true это данные текущего пользователя.
-  ClientUser m_user; ///< Пользователь.
+  bool m_self;             ///< true это данные текущего пользователя.
+  ClientChannel m_channel; ///< Канал-пользователь.
 };
 
 
@@ -58,12 +59,11 @@ public:
   };
 
   UserView(QWidget *parent = 0);
-  bool add(ClientUser user);
+  bool add(ClientChannel channel);
+  bool reload(ClientChannel channel);
   bool remove(const QByteArray &id);
-  bool update(ClientUser user);
+  inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
   inline bool isSortable() const { return m_sortable; }
-  inline int userCount() const { return m_users.size(); }
-  inline QList<QByteArray> users() const { return m_users.keys(); }
   void clear();
   void sort();
 
@@ -78,9 +78,9 @@ private slots:
   void addTab(const QModelIndex &index);
 
 private:
-  bool m_sortable;                      ///< true если список пользователей нужно сортировать при добавлении пользователя.
-  QHash<QByteArray, UserItem*> m_users; ///< Таблица для ускоренного поиска пользователей.
-  QStandardItemModel m_model;           ///< Модель для отображения списка пользователей.
+  bool m_sortable;                         ///< true если список пользователей нужно сортировать при добавлении пользователя.
+  QHash<QByteArray, UserItem*> m_channels; ///< Таблица для ускоренного поиска пользователей.
+  QStandardItemModel m_model;              ///< Модель для отображения списка пользователей.
 };
 
 #endif /* USERVIEW_H_ */

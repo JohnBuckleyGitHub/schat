@@ -43,6 +43,7 @@ private slots:
   void notice(int type);
 
 private:
+  ClientChannel add();
   void channel();
 
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.

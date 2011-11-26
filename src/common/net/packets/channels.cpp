@@ -45,7 +45,7 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   m_gender = reader->get<quint8>();
   m_status = reader->get<quint8>();
 
-  if (m_command == "channel")
+  if (SimpleID::typeOf(m_channelId) == SimpleID::ChannelId && m_command == "channel")
     m_channels = reader->idList();
 }
 
@@ -55,7 +55,7 @@ void ChannelPacket::write(PacketWriter *writer) const
   writer->put(m_gender);
   writer->put(m_status);
 
-  if (m_command == "channel")
+  if (!m_channels.isEmpty() && m_command == "channel")
     writer->putId(m_channels);
 }
 
@@ -74,8 +74,10 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
   packet.setText(channel->name());
   packet.m_gender   = channel->gender().raw();
   packet.m_status   = channel->status().value();
-  packet.m_channels = channel->channels().all();
   packet.setData(channel->feeds().get(channel.data()));
+
+  if (channel->type() == SimpleID::ChannelId)
+    packet.m_channels = channel->channels().all();
 
   return packet.data(stream);
 }

@@ -717,4 +717,6 @@ void SimpleClient::newPacketsImpl()
         break;
     }
   }
+
+  emit idle();
 }

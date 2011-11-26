@@ -23,6 +23,8 @@
 #include "actions/ChannelMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "messages/TopicMessage.h"
 #include "net/packets/message.h"
@@ -90,10 +92,10 @@ ChannelTab::~ChannelTab()
 }
 
 
-bool ChannelTab::add(ClientUser user)
+bool ChannelTab::add2(ClientUser user)
 {
-  if (!m_userView->add(user))
-    return false;
+//  if (!m_userView->add(user))
+//    return false;
 
   if (m_userView->isSortable() || UserUtils::userId() == user->id()) {
     addJoinMsg(user->id(), m_channel->id());
@@ -147,12 +149,12 @@ void ChannelTab::setOnline(bool online)
       addQuitMsg(UserUtils::userId(), m_channel->id());
   }
   else {
-    ClientChannel channel = ChatCore::i()->client()->channel(id());
+    ClientChannel channel = ChatClient::channels()->get(id());
     if (channel && channel != m_channel)
       m_channel = channel;
   }
 
-  AbstractTab::setOnline(online);
+  ChatViewTab::setOnline(online);
 }
 
 
@@ -265,14 +267,17 @@ void ChannelTab::userLeave(const QByteArray &userId)
 }
 
 
+/*!
+ * \deprecated Эта функция больше не используется.
+ */
 void ChannelTab::displayUserCount()
 {
-  int index = m_tabs->indexOf(this);
-  if (index == -1)
-    return;
-
-  if (m_userCount && m_userView->userCount() > 1)
-    m_tabs->setTabText(index, QString("%1 (%2)").arg(m_channel->name()).arg(m_userView->userCount()));
-  else
-    m_tabs->setTabText(index, m_channel->name());
+//  int index = m_tabs->indexOf(this);
+//  if (index == -1)
+//    return;
+//
+//  if (m_userCount && m_userView->userCount() > 1)
+//    m_tabs->setTabText(index, QString("%1 (%2)").arg(m_channel->name()).arg(m_userView->userCount()));
+//  else
+//    m_tabs->setTabText(index, m_channel->name());
 }
