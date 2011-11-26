@@ -83,6 +83,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
   connect(m_bar->topic(), SIGNAL(focusOut()), SLOT(topicFocusOut()));
   connect(m_chatView, SIGNAL(reloaded()), SLOT(reloaded()));
+
+  connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
 }
 
 
@@ -162,6 +164,21 @@ void ChannelTab::synced()
 {
   displayUserCount();
   m_userView->sort();
+}
+
+
+/*!
+ * Обработка получения данных о новых каналах.
+ * Если канал содержит пользователя, но ещё не был добавлен в список пользователей, то он будет добавлен.
+ *
+ * \param channels Список идентификаторов каналов.
+ */
+void ChannelTab::channels(const QList<QByteArray> &channels)
+{
+  foreach (QByteArray id, channels) {
+    if (m_channel->channels().all().contains(id) && !m_userView->contains(id))
+      m_userView->add(ChatClient::channels()->get(id));
+  }
 }
 
 

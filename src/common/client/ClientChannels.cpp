@@ -29,6 +29,7 @@ ClientChannels::ClientChannels(QObject *parent)
   , m_client(ChatClient::io())
 {
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
+  connect(m_client, SIGNAL(idle()), SLOT(idle()));
 }
 
 
@@ -55,6 +56,18 @@ void ClientChannels::join(const QString &name)
     return;
 
   m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
+}
+
+
+/*!
+ * Слот вызывается, когда клиент прочитает все пришедшие пакеты.
+ */
+void ClientChannels::idle()
+{
+  if (!m_synced.isEmpty()) {
+    emit channels(m_synced);
+    m_synced.clear();
+  }
 }
 
 
@@ -114,11 +127,22 @@ void ClientChannels::channel()
   if (!channel)
     return;
 
+  emit this->channel(channel->id());
+
   if (channel->type() == SimpleID::ChannelId) {
     channel->channels() = m_packet->channels();
+    sync(channel);
   }
+}
 
-  qDebug() << "CHANNELS SIZE:" << channel->channels().all().size();
 
-  emit this->channel(channel->id());
+void ClientChannels::sync(ClientChannel channel)
+{
+  QList<QByteArray> channels = channel->channels().all();
+  foreach (QByteArray id, channels) {
+    if (m_channels.contains(id))
+      m_synced += id;
+    else
+      m_unsynced += id;
+  }
 }
