@@ -46,6 +46,7 @@ public:
   void synced();
 
 private slots:
+  void channels(const QList<QByteArray> &channels);
   void notify(int notice, const QVariant &data);
   void part(const QByteArray &channelId, const QByteArray &userId);
   void reloaded();

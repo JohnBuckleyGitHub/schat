@@ -37,17 +37,22 @@ public:
 
 signals:
   void channel(const QByteArray &id);
+  void channels(const QList<QByteArray> &channels);
   void notice(const ChannelPacket &notice);
 
 private slots:
+  void idle();
   void notice(int type);
 
 private:
   ClientChannel add();
   void channel();
+  void sync(ClientChannel channel);
 
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
   QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
+  QList<QByteArray> m_synced;                  ///< Список синхронизированных каналов.
+  QList<QByteArray> m_unsynced;                ///< Список не синхронизированных каналов.
   SimpleClient *m_client;                      ///< Клиент чата.
 };
 
