@@ -42,11 +42,9 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   else
     m_channelId = reader->dest();
 
-  m_gender = reader->get<quint8>();
-  m_status = reader->get<quint8>();
-
-  if (SimpleID::typeOf(m_channelId) == SimpleID::ChannelId && m_command == "channel")
-    m_channels = reader->idList();
+  m_gender   = reader->get<quint8>();
+  m_status   = reader->get<quint8>();
+  m_channels = reader->idList();
 }
 
 
@@ -54,22 +52,21 @@ void ChannelPacket::write(PacketWriter *writer) const
 {
   writer->put(m_gender);
   writer->put(m_status);
-
-  if (!m_channels.isEmpty() && m_command == "channel")
-    writer->putId(m_channels);
+  writer->putId(m_channels);
 }
 
 
 /*!
- * Формирование пакета \b channel для отправки клиенту заголовка канала.
+ * Формирование пакета для отправки клиенту заголовка канала.
  *
  * \param channel Канал.
  * \param dest    Идентификатор получателя.
  * \param stream  Поток записи пакета.
+ * \param command Команда.
  */
-QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream)
+QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command)
 {
-  ChannelPacket packet(channel->id(), dest, "channel", DateTime::utc());
+  ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
   packet.m_gender   = channel->gender().raw();
@@ -83,6 +80,24 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
 }
 
 
+QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
+{
+  ChannelPacket packet(user, user, "info", DateTime::utc());
+  packet.m_channels = channels;
+  return packet.data(stream);
+}
+
+
+/*!
+ * Формирования пакета "join" для входа в канал.
+ *
+ * \param user    Идентификатор пользователя отправителя.
+ * \param channel Идентификатор канала, в который необходимо войти, может быть пустым.
+ * \param name    Имя канала, может быть пустым.
+ * \param stream  Поток записи пакета.
+ *
+ * \sa ClientChannels::join().
+ */
 QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
 {
   ChannelPacket packet(user, channel, "join", DateTime::utc());

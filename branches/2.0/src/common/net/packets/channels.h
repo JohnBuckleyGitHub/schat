@@ -36,7 +36,8 @@ public:
   inline quint8 gender() const { return m_gender; }
   inline quint8 status() const { return m_status; }
 
-  static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream);
+  static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command = "channel");
+  static QByteArray info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream);
   static QByteArray join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
 
 protected:
