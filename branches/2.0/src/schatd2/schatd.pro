@@ -44,6 +44,7 @@ HEADERS = \
     plugins/StorageHooks.h \
     ServerChannel.h \
     ServerUser.h \
+    Sockets.h \
     Storage.h \
 
 SOURCES = \
@@ -62,6 +63,7 @@ SOURCES = \
     plugins/StorageHooks.cpp \
     ServerChannel.cpp \
     ServerUser.cpp \
+    Sockets.cpp \
     Storage.cpp \
 
 include(../common/client.pri)

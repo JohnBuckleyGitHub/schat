@@ -23,6 +23,7 @@
 #include "net/packets/channels.h"
 #include "net/packets/notices.h"
 #include "NodeChannels.h"
+#include "Sockets.h"
 #include "Storage.h"
 
 NodeChannels::NodeChannels(Core *core)
@@ -52,6 +53,9 @@ bool NodeChannels::read(PacketReader *reader)
 }
 
 
+/*!
+ * Обработка запроса пользователем информации о канале.
+ */
 bool NodeChannels::info()
 {
   ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
@@ -92,10 +96,16 @@ bool NodeChannels::join()
   if (!channel)
     return false;
 
+  bool notify = !channel->channels().all().contains(user->id());
+  qDebug() << "---" << notify;
+
   channel->channels() += user->id();
   user->channels()    += channel->id();
 
   m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
+
+  if (notify && channel->channels().all().size() > 1)
+    m_core->send(Sockets::channel(channel), ChannelPacket::channel(channel, channel->id(), m_core->sendStream(), "+"));
 
   return false;
 }
