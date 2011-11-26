@@ -32,6 +32,7 @@ public:
   bool read(PacketReader *reader);
 
 private:
+  bool info();
   bool join();
 
   ChannelPacket *m_packet;

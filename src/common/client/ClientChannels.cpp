@@ -45,17 +45,26 @@ ClientChannel ClientChannels::get(const QByteArray &id)
 }
 
 
+bool ClientChannels::info(const QList<QByteArray> &channels)
+{
+  if (channels.isEmpty())
+    return false;
+
+  return m_client->send(ChannelPacket::info(ChatClient::id(), channels, m_client->sendStream()));
+}
+
+
 /*!
  * Подключение к обычному каналу по имени.
  *
  * \param name Имя канала.
  */
-void ClientChannels::join(const QString &name)
+bool ClientChannels::join(const QString &name)
 {
   if (!Channel::isValidName(name))
-    return;
+    return false;
 
-  m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
+  return m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
 }
 
 
@@ -87,9 +96,13 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   QString cmd = m_packet->command();
+  qDebug() << cmd;
 
   if (cmd == "channel")
     channel();
+
+  if (cmd == "info")
+    info();
 
   emit notice(packet);
 }
@@ -136,8 +149,29 @@ void ClientChannels::channel()
 }
 
 
+/*!
+ * Чтение информации о канале.
+ */
+void ClientChannels::info()
+{
+  ClientChannel channel = add();
+  if (!channel)
+    return;
+
+  m_synced += channel->id();
+}
+
+
+/*!
+ * Формирование запроса информации об не известных каналах.
+ *
+ * \param channel Указатель на канал, допустимый тип канала: SimpleID::ChannelId.
+ */
 void ClientChannels::sync(ClientChannel channel)
 {
+  if (channel->type() != SimpleID::ChannelId)
+    return;
+
   QList<QByteArray> channels = channel->channels().all();
   foreach (QByteArray id, channels) {
     if (m_channels.contains(id))
@@ -145,4 +179,6 @@ void ClientChannels::sync(ClientChannel channel)
     else
       m_unsynced += id;
   }
+
+  info(m_unsynced);
 }

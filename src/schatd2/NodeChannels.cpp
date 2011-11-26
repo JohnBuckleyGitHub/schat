@@ -40,10 +40,38 @@ bool NodeChannels::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
+  qDebug() << cmd;
+
+  if (cmd == "info")
+    return info();
 
   if (cmd == "join")
     return join();
 
+  return false;
+}
+
+
+bool NodeChannels::info()
+{
+  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  if (!user)
+    return false;
+
+  if (m_packet->channels().isEmpty())
+    return false;
+
+  QList<QByteArray> packets;
+  foreach (QByteArray id, m_packet->channels()) {
+    ChatChannel channel = m_storage->channel(id, SimpleID::typeOf(id));
+    if (channel)
+      packets += ChannelPacket::channel(channel, user->id(), m_core->sendStream(), "info");
+  }
+
+  if (packets.isEmpty())
+    return false;
+
+  m_core->send(user->sockets(), packets);
   return false;
 }
 
@@ -57,10 +85,7 @@ bool NodeChannels::join()
   if (!user)
     return false;
 
-  ChatChannel channel;
-  if (Channel::isCompatibleId(m_packet->dest()) != SimpleID::InvalidId)
-    channel = m_storage->channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
-
+  ChatChannel channel = m_storage->channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
     channel = m_storage->channel(m_packet->text());
 

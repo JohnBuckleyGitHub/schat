@@ -32,8 +32,9 @@ class SCHAT_EXPORT ClientChannels : public QObject
 
 public:
   ClientChannels(QObject *parent = 0);
+  bool info(const QList<QByteArray> &channels);
+  bool join(const QString &name);
   ClientChannel get(const QByteArray &id);
-  void join(const QString &name);
 
 signals:
   void channel(const QByteArray &id);
@@ -47,6 +48,7 @@ private slots:
 private:
   ClientChannel add();
   void channel();
+  void info();
   void sync(ClientChannel channel);
 
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
