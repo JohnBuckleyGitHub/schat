@@ -83,6 +83,7 @@ public:
 
 signals:
   void clientStateChanged(int state, int previousState);
+  void idle();
   void packetReady(int type);
   void ready();
   void requestClientAuth();

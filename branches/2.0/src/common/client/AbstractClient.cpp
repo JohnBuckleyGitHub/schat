@@ -441,6 +441,8 @@ void AbstractClient::newPacketsImpl()
       d->authReply(AuthReply(d->reader));
     }
   }
+
+  emit idle();
 }
 
 

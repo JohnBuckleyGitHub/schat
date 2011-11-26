@@ -391,7 +391,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 
   if (tab && user) {
     privateTab(user->id(), false);
-    tab->add(user);
+//    tab->add(user);
   }
 }
 
@@ -426,7 +426,7 @@ void TabWidget::synced(const QByteArray &channelId)
       continue;
 
     privateTab(user->id(), false);
-    tab->add(user);
+//    tab->add(user);
   }
 
   tab->synced();
@@ -543,7 +543,7 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
 
   if (!m_channels.contains(id)) {
     tab = new ChannelTab(channel, this);
-    m_channels.insert(id, tab);
+    m_channels[id] = tab;
     setCurrentIndex(addTab(tab, channel->name()));
 
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));

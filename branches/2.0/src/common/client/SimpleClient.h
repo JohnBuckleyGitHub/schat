@@ -71,8 +71,6 @@ public:
   void setCookieAuth(bool allow);
 
 signals:
-//  void join(const QByteArray &channelId);
-//  void join(const QByteArray &channelId, const QByteArray &userId);
   void message(const MessageData &data);
   void notice(const Notice &notice);
   void notice(int type);

@@ -37,7 +37,7 @@ class ChannelTab : public ChatViewTab
 public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   ~ChannelTab();
-  bool add(ClientUser user);
+  bool add2(ClientUser user);
   bool bindMenu(QMenu *menu);
   bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }
