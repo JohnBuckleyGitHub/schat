@@ -97,15 +97,13 @@ bool NodeChannels::join()
     return false;
 
   bool notify = !channel->channels().all().contains(user->id());
-  qDebug() << "---" << notify;
-
   channel->channels() += user->id();
   user->channels()    += channel->id();
 
   m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
 
   if (notify && channel->channels().all().size() > 1)
-    m_core->send(Sockets::channel(channel), ChannelPacket::channel(channel, channel->id(), m_core->sendStream(), "+"));
+    m_core->send(Sockets::channel(channel), ChannelPacket::channel(user, channel->id(), m_core->sendStream(), "+"));
 
   return false;
 }

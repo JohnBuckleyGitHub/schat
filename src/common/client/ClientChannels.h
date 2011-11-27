@@ -39,6 +39,7 @@ public:
 signals:
   void channel(const QByteArray &id);
   void channels(const QList<QByteArray> &channels);
+  void joined(const QByteArray &channel, const QByteArray &user);
   void notice(const ChannelPacket &notice);
 
 private slots:
@@ -49,6 +50,7 @@ private:
   ClientChannel add();
   void channel();
   void info();
+  void joined();
   void sync(ClientChannel channel);
 
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.

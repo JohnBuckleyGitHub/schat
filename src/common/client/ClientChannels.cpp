@@ -104,6 +104,9 @@ void ClientChannels::notice(int type)
   if (cmd == "info")
     info();
 
+  if (cmd == "+")
+    joined();
+
   emit notice(packet);
 }
 
@@ -159,6 +162,23 @@ void ClientChannels::info()
     return;
 
   m_synced += channel->id();
+}
+
+
+/*!
+ * Обработка входа пользователя в канал.
+ */
+void ClientChannels::joined()
+{
+  ClientChannel user = add();
+  if (!user)
+    return;
+
+  ClientChannel channel = get(m_packet->dest());
+  channel->channels() += user->id();
+  m_synced += user->id();
+
+  emit joined(channel->id(), user->id());
 }
 
 
