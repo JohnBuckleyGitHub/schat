@@ -85,6 +85,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(m_chatView, SIGNAL(reloaded()), SLOT(reloaded()));
 
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
+  connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
 }
 
 
@@ -179,6 +180,18 @@ void ChannelTab::channels(const QList<QByteArray> &channels)
     if (m_channel->channels().all().contains(id) && !m_userView->contains(id))
       m_userView->add(ChatClient::channels()->get(id));
   }
+}
+
+
+/*!
+ * Обработка входа пользователя в канал.
+ */
+void ChannelTab::joined(const QByteArray &channel, const QByteArray &user)
+{
+  if (id() != channel)
+    return;
+
+  m_userView->add(ChatClient::channels()->get(user));
 }
 
 
