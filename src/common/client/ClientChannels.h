@@ -34,6 +34,7 @@ public:
   ClientChannels(QObject *parent = 0);
   bool info(const QList<QByteArray> &channels);
   bool join(const QString &name);
+  bool part(const QByteArray &id);
   ClientChannel get(const QByteArray &id);
 
 signals:

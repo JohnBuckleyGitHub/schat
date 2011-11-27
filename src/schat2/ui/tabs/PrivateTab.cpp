@@ -56,7 +56,8 @@ PrivateTab::PrivateTab(ClientUser user, TabWidget *parent)
 
 PrivateTab::~PrivateTab()
 {
-  ChatCore::i()->client()->part(SimpleID::setType(SimpleID::ChannelId, m_user->id()));
+//  ChatClient::channels()->part(id());
+//  ChatCore::i()->client()->part(SimpleID::setType(SimpleID::ChannelId, m_user->id()));
 }
 
 

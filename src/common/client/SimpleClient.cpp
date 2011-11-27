@@ -620,26 +620,6 @@ void SimpleClient::leave()
 }
 
 
-/*!
- * Отключение от канала.
- */
-void SimpleClient::part(const QByteArray &channelId)
-{
-  SCHAT_DEBUG_STREAM(this << "part()" << SimpleID::encode(channelId))
-
-  Q_D(SimpleClient);
-
-  if (!d->channels.contains(channelId))
-    return;
-
-  d->channels.remove(channelId);
-//  d->user->removeChannel(channelId);
-
-  MessageData message(this->channelId(), channelId, QLatin1String("part"), QString());
-  send(message);
-}
-
-
 void SimpleClient::setAccount(const QString &account, const QString &password)
 {
   Q_D(SimpleClient);

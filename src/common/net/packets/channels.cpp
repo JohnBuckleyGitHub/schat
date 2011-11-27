@@ -80,6 +80,13 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
 }
 
 
+/*!
+ * Формирование пакета "info" для запроса информации о каналах.
+ *
+ * \param user     Идентификатор пользователя отправителя.
+ * \param channels Список идентификаторов каналов, о которых необходима информация.
+ * \param stream   Поток записи пакета.
+ */
 QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
 {
   ChannelPacket packet(user, user, "info", DateTime::utc());
@@ -102,5 +109,12 @@ QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel
 {
   ChannelPacket packet(user, channel, "join", DateTime::utc());
   packet.setText(name);
+  return packet.data(stream);
+}
+
+
+QByteArray ChannelPacket::part(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
+{
+  ChannelPacket packet(user, channel, "part", DateTime::utc());
   return packet.data(stream);
 }

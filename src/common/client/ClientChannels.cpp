@@ -45,6 +45,9 @@ ClientChannel ClientChannels::get(const QByteArray &id)
 }
 
 
+/*!
+ * Запрос информации о каналах.
+ */
 bool ClientChannels::info(const QList<QByteArray> &channels)
 {
   if (channels.isEmpty())
@@ -65,6 +68,18 @@ bool ClientChannels::join(const QString &name)
     return false;
 
   return m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
+}
+
+
+/*!
+ * Отключение от канала.
+ */
+bool ClientChannels::part(const QByteArray &id)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  return m_client->send(ChannelPacket::part(ChatClient::id(), id, m_client->sendStream()));
 }
 
 

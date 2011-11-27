@@ -277,79 +277,13 @@ void Core::packet(int type)
 
 
 /*!
- * Обработка команды "join".
- */
-bool Core::join()
-{
-  ChatChannel channel;
-  if (!m_messageData->destId().isEmpty())
-    channel = m_storage->channel(m_messageData->destId());
-
-  if (!channel)
-    channel = m_storage->channel(m_messageData->text);
-
-  if (!channel)
-    return false;
-
-  return join(m_reader->sender(), channel);
-}
-
-
-/*!
- * Подключение пользователя к каналу.
- * Пользователь будет добавлен в канал, затем ему будет отослана информация
- * о канале.
- * В случае если в канале находятся другие пользователи, им будет разослано
- * уведомление о входе нового пользователя, после этого подключившемуся
- * пользователю будут отосланы данные всех пользователей в канале.
- *
- * \param userId  Идентификатор пользователя.
- * \param channel Указатель на канал.
- *
- * \return true в случае успеха.
- */
-bool Core::join(const QByteArray &userId, ChatChannel channel)
-{
-  if (!channel)
-    return false;
-
-  ChatUser user = m_storage->user(userId);
-  if (!user)
-    return false;
-
-  channel->channels().add(userId);
-  user->addChannel(channel->id());
-
-//  ChatUser author = Storage::i()->user(channel->topic().author, true);
-//  if (author)
-//    send(user, UserWriter(m_sendStream, author.data(), userId, UserWriter::StaticData).data());
-
-//  ChannelWriter writer(m_sendStream, channel.data(), user->id());
-//  send(user, writer.data());
-
-//  ChannelPacket header(channel, userId, "channel", DateTime::utc());
-//  header.setData(channel->feeds().json(user, false));
-//  send(user, header.data(m_sendStream));
-
-  if (channel->channels().all().size() > 1) {
-    UserWriter writer(m_sendStream, user.data(), channel->id(), UserWriter::StaticData);
-    send(channel, writer.data()); // Отправка всем пользователям в канале данных нового пользователя.
-
-    QList<QByteArray> packets = userDataToSync(channel, user);
-    if (!packets.isEmpty())
-      send(user, packets);
-  }
-
-  return true;
-}
-
-
-/*!
  * Формирование списка пакетов для синхронизации списка пользователей в канале.
  * Будут отправлены только данные пользователей, которые не известны получателю.
  *
  * \param channel Канал, который необходимо синхронизировать.
  * \param user    Получатель пакетов.
+ *
+ * \deprecated Теперь клиент самостоятельно запрашивает список пользователей.
  */
 QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
 {
@@ -610,6 +544,7 @@ void Core::release(SocketReleaseEvent *event)
  * Обработка команд.
  *
  * \return true в случае если команда была обработана, иначе false.
+ * \deprecated Сервер больше не должен интерпретировать команды в сообщениях.
  */
 bool Core::command()
 {
@@ -618,18 +553,6 @@ bool Core::command()
 
   if (command.isEmpty())
     return false;
-
-  if (command == QLatin1String("join")) {
-    join();
-    return true;
-  }
-
-  if (command == QLatin1String("part")) {
-    if (m_storage->removeUserFromChannel(m_reader->sender(), m_reader->dest()))
-      return false;
-
-    return true;
-  }
 
   if (command == QLatin1String("status"))
     return updateUserStatus();
@@ -834,7 +757,7 @@ void Core::notice(quint16 type)
     }
   }
   else {
-    if (!NodeNoticeReader::read(type, m_reader))
+    if (NodeNoticeReader::read(type, m_reader))
       route();
 
     return;
