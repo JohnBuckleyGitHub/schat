@@ -55,7 +55,6 @@ public:
 
   // user management.
   bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
-  bool removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId);
   ChatUser user(const QByteArray &id, bool offline = false) const;
   inline QHash<QByteArray, ChatUser> users() const { return m_users; }
   LoginReply login(ChatUser user, const QString &name, const QByteArray &password);

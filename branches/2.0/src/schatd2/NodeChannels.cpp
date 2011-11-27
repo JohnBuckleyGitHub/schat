@@ -49,6 +49,9 @@ bool NodeChannels::read(PacketReader *reader)
   if (cmd == "join")
     return join();
 
+  if (cmd == "part")
+    return part();
+
   return false;
 }
 
@@ -104,6 +107,34 @@ bool NodeChannels::join()
 
   if (notify && channel->channels().all().size() > 1)
     m_core->send(Sockets::channel(channel), ChannelPacket::channel(user, channel->id(), m_core->sendStream(), "+"));
+
+  return false;
+}
+
+
+/*!
+ * Обработка отключения пользователя от канала.
+ */
+bool NodeChannels::part()
+{
+  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  if (!user)
+    return false;
+
+  ChatChannel channel = m_storage->channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  if (!channel)
+    return false;
+
+  user->channels().remove(channel->id());
+
+  if (!channel->channels().all().contains(user->id()))
+    return false;
+
+  m_core->send(Sockets::channel(channel), ChannelPacket::part(user->id(), channel->id(), m_core->sendStream()));
+  channel->channels().remove(user->id());
+
+  if (channel->type() == SimpleID::ChannelId && channel->channels().all().size() == 0)
+    m_storage->remove(channel);
 
   return false;
 }

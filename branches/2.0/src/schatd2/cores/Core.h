@@ -78,8 +78,6 @@ protected:
   virtual void newPacketsEvent(NewPacketsEvent *event);
   virtual void packet(int type);
 
-  bool join();
-  bool join(const QByteArray &userId, ChatChannel channel);
   QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
   QList<quint64> echoFilter(const QList<quint64> &sockets);
 

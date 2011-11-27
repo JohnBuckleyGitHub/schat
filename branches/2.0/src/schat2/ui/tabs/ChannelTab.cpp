@@ -91,7 +91,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
 ChannelTab::~ChannelTab()
 {
-  ChatCore::i()->client()->part(m_channel->id());
+  ChatClient::channels()->part(id());
 }
 
 

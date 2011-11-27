@@ -145,33 +145,6 @@ bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
 
 
 /*!
- * Удаление пользователя из канала. Если канал не постоянный
- * и в нём больше нет пользователей, то канал также будет удалён.
- *
- * \param userId    Идентификатор пользователя.
- * \param channelId Идентификатор канала.
- */
-bool Storage::removeUserFromChannel(const QByteArray &userId, const QByteArray &channelId)
-{
-  ChatUser user = this->user(userId);
-  if (!user)
-    return false;
-
-  ChatChannel chan = channel(channelId);
-  if (!chan)
-    return false;
-
-  chan->channels().remove(userId);
-  user->removeChannel(channelId);
-
-  if (chan->channels().all().size() == 0)
-    remove(chan);
-
-  return true;
-}
-
-
-/*!
  * Получение пользователя по идентификатору.
  *
  * \param id      Идентификатор пользователя.
