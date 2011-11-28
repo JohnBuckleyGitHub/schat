@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "cores/Core.h"
+#include "events.h"
 #include "net/PacketReader.h"
 #include "net/packets/channels.h"
 #include "net/packets/notices.h"
@@ -52,7 +53,19 @@ bool NodeChannels::read(PacketReader *reader)
   if (cmd == "part")
     return part();
 
+  if (cmd == "quit")
+    return quit();
+
   return false;
+}
+
+
+void NodeChannels::releaseImpl(ChatChannel channel, quint64 socket)
+{
+  if (channel->sockets().size())
+    return;
+
+  m_core->send(Sockets::all(channel), ChannelPacket::quit(channel->id(), m_core->sendStream()));
 }
 
 
@@ -136,5 +149,12 @@ bool NodeChannels::part()
   if (channel->type() == SimpleID::ChannelId && channel->channels().all().size() == 0)
     m_storage->remove(channel);
 
+  return false;
+}
+
+
+bool NodeChannels::quit()
+{
+  m_core->send(QList<quint64>() << m_core->packetsEvent()->socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
   return false;
 }

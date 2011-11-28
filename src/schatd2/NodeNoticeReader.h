@@ -22,7 +22,7 @@
 #include <QMap>
 #include <QSharedPointer>
 
-#include "schat.h"
+#include "ServerChannel.h"
 
 class Core;
 class Storage;
@@ -34,12 +34,15 @@ public:
   virtual ~NodeNoticeReader() {}
 
   inline int type() const { return m_type; }
-  virtual bool read(PacketReader *reader) { Q_UNUSED(reader) return false; }
 
   static bool read(int type, PacketReader *reader);
   static void add(NodeNoticeReader *reader);
+  static void release(ChatChannel channel, quint64 socket);
 
 protected:
+  virtual bool read(PacketReader *reader) { Q_UNUSED(reader) return false; }
+  virtual void releaseImpl(ChatChannel channel, quint64 socket) { Q_UNUSED(channel) Q_UNUSED(socket) }
+
   Core *m_core;       ///< Ядро чата.
   int m_type;         ///< Тип поддерживаемых пакетов.
   Storage *m_storage; ///< Хранилище данных.

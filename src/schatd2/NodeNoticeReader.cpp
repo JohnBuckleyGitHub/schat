@@ -53,3 +53,13 @@ void NodeNoticeReader::add(NodeNoticeReader *reader)
 {
   m_readers[reader->type()] = QSharedPointer<NodeNoticeReader>(reader);
 }
+
+
+void NodeNoticeReader::release(ChatChannel channel, quint64 socket)
+{
+  QMapIterator<int, QSharedPointer<NodeNoticeReader> > i(m_readers);
+  while (i.hasNext()) {
+    i.next();
+    i.value()->releaseImpl(channel, socket);
+  }
+}

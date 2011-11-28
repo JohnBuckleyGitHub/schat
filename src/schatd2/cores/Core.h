@@ -90,7 +90,6 @@ protected:
   bool readUserData();
   bool updateUserData(ChatUser user, User *other);
   bool updateUserStatus();
-  virtual void leave(ChatChannel channel, quint64 socket);
   void release(SocketReleaseEvent *event);
 
   // messages.
