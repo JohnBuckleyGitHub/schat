@@ -29,12 +29,16 @@ class SCHAT_EXPORT NodeChannels : public NodeNoticeReader
 {
 public:
   NodeChannels(Core *core);
+
+protected:
   bool read(PacketReader *reader);
+  void releaseImpl(ChatChannel channel, quint64 socket);
 
 private:
   bool info();
   bool join();
   bool part();
+  bool quit();
 
   ChannelPacket *m_packet;
 };

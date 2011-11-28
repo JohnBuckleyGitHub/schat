@@ -558,8 +558,8 @@ const QString &SimpleClient::account() const
 
 void SimpleClient::leave()
 {
-//  Notice notice(userId(), user()->channels(), "leave");
-//  send(notice);
+  Q_D(SimpleClient);
+  send(ChannelPacket::quit(channelId(), d->sendStream));
 
   AbstractClient::leave();
 }

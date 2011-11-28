@@ -19,12 +19,25 @@
 #include "Sockets.h"
 #include "Storage.h"
 
-void Sockets::merge(QList<quint64> &out, const QList<quint64> &sockets)
+QList<quint64> Sockets::all(ChatChannel user)
 {
-  foreach (quint64 socket, sockets) {
-    if (!out.contains(socket))
-      out.append(socket);
+  QList<quint64> out;
+  if (!user)
+    return out;
+
+  QList<QByteArray> channels = user->channels().all();
+  for (int i = 0; i < channels.size(); ++i) {
+    ChatChannel channel = Storage::i()->channel(channels.at(i), SimpleID::typeOf(channels.at(i)));
+    if (!channel)
+      continue;
+
+    if (channel->type() == SimpleID::UserId)
+      merge(out, channel->sockets());
+    else
+      merge(out, Sockets::channel(channel));
   }
+
+  return out;
 }
 
 
@@ -44,4 +57,13 @@ QList<quint64> Sockets::channel(ChatChannel channel)
   }
 
   return out;
+}
+
+
+void Sockets::merge(QList<quint64> &out, const QList<quint64> &sockets)
+{
+  foreach (quint64 socket, sockets) {
+    if (!out.contains(socket))
+      out.append(socket);
+  }
 }

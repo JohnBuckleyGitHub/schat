@@ -515,28 +515,23 @@ bool Core::updateUserStatus()
 }
 
 
-void Core::leave(ChatChannel channel, quint64 socket)
-{
-  if (!channel)
-    return;
-
-  channel->removeSocket(socket);
-  if (channel->sockets().size())
-    return;
-
-  m_storage->remove(channel);
-
-//  Notice notice(user->id(), user->channels(), "leave", DateTime::utc());
-//  send(user, notice.data(m_sendStream), NewPacketsEvent::KillSocketOption);
-}
-
-
 /*!
  * Обработка физического отключения пользователя от сервера.
  */
 void Core::release(SocketReleaseEvent *event)
 {
-  leave(m_storage->channel(event->channelId()), event->socket());
+  ChatChannel user = m_storage->channel(event->channelId(), SimpleID::UserId);
+  if (!user)
+    return;
+
+  user->removeSocket(event->socket());
+
+  NodeNoticeReader::release(user, event->socket());
+
+  if (user->sockets().size())
+    return;
+
+  m_storage->remove(user);
 }
 
 
@@ -748,8 +743,8 @@ void Core::notice(quint16 type)
     else if (command == "login")
       login();
 
-    else if (command == "leave")
-      leave(m_storage->channel(m_reader->sender()), m_packetsEvent->socket());
+//    else if (command == "leave")
+//      leave(m_storage->channel(m_reader->sender()), m_packetsEvent->socket());
 
     else {
       route();

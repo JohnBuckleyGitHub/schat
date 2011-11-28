@@ -118,3 +118,10 @@ QByteArray ChannelPacket::part(const QByteArray &user, const QByteArray &channel
   ChannelPacket packet(user, channel, "part", DateTime::utc());
   return packet.data(stream);
 }
+
+
+QByteArray ChannelPacket::quit(const QByteArray &user, QDataStream *stream)
+{
+  ChannelPacket packet(user, user, "quit", DateTime::utc());
+  return packet.data(stream);
+}
