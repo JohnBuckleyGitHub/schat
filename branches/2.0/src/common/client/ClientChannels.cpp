@@ -116,11 +116,14 @@ void ClientChannels::notice(int type)
   if (cmd == "channel")
     channel();
 
-  if (cmd == "info")
+  else if (cmd == "info")
     info();
 
-  if (cmd == "+")
+  else if (cmd == "+")
     joined();
+
+  else if (cmd == "part")
+    part();
 
   emit notice(packet);
 }
@@ -194,6 +197,22 @@ void ClientChannels::joined()
   m_synced += user->id();
 
   emit joined(channel->id(), user->id());
+}
+
+
+void ClientChannels::part()
+{
+  ClientChannel user = get(m_packet->sender());
+  if (!user)
+    return;
+
+  ClientChannel channel = get(m_packet->dest());
+  if (!channel)
+    return;
+
+  emit part(channel->id(), user->id());
+
+  channel->channels().remove(user->id());
 }
 
 

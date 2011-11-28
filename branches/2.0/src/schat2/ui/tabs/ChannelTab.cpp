@@ -76,7 +76,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
   connect(m_client, SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
-  connect(m_client, SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
@@ -86,6 +85,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
   connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
 }
 
 
@@ -212,14 +212,12 @@ void ChannelTab::notify(int notice, const QVariant &data)
 }
 
 
-void ChannelTab::part(const QByteArray &channelId, const QByteArray &userId)
+void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
 {
-  if (id() != channelId)
+  if (id() != channel)
     return;
 
-  ClientUser user = m_client->user(userId);
-  if (user)
-    remove(userId);
+  m_userView->remove(user);
 }
 
 

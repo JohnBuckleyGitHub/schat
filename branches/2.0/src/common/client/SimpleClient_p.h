@@ -56,8 +56,6 @@ public:
 
   // Пользователи.
   bool readUserData();
-  bool removeUser(const QByteArray &userId);
-  bool removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear = true);
   void updateUserData(ClientUser existUser, UserReader &reader);
   void updateUserStatus(const QString &text);
 

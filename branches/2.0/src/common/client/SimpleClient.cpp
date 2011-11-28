@@ -260,11 +260,6 @@ bool SimpleClientPrivate::command()
   QString command = messageData->command;
   SCHAT_DEBUG_STREAM(this << "command()" << command)
 
-  if (command == QLatin1String("part")) {
-    removeUserFromChannel(reader->dest(), reader->sender());
-    return true;
-  }
-
   if (command == QLatin1String("synced")) {
     endSyncChannel(reader->sender());
     return true;
@@ -367,8 +362,8 @@ bool SimpleClientPrivate::notice()
     m_notice = &notice;
     QString cmd = notice.command();
 
-    if (cmd == "leave")
-      removeUser(reader->sender());
+//    if (cmd == "leave")
+//      removeUser(reader->sender());
 
     emit(q->notice(notice));
   }
@@ -442,56 +437,6 @@ bool SimpleClientPrivate::readUserData()
   }
 
   return true;
-}
-
-
-/*!
- * Удаление пользователя.
- */
-bool SimpleClientPrivate::removeUser(const QByteArray &userId)
-{
-  ClientUser user = users.value(userId);
-  if (!user)
-    return false;
-
-  user->setStatus(Status::Offline);
-
-  Q_Q(SimpleClient);
-  emit(q->userLeave(userId));
-
-  QList<QByteArray> channels = user->channels();
-  for (int i = 0; i < channels.size(); ++i) {
-    removeUserFromChannel(channels.at(i), userId, false);
-  }
-
-  users.remove(userId);
-  return true;
-}
-
-
-/*!
- * Удаление пользователя из канала.
- */
-bool SimpleClientPrivate::removeUserFromChannel(const QByteArray &channelId, const QByteArray &userId, bool clear)
-{
-  Q_Q(SimpleClient);
-  ClientUser user = users.value(userId);
-  ClientChannel channel = channels.value(channelId);
-
-  if (!user.isNull() && channel) {
-    channel->channels().remove(user->id());
-    user->removeChannel(channel->id());
-
-    if (clear) {
-      emit(q->part(channel->id(), user->id()));
-      if (user->channelsCount() == 1)
-        removeUser(userId);
-    }
-
-    return true;
-  }
-
-  return false;
 }
 
 

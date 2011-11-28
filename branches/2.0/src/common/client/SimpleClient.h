@@ -73,7 +73,6 @@ signals:
   void message(const MessageData &data);
   void notice(const Notice &notice);
   void notice(int type);
-  void part(const QByteArray &channelId, const QByteArray &userId);
   void split(const QList<QByteArray> &users);
   void synced(const QByteArray &channelId);
   void userDataChanged(const QByteArray &userId, int changed = 0);
