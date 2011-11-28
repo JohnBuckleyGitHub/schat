@@ -50,7 +50,7 @@ bool NodeChannels::read(PacketReader *reader)
   if (cmd == "join")
     return join();
 
-  if (cmd == "part")
+  if (cmd == "-")
     return part();
 
   if (cmd == "quit")
