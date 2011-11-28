@@ -115,7 +115,7 @@ QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel
 
 QByteArray ChannelPacket::part(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
 {
-  ChannelPacket packet(user, channel, "part", DateTime::utc());
+  ChannelPacket packet(user, channel, "-", DateTime::utc());
   return packet.data(stream);
 }
 

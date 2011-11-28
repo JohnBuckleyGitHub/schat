@@ -122,8 +122,11 @@ void ClientChannels::notice(int type)
   else if (cmd == "+")
     joined();
 
-  else if (cmd == "part")
+  else if (cmd == "-")
     part();
+
+  else if (cmd == "quit")
+    quit();
 
   emit notice(packet);
 }
@@ -213,6 +216,22 @@ void ClientChannels::part()
   emit part(channel->id(), user->id());
 
   channel->channels().remove(user->id());
+}
+
+
+void ClientChannels::quit()
+{
+  ClientChannel user = get(m_packet->sender());
+  if (!user)
+    return;
+
+  emit quit(user->id());
+
+  QHashIterator<QByteArray, ClientChannel> i(m_channels);
+  while (i.hasNext()) {
+    i.next();
+    i.value()->channels().remove(user->id());
+  }
 }
 
 

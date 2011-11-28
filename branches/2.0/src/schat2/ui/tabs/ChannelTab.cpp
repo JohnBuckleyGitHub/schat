@@ -86,6 +86,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
   connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
   connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
 }
 
 
@@ -215,6 +216,15 @@ void ChannelTab::notify(int notice, const QVariant &data)
 void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
 {
   if (id() != channel)
+    return;
+
+  m_userView->remove(user);
+}
+
+
+void ChannelTab::quit(const QByteArray &user)
+{
+  if (!m_channel->channels().all().contains(user))
     return;
 
   m_userView->remove(user);

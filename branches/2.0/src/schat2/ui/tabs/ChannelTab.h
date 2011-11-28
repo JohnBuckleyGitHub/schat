@@ -50,6 +50,7 @@ private slots:
   void joined(const QByteArray &channel, const QByteArray &user);
   void notify(int notice, const QVariant &data);
   void part(const QByteArray &channel, const QByteArray &user);
+  void quit(const QByteArray &user);
   void reloaded();
   void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
