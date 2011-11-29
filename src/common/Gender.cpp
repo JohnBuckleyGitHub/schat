@@ -79,6 +79,43 @@ void Gender::setColor(quint8 color)
 }
 
 
+QString Gender::colorToString(quint8 color)
+{
+  switch (color) {
+    case Black:
+      return "black";
+
+    case Gray:
+      return "gray";
+
+    case Green:
+      return "green";
+
+    case Red:
+      return "red";
+
+    case White:
+      return "white";
+
+    case Yellow:
+      return "yellow";
+
+    case Medical:
+      return "medical";
+
+    case Nude:
+      return "nude";
+
+    case Thief:
+      return "thief";
+
+    default:
+      return "default";
+      break;
+  }
+}
+
+
 Gender& Gender::operator=(int other)
 {
   m_gender = other;

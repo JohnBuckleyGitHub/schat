@@ -121,3 +121,64 @@ QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &actio
   map["title"] = title;
   return map;
 }
+
+
+/*!
+ * Иконка пользователя.
+ *
+ * \param user    Пользователь.
+ * \param status  true если необходимо отрисовывать статус.
+ * \param offline true если необходимо отрисовывать статус User::OfflineStatus.
+ */
+QIcon ChannelUtils::icon(ClientChannel channel, int options)
+{
+  QString file = ":/images/user";
+  int gender = channel->gender().value();
+  int color  = channel->gender().color();
+
+  if (gender == Gender::Unknown) {
+    file += "-unknown";
+  }
+  else if (gender == Gender::Ghost) {
+    file += "-ghost";
+  }
+  else if (gender == Gender::Bot) {
+    file += "-bot";
+  }
+  else if (color != Gender::Default) {
+    file += "-" + Gender::colorToString(color);
+  }
+
+  if (gender == Gender::Female)
+    file += "-female";
+
+  file += ".png";
+
+  if (options & OfflineStatus && channel->status().value() == Status::Offline && !(options & Statuses))
+    options |= Statuses;
+
+  if (options & Statuses) {
+    if (options & OfflineStatus && channel->status().value() == Status::Offline)
+      return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
+
+    return ChatCore::icon(file, overlay(channel->status().value()));
+  }
+
+  return QIcon(file);
+}
+
+
+/*!
+ * Возвращает имя файла с иконкой оверлеем для статуса \p status пользователя.
+ */
+QString ChannelUtils::overlay(int status)
+{
+  if (status == Status::Away || status == Status::AutoAway)
+    return ":/images/away-small.png";
+  else if (status == Status::DnD)
+    return ":/images/dnd-small.png";
+  else if (status == Status::FreeForChat)
+    return ":/images/ffc-small.png";
+  else
+    return QString();
+}

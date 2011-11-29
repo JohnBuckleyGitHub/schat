@@ -19,7 +19,7 @@
 #ifndef GENDER_H_
 #define GENDER_H_
 
-#include <QtGlobal>
+#include <QString>
 
 #include "schat.h"
 
@@ -63,6 +63,8 @@ public:
   void set(Genders gender);
   void setColor(Colors color);
   void setColor(quint8 color);
+
+  static QString colorToString(quint8 color);
 
   Gender& operator=(int other);
 
