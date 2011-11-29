@@ -16,29 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USERMENU_H_
-#define USERMENU_H_
+#ifndef CHATURLS_H_
+#define CHATURLS_H_
 
-#include "actions/MenuBuilder.h"
-#include "Channel.h"
+#include <QObject>
 
-class QUrl;
+#include "schat.h"
 
-class SCHAT_CORE_EXPORT UserMenu : public MenuBuilder
+class SCHAT_EXPORT ChatUrls : public QObject
 {
   Q_OBJECT
 
 public:
-  UserMenu(ClientChannel channel, QObject *parent = 0);
-  static UserMenu *bind(QMenu *menu, const QVariant &id);
-  void bind(QMenu *menu);
+  ChatUrls(QObject *parent = 0);
+  inline static ChatUrls *i() { return m_self; }
 
 private:
-  bool m_self;             ///< \b true если это меню для себя.
-  ClientChannel m_channel;
-  QAction *m_ignore;
-  QAction *m_insert;
-  QAction *m_talk;
+  static ChatUrls *m_self; ///< Указатель на себя.
 };
 
-#endif /* USERMENU_H_ */
+#endif /* CHATURLS_H_ */

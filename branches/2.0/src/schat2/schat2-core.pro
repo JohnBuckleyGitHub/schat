@@ -36,6 +36,7 @@ HEADERS = \
     ChatCore_p.h \
     ChatPlugins.h \
     ChatSettings.h \
+    ChatUrls.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/MessageAdapter.h \
@@ -95,6 +96,7 @@ SOURCES = \
     ChatCore.cpp \
     ChatPlugins.cpp \
     ChatSettings.cpp \
+    ChatUrls.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/MessageAdapter.cpp \

@@ -28,6 +28,7 @@
 #include "ChatCore_p.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
@@ -220,6 +221,8 @@ ChatCore::ChatCore(QObject *parent)
   d->q = this;
 
   qsrand(QDateTime::currentDateTime().toTime_t());
+
+  new ChatUrls(this);
 
   m_locations = new FileLocations(this);
   m_settings = new ChatSettings(m_locations->path(FileLocations::ConfigFile), this);

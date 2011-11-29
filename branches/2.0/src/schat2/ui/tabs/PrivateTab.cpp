@@ -63,8 +63,8 @@ PrivateTab::~PrivateTab()
 
 bool PrivateTab::bindMenu(QMenu *menu)
 {
-  UserMenu *builder = new UserMenu(m_user, this);
-  builder->bind(menu);
+//  UserMenu *builder = new UserMenu(m_user, this);
+//  builder->bind(menu);
   return true;
 }
 
