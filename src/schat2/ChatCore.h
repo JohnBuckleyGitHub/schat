@@ -114,7 +114,7 @@ public:
   inline FileLocations *locations() const { return m_locations; }
   inline MessageAdapter *adapter() const { return m_messageAdapter; }
   inline NetworkManager *networks() const { return m_networkManager; }
-  inline QByteArray currentId() const { return m_currentId; }
+  inline const QByteArray& currentId() const { return m_currentId; }
   inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i() { return m_self; }
   inline StatusMenu *statusMenu() { return m_statusMenu; }

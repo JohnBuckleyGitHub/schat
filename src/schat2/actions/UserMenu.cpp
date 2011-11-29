@@ -25,24 +25,30 @@
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "net/SimpleID.h"
 #include "ui/UserUtils.h"
 
-UserMenu::UserMenu(ClientUser user, QObject *parent)
+UserMenu::UserMenu(ClientChannel channel, QObject *parent)
   : MenuBuilder(parent)
   , m_self(false)
-  , m_user(user)
+  , m_channel(channel)
   , m_ignore(0)
   , m_insert(0)
   , m_talk(0)
 {
-  m_self = m_user->id() == UserUtils::userId();
+  m_self = m_channel->id() == UserUtils::userId();
 }
 
 
 UserMenu *UserMenu::bind(QMenu *menu, const QVariant &id)
 {
-  ClientUser user = UserUtils::user(id);
+  ClientChannel user = ChatClient::channels()->get(id.toByteArray());
   if (!user)
+    return 0;
+
+  if (user->type() != SimpleID::UserId)
     return 0;
 
   UserMenu *out = new UserMenu(user, menu);
@@ -56,22 +62,22 @@ void UserMenu::bind(QMenu *menu)
 {
   MenuBuilder::bind(menu);
 
-  if (!m_self && ChatCore::i()->currentId() != m_user->id()) {
+  if (!m_self && ChatCore::i()->currentId() != m_channel->id()) {
     m_talk = new QAction(SCHAT_ICON(Balloon), tr("Talk..."), this);
-    m_talk->setData(UserUtils::toUrl(m_user, QLatin1String("talk")));
+//    m_talk->setData(UserUtils::toUrl(m_user, QLatin1String("talk")));
     menu->addAction(m_talk);
   }
 
-  if (!m_self && (!SCHAT_OPTION("HideIgnore").toBool() || ChatCore::i()->isIgnored(m_user->id()))) {
-    m_ignore = new QAction(SCHAT_ICON(Slash), tr("Ignore"), this);
-    m_ignore->setCheckable(true);
-    m_ignore->setChecked(ChatCore::i()->isIgnored(m_user->id()));
-    m_ignore->setData(UserUtils::toUrl(m_user, m_ignore->isChecked() ? QLatin1String("unignore") : QLatin1String("ignore")));
+//  if (!m_self && (!SCHAT_OPTION("HideIgnore").toBool() || ChatCore::i()->isIgnored(m_channel->id()))) {
+//    m_ignore = new QAction(SCHAT_ICON(Slash), tr("Ignore"), this);
+//    m_ignore->setCheckable(true);
+//    m_ignore->setChecked(ChatCore::i()->isIgnored(m_user->id()));
+//    m_ignore->setData(UserUtils::toUrl(m_user, m_ignore->isChecked() ? QLatin1String("unignore") : QLatin1String("ignore")));
 
-    menu->addAction(m_ignore);
-  }
+//    menu->addAction(m_ignore);
+//  }
 
   m_insert = new QAction(tr("Insert Nick"), this);
-  m_insert->setData(UserUtils::toUrl(m_user, QLatin1String("insert")));
+//  m_insert->setData(UserUtils::toUrl(m_user, QLatin1String("insert")));
   menu->addAction(m_insert);
 }
