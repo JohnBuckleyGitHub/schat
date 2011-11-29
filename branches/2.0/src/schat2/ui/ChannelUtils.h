@@ -28,6 +28,13 @@ private:
   ChannelUtils() {}
 
 public:
+  /// Опции получения иконки канала.
+  enum IconOptions {
+    NoOptions = 0,    ///< Нет специальных опций
+    Statuses = 1,     ///< Отображать статусы, кроме статуса "не в сети".
+    OfflineStatus = 2 ///< Также отображать статус "не в сети".
+  };
+
   static ClientChannel channel();
   static ClientChannel channel(const QByteArray &id);
   static ClientChannel channel(const QUrl &url);
@@ -35,6 +42,11 @@ public:
   static QString webIcon(const QString &action);
   static QUrl toUrl(ClientChannel channel, const QString &action = QString());
   static QVariantMap toWebButton(const QByteArray &id, const QString &action, const QString &title);
+
+  static QIcon icon(ClientChannel channel, int options = 1);
+
+private:
+  static QString overlay(int status);
 };
 
 #endif /* CHANNELUTILS_H_ */

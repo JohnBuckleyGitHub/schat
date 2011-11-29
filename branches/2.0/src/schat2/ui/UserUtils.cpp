@@ -47,12 +47,6 @@ UserUtils::UserUtils()
 }
 
 
-//ClientUser UserUtils::user()
-//{
-//  return ChatCore::i()->client()->user();
-//}
-
-
 ClientUser UserUtils::user(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) != SimpleID::UserId)
@@ -127,16 +121,6 @@ ClientUser UserUtils::user(const QVariant &id)
 }
 
 
-int UserUtils::color(const QString &color)
-{
-  int index = m_colors.indexOf(color);
-  if (index == -1)
-    return Gender::Default;
-
-  return index;
-}
-
-
 /*!
  * Получение собственного идентификатора.
  *
@@ -186,23 +170,10 @@ QIcon UserUtils::icon(ClientUser user, bool status, bool offline)
     if (offline && user->status() == Status::Offline)
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
-    return ChatCore::icon(file, overlay(user->status()));
+//    return ChatCore::icon(file, overlay(user->status()));
   }
 
   return QIcon(file);
-}
-
-
-QString UserUtils::overlay(int status)
-{
-  if (status == Status::Away || status == Status::AutoAway)
-    return QLatin1String(":/images/away-small.png");
-  else if (status == Status::DnD)
-    return QLatin1String(":/images/dnd-small.png");
-  else if (status == Status::FreeForChat)
-    return QLatin1String(":/images/ffc-small.png");
-  else
-    return QLatin1String("");
 }
 
 
