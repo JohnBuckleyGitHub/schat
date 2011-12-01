@@ -26,6 +26,7 @@
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
 #include "ChatCore_p.h"
+#include "ChatNotify.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
@@ -230,6 +231,7 @@ ChatCore::ChatCore(QObject *parent)
   loadTranslation();
 
   new ChatClient(this);
+  new ChatNotify(this);
 
   m_client = ChatClient::io();
   m_settings->setClient(m_client);

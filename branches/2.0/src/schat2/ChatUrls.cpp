@@ -16,7 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include <QDesktopServices>
+
 #include "ChatUrls.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
+#include "net/SimpleID.h"
 
 ChatUrls *ChatUrls::m_self = 0;
 
@@ -24,4 +31,80 @@ ChatUrls::ChatUrls(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+}
+
+
+QStringList ChatUrls::actions(const QUrl &url)
+{
+  if (url.scheme() != "chat")
+    return QStringList();
+
+  QStringList out = path(url);
+
+  if (url.host() == "channel") {
+    if (out.size() < 2)
+      return QStringList();
+
+    out.removeFirst();
+    return out;
+  }
+
+  return out;
+}
+
+
+QStringList ChatUrls::path(const QUrl &url)
+{
+  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
+  if (path.startsWith('/'))
+    path.remove(0, 1);
+
+  return path.split('/', QString::SkipEmptyParts);
+}
+
+
+/*!
+ * Преобразует канал в URL адрес.
+ *
+ * \param channel Указатель на канал.
+ * \param action  Действие над каналом.
+ */
+QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
+{
+  QUrl out("chat://channel");
+  out.setPath(SimpleID::encode(channel->id()) + (action.isEmpty() ? QString() : "/" + action));
+
+  QList<QPair<QString, QString> > queries;
+  queries.append(QPair<QString, QString>("name", SimpleID::toBase32(channel->name().toUtf8())));
+  queries.append(QPair<QString, QString>("gender", QString::number(channel->gender().raw())));
+
+  out.setQueryItems(queries);
+
+  return out;
+}
+
+
+void ChatUrls::openUrl(const QUrl &url)
+{
+  qDebug() << "-----" << url;
+
+  if (url.scheme() == QLatin1String("schat")) {
+    ChatClient::io()->openUrl(url);
+    return;
+  }
+
+  if (url.scheme() != QLatin1String("chat")) {
+    QDesktopServices::openUrl(url);
+    return;
+  }
+
+  if (url.host() == QLatin1String("channel")) {
+//    d->openChannelUrl(url);
+  }
+  else if (url.host() == QLatin1String("about")) {
+//    startNotify(ChatCore::AboutNotice);
+  }
+  else if (url.host() == QLatin1String("settings")) {
+//    startNotify(ChatCore::SettingsNotice, url);
+  }
 }

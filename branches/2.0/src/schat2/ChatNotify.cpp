@@ -16,38 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QMenu>
+#include "ChatNotify.h"
 
-#include "actions/ChannelMenu.h"
-#include "ChatCore.h"
-#include "ui/ChannelUtils.h"
-#include "ChatUrls.h"
+ChatNotify *ChatNotify::m_self = 0;
 
-ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
-  : MenuBuilder(parent)
-  , m_channel(channel)
+ChatNotify::ChatNotify(QObject *parent)
+  : QObject(parent)
 {
-}
-
-
-ChannelMenu *ChannelMenu::bind(QMenu *menu, const QVariant &id)
-{
-  ClientChannel channel = ChannelUtils::channel(id.toByteArray());
-  if (!channel)
-    return 0;
-
-  ChannelMenu *out = new ChannelMenu(channel, menu);
-  out->bind(menu);
-
-  return out;
-}
-
-
-void ChannelMenu::bind(QMenu *menu)
-{
-  MenuBuilder::bind(menu);
-
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(m_channel, QLatin1String("edit/topic")));
-  menu->addAction(m_topic);
+  m_self = this;
 }
