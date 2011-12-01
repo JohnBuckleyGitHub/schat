@@ -16,38 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QMenu>
+#ifndef CHATNOTIFY_H_
+#define CHATNOTIFY_H_
 
-#include "actions/ChannelMenu.h"
-#include "ChatCore.h"
-#include "ui/ChannelUtils.h"
-#include "ChatUrls.h"
+#include <QObject>
+#include <QVariant>
 
-ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
-  : MenuBuilder(parent)
-  , m_channel(channel)
+#include "schat.h"
+
+class Notify
 {
-}
+  Notify(int type, const QVariant &data = QVariant())
+  : m_type(type)
+  , m_data(data)
+  {}
+
+private:
+  int m_type;
+  QVariant m_data;
+};
 
 
-ChannelMenu *ChannelMenu::bind(QMenu *menu, const QVariant &id)
+class SCHAT_EXPORT ChatNotify : public QObject
 {
-  ClientChannel channel = ChannelUtils::channel(id.toByteArray());
-  if (!channel)
-    return 0;
+  Q_OBJECT
 
-  ChannelMenu *out = new ChannelMenu(channel, menu);
-  out->bind(menu);
+public:
+  ChatNotify(QObject *parent = 0);
+  inline static ChatNotify *i() { return m_self; }
 
-  return out;
-}
+private:
+  static ChatNotify *m_self; ///< Указатель на себя.
+};
 
-
-void ChannelMenu::bind(QMenu *menu)
-{
-  MenuBuilder::bind(menu);
-
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(m_channel, QLatin1String("edit/topic")));
-  menu->addAction(m_topic);
-}
+#endif /* CHATNOTIFY_H_ */

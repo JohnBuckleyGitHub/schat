@@ -34,6 +34,7 @@ HEADERS = \
     arora/lineedit_p.h \
     ChatCore.h \
     ChatCore_p.h \
+    ChatNotify.h \
     ChatPlugins.h \
     ChatSettings.h \
     ChatUrls.h \
@@ -94,6 +95,7 @@ SOURCES = \
     actions/UserMenu.cpp \
     arora/lineedit.cpp \
     ChatCore.cpp \
+    ChatNotify.cpp \
     ChatPlugins.cpp \
     ChatSettings.cpp \
     ChatUrls.cpp \

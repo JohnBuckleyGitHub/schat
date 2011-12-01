@@ -20,7 +20,7 @@
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "ui/ChannelUtils.h"
-
+#include "ChatUrls.h"
 
 /*!
  * Возвращает канал пользовователя.
@@ -95,20 +95,6 @@ QString ChannelUtils::webIcon(const QString &action)
 }
 
 
-QUrl ChannelUtils::toUrl(ClientChannel channel, const QString &action)
-{
-  QUrl out(QLatin1String("chat://channel"));
-  out.setPath(SimpleID::encode(channel->id()) + (action.isEmpty() ? QString() : QLatin1String("/") + action));
-
-  QList<QPair<QString, QString> > queries;
-  queries.append(QPair<QString, QString>(QLatin1String("name"), SimpleID::toBase32(channel->name().toUtf8())));
-
-  out.setQueryItems(queries);
-
-  return out;
-}
-
-
 QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &action, const QString &title)
 {
   QVariantMap map;
@@ -116,7 +102,7 @@ QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &actio
   if (!channel)
     return map;
 
-  map["url"] = toUrl(channel, action);
+  map["url"] = ChatUrls::toUrl(channel, action);
   map["icon"] = webIcon(action);
   map["title"] = title;
   return map;
