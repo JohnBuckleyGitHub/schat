@@ -36,8 +36,6 @@ class ChannelTab : public ChannelBaseTab
 
 public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
-  ~ChannelTab();
-  bool add2(ClientUser user);
   bool bindMenu(QMenu *menu);
   bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }

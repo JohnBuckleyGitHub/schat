@@ -57,6 +57,15 @@ bool ClientChannels::info(const QList<QByteArray> &channels)
 }
 
 
+bool ClientChannels::join(const QByteArray &id)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  return m_client->send(ChannelPacket::join(ChatClient::id(), id, QString(), m_client->sendStream()));
+}
+
+
 /*!
  * Подключение к обычному каналу по имени.
  *

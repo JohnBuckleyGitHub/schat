@@ -33,6 +33,8 @@ class SCHAT_CORE_EXPORT ChannelBaseTab : public AbstractTab
 
 public:
   ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent);
+  ~ChannelBaseTab();
+
   inline ChatView *chatView()          { return m_chatView; }
   inline ClientChannel channel() const { return m_channel; }
   inline int alerts() const            { return m_alerts; }

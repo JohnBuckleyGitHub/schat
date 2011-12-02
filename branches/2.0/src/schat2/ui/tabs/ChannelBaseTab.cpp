@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
 
@@ -25,6 +27,12 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   , m_alerts(0)
 {
   m_chatView = new ChatView(channel->id(), "qrc:/html/ChatView.html", this);
+}
+
+
+ChannelBaseTab::~ChannelBaseTab()
+{
+  ChatClient::channels()->part(id());
 }
 
 
