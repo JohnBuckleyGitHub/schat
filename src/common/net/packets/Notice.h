@@ -35,7 +35,8 @@ class SCHAT_EXPORT Notice
 public:
   enum Type {
     GenericType = 103,  ///< 'g'
-    ChannelType = 99    ///< 'c'
+    ChannelType = 99,   ///< 'c'
+    MessageType = 109   ///< 'm'
   };
 
   /// Дополнительные поля данных.
