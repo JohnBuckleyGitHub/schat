@@ -16,22 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PRIVATETAB_H_
-#define PRIVATETAB_H_
-
 #include "ui/tabs/ChannelBaseTab.h"
+#include "ui/tabs/ChatView.h"
 
-class SCHAT_CORE_EXPORT PrivateTab : public ChannelBaseTab
+ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent)
+  : AbstractTab(channel->id(), type, parent)
+  , m_channel(channel)
+  , m_alerts(0)
 {
-  Q_OBJECT
+  m_chatView = new ChatView(channel->id(), "qrc:/html/ChatView.html", this);
+}
 
-public:
-  PrivateTab(ClientChannel channel, TabWidget *parent);
-  ~PrivateTab();
-  bool bindMenu(QMenu *menu);
 
-private:
-  QIcon userIcon() const;
-};
-
-#endif /* PRIVATETAB_H_ */
+void ChannelBaseTab::alert(bool start)
+{
+  if (start)
+    m_alerts++;
+  else
+    m_alerts = 0;
+}

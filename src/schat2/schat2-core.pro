@@ -75,6 +75,7 @@ HEADERS = \
     ui/tabs/AbstractTab.h \
     ui/tabs/AlertTab.h \
     ui/tabs/ChannelBar.h \
+    ui/tabs/ChannelBaseTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
     ui/tabs/ChatViewTab.h \
@@ -135,6 +136,7 @@ SOURCES = \
     ui/tabs/AbstractTab.cpp \
     ui/tabs/AlertTab.cpp \
     ui/tabs/ChannelBar.cpp \
+    ui/tabs/ChannelBaseTab.cpp \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \
     ui/tabs/ChatViewTab.cpp \
