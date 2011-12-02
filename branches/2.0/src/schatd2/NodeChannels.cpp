@@ -60,12 +60,21 @@ bool NodeChannels::read(PacketReader *reader)
 }
 
 
-void NodeChannels::releaseImpl(ChatChannel channel, quint64 socket)
+void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 {
-  if (channel->sockets().size())
+  Q_UNUSED(socket);
+
+  if (user->sockets().size())
     return;
 
-  m_core->send(Sockets::all(channel), ChannelPacket::quit(channel->id(), m_core->sendStream()));
+  QList<QByteArray> channels = user->channels().all();
+  foreach (QByteArray id, channels) {
+    ChatChannel channel = m_storage->channel(id);
+    if (channel)
+      channel->channels().remove(user->id());
+  }
+
+  m_core->send(Sockets::all(user), ChannelPacket::quit(user->id(), m_core->sendStream()));
 }
 
 
