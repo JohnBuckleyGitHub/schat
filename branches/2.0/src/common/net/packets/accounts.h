@@ -21,7 +21,7 @@
 
 #include <QVariant>
 
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "schat.h"
 
 /*!

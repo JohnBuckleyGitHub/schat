@@ -23,7 +23,7 @@
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/message.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "net/packets/users.h"
 #include "net/ServerData.h"
 #include "SlaveAuth.h"

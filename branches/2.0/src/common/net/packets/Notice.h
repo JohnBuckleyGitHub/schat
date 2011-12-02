@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NOTICES_H_
-#define NOTICES_H_
+#ifndef NOTICE_H_
+#define NOTICE_H_
 
 #include <QVariant>
 
@@ -124,4 +124,4 @@ protected:
   QString m_text;           ///< Сырой текст, не обязательное поле.
 };
 
-#endif /* NOTICES_H_ */
+#endif /* NOTICE_H_ */

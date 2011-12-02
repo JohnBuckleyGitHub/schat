@@ -30,7 +30,7 @@
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/LoginWidget.h"
 #include "ui/UserUtils.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)

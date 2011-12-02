@@ -21,7 +21,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
-#include "net/packets/channels.h"
+#include "net/packets/ChannelPacket.h"
 #include "net/SimpleID.h"
 
 ClientChannels::ClientChannels(QObject *parent)
