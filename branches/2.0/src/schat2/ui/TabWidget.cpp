@@ -122,7 +122,7 @@ AbstractTab *TabWidget::widget(int index) const
 /*!
  * Добавление сервисного сообщения.
  */
-void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab)
+void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab)
 {
   MessageData data(userId, destId, QString(), text);
   data.timestamp = m_client->timestamp();
@@ -134,7 +134,7 @@ void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId
 }
 
 
-void TabWidget::message(ChatViewTab *tab, const AbstractMessage &data)
+void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
 {
   if (!tab) {
     message(data);
@@ -319,7 +319,7 @@ void TabWidget::notify(int notice, const QVariant &data)
     addPrivateTab(data.toByteArray());
   }
   else if (notice == ChatCore::CopyRequestNotice) {
-    ChatViewTab *tab = qobject_cast<ChatViewTab *>(currentWidget());
+    ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
     if (!tab)
       return;
 
@@ -456,7 +456,7 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   QByteArray id = m_client->channelId();
 
-  foreach (ChatViewTab *tab, m_channels) {
+  foreach (ChannelBaseTab *tab, m_channels) {
     tab->setOnline(false);
   }
 
@@ -477,10 +477,10 @@ void TabWidget::clientStateChanged(int state, int previousState)
  */
 void TabWidget::message(const AbstractMessage &data)
 {
-  ChatViewTab *tab = 0;
+  ChannelBaseTab *tab = 0;
 
   if (data.destId().isEmpty()) {
-    tab = m_alertTab;
+//    tab = m_alertTab;
   }
   else {
     int type = SimpleID::typeOf(data.destId());
@@ -606,7 +606,7 @@ int TabWidget::addChatTab(AbstractTab *tab)
  */
 PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 {
-  ChatViewTab *tab = 0;
+  ChannelBaseTab *tab = 0;
 
   if (m_channels.contains(id)) {
     tab = m_channels.value(id);
@@ -765,7 +765,7 @@ void TabWidget::showWelcome()
 
 void TabWidget::stopAlert()
 {
-  ChatViewTab *tab = qobject_cast<ChatViewTab *>(currentWidget());
+  ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
   if (!tab)
     return;
 

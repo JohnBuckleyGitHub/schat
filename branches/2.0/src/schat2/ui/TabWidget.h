@@ -32,7 +32,7 @@ class AbstractTab;
 class AlertTab;
 class ChannelTab;
 class ChatCore;
-class ChatViewTab;
+class ChannelBaseTab;
 class Notify;
 class PrivateTab;
 class ProgressTab;
@@ -58,8 +58,8 @@ public:
   AbstractTab *widget(int index) const;
   inline TabBar *tabBar() { return m_tabBar; }
   static TabWidget *i() { return m_self; }
-  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
-  void message(ChatViewTab *tab, const AbstractMessage &data);
+  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab = 0);
+  void message(ChannelBaseTab *tab, const AbstractMessage &data);
 
 signals:
   void pageChanged(int type, bool visible);
@@ -101,8 +101,8 @@ private:
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   ChatCore *m_core;                          ///< Указатель на объект ChatCore.
-  QHash<QByteArray, ChatViewTab*> m_channels; ///< Таблица каналов.
-  QList<ChatViewTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
+  QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
+  QList<ChannelBaseTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
   QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.

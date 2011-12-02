@@ -37,8 +37,7 @@
 #include "ui/UserUtils.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
-  : ChatViewTab(QLatin1String("qrc:/html/ChatView.html"), channel->id(), ChannelType, parent)
-  , m_channel(channel)
+  : ChannelBaseTab(channel, ChannelType, parent)
   , m_client(ChatCore::i()->client())
 {
   m_bar = new ChannelBar(this);
@@ -102,7 +101,7 @@ bool ChannelTab::add2(ClientUser user)
 //    return false;
 
   if (m_userView->isSortable() || UserUtils::userId() == user->id()) {
-    addJoinMsg(user->id(), m_channel->id());
+//    addJoinMsg(user->id(), m_channel->id());
     displayUserCount();
   }
 
@@ -123,7 +122,7 @@ bool ChannelTab::remove(const QByteArray &id)
   if (!m_userView->remove(id))
     return false;
 
-  addLeftMsg(id, m_channel->id());
+//  addLeftMsg(id, m_channel->id());
   displayUserCount();
   return true;
 }
@@ -131,7 +130,7 @@ bool ChannelTab::remove(const QByteArray &id)
 
 void ChannelTab::alert(bool start)
 {
-  ChatViewTab::alert(start);
+  ChannelBaseTab::alert(start);
 
   if (m_alerts > 1)
     return;
@@ -149,8 +148,8 @@ void ChannelTab::setOnline(bool online)
     m_userView->clear();
     displayUserCount();
 
-    if (ChatCore::i()->client()->previousState() == SimpleClient::ClientOnline)
-      addQuitMsg(UserUtils::userId(), m_channel->id());
+//    if (ChatCore::i()->client()->previousState() == SimpleClient::ClientOnline)
+//      addQuitMsg(UserUtils::userId(), m_channel->id());
   }
   else {
     ClientChannel channel = ChatClient::channels()->get(id());
@@ -158,7 +157,7 @@ void ChannelTab::setOnline(bool online)
       m_channel = channel;
   }
 
-  ChatViewTab::setOnline(online);
+  ChannelBaseTab::setOnline(online);
 }
 
 
@@ -299,7 +298,7 @@ void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
 void ChannelTab::userLeave(const QByteArray &userId)
 {
   if (m_userView->remove(userId)) {
-    addQuitMsg(userId, m_channel->id());
+//    addQuitMsg(userId, m_channel->id());
     displayUserCount();
   }
 }

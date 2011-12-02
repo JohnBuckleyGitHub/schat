@@ -60,10 +60,6 @@ void History::hook(const HookData &data)
       add(static_cast<const RawUserMessageHook &>(data));
       break;
 
-    case HookData::PrivateTabCreated:
-      m_db->loadLast(const_cast<PrivateTab *>(static_cast<const PrivateTabHook &>(data).tab));
-      break;
-
     default:
       break;
   }

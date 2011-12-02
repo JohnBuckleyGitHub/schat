@@ -20,7 +20,7 @@
 #define CHANNELTAB_H_
 
 #include "Channel.h"
-#include "ui/tabs/ChatViewTab.h"
+#include "ui/tabs/ChannelBaseTab.h"
 #include "User.h"
 
 class ChannelBar;
@@ -30,7 +30,7 @@ class QVBoxLayout;
 class SimpleClient;
 class UserView;
 
-class ChannelTab : public ChatViewTab
+class ChannelTab : public ChannelBaseTab
 {
   Q_OBJECT
 
@@ -64,7 +64,6 @@ private:
 
   bool m_userCount;
   ChannelBar *m_bar;
-  ClientChannel m_channel;
   QSplitter *m_splitter;
   QVBoxLayout *m_leftLayout;
   SimpleClient *m_client;

@@ -32,8 +32,7 @@
 #include "ui/ChannelUtils.h"
 
 PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
-  : ChatViewTab(QLatin1String("qrc:/html/ChatView.html"), channel->id(), PrivateType, parent)
-  , m_channel(channel)
+  : ChannelBaseTab(channel, PrivateType, parent)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
@@ -45,13 +44,6 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
 
 //  MessageData data(UserUtils::userId(), SimpleID::setType(SimpleID::ChannelId, user->id()), QLatin1String("join"), QLatin1String("~") + user->nick());
 //  ChatCore::i()->client()->send(data);
-
-  PrivateTabHook hook(this);
-  ChatCore::i()->plugins()->hook(hook);
-
-  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
-  connect(ChatCore::i()->client(), SIGNAL(split(const QList<QByteArray> &)), SLOT(split(const QList<QByteArray> &)));
-  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
 }
 
 
@@ -91,17 +83,6 @@ bool PrivateTab::bindMenu(QMenu *menu)
 //  setOnline(true);
 //  return true;
 //}
-
-
-void PrivateTab::alert(bool start)
-{
-  ChatViewTab::alert(start);
-
-  if (m_alerts > 1)
-    return;
-
-  setIcon(userIcon());
-}
 
 
 QIcon PrivateTab::userIcon() const

@@ -56,7 +56,7 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
   else
     text = tr("has joined", "Male");
 
-  m_tabs->addServiceMsg(userId, destId, text, this);
+//  m_tabs->addServiceMsg(userId, destId, text, this);
 }
 
 
@@ -72,7 +72,7 @@ void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
   else
     text = tr("has left", "Male");
 
-  m_tabs->addServiceMsg(userId, destId, text, this);
+//  m_tabs->addServiceMsg(userId, destId, text, this);
 }
 
 
@@ -88,5 +88,5 @@ void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
   else
     text = tr("has quit chat", "Male");
 
-  m_tabs->addServiceMsg(userId, destId, text, this);
+//  m_tabs->addServiceMsg(userId, destId, text, this);
 }
