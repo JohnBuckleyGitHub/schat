@@ -62,9 +62,9 @@ ClientUser UserUtils::user(const QByteArray &id)
       return user;
   }
 
-  user = TabWidget::i()->user(id);
-  if (user)
-    return user;
+//  user = TabWidget::i()->user(id);
+//  if (user)
+//    return user;
 
   return m_users.value(id);
 }

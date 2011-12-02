@@ -56,7 +56,6 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
-  ClientUser user(const QByteArray &id);
   inline TabBar *tabBar() { return m_tabBar; }
   static TabWidget *i() { return m_self; }
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChatViewTab *tab = 0);
@@ -102,8 +101,7 @@ private:
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   ChatCore *m_core;                          ///< Указатель на объект ChatCore.
-  QHash<QByteArray, ChannelTab*> m_channels; ///< Таблица каналов.
-  QHash<QByteArray, PrivateTab*> m_talks;    ///< Таблица приватных разговоров.
+  QHash<QByteArray, ChatViewTab*> m_channels; ///< Таблица каналов.
   QList<ChatViewTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.

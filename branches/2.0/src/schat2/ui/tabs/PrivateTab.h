@@ -19,9 +19,9 @@
 #ifndef PRIVATETAB_H_
 #define PRIVATETAB_H_
 
+#include "Channel.h"
 #include "plugins/HookData.h"
 #include "ui/tabs/ChatViewTab.h"
-#include "User.h"
 
 class ChatView;
 
@@ -30,23 +30,18 @@ class SCHAT_CORE_EXPORT PrivateTab : public ChatViewTab
   Q_OBJECT
 
 public:
-  PrivateTab(ClientUser user, TabWidget *parent);
+  PrivateTab(ClientChannel channel, TabWidget *parent);
   ~PrivateTab();
   bool bindMenu(QMenu *menu);
-  bool update(ClientUser user);
-  inline ClientUser user() const { return m_user; }
+  inline ClientChannel channel() const { return m_channel; }
   void alert(bool start = true);
-  void setOnline(bool online = true);
-
-private slots:
-  void split(const QList<QByteArray> &users);
-  void userDataChanged(const QByteArray &userId, int changed);
-  void userLeave(const QByteArray &userId);
 
 private:
   QIcon userIcon() const;
 
-  ClientUser m_user;
+  ChatView *m_chatView;    ///< Виджет отображающий текст чата.
+  ClientChannel m_channel; ///< Канал.
+  int m_alerts;            ///< Количество непрочитанных уведомлений.
 };
 
 
