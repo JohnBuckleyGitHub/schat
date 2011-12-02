@@ -110,13 +110,13 @@ AbstractTab *TabWidget::widget(int index) const
 }
 
 
-ClientUser TabWidget::user(const QByteArray &id)
-{
-  if (!m_talks.contains(id))
-    return ClientUser();
-
-  return m_talks.value(id)->user();
-}
+//ClientUser TabWidget::user(const QByteArray &id)
+//{
+//  if (!m_talks.contains(id))
+//    return ClientUser();
+//
+//  return m_talks.value(id)->user();
+//}
 
 
 /*!
@@ -224,8 +224,8 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void TabWidget::addPrivateTab(const QByteArray &id)
 {
-  if (ChatClient::id() == id)
-    return;
+//  if (ChatClient::id() == id)
+//    return;
 
   privateTab(id, true, true);
 }
@@ -244,13 +244,13 @@ void TabWidget::closeTab(int index)
   AbstractTab *tab = widget(index);
 
   // Закрытие канала.
-  if (tab->type() == AbstractTab::ChannelType && m_channels.contains(tab->id())) {
+  if (m_channels.contains(tab->id())) {
     m_channels.remove(tab->id());
   }
   // Закрытие приватного разговора.
-  else if (tab->type() == AbstractTab::PrivateType && m_talks.contains(tab->id())) {
-    m_talks.remove(tab->id());
-  }
+//  else if (tab->type() == AbstractTab::PrivateType && m_talks.contains(tab->id())) {
+//    m_talks.remove(tab->id());
+//  }
 
   removeTab(index);
   if (tab->isDeleteOnClose())
@@ -392,17 +392,17 @@ void TabWidget::channel(const QByteArray &id)
  */
 void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 {
-  ClientChannel chan = m_client->channel(channelId);
-  if (!chan)
-    return;
+//  ClientChannel chan = m_client->channel(channelId);
+//  if (!chan)
+//    return;
 
-  ChannelTab *tab = m_channels.value(channelId);
-  ClientUser user = m_client->user(userId);
+//  ChannelTab *tab = m_channels.value(channelId);
+//  ClientUser user = m_client->user(userId);
 
-  if (tab && user) {
-    privateTab(user->id(), false);
+//  if (tab && user) {
+//    privateTab(user->id(), false);
 //    tab->add(user);
-  }
+//  }
 }
 
 
@@ -413,34 +413,34 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
  */
 void TabWidget::synced(const QByteArray &channelId)
 {
-  QTime t;
-  t.start();
-  ClientChannel channel = m_client->channel(channelId);
-  if (!channel)
-    return;
-
-  ChannelTab *tab = m_channels.value(channelId);
-  if (!tab)
-    return;
-
-  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
-  if (channel->channels().all().size() == 1) {
-    tab->synced();
-    return;
-  }
-
-  QList<QByteArray> users = channel->channels().all();
-  for (int i = 0; i < users.size(); ++i) {
-    ClientUser user = m_client->user(users.at(i));
-    if (!user)
-      continue;
-
-    privateTab(user->id(), false);
-//    tab->add(user);
-  }
-
-  tab->synced();
-  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
+//  QTime t;
+//  t.start();
+//  ClientChannel channel = m_client->channel(channelId);
+//  if (!channel)
+//    return;
+//
+//  ChannelTab *tab = m_channels.value(channelId);
+//  if (!tab)
+//    return;
+//
+//  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
+//  if (channel->channels().all().size() == 1) {
+//    tab->synced();
+//    return;
+//  }
+//
+//  QList<QByteArray> users = channel->channels().all();
+//  for (int i = 0; i < users.size(); ++i) {
+//    ClientUser user = m_client->user(users.at(i));
+//    if (!user)
+//      continue;
+//
+//    privateTab(user->id(), false);
+////    tab->add(user);
+//  }
+//
+//  tab->synced();
+//  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
 }
 
 
@@ -456,13 +456,13 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   QByteArray id = m_client->channelId();
 
-  foreach (ChannelTab *tab, m_channels) {
+  foreach (ChatViewTab *tab, m_channels) {
     tab->setOnline(false);
   }
 
-  foreach (PrivateTab *tab, m_talks) {
-    tab->setOnline(false);
-  }
+//  foreach (PrivateTab *tab, m_talks) {
+//    tab->setOnline(false);
+//  }
 
   if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
     closeWelcome();
@@ -530,9 +530,9 @@ void TabWidget::updateUserData(const QByteArray &userId)
 //    }
 //  }
 
-  PrivateTab *tab = privateTab(userId, false);
-  if (tab)
-    tab->update(user);
+//  PrivateTab *tab = privateTab(userId, false);
+//  if (tab)
+//    tab->update(user);
 }
 
 
@@ -559,8 +559,11 @@ ChannelTab *TabWidget::channelTab(const QByteArray &id)
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   }
   else {
-    tab = m_channels.value(id);
+    tab = qobject_cast<ChannelTab *>(m_channels.value(id));
   }
+
+  if (!tab)
+    return 0;
 
   tab->setOnline();
 //  tab->add(m_client->user());
@@ -603,34 +606,34 @@ int TabWidget::addChatTab(AbstractTab *tab)
  */
 PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
 {
-  PrivateTab *tab = 0;
+  ChatViewTab *tab = 0;
 
-  if (m_talks.contains(id)) {
-    tab = m_talks.value(id);
+  if (m_channels.contains(id)) {
+    tab = m_channels.value(id);
     create = false;
   }
 
-  ClientUser user = UserUtils::user(id);
-  if (!user)
+  ClientChannel channel = ChatClient::channels()->get(id);
+  if (!channel)
     return 0;
 
   if (create) {
-    tab = new PrivateTab(user, this);
-    m_talks.insert(id, tab);
-    addTab(tab, user->nick());
+    tab = new PrivateTab(channel, this);
+    m_channels[id] = tab;
+    addTab(tab, channel->name());
     tab->setOnline();
 
     connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   }
   else if (tab) {
-    tab->update(user);
+//    tab->update(user);
   }
 
   if (show && tab) {
     setCurrentIndex(indexOf(tab));
   }
 
-  return tab;
+  return qobject_cast<PrivateTab*>(tab);
 }
 
 
