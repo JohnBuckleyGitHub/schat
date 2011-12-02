@@ -21,7 +21,7 @@
 #include "feeds/AccountFeed.h"
 #include "feeds/TopicFeed.h"
 #include "net/packets/auth.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "NodeLog.h"
 #include "plugins/StorageHooks.h"
 #include "Storage.h"

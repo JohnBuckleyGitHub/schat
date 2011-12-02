@@ -20,7 +20,7 @@
 
 #include "DateTime.h"
 #include "net/PacketReader.h"
-#include "net/packets/channels.h"
+#include "net/packets/ChannelPacket.h"
 #include "net/PacketWriter.h"
 
 ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)

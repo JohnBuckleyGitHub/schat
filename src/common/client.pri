@@ -38,9 +38,9 @@ HEADERS += \
     net/packets/AbstractPacket.h \
     net/packets/accounts.h \
     net/packets/auth.h \
-    net/packets/channels.h \
+    net/packets/ChannelPacket.h \
     net/packets/message.h \
-    net/packets/notices.h \
+    net/packets/Notice.h \
     net/packets/users.h \
     net/PacketWriter.h \
     net/ServerData.h \
@@ -79,9 +79,9 @@ SOURCES += \
     net/PacketReader.cpp \
     net/packets/accounts.cpp  \
     net/packets/auth.cpp \
-    net/packets/channels.cpp \
+    net/packets/ChannelPacket.cpp \
     net/packets/message.cpp \
-    net/packets/notices.cpp \
+    net/packets/Notice.cpp \
     net/packets/users.cpp \
     net/ServerData.cpp \
     net/SimpleID.cpp \

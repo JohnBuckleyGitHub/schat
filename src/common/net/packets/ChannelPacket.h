@@ -16,11 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELS_H_
-#define CHANNELS_H_
+#ifndef CHANNELPACKET_H_
+#define CHANNELPACKET_H_
 
 #include "Channel.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 
 class PacketReader;
 class PacketWriter;
@@ -51,4 +51,4 @@ protected:
   QList<QByteArray> m_channels; ///< Список идентификаторов каналов, передаётся только для команды "channel".
 };
 
-#endif /* CHANNELS_H_ */
+#endif /* CHANNELPACKET_H_ */

@@ -29,7 +29,7 @@
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/SignUpWidget.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)

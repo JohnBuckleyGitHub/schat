@@ -19,7 +19,7 @@
 #ifndef AUTH_H_
 #define AUTH_H_
 
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/ServerData.h"
 #include "net/packets/AbstractPacket.h"

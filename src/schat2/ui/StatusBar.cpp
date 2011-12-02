@@ -27,7 +27,7 @@
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/NetworkWidget.h"

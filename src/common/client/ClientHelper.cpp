@@ -24,7 +24,7 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "net/packets/message.h"
-#include "net/packets/notices.h"
+#include "net/packets/Notice.h"
 #include "text/PlainTextFilter.h"
 
 ClientHelper::ClientHelper(SimpleClient *client)

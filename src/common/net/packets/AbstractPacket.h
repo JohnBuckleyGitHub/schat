@@ -21,6 +21,9 @@
 
 #include <QVariant>
 
+/*!
+ * \deprecated Этот класс устаревший.
+ */
 class AbstractPacket
 {
 public:
