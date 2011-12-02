@@ -89,26 +89,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 }
 
 
-ChannelTab::~ChannelTab()
-{
-  ChatClient::channels()->part(id());
-}
-
-
-bool ChannelTab::add2(ClientUser user)
-{
-//  if (!m_userView->add(user))
-//    return false;
-
-  if (m_userView->isSortable() || UserUtils::userId() == user->id()) {
-//    addJoinMsg(user->id(), m_channel->id());
-    displayUserCount();
-  }
-
-  return true;
-}
-
-
 bool ChannelTab::bindMenu(QMenu *menu)
 {
   ChannelMenu *builder = new ChannelMenu(m_channel, this);

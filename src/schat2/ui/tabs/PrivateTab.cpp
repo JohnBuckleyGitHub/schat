@@ -16,20 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QAction>
 #include <QVBoxLayout>
-#include <QTextDocument>
 
-#include "actions/UserMenu.h"
-#include "ChatCore.h"
-#include "ChatPlugins.h"
-#include "client/SimpleClient.h"
-#include "net/packets/message.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "ui/ChannelUtils.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
-#include "ui/UserUtils.h"
-#include "ui/ChannelUtils.h"
 
 PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, PrivateType, parent)
@@ -42,15 +36,7 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   setIcon(userIcon());
   setText(m_channel->name());
 
-//  MessageData data(UserUtils::userId(), SimpleID::setType(SimpleID::ChannelId, user->id()), QLatin1String("join"), QLatin1String("~") + user->nick());
-//  ChatCore::i()->client()->send(data);
-}
-
-
-PrivateTab::~PrivateTab()
-{
-//  ChatClient::channels()->part(id());
-//  ChatCore::i()->client()->part(SimpleID::setType(SimpleID::ChannelId, m_user->id()));
+  ChatClient::channels()->join(id());
 }
 
 
