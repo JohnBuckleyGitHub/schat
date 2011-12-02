@@ -25,3 +25,9 @@ ChatNotify::ChatNotify(QObject *parent)
 {
   m_self = this;
 }
+
+
+void ChatNotify::startNotify(const Notify &notify)
+{
+  emit this->notify(notify);
+}

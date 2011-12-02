@@ -33,6 +33,7 @@ class AlertTab;
 class ChannelTab;
 class ChatCore;
 class ChatViewTab;
+class Notify;
 class PrivateTab;
 class ProgressTab;
 class QMenu;
@@ -75,6 +76,7 @@ private slots:
   void closeTab(int index);
   void currentChanged(int index);
   void hideMainMenu();
+  void notify(const Notify &notify);
   void notify(int notice, const QVariant &data);
   void openTab();
   void showMainMenu();

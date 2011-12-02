@@ -29,6 +29,7 @@
 #include "actions/MenuBuilder.h"
 #include "Channel.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -98,6 +99,8 @@ TabWidget::TabWidget(QWidget *parent)
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
+
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -221,7 +224,7 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void TabWidget::addPrivateTab(const QByteArray &id)
 {
-  if (m_client->channelId() == id)
+  if (ChatClient::id() == id)
     return;
 
   privateTab(id, true, true);
@@ -285,6 +288,13 @@ void TabWidget::hideMainMenu()
   m_mainMenu->clear();
   m_channelsMenu->clear();
   m_talksMenu->clear();
+}
+
+
+void TabWidget::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::OpenChannel)
+    addPrivateTab(notify.data().toByteArray());
 }
 
 
