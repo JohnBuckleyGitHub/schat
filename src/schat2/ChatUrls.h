@@ -34,11 +34,13 @@ public:
   inline static void open(const QString &url) { open(QUrl(url)); }
   inline static void open(const QUrl &url) { m_self->openUrl(url); }
 
+  static ClientChannel channel(const QUrl &url);
   static QStringList actions(const QUrl &url);
   static QStringList path(const QUrl &url);
   static QUrl toUrl(ClientChannel channel, const QString &action = QString());
 
 private:
+  void openChannelUrl(const QUrl &url);
   void openUrl(const QUrl &url);
 
   static ChatUrls *m_self; ///< Указатель на себя.

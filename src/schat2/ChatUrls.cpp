@@ -20,8 +20,10 @@
 
 #include <QDesktopServices>
 
+#include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 
@@ -31,6 +33,36 @@ ChatUrls::ChatUrls(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+}
+
+
+/*!
+ * Получение канала из URL адреса.
+ */
+ClientChannel ChatUrls::channel(const QUrl &url)
+{
+  ClientChannel channel;
+  if (url.scheme() != "chat" && url.host() != "channel")
+    return channel;
+
+  QStringList path = ChatUrls::path(url);
+  if (path.isEmpty())
+    return channel;
+
+  QByteArray id = SimpleID::decode(path.at(0).toLatin1());
+  if (!Channel::isCompatibleId(id))
+    return channel;
+
+  channel = ChatClient::channels()->get(id);
+  if (channel)
+    return channel;
+
+  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(url.queryItemValue("name").toLatin1())));
+  channel->gender().setRaw(url.queryItemValue("gender").toInt());
+  if (!channel->isValid())
+    return ClientChannel();
+
+  return channel;
 }
 
 
@@ -75,7 +107,7 @@ QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
   out.setPath(SimpleID::encode(channel->id()) + (action.isEmpty() ? QString() : "/" + action));
 
   QList<QPair<QString, QString> > queries;
-  queries.append(QPair<QString, QString>("name", SimpleID::toBase32(channel->name().toUtf8())));
+  queries.append(QPair<QString, QString>("name",   SimpleID::toBase32(channel->name().toUtf8())));
   queries.append(QPair<QString, QString>("gender", QString::number(channel->gender().raw())));
 
   out.setQueryItems(queries);
@@ -84,9 +116,28 @@ QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
 }
 
 
+void ChatUrls::openChannelUrl(const QUrl &url)
+{
+  QStringList actions = ChatUrls::actions(url);
+  if (actions.isEmpty())
+    return;
+
+  ClientChannel channel = ChatUrls::channel(url);
+  if (!channel)
+    return;
+
+  QString action = actions.first();
+  if (action == "open") {
+    ChatNotify::start(Notify(Notify::OpenChannel, channel->id()));
+  }
+
+  qDebug() << channel->name();
+}
+
+
 void ChatUrls::openUrl(const QUrl &url)
 {
-  qDebug() << "-----" << url;
+  qDebug() << "-----" << url.toString();
 
   if (url.scheme() == QLatin1String("schat")) {
     ChatClient::io()->openUrl(url);
@@ -99,7 +150,7 @@ void ChatUrls::openUrl(const QUrl &url)
   }
 
   if (url.host() == QLatin1String("channel")) {
-//    d->openChannelUrl(url);
+    openChannelUrl(url);
   }
   else if (url.host() == QLatin1String("about")) {
 //    startNotify(ChatCore::AboutNotice);

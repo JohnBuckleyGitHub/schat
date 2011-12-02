@@ -22,6 +22,7 @@
 
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
@@ -241,6 +242,6 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
  */
 void UserView::addTab(const QModelIndex &index)
 {
-//  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-//  ChatCore::i()->startNotify(ChatCore::AddPrivateTab, item->user()->id());
+  QUrl url = ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->channel(), "open");
+  ChatUrls::open(url);
 }

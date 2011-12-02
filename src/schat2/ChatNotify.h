@@ -26,10 +26,18 @@
 
 class Notify
 {
+public:
+  enum Actions {
+    OpenChannel = 0x6F63 ///< "oc" Открытие канала, команда передаёт идентификатор канала.
+  };
+
   Notify(int type, const QVariant &data = QVariant())
   : m_type(type)
   , m_data(data)
   {}
+
+  inline const QVariant& data() const { return m_data; }
+  inline int type() const { return m_type; }
 
 private:
   int m_type;
@@ -44,8 +52,14 @@ class SCHAT_EXPORT ChatNotify : public QObject
 public:
   ChatNotify(QObject *parent = 0);
   inline static ChatNotify *i() { return m_self; }
+  inline static void start(const Notify &notify) { m_self->startNotify(notify); }
+
+signals:
+  void notify(const Notify &notify);
 
 private:
+  void startNotify(const Notify &notify);
+
   static ChatNotify *m_self; ///< Указатель на себя.
 };
 
