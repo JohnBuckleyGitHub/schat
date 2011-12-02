@@ -41,7 +41,7 @@ public:
 
 protected:
   virtual bool read(PacketReader *reader) { Q_UNUSED(reader) return false; }
-  virtual void releaseImpl(ChatChannel channel, quint64 socket) { Q_UNUSED(channel) Q_UNUSED(socket) }
+  virtual void releaseImpl(ChatChannel user, quint64 socket) { Q_UNUSED(user) Q_UNUSED(socket) }
 
   Core *m_core;       ///< Ядро чата.
   int m_type;         ///< Тип поддерживаемых пакетов.
