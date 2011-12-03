@@ -16,11 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "client/ClientCmd.h"
 #include "client/ClientHooks.h"
 
 namespace Hooks
 {
 
+/*!
+ * Обработка команды в тексте.
+ * Текст предварительно очищен от HTML.
+ *
+ * \param dest Идентификатор получателя.
+ * \param cmd  Команда и тело команды.
+ */
+bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
+{
+  qDebug() << cmd.command() << cmd.body();
+  QString command = cmd.command().toLower();
 
+  if (command == "join") {
+    ChatClient::channels()->join(cmd.body());
+    return true;
+  }
+
+  return false;
+}
 
 }  // namespace Hooks

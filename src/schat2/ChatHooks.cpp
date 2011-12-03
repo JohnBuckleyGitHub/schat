@@ -16,27 +16,5 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLIENTCMD_H_
-#define CLIENTCMD_H_
+#include "ChatHooks.h"
 
-#include <QString>
-
-#include "schat.h"
-
-class SCHAT_EXPORT ClientCmd
-{
-public:
-  ClientCmd(const QString &text);
-  inline bool isBody() const            { return m_isBody; }
-  inline bool isValid() const           { return m_isValid; }
-  inline const QString& body() const    { return m_body; }
-  inline const QString& command() const { return m_command; }
-
-private:
-  bool m_isBody;     ///< true если \p m_body не пустая строка.
-  bool m_isValid;    ///< true если команда валидна.
-  QString m_body;    ///< Тело команды.
-  QString m_command; ///< Команда приведённая к нижнему регистру.
-};
-
-#endif /* CLIENTCMD_H_ */

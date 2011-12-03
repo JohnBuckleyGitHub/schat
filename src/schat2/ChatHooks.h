@@ -16,27 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLIENTCMD_H_
-#define CLIENTCMD_H_
+#ifndef CHATHOOKS_H_
+#define CHATHOOKS_H_
 
-#include <QString>
+#include "client/ClientHooks.h"
 
-#include "schat.h"
+namespace Hooks
+{
 
-class SCHAT_EXPORT ClientCmd
+class SCHAT_CORE_EXPORT ChatMessages : public Messages
 {
 public:
-  ClientCmd(const QString &text);
-  inline bool isBody() const            { return m_isBody; }
-  inline bool isValid() const           { return m_isValid; }
-  inline const QString& body() const    { return m_body; }
-  inline const QString& command() const { return m_command; }
+  ChatMessages()
+  : Messages()
+  {}
 
-private:
-  bool m_isBody;     ///< true если \p m_body не пустая строка.
-  bool m_isValid;    ///< true если команда валидна.
-  QString m_body;    ///< Тело команды.
-  QString m_command; ///< Команда приведённая к нижнему регистру.
 };
 
-#endif /* CLIENTCMD_H_ */
+}  // namespace Hooks
+
+#endif /* CHATHOOKS_H_ */
