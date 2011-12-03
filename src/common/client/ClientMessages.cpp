@@ -37,13 +37,6 @@ ClientMessages::ClientMessages(QObject *parent)
 }
 
 
-ClientMessages::~ClientMessages()
-{
-  if (m_hooks)
-    delete m_hooks;
-}
-
-
 QByteArray ClientMessages::randomId() const
 {
   return SimpleID::randomId(SimpleID::MessageId, m_client->channelId());
@@ -55,8 +48,6 @@ QByteArray ClientMessages::randomId() const
  */
 bool ClientMessages::send(const QByteArray &dest, const QString &text)
 {
-  qDebug() << text;
-
   if (text.isEmpty())
     return false;
 
@@ -86,7 +77,14 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
 bool ClientMessages::sendText(const QByteArray &dest, const QString &text)
 {
   MessagePacket packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
-  return m_client->send(packet, true);
+  if (m_client->send(packet, true)) {
+    if (m_hooks)
+      m_hooks->sendText(packet);
+
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -106,4 +104,7 @@ void ClientMessages::notice(int type)
 
   m_packet = &packet;
   m_packet->setDate(ChatClient::io()->date());
+
+  if (m_hooks)
+    m_hooks->readText(packet);
 }
