@@ -31,6 +31,7 @@
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
@@ -404,7 +405,7 @@ void ChatCore::send(const QString &text)
     return;
 
   MessageData data(QByteArray(), m_currentId, QString(), text);
-  m_messageAdapter->send(data);
+  ChatClient::messages()->send(m_currentId, text);
 }
 
 

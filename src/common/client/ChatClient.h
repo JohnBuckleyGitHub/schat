@@ -24,6 +24,7 @@
 #include "schat.h"
 
 class ClientChannels;
+class ClientMessages;
 class SimpleClient;
 
 class SCHAT_EXPORT ChatClient : public QObject
@@ -35,11 +36,13 @@ public:
 
   inline static ChatClient *i()            { return m_self; }
   inline static ClientChannels *channels() { return m_self->m_channels; }
+  inline static ClientMessages *messages() { return m_self->m_messages; }
   inline static SimpleClient *io()         { return m_self->m_client; }
   static QByteArray id();
 
 private:
   ClientChannels *m_channels; ///< Каналы.
+  ClientMessages *m_messages; ///< Обработчик сообщений.
   SimpleClient *m_client;     ///< Клиент чата.
   static ChatClient *m_self;  ///< Указатель на себя.
 };

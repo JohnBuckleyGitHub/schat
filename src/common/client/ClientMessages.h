@@ -16,28 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/ChatClient.h"
-#include "client/ClientChannels.h"
-#include "client/ClientMessages.h"
-#include "client/SimpleClient.h"
+#ifndef CLIENTMESSAGES_H_
+#define CLIENTMESSAGES_H_
 
-ChatClient *ChatClient::m_self = 0;
+#include <QObject>
 
-ChatClient::ChatClient(QObject *parent)
-  : QObject(parent)
+#include "schat.h"
+
+class MessagePacket;
+class SimpleClient;
+
+class SCHAT_EXPORT ClientMessages : public QObject
 {
-  m_self = this;
+  Q_OBJECT
 
-  m_client = new SimpleClient(this);
-  m_channels = new ClientChannels(this);
-  m_messages = new ClientMessages(this);
-}
+public:
+  ClientMessages(QObject *parent = 0);
+  QByteArray randomId() const;
 
+  bool send(const QByteArray &dest, const QString &text);
+  bool sendText(const QByteArray &dest, const QString &text);
 
-/*!
- * Возвращает идентификатор пользователя.
- */
-QByteArray ChatClient::id()
-{
-  return io()->channelId();
-}
+private slots:
+  void notice(int type);
+
+private:
+  MessagePacket *m_packet; ///< Текущий прочитанный пакет.
+  QByteArray m_destId;    ///< Текущий получатель сообщения.
+  SimpleClient *m_client;  ///< Клиент чата.
+};
+
+#endif /* CLIENTMESSAGES_H_ */

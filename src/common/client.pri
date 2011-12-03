@@ -104,6 +104,7 @@ SOURCES += \
     client/ClientChannels.h \
     client/ClientCmd.h \
     client/ClientHelper.h \
+    client/ClientMessages.h \
     client/SimpleClient.h \
     client/SimpleClient_p.h \
     
@@ -112,6 +113,7 @@ SOURCES += \
     client/ClientChannels.cpp \
     client/ClientCmd.cpp \
     client/ClientHelper.cpp \
+    client/ClientMessages.cpp \
     client/SimpleClient.cpp \
 }
 

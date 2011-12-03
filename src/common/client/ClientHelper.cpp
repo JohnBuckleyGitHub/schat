@@ -42,7 +42,7 @@ ClientHelper::ClientHelper(SimpleClient *client)
 /*!
  * Отправка сообщения, если в сообщении содержаться команды, то они будут обработаны.
  */
-bool ClientHelper::send(MessageData &data)
+bool ClientHelper::send2(MessageData &data)
 {
   if (data.text.isEmpty())
     return false;
