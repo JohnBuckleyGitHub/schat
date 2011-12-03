@@ -26,13 +26,21 @@
 class MessagePacket;
 class SimpleClient;
 
+namespace Hooks
+{
+  class Messages;
+}
+
 class SCHAT_EXPORT ClientMessages : public QObject
 {
   Q_OBJECT
 
 public:
   ClientMessages(QObject *parent = 0);
+  ~ClientMessages();
   QByteArray randomId() const;
+
+  inline void setHooks(Hooks::Messages *hooks) { m_hooks = hooks; }
 
   bool send(const QByteArray &dest, const QString &text);
   bool sendText(const QByteArray &dest, const QString &text);
@@ -41,9 +49,10 @@ private slots:
   void notice(int type);
 
 private:
-  MessagePacket *m_packet; ///< Текущий прочитанный пакет.
-  QByteArray m_destId;    ///< Текущий получатель сообщения.
-  SimpleClient *m_client;  ///< Клиент чата.
+  Hooks::Messages *m_hooks; ///< Хуки.
+  MessagePacket *m_packet;  ///< Текущий прочитанный пакет.
+  QByteArray m_destId;      ///< Текущий получатель сообщения.
+  SimpleClient *m_client;   ///< Клиент чата.
 };
 
 #endif /* CLIENTMESSAGES_H_ */
