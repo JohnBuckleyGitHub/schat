@@ -37,7 +37,7 @@ SimpleSocketPrivate::SimpleSocketPrivate()
   , serverSide(false)
   , sslAvailable(false)
   , rxStream(0)
-  , timestamp(0)
+  , date(0)
   , nextBlockSize(0)
   , id(0)
   , rx(0)
@@ -88,7 +88,7 @@ bool SimpleSocketPrivate::readTransport()
 
     int options = reader.options();
     if (options & Protocol::TimeStamp)
-      timestamp = reader.timestamp();
+      date = reader.timestamp();
 
     // Чтение служебного транспортного пакета.
     if (options & Protocol::ContainsInternalPacket) {
@@ -174,7 +174,7 @@ bool SimpleSocketPrivate::transmit(const QList<QByteArray> &packets, quint8 opti
 
   qint64 ts = 0;
   if (serverSide && options != Protocol::ContainsInternalPacket)
-    ts = timestamp;
+    ts = date;
 
   TransportWriter tp(txStream, packets, txSeq, ts, options, type, subversion);
   QByteArray packet = tp.data();
@@ -210,7 +210,7 @@ void SimpleSocketPrivate::releaseSocket()
   if (timer->isActive())
     timer->stop();
 
-  timestamp = 0;
+  date = 0;
   sendBuffer.clear();
   readBuffer.clear();
   txBuffer.clear();
@@ -467,10 +467,10 @@ QDataStream *SimpleSocket::sendStream()
 }
 
 
-qint64 SimpleSocket::timestamp() const
+qint64 SimpleSocket::date() const
 {
   Q_D(const SimpleSocket);
-  return d->timestamp;
+  return d->date;
 }
 
 
@@ -531,10 +531,10 @@ void SimpleSocket::setId(quint64 id)
 }
 
 
-void SimpleSocket::setTimestamp(qint64 timestamp)
+void SimpleSocket::setDate(qint64 date)
 {
   Q_D(SimpleSocket);
-  d->timestamp = timestamp;
+  d->date = date;
 }
 
 

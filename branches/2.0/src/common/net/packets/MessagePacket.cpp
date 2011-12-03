@@ -26,7 +26,7 @@ MessagePacket::MessagePacket(const QByteArray &sender, const QByteArray &dest, c
   setText(text);
 
   if (time == 0)
-    m_time = DateTime::utc();
+    m_date = DateTime::utc();
 }
 
 

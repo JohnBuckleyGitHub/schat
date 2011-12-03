@@ -24,7 +24,7 @@
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
+Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(QList<QByteArray>() << dest)
   , m_type(GenericType)
@@ -32,7 +32,7 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
   , m_fields(0)
   , m_version(0)
   , m_status(OK)
-  , m_time(time)
+  , m_date(date)
   , m_id(id)
   , m_command(command)
   , m_data(data)
@@ -48,7 +48,7 @@ Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &
 /*!
  * Базовый конструктор.
  */
-Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time, const QByteArray &id, const QVariantMap &data)
+Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(dest)
   , m_type(GenericType)
@@ -56,7 +56,7 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
   , m_fields(0)
   , m_version(0)
   , m_status(OK)
-  , m_time(time)
+  , m_date(date)
   , m_id(id)
   , m_command(command)
   , m_data(data)
@@ -82,7 +82,7 @@ Notice::Notice(quint16 type, PacketReader *reader)
   m_fields = reader->get<quint8>();
   m_version = reader->get<quint8>();
   m_status = reader->get<quint16>();
-  m_time = reader->get<qint64>();
+  m_date = reader->get<qint64>();
 
   if (m_fields & IdField)
     m_id = reader->id();
@@ -134,7 +134,7 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
   writer.put(m_fields);
   writer.put(m_version);
   writer.put(m_status);
-  writer.put(m_time);
+  writer.put(m_date);
 
   if (m_fields & IdField)
     writer.putId(m_id);

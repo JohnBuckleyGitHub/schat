@@ -92,7 +92,7 @@ void WorkerEventListener::customEvent(QEvent *event)
       if (!socket)
         continue;
 
-      socket->setTimestamp(e->timestamp);
+      socket->setDate(e->timestamp);
       socket->send(e->packets);
 
       if (!e->option)

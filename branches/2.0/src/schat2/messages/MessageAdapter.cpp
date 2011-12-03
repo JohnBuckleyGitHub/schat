@@ -333,7 +333,7 @@ MessageData MessageAdapter::msgFromNotice() const
 {
   MessageData msg(m_client->channelId(), m_notice->sender(), QString(), QString());
   msg.id = m_notice->id();
-  msg.timestamp = m_notice->time();
+  msg.timestamp = m_notice->date();
   return msg;
 }
 

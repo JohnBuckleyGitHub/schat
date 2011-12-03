@@ -158,7 +158,7 @@ ClientChannel ClientChannels::add()
 
   channel->setName(m_packet->text());
   channel->gender() = m_packet->gender();
-  channel->status() = m_packet->status();
+  channel->status() = m_packet->channelStatus();
 
   return channel;
 }

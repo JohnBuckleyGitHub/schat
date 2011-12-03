@@ -125,7 +125,7 @@ AbstractTab *TabWidget::widget(int index) const
 void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab)
 {
   MessageData data(userId, destId, QString(), text);
-  data.timestamp = m_client->timestamp();
+  data.timestamp = m_client->date();
 
   AbstractMessage msg(QLatin1String("service-type"), data);
   msg.setPriority(AbstractMessage::LowPriority);
