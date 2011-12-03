@@ -37,7 +37,6 @@ class SCHAT_EXPORT ClientMessages : public QObject
 
 public:
   ClientMessages(QObject *parent = 0);
-  ~ClientMessages();
   QByteArray randomId() const;
 
   inline void setHooks(Hooks::Messages *hooks) { m_hooks = hooks; }

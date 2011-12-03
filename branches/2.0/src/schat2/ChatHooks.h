@@ -26,11 +26,11 @@ namespace Hooks
 
 class SCHAT_CORE_EXPORT ChatMessages : public Messages
 {
-public:
-  ChatMessages()
-  : Messages()
-  {}
+  Q_OBJECT
 
+public:
+  ChatMessages(QObject *parent = 0);
+  void readText(const MessagePacket &packet);
 };
 
 }  // namespace Hooks

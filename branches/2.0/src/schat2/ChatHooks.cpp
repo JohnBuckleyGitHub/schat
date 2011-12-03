@@ -16,5 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatHooks.h"
+#include <QDebug>
 
+#include "ChatHooks.h"
+#include "net/packets/MessagePacket.h"
+
+namespace Hooks {
+
+ChatMessages::ChatMessages(QObject *parent)
+  : Messages(parent)
+{
+}
+
+
+void ChatMessages::readText(const MessagePacket &packet)
+{
+  qDebug() << "-->" << packet.text();
+}
+
+}  // namespace Hooks

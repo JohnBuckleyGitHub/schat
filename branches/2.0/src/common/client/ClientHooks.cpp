@@ -26,6 +26,12 @@
 namespace Hooks
 {
 
+Messages::Messages(QObject *parent)
+  : QObject(parent)
+{
+}
+
+
 /*!
  * Обработка команды в тексте.
  * Текст предварительно очищен от HTML.
