@@ -63,8 +63,8 @@ void MasterNode::accept(const AuthResult &result)
   else {
     QList<QByteArray> slaves = m_storage->slaves();
     if (!slaves.isEmpty()) {
-      UserWriter writer(m_sendStream, user.data(), slaves, user->cookie());
-      send(m_storage->sockets(slaves), writer.data());
+//      UserWriter writer(m_sendStream, user.data(), slaves, user->cookie());
+//      send(m_storage->sockets(slaves), writer.data());
     }
   }
 
@@ -144,8 +144,8 @@ void MasterNode::release(SocketReleaseEvent *event)
 //      m_storage->remove(users.at(i));
     }
 
-    MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));
-    send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
+//    MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));
+//    send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
   }
   else
     Core::release(event);

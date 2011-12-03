@@ -48,8 +48,7 @@ public:
   ~Core();
 
   // Функции отправки пакетов.
-  virtual bool send(ChatChannel channel, const QByteArray &packet);
-  virtual bool send(ChatChannel channel, const QList<QByteArray> &packets);
+  virtual bool route();
   virtual bool send(ChatUser user, const QByteArray &packet, int option = 0);
   virtual bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   virtual bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
@@ -72,14 +71,11 @@ protected:
   void customEvent(QEvent *event);
 
 protected:
-  bool route();
-
   virtual bool checkPacket();
   virtual void newPacketsEvent(NewPacketsEvent *event);
   virtual void packet(int type);
 
   QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
-  QList<quint64> echoFilter(const QList<quint64> &sockets);
 
   // Авторизация.
   virtual bool auth();

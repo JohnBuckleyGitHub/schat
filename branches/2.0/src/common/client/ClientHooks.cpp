@@ -32,6 +32,8 @@ namespace Hooks
  *
  * \param dest Идентификатор получателя.
  * \param cmd  Команда и тело команды.
+ *
+ * \return \b true если команда обработана.
  */
 bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 {

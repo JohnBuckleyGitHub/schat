@@ -60,6 +60,22 @@ QList<quint64> Sockets::channel(ChatChannel channel)
 }
 
 
+void Sockets::echoFilter(ChatChannel channel, QList<quint64> &sockets, bool echo)
+{
+  if (!channel)
+    return;
+
+  if (echo) {
+    merge(sockets, channel->sockets());
+    return;
+  }
+
+  foreach (quint64 socket, channel->sockets()) {
+    sockets.removeAll(socket);
+  }
+}
+
+
 void Sockets::merge(QList<quint64> &out, const QList<quint64> &sockets)
 {
   foreach (quint64 socket, sockets) {

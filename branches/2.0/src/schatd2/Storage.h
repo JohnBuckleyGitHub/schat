@@ -50,7 +50,6 @@ public:
   inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
-  static void merge(QList<quint64> &out, const QList<quint64> sockets);
   void addSlave(const QByteArray &id);
 
   // user management.
@@ -70,8 +69,6 @@ public:
   void remove(ChatChannel channel);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
-  QList<quint64> sockets(ChatChannel channel);
-  QList<quint64> sockets(const QList<QByteArray> &ids);
   void update(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }

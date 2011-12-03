@@ -44,6 +44,7 @@
 #include "NodePlugins.h"
 #include "plugins/NodeHooks.h"
 #include "ServerUser.h"
+#include "Sockets.h"
 #include "Storage.h"
 
 Core::Core(QObject *parent)
@@ -77,27 +78,25 @@ Core::~Core()
 
 
 /*!
- * Отправка пакета всем пользователям в канале.
- *
- * \param channel Канал.
- * \param packet  Пакет.
- * \return false в случае ошибки.
+ * Маршрутизация входящих пакетов.
  */
-bool Core::send(ChatChannel channel, const QByteArray &packet)
+bool Core::route()
 {
-  return send(m_storage->sockets(channel), QList<QByteArray>() << packet);
-}
+  if (m_timestamp == 0)
+    m_timestamp = DateTime::utc();
 
+  ChatChannel channel = m_storage->channel(m_reader->dest(), SimpleID::typeOf(m_reader->dest()));
+  if (!channel)
+    return false;
 
-/*!
- * Отправка пакетов всем пользователям в канале.
- * \param channel Канал.
- * \param packets Пакеты.
- * \return false в случае ошибки, иначе true.
- */
-bool Core::send(ChatChannel channel, const QList<QByteArray> &packets)
-{
-  return send(m_storage->sockets(channel), packets);
+  QList<quint64> sockets;
+  if (channel->type() == SimpleID::UserId)
+    sockets = channel->sockets();
+  else
+    sockets = Sockets::channel(channel);
+
+  Sockets::echoFilter(m_storage->channel(m_reader->sender(), SimpleID::UserId), sockets, m_reader->is(Protocol::EnableEcho));
+  return send(sockets, m_readBuffer);
 }
 
 
@@ -188,18 +187,6 @@ void Core::customEvent(QEvent *event)
     default:
       break;
   }
-}
-
-
-/*!
- * Маршрутизация входящих пакетов.
- */
-bool Core::route()
-{
-  if (m_timestamp == 0)
-    m_timestamp = DateTime::utc();
-
-  return send(echoFilter(m_storage->sockets(m_reader->destinations())), m_readBuffer);
 }
 
 
@@ -322,31 +309,6 @@ QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
   packets.append(MessageWriter(m_sendStream, message).data());
 
   return packets;
-}
-
-
-/*!
- * Фильтрует список сокетов, в зависимости от необходимости эха.
- */
-QList<quint64> Core::echoFilter(const QList<quint64> &sockets)
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-
-  if (!user)
-    return sockets;
-
-  QList<quint64> out = sockets;
-
-  if (!m_reader->is(Protocol::EnableEcho)) {
-    QList<quint64> sockets = user->sockets();
-    foreach (quint64 socket, sockets) {
-      out.removeAll(socket);
-    }
-  }
-  else
-    Storage::merge(out, user->sockets());
-
-  return out;
 }
 
 
