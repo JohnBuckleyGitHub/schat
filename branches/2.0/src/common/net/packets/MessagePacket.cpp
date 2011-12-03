@@ -17,9 +17,20 @@
  */
 
 #include "net/packets/MessagePacket.h"
+#include "DateTime.h"
 
-MessagePacket::MessagePacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
-  : Notice(sender, dest, command, time)
+MessagePacket::MessagePacket(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time, const QByteArray &id)
+  : Notice(sender, dest, "m", time, id)
 {
   m_type = MessageType;
+  setText(text);
+
+  if (time == 0)
+    m_time = DateTime::utc();
+}
+
+
+MessagePacket::MessagePacket(quint16 type, PacketReader *reader)
+  : Notice(type, reader)
+{
 }

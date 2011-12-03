@@ -104,6 +104,7 @@ public:
   inline void setDest(const QByteArray &dest)        { m_dest = QList<QByteArray>() << dest; }
   inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
   inline void setDirection(int direction)            { m_direction = direction; }
+  inline void setId(const QByteArray &id)            { m_id = id; }
   inline void setStatus(int status)                  { m_status = status; }
   inline void setText(const QString &text)           { m_text = text; }
 

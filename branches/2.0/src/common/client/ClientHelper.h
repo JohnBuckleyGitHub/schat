@@ -32,6 +32,8 @@ class SimpleClient;
 
 /*!
  * Дополнительный слой абстракции между клиентом и приложением.
+ *
+ * \deprecated Этот класс должен быть заменён на ClientMessages.
  */
 class SCHAT_EXPORT ClientHelper : public QObject
 {
@@ -39,7 +41,7 @@ class SCHAT_EXPORT ClientHelper : public QObject
 
 public:
   ClientHelper(SimpleClient *client);
-  bool send(MessageData &data);
+  bool send2(MessageData &data);
   inline SimpleClient *client() { return m_client; }
   QByteArray login(const QString &command, const QString &name, const QString &password, const QVariantMap &json = QVariantMap());
   QByteArray randomId() const;
