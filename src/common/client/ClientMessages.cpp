@@ -90,6 +90,9 @@ bool ClientMessages::sendText(const QByteArray &dest, const QString &text)
 }
 
 
+/*!
+ * Чтение входящего сообщения.
+ */
 void ClientMessages::notice(int type)
 {
   if (type != Notice::MessageType)
@@ -99,5 +102,8 @@ void ClientMessages::notice(int type)
   if (!packet.isValid())
     return;
 
+  qDebug() << ">>>" << packet.text();
+
   m_packet = &packet;
+  m_packet->setDate(ChatClient::io()->date());
 }

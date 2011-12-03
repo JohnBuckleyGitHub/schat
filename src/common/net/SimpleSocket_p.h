@@ -60,7 +60,7 @@ public:
   QDataStream *rxStream;               ///< Поток чтения транспортных пакетов.
   QDataStream *sendStream;             ///< Поток отправки виртуальных пакетов.
   QDataStream *txStream;               ///< Поток отправки транспортных пакетов.
-  qint64 timestamp;                    ///< Отметка времени.
+  qint64 date;                         ///< Отметка времени.
   QList<QByteArray> readQueue;         ///< Список прочитанных виртуальных пакетов.
   QList<quint64> deliveryConfirm;      ///< Список sequence пакетов, используется сервером для формирования отчёта о доставке или клиентом для проверки доставки.
   quint32 nextBlockSize;               ///< Размер следующего блока данных.

@@ -58,13 +58,13 @@ public:
   inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
   QByteArray readBuffer() const;
   QDataStream *sendStream();
-  qint64 timestamp() const;
+  qint64 date() const;
   quint64 rx() const;
   quint64 tx() const;
   void leave();
   void setAuthorized(const QByteArray &userId);
   void setId(quint64 id);
-  void setTimestamp(qint64 timestamp);
+  void setDate(qint64 date);
 
 signals:
   void allDelivered(quint64 id);

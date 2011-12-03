@@ -292,7 +292,7 @@ bool SimpleClientPrivate::readMessage()
   messageData = &reader.data;
 
   if (!(messageData->flags & MessageData::OfflineFlag))
-    messageData->timestamp = timestamp;
+    messageData->timestamp = date;
 
   if (messageData->options & MessageData::ControlOption && command()) {
     return true;

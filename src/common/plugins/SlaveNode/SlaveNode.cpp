@@ -311,7 +311,7 @@ bool SlaveNode::uplinkRouteUser(const QByteArray &id)
   if (!user)
     return false;
 
-  m_timestamp = m_uplink->timestamp();
+  m_timestamp = m_uplink->date();
   return send(user, m_uplink->readBuffer());
 }
 
@@ -383,7 +383,7 @@ void SlaveNode::uplinkAuthReply()
     m_pending.remove(data.id);
   }
 
-  m_timestamp = m_uplink->timestamp();
+  m_timestamp = m_uplink->date();
   send(user, m_uplink->readBuffer(), option);
 }
 

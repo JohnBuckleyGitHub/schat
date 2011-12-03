@@ -31,10 +31,10 @@ public:
   ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0);
   ChannelPacket(quint16 type, PacketReader *reader);
 
-  inline const QByteArray& channelId() const { return m_channelId; }
+  inline const QByteArray& channelId() const       { return m_channelId; }
   inline const QList<QByteArray>& channels() const { return m_channels; }
-  inline quint8 gender() const { return m_gender; }
-  inline quint8 status() const { return m_status; }
+  inline quint8 gender() const                     { return m_gender; }
+  inline quint8 channelStatus() const              { return m_channelStatus; }
 
   static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command = "channel");
   static QByteArray info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream);
@@ -47,7 +47,7 @@ protected:
 
   QByteArray m_channelId;       ///< Идентификатор канала.
   quint8 m_gender;              ///< Пол и цвет пользователя.
-  quint8 m_status;              ///< Базовый статус пользователя.
+  quint8 m_channelStatus;       ///< Базовый статус пользователя.
   QList<QByteArray> m_channels; ///< Список идентификаторов каналов, передаётся только для команды "channel".
 };
 

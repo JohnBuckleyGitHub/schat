@@ -74,8 +74,8 @@ public:
     Server2Server = 83   ///< 'S'
   };
 
-  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
-  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 time = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
+  Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
+  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
   virtual ~Notice() {}
 
@@ -94,13 +94,14 @@ public:
   inline int type() const                  { return m_type; }
   inline int version() const               { return m_version; }
   inline QByteArray dest() const           { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
-  inline qint64 time() const               { return m_time; }
+  inline qint64 date() const               { return m_date; }
   inline QVariantMap& json()               { return m_data; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
 
   static QString status(int status);
 
   inline void setData(const QVariantMap &data)       { m_data = data; }
+  inline void setDate(qint64 date)                   { m_date = date; }
   inline void setDest(const QByteArray &dest)        { m_dest = QList<QByteArray>() << dest; }
   inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
   inline void setDirection(int direction)            { m_direction = direction; }
@@ -118,7 +119,7 @@ protected:
   mutable quint8 m_fields;  ///< Дополнительные поля данных.
   quint8 m_version;         ///< Версия пакета, обязательное поле.
   quint16 m_status;         ///< Статус \sa StatusCodes, обязательное поле.
-  qint64 m_time;            ///< Отметка времени, обязательное поле.
+  qint64 m_date;            ///< Отметка времени, обязательное поле.
   QByteArray m_id;          ///< Идентификатор сообщения, не обязательное поле.
   QString m_command;        ///< Текстовая команда, обязательное поле.
   QVariantMap m_data;       ///< JSON данные пакета, не обязательное поле.

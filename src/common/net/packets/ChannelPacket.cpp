@@ -26,7 +26,7 @@
 ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(sender, dest, command, time)
   , m_gender(0)
-  , m_status(0)
+  , m_channelStatus(0)
 {
   m_type = ChannelType;
 }
@@ -35,7 +35,7 @@ ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, c
 ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
   : Notice(type, reader)
   , m_gender(0)
-  , m_status(0)
+  , m_channelStatus(0)
 {
   if (m_direction == Server2Client)
     m_channelId = reader->sender();
@@ -43,7 +43,7 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
     m_channelId = reader->dest();
 
   m_gender   = reader->get<quint8>();
-  m_status   = reader->get<quint8>();
+  m_channelStatus   = reader->get<quint8>();
   m_channels = reader->idList();
 }
 
@@ -51,7 +51,7 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
 void ChannelPacket::write(PacketWriter *writer) const
 {
   writer->put(m_gender);
-  writer->put(m_status);
+  writer->put(m_channelStatus);
   writer->putId(m_channels);
 }
 
@@ -69,8 +69,8 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
   ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
-  packet.m_gender   = channel->gender().raw();
-  packet.m_status   = channel->status().value();
+  packet.m_gender        = channel->gender().raw();
+  packet.m_channelStatus = channel->status().value();
   packet.setData(channel->feeds().get(channel.data()));
 
   if (channel->type() == SimpleID::ChannelId)
