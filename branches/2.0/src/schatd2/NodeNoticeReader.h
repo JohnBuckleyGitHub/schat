@@ -25,6 +25,7 @@
 #include "ServerChannel.h"
 
 class Core;
+class PacketReader;
 class Storage;
 
 class SCHAT_EXPORT NodeNoticeReader

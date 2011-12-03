@@ -24,8 +24,6 @@
 #include "cores/AnonymousAuth.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
-#include "NodeChannels.h"
-#include "NodeNoticeReader.h"
 #include "cores/PasswordAuth.h"
 #include "DateTime.h"
 #include "debugstream.h"
@@ -40,7 +38,9 @@
 #include "net/Protocol.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
+#include "NodeChannels.h"
 #include "NodeLog.h"
+#include "NodeMessages.h"
 #include "NodePlugins.h"
 #include "plugins/NodeHooks.h"
 #include "ServerUser.h"
@@ -63,7 +63,8 @@ Core::Core(QObject *parent)
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
 
-  NodeNoticeReader::add(new NodeChannels(this));
+  new NodeChannels(this);
+  new NodeMessages(this);
 }
 
 
