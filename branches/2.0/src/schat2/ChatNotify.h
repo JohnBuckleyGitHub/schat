@@ -45,7 +45,7 @@ private:
 };
 
 
-class SCHAT_EXPORT ChatNotify : public QObject
+class SCHAT_CORE_EXPORT ChatNotify : public QObject
 {
   Q_OBJECT
 

@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "client/ChatClient.h"
+#include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
@@ -28,9 +29,17 @@
 
 ClientMessages::ClientMessages(QObject *parent)
   : QObject(parent)
+  , m_hooks(0)
   , m_client(ChatClient::io())
 {
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
+}
+
+
+ClientMessages::~ClientMessages()
+{
+  if (m_hooks)
+    delete m_hooks;
 }
 
 

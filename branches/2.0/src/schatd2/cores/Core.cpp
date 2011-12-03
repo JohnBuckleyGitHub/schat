@@ -176,8 +176,6 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 
 void Core::customEvent(QEvent *event)
 {
-  SCHAT_DEBUG_STREAM(this << "customEvent()" << event->type())
-
   switch (event->type()) {
     case ServerEvent::NewPackets:
       newPacketsEvent(static_cast<NewPacketsEvent*>(event));
@@ -227,8 +225,6 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 {
   m_packetsEvent = event;
   QList<QByteArray> packets = event->packets;
-
-  SCHAT_DEBUG_STREAM(this << "newPacketsEvent()" << packets.size())
 
   while (!packets.isEmpty()) {
     m_readBuffer = packets.takeFirst();

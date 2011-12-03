@@ -16,19 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef CLIENTHOOKS_H_
+#define CLIENTHOOKS_H_
 
-#include "NodeMessages.h"
-#include "net/packets/Notice.h"
-
-NodeMessages::NodeMessages(Core *core)
-  : NodeNoticeReader(Notice::MessageType, core)
+namespace Hooks
 {
-}
 
-
-bool NodeMessages::read(PacketReader *reader)
+class Messages
 {
-  qDebug() << "---";
-  return true;
-}
+public:
+  Messages() {}
+  virtual ~Messages() {}
+};
+
+}  // namespace Hooks
+
+#endif /* CLIENTHOOKS_H_ */
