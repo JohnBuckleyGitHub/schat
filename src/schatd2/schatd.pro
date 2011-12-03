@@ -37,6 +37,7 @@ HEADERS = \
     events.h \
     NodeChannels.h \
     NodeLog.h \
+    NodeMessages.h \
     NodeNoticeReader.h \
     NodePlugins.h \
     Normalize.h \
@@ -56,6 +57,7 @@ SOURCES = \
     events.cpp \
     NodeChannels.cpp \
     NodeLog.cpp \
+    NodeMessages.cpp \
     NodeNoticeReader.cpp \
     NodePlugins.cpp \
     Normalize.cpp \

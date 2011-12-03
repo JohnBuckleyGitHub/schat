@@ -29,6 +29,7 @@ NodeNoticeReader::NodeNoticeReader(int type, Core *core)
   , m_type(type)
   , m_storage(Storage::i())
 {
+  add(this);
 }
 
 
