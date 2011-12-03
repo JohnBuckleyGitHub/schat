@@ -102,15 +102,6 @@ int Storage::start()
 }
 
 
-void Storage::merge(QList<quint64> &out, const QList<quint64> sockets)
-{
-  foreach (quint64 socket, sockets) {
-    if (!out.contains(socket))
-      out.append(socket);
-  }
-}
-
-
 void Storage::addSlave(const QByteArray &id)
 {
   if (m_slaves.contains(id))
@@ -366,53 +357,6 @@ ChatChannel Storage::channel(const QString &name)
   }
 
   return channel;
-}
-
-
-/*!
- * Получение списка идентификаторов сокетов пользователей в канале.
- * \param channel Указатель на канал.
- */
-QList<quint64> Storage::sockets(ChatChannel channel)
-{
-  QList<quint64> out;
-  if (!channel)
-    return out;
-
-  QList<QByteArray> users = channel->channels().all();
-  for (int i = 0; i < users.size(); ++i) {
-    ChatUser user = this->user(users.at(i));
-    if (user)
-      merge(out, user->sockets());
-  }
-
-  return out;
-}
-
-
-/*!
- * Получение списка идентификаторов сокетов.
- */
-QList<quint64> Storage::sockets(const QList<QByteArray> &ids)
-{
-  QList<quint64> out;
-  if (ids.isEmpty())
-    return out;
-
-  foreach (QByteArray id, ids) {
-    int type = SimpleID::typeOf(id);
-
-    if (type == SimpleID::ChannelId) {
-      merge(out, sockets(this->channel(id)));
-    }
-    else if (type == SimpleID::UserId) {
-      ChatUser user = this->user(id);
-      if (user)
-        merge(out, user->sockets());
-    }
-  }
-
-  return out;
 }
 
 
