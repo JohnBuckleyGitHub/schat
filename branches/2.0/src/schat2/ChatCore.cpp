@@ -26,6 +26,7 @@
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
 #include "ChatCore_p.h"
+#include "ChatHooks.h"
 #include "ChatNotify.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
@@ -246,6 +247,8 @@ ChatCore::ChatCore(QObject *parent)
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
   connect(m_messageAdapter, SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+
+  ChatClient::messages()->setHooks(new Hooks::ChatMessages());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

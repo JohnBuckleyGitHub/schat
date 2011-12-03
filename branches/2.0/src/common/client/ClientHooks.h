@@ -19,14 +19,21 @@
 #ifndef CLIENTHOOKS_H_
 #define CLIENTHOOKS_H_
 
+#include <QByteArray>
+
+#include "schat.h"
+
+class ClientCmd;
+
 namespace Hooks
 {
 
-class Messages
+class SCHAT_EXPORT Messages
 {
 public:
   Messages() {}
   virtual ~Messages() {}
+  virtual bool command(const QByteArray &dest, const ClientCmd &cmd);
 };
 
 }  // namespace Hooks

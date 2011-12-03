@@ -24,7 +24,7 @@
 
 #include "Channel.h"
 
-class SCHAT_EXPORT ChatUrls : public QObject
+class SCHAT_CORE_EXPORT ChatUrls : public QObject
 {
   Q_OBJECT
 

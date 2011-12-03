@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "client/ChatClient.h"
+#include "client/ClientCmd.h"
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -62,7 +63,20 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   m_destId = dest;
   QString plain = PlainTextFilter::filter(text);
 
-  return sendText(dest, text);
+  if (!plain.startsWith('/'))
+    return sendText(dest, text);
+
+  if (!m_hooks)
+    return false;
+
+  QStringList commands = (" " + plain).split(" /", QString::SkipEmptyParts);
+  for (int i = 0; i < commands.size(); ++i) {
+    ClientCmd cmd(commands.at(i));
+    if (cmd.isValid())
+      m_hooks->command(dest, cmd);
+  }
+
+  return true;
 }
 
 
