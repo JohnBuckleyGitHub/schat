@@ -37,9 +37,8 @@ class SCHAT_EXPORT ClientMessages : public QObject
 
 public:
   ClientMessages(QObject *parent = 0);
+  inline Hooks::Messages *hooks() const { return m_hooks; }
   QByteArray randomId() const;
-
-  inline void setHooks(Hooks::Messages *hooks) { m_hooks = hooks; }
 
   bool send(const QByteArray &dest, const QString &text);
   bool sendText(const QByteArray &dest, const QString &text);

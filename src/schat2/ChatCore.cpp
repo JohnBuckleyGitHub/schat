@@ -238,6 +238,8 @@ ChatCore::ChatCore(QObject *parent)
   m_client = ChatClient::io();
   m_settings->setClient(m_client);
 
+  ChatClient::messages()->hooks()->add(new Hooks::ChatMessages(this));
+
   m_messageAdapter = new MessageAdapter();
   m_networkManager = new NetworkManager(this);
 
@@ -247,8 +249,6 @@ ChatCore::ChatCore(QObject *parent)
   connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
   connect(m_messageAdapter, SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-
-  ChatClient::messages()->setHooks(new Hooks::ChatMessages());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
