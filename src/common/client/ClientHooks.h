@@ -29,6 +29,9 @@ class MessagePacket;
 namespace Hooks
 {
 
+/*!
+ * Хуки, связанные с обработкой сообщений.
+ */
 class SCHAT_EXPORT Messages : public QObject
 {
   Q_OBJECT
@@ -44,6 +47,23 @@ public:
 
 protected:
   QList<Messages*> m_hooks; ///< Хуки.
+};
+
+
+/*!
+ * Хуки, связанные с обработкой каналов.
+ */
+class SCHAT_EXPORT Channels : public QObject
+{
+  Q_OBJECT
+
+public:
+  Channels(QObject *parent = 0);
+  inline void add(Channels *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
+  inline void remove(Channels *hook) { m_hooks.removeAll(hook); }
+
+protected:
+  QList<Channels*> m_hooks; ///< Хуки.
 };
 
 }  // namespace Hooks
