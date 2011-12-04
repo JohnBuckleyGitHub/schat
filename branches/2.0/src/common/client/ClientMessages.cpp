@@ -102,8 +102,6 @@ void ClientMessages::notice(int type)
   if (!packet.isValid())
     return;
 
-  qDebug() << ">>>" << packet.text();
-
   m_packet = &packet;
   m_packet->setDate(ChatClient::io()->date());
 
