@@ -16,6 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
+#include <QFile>
+
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "ui/tabs/ChannelBaseTab.h"
@@ -26,7 +29,11 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   , m_channel(channel)
   , m_alerts(0)
 {
-  m_chatView = new ChatView(channel->id(), "qrc:/html/ChatView.html", this);
+  QString file = QApplication::applicationDirPath() + "/styles/test/html/ChatView.html";
+  if (!QFile::exists(file))
+    file = "qrc:/html/ChatView.html";
+
+  m_chatView = new ChatView(channel->id(), file, this);
 }
 
 

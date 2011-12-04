@@ -17,6 +17,7 @@
  */
 
 #include <QtPlugin>
+#include <QSqlDatabase>
 
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
@@ -24,6 +25,12 @@
 Cache::Cache(ChatCore *core)
   : ChatPlugin(core)
 {
+}
+
+
+void Cache::close()
+{
+  QSqlDatabase::removeDatabase(m_id);
 }
 
 

@@ -28,6 +28,10 @@ class Cache : public ChatPlugin
 public:
   Cache(ChatCore *core);
 
+private:
+  void close();
+
+  QString m_id; ///< Идентификатор соединения с базой.
 };
 
 #endif /* CACHEPLUGIN_P_H_ */
