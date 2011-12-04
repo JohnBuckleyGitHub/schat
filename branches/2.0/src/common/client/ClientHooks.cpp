@@ -34,7 +34,6 @@ Messages::Messages(QObject *parent)
 
 /*!
  * Обработка команды в тексте.
- * Текст предварительно очищен от HTML.
  *
  * \param dest Идентификатор получателя.
  * \param cmd  Команда и тело команды.
@@ -43,7 +42,14 @@ Messages::Messages(QObject *parent)
  */
 bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 {
-  qDebug() << cmd.command() << cmd.body();
+  if (m_hooks.isEmpty())
+    return false;
+
+  for (int i = 0; i < m_hooks.size(); ++i) {
+    if (m_hooks.at(i)->command(dest, cmd))
+      return true;
+  }
+
   QString command = cmd.command().toLower();
 
   if (command == "join") {
@@ -52,6 +58,34 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
   }
 
   return false;
+}
+
+
+/*!
+ * Чтение полученного сообщения.
+ */
+void Messages::readText(const MessagePacket &packet)
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Messages *hook, m_hooks) {
+    hook->readText(packet);
+  }
+}
+
+
+/*!
+ * Обработка копии только что отправленного сообщения.
+ */
+void Messages::sendText(const MessagePacket &packet)
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Messages *hook, m_hooks) {
+    hook->sendText(packet);
+  }
 }
 
 }  // namespace Hooks

@@ -33,6 +33,8 @@ ClientMessages::ClientMessages(QObject *parent)
   , m_hooks(0)
   , m_client(ChatClient::io())
 {
+  m_hooks = new Hooks::Messages(this);
+
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
 }
 
