@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "messages/Message.h"
 #include "SimpleJSon.h"
 
@@ -24,7 +26,12 @@ Message::Message()
 }
 
 
-QByteArray Message::json() const
+QString Message::json() const
 {
-  return SimpleJSon::generate(m_data);
+  QString json = SimpleJSon::generate(m_data);
+  qDebug() << json;
+
+  json.remove('\n');
+  json.remove('\r');
+  return json;
 }

@@ -30,6 +30,8 @@ public:
   inline const MessagePacket &packet() const { return m_packet; }
 
 private:
+  QByteArray detectTab() const;
+
   const MessagePacket &m_packet; ///< Пакет на основе которого формируется сообщение.
 };
 

@@ -29,7 +29,7 @@
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "HistoryUserMessage.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"

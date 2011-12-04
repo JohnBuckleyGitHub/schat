@@ -27,7 +27,9 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "debugstream.h"
+#include "messages/Message.h"
 #include "net/SimpleID.h"
+#include "SimpleJSon.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/UserUtils.h"
 
@@ -50,6 +52,12 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 
   createActions();
   retranslateUi();
+}
+
+
+void ChatView::add(const Message &message)
+{
+  evaluateJavaScript("addMessage(" + SimpleJSon::quote(message.json()) + ");");
 }
 
 
