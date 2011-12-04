@@ -23,6 +23,7 @@
 #include "ui/tabs/AbstractTab.h"
 
 class ChatView;
+class Message;
 
 /*!
  * Базовый класс для вкладок каналов.
@@ -40,6 +41,7 @@ public:
   inline int alerts() const            { return m_alerts; }
 
   virtual void alert(bool start = true);
+  void add(const Message &message);
 
 protected:
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.

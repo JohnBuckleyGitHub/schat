@@ -162,9 +162,27 @@ void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
 }
 
 
+/*!
+ * Добавление нового сообщения.
+ */
 void TabWidget::add(const Message &message)
 {
-  qDebug() << message.json();
+  QByteArray id = message.tab();
+  if (!Channel::isCompatibleId(id))
+    return;
+
+  if (m_channels.contains(id)) {
+    m_channels.value(id)->add(message);
+    return;
+  }
+
+  if (SimpleID::typeOf(id) == SimpleID::UserId) {
+    ChannelBaseTab *tab = privateTab(id);
+    if (tab)
+      tab->add(message);
+
+    return;
+  }
 }
 
 

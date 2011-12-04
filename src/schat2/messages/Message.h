@@ -31,7 +31,7 @@ class Message
 public:
   Message();
   inline const QByteArray tab() const { return m_tab; }
-  QByteArray json() const;
+  QString json() const;
 
 protected:
   QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.

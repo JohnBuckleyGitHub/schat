@@ -39,7 +39,7 @@ $(document).ready(function() {
 	alignChat();
 });
 
-//Align our chat to the bottom of the window.  If true is passed, view will also be scrolled down
+
 function alignChat() {
 	var windowHeight = window.innerHeight;
 
@@ -54,23 +54,35 @@ function alignChat() {
 		}
 	}
 
-	scrollToBottom();
-}
-
-//Auto-scroll to bottom.  Use nearBottom to determine if a scrollToBottom is desired.
-function nearBottom() {
-	return ( document.body.scrollTop >= ( document.body.offsetHeight - ( window.innerHeight * 1.2 ) ) );
-}
-
-function scrollToBottom() {
 	document.body.scrollTop = document.body.offsetHeight;
 }
 
-//Appending new content to the message view
-function appendMessage(html) {
+
+function addMessage(data)
+{
+	var json = JSON.parse(data);
+
+	if (json.type == 'channel')
+		addChannelMessage(json);
+}
+
+
+function addRawMessage(html) {
 	$('#Chat').append(html);
 
 	alignChat();
+}
+
+
+function addChannelMessage(json)
+{
+	var html = '<div class="container ' + json.type + '-type" id="' + json.id + '">';
+	html += '<div class="blocks">';
+	html += json.text;
+	html += '</div>';
+	html += '</div>';
+
+	addRawMessage(html);
 }
 
 function showSeconds(show) {

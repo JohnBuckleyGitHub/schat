@@ -50,3 +50,9 @@ void ChannelBaseTab::alert(bool start)
   else
     m_alerts = 0;
 }
+
+
+void ChannelBaseTab::add(const Message &message)
+{
+  m_chatView->add(message);
+}

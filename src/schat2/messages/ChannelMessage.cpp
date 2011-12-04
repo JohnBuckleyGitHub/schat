@@ -16,11 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "client/ChatClient.h"
 #include "messages/ChannelMessage.h"
+#include "net/packets/MessagePacket.h"
+#include "net/SimpleID.h"
 
 ChannelMessage::ChannelMessage(const MessagePacket &packet)
   : Message()
   , m_packet(packet)
 {
   m_data["type"] = "channel";
+  m_data["id"]   = QString(SimpleID::encode(packet.id()));
+  m_data["text"] = packet.text();
+
+  m_tab = detectTab();
+}
+
+
+QByteArray ChannelMessage::detectTab() const
+{
+  if (SimpleID::typeOf(m_packet.dest()) == SimpleID::ChannelId)
+    return m_packet.dest();
+
+  if (m_packet.sender() == ChatClient::id())
+    return m_packet.dest();
+
+  return m_packet.sender();
 }
