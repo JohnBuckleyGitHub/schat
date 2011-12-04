@@ -15,12 +15,20 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/MasterNode \
-    common/plugins/SlaveNode \
-    common/plugins/MessageLog \
-    common/plugins/BotCore \
-    common/plugins/BotEcho \
-    common/plugins/History \
-    common/plugins/Cache \
-    common/plugins/DebugClient \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network sql
+
+HEADERS  = \
+   CachePlugin.h \
+   CachePlugin_p.h \
+
+SOURCES  = \
+   CachePlugin.cpp \
+
+unix {
+  target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
+  INSTALLS += target
+}
+
+include(../plugins.pri)

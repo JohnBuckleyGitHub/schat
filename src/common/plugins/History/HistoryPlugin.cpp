@@ -19,7 +19,7 @@
 #include <QDebug>
 
 #include <QTime>
-#include <qplugin.h>
+#include <QtPlugin>
 
 #include "ChatCore.h"
 #include "HistoryDB.h"
