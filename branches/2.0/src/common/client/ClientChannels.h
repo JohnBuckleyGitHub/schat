@@ -26,12 +26,19 @@
 class ChannelPacket;
 class SimpleClient;
 
+namespace Hooks
+{
+  class Channels;
+}
+
 class SCHAT_EXPORT ClientChannels : public QObject
 {
   Q_OBJECT
 
 public:
   ClientChannels(QObject *parent = 0);
+  inline Hooks::Channels *hooks() const { return m_hooks; }
+
   bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);
   bool join(const QString &name);
@@ -60,6 +67,7 @@ private:
   void sync(ClientChannel channel);
 
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
+  Hooks::Channels *m_hooks;                    ///< Хуки.
   QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
   QList<QByteArray> m_synced;                  ///< Список синхронизированных каналов.
   QList<QByteArray> m_unsynced;                ///< Список не синхронизированных каналов.

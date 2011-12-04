@@ -88,4 +88,10 @@ void Messages::sendText(const MessagePacket &packet)
   }
 }
 
+
+Channels::Channels(QObject *parent)
+  : QObject(parent)
+{
+}
+
 }  // namespace Hooks

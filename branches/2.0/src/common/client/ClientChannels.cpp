@@ -20,6 +20,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
 #include "net/packets/ChannelPacket.h"
 #include "net/SimpleID.h"
@@ -28,6 +29,8 @@ ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
   , m_client(ChatClient::io())
 {
+  m_hooks = new Hooks::Channels(this);
+
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
   connect(m_client, SIGNAL(idle()), SLOT(idle()));
 }
