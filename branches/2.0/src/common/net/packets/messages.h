@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGE_H_
-#define MESSAGE_H_
+#ifndef MESSAGES_H_
+#define MESSAGES_H_
 
 #include <QStringList>
 
@@ -155,4 +155,4 @@ public:
   static bool remove(const QString &cmd, QString &msg);
 };
 
-#endif /* MESSAGE_H_ */
+#endif /* MESSAGES_H_ */

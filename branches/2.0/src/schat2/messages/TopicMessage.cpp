@@ -17,7 +17,7 @@
  */
 
 #include "messages/TopicMessage.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "ui/ChannelUtils.h"
 
 TopicMessage::TopicMessage(const Topic &topic)

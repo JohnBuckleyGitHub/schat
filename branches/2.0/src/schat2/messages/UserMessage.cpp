@@ -17,7 +17,7 @@
  */
 
 #include "messages/UserMessage.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 
 UserMessage::UserMessage(int status, const MessageData &data)
   : AbstractMessage(QLatin1String("user-type"), data)

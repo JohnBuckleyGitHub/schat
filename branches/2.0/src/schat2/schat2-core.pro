@@ -42,6 +42,7 @@ HEADERS = \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/ChannelMessage.h \
+    messages/Message.h \
     messages/MessageAdapter.h \
     messages/MessageBox.h \
     messages/TopicMessage.h \
@@ -106,6 +107,7 @@ SOURCES = \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/ChannelMessage.cpp \
+    messages/Message.cpp \
     messages/MessageAdapter.cpp \
     messages/MessageBox.cpp \
     messages/TopicMessage.cpp \

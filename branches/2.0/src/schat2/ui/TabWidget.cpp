@@ -36,8 +36,9 @@
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "net/packets/MessagePacket.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
@@ -161,9 +162,9 @@ void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
 }
 
 
-void TabWidget::add(const ChannelMessage &message)
+void TabWidget::add(const Message &message)
 {
-  qDebug() << "++++" << message.packet().text();
+  qDebug() << message.json();
 }
 
 

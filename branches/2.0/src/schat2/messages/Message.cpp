@@ -16,21 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELMESSAGE_H_
-#define CHANNELMESSAGE_H_
-
 #include "messages/Message.h"
+#include "SimpleJSon.h"
 
-class MessagePacket;
-
-class SCHAT_CORE_EXPORT ChannelMessage : public Message
+Message::Message()
 {
-public:
-  ChannelMessage(const MessagePacket &packet);
-  inline const MessagePacket &packet() const { return m_packet; }
+}
 
-private:
-  const MessagePacket &m_packet; ///< Пакет на основе которого формируется сообщение.
-};
 
-#endif /* CHANNELMESSAGE_H_ */
+QByteArray Message::json() const
+{
+  return SimpleJSon::generate(m_data);
+}
