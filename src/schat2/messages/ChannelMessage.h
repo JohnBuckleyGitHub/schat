@@ -16,27 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef CHANNELMESSAGE_H_
+#define CHANNELMESSAGE_H_
 
-#include "ChatHooks.h"
-#include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
-#include "ui/TabWidget.h"
+#include "schat.h"
 
-namespace Hooks {
+class MessagePacket;
 
-ChatMessages::ChatMessages(QObject *parent)
-  : Messages(parent)
+class SCHAT_CORE_EXPORT ChannelMessage
 {
-}
+public:
+  ChannelMessage(const MessagePacket &packet);
+  inline const MessagePacket &packet() const { return m_packet; }
 
+private:
+  const MessagePacket &m_packet; ///< Пакет на основе которого формируется сообщение.
+};
 
-void ChatMessages::readText(const MessagePacket &packet)
-{
-  qDebug() << "-->" << packet.text();
-
-  ChannelMessage message(packet);
-  TabWidget::i()->add(message);
-}
-
-}  // namespace Hooks
+#endif /* CHANNELMESSAGE_H_ */

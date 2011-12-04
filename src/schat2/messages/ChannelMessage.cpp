@@ -16,27 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
-#include "ChatHooks.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
-#include "ui/TabWidget.h"
 
-namespace Hooks {
-
-ChatMessages::ChatMessages(QObject *parent)
-  : Messages(parent)
+ChannelMessage::ChannelMessage(const MessagePacket &packet)
+  : m_packet(packet)
 {
 }
-
-
-void ChatMessages::readText(const MessagePacket &packet)
-{
-  qDebug() << "-->" << packet.text();
-
-  ChannelMessage message(packet);
-  TabWidget::i()->add(message);
-}
-
-}  // namespace Hooks

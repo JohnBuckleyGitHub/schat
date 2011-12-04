@@ -35,7 +35,9 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
+#include "messages/ChannelMessage.h"
 #include "net/packets/message.h"
+#include "net/packets/MessagePacket.h"
 #include "NetworkManager.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
@@ -156,6 +158,12 @@ void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
     if (!m_alerts.contains(tab))
       m_alerts.append(tab);
   }
+}
+
+
+void TabWidget::add(const ChannelMessage &message)
+{
+  qDebug() << "++++" << message.packet().text();
 }
 
 

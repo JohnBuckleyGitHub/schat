@@ -41,6 +41,7 @@ HEADERS = \
     ChatUrls.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
+    messages/ChannelMessage.h \
     messages/MessageAdapter.h \
     messages/MessageBox.h \
     messages/TopicMessage.h \
@@ -104,6 +105,7 @@ SOURCES = \
     ChatUrls.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
+    messages/ChannelMessage.cpp \
     messages/MessageAdapter.cpp \
     messages/MessageBox.cpp \
     messages/TopicMessage.cpp \
