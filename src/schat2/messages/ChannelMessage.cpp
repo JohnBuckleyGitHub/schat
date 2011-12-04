@@ -19,6 +19,8 @@
 #include "messages/ChannelMessage.h"
 
 ChannelMessage::ChannelMessage(const MessagePacket &packet)
-  : m_packet(packet)
+  : Message()
+  , m_packet(packet)
 {
+  m_data["type"] = "channel";
 }

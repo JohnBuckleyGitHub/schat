@@ -39,7 +39,7 @@ HEADERS += \
     net/packets/accounts.h \
     net/packets/auth.h \
     net/packets/ChannelPacket.h \
-    net/packets/message.h \
+    net/packets/messages.h \
     net/packets/MessagePacket.h \
     net/packets/Notice.h \
     net/packets/users.h \
@@ -81,7 +81,7 @@ SOURCES += \
     net/packets/accounts.cpp  \
     net/packets/auth.cpp \
     net/packets/ChannelPacket.cpp \
-    net/packets/message.cpp \
+    net/packets/messages.cpp \
     net/packets/MessagePacket.cpp \
     net/packets/Notice.cpp \
     net/packets/users.cpp \

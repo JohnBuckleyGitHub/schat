@@ -31,7 +31,7 @@ class AbstractMessage;
 class AbstractTab;
 class AlertTab;
 class ChannelBaseTab;
-class ChannelMessage;
+class Message;
 class ChannelTab;
 class ChatCore;
 class Notify;
@@ -62,7 +62,7 @@ public:
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab = 0);
   void message(ChannelBaseTab *tab, const AbstractMessage &data);
 
-  void add(const ChannelMessage &message);
+  void add(const Message &message);
 
 signals:
   void pageChanged(int type, bool visible);

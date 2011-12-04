@@ -22,7 +22,7 @@
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "messages/AbstractMessage.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "text/HtmlFilter.h"
 #include "text/TokenFilter.h"
 #include "ui/UserUtils.h"

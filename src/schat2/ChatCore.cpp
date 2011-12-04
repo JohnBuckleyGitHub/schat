@@ -36,7 +36,7 @@
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "NetworkManager.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"

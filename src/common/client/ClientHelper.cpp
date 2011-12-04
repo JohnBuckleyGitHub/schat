@@ -23,7 +23,7 @@
 #include "client/ClientCmd.h"
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "text/PlainTextFilter.h"
 

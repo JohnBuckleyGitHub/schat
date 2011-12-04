@@ -16,21 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELMESSAGE_H_
-#define CHANNELMESSAGE_H_
+#ifndef MESSAGE_H_
+#define MESSAGE_H_
 
-#include "messages/Message.h"
+#include <QVariant>
 
-class MessagePacket;
+#include "schat.h"
 
-class SCHAT_CORE_EXPORT ChannelMessage : public Message
+/*!
+ * Базовый класс для текстовых сообщений.
+ */
+class Message
 {
 public:
-  ChannelMessage(const MessagePacket &packet);
-  inline const MessagePacket &packet() const { return m_packet; }
+  Message();
+  inline const QByteArray tab() const { return m_tab; }
+  QByteArray json() const;
 
-private:
-  const MessagePacket &m_packet; ///< Пакет на основе которого формируется сообщение.
+protected:
+  QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.
+  QVariantMap m_data; ///< JSON данные.
 };
 
-#endif /* CHANNELMESSAGE_H_ */
+#endif /* MESSAGE_H_ */

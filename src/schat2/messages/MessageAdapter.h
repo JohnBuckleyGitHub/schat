@@ -23,7 +23,7 @@
 #include <QObject>
 
 #include "client/ClientHelper.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 
 class AbstractMessage;
 class AbstractNotice;

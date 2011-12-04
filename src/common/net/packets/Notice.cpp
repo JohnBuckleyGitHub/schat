@@ -18,7 +18,7 @@
 
 #include "net/PacketReader.h"
 #include "net/packets/Notice.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "net/PacketWriter.h"
 
 /*!
