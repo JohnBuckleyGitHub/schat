@@ -79,6 +79,7 @@ function addChannelMessage(json)
 	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
 	html += '<div class="blocks ' + json.Direction + '">';
 	html += dateTemplate(json.Date, json.Day);
+	html += nameTemplate(json);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 	html += '</div>';
 	html += '</div>';
@@ -99,12 +100,29 @@ function dateTemplate(milliseconds, day)
 			out += '<span class="day">' + pad(date.getDate()) + ':' + pad(date.getMonth() + 1) + ':' + date.getFullYear() + '</span> ';
 		}
 		out += '<span class="time">' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + '</span>';
-		out += '<span class="seconds">:' + pad(date.getSeconds()) + '</span>';
+		out += '<span class="seconds">:' + pad(date.getSeconds()) + '</span> ';
 		out += '</span>';
 	}
 
 	return out;
 }
+
+
+function nameTemplate(json)
+{
+	var out = '';
+	if (json.Author === undefined)
+		return out;
+
+	out += '<span class="nick-block"><a class="nick ';
+	out += json.Author.Id + '" href="';
+	out += json.Author.Url + '">';
+	out += json.Author.Name;
+	out += '</a></span>';
+
+	return out;
+}
+
 
 function showSeconds(show) {
 	if (show)
