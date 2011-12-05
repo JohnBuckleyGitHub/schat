@@ -23,7 +23,7 @@
 #include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 
 BotEcho::BotEcho(ClientHelper *helper, FileLocations *locations)
   : QObject(helper)

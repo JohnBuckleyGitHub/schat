@@ -19,12 +19,12 @@
 #include <QDebug>
 
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
-#include "net/packets/MessagePacket.h"
 #include "net/SimpleID.h"
 #include "text/PlainTextFilter.h"
 
@@ -36,6 +36,7 @@ ClientMessages::ClientMessages(QObject *parent)
   m_hooks = new Hooks::Messages(this);
 
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
+  connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
 }
 
 
@@ -59,9 +60,6 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   if (!plain.startsWith('/'))
     return sendText(dest, text);
 
-  if (!m_hooks)
-    return false;
-
   QStringList commands = (" " + plain).split(" /", QString::SkipEmptyParts);
   for (int i = 0; i < commands.size(); ++i) {
     ClientCmd cmd(commands.at(i));
@@ -80,13 +78,27 @@ bool ClientMessages::sendText(const QByteArray &dest, const QString &text)
 {
   MessagePacket packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
   if (m_client->send(packet, true)) {
-    if (m_hooks)
-      m_hooks->sendText(packet);
+    m_hooks->sendText(packet);
 
     return true;
   }
 
   return false;
+}
+
+
+void ClientMessages::channels(const QList<QByteArray> &channels)
+{
+  foreach (QByteArray id, channels) {
+    if (m_pending.contains(id)) {
+      QList<MessagePacket> packets = m_pending.value(id);
+
+      for (int i = 0; i < packets.size(); ++i)
+        m_hooks->readText(packets.at(i));
+
+      m_pending.remove(id);
+    }
+  }
 }
 
 
@@ -105,6 +117,15 @@ void ClientMessages::notice(int type)
   m_packet = &packet;
   m_packet->setDate(ChatClient::io()->date());
 
-  if (m_hooks)
-    m_hooks->readText(packet);
+  /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
+  /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь
+  /// до момента получения информации об отправителе.
+  ClientChannel user = ChatClient::channels()->get(m_packet->sender());
+  if (!user || user->status().value() == Status::Offline) {
+    ChatClient::channels()->join(m_packet->sender());
+    m_pending[m_packet->sender()].append(packet);
+    return;
+  }
+
+  m_hooks->readText(packet);
 }

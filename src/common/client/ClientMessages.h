@@ -20,8 +20,9 @@
 #define CLIENTMESSAGES_H_
 
 #include <QObject>
+#include <QHash>
 
-#include "schat.h"
+#include "net/packets/MessagePacket.h"
 
 class MessagePacket;
 class SimpleClient;
@@ -44,13 +45,15 @@ public:
   bool sendText(const QByteArray &dest, const QString &text);
 
 private slots:
+  void channels(const QList<QByteArray> &channels);
   void notice(int type);
 
 private:
-  Hooks::Messages *m_hooks; ///< Хуки.
-  MessagePacket *m_packet;  ///< Текущий прочитанный пакет.
-  QByteArray m_destId;      ///< Текущий получатель сообщения.
-  SimpleClient *m_client;   ///< Клиент чата.
+  Hooks::Messages *m_hooks;                           ///< Хуки.
+  MessagePacket *m_packet;                            ///< Текущий прочитанный пакет.
+  QByteArray m_destId;                                ///< Текущий получатель сообщения.
+  QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  SimpleClient *m_client;                             ///< Клиент чата.
 };
 
 #endif /* CLIENTMESSAGES_H_ */

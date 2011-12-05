@@ -182,6 +182,8 @@ void ClientChannels::channel()
     channel->channels() = m_packet->channels();
     sync(channel);
   }
+
+  m_synced += channel->id();
 }
 
 
@@ -250,7 +252,7 @@ void ClientChannels::quit()
 /*!
  * Формирование запроса информации об не известных каналах.
  *
- * \param channel Указатель на канал, допустимый тип канала: SimpleID::ChannelId.
+ * \param channel Указатель на канал.
  */
 void ClientChannels::sync(ClientChannel channel)
 {
