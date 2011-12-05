@@ -22,7 +22,7 @@
 #include "MasterNode.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/message.h"
+#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "net/packets/users.h"
 #include "net/ServerData.h"
