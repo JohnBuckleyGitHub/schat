@@ -30,7 +30,9 @@ class Message
 {
 public:
   Message();
-  inline const QByteArray tab() const { return m_tab; }
+  inline const QByteArray& tab() const   { return m_tab; }
+  inline const QVariantMap& data() const { return m_data; };
+  inline QVariantMap& data()             { return m_data; };
   QString json() const;
 
 protected:

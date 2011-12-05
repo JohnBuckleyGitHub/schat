@@ -74,13 +74,27 @@ function addRawMessage(html) {
 }
 
 
+/// Добавление сообщения пользователя.
 function addChannelMessage(json)
 {
+	if ($('#' + json.Id).length) {
+		updateChannelMessage(json);
+		return;
+	}
+
 	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
-	html += '<div class="blocks ' + json.Direction + '">';
+	html += '<div class="blocks ';
+	html += json.Direction;
+
+	if (json.Status !== undefined)
+		html += ' ' + json.Status;
+
+	html += '">';
+
 	html += dateTemplate(json.Date, json.Day);
 	html += nameTemplate(json);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
+
 	html += '</div>';
 	html += '</div>';
 
@@ -88,23 +102,72 @@ function addChannelMessage(json)
 }
 
 
+/// Обновление информации сообщения.
+function updateChannelMessage(json)
+{
+	var id = '#' + json.Id + ' > div.blocks';
+	var classes = json.Direction;
+	if (json.Status !== undefined)
+		classes += ' ' + json.Status;
+
+	$(id).attr('class', 'blocks ' + classes);
+
+	if (json.Date > 0) {
+		var date = new Date(json.Date);
+		if (json.Day === true)
+			$(id + ' > .date-time-block > .day').text(dateDay(date));
+
+		$(id + ' > .date-time-block > .time').text(dateTime(date));
+		$(id + ' > .date-time-block > .seconds').text(dateSeconds(date));
+	}
+}
+
+
+/// Возвращает HTML шаблон времени сообщения.
 function dateTemplate(milliseconds, day)
 {
-	function pad(n) { return n < 10 ? '0' + n : n }
 	var out = '';
 
 	if (milliseconds > 0) {
 		var date = new Date(milliseconds);
 		out += '<span class="date-time-block">';
 		if (day === true) {
-			out += '<span class="day">' + pad(date.getDate()) + ':' + pad(date.getMonth() + 1) + ':' + date.getFullYear() + '</span> ';
+			out += '<span class="day">' + dateDay(date) + '</span> ';
 		}
-		out += '<span class="time">' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + '</span>';
-		out += '<span class="seconds">:' + pad(date.getSeconds()) + '</span> ';
+		out += '<span class="time">' + dateTime(date) + '</span>';
+		out += '<span class="seconds">' + dateSeconds(date) + '</span> ';
 		out += '</span>';
 	}
 
 	return out;
+}
+
+
+/// Возвращает день в формате день:месяц:год.
+function dateDay(date)
+{
+	return datePad(date.getDate()) + ':' + datePad(date.getMonth() + 1) + ':' + date.getFullYear();
+}
+
+
+/// Возвращает время в формате часы:минуты.
+function dateTime(date)
+{
+	return datePad(date.getHours()) + ':' + datePad(date.getMinutes());
+}
+
+
+/// Возвращает секунды в формате :секунды.
+function dateSeconds(date)
+{
+	return ':' + datePad(date.getSeconds());
+}
+
+
+/// Дополняет число ведущим 0 при необходимости.
+function datePad(n)
+{
+	return n < 10 ? '0' + n : n
 }
 
 

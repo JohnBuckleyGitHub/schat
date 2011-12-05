@@ -33,9 +33,18 @@ ChatMessages::ChatMessages(QObject *parent)
 
 void ChatMessages::readText(const MessagePacket &packet)
 {
-  qDebug() << "-->" << packet.text();
+  qDebug() << "-->" << packet.status();
 
   ChannelMessage message(packet);
+  TabWidget::i()->add(message);
+}
+
+
+void ChatMessages::sendText(const MessagePacket &packet)
+{
+  ChannelMessage message(packet);
+  message.data()["Status"] = "undelivered";
+
   TabWidget::i()->add(message);
 }
 
