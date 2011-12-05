@@ -25,9 +25,12 @@ ChannelMessage::ChannelMessage(const MessagePacket &packet)
   : Message()
   , m_packet(packet)
 {
-  m_data["type"] = "channel";
-  m_data["id"]   = QString(SimpleID::encode(packet.id()));
-  m_data["text"] = packet.text();
+  m_data["Type"]      = "channel";
+  m_data["Id"]        = QString(SimpleID::encode(packet.id()));
+  m_data["Text"]      = packet.text();
+  m_data["Direction"] = m_packet.sender() == ChatClient::id() ? "outgoing" : "incoming";
+  m_data["Date"]      = m_packet.date();
+  m_data["Day"]       = false; // true включает отображение полного времени.
 
   m_tab = detectTab();
 }
