@@ -23,9 +23,9 @@
 
 class SCHAT_EXPORT DateTime
 {
-public:
-  DateTime();
+  DateTime() {}
 
+public:
   static qint64 utc();
 };
 

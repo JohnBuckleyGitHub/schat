@@ -62,7 +62,7 @@ function addMessage(data)
 {
 	var json = JSON.parse(data);
 
-	if (json.type == 'channel')
+	if (json.Type == 'channel')
 		addChannelMessage(json);
 }
 
@@ -76,13 +76,34 @@ function addRawMessage(html) {
 
 function addChannelMessage(json)
 {
-	var html = '<div class="container ' + json.type + '-type" id="' + json.id + '">';
-	html += '<div class="blocks">';
-	html += json.text;
+	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+	html += '<div class="blocks ' + json.Direction + '">';
+	html += dateTemplate(json.Date, json.Day);
+	html += '<span class="msg-body-block">' + json.Text + '</span>';
 	html += '</div>';
 	html += '</div>';
 
 	addRawMessage(html);
+}
+
+
+function dateTemplate(milliseconds, day)
+{
+	function pad(n) { return n < 10 ? '0' + n : n }
+	var out = '';
+
+	if (milliseconds > 0) {
+		var date = new Date(milliseconds);
+		out += '<span class="date-time-block">';
+		if (day === true) {
+			out += '<span class="day">' + pad(date.getDate()) + ':' + pad(date.getMonth() + 1) + ':' + date.getFullYear() + '</span> ';
+		}
+		out += '<span class="time">' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + '</span>';
+		out += '<span class="seconds">:' + pad(date.getSeconds()) + '</span>';
+		out += '</span>';
+	}
+
+	return out;
 }
 
 function showSeconds(show) {
