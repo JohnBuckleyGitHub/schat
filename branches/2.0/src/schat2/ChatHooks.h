@@ -31,6 +31,7 @@ class SCHAT_CORE_EXPORT ChatMessages : public Messages
 public:
   ChatMessages(QObject *parent = 0);
   void readText(const MessagePacket &packet);
+  void sendText(const MessagePacket &packet);
 };
 
 }  // namespace Hooks
