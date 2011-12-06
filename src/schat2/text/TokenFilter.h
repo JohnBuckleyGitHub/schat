@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QStringList>
 #include <QVariant>
+#include <QSharedPointer>
 
 #include "schat.h"
 #include "text/HtmlToken.h"
@@ -40,7 +41,7 @@ public:
   {}
 
   virtual ~AbstractFilter() {}
-  inline QString name() const { return m_name; }
+  inline const QString& name() const { return m_name; }
   virtual bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const = 0;
 
 protected:
@@ -48,22 +49,19 @@ protected:
 };
 
 
+typedef QSharedPointer<AbstractFilter> FilterPtr;
+
+
 class SCHAT_CORE_EXPORT TokenFilter
 {
   TokenFilter() {}
 
 public:
-  static bool add(AbstractFilter *filter);
-  static bool add(const QString &type, AbstractFilter *filter);
-  static bool add(const QString &type, const QString &filter);
-  static bool filter(const QString &name, QList<HtmlToken> &tokens, QVariantHash options = QVariantHash());
-  static QStringList defaults(const QString &name);
-  static void remove(const QString &name);
-  static void removeAll();
+  static QString filter(const QString &type, const QString &text);
+  static void add(const QString &type, AbstractFilter *filter);
 
 private:
-  static QHash<QString, AbstractFilter *> m_filters; ///< Доступные фильтры.
-  static QHash<QString, QStringList> m_default;      ///< Конфигурация фильтров по умолчанию.
+  static QHash<QString, FilterPtr> m_filters; ///< Доступные фильтры.
 };
 
 

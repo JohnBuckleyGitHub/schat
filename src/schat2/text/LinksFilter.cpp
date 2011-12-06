@@ -21,7 +21,7 @@
 #include "text/LinksFilter.h"
 
 LinksFilter::LinksFilter()
-  : AbstractFilter(QLatin1String("Links"))
+  : AbstractFilter("Links")
 {
   m_scheme += "http://";
   m_scheme += "https://";
@@ -42,8 +42,6 @@ bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
       parse(out, token.text);
     else
       out.append(token);
-
-//    qDebug() << "--" << tokens.at(i).parent << tokens.at(i).text;
   }
 
   tokens = out;

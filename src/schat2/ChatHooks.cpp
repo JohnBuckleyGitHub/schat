@@ -23,6 +23,9 @@
 #include "client/SimpleClient.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessagePacket.h"
+#include "text/LinksFilter.h"
+#include "text/TokenFilter.h"
+#include "text/UrlFilter.h"
 #include "ui/TabWidget.h"
 
 namespace Hooks {
@@ -30,6 +33,9 @@ namespace Hooks {
 ChatMessages::ChatMessages(QObject *parent)
   : Messages(parent)
 {
+  TokenFilter::add("channel", new LinksFilter());
+  TokenFilter::add("channel", new UrlFilter());
+
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
 }
 

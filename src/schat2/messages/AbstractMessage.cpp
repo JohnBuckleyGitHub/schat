@@ -148,23 +148,23 @@ QString AbstractMessage::js(bool add) const
 
 void AbstractMessage::setText(const QString &text, int parseOptions)
 {
-  if (text.isEmpty())
-    return;
-
-  QStringList filters = TokenFilter::defaults(m_type);
-  if (filters.isEmpty()) {
-    m_text = text;
-    return;
-  }
-
-  HtmlFilter filter(parseOptions);
-  QList<HtmlToken> tokens = filter.tokenize(text);
-
-  for (int i = 0; i < filters.size(); ++i) {
-    TokenFilter::filter(filters.at(i), tokens);
-  }
-
-  m_text = HtmlFilter::build(tokens);
+//  if (text.isEmpty())
+//    return;
+//
+//  QStringList filters = TokenFilter::defaults(m_type);
+//  if (filters.isEmpty()) {
+//    m_text = text;
+//    return;
+//  }
+//
+//  HtmlFilter filter(parseOptions);
+//  QList<HtmlToken> tokens = filter.tokenize(text);
+//
+//  for (int i = 0; i < filters.size(); ++i) {
+//    TokenFilter::filter(filters.at(i), tokens);
+//  }
+//
+//  m_text = HtmlFilter::build(tokens);
 }
 
 

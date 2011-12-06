@@ -767,6 +767,7 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
     case QVariant::UInt: res += QString::number(val.toUInt()).toAscii(); break;
     case QVariant::ULongLong: res += QString::number(val.toULongLong()).toAscii(); break;
     case QVariant::String: res += quote(val.toString()).toUtf8(); break;
+    case QVariant::ByteArray: res += quote(val.toByteArray()); break;
     case QVariant::Map: {
       //for (int c = indent; c > 0; c--) res += ' ';
       res += "{";

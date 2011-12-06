@@ -48,8 +48,8 @@ MessageAdapter::MessageAdapter()
   : ClientHelper(ChatCore::i()->client())
   , m_settings(ChatCore::i()->settings())
 {
-  TokenFilter::add(QLatin1String("user-type"), new LinksFilter());
-  TokenFilter::add(QLatin1String("user-type"), new UrlFilter());
+//  TokenFilter::add(QLatin1String("user-type"), new LinksFilter());
+//  TokenFilter::add(QLatin1String("user-type"), new UrlFilter());
 
   m_richText = true;
   connect(m_client, SIGNAL(message(const MessageData &)), SLOT(message(const MessageData &)));
