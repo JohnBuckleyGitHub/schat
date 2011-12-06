@@ -80,6 +80,15 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
+/*!
+ * Обработка команд требующих сохранения форматирования сообщения.
+ *
+ * \param dest  Идентификатор получателя.
+ * \param text  Текст сообщения.
+ * \param plain Текст очищенный от HTML тегов.
+ *
+ * \return \b true если команда обработана.
+ */
 bool Messages::command(const QByteArray &dest, const QString &text, const QString &plain)
 {
   if (m_hooks.isEmpty())
@@ -92,6 +101,11 @@ bool Messages::command(const QByteArray &dest, const QString &text, const QStrin
 
   if (plain.startsWith("/me ", Qt::CaseInsensitive)) {
     ChatClient::messages()->sendText(dest, remove("/me ", text), "me");
+    return true;
+  }
+
+  if (plain.startsWith("/say ", Qt::CaseInsensitive)) {
+    ChatClient::messages()->sendText(dest, remove("/say ", text), "say");
     return true;
   }
 
