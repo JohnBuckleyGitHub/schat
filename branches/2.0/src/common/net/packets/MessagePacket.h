@@ -24,6 +24,7 @@
 class SCHAT_EXPORT MessagePacket : public Notice
 {
 public:
+  MessagePacket();
   MessagePacket(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time = 0, const QByteArray &id = QByteArray());
   MessagePacket(quint16 type, PacketReader *reader);
 };

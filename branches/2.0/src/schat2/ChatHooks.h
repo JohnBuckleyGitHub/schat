@@ -20,6 +20,7 @@
 #define CHATHOOKS_H_
 
 #include "client/ClientHooks.h"
+#include "net/packets/MessagePacket.h"
 
 namespace Hooks
 {
@@ -32,6 +33,12 @@ public:
   ChatMessages(QObject *parent = 0);
   void readText(const MessagePacket &packet);
   void sendText(const MessagePacket &packet);
+
+private slots:
+  void clientStateChanged(int state, int previousState);
+
+private:
+  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 }  // namespace Hooks
