@@ -42,7 +42,7 @@ public:
   QByteArray randomId() const;
 
   bool send(const QByteArray &dest, const QString &text);
-  bool sendText(const QByteArray &dest, const QString &text);
+  bool sendText(const QByteArray &dest, const QString &text, const QString &command = QString());
 
 private slots:
   void channels(const QList<QByteArray> &channels);

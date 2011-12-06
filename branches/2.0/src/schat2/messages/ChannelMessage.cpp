@@ -31,6 +31,7 @@ ChannelMessage::ChannelMessage(const MessagePacket &packet)
 {
   m_data["Type"]      = "channel";
   m_data["Id"]        = QString(SimpleID::encode(packet.id()));
+  m_data["Command"]   = packet.command();
   m_data["Text"]      = packet.text();
   m_data["Direction"] = m_packet.sender() == ChatClient::id() ? "outgoing" : "incoming";
   m_data["Date"]      = m_packet.date();

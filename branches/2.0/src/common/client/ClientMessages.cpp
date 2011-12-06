@@ -60,6 +60,10 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   if (!plain.startsWith('/'))
     return sendText(dest, text);
 
+  if (m_hooks->command(dest, text, plain))
+    return true;
+
+  /// Для обработки обычных команд используется хук: Hooks::Messages::command(const QByteArray &dest, const ClientCmd &cmd).
   QStringList commands = (" " + plain).split(" /", QString::SkipEmptyParts);
   for (int i = 0; i < commands.size(); ++i) {
     ClientCmd cmd(commands.at(i));
@@ -74,9 +78,12 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
 /*!
  * Отправка текстового сообщения, команды не обрабатываются.
  */
-bool ClientMessages::sendText(const QByteArray &dest, const QString &text)
+bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const QString &command)
 {
   MessagePacket packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
+  if (!command.isEmpty())
+    packet.setCommand(command);
+
   if (m_client->send(packet, true)) {
     m_hooks->sendText(packet);
 
