@@ -69,6 +69,23 @@ protected:
   QList<Channels*> m_hooks; ///< Хуки.
 };
 
+
+/*!
+ * Хуки, связанные c работой клиента.
+ */
+class SCHAT_EXPORT Client : public QObject
+{
+  Q_OBJECT
+
+public:
+  Client(QObject *parent = 0);
+  inline void add(Client *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
+  inline void remove(Client *hook) { m_hooks.removeAll(hook); }
+
+protected:
+  QList<Client*> m_hooks; ///< Хуки.
+};
+
 }  // namespace Hooks
 
 #endif /* CLIENTHOOKS_H_ */

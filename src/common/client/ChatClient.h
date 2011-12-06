@@ -21,11 +21,16 @@
 
 #include <QObject>
 
-#include "schat.h"
+#include "Channel.h"
 
 class ClientChannels;
 class ClientMessages;
 class SimpleClient;
+
+namespace Hooks
+{
+  class Client;
+}
 
 class SCHAT_EXPORT ChatClient : public QObject
 {
@@ -33,16 +38,22 @@ class SCHAT_EXPORT ChatClient : public QObject
 
 public:
   ChatClient(QObject *parent = 0);
+  inline Hooks::Client *hooks() const { return m_hooks; }
 
   inline static ChatClient *i()            { return m_self; }
+  inline static ClientChannel channel()    { return m_self->getChannel(); }
   inline static ClientChannels *channels() { return m_self->m_channels; }
   inline static ClientMessages *messages() { return m_self->m_messages; }
+  inline static QByteArray id()            { return m_self->getId(); }
   inline static SimpleClient *io()         { return m_self->m_client; }
-  static QByteArray id();
 
 private:
+  ClientChannel getChannel();
+  QByteArray getId();
+
   ClientChannels *m_channels; ///< Каналы.
   ClientMessages *m_messages; ///< Обработчик сообщений.
+  Hooks::Client *m_hooks;     ///< Хуки.
   SimpleClient *m_client;     ///< Клиент чата.
   static ChatClient *m_self;  ///< Указатель на себя.
 };

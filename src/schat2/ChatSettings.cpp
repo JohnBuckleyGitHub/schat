@@ -52,12 +52,12 @@ void ChatSettings::setClient(SimpleClient *client)
 {
   m_client = client;
 
-  m_channel = ChannelUtils::channel();
-  m_channel->setName(value("Profile/Nick").toString());
-  m_channel->gender().setRaw(value("Profile/Gender").toInt());
-  m_channel->status().set(value("Profile/Status").toInt());
-
-  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+//  m_channel = ChannelUtils::channel();
+//  m_channel->setName(value("Profile/Nick").toString());
+//  m_channel->gender().setRaw(value("Profile/Gender").toInt());
+//  m_channel->status().set(value("Profile/Status").toInt());
+//
+//  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
 
 
