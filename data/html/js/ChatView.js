@@ -89,6 +89,9 @@ function addChannelMessage(json)
 	if (json.Status !== undefined)
 		html += ' ' + json.Status;
 
+	if (json.Command == "me")
+		html += ' me-action';
+
 	html += '">';
 
 	html += dateTemplate(json.Date, json.Day);
@@ -107,8 +110,12 @@ function updateChannelMessage(json)
 {
 	var id = '#' + json.Id + ' > div.blocks';
 	var classes = json.Direction;
+
 	if (json.Status !== undefined)
 		classes += ' ' + json.Status;
+
+		if (json.Command == "me")
+		classes += ' me-action';
 
 	$(id).attr('class', 'blocks ' + classes);
 
@@ -181,7 +188,7 @@ function nameTemplate(json)
 	out += json.Author.Id + '" href="';
 	out += json.Author.Url + '">';
 	out += json.Author.Name;
-	out += '</a></span>';
+	out += '</a></span> ';
 
 	return out;
 }

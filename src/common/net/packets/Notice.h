@@ -100,6 +100,7 @@ public:
 
   static QString status(int status);
 
+  inline void setCommand(const QString &command)     { m_command = command; }
   inline void setData(const QVariantMap &data)       { m_data = data; }
   inline void setDate(qint64 date)                   { m_date = date; }
   inline void setDest(const QByteArray &dest)        { m_dest = QList<QByteArray>() << dest; }

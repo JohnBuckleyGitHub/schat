@@ -22,6 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
 #include "client/ClientHooks.h"
+#include "client/ClientMessages.h"
 
 namespace Hooks
 {
@@ -29,6 +30,24 @@ namespace Hooks
 Messages::Messages(QObject *parent)
   : QObject(parent)
 {
+}
+
+
+QString Messages::remove(const QString &cmd, const QString &msg)
+{
+  QString c = cmd;
+  int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+  if (index == -1 && c.endsWith(' ')) {
+    c = c.left(c.size() - 1);
+    index = msg.indexOf(c, 0, Qt::CaseInsensitive);
+  }
+
+  if (index == -1)
+    return false;
+
+  QString out = msg;
+  out.remove(index, c.size());
+  return out;
 }
 
 
@@ -54,6 +73,25 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 
   if (command == "join") {
     ChatClient::channels()->join(cmd.body());
+    return true;
+  }
+
+  return false;
+}
+
+
+bool Messages::command(const QByteArray &dest, const QString &text, const QString &plain)
+{
+  if (m_hooks.isEmpty())
+    return false;
+
+  for (int i = 0; i < m_hooks.size(); ++i) {
+    if (m_hooks.at(i)->command(dest, text, plain))
+      return true;
+  }
+
+  if (plain.startsWith("/me ", Qt::CaseInsensitive)) {
+    ChatClient::messages()->sendText(dest, remove("/me ", text), "me");
     return true;
   }
 
