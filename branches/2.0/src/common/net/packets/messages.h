@@ -147,12 +147,4 @@ public:
   MessageData data;
 };
 
-
-class SCHAT_EXPORT MessageUtils
-{
-public:
-  MessageUtils() {}
-  static bool remove(const QString &cmd, QString &msg);
-};
-
 #endif /* MESSAGES_H_ */
