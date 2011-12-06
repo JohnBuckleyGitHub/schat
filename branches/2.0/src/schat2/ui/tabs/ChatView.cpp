@@ -26,6 +26,7 @@
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "debugstream.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
@@ -188,7 +189,7 @@ void ChatView::menuTriggered(QAction *action)
 
 void ChatView::openUrl(const QUrl &url)
 {
-  ChatCore::i()->openUrl(url);
+  ChatUrls::open(url);
 }
 
 

@@ -24,6 +24,7 @@
 #include "schat.h"
 
 class InputWidget;
+class Notify;
 class QMenu;
 class QToolBar;
 class QToolButton;
@@ -48,6 +49,7 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
+  void notify(const Notify &notify);
   void notify(int notice, const QVariant &data);
   void sendMsg(const QString &text);
   void showHistoryItem();

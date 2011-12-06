@@ -224,9 +224,8 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
   QModelIndex index = indexAt(event->pos());
 
   if (index.isValid(), event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
-//    UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-
-//    ChatCore::i()->openUrl(UserUtils::toUrl(item->user(), QLatin1String("insert")));
+    UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+    ChatUrls::open(ChatUrls::toUrl(item->channel(), "insert"));
   }
   else if (event->button() == Qt::LeftButton && !index.isValid()) {
     setCurrentIndex(QModelIndex());

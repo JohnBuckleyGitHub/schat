@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QDesktopServices>
+#include <QTextDocument>
 
 #include "ChatNotify.h"
 #include "ChatUrls.h"
@@ -127,11 +128,13 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     return;
 
   QString action = actions.first();
-  if (action == "open") {
-    ChatNotify::start(Notify(Notify::OpenChannel, channel->id()));
-  }
 
-  qDebug() << channel->name();
+  if (action == "open") {
+    ChatNotify::start(Notify::OpenChannel, channel->id());
+  }
+  else if (action == "insert") {
+    ChatNotify::start(Notify::InsertText, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(channel->name())));
+  }
 }
 
 

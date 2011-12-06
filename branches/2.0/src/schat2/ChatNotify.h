@@ -24,11 +24,15 @@
 
 #include "schat.h"
 
+/*!
+ * Базовый класс уведомления.
+ */
 class Notify
 {
 public:
   enum Actions {
-    OpenChannel = 0x6F63 ///< "oc" Открытие канала, команда передаёт идентификатор канала.
+    OpenChannel = 0x6F63, ///< "oc" Открытие канала, команда передаёт идентификатор канала.
+    InsertText = 0x6974   ///< "it" Запрос на вставку текста в поле отравки.
   };
 
   Notify(int type, const QVariant &data = QVariant())
@@ -45,6 +49,9 @@ private:
 };
 
 
+/*!
+ * Отправка и получение внутренних уведомлений чата.
+ */
 class SCHAT_CORE_EXPORT ChatNotify : public QObject
 {
   Q_OBJECT
@@ -53,6 +60,7 @@ public:
   ChatNotify(QObject *parent = 0);
   inline static ChatNotify *i() { return m_self; }
   inline static void start(const Notify &notify) { m_self->startNotify(notify); }
+  inline static void start(int type, const QVariant &data = QVariant()) { m_self->startNotify(Notify(type, data)); }
 
 signals:
   void notify(const Notify &notify);
