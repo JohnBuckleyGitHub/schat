@@ -146,4 +146,10 @@ Channels::Channels(QObject *parent)
 {
 }
 
+
+Client::Client(QObject *parent)
+  : QObject(parent)
+{
+}
+
 }  // namespace Hooks

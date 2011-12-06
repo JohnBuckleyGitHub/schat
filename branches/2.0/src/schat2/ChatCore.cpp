@@ -151,7 +151,7 @@ void ChatCorePrivate::openChannelUrl(const QUrl &url)
   if (actions.isEmpty())
     return;
 
-  ClientChannel channel = ChannelUtils::channel(url);
+  ClientChannel channel = ChatUrls::channel(url);
   if (!channel)
     return;
 

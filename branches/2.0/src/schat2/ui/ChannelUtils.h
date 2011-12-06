@@ -35,10 +35,7 @@ public:
     OfflineStatus = 2 ///< Также отображать статус "не в сети".
   };
 
-  static ClientChannel channel();
   static ClientChannel channel(const QByteArray &id);
-  static ClientChannel channel(const QUrl &url);
-  static QByteArray id();
   static QString webIcon(const QString &action);
   static QVariantMap toWebButton(const QByteArray &id, const QString &action, const QString &title);
 
