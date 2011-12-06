@@ -97,7 +97,6 @@ public:
     SettingsNotice,
     ToggleVisibilityNotice,
     NetworkChangedNotice,
-    InsertTextToSend,       ///< Запрос на вставку текста в поле отравки.
     AddPrivateTab,          ///< Добавление приватного разговора и установка фокуса на него.
     ShowChatNotice,         ///< Запрос на открытие и активацию окна чата.
     EditTopicNotice,        ///< Редактирование темы канала, параметр: идентификатор канала.

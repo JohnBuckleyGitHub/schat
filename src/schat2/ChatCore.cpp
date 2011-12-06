@@ -178,10 +178,7 @@ void ChatCorePrivate::openUserUrl(const QUrl &url)
   if (!user)
     return;
 
-  if (actions.first() == QLatin1String("insert")) {
-    q->startNotify(ChatCore::InsertTextToSend, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(user->nick())));
-  }
-  else if (actions.first() == QLatin1String("talk")) {
+  if (actions.first() == QLatin1String("talk")) {
     q->startNotify(ChatCore::AddPrivateTab, user->id());
   }
   else if (actions.first() == QLatin1String("ignore")) {

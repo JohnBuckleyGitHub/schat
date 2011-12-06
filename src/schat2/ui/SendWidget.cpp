@@ -23,6 +23,7 @@
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "net/packets/messages.h"
 #include "text/PlainTextFilter.h"
 #include "ui/ColorButton.h"
@@ -49,6 +50,8 @@ SendWidget::SendWidget(QWidget *parent)
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -82,6 +85,13 @@ void SendWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QWidget::changeEvent(event);
+}
+
+
+void SendWidget::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::InsertText)
+    insertHtml(notify.data().toString());
 }
 
 
