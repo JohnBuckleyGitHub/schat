@@ -155,14 +155,6 @@ bool ClientHelper::sendText(MessageData &data)
  */
 int ClientHelper::command(MessageData &data, const QString &cmd, const QString &text)
 {
-  QString full = QLatin1String("/") + cmd + QLatin1String(" ");
-  if (text.startsWith(full, Qt::CaseInsensitive)) {
-    if (MessageUtils::remove(full, data.text))
-      data.command = cmd;
-
-    return 1;
-  }
-
   return 0;
 }
 
