@@ -29,7 +29,7 @@ Message::Message()
 QString Message::json() const
 {
   QString json = SimpleJSon::generate(m_data);
-  qDebug() << json;
+//  qDebug() << json;
 
   json.remove('\n');
   json.remove('\r');

@@ -23,7 +23,7 @@
 #include "ui/UserUtils.h"
 
 UrlFilter::UrlFilter()
-  : AbstractFilter(QLatin1String("Url"))
+  : AbstractFilter("Url")
 {
 }
 
@@ -34,7 +34,7 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
     if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == QLatin1String("a")) {
       HtmlATag tag(tokens.at(i));
 
-      if (tag.url.startsWith("chat://user/")) {
+      if (tag.url.startsWith("chat://channel/")) {
         tag.classes = "nick";
         ClientUser user = UserUtils::user(QUrl(tag.url));
         if (user)

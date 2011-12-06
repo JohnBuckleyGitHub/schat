@@ -24,15 +24,16 @@
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessagePacket.h"
 #include "net/SimpleID.h"
+#include "text/TokenFilter.h"
 
 ChannelMessage::ChannelMessage(const MessagePacket &packet)
   : Message()
   , m_packet(packet)
 {
   m_data["Type"]      = "channel";
-  m_data["Id"]        = QString(SimpleID::encode(packet.id()));
+  m_data["Id"]        = SimpleID::encode(packet.id());
   m_data["Command"]   = packet.command();
-  m_data["Text"]      = packet.text();
+  m_data["Text"]      = TokenFilter::filter("channel", packet.text());
   m_data["Direction"] = m_packet.sender() == ChatClient::id() ? "outgoing" : "incoming";
   m_data["Date"]      = m_packet.date();
 //  m_data["Day"]       = true; // true включает отображение полного времени.
@@ -40,7 +41,7 @@ ChannelMessage::ChannelMessage(const MessagePacket &packet)
   ClientChannel user = ChatClient::channels()->get(m_packet.sender());
   if (user) {
     QVariantMap author;
-    author["Id"]      = QString(SimpleID::encode(user->id()));
+    author["Id"]      = SimpleID::encode(user->id());
     author["Name"]    = Qt::escape(user->name());
     author["Url"]     = ChatUrls::toUrl(user, "insert").toString();
     m_data["Author"]  = author;

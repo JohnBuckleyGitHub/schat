@@ -16,72 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "text/HtmlFilter.h"
 #include "text/TokenFilter.h"
 
-QHash<QString, AbstractFilter *> TokenFilter::m_filters;
-QHash<QString, QStringList> TokenFilter::m_default;
+QHash<QString, FilterPtr> TokenFilter::m_filters;
 
-
-/*!
- * Добавление нового фильтра.
- */
-bool TokenFilter::add(AbstractFilter *filter)
+QString TokenFilter::filter(const QString &type, const QString &text)
 {
-  if (filter->name().isEmpty() || m_filters.contains(filter->name())) {
-    delete filter;
-    return false;
-  }
+  HtmlFilter filter;
+  QList<HtmlToken> tokens = filter.tokenize(text);
+  QList<FilterPtr> filters = m_filters.values(type);
 
-  m_filters[filter->name()] = filter;
-  return true;
+  for (int i = 0; i < filters.size(); ++i)
+    filters.at(i)->filter(tokens);
+
+  return HtmlFilter::build(tokens);
 }
 
 
-bool TokenFilter::add(const QString &type, AbstractFilter *filter)
+void TokenFilter::add(const QString &type, AbstractFilter *filter)
 {
-  if (add(filter))
-    return add(type, filter->name());
-
-  return false;
-}
-
-
-bool TokenFilter::add(const QString &type, const QString &filter)
-{
-  if (m_default.contains(type) && m_default.value(type).contains(filter))
-    return false;
-
-  m_default[type].append(filter);
-  return true;
-}
-
-
-bool TokenFilter::filter(const QString &name, QList<HtmlToken> &tokens, QVariantHash options)
-{
-  if (m_filters.contains(name))
-    return m_filters.value(name)->filter(tokens, options);
-
-  return false;
-}
-
-
-QStringList TokenFilter::defaults(const QString &name)
-{
-  return m_default.value(name);
-}
-
-
-/*!
- * Удаление фильтра.
- */
-void TokenFilter::remove(const QString &name)
-{
-  m_filters.remove(name);
-}
-
-
-void TokenFilter::removeAll()
-{
-  qDeleteAll(m_filters);
-  m_filters.clear();
+  m_filters.insertMulti(type, FilterPtr(filter));
 }
