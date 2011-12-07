@@ -66,7 +66,7 @@ StatusBar::StatusBar(QWidget *parent)
   addPermanentWidget(m_status);
 
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString&)), SLOT(loggedIn(const QString&)));
+//  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString&)), SLOT(loggedIn(const QString&)));
 
   updateStyleSheet();
   clientStateChanged(SimpleClient::ClientOffline);

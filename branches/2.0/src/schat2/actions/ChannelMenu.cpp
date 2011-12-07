@@ -20,8 +20,10 @@
 
 #include "actions/ChannelMenu.h"
 #include "ChatCore.h"
-#include "ui/ChannelUtils.h"
 #include "ChatUrls.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "ui/ChannelUtils.h"
 
 ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
   : MenuBuilder(parent)
@@ -32,7 +34,7 @@ ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
 
 ChannelMenu *ChannelMenu::bind(QMenu *menu, const QVariant &id)
 {
-  ClientChannel channel = ChannelUtils::channel(id.toByteArray());
+  ClientChannel channel = ChatClient::channels()->get(id.toByteArray());
   if (!channel)
     return 0;
 

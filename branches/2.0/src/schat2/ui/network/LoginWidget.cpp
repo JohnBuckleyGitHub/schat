@@ -149,7 +149,7 @@ void LoginWidget::login()
   m_progress->setVisible(true);
   m_login->setVisible(false);
 
-  ChatCore::i()->adapter()->login("login", m_nameEdit->text(), m_passwordEdit->text());
+//  ChatCore::i()->adapter()->login("login", m_nameEdit->text(), m_passwordEdit->text());
 }
 
 

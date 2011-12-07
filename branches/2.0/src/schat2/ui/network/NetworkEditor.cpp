@@ -62,7 +62,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   mainLay->setSpacing(4);
 
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
-  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(reload()));
+//  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(reload()));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_anonymous, SIGNAL(toggled(bool)), SLOT(anonymousToggled(bool)));
 

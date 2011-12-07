@@ -104,7 +104,6 @@ public:
 
 private slots:
   void clientStateChanged(int state);
-  void loggedIn(const QString &name);
 
 private:
   QString root(const QByteArray &id) const;
@@ -115,7 +114,6 @@ private:
   ChatSettings *m_settings;  ///< Основные настройки.
   FileLocations *m_locations;
   int m_invalids;
-  MessageAdapter *m_adapter;
   QByteArray m_tmpId;        ///< Временный идентификатор для текущего редактируемой сети.
   QHash<QByteArray, NetworkItem> m_items;
   QByteArray m_selected;     ///< Текущая выбранная сеть в настройках.

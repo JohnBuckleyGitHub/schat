@@ -147,12 +147,10 @@ NetworkManager::NetworkManager(QObject *parent)
   , m_settings(ChatCore::i()->settings())
   , m_locations(ChatCore::i()->locations())
   , m_invalids(0)
-  , m_adapter(ChatCore::i()->adapter())
   , m_client(ChatCore::i()->client())
 {
   load();
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-  connect(m_adapter, SIGNAL(loggedIn(const QString &)), SLOT(loggedIn(const QString &)));
 }
 
 
@@ -322,14 +320,6 @@ void NetworkManager::clientStateChanged(int state)
     return;
 
   write();
-}
-
-
-void NetworkManager::loggedIn(const QString &name)
-{
-  NetworkItem& item = m_items[serverId()];
-  item.setAccount(name);
-  item.write();
 }
 
 

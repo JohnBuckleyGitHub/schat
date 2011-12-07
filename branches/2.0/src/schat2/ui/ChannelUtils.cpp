@@ -17,23 +17,12 @@
  */
 
 #include "ChatCore.h"
+#include "ChatUrls.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "ui/ChannelUtils.h"
-#include "ChatUrls.h"
-
-
-ClientChannel ChannelUtils::channel(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
-    return ClientChannel();
-
-  ClientChannel channel = ChatCore::i()->client()->channel(id);
-  if (channel)
-    return channel;
-
-  return channel;
-}
 
 
 QString ChannelUtils::webIcon(const QString &action)
@@ -52,7 +41,7 @@ QString ChannelUtils::webIcon(const QString &action)
 QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &action, const QString &title)
 {
   QVariantMap map;
-  ClientChannel channel = ChannelUtils::channel(id);
+  ClientChannel channel = ChatClient::channels()->get(id);
   if (!channel)
     return map;
 

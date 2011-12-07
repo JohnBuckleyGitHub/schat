@@ -101,28 +101,6 @@ ChatCorePrivate::~ChatCorePrivate()
 }
 
 
-/*!
- * Возвращает действие и список параметров из адреса.
- */
-QStringList ChatCorePrivate::urlAction(const QUrl &url)
-{
-  if (url.scheme() != QLatin1String("chat"))
-    return QStringList();
-
-  QStringList out = ChatCore::urlPath(url);
-
-  if (url.host() == QLatin1String("user") || url.host() == QLatin1String("channel")) {
-    if (out.size() < 2)
-      return QStringList();
-
-    out.removeFirst();
-    return out;
-  }
-
-  return out;
-}
-
-
 void ChatCorePrivate::ignore(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) != SimpleID::UserId)
@@ -144,10 +122,12 @@ void ChatCorePrivate::loadIgnoreList()
 
 /*!
  * Открытия адресов вида chat://channel/идентификатор канала/действие.
+ *
+ * \deprecated Вместо этой функции использовать ChatUrls.
  */
 void ChatCorePrivate::openChannelUrl(const QUrl &url)
 {
-  QStringList actions = urlAction(url);
+  QStringList actions = ChatUrls::actions(url);
   if (actions.isEmpty())
     return;
 
@@ -167,10 +147,12 @@ void ChatCorePrivate::openChannelUrl(const QUrl &url)
 
 /*!
  * Открытия адресов вида chat://user/идентификатор пользователя/действие.
+ *
+ * \deprecated Вместо этой функции использовать ChatUrls.
  */
 void ChatCorePrivate::openUserUrl(const QUrl &url)
 {
-  QStringList actions = urlAction(url);
+  QStringList actions = ChatUrls::actions(url);
   if (actions.isEmpty())
     return;
 
@@ -232,19 +214,16 @@ ChatCore::ChatCore(QObject *parent)
   new ChatClient(this);
   new ChatNotify(this);
 
+  new Hooks::ChatMessages(this);
+
   m_client = ChatClient::io();
   m_settings->setClient(m_client);
 
-  ChatClient::messages()->hooks()->add(new Hooks::ChatMessages(this));
-
-  m_messageAdapter = new MessageAdapter();
   m_networkManager = new NetworkManager(this);
 
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
-  connect(m_messageAdapter, SIGNAL(message(const AbstractMessage &)), SIGNAL(message(const AbstractMessage &)));
-  connect(m_messageAdapter, SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)), SIGNAL(channelDataChanged(const QByteArray &, const QByteArray &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
   QTimer::singleShot(0, this, SLOT(start()));
@@ -307,19 +286,6 @@ QIcon ChatCore::icon(IconName name)
     return QIcon();
 
   return QIcon(QLatin1String(":/images/") + ChatCorePrivate::icons.at(name) + QLatin1String(".png"));
-}
-
-
-/*!
- * Возвращает список элементов пути из адреса.
- */
-QStringList ChatCore::urlPath(const QUrl &url)
-{
-  QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
-  if (path.startsWith('/'))
-    path.remove(0, 1);
-
-  return path.split('/', QString::SkipEmptyParts);
 }
 
 
