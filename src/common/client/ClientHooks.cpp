@@ -152,4 +152,24 @@ Client::Client(QObject *parent)
 {
 }
 
+
+/*!
+ * Получение идентификатора пользователя.
+ * Эта функция будет вызвана только если не удалось получить
+ * идентификатор пользователя стандартым методом.
+ */
+QByteArray Client::id()
+{
+  if (m_hooks.isEmpty())
+    return QByteArray();
+
+  foreach (Client *hook, m_hooks) {
+    QByteArray id = hook->id();
+    if (id.isEmpty())
+      return id;
+  }
+
+  return QByteArray();
+}
+
 }  // namespace Hooks

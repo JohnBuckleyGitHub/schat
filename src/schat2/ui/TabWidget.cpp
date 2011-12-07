@@ -419,6 +419,8 @@ void TabWidget::channel(const QByteArray &id)
  */
 void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
 {
+  Q_UNUSED(channelId)
+  Q_UNUSED(userId)
 //  ClientChannel chan = m_client->channel(channelId);
 //  if (!chan)
 //    return;
@@ -440,6 +442,7 @@ void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
  */
 void TabWidget::synced(const QByteArray &channelId)
 {
+  Q_UNUSED(channelId)
 //  QTime t;
 //  t.start();
 //  ClientChannel channel = m_client->channel(channelId);

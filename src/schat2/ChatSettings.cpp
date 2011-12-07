@@ -30,22 +30,22 @@
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
-  setDefault(QLatin1String("AutoConnect"),         true);
-  setDefault(QLatin1String("ChannelUserCount"),    false);
-  setDefault(QLatin1String("CookieAuth"),          true);
-  setDefault(QLatin1String("DeveloperExtras"),     false);
-  setDefault(QLatin1String("Height"),              420);
-  setDefault(QLatin1String("HideIgnore"),          true);
-  setDefault(QLatin1String("Maximized"),           false);
-  setDefault(QLatin1String("Networks"),            QStringList());
-  setDefault(QLatin1String("ShowSeconds"),         false);
-  setDefault(QLatin1String("ShowServiceMessages"), false);
-  setDefault(QLatin1String("Translation"),         QLatin1String("auto"));
-  setDefault(QLatin1String("Width"),               666);
-  setDefault(QLatin1String("WindowsAero"),         true);
-  setDefault(QLatin1String("Profile/Gender"),      0);
-  setDefault(QLatin1String("Profile/Nick"),        User::defaultNick());
-  setDefault(QLatin1String("Profile/Status"),      1);
+  setDefault("AutoConnect",         true);
+  setDefault("ChannelUserCount",    false);
+  setDefault("CookieAuth",          true);
+  setDefault("DeveloperExtras",     false);
+  setDefault("Height",              420);
+  setDefault("HideIgnore",          true);
+  setDefault("Maximized",           false);
+  setDefault("Networks",            QStringList());
+  setDefault("ShowSeconds",         false);
+  setDefault("ShowServiceMessages", false);
+  setDefault("Translation",         "auto");
+  setDefault("Width",               666);
+  setDefault("WindowsAero",         true);
+  setDefault("Profile/Gender",      0);
+  setDefault("Profile/Nick",        User::defaultNick());
+  setDefault("Profile/Status",      1);
 }
 
 
@@ -67,6 +67,8 @@ void ChatSettings::setClient(SimpleClient *client)
  */
 void ChatSettings::updateValue(const QString &key, const QVariant &value)
 {
+  Q_UNUSED(key)
+  Q_UNUSED(value)
 //  if (this->value(key) == value)
 //    return;
 //
@@ -135,6 +137,7 @@ void ChatSettings::update(User *user, bool sync)
  */
 void ChatSettings::updateStatus(const QVariant &value)
 {
+  Q_UNUSED(value);
   QString status;
 //  if (value.type() == QVariant::Int)
 //    status = User::statusToString(value.toInt(), m_user->statusText(value.toInt()));

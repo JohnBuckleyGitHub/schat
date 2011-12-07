@@ -392,6 +392,7 @@ void MessageAdapter::newUserMessage(int status, const MessageData &data)
 
 void MessageAdapter::readTopic(const MessageData &data)
 {
+  Q_UNUSED(data)
 //  ClientChannel channel = m_client->channel(data.destId());
 //  if (!channel)
 //    return;
