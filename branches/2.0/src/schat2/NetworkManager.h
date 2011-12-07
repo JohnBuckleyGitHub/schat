@@ -21,6 +21,7 @@
 
 #include <QHash>
 #include <QObject>
+#include <QSharedPointer>
 #include <QStringList>
 #include <QVariant>
 
@@ -50,7 +51,7 @@ public:
   inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
 
-  static NetworkItem item();
+  static NetworkItem* item();
 
   void read();
   void write();
@@ -71,6 +72,8 @@ private:
   QString m_url;         ///< Адрес сервера.
 };
 
+typedef QSharedPointer<NetworkItem> Network;
+
 
 /*!
  * Менеджер подключений.
@@ -81,22 +84,22 @@ class SCHAT_CORE_EXPORT NetworkManager : public QObject
 
 public:
   NetworkManager(QObject *parent = 0);
-  bool isAutoConnect() const;
   bool open();
   bool open(const QByteArray &id);
   bool open(const QString &url);
-  inline bool isItem(const QByteArray &id) const { if (id.isEmpty()) return false; return m_items.contains(id); }
-  inline const QByteArray& tmpId() const { return m_tmpId; }
-  inline int count() const { return m_items.count(); }
-  inline NetworkItem item() const { return item(serverId()); }
-  inline NetworkItem item(const QByteArray &id) const { return m_items.value(id); }
-  inline NetworkItem& edit(const QByteArray &id) { return m_items[id]; }
-  inline QByteArray selected() const { return m_selected; }
-  inline QString root() const { return root(serverId()); }
+
+  bool isAutoConnect() const;
+  inline const QByteArray& selected() const       { return m_selected; }
+  inline const QByteArray& tmpId() const          { return m_tmpId; }
+  inline Network item() const                     { return item(serverId()); }
+  inline Network item(const QByteArray &id) const { return m_items.value(id); }
   int isSelectedActive() const;
   QByteArray serverId() const;
-  QList<NetworkItem> items() const;
+  QList<Network> items() const;
+
   static QString currentServerName();
+
+  inline QString root() const { return root(serverId()); }
   void removeItem(const QByteArray &id);
   void setSelected(const QByteArray &id);
 
@@ -124,7 +127,7 @@ private:
   Networks m_networks;       ///< Список сетей.
   QByteArray m_selected;     ///< Текущая выбранная сеть в настройках.
   QByteArray m_tmpId;        ///< Временный идентификатор для текущей редактируемой сети.
-  QHash<QByteArray, NetworkItem> m_items;
+  QHash<QByteArray, Network> m_items;
 };
 
 #endif /* NETWORKMANAGER_H_ */

@@ -31,7 +31,6 @@
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkEditor.h"
 #include "ui/tabs/WelcomeTab.h"
-#include "User.h"
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
@@ -48,7 +47,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   networkLay->setColumnStretch(0, 1);
 
   QGridLayout *languageLay = 0;
-  if (!ChatCore::i()->networks()->count()) {
+  if (!ChatCore::networks()->items().size()) {
     m_languageLabel = new QLabel(this);
     m_languageBox = new LanguageField(this);
     languageLay = new QGridLayout;

@@ -112,19 +112,19 @@ void NetworkWidget::open()
     return;
   }
 
-  NetworkItem& item = m_manager->edit(m_manager->selected());
-  if (item.id() == m_manager->tmpId()) {
-    item.setUrl(m_combo->currentText());
-    m_combo->setItemText(index, item.url());
+  Network item = m_manager->item(m_manager->selected());
+  if (item->id() == m_manager->tmpId()) {
+    item->setUrl(m_combo->currentText());
+    m_combo->setItemText(index, item->url());
   }
-  else if (!m_editing.isEmpty() && item.id() == m_editing) {
-    item.setUrl(m_combo->currentText());
-    m_combo->setItemText(index, item.name());
+  else if (!m_editing.isEmpty() && item->id() == m_editing) {
+    item->setUrl(m_combo->currentText());
+    m_combo->setItemText(index, item->name());
     m_editing.clear();
     m_combo->setEditable(false);
   }
 
-  m_manager->open(item.id());
+  m_manager->open(item->id());
 }
 
 
@@ -156,17 +156,17 @@ void NetworkWidget::changeEvent(QEvent *event)
  */
 int NetworkWidget::add(const QString &url)
 {
-  NetworkItem &item = m_manager->edit(m_manager->tmpId());
+  Network item = m_manager->item(m_manager->tmpId());
 
-  int index = m_combo->findData(item.id());
+  int index = m_combo->findData(item->id());
   if (index == -1) {
     if (!url.isEmpty()) {
-      item.setUrl(url);
-      item.setAccount(QString());
-      item.setPassword(QString());
+      item->setUrl(url);
+      item->setAccount(QString());
+      item->setPassword(QString());
     }
 
-    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.url(), item.id());
+    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item->url(), item->id());
     index = 0;
   }
 
@@ -188,12 +188,12 @@ void NetworkWidget::edit()
   if (index == -1)
     return;
 
-  NetworkItem item = m_manager->item(m_combo->itemData(index).toByteArray());
-  if (!item.isValid())
+  Network item = m_manager->item(m_combo->itemData(index).toByteArray());
+  if (!item->isValid())
     return;
 
-  m_editing = item.id();
-  m_combo->setItemText(index, item.url());
+  m_editing = item->id();
+  m_combo->setItemText(index, item->url());
   m_combo->setEditable(true);
   m_combo->setFocus();
 }
@@ -210,8 +210,8 @@ void NetworkWidget::indexChanged(int index)
   if (!m_editing.isEmpty()) {
     int index = m_combo->findData(m_editing);
     if (index != -1) {
-      NetworkItem item = m_manager->item(m_editing);
-      m_combo->setItemText(index, item.name());
+      Network item = m_manager->item(m_editing);
+      m_combo->setItemText(index, item->name());
     }
 
     m_editing.clear();
@@ -229,16 +229,16 @@ void NetworkWidget::notify(int notice, const QVariant &data)
       m_combo->removeItem(index);
 
     QByteArray id = data.toByteArray();
-    NetworkItem item = m_manager->item(id);
+    Network item = m_manager->item(id);
 
-    if (!item.isValid())
+    if (!item->isValid())
       return;
 
-    index = m_combo->findData(item.id());
+    index = m_combo->findData(item->id());
     if (index != -1)
       m_combo->removeItem(index);
 
-    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item.name(), item.id());
+    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item->name(), item->id());
     m_combo->setCurrentIndex(0);
   }
   else if (notice == ChatCore::NetworkSelectedNotice) {
@@ -283,10 +283,10 @@ void NetworkWidget::showMenu()
  */
 void NetworkWidget::load()
 {
-  QList<NetworkItem> items = m_manager->items();
+  QList<Network> items = m_manager->items();
 
   for (int i = 0; i < items.size(); ++i) {
-    m_combo->addItem(SCHAT_ICON(GlobeIcon), items.at(i).name(), items.at(i).id());
+    m_combo->addItem(SCHAT_ICON(GlobeIcon), items.at(i)->name(), items.at(i)->id());
   }
 
   if (m_combo->count() == 0) {
@@ -312,11 +312,11 @@ void NetworkWidget::retranslateUi()
  */
 void NetworkWidget::updateIndex()
 {
-  NetworkItem item = m_manager->item(m_manager->selected());
+  Network item = m_manager->item(m_manager->selected());
 
-  int index = m_combo->findData(item.id());
+  int index = m_combo->findData(item->id());
   if (index == -1) {
-    if (m_manager->tmpId() == item.id())
+    if (m_manager->tmpId() == item->id())
       index = add(QString());
     else
       return;
