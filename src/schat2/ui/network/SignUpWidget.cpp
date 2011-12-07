@@ -219,7 +219,7 @@ void SignUpWidget::signUp()
   QVariantMap json;
   json["recovery"] = map;
 
-  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text(), json);
+//  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text(), json);
 }
 
 

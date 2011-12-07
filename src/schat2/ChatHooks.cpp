@@ -20,6 +20,7 @@
 
 #include "ChatHooks.h"
 #include "client/ChatClient.h"
+#include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessagePacket.h"
@@ -33,6 +34,8 @@ namespace Hooks {
 ChatMessages::ChatMessages(QObject *parent)
   : Messages(parent)
 {
+  ChatClient::messages()->hooks()->add(this);
+
   TokenFilter::add("channel", new LinksFilter());
   TokenFilter::add("channel", new UrlFilter());
 

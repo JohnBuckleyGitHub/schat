@@ -22,6 +22,9 @@
 #include "Channel.h"
 #include "schat.h"
 
+/*!
+ * \deprecated Этот класс является устаревшим.
+ */
 class SCHAT_CORE_EXPORT ChannelUtils
 {
 private:
@@ -35,7 +38,6 @@ public:
     OfflineStatus = 2 ///< Также отображать статус "не в сети".
   };
 
-  static ClientChannel channel(const QByteArray &id);
   static QString webIcon(const QString &action);
   static QVariantMap toWebButton(const QByteArray &id, const QString &action, const QString &title);
 

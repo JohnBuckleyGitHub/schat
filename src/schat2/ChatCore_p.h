@@ -26,7 +26,6 @@ public:
   ChatCorePrivate();
   ~ChatCorePrivate();
 
-  QStringList urlAction(const QUrl &url);
   void ignore(const QByteArray &id);
   void loadIgnoreList();
   void openChannelUrl(const QUrl &url);

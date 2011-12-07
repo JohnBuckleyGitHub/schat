@@ -30,6 +30,8 @@
 
 /*!
  * Пользователь.
+ *
+ * \deprecated Этот класс является устаревшим.
  */
 class SCHAT_EXPORT User
 {
@@ -97,7 +99,7 @@ public:
 protected:
   inline bool validate(bool valid) { if (valid) return true; else m_valid = false; return false; }
 
-  bool m_valid;                         ///< true все данные корректны. \deprecated Не использовать эту переменную.
+  bool m_valid;                         ///< true все данные корректны.
   Groups m_groups;                      ///< Группы пользователя.
   Gender m_gender;                      ///< Пол и цвет иконки.
   int m_status;                         ///< Код статуса.
@@ -105,9 +107,9 @@ protected:
   QHash<int, QString> m_statuses;       ///< Статусы.
   QList<QByteArray> m_channels;         ///< Каналы.
   QString m_account;                    ///< Зарегистрированное имя пользователя.
-  QString m_host;                       ///< Адрес пользователя. \deprecated Необходима поддержка множественного входа пользователя.
+  QString m_host;                       ///< Адрес пользователя.
   QString m_nick;                       ///< Ник пользователя.
-  QString m_userAgent;                  ///< User Agent пользователя. \deprecated Необходима поддержка множественного входа пользователя.
+  QString m_userAgent;                  ///< User Agent пользователя.
   quint8 m_serverNumber;                ///< Номер сервера.
 };
 

@@ -28,18 +28,14 @@
 #include <QStackedWidget>
 
 #include "ChatCore.h"
-#include "ui/network/NetworkEditor.h"
+#include "ChatSettings.h"
+#include "ChatUrls.h"
+#include "ui/fields/GenderField.h"
 #include "ui/fields/NickEdit.h"
+#include "ui/network/NetworkEditor.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 #include "User.h"
-#include "ChatSettings.h"
-#include "ui/fields/GenderField.h"
-
-#if defined(SCHAT_OPTION)
-  #undef SCHAT_OPTION
-  #define SCHAT_OPTION(x) m_settings->value(ChatSettings::x)
-#endif
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
   : QWidget(parent)
@@ -172,7 +168,7 @@ void SettingsTab::openUrl(const QUrl &url)
   if (url.isEmpty() || url.scheme() != "chat" || url.host() != "settings")
     return;
 
-  QStringList path = ChatCore::urlPath(url);
+  QStringList path = ChatUrls::path(url);
   if (path.isEmpty())
     return;
 

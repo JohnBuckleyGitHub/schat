@@ -18,6 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "net/packets/messages.h"
 #include "net/packets/users.h"
@@ -52,12 +53,12 @@ void ChatSettings::setClient(SimpleClient *client)
 {
   m_client = client;
 
-//  m_channel = ChannelUtils::channel();
-//  m_channel->setName(value("Profile/Nick").toString());
-//  m_channel->gender().setRaw(value("Profile/Gender").toInt());
-//  m_channel->status().set(value("Profile/Status").toInt());
-//
-//  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
+  m_channel = ChatClient::channel();
+  m_channel->setName(value("Profile/Nick").toString());
+  m_channel->gender().setRaw(value("Profile/Gender").toInt());
+  m_channel->status().set(value("Profile/Status").toInt());
+
+  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
 }
 
 

@@ -32,7 +32,6 @@ class ChatPlugins;
 class ChatSettings;
 class ChatViewAction;
 class FileLocations;
-class MessageAdapter;
 class MessageData;
 class NetworkManager;
 class SimpleClient;
@@ -109,13 +108,12 @@ public:
   ~ChatCore();
   bool isIgnored(const QByteArray &id);
   inline ChatPlugins *plugins() { return m_plugins; }
-  inline ChatSettings *settings() { return m_settings; }
-  inline FileLocations *locations() const { return m_locations; }
-  inline MessageAdapter *adapter() const { return m_messageAdapter; }
-  inline NetworkManager *networks() const { return m_networkManager; }
   inline const QByteArray& currentId() const { return m_currentId; }
   inline SimpleClient *client() { return m_client; }
-  inline static ChatCore *i() { return m_self; }
+  inline static ChatCore *i()              { return m_self; }
+  inline static ChatSettings *settings()   { return m_self->m_settings; }
+  inline static FileLocations *locations() { return m_self->m_locations; }
+  inline static NetworkManager *networks() { return m_self->m_networkManager; }
   inline StatusMenu *statusMenu() { return m_statusMenu; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
@@ -124,13 +122,10 @@ public:
   static QIcon icon(const QIcon &icon, const QString &overlay);
   static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
-  static QStringList urlPath(const QUrl &url);
   static void makeRed(QWidget *widget, bool red = true);
   void startNotify(int notice, const QVariant &data = QVariant());
 
 signals:
-  void channelDataChanged(const QByteArray &senderId, const QByteArray &channelId);
-  void message(const AbstractMessage &message);
   void notify(int notice, const QVariant &data);
 
 public slots:
@@ -150,7 +145,6 @@ private:
   ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
   ChatSettings *m_settings;                       ///< Настройки.
   FileLocations *m_locations;                     ///< Схема размещения файлов.
-  MessageAdapter *m_messageAdapter;               ///< Адаптер отправки и получения сообщений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
