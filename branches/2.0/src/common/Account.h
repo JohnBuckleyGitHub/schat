@@ -45,8 +45,8 @@ public:
   inline qint64 date() const                { return m_date; }
   inline qint64 id() const                  { return m_id; }
 
-  inline const void setCookie(const QByteArray &cookie) { m_cookie = cookie; }
   inline void setChannel(qint64 channel)                { m_channel = channel; }
+  inline void setCookie(const QByteArray &cookie)       { m_cookie = cookie; }
   inline void setDate(qint64 date)                      { m_date = date; }
   inline void setId(qint64 id)                          { m_id = id; }
   inline void setName(const QString &name)              { m_name = name; }

@@ -46,8 +46,6 @@ public:
   };
 
   MessageAdapter();
-  bool sendText(MessageData &data);
-  int command(MessageData &data, const QString &cmd, const QString &text);
   void command(const ClientCmd &cmd);
 
 signals:

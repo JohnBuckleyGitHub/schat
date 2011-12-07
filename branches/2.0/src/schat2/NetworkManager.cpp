@@ -106,7 +106,6 @@ void NetworkItem::write()
 {
   QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
-
   settings.beginGroup(SimpleID::encode(m_id));
 
   if (!m_account.isEmpty()) {
@@ -386,12 +385,12 @@ void NetworkManager::write()
   QByteArray id = ChatClient::serverId();
   m_selected = id;
 
+  NetworkItem item = NetworkItem::item();
+  item.write();
+
   m_networks.data.removeAll(id);
   m_networks.data.prepend(id);
   m_networks.write();
-
-  NetworkItem item = NetworkItem::item();
-  item.write();
 
   m_items[id] = item;
   root(id);

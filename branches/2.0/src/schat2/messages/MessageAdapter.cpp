@@ -57,31 +57,6 @@ MessageAdapter::MessageAdapter()
 }
 
 
-bool MessageAdapter::sendText(MessageData &data)
-{
-  if (ClientHelper::sendText(data)) {
-    newUserMessage(UserMessage::OutgoingMessage | UserMessage::Undelivered, data);
-    return true;
-  }
-
-  return false;
-}
-
-
-int MessageAdapter::command(MessageData &data, const QString &cmd, const QString &text)
-{
-  int result = ClientHelper::command(data, cmd, text);
-
-  if (result == 1 && cmd == QLatin1String("topic")) {
-    MessageData msg(UserUtils::userId(), m_destId, data.command, data.text);
-    m_client->send(msg, true);
-    return 2;
-  }
-
-  return result;
-}
-
-
 /*!
  * Обработка комманд http://simple.impomezia.com/Commands
  * - /about

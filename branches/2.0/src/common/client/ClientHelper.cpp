@@ -40,53 +40,6 @@ ClientHelper::ClientHelper(SimpleClient *client)
 
 
 /*!
- * Отправка сообщения, если в сообщении содержаться команды, то они будут обработаны.
- */
-bool ClientHelper::send2(MessageData &data)
-{
-  if (data.text.isEmpty())
-    return false;
-
-  m_destId = data.destId();
-  QString text;
-
-  if (m_richText) {
-    text = PlainTextFilter::filter(data.text);
-  }
-  else
-    text = data.text.simplified();
-
-  for (int i = 0; i < m_commands.size(); ++i) {
-    int result = command(data, m_commands.at(i), text);
-    if (result == 0)
-      continue;
-
-    if (result == 1) {
-      sendText(data);
-      return true;
-    }
-
-    if (result == 2)
-      return false;
-  }
-
-  if (text.at(0) != QLatin1Char('/')) {
-    sendText(data);
-    return true;
-  }
-
-  QStringList commands = (QLatin1String(" ") + text).split(QLatin1String(" /"), QString::SkipEmptyParts);
-  for (int i = 0; i < commands.size(); ++i) {
-    ClientCmd cmd(commands.at(i));
-    if (cmd.isValid())
-      command(cmd);
-  }
-
-  return true;
-}
-
-
-/*!
  * Универсальная функция для регистрации или авторизации пользователя.
  *
  * \param command  Команда, например "reg" или "login".
@@ -138,30 +91,6 @@ bool ClientHelper::sendText(MessageData &data)
   data.autoSetOptions();
 
   return m_client->send(data, true);
-}
-
-
-/*!
- * Обработчик команд требующих полную поддержку html текста, например команда "/me".
- *
- * \param data Данные сообщения.
- * \param cmd  Команда без начального слэша.
- * \param text Текст, очищенный от html тегов.
- *
- * \return Результат обработки команды
- *  - 0 команда не найдена,
- *  - 1 команда найдена
- *  - 2 команда найдена и обработана.
- */
-int ClientHelper::command(MessageData &data, const QString &cmd, const QString &text)
-{
-  return 0;
-}
-
-
-void ClientHelper::command(const ClientCmd &cmd)
-{
-  Q_UNUSED(cmd)
 }
 
 
