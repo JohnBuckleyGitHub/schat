@@ -108,9 +108,9 @@ void NetworkEditor::reload()
   m_tabs->reload();
   m_anonymous->setEnabled(true);
 
-  NetworkItem item = m_manager->item(m_manager->selected());
-  m_anonymous->setEnabled(!item.isAuthorized());
-  m_anonymous->setChecked(item.account().isEmpty());
+  Network item = m_manager->item(m_manager->selected());
+  m_anonymous->setEnabled(!item->isAuthorized());
+  m_anonymous->setChecked(item->account().isEmpty());
 }
 
 

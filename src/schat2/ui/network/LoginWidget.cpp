@@ -118,9 +118,9 @@ void LoginWidget::retranslateUi()
  */
 void LoginWidget::reload()
 {
-  NetworkItem item = m_manager->item(m_manager->selected());
-  m_nameEdit->setText(item.account());
-  m_passwordEdit->setText(item.password());
+  Network item = m_manager->item(m_manager->selected());
+  m_nameEdit->setText(item->account());
+  m_passwordEdit->setText(item->password());
 
   textChanged();
 }
@@ -137,9 +137,9 @@ void LoginWidget::showEvent(QShowEvent *event)
 
 void LoginWidget::editingFinished()
 {
-  NetworkItem& item = m_manager->edit(m_manager->selected());
-  item.setAccount(m_nameEdit->text());
-  item.setPassword(m_passwordEdit->text());
+  Network item = m_manager->item(m_manager->selected());
+  item->setAccount(m_nameEdit->text());
+  item->setPassword(m_passwordEdit->text());
 }
 
 

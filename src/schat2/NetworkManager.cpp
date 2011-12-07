@@ -63,23 +63,23 @@ bool NetworkItem::isValid() const
 }
 
 
-NetworkItem NetworkItem::item()
+NetworkItem* NetworkItem::item()
 {
   SimpleClient *client = ChatClient::io();
-  NetworkItem item(client->serverData()->id());
+  NetworkItem *item = new NetworkItem(client->serverData()->id());
 
   QString name = client->serverData()->name();
   if (name.isEmpty())
     name = client->url().host();
 
-  item.m_name = name;
-  item.m_url = client->url().toString();
-  item.m_cookie = client->cookie();
-  item.m_userId = client->channelId();
+  item->m_name = name;
+  item->m_url = client->url().toString();
+  item->m_cookie = client->cookie();
+  item->m_userId = client->channelId();
 //  item.m_account = client->user()->account();
 
-  if (!item.m_account.isEmpty())
-    item.m_authorized = true;
+  if (!item->m_account.isEmpty())
+    item->m_authorized = true;
 
   return item;
 }
@@ -194,10 +194,10 @@ bool NetworkManager::open(const QByteArray &id)
     return false;
 
   ChatClient::io()->setCookieAuth(ChatCore::settings()->value("CookieAuth").toBool());
-  NetworkItem item = m_items.value(id);
-  ChatClient::io()->setAccount(item.account(), item.password());
+  Network item = m_items.value(id);
+  ChatClient::io()->setAccount(item->account(), item->password());
 
-  return ChatClient::io()->openUrl(item.url(), item.cookie());
+  return ChatClient::io()->openUrl(item->url(), item->cookie());
 }
 
 
@@ -226,7 +226,7 @@ int NetworkManager::isSelectedActive() const
   if (ChatClient::io()->clientState() == SimpleClient::ClientOnline && m_selected == ChatClient::io()->serverId())
     return 1;
 
-  if (ChatClient::io()->clientState() == SimpleClient::ClientConnecting && ChatClient::io()->url().toString() == item(m_selected).url())
+  if (ChatClient::io()->clientState() == SimpleClient::ClientConnecting && ChatClient::io()->url().toString() == item(m_selected)->url())
     return 2;
 
   return 0;
@@ -254,13 +254,13 @@ QByteArray NetworkManager::serverId() const
 /*!
  * Получение списка идентификаторов сетей, сохранённых в настройках.
  */
-QList<NetworkItem> NetworkManager::items() const
+QList<Network> NetworkManager::items() const
 {
-  QList<NetworkItem> out;
+  QList<Network> out;
 
   for (int i = 0; i < m_networks.data.size(); ++i) {
-    NetworkItem item = m_items.value(m_networks.data.at(i));
-    if (item.isValid())
+    Network item = m_items.value(m_networks.data.at(i));
+    if (item->isValid())
       out.append(item);
   }
 
@@ -338,8 +338,8 @@ void NetworkManager::load()
   m_networks.read();
 
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
-  NetworkItem item(m_tmpId);
-  item.setUrl("schat://");
+  Network item(new NetworkItem(m_tmpId));
+  item->setUrl("schat://");
   m_items[m_tmpId] = item;
 
   if (m_networks.data.isEmpty())
@@ -352,10 +352,10 @@ void NetworkManager::load()
   for (int i = 0; i < m_networks.data.size(); ++i) {
     QByteArray id = m_networks.data.at(i);
 
-    NetworkItem item(id);
-    item.read();
+    Network item(new NetworkItem(id));
+    item->read();
 
-    if (!item.isValid()) {
+    if (!item->isValid()) {
       invalids += id;
       continue;
     }
@@ -385,8 +385,8 @@ void NetworkManager::write()
   QByteArray id = ChatClient::serverId();
   m_selected = id;
 
-  NetworkItem item = NetworkItem::item();
-  item.write();
+  Network item(NetworkItem::item());
+  item->write();
 
   m_networks.data.removeAll(id);
   m_networks.data.prepend(id);

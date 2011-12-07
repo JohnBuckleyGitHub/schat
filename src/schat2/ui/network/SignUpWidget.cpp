@@ -142,11 +142,11 @@ bool SignUpWidget::canSignUp()
   if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline)
     return false;
 
-  if (ChatCore::i()->client()->serverId() != ChatCore::i()->networks()->selected())
+  if (ChatCore::i()->client()->serverId() != ChatCore::networks()->selected())
     return false;
 
-  NetworkItem item = ChatCore::i()->networks()->item(ChatCore::i()->networks()->selected());
-  if (item.isAuthorized())
+  Network item = ChatCore::i()->networks()->item(ChatCore::networks()->selected());
+  if (item->isAuthorized())
     return false;
 
   return true;
