@@ -41,14 +41,11 @@ class SCHAT_EXPORT ClientHelper : public QObject
 
 public:
   ClientHelper(SimpleClient *client);
-  bool send2(MessageData &data);
   inline SimpleClient *client() { return m_client; }
   QByteArray login(const QString &command, const QString &name, const QString &password, const QVariantMap &json = QVariantMap());
   QByteArray randomId() const;
   static qint64 timestamp();
   virtual bool sendText(MessageData &data);
-  virtual int command(MessageData &data, const QString &cmd, const QString &text);
-  virtual void command(const ClientCmd &cmd);
 
 signals:
   void loggedIn(const QString &name);
