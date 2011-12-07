@@ -19,10 +19,12 @@
 #include <QFile>
 #include <QDir>
 
+#include "debugstream.h"
+
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
-#include "debugstream.h"
 #include "FileLocations.h"
 #include "messages/MessageAdapter.h"
 #include "net/ServerData.h"
@@ -63,7 +65,7 @@ bool NetworkItem::isValid() const
 
 NetworkItem NetworkItem::item()
 {
-  SimpleClient *client = ChatCore::i()->client();
+  SimpleClient *client = ChatClient::io();
   NetworkItem item(client->serverData()->id());
 
   QString name = client->serverData()->name();
@@ -85,7 +87,7 @@ NetworkItem NetworkItem::item()
 
 void NetworkItem::read()
 {
-  QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
@@ -102,7 +104,7 @@ void NetworkItem::read()
 
 void NetworkItem::write()
 {
-  QSettings settings(ChatCore::i()->locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
@@ -144,32 +146,28 @@ void NetworkItem::setAuth(const QString &auth)
 
 NetworkManager::NetworkManager(QObject *parent)
   : QObject(parent)
-  , m_settings(ChatCore::i()->settings())
-  , m_locations(ChatCore::i()->locations())
   , m_invalids(0)
-  , m_client(ChatCore::i()->client())
 {
   load();
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 }
 
 
 bool NetworkManager::isAutoConnect() const
 {
-  if (m_client->clientState() != SimpleClient::ClientOffline)
+  if (ChatClient::io()->clientState() != SimpleClient::ClientOffline)
     return false;
 
   if (m_invalids)
     return false;
 
-  if (!m_settings->value(QLatin1String("AutoConnect")).toBool())
+  if (!ChatCore::settings()->value("AutoConnect").toBool())
     return false;
 
 //  if (m_client->user()->status() == Status::Offline)
 //    return false;
 
-  QStringList networks = networkList();
-  if (networks.isEmpty())
+  if (m_networks.data.isEmpty())
     return false;
 
   return true;
@@ -179,7 +177,7 @@ bool NetworkManager::isAutoConnect() const
 bool NetworkManager::open()
 {
   if (isAutoConnect())
-    return open(SimpleID::decode(networkList().at(0).toLatin1()));
+    return open(m_networks.first());
 
   return false;
 }
@@ -196,11 +194,11 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
-  m_client->setCookieAuth(m_settings->value(QLatin1String("CookieAuth")).toBool());
+  ChatClient::io()->setCookieAuth(ChatCore::settings()->value("CookieAuth").toBool());
   NetworkItem item = m_items.value(id);
-  m_client->setAccount(item.account(), item.password());
+  ChatClient::io()->setAccount(item.account(), item.password());
 
-  return m_client->openUrl(item.url(), item.cookie());
+  return ChatClient::io()->openUrl(item.url(), item.cookie());
 }
 
 
@@ -212,7 +210,7 @@ bool NetworkManager::open(const QByteArray &id)
  */
 bool NetworkManager::open(const QString &url)
 {
-  return m_client->openUrl(url);
+  return ChatClient::io()->openUrl(url);
 }
 
 
@@ -226,10 +224,10 @@ bool NetworkManager::open(const QString &url)
  */
 int NetworkManager::isSelectedActive() const
 {
-  if (m_client->clientState() == SimpleClient::ClientOnline && m_selected == m_client->serverId())
+  if (ChatClient::io()->clientState() == SimpleClient::ClientOnline && m_selected == ChatClient::io()->serverId())
     return 1;
 
-  if (m_client->clientState() == SimpleClient::ClientConnecting && m_client->url().toString() == item(m_selected).url())
+  if (ChatClient::io()->clientState() == SimpleClient::ClientConnecting && ChatClient::io()->url().toString() == item(m_selected).url())
     return 2;
 
   return 0;
@@ -243,12 +241,12 @@ int NetworkManager::isSelectedActive() const
  */
 QByteArray NetworkManager::serverId() const
 {
-  QByteArray id = m_client->serverId();
-  if (id.isEmpty()) {
-    QStringList networks = networkList();
-    if (!networks.isEmpty())
-      return SimpleID::decode(networks.at(0).toLatin1());
-  }
+  QByteArray id = ChatClient::io()->serverId();
+//  if (id.isEmpty()) {
+//    QStringList networks = networkList();
+//    if (!networks.isEmpty())
+//      return SimpleID::decode(networks.at(0).toLatin1());
+//  }
 
   return id;
 }
@@ -259,11 +257,10 @@ QByteArray NetworkManager::serverId() const
  */
 QList<NetworkItem> NetworkManager::items() const
 {
-  QStringList networks = networkList();
   QList<NetworkItem> out;
 
-  for (int i = 0; i < networks.size(); ++i) {
-    NetworkItem item = m_items.value(SimpleID::decode(networks.at(i).toLatin1()));
+  for (int i = 0; i < m_networks.data.size(); ++i) {
+    NetworkItem item = m_items.value(m_networks.data.at(i));
     if (item.isValid())
       out.append(item);
   }
@@ -293,14 +290,12 @@ void NetworkManager::removeItem(const QByteArray &id)
   if (id == m_tmpId)
     return;
 
-  QStringList networks = networkList();
+  m_networks.data.removeAll(id);
+  m_networks.write();
+  ChatCore::settings()->remove(SimpleID::encode(id));
 
-  networks.removeAll(SimpleID::encode(id));
-  m_settings->setValue(QLatin1String("Networks"), networks);
-  m_settings->remove(SimpleID::encode(id));
-
-  if (id == m_client->serverId() && m_client->clientState() != SimpleClient::ClientOffline)
-    m_client->leave();
+  if (id == ChatClient::io()->serverId() && ChatClient::io()->clientState() != SimpleClient::ClientOffline)
+    ChatClient::io()->leave();
 }
 
 
@@ -325,17 +320,11 @@ void NetworkManager::clientStateChanged(int state)
 
 QString NetworkManager::root(const QByteArray &id) const
 {
-  QString out = m_locations->path(FileLocations::ConfigPath) + QLatin1String("/networks/") + SimpleID::encode(id);
+  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + "/networks/" + SimpleID::encode(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
   return out;
-}
-
-
-QStringList NetworkManager::networkList() const
-{
-  return m_settings->value(QLatin1String("Networks")).toStringList();
 }
 
 
@@ -347,31 +336,28 @@ QStringList NetworkManager::networkList() const
  */
 void NetworkManager::load()
 {
+  m_networks.read();
+
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
   NetworkItem item(m_tmpId);
   item.setUrl("schat://");
   m_items[m_tmpId] = item;
 
-  QStringList networks = networkList();
-  if (networks.isEmpty())
+  if (m_networks.data.isEmpty())
     return;
 
-  QStringList invalid;
-  Settings settings(m_locations->path(FileLocations::ConfigFile), this);
+  QList<QByteArray> invalids;
+  Settings settings(ChatCore::locations()->path(FileLocations::ConfigFile), this);
 
   // Чтение данных серверов.
-  for (int i = 0; i < networks.size(); ++i) {
-    QByteArray id = SimpleID::decode(networks.at(i).toLatin1());
-    if (SimpleID::typeOf(id) != SimpleID::ServerId) {
-      invalid.append(networks.at(i));
-      continue;
-    }
+  for (int i = 0; i < m_networks.data.size(); ++i) {
+    QByteArray id = m_networks.data.at(i);
 
     NetworkItem item(id);
     item.read();
 
     if (!item.isValid()) {
-      invalid.append(networks.at(i));
+      invalids += id;
       continue;
     }
 
@@ -379,17 +365,16 @@ void NetworkManager::load()
   }
 
   // Удаление невалидных серверов.
-  if (!invalid.isEmpty()) {
-    for (int i = 0; i < invalid.size(); ++i) {
-      networks.removeAll(invalid.at(i));
+  if (!invalids.isEmpty()) {
+    for (int i = 0; i < invalids.size(); ++i) {
+      m_networks.data.removeAll(invalids.at(i));
     }
 
-    m_invalids = invalid.size();
-    m_settings->setValue(QLatin1String("Networks"), networks);
+    m_invalids = invalids.size();
+    m_networks.write();
   }
 
-  if (!networks.isEmpty())
-    setSelected(SimpleID::decode(networks.at(0).toLatin1()));
+  setSelected(m_networks.first());
 }
 
 
@@ -398,14 +383,12 @@ void NetworkManager::load()
  */
 void NetworkManager::write()
 {
-  QByteArray id = m_client->serverData()->id();
+  QByteArray id = ChatClient::serverId();
   m_selected = id;
-  QString base64 = SimpleID::encode(id);
 
-  QStringList networks = networkList();
-  networks.removeAll(base64);
-  networks.prepend(base64);
-  m_settings->setValue(QLatin1String("Networks"), networks);
+  m_networks.data.removeAll(id);
+  m_networks.data.prepend(id);
+  m_networks.write();
 
   NetworkItem item = NetworkItem::item();
   item.write();
@@ -413,4 +396,52 @@ void NetworkManager::write()
   m_items[id] = item;
   root(id);
   ChatCore::i()->startNotify(ChatCore::NetworkChangedNotice, id);
+}
+
+
+NetworkManager::Networks::Networks()
+{
+}
+
+
+/*!
+ * Получение идентификатора первого сервера в списке или пустого
+ * идентификатора если список пуст.
+ */
+QByteArray NetworkManager::Networks::first()
+{
+  if (data.isEmpty())
+    return QByteArray();
+
+  return data.at(0);
+}
+
+
+/*!
+ * Загрузка списка сетей из настроек.
+ */
+void NetworkManager::Networks::read()
+{
+  data.clear();
+  QStringList networks = ChatCore::settings()->value("Networks").toStringList();
+
+  foreach (QString network, networks) {
+    QByteArray id = SimpleID::decode(network.toLatin1());
+    if (SimpleID::typeOf(id) == SimpleID::ServerId)
+      data += id;
+  }
+}
+
+
+/*!
+ * Запись списка сетей в настройки.
+ */
+void NetworkManager::Networks::write()
+{
+  QStringList out;
+  foreach (QByteArray id, data) {
+    out += SimpleID::encode(id);
+  }
+
+  ChatCore::settings()->setValue("Networks", out);
 }

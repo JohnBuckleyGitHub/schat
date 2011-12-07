@@ -45,11 +45,13 @@ public:
   inline static ClientChannels *channels() { return m_self->m_channels; }
   inline static ClientMessages *messages() { return m_self->m_messages; }
   inline static QByteArray id()            { return m_self->getId(); }
+  inline static QByteArray serverId()      { return m_self->getServerId(); }
   inline static SimpleClient *io()         { return m_self->m_client; }
 
 private:
   ClientChannel getChannel();
   QByteArray getId();
+  QByteArray getServerId();
 
   ClientChannels *m_channels; ///< Каналы.
   ClientMessages *m_messages; ///< Обработчик сообщений.

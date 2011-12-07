@@ -48,3 +48,9 @@ QByteArray ChatClient::getId()
 {
   return m_client->channelId();
 }
+
+
+QByteArray ChatClient::getServerId()
+{
+  return m_client->serverId();
+}

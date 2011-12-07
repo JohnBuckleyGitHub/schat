@@ -26,12 +26,7 @@
 
 #include "schat.h"
 
-class ChatSettings;
-class FileLocations;
-class MessageAdapter;
 class NetworkManager;
-class SettingsLegacy;
-class SimpleClient;
 
 /*!
  * Используется для хранения информации о подключении.
@@ -43,17 +38,20 @@ public:
   NetworkItem();
   NetworkItem(const QByteArray &id);
   bool isValid() const;
-  inline bool isAuthorized() const { return m_authorized; }
-  inline QByteArray cookie() const { return m_cookie; }
-  inline QByteArray id() const     { return m_id; }
-  inline QString account() const   { return m_account; }
-  inline QString name() const      { return m_name; }
-  inline QString password() const  { return m_password; }
-  inline QString url() const       { return m_url; }
+  inline bool isAuthorized() const        { return m_authorized; }
+  inline const QByteArray& cookie() const { return m_cookie; }
+  inline const QByteArray& id() const     { return m_id; }
+  inline const QString& account() const   { return m_account; }
+  inline const QString& name() const      { return m_name; }
+  inline const QString& password() const  { return m_password; }
+  inline const QString& url() const       { return m_url; }
+
   inline void setAccount(const QString &account)   { m_account = account; }
   inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
+
   static NetworkItem item();
+
   void read();
   void write();
 
@@ -107,17 +105,26 @@ private slots:
 
 private:
   QString root(const QByteArray &id) const;
-  QStringList networkList() const;
   void load();
   void write();
 
-  ChatSettings *m_settings;  ///< Основные настройки.
-  FileLocations *m_locations;
-  int m_invalids;
-  QByteArray m_tmpId;        ///< Временный идентификатор для текущего редактируемой сети.
-  QHash<QByteArray, NetworkItem> m_items;
+  /// Хранилище списка сетей.
+  class Networks
+  {
+  public:
+    Networks();
+    QByteArray first();
+    void read();
+    void write();
+
+    QList<QByteArray> data; ///< Список идентификаторов сетей.
+  };
+
+  int m_invalids;            ///< Число элементов загруженных с ошибками.
+  Networks m_networks;       ///< Список сетей.
   QByteArray m_selected;     ///< Текущая выбранная сеть в настройках.
-  SimpleClient *m_client;    ///< Указатель на клиент.
+  QByteArray m_tmpId;        ///< Временный идентификатор для текущей редактируемой сети.
+  QHash<QByteArray, NetworkItem> m_items;
 };
 
 #endif /* NETWORKMANAGER_H_ */
