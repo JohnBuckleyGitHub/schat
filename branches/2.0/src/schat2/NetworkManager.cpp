@@ -233,6 +233,15 @@ int NetworkManager::isSelectedActive() const
 }
 
 
+Network NetworkManager::item(const QByteArray &id) const
+{
+  if (!m_items.contains(id))
+    return m_items.value(m_tmpId);
+
+  return m_items.value(id);
+}
+
+
 /*!
  * Получение идентификатора сервера.
  *

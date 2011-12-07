@@ -92,8 +92,8 @@ public:
   inline const QByteArray& selected() const       { return m_selected; }
   inline const QByteArray& tmpId() const          { return m_tmpId; }
   inline Network item() const                     { return item(serverId()); }
-  inline Network item(const QByteArray &id) const { return m_items.value(id); }
   int isSelectedActive() const;
+  Network item(const QByteArray &id) const;
   QByteArray serverId() const;
   QList<Network> items() const;
 
