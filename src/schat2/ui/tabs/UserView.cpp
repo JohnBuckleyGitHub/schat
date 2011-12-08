@@ -203,6 +203,7 @@ void UserView::userDataChanged(const QByteArray &userId, int changed)
 
 void UserView::contextMenuEvent(QContextMenuEvent *event)
 {
+  Q_UNUSED(event)
 //  QModelIndex index = indexAt(event->pos());
 //
 //  if (!index.isValid()) {

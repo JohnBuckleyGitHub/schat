@@ -37,6 +37,14 @@ class SCHAT_EXPORT ChatClient : public QObject
   Q_OBJECT
 
 public:
+  /// Состояние клиента.
+  enum ClientState {
+    Online,      ///< Клиент успешно подключен
+    Offline,     ///< Клиент отключен.
+    Connecting,  ///< Клиент в состоянии подключения к серверу.
+    Error        ///< Критическая ошибка.
+  };
+
   ChatClient(QObject *parent = 0);
   inline Hooks::Client *hooks() const { return m_hooks; }
 
@@ -44,12 +52,14 @@ public:
   inline static ClientChannel channel()    { return m_self->getChannel(); }
   inline static ClientChannels *channels() { return m_self->m_channels; }
   inline static ClientMessages *messages() { return m_self->m_messages; }
+  inline static int state()                { return m_self->getState(); }
   inline static QByteArray id()            { return m_self->getId(); }
   inline static QByteArray serverId()      { return m_self->getServerId(); }
   inline static SimpleClient *io()         { return m_self->m_client; }
 
 private:
   ClientChannel getChannel();
+  int getState();
   QByteArray getId();
   QByteArray getServerId();
 

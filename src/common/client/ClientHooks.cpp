@@ -165,7 +165,27 @@ QByteArray Client::id()
 
   foreach (Client *hook, m_hooks) {
     QByteArray id = hook->id();
-    if (id.isEmpty())
+    if (!id.isEmpty())
+      return id;
+  }
+
+  return QByteArray();
+}
+
+
+/*!
+ * Получение идентификатора сервера.
+ * Эта функция будет вызвана только если не удалось получить
+ * идентификатор сервера стандартым методом.
+ */
+QByteArray Client::serverId()
+{
+  if (m_hooks.isEmpty())
+    return QByteArray();
+
+  foreach (Client *hook, m_hooks) {
+    QByteArray id = hook->serverId();
+    if (!id.isEmpty())
       return id;
   }
 

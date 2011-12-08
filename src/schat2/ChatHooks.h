@@ -41,6 +41,16 @@ private:
   QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
+
+class SCHAT_CORE_EXPORT Networks : public Client
+{
+  Q_OBJECT
+
+public:
+  Networks(QObject *parent = 0);
+  QByteArray serverId();
+};
+
 }  // namespace Hooks
 
 #endif /* CHATHOOKS_H_ */

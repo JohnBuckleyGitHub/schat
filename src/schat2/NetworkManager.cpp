@@ -22,6 +22,7 @@
 #include "debugstream.h"
 
 #include "ChatCore.h"
+#include "ChatHooks.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -148,13 +149,16 @@ NetworkManager::NetworkManager(QObject *parent)
   , m_invalids(0)
 {
   load();
+
+  new Hooks::Networks(this);
+
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 }
 
 
 bool NetworkManager::isAutoConnect() const
 {
-  if (ChatClient::io()->clientState() != SimpleClient::ClientOffline)
+  if (ChatClient::state() != ChatClient::Offline)
     return false;
 
   if (m_invalids)
@@ -223,10 +227,10 @@ bool NetworkManager::open(const QString &url)
  */
 int NetworkManager::isSelectedActive() const
 {
-  if (ChatClient::io()->clientState() == SimpleClient::ClientOnline && m_selected == ChatClient::io()->serverId())
+  if (ChatClient::state() == ChatClient::Online && m_selected == ChatClient::io()->serverId())
     return 1;
 
-  if (ChatClient::io()->clientState() == SimpleClient::ClientConnecting && ChatClient::io()->url().toString() == item(m_selected)->url())
+  if (ChatClient::state() == ChatClient::Connecting && ChatClient::io()->url().toString() == item(m_selected)->url())
     return 2;
 
   return 0;
@@ -239,24 +243,6 @@ Network NetworkManager::item(const QByteArray &id) const
     return m_items.value(m_tmpId);
 
   return m_items.value(id);
-}
-
-
-/*!
- * Получение идентификатора сервера.
- *
- * \return Идентификатор сервера или пустой массив, если клиент никогда не был подключен к серверу.
- */
-QByteArray NetworkManager::serverId() const
-{
-  QByteArray id = ChatClient::io()->serverId();
-//  if (id.isEmpty()) {
-//    QStringList networks = networkList();
-//    if (!networks.isEmpty())
-//      return SimpleID::decode(networks.at(0).toLatin1());
-//  }
-
-  return id;
 }
 
 
@@ -282,11 +268,27 @@ QList<Network> NetworkManager::items() const
  */
 QString NetworkManager::currentServerName()
 {
-  QString name = ChatCore::i()->client()->serverData()->name();
+  QString name = ChatClient::io()->serverData()->name();
   if (name.isEmpty())
-    name = ChatCore::i()->client()->url().host();
+    name = ChatClient::io()->url().host();
 
   return name;
+}
+
+
+/*!
+ * Возвращает и при необходимости создаёт путь для хранения файлов сервера.
+ */
+QString NetworkManager::root(const QByteArray &id) const
+{
+  if (id.isEmpty())
+    return QString();
+
+  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + "/networks/" + SimpleID::encode(id);
+  if (!QFile::exists(out))
+    QDir().mkpath(out);
+
+  return out;
 }
 
 
@@ -302,7 +304,7 @@ void NetworkManager::removeItem(const QByteArray &id)
   m_networks.write();
   ChatCore::settings()->remove(SimpleID::encode(id));
 
-  if (id == ChatClient::io()->serverId() && ChatClient::io()->clientState() != SimpleClient::ClientOffline)
+  if (id == ChatClient::io()->serverId() && ChatClient::state() != ChatClient::Offline)
     ChatClient::io()->leave();
 }
 
@@ -319,20 +321,10 @@ void NetworkManager::setSelected(const QByteArray &id)
 
 void NetworkManager::clientStateChanged(int state)
 {
-  if (state != SimpleClient::ClientOnline)
+  if (state != ChatClient::Online)
     return;
 
   write();
-}
-
-
-QString NetworkManager::root(const QByteArray &id) const
-{
-  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + "/networks/" + SimpleID::encode(id);
-  if (!QFile::exists(out))
-    QDir().mkpath(out);
-
-  return out;
 }
 
 
