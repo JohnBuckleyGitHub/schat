@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDir>
+
 #include "debugstream.h"
 
 #include "Account.h"
@@ -172,4 +174,20 @@ int Channel::isCompatibleId(const QByteArray &id)
     return type;
 
   return 0;
+}
+
+
+QString Channel::defaultName()
+{
+  QString out;
+# if defined(Q_WS_WIN)
+  out = qgetenv("USERNAME");
+# else
+  out = qgetenv("USER");
+# endif
+
+  if (out.isEmpty())
+    out = QDir::home().dirName();
+
+  return out;
 }

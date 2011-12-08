@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Channel.h"
 #include "ChatSettings.h"
-#include "User.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
@@ -36,6 +36,6 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault("Width",               666);
   setDefault("WindowsAero",         true);
   setDefault("Profile/Gender",      0);
-  setDefault("Profile/Nick",        User::defaultNick());
+  setDefault("Profile/Nick",        Channel::defaultName());
   setDefault("Profile/Status",      1);
 }

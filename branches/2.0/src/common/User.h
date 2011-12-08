@@ -60,7 +60,6 @@ public:
   bool setNick(const QString &nick);
   inline QString nick() const { return m_nick; }
   static bool isValidNick(const QString &nick);
-  static QString defaultNick();
 
   inline const Gender& gender() const { return m_gender; }
   inline Gender& gender() { return m_gender; }

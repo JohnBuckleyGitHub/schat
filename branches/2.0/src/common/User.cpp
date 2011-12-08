@@ -107,15 +107,6 @@ bool User::isValidNick(const QString &nick)
 }
 
 
-/*!
- * \todo ! http://www.prog.org.ru/topic_7694_0.html;topicseen
- */
-QString User::defaultNick()
-{
-  return QDir::home().dirName();
-}
-
-
 bool User::addChannel(const QByteArray &id)
 {
   if (id.size() != SimpleID::DefaultSize)
