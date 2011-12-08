@@ -148,6 +148,7 @@ public:
 
   static bool isValidName(const QString &name);
   static int isCompatibleId(const QByteArray &id);
+  static QString defaultName();
 
 private:
   Account *m_account;              ///< Аккаунт пользователя
