@@ -217,18 +217,14 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChatMessages(this);
 
   m_client = ChatClient::io();
-  m_settings->setClient(m_client);
 
   m_networkManager = new NetworkManager(this);
+  ChatClient::id(); // Необходимо для инициализации базовых настроек.
 
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-
-  qDebug() << "***" << SimpleID::encode(ChatClient::id());
-  qDebug() << "***" << SimpleID::encode(ChatClient::serverId());
-  qDebug() << "***" << ChatClient::channel()->name();
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

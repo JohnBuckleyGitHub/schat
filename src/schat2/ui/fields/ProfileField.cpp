@@ -40,7 +40,7 @@ ProfileField::ProfileField(QString key, const QString &contents, QWidget *parent
 
 void ProfileField::updateData()
 {
-  m_settings->updateValue(m_key, text());
+//  m_settings->updateValue(m_key, text());
 }
 
 

@@ -52,7 +52,15 @@ int ChatClient::getState()
 
 QByteArray ChatClient::getId()
 {
-  return m_client->channelId();
+  QByteArray id = m_client->channelId();
+  if (!id.isEmpty())
+    return id;
+
+  id = m_client->channel()->id();
+  if (!id.isEmpty())
+    return id;
+
+  return m_hooks->id();
 }
 
 

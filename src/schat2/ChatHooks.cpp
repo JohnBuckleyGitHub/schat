@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatHooks.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -113,6 +114,30 @@ Networks::Networks(QObject *parent)
 }
 
 
+/*!
+ * Получение идентификатора пользователя из менеджера сетей
+ * и установка базовых данных из настроек.
+ */
+QByteArray Networks::id()
+{
+  ClientChannel channel = ChatClient::channel();
+  channel->setName(ChatCore::settings()->value("Profile/Nick").toString());
+  channel->gender().setRaw(ChatCore::settings()->value("Profile/Gender").toInt());
+  channel->status().set(ChatCore::settings()->value("Profile/Status").toInt());
+
+  Network item = ChatCore::networks()->item(ChatCore::networks()->selected());
+  if (!item->isValid())
+    return QByteArray();
+
+  channel->setId(item->userId());
+
+  return channel->id();
+}
+
+
+/*!
+ * Получение идентификатора сервера из менеджера сетей.
+ */
 QByteArray Networks::serverId()
 {
   return ChatCore::networks()->selected();

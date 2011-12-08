@@ -76,7 +76,8 @@ void StatusMenu::settingsChanged(const QString &key, const QVariant &value)
 
 void StatusMenu::statusChanged(QAction *action)
 {
-  ChatCore::i()->settings()->updateValue(QLatin1String("Profile/Status"), action->data().toInt());
+  Q_UNUSED(action)
+//  ChatCore::i()->settings()->updateValue(QLatin1String("Profile/Status"), action->data().toInt());
 }
 
 
