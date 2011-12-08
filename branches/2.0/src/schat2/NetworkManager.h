@@ -42,6 +42,7 @@ public:
   inline bool isAuthorized() const        { return m_authorized; }
   inline const QByteArray& cookie() const { return m_cookie; }
   inline const QByteArray& id() const     { return m_id; }
+  inline const QByteArray& userId() const { return m_userId; }
   inline const QString& account() const   { return m_account; }
   inline const QString& name() const      { return m_name; }
   inline const QString& password() const  { return m_password; }

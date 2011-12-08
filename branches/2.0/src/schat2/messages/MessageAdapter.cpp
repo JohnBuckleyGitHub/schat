@@ -167,7 +167,7 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("nick") && cmd.isBody() && cmd.body().size() >= 3) {
-    m_settings->updateValue(QLatin1String("Profile/Nick"), cmd.body());
+//    m_settings->updateValue(QLatin1String("Profile/Nick"), cmd.body());
     return;
   }
 
@@ -400,8 +400,10 @@ void MessageAdapter::setStateAll(int state)
 
 void MessageAdapter::setStatus(int status, const QString &text)
 {
-  if (text.isEmpty())
-    m_settings->updateValue(QLatin1String("Profile/Status"), status);
-  else
-    m_settings->updateValue(QLatin1String("Profile/Status"), User::statusToString(status, text));
+  Q_UNUSED(status)
+  Q_UNUSED(text)
+//  if (text.isEmpty())
+//    m_settings->updateValue(QLatin1String("Profile/Status"), status);
+//  else
+//    m_settings->updateValue(QLatin1String("Profile/Status"), User::statusToString(status, text));
 }

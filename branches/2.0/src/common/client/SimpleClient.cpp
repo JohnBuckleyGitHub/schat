@@ -446,6 +446,8 @@ bool SimpleClientPrivate::readUserData()
  */
 void SimpleClientPrivate::updateUserData(ClientUser existUser, UserReader &reader)
 {
+  Q_UNUSED(existUser)
+  Q_UNUSED(reader)
   SCHAT_DEBUG_STREAM(this << "updateUserData()");
 
 //  User *user = &reader.user;

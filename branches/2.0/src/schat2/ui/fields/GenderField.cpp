@@ -75,7 +75,7 @@ GenderField::GenderField(QWidget *parent)
 
 void GenderField::updateData()
 {
-  m_settings->updateValue(QLatin1String("Profile/Gender"), m_user->gender().raw());
+//  m_settings->updateValue(QLatin1String("Profile/Gender"), m_user->gender().raw());
 }
 
 
