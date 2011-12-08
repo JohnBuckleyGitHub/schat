@@ -26,7 +26,7 @@ class QComboBox;
 class QMenu;
 class QToolBar;
 class QToolButton;
-class SimpleClient;
+class Notify;
 
 class NetworkWidget : public QWidget
 {
@@ -47,7 +47,7 @@ private slots:
   int add(const QString &url = "schat://");
   void edit();
   void indexChanged(int index);
-  void notify(int notice, const QVariant &data);
+  void notify(const Notify &notify);
   void remove();
   void showMenu();
 
@@ -66,7 +66,6 @@ private:
   QMenu *m_menu;
   QToolBar *m_toolBar;
   QToolButton *m_config;
-  SimpleClient *m_client;   ///< Указатель на клиент.
 };
 
 #endif /* NETWORKWIDGET_H_ */

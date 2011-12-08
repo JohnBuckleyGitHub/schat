@@ -160,10 +160,7 @@ void ChatCorePrivate::openUserUrl(const QUrl &url)
   if (!user)
     return;
 
-  if (actions.first() == QLatin1String("talk")) {
-    q->startNotify(ChatCore::AddPrivateTab, user->id());
-  }
-  else if (actions.first() == QLatin1String("ignore")) {
+  if (actions.first() == QLatin1String("ignore")) {
     ignore(user->id());
   }
   else if (actions.first() == QLatin1String("unignore")) {
@@ -304,10 +301,6 @@ void ChatCore::makeRed(QWidget *widget, bool red)
 
 void ChatCore::startNotify(int notice, const QVariant &data)
 {
-  if (notice == NetworkChangedNotice) {
-    d->loadIgnoreList();
-  }
-
   emit notify(notice, data);
 }
 

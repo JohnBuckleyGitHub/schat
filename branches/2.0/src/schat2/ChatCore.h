@@ -95,13 +95,10 @@ public:
     QuitNotice,
     SettingsNotice,
     ToggleVisibilityNotice,
-    NetworkChangedNotice,
-    AddPrivateTab,          ///< Добавление приватного разговора и установка фокуса на него.
     ShowChatNotice,         ///< Запрос на открытие и активацию окна чата.
     EditTopicNotice,        ///< Редактирование темы канала, параметр: идентификатор канала.
     SetSendFocusNotice,     ///< Установка фокуса на поле отправки сообщения.
     CopyRequestNotice,      ///< Запрос на копирование текста, отправляется полем редактирования текста в случае если в нём отсутствует выделение.
-    NetworkSelectedNotice   ///< Изменён выбор текущей сети.
   };
 
   ChatCore(QObject *parent = 0);

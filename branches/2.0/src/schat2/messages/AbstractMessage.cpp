@@ -148,6 +148,8 @@ QString AbstractMessage::js(bool add) const
 
 void AbstractMessage::setText(const QString &text, int parseOptions)
 {
+  Q_UNUSED(text)
+  Q_UNUSED(parseOptions)
 //  if (text.isEmpty())
 //    return;
 //
