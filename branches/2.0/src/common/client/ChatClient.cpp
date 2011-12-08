@@ -38,6 +38,19 @@ ChatClient::ChatClient(QObject *parent)
 }
 
 
+bool ChatClient::openId(const QByteArray &id)
+{
+  bool matched = false;
+  return m_hooks->openId(id, &matched);
+}
+
+
+bool ChatClient::openUrl(const QUrl &url)
+{
+  return m_client->openUrl(url);
+}
+
+
 ClientChannel ChatClient::getChannel()
 {
   return m_client->channel();
@@ -50,6 +63,11 @@ int ChatClient::getState()
 }
 
 
+/*!
+ * Получение идентификатора пользователя.
+ *
+ * \sa Hooks::Client::id()
+ */
 QByteArray ChatClient::getId()
 {
   QByteArray id = m_client->channelId();
@@ -64,6 +82,12 @@ QByteArray ChatClient::getId()
 }
 
 
+/*!
+ * Получение идентификатора сервера.
+ * Если у клиента не установлен идентификатор, используются хуки для его получения.
+ *
+ * \sa Hooks::Client::serverId()
+ */
 QByteArray ChatClient::getServerId()
 {
   QByteArray id = m_client->serverId();

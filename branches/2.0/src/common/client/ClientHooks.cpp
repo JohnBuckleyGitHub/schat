@@ -153,6 +153,21 @@ Client::Client(QObject *parent)
 }
 
 
+bool Client::openId(const QByteArray &id, bool *matched)
+{
+  if (m_hooks.isEmpty())
+    return false;
+
+  foreach (Client *hook, m_hooks) {
+    bool result = hook->openId(id, matched);
+    if (matched)
+      return result;
+  }
+
+  return false;
+}
+
+
 /*!
  * Получение идентификатора пользователя.
  * Эта функция будет вызвана только если не удалось получить

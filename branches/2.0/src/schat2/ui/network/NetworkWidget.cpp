@@ -27,6 +27,7 @@
 #include <QToolButton>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -124,7 +125,7 @@ void NetworkWidget::open()
     m_combo->setEditable(false);
   }
 
-  m_manager->open(item->id());
+  ChatClient::open(item->id());
 }
 
 

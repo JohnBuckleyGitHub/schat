@@ -87,7 +87,6 @@ public:
   NetworkManager(QObject *parent = 0);
   bool open();
   bool open(const QByteArray &id);
-  bool open(const QString &url);
 
   bool isAutoConnect() const;
   inline const QByteArray& selected() const       { return m_selected; }
@@ -118,7 +117,7 @@ private:
     void read();
     void write();
 
-    QList<QByteArray> data; ///< Список идентификаторов сетей.
+    QList<QByteArray> data;  ///< Список идентификаторов сетей.
   };
 
   int m_invalids;            ///< Число элементов загруженных с ошибками.

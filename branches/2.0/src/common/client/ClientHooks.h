@@ -82,6 +82,7 @@ public:
   inline void add(Client *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Client *hook) { m_hooks.removeAll(hook); }
 
+  virtual bool openId(const QByteArray &id, bool *matched);
   virtual QByteArray id();
   virtual QByteArray serverId();
 
