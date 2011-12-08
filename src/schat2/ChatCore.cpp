@@ -385,7 +385,7 @@ void ChatCore::settingsChanged(const QString &key, const QVariant &value)
 
 void ChatCore::start()
 {
-  m_networkManager->open();
+  ChatClient::open();
 }
 
 

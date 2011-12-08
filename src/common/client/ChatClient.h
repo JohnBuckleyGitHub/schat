@@ -20,6 +20,7 @@
 #define CHATCLIENT_H_
 
 #include <QObject>
+#include <QUrl>
 
 #include "Channel.h"
 
@@ -57,7 +58,13 @@ public:
   inline static QByteArray serverId()      { return m_self->getServerId(); }
   inline static SimpleClient *io()         { return m_self->m_client; }
 
+  inline static bool open()                     { return m_self->openId(QByteArray()); }
+  inline static bool open(const QByteArray &id) { return m_self->openId(id); }
+  inline static bool open(const QString &url)   { return m_self->openUrl(QUrl(url)); }
+
 private:
+  bool openId(const QByteArray &id);
+  bool openUrl(const QUrl &url);
   ClientChannel getChannel();
   int getState();
   QByteArray getId();

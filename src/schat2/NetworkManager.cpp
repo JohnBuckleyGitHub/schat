@@ -206,18 +206,6 @@ bool NetworkManager::open(const QByteArray &id)
 
 
 /*!
- * Открытие нового соединения, URL адрес сервера.
- *
- * \param url Адрес сервера.
- * \return true в случае успеха.
- */
-bool NetworkManager::open(const QString &url)
-{
-  return ChatClient::io()->openUrl(url);
-}
-
-
-/*!
  * Возвращает состояние текущего выбранного итема.
  *
  * \return Возвращаемые значения:

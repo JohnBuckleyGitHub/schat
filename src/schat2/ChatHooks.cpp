@@ -114,6 +114,17 @@ Networks::Networks(QObject *parent)
 }
 
 
+bool Networks::openId(const QByteArray &id, bool *matched)
+{
+  *matched = true;
+
+  if (id.isEmpty())
+    return ChatCore::networks()->open();
+
+  return ChatCore::networks()->open(id);
+}
+
+
 /*!
  * Получение идентификатора пользователя из менеджера сетей
  * и установка базовых данных из настроек.

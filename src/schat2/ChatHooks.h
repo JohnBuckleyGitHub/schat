@@ -48,6 +48,7 @@ class SCHAT_CORE_EXPORT Networks : public Client
 
 public:
   Networks(QObject *parent = 0);
+  bool openId(const QByteArray &id, bool *matched);
   QByteArray id();
   QByteArray serverId();
 };
