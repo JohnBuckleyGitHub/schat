@@ -116,7 +116,7 @@ void ChatCorePrivate::ignore(const QByteArray &id)
 void ChatCorePrivate::loadIgnoreList()
 {
   ignoreList.clear();
-  QStringList list = q->settings()->value(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), QStringList()).toStringList();
+//  QStringList list = q->settings()->value(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), QStringList()).toStringList();
 }
 
 
@@ -190,7 +190,7 @@ void ChatCorePrivate::writeIgnoreList()
     list.append(SimpleID::encode(ignoreList.at(i)));
   }
 
-  q->settings()->setValue(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), list);
+//  q->settings()->setValue(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), list);
 }
 
 
@@ -225,6 +225,10 @@ ChatCore::ChatCore(QObject *parent)
   m_plugins->load();
 
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+
+  qDebug() << "***" << SimpleID::encode(ChatClient::id());
+  qDebug() << "***" << SimpleID::encode(ChatClient::serverId());
+  qDebug() << "***" << ChatClient::channel()->name();
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

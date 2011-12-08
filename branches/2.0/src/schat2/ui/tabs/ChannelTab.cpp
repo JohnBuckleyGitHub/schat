@@ -219,6 +219,7 @@ void ChannelTab::reloaded()
 
 void ChannelTab::sendTopic(const QString &text)
 {
+  Q_UNUSED(text)
 //  m_bar->setVisible(false);
 //  if (!text.isEmpty())
 //    m_chatView->evaluateJavaScript("showTopic", true);

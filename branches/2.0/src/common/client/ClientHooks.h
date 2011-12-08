@@ -83,6 +83,7 @@ public:
   inline void remove(Client *hook) { m_hooks.removeAll(hook); }
 
   virtual QByteArray id();
+  virtual QByteArray serverId();
 
 protected:
   QList<Client*> m_hooks; ///< Хуки.

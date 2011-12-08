@@ -22,6 +22,7 @@
 #include <QtPlugin>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "HistoryDB.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
@@ -87,9 +88,9 @@ void History::add(const RawUserMessageHook &data)
 
 void History::openDb()
 {
-  QByteArray id = m_core->networks()->serverId();
+  QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    m_db->open(id, m_core->networks()->root());
+    m_db->open(id, m_core->networks()->root(id));
 }
 
 

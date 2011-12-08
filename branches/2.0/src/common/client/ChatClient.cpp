@@ -44,6 +44,12 @@ ClientChannel ChatClient::getChannel()
 }
 
 
+int ChatClient::getState()
+{
+  return m_client->clientState();
+}
+
+
 QByteArray ChatClient::getId()
 {
   return m_client->channelId();
@@ -52,5 +58,9 @@ QByteArray ChatClient::getId()
 
 QByteArray ChatClient::getServerId()
 {
-  return m_client->serverId();
+  QByteArray id = m_client->serverId();
+  if (!id.isEmpty())
+    return id;
+
+  return m_hooks->serverId();
 }

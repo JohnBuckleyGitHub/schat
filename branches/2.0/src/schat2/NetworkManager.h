@@ -91,15 +91,13 @@ public:
   bool isAutoConnect() const;
   inline const QByteArray& selected() const       { return m_selected; }
   inline const QByteArray& tmpId() const          { return m_tmpId; }
-  inline Network item() const                     { return item(serverId()); }
   int isSelectedActive() const;
   Network item(const QByteArray &id) const;
-  QByteArray serverId() const;
   QList<Network> items() const;
 
   static QString currentServerName();
 
-  inline QString root() const { return root(serverId()); }
+  QString root(const QByteArray &id) const;
   void removeItem(const QByteArray &id);
   void setSelected(const QByteArray &id);
 
@@ -107,7 +105,6 @@ private slots:
   void clientStateChanged(int state);
 
 private:
-  QString root(const QByteArray &id) const;
   void load();
   void write();
 

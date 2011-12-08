@@ -18,12 +18,15 @@
 
 #include <QDebug>
 
+#include "ChatCore.h"
 #include "ChatHooks.h"
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessagePacket.h"
+#include "net/SimpleID.h"
+#include "NetworkManager.h"
 #include "text/LinksFilter.h"
 #include "text/TokenFilter.h"
 #include "text/UrlFilter.h"
@@ -100,6 +103,19 @@ void ChatMessages::clientStateChanged(int state, int previousState)
 
     m_undelivered.clear();
   }
+}
+
+
+Networks::Networks(QObject *parent)
+  : Client(parent)
+{
+  ChatClient::i()->hooks()->add(this);
+}
+
+
+QByteArray Networks::serverId()
+{
+  return ChatCore::networks()->selected();
 }
 
 }  // namespace Hooks
