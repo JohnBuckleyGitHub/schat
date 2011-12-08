@@ -129,7 +129,7 @@ void ClientChannels::notice(int type)
     channel();
 
   else if (cmd == "info")
-    info();
+    add();
 
   else if (cmd == "+")
     joined();
@@ -153,15 +153,26 @@ ClientChannel ClientChannels::add()
   if (!Channel::isCompatibleId(id))
     return ClientChannel();
 
-  ClientChannel channel = m_channels.value(id);
+  ClientChannel channel = get(id);
+  ChannelInfo info(id);
+
   if (!channel) {
     channel = ClientChannel(new Channel(id, m_packet->text()));
     m_channels[id] = channel;
   }
+  else
+    info.setOption(ChannelInfo::Updated);
 
+  QString name = channel->name();
   channel->setName(m_packet->text());
+  if (channel->name() != name)
+    info.setOption(ChannelInfo::Renamed);
+
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
+
+  m_synced += channel->id();
+  emit this->channel(info);
 
   return channel;
 }
@@ -173,30 +184,12 @@ ClientChannel ClientChannels::add()
 void ClientChannels::channel()
 {
   ClientChannel channel = add();
-  if (!channel)
-    return;
-
   emit this->channel(channel->id());
 
   if (channel->type() == SimpleID::ChannelId) {
     channel->channels() = m_packet->channels();
     sync(channel);
   }
-
-  m_synced += channel->id();
-}
-
-
-/*!
- * Чтение информации о канале.
- */
-void ClientChannels::info()
-{
-  ClientChannel channel = add();
-  if (!channel)
-    return;
-
-  m_synced += channel->id();
 }
 
 
@@ -206,12 +199,9 @@ void ClientChannels::info()
 void ClientChannels::joined()
 {
   ClientChannel user = add();
-  if (!user)
-    return;
-
   ClientChannel channel = get(m_packet->dest());
+
   channel->channels() += user->id();
-  m_synced += user->id();
 
   emit joined(channel->id(), user->id());
 }
