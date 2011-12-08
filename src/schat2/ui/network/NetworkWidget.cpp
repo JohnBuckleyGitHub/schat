@@ -27,6 +27,7 @@
 #include <QToolButton>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
@@ -36,7 +37,6 @@
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
   , m_manager(ChatCore::i()->networks())
-  , m_client(ChatCore::i()->client())
 {
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
@@ -70,7 +70,7 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   load();
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -109,7 +109,7 @@ void NetworkWidget::open()
     return;
 
   if (m_manager->isSelectedActive()) {
-    m_client->leave();
+    ChatClient::io()->leave();
     return;
   }
 
@@ -222,14 +222,14 @@ void NetworkWidget::indexChanged(int index)
 }
 
 
-void NetworkWidget::notify(int notice, const QVariant &data)
+void NetworkWidget::notify(const Notify &notify)
 {
-  if (notice == ChatCore::NetworkChangedNotice) {
+  if (notify.type() == Notify::NetworkChanged) {
     int index = m_combo->findData(m_manager->tmpId());
     if (index != -1)
       m_combo->removeItem(index);
 
-    QByteArray id = data.toByteArray();
+    QByteArray id = notify.data().toByteArray();
     Network item = m_manager->item(id);
 
     if (!item->isValid())
@@ -242,7 +242,7 @@ void NetworkWidget::notify(int notice, const QVariant &data)
     m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item->name(), item->id());
     m_combo->setCurrentIndex(0);
   }
-  else if (notice == ChatCore::NetworkSelectedNotice) {
+  else if (notify.type() == Notify::NetworkSelected) {
     updateIndex();
   }
 }

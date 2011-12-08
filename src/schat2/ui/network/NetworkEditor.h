@@ -24,9 +24,9 @@
 class NetworkManager;
 class NetworkTabs;
 class NetworkWidget;
+class Notify;
 class QCheckBox;
 class QPushButton;
-class SimpleClient;
 
 class NetworkEditor : public QWidget
 {
@@ -46,7 +46,7 @@ protected:
 
 private slots:
   void anonymousToggled(bool checked);
-  void notify(int notice, const QVariant &data);
+  void notify(const Notify &notify);
   void reload();
 
 private:
@@ -58,7 +58,6 @@ private:
   NetworkWidget *m_network;    ///< Виджет выбора сети.
   QCheckBox *m_anonymous;      ///< Флажок анонимного подключения.
   QPushButton *m_connect;      ///< Кнопка Connect.
-  SimpleClient *m_client;      ///< Указатель на клиент.
 };
 
 #endif /* NETWORKEDITOR_H_ */

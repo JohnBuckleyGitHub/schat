@@ -19,19 +19,16 @@
 #include <QFile>
 #include <QDir>
 
-#include "debugstream.h"
-
 #include "ChatCore.h"
 #include "ChatHooks.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
-#include "messages/MessageAdapter.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
-#include "User.h"
 
 NetworkItem::NetworkItem()
   : m_authorized(false)
@@ -67,7 +64,7 @@ bool NetworkItem::isValid() const
 NetworkItem* NetworkItem::item()
 {
   SimpleClient *client = ChatClient::io();
-  NetworkItem *item = new NetworkItem(client->serverData()->id());
+  NetworkItem *item = new NetworkItem(ChatClient::serverId());
 
   QString name = client->serverData()->name();
   if (name.isEmpty())
@@ -303,7 +300,7 @@ void NetworkManager::setSelected(const QByteArray &id)
     return;
 
   m_selected = id;
-  ChatCore::i()->startNotify(ChatCore::NetworkSelectedNotice, id);
+  ChatNotify::start(Notify::NetworkSelected, id);
 }
 
 
@@ -383,7 +380,7 @@ void NetworkManager::write()
 
   m_items[id] = item;
   root(id);
-  ChatCore::i()->startNotify(ChatCore::NetworkChangedNotice, id);
+  ChatNotify::start(Notify::NetworkChanged, id);
 }
 
 

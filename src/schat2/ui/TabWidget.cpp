@@ -342,9 +342,6 @@ void TabWidget::notify(int notice, const QVariant &data)
     m_settingsTab->openUrl(data.toUrl());
     addChatTab(m_settingsTab);
   }
-  else if (notice == ChatCore::AddPrivateTab) {
-    addPrivateTab(data.toByteArray());
-  }
   else if (notice == ChatCore::CopyRequestNotice) {
     ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
     if (!tab)

@@ -24,6 +24,7 @@
 #include <QTabWidget>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
 #include "NetworkManager.h"
@@ -36,7 +37,6 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)
   , m_layout(layout)
   , m_connect(0)
-  , m_client(ChatCore::i()->client())
 {
   m_manager = ChatCore::i()->networks();
   m_network = new NetworkWidget(this);
@@ -62,9 +62,9 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   mainLay->setSpacing(4);
 
   connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
-//  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString &)), SLOT(reload()));
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_anonymous, SIGNAL(toggled(bool)), SLOT(anonymousToggled(bool)));
+
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   retranslateUi();
 }
@@ -85,11 +85,9 @@ void NetworkEditor::anonymousToggled(bool checked)
 }
 
 
-void NetworkEditor::notify(int notice, const QVariant &data)
+void NetworkEditor::notify(const Notify &notify)
 {
-  Q_UNUSED(data)
-
-  if (notice == ChatCore::NetworkSelectedNotice || notice == ChatCore::NetworkChangedNotice)
+  if (notify.type() == Notify::NetworkSelected || notify.type() == Notify::NetworkChanged)
     reload();
 }
 

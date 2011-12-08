@@ -31,8 +31,10 @@ class Notify
 {
 public:
   enum Actions {
-    OpenChannel = 0x6F63, ///< "oc" Открытие канала, команда передаёт идентификатор канала.
-    InsertText = 0x6974   ///< "it" Запрос на вставку текста в поле отравки.
+    OpenChannel = 0x6F63,    ///< "oc" Открытие канала, команда передаёт идентификатор канала.
+    InsertText = 0x6974,     ///< "it" Запрос на вставку текста в поле отравки.
+    NetworkChanged = 0x6E63, ///< "nc" Уведомление об изменении выбранной сети.
+    NetworkSelected = 0x6E73 ///< "ns" Изменён выбор текущей сети.
   };
 
   Notify(int type, const QVariant &data = QVariant())
