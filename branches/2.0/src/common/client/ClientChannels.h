@@ -31,6 +31,32 @@ namespace Hooks
   class Channels;
 }
 
+
+class ChannelInfo
+{
+public:
+  /// Информация об создании канала.
+  enum Option {
+    New,     ///< Канал создан в результате чтения пакета и ранее был не известен клиенту.
+    Updated, ///< Канал существовал ранее и был обновлён.
+    Renamed  ///< Канал существовал ранее и был обновлён и переименован.
+  };
+
+  ChannelInfo(const QByteArray &id)
+  : m_option(New)
+  , m_id(id)
+  {}
+
+  inline const QByteArray& id() const { return m_id; }
+  inline int option() const           { return m_option; }
+  inline void setOption(int option)   { m_option = option; }
+
+private:
+  int m_option;
+  QByteArray m_id;
+};
+
+
 class SCHAT_EXPORT ClientChannels : public QObject
 {
   Q_OBJECT
@@ -46,12 +72,13 @@ public:
   ClientChannel get(const QByteArray &id);
 
 signals:
-  void channel(const QByteArray &id);
-  void channels(const QList<QByteArray> &channels);
-  void joined(const QByteArray &channel, const QByteArray &user);
-  void notice(const ChannelPacket &notice);
-  void part(const QByteArray &channel, const QByteArray &user);
-  void quit(const QByteArray &user);
+  void channel(const ChannelInfo &id);                            ///< Общая информация о канале.
+  void channel(const QByteArray &id);                             ///< Команда "channel".
+  void channels(const QList<QByteArray> &channels);               ///< Пакет новых каналов.
+  void joined(const QByteArray &channel, const QByteArray &user); ///< Команда "+".
+  void notice(const ChannelPacket &notice);                       ///< Сырой пакет.
+  void part(const QByteArray &channel, const QByteArray &user);   ///< Команда "-".
+  void quit(const QByteArray &user);                              ///< Команда "quit".
 
 private slots:
   void idle();
