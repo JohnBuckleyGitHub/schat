@@ -19,21 +19,19 @@
 #ifndef NICKEDIT_H_
 #define NICKEDIT_H_
 
-#include "ui/fields/ProfileField.h"
+#include "arora/lineedit.h"
 
-class QToolBar;
-class QToolButton;
-
-class NickEdit : public ProfileField
+class NickEdit : public LineEdit
 {
   Q_OBJECT
 
 public:
   NickEdit(QWidget *parent = 0);
-  NickEdit(const QString &contents, QWidget *parent = 0);
 
-private:
-  void init();
+private slots:
+  void editingFinished();
+  void settingsChanged(const QString &key, const QVariant &value);
+  void textChanged();
 };
 
 #endif /* NICKEDIT_H_ */

@@ -16,30 +16,54 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QToolButton>
-#include <QToolBar>
-
+#include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
 #include "ui/fields/NickEdit.h"
-#include "ui/UserUtils.h"
 
 NickEdit::NickEdit(QWidget *parent)
-  : ProfileField(QLatin1String("Profile/Nick"), parent)
+  : LineEdit(parent)
 {
-  init();
+  setText(ChatClient::io()->nick());
+
+  setMaxLength(Channel::MaxNameLength);
+
+  connect(this, SIGNAL(editingFinished()), SLOT(editingFinished()));
+  connect(this, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
-NickEdit::NickEdit(const QString &contents, QWidget *parent)
-  : ProfileField(QLatin1String("Profile/Nick"), contents, parent)
+void NickEdit::editingFinished()
 {
-  init();
+  if (!Channel::isValidName(text()))
+    return;
+
+  if (ChatClient::state() != ChatClient::Online) {
+    ChatClient::io()->setNick(text());
+    ChatCore::settings()->setValue("Profile/Nick", ChatClient::channel()->name());
+    return;
+  }
 }
 
 
-void NickEdit::init()
+void NickEdit::settingsChanged(const QString &key, const QVariant &value)
 {
-  setMaxLength(User::MaxNickLength);
+  if (key == "Profile/Nick")
+    setText(value.toString());
+}
+
+
+void NickEdit::textChanged()
+{
+  QPalette palette = this->palette();
+
+  if (Channel::isValidName(text()))
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+
+  setPalette(palette);
 }
