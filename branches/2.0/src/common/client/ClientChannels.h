@@ -73,7 +73,7 @@ public:
   ClientChannel get(const QByteArray &id);
 
 signals:
-  void channel(const ChannelInfo &id);                            ///< Общая информация о канале.
+  void channel(const ChannelInfo &info);                          ///< Общая информация о канале.
   void channel(const QByteArray &id);                             ///< Команда "channel".
   void channels(const QList<QByteArray> &channels);               ///< Пакет новых каналов.
   void joined(const QByteArray &channel, const QByteArray &user); ///< Команда "+".

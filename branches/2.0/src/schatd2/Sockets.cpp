@@ -19,11 +19,14 @@
 #include "Sockets.h"
 #include "Storage.h"
 
-QList<quint64> Sockets::all(ChatChannel user)
+QList<quint64> Sockets::all(ChatChannel user, bool echo)
 {
   QList<quint64> out;
   if (!user)
     return out;
+
+  if (echo)
+    out = user->sockets();
 
   QList<QByteArray> channels = user->channels().all();
   for (int i = 0; i < channels.size(); ++i) {

@@ -26,7 +26,7 @@ class SCHAT_EXPORT Sockets
   Sockets() {}
 
 public:
-  static QList<quint64> all(ChatChannel user);
+  static QList<quint64> all(ChatChannel user, bool echo = false);
   static QList<quint64> channel(ChatChannel channel);
   static void echoFilter(ChatChannel channel, QList<quint64> &sockets, bool echo);
   static void merge(QList<quint64> &out, const QList<quint64> &sockets);

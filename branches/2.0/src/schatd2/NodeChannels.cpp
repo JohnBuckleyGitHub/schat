@@ -24,6 +24,7 @@
 #include "net/packets/ChannelPacket.h"
 #include "net/packets/Notice.h"
 #include "NodeChannels.h"
+#include "Normalize.h"
 #include "Sockets.h"
 #include "Storage.h"
 
@@ -55,6 +56,9 @@ bool NodeChannels::read(PacketReader *reader)
 
   if (cmd == "quit")
     return quit();
+
+  if (cmd == "update")
+    return update();
 
   return false;
 }
@@ -173,5 +177,45 @@ bool NodeChannels::part()
 bool NodeChannels::quit()
 {
   m_core->send(QList<quint64>() << m_core->packetsEvent()->socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
+  return false;
+}
+
+
+/*!
+ * Обработка обновления информации о пользователе.
+ */
+bool NodeChannels::update()
+{
+  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  if (!user)
+    return false;
+
+  if (!Channel::isValidName(m_packet->text()))
+    return false;
+
+  int updates = 0;
+
+  if (user->name() != m_packet->text()) {
+    ChatChannel channel = m_storage->channel(Normalize::toId('~' + m_packet->text()), SimpleID::UserId);
+    if (!channel || channel->id() == user->id())
+      user->setName(m_packet->text());
+
+    updates++;
+  }
+
+  if (user->status().value() != m_packet->channelStatus()) {
+    user->status() = m_packet->channelStatus();
+    updates++;
+  }
+
+  if (user->gender().raw() != m_packet->gender()) {
+    user->gender() = m_packet->gender();
+    updates++;
+  }
+
+  if (!updates)
+    return false;
+
+  m_core->send(Sockets::all(user, true), ChannelPacket::channel(user, user->id(), m_core->sendStream(), "info"));
   return false;
 }

@@ -39,6 +39,7 @@ private:
   bool join();
   bool part();
   bool quit();
+  bool update();
 
   ChannelPacket *m_packet;
 };
