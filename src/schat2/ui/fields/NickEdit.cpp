@@ -48,6 +48,7 @@ void NickEdit::editingFinished()
     return;
   }
 
+  ChatClient::channel()->setName(text());
   ChatClient::channels()->update();
 }
 

@@ -147,13 +147,13 @@ Channels::Channels(QObject *parent)
 }
 
 
-void Channels::add(const ChannelInfo &id)
+void Channels::add(const ChannelInfo &info)
 {
   if (m_hooks.isEmpty())
     return;
 
   foreach (Channels *hook, m_hooks) {
-    hook->add(id);
+    hook->add(info);
   }
 }
 

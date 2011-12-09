@@ -435,6 +435,8 @@ bool Core::readUserData()
  */
 bool Core::updateUserData(ChatUser user, User *other)
 {
+  Q_UNUSED(user)
+  Q_UNUSED(other)
 //  bool rename = false;
 
 //  if (user->nick() != other->nick()) {

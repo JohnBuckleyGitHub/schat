@@ -66,7 +66,7 @@ public:
   inline void add(Channels *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Channels *hook) { m_hooks.removeAll(hook); }
 
-  virtual void add(const ChannelInfo &id);
+  virtual void add(const ChannelInfo &info);
 
 protected:
   QList<Channels*> m_hooks; ///< Хуки.
