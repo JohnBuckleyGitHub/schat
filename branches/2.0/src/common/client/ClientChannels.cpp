@@ -95,6 +95,12 @@ bool ClientChannels::part(const QByteArray &id)
 }
 
 
+bool ClientChannels::update()
+{
+  return m_client->send(ChannelPacket::update(ChatClient::channel(), m_client->sendStream()));
+}
+
+
 /*!
  * Слот вызывается, когда клиент прочитает все пришедшие пакеты.
  */
@@ -172,6 +178,8 @@ ClientChannel ClientChannels::add()
   channel->status() = m_packet->channelStatus();
 
   m_synced += channel->id();
+
+  m_hooks->add(info);
   emit this->channel(info);
 
   return channel;

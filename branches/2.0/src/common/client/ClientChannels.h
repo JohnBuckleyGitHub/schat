@@ -69,6 +69,7 @@ public:
   bool join(const QByteArray &id);
   bool join(const QString &name);
   bool part(const QByteArray &id);
+  bool update();
   ClientChannel get(const QByteArray &id);
 
 signals:
