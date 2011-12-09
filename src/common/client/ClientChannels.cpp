@@ -44,6 +44,9 @@ ClientChannels::ClientChannels(QObject *parent)
  */
 ClientChannel ClientChannels::get(const QByteArray &id)
 {
+  if (ChatClient::id() == id)
+    return ChatClient::channel();
+
   return m_channels.value(id);
 }
 
@@ -80,6 +83,19 @@ bool ClientChannels::join(const QString &name)
     return false;
 
   return m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
+}
+
+
+bool ClientChannels::nick(const QString &nick)
+{
+  ClientChannel user(new Channel(ChatClient::channel()->id(), nick));
+  user->gender() = ChatClient::channel()->gender().raw();
+  user->status() = ChatClient::channel()->status().value();
+
+  if (!user->isValid())
+    return false;
+
+  return m_client->send(ChannelPacket::update(user, m_client->sendStream()));
 }
 
 
