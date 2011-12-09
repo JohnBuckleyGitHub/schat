@@ -24,6 +24,8 @@
 #include "ChatCore.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "ui/ChannelUtils.h"
@@ -106,7 +108,7 @@ UserView::UserView(QWidget *parent)
   m_model.setSortRole(Qt::UserRole + 1);
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
-  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
+  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
 }
 
 
@@ -186,17 +188,15 @@ void UserView::sort()
 }
 
 
-/*!
- * \deprecated Эта функция больше не используется.
- */
-void UserView::userDataChanged(const QByteArray &userId, int changed)
+void UserView::channel(const ChannelInfo &info)
 {
-  UserItem *item = m_channels.value(userId);
+  UserItem *item = m_channels.value(info.id());
   if (!item)
     return;
 
   item->reload();
-  if (m_sortable && changed & SimpleClient::UserNickChanged)
+
+  if (info.option() == ChannelInfo::Renamed)
     sort();
 }
 

@@ -153,6 +153,9 @@ void Channels::add(const ChannelInfo &info)
   if (m_hooks.isEmpty())
     return;
 
+  if (ChatClient::id() == info.id())
+    ChatClient::io()->setNick(ChatClient::channel()->name());
+
   foreach (Channels *hook, m_hooks) {
     hook->add(info);
   }
