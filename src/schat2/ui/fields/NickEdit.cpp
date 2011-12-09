@@ -20,6 +20,7 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "ui/fields/NickEdit.h"
 
@@ -46,6 +47,8 @@ void NickEdit::editingFinished()
     ChatCore::settings()->setValue("Profile/Nick", ChatClient::channel()->name());
     return;
   }
+
+  ChatClient::channels()->update();
 }
 
 

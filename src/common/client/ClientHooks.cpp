@@ -147,6 +147,17 @@ Channels::Channels(QObject *parent)
 }
 
 
+void Channels::add(const ChannelInfo &id)
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Channels *hook, m_hooks) {
+    hook->add(id);
+  }
+}
+
+
 Client::Client(QObject *parent)
   : QObject(parent)
 {

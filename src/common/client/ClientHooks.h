@@ -23,6 +23,7 @@
 
 #include "schat.h"
 
+class ChannelInfo;
 class ClientCmd;
 class MessagePacket;
 
@@ -64,6 +65,8 @@ public:
   Channels(QObject *parent = 0);
   inline void add(Channels *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Channels *hook) { m_hooks.removeAll(hook); }
+
+  virtual void add(const ChannelInfo &id);
 
 protected:
   QList<Channels*> m_hooks; ///< Хуки.

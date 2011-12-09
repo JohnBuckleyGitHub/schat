@@ -114,7 +114,14 @@ bool NodeChannels::join()
   if (!user)
     return false;
 
-  ChatChannel channel = m_storage->channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  ChatChannel channel;
+
+  /// Если идентификатор канала корректный функция пытается получить его по этому идентификатору.
+  int type = SimpleID::typeOf(m_packet->channelId());
+  if (type != SimpleID::InvalidId)
+    channel = m_storage->channel(m_packet->channelId(), type);
+
+  /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
   if (!channel)
     channel = m_storage->channel(m_packet->text());
 
@@ -127,7 +134,8 @@ bool NodeChannels::join()
 
   m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
 
-  if (notify && channel->channels().all().size() > 1)
+  /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
+  if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
     m_core->send(Sockets::channel(channel), ChannelPacket::channel(user, channel->id(), m_core->sendStream(), "+"));
 
   return false;

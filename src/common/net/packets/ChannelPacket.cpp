@@ -125,3 +125,13 @@ QByteArray ChannelPacket::quit(const QByteArray &user, QDataStream *stream)
   ChannelPacket packet(user, user, "quit", DateTime::utc());
   return packet.data(stream);
 }
+
+
+QByteArray ChannelPacket::update(ClientChannel channel, QDataStream *stream)
+{
+  ChannelPacket packet(channel->id(), channel->id(), "update", DateTime::utc());
+  packet.setText(channel->name());
+  packet.m_gender        = channel->gender().raw();
+  packet.m_channelStatus = channel->status().value();
+  return packet.data(stream);
+}
