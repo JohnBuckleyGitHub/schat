@@ -22,8 +22,9 @@
 #include <QListView>
 #include <QStandardItemModel>
 
-#include "User.h"
 #include "Channel.h"
+
+class ChannelInfo;
 
 /*!
  * Итем в списке пользователей.
@@ -68,7 +69,7 @@ public:
   void sort();
 
 private slots:
-  void userDataChanged(const QByteArray &userId, int changed);
+  void channel(const ChannelInfo &info);
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
