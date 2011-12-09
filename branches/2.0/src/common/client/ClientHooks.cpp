@@ -23,6 +23,7 @@
 #include "client/ClientCmd.h"
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
+#include "client/SimpleClient.h"
 
 namespace Hooks
 {
