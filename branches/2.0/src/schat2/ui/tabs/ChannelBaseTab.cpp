@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QApplication>
 #include <QFile>
 
@@ -34,6 +36,8 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
     file = "qrc:/html/ChatView.html";
 
   m_chatView = new ChatView(channel->id(), file, this);
+
+  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
 }
 
 
@@ -55,4 +59,14 @@ void ChannelBaseTab::alert(bool start)
 void ChannelBaseTab::add(const Message &message)
 {
   m_chatView->add(message);
+}
+
+
+void ChannelBaseTab::channel(const ChannelInfo &info)
+{
+  if (info.id() == id()) {
+    qDebug() << m_channel.data();
+    qDebug() << ChatClient::channels()->get(info.id()).data();
+    qDebug() << (m_channel == ChatClient::channels()->get(info.id()));
+  }
 }

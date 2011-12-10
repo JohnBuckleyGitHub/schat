@@ -168,7 +168,7 @@ Client::Client(QObject *parent)
 }
 
 
-bool Client::openId(const QByteArray &id, bool *matched)
+bool Client::openId(const QByteArray &id, bool &matched)
 {
   if (m_hooks.isEmpty())
     return false;
@@ -220,6 +220,17 @@ QByteArray Client::serverId()
   }
 
   return QByteArray();
+}
+
+
+void Client::setup()
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Client *hook, m_hooks) {
+    hook->setup();
+  }
 }
 
 }  // namespace Hooks

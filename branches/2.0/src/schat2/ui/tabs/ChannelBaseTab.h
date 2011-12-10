@@ -22,6 +22,7 @@
 #include "Channel.h"
 #include "ui/tabs/AbstractTab.h"
 
+class ChannelInfo;
 class ChatView;
 class Message;
 
@@ -42,6 +43,9 @@ public:
 
   virtual void alert(bool start = true);
   void add(const Message &message);
+
+private slots:
+  void channel(const ChannelInfo &info);
 
 protected:
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.

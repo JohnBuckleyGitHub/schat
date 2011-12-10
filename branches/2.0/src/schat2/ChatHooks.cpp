@@ -33,7 +33,8 @@
 #include "text/UrlFilter.h"
 #include "ui/TabWidget.h"
 
-namespace Hooks {
+namespace Hooks
+{
 
 ChatMessages::ChatMessages(QObject *parent)
   : Messages(parent)
@@ -114,9 +115,9 @@ Networks::Networks(QObject *parent)
 }
 
 
-bool Networks::openId(const QByteArray &id, bool *matched)
+bool Networks::openId(const QByteArray &id, bool &matched)
 {
-  *matched = true;
+  matched = true;
 
   if (id.isEmpty())
     return ChatCore::networks()->open();
@@ -154,4 +155,4 @@ QByteArray Networks::serverId()
   return ChatCore::networks()->selected();
 }
 
-}  // namespace Hooks
+} // namespace Hooks
