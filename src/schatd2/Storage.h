@@ -60,15 +60,15 @@ public:
   QByteArray makeUserId(int type, const QByteArray &userId) const;
   QList<QByteArray> users(const QByteArray &id);
   RegReply reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
-  void rename(ChatUser user);
   void store(ChatUser user);
   void update(ChatUser user);
 
   // channel management.
   bool add(ChatChannel channel);
-  void remove(ChatChannel channel);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
+  void remove(ChatChannel channel);
+  void rename(ChatChannel channel, const QString &name);
   void update(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }
@@ -88,6 +88,7 @@ private:
     inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
     void add(ChatChannel channel);
     void remove(const QByteArray &id);
+    void rename(ChatChannel channel, const QByteArray &before);
 
   private:
     QHash<QByteArray, ChatChannel> m_channels;

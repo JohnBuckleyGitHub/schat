@@ -162,6 +162,8 @@ ChatUser Storage::user(const QByteArray &id, bool offline) const
  */
 LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &password)
 {
+  Q_UNUSED(user)
+
   if (!m_serverData->is(ServerData::PasswordAuthSupport))
     return LoginReply(Notice::ServiceUnavailable);
 
@@ -265,27 +267,6 @@ RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &pass
 }
 
 
-/*!
- * Обработка смены ника пользователя.
- */
-void Storage::rename(ChatUser user)
-{
-  if (!m_users.contains(user->id()))
-    return;
-
-  ChatChannel channel = m_cache.channel(user->channel());
-  if (!channel)
-    return;
-
-  m_nicks.remove(user->normalNick());
-
-//  user->setNormalNick(normalize(user->nick()));
-  channel->setName(QLatin1String("~") + user->nick());
-
-  m_nicks[user->normalNick()] = user;
-}
-
-
 void Storage::store(ChatUser user)
 {
   m_db->add(user);
@@ -308,17 +289,6 @@ bool Storage::add(ChatChannel channel)
 
   m_cache.add(channel);
   return true;
-}
-
-
-/*!
- * Удаление канала.
- */
-void Storage::remove(ChatChannel channel)
-{
-  DataBase::update(channel);
-
-  m_cache.remove(channel->id());
 }
 
 
@@ -357,6 +327,36 @@ ChatChannel Storage::channel(const QString &name)
   }
 
   return channel;
+}
+
+
+/*!
+ * Удаление канала.
+ */
+void Storage::remove(ChatChannel channel)
+{
+  DataBase::update(channel);
+
+  m_cache.remove(channel->id());
+}
+
+
+/*!
+ * Переименование канала.
+ */
+void Storage::rename(ChatChannel channel, const QString &name)
+{
+  if (channel->type() != SimpleID::UserId)
+    return;
+
+  QByteArray normalized = channel->normalized();
+  ChatChannel exist = this->channel(Normalize::toId('~' + name), SimpleID::UserId);
+  if (exist && exist->id() != channel->id())
+    return;
+
+  channel->setName(name);
+  m_cache.rename(channel, normalized);
+  update(channel);
 }
 
 
@@ -452,4 +452,11 @@ void Storage::Cache::remove(const QByteArray &id)
     m_channels.remove(channel->account()->cookie());
 
   return;
+}
+
+
+void Storage::Cache::rename(ChatChannel channel, const QByteArray &before)
+{
+  m_channels.remove(before);
+  m_channels[channel->normalized()] = channel;
 }
