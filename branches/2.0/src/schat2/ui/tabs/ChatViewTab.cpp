@@ -43,6 +43,7 @@ void ChatViewTab::alert(bool start)
 
 void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
 {
+  Q_UNUSED(destId)
   ClientUser user = UserUtils::user(userId);
   if (!user)
     return;
@@ -62,6 +63,7 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
 
 void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
 {
+  Q_UNUSED(destId)
   ClientUser user = UserUtils::user(userId);
   if (!user)
     return;
@@ -78,6 +80,7 @@ void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
 
 void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
 {
+  Q_UNUSED(destId)
   ClientUser user = UserUtils::user(userId);
   if (!user)
     return;

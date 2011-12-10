@@ -24,7 +24,7 @@
 #include <QPointer>
 
 #include "schat.h"
-#include "User.h"
+#include "Channel.h"
 
 class AboutTab;
 class AbstractMessage;
@@ -57,11 +57,14 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
+  ClientChannel channel(const QByteArray &id);
   inline TabBar *tabBar() { return m_tabBar; }
   static TabWidget *i() { return m_self; }
+
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab = 0);
   void message(ChannelBaseTab *tab, const AbstractMessage &data);
 
+  ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   void add(const Message &message);
 
 signals:
@@ -74,7 +77,6 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void addPrivateTab(const QByteArray &id);
   void closeTab(int index);
   void currentChanged(int index);
   void hideMainMenu();
@@ -83,18 +85,13 @@ private slots:
   void openTab();
   void showMainMenu();
 
-  void channel(const QByteArray &id);
-  void join(const QByteArray &channelId, const QByteArray &userId);
-  void synced(const QByteArray &channelId);
+  void addChannel(const QByteArray &id);
 
   void clientStateChanged(int state, int previousState);
   void message(const AbstractMessage &data);
-  void updateUserData(const QByteArray &userId);
 
 private:
-  ChannelTab *channelTab(const QByteArray &id);
   int addChatTab(AbstractTab *tab);
-  PrivateTab *privateTab(const QByteArray &id, bool create = true, bool show = false);
   void closeWelcome();
   void createToolBars();
   void lastTab();

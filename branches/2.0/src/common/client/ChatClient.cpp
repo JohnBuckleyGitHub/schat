@@ -44,6 +44,7 @@ ChatClient::ChatClient(QObject *parent)
 void ChatClient::restore()
 {
   qDebug() << "~~ RESTORE ~~";
+  m_hooks->restore();
 }
 
 
