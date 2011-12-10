@@ -196,10 +196,7 @@ bool NodeChannels::update()
   int updates = 0;
 
   if (user->name() != m_packet->text()) {
-    ChatChannel channel = m_storage->channel(Normalize::toId('~' + m_packet->text()), SimpleID::UserId);
-    if (!channel || channel->id() == user->id())
-      user->setName(m_packet->text());
-
+    m_storage->rename(user, m_packet->text());
     updates++;
   }
 
