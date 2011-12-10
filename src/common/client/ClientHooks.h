@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-#include "schat.h"
+#include "Channel.h"
 
 class ChannelInfo;
 class ClientCmd;
@@ -66,6 +66,7 @@ public:
   inline void add(Channels *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Channels *hook) { m_hooks.removeAll(hook); }
 
+  virtual ClientChannel get(const QByteArray &id);
   virtual void add(const ChannelInfo &info);
 
 protected:

@@ -31,6 +31,7 @@ class ChannelsImpl  : public Channels
 public:
   ChannelsImpl(QObject *parent = 0);
 
+  ClientChannel get(const QByteArray &id);
   void add(const ChannelInfo &info);
 };
 

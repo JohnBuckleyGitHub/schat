@@ -148,6 +148,22 @@ Channels::Channels(QObject *parent)
 }
 
 
+ClientChannel Channels::get(const QByteArray &id)
+{
+  if (m_hooks.isEmpty())
+    return ClientChannel();
+
+  ClientChannel channel;
+  foreach (Channels *hook, m_hooks) {
+    channel = hook->get(id);
+    if (channel)
+      return channel;
+  }
+
+  return channel;
+}
+
+
 void Channels::add(const ChannelInfo &info)
 {
   if (m_hooks.isEmpty())

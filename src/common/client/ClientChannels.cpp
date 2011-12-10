@@ -33,6 +33,8 @@ ClientChannels::ClientChannels(QObject *parent)
 
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
   connect(m_client, SIGNAL(idle()), SLOT(idle()));
+  connect(m_client, SIGNAL(restore()), SLOT(restore()));
+  connect(m_client, SIGNAL(setup()), SLOT(setup()));
 }
 
 
@@ -44,10 +46,20 @@ ClientChannels::ClientChannels(QObject *parent)
  */
 ClientChannel ClientChannels::get(const QByteArray &id)
 {
-  if (ChatClient::id() == id)
+  if (ChatClient::id() == id) {
+    m_channels[id] = ChatClient::channel();
     return ChatClient::channel();
+  }
 
-  return m_channels.value(id);
+  ClientChannel channel = m_channels.value(id);
+  if (!channel) {
+    channel = m_hooks->get(id);
+
+    if (channel)
+      m_channels[id] = channel;
+  }
+
+  return channel;
 }
 
 
@@ -145,7 +157,7 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   QString cmd = m_packet->command();
-  qDebug() << cmd;
+  qDebug() << cmd << m_packet->text();
 
   if (cmd == "channel")
     channel();
@@ -166,6 +178,21 @@ void ClientChannels::notice(int type)
 }
 
 
+void ClientChannels::restore()
+{
+  qDebug() << "** RESTORE **";
+}
+
+
+void ClientChannels::setup()
+{
+  qDebug() << "** SETUP **";
+  m_channels.clear();
+  m_synced.clear();
+  m_unsynced.clear();
+}
+
+
 /*!
  * Добавление канала в таблицу каналов.
  */
@@ -175,6 +202,7 @@ ClientChannel ClientChannels::add()
   if (!Channel::isCompatibleId(id))
     return ClientChannel();
 
+  m_unsynced.removeAll(id);
   ClientChannel channel = get(id);
   ChannelInfo info(id);
 
