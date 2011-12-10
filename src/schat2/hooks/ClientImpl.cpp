@@ -16,43 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATHOOKS_H_
-#define CHATHOOKS_H_
-
-#include "client/ClientHooks.h"
-#include "net/packets/MessagePacket.h"
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "client/SimpleClient.h"
+#include "hooks/ClientImpl.h"
+#include "net/ServerData.h"
+#include "net/SimpleID.h"
 
 namespace Hooks
 {
 
-class SCHAT_CORE_EXPORT ChatMessages : public Messages
+ClientImpl::ClientImpl(QObject *parent)
+  : Client(parent)
 {
-  Q_OBJECT
-
-public:
-  ChatMessages(QObject *parent = 0);
-  void readText(const MessagePacket &packet);
-  void sendText(const MessagePacket &packet);
-
-private slots:
-  void clientStateChanged(int state, int previousState);
-
-private:
-  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
-};
+  ChatClient::i()->hooks()->add(this);
+}
 
 
-class SCHAT_CORE_EXPORT Networks : public Client
+void ClientImpl::setup()
 {
-  Q_OBJECT
-
-public:
-  Networks(QObject *parent = 0);
-  bool openId(const QByteArray &id, bool &matched);
-  QByteArray id();
-  QByteArray serverId();
-};
+  if (ChatCore::settings()->value("AutoJoin").toBool()) {
+    ServerData *data = ChatClient::io()->serverData();
+    if (data->features() & ServerData::AutoJoinSupport && SimpleID::typeOf(data->channelId()) == SimpleID::ChannelId) {
+      ChatClient::channels()->join(data->channelId());
+    }
+  }
+}
 
 } // namespace Hooks
-
-#endif /* CHATHOOKS_H_ */

@@ -23,6 +23,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
   setDefault("AutoConnect",         true);
+  setDefault("AutoJoin",            true);
   setDefault("ChannelUserCount",    false);
   setDefault("CookieAuth",          true);
   setDefault("DeveloperExtras",     false);

@@ -66,7 +66,6 @@ public:
   ClientState clientState() const;
   ClientState previousState() const;
   ClientChannel channel() const;
-//  ClientUser user() const;
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
   QByteArray cookie() const;
@@ -87,6 +86,8 @@ signals:
   void packetReady(int type);
   void ready();
   void requestClientAuth();
+  void restore();
+  void setup();
 
 protected:
   AbstractClient(AbstractClientPrivate &dd, QObject *parent);

@@ -92,10 +92,10 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     pool->setLast();
     authId.clear();
 
-    setServerData(reply.serverData);
-
     if (channel->status().value() == Status::Offline)
       channel->status().set(Status::Online);
+
+    setServerData(reply.serverData);
 
     emit(q->ready());
     return true;
@@ -154,10 +154,11 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
 
   setClientState(AbstractClient::ClientOnline);
 
+  Q_Q(AbstractClient);
   if (!sameServer)
-    setup();
+    emit(q->setup());
   else
-    restore();
+    emit(q->restore());
 }
 
 
@@ -313,13 +314,6 @@ ClientChannel AbstractClient::channel() const
   Q_D(const AbstractClient);
   return d->channel;
 }
-
-
-//ClientUser AbstractClient::user() const
-//{
-//  Q_D(const AbstractClient);
-//  return d->user;
-//}
 
 
 PacketReader *AbstractClient::reader()

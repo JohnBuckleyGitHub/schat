@@ -35,13 +35,29 @@ ChatClient::ChatClient(QObject *parent)
   m_messages = new ClientMessages(this);
 
   m_hooks = new Hooks::Client(this);
+
+  connect(m_client, SIGNAL(restore()), SLOT(restore()));
+  connect(m_client, SIGNAL(setup()), SLOT(setup()));
+}
+
+
+void ChatClient::restore()
+{
+  qDebug() << "~~ RESTORE ~~";
+}
+
+
+void ChatClient::setup()
+{
+  qDebug() << "~~ SETUP ~~";
+  m_hooks->setup();
 }
 
 
 bool ChatClient::openId(const QByteArray &id)
 {
   bool matched = false;
-  return m_hooks->openId(id, &matched);
+  return m_hooks->openId(id, matched);
 }
 
 
