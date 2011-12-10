@@ -223,6 +223,17 @@ QByteArray Client::serverId()
 }
 
 
+void Client::restore()
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Client *hook, m_hooks) {
+    hook->restore();
+  }
+}
+
+
 void Client::setup()
 {
   if (m_hooks.isEmpty())

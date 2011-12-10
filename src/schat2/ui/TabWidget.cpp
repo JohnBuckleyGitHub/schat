@@ -27,7 +27,6 @@
 #include "debugstream.h"
 
 #include "actions/MenuBuilder.h"
-#include "Channel.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -94,11 +93,8 @@ TabWidget::TabWidget(QWidget *parent)
 
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
-  connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
-  connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(channel(const QByteArray &)));
-  connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
-  connect(m_client, SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
@@ -113,13 +109,13 @@ AbstractTab *TabWidget::widget(int index) const
 }
 
 
-//ClientUser TabWidget::user(const QByteArray &id)
-//{
-//  if (!m_talks.contains(id))
-//    return ClientUser();
-//
-//  return m_talks.value(id)->user();
-//}
+ClientChannel TabWidget::channel(const QByteArray &id)
+{
+  if (m_channels.contains(id))
+    return m_channels.value(id)->channel();
+
+  return ClientChannel();
+}
 
 
 /*!
@@ -163,6 +159,49 @@ void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
 
 
 /*!
+ * Создание или повторная инициализация вкладки канала.
+ *
+ * \param id     Идентификатор канала.
+ * \param create \b true если необходимо создать канал.
+ * \param show   \b true если необходимо выбрать эту вкладку.
+ *
+ * \return Возвращает указатель на вкладку или 0 в случае ошибки.
+ */
+ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool show)
+{
+  ChannelBaseTab *tab = 0;
+
+  if (m_channels.contains(id)) {
+    tab = m_channels.value(id);
+    create = false;
+  }
+
+  ClientChannel channel = ChatClient::channels()->get(id);
+  if (!channel)
+    return 0;
+
+  if (create) {
+    if (channel->type() == SimpleID::UserId)
+      tab = new PrivateTab(channel, this);
+    else if (channel->type() == SimpleID::ChannelId)
+      tab = new ChannelTab(channel, this);
+
+    if (tab) {
+      m_channels[id] = tab;
+      addTab(tab, channel->name());
+      tab->setOnline();
+      connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
+    }
+  }
+
+  if (show && tab)
+    setCurrentIndex(indexOf(tab));
+
+  return tab;
+}
+
+
+/*!
  * Добавление нового сообщения.
  */
 void TabWidget::add(const Message &message)
@@ -177,7 +216,7 @@ void TabWidget::add(const Message &message)
   }
 
   if (SimpleID::typeOf(id) == SimpleID::UserId) {
-    ChannelBaseTab *tab = privateTab(id);
+    ChannelBaseTab *tab = channelTab(id, true, false);
     if (tab)
       tab->add(message);
 
@@ -249,15 +288,6 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
-void TabWidget::addPrivateTab(const QByteArray &id)
-{
-//  if (ChatClient::id() == id)
-//    return;
-
-  privateTab(id, true, true);
-}
-
-
 /*!
  * Обработка закрытия вкладки.
  */
@@ -321,7 +351,7 @@ void TabWidget::hideMainMenu()
 void TabWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::OpenChannel)
-    addPrivateTab(notify.data().toByteArray());
+    channelTab(notify.data().toByteArray());
 }
 
 
@@ -401,73 +431,10 @@ void TabWidget::showMainMenu()
 }
 
 
-void TabWidget::channel(const QByteArray &id)
+void TabWidget::addChannel(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) == SimpleID::ChannelId)
     channelTab(id);
-}
-
-
-/*!
- * Обработка входа пользователя в канал.
- *
- * \param channelId Идентификатор канала.
- * \param userId    Идентификатор пользователя.
- */
-void TabWidget::join(const QByteArray &channelId, const QByteArray &userId)
-{
-  Q_UNUSED(channelId)
-  Q_UNUSED(userId)
-//  ClientChannel chan = m_client->channel(channelId);
-//  if (!chan)
-//    return;
-
-//  ChannelTab *tab = m_channels.value(channelId);
-//  ClientUser user = m_client->user(userId);
-
-//  if (tab && user) {
-//    privateTab(user->id(), false);
-//    tab->add(user);
-//  }
-}
-
-
-/*!
- * Обработка завершения синхронизации канала.
- *
- * \param channelId Идентификатор канала.
- */
-void TabWidget::synced(const QByteArray &channelId)
-{
-  Q_UNUSED(channelId)
-//  QTime t;
-//  t.start();
-//  ClientChannel channel = m_client->channel(channelId);
-//  if (!channel)
-//    return;
-//
-//  ChannelTab *tab = m_channels.value(channelId);
-//  if (!tab)
-//    return;
-//
-//  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
-//  if (channel->channels().all().size() == 1) {
-//    tab->synced();
-//    return;
-//  }
-//
-//  QList<QByteArray> users = channel->channels().all();
-//  for (int i = 0; i < users.size(); ++i) {
-//    ClientUser user = m_client->user(users.at(i));
-//    if (!user)
-//      continue;
-//
-//    privateTab(user->id(), false);
-////    tab->add(user);
-//  }
-//
-//  tab->synced();
-//  qDebug() << "SYNCED AT:" << t.elapsed() << "ms";
 }
 
 
@@ -526,7 +493,7 @@ void TabWidget::message(const AbstractMessage &data)
       else
         id = data.destId();
 
-      tab = privateTab(id);
+      tab = channelTab(id);
     }
   }
 
@@ -534,69 +501,6 @@ void TabWidget::message(const AbstractMessage &data)
     return;
 
   message(tab, data);
-}
-
-
-/*!
- * Обновление информации о пользователе.
- *
- * \deprecated Необходимо обрабатывать изменения непосредственно внутри вкладок.
- * \param userId Идентификатор пользователя, данные которого изменились.
- */
-void TabWidget::updateUserData(const QByteArray &userId)
-{
-  ClientUser user = m_client->user(userId);
-  if (!user)
-    return;
-
-//  QList<QByteArray> channels = user->channels();
-//  foreach(QByteArray id, channels) {
-//    ChannelTab *tab = m_channels.value(id);
-//    if (tab) {
-//      tab->userView()->update(user);
-//    }
-//  }
-
-//  PrivateTab *tab = privateTab(userId, false);
-//  if (tab)
-//    tab->update(user);
-}
-
-
-/*!
- * Создание или повторная инициализация вкладки канала.
- *
- * \param id Идентификатор канала.
- *
- * \return Возвращает указатель на вкладку или 0 в случае ошибки.
- */
-ChannelTab *TabWidget::channelTab(const QByteArray &id)
-{
-  ClientChannel channel = ChatClient::channels()->get(id);
-  if (!channel)
-    return 0;
-
-  ChannelTab *tab = 0;
-
-  if (!m_channels.contains(id)) {
-    tab = new ChannelTab(channel, this);
-    m_channels[id] = tab;
-    setCurrentIndex(addTab(tab, channel->name()));
-
-    connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
-  }
-  else {
-    tab = qobject_cast<ChannelTab *>(m_channels.value(id));
-  }
-
-  if (!tab)
-    return 0;
-
-  tab->setOnline();
-//  tab->add(m_client->user());
-
-  closeWelcome();
-  return tab;
 }
 
 
@@ -619,48 +523,6 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
   setCurrentIndex(index);
   return index;
-}
-
-
-/*!
- * Открытие или создание вкладки для приватного разговора.
- *
- * \param id     Идентификатор пользователя.
- * \param create true для создания вкладки, если она не была создана до этого.
- * \param show   true если надо уставить текущий индекс на эту вкладку.
- *
- * \return Возвращает указатель на вкладку или 0 в случае ошибки.
- */
-PrivateTab *TabWidget::privateTab(const QByteArray &id, bool create, bool show)
-{
-  ChannelBaseTab *tab = 0;
-
-  if (m_channels.contains(id)) {
-    tab = m_channels.value(id);
-    create = false;
-  }
-
-  ClientChannel channel = ChatClient::channels()->get(id);
-  if (!channel)
-    return 0;
-
-  if (create) {
-    tab = new PrivateTab(channel, this);
-    m_channels[id] = tab;
-    addTab(tab, channel->name());
-    tab->setOnline();
-
-    connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
-  }
-  else if (tab) {
-//    tab->update(user);
-  }
-
-  if (show && tab) {
-    setCurrentIndex(indexOf(tab));
-  }
-
-  return qobject_cast<PrivateTab*>(tab);
 }
 
 

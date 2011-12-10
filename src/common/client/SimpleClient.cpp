@@ -173,7 +173,7 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
 //    if (!channel->name().startsWith(QLatin1String("~")))
 //      emit(q->join(id));
 
-    endSyncChannel(channel);
+//    endSyncChannel(channel);
     return true;
   }
 
@@ -193,8 +193,8 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
 //  if (!channel->name().startsWith(QLatin1String("~")))
 //    emit(q->join(id));
 
-  if (unsync == 0)
-    endSyncChannel(channel);
+//  if (unsync == 0)
+//    endSyncChannel(channel);
 
   return true;
 }
@@ -221,36 +221,6 @@ bool SimpleClientPrivate::addChannel(ClientChannel channel)
 
 
 /*!
- * Завершение синхронизации канала.
- */
-void SimpleClientPrivate::endSyncChannel(ClientChannel channel)
-{
-  if (!channel)
-    return;
-
-  if (channel->isSynced())
-    return;
-
-  channel->setSynced(true);
-
-  if (channel->name().startsWith(QLatin1String("~")))
-    return;
-
-  Q_Q(SimpleClient);
-  emit(q->synced(channel->id()));
-}
-
-
-/*!
- * Завершение синхронизации канала.
- */
-void SimpleClientPrivate::endSyncChannel(const QByteArray &id)
-{
-  endSyncChannel(channels.value(id));
-}
-
-
-/*!
  * Обработка команд.
  *
  * \return true в случае если команда была обработана, иначе false.
@@ -259,11 +229,6 @@ bool SimpleClientPrivate::command()
 {
   QString command = messageData->command;
   SCHAT_DEBUG_STREAM(this << "command()" << command)
-
-  if (command == QLatin1String("synced")) {
-    endSyncChannel(reader->sender());
-    return true;
-  }
 
   if (command == QLatin1String("status")) {
     updateUserStatus(messageData->text);

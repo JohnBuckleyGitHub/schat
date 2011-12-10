@@ -88,6 +88,7 @@ public:
   virtual bool openId(const QByteArray &id, bool &matched);
   virtual QByteArray id();
   virtual QByteArray serverId();
+  virtual void restore();
   virtual void setup();
 
 protected:
