@@ -22,6 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "hooks/ChannelsImpl.h"
+#include "ui/TabWidget.h"
 
 namespace Hooks
 {
@@ -30,6 +31,12 @@ ChannelsImpl::ChannelsImpl(QObject *parent)
   : Channels(parent)
 {
   ChatClient::channels()->hooks()->add(this);
+}
+
+
+ClientChannel ChannelsImpl::get(const QByteArray &id)
+{
+  return TabWidget::i()->channel(id);
 }
 
 

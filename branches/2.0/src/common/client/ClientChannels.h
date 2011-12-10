@@ -85,6 +85,8 @@ signals:
 private slots:
   void idle();
   void notice(int type);
+  void restore();
+  void setup();
 
 private:
   ClientChannel add();
