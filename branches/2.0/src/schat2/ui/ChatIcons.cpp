@@ -16,50 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
-#include "ChatUrls.h"
-#include "client/ChatClient.h"
-#include "client/ClientChannels.h"
-#include "client/SimpleClient.h"
-#include "net/SimpleID.h"
-#include "ui/ChannelUtils.h"
+#include <QPixmap>
+#include <QPainter>
 
-
-QString ChannelUtils::webIcon(const QString &action)
-{
-  QString icon;
-  if (action == "edit/topic")
-    icon = "topic-edit";
-
-  if (icon.isEmpty())
-    return icon;
-
-  return "qrc:/images/" + icon + ".png";
-}
-
-
-QVariantMap ChannelUtils::toWebButton(const QByteArray &id, const QString &action, const QString &title)
-{
-  QVariantMap map;
-  ClientChannel channel = ChatClient::channels()->get(id);
-  if (!channel)
-    return map;
-
-  map["url"] = ChatUrls::toUrl(channel, action);
-  map["icon"] = webIcon(action);
-  map["title"] = title;
-  return map;
-}
-
+#include "ui/ChatIcons.h"
 
 /*!
- * Иконка пользователя.
- *
- * \param user    Пользователь.
- * \param status  true если необходимо отрисовывать статус.
- * \param offline true если необходимо отрисовывать статус User::OfflineStatus.
+ * Иконка канала.
  */
-QIcon ChannelUtils::icon(ClientChannel channel, int options)
+QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
   QString file = ":/images/user";
   int gender = channel->gender().value();
@@ -90,7 +55,7 @@ QIcon ChannelUtils::icon(ClientChannel channel, int options)
     if (options & OfflineStatus && channel->status().value() == Status::Offline)
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
-    return ChatCore::icon(file, overlay(channel->status().value()));
+    return ChatIcons::icon(file, overlay(channel->status().value()));
   }
 
   return QIcon(file);
@@ -98,9 +63,49 @@ QIcon ChannelUtils::icon(ClientChannel channel, int options)
 
 
 /*!
+ * Наложение маленькой иконки \p overlay на большую \p icon в правый нижний угол.
+ *
+ * \param icon    Иконка размером 16x16 пикселей.
+ * \param overlay Иконка-оверлей размером 10x10 пикселей.
+ */
+QIcon ChatIcons::icon(const QIcon &icon, const QString &overlay)
+{
+  if (overlay.isEmpty())
+    return icon;
+
+  QPixmap pixmap = icon.pixmap(16, 16);
+  QPainter painter(&pixmap);
+  painter.drawPixmap(6, 6, QPixmap(overlay));
+  painter.end();
+
+  return QIcon(pixmap);
+}
+
+
+/*!
+ * Наложение маленькой иконки \p overlay на большую \p file в правый нижний угол.
+ *
+ * \param file    Файл иконки размером 16x16 пикселей.
+ * \param overlay Иконка-оверлей размером 10x10 пикселей.
+ */
+QIcon ChatIcons::icon(const QString &file, const QString &overlay)
+{
+  if (overlay.isEmpty())
+    return QIcon(file);
+
+  QPixmap pixmap(file);
+  QPainter painter(&pixmap);
+  painter.drawPixmap(6, 6, QPixmap(overlay));
+  painter.end();
+
+  return QIcon(pixmap);
+}
+
+
+/*!
  * Возвращает имя файла с иконкой оверлеем для статуса \p status пользователя.
  */
-QString ChannelUtils::overlay(int status)
+QString ChatIcons::overlay(int status)
 {
   if (status == Status::Away || status == Status::AutoAway)
     return ":/images/away-small.png";

@@ -20,7 +20,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
-#include "ui/ChannelUtils.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
@@ -78,6 +78,6 @@ QIcon PrivateTab::userIcon() const
 //    return ChatCore::icon(UserUtils::icon(m_user, false, true), QLatin1String(":/images/message-small.png"));
 //  else
 //    return UserUtils::icon(m_user, true, true);
-  return ChannelUtils::icon(m_channel, ChannelUtils::Statuses | ChannelUtils::OfflineStatus);
+  return ChatIcons::icon(m_channel);
 }
 

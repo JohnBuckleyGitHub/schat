@@ -57,7 +57,7 @@ HEADERS = \
     text/LinksFilter.h \
     text/TokenFilter.h \
     text/UrlFilter.h \
-    ui/ChannelUtils.h \
+    ui/ChatIcons.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
     ui/fields/LanguageField.h \
@@ -123,7 +123,7 @@ SOURCES = \
     text/LinksFilter.cpp \
     text/TokenFilter.cpp \
     text/UrlFilter.cpp \
-    ui/ChannelUtils.cpp \
+    ui/ChatIcons.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
     ui/fields/LanguageField.cpp \

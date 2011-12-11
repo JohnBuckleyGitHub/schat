@@ -28,11 +28,11 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
-#include "ui/ChannelUtils.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/UserView.h"
 
 UserItem::UserItem(ClientChannel channel, int option)
-  : QStandardItem(ChannelUtils::icon(channel), channel->name())
+  : QStandardItem(ChatIcons::icon(channel), channel->name())
   , m_self(false)
   , m_channel(channel)
 {
@@ -51,7 +51,7 @@ bool UserItem::reload()
   setText(m_channel->name());
   setColor();
   setSortData();
-  setIcon(ChannelUtils::icon(m_channel));
+  setIcon(ChatIcons::icon(m_channel));
   return true;
 }
 

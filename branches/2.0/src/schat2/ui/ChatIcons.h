@@ -16,35 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELUTILS_H_
-#define CHANNELUTILS_H_
+#ifndef CHATICONS_H_
+#define CHATICONS_H_
+
+#include <QIcon>
 
 #include "Channel.h"
-#include "schat.h"
 
-/*!
- * \deprecated Этот класс является устаревшим.
- */
-class SCHAT_CORE_EXPORT ChannelUtils
+class SCHAT_CORE_EXPORT ChatIcons
 {
-private:
-  ChannelUtils() {}
+  ChatIcons() {}
 
 public:
   /// Опции получения иконки канала.
-  enum IconOptions {
+  enum ChannelIcon {
     NoOptions = 0,    ///< Нет специальных опций
     Statuses = 1,     ///< Отображать статусы, кроме статуса "не в сети".
     OfflineStatus = 2 ///< Также отображать статус "не в сети".
   };
 
-  static QString webIcon(const QString &action);
-  static QVariantMap toWebButton(const QByteArray &id, const QString &action, const QString &title);
-
-  static QIcon icon(ClientChannel channel, int options = 1);
+  static QIcon icon(ClientChannel channel, int options = Statuses | OfflineStatus);
+  static QIcon icon(const QIcon &icon, const QString &overlay);
+  static QIcon icon(const QString &file, const QString &overlay);
 
 private:
   static QString overlay(int status);
 };
 
-#endif /* CHANNELUTILS_H_ */
+#endif /* CHATICONS_H_ */
