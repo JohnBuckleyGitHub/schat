@@ -36,6 +36,8 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   setText(m_channel->name());
 
   ChatClient::channels()->join(id());
+
+  connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
 }
 
 
@@ -45,4 +47,11 @@ bool PrivateTab::bindMenu(QMenu *menu)
 //  UserMenu *builder = new UserMenu(m_user, this);
 //  builder->bind(menu);
   return true;
+}
+
+
+void PrivateTab::quit(const QByteArray &user)
+{
+  if (id() == user)
+    reload();
 }

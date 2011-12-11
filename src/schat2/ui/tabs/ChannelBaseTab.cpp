@@ -85,8 +85,7 @@ void ChannelBaseTab::setOnline(bool online)
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
   if (info.id() == id()) {
-    setIcon(channelIcon());
-    setText(m_channel->name());
+    reload();
 
     if (!m_online)
       m_online = true;
@@ -106,4 +105,11 @@ QIcon ChannelBaseTab::channelIcon() const
     return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), ":/images/message-small.png");
   else
     return ChatIcons::icon(m_channel);
+}
+
+
+void ChannelBaseTab::reload()
+{
+  setIcon(channelIcon());
+  setText(m_channel->name());
 }

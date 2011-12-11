@@ -302,6 +302,7 @@ void ClientChannels::quit()
   if (!user)
     return;
 
+  user->setSynced(false);
   emit quit(user->id());
 
   QHashIterator<QByteArray, ClientChannel> i(m_channels);
