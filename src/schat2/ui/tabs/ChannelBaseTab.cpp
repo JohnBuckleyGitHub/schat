@@ -40,6 +40,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   setIcon(channelIcon());
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
+  connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
 }
 
 
@@ -69,13 +70,33 @@ void ChannelBaseTab::add(const Message &message)
 }
 
 
+void ChannelBaseTab::setOnline(bool online)
+{
+  if (online) {
+    AbstractTab::setOnline(online);
+    return;
+  }
+
+  m_online = false;
+  setIcon(channelIcon());
+}
+
+
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
   if (info.id() == id()) {
-    qDebug() << m_channel.data();
-    qDebug() << ChatClient::channels()->get(info.id()).data();
-    qDebug() << (m_channel == ChatClient::channels()->get(info.id()));
+    setIcon(channelIcon());
+    setText(m_channel->name());
+
+    if (!m_online)
+      m_online = true;
   }
+}
+
+
+void ChannelBaseTab::offline()
+{
+  setOnline(false);
 }
 
 

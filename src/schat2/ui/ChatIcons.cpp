@@ -59,7 +59,7 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
     options |= Statuses;
 
   if (options & Statuses) {
-    if (options & OfflineStatus && channel->status().value() == Status::Offline)
+    if (options & OfflineStatus && (channel->status().value() == Status::Offline || !channel->isSynced()))
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
     return ChatIcons::icon(file, overlay(channel->status().value()));
