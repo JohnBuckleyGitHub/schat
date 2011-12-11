@@ -43,7 +43,6 @@
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
-#include "ui/ChannelUtils.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
@@ -241,40 +240,6 @@ ChatCore::~ChatCore()
 bool ChatCore::isIgnored(const QByteArray &id)
 {
   return d->ignoreList.contains(id);
-}
-
-
-QIcon ChatCore::icon(const QIcon &icon, const QString &overlay)
-{
-  if (overlay.isEmpty())
-    return icon;
-
-  QPixmap pixmap = icon.pixmap(16, 16);
-  QPainter painter(&pixmap);
-  painter.drawPixmap(6, 6, QPixmap(overlay));
-  painter.end();
-
-  return QIcon(pixmap);
-}
-
-
-/*!
- * Наложение маленькой иконки \p overlay на большую \p file в правый нижний угол.
- *
- * \param file    Файл иконки размером 16x16 пикселей.
- * \param overlay Иконка-оверлей размером 10x10 пикселей.
- */
-QIcon ChatCore::icon(const QString &file, const QString &overlay)
-{
-  if (overlay.isEmpty())
-    return QIcon(file);
-
-  QPixmap pixmap(file);
-  QPainter painter(&pixmap);
-  painter.drawPixmap(6, 6, QPixmap(overlay));
-  painter.end();
-
-  return QIcon(pixmap);
 }
 
 

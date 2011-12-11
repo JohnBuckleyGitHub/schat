@@ -116,8 +116,6 @@ public:
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
   inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
-  static QIcon icon(const QIcon &icon, const QString &overlay);
-  static QIcon icon(const QString &file, const QString &overlay);
   static QIcon icon(IconName name);
   static void makeRed(QWidget *widget, bool red = true);
   void startNotify(int notice, const QVariant &data = QVariant());

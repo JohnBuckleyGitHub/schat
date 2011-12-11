@@ -40,7 +40,6 @@
 #include "text/LinksFilter.h"
 #include "text/TokenFilter.h"
 #include "text/UrlFilter.h"
-#include "ui/ChannelUtils.h"
 #include "ui/UserUtils.h"
 #include "User.h"
 
