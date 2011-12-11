@@ -38,6 +38,16 @@ ChatClient::ChatClient(QObject *parent)
 
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+}
+
+
+void ChatClient::clientStateChanged(int state, int previousState)
+{
+  Q_UNUSED(state);
+
+  if (previousState == Online)
+    emit offline();
 }
 
 

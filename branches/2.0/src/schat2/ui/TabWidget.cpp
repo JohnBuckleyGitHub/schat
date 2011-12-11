@@ -94,7 +94,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
@@ -448,11 +448,11 @@ void TabWidget::clientStateChanged(int state, int previousState)
   if (state == SimpleClient::ClientOnline)
     return;
 
-  QByteArray id = m_client->channelId();
+//  QByteArray id = m_client->channelId();
 
-  foreach (ChannelBaseTab *tab, m_channels) {
-    tab->setOnline(false);
-  }
+//  foreach (ChannelBaseTab *tab, m_channels) {
+//    tab->setOnline(false);
+//  }
 
 //  foreach (PrivateTab *tab, m_talks) {
 //    tab->setOnline(false);

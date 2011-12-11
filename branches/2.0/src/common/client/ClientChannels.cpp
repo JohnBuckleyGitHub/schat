@@ -35,6 +35,7 @@ ClientChannels::ClientChannels(QObject *parent)
   connect(m_client, SIGNAL(idle()), SLOT(idle()));
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
+  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
 }
 
 
@@ -124,6 +125,18 @@ bool ClientChannels::part(const QByteArray &id)
 bool ClientChannels::update()
 {
   return m_client->send(ChannelPacket::update(ChatClient::channel(), m_client->sendStream()));
+}
+
+
+void ClientChannels::clientStateChanged(int state, int previousState)
+{
+  Q_UNUSED(state)
+
+  if (previousState == ChatClient::Online) {
+    foreach (ClientChannel channel, m_channels) {
+      channel->setSynced(false);
+    }
+  }
 }
 
 

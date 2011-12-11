@@ -83,6 +83,7 @@ signals:
   void quit(const QByteArray &user);                              ///< Команда "quit".
 
 private slots:
+  void clientStateChanged(int state, int previousState);
   void idle();
   void notice(int type);
   void restore();

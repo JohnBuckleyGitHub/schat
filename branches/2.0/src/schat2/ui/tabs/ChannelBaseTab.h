@@ -43,9 +43,11 @@ public:
 
   virtual void alert(bool start = true);
   void add(const Message &message);
+  void setOnline(bool online = true);
 
 private slots:
   void channel(const ChannelInfo &info);
+  void offline();
 
 protected:
   QIcon channelIcon() const;

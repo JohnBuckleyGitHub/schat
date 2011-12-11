@@ -62,7 +62,11 @@ public:
   inline static bool open(const QByteArray &id) { return m_self->openId(id); }
   inline static bool open(const QString &url)   { return m_self->openUrl(QUrl(url)); }
 
+signals:
+  void offline();
+
 private slots:
+  void clientStateChanged(int state, int previousState);
   void restore();
   void setup();
 
