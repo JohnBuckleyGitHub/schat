@@ -489,10 +489,7 @@ void Core::release(SocketReleaseEvent *event)
 
   NodeNoticeReader::release(user, event->socket());
 
-  if (user->sockets().size())
-    return;
-
-  m_storage->remove(user);
+  m_storage->gc(user);
 }
 
 
