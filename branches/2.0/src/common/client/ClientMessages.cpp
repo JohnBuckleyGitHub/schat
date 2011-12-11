@@ -128,7 +128,7 @@ void ClientMessages::notice(int type)
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь
   /// до момента получения информации об отправителе.
   ClientChannel user = ChatClient::channels()->get(m_packet->sender());
-  if (!user || user->status().value() == Status::Offline) {
+  if (!user || !user->isSynced()) {
     ChatClient::channels()->join(m_packet->sender());
     m_pending[m_packet->sender()].append(packet);
     return;

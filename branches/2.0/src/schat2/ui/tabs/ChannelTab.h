@@ -36,11 +36,10 @@ class ChannelTab : public ChannelBaseTab
 
 public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
-  bool bindMenu(QMenu *menu);
-  bool remove(const QByteArray &id);
   inline UserView *userView() { return m_userView; }
+
+  bool bindMenu(QMenu *menu);
   void setOnline(bool online = true);
-  void synced();
 
 private slots:
   void channels(const QList<QByteArray> &channels);
@@ -48,6 +47,7 @@ private slots:
   void notify(int notice, const QVariant &data);
   void part(const QByteArray &channel, const QByteArray &user);
   void quit(const QByteArray &user);
+
   void reloaded();
   void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
