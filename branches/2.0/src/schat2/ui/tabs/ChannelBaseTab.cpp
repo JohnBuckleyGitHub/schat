@@ -23,6 +23,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
 
@@ -36,6 +37,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
     file = "qrc:/html/ChatView.html";
 
   m_chatView = new ChatView(channel->id(), file, this);
+  setIcon(channelIcon());
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
 }
@@ -53,6 +55,11 @@ void ChannelBaseTab::alert(bool start)
     m_alerts++;
   else
     m_alerts = 0;
+
+  if (m_alerts > 1)
+    return;
+
+  setIcon(channelIcon());
 }
 
 
@@ -69,4 +76,13 @@ void ChannelBaseTab::channel(const ChannelInfo &info)
     qDebug() << ChatClient::channels()->get(info.id()).data();
     qDebug() << (m_channel == ChatClient::channels()->get(info.id()));
   }
+}
+
+
+QIcon ChannelBaseTab::channelIcon() const
+{
+  if (m_alerts)
+    return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), ":/images/message-small.png");
+  else
+    return ChatIcons::icon(m_channel);
 }

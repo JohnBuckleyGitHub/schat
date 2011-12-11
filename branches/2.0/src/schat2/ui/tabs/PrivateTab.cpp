@@ -33,7 +33,6 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  setIcon(userIcon());
   setText(m_channel->name());
 
   ChatClient::channels()->join(id());
@@ -47,37 +46,3 @@ bool PrivateTab::bindMenu(QMenu *menu)
 //  builder->bind(menu);
   return true;
 }
-
-
-//bool PrivateTab::update(ClientUser user)
-//{
-//  if (!user)
-//    return false;
-//
-//  if (m_user != user) {
-//    addJoinMsg(user->id(), user->id());
-//    m_user = user;
-//  }
-//
-//  m_action->setText(m_user->nick());
-//  m_icon = userIcon();
-//
-//  int index = m_tabs->indexOf(this);
-//  if (index == -1)
-//    return false;
-//
-//  m_tabs->setTabText(index, m_user->nick());
-//  setOnline(true);
-//  return true;
-//}
-
-
-QIcon PrivateTab::userIcon() const
-{
-//  if (m_alerts)
-//    return ChatCore::icon(UserUtils::icon(m_user, false, true), QLatin1String(":/images/message-small.png"));
-//  else
-//    return UserUtils::icon(m_user, true, true);
-  return ChatIcons::icon(m_channel);
-}
-

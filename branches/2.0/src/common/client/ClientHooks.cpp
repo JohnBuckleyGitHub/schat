@@ -24,6 +24,7 @@
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
+#include "net/SimpleID.h"
 
 namespace Hooks
 {
@@ -171,6 +172,14 @@ void Channels::add(const ChannelInfo &info)
 
   if (ChatClient::id() == info.id())
     ChatClient::io()->setNick(ChatClient::channel()->name());
+
+  ClientChannel channel = ChatClient::channels()->get(info.id());
+  if (!channel)
+    return;
+
+  channel->setSynced(true);
+  if (channel->type() == SimpleID::ChannelId)
+    channel->status() = Status::Online;
 
   foreach (Channels *hook, m_hooks) {
     hook->add(info);

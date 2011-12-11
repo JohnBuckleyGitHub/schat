@@ -48,6 +48,8 @@ private slots:
   void channel(const ChannelInfo &info);
 
 protected:
+  QIcon channelIcon() const;
+
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.
   ClientChannel m_channel; ///< Канал.
   int m_alerts;            ///< Количество непрочитанных уведомлений.
