@@ -135,6 +135,8 @@ void ClientChannels::clientStateChanged(int state, int previousState)
   Q_UNUSED(state)
 
   if (previousState == ChatClient::Online) {
+    m_joined.removeAll(ChatClient::id());
+
     foreach (ClientChannel channel, m_channels) {
       channel->setSynced(false);
       channel->channels().clear();

@@ -65,6 +65,7 @@ public:
 
   // channel management.
   bool add(ChatChannel channel);
+  bool gc(ChatChannel channel);
   ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   ChatChannel channel(const QString &name);
   void remove(ChatChannel channel);

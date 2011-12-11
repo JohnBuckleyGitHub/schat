@@ -293,6 +293,32 @@ bool Storage::add(ChatChannel channel)
 
 
 /*!
+ * При необходимости удаляет канал.
+ *
+ * \return \b true если канал был удалён.
+ */
+bool Storage::gc(ChatChannel channel)
+{
+  if (channel->type() == SimpleID::UserId) {
+    if (channel->sockets().size())
+      return false;
+
+    channel->status() = Status::Offline;
+
+    if (channel->channels().all().size() > 1)
+      return false;
+  }
+  else if (channel->type() == SimpleID::ChannelId) {
+    if (channel->channels().all().size())
+      return false;
+  }
+
+  remove(channel);
+  return true;
+}
+
+
+/*!
  * Получение канала по идентификатору канала или идентификатору нормализированного имени либо Сookie.
  *
  * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
