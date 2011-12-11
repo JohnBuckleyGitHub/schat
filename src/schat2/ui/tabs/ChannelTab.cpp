@@ -67,7 +67,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  setIcon(SCHAT_ICON(ChannelIcon));
   setText(channel->name());
 
 //  TopicMessage msg(m_channel->topic());
@@ -105,20 +104,6 @@ bool ChannelTab::remove(const QByteArray &id)
 //  addLeftMsg(id, m_channel->id());
   displayUserCount();
   return true;
-}
-
-
-void ChannelTab::alert(bool start)
-{
-  ChannelBaseTab::alert(start);
-
-  if (m_alerts > 1)
-    return;
-
-  if (start)
-    setIcon(SCHAT_ICON(ChannelAlertIcon));
-  else
-    setIcon(SCHAT_ICON(ChannelIcon));
 }
 
 

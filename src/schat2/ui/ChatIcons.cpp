@@ -19,6 +19,7 @@
 #include <QPixmap>
 #include <QPainter>
 
+#include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
 
 /*!
@@ -26,27 +27,33 @@
  */
 QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
-  QString file = ":/images/user";
-  int gender = channel->gender().value();
-  int color  = channel->gender().color();
+  QString file = ":/webkit/resources/missingImage.png";
 
-  if (gender == Gender::Unknown) {
-    file += "-unknown";
-  }
-  else if (gender == Gender::Ghost) {
-    file += "-ghost";
-  }
-  else if (gender == Gender::Bot) {
-    file += "-bot";
-  }
-  else if (color != Gender::Default) {
-    file += "-" + Gender::colorToString(color);
-  }
+  if (channel->type() == SimpleID::UserId) {
+    file = ":/images/user";
+    int gender = channel->gender().value();
+    int color  = channel->gender().color();
 
-  if (gender == Gender::Female)
-    file += "-female";
+    if (gender == Gender::Unknown) {
+      file += "-unknown";
+    }
+    else if (gender == Gender::Ghost) {
+      file += "-ghost";
+    }
+    else if (gender == Gender::Bot) {
+      file += "-bot";
+    }
+    else if (color != Gender::Default) {
+      file += "-" + Gender::colorToString(color);
+    }
 
-  file += ".png";
+    if (gender == Gender::Female)
+      file += "-female";
+
+    file += ".png";
+  }
+  else if (channel->type() == SimpleID::ChannelId)
+    file = ":/images/channel.png";
 
   if (options & OfflineStatus && channel->status().value() == Status::Offline && !(options & Statuses))
     options |= Statuses;
