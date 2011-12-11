@@ -101,6 +101,7 @@ private:
   ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
   Hooks::Channels *m_hooks;                    ///< Хуки.
   QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
+  QList<QByteArray> m_joined;                  ///< Список каналов в которых находится клиент.
   QList<QByteArray> m_synced;                  ///< Список синхронизированных каналов.
   QList<QByteArray> m_unsynced;                ///< Список не синхронизированных каналов.
   SimpleClient *m_client;                      ///< Клиент чата.

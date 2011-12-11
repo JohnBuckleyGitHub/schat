@@ -96,40 +96,14 @@ bool ChannelTab::bindMenu(QMenu *menu)
 }
 
 
-bool ChannelTab::remove(const QByteArray &id)
-{
-  if (!m_userView->remove(id))
-    return false;
-
-//  addLeftMsg(id, m_channel->id());
-  displayUserCount();
-  return true;
-}
-
-
 void ChannelTab::setOnline(bool online)
 {
   if (!online) {
     m_userView->clear();
     displayUserCount();
-
-//    if (ChatCore::i()->client()->previousState() == SimpleClient::ClientOnline)
-//      addQuitMsg(UserUtils::userId(), m_channel->id());
-  }
-  else {
-    ClientChannel channel = ChatClient::channels()->get(id());
-    if (channel && channel != m_channel)
-      m_channel = channel;
   }
 
   ChannelBaseTab::setOnline(online);
-}
-
-
-void ChannelTab::synced()
-{
-  displayUserCount();
-  m_userView->sort();
 }
 
 
@@ -245,6 +219,9 @@ void ChannelTab::topicFocusOut()
 }
 
 
+/*!
+ * \deprecated Эта функция больше не используется.
+ */
 void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
 {
   if (!(changed & SimpleClient::UserNickChanged))
@@ -261,6 +238,9 @@ void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
 }
 
 
+/*!
+ * \deprecated Эта функция больше не используется.
+ */
 void ChannelTab::userLeave(const QByteArray &userId)
 {
   if (m_userView->remove(userId)) {
@@ -270,9 +250,6 @@ void ChannelTab::userLeave(const QByteArray &userId)
 }
 
 
-/*!
- * \deprecated Эта функция больше не используется.
- */
 void ChannelTab::displayUserCount()
 {
 //  int index = m_tabs->indexOf(this);

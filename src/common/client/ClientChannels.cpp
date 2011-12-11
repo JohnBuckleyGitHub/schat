@@ -118,6 +118,8 @@ bool ClientChannels::part(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
+  m_joined.removeAll(id);
+
   return m_client->send(ChannelPacket::part(ChatClient::id(), id, m_client->sendStream()));
 }
 
@@ -135,6 +137,7 @@ void ClientChannels::clientStateChanged(int state, int previousState)
   if (previousState == ChatClient::Online) {
     foreach (ClientChannel channel, m_channels) {
       channel->setSynced(false);
+      channel->channels().clear();
     }
   }
 }
@@ -192,6 +195,9 @@ void ClientChannels::notice(int type)
 void ClientChannels::restore()
 {
   qDebug() << "** RESTORE **";
+  foreach (QByteArray id, m_joined) {
+    join(id);
+  }
 }
 
 
@@ -201,6 +207,7 @@ void ClientChannels::setup()
   m_channels.clear();
   m_synced.clear();
   m_unsynced.clear();
+  m_joined.clear();
 }
 
 
@@ -247,6 +254,9 @@ ClientChannel ClientChannels::add()
 void ClientChannels::channel()
 {
   ClientChannel channel = add();
+  if (!m_joined.contains(channel->id()))
+    m_joined += channel->id();
+
   emit this->channel(channel->id());
 
   if (channel->type() == SimpleID::ChannelId) {
@@ -314,7 +324,8 @@ void ClientChannels::sync(ClientChannel channel)
 
   QList<QByteArray> channels = channel->channels().all();
   foreach (QByteArray id, channels) {
-    if (m_channels.contains(id))
+    ClientChannel exist = get(id);
+    if (exist && exist->isSynced())
       m_synced += id;
     else
       m_unsynced += id;

@@ -434,7 +434,7 @@ void TabWidget::showMainMenu()
 void TabWidget::addChannel(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) == SimpleID::ChannelId)
-    channelTab(id);
+    channelTab(id, true, !m_channels.contains(id));
 }
 
 
