@@ -37,11 +37,13 @@ public:
   inline int type() const { return m_type; }
 
   static bool read(int type, PacketReader *reader);
+  static void add(ChatChannel channel);
   static void add(NodeNoticeReader *reader);
   static void release(ChatChannel channel, quint64 socket);
 
 protected:
   virtual bool read(PacketReader *reader) { Q_UNUSED(reader) return false; }
+  virtual void addImpl(ChatChannel user) { Q_UNUSED(user) }
   virtual void releaseImpl(ChatChannel user, quint64 socket) { Q_UNUSED(user) Q_UNUSED(socket) }
 
   Core *m_core;       ///< Ядро чата.

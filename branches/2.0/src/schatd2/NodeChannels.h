@@ -32,6 +32,7 @@ public:
 
 protected:
   bool read(PacketReader *reader);
+  void addImpl(ChatChannel user);
   void releaseImpl(ChatChannel user, quint64 socket);
 
 private:
