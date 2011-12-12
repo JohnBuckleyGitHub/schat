@@ -21,8 +21,13 @@
 #include <QApplication>
 #include <QFile>
 
+#include <QTextDocument>
+
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "net/SimpleID.h"
+#include "SimpleJSon.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
@@ -84,12 +89,16 @@ void ChannelBaseTab::setOnline(bool online)
 
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
-  if (info.id() == id()) {
-    reload();
+  if (SimpleID::typeOf(info.id()) == SimpleID::UserId && info.option() != ChannelInfo::Updated)
+    rename(info.id());
 
-    if (!m_online)
-      m_online = true;
-  }
+  if (info.id() != id())
+    return;
+
+  reload();
+
+  if (!m_online)
+    m_online = true;
 }
 
 
@@ -112,4 +121,20 @@ void ChannelBaseTab::reload()
 {
   setIcon(channelIcon());
   setText(m_channel->name());
+}
+
+
+void ChannelBaseTab::rename(const QByteArray &id)
+{
+  ClientChannel user = ChatClient::channels()->get(id);
+
+  if (!user)
+    return;
+
+  QVariantMap json;
+  json["Id"]   = SimpleID::encode(user->id());
+  json["Url"]  = ChatUrls::toUrl(user, "insert").toString();
+  json["Name"] = Qt::escape(user->name());
+
+  m_chatView->evaluateJavaScript("updateChannelName(" + SimpleJSon::quote(SimpleJSon::generate(json)) + ");");
 }

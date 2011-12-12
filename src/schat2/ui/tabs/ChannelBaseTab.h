@@ -52,6 +52,7 @@ private slots:
 protected:
   QIcon channelIcon() const;
   virtual void reload();
+  void rename(const QByteArray &id);
 
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.
   ClientChannel m_channel; ///< Канал.

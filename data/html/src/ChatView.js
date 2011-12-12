@@ -178,6 +178,7 @@ function datePad(n)
 }
 
 
+/// Возвращает HTML шаблон имени канала.
 function nameTemplate(json)
 {
 	var out = '';
@@ -194,6 +195,18 @@ function nameTemplate(json)
 }
 
 
+/// Обновление имени канала.
+function updateChannelName(data)
+{
+	var json = JSON.parse(data);
+
+	var a = $('a.' + json.Id);
+	a.attr('href', json.Url);
+	a.html(json.Name);
+}
+
+
+/// Включает или выключает отображение секунд.
 function showSeconds(show) {
 	if (show)
 		$('#body').removeClass('no-seconds');
@@ -216,17 +229,6 @@ function showTopic(show) {
 		$('#topic-wrapper').show();
 	else
 		$('#topic-wrapper').hide();
-}
-
-// Удаление статуса сообщения и времени доставки.
-function setMessageState(id, classes, timestamp, seconds) {
-	var prefix = id + ' > div.blocks';
-
-	$(prefix).attr('class', 'blocks ' + classes);
-
-	prefix += ' > .date-time-block > ';
-	$(prefix + '.timestamp').text(timestamp);
-	$(prefix + '.seconds').text(seconds);
 }
 
 // Повторно устанавливает обработчик кнопок.
