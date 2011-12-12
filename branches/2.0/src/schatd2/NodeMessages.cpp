@@ -29,6 +29,6 @@ NodeMessages::NodeMessages(Core *core)
 
 bool NodeMessages::read(PacketReader *reader)
 {
-  qDebug() << "---";
+  Q_UNUSED(reader)
   return true;
 }

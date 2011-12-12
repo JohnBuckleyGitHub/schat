@@ -31,7 +31,7 @@ public:
   ChatPlugin *init(ChatCore *core);
   QString id() const { return "Cache"; }
   QString name() const { return id(); }
-  QString version() const { return "1.0.0"; }
+  QString version() const { return "0.1.0"; }
   QStringList provides() const { return QStringList(id()); }
 };
 

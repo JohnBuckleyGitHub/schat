@@ -23,16 +23,21 @@
 #include <QToolBar>
 #include <QToolButton>
 
-#include "ui/fields/GenderField.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "ui/UserUtils.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "ui/ChatIcons.h"
+#include "ui/fields/GenderField.h"
+
 
 GenderField::GenderField(QWidget *parent)
   : QWidget(parent)
-  , m_settings(ChatCore::i()->settings())
-  , m_user(new User())
 {
+  m_channel = ClientChannel(new Channel(ChatClient::id(), ChatClient::channel()->name()));
+  m_channel->setSynced(true);
+  m_channel->gender() = ChatClient::channel()->gender().raw();
+
   m_combo = new QComboBox(this);
   m_combo->addItem(tr("Male"));
   m_combo->addItem(tr("Female"));
@@ -58,7 +63,6 @@ GenderField::GenderField(QWidget *parent)
   m_toolBar->addWidget(m_config);
   m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }" );
 
-  m_user->gender().setRaw(m_settings->value(QLatin1String("Profile/Gender")).toInt());
   setState();
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
@@ -69,13 +73,15 @@ GenderField::GenderField(QWidget *parent)
   mainLay->setSpacing(0);
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
 void GenderField::updateData()
 {
-//  m_settings->updateValue(QLatin1String("Profile/Gender"), m_user->gender().raw());
+  ChatCore::settings()->setValue("Profile/Gender", m_channel->gender().raw());
+  ChatClient::channel()->gender() = m_channel->gender().raw();
+  ChatClient::channels()->update();
 }
 
 
@@ -94,9 +100,9 @@ void GenderField::indexChanged(int index)
     return;
 
   if (index == 0)
-    m_user->gender().set(Gender::Male);
+    m_channel->gender().set(Gender::Male);
   else
-    m_user->gender().set(Gender::Female);
+    m_channel->gender().set(Gender::Female);
 
   setState();
   updateData();
@@ -109,7 +115,7 @@ void GenderField::setColor()
   if (!action)
     return;
 
-  m_user->gender().setColor(action->data().toInt());
+  m_channel->gender().setColor(action->data().toInt());
 
   setState();
   updateData();
@@ -118,8 +124,8 @@ void GenderField::setColor()
 
 void GenderField::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == QLatin1String("Profile/Gender")) {
-    m_user->gender().setRaw(value.toInt());
+  if (key == "Profile/Gender") {
+    m_channel->gender().setRaw(value.toInt());
     setState();
   }
 }
@@ -151,23 +157,22 @@ void GenderField::retranslateUi()
 
 void GenderField::setIcons()
 {
-  int gender = m_user->gender().raw();
+  int gender = m_channel->gender().raw();
 
+  m_channel->gender().set(Gender::Male);
+  m_combo->setItemIcon(0, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
 
-  m_user->gender().set(Gender::Male);
-  m_combo->setItemIcon(0, UserUtils::icon(m_user));
+  m_channel->gender().set(Gender::Female);
+  m_combo->setItemIcon(1, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
 
-  m_user->gender().set(Gender::Female);
-  m_combo->setItemIcon(1, UserUtils::icon(m_user));
-
-  m_user->gender().setRaw(gender);
+  m_channel->gender().setRaw(gender);
 
   for (int i = 0; i < m_colors.size(); ++i) {
-    m_user->gender().setColor(i);
-    m_colors.at(i)->setIcon(UserUtils::icon(m_user));
+    m_channel->gender().setColor(i);
+    m_colors.at(i)->setIcon(ChatIcons::icon(m_channel, ChatIcons::Statuses));
   }
 
-  m_user->gender().setRaw(gender);
+  m_channel->gender().setRaw(gender);
 }
 
 
@@ -176,9 +181,9 @@ void GenderField::setState()
   setIcons();
   m_config->setEnabled(true);
 
-  if (m_user->gender().value() == Gender::Female)
+  if (m_channel->gender().value() == Gender::Female)
     m_combo->setCurrentIndex(1);
-  else if (m_user->gender().value() == Gender::Male)
+  else if (m_channel->gender().value() == Gender::Male)
     m_combo->setCurrentIndex(0);
   else {
     m_combo->setCurrentIndex(-1);
@@ -186,12 +191,11 @@ void GenderField::setState()
     return;
   }
 
-  if (m_user->gender().color() > Gender::Yellow)
+  if (m_channel->gender().color() > Gender::Yellow)
     return;
 
-  for (int i = 0; i < m_colors.size(); ++i) {
+  for (int i = 0; i < m_colors.size(); ++i)
     m_colors.at(i)->setChecked(false);
-  }
 
-  m_colors.at(m_user->gender().color())->setChecked(true);
+  m_colors.at(m_channel->gender().color())->setChecked(true);
 }
