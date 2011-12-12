@@ -16,11 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTextDocument>
 #include <QUrl>
 
 #include "net/SimpleID.h"
 #include "text/UrlFilter.h"
-#include "ui/UserUtils.h"
+#include "ChatUrls.h"
 
 UrlFilter::UrlFilter()
   : AbstractFilter("Url")
@@ -30,19 +31,29 @@ UrlFilter::UrlFilter()
 
 bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 {
+  Q_UNUSED(options)
+
+  QString name;
+
   for (int i = 0; i < tokens.size(); ++i) {
-    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == QLatin1String("a")) {
+
+    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == "a") {
       HtmlATag tag(tokens.at(i));
 
       if (tag.url.startsWith("chat://channel/")) {
         tag.classes = "nick";
-        ClientUser user = UserUtils::user(QUrl(tag.url));
-        if (user)
+        ClientChannel user = ChatUrls::channel(QUrl(tag.url));
+        if (user) {
           tag.classes += " " + SimpleID::encode(user->id());
+          name = user->name();
+        }
 
         tokens[i].text = tag.toText();
       }
-
+    }
+    else if (tokens.at(i).type == HtmlToken::Text && !name.isEmpty()) {
+      tokens[i].text = Qt::escape(name);
+      name.clear();
     }
   }
 
