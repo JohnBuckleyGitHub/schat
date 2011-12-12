@@ -29,6 +29,7 @@ class SCHAT_CORE_EXPORT StatusMenu : public QMenu
 
 public:
   StatusMenu(QWidget *parent = 0);
+  static QString statusTitle(int status);
 
 signals:
   void updated();
@@ -37,14 +38,14 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  void clientStateChanged(int state);
+  void clientStateChanged();
   void settingsChanged(const QString &key, const QVariant &value);
   void statusChanged(QAction *action);
 
 private:
-  inline void retranslateUi() { update(); }
+  inline void retranslateUi() { reload(); }
   void addStatus(int status);
-  void update();
+  void reload();
 
   QActionGroup *m_group;            ///< Группа для того чтобы можно было выбрать только один статус.
   QHash<int, QAction *> m_statuses; ///< Статусы.

@@ -79,9 +79,11 @@ GenderField::GenderField(QWidget *parent)
 
 void GenderField::updateData()
 {
-  ChatCore::settings()->setValue("Profile/Gender", m_channel->gender().raw());
   ChatClient::channel()->gender() = m_channel->gender().raw();
-  ChatClient::channels()->update();
+  ChatCore::settings()->setValue("Profile/Gender", m_channel->gender().raw());
+
+  if (ChatClient::state() == ChatClient::Online)
+    ChatClient::channels()->update();
 }
 
 

@@ -18,12 +18,14 @@
 
 #include <QEvent>
 
+#include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
-#include "ui/UserUtils.h"
-#include "User.h"
 
 StatusMenu::StatusMenu(QWidget *parent)
   : QMenu(parent)
@@ -37,11 +39,33 @@ StatusMenu::StatusMenu(QWidget *parent)
   addSeparator();
   addStatus(Status::Offline);
 
-  update();
+  reload();
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
+}
+
+
+QString StatusMenu::statusTitle(int status)
+{
+  switch (status) {
+    case Status::Offline:
+      return QObject::tr("Offline");
+
+    case Status::Away:
+    case Status::AutoAway:
+      return QObject::tr("Away");
+
+    case Status::DnD:
+      return QObject::tr("Do not disturb");
+
+    case Status::FreeForChat:
+      return QObject::tr("Free for Chat");
+
+    default:
+      return QObject::tr("Online");
+  }
 }
 
 
@@ -54,10 +78,9 @@ void StatusMenu::changeEvent(QEvent *event)
 }
 
 
-void StatusMenu::clientStateChanged(int state)
+void StatusMenu::clientStateChanged()
 {
-  Q_UNUSED(state);
-  update();
+  reload();
 }
 
 
@@ -68,16 +91,19 @@ void StatusMenu::settingsChanged(const QString &key, const QVariant &value)
 {
   Q_UNUSED(value)
 
-  if (key == QLatin1String("Profile/Status") || key == QLatin1String("Profile/Gender")) {
-    update();
+  if (key == "Profile/Status" || key == "Profile/Gender") {
+    reload();
   }
 }
 
 
 void StatusMenu::statusChanged(QAction *action)
 {
-  Q_UNUSED(action)
-//  ChatCore::i()->settings()->updateValue(QLatin1String("Profile/Status"), action->data().toInt());
+  ChatClient::channel()->status() = action->data().toInt();
+  ChatCore::settings()->setValue("Profile/Status", ChatClient::channel()->status().value());
+
+  if (ChatClient::state() == ChatClient::Online)
+    ChatClient::channels()->update();
 }
 
 
@@ -96,27 +122,29 @@ void StatusMenu::addStatus(int status)
 /*!
  * Обновление меню.
  */
-void StatusMenu::update()
+void StatusMenu::reload()
 {
-//  ClientUser user(new User(ChatCore::i()->client()->user().data()));
-//  if (m_statuses.contains(user->status())) {
-//    m_statuses.value(user->status())->setChecked(true);
-//  }
-//
-//  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline) {
-//    user->setStatus(Status::Offline);
-//  }
-//
-//  setIcon(UserUtils::icon(user, true, true));
-//  setTitle(UserUtils::statusTitle(user->status()));
-//
-//  QHashIterator<int, QAction *> i(m_statuses);
-//  while (i.hasNext()) {
-//    i.next();
-//    user->setStatus(i.key());
-//    i.value()->setIcon(UserUtils::icon(user, true, true));
-//    i.value()->setText(UserUtils::statusTitle(i.key()));
-//  }
-//
-//  emit updated();
+  ClientChannel channel(new Channel(ChatClient::id(), ChatClient::channel()->name()));
+  channel->setSynced(true);
+  channel->gender() = ChatClient::channel()->gender().raw();
+  channel->status() = ChatClient::channel()->status().value();
+
+  if (m_statuses.contains(channel->status().value()))
+    m_statuses.value(channel->status().value())->setChecked(true);
+
+  if (ChatClient::state() != ChatClient::Online)
+    channel->status() = Status::Offline;
+
+  setIcon(ChatIcons::icon(channel));
+  setTitle(statusTitle(channel->status().value()));
+
+  QHashIterator<int, QAction *> i(m_statuses);
+  while (i.hasNext()) {
+    i.next();
+    channel->status() = i.key();
+    i.value()->setIcon(ChatIcons::icon(channel));
+    i.value()->setText(statusTitle(i.key()));
+  }
+
+  emit updated();
 }
