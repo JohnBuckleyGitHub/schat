@@ -106,8 +106,17 @@ void StatusMenu::statusChanged(QAction *action)
   ChatClient::channel()->status() = action->data().toInt();
   ChatCore::settings()->setValue("Profile/Status", ChatClient::channel()->status().value());
 
-  if (ChatClient::state() == ChatClient::Online)
+  if (ChatClient::state() == ChatClient::Online) {
     ChatClient::channels()->update();
+
+    if (ChatClient::channel()->status().value() == Status::Offline)
+      ChatClient::io()->leave();
+
+    return;
+  }
+
+  if (ChatClient::state() == ChatClient::Offline && ChatClient::channel()->status().value() != Status::Offline)
+    ChatClient::open();
 }
 
 
