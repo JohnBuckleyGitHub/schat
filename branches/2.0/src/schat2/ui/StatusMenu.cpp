@@ -27,9 +27,13 @@
 #include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
 
+StatusMenu *StatusMenu::m_self = 0;
+
 StatusMenu::StatusMenu(QWidget *parent)
   : QMenu(parent)
 {
+  m_self = this;
+
   m_group = new QActionGroup(this);
 
   addStatus(Status::Online);

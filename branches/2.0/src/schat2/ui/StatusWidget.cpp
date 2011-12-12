@@ -18,17 +18,15 @@
 
 #include <QMouseEvent>
 
-#include "ChatCore.h"
 #include "ui/StatusMenu.h"
 #include "ui/StatusWidget.h"
 
 StatusWidget::StatusWidget(QWidget *parent)
   : QLabel(parent)
-  , m_menu(ChatCore::i()->statusMenu())
 {
   reload();
 
-  connect(m_menu, SIGNAL(updated()), SLOT(reload()));
+  connect(StatusMenu::i(), SIGNAL(updated()), SLOT(reload()));
 }
 
 
@@ -38,7 +36,7 @@ StatusWidget::StatusWidget(QWidget *parent)
 void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)
-    m_menu->exec(event->globalPos());
+    StatusMenu::i()->exec(event->globalPos());
   else
     QLabel::mouseReleaseEvent(event);
 }
@@ -46,6 +44,6 @@ void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void StatusWidget::reload()
 {
-  setPixmap(m_menu->icon().pixmap(16));
-  setToolTip(m_menu->title());
+  setPixmap(StatusMenu::i()->icon().pixmap(16));
+  setToolTip(StatusMenu::i()->title());
 }
