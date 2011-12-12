@@ -21,9 +21,8 @@
 
 #include <QWidget>
 
-#include "User.h"
+#include "Channel.h"
 
-class ChatSettings;
 class QComboBox;
 class QMenu;
 class QToolBar;
@@ -51,9 +50,8 @@ private:
   void setIcons();
   void setState();
 
-  ChatSettings *m_settings;
-  ClientUser m_user;
-  QComboBox *m_combo;
+  ClientChannel m_channel;   ///< Канал для манипуляции с полом пользователя.
+  QComboBox *m_combo;        ///< Комбо бокс для выбора пола.
   QList<QAction *> m_colors;
   QMenu *m_menu;
   QToolBar *m_toolBar;
