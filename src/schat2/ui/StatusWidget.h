@@ -21,8 +21,6 @@
 
 #include <QLabel>
 
-class StatusMenu;
-
 class StatusWidget: public QLabel
 {
   Q_OBJECT
@@ -35,9 +33,6 @@ protected:
 
 private slots:
   void reload();
-
-private:
-  StatusMenu *m_menu; ///< Статусное меню.
 };
 
 #endif /* STATUSWIDGET_H_ */

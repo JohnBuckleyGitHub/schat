@@ -29,6 +29,7 @@ class SCHAT_CORE_EXPORT StatusMenu : public QMenu
 
 public:
   StatusMenu(QWidget *parent = 0);
+  inline static StatusMenu *i() { return m_self; }
   static QString statusTitle(int status);
 
 signals:
@@ -49,6 +50,7 @@ private:
 
   QActionGroup *m_group;            ///< Группа для того чтобы можно было выбрать только один статус.
   QHash<int, QAction *> m_statuses; ///< Статусы.
+  static StatusMenu *m_self;        ///< Указатель на себя.
 };
 
 #endif /* STATUSMENU_H_ */

@@ -35,7 +35,6 @@ class FileLocations;
 class MessageData;
 class NetworkManager;
 class SimpleClient;
-class StatusMenu;
 class Translation;
 class UserUtils;
 
@@ -111,11 +110,9 @@ public:
   inline static ChatSettings *settings()   { return m_self->m_settings; }
   inline static FileLocations *locations() { return m_self->m_locations; }
   inline static NetworkManager *networks() { return m_self->m_networkManager; }
-  inline StatusMenu *statusMenu() { return m_statusMenu; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
-  inline void setStatusMenu(StatusMenu *menu) { m_statusMenu = menu; }
   static QIcon icon(IconName name);
   static void makeRed(QWidget *widget, bool red = true);
   void startNotify(int notice, const QVariant &data = QVariant());
@@ -145,7 +142,6 @@ private:
   QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.
-  StatusMenu *m_statusMenu;                       ///< Меню статуса.
   Translation *m_translation;                     ///< Модуль загрузки переводов.
 };
 

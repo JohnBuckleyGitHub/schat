@@ -47,7 +47,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   , m_core(ChatCore::i())
   , m_settings(ChatCore::i()->settings())
 {
-  m_core->setStatusMenu(new StatusMenu(this));
+  new StatusMenu(this);
 
   m_central = new QWidget(this);
   m_tabs = new TabWidget(this);

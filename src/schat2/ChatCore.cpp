@@ -195,7 +195,6 @@ void ChatCorePrivate::writeIgnoreList()
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
   , d(new ChatCorePrivate())
-  , m_statusMenu(0)
 {
   m_self = this;
   d->q = this;
