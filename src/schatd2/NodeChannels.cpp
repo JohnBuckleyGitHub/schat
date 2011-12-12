@@ -201,6 +201,11 @@ bool NodeChannels::update()
   if (!Channel::isValidName(m_packet->text()))
     return false;
 
+  if (m_packet->channelStatus() == Status::Offline) {
+    m_core->send(QList<quint64>() << m_core->packetsEvent()->socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
+    return false;
+  }
+
   int updates = 0;
 
   if (user->name() != m_packet->text()) {
@@ -208,13 +213,13 @@ bool NodeChannels::update()
     updates++;
   }
 
-  if (user->status().value() != m_packet->channelStatus()) {
-    user->status() = m_packet->channelStatus();
+  if (user->gender().raw() != m_packet->gender()) {
+    user->gender() = m_packet->gender();
     updates++;
   }
 
-  if (user->gender().raw() != m_packet->gender()) {
-    user->gender() = m_packet->gender();
+  if (user->status().value() != m_packet->channelStatus()) {
+    user->status() = m_packet->channelStatus();
     updates++;
   }
 
