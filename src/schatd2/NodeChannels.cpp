@@ -64,6 +64,12 @@ bool NodeChannels::read(PacketReader *reader)
 }
 
 
+void NodeChannels::addImpl(ChatChannel user)
+{
+  m_core->send(Sockets::all(user), ChannelPacket::channel(user, user->id(), m_core->sendStream(), "info"));
+}
+
+
 void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 {
   Q_UNUSED(socket);
@@ -74,8 +80,9 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   QList<QByteArray> channels = user->channels().all();
   foreach (QByteArray id, channels) {
     ChatChannel channel = m_storage->channel(id);
-    if (channel) {
+    if (channel && channel->type() == SimpleID::ChannelId) {
       channel->channels().remove(user->id());
+      user->channels().remove(channel->id());
       m_storage->gc(channel);
     }
   }
@@ -116,7 +123,6 @@ bool NodeChannels::info()
  */
 bool NodeChannels::join()
 {
-  qDebug() << " - - - JOIN";
   ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
   if (!user)
     return false;
@@ -134,8 +140,6 @@ bool NodeChannels::join()
 
   if (!channel)
     return false;
-
-  qDebug() << " ^ ^ ^ CHANNEL NAME" << channel->name();
 
   bool notify = !channel->channels().all().contains(user->id());
   channel->channels() += user->id();

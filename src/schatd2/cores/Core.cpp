@@ -169,7 +169,13 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 {
   Q_UNUSED(authType);
   Q_UNUSED(authId)
-  return m_storage->add(channel);
+
+  if (m_storage->add(channel)) {
+    NodeNoticeReader::add(channel);
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -238,8 +244,6 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 
 void Core::packet(int type)
 {
-  qDebug() << "Core::readPacket()" << type;
-
   switch (type) {
     case Protocol::MessagePacket:
       message();

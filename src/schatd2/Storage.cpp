@@ -304,14 +304,10 @@ bool Storage::gc(ChatChannel channel)
       return false;
 
     channel->status() = Status::Offline;
+  }
 
-    if (channel->channels().all().size() > 1)
-      return false;
-  }
-  else if (channel->type() == SimpleID::ChannelId) {
-    if (channel->channels().all().size())
-      return false;
-  }
+  if (channel->channels().all().size())
+    return false;
 
   remove(channel);
   return true;
