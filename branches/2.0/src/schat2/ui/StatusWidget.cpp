@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QMouseEvent>
 
 #include "ChatCore.h"
@@ -25,22 +23,12 @@
 #include "ui/StatusWidget.h"
 
 StatusWidget::StatusWidget(QWidget *parent)
-  : QWidget(parent)
+  : QLabel(parent)
   , m_menu(ChatCore::i()->statusMenu())
 {
-  m_icon = new QLabel(this);
-  m_label = new QLabel(this);
+  reload();
 
-  QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(3);
-  mainLay->addWidget(m_icon);
-  mainLay->addWidget(m_label);
-  mainLay->addStretch();
-
-  update();
-
-  connect(m_menu, SIGNAL(updated()), SLOT(update()));
+  connect(m_menu, SIGNAL(updated()), SLOT(reload()));
 }
 
 
@@ -49,18 +37,15 @@ StatusWidget::StatusWidget(QWidget *parent)
  */
 void StatusWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
+  if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)
     m_menu->exec(event->globalPos());
-  }
-  else {
-    QWidget::mouseReleaseEvent(event);
-  }
+  else
+    QLabel::mouseReleaseEvent(event);
 }
 
 
-void StatusWidget::update()
+void StatusWidget::reload()
 {
-  m_icon->setPixmap(m_menu->icon().pixmap(16));
-  m_label->setText(m_menu->title());
-  adjustSize();
+  setPixmap(m_menu->icon().pixmap(16));
+  setToolTip(m_menu->title());
 }

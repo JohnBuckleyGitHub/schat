@@ -19,12 +19,11 @@
 #ifndef STATUSWIDGET_H_
 #define STATUSWIDGET_H_
 
-#include <QWidget>
+#include <QLabel>
 
-class QLabel;
 class StatusMenu;
 
-class StatusWidget: public QWidget
+class StatusWidget: public QLabel
 {
   Q_OBJECT
 
@@ -35,11 +34,9 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void update();
+  void reload();
 
 private:
-  QLabel *m_icon;     ///< Видежт для отображения иконки статуса.
-  QLabel *m_label;    ///< Виджет для показа текста статуса.
   StatusMenu *m_menu; ///< Статусное меню.
 };
 
