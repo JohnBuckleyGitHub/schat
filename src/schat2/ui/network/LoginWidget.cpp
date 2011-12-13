@@ -31,7 +31,6 @@
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/LoginWidget.h"
-#include "ui/UserUtils.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)

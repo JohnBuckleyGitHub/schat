@@ -34,7 +34,6 @@
 #include "ui/network/NetworkWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
-#include "ui/UserUtils.h"
 
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)

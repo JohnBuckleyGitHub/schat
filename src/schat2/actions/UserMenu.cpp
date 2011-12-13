@@ -28,7 +28,6 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "net/SimpleID.h"
-#include "ui/UserUtils.h"
 
 UserMenu::UserMenu(ClientChannel channel, QObject *parent)
   : MenuBuilder(parent)
@@ -38,7 +37,7 @@ UserMenu::UserMenu(ClientChannel channel, QObject *parent)
   , m_insert(0)
   , m_talk(0)
 {
-  m_self = m_channel->id() == UserUtils::userId();
+//  m_self = m_channel->id() == UserUtils::userId();
 }
 
 

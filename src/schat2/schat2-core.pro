@@ -92,7 +92,6 @@ HEADERS = \
     ui/tabs/WelcomeTab.h \
     ui/TabWidget.h \
     ui/TrayIcon.h \
-    ui/UserUtils.h \
 
 SOURCES = \
     actions/ChannelMenu.cpp \
@@ -157,7 +156,6 @@ SOURCES = \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
-    ui/UserUtils.cpp \
     
 SCHAT_CLIENT_LIB = 1
 

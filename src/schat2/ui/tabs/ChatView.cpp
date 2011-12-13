@@ -32,7 +32,6 @@
 #include "net/SimpleID.h"
 #include "SimpleJSon.h"
 #include "ui/tabs/ChatView.h"
-#include "ui/UserUtils.h"
 
 ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   : QWebView(parent)

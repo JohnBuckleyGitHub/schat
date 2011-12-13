@@ -25,7 +25,6 @@
 #include "net/packets/messages.h"
 #include "text/HtmlFilter.h"
 #include "text/TokenFilter.h"
-#include "ui/UserUtils.h"
 
 QHash<QString, QString> AbstractMessage::m_templates;
 
@@ -266,7 +265,7 @@ void AbstractMessage::nick(QString &html) const
   if (!html.contains(QLatin1String("%nick%")))
     return;
 
-  ClientUser user = UserUtils::user(m_senderId);
+  ClientUser user;
   if (!user) {
     html.remove(QLatin1String("%nick%"));
     return;
@@ -274,7 +273,7 @@ void AbstractMessage::nick(QString &html) const
 
   QString t = tpl(QLatin1String("nick"));
   t.replace(QLatin1String("%user-id%"), SimpleID::encode(m_senderId));
-  t.replace(QLatin1String("%user-url%"), UserUtils::toUrl(user, QLatin1String("insert")).toString());
+//  t.replace(QLatin1String("%user-url%"), UserUtils::toUrl(user, QLatin1String("insert")).toString());
   t.replace(QLatin1String("%user-nick%"), Qt::escape(user->nick()));
 
   html.replace(QLatin1String("%nick%"), t);

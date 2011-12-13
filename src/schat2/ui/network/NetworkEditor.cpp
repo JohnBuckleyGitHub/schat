@@ -32,7 +32,6 @@
 #include "ui/network/NetworkEditor.h"
 #include "ui/network/NetworkTabs.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/UserUtils.h"
 
 NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   : QWidget(parent)

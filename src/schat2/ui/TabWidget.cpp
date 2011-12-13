@@ -52,7 +52,6 @@
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
 #include "ui/TrayIcon.h"
-#include "ui/UserUtils.h"
 #include "User.h"
 
 TabWidget *TabWidget::m_self = 0;
