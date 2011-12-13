@@ -16,11 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTextDocument>
-
-#include "ChatUrls.h"
 #include "client/ChatClient.h"
-#include "client/ClientChannels.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessagePacket.h"
 #include "net/SimpleID.h"
@@ -38,14 +34,7 @@ ChannelMessage::ChannelMessage(const MessagePacket &packet)
   m_data["Date"]      = m_packet.date();
 //  m_data["Day"]       = true; // true включает отображение полного времени.
 
-  ClientChannel user = ChatClient::channels()->get(m_packet.sender());
-  if (user) {
-    QVariantMap author;
-    author["Id"]      = SimpleID::encode(user->id());
-    author["Name"]    = Qt::escape(user->name());
-    author["Url"]     = ChatUrls::toUrl(user, "insert").toString();
-    m_data["Author"]  = author;
-  }
+  author(m_packet.sender());
 
   m_tab = detectTab();
 }

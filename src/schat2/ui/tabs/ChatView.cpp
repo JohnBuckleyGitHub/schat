@@ -57,6 +57,9 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 
 void ChatView::add(const Message &message)
 {
+  if (!message.isValid())
+    return;
+
   evaluateJavaScript("addMessage(" + SimpleJSon::quote(message.json()) + ");");
 }
 
