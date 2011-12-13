@@ -159,8 +159,8 @@ SOURCES = \
     
 SCHAT_CLIENT_LIB = 1
 
-TRANSLATIONS += ../../data/translations/schat2_en.ts
-TRANSLATIONS += ../../data/translations/schat2_ru.ts
+TRANSLATIONS += ../../res/translations/schat2_en.ts
+TRANSLATIONS += ../../res/translations/schat2_ru.ts
 CODECFORTR = UTF-8
 
 unix {
