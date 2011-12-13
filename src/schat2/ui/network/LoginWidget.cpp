@@ -24,13 +24,14 @@
 #include <QToolButton>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
+#include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/LoginWidget.h"
 #include "ui/UserUtils.h"
-#include "net/packets/Notice.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
@@ -73,7 +74,7 @@ LoginWidget::LoginWidget(QWidget *parent)
   connect(m_passwordEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
 
   connect(m_login, SIGNAL(clicked()), SLOT(login()));
-  connect(ChatCore::i()->client(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
+  connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
   textChanged();
   retranslateUi();
@@ -86,16 +87,15 @@ LoginWidget::LoginWidget(QWidget *parent)
 bool LoginWidget::canLogIn() const
 {
   QVariant selected = ChatCore::i()->networks()->selected();
-  SimpleClient *client = ChatCore::i()->client();
 
   if (selected.type() != QVariant::ByteArray)
     return false;
 
   QByteArray id = selected.toByteArray();
-  if (client->serverId() != id)
+  if (ChatClient::serverId() != id)
     return false;
 
-  if (client->clientState() != SimpleClient::ClientOnline)
+  if (ChatClient::state() != ChatClient::Online)
     return false;
 
 //  if (!client->user()->account().isEmpty())

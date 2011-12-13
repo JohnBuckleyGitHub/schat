@@ -28,7 +28,6 @@ class QLineEdit;
 class QProgressIndicator;
 class QPushButton;
 class QToolButton;
-class SimpleClient;
 class Notice;
 
 class SignUpWidget : public QWidget
@@ -72,7 +71,6 @@ private:
   QProgressIndicator *m_progress; ///< Прогресс бар.
   QPushButton *m_signUp;
   QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
-  SimpleClient *m_client;         ///< Указатель на клиент.
   WidgetState m_state;            ///< Состояние виджета.
 };
 

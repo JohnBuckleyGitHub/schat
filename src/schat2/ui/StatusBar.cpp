@@ -25,6 +25,7 @@
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/Notice.h"
@@ -37,7 +38,6 @@
 
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
-  , m_client(ChatCore::i()->client())
 {
   m_progress = new QProgressIndicator(this);
   m_progress->setAnimationDelay(100);
@@ -65,7 +65,7 @@ StatusBar::StatusBar(QWidget *parent)
   addWidget(m_label, 1);
   addPermanentWidget(m_status);
 
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 //  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString&)), SLOT(loggedIn(const QString&)));
 
   updateStyleSheet();
@@ -134,7 +134,7 @@ void StatusBar::clientStateChanged(int state)
 //      loggedIn(UserUtils::user()->account());
 
     #if !defined(SCHAT_NO_SSL)
-    if (m_client->isEncrypted()) {
+    if (ChatClient::io()->isEncrypted()) {
       m_secure->setPixmap(QPixmap(":/images/secure.png"));
       m_secure->setVisible(true);
     }
@@ -165,7 +165,7 @@ void StatusBar::menuTriggered(QAction *action)
 void StatusBar::menu(const QPoint &point)
 {
   QMenu menu(this);
-  if (m_client->clientState() == SimpleClient::ClientOffline)
+  if (ChatClient::state() == ChatClient::Offline)
     menu.addAction(m_urlAction);
 
   QAction *action = m_url->connectAction();
@@ -179,22 +179,22 @@ void StatusBar::menu(const QPoint &point)
 void StatusBar::retranslateUi()
 {
   m_secure->setToolTip(tr("Encrypted connection"));
-  int state = m_client->clientState();
+  int state = ChatClient::state();
 
-  if (state == SimpleClient::ClientOffline) {
+  if (state == ChatClient::Offline) {
     m_label->setText(tr("No connection"));
     m_icon->setToolTip(tr("No connection"));
   }
-  else if (state == SimpleClient::ClientConnecting) {
+  else if (state == ChatClient::Connecting) {
     m_label->setText(tr("Connecting..."));
   }
-  else if (state == SimpleClient::ClientOnline) {
+  else if (state == ChatClient::Online) {
     m_label->setText(NetworkManager::currentServerName());
     m_icon->setToolTip(tr("Connected"));
   }
-  else if (state == SimpleClient::ClientError) {
+  else if (state == ChatClient::Error) {
     m_label->setText(tr("Error"));
-    m_icon->setToolTip(Notice::status(m_client->authError().status));
+    m_icon->setToolTip(Notice::status(ChatClient::io()->authError().status));
   }
 }
 

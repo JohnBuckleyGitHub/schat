@@ -52,21 +52,23 @@ ClientUser UserUtils::user(const QByteArray &id)
   if (SimpleID::typeOf(id) != SimpleID::UserId)
     return ClientUser();
 
-  ClientUser user = ChatCore::i()->client()->user(id);
-  if (user)
-    return user;
+  return ClientUser();
 
-  if (ChatCore::i()->plugins()->history()) {
-    user = ChatCore::i()->plugins()->history()->user(id);
-    if (user)
-      return user;
-  }
+//  ClientUser user = ChatCore::i()->client()->user(id);
+//  if (user)
+//    return user;
+//
+//  if (ChatCore::i()->plugins()->history()) {
+//    user = ChatCore::i()->plugins()->history()->user(id);
+//    if (user)
+//      return user;
+//  }
 
 //  user = TabWidget::i()->user(id);
 //  if (user)
 //    return user;
 
-  return m_users.value(id);
+//  return m_users.value(id);
 }
 
 
@@ -128,7 +130,8 @@ ClientUser UserUtils::user(const QVariant &id)
  */
 QByteArray UserUtils::userId()
 {
-  return ChatCore::i()->client()->channelId();
+  return QByteArray();
+//  return ChatCore::i()->client()->channelId();
 }
 
 

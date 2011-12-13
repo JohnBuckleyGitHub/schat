@@ -23,7 +23,6 @@
 
 class QAction;
 class QBasicTimer;
-class SimpleClient;
 
 class TrayIcon : public QSystemTrayIcon
 {
@@ -56,7 +55,6 @@ private:
   QBasicTimer *m_timer;      ///< Таймер анимации.
   QIcon m_icon;              ///< Иконка.
   QMenu *m_menu;             ///< Меню.
-  SimpleClient *m_client;    ///< Указатель на клиент.
 };
 
 #endif /* TRAYICON_H_ */

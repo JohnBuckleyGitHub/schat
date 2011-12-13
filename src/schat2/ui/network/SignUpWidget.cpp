@@ -24,17 +24,17 @@
 #include <QToolButton>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "messages/MessageAdapter.h"
+#include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/SignUpWidget.h"
-#include "net/packets/Notice.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)
   , m_manager(ChatCore::i()->networks())
-  , m_client(ChatCore::i()->client())
   , m_state(Idle)
 {
   m_nameLabel = new QLabel(this);
@@ -99,7 +99,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(reload()));
 
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
-  connect(m_client, SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
+  connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
 
   retranslateUi();
 }
@@ -139,10 +139,10 @@ bool SignUpWidget::ready() const
  */
 bool SignUpWidget::canSignUp()
 {
-  if (ChatCore::i()->client()->clientState() != SimpleClient::ClientOnline)
+  if (ChatClient::state() != ChatClient::Online)
     return false;
 
-  if (ChatCore::i()->client()->serverId() != ChatCore::networks()->selected())
+  if (ChatClient::serverId() != ChatCore::networks()->selected())
     return false;
 
   Network item = ChatCore::i()->networks()->item(ChatCore::networks()->selected());

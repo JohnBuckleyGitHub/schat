@@ -105,7 +105,6 @@ public:
   bool isIgnored(const QByteArray &id);
   inline ChatPlugins *plugins() { return m_plugins; }
   inline const QByteArray& currentId() const { return m_currentId; }
-  inline SimpleClient *client() { return m_client; }
   inline static ChatCore *i()              { return m_self; }
   inline static ChatSettings *settings()   { return m_self->m_settings; }
   inline static FileLocations *locations() { return m_self->m_locations; }
