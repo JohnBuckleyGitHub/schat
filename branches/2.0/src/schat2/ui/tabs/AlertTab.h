@@ -19,11 +19,11 @@
 #ifndef ALERTTAB_H_
 #define ALERTTAB_H_
 
-#include "ui/tabs/ChatViewTab.h"
+#include "ui/tabs/AbstractTab.h"
 
 class ChatView;
 
-class AlertTab : public ChatViewTab
+class AlertTab : public AbstractTab
 {
   Q_OBJECT
 
@@ -32,6 +32,8 @@ public:
 
 private:
   void retranslateUi();
+
+  ChatView *m_chatView; ///< Виджет отображающий текст чата.
 };
 
 #endif /* ALERTTAB_H_ */

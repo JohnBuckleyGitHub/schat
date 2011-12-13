@@ -16,6 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
+#include <QFile>
+
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
@@ -23,8 +26,14 @@
 #include "ui/tabs/ChatView.h"
 
 AlertTab::AlertTab(TabWidget *parent)
-  : ChatViewTab("qrc:/html/ChatView.html", QByteArray(), AlertType, parent)
+  : AbstractTab(QByteArray(), AlertType, parent)
 {
+  QString file = QApplication::applicationDirPath() + "/styles/test/html/ChatView.html";
+  if (!QFile::exists(file))
+    file = "qrc:/html/ChatView.html";
+
+  m_chatView = new ChatView(QByteArray(), file, this);
+
   m_deleteOnClose = false;
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
