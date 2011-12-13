@@ -31,12 +31,12 @@ CONFIG(debug, debug|release) {
   RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
   MOC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/moc
   OBJECTS_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/obj
-  DESTDIR = ../../out/debug
+  DESTDIR = ../../bin/debug
 } else { 
   RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/rcc
   MOC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/moc
   OBJECTS_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/release/obj
-  DESTDIR = ../../out
+  DESTDIR = ../../bin
 }
 
 contains( SCHAT_CONSOLE, 1 ) {
@@ -55,7 +55,7 @@ contains( SCHAT_USE_SSL, 0 ) {
 }
 
 contains( SCHAT_RESOURCES, 1 ) {
-  RESOURCES += ../../data/$${TARGET}.qrc
+  RESOURCES += ../../res/$${TARGET}.qrc
 }
 
 contains( SCHAT_RC_FILE, 1 ) {
