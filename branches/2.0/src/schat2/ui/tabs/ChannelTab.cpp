@@ -38,7 +38,6 @@
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, ChannelType, parent)
-  , m_client(ChatCore::i()->client())
 {
   m_bar = new ChannelBar(this);
   m_bar->setVisible(false);
@@ -72,8 +71,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 //  TopicMessage msg(m_channel->topic());
 //  m_tabs->message(this, msg);
 
-  connect(m_client, SIGNAL(userLeave(const QByteArray &)), SLOT(userLeave(const QByteArray &)));
-  connect(m_client, SIGNAL(userDataChanged(const QByteArray &, int)), SLOT(userDataChanged(const QByteArray &, int)));
   connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
@@ -213,32 +210,32 @@ void ChannelTab::topicFocusOut()
 /*!
  * \deprecated Эта функция больше не используется.
  */
-void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
-{
-  if (!(changed & SimpleClient::UserNickChanged))
-    return;
-
-  if (!m_channel->channels().all().contains(userId))
-    return;
-
-  ClientUser user = UserUtils::user(userId);
-  if (!user)
-    return;
-
-  UserUtils::updateUserNick(m_chatView, user);
-}
+//void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
+//{
+//  if (!(changed & SimpleClient::UserNickChanged))
+//    return;
+//
+//  if (!m_channel->channels().all().contains(userId))
+//    return;
+//
+//  ClientUser user = UserUtils::user(userId);
+//  if (!user)
+//    return;
+//
+//  UserUtils::updateUserNick(m_chatView, user);
+//}
 
 
 /*!
  * \deprecated Эта функция больше не используется.
  */
-void ChannelTab::userLeave(const QByteArray &userId)
-{
-  if (m_userView->remove(userId)) {
-//    addQuitMsg(userId, m_channel->id());
-    displayUserCount();
-  }
-}
+//void ChannelTab::userLeave(const QByteArray &userId)
+//{
+//  if (m_userView->remove(userId)) {
+////    addQuitMsg(userId, m_channel->id());
+//    displayUserCount();
+//  }
+//}
 
 
 void ChannelTab::displayUserCount()

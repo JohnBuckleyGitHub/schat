@@ -27,7 +27,6 @@ class ChannelBar;
 class ChatView;
 class QSplitter;
 class QVBoxLayout;
-class SimpleClient;
 class UserView;
 
 class ChannelTab : public ChannelBaseTab
@@ -52,8 +51,6 @@ private slots:
   void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
   void topicFocusOut();
-  void userDataChanged(const QByteArray &userId, int changed);
-  void userLeave(const QByteArray &userId);
 
 private:
   void displayUserCount();
@@ -62,7 +59,6 @@ private:
   ChannelBar *m_bar;
   QSplitter *m_splitter;
   QVBoxLayout *m_leftLayout;
-  SimpleClient *m_client;
   UserView *m_userView;
 };
 

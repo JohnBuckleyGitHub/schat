@@ -29,7 +29,6 @@ class NetworkWidget;
 class QLabel;
 class QProgressIndicator;
 class QWidgetAction;
-class SimpleClient;
 class StatusMenu;
 class StatusWidget;
 
@@ -63,7 +62,6 @@ private:
   QLabel *m_secure;               ///< Иконка безопасного соединения.
   QProgressIndicator *m_progress; ///< Отображает состояние подключения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
-  SimpleClient *m_client;         ///< Клиент.
   StatusWidget *m_status;         ///< Виджет выбора статуса.
 };
 

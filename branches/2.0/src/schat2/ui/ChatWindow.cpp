@@ -23,6 +23,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "ui/ChatWindow.h"
@@ -154,7 +155,7 @@ bool ChatWindow::winEvent(MSG *message, long *result)
  */
 void ChatWindow::closeChat()
 {
-  m_core->client()->leave();
+  ChatClient::io()->leave();
   hideChat();
 
   QApplication::quit();

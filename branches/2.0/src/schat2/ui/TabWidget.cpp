@@ -60,7 +60,6 @@ TabWidget *TabWidget::m_self = 0;
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
   , m_core(ChatCore::i())
-  , m_client(ChatCore::i()->client())
   , m_tabBar(new TabBar(this))
 {
   m_self = this;
@@ -124,7 +123,7 @@ ClientChannel TabWidget::channel(const QByteArray &id)
 void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab)
 {
   MessageData data(userId, destId, QString(), text);
-  data.timestamp = m_client->date();
+  data.timestamp = ChatClient::io()->date();
 
   AbstractMessage msg(QLatin1String("service-type"), data);
   msg.setPriority(AbstractMessage::LowPriority);
@@ -480,8 +479,8 @@ void TabWidget::message(const AbstractMessage &data)
     int type = SimpleID::typeOf(data.destId());
 
     if (type == SimpleID::ChannelId) {
-      if (!data.senderId().isEmpty() && !m_client->user(data.senderId()))
-        return;
+//      if (!data.senderId().isEmpty() && !m_client->user(data.senderId()))
+//        return;
 
       tab = m_channels.value(data.destId());
     }
@@ -544,7 +543,7 @@ void TabWidget::closeWelcome()
   if (m_progressTab) {
     int index = indexOf(m_progressTab);
     if (index != -1) {
-      if (count() == 1 && m_client->clientState() == SimpleClient::ClientOffline) {
+      if (count() == 1 && ChatClient::state() == ChatClient::Offline) {
         if (!m_welcomeTab)
           m_welcomeTab = new WelcomeTab(this);
         addChatTab(m_welcomeTab);

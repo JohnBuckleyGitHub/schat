@@ -41,7 +41,6 @@ class QMenu;
 class QToolBar;
 class QToolButton;
 class SettingsTab;
-class SimpleClient;
 class SoundButton;
 class TabBar;
 class TrayIcon;
@@ -115,7 +114,6 @@ private:
   QToolBar *m_rightToolBar;                  ///< Правая панель инструментов.
   QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.
   QToolButton *m_settingsButton;             ///< Кнопка с меню настроек.
-  SimpleClient *m_client;                    ///< Клиент чата.
   SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
   static TabWidget *m_self;                  ///< Указатель на себя.
   TabBar *m_tabBar;                          ///< Заголовок виджета.

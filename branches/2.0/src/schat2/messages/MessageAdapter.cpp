@@ -44,7 +44,7 @@
 #include "User.h"
 
 MessageAdapter::MessageAdapter()
-  : ClientHelper(ChatCore::i()->client())
+  : ClientHelper(ChatClient::io())
   , m_settings(ChatCore::i()->settings())
 {
 //  TokenFilter::add(QLatin1String("user-type"), new LinksFilter());

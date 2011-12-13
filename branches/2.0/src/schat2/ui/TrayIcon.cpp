@@ -28,7 +28,6 @@
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
   , m_alertIcon(0)
-  , m_client(ChatCore::i()->client())
 {
   m_menu = new QMenu();
   m_timer = new QBasicTimer();
