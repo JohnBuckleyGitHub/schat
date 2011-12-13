@@ -68,9 +68,9 @@ contains( SCHAT_DEVEL_MODE, 1 ) {
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat-client
+    LIBS += -L../../bin/debug -lschat-client
   } else {
-    LIBS += -L../../out -lschat-client
+    LIBS += -L../../bin -lschat-client
   }
 }
 
@@ -78,15 +78,15 @@ contains( SCHAT_CORE_LIB, 1 ) {
   CONFIG(debug, debug|release) {
     LIBS += -L../../out/debug -lschat
   } else {
-    LIBS += -L../../out -lschat
+    LIBS += -L../../bin -lschat
   }
 }
 
 contains( SCHAT_DAEMON_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschatd
+    LIBS += -L../../bin/debug -lschatd
   } else {
-    LIBS += -L../../out -lschatd
+    LIBS += -L../../bin -lschatd
   }
 }
 

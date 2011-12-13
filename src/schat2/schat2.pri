@@ -43,7 +43,7 @@ SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
 unix {
-  pixmaps.files = ../../data/images/schat2.png
+  pixmaps.files = ../../res/images/schat2.png
   pixmaps.path = $$SCHAT_PREFIX/usr/share/pixmaps
 
   applications.files = ../../os/ubuntu/schat2.desktop

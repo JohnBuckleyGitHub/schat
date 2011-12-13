@@ -38,8 +38,8 @@ SOURCES = \
 DEFINES += SCHAT_DAEMON
 SCHAT_DAEMON_LIB = 1
 
-TRANSLATIONS += ../../data/translations/schatd2_en.ts
-TRANSLATIONS += ../../data/translations/schatd2_ru.ts
+TRANSLATIONS += ../../res/translations/schatd2_en.ts
+TRANSLATIONS += ../../res/translations/schatd2_ru.ts
 CODECFORTR = UTF-8
 
 unix {
