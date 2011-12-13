@@ -26,6 +26,7 @@
 #include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "HistoryUserMessage.h"
@@ -33,18 +34,14 @@
 #include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
-#include "ui/UserUtils.h"
 #include "User.h"
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
 {
-  connect(ChatCore::i()->client(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-  connect(ChatCore::i()->client(), SIGNAL(userDataChanged(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
-  connect(ChatCore::i()->client(), SIGNAL(userLeave(const QByteArray &)), SLOT(updateUserData(const QByteArray &)));
-  connect(ChatCore::i()->client(), SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 
-  m_lastMessages = ChatCore::i()->settings()->value("History/LastMessages", 10).toInt();
+  m_lastMessages = ChatCore::settings()->value("History/LastMessages", 10).toInt();
 }
 
 
@@ -115,7 +112,7 @@ qint64 HistoryDB::add(int status, const MessageData &data)
  */
 qint64 HistoryDB::addUser(const QByteArray &id)
 {
-  ClientUser user = UserUtils::user(id);
+  ClientUser user;
   if (!user)
     return -1;
 
@@ -159,26 +156,27 @@ qint64 HistoryDB::addUser(const QByteArray &id)
  */
 qint64 HistoryDB::updateUser(const QByteArray &id)
 {
-  ClientUser user = ChatCore::i()->client()->user(id);
-  if (!user)
-    return -1;
+  Q_UNUSED(id)
+//  ClientUser user = ChatCore::i()->client()->user(id);
+//  if (!user)
+//    return -1;
+//
+//  qint64 index = userId(id);
+//  if (index == -1)
+//    return -1;
+//
+//  QSqlQuery query(QSqlDatabase::database(m_id));
+//
+//  query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
+//  query.bindValue(QLatin1String(":nick"), user->nick());
+//  query.bindValue(QLatin1String(":gender"), user->gender().raw());
+//  query.bindValue(QLatin1String(":host"), user->host());
+//  query.bindValue(QLatin1String(":status"), user->statusToString());
+//  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
+//  query.bindValue(QLatin1String(":id"), index);
+//  query.exec();
 
-  qint64 index = userId(id);
-  if (index == -1)
-    return -1;
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
-  query.bindValue(QLatin1String(":nick"), user->nick());
-  query.bindValue(QLatin1String(":gender"), user->gender().raw());
-  query.bindValue(QLatin1String(":host"), user->host());
-  query.bindValue(QLatin1String(":status"), user->statusToString());
-  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
-  query.bindValue(QLatin1String(":id"), index);
-  query.exec();
-
-  return index;
+  return -1;
 }
 
 
@@ -200,13 +198,13 @@ void HistoryDB::loadLast(PrivateTab *tab)
 
   query.bindValue(QLatin1String(":destId"), senderId);
   query.bindValue(QLatin1String(":senderId"), senderId);
-  query.bindValue(QLatin1String(":myId"), UserUtils::userId());
+  query.bindValue(QLatin1String(":myId"), QByteArray());
   query.exec();
 
   if (!query.isActive())
     return;
 
-  ClientUser user = UserUtils::user(senderId);
+  ClientUser user;
   if (!user)
     return;
 
@@ -296,18 +294,19 @@ void HistoryDB::clientStateChanged(int state)
 
 void HistoryDB::synced(const QByteArray &channelId)
 {
-  ClientChannel channel = ChatCore::i()->client()->channel(channelId);
-  if (!channel)
-    return;
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("INSERT INTO channels (channelId, name) "
-                     "VALUES (:channelId, :name);"));
-
-  query.bindValue(QLatin1String(":channelId"), channelId);
-  query.bindValue(QLatin1String(":name"), channel->name());
-  query.exec();
+  Q_UNUSED(channelId)
+//  ClientChannel channel = ChatCore::i()->client()->channel(channelId);
+//  if (!channel)
+//    return;
+//
+//  QSqlQuery query(QSqlDatabase::database(m_id));
+//
+//  query.prepare(QLatin1String("INSERT INTO channels (channelId, name) "
+//                     "VALUES (:channelId, :name);"));
+//
+//  query.bindValue(QLatin1String(":channelId"), channelId);
+//  query.bindValue(QLatin1String(":name"), channel->name());
+//  query.exec();
 }
 
 

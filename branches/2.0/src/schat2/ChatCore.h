@@ -36,7 +36,6 @@ class MessageData;
 class NetworkManager;
 class SimpleClient;
 class Translation;
-class UserUtils;
 
 #define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
 #define SCHAT_OPTION(x) ChatCore::i()->settings()->value(QLatin1String(x))

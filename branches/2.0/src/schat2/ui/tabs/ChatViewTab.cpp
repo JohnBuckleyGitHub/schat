@@ -19,8 +19,8 @@
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/ChatViewTab.h"
 #include "ui/TabWidget.h"
-#include "ui/UserUtils.h"
 #include "Channel.h"
+#include "User.h"
 
 ChatViewTab::ChatViewTab(const QString &url, const QByteArray &id, TabType type, TabWidget *parent)
   : AbstractTab(id, type, parent)
@@ -44,7 +44,9 @@ void ChatViewTab::alert(bool start)
 void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
 {
   Q_UNUSED(destId)
-  ClientUser user = UserUtils::user(userId);
+  Q_UNUSED(userId)
+
+  ClientUser user;
   if (!user)
     return;
 
@@ -64,7 +66,9 @@ void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
 void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
 {
   Q_UNUSED(destId)
-  ClientUser user = UserUtils::user(userId);
+  Q_UNUSED(userId)
+
+  ClientUser user;
   if (!user)
     return;
 
@@ -81,7 +85,9 @@ void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
 void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
 {
   Q_UNUSED(destId)
-  ClientUser user = UserUtils::user(userId);
+  Q_UNUSED(userId)
+
+  ClientUser user;
   if (!user)
     return;
 

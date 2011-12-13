@@ -40,7 +40,6 @@
 #include "text/LinksFilter.h"
 #include "text/TokenFilter.h"
 #include "text/UrlFilter.h"
-#include "ui/UserUtils.h"
 #include "User.h"
 
 MessageAdapter::MessageAdapter()
@@ -142,8 +141,8 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == QLatin1String("ignore") || command == QLatin1String("unignore")) {
-    if (SimpleID::typeOf(m_destId) == SimpleID::UserId)
-      ChatCore::i()->openUrl(UserUtils::toUrl(UserUtils::user(m_destId), command));
+//    if (SimpleID::typeOf(m_destId) == SimpleID::UserId)
+//      ChatCore::i()->openUrl(UserUtils::toUrl(UserUtils::user(m_destId), command));
     return;
   }
 
@@ -194,10 +193,10 @@ void MessageAdapter::command(const ClientCmd &cmd)
   }
 
   if (command == "topic") {
-    if (SimpleID::typeOf(m_destId) == SimpleID::ChannelId) {
-      MessageData msg(UserUtils::userId(), m_destId, command, QString());
-      m_client->send(msg, true);
-    }
+//    if (SimpleID::typeOf(m_destId) == SimpleID::ChannelId) {
+//      MessageData msg(UserUtils::userId(), m_destId, command, QString());
+//      m_client->send(msg, true);
+//    }
 
     return;
   }
@@ -224,29 +223,29 @@ void MessageAdapter::notice()
  */
 void MessageAdapter::message(const MessageData &data)
 {
-  if (data.command == QLatin1String("topic")) {
-    readTopic(data);
-    return;
-  }
+//  if (data.command == QLatin1String("topic")) {
+//    readTopic(data);
+//    return;
+//  }
+//
+//  if (ChatCore::i()->isIgnored(data.senderId)) {
+//    if (data.destId() != m_client->channelId())
+//      return;
+//
+//    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", data.timestamp, data.id);
+//    notice.setStatus(Notice::Forbidden);
+//    m_client->send(notice.data(m_client->sendStream()));
+//    return;
+//  }
+//
+//  int status = UserMessage::IncomingMessage;
+//  if (data.senderId == UserUtils::userId()) {
+//    status = UserMessage::OutgoingMessage;
+//    if (m_undelivered.contains(data.id))
+//      status |= UserMessage::Delivered;
+//  }
 
-  if (ChatCore::i()->isIgnored(data.senderId)) {
-    if (data.destId() != m_client->channelId())
-      return;
-
-    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", data.timestamp, data.id);
-    notice.setStatus(Notice::Forbidden);
-    m_client->send(notice.data(m_client->sendStream()));
-    return;
-  }
-
-  int status = UserMessage::IncomingMessage;
-  if (data.senderId == UserUtils::userId()) {
-    status = UserMessage::OutgoingMessage;
-    if (m_undelivered.contains(data.id))
-      status |= UserMessage::Delivered;
-  }
-
-  newUserMessage(status, data);
+  newUserMessage(0, data);
 }
 
 

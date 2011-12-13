@@ -35,7 +35,6 @@ public:
 
   ChatCore *q;                    ///< Указатель на объект ChatCore.
   static QStringList icons;       ///< Иконки.
-  UserUtils *userUtils;           ///< Утилиты манипуляции над пользователем.
   QList<QByteArray> ignoreList;   ///< Чёрный список.
 };
 

@@ -34,7 +34,6 @@
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/UserView.h"
 #include "ui/TabWidget.h"
-#include "ui/UserUtils.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, ChannelType, parent)

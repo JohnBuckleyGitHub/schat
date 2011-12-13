@@ -43,7 +43,6 @@
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
-#include "ui/UserUtils.h"
 #include "User.h"
 
 ChatCore *ChatCore::m_self = 0;
@@ -52,8 +51,6 @@ QStringList ChatCorePrivate::icons;
 
 ChatCorePrivate::ChatCorePrivate()
 {
-  userUtils = new UserUtils();
-
   icons += QLatin1String("channel");
   icons += QLatin1String("channel-alert");
   icons += QLatin1String("gear");
@@ -98,7 +95,6 @@ ChatCorePrivate::ChatCorePrivate()
 
 ChatCorePrivate::~ChatCorePrivate()
 {
-  delete userUtils;
 }
 
 
@@ -157,7 +153,7 @@ void ChatCorePrivate::openUserUrl(const QUrl &url)
   if (actions.isEmpty())
     return;
 
-  ClientUser user = UserUtils::user(url);
+  ClientUser user;
   if (!user)
     return;
 
