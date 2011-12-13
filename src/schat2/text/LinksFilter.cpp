@@ -32,7 +32,7 @@ LinksFilter::LinksFilter()
 
 bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 {
-  qDebug() << "LinksFilter::filter()";
+  Q_UNUSED(options)
 
   QList<HtmlToken> out;
 
