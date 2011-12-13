@@ -19,7 +19,7 @@
 #include <windows.h>
 #include "../common/version.h"
 
-IDI_ICON1    ICON    DISCARDABLE    "../../data/images/icon.ico"
+IDI_ICON1    ICON    DISCARDABLE    "../../res/images/icon.ico"
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION SCHAT_VERSION_RC

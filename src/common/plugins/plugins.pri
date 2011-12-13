@@ -32,19 +32,19 @@ CONFIG(debug, debug|release) {
   RCC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
   MOC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/moc
   OBJECTS_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/obj
-  DESTDIR = ../../../../out/debug/plugins
+  DESTDIR = ../../../../bin/debug/plugins
 } else { 
   RCC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/rcc
   MOC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/moc
   OBJECTS_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/release/obj
-  DESTDIR = ../../../../out/plugins
+  DESTDIR = ../../../../bin/plugins
 }
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) { 
-    LIBS += -L../../../../out/debug -lschat-client 
+    LIBS += -L../../../../bin/debug -lschat-client 
   } else { 
-    LIBS += -L../../../../out -lschat-client  
+    LIBS += -L../../../../bin -lschat-client  
   }
 }
 
@@ -56,9 +56,9 @@ contains( SCHAT_CORE_LIB, 1 ) {
     ../../../schat2 \
     
   CONFIG(debug, debug|release) {
-    LIBS += -L../../../../out/debug -lschat
+    LIBS += -L../../../../bin/debug -lschat
   } else {
-    LIBS += -L../../../../out -lschat
+    LIBS += -L../../../../bin -lschat
   }
 }
 
@@ -70,9 +70,9 @@ contains( SCHAT_DAEMON_LIB, 1 ) {
     ../../../schatd2 \
     
   CONFIG(debug, debug|release) {
-    LIBS += -L../../../../out/debug -lschatd
+    LIBS += -L../../../../bin/debug -lschatd
   } else {
-    LIBS += -L../../../../out -lschatd
+    LIBS += -L../../../../bin -lschatd
   }
 }
 
