@@ -77,6 +77,8 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   if (user->sockets().size())
     return;
 
+  m_core->send(Sockets::all(user), ChannelPacket::quit(user->id(), m_core->sendStream()));
+
   QList<QByteArray> channels = user->channels().all();
   foreach (QByteArray id, channels) {
     ChatChannel channel = m_storage->channel(id);
@@ -86,8 +88,6 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
       m_storage->gc(channel);
     }
   }
-
-  m_core->send(Sockets::all(user), ChannelPacket::quit(user->id(), m_core->sendStream()));
 }
 
 
