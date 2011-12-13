@@ -22,12 +22,13 @@
 #include "client/SimpleClient.h"
 #include "DateTime.h"
 #include "messages/ServiceMessage.h"
+#include "net/SimpleID.h"
 
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
   : Message()
 {
   m_data["Type"] = "service";
-  m_data["Id"]   = ChatClient::messages()->randomId();
+  m_data["Id"]   = SimpleID::encode(ChatClient::messages()->randomId());
   m_data["Text"] = text;
 
   qint64 date = ChatClient::io()->date();
