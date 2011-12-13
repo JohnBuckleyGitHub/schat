@@ -16,45 +16,50 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QVBoxLayout>
-
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientMessages.h"
+#include "client/SimpleClient.h"
+#include "DateTime.h"
 #include "messages/ServiceMessage.h"
-#include "ui/ChatIcons.h"
-#include "ui/tabs/ChatView.h"
-#include "ui/tabs/PrivateTab.h"
-#include "ui/TabWidget.h"
 
-PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
-  : ChannelBaseTab(channel, PrivateType, parent)
+ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
+  : Message()
 {
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_chatView);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
+  m_data["Type"] = "service";
+  m_data["Id"]   = ChatClient::messages()->randomId();
+  m_data["Text"] = text;
 
-  setText(m_channel->name());
+  qint64 date = ChatClient::io()->date();
+  if (!date)
+    date = DateTime::utc();
 
-  ChatClient::channels()->join(id());
+  m_data["Date"] = date;
 
-  connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
+  author(user);
 }
 
 
-bool PrivateTab::bindMenu(QMenu *menu)
+bool ServiceMessage::isValid() const
 {
-  Q_UNUSED(menu)
-//  UserMenu *builder = new UserMenu(m_user, this);
-//  builder->bind(menu);
+  if (m_data.value("Text").toString().isEmpty())
+    return false;
+
   return true;
 }
 
 
-void PrivateTab::quit(const QByteArray &user)
+ServiceMessage ServiceMessage::quit(const QByteArray &user)
 {
-  if (id() == user)
-    reload();
+  QString text;
+  ClientChannel channel = ChatClient::channels()->get(user);
 
-  m_chatView->add(ServiceMessage::quit(user));
+  if (channel) {
+    if (channel->gender().value() == Gender::Female)
+      text = QObject::tr("has quit chat", "Female");
+    else
+      text = QObject::tr("has quit chat", "Male");
+  }
+
+  return ServiceMessage(text, user);
 }

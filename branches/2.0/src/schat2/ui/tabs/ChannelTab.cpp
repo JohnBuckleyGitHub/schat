@@ -26,6 +26,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "messages/ServiceMessage.h"
 #include "messages/TopicMessage.h"
 #include "net/packets/messages.h"
 #include "ui/InputWidget.h"
@@ -161,6 +162,7 @@ void ChannelTab::quit(const QByteArray &user)
     return;
 
   m_userView->remove(user);
+  m_chatView->add(ServiceMessage::quit(user));
 }
 
 

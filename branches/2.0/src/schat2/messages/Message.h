@@ -33,9 +33,12 @@ public:
   inline const QByteArray& tab() const   { return m_tab; }
   inline const QVariantMap& data() const { return m_data; };
   inline QVariantMap& data()             { return m_data; };
+  inline virtual bool isValid() const    { return true; }
   QString json() const;
 
 protected:
+  void author(const QByteArray &id);
+
   QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.
   QVariantMap m_data; ///< JSON данные.
 };

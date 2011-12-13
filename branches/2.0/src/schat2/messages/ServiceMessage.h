@@ -16,45 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef SERVICEMESSAGE_H_
+#define SERVICEMESSAGE_H_
 
-#include <QTextDocument>
-
-#include "ChatUrls.h"
-#include "client/ChatClient.h"
-#include "client/ClientChannels.h"
 #include "messages/Message.h"
-#include "net/SimpleID.h"
-#include "SimpleJSon.h"
 
-Message::Message()
+class SCHAT_CORE_EXPORT ServiceMessage : public Message
 {
-}
+public:
+  ServiceMessage(const QString &text, const QByteArray &user = QByteArray());
+  bool isValid() const;
 
+  static ServiceMessage quit(const QByteArray &user);
+};
 
-QString Message::json() const
-{
-  QString json = SimpleJSon::generate(m_data);
-//  qDebug() << json;
-
-  json.remove('\n');
-  json.remove('\r');
-  return json;
-}
-
-
-void Message::author(const QByteArray &id)
-{
-  if (id.isEmpty())
-    return;
-
-  ClientChannel user = ChatClient::channels()->get(id);
-  if (!user)
-    return;
-
-  QVariantMap author;
-  author["Id"]      = SimpleID::encode(user->id());
-  author["Name"]    = Qt::escape(user->name());
-  author["Url"]     = ChatUrls::toUrl(user, "insert").toString();
-  m_data["Author"]  = author;
-}
+#endif /* SERVICEMESSAGE_H_ */

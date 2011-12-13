@@ -88,6 +88,7 @@ private slots:
 
   void clientStateChanged(int state, int previousState);
   void message(const AbstractMessage &data);
+  void offline();
 
 private:
   int addChatTab(AbstractTab *tab);

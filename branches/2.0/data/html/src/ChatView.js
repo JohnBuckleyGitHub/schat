@@ -58,12 +58,16 @@ function alignChat() {
 }
 
 
+/// Добавление сообщения.
+/// Эта функция вызывается из C++ кода.
 function addMessage(data)
 {
 	var json = JSON.parse(data);
 
 	if (json.Type == 'channel')
 		addChannelMessage(json);
+	else if (json.Type == 'service')
+		addServiceMessage(json);
 }
 
 
@@ -95,6 +99,22 @@ function addChannelMessage(json)
 	html += '">';
 
 	html += dateTemplate(json.Date, json.Day);
+	html += nameTemplate(json);
+	html += '<span class="msg-body-block">' + json.Text + '</span>';
+
+	html += '</div>';
+	html += '</div>';
+
+	addRawMessage(html);
+}
+
+
+function addServiceMessage(json)
+{
+	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+	html += '<div class="blocks">';
+
+	html += dateTemplate(json.Date, false);
 	html += nameTemplate(json);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 

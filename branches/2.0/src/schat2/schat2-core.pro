@@ -47,6 +47,7 @@ HEADERS = \
     messages/Message.h \
     messages/MessageAdapter.h \
     messages/MessageBox.h \
+    messages/ServiceMessage.h \
     messages/TopicMessage.h \
     messages/UserMessage.h \
     NetworkManager.h \
@@ -113,6 +114,7 @@ SOURCES = \
     messages/Message.cpp \
     messages/MessageAdapter.cpp \
     messages/MessageBox.cpp \
+    messages/ServiceMessage.cpp \
     messages/TopicMessage.cpp \
     messages/UserMessage.cpp \
     NetworkManager.cpp \
