@@ -35,9 +35,9 @@ public:
   virtual void alert(bool start = true);
 
 protected:
-  void addJoinMsg(const QByteArray &userId, const QByteArray &destId);
-  void addLeftMsg(const QByteArray &userId, const QByteArray &destId);
-  void addQuitMsg(const QByteArray &userId, const QByteArray &destId);
+//  void addJoinMsg(const QByteArray &userId, const QByteArray &destId);
+//  void addLeftMsg(const QByteArray &userId, const QByteArray &destId);
+//  void addQuitMsg(const QByteArray &userId, const QByteArray &destId);
 
   ChatView *m_chatView; ///< Виджет отображающий текст чата.
   int m_alerts;         ///< Количество непрочитанных уведомлений.
