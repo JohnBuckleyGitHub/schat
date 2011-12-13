@@ -127,6 +127,7 @@ void ChannelTab::joined(const QByteArray &channel, const QByteArray &user)
     return;
 
   m_userView->add(ChatClient::channels()->get(user));
+  m_chatView->add(ServiceMessage::joined(user));
 }
 
 
@@ -153,6 +154,7 @@ void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
     return;
 
   m_userView->remove(user);
+  m_chatView->add(ServiceMessage::part(user));
 }
 
 

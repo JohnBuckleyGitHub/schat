@@ -28,6 +28,7 @@
 
 PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, PrivateType, parent)
+  , m_joined(true)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
@@ -38,6 +39,7 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
 
   ChatClient::channels()->join(id());
 
+  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
 }
 
@@ -51,10 +53,24 @@ bool PrivateTab::bindMenu(QMenu *menu)
 }
 
 
+void PrivateTab::channel(const ChannelInfo &info)
+{
+  if (info.id() != id())
+    return;
+
+  if (m_joined)
+    return;
+
+  m_chatView->add(ServiceMessage::joined(id()));
+  m_joined = true;
+}
+
+
 void PrivateTab::quit(const QByteArray &user)
 {
   if (id() == user)
     reload();
 
   m_chatView->add(ServiceMessage::quit(user));
+  m_joined = false;
 }

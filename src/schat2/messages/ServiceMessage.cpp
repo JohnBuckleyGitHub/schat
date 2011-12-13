@@ -50,6 +50,38 @@ bool ServiceMessage::isValid() const
 }
 
 
+ServiceMessage ServiceMessage::joined(const QByteArray &user)
+{
+  QString text;
+  ClientChannel channel = ChatClient::channels()->get(user);
+
+  if (channel) {
+    if (channel->gender().value() == Gender::Female)
+      text = QObject::tr("has joined", "Female");
+    else
+      text = QObject::tr("has joined", "Male");
+  }
+
+  return ServiceMessage(text, user);
+}
+
+
+ServiceMessage ServiceMessage::part(const QByteArray &user)
+{
+  QString text;
+  ClientChannel channel = ChatClient::channels()->get(user);
+
+  if (channel) {
+    if (channel->gender().value() == Gender::Female)
+      text = QObject::tr("has left", "Female");
+    else
+      text = QObject::tr("has left", "Male");
+  }
+
+  return ServiceMessage(text, user);
+}
+
+
 ServiceMessage ServiceMessage::quit(const QByteArray &user)
 {
   QString text;

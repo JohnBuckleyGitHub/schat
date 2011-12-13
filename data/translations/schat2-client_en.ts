@@ -5,82 +5,82 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="147"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="160"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="150"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="163"/>
         <source>Bad Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="153"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="166"/>
         <source>Unauthorized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="156"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="169"/>
         <source>Forbidden</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="159"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="172"/>
         <source>Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="162"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="175"/>
         <source>User Already Exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="165"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="178"/>
         <source>User Not Exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="168"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="181"/>
         <source>Nick Already In Use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="171"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="184"/>
         <source>User Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="174"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="187"/>
         <source>Conflict</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="177"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="190"/>
         <source>Internal Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="180"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="193"/>
         <source>Not Implemented</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="183"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="196"/>
         <source>Bad Gateway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="186"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="199"/>
         <source>Service Unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="189"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="202"/>
         <source>Gateway Timeout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/notices.cpp" line="192"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="205"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>

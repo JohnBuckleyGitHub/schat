@@ -41,61 +41,61 @@ void ChatViewTab::alert(bool start)
 }
 
 
-void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
-{
-  Q_UNUSED(destId)
-  Q_UNUSED(userId)
-
-  ClientUser user;
-  if (!user)
-    return;
-
-  if (user->status() == Status::Offline)
-    return;
-
-  QString text;
-  if (user->gender().value() == Gender::Female)
-    text = tr("has joined", "Female");
-  else
-    text = tr("has joined", "Male");
-
-//  m_tabs->addServiceMsg(userId, destId, text, this);
-}
-
-
-void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
-{
-  Q_UNUSED(destId)
-  Q_UNUSED(userId)
-
-  ClientUser user;
-  if (!user)
-    return;
-
-  QString text;
-  if (user->gender().value() == Gender::Female)
-    text = tr("has left", "Female");
-  else
-    text = tr("has left", "Male");
+//void ChatViewTab::addJoinMsg(const QByteArray &userId, const QByteArray &destId)
+//{
+//  Q_UNUSED(destId)
+//  Q_UNUSED(userId)
+//
+//  ClientUser user;
+//  if (!user)
+//    return;
+//
+//  if (user->status() == Status::Offline)
+//    return;
+//
+//  QString text;
+//  if (user->gender().value() == Gender::Female)
+//    text = tr("has joined", "Female");
+//  else
+//    text = tr("has joined", "Male");
 
 //  m_tabs->addServiceMsg(userId, destId, text, this);
-}
+//}
 
 
-void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
-{
-  Q_UNUSED(destId)
-  Q_UNUSED(userId)
-
-  ClientUser user;
-  if (!user)
-    return;
-
-  QString text;
-  if (user->gender().value() == Gender::Female)
-    text = tr("has quit chat", "Female");
-  else
-    text = tr("has quit chat", "Male");
+//void ChatViewTab::addLeftMsg(const QByteArray &userId, const QByteArray &destId)
+//{
+//  Q_UNUSED(destId)
+//  Q_UNUSED(userId)
+//
+//  ClientUser user;
+//  if (!user)
+//    return;
+//
+//  QString text;
+//  if (user->gender().value() == Gender::Female)
+//    text = tr("has left", "Female");
+//  else
+//    text = tr("has left", "Male");
 
 //  m_tabs->addServiceMsg(userId, destId, text, this);
-}
+//}
+
+
+//void ChatViewTab::addQuitMsg(const QByteArray &userId, const QByteArray &destId)
+//{
+//  Q_UNUSED(destId)
+//  Q_UNUSED(userId)
+//
+//  ClientUser user;
+//  if (!user)
+//    return;
+//
+//  QString text;
+//  if (user->gender().value() == Gender::Female)
+//    text = tr("has quit chat", "Female");
+//  else
+//    text = tr("has quit chat", "Male");
+
+//  m_tabs->addServiceMsg(userId, destId, text, this);
+//}

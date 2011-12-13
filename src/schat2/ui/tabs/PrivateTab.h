@@ -30,7 +30,11 @@ public:
   bool bindMenu(QMenu *menu);
 
 private slots:
+  void channel(const ChannelInfo &info);
   void quit(const QByteArray &user);
+
+private:
+  bool m_joined;
 };
 
 #endif /* PRIVATETAB_H_ */
