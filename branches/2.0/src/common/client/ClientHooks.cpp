@@ -74,7 +74,11 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
 
   if (command == "join") {
-    ChatClient::channels()->join(cmd.body());
+    if (cmd.isBody())
+      ChatClient::channels()->join(cmd.body());
+    else
+      ChatClient::channels()->join(dest);
+
     return true;
   }
 
@@ -83,6 +87,12 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
       return true;
 
     ChatClient::channels()->nick(cmd.body());
+    return true;
+  }
+
+  if (command == "part") {
+    ChatClient::channels()->part(dest);
+    return true;
   }
 
   return false;
