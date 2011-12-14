@@ -29,7 +29,6 @@
 #include "Channel.h"
 
 AuthReply::AuthReply(PacketReader *reader)
-  : AbstractPacket(reader)
 {
   serverData.setId(reader->sender());
   userId = reader->dest();
@@ -57,20 +56,22 @@ AuthReply::AuthReply(PacketReader *reader)
 
 
 AuthReply::AuthReply(ServerData *data, int status, const QByteArray &id, const QVariant &json)
-  : AbstractPacket(json)
+  : fields(0)
   , status(status)
   , id(id)
+  , json(json)
 {
   serverData = *data;
 }
 
 
 AuthReply::AuthReply(ServerData *data, Channel *channel, const QByteArray &cookie, const QByteArray &id, const QVariant &json)
-  : AbstractPacket(json)
-  , userId(channel->id())
+  : userId(channel->id())
+  , fields(0)
   , status(Notice::OK)
   , cookie(cookie)
   , id(id)
+  , json(json)
 {
 //  account = user->account();
   serverData = *data;
@@ -109,19 +110,19 @@ QByteArray AuthReply::data(QDataStream *stream) const
 
 
 AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariant &json)
-  : AbstractPacket(json)
+  : fields(0)
   , authType(authType)
   , gender(channel->gender().raw())
   , host(host)
   , nick(channel->name())
   , userAgent(SimpleID::userAgent())
+  , json(json)
 {
   setStatus(channel->status().value());
 }
 
 
 AuthRequest::AuthRequest(PacketReader *reader)
-  : AbstractPacket(reader)
 {
   fields = reader->get<quint8>();
   authType = reader->get<quint8>();
