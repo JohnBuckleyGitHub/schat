@@ -27,6 +27,7 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "hooks/CommandsImpl.h"
+#include "ui/StatusMenu.h"
 
 namespace Hooks
 {
@@ -48,24 +49,31 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
 
   /// - /about Открытие вкладки O Simple Chat.
-  if (command == "about") {
+  if (command == "about")
     ChatNotify::start(Notify::OpenAbout);
-    return true;
-  }
 
+  /// - /away Установка статуса «Отсутствую» (Away).
+  else if (command == "away")
+    StatusMenu::apply(Status::Away);
 
-  if (command == "exit" || command == "quit") {
+  /// - /dnd Установка статуса «Не беспокоить» (Do not disturb).
+  else if (command == "dnd")
+    StatusMenu::apply(Status::DnD);
+
+  /// - /exit Выход из чата.
+  else if (command == "exit" || command == "quit")
     ChatNotify::start(Notify::Quit);
-    return true;
-  }
 
-  if (command == "hide") {
+  /// - /ffc Установка статуса «Готов болтать» (Free for chat).
+  else if (command == "ffc")
+    StatusMenu::apply(Status::FreeForChat);
+
+  /// - /hide Скрытие окна чата.
+  else if (command == "hide")
     ChatNotify::start(Notify::ToggleVisibility);
-    return true;
-  }
 
   /// - /nick Установка нового ника.
-  if (command == "nick") {
+  else if (command == "nick") {
     if (!Channel::isValidName(cmd.body()))
       return true;
 
@@ -78,22 +86,28 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
     return false;
   }
 
+  /// - /offline Установка статуса «Не в сети» (Offline) и отключение от сервера.
+  else if (command == "offline")
+    StatusMenu::apply(Status::Offline);
+
+  /// - /online Установка статуса «В сети» (Online).
+  else if (command == "online")
+    StatusMenu::apply(Status::Online);
+
   /// - /open Открытие URL адреса.
-  if (command == "open") {
+  else if (command == "open")
     ChatUrls::open(cmd.body());
-    return true;
-  }
 
   /// - /set Установка опции чата, имя опции чувствительно к регистру символов.
-  if (command == QLatin1String("set")) {
+  else if (command == QLatin1String("set")) {
     ClientCmd body(cmd.body());
     if (body.isValid() && body.isBody())
       ChatCore::settings()->setValue(body.command(), body.body());
-
-    return true;
   }
+  else
+    return false;
 
-  return false;
+  return true;
 }
 
 } // namespace Hooks

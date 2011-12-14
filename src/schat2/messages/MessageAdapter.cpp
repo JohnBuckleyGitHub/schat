@@ -86,11 +86,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
 
-  if (command == QLatin1String("away")) {
-    setStatus(Status::Away, cmd.body());
-    return;
-  }
-
   if (command == QLatin1String("color")) {
     if (cmd.isBody())
       setGender(QString(), cmd.body());
@@ -100,18 +95,8 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == QLatin1String("dnd")) {
-    setStatus(Status::DnD, cmd.body());
-    return;
-  }
-
   if (command == QLatin1String("female")) {
     setGender(command, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("ffc")) {
-    setStatus(Status::FreeForChat, cmd.body());
     return;
   }
 
@@ -141,16 +126,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("male")) {
     setGender(command, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("offline")) {
-    setStatus(Status::Offline, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("online")) {
-    setStatus(Status::Online, cmd.body());
     return;
   }
 
@@ -355,15 +330,4 @@ void MessageAdapter::setStateAll(int state)
     i.next();
     newUserMessage(UserMessage::OutgoingMessage | state, i.value());
   }
-}
-
-
-void MessageAdapter::setStatus(int status, const QString &text)
-{
-  Q_UNUSED(status)
-  Q_UNUSED(text)
-//  if (text.isEmpty())
-//    m_settings->updateValue(QLatin1String("Profile/Status"), status);
-//  else
-//    m_settings->updateValue(QLatin1String("Profile/Status"), User::statusToString(status, text));
 }

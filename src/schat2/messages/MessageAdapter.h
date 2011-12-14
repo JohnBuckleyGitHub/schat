@@ -66,7 +66,6 @@ private:
   void newUserMessage(int status, const MessageData &data);
   void readTopic(const MessageData &data);
   void setStateAll(int state);
-  void setStatus(int status, const QString &text = QString());
 
   ChatSettings *m_settings;                     ///< Настройки чата.
   QHash<QByteArray, MessageData> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.

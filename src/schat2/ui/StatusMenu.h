@@ -31,6 +31,7 @@ public:
   StatusMenu(QWidget *parent = 0);
   inline static StatusMenu *i() { return m_self; }
   static QString statusTitle(int status);
+  static void apply(int status) { m_self->applyStatus(status); }
 
 signals:
   void updated();
@@ -46,6 +47,7 @@ private slots:
 private:
   inline void retranslateUi() { reload(); }
   void addStatus(int status);
+  void applyStatus(int status);
   void reload();
 
   QActionGroup *m_group;            ///< Группа для того чтобы можно было выбрать только один статус.
