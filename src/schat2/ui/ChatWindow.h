@@ -23,6 +23,7 @@
 
 class ChatCore;
 class ChatSettings;
+class Notify;
 class QVBoxLayout;
 class SendWidget;
 class StatusBar;
@@ -47,7 +48,7 @@ protected:
 
 private slots:
   void closeChat();
-  void notify(int notice, const QVariant &data);
+  void notify(const Notify &notify);
   void pageChanged(int type, bool visible);
   void settingsChanged(const QString &key, const QVariant &value);
 

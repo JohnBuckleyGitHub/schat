@@ -67,17 +67,6 @@ void History::hook(const HookData &data)
 }
 
 
-void History::notify(int notice, const QVariant &data)
-{
-  Q_UNUSED(data)
-  Q_UNUSED(notice)
-
-//  if (notice == ChatCore::NetworkChangedNotice) {
-//    openDb();
-//  }
-}
-
-
 void History::add(const RawUserMessageHook &data)
 {
   QTime t;

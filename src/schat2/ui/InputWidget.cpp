@@ -26,6 +26,7 @@
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "net/packets/messages.h"
 #include "text/HtmlFilter.h"
 #include "ui/ColorButton.h"
@@ -167,7 +168,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     if (textCursor().hasSelection())
       QTextEdit::keyPressEvent(event);
     else
-      ChatCore::i()->startNotify(ChatCore::CopyRequestNotice);
+      ChatNotify::start(Notify::CopyRequest);
 
     return;
   }

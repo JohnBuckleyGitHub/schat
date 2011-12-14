@@ -88,17 +88,6 @@ public:
     ArrowRightIcon
   };
 
-  enum Notice {
-    AboutNotice,
-    QuitNotice,
-    SettingsNotice,
-    ToggleVisibilityNotice,
-    ShowChatNotice,         ///< Запрос на открытие и активацию окна чата.
-    EditTopicNotice,        ///< Редактирование темы канала, параметр: идентификатор канала.
-    SetSendFocusNotice,     ///< Установка фокуса на поле отправки сообщения.
-    CopyRequestNotice,      ///< Запрос на копирование текста, отправляется полем редактирования текста в случае если в нём отсутствует выделение.
-  };
-
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   bool isIgnored(const QByteArray &id);
@@ -113,10 +102,6 @@ public:
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
   static QIcon icon(IconName name);
   static void makeRed(QWidget *widget, bool red = true);
-  void startNotify(int notice, const QVariant &data = QVariant());
-
-signals:
-  void notify(int notice, const QVariant &data);
 
 public slots:
   inline void openUrl(const QString &url) { openUrl(QUrl(url)); }

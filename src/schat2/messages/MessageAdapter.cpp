@@ -86,11 +86,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
 
-  if (command == QLatin1String("about")) {
-    ChatCore::i()->openUrl(QLatin1String("chat://about"));
-    return;
-  }
-
   if (command == QLatin1String("away")) {
     setStatus(Status::Away, cmd.body());
     return;
@@ -107,11 +102,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("dnd")) {
     setStatus(Status::DnD, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("exit") || command == QLatin1String("quit")) {
-    ChatCore::i()->startNotify(ChatCore::QuitNotice);
     return;
   }
 
@@ -132,11 +122,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("help")) {
     commandHelpHint(QString());
-    return;
-  }
-
-  if (command == QLatin1String("hide")) {
-    ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
     return;
   }
 

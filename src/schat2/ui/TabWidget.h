@@ -80,7 +80,6 @@ private slots:
   void currentChanged(int index);
   void hideMainMenu();
   void notify(const Notify &notify);
-  void notify(int notice, const QVariant &data);
   void openTab();
   void showMainMenu();
 

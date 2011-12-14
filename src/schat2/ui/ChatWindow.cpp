@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -74,9 +75,9 @@ ChatWindow::ChatWindow(QWidget *parent)
   resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
 
   connect(m_send, SIGNAL(send(const QString &)), m_core, SLOT(send(const QString &)));
-  connect(m_core, SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   setWindowTitle(QApplication::applicationName());
 }
@@ -162,20 +163,18 @@ void ChatWindow::closeChat()
 }
 
 
-void ChatWindow::notify(int notice, const QVariant &data)
+void ChatWindow::notify(const Notify &notify)
 {
-  Q_UNUSED(data)
-
-  if (notice == ChatCore::QuitNotice) {
+  if (notify.type() == Notify::Quit) {
     closeChat();
   }
-  else if (notice == ChatCore::ToggleVisibilityNotice) {
+  else if (notify.type() == Notify::ToggleVisibility) {
     if (isHidden())
       showChat();
     else
       hideChat();
   }
-  else if (notice == ChatCore::ShowChatNotice) {
+  else if (notify.type() == Notify::ShowChat) {
     showChat();
   }
 }

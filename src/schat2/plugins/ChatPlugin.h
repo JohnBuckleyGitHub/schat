@@ -37,7 +37,6 @@ public:
   virtual void hook(const HookData & /*data*/) {}
 
 public slots:
-  virtual void notify(int /*notice*/, const QVariant & /*data*/) {}
   virtual void settingsChanged(const QString & /*key*/, const QVariant & /*value*/) {}
 
 protected:
