@@ -27,9 +27,9 @@
  */
 QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
-  QString file = ":/webkit/resources/missingImage.png";
+  QString file = ":/images/channel.png";
 
-  if (channel->type() == SimpleID::UserId) {
+  if (channel->type() != SimpleID::ChannelId) {
     file = ":/images/user";
     int gender = channel->gender().value();
     int color  = channel->gender().color();
@@ -52,8 +52,6 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
 
     file += ".png";
   }
-  else if (channel->type() == SimpleID::ChannelId)
-    file = ":/images/channel.png";
 
   if (options & OfflineStatus && channel->status().value() == Status::Offline && !(options & Statuses))
     options |= Statuses;
