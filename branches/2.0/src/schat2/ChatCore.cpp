@@ -37,6 +37,7 @@
 #include "FileLocations.h"
 #include "hooks/ChannelsImpl.h"
 #include "hooks/ClientImpl.h"
+#include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/messages.h"
@@ -209,6 +210,7 @@ ChatCore::ChatCore(QObject *parent)
   new ChatNotify(this);
 
   new Hooks::MessagesImpl(this);
+  new Hooks::CommandsImpl(this);
   new Hooks::ChannelsImpl(this);
   new Hooks::ClientImpl(this);
 
