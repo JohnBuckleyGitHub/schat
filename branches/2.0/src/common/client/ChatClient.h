@@ -64,6 +64,7 @@ public:
 
 signals:
   void offline();
+  void online();
 
 private slots:
   void clientStateChanged(int state, int previousState);

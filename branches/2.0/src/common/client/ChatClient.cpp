@@ -48,6 +48,9 @@ void ChatClient::clientStateChanged(int state, int previousState)
 
   if (previousState == Online)
     emit offline();
+
+  if (state == Online)
+    emit online();
 }
 
 

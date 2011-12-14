@@ -41,6 +41,7 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
 }
 
 
@@ -66,10 +67,18 @@ void PrivateTab::channel(const ChannelInfo &info)
 }
 
 
+void PrivateTab::online()
+{
+  m_chatView->add(ServiceMessage::joined(id()));
+}
+
+
 void PrivateTab::quit(const QByteArray &user)
 {
-  if (id() == user)
-    reload();
+  if (id() != user)
+    return;
+
+  reload();
 
   m_chatView->add(ServiceMessage::quit(user));
   m_joined = false;
