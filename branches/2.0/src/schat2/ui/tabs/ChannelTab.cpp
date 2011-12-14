@@ -71,8 +71,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 //  TopicMessage msg(m_channel->topic());
 //  m_tabs->message(this, msg);
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
   connect(m_bar->topic(), SIGNAL(focusOut()), SLOT(topicFocusOut()));
   connect(m_chatView, SIGNAL(reloaded()), SLOT(reloaded()));
@@ -128,23 +127,6 @@ void ChannelTab::joined(const QByteArray &channel, const QByteArray &user)
 
   m_userView->add(ChatClient::channels()->get(user));
   m_chatView->add(ServiceMessage::joined(user));
-}
-
-
-void ChannelTab::notify(int notice, const QVariant &data)
-{
-  if (notice == ChatCore::EditTopicNotice) {
-    if (data.toByteArray() != id())
-      return;
-
-    m_chatView->evaluateJavaScript("showTopic", false);
-    m_tabs->setCurrentWidget(this);
-    m_bar->topic()->clear();
-//    m_bar->topic()->insertHtml(m_channel->topic().topic + " ");
-    m_bar->setVisible(true);
-    m_bar->topic()->adjustHeight();
-    m_bar->topic()->setFocus();
-  }
 }
 
 

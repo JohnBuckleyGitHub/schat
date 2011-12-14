@@ -50,7 +50,6 @@ protected:
 
 private slots:
   void notify(const Notify &notify);
-  void notify(int notice, const QVariant &data);
   void sendMsg(const QString &text);
   void showHistoryItem();
   void showHistoryMenu();

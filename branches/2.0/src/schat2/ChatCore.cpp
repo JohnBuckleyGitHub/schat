@@ -133,14 +133,6 @@ void ChatCorePrivate::openChannelUrl(const QUrl &url)
   ClientChannel channel = ChatUrls::channel(url);
   if (!channel)
     return;
-
-  if (actions.first() == "edit") {
-    if (actions.size() == 1)
-      return;
-
-    if (actions.at(1) == "topic")
-      q->startNotify(ChatCore::EditTopicNotice, channel->id());
-  }
 }
 
 
@@ -266,12 +258,6 @@ void ChatCore::makeRed(QWidget *widget, bool red)
 }
 
 
-void ChatCore::startNotify(int notice, const QVariant &data)
-{
-  emit notify(notice, data);
-}
-
-
 void ChatCore::click(const QString &id, const QString &button)
 {
   QList<ChatViewAction *> actions = m_actions.values(id);
@@ -312,12 +298,6 @@ void ChatCore::openUrl(const QUrl &url)
   }
   else if (url.host() == QLatin1String("channel")) {
     d->openChannelUrl(url);
-  }
-  else if (url.host() == QLatin1String("about")) {
-    startNotify(ChatCore::AboutNotice);
-  }
-  else if (url.host() == QLatin1String("settings")) {
-    startNotify(ChatCore::SettingsNotice, url);
   }
 }
 

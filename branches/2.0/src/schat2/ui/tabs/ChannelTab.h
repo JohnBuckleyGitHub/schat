@@ -43,7 +43,6 @@ public:
 private slots:
   void channels(const QList<QByteArray> &channels);
   void joined(const QByteArray &channel, const QByteArray &user);
-  void notify(int notice, const QVariant &data);
   void part(const QByteArray &channel, const QByteArray &user);
   void quit(const QByteArray &user);
 

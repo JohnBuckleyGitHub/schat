@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -45,6 +46,23 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   Q_UNUSED(dest);
 
   QString command = cmd.command().toLower();
+
+  /// - /about Открытие вкладки O Simple Chat.
+  if (command == "about") {
+    ChatNotify::start(Notify::OpenAbout);
+    return true;
+  }
+
+
+  if (command == "exit" || command == "quit") {
+    ChatNotify::start(Notify::Quit);
+    return true;
+  }
+
+  if (command == "hide") {
+    ChatNotify::start(Notify::ToggleVisibility);
+    return true;
+  }
 
   /// - /nick Установка нового ника.
   if (command == "nick") {

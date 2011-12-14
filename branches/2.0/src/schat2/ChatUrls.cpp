@@ -135,6 +135,13 @@ void ChatUrls::openChannelUrl(const QUrl &url)
   else if (action == "insert") {
     ChatNotify::start(Notify::InsertText, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(channel->name())));
   }
+  else if (action == "edit") {
+    if (actions.size() == 1)
+      return;
+
+    if (actions.at(1) == "topic" && channel->type() == SimpleID::ChannelId)
+      ChatNotify::start(Notify::EditTopic, channel->id());
+  }
 }
 
 
@@ -156,9 +163,9 @@ void ChatUrls::openUrl(const QUrl &url)
     openChannelUrl(url);
   }
   else if (url.host() == QLatin1String("about")) {
-//    startNotify(ChatCore::AboutNotice);
+    ChatNotify::start(Notify::OpenAbout);
   }
   else if (url.host() == QLatin1String("settings")) {
-//    startNotify(ChatCore::SettingsNotice, url);
+    ChatNotify::start(Notify::OpenSettings, url);
   }
 }

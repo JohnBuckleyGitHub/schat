@@ -21,6 +21,7 @@
 #include <QTimerEvent>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
@@ -101,29 +102,29 @@ void TrayIcon::timerEvent(QTimerEvent *event)
 
 void TrayIcon::about()
 {
-  ChatCore::i()->startNotify(ChatCore::AboutNotice);
-  ChatCore::i()->startNotify(ChatCore::ShowChatNotice);
+  ChatNotify::start(Notify::OpenAbout);
+  ChatNotify::start(Notify::ShowChat);
 }
 
 
 void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::MiddleClick) {
-    ChatCore::i()->startNotify(ChatCore::ToggleVisibilityNotice);
+    ChatNotify::start(Notify::ToggleVisibility);
   }
 }
 
 
 void TrayIcon::quit()
 {
-  ChatCore::i()->startNotify(ChatCore::QuitNotice);
+  ChatNotify::start(Notify::Quit);
 }
 
 
 void TrayIcon::settings()
 {
-  ChatCore::i()->startNotify(ChatCore::SettingsNotice);
-  ChatCore::i()->startNotify(ChatCore::ShowChatNotice);
+  ChatNotify::start(Notify::OpenSettings);
+  ChatNotify::start(Notify::ShowChat);
 }
 
 

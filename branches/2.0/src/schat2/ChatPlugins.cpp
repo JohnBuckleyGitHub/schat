@@ -77,7 +77,6 @@ void ChatPlugins::init()
       continue;
 
     m_chatPlugins.append(plugin);
-    connect(m_core, SIGNAL(notify(int, const QVariant &)), plugin, SLOT(notify(int, const QVariant &)));
     connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));
 
     QList<HookData::Type> hooks = plugin->hooks();

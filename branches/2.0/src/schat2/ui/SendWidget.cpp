@@ -49,8 +49,6 @@ SendWidget::SendWidget(QWidget *parent)
   retranslateUi();
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
-
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
@@ -92,16 +90,8 @@ void SendWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::InsertText)
     insertHtml(notify.data().toString());
-}
-
-
-void SendWidget::notify(int notice, const QVariant &data)
-{
-  Q_UNUSED(data)
-
-  if (notice == ChatCore::SetSendFocusNotice) {
+  else if (notify.type() == Notify::SetSendFocus)
     m_input->setFocus();
-  }
 }
 
 

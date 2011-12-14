@@ -95,7 +95,6 @@ TabWidget::TabWidget(QWidget *parent)
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
-  connect(ChatCore::i(), SIGNAL(notify(int, const QVariant &)), SLOT(notify(int, const QVariant &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -351,29 +350,23 @@ void TabWidget::hideMainMenu()
 
 void TabWidget::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::OpenChannel)
+  if (notify.type() == Notify::OpenChannel) {
     channelTab(notify.data().toByteArray());
-}
-
-
-void TabWidget::notify(int notice, const QVariant &data)
-{
-  Q_UNUSED(data)
-
-  if (notice == ChatCore::AboutNotice) {
+  }
+  else if (notify.type() == Notify::OpenAbout) {
     if (!m_aboutTab)
       m_aboutTab = new AboutTab(this);
 
     addChatTab(m_aboutTab);
   }
-  else if (notice == ChatCore::SettingsNotice) {
+  else if (notify.type() == Notify::OpenSettings) {
     if (!m_settingsTab)
       m_settingsTab = new SettingsTab(this);
 
-    m_settingsTab->openUrl(data.toUrl());
+    m_settingsTab->openUrl(notify.data().toUrl());
     addChatTab(m_settingsTab);
   }
-  else if (notice == ChatCore::CopyRequestNotice) {
+  else if (notify.type() == Notify::CopyRequest) {
     ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
     if (!tab)
       return;
