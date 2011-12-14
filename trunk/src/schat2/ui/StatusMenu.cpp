@@ -103,7 +103,28 @@ void StatusMenu::settingsChanged(const QString &key, const QVariant &value)
 
 void StatusMenu::statusChanged(QAction *action)
 {
-  ChatClient::channel()->status() = action->data().toInt();
+  applyStatus(action->data().toInt());
+}
+
+
+void StatusMenu::addStatus(int status)
+{
+  QAction *action = m_group->addAction("");
+  action->setData(status);
+  action->setCheckable(true);
+  m_statuses.insert(status, action);
+
+  m_group->addAction(action);
+  addAction(action);
+}
+
+
+/*!
+ * Применение статуса.
+ */
+void StatusMenu::applyStatus(int status)
+{
+  ChatClient::channel()->status() = status;
   ChatCore::settings()->setValue("Profile/Status", ChatClient::channel()->status().value());
 
   if (ChatClient::state() == ChatClient::Online) {
@@ -117,18 +138,6 @@ void StatusMenu::statusChanged(QAction *action)
 
   if (ChatClient::state() == ChatClient::Offline && ChatClient::channel()->status().value() != Status::Offline)
     ChatClient::open();
-}
-
-
-void StatusMenu::addStatus(int status)
-{
-  QAction *action = m_group->addAction("");
-  action->setData(status);
-  action->setCheckable(true);
-  m_statuses.insert(status, action);
-
-  m_group->addAction(action);
-  addAction(action);
 }
 
 

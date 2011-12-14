@@ -164,8 +164,8 @@ bool NetworkManager::isAutoConnect() const
   if (!ChatCore::settings()->value("AutoConnect").toBool())
     return false;
 
-//  if (m_client->user()->status() == Status::Offline)
-//    return false;
+  if (ChatClient::channel()->status().value() == Status::Offline)
+    return false;
 
   if (m_networks.data.isEmpty())
     return false;
