@@ -16,25 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHATHOOKS_H_
-#define CHATHOOKS_H_
+#ifndef MESSAGESIMPL_H_
+#define MESSAGESIMPL_H_
 
 #include "client/ClientHooks.h"
+#include "net/packets/MessagePacket.h"
 
 namespace Hooks
 {
 
-class SCHAT_CORE_EXPORT Networks : public Client
+class SCHAT_CORE_EXPORT MessagesImpl : public Messages
 {
   Q_OBJECT
 
 public:
-  Networks(QObject *parent = 0);
-  bool openId(const QByteArray &id, bool &matched);
-  QByteArray id();
-  QByteArray serverId();
+  MessagesImpl(QObject *parent = 0);
+  void readText(const MessagePacket &packet);
+  void sendText(const MessagePacket &packet);
+
+private slots:
+  void clientStateChanged(int state, int previousState);
+
+private:
+  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 } // namespace Hooks
 
-#endif /* CHATHOOKS_H_ */
+#endif /* MESSAGESIMPL_H_ */

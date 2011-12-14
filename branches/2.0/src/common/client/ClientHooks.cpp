@@ -78,6 +78,13 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
     return true;
   }
 
+  if (command == "nick") {
+    if (!Channel::isValidName(cmd.body()))
+      return true;
+
+    ChatClient::channels()->nick(cmd.body());
+  }
+
   return false;
 }
 
