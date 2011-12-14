@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
@@ -36,12 +37,16 @@ CommandsImpl::CommandsImpl(QObject *parent)
 }
 
 
+/*!
+ * Обработка команд.
+ */
 bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   Q_UNUSED(dest);
 
   QString command = cmd.command().toLower();
 
+  /// - /nick Установка нового ника.
   if (command == "nick") {
     if (!Channel::isValidName(cmd.body()))
       return true;
@@ -53,6 +58,21 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
     }
 
     return false;
+  }
+
+  /// - /open Открытие URL адреса.
+  if (command == "open") {
+    ChatUrls::open(cmd.body());
+    return true;
+  }
+
+  /// - /set Установка опции чата, имя опции чувствительно к регистру символов.
+  if (command == QLatin1String("set")) {
+    ClientCmd body(cmd.body());
+    if (body.isValid() && body.isBody())
+      ChatCore::settings()->setValue(body.command(), body.body());
+
+    return true;
   }
 
   return false;

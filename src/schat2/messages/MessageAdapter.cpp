@@ -146,11 +146,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == "join") {
-    ChatClient::channels()->join(cmd.body());
-    return;
-  }
-
   if (command == "login" || command == "reg") {
     ClientCmd body(cmd.body());
     if (body.isValid() && body.isBody())
@@ -164,11 +159,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
     return;
   }
 
-  if (command == QLatin1String("nick") && cmd.isBody() && cmd.body().size() >= 3) {
-//    m_settings->updateValue(QLatin1String("Profile/Nick"), cmd.body());
-    return;
-  }
-
   if (command == QLatin1String("offline")) {
     setStatus(Status::Offline, cmd.body());
     return;
@@ -176,19 +166,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 
   if (command == QLatin1String("online")) {
     setStatus(Status::Online, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("open") && cmd.isBody()) {
-    ChatCore::i()->openUrl(cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("set")) {
-    ClientCmd body(cmd.body());
-    if (body.isValid() && body.isBody())
-      m_settings->setValue(body.command(), body.body());
-
     return;
   }
 
