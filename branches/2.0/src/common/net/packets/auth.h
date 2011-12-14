@@ -22,7 +22,6 @@
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/ServerData.h"
-#include "net/packets/AbstractPacket.h"
 
 class Channel;
 class PacketReader;
@@ -46,7 +45,7 @@ class User;
  *  - \b json      - JSON данные (\p status & AuthReply::JSonField).
  *    - \b id      - Идентификатор основного канала (\p status == Notice::OK и опции сервера содержат ServerData::AutoJoinSupport).
  */
-class SCHAT_EXPORT AuthReply : public AbstractPacket
+class SCHAT_EXPORT AuthReply
 {
 public:
   /// Поля данных.
@@ -56,7 +55,7 @@ public:
   };
 
   AuthReply()
-  : AbstractPacket()
+  : fields(0)
   , status(Notice::InternalError)
   {}
 
@@ -66,11 +65,13 @@ public:
   QByteArray data(QDataStream *stream) const;
 
   QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
+  mutable quint8 fields; ///< Битовая маска дополнительный полей пакета.
   quint16 status;        ///< Статус \sa Notice::StatusCodes, обязательное поле.
   QByteArray cookie;     ///< Cookie.
   QByteArray id;         ///< Уникальный идентификатор авторизации.
   ServerData serverData; ///< Данные о сервере.
   QString account;       ///< Имя аккаунта пользователя.
+  QVariant json;         ///< JSON данные.
 };
 
 
@@ -93,7 +94,7 @@ public:
  *    - \b id      - AuthRequest::cookie, (\p authType == AuthRequest::Cookie или \p authType == AuthRequest::Password).
  *    - \b json    - AuthRequest::json, (AuthRequest::fields & AuthRequest::JSonField)
  */
-class SCHAT_EXPORT AuthRequest : public AbstractPacket
+class SCHAT_EXPORT AuthRequest
 {
 public:
   /// Тип авторизации.
@@ -111,7 +112,7 @@ public:
   };
 
   AuthRequest()
-  : AbstractPacket()
+  : fields(0)
   , authType(0)
   {}
 
@@ -121,6 +122,7 @@ public:
   QByteArray data(QDataStream *stream) const;
   void setStatus(quint8 status);
 
+  mutable quint8 fields;   ///< Битовая маска дополнительный полей пакета.
   quint8 authType;         ///< Тип авторизации.
   QByteArray uniqueId;     ///< Уникальный идентификатор клиента.
   mutable QByteArray id;   ///< Уникальный идентификатор авторизации.
@@ -133,6 +135,7 @@ public:
   QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequest::Cookie.
   QString account;         ///< Зарегистрированное имя пользователя.
   QByteArray password;     ///< Пароль.
+  QVariant json;           ///< JSON данные.
 };
 
 #endif /* AUTH_H_ */
