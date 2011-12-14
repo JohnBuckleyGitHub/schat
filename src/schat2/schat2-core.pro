@@ -41,6 +41,7 @@ HEADERS = \
     ChatUrls.h \
     hooks/ChannelsImpl.h \
     hooks/ClientImpl.h \
+    hooks/MessagesImpl.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/ChannelMessage.h \
@@ -107,6 +108,7 @@ SOURCES = \
     ChatUrls.cpp \
     hooks/ChannelsImpl.cpp \
     hooks/ClientImpl.cpp \
+    hooks/MessagesImpl.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/ChannelMessage.cpp \
