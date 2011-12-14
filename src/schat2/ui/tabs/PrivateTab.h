@@ -31,6 +31,7 @@ public:
 
 private slots:
   void channel(const ChannelInfo &info);
+  void online();
   void quit(const QByteArray &user);
 
 private:
