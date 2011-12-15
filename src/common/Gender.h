@@ -64,6 +64,7 @@ public:
   void setColor(Colors color);
   void setColor(quint8 color);
 
+  static int stringToColor(const QString &color);
   static QString colorToString(quint8 color);
 
   Gender& operator=(int other);

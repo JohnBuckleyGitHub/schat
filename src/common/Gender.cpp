@@ -79,6 +79,40 @@ void Gender::setColor(quint8 color)
 }
 
 
+int Gender::stringToColor(const QString &color)
+{
+  QString c = color.toLower();
+  if (c == "black")
+    return Black;
+
+  if (c == "gray")
+    return Gray;
+
+  if (c == "green")
+    return Green;
+
+  if (c == "red")
+    return Red;
+
+  if (c == "white")
+    return White;
+
+  if (c == "yellow")
+    return Yellow;
+
+  if (c == "medical")
+    return Medical;
+
+  if (c == "nude")
+    return Nude;
+
+  if (c == "thief")
+    return Thief;
+
+  return Default;
+}
+
+
 QString Gender::colorToString(quint8 color)
 {
   switch (color) {
