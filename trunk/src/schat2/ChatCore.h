@@ -90,7 +90,6 @@ public:
 
   ChatCore(QObject *parent = 0);
   ~ChatCore();
-  bool isIgnored(const QByteArray &id);
   inline ChatPlugins *plugins() { return m_plugins; }
   inline const QByteArray& currentId() const { return m_currentId; }
   inline static ChatCore *i()              { return m_self; }
@@ -104,9 +103,7 @@ public:
   static void makeRed(QWidget *widget, bool red = true);
 
 public slots:
-  inline void openUrl(const QString &url) { openUrl(QUrl(url)); }
   void click(const QString &id, const QString &button);
-  void openUrl(const QUrl &url);
   void send(const QString &text);
 
 private slots:
