@@ -20,7 +20,7 @@
 #include <QUrl>
 
 #include "actions/MenuBuilder.h"
-#include "ChatCore.h"
+#include "ChatUrls.h"
 
 MenuBuilder::MenuBuilder(QObject *parent)
   : QObject(parent)
@@ -45,7 +45,7 @@ void MenuBuilder::triggered(QAction *action)
     return;
 
   if (action->data().type() == QVariant::Url) {
-    ChatCore::i()->openUrl(action->data().toUrl());
+    ChatUrls::open(action->data().toUrl());
     return;
   }
 }

@@ -26,16 +26,9 @@ public:
   ChatCorePrivate();
   ~ChatCorePrivate();
 
-  void ignore(const QByteArray &id);
-  void loadIgnoreList();
-  void openChannelUrl(const QUrl &url);
-  void openUserUrl(const QUrl &url);
-  void unignore(const QByteArray &id);
-  void writeIgnoreList();
-
   ChatCore *q;                    ///< Указатель на объект ChatCore.
   static QStringList icons;       ///< Иконки.
-  QList<QByteArray> ignoreList;   ///< Чёрный список.
+//  QList<QByteArray> ignoreList;   ///< Чёрный список.
 };
 
 

@@ -100,88 +100,6 @@ ChatCorePrivate::~ChatCorePrivate()
 }
 
 
-void ChatCorePrivate::ignore(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return;
-
-  if (!ignoreList.contains(id))
-    ignoreList.prepend(id);
-
-  writeIgnoreList();
-}
-
-
-void ChatCorePrivate::loadIgnoreList()
-{
-  ignoreList.clear();
-//  QStringList list = q->settings()->value(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), QStringList()).toStringList();
-}
-
-
-/*!
- * Открытия адресов вида chat://channel/идентификатор канала/действие.
- *
- * \deprecated Вместо этой функции использовать ChatUrls.
- */
-void ChatCorePrivate::openChannelUrl(const QUrl &url)
-{
-  QStringList actions = ChatUrls::actions(url);
-  if (actions.isEmpty())
-    return;
-
-  ClientChannel channel = ChatUrls::channel(url);
-  if (!channel)
-    return;
-}
-
-
-/*!
- * Открытия адресов вида chat://user/идентификатор пользователя/действие.
- *
- * \deprecated Вместо этой функции использовать ChatUrls.
- */
-void ChatCorePrivate::openUserUrl(const QUrl &url)
-{
-  QStringList actions = ChatUrls::actions(url);
-  if (actions.isEmpty())
-    return;
-
-  ClientUser user;
-  if (!user)
-    return;
-
-  if (actions.first() == QLatin1String("ignore")) {
-    ignore(user->id());
-  }
-  else if (actions.first() == QLatin1String("unignore")) {
-    unignore(user->id());
-  }
-}
-
-
-void ChatCorePrivate::unignore(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return;
-
-  ignoreList.removeAll(id);
-
-  writeIgnoreList();
-}
-
-
-void ChatCorePrivate::writeIgnoreList()
-{
-  QStringList list;
-  for (int i = 0; i < ignoreList.size(); ++i) {
-    list.append(SimpleID::encode(ignoreList.at(i)));
-  }
-
-//  q->settings()->setValue(SimpleID::encode(q->networks()->serverId()) + QLatin1String("/IgnoreList"), list);
-}
-
-
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
   , d(new ChatCorePrivate())
@@ -227,12 +145,6 @@ ChatCore::~ChatCore()
 }
 
 
-bool ChatCore::isIgnored(const QByteArray &id)
-{
-  return d->ignoreList.contains(id);
-}
-
-
 /*!
  * \todo Добавить поддержку получения иконки из темы.
  */
@@ -272,32 +184,6 @@ void ChatCore::click(const QString &id, const QString &button)
       delete action;
       action = 0;
     }
-  }
-}
-
-
-/*!
- * Обработчик ссылок.
- */
-void ChatCore::openUrl(const QUrl &url)
-{
-  qDebug() << "-----" << url;
-
-  if (url.scheme() == QLatin1String("schat")) {
-    m_client->openUrl(url);
-    return;
-  }
-
-  if (url.scheme() != QLatin1String("chat")) {
-    QDesktopServices::openUrl(url);
-    return;
-  }
-
-  if (url.host() == QLatin1String("user")) {
-    d->openUserUrl(url);
-  }
-  else if (url.host() == QLatin1String("channel")) {
-    d->openChannelUrl(url);
   }
 }
 
