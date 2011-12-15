@@ -23,6 +23,7 @@
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -56,6 +57,14 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   else if (command == "away")
     StatusMenu::apply(Status::Away);
 
+  /// - /color Установка цвета иконки пользователя.
+  else if (command == "color") {
+    if (cmd.isBody())
+      setGender(QString(), cmd.body());
+    else
+      setGender(QString(), "default");
+  }
+
   /// - /dnd Установка статуса «Не беспокоить» (Do not disturb).
   else if (command == "dnd")
     StatusMenu::apply(Status::DnD);
@@ -64,13 +73,25 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   else if (command == "exit" || command == "quit")
     ChatNotify::start(Notify::Quit);
 
+  /// - /female Установка женского пола пользователя.
+  else if (command == "female")
+    setGender(command, cmd.body());
+
   /// - /ffc Установка статуса «Готов болтать» (Free for chat).
   else if (command == "ffc")
     StatusMenu::apply(Status::FreeForChat);
 
+  /// - /gender Установка пола пользователя.
+  else if (command == "gender")
+    setGender(cmd.body(), QString());
+
   /// - /hide Скрытие окна чата.
   else if (command == "hide")
     ChatNotify::start(Notify::ToggleVisibility);
+
+  /// - /male Установка мужского пола пользователя.
+  else if (command == "male")
+    setGender(command, cmd.body());
 
   /// - /nick Установка нового ника.
   else if (command == "nick") {
@@ -108,6 +129,42 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
     return false;
 
   return true;
+}
+
+
+void CommandsImpl::setGender(const QString &gender, const QString &color)
+{
+  if (gender.isEmpty() && color.isEmpty())
+    return;
+
+  Gender data = ChatClient::channel()->gender();
+
+  if (!gender.isEmpty()) {
+    if (gender == "male")
+      data.set(Gender::Male);
+    else if (gender == "female")
+      data.set(Gender::Female);
+    else if (gender == "ghost")
+      data.set(Gender::Ghost);
+    else if (gender == "unknown")
+      data.set(Gender::Unknown);
+    else if (gender == "bot")
+      data.set(Gender::Bot);
+    else
+      return;
+  }
+
+  if (!color.isEmpty())
+    data.setColor(Gender::stringToColor(color));
+
+  if (ChatClient::channel()->gender().raw() == data.raw())
+    return;
+
+  ChatClient::channel()->gender() = data.raw();
+  ChatCore::settings()->setValue("Profile/Gender", data.raw());
+
+  if (ChatClient::state() == ChatClient::Online)
+    ChatClient::channels()->update();
 }
 
 } // namespace Hooks

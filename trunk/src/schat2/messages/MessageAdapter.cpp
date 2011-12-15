@@ -86,24 +86,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
 
-  if (command == QLatin1String("color")) {
-    if (cmd.isBody())
-      setGender(QString(), cmd.body());
-    else
-      setGender(QString(), QLatin1String("default"));
-
-    return;
-  }
-
-  if (command == QLatin1String("female")) {
-    setGender(command, cmd.body());
-    return;
-  }
-
-  if (command == QLatin1String("gender") && cmd.isBody()) {
-    setGender(cmd.body(), QString());
-    return;
-  }
 
   if (command == QLatin1String("help")) {
     commandHelpHint(QString());
@@ -120,20 +102,6 @@ void MessageAdapter::command(const ClientCmd &cmd)
     ClientCmd body(cmd.body());
     if (body.isValid() && body.isBody())
       login(command, body.command(), body.body());
-
-    return;
-  }
-
-  if (command == QLatin1String("male")) {
-    setGender(command, cmd.body());
-    return;
-  }
-
-  if (command == "topic") {
-//    if (SimpleID::typeOf(m_destId) == SimpleID::ChannelId) {
-//      MessageData msg(UserUtils::userId(), m_destId, command, QString());
-//      m_client->send(msg, true);
-//    }
 
     return;
   }

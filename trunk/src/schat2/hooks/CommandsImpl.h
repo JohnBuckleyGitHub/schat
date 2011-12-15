@@ -31,6 +31,9 @@ class SCHAT_CORE_EXPORT CommandsImpl : public Messages
 public:
   CommandsImpl(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+
+private:
+  void setGender(const QString &gender, const QString &color);
 };
 
 } // namespace Hooks
