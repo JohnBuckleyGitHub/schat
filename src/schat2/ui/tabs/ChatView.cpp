@@ -31,6 +31,7 @@
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "SimpleJSon.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 
 ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
@@ -128,7 +129,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   }
 
   QMenu display(tr("Display"), this);
-  display.setIcon(SCHAT_ICON(GearIcon));
+  display.setIcon(SCHAT_ICON(Gear));
   menu.addSeparator();
   menu.addMenu(&display);
   display.addAction(m_seconds);

@@ -37,57 +37,14 @@ class NetworkManager;
 class SimpleClient;
 class Translation;
 
-#define SCHAT_ICON(x) ChatCore::icon(ChatCore::x)
-#define SCHAT_OPTION(x) ChatCore::i()->settings()->value(QLatin1String(x))
+#define SCHAT_ICON(x) ChatIcons::icon(ChatIcons::x)
+#define SCHAT_OPTION(x) ChatCore::settings()->value(x)
 
 class SCHAT_CORE_EXPORT ChatCore : public QObject
 {
   Q_OBJECT
 
 public:
-  /// Иконки.
-  enum IconName {
-    ChannelIcon,        ///< Иконка канала.
-    ChannelAlertIcon,
-    GearIcon,           ///< Иконка в виде шестерёнки.
-    MainTabMenuIcon,    ///< Иконка главного меню вкладок.
-    NetworkErrorIcon,   ///< Критическая ошибка подключения.
-    NetworkOfflineIcon, ///< Нет подключения.
-    NetworkOnlineIcon,  ///< Подключение установлено.
-    ConnectIcon,        ///< Подключение.
-    DisconnectIcon,     ///< Отключение.
-    QuitIcon,           ///< Выход.
-    SecureIcon,         ///< Шифрование.
-    SettingsIcon,       ///< Настройки.
-    SoundIcon,
-    SoundMuteIcon,
-    UsersIcon,
-    SmallLogoIcon,
-    SmallLogoNYIcon,
-    TextBoldIcon,
-    TextItalicIcon,
-    TextStrikeIcon,
-    TextUnderlineIcon,
-    SendIcon,
-    GlobeIcon,
-    AddIcon,
-    RemoveIcon,
-    ProfileIcon,
-    OkIcon,
-    InfoBalloon,
-    EditClear,
-    EditCopy,
-    EditCut,
-    EditPaste,
-    EditSelectAll,
-    Balloon,
-    Slash,
-    TopicEdit,
-    KeyIcon,
-    ExclamationRedIcon,
-    ArrowRightIcon
-  };
-
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline ChatPlugins *plugins() { return m_plugins; }
@@ -99,7 +56,6 @@ public:
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
-  static QIcon icon(IconName name);
   static void makeRed(QWidget *widget, bool red = true);
 
 public slots:

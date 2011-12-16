@@ -23,6 +23,7 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "ui/ChatIcons.h"
 
 ChannelMenu::ChannelMenu(ClientChannel channel, QObject *parent)
   : MenuBuilder(parent)

@@ -31,6 +31,7 @@
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkEditor.h"
 #include "ui/tabs/WelcomeTab.h"
+#include "ui/ChatIcons.h"
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
   : AbstractTab(QByteArray(), WelcomeType, parent)
@@ -91,7 +92,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   scrollLay->setMargin(0);
   scrollLay->addWidget(scroll);
 
-  setIcon(SCHAT_ICON(SmallLogoIcon));
+  setIcon(SCHAT_ICON(SmallLogo));
   retranslateUi();
 }
 

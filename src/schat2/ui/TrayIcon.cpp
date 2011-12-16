@@ -25,6 +25,7 @@
 #include "client/SimpleClient.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
+#include "ui/ChatIcons.h"
 
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
@@ -36,11 +37,11 @@ TrayIcon::TrayIcon(QObject *parent)
   m_menu->addMenu(StatusMenu::i());
   m_menu->addSeparator();
 
-  m_settingsAction = m_menu->addAction(SCHAT_ICON(SettingsIcon), tr("Preferences..."), this, SLOT(settings()));
-  m_aboutAction = m_menu->addAction(SCHAT_ICON(SmallLogoIcon), tr("About..."), this, SLOT(about()));
+  m_settingsAction = m_menu->addAction(SCHAT_ICON(Settings), tr("Preferences..."), this, SLOT(settings()));
+  m_aboutAction = m_menu->addAction(SCHAT_ICON(SmallLogo), tr("About..."), this, SLOT(about()));
   m_menu->addSeparator();
 
-  m_quitAction = m_menu->addAction(SCHAT_ICON(QuitIcon), tr("Quit"), this, SLOT(quit()));
+  m_quitAction = m_menu->addAction(SCHAT_ICON(Quit), tr("Quit"), this, SLOT(quit()));
 
   setContextMenu(m_menu);
 

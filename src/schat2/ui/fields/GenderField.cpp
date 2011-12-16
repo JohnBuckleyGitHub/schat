@@ -54,7 +54,7 @@ GenderField::GenderField(QWidget *parent)
   addColor(tr("Yellow"));
 
   m_config = new QToolButton(this);
-  m_config->setIcon(SCHAT_ICON(GearIcon));
+  m_config->setIcon(SCHAT_ICON(Gear));
   m_config->setMenu(m_menu);
   m_config->setPopupMode(QToolButton::InstantPopup);
 

@@ -31,6 +31,7 @@
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/LoginWidget.h"
+#include "ui/ChatIcons.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
@@ -44,11 +45,11 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
   m_login = new QToolButton(this);
-  m_login->setIcon(SCHAT_ICON(KeyIcon));
+  m_login->setIcon(SCHAT_ICON(Key));
   m_login->setAutoRaise(true);
 
   m_error = new QToolButton(this);
-  m_error->setIcon(SCHAT_ICON(ExclamationRedIcon));
+  m_error->setIcon(SCHAT_ICON(ExclamationRed));
   m_error->setAutoRaise(true);
   m_error->setVisible(false);
 
