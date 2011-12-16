@@ -48,7 +48,7 @@ function alignChat() {
 		var contentHeight = contentElement.offsetHeight;
 		if (windowHeight - contentHeight > 0) {
 			contentElement.style.position = 'relative';
-			contentElement.style.top = (windowHeight - contentHeight) + 'px';
+			contentElement.style.top = (windowHeight - contentHeight - 4) + 'px';
 		} else {
 			contentElement.style.position = 'static';
 		}

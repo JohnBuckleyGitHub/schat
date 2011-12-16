@@ -265,58 +265,6 @@ void Core::packet(int type)
 
 
 /*!
- * Формирование списка пакетов для синхронизации списка пользователей в канале.
- * Будут отправлены только данные пользователей, которые не известны получателю.
- *
- * \param channel Канал, который необходимо синхронизировать.
- * \param user    Получатель пакетов.
- *
- * \deprecated Теперь клиент самостоятельно запрашивает список пользователей.
- */
-QList<QByteArray> Core::userDataToSync(ChatChannel channel, ChatUser user)
-{
-  QList<QByteArray> channels = user->channels();
-  channels.removeAll(channel->id());
-
-  QList<QByteArray> users; // Список пользователей данные о которых имеются у \p user.
-  for (int i = 0; i < channels.size(); ++i) {
-    ChatChannel channel = m_storage->channel(channels.at(i));
-    if (!channel)
-      continue;
-
-    foreach (QByteArray id, channel->channels().all()) {
-      if (!users.contains(id))
-        users.append(id);
-    }
-  }
-
-  QList<QByteArray> diff; // Список пользователей данные о которых не имеются у \p user.
-  foreach (QByteArray id, channel->channels().all()) {
-    if (!users.contains(id))
-      diff.append(id);
-  }
-
-  if (diff.isEmpty())
-    return diff;
-
-  QList<QByteArray> packets;
-
-  for (int i = 0; i < diff.size(); ++i) {
-    ChatUser u = m_storage->user(diff.at(i));
-    if (!u)
-      continue;
-
-    packets.append(UserWriter(m_sendStream, u.data(), user->id(), channel->id(), UserWriter::StaticData).data());
-  }
-
-  MessageData message(channel->id(), user->id(), QLatin1String("synced"), QString());
-  packets.append(MessageWriter(m_sendStream, message).data());
-
-  return packets;
-}
-
-
-/*!
  * Обработка авторизации пользователя.
  */
 bool Core::auth()

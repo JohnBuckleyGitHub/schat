@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QMenu>
 #include <QUrl>
 
@@ -24,28 +26,38 @@
 
 MenuBuilder::MenuBuilder(QObject *parent)
   : QObject(parent)
-  , m_bind(false)
   , m_menu(0)
 {
 }
 
 
+MenuBuilder::~MenuBuilder()
+{
+  qDebug() << " --- ~MenuBuilder()";
+}
+
+
 void MenuBuilder::bind(QMenu *menu)
 {
-  m_bind = true;
   m_menu = menu;
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
   connect(m_menu, SIGNAL(destroyed(QObject *)), SLOT(deleteLater()));
+
+  bindImpl();
 }
 
 
 void MenuBuilder::triggered(QAction *action)
 {
-  if (!m_bind)
+  if (!m_menu)
     return;
 
-  if (action->data().type() == QVariant::Url) {
+  if (action->data().type() == QVariant::Url)
     ChatUrls::open(action->data().toUrl());
-    return;
-  }
+}
+
+
+void MenuBuilder::bindImpl()
+{
+
 }

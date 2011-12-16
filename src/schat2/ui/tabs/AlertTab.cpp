@@ -30,7 +30,9 @@ AlertTab::AlertTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)
 {
   QString file = QApplication::applicationDirPath() + "/styles/test/html/ChatView.html";
-  if (!QFile::exists(file))
+  if (QFile::exists(file))
+    file = QUrl::fromLocalFile(file).toString();
+  else
     file = "qrc:/html/ChatView.html";
 
   m_chatView = new ChatView(QByteArray(), file, this);

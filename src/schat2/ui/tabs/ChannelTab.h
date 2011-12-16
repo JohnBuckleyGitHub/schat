@@ -46,10 +46,7 @@ private slots:
   void part(const QByteArray &channel, const QByteArray &user);
   void quit(const QByteArray &user);
 
-  void reloaded();
-  void sendTopic(const QString &text);
   void settingsChanged(const QString &key, const QVariant &value);
-  void topicFocusOut();
 
 private:
   void displayUserCount();

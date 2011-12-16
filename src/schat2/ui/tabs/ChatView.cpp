@@ -22,12 +22,12 @@
 #include <QMenu>
 #include <QWebFrame>
 
-#include "actions/ChannelMenu.h"
 #include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "debugstream.h"
+#include "hooks/ChannelMenu.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "SimpleJSon.h"
@@ -124,8 +124,8 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   else if (!builder) {
     if (SimpleID::typeOf(m_id) == SimpleID::UserId)
       builder = UserMenu::bind(&menu, m_id);
-    else if (SimpleID::typeOf(m_id) == SimpleID::ChannelId)
-      builder = ChannelMenu::bind(&menu, m_id);
+//    else if (SimpleID::typeOf(m_id) == SimpleID::ChannelId)
+//      builder = ChannelMenu::bind(&menu, m_id);
   }
 
   QMenu display(tr("Display"), this);
