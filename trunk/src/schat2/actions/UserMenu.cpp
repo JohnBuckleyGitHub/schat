@@ -28,6 +28,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "net/SimpleID.h"
+#include "ui/ChatIcons.h"
 
 UserMenu::UserMenu(ClientChannel channel, QObject *parent)
   : MenuBuilder(parent)

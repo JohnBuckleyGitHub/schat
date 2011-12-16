@@ -19,7 +19,7 @@
 #ifndef SCHAT_H_
 #define SCHAT_H_
 
-#if defined(SCHAT_NO_DLL) || !defined(Q_CC_MSVC)
+#if defined(SCHAT_NO_DLL)
 #  define SCHAT_EXPORT
 #  define SCHAT_CORE_EXPORT
 #else

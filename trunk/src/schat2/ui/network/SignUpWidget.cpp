@@ -31,6 +31,7 @@
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/network/SignUpWidget.h"
+#include "ui/ChatIcons.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)
@@ -57,7 +58,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   m_answerEdit = new QLineEdit(this);
 
   m_error = new QToolButton(this);
-  m_error->setIcon(SCHAT_ICON(ExclamationRedIcon));
+  m_error->setIcon(SCHAT_ICON(ExclamationRed));
   m_error->setAutoRaise(true);
   m_error->setVisible(false);
 
@@ -66,7 +67,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   m_progress->setMaximumSize(16, 16);
   m_progress->setVisible(false);
 
-  m_signUp = new QPushButton(SCHAT_ICON(ArrowRightIcon), tr("Sign Up"), this);
+  m_signUp = new QPushButton(SCHAT_ICON(ArrowRight), tr("Sign Up"), this);
   m_signUp->setEnabled(false);
 
   QHBoxLayout *nameLay = new QHBoxLayout;

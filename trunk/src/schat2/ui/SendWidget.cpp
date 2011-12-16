@@ -29,6 +29,7 @@
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
+#include "ui/ChatIcons.h"
 
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
@@ -156,7 +157,7 @@ void SendWidget::fillToolBar()
 
   m_sendButton = new QToolButton(this);
   m_sendButton->setAutoRaise(true);
-  m_sendButton->setIcon(SCHAT_ICON(SendIcon));
+  m_sendButton->setIcon(SCHAT_ICON(Send));
 
   QWidget *stretch = new QWidget(this);
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);

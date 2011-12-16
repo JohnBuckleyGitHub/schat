@@ -28,6 +28,7 @@
 
 #include "actions/MenuBuilder.h"
 #include "ChatCore.h"
+#include "ChatIcons.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
@@ -572,7 +573,7 @@ void TabWidget::createToolBars()
   m_leftToolBar->setIconSize(QSize(16, 16));
 
   m_menuButton = new QToolButton(this);
-  m_menuButton->setIcon(SCHAT_ICON(MainTabMenuIcon));
+  m_menuButton->setIcon(SCHAT_ICON(MainTabMenu));
   m_menuButton->setAutoRaise(true);
   m_menuButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -582,10 +583,10 @@ void TabWidget::createToolBars()
   m_menuButton->setMenu(m_mainMenu);
 
   m_channelsMenu = new QMenu(this);
-  m_channelsMenu->setIcon(SCHAT_ICON(ChannelIcon));
+  m_channelsMenu->setIcon(ChatIcons::icon(ChatIcons::Channel));
 
   m_talksMenu = new QMenu(this);
-  m_talksMenu->setIcon(SCHAT_ICON(UsersIcon));
+  m_talksMenu->setIcon(SCHAT_ICON(Users));
 
   connect(m_mainMenu, SIGNAL(aboutToHide()), SLOT(hideMainMenu()));
   connect(m_mainMenu, SIGNAL(aboutToShow()), SLOT(showMainMenu()));
@@ -602,7 +603,7 @@ void TabWidget::createToolBars()
   m_settingsMenu->addAction(m_tray->quitAction());
 
   m_settingsButton = new QToolButton(this);
-  m_settingsButton->setIcon(SCHAT_ICON(SettingsIcon));
+  m_settingsButton->setIcon(SCHAT_ICON(Settings));
   m_settingsButton->setAutoRaise(true);
   m_settingsButton->setPopupMode(QToolButton::InstantPopup);
   m_settingsButton->setMenu(m_settingsMenu);

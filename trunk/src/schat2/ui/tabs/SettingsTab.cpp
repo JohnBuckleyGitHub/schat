@@ -36,6 +36,7 @@
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 #include "User.h"
+#include "ui/ChatIcons.h"
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
   : QWidget(parent)
@@ -54,7 +55,7 @@ AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
 
 
 ProfilePage::ProfilePage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(ProfileIcon), "profile", parent)
+  : AbstractSettingsPage(SCHAT_ICON(Profile), "profile", parent)
 {
   m_profileLabel = new QLabel(this);
   m_nickLabel = new QLabel(this);
@@ -90,7 +91,7 @@ void ProfilePage::retranslateUi()
 
 
 NetworkPage::NetworkPage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(GlobeIcon), "network", parent)
+  : AbstractSettingsPage(SCHAT_ICON(Globe), "network", parent)
 {
   m_networkLabel = new QLabel(this);
   m_network = new NetworkEditor(this);
@@ -122,7 +123,7 @@ SettingsTab::SettingsTab(TabWidget *parent)
   m_contents = new QListWidget(this);
   m_contents->setSpacing(1);
   m_contents->setFrameShape(QFrame::NoFrame);
-  m_apply = new QPushButton(SCHAT_ICON(OkIcon), tr("Apply"), this);
+  m_apply = new QPushButton(SCHAT_ICON(OK), tr("Apply"), this);
   m_apply->setVisible(false);
   m_pages = new QStackedWidget(this);
 
@@ -139,7 +140,7 @@ SettingsTab::SettingsTab(TabWidget *parent)
   addPage(new NetworkPage(this));
 
   m_contents->setCurrentRow(0);
-  setIcon(SCHAT_ICON(SettingsIcon));
+  setIcon(SCHAT_ICON(Settings));
   setText(tr("Preferences"));
 
   connect(m_contents, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(pageChanged(QListWidgetItem *, QListWidgetItem*)));

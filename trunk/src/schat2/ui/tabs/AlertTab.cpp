@@ -24,6 +24,7 @@
 #include "ChatCore.h"
 #include "ui/tabs/AlertTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/ChatIcons.h"
 
 AlertTab::AlertTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)

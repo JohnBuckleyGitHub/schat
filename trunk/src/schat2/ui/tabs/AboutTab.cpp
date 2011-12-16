@@ -29,6 +29,7 @@
 #include "FileLocations.h"
 #include "ui/tabs/AboutTab.h"
 #include "version.h"
+#include "ui/ChatIcons.h"
 
 AboutTab::AboutTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AboutType, parent)
@@ -44,7 +45,7 @@ AboutTab::AboutTab(TabWidget *parent)
 
   connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
 
-  setIcon(SCHAT_ICON(SmallLogoIcon));
+  setIcon(SCHAT_ICON(SmallLogo));
   retranslateUi();
 }
 

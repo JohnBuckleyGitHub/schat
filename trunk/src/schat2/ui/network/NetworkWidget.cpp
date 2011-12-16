@@ -33,6 +33,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "ui/network/NetworkWidget.h"
+#include "ui/ChatIcons.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
@@ -47,11 +48,11 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   m_menu->addSeparator();
   m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
   m_menu->addSeparator();
-  m_addAction = m_menu->addAction(SCHAT_ICON(AddIcon), tr("Add"), this, SLOT(add()));
-  m_removeAction = m_menu->addAction(SCHAT_ICON(RemoveIcon), tr("Remove"), this, SLOT(remove()));
+  m_addAction = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), this, SLOT(add()));
+  m_removeAction = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), this, SLOT(remove()));
 
   m_config = new QToolButton(this);
-  m_config->setIcon(SCHAT_ICON(GearIcon));
+  m_config->setIcon(SCHAT_ICON(Gear));
   m_config->setMenu(m_menu);
   m_config->setPopupMode(QToolButton::InstantPopup);
 
@@ -79,15 +80,15 @@ QAction *NetworkWidget::connectAction()
   int state = m_manager->isSelectedActive();
 
   if (state == 1) {
-    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setIcon(SCHAT_ICON(Disconnect));
     m_connectAction->setText(tr("Disconnect"));
   }
   else if (state == 2) {
-    m_connectAction->setIcon(SCHAT_ICON(DisconnectIcon));
+    m_connectAction->setIcon(SCHAT_ICON(Disconnect));
     m_connectAction->setText(tr("Abort"));
   }
   else {
-    m_connectAction->setIcon(SCHAT_ICON(ConnectIcon));
+    m_connectAction->setIcon(SCHAT_ICON(Connect));
     m_connectAction->setText(tr("Connect"));
   }
 
@@ -167,7 +168,7 @@ int NetworkWidget::add(const QString &url)
       item->setPassword(QString());
     }
 
-    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item->url(), item->id());
+    m_combo->insertItem(0, SCHAT_ICON(Globe), item->url(), item->id());
     index = 0;
   }
 
@@ -239,7 +240,7 @@ void NetworkWidget::notify(const Notify &notify)
     if (index != -1)
       m_combo->removeItem(index);
 
-    m_combo->insertItem(0, SCHAT_ICON(GlobeIcon), item->name(), item->id());
+    m_combo->insertItem(0, SCHAT_ICON(Globe), item->name(), item->id());
     m_combo->setCurrentIndex(0);
   }
   else if (notify.type() == Notify::NetworkSelected) {
@@ -287,7 +288,7 @@ void NetworkWidget::load()
   QList<Network> items = m_manager->items();
 
   for (int i = 0; i < items.size(); ++i) {
-    m_combo->addItem(SCHAT_ICON(GlobeIcon), items.at(i)->name(), items.at(i)->id());
+    m_combo->addItem(SCHAT_ICON(Globe), items.at(i)->name(), items.at(i)->id());
   }
 
   if (m_combo->count() == 0) {

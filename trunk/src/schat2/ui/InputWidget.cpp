@@ -29,6 +29,7 @@
 #include "ChatNotify.h"
 #include "net/packets/messages.h"
 #include "text/HtmlFilter.h"
+#include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 
@@ -384,25 +385,25 @@ void InputWidget::createActions()
   m_action->setDefaultWidget(m_toolBar);
 
   QAction *action;
-  action = new QAction(SCHAT_ICON(TextBoldIcon), tr("Bold"), this);
+  action = new QAction(SCHAT_ICON(TextBold), tr("Bold"), this);
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setBold(bool)));
   m_toolBar->addAction(action);
   m_format.append(action);
 
-  action = new QAction(SCHAT_ICON(TextItalicIcon), tr("Italic"), this);
+  action = new QAction(SCHAT_ICON(TextItalic), tr("Italic"), this);
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setItalic(bool)));
   m_toolBar->addAction(action);
   m_format.append(action);
 
-  action = new QAction(SCHAT_ICON(TextUnderlineIcon), tr("Underline"), this);
+  action = new QAction(SCHAT_ICON(TextUnderline), tr("Underline"), this);
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setUnderline(bool)));
   m_toolBar->addAction(action);
   m_format.append(action);
 
-  action = m_toolBar->addAction(SCHAT_ICON(TextStrikeIcon), tr("Strikeout"), this, SLOT(setStrike(bool)));
+  action = m_toolBar->addAction(SCHAT_ICON(TextStrike), tr("Strikeout"), this, SLOT(setStrike(bool)));
   action->setCheckable(true);
   connect(action, SIGNAL(triggered(bool)), SLOT(setStrike(bool)));
   m_toolBar->addAction(action);

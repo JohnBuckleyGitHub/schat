@@ -45,6 +45,7 @@
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
+#include "ui/ChatIcons.h"
 #include "User.h"
 
 ChatCore *ChatCore::m_self = 0;
@@ -129,6 +130,8 @@ ChatCore::ChatCore(QObject *parent)
   m_networkManager = new NetworkManager(this);
   ChatClient::id(); // Необходимо для инициализации базовых настроек.
 
+  ChatIcons::init();
+
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
@@ -142,18 +145,6 @@ ChatCore::~ChatCore()
 {
   delete d;
   qDeleteAll(m_actions);
-}
-
-
-/*!
- * \todo Добавить поддержку получения иконки из темы.
- */
-QIcon ChatCore::icon(IconName name)
-{
-  if (name >= ChatCorePrivate::icons.size())
-    return QIcon();
-
-  return QIcon(QLatin1String(":/images/") + ChatCorePrivate::icons.at(name) + QLatin1String(".png"));
 }
 
 

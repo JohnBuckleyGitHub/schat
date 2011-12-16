@@ -21,6 +21,7 @@
 #include "ChatCore.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "ui/tabs/ProgressTab.h"
+#include "ui/ChatIcons.h"
 
 ProgressTab::ProgressTab(TabWidget *parent)
   : AbstractTab(QByteArray(), ProgressType, parent)
@@ -33,7 +34,7 @@ ProgressTab::ProgressTab(TabWidget *parent)
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_progress, Qt::AlignCenter);
 
-  setIcon(SCHAT_ICON(SmallLogoIcon));
+  setIcon(SCHAT_ICON(SmallLogo));
   retranslateUi();
 }
 

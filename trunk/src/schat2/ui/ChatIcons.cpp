@@ -22,6 +22,9 @@
 #include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
 
+
+QMap<int, QString> ChatIcons::m_icons;
+
 /*!
  * Иконка канала.
  */
@@ -104,6 +107,59 @@ QIcon ChatIcons::icon(const QString &file, const QString &overlay)
   painter.end();
 
   return QIcon(pixmap);
+}
+
+
+QIcon ChatIcons::icon(int name)
+{
+  if (!m_icons.contains(name))
+    return QIcon(":/webkit/resources/missingImage.png");
+
+  return QIcon(":/images/" + m_icons.value(name) + ".png");
+}
+
+
+void ChatIcons::init()
+{
+  m_icons[Channel]        = "channel";
+  m_icons[ChannelAlert]   = "channel-alert";
+  m_icons[Gear]           = "gear";
+  m_icons[MainTabMenu]    = "main-tab-menu";
+  m_icons[NetworkError]   = "network-error";
+  m_icons[NetworkOffline] = "offline";
+  m_icons[NetworkOnline]  = "online";
+  m_icons[Connect]        = "plug";
+  m_icons[Disconnect]     = "plug-disconnect";
+  m_icons[Quit]           = "quit";
+  m_icons[Secure]         = "secure";
+  m_icons[Settings]       = "settings";
+  m_icons[Sound]          = "sound";
+  m_icons[SoundMute]      = "sound_mute";
+  m_icons[Users]          = "users";
+  m_icons[SmallLogo]      = "schat16";
+  m_icons[SmallLogoNY]    = "schat16-ny";
+  m_icons[TextBold]       = "text-bold";
+  m_icons[TextItalic]     = "text-italic";
+  m_icons[TextStrike]     = "text-strikethrough";
+  m_icons[TextUnderline]  = "text-underline";
+  m_icons[Send]           = "send";
+  m_icons[Globe]          = "globe";
+  m_icons[Add]            = "add";
+  m_icons[Remove]         = "remove";
+  m_icons[Profile]        = "profile";
+  m_icons[OK]             = "ok";
+  m_icons[InfoBalloon]    = "information-balloon";
+  m_icons[EditClear]      = "edit-clear";
+  m_icons[EditCopy]       = "edit-copy";
+  m_icons[EditCut]        = "edit-cut";
+  m_icons[EditPaste]      = "edit-paste";
+  m_icons[EditSelectAll]  = "edit-select-all";
+  m_icons[Balloon]        = "balloon";
+  m_icons[Slash]          = "slash";
+  m_icons[TopicEdit]      = "topic-edit";
+  m_icons[Key]            = "key";
+  m_icons[ExclamationRed] = "exclamation-red";
+  m_icons[ArrowRight]     = "arrow-right";
 }
 
 
