@@ -20,12 +20,12 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 
-#include "actions/ChannelMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
 #include "messages/TopicMessage.h"
 #include "net/packets/messages.h"
@@ -68,14 +68,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   setText(channel->name());
 
-//  TopicMessage msg(m_channel->topic());
-//  m_tabs->message(this, msg);
-
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(m_bar->topic(), SIGNAL(send(const QString &)), SLOT(sendTopic(const QString &)));
-  connect(m_bar->topic(), SIGNAL(focusOut()), SLOT(topicFocusOut()));
-  connect(m_chatView, SIGNAL(reloaded()), SLOT(reloaded()));
-
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
   connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
   connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
@@ -85,8 +78,8 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
 bool ChannelTab::bindMenu(QMenu *menu)
 {
-  ChannelMenu *builder = new ChannelMenu(m_channel, this);
-  builder->bind(menu);
+//  Hooks::ChannelMenu *builder = new Hooks::ChannelMenu(m_channel, this);
+//  builder->bind(menu);
   return true;
 }
 
@@ -150,29 +143,6 @@ void ChannelTab::quit(const QByteArray &user)
 }
 
 
-void ChannelTab::reloaded()
-{
-//  TopicMessage msg(m_channel->topic());
-//  m_chatView->evaluateJavaScript(msg.js());
-}
-
-
-void ChannelTab::sendTopic(const QString &text)
-{
-  Q_UNUSED(text)
-//  m_bar->setVisible(false);
-//  if (!text.isEmpty())
-//    m_chatView->evaluateJavaScript("showTopic", true);
-//
-//  if (m_channel->topic().topic == text)
-//    return;
-//
-//  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
-//  MessageData msg(UserUtils::userId(), id(), "topic", text);
-//  m_client->send(msg, true);
-}
-
-
 void ChannelTab::settingsChanged(const QString &key, const QVariant &value)
 {
   if (key == QLatin1String("ChannelUserCount")) {
@@ -180,47 +150,6 @@ void ChannelTab::settingsChanged(const QString &key, const QVariant &value)
     displayUserCount();
   }
 }
-
-
-void ChannelTab::topicFocusOut()
-{
-//  m_bar->setVisible(false);
-//  if (!m_channel->topic().topic.isEmpty())
-//    m_chatView->evaluateJavaScript("showTopic", true);
-//
-//  ChatCore::i()->startNotify(ChatCore::SetSendFocusNotice);
-}
-
-
-/*!
- * \deprecated Эта функция больше не используется.
- */
-//void ChannelTab::userDataChanged(const QByteArray &userId, int changed)
-//{
-//  if (!(changed & SimpleClient::UserNickChanged))
-//    return;
-//
-//  if (!m_channel->channels().all().contains(userId))
-//    return;
-//
-//  ClientUser user = UserUtils::user(userId);
-//  if (!user)
-//    return;
-//
-//  UserUtils::updateUserNick(m_chatView, user);
-//}
-
-
-/*!
- * \deprecated Эта функция больше не используется.
- */
-//void ChannelTab::userLeave(const QByteArray &userId)
-//{
-//  if (m_userView->remove(userId)) {
-////    addQuitMsg(userId, m_channel->id());
-//    displayUserCount();
-//  }
-//}
 
 
 void ChannelTab::displayUserCount()

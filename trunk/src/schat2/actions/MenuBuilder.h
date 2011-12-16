@@ -32,16 +32,17 @@ class SCHAT_CORE_EXPORT MenuBuilder : public QObject
 
 public:
   MenuBuilder(QObject *parent = 0);
-  virtual ~MenuBuilder() {}
+  ~MenuBuilder();
   virtual void bind(QMenu *menu);
   virtual void retranslateUi() {}
 
-public slots:
+protected slots:
   virtual void triggered(QAction *action);
 
 protected:
-  bool m_bind;
-  QMenu *m_menu;
+  virtual void bindImpl();
+
+  QMenu *m_menu; ///< Меню с которым происходит связывание.
 };
 
 #endif /* MENUBUILDER_H_ */

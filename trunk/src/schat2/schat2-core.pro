@@ -26,19 +26,18 @@ DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
 
 HEADERS = \
-    actions/ChannelMenu.h \
     actions/ChatViewAction.h \
     actions/MenuBuilder.h \
     actions/UserMenu.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
     ChatCore.h \
-    ChatCore_p.h \
     ChatHooks.h \
     ChatNotify.h \
     ChatPlugins.h \
     ChatSettings.h \
     ChatUrls.h \
+    hooks/ChannelMenu.h \
     hooks/ChannelsImpl.h \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
@@ -96,7 +95,6 @@ HEADERS = \
     ui/TrayIcon.h \
 
 SOURCES = \
-    actions/ChannelMenu.cpp \
     actions/ChatViewAction.cpp \
     actions/MenuBuilder.cpp \
     actions/UserMenu.cpp \
@@ -107,6 +105,7 @@ SOURCES = \
     ChatPlugins.cpp \
     ChatSettings.cpp \
     ChatUrls.cpp \
+    hooks/ChannelMenu.cpp \
     hooks/ChannelsImpl.cpp \
     hooks/ClientImpl.cpp \
     hooks/CommandsImpl.cpp \

@@ -25,7 +25,6 @@
 
 #include "actions/ChatViewAction.h"
 #include "ChatCore.h"
-#include "ChatCore_p.h"
 #include "ChatHooks.h"
 #include "ChatNotify.h"
 #include "ChatPlugins.h"
@@ -35,6 +34,7 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
+#include "hooks/ChannelMenu.h"
 #include "hooks/ChannelsImpl.h"
 #include "hooks/ClientImpl.h"
 #include "hooks/CommandsImpl.h"
@@ -49,64 +49,13 @@
 #include "User.h"
 
 ChatCore *ChatCore::m_self = 0;
-QStringList ChatCorePrivate::icons;
 
-
-ChatCorePrivate::ChatCorePrivate()
-{
-  icons += QLatin1String("channel");
-  icons += QLatin1String("channel-alert");
-  icons += QLatin1String("gear");
-  icons += QLatin1String("main-tab-menu");
-  icons += QLatin1String("network-error");
-  icons += QLatin1String("offline");
-  icons += QLatin1String("online");
-  icons += QLatin1String("plug");
-  icons += QLatin1String("plug-disconnect");
-  icons += QLatin1String("quit");
-  icons += QLatin1String("secure");
-  icons += QLatin1String("settings");
-  icons += QLatin1String("sound");
-  icons += QLatin1String("sound_mute");
-  icons += QLatin1String("users");
-  icons += QLatin1String("schat16");
-  icons += QLatin1String("schat16-ny");
-  icons += QLatin1String("text-bold");
-  icons += QLatin1String("text-italic");
-  icons += QLatin1String("text-strikethrough");
-  icons += QLatin1String("text-underline");
-  icons += QLatin1String("send");
-  icons += QLatin1String("globe");
-  icons += QLatin1String("add");
-  icons += QLatin1String("remove");
-  icons += QLatin1String("profile");
-  icons += QLatin1String("ok");
-  icons += QLatin1String("information-balloon");
-  icons += QLatin1String("edit-clear");
-  icons += QLatin1String("edit-copy");
-  icons += QLatin1String("edit-cut");
-  icons += QLatin1String("edit-paste");
-  icons += QLatin1String("edit-select-all");
-  icons += QLatin1String("balloon");
-  icons += QLatin1String("slash");
-  icons += QLatin1String("topic-edit");
-  icons += QLatin1String("key");
-  icons += QLatin1String("exclamation-red");
-  icons += QLatin1String("arrow-right");
-}
-
-
-ChatCorePrivate::~ChatCorePrivate()
-{
-}
 
 
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
-  , d(new ChatCorePrivate())
 {
   m_self = this;
-  d->q = this;
 
   qsrand(QDateTime::currentDateTime().toTime_t());
 
@@ -124,6 +73,7 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::CommandsImpl(this);
   new Hooks::ChannelsImpl(this);
   new Hooks::ClientImpl(this);
+  new Hooks::ChannelMenu(this);
 
   m_client = ChatClient::io();
 
@@ -143,7 +93,6 @@ ChatCore::ChatCore(QObject *parent)
 
 ChatCore::~ChatCore()
 {
-  delete d;
   qDeleteAll(m_actions);
 }
 

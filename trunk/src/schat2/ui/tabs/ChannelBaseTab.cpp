@@ -38,7 +38,9 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   , m_alerts(0)
 {
   QString file = QApplication::applicationDirPath() + "/styles/test/html/ChatView.html";
-  if (!QFile::exists(file))
+  if (QFile::exists(file))
+    file = QUrl::fromLocalFile(file).toString();
+  else
     file = "qrc:/html/ChatView.html";
 
   m_chatView = new ChatView(channel->id(), file, this);

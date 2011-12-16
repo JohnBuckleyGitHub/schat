@@ -23,18 +23,38 @@
 #include "Channel.h"
 #include "User.h"
 
-class SCHAT_CORE_EXPORT ChannelMenu : public MenuBuilder
+namespace Hooks
+{
+
+class SCHAT_CORE_EXPORT ChannelMenu : public QObject
 {
   Q_OBJECT
 
 public:
-  ChannelMenu(ClientChannel channel, QObject *parent = 0);
-  static ChannelMenu *bind(QMenu *menu, const QVariant &id);
+  ChannelMenu(QObject *parent = 0);
+  inline static void add(ChannelMenu *hook)                   { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void bind(QMenu *menu, ClientChannel channel) { m_self->bindImpl(menu, channel); }
+  inline static void remove(ChannelMenu *hook)                { m_self->m_hooks.removeAll(hook); }
+
   void bind(QMenu *menu);
+
+protected slots:
+  void cleanup();
+  void triggered(QAction *action);
+
+protected:
+  virtual bool triggerImpl(QAction *action);
+  virtual void bindImpl(QMenu *menu, ClientChannel channel);
+  virtual void cleanupImpl();
+
+  QList<ChannelMenu*> m_hooks; ///< Хуки.
+  static ChannelMenu *m_self;  ///< Указатель на себя.
 
 private:
   ClientChannel m_channel;
   QAction *m_topic;
 };
+
+} // namespace Hooks
 
 #endif /* CHANNELMENU_H_ */

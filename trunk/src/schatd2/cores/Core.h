@@ -75,8 +75,6 @@ protected:
   virtual void newPacketsEvent(NewPacketsEvent *event);
   virtual void packet(int type);
 
-  QList<QByteArray> userDataToSync(ChatChannel channel, ChatUser user);
-
   // Авторизация.
   virtual bool auth();
   virtual void accept(const AuthResult &result);

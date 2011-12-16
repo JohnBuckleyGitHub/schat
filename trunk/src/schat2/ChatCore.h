@@ -27,7 +27,6 @@
 #include "schat.h"
 
 class AbstractMessage;
-class ChatCorePrivate;
 class ChatPlugins;
 class ChatSettings;
 class ChatViewAction;
@@ -69,7 +68,6 @@ private slots:
 private:
   void loadTranslation();
 
-  ChatCorePrivate *d;                             ///< Приватный класс.
   ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
   ChatSettings *m_settings;                       ///< Настройки.
   FileLocations *m_locations;                     ///< Схема размещения файлов.
