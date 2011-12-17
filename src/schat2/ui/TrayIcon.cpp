@@ -27,28 +27,32 @@
 #include "ui/TrayIcon.h"
 #include "ui/ChatIcons.h"
 
+TrayIcon *TrayIcon::m_self = 0;
+
 TrayIcon::TrayIcon(QObject *parent)
   : QSystemTrayIcon(parent)
   , m_alertIcon(0)
 {
+  m_self = this;
+
   m_menu = new QMenu();
   m_timer = new QBasicTimer();
 
   m_menu->addMenu(StatusMenu::i());
   m_menu->addSeparator();
 
-  m_settingsAction = m_menu->addAction(SCHAT_ICON(Settings), tr("Preferences..."), this, SLOT(settings()));
-  m_aboutAction = m_menu->addAction(SCHAT_ICON(SmallLogo), tr("About..."), this, SLOT(about()));
+  m_settings = m_menu->addAction(SCHAT_ICON(Settings), tr("Preferences..."));
+  m_about    = m_menu->addAction(SCHAT_ICON(SmallLogo), tr("About..."));
   m_menu->addSeparator();
-
-  m_quitAction = m_menu->addAction(SCHAT_ICON(Quit), tr("Quit"), this, SLOT(quit()));
+  m_quit     = m_menu->addAction(SCHAT_ICON(Quit), tr("Quit"));
 
   setContextMenu(m_menu);
 
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(StatusMenu::i(), SIGNAL(updated()), SLOT(update()));
+  connect(StatusMenu::i(), SIGNAL(updated()), SLOT(reload()));
+  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
 
-  update();
+  reload();
 }
 
 
@@ -77,9 +81,9 @@ void TrayIcon::alert(bool start)
 
 void TrayIcon::retranslateUi()
 {
-  m_settingsAction->setText(tr("Preferences..."));
-  m_aboutAction->setText(tr("About..."));
-  m_quitAction->setText(tr("Quit"));
+  m_settings->setText(tr("Preferences..."));
+  m_about->setText(tr("About..."));
+  m_quit->setText(tr("Quit"));
 }
 
 
@@ -101,13 +105,6 @@ void TrayIcon::timerEvent(QTimerEvent *event)
 }
 
 
-void TrayIcon::about()
-{
-  ChatNotify::start(Notify::OpenAbout);
-  ChatNotify::start(Notify::ShowChat);
-}
-
-
 void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::MiddleClick) {
@@ -116,23 +113,10 @@ void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 }
 
 
-void TrayIcon::quit()
-{
-  ChatNotify::start(Notify::Quit);
-}
-
-
-void TrayIcon::settings()
-{
-  ChatNotify::start(Notify::OpenSettings);
-  ChatNotify::start(Notify::ShowChat);
-}
-
-
 /*!
  * Обновление состояния в зависимости от статуса пользователя и подключения.
  */
-void TrayIcon::update()
+void TrayIcon::reload()
 {
 //  int status = m_client->user()->status();
 //  if (m_client->clientState() != SimpleClient::ClientOnline)
@@ -147,4 +131,19 @@ void TrayIcon::update()
 
   if (!m_timer->isActive())
     setIcon(m_icon);
+}
+
+
+void TrayIcon::triggered(QAction *action)
+{
+  if (action == m_settings) {
+    ChatNotify::start(Notify::OpenSettings);
+    ChatNotify::start(Notify::ShowChat);
+  }
+  else if (action == m_about) {
+    ChatNotify::start(Notify::OpenAbout);
+    ChatNotify::start(Notify::ShowChat);
+  }
+  else if (action == m_quit)
+    ChatNotify::start(Notify::Quit);
 }

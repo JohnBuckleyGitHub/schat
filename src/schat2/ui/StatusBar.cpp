@@ -185,7 +185,7 @@ void StatusBar::retranslateUi()
     m_icon->setToolTip(tr("No connection"));
   }
   else if (state == ChatClient::Connecting) {
-    m_label->setText(tr("Connecting..."));
+    m_label->setText(ChatClient::io()->url().toString());
   }
   else if (state == ChatClient::Online) {
     m_label->setText(NetworkManager::currentServerName());
