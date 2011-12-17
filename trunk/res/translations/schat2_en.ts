@@ -603,22 +603,28 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="266"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="267"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>TabsToolBar</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="613"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="40"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="109"/>
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="614"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="43"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="110"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="615"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="46"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="111"/>
         <source>Talks</source>
         <translation type="unfinished"></translation>
     </message>

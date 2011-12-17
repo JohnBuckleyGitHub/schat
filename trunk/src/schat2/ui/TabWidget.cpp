@@ -53,6 +53,7 @@
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
+#include "ui/TabsToolBar.h"
 #include "ui/TabWidget.h"
 #include "ui/TrayIcon.h"
 #include "User.h"
@@ -341,14 +342,6 @@ void TabWidget::currentChanged(int index)
 }
 
 
-void TabWidget::hideMainMenu()
-{
-  m_mainMenu->clear();
-  m_channelsMenu->clear();
-  m_talksMenu->clear();
-}
-
-
 void TabWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::OpenChannel) {
@@ -383,46 +376,6 @@ void TabWidget::notify(const Notify &notify)
 void TabWidget::openTab()
 {
   addChatTab(qobject_cast<AbstractTab *>(sender()));
-}
-
-
-void TabWidget::showMainMenu()
-{
-  // Создание меню каналов.
-  QList<QAction *> channels;
-  QList<QAction *> talks;
-
-  AbstractTab *currentTab = widget(currentIndex());
-
-  for (int i = 0; i < count(); ++i) {
-    AbstractTab *tab = widget(i);
-    if (tab->type() == AbstractTab::ChannelType)
-      channels.append(tab->action());
-    else if (tab->type() == AbstractTab::PrivateType)
-      talks.append(tab->action());
-
-    tab->action()->setChecked(currentTab == tab);
-  }
-
-  bool separator = false;
-
-  if (!channels.isEmpty()) {
-    m_channelsMenu->addActions(channels);
-    m_mainMenu->addMenu(m_channelsMenu);
-    separator = true;
-  }
-
-  if (!talks.isEmpty()) {
-    m_talksMenu->addActions(talks);
-    m_mainMenu->addMenu(m_talksMenu);
-    separator = true;
-  }
-
-  if (separator)
-    m_mainMenu->addSeparator();
-
-  m_mainMenu->addAction(m_alertTab->action());
-  m_alertTab->action()->setChecked(currentTab == m_alertTab);
 }
 
 
@@ -568,34 +521,11 @@ void TabWidget::closeWelcome()
  */
 void TabWidget::createToolBars()
 {
-  // Левый виджет.
-  m_leftToolBar = new QToolBar(this);
-  m_leftToolBar->setIconSize(QSize(16, 16));
+  m_tabsToolBar = new TabsToolBar(this);
+  m_mainToolBar = new MainToolBar(this);
 
-  m_menuButton = new QToolButton(this);
-  m_menuButton->setIcon(SCHAT_ICON(MainTabMenu));
-  m_menuButton->setAutoRaise(true);
-  m_menuButton->setPopupMode(QToolButton::InstantPopup);
-
-  m_leftToolBar->addWidget(m_menuButton);
-
-  m_mainMenu = new QMenu(this);
-  m_menuButton->setMenu(m_mainMenu);
-
-  m_channelsMenu = new QMenu(this);
-  m_channelsMenu->setIcon(ChatIcons::icon(ChatIcons::Channel));
-
-  m_talksMenu = new QMenu(this);
-  m_talksMenu->setIcon(SCHAT_ICON(Users));
-
-  connect(m_mainMenu, SIGNAL(aboutToHide()), SLOT(hideMainMenu()));
-  connect(m_mainMenu, SIGNAL(aboutToShow()), SLOT(showMainMenu()));
-
-  // Правый виджет.
-  m_rightToolBar = new MainToolBar(this);
-
-  setCornerWidget(m_leftToolBar, Qt::TopLeftCorner);
-  setCornerWidget(m_rightToolBar, Qt::TopRightCorner);
+  setCornerWidget(m_tabsToolBar, Qt::TopLeftCorner);
+  setCornerWidget(m_mainToolBar, Qt::TopRightCorner);
 }
 
 
@@ -609,10 +539,6 @@ void TabWidget::lastTab()
 void TabWidget::retranslateUi()
 {
   m_tray->retranslateUi();
-
-  m_menuButton->setToolTip(tr("Menu"));
-  m_channelsMenu->setTitle(tr("Channels"));
-  m_talksMenu->setTitle(tr("Talks"));
 }
 
 
