@@ -36,7 +36,6 @@ class NetworkManager;
 class SimpleClient;
 class Translation;
 
-#define SCHAT_ICON(x) ChatIcons::icon(ChatIcons::x)
 #define SCHAT_OPTION(x) ChatCore::settings()->value(x)
 
 class SCHAT_CORE_EXPORT ChatCore : public QObject
@@ -47,11 +46,11 @@ public:
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline ChatPlugins *plugins() { return m_plugins; }
-  inline const QByteArray& currentId() const { return m_currentId; }
   inline static ChatCore *i()              { return m_self; }
   inline static ChatSettings *settings()   { return m_self->m_settings; }
   inline static FileLocations *locations() { return m_self->m_locations; }
   inline static NetworkManager *networks() { return m_self->m_networkManager; }
+  inline static QByteArray currentId()     { return m_self->m_currentId; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
   inline void setCurrentId(const QByteArray &id) { m_currentId = id; }

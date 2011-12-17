@@ -23,6 +23,8 @@
 
 #include "Channel.h"
 
+#define SCHAT_ICON(x) ChatIcons::icon(ChatIcons::x)
+
 class SCHAT_CORE_EXPORT ChatIcons
 {
   ChatIcons() {}

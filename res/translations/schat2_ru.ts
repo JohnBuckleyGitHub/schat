@@ -59,22 +59,6 @@
     </message>
 </context>
 <context>
-    <name>ChannelMenu</name>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenu.cpp" line="49"/>
-        <source>Edit topic...</source>
-        <translation>Изменить тему...</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelMenuImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
-        <source>Edit topic...</source>
-        <translation>Изменить тему...</translation>
-    </message>
-</context>
-<context>
     <name>ChatView</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="132"/>
@@ -176,6 +160,27 @@
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="156"/>
         <source>Yellow</source>
         <translation>Жёлтый</translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::ChannelMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
+        <source>Edit topic...</source>
+        <translation>Изменить тему...</translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::UserMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="44"/>
+        <source>Talk...</source>
+        <translation>Разговор...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="49"/>
+        <source>Insert Nick</source>
+        <translation>Вставить ник</translation>
     </message>
 </context>
 <context>

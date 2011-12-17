@@ -40,6 +40,7 @@
 #include "hooks/ClientImpl.h"
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
+#include "hooks/UserMenuImpl.h"
 #include "messages/MessageAdapter.h"
 #include "net/packets/messages.h"
 #include "NetworkManager.h"
@@ -77,6 +78,7 @@ ChatCore::ChatCore(QObject *parent)
 
   new Hooks::ChannelMenu(this);
   new Hooks::ChannelMenuImpl(this);
+  new Hooks::UserMenuImpl(this);
 
   m_client = ChatClient::io();
 

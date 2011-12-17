@@ -43,6 +43,7 @@ HEADERS = \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
     hooks/MessagesImpl.h \
+    hooks/UserMenuImpl.h \
     messages/AbstractMessage.h \
     messages/AlertMessage.h \
     messages/ChannelMessage.h \
@@ -112,6 +113,7 @@ SOURCES = \
     hooks/ClientImpl.cpp \
     hooks/CommandsImpl.cpp \
     hooks/MessagesImpl.cpp \
+    hooks/UserMenuImpl.cpp \
     messages/AbstractMessage.cpp \
     messages/AlertMessage.cpp \
     messages/ChannelMessage.cpp \
