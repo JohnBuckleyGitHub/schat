@@ -20,7 +20,6 @@
 #include <QMouseEvent>
 #include <QUrl>
 
-#include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -28,6 +27,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
+#include "hooks/ChannelMenu.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/UserView.h"
 
@@ -203,20 +203,17 @@ void UserView::channel(const ChannelInfo &info)
 
 void UserView::contextMenuEvent(QContextMenuEvent *event)
 {
-  Q_UNUSED(event)
-//  QModelIndex index = indexAt(event->pos());
-//
-//  if (!index.isValid()) {
-//    QListView::contextMenuEvent(event);
-//    return;
-//  }
-//
-//  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-//  QMenu menu(this);
-//  UserMenu userMenu(item->user(), this);
-//  userMenu.bind(&menu);
-//
-//  menu.exec(event->globalPos());
+  QModelIndex index = indexAt(event->pos());
+
+  if (!index.isValid()) {
+    QListView::contextMenuEvent(event);
+    return;
+  }
+
+  UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
+  QMenu menu(this);
+  Hooks::ChannelMenu::bind(&menu, item->channel());
+  menu.exec(event->globalPos());
 }
 
 
