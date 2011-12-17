@@ -41,6 +41,7 @@ public:
   inline ClientChannel channel() const { return m_channel; }
   inline int alerts() const            { return m_alerts; }
 
+  bool bindMenu(QMenu *menu);
   virtual void alert(bool start = true);
   void add(const Message &message);
   void setOnline(bool online = true);

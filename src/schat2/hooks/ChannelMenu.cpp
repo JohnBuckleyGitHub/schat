@@ -38,6 +38,12 @@ ChannelMenu::ChannelMenu(QObject *parent)
 }
 
 
+void ChannelMenu::bind(QMenu *menu, const QByteArray &id)
+{
+  bind(menu, ChatClient::channels()->get(id));
+}
+
+
 void ChannelMenu::bind(QMenu *menu)
 {
   m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);

@@ -76,14 +76,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 }
 
 
-bool ChannelTab::bindMenu(QMenu *menu)
-{
-//  Hooks::ChannelMenu *builder = new Hooks::ChannelMenu(m_channel, this);
-//  builder->bind(menu);
-  return true;
-}
-
-
 void ChannelTab::setOnline(bool online)
 {
   if (!online) {

@@ -45,15 +45,6 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
 }
 
 
-bool PrivateTab::bindMenu(QMenu *menu)
-{
-  Q_UNUSED(menu)
-//  UserMenu *builder = new UserMenu(m_user, this);
-//  builder->bind(menu);
-  return true;
-}
-
-
 void PrivateTab::channel(const ChannelInfo &info)
 {
   if (info.id() != id())

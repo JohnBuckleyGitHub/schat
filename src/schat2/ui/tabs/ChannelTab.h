@@ -37,7 +37,6 @@ public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   inline UserView *userView() { return m_userView; }
 
-  bool bindMenu(QMenu *menu);
   void setOnline(bool online = true);
 
 private slots:
