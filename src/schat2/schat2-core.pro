@@ -93,6 +93,7 @@ HEADERS = \
     ui/tabs/SettingsTab_p.h \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
+    ui/TabsToolBar.h \
     ui/TabWidget.h \
     ui/TrayIcon.h \
 
@@ -161,6 +162,7 @@ SOURCES = \
     ui/tabs/SettingsTab.cpp \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
+    ui/TabsToolBar.cpp \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
 

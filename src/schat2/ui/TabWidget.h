@@ -37,11 +37,9 @@ class Message;
 class Notify;
 class PrivateTab;
 class ProgressTab;
-class QMenu;
-class QToolBar;
-class QToolButton;
 class SettingsTab;
 class TabBar;
+class TabsToolBar;
 class TrayIcon;
 class WelcomeTab;
 
@@ -56,8 +54,9 @@ public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
   ClientChannel channel(const QByteArray &id);
-  inline TabBar *tabBar() { return m_tabBar; }
-  static TabWidget *i() { return m_self; }
+  inline AlertTab *alertTab() { return m_alertTab; }
+  inline TabBar *tabBar()     { return m_tabBar; }
+  static TabWidget *i()       { return m_self; }
 
   void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab = 0);
   void message(ChannelBaseTab *tab, const AbstractMessage &data);
@@ -77,10 +76,8 @@ protected:
 private slots:
   void closeTab(int index);
   void currentChanged(int index);
-  void hideMainMenu();
   void notify(const Notify &notify);
   void openTab();
-  void showMainMenu();
 
   void addChannel(const QByteArray &id);
 
@@ -98,20 +95,16 @@ private:
   void stopAlert();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
-  MainToolBar *m_rightToolBar;               ///< Правая панель инструментов.
+  MainToolBar *m_mainToolBar;                ///< Правая панель инструментов.
   QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
   QList<ChannelBaseTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
-  QMenu *m_channelsMenu;                     ///< Меню каналов.
-  QMenu *m_mainMenu;                         ///< Главное меню.
-  QMenu *m_talksMenu;                        ///< Меню разговоров.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
   QPointer<ProgressTab> m_progressTab;       ///< Вкладка идицирующая подключение к серверу.
   QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
   QPointer<WelcomeTab> m_welcomeTab;         ///< Вкладка приветствия.
-  QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
-  QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.
   static TabWidget *m_self;                  ///< Указатель на себя.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
+  TabsToolBar *m_tabsToolBar;                ///< Левая панель инструментов.
   TrayIcon *m_tray;                          ///< Иконка в трее.
 };
 
