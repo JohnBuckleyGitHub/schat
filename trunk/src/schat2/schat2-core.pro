@@ -68,6 +68,7 @@ HEADERS = \
     ui/fields/ProfileField.h \
     ui/InputWidget.h \
     ui/LanguageBox.h \
+    ui/MainToolBar.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkEditor.h \
     ui/network/NetworkTabs.h \
@@ -136,6 +137,7 @@ SOURCES = \
     ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
     ui/LanguageBox.cpp \
+    ui/MainToolBar.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkEditor.cpp \
     ui/network/NetworkTabs.cpp \
@@ -161,7 +163,7 @@ SOURCES = \
     ui/tabs/WelcomeTab.cpp \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
-    
+
 SCHAT_CLIENT_LIB = 1
 
 TRANSLATIONS += ../../res/translations/schat2_en.ts

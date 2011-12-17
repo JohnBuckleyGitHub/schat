@@ -31,9 +31,9 @@ class AbstractMessage;
 class AbstractTab;
 class AlertTab;
 class ChannelBaseTab;
-class Message;
 class ChannelTab;
-class ChatCore;
+class MainToolBar;
+class Message;
 class Notify;
 class PrivateTab;
 class ProgressTab;
@@ -41,7 +41,6 @@ class QMenu;
 class QToolBar;
 class QToolButton;
 class SettingsTab;
-class SoundButton;
 class TabBar;
 class TrayIcon;
 class WelcomeTab;
@@ -99,22 +98,18 @@ private:
   void stopAlert();
 
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
-  ChatCore *m_core;                          ///< Указатель на объект ChatCore.
+  MainToolBar *m_rightToolBar;               ///< Правая панель инструментов.
   QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
   QList<ChannelBaseTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
   QMenu *m_channelsMenu;                     ///< Меню каналов.
   QMenu *m_mainMenu;                         ///< Главное меню.
-  QMenu *m_settingsMenu;                     ///< Меню для кнопки m_settingsButton.
   QMenu *m_talksMenu;                        ///< Меню разговоров.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
   QPointer<ProgressTab> m_progressTab;       ///< Вкладка идицирующая подключение к серверу.
   QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
   QPointer<WelcomeTab> m_welcomeTab;         ///< Вкладка приветствия.
   QToolBar *m_leftToolBar;                   ///< Левая панель инструментов.
-  QToolBar *m_rightToolBar;                  ///< Правая панель инструментов.
   QToolButton *m_menuButton;                 ///< Кнопка с меню пользователей и каналов.
-  QToolButton *m_settingsButton;             ///< Кнопка с меню настроек.
-  SoundButton *m_soundButton;                ///< Кнопка включения/выключения звука.
   static TabWidget *m_self;                  ///< Указатель на себя.
   TabBar *m_tabBar;                          ///< Заголовок виджета.
   TrayIcon *m_tray;                          ///< Иконка в трее.

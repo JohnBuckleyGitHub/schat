@@ -51,9 +51,9 @@ public:
   inline static FileLocations *locations() { return m_self->m_locations; }
   inline static NetworkManager *networks() { return m_self->m_networkManager; }
   inline static QByteArray currentId()     { return m_self->m_currentId; }
+  inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
-  inline void setCurrentId(const QByteArray &id) { m_currentId = id; }
   static void makeRed(QWidget *widget, bool red = true);
 
 public slots:

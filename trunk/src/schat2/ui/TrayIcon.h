@@ -31,9 +31,7 @@ class TrayIcon : public QSystemTrayIcon
 public:
   TrayIcon(QObject *parent = 0);
   ~TrayIcon();
-  inline QAction *aboutAction() { return m_aboutAction; }
-  inline QAction *quitAction() { return m_quitAction; }
-  inline QAction *settingsAction() { return m_settingsAction; }
+  inline static TrayIcon *i() { return m_self; }
   void alert(bool start = true);
   void retranslateUi();
 
@@ -41,20 +39,19 @@ protected:
   void timerEvent(QTimerEvent *event);
 
 private slots:
-  void about();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
-  void quit();
-  void settings();
-  void update();
+  void reload();
+  void triggered(QAction *action);
 
 private:
   int m_alertIcon;           ///< Номер текущей иконки, при отображении уведомлений.
-  QAction *m_aboutAction;    ///< О Simple Chat.
-  QAction *m_quitAction;     ///< Quit.
-  QAction *m_settingsAction; ///< SettingsLegacy.
+  QAction *m_about;          ///< О Simple Chat.
+  QAction *m_quit;           ///< Выход.
+  QAction *m_settings;       ///< Настройки.
   QBasicTimer *m_timer;      ///< Таймер анимации.
   QIcon m_icon;              ///< Иконка.
   QMenu *m_menu;             ///< Меню.
+  static TrayIcon *m_self;   ///< Указатель на себя.
 };
 
 #endif /* TRAYICON_H_ */

@@ -41,6 +41,7 @@
 #include "net/packets/messages.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "ui/MainToolBar.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
@@ -60,7 +61,6 @@ TabWidget *TabWidget::m_self = 0;
 
 TabWidget::TabWidget(QWidget *parent)
   : QTabWidget(parent)
-  , m_core(ChatCore::i())
   , m_tabBar(new TabBar(this))
 {
   m_self = this;
@@ -334,7 +334,7 @@ void TabWidget::currentChanged(int index)
     visible = false;
   }
 
-  m_core->setCurrentId(tab->id());
+  ChatCore::setCurrentId(tab->id());
 
   stopAlert();
   emit pageChanged(tab->type(), visible);
@@ -592,26 +592,7 @@ void TabWidget::createToolBars()
   connect(m_mainMenu, SIGNAL(aboutToShow()), SLOT(showMainMenu()));
 
   // Правый виджет.
-  m_rightToolBar = new QToolBar(this);
-  m_rightToolBar->setIconSize(QSize(16, 16));
-
-  m_settingsMenu = new QMenu(this);
-  // \todo isNewYear().
-  m_settingsMenu->addAction(m_tray->settingsAction());
-  m_settingsMenu->addAction(m_tray->aboutAction());
-  m_settingsMenu->addSeparator();
-  m_settingsMenu->addAction(m_tray->quitAction());
-
-  m_settingsButton = new QToolButton(this);
-  m_settingsButton->setIcon(SCHAT_ICON(Settings));
-  m_settingsButton->setAutoRaise(true);
-  m_settingsButton->setPopupMode(QToolButton::InstantPopup);
-  m_settingsButton->setMenu(m_settingsMenu);
-
-  m_soundButton = new SoundButton(false, this);
-
-  m_rightToolBar->addWidget(m_settingsButton);
-  m_rightToolBar->addWidget(m_soundButton);
+  m_rightToolBar = new MainToolBar(this);
 
   setCornerWidget(m_leftToolBar, Qt::TopLeftCorner);
   setCornerWidget(m_rightToolBar, Qt::TopRightCorner);
@@ -630,7 +611,6 @@ void TabWidget::retranslateUi()
   m_tray->retranslateUi();
 
   m_menuButton->setToolTip(tr("Menu"));
-  m_settingsButton->setToolTip(tr("Preferences"));
   m_channelsMenu->setTitle(tr("Channels"));
   m_talksMenu->setTitle(tr("Talks"));
 }

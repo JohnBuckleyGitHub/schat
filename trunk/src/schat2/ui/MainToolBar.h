@@ -16,53 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QEvent>
+#ifndef MAINTOOLBAR_H_
+#define MAINTOOLBAR_H_
 
-#include "ui/SoundButton.h"
+#include <QToolBar>
 
-SoundButton::SoundButton(bool mute, QWidget *parent)
-  : QToolButton(parent)
-  , m_mute(mute)
+class QMenu;
+class QToolButton;
+class SoundButton;
+
+class MainToolBar : public QToolBar
 {
-  setAutoRaise(true);
-  setMute(m_mute);
+  Q_OBJECT
 
-  connect(this, SIGNAL(clicked(bool)), SLOT(clicked()));
-}
+public:
+  MainToolBar(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
 
-void SoundButton::setMute(bool mute)
-{
-  m_mute = mute;
+private slots:
+  void triggered(QAction *action);
 
-  if (m_mute)
-    setIcon(QIcon(":/images/sound_mute.png"));
-  else
-    setIcon(QIcon(":/images/sound.png"));
+private:
+  void retranslateUi();
 
-  retranslateUi();
-}
+  QAction *m_about;      ///< О Simple Chat.
+  QAction *m_quit;       ///< Выход из чата.
+  QAction *m_settings;   ///< Настройки.
+  QMenu *m_menu;         ///< Меню настройки.
+  QToolButton *m_button; ///< Кнопка с меню настроек.
+  SoundButton *m_sound;  ///< Кнопка включения/выключения звука.
+};
 
-
-void SoundButton::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QToolButton::changeEvent(event);
-}
-
-
-void SoundButton::clicked()
-{
-  setMute(!m_mute);
-}
-
-
-void SoundButton::retranslateUi()
-{
-  if (m_mute)
-    setToolTip(tr("Turn on sounds"));
-  else
-    setToolTip(tr("Turn off sounds"));
-}
+#endif /* MAINTOOLBAR_H_ */
