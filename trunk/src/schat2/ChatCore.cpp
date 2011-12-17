@@ -35,6 +35,7 @@
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "hooks/ChannelMenu.h"
+#include "hooks/ChannelMenuImpl.h"
 #include "hooks/ChannelsImpl.h"
 #include "hooks/ClientImpl.h"
 #include "hooks/CommandsImpl.h"
@@ -73,7 +74,9 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::CommandsImpl(this);
   new Hooks::ChannelsImpl(this);
   new Hooks::ClientImpl(this);
+
   new Hooks::ChannelMenu(this);
+  new Hooks::ChannelMenuImpl(this);
 
   m_client = ChatClient::io();
 

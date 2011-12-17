@@ -35,6 +35,7 @@ public:
   inline static void add(ChannelMenu *hook)                   { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void bind(QMenu *menu, ClientChannel channel) { m_self->bindImpl(menu, channel); }
   inline static void remove(ChannelMenu *hook)                { m_self->m_hooks.removeAll(hook); }
+  static void bind(QMenu *menu, const QByteArray &id);
 
   void bind(QMenu *menu);
 

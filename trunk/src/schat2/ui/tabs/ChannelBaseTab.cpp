@@ -26,6 +26,7 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "hooks/ChannelMenu.h"
 #include "net/SimpleID.h"
 #include "SimpleJSon.h"
 #include "ui/ChatIcons.h"
@@ -54,6 +55,13 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
 ChannelBaseTab::~ChannelBaseTab()
 {
   ChatClient::channels()->part(id());
+}
+
+
+bool ChannelBaseTab::bindMenu(QMenu *menu)
+{
+  Hooks::ChannelMenu::bind(menu, m_channel);
+  return true;
 }
 
 

@@ -122,8 +122,9 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
     }
   }
   else if (!builder) {
-    if (SimpleID::typeOf(m_id) == SimpleID::UserId)
-      builder = UserMenu::bind(&menu, m_id);
+    Hooks::ChannelMenu::bind(&menu, m_id);
+//    if (SimpleID::typeOf(m_id) == SimpleID::UserId)
+//      builder = UserMenu::bind(&menu, m_id);
 //    else if (SimpleID::typeOf(m_id) == SimpleID::ChannelId)
 //      builder = ChannelMenu::bind(&menu, m_id);
   }

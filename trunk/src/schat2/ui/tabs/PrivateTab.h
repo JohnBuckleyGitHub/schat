@@ -27,7 +27,6 @@ class SCHAT_CORE_EXPORT PrivateTab : public ChannelBaseTab
 
 public:
   PrivateTab(ClientChannel channel, TabWidget *parent);
-  bool bindMenu(QMenu *menu);
 
 private slots:
   void channel(const ChannelInfo &info);

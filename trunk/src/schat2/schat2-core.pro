@@ -38,6 +38,7 @@ HEADERS = \
     ChatSettings.h \
     ChatUrls.h \
     hooks/ChannelMenu.h \
+    hooks/ChannelMenuImpl.h \
     hooks/ChannelsImpl.h \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
@@ -106,6 +107,7 @@ SOURCES = \
     ChatSettings.cpp \
     ChatUrls.cpp \
     hooks/ChannelMenu.cpp \
+    hooks/ChannelMenuImpl.cpp \
     hooks/ChannelsImpl.cpp \
     hooks/ClientImpl.cpp \
     hooks/CommandsImpl.cpp \
