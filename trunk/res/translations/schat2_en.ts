@@ -59,22 +59,6 @@
     </message>
 </context>
 <context>
-    <name>ChannelMenu</name>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenu.cpp" line="49"/>
-        <source>Edit topic...</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChannelMenuImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
-        <source>Edit topic...</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ChatView</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="132"/>
@@ -175,6 +159,33 @@
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="54"/>
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="156"/>
         <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::ChannelMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="27"/>
+        <source></source>
+        <comment>Necessary for lupdate. ...</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
+        <source>Edit topic...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::UserMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="44"/>
+        <source>Talk...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="49"/>
+        <source>Insert Nick</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

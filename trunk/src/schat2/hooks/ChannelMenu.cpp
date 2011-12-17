@@ -44,14 +44,6 @@ void ChannelMenu::bind(QMenu *menu, const QByteArray &id)
 }
 
 
-void ChannelMenu::bind(QMenu *menu)
-{
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(m_channel, QLatin1String("edit/topic")));
-  menu->addAction(m_topic);
-}
-
-
 void ChannelMenu::cleanup()
 {
   if (m_hooks.isEmpty())

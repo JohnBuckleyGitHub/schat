@@ -16,42 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QMenu>
+#ifndef USERMENUIMPL_H_
+#define USERMENUIMPL_H_
 
-#include "ChatCore.h"
-#include "ChatUrls.h"
-#include "hooks/ChannelMenuImpl.h"
-#include "net/SimpleID.h"
-#include "ui/ChatIcons.h"
+#include "hooks/ChannelMenu.h"
 
 namespace Hooks
 {
 
-ChannelMenuImpl::ChannelMenuImpl(QObject *parent)
-  : ChannelMenu(parent)
-  , m_topic(0)
+class UserMenuImpl : public ChannelMenu
 {
-  add(this);
-}
+  Q_OBJECT
 
+public:
+  UserMenuImpl(QObject *parent = 0);
 
-void ChannelMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
-{
-  if (channel->type() != SimpleID::ChannelId)
-    return;
+protected:
+  void bindImpl(QMenu *menu, ClientChannel channel);
+  void cleanupImpl();
 
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), Hooks::ChannelMenuImpl::tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(channel, "edit/topic"));
-  menu->addAction(m_topic);
-}
-
-
-void ChannelMenuImpl::cleanupImpl()
-{
-  if (m_topic)
-    delete m_topic;
-
-  m_topic = 0;
-}
+private:
+  QAction *m_insert;
+  QAction *m_talk;
+};
 
 } // namespace Hooks
+
+#endif /* USERMENUIMPL_H_ */

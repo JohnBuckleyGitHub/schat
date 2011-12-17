@@ -37,8 +37,6 @@ public:
   inline static void remove(ChannelMenu *hook)                { m_self->m_hooks.removeAll(hook); }
   static void bind(QMenu *menu, const QByteArray &id);
 
-  void bind(QMenu *menu);
-
 protected slots:
   void cleanup();
   void triggered(QAction *action);
@@ -50,10 +48,6 @@ protected:
 
   QList<ChannelMenu*> m_hooks; ///< Хуки.
   static ChannelMenu *m_self;  ///< Указатель на себя.
-
-private:
-  ClientChannel m_channel;
-  QAction *m_topic;
 };
 
 } // namespace Hooks

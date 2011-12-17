@@ -20,38 +20,42 @@
 
 #include "ChatCore.h"
 #include "ChatUrls.h"
-#include "hooks/ChannelMenuImpl.h"
+#include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
 
 namespace Hooks
 {
 
-ChannelMenuImpl::ChannelMenuImpl(QObject *parent)
+UserMenuImpl::UserMenuImpl(QObject *parent)
   : ChannelMenu(parent)
-  , m_topic(0)
+  , m_insert(0)
+  , m_talk(0)
 {
   add(this);
 }
 
-
-void ChannelMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
+void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
 {
-  if (channel->type() != SimpleID::ChannelId)
+  if (channel->type() != SimpleID::UserId)
     return;
 
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), Hooks::ChannelMenuImpl::tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(channel, "edit/topic"));
-  menu->addAction(m_topic);
+  if (ChatCore::currentId() != channel->id()) {
+    m_talk = new QAction(SCHAT_ICON(Balloon), Hooks::UserMenuImpl::tr("Talk..."), this);
+    m_talk->setData(ChatUrls::toUrl(channel, "open"));
+    menu->addAction(m_talk);
+  }
+
+  m_insert = new QAction(Hooks::UserMenuImpl::tr("Insert Nick"), this);
+  m_insert->setData(ChatUrls::toUrl(channel, "insert"));
+  menu->addAction(m_insert);
 }
 
 
-void ChannelMenuImpl::cleanupImpl()
+void UserMenuImpl::cleanupImpl()
 {
-  if (m_topic)
-    delete m_topic;
-
-  m_topic = 0;
+  if (m_insert) delete m_insert; m_insert = 0;
+  if (m_talk)   delete m_insert; m_insert = 0;
 }
 
 } // namespace Hooks
