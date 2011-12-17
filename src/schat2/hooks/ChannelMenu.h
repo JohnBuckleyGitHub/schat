@@ -36,6 +36,7 @@ public:
   inline static void bind(QMenu *menu, ClientChannel channel) { m_self->bindImpl(menu, channel); }
   inline static void remove(ChannelMenu *hook)                { m_self->m_hooks.removeAll(hook); }
   static void bind(QMenu *menu, const QByteArray &id);
+  static void bind(QMenu *menu, const QUrl &url);
 
 protected slots:
   void cleanup();

@@ -44,6 +44,12 @@ void ChannelMenu::bind(QMenu *menu, const QByteArray &id)
 }
 
 
+void ChannelMenu::bind(QMenu *menu, const QUrl &url)
+{
+  bind(menu, ChatUrls::channel(url));
+}
+
+
 void ChannelMenu::cleanup()
 {
   if (m_hooks.isEmpty())

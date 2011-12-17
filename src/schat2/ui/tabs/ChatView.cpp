@@ -22,7 +22,6 @@
 #include <QMenu>
 #include <QWebFrame>
 
-#include "actions/UserMenu.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
@@ -108,26 +107,15 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != QLatin1String("chat")) {
+  if (!url.isEmpty() && url.scheme() != "chat")
     menu.addAction(m_copyLink);
-  }
+
   menu.addSeparator();
 
-  MenuBuilder *builder = 0;
-  if (!url.isEmpty()) {
-    if (url.scheme() == QLatin1String("chat")) {
-      if (url.host() == QLatin1String("user")) {
-        builder = UserMenu::bind(&menu, url);
-      }
-    }
-  }
-  else if (!builder) {
+  if (url.scheme() == "chat" && url.host() == "channel")
+    Hooks::ChannelMenu::bind(&menu, url);
+  else
     Hooks::ChannelMenu::bind(&menu, m_id);
-//    if (SimpleID::typeOf(m_id) == SimpleID::UserId)
-//      builder = UserMenu::bind(&menu, m_id);
-//    else if (SimpleID::typeOf(m_id) == SimpleID::ChannelId)
-//      builder = ChannelMenu::bind(&menu, m_id);
-  }
 
   QMenu display(tr("Display"), this);
   display.setIcon(SCHAT_ICON(Gear));
