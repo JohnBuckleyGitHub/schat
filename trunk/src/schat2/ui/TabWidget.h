@@ -97,7 +97,6 @@ private:
   AlertTab *m_alertTab;                      ///< Вкладка оповещений.
   MainToolBar *m_mainToolBar;                ///< Правая панель инструментов.
   QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
-  QList<ChannelBaseTab *> m_alerts;             ///< Список вкладок для которых активно уведомление.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
   QPointer<ProgressTab> m_progressTab;       ///< Вкладка идицирующая подключение к серверу.
   QPointer<SettingsTab> m_settingsTab;       ///< Настройка.

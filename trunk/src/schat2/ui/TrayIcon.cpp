@@ -20,12 +20,14 @@
 #include <QMenu>
 #include <QTimerEvent>
 
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
-#include "ui/ChatIcons.h"
 
 TrayIcon *TrayIcon::m_self = 0;
 
@@ -51,6 +53,7 @@ TrayIcon::TrayIcon(QObject *parent)
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(StatusMenu::i(), SIGNAL(updated()), SLOT(reload()));
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
+  connect(ChatAlerts::i(), SIGNAL(alert(bool)), SLOT(alert(bool)));
 
   reload();
 }
@@ -63,19 +66,6 @@ TrayIcon::~TrayIcon()
 
   delete m_timer;
   delete m_menu;
-}
-
-
-void TrayIcon::alert(bool start)
-{
-  if (!start) {
-    m_timer->stop();
-    setIcon(m_icon);
-    m_alertIcon = 0;
-  }
-  else if (!m_timer->isActive()) {
-    m_timer->start(666, this);
-  }
 }
 
 
@@ -105,6 +95,19 @@ void TrayIcon::timerEvent(QTimerEvent *event)
 }
 
 
+void TrayIcon::alert(bool start)
+{
+  if (!start) {
+    m_timer->stop();
+    setIcon(m_icon);
+    m_alertIcon = 0;
+  }
+  else if (!m_timer->isActive()) {
+    m_timer->start(666, this);
+  }
+}
+
+
 void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
   if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::MiddleClick) {
@@ -118,16 +121,13 @@ void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
  */
 void TrayIcon::reload()
 {
-//  int status = m_client->user()->status();
-//  if (m_client->clientState() != SimpleClient::ClientOnline)
-//    status = -1;
-//
-//  if (status == -1) {
-//    m_icon = SCHAT_ICON(SmallLogoIcon);
-//  }
-//  else {
-//    m_icon = ChatCore::icon(":/images/schat16.png", UserUtils::overlay(status));
-//  }
+  int status = ChatClient::channel()->status().value();
+  if (ChatClient::state() != ChatClient::Online)
+    status = -1;
+
+  m_icon = SCHAT_ICON(SmallLogo);
+  if (status != -1)
+    m_icon = ChatIcons::icon(m_icon, ChatIcons::overlay(status));
 
   if (!m_timer->isActive())
     setIcon(m_icon);

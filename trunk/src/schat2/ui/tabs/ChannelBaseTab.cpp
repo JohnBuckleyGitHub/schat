@@ -70,10 +70,14 @@ bool ChannelBaseTab::bindMenu(QMenu *menu)
 
 void ChannelBaseTab::alert(bool start)
 {
-  if (start)
+  if (start) {
     m_alerts++;
-  else
+    ChatAlerts::add(id());
+  }
+  else {
     m_alerts = 0;
+    ChatAlerts::remove(id());
+  }
 
   if (m_alerts > 1)
     return;

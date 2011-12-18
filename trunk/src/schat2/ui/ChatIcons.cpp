@@ -119,6 +119,22 @@ QIcon ChatIcons::icon(int name)
 }
 
 
+/*!
+ * Возвращает имя файла с иконкой оверлеем для статуса \p status пользователя.
+ */
+QString ChatIcons::overlay(int status)
+{
+  if (status == Status::Away || status == Status::AutoAway)
+    return ":/images/away-small.png";
+  else if (status == Status::DnD)
+    return ":/images/dnd-small.png";
+  else if (status == Status::FreeForChat)
+    return ":/images/ffc-small.png";
+  else
+    return QString();
+}
+
+
 void ChatIcons::init()
 {
   m_icons[Channel]        = "channel";
@@ -160,20 +176,4 @@ void ChatIcons::init()
   m_icons[Key]            = "key";
   m_icons[ExclamationRed] = "exclamation-red";
   m_icons[ArrowRight]     = "arrow-right";
-}
-
-
-/*!
- * Возвращает имя файла с иконкой оверлеем для статуса \p status пользователя.
- */
-QString ChatIcons::overlay(int status)
-{
-  if (status == Status::Away || status == Status::AutoAway)
-    return ":/images/away-small.png";
-  else if (status == Status::DnD)
-    return ":/images/dnd-small.png";
-  else if (status == Status::FreeForChat)
-    return ":/images/ffc-small.png";
-  else
-    return QString();
 }
