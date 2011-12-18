@@ -27,7 +27,6 @@
 #include "client/ClientCmd.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
-#include "messages/AlertMessage.h"
 #include "messages/MessageAdapter.h"
 #include "messages/MessageBox.h"
 #include "messages/TopicMessage.h"
@@ -50,8 +49,6 @@ MessageAdapter::MessageAdapter()
 //  TokenFilter::add(QLatin1String("user-type"), new UrlFilter());
 
   m_richText = true;
-  connect(m_client, SIGNAL(message(const MessageData &)), SLOT(message(const MessageData &)));
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
 }
 
 
@@ -120,56 +117,6 @@ void MessageAdapter::notice()
   else if (command == "msg.accepted" && m_notice->status() == Notice::UserOffline) {
     newUserMessage(UserMessage::OutgoingMessage | UserMessage::Delivered | UserMessage::Offline, msgFromNotice());
   }
-}
-
-
-/*!
- * Обработка получения нового сообщения от клиента.
- */
-void MessageAdapter::message(const MessageData &data)
-{
-//  if (data.command == QLatin1String("topic")) {
-//    readTopic(data);
-//    return;
-//  }
-//
-//  if (ChatCore::i()->isIgnored(data.senderId)) {
-//    if (data.destId() != m_client->channelId())
-//      return;
-//
-//    Notice notice(UserUtils::userId(), data.senderId, "msg.rejected", data.timestamp, data.id);
-//    notice.setStatus(Notice::Forbidden);
-//    m_client->send(notice.data(m_client->sendStream()));
-//    return;
-//  }
-//
-//  int status = UserMessage::IncomingMessage;
-//  if (data.senderId == UserUtils::userId()) {
-//    status = UserMessage::OutgoingMessage;
-//    if (m_undelivered.contains(data.id))
-//      status |= UserMessage::Delivered;
-//  }
-
-  newUserMessage(0, data);
-}
-
-
-/*!
- * \todo Улучшить функциональность уведомлений об подключении и отключении.
- */
-void MessageAdapter::clientStateChanged(int state, int previousState)
-{
-  if (state == SimpleClient::ClientOnline) {
-    AlertMessage msg(AlertMessage::Information, tr("Successfully connected to <b>%1</b>").arg(NetworkManager::currentServerName()));
-    emit message(msg);
-    return;
-  }
-  else if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
-    AlertMessage msg(AlertMessage::Exclamation, tr("Connection lost"));
-    emit message(msg);
-  }
-
-  setStateAll(UserMessage::Rejected);
 }
 
 

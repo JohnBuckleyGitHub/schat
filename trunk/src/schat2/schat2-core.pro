@@ -46,7 +46,6 @@ HEADERS = \
     hooks/MessagesImpl.h \
     hooks/UserMenuImpl.h \
     messages/AbstractMessage.h \
-    messages/AlertMessage.h \
     messages/ChannelMessage.h \
     messages/Message.h \
     messages/MessageAdapter.h \
@@ -119,7 +118,6 @@ SOURCES = \
     hooks/MessagesImpl.cpp \
     hooks/UserMenuImpl.cpp \
     messages/AbstractMessage.cpp \
-    messages/AlertMessage.cpp \
     messages/ChannelMessage.cpp \
     messages/Message.cpp \
     messages/MessageAdapter.cpp \
