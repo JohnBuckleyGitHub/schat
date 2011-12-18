@@ -29,30 +29,6 @@
 class Account;
 
 /*!
- * \deprecated Этот класс является устаревшим, в связи с заменой топика на фид.
- */
-class Topic
-{
-public:
-  Topic()
-  : timestamp(0)
-  {}
-
-  Topic(const QByteArray &channel, const QByteArray &author, const QString &topic, qint64 timestamp)
-  : author(author)
-  , channel(channel)
-  , timestamp(timestamp)
-  , topic(topic)
-  {}
-
-  QByteArray author;
-  QByteArray channel;
-  qint64 timestamp;
-  QString topic;
-};
-
-
-/*!
  * Базовый статус пользователя.
  */
 class Status

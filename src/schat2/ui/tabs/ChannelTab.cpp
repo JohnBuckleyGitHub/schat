@@ -27,7 +27,6 @@
 #include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
-#include "messages/TopicMessage.h"
 #include "net/packets/messages.h"
 #include "ui/InputWidget.h"
 #include "ui/tabs/ChannelBar.h"
