@@ -21,24 +21,28 @@
 TabBar::TabBar(QWidget *parent)
   : QTabBar(parent)
 {
-  setUsesScrollButtons(true);
-  setElideMode(Qt::ElideRight);
   setMovable(true);
   setTabsClosable(true);
+
+# if QT_VERSION < 0x040800
+  setElideMode(Qt::ElideRight);
+# endif
 }
 
 
 void TabBar::tabInserted(int index)
 {
-  setTabsClosable(count() > 1);
-
   QTabBar::tabInserted(index);
+
+  if (!tabsClosable() && count() > 1)
+    setTabsClosable(true);
 }
 
 
 void TabBar::tabRemoved(int index)
 {
-  setTabsClosable(count() > 1);
-
   QTabBar::tabRemoved(index);
+
+  if (count() < 2)
+    setTabsClosable(false);
 }

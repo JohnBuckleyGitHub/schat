@@ -66,7 +66,7 @@ function addMessage(data)
 
 	if (json.Type == 'channel')
 		addChannelMessage(json);
-	else if (json.Type == 'service')
+	else if (json.Type == 'service' || json.Type == 'info')
 		addServiceMessage(json);
 }
 
@@ -112,7 +112,11 @@ function addChannelMessage(json)
 function addServiceMessage(json)
 {
 	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
-	html += '<div class="blocks">';
+	html += '<div class="blocks ';
+    if (json.Extra !== undefined)
+        html += json.Extra;
+
+    html += '">';
 
 	html += dateTemplate(json.Date, false);
 	html += nameTemplate(json);

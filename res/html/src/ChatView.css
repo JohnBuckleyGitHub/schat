@@ -72,8 +72,8 @@ a:active, a:hover {
 }
 
 .nick-block {
-    padding-right: 2px;
-    border-right: solid 1px #eee;
+	padding-right: 2px;
+	border-right: solid 1px #eee;
 }
 
 /* Входящие сообщения */
@@ -154,5 +154,13 @@ a:active, a:hover {
 	border:1px solid #f6f69a;
 }
 
-.service-type .blocks { border:1px solid #fff; color:#a5b2c3; }
+.service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick, #topic-extra .nick { color:#a5b2c3; }
+
+.info-type .green-text {
+	color:#6bb521;
+}
+
+.info-type .red-text {
+	color:#da251d;
+}

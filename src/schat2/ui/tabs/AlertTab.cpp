@@ -21,10 +21,12 @@
 
 #include <QVBoxLayout>
 
+#include "ChatAlerts.h"
 #include "ChatCore.h"
+#include "messages/ServiceMessage.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/AlertTab.h"
 #include "ui/tabs/ChatView.h"
-#include "ui/ChatIcons.h"
 
 AlertTab::AlertTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)
@@ -46,6 +48,17 @@ AlertTab::AlertTab(TabWidget *parent)
 
   setIcon(SCHAT_ICON(InfoBalloon));
   retranslateUi();
+
+  connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
+}
+
+
+void AlertTab::alert(const Alert &alert)
+{
+  if (alert.type() == Alert::Connected)
+    m_chatView->add(ServiceMessage::connected());
+  else if (alert.type() == Alert::ConnectionLost)
+    m_chatView->add(ServiceMessage::connectionLost());
 }
 
 

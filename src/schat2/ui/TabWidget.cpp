@@ -96,11 +96,8 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
-  connect(ChatCore::i(), SIGNAL(message(const AbstractMessage &)), SLOT(message(const AbstractMessage &)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
-
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
 }
 
@@ -117,42 +114,6 @@ ClientChannel TabWidget::channel(const QByteArray &id)
     return m_channels.value(id)->channel();
 
   return ClientChannel();
-}
-
-
-/*!
- * Добавление сервисного сообщения.
- */
-void TabWidget::addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab)
-{
-  MessageData data(userId, destId, QString(), text);
-  data.timestamp = ChatClient::io()->date();
-
-  AbstractMessage msg(QLatin1String("service-type"), data);
-  msg.setPriority(AbstractMessage::LowPriority);
-
-  message(tab, msg);
-}
-
-
-void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
-{
-  if (!tab) {
-    message(data);
-    return;
-  }
-
-  tab->chatView()->evaluateJavaScript(data.js());
-
-  if (data.priority() < AbstractMessage::NormalPriority)
-    return;
-
-  int index = indexOf(tab);
-  bool alert = false;
-  if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
-    alert = true;
-    tab->alert();
-  }
 }
 
 
@@ -405,46 +366,6 @@ void TabWidget::clientStateChanged(int state, int previousState)
   if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
     closeWelcome();
   }
-}
-
-
-/*!
- * Отображение сообщения.
- *
- * \param data Абстрактное сообщение.
- */
-void TabWidget::message(const AbstractMessage &data)
-{
-  ChannelBaseTab *tab = 0;
-
-  if (data.destId().isEmpty()) {
-//    tab = m_alertTab;
-  }
-  else {
-    int type = SimpleID::typeOf(data.destId());
-
-    if (type == SimpleID::ChannelId) {
-//      if (!data.senderId().isEmpty() && !m_client->user(data.senderId()))
-//        return;
-
-      tab = m_channels.value(data.destId());
-    }
-    else if (type == SimpleID::UserId) {
-      QByteArray id;
-
-      if (data.direction() == AbstractMessage::IncomingDirection)
-        id = data.senderId();
-      else
-        id = data.destId();
-
-      tab = channelTab(id);
-    }
-  }
-
-  if (!tab)
-    return;
-
-  message(tab, data);
 }
 
 

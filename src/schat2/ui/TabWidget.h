@@ -58,9 +58,6 @@ public:
   inline TabBar *tabBar()     { return m_tabBar; }
   static TabWidget *i()       { return m_self; }
 
-  void addServiceMsg(const QByteArray &userId, const QByteArray &destId, const QString &text, ChannelBaseTab *tab = 0);
-  void message(ChannelBaseTab *tab, const AbstractMessage &data);
-
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   void add(const Message &message);
 
@@ -82,7 +79,6 @@ private slots:
   void addChannel(const QByteArray &id);
 
   void clientStateChanged(int state, int previousState);
-  void message(const AbstractMessage &data);
   void offline();
 
 private:

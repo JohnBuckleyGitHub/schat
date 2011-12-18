@@ -29,7 +29,9 @@ class SCHAT_CORE_EXPORT Alert
 public:
   enum Type {
     PublicMessage  = 0x434D, ///< "CM" Сообщение в канале от другого пользователя.
-    PrivateMessage = 0x504D  ///< "PM" Приватное сообщение от другого пользователя.
+    PrivateMessage = 0x504D, ///< "PM" Приватное сообщение от другого пользователя.
+    Connected      = 0x436F, ///< "Co" Уведомление об успешном подключении к серверу.
+    ConnectionLost = 0x434C  ///< "CL" Обработка потери соединения.
   };
 
   Alert(int type);
@@ -67,6 +69,10 @@ public:
 signals:
   void alert(bool alert);
   void alert(const Alert &alert);
+
+private slots:
+  void offline();
+  void online();
 
 private:
   void startAlert(const Alert &alert);

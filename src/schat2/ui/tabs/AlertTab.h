@@ -21,6 +21,7 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+class Alert;
 class ChatView;
 
 class AlertTab : public AbstractTab
@@ -29,6 +30,9 @@ class AlertTab : public AbstractTab
 
 public:
   AlertTab(TabWidget *parent);
+
+private slots:
+  void alert(const Alert &alert);
 
 private:
   void retranslateUi();
