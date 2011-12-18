@@ -55,10 +55,6 @@ signals:
 protected:
   void notice();
 
-private slots:
-  void message(const MessageData &data);
-  void clientStateChanged(int state, int previousState);
-
 private:
   int setGender(const QString &gender, const QString &color);
   MessageData msgFromNotice() const;

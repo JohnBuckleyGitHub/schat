@@ -131,29 +131,6 @@ a:active, a:hover {
 	border:1px solid #f6f69a;
 }
 
-.information-alert {
-	background-color:#e8f2f8;
-	border:1px solid #e1edf5;
-	color:#143244;
-}
-
-.information-alert:hover {
-	background-color:#d9e8f3;
-	border:1px solid #cde1ef;
-}
-
-.exclamation-alert { color:#515007; }
-
-.exclamation-alert {
-	background-color:#fbfbd1;
-	border:1px solid #f8f7ac;
-}
-
-.exclamation-alert:hover {
-	background-color:#f8f7ac;
-	border:1px solid #f6f69a;
-}
-
 .service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick, #topic-extra .nick { color:#a5b2c3; }
 
