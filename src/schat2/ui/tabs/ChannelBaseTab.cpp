@@ -23,6 +23,7 @@
 
 #include <QTextDocument>
 
+#include "ChatAlerts.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -32,6 +33,7 @@
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/TabWidget.h"
 
 ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent)
   : AbstractTab(channel->id(), type, parent)
@@ -49,6 +51,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
+  connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
 }
 
 
@@ -97,6 +100,20 @@ void ChannelBaseTab::setOnline(bool online)
 }
 
 
+void ChannelBaseTab::alert(const Alert &alert)
+{
+  if (alert.type() == Alert::PublicMessage || alert.type() == Alert::PrivateMessage) {
+    if (alert.tab() != id())
+      return;
+
+    if (m_tabs->currentIndex() == m_tabs->indexOf(this) && m_tabs->parentWidget()->isActiveWindow())
+      return;
+
+    this->alert();
+  }
+}
+
+
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
   if (SimpleID::typeOf(info.id()) == SimpleID::UserId && info.option() != ChannelInfo::Updated)
@@ -120,8 +137,12 @@ void ChannelBaseTab::offline()
 
 QIcon ChannelBaseTab::channelIcon() const
 {
-  if (m_alerts)
+  if (m_alerts) {
+    if (m_channel->type() == SimpleID::ChannelId)
+      return SCHAT_ICON(ChannelAlert);
+
     return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), ":/images/message-small.png");
+  }
   else
     return ChatIcons::icon(m_channel);
 }

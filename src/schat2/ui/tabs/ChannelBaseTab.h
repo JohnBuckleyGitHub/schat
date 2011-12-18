@@ -22,6 +22,7 @@
 #include "Channel.h"
 #include "ui/tabs/AbstractTab.h"
 
+class Alert;
 class ChannelInfo;
 class ChatView;
 class Message;
@@ -47,6 +48,7 @@ public:
   void setOnline(bool online = true);
 
 private slots:
+  void alert(const Alert &alert);
   void channel(const ChannelInfo &info);
   void offline();
 

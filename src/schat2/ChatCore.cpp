@@ -24,6 +24,7 @@
 #include <QWidget>
 
 #include "actions/ChatViewAction.h"
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatHooks.h"
 #include "ChatNotify.h"
@@ -80,6 +81,8 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChannelMenuImpl(this);
   new Hooks::UserMenuImpl(this);
 
+  new ChatAlerts(this);
+
   m_client = ChatClient::io();
 
   m_networkManager = new NetworkManager(this);
@@ -124,6 +127,9 @@ void ChatCore::makeRed(QWidget *widget, bool red)
 }
 
 
+/*!
+ * \deprecated Необходим отдельный класс.
+ */
 void ChatCore::click(const QString &id, const QString &button)
 {
   QList<ChatViewAction *> actions = m_actions.values(id);
@@ -150,7 +156,6 @@ void ChatCore::send(const QString &text)
   if (text.isEmpty())
     return;
 
-  MessageData data(QByteArray(), m_currentId, QString(), text);
   ChatClient::messages()->send(m_currentId, text);
 }
 
