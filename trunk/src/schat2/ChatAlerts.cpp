@@ -16,9 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
+#include <QDebug>
+
 #include "ChatAlerts.h"
+#include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "DateTime.h"
+#include "client/SimpleClient.h"
 
 ChatAlerts *ChatAlerts::m_self = 0;
 
@@ -41,6 +45,23 @@ ChatAlerts::ChatAlerts(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+
+  connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
+}
+
+
+void ChatAlerts::offline()
+{
+  Alert alert(Alert::ConnectionLost);
+  start(alert);
+}
+
+
+void ChatAlerts::online()
+{
+  Alert alert(Alert::Connected, ChatCore::randomId(), ChatClient::io()->date());
+  start(alert);
 }
 
 

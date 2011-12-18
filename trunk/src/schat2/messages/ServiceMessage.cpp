@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTextDocument>
+
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientMessages.h"
@@ -23,6 +25,7 @@
 #include "DateTime.h"
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
+#include "NetworkManager.h"
 
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
   : Message()
@@ -50,6 +53,27 @@ bool ServiceMessage::isValid() const
 }
 
 
+ServiceMessage ServiceMessage::connected()
+{
+  ServiceMessage message(QObject::tr("Successfully connected to <b>%1</b>").arg(Qt::escape(NetworkManager::currentServerName())));
+  message.data()["Type"]  = "info";
+  message.data()["Extra"] = "green-text";
+  return message;
+}
+
+
+ServiceMessage ServiceMessage::connectionLost()
+{
+  ServiceMessage message(QObject::tr("Connection lost"));
+  message.data()["Type"]  = "info";
+  message.data()["Extra"] = "red-text";
+  return message;
+}
+
+
+/*!
+ * Сообщение о входе пользователя в канал.
+ */
 ServiceMessage ServiceMessage::joined(const QByteArray &user)
 {
   QString text;
@@ -66,6 +90,9 @@ ServiceMessage ServiceMessage::joined(const QByteArray &user)
 }
 
 
+/*!
+ * Сообщение о выходе пользователя из канала.
+ */
 ServiceMessage ServiceMessage::part(const QByteArray &user)
 {
   QString text;
@@ -82,6 +109,9 @@ ServiceMessage ServiceMessage::part(const QByteArray &user)
 }
 
 
+/*!
+ * Сообщение о выходе пользователя из чата.
+ */
 ServiceMessage ServiceMessage::quit(const QByteArray &user)
 {
   QString text;
