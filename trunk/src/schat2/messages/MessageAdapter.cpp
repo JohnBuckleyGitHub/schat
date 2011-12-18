@@ -29,7 +29,6 @@
 #include "debugstream.h"
 #include "messages/MessageAdapter.h"
 #include "messages/MessageBox.h"
-#include "messages/TopicMessage.h"
 #include "messages/UserMessage.h"
 #include "net/packets/ChannelPacket.h"
 #include "net/packets/Notice.h"
