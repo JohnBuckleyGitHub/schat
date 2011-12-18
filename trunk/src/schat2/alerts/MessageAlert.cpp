@@ -16,35 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
-#include "ChatAlerts.h"
-#include "DateTime.h"
+#include "alerts/MessageAlert.h"
+#include "messages/ChannelMessage.h"
+#include "net/packets/MessagePacket.h"
+#include "net/SimpleID.h"
 
-ChatAlerts *ChatAlerts::m_self = 0;
-
-Alert::Alert(int type)
-  : m_type(type)
-  , m_id(ChatCore::randomId())
-  , m_date(DateTime::utc())
+MessageAlert::MessageAlert(const ChannelMessage &message)
+  : Alert(PublicMessage, message.packet().id(), message.packet().date())
 {
-}
+  m_tab = message.tab();
 
-
-Alert::Alert(int type, const QByteArray &id, qint64 date)
-  : m_type(type)
-  , m_id(id)
-  , m_date(date)
-{
-}
-
-ChatAlerts::ChatAlerts(QObject *parent)
-  : QObject(parent)
-{
-  m_self = this;
-}
-
-
-void ChatAlerts::startAlert(const Alert &alert)
-{
-  emit this->alert(alert);
+  if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
+    m_type = PrivateMessage;
 }

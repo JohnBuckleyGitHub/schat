@@ -27,7 +27,13 @@
 class SCHAT_CORE_EXPORT Alert
 {
 public:
+  enum Type {
+    PublicMessage  = 0x434D, ///< "CM" Сообщение в канале от другого пользователя.
+    PrivateMessage = 0x504D  ///< "PM" Приватное сообщение от другого пользователя.
+  };
+
   Alert(int type);
+  Alert(int type, const QByteArray &id, qint64 date);
   virtual ~Alert() {}
 
   inline const QByteArray id() const     { return m_id; }
@@ -54,8 +60,14 @@ class SCHAT_CORE_EXPORT ChatAlerts : public QObject
 public:
   ChatAlerts(QObject *parent = 0);
   inline static ChatAlerts *i() { return m_self; }
+  inline static void start(const Alert &alert) { m_self->startAlert(alert); }
+
+signals:
+  void alert(const Alert &alert);
 
 private:
+  void startAlert(const Alert &alert);
+
   static ChatAlerts *m_self; ///< Указатель на себя.
 };
 
