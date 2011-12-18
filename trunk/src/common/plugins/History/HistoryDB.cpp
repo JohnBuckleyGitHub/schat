@@ -29,7 +29,6 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
-#include "HistoryUserMessage.h"
 #include "net/packets/messages.h"
 #include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
@@ -214,8 +213,8 @@ void HistoryDB::loadLast(PrivateTab *tab)
     data.timestamp = query.value(5).toULongLong();
     data.id = query.value(1).toByteArray();
 
-    HistoryUserMessage msg(query.value(4).toULongLong(), data);
-    tab->chatView()->evaluateJavaScript(msg.js());
+//    HistoryUserMessage msg(query.value(4).toULongLong(), data);
+//    tab->chatView()->evaluateJavaScript(msg.js());
   }
 }
 

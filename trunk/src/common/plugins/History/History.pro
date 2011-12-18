@@ -23,12 +23,10 @@ HEADERS  = \
    HistoryDB.h \
    HistoryPlugin.h \
    HistoryPlugin_p.h \
-   HistoryUserMessage.h \
 
 SOURCES  = \
    HistoryDB.cpp \
    HistoryPlugin.cpp \
-   HistoryUserMessage.cpp \
 
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
