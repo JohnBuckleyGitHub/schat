@@ -102,6 +102,15 @@ ChatCore::~ChatCore()
 }
 
 
+QByteArray ChatCore::randomId()
+{
+  return SimpleID::randomId(SimpleID::MessageId, ChatClient::id());
+}
+
+
+/*!
+ * \deprecated Эта функция не должна находится в этом классе.
+ */
 void ChatCore::makeRed(QWidget *widget, bool red)
 {
   QPalette palette = widget->palette();
