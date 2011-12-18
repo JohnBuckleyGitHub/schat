@@ -16,35 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
+#ifndef MESSAGEALERT_H_
+#define MESSAGEALERT_H_
+
 #include "ChatAlerts.h"
-#include "DateTime.h"
 
-ChatAlerts *ChatAlerts::m_self = 0;
+class ChannelMessage;
 
-Alert::Alert(int type)
-  : m_type(type)
-  , m_id(ChatCore::randomId())
-  , m_date(DateTime::utc())
+class MessageAlert : public Alert
 {
-}
+public:
+  MessageAlert(const ChannelMessage &message);
+};
 
-
-Alert::Alert(int type, const QByteArray &id, qint64 date)
-  : m_type(type)
-  , m_id(id)
-  , m_date(date)
-{
-}
-
-ChatAlerts::ChatAlerts(QObject *parent)
-  : QObject(parent)
-{
-  m_self = this;
-}
-
-
-void ChatAlerts::startAlert(const Alert &alert)
-{
-  emit this->alert(alert);
-}
+#endif /* MESSAGEALERT_H_ */

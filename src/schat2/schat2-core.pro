@@ -28,6 +28,7 @@ win32:RC_FILE = schat2-core.rc
 HEADERS = \
     actions/ChatViewAction.h \
     actions/MenuBuilder.h \
+    alerts/MessageAlert.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
     ChatAlerts.h \
@@ -101,6 +102,7 @@ HEADERS = \
 SOURCES = \
     actions/ChatViewAction.cpp \
     actions/MenuBuilder.cpp \
+    alerts/MessageAlert.cpp \
     arora/lineedit.cpp \
     ChatAlerts.cpp \
     ChatCore.cpp \
