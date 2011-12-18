@@ -152,10 +152,6 @@ void TabWidget::message(ChannelBaseTab *tab, const AbstractMessage &data)
   if (index != currentIndex() || !parentWidget()->isActiveWindow()) {
     alert = true;
     tab->alert();
-    m_tray->alert();
-
-    if (!m_alerts.contains(tab))
-      m_alerts.append(tab);
   }
 }
 
@@ -571,10 +567,6 @@ void TabWidget::stopAlert()
   if (!tab)
     return;
 
-  m_alerts.removeAll(tab);
   if (tab->alerts())
     tab->alert(false);
-
-  if (m_alerts.isEmpty())
-    m_tray->alert(false);
 }

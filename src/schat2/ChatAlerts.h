@@ -59,16 +59,22 @@ class SCHAT_CORE_EXPORT ChatAlerts : public QObject
 
 public:
   ChatAlerts(QObject *parent = 0);
-  inline static ChatAlerts *i() { return m_self; }
-  inline static void start(const Alert &alert) { m_self->startAlert(alert); }
+  inline static ChatAlerts *i()                   { return m_self; }
+  inline static void add(const QByteArray &id)    { m_self->addImpl(id); }
+  inline static void remove(const QByteArray &id) { m_self->removeImpl(id); }
+  inline static void start(const Alert &alert)    { m_self->startAlert(alert); }
 
 signals:
+  void alert(bool alert);
   void alert(const Alert &alert);
 
 private:
   void startAlert(const Alert &alert);
+  void addImpl(const QByteArray &id);
+  void removeImpl(const QByteArray &id);
 
-  static ChatAlerts *m_self; ///< Указатель на себя.
+  QList<QByteArray> m_channels; ///< Список каналов для которых активно уведомление о новых сообщениях.
+  static ChatAlerts *m_self;    ///< Указатель на себя.
 };
 
 #endif /* CHATALERTS_H_ */

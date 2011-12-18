@@ -32,13 +32,13 @@ public:
   TrayIcon(QObject *parent = 0);
   ~TrayIcon();
   inline static TrayIcon *i() { return m_self; }
-  void alert(bool start = true);
   void retranslateUi();
 
 protected:
   void timerEvent(QTimerEvent *event);
 
 private slots:
+  void alert(bool start);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void reload();
   void triggered(QAction *action);

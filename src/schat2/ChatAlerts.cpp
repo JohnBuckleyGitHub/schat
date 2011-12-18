@@ -48,3 +48,23 @@ void ChatAlerts::startAlert(const Alert &alert)
 {
   emit this->alert(alert);
 }
+
+
+void ChatAlerts::addImpl(const QByteArray &id)
+{
+  if (!m_channels.contains(id)) {
+    m_channels += id;
+
+    if (m_channels.size() == 1)
+      emit alert(true);
+  }
+}
+
+
+void ChatAlerts::removeImpl(const QByteArray &id)
+{
+  m_channels.removeAll(id);
+
+  if (m_channels.isEmpty())
+    emit alert(false);
+}
