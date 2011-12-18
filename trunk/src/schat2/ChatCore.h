@@ -54,6 +54,7 @@ public:
   inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
   inline Translation *translation() { return m_translation; }
   inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
+  static QByteArray randomId();
   static void makeRed(QWidget *widget, bool red = true);
 
 public slots:
