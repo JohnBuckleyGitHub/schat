@@ -28,4 +28,6 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
 
   if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
     m_type = PrivateMessage;
+
+  m_data["Message"] = message.data();
 }

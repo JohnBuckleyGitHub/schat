@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "alerts/MessageAlert.h"
+#include "ChatAlerts.h"
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -46,8 +48,6 @@ MessagesImpl::MessagesImpl(QObject *parent)
  */
 void MessagesImpl::readText(const MessagePacket &packet)
 {
-  m_undelivered.remove(packet.id());
-
   ChannelMessage message(packet);
 
   /// Если это собственное сообщение, то для него при необходимости устанавливается
@@ -60,6 +60,14 @@ void MessagesImpl::readText(const MessagePacket &packet)
   }
 
   TabWidget::i()->add(message);
+
+  if (packet.sender() != ChatClient::id() || !m_undelivered.contains(packet.id())) {
+    qDebug() << " ~~ START ALERT ~~";
+    MessageAlert alert(message);
+    ChatAlerts::start(alert);
+  }
+
+  m_undelivered.remove(packet.id());
 }
 
 
