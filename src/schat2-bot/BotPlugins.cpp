@@ -17,7 +17,6 @@
  */
 
 #include "BotPlugins.h"
-#include "client/ClientHelper.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
 #include "plugins/ClientApi.h"
@@ -27,7 +26,6 @@ BotPlugins::BotPlugins(QObject *parent)
   : Plugins(parent)
 {
   m_client = new SimpleClient(this);
-  m_helper = new ClientHelper(m_client);
   m_locations = new FileLocations(this);
 
   addProvider("BotCore");

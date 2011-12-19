@@ -27,7 +27,6 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
-#include "messages/MessageAdapter.h"
 #include "NetworkManager.h"
 #include "ui/network/NetworkEditor.h"
 #include "ui/network/NetworkTabs.h"

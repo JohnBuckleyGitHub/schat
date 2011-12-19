@@ -34,7 +34,7 @@ DebugClient::DebugClient(ClientHelper *helper, FileLocations *locations)
   , m_helper(helper)
   , m_locations(locations)
   , m_stream(0)
-  , m_client(helper->client())
+  , m_client(0)
 {
   bool bom = false;
   m_file.setFileName(m_locations->path(FileLocations::VarPath) + QLatin1String("/DebugClient.log"));
