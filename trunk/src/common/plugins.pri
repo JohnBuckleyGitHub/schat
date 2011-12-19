@@ -19,8 +19,5 @@ SUBDIRS += \
     common/plugins/MasterNode \
     common/plugins/SlaveNode \
     common/plugins/MessageLog \
-    common/plugins/BotCore \
-    common/plugins/BotEcho \
     common/plugins/History \
     common/plugins/Cache \
-    common/plugins/DebugClient \

@@ -31,7 +31,7 @@ BotCore::BotCore(ClientHelper *helper, FileLocations *locations)
   : QObject(helper)
   , m_helper(helper)
   , m_locations(locations)
-  , m_client(helper->client())
+  , m_client(0)
 {
   m_settings.insert("Url", "schat://schat.me");
   m_settings.insert("Nick", "Bot");

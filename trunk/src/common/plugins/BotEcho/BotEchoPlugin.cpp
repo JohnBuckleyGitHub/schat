@@ -29,7 +29,7 @@ BotEcho::BotEcho(ClientHelper *helper, FileLocations *locations)
   : QObject(helper)
   , m_helper(helper)
   , m_locations(locations)
-  , m_client(helper->client())
+  , m_client(0)
 {
   connect(m_client, SIGNAL(join(const QByteArray &, const QByteArray &)), SLOT(join(const QByteArray &, const QByteArray &)));
   connect(m_client, SIGNAL(synced(const QByteArray &)), SLOT(synced(const QByteArray &)));

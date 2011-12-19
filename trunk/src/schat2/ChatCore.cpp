@@ -42,7 +42,6 @@
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
 #include "hooks/UserMenuImpl.h"
-#include "messages/MessageAdapter.h"
 #include "net/packets/messages.h"
 #include "NetworkManager.h"
 #include "text/HtmlFilter.h"

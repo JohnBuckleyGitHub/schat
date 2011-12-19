@@ -102,7 +102,6 @@ SOURCES += \
     client/ChatClient.h \
     client/ClientChannels.h \
     client/ClientCmd.h \
-    client/ClientHelper.h \
     client/ClientHooks.h \
     client/ClientMessages.h \
     client/SimpleClient.h \
@@ -112,7 +111,6 @@ SOURCES += \
     client/ChatClient.cpp \
     client/ClientChannels.cpp \
     client/ClientCmd.cpp \
-    client/ClientHelper.cpp \
     client/ClientHooks.cpp \
     client/ClientMessages.cpp \
     client/SimpleClient.cpp \
