@@ -62,7 +62,6 @@ public:
   ~SimpleClient();
   ClientChannel channel() const;
   ClientChannel channel(const QByteArray &id) const;
-  ClientUser user(const QByteArray &id) const;
   const AuthError& authError() const;
   const QString &account() const;
   void leave();
@@ -74,7 +73,6 @@ signals:
   void notice(const Notice &notice);
   void notice(int type);
   void split(const QList<QByteArray> &users);
-  void userDataChanged(const QByteArray &userId, int changed = 0);
   void userLeave(const QByteArray &userId);
 
 protected:
