@@ -34,7 +34,6 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
-#include "messages/AbstractMessage.h"
 #include "messages/ChannelMessage.h"
 #include "messages/ServiceMessage.h"
 #include "net/packets/MessagePacket.h"

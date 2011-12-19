@@ -78,15 +78,6 @@
   <file alias="js/jquery.js">html/js/jquery-1.7.1.min.js</file>
   <file>html/about.html</file>
   <file>html/ChatView.html</file>
-  <file>html/templates/body.html</file>
-  <file>html/templates/button.html</file>
-  <file>html/templates/content-small.html</file>
-  <file>html/templates/generic.html</file>
-  <file>html/templates/nick.html</file>
-  <file>html/templates/time.html</file>
-  <file>html/templates/time-date.html</file>
-  <file>html/templates/topic.html</file>
-  <file>html/templates/yes-no-box.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
   <file>images/logo128.png</file>

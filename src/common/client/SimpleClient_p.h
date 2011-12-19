@@ -37,25 +37,13 @@ public:
   // Установка и завершение соединения.
   bool authReply(const AuthReply &reply);
   void clearClient();
-  void restore();
   void setClientState(AbstractClient::ClientState state);
-  void setup();
 
   // Каналы.
   bool addChannel(ClientChannel channel);
   void endSyncChannel(const QByteArray &id);
 
-  // Сообщения.
-  bool command();
-  bool readMessage();
-  void split();
-
   bool notice();
-
-  // Пользователи.
-  bool readUserData();
-  void updateUserData(ClientUser existUser, UserReader &reader);
-  void updateUserStatus(const QString &text);
 
   AuthError m_authError;                     ///< Информация об ошибки подключения.
   bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
@@ -64,7 +52,7 @@ public:
   Notice *m_notice;                          ///< Текущий прочитанный объект Notice.
   QByteArray password;                       ///< Пароль.
   QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
-  QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
+//  QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
   QString account;                           ///< Имя аккаунта пользователя.
 };
 

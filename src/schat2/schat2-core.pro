@@ -45,10 +45,8 @@ HEADERS = \
     hooks/CommandsImpl.h \
     hooks/MessagesImpl.h \
     hooks/UserMenuImpl.h \
-    messages/AbstractMessage.h \
     messages/ChannelMessage.h \
     messages/Message.h \
-    messages/MessageBox.h \
     messages/ServiceMessage.h \
     NetworkManager.h \
     plugins/AbstractHistory.h \
@@ -114,10 +112,8 @@ SOURCES = \
     hooks/CommandsImpl.cpp \
     hooks/MessagesImpl.cpp \
     hooks/UserMenuImpl.cpp \
-    messages/AbstractMessage.cpp \
     messages/ChannelMessage.cpp \
     messages/Message.cpp \
-    messages/MessageBox.cpp \
     messages/ServiceMessage.cpp \
     NetworkManager.cpp \
     plugins/AbstractHistory.cpp \
