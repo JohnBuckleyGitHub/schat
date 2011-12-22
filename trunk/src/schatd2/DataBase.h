@@ -24,8 +24,6 @@
 #include "Account.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
-#include "ServerUser.h"
-
 
 /*!
  * База данных сервера.
@@ -39,12 +37,8 @@ public:
   int start();
 
   // users.
-  ChatUser user(const QByteArray &id);
-  ChatUser user(qint64 id);
-  qint64 add(ChatUser user);
   qint64 addGroup(const QString &name, const QString &permissions = QString());
   qint64 userKey(const QByteArray &id);
-  void update(ChatUser user);
 
   // channels.
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
@@ -59,7 +53,6 @@ public:
   static qint64 accountKey(const QString &name);
   static qint64 accountKey(qint64 channel);
   static qint64 add(Account *account);
-  static qint64 reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
 };
 
 #endif /* DATABASE_H_ */

@@ -53,12 +53,6 @@ HookResult MessageLog::hook(const NodeHook &data)
   if (!m_isOpen)
     open();
 
-  if (data.type() == NodeHook::AcceptedMessage)
-    add(static_cast<const MessageHook &>(data));
-  else if (data.type() == NodeHook::UserReady) {
-    userReady(static_cast<const UserReadyHook &>(data));
-  }
-
   return HookResult(1);
 }
 
@@ -136,54 +130,6 @@ void MessageLog::cleanup(const QByteArray &destId)
 
 
 /*!
- * Запуск оффлайновой доставки сообщений.
- */
-void MessageLog::offlineDelivery(const UserReadyHook &data)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  QByteArray id = data.user->id();
-
-  query.prepare(QLatin1String("SELECT messageId, senderId, timestamp, command, text FROM messages WHERE destId = :destId AND status = 407;"));
-  query.bindValue(QLatin1String(":destId"), id);
-  query.exec();
-
-  if (!query.isActive())
-    return;
-
-  QList<QByteArray> packets;
-  QDataStream *stream = m_core->sendStream();
-  QList<QByteArray> users = Storage::i()->users(id);
-
-  // Цикл формирующий пакеты.
-  while (query.next()) {
-    QByteArray sender = query.value(1).toByteArray();
-
-    // Если получателю не известны данные отправителя, то ему будут отосланы данные пользователя.
-    if (!users.contains(sender)) {
-      users.append(sender);
-      ChatUser user = Storage::i()->user(sender, true);
-      if (user)
-        packets.append(UserWriter(stream, user.data(), id, UserWriter::StaticData).data());
-    }
-
-    // Формирование пакета с сообщением.
-    MessageData msg(sender, id, query.value(3).toString(), query.value(4).toString());
-    msg.flags = MessageData::OfflineFlag;
-    msg.timestamp = query.value(2).toULongLong();
-    msg.id = query.value(0).toByteArray();
-    msg.autoSetOptions();
-
-    packets.append(MessageWriter(stream, msg).data());
-  }
-
-  if (!packets.isEmpty())
-    m_core->send(data.user, packets);
-
-  cleanup(id);
-}
-
-
-/*!
  * Открытие базы данных.
  */
 void MessageLog::open()
@@ -209,16 +155,6 @@ void MessageLog::open()
     ");"));
 
   m_isOpen = true;
-}
-
-
-void MessageLog::userReady(const UserReadyHook &data)
-{
-  if (m_offlineLog && (data.type == QLatin1String("restore") || data.type == QLatin1String("setup"))) {
-    offlineDelivery(data);
-    return;
-  }
-
 }
 
 

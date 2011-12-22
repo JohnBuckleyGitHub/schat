@@ -39,62 +39,6 @@ MasterNode::MasterNode(QObject *parent)
 }
 
 
-void MasterNode::accept(const AuthResult &result)
-{
-  ChatUser user = m_storage->user(result.id);
-  if (!user)
-    return;
-
-  if (m_storage->isSlave(m_packetsEvent->channelId())) {
-    if (m_hosts.contains(result.authId)) {
-      user->setHost(m_hosts.value(result.authId));
-      m_hosts.remove(result.authId);
-    }
-
-    ChatUser slave = Storage::i()->user(m_packetsEvent->channelId());
-    if (slave)
-      user->setServerNumber(slave->gender().raw());
-
-    AuthResult r = result;
-    r.option = 0;
-    Core::accept(r);
-    return;
-  }
-  else {
-    QList<QByteArray> slaves = m_storage->slaves();
-    if (!slaves.isEmpty()) {
-//      UserWriter writer(m_sendStream, user.data(), slaves, user->cookie());
-//      send(m_storage->sockets(slaves), writer.data());
-    }
-  }
-
-  Core::accept(result);
-}
-
-
-void MasterNode::notice(quint16 type)
-{
-  if (m_storage->isSlave(m_packetsEvent->channelId()) && SimpleID::typeOf(m_reader->sender()) == SimpleID::ServerId) {
-    quint16 type = m_reader->get<quint16>();
-
-    if (type == Notice::GenericType) {
-      Notice notice(type, m_reader);
-      m_notice = &notice;
-
-      if (!m_notice->isValid()) {
-        rejectNotice(Notice::BadRequest);
-        return;
-      }
-
-      if (m_notice->command() == "slave.user.host")
-        m_hosts[m_reader->dest()] = notice.text();
-    }
-  }
-  else
-    Core::notice(type);
-}
-
-
 void MasterNode::reject(const AuthResult &result)
 {
   if (m_storage->isSlave(m_packetsEvent->channelId())) {
@@ -105,48 +49,4 @@ void MasterNode::reject(const AuthResult &result)
   }
 
   Core::reject(result);
-}
-
-
-void MasterNode::release(SocketReleaseEvent *event)
-{
-  if (m_storage->isSlave(event->channelId())) {
-    ChatUser slave = m_storage->user(event->channelId());
-    if (!slave)
-      return;
-
-//    m_storage->remove(slave);
-    m_storage->removeSlave(event->channelId());
-
-    quint8 number = slave->gender().raw();
-    QHash<QByteArray, ChatUser> all = m_storage->users();
-    QList<ChatUser> users;
-
-    // Поиск всех пользователей с вторичного сервера.
-    QHashIterator<QByteArray, ChatUser> i(all);
-    while (i.hasNext()) {
-      i.next();
-      if (i.value()->serverNumber() == number)
-        users.append(i.value());
-    }
-
-    if (users.isEmpty())
-      return;
-
-    // Поиск всех каналов в которых находились пользователи со вторичного сервера.
-    QList<QByteArray> channels;
-    for (int i = 0; i < users.size(); ++i) {
-      foreach (QByteArray id, users.at(i)->channels()) {
-        if (!channels.contains(id))
-          channels.append(id);
-      }
-
-//      m_storage->remove(users.at(i));
-    }
-
-//    MessageData message(m_storage->serverData()->id(), channels, QLatin1String("split"), QString::number(number));
-//    send(m_storage->sockets(channels), MessageWriter(m_sendStream, message).data());
-  }
-  else
-    Core::release(event);
 }

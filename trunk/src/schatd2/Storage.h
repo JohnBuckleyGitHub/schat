@@ -25,7 +25,6 @@
 #include "net/packets/accounts.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
-#include "ServerUser.h"
 
 class DataBase;
 class FileLocations;
@@ -53,15 +52,7 @@ public:
   void addSlave(const QByteArray &id);
 
   // user management.
-  bool isSameSlave(const QByteArray &id1, const QByteArray &id2);
-  ChatUser user(const QByteArray &id, bool offline = false) const;
-  inline QHash<QByteArray, ChatUser> users() const { return m_users; }
-  LoginReply login(ChatUser user, const QString &name, const QByteArray &password);
   QByteArray makeUserId(int type, const QByteArray &userId) const;
-  QList<QByteArray> users(const QByteArray &id);
-  RegReply reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data);
-  void store(ChatUser user);
-  void update(ChatUser user);
 
   // channel management.
   bool add(ChatChannel channel);
@@ -100,8 +91,6 @@ private:
   DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
-  QHash<QByteArray, ChatUser> m_users;           ///< Таблица пользователей.
-  QHash<QString, ChatUser> m_nicks;              ///< Таблица ников.
   QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
