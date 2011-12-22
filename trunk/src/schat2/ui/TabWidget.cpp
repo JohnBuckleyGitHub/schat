@@ -181,6 +181,33 @@ void TabWidget::add(const Message &message)
 }
 
 
+/*!
+ * Обработка закрытия вкладки.
+ */
+void TabWidget::closeTab(int index)
+{
+  SCHAT_DEBUG_STREAM(this << "closeTab()" << index)
+
+  if (index == -1)
+    return;
+
+  AbstractTab *tab = widget(index);
+
+  // Закрытие канала.
+  if (m_channels.contains(tab->id()))
+    m_channels.remove(tab->id());
+
+  removeTab(index);
+
+  if (tab->isDeleteOnClose())
+    QTimer::singleShot(0, tab, SLOT(deleteLater()));
+  else
+    tab->setOnline(false);
+
+  lastTab();
+}
+
+
 
 bool TabWidget::event(QEvent *event)
 {
@@ -241,37 +268,6 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
     closeTab(index);
   else
     QTabWidget::mouseReleaseEvent(event);
-}
-
-
-/*!
- * Обработка закрытия вкладки.
- */
-void TabWidget::closeTab(int index)
-{
-  SCHAT_DEBUG_STREAM(this << "closeTab()" << index)
-
-  if (index == -1)
-    return;
-
-  AbstractTab *tab = widget(index);
-
-  // Закрытие канала.
-  if (m_channels.contains(tab->id())) {
-    m_channels.remove(tab->id());
-  }
-  // Закрытие приватного разговора.
-//  else if (tab->type() == AbstractTab::PrivateType && m_talks.contains(tab->id())) {
-//    m_talks.remove(tab->id());
-//  }
-
-  removeTab(index);
-  if (tab->isDeleteOnClose())
-    QTimer::singleShot(0, tab, SLOT(deleteLater()));
-  else
-    tab->setOnline(false);
-
-  lastTab();
 }
 
 
@@ -345,23 +341,12 @@ void TabWidget::addChannel(const QByteArray &id)
  */
 void TabWidget::clientStateChanged(int state, int previousState)
 {
-  Q_UNUSED(previousState)
+  if (state == ChatClient::Online && m_welcomeTab) {
+    closeTab(indexOf(m_welcomeTab));
+  }
 
-  if (state == SimpleClient::ClientOnline)
-    return;
-
-//  QByteArray id = m_client->channelId();
-
-//  foreach (ChannelBaseTab *tab, m_channels) {
-//    tab->setOnline(false);
-//  }
-
-//  foreach (PrivateTab *tab, m_talks) {
-//    tab->setOnline(false);
-//  }
-
-  if (state == SimpleClient::ClientOffline && previousState == SimpleClient::ClientOnline) {
-    closeWelcome();
+  if (previousState == ChatClient::Connecting && m_progressTab) {
+    closeTab(indexOf(m_progressTab));
   }
 }
 
@@ -401,36 +386,6 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
 
 /*!
- * Закрытие вкладки приветствия или прогресса подключения.
- * Если процесс подключения был прерван и отображается только вкладка прогресса
- * подключения, то она будет заменена на вкладку приветствия.
- *
- * \sa showWelcome().
- */
-void TabWidget::closeWelcome()
-{
-  if (m_welcomeTab) {
-    int index = indexOf(m_welcomeTab);
-    if (index != -1)
-      closeTab(index);
-  }
-
-  if (m_progressTab) {
-    int index = indexOf(m_progressTab);
-    if (index != -1) {
-      if (count() == 1 && ChatClient::state() == ChatClient::Offline) {
-        if (!m_welcomeTab)
-          m_welcomeTab = new WelcomeTab(this);
-        addChatTab(m_welcomeTab);
-      }
-
-      closeTab(index);
-    }
-  }
-}
-
-
-/*!
  * Создание панелей инструментов.
  */
 void TabWidget::createToolBars()
@@ -443,6 +398,9 @@ void TabWidget::createToolBars()
 }
 
 
+/*!
+ * \todo Не отображать вкладку уведомлений после подключения к новому серверу.
+ */
 void TabWidget::lastTab()
 {
   if (count() == 0)
@@ -458,17 +416,10 @@ void TabWidget::retranslateUi()
 
 /*!
  * Отображает вкладку приветствия или прогресса подключения в зависимости от состояния клиента.
- *
- * Вкладка прогресса подключения будет отображена в следующих случаях:
- * - Конфигурационная опция AutoConnect равна true.
- * - Статус пользователя не равен User::OfflineStatus.
- * - Есть сохранённые сети.
- *
- * \sa closeWelcome().
  */
 void TabWidget::showWelcome()
 {
-  if (ChatCore::i()->networks()->isAutoConnect()) {
+  if (ChatCore::networks()->isAutoConnect()) {
     m_progressTab = new ProgressTab(this);
     addChatTab(m_progressTab);
   }
