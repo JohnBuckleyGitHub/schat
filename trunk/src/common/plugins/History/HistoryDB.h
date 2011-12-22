@@ -31,7 +31,6 @@ class HistoryDB : public QObject
 
 public:
   HistoryDB(QObject *parent = 0);
-  qint64 add(int status, const MessageData &data);
   void open(const QByteArray &id, const QString &dir);
 
 private slots:
@@ -40,7 +39,6 @@ private slots:
 
 private:
   qint64 messageId(const QByteArray &id) const;
-  qint64 update(int status, const MessageData &data);
   qint64 userId(const QByteArray &id) const;
   void close();
 

@@ -65,7 +65,6 @@ void History::add(const RawUserMessageHook &data)
 {
   QTime t;
   t.start();
-  m_db->add(data.status, data.data);
   qDebug() << "[History Plugin] message added at:" << t.elapsed() << "ms";
 }
 

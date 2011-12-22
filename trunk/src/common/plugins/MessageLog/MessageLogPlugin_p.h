@@ -36,7 +36,6 @@ public:
   void reload();
 
 private:
-  void add(const MessageHook &data);
   void cleanup(const QByteArray &destId);
   void open();
 

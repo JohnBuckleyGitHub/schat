@@ -57,7 +57,6 @@ public:
 
   bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl);
 
-  bool send(const MessageData &data, bool echo = false);
   bool send(const Notice &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);

@@ -96,10 +96,6 @@ public:
     AuthRequestPacket = 0x6152, // "aR" or 24914
     /// Ответ на запрос авторизации.
     AuthReplyPacket = 0x6172, // "ar" or 24946
-    /// Сообщение.
-    MessagePacket = 0x6d, // "m" or 109
-    /// Данные пользователя.
-    UserDataPacket = 0x7544, // "uD" or 30020
     NoticePacket = 0x6e // "n" or 110
   };
 

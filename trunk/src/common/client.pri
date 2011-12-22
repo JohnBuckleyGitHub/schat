@@ -37,7 +37,6 @@ HEADERS += \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/ChannelPacket.h \
-    net/packets/messages.h \
     net/packets/MessagePacket.h \
     net/packets/Notice.h \
     net/PacketWriter.h \
@@ -76,7 +75,6 @@ SOURCES += \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/ChannelPacket.cpp \
-    net/packets/messages.cpp \
     net/packets/MessagePacket.cpp \
     net/packets/Notice.cpp \
     net/ServerData.cpp \

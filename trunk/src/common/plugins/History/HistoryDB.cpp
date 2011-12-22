@@ -29,7 +29,6 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "HistoryDB.h"
-#include "net/packets/messages.h"
 #include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
@@ -40,42 +39,6 @@ HistoryDB::HistoryDB(QObject *parent)
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 
   m_lastMessages = ChatCore::settings()->value("History/LastMessages", 10).toInt();
-}
-
-
-/*!
- * Добавление сообщения в историю.
- */
-qint64 HistoryDB::add(int status, const MessageData &data)
-{
-//  if (addUser(data.senderId) == -1)
-//    return -1;
-//
-//  if (SimpleID::typeOf(data.destId()) == SimpleID::UserId)
-//    addUser(data.destId());
-
-  if (data.text.isEmpty())
-    return update(status, data);
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("INSERT INTO messages (messageId, senderId, destId, status, timestamp, command, text, plainText) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :timestamp, :command, :text, :plainText);"));
-
-  query.bindValue(QLatin1String(":messageId"), data.id);
-  query.bindValue(QLatin1String(":senderId"), data.senderId);
-  query.bindValue(QLatin1String(":destId"), data.destId());
-  query.bindValue(QLatin1String(":status"), status);
-  query.bindValue(QLatin1String(":timestamp"), data.timestamp);
-  query.bindValue(QLatin1String(":command"), data.command);
-  query.bindValue(QLatin1String(":text"), data.text);
-  query.bindValue(QLatin1String(":plainText"), PlainTextFilter::filter(data.text));
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
-    return -1;
-
-  return query.lastInsertId().toLongLong();
 }
 
 
@@ -181,23 +144,6 @@ qint64 HistoryDB::messageId(const QByteArray &id) const
     return query.value(0).toLongLong();
 
   return -1;
-}
-
-
-qint64 HistoryDB::update(int status, const MessageData &data)
-{
-  qint64 id = messageId(data.id);
-  if (id == -1)
-    return -1;
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("UPDATE messages SET status = :status WHERE id = :id;"));
-  query.bindValue(QLatin1String(":status"), status);
-  query.bindValue(QLatin1String(":id"), id);
-  query.exec();
-
-  return id;
 }
 
 

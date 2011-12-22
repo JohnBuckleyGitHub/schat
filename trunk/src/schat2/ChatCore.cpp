@@ -42,12 +42,13 @@
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
 #include "hooks/UserMenuImpl.h"
-#include "net/packets/messages.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
 #include "ui/ChatIcons.h"
+
 
 ChatCore *ChatCore::m_self = 0;
 

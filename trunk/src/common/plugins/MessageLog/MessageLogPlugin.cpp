@@ -27,7 +27,6 @@
 #include "FileLocations.h"
 #include "MessageLogPlugin.h"
 #include "MessageLogPlugin_p.h"
-#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "Settings.h"
 #include "Storage.h"
@@ -75,41 +74,6 @@ void MessageLog::reload()
   m_offlineLog = m_settings->value(QLatin1String("MessageLog/OfflineLog")).toBool();
   m_privateLog = m_settings->value(QLatin1String("MessageLog/PrivateLog")).toBool();
   m_publicLog  = m_settings->value(QLatin1String("MessageLog/PublicLog")).toBool();
-}
-
-
-/*!
- * Добавление сообщения в историю.
- */
-void MessageLog::add(const MessageHook &data)
-{
-  MessageData *msg = data.data();
-  if (msg->dest.size() > 1)
-    return;
-
-  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::ChannelId && !m_publicLog)
-    return;
-
-  if (SimpleID::typeOf(data.data()->destId()) == SimpleID::UserId) {
-    if (data.status() == Notice::UserOffline && !m_offlineLog)
-      return;
-
-    if (data.status() == Notice::OK && !m_privateLog)
-      return;
-  }
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(QLatin1String("INSERT INTO messages (messageId, senderId, destId, status, timestamp, command, text) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :timestamp, :command, :text);"));
-
-  query.bindValue(QLatin1String(":messageId"), msg->id);
-  query.bindValue(QLatin1String(":senderId"),  msg->senderId);
-  query.bindValue(QLatin1String(":destId"),    msg->destId());
-  query.bindValue(QLatin1String(":status"),    data.status());
-  query.bindValue(QLatin1String(":timestamp"), data.timestamp());
-  query.bindValue(QLatin1String(":command"),   msg->command);
-  query.bindValue(QLatin1String(":text"),      msg->text);
-  query.exec();
 }
 
 

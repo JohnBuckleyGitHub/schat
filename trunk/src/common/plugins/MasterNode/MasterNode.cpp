@@ -22,7 +22,6 @@
 #include "MasterNode.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "net/ServerData.h"
 #include "SlaveAuth.h"

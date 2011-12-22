@@ -26,7 +26,6 @@
 #include "ServerChannel.h"
 
 class AuthResult;
-class MessageData;
 class NewPacketsEvent;
 class NodeAuth;
 class NodePlugins;
@@ -80,14 +79,9 @@ protected:
   // users.
   void release(SocketReleaseEvent *event);
 
-  // messages.
-  bool command();
-  bool readTopic();
-
   // notices.
   virtual void notice(quint16 type);
 
-  MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
   NodePlugins *m_plugins;             ///< Плагины.
   Notice *m_notice;                   ///< Текущий прочитанный объект Notice.
