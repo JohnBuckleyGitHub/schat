@@ -48,7 +48,6 @@
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
 #include "ui/ChatIcons.h"
-#include "User.h"
 
 ChatCore *ChatCore::m_self = 0;
 

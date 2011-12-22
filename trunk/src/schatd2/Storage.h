@@ -22,7 +22,6 @@
 #include <QByteArray>
 #include <QHash>
 
-#include "net/packets/accounts.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 

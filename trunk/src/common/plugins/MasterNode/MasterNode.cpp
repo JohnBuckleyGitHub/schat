@@ -24,7 +24,6 @@
 #include "net/packets/auth.h"
 #include "net/packets/messages.h"
 #include "net/packets/Notice.h"
-#include "net/packets/users.h"
 #include "net/ServerData.h"
 #include "SlaveAuth.h"
 #include "Storage.h"

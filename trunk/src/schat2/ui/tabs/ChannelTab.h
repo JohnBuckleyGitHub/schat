@@ -21,7 +21,6 @@
 
 #include "Channel.h"
 #include "ui/tabs/ChannelBaseTab.h"
-#include "User.h"
 
 class ChannelBar;
 class ChatView;

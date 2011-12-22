@@ -20,7 +20,6 @@
 #define ABSTRACTHISTORY_H_
 
 #include "plugins/ChatPlugin.h"
-#include "User.h"
 
 class SCHAT_CORE_EXPORT AbstractHistory : public ChatPlugin
 {

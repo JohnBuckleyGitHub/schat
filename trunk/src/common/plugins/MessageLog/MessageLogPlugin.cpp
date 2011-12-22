@@ -28,7 +28,7 @@
 #include "MessageLogPlugin.h"
 #include "MessageLogPlugin_p.h"
 #include "net/packets/messages.h"
-#include "net/packets/users.h"
+#include "net/packets/Notice.h"
 #include "Settings.h"
 #include "Storage.h"
 

@@ -36,7 +36,8 @@ AuthResult PasswordAuth::auth(const AuthRequest &data)
   if (SimpleID::typeOf(data.password) != SimpleID::PasswordId)
     return AuthResult(Notice::BadRequest, data.id);
 
-  QString login = LoginReply::filter(data.account, storage->serverData()->name());
+//  QString login = LoginReply::filter(data.account, storage->serverData()->name());
+  QString login;
   if (login.isEmpty())
     return AuthResult(Notice::BadRequest, data.id);
 
