@@ -33,7 +33,6 @@
 #include "net/packets/ChannelPacket.h"
 #include "net/packets/messages.h"
 #include "net/packets/Notice.h"
-#include "net/packets/users.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "net/ServerData.h"

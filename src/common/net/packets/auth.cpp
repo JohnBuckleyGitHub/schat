@@ -25,7 +25,6 @@
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
-#include "User.h"
 #include "Channel.h"
 
 AuthReply::AuthReply(PacketReader *reader)
@@ -162,7 +161,7 @@ bool AuthRequest::isValid() const
   if (userAgent.isEmpty())
     return false;
 
-  if (!User::isValidNick(nick))
+  if (!Channel::isValidName(nick))
     return false;
 
   if (authType == Cookie && SimpleID::typeOf(cookie) != SimpleID::CookieId)

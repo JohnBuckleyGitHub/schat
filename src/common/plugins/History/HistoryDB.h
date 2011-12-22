@@ -22,8 +22,6 @@
 #include <QHash>
 #include <QObject>
 
-#include "User.h"
-
 class MessageData;
 class PrivateTab;
 

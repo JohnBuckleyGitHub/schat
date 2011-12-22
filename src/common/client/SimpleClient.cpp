@@ -25,7 +25,6 @@
 #include "net/packets/ChannelPacket.h"
 #include "net/packets/messages.h"
 #include "net/packets/Notice.h"
-#include "net/packets/users.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
   : cookieAuth(false)

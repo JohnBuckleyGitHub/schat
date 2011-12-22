@@ -31,7 +31,6 @@
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
-#include "User.h"
 
 AbstractClientPrivate::AbstractClientPrivate()
   : clientState(AbstractClient::ClientOffline)
@@ -66,7 +65,7 @@ QString AbstractClientPrivate::mangleNick()
   if (nick.isEmpty())
     nick = channel->name();
 
-  return nick.left(User::MaxNickLength - 2) + QString::number(rand);
+  return nick.left(Channel::MaxNameLength - 2) + QString::number(rand);
 }
 
 

@@ -35,13 +35,11 @@ HEADERS += \
     Gender.h \
     k8json/k8json.h \
     net/PacketReader.h \
-    net/packets/accounts.h \
     net/packets/auth.h \
     net/packets/ChannelPacket.h \
     net/packets/messages.h \
     net/packets/MessagePacket.h \
     net/packets/Notice.h \
-    net/packets/users.h \
     net/PacketWriter.h \
     net/ServerData.h \
     net/SimpleID.h \
@@ -57,7 +55,6 @@ HEADERS += \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
     Translation.h \
-    User.h \
 
 SOURCES += \
     Account.cpp \
@@ -77,13 +74,11 @@ SOURCES += \
     Gender.cpp \
     k8json/k8json.cpp \
     net/PacketReader.cpp \
-    net/packets/accounts.cpp  \
     net/packets/auth.cpp \
     net/packets/ChannelPacket.cpp \
     net/packets/messages.cpp \
     net/packets/MessagePacket.cpp \
     net/packets/Notice.cpp \
-    net/packets/users.cpp \
     net/ServerData.cpp \
     net/SimpleID.cpp \
     net/SimpleSocket.cpp \
@@ -95,7 +90,6 @@ SOURCES += \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
     Translation.cpp \
-    User.cpp \
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
   HEADERS += \

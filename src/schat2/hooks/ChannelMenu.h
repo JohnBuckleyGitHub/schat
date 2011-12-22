@@ -21,7 +21,6 @@
 
 #include "actions/MenuBuilder.h"
 #include "Channel.h"
-#include "User.h"
 
 namespace Hooks
 {

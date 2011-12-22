@@ -33,7 +33,6 @@
 #include "text/PlainTextFilter.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
-#include "User.h"
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)

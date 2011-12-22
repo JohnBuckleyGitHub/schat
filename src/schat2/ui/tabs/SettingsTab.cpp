@@ -35,7 +35,6 @@
 #include "ui/network/NetworkEditor.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
-#include "User.h"
 #include "ui/ChatIcons.h"
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)

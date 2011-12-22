@@ -24,7 +24,6 @@
 #include "Channel.h"
 #include "net/SimpleSocket.h"
 #include "schat.h"
-#include "User.h"
 
 class AbstractClientPrivate;
 class Channel;
