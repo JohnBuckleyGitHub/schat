@@ -38,19 +38,6 @@ SimpleClientPrivate::~SimpleClientPrivate()
 }
 
 
-/*!
- * Очистка данных состояния клиента.
- */
-void SimpleClientPrivate::clearClient()
-{
-//  user->clear();
-//  users.clear();
-//  users.insert(user->id(), user);
-
-  channels.clear();
-}
-
-
 bool SimpleClientPrivate::authReply(const AuthReply &reply)
 {
   AbstractClientPrivate::authReply(reply);
@@ -78,79 +65,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   }
 
   return false;
-}
-
-
-void SimpleClientPrivate::setClientState(AbstractClient::ClientState state)
-{
-  if (clientState == state)
-    return;
-
-  if (state == AbstractClient::ClientOnline) {
-//    users.insert(user->id(), user);
-  }
-  else {
-    foreach (ClientChannel chan, channels) {
-      chan->channels().clear();
-    }
-  }
-
-  AbstractClientPrivate::setClientState(state);
-}
-
-
-/*!
- * Добавление нового канала.
- * В случае если идентификатор канала уже используется, возможны 2 сценария:
- * - Если существующий канал содержит пользователей, добавления не произойдёт,
- * объект \p channel будет удалён и функция возвратит false.
- * - Существующий канал не содержит пользователей, что означает его не валидность,
- * объект канала будет удалён и его место в таблице каналов займёт \p channel.
- *
- * \return true в случае успешного добавления канала.
- */
-bool SimpleClientPrivate::addChannel(ClientChannel channel)
-{
-  QByteArray id = channel->id();
-  ClientChannel ch = channels.value(id);
-
-  if (ch && ch->channels().all().size())
-    return false;
-
-  channels[id] = channel;
-//  channel->channels().add(user->id());
-//  user->addChannel(id);
-
-//  Q_Q(SimpleClient);
-
-  if (channel->channels().all().size() == 1) {
-//    if (!channel->name().startsWith(QLatin1String("~")))
-//      emit(q->join(id));
-
-//    endSyncChannel(channel);
-    return true;
-  }
-
-  QList<QByteArray> list = channel->channels().all();
-  list.removeAll(channelId);
-//  int unsync = 0;
-
-//  for (int i = 0; i < list.size(); ++i) {
-//    ClientUser u = users.value(list.at(i));
-//    if (u) {
-//      u->addChannel(id);
-//    }
-//    else
-//      unsync++;
-//  }
-
-//  if (!channel->name().startsWith(QLatin1String("~")))
-//    emit(q->join(id));
-
-//  if (unsync == 0)
-//    endSyncChannel(channel);
-
-  return true;
 }
 
 
@@ -211,19 +125,6 @@ SimpleClient::SimpleClient(SimpleClientPrivate &dd, QObject *parent)
 
 SimpleClient::~SimpleClient()
 {
-}
-
-
-ClientChannel SimpleClient::channel() const
-{
-  return AbstractClient::channel();
-}
-
-
-ClientChannel SimpleClient::channel(const QByteArray &id) const
-{
-  Q_D(const SimpleClient);
-  return d->channels.value(id);
 }
 
 

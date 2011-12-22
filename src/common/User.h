@@ -112,6 +112,6 @@ protected:
   quint8 m_serverNumber;                ///< Номер сервера.
 };
 
-typedef QSharedPointer<User> ClientUser;
+//typedef QSharedPointer<User> ClientUser;
 
 #endif /* USER_H_ */

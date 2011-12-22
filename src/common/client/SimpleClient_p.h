@@ -36,12 +36,6 @@ public:
 
   // Установка и завершение соединения.
   bool authReply(const AuthReply &reply);
-  void clearClient();
-  void setClientState(AbstractClient::ClientState state);
-
-  // Каналы.
-  bool addChannel(ClientChannel channel);
-  void endSyncChannel(const QByteArray &id);
 
   bool notice();
 
@@ -51,8 +45,6 @@ public:
   MessageData *messageData;                  ///< Текущий прочитанный объект MessageData.
   Notice *m_notice;                          ///< Текущий прочитанный объект Notice.
   QByteArray password;                       ///< Пароль.
-  QHash<QByteArray, ClientChannel> channels; ///< Таблица каналов.
-//  QHash<QByteArray, ClientUser> users;       ///< Таблица пользователей.
   QString account;                           ///< Имя аккаунта пользователя.
 };
 
