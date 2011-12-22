@@ -38,12 +38,6 @@ History::History(ChatCore *core)
 }
 
 
-ClientUser History::user(const QByteArray &id) const
-{
-  return m_db->user(id);
-}
-
-
 QList<HookData::Type> History::hooks() const
 {
   QList<HookData::Type> out;

@@ -33,17 +33,12 @@ class HistoryDB : public QObject
 
 public:
   HistoryDB(QObject *parent = 0);
-  ClientUser user(const QByteArray &id) const;
   qint64 add(int status, const MessageData &data);
-  qint64 addUser(const QByteArray &id);
-  qint64 updateUser(const QByteArray &id);
-  void loadLast(PrivateTab *tab);
   void open(const QByteArray &id, const QString &dir);
 
 private slots:
   void clientStateChanged(int state);
   void synced(const QByteArray &channelId);
-  void updateUserData(const QByteArray &userId);
 
 private:
   qint64 messageId(const QByteArray &id) const;

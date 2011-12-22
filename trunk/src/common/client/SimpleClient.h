@@ -47,21 +47,8 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
   Q_OBJECT
 
 public:
-  ///< Данные пользователя которые были изменены.
-  enum UserChangeData {
-    UserNotChanged = 0,        ///< Данные пользователя не изменены.
-    UserBasicDataChanged = 1,  ///< Изменены основные данные пользователя.
-    UserNickChanged = 2,       ///< Изменён ник пользователя.
-    UserStaticDataChanged = 4, ///< Изменены статические данные пользователя.
-    UserStatusChanged = 8,     ///< Изменён текстовый статус пользователя.
-    JSonDataChanged = 16,
-    UserCompletelyChanged = UserBasicDataChanged | UserNickChanged | UserStaticDataChanged | UserStatusChanged | JSonDataChanged ///< Данные пользователя полностью изменены.
-  };
-
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
-  ClientChannel channel() const;
-  ClientChannel channel(const QByteArray &id) const;
   const AuthError& authError() const;
   const QString &account() const;
   void leave();
@@ -69,11 +56,8 @@ public:
   void setCookieAuth(bool allow);
 
 signals:
-  void message(const MessageData &data);
   void notice(const Notice &notice);
   void notice(int type);
-  void split(const QList<QByteArray> &users);
-  void userLeave(const QByteArray &userId);
 
 protected:
   SimpleClient(SimpleClientPrivate &dd, QObject *parent);

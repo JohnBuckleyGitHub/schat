@@ -44,42 +44,16 @@ HistoryDB::HistoryDB(QObject *parent)
 }
 
 
-ClientUser HistoryDB::user(const QByteArray &id) const
-{
-  qint64 index = userId(id);
-  if (index == -1)
-    return ClientUser();
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("SELECT nick, gender, host, userAgent FROM users WHERE id = ? LIMIT 1;"));
-  query.addBindValue(index);
-  query.exec();
-
-  if (!query.first())
-    return ClientUser();
-
-  ClientUser user(new User());
-  user->setId(id);
-  user->setNick(query.value(0).toString());
-  user->gender().setRaw(query.value(1).toULongLong());
-  user->setHost(query.value(2).toString());
-  user->setUserAgent(query.value(3).toString());
-
-  return user;
-}
-
-
 /*!
  * Добавление сообщения в историю.
  */
 qint64 HistoryDB::add(int status, const MessageData &data)
 {
-  if (addUser(data.senderId) == -1)
-    return -1;
-
-  if (SimpleID::typeOf(data.destId()) == SimpleID::UserId)
-    addUser(data.destId());
+//  if (addUser(data.senderId) == -1)
+//    return -1;
+//
+//  if (SimpleID::typeOf(data.destId()) == SimpleID::UserId)
+//    addUser(data.destId());
 
   if (data.text.isEmpty())
     return update(status, data);
@@ -103,119 +77,6 @@ qint64 HistoryDB::add(int status, const MessageData &data)
     return -1;
 
   return query.lastInsertId().toLongLong();
-}
-
-
-/*!
- * Добавление пользователя в базу данных.
- */
-qint64 HistoryDB::addUser(const QByteArray &id)
-{
-  ClientUser user;
-  if (!user)
-    return -1;
-
-  if (m_cache.contains(id))
-    return m_cache.value(id);
-
-  qint64 result = updateUser(id);
-  if (result != -1)
-    return result;
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  query.prepare(QLatin1String("INSERT INTO users (userId, nick, gender, host, status, userAgent) "
-                     "VALUES (:userId, :nick, :gender, :host, :status, :userAgent);"));
-
-  query.bindValue(QLatin1String(":userId"), id);
-  query.bindValue(QLatin1String(":nick"), user->nick());
-  query.bindValue(QLatin1String(":gender"), user->gender().raw());
-  query.bindValue(QLatin1String(":host"), user->host());
-  query.bindValue(QLatin1String(":status"), user->statusToString());
-  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
-    return -1;
-
-  query.exec(QLatin1String("SELECT last_insert_rowid();"));
-  if (!query.first())
-    return -1;
-
-  result = query.value(0).toLongLong();
-  m_cache[id] = result;
-  return result;
-}
-
-
-/*!
- * Обновление информации о пользователе.
- *
- * \param id Идентификатор пользователя.
- */
-qint64 HistoryDB::updateUser(const QByteArray &id)
-{
-  Q_UNUSED(id)
-//  ClientUser user = ChatCore::i()->client()->user(id);
-//  if (!user)
-//    return -1;
-//
-//  qint64 index = userId(id);
-//  if (index == -1)
-//    return -1;
-//
-//  QSqlQuery query(QSqlDatabase::database(m_id));
-//
-//  query.prepare(QLatin1String("UPDATE users SET nick = :nick, gender = :gender, host = :host, status = :status, userAgent = :userAgent WHERE id = :id;"));
-//  query.bindValue(QLatin1String(":nick"), user->nick());
-//  query.bindValue(QLatin1String(":gender"), user->gender().raw());
-//  query.bindValue(QLatin1String(":host"), user->host());
-//  query.bindValue(QLatin1String(":status"), user->statusToString());
-//  query.bindValue(QLatin1String(":userAgent"), user->userAgent());
-//  query.bindValue(QLatin1String(":id"), index);
-//  query.exec();
-
-  return -1;
-}
-
-
-/*!
- * Загрузка последних сообщений в приватный разговор.
- */
-void HistoryDB::loadLast(PrivateTab *tab)
-{
-  QByteArray senderId = tab->id();
-  qint64 index = userId(senderId);
-  if (index == -1) {
-    addUser(senderId);
-    return;
-  }
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(QLatin1String("SELECT * FROM (SELECT id, messageId, senderId, destId, status, timestamp, command, text FROM messages WHERE destId = :destId OR senderId = :senderId AND destId = :myId ORDER BY id DESC LIMIT ")
-      + QString::number(m_lastMessages) + QLatin1String(") ORDER BY id;"));
-
-  query.bindValue(QLatin1String(":destId"), senderId);
-  query.bindValue(QLatin1String(":senderId"), senderId);
-  query.bindValue(QLatin1String(":myId"), QByteArray());
-  query.exec();
-
-  if (!query.isActive())
-    return;
-
-  ClientUser user;
-  if (!user)
-    return;
-
-  while (query.next()) {
-    QByteArray id;
-    MessageData data(query.value(2).toByteArray(), query.value(3).toByteArray(), query.value(6).toString(), query.value(7).toString());
-    data.timestamp = query.value(5).toULongLong();
-    data.id = query.value(1).toByteArray();
-
-//    HistoryUserMessage msg(query.value(4).toULongLong(), data);
-//    tab->chatView()->evaluateJavaScript(msg.js());
-  }
 }
 
 
@@ -306,15 +167,6 @@ void HistoryDB::synced(const QByteArray &channelId)
 //  query.bindValue(QLatin1String(":channelId"), channelId);
 //  query.bindValue(QLatin1String(":name"), channel->name());
 //  query.exec();
-}
-
-
-/*!
- * Обновление информации о пользователе, в случае если он находится в кэше.
- */
-void HistoryDB::updateUserData(const QByteArray &userId)
-{
-  updateUser(userId);
 }
 
 
