@@ -29,10 +29,7 @@ public:
   MasterNode(QObject *parent = 0);
 
 protected:
-  void accept(const AuthResult &result);
-  void notice(quint16 type);
   void reject(const AuthResult &result);
-  void release(SocketReleaseEvent *event);
 
 private:
   QHash<QByteArray, QString> m_hosts; ///< Таблица адресов пользователей, используется при авторизации клиентов с вторичного сервера.

@@ -44,7 +44,6 @@ HEADERS = \
     plugins/NodePlugin.h \
     plugins/StorageHooks.h \
     ServerChannel.h \
-    ServerUser.h \
     Sockets.h \
     Storage.h \
 
@@ -64,7 +63,6 @@ SOURCES = \
     plugins/NodePlugin.cpp \
     plugins/StorageHooks.cpp \
     ServerChannel.cpp \
-    ServerUser.cpp \
     Sockets.cpp \
     Storage.cpp \
 

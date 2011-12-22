@@ -36,41 +36,17 @@ public:
   };
 
   SlaveNode(QObject *parent = 0);
-//  bool add(ChatUser user, int authType, const QByteArray &authId);
   inline AbstractClient *uplink() { return m_uplink; }
   inline Mode mode() const { return m_mode; }
   int start();
 
-protected:
-  bool command();
-  bool readMessage();
-  bool readUserData();
-  void readPacket(int type);
-  void release(SocketReleaseEvent *event);
-
-private slots:
-  void uplinkAuth();
-  void uplinkPacketReady(int type);
-  void uplinkReady();
-  void uplinkStateChanged(int state, int previousState);
-
 private:
-  void reAuth();
   void split();
 
   bool uplinkRoute();
-  bool uplinkRouteUser(const QByteArray &id);
-  ChatChannel uplinkAddChannel();
-  void setMode(Mode mode);
-  void uplinkAuthReply();
-  void uplinkReadChannel();
-  void uplinkReadMessage();
-  void uplinkReadUserData();
-  void uplinkRejectMessage(const MessageData &msg, int reason);
 
   AbstractClient *m_uplink;              ///< Подключение к корневому серверу.
   Mode m_mode;                           ///< Режим работы сервера.
-  QHash<QByteArray, ChatUser> m_pending; ///< Таблица пользователей ожидающих авторизации.
 };
 
 #endif /* SLAVECORE_H_ */

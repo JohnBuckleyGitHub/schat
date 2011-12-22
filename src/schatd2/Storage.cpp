@@ -33,7 +33,6 @@
 #include "NodeLog.h"
 #include "Normalize.h"
 #include "plugins/StorageHooks.h"
-#include "ServerUser.h"
 #include "Settings.h"
 #include "Storage.h"
 
@@ -112,90 +111,6 @@ void Storage::addSlave(const QByteArray &id)
 
 
 /*!
- * Проверка на принадлежность пользователей одному вторичному серверу.
- * Если идентификаторы сокетов совпадают, значит, пользователи находятся на одном вторичном сервере.
- *
- * \return true если пользователи находятся на одном вторичном сервере или один или оба не являются валидными.
- * \bug Нарушена совместимость с вторичным сервером.
- */
-bool Storage::isSameSlave(const QByteArray &id1, const QByteArray &id2)
-{
-  ChatUser user1 = user(id1);
-  if (!user1)
-    return true;
-
-  ChatUser user2 = user(id2);
-  if (!user2)
-    return true;
-
-//  if (isAllowSlaves() && user1->socketId() == user2->socketId())
-//    return true;
-
-  return false;
-}
-
-
-/*!
- * Получение пользователя по идентификатору.
- *
- * \param id      Идентификатор пользователя.
- * \param offline true в случае если пользователь не найден, то будет произведена попытка получить его из базы.
- */
-ChatUser Storage::user(const QByteArray &id, bool offline) const
-{
-  if (m_users.contains(id))
-    return m_users.value(id);
-
-  if (!offline)
-    return ChatUser();
-
-  ChatUser user = m_db->user(id);
-  if (user && m_users.contains(user->id()))
-    return m_users.value(user->id());
-
-  return user;
-}
-
-
-/*!
- * Процедура авторизации анонимного пользователя во время работы.
- */
-LoginReply Storage::login(ChatUser user, const QString &name, const QByteArray &password)
-{
-  Q_UNUSED(user)
-
-  if (!m_serverData->is(ServerData::PasswordAuthSupport))
-    return LoginReply(Notice::ServiceUnavailable);
-
-  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
-    return LoginReply(Notice::BadRequest);
-
-  QString login = LoginReply::filter(name, m_serverData->name());
-  if (login.isEmpty())
-    return LoginReply(Notice::BadRequest);
-
-//  Account account = m_db->account(login);
-//  if (!account.isValid())
-//    return LoginReply(Notice::UserNotExists);
-//
-//  if (account.password() != password)
-//    return LoginReply(Notice::Forbidden);
-//
-  LoginReply reply(login);
-//  user->setAccount(login);
-//  user->groups().add("registered");
-//  m_db->update(user);
-
-//  if (user->id() != account.userId) {
-//    reply.setStatus(Notice::Conflict);
-//    return reply;
-//  }
-
-  return reply;
-}
-
-
-/*!
  * Создание идентификатора пользователя.
  */
 QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
@@ -207,75 +122,6 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
     prefix = "slave:";
 
   return SimpleID::make(prefix + m_serverData->privateId() + userId, SimpleID::UserId);
-}
-
-
-QList<QByteArray> Storage::users(const QByteArray &id)
-{
-  QList<QByteArray> out;
-  ChatUser user = this->user(id);
-  if (!user)
-    return out;
-
-  QList<QByteArray> channels = user->channels();
-
-  for (int i = 0; i < channels.size(); ++i) {
-    ChatChannel channel = this->channel(channels.at(i));
-    if (!channel)
-      continue;
-
-    foreach (QByteArray id, channel->channels().all()) {
-      if (!out.contains(id))
-        out.append(id);
-    }
-  }
-
-  return out;
-}
-
-
-/*!
- * Регистрация пользователя.
- *
- * \param user     Пользователь.
- * \param name     Имя аккаунта пользователя.
- * \param password Пароль.
- * \param data     JSON данные.
- */
-RegReply Storage::reg(ChatUser user, const QString &name, const QByteArray &password, const QVariant &data)
-{
-  if (!m_serverData->is(ServerData::PasswordAuthSupport))
-    return RegReply(Notice::ServiceUnavailable);
-
-  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
-    return RegReply(Notice::BadRequest);
-
-  QString login = RegReply::filter(name);
-  if (login.isEmpty())
-    return RegReply(Notice::BadRequest);
-
-  login += '@' + m_serverData->name();
-
-  qint64 result = m_db->reg(user, login, password, data);
-  if (result == -2)
-    return RegReply(Notice::UserAlreadyExists);
-
-  if (result == -1)
-    return RegReply(Notice::InternalError);
-
-  return RegReply(login);
-}
-
-
-void Storage::store(ChatUser user)
-{
-  m_db->add(user);
-}
-
-
-void Storage::update(ChatUser user)
-{
-  m_db->update(user);
 }
 
 

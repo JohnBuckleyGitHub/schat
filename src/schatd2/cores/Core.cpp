@@ -43,7 +43,6 @@
 #include "NodeMessages.h"
 #include "NodePlugins.h"
 #include "plugins/NodeHooks.h"
-#include "ServerUser.h"
 #include "Sockets.h"
 #include "Storage.h"
 
@@ -97,30 +96,6 @@ bool Core::route()
 
   Sockets::echoFilter(m_storage->channel(m_reader->sender(), SimpleID::UserId), sockets, m_reader->is(Protocol::EnableEcho));
   return send(sockets, m_readBuffer);
-}
-
-
-/*!
- * Отправка пакетов пользователю.
- */
-bool Core::send(ChatUser user, const QByteArray &packet, int option)
-{
-  if (!user)
-    return false;
-
-  return send(user->sockets(), QList<QByteArray>() << packet, option, user->id());
-}
-
-
-/*!
- * Отправка пакетов пользователю.
- */
-bool Core::send(ChatUser user, const QList<QByteArray> &packets, int option)
-{
-  if (!user)
-    return false;
-
-  return send(user->sockets(), packets, option, user->id());
 }
 
 
@@ -245,14 +220,6 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 void Core::packet(int type)
 {
   switch (type) {
-    case Protocol::MessagePacket:
-      message();
-      break;
-
-    case Protocol::UserDataPacket:
-      readUserData();
-      break;
-
     case Protocol::NoticePacket:
       notice(m_reader->get<quint16>());
       break;
@@ -366,68 +333,6 @@ void Core::reject(const AuthResult &result)
 }
 
 
-bool Core::readUserData()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return false;
-
-  UserReader reader(m_reader);
-  if (updateUserData(user, &reader.user)) {
-    route();
-    return true;
-  }
-
-  return false;
-}
-
-
-/*!
- * Обновление данных о пользователе.
- */
-bool Core::updateUserData(ChatUser user, User *other)
-{
-  Q_UNUSED(user)
-  Q_UNUSED(other)
-//  bool rename = false;
-
-//  if (user->nick() != other->nick()) {
-//    ChatUser u = m_storage->user(other->nick(), true);
-//    if (u && u != user)
-//      return false;
-//
-//    rename = true;
-//  }
-//
-//  user->gender().setRaw(other->gender().raw());
-//  if (rename) {
-//    user->setNick(other->nick());
-//    m_storage->rename(user);
-//  }
-
-  return true;
-}
-
-
-/*!
- * Обновление статуса пользователя.
- */
-bool Core::updateUserStatus()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return true;
-
-  if (!user->setStatus(m_messageData->text))
-    return true;
-
-  if (user->status() == Status::Offline)
-    user->setStatus(Status::Online);
-
-  return false;
-}
-
-
 /*!
  * Обработка физического отключения пользователя от сервера.
  */
@@ -459,49 +364,10 @@ bool Core::command()
   if (command.isEmpty())
     return false;
 
-  if (command == QLatin1String("status"))
-    return updateUserStatus();
-
-  if (command == QLatin1String("ready")) {
-    userReadyHook();
-    return true;
-  }
-
   if (command == QLatin1String("topic"))
     return readTopic();
 
   return false;
-}
-
-
-/*!
- * Чтение пакета Protocol::MessagePacket.
- */
-bool Core::message()
-{
-  MessageReader reader(m_reader);
-  m_messageData = &reader.data;
-
-  SCHAT_DEBUG_STREAM(this << "message()" << m_messageData->options);
-
-  if (SimpleID::typeOf(m_reader->dest()) == SimpleID::UserId && !m_storage->user(m_reader->dest())) {
-    rejectMessage(Notice::UserNotExists);
-    return false;
-  }
-
-  if (m_messageData->options & MessageData::ControlOption && command())
-    return true;
-
-  m_timestamp = DateTime::utc();
-
-  if (route()) {
-    acceptMessage();
-    return true;
-  }
-  else {
-    rejectMessage(Notice::InternalError);
-    return false;
-  }
 }
 
 
@@ -531,105 +397,6 @@ bool Core::readTopic()
 
 
 /*!
- * Подтверждение доставки сообщения.
- */
-void Core::acceptMessage(int status)
-{
-  if (m_messageData->id.isEmpty())
-    return;
-
-  if (status == Notice::UserOffline) {
-    Notice notice(m_reader->dest(), m_reader->sender(), "msg.accepted", m_timestamp, m_messageData->id);
-    notice.setStatus(status);
-
-    QList<QByteArray> packets;
-    packets.append(m_readBuffer);
-    packets.append(notice.data(m_sendStream));
-    send(m_storage->user(m_reader->sender()), packets);
-  }
-
-  acceptedMessageHook(status);
-}
-
-
-/*!
- * Отклонение сообщения.
- */
-void Core::rejectMessage(int status)
-{
-  SCHAT_DEBUG_STREAM("rejectMessage()" << status)
-
-  if (m_messageData->id.isEmpty())
-    return;
-
-  if (status == Notice::UserNotExists && m_plugins->has(NodeHook::OfflineDelivery)) {
-    ChatUser user = m_storage->user(m_reader->dest(), true);
-    if (user) {
-      acceptMessage(Notice::UserOffline);
-      return;
-    }
-  }
-
-  Notice notice(m_reader->dest(), m_reader->sender(), "msg.rejected", m_timestamp, m_messageData->id);
-  notice.setStatus(status);
-  send(m_storage->user(m_reader->sender()), notice.data(m_sendStream));
-}
-
-
-/*!
- * Процедура авторизации анонимного пользователя во время работы.
- * В случае если пользователь успешно авторизирован, но текущий идентификатор
- * не совпадает с зарегистрированным, то пользователь будет принудительно отключен от сервера.
- *
- * В ответ клиенту высылается уведомление "login.reply"
- *
- * \sa Storage::login().
- */
-bool Core::login()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return false;
-
-  LoginReply reply = m_storage->login(user, m_notice->text(), m_reader->dest());
-  Notice notice(m_reader->dest(), user->id(), "login.reply", DateTime::utc(), m_notice->id());
-  notice.setStatus(reply.status());
-  notice.setText(reply.name());
-
-  int option = NewPacketsEvent::NoSocketOption;
-  if (notice.status() == Notice::Conflict && !m_storage->isSlave(m_packetsEvent->channelId()))
-    option = NewPacketsEvent::KillSocketOption;
-
-  send(user, notice.data(m_sendStream), option);
-  return true;
-}
-
-
-/*!
- * Обработка запроса на авторизацию.
- * В ответ клиенту высылается уведомление "reg.reply".
- * \todo Добавить корректное уведомление об ошибке если этот идентификатор пользователя уже зарегистрирован.
- */
-bool Core::reg()
-{
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return false;
-
-  RegReply reply = m_storage->reg(user, m_notice->text(), m_reader->dest(), m_notice->json());
-  Notice notice(m_reader->dest(), user->id(), "reg.reply", DateTime::utc(), m_notice->id());
-  notice.setStatus(reply.status());
-  notice.setText(reply.name());
-
-  send(user, notice.data(m_sendStream));
-  if (reply.status() == Notice::OK)
-    login();
-
-  return true;
-}
-
-
-/*!
  * Чтение пакетов типа Protocol::NoticePacket.
  * \sa Notice.
  */
@@ -639,27 +406,14 @@ void Core::notice(quint16 type)
     Notice notice(type, m_reader);
     m_notice = &notice;
 
-    if (!m_notice->isValid()) {
-      rejectNotice(Notice::BadRequest);
-      return;
-    }
 
     QString command = m_notice->command();
     SCHAT_LOG_TRACE(<< "NOTICE PACKET" << command << notice.text() << notice.raw());
 
-    if (command == "reg")
-      reg();
-
-    else if (command == "login")
-      login();
 
 //    else if (command == "leave")
 //      leave(m_storage->channel(m_reader->sender()), m_packetsEvent->socket());
 
-    else {
-      route();
-      return;
-    }
   }
   else {
     if (NodeNoticeReader::read(type, m_reader))
@@ -669,48 +423,4 @@ void Core::notice(quint16 type)
   }
 
   route();
-}
-
-
-/*!
- * Отклонение входящего пакета Notice.
- *
- * \param status Причина отклонения, \sa Notice::StatusCodes.
- */
-void Core::rejectNotice(int status)
-{
-  if (SimpleID::typeOf(m_notice->id()) != SimpleID::MessageId)
-    return;
-
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return;
-
-  Notice notice(id(), m_reader->sender(), m_notice->command(), DateTime::utc(), m_notice->id());
-  notice.setStatus(status);
-  send(user, notice.data(m_sendStream));
-}
-
-
-void Core::acceptedMessageHook(int reason)
-{
-  if (!m_plugins)
-    return;
-
-  MessageHook hook(m_messageData, m_timestamp, reason);
-  m_plugins->hook(hook);
-}
-
-
-void Core::userReadyHook()
-{
-  if (!m_plugins)
-    return;
-
-  ChatUser user = m_storage->user(m_reader->sender());
-  if (!user)
-    return;
-
-  UserReadyHook hook(user, m_messageData->text, m_reader->dest());
-  m_plugins->hook(hook);
 }

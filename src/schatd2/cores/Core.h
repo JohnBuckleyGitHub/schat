@@ -24,7 +24,6 @@
 #include <QVariant>
 
 #include "ServerChannel.h"
-#include "ServerUser.h"
 
 class AuthResult;
 class MessageData;
@@ -49,8 +48,6 @@ public:
 
   // Функции отправки пакетов.
   virtual bool route();
-  virtual bool send(ChatUser user, const QByteArray &packet, int option = 0);
-  virtual bool send(ChatUser user, const QList<QByteArray> &packets, int option = 0);
   virtual bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
   virtual bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
 
@@ -81,26 +78,14 @@ protected:
   virtual void reject(const AuthResult &result);
 
   // users.
-  bool readUserData();
-  bool updateUserData(ChatUser user, User *other);
-  bool updateUserStatus();
   void release(SocketReleaseEvent *event);
 
   // messages.
   bool command();
-  bool message();
   bool readTopic();
-  void acceptMessage(int status = 200);
-  void rejectMessage(int status);
 
   // notices.
-  bool login();
-  bool reg();
   virtual void notice(quint16 type);
-  void rejectNotice(int status);
-
-  virtual void acceptedMessageHook(int reason);
-  virtual void userReadyHook();
 
   MessageData *m_messageData;         ///< Текущий прочитанный объект MessageData.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.

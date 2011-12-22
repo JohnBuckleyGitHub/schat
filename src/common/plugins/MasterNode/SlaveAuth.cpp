@@ -30,30 +30,6 @@ SlaveAuth::SlaveAuth(MasterNode *node)
 }
 
 
-AuthResult SlaveAuth::auth(const AuthRequest &data)
-{
-  qDebug() << "SLAVE AUTH";
-  if (Storage::i()->serverData()->privateId() != data.privateId)
-    return AuthResult(Notice::Forbidden, data.id);
-
-  AuthResult result = AnonymousAuth::auth(data);
-  if (result.action == AuthResult::Accept) {
-    Storage *storage = Storage::i();
-    QList<QByteArray> slaves = storage->slaves();
-
-    for (int i = 0; i < slaves.size(); ++i) { // Вторичные серверы не могут использовать один номер сервера.
-      ChatUser slave = storage->user(slaves.at(i));
-      if (slave && slave->gender().raw() == data.gender)
-        return AuthResult(Notice::Forbidden, data.id);
-    }
-
-    Storage::i()->addSlave(result.id);
-  }
-
-  return result;
-}
-
-
 int SlaveAuth::type() const
 {
   return AuthRequest::SlaveNode;
