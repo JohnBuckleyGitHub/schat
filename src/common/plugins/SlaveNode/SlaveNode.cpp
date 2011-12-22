@@ -23,7 +23,6 @@
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/ChannelPacket.h"
-#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "NodePlugins.h"
 #include "Settings.h"

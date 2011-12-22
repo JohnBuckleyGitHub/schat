@@ -19,8 +19,6 @@
 #ifndef NODEHOOKS_H_
 #define NODEHOOKS_H_
 
-class MessageData;
-
 class NodeHook
 {
 public:
@@ -40,27 +38,6 @@ protected:
   {}
 
   Type m_type;
-};
-
-
-class MessageHook : public NodeHook
-{
-public:
-  MessageHook(MessageData *data, qint64 timestamp, int status)
-  : NodeHook(AcceptedMessage)
-  , m_status(status)
-  , m_data(data)
-  , m_timestamp(timestamp)
-  {}
-
-  inline int status() const { return m_status; }
-  inline MessageData *data() const { return m_data; }
-  inline qint64 timestamp() const { return m_timestamp; }
-
-protected:
-  int m_status;
-  MessageData *m_data;
-  qint64 m_timestamp;
 };
 
 #endif /* NODEHOOKS_H_ */

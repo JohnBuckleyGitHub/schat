@@ -27,7 +27,6 @@
 #include "debugstream.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
@@ -37,7 +36,6 @@ AbstractClientPrivate::AbstractClientPrivate()
   , previousState(AbstractClient::ClientOffline)
   , sendLock(false)
   , channel(new Channel())
-//  , user(new User())
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
@@ -249,16 +247,6 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
 
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
   return true;
-}
-
-
-/*!
- * Отправка сообщения.
- */
-bool AbstractClient::send(const MessageData &data, bool echo)
-{
-  Q_D(AbstractClient);
-  return send(MessageWriter(d->sendStream, data, echo).data());
 }
 
 

@@ -27,7 +27,6 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
-#include "net/packets/messages.h"
 #include "text/HtmlFilter.h"
 #include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"

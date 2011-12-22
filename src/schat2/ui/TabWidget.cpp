@@ -37,7 +37,6 @@
 #include "messages/ChannelMessage.h"
 #include "messages/ServiceMessage.h"
 #include "net/packets/MessagePacket.h"
-#include "net/packets/messages.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "ui/MainToolBar.h"

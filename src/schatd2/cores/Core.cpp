@@ -31,7 +31,6 @@
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/ChannelPacket.h"
-#include "net/packets/messages.h"
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
@@ -346,52 +345,6 @@ void Core::release(SocketReleaseEvent *event)
   NodeNoticeReader::release(user, event->socket());
 
   m_storage->gc(user);
-}
-
-
-/*!
- * Обработка команд.
- *
- * \return true в случае если команда была обработана, иначе false.
- * \deprecated Сервер больше не должен интерпретировать команды в сообщениях.
- */
-bool Core::command()
-{
-  QString command = m_messageData->command;
-  SCHAT_DEBUG_STREAM(this << "command()" << command << SimpleID::encode(m_packetsEvent->channelId()))
-
-  if (command.isEmpty())
-    return false;
-
-  if (command == QLatin1String("topic"))
-    return readTopic();
-
-  return false;
-}
-
-
-/*!
- * Чтение команды изменения топика.
- * Если топик был изменён функция возвратит false для того чтобы команда
- * была отослана дальше.
- */
-bool Core::readTopic()
-{
-  return true;
-//  if (SimpleID::typeOf(m_reader->dest()) != SimpleID::ChannelId)
-//    return true;
-//
-//  ChatChannel channel = m_storage->channel(m_reader->dest());
-//  if (!channel)
-//    return true;
-//
-//  if (channel->topic().topic == m_messageData->text)
-//    return true;
-//
-//  m_timestamp = Storage::timestamp();
-//  channel->setTopic(m_messageData->text, m_reader->sender(), m_timestamp);
-//  m_storage->update(channel);
-//  return false;
 }
 
 
