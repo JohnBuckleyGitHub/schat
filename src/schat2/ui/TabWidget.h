@@ -64,6 +64,9 @@ public:
 signals:
   void pageChanged(int type, bool visible);
 
+public slots:
+  void closeTab(int index);
+
 protected:
   bool event(QEvent *event);
   void changeEvent(QEvent *event);
@@ -71,7 +74,6 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void closeTab(int index);
   void currentChanged(int index);
   void notify(const Notify &notify);
   void openTab();
@@ -83,7 +85,6 @@ private slots:
 
 private:
   int addChatTab(AbstractTab *tab);
-  void closeWelcome();
   void createToolBars();
   void lastTab();
   void retranslateUi();
