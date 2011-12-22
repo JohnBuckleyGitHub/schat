@@ -71,6 +71,9 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
   connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(channel(const QByteArray &)));
+
+  m_chatView->add(ServiceMessage::joined(ChatClient::id()));
 }
 
 
@@ -82,6 +85,15 @@ void ChannelTab::setOnline(bool online)
   }
 
   ChannelBaseTab::setOnline(online);
+}
+
+
+void ChannelTab::channel(const QByteArray &id)
+{
+  if (this->id() != id)
+    return;
+
+  m_chatView->add(ServiceMessage::joined(ChatClient::id()));
 }
 
 
@@ -109,7 +121,9 @@ void ChannelTab::joined(const QByteArray &channel, const QByteArray &user)
     return;
 
   m_userView->add(ChatClient::channels()->get(user));
-  m_chatView->add(ServiceMessage::joined(user));
+
+  if (ChatClient::id() != user)
+    m_chatView->add(ServiceMessage::joined(user));
 }
 
 

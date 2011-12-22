@@ -39,11 +39,11 @@ public:
   void setOnline(bool online = true);
 
 private slots:
+  void channel(const QByteArray &id);
   void channels(const QList<QByteArray> &channels);
   void joined(const QByteArray &channel, const QByteArray &user);
   void part(const QByteArray &channel, const QByteArray &user);
   void quit(const QByteArray &user);
-
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
