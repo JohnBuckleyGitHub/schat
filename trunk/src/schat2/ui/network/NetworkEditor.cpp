@@ -40,6 +40,7 @@ NetworkEditor::NetworkEditor(QWidget *parent, EditorLayout layout)
   m_manager = ChatCore::i()->networks();
   m_network = new NetworkWidget(this);
   m_anonymous = new QCheckBox(this);
+  m_anonymous->setVisible(false);
 
   if (m_layout & ConnectButtonLayout) {
     m_connect = new QPushButton(this);

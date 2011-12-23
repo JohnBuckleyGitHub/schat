@@ -43,7 +43,6 @@ AbstractClientPrivate::AbstractClientPrivate()
 {
   Account account;
   channel->setAccount(&account);
-//  user->setUserAgent(SimpleID::userAgent()); /// \bug !!!
 }
 
 
@@ -80,10 +79,6 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     channel->setId(reply.userId);
     channel->account()->setName(reply.account);
     channel->account()->setCookie(reply.cookie);
-
-//    user->setId(reply.userId);
-//    user->setServerNumber(reply.serverData.number()); /// \bug !!!
-//    user->setAccount(reply.account); /// \bug !!!
 
     cookie = reply.cookie;
     pool->setLast();
