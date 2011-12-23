@@ -76,7 +76,7 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChannelsImpl(this);
   new Hooks::ClientImpl(this);
 
-  new Hooks::ChannelMenu(this);
+//  new Hooks::ChannelMenu(this);
   new Hooks::ChannelMenuImpl(this);
   new Hooks::UserMenuImpl(this);
 
