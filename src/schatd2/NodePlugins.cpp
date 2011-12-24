@@ -31,8 +31,6 @@ NodePlugins::NodePlugins(QObject *parent)
   , m_core(0)
 {
   m_kernelId = Storage::i()->settings()->value(QLatin1String("Kernel")).toString();
-  if (!m_kernelId.isEmpty())
-    addProvider(m_kernelId);
 }
 
 
@@ -63,11 +61,11 @@ HookResult NodePlugins::hook(const NodeHook &data)
 
 void NodePlugins::init()
 {
-  if (!m_kernelId.isEmpty() && m_providers.value(m_kernelId)) {
-    NodeKernelApi *api = qobject_cast<NodeKernelApi *>(m_providers.value(m_kernelId)->plugin());
-    m_core = api->init();
-    m_core->setPlugins(this);
-  }
+//  if (!m_kernelId.isEmpty() && m_providers.value(m_kernelId)) {
+//    NodeKernelApi *api = qobject_cast<NodeKernelApi *>(m_providers.value(m_kernelId)->plugin());
+//    m_core = api->init();
+//    m_core->setPlugins(this);
+//  }
 
   for (int i = 0; i < m_sorted.size(); ++i) {
     NodeApi *api = qobject_cast<NodeApi *>(m_plugins.value(m_sorted.at(i))->plugin());

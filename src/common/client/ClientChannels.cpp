@@ -196,7 +196,6 @@ void ClientChannels::notice(int type)
 
 void ClientChannels::restore()
 {
-  qDebug() << "** RESTORE **";
   foreach (QByteArray id, m_joined) {
     join(id);
   }
@@ -205,7 +204,6 @@ void ClientChannels::restore()
 
 void ClientChannels::setup()
 {
-  qDebug() << "** SETUP **";
   m_channels.clear();
   m_synced.clear();
   m_unsynced.clear();

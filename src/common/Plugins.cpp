@@ -23,6 +23,7 @@
 
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
+#include "SimpleJSon.h"
 
 /*!
  * Загружает плагин с именем \p fileName.
@@ -31,7 +32,6 @@
  */
 PluginItem::PluginItem(const QString &fileName)
   : m_valid(false)
-  , m_api(0)
   , m_plugin(0)
 {
   m_loader.setFileName(fileName);
@@ -42,14 +42,18 @@ PluginItem::PluginItem(const QString &fileName)
   if (!m_plugin)
     return;
 
-  m_api = qobject_cast<CoreApi *>(m_plugin);
-  if (!m_api)
+  CoreApi *api = qobject_cast<CoreApi *>(m_plugin);
+  if (!api)
     return;
 
-  if (m_api->id().isEmpty() || m_api->name().isEmpty())
+  m_header = api->header();
+  if (m_header.value("Id").toString().isEmpty())
     return;
 
-  qDebug() << "ITEM CREATED" << m_api->id() << m_api->version();
+  if (m_header.value("Name").toString().isEmpty())
+    return;
+
+  qDebug() << "PLUGIN ITEM CREATED" << SimpleJSon::generate(m_header);
   m_valid = true;
 }
 
@@ -61,33 +65,9 @@ PluginItem::~PluginItem()
 }
 
 
-QString PluginItem::id() const
-{
-  if (isValid())
-    return m_api->id();
-
-  return QString();
-}
-
-
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
-}
-
-
-/*!
- * Добавляет провайдера в список поддерживаемых,
- * эта функция должна вызываться до загрузки плагинов.
- */
-bool Plugins::addProvider(const QString &name)
-{
-  if (m_providers.contains(name) || m_providersList.contains(name))
-    return false;
-
-  m_providers.insert(name, 0);
-  m_providersList.append(name);
-  return true;
 }
 
 
@@ -103,7 +83,6 @@ void Plugins::load()
     load(path);
   }
 
-  sort();
   init();
 }
 
@@ -113,26 +92,10 @@ void Plugins::load()
  *
  * \return true если плагин прошёл проверку.
  */
-bool Plugins::checkPlugin(PluginItem *plugin)
+bool Plugins::check(PluginItem *plugin)
 {
   if (m_plugins.contains(plugin->id()))
     return false;
-
-  QStringList provides = plugin->api()->provides();
-  if (provides.isEmpty())
-    return true;
-
-  QString provider;
-  for (int i = 0; i < provides.size(); ++i) {
-    provider = provides.at(i);
-    if (!m_providers.contains(provider))
-      return false;
-
-    if (m_providers.value(provider))
-      return false;
-
-    m_providers[provider] = plugin;
-  }
 
   return true;
 }
@@ -166,7 +129,7 @@ void Plugins::load(const QString &path)
       continue;
     }
 
-    if (!checkPlugin(item)) {
+    if (!check(item)) {
       delete item;
       continue;
     }
@@ -174,31 +137,4 @@ void Plugins::load(const QString &path)
     m_plugins[item->id()] = item;
     m_sorted.append(item->id());
   }
-}
-
-
-/*!
- * Выполняет сортировку списка плагинов.
- */
-void Plugins::sort()
-{
-  if (m_providersList.isEmpty())
-    return;
-
-  PluginItem *item = 0;
-
-  for (int i = m_providersList.size() - 1; i >= 0; --i) {
-    item = m_providers.value(m_providersList.at(i));
-    if (!item)
-      continue;
-
-    int index = m_sorted.indexOf(item->id());
-    if (index == -1)
-      continue;
-
-    m_sorted.swap(0, index);
-  }
-
-  m_providersList.clear();
-  qDebug() << m_sorted;
 }

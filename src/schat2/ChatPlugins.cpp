@@ -32,32 +32,6 @@ ChatPlugins::ChatPlugins(QObject *parent)
   , m_core(ChatCore::i())
   , m_settings(ChatCore::i()->settings())
 {
-  addProvider(QLatin1String("History"));
-}
-
-
-void ChatPlugins::hook(const HookData &data)
-{
-  if (!m_hooks.contains(data.type()))
-    return;
-
-  QList<ChatPlugin *> list = m_hooks.value(data.type());
-  for (int i = 0; i < list.size(); ++i) {
-    list.at(i)->hook(data);
-  }
-}
-
-
-ChatPlugin *ChatPlugins::provider(const QString &id) const
-{
-  if (!m_providers.value(id))
-    return 0;
-
-  ChatApi *api = qobject_cast<ChatApi *>(m_providers.value(id)->plugin());
-  if (!api)
-    return 0;
-
-  return api->plugin();
 }
 
 
@@ -77,16 +51,5 @@ void ChatPlugins::init()
       continue;
 
     m_chatPlugins.append(plugin);
-    connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), plugin, SLOT(settingsChanged(const QString &, const QVariant &)));
-
-    QList<HookData::Type> hooks = plugin->hooks();
-    if (hooks.isEmpty())
-      continue;
-
-    foreach (HookData::Type hook, hooks) {
-      m_hooks[hook].append(plugin);
-    }
   }
-
-  m_history = qobject_cast<AbstractHistory *>(provider(QLatin1String("History")));
 }

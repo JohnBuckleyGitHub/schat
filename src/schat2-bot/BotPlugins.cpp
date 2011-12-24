@@ -27,8 +27,6 @@ BotPlugins::BotPlugins(QObject *parent)
 {
   m_client = new SimpleClient(this);
   m_locations = new FileLocations(this);
-
-  addProvider("BotCore");
 }
 
 

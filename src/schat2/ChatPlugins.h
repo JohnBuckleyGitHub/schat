@@ -36,9 +36,6 @@ class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 
 public:
   ChatPlugins(QObject *parent = 0);
-  ChatPlugin *provider(const QString &id) const;
-  inline AbstractHistory *history() { return m_history; }
-  void hook(const HookData &data);
 
 protected:
   void init();
@@ -47,7 +44,6 @@ private:
   AbstractHistory *m_history;
   ChatCore *m_core;
   ChatSettings *m_settings;
-  QHash<HookData::Type, QList<ChatPlugin *> > m_hooks;
   QList<ChatPlugin *> m_chatPlugins;
 };
 
