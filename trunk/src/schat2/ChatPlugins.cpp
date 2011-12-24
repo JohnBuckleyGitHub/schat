@@ -20,17 +20,13 @@
 
 #include "ChatCore.h"
 #include "ChatPlugins.h"
-#include "ChatSettings.h"
-#include "plugins/AbstractHistory.h"
 #include "plugins/ChatApi.h"
 #include "plugins/ChatPlugin.h"
 #include "plugins/CoreApi.h"
 
 ChatPlugins::ChatPlugins(QObject *parent)
   : Plugins(parent)
-  , m_history(0)
   , m_core(ChatCore::i())
-  , m_settings(ChatCore::i()->settings())
 {
 }
 

@@ -20,15 +20,12 @@
 #define CHATPLUGINS_H_
 
 #include "Plugins.h"
-#include "plugins/HookData.h"
 
 #include <QDebug>
 
-class AbstractHistory;
 class ChatCore;
 class ChatPlugin;
 class ChatSettings;
-class MessageData;
 
 class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 {
@@ -41,9 +38,7 @@ protected:
   void init();
 
 private:
-  AbstractHistory *m_history;
   ChatCore *m_core;
-  ChatSettings *m_settings;
   QList<ChatPlugin *> m_chatPlugins;
 };
 

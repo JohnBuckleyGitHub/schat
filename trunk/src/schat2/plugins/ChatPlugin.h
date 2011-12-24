@@ -22,10 +22,8 @@
 #include <QObject>
 
 #include "schat.h"
-#include "plugins/HookData.h"
 
 class ChatCore;
-class MessageData;
 
 class SCHAT_CORE_EXPORT ChatPlugin : public QObject
 {
@@ -33,11 +31,6 @@ class SCHAT_CORE_EXPORT ChatPlugin : public QObject
 
 public:
   ChatPlugin(ChatCore *core);
-  virtual QList<HookData::Type> hooks() const { return QList<HookData::Type>(); }
-  virtual void hook(const HookData & /*data*/) {}
-
-public slots:
-  virtual void settingsChanged(const QString & /*key*/, const QVariant & /*value*/) {}
 
 protected:
   ChatCore *m_core;
