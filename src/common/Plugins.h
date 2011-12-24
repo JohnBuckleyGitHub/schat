@@ -65,6 +65,7 @@ protected:
   virtual void init() {}
 
   QHash<QString, PluginItem *> m_plugins;   ///< Таблица плагинов.
+  QString m_type;                           ///< Тип плагинов, загрузка которых разрешена.
   QStringList m_sorted;                     ///< Сортированный список плагинов, этот список определяет очерёдность загрузки наследниками этого класса.
 
 private:

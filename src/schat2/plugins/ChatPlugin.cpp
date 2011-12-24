@@ -16,11 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
 #include "plugins/ChatPlugin.h"
 
-ChatPlugin::ChatPlugin(ChatCore *core)
-  : QObject(core)
-  , m_core(core)
+ChatPlugin::ChatPlugin(QObject *parent)
+  : QObject(parent)
 {
 }

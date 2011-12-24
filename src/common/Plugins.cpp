@@ -97,6 +97,9 @@ bool Plugins::check(PluginItem *plugin)
   if (m_plugins.contains(plugin->id()))
     return false;
 
+  if (m_type != plugin->header().value("Type").toString())
+    return false;
+
   return true;
 }
 
