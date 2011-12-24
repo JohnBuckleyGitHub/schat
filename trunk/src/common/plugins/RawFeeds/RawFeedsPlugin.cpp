@@ -18,12 +18,14 @@
 
 #include <QtPlugin>
 
+#include "RawFeedsCmd.h"
 #include "RawFeedsPlugin.h"
 #include "RawFeedsPlugin_p.h"
 
 RawFeeds::RawFeeds(QObject *parent)
   : ChatPlugin(parent)
 {
+  new Hooks::RawFeedsCmd(this);
 }
 
 

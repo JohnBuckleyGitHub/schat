@@ -16,30 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CACHEPLUGIN_H_
-#define CACHEPLUGIN_H_
+#ifndef RAWFEEDSCMD_H_
+#define RAWFEEDSCMD_H_
 
-#include "ChatApi.h"
-#include "CoreApi.h"
+#include "client/ClientHooks.h"
 
-class CachePlugin : public QObject, CoreApi, ChatApi
+class RawFeeds;
+
+namespace Hooks
+{
+
+class RawFeedsCmd : public Messages
 {
   Q_OBJECT
-  Q_INTERFACES(CoreApi ChatApi)
 
 public:
-  virtual QVariantMap header() const
-  {
-    QVariantMap out = CoreApi::header();
-    out["Id"]      = "cache";
-    out["Name"]    = "Cache";
-    out["Version"] = "0.1.0";
-    out["Desc"]    = "Client Cache";
-
-    return out;
-  }
-
-  ChatPlugin *create();
+  RawFeedsCmd(RawFeeds *parent);
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
 };
 
-#endif /* CACHEPLUGIN_H_ */
+} // namespace Hooks
+
+#endif /* RAWFEEDSCMD_H_ */
