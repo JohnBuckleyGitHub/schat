@@ -16,16 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEEDPACKET_H_
-#define FEEDPACKET_H_
+#ifndef NODEFEEDS_H_
+#define NODEFEEDS_H_
 
-#include "net/packets/Notice.h"
+#include "NodeNoticeReader.h"
 
-class SCHAT_EXPORT FeedPacket : public Notice
+class FeedPacket;
+
+class SCHAT_EXPORT NodeFeeds : public NodeNoticeReader
 {
 public:
-  FeedPacket();
-  FeedPacket(quint16 type, PacketReader *reader);
+  NodeFeeds(Core *core);
+
+protected:
+  bool read(PacketReader *reader);
+
+  FeedPacket *m_packet;
 };
 
-#endif /* FEEDPACKET_H_ */
+#endif /* NODEFEEDS_H_ */
