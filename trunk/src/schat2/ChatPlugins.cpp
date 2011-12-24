@@ -16,9 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <debugstream.h>
-
-#include "ChatCore.h"
 #include "ChatPlugins.h"
 #include "plugins/ChatApi.h"
 #include "plugins/ChatPlugin.h"
@@ -26,8 +23,8 @@
 
 ChatPlugins::ChatPlugins(QObject *parent)
   : Plugins(parent)
-  , m_core(ChatCore::i())
 {
+  m_type = "chat";
 }
 
 
@@ -42,7 +39,7 @@ void ChatPlugins::init()
     if (!api)
       continue;
 
-    ChatPlugin *plugin = api->init(m_core);
+    ChatPlugin *plugin = api->create();
     if (!plugin)
       continue;
 

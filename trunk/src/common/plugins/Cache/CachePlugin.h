@@ -40,7 +40,7 @@ public:
     return out;
   }
 
-  ChatPlugin *init(ChatCore *core);
+  ChatPlugin *create();
 };
 
 #endif /* CACHEPLUGIN_H_ */

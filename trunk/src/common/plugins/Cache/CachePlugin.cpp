@@ -22,8 +22,8 @@
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
 
-Cache::Cache(ChatCore *core)
-  : ChatPlugin(core)
+Cache::Cache(QObject *parent)
+  : ChatPlugin(parent)
 {
 }
 
@@ -34,9 +34,9 @@ void Cache::close()
 }
 
 
-ChatPlugin *CachePlugin::init(ChatCore *core)
+ChatPlugin *CachePlugin::create()
 {
-  m_plugin = new Cache(core);
+  m_plugin = new Cache(this);
   return m_plugin;
 }
 

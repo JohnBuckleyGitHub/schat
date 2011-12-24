@@ -23,17 +23,12 @@
 
 #include "schat.h"
 
-class ChatCore;
-
 class SCHAT_CORE_EXPORT ChatPlugin : public QObject
 {
   Q_OBJECT
 
 public:
-  ChatPlugin(ChatCore *core);
-
-protected:
-  ChatCore *m_core;
+  ChatPlugin(QObject *parent);
 };
 
 #endif /* CHATPLUGIN_H_ */

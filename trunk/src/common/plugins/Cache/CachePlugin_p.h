@@ -26,7 +26,7 @@ class Cache : public ChatPlugin
   Q_OBJECT
 
 public:
-  Cache(ChatCore *core);
+  Cache(QObject *parent);
 
 private:
   void close();

@@ -21,11 +21,7 @@
 
 #include "Plugins.h"
 
-#include <QDebug>
-
-class ChatCore;
 class ChatPlugin;
-class ChatSettings;
 
 class SCHAT_CORE_EXPORT ChatPlugins : public Plugins
 {
@@ -38,7 +34,6 @@ protected:
   void init();
 
 private:
-  ChatCore *m_core;
   QList<ChatPlugin *> m_chatPlugins;
 };
 

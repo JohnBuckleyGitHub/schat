@@ -28,13 +28,13 @@ class ChatApi
 {
 public:
   virtual ~ChatApi() {}
-  virtual ChatPlugin *init(ChatCore *core) = 0;
+  virtual ChatPlugin *create() = 0;
   inline ChatPlugin *plugin() const { return m_plugin; }
 
 protected:
   ChatPlugin *m_plugin;
 };
 
-Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.0");
+Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.1");
 
 #endif /* CHATAPI_H_ */
