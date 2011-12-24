@@ -25,6 +25,7 @@
 #include "Channel.h"
 
 class ClientChannels;
+class ClientFeeds;
 class ClientMessages;
 class SimpleClient;
 
@@ -52,6 +53,7 @@ public:
   inline static ChatClient *i()            { return m_self; }
   inline static ClientChannel channel()    { return m_self->getChannel(); }
   inline static ClientChannels *channels() { return m_self->m_channels; }
+  inline static ClientFeeds *feeds()       { return m_self->m_feeds; }
   inline static ClientMessages *messages() { return m_self->m_messages; }
   inline static int state()                { return m_self->getState(); }
   inline static QByteArray id()            { return m_self->getId(); }
@@ -80,6 +82,7 @@ private:
   QByteArray getServerId();
 
   ClientChannels *m_channels; ///< Каналы.
+  ClientFeeds *m_feeds;       ///< Обработчик фидов.
   ClientMessages *m_messages; ///< Обработчик сообщений.
   Hooks::Client *m_hooks;     ///< Хуки.
   SimpleClient *m_client;     ///< Клиент чата.

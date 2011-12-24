@@ -18,6 +18,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -33,6 +34,7 @@ ChatClient::ChatClient(QObject *parent)
 
   m_channels = new ClientChannels(this);
   m_messages = new ClientMessages(this);
+  m_feeds = new ClientFeeds(this);
 
   m_hooks = new Hooks::Client(this);
 

@@ -36,7 +36,8 @@ public:
   enum Type {
     GenericType = 103,  ///< 'g'
     ChannelType = 99,   ///< 'c'
-    MessageType = 109   ///< 'm'
+    MessageType = 109,  ///< 'm'
+    FeedType    = 102   ///< 'f'
   };
 
   /// Дополнительные поля данных.
