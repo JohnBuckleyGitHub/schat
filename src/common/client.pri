@@ -37,6 +37,7 @@ HEADERS += \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/ChannelPacket.h \
+    net/packets/FeedPacket.h \
     net/packets/MessagePacket.h \
     net/packets/Notice.h \
     net/PacketWriter.h \
@@ -75,6 +76,7 @@ SOURCES += \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/ChannelPacket.cpp \
+    net/packets/FeedPacket.cpp \
     net/packets/MessagePacket.cpp \
     net/packets/Notice.cpp \
     net/ServerData.cpp \
@@ -94,6 +96,7 @@ SOURCES += \
     client/ChatClient.h \
     client/ClientChannels.h \
     client/ClientCmd.h \
+    client/ClientFeeds.h \
     client/ClientHooks.h \
     client/ClientMessages.h \
     client/SimpleClient.h \
@@ -103,6 +106,7 @@ SOURCES += \
     client/ChatClient.cpp \
     client/ClientChannels.cpp \
     client/ClientCmd.cpp \
+    client/ClientFeeds.cpp \
     client/ClientHooks.cpp \
     client/ClientMessages.cpp \
     client/SimpleClient.cpp \
