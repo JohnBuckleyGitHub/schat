@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QStringList>
 
+#include <QVariant>
+
 #include "version.h"
 
 /*!
@@ -33,17 +35,22 @@ class CoreApi
 {
 public:
   virtual ~CoreApi() {}
-  virtual QString author() const       { return QLatin1String("IMPOMEZIA"); }
-  virtual QString description() const  { return QString(); }
-  virtual QString id() const           = 0;
-  virtual QString name() const         = 0;
-  virtual QString site() const         { return QLatin1String("http://impomezia.com"); }
-//  virtual QString version() const      { return QLocale(QLocale::C).toDate(QString(__DATE__).simplified(), QLatin1String("MMM d yyyy")).toString(QLatin1String("yyyy.MM.dd")); }
-  virtual QString version() const      { return SCHAT_VERSION; }
-  virtual QStringList provides() const { return QStringList(); }
-  virtual QStringList required() const { return QStringList(); }
+
+  /// Получение информации о плагине.
+  virtual QVariantMap header() const
+  {
+    QVariantMap out;
+    out["Author"]  = "IMPOMEZIA";       // Автор плагина.
+    out["Id"]      = "";                // Машинное имя плагина.
+    out["Name"]    = "";                // Имя плагина.
+    out["Version"] = "0.1.0";           // Версия плагина.
+    out["Site"]    = "http://schat.me"; // Домашняя страница плагина.
+    out["Desc"]    = "";                // Описание плагина.
+
+    return out;
+  }
 };
 
-Q_DECLARE_INTERFACE(CoreApi, "me.schat.CoreApi/1.0");
+Q_DECLARE_INTERFACE(CoreApi, "me.schat.CoreApi/1.1");
 
 #endif /* COREINTERFACE_H_ */

@@ -28,11 +28,19 @@ class CachePlugin : public QObject, CoreApi, ChatApi
   Q_INTERFACES(CoreApi ChatApi)
 
 public:
+  /// Получение информации о плагине.
+  virtual QVariantMap header() const
+  {
+    QVariantMap out = CoreApi::header();
+    out["Id"]      = "cache";
+    out["Name"]    = "Cache";
+    out["Version"] = "0.1.0";
+    out["Desc"]    = "Client Cache";
+
+    return out;
+  }
+
   ChatPlugin *init(ChatCore *core);
-  QString id() const { return "Cache"; }
-  QString name() const { return id(); }
-  QString version() const { return "0.1.0"; }
-  QStringList provides() const { return QStringList(id()); }
 };
 
 #endif /* CACHEPLUGIN_H_ */
