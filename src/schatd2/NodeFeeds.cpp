@@ -16,16 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEEDPACKET_H_
-#define FEEDPACKET_H_
+#include <QDebug>
 
+#include "net/PacketReader.h"
+#include "net/packets/FeedPacket.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "NodeFeeds.h"
 
-class SCHAT_EXPORT FeedPacket : public Notice
+NodeFeeds::NodeFeeds(Core *core)
+  : NodeNoticeReader(Notice::FeedType, core)
 {
-public:
-  FeedPacket();
-  FeedPacket(quint16 type, PacketReader *reader);
-};
+}
 
-#endif /* FEEDPACKET_H_ */
+
+bool NodeFeeds::read(PacketReader *reader)
+{
+  if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
+    return false;
+
+  FeedPacket packet(m_type, reader);
+  m_packet = &packet;
+
+  QString cmd = m_packet->command();
+  qDebug() << "NodeFeeds::read()" << cmd;
+
+  return false;
+}

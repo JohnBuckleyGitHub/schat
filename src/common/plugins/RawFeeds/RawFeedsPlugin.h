@@ -34,6 +34,7 @@ public:
     out["Id"]      = "raw-feeds";
     out["Name"]    = "Raw Feeds";
     out["Version"] = "0.1.0";
+    out["Site"]    = "http://wiki.schat.me/Plugin/RawFeeds";
     out["Desc"]    = "Raw Feeds";
 
     return out;

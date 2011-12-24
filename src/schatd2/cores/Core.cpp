@@ -37,6 +37,7 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NodeChannels.h"
+#include "NodeFeeds.h"
 #include "NodeLog.h"
 #include "NodeMessages.h"
 #include "NodePlugins.h"
@@ -63,6 +64,7 @@ Core::Core(QObject *parent)
 
   new NodeChannels(this);
   new NodeMessages(this);
+  new NodeFeeds(this);
 }
 
 

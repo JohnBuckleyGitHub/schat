@@ -36,6 +36,7 @@ HEADERS = \
     DataBase.h \
     events.h \
     NodeChannels.h \
+    NodeFeeds.h \
     NodeLog.h \
     NodeMessages.h \
     NodeNoticeReader.h \
@@ -55,6 +56,7 @@ SOURCES = \
     DataBase.cpp \
     events.cpp \
     NodeChannels.cpp \
+    NodeFeeds.cpp \
     NodeLog.cpp \
     NodeMessages.cpp \
     NodeNoticeReader.cpp \

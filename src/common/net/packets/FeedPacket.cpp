@@ -23,3 +23,9 @@ FeedPacket::FeedPacket()
 {
   m_type = FeedType;
 }
+
+
+FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
+  : Notice(type, reader)
+{
+}
