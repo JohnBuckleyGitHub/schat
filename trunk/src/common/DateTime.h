@@ -19,6 +19,8 @@
 #ifndef DATETIME_H_
 #define DATETIME_H_
 
+#include <QtGlobal>
+
 #include "schat.h"
 
 class SCHAT_EXPORT DateTime

@@ -25,7 +25,10 @@ class SCHAT_EXPORT FeedPacket : public Notice
 {
 public:
   FeedPacket();
+  FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedPacket(quint16 type, PacketReader *reader);
+
+  static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
 };
 
 #endif /* FEEDPACKET_H_ */

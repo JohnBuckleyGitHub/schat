@@ -23,12 +23,21 @@
 
 #include "schat.h"
 
+class FeedPacket;
+
 class SCHAT_EXPORT ClientFeeds : public QObject
 {
   Q_OBJECT
 
 public:
   ClientFeeds(QObject *parent = 0);
+  bool headers(const QByteArray &id);
+
+private slots:
+  void notice(int type);
+
+private:
+  FeedPacket *m_packet; ///< Текущий прочитанный пакет.
 };
 
 #endif /* CLIENTFEEDS_H_ */
