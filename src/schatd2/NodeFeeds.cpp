@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "cores/Core.h"
 #include "net/PacketReader.h"
 #include "net/packets/FeedPacket.h"
 #include "net/packets/Notice.h"
@@ -55,5 +56,10 @@ bool NodeFeeds::headers()
   if (!user)
     return false;
 
+  ChatChannel channel = m_storage->channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
+  if (!channel)
+    return false;
+
+  m_core->send(user->sockets(), FeedPacket::headers(channel, user, m_core->sendStream()));
   return false;
 }
