@@ -19,6 +19,7 @@
 #ifndef FEEDPACKET_H_
 #define FEEDPACKET_H_
 
+#include "Channel.h"
 #include "net/packets/Notice.h"
 
 class SCHAT_EXPORT FeedPacket : public Notice
@@ -28,6 +29,7 @@ public:
   FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedPacket(quint16 type, PacketReader *reader);
 
+  static QByteArray headers(ClientChannel channel, const QByteArray &dest, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
 };
 

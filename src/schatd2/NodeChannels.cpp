@@ -107,7 +107,7 @@ bool NodeChannels::info()
   foreach (QByteArray id, m_packet->channels()) {
     ChatChannel channel = m_storage->channel(id, SimpleID::typeOf(id));
     if (channel)
-      packets += ChannelPacket::channel(channel, user->id(), m_core->sendStream(), "info");
+      packets += ChannelPacket::channel(channel, user, m_core->sendStream(), "info");
   }
 
   if (packets.isEmpty())
@@ -145,7 +145,7 @@ bool NodeChannels::join()
   channel->channels() += user->id();
   user->channels()    += channel->id();
 
-  m_core->send(user->sockets(), ChannelPacket::channel(channel, channel->id(), m_core->sendStream()));
+  m_core->send(user->sockets(), ChannelPacket::channel(channel, user, m_core->sendStream()));
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
   if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
