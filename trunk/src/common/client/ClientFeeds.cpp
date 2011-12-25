@@ -25,6 +25,7 @@
 ClientFeeds::ClientFeeds(QObject *parent)
   : QObject(parent)
 {
+  connect(ChatClient::io(), SIGNAL(notice(int)), SLOT(notice(int)));
 }
 
 
@@ -47,4 +48,5 @@ void ClientFeeds::notice(int type)
     return;
 
   m_packet = &packet;
+  qDebug() << "FeedPacket:" << m_packet->command() << m_packet->raw();
 }
