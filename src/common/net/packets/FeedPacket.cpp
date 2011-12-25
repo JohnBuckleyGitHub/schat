@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "net/packets/FeedPacket.h"
 
 FeedPacket::FeedPacket()
@@ -25,7 +26,21 @@ FeedPacket::FeedPacket()
 }
 
 
+FeedPacket::FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id)
+  : Notice(sender, dest, command, DateTime::utc(), id)
+{
+  m_type = FeedType;
+}
+
+
 FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
   : Notice(type, reader)
 {
+}
+
+
+QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "headers");
+  return packet.data(stream);
 }

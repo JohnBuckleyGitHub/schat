@@ -20,6 +20,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
+#include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
 #include "RawFeedsCmd.h"
 #include "RawFeedsPlugin_p.h"
@@ -37,6 +38,12 @@ RawFeedsCmd::RawFeedsCmd(RawFeeds *parent)
 bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   qDebug() << "RawFeedsCmd" << cmd.command();
+  QString command = cmd.command().toLower();
+  if (command == "feeds") {
+    ChatClient::feeds()->headers(dest);
+    return true;
+  }
+
   return false;
 }
 

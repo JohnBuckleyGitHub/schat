@@ -16,9 +16,35 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
+#include "client/SimpleClient.h"
+#include "net/packets/FeedPacket.h"
+#include "net/packets/Notice.h"
 
 ClientFeeds::ClientFeeds(QObject *parent)
   : QObject(parent)
 {
+}
+
+
+bool ClientFeeds::headers(const QByteArray &id)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::headers(ChatClient::id(), id, ChatClient::io()->sendStream()));
+}
+
+
+void ClientFeeds::notice(int type)
+{
+  if (type != Notice::FeedType)
+    return;
+
+  FeedPacket packet(type, ChatClient::io()->reader());
+  if (!packet.isValid())
+    return;
+
+  m_packet = &packet;
 }
