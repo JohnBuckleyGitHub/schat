@@ -58,6 +58,31 @@ void ChannelPacket::write(PacketWriter *writer) const
 
 /*!
  * Формирование пакета для отправки клиенту заголовка канала.
+ * Также будут отосланы заголовки фидов в соответствии с правами \p user.
+ *
+ * \param channel Канал.
+ * \param user    Получатель.
+ * \param stream  Поток записи пакета.
+ * \param command Команда.
+ */
+QByteArray ChannelPacket::channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command)
+{
+  ChannelPacket packet(channel->id(), user->id(), command, DateTime::utc());
+  packet.setDirection(Server2Client);
+  packet.setText(channel->name());
+  packet.m_gender        = channel->gender().raw();
+  packet.m_channelStatus = channel->status().value();
+  packet.setData(channel->feeds().get(user.data()));
+
+  if (channel->type() == SimpleID::ChannelId)
+    packet.m_channels = channel->channels().all();
+
+  return packet.data(stream);
+}
+
+
+/*!
+ * Формирование пакета для отправки клиенту заголовка канала.
  *
  * \param channel Канал.
  * \param dest    Идентификатор получателя.
@@ -71,7 +96,7 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
   packet.m_channelStatus = channel->status().value();
-  packet.setData(channel->feeds().get(channel.data()));
+//  packet.setData(channel->feeds().get(channel.data()));
 
   if (channel->type() == SimpleID::ChannelId)
     packet.m_channels = channel->channels().all();

@@ -241,6 +241,8 @@ ClientChannel ClientChannels::add()
 
   m_synced += channel->id();
 
+  qDebug() << m_packet->raw();
+
   m_hooks->add(info);
   emit this->channel(info);
 

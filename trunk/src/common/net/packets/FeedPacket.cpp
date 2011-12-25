@@ -39,6 +39,16 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+QByteArray FeedPacket::headers(ClientChannel channel, const QByteArray &dest, QDataStream *stream)
+{
+  FeedPacket packet(channel->id(), dest, "headers");
+  packet.setDirection(Server2Client);
+  packet.setData(channel->feeds().get(channel.data()));
+
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "headers");

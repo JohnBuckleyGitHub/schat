@@ -23,6 +23,7 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
+#include "Storage.h"
 
 NodeFeeds::NodeFeeds(Core *core)
   : NodeNoticeReader(Notice::FeedType, core)
@@ -40,6 +41,19 @@ bool NodeFeeds::read(PacketReader *reader)
 
   QString cmd = m_packet->command();
   qDebug() << "NodeFeeds::read()" << cmd;
+
+  if (cmd == "headers")
+    return headers();
+
+  return false;
+}
+
+
+bool NodeFeeds::headers()
+{
+  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  if (!user)
+    return false;
 
   return false;
 }

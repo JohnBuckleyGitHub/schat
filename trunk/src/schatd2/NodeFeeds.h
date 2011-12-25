@@ -31,6 +31,9 @@ public:
 protected:
   bool read(PacketReader *reader);
 
+private:
+  bool headers();
+
   FeedPacket *m_packet;
 };
 
