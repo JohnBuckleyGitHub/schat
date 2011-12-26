@@ -40,6 +40,10 @@ $(document).ready(function() {
 	loadJS("qrc:/js/RawFeeds/RawFeeds.js");
 	loadCSS("qrc:/css/RawFeeds/RawFeeds.css");
 
+//    loadJS("RawFeeds/KelpJSONView.js");
+//	loadJS("RawFeeds/RawFeeds.js");
+//	loadCSS("RawFeeds/RawFeeds.css");
+
 	alignChat();
 });
 
@@ -58,7 +62,7 @@ function loadCSS(filename)
 {
 	var e = document.createElement("link");
 	e.setAttribute("rel", "stylesheet");
-	e.setAttribute("type", "text/css")
+	e.setAttribute("type", "text/css");
 	e.setAttribute("href", filename);
 
 	document.getElementsByTagName("head")[0].appendChild(e);
