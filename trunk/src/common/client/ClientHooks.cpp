@@ -286,4 +286,24 @@ void Client::setup()
   }
 }
 
+
+Feeds::Feeds(QObject *parent)
+  : QObject(parent)
+{
+}
+
+
+/*!
+ * Чтение полученного сообщения.
+ */
+void Feeds::readFeed(const FeedPacket &packet)
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  foreach (Feeds *hook, m_hooks) {
+    hook->readFeed(packet);
+  }
+}
+
 }  // namespace Hooks

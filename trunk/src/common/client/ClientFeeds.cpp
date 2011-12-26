@@ -18,6 +18,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
+#include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
 #include "net/packets/FeedPacket.h"
 #include "net/packets/Notice.h"
@@ -25,6 +26,8 @@
 ClientFeeds::ClientFeeds(QObject *parent)
   : QObject(parent)
 {
+  m_hooks = new Hooks::Feeds(this);
+
   connect(ChatClient::io(), SIGNAL(notice(int)), SLOT(notice(int)));
 }
 
@@ -49,4 +52,6 @@ void ClientFeeds::notice(int type)
 
   m_packet = &packet;
   qDebug() << "FeedPacket:" << m_packet->command() << m_packet->raw();
+
+  m_hooks->readFeed(packet);
 }

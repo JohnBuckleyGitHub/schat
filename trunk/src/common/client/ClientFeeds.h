@@ -25,6 +25,11 @@
 
 class FeedPacket;
 
+namespace Hooks
+{
+  class Feeds;
+}
+
 class SCHAT_EXPORT ClientFeeds : public QObject
 {
   Q_OBJECT
@@ -32,12 +37,14 @@ class SCHAT_EXPORT ClientFeeds : public QObject
 public:
   ClientFeeds(QObject *parent = 0);
   bool headers(const QByteArray &id);
+  inline Hooks::Feeds *hooks() const { return m_hooks; }
 
 private slots:
   void notice(int type);
 
 private:
-  FeedPacket *m_packet; ///< Текущий прочитанный пакет.
+  FeedPacket *m_packet;     ///< Текущий прочитанный пакет.
+  Hooks::Feeds *m_hooks;    ///< Хуки.
 };
 
 #endif /* CLIENTFEEDS_H_ */
