@@ -22,12 +22,14 @@ QT = core gui network
 HEADERS  = \
    FeedsImpl.h \
    RawFeedsCmd.h \
+   RawFeedsMessage.h \
    RawFeedsPlugin.h \
    RawFeedsPlugin_p.h \
 
 SOURCES  = \
    FeedsImpl.cpp \
    RawFeedsCmd.cpp \
+   RawFeedsMessage.cpp \
    RawFeedsPlugin.cpp \
 
 unix {

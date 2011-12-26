@@ -28,6 +28,7 @@
 #include "SimpleJSon.h"
 
 Message::Message()
+  : m_func("addMessage")
 {
 }
 
