@@ -64,6 +64,8 @@ public:
   inline static bool open(const QByteArray &id) { return m_self->openId(id); }
   inline static bool open(const QString &url)   { return m_self->openUrl(QUrl(url)); }
 
+  static qint64 date();
+
 signals:
   void offline();
   void online();

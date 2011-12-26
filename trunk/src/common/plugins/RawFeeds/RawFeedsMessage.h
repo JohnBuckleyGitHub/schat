@@ -16,32 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef RAWFEEDSMESSAGE_H_
+#define RAWFEEDSMESSAGE_H_
 
-#include "client/ChatClient.h"
-#include "client/ClientFeeds.h"
-#include "FeedsImpl.h"
-#include "net/packets/FeedPacket.h"
-#include "RawFeedsMessage.h"
-#include "RawFeedsPlugin_p.h"
-#include "ui/TabWidget.h"
+#include "messages/Message.h"
 
-namespace Hooks
+class RawFeedsMessage : public Message
 {
+public:
+  RawFeedsMessage(const QByteArray &tab, const QVariantMap &json);
+};
 
-FeedsImpl::FeedsImpl(RawFeeds *parent)
-  : Feeds(parent)
-{
-  ChatClient::feeds()->hooks()->add(this);
-}
-
-
-void FeedsImpl::readFeed(const FeedPacket &packet)
-{
-  qDebug() << "FeedsImpl::readFeed()";
-
-  RawFeedsMessage message(packet.sender(), packet.json());
-  TabWidget::i()->add(message);
-}
-
-} // namespace Hooks
+#endif /* RAWFEEDSMESSAGE_H_ */

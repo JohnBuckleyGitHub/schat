@@ -22,6 +22,7 @@
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
+#include "DateTime.h"
 
 ChatClient *ChatClient::m_self = 0;
 
@@ -41,6 +42,16 @@ ChatClient::ChatClient(QObject *parent)
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+}
+
+
+qint64 ChatClient::date()
+{
+  qint64 out = io()->date();
+  if (!out)
+    out = DateTime::utc();
+
+  return out;
 }
 
 

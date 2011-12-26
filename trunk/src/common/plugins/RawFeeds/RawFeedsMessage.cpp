@@ -16,32 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "ChatCore.h"
 #include "client/ChatClient.h"
-#include "client/ClientFeeds.h"
-#include "FeedsImpl.h"
-#include "net/packets/FeedPacket.h"
+#include "net/SimpleID.h"
 #include "RawFeedsMessage.h"
-#include "RawFeedsPlugin_p.h"
-#include "ui/TabWidget.h"
+#include "SimpleJSon.h"
 
-namespace Hooks
+RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QVariantMap &json)
+  : Message()
 {
+  m_tab = tab;
 
-FeedsImpl::FeedsImpl(RawFeeds *parent)
-  : Feeds(parent)
-{
-  ChatClient::feeds()->hooks()->add(this);
+  m_data["Type"] = "service";
+  m_data["Id"]   = SimpleID::encode(ChatCore::randomId());
+  m_data["Text"] = "<pre>" + SimpleJSon::generate(json) + "</pre>";
+
+  m_data["Date"] = ChatClient::date();
 }
-
-
-void FeedsImpl::readFeed(const FeedPacket &packet)
-{
-  qDebug() << "FeedsImpl::readFeed()";
-
-  RawFeedsMessage message(packet.sender(), packet.json());
-  TabWidget::i()->add(message);
-}
-
-} // namespace Hooks

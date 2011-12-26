@@ -60,7 +60,7 @@ void ChatView::add(const Message &message)
   if (!message.isValid())
     return;
 
-  evaluateJavaScript("addMessage(" + SimpleJSon::quote(message.json()) + ");");
+  evaluateJavaScript(message.func() + "(" + SimpleJSon::quote(message.json()) + ");");
 }
 
 
