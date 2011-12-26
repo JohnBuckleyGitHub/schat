@@ -75,6 +75,7 @@ TabWidget::TabWidget(QWidget *parent)
   #endif
 
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
+  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFixedFontSize, fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
   QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("DeveloperExtras").toBool());
 

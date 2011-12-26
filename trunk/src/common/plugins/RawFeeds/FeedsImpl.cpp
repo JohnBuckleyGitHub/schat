@@ -40,7 +40,7 @@ void FeedsImpl::readFeed(const FeedPacket &packet)
 {
   qDebug() << "FeedsImpl::readFeed()";
 
-  RawFeedsMessage message(packet.sender(), packet.json());
+  RawFeedsMessage message(packet.sender(), packet.raw());
   TabWidget::i()->add(message);
 }
 

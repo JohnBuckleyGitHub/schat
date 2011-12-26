@@ -20,16 +20,16 @@
 #include "client/ChatClient.h"
 #include "net/SimpleID.h"
 #include "RawFeedsMessage.h"
-#include "SimpleJSon.h"
 
-RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QVariantMap &json)
+RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QByteArray &json)
   : Message()
 {
   m_tab = tab;
+  m_func = "addRawFeedsMessage";
 
-  m_data["Type"] = "service";
+  m_data["Type"] = "raw-feeds";
   m_data["Id"]   = SimpleID::encode(ChatCore::randomId());
-  m_data["Text"] = "<pre>" + SimpleJSon::generate(json) + "</pre>";
+  m_data["Text"] = json;
 
   m_data["Date"] = ChatClient::date();
 }
