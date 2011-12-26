@@ -32,6 +32,8 @@ SOURCES  = \
    RawFeedsMessage.cpp \
    RawFeedsPlugin.cpp \
 
+RESOURCES += RawFeeds.qrc
+
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
   INSTALLS += target
