@@ -16,25 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include <QDebug>
 
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "FeedsImpl.h"
-#include "RawFeedsCmd.h"
-#include "RawFeedsPlugin.h"
 #include "RawFeedsPlugin_p.h"
 
-RawFeeds::RawFeeds(QObject *parent)
-  : ChatPlugin(parent)
+namespace Hooks
 {
-  new Hooks::RawFeedsCmd(this);
-  new Hooks::FeedsImpl(this);
+
+FeedsImpl::FeedsImpl(RawFeeds *parent)
+  : Feeds(parent)
+{
+  ChatClient::feeds()->hooks()->add(this);
 }
 
 
-ChatPlugin *RawFeedsPlugin::create()
+void FeedsImpl::readFeed(const FeedPacket &packet)
 {
-  m_plugin = new RawFeeds(this);
-  return m_plugin;
+  qDebug() << "FeedsImpl::readFeed()";
 }
 
-Q_EXPORT_PLUGIN2(RawFeeds, RawFeedsPlugin);
+} // namespace Hooks

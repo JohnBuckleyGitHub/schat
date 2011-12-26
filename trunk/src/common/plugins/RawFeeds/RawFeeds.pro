@@ -20,11 +20,13 @@ SCHAT_CORE_LIB = 1
 QT = core gui network
 
 HEADERS  = \
+   FeedsImpl.h \
    RawFeedsCmd.h \
    RawFeedsPlugin.h \
    RawFeedsPlugin_p.h \
 
 SOURCES  = \
+   FeedsImpl.cpp \
    RawFeedsCmd.cpp \
    RawFeedsPlugin.cpp \
 
