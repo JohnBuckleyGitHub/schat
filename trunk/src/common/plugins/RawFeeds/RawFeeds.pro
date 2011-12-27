@@ -17,10 +17,11 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core gui network
+QT = core gui network webkit
 
 HEADERS  = \
    FeedsImpl.h \
+   RawFeedsChatView.h \
    RawFeedsCmd.h \
    RawFeedsMessage.h \
    RawFeedsPlugin.h \
@@ -28,6 +29,7 @@ HEADERS  = \
 
 SOURCES  = \
    FeedsImpl.cpp \
+   RawFeedsChatView.cpp \
    RawFeedsCmd.cpp \
    RawFeedsMessage.cpp \
    RawFeedsPlugin.cpp \

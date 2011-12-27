@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef CHATVIEWHOOKS_H_
 #define CHATVIEWHOOKS_H_
 
