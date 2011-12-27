@@ -16,27 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include <QDebug>
 
-#include "FeedsImpl.h"
-#include "RawFeedsCmd.h"
-#include "RawFeedsPlugin.h"
-#include "RawFeedsPlugin_p.h"
 #include "RawFeedsChatView.h"
+#include "ui/tabs/ChatView.h"
 
-RawFeeds::RawFeeds(QObject *parent)
-  : ChatPlugin(parent)
+RawFeedsChatView::RawFeedsChatView(QObject *parent)
+  : ChatViewHooks(parent)
 {
-  new Hooks::RawFeedsCmd(this);
-  new Hooks::FeedsImpl(this);
-  new RawFeedsChatView(this);
+  add(this);
 }
 
 
-ChatPlugin *RawFeedsPlugin::create()
+void RawFeedsChatView::loadFinishedImpl(ChatView *view)
 {
-  m_plugin = new RawFeeds(this);
-  return m_plugin;
-}
+  qDebug() << "RawFeedsChatView::loadFinishedImpl()" << view;
 
-Q_EXPORT_PLUGIN2(RawFeeds, RawFeedsPlugin);
+  view->evaluateJavaScript("loadJS('qrc:/js/RawFeeds/KelpJSONView.js'); loadJS('qrc:/js/RawFeeds/RawFeeds.js'); loadCSS('qrc:/css/RawFeeds/RawFeeds.css');");
+}

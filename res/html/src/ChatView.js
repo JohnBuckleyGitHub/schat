@@ -36,14 +36,6 @@ $(document).ready(function() {
 		}
 	);
 
-	loadJS("qrc:/js/RawFeeds/KelpJSONView.js");
-	loadJS("qrc:/js/RawFeeds/RawFeeds.js");
-	loadCSS("qrc:/css/RawFeeds/RawFeeds.css");
-
-//    loadJS("RawFeeds/KelpJSONView.js");
-//	loadJS("RawFeeds/RawFeeds.js");
-//	loadCSS("RawFeeds/RawFeeds.css");
-
 	alignChat();
 });
 

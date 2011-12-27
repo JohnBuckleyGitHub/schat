@@ -16,27 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef RAWFEEDSCHATVIEW_H_
+#define RAWFEEDSCHATVIEW_H_
 
-#include "FeedsImpl.h"
-#include "RawFeedsCmd.h"
-#include "RawFeedsPlugin.h"
-#include "RawFeedsPlugin_p.h"
-#include "RawFeedsChatView.h"
+#include "hooks/ChatViewHooks.h"
 
-RawFeeds::RawFeeds(QObject *parent)
-  : ChatPlugin(parent)
+class RawFeedsChatView : public ChatViewHooks
 {
-  new Hooks::RawFeedsCmd(this);
-  new Hooks::FeedsImpl(this);
-  new RawFeedsChatView(this);
-}
+  Q_OBJECT
 
+public:
+  RawFeedsChatView(QObject *parent = 0);
 
-ChatPlugin *RawFeedsPlugin::create()
-{
-  m_plugin = new RawFeeds(this);
-  return m_plugin;
-}
+protected:
+  void loadFinishedImpl(ChatView *view);
+};
 
-Q_EXPORT_PLUGIN2(RawFeeds, RawFeedsPlugin);
+#endif /* RAWFEEDSCHATVIEW_H_ */
