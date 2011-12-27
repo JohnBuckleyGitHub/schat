@@ -38,6 +38,7 @@
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChannelMenuImpl.h"
 #include "hooks/ChannelsImpl.h"
+#include "hooks/ChatViewHooks.h"
 #include "hooks/ClientImpl.h"
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
@@ -48,7 +49,6 @@
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
 #include "ui/ChatIcons.h"
-
 
 ChatCore *ChatCore::m_self = 0;
 
@@ -79,6 +79,8 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChannelMenu(this);
 //  new Hooks::ChannelMenuImpl(this);
   new Hooks::UserMenuImpl(this);
+
+  new ChatViewHooks(this);
 
   new ChatAlerts(this);
 

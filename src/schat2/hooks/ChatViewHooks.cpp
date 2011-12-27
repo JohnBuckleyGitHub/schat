@@ -16,20 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatCore.h"
-#include "client/ChatClient.h"
-#include "net/SimpleID.h"
-#include "RawFeedsMessage.h"
+#include "hooks/ChatViewHooks.h"
 
-RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, const QByteArray &json)
-  : Message()
+ChatViewHooks *ChatViewHooks::m_self = 0;
+
+ChatViewHooks::ChatViewHooks(QObject *parent)
+  : QObject(parent)
 {
-  m_tab = tab;
-  m_func = "addRawFeedsMessage";
+  if (!m_self)
+    m_self = this;
+}
 
-  m_data["Type"]    = "raw-feeds";
-  m_data["Id"]      = SimpleID::encode(ChatCore::randomId());
-  m_data["Text"]    = json;
-  m_data["Command"] = command;
-  m_data["Date"]    = ChatClient::date();
+
+void ChatViewHooks::loadFinishedImpl(ChatView *view)
+{
+  if (m_hooks.isEmpty())
+    return;
+
+  emit loadFinishedHook(view);
+
+  foreach (ChatViewHooks *hook, m_hooks) {
+    hook->loadFinishedImpl(view);
+  }
 }

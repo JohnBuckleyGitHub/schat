@@ -24,7 +24,7 @@
 class RawFeedsMessage : public Message
 {
 public:
-  RawFeedsMessage(const QByteArray &tab, const QByteArray &json);
+  RawFeedsMessage(const QByteArray &tab, const QString &command, const QByteArray &json);
 };
 
 #endif /* RAWFEEDSMESSAGE_H_ */

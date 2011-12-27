@@ -27,6 +27,7 @@
 #include "ChatUrls.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
+#include "hooks/ChatViewHooks.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "SimpleJSon.h"
@@ -160,6 +161,8 @@ void ChatView::loadFinished()
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
+
+  ChatViewHooks::loadFinished(this);
 }
 
 
@@ -171,10 +174,10 @@ void ChatView::menuTriggered(QAction *action)
     emit reloaded();
   }
   else if (action == m_seconds) {
-    ChatCore::i()->settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
+    ChatCore::settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
   }
   else if (action == m_service) {
-    ChatCore::i()->settings()->setValue(QLatin1String("ShowServiceMessages"), action->isChecked());
+    ChatCore::settings()->setValue(QLatin1String("ShowServiceMessages"), action->isChecked());
   }
 }
 
