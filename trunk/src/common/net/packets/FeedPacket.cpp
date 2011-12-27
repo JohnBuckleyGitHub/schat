@@ -39,6 +39,23 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream)
+{
+  FeedPacket packet(channel->id(), user->id(), "feed");
+  packet.setDirection(Server2Client);
+  packet.setData(channel->feeds().get(user.data(), QStringList(name)));
+
+  if (packet.json().isEmpty()) {
+    if (!channel->feeds().all().contains(name))
+      packet.setStatus(Notice::NotFound);
+    else
+      packet.setStatus(Notice::Forbidden);
+  }
+
+  return packet.data(stream);
+}
+
+
 /*!
  * Запрос клиентом тела фида.
  */
