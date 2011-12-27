@@ -41,6 +41,7 @@ HEADERS = \
     hooks/ChannelMenu.h \
     hooks/ChannelMenuImpl.h \
     hooks/ChannelsImpl.h \
+    hooks/ChatViewHooks.h \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
     hooks/MessagesImpl.h \
@@ -107,6 +108,7 @@ SOURCES = \
     hooks/ChannelMenu.cpp \
     hooks/ChannelMenuImpl.cpp \
     hooks/ChannelsImpl.cpp \
+    hooks/ChatViewHooks.cpp \
     hooks/ClientImpl.cpp \
     hooks/CommandsImpl.cpp \
     hooks/MessagesImpl.cpp \
