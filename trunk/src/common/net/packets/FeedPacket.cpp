@@ -39,6 +39,20 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+/*!
+ * Запрос клиентом тела фида.
+ */
+QByteArray FeedPacket::get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "get");
+  packet.setText(name);
+  return packet.data(stream);
+}
+
+
+/*!
+ * Отправка клиенту заголовков фидов.
+ */
 QByteArray FeedPacket::headers(ClientChannel channel, ClientChannel user, QDataStream *stream)
 {
   FeedPacket packet(channel->id(), user->id(), "headers");
@@ -49,6 +63,9 @@ QByteArray FeedPacket::headers(ClientChannel channel, ClientChannel user, QDataS
 }
 
 
+/*!
+ * Запрос клиентом заголовков фидов.
+ */
 QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "headers");

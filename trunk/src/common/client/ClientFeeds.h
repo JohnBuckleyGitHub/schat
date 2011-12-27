@@ -36,6 +36,7 @@ class SCHAT_EXPORT ClientFeeds : public QObject
 
 public:
   ClientFeeds(QObject *parent = 0);
+  bool get(const QByteArray &id, const QString &name);
   bool headers(const QByteArray &id);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
 

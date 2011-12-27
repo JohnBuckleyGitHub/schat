@@ -44,6 +44,18 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     return true;
   }
 
+  if (command == "feed") {
+    ClientCmd body(cmd.body());
+    if (!body.isValid())
+      return true;
+
+    if (body.command() == "get") {
+      ChatClient::feeds()->get(dest, body.body());
+    }
+
+    return true;
+  }
+
   return false;
 }
 
