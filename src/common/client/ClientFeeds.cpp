@@ -32,6 +32,21 @@ ClientFeeds::ClientFeeds(QObject *parent)
 }
 
 
+bool ClientFeeds::get(const QByteArray &id, const QString &name)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::get(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+}
+
+
+/*!
+ * Запрос заголовков фидов.
+ */
 bool ClientFeeds::headers(const QByteArray &id)
 {
   if (!Channel::isCompatibleId(id))
