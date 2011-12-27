@@ -22,6 +22,7 @@
 #include "NodeNoticeReader.h"
 
 class FeedPacket;
+class ServerChannel;
 
 class SCHAT_EXPORT NodeFeeds : public NodeNoticeReader
 {
@@ -32,9 +33,12 @@ protected:
   bool read(PacketReader *reader);
 
 private:
+  bool get();
   bool headers();
 
   FeedPacket *m_packet;
+  ChatChannel m_channel;
+  ChatChannel m_user;
 };
 
 #endif /* NODEFEEDS_H_ */

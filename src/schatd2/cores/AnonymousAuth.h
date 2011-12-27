@@ -23,7 +23,6 @@
 #include "schat.h"
 
 class ServerChannel;
-class ServerUser;
 
 class SCHAT_EXPORT AnonymousAuth : public NodeAuth
 {

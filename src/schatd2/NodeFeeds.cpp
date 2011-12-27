@@ -37,6 +37,14 @@ bool NodeFeeds::read(PacketReader *reader)
   if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
     return false;
 
+  m_user = m_storage->channel(reader->sender(), SimpleID::UserId);
+  if (!m_user)
+    return false;
+
+  m_channel = m_storage->channel(reader->dest(), SimpleID::typeOf(reader->dest()));
+  if (!m_channel)
+    return false;
+
   FeedPacket packet(m_type, reader);
   m_packet = &packet;
 
@@ -45,21 +53,25 @@ bool NodeFeeds::read(PacketReader *reader)
 
   if (cmd == "headers")
     return headers();
+  else if (cmd == "get")
+    return get();
 
+  return false;
+}
+
+
+bool NodeFeeds::get()
+{
+  if (m_packet->text().isEmpty())
+    return false;
+
+  m_core->send(m_user->sockets(), FeedPacket::feed(m_channel, m_user, m_packet->text(), m_core->sendStream()));
   return false;
 }
 
 
 bool NodeFeeds::headers()
 {
-  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
-  if (!user)
-    return false;
-
-  ChatChannel channel = m_storage->channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
-  if (!channel)
-    return false;
-
-  m_core->send(user->sockets(), FeedPacket::headers(channel, user, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::headers(m_channel, m_user, m_core->sendStream()));
   return false;
 }

@@ -29,6 +29,7 @@ public:
   FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedPacket(quint16 type, PacketReader *reader);
 
+  static QByteArray feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream);
   static QByteArray get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
   static QByteArray headers(ClientChannel channel, ClientChannel user, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
