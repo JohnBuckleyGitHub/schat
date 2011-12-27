@@ -30,6 +30,9 @@ function addRawFeedsMessage(data)
 	html += '<div class="raw-feeds-header">';
 	html += dateTemplate(json.Date, false);
 	html += '<b class="raw-feeds-command">' + json.Command + '</b>';
+	if (json.Status.Code != 200)
+		html += ' <span class="raw-feeds-bad-status">' + json.Status.Code + ' ' + json.Status.Desc + '</span>';
+
 	html += '</div>';
 
 	html += '<div class="jsonoutput"></div>';
@@ -39,7 +42,8 @@ function addRawFeedsMessage(data)
 
 	addRawMessage(html);
 
-	$.JSONView(json.Text, $('#' + json.Id + " .jsonoutput"));
+	if (json.Text.length)
+		$.JSONView(json.Text, $('#' + json.Id + " .jsonoutput"));
 
 	alignChat();
 }
