@@ -18,18 +18,25 @@
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "net/packets/FeedPacket.h"
 #include "net/SimpleID.h"
 #include "RawFeedsMessage.h"
 
-RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, const QByteArray &json)
+RawFeedsMessage::RawFeedsMessage(const FeedPacket &packet)
   : Message()
 {
-  m_tab = tab;
+  m_tab = packet.sender();
   m_func = "addRawFeedsMessage";
 
   m_data["Type"]    = "raw-feeds";
   m_data["Id"]      = SimpleID::encode(ChatCore::randomId());
-  m_data["Text"]    = json;
-  m_data["Command"] = command;
+  m_data["Text"]    = packet.raw();
+  m_data["Command"] = packet.command();
   m_data["Date"]    = ChatClient::date();
+
+  QVariantMap status;
+  status["Code"] = packet.status();
+  status["Desc"] = FeedPacket::status(packet.status());
+
+  m_data["Status"] = status;
 }

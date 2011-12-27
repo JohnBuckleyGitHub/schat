@@ -21,10 +21,12 @@
 
 #include "messages/Message.h"
 
+class FeedPacket;
+
 class RawFeedsMessage : public Message
 {
 public:
-  RawFeedsMessage(const QByteArray &tab, const QString &command, const QByteArray &json);
+  RawFeedsMessage(const FeedPacket &packet);
 };
 
 #endif /* RAWFEEDSMESSAGE_H_ */
