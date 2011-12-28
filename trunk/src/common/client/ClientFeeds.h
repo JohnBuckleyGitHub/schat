@@ -20,6 +20,7 @@
 #define CLIENTFEEDS_H_
 
 #include <QObject>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -38,6 +39,7 @@ public:
   ClientFeeds(QObject *parent = 0);
   bool get(const QByteArray &id, const QString &name);
   bool headers(const QByteArray &id);
+  bool update(const QByteArray &id, const QString &name, const QVariantMap &json);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
 
 private slots:

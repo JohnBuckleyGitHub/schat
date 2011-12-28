@@ -56,6 +56,21 @@ bool ClientFeeds::headers(const QByteArray &id)
 }
 
 
+bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVariantMap &json)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  if (json.isEmpty())
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::update(ChatClient::id(), id, name, json, ChatClient::io()->sendStream()));
+}
+
+
 void ClientFeeds::notice(int type)
 {
   if (type != Notice::FeedType)

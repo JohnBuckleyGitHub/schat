@@ -24,6 +24,7 @@
 #include "client/ClientMessages.h"
 #include "RawFeedsCmd.h"
 #include "RawFeedsPlugin_p.h"
+#include "SimpleJSon.h"
 
 namespace Hooks
 {
@@ -52,11 +53,28 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     if (body.command() == "get") {
       ChatClient::feeds()->get(dest, body.body());
     }
+    else if (body.command() == "update") {
+      update(dest, body);
+    }
 
     return true;
   }
 
   return false;
+}
+
+
+void RawFeedsCmd::update(const QByteArray &dest, const ClientCmd &cmd)
+{
+  ClientCmd body(cmd.body());
+  if (body.command().isEmpty())
+    return;
+
+  QVariantMap json = SimpleJSon::parse(body.body().toUtf8()).toMap();
+  if (json.isEmpty())
+    return;
+
+  ChatClient::feeds()->update(dest, body.command(), json);
 }
 
 } // namespace Hooks
