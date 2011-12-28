@@ -39,11 +39,15 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+/*!
+ * Отправка клиенту тела фида.
+ */
 QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream)
 {
   FeedPacket packet(channel->id(), user->id(), "feed");
   packet.setDirection(Server2Client);
   packet.setData(channel->feeds().feed(name, user.data()));
+  packet.setText(name);
 
   if (packet.json().isEmpty()) {
     if (!channel->feeds().all().contains(name))
@@ -58,6 +62,10 @@ QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QSt
 
 /*!
  * Запрос клиентом тела фида.
+ *
+ * \param user    Идентификатор пользователя.
+ * \param channel Идентификатор канала.
+ * \param stream  Поток записи пакета.
  */
 QByteArray FeedPacket::get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
 {
@@ -82,9 +90,22 @@ QByteArray FeedPacket::headers(ClientChannel channel, ClientChannel user, QDataS
 
 /*!
  * Запрос клиентом заголовков фидов.
+ *
+ * \param user    Идентификатор пользователя.
+ * \param channel Идентификатор канала.
+ * \param stream  Поток записи пакета.
  */
 QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "headers");
+  return packet.data(stream);
+}
+
+
+QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "update");
+  packet.setText(name);
+  packet.setData(json);
   return packet.data(stream);
 }

@@ -33,6 +33,7 @@ public:
   static QByteArray get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
   static QByteArray headers(ClientChannel channel, ClientChannel user, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
+  static QByteArray update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
 };
 
 #endif /* FEEDPACKET_H_ */

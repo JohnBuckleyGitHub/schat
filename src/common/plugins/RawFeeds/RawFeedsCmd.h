@@ -33,6 +33,9 @@ class RawFeedsCmd : public Messages
 public:
   RawFeedsCmd(RawFeeds *parent);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+
+private:
+  void update(const QByteArray &dest, const ClientCmd &cmd);
 };
 
 } // namespace Hooks
