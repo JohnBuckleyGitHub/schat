@@ -19,8 +19,9 @@
 #include <QDebug>
 #include "SimpleJSon.h"
 
-#include "feeds/Feeds.h"
 #include "feeds/FeedFactory.h"
+#include "feeds/Feeds.h"
+#include "net/packets/Notice.h"
 
 bool Feeds::add(FeedPtr feed)
 {
@@ -62,6 +63,15 @@ void Feeds::load(const QVariantMap &data)
 }
 
 
+int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
+{
+  if (!m_feeds.contains(name))
+    return Notice::NotFound;
+
+  return m_feeds.value(name)->update(json, channel);
+}
+
+
 /*!
  * Получение тела фида.
  *
@@ -72,7 +82,6 @@ void Feeds::load(const QVariantMap &data)
  */
 QVariantMap Feeds::feed(const QString &name, Channel *channel)
 {
-  QVariantMap json;
   if (name.isEmpty())
     return QVariantMap();
 

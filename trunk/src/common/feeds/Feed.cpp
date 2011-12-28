@@ -16,9 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "feeds/Feed.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
-
 
 /*!
  * Создание пустого фида.
@@ -73,6 +74,18 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
   Q_UNUSED(data)
 
   return new Feed(name, data);
+}
+
+
+int Feed::update(const QVariantMap &json, Channel *channel)
+{
+  if (!(m_header.acl().match(channel) & Acl::Write))
+    return Notice::Forbidden;
+
+  merge(m_data, json);
+  m_header.setDate(DateTime::utc());
+
+  return Notice::OK;
 }
 
 

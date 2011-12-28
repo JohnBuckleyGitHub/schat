@@ -35,6 +35,7 @@ protected:
 private:
   bool get();
   bool headers();
+  bool update();
 
   FeedPacket *m_packet;
   ChatChannel m_channel;
