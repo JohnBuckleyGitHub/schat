@@ -72,7 +72,7 @@ QByteArray ChannelPacket::channel(ClientChannel channel, ClientChannel user, QDa
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
   packet.m_channelStatus = channel->status().value();
-  packet.setData(channel->feeds().get(user.data()));
+  packet.setData(channel->feeds().headers(user.data()));
 
   if (channel->type() == SimpleID::ChannelId)
     packet.m_channels = channel->channels().all();

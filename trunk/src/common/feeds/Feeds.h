@@ -39,8 +39,8 @@ public:
   inline void setChannel(Channel *channel) { m_channel = channel; }
   void load(const QVariantMap &data);
 
-  QVariantMap get(Channel *channel, const QStringList &feeds = QStringList(), bool body = true) const;
-  QVariantMap headers(Channel *channel, const QStringList &feeds = QStringList()) const;
+  QVariantMap feed(const QString &name, Channel *channel = 0);
+  QVariantMap headers(Channel *channel) const;
   QVariantMap save() const;
 
   static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);

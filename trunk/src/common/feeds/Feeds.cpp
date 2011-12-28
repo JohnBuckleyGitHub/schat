@@ -63,39 +63,35 @@ void Feeds::load(const QVariantMap &data)
 
 
 /*!
- * Получение фидов для одиночного пользователя.
+ * Получение тела фида.
  *
- * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит фиды если у него нет прав на чтение.
- * \param feeds   Список имён фидов, если список пуст будут получены все фиды.
- * \param body    false если не нужно получать тело фидов.
+ * \param name    Имя фида.
+ * \param channel Указатель на канал для проверки прав доступа.
  *
- * \sa headers().
+ * \return Тело фида или пустые данные, если произошла ошибка.
  */
-QVariantMap Feeds::get(Channel *channel, const QStringList &feeds, bool body) const
+QVariantMap Feeds::feed(const QString &name, Channel *channel)
 {
-  if (feeds.isEmpty())
-    return headers(channel, m_feeds.keys());
-
   QVariantMap json;
+  if (name.isEmpty())
+    return json;
 
-  for (int i = 0; i < feeds.size(); ++i) {
-    FeedPtr feed = m_feeds.value(feeds.at(i));
-    if (!feed)
-      continue;
+  if (!m_feeds.contains(name))
+    return json;
 
-    QVariantMap header = feed->h().get(channel);
-    if (header.isEmpty())
-      continue;
+  FeedPtr feed = m_feeds.value(name);
+  if (!feed)
+    return json;
 
-    QVariantMap data;
-    if (body)
-      data = feed->get(channel);
+  QVariantMap header = feed->h().get(channel);
+  if (header.isEmpty())
+    return json;
 
-    Feed::merge(data, header);
-    merge(feeds.at(i), json, data);
-  }
+  QVariantMap body = feed->get(channel);
+  Feed::merge(body, header);
 
-  return merge("feeds", json);
+  merge(name, json, body);
+  return json;
 }
 
 
@@ -107,9 +103,17 @@ QVariantMap Feeds::get(Channel *channel, const QStringList &feeds, bool body) co
  *
  * \sa get().
  */
-QVariantMap Feeds::headers(Channel *channel, const QStringList &feeds) const
+QVariantMap Feeds::headers(Channel *channel) const
 {
-  return get(channel, feeds, false);
+  QVariantMap json;
+
+  QMapIterator<QString, FeedPtr> i(m_feeds);
+  while (i.hasNext()) {
+    i.next();
+    merge(i.key(), json, i.value()->h().get(channel));
+  }
+
+  return merge("feeds", json);
 }
 
 
