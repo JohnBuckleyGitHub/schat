@@ -33,7 +33,7 @@ Acl::Acl(int acl)
 int Acl::match(Channel *channel) const
 {
   if (!channel)
-    return 04;
+    return 06;
 
-  return 04;
+  return 06;
 }
