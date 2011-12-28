@@ -74,24 +74,16 @@ QVariantMap Feeds::feed(const QString &name, Channel *channel)
 {
   QVariantMap json;
   if (name.isEmpty())
-    return json;
+    return QVariantMap();
 
   if (!m_feeds.contains(name))
-    return json;
+    return QVariantMap();
 
   FeedPtr feed = m_feeds.value(name);
   if (!feed)
-    return json;
+    return QVariantMap();
 
-  QVariantMap header = feed->h().get(channel);
-  if (header.isEmpty())
-    return json;
-
-  QVariantMap body = feed->get(channel);
-  Feed::merge(body, header);
-
-  merge(name, json, body);
-  return json;
+  return Feed::merge(name, feed->feed(channel));
 }
 
 
@@ -110,10 +102,10 @@ QVariantMap Feeds::headers(Channel *channel) const
   QMapIterator<QString, FeedPtr> i(m_feeds);
   while (i.hasNext()) {
     i.next();
-    merge(i.key(), json, i.value()->h().get(channel));
+    Feed::merge(i.key(), json, i.value()->h().get(channel));
   }
 
-  return merge("feeds", json);
+  return Feed::merge("feeds", json);
 }
 
 
@@ -127,28 +119,8 @@ QVariantMap Feeds::save() const
   QMapIterator<QString, FeedPtr> i(m_feeds);
   while (i.hasNext()) {
     i.next();
-    json[i.key()] = i.value()->save();
+    Feed::merge(i.key(), json, i.value()->save());
   }
 
-  return merge("feeds", json);
-}
-
-
-bool Feeds::merge(const QString &key, QVariantMap &out, const QVariantMap &in)
-{
-  if (in.isEmpty())
-    return false;
-
-  out[key] = in;
-  return true;
-}
-
-
-QVariantMap Feeds::merge(const QString &key, const QVariantMap &in)
-{
-  QVariantMap out;
-  if (!in.isEmpty())
-    out[key] = in;
-
-  return out;
+  return Feed::merge("feeds", json);
 }
