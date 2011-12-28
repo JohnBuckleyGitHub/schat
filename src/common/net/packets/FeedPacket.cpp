@@ -43,7 +43,7 @@ QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QSt
 {
   FeedPacket packet(channel->id(), user->id(), "feed");
   packet.setDirection(Server2Client);
-  packet.setData(channel->feeds().get(user.data(), QStringList(name)));
+  packet.setData(channel->feeds().feed(name, user.data()));
 
   if (packet.json().isEmpty()) {
     if (!channel->feeds().all().contains(name))
@@ -74,7 +74,7 @@ QByteArray FeedPacket::headers(ClientChannel channel, ClientChannel user, QDataS
 {
   FeedPacket packet(channel->id(), user->id(), "headers");
   packet.setDirection(Server2Client);
-  packet.setData(channel->feeds().get(user.data()));
+  packet.setData(channel->feeds().headers(user.data()));
 
   return packet.data(stream);
 }
