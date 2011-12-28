@@ -76,12 +76,15 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 }
 
 
-QVariantMap Feed::get(Channel *channel) const
+QVariantMap Feed::feed(Channel *channel)
 {
-  if (canRead(channel))
-    return m_data;
+  QVariantMap header = m_header.get(channel);
+  if (header.isEmpty())
+    return QVariantMap();
 
-  return QVariantMap();
+  QVariantMap json = m_data;
+  merge(json, header);
+  return json;
 }
 
 
@@ -108,6 +111,29 @@ bool Feed::canRead(Channel *channel) const
 }
 
 
+bool Feed::merge(const QString &key, QVariantMap &out, const QVariantMap &in)
+{
+  if (in.isEmpty())
+    return false;
+
+  out[key] = in;
+  return true;
+}
+
+
+QVariantMap Feed::merge(const QString &key, const QVariantMap &in)
+{
+  QVariantMap out;
+  if (!in.isEmpty())
+    out[key] = in;
+
+  return out;
+}
+
+
+/*!
+ * Слияние данных фидов.
+ */
 void Feed::merge(QVariantMap &out, const QVariantMap &in)
 {
   QMapIterator<QString, QVariant> i(in);

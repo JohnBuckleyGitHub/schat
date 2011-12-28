@@ -37,8 +37,9 @@ public:
 
   virtual bool isValid() const;
   virtual Feed* load(const QString &name, const QVariantMap &data);
-  virtual QVariantMap get(Channel *channel) const;
+  virtual QVariantMap feed(Channel *channel = 0);
   virtual QVariantMap save() const;
+
   virtual void setChannel(Channel *channel);
 
   bool canRead(Channel *channel) const;
@@ -46,6 +47,8 @@ public:
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& h()                   { return m_header; }
 
+  static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
+  static QVariantMap merge(const QString &key, const QVariantMap &in);
   static void merge(QVariantMap &out, const QVariantMap &in);
 
 protected:

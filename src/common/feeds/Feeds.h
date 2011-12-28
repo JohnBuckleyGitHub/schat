@@ -43,9 +43,6 @@ public:
   QVariantMap headers(Channel *channel) const;
   QVariantMap save() const;
 
-  static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
-  static QVariantMap merge(const QString &key, const QVariantMap &in);
-
 private:
   Channel *m_channel;             ///< Канал фидов.
   QMap<QString, FeedPtr> m_feeds; ///< Таблица фидов.
