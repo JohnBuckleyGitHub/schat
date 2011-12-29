@@ -95,6 +95,18 @@ bool ClientFeeds::query(const QByteArray &id, const QString &name, const QVarian
 }
 
 
+bool ClientFeeds::remove(const QByteArray &id, const QString &name)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::remove(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+}
+
+
 bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVariantMap &json)
 {
   if (!Channel::isCompatibleId(id))

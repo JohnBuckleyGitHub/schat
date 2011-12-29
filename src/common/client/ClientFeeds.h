@@ -42,6 +42,7 @@ public:
   bool get(const QByteArray &id, const QString &name);
   bool headers(const QByteArray &id);
   bool query(const QByteArray &id, const QString &name, const QVariantMap &json);
+  bool remove(const QByteArray &id, const QString &name);
   bool update(const QByteArray &id, const QString &name, const QVariantMap &json);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
 
