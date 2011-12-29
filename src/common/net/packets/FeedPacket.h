@@ -30,6 +30,7 @@ public:
   FeedPacket(quint16 type, PacketReader *reader);
 
   static QByteArray add(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
+  static QByteArray added(const FeedPacket &source, int status, QDataStream *stream);
   static QByteArray clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
   static QByteArray cleared(const FeedPacket &source, int status, QDataStream *stream);
   static QByteArray feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream);

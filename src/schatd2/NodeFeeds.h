@@ -33,6 +33,7 @@ protected:
   bool read(PacketReader *reader);
 
 private:
+  bool add();
   bool clear();
   bool get();
   bool headers();
