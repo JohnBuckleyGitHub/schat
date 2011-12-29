@@ -65,6 +65,9 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     else if (body.command() == "add") {
       add(dest, body);
     }
+    else if (body.command() == "remove") {
+      ChatClient::feeds()->remove(dest, body.body());
+    }
 
     return true;
   }
