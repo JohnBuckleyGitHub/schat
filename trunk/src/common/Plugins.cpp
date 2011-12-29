@@ -21,9 +21,9 @@
 #include <QDir>
 #include <QPluginLoader>
 
+#include "JSON.h"
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
-#include "SimpleJSon.h"
 
 /*!
  * Загружает плагин с именем \p fileName.
@@ -53,7 +53,7 @@ PluginItem::PluginItem(const QString &fileName)
   if (m_header.value("Name").toString().isEmpty())
     return;
 
-  qDebug() << "PLUGIN ITEM CREATED" << SimpleJSon::generate(m_header);
+  qDebug() << "PLUGIN ITEM CREATED" << JSON::generate(m_header);
   m_valid = true;
 }
 

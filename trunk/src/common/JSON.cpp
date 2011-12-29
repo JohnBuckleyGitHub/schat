@@ -17,7 +17,7 @@
  */
 
 #include "k8json/k8json.h"
-#include "SimpleJSon.h"
+#include "JSON.h"
 
 /*!
  * Генерация JSON.
@@ -25,7 +25,7 @@
  * \param data Исходные данные.
  * \return Результат генерации.
  */
-QByteArray SimpleJSon::generate(const QVariant &data)
+QByteArray JSON::generate(const QVariant &data)
 {
   QByteArray res;
   K8JSON::generate(res, data, 0);
@@ -39,7 +39,7 @@ QByteArray SimpleJSon::generate(const QVariant &data)
 /*!
  * Формирование корректной строки для использования внутри JSON.
  */
-QString SimpleJSon::quote(const QString &text)
+QString JSON::quote(const QString &text)
 {
   return K8JSON::quote(text);
 }
@@ -48,7 +48,7 @@ QString SimpleJSon::quote(const QString &text)
 /*!
  * Разбор JSON данных.
  */
-QVariant SimpleJSon::parse(const QByteArray &data)
+QVariant JSON::parse(const QByteArray &data)
 {
   QVariant res;
   if (data.isEmpty())

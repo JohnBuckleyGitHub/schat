@@ -22,9 +22,9 @@
 #include <QByteArray>
 #include <QDataStream>
 
+#include "JSON.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
-#include "SimpleJSon.h"
 
 /*!
  * Класс выполняющий запись виртуального пакета.
@@ -140,7 +140,7 @@ public:
   }
 
   inline void put(const QVariant &data) {
-    *m_stream << SimpleJSon::generate(data);
+    *m_stream << JSON::generate(data);
   }
 
   template<class T>

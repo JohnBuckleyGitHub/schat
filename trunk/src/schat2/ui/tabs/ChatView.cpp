@@ -28,9 +28,9 @@
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChatViewHooks.h"
+#include "JSON.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
-#include "SimpleJSon.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 
@@ -61,7 +61,7 @@ void ChatView::add(const Message &message)
   if (!message.isValid())
     return;
 
-  evaluateJavaScript(message.func() + "(" + SimpleJSon::quote(message.json()) + ");");
+  evaluateJavaScript(message.func() + "(" + JSON::quote(message.json()) + ");");
 }
 
 

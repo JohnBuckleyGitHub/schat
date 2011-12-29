@@ -17,7 +17,7 @@
  */
 
 #include <QDebug>
-#include "SimpleJSon.h"
+#include "JSON.h"
 
 #include "feeds/FeedFactory.h"
 #include "feeds/Feeds.h"
@@ -59,7 +59,7 @@ void Feeds::load(const QVariantMap &data)
     add(FeedFactory::load(i.key(), i.value().toMap()));
   }
 
-  qDebug() << SimpleJSon::generate(save());
+  qDebug() << JSON::generate(save());
 }
 
 

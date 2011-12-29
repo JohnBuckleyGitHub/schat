@@ -33,6 +33,7 @@ HEADERS += \
     feeds/TopicFeed.h \
     FileLocations.h \
     Gender.h \
+    JSON.h \
     k8json/k8json.h \
     net/PacketReader.h \
     net/packets/auth.h \
@@ -50,7 +51,6 @@ HEADERS += \
     Plugins.h \
     schat.h \
     Settings.h \
-    SimpleJSon.h \
     text/HtmlFilter.h \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
@@ -72,6 +72,7 @@ SOURCES += \
     feeds/TopicFeed.cpp \
     FileLocations.cpp \
     Gender.cpp \
+    JSON.cpp \
     k8json/k8json.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
@@ -86,7 +87,6 @@ SOURCES += \
     net/TransportWriter.cpp \
     Plugins.cpp \
     Settings.cpp \
-    SimpleJSon.cpp \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
     Translation.cpp \

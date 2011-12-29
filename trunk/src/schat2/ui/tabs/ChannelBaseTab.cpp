@@ -28,8 +28,8 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "hooks/ChannelMenu.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
-#include "SimpleJSon.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
@@ -171,5 +171,5 @@ void ChannelBaseTab::rename(const QByteArray &id)
   json["Url"]  = ChatUrls::toUrl(user, "insert").toString();
   json["Name"] = Qt::escape(user->name());
 
-  m_chatView->evaluateJavaScript("updateChannelName(" + SimpleJSon::quote(SimpleJSon::generate(json)) + ");");
+  m_chatView->evaluateJavaScript("updateChannelName(" + JSON::quote(JSON::generate(json)) + ");");
 }

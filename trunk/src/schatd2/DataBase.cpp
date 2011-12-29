@@ -27,9 +27,9 @@
 #include "DataBase.h"
 #include "DateTime.h"
 #include "FileLocations.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
-#include "SimpleJSon.h"
 #include "Storage.h"
 
 DataBase::DataBase(QObject *parent)
@@ -155,7 +155,7 @@ ChatChannel DataBase::channel(qint64 id)
     channel->setAccount(&account);
   }
 
-  channel->setData(SimpleJSon::parse(query.value(5).toByteArray()).toMap());
+  channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
 
   return channel;
 }
@@ -189,7 +189,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.bindValue(":gender",     channel->gender().raw());
   query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().save()));
+  query.bindValue(":data",       JSON::generate(channel->feeds().save()));
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -282,7 +282,7 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(":gender",     channel->gender().raw());
   query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       SimpleJSon::generate(channel->feeds().save()));
+  query.bindValue(":data",       JSON::generate(channel->feeds().save()));
   query.bindValue(":id",         channel->key());
   query.exec();
 
