@@ -47,11 +47,11 @@ QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, 
 }
 
 
-QByteArray FeedPacket::cleared(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream)
+QByteArray FeedPacket::cleared(const FeedPacket &source, int status, QDataStream *stream)
 {
-  FeedPacket packet(channel, user, "cleared");
+  FeedPacket packet(source.dest(), source.sender(), "cleared");
   packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(name);
+  packet.setText(source.text());
   packet.setStatus(status);
   return packet.data(stream);
 }
@@ -129,11 +129,11 @@ QByteArray FeedPacket::query(const QByteArray &user, const QByteArray &channel, 
 }
 
 
-QByteArray FeedPacket::reply(const QByteArray &channel, const QByteArray &user, const QString &name, const FeedQueryReply &reply, QDataStream *stream)
+QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream)
 {
-  FeedPacket packet(channel, user, "reply");
+  FeedPacket packet(source.dest(), source.sender(), "reply");
   packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(name);
+  packet.setText(source.text());
   packet.setStatus(reply.status);
   packet.setData(reply.json);
   return packet.data(stream);
@@ -149,11 +149,11 @@ QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel,
 }
 
 
-QByteArray FeedPacket::updated(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream)
+QByteArray FeedPacket::updated(const FeedPacket &source, int status, QDataStream *stream)
 {
-  FeedPacket packet(channel, user, "updated");
+  FeedPacket packet(source.dest(), source.sender(), "updated");
   packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(name);
+  packet.setText(source.text());
   packet.setStatus(status);
   return packet.data(stream);
 }
