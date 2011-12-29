@@ -22,15 +22,6 @@
 #include "net/SimpleID.h"
 
 /*!
- * Создание пустого фида.
- */
-Feed::Feed(qint64 date)
-{
-  m_header.setDate(date);
-}
-
-
-/*!
  * Создание фида на основе JSON данных.
  *
  * \param name Имя фида.
@@ -63,6 +54,12 @@ bool Feed::isValid() const
 }
 
 
+Feed* Feed::create(const QString &name)
+{
+  return new Feed(name, DateTime::utc());
+}
+
+
 /*!
  * Создание фида на основе сохранённых JSON данных.
  *
@@ -71,8 +68,6 @@ bool Feed::isValid() const
  */
 Feed* Feed::load(const QString &name, const QVariantMap &data)
 {
-  Q_UNUSED(data)
-
   return new Feed(name, data);
 }
 

@@ -20,6 +20,21 @@
 
 QHash<QString, FeedPtr> FeedFactory::m_feeds;
 
+
+Feed* FeedFactory::create(const QString &name)
+{
+  if (!m_feeds.contains(name)) {
+    Feed feed;
+    return feed.create(name);
+  }
+
+  return m_feeds.value(name)->create(name);
+}
+
+
+/*!
+ * Восстановление фида из JSON данных.
+ */
 Feed* FeedFactory::load(const QString &name, const QVariantMap &data)
 {
   if (!m_feeds.contains(name)) {

@@ -53,7 +53,7 @@ void MessagesImpl::readText(const MessagePacket &packet)
   /// Если это собственное сообщение, то для него при необходимости устанавливается
   /// статус "offline" или "rejected".
   if (packet.sender() == ChatClient::id()) {
-    if (packet.status() == Notice::UserOffline)
+    if (packet.status() == Notice::ChannelOffline)
       message.data()["Status"] = "offline";
     else if (packet.status() != Notice::OK)
       message.data()["Status"] = "rejected";

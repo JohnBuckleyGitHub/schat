@@ -170,17 +170,17 @@ QString Notice::status(int status)
     case NotFound:
       return QObject::tr("Not Found");
 
-    case UserAlreadyExists:
-      return QObject::tr("User Already Exists");
+    case ObjectAlreadyExists:
+      return QObject::tr("Object Already Exists");
 
-    case UserNotExists:
-      return QObject::tr("User Not Exists");
+    case ObjectNotExists:
+      return QObject::tr("Object Not Exists");
 
     case NickAlreadyUse:
       return QObject::tr("Nick Already In Use");
 
-    case UserOffline:
-      return QObject::tr("User Offline");
+    case ChannelOffline:
+      return QObject::tr("Channel Offline");
 
     case Conflict:
       return QObject::tr("Conflict");

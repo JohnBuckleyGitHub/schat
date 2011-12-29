@@ -41,6 +41,22 @@ bool Feeds::add(FeedPtr feed)
 }
 
 
+int Feeds::add(const QString &name, const QVariantMap &json, Channel *channel)
+{
+  if (name.isEmpty())
+    return Notice::BadRequest;
+
+  if (m_feeds.contains(name))
+    return Notice::ObjectAlreadyExists;
+
+  if (!add(FeedFactory::create(name)))
+    return Notice::InternalError;
+
+  update(name, json, channel);
+  return Notice::OK;
+}
+
+
 /*!
  * Загрузка фидов из JSON данных.
  *
