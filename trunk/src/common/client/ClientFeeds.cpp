@@ -32,6 +32,18 @@ ClientFeeds::ClientFeeds(QObject *parent)
 }
 
 
+bool ClientFeeds::add(const QByteArray &id, const QString &name, const QVariantMap &json)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::add(ChatClient::id(), id, name, json, ChatClient::io()->sendStream()));
+}
+
+
 bool ClientFeeds::clear(const QByteArray &id, const QString &name)
 {
   if (!Channel::isCompatibleId(id))

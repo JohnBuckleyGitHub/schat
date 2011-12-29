@@ -39,6 +39,15 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+QByteArray FeedPacket::add(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "add");
+  packet.setText(name);
+  packet.setData(json);
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "clear");
