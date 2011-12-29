@@ -48,6 +48,16 @@ QByteArray FeedPacket::add(const QByteArray &user, const QByteArray &channel, co
 }
 
 
+QByteArray FeedPacket::added(const FeedPacket &source, int status, QDataStream *stream)
+{
+  FeedPacket packet(source.dest(), source.sender(), "added");
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(source.text());
+  packet.setStatus(status);
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "clear");

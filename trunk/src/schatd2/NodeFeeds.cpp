@@ -61,7 +61,17 @@ bool NodeFeeds::read(PacketReader *reader)
     return clear();
   else if (cmd == "query")
     return query();
+  else if (cmd == "add")
+    return add();
 
+  return false;
+}
+
+
+bool NodeFeeds::add()
+{
+  int status = m_channel->feeds().add(m_packet->text(), m_packet->json(), m_user.data());
+  m_core->send(m_user->sockets(), FeedPacket::added(*m_packet, status, m_core->sendStream()));
   return false;
 }
 
