@@ -30,15 +30,15 @@ public:
   FeedPacket(quint16 type, PacketReader *reader);
 
   static QByteArray clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
-  static QByteArray cleared(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream);
+  static QByteArray cleared(const FeedPacket &source, int status, QDataStream *stream);
   static QByteArray feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream);
   static QByteArray get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
   static QByteArray headers(ClientChannel channel, ClientChannel user, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
   static QByteArray query(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
-  static QByteArray reply(const QByteArray &channel, const QByteArray &user, const QString &name, const FeedQueryReply &reply, QDataStream *stream);
+  static QByteArray reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream);
   static QByteArray update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
-  static QByteArray updated(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream);
+  static QByteArray updated(const FeedPacket &source, int status, QDataStream *stream);
 };
 
 #endif /* FEEDPACKET_H_ */
