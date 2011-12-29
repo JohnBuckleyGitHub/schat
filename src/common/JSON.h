@@ -16,16 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SIMPLEJSON_H_
-#define SIMPLEJSON_H_
+#ifndef JSON_H_
+#define JSON_H_
 
 #include <QVariant>
 
 #include "schat.h"
 
-class SCHAT_EXPORT SimpleJSon
+class SCHAT_EXPORT JSON
 {
-  SimpleJSon() {}
+  JSON() {}
 
 public:
   static QByteArray generate(const QVariant &data);
@@ -33,4 +33,4 @@ public:
   static QVariant parse(const QByteArray &data);
 };
 
-#endif /* SIMPLEJSON_H_ */
+#endif /* JSON_H_ */

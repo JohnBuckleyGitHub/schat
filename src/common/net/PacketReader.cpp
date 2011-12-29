@@ -16,9 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "JSON.h"
 #include "net/PacketReader.h"
 #include "net/Protocol.h"
-#include "SimpleJSon.h"
 
 PacketReader::PacketReader(QDataStream *stream)
   : m_stream(stream),
@@ -42,5 +42,5 @@ QVariant PacketReader::json() const
 {
   QByteArray data;
   *m_stream >> data;
-  return SimpleJSon::parse(data);
+  return JSON::parse(data);
 }

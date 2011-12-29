@@ -22,9 +22,9 @@
 #include "client/ClientCmd.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
+#include "JSON.h"
 #include "RawFeedsCmd.h"
 #include "RawFeedsPlugin_p.h"
-#include "SimpleJSon.h"
 
 namespace Hooks
 {
@@ -76,7 +76,7 @@ void RawFeedsCmd::query(const QByteArray &dest, const ClientCmd &cmd)
   if (body.command().isEmpty())
     return;
 
-  QVariantMap json = SimpleJSon::parse(body.body().toUtf8()).toMap();
+  QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
   if (json.isEmpty())
     return;
 
@@ -90,7 +90,7 @@ void RawFeedsCmd::update(const QByteArray &dest, const ClientCmd &cmd)
   if (body.command().isEmpty())
     return;
 
-  QVariantMap json = SimpleJSon::parse(body.body().toUtf8()).toMap();
+  QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
   if (json.isEmpty())
     return;
 

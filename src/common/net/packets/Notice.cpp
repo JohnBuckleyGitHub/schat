@@ -90,7 +90,7 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   if (m_fields & JSonField) {
     m_raw = reader->get<QByteArray>();
-    m_data = SimpleJSon::parse(m_raw).toMap();
+    m_data = JSON::parse(m_raw).toMap();
   }
 
   if (m_fields & TextField)

@@ -23,9 +23,9 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "JSON.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
-#include "SimpleJSon.h"
 
 Message::Message()
   : m_func("addMessage")
@@ -35,7 +35,7 @@ Message::Message()
 
 QString Message::json() const
 {
-  QString json = SimpleJSon::generate(m_data);
+  QString json = JSON::generate(m_data);
 //  qDebug() << json;
 
   json.remove('\n');
