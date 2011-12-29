@@ -42,12 +42,12 @@ public:
 class SCHAT_EXPORT Feed
 {
 public:
-  Feed(qint64 date = 0);
   Feed(const QString &name, const QVariantMap &data);
-  Feed(const QString &name, qint64 date = 0);
+  Feed(const QString &name = QString(), qint64 date = 0);
   virtual ~Feed() {}
 
   virtual bool isValid() const;
+  virtual Feed* create(const QString &name);
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
   virtual int clear(Channel *channel = 0);

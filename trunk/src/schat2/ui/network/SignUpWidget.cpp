@@ -200,7 +200,7 @@ void SignUpWidget::notice(const Notice &notice)
   if (notice.status() == Notice::OK)
     return;
 
-  if (notice.status() == Notice::UserAlreadyExists)
+  if (notice.status() == Notice::ObjectAlreadyExists)
     ChatCore::makeRed(m_nameEdit);
 
   m_error->setToolTip(Notice::status(notice.status()));

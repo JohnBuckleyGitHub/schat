@@ -31,6 +31,7 @@ class SCHAT_EXPORT FeedFactory
   FeedFactory() {}
 
 public:
+  static Feed* create(const QString &name);
   static Feed* load(const QString &name, const QVariantMap &data);
 //  static void add(const QString &name, Feed *feed);
 

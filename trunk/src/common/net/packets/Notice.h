@@ -55,10 +55,10 @@ public:
     Unauthorized        = 401, ///< Unauthorized.
     Forbidden           = 402, ///< Forbidden.
     NotFound            = 403, ///< Not Found.
-    UserAlreadyExists   = 404, ///< User Already Exists.
-    UserNotExists       = 405, ///< User Not Exists.
+    ObjectAlreadyExists = 404, ///< Object Already Exists.
+    ObjectNotExists     = 405, ///< Object Not Exists.
     NickAlreadyUse      = 406, ///< Nick Already In Use.
-    UserOffline         = 407, ///< User Offline.
+    ChannelOffline      = 407, ///< Channel Offline.
     Conflict            = 408, ///< Conflict.
     InternalError       = 500, ///< Internal Error.
     NotImplemented      = 501, ///< Not Implemented.

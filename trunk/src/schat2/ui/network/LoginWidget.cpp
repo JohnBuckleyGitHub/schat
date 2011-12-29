@@ -167,7 +167,7 @@ void LoginWidget::notice(const Notice &notice)
   m_error->setVisible(true);
   m_error->setToolTip(Notice::status(notice.status()));
 
-  if (notice.status() == Notice::UserNotExists)
+  if (notice.status() == Notice::ObjectNotExists)
     ChatCore::makeRed(m_nameEdit);
   else if (notice.status() == Notice::Forbidden)
     ChatCore::makeRed(m_passwordEdit);

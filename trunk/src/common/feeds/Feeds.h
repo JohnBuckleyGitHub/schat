@@ -37,6 +37,7 @@ public:
   inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
   inline const QMap<QString, FeedPtr>& all() const { return m_feeds; }
   inline void setChannel(Channel *channel) { m_channel = channel; }
+  int add(const QString &name, const QVariantMap &json, Channel *channel = 0);
   void load(const QVariantMap &data);
 
   FeedQueryReply query(const QString &name, const QVariantMap &json, Channel *channel = 0);

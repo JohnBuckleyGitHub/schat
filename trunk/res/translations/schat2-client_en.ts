@@ -30,23 +30,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="174"/>
-        <source>User Already Exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="177"/>
-        <source>User Not Exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/common/net/packets/Notice.cpp" line="180"/>
         <source>Nick Already In Use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="174"/>
+        <source>Object Already Exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="177"/>
+        <source>Object Not Exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/common/net/packets/Notice.cpp" line="183"/>
-        <source>User Offline</source>
+        <source>Channel Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -30,24 +30,24 @@
         <translation>Не найдено</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="174"/>
-        <source>User Already Exists</source>
-        <translation>Пользователь уже существует</translation>
-    </message>
-    <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="177"/>
-        <source>User Not Exists</source>
-        <translation>Пользователь не существует</translation>
-    </message>
-    <message>
         <location filename="../../src/common/net/packets/Notice.cpp" line="180"/>
         <source>Nick Already In Use</source>
         <translation>Ник уже используется</translation>
     </message>
     <message>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="174"/>
+        <source>Object Already Exists</source>
+        <translation>Объект уже существует</translation>
+    </message>
+    <message>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="177"/>
+        <source>Object Not Exists</source>
+        <translation>Объект  не существует</translation>
+    </message>
+    <message>
         <location filename="../../src/common/net/packets/Notice.cpp" line="183"/>
-        <source>User Offline</source>
-        <translation>Пользователь не в сети</translation>
+        <source>Channel Offline</source>
+        <translation>Канал не в сети</translation>
     </message>
     <message>
         <location filename="../../src/common/net/packets/Notice.cpp" line="186"/>
