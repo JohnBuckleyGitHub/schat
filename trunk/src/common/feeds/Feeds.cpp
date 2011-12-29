@@ -97,6 +97,18 @@ int Feeds::clear(const QString &name, Channel *channel)
 }
 
 
+int Feeds::remove(const QString &name, Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  if (!m_feeds.contains(name))
+    return Notice::NotFound;
+
+  m_feeds.remove(name);
+  return Notice::OK;
+}
+
+
 int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
 {
   if (!m_feeds.contains(name))

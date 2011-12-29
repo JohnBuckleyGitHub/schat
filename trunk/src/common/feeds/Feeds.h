@@ -42,6 +42,7 @@ public:
 
   FeedQueryReply query(const QString &name, const QVariantMap &json, Channel *channel = 0);
   int clear(const QString &name, Channel *channel = 0);
+  int remove(const QString &name, Channel *channel = 0);
   int update(const QString &name, const QVariantMap &json, Channel *channel = 0);
   QVariantMap feed(const QString &name, Channel *channel = 0);
   QVariantMap headers(Channel *channel) const;
