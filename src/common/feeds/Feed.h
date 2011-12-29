@@ -24,6 +24,18 @@
 
 #include "feeds/FeedHeader.h"
 
+class FeedQueryReply
+{
+public:
+  FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
+  : status(status)
+  , json(json)
+  {}
+
+  int status;
+  QVariantMap json;
+};
+
 /*!
  * Базовый класс для фидов.
  */
@@ -37,6 +49,7 @@ public:
 
   virtual bool isValid() const;
   virtual Feed* load(const QString &name, const QVariantMap &data);
+  virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
   virtual int clear(Channel *channel = 0);
   virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);

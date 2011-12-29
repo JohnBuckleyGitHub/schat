@@ -39,6 +39,7 @@ public:
   inline void setChannel(Channel *channel) { m_channel = channel; }
   void load(const QVariantMap &data);
 
+  FeedQueryReply query(const QString &name, const QVariantMap &json, Channel *channel = 0);
   int clear(const QString &name, Channel *channel = 0);
   int update(const QString &name, const QVariantMap &json, Channel *channel = 0);
   QVariantMap feed(const QString &name, Channel *channel = 0);

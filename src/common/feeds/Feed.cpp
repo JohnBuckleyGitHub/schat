@@ -77,6 +77,15 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 }
 
 
+FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+
+  return FeedQueryReply(Notice::NotImplemented);
+}
+
+
 int Feed::clear(Channel *channel)
 {
   if (!(m_header.acl().match(channel) & Acl::Write))
