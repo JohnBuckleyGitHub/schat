@@ -59,11 +59,28 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     else if (body.command() == "clear") {
       ChatClient::feeds()->clear(dest, body.body());
     }
+    else if (body.command() == "query") {
+      query(dest, body);
+    }
 
     return true;
   }
 
   return false;
+}
+
+
+void RawFeedsCmd::query(const QByteArray &dest, const ClientCmd &cmd)
+{
+  ClientCmd body(cmd.body());
+  if (body.command().isEmpty())
+    return;
+
+  QVariantMap json = SimpleJSon::parse(body.body().toUtf8()).toMap();
+  if (json.isEmpty())
+    return;
+
+  ChatClient::feeds()->query(dest, body.command(), json);
 }
 
 

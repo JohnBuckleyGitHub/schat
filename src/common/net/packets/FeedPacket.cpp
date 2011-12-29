@@ -120,6 +120,15 @@ QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel
 }
 
 
+QByteArray FeedPacket::query(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "query");
+  packet.setText(name);
+  packet.setData(json);
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "update");
