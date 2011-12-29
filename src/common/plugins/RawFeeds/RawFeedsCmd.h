@@ -35,6 +35,7 @@ public:
   bool command(const QByteArray &dest, const ClientCmd &cmd);
 
 private:
+  void add(const QByteArray &dest, const ClientCmd &cmd);
   void query(const QByteArray &dest, const ClientCmd &cmd);
   void update(const QByteArray &dest, const ClientCmd &cmd);
 };

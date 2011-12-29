@@ -62,11 +62,25 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     else if (body.command() == "query") {
       query(dest, body);
     }
+    else if (body.command() == "add") {
+      add(dest, body);
+    }
 
     return true;
   }
 
   return false;
+}
+
+
+void RawFeedsCmd::add(const QByteArray &dest, const ClientCmd &cmd)
+{
+  ClientCmd body(cmd.body());
+  if (body.command().isEmpty())
+    return;
+
+  QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
+  ChatClient::feeds()->add(dest, body.command(), json);
 }
 
 
