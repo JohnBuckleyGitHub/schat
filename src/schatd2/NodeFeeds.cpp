@@ -63,6 +63,8 @@ bool NodeFeeds::read(PacketReader *reader)
     return query();
   else if (cmd == "add")
     return add();
+  else if (cmd == "remove")
+    return remove();
 
   return false;
 }
@@ -105,6 +107,14 @@ bool NodeFeeds::query()
 {
   FeedQueryReply reply = m_channel->feeds().query(m_packet->text(), m_packet->json(), m_user.data());
   m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, reply, m_core->sendStream()));
+  return false;
+}
+
+
+bool NodeFeeds::remove()
+{
+  int status = m_channel->feeds().remove(m_packet->text(), m_user.data());
+  m_core->send(m_user->sockets(), FeedPacket::removed(*m_packet, status, m_core->sendStream()));
   return false;
 }
 

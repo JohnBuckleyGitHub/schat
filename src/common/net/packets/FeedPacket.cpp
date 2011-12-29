@@ -156,6 +156,16 @@ QByteArray FeedPacket::remove(const QByteArray &user, const QByteArray &channel,
 }
 
 
+QByteArray FeedPacket::removed(const FeedPacket &source, int status, QDataStream *stream)
+{
+  FeedPacket packet(source.dest(), source.sender(), "removed");
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(source.text());
+  packet.setStatus(status);
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream)
 {
   FeedPacket packet(source.dest(), source.sender(), "reply");

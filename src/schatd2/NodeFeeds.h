@@ -38,6 +38,7 @@ private:
   bool get();
   bool headers();
   bool query();
+  bool remove();
   bool update();
 
   FeedPacket *m_packet;
