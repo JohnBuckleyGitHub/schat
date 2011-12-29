@@ -36,6 +36,7 @@ public:
   static QByteArray headers(ClientChannel channel, ClientChannel user, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
   static QByteArray query(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
+  static QByteArray reply(const QByteArray &channel, const QByteArray &user, const QString &name, const FeedQueryReply &reply, QDataStream *stream);
   static QByteArray update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
   static QByteArray updated(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream);
 };

@@ -36,6 +36,7 @@ private:
   bool clear();
   bool get();
   bool headers();
+  bool query();
   bool update();
 
   FeedPacket *m_packet;

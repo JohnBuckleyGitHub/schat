@@ -59,6 +59,8 @@ bool NodeFeeds::read(PacketReader *reader)
     return update();
   else if (cmd == "clear")
     return clear();
+  else if (cmd == "query")
+    return query();
 
   return false;
 }
@@ -85,6 +87,14 @@ bool NodeFeeds::get()
 bool NodeFeeds::headers()
 {
   m_core->send(m_user->sockets(), FeedPacket::headers(m_channel, m_user, m_core->sendStream()));
+  return false;
+}
+
+
+bool NodeFeeds::query()
+{
+  FeedQueryReply reply = m_channel->feeds().query(m_packet->text(), m_packet->json(), m_user.data());
+  m_core->send(m_user->sockets(), FeedPacket::reply(m_channel->id(), m_user->id(), m_packet->text(), reply, m_core->sendStream()));
   return false;
 }
 

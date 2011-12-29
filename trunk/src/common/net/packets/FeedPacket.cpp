@@ -129,6 +129,17 @@ QByteArray FeedPacket::query(const QByteArray &user, const QByteArray &channel, 
 }
 
 
+QByteArray FeedPacket::reply(const QByteArray &channel, const QByteArray &user, const QString &name, const FeedQueryReply &reply, QDataStream *stream)
+{
+  FeedPacket packet(channel, user, "reply");
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(name);
+  packet.setStatus(reply.status);
+  packet.setData(reply.json);
+  return packet.data(stream);
+}
+
+
 QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
 {
   FeedPacket packet(user, channel, "update");
