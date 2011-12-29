@@ -63,6 +63,15 @@ void Feeds::load(const QVariantMap &data)
 }
 
 
+int Feeds::clear(const QString &name, Channel *channel)
+{
+  if (!m_feeds.contains(name))
+    return Notice::NotFound;
+
+  return m_feeds.value(name)->clear(channel);
+}
+
+
 int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
 {
   if (!m_feeds.contains(name))

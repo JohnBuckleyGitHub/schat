@@ -47,6 +47,16 @@ QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, 
 }
 
 
+QByteArray FeedPacket::cleared(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream)
+{
+  FeedPacket packet(channel, user, "cleared");
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(name);
+  packet.setStatus(status);
+  return packet.data(stream);
+}
+
+
 /*!
  * Отправка клиенту тела фида.
  */
