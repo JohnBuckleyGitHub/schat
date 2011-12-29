@@ -82,6 +82,6 @@ bool NodeFeeds::headers()
 bool NodeFeeds::update()
 {
   int status = m_channel->feeds().update(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::update(m_channel->id(), m_user->id(), m_packet->text(), status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::updated(m_channel->id(), m_user->id(), m_packet->text(), status, m_core->sendStream()));
   return false;
 }

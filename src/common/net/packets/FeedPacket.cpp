@@ -39,6 +39,14 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
+QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+{
+  FeedPacket packet(user, channel, "clear");
+  packet.setText(name);
+  return packet.data(stream);
+}
+
+
 /*!
  * Отправка клиенту тела фида.
  */
@@ -111,9 +119,9 @@ QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel,
 }
 
 
-QByteArray FeedPacket::update(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream)
+QByteArray FeedPacket::updated(const QByteArray &channel, const QByteArray &user, const QString &name, int status, QDataStream *stream)
 {
-  FeedPacket packet(channel, user, "update");
+  FeedPacket packet(channel, user, "updated");
   packet.setDirection(FeedPacket::Server2Client);
   packet.setText(name);
   packet.setStatus(status);
