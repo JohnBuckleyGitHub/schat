@@ -56,6 +56,9 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     else if (body.command() == "update") {
       update(dest, body);
     }
+    else if (body.command() == "clear") {
+      ChatClient::feeds()->clear(dest, body.body());
+    }
 
     return true;
   }

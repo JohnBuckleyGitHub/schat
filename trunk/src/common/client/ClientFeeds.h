@@ -37,6 +37,7 @@ class SCHAT_EXPORT ClientFeeds : public QObject
 
 public:
   ClientFeeds(QObject *parent = 0);
+  bool clear(const QByteArray &id, const QString &name);
   bool get(const QByteArray &id, const QString &name);
   bool headers(const QByteArray &id);
   bool update(const QByteArray &id, const QString &name, const QVariantMap &json);

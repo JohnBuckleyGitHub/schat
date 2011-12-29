@@ -32,6 +32,18 @@ ClientFeeds::ClientFeeds(QObject *parent)
 }
 
 
+bool ClientFeeds::clear(const QByteArray &id, const QString &name)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  return ChatClient::io()->send(FeedPacket::clear(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+}
+
+
 bool ClientFeeds::get(const QByteArray &id, const QString &name)
 {
   if (!Channel::isCompatibleId(id))
