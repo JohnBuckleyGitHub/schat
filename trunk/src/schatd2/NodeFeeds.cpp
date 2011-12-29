@@ -57,7 +57,17 @@ bool NodeFeeds::read(PacketReader *reader)
     return get();
   else if (cmd == "update")
     return update();
+  else if (cmd == "clear")
+    return clear();
 
+  return false;
+}
+
+
+bool NodeFeeds::clear()
+{
+  int status = m_channel->feeds().clear(m_packet->text(), m_user.data());
+  m_core->send(m_user->sockets(), FeedPacket::cleared(m_channel->id(), m_user->id(), m_packet->text(), status, m_core->sendStream()));
   return false;
 }
 

@@ -37,6 +37,7 @@ public:
 
   virtual bool isValid() const;
   virtual Feed* load(const QString &name, const QVariantMap &data);
+  virtual int clear(Channel *channel = 0);
   virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);
   virtual QVariantMap save() const;

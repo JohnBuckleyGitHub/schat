@@ -77,6 +77,18 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 }
 
 
+int Feed::clear(Channel *channel)
+{
+  if (!(m_header.acl().match(channel) & Acl::Write))
+    return Notice::Forbidden;
+
+  m_data.clear();
+  m_header.setDate(DateTime::utc());
+
+  return Notice::OK;
+}
+
+
 int Feed::update(const QVariantMap &json, Channel *channel)
 {
   if (!(m_header.acl().match(channel) & Acl::Write))
