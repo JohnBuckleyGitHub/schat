@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -63,8 +63,8 @@ public:
   void update(ChatChannel channel);
 
   inline FileLocations *locations() const { return m_locations; }
-  inline ServerData *serverData() { return m_serverData; }
-  inline Settings *settings() { return m_settings; }
+  inline static ServerData *serverData() { return i()->m_serverData; }
+  inline static Settings *settings() { return i()->m_settings; }
   QByteArray cookie() const;
 
 private:
