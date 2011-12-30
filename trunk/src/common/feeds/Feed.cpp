@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 Feed::Feed(const QString &name, const QVariantMap &data)
 {
   m_header.setName(name);
-  m_header.setData(data);
+  m_header.setData(data.value("head").toMap());
   m_data = data;
 }
 
@@ -41,7 +41,7 @@ Feed::Feed(const QString &name, const QVariantMap &data)
 Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
-  m_header.setDate(date);
+  m_header.data()["date"] = date;
 }
 
 
@@ -87,7 +87,7 @@ int Feed::clear(Channel *channel)
     return Notice::Forbidden;
 
   m_data.clear();
-  m_header.setDate(DateTime::utc());
+  m_header.data()["date"] = DateTime::utc();
 
   return Notice::OK;
 }
@@ -99,7 +99,7 @@ int Feed::update(const QVariantMap &json, Channel *channel)
     return Notice::Forbidden;
 
   merge(m_data, json);
-  m_header.setDate(DateTime::utc());
+  m_header.data()["date"] = DateTime::utc();
 
   return Notice::OK;
 }
@@ -111,20 +111,18 @@ QVariantMap Feed::feed(Channel *channel)
   if (header.isEmpty())
     return QVariantMap();
 
-  QVariantMap json = m_data;
-  merge(json, header);
-  return json;
+  merge("head", m_data, header);
+  return m_data;
 }
 
 
 /*!
- * Получение JSON данных фида для сохранения в базе данных.
+ * Получение полных JSON данных фида для сохранения в хранилище.
  */
-QVariantMap Feed::save() const
+QVariantMap Feed::save()
 {
-  QVariantMap out = m_data;
-  merge(out, m_header.save());
-  return out;
+  merge("head", m_data, m_header.save());
+  return m_data;
 }
 
 

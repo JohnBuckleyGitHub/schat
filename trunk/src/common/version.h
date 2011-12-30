@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define SCHAT_VERSION      "1.99.2"
-#define SCHAT_VERSION_RC   1,99,2,0
+#define SCHAT_VERSION      "1.99.3"
+#define SCHAT_VERSION_RC   1,99,3,0
 #define SCHAT_NAME         "Simple Chat"
 #define SCHAT_ORGANIZATION "IMPOMEZIA"
 #define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2011 IMPOMEZIA"
+#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
 
 static const int UpdateLevelQt   = 2011022000;
 static const int UpdateLevelCore = 2011022000;

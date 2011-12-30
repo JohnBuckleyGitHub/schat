@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "feeds/FeedHeader.h"
 #include "net/SimpleID.h"
 
@@ -24,7 +26,6 @@
  */
 FeedHeader::FeedHeader()
   : m_channel(0)
-  , m_date(0)
 {
 }
 
@@ -45,23 +46,18 @@ QVariantMap FeedHeader::get(Channel *channel)
 {
   int acl = m_acl.match(channel);
 
-  QVariantMap out;
+  if (!(acl & Acl::Read))
+    return QVariantMap();
 
-  if (acl & Acl::Read) {
-    out["acl"]  = acl;
-    out["date"] = m_date;
-  }
-
-  return out;
+  m_data["acl"] = acl;
+  return m_data;
 }
 
 
-QVariantMap FeedHeader::save() const
+QVariantMap FeedHeader::save()
 {
-  QVariantMap out;
-  out["acl"] = m_acl.acl();
-  out["date"] = m_date;
-  return out;
+  m_data["acl"] = m_acl.acl();
+  return m_data;
 }
 
 
@@ -71,5 +67,5 @@ QVariantMap FeedHeader::save() const
 void FeedHeader::setData(const QVariantMap &data)
 {
   m_acl.setAcl(data["acl"].toLongLong());
-  m_date = data["date"].toLongLong();
+  m_data["date"] = data.value("date");
 }
