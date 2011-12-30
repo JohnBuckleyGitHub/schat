@@ -81,7 +81,6 @@ private slots:
   void addChannel(const QByteArray &id);
 
   void clientStateChanged(int state, int previousState);
-  void offline();
 
 private:
   int addChatTab(AbstractTab *tab);

@@ -29,6 +29,7 @@
 #include "client/ClientChannels.h"
 #include "hooks/ChannelMenu.h"
 #include "JSON.h"
+#include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
@@ -37,6 +38,7 @@
 
 ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent)
   : AbstractTab(channel->id(), type, parent)
+  , m_joined(true)
   , m_channel(channel)
   , m_alerts(0)
 {
@@ -100,6 +102,7 @@ void ChannelBaseTab::setOnline(bool online)
   }
 
   m_online = false;
+  m_joined = false;
   setIcon(channelIcon());
 }
 
@@ -136,6 +139,7 @@ void ChannelBaseTab::channel(const ChannelInfo &info)
 void ChannelBaseTab::offline()
 {
   setOnline(false);
+  add(ServiceMessage::quit(ChatClient::id()));
 }
 
 

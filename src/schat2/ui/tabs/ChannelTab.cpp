@@ -93,7 +93,11 @@ void ChannelTab::channel(const QByteArray &id)
   if (this->id() != id)
     return;
 
+  if (m_joined)
+    return;
+
   m_chatView->add(ServiceMessage::joined(ChatClient::id()));
+  m_joined = true;
 }
 
 
@@ -144,6 +148,7 @@ void ChannelTab::quit(const QByteArray &user)
 
   m_userView->remove(user);
   m_chatView->add(ServiceMessage::quit(user));
+  m_joined = false;
 }
 
 
