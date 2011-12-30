@@ -21,4 +21,4 @@ SUBDIRS  = \
     client \
     schat2/schat2-core.pro \
     schat2 \
-    common/plugins/History \
+    common/plugins/RawFeeds \

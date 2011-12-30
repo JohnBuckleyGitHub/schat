@@ -20,6 +20,3 @@ TEMPLATE = subdirs
 SUBDIRS  = \
     schatd2/schatd.pro \
     schatd2 \
-    common/plugins/MasterNode \
-    common/plugins/MessageLog \
-    common/plugins/SlaveNode \
