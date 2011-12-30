@@ -57,6 +57,7 @@ protected:
   virtual void reload();
   void rename(const QByteArray &id);
 
+  bool m_joined;           ///< \b true если пользователь уже вошёл в канал.
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.
   ClientChannel m_channel; ///< Канал.
   int m_alerts;            ///< Количество непрочитанных уведомлений.

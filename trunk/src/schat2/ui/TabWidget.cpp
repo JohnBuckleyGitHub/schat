@@ -35,7 +35,6 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "messages/ChannelMessage.h"
-#include "messages/ServiceMessage.h"
 #include "net/packets/MessagePacket.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -96,7 +95,6 @@ TabWidget::TabWidget(QWidget *parent)
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
 }
 
 
@@ -348,18 +346,6 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   if (previousState == ChatClient::Connecting && m_progressTab) {
     closeTab(indexOf(m_progressTab));
-  }
-}
-
-
-void TabWidget::offline()
-{
-  if (m_channels.isEmpty())
-    return;
-
-  ServiceMessage message = ServiceMessage::quit(ChatClient::id());
-  foreach (ChannelBaseTab *tab, m_channels) {
-    tab->add(message);
   }
 }
 

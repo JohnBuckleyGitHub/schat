@@ -28,7 +28,6 @@
 
 PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, PrivateType, parent)
-  , m_joined(true)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
