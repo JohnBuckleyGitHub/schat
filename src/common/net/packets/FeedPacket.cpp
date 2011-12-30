@@ -39,43 +39,6 @@ FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
 }
 
 
-QByteArray FeedPacket::add(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
-{
-  FeedPacket packet(user, channel, "add");
-  packet.setText(name);
-  packet.setData(json);
-  return packet.data(stream);
-}
-
-
-QByteArray FeedPacket::added(const FeedPacket &source, int status, QDataStream *stream)
-{
-  FeedPacket packet(source.dest(), source.sender(), "added");
-  packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
-  return packet.data(stream);
-}
-
-
-QByteArray FeedPacket::clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
-{
-  FeedPacket packet(user, channel, "clear");
-  packet.setText(name);
-  return packet.data(stream);
-}
-
-
-QByteArray FeedPacket::cleared(const FeedPacket &source, int status, QDataStream *stream)
-{
-  FeedPacket packet(source.dest(), source.sender(), "cleared");
-  packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
-  return packet.data(stream);
-}
-
-
 /*!
  * Отправка клиенту тела фида.
  */
@@ -93,21 +56,6 @@ QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QSt
       packet.setStatus(Notice::Forbidden);
   }
 
-  return packet.data(stream);
-}
-
-
-/*!
- * Запрос клиентом тела фида.
- *
- * \param user    Идентификатор пользователя.
- * \param channel Идентификатор канала.
- * \param stream  Поток записи пакета.
- */
-QByteArray FeedPacket::get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
-{
-  FeedPacket packet(user, channel, "get");
-  packet.setText(name);
   return packet.data(stream);
 }
 
@@ -139,33 +87,6 @@ QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel
 }
 
 
-QByteArray FeedPacket::query(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
-{
-  FeedPacket packet(user, channel, "query");
-  packet.setText(name);
-  packet.setData(json);
-  return packet.data(stream);
-}
-
-
-QByteArray FeedPacket::remove(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
-{
-  FeedPacket packet(user, channel, "remove");
-  packet.setText(name);
-  return packet.data(stream);
-}
-
-
-QByteArray FeedPacket::removed(const FeedPacket &source, int status, QDataStream *stream)
-{
-  FeedPacket packet(source.dest(), source.sender(), "removed");
-  packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
-  return packet.data(stream);
-}
-
-
 QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream)
 {
   FeedPacket packet(source.dest(), source.sender(), "reply");
@@ -177,20 +98,28 @@ QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &rep
 }
 
 
-QByteArray FeedPacket::update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream)
+/*!
+ * Базовая функция формирования ответа за запрос клиента.
+ *
+ * \param source  Исходный пакет, полученный от клиента.
+ * \param status  Код ответа на запрос.
+ * \param command Команда ответ за запрос.
+ * \param stream  Поток записи пакета.
+ */
+QByteArray FeedPacket::reply(const FeedPacket &source, int status, const QString &command, QDataStream *stream)
 {
-  FeedPacket packet(user, channel, "update");
-  packet.setText(name);
-  packet.setData(json);
+  FeedPacket packet(source.dest(), source.sender(), command);
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(source.text());
+  packet.setStatus(status);
   return packet.data(stream);
 }
 
 
-QByteArray FeedPacket::updated(const FeedPacket &source, int status, QDataStream *stream)
+QByteArray FeedPacket::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json)
 {
-  FeedPacket packet(source.dest(), source.sender(), "updated");
-  packet.setDirection(FeedPacket::Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
+  FeedPacket packet(user, channel, command);
+  packet.setText(name);
+  packet.setData(json);
   return packet.data(stream);
 }
