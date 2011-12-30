@@ -233,7 +233,7 @@ function nameTemplate(json)
 	out += '<span class="nick-block"><a class="nick ';
 	out += json.Author.Id + '" href="';
 	out += json.Author.Url + '">';
-	out += json.Author.Name;
+	out += htmlspecialchars(json.Author.Name);
 	out += '</a></span> ';
 
 	return out;
@@ -247,7 +247,7 @@ function updateChannelName(data)
 
 	var a = $('a.' + json.Id);
 	a.attr('href', json.Url);
-	a.html(json.Name);
+	a.html(htmlspecialchars(json.Name));
 }
 
 
@@ -310,13 +310,6 @@ function setTopic(topic)
 		$('#topic-wrapper').show();
 }
 
-function updateUserNick(id, url, nick)
-{
-	var a = $('a.' + id);
-	a.attr('href', url);
-	a.html(nick);
-}
-
 function htmlspecialchars (string, quote_style, charset, double_encode) {
 	// http://kevin.vanzonneveld.net
 	// +   original by: Mirek Slugen
@@ -341,7 +334,7 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 		i = 0,
 		noquotes = false;
 	if (typeof quote_style === 'undefined' || quote_style === null) {
-		quote_style = 0;
+		quote_style = 2;
 	}
 	string = string.toString();
 	if (double_encode !== false) { // Put this first to avoid double-encoding
