@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include "debugstream.h"
 
 #include "cores/Core.h"
+#include "DataBase.h"
+#include "net/ServerData.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
 #include "Settings.h"
@@ -61,11 +63,19 @@ void NodeInit::start()
   m_plugins->load();
   m_core = m_plugins->kernel();
 
-  m_thread = new WorkerThread(m_storage->settings()->value(QLatin1String("Listen")).toStringList(), m_core);
+  m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
 
   m_core->start();
   m_thread->start();
+
+  qint64 key = Storage::settings()->value("MainChannel").toLongLong();
+  if (key > 0) {
+    ChatChannel channel = DataBase::channel(key);
+    if (channel) {
+      Storage::serverData()->setChannelId(channel->id());
+    }
+  }
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

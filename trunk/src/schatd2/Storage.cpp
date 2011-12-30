@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "DataBase.h"
 #include "DateTime.h"
 #include "debugstream.h"
+#include "feeds/FeedStorage.h"
 #include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
@@ -63,6 +64,7 @@ Storage::Storage(QObject *parent)
 
   m_log = new NodeLog;
   m_db = new DataBase(this);
+  new FeedStorage(this);
 }
 
 
@@ -87,16 +89,6 @@ int Storage::start()
   m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
 
   m_db->start();
-
-  qint64 key = m_settings->value(QLatin1String("MainChannel")).toLongLong();
-  if (key > 0) {
-    ChatChannel channel = DataBase::channel(key);
-    if (channel) {
-      m_serverData->setChannelId(channel->id());
-      SCHAT_LOG_DEBUG(<< "Main channel:" << channel->name() << "id:" << SimpleID::encode(channel->id()));
-    }
-  }
-
   return 0;
 }
 
