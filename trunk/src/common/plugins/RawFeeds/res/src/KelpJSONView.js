@@ -7,7 +7,7 @@ $.extend(jQuery,
         else
             ob = json;
         var p, l = [], c = container;
-        var repeat = function (s, n) {  //���� s �r�� n ��
+        var repeat = function (s, n) {
             return new Array(n + 1).join(s);
         };
 
@@ -19,33 +19,33 @@ $.extend(jQuery,
                         break;
                     case 'string':
                         if (isar)
-                            l.push({ Text: '<span class="jsonstring">"' + p + '"</span><span class="jsontag">,</span>', Step: s });
+                            l.push({ Text: '<span class="jsonstring">"' + htmlspecialchars(p) + '"</span><span class="jsontag">,</span>', Step: s });
                         else
-                            l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">: </span><span class="jsonstring">"' + p + '"</span><span class="jsontag">,</span>', Step: s });
+                            l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">: </span><span class="jsonstring">"' + htmlspecialchars(p) + '"</span><span class="jsontag">,</span>', Step: s });
                         break;
                     case 'boolean':
                         if (isar)
                             l.push({ Text: '<span class="jsonboolean">"' + p + '"</span><span class="jsontag">,</span>', Step: s });
                         else
-                            l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">: </span><span class="jsonboolean">' + p + '</span><span class="jsontag">,</span>', Step: s });
+                            l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">: </span><span class="jsonboolean">' + p + '</span><span class="jsontag">,</span>', Step: s });
                         break;
                     case 'number':
                         if (isar)
                             l.push({ Text: '<span class="jsonnumber">' + p + '</span><span class="jsontag">,</span>', Step: s });
                         else
-                            l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">: </span><span class="jsonnumber">' + p + '</span><span class="jsontag">,</span>', Step: s });
+                            l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">: </span><span class="jsonnumber">' + p + '</span><span class="jsontag">,</span>', Step: s });
                         break;
                     case 'object':
                         if (p === null) {
                             if (isar)
                                 l.push({ Text: '<span class="jsonnull">' + p + '</span><span class="jsontag">,</span>', Step: s });
                             else
-                                l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">: </span><span class="jsonnull">' + p + '</span><span class="jsontag">,</span>', Step: s });
+                                l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">: </span><span class="jsonnull">' + p + '</span><span class="jsontag">,</span>', Step: s });
                         }
                         else if (p.length == undefined) {
                             //object
                             if (!isar) {
-                                l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">:</span>', Step: s });
+                                l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">:</span>', Step: s });
                             }
                             l.push({ Text: '<span class="jsontag">{</span>', Step: s });
                             r(p, false, s + 1);
@@ -54,7 +54,7 @@ $.extend(jQuery,
                         else {
                             //array
                             if (!isar) {
-                                l.push({ Text: '<span class="jsonname">"' + n + '"</span><span class="jsontag">:</span>', Step: s });
+                                l.push({ Text: '<span class="jsonname">"' + htmlspecialchars(n) + '"</span><span class="jsontag">:</span>', Step: s });
                             }
                             l.push({ Text: '<span class="jsontag">[</span>', Step: s });
                             r(p, true, s + 1);
