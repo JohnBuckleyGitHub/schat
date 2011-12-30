@@ -29,20 +29,12 @@ public:
   FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedPacket(quint16 type, PacketReader *reader);
 
-  static QByteArray add(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
-  static QByteArray added(const FeedPacket &source, int status, QDataStream *stream);
-  static QByteArray clear(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
-  static QByteArray cleared(const FeedPacket &source, int status, QDataStream *stream);
   static QByteArray feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream);
-  static QByteArray get(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
   static QByteArray headers(ClientChannel channel, ClientChannel user, QDataStream *stream);
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
-  static QByteArray query(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
-  static QByteArray remove(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
-  static QByteArray removed(const FeedPacket &source, int status, QDataStream *stream);
   static QByteArray reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream);
-  static QByteArray update(const QByteArray &user, const QByteArray &channel, const QString &name, const QVariantMap &json, QDataStream *stream);
-  static QByteArray updated(const FeedPacket &source, int status, QDataStream *stream);
+  static QByteArray reply(const FeedPacket &source, int status, const QString &command, QDataStream *stream);
+  static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json = QVariantMap());
 };
 
 #endif /* FEEDPACKET_H_ */

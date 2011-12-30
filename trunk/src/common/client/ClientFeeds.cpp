@@ -40,7 +40,7 @@ bool ClientFeeds::add(const QByteArray &id, const QString &name, const QVariantM
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::add(ChatClient::id(), id, name, json, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "add", name, ChatClient::io()->sendStream(), json));
 }
 
 
@@ -52,7 +52,7 @@ bool ClientFeeds::clear(const QByteArray &id, const QString &name)
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::clear(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "clear", name, ChatClient::io()->sendStream()));
 }
 
 
@@ -64,7 +64,7 @@ bool ClientFeeds::get(const QByteArray &id, const QString &name)
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::get(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "get", name, ChatClient::io()->sendStream()));
 }
 
 
@@ -91,7 +91,7 @@ bool ClientFeeds::query(const QByteArray &id, const QString &name, const QVarian
   if (json.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::query(ChatClient::id(), id, name, json, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "query", name, ChatClient::io()->sendStream(), json));
 }
 
 
@@ -103,7 +103,7 @@ bool ClientFeeds::remove(const QByteArray &id, const QString &name)
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::remove(ChatClient::id(), id, name, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "remove", name, ChatClient::io()->sendStream()));
 }
 
 
@@ -118,7 +118,7 @@ bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVaria
   if (json.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::update(ChatClient::id(), id, name, json, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "update", name, ChatClient::io()->sendStream(), json));
 }
 
 

@@ -73,7 +73,7 @@ bool NodeFeeds::read(PacketReader *reader)
 bool NodeFeeds::add()
 {
   int status = m_channel->feeds().add(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::added(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "added", m_core->sendStream()));
   return false;
 }
 
@@ -81,7 +81,7 @@ bool NodeFeeds::add()
 bool NodeFeeds::clear()
 {
   int status = m_channel->feeds().clear(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::cleared(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "cleared", m_core->sendStream()));
   return false;
 }
 
@@ -114,7 +114,7 @@ bool NodeFeeds::query()
 bool NodeFeeds::remove()
 {
   int status = m_channel->feeds().remove(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::removed(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "removed", m_core->sendStream()));
   return false;
 }
 
@@ -122,6 +122,6 @@ bool NodeFeeds::remove()
 bool NodeFeeds::update()
 {
   int status = m_channel->feeds().update(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::updated(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "updated", m_core->sendStream()));
   return false;
 }
