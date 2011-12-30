@@ -16,10 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
-#include <QTextDocument>
-
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -36,7 +32,6 @@ Message::Message()
 QString Message::json() const
 {
   QString json = JSON::generate(m_data);
-//  qDebug() << json;
 
   json.remove('\n');
   json.remove('\r');
@@ -55,7 +50,7 @@ void Message::author(const QByteArray &id)
 
   QVariantMap author;
   author["Id"]      = SimpleID::encode(user->id());
-  author["Name"]    = Qt::escape(user->name());
+  author["Name"]    = user->name();
   author["Url"]     = ChatUrls::toUrl(user, "insert").toString();
   m_data["Author"]  = author;
 }

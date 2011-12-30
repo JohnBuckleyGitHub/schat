@@ -173,7 +173,7 @@ void ChannelBaseTab::rename(const QByteArray &id)
   QVariantMap json;
   json["Id"]   = SimpleID::encode(user->id());
   json["Url"]  = ChatUrls::toUrl(user, "insert").toString();
-  json["Name"] = Qt::escape(user->name());
+  json["Name"] = user->name();
 
   m_chatView->evaluateJavaScript("updateChannelName(" + JSON::quote(JSON::generate(json)) + ");");
 }
