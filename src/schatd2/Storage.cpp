@@ -47,7 +47,7 @@ Storage::Storage(QObject *parent)
 
   Normalize::init();
 
-  m_hooks = new StorageHooks();
+  m_hooks = new StorageHooks(this);
   m_serverData = new ServerData();
   m_locations = new FileLocations(this);
 
@@ -70,7 +70,6 @@ Storage::Storage(QObject *parent)
 
 Storage::~Storage()
 {
-  delete m_hooks;
   delete m_log;
   delete m_serverData;
 }
@@ -182,7 +181,7 @@ ChatChannel Storage::channel(const QString &name)
 
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
-    m_hooks->createdNewChannel(channel);
+    StorageHooks::newChannel(channel);
     add(channel);
   }
 

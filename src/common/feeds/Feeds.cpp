@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 #include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
 
+/*!
+ * Добавление нового фида.
+ */
 bool Feeds::add(FeedPtr feed)
 {
   if (!m_channel)
@@ -38,6 +41,7 @@ bool Feeds::add(FeedPtr feed)
     return false;
 
   m_feeds[feed->h().name()] = feed;
+  FeedStorage::save(feed);
   return true;
 }
 

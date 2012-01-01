@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,18 +23,25 @@
 #include "schat.h"
 
 class AuthRequest;
-class Storage;
 
-class SCHAT_EXPORT StorageHooks
+class SCHAT_EXPORT StorageHooks : public QObject
 {
-public:
-  StorageHooks();
+  Q_OBJECT
 
-  int createdNewChannel(ChatChannel channel);
-  int createdNewUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host);
+public:
+  StorageHooks(QObject *parent = 0);
+  inline static int newChannel(ChatChannel channel)    { return m_self->newChannelImpl(channel); }
+  inline static int newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host) { return m_self->newUserChannelImpl(channel, data, host); }
+  inline static void add(StorageHooks *hook)           { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void remove(StorageHooks *hook)        { m_self->m_hooks.removeAll(hook); }
+
+protected:
+  virtual int newChannelImpl(ChatChannel channel);
+  virtual int newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host);
 
 private:
-  Storage *m_storage;
+  QList<StorageHooks*> m_hooks; ///< Хуки.
+  static StorageHooks *m_self;  ///< Указатель на себя.
 };
 
 #endif /* STORAGEHOOKS_H_ */

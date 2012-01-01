@@ -66,7 +66,7 @@ qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
   query.prepare("INSERT INTO feeds (channel, rev, date, name, json) "
                      "VALUES (:channel, :rev, :date, :name, :json);");
 
-  query.bindValue(":channel", static_cast<ServerChannel *>(feed->h().channel())->key());
+  query.bindValue(":channel", feed->h().channel()->key());
   query.bindValue(":rev",     feed->h().data().value("rev").toLongLong());
   query.bindValue(":date",    feed->h().data().value("date"));
   query.bindValue(":name",    feed->h().name());

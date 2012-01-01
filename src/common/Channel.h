@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -104,14 +104,18 @@ public:
   inline Account *account() const         { return m_account; }
   inline bool isSynced() const            { return m_synced; }
   inline const QString& name() const      { return m_name; }
+  inline const QVariantMap& data() const  { return m_data; }
   inline int type() const                 { return m_type; }
   inline QByteArray id() const            { return m_id; }
+  inline qint64 key() const               { return m_key; }
+  inline QVariantMap& data()              { return m_data; }
 
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
+  inline void setData(const QVariantMap &data) { m_data = data; }
+  inline void setKey(qint64 key)          { m_key = key; }
   inline void setSynced(bool synced)      { m_synced = synced; }
   void setAccount(Account *account);
-  void setData(const QVariantMap &data);
 
   inline Channels& channels()             { return m_channels; }
   inline const Channels& channels() const { return m_channels; }
@@ -134,7 +138,9 @@ private:
   Gender m_gender;                 ///< Пол и цвет иконки.
   int m_type;                      ///< Тип канала, соответствует типу идентификатора канала \sa SimpleID::Types.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
+  qint64 m_key;                    ///< Ключ в таблице базы данных.
   QString m_name;                  ///< Имя канала.
+  QVariantMap m_data;              ///< JSON данные канала.
   Status m_status;                 ///< Статус пользователя.
 };
 
