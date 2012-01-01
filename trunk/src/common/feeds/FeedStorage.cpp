@@ -17,6 +17,7 @@
  */
 
 #include "feeds/FeedStorage.h"
+#include "net/packets/Notice.h"
 
 FeedStorage *FeedStorage::m_self = 0;
 
@@ -25,4 +26,21 @@ FeedStorage::FeedStorage(QObject *parent)
 {
   if (!m_self)
     m_self = this;
+  else
+    add(this);
+}
+
+
+int FeedStorage::saveImpl(FeedPtr feed)
+{
+  if (m_hooks.isEmpty())
+    return Notice::OK;
+
+  foreach (FeedStorage *hook, m_hooks) {
+    int status = hook->saveImpl(feed);
+    if (status != Notice::OK)
+      return status;
+  }
+
+  return Notice::OK;
 }

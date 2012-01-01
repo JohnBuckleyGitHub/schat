@@ -35,6 +35,7 @@ HEADERS = \
     cores/PasswordAuth.h \
     DataBase.h \
     events.h \
+    feeds/NodeFeedStorage.h \
     NodeChannels.h \
     NodeFeeds.h \
     NodeLog.h \
@@ -55,6 +56,7 @@ SOURCES = \
     cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
+    feeds/NodeFeedStorage.cpp \
     NodeChannels.cpp \
     NodeFeeds.cpp \
     NodeLog.cpp \

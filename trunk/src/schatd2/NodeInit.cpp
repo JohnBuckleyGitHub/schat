@@ -22,6 +22,7 @@
 
 #include "cores/Core.h"
 #include "DataBase.h"
+#include "feeds/NodeFeedStorage.h"
 #include "net/ServerData.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
@@ -68,6 +69,8 @@ void NodeInit::start()
 
   m_core->start();
   m_thread->start();
+
+  new NodeFeedStorage(this);
 
   qint64 key = Storage::settings()->value("MainChannel").toLongLong();
   if (key > 0) {
