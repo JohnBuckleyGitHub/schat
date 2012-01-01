@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,9 +26,15 @@
 #include "plugins/StorageHooks.h"
 #include "Storage.h"
 
-StorageHooks::StorageHooks()
-  : m_storage(Storage::i())
+StorageHooks *StorageHooks::m_self = 0;
+
+StorageHooks::StorageHooks(QObject *parent)
+  : QObject(parent)
 {
+  if (!m_self)
+    m_self = this;
+  else
+    add(this);
 }
 
 
@@ -40,13 +46,20 @@ StorageHooks::StorageHooks()
  *
  * \sa Storage::channel(const QString &name).
  */
-int StorageHooks::createdNewChannel(ChatChannel channel)
+int StorageHooks::newChannelImpl(ChatChannel channel)
 {
+  if (m_self != this)
+    return Notice::OK;
+
   SCHAT_LOG_TRACE(<< "HOOK: NEW CHANNEL" << (channel->name() + "/" + SimpleID::encode(channel->id())));
 
   qint64 date = DateTime::utc();
 
   channel->feeds().add(new TopicFeed(date));
+
+  foreach (StorageHooks *hook, m_hooks) {
+    hook->newChannelImpl(channel);
+  }
 
   return Notice::OK;
 }
@@ -62,10 +75,11 @@ int StorageHooks::createdNewChannel(ChatChannel channel)
  *
  * \sa AnonymousAuth::auth().
  */
-int StorageHooks::createdNewUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host)
+int StorageHooks::newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host)
 {
-  Q_UNUSED(data)
-  Q_UNUSED(host)
+  if (m_self != this)
+    return Notice::OK;
+
   SCHAT_LOG_TRACE(<< "HOOK: NEW USER CHANNEL" << (channel->name() + "@" + host + "/" + SimpleID::encode(channel->id())) << data.userAgent);
 
   qint64 date = DateTime::utc();
@@ -76,6 +90,10 @@ int StorageHooks::createdNewUserChannel(ChatChannel channel, const AuthRequest &
 
   channel->setAccount(&account);
   channel->feeds().add(new AccountFeed(date));
+
+  foreach (StorageHooks *hook, m_hooks) {
+    hook->newUserChannelImpl(channel, data, host);
+  }
 
   return Notice::OK;
 }

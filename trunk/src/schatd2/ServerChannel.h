@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,18 +30,15 @@ public:
 
   inline const QByteArray& normalized() const { return m_normalized; }
   inline const QList<quint64>& sockets() const { return m_sockets; }
-  inline qint64 key() const { return m_key; }
 
   bool setName(const QString &name);
   inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
   inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
-  inline void setKey(qint64 key) { m_key = key; }
 
 private:
   void normalize();
 
   QByteArray m_normalized;  ///< Нормализованное имя канала.
-  qint64 m_key;             ///< Ключ в таблице channels.
   QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
 

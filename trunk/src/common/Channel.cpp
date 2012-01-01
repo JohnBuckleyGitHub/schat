@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ Channel::Channel()
   : m_account(0)
   , m_synced(false)
   , m_type(SimpleID::InvalidId)
+  , m_key(0)
 {
 }
 
@@ -68,6 +69,7 @@ Channel::Channel(const QByteArray &id, const QString &name)
   : m_account(0)
   , m_synced(false)
   , m_type(SimpleID::InvalidId)
+  , m_key(0)
 {
   setId(id);
   setName(name);
@@ -129,18 +131,6 @@ void Channel::setAccount(Account *account)
     m_account = new Account();
 
   *m_account = *account;
-}
-
-
-/*!
- * Загрузка JSON данных.
- */
-void Channel::setData(const QVariantMap &data)
-{
-  if (data.isEmpty())
-    return;
-
-  m_feeds.load(data["feeds"].toMap());
 }
 
 
