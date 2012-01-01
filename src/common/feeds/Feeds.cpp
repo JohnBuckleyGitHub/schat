@@ -21,6 +21,7 @@
 
 #include "feeds/FeedFactory.h"
 #include "feeds/Feeds.h"
+#include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
 
 bool Feeds::add(FeedPtr feed)
@@ -114,7 +115,11 @@ int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel
   if (!m_feeds.contains(name))
     return Notice::NotFound;
 
-  return m_feeds.value(name)->update(json, channel);
+  int status = m_feeds.value(name)->update(json, channel);
+  if (status != Notice::OK)
+    return status;
+
+  return FeedStorage::save(m_feeds.value(name));
 }
 
 

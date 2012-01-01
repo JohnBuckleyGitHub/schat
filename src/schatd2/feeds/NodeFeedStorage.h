@@ -16,30 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEEDSTORAGE_H_
-#define FEEDSTORAGE_H_
+#ifndef NODEFEEDSTORAGE_H_
+#define NODEFEEDSTORAGE_H_
 
-#include <QObject>
+#include "feeds/FeedStorage.h"
 
-#include "feeds/Feed.h"
-#include "schat.h"
-
-class SCHAT_EXPORT FeedStorage : public QObject
+class SCHAT_EXPORT NodeFeedStorage : public FeedStorage
 {
   Q_OBJECT
 
 public:
-  FeedStorage(QObject *parent = 0);
-  inline static int save(FeedPtr feed)         { return m_self->saveImpl(feed); }
-  inline static void add(FeedStorage *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
-  inline static void remove(FeedStorage *hook) { m_self->m_hooks.removeAll(hook); }
+  NodeFeedStorage(QObject *parent = 0);
 
 protected:
-  virtual int saveImpl(FeedPtr feed);
+  int saveImpl(FeedPtr feed);
 
 private:
-  QList<FeedStorage*> m_hooks; ///< Хуки.
-  static FeedStorage *m_self;  ///< Указатель на себя.
+  qint64 save(FeedPtr feed, const QByteArray &json);
+  void start();
 };
 
-#endif /* FEEDSTORAGE_H_ */
+#endif /* NODEFEEDSTORAGE_H_ */
