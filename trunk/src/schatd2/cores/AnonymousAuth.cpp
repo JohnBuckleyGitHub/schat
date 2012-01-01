@@ -60,10 +60,10 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
 
+  m_core->add(channel, data.authType, data.id);
+
   if (created)
     StorageHooks::newUserChannel(channel, data, m_core->packetsEvent()->address.toString());
-
-  m_core->add(channel, data.authType, data.id);
 
   SCHAT_LOG_DEBUG(<< "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host);
   return AuthResult(id, data.id);

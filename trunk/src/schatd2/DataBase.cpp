@@ -199,19 +199,6 @@ qint64 DataBase::add(ChatChannel channel)
 
   key = query.lastInsertId().toLongLong();
   channel->setKey(key);
-
-  // Создание нового аккаунта.
-  if (SimpleID::typeOf(channel->id()) == SimpleID::UserId && channel->account()) {
-    channel->account()->setChannel(key);
-
-    if (add(channel->account()) != -1) {
-      query.prepare("UPDATE channels SET account = :account WHERE id = :id;");
-      query.bindValue(":account", channel->account()->id());
-      query.bindValue(":id", key);
-      query.exec();
-    }
-  }
-
   return key;
 }
 
@@ -416,6 +403,11 @@ qint64 DataBase::add(Account *account)
 
   qint64 key = query.lastInsertId().toLongLong();
   account->setId(key);
+
+  query.prepare("UPDATE channels SET account = :account WHERE id = :id;");
+  query.bindValue(":account", key);
+  query.bindValue(":id", account->channel());
+  query.exec();
 
   return key;
 }

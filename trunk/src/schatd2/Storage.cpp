@@ -181,8 +181,8 @@ ChatChannel Storage::channel(const QString &name)
 
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
-    StorageHooks::newChannel(channel);
     add(channel);
+    StorageHooks::newChannel(channel);
   }
 
   return channel;

@@ -17,6 +17,7 @@
  */
 
 #include "Account.h"
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/AccountFeed.h"
 #include "feeds/TopicFeed.h"
@@ -40,7 +41,7 @@ StorageHooks::StorageHooks(QObject *parent)
 
 /*!
  * Создание нового канала типа SimpleID::ChannelId.
- * Эта функция будет вызвана только для только что созданных каналов, до добавления их в базу данных.
+ * Эта функция будет вызвана только для только что созданных каналов, после добавления их в базу данных.
  *
  * \param channel Созданный канал.
  *
@@ -67,7 +68,7 @@ int StorageHooks::newChannelImpl(ChatChannel channel)
 
 /*!
  * Создание нового канала типа SimpleID::UserId.
- * Эта функция будет вызвана только для только что созданных каналов, до добавления их в базу данных.
+ * Эта функция будет вызвана только для только что созданных каналов, после добавления их в базу данных.
  *
  * \param channel Созданный канал.
  * \param data    Данные авторизационного пакета.
@@ -87,9 +88,12 @@ int StorageHooks::newUserChannelImpl(ChatChannel channel, const AuthRequest &dat
   Account account;
   account.setDate(date);
   account.groups() += "anonymous";
+  account.setChannel(channel->key());
 
   channel->setAccount(&account);
   channel->feeds().add(new AccountFeed(date));
+
+  DataBase::add(channel->account());
 
   foreach (StorageHooks *hook, m_hooks) {
     hook->newUserChannelImpl(channel, data, host);
