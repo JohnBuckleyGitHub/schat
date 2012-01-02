@@ -20,6 +20,7 @@
 
 #include <QSqlQuery>
 
+#include "DataBase.h"
 #include "feeds/NodeFeedStorage.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
@@ -52,6 +53,11 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
   qint64 id = save(feed, json);
   if (id == -1)
     return Notice::InternalError;
+
+  QVariantMap feeds = feed->h().channel()->data()["feeds"].toMap();
+  feeds[feed->h().name()] = id;
+  feed->h().channel()->data()["feeds"] = feeds;
+  DataBase::saveData(feed->h().channel());
 
   return Notice::OK;
 }
