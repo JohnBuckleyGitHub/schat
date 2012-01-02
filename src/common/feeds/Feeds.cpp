@@ -19,7 +19,6 @@
 #include <QDebug>
 #include "JSON.h"
 
-#include "feeds/FeedFactory.h"
 #include "feeds/Feeds.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
@@ -27,7 +26,7 @@
 /*!
  * Добавление нового фида.
  */
-bool Feeds::add(FeedPtr feed)
+bool Feeds::add(FeedPtr feed, bool save)
 {
   if (!m_channel)
     return false;
@@ -41,7 +40,10 @@ bool Feeds::add(FeedPtr feed)
     return false;
 
   m_feeds[feed->h().name()] = feed;
-  FeedStorage::save(feed);
+
+  if (save)
+    FeedStorage::save(feed);
+
   return true;
 }
 
@@ -54,33 +56,11 @@ int Feeds::add(const QString &name, const QVariantMap &json, Channel *channel)
   if (m_feeds.contains(name))
     return Notice::ObjectAlreadyExists;
 
-  if (!add(FeedFactory::create(name)))
+  if (!add(FeedStorage::create(name), false))
     return Notice::InternalError;
 
   update(name, json, channel);
   return Notice::OK;
-}
-
-
-/*!
- * Загрузка фидов из JSON данных.
- *
- * \param data JSON данные.
- */
-void Feeds::load(const QVariantMap &data)
-{
-  qDebug() << "LOAD" << data.size();
-
-  if (data.isEmpty())
-    return;
-
-  QMapIterator<QString, QVariant> i(data);
-  while (i.hasNext()) {
-    i.next();
-    add(FeedFactory::load(i.key(), i.value().toMap()));
-  }
-
-  qDebug() << JSON::generate(save());
 }
 
 
@@ -89,7 +69,11 @@ FeedQueryReply Feeds::query(const QString &name, const QVariantMap &json, Channe
   if (!m_feeds.contains(name))
     return FeedQueryReply(Notice::NotFound);
 
-  return m_feeds.value(name)->query(json, channel);
+  FeedQueryReply reply = m_feeds.value(name)->query(json, channel);
+  if (reply.modified)
+    FeedStorage::save(m_feeds.value(name));
+
+  return reply;
 }
 
 
@@ -98,7 +82,11 @@ int Feeds::clear(const QString &name, Channel *channel)
   if (!m_feeds.contains(name))
     return Notice::NotFound;
 
-  return m_feeds.value(name)->clear(channel);
+  int status = m_feeds.value(name)->clear(channel);
+  if (status == Notice::OK)
+    FeedStorage::save(m_feeds.value(name));
+
+  return status;
 }
 
 
@@ -114,6 +102,13 @@ int Feeds::remove(const QString &name, Channel *channel)
 }
 
 
+/*!
+ * Обновление данных фида, вызванное пользователем.
+ *
+ * \param name    ///< Имя фида.
+ * \param json    ///< Новые данные фида.
+ * \param channel ///< Канал для проверки привилегий.
+ */
 int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
 {
   if (!m_feeds.contains(name))

@@ -33,12 +33,11 @@ public:
   : m_channel(0)
   {}
 
-  bool add(FeedPtr feed);
-  inline bool add(Feed *feed) { return add(FeedPtr(feed)); }
+  bool add(FeedPtr feed, bool save = true);
+  inline bool add(Feed *feed, bool save = true) { return add(FeedPtr(feed), save); }
   inline const QMap<QString, FeedPtr>& all() const { return m_feeds; }
   inline void setChannel(Channel *channel) { m_channel = channel; }
   int add(const QString &name, const QVariantMap &json, Channel *channel = 0);
-  void load(const QVariantMap &data);
 
   FeedQueryReply query(const QString &name, const QVariantMap &json, Channel *channel = 0);
   int clear(const QString &name, Channel *channel = 0);

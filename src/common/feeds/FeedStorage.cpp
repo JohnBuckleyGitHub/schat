@@ -20,6 +20,7 @@
 #include "net/packets/Notice.h"
 
 FeedStorage *FeedStorage::m_self = 0;
+QHash<QString, FeedPtr> FeedStorage::m_feeds;
 
 FeedStorage::FeedStorage(QObject *parent)
   : QObject(parent)
@@ -31,9 +32,34 @@ FeedStorage::FeedStorage(QObject *parent)
 }
 
 
+Feed* FeedStorage::create(const QString &name)
+{
+  if (!m_feeds.contains(name)) {
+    Feed feed;
+    return feed.create(name);
+  }
+
+  return m_feeds.value(name)->create(name);
+}
+
+
+/*!
+ * Восстановление фида из JSON данных.
+ */
+Feed* FeedStorage::load(const QString &name, const QVariantMap &data)
+{
+  if (!m_feeds.contains(name)) {
+    Feed feed;
+    return feed.load(name, data);
+  }
+
+  return m_feeds.value(name)->load(name, data);
+}
+
+
 int FeedStorage::saveImpl(FeedPtr feed)
 {
-  if (m_hooks.isEmpty())
+  if (m_self != this)
     return Notice::OK;
 
   foreach (FeedStorage *hook, m_hooks) {
@@ -43,4 +69,17 @@ int FeedStorage::saveImpl(FeedPtr feed)
   }
 
   return Notice::OK;
+}
+
+
+void FeedStorage::loadImpl(Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  if (m_self != this)
+    return;
+
+  foreach (FeedStorage *hook, m_hooks) {
+    hook->loadImpl(channel);
+  }
 }

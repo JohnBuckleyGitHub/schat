@@ -27,7 +27,6 @@ HEADERS += \
     DateTime.h \
     feeds/AccountFeed.h \
     feeds/Feed.h \
-    feeds/FeedFactory.h \
     feeds/FeedHeader.h \
     feeds/Feeds.h \
     feeds/FeedStorage.h \
@@ -67,7 +66,6 @@ SOURCES += \
     DateTime.cpp \
     feeds/AccountFeed.cpp \
     feeds/Feed.cpp \
-    feeds/FeedFactory.cpp \
     feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
     feeds/FeedStorage.cpp \
