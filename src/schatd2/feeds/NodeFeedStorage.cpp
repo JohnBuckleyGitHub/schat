@@ -33,6 +33,38 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
 }
 
 
+int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
+{
+  qint64 rev = feed->h().data().value("rev").toLongLong();
+  if (rev == 1)
+    return Notice::InternalError;
+
+  qint64 revTo = data.value("rev").toLongLong();
+  if (revTo == 0)
+    revTo = rev - 1;
+
+  QSqlQuery query;
+  query.prepare("SELECT rev, date, json FROM feeds WHERE channel = :channel AND rev = :rev AND name = :name LIMIT 1;");
+  query.bindValue(":channel", feed->h().channel()->key());
+  query.bindValue(":rev",     revTo);
+  query.bindValue(":name",    feed->h().name());
+  query.exec();
+
+  if (!query.first())
+    return Notice::InternalError;
+
+  QByteArray body = query.value(2).toByteArray();
+  QVariantMap json = JSON::parse(body).toMap();
+
+  Feed *f = FeedStorage::load(feed->h().name(), json);
+  f->h().data()["rev"]  = rev;
+  f->h().data()["size"] = body.size();
+
+  feed->h().channel()->feeds().add(f);
+  return Notice::OK;
+}
+
+
 /*!
  * Реализация сохранения фида.
  */

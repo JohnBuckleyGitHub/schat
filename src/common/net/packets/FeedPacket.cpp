@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -103,12 +103,11 @@ QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &rep
  *
  * \param source  Исходный пакет, полученный от клиента.
  * \param status  Код ответа на запрос.
- * \param command Команда ответ за запрос.
  * \param stream  Поток записи пакета.
  */
-QByteArray FeedPacket::reply(const FeedPacket &source, int status, const QString &command, QDataStream *stream)
+QByteArray FeedPacket::reply(const FeedPacket &source, int status, QDataStream *stream)
 {
-  FeedPacket packet(source.dest(), source.sender(), command);
+  FeedPacket packet(source.dest(), source.sender(), source.command());
   packet.setDirection(FeedPacket::Server2Client);
   packet.setText(source.text());
   packet.setStatus(status);

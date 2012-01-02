@@ -57,6 +57,21 @@ Feed* FeedStorage::load(const QString &name, const QVariantMap &data)
 }
 
 
+int FeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
+{
+  if (m_self != this)
+    return Notice::OK;
+
+  foreach (FeedStorage *hook, m_hooks) {
+    int status = hook->revertImpl(feed, data);
+    if (status != Notice::OK)
+      return status;
+  }
+
+  return Notice::OK;
+}
+
+
 int FeedStorage::saveImpl(FeedPtr feed)
 {
   if (m_self != this)
