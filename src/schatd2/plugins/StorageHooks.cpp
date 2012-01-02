@@ -17,7 +17,6 @@
  */
 
 #include "Account.h"
-#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/AccountFeed.h"
 #include "feeds/TopicFeed.h"
@@ -85,15 +84,8 @@ int StorageHooks::newUserChannelImpl(ChatChannel channel, const AuthRequest &dat
 
   qint64 date = DateTime::utc();
 
-  Account account;
-  account.setDate(date);
-  account.groups() += "anonymous";
-  account.setChannel(channel->key());
-
-  channel->setAccount(&account);
+  channel->createAccount();
   channel->feeds().add(new AccountFeed(date));
-
-  DataBase::add(channel->account());
 
   foreach (StorageHooks *hook, m_hooks) {
     hook->newUserChannelImpl(channel, data, host);

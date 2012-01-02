@@ -34,6 +34,7 @@ public:
   bool setName(const QString &name);
   inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
   inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
+  void createAccount();
 
 private:
   void normalize();

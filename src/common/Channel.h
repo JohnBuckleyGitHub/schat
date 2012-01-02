@@ -130,8 +130,10 @@ public:
   static int isCompatibleId(const QByteArray &id);
   static QString defaultName();
 
-private:
+protected:
   Account *m_account;              ///< Аккаунт пользователя
+
+private:
   bool m_synced;                   ///< true если канал синхронизирован.
   Channels m_channels;             ///< Список каналов.
   Feeds m_feeds;                   ///< Таблица фидов.
