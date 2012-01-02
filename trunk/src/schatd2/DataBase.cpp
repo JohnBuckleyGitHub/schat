@@ -26,6 +26,7 @@
 
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/FeedStorage.h"
 #include "FileLocations.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
@@ -156,6 +157,7 @@ ChatChannel DataBase::channel(qint64 id)
   }
 
   channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
+  FeedStorage::load(channel.data());
 
   return channel;
 }

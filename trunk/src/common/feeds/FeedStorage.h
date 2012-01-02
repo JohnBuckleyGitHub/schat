@@ -32,14 +32,19 @@ public:
   FeedStorage(QObject *parent = 0);
   inline static int save(FeedPtr feed)         { return m_self->saveImpl(feed); }
   inline static void add(FeedStorage *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void load(Channel *channel)    { m_self->loadImpl(channel); }
   inline static void remove(FeedStorage *hook) { m_self->m_hooks.removeAll(hook); }
+  static Feed* create(const QString &name);
+  static Feed* load(const QString &name, const QVariantMap &data);
 
 protected:
   virtual int saveImpl(FeedPtr feed);
+  virtual void loadImpl(Channel *channel);
 
 private:
-  QList<FeedStorage*> m_hooks; ///< Хуки.
-  static FeedStorage *m_self;  ///< Указатель на себя.
+  QList<FeedStorage*> m_hooks;            ///< Хуки.
+  static FeedStorage *m_self;             ///< Указатель на себя.
+  static QHash<QString, FeedPtr> m_feeds; ///< Таблица для создания фидов.
 };
 
 #endif /* FEEDSTORAGE_H_ */

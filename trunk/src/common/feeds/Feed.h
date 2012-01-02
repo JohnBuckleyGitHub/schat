@@ -28,12 +28,14 @@ class FeedQueryReply
 {
 public:
   FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
-  : status(status)
+  : modified(false)
+  , status(status)
   , json(json)
   {}
 
-  int status;
-  QVariantMap json;
+  bool modified;    ///< \b true если тело фида изменилось.
+  int status;       ///< Статус операции.
+  QVariantMap json; ///< JSON ответ на запрос.
 };
 
 /*!

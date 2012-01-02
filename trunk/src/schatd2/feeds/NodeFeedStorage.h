@@ -30,9 +30,11 @@ public:
 
 protected:
   int saveImpl(FeedPtr feed);
+  void loadImpl(Channel *channel);
 
 private:
   qint64 save(FeedPtr feed, const QByteArray &json);
+  void load(Channel *channel, const QString &name, qint64 id);
   void start();
 };
 

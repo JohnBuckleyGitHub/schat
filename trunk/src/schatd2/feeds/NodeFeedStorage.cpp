@@ -38,7 +38,6 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
  */
 int NodeFeedStorage::saveImpl(FeedPtr feed)
 {
-  qDebug() << " - - - saveImpl()" << feed->h().name();
   qint64 rev = feed->h().data().value("rev").toLongLong();
   rev++;
 
@@ -63,6 +62,18 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
 }
 
 
+void NodeFeedStorage::loadImpl(Channel *channel)
+{
+  QVariantMap feeds = channel->data()["feeds"].toMap();
+
+  QMapIterator<QString, QVariant> i(feeds);
+  while (i.hasNext()) {
+    i.next();
+    load(channel, i.key(), i.value().toLongLong());
+  }
+}
+
+
 /*!
  * Запись в базу новой ревизии фида.
  */
@@ -83,6 +94,30 @@ qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
     return -1;
 
   return query.lastInsertId().toLongLong();
+}
+
+
+void NodeFeedStorage::load(Channel *channel, const QString &name, qint64 id)
+{
+  if (id == 0)
+    return;
+
+  QSqlQuery query;
+  query.prepare("SELECT rev, date, json FROM feeds WHERE id = :id LIMIT 1;");
+  query.bindValue(":id", id);
+  query.exec();
+
+  if (!query.first())
+    return;
+
+  QByteArray data = query.value(2).toByteArray();
+  QVariantMap json = JSON::parse(data).toMap();
+
+  Feed *feed = FeedStorage::load(name, json);
+  feed->h().data()["rev"]  = query.value(0).toLongLong();
+  feed->h().data()["size"] = data.size();
+
+  channel->feeds().add(feed, false);
 }
 
 
