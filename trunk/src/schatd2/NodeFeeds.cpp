@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "cores/Core.h"
+#include "feeds/FeedStorage.h"
 #include "net/PacketReader.h"
 #include "net/packets/FeedPacket.h"
 #include "net/packets/Notice.h"
@@ -51,6 +52,8 @@ bool NodeFeeds::read(PacketReader *reader)
   QString cmd = m_packet->command();
   qDebug() << "NodeFeeds::read()" << cmd;
 
+  int status = Notice::NotImplemented;
+
   if (cmd == "headers")
     return headers();
   else if (cmd == "get")
@@ -65,7 +68,14 @@ bool NodeFeeds::read(PacketReader *reader)
     return add();
   else if (cmd == "remove")
     return remove();
+  else if (cmd == "revert") {
+    status = revert();
+  }
 
+  if (status == Notice::OK)
+    return false;
+
+  reply(status);
   return false;
 }
 
@@ -73,7 +83,7 @@ bool NodeFeeds::read(PacketReader *reader)
 bool NodeFeeds::add()
 {
   int status = m_channel->feeds().add(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "added", m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
   return false;
 }
 
@@ -81,7 +91,7 @@ bool NodeFeeds::add()
 bool NodeFeeds::clear()
 {
   int status = m_channel->feeds().clear(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "cleared", m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
   return false;
 }
 
@@ -114,7 +124,7 @@ bool NodeFeeds::query()
 bool NodeFeeds::remove()
 {
   int status = m_channel->feeds().remove(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "removed", m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
   return false;
 }
 
@@ -122,6 +132,30 @@ bool NodeFeeds::remove()
 bool NodeFeeds::update()
 {
   int status = m_channel->feeds().update(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, "updated", m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
   return false;
+}
+
+
+int NodeFeeds::revert()
+{
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return Notice::BadRequest;
+
+  if (!m_channel->feeds().all().contains(name))
+    return Notice::NotFound;
+
+  FeedPtr feed = m_channel->feeds().all().value(name);
+  int status = FeedStorage::revert(feed, m_packet->json());
+  if (status == Notice::OK)
+    reply(status);
+
+  return status;
+}
+
+
+void NodeFeeds::reply(int status)
+{
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
 }

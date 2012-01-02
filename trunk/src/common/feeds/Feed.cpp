@@ -77,7 +77,7 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
   Q_UNUSED(json)
   Q_UNUSED(channel)
 
-  return FeedQueryReply(Notice::NotImplemented);
+  return FeedQueryReply(Notice::ServiceUnavailable);
 }
 
 

@@ -29,6 +29,7 @@ public:
   NodeFeedStorage(QObject *parent = 0);
 
 protected:
+  int revertImpl(FeedPtr feed, const QVariantMap &data);
   int saveImpl(FeedPtr feed);
   void loadImpl(Channel *channel);
   void removeImpl(FeedPtr feed);

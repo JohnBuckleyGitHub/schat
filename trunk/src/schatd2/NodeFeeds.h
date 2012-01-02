@@ -40,6 +40,8 @@ private:
   bool query();
   bool remove();
   bool update();
+  int revert();
+  void reply(int status);
 
   FeedPacket *m_packet;
   ChatChannel m_channel;

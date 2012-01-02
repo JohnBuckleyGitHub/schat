@@ -30,6 +30,7 @@ class SCHAT_EXPORT FeedStorage : public QObject
 
 public:
   FeedStorage(QObject *parent = 0);
+  inline static int revert(FeedPtr feed, const QVariantMap &data) { return m_self->revertImpl(feed, data); }
   inline static int save(FeedPtr feed)         { return m_self->saveImpl(feed); }
   inline static void add(FeedStorage *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void load(Channel *channel)    { m_self->loadImpl(channel); }
@@ -39,6 +40,7 @@ public:
   static Feed* load(const QString &name, const QVariantMap &data);
 
 protected:
+  virtual int revertImpl(FeedPtr feed, const QVariantMap &data);
   virtual int saveImpl(FeedPtr feed);
   virtual void loadImpl(Channel *channel);
   virtual void removeImpl(FeedPtr feed);
