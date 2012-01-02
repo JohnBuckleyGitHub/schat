@@ -31,6 +31,7 @@ public:
 protected:
   int saveImpl(FeedPtr feed);
   void loadImpl(Channel *channel);
+  void removeImpl(FeedPtr feed);
 
 private:
   qint64 save(FeedPtr feed, const QByteArray &json);

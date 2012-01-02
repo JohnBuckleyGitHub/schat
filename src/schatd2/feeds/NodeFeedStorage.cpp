@@ -39,12 +39,21 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
 int NodeFeedStorage::saveImpl(FeedPtr feed)
 {
   qint64 rev = feed->h().data().value("rev").toLongLong();
-  rev++;
 
   feed->h().data().remove("rev");
   feed->h().data().remove("size");
 
   QByteArray json = JSON::generate(feed->save());
+  QVariantMap feeds = feed->h().channel()->data().value("feeds").toMap();
+
+  // Специальная обработка получения ревизии для случая если фид был раннее существовал но был удалён.
+  if (feeds.contains(feed->h().name())) {
+    qint64 id = feeds.value(feed->h().name()).toLongLong();
+    if (id < 0)
+      rev = -id;
+  }
+
+  rev++;
 
   feed->h().data()["rev"]  = rev;
   feed->h().data()["size"] = json.size();
@@ -53,7 +62,7 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
   if (id == -1)
     return Notice::InternalError;
 
-  QVariantMap feeds = feed->h().channel()->data()["feeds"].toMap();
+
   feeds[feed->h().name()] = id;
   feed->h().channel()->data()["feeds"] = feeds;
   DataBase::saveData(feed->h().channel());
@@ -71,6 +80,15 @@ void NodeFeedStorage::loadImpl(Channel *channel)
     i.next();
     load(channel, i.key(), i.value().toLongLong());
   }
+}
+
+
+void NodeFeedStorage::removeImpl(FeedPtr feed)
+{
+  QVariantMap feeds = feed->h().channel()->data()["feeds"].toMap();
+  feeds[feed->h().name()] = -feed->h().data()["rev"].toLongLong();
+  feed->h().channel()->data()["feeds"] = feeds;
+  DataBase::saveData(feed->h().channel());
 }
 
 
@@ -99,7 +117,7 @@ qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
 
 void NodeFeedStorage::load(Channel *channel, const QString &name, qint64 id)
 {
-  if (id == 0)
+  if (id <= 0)
     return;
 
   QSqlQuery query;
