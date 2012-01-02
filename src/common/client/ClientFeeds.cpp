@@ -104,6 +104,22 @@ bool ClientFeeds::remove(const QByteArray &id, const QString &name)
 }
 
 
+bool ClientFeeds::revert(const QByteArray &id, const QString &name, qint64 rev)
+{
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (name.isEmpty())
+    return false;
+
+  QVariantMap json;
+  if (rev > 0)
+    json["rev"] = rev;
+
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "revert", name, ChatClient::io()->sendStream(), json));
+}
+
+
 bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVariantMap &json)
 {
   if (!Channel::isCompatibleId(id))
