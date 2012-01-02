@@ -74,12 +74,21 @@ int FeedStorage::saveImpl(FeedPtr feed)
 
 void FeedStorage::loadImpl(Channel *channel)
 {
-  Q_UNUSED(channel)
-
   if (m_self != this)
     return;
 
   foreach (FeedStorage *hook, m_hooks) {
     hook->loadImpl(channel);
+  }
+}
+
+
+void FeedStorage::removeImpl(FeedPtr feed)
+{
+  if (m_self != this)
+    return;
+
+  foreach (FeedStorage *hook, m_hooks) {
+    hook->removeImpl(feed);
   }
 }

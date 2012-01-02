@@ -24,7 +24,12 @@
 #include "net/packets/Notice.h"
 
 /*!
- * Добавление нового фида.
+ * Базовая функция добавления нового фида.
+ *
+ * \param feed Указатель на фид.
+ * \param save \b true если необходимо сохранить фид как новую ревизию.
+ *
+ * \return \b true если фид был добавлен.
  */
 bool Feeds::add(FeedPtr feed, bool save)
 {
@@ -48,6 +53,17 @@ bool Feeds::add(FeedPtr feed, bool save)
 }
 
 
+/*!
+ * Добавленимя фида пользователем.
+ * Если фид уже существует, добавления не произойдёт.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed add <имя фида> <опциональные JSON данные фида>.
+ *
+ * \param name    Имя фида.
+ * \param json    Данные фида.
+ * \param channel Указатель на канал-пользователь для проверки прав доступа.
+ */
 int Feeds::add(const QString &name, const QVariantMap &json, Channel *channel)
 {
   if (name.isEmpty())
@@ -64,8 +80,21 @@ int Feeds::add(const QString &name, const QVariantMap &json, Channel *channel)
 }
 
 
+/*!
+ * Обработка запроса пользователя к данным фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed query <имя фида> <опциональные JSON данные запроса>.
+ *
+ * \param name    Имя фида.
+ * \param json    Данные запроса.
+ * \param channel Указатель на канал-пользователь для проверки прав доступа.
+ */
 FeedQueryReply Feeds::query(const QString &name, const QVariantMap &json, Channel *channel)
 {
+  if (name.isEmpty())
+    return Notice::BadRequest;
+
   if (!m_feeds.contains(name))
     return FeedQueryReply(Notice::NotFound);
 
@@ -77,6 +106,15 @@ FeedQueryReply Feeds::query(const QString &name, const QVariantMap &json, Channe
 }
 
 
+/*!
+ * Обработка запроса пользователя на очистку данных фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed clear <имя фида>.
+ *
+ * \param name    Имя фида.
+ * \param channel Указатель на канал-пользователь для проверки прав доступа.
+ */
 int Feeds::clear(const QString &name, Channel *channel)
 {
   if (!m_feeds.contains(name))
@@ -90,6 +128,15 @@ int Feeds::clear(const QString &name, Channel *channel)
 }
 
 
+/*!
+ * Обработка запроса пользователя на удаление фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed remove <имя фида>.
+ *
+ * \param name    Имя фида.
+ * \param channel Указатель на канал-пользователь для проверки прав доступа.
+ */
 int Feeds::remove(const QString &name, Channel *channel)
 {
   Q_UNUSED(channel)
@@ -97,6 +144,7 @@ int Feeds::remove(const QString &name, Channel *channel)
   if (!m_feeds.contains(name))
     return Notice::NotFound;
 
+  FeedStorage::remove(m_feeds.value(name));
   m_feeds.remove(name);
   return Notice::OK;
 }
@@ -105,9 +153,12 @@ int Feeds::remove(const QString &name, Channel *channel)
 /*!
  * Обновление данных фида, вызванное пользователем.
  *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed update <имя фида> <JSON данные>.
+ *
  * \param name    ///< Имя фида.
  * \param json    ///< Новые данные фида.
- * \param channel ///< Канал для проверки привилегий.
+ * \param channel ///< Указатель на канал-пользователь для проверки прав доступа.
  */
 int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
 {
@@ -150,9 +201,6 @@ QVariantMap Feeds::feed(const QString &name, Channel *channel)
  * Получение заголовков фидов для одиночного пользователя.
  *
  * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит список фидов если у него нет прав на чтение.
- * \param feeds   Список имён фидов, если список пуст будут получены заголовки всех доступных фидов.
- *
- * \sa get().
  */
 QVariantMap Feeds::headers(Channel *channel) const
 {
@@ -162,23 +210,6 @@ QVariantMap Feeds::headers(Channel *channel) const
   while (i.hasNext()) {
     i.next();
     Feed::merge(i.key(), json, i.value()->h().get(channel));
-  }
-
-  return Feed::merge("feeds", json);
-}
-
-
-/*!
- * Получение JSON данных фидов для сохранения в базе данных.
- */
-QVariantMap Feeds::save() const
-{
-  QVariantMap json;
-
-  QMapIterator<QString, FeedPtr> i(m_feeds);
-  while (i.hasNext()) {
-    i.next();
-    Feed::merge(i.key(), json, i.value()->save());
   }
 
   return Feed::merge("feeds", json);
