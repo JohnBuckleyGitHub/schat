@@ -255,6 +255,16 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
 }
 
 
+void DataBase::saveData(Channel *channel)
+{
+  QSqlQuery query;
+  query.prepare("UPDATE channels SET data = :data WHERE id = :id;");
+  query.bindValue(":data",       JSON::generate(channel->data()));
+  query.bindValue(":id",         channel->key());
+  query.exec();
+}
+
+
 /*!
  * Обновление информации об канале.
  * Если канал также содержит пользовательский аккаунт, то он также будет обновлён.
