@@ -72,6 +72,8 @@ void NodeInit::start()
 
   new NodeFeedStorage(this);
 
+  Storage::i()->channel(QString("Main"));
+
   qint64 key = Storage::settings()->value("MainChannel").toLongLong();
   if (key > 0) {
     ChatChannel channel = DataBase::channel(key);
