@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -269,7 +269,6 @@ bool Core::auth()
 
 /*!
  * Успешная авторизация пользователя.
- * \todo Улучшить поддержку множественного входа, в настоящее время данные не корректно синхронизируются.
  */
 void Core::accept(const AuthResult &result)
 {
@@ -278,42 +277,17 @@ void Core::accept(const AuthResult &result)
     return;
 
   if (!channel->account())
-    return;
+    channel->createAccount();
 
   QList<QByteArray> packets;
   if (result.packet) {
-    AuthReply reply(m_storage->serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
+    AuthReply reply(Storage::serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
     packets.append(reply.data(m_sendStream));
   }
 
   packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
 
   send(channel->sockets(), packets, result.option, channel->id());
-
-//  ChatUser user = m_storage->user(result.id);
-//  if (!user)
-//    return;
-
-//  SCHAT_LOG_INFO() << "Accept Auth" << (user->nick() + "@" + user->host() + "/" + SimpleID::encode(user->id())) << "cookie:" << SimpleID::encode(user->cookie());
-
-//  ChatChannel channel = addChannel(user);
-//  QList<QByteArray> packets;
-//
-//  if (channel->channels().all().size() > 1)
-//    packets = userDataToSync(channel, user);
-//
-//  if (result.packet) {
-//    AuthReply reply(m_storage->serverData(), user.data(), user->cookie(), result.authId, result.json);
-//    packets.prepend(reply.data(m_sendStream));
-//  }
-//
-//  packets.append(UserWriter(m_sendStream, user.data(), user->id(), UserWriter::StaticData).data());
-//  send(QList<quint64>() << m_packetsEvent->socket(), packets, result.option, user->id());
-//
-//  if (m_plugins) {
-//    UserHook hook(user);
-//    m_plugins->hook(hook);
-//  }
 }
 
 
@@ -324,7 +298,7 @@ void Core::reject(const AuthResult &result)
 {
   SCHAT_LOG_DEBUG(<< "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId));
 
-  AuthReply reply(m_storage->serverData(), result.status, result.authId, result.json);
+  AuthReply reply(Storage::serverData(), result.status, result.authId, result.json);
 
   NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));
   event->option = result.option;

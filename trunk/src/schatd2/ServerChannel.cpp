@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ServerChannel.h"
-#include "Normalize.h"
+#include "Account.h"
+#include "DataBase.h"
+#include "DateTime.h"
 #include "net/SimpleID.h"
+#include "Normalize.h"
+#include "ServerChannel.h"
 
 ServerChannel::ServerChannel(ClientChannel channel)
   : Channel(channel->id(), channel->name())
@@ -48,6 +51,17 @@ bool ServerChannel::setName(const QString &name)
   }
 
   return false;
+}
+
+
+void ServerChannel::createAccount()
+{
+  m_account = new Account();
+  m_account->setDate(DateTime::utc());
+  m_account->groups() += "anonymous";
+  m_account->setChannel(key());
+
+  DataBase::add(account());
 }
 
 
