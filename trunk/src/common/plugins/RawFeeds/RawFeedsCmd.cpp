@@ -68,6 +68,9 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     else if (body.command() == "remove") {
       ChatClient::feeds()->remove(dest, body.body());
     }
+    else if (body.command() == "revert") {
+      revert(dest, body);
+    }
 
     return true;
   }
@@ -95,6 +98,17 @@ void RawFeedsCmd::query(const QByteArray &dest, const ClientCmd &cmd)
 
   QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
   ChatClient::feeds()->query(dest, body.command(), json);
+}
+
+
+void RawFeedsCmd::revert(const QByteArray &dest, const ClientCmd &cmd)
+{
+  ClientCmd body(cmd.body());
+  if (body.command().isEmpty())
+    return;
+
+  qint64 rev = body.body().toLongLong();
+  ChatClient::feeds()->revert(dest, body.command(), rev);
 }
 
 
