@@ -96,8 +96,6 @@ int DataBase::start()
     "  name       TEXT    NOT NULL,"
     "  data       BLOB"
     ");"));
-
-    Storage::i()->channel(QLatin1String("Main"));
   }
 
   return 0;
