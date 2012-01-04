@@ -137,6 +137,9 @@ bool NodeFeeds::update()
 }
 
 
+/*!
+ * Обработка запроса пользователя на откат фида.
+ */
 int NodeFeeds::revert()
 {
   QString name = m_packet->text();
@@ -147,6 +150,9 @@ int NodeFeeds::revert()
     return Notice::NotFound;
 
   FeedPtr feed = m_channel->feeds().all().value(name);
+  if (!feed->head().acl().can(m_user.data(), Acl::Edit))
+    return Notice::Forbidden;
+
   int status = FeedStorage::revert(feed, m_packet->json());
   if (status == Notice::OK)
     reply(status);

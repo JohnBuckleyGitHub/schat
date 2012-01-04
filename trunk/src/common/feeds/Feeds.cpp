@@ -44,7 +44,7 @@ bool Feeds::add(FeedPtr feed, bool save)
   if (!feed->isValid())
     return false;
 
-  m_feeds[feed->h().name()] = feed;
+  m_feeds[feed->head().name()] = feed;
 
   if (save)
     FeedStorage::save(feed);
@@ -209,7 +209,7 @@ QVariantMap Feeds::headers(Channel *channel) const
   QMapIterator<QString, FeedPtr> i(m_feeds);
   while (i.hasNext()) {
     i.next();
-    Feed::merge(i.key(), json, i.value()->h().get(channel));
+    Feed::merge(i.key(), json, i.value()->head().get(channel));
   }
 
   return Feed::merge("feeds", json);

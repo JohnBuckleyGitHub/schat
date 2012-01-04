@@ -83,7 +83,7 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 
 int Feed::clear(Channel *channel)
 {
-  if (!(m_header.acl().match(channel) & Acl::Write))
+  if (!m_header.acl().can(channel, Acl::Write))
     return Notice::Forbidden;
 
   m_data.clear();
@@ -95,7 +95,7 @@ int Feed::clear(Channel *channel)
 
 int Feed::update(const QVariantMap &json, Channel *channel)
 {
-  if (!(m_header.acl().match(channel) & Acl::Write))
+  if (!m_header.acl().can(channel, Acl::Write))
     return Notice::Forbidden;
 
   merge(m_data, json);
