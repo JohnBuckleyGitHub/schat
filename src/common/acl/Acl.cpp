@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "acl/Acl.h"
+#include "Channel.h"
 
 Acl::Acl(int mask)
   : m_mask(mask)
@@ -40,12 +42,29 @@ bool Acl::can(Channel *channel, ResultAcl acl) const
 int Acl::match(Channel *channel) const
 {
   if (!channel)
-    return 06;
+    return (m_mask & ~0770);
 
-  return 06;
+  if (channel->account()->groups().all().contains("master"))
+    return Read | Write | Edit;
+
+  if (m_others.contains(channel->id()))
+    return m_others.value(channel->id());
+
+  if (m_owners.contains(channel->id()))
+    return (m_mask >> 6);
+
+  foreach (QString group, m_groups.all()) {
+    if (channel->account()->groups().all().contains(group))
+      return ((m_mask & ~0700) >> 3);
+  }
+
+  return (m_mask & ~0770);
 }
 
 
+/*!
+ * Получение данных о правах доступа.
+ */
 QVariantMap Acl::get(Channel *channel)
 {
   int acl = match(channel);
@@ -58,17 +77,21 @@ QVariantMap Acl::get(Channel *channel)
     json = save();
 
   json["math"] = acl;
+  json["mask"] = m_mask;
   return json;
 }
 
 
 QVariantMap Acl::save()
 {
-  return QVariantMap();
+  QVariantMap json;
+  json["mask"] = m_mask;
+
+  return json;
 }
 
 
 void Acl::load(const QVariantMap &json)
 {
-
+  m_mask = json.value("mask").toInt();
 }
