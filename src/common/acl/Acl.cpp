@@ -18,9 +18,16 @@
 
 #include "acl/Acl.h"
 
-Acl::Acl(int acl)
-  : m_acl(acl)
+Acl::Acl(int mask)
+  : m_mask(mask)
 {
+}
+
+
+bool Acl::can(Channel *channel, ResultAcl acl) const
+{
+  int r = match(channel);
+  return r & acl;
 }
 
 
@@ -36,4 +43,32 @@ int Acl::match(Channel *channel) const
     return 06;
 
   return 06;
+}
+
+
+QVariantMap Acl::get(Channel *channel)
+{
+  int acl = match(channel);
+
+  if (!(acl & Read))
+    return QVariantMap();
+
+  QVariantMap json;
+  if (acl & Edit)
+    json = save();
+
+  json["math"] = acl;
+  return json;
+}
+
+
+QVariantMap Acl::save()
+{
+  return QVariantMap();
+}
+
+
+void Acl::load(const QVariantMap &json)
+{
+
 }

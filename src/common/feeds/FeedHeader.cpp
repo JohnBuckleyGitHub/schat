@@ -44,10 +44,9 @@ bool FeedHeader::isValid() const
 
 QVariantMap FeedHeader::get(Channel *channel)
 {
-  int acl = m_acl.match(channel);
-
-  if (!(acl & Acl::Read))
-    return QVariantMap();
+  QVariantMap acl = m_acl.get(channel);
+  if (acl.isEmpty())
+    return acl;
 
   m_data["acl"] = acl;
   return m_data;
@@ -56,7 +55,7 @@ QVariantMap FeedHeader::get(Channel *channel)
 
 QVariantMap FeedHeader::save()
 {
-  m_data["acl"] = m_acl.acl();
+  m_data["acl"] = m_acl.save();
   return m_data;
 }
 
@@ -66,6 +65,6 @@ QVariantMap FeedHeader::save()
  */
 void FeedHeader::setData(const QVariantMap &data)
 {
-  m_acl.setAcl(data["acl"].toLongLong());
+  m_acl.load(data.value("acl").toMap());
   m_data["date"] = data.value("date");
 }

@@ -60,9 +60,9 @@ public:
   virtual void setChannel(Channel *channel);
 
   bool canRead(Channel *channel) const;
-  inline const FeedHeader& h() const       { return m_header; }
+  inline const FeedHeader& head() const    { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
-  inline FeedHeader& h()                   { return m_header; }
+  inline FeedHeader& head()                { return m_header; }
 
   static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
   static QVariantMap merge(const QString &key, const QVariantMap &in);

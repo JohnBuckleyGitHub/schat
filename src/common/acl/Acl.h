@@ -19,6 +19,9 @@
 #ifndef ACL_H_
 #define ACL_H_
 
+#include <QHash>
+#include <QVariant>
+
 #include "acl/Groups.h"
 #include "schat.h"
 
@@ -49,15 +52,21 @@ public:
 
   Acl(int acl = 0666);
 
+  bool can(Channel *channel, ResultAcl acl) const;
   inline const Groups& groups() const { return m_groups; }
   inline Groups& groups() { return m_groups; }
-  inline int acl() const { return m_acl; }
-  inline void setAcl(int acl) { m_acl = acl; }
+  inline int mask() const { return m_mask; }
+  inline void setMask(int mask) { m_mask = mask; }
   int match(Channel *channel) const;
+  QVariantMap get(Channel *channel);
+  QVariantMap save();
+  void load(const QVariantMap &json);
 
 private:
-  Groups m_groups; ///< Группы.
-  int m_acl;       ///< Права доступа Acl:CommonAcl.
+  Groups m_groups;                 ///< Группы.
+  int m_mask;                      ///< Общая маска прав доступа Acl:CommonAcl.
+  QHash<QByteArray, int> m_others; ///< Специальные права доступа для выбранных пользователей.
+  QList<QByteArray> m_owners;      ///< Идентификаторы владельцев.
 };
 
 #endif /* ACL_H_ */
