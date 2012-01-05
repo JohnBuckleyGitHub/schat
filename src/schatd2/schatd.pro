@@ -36,6 +36,7 @@ HEADERS = \
     DataBase.h \
     events.h \
     feeds/NodeFeedStorage.h \
+    feeds/NodeTopicFeed.h \
     NodeChannels.h \
     NodeFeeds.h \
     NodeLog.h \
@@ -57,6 +58,7 @@ SOURCES = \
     DataBase.cpp \
     events.cpp \
     feeds/NodeFeedStorage.cpp \
+    feeds/NodeTopicFeed.cpp \
     NodeChannels.cpp \
     NodeFeeds.cpp \
     NodeLog.cpp \

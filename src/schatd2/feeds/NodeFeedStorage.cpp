@@ -24,11 +24,14 @@
 #include "feeds/NodeFeedStorage.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
+#include "NodeTopicFeed.h"
 #include "ServerChannel.h"
 
 NodeFeedStorage::NodeFeedStorage(QObject *parent)
   : FeedStorage(parent)
 {
+  add(new NodeTopicFeed());
+
   start();
 }
 

@@ -30,7 +30,6 @@ HEADERS += \
     feeds/FeedHeader.h \
     feeds/Feeds.h \
     feeds/FeedStorage.h \
-    feeds/TopicFeed.h \
     FileLocations.h \
     Gender.h \
     JSON.h \
@@ -69,7 +68,6 @@ SOURCES += \
     feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
     feeds/FeedStorage.cpp \
-    feeds/TopicFeed.cpp \
     FileLocations.cpp \
     Gender.cpp \
     JSON.cpp \
