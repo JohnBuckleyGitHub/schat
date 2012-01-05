@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ HEADERS = \
     cores/PasswordAuth.h \
     DataBase.h \
     events.h \
+    feeds/NodeAccountFeed.h \
     feeds/NodeFeedStorage.h \
     feeds/NodeTopicFeed.h \
     NodeChannels.h \
@@ -57,6 +58,7 @@ SOURCES = \
     cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
+    feeds/NodeAccountFeed.cpp \
     feeds/NodeFeedStorage.cpp \
     feeds/NodeTopicFeed.cpp \
     NodeChannels.cpp \

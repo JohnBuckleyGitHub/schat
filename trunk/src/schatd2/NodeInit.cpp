@@ -61,6 +61,9 @@ void NodeInit::start()
 {
   m_storage->start();
 
+  // Инициализация фидов.
+  new NodeFeedStorage(this);
+
   m_plugins->load();
   m_core = m_plugins->kernel();
 
@@ -69,9 +72,6 @@ void NodeInit::start()
 
   m_core->start();
   m_thread->start();
-
-  // Инициализация фидов.
-  new NodeFeedStorage(this);
 
   Storage::i()->channel(QString("Main"));
 
