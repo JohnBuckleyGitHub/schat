@@ -18,7 +18,6 @@
 
 #include "Account.h"
 #include "DateTime.h"
-#include "feeds/AccountFeed.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
@@ -80,10 +79,8 @@ int StorageHooks::newUserChannelImpl(ChatChannel channel, const AuthRequest &dat
 
   SCHAT_LOG_TRACE(<< "HOOK: NEW USER CHANNEL" << (channel->name() + "@" + host + "/" + SimpleID::encode(channel->id())) << data.userAgent);
 
-  qint64 date = DateTime::utc();
-
   channel->createAccount();
-  channel->feeds().add(new AccountFeed(date));
+  channel->feeds().add(FeedStorage::create("account"));
 
   foreach (StorageHooks *hook, m_hooks) {
     hook->newUserChannelImpl(channel, data, host);
