@@ -54,16 +54,16 @@ bool NodeFeeds::read(PacketReader *reader)
 
   int status = Notice::NotImplemented;
 
-  if (cmd == "headers")
-    return headers();
-  else if (cmd == "get")
-    return get();
-  else if (cmd == "clear")
-    return clear();
-  else if (cmd == "query")
-    return query();
-  else if (cmd == "add")
+  if (cmd == "add")
     status = add();
+  else if (cmd == "clear")
+    status = clear();
+  else if (cmd == "get")
+    status = get();
+  else if (cmd == "headers")
+    status = headers();
+  else if (cmd == "query")
+    status = query();
   else if (cmd == "remove")
     status = remove();
   else if (cmd == "revert")
@@ -75,39 +75,6 @@ bool NodeFeeds::read(PacketReader *reader)
     return false;
 
   reply(status);
-  return false;
-}
-
-
-bool NodeFeeds::clear()
-{
-  int status = m_channel->feeds().clear(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
-  return false;
-}
-
-
-bool NodeFeeds::get()
-{
-  if (m_packet->text().isEmpty())
-    return false;
-
-  m_core->send(m_user->sockets(), FeedPacket::feed(m_channel, m_user, m_packet->text(), m_core->sendStream()));
-  return false;
-}
-
-
-bool NodeFeeds::headers()
-{
-  m_core->send(m_user->sockets(), FeedPacket::headers(m_channel, m_user, m_core->sendStream()));
-  return false;
-}
-
-
-bool NodeFeeds::query()
-{
-  FeedQueryReply reply = m_channel->feeds().query(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, reply, m_core->sendStream()));
   return false;
 }
 
@@ -153,22 +120,84 @@ int NodeFeeds::add()
 
 
 /*!
- * Базовая проверка корректности запроса к фиду и проверка прав доступа.
+ * Обработка запроса пользователя на очистку данных фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed clear <имя фида>.
  */
-int NodeFeeds::check(int acl)
+int NodeFeeds::clear()
 {
-  QString name = m_packet->text();
-  if (name.isEmpty())
-    return Notice::BadRequest;
+  int status = check(Acl::Write);
+  if (status != Notice::OK)
+    return status;
 
-  if (!m_channel->feeds().all().contains(name))
-    return Notice::NotFound;
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  status = feed->clear(m_user.data());
+  if (status != Notice::OK)
+    return status;
 
-  FeedPtr feed = m_channel->feeds().all().value(name);
-  if (!feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
+  status = FeedStorage::save(feed);
+  if (status == Notice::OK)
+    reply(status);
+
+  return status;
+}
+
+
+/*!
+ * Получение тела фида.
+ */
+int NodeFeeds::get()
+{
+  int status = check(Acl::Read);
+  if (status != Notice::OK)
+    return status;
+
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  QVariantMap json = feed->feed(m_user.data());
+  if (json.isEmpty())
     return Notice::Forbidden;
 
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, Feed::merge(m_packet->text(), json), m_core->sendStream()));
   return Notice::OK;
+}
+
+
+/*!
+ * Получение заголовков фидов для одиночного пользователя.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feeds.
+ */
+int NodeFeeds::headers()
+{
+//  m_core->send(m_user->sockets(), FeedPacket::headers(m_channel, m_user, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, m_channel->feeds().headers(m_user.data()), m_core->sendStream()));
+  return Notice::OK;
+}
+
+
+/*!
+ * Обработка запроса пользователя к данным фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed query <имя фида> <опциональные JSON данные запроса>.
+ */
+int NodeFeeds::query()
+{
+  int status = check(Acl::Read);
+  if (status != Notice::OK)
+    return status;
+
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedQueryReply reply = feed->query(m_packet->json(), m_user.data());
+  if (reply.modified)
+    FeedStorage::save(feed);
+
+  if (reply.status == Notice::OK)
+    m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, reply, m_core->sendStream()));
+
+  return reply.status;
 }
 
 
@@ -243,6 +272,26 @@ int NodeFeeds::update()
     reply(status);
 
   return status;
+}
+
+
+/*!
+ * Базовая проверка корректности запроса к фиду и проверка прав доступа.
+ */
+int NodeFeeds::check(int acl)
+{
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return Notice::BadRequest;
+
+  if (!m_channel->feeds().all().contains(name))
+    return Notice::NotFound;
+
+  FeedPtr feed = m_channel->feeds().all().value(name);
+  if (!feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
+    return Notice::Forbidden;
+
+  return Notice::OK;
 }
 
 
