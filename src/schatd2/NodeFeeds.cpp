@@ -129,6 +129,9 @@ bool NodeFeeds::update()
 }
 
 
+/*!
+ * Базовая проверка корректности запроса к фиду и проверка прав доступа.
+ */
 int NodeFeeds::check(int acl)
 {
   QString name = m_packet->text();
