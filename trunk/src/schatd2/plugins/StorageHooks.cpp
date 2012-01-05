@@ -52,6 +52,7 @@ int StorageHooks::newChannelImpl(ChatChannel channel)
 
   SCHAT_LOG_TRACE(<< "HOOK: NEW CHANNEL" << (channel->name() + "/" + SimpleID::encode(channel->id())));
 
+  channel->feeds().add(FeedStorage::create("acl"));
   channel->feeds().add(FeedStorage::create("topic"));
 
   foreach (StorageHooks *hook, m_hooks) {
@@ -80,6 +81,7 @@ int StorageHooks::newUserChannelImpl(ChatChannel channel, const AuthRequest &dat
   SCHAT_LOG_TRACE(<< "HOOK: NEW USER CHANNEL" << (channel->name() + "@" + host + "/" + SimpleID::encode(channel->id())) << data.userAgent);
 
   channel->createAccount();
+  channel->feeds().add(FeedStorage::create("acl"));
   channel->feeds().add(FeedStorage::create("account"));
 
   foreach (StorageHooks *hook, m_hooks) {
