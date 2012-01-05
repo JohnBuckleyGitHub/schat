@@ -58,32 +58,23 @@ bool NodeFeeds::read(PacketReader *reader)
     return headers();
   else if (cmd == "get")
     return get();
-  else if (cmd == "update")
-    return update();
   else if (cmd == "clear")
     return clear();
   else if (cmd == "query")
     return query();
   else if (cmd == "add")
-    return add();
+    status = add();
   else if (cmd == "remove")
     status = remove();
-  else if (cmd == "revert") {
+  else if (cmd == "revert")
     status = revert();
-  }
+  else if (cmd == "update")
+    status = update();
 
   if (status == Notice::OK)
     return false;
 
   reply(status);
-  return false;
-}
-
-
-bool NodeFeeds::add()
-{
-  int status = m_channel->feeds().add(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
   return false;
 }
 
@@ -121,11 +112,43 @@ bool NodeFeeds::query()
 }
 
 
-bool NodeFeeds::update()
+/*!
+ * Обработка запроса пользователя на создание нового фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed add <имя фида> <опциональные JSON данные фида>.
+ */
+int NodeFeeds::add()
 {
-  int status = m_channel->feeds().update(m_packet->text(), m_packet->json(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
-  return false;
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return Notice::BadRequest;
+
+  if (m_channel->feeds().all().contains(name))
+    return Notice::ObjectAlreadyExists;
+
+  FeedPtr acl = m_channel->feeds().all().value("acl");
+  if (!acl)
+    return Notice::InternalError;
+
+  if (!acl->head().acl().can(m_user.data(), Acl::Edit))
+    return Notice::Forbidden;
+
+  if (!m_channel->feeds().add(FeedStorage::create(name), false))
+    return Notice::InternalError;
+
+  FeedPtr feed = m_channel->feeds().all().value(name);
+  if (!m_packet->raw().isEmpty()) {
+    int status = feed->update(m_packet->json(), m_user.data());
+    if (status != Notice::OK)
+      return status;
+  }
+
+  int status = FeedStorage::save(feed);
+  if (status == Notice::OK)
+    reply(status);
+
+  return status;
 }
 
 
@@ -188,6 +211,34 @@ int NodeFeeds::revert()
 
   FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
   status = FeedStorage::revert(feed, m_packet->json());
+  if (status == Notice::OK)
+    reply(status);
+
+  return status;
+}
+
+
+/*!
+ * Обработка запроса пользователя на обновление данных фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed update <имя фида> <JSON данные>.
+ */
+int NodeFeeds::update()
+{
+  int status = check(Acl::Write);
+  if (status != Notice::OK)
+    return status;
+
+  if (m_packet->raw().isEmpty())
+    return Notice::BadRequest;
+
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  status = feed->update(m_packet->json(), m_user.data());
+  if (status != Notice::OK)
+    return status;
+
+  status = FeedStorage::save(feed);
   if (status == Notice::OK)
     reply(status);
 

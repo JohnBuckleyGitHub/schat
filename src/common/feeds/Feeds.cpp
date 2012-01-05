@@ -54,33 +54,6 @@ bool Feeds::add(FeedPtr feed, bool save)
 
 
 /*!
- * Добавленимя фида пользователем.
- * Если фид уже существует, добавления не произойдёт.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed add <имя фида> <опциональные JSON данные фида>.
- *
- * \param name    Имя фида.
- * \param json    Данные фида.
- * \param channel Указатель на канал-пользователь для проверки прав доступа.
- */
-int Feeds::add(const QString &name, const QVariantMap &json, Channel *channel)
-{
-  if (name.isEmpty())
-    return Notice::BadRequest;
-
-  if (m_feeds.contains(name))
-    return Notice::ObjectAlreadyExists;
-
-  if (!add(FeedStorage::create(name), false))
-    return Notice::InternalError;
-
-  update(name, json, channel);
-  return Notice::OK;
-}
-
-
-/*!
  * Обработка запроса пользователя к данным фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
@@ -125,29 +98,6 @@ int Feeds::clear(const QString &name, Channel *channel)
     FeedStorage::save(m_feeds.value(name));
 
   return status;
-}
-
-
-/*!
- * Обновление данных фида, вызванное пользователем.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed update <имя фида> <JSON данные>.
- *
- * \param name    ///< Имя фида.
- * \param json    ///< Новые данные фида.
- * \param channel ///< Указатель на канал-пользователь для проверки прав доступа.
- */
-int Feeds::update(const QString &name, const QVariantMap &json, Channel *channel)
-{
-  if (!m_feeds.contains(name))
-    return Notice::NotFound;
-
-  int status = m_feeds.value(name)->update(json, channel);
-  if (status != Notice::OK)
-    return status;
-
-  return FeedStorage::save(m_feeds.value(name));
 }
 
 

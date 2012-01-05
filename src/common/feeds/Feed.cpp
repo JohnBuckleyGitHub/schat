@@ -95,12 +95,9 @@ int Feed::clear(Channel *channel)
 
 int Feed::update(const QVariantMap &json, Channel *channel)
 {
-  if (!m_header.acl().can(channel, Acl::Write))
-    return Notice::Forbidden;
+  Q_UNUSED(channel)
 
   merge(m_data, json);
-  m_header.data()["date"] = DateTime::utc();
-
   return Notice::OK;
 }
 
