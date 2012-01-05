@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,15 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TOPICFEED_H_
-#define TOPICFEED_H_
+#include "DateTime.h"
+#include "feeds/NodeTopicFeed.h"
 
-#include "feeds/Feed.h"
 
-class SCHAT_EXPORT TopicFeed : public Feed
+NodeTopicFeed::NodeTopicFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
 {
-public:
-  TopicFeed(qint64 date = 0);
-};
+}
 
-#endif /* TOPICFEED_H_ */
+
+NodeTopicFeed::NodeTopicFeed(const QString &name, qint64 date)
+  : Feed(name, date)
+{
+}
+
+
+Feed* NodeTopicFeed::create(const QString &name)
+{
+  return new NodeTopicFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeTopicFeed::load(const QString &name, const QVariantMap &data)
+{
+  return new NodeTopicFeed(name, data);
+}
+

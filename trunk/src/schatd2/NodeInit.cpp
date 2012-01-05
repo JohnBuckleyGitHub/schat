@@ -70,6 +70,7 @@ void NodeInit::start()
   m_core->start();
   m_thread->start();
 
+  // Инициализация фидов.
   new NodeFeedStorage(this);
 
   Storage::i()->channel(QString("Main"));
