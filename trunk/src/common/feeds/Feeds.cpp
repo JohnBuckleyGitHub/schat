@@ -129,28 +129,6 @@ int Feeds::clear(const QString &name, Channel *channel)
 
 
 /*!
- * Обработка запроса пользователя на удаление фида.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed remove <имя фида>.
- *
- * \param name    Имя фида.
- * \param channel Указатель на канал-пользователь для проверки прав доступа.
- */
-int Feeds::remove(const QString &name, Channel *channel)
-{
-  Q_UNUSED(channel)
-
-  if (!m_feeds.contains(name))
-    return Notice::NotFound;
-
-  FeedStorage::remove(m_feeds.value(name));
-  m_feeds.remove(name);
-  return Notice::OK;
-}
-
-
-/*!
  * Обновление данных фида, вызванное пользователем.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
