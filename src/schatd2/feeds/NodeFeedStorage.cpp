@@ -22,6 +22,7 @@
 
 #include "DataBase.h"
 #include "feeds/NodeAccountFeed.h"
+#include "feeds/NodeAclFeed.h"
 #include "feeds/NodeFeedStorage.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
@@ -32,6 +33,7 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
   : FeedStorage(parent)
 {
   add(new NodeAccountFeed());
+  add(new NodeAclFeed());
   add(new NodeTopicFeed());
 
   start();
