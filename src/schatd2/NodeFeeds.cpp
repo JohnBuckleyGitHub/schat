@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ bool NodeFeeds::read(PacketReader *reader)
   else if (cmd == "add")
     return add();
   else if (cmd == "remove")
-    return remove();
+    status = remove();
   else if (cmd == "revert") {
     status = revert();
   }
@@ -121,14 +121,6 @@ bool NodeFeeds::query()
 }
 
 
-bool NodeFeeds::remove()
-{
-  int status = m_channel->feeds().remove(m_packet->text(), m_user.data());
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
-  return false;
-}
-
-
 bool NodeFeeds::update()
 {
   int status = m_channel->feeds().update(m_packet->text(), m_packet->json(), m_user.data());
@@ -137,10 +129,7 @@ bool NodeFeeds::update()
 }
 
 
-/*!
- * Обработка запроса пользователя на откат фида.
- */
-int NodeFeeds::revert()
+int NodeFeeds::check(int acl)
 {
   QString name = m_packet->text();
   if (name.isEmpty())
@@ -150,10 +139,52 @@ int NodeFeeds::revert()
     return Notice::NotFound;
 
   FeedPtr feed = m_channel->feeds().all().value(name);
-  if (!feed->head().acl().can(m_user.data(), Acl::Edit))
+  if (!feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
     return Notice::Forbidden;
 
-  int status = FeedStorage::revert(feed, m_packet->json());
+  return Notice::OK;
+}
+
+
+/*!
+ * Обработка запроса пользователя на удаление фида.
+ * Для удаления фида необходимы права на редактирование.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed remove <имя фида>.
+ */
+int NodeFeeds::remove()
+{
+  int status = check(Acl::Edit);
+  if (status != Notice::OK)
+    return status;
+
+  if (m_packet->text() == "acl")
+    return Notice::BadRequest;
+
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedStorage::remove(feed);
+  m_channel->feeds().remove(m_packet->text());
+  reply(status);
+  return status;
+}
+
+
+/*!
+ * Обработка запроса пользователя на откат фида.
+ * Откат фида возможен, только если у пользователя есть права на редактирование фида.
+ *
+ * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
+ * /feed revert <имя фида> <опциональный номер ревизии>.
+ */
+int NodeFeeds::revert()
+{
+  int status = check(Acl::Edit);
+  if (status != Notice::OK)
+    return status;
+
+  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  status = FeedStorage::revert(feed, m_packet->json());
   if (status == Notice::OK)
     reply(status);
 
