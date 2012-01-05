@@ -19,6 +19,7 @@
 #include "Account.h"
 #include "acl/Acl.h"
 #include "Channel.h"
+#include "net/SimpleID.h"
 
 Acl::Acl(int mask)
   : m_mask(mask)
@@ -82,16 +83,43 @@ QVariantMap Acl::get(Channel *channel)
 }
 
 
+/*!
+ * Сохранение информации о правах доступа.
+ */
 QVariantMap Acl::save()
 {
   QVariantMap json;
-  json["mask"] = m_mask;
+
+  QVariantList owners;
+  foreach (QByteArray owner, m_owners) {
+    owners.append(SimpleID::encode(owner));
+  }
+
+  json["mask"]   = m_mask;
+  json["owners"] = owners;
 
   return json;
+}
+
+
+void Acl::add(const QByteArray &owner)
+{
+  if (SimpleID::typeOf(owner) != SimpleID::UserId)
+    return;
+
+  if (m_owners.contains(owner))
+    return;
+
+  m_owners.append(owner);
 }
 
 
 void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value("mask").toInt();
+
+  QVariantList owners = json.value("owners").toList();
+  foreach (QVariant owner, owners) {
+    add(SimpleID::decode(owner.toByteArray()));
+  }
 }

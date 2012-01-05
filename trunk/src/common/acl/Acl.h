@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -53,13 +53,16 @@ public:
   Acl(int acl = 0666);
 
   bool can(Channel *channel, ResultAcl acl) const;
-  inline const Groups& groups() const { return m_groups; }
-  inline Groups& groups() { return m_groups; }
-  inline int mask() const { return m_mask; }
-  inline void setMask(int mask) { m_mask = mask; }
+  inline const Groups& groups() const            { return m_groups; }
+  inline const QList<QByteArray>& owners() const { return m_owners; }
+  inline Groups& groups()                        { return m_groups; }
+  inline int mask() const                        { return m_mask; }
+  inline void remove(const QByteArray &owner)    { m_owners.removeAll(owner); }
+  inline void setMask(int mask)                  { m_mask = mask; }
   int match(Channel *channel) const;
   QVariantMap get(Channel *channel);
   QVariantMap save();
+  void add(const QByteArray &owner);
   void load(const QVariantMap &json);
 
 private:
