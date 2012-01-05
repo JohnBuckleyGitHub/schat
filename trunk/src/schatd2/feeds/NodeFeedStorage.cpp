@@ -21,6 +21,7 @@
 #include <QSqlQuery>
 
 #include "DataBase.h"
+#include "DateTime.h"
 #include "feeds/NodeAccountFeed.h"
 #include "feeds/NodeAclFeed.h"
 #include "feeds/NodeFeedStorage.h"
@@ -40,6 +41,12 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
 }
 
 
+/*!
+ * Реализация отката фида.
+ *
+ * Откат невозможен, если фид имеет только одну ревизию, или нужную ревизию не удалось
+ * загрузить из базы данных.
+ */
 int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
 {
   qint64 rev = feed->head().data().value("rev").toLongLong();
@@ -81,6 +88,7 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
 
   feed->head().data().remove("rev");
   feed->head().data().remove("size");
+  feed->head().data()["date"] = DateTime::utc();
 
   QByteArray json = JSON::generate(feed->save());
   QVariantMap feeds = feed->head().channel()->data().value("feeds").toMap();
@@ -100,7 +108,6 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
   qint64 id = save(feed, json);
   if (id == -1)
     return Notice::InternalError;
-
 
   feeds[feed->head().name()] = id;
   feed->head().channel()->data()["feeds"] = feeds;

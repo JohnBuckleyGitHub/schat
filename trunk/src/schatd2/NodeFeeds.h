@@ -33,15 +33,15 @@ protected:
   bool read(PacketReader *reader);
 
 private:
-  bool add();
   bool clear();
   bool get();
   bool headers();
   bool query();
-  bool update();
+  int add();
   int check(int acl);
   int remove();
   int revert();
+  int update();
   void reply(int status);
 
   FeedPacket *m_packet;

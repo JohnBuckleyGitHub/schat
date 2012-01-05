@@ -50,7 +50,7 @@ public:
     OthersEdit  = 01    ///< остальные имеют право на редактирование свойств.
   };
 
-  Acl(int acl = 0666);
+  Acl(int acl = 0766);
 
   bool can(Channel *channel, ResultAcl acl) const;
   inline const Groups& groups() const            { return m_groups; }

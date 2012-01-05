@@ -22,14 +22,12 @@
 NodeAclFeed::NodeAclFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  m_header.acl().setMask(0766);
 }
 
 
 NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  m_header.acl().setMask(0766);
 }
 
 
