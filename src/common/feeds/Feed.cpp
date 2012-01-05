@@ -83,12 +83,9 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 
 int Feed::clear(Channel *channel)
 {
-  if (!m_header.acl().can(channel, Acl::Write))
-    return Notice::Forbidden;
+  Q_UNUSED(channel)
 
   m_data.clear();
-  m_header.data()["date"] = DateTime::utc();
-
   return Notice::OK;
 }
 

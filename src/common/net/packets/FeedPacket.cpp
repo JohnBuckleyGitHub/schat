@@ -17,6 +17,7 @@
  */
 
 #include "DateTime.h"
+#include "feeds/Feed.h"
 #include "net/packets/FeedPacket.h"
 
 FeedPacket::FeedPacket()
@@ -36,40 +37,6 @@ FeedPacket::FeedPacket(const QByteArray &sender, const QByteArray &dest, const Q
 FeedPacket::FeedPacket(quint16 type, PacketReader *reader)
   : Notice(type, reader)
 {
-}
-
-
-/*!
- * Отправка клиенту тела фида.
- */
-QByteArray FeedPacket::feed(ClientChannel channel, ClientChannel user, const QString &name, QDataStream *stream)
-{
-  FeedPacket packet(channel->id(), user->id(), "feed");
-  packet.setDirection(Server2Client);
-  packet.setData(channel->feeds().feed(name, user.data()));
-  packet.setText(name);
-
-  if (packet.json().isEmpty()) {
-    if (!channel->feeds().all().contains(name))
-      packet.setStatus(Notice::NotFound);
-    else
-      packet.setStatus(Notice::Forbidden);
-  }
-
-  return packet.data(stream);
-}
-
-
-/*!
- * Отправка клиенту заголовков фидов.
- */
-QByteArray FeedPacket::headers(ClientChannel channel, ClientChannel user, QDataStream *stream)
-{
-  FeedPacket packet(channel->id(), user->id(), "headers");
-  packet.setDirection(Server2Client);
-  packet.setData(channel->feeds().headers(user.data()));
-
-  return packet.data(stream);
 }
 
 
@@ -94,6 +61,16 @@ QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &rep
   packet.setText(source.text());
   packet.setStatus(reply.status);
   packet.setData(reply.json);
+  return packet.data(stream);
+}
+
+
+QByteArray FeedPacket::reply(const FeedPacket &source, const QVariantMap &json, QDataStream *stream)
+{
+  FeedPacket packet(source.dest(), source.sender(), source.command());
+  packet.setDirection(FeedPacket::Server2Client);
+  packet.setText(source.text());
+  packet.setData(json);
   return packet.data(stream);
 }
 
