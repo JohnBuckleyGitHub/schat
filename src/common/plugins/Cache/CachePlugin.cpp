@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,16 +21,44 @@
 
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
+#include "ChatCore.h"
+#include "client/ChatClient.h"
+#include "net/SimpleID.h"
+#include "NetworkManager.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
 {
+  open();
 }
 
 
 void Cache::close()
 {
+  m_id.clear();
   QSqlDatabase::removeDatabase(m_id);
+}
+
+
+void Cache::open()
+{
+  QByteArray id = ChatClient::serverId();
+  if (!id.isEmpty())
+    open(id, ChatCore::networks()->root(id));
+}
+
+
+void Cache::open(const QByteArray &id, const QString &dir)
+{
+  if (!m_id.isEmpty())
+    close();
+
+  m_id = SimpleID::encode(id) + "-cache";
+
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_id);
+  db.setDatabaseName(dir + "/cache.sqlite");
+  if (!db.open())
+    return;
 }
 
 
