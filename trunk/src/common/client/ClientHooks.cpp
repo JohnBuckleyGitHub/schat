@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ ClientChannel Channels::get(const QByteArray &id)
 }
 
 
-void Channels::add(const ChannelInfo &info)
+void Channels::add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json)
 {
   if (m_hooks.isEmpty())
     return;
@@ -190,16 +190,15 @@ void Channels::add(const ChannelInfo &info)
   if (ChatClient::id() == info.id())
     ChatClient::io()->setNick(ChatClient::channel()->name());
 
-  ClientChannel channel = ChatClient::channels()->get(info.id());
-  if (!channel)
-    return;
-
   channel->setSynced(true);
   if (channel->type() == SimpleID::ChannelId)
     channel->status() = Status::Online;
 
+  qDebug() << "---";
+  qDebug() << "--- ADD HOOK" << channel->name() << info.option() << json.keys();
+  qDebug() << "---";
   foreach (Channels *hook, m_hooks) {
-    hook->add(info);
+    hook->add(channel, info, json);
   }
 }
 
