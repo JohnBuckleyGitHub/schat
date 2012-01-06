@@ -16,27 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSIMPL_H_
-#define CHANNELSIMPL_H_
+#ifndef CACHECHANNELS_H_
+#define CACHECHANNELS_H_
 
 #include "client/ClientHooks.h"
-
-class ChannelInfo;
 
 namespace Hooks
 {
 
-class ChannelsImpl : public Channels
+class CacheChannels : public Channels
 {
   Q_OBJECT
 
 public:
-  ChannelsImpl(QObject *parent = 0);
-
-  ClientChannel get(const QByteArray &id);
+  CacheChannels(QObject *parent = 0);
   void add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
 };
 
 } // namespace Hooks
 
-#endif /* CHANNELSIMPL_H_ */
+#endif /* CACHECHANNELS_H_ */

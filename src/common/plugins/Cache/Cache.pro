@@ -20,11 +20,13 @@ SCHAT_CORE_LIB = 1
 QT = core gui network sql
 
 HEADERS  = \
+   CacheChannels.h \
    CacheDB.h \
    CachePlugin.h \
    CachePlugin_p.h \
 
 SOURCES  = \
+   CacheChannels.cpp \
    CacheDB.cpp \
    CachePlugin.cpp \
 
