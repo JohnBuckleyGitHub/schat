@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "CacheChannels.h"
 #include "CacheDB.h"
 #include "client/ChatClient.h"
@@ -28,6 +30,12 @@ CacheChannels::CacheChannels(QObject *parent)
   : Channels(parent)
 {
   ChatClient::channels()->hooks()->add(this);
+}
+
+
+ClientChannel CacheChannels::get(const QByteArray &id)
+{
+  return CacheDB::channel(id);
 }
 
 
