@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class CachePlugin : public QObject, CoreApi, ChatApi
   Q_INTERFACES(CoreApi ChatApi)
 
 public:
-  virtual QVariantMap header() const
+  QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
     out["Id"]      = "cache";
