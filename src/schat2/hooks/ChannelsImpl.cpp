@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,12 +40,14 @@ ClientChannel ChannelsImpl::get(const QByteArray &id)
 }
 
 
-void ChannelsImpl::add(const ChannelInfo &info)
+void ChannelsImpl::add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json)
 {
+  Q_UNUSED(json)
+
   if (ChatClient::id() == info.id()) {
     ChatCore::settings()->setValue("Profile/Nick",   ChatClient::io()->nick());
-    ChatCore::settings()->setValue("Profile/Gender", ChatClient::channel()->gender().raw());
-    ChatCore::settings()->setValue("Profile/Status", ChatClient::channel()->status().value());
+    ChatCore::settings()->setValue("Profile/Gender", channel->gender().raw());
+    ChatCore::settings()->setValue("Profile/Status", channel->status().value());
   }
 }
 
