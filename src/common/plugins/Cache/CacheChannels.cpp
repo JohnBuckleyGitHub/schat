@@ -16,9 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "CacheChannels.h"
+#include "CacheDB.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 
@@ -34,7 +33,10 @@ CacheChannels::CacheChannels(QObject *parent)
 
 void CacheChannels::add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json)
 {
-  qDebug() << "CACHE";
+  Q_UNUSED(info)
+  Q_UNUSED(json)
+
+  CacheDB::add(channel);
 }
 
 } // namespace Hooks

@@ -30,7 +30,6 @@ class FileLocations;
 class NodeLog;
 class ServerData;
 class Settings;
-class StorageHooks;
 
 class SCHAT_EXPORT Storage : public QObject
 {
@@ -44,7 +43,6 @@ public:
   inline DataBase *db() const { return m_db; }
   inline QList<QByteArray> slaves() const { return m_slaves; }
   inline static Storage *i() { return m_self; }
-  inline StorageHooks *hooks() const { return m_hooks; }
   inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
   inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
@@ -94,7 +92,6 @@ private:
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.
-  StorageHooks *m_hooks;                         ///< Обработчик хуков.
 };
 
 #endif /* STORAGE_H_ */
