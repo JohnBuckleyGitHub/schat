@@ -30,6 +30,7 @@ class CacheChannels : public Channels
 
 public:
   CacheChannels(QObject *parent = 0);
+  ClientChannel get(const QByteArray &id);
   void add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
 };
 

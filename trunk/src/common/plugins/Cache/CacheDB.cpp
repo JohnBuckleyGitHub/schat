@@ -28,6 +28,35 @@
 QString CacheDB::m_id;
 
 
+ClientChannel CacheDB::channel(const QByteArray &id)
+{
+  qint64 key = channelKey(id, SimpleID::typeOf(id));
+  if (key == -1)
+    return ClientChannel();
+
+  return channel(key);
+}
+
+
+ClientChannel CacheDB::channel(qint64 id)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;");
+  query.bindValue(":id", id);
+  query.exec();
+
+  if (!query.first())
+    return ClientChannel();
+
+  ClientChannel channel(new Channel(query.value(0).toByteArray(), query.value(2).toString()));
+  channel->setKey(id);
+  channel->gender().setRaw(query.value(1).toLongLong());
+  channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
+
+  return channel;
+}
+
+
 /*!
  * Добавление или обновление канала.
  *
