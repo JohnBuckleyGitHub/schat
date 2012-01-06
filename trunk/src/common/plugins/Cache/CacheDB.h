@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include "Channel.h"
+
 class CacheDB : public QObject
 {
   Q_OBJECT
@@ -31,8 +33,11 @@ public:
   {}
 
   inline static QString id() { return m_id; }
+  static qint64 add(ClientChannel channel);
+  static qint64 channelKey(const QByteArray &id, int type);
   static void close();
   static void open(const QByteArray &id, const QString &dir);
+  static void update(ClientChannel channel);
 
 private:
   static QString m_id; ///< Идентификатор соединения с базой.

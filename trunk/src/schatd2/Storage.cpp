@@ -47,7 +47,7 @@ Storage::Storage(QObject *parent)
 
   Normalize::init();
 
-  m_hooks = new StorageHooks(this);
+  new StorageHooks(this);
   m_serverData = new ServerData();
   m_locations = new FileLocations(this);
 
