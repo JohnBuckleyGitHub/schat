@@ -59,6 +59,9 @@ void PrivateTab::channel(const ChannelInfo &info)
 
 void PrivateTab::online()
 {
+  if (m_joined)
+    return;
+
   m_chatView->add(ServiceMessage::joined(id()));
 }
 
