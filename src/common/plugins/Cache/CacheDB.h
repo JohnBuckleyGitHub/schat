@@ -16,22 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CACHEPLUGIN_P_H_
-#define CACHEPLUGIN_P_H_
+#ifndef CACHEDB_H_
+#define CACHEDB_H_
 
-#include "plugins/ChatPlugin.h"
+#include <QObject>
 
-class Cache : public ChatPlugin
+class CacheDB : public QObject
 {
   Q_OBJECT
 
 public:
-  Cache(QObject *parent);
+  CacheDB(QObject *parent = 0)
+  : QObject(parent)
+  {}
+
+  inline static QString id() { return m_id; }
+  static void close();
+  static void open(const QByteArray &id, const QString &dir);
 
 private:
-  void open();
-
-  QString m_id; ///< Идентификатор соединения с базой.
+  static QString m_id; ///< Идентификатор соединения с базой.
 };
 
-#endif /* CACHEPLUGIN_P_H_ */
+#endif /* CACHEDB_H_ */

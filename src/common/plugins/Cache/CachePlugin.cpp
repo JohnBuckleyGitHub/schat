@@ -17,13 +17,12 @@
  */
 
 #include <QtPlugin>
-#include <QSqlDatabase>
 
+#include "CacheDB.h"
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
 #include "ChatCore.h"
 #include "client/ChatClient.h"
-#include "net/SimpleID.h"
 #include "NetworkManager.h"
 
 Cache::Cache(QObject *parent)
@@ -33,32 +32,11 @@ Cache::Cache(QObject *parent)
 }
 
 
-void Cache::close()
-{
-  m_id.clear();
-  QSqlDatabase::removeDatabase(m_id);
-}
-
-
 void Cache::open()
 {
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    open(id, ChatCore::networks()->root(id));
-}
-
-
-void Cache::open(const QByteArray &id, const QString &dir)
-{
-  if (!m_id.isEmpty())
-    close();
-
-  m_id = SimpleID::encode(id) + "-cache";
-
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_id);
-  db.setDatabaseName(dir + "/cache.sqlite");
-  if (!db.open())
-    return;
+    CacheDB::open(id, ChatCore::networks()->root(id));
 }
 
 
