@@ -18,6 +18,7 @@
 
 #include <QtPlugin>
 
+#include "CacheChannels.h"
 #include "CacheDB.h"
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
@@ -28,6 +29,7 @@
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
 {
+  new Hooks::CacheChannels(this);
   open();
 }
 
