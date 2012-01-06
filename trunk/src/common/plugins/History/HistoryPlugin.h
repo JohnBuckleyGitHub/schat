@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,11 +30,19 @@ class HistoryPlugin : public QObject, CoreApi, ChatApi
   Q_INTERFACES(CoreApi ChatApi)
 
 public:
-  ChatPlugin *init(ChatCore *core);
-  QString id() const { return QLatin1String("History"); }
-  QString name() const { return id(); }
-  QString version() const { return QLatin1String("1.1.0"); }
-  QStringList provides() const { return QStringList(id()); }
+  QVariantMap header() const
+  {
+    QVariantMap out = CoreApi::header();
+    out["Id"]      = "history";
+    out["Name"]    = "History";
+    out["Version"] = "0.1.0";
+    out["Site"]    = "http://wiki.schat.me/Plugin/History";
+    out["Desc"]    = "History";
+
+    return out;
+  }
+
+  ChatPlugin *create();
 };
 
 #endif /* HISTORYPLUGIN_H_ */

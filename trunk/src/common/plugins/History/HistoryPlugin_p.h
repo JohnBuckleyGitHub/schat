@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,22 +19,18 @@
 #ifndef HISTORYPLUGIN_P_H_
 #define HISTORYPLUGIN_P_H_
 
-#include "plugins/AbstractHistory.h"
+#include "plugins/ChatPlugin.h"
 
 class HistoryDB;
-class RawUserMessageHook;
 
-class History : public AbstractHistory
+class History : public ChatPlugin
 {
   Q_OBJECT
 
 public:
-  History(ChatCore *core);
-  QList<HookData::Type> hooks() const;
-  void hook(const HookData &data);
+  History(QObject *parent);
 
 private:
-  void add(const RawUserMessageHook &data);
   void openDb();
 
   HistoryDB *m_db;

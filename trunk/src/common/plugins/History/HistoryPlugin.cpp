@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,45 +27,13 @@
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
 #include "NetworkManager.h"
-#include "plugins/hooks.h"
 #include "ui/tabs/PrivateTab.h"
 
-History::History(ChatCore *core)
-  : AbstractHistory(core)
+History::History(QObject *parent)
+  : ChatPlugin(parent)
 {
   m_db = new HistoryDB(this);
   openDb();
-}
-
-
-QList<HookData::Type> History::hooks() const
-{
-  QList<HookData::Type> out;
-  out += HookData::RawUserMessage;
-  out += HookData::PrivateTabCreated;
-
-  return out;
-}
-
-
-void History::hook(const HookData &data)
-{
-  switch (data.type()) {
-    case HookData::RawUserMessage:
-      add(static_cast<const RawUserMessageHook &>(data));
-      break;
-
-    default:
-      break;
-  }
-}
-
-
-void History::add(const RawUserMessageHook &data)
-{
-  QTime t;
-  t.start();
-  qDebug() << "[History Plugin] message added at:" << t.elapsed() << "ms";
 }
 
 
@@ -73,13 +41,13 @@ void History::openDb()
 {
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    m_db->open(id, m_core->networks()->root(id));
+    m_db->open(id, ChatCore::networks()->root(id));
 }
 
 
-ChatPlugin *HistoryPlugin::init(ChatCore *core)
+ChatPlugin *HistoryPlugin::create()
 {
-  m_plugin = new History(core);
+  m_plugin = new History(this);
   return m_plugin;
 }
 
