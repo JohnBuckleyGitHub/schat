@@ -28,7 +28,6 @@
 class AuthResult;
 class NewPacketsEvent;
 class NodeAuth;
-class NodePlugins;
 class Notice;
 class PacketReader;
 class Settings;
@@ -53,7 +52,6 @@ public:
   inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
   inline QDataStream *sendStream()             { return m_sendStream; }
   inline void addAuth(NodeAuth *auth)          { m_auth.prepend(auth); }
-  inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
   QByteArray id() const;
   virtual bool add(ChatChannel channel, int authType, const QByteArray &authId);
   virtual int start() { return 0; }
@@ -82,7 +80,6 @@ protected:
   virtual void notice(quint16 type);
 
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
-  NodePlugins *m_plugins;             ///< Плагины.
   Notice *m_notice;                   ///< Текущий прочитанный объект Notice.
   PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
   QByteArray m_readBuffer;            ///< Буфер чтения виртуальных пакетов.

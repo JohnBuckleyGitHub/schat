@@ -16,19 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEPLUGIN_H_
-#define NODEPLUGIN_H_
+#include <QtPlugin>
 
-#include <QObject>
+#include "GenericNodePlugin.h"
 
-#include "schat.h"
 
-class SCHAT_EXPORT NodePlugin : public QObject
+NodePlugin *GenericNodePlugin::create()
 {
-  Q_OBJECT
+  return 0;
+}
 
-public:
-  NodePlugin(QObject *parent);
-};
 
-#endif /* NODEPLUGIN_H_ */
+Q_EXPORT_PLUGIN2(GenericNode, GenericNodePlugin);

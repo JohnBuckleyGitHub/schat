@@ -15,7 +15,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/Cache \
-    common/plugins/GenericNode \
-    common/plugins/RawFeeds \
+SCHAT_DAEMON_LIB = 1
+QT = core network
+
+HEADERS  = \
+   GenericNodePlugin.h \
+
+SOURCES  = \
+   GenericNodePlugin.cpp \
+   
+unix {
+  target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
+  INSTALLS += target
+}
+
+include(../plugins.pri)

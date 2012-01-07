@@ -36,6 +36,7 @@ NodeInit::NodeInit(QObject *parent)
   , m_thread(0)
 {
   m_storage = new Storage(this);
+  m_core = new Core(this);
   m_plugins = new NodePlugins(this);
 
   QTimer::singleShot(0, this, SLOT(start()));
@@ -56,10 +57,8 @@ void NodeInit::quit()
 
 void NodeInit::start()
 {
-  m_storage->start();
-
   m_plugins->load();
-  m_core = m_plugins->kernel();
+  m_storage->start();
 
   m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));

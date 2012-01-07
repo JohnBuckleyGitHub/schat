@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,11 +20,7 @@
 #define NODEPLUGINS_H_
 
 #include "Plugins.h"
-#include "plugins/HookResult.h"
-#include "plugins/NodeHooks.h"
-#include "schat.h"
 
-class Core;
 class NodePlugin;
 
 class SCHAT_EXPORT NodePlugins : public Plugins
@@ -33,18 +29,11 @@ class SCHAT_EXPORT NodePlugins : public Plugins
 
 public:
   NodePlugins(QObject *parent = 0);
-  Core *kernel();
-  HookResult hook(const NodeHook &data);
-  inline bool has(NodeHook::Type type) { return m_hooks.contains(type); }
-  inline void removeHook(NodeHook::Type type) { m_hooks.remove(type); }
 
 protected:
   void init();
 
 private:
-  Core *m_core;
-  QString m_kernelId;
-  QHash<NodeHook::Type, QList<NodePlugin *> > m_hooks;
   QList<NodePlugin *> m_nodePlugins;
 };
 

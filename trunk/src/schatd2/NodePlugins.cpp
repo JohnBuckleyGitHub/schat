@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,67 +28,23 @@
 
 NodePlugins::NodePlugins(QObject *parent)
   : Plugins(parent)
-  , m_core(0)
 {
-  m_kernelId = Storage::i()->settings()->value(QLatin1String("Kernel")).toString();
-}
-
-
-Core *NodePlugins::kernel()
-{
-  if (!m_core) {
-    m_core = new Core(this);
-    m_core->setPlugins(this);
-  }
-
-  return m_core;
-}
-
-
-HookResult NodePlugins::hook(const NodeHook &data)
-{
-  if (!m_hooks.contains(data.type()))
-    return HookResult();
-
-  QList<NodePlugin *> list = m_hooks.value(data.type());
-  for (int i = 0; i < list.size(); ++i) {
-    list.at(i)->hook(data);
-  }
-
-  return HookResult(list.size());
+  m_type = "server";
 }
 
 
 void NodePlugins::init()
 {
-//  if (!m_kernelId.isEmpty() && m_providers.value(m_kernelId)) {
-//    NodeKernelApi *api = qobject_cast<NodeKernelApi *>(m_providers.value(m_kernelId)->plugin());
-//    m_core = api->init();
-//    m_core->setPlugins(this);
-//  }
-
   for (int i = 0; i < m_sorted.size(); ++i) {
     NodeApi *api = qobject_cast<NodeApi *>(m_plugins.value(m_sorted.at(i))->plugin());
 
     if (!api)
       continue;
 
-    qDebug() << "API OK";
-
-    NodePlugin *plugin = api->init(kernel());
+    NodePlugin *plugin = api->create();
     if (!plugin)
       continue;
 
     m_nodePlugins.append(plugin);
-
-    QList<NodeHook::Type> hooks = plugin->hooks();
-    if (hooks.isEmpty())
-      continue;
-
-    foreach (NodeHook::Type hook, hooks) {
-      m_hooks[hook].append(plugin);
-    }
   }
-
-  kernel();
 }
