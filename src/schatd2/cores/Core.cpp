@@ -37,12 +37,13 @@
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NodeChannels.h"
-#include "NodeFeeds.h"
 #include "NodeLog.h"
 #include "NodeMessages.h"
 #include "NodePlugins.h"
 #include "Sockets.h"
 #include "Storage.h"
+
+Core *Core::m_self = 0;
 
 Core::Core(QObject *parent)
   : QObject(parent)
@@ -51,6 +52,7 @@ Core::Core(QObject *parent)
   , m_settings(Storage::i()->settings())
   , m_storage(Storage::i())
 {
+  m_self = this;
   addAuth(new AnonymousAuth(this));
   addAuth(new CookieAuth(this));
 
@@ -62,7 +64,6 @@ Core::Core(QObject *parent)
 
   new NodeChannels(this);
   new NodeMessages(this);
-  new NodeFeeds(this);
 }
 
 

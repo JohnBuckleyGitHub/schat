@@ -21,7 +21,7 @@
 
 #include "feeds/Feed.h"
 
-class NodeTopicFeed : public Feed
+class SCHAT_EXPORT NodeTopicFeed : public Feed
 {
 public:
   NodeTopicFeed(const QString &name, const QVariantMap &data);

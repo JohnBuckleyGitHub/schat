@@ -16,13 +16,18 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_DAEMON_LIB = 1
-QT = core network
+QT = core sql
 
 HEADERS  = \
+   feeds/NodeFeedStorage.h \
    GenericNodePlugin.h \
+   GenericNodePlugin_p.h \
+   NodeFeeds.h \
 
 SOURCES  = \
+   feeds/NodeFeedStorage.cpp \
    GenericNodePlugin.cpp \
+   NodeFeeds.cpp \
    
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins

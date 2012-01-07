@@ -16,28 +16,38 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEFEEDSTORAGE_H_
-#define NODEFEEDSTORAGE_H_
+#ifndef NODEFEEDS_H_
+#define NODEFEEDS_H_
 
-#include "feeds/FeedStorage.h"
+#include "NodeNoticeReader.h"
 
-class SCHAT_EXPORT NodeFeedStorage : public FeedStorage
+class FeedPacket;
+class ServerChannel;
+
+class NodeFeeds : public NodeNoticeReader
 {
-  Q_OBJECT
-
 public:
-  NodeFeedStorage(QObject *parent = 0);
+  NodeFeeds(Core *core);
 
 protected:
-  int revertImpl(FeedPtr feed, const QVariantMap &data);
-  int saveImpl(FeedPtr feed);
-  void loadImpl(Channel *channel);
-  void removeImpl(FeedPtr feed);
+  bool read(PacketReader *reader);
 
 private:
-  qint64 save(FeedPtr feed, const QByteArray &json);
-  void load(Channel *channel, const QString &name, qint64 id);
-  void start();
+  int add();
+  int clear();
+  int get();
+  int headers();
+  int query();
+  int remove();
+  int revert();
+  int update();
+
+  int check(int acl);
+  void reply(int status);
+
+  FeedPacket *m_packet;
+  ChatChannel m_channel;
+  ChatChannel m_user;
 };
 
-#endif /* NODEFEEDSTORAGE_H_ */
+#endif /* NODEFEEDS_H_ */
