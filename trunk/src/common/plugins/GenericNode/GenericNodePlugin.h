@@ -21,6 +21,7 @@
 
 #include "CoreApi.h"
 #include "NodeApi.h"
+#include "version.h"
 
 class GenericNodePlugin : public QObject, CoreApi, NodeApi
 {
@@ -33,8 +34,9 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]      = "generic";
     out["Name"]    = "Generic Node";
-    out["Version"] = "0.1.0";
+    out["Version"] = SCHAT_VERSION;
     out["Type"]    = "server";
+    out["Site"]    = "http://wiki.schat.me/Plugin/GenericNode";
     out["Desc"]    = "Standard core of server";
 
     return out;

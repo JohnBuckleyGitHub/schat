@@ -26,7 +26,6 @@
 #include "DateTime.h"
 #include "debugstream.h"
 #include "feeds/FeedStorage.h"
-#include "feeds/NodeFeedStorage.h"
 #include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
@@ -114,8 +113,6 @@ int Storage::start()
   m_serverData->setName(m_settings->value("ServerName").toString());
 
   DataBase::start();
-
-  new NodeFeedStorage(this);
   return 0;
 }
 

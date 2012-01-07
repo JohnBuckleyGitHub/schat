@@ -43,6 +43,7 @@ class SCHAT_EXPORT Core : public QObject
 public:
   Core(QObject *parent = 0);
   ~Core();
+  inline static Core *i() { return m_self; }
 
   // Функции отправки пакетов.
   virtual bool route();
@@ -90,6 +91,7 @@ protected:
   QList<NodeAuth *> m_auth;           ///< Модули авторизации.
   QObject *m_listener;                ///< Слушатель сообщений.
   Settings *m_settings;               ///< Настройки.
+  static Core *m_self;                ///< Указатель на себя.
   Storage *m_storage;                 ///< Хранилище данных.
 };
 

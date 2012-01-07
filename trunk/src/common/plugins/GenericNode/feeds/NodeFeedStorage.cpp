@@ -27,7 +27,7 @@
 #include "feeds/NodeFeedStorage.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
-#include "NodeTopicFeed.h"
+#include "feeds/NodeTopicFeed.h"
 #include "ServerChannel.h"
 
 NodeFeedStorage::NodeFeedStorage(QObject *parent)

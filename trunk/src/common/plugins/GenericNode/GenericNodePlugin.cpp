@@ -16,14 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QtPlugin>
 
+#include "cores/Core.h"
+#include "feeds/NodeFeedStorage.h"
 #include "GenericNodePlugin.h"
+#include "GenericNodePlugin_p.h"
+#include "NodeFeeds.h"
+
+GenericNode::GenericNode(QObject *parent)
+  : NodePlugin(parent)
+{
+  new NodeFeeds(Core::i());
+  new NodeFeedStorage(this);
+}
 
 
 NodePlugin *GenericNodePlugin::create()
 {
-  return 0;
+  m_plugin = new GenericNode(this);
+  return m_plugin;
 }
 
 
