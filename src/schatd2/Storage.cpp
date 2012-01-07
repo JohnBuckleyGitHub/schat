@@ -136,60 +136,6 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 
 
 /*!
- * Добавление канала.
- */
-//bool Storage::add(ChatChannel channel)
-//{
-//  if (DataBase::add(channel) == -1)
-//    return false;
-//
-//  m_cache.add(channel);
-//  return true;
-//}
-
-
-/*!
- * При необходимости удаляет канал.
- *
- * \return \b true если канал был удалён.
- */
-bool Storage::gc(ChatChannel channel)
-{
-  if (channel->type() == SimpleID::UserId) {
-    if (channel->sockets().size())
-      return false;
-
-    channel->status() = Status::Offline;
-  }
-
-  if (channel->channels().all().size())
-    return false;
-
-//  remove(channel);
-  return true;
-}
-
-
-/*!
- * Получение канала по идентификатору канала или идентификатору нормализированного имени либо Сookie.
- *
- * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
- */
-//ChatChannel Storage::channel(const QByteArray &id, int type)
-//{
-//  ChatChannel channel = m_cache.channel(id);
-//  if (channel)
-//    return channel;
-//
-//  channel = DataBase::channel(id, type);
-//  if (channel)
-//    m_cache.add(channel);
-//
-//  return channel;
-//}
-
-
-/*!
  * Генерирование новой Cookie.
  */
 QByteArray Storage::cookie() const
@@ -235,46 +181,4 @@ void Storage::setDefaultSslConf()
 
   QSslConfiguration::setDefaultConfiguration(conf);
 # endif
-}
-
-
-/*!
- * Добавление канала в кеш.
- */
-void Storage::Cache::add(ChatChannel channel)
-{
-  if (!channel)
-    return;
-
-  m_channels[channel->id()] = channel;
-  m_channels[channel->normalized()] = channel;
-
-  if (channel->account())
-    m_channels[channel->account()->cookie()] = channel;
-}
-
-
-/*!
- * Удаление канала из кэша.
- */
-void Storage::Cache::remove(const QByteArray &id)
-{
-  ChatChannel channel = this->channel(id);
-  if (!channel)
-    return;
-
-  m_channels.remove(channel->id());
-  m_channels.remove(channel->normalized());
-
-  if (channel->account())
-    m_channels.remove(channel->account()->cookie());
-
-  return;
-}
-
-
-void Storage::Cache::rename(ChatChannel channel, const QByteArray &before)
-{
-  m_channels.remove(before);
-  m_channels[channel->normalized()] = channel;
 }

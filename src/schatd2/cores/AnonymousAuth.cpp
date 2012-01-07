@@ -39,18 +39,14 @@ AnonymousAuth::AnonymousAuth(Core *core)
  */
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
-  Storage *storage      = Storage::i();
-  QByteArray id         = storage->makeUserId(data.authType, data.uniqueId);
-  QByteArray normalized = Normalize::toId('~' + data.nick);
-  ChatChannel channel   = Ch::channel(normalized, SimpleID::UserId);
+  QByteArray id = Storage::i()->makeUserId(data.authType, data.uniqueId);
 
-  if (channel && channel->id() != id)
+  if (Ch::isCollision(id, data.nick))
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
-  if (!channel)
-    channel = Ch::channel(id, SimpleID::UserId);
-
+  ChatChannel channel = Ch::channel(id, SimpleID::UserId);
   bool created = false;
+
   if (!channel) {
     channel = ChatChannel(new ServerChannel(id, data.nick));
     created = true;

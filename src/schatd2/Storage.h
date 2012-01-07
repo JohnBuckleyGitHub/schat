@@ -44,10 +44,6 @@ public:
   // user management.
   QByteArray makeUserId(int type, const QByteArray &userId) const;
 
-  // channel management.
-  bool gc(ChatChannel channel);
-//  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
-
   inline FileLocations *locations() const { return m_locations; }
   inline static ServerData *serverData() { return i()->m_serverData; }
   inline static Settings *settings() { return i()->m_settings; }
@@ -56,21 +52,6 @@ public:
 private:
   void setDefaultSslConf();
 
-  /// Внутренний кэш хранилища.
-  class Cache
-  {
-  public:
-    Cache() {}
-    inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
-    void add(ChatChannel channel);
-    void remove(const QByteArray &id);
-    void rename(ChatChannel channel, const QByteArray &before);
-
-  private:
-    QHash<QByteArray, ChatChannel> m_channels;
-  };
-
-  Cache m_cache;                                 ///< Кеш хранилища.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
   ServerData *m_serverData;                      ///< Информация о сервере.
