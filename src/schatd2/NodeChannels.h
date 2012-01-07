@@ -32,7 +32,7 @@ public:
 
 protected:
   bool read(PacketReader *reader);
-  void acceptImpl(ChatChannel user, const AuthResult &result, QList<QByteArray> &packets);
+  void acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets);
   void addImpl(ChatChannel user);
   void releaseImpl(ChatChannel user, quint64 socket);
 
