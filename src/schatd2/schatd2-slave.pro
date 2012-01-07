@@ -15,35 +15,11 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
-SCHAT_RC_FILE     = 1
-SCHAT_SINGLEAPP   = 0
+SCHAT_CONSOLE = 1
+SCHAT_DEBUG   = 1
+SCHAT_USE_SSL = 1
 
-QT = core network sql
-TEMPLATE = app
+DEFINES += SCHATD_SLAVE
 
-HEADERS = \
-    NodeInit.h \
-
-SOURCES = \
-    main.cpp \
-    NodeInit.cpp \
-
-DEFINES += SCHAT_DAEMON
-SCHAT_DAEMON_LIB = 1
-
-TRANSLATIONS += ../../res/translations/schatd2_en.ts
-TRANSLATIONS += ../../res/translations/schatd2_ru.ts
-CODECFORTR = UTF-8
-
-unix {
-  ssl.files = ../../misc/tools/server.crt
-  ssl.files += ../../misc/tools/server.key
-  ssl.path = $$SCHAT_PREFIX/etc/schatd2
-  
-  target.path += $$SCHAT_PREFIX/usr/sbin
-  INSTALLS += target ssl
-}
-
-include(../common/common.pri)
+include(schatd2.pri)
 

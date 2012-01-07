@@ -47,9 +47,12 @@ HEADERS = \
     Normalize.h \
     plugins/NodePlugin.h \
     plugins/StorageHooks.h \
+    Server.h \
     ServerChannel.h \
     Sockets.h \
     Storage.h \
+    Worker.h \
+    WorkerThread.h \
 
 SOURCES = \
     Ch.cpp \
@@ -70,9 +73,12 @@ SOURCES = \
     Normalize.cpp \
     plugins/NodePlugin.cpp \
     plugins/StorageHooks.cpp \
+    Server.cpp \
     ServerChannel.cpp \
     Sockets.cpp \
     Storage.cpp \
+    Worker.cpp \
+    WorkerThread.cpp \
 
 include(../common/client.pri)
 

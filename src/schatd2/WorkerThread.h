@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,10 +23,12 @@
 #include <QStringList>
 #include <QThread>
 
+#include "schat.h"
+
 class SimpleSocket;
 class Worker;
 
-class WorkerThread : public QThread
+class SCHAT_EXPORT WorkerThread : public QThread
 {
   Q_OBJECT
 
@@ -48,7 +50,7 @@ private:
 /*!
  * Слушатель событий от ядра чата.
  */
-class WorkerEventListener : public QObject
+class SCHAT_EXPORT WorkerEventListener : public QObject
 {
   Q_OBJECT
 
