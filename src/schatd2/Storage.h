@@ -38,8 +38,8 @@ public:
   Storage(QObject *parent = 0);
   ~Storage();
   inline static Storage *i() { return m_self; }
+  int load();
   int start();
-  void addSlave(const QByteArray &id);
 
   // user management.
   QByteArray makeUserId(int type, const QByteArray &userId) const;
