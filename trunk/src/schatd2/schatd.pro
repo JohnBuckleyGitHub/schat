@@ -28,6 +28,7 @@ DEFINES += SCHAT_DAEMON
 SCHAT_LITTLE_CLIENT = 1
 
 HEADERS = \
+    Ch.h \
     cores/AnonymousAuth.h \
     cores/CookieAuth.h \
     cores/Core.h \
@@ -53,6 +54,7 @@ HEADERS = \
     Storage.h \
 
 SOURCES = \
+    Ch.cpp \
     cores/AnonymousAuth.cpp \
     cores/CookieAuth.cpp \
     cores/Core.cpp \
