@@ -21,6 +21,7 @@
 #include <QThread>
 
 #include "Account.h"
+#include "Ch.h"
 #include "cores/AnonymousAuth.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
@@ -83,7 +84,7 @@ bool Core::route()
   if (m_timestamp == 0)
     m_timestamp = DateTime::utc();
 
-  ChatChannel channel = m_storage->channel(m_reader->dest(), SimpleID::typeOf(m_reader->dest()));
+  ChatChannel channel = Ch::channel(m_reader->dest(), SimpleID::typeOf(m_reader->dest()));
   if (!channel)
     return false;
 
@@ -93,7 +94,7 @@ bool Core::route()
   else
     sockets = Sockets::channel(channel);
 
-  Sockets::echoFilter(m_storage->channel(m_reader->sender(), SimpleID::UserId), sockets, m_reader->is(Protocol::EnableEcho));
+  Sockets::echoFilter(Ch::channel(m_reader->sender(), SimpleID::UserId), sockets, m_reader->is(Protocol::EnableEcho));
   return send(sockets, m_readBuffer);
 }
 
@@ -144,7 +145,7 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
   Q_UNUSED(authType);
   Q_UNUSED(authId)
 
-  if (m_storage->add(channel)) {
+  if (Ch::add(channel)) {
     NodeNoticeReader::add(channel);
     return true;
   }
@@ -201,7 +202,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     }
 
     /// Идентификатор клиента не должен быть пустым или не верным.
-    if (event->channelId().isEmpty() || m_storage->channel(event->channelId()) == 0)
+    if (event->channelId().isEmpty() || Ch::channel(event->channelId()) == 0)
       continue;
 
     if (!checkPacket())
@@ -268,7 +269,7 @@ bool Core::auth()
  */
 void Core::accept(const AuthResult &result)
 {
-  ChatChannel channel = m_storage->channel(result.id);
+  ChatChannel channel = Ch::channel(result.id);
   if (!channel)
     return;
 
@@ -308,7 +309,7 @@ void Core::reject(const AuthResult &result)
  */
 void Core::release(SocketReleaseEvent *event)
 {
-  ChatChannel user = m_storage->channel(event->channelId(), SimpleID::UserId);
+  ChatChannel user = Ch::channel(event->channelId(), SimpleID::UserId);
   if (!user)
     return;
 

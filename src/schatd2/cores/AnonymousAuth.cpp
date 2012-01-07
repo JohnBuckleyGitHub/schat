@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
 #include "events.h"
@@ -41,13 +42,13 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   Storage *storage      = Storage::i();
   QByteArray id         = storage->makeUserId(data.authType, data.uniqueId);
   QByteArray normalized = Normalize::toId('~' + data.nick);
-  ChatChannel channel   = storage->channel(normalized, SimpleID::UserId);
+  ChatChannel channel   = Ch::channel(normalized, SimpleID::UserId);
 
   if (channel && channel->id() != id)
     return AuthResult(Notice::NickAlreadyUse, data.id, 0);
 
   if (!channel)
-    channel = storage->channel(id, SimpleID::UserId);
+    channel = Ch::channel(id, SimpleID::UserId);
 
   bool created = false;
   if (!channel) {

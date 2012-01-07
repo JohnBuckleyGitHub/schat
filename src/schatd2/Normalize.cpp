@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,10 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Channel.h"
 #include "net/SimpleID.h"
 #include "Normalize.h"
 
 QHash<QChar, QChar> Normalize::m_map;
+
+
+QByteArray Normalize::toId(Channel *channel)
+{
+  return Normalize::toId((channel->type() == SimpleID::UserId ? '~' : '#') + channel->name());
+}
 
 
 QByteArray Normalize::toId(const QString &text)
