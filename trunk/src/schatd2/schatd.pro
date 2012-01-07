@@ -39,7 +39,6 @@ HEADERS = \
     feeds/NodeAccountFeed.h \
     feeds/NodeAclFeed.h \
     feeds/NodeTopicFeed.h \
-    NodeChannels.h \
     NodeLog.h \
     NodeMessages.h \
     NodeNoticeReader.h \
@@ -65,7 +64,6 @@ SOURCES = \
     feeds/NodeAccountFeed.cpp \
     feeds/NodeAclFeed.cpp \
     feeds/NodeTopicFeed.cpp \
-    NodeChannels.cpp \
     NodeLog.cpp \
     NodeMessages.cpp \
     NodeNoticeReader.cpp \

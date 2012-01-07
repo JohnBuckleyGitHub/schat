@@ -16,17 +16,19 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_DAEMON_LIB = 1
-QT = core sql
+QT = core network sql
 
 HEADERS  = \
    feeds/NodeFeedStorage.h \
    GenericNodePlugin.h \
    GenericNodePlugin_p.h \
+   NodeChannels.h \
    NodeFeeds.h \
 
 SOURCES  = \
    feeds/NodeFeedStorage.cpp \
    GenericNodePlugin.cpp \
+   NodeChannels.cpp \
    NodeFeeds.cpp \
    
 unix {

@@ -32,9 +32,9 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]      = "generic";
+    out["Id"]      = "GenericNode";
     out["Name"]    = "Generic Node";
-    out["Version"] = SCHAT_VERSION;
+    out["Version"] = "0.1.0";
     out["Type"]    = "server";
     out["Site"]    = "http://wiki.schat.me/Plugin/GenericNode";
     out["Desc"]    = "Standard core of server";
