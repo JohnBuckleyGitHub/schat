@@ -24,12 +24,15 @@
 #include "feeds/NodeFeedStorage.h"
 #include "GenericNodePlugin.h"
 #include "GenericNodePlugin_p.h"
+#include "NodeChannels.h"
 #include "NodeFeeds.h"
 
 GenericNode::GenericNode(QObject *parent)
   : NodePlugin(parent)
 {
+  new NodeChannels(Core::i());
   new NodeFeeds(Core::i());
+
   new NodeFeedStorage(this);
 }
 

@@ -25,7 +25,7 @@ class ChannelPacket;
 class Core;
 class Storage;
 
-class SCHAT_EXPORT NodeChannels : public NodeNoticeReader
+class NodeChannels : public NodeNoticeReader
 {
 public:
   NodeChannels(Core *core);

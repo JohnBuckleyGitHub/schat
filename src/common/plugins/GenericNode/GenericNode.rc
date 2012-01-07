@@ -25,7 +25,7 @@
 #include "../../version.h"
 
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION SCHAT_VERSION_RC
+  FILEVERSION 0,1,0,0
   PRODUCTVERSION SCHAT_VERSION_RC
   FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -42,8 +42,8 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
-        VALUE "FileDescription",  "Server MasterNode Kernel"
-        VALUE "FileVersion",      SCHAT_VERSION
+        VALUE "FileDescription",  "Standard core of server"
+        VALUE "FileVersion",      "0.1.0"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "SlaveNode.dll"
         VALUE "ProductName",      SCHAT_NAME
