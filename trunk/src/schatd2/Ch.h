@@ -38,6 +38,7 @@ public:
   inline static void remove(Ch *hook)                                                     { m_self->m_hooks.removeAll(hook); }
   inline static void remove(ChatChannel channel)                                          { m_self->removeImpl(channel); }
   inline static void rename(ChatChannel channel, const QString &name)                     { m_self->renameImpl(channel, name); }
+  static bool isCollision(const QByteArray &id, const QString &name);
   static QByteArray makeId(const QByteArray &normalized);
 
 protected:

@@ -315,7 +315,7 @@ void Core::release(SocketReleaseEvent *event)
 
   NodeNoticeReader::release(user, event->socket());
 
-  m_storage->gc(user);
+  Ch::gc(user);
 }
 
 

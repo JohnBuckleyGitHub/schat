@@ -93,7 +93,7 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
     if (channel && channel->type() == SimpleID::ChannelId) {
       channel->channels().remove(user->id());
       user->channels().remove(channel->id());
-      m_storage->gc(channel);
+      Ch::gc(channel);
     }
   }
 }
@@ -184,7 +184,7 @@ bool NodeChannels::part()
   m_core->send(Sockets::channel(channel), ChannelPacket::part(user->id(), channel->id(), m_core->sendStream()));
   channel->channels().remove(user->id());
 
-  m_storage->gc(channel);
+  Ch::gc(channel);
 
   return false;
 }

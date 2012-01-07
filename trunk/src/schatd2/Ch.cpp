@@ -36,6 +36,26 @@ Ch::Ch(QObject *parent)
 
 
 /*!
+ * Проверка ника на коллизию.
+ *
+ * \param id   Идентификатор пользователя.
+ * \param name Новый ник.
+ *
+ * \return \b true если обнаружена коллизия.
+ */
+bool Ch::isCollision(const QByteArray &id, const QString &name)
+{
+  ChatChannel channel = Ch::channel(Normalize::toId('~' + name), SimpleID::UserId);
+  if (channel && channel->id() != id) {
+    Ch::gc(channel);
+    return true;
+  }
+
+  return false;
+}
+
+
+/*!
  * Создание идентификатора канала.
  */
 QByteArray Ch::makeId(const QByteArray &normalized)
@@ -154,8 +174,7 @@ void Ch::renameImpl(ChatChannel channel, const QString &name)
     return;
 
   QByteArray normalized = channel->normalized();
-  ChatChannel exist = this->channel(Normalize::toId('~' + name), SimpleID::UserId);
-  if (exist && exist->id() != channel->id())
+  if (isCollision(channel->id(), name))
     return;
 
   channel->setName(name);
