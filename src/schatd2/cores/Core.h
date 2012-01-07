@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,10 +50,9 @@ public:
   virtual bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
   virtual bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
 
-  inline NewPacketsEvent *packetsEvent() { return m_packetsEvent; }
-  inline QByteArray readBuffer() const { return m_readBuffer; }
-  inline QDataStream *sendStream() { return m_sendStream; }
-  inline void addAuth(NodeAuth *auth) { m_auth.prepend(auth); }
+  inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
+  inline QDataStream *sendStream()             { return m_sendStream; }
+  inline void addAuth(NodeAuth *auth)          { m_auth.prepend(auth); }
   inline void setPlugins(NodePlugins *plugins) { m_plugins = plugins; }
   QByteArray id() const;
   virtual bool add(ChatChannel channel, int authType, const QByteArray &authId);

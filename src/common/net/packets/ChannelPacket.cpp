@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
   packet.m_channelStatus = channel->status().value();
-//  packet.setData(channel->feeds().get(channel.data()));
+//  packet.setData(channel->feeds().headers(0));
 
   if (channel->type() == SimpleID::ChannelId)
     packet.m_channels = channel->channels().all();

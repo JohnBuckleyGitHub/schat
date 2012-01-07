@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include <QDebug>
+#include "debugstream.h"
 
 #include "cores/Core.h"
 #include "events.h"
@@ -43,7 +44,7 @@ bool NodeChannels::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
-  qDebug() << cmd;
+  qDebug() << "NodeChannels::read" << cmd;
 
   if (cmd == "info")
     return info();
@@ -61,6 +62,14 @@ bool NodeChannels::read(PacketReader *reader)
     return update();
 
   return false;
+}
+
+
+void NodeChannels::acceptImpl(ChatChannel user, const AuthResult &result, QList<QByteArray> &packets)
+{
+  Q_UNUSED(result)
+
+  packets.append(ChannelPacket::channel(user, user, m_core->sendStream()));
 }
 
 

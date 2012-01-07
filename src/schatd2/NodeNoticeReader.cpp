@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,9 +50,20 @@ bool NodeNoticeReader::read(int type, PacketReader *reader)
 }
 
 
-void  NodeNoticeReader::add(ChatChannel channel)
+void NodeNoticeReader::accept(ChatChannel user, const AuthResult &result, QList<QByteArray> &packets)
 {
-  foreach (QSharedPointer<NodeNoticeReader> reader, m_readers) {
+  foreach (NodeNoticeReaderPtr reader, m_readers) {
+    reader->acceptImpl(user, result, packets);
+  }
+}
+
+
+/*!
+ * Добавление нового канала.
+ */
+void NodeNoticeReader::add(ChatChannel channel)
+{
+  foreach (NodeNoticeReaderPtr reader, m_readers) {
     reader->addImpl(channel);
   }
 }
@@ -60,13 +71,13 @@ void  NodeNoticeReader::add(ChatChannel channel)
 
 void NodeNoticeReader::add(NodeNoticeReader *reader)
 {
-  m_readers[reader->type()] = QSharedPointer<NodeNoticeReader>(reader);
+  m_readers[reader->type()] = NodeNoticeReaderPtr(reader);
 }
 
 
 void NodeNoticeReader::release(ChatChannel channel, quint64 socket)
 {
-  foreach (QSharedPointer<NodeNoticeReader> reader, m_readers) {
+  foreach (NodeNoticeReaderPtr reader, m_readers) {
     reader->releaseImpl(channel, socket);
   }
 }
