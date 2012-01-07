@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QUuid>
 
+#include "Ch.h"
 #include "DataBase.h"
 #include "DateTime.h"
 #include "debugstream.h"
@@ -47,6 +48,8 @@ Storage::Storage(QObject *parent)
   Normalize::init();
 
   new StorageHooks(this);
+  new Ch(this);
+
   m_serverData = new ServerData();
   m_locations = new FileLocations(this);
 
@@ -75,7 +78,7 @@ Storage::~Storage()
 
 int Storage::load()
 {
-  ChatChannel server = channel(m_serverData->id(), SimpleID::ServerId);
+  ChatChannel server = Ch::channel(m_serverData->id(), SimpleID::ServerId);
   qDebug() << " - - - - - - - ";
   qDebug() << " - - - - - - - " << server;
   qDebug() << " - - - - - - - ";
@@ -84,9 +87,9 @@ int Storage::load()
   }
 
   server->setName(m_serverData->name());
-  add(server);
+  Ch::add(server);
 
-  channel(QString("Main"));
+  Ch::channel(QString("Main"));
 
   qint64 key = m_settings->value("MainChannel").toLongLong();
   if (key > 0) {
@@ -135,14 +138,14 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
 /*!
  * Добавление канала.
  */
-bool Storage::add(ChatChannel channel)
-{
-  if (DataBase::add(channel) == -1)
-    return false;
-
-  m_cache.add(channel);
-  return true;
-}
+//bool Storage::add(ChatChannel channel)
+//{
+//  if (DataBase::add(channel) == -1)
+//    return false;
+//
+//  m_cache.add(channel);
+//  return true;
+//}
 
 
 /*!
@@ -162,7 +165,7 @@ bool Storage::gc(ChatChannel channel)
   if (channel->channels().all().size())
     return false;
 
-  remove(channel);
+//  remove(channel);
   return true;
 }
 
@@ -172,74 +175,18 @@ bool Storage::gc(ChatChannel channel)
  *
  * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
  */
-ChatChannel Storage::channel(const QByteArray &id, int type)
-{
-  ChatChannel channel = m_cache.channel(id);
-  if (channel)
-    return channel;
-
-  channel = DataBase::channel(id, type);
-  if (channel)
-    m_cache.add(channel);
-
-  return channel;
-}
-
-
-/*!
- * Получение канала по имени.
- *
- * \sa StorageHooks::createdNewChannel().
- */
-ChatChannel Storage::channel(const QString &name)
-{
-  QByteArray normalized = Normalize::toId('#' + name);
-  ChatChannel channel = this->channel(normalized);
-
-  if (!channel) {
-    channel = ChatChannel(new ServerChannel(makeId(normalized), name));
-    add(channel);
-    StorageHooks::newChannel(channel);
-  }
-
-  return channel;
-}
-
-
-/*!
- * Удаление канала.
- */
-void Storage::remove(ChatChannel channel)
-{
-  DataBase::update(channel);
-
-  m_cache.remove(channel->id());
-}
-
-
-/*!
- * Переименование канала.
- */
-void Storage::rename(ChatChannel channel, const QString &name)
-{
-  if (channel->type() != SimpleID::UserId)
-    return;
-
-  QByteArray normalized = channel->normalized();
-  ChatChannel exist = this->channel(Normalize::toId('~' + name), SimpleID::UserId);
-  if (exist && exist->id() != channel->id())
-    return;
-
-  channel->setName(name);
-  m_cache.rename(channel, normalized);
-  update(channel);
-}
-
-
-void Storage::update(ChatChannel channel)
-{
-  DataBase::update(channel);
-}
+//ChatChannel Storage::channel(const QByteArray &id, int type)
+//{
+//  ChatChannel channel = m_cache.channel(id);
+//  if (channel)
+//    return channel;
+//
+//  channel = DataBase::channel(id, type);
+//  if (channel)
+//    m_cache.add(channel);
+//
+//  return channel;
+//}
 
 
 /*!
@@ -250,11 +197,6 @@ QByteArray Storage::cookie() const
   return SimpleID::randomId(SimpleID::CookieId, m_serverData->privateId());
 }
 
-
-QByteArray Storage::makeId(const QByteArray &normalized) const
-{
-  return SimpleID::make("channel:" + m_serverData->privateId() + normalized, SimpleID::ChannelId);
-}
 
 
 void Storage::setDefaultSslConf()

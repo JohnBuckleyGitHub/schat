@@ -67,5 +67,5 @@ void ServerChannel::createAccount()
 
 void ServerChannel::normalize()
 {
-  m_normalized = Normalize::toId((type() == SimpleID::UserId ? '~' : '#') + this->name());
+  m_normalized = Normalize::toId(this);
 }

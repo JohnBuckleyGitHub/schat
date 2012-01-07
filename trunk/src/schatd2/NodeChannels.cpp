@@ -19,6 +19,7 @@
 #include <QDebug>
 #include "debugstream.h"
 
+#include "Ch.h"
 #include "cores/Core.h"
 #include "events.h"
 #include "net/PacketReader.h"
@@ -88,7 +89,7 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 
   QList<QByteArray> channels = user->channels().all();
   foreach (QByteArray id, channels) {
-    ChatChannel channel = m_storage->channel(id);
+    ChatChannel channel = Ch::channel(id);
     if (channel && channel->type() == SimpleID::ChannelId) {
       channel->channels().remove(user->id());
       user->channels().remove(channel->id());
@@ -103,7 +104,7 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
  */
 bool NodeChannels::info()
 {
-  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
   if (!user)
     return false;
 
@@ -112,7 +113,7 @@ bool NodeChannels::info()
 
   QList<QByteArray> packets;
   foreach (QByteArray id, m_packet->channels()) {
-    ChatChannel channel = m_storage->channel(id, SimpleID::typeOf(id));
+    ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
     if (channel)
       packets += ChannelPacket::channel(channel, user, m_core->sendStream(), "info");
   }
@@ -130,7 +131,7 @@ bool NodeChannels::info()
  */
 bool NodeChannels::join()
 {
-  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
   if (!user)
     return false;
 
@@ -139,11 +140,11 @@ bool NodeChannels::join()
   /// Если идентификатор канала корректный функция пытается получить его по этому идентификатору.
   int type = SimpleID::typeOf(m_packet->channelId());
   if (type != SimpleID::InvalidId)
-    channel = m_storage->channel(m_packet->channelId(), type);
+    channel = Ch::channel(m_packet->channelId(), type);
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
   if (!channel)
-    channel = m_storage->channel(m_packet->text());
+    channel = Ch::channel(m_packet->text());
 
   if (!channel)
     return false;
@@ -167,11 +168,11 @@ bool NodeChannels::join()
  */
 bool NodeChannels::part()
 {
-  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
   if (!user)
     return false;
 
-  ChatChannel channel = m_storage->channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
     return false;
 
@@ -201,7 +202,7 @@ bool NodeChannels::quit()
  */
 bool NodeChannels::update()
 {
-  ChatChannel user = m_storage->channel(m_packet->sender(), SimpleID::UserId);
+  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
   if (!user)
     return false;
 
@@ -216,7 +217,7 @@ bool NodeChannels::update()
   int updates = 0;
 
   if (user->name() != m_packet->text()) {
-    m_storage->rename(user, m_packet->text());
+    Ch::rename(user, m_packet->text());
     updates++;
   }
 

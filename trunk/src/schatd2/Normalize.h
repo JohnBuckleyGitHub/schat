@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,14 @@
 
 #include "schat.h"
 
+class Channel;
+
 class SCHAT_EXPORT Normalize
 {
   Normalize() {}
 
 public:
+  static QByteArray toId(Channel *channel);
   static QByteArray toId(const QString &text);
   static QString toString(const QString &text);
   static void init();

@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "Ch.h"
 #include "cores/Core.h"
 #include "feeds/FeedStorage.h"
 #include "net/PacketReader.h"
@@ -38,11 +39,11 @@ bool NodeFeeds::read(PacketReader *reader)
   if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
     return false;
 
-  m_user = m_storage->channel(reader->sender(), SimpleID::UserId);
+  m_user = Ch::channel(reader->sender(), SimpleID::UserId);
   if (!m_user)
     return false;
 
-  m_channel = m_storage->channel(reader->dest(), SimpleID::typeOf(reader->dest()));
+  m_channel = Ch::channel(reader->dest(), SimpleID::typeOf(reader->dest()));
   if (!m_channel)
     return false;
 

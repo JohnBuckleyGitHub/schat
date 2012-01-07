@@ -45,13 +45,8 @@ public:
   QByteArray makeUserId(int type, const QByteArray &userId) const;
 
   // channel management.
-  bool add(ChatChannel channel);
   bool gc(ChatChannel channel);
-  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
-  ChatChannel channel(const QString &name);
-  void remove(ChatChannel channel);
-  void rename(ChatChannel channel, const QString &name);
-  void update(ChatChannel channel);
+//  ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
 
   inline FileLocations *locations() const { return m_locations; }
   inline static ServerData *serverData() { return i()->m_serverData; }
@@ -59,7 +54,6 @@ public:
   QByteArray cookie() const;
 
 private:
-  QByteArray makeId(const QByteArray &normalized) const;
   void setDefaultSslConf();
 
   /// Внутренний кэш хранилища.

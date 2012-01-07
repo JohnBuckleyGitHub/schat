@@ -57,8 +57,8 @@ void NodeInit::quit()
 
 void NodeInit::start()
 {
-  m_plugins->load();
   m_storage->start();
+  m_plugins->load();
 
   m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
