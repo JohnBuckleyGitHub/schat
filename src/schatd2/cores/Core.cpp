@@ -41,13 +41,11 @@
 #include "NodeLog.h"
 #include "NodeMessages.h"
 #include "NodePlugins.h"
-#include "plugins/NodeHooks.h"
 #include "Sockets.h"
 #include "Storage.h"
 
 Core::Core(QObject *parent)
   : QObject(parent)
-  , m_plugins(0)
   , m_timestamp(0)
   , m_listener(0)
   , m_settings(Storage::i()->settings())

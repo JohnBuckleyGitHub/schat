@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,28 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEHOOKS_H_
-#define NODEHOOKS_H_
+#ifndef GENERICNODEPLUGIN_H_
+#define GENERICNODEPLUGIN_H_
 
-class NodeHook
+#include "CoreApi.h"
+#include "NodeApi.h"
+
+class GenericNodePlugin : public QObject, CoreApi, NodeApi
 {
+  Q_OBJECT
+  Q_INTERFACES(CoreApi NodeApi)
+
 public:
-  enum Type {
-    AcceptedMessage, ///< Успешно доставленное сообщение.
-    OfflineDelivery, ///< Поддержка оффлайн-доставки сообщений.
-    AcceptedUser,    ///< Успешно авторизированный пользователь.
-    UserReady        ///< Получение команды "ready" от пользователя.
-  };
+  QVariantMap header() const
+  {
+    QVariantMap out = CoreApi::header();
+    out["Id"]      = "generic";
+    out["Name"]    = "Generic Node";
+    out["Version"] = "0.1.0";
+    out["Type"]    = "server";
+    out["Desc"]    = "Standard core of server";
 
-  virtual ~NodeHook() {}
-  inline Type type() const { return m_type; }
+    return out;
+  }
 
-protected:
-  NodeHook(Type type)
-  : m_type(type)
-  {}
-
-  Type m_type;
+  NodePlugin *create();
 };
 
-#endif /* NODEHOOKS_H_ */
+#endif /* GENERICNODEPLUGIN_H_ */
