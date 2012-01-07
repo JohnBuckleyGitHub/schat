@@ -173,9 +173,6 @@ void Core::customEvent(QEvent *event)
 
 bool Core::checkPacket()
 {
-  if (m_storage->isAllowSlaves() && m_storage->isSlave(m_packetsEvent->channelId()))
-    return true;
-
   if (m_reader->sender().isEmpty())
     return false;
 

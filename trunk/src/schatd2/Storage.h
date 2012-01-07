@@ -25,7 +25,6 @@
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 
-class DataBase;
 class FileLocations;
 class NodeLog;
 class ServerData;
@@ -38,13 +37,7 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
-  inline bool isAllowSlaves() const { return m_allowSlaves; }
-  inline bool isSlave(const QByteArray &id) { return m_slaves.contains(id); }
-  inline DataBase *db() const { return m_db; }
-  inline QList<QByteArray> slaves() const { return m_slaves; }
   inline static Storage *i() { return m_self; }
-  inline void removeSlave(const QByteArray &id) { m_slaves.removeAll(id); }
-  inline void setAllowSlaves(bool allow = true) { m_allowSlaves = allow; }
   int start();
   void addSlave(const QByteArray &id);
 
@@ -83,12 +76,9 @@ private:
     QHash<QByteArray, ChatChannel> m_channels;
   };
 
-  bool m_allowSlaves;                            ///< true если разрешено подключение вторичных серверов.
   Cache m_cache;                                 ///< Кеш хранилища.
-  DataBase *m_db;                                ///< База данных сервера.
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
-  QList<QByteArray> m_slaves;                    ///< Список вторичных серверов.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.
