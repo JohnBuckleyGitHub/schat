@@ -285,7 +285,7 @@ void Core::accept(const AuthResult &result)
     packets.append(reply.data(m_sendStream));
   }
 
-  packets.append(ChannelPacket::channel(channel, channel->id(), m_sendStream));
+  NodeNoticeReader::accept(channel, result, packets);
 
   send(channel->sockets(), packets, result.option, channel->id());
 }
