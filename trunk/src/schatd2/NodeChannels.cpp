@@ -65,10 +65,8 @@ bool NodeChannels::read(PacketReader *reader)
 }
 
 
-void NodeChannels::acceptImpl(ChatChannel user, const AuthResult &result, QList<QByteArray> &packets)
+void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets)
 {
-  Q_UNUSED(result)
-
   packets.append(ChannelPacket::channel(user, user, m_core->sendStream()));
 }
 

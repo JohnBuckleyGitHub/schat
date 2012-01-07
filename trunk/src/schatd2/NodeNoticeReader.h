@@ -45,7 +45,7 @@ public:
 
 protected:
   virtual bool read(PacketReader *reader) { Q_UNUSED(reader) return false; }
-  virtual void acceptImpl(ChatChannel user, const AuthResult &result, QList<QByteArray> &packets) { Q_UNUSED(user) Q_UNUSED(result) Q_UNUSED(packets) }
+  virtual void acceptImpl(ChatChannel /*user*/, const AuthResult & /*result*/, QList<QByteArray> & /*packets*/) {}
   virtual void addImpl(ChatChannel user) { Q_UNUSED(user) }
   virtual void releaseImpl(ChatChannel user, quint64 socket) { Q_UNUSED(user) Q_UNUSED(socket) }
 
