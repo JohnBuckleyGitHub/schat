@@ -41,7 +41,6 @@ Storage *Storage::m_self = 0;
 
 Storage::Storage(QObject *parent)
   : QObject(parent)
-  , m_allowSlaves(false)
 {
   m_self = this;
 
@@ -63,7 +62,6 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault("ServerName",  QString());
 
   m_log = new NodeLog;
-  m_db = new DataBase(this);
   new FeedStorage(this);
 }
 
@@ -87,17 +85,8 @@ int Storage::start()
   m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
   m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
 
-  m_db->start();
+  DataBase::start();
   return 0;
-}
-
-
-void Storage::addSlave(const QByteArray &id)
-{
-  if (m_slaves.contains(id))
-    return;
-
-  m_slaves.append(id);
 }
 
 
@@ -121,7 +110,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
  */
 bool Storage::add(ChatChannel channel)
 {
-  if (m_db->add(channel) == -1)
+  if (DataBase::add(channel) == -1)
     return false;
 
   m_cache.add(channel);
@@ -221,7 +210,7 @@ void Storage::rename(ChatChannel channel, const QString &name)
 
 void Storage::update(ChatChannel channel)
 {
-  m_db->update(channel);
+  DataBase::update(channel);
 }
 
 

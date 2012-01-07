@@ -34,11 +34,10 @@ class SCHAT_EXPORT DataBase : public QObject
 
 public:
   DataBase(QObject *parent = 0);
-  int start();
+  static int start();
 
   // users.
-  qint64 addGroup(const QString &name, const QString &permissions = QString());
-  qint64 userKey(const QByteArray &id);
+  static qint64 addGroup(const QString &name, const QString &permissions = QString());
 
   // channels.
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
