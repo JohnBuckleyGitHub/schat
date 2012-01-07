@@ -113,8 +113,14 @@ bool Channel::setId(const QByteArray &id)
 
 bool Channel::setName(const QString &name)
 {
-  if (name.isEmpty())
+  if (name.isEmpty()) {
+    if (type() == SimpleID::ServerId) {
+      m_name = "*";
+      return true;
+    }
+
     return false;
+  }
 
   QString tmp = name.simplified().left(MaxNameLength);
   if (tmp.size() < MinNameLengh)

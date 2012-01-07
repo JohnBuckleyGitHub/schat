@@ -21,9 +21,6 @@
 #include "debugstream.h"
 
 #include "cores/Core.h"
-#include "DataBase.h"
-#include "feeds/NodeFeedStorage.h"
-#include "net/ServerData.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
 #include "Settings.h"
@@ -61,9 +58,6 @@ void NodeInit::start()
 {
   m_storage->start();
 
-  // Инициализация фидов.
-  new NodeFeedStorage(this);
-
   m_plugins->load();
   m_core = m_plugins->kernel();
 
@@ -73,15 +67,7 @@ void NodeInit::start()
   m_core->start();
   m_thread->start();
 
-  Storage::i()->channel(QString("Main"));
-
-  qint64 key = Storage::settings()->value("MainChannel").toLongLong();
-  if (key > 0) {
-    ChatChannel channel = DataBase::channel(key);
-    if (channel) {
-      Storage::serverData()->setChannelId(channel->id());
-    }
-  }
+  m_storage->load();
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

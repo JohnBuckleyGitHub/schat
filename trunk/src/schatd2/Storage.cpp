@@ -26,6 +26,7 @@
 #include "DateTime.h"
 #include "debugstream.h"
 #include "feeds/FeedStorage.h"
+#include "feeds/NodeFeedStorage.h"
 #include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
@@ -56,7 +57,7 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault("Kernel",      QString());
   m_settings->setDefault("Listen",      QStringList("0.0.0.0:7667"));
   m_settings->setDefault("LogLevel",    2);
-  m_settings->setDefault("MainChannel", 1);
+  m_settings->setDefault("MainChannel", 2);
   m_settings->setDefault("PrivateId",   QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault("PrivateKey",  QLatin1String("server.key"));
   m_settings->setDefault("ServerName",  QString());
@@ -73,6 +74,33 @@ Storage::~Storage()
 }
 
 
+int Storage::load()
+{
+  ChatChannel server = channel(m_serverData->id(), SimpleID::ServerId);
+  qDebug() << " - - - - - - - ";
+  qDebug() << " - - - - - - - " << server;
+  qDebug() << " - - - - - - - ";
+  if (!server) {
+    server = ChatChannel(new ServerChannel(m_serverData->id(), m_serverData->name()));
+  }
+
+  server->setName(m_serverData->name());
+  add(server);
+
+  channel(QString("Main"));
+
+  qint64 key = m_settings->value("MainChannel").toLongLong();
+  if (key > 0) {
+    ChatChannel channel = DataBase::channel(key);
+    if (channel) {
+      m_serverData->setChannelId(channel->id());
+    }
+  }
+
+  return 0;
+}
+
+
 /*!
  * Запуск сервера, функция производит инициализацию состояния и объектов сервера.
  */
@@ -82,10 +110,12 @@ int Storage::start()
 
   setDefaultSslConf();
 
-  m_serverData->setPrivateId(m_settings->value(QLatin1String("PrivateId")).toString().toUtf8());
-  m_serverData->setName(m_settings->value(QLatin1String("ServerName")).toString());
+  m_serverData->setPrivateId(m_settings->value("PrivateId").toString().toUtf8());
+  m_serverData->setName(m_settings->value("ServerName").toString());
 
   DataBase::start();
+
+  new NodeFeedStorage(this);
   return 0;
 }
 
@@ -152,7 +182,8 @@ ChatChannel Storage::channel(const QByteArray &id, int type)
     return channel;
 
   channel = DataBase::channel(id, type);
-  m_cache.add(channel);
+  if (channel)
+    m_cache.add(channel);
 
   return channel;
 }
