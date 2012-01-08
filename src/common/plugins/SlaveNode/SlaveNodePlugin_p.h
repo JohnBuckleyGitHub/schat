@@ -16,21 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef SLAVENODEPLUGIN_P_H_
+#define SLAVENODEPLUGIN_P_H_
 
-#include "SlaveNodePlugin.h"
-#include "SlaveNodePlugin_p.h"
+#include "plugins/NodePlugin.h"
 
-SlaveNode::SlaveNode(QObject *parent)
-  : NodePlugin(parent)
+class SlaveNode : public NodePlugin
 {
-}
+  Q_OBJECT
 
+public:
+  SlaveNode(QObject *parent);
+};
 
-NodePlugin *SlaveNodePlugin::create()
-{
-  m_plugin = new SlaveNode(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(SlaveNode, SlaveNodePlugin);
+#endif /* SLAVENODEPLUGIN_P_H_ */
