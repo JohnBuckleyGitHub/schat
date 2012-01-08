@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 
 #include "ChatApp.h"
 #include "ChatCore.h"
-#include "version.h"
+#include "ChatSettings.h"
 #include "ui/ChatWindow.h"
-
+#include "version.h"
 
 ChatApp::ChatApp(int &argc, char **argv)
   : QApplication(argc, argv)
@@ -46,8 +46,10 @@ ChatApp::ChatApp(int &argc, char **argv)
 
   m_core = new ChatCore(this);
 
-  m_window = new ChatWindow();
-  m_window->showChat();
+  if (!ChatCore::settings()->value("Labs/DisableUI").toBool()) {
+    m_window = new ChatWindow();
+    m_window->showChat();
+  }
 }
 
 

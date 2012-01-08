@@ -59,7 +59,8 @@ void MessagesImpl::readText(const MessagePacket &packet)
       message.data()["Status"] = "rejected";
   }
 
-  TabWidget::i()->add(message);
+  if (TabWidget::i())
+    TabWidget::i()->add(message);
 
   if (packet.sender() != ChatClient::id() || !m_undelivered.contains(packet.id())) {
     qDebug() << " ~~ START ALERT ~~";
@@ -81,7 +82,9 @@ void MessagesImpl::sendText(const MessagePacket &packet)
   message.data()["Status"] = "undelivered";
 
   m_undelivered[packet.id()] = packet;
-  TabWidget::i()->add(message);
+
+  if (TabWidget::i())
+    TabWidget::i()->add(message);
 }
 
 
@@ -101,7 +104,8 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
       ChannelMessage message(i.value());
       message.data()["Status"] = "rejected";
 
-      TabWidget::i()->add(message);
+      if (TabWidget::i())
+        TabWidget::i()->add(message);
     }
 
     m_undelivered.clear();
