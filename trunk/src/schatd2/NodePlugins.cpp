@@ -21,7 +21,6 @@
 #include "cores/Core.h"
 #include "NodePlugins.h"
 #include "plugins/NodeApi.h"
-#include "plugins/NodeKernelApi.h"
 #include "plugins/NodePlugin.h"
 #include "Settings.h"
 #include "Storage.h"

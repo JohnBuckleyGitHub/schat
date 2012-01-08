@@ -53,10 +53,8 @@ Core::Core(QObject *parent)
   , m_storage(Storage::i())
 {
   m_self = this;
-  addAuth(new AnonymousAuth(this));
-  addAuth(new CookieAuth(this));
 
-  if (Storage::i()->serverData()->is(ServerData::PasswordAuthSupport))
+  if (Storage::serverData()->is(ServerData::PasswordAuthSupport))
     addAuth(new PasswordAuth(this));
 
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
@@ -237,6 +235,11 @@ bool Core::auth()
     AuthResult result(Notice::BadRequest, data.id, NewPacketsEvent::KillSocketOption);
     reject(result);
     return false;
+  }
+
+  if (m_auth.isEmpty()) {
+    addAuth(new AnonymousAuth(this));
+    addAuth(new CookieAuth(this));
   }
 
   for (int i = 0; i < m_auth.size(); ++i) {

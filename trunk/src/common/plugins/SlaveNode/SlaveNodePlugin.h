@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,19 +20,28 @@
 #define SLAVENODEPLUGIN_H_
 
 #include "CoreApi.h"
-#include "NodeKernelApi.h"
+#include "NodeApi.h"
 
-class SlaveNodePlugin : public QObject, CoreApi, NodeKernelApi
+class SlaveNodePlugin : public QObject, CoreApi, NodeApi
 {
   Q_OBJECT
-  Q_INTERFACES(CoreApi NodeKernelApi)
+  Q_INTERFACES(CoreApi NodeApi)
 
 public:
-  Core *init();
-  QString id() const { return QLatin1String("SlaveNode"); }
-  QString name() const { return QLatin1String("SlaveNode Kernel"); }
-  QString version() const { return QLatin1String("1.0.0"); }
-  QStringList provides() const { return QStringList(id()); }
+  QVariantMap header() const
+  {
+    QVariantMap out = CoreApi::header();
+    out["Id"]      = "SlaveNode";
+    out["Name"]    = "Slave Node";
+    out["Version"] = "0.1.0";
+    out["Type"]    = "slave";
+    out["Site"]    = "http://wiki.schat.me/Plugin/SlaveNode";
+    out["Desc"]    = "Slave core of server";
+
+    return out;
+  }
+
+  NodePlugin *create();
 };
 
 #endif /* SLAVENODEPLUGIN_H_ */

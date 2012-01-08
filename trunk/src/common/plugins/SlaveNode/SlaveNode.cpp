@@ -53,7 +53,7 @@ SlaveNode::SlaveNode(QObject *parent)
 
 int SlaveNode::start()
 {
-  m_plugins->removeHook(NodeHook::OfflineDelivery);
+//  m_plugins->removeHook(NodeHook::OfflineDelivery);
   m_uplink->openUrl(m_settings->value(QLatin1String("SlaveNode/Url"), QString()).toString());
   return 0;
 }
