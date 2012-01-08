@@ -36,6 +36,9 @@ ChannelsImpl::ChannelsImpl(QObject *parent)
 
 ClientChannel ChannelsImpl::get(const QByteArray &id)
 {
+  if (!TabWidget::i())
+    return ClientChannel();
+
   return TabWidget::i()->channel(id);
 }
 
