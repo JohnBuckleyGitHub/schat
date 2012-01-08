@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -61,19 +61,20 @@ public:
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
 
+  ClientChannel channel() const;
   ClientState clientState() const;
   ClientState previousState() const;
-  ClientChannel channel() const;
-  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
-  PacketReader *reader();
-  QByteArray cookie() const;
-  QByteArray serverId() const;
-  QByteArray uniqueId() const;
+  const QByteArray& cookie() const;
+  const QByteArray& uniqueId() const;
   const QString& nick() const;
   const QUrl& url() const;
+  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
+  PacketReader *reader();
+  QByteArray serverId() const;
   ServerData *serverData();
   void lock();
   void setNick(const QString &nick);
+  void setUniqueId(const QByteArray &id);
   void unlock();
 
   virtual void leave();

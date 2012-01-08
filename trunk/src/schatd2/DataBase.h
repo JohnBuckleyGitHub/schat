@@ -40,6 +40,7 @@ public:
   static qint64 addGroup(const QString &name, const QString &permissions = QString());
 
   // channels.
+  static bool isCollision(const QByteArray &id, const QByteArray &normalized, int type);
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   static ChatChannel channel(qint64 id);
   static qint64 add(ChatChannel channel);

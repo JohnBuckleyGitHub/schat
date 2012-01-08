@@ -117,6 +117,21 @@ qint64 DataBase::addGroup(const QString &name, const QString &permissions)
 }
 
 
+bool DataBase::isCollision(const QByteArray &id, const QByteArray &normalized, int type)
+{
+  QSqlQuery query;
+  query.prepare("SELECT channel FROM channels WHERE normalized = :normalized AND type = :type LIMIT 1;");
+  query.bindValue(":normalized", normalized);
+  query.bindValue(":type", type);
+  query.exec();
+
+  if (!query.first())
+    return false;
+
+  return query.value(0).toByteArray() != id;
+}
+
+
 /*!
  * Получение канала на основе идентификатора канала или нормализированного имени и типа канала.
  */

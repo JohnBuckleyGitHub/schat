@@ -45,13 +45,11 @@ Ch::Ch(QObject *parent)
  */
 bool Ch::isCollision(const QByteArray &id, const QString &name)
 {
-  ChatChannel channel = Ch::channel(Normalize::toId('~' + name), SimpleID::UserId);
-  if (channel && channel->id() != id) {
-    Ch::gc(channel);
-    return true;
-  }
+  ChatChannel channel = Ch::channel(Normalize::toId('~' + name), SimpleID::UserId, false);
+  if (channel && channel->id() != id)
+    return channel->id() != id;
 
-  return false;
+  return DataBase::isCollision(id, Normalize::toId('~' + name), SimpleID::UserId);
 }
 
 
@@ -106,17 +104,24 @@ bool Ch::gcImpl(ChatChannel channel)
 
 
 /*!
- * Получение канала по идентификатору канала или идентификатору нормализированного имени либо Сookie.
+ * Получение канала по идентификатору.
  *
  * \todo В случае получения пользовательского канала по нормализированному имени и если ник устарел, сбрасывать ник и возвращать пустой канал.
+ *
+ * \param id   Идентификатор канала, либо идентификатор нормализированного имени, либо идентификатор Cookie.
+ * \param type Тип канала, этот параметр игнорируется, если идентификатор найден в кеше.
+ * \param db   \b true если необходимо загрузить канал из базы если он не найден в кеше.
  */
-ChatChannel Ch::channelImpl(const QByteArray &id, int type)
+ChatChannel Ch::channelImpl(const QByteArray &id, int type, bool db)
 {
   if (m_self != this)
     return ChatChannel();
 
   ChatChannel channel = m_cache.channel(id);
   if (channel)
+    return channel;
+
+  if (!db)
     return channel;
 
   channel = DataBase::channel(id, type);
