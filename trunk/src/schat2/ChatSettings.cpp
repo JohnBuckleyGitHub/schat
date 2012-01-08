@@ -25,7 +25,6 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault("AutoConnect",         true);
   setDefault("AutoJoin",            true);
   setDefault("ChannelUserCount",    false);
-  setDefault("CookieAuth",          true);
   setDefault("DeveloperExtras",     false);
   setDefault("Height",              420);
   setDefault("HideIgnore",          true);
@@ -37,6 +36,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault("Width",               666);
   setDefault("WindowsAero",         true);
 
+  setDefault("Labs/CookieAuth",     true);
   setDefault("Labs/DisableUI",      false);
 
   setDefault("Profile/Gender",      0);
