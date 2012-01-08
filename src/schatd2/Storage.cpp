@@ -34,7 +34,6 @@
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "Normalize.h"
-#include "plugins/StorageHooks.h"
 #include "Settings.h"
 #include "Storage.h"
 
@@ -47,7 +46,6 @@ Storage::Storage(QObject *parent)
 
   Normalize::init();
 
-  new StorageHooks(this);
   new Ch(this);
 
   m_serverData = new ServerData();
