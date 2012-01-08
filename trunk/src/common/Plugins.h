@@ -59,6 +59,8 @@ class SCHAT_EXPORT Plugins : public QObject
 
 public:
   Plugins(QObject *parent = 0);
+  inline const QString& type() const { return m_type; }
+  inline void setType(const QString &type) { m_type = type; }
   void load();
 
 protected:

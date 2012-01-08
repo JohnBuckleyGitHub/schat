@@ -39,6 +39,10 @@ NodeInit::NodeInit(QObject *parent)
   m_core = new Core(this);
   m_plugins = new NodePlugins(this);
 
+# if defined(SCHATD_SLAVE)
+  m_plugins->setType("slave");
+# endif
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 

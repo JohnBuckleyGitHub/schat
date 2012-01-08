@@ -16,21 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef SLAVECLIENT_H_
+#define SLAVECLIENT_H_
 
-#include "SlaveNodePlugin.h"
-#include "SlaveNodePlugin_p.h"
+#include <QObject>
 
-SlaveNode::SlaveNode(QObject *parent)
-  : NodePlugin(parent)
+class AbstractClient;
+
+class SlaveClient : public QObject
 {
-}
+  Q_OBJECT
 
+public:
+  SlaveClient(QObject *parent = 0);
 
-NodePlugin *SlaveNodePlugin::create()
-{
-  m_plugin = new SlaveNode(this);
-  return m_plugin;
-}
+private:
+  AbstractClient *m_client;     ///< Клиент чата.
+};
 
-Q_EXPORT_PLUGIN2(SlaveNode, SlaveNodePlugin);
+#endif /* SLAVECLIENT_H_ */
