@@ -277,6 +277,13 @@ bool AbstractClient::send(const QList<QByteArray> &packets)
 }
 
 
+ClientChannel AbstractClient::channel() const
+{
+  Q_D(const AbstractClient);
+  return d->channel;
+}
+
+
 AbstractClient::ClientState AbstractClient::clientState() const
 {
   Q_D(const AbstractClient);
@@ -291,35 +298,14 @@ AbstractClient::ClientState AbstractClient::previousState() const
 }
 
 
-ClientChannel AbstractClient::channel() const
-{
-  Q_D(const AbstractClient);
-  return d->channel;
-}
-
-
-PacketReader *AbstractClient::reader()
-{
-  Q_D(const AbstractClient);
-  return d->reader;
-}
-
-
-QByteArray AbstractClient::cookie() const
+const QByteArray& AbstractClient::cookie() const
 {
   Q_D(const AbstractClient);
   return d->cookie;
 }
 
 
-QByteArray AbstractClient::serverId() const
-{
-  Q_D(const AbstractClient);
-  return d->serverData->id();
-}
-
-
-QByteArray AbstractClient::uniqueId() const
+const QByteArray& AbstractClient::uniqueId() const
 {
   Q_D(const AbstractClient);
   return d->uniqueId;
@@ -347,6 +333,20 @@ const QUrl& AbstractClient::url() const
 }
 
 
+PacketReader *AbstractClient::reader()
+{
+  Q_D(const AbstractClient);
+  return d->reader;
+}
+
+
+QByteArray AbstractClient::serverId() const
+{
+  Q_D(const AbstractClient);
+  return d->serverData->id();
+}
+
+
 ServerData *AbstractClient::serverData()
 {
   Q_D(const AbstractClient);
@@ -366,6 +366,16 @@ void AbstractClient::setNick(const QString &nick)
   Q_D(AbstractClient);
   d->channel->setName(nick);
   d->nick = QString();
+}
+
+
+void AbstractClient::setUniqueId(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::UniqueUserId)
+    return;
+
+  Q_D(AbstractClient);
+  d->uniqueId = id;
 }
 
 

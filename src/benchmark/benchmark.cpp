@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 
 #include "benchmark.h"
+#include "BenchmarkClient.h"
 #include "Settings.h"
 
 /*!
@@ -36,7 +37,7 @@ Benchmark::Benchmark(QObject *parent)
   , m_disconnected(0)
   , m_rejected(0)
   , m_synced(0)
-  , m_usersCount(60)
+  , m_usersCount(2)
   , m_chatName("schat2")
   , m_nickPrefix("test_")
   , m_serverAddr("192.168.238.1:7667")
@@ -70,6 +71,13 @@ void Benchmark::start()
   m_chatFile += ".exe";
 # endif
 
+  QSettings settings(QCoreApplication::applicationDirPath() + "/benchmark.conf", QSettings::IniFormat, this);
+  settings.setIniCodec("UTF-8");
+  m_connectInterval = settings.value("ConnectInterval", m_connectInterval).toInt();
+  m_usersCount      = settings.value("UsersCount", m_usersCount).toInt();
+  m_nickPrefix      = settings.value("NickPrefix", m_nickPrefix).toString();
+  m_serverAddr      = settings.value("Url", m_serverAddr).toString();
+
   connectToHost();
 }
 
@@ -78,14 +86,20 @@ void Benchmark::connectToHost()
 {
 
   if (m_count < m_usersCount) {
-    QSettings settings(m_chatConf, QSettings::IniFormat, this);
-    settings.setIniCodec("UTF-8");
-    settings.setValue("Profile/Nick", m_nickPrefix + QString::number(m_count));
+    BenchmarkClient *client = new BenchmarkClient(m_nickPrefix + QString::number(m_count), this);
+    client->open(m_serverAddr);
+//    client->setNick(m_nickPrefix + QString::number(m_count));
+//    client->setCookieAuth(false);
+//    client->openUrl(m_serverAddr);
 
-    QProcess *chat = new QProcess(this);
-    m_process.append(chat);
-
-    chat->start(m_chatFile);
+//    QSettings settings(m_chatConf, QSettings::IniFormat, this);
+//    settings.setIniCodec("UTF-8");
+//    settings.setValue("Profile/Nick", m_nickPrefix + QString::number(m_count));
+//
+//    QProcess *chat = new QProcess(this);
+//    m_process.append(chat);
+//
+//    chat->start(m_chatFile);
 //    chat->waitForStarted();
 //    AbstractProfile *profile = new AbstractProfile();
 //    profile->setNick(m_nickPrefix + QString::number(m_count));

@@ -853,12 +853,6 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
   }
   return true;
 }
-
-
-_K8_JSON_COMPLEX_WORD bool generateCB (void *udata, generatorCB cb, QByteArray &res, const QVariant &val, int indent) {
-  QString err;
-  return generateExCB(udata, cb, err, res, val, indent);
-}
 #endif
 
 

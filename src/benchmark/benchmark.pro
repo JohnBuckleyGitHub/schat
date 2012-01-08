@@ -21,20 +21,20 @@ SCHAT_RESOURCES  = 0
 SCHAT_RC_FILE    = 0
 SCHAT_SINGLEAPP  = 0
 BENCHMARK_NO_UI  = 0
+SCHAT_CLIENT_LIB = 1
 
 QT = core network
 TEMPLATE = app
 
-DEFINES += SCHAT_NO_WRITE_SETTINGS
-DEFINES += SCHAT_CLIENT
-
 HEADERS = \
     benchmark.h \
     benchmarkapp.h \
+    BenchmarkClient.h \
 
 SOURCES = \
     benchmark.cpp \
     benchmarkapp.cpp \
+    BenchmarkClient.cpp \
     main.cpp \
 
 CODECFORTR = UTF-8
