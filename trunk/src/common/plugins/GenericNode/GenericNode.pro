@@ -20,6 +20,7 @@ QT = core network sql
 
 HEADERS  = \
    feeds/NodeFeedStorage.h \
+   GenericCh.h \
    GenericNodePlugin.h \
    GenericNodePlugin_p.h \
    NodeChannels.h \
@@ -27,6 +28,7 @@ HEADERS  = \
 
 SOURCES  = \
    feeds/NodeFeedStorage.cpp \
+   GenericCh.cpp \
    GenericNodePlugin.cpp \
    NodeChannels.cpp \
    NodeFeeds.cpp \

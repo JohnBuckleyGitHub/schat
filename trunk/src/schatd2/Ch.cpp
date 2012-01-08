@@ -87,6 +87,9 @@ bool Ch::addImpl(ChatChannel channel)
 
 bool Ch::gcImpl(ChatChannel channel)
 {
+  if (m_self != this)
+    return false;
+
   if (channel->type() == SimpleID::UserId) {
     if (channel->sockets().size())
       return false;
@@ -109,6 +112,9 @@ bool Ch::gcImpl(ChatChannel channel)
  */
 ChatChannel Ch::channelImpl(const QByteArray &id, int type)
 {
+  if (m_self != this)
+    return ChatChannel();
+
   ChatChannel channel = m_cache.channel(id);
   if (channel)
     return channel;
@@ -144,7 +150,23 @@ ChatChannel Ch::channelImpl(const QString &name)
 
 void Ch::newChannelImpl(ChatChannel channel)
 {
-  Q_UNUSED(channel)
+  if (m_self != this)
+    return;
+
+  foreach (Ch *hook, m_hooks) {
+    hook->newChannelImpl(channel);
+  }
+}
+
+
+void Ch::newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created)
+{
+  if (m_self != this)
+    return;
+
+  foreach (Ch *hook, m_hooks) {
+    hook->newUserChannelImpl(channel, data, host, created);
+  }
 }
 
 
@@ -170,6 +192,9 @@ void Ch::removeImpl(ChatChannel channel)
  */
 void Ch::renameImpl(ChatChannel channel, const QString &name)
 {
+  if (m_self != this)
+    return;
+
   if (channel->type() != SimpleID::UserId)
     return;
 

@@ -16,33 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef GENERICCH_H_
+#define GENERICCH_H_
 
-#include <QtPlugin>
+#include "Ch.h"
 
-#include "cores/Core.h"
-#include "feeds/NodeFeedStorage.h"
-#include "GenericCh.h"
-#include "GenericNodePlugin.h"
-#include "GenericNodePlugin_p.h"
-#include "NodeChannels.h"
-#include "NodeFeeds.h"
-
-GenericNode::GenericNode(QObject *parent)
-  : NodePlugin(parent)
+class GenericCh : public Ch
 {
-  new NodeChannels(Core::i());
-  new NodeFeeds(Core::i());
-  new GenericCh(this);
-  new NodeFeedStorage(this);
-}
+  Q_OBJECT
 
+public:
+  GenericCh(QObject *parent = 0);
 
-NodePlugin *GenericNodePlugin::create()
-{
-  m_plugin = new GenericNode(this);
-  return m_plugin;
-}
+protected:
+  bool addImpl(ChatChannel channel);
+  void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
+};
 
-
-Q_EXPORT_PLUGIN2(GenericNode, GenericNodePlugin);
+#endif /* GENERICCH_H_ */

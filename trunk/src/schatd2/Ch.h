@@ -24,6 +24,8 @@
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 
+class AuthRequest;
+
 class SCHAT_EXPORT Ch : public QObject
 {
   Q_OBJECT
@@ -35,6 +37,7 @@ public:
   inline static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId) { return m_self->channelImpl(id, type); }
   inline static ChatChannel channel(const QString &name)                                  { return m_self->channelImpl(name); }
   inline static void add(Ch *hook)                                                        { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created = false) { m_self->newUserChannelImpl(channel, data, host, created); }
   inline static void remove(Ch *hook)                                                     { m_self->m_hooks.removeAll(hook); }
   inline static void remove(ChatChannel channel)                                          { m_self->removeImpl(channel); }
   inline static void rename(ChatChannel channel, const QString &name)                     { m_self->renameImpl(channel, name); }
@@ -62,6 +65,7 @@ protected:
   virtual ChatChannel channelImpl(const QByteArray &id, int type);
   virtual ChatChannel channelImpl(const QString &name);
   virtual void newChannelImpl(ChatChannel channel);
+  virtual void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
   virtual void removeImpl(ChatChannel channel);
   virtual void renameImpl(ChatChannel channel, const QString &name);
 
