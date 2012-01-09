@@ -51,8 +51,9 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   if (!channel)
     return AnonymousAuth::auth(data);
 
-  if (Ch::isCollision(channel->id(), data.nick))
-    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
+  AuthResult result = isCollision(channel->id(), data.nick, data.id);
+  if (result.action == AuthResult::Reject)
+    return result;
 
   update(channel.data(), data);
 

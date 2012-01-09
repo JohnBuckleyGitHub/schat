@@ -25,6 +25,8 @@
 #include "Normalize.h"
 #include "Storage.h"
 
+QHash<QByteArray, quint64> AnonymousAuth::m_collisions;
+
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
 {
@@ -40,8 +42,9 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
   QByteArray id = Storage::i()->makeUserId(data.authType, data.uniqueId);
 
-  if (Ch::isCollision(id, data.nick))
-    return AuthResult(Notice::NickAlreadyUse, data.id, 0);
+  AuthResult result = isCollision(id, data.nick, data.id);
+  if (result.action == AuthResult::Reject)
+    return result;
 
   ChatChannel channel = Ch::channel(id, SimpleID::UserId);
   bool created = false;
@@ -67,6 +70,33 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 int AnonymousAuth::type() const
 {
   return AuthRequest::Anonymous;
+}
+
+
+/*!
+ * Проверка на коллизию ника.
+ * Допускается не более 20 попыток разрешить коллизию без разрыва соединения.
+ *
+ * \param id     Идентификатор канала.
+ * \param name   Имя канала.
+ * \param authId Идентификатор авторизации.
+ */
+AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name, const QByteArray &authId)
+{
+  quint64 collisions = m_collisions.value(id);
+
+  if (Ch::isCollision(id, name)) {
+    ++collisions;
+    m_collisions[id] = collisions;
+
+    if (collisions == 10)
+      return AuthResult(Notice::NickAlreadyUse, authId);
+
+    return AuthResult(Notice::NickAlreadyUse, authId, collisions > 20 ? 2 : 0);
+  }
+
+  m_collisions.remove(id);
+  return AuthResult();
 }
 
 
