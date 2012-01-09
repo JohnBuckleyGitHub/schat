@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return true;
   }
 
+  m_authError = AuthError(authType, reply.status);
+
   if (reply.status == Notice::NickAlreadyUse)
     return false;
 
@@ -57,10 +59,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return false;
   }
 
-  if (authType == AuthRequest::Password) {
-    m_authError = AuthError(authType, reply.status);
+  if (authType == AuthRequest::Password)
     setClientState(SimpleClient::ClientError);
-  }
 
   return false;
 }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
   AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientChannel channel;                   ///< Канал пользователя.
-//  ClientUser user;                         ///< Пользователь.
+  int collisions;                          ///< Счётчик коллизий ника.
   int reconnects;                          ///< Число попыток восстановить соединение.
   NetworkPool *pool;                       ///< Пул адресов серверов.
   PacketReader *reader;                    ///< Текущий объект PacketReader выполняющий чтение пакета.

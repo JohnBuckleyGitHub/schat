@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ AbstractClientPrivate::AbstractClientPrivate()
   , previousState(AbstractClient::ClientOffline)
   , sendLock(false)
   , channel(new Channel())
+  , collisions(0)
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
@@ -58,11 +59,26 @@ AbstractClientPrivate::~AbstractClientPrivate()
 
 QString AbstractClientPrivate::mangleNick()
 {
-  int rand = qrand() % 89 + 10;
+  collisions++;
+
+  int size = 1;
+  if (collisions > 10 && collisions <= 15)
+    size = 2;
+  else if (collisions > 15)
+    size = 3;
+
+  int rand = 0;
+  if (size == 1)
+    rand = qrand() % 9;
+  else if (size == 2)
+    rand = qrand() % 89 + 10;
+  else if (size == 3)
+    rand = qrand() % 899 + 100;
+
   if (nick.isEmpty())
     nick = channel->name();
 
-  return nick.left(Channel::MaxNameLength - 2) + QString::number(rand);
+  return nick.left(Channel::MaxNameLength - size) + QString::number(rand);
 }
 
 
@@ -75,6 +91,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
   Q_Q(AbstractClient);
   if (reply.status == Notice::OK) {
+    collisions = 0;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
     channel->account()->setName(reply.account);
@@ -95,10 +112,18 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
   if (reply.status == Notice::NickAlreadyUse) {
     authId = reply.id;
+
+    if (collisions > 19) {
+      setClientState(AbstractClient::ClientError);
+      return false;
+    }
+
     channel->setName(mangleNick());
     q->requestAuth();
+    return false;
   }
 
+  collisions = 0;
   return false;
 }
 
