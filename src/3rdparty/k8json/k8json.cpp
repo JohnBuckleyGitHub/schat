@@ -346,7 +346,7 @@ static const uchar *parseString (QString &str, const uchar *s, int *maxLength) {
     if (ch != '\\') {
       // ascii or utf-8
       quint8 t = utf8Length[ch];
-      if (!t) str.append(ch); // ascii
+      if (!t) str.append(QLatin1Char(ch)); // ascii
       else {
         // utf-8
         int u = 0; s--; maxLen++;
