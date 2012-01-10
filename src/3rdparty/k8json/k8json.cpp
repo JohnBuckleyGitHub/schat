@@ -7,7 +7,7 @@
  * To Public License, Version 2, as published by Sam Hocevar. See
  * http://sam.zoy.org/wtfpl/COPYING for more details.
  */
-//#include <QtDebug>
+#include <QDebug>
 
 #include "k8json.h"
 
@@ -68,25 +68,30 @@ bool isValidUtf8 (const uchar *s, int maxLen, bool zeroInvalid) {
 }
 
 
-QString quote (const QString &str) {
-  int len = str.length(), c;
-  QString res('"'); res.reserve(len+128);
+QString quote(const QString &str) {
+  int len = str.length();
+  int c;
+  QString res;
+  res.reserve(len + 256);
+  res += QLatin1Char('"');
+
   for (int f = 0; f < len; f++) {
     QChar ch(str[f]);
     ushort uc = ch.unicode();
+
     if (uc < 32) {
       // control char
       switch (uc) {
-        case '\b': res += "\\b"; break;
-        case '\f': res += "\\f"; break;
-        case '\n': res += "\\n"; break;
-        case '\r': res += "\\r"; break;
-        case '\t': res += "\\t"; break;
+        case '\b': res += QLatin1String("\\b"); break;
+        case '\f': res += QLatin1String("\\f"); break;
+        case '\n': res += QLatin1String("\\n"); break;
+        case '\r': res += QLatin1String("\\r"); break;
+        case '\t': res += QLatin1String("\\t"); break;
         default:
-          res += "\\u";
+          res += QLatin1String("\\u");
           for (c = 4; c > 0; c--) {
             ushort n = (uc>>12)&0x0f;
-            n += '0'+(n>9?7:0);
+            n += '0' + (n > 9 ? 7 : 0);
             res += (uchar)n;
           }
           break;
@@ -94,13 +99,14 @@ QString quote (const QString &str) {
     } else {
       // normal char
       switch (uc) {
-        case '"': res += "\\\""; break;
-        case '\\': res += "\\\\"; break;
+        case '"': res += QLatin1String("\\\""); break;
+        case '\\': res += QLatin1String("\\\\"); break;
         default: res += ch; break;
       }
     }
   }
-  res += '"';
+
+  res += QLatin1Char('"');
   return res;
 }
 
@@ -761,11 +767,11 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
     case QVariant::Invalid: res += "null"; break;
     case QVariant::Bool: res += (val.toBool() ? "true" : "false"); break;
     case QVariant::Char: res += quote(QString(val.toChar())).toUtf8(); break;
-    case QVariant::Double: res += QString::number(val.toDouble()).toAscii(); break; //CHECKME: is '.' always '.'?
-    case QVariant::Int: res += QString::number(val.toInt()).toAscii(); break;
-    case QVariant::LongLong: res += QString::number(val.toLongLong()).toAscii(); break;
-    case QVariant::UInt: res += QString::number(val.toUInt()).toAscii(); break;
-    case QVariant::ULongLong: res += QString::number(val.toULongLong()).toAscii(); break;
+    case QVariant::Double: res += QByteArray::number(val.toDouble()); break; //CHECKME: is '.' always '.'?
+    case QVariant::Int: res += QByteArray::number(val.toInt()); break;
+    case QVariant::LongLong: res += QByteArray::number(val.toLongLong()); break;
+    case QVariant::UInt: res += QByteArray::number(val.toUInt()); break;
+    case QVariant::ULongLong: res += QByteArray::number(val.toULongLong()); break;
     case QVariant::String: res += quote(val.toString()).toUtf8(); break;
     case QVariant::ByteArray: res += quote(val.toByteArray()); break;
     case QVariant::Map: {
