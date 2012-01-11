@@ -18,6 +18,8 @@
 
 #include "BenchmarkClient.h"
 #include "client/SimpleClient.h"
+#include "net/packets/ChannelPacket.h"
+#include "net/ServerData.h"
 #include "net/SimpleID.h"
 
 BenchmarkClient::BenchmarkClient(const QString &nick, QObject *parent)
@@ -27,6 +29,8 @@ BenchmarkClient::BenchmarkClient(const QString &nick, QObject *parent)
   m_client->setNick(nick);
   m_client->setCookieAuth(false);
   m_client->setUniqueId(SimpleID::randomId(SimpleID::UniqueUserId));
+
+  connect(m_client, SIGNAL(setup()), SLOT(setup()));
 }
 
 
@@ -39,10 +43,21 @@ BenchmarkClient::BenchmarkClient(const QVariantMap &auth, QObject *parent)
   m_client->setUniqueId(SimpleID::decode(auth.value("uniqueId").toByteArray()));
 
   m_cookie = SimpleID::decode(auth.value("cookie").toByteArray());
+
+  connect(m_client, SIGNAL(setup()), SLOT(setup()));
 }
 
 
 bool BenchmarkClient::open(const QString &url)
 {
   return m_client->openUrl(url, m_cookie);
+}
+
+
+void BenchmarkClient::setup()
+{
+  ServerData *data = m_client->serverData();
+  if (data->features() & ServerData::AutoJoinSupport && SimpleID::typeOf(data->channelId()) == SimpleID::ChannelId) {
+    m_client->send(ChannelPacket::join(m_client->channelId(), data->channelId(), QString(), m_client->sendStream()));
+  }
 }
