@@ -20,10 +20,7 @@
 #define BENCHMARK_H_
 
 #include <QObject>
-#include <QStringList>
-
-class Settings;
-class QProcess;
+#include <QVariant>
 
 /*!
  * \brief Класс для стресс-тестирования.
@@ -39,21 +36,18 @@ public:
   void start();
 
 signals:
-  #if !defined(BENCHMARK_NO_UI)
   void accepted(int count);
   void disconnected(int count);
   void rejected(int count);
   void started(int count);
   void synced(int count);
-  #endif
 
 private slots:
-  #if !defined(BENCHMARK_NO_UI)
   inline void accessDenied(quint16) { emit rejected(++m_rejected); }
   inline void accessGranted(const QString &, const QString &, quint16) { emit accepted(++m_accepted); }
   inline void syncUsersEnd() { emit synced(++m_synced); }
   inline void unconnected() { emit disconnected(++m_disconnected); }
-  #endif
+  void clientStateChanged(int state, int previousState);
   void connectToHost();
 
 private:
@@ -64,13 +58,10 @@ private:
   int m_rejected;               ///< Счётчик клиентов которым отказано в подключении.
   int m_synced;                 ///< Счётчик синхронизированных соединений.
   int m_usersCount;             ///< Число подключений (UsersCount), по умолчанию 10.
-  QList<QProcess *> m_process;  ///< Запущенные процессы чата.
-  QString m_chatConf;           ///< Полное имя конфигурационного файла чата.
-  QString m_chatFile;           ///< Полное имя исполняемого файла чата.
-  QString m_chatName;           ///< Имя исполняемого файла чата, по умолчанию schat2.
   QString m_nickPrefix;         ///< Префикс имён пользователей (NickPrefix), по умолчанию "test_".
-  QString m_serverAddr;         ///< Адрес сервера для тестирования (Network), по умолчанию "192.168.238.1:7667".
-  Settings *m_settings;         ///< Настройки.
+  QString m_serverAddr;         ///< Адрес сервера для тестирования (Url)".
+  QVariantList m_authIn;        ///< Авторизационные данные.
+  QVariantList m_authOut;       ///< Авторизационные данные.
 };
 
 #endif /* BENCHMARK_H_ */
