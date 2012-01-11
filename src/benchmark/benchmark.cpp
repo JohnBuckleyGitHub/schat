@@ -18,13 +18,16 @@
 
 #include <QDebug>
 
-#include <QTimer>
-#include <QProcess>
 #include <QCoreApplication>
+#include <QSettings>
+#include <QTimer>
+#include <QFile>
 
 #include "benchmark.h"
 #include "BenchmarkClient.h"
-#include "Settings.h"
+#include "client/SimpleClient.h"
+#include "JSON.h"
+#include "net/SimpleID.h"
 
 /*!
  * Конструктор класса Benchmark.
@@ -38,39 +41,23 @@ Benchmark::Benchmark(QObject *parent)
   , m_rejected(0)
   , m_synced(0)
   , m_usersCount(2)
-  , m_chatName("schat2")
   , m_nickPrefix("test_")
-  , m_serverAddr("192.168.238.1:7667")
-  , m_settings(0)
 {
 }
 
 
 Benchmark::~Benchmark()
 {
-  if (m_settings)
-    delete m_settings;
 }
 
 
 void Benchmark::quit()
 {
-  foreach (QProcess *process, m_process) {
-    process->terminate();
-    process->kill();
-  }
 }
 
 
 void Benchmark::start()
 {
-  m_chatFile = QCoreApplication::applicationDirPath() + "/" + m_chatName;
-  m_chatConf = QCoreApplication::applicationDirPath() + "/" + m_chatName + ".conf";
-
-# if defined(Q_WS_WIN)
-  m_chatFile += ".exe";
-# endif
-
   QSettings settings(QCoreApplication::applicationDirPath() + "/benchmark.conf", QSettings::IniFormat, this);
   settings.setIniCodec("UTF-8");
   m_connectInterval = settings.value("ConnectInterval", m_connectInterval).toInt();
@@ -78,7 +65,39 @@ void Benchmark::start()
   m_nickPrefix      = settings.value("NickPrefix", m_nickPrefix).toString();
   m_serverAddr      = settings.value("Url", m_serverAddr).toString();
 
+  QFile file(QCoreApplication::applicationDirPath() + "/benchmark.cache");
+  if (file.open(QFile::ReadOnly)) {
+    QVariantMap cache = JSON::parse(file.readAll()).toMap();
+    m_authIn = cache.value("auth").toList();
+  }
+
   connectToHost();
+}
+
+
+void Benchmark::clientStateChanged(int state, int previousState)
+{
+  if (state == SimpleClient::ClientOnline) {
+    ++m_accepted;
+    emit accepted(m_accepted);
+
+    SimpleClient *client = qobject_cast<SimpleClient*>(sender());
+    if (!client)
+      return;
+
+    QVariantMap data;
+    data["nick"]     = client->nick();
+    data["uniqueId"] = SimpleID::encode(client->uniqueId());
+    data["cookie"]   = SimpleID::encode(client->cookie());
+    m_authOut.append(data);
+
+    qDebug() << client->nick();
+  }
+  else if (previousState == SimpleClient::ClientOnline) {
+    ++m_disconnected;
+    emit disconnected(m_disconnected);
+  }
+  qDebug() << sender();
 }
 
 
@@ -86,8 +105,15 @@ void Benchmark::connectToHost()
 {
 
   if (m_count < m_usersCount) {
-    BenchmarkClient *client = new BenchmarkClient(m_nickPrefix + QString::number(m_count), this);
+    BenchmarkClient *client;
+    if (m_authIn.size() > m_count)
+      client = new BenchmarkClient(m_authIn.at(m_count).toMap(), this);
+    else
+      client = new BenchmarkClient(m_nickPrefix + QString::number(m_count), this);
+
+    connect(client->io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
     client->open(m_serverAddr);
+
 //    client->setNick(m_nickPrefix + QString::number(m_count));
 //    client->setCookieAuth(false);
 //    client->openUrl(m_serverAddr);
@@ -123,6 +149,16 @@ void Benchmark::connectToHost()
 
 //    service->connectToHost();
     QTimer::singleShot(m_connectInterval, this, SLOT(connectToHost()));
+  }
+  else {
+    QVariantMap cache;
+    cache["auth"] = m_authOut;
+
+    QFile file(QCoreApplication::applicationDirPath() + "/benchmark.cache");
+    if (!file.open(QFile::WriteOnly))
+      return;
+
+    file.write(JSON::generate(cache));
   }
 }
 

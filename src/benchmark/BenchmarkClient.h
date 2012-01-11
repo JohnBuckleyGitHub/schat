@@ -20,6 +20,7 @@
 #define BENCHMARKCLIENT_H_
 
 #include <QObject>
+#include <QVariant>
 
 class SimpleClient;
 
@@ -29,9 +30,12 @@ class BenchmarkClient : public QObject
 
 public:
   BenchmarkClient(const QString &nick, QObject *parent = 0);
+  BenchmarkClient(const QVariantMap &auth, QObject *parent = 0);
   bool open(const QString &url);
+  inline SimpleClient *io() { return m_client; }
 
 private:
+  QByteArray m_cookie;    ///< Cookie;
   SimpleClient *m_client; ///< Клиент чата.
 };
 

@@ -30,7 +30,19 @@ BenchmarkClient::BenchmarkClient(const QString &nick, QObject *parent)
 }
 
 
+BenchmarkClient::BenchmarkClient(const QVariantMap &auth, QObject *parent)
+: QObject(parent)
+{
+  m_client = new SimpleClient(this);
+  m_client->setNick(auth.value("nick").toString());
+  m_client->setCookieAuth(true);
+  m_client->setUniqueId(SimpleID::decode(auth.value("uniqueId").toByteArray()));
+
+  m_cookie = SimpleID::decode(auth.value("cookie").toByteArray());
+}
+
+
 bool BenchmarkClient::open(const QString &url)
 {
-  return m_client->openUrl(url);
+  return m_client->openUrl(url, m_cookie);
 }
