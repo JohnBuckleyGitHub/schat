@@ -16,37 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#include <QDebug>
 
-#include <QObject>
+#include "net/NodePool.h"
+#include "net/TcpServer.h"
 
-class Core;
-class NodePlugins;
-class NodePool;
-class Storage;
-class WorkerThread;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+NodePool::NodePool(const QStringList &listen, QObject *core, QObject *parent)
+  : QThread(parent)
+  , m_core(core)
+  , m_listen(listen)
 {
-  Q_OBJECT
+  qDebug() << " ~~~ NodePool" << currentThread() << QThread::idealThreadCount();
+}
 
-public:
-  NodeInit(QObject *parent = 0);
-  void quit();
 
-public slots:
-  void start();
+void NodePool::run()
+{
+  qDebug() << " ~~~ NodePool::run()" << currentThread();
 
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  NodePool *m_pool;       ///< Пул обслуживающий подключения.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
-};
+  TcpServer *server = new TcpServer;
+  connect(server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
 
-#endif /* NODEINIT_H_ */
+  server->listen(QHostAddress("0.0.0.0"), 8888);
+
+  exec();
+}
+
+
+void NodePool::newConnection(int socketDescriptor)
+{
+  qDebug() << " ~~~ NodePool::newConnection()" << currentThread();
+}

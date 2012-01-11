@@ -26,6 +26,7 @@
 #include "Settings.h"
 #include "Storage.h"
 #include "WorkerThread.h"
+#include "net/NodePool.h"
 
 /*!
  * Инициализация сервера.
@@ -66,6 +67,9 @@ void NodeInit::start()
 
   m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
+
+  m_pool = new NodePool(QStringList("0.0.0.0:8888"), m_core);
+  m_pool->start();
 
   m_core->start();
   m_thread->start();
