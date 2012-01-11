@@ -34,6 +34,9 @@ public:
   bool open(const QString &url);
   inline SimpleClient *io() { return m_client; }
 
+private slots:
+  void setup();
+
 private:
   QByteArray m_cookie;    ///< Cookie;
   SimpleClient *m_client; ///< Клиент чата.
