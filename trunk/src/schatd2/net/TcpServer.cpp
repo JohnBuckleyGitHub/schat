@@ -16,37 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#include <QDebug>
+#include <QThread>
 
-#include <QObject>
+#include "net/TcpServer.h"
 
-class Core;
-class NodePlugins;
-class NodePool;
-class Storage;
-class WorkerThread;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+TcpServer::TcpServer(QObject *parent)
+  : QTcpServer(parent)
 {
-  Q_OBJECT
+}
 
-public:
-  NodeInit(QObject *parent = 0);
-  void quit();
 
-public slots:
-  void start();
-
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  NodePool *m_pool;       ///< Пул обслуживающий подключения.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
-};
-
-#endif /* NODEINIT_H_ */
+void TcpServer::incomingConnection(int socketDescriptor)
+{
+  qDebug() << " ~~~ TcpServer::incomingConnection()" << QThread::currentThread();
+  emit newConnection(socketDescriptor);
+}

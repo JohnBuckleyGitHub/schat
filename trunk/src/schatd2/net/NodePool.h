@@ -16,37 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#ifndef NODEPOOL_H_
+#define NODEPOOL_H_
 
-#include <QObject>
+#include <QStringList>
+#include <QThread>
 
-class Core;
-class NodePlugins;
-class NodePool;
-class Storage;
-class WorkerThread;
+#include "schat.h"
 
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+class SCHAT_EXPORT NodePool : public QThread
 {
   Q_OBJECT
 
 public:
-  NodeInit(QObject *parent = 0);
-  void quit();
+  NodePool(const QStringList &listen, QObject *core, QObject *parent = 0);
 
-public slots:
-  void start();
+protected:
+  void run();
+
+private slots:
+  void newConnection(int socketDescriptor);
 
 private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  NodePool *m_pool;       ///< Пул обслуживающий подключения.
-  Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
+  QObject *m_core;      ///< Указатель на ядро чата.
+  QStringList m_listen; ///< Список пар адресов и портов на которых сервер будет принимать подключения.
 };
 
-#endif /* NODEINIT_H_ */
+#endif /* NODEPOOL_H_ */
