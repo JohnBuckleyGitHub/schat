@@ -32,6 +32,12 @@ NodeWorker::NodeWorker(QObject *core)
 }
 
 
+NodeWorker::~NodeWorker()
+{
+  qDebug() << " ------------------------- NodeWorker::~NodeWorker()";
+}
+
+
 void NodeWorker::run()
 {
   qDebug() << " ~~~ NodeWorker::run()" << currentThread();
@@ -48,6 +54,17 @@ NodeWorkerListener::NodeWorkerListener(QObject *core)
   , m_core(core)
 {
   qDebug() << " ~~~ NodeWorkerListener" << QThread::currentThread();
+}
+
+
+NodeWorkerListener::~NodeWorkerListener()
+{
+  qDebug() << " ------------------------- NodeWorkerListener::~NodeWorkerListener()";
+
+  foreach (SimpleSocket *socket, m_sockets) {
+    socket->abort();
+    socket->deleteLater();
+  }
 }
 
 
