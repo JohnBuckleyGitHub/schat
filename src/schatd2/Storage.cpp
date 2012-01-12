@@ -22,6 +22,10 @@
 #include <QStringList>
 #include <QUuid>
 
+#if defined(Q_OS_UNIX)
+#include <sys/resource.h>
+#endif
+
 #include "Ch.h"
 #include "DataBase.h"
 #include "DateTime.h"
@@ -53,14 +57,15 @@ Storage::Storage(QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
-  m_settings->setDefault("Certificate", QLatin1String("server.crt"));
-  m_settings->setDefault("Listen",      QStringList("0.0.0.0:7667"));
-  m_settings->setDefault("LogLevel",    2);
-  m_settings->setDefault("MainChannel", 2);
-  m_settings->setDefault("PrivateId",   QString(SimpleID::encode(SimpleID::uniqueId())));
-  m_settings->setDefault("PrivateKey",  QLatin1String("server.key"));
-  m_settings->setDefault("ServerName",  QString());
-  m_settings->setDefault("Workers",     0);
+  m_settings->setDefault("Certificate",  QLatin1String("server.crt"));
+  m_settings->setDefault("Listen",       QStringList("0.0.0.0:7667"));
+  m_settings->setDefault("LogLevel",     2);
+  m_settings->setDefault("MainChannel",  2);
+  m_settings->setDefault("MaxOpenFiles", 0);
+  m_settings->setDefault("PrivateId",    QString(SimpleID::encode(SimpleID::uniqueId())));
+  m_settings->setDefault("PrivateKey",   QLatin1String("server.key"));
+  m_settings->setDefault("ServerName",   QString());
+  m_settings->setDefault("Workers",      0);
 
   m_log = new NodeLog;
   new FeedStorage(this);
@@ -109,6 +114,7 @@ int Storage::start()
   m_log->open(m_locations->file(FileLocations::LogPath, m_locations->path(FileLocations::BaseName) + ".log"), static_cast<NodeLog::Level>(m_settings->value("LogLevel").toInt()));
 
   setDefaultSslConf();
+  setMaxOpenFiles(m_settings->value("MaxOpenFiles").toInt());
 
   m_serverData->setPrivateId(m_settings->value("PrivateId").toString().toUtf8());
   m_serverData->setName(m_settings->value("ServerName").toString());
@@ -178,5 +184,20 @@ void Storage::setDefaultSslConf()
   }
 
   QSslConfiguration::setDefaultConfiguration(conf);
+# endif
+}
+
+
+void Storage::setMaxOpenFiles(int max)
+{
+  if (max <= 0)
+    return;
+
+# if defined(Q_OS_UNIX)
+  struct rlimit limit;
+  limit.rlim_cur = max;
+  limit.rlim_max = max;
+
+  qDebug() << setrlimit(RLIMIT_NOFILE, &limit);
 # endif
 }
