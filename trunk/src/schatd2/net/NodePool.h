@@ -36,7 +36,7 @@ class SCHAT_EXPORT NodePool : public QThread
   Q_OBJECT
 
 public:
-  NodePool(const QStringList &listen, QObject *core, QObject *parent = 0);
+  NodePool(const QStringList &listen, int workers, QObject *core);
   ~NodePool();
 
 signals:
@@ -50,6 +50,7 @@ private slots:
   void workerReady(NodeWorkerListener *listener);
 
 private:
+  int m_count;                             ///< Число потоков.
   QList<NodeWorker *> m_workers;           ///< Список потоков обслуживающих подключения.
   QList<NodeWorkerListener *> m_listeners; ///< Указатели на объекты слушатели потоков обработки сообщений.
   QList<TcpServer *> m_servers;            ///< Список серверов.

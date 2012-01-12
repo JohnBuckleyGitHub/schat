@@ -25,19 +25,26 @@
 #include "net/NodeWorker.h"
 #include "net/TcpServer.h"
 
-NodePool::NodePool(const QStringList &listen, QObject *core, QObject *parent)
-  : QThread(parent)
+NodePool::NodePool(const QStringList &listen, int workers, QObject *core)
+  : QThread()
+  , m_count(workers)
   , m_core(core)
   , m_listen(listen)
   , m_counter(0)
 {
-  qDebug() << " ~~~ NodePool" << currentThread() << QThread::idealThreadCount();
+//  qDebug() << " ~~~ NodePool" << currentThread() << QThread::idealThreadCount();
+
+  if (m_count <= 0) {
+    m_count = QThread::idealThreadCount() - 1;
+    if (m_count == 0)
+      m_count = 1;
+  }
 }
 
 
 NodePool::~NodePool()
 {
-  qDebug() << " ------------------------- NodePool::~NodePool()";
+//  qDebug() << " ------------------------- NodePool::~NodePool()";
 
   foreach (TcpServer *server, m_servers) {
     server->close();
@@ -57,9 +64,9 @@ NodePool::~NodePool()
 
 void NodePool::run()
 {
-  qDebug() << " ~~~ NodePool::run()" << currentThread();
+//  qDebug() << " ~~~ NodePool::run()" << currentThread();
 
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < m_count; ++i) {
     NodeWorker *worker = new NodeWorker(m_core);
     m_workers.append(worker);
     connect(worker, SIGNAL(ready(NodeWorkerListener *)), SLOT(workerReady(NodeWorkerListener *)));
@@ -83,7 +90,7 @@ void NodePool::run()
  */
 void NodePool::newConnection(int socketDescriptor)
 {
-  qDebug() << " ~~~ NodePool::newConnection()" << currentThread();
+//  qDebug() << " ~~~ NodePool::newConnection()" << currentThread();
 
   m_counter++;
   QCoreApplication::postEvent(m_listeners.at(0), new NewConnectionEvent(socketDescriptor, m_counter));
@@ -95,7 +102,7 @@ void NodePool::newConnection(int socketDescriptor)
  */
 void NodePool::workerReady(NodeWorkerListener *listener)
 {
-  qDebug() << " ~~~ NodePool::workerReady()" << currentThread() << listener;
+//  qDebug() << " ~~~ NodePool::workerReady()" << currentThread() << listener;
   m_listeners.append(listener);
   qDebug() << m_listeners.size();
   emit ready(listener);

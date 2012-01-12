@@ -121,13 +121,11 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets,
   if (m_timestamp == 0)
     m_timestamp = DateTime::utc();
 
-  NewPacketsEvent *event = new NewPacketsEvent(sockets, packets, userId);
-  event->timestamp = m_timestamp;
-  event->option = option;
-
-//  QCoreApplication::postEvent(m_listener, event);
-  foreach (QObject *listener, m_listeners) {
-    QCoreApplication::postEvent(listener, event);
+  for (int i = 0; i < m_listeners.size(); ++i) {
+    NewPacketsEvent *event = new NewPacketsEvent(sockets, packets, userId);
+    event->timestamp = m_timestamp;
+    event->option = option;
+    QCoreApplication::postEvent(m_listeners.at(i), event);
   }
 
   return true;
@@ -304,10 +302,11 @@ void Core::reject(const AuthResult &result)
 
   AuthReply reply(Storage::serverData(), result.status, result.authId, result.json);
 
-  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));
-  event->option = result.option;
-
-  QCoreApplication::postEvent(m_listener, event);
+  for (int i = 0; i < m_listeners.size(); ++i) {
+    NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));
+    event->option = result.option;
+    QCoreApplication::postEvent(m_listeners.at(i), event);
+  }
 }
 
 
