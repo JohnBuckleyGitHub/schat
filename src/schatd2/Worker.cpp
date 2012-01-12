@@ -57,10 +57,12 @@ bool Worker::start(const QString &listen)
   if (!port)
     return false;
 
+
   m_server = new Server;
   connect(m_server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
 
-  return m_server->listen(address, port);
+  return false;
+//  return m_server->listen(address, port);
 }
 
 

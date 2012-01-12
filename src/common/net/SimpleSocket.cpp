@@ -367,7 +367,7 @@ SimpleSocket::SimpleSocket(SimpleSocketPrivate &dd, QObject *parent)
 SimpleSocket::~SimpleSocket()
 {
   SCHAT_DEBUG_STREAM("~SimpleSocket" << this)
-  qDebug() << "~SimpleSocket";
+  qDebug() << "                           ~SimpleSocket";
   delete d_ptr;
 }
 

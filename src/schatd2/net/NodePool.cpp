@@ -47,10 +47,11 @@ void NodePool::run()
     worker->start();
   }
 
-  TcpServer *server = new TcpServer;
-  connect(server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
-
-  server->listen(QHostAddress("0.0.0.0"), 8888);
+  foreach (QString host, m_listen) {
+    TcpServer *server = new TcpServer;
+    connect(server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
+    server->listen(host);
+  }
 
   exec();
 }
