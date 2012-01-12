@@ -26,7 +26,6 @@
 #include "NodePlugins.h"
 #include "Settings.h"
 #include "Storage.h"
-#include "WorkerThread.h"
 #include "net/NodePool.h"
 
 /*!
@@ -36,7 +35,6 @@ NodeInit::NodeInit(QObject *parent)
   : QObject(parent)
   , m_core(0)
   , m_pool(0)
-  , m_thread(0)
 {
   m_storage = new Storage(this);
   m_core = new Core(this);
@@ -54,11 +52,6 @@ void NodeInit::quit()
 {
   qDebug() << "quit()";
 
-  if (m_thread) {
-    m_thread->quit();
-    m_thread->wait();
-  }
-
   if (m_pool) {
     m_pool->quit();
     m_pool->wait();
@@ -75,21 +68,15 @@ void NodeInit::start()
   m_storage->start();
   m_plugins->load();
 
-  m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
-  connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
-
   QStringList listen = Storage::settings()->value("Listen").toStringList();
   int workers = Storage::settings()->value("Workers").toInt();
   m_pool = new NodePool(listen, workers, m_core);
   connect(m_pool, SIGNAL(ready(QObject *)), m_core, SLOT(workerReady(QObject *)));
 
   m_core->start();
-  m_thread->start();
   m_pool->start();
 
   m_storage->load();
-
-//  QTimer::singleShot(5000, QCoreApplication::instance(), SLOT(quit()));
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

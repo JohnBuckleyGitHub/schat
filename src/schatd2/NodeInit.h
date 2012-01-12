@@ -25,7 +25,6 @@ class Core;
 class NodePlugins;
 class NodePool;
 class Storage;
-class WorkerThread;
 
 /*!
  * Загрузчик сервера.
@@ -46,7 +45,6 @@ private:
   NodePlugins *m_plugins; ///< Загрузчик плагинов.
   NodePool *m_pool;       ///< Пул обслуживающий подключения.
   Storage *m_storage;     ///< Хранилище данных.
-  WorkerThread *m_thread; ///< Поток обслуживающий подключения.
 };
 
 #endif /* NODEINIT_H_ */

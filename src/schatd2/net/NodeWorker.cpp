@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QCoreApplication>
+#include <QReadLocker>
 
 #include "net/NodeWorker.h"
 #include "events.h"
@@ -28,19 +29,11 @@ NodeWorker::NodeWorker(QObject *core)
   : QThread()
   , m_core(core)
 {
-//  qDebug() << " ~~~ NodeWorker" << currentThread();
-}
-
-
-NodeWorker::~NodeWorker()
-{
-//  qDebug() << " ------------------------- NodeWorker::~NodeWorker()";
 }
 
 
 void NodeWorker::run()
 {
-//  qDebug() << " ~~~ NodeWorker::run()" << currentThread();
   NodeWorkerListener listener(m_core);
 
   emit ready(&listener);
@@ -53,14 +46,11 @@ NodeWorkerListener::NodeWorkerListener(QObject *core)
   : QObject()
   , m_core(core)
 {
-//  qDebug() << " ~~~ NodeWorkerListener" << QThread::currentThread();
 }
 
 
 NodeWorkerListener::~NodeWorkerListener()
 {
-//  qDebug() << " ------------------------- NodeWorkerListener::~NodeWorkerListener()";
-
   foreach (SimpleSocket *socket, m_sockets) {
     socket->abort();
     socket->deleteLater();
@@ -68,9 +58,15 @@ NodeWorkerListener::~NodeWorkerListener()
 }
 
 
+int NodeWorkerListener::count()
+{
+  QReadLocker lock(&m_lock);
+  return m_sockets.size();
+}
+
+
 void NodeWorkerListener::customEvent(QEvent *event)
 {
-//  qDebug() << " ~~~ NodeWorkerListener::customEvent()" << QThread::currentThread() << event;
   int type = event->type();
   if (type == ServerEvent::NewConnection)
     add(static_cast<NewConnectionEvent*>(event));
@@ -87,7 +83,6 @@ void NodeWorkerListener::customEvent(QEvent *event)
  */
 void NodeWorkerListener::packets(quint64 id, const QList<QByteArray> &packets)
 {
-//  qDebug() << " ~~~ NodeWorkerListener::packets()" << QThread::currentThread() << id;
   m_lock.lockForRead();
   SimpleSocket *socket = m_sockets.value(id);
   m_lock.unlock();
@@ -126,8 +121,6 @@ void NodeWorkerListener::released(quint64 id)
  */
 void NodeWorkerListener::add(NewConnectionEvent *event)
 {
-//  qDebug() << " ~~~ NodeWorkerListener::add()" << QThread::currentThread();
-
   SimpleSocket *socket = new SimpleSocket();
   socket->setId(event->socket());
 
@@ -146,7 +139,6 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
 
 void NodeWorkerListener::packets(NewPacketsEvent *event)
 {
-//  qDebug() << " ~~~ NodeWorkerListener::packets(NewPacketsEvent *event)" << QThread::currentThread() << event->sockets() << m_sockets << event;
   QList<SimpleSocket*> sockets;
 
   m_lock.lockForRead();
