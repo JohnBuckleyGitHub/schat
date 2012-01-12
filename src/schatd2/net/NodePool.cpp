@@ -18,13 +18,18 @@
 
 #include <QDebug>
 
+#include <QCoreApplication>
+
+#include "events.h"
 #include "net/NodePool.h"
+#include "net/NodeWorker.h"
 #include "net/TcpServer.h"
 
 NodePool::NodePool(const QStringList &listen, QObject *core, QObject *parent)
   : QThread(parent)
   , m_core(core)
   , m_listen(listen)
+  , m_counter(0)
 {
   qDebug() << " ~~~ NodePool" << currentThread() << QThread::idealThreadCount();
 }
@@ -33,6 +38,14 @@ NodePool::NodePool(const QStringList &listen, QObject *core, QObject *parent)
 void NodePool::run()
 {
   qDebug() << " ~~~ NodePool::run()" << currentThread();
+
+  for (int i = 0; i < 1; ++i) {
+    NodeWorker *worker = new NodeWorker(m_core);
+    m_workers.append(worker);
+    connect(worker, SIGNAL(ready(NodeWorkerListener *)), SLOT(workerReady(NodeWorkerListener *)));
+
+    worker->start();
+  }
 
   TcpServer *server = new TcpServer;
   connect(server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
@@ -43,7 +56,25 @@ void NodePool::run()
 }
 
 
+/*!
+ * Обработка нового подключения.
+ */
 void NodePool::newConnection(int socketDescriptor)
 {
   qDebug() << " ~~~ NodePool::newConnection()" << currentThread();
+
+  m_counter++;
+  QCoreApplication::postEvent(m_listeners.at(0), new NewConnectionEvent(socketDescriptor, m_counter));
+}
+
+
+/*!
+ * Обработка готовности потока NodeWorker.
+ */
+void NodePool::workerReady(NodeWorkerListener *listener)
+{
+  qDebug() << " ~~~ NodePool::workerReady()" << currentThread() << listener;
+  m_listeners.append(listener);
+  qDebug() << m_listeners.size();
+  emit ready(listener);
 }

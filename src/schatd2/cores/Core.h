@@ -59,6 +59,7 @@ public:
   virtual void quit() {}
 
 public slots:
+  inline void workerReady(QObject *listener) { m_listeners.append(listener); }
   inline void workersReady(QObject *listener) { m_listener = listener; }
 
 protected:
@@ -89,6 +90,7 @@ protected:
   QDataStream *m_sendStream;          ///< Поток отправки виртуальных пакетов.
   qint64 m_timestamp;                 ///< Отметка времени.
   QList<NodeAuth *> m_auth;           ///< Модули авторизации.
+  QList<QObject *> m_listeners;       ///< Слушатели событий.
   QObject *m_listener;                ///< Слушатель сообщений.
   Settings *m_settings;               ///< Настройки.
   static Core *m_self;                ///< Указатель на себя.

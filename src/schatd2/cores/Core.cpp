@@ -125,7 +125,11 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets,
   event->timestamp = m_timestamp;
   event->option = option;
 
-  QCoreApplication::postEvent(m_listener, event);
+//  QCoreApplication::postEvent(m_listener, event);
+  foreach (QObject *listener, m_listeners) {
+    QCoreApplication::postEvent(listener, event);
+  }
+
   return true;
 }
 
@@ -152,6 +156,8 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 
 void Core::customEvent(QEvent *event)
 {
+  qDebug() << "Core::customEvent()" << QThread::currentThread();
+
   switch (event->type()) {
     case ServerEvent::NewPackets:
       newPacketsEvent(static_cast<NewPacketsEvent*>(event));

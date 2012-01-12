@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -67,5 +67,12 @@ NewPacketsEvent::NewPacketsEvent(const QList<quint64> &sockets, const QList<QByt
 SocketReleaseEvent::SocketReleaseEvent(quint64 socket, const QString &errorString, const QByteArray &userId)
   : ServerEvent(SocketRelease, socket, userId)
   , errorString(errorString)
+{
+}
+
+
+NewConnectionEvent::NewConnectionEvent(int socketDescriptor, quint64 socket)
+  : ServerEvent(NewConnection, socket)
+  , socketDescriptor(socketDescriptor)
 {
 }

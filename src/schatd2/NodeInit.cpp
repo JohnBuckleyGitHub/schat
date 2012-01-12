@@ -69,10 +69,11 @@ void NodeInit::start()
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
 
   m_pool = new NodePool(QStringList("0.0.0.0:8888"), m_core);
-  m_pool->start();
+  connect(m_pool, SIGNAL(ready(QObject *)), m_core, SLOT(workerReady(QObject *)));
 
   m_core->start();
   m_thread->start();
+  m_pool->start();
 
   m_storage->load();
 
