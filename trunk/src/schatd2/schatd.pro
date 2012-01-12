@@ -40,6 +40,7 @@ HEADERS = \
     feeds/NodeAclFeed.h \
     feeds/NodeTopicFeed.h \
     net/NodePool.h \
+    net/NodeWorker.h \
     net/TcpServer.h \
     NodeLog.h \
     NodeMessages.h \
@@ -66,6 +67,7 @@ SOURCES = \
     feeds/NodeAclFeed.cpp \
     feeds/NodeTopicFeed.cpp \
     net/NodePool.cpp \
+    net/NodeWorker.cpp \
     net/TcpServer.cpp \
     NodeLog.cpp \
     NodeMessages.cpp \

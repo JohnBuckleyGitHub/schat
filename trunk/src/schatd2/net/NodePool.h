@@ -24,6 +24,12 @@
 
 #include "schat.h"
 
+class NodeWorker;
+class NodeWorkerListener;
+
+/*!
+ * Пул потоков сервера, обрабатывающих подключения.
+ */
 class SCHAT_EXPORT NodePool : public QThread
 {
   Q_OBJECT
@@ -31,15 +37,22 @@ class SCHAT_EXPORT NodePool : public QThread
 public:
   NodePool(const QStringList &listen, QObject *core, QObject *parent = 0);
 
+signals:
+  void ready(QObject *listener);
+
 protected:
   void run();
 
 private slots:
   void newConnection(int socketDescriptor);
+  void workerReady(NodeWorkerListener *listener);
 
 private:
-  QObject *m_core;      ///< Указатель на ядро чата.
-  QStringList m_listen; ///< Список пар адресов и портов на которых сервер будет принимать подключения.
+  QList<NodeWorker *> m_workers;           ///< Список потоков обслуживающих подключения.
+  QList<NodeWorkerListener *> m_listeners; ///< Указатели на объекты слушатели потоков обработки сообщений.
+  QObject *m_core;                         ///< Указатель на ядро чата.
+  QStringList m_listen;                    ///< Список пар адресов и портов на которых сервер будет принимать подключения.
+  quint64 m_counter;                       ///< Счётчик, определяющий глобальный идентификатор сокета.
 };
 
 #endif /* NODEPOOL_H_ */

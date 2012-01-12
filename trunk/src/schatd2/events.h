@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,18 +33,19 @@ class SCHAT_EXPORT ServerEvent : public QEvent
 public:
   enum ServerEvents {
     NewPackets = 7666,
-    SocketRelease = 7667
+    SocketRelease = 7667,
+    NewConnection = 0x4E43
   };
 
   ServerEvent(ServerEvents type, const QList<quint64> &sockets, const QByteArray &m_channelId = QByteArray());
   ServerEvent(ServerEvents type, quint64 socket, const QByteArray &m_channelId = QByteArray());
-  inline const QByteArray& channelId() const { return m_channelId; }
+  inline const QByteArray& channelId() const   { return m_channelId; }
   inline const QList<quint64>& sockets() const { return m_sockets; }
   quint64 socket() const;
 
 protected:
   QByteArray m_channelId;      ///< Идентификатор пользователя.
-  QList<quint64> m_sockets; ///< Идентификаторы сокетов.
+  QList<quint64> m_sockets;    ///< Идентификаторы сокетов.
 };
 
 
@@ -73,9 +74,18 @@ public:
 class SCHAT_EXPORT SocketReleaseEvent : public ServerEvent
 {
 public:
-  SocketReleaseEvent(quint64 sockets, const QString &errorString, const QByteArray &userId = QByteArray());
+  SocketReleaseEvent(quint64 socket, const QString &errorString, const QByteArray &userId = QByteArray());
 
   const QString errorString;
+};
+
+
+class SCHAT_EXPORT NewConnectionEvent : public ServerEvent
+{
+public:
+  NewConnectionEvent(int socketDescriptor, quint64 socket);
+
+  int socketDescriptor;
 };
 
 #endif /* EVENTS_H_ */
