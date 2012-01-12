@@ -17,6 +17,7 @@
  */
 
 #include <QTimer>
+#include <QCoreApplication>
 
 #include "debugstream.h"
 
@@ -68,7 +69,7 @@ void NodeInit::start()
   m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
 
-  m_pool = new NodePool(QStringList("0.0.0.0:8888"), m_core);
+  m_pool = new NodePool(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_pool, SIGNAL(ready(QObject *)), m_core, SLOT(workerReady(QObject *)));
 
   m_core->start();
@@ -76,6 +77,8 @@ void NodeInit::start()
   m_pool->start();
 
   m_storage->load();
+
+  QTimer::singleShot(10000, QCoreApplication::instance(), SLOT(quit()));
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

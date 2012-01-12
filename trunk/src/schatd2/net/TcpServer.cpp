@@ -27,6 +27,24 @@ TcpServer::TcpServer(QObject *parent)
 }
 
 
+bool TcpServer::listen(const QString &host)
+{
+  int index = host.lastIndexOf(QLatin1String(":"));
+  if (index == -1)
+    return false;
+
+  QHostAddress address = QHostAddress(host.left(index));
+  if (address.isNull())
+    return false;
+
+  quint16 port = host.mid(index + 1).toUInt();
+  if (!port)
+    return false;
+
+  return QTcpServer::listen(address, port);
+}
+
+
 void TcpServer::incomingConnection(int socketDescriptor)
 {
   qDebug() << " ~~~ TcpServer::incomingConnection()" << QThread::currentThread();

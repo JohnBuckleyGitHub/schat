@@ -91,14 +91,15 @@ void NodeWorkerListener::released(quint64 id)
   m_lock.unlock();
 
   if (socket) {
-    m_lock.lockForWrite();
-    m_sockets.remove(id);
-    m_lock.unlock();
-
     if (socket->isAuthorized()) {
       SocketReleaseEvent *event = new SocketReleaseEvent(id, socket->errorString(), socket->channelId());
       QCoreApplication::postEvent(m_core, event);
     }
+
+    m_lock.lockForWrite();
+    m_sockets.remove(id);
+    socket->deleteLater();
+    m_lock.unlock();
   }
 }
 
@@ -116,6 +117,7 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
   if (socket->setSocketDescriptor(event->socketDescriptor)) {
     connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(packets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
+
     m_lock.lockForWrite();
     m_sockets[event->socket()] = socket;
     m_lock.unlock();
