@@ -54,13 +54,13 @@ Storage::Storage(QObject *parent)
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
   m_settings->setDefault("Certificate", QLatin1String("server.crt"));
-  m_settings->setDefault("Kernel",      QString());
   m_settings->setDefault("Listen",      QStringList("0.0.0.0:7667"));
   m_settings->setDefault("LogLevel",    2);
   m_settings->setDefault("MainChannel", 2);
   m_settings->setDefault("PrivateId",   QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault("PrivateKey",  QLatin1String("server.key"));
   m_settings->setDefault("ServerName",  QString());
+  m_settings->setDefault("Workers",     0);
 
   m_log = new NodeLog;
   new FeedStorage(this);

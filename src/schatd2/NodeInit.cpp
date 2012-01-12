@@ -78,7 +78,9 @@ void NodeInit::start()
   m_thread = new WorkerThread(Storage::settings()->value("Listen").toStringList(), m_core);
   connect(m_thread, SIGNAL(ready(QObject *)), m_core, SLOT(workersReady(QObject *)));
 
-  m_pool = new NodePool(Storage::settings()->value("Listen").toStringList(), m_core);
+  QStringList listen = Storage::settings()->value("Listen").toStringList();
+  int workers = Storage::settings()->value("Workers").toInt();
+  m_pool = new NodePool(listen, workers, m_core);
   connect(m_pool, SIGNAL(ready(QObject *)), m_core, SLOT(workerReady(QObject *)));
 
   m_core->start();
