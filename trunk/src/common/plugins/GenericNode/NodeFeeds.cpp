@@ -84,7 +84,7 @@ bool NodeFeeds::read(PacketReader *reader)
  * Обработка запроса пользователя на создание нового фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed add <имя фида> <опциональные JSON данные фида>.
+ * /feed add \<имя фида\> \<опциональные JSON данные фида\>.
  */
 int NodeFeeds::add()
 {
@@ -124,7 +124,7 @@ int NodeFeeds::add()
  * Обработка запроса пользователя на очистку данных фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed clear <имя фида>.
+ * /feed clear \<имя фида\>.
  */
 int NodeFeeds::clear()
 {
@@ -172,7 +172,6 @@ int NodeFeeds::get()
  */
 int NodeFeeds::headers()
 {
-//  m_core->send(m_user->sockets(), FeedPacket::headers(m_channel, m_user, m_core->sendStream()));
   m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, m_channel->feeds().headers(m_user.data()), m_core->sendStream()));
   return Notice::OK;
 }
@@ -182,7 +181,7 @@ int NodeFeeds::headers()
  * Обработка запроса пользователя к данным фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed query <имя фида> <опциональные JSON данные запроса>.
+ * /feed query \<имя фида\> \<опциональные JSON данные запроса\>.
  */
 int NodeFeeds::query()
 {
@@ -207,7 +206,7 @@ int NodeFeeds::query()
  * Для удаления фида необходимы права на редактирование.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed remove <имя фида>.
+ * /feed remove \<имя фида\>.
  */
 int NodeFeeds::remove()
 {
@@ -231,7 +230,7 @@ int NodeFeeds::remove()
  * Откат фида возможен, только если у пользователя есть права на редактирование фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed revert <имя фида> <опциональный номер ревизии>.
+ * /feed revert \<имя фида\> \<опциональный номер ревизии\>.
  */
 int NodeFeeds::revert()
 {
@@ -252,7 +251,7 @@ int NodeFeeds::revert()
  * Обработка запроса пользователя на обновление данных фида.
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed update <имя фида> <JSON данные>.
+ * /feed update \<имя фида\> \<JSON данные\>.
  */
 int NodeFeeds::update()
 {
