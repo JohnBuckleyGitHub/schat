@@ -51,6 +51,7 @@ public:
 
 private:
   void setDefaultSslConf();
+  void setMaxOpenFiles(int max);
 
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
