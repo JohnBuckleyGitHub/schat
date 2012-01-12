@@ -37,7 +37,7 @@ bool Acl::can(Channel *channel, ResultAcl acl) const
 /*!
  * Возвращает права доступа для конкретного пользователя.
  *
- * \param Канал-пользователь.
+ * \param channel Канал-пользователь.
  * \return Acl::ResultAcl.
  */
 int Acl::match(Channel *channel) const

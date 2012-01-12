@@ -26,8 +26,8 @@ HEADERS = \
     NodeInit.h \
 
 SOURCES = \
-    main.cpp \
     NodeInit.cpp \
+    schatd2.cpp \
 
 DEFINES += SCHAT_DAEMON
 SCHAT_DAEMON_LIB = 1
