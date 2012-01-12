@@ -35,6 +35,7 @@
 NodeInit::NodeInit(QObject *parent)
   : QObject(parent)
   , m_core(0)
+  , m_pool(0)
   , m_thread(0)
 {
   m_storage = new Storage(this);
@@ -51,9 +52,17 @@ NodeInit::NodeInit(QObject *parent)
 
 void NodeInit::quit()
 {
+  qDebug() << "quit()";
+
   if (m_thread) {
     m_thread->quit();
     m_thread->wait();
+  }
+
+  if (m_pool) {
+    m_pool->quit();
+    m_pool->wait();
+    delete m_pool;
   }
 
   if (m_core)
@@ -78,7 +87,7 @@ void NodeInit::start()
 
   m_storage->load();
 
-  QTimer::singleShot(10000, QCoreApplication::instance(), SLOT(quit()));
+//  QTimer::singleShot(5000, QCoreApplication::instance(), SLOT(quit()));
 
   SCHAT_DEBUG_STREAM("NODE STARTED");
 }

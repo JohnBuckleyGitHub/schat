@@ -35,11 +35,31 @@ NodePool::NodePool(const QStringList &listen, QObject *core, QObject *parent)
 }
 
 
+NodePool::~NodePool()
+{
+  qDebug() << " ------------------------- NodePool::~NodePool()";
+
+  foreach (TcpServer *server, m_servers) {
+    server->close();
+    delete server;
+  }
+
+  foreach (NodeWorker *worker, m_workers) {
+    worker->quit();
+  }
+
+  foreach (NodeWorker *worker, m_workers) {
+    worker->wait();
+    delete worker;
+  }
+}
+
+
 void NodePool::run()
 {
   qDebug() << " ~~~ NodePool::run()" << currentThread();
 
-  for (int i = 0; i < 1; ++i) {
+  for (int i = 0; i < 2; ++i) {
     NodeWorker *worker = new NodeWorker(m_core);
     m_workers.append(worker);
     connect(worker, SIGNAL(ready(NodeWorkerListener *)), SLOT(workerReady(NodeWorkerListener *)));
@@ -49,6 +69,7 @@ void NodePool::run()
 
   foreach (QString host, m_listen) {
     TcpServer *server = new TcpServer;
+    m_servers.append(server);
     connect(server, SIGNAL(newConnection(int)), SLOT(newConnection(int)), Qt::DirectConnection);
     server->listen(host);
   }

@@ -36,6 +36,7 @@ class SCHAT_EXPORT NodeWorker : public QThread
 
 public:
   NodeWorker(QObject *core);
+  ~NodeWorker();
 
 signals:
   void ready(NodeWorkerListener *listener);
@@ -54,6 +55,7 @@ class NodeWorkerListener : public QObject
 
 public:
   NodeWorkerListener(QObject *core);
+  ~NodeWorkerListener();
 
 protected:
   void customEvent(QEvent *event);

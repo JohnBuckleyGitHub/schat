@@ -27,6 +27,12 @@ TcpServer::TcpServer(QObject *parent)
 }
 
 
+TcpServer::~TcpServer()
+{
+  qDebug() << " ------------------------- TcpServer::~TcpServer()";
+}
+
+
 bool TcpServer::listen(const QString &host)
 {
   int index = host.lastIndexOf(QLatin1String(":"));

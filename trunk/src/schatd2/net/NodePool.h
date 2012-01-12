@@ -26,6 +26,7 @@
 
 class NodeWorker;
 class NodeWorkerListener;
+class TcpServer;
 
 /*!
  * Пул потоков сервера, обрабатывающих подключения.
@@ -36,6 +37,7 @@ class SCHAT_EXPORT NodePool : public QThread
 
 public:
   NodePool(const QStringList &listen, QObject *core, QObject *parent = 0);
+  ~NodePool();
 
 signals:
   void ready(QObject *listener);
@@ -50,6 +52,7 @@ private slots:
 private:
   QList<NodeWorker *> m_workers;           ///< Список потоков обслуживающих подключения.
   QList<NodeWorkerListener *> m_listeners; ///< Указатели на объекты слушатели потоков обработки сообщений.
+  QList<TcpServer *> m_servers;            ///< Список серверов.
   QObject *m_core;                         ///< Указатель на ядро чата.
   QStringList m_listen;                    ///< Список пар адресов и портов на которых сервер будет принимать подключения.
   quint64 m_counter;                       ///< Счётчик, определяющий глобальный идентификатор сокета.
