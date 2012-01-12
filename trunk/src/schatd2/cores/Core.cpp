@@ -48,8 +48,7 @@ Core *Core::m_self = 0;
 Core::Core(QObject *parent)
   : QObject(parent)
   , m_timestamp(0)
-  , m_listener(0)
-  , m_settings(Storage::i()->settings())
+  , m_settings(Storage::settings())
   , m_storage(Storage::i())
 {
   m_self = this;
@@ -154,8 +153,6 @@ bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 
 void Core::customEvent(QEvent *event)
 {
-  qDebug() << "Core::customEvent()" << QThread::currentThread();
-
   switch (event->type()) {
     case ServerEvent::NewPackets:
       newPacketsEvent(static_cast<NewPacketsEvent*>(event));

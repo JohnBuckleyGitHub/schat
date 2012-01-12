@@ -27,12 +27,6 @@ TcpServer::TcpServer(QObject *parent)
 }
 
 
-TcpServer::~TcpServer()
-{
-  qDebug() << " ------------------------- TcpServer::~TcpServer()";
-}
-
-
 bool TcpServer::listen(const QString &host)
 {
   int index = host.lastIndexOf(QLatin1String(":"));
@@ -53,6 +47,5 @@ bool TcpServer::listen(const QString &host)
 
 void TcpServer::incomingConnection(int socketDescriptor)
 {
-  qDebug() << " ~~~ TcpServer::incomingConnection()" << QThread::currentThread();
   emit newConnection(socketDescriptor);
 }

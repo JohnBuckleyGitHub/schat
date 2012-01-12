@@ -29,7 +29,6 @@ class SCHAT_EXPORT TcpServer : public QTcpServer
 
 public:
   TcpServer(QObject *parent = 0);
-  ~TcpServer();
   bool listen(const QString &host);
 
 signals:

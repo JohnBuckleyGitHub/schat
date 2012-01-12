@@ -32,8 +32,6 @@ NodePool::NodePool(const QStringList &listen, int workers, QObject *core)
   , m_listen(listen)
   , m_counter(0)
 {
-//  qDebug() << " ~~~ NodePool" << currentThread() << QThread::idealThreadCount();
-
   if (m_count <= 0) {
     m_count = QThread::idealThreadCount() - 1;
     if (m_count == 0)
@@ -44,8 +42,6 @@ NodePool::NodePool(const QStringList &listen, int workers, QObject *core)
 
 NodePool::~NodePool()
 {
-//  qDebug() << " ------------------------- NodePool::~NodePool()";
-
   foreach (TcpServer *server, m_servers) {
     server->close();
     delete server;
@@ -64,8 +60,6 @@ NodePool::~NodePool()
 
 void NodePool::run()
 {
-//  qDebug() << " ~~~ NodePool::run()" << currentThread();
-
   for (int i = 0; i < m_count; ++i) {
     NodeWorker *worker = new NodeWorker(m_core);
     m_workers.append(worker);
@@ -90,10 +84,16 @@ void NodePool::run()
  */
 void NodePool::newConnection(int socketDescriptor)
 {
-//  qDebug() << " ~~~ NodePool::newConnection()" << currentThread();
+  if (m_listeners.isEmpty())
+    return;
 
   m_counter++;
-  QCoreApplication::postEvent(m_listeners.at(0), new NewConnectionEvent(socketDescriptor, m_counter));
+  QMap<int, NodeWorkerListener*> map;
+  foreach (NodeWorkerListener *listener, m_listeners) {
+    map[listener->count()] = listener;
+  }
+
+  QCoreApplication::postEvent(map.value(map.keys().at(0)), new NewConnectionEvent(socketDescriptor, m_counter));
 }
 
 
@@ -102,8 +102,6 @@ void NodePool::newConnection(int socketDescriptor)
  */
 void NodePool::workerReady(NodeWorkerListener *listener)
 {
-//  qDebug() << " ~~~ NodePool::workerReady()" << currentThread() << listener;
   m_listeners.append(listener);
-  qDebug() << m_listeners.size();
   emit ready(listener);
 }
