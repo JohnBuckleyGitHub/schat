@@ -31,9 +31,9 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]      = "raw-feeds";
+    out["Id"]      = "RawFeeds";
     out["Name"]    = "Raw Feeds";
-    out["Version"] = "0.1.1";
+    out["Version"] = "0.1.2";
     out["Site"]    = "http://wiki.schat.me/Plugin/RawFeeds";
     out["Desc"]    = "Raw Feeds";
 
