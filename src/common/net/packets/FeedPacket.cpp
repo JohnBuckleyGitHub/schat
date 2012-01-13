@@ -92,6 +92,16 @@ QByteArray FeedPacket::reply(const FeedPacket &source, int status, QDataStream *
 }
 
 
+/*!
+ * Универсальная функция запроса клиента к серверу.
+ *
+ * \param user    Идентификатор пользователя.
+ * \param channel Идентификатор канала, к которому предназначен запрос.
+ * \param command Команда.
+ * \param name    Имя фида.
+ * \param stream  Поток записи пакета.
+ * \param json    JSON данные запроса.
+ */
 QByteArray FeedPacket::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json)
 {
   FeedPacket packet(user, channel, command);

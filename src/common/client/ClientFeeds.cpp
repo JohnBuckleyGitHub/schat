@@ -34,42 +34,26 @@ ClientFeeds::ClientFeeds(QObject *parent)
 
 bool ClientFeeds::add(const QByteArray &id, const QString &name, const QVariantMap &json)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "add", name, ChatClient::io()->sendStream(), json));
+  return request(id, "add", name, json);
 }
 
 
 bool ClientFeeds::clear(const QByteArray &id, const QString &name)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "clear", name, ChatClient::io()->sendStream()));
+  return request(id, "clear", name);
 }
 
 
 bool ClientFeeds::get(const QByteArray &id, const QString &name)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "get", name, ChatClient::io()->sendStream()));
+  return request(id, "get", name);
 }
 
 
 /*!
  * Запрос заголовков фидов.
+ *
+ * \param id Идентификатор канала, к которому предназначен запрос.
  */
 bool ClientFeeds::headers(const QByteArray &id)
 {
@@ -82,56 +66,44 @@ bool ClientFeeds::headers(const QByteArray &id)
 
 bool ClientFeeds::query(const QByteArray &id, const QString &name, const QVariantMap &json)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "query", name, ChatClient::io()->sendStream(), json));
+  return request(id, "query", name, json);
 }
 
 
 bool ClientFeeds::remove(const QByteArray &id, const QString &name)
 {
+  return request(id, "remove", name);
+}
+
+
+bool ClientFeeds::request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json)
+{
   if (!Channel::isCompatibleId(id))
+    return false;
+
+  if (command.isEmpty())
     return false;
 
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "remove", name, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, command, name, ChatClient::stream(), json));
 }
 
 
 bool ClientFeeds::revert(const QByteArray &id, const QString &name, qint64 rev)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
   QVariantMap json;
   if (rev > 0)
     json["rev"] = rev;
 
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "revert", name, ChatClient::io()->sendStream(), json));
+  return request(id, "revert", name, json);
 }
 
 
 bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVariantMap &json)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (name.isEmpty())
-    return false;
-
-  if (json.isEmpty())
-    return false;
-
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, "update", name, ChatClient::io()->sendStream(), json));
+  return request(id, "update", name, json);
 }
 
 

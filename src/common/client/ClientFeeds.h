@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ public:
   bool headers(const QByteArray &id);
   bool query(const QByteArray &id, const QString &name, const QVariantMap &json);
   bool remove(const QByteArray &id, const QString &name);
+  bool request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   bool revert(const QByteArray &id, const QString &name, qint64 rev);
   bool update(const QByteArray &id, const QString &name, const QVariantMap &json);
   inline Hooks::Feeds *hooks() const { return m_hooks; }

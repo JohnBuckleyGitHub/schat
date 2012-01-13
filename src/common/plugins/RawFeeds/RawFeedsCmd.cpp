@@ -50,27 +50,11 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     if (!body.isValid())
       return true;
 
-    if (body.command() == "get") {
-      ChatClient::feeds()->get(dest, body.body());
-    }
-    else if (body.command() == "update") {
-      update(dest, body);
-    }
-    else if (body.command() == "clear") {
-      ChatClient::feeds()->clear(dest, body.body());
-    }
-    else if (body.command() == "query") {
-      query(dest, body);
-    }
-    else if (body.command() == "add") {
-      add(dest, body);
-    }
-    else if (body.command() == "remove") {
-      ChatClient::feeds()->remove(dest, body.body());
-    }
-    else if (body.command() == "revert") {
+    if (body.command() == "revert") {
       revert(dest, body);
     }
+    else
+      request(dest, body);
 
     return true;
   }
@@ -79,25 +63,14 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
-void RawFeedsCmd::add(const QByteArray &dest, const ClientCmd &cmd)
+void RawFeedsCmd::request(const QByteArray &dest, const ClientCmd &cmd)
 {
   ClientCmd body(cmd.body());
   if (body.command().isEmpty())
     return;
 
   QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
-  ChatClient::feeds()->add(dest, body.command(), json);
-}
-
-
-void RawFeedsCmd::query(const QByteArray &dest, const ClientCmd &cmd)
-{
-  ClientCmd body(cmd.body());
-  if (body.command().isEmpty())
-    return;
-
-  QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
-  ChatClient::feeds()->query(dest, body.command(), json);
+  ChatClient::feeds()->request(dest, cmd.command(), body.command(), json);
 }
 
 
@@ -109,20 +82,6 @@ void RawFeedsCmd::revert(const QByteArray &dest, const ClientCmd &cmd)
 
   qint64 rev = body.body().toLongLong();
   ChatClient::feeds()->revert(dest, body.command(), rev);
-}
-
-
-void RawFeedsCmd::update(const QByteArray &dest, const ClientCmd &cmd)
-{
-  ClientCmd body(cmd.body());
-  if (body.command().isEmpty())
-    return;
-
-  QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
-  if (json.isEmpty())
-    return;
-
-  ChatClient::feeds()->update(dest, body.command(), json);
 }
 
 } // namespace Hooks

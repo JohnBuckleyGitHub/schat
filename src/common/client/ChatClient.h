@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ public:
   inline static bool open(const QByteArray &id) { return m_self->openId(id); }
   inline static bool open(const QString &url)   { return m_self->openUrl(QUrl(url)); }
 
+  static QDataStream *stream();
   static qint64 date();
 
 signals:
