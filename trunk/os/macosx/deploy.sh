@@ -23,6 +23,7 @@ cd ../..
 qmake -r
 make -j3
 cd out
+mkdir $TARGET.app/Contents/Frameworks/
 cp -R libschat*dylib $TARGET.app/Contents/Frameworks/
 cp schatd2.app/Contents/MacOS/schatd2 $TARGET.app/Contents/MacOS/
 cp plugins/*dylib $TARGET.app/Contents/PlugIns/
