@@ -69,11 +69,13 @@ bool Ch::gc(ChatChannel channel)
  */
 bool Ch::isCollision(const QByteArray &id, const QString &name)
 {
-  ChatChannel channel = Ch::channel(Normalize::toId('~' + name), SimpleID::UserId, false);
+  int type = SimpleID::typeOf(id);
+
+  ChatChannel channel = Ch::channel(Normalize::toId(type, name), type, false);
   if (channel && channel->id() != id)
     return channel->id() != id;
 
-  return DataBase::isCollision(id, Normalize::toId('~' + name), SimpleID::UserId);
+  return DataBase::isCollision(id, Normalize::toId(type, name), type);
 }
 
 
@@ -83,6 +85,22 @@ bool Ch::isCollision(const QByteArray &id, const QString &name)
 QByteArray Ch::makeId(const QByteArray &normalized)
 {
   return SimpleID::make("channel:" + Storage::serverData()->privateId() + normalized, SimpleID::ChannelId);
+}
+
+
+/*!
+ * Переименование канала.
+ */
+bool Ch::renameImpl(ChatChannel channel, const QString &name)
+{
+  QByteArray normalized = channel->normalized();
+  if (isCollision(channel->id(), name))
+    return false;
+
+  channel->setName(name);
+  m_cache.rename(channel, normalized);
+  DataBase::update(channel);
+  return true;
 }
 
 
@@ -211,27 +229,6 @@ void Ch::removeImpl(ChatChannel channel)
   foreach (Ch *hook, m_hooks) {
     hook->removeImpl(channel);
   }
-}
-
-
-/*!
- * Переименование канала.
- */
-void Ch::renameImpl(ChatChannel channel, const QString &name)
-{
-  if (m_self != this)
-    return;
-
-  if (channel->type() != SimpleID::UserId)
-    return;
-
-  QByteArray normalized = channel->normalized();
-  if (isCollision(channel->id(), name))
-    return;
-
-  channel->setName(name);
-  m_cache.rename(channel, normalized);
-  DataBase::update(channel);
 }
 
 

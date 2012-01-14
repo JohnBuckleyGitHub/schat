@@ -19,19 +19,25 @@
 #include "Channel.h"
 #include "net/SimpleID.h"
 #include "Normalize.h"
+#include "sglobal.h"
 
 QHash<QChar, QChar> Normalize::m_map;
 
-
 QByteArray Normalize::toId(Channel *channel)
 {
-  return Normalize::toId((channel->type() == SimpleID::UserId ? '~' : '#') + channel->name());
+  return Normalize::toId(channel->type(), channel->name());
 }
 
 
 QByteArray Normalize::toId(const QString &text)
 {
   return SimpleID::make(toString(text).toUtf8(), SimpleID::NormalizedId);
+}
+
+
+QByteArray Normalize::toId(int type, const QString &name)
+{
+  return Normalize::toId((type == SimpleID::UserId ? LC('~') : LC('#')) + name);
 }
 
 
