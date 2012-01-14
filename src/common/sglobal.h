@@ -16,28 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NORMALIZE_H_
-#define NORMALIZE_H_
+#ifndef SGLOBAL_H_
+#define SGLOBAL_H_
 
-#include <QHash>
+#include <QLatin1Char>
+#include <QLatin1String>
 
-#include "schat.h"
+typedef QLatin1Char   LC;
+typedef QLatin1String LS;
 
-class Channel;
-
-class SCHAT_EXPORT Normalize
-{
-  Normalize() {}
-
-public:
-  static QByteArray toId(Channel *channel);
-  static QByteArray toId(const QString &text);
-  static QByteArray toId(int type, const QString &name);
-  static QString toString(const QString &text);
-  static void init();
-
-private:
-  static QHash<QChar, QChar> m_map; ///< Карта замены символов.
-};
-
-#endif /* NORMALIZE_H_ */
+#endif /* SGLOBAL_H_ */
