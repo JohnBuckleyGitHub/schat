@@ -25,6 +25,7 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 namespace Hooks
 {
@@ -73,7 +74,7 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 
   QString command = cmd.command().toLower();
 
-  if (command == "join") {
+  if (command == LS("join")) {
     if (cmd.isBody())
       ChatClient::channels()->join(cmd.body());
     else
@@ -82,15 +83,17 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
     return true;
   }
 
-  if (command == "nick") {
-    if (!Channel::isValidName(cmd.body()))
-      return true;
-
+  if (command == LS("nick")) {
     ChatClient::channels()->nick(cmd.body());
     return true;
   }
 
-  if (command == "part") {
+  if (command == LS("name")) {
+    ChatClient::channels()->name(dest, cmd.body());
+    return true;
+  }
+
+  if (command == LS("part")) {
     ChatClient::channels()->part(dest);
     return true;
   }

@@ -22,6 +22,7 @@
 #include "net/PacketReader.h"
 #include "net/packets/ChannelPacket.h"
 #include "net/PacketWriter.h"
+#include "sglobal.h"
 
 ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(sender, dest, command, time)
@@ -114,7 +115,7 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
  */
 QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
 {
-  ChannelPacket packet(user, user, "info", DateTime::utc());
+  ChannelPacket packet(user, user, LS("info"), DateTime::utc());
   packet.m_channels = channels;
   return packet.data(stream);
 }
@@ -132,7 +133,15 @@ QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &
  */
 QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
 {
-  ChannelPacket packet(user, channel, "join", DateTime::utc());
+  ChannelPacket packet(user, channel, LS("join"), DateTime::utc());
+  packet.setText(name);
+  return packet.data(stream);
+}
+
+
+QByteArray ChannelPacket::name(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+{
+  ChannelPacket packet(user, channel, LS("name"), DateTime::utc());
   packet.setText(name);
   return packet.data(stream);
 }
@@ -140,21 +149,21 @@ QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel
 
 QByteArray ChannelPacket::part(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
 {
-  ChannelPacket packet(user, channel, "-", DateTime::utc());
+  ChannelPacket packet(user, channel, LS("-"), DateTime::utc());
   return packet.data(stream);
 }
 
 
 QByteArray ChannelPacket::quit(const QByteArray &user, QDataStream *stream)
 {
-  ChannelPacket packet(user, user, "quit", DateTime::utc());
+  ChannelPacket packet(user, user, LS("quit"), DateTime::utc());
   return packet.data(stream);
 }
 
 
 QByteArray ChannelPacket::update(ClientChannel channel, QDataStream *stream)
 {
-  ChannelPacket packet(channel->id(), channel->id(), "update", DateTime::utc());
+  ChannelPacket packet(channel->id(), channel->id(), LS("update"), DateTime::utc());
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
   packet.m_channelStatus = channel->status().value();

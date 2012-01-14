@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ public:
   bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);
   bool join(const QString &name);
+  bool name(const QByteArray &id, const QString &name);
   bool nick(const QString &nick);
   bool part(const QByteArray &id);
   bool update();

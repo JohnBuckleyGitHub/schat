@@ -97,6 +97,15 @@ bool ClientChannels::join(const QString &name)
 }
 
 
+bool ClientChannels::name(const QByteArray &id, const QString &name)
+{
+  if (!Channel::isValidName(name))
+    return false;
+
+  return m_client->send(ChannelPacket::name(ChatClient::id(), id, name, m_client->sendStream()));
+}
+
+
 bool ClientChannels::nick(const QString &nick)
 {
   ClientChannel user(new Channel(ChatClient::channel()->id(), nick));
