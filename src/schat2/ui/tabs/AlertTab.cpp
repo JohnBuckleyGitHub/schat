@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
+#include "client/ChatClient.h"
 #include "messages/ServiceMessage.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/AlertTab.h"
@@ -49,7 +51,9 @@ AlertTab::AlertTab(TabWidget *parent)
   setIcon(SCHAT_ICON(InfoBalloon));
   retranslateUi();
 
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -59,6 +63,21 @@ void AlertTab::alert(const Alert &alert)
     m_chatView->add(ServiceMessage::connected());
   else if (alert.type() == Alert::ConnectionLost)
     m_chatView->add(ServiceMessage::connectionLost());
+}
+
+
+void AlertTab::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ShowID) {
+    if (notify.data().toByteArray() == id())
+      m_chatView->add(ServiceMessage::showId(notify.data().toByteArray()));
+  }
+}
+
+
+void AlertTab::online()
+{
+  setId(ChatClient::serverId());
 }
 
 

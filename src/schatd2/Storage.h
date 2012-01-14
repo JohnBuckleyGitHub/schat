@@ -37,16 +37,18 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
-  inline static Storage *i() { return m_self; }
+  inline static FileLocations *locations() { return i()->m_locations; }
+  inline static ServerData *serverData()   { return i()->m_serverData; }
+  inline static Settings *settings()       { return i()->m_settings; }
+  inline static Storage *i()               { return m_self; }
+  static QByteArray serverId();
+  static QString serverName();
+
   int load();
   int start();
 
   // user management.
   QByteArray makeUserId(int type, const QByteArray &userId) const;
-
-  inline FileLocations *locations() const { return m_locations; }
-  inline static ServerData *serverData() { return i()->m_serverData; }
-  inline static Settings *settings() { return i()->m_settings; }
   QByteArray cookie() const;
 
 private:
