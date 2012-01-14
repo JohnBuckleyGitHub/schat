@@ -27,6 +27,7 @@
 #include "net/packets/Notice.h"
 #include "NodeChannels.h"
 #include "Normalize.h"
+#include "sglobal.h"
 #include "Sockets.h"
 #include "Storage.h"
 
@@ -41,25 +42,29 @@ bool NodeChannels::read(PacketReader *reader)
   if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
     return false;
 
+  m_user = Ch::channel(reader->sender(), SimpleID::UserId);
+  if (!m_user)
+    return false;
+
   ChannelPacket packet(m_type, reader);
   m_packet = &packet;
 
   QString cmd = m_packet->command();
   qDebug() << "NodeChannels::read" << cmd;
 
-  if (cmd == "info")
+  if (cmd == LS("info"))
     return info();
 
-  if (cmd == "join")
+  if (cmd == LS("join"))
     return join();
 
-  if (cmd == "-")
+  if (cmd == LS("-"))
     return part();
 
-  if (cmd == "quit")
+  if (cmd == LS("quit"))
     return quit();
 
-  if (cmd == "update")
+  if (cmd == LS("update"))
     return update();
 
   return false;
@@ -74,7 +79,7 @@ void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, Q
 
 void NodeChannels::addImpl(ChatChannel user)
 {
-  m_core->send(Sockets::all(user), ChannelPacket::channel(user, user->id(), m_core->sendStream(), "info"));
+  m_core->send(Sockets::all(user), ChannelPacket::channel(user, user->id(), m_core->sendStream(), LS("info")));
 }
 
 
@@ -104,10 +109,6 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
  */
 bool NodeChannels::info()
 {
-  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
-  if (!user)
-    return false;
-
   if (m_packet->channels().isEmpty())
     return false;
 
@@ -115,13 +116,13 @@ bool NodeChannels::info()
   foreach (QByteArray id, m_packet->channels()) {
     ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
     if (channel)
-      packets += ChannelPacket::channel(channel, user, m_core->sendStream(), "info");
+      packets += ChannelPacket::channel(channel, m_user, m_core->sendStream(), LS("info"));
   }
 
   if (packets.isEmpty())
     return false;
 
-  m_core->send(user->sockets(), packets);
+  m_core->send(m_user->sockets(), packets);
   return false;
 }
 
@@ -131,10 +132,6 @@ bool NodeChannels::info()
  */
 bool NodeChannels::join()
 {
-  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
-  if (!user)
-    return false;
-
   ChatChannel channel;
 
   /// Если идентификатор канала корректный функция пытается получить его по этому идентификатору.
@@ -149,15 +146,15 @@ bool NodeChannels::join()
   if (!channel)
     return false;
 
-  bool notify = !channel->channels().all().contains(user->id());
-  channel->channels() += user->id();
-  user->channels()    += channel->id();
+  bool notify = !channel->channels().all().contains(m_user->id());
+  channel->channels() += m_user->id();
+  m_user->channels()  += channel->id();
 
-  m_core->send(user->sockets(), ChannelPacket::channel(channel, user, m_core->sendStream()));
+  m_core->send(m_user->sockets(), ChannelPacket::channel(channel, m_user, m_core->sendStream()));
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
   if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
-    m_core->send(Sockets::channel(channel), ChannelPacket::channel(user, channel->id(), m_core->sendStream(), "+"));
+    m_core->send(Sockets::channel(channel), ChannelPacket::channel(m_user, channel->id(), m_core->sendStream(), LS("+")));
 
   return false;
 }
@@ -168,21 +165,17 @@ bool NodeChannels::join()
  */
 bool NodeChannels::part()
 {
-  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
-  if (!user)
-    return false;
-
   ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
     return false;
 
-  user->channels().remove(channel->id());
+  m_user->channels().remove(channel->id());
 
-  if (!channel->channels().all().contains(user->id()))
+  if (!channel->channels().all().contains(m_user->id()))
     return false;
 
-  m_core->send(Sockets::channel(channel), ChannelPacket::part(user->id(), channel->id(), m_core->sendStream()));
-  channel->channels().remove(user->id());
+  m_core->send(Sockets::channel(channel), ChannelPacket::part(m_user->id(), channel->id(), m_core->sendStream()));
+  channel->channels().remove(m_user->id());
 
   Ch::gc(channel);
 
@@ -234,6 +227,6 @@ bool NodeChannels::update()
   if (!updates)
     return false;
 
-  m_core->send(Sockets::all(user, true), ChannelPacket::channel(user, user->id(), m_core->sendStream(), "info"));
+  m_core->send(Sockets::all(user, true), ChannelPacket::channel(user, user->id(), m_core->sendStream(), LS("info")));
   return false;
 }

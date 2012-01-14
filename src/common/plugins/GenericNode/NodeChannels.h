@@ -44,6 +44,7 @@ private:
   bool update();
 
   ChannelPacket *m_packet;
+  ChatChannel m_user;
 };
 
 #endif /* NODECHANNELS_H_ */
