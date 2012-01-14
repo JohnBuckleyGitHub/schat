@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <QTextDocument>
 
 #include "ChatAlerts.h"
+#include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -54,6 +55,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -133,6 +135,15 @@ void ChannelBaseTab::channel(const ChannelInfo &info)
 
   if (!m_online)
     m_online = true;
+}
+
+
+void ChannelBaseTab::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ShowID) {
+    if (notify.data().toByteArray() == id())
+      add(ServiceMessage::showId(notify.data().toByteArray()));
+  }
 }
 
 

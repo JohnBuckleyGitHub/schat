@@ -8,6 +8,7 @@
 /gender
 /help
 /hide
+/id
 /ignore
 /join
 /male

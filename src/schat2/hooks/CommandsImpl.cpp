@@ -89,6 +89,9 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   else if (command == "hide")
     ChatNotify::start(Notify::ToggleVisibility);
 
+  else if (command == "id")
+    ChatNotify::start(Notify::ShowID, dest);
+
   /// - /male Установка мужского пола пользователя.
   else if (command == "male")
     setGender(command, cmd.body());
