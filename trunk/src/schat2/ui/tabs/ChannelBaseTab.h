@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ class Alert;
 class ChannelInfo;
 class ChatView;
 class Message;
+class Notify;
 
 /*!
  * Базовый класс для вкладок каналов.
@@ -50,6 +51,7 @@ public:
 private slots:
   void alert(const Alert &alert);
   void channel(const ChannelInfo &info);
+  void notify(const Notify &notify);
   void offline();
 
 protected:
