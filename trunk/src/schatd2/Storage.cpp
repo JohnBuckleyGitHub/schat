@@ -79,19 +79,21 @@ Storage::~Storage()
 }
 
 
+QByteArray Storage::serverId()
+{
+  return serverData()->id();
+}
+
+
+QString Storage::serverName()
+{
+  return serverData()->name();
+}
+
+
 int Storage::load()
 {
-  ChatChannel server = Ch::channel(m_serverData->id(), SimpleID::ServerId);
-  qDebug() << " - - - - - - - ";
-  qDebug() << " - - - - - - - " << server;
-  qDebug() << " - - - - - - - ";
-  if (!server) {
-    server = ChatChannel(new ServerChannel(m_serverData->id(), m_serverData->name()));
-  }
-
-  server->setName(m_serverData->name());
-  Ch::add(server);
-
+  Ch::load();
   Ch::channel(QString("Main"));
 
   qint64 key = m_settings->value("MainChannel").toLongLong();

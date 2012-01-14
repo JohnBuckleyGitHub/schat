@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "Account.h"
 #include "Ch.h"
 #include "DataBase.h"
@@ -32,6 +34,28 @@ Ch::Ch(QObject *parent)
     m_self = this;
   else
     add(this);
+}
+
+
+/*!
+ * Автоматическое удаление канала, если он больше не нужен.
+ *
+ * \return \b true если канал был удалён.
+ */
+bool Ch::gc(ChatChannel channel)
+{
+  if (channel->type() == SimpleID::UserId) {
+    if (channel->sockets().size())
+      return false;
+
+    channel->status() = Status::Offline;
+  }
+
+  if (channel->channels().all().size())
+    return false;
+
+  remove(channel);
+  return true;
 }
 
 
@@ -83,26 +107,6 @@ bool Ch::addImpl(ChatChannel channel)
 }
 
 
-bool Ch::gcImpl(ChatChannel channel)
-{
-  if (m_self != this)
-    return false;
-
-  if (channel->type() == SimpleID::UserId) {
-    if (channel->sockets().size())
-      return false;
-
-    channel->status() = Status::Offline;
-  }
-
-  if (channel->channels().all().size())
-    return false;
-
-  remove(channel);
-  return true;
-}
-
-
 /*!
  * Получение канала по идентификатору.
  *
@@ -150,6 +154,24 @@ ChatChannel Ch::channelImpl(const QString &name)
   }
 
   return channel;
+}
+
+
+void Ch::loadImpl()
+{
+  if (m_self != this)
+    return;
+
+  ChatChannel server = Ch::channel(Storage::serverId(), SimpleID::ServerId);
+  if (!server) {
+    server = ChatChannel(new ServerChannel(Storage::serverId(), Storage::serverName()));
+    add(server);
+    newChannelImpl(server);
+  }
+
+  foreach (Ch *hook, m_hooks) {
+    hook->loadImpl();
+  }
 }
 
 

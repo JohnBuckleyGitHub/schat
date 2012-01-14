@@ -33,14 +33,15 @@ class SCHAT_EXPORT Ch : public QObject
 public:
   Ch(QObject *parent = 0);
   inline static bool add(ChatChannel channel)                                             { return m_self->addImpl(channel); }
-  inline static bool gc(ChatChannel channel)                                              { return m_self->gcImpl(channel);  }
   inline static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId, bool db = true) { return m_self->channelImpl(id, type, db); }
   inline static ChatChannel channel(const QString &name)                                  { return m_self->channelImpl(name); }
   inline static void add(Ch *hook)                                                        { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void load()                                                               { m_self->loadImpl(); }
   inline static void newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created = false) { m_self->newUserChannelImpl(channel, data, host, created); }
   inline static void remove(Ch *hook)                                                     { m_self->m_hooks.removeAll(hook); }
   inline static void remove(ChatChannel channel)                                          { m_self->removeImpl(channel); }
   inline static void rename(ChatChannel channel, const QString &name)                     { m_self->renameImpl(channel, name); }
+  static bool gc(ChatChannel channel);
   static bool isCollision(const QByteArray &id, const QString &name);
   static QByteArray makeId(const QByteArray &normalized);
 
@@ -61,9 +62,9 @@ protected:
 
 protected:
   virtual bool addImpl(ChatChannel channel);
-  virtual bool gcImpl(ChatChannel channel);
   virtual ChatChannel channelImpl(const QByteArray &id, int type, bool db);
   virtual ChatChannel channelImpl(const QString &name);
+  virtual void loadImpl();
   virtual void newChannelImpl(ChatChannel channel);
   virtual void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
   virtual void removeImpl(ChatChannel channel);
