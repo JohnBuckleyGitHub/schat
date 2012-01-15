@@ -150,7 +150,7 @@ bool NodeChannels::join()
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
   if (!channel)
-    channel = Ch::channel(m_packet->text());
+    channel = Ch::channel(m_packet->text(), m_user);
 
   if (!channel)
     return false;

@@ -25,17 +25,15 @@ GenericCh::GenericCh(QObject *parent)
 }
 
 
-bool GenericCh::addImpl(ChatChannel channel)
+void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   if (channel->type() == SimpleID::ChannelId) {
-    if (!channel->feeds().all().contains("acl"))
-      channel->feeds().add(FeedStorage::create("acl"));
+    FeedPtr acl = channel->feed("acl");
+    if (user)
+      acl->head().acl().add(user->id());
 
-    if (!channel->feeds().all().contains("topic"))
-      channel->feeds().add(FeedStorage::create("topic"));
+    channel->feed("topic");
   }
-
-  return true;
 }
 
 
@@ -44,13 +42,7 @@ void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*da
   if (!channel->account())
     channel->createAccount();
 
-  if (!channel->feeds().all().contains("account"))
-    channel->feeds().add(FeedStorage::create("account"));
-
-  if (!channel->feeds().all().contains("acl")) {
-    Feed *acl = FeedStorage::create("acl");
-    acl->head().acl().add(channel->id());
-
-    channel->feeds().add(acl);
-  }
+  channel->feed("account");
+  FeedPtr acl = channel->feed("acl");
+  acl->head().acl().add(channel->id());
 }

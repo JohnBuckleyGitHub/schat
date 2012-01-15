@@ -158,7 +158,7 @@ ChatChannel Ch::channelImpl(const QByteArray &id, int type, bool db)
 /*!
  * Получение или создание обычного канала по имени.
  */
-ChatChannel Ch::channelImpl(const QString &name)
+ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
 {
   if (m_self != this)
     return ChatChannel();
@@ -169,7 +169,7 @@ ChatChannel Ch::channelImpl(const QString &name)
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
     add(channel);
-    newChannelImpl(channel);
+    newChannelImpl(channel, user);
   }
 
   return channel;
@@ -210,13 +210,13 @@ void Ch::loadImpl()
 }
 
 
-void Ch::newChannelImpl(ChatChannel channel)
+void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   if (m_self != this)
     return;
 
   foreach (Ch *hook, m_hooks) {
-    hook->newChannelImpl(channel);
+    hook->newChannelImpl(channel, user);
   }
 }
 
