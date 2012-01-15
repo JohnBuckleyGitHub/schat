@@ -165,6 +165,8 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
 
   QByteArray normalized = Normalize::toId('#' + name);
   ChatChannel channel = this->channel(normalized);
+  if (!channel)
+    channel = this->channel(makeId(normalized));
 
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
