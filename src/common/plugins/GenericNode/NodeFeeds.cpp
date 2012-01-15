@@ -56,7 +56,7 @@ bool NodeFeeds::read(PacketReader *reader)
 
   int status = Notice::NotImplemented;
 
-  if (cmd == LS("add"))
+  if (cmd == LS("add") || cmd == LS("new"))
     status = add();
   else if (cmd == LS("clear"))
     status = clear();
@@ -66,7 +66,7 @@ bool NodeFeeds::read(PacketReader *reader)
     status = headers();
   else if (cmd == LS("query"))
     status = query();
-  else if (cmd == LS("remove"))
+  else if (cmd == LS("remove") || cmd == LS("delete") || cmd == LS("del"))
     status = remove();
   else if (cmd == LS("revert"))
     status = revert();
@@ -93,25 +93,23 @@ int NodeFeeds::add()
   if (name.isEmpty())
     return Notice::BadRequest;
 
-  if (m_channel->feeds().all().contains(name))
+  if (m_channel->feed(name, false))
     return Notice::ObjectAlreadyExists;
 
-  FeedPtr acl = m_channel->feeds().all().value("acl");
-  if (!acl)
-    return Notice::InternalError;
-
-  if (!acl->head().acl().can(m_user.data(), Acl::Edit))
+  if (!m_channel->canEdit(m_user))
     return Notice::Forbidden;
 
-  if (!m_channel->feeds().add(FeedStorage::create(name), false))
+  FeedPtr feed = m_channel->feed(name, true, false);
+  if (!feed)
     return Notice::InternalError;
 
-  FeedPtr feed = m_channel->feeds().all().value(name);
   if (!m_packet->raw().isEmpty()) {
     int status = feed->update(m_packet->json(), m_user.data());
     if (status != Notice::OK)
       return status;
   }
+
+  feed->head().acl().add(m_user->id());
 
   int status = FeedStorage::save(feed);
   if (status == Notice::OK)
@@ -285,10 +283,10 @@ int NodeFeeds::check(int acl)
   if (name.isEmpty())
     return Notice::BadRequest;
 
-  if (!m_channel->feeds().all().contains(name))
+  FeedPtr feed = m_channel->feed(name, false);
+  if (!feed)
     return Notice::NotFound;
 
-  FeedPtr feed = m_channel->feeds().all().value(name);
   if (!feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
     return Notice::Forbidden;
 
