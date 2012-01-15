@@ -24,6 +24,7 @@
 #include "client/SimpleClient.h"
 #include "net/packets/ChannelPacket.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
@@ -79,7 +80,7 @@ bool ClientChannels::join(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
-  return m_client->send(ChannelPacket::join(ChatClient::id(), id, QString(), m_client->sendStream()));
+  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("join"), m_client->sendStream()));
 }
 
 
@@ -93,7 +94,7 @@ bool ClientChannels::join(const QString &name)
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelPacket::join(ChatClient::id(), QByteArray(), name, m_client->sendStream()));
+  return m_client->send(ChannelPacket::request(ChatClient::id(), QByteArray(), LS("join"), m_client->sendStream(), name));
 }
 
 
@@ -102,7 +103,7 @@ bool ClientChannels::name(const QByteArray &id, const QString &name)
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelPacket::name(ChatClient::id(), id, name, m_client->sendStream()));
+  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("name"), ChatClient::stream(), name));
 }
 
 
@@ -129,7 +130,7 @@ bool ClientChannels::part(const QByteArray &id)
 
   m_joined.removeAll(id);
 
-  return m_client->send(ChannelPacket::part(ChatClient::id(), id, m_client->sendStream()));
+  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("-"), ChatClient::stream()));
 }
 
 
@@ -182,7 +183,7 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   QString cmd = m_packet->command();
-  qDebug() << cmd << m_packet->text();
+  qDebug() << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status());
 
   if (cmd == "channel")
     channel();

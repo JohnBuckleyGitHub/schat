@@ -26,6 +26,7 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 NodeFeeds::NodeFeeds(Core *core)
@@ -55,21 +56,21 @@ bool NodeFeeds::read(PacketReader *reader)
 
   int status = Notice::NotImplemented;
 
-  if (cmd == "add")
+  if (cmd == LS("add"))
     status = add();
-  else if (cmd == "clear")
+  else if (cmd == LS("clear"))
     status = clear();
-  else if (cmd == "get")
+  else if (cmd == LS("get"))
     status = get();
-  else if (cmd == "headers")
+  else if (cmd == LS("headers"))
     status = headers();
-  else if (cmd == "query")
+  else if (cmd == LS("query"))
     status = query();
-  else if (cmd == "remove")
+  else if (cmd == LS("remove"))
     status = remove();
-  else if (cmd == "revert")
+  else if (cmd == LS("revert"))
     status = revert();
-  else if (cmd == "update")
+  else if (cmd == LS("update"))
     status = update();
 
   if (status == Notice::OK)

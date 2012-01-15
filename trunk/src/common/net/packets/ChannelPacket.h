@@ -39,10 +39,8 @@ public:
   static QByteArray channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command = "channel");
   static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command = "channel");
   static QByteArray info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream);
-  static QByteArray join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
-  static QByteArray name(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream);
-  static QByteArray part(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
-  static QByteArray quit(const QByteArray &user, QDataStream *stream);
+  static QByteArray reply(const ChannelPacket &source, int status, QDataStream *stream);
+  static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text = QString());
   static QByteArray update(ClientChannel channel, QDataStream *stream);
 
 protected:

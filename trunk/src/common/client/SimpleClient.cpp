@@ -24,6 +24,7 @@
 #include "net/packets/auth.h"
 #include "net/packets/ChannelPacket.h"
 #include "net/packets/Notice.h"
+#include "sglobal.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
   : cookieAuth(false)
@@ -143,7 +144,7 @@ const QString &SimpleClient::account() const
 void SimpleClient::leave()
 {
   Q_D(SimpleClient);
-  send(ChannelPacket::quit(channelId(), d->sendStream));
+  send(ChannelPacket::request(channelId(), channelId(), LS("quit"), d->sendStream));
 
   AbstractClient::leave();
 }
