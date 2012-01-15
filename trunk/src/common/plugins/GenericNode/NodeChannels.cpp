@@ -181,6 +181,9 @@ int NodeChannels::name()
   if (!channel)
     return Notice::NotFound;
 
+  if (!channel->canEdit(m_user))
+    return Notice::Forbidden;
+
   if (channel->name() == m_packet->text())
     return Notice::BadRequest;
 

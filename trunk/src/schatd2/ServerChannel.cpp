@@ -66,6 +66,24 @@ void ServerChannel::createAccount()
 }
 
 
+bool ServerChannel::canEdit(ChatChannel channel)
+{
+  return feed("acl")->head().acl().can(channel.data(), Acl::Edit);
+}
+
+
+bool ServerChannel::canRead(ChatChannel channel)
+{
+  return feed("acl")->head().acl().can(channel.data(), Acl::Read);
+}
+
+
+bool ServerChannel::canWrite(ChatChannel channel)
+{
+  return feed("acl")->head().acl().can(channel.data(), Acl::Write);
+}
+
+
 /*!
  * Получение фида по имени, эта функция позволяет автоматически создать фид, если он не существует.
  *

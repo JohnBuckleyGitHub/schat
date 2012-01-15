@@ -21,6 +21,10 @@
 
 #include "Channel.h"
 
+class ServerChannel;
+
+typedef QSharedPointer<ServerChannel> ChatChannel;
+
 class SCHAT_EXPORT ServerChannel: public Channel
 {
 public:
@@ -36,6 +40,9 @@ public:
   inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
   void createAccount();
 
+  bool canEdit(ChatChannel channel);
+  bool canRead(ChatChannel channel);
+  bool canWrite(ChatChannel channel);
   FeedPtr feed(const QString &name, bool create = true, bool save = true);
 
 private:
@@ -44,7 +51,5 @@ private:
   QByteArray m_normalized;  ///< Нормализованное имя канала.
   QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
-
-typedef QSharedPointer<ServerChannel> ChatChannel;
 
 #endif /* SERVERCHANNEL_H_ */
