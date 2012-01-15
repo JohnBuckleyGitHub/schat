@@ -79,7 +79,7 @@ public:
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
-  virtual ~Notice();
+  virtual ~Notice() {}
 
   virtual bool isValid() const;
 

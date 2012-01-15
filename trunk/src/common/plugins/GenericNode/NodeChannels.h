@@ -39,7 +39,7 @@ protected:
 private:
   bool info();
   bool join();
-  bool name();
+  int name();
   bool part();
   bool quit();
   int update();

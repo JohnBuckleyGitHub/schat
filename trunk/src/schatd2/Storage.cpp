@@ -94,15 +94,6 @@ QString Storage::serverName()
 int Storage::load()
 {
   Ch::load();
-  Ch::channel(QString("Main"));
-
-  qint64 key = m_settings->value("MainChannel").toLongLong();
-  if (key > 0) {
-    ChatChannel channel = DataBase::channel(key);
-    if (channel) {
-      m_serverData->setChannelId(channel->id());
-    }
-  }
 
   return 0;
 }

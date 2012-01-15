@@ -70,7 +70,7 @@ bool NodeChannels::read(PacketReader *reader)
     status = update();
 
   else if (cmd == LS("name"))
-    return name();
+    status = name();
 
   if (status == Notice::OK)
     return false;
@@ -172,20 +172,20 @@ bool NodeChannels::join()
 /*!
  * \todo Необходимо добавить проверку прав доступа.
  */
-bool NodeChannels::name()
+int NodeChannels::name()
 {
   if (!Channel::isValidName(m_packet->text()))
-    return false;
+    return Notice::BadRequest;
 
   ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
-    return false;
+    return Notice::NotFound;
 
   if (channel->name() == m_packet->text())
-    return false;
+    return Notice::BadRequest;
 
   if (!Ch::rename(channel, m_packet->text()))
-    return false;
+    return Notice::ObjectAlreadyExists;
 
   QList<quint64> sockets;
   if (channel->type() == SimpleID::UserId)
@@ -194,7 +194,7 @@ bool NodeChannels::name()
     sockets = Sockets::channel(channel);
 
   m_core->send(sockets, ChannelNotice::info(channel));
-  return false;
+  return Notice::OK;
 }
 
 
