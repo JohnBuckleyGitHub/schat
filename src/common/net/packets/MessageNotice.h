@@ -16,17 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGEPACKET_H_
-#define MESSAGEPACKET_H_
+#ifndef MESSAGENOTICE_H_
+#define MESSAGENOTICE_H_
 
 #include "net/packets/Notice.h"
 
-class SCHAT_EXPORT MessagePacket : public Notice
+class SCHAT_EXPORT MessageNotice : public Notice
 {
 public:
-  MessagePacket();
-  MessagePacket(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time = 0, const QByteArray &id = QByteArray());
-  MessagePacket(quint16 type, PacketReader *reader);
+  MessageNotice();
+  MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time = 0, const QByteArray &id = QByteArray());
+  MessageNotice(quint16 type, PacketReader *reader);
 };
 
-#endif /* MESSAGEPACKET_H_ */
+#endif /* MESSAGENOTICE_H_ */

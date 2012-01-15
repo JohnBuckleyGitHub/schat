@@ -18,11 +18,11 @@
 
 #include "client/ChatClient.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
 #include "text/TokenFilter.h"
 
-ChannelMessage::ChannelMessage(const MessagePacket &packet)
+ChannelMessage::ChannelMessage(const MessageNotice &packet)
   : Message()
   , m_packet(packet)
 {

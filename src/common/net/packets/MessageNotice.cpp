@@ -16,18 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 #include "DateTime.h"
 
 
-MessagePacket::MessagePacket()
+MessageNotice::MessageNotice()
   : Notice(QByteArray(), QByteArray(), "m")
 {
   m_type = MessageType;
 }
 
 
-MessagePacket::MessagePacket(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time, const QByteArray &id)
+MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time, const QByteArray &id)
   : Notice(sender, dest, "m", time, id)
 {
   m_type = MessageType;
@@ -38,7 +38,7 @@ MessagePacket::MessagePacket(const QByteArray &sender, const QByteArray &dest, c
 }
 
 
-MessagePacket::MessagePacket(quint16 type, PacketReader *reader)
+MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
 {
 }

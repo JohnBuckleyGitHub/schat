@@ -80,7 +80,7 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
  */
 bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const QString &command)
 {
-  MessagePacket packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
+  MessageNotice packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
   if (!command.isEmpty())
     packet.setCommand(command);
 
@@ -98,7 +98,7 @@ void ClientMessages::channels(const QList<QByteArray> &channels)
 {
   foreach (QByteArray id, channels) {
     if (m_pending.contains(id)) {
-      QList<MessagePacket> packets = m_pending.value(id);
+      QList<MessageNotice> packets = m_pending.value(id);
 
       for (int i = 0; i < packets.size(); ++i)
         m_hooks->readText(packets.at(i));
@@ -117,7 +117,7 @@ void ClientMessages::notice(int type)
   if (type != Notice::MessageType)
     return;
 
-  MessagePacket packet(type, ChatClient::io()->reader());
+  MessageNotice packet(type, ChatClient::io()->reader());
   if (!packet.isValid())
     return;
 

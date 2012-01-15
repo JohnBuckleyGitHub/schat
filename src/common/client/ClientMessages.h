@@ -22,9 +22,9 @@
 #include <QObject>
 #include <QHash>
 
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 
-class MessagePacket;
+class MessageNotice;
 class SimpleClient;
 
 namespace Hooks
@@ -50,9 +50,9 @@ private slots:
 
 private:
   Hooks::Messages *m_hooks;                           ///< Хуки.
-  MessagePacket *m_packet;                            ///< Текущий прочитанный пакет.
+  MessageNotice *m_packet;                            ///< Текущий прочитанный пакет.
   QByteArray m_destId;                                ///< Текущий получатель сообщения.
-  QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  QHash<QByteArray, QList<MessageNotice> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
   SimpleClient *m_client;                             ///< Клиент чата.
 };
 

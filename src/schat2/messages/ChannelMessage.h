@@ -21,18 +21,18 @@
 
 #include "messages/Message.h"
 
-class MessagePacket;
+class MessageNotice;
 
 class SCHAT_CORE_EXPORT ChannelMessage : public Message
 {
 public:
-  ChannelMessage(const MessagePacket &packet);
-  inline const MessagePacket &packet() const { return m_packet; }
+  ChannelMessage(const MessageNotice &packet);
+  inline const MessageNotice &packet() const { return m_packet; }
 
 private:
   QByteArray detectTab() const;
 
-  const MessagePacket &m_packet; ///< Пакет на основе которого формируется сообщение.
+  const MessageNotice &m_packet; ///< Пакет на основе которого формируется сообщение.
 };
 
 #endif /* CHANNELMESSAGE_H_ */
