@@ -19,6 +19,7 @@
 #include "Account.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/FeedStorage.h"
 #include "net/SimpleID.h"
 #include "Normalize.h"
 #include "ServerChannel.h"
@@ -62,6 +63,23 @@ void ServerChannel::createAccount()
   m_account->setChannel(key());
 
   DataBase::add(account());
+}
+
+
+/*!
+ * Получение фида по имени, эта функция позволяет автоматически создать фид, если он не существует.
+ *
+ * \param name Имя фида.
+ * \param create \b true если необходимо создать фид, если он не существует.
+ */
+FeedPtr ServerChannel::feed(const QString &name, bool create)
+{
+  FeedPtr feed = feeds().all().value(name);
+  if (feed || !create)
+    return feed;
+
+  feeds().add(FeedStorage::create(name));
+  return this->feed(name, false);
 }
 
 

@@ -29,7 +29,7 @@ public:
   GenericCh(QObject *parent = 0);
 
 protected:
-  bool addImpl(ChatChannel channel);
+  void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
 };
 
