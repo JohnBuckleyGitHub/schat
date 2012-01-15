@@ -270,13 +270,6 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
 }
 
 
-bool AbstractClient::send(const Notice &data, bool echo)
-{
-  Q_D(AbstractClient);
-  return send(data.data(d->sendStream, echo));
-}
-
-
 bool AbstractClient::send(const QByteArray &packet)
 {
   Q_D(AbstractClient);
@@ -299,6 +292,13 @@ bool AbstractClient::send(const QList<QByteArray> &packets)
   }
 
   return SimpleSocket::send(packets);
+}
+
+
+bool AbstractClient::send(Packet packet, bool echo)
+{
+  Q_D(AbstractClient);
+  return send(packet->data(d->sendStream, echo));
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,9 +50,9 @@ private slots:
 
 private:
   Hooks::Messages *m_hooks;                           ///< Хуки.
-  MessageNotice *m_packet;                            ///< Текущий прочитанный пакет.
+  MessagePacket m_packet;                            ///< Текущий прочитанный пакет.
   QByteArray m_destId;                                ///< Текущий получатель сообщения.
-  QHash<QByteArray, QList<MessageNotice> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
   SimpleClient *m_client;                             ///< Клиент чата.
 };
 

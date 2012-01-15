@@ -138,7 +138,7 @@ bool Messages::command(const QByteArray &dest, const QString &text, const QStrin
 /*!
  * Чтение полученного сообщения.
  */
-void Messages::readText(const MessageNotice &packet)
+void Messages::readText(MessagePacket packet)
 {
   if (m_hooks.isEmpty())
     return;
@@ -152,7 +152,7 @@ void Messages::readText(const MessageNotice &packet)
 /*!
  * Обработка копии только что отправленного сообщения.
  */
-void Messages::sendText(const MessageNotice &packet)
+void Messages::sendText(MessagePacket packet)
 {
   if (m_hooks.isEmpty())
     return;

@@ -22,11 +22,11 @@
 #include <QObject>
 
 #include "Channel.h"
+#include "net/packets/MessageNotice.h"
 
 class ChannelInfo;
 class ClientCmd;
 class FeedNotice;
-class MessageNotice;
 
 namespace Hooks
 {
@@ -47,8 +47,8 @@ public:
 
   virtual bool command(const QByteArray &dest, const ClientCmd &cmd);
   virtual bool command(const QByteArray &dest, const QString &text, const QString &plain);
-  virtual void readText(const MessageNotice &packet);
-  virtual void sendText(const MessageNotice &packet);
+  virtual void readText(MessagePacket packet);
+  virtual void sendText(MessagePacket packet);
 
 protected:
   QList<Messages*> m_hooks; ///< Хуки.

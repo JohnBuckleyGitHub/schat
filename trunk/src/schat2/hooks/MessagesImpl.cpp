@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,31 +45,30 @@ MessagesImpl::MessagesImpl(QObject *parent)
 
 /*!
  * Чтение полученного сообщения.
- * \bug FIX
  */
-void MessagesImpl::readText(const MessageNotice &packet)
+void MessagesImpl::readText(MessagePacket packet)
 {
   ChannelMessage message(packet);
 
   /// Если это собственное сообщение, то для него при необходимости устанавливается
   /// статус "offline" или "rejected".
-  if (packet.sender() == ChatClient::id()) {
-    if (packet.status() == Notice::ChannelOffline)
+  if (packet->sender() == ChatClient::id()) {
+    if (packet->status() == Notice::ChannelOffline)
       message.data()["Status"] = "offline";
-    else if (packet.status() != Notice::OK)
+    else if (packet->status() != Notice::OK)
       message.data()["Status"] = "rejected";
   }
 
   if (TabWidget::i())
     TabWidget::i()->add(message);
 
-  if (packet.sender() != ChatClient::id() || !m_undelivered.contains(packet.id())) {
+  if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
     qDebug() << " ~~ START ALERT ~~";
     MessageAlert alert(message);
     ChatAlerts::start(alert);
   }
 
-  m_undelivered.remove(packet.id());
+  m_undelivered.remove(packet->id());
 }
 
 
@@ -77,12 +76,12 @@ void MessagesImpl::readText(const MessageNotice &packet)
  * Обработка отправки сообщения, пакет сообщения добавляется в список не доставленных сообщений
  * и происходи немедленное отображение сообщения в пользовательском интерфейсе со статусом "undelivered".
  */
-void MessagesImpl::sendText(const MessageNotice &packet)
+void MessagesImpl::sendText(MessagePacket packet)
 {
   ChannelMessage message(packet);
   message.data()["Status"] = "undelivered";
 
-  m_undelivered[packet.id()] = packet;
+  m_undelivered[packet->id()] = packet;
 
   if (TabWidget::i())
     TabWidget::i()->add(message);
@@ -99,7 +98,7 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
   /// В случае если предыдущее состояние клиента было в "В сети" и имеются не доставленные
   /// сообщения, то они помечаются недоставленными для отображения в пользовательском интерфейсе.
   if (previousState == SimpleClient::ClientOnline && !m_undelivered.isEmpty()) {
-    QHashIterator<QByteArray, MessageNotice> i(m_undelivered);
+    QHashIterator<QByteArray, MessagePacket> i(m_undelivered);
     while (i.hasNext()) {
       i.next();
       ChannelMessage message(i.value());

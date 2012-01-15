@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -80,9 +80,9 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
  */
 bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const QString &command)
 {
-  MessageNotice packet(ChatClient::id(), dest, text, DateTime::utc(), randomId());
+  MessagePacket packet(new MessageNotice(ChatClient::id(), dest, text, DateTime::utc(), randomId()));
   if (!command.isEmpty())
-    packet.setCommand(command);
+    packet->setCommand(command);
 
   if (m_client->send(packet, true)) {
     m_hooks->sendText(packet);
@@ -98,7 +98,7 @@ void ClientMessages::channels(const QList<QByteArray> &channels)
 {
   foreach (QByteArray id, channels) {
     if (m_pending.contains(id)) {
-      QList<MessageNotice> packets = m_pending.value(id);
+      QList<MessagePacket> packets = m_pending.value(id);
 
       for (int i = 0; i < packets.size(); ++i)
         m_hooks->readText(packets.at(i));
@@ -117,11 +117,12 @@ void ClientMessages::notice(int type)
   if (type != Notice::MessageType)
     return;
 
-  MessageNotice packet(type, ChatClient::io()->reader());
-  if (!packet.isValid())
+  m_packet = MessagePacket(new MessageNotice(type, ChatClient::io()->reader()));
+  if (!m_packet->isValid()) {
+    m_packet.clear();
     return;
+  }
 
-  m_packet = &packet;
   m_packet->setDate(ChatClient::io()->date());
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
@@ -130,9 +131,9 @@ void ClientMessages::notice(int type)
   ClientChannel user = ChatClient::channels()->get(m_packet->sender());
   if (!user || !user->isSynced()) {
     ChatClient::channels()->join(m_packet->sender());
-    m_pending[m_packet->sender()].append(packet);
+    m_pending[m_packet->sender()].append(m_packet);
     return;
   }
 
-  m_hooks->readText(packet);
+  m_hooks->readText(m_packet);
 }

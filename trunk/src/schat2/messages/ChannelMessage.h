@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,19 +20,20 @@
 #define CHANNELMESSAGE_H_
 
 #include "messages/Message.h"
+#include "net/packets/MessageNotice.h"
 
 class MessageNotice;
 
 class SCHAT_CORE_EXPORT ChannelMessage : public Message
 {
 public:
-  ChannelMessage(const MessageNotice &packet);
-  inline const MessageNotice &packet() const { return m_packet; }
+  ChannelMessage(MessagePacket packet);
+  inline MessagePacket packet() const { return m_packet; }
 
 private:
   QByteArray detectTab() const;
 
-  const MessageNotice &m_packet; ///< Пакет на основе которого формируется сообщение.
+  MessagePacket m_packet; ///< Пакет на основе которого формируется сообщение.
 };
 
 #endif /* CHANNELMESSAGE_H_ */
