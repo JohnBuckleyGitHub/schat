@@ -60,7 +60,7 @@ bool ClientFeeds::headers(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
-  return ChatClient::io()->send(FeedNotice::headers(ChatClient::id(), id, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedNotice::headers(ChatClient::id(), id));
 }
 
 
@@ -87,7 +87,7 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedNotice::request(ChatClient::id(), id, command, name, ChatClient::stream(), json));
+  return ChatClient::io()->send(FeedNotice::request(ChatClient::id(), id, command, name, json));
 }
 
 

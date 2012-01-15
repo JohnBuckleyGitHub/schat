@@ -21,7 +21,10 @@
 
 #include "net/packets/Notice.h"
 
+class FeedNotice;
 class FeedQueryReply;
+
+typedef QSharedPointer<FeedNotice> FeedPacket;
 
 class SCHAT_EXPORT FeedNotice : public Notice
 {
@@ -30,11 +33,11 @@ public:
   FeedNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedNotice(quint16 type, PacketReader *reader);
 
-  static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
-  static QByteArray reply(const FeedNotice &source, const FeedQueryReply &reply, QDataStream *stream);
-  static QByteArray reply(const FeedNotice &source, const QVariantMap &json, QDataStream *stream);
-  static QByteArray reply(const FeedNotice &source, int status, QDataStream *stream);
-  static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json = QVariantMap());
+  static FeedPacket headers(const QByteArray &user, const QByteArray &channel);
+  static FeedPacket reply(const FeedNotice &source, const FeedQueryReply &reply);
+  static FeedPacket reply(const FeedNotice &source, const QVariantMap &json);
+  static FeedPacket reply(const FeedNotice &source, int status);
+  static FeedPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
 };
 
 #endif /* FEEDNOTICE_H_ */
