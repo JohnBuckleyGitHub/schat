@@ -21,12 +21,12 @@
 
 #include "messages/Message.h"
 
-class FeedPacket;
+class FeedNotice;
 
 class RawFeedsMessage : public Message
 {
 public:
-  RawFeedsMessage(const FeedPacket &packet);
+  RawFeedsMessage(const FeedNotice &packet);
 };
 
 #endif /* RAWFEEDSMESSAGE_H_ */

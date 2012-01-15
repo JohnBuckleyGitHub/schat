@@ -33,7 +33,7 @@ class FeedsImpl : public Feeds
 public:
   FeedsImpl(RawFeeds *parent);
 
-  void readFeed(const FeedPacket &packet);
+  void readFeed(const FeedNotice &packet);
 };
 
 } // namespace Hooks

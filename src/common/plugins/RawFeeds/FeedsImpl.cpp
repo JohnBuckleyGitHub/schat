@@ -21,7 +21,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "FeedsImpl.h"
-#include "net/packets/FeedPacket.h"
+#include "net/packets/FeedNotice.h"
 #include "RawFeedsMessage.h"
 #include "RawFeedsPlugin_p.h"
 #include "ui/TabWidget.h"
@@ -36,7 +36,10 @@ FeedsImpl::FeedsImpl(RawFeeds *parent)
 }
 
 
-void FeedsImpl::readFeed(const FeedPacket &packet)
+/*!
+ * \bug FIX
+ */
+void FeedsImpl::readFeed(const FeedNotice &packet)
 {
   qDebug() << "FeedsImpl::readFeed()";
 

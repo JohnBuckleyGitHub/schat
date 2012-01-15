@@ -298,7 +298,7 @@ Feeds::Feeds(QObject *parent)
 /*!
  * Чтение полученного сообщения.
  */
-void Feeds::readFeed(const FeedPacket &packet)
+void Feeds::readFeed(const FeedNotice &packet)
 {
   if (m_hooks.isEmpty())
     return;

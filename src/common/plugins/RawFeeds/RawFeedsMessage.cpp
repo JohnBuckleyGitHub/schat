@@ -18,11 +18,11 @@
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
-#include "net/packets/FeedPacket.h"
+#include "net/packets/FeedNotice.h"
 #include "net/SimpleID.h"
 #include "RawFeedsMessage.h"
 
-RawFeedsMessage::RawFeedsMessage(const FeedPacket &packet)
+RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   : Message()
 {
   m_tab = packet.sender();
@@ -36,7 +36,7 @@ RawFeedsMessage::RawFeedsMessage(const FeedPacket &packet)
 
   QVariantMap status;
   status["Code"] = packet.status();
-  status["Desc"] = FeedPacket::status(packet.status());
+  status["Desc"] = FeedNotice::status(packet.status());
 
   m_data["Status"] = status;
 }

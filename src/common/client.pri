@@ -36,7 +36,7 @@ HEADERS += \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/ChannelNotice.h \
-    net/packets/FeedPacket.h \
+    net/packets/FeedNotice.h \
     net/packets/MessageNotice.h \
     net/packets/Notice.h \
     net/PacketWriter.h \
@@ -49,6 +49,7 @@ HEADERS += \
     Plugins.h \
     schat.h \
     Settings.h \
+    sglobal.h \
     text/HtmlFilter.h \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
@@ -73,7 +74,7 @@ SOURCES += \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/ChannelNotice.cpp \
-    net/packets/FeedPacket.cpp \
+    net/packets/FeedNotice.cpp \
     net/packets/MessageNotice.cpp \
     net/packets/Notice.cpp \
     net/ServerData.cpp \
