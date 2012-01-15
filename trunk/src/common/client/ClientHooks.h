@@ -25,7 +25,7 @@
 
 class ChannelInfo;
 class ClientCmd;
-class FeedPacket;
+class FeedNotice;
 class MessageNotice;
 
 namespace Hooks
@@ -110,7 +110,7 @@ public:
   inline void add(Feeds *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Feeds *hook) { m_hooks.removeAll(hook); }
 
-  virtual void readFeed(const FeedPacket &packet);
+  virtual void readFeed(const FeedNotice &packet);
 
 protected:
   QList<Feeds*> m_hooks; ///< Хуки.

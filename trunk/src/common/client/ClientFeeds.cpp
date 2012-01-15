@@ -20,7 +20,7 @@
 #include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
-#include "net/packets/FeedPacket.h"
+#include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
 
 ClientFeeds::ClientFeeds(QObject *parent)
@@ -60,7 +60,7 @@ bool ClientFeeds::headers(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
-  return ChatClient::io()->send(FeedPacket::headers(ChatClient::id(), id, ChatClient::io()->sendStream()));
+  return ChatClient::io()->send(FeedNotice::headers(ChatClient::id(), id, ChatClient::io()->sendStream()));
 }
 
 
@@ -87,7 +87,7 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
   if (name.isEmpty())
     return false;
 
-  return ChatClient::io()->send(FeedPacket::request(ChatClient::id(), id, command, name, ChatClient::stream(), json));
+  return ChatClient::io()->send(FeedNotice::request(ChatClient::id(), id, command, name, ChatClient::stream(), json));
 }
 
 
@@ -112,12 +112,12 @@ void ClientFeeds::notice(int type)
   if (type != Notice::FeedType)
     return;
 
-  FeedPacket packet(type, ChatClient::io()->reader());
+  FeedNotice packet(type, ChatClient::io()->reader());
   if (!packet.isValid())
     return;
 
   m_packet = &packet;
-  qDebug() << "FeedPacket:" << m_packet->command() << m_packet->raw();
+  qDebug() << "FeedNotice:" << m_packet->command() << m_packet->raw();
 
   m_hooks->readFeed(packet);
 }

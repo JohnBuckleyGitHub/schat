@@ -22,7 +22,7 @@
 #include "cores/Core.h"
 #include "feeds/FeedStorage.h"
 #include "net/PacketReader.h"
-#include "net/packets/FeedPacket.h"
+#include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
@@ -48,7 +48,7 @@ bool NodeFeeds::read(PacketReader *reader)
   if (!m_channel)
     return false;
 
-  FeedPacket packet(m_type, reader);
+  FeedNotice packet(m_type, reader);
   m_packet = &packet;
 
   QString cmd = m_packet->command();
@@ -160,7 +160,7 @@ int NodeFeeds::get()
   if (json.isEmpty())
     return Notice::Forbidden;
 
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, Feed::merge(m_packet->text(), json), m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, Feed::merge(m_packet->text(), json), m_core->sendStream()));
   return Notice::OK;
 }
 
@@ -173,7 +173,7 @@ int NodeFeeds::get()
  */
 int NodeFeeds::headers()
 {
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, m_channel->feeds().headers(m_user.data()), m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data()), m_core->sendStream()));
   return Notice::OK;
 }
 
@@ -196,7 +196,7 @@ int NodeFeeds::query()
     FeedStorage::save(feed);
 
   if (reply.status == Notice::OK)
-    m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, reply, m_core->sendStream()));
+    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply, m_core->sendStream()));
 
   return reply.status;
 }
@@ -298,5 +298,5 @@ int NodeFeeds::check(int acl)
 
 void NodeFeeds::reply(int status)
 {
-  m_core->send(m_user->sockets(), FeedPacket::reply(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, status, m_core->sendStream()));
 }

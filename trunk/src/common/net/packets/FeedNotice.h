@@ -16,25 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FEEDPACKET_H_
-#define FEEDPACKET_H_
+#ifndef FEEDNOTICE_H_
+#define FEEDNOTICE_H_
 
 #include "net/packets/Notice.h"
 
 class FeedQueryReply;
 
-class SCHAT_EXPORT FeedPacket : public Notice
+class SCHAT_EXPORT FeedNotice : public Notice
 {
 public:
-  FeedPacket();
-  FeedPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
-  FeedPacket(quint16 type, PacketReader *reader);
+  FeedNotice();
+  FeedNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
+  FeedNotice(quint16 type, PacketReader *reader);
 
   static QByteArray headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream);
-  static QByteArray reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream);
-  static QByteArray reply(const FeedPacket &source, const QVariantMap &json, QDataStream *stream);
-  static QByteArray reply(const FeedPacket &source, int status, QDataStream *stream);
+  static QByteArray reply(const FeedNotice &source, const FeedQueryReply &reply, QDataStream *stream);
+  static QByteArray reply(const FeedNotice &source, const QVariantMap &json, QDataStream *stream);
+  static QByteArray reply(const FeedNotice &source, int status, QDataStream *stream);
   static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json = QVariantMap());
 };
 
-#endif /* FEEDPACKET_H_ */
+#endif /* FEEDNOTICE_H_ */

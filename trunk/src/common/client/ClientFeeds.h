@@ -24,7 +24,7 @@
 
 #include "schat.h"
 
-class FeedPacket;
+class FeedNotice;
 
 namespace Hooks
 {
@@ -52,7 +52,7 @@ private slots:
   void notice(int type);
 
 private:
-  FeedPacket *m_packet;     ///< Текущий прочитанный пакет.
+  FeedNotice *m_packet;     ///< Текущий прочитанный пакет.
   Hooks::Feeds *m_hooks;    ///< Хуки.
 };
 

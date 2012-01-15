@@ -21,7 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
-class FeedPacket;
+class FeedNotice;
 class ServerChannel;
 
 class NodeFeeds : public NodeNoticeReader
@@ -45,7 +45,7 @@ private:
   int check(int acl);
   void reply(int status);
 
-  FeedPacket *m_packet;
+  FeedNotice *m_packet;
   ChatChannel m_channel;
   ChatChannel m_user;
 };
