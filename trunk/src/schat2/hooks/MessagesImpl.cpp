@@ -23,7 +23,7 @@
 #include "client/SimpleClient.h"
 #include "hooks/MessagesImpl.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 #include "text/LinksFilter.h"
 #include "text/UrlFilter.h"
 #include "ui/TabWidget.h"
@@ -45,8 +45,9 @@ MessagesImpl::MessagesImpl(QObject *parent)
 
 /*!
  * Чтение полученного сообщения.
+ * \bug FIX
  */
-void MessagesImpl::readText(const MessagePacket &packet)
+void MessagesImpl::readText(const MessageNotice &packet)
 {
   ChannelMessage message(packet);
 
@@ -76,7 +77,7 @@ void MessagesImpl::readText(const MessagePacket &packet)
  * Обработка отправки сообщения, пакет сообщения добавляется в список не доставленных сообщений
  * и происходи немедленное отображение сообщения в пользовательском интерфейсе со статусом "undelivered".
  */
-void MessagesImpl::sendText(const MessagePacket &packet)
+void MessagesImpl::sendText(const MessageNotice &packet)
 {
   ChannelMessage message(packet);
   message.data()["Status"] = "undelivered";
@@ -98,7 +99,7 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
   /// В случае если предыдущее состояние клиента было в "В сети" и имеются не доставленные
   /// сообщения, то они помечаются недоставленными для отображения в пользовательском интерфейсе.
   if (previousState == SimpleClient::ClientOnline && !m_undelivered.isEmpty()) {
-    QHashIterator<QByteArray, MessagePacket> i(m_undelivered);
+    QHashIterator<QByteArray, MessageNotice> i(m_undelivered);
     while (i.hasNext()) {
       i.next();
       ChannelMessage message(i.value());

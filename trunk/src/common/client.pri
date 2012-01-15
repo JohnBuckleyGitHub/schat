@@ -37,7 +37,7 @@ HEADERS += \
     net/packets/auth.h \
     net/packets/ChannelPacket.h \
     net/packets/FeedPacket.h \
-    net/packets/MessagePacket.h \
+    net/packets/MessageNotice.h \
     net/packets/Notice.h \
     net/PacketWriter.h \
     net/ServerData.h \
@@ -74,7 +74,7 @@ SOURCES += \
     net/packets/auth.cpp \
     net/packets/ChannelPacket.cpp \
     net/packets/FeedPacket.cpp \
-    net/packets/MessagePacket.cpp \
+    net/packets/MessageNotice.cpp \
     net/packets/Notice.cpp \
     net/ServerData.cpp \
     net/SimpleID.cpp \

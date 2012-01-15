@@ -18,7 +18,7 @@
 
 #include "alerts/MessageAlert.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
 
 MessageAlert::MessageAlert(const ChannelMessage &message)

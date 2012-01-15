@@ -35,7 +35,6 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "messages/ChannelMessage.h"
-#include "net/packets/MessagePacket.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "ui/MainToolBar.h"

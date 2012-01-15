@@ -102,7 +102,7 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
 Notice::~Notice()
 {
-  qDebug() << "         Notice::~Notice()";
+  qDebug() << "         Notice::~Notice()" << m_command << m_text;
 }
 
 

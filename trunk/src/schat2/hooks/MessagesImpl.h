@@ -20,7 +20,7 @@
 #define MESSAGESIMPL_H_
 
 #include "client/ClientHooks.h"
-#include "net/packets/MessagePacket.h"
+#include "net/packets/MessageNotice.h"
 
 namespace Hooks
 {
@@ -31,14 +31,14 @@ class SCHAT_CORE_EXPORT MessagesImpl : public Messages
 
 public:
   MessagesImpl(QObject *parent = 0);
-  void readText(const MessagePacket &packet);
-  void sendText(const MessagePacket &packet);
+  void readText(const MessageNotice &packet);
+  void sendText(const MessageNotice &packet);
 
 private slots:
   void clientStateChanged(int state, int previousState);
 
 private:
-  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
+  QHash<QByteArray, MessageNotice> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 } // namespace Hooks
