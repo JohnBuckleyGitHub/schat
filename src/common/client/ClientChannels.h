@@ -23,7 +23,7 @@
 
 #include "Channel.h"
 
-class ChannelPacket;
+class ChannelNotice;
 class SimpleClient;
 
 namespace Hooks
@@ -79,7 +79,7 @@ signals:
   void channel(const QByteArray &id);                             ///< Команда "channel".
   void channels(const QList<QByteArray> &channels);               ///< Пакет новых каналов.
   void joined(const QByteArray &channel, const QByteArray &user); ///< Команда "+".
-  void notice(const ChannelPacket &notice);                       ///< Сырой пакет.
+  void notice(const ChannelNotice &notice);                       ///< Сырой пакет.
   void part(const QByteArray &channel, const QByteArray &user);   ///< Команда "-".
   void quit(const QByteArray &user);                              ///< Команда "quit".
 
@@ -99,7 +99,7 @@ private:
   void quit();
   void sync(ClientChannel channel);
 
-  ChannelPacket *m_packet;                     ///< Текущий прочитанный пакет.
+  ChannelNotice *m_packet;                     ///< Текущий прочитанный пакет.
   Hooks::Channels *m_hooks;                    ///< Хуки.
   QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
   QList<QByteArray> m_joined;                  ///< Список каналов в которых находится клиент.

@@ -20,11 +20,11 @@
 
 #include "DateTime.h"
 #include "net/PacketReader.h"
-#include "net/packets/ChannelPacket.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/PacketWriter.h"
 #include "sglobal.h"
 
-ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
+ChannelNotice::ChannelNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(sender, dest, command, time)
   , m_gender(0)
   , m_channelStatus(0)
@@ -33,7 +33,7 @@ ChannelPacket::ChannelPacket(const QByteArray &sender, const QByteArray &dest, c
 }
 
 
-ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
+ChannelNotice::ChannelNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
   , m_gender(0)
   , m_channelStatus(0)
@@ -49,7 +49,7 @@ ChannelPacket::ChannelPacket(quint16 type, PacketReader *reader)
 }
 
 
-void ChannelPacket::write(PacketWriter *writer) const
+void ChannelNotice::write(PacketWriter *writer) const
 {
   writer->put(m_gender);
   writer->put(m_channelStatus);
@@ -66,9 +66,9 @@ void ChannelPacket::write(PacketWriter *writer) const
  * \param stream  Поток записи пакета.
  * \param command Команда.
  */
-QByteArray ChannelPacket::channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command)
+QByteArray ChannelNotice::channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command)
 {
-  ChannelPacket packet(channel->id(), user->id(), command, DateTime::utc());
+  ChannelNotice packet(channel->id(), user->id(), command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
@@ -90,9 +90,9 @@ QByteArray ChannelPacket::channel(ClientChannel channel, ClientChannel user, QDa
  * \param stream  Поток записи пакета.
  * \param command Команда.
  */
-QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command)
+QByteArray ChannelNotice::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command)
 {
-  ChannelPacket packet(channel->id(), dest, command, DateTime::utc());
+  ChannelNotice packet(channel->id(), dest, command, DateTime::utc());
   packet.setDirection(Server2Client);
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
@@ -113,9 +113,9 @@ QByteArray ChannelPacket::channel(ClientChannel channel, const QByteArray &dest,
  * \param channels Список идентификаторов каналов, о которых необходима информация.
  * \param stream   Поток записи пакета.
  */
-QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
+QByteArray ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
 {
-  ChannelPacket packet(user, user, LS("info"), DateTime::utc());
+  ChannelNotice packet(user, user, LS("info"), DateTime::utc());
   packet.m_channels = channels;
   return packet.data(stream);
 }
@@ -124,9 +124,9 @@ QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &
 /*!
  * Базовый пакет ответа за запрос клиента.
  */
-QByteArray ChannelPacket::reply(const ChannelPacket &source, int status, QDataStream *stream)
+QByteArray ChannelNotice::reply(const ChannelNotice &source, int status, QDataStream *stream)
 {
-  ChannelPacket packet(source.dest(), source.sender(), source.command());
+  ChannelNotice packet(source.dest(), source.sender(), source.command());
   packet.setDirection(Server2Client);
   packet.setText(source.text());
   packet.setStatus(status);
@@ -137,9 +137,9 @@ QByteArray ChannelPacket::reply(const ChannelPacket &source, int status, QDataSt
 /*!
  * Базовая функция формирования запроса к серверу.
  */
-QByteArray ChannelPacket::request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text)
+QByteArray ChannelNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text)
 {
-  ChannelPacket packet(user, channel, command);
+  ChannelNotice packet(user, channel, command);
   packet.setText(text);
   return packet.data(stream);
 }
@@ -148,9 +148,9 @@ QByteArray ChannelPacket::request(const QByteArray &user, const QByteArray &chan
 /*!
  * Отправка обновлённой информации о себе.
  */
-QByteArray ChannelPacket::update(ClientChannel channel, QDataStream *stream)
+QByteArray ChannelNotice::update(ClientChannel channel, QDataStream *stream)
 {
-  ChannelPacket packet(channel->id(), channel->id(), LS("update"), DateTime::utc());
+  ChannelNotice packet(channel->id(), channel->id(), LS("update"), DateTime::utc());
   packet.setText(channel->name());
   packet.m_gender        = channel->gender().raw();
   packet.m_channelStatus = channel->status().value();

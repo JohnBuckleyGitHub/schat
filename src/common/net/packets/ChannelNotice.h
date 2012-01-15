@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELPACKET_H_
-#define CHANNELPACKET_H_
+#ifndef CHANNELNOTICE_H_
+#define CHANNELNOTICE_H_
 
 #include "Channel.h"
 #include "net/packets/Notice.h"
@@ -25,11 +25,11 @@
 class PacketReader;
 class PacketWriter;
 
-class SCHAT_EXPORT ChannelPacket : public Notice
+class SCHAT_EXPORT ChannelNotice : public Notice
 {
 public:
-  ChannelPacket(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0);
-  ChannelPacket(quint16 type, PacketReader *reader);
+  ChannelNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time = 0);
+  ChannelNotice(quint16 type, PacketReader *reader);
 
   inline const QByteArray& channelId() const       { return m_channelId; }
   inline const QList<QByteArray>& channels() const { return m_channels; }
@@ -39,7 +39,7 @@ public:
   static QByteArray channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command = "channel");
   static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command = "channel");
   static QByteArray info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream);
-  static QByteArray reply(const ChannelPacket &source, int status, QDataStream *stream);
+  static QByteArray reply(const ChannelNotice &source, int status, QDataStream *stream);
   static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text = QString());
   static QByteArray update(ClientChannel channel, QDataStream *stream);
 
@@ -52,4 +52,4 @@ protected:
   QList<QByteArray> m_channels; ///< Список идентификаторов каналов, передаётся только для команды "channel".
 };
 
-#endif /* CHANNELPACKET_H_ */
+#endif /* CHANNELNOTICE_H_ */
