@@ -47,31 +47,31 @@ FeedNotice::FeedNotice(quint16 type, PacketReader *reader)
  * \param channel Идентификатор канала.
  * \param stream  Поток записи пакета.
  */
-QByteArray FeedNotice::headers(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
+FeedPacket FeedNotice::headers(const QByteArray &user, const QByteArray &channel)
 {
-  FeedNotice packet(user, channel, "headers");
-  return packet.data(stream);
+  FeedPacket packet(new FeedNotice(user, channel, "headers"));
+  return packet;
 }
 
 
-QByteArray FeedNotice::reply(const FeedNotice &source, const FeedQueryReply &reply, QDataStream *stream)
+FeedPacket FeedNotice::reply(const FeedNotice &source, const FeedQueryReply &reply)
 {
-  FeedNotice packet(source.dest(), source.sender(), "reply");
-  packet.setDirection(Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(reply.status);
-  packet.setData(reply.json);
-  return packet.data(stream);
+  FeedPacket packet(new FeedNotice(source.dest(), source.sender(), "reply"));
+  packet->setDirection(Server2Client);
+  packet->setText(source.text());
+  packet->setStatus(reply.status);
+  packet->setData(reply.json);
+  return packet;
 }
 
 
-QByteArray FeedNotice::reply(const FeedNotice &source, const QVariantMap &json, QDataStream *stream)
+FeedPacket FeedNotice::reply(const FeedNotice &source, const QVariantMap &json)
 {
-  FeedNotice packet(source.dest(), source.sender(), source.command());
-  packet.setDirection(Server2Client);
-  packet.setText(source.text());
-  packet.setData(json);
-  return packet.data(stream);
+  FeedPacket packet(new FeedNotice(source.dest(), source.sender(), source.command()));
+  packet->setDirection(Server2Client);
+  packet->setText(source.text());
+  packet->setData(json);
+  return packet;
 }
 
 
@@ -82,13 +82,13 @@ QByteArray FeedNotice::reply(const FeedNotice &source, const QVariantMap &json, 
  * \param status  Код ответа на запрос.
  * \param stream  Поток записи пакета.
  */
-QByteArray FeedNotice::reply(const FeedNotice &source, int status, QDataStream *stream)
+FeedPacket FeedNotice::reply(const FeedNotice &source, int status)
 {
-  FeedNotice packet(source.dest(), source.sender(), source.command());
-  packet.setDirection(Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
-  return packet.data(stream);
+  FeedPacket packet(new FeedNotice(source.dest(), source.sender(), source.command()));
+  packet->setDirection(Server2Client);
+  packet->setText(source.text());
+  packet->setStatus(status);
+  return packet;
 }
 
 
@@ -102,10 +102,10 @@ QByteArray FeedNotice::reply(const FeedNotice &source, int status, QDataStream *
  * \param stream  Поток записи пакета.
  * \param json    JSON данные запроса.
  */
-QByteArray FeedNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, QDataStream *stream, const QVariantMap &json)
+FeedPacket FeedNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, const QVariantMap &json)
 {
-  FeedNotice packet(user, channel, command);
-  packet.setText(name);
-  packet.setData(json);
-  return packet.data(stream);
+  FeedPacket packet(new FeedNotice(user, channel, command));
+  packet->setText(name);
+  packet->setData(json);
+  return packet;
 }

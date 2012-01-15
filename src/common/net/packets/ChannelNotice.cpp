@@ -106,6 +106,17 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &de
 }
 
 
+ChannelPacket ChannelNotice::info(ClientChannel channel)
+{
+  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), LS("info"), DateTime::utc()));
+  packet->setDirection(Server2Client);
+  packet->setText(channel->name());
+  packet->m_gender        = channel->gender().raw();
+  packet->m_channelStatus = channel->status().value();
+  return packet;
+}
+
+
 /*!
  * Формирование пакета "info" для запроса информации о каналах.
  *

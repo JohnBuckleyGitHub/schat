@@ -118,12 +118,10 @@ void ClientMessages::notice(int type)
     return;
 
   m_packet = MessagePacket(new MessageNotice(type, ChatClient::io()->reader()));
-  if (!m_packet->isValid()) {
-    m_packet.clear();
+  if (!m_packet->isValid())
     return;
-  }
 
-  m_packet->setDate(ChatClient::io()->date());
+  m_packet->setDate(ChatClient::date());
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь

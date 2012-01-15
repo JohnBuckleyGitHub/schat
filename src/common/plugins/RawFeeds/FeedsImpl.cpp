@@ -36,9 +36,6 @@ FeedsImpl::FeedsImpl(RawFeeds *parent)
 }
 
 
-/*!
- * \bug FIX
- */
 void FeedsImpl::readFeed(const FeedNotice &packet)
 {
   qDebug() << "FeedsImpl::readFeed()";

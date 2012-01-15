@@ -88,7 +88,7 @@ void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, Q
 
 void NodeChannels::addImpl(ChatChannel user)
 {
-  m_core->send(Sockets::all(user), ChannelNotice::channel(user, user->id(), LS("info")));
+  m_core->send(Sockets::all(user), ChannelNotice::info(user));
 }
 
 
@@ -169,6 +169,9 @@ bool NodeChannels::join()
 }
 
 
+/*!
+ * \todo Необходимо добавить проверку прав доступа.
+ */
 bool NodeChannels::name()
 {
   if (!Channel::isValidName(m_packet->text()))
@@ -178,16 +181,19 @@ bool NodeChannels::name()
   if (!channel)
     return false;
 
-  qDebug() << channel;
-
   if (channel->name() == m_packet->text())
     return false;
 
   if (!Ch::rename(channel, m_packet->text()))
     return false;
 
-//  qDebug() << Sockets::channel(channel);
-//  m_core->send(Sockets::channel(channel), ChannelPacket::channel(channel, channel, m_core->sendStream(), LS("info")));
+  QList<quint64> sockets;
+  if (channel->type() == SimpleID::UserId)
+    sockets = Sockets::all(channel, true);
+  else
+    sockets = Sockets::channel(channel);
+
+  m_core->send(sockets, ChannelNotice::info(channel));
   return false;
 }
 
@@ -240,6 +246,8 @@ int NodeChannels::update()
   if (m_user->name() != m_packet->text()) {
     if (!Ch::rename(m_user, m_packet->text()))
       return Notice::ObjectAlreadyExists;
+
+    updates++;
   }
 
   if (m_user->gender().raw() != m_packet->gender()) {
@@ -255,7 +263,7 @@ int NodeChannels::update()
   if (!updates)
     return Notice::BadRequest;
 
-  m_core->send(Sockets::all(m_user, true), ChannelNotice::channel(m_user, m_user->id(), LS("info")));
+  m_core->send(Sockets::all(m_user, true), ChannelNotice::info(m_user));
   return Notice::OK;
 }
 

@@ -160,7 +160,7 @@ int NodeFeeds::get()
   if (json.isEmpty())
     return Notice::Forbidden;
 
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, Feed::merge(m_packet->text(), json), m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, Feed::merge(m_packet->text(), json)));
   return Notice::OK;
 }
 
@@ -173,7 +173,7 @@ int NodeFeeds::get()
  */
 int NodeFeeds::headers()
 {
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data()), m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data())));
   return Notice::OK;
 }
 
@@ -196,7 +196,7 @@ int NodeFeeds::query()
     FeedStorage::save(feed);
 
   if (reply.status == Notice::OK)
-    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply, m_core->sendStream()));
+    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply));
 
   return reply.status;
 }
@@ -298,5 +298,5 @@ int NodeFeeds::check(int acl)
 
 void NodeFeeds::reply(int status)
 {
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, status, m_core->sendStream()));
+  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, status));
 }

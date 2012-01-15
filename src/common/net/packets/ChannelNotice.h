@@ -41,6 +41,7 @@ public:
 
   static ChannelPacket channel(ClientChannel channel, ClientChannel user, const QString &command = "channel");
   static ChannelPacket channel(ClientChannel channel, const QByteArray &dest, const QString &command = "channel");
+  static ChannelPacket info(ClientChannel channel);
   static ChannelPacket info(const QByteArray &user, const QList<QByteArray> &channels);
   static ChannelPacket reply(const ChannelNotice &source, int status);
   static ChannelPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &text = QString());
