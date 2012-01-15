@@ -35,7 +35,7 @@ HEADERS += \
     k8json/k8json.h \
     net/PacketReader.h \
     net/packets/auth.h \
-    net/packets/ChannelPacket.h \
+    net/packets/ChannelNotice.h \
     net/packets/FeedPacket.h \
     net/packets/MessageNotice.h \
     net/packets/Notice.h \
@@ -72,7 +72,7 @@ SOURCES += \
     k8json/k8json.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
-    net/packets/ChannelPacket.cpp \
+    net/packets/ChannelNotice.cpp \
     net/packets/FeedPacket.cpp \
     net/packets/MessageNotice.cpp \
     net/packets/Notice.cpp \

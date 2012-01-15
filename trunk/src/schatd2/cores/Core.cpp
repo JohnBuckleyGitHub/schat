@@ -31,7 +31,6 @@
 #include "events.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/ChannelPacket.h"
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"

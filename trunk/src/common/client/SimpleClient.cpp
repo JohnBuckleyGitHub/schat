@@ -22,7 +22,7 @@
 #include "client/SimpleClient_p.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
-#include "net/packets/ChannelPacket.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/packets/Notice.h"
 #include "sglobal.h"
 
@@ -144,7 +144,7 @@ const QString &SimpleClient::account() const
 void SimpleClient::leave()
 {
   Q_D(SimpleClient);
-  send(ChannelPacket::request(channelId(), channelId(), LS("quit"), d->sendStream));
+  send(ChannelNotice::request(channelId(), channelId(), LS("quit"), d->sendStream));
 
   AbstractClient::leave();
 }

@@ -22,7 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
-#include "net/packets/ChannelPacket.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
@@ -71,7 +71,7 @@ bool ClientChannels::info(const QList<QByteArray> &channels)
   if (channels.isEmpty())
     return false;
 
-  return m_client->send(ChannelPacket::info(ChatClient::id(), channels, m_client->sendStream()));
+  return m_client->send(ChannelNotice::info(ChatClient::id(), channels, m_client->sendStream()));
 }
 
 
@@ -80,7 +80,7 @@ bool ClientChannels::join(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
-  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("join"), m_client->sendStream()));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("join"), m_client->sendStream()));
 }
 
 
@@ -94,7 +94,7 @@ bool ClientChannels::join(const QString &name)
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelPacket::request(ChatClient::id(), QByteArray(), LS("join"), m_client->sendStream(), name));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), QByteArray(), LS("join"), m_client->sendStream(), name));
 }
 
 
@@ -103,7 +103,7 @@ bool ClientChannels::name(const QByteArray &id, const QString &name)
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("name"), ChatClient::stream(), name));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("name"), ChatClient::stream(), name));
 }
 
 
@@ -116,7 +116,7 @@ bool ClientChannels::nick(const QString &nick)
   if (!user->isValid())
     return false;
 
-  return m_client->send(ChannelPacket::update(user, m_client->sendStream()));
+  return m_client->send(ChannelNotice::update(user, m_client->sendStream()));
 }
 
 
@@ -130,13 +130,13 @@ bool ClientChannels::part(const QByteArray &id)
 
   m_joined.removeAll(id);
 
-  return m_client->send(ChannelPacket::request(ChatClient::id(), id, LS("-"), ChatClient::stream()));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("-"), ChatClient::stream()));
 }
 
 
 bool ClientChannels::update()
 {
-  return m_client->send(ChannelPacket::update(ChatClient::channel(), m_client->sendStream()));
+  return m_client->send(ChannelNotice::update(ChatClient::channel(), m_client->sendStream()));
 }
 
 
@@ -177,7 +177,7 @@ void ClientChannels::notice(int type)
   if (type != Notice::ChannelType)
     return;
 
-  ChannelPacket packet(type, ChatClient::io()->reader());
+  ChannelNotice packet(type, ChatClient::io()->reader());
   if (!packet.isValid())
     return;
 

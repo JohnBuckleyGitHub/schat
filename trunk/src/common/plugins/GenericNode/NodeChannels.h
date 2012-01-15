@@ -21,7 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
-class ChannelPacket;
+class ChannelNotice;
 class Core;
 class Storage;
 
@@ -46,7 +46,7 @@ private:
 
   void reply(int status);
 
-  ChannelPacket *m_packet;
+  ChannelNotice *m_packet;
   ChatChannel m_user;
 };
 
