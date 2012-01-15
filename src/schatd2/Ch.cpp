@@ -24,6 +24,7 @@
 #include "net/ServerData.h"
 #include "Normalize.h"
 #include "Storage.h"
+#include "Settings.h"
 
 Ch *Ch::m_self = 0;
 
@@ -175,6 +176,12 @@ ChatChannel Ch::channelImpl(const QString &name)
 }
 
 
+/*!
+ * Загрузка основных каналов сервера.
+ *
+ * \bug Если изменить имя основного канала, то после перезапуска оно будет возвращено на стандартное имя.
+ * \todo Устанавливать основной канал через фид канала сервера.
+ */
 void Ch::loadImpl()
 {
   if (m_self != this)
@@ -185,6 +192,16 @@ void Ch::loadImpl()
     server = ChatChannel(new ServerChannel(Storage::serverId(), Storage::serverName()));
     add(server);
     newChannelImpl(server);
+  }
+
+  Ch::channel(QString("Main"));
+
+  qint64 key = Storage::settings()->value("MainChannel").toLongLong();
+  if (key > 0) {
+    ChatChannel channel = DataBase::channel(key);
+    if (channel) {
+      Storage::serverData()->setChannelId(channel->id());
+    }
   }
 
   foreach (Ch *hook, m_hooks) {
