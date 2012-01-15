@@ -122,45 +122,32 @@ QByteArray ChannelPacket::info(const QByteArray &user, const QList<QByteArray> &
 
 
 /*!
- * Формирования пакета "join" для входа в канал.
- *
- * \param user    Идентификатор пользователя отправителя.
- * \param channel Идентификатор канала, в который необходимо войти, может быть пустым.
- * \param name    Имя канала, может быть пустым.
- * \param stream  Поток записи пакета.
- *
- * \sa ClientChannels::join().
+ * Базовый пакет ответа за запрос клиента.
  */
-QByteArray ChannelPacket::join(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+QByteArray ChannelPacket::reply(const ChannelPacket &source, int status, QDataStream *stream)
 {
-  ChannelPacket packet(user, channel, LS("join"), DateTime::utc());
-  packet.setText(name);
+  ChannelPacket packet(source.dest(), source.sender(), source.command());
+  packet.setDirection(Server2Client);
+  packet.setText(source.text());
+  packet.setStatus(status);
   return packet.data(stream);
 }
 
 
-QByteArray ChannelPacket::name(const QByteArray &user, const QByteArray &channel, const QString &name, QDataStream *stream)
+/*!
+ * Базовая функция формирования запроса к серверу.
+ */
+QByteArray ChannelPacket::request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text)
 {
-  ChannelPacket packet(user, channel, LS("name"), DateTime::utc());
-  packet.setText(name);
+  ChannelPacket packet(user, channel, command);
+  packet.setText(text);
   return packet.data(stream);
 }
 
 
-QByteArray ChannelPacket::part(const QByteArray &user, const QByteArray &channel, QDataStream *stream)
-{
-  ChannelPacket packet(user, channel, LS("-"), DateTime::utc());
-  return packet.data(stream);
-}
-
-
-QByteArray ChannelPacket::quit(const QByteArray &user, QDataStream *stream)
-{
-  ChannelPacket packet(user, user, LS("quit"), DateTime::utc());
-  return packet.data(stream);
-}
-
-
+/*!
+ * Отправка обновлённой информации о себе.
+ */
 QByteArray ChannelPacket::update(ClientChannel channel, QDataStream *stream)
 {
   ChannelPacket packet(channel->id(), channel->id(), LS("update"), DateTime::utc());

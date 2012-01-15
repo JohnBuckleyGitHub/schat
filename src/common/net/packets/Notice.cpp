@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "net/PacketReader.h"
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
@@ -95,6 +97,12 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   if (m_fields & TextField)
     m_text = reader->text();
+}
+
+
+Notice::~Notice()
+{
+  qDebug() << "         Notice::~Notice()";
 }
 
 

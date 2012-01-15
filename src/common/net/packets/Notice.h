@@ -20,6 +20,7 @@
 #define NOTICE_H_
 
 #include <QVariant>
+#include <QSharedPointer>
 
 #include "schat.h"
 
@@ -78,7 +79,7 @@ public:
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
-  virtual ~Notice() {}
+  virtual ~Notice();
 
   virtual bool isValid() const;
 
@@ -128,5 +129,7 @@ protected:
   QByteArray m_raw;         ///< Сырые JSON данные.
   QString m_text;           ///< Сырой текст, не обязательное поле.
 };
+
+typedef QSharedPointer<Notice> Packet;
 
 #endif /* NOTICE_H_ */

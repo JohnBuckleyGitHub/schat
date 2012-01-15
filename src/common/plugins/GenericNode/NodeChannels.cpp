@@ -52,21 +52,30 @@ bool NodeChannels::read(PacketReader *reader)
   QString cmd = m_packet->command();
   qDebug() << "NodeChannels::read" << cmd;
 
+  int status = Notice::NotImplemented;
+
   if (cmd == LS("info"))
     return info();
 
-  if (cmd == LS("join"))
+  else if (cmd == LS("join"))
     return join();
 
-  if (cmd == LS("-"))
+  else if (cmd == LS("-"))
     return part();
 
-  if (cmd == LS("quit"))
+  else if (cmd == LS("quit"))
     return quit();
 
-  if (cmd == LS("update"))
-    return update();
+  else if (cmd == LS("update"))
+    status = update();
 
+  else if (cmd == LS("name"))
+    return name();
+
+  if (status == Notice::OK)
+    return false;
+
+  reply(status);
   return false;
 }
 
@@ -90,7 +99,7 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   if (user->sockets().size())
     return;
 
-  m_core->send(Sockets::all(user), ChannelPacket::quit(user->id(), m_core->sendStream()));
+  m_core->send(Sockets::all(user), ChannelPacket::request(user->id(), user->id(), LS("quit"), m_core->sendStream()));
 
   QList<QByteArray> channels = user->channels().all();
   foreach (QByteArray id, channels) {
@@ -160,6 +169,29 @@ bool NodeChannels::join()
 }
 
 
+bool NodeChannels::name()
+{
+  if (!Channel::isValidName(m_packet->text()))
+    return false;
+
+  ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  if (!channel)
+    return false;
+
+  qDebug() << channel;
+
+  if (channel->name() == m_packet->text())
+    return false;
+
+  if (!Ch::rename(channel, m_packet->text()))
+    return false;
+
+//  qDebug() << Sockets::channel(channel);
+//  m_core->send(Sockets::channel(channel), ChannelPacket::channel(channel, channel, m_core->sendStream(), LS("info")));
+  return false;
+}
+
+
 /*!
  * Обработка отключения пользователя от канала.
  */
@@ -174,7 +206,7 @@ bool NodeChannels::part()
   if (!channel->channels().all().contains(m_user->id()))
     return false;
 
-  m_core->send(Sockets::channel(channel), ChannelPacket::part(m_user->id(), channel->id(), m_core->sendStream()));
+  m_core->send(Sockets::channel(channel), ChannelPacket::request(m_user->id(), channel->id(), LS("-"), m_core->sendStream()));
   channel->channels().remove(m_user->id());
 
   Ch::gc(channel);
@@ -191,42 +223,44 @@ bool NodeChannels::quit()
 
 
 /*!
- * Обработка обновления информации о пользователе.
+ * Обработка получения обновлённой информации о пользователе.
  */
-bool NodeChannels::update()
+int NodeChannels::update()
 {
-  ChatChannel user = Ch::channel(m_packet->sender(), SimpleID::UserId);
-  if (!user)
-    return false;
-
   if (!Channel::isValidName(m_packet->text()))
-    return false;
+    return Notice::BadRequest;
 
   if (m_packet->channelStatus() == Status::Offline) {
     m_core->send(QList<quint64>() << m_core->packetsEvent()->socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
-    return false;
+    return Notice::OK;
   }
 
   int updates = 0;
 
-  if (user->name() != m_packet->text()) {
-    Ch::rename(user, m_packet->text());
+  if (m_user->name() != m_packet->text()) {
+    if (!Ch::rename(m_user, m_packet->text()))
+      return Notice::ObjectAlreadyExists;
+  }
+
+  if (m_user->gender().raw() != m_packet->gender()) {
+    m_user->gender() = m_packet->gender();
     updates++;
   }
 
-  if (user->gender().raw() != m_packet->gender()) {
-    user->gender() = m_packet->gender();
-    updates++;
-  }
-
-  if (user->status().value() != m_packet->channelStatus()) {
-    user->status() = m_packet->channelStatus();
+  if (m_user->status().value() != m_packet->channelStatus()) {
+    m_user->status() = m_packet->channelStatus();
     updates++;
   }
 
   if (!updates)
-    return false;
+    return Notice::BadRequest;
 
-  m_core->send(Sockets::all(user, true), ChannelPacket::channel(user, user->id(), m_core->sendStream(), LS("info")));
-  return false;
+  m_core->send(Sockets::all(m_user, true), ChannelPacket::channel(m_user, m_user->id(), m_core->sendStream(), LS("info")));
+  return Notice::OK;
+}
+
+
+void NodeChannels::reply(int status)
+{
+  m_core->send(m_user->sockets(), ChannelPacket::reply(*m_packet, status, m_core->sendStream()));
 }

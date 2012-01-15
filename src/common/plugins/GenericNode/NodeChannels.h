@@ -39,9 +39,12 @@ protected:
 private:
   bool info();
   bool join();
+  bool name();
   bool part();
   bool quit();
-  bool update();
+  int update();
+
+  void reply(int status);
 
   ChannelPacket *m_packet;
   ChatChannel m_user;

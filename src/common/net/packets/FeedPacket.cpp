@@ -57,7 +57,7 @@ QByteArray FeedPacket::headers(const QByteArray &user, const QByteArray &channel
 QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &reply, QDataStream *stream)
 {
   FeedPacket packet(source.dest(), source.sender(), "reply");
-  packet.setDirection(FeedPacket::Server2Client);
+  packet.setDirection(Server2Client);
   packet.setText(source.text());
   packet.setStatus(reply.status);
   packet.setData(reply.json);
@@ -68,7 +68,7 @@ QByteArray FeedPacket::reply(const FeedPacket &source, const FeedQueryReply &rep
 QByteArray FeedPacket::reply(const FeedPacket &source, const QVariantMap &json, QDataStream *stream)
 {
   FeedPacket packet(source.dest(), source.sender(), source.command());
-  packet.setDirection(FeedPacket::Server2Client);
+  packet.setDirection(Server2Client);
   packet.setText(source.text());
   packet.setData(json);
   return packet.data(stream);
@@ -85,7 +85,7 @@ QByteArray FeedPacket::reply(const FeedPacket &source, const QVariantMap &json, 
 QByteArray FeedPacket::reply(const FeedPacket &source, int status, QDataStream *stream)
 {
   FeedPacket packet(source.dest(), source.sender(), source.command());
-  packet.setDirection(FeedPacket::Server2Client);
+  packet.setDirection(Server2Client);
   packet.setText(source.text());
   packet.setStatus(status);
   return packet.data(stream);
