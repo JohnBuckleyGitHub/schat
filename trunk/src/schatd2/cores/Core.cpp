@@ -130,6 +130,12 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets,
 }
 
 
+bool Core::send(const QList<quint64> &sockets, Packet packet, int option, const QByteArray &userId)
+{
+  return send(sockets, packet->data(m_sendStream), option, userId);
+}
+
+
 QByteArray Core::id() const
 {
   return m_storage->serverData()->id();

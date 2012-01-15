@@ -22,8 +22,11 @@
 #include "Channel.h"
 #include "net/packets/Notice.h"
 
+class ChannelNotice;
 class PacketReader;
 class PacketWriter;
+
+typedef QSharedPointer<ChannelNotice> ChannelPacket;
 
 class SCHAT_EXPORT ChannelNotice : public Notice
 {
@@ -36,12 +39,12 @@ public:
   inline quint8 gender() const                     { return m_gender; }
   inline quint8 channelStatus() const              { return m_channelStatus; }
 
-  static QByteArray channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command = "channel");
-  static QByteArray channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command = "channel");
-  static QByteArray info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream);
-  static QByteArray reply(const ChannelNotice &source, int status, QDataStream *stream);
-  static QByteArray request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text = QString());
-  static QByteArray update(ClientChannel channel, QDataStream *stream);
+  static ChannelPacket channel(ClientChannel channel, ClientChannel user, const QString &command = "channel");
+  static ChannelPacket channel(ClientChannel channel, const QByteArray &dest, const QString &command = "channel");
+  static ChannelPacket info(const QByteArray &user, const QList<QByteArray> &channels);
+  static ChannelPacket reply(const ChannelNotice &source, int status);
+  static ChannelPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &text = QString());
+  static ChannelPacket update(ClientChannel channel);
 
 protected:
   void write(PacketWriter *writer) const;
@@ -51,5 +54,7 @@ protected:
   quint8 m_channelStatus;       ///< Базовый статус пользователя.
   QList<QByteArray> m_channels; ///< Список идентификаторов каналов, передаётся только для команды "channel".
 };
+
+
 
 #endif /* CHANNELNOTICE_H_ */

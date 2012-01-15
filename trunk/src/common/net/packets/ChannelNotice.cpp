@@ -66,19 +66,19 @@ void ChannelNotice::write(PacketWriter *writer) const
  * \param stream  Поток записи пакета.
  * \param command Команда.
  */
-QByteArray ChannelNotice::channel(ClientChannel channel, ClientChannel user, QDataStream *stream, const QString &command)
+ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, const QString &command)
 {
-  ChannelNotice packet(channel->id(), user->id(), command, DateTime::utc());
-  packet.setDirection(Server2Client);
-  packet.setText(channel->name());
-  packet.m_gender        = channel->gender().raw();
-  packet.m_channelStatus = channel->status().value();
-  packet.setData(channel->feeds().headers(user.data()));
+  ChannelPacket packet(new ChannelNotice(channel->id(), user->id(), command, DateTime::utc()));
+  packet->setDirection(Server2Client);
+  packet->setText(channel->name());
+  packet->m_gender        = channel->gender().raw();
+  packet->m_channelStatus = channel->status().value();
+  packet->setData(channel->feeds().headers(user.data()));
 
   if (channel->type() == SimpleID::ChannelId)
-    packet.m_channels = channel->channels().all();
+    packet->m_channels = channel->channels().all();
 
-  return packet.data(stream);
+  return packet;
 }
 
 
@@ -90,19 +90,19 @@ QByteArray ChannelNotice::channel(ClientChannel channel, ClientChannel user, QDa
  * \param stream  Поток записи пакета.
  * \param command Команда.
  */
-QByteArray ChannelNotice::channel(ClientChannel channel, const QByteArray &dest, QDataStream *stream, const QString &command)
+ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &dest, const QString &command)
 {
-  ChannelNotice packet(channel->id(), dest, command, DateTime::utc());
-  packet.setDirection(Server2Client);
-  packet.setText(channel->name());
-  packet.m_gender        = channel->gender().raw();
-  packet.m_channelStatus = channel->status().value();
+  ChannelPacket packet(new ChannelNotice(channel->id(), dest, command, DateTime::utc()));
+  packet->setDirection(Server2Client);
+  packet->setText(channel->name());
+  packet->m_gender        = channel->gender().raw();
+  packet->m_channelStatus = channel->status().value();
 //  packet.setData(channel->feeds().headers(0));
 
   if (channel->type() == SimpleID::ChannelId)
-    packet.m_channels = channel->channels().all();
+    packet->m_channels = channel->channels().all();
 
-  return packet.data(stream);
+  return packet;
 }
 
 
@@ -113,46 +113,46 @@ QByteArray ChannelNotice::channel(ClientChannel channel, const QByteArray &dest,
  * \param channels Список идентификаторов каналов, о которых необходима информация.
  * \param stream   Поток записи пакета.
  */
-QByteArray ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels, QDataStream *stream)
+ChannelPacket ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels)
 {
-  ChannelNotice packet(user, user, LS("info"), DateTime::utc());
-  packet.m_channels = channels;
-  return packet.data(stream);
+  ChannelPacket packet(new ChannelNotice(user, user, LS("info"), DateTime::utc()));
+  packet->m_channels = channels;
+  return packet;
 }
 
 
 /*!
  * Базовый пакет ответа за запрос клиента.
  */
-QByteArray ChannelNotice::reply(const ChannelNotice &source, int status, QDataStream *stream)
+ChannelPacket ChannelNotice::reply(const ChannelNotice &source, int status)
 {
-  ChannelNotice packet(source.dest(), source.sender(), source.command());
-  packet.setDirection(Server2Client);
-  packet.setText(source.text());
-  packet.setStatus(status);
-  return packet.data(stream);
+  ChannelPacket packet(new ChannelNotice(source.dest(), source.sender(), source.command()));
+  packet->setDirection(Server2Client);
+  packet->setText(source.text());
+  packet->setStatus(status);
+  return packet;
 }
 
 
 /*!
  * Базовая функция формирования запроса к серверу.
  */
-QByteArray ChannelNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, QDataStream *stream, const QString &text)
+ChannelPacket ChannelNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &text)
 {
-  ChannelNotice packet(user, channel, command);
-  packet.setText(text);
-  return packet.data(stream);
+  ChannelPacket packet(new ChannelNotice(user, channel, command));
+  packet->setText(text);
+  return packet;
 }
 
 
 /*!
  * Отправка обновлённой информации о себе.
  */
-QByteArray ChannelNotice::update(ClientChannel channel, QDataStream *stream)
+ChannelPacket ChannelNotice::update(ClientChannel channel)
 {
-  ChannelNotice packet(channel->id(), channel->id(), LS("update"), DateTime::utc());
-  packet.setText(channel->name());
-  packet.m_gender        = channel->gender().raw();
-  packet.m_channelStatus = channel->status().value();
-  return packet.data(stream);
+  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), LS("update"), DateTime::utc()));
+  packet->setText(channel->name());
+  packet->m_gender        = channel->gender().raw();
+  packet->m_channelStatus = channel->status().value();
+  return packet;
 }
