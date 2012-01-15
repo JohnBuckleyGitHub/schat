@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QVariant>
 
+#include "net/packets/Notice.h"
 #include "ServerChannel.h"
 
 class AuthResult;
@@ -45,9 +46,10 @@ public:
   inline static Core *i() { return m_self; }
 
   // Функции отправки пакетов.
-  virtual bool route();
-  virtual bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
-  virtual bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
+  bool route();
+  bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
+  bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
+  bool send(const QList<quint64> &sockets, Packet packet, int option = 0, const QByteArray &userId = QByteArray());
 
   inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
   inline QDataStream *sendStream()             { return m_sendStream; }
