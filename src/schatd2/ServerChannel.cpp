@@ -69,16 +69,17 @@ void ServerChannel::createAccount()
 /*!
  * Получение фида по имени, эта функция позволяет автоматически создать фид, если он не существует.
  *
- * \param name Имя фида.
+ * \param name   Имя фида.
  * \param create \b true если необходимо создать фид, если он не существует.
+ * \param save   \b true если необходимо сохранить фид после создания.
  */
-FeedPtr ServerChannel::feed(const QString &name, bool create)
+FeedPtr ServerChannel::feed(const QString &name, bool create, bool save)
 {
   FeedPtr feed = feeds().all().value(name);
   if (feed || !create)
     return feed;
 
-  feeds().add(FeedStorage::create(name));
+  feeds().add(FeedStorage::create(name), save);
   return this->feed(name, false);
 }
 

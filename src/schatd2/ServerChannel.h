@@ -36,7 +36,7 @@ public:
   inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
   void createAccount();
 
-  FeedPtr feed(const QString &name, bool create = true);
+  FeedPtr feed(const QString &name, bool create = true, bool save = true);
 
 private:
   void normalize();
