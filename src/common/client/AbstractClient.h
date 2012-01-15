@@ -22,14 +22,11 @@
 #include <QUrl>
 
 #include "Channel.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleSocket.h"
 #include "schat.h"
 
 class AbstractClientPrivate;
-class Channel;
-class MessageData;
-class Notice;
-class NoticeData;
 class PacketReader;
 class ServerData;
 
@@ -57,9 +54,9 @@ public:
 
   bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl);
 
-  bool send(const Notice &data, bool echo = false);
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
+  bool send(Packet packet, bool echo = false);
 
   ClientChannel channel() const;
   ClientState clientState() const;

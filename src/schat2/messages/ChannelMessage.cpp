@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@
 #include "net/SimpleID.h"
 #include "text/TokenFilter.h"
 
-ChannelMessage::ChannelMessage(const MessageNotice &packet)
+ChannelMessage::ChannelMessage(MessagePacket packet)
   : Message()
   , m_packet(packet)
 {
   m_data["Type"]      = "channel";
-  m_data["Id"]        = SimpleID::encode(packet.id());
-  m_data["Command"]   = packet.command();
-  m_data["Text"]      = TokenFilter::filter("channel", packet.text());
-  m_data["Direction"] = m_packet.sender() == ChatClient::id() ? "outgoing" : "incoming";
-  m_data["Date"]      = m_packet.date();
+  m_data["Id"]        = SimpleID::encode(packet->id());
+  m_data["Command"]   = packet->command();
+  m_data["Text"]      = TokenFilter::filter("channel", packet->text());
+  m_data["Direction"] = m_packet->sender() == ChatClient::id() ? "outgoing" : "incoming";
+  m_data["Date"]      = m_packet->date();
 //  m_data["Day"]       = true; // true включает отображение полного времени.
 
-  author(m_packet.sender());
+  author(m_packet->sender());
 
   m_tab = detectTab();
 }
@@ -42,11 +42,11 @@ ChannelMessage::ChannelMessage(const MessageNotice &packet)
 
 QByteArray ChannelMessage::detectTab() const
 {
-  if (SimpleID::typeOf(m_packet.dest()) == SimpleID::ChannelId)
-    return m_packet.dest();
+  if (SimpleID::typeOf(m_packet->dest()) == SimpleID::ChannelId)
+    return m_packet->dest();
 
-  if (m_packet.sender() == ChatClient::id())
-    return m_packet.dest();
+  if (m_packet->sender() == ChatClient::id())
+    return m_packet->dest();
 
-  return m_packet.sender();
+  return m_packet->sender();
 }

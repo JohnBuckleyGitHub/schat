@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ class SCHAT_CORE_EXPORT MessagesImpl : public Messages
 
 public:
   MessagesImpl(QObject *parent = 0);
-  void readText(const MessageNotice &packet);
-  void sendText(const MessageNotice &packet);
+  void readText(MessagePacket packet);
+  void sendText(MessagePacket packet);
 
 private slots:
   void clientStateChanged(int state, int previousState);
 
 private:
-  QHash<QByteArray, MessageNotice> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
+  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
 };
 
 } // namespace Hooks
