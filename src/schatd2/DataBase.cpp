@@ -31,7 +31,10 @@
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
+#include "sglobal.h"
 #include "Storage.h"
+
+bool DataBase::noMaster = false;
 
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
@@ -57,8 +60,8 @@ int DataBase::start()
   query.exec(QLatin1String("PRAGMA synchronous = OFF"));
   QStringList tables = db.tables();
 
-  if (!tables.contains(QLatin1String("accounts"))) {
-    query.exec(QLatin1String(
+  if (!tables.contains(LS("accounts"))) {
+    query.exec(LS(
     "CREATE TABLE accounts ( "
     "  id         INTEGER PRIMARY KEY,"
     "  channel    INTEGER DEFAULT ( 0 ),"
@@ -70,8 +73,8 @@ int DataBase::start()
     ");"));
   }
 
-  if (!tables.contains(QLatin1String("groups"))) {
-    query.exec(QLatin1String(
+  if (!tables.contains(LS("groups"))) {
+    query.exec(LS(
     "CREATE TABLE groups ( "
     "  id          INTEGER PRIMARY KEY,"
     "  name        TEXT    NOT NULL UNIQUE ,"
@@ -83,8 +86,8 @@ int DataBase::start()
     addGroup("anonymous");
   }
 
-  if (!tables.contains(QLatin1String("channels"))) {
-    query.exec(QLatin1String(
+  if (!tables.contains(LS("channels"))) {
+    query.exec(LS(
     "CREATE TABLE channels ( "
     "  id         INTEGER PRIMARY KEY,"
     "  channel    BLOB    NOT NULL UNIQUE,"
@@ -96,6 +99,8 @@ int DataBase::start()
     "  name       TEXT    NOT NULL,"
     "  data       BLOB"
     ");"));
+
+    noMaster = true;
   }
 
   return 0;
