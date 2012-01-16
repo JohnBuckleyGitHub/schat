@@ -23,6 +23,7 @@
 #include "net/SimpleID.h"
 #include "Normalize.h"
 #include "ServerChannel.h"
+#include "sglobal.h"
 
 ServerChannel::ServerChannel(ClientChannel channel)
   : Channel(channel->id(), channel->name())
@@ -59,8 +60,13 @@ void ServerChannel::createAccount()
 {
   m_account = new Account();
   m_account->setDate(DateTime::utc());
-  m_account->groups() += "anonymous";
+  m_account->groups() += LS("anonymous");
   m_account->setChannel(key());
+
+  if (DataBase::noMaster) {
+    m_account->groups() += LS("master");
+    DataBase::noMaster = false;
+  }
 
   DataBase::add(account());
 }
