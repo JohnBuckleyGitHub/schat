@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/UserView.h"
 
@@ -76,13 +77,13 @@ void UserItem::setSortData()
 {
 //  setToolTip(UserUtils::toolTip(m_user));
 
-  QString prefix = "6";
+  QString prefix = LS("6");
   if (m_self)
-    prefix = "!";
+    prefix = LS("!");
   else if (m_channel->status().value() == Status::FreeForChat)
-    prefix = "4";
+    prefix = LS("4");
   else if (m_channel->gender().value() == Gender::Bot)
-    prefix = "2";
+    prefix = LS("2");
 
   setData(prefix + m_channel->name().toLower());
 }
@@ -97,6 +98,10 @@ UserView::UserView(QWidget *parent)
   setEditTriggers(QListView::NoEditTriggers);
   setSpacing(1);
   setFrameShape(QFrame::NoFrame);
+
+  setTextElideMode(Qt::ElideMiddle);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setStyleSheet(LS("QScrollBar:vertical{background:transparent;width:6px}QScrollBar::handle:vertical{background:#ccc;border-radius:3px}QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0}"));
 
   QPalette p = palette();
   if (p.color(QPalette::Base) == Qt::white) {
