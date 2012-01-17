@@ -31,6 +31,7 @@ class AlertTab : public AbstractTab
 
 public:
   AlertTab(TabWidget *parent);
+  inline ChatView *chatView() { return m_chatView; }
 
 private slots:
   void alert(const Alert &alert);

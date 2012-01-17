@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "RawFeedsChatView.h"
 #include "ui/tabs/ChatView.h"
 
@@ -30,7 +28,5 @@ RawFeedsChatView::RawFeedsChatView(QObject *parent)
 
 void RawFeedsChatView::loadFinishedImpl(ChatView *view)
 {
-  qDebug() << "RawFeedsChatView::loadFinishedImpl()" << view;
-
   view->evaluateJavaScript("loadJS('qrc:/js/RawFeeds/KelpJSONView.js'); loadJS('qrc:/js/RawFeeds/RawFeeds.js'); loadCSS('qrc:/css/RawFeeds/RawFeeds.css');");
 }
