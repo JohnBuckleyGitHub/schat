@@ -79,15 +79,11 @@ Storage::~Storage()
 }
 
 
-QByteArray Storage::serverId()
-{
-  return serverData()->id();
-}
-
-
 QString Storage::serverName()
 {
-  return serverData()->name();
+  qDebug() << "serverName()" << Ch::server()->name();
+
+  return Ch::server()->name();
 }
 
 
@@ -109,8 +105,11 @@ int Storage::start()
   setDefaultSslConf();
   setMaxOpenFiles(m_settings->value("MaxOpenFiles").toInt());
 
-  m_serverData->setPrivateId(m_settings->value("PrivateId").toString().toUtf8());
-  m_serverData->setName(m_settings->value("ServerName").toString());
+  m_privateId = m_settings->value("PrivateId").toString().toUtf8();
+  m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
+
+//  m_serverData->setPrivateId(m_settings->value("PrivateId").toString().toUtf8());
+//  m_serverData->setName(m_settings->value("ServerName").toString());
 
   DataBase::start();
   return 0;
@@ -128,7 +127,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
   else if (type == AuthRequest::SlaveNode)
     prefix = "slave:";
 
-  return SimpleID::make(prefix + m_serverData->privateId() + userId, SimpleID::UserId);
+  return SimpleID::make(prefix + m_privateId + userId, SimpleID::UserId);
 }
 
 
@@ -137,7 +136,7 @@ QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
  */
 QByteArray Storage::cookie() const
 {
-  return SimpleID::randomId(SimpleID::CookieId, m_serverData->privateId());
+  return SimpleID::randomId(SimpleID::CookieId, m_privateId);
 }
 
 

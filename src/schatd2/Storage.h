@@ -37,11 +37,11 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
-  inline static FileLocations *locations() { return i()->m_locations; }
-  inline static ServerData *serverData()   { return i()->m_serverData; }
-  inline static Settings *settings()       { return i()->m_settings; }
+  inline static FileLocations *locations() { return m_self->m_locations; }
+  inline static QByteArray privateId()     { return m_self->m_privateId; }
+  inline static QByteArray serverId()      { return m_self->m_id; }
+  inline static Settings *settings()       { return m_self->m_settings; }
   inline static Storage *i()               { return m_self; }
-  static QByteArray serverId();
   static QString serverName();
 
   int load();
@@ -57,6 +57,8 @@ private:
 
   FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
+  QByteArray m_id;                               ///< Публичный идентификатор сервера.
+  QByteArray m_privateId;                        ///< Приватный идентификатор сервера.
   ServerData *m_serverData;                      ///< Информация о сервере.
   Settings *m_settings;                          ///< Настройки сервера.
   static Storage *m_self;                        ///< Указатель на себя.

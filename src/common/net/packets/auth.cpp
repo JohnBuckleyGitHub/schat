@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 AuthReply::AuthReply(PacketReader *reader)
 {
   serverData.setId(reader->sender());
+  serverId = reader->sender();
   userId = reader->dest();
 
   fields = reader->get<quint8>();
@@ -40,41 +41,18 @@ AuthReply::AuthReply(PacketReader *reader)
     cookie = reader->id();
     serverData.setFeatures(reader->get<quint32>());
     serverData.setNumber(reader->get<quint8>());
-    serverData.setName(reader->text());
+    serverName = reader->text();
+    serverData.setName(serverName);
     account = reader->text();
   }
 
   if (fields & JSonField)
     json = reader->json();
 
-  if (status == Notice::OK) {
-    if (serverData.is(ServerData::AutoJoinSupport))
-      serverData.setChannelId(reader->id());
-  }
-}
-
-
-AuthReply::AuthReply(ServerData *data, int status, const QByteArray &id, const QVariant &json)
-  : fields(0)
-  , status(status)
-  , id(id)
-  , json(json)
-{
-  serverData = *data;
-}
-
-
-AuthReply::AuthReply(ServerData *data, Channel *channel, const QByteArray &cookie, const QByteArray &id, const QVariant &json)
-  : userId(channel->id())
-  , fields(0)
-  , status(Notice::OK)
-  , cookie(cookie)
-  , id(id)
-  , json(json)
-{
-//  account = user->account();
-  serverData = *data;
-//  serverData.setNumber(user->serverNumber());
+//  if (status == Notice::OK) {
+//    if (serverData.is(ServerData::AutoJoinSupport))
+//      serverData.setChannelId(reader->id());
+//  }
 }
 
 
@@ -90,8 +68,8 @@ QByteArray AuthReply::data(QDataStream *stream) const
 
   if (status == Notice::OK) {
     writer.putId(cookie);
-    writer.put(serverData.features());
-    writer.put(serverData.number());
+    writer.put(0);
+    writer.put(0);
     writer.put(serverData.name());
     writer.put(account);
   }
@@ -99,10 +77,10 @@ QByteArray AuthReply::data(QDataStream *stream) const
   if (fields & JSonField)
     writer.put(json);
 
-  if (status == Notice::OK) {
-    if (serverData.is(ServerData::AutoJoinSupport))
-      writer.putId(serverData.channelId());
-  }
+//  if (status == Notice::OK) {
+//    if (serverData.is(ServerData::AutoJoinSupport))
+//      writer.putId(serverData.channelId());
+//  }
 
   return writer.data();
 }

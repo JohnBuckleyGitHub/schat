@@ -54,7 +54,6 @@ public:
   inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
   inline QDataStream *sendStream()             { return m_sendStream; }
   inline void addAuth(NodeAuth *auth)          { m_auth.prepend(auth); }
-  QByteArray id() const;
   virtual bool add(ChatChannel channel, int authType, const QByteArray &authId);
   virtual int start() { return 0; }
   virtual void quit() {}

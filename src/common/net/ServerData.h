@@ -23,6 +23,11 @@
 
 #include "schat.h"
 
+/*!
+ * Данные сервера.
+ *
+ * \deprecated Этот класс должен быть заменён на канал сервера и фиды.
+ */
 class SCHAT_EXPORT ServerData
 {
 public:
@@ -52,7 +57,7 @@ public:
   inline void setFeatures(quint32 features) { m_features = features; }
   inline void setId(const QByteArray &id) { m_id = id; }
   inline void setNumber(quint8 number) { m_number = number; }
-  void setPrivateId(const QByteArray &id);
+//  void setPrivateId(const QByteArray &id);
 
 private:
   QByteArray m_channelId; ///< Идентификатор главного канала.

@@ -31,8 +31,9 @@ public:
   ServerChannel(ClientChannel channel);
   ServerChannel(const QByteArray &id, const QString &name);
   ~ServerChannel();
+  static QString serverName(const QString &name);
 
-  inline const QByteArray& normalized() const { return m_normalized; }
+  inline const QByteArray& normalized() const  { return m_normalized; }
   inline const QList<quint64>& sockets() const { return m_sockets; }
 
   bool setName(const QString &name);

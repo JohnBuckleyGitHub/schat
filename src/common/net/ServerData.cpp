@@ -76,8 +76,8 @@ bool ServerData::setName(const QString &name)
 }
 
 
-void ServerData::setPrivateId(const QByteArray &id)
-{
-  m_privateId = id;
-  m_id = SimpleID::make(id, SimpleID::ServerId);
-}
+//void ServerData::setPrivateId(const QByteArray &id)
+//{
+//  m_privateId = id;
+//  m_id = SimpleID::make(id, SimpleID::ServerId);
+//}
