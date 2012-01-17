@@ -50,6 +50,7 @@ public:
   AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
   bool sendLock;                           ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ClientChannel channel;                   ///< Канал пользователя.
+  ClientChannel server;                    ///< Канал сервера.
   int collisions;                          ///< Счётчик коллизий ника.
   int reconnects;                          ///< Число попыток восстановить соединение.
   NetworkPool *pool;                       ///< Пул адресов серверов.

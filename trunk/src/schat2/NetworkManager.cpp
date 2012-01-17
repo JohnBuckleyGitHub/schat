@@ -212,7 +212,7 @@ bool NetworkManager::open(const QByteArray &id)
  */
 int NetworkManager::isSelectedActive() const
 {
-  if (ChatClient::state() == ChatClient::Online && m_selected == ChatClient::io()->serverId())
+  if (ChatClient::state() == ChatClient::Online && m_selected == ChatClient::serverId())
     return 1;
 
   if (ChatClient::state() == ChatClient::Connecting && ChatClient::io()->url().toString() == item(m_selected)->url())
@@ -289,7 +289,7 @@ void NetworkManager::removeItem(const QByteArray &id)
   m_networks.write();
   ChatCore::settings()->remove(SimpleID::encode(id));
 
-  if (id == ChatClient::io()->serverId() && ChatClient::state() != ChatClient::Offline)
+  if (id == ChatClient::serverId() && ChatClient::state() != ChatClient::Offline)
     ChatClient::io()->leave();
 }
 

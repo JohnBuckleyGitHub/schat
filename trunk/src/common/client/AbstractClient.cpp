@@ -36,6 +36,7 @@ AbstractClientPrivate::AbstractClientPrivate()
   , previousState(AbstractClient::ClientOffline)
   , sendLock(false)
   , channel(new Channel())
+  , server(new Channel())
   , collisions(0)
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
@@ -163,6 +164,8 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
   if (!serverData->id().isEmpty() && serverData->id() == data.id())
     sameServer = true;
 
+  server->setId(data.id());
+  server->setName(data.name());
   serverData->setId(data.id());
   serverData->setName(data.name());
   serverData->setChannelId(data.channelId());
@@ -309,6 +312,13 @@ ClientChannel AbstractClient::channel() const
 }
 
 
+ClientChannel AbstractClient::server() const
+{
+  Q_D(const AbstractClient);
+  return d->server;
+}
+
+
 AbstractClient::ClientState AbstractClient::clientState() const
 {
   Q_D(const AbstractClient);
@@ -365,11 +375,11 @@ PacketReader *AbstractClient::reader()
 }
 
 
-QByteArray AbstractClient::serverId() const
-{
-  Q_D(const AbstractClient);
-  return d->serverData->id();
-}
+//QByteArray AbstractClient::serverId() const
+//{
+//  Q_D(const AbstractClient);
+//  return d->serverData->id();
+//}
 
 
 ServerData *AbstractClient::serverData()
