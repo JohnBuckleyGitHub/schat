@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "hooks/ClientImpl.h"
 #include "net/ServerData.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 namespace Hooks
 {
@@ -37,11 +38,8 @@ ClientImpl::ClientImpl(QObject *parent)
 
 void ClientImpl::setup()
 {
-  if (ChatCore::settings()->value("AutoJoin").toBool()) {
-    ServerData *data = ChatClient::io()->serverData();
-    if (data->features() & ServerData::AutoJoinSupport && SimpleID::typeOf(data->channelId()) == SimpleID::ChannelId) {
-      ChatClient::channels()->join(data->channelId());
-    }
+  if (ChatCore::settings()->value(LS("AutoJoin")).toBool()) {
+    ChatClient::channels()->join(LS("Main"));
   }
 }
 

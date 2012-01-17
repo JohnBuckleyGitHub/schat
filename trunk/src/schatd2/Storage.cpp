@@ -108,9 +108,6 @@ int Storage::start()
   m_privateId = m_settings->value("PrivateId").toString().toUtf8();
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
 
-//  m_serverData->setPrivateId(m_settings->value("PrivateId").toString().toUtf8());
-//  m_serverData->setName(m_settings->value("ServerName").toString());
-
   DataBase::start();
   return 0;
 }

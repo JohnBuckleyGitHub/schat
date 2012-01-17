@@ -24,6 +24,7 @@
 #include "Channel.h"
 #include "net/SimpleID.h"
 #include "text/HtmlFilter.h"
+#include "sglobal.h"
 
 /*!
  * Добавление идентификатора в список каналов.
@@ -113,9 +114,9 @@ bool Channel::setId(const QByteArray &id)
 
 bool Channel::setName(const QString &name)
 {
-  if (name.isEmpty()) {
+  if (name.isEmpty() || name == LS("*")) {
     if (type() == SimpleID::ServerId) {
-      m_name = "*";
+      m_name = LS("*");
       return true;
     }
 

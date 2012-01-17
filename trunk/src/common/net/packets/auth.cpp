@@ -48,11 +48,6 @@ AuthReply::AuthReply(PacketReader *reader)
 
   if (fields & JSonField)
     json = reader->json();
-
-//  if (status == Notice::OK) {
-//    if (serverData.is(ServerData::AutoJoinSupport))
-//      serverData.setChannelId(reader->id());
-//  }
 }
 
 
@@ -61,26 +56,21 @@ QByteArray AuthReply::data(QDataStream *stream) const
   if (!json.isNull())
     fields |= JSonField;
 
-  PacketWriter writer(stream, Protocol::AuthReplyPacket, serverData.id(), userId);
+  PacketWriter writer(stream, Protocol::AuthReplyPacket, serverId, userId);
   writer.put(fields);
   writer.put(status);
   writer.putId(id);
 
   if (status == Notice::OK) {
     writer.putId(cookie);
-    writer.put(0);
-    writer.put(0);
-    writer.put(serverData.name());
+    writer.put<quint32>(0);
+    writer.put<quint8>(0);
+    writer.put(serverName);
     writer.put(account);
   }
 
   if (fields & JSonField)
     writer.put(json);
-
-//  if (status == Notice::OK) {
-//    if (serverData.is(ServerData::AutoJoinSupport))
-//      writer.putId(serverData.channelId());
-//  }
 
   return writer.data();
 }
