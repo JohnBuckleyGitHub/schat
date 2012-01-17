@@ -65,10 +65,10 @@ public:
   const QByteArray& cookie() const;
   const QByteArray& uniqueId() const;
   const QString& nick() const;
+  const QString& serverName() const;
   const QUrl& url() const;
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
-//  QByteArray serverId() const;
   ServerData *serverData();
   void lock();
   void setNick(const QString &nick);

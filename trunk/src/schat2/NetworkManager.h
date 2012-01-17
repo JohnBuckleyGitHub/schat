@@ -95,8 +95,6 @@ public:
   Network item(const QByteArray &id) const;
   QList<Network> items() const;
 
-  static QString currentServerName();
-
   QString root(const QByteArray &id) const;
   void removeItem(const QByteArray &id);
   void setSelected(const QByteArray &id);
