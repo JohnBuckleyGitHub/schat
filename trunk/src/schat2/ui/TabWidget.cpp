@@ -166,15 +166,14 @@ void TabWidget::add(const Message &message)
 
   if (m_channels.contains(id)) {
     m_channels.value(id)->add(message);
-    return;
   }
-
-  if (SimpleID::typeOf(id) == SimpleID::UserId) {
+  else if (SimpleID::typeOf(id) == SimpleID::ServerId) {
+    m_alertTab->chatView()->add(message);
+  }
+  else if (SimpleID::typeOf(id) == SimpleID::UserId) {
     ChannelBaseTab *tab = channelTab(id, true, false);
     if (tab)
       tab->add(message);
-
-    return;
   }
 }
 
