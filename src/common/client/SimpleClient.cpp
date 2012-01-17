@@ -42,9 +42,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   AbstractClientPrivate::authReply(reply);
 
   if (reply.status == Notice::OK) {
-//    ClientChannel channel = ClientChannel(new Channel(SimpleID::setType(SimpleID::ChannelId, userId), QLatin1String("~") + user->nick()));
-//    addChannel(channel);
-
     account.clear();
     password.clear();
     return true;

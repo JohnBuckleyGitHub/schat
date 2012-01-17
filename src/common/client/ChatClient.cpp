@@ -139,7 +139,7 @@ QByteArray ChatClient::getId()
  */
 QByteArray ChatClient::getServerId()
 {
-  QByteArray id = m_client->serverId();
+  QByteArray id = m_client->server()->id();
   if (!id.isEmpty())
     return id;
 

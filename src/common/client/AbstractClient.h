@@ -59,6 +59,7 @@ public:
   bool send(Packet packet, bool echo = false);
 
   ClientChannel channel() const;
+  ClientChannel server() const;
   ClientState clientState() const;
   ClientState previousState() const;
   const QByteArray& cookie() const;
@@ -67,7 +68,7 @@ public:
   const QUrl& url() const;
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
-  QByteArray serverId() const;
+//  QByteArray serverId() const;
   ServerData *serverData();
   void lock();
   void setNick(const QString &nick);

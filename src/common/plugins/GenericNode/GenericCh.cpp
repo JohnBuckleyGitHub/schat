@@ -36,6 +36,9 @@ void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 
     channel->feed("topic");
   }
+  else if (channel->type() == SimpleID::ServerId) {
+    channel->feed("acl");
+  }
 }
 
 
