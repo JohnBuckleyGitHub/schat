@@ -29,6 +29,7 @@
 #include "DateTime.h"
 #include "debugstream.h"
 #include "events.h"
+#include "net/NodeAuthReply.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
@@ -52,8 +53,8 @@ Core::Core(QObject *parent)
 {
   m_self = this;
 
-  if (Storage::serverData()->is(ServerData::PasswordAuthSupport))
-    addAuth(new PasswordAuth(this));
+//  if (Storage::serverData()->is(ServerData::PasswordAuthSupport))
+//    addAuth(new PasswordAuth(this));
 
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
@@ -133,12 +134,6 @@ bool Core::send(const QList<quint64> &sockets, const QList<QByteArray> &packets,
 bool Core::send(const QList<quint64> &sockets, Packet packet, int option, const QByteArray &userId)
 {
   return send(sockets, packet->data(m_sendStream), option, userId);
-}
-
-
-QByteArray Core::id() const
-{
-  return m_storage->serverData()->id();
 }
 
 
@@ -285,7 +280,7 @@ void Core::accept(const AuthResult &result)
 
   QList<QByteArray> packets;
   if (result.packet) {
-    AuthReply reply(Storage::serverData(), channel.data(), channel->account()->cookie(), result.authId, result.json);
+    NodeAuthReply reply(result, channel);
     packets.append(reply.data(m_sendStream));
   }
 
@@ -302,7 +297,7 @@ void Core::reject(const AuthResult &result)
 {
   SCHAT_LOG_DEBUG(<< "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId));
 
-  AuthReply reply(Storage::serverData(), result.status, result.authId, result.json);
+  NodeAuthReply reply(result);
 
   for (int i = 0; i < m_listeners.size(); ++i) {
     NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));

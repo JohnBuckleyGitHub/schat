@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ class User;
 
 /*!
  * Ответ сервера на запрос авторизации.
+ * \deprecated Класс ServerData устаревший и не должен использоваться в этом пакете.
  * Заголовок пакета:
  * - \b sender  - Идентификатор сервера.
  * - \b dest    - Идентификатор, выданный сервером клиенту, в случае если статус \p status не Notice::OK это поле отсутствует.
@@ -60,16 +61,16 @@ public:
   {}
 
   AuthReply(PacketReader *reader);
-  AuthReply(ServerData *data, int status, const QByteArray &id, const QVariant &json = QVariant());
-  AuthReply(ServerData *data, Channel *channel, const QByteArray &cookie, const QByteArray &id, const QVariant &json = QVariant());
   QByteArray data(QDataStream *stream) const;
 
+  QByteArray serverId;   ///< Идентификатор сервера.
   QByteArray userId;     ///< Идентификатор пользователя, передаётся в заголовке пакета как адрес получателя.
   mutable quint8 fields; ///< Битовая маска дополнительный полей пакета.
   quint16 status;        ///< Статус \sa Notice::StatusCodes, обязательное поле.
   QByteArray cookie;     ///< Cookie.
   QByteArray id;         ///< Уникальный идентификатор авторизации.
   ServerData serverData; ///< Данные о сервере.
+  QString serverName;    ///< Имя сервера.
   QString account;       ///< Имя аккаунта пользователя.
   QVariant json;         ///< JSON данные.
 };

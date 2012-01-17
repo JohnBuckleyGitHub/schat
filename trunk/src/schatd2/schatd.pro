@@ -39,6 +39,7 @@ HEADERS = \
     feeds/NodeAccountFeed.h \
     feeds/NodeAclFeed.h \
     feeds/NodeTopicFeed.h \
+    net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
     net/TcpServer.h \
@@ -63,6 +64,7 @@ SOURCES = \
     feeds/NodeAccountFeed.cpp \
     feeds/NodeAclFeed.cpp \
     feeds/NodeTopicFeed.cpp \
+    net/NodeAuthReply.cpp \
     net/NodePool.cpp \
     net/NodeWorker.cpp \
     net/TcpServer.cpp \

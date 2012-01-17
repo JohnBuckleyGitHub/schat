@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ PasswordAuth::PasswordAuth(Core *core)
 
 AuthResult PasswordAuth::auth(const AuthRequest &data)
 {
-  Storage *storage = Storage::i();
-  if (!storage->serverData()->is(ServerData::PasswordAuthSupport))
+//  Storage *storage = Storage::i();
+//  if (!storage->serverData()->is(ServerData::PasswordAuthSupport))
     return CookieAuth::auth(data);
 
   if (SimpleID::typeOf(data.password) != SimpleID::PasswordId)

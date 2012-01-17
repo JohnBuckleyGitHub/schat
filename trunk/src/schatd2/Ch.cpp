@@ -21,10 +21,11 @@
 #include "Account.h"
 #include "Ch.h"
 #include "DataBase.h"
+#include "net/packets/Notice.h"
 #include "net/ServerData.h"
 #include "Normalize.h"
-#include "Storage.h"
 #include "Settings.h"
+#include "Storage.h"
 
 Ch *Ch::m_self = 0;
 
@@ -80,28 +81,43 @@ bool Ch::isCollision(const QByteArray &id, const QString &name)
 }
 
 
+ChatChannel Ch::server()
+{
+  ChatChannel server = channel(Storage::serverId(), SimpleID::ServerId);
+  if (!server) {
+    server = ChatChannel(new ServerChannel(Storage::serverId(), QString()));
+    add(server);
+    m_self->newChannelImpl(server);
+  }
+
+  return server;
+}
+
+
 /*!
  * Создание идентификатора канала.
  */
 QByteArray Ch::makeId(const QByteArray &normalized)
 {
-  return SimpleID::make("channel:" + Storage::serverData()->privateId() + normalized, SimpleID::ChannelId);
+  return SimpleID::make("channel:" + Storage::privateId() + normalized, SimpleID::ChannelId);
 }
 
 
 /*!
  * Переименование канала.
  */
-bool Ch::renameImpl(ChatChannel channel, const QString &name)
+int Ch::renameImpl(ChatChannel channel, const QString &name)
 {
   QByteArray normalized = channel->normalized();
   if (isCollision(channel->id(), name))
-    return false;
+    return Notice::ObjectAlreadyExists;
 
-  channel->setName(name);
+  if (!channel->setName(name))
+    return Notice::BadRequest;
+
   m_cache.rename(channel, normalized);
   DataBase::update(channel);
-  return true;
+  return Notice::OK;
 }
 
 
@@ -180,30 +196,21 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
 
 /*!
  * Загрузка основных каналов сервера.
- *
- * \bug Если изменить имя основного канала, то после перезапуска оно будет возвращено на стандартное имя.
- * \todo Устанавливать основной канал через фид канала сервера.
  */
 void Ch::loadImpl()
 {
   if (m_self != this)
     return;
 
-  ChatChannel server = Ch::channel(Storage::serverId(), SimpleID::ServerId);
-  if (!server) {
-    server = ChatChannel(new ServerChannel(Storage::serverId(), Storage::serverName()));
-    add(server);
-    newChannelImpl(server);
-  }
-
+  Ch::server();
   Ch::channel(QString("Main"));
 
   qint64 key = Storage::settings()->value("MainChannel").toLongLong();
   if (key > 0) {
     ChatChannel channel = DataBase::channel(key);
-    if (channel) {
-      Storage::serverData()->setChannelId(channel->id());
-    }
+//    if (channel) {
+//      Storage::serverData()->setChannelId(channel->id());
+//    }
   }
 
   foreach (Ch *hook, m_hooks) {

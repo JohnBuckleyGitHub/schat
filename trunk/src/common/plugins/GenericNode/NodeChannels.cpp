@@ -82,6 +82,7 @@ bool NodeChannels::read(PacketReader *reader)
 
 void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets)
 {
+  packets.append(ChannelNotice::channel(Ch::server(), user)->data(m_core->sendStream()));
   packets.append(ChannelNotice::channel(user, user)->data(m_core->sendStream()));
 }
 
@@ -170,7 +171,7 @@ bool NodeChannels::join()
 
 
 /*!
- * \todo Необходимо добавить проверку прав доступа.
+ * Установка имени канала.
  */
 int NodeChannels::name()
 {
@@ -187,8 +188,9 @@ int NodeChannels::name()
   if (channel->name() == m_packet->text())
     return Notice::BadRequest;
 
-  if (!Ch::rename(channel, m_packet->text()))
-    return Notice::ObjectAlreadyExists;
+  int status = Ch::rename(channel, m_packet->text());
+  if (status != Notice::OK)
+    return status;
 
   QList<quint64> sockets;
   if (channel->type() == SimpleID::UserId)
