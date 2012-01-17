@@ -145,3 +145,9 @@ QByteArray ChatClient::getServerId()
 
   return m_hooks->serverId();
 }
+
+
+QString ChatClient::getServerName()
+{
+  return m_client->serverName();
+}

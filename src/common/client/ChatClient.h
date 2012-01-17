@@ -58,6 +58,7 @@ public:
   inline static int state()                { return m_self->getState(); }
   inline static QByteArray id()            { return m_self->getId(); }
   inline static QByteArray serverId()      { return m_self->getServerId(); }
+  inline static QString serverName()       { return m_self->getServerName(); }
   inline static SimpleClient *io()         { return m_self->m_client; }
 
   inline static bool open()                     { return m_self->openId(QByteArray()); }
@@ -83,6 +84,7 @@ private:
   int getState();
   QByteArray getId();
   QByteArray getServerId();
+  QString getServerName();
 
   ClientChannels *m_channels; ///< Каналы.
   ClientFeeds *m_feeds;       ///< Обработчик фидов.

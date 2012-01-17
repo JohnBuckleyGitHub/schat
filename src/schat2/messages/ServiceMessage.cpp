@@ -49,7 +49,7 @@ bool ServiceMessage::isValid() const
 
 ServiceMessage ServiceMessage::connected()
 {
-  ServiceMessage message(QObject::tr("Successfully connected to <b>%1</b>").arg(Qt::escape(NetworkManager::currentServerName())));
+  ServiceMessage message(QObject::tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName())));
   message.data()["Type"]  = "info";
   message.data()["Extra"] = "green-text";
   return message;

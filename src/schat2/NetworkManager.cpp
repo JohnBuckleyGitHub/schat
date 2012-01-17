@@ -249,19 +249,6 @@ QList<Network> NetworkManager::items() const
 
 
 /*!
- * Возвращает имя текущего сервера.
- */
-QString NetworkManager::currentServerName()
-{
-  QString name = ChatClient::io()->serverData()->name();
-  if (name.isEmpty())
-    name = ChatClient::io()->url().host();
-
-  return name;
-}
-
-
-/*!
  * Возвращает и при необходимости создаёт путь для хранения файлов сервера.
  */
 QString NetworkManager::root(const QByteArray &id) const

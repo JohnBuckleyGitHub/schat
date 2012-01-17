@@ -165,9 +165,13 @@ void AbstractClientPrivate::setServerData(const ServerData &data)
     sameServer = true;
 
   server->setId(data.id());
-  server->setName(data.name());
+  if (data.name().isEmpty())
+    server->setName(url.host());
+  else
+    server->setName(data.name());
+
   serverData->setId(data.id());
-  serverData->setName(data.name());
+  serverData->setName(server->name());
   serverData->setChannelId(data.channelId());
   serverData->setFeatures(data.features());
   serverData->setNumber(data.number());
@@ -361,6 +365,13 @@ const QString& AbstractClient::nick() const
 }
 
 
+const QString& AbstractClient::serverName() const
+{
+  Q_D(const AbstractClient);
+  return d->server->name();
+}
+
+
 const QUrl& AbstractClient::url() const
 {
   Q_D(const AbstractClient);
@@ -373,13 +384,6 @@ PacketReader *AbstractClient::reader()
   Q_D(const AbstractClient);
   return d->reader;
 }
-
-
-//QByteArray AbstractClient::serverId() const
-//{
-//  Q_D(const AbstractClient);
-//  return d->serverData->id();
-//}
 
 
 ServerData *AbstractClient::serverData()
