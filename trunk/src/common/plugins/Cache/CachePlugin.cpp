@@ -24,13 +24,17 @@
 #include "CachePlugin_p.h"
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "feeds/CacheFeeds.h"
 #include "NetworkManager.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
 {
   new Hooks::CacheChannels(this);
+  new Hooks::CacheFeeds(this);
   open();
+
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
 }
 
 
@@ -47,6 +51,5 @@ ChatPlugin *CachePlugin::create()
   m_plugin = new Cache(this);
   return m_plugin;
 }
-
 
 Q_EXPORT_PLUGIN2(Cache, CachePlugin);

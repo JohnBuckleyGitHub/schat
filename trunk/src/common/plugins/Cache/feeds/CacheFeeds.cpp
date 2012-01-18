@@ -16,31 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CACHEPLUGIN_H_
-#define CACHEPLUGIN_H_
+#include <QDebug>
 
-#include "ChatApi.h"
-#include "CoreApi.h"
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
+#include "feeds/CacheFeeds.h"
+#include "net/packets/FeedNotice.h"
 
-class CachePlugin : public QObject, CoreApi, ChatApi
+namespace Hooks
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreApi ChatApi)
 
-public:
-  QVariantMap header() const
-  {
-    QVariantMap out = CoreApi::header();
-    out["Id"]      = "Cache";
-    out["Name"]    = "Cache";
-    out["Version"] = "0.1.1";
-    out["Site"]    = "http://wiki.schat.me/Plugin/Cache";
-    out["Desc"]    = "Client Cache";
+CacheFeeds::CacheFeeds(QObject *parent)
+  : Feeds(parent)
+{
+  ChatClient::feeds()->hooks()->add(this);
+}
 
-    return out;
-  }
 
-  ChatPlugin *create();
-};
+void CacheFeeds::readFeed(const FeedNotice &packet)
+{
+  qDebug() << " [Cache] CacheFeeds::readFeed()" << packet.command();
+}
 
-#endif /* CACHEPLUGIN_H_ */
+} // namespace Hooks

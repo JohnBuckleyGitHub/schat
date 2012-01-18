@@ -147,6 +147,16 @@ void CacheDB::open(const QByteArray &id, const QString &dir)
     "  data       BLOB"
     ");"
   );
+
+  query.exec(
+  "CREATE TABLE IF NOT EXISTS feeds ( "
+  "  id         INTEGER PRIMARY KEY,"
+  "  channel    INTEGER DEFAULT ( 0 ),"
+  "  rev        INTEGER DEFAULT ( 0 ),"
+  "  date       INTEGER DEFAULT ( 0 ),"
+  "  name       TEXT    NOT NULL,"
+  "  json       BLOB"
+  ");");
 }
 
 
