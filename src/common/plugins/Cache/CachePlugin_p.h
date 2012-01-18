@@ -28,10 +28,8 @@ class Cache : public ChatPlugin
 public:
   Cache(QObject *parent);
 
-private:
+private slots:
   void open();
-
-  QString m_id; ///< Идентификатор соединения с базой.
 };
 
 #endif /* CACHEPLUGIN_P_H_ */

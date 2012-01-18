@@ -63,6 +63,9 @@ QString ServerChannel::serverName(const QString &name)
   if (tmp.size() < MinNameLengh)
     return QString();
 
+  if (tmp.contains(LC(' ')))
+    return QString();
+
   if (tmp.indexOf(LS("..")) != -1)
     return QString();
 
