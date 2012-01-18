@@ -255,9 +255,6 @@ ClientChannel ClientChannels::add()
   channel->status() = m_packet->channelStatus();
 
   m_synced += channel->id();
-
-//  qDebug() << m_packet->raw();
-
   m_hooks->add(channel, info, m_packet->json());
   emit this->channel(info);
 
