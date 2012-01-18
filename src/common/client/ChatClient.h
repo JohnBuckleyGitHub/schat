@@ -52,6 +52,7 @@ public:
 
   inline static ChatClient *i()            { return m_self; }
   inline static ClientChannel channel()    { return m_self->getChannel(); }
+  inline static ClientChannel server()     { return m_self->getServer(); }
   inline static ClientChannels *channels() { return m_self->m_channels; }
   inline static ClientFeeds *feeds()       { return m_self->m_feeds; }
   inline static ClientMessages *messages() { return m_self->m_messages; }
@@ -81,6 +82,7 @@ private:
   bool openId(const QByteArray &id);
   bool openUrl(const QUrl &url);
   ClientChannel getChannel();
+  ClientChannel getServer();
   int getState();
   QByteArray getId();
   QByteArray getServerId();

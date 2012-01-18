@@ -48,8 +48,12 @@ ClientChannels::ClientChannels(QObject *parent)
  */
 ClientChannel ClientChannels::get(const QByteArray &id)
 {
-  if (ChatClient::id() == id && !m_channels.contains(id))
-    m_channels[id] = ChatClient::channel();
+  if (!m_channels.contains(id)) {
+    if (ChatClient::id() == id)
+      m_channels[id] = ChatClient::channel();
+    else if (ChatClient::serverId() == id)
+      m_channels[id] = ChatClient::server();
+  }
 
   ClientChannel channel = m_channels.value(id);
   if (!channel) {
@@ -241,10 +245,11 @@ ClientChannel ClientChannels::add()
   else
     info.setOption(ChannelInfo::Updated);
 
-  QString name = channel->name();
-  channel->setName(m_packet->text());
-  if (channel->name() != name)
-    info.setOption(ChannelInfo::Renamed);
+  if (m_packet->text() != LS("*")) {
+    QString name = channel->name();
+    if (channel->setName(m_packet->text()) && channel->name() != name)
+      info.setOption(ChannelInfo::Renamed);
+  }
 
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
