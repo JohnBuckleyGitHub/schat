@@ -19,6 +19,7 @@
 #include "DateTime.h"
 #include "feeds/Feed.h"
 #include "net/packets/FeedNotice.h"
+#include "sglobal.h"
 
 FeedNotice::FeedNotice()
   : Notice(QByteArray(), QByteArray(), QString())
@@ -37,6 +38,19 @@ FeedNotice::FeedNotice(const QByteArray &sender, const QByteArray &dest, const Q
 FeedNotice::FeedNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
 {
+}
+
+
+/*!
+ * Отправка клиентам тела фида.
+ */
+FeedPacket FeedNotice::feed(const FeedNotice &source, const QVariantMap &json)
+{
+  FeedPacket packet(new FeedNotice(source.dest(), source.sender(), LS("feed")));
+  packet->setDirection(Server2Client);
+  packet->setText(source.text());
+  packet->setData(Feed::merge(source.text(), json));
+  return packet;
 }
 
 
