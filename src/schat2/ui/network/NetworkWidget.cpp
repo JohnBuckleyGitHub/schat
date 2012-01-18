@@ -246,6 +246,11 @@ void NetworkWidget::notify(const Notify &notify)
   else if (notify.type() == Notify::NetworkSelected) {
     updateIndex();
   }
+  else if (notify.type() == Notify::ServerRenamed) {
+    int index = m_combo->findData(ChatClient::serverId());
+    if (index != -1)
+      m_combo->setItemText(index, ChatClient::serverName());
+  }
 }
 
 

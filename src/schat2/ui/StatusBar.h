@@ -25,8 +25,8 @@
 
 #include "schat.h"
 
-class ChannelInfo;
 class NetworkWidget;
+class Notify;
 class QLabel;
 class QProgressIndicator;
 class QWidgetAction;
@@ -45,10 +45,10 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-  void channel(const ChannelInfo &info);
   void clientStateChanged(int state);
   void loggedIn(const QString &name);
   void menuTriggered(QAction *action);
+  void notify(const Notify &notify);
 
 private:
   void menu(const QPoint &point);
