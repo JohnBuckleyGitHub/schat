@@ -106,6 +106,12 @@ ClientChannel ChatClient::getChannel()
 }
 
 
+ClientChannel ChatClient::getServer()
+{
+  return m_client->server();
+}
+
+
 int ChatClient::getState()
 {
   return m_client->clientState();

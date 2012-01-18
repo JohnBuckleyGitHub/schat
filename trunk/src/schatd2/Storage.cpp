@@ -64,7 +64,6 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault("MaxOpenFiles", 0);
   m_settings->setDefault("PrivateId",    QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault("PrivateKey",   QLatin1String("server.key"));
-  m_settings->setDefault("ServerName",   QString());
   m_settings->setDefault("Workers",      0);
 
   m_log = new NodeLog;
