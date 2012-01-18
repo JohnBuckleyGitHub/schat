@@ -176,15 +176,5 @@ int Channel::isCompatibleId(const QByteArray &id)
 
 QString Channel::defaultName()
 {
-  QString out;
-# if defined(Q_WS_WIN)
-  out = qgetenv("USERNAME");
-# else
-  out = qgetenv("USER");
-# endif
-
-  if (out.isEmpty())
-    out = QDir::home().dirName();
-
-  return out;
+  return QDir::home().dirName();
 }
