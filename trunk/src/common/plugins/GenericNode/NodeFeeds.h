@@ -43,6 +43,7 @@ private:
   int update();
 
   int check(int acl);
+  void broadcast(FeedPtr feed);
   void reply(int status);
 
   FeedNotice *m_packet;

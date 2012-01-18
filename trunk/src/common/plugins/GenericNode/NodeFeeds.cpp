@@ -21,6 +21,7 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "feeds/FeedStorage.h"
+#include "JSON.h"
 #include "net/PacketReader.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
@@ -153,12 +154,12 @@ int NodeFeeds::get()
   if (status != Notice::OK)
     return status;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedPtr feed = m_channel->feed(m_packet->text(), false);
   QVariantMap json = feed->feed(m_user.data());
   if (json.isEmpty())
     return Notice::Forbidden;
 
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, Feed::merge(m_packet->text(), json)));
+  m_core->send(m_user->sockets(), FeedNotice::feed(*m_packet, json));
   return Notice::OK;
 }
 
@@ -261,14 +262,14 @@ int NodeFeeds::update()
   if (m_packet->raw().isEmpty())
     return Notice::BadRequest;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedPtr feed = m_channel->feed(m_packet->text(), false);
   status = feed->update(m_packet->json(), m_user.data());
   if (status != Notice::OK)
     return status;
 
   status = FeedStorage::save(feed);
   if (status == Notice::OK)
-    reply(status);
+    broadcast(feed);
 
   return status;
 }
@@ -291,6 +292,19 @@ int NodeFeeds::check(int acl)
     return Notice::Forbidden;
 
   return Notice::OK;
+}
+
+
+void NodeFeeds::broadcast(FeedPtr feed)
+{
+  reply(Notice::OK);
+  get();
+
+//  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
+//  if (headers.isEmpty())
+//    return;
+//
+//  qDebug() << JSON::generate(headers);
 }
 
 
