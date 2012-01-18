@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 
 #include "schat.h"
 
+class ChannelInfo;
 class NetworkWidget;
 class QLabel;
 class QProgressIndicator;
 class QWidgetAction;
-class StatusMenu;
 class StatusWidget;
 
 class SCHAT_CORE_EXPORT StatusBar : public QStatusBar
@@ -45,6 +45,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
+  void channel(const ChannelInfo &info);
   void clientStateChanged(int state);
   void loggedIn(const QString &name);
   void menuTriggered(QAction *action);

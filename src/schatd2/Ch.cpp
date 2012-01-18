@@ -266,6 +266,9 @@ void Ch::Cache::add(ChatChannel channel)
   if (!channel)
     return;
 
+  if (channel->type() != SimpleID::ServerId)
+    Ch::server()->channels().add(channel->id());
+
   m_channels[channel->id()] = channel;
   m_channels[channel->normalized()] = channel;
 
@@ -282,6 +285,8 @@ void Ch::Cache::remove(const QByteArray &id)
   ChatChannel channel = this->channel(id);
   if (!channel)
     return;
+
+//  Ch::server()->channels().remove(channel->id());
 
   m_channels.remove(channel->id());
   m_channels.remove(channel->normalized());

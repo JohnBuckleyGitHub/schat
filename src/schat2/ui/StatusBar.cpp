@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
@@ -64,7 +65,7 @@ StatusBar::StatusBar(QWidget *parent)
   addPermanentWidget(m_status);
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-//  connect(ChatCore::i()->adapter(), SIGNAL(loggedIn(const QString&)), SLOT(loggedIn(const QString&)));
+  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
 
   updateStyleSheet();
   clientStateChanged(SimpleClient::ClientOffline);
@@ -104,6 +105,13 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
+void StatusBar::channel(const ChannelInfo &info)
+{
+  if (info.id() == ChatClient::serverId() && info.option() & ChannelInfo::Renamed)
+    m_label->setText(ChatClient::serverName());
+}
+
+
 void StatusBar::clientStateChanged(int state)
 {
   if (state == SimpleClient::ClientConnecting) {
@@ -127,9 +135,6 @@ void StatusBar::clientStateChanged(int state)
   }
   else if (state == SimpleClient::ClientOnline) {
     m_icon->setPixmap(QPixmap(":/images/online.png"));
-
-//    if (!UserUtils::user()->account().isEmpty())
-//      loggedIn(UserUtils::user()->account());
 
     #if !defined(SCHAT_NO_SSL)
     if (ChatClient::io()->isEncrypted()) {
