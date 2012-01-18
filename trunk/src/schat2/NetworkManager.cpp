@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -150,6 +150,7 @@ NetworkManager::NetworkManager(QObject *parent)
   new Hooks::Networks(this);
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -297,6 +298,19 @@ void NetworkManager::clientStateChanged(int state)
     return;
 
   write();
+}
+
+
+void NetworkManager::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ServerRenamed) {
+    Network item = this->item(ChatClient::serverId());
+    if (!item)
+      return;
+
+    item->setName(ChatClient::serverName());
+    item->write();
+  }
 }
 
 

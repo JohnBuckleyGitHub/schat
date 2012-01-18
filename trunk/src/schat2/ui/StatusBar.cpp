@@ -25,8 +25,8 @@
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
-#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
@@ -65,7 +65,7 @@ StatusBar::StatusBar(QWidget *parent)
   addPermanentWidget(m_status);
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
-  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   updateStyleSheet();
   clientStateChanged(SimpleClient::ClientOffline);
@@ -102,13 +102,6 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
     menu(event->globalPos());
   else
     QStatusBar::mouseReleaseEvent(event);
-}
-
-
-void StatusBar::channel(const ChannelInfo &info)
-{
-  if (info.id() == ChatClient::serverId() && info.option() & ChannelInfo::Renamed)
-    m_label->setText(ChatClient::serverName());
 }
 
 
@@ -162,6 +155,13 @@ void StatusBar::menuTriggered(QAction *action)
 {
   if (action == m_connect)
     m_url->open();
+}
+
+
+void StatusBar::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ServerRenamed)
+    m_label->setText(ChatClient::serverName());
 }
 
 

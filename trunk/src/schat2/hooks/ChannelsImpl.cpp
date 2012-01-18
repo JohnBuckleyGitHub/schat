@@ -17,6 +17,7 @@
  */
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -47,11 +48,14 @@ void ChannelsImpl::add(ClientChannel channel, const ChannelInfo &info, const QVa
 {
   Q_UNUSED(json)
 
-  if (ChatClient::id() == info.id()) {
+  if (info.id() == ChatClient::id()) {
     ChatCore::settings()->setValue("Profile/Nick",   ChatClient::io()->nick());
     ChatCore::settings()->setValue("Profile/Gender", channel->gender().raw());
     ChatCore::settings()->setValue("Profile/Status", channel->status().value());
   }
+
+  if (info.id() == ChatClient::serverId() && info.option() & ChannelInfo::Renamed)
+    ChatNotify::start(Notify::ServerRenamed);
 }
 
 } // namespace Hooks

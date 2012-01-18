@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "schat.h"
 
 class NetworkManager;
+class Notify;
 
 /*!
  * Используется для хранения информации о подключении.
@@ -49,6 +50,7 @@ public:
   inline const QString& url() const       { return m_url; }
 
   inline void setAccount(const QString &account)   { m_account = account; }
+  inline void setName(const QString &name)         { m_name = name; }
   inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
 
@@ -101,6 +103,7 @@ public:
 
 private slots:
   void clientStateChanged(int state);
+  void notify(const Notify &notify);
 
 private:
   void load();
