@@ -16,34 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CACHEDB_H_
-#define CACHEDB_H_
+#ifndef CACHEFEEDSTORAGE_H_
+#define CACHEFEEDSTORAGE_H_
 
-#include <QObject>
+#include "feeds/FeedStorage.h"
 
-#include "Channel.h"
-
-class CacheDB : public QObject
+class CacheFeedStorage : public FeedStorage
 {
   Q_OBJECT
 
 public:
-  CacheDB(QObject *parent = 0)
-  : QObject(parent)
-  {}
-
-  inline static QString id() { return m_id; }
-  static ClientChannel channel(const QByteArray &id);
-  static ClientChannel channel(qint64 id);
-  static qint64 add(ClientChannel channel);
-  static qint64 channelKey(const QByteArray &id, int type);
-  static void close();
-  static void open(const QByteArray &id, const QString &dir);
-  static void saveData(Channel *channel);
-  static void update(ClientChannel channel);
+  CacheFeedStorage(QObject *parent = 0);
+  int saveImpl(FeedPtr feed);
 
 private:
-  static QString m_id; ///< Идентификатор соединения с базой.
+  qint64 save(FeedPtr feed, const QByteArray &json);
 };
 
-#endif /* CACHEDB_H_ */
+#endif /* CACHEFEEDSTORAGE_H_ */

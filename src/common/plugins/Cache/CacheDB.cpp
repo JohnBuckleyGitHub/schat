@@ -24,6 +24,7 @@
 #include "CacheDB.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 QString CacheDB::m_id;
 
@@ -124,20 +125,26 @@ void CacheDB::close()
  */
 void CacheDB::open(const QByteArray &id, const QString &dir)
 {
-  if (!m_id.isEmpty())
+  QString newId = SimpleID::encode(id) + LS("-cache");
+
+  if (!m_id.isEmpty()) {
+    if (m_id == newId)
+      return;
+
     close();
+  }
 
-  m_id = SimpleID::encode(id) + "-cache";
+  m_id = newId;
 
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_id);
-  db.setDatabaseName(dir + "/cache.sqlite");
+  QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
+  db.setDatabaseName(dir + LS("/cache.sqlite"));
   if (!db.open())
     return;
 
   QSqlQuery query(db);
-  query.exec("PRAGMA synchronous = OFF");
+  query.exec(LS("PRAGMA synchronous = OFF"));
 
-  query.exec(
+  query.exec(LS(
     "CREATE TABLE IF NOT EXISTS channels ( "
     "  id         INTEGER PRIMARY KEY,"
     "  channel    BLOB    NOT NULL UNIQUE,"
@@ -146,17 +153,28 @@ void CacheDB::open(const QByteArray &id, const QString &dir)
     "  name       TEXT    NOT NULL,"
     "  data       BLOB"
     ");"
-  );
+  ));
 
-  query.exec(
-  "CREATE TABLE IF NOT EXISTS feeds ( "
-  "  id         INTEGER PRIMARY KEY,"
-  "  channel    INTEGER DEFAULT ( 0 ),"
-  "  rev        INTEGER DEFAULT ( 0 ),"
-  "  date       INTEGER DEFAULT ( 0 ),"
-  "  name       TEXT    NOT NULL,"
-  "  json       BLOB"
-  ");");
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS feeds ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER DEFAULT ( 0 ),"
+    "  rev        INTEGER DEFAULT ( 0 ),"
+    "  date       INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT    NOT NULL,"
+    "  json       BLOB"
+    ");"
+  ));
+}
+
+
+void CacheDB::saveData(Channel *channel)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("UPDATE channels SET data = :data WHERE id = :id;"));
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":id"),         channel->key());
+  query.exec();
 }
 
 

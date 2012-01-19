@@ -25,12 +25,14 @@ HEADERS  = \
    CachePlugin.h \
    CachePlugin_p.h \
    feeds/CacheFeeds.h \
+   feeds/CacheFeedStorage.h \
 
 SOURCES  = \
    CacheChannels.cpp \
    CacheDB.cpp \
    CachePlugin.cpp \
    feeds/CacheFeeds.cpp \
+   feeds/CacheFeedStorage.cpp \
 
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
