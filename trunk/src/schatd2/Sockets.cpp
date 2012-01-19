@@ -20,6 +20,26 @@
 #include "Sockets.h"
 #include "Storage.h"
 
+
+QList<quint64> Sockets::all(ChatChannel channel, ChatChannel user, bool echo)
+{
+  QList<quint64> sockets;
+  if (channel->type() == SimpleID::UserId)
+    sockets = all(channel);
+  else
+    sockets = Sockets::channel(channel);
+
+  echoFilter(user, sockets, echo);
+  return sockets;
+}
+
+
+/*!
+ * Получение списка всех сокетов для пользователя.
+ *
+ * \param user пользователь.
+ * \param echo \b true если необходимо включить в список сокеты пользователя.
+ */
 QList<quint64> Sockets::all(ChatChannel user, bool echo)
 {
   QList<quint64> out;
@@ -45,6 +65,9 @@ QList<quint64> Sockets::all(ChatChannel user, bool echo)
 }
 
 
+/*!
+ * Получение списка всех сокетов пользователей в обычном канале.
+ */
 QList<quint64> Sockets::channel(ChatChannel channel)
 {
   QList<quint64> out;
@@ -64,6 +87,9 @@ QList<quint64> Sockets::channel(ChatChannel channel)
 }
 
 
+/*!
+ * Фильтрация списка сокетов.
+ */
 void Sockets::echoFilter(ChatChannel channel, QList<quint64> &sockets, bool echo)
 {
   if (!channel)
@@ -80,6 +106,9 @@ void Sockets::echoFilter(ChatChannel channel, QList<quint64> &sockets, bool echo
 }
 
 
+/*!
+ * Слияние двух списков недопуская появления дубликатов.
+ */
 void Sockets::merge(QList<quint64> &out, const QList<quint64> &sockets)
 {
   foreach (quint64 socket, sockets) {
