@@ -19,9 +19,13 @@
 #include <QDebug>
 
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "feeds/FeedStorage.h"
 #include "hooks/ClientFeedsImpl.h"
 #include "net/packets/FeedNotice.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
 
 ClientFeedsImpl::ClientFeedsImpl(QObject *parent)
   : Feeds(parent)
@@ -32,5 +36,30 @@ ClientFeedsImpl::ClientFeedsImpl(QObject *parent)
 
 void ClientFeedsImpl::readFeed(const FeedNotice &packet)
 {
-  qDebug() << " [Client] ClientFeedsImpl::readFeed()" << packet.command();
+  m_channel = ChatClient::channels()->get(packet.sender());
+  if (!m_channel)
+    return;
+
+  QString cmd = packet.command();
+  if (cmd.isEmpty())
+    return;
+
+  m_packet = &packet;
+
+  if (cmd == LS("feed"))
+    feed();
+}
+
+
+void ClientFeedsImpl::feed()
+{
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return;
+
+  FeedPtr feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
+  if (!feed)
+    return;
+
+  m_channel->feeds().add(feed);
 }

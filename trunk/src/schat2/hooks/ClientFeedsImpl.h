@@ -29,6 +29,12 @@ public:
   ClientFeedsImpl(QObject *parent = 0);
 
   void readFeed(const FeedNotice &packet);
+
+private:
+  void feed();
+
+  ClientChannel m_channel;
+  const FeedNotice *m_packet;
 };
 
 #endif /* CLIENTFEEDSIMPL_H_ */
