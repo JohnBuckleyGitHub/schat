@@ -59,7 +59,7 @@ public:
   static TabWidget *i()       { return m_self; }
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
-  void add(const Message &message);
+  void add(const Message &message, bool create = true);
 
 signals:
   void pageChanged(int type, bool visible);

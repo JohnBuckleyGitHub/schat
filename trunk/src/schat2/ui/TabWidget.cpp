@@ -158,7 +158,7 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
 /*!
  * Добавление нового сообщения.
  */
-void TabWidget::add(const Message &message)
+void TabWidget::add(const Message &message, bool create)
 {
   QByteArray id = message.tab();
   if (!Channel::isCompatibleId(id))
@@ -171,7 +171,7 @@ void TabWidget::add(const Message &message)
     m_alertTab->chatView()->add(message);
   }
   else if (SimpleID::typeOf(id) == SimpleID::UserId) {
-    ChannelBaseTab *tab = channelTab(id, true, false);
+    ChannelBaseTab *tab = channelTab(id, create, false);
     if (tab)
       tab->add(message);
   }
