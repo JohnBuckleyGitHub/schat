@@ -25,6 +25,7 @@
 #include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "feeds/CacheFeeds.h"
+#include "feeds/CacheFeedStorage.h"
 #include "NetworkManager.h"
 
 Cache::Cache(QObject *parent)
@@ -32,6 +33,7 @@ Cache::Cache(QObject *parent)
 {
   new Hooks::CacheChannels(this);
   new Hooks::CacheFeeds(this);
+  new CacheFeedStorage(this);
   open();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));

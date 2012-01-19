@@ -20,6 +20,7 @@
 
 #include "feeds/FeedHeader.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 /*!
  * Конструктор создающий пустой объект.
@@ -48,14 +49,14 @@ QVariantMap FeedHeader::get(Channel *channel)
   if (acl.isEmpty())
     return acl;
 
-  m_data["acl"] = acl;
+  m_data[LS("acl")] = acl;
   return m_data;
 }
 
 
 QVariantMap FeedHeader::save()
 {
-  m_data["acl"] = m_acl.save();
+  m_data[LS("acl")] = m_acl.save();
   return m_data;
 }
 
@@ -66,5 +67,6 @@ QVariantMap FeedHeader::save()
 void FeedHeader::setData(const QVariantMap &data)
 {
   m_acl.load(data.value("acl").toMap());
-  m_data["date"] = data.value("date");
+  m_data = data;
+  m_data.remove(LS("acl"));
 }
