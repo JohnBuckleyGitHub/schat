@@ -28,6 +28,7 @@
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
 #include "sglobal.h"
+#include "Sockets.h"
 #include "Storage.h"
 
 NodeFeeds::NodeFeeds(Core *core)
@@ -268,8 +269,11 @@ int NodeFeeds::update()
     return status;
 
   status = FeedStorage::save(feed);
-  if (status == Notice::OK)
+  if (status == Notice::OK) {
+    reply(status);
+    get();
     broadcast(feed);
+  }
 
   return status;
 }
@@ -295,16 +299,19 @@ int NodeFeeds::check(int acl)
 }
 
 
+/*!
+ * Отравка заголовка фида всем если он публично доступен для чтения.
+ */
 void NodeFeeds::broadcast(FeedPtr feed)
 {
-  reply(Notice::OK);
-  get();
+  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
+  if (headers.isEmpty())
+    return;
 
-//  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
-//  if (headers.isEmpty())
-//    return;
-//
-//  qDebug() << JSON::generate(headers);
+  FeedPacket packet = FeedNotice::reply(*m_packet, headers);
+  packet->setDest(m_channel->id());
+  packet->setCommand(LS("headers"));
+  m_core->send(Sockets::all(m_channel, m_user), packet);
 }
 
 
