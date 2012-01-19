@@ -33,7 +33,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]      = "RawFeeds";
     out["Name"]    = "Raw Feeds";
-    out["Version"] = "0.1.2";
+    out["Version"] = "0.1.3";
     out["Site"]    = "http://wiki.schat.me/Plugin/RawFeeds";
     out["Desc"]    = "Raw Feeds";
 
