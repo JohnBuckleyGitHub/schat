@@ -44,7 +44,6 @@ public:
   bool canEdit(ChatChannel channel);
   bool canRead(ChatChannel channel);
   bool canWrite(ChatChannel channel);
-  FeedPtr feed(const QString &name, bool create = true, bool save = true);
 
 private:
   void normalize();

@@ -130,6 +130,8 @@ public:
   static int isCompatibleId(const QByteArray &id);
   static QString defaultName();
 
+  FeedPtr feed(const QString &name, bool create = true, bool save = true);
+
 protected:
   Account *m_account;              ///< Аккаунт пользователя
 

@@ -22,9 +22,10 @@
 
 #include "Account.h"
 #include "Channel.h"
+#include "feeds/FeedStorage.h"
 #include "net/SimpleID.h"
-#include "text/HtmlFilter.h"
 #include "sglobal.h"
+#include "text/HtmlFilter.h"
 
 /*!
  * Добавление идентификатора в список каналов.
@@ -177,4 +178,22 @@ int Channel::isCompatibleId(const QByteArray &id)
 QString Channel::defaultName()
 {
   return QDir::home().dirName();
+}
+
+
+/*!
+ * Получение фида по имени, эта функция позволяет автоматически создать фид, если он не существует.
+ *
+ * \param name   Имя фида.
+ * \param create \b true если необходимо создать фид, если он не существует.
+ * \param save   \b true если необходимо сохранить фид после создания.
+ */
+FeedPtr Channel::feed(const QString &name, bool create, bool save)
+{
+  FeedPtr feed = feeds().all().value(name);
+  if (feed || !create)
+    return feed;
+
+  feeds().add(FeedStorage::create(name), save);
+  return this->feed(name, false);
 }

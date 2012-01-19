@@ -139,8 +139,11 @@ int NodeFeeds::clear()
     return status;
 
   status = FeedStorage::save(feed);
-  if (status == Notice::OK)
+  if (status == Notice::OK) {
     reply(status);
+    get();
+    broadcast(feed);
+  }
 
   return status;
 }
@@ -190,7 +193,7 @@ int NodeFeeds::query()
   if (status != Notice::OK)
     return status;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedPtr feed = m_channel->feed(m_packet->text(), false);
   FeedQueryReply reply = feed->query(m_packet->json(), m_user.data());
   if (reply.modified)
     FeedStorage::save(feed);
@@ -218,7 +221,7 @@ int NodeFeeds::remove()
   if (m_packet->text() == "acl")
     return Notice::BadRequest;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedPtr feed = m_channel->feed(m_packet->text(), false);
   FeedStorage::remove(feed);
   m_channel->feeds().remove(m_packet->text());
   reply(status);
@@ -239,10 +242,13 @@ int NodeFeeds::revert()
   if (status != Notice::OK)
     return status;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
+  FeedPtr feed = m_channel->feed(m_packet->text(), false);
   status = FeedStorage::revert(feed, m_packet->json());
-  if (status == Notice::OK)
+  if (status == Notice::OK) {
     reply(status);
+    get();
+    broadcast(m_channel->feed(m_packet->text(), false));
+  }
 
   return status;
 }
