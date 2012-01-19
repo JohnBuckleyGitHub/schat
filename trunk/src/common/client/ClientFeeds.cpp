@@ -22,6 +22,7 @@
 #include "client/SimpleClient.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
+#include "sglobal.h"
 
 ClientFeeds::ClientFeeds(QObject *parent)
   : QObject(parent)
@@ -29,24 +30,6 @@ ClientFeeds::ClientFeeds(QObject *parent)
   m_hooks = new Hooks::Feeds(this);
 
   connect(ChatClient::io(), SIGNAL(notice(int)), SLOT(notice(int)));
-}
-
-
-bool ClientFeeds::add(const QByteArray &id, const QString &name, const QVariantMap &json)
-{
-  return request(id, "add", name, json);
-}
-
-
-bool ClientFeeds::clear(const QByteArray &id, const QString &name)
-{
-  return request(id, "clear", name);
-}
-
-
-bool ClientFeeds::get(const QByteArray &id, const QString &name)
-{
-  return request(id, "get", name);
 }
 
 
@@ -61,18 +44,6 @@ bool ClientFeeds::headers(const QByteArray &id)
     return false;
 
   return ChatClient::io()->send(FeedNotice::headers(ChatClient::id(), id));
-}
-
-
-bool ClientFeeds::query(const QByteArray &id, const QString &name, const QVariantMap &json)
-{
-  return request(id, "query", name, json);
-}
-
-
-bool ClientFeeds::remove(const QByteArray &id, const QString &name)
-{
-  return request(id, "remove", name);
 }
 
 
@@ -97,13 +68,7 @@ bool ClientFeeds::revert(const QByteArray &id, const QString &name, qint64 rev)
   if (rev > 0)
     json["rev"] = rev;
 
-  return request(id, "revert", name, json);
-}
-
-
-bool ClientFeeds::update(const QByteArray &id, const QString &name, const QVariantMap &json)
-{
-  return request(id, "update", name, json);
+  return request(id, LS("revert"), name, json);
 }
 
 

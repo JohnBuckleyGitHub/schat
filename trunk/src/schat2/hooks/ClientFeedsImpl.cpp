@@ -48,6 +48,26 @@ void ClientFeedsImpl::readFeed(const FeedNotice &packet)
 
   if (cmd == LS("feed"))
     feed();
+  else if (cmd == LS("headers"))
+    headers();
+}
+
+
+QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &feeds)
+{
+  QStringList out;
+  QMapIterator<QString, QVariant> i(feeds);
+  while (i.hasNext()) {
+    i.next();
+    FeedPtr feed = channel->feed(i.key(), false);
+    if (!feed)
+      continue;
+
+    if (i.value().toMap().value("date").toLongLong() != feed->head().date())
+      out.append(i.key());
+  }
+
+  return out;
 }
 
 
@@ -62,4 +82,26 @@ void ClientFeedsImpl::feed()
     return;
 
   m_channel->feeds().add(feed);
+}
+
+
+
+void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
+{
+  if (feeds.isEmpty())
+    return;
+
+  foreach (QString name, feeds) {
+    ChatClient::feeds()->request(id, LS("get"), name);
+  }
+}
+
+
+void ClientFeedsImpl::headers()
+{
+  QVariantMap feeds = m_packet->json().value(LS("feeds")).toMap();
+  if (feeds.isEmpty())
+    return;
+
+  get(m_channel->id(), unsynced(m_channel, feeds));
 }
