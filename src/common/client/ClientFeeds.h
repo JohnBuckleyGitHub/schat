@@ -37,15 +37,9 @@ class SCHAT_EXPORT ClientFeeds : public QObject
 
 public:
   ClientFeeds(QObject *parent = 0);
-  bool add(const QByteArray &id, const QString &name, const QVariantMap &json);
-  bool clear(const QByteArray &id, const QString &name);
-  bool get(const QByteArray &id, const QString &name);
   bool headers(const QByteArray &id);
-  bool query(const QByteArray &id, const QString &name, const QVariantMap &json);
-  bool remove(const QByteArray &id, const QString &name);
   bool request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   bool revert(const QByteArray &id, const QString &name, qint64 rev);
-  bool update(const QByteArray &id, const QString &name, const QVariantMap &json);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
 
 private slots:

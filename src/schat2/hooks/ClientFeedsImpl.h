@@ -31,7 +31,10 @@ public:
   void readFeed(const FeedNotice &packet);
 
 private:
+  QStringList unsynced(ClientChannel channel, const QVariantMap &feeds);
   void feed();
+  void get(const QByteArray &id, const QStringList &feeds);
+  void headers();
 
   ClientChannel m_channel;
   const FeedNotice *m_packet;

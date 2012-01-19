@@ -37,6 +37,7 @@ public:
   inline const Acl& acl() const            { return m_acl; }
   inline const QString& name() const       { return m_name; }
   inline const QVariantMap& data() const   { return m_data; }
+  inline qint64 date() const               { return m_data.value("date").toLongLong(); }
   inline QVariantMap& data()               { return m_data; }
 
   QVariantMap get(Channel *channel);
