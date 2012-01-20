@@ -32,6 +32,7 @@ public:
 
 private:
   qint64 save(FeedPtr feed, const QByteArray &json);
+  void load(Channel *channel, const QString &name, qint64 id);
 };
 
 #endif /* CACHEFEEDSTORAGE_H_ */
