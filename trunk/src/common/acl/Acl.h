@@ -68,6 +68,7 @@ public:
 private:
   Groups m_groups;                 ///< Группы.
   int m_mask;                      ///< Общая маска прав доступа Acl:CommonAcl.
+  int m_math;                      ///< Права доступа для конкретного пользователя.
   QHash<QByteArray, int> m_others; ///< Специальные права доступа для выбранных пользователей.
   QList<QByteArray> m_owners;      ///< Идентификаторы владельцев.
 };
