@@ -20,9 +20,11 @@
 #include "acl/Acl.h"
 #include "Channel.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 Acl::Acl(int mask)
   : m_mask(mask)
+  , m_math(0)
 {
 }
 
@@ -45,7 +47,7 @@ int Acl::match(Channel *channel) const
   if (!channel)
     return (m_mask & ~0770);
 
-  if (channel->account()->groups().all().contains("master"))
+  if (channel->account()->groups().all().contains(LS("master")))
     return Read | Write | Edit;
 
   if (m_others.contains(channel->id()))
@@ -77,8 +79,8 @@ QVariantMap Acl::get(Channel *channel)
   if (acl & Edit)
     json = save();
 
-  json["math"] = acl;
-  json["mask"] = m_mask;
+  json[LS("math")] = acl;
+  json[LS("mask")] = m_mask;
   return json;
 }
 
@@ -95,8 +97,11 @@ QVariantMap Acl::save()
     owners.append(SimpleID::encode(owner));
   }
 
-  json["mask"]   = m_mask;
-  json["owners"] = owners;
+  json[LS("mask")]   = m_mask;
+  json[LS("owners")] = owners;
+
+  if (m_math)
+    json[LS("math")] = m_math;
 
   return json;
 }
@@ -116,7 +121,8 @@ void Acl::add(const QByteArray &owner)
 
 void Acl::load(const QVariantMap &json)
 {
-  m_mask = json.value("mask").toInt();
+  m_mask = json.value(LS("mask")).toInt();
+  m_math = json.value(LS("math")).toInt();
 
   QVariantList owners = json.value("owners").toList();
   foreach (QVariant owner, owners) {

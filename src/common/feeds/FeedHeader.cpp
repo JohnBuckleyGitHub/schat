@@ -66,7 +66,7 @@ QVariantMap FeedHeader::save()
  */
 void FeedHeader::setData(const QVariantMap &data)
 {
-  m_acl.load(data.value("acl").toMap());
+  m_acl.load(data.value(LS("acl")).toMap());
   m_data = data;
   m_data.remove(LS("acl"));
 }
