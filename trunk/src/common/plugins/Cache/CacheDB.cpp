@@ -37,13 +37,10 @@ bool CacheDB::open(const QByteArray &id, const QString &dir)
 {
   QString newId = SimpleID::encode(id) + LS("-cache");
 
-  if (!m_id.isEmpty()) {
-    if (m_id == newId)
+  if (!m_id.isEmpty() && m_id == newId)
       return false;
 
-    close();
-  }
-
+  close();
   m_id = newId;
 
   QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
@@ -169,8 +166,8 @@ qint64 CacheDB::channelKey(const QByteArray &id, int type)
  */
 void CacheDB::close()
 {
-  m_id.clear();
   QSqlDatabase::removeDatabase(m_id);
+  m_id.clear();
 }
 
 

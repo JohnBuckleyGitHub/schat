@@ -66,8 +66,17 @@ void ChatClient::clientStateChanged(int state, int previousState)
   if (previousState == Online)
     emit offline();
 
-  if (state == Online)
+  if (state == Online) {
+    if (!m_id.isEmpty() && m_id != serverId()) {
+      server()->data().clear();
+      server()->feeds().clear();
+      channel()->data().clear();
+      channel()->feeds().clear();
+    }
+
+    m_id = serverId();
     emit online();
+  }
 }
 
 
