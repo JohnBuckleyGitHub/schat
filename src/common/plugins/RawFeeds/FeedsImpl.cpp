@@ -36,10 +36,8 @@ FeedsImpl::FeedsImpl(RawFeeds *parent)
 }
 
 
-void FeedsImpl::readFeed(const FeedNotice &packet)
+void FeedsImpl::readFeedImpl(const FeedNotice &packet)
 {
-  qDebug() << "FeedsImpl::readFeed()";
-
   if (TabWidget::i()) {
     RawFeedsMessage message(packet);
     TabWidget::i()->add(message, false);

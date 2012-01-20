@@ -21,6 +21,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
+#include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
@@ -200,6 +201,8 @@ void Channels::add(ClientChannel channel, const ChannelInfo &info, const QVarian
   qDebug() << "---";
   qDebug() << "--- ADD HOOK" << channel->name() << info.option() << json.keys();
   qDebug() << "---";
+  ChatClient::feeds()->hooks()->add(channel, info, json);
+
   foreach (Channels *hook, m_hooks) {
     hook->add(channel, info, json);
   }
@@ -295,6 +298,14 @@ Feeds::Feeds(QObject *parent)
 }
 
 
+void Feeds::add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json)
+{
+  foreach (Feeds *hook, m_hooks) {
+    hook->addImpl(channel, info, json);
+  }
+}
+
+
 /*!
  * Чтение полученного сообщения.
  */
@@ -304,8 +315,18 @@ void Feeds::readFeed(const FeedNotice &packet)
     return;
 
   foreach (Feeds *hook, m_hooks) {
-    hook->readFeed(packet);
+    hook->readFeedImpl(packet);
   }
+}
+
+
+void Feeds::addImpl(ClientChannel /*channel*/, const ChannelInfo & /*info*/, const QVariantMap & /*json*/)
+{
+}
+
+
+void Feeds::readFeedImpl(const FeedNotice & /*packet*/)
+{
 }
 
 }  // namespace Hooks

@@ -33,7 +33,7 @@ CacheFeeds::CacheFeeds(QObject *parent)
 }
 
 
-void CacheFeeds::readFeed(const FeedNotice &packet)
+void CacheFeeds::readFeedImpl(const FeedNotice &packet)
 {
   qDebug() << " [Cache] CacheFeeds::readFeed()" << packet.command();
 }
