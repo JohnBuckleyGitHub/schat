@@ -35,7 +35,6 @@
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
-#include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "NodeMessages.h"

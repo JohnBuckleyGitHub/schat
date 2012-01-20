@@ -26,7 +26,6 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "FileLocations.h"
-#include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 
@@ -66,11 +65,7 @@ NetworkItem* NetworkItem::item()
   SimpleClient *client = ChatClient::io();
   NetworkItem *item = new NetworkItem(ChatClient::serverId());
 
-  QString name = client->serverData()->name();
-  if (name.isEmpty())
-    name = client->url().host();
-
-  item->m_name = name;
+  item->m_name = ChatClient::serverName();
   item->m_url = client->url().toString();
   item->m_cookie = client->cookie();
   item->m_userId = client->channelId();

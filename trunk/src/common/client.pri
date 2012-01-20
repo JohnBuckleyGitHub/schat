@@ -40,7 +40,6 @@ HEADERS += \
     net/packets/MessageNotice.h \
     net/packets/Notice.h \
     net/PacketWriter.h \
-    net/ServerData.h \
     net/SimpleID.h \
     net/SimpleSocket.h \
     net/SimpleSocket_p.h \
@@ -77,7 +76,6 @@ SOURCES += \
     net/packets/FeedNotice.cpp \
     net/packets/MessageNotice.cpp \
     net/packets/Notice.cpp \
-    net/ServerData.cpp \
     net/SimpleID.cpp \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \

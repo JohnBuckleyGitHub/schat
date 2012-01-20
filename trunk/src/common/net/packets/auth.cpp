@@ -29,7 +29,6 @@
 
 AuthReply::AuthReply(PacketReader *reader)
 {
-  serverData.setId(reader->sender());
   serverId = reader->sender();
   userId = reader->dest();
 
@@ -39,10 +38,7 @@ AuthReply::AuthReply(PacketReader *reader)
 
   if (status == Notice::OK) {
     cookie = reader->id();
-    serverData.setFeatures(reader->get<quint32>());
-    serverData.setNumber(reader->get<quint8>());
     serverName = reader->text();
-    serverData.setName(serverName);
     account = reader->text();
   }
 

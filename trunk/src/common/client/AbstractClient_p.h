@@ -43,7 +43,7 @@ public:
   virtual void restore() {}
   virtual void setClientState(AbstractClient::ClientState state);
   virtual void setup() {}
-  void setServerData(const ServerData &data);
+  void setServerData(const AuthReply &reply);
   void startReconnectTimer();
 
   AbstractClient::ClientState clientState;   ///< Состояние клиента.
@@ -62,7 +62,6 @@ public:
   QList<QByteArray> sendQueue;             ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString nick;                            ///< Оригинальный ник пользователя.
   QUrl url;                                ///< Адрес, к которому будет подключен клиент.
-  ServerData *serverData;                  ///< Данные о сервере.
 };
 
 #endif /* ABSTRACTCLIENT_P_H_ */

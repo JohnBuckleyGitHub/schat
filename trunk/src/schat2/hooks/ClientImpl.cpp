@@ -22,8 +22,6 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "hooks/ClientImpl.h"
-#include "net/ServerData.h"
-#include "net/SimpleID.h"
 #include "sglobal.h"
 
 namespace Hooks

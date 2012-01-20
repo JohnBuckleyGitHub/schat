@@ -34,7 +34,6 @@
 #include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
-#include "net/ServerData.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "Normalize.h"
@@ -52,7 +51,6 @@ Storage::Storage(QObject *parent)
 
   new Ch(this);
 
-  m_serverData = new ServerData();
   m_locations = new FileLocations(this);
 
   // Инициализация настроек по умолчанию.
@@ -74,7 +72,6 @@ Storage::Storage(QObject *parent)
 Storage::~Storage()
 {
   delete m_log;
-  delete m_serverData;
 }
 
 

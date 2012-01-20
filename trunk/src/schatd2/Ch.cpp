@@ -22,7 +22,6 @@
 #include "Ch.h"
 #include "DataBase.h"
 #include "net/packets/Notice.h"
-#include "net/ServerData.h"
 #include "Normalize.h"
 #include "Settings.h"
 #include "Storage.h"

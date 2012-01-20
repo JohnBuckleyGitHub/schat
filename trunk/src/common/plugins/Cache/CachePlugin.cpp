@@ -55,7 +55,7 @@ void Cache::open()
   if (ChatClient::serverId().isEmpty())
     return;
 
-  ChatClient::server()->setId(ChatClient::serverId());
+//  ChatClient::server()->setId(ChatClient::serverId());
   load(ChatClient::server());
   load(ChatClient::channel());
 }
