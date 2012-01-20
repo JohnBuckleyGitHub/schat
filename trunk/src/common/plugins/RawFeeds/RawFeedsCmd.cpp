@@ -19,12 +19,16 @@
 #include <QDebug>
 
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
 #include "JSON.h"
 #include "RawFeedsCmd.h"
+#include "RawFeedsMessage.h"
 #include "RawFeedsPlugin_p.h"
+#include "sglobal.h"
+#include "ui/TabWidget.h"
 
 namespace Hooks
 {
@@ -38,19 +42,23 @@ RawFeedsCmd::RawFeedsCmd(RawFeeds *parent)
 
 bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 {
-  qDebug() << "RawFeedsCmd" << cmd.command();
   QString command = cmd.command().toLower();
-  if (command == "feeds") {
-    ChatClient::feeds()->headers(dest);
+  if (command == LS("feeds")) {
+    ClientCmd body(cmd.body());
+    if (!body.isValid())
+      ChatClient::feeds()->headers(dest);
+    else if (body.command() == LS("local"))
+      localFeeds(dest);
+
     return true;
   }
 
-  if (command == "feed") {
+  if (command == LS("feed")) {
     ClientCmd body(cmd.body());
     if (!body.isValid())
       return true;
 
-    if (body.command() == "revert") {
+    if (body.command() == LS("revert")) {
       revert(dest, body);
     }
     else
@@ -60,6 +68,34 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   }
 
   return false;
+}
+
+
+/*!
+ * Получение заголовков локальных фидов.
+ */
+void RawFeedsCmd::localFeeds(const QByteArray &dest)
+{
+  if (!TabWidget::i())
+    return;
+
+  ClientChannel channel = ChatClient::channels()->get(dest);
+  if (!channel)
+    return;
+
+  QVariantMap json;
+
+  QMapIterator<QString, FeedPtr> i(channel->feeds().all());
+  while (i.hasNext()) {
+    i.next();
+    Feed::merge(i.key(), json, i.value()->head().save());
+  }
+
+  if (json.isEmpty())
+    return;
+
+  RawFeedsMessage message(dest, LS("headers"), Feed::merge(LS("feeds"), json));
+  TabWidget::i()->add(message, false);
 }
 
 

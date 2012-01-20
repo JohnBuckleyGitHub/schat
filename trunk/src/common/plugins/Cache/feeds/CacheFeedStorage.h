@@ -28,6 +28,7 @@ class CacheFeedStorage : public FeedStorage
 public:
   CacheFeedStorage(QObject *parent = 0);
   int saveImpl(FeedPtr feed);
+  void loadImpl(Channel *channel);
 
 private:
   qint64 save(FeedPtr feed, const QByteArray &json);

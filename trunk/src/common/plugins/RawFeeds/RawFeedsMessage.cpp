@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,25 +18,47 @@
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "JSON.h"
 #include "net/packets/FeedNotice.h"
 #include "net/SimpleID.h"
 #include "RawFeedsMessage.h"
+#include "sglobal.h"
 
 RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   : Message()
 {
   m_tab = packet.sender();
-  m_func = "addRawFeedsMessage";
+  m_func = LS("addRawFeedsMessage");
 
-  m_data["Type"]    = "raw-feeds";
-  m_data["Id"]      = SimpleID::encode(ChatCore::randomId());
-  m_data["Text"]    = packet.raw();
-  m_data["Command"] = packet.command();
-  m_data["Date"]    = ChatClient::date();
+  m_data[LS("Type")]    = LS("raw-feeds");
+  m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
+  m_data[LS("Text")]    = packet.raw();
+  m_data[LS("Command")] = packet.command();
+  m_data[LS("Date")]    = ChatClient::date();
 
   QVariantMap status;
-  status["Code"] = packet.status();
-  status["Desc"] = FeedNotice::status(packet.status());
+  status[LS("Code")] = packet.status();
+  status[LS("Desc")] = FeedNotice::status(packet.status());
 
-  m_data["Status"] = status;
+  m_data[LS("Status")] = status;
+}
+
+
+RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, const QVariantMap &data)
+  : Message()
+{
+  m_tab = tab;
+  m_func = LS("addRawFeedsMessage");
+
+  m_data[LS("Type")]    = LS("raw-feeds");
+  m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
+  m_data[LS("Text")]    = JSON::generate(data);
+  m_data[LS("Command")] = command;
+  m_data[LS("Date")]    = ChatClient::date();
+
+  QVariantMap status;
+  status[LS("Code")] = 200;
+  status[LS("Desc")] = LS("OK");
+
+  m_data[LS("Status")] = status;
 }

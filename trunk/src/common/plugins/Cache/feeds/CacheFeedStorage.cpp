@@ -48,6 +48,14 @@ int CacheFeedStorage::saveImpl(FeedPtr feed)
 }
 
 
+void CacheFeedStorage::loadImpl(Channel *channel)
+{
+  qDebug() << " $ ";
+  qDebug() << " $ " << channel->name();
+  qDebug() << " $ ";
+}
+
+
 qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
 {
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));

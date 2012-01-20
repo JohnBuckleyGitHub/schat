@@ -22,6 +22,7 @@
 #include <QSqlQuery>
 
 #include "CacheDB.h"
+#include "feeds/FeedStorage.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -53,6 +54,7 @@ ClientChannel CacheDB::channel(qint64 id)
   channel->setKey(id);
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
+  FeedStorage::load(channel.data());
 
   return channel;
 }
