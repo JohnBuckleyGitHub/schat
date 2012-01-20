@@ -30,17 +30,67 @@
 QString CacheDB::m_id;
 
 
-ClientChannel CacheDB::channel(const QByteArray &id)
+/*!
+ * Открытие базы данных.
+ */
+bool CacheDB::open(const QByteArray &id, const QString &dir)
+{
+  QString newId = SimpleID::encode(id) + LS("-cache");
+
+  if (!m_id.isEmpty()) {
+    if (m_id == newId)
+      return false;
+
+    close();
+  }
+
+  m_id = newId;
+
+  QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
+  db.setDatabaseName(dir + LS("/cache.sqlite"));
+  if (!db.open())
+    return false;
+
+  QSqlQuery query(db);
+  query.exec(LS("PRAGMA synchronous = OFF"));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS channels ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    BLOB    NOT NULL UNIQUE,"
+    "  type       INTEGER DEFAULT ( 73 ),"
+    "  gender     INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT    NOT NULL,"
+    "  data       BLOB"
+    ");"
+  ));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS feeds ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER DEFAULT ( 0 ),"
+    "  rev        INTEGER DEFAULT ( 0 ),"
+    "  date       INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT    NOT NULL,"
+    "  json       BLOB"
+    ");"
+  ));
+
+  return true;
+}
+
+
+ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 {
   qint64 key = channelKey(id, SimpleID::typeOf(id));
   if (key == -1)
     return ClientChannel();
 
-  return channel(key);
+  return channel(key, feeds);
 }
 
 
-ClientChannel CacheDB::channel(qint64 id)
+ClientChannel CacheDB::channel(qint64 id, bool feeds)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;");
@@ -54,7 +104,9 @@ ClientChannel CacheDB::channel(qint64 id)
   channel->setKey(id);
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
-  FeedStorage::load(channel.data());
+
+  if (feeds)
+    FeedStorage::load(channel.data());
 
   return channel;
 }
@@ -119,54 +171,6 @@ void CacheDB::close()
 {
   m_id.clear();
   QSqlDatabase::removeDatabase(m_id);
-}
-
-
-/*!
- * Открытие базы данных.
- */
-void CacheDB::open(const QByteArray &id, const QString &dir)
-{
-  QString newId = SimpleID::encode(id) + LS("-cache");
-
-  if (!m_id.isEmpty()) {
-    if (m_id == newId)
-      return;
-
-    close();
-  }
-
-  m_id = newId;
-
-  QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
-  db.setDatabaseName(dir + LS("/cache.sqlite"));
-  if (!db.open())
-    return;
-
-  QSqlQuery query(db);
-  query.exec(LS("PRAGMA synchronous = OFF"));
-
-  query.exec(LS(
-    "CREATE TABLE IF NOT EXISTS channels ( "
-    "  id         INTEGER PRIMARY KEY,"
-    "  channel    BLOB    NOT NULL UNIQUE,"
-    "  type       INTEGER DEFAULT ( 73 ),"
-    "  gender     INTEGER DEFAULT ( 0 ),"
-    "  name       TEXT    NOT NULL,"
-    "  data       BLOB"
-    ");"
-  ));
-
-  query.exec(LS(
-    "CREATE TABLE IF NOT EXISTS feeds ( "
-    "  id         INTEGER PRIMARY KEY,"
-    "  channel    INTEGER DEFAULT ( 0 ),"
-    "  rev        INTEGER DEFAULT ( 0 ),"
-    "  date       INTEGER DEFAULT ( 0 ),"
-    "  name       TEXT    NOT NULL,"
-    "  json       BLOB"
-    ");"
-  ));
 }
 
 
