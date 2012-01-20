@@ -36,6 +36,7 @@ public:
   bool add(FeedPtr feed, bool save = true);
   inline bool add(Feed *feed, bool save = true)    { return add(FeedPtr(feed), save); }
   inline const QMap<QString, FeedPtr>& all() const { return m_feeds; }
+  inline void clear()                              { m_feeds.clear(); }
   inline void remove(const QString &name)          { m_feeds.remove(name); }
   inline void setChannel(Channel *channel)         { m_channel = channel; }
   QVariantMap headers(Channel *channel) const;
