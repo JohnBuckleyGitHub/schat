@@ -91,9 +91,10 @@ private:
   ClientChannels *m_channels; ///< Каналы.
   ClientFeeds *m_feeds;       ///< Обработчик фидов.
   ClientMessages *m_messages; ///< Обработчик сообщений.
-  Hooks::Client *m_hooks;     ///< Хуки.
+  QByteArray m_id;            ///< Предыдущий идентификатор сервера.
   SimpleClient *m_client;     ///< Клиент чата.
   static ChatClient *m_self;  ///< Указатель на себя.
+  Hooks::Client *m_hooks;     ///< Хуки.
 };
 
 #endif /* CHATCLIENT_H_ */

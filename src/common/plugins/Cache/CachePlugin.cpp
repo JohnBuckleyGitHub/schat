@@ -72,9 +72,6 @@ void Cache::load(ClientChannel channel)
   if (id.isEmpty())
     id = ChatClient::serverId();
 
-  channel->data().clear();
-  channel->feeds().clear();
-
   ClientChannel exist = CacheDB::channel(id, false);
   if (!exist)
     return;
