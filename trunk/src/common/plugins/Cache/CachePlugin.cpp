@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QtPlugin>
 
 #include "CacheChannels.h"
@@ -43,8 +45,34 @@ Cache::Cache(QObject *parent)
 void Cache::open()
 {
   QByteArray id = ChatClient::serverId();
-  if (!id.isEmpty())
-    CacheDB::open(id, ChatCore::networks()->root(id));
+  if (id.isEmpty())
+    return;
+
+  if (!CacheDB::open(id, ChatCore::networks()->root(id)))
+    return;
+
+  qDebug() << " $$ " << ChatClient::serverId().toHex();
+  if (ChatClient::serverId().isEmpty())
+    return;
+
+  ChatClient::server()->setId(ChatClient::serverId());
+  load(ChatClient::server());
+  load(ChatClient::channel());
+}
+
+
+void Cache::load(ClientChannel channel)
+{
+  qDebug() << " % " << channel->key() << channel->id().toHex();
+
+  ClientChannel exist = CacheDB::channel(channel->id(), false);
+  if (!exist) {
+    channel->data().clear();
+    return;
+  }
+
+  channel->setData(exist->data());
+  FeedStorage::load(channel.data());
 }
 
 

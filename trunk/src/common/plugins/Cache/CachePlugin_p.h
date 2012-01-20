@@ -19,6 +19,7 @@
 #ifndef CACHEPLUGIN_P_H_
 #define CACHEPLUGIN_P_H_
 
+#include "Channel.h"
 #include "plugins/ChatPlugin.h"
 
 class Cache : public ChatPlugin
@@ -30,6 +31,9 @@ public:
 
 private slots:
   void open();
+
+private:
+  void load(ClientChannel channel);
 };
 
 #endif /* CACHEPLUGIN_P_H_ */

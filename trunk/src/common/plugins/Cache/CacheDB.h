@@ -33,12 +33,12 @@ public:
   {}
 
   inline static QString id() { return m_id; }
-  static ClientChannel channel(const QByteArray &id);
-  static ClientChannel channel(qint64 id);
+  static bool open(const QByteArray &id, const QString &dir);
+  static ClientChannel channel(const QByteArray &id, bool feeds = true);
+  static ClientChannel channel(qint64 id, bool feeds = true);
   static qint64 add(ClientChannel channel);
   static qint64 channelKey(const QByteArray &id, int type);
   static void close();
-  static void open(const QByteArray &id, const QString &dir);
   static void saveData(Channel *channel);
   static void update(ClientChannel channel);
 

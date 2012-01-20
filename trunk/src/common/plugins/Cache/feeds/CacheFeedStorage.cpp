@@ -50,10 +50,6 @@ int CacheFeedStorage::saveImpl(FeedPtr feed)
 
 void CacheFeedStorage::loadImpl(Channel *channel)
 {
-  qDebug() << " $ ";
-  qDebug() << " $ " << channel->name();
-  qDebug() << " $ ";
-
   QVariantMap feeds = channel->data()[LS("feeds")].toMap();
 
   QMapIterator<QString, QVariant> i(feeds);
