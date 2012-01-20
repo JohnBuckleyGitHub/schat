@@ -21,7 +21,6 @@
 
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
-#include "net/ServerData.h"
 
 class Channel;
 class PacketReader;
@@ -29,7 +28,6 @@ class User;
 
 /*!
  * Ответ сервера на запрос авторизации.
- * \deprecated Класс ServerData устаревший и не должен использоваться в этом пакете.
  * Заголовок пакета:
  * - \b sender  - Идентификатор сервера.
  * - \b dest    - Идентификатор, выданный сервером клиенту, в случае если статус \p status не Notice::OK это поле отсутствует.
@@ -69,7 +67,6 @@ public:
   quint16 status;        ///< Статус \sa Notice::StatusCodes, обязательное поле.
   QByteArray cookie;     ///< Cookie.
   QByteArray id;         ///< Уникальный идентификатор авторизации.
-  ServerData serverData; ///< Данные о сервере.
   QString serverName;    ///< Имя сервера.
   QString account;       ///< Имя аккаунта пользователя.
   QVariant json;         ///< JSON данные.

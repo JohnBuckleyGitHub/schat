@@ -28,7 +28,6 @@
 
 class AbstractClientPrivate;
 class PacketReader;
-class ServerData;
 
 class SCHAT_EXPORT AbstractClient : public SimpleSocket
 {
@@ -69,7 +68,6 @@ public:
   const QUrl& url() const;
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
-  ServerData *serverData();
   void lock();
   void setNick(const QString &nick);
   void setUniqueId(const QByteArray &id);

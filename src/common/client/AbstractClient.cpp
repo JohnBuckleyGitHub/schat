@@ -41,7 +41,6 @@ AbstractClientPrivate::AbstractClientPrivate()
   , reconnects(0)
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
-  , serverData(new ServerData())
 {
   Account account;
   channel->setAccount(&account);
@@ -54,7 +53,6 @@ AbstractClientPrivate::~AbstractClientPrivate()
     reconnectTimer->stop();
 
   delete reconnectTimer;
-  delete serverData;
 }
 
 
@@ -105,7 +103,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     if (channel->status().value() == Status::Offline)
       channel->status().set(Status::Online);
 
-    setServerData(reply.serverData);
+    setServerData(reply);
 
     emit(q->ready());
     return true;
@@ -157,24 +155,18 @@ void AbstractClientPrivate::setClientState(AbstractClient::ClientState state)
  *
  * \param data Данные сервера.
  */
-void AbstractClientPrivate::setServerData(const ServerData &data)
+void AbstractClientPrivate::setServerData(const AuthReply &reply)
 {
   bool sameServer = false;
 
-  if (!serverData->id().isEmpty() && serverData->id() == data.id())
+  if (!server->id().isEmpty() && server->id() == reply.serverId)
     sameServer = true;
 
-  server->setId(data.id());
-  if (data.name().isEmpty())
+  server->setId(reply.serverId);
+  if (reply.serverName.isEmpty() || reply.serverName == "*")
     server->setName(url.host());
   else
-    server->setName(data.name());
-
-  serverData->setId(data.id());
-  serverData->setName(server->name());
-  serverData->setChannelId(data.channelId());
-  serverData->setFeatures(data.features());
-  serverData->setNumber(data.number());
+    server->setName(reply.serverName);
 
   setClientState(AbstractClient::ClientOnline);
 
@@ -383,13 +375,6 @@ PacketReader *AbstractClient::reader()
 {
   Q_D(const AbstractClient);
   return d->reader;
-}
-
-
-ServerData *AbstractClient::serverData()
-{
-  Q_D(const AbstractClient);
-  return d->serverData;
 }
 
 
