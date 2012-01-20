@@ -51,7 +51,6 @@ void Cache::open()
   if (!CacheDB::open(id, ChatCore::networks()->root(id)))
     return;
 
-  qDebug() << " $$ " << ChatClient::serverId().toHex();
   if (ChatClient::serverId().isEmpty())
     return;
 
@@ -61,15 +60,24 @@ void Cache::open()
 }
 
 
+/*!
+ * Загрузка фидов для собственного канала и канала сервера.
+ *
+ * Функция вызывается сразу после подключения к серверу или при запуске клиента.
+ * Если идентификатор сервера пустой, то считается что это серверный канал.
+ */
 void Cache::load(ClientChannel channel)
 {
-  qDebug() << " % " << channel->key() << channel->id().toHex();
+  QByteArray id = channel->id();
+  if (id.isEmpty())
+    id = ChatClient::serverId();
 
-  ClientChannel exist = CacheDB::channel(channel->id(), false);
-  if (!exist) {
-    channel->data().clear();
+  channel->data().clear();
+  channel->feeds().clear();
+
+  ClientChannel exist = CacheDB::channel(id, false);
+  if (!exist)
     return;
-  }
 
   channel->setData(exist->data());
   FeedStorage::load(channel.data());

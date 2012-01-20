@@ -63,8 +63,6 @@ qint64 ChatClient::date()
 
 void ChatClient::clientStateChanged(int state, int previousState)
 {
-  Q_UNUSED(state);
-
   if (previousState == Online)
     emit offline();
 
