@@ -34,7 +34,23 @@ ClientFeedsImpl::ClientFeedsImpl(QObject *parent)
 }
 
 
-void ClientFeedsImpl::readFeed(const FeedNotice &packet)
+void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*/, const QVariantMap &json)
+{
+  if (json.isEmpty())
+    return;
+
+  if (!json.contains(LS("feeds")))
+    return;
+
+  QVariantMap data = json.value(LS("feeds")).toMap();
+  if (data.isEmpty())
+    return;
+
+  get(channel->id(), unsynced(channel, data));
+}
+
+
+void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 {
   m_channel = ChatClient::channels()->get(packet.sender());
   if (!m_channel)
@@ -86,6 +102,12 @@ void ClientFeedsImpl::feed()
 
 
 
+/*!
+ * Загрузка списка фидов.
+ *
+ * \param id    идентификатор канала.
+ * \param feeds список фидов.
+ */
 void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
 {
   if (feeds.isEmpty())

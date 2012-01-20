@@ -28,7 +28,9 @@ class ClientFeedsImpl : public Hooks::Feeds
 public:
   ClientFeedsImpl(QObject *parent = 0);
 
-  void readFeed(const FeedNotice &packet);
+protected:
+  void addImpl(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
+  void readFeedImpl(const FeedNotice &packet);
 
 private:
   QStringList unsynced(ClientChannel channel, const QVariantMap &feeds);

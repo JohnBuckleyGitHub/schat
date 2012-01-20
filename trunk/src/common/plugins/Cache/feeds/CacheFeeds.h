@@ -31,7 +31,8 @@ class CacheFeeds : public Feeds
 public:
   CacheFeeds(QObject *parent = 0);
 
-  void readFeed(const FeedNotice &packet);
+protected:
+  void readFeedImpl(const FeedNotice &packet);
 };
 
 } // namespace Hooks

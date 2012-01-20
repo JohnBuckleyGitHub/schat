@@ -110,9 +110,13 @@ public:
   inline void add(Feeds *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Feeds *hook) { m_hooks.removeAll(hook); }
 
-  virtual void readFeed(const FeedNotice &packet);
+  void add(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
+  void readFeed(const FeedNotice &packet);
 
 protected:
+  virtual void addImpl(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
+  virtual void readFeedImpl(const FeedNotice &packet);
+
   QList<Feeds*> m_hooks; ///< Хуки.
 };
 
