@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "schat.h"
+#include "plugins/Ver.h"
 
 class CoreApi;
 
@@ -69,10 +69,13 @@ protected:
   QHash<QString, PluginItem *> m_plugins;   ///< Таблица плагинов.
   QString m_type;                           ///< Тип плагинов, загрузка которых разрешена.
   QStringList m_sorted;                     ///< Сортированный список плагинов, этот список определяет очерёдность загрузки наследниками этого класса.
+  Ver m_min;                                ///< Минимальная совместимая версия.
 
 private:
   bool check(PluginItem *plugin);
   void load(const QString &path);
+
+  Ver m_version; ///< Версия чата.
 };
 
 #endif /* PLUGINS_H_ */
