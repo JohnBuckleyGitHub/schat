@@ -46,6 +46,7 @@ HEADERS += \
     net/TransportReader.h \
     net/TransportWriter.h \
     Plugins.h \
+    plugins/Ver.h \
     schat.h \
     Settings.h \
     sglobal.h \
@@ -81,6 +82,7 @@ SOURCES += \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
     Plugins.cpp \
+    plugins/Ver.cpp \
     Settings.cpp \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
