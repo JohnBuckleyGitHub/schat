@@ -31,6 +31,7 @@ namespace Hooks
 
 FeedsImpl::FeedsImpl(RawFeeds *parent)
   : Feeds(parent)
+  , m_plugin(parent)
 {
   ChatClient::feeds()->hooks()->add(this);
 }
@@ -38,6 +39,9 @@ FeedsImpl::FeedsImpl(RawFeeds *parent)
 
 void FeedsImpl::readFeedImpl(const FeedNotice &packet)
 {
+  if (!m_plugin->isEnabled())
+    return;
+
   if (TabWidget::i()) {
     RawFeedsMessage message(packet);
     TabWidget::i()->add(message, false);

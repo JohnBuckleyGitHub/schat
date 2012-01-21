@@ -27,6 +27,11 @@ class RawFeeds : public ChatPlugin
 
 public:
   RawFeeds(QObject *parent);
+  inline bool isEnabled() const        { return m_enabled; }
+  inline void setEnabled(bool enabled) { m_enabled = enabled; }
+
+private:
+  bool m_enabled;
 };
 
 #endif /* RAWFEEDSPLUGIN_P_H_ */

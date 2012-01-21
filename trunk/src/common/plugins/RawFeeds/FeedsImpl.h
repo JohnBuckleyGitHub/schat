@@ -35,6 +35,9 @@ public:
 
 protected:
   void readFeedImpl(const FeedNotice &packet);
+
+private:
+  RawFeeds *m_plugin;
 };
 
 } // namespace Hooks
