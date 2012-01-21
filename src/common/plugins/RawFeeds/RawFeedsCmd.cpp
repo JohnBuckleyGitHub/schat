@@ -35,6 +35,7 @@ namespace Hooks
 
 RawFeedsCmd::RawFeedsCmd(RawFeeds *parent)
   : Messages(parent)
+  , m_plugin(parent)
 {
   ChatClient::messages()->hooks()->add(this);
 }
@@ -44,16 +45,22 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
   if (command == LS("feeds")) {
+    m_plugin->setEnabled(true);
+
     ClientCmd body(cmd.body());
     if (!body.isValid())
       ChatClient::feeds()->headers(dest);
     else if (body.command() == LS("local"))
       localFeeds(dest);
+    else if (body.command() == LS("off"))
+      m_plugin->setEnabled(false);
 
     return true;
   }
 
   if (command == LS("feed")) {
+    m_plugin->setEnabled(true);
+
     ClientCmd body(cmd.body());
     if (!body.isValid())
       return true;
@@ -76,6 +83,9 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
  */
 void RawFeedsCmd::localFeeds(const QByteArray &dest)
 {
+  if (!m_plugin->isEnabled())
+    return;
+
   if (!TabWidget::i())
     return;
 

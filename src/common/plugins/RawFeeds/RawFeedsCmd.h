@@ -38,6 +38,8 @@ private:
   void localFeeds(const QByteArray &dest);
   void request(const QByteArray &dest, const ClientCmd &cmd);
   void revert(const QByteArray &dest, const ClientCmd &cmd);
+
+  RawFeeds *m_plugin;
 };
 
 } // namespace Hooks
