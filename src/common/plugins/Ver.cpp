@@ -44,6 +44,21 @@ QString Ver::toString() const
 }
 
 
+/*!
+ * Преобразование версии в 32 битное беззнаковое число.
+ *
+ * Максимально возможная версия "255.4095.4095".
+ */
+quint32 Ver::toUInt(const Ver &ver)
+{
+  quint32 out = (quint32(ver.major()) << 24 | ver.minor() << 12 | ver.patch());
+  return out;
+}
+
+
+/*!
+ * Установка версии в формате "major.minor.patch"
+ */
 void Ver::setVersion(const QString &version)
 {
   QStringList split = version.split(LC('.'));

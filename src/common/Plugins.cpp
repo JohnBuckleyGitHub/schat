@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "JSON.h"
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
+#include "sglobal.h"
 
 /*!
  * Загружает плагин с именем \p fileName.
@@ -47,10 +48,10 @@ PluginItem::PluginItem(const QString &fileName)
     return;
 
   m_header = api->header();
-  if (m_header.value("Id").toString().isEmpty())
+  if (m_header.value(LS("Id")).toString().isEmpty())
     return;
 
-  if (m_header.value("Name").toString().isEmpty())
+  if (m_header.value(LS("Name")).toString().isEmpty())
     return;
 
   qDebug() << "PLUGIN ITEM CREATED" << JSON::generate(m_header);
@@ -68,6 +69,8 @@ PluginItem::~PluginItem()
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
+  m_min.setVersion(LS("1.99.7"));
+  m_version.setVersion(QCoreApplication::applicationVersion());
 }
 
 
@@ -97,7 +100,17 @@ bool Plugins::check(PluginItem *plugin)
   if (m_plugins.contains(plugin->id()))
     return false;
 
-  if (m_type != plugin->header().value("Type").toString())
+  if (m_type != plugin->header().value(LS("Type")).toString())
+    return false;
+
+  Ver required = Ver(plugin->header().value(LS("Required")).toString());
+
+  // Отклоняем плагин если он требует более новую версию ядра чем имеется.
+  if (m_version < required)
+    return false;
+
+  // Отклоняем плагин если он требует версию, ниже разрещённой.
+  if (m_min > required)
     return false;
 
   return true;
@@ -115,12 +128,12 @@ void Plugins::load(const QString &path)
   QStringList filters;
 
 # if defined(Q_WS_WIN) || defined(Q_OS_SYMBIAN)
-  filters.append(QLatin1String("*.dll"));
+  filters.append(LS("*.dll"));
 # elif defined(Q_WS_MAC)
-  filters.append(QLatin1String("*.dylib"));
-  filters.append(QLatin1String("*.so"));
+  filters.append(LS("*.dylib"));
+  filters.append(LS("*.so"));
 # else
-  filters.append(QLatin1String("*.so"));
+  filters.append(LS("*.so"));
 # endif
 
   QStringList files = dir.entryList(filters, QDir::Files);

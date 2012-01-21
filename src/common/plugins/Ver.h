@@ -23,6 +23,9 @@
 
 #include "schat.h"
 
+/*!
+ * Реализует основные операции с версиями в формате "major.minor.patch".
+ */
 class SCHAT_EXPORT Ver
 {
 public:
@@ -31,8 +34,25 @@ public:
   inline int major() const { return m_major; }
   inline int minor() const { return m_minor; }
   inline int patch() const { return m_patch; }
+
+  inline bool operator!=(const QString &other) const { return !operator==(other); }
+  inline bool operator!=(const Ver &other) const     { return !operator==(other); }
+  inline bool operator<(const QString &other) const  { return operator<(Ver(other)); }
+  inline bool operator<(const Ver &other) const      { return toUInt() < other.toUInt(); }
+  inline bool operator<=(const QString &other) const { return !operator>(other); }
+  inline bool operator<=(const Ver &other) const     { return !operator>(other); }
+  inline bool operator==(const QString &other) const { return operator==(Ver(other)); };
+  inline bool operator==(const Ver &other) const     { return toUInt() == other.toUInt(); }
+  inline bool operator>(const QString &other) const  { return Ver(other) < *this; }
+  inline bool operator>(const Ver &other) const      { return other < *this; }
+  inline bool operator>=(const QString &other) const { return !operator<(other); }
+  inline bool operator>=(const Ver &other) const     { return !operator<(other); }
+
+  inline quint32 toUInt() const { return toUInt(*this); }
   QString toString() const;
+  static quint32 toUInt(const Ver &ver);
   void setVersion(const QString &version);
+
 private:
   int m_major;
   int m_minor;

@@ -53,7 +53,7 @@
 <context>
     <name>AlertTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AlertTab.cpp" line="67"/>
+        <location filename="../../src/schat2/ui/tabs/AlertTab.cpp" line="86"/>
         <source>Notifications</source>
         <translation type="unfinished"></translation>
     </message>
@@ -325,19 +325,19 @@
     <name>NetworkWidget</name>
     <message>
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="49"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="305"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="310"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="51"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="306"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="311"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="52"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="307"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="312"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
@@ -556,23 +556,23 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="179"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
         <source>Encrypted connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="188"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="189"/>
         <source>No connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="191"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="196"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="194"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="199"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -580,7 +580,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="249"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="245"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
