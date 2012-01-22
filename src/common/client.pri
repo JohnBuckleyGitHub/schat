@@ -53,6 +53,7 @@ HEADERS += \
     text/HtmlFilter.h \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
+    tools/OsInfo.h \
     Translation.h \
 
 SOURCES += \
@@ -86,6 +87,7 @@ SOURCES += \
     Settings.cpp \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
+    tools/OsInfo.cpp \
     Translation.cpp \
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
