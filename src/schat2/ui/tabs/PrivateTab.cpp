@@ -63,6 +63,7 @@ void PrivateTab::online()
     return;
 
   m_chatView->add(ServiceMessage::joined(id()));
+  m_joined = true;
 }
 
 
