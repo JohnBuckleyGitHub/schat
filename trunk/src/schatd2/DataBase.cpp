@@ -166,7 +166,6 @@ ChatChannel DataBase::channel(qint64 id)
   ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(4).toString()));
   channel->setKey(id);
   channel->gender().setRaw(query.value(1).toLongLong());
-  channel->status().set(query.value(2).toLongLong());
 
   qint64 accountId = query.value(3).toLongLong();
   if (accountId > 0) {
@@ -200,14 +199,13 @@ qint64 DataBase::add(ChatChannel channel)
   }
 
   QSqlQuery query;
-  query.prepare("INSERT INTO channels (channel, normalized, type, gender, status, name, data) "
-                     "VALUES (:channel, :normalized, :type, :gender, :status, :name, :data);");
+  query.prepare("INSERT INTO channels (channel, normalized, type, gender, name, data) "
+                     "VALUES (:channel, :normalized, :type, :gender, :name, :data);");
 
   query.bindValue(":channel",    channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
   query.bindValue(":data",       JSON::generate(channel->data()));
   query.exec();
@@ -292,12 +290,11 @@ void DataBase::saveData(Channel *channel)
 void DataBase::update(ChatChannel channel)
 {
   QSqlQuery query;
-  query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, status = :status, name = :name, data = :data WHERE id = :id;");
+  query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;");
   query.bindValue(":channel",    channel->id());
   query.bindValue(":normalized", channel->normalized());
   query.bindValue(":type",       channel->type());
   query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":status",     channel->status().value());
   query.bindValue(":name",       channel->name());
   query.bindValue(":data",       JSON::generate(channel->data()));
   query.bindValue(":id",         channel->key());
