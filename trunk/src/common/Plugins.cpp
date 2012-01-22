@@ -25,6 +25,7 @@
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
 #include "sglobal.h"
+#include "tools/Ver.h"
 
 /*!
  * Загружает плагин с именем \p fileName.
@@ -69,8 +70,7 @@ PluginItem::~PluginItem()
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
-  m_min.setVersion(LS("1.99.7"));
-  m_version.setVersion(QCoreApplication::applicationVersion());
+  m_min = LS("1.99.7");
 }
 
 
@@ -106,11 +106,11 @@ bool Plugins::check(PluginItem *plugin)
   Ver required = Ver(plugin->header().value(LS("Required")).toString());
 
   // Отклоняем плагин если он требует более новую версию ядра чем имеется.
-  if (m_version < required)
+  if (Ver::current() < required)
     return false;
 
   // Отклоняем плагин если он требует версию, ниже разрещённой.
-  if (m_min > required)
+  if (Ver(m_min) > required)
     return false;
 
   return true;
