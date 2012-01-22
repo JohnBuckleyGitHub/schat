@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "plugins/Ver.h"
+#include "tools/Ver.h"
 
 class CoreApi;
 
@@ -67,15 +67,13 @@ protected:
   virtual void init() {}
 
   QHash<QString, PluginItem *> m_plugins;   ///< Таблица плагинов.
+  QString m_min;                            ///< Минимальная совместимая версия.
   QString m_type;                           ///< Тип плагинов, загрузка которых разрешена.
   QStringList m_sorted;                     ///< Сортированный список плагинов, этот список определяет очерёдность загрузки наследниками этого класса.
-  Ver m_min;                                ///< Минимальная совместимая версия.
 
 private:
   bool check(PluginItem *plugin);
   void load(const QString &path);
-
-  Ver m_version; ///< Версия чата.
 };
 
 #endif /* PLUGINS_H_ */

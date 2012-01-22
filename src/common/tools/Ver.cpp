@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include <QCoreApplication>
 #include <QStringList>
 
-#include "plugins/Ver.h"
+#include "tools/Ver.h"
 #include "sglobal.h"
 
 Ver::Ver()
@@ -38,21 +41,20 @@ Ver::Ver(const QString &version)
 }
 
 
-QString Ver::toString() const
+Ver::Ver(quint32 ver)
+  : m_major(0)
+  , m_minor(0)
+  , m_patch(0)
 {
-  return QString::number(m_major) + LC('.') + QString::number(m_minor) + LC('.') + QString::number(m_patch);
+  m_major = ver >> 24;
+  m_minor = ver >> 12 & ~0xFF000;
+  m_patch = ver & ~0xFFFFF000;
 }
 
 
-/*!
- * Преобразование версии в 32 битное беззнаковое число.
- *
- * Максимально возможная версия "255.4095.4095".
- */
-quint32 Ver::toUInt(const Ver &ver)
+QString Ver::toString() const
 {
-  quint32 out = (quint32(ver.major()) << 24 | ver.minor() << 12 | ver.patch());
-  return out;
+  return QString::number(m_major) + LC('.') + QString::number(m_minor) + LC('.') + QString::number(m_patch);
 }
 
 
@@ -70,4 +72,22 @@ void Ver::setVersion(const QString &version)
 
   if (split.size() > 2)
     m_patch = split.at(2).toInt();
+}
+
+
+/*!
+ * Преобразование версии в 32 битное беззнаковое число.
+ *
+ * Максимально возможная версия "255.4095.4095".
+ */
+quint32 Ver::toUInt(const Ver &ver)
+{
+  quint32 out = (quint32(ver.major()) << 24 | ver.minor() << 12 | ver.patch());
+  return out;
+}
+
+
+Ver Ver::current()
+{
+  return Ver(QCoreApplication::applicationVersion());
 }

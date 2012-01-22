@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ class SCHAT_EXPORT Ver
 public:
   Ver();
   Ver(const QString &version);
+  Ver(quint32 ver);
   inline int major() const { return m_major; }
   inline int minor() const { return m_minor; }
   inline int patch() const { return m_patch; }
@@ -50,8 +51,10 @@ public:
 
   inline quint32 toUInt() const { return toUInt(*this); }
   QString toString() const;
-  static quint32 toUInt(const Ver &ver);
   void setVersion(const QString &version);
+
+  static quint32 toUInt(const Ver &ver);
+  static Ver current();
 
 private:
   int m_major;

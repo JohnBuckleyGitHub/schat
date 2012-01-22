@@ -46,7 +46,6 @@ HEADERS += \
     net/TransportReader.h \
     net/TransportWriter.h \
     Plugins.h \
-    plugins/Ver.h \
     schat.h \
     Settings.h \
     sglobal.h \
@@ -54,6 +53,7 @@ HEADERS += \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
     tools/OsInfo.h \
+    tools/Ver.h \
     Translation.h \
 
 SOURCES += \
@@ -83,11 +83,11 @@ SOURCES += \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
     Plugins.cpp \
-    plugins/Ver.cpp \
     Settings.cpp \
     text/HtmlFilter.cpp \
     text/PlainTextFilter.cpp \
     tools/OsInfo.cpp \
+    tools/Ver.cpp \
     Translation.cpp \
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
