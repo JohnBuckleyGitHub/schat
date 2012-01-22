@@ -72,7 +72,7 @@ QByteArray AuthReply::data(QDataStream *stream) const
 }
 
 
-AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariant &json)
+AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariantMap &json)
   : fields(0)
   , authType(authType)
   , gender(channel->gender().raw())
@@ -109,11 +109,18 @@ AuthRequest::AuthRequest(PacketReader *reader)
   if (authType == Cookie)
     cookie = reader->id();
 
-  if (fields & JSonField)
-    json = reader->json();
+  if (fields & JSonField) {
+    raw = reader->get<QByteArray>();
+
+    if (raw.size() <= MaxJSONSize)
+      json = JSON::parse(raw).toMap();
+  }
 }
 
 
+/*!
+ * Проверка пакета на корректность.
+ */
 bool AuthRequest::isValid() const
 {
   if (SimpleID::typeOf(uniqueId) != SimpleID::UniqueUserId)
@@ -131,7 +138,7 @@ bool AuthRequest::isValid() const
   if (authType == Cookie && SimpleID::typeOf(cookie) != SimpleID::CookieId)
     return false;
 
-  if (fields & JSonField && json.isNull())
+  if (fields & JSonField && (raw.isEmpty() || raw.size() > MaxJSONSize))
     return false;
 
   return true;
@@ -140,7 +147,7 @@ bool AuthRequest::isValid() const
 
 QByteArray AuthRequest::data(QDataStream *stream) const
 {
-  if (!json.isNull())
+  if (!json.isEmpty())
     fields |= JSonField;
 
   if (id.isEmpty())

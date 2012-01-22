@@ -108,12 +108,17 @@ public:
     JSonField = 1
   };
 
+  /// Ограничения
+  enum Limits {
+    MaxJSONSize = 1024
+  };
+
   AuthRequest()
   : fields(0)
   , authType(0)
   {}
 
-  AuthRequest(int authType, const QString &host, Channel *channel, const QVariant &json = QVariant());
+  AuthRequest(int authType, const QString &host, Channel *channel, const QVariantMap &json = QVariantMap());
   AuthRequest(PacketReader *reader);
   bool isValid() const;
   QByteArray data(QDataStream *stream) const;
@@ -132,7 +137,8 @@ public:
   QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequest::Cookie.
   QString account;         ///< Зарегистрированное имя пользователя.
   QByteArray password;     ///< Пароль.
-  QVariant json;           ///< JSON данные.
+  QVariantMap json;        ///< JSON данные.
+  QByteArray raw;          ///< Сырые JSON данные.
 };
 
 #endif /* AUTH_H_ */
