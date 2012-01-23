@@ -16,33 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENERICNODEPLUGIN_H_
-#define GENERICNODEPLUGIN_H_
+#ifndef NODELINKSFEED_H_
+#define NODELINKSFEED_H_
 
-#include "CoreApi.h"
-#include "NodeApi.h"
-#include "version.h"
+#include "feeds/Feed.h"
 
-class GenericNodePlugin : public QObject, CoreApi, NodeApi
+class NodeLinksFeed : public Feed
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreApi NodeApi)
-
 public:
-  QVariantMap header() const
-  {
-    QVariantMap out = CoreApi::header();
-    out["Id"]      = "GenericNode";
-    out["Name"]    = "Generic Node";
-    out["Version"] = "0.1.3";
-    out["Type"]    = "server";
-    out["Site"]    = "http://wiki.schat.me/Plugin/GenericNode";
-    out["Desc"]    = "Standard core of server";
-
-    return out;
-  }
-
-  NodePlugin *create();
+  NodeLinksFeed(const QString &name, const QVariantMap &data);
+  NodeLinksFeed(const QString &name = QLatin1String("links"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 };
 
-#endif /* GENERICNODEPLUGIN_H_ */
+#endif /* NODELINKSFEED_H_ */
