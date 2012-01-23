@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,20 @@
 #include <QDateTime>
 
 #include "DateTime.h"
+
+
+/*!
+ * Возвращает смещение в секундах относительно UTC.
+ */
+int DateTime::offset()
+{
+  QDateTime local = QDateTime::currentDateTime();
+  QDateTime utc(local);
+  utc.setTimeSpec(Qt::UTC);
+  return local.secsTo(utc);
+}
+
+
 
 /*!
  * Возвращает число миллисекунд с 1970-01-01T00:00:00 UTC.

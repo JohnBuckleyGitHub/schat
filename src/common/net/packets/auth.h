@@ -104,8 +104,9 @@ public:
 
   /// Поля данных.
   enum Fields {
-    BasicFields = 0,
-    JSonField = 1
+    BasicFields    = 0, ///< Стандартные поля данных.
+    JSonField      = 1, ///< Дополнительно передаются произвольные JSON данные с максимальным размером MaxJSONSize.
+    ExtraInfoField = 2  ///< Дополнительная информация о типе ос, версии клиента и локальном имени хоста.
   };
 
   /// Ограничения
@@ -137,8 +138,16 @@ public:
   QByteArray cookie;       ///< Cookie, только для типа авторизации AuthRequest::Cookie.
   QString account;         ///< Зарегистрированное имя пользователя.
   QByteArray password;     ///< Пароль.
+
+  // JSonField.
   QVariantMap json;        ///< JSON данные.
   QByteArray raw;          ///< Сырые JSON данные.
+
+  // ExtraInfoField.
+  quint8 os;               ///< Базовый тип операционной системы.
+  quint32 version;         ///< Версия клиента.
+  qint32 offset;           ///< Смещение времени относительно UTC.
+  QString hostName;        ///< Локальное имя хоста клиента.
 };
 
 #endif /* AUTH_H_ */
