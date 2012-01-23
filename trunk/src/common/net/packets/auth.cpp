@@ -16,16 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QCoreApplication>
 #include <QNetworkInterface>
+#include <QHostInfo>
 
 #include "Account.h"
+#include "Channel.h"
+#include "DateTime.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
-#include "Channel.h"
+#include "sglobal.h"
+#include "tools/OsInfo.h"
+#include "tools/Ver.h"
 
 AuthReply::AuthReply(PacketReader *reader)
 {
@@ -73,12 +77,12 @@ QByteArray AuthReply::data(QDataStream *stream) const
 
 
 AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariantMap &json)
-  : fields(0)
+  : fields(ExtraInfoField)
   , authType(authType)
   , gender(channel->gender().raw())
   , host(host)
   , nick(channel->name())
-  , userAgent(SimpleID::userAgent())
+  , userAgent(LC('i'))
   , json(json)
 {
   setStatus(channel->status().value());
@@ -86,6 +90,9 @@ AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, co
 
 
 AuthRequest::AuthRequest(PacketReader *reader)
+  : os(0)
+  , version(0)
+  , offset(DateTime::offset())
 {
   fields = reader->get<quint8>();
   authType = reader->get<quint8>();
@@ -114,6 +121,13 @@ AuthRequest::AuthRequest(PacketReader *reader)
 
     if (raw.size() <= MaxJSONSize)
       json = JSON::parse(raw).toMap();
+  }
+
+  if (fields & ExtraInfoField) {
+    os       = reader->get<quint8>();
+    version  = reader->get<quint32>();
+    offset   = reader->get<qint32>();
+    hostName = reader->text();
   }
 }
 
@@ -179,6 +193,13 @@ QByteArray AuthRequest::data(QDataStream *stream) const
 
   if (fields & JSonField)
     writer.put(json);
+
+  if (fields & ExtraInfoField) {
+    writer.put<quint8>(OsInfo::type());
+    writer.put<quint32>(Ver::current().toUInt());
+    writer.put<qint32>(DateTime::offset());
+    writer.put(QHostInfo::localHostName());
+  }
 
   return writer.data();
 }
