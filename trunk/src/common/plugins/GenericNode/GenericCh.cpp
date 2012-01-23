@@ -18,6 +18,7 @@
 
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
+#include "sglobal.h"
 
 GenericCh::GenericCh(QObject *parent)
   : Ch(parent)
@@ -28,28 +29,30 @@ GenericCh::GenericCh(QObject *parent)
 void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   if (channel->type() == SimpleID::ChannelId) {
-    FeedPtr acl = channel->feed("acl", true, false);
+    FeedPtr acl = channel->feed(LS("acl"), true, false);
     if (user)
       acl->head().acl().add(user->id());
 
     FeedStorage::save(acl);
 
-    channel->feed("topic");
+    channel->feed(LS("topic"));
   }
   else if (channel->type() == SimpleID::ServerId) {
-    channel->feed("acl");
+    channel->feed(LS("acl"));
   }
 }
 
 
-void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
+void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool created)
 {
   if (!channel->account())
     channel->createAccount();
 
-  channel->feed("account");
+  channel->feed(LS("account"));
 
-  FeedPtr acl = channel->feed("acl", true, false);
-  acl->head().acl().add(channel->id());
-  FeedStorage::save(acl);
+  if (created) {
+    FeedPtr acl = channel->feed(LS("acl"), true, false);
+    acl->head().acl().add(channel->id());
+    FeedStorage::save(acl);
+  }
 }
