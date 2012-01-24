@@ -36,7 +36,6 @@ HEADERS = \
     cores/PasswordAuth.h \
     DataBase.h \
     events.h \
-    feeds/NodeAccountFeed.h \
     feeds/NodeAclFeed.h \
     feeds/NodeTopicFeed.h \
     net/NodeAuthReply.h \
@@ -61,7 +60,6 @@ SOURCES = \
     cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
-    feeds/NodeAccountFeed.cpp \
     feeds/NodeAclFeed.cpp \
     feeds/NodeTopicFeed.cpp \
     net/NodeAuthReply.cpp \
