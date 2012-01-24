@@ -19,6 +19,9 @@
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
 #include "sglobal.h"
+#include "feeds/NodeLinksFeed.h"
+
+#include "JSON.h"
 
 GenericCh::GenericCh(QObject *parent)
   : Ch(parent)
@@ -43,16 +46,31 @@ void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 }
 
 
-void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool created)
+void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool /*created*/)
 {
   if (!channel->account())
     channel->createAccount();
 
   channel->feed(LS("account"));
 
-  if (created) {
-    FeedPtr acl = channel->feed(LS("acl"), true, false);
-    acl->head().acl().add(channel->id());
-    FeedStorage::save(acl);
-  }
+  addNewUserFeedIsNotExist(channel, LS("acl"));
+  addNewUserFeedIsNotExist(channel, LS("links"));
+
+  NodeLinksFeed::add(channel, data, host);
+}
+
+
+/*!
+ * Создание при необходимости пользовательского фида.
+ */
+void GenericCh::addNewUserFeedIsNotExist(ChatChannel channel, const QString &name)
+{
+  FeedPtr feed = channel->feed(name, false);
+  if (feed)
+    return;
+
+  feed = channel->feed(name, true, false);
+  feed->head().acl().add(channel->id());
+
+  FeedStorage::save(feed);
 }
