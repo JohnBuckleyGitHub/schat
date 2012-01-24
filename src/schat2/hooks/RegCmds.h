@@ -21,13 +21,15 @@
 
 #include "client/ClientHooks.h"
 
-class RegCmds : public Hooks::Messages
+class SCHAT_CORE_EXPORT RegCmds : public Hooks::Messages
 {
   Q_OBJECT
 
 public:
   RegCmds(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+
+  static QVariantMap reg(const QString &name, const QString &password);
 };
 
 #endif /* REGCMDS_H_ */
