@@ -16,19 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEACCOUNTFEED_H_
-#define NODEACCOUNTFEED_H_
+#ifndef REGCMDS_H_
+#define REGCMDS_H_
 
-#include "feeds/Feed.h"
+#include "client/ClientHooks.h"
 
-class NodeAccountFeed : public Feed
+class RegCmds : public Hooks::Messages
 {
+  Q_OBJECT
+
 public:
-  NodeAccountFeed(const QString &name, const QVariantMap &data);
-  NodeAccountFeed(const QString &name = QLatin1String("account"), qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
-  void setChannel(Channel *channel);
+  RegCmds(QObject *parent = 0);
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
 };
 
-#endif /* NODEACCOUNTFEED_H_ */
+#endif /* REGCMDS_H_ */
