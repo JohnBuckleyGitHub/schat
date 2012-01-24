@@ -88,7 +88,11 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 {
   SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
 
+  if (clientState == AbstractClient::ClientOnline)
+    return true;
+
   Q_Q(AbstractClient);
+
   if (reply.status == Notice::OK) {
     collisions = 0;
     q->setAuthorized(reply.userId);

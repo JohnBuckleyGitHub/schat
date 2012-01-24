@@ -54,7 +54,7 @@ bool NodeFeeds::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
-  qDebug() << "NodeFeeds::read()" << cmd;
+  qDebug() << "NodeFeeds::read()" << Core::socket() << cmd << m_packet->text();
 
   int status = Notice::NotImplemented;
 
@@ -163,7 +163,7 @@ int NodeFeeds::get()
   if (json.isEmpty())
     return Notice::Forbidden;
 
-  m_core->send(m_user->sockets(), FeedNotice::feed(*m_packet, json));
+  m_core->send(FeedNotice::feed(*m_packet, json));
   return Notice::OK;
 }
 

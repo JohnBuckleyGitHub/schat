@@ -70,7 +70,7 @@ PluginItem::~PluginItem()
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
-  m_min = LS("1.99.7");
+  m_min = LS("1.99.8");
 }
 
 

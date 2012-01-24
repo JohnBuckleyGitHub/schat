@@ -136,6 +136,15 @@ bool Core::send(const QList<quint64> &sockets, Packet packet, int option, const 
 }
 
 
+/*!
+ * Отправка пакета текущему сокету.
+ */
+bool Core::send(Packet packet)
+{
+  return send(QList<quint64>() << m_socket, packet->data(m_sendStream));
+}
+
+
 bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
 {
   Q_UNUSED(authType);
@@ -186,6 +195,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
 {
   m_packetsEvent = event;
   QList<QByteArray> packets = event->packets;
+  m_socket = event->socket();
 
   while (!packets.isEmpty()) {
     m_readBuffer = packets.takeFirst();

@@ -31,11 +31,12 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]      = "Cache";
-    out["Name"]    = "Cache";
-    out["Version"] = "0.1.1";
-    out["Site"]    = "http://wiki.schat.me/Plugin/Cache";
-    out["Desc"]    = "Client Cache";
+    out["Id"]       = "Cache";
+    out["Name"]     = "Cache";
+    out["Version"]  = "0.1.2";
+    out["Site"]     = "http://wiki.schat.me/Plugin/Cache";
+    out["Desc"]     = "Client Cache";
+    out["Required"] = "1.99.8";
 
     return out;
   }
