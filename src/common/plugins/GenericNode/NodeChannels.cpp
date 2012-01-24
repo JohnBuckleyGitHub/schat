@@ -50,7 +50,7 @@ bool NodeChannels::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
-  qDebug() << "NodeChannels::read" << cmd;
+  qDebug() << "NodeChannels::read" << Core::socket() << cmd << m_packet->text();
 
   int status = Notice::NotImplemented;
 
@@ -156,6 +156,7 @@ bool NodeChannels::join()
   if (!channel)
     return false;
 
+  qDebug() << "                               " << channel->name();
   bool notify = !channel->channels().all().contains(m_user->id());
   channel->channels() += m_user->id();
   m_user->channels()  += channel->id();

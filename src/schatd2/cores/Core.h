@@ -50,6 +50,8 @@ public:
   bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, Packet packet, int option = 0, const QByteArray &userId = QByteArray());
+  bool send(Packet packet);
+  inline static quint64 socket() { return m_self->m_socket; }
 
   inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
   inline QDataStream *sendStream()             { return m_sendStream; }
@@ -90,6 +92,7 @@ protected:
   qint64 m_timestamp;                 ///< Отметка времени.
   QList<NodeAuth *> m_auth;           ///< Модули авторизации.
   QList<QObject *> m_listeners;       ///< Слушатели событий.
+  quint64 m_socket;                   ///< Текущий сокет от которого получен пакет.
   Settings *m_settings;               ///< Настройки.
   static Core *m_self;                ///< Указатель на себя.
   Storage *m_storage;                 ///< Хранилище данных.
