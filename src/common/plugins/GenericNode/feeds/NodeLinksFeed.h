@@ -31,7 +31,9 @@ public:
   NodeLinksFeed(const QString &name = QLatin1String("links"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
   FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0);
 
   static void add(ChatChannel channel, const AuthRequest &data, const QString &host);
 

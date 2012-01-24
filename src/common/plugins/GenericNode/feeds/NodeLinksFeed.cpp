@@ -25,6 +25,7 @@
 #include "net/packets/auth.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Storage.h"
 #include "tools/Ver.h"
 
 NodeLinksFeed::NodeLinksFeed(const QString &name, const QVariantMap &data)
@@ -53,6 +54,9 @@ Feed* NodeLinksFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
+/*!
+ * Обработка запросов.
+ */
 FeedQueryReply NodeLinksFeed::query(const QVariantMap &json, Channel *channel)
 {
   QString action = json.value(LS("action")).toString();
@@ -63,6 +67,39 @@ FeedQueryReply NodeLinksFeed::query(const QVariantMap &json, Channel *channel)
     return add(json, channel);
 
   return FeedQueryReply(Notice::ServiceUnavailable);
+}
+
+
+/*!
+ * Формирование тела фида для отправки клиенту.
+ * Переопределение этой функции необходимо для того чтобы
+ * не передавать уникальный идентификатор пользователя.
+ */
+QVariantMap NodeLinksFeed::feed(Channel *channel)
+{
+  QVariantMap header = head().get(channel);
+  if (header.isEmpty())
+    return QVariantMap();
+
+  QVariantMap out;
+
+  QMapIterator<QString, QVariant> i(m_data);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value().type() != QVariant::Map)
+      continue;
+
+    QVariantMap item = i.value().toMap();
+    QString id = item.value(LS("id")).toString();
+    if (id.isEmpty())
+      continue;
+
+    item.remove(LS("id"));
+    out[id] = item;
+  }
+
+  merge(LS("head"), out, header);
+  return out;
 }
 
 
@@ -103,9 +140,13 @@ FeedQueryReply NodeLinksFeed::add(const QVariantMap &json, Channel *channel)
 
   QString uniqueId = json.value(LS("uniqueId")).toString();
   QVariantMap data = m_data.value(uniqueId).toMap();
+
   merge(data, json);
   data.remove(LS("action"));
   data.remove(LS("uniqueId"));
+
+  if (!data.contains(LS("id")))
+    data[LS("id")] = SimpleID::encode(SimpleID::randomId(SimpleID::MessageId, Storage::privateId()));
 
   m_data[uniqueId] = data;
 
