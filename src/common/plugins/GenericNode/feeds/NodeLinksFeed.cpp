@@ -16,8 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include "Ch.h"
 #include "DateTime.h"
+#include "feeds/FeedStorage.h"
 #include "feeds/NodeLinksFeed.h"
+#include "net/packets/auth.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
+#include "tools/Ver.h"
 
 NodeLinksFeed::NodeLinksFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -42,4 +50,64 @@ Feed* NodeLinksFeed::create(const QString &name)
 Feed* NodeLinksFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeLinksFeed(name, data);
+}
+
+
+FeedQueryReply NodeLinksFeed::query(const QVariantMap &json, Channel *channel)
+{
+  QString action = json.value(LS("action")).toString();
+  if (action.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (action == LS("add"))
+    return add(json, channel);
+
+  return FeedQueryReply(Notice::ServiceUnavailable);
+}
+
+
+/*!
+ * Обработка подключения пользователя.
+ */
+void NodeLinksFeed::add(ChatChannel channel, const AuthRequest &data, const QString &host)
+{
+  FeedPtr feed = channel->feed(LS("links"), false);
+  if (!feed)
+    return;
+
+  QVariantMap query;
+  query[LS("action")]   = LS("add");
+  query[LS("host")]     = host;
+  query[LS("uniqueId")] = SimpleID::encode(data.uniqueId);
+  query[LS("os")]       = data.os;
+  query[LS("version")]  = Ver(data.version).toString();
+  query[LS("offset")]   = data.offset;
+  query[LS("name")]     = data.hostName;
+  query[LS("date")]     = DateTime::utc();
+
+  if (feed->query(query, Ch::server().data()).status == Notice::OK)
+    FeedStorage::save(feed);
+}
+
+
+/*!
+ * Обработка "add" запроса.
+ *
+ * \param json    тело запроса.
+ * \param channel канал, только канал-сервер имеет права на выполнение.
+ */
+FeedQueryReply NodeLinksFeed::add(const QVariantMap &json, Channel *channel)
+{
+  if (!channel || channel->type() != SimpleID::ServerId)
+    return FeedQueryReply(Notice::Forbidden);
+
+  QString uniqueId = json.value(LS("uniqueId")).toString();
+  QVariantMap data = m_data.value(uniqueId).toMap();
+  merge(data, json);
+  data.remove(LS("action"));
+  data.remove(LS("uniqueId"));
+
+  m_data[uniqueId] = data;
+
+  return FeedQueryReply(Notice::OK);
 }

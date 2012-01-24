@@ -47,6 +47,9 @@ int Acl::match(Channel *channel) const
   if (!channel)
     return (m_mask & ~0770);
 
+  if (channel->type() == SimpleID::ServerId)
+    return Read | Write | Edit;
+
   if (channel->account()->groups().all().contains(LS("master")))
     return Read | Write | Edit;
 
