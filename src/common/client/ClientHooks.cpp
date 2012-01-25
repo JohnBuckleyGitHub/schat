@@ -320,6 +320,35 @@ void Feeds::readFeed(const FeedNotice &packet)
 }
 
 
+/*!
+ * Получение списка фидов, для которых требуется синхронизация.
+ *
+ * \param channel канал фидов.
+ * \param feeds   заголовки фидов.
+ * \param extra   обязательные фиды, если они отсутствуют у канала то попадут в список.
+ */
+QStringList Feeds::unsynced(ClientChannel channel, const QVariantMap &feeds, const QStringList &extra)
+{
+  QStringList out;
+  QMapIterator<QString, QVariant> i(feeds);
+  while (i.hasNext()) {
+    i.next();
+    FeedPtr feed = channel->feed(i.key(), false);
+    if (!feed) {
+      if (extra.contains(i.key()))
+        out.append(i.key());
+
+      continue;
+    }
+
+    if (i.value().toMap().value(LS("date")).toLongLong() != feed->head().date())
+      out.append(i.key());
+  }
+
+  return out;
+}
+
+
 void Feeds::addImpl(ClientChannel /*channel*/, const ChannelInfo & /*info*/, const QVariantMap & /*json*/)
 {
 }

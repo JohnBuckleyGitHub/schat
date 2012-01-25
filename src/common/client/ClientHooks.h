@@ -114,6 +114,7 @@ public:
   void readFeed(const FeedNotice &packet);
 
 protected:
+  virtual QStringList unsynced(ClientChannel channel, const QVariantMap &feeds, const QStringList &extra = QStringList());
   virtual void addImpl(ClientChannel channel, const ChannelInfo &info, const QVariantMap &json);
   virtual void readFeedImpl(const FeedNotice &packet);
 
