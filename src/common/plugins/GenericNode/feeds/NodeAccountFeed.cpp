@@ -91,6 +91,9 @@ void NodeAccountFeed::setChannel(Channel *channel)
  */
 FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
 {
+  if (!head().channel()->account()->name().isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
   // Получение и проверка пароля.
   QByteArray password = SimpleID::decode(json.value(LS("pass")).toString().toLatin1());
   if (SimpleID::typeOf(password) != SimpleID::PasswordId)
@@ -110,14 +113,20 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
   if (key != -1)
     return FeedQueryReply(Notice::ObjectAlreadyExists);
 
-  head().channel()->account()->setName(name);
-  head().channel()->account()->setPassword(password);
+  // Обновление данных.
+  ChatChannel channel = Ch::channel(head().channel()->id());
+  if (!channel)
+    return FeedQueryReply(Notice::InternalError);
+
+  channel->account()->setName(name);
+  channel->account()->setPassword(password);
   m_data[LS("account")] = name;
 
-  DataBase::update(Ch::channel(head().channel()->id()));
-  FeedStorage::save(FeedPtr(this));
+  DataBase::update(channel);
 
+  // Формирования ответа.
   FeedQueryReply reply   = FeedQueryReply(Notice::OK);
   reply.json[LS("name")] = name;
+  reply.modified         = true;
   return reply;
 }
