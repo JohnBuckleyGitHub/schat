@@ -16,27 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatNotify.h"
-#include "sglobal.h"
+#ifndef LOGINICON_H_
+#define LOGINICON_H_
 
-Notify Notify::feedData(const QByteArray &id, const QString &name)
+#include <QLabel>
+
+class Notify;
+
+class LoginIcon : public QLabel
 {
-  QVariantMap data;
-  data[LS("id")]   = id;
-  data[LS("name")] = name;
-  return Notify(FeedData, data);
-}
+  Q_OBJECT
 
-ChatNotify *ChatNotify::m_self = 0;
+public:
+  LoginIcon(QWidget *parent = 0);
 
-ChatNotify::ChatNotify(QObject *parent)
-  : QObject(parent)
-{
-  m_self = this;
-}
+private slots:
+  void notify(const Notify &notify);
+  void reload();
+};
 
-
-void ChatNotify::startNotify(const Notify &notify)
-{
-  emit this->notify(notify);
-}
+#endif /* LOGINICON_H_ */

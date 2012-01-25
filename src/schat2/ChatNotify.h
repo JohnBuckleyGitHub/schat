@@ -27,7 +27,7 @@
 /*!
  * Базовый класс уведомления.
  */
-class Notify
+class SCHAT_CORE_EXPORT Notify
 {
 public:
   enum Actions {
@@ -44,7 +44,8 @@ public:
     SetSendFocus     = 0x5366, ///< "Sf" Установка фокуса на поле отправки сообщения.
     CopyRequest      = 0x6372, ///< "cr" Запрос на копирование текста, отправляется полем редактирования текста в случае если в нём отсутствует выделение.
     ShowID           = 0x5349, ///< "SI" Отобразить идентификатор канала.
-    ServerRenamed    = 0x5352  ///< "SR" Сервер сменил имя.
+    ServerRenamed    = 0x5352, ///< "SR" Сервер сменил имя.
+    FeedData         = 0x7068  ///< "FD" Полученные данные фида.
   };
 
   Notify(int type, const QVariant &data = QVariant())
@@ -53,7 +54,8 @@ public:
   {}
 
   inline const QVariant& data() const { return m_data; }
-  inline int type() const { return m_type; }
+  inline int type() const             { return m_type; }
+  static Notify feedData(const QByteArray &id, const QString &name);
 
 private:
   int m_type;

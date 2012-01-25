@@ -25,6 +25,7 @@
 
 #include "schat.h"
 
+class LoginIcon;
 class NetworkWidget;
 class Notify;
 class QLabel;
@@ -46,7 +47,6 @@ protected:
 
 private slots:
   void clientStateChanged(int state);
-  void loggedIn(const QString &name);
   void menuTriggered(QAction *action);
   void notify(const Notify &notify);
 
@@ -55,11 +55,11 @@ private:
   void retranslateUi();
   void updateStyleSheet();
 
+  LoginIcon *m_login;             ///< Иконка авторизации по имени и паролю.
   NetworkWidget *m_url;           ///< Поле ввода адреса сервера.
   QAction *m_connect;             ///< Главное действие связанное с сетевым подключением.
   QLabel *m_icon;                 ///< Главная иконка.
   QLabel *m_label;                ///< Информация о состоянии.
-  QLabel *m_login;
   QLabel *m_secure;               ///< Иконка безопасного соединения.
   QProgressIndicator *m_progress; ///< Отображает состояние подключения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
