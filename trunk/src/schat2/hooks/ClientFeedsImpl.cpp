@@ -72,19 +72,9 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 
 QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &feeds)
 {
-  QStringList out;
-  QMapIterator<QString, QVariant> i(feeds);
-  while (i.hasNext()) {
-    i.next();
-    FeedPtr feed = channel->feed(i.key(), false);
-    if (!feed)
-      continue;
-
-    if (i.value().toMap().value(LS("date")).toLongLong() != feed->head().date())
-      out.append(i.key());
-  }
-
-  return out;
+  QStringList extra;
+  extra += LS("account");
+  return Feeds::unsynced(channel, feeds, extra);
 }
 
 
