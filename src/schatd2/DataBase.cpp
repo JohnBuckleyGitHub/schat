@@ -289,6 +289,9 @@ void DataBase::saveData(Channel *channel)
  */
 void DataBase::update(ChatChannel channel)
 {
+  if (!channel)
+    return;
+
   QSqlQuery query;
   query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;");
   query.bindValue(":channel",    channel->id());

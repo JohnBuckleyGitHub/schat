@@ -28,7 +28,12 @@ public:
   NodeAccountFeed(const QString &name = QLatin1String("account"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
+  FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
   void setChannel(Channel *channel);
+
+private:
+  FeedQueryReply reg(const QVariantMap &json);
 };
 
 #endif /* NODEACCOUNTFEED_H_ */
