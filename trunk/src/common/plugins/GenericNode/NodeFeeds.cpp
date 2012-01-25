@@ -201,6 +201,11 @@ int NodeFeeds::query()
   if (reply.status == Notice::OK)
     m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply));
 
+  if (reply.modified) {
+    get();
+    broadcast(m_channel->feed(m_packet->text(), false));
+  }
+
   return reply.status;
 }
 
@@ -317,7 +322,7 @@ void NodeFeeds::broadcast(FeedPtr feed)
   FeedPacket packet = FeedNotice::reply(*m_packet, headers);
   packet->setDest(m_channel->id());
   packet->setCommand(LS("headers"));
-  m_core->send(Sockets::all(m_channel, m_user), packet);
+  m_core->send(Sockets::all(m_channel, m_user, true), packet);
 }
 
 
