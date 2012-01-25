@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
@@ -79,7 +80,7 @@ QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &
     if (!feed)
       continue;
 
-    if (i.value().toMap().value("date").toLongLong() != feed->head().date())
+    if (i.value().toMap().value(LS("date")).toLongLong() != feed->head().date())
       out.append(i.key());
   }
 
@@ -87,6 +88,9 @@ QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &
 }
 
 
+/*!
+ * Обработка получения тела фида.
+ */
 void ClientFeedsImpl::feed()
 {
   QString name = m_packet->text();
@@ -98,6 +102,8 @@ void ClientFeedsImpl::feed()
     return;
 
   m_channel->feeds().add(feed);
+
+  ChatNotify::start(Notify::feedData(m_channel->id(), name));
 }
 
 
@@ -119,6 +125,9 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
 }
 
 
+/*!
+ * Обработка получения заголовков фидов.
+ */
 void ClientFeedsImpl::headers()
 {
   QVariantMap feeds = m_packet->json().value(LS("feeds")).toMap();

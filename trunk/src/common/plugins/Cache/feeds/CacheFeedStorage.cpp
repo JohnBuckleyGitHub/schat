@@ -22,6 +22,7 @@
 #include <QSqlDatabase>
 
 #include "CacheDB.h"
+#include "ChatNotify.h"
 #include "feeds/CacheFeedStorage.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
@@ -97,4 +98,6 @@ void CacheFeedStorage::load(Channel *channel, const QString &name, qint64 id)
 
   Feed *feed = FeedStorage::load(name, json);
   channel->feeds().add(feed, false);
+
+  ChatNotify::start(Notify::feedData(channel->id(), name));
 }

@@ -66,6 +66,7 @@ HEADERS = \
     ui/fields/ProfileField.h \
     ui/InputWidget.h \
     ui/LanguageBox.h \
+    ui/LoginIcon.h \
     ui/MainToolBar.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkEditor.h \
@@ -134,6 +135,7 @@ SOURCES = \
     ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
     ui/LanguageBox.cpp \
+    ui/LoginIcon.cpp \
     ui/MainToolBar.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkEditor.cpp \

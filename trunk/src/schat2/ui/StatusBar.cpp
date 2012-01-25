@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QAction>
 #include <QApplication>
 #include <QEvent>
@@ -31,6 +33,8 @@
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
+#include "sglobal.h"
+#include "ui/LoginIcon.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
@@ -44,11 +48,13 @@ StatusBar::StatusBar(QWidget *parent)
   m_progress->startAnimation();
 
   m_icon = new QLabel(this);
-  m_login = new QLabel(this);
+  m_login = new LoginIcon(this);
   m_secure = new QLabel(this);
   m_label = new QLabel(this);
 
-  m_login->setPixmap(QPixmap(":/images/key.png"));
+# if !defined(SCHAT_NO_SSL)
+  m_secure->setPixmap(QPixmap(LS(":/images/secure.png")));
+# endif
 
   m_url = new NetworkWidget(this);
   m_url->setMinimumWidth(m_url->width() * 2);
@@ -118,36 +124,25 @@ void StatusBar::clientStateChanged(int state)
     m_progress->stopAnimation();
   }
 
-  if (state != SimpleClient::ClientOnline) {
-    m_login->setVisible(false);
+  if (state != SimpleClient::ClientOnline)
     m_secure->setVisible(false);
-  }
 
   if (state == SimpleClient::ClientOffline) {
-    m_icon->setPixmap(QPixmap(":/images/offline.png"));
+    m_icon->setPixmap(QPixmap(LS(":/images/offline.png")));
   }
   else if (state == SimpleClient::ClientOnline) {
-    m_icon->setPixmap(QPixmap(":/images/online.png"));
+    m_icon->setPixmap(QPixmap(LS(":/images/online.png")));
 
-    #if !defined(SCHAT_NO_SSL)
-    if (ChatClient::io()->isEncrypted()) {
-      m_secure->setPixmap(QPixmap(":/images/secure.png"));
+#   if !defined(SCHAT_NO_SSL)
+    if (ChatClient::io()->isEncrypted())
       m_secure->setVisible(true);
-    }
-    #endif
+#   endif
   }
   else if (state == SimpleClient::ClientError) {
-    m_icon->setPixmap(QPixmap(":/images/exclamation-red.png"));
+    m_icon->setPixmap(QPixmap(LS(":/images/exclamation-red.png")));
   }
 
   retranslateUi();
-}
-
-
-void StatusBar::loggedIn(const QString &name)
-{
-  m_login->setToolTip(name);
-  m_login->setVisible(true);
 }
 
 
@@ -205,12 +200,12 @@ void StatusBar::retranslateUi()
 void StatusBar::updateStyleSheet()
 {
   #if defined(Q_OS_MAC)
-  setStyleSheet("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }");
+  setStyleSheet(LS("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }"));
   #else
     #if defined(Q_WS_WIN)
-    setStyleSheet(QString("QStatusBar { background-color: %1; } QStatusBar::item { border-width: 0; }").arg(parentWidget()->palette().color(QPalette::Window).name()));
+    setStyleSheet(QString(LS("QStatusBar { background-color: %1; } QStatusBar::item { border-width: 0; }")).arg(parentWidget()->palette().color(QPalette::Window).name()));
     #else
-    setStyleSheet("QStatusBar::item { border-width: 0; }");
+    setStyleSheet(LS("QStatusBar::item { border-width: 0; }"));
     #endif
   #endif
 }
