@@ -37,6 +37,7 @@ private:
   void feed();
   void get(const QByteArray &id, const QStringList &feeds);
   void headers();
+  void reply();
 
   ClientChannel m_channel;
   const FeedNotice *m_packet;

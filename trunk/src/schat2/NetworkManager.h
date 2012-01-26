@@ -50,6 +50,7 @@ public:
   inline const QString& url() const       { return m_url; }
 
   inline void setAccount(const QString &account)   { m_account = account; }
+  inline void setCookie(const QByteArray &cookie)  { m_cookie = cookie; }
   inline void setName(const QString &name)         { m_name = name; }
   inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
@@ -107,6 +108,7 @@ private slots:
 
 private:
   void load();
+  void login(const QVariantMap &data);
   void write();
 
   /// Хранилище списка сетей.
