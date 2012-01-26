@@ -45,6 +45,7 @@ public:
   static ChatChannel channel(qint64 id);
   static qint64 add(ChatChannel channel);
   static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
+  static QString nick(qint64 id);
   static void saveData(Channel *channel);
   static void update(ChatChannel channel);
 

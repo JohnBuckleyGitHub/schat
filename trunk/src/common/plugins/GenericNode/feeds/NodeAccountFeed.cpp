@@ -70,7 +70,9 @@ FeedQueryReply NodeAccountFeed::query(const QVariantMap &json, Channel *channel)
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  if (action == LS("reg"))
+  if (action == LS("login"))
+    return login(json);
+  else if (action == LS("reg"))
     return reg(json);
 
   return FeedQueryReply(Notice::NotImplemented);
@@ -87,6 +89,44 @@ void NodeAccountFeed::setChannel(Channel *channel)
 
 
 /*!
+ * Авторизация пользователя.
+ */
+FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
+{
+  if (!head().channel()->account()->name().isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  // Получение и проверка пароля.
+  QByteArray password = this->password(json);
+  if (password.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  // Получение и проверка имени.
+  QString name = this->name(json);
+  if (name.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  // Проверка имени на существование.
+  qint64 key = DataBase::accountKey(name);
+  if (key == -1)
+    return FeedQueryReply(Notice::NotFound);
+
+  Account account = DataBase::account(key);
+  if (!account.isValid())
+    return FeedQueryReply(Notice::InternalError);
+
+  if (account.password() != password)
+    return FeedQueryReply(Notice::Forbidden);
+
+  // Формирования ответа.
+  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.json[LS("nick")]   = DataBase::nick(account.channel());
+  reply.json[LS("cookie")] = SimpleID::encode(account.cookie());
+  return reply;
+}
+
+
+/*!
  * Регистрация пользователя.
  */
 FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
@@ -95,16 +135,12 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка пароля.
-  QByteArray password = SimpleID::decode(json.value(LS("pass")).toString().toLatin1());
-  if (SimpleID::typeOf(password) != SimpleID::PasswordId)
+  QByteArray password = this->password(json);
+  if (password.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка имени.
-  QString name = json.value(LS("name")).toString().simplified().toLower().remove(LC(' '));
-  int index = name.indexOf(LC('@'));
-  if (index != -1)
-    name = name.left(index);
-
+  QString name = this->name(json);
   if (name.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
@@ -131,4 +167,25 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
   reply.json[LS("name")] = name;
   reply.modified         = true;
   return reply;
+}
+
+
+QByteArray NodeAccountFeed::password(const QVariantMap &json) const
+{
+  QByteArray password = SimpleID::decode(json.value(LS("pass")).toString().toLatin1());
+  if (SimpleID::typeOf(password) == SimpleID::PasswordId)
+    return password;
+
+  return QByteArray();
+}
+
+
+QString NodeAccountFeed::name(const QVariantMap &json) const
+{
+  QString name = json.value(LS("name")).toString().simplified().toLower().remove(LC(' '));
+  int index = name.indexOf(LC('@'));
+  if (index != -1)
+    name = name.left(index);
+
+  return name;
 }

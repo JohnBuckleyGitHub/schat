@@ -156,8 +156,8 @@ ChatChannel DataBase::channel(const QByteArray &id, int type)
 ChatChannel DataBase::channel(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("SELECT channel, gender, status, account, name, data FROM channels WHERE id = ? LIMIT 1;"));
-  query.addBindValue(id);
+  query.prepare(LS("SELECT channel, gender, status, account, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
   query.exec();
 
   if (!query.first())
@@ -270,6 +270,20 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
     return -1;
 
   return query.value(0).toLongLong();
+}
+
+
+QString DataBase::nick(qint64 id)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT name FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
+  query.exec();
+
+  if (!query.first())
+    return QString();
+
+  return query.value(0).toString();
 }
 
 
