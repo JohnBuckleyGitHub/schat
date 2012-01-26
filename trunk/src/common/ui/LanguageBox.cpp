@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <QEvent>
 #include <QTranslator>
 
+#include "sglobal.h"
 #include "Translation.h"
 #include "ui/LanguageBox.h"
 
@@ -31,10 +32,9 @@ LanguageBox::LanguageBox(Translation *translation, QWidget *parent)
   , m_translation(translation)
 {
   QString prefix = translation->prefix();
-  addItem(QIcon(QLatin1String(":/translations/en.png")), QLatin1String("English"), QLatin1String(":/translations/") + prefix + QLatin1String("en.qm"));
+  addItem(QIcon(LS(":/translations/en.png")), LS("English"), LS(":/translations/") + prefix + LS("en.qm"));
 
   QStringList qmFiles = findQmFiles();
-  qmFiles.append(QLatin1String(":/translations/") + prefix + QLatin1String("ru.qm"));
   bool canOverrideEnglish = true;
 
   for (int i = 0; i < qmFiles.size(); ++i) {
@@ -48,7 +48,7 @@ LanguageBox::LanguageBox(Translation *translation, QWidget *parent)
     if (findText(langName) == -1) {
       addItem(QIcon(languageIcon(file)), langName, file);
     }
-    else if (canOverrideEnglish && file.endsWith(prefix + QLatin1String("en.qm"))) {
+    else if (canOverrideEnglish && file.endsWith(prefix + LS("en.qm"))) {
       setItemIcon(0, QIcon(languageIcon(file)));
       setItemData(0, file);
       canOverrideEnglish = false;
@@ -90,18 +90,15 @@ void LanguageBox::changeEvent(QEvent *event)
 QString LanguageBox::languageIcon(const QString &file) const
 {
   QFileInfo fi(file);
-  QString icon = fi.absolutePath() + QLatin1String("/") + fi.baseName().remove(0, m_translation->prefix().size()) + QLatin1String(".png");
+  QString icon = fi.absolutePath() + LS("/") + fi.baseName().remove(0, m_translation->prefix().size()) + LS(".png");
 
   if (QFile::exists(icon))
     return icon;
 
-  if (icon.endsWith(QLatin1String("ru.png")))
-    return QLatin1String(":/translations/ru.png");
+  if (icon.endsWith(LS("en.png")))
+    return LS(":/translations/en.png");
 
-  if (icon.endsWith(QLatin1String("en.png")))
-    return QLatin1String(":/translations/en.png");
-
-  return QLatin1String(":/translations/unknown.png");
+  return LS(":/translations/unknown.png");
 }
 
 
@@ -123,7 +120,7 @@ QStringList LanguageBox::findQmFiles() const
 
   foreach (QString d, m_translation->search()) {
     QDir dir(d);
-    QStringList fn = dir.entryList(QStringList(m_translation->prefix() + QLatin1String("*.qm")), QDir::Files, QDir::Name);
+    QStringList fn = dir.entryList(QStringList(m_translation->prefix() + LS("*.qm")), QDir::Files, QDir::Name);
     QMutableStringListIterator i(fn);
     while (i.hasNext()) {
         i.next();
