@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "text/HtmlFilter.h"
+#include "text/PlainTextFilter.h"
 #include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
@@ -236,11 +237,12 @@ void InputWidget::send()
 {
   QString html = toHtml();
   HtmlFilter filter(HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
+
   QString out = filter.filter(html);
   clear();
   setHeight(1);
 
-  if (out.isEmpty()) {
+  if (PlainTextFilter::filter(out).isEmpty()) {
     if (m_emptySend)
       emit send(out);
 

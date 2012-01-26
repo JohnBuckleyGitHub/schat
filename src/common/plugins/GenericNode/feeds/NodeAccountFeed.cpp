@@ -157,6 +157,7 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
 
   channel->account()->setName(name);
   channel->account()->setPassword(password);
+  channel->account()->groups().remove(LS("anonymous"));
   channel->account()->groups().add(LS("registered"));
   m_data[LS("account")] = name;
   m_data[LS("groups")]  = channel->account()->groups().all();
