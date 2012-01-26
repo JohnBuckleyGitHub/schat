@@ -120,6 +120,7 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
 
   // Формирования ответа.
   FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.json[LS("action")] = LS("login");
   reply.json[LS("nick")]   = DataBase::nick(account.channel());
   reply.json[LS("cookie")] = SimpleID::encode(account.cookie());
   return reply;
@@ -163,9 +164,10 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
   DataBase::update(channel);
 
   // Формирования ответа.
-  FeedQueryReply reply   = FeedQueryReply(Notice::OK);
-  reply.json[LS("name")] = name;
-  reply.modified         = true;
+  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.json[LS("action")] = LS("reg");
+  reply.json[LS("name")]   = name;
+  reply.modified           = true;
   return reply;
 }
 

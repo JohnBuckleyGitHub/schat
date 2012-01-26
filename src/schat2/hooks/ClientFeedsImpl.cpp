@@ -67,6 +67,8 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
     feed();
   else if (cmd == LS("headers"))
     headers();
+  else if (cmd == LS("reply"))
+    reply();
 }
 
 
@@ -125,4 +127,18 @@ void ClientFeedsImpl::headers()
     return;
 
   get(m_channel->id(), unsynced(m_channel, feeds));
+}
+
+
+void ClientFeedsImpl::reply()
+{
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return;
+
+  QVariantMap data;
+  data[LS("id")]   = m_channel->id();
+  data[LS("name")] = name;
+  data[LS("data")] = m_packet->json();
+  ChatNotify::start(Notify::FeedReply, data);
 }

@@ -28,6 +28,7 @@
 #include "FileLocations.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 
 NetworkItem::NetworkItem()
   : m_authorized(false)
@@ -306,6 +307,24 @@ void NetworkManager::notify(const Notify &notify)
     item->setName(ChatClient::serverName());
     item->write();
   }
+  else if (notify.type() == Notify::FeedReply) {
+    QVariantMap data = notify.data().toMap();
+    if (data.value(LS("name")) == LS("account")) {
+      if (data.value(LS("id")) != ChatClient::id())
+        return;
+
+      QVariantMap json = data.value(LS("data")).toMap();
+      if (json.isEmpty())
+        return;
+
+      QString action = json.value(LS("action")).toString();
+      if (action == LS("login"))
+        login(json);
+    }
+
+    if (data.value(LS("id")) != ChatClient::id())
+      return;
+  }
 }
 
 
@@ -356,6 +375,27 @@ void NetworkManager::load()
   }
 
   setSelected(m_networks.first());
+}
+
+
+void NetworkManager::login(const QVariantMap &data)
+{
+  Network item = this->item(ChatClient::serverId());
+  if (!item)
+    return;
+
+  QString nick = data.value(LS("nick")).toString();
+  if (nick.isEmpty())
+    return;
+
+  QByteArray cookie = SimpleID::decode(data.value(LS("cookie")).toString().toLatin1());
+  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
+    return;
+
+  ChatClient::io()->leave();
+  ChatClient::io()->setNick(nick);
+  item->setCookie(cookie);
+  ChatClient::open();
 }
 
 
