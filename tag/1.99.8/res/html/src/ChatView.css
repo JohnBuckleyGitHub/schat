@@ -1,0 +1,158 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+* {
+	word-wrap:break-word;
+}
+
+body {
+	background:#fff;
+	color:#000;
+	margin:0;
+}
+
+#Chat {
+	margin:0;
+	padding:0;
+}
+
+img {
+	vertical-align:middle;
+}
+
+a {
+	text-decoration:none;
+}
+
+a:link, a:visited {
+	color:#2988d2;
+}
+
+a:active, a:hover {
+	color:#1e6396;
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	background-color:#fff;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius:3px;
+}
+
+::-webkit-scrollbar-track {
+	border-radius:3px;
+}
+
+.container {
+	margin:2px;
+}
+
+.channel-type {
+	box-shadow: 1px 1px 0px rgba(0,0,0,0.07);
+}
+
+.blocks {
+	padding-left:0;
+}
+
+.date-time-block {
+	color:#a5b2c3;
+	font-size:x-small;
+}
+
+.no-seconds .seconds, .no-service .service-type, .no-topic-author #topic-extra { display:none; }
+
+.nick, .nick:link, .nick:visited {
+	font-weight:bold;
+	color:#113853;
+}
+
+.nick-block {
+	padding-right: 2px;
+	border-right: solid 1px #eee;
+}
+
+/* Входящие сообщения */
+.incoming  {
+	background-color:#f7f8f9;
+	border:1px solid #f2f4f6;
+}
+
+.incoming:hover {
+	background-color:#e6f0f5;
+	border:1px solid #dbebf1;
+}
+
+/* Исходящие сообщения */
+.outgoing {
+	background:#f2ffe1;
+	border:1px solid #ebffcd;
+}
+
+.outgoing:hover {
+	background-color:#e3ffb9;
+	border:1px solid #ddffa5;
+}
+
+/* Отображение прогресс-бара для недоставленных сообщений */
+.undelivered {
+	background:url("qrc:/images/progress.gif") top right no-repeat #f2ffe1;
+}
+
+/* Изменение внешнего вида для /me сообщений */
+.me-action .nick, .me-action { color:#be00c4; }
+.me-action { background:#ffebff; border:1px solid #ffe1ff; }
+.me-action:hover { background:#ffe1ff; border:1px solid #fed7ff; }
+.me-action.undelivered { background:url("qrc:/images/progress-pink.gif") top right no-repeat #ffebff; }
+
+/* Выделение красным отклонённых сообщений */
+.rejected {
+	background:#ffe1e2;
+	border:1px solid #ffd7d8;
+}
+
+.rejected:hover {
+	background:#ffc3c5;
+	border:1px solid #ffb9bb;
+}
+
+/* Выделение жёлтым офлайн сообщений */
+.offline {
+	background-color:#fbfbd1;
+	border:1px solid #f8f7ac;
+}
+
+.offline:hover {
+	background-color:#f8f7ac;
+	border:1px solid #f6f69a;
+}
+
+.service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
+.service-type .nick, #topic-extra .nick { color:#a5b2c3; }
+
+.info-type .green-text {
+	color:#6bb521;
+}
+
+.info-type .red-text {
+	color:#da251d;
+}
