@@ -34,12 +34,12 @@ RegCmds::RegCmds(QObject *parent)
 bool RegCmds::command(const QByteArray & /*dest*/, const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
-  if (command == LS("reg")) {
+  if (command == LS("reg") || command == LS("login")) {
     ClientCmd body(cmd.body());
     if (!body.isValid())
       return true;
 
-    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), reg(body.command(), body.body()));
+    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), request(command, body.command(), body.body()));
     return true;
   }
 
@@ -47,10 +47,16 @@ bool RegCmds::command(const QByteArray & /*dest*/, const ClientCmd &cmd)
 }
 
 
-QVariantMap RegCmds::reg(const QString &name, const QString &password)
+QVariantMap RegCmds::request(const QString &action, const QString &name, const QString &password)
 {
+  if (name.isEmpty())
+    return QVariantMap();
+
+  if (password.isEmpty())
+    return QVariantMap();
+
   QVariantMap out;
-  out[LS("action")] = LS("reg");
+  out[LS("action")] = action;
   out[LS("name")]   = name.simplified().toLower().remove(LC(' '));
   out[LS("pass")]   = SimpleID::encode(SimpleID::password(password));
 

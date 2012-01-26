@@ -33,7 +33,10 @@ public:
   void setChannel(Channel *channel);
 
 private:
+  FeedQueryReply login(const QVariantMap &json);
   FeedQueryReply reg(const QVariantMap &json);
+  QByteArray password(const QVariantMap &json) const;
+  QString name(const QVariantMap &json) const;
 };
 
 #endif /* NODEACCOUNTFEED_H_ */

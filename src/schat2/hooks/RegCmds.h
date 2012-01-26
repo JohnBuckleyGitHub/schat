@@ -29,7 +29,7 @@ public:
   RegCmds(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
 
-  static QVariantMap reg(const QString &name, const QString &password);
+  static QVariantMap request(const QString &action, const QString &name, const QString &password);
 };
 
 #endif /* REGCMDS_H_ */
