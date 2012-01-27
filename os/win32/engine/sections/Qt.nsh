@@ -61,9 +61,10 @@ ${Uninstall}
   Delete "$INSTDIR\zlib1.dll"
   Delete "$INSTDIR\msvcp100.dll"
   Delete "$INSTDIR\msvcr100.dll"
-  Delete "$INSTDIR\plugins\imageformats\qgif4.dll"
-  Delete "$INSTDIR\plugins\imageformats\qico4.dll"
-  Delete "$INSTDIR\plugins\imageformats\qjpeg4.dll"
+  Delete "$INSTDIR\plugins\qt\imageformats\qgif4.dll"
+  Delete "$INSTDIR\plugins\qt\imageformats\qico4.dll"
+  Delete "$INSTDIR\plugins\qt\imageformats\qjpeg4.dll"
+  Delete "$INSTDIR\plugins\qt\sqldrivers\qsqlite4.dll"
 
   RMDir "$INSTDIR\plugins\qt\imageformats"
   RMDir "$INSTDIR\plugins\qt\sqldrivers"

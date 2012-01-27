@@ -24,8 +24,6 @@
 !include "engine\page-options.nsh"
 !include "engine\update.nsh"
 
-Var run_daemon
-
 !define SCHAT_META
 !include "engine\sections.nsh"
 
@@ -114,7 +112,7 @@ Section
 
   !include "engine\sections.nsh"
 
-  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME} ${SCHAT_VERSION}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schat2.exe"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "IMPOMEZIA"
