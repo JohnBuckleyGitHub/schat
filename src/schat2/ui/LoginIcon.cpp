@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -56,13 +57,7 @@ void LoginIcon::reload()
     return;
   }
 
-  FeedPtr feed = ChatClient::channel()->feed(LS("account"), false);
-  if (!feed) {
-    setVisible(false);
-    return;
-  }
-
-  QString account = feed->data().value(LS("account")).toString();
+  QString account = ChatClient::channel()->account()->name();
   if (!account.isEmpty()) {
     setVisible(true);
     setToolTip(account);

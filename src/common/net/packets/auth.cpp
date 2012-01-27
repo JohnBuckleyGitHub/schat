@@ -42,6 +42,8 @@ AuthReply::AuthReply(PacketReader *reader)
 
   if (status == Notice::OK) {
     cookie = reader->id();
+    reader->get<quint32>();
+    reader->get<quint8>();
     serverName = reader->text();
     account = reader->text();
   }
