@@ -38,12 +38,10 @@ public:
   virtual ~AbstractClientPrivate();
 
   // Установка и завершение соединения.
+  bool isSetup(const AuthReply &reply);
   QString mangleNick();
   virtual bool authReply(const AuthReply &reply);
-  virtual void restore() {}
   virtual void setClientState(AbstractClient::ClientState state);
-  virtual void setup() {}
-  void setServerData(const AuthReply &reply);
   void startReconnectTimer();
 
   AbstractClient::ClientState clientState;   ///< Состояние клиента.
