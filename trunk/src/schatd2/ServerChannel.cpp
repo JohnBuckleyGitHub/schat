@@ -107,6 +107,9 @@ bool ServerChannel::setName(const QString &name)
 
 void ServerChannel::createAccount()
 {
+  if (m_account)
+    delete m_account;
+
   m_account = new Account();
   m_account->setDate(DateTime::utc());
   m_account->groups() += LS("anonymous");

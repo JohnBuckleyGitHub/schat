@@ -16,23 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Account.h"
-#include "cores/NodeAuth.h"
-#include "net/NodeAuthReply.h"
-#include "Storage.h"
+#ifndef ACCOUNTFEED_H_
+#define ACCOUNTFEED_H_
 
-NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
-  : AuthReply()
+#include "feeds/Feed.h"
+
+class AccountFeed : public Feed
 {
-  serverId = Storage::serverId();
-  status   = result.status;
-  id       = result.authId;
-  json     = result.json;
+public:
+  AccountFeed(const QString &name, const QVariantMap &data);
+  AccountFeed(const QString &name = QLatin1String("account"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
-  if (channel) {
-    serverName = Storage::serverName();
-    userId     = channel->id();
-    cookie     = channel->account()->cookie();
-    account    = channel->account()->name();
-  }
-}
+  void setChannel(Channel *channel);
+};
+
+#endif /* ACCOUNTFEED_H_ */
