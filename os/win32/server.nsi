@@ -89,6 +89,10 @@ Section
   SetOutPath "$INSTDIR\plugins\qt\sqldrivers"
   File "${SCHAT_SOURCE}\plugins\qt\sqldrivers\qsqlite4.dll"
 
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.html"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.GenericNode.html"
+
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schatd2.exe"
@@ -124,11 +128,15 @@ Section "Uninstall"
 
   Delete "$INSTDIR\plugins\qt\sqldrivers\qsqlite4.dll"
   Delete "$INSTDIR\plugins\GenericNode.dll"
-  
+
+  Delete "$INSTDIR\doc\ChangeLog.html"
+  Delete "$INSTDIR\doc\ChangeLog.GenericNode.html"
+
   RMDir "$INSTDIR\plugins\qt\sqldrivers"
   RMDir "$INSTDIR\plugins\qt"
+  RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
-  
+
   Delete "$INSTDIR\uninstall.exe"
   DeleteRegKey HKLM "${SCHAT_UNINST_KEY}"
   RMDir "$INSTDIR"

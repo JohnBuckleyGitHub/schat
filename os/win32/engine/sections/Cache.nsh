@@ -23,10 +23,16 @@ ${Body}
 ${Section}
   SetOutPath "$INSTDIR\plugins"
   File "${SCHAT_SOURCE}\plugins\Cache.dll"
+
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.Cache.html"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
+  Delete "$INSTDIR\doc\ChangeLog.Cache.html"
   Delete "$INSTDIR\plugins\Cache.dll"
+
+  RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
 ${UninstallEnd}

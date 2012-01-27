@@ -23,10 +23,16 @@ ${Body}
 ${Section}
   SetOutPath "$INSTDIR\plugins"
   File "${SCHAT_SOURCE}\plugins\RawFeeds.dll"
+
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.RawFeeds.html"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
+  Delete "$INSTDIR\doc\ChangeLog.RawFeeds.html"
   Delete "$INSTDIR\plugins\RawFeeds.dll"
+
+  RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
 ${UninstallEnd}
