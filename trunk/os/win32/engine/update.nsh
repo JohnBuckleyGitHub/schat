@@ -132,7 +132,7 @@ Var files
  * Успешное завершение
  */
 !macro UPDATE_ENGINE_DONE
-  WriteINIStr "$INSTDIR\schat.conf" "Updates" "ReadyToInstall" "false"
+  WriteINIStr "$INSTDIR\schat2.conf" "Updates" "ReadyToInstall" "false"
 
   ${If} $clean == 1
   ${EndIf}
@@ -141,16 +141,7 @@ Var files
 
   Banner::destroy
   ${If} $run == 1
-    Exec `"$INSTDIR\schat.exe"`
-  ${EndIf}
-
-  ${If} $run_daemon == 1
-    ReadRegStr $R0 HKLM "SYSTEM\CurrentControlSet\Services\Simple Chat Daemon" "ImagePath"
-    ${If} $R0 != ""
-      Exec '"$INSTDIR\schatd.exe"'
-    ${Else}
-      Exec '"$INSTDIR\schatd.exe" -e'
-    ${EndIf}
+    Exec `"$INSTDIR\schat2.exe"`
   ${EndIf}
 
   Quit

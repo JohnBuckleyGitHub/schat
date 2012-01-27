@@ -30,11 +30,6 @@
   var settings.QuickLaunch
   var settings.AllPrograms
   var settings.AutoStart
-
-  !ifdef Daemon
-    var settings.AutoDaemonStart
-    var AutostartDaemonCheckBox
-  !endif
 !endif
 
 !macro OPTIONS_PAGE
@@ -70,17 +65,6 @@ Function SettingsPage
   Pop $AutostartCheckBox
   ${NSD_SetState} $AutoStartCheckBox $settings.AutoStart
 
-  !ifdef Daemon
-    ${NSD_CreateCheckbox} 10 116 90% 18 "$(STR105)"
-    Pop $AutostartDaemonCheckBox
-    ${If} ${SectionIsSelected} ${Daemon_idx}
-      ${NSD_SetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
-    ${Else}
-      ${NSD_AddStyle} $AutostartDaemonCheckBox ${WS_DISABLED}
-      ${NSD_SetState} $AutostartDaemonCheckBox ${BST_UNCHECKED}
-    ${EndIf}
-  !endif
-
   nsDialogs::Show
 
 FunctionEnd
@@ -90,10 +74,6 @@ Function SettingsPageLeave
   ${NSD_GetState} $QuickLaunchCheckBox     $settings.QuickLaunch
   ${NSD_GetState} $AllProgramsCheckBox     $settings.AllPrograms
   ${NSD_GetState} $AutoStartCheckBox       $settings.AutoStart
-
-  !ifdef Daemon
-    ${NSD_GetState} $AutostartDaemonCheckBox $settings.AutoDaemonStart
-  !endif
 FunctionEnd
 !endif
 !macroend
@@ -120,12 +100,6 @@ Section
     CreateDirectory "${SCHAT_PROGRAMGROUP}"
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR300).lnk" "$INSTDIR\uninstall.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
 
-    !ifdef Daemon
-      ${If} ${SectionIsSelected} ${Daemon_idx}
-        CreateShortCut  "${SCHAT_PROGRAMGROUP}\$(STR301).lnk" "$INSTDIR\schatd-ui.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
-      ${EndIf}
-    !endif
-
     CreateShortCut  "${SCHAT_PROGRAMGROUP}\${SCHAT_NAME}.lnk" "$INSTDIR\schat2.exe" "" "" "" "" "" "${SCHAT_NAME} ${SCHAT_VERSION}"
   ${EndIf}
 
@@ -133,20 +107,10 @@ Section
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME}" "$INSTDIR\schat2.exe -hide"
   ${EndIf}
 
-  !ifdef Daemon
-    ${If} $settings.AutoDaemonStart == ${BST_CHECKED}
-      WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "${SCHAT_NAME} Daemon" "$INSTDIR\schatd-ui.exe -start"
-    ${EndIf}
-  !endif
-
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "Desktop"         "$settings.Desktop"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "QuickLaunch"     "$settings.QuickLaunch"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AllPrograms"     "$settings.AllPrograms"
   WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoStart"       "$settings.AutoStart"
-
-  !ifdef Daemon
-    WriteINIStr "$INSTDIR\uninstall.ini" "${SCHAT_NAME}" "AutoDaemonStart" "$settings.AutoDaemonStart"
-  !endif
 SectionEnd
 !endif
 !macroend
@@ -181,10 +145,6 @@ SectionEnd
   ${Option} "QuickLaunch"     ${OPT_QUICKLAUNCH} $settings.QuickLaunch
   ${Option} "AllPrograms"     ${OPT_ALLPROGRAMS} $settings.AllPrograms
   ${Option} "AutoStart"       ${OPT_AUTOSTART}   $settings.AutoStart
-
-  !ifdef Daemon
-    ${Option} "AutoDaemonStart" ${OPT_AUTODAEMONSTART} $settings.AutoDaemonStart
-  !endif
 !endif
 !macroend
 

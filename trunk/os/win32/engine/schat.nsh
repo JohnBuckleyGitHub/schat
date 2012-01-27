@@ -176,18 +176,7 @@
     ${EndIf}
   ${EndUnless}
 
-  FindProcDLL::FindProc "schatd2.exe"
-  StrCpy $run_daemon $R0
-
-  ReadRegStr $R0 HKLM "SYSTEM\CurrentControlSet\Services\Simple Chat Daemon" "ImagePath"
-  ${If} $R0 != ""
-    ExecWait '"$INSTDIR\schatd.exe" -t'
-  ${Else}
-    !insertmacro KILL_ALL "schatd2.exe"
-  ${EndIf}
-
   !insertmacro KILL_ALL "schat2.exe"
-  !insertmacro KILL_ALL "schatd-ui.exe"
 !macroend
 
 !macro FIND_RUNNING
