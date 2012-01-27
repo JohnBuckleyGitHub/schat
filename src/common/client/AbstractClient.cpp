@@ -56,6 +56,21 @@ AbstractClientPrivate::~AbstractClientPrivate()
 }
 
 
+/*
+ * \return \b true если это новое подключение.
+ */
+bool AbstractClientPrivate::isSetup(const AuthReply &reply)
+{
+  if (server->id() != reply.serverId)
+    return true;
+
+  if (channel->id() != reply.userId)
+    return true;
+
+  return false;
+}
+
+
 QString AbstractClientPrivate::mangleNick()
 {
   collisions++;
@@ -94,6 +109,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
   Q_Q(AbstractClient);
 
   if (reply.status == Notice::OK) {
+    bool setup = isSetup(reply);
     collisions = 0;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
@@ -107,7 +123,18 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     if (channel->status().value() == Status::Offline)
       channel->status().set(Status::Online);
 
-    setServerData(reply);
+    server->setId(reply.serverId);
+    if (reply.serverName.isEmpty() || reply.serverName == QLatin1String("*"))
+      server->setName(url.host());
+    else
+      server->setName(reply.serverName);
+
+    setClientState(AbstractClient::ClientOnline);
+
+    if (setup)
+      emit(q->setup());
+    else
+      emit(q->restore());
 
     emit(q->ready());
     return true;
@@ -147,38 +174,6 @@ void AbstractClientPrivate::setClientState(AbstractClient::ClientState state)
 
   Q_Q(AbstractClient);
   emit(q->clientStateChanged(state, previousState));
-}
-
-
-/*!
- * Установка идентификатора сервера, при успешной авторизации.
- *
- * В случае повторного подключения к предыдущему серверу происходит,
- * вход в раннее открытые каналы.
- * В случае если подключение происходит к новому серверу, таблица каналов очищается.
- *
- * \param data Данные сервера.
- */
-void AbstractClientPrivate::setServerData(const AuthReply &reply)
-{
-  bool sameServer = false;
-
-  if (!server->id().isEmpty() && server->id() == reply.serverId)
-    sameServer = true;
-
-  server->setId(reply.serverId);
-  if (reply.serverName.isEmpty() || reply.serverName == "*")
-    server->setName(url.host());
-  else
-    server->setName(reply.serverName);
-
-  setClientState(AbstractClient::ClientOnline);
-
-  Q_Q(AbstractClient);
-  if (!sameServer)
-    emit(q->setup());
-  else
-    emit(q->restore());
 }
 
 
