@@ -42,4 +42,15 @@ ${mod} Emoticons.Kolobok
   !endif
 !endif
 
-${mod} Daemon
+!ifdef SCHAT_SECTIONS
+  !if ${SCHAT_PLUGINS_GRP} == 1
+    SectionGroup "$(STR1005)" GroupPlugins
+  !endif
+!endif
+${mod} Cache
+${mod} RawFeeds 
+!ifdef SCHAT_SECTIONS
+  !if ${SCHAT_PLUGINS_GRP} == 1
+    SectionGroupEnd
+  !endif
+!endif
