@@ -249,18 +249,28 @@
 <context>
     <name>LoginWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="109"/>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="114"/>
         <source>&amp;Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="110"/>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="115"/>
         <source>&amp;Password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="111"/>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="116"/>
         <source>Sign in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="190"/>
+        <source>User does not exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="195"/>
+        <source>Password is incorrect</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -324,66 +334,66 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="310"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="370"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="326"/>
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="388"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="406"/>
         <source>Sign in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="311"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="371"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="327"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="389"/>
         <source>Sign out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="312"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="372"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="328"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="390"/>
         <source>Sign up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="318"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="367"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="334"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="385"/>
         <source>Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="327"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="364"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="345"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="382"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="329"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="365"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="347"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="383"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="330"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="366"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="348"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="384"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="336"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="368"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="354"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="386"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="91"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="92"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="95"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="96"/>
         <source>Abort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="99"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="100"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
