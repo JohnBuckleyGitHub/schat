@@ -48,6 +48,9 @@ public:
   static bool canSignUp();
   void retranslateUi();
 
+signals:
+  void done();
+
 protected:
   void focusInEvent(QFocusEvent *event);
 
@@ -55,6 +58,7 @@ public slots:
   void reload();
 
 private slots:
+  void indexChanged(int index);
   void notify(const Notify &notify);
   void signUp();
 
