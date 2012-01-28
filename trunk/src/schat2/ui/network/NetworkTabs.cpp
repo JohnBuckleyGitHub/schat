@@ -85,8 +85,8 @@ void NetworkTabs::changeEvent(QEvent *event)
 
 void NetworkTabs::indexChanged(int index)
 {
-  if (m_signup)
-    m_signup->setSmall(indexOf(m_signup) != index);
+//  if (m_signup)
+//    m_signup->setSmall(indexOf(m_signup) != index);
 
   m_login->adjustSize();
   adjustSize();

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,14 +23,19 @@
 #include <QPushButton>
 #include <QToolButton>
 
+#include "Account.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "hooks/RegCmds.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "ui/network/SignUpWidget.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/SignUpWidget.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)
@@ -66,7 +71,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   m_progress->setMaximumSize(16, 16);
   m_progress->setVisible(false);
 
-  m_signUp = new QPushButton(SCHAT_ICON(ArrowRight), tr("Sign Up"), this);
+  m_signUp = new QPushButton(SCHAT_ICON(SignUp), tr("Sign up"), this);
   m_signUp->setEnabled(false);
 
   QHBoxLayout *nameLay = new QHBoxLayout;
@@ -89,9 +94,9 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   mainLay->addWidget(m_answerLabel, 2, 0);
   mainLay->addWidget(m_answerEdit, 2, 1);
   mainLay->addLayout(buttonLay, 2, 2);
-  mainLay->setMargin(4);
+  mainLay->setMargin(0);
 
-  setSmall();
+//  setSmall();
 
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
@@ -100,6 +105,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
 
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
   connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   retranslateUi();
 }
@@ -145,8 +151,7 @@ bool SignUpWidget::canSignUp()
   if (ChatClient::serverId() != ChatCore::networks()->selected())
     return false;
 
-  Network item = ChatCore::i()->networks()->item(ChatCore::networks()->selected());
-  if (item->isAuthorized())
+  if (!ChatClient::channel()->account()->name().isEmpty())
     return false;
 
   return true;
@@ -159,7 +164,7 @@ void SignUpWidget::retranslateUi()
   m_passwordLabel->setText(tr("Password:"));
   m_questionLabel->setText(tr("Security question:"));
   m_answerLabel->setText(tr("Answer:"));
-  m_signUp->setText(tr("Sign Up"));
+  m_signUp->setText(tr("Sign up"));
 
   m_question->setItemText(0, tr("Choose a question ..."));
   m_question->setItemText(1, tr("What is the name of your best friend from childhood?"));
@@ -170,41 +175,42 @@ void SignUpWidget::retranslateUi()
 }
 
 
-void SignUpWidget::setSmall(bool small)
+void SignUpWidget::focusInEvent(QFocusEvent *event)
 {
-  m_nameLabel->setVisible(!small);
-  m_nameEdit->setVisible(!small);
-  m_passwordLabel->setVisible(!small);
-  m_passwordEdit->setVisible(!small);
-  m_questionLabel->setVisible(!small);
-  m_question->setVisible(!small);
-  m_answerLabel->setVisible(!small);
-  m_answerEdit->setVisible(!small);
-  m_signUp->setVisible(!small);
-  adjustSize();
+  QWidget::focusInEvent(event);
+
+  m_nameEdit->setFocus();
 }
 
 
 void SignUpWidget::reload()
 {
-  m_signUp->setEnabled(ready());
+  setState(Idle);
 }
 
 
-void SignUpWidget::notice(const Notice &notice)
+void SignUpWidget::notify(const Notify &notify)
 {
-  if (notice.command() != "reg.reply")
-    return;
+  if (notify.type() == Notify::QueryError) {
+    QVariantMap data = notify.data().toMap();
+    if (data.value(LS("name")) != LS("account"))
+      return;
 
-  setState(Idle);
-  if (notice.status() == Notice::OK)
-    return;
+    if (data.value(LS("id")) != ChatClient::id())
+      return;
 
-  if (notice.status() == Notice::ObjectAlreadyExists)
-    ChatCore::makeRed(m_nameEdit);
+    setState(Idle);
 
-  m_error->setToolTip(Notice::status(notice.status()));
-  setState(Error);
+    int status = data.value(LS("status")).toInt();
+    if (status == Notice::ObjectAlreadyExists) {
+      m_error->setToolTip(tr("User is already registered"));
+      makeRed(m_nameEdit);
+    }
+    else
+      m_error->setToolTip(Notice::status(status));
+
+    setState(Error);
+  }
 }
 
 
@@ -212,14 +218,30 @@ void SignUpWidget::signUp()
 {
   setState(Progress);
 
-  QVariantMap map;
-  map["q"] = QString::number(m_question->currentIndex());
-  map["a"] = m_answerEdit->text();
-
-  QVariantMap json;
-  json["recovery"] = map;
+//  QVariantMap map;
+//  map["q"] = QString::number(m_question->currentIndex());
+//  map["a"] = m_answerEdit->text();
+//
+//  QVariantMap json;
+//  json["recovery"] = map;
 
 //  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text(), json);
+  QVariantMap data = RegCmds::request(LS("reg"), m_nameEdit->text(), m_passwordEdit->text());
+
+  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
+}
+
+
+void SignUpWidget::makeRed(QWidget *widget, bool red)
+{
+  QPalette palette = widget->palette();
+
+  if (red)
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+
+  widget->setPalette(palette);
 }
 
 
@@ -229,6 +251,7 @@ void SignUpWidget::setState(WidgetState state)
 
   if (m_state == Idle) {
     m_nameEdit->setEnabled(true);
+    makeRed(m_nameEdit, false);
     m_passwordEdit->setEnabled(true);
     m_question->setEnabled(true);
     m_answerEdit->setEnabled(true);

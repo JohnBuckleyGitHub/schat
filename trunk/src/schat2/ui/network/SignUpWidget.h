@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 #include <QWidget>
 
 class NetworkManager;
+class Notify;
 class QComboBox;
 class QLabel;
 class QLineEdit;
 class QProgressIndicator;
 class QPushButton;
 class QToolButton;
-class Notice;
 
 class SignUpWidget : public QWidget
 {
@@ -47,16 +47,19 @@ public:
   bool ready() const;
   static bool canSignUp();
   void retranslateUi();
-  void setSmall(bool small = true);
+
+protected:
+  void focusInEvent(QFocusEvent *event);
 
 public slots:
   void reload();
 
 private slots:
-  void notice(const Notice &notice);
+  void notify(const Notify &notify);
   void signUp();
 
 private:
+  void makeRed(QWidget *widget, bool red = true);
   void setState(WidgetState state);
 
   NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.

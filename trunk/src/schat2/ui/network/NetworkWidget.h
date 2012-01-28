@@ -31,6 +31,7 @@ class QMenu;
 class QToolBar;
 class QToolButton;
 class QVBoxLayout;
+class SignUpWidget;
 
 class NetworkWidget : public QWidget
 {
@@ -57,11 +58,13 @@ private slots:
   void showAccountMenu();
   void showMenu();
   void signIn();
+  void signUp();
 
 private:
   enum EditState {
     EditNone,
-    EditSignIn
+    EditSignIn,
+    EditSignUp
   };
 
   void createAccountButton();
@@ -87,6 +90,7 @@ private:
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QMenu *m_sign;                 ///< Меню действий над аккаунтом.
   QPointer<LoginWidget> m_login; ///< Виджет авторизации.
+  QPointer<SignUpWidget> m_reg;  ///< Виджет регистрации.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
   QToolButton *m_account;        ///< Кнопка аккаунта.
   QToolButton *m_actions;        ///< Кнопка дополнительных действий.
