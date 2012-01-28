@@ -69,6 +69,8 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
     feed();
   else if (cmd == LS("headers"))
     headers();
+  else if (cmd == LS("query"))
+    query();
   else if (cmd == LS("reply"))
     reply();
 }
@@ -129,6 +131,24 @@ void ClientFeedsImpl::headers()
     return;
 
   get(m_channel->id(), unsynced(m_channel, feeds));
+}
+
+
+void ClientFeedsImpl::query()
+{
+  QString name = m_packet->text();
+  if (name.isEmpty())
+    return;
+
+  if (m_packet->status() == Notice::OK)
+    return;
+
+  QVariantMap data;
+  data[LS("id")]     = m_channel->id();
+  data[LS("name")]   = name;
+  data[LS("data")]   = m_packet->json();
+  data[LS("status")] = m_packet->status();
+  ChatNotify::start(Notify::QueryError, data);
 }
 
 

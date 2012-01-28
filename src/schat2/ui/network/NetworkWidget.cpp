@@ -28,6 +28,7 @@
 #include <QToolBar>
 #include <QToolButton>
 
+#include "Account.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
@@ -201,6 +202,8 @@ void NetworkWidget::edit()
   if (!item->isValid())
     return;
 
+  setEditState(EditNone);
+
   m_editing = item->id();
   m_combo->setItemText(index, item->url());
   m_combo->setEditable(true);
@@ -227,7 +230,7 @@ void NetworkWidget::indexChanged(int index)
   }
 
   m_manager->setSelected(id);
-
+  setEditState(EditNone);
   reload();
 }
 
@@ -266,6 +269,10 @@ void NetworkWidget::notify(const Notify &notify)
 void NetworkWidget::reload()
 {
   connectAction();
+
+  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
+  if (m_account->isEnabled() && m_manager->selected() != ChatClient::serverId())
+    m_account->setEnabled(false);
 }
 
 
@@ -284,6 +291,15 @@ void NetworkWidget::remove()
 
   if (!m_combo->count())
     add();
+}
+
+
+void NetworkWidget::showAccountMenu()
+{
+  bool account = !ChatClient::channel()->account()->name().isEmpty();
+  m_signIn->setVisible(!account);
+  m_signOut->setVisible(account);
+  m_signUp->setVisible(!account);
 }
 
 
@@ -316,6 +332,8 @@ void NetworkWidget::createAccountButton()
   m_account->setMenu(m_sign);
   m_account->setPopupMode(QToolButton::InstantPopup);
   m_account->setToolTip(tr("Account"));
+
+  connect(m_sign, SIGNAL(aboutToShow()), SLOT(showAccountMenu()));
 }
 
 

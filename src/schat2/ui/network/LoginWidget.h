@@ -22,7 +22,7 @@
 #include <QWidget>
 
 class NetworkManager;
-class Notice;
+class Notify;
 class QLabel;
 class QLineEdit;
 class QProgressIndicator;
@@ -45,10 +45,12 @@ protected:
 private slots:
   void editingFinished();
   void login();
-  void notice(const Notice &notice);
+  void notify(const Notify &notify);
   void textChanged();
 
 private:
+  void makeRed(QWidget *widget, bool red = true);
+
   NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
   QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
   QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
