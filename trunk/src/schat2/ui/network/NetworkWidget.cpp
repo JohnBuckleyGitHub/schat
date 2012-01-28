@@ -22,6 +22,7 @@
 #include <QEvent>
 #include <QGridLayout>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QMenu>
 #include <QTimer>
 #include <QToolBar>
@@ -35,11 +36,13 @@
 #include "NetworkManager.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
-  , m_manager(ChatCore::i()->networks())
+  , m_editState(EditNone)
+  , m_manager(ChatCore::networks())
 {
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
@@ -54,12 +57,20 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
   m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
-  QGridLayout *mainLay = new QGridLayout(this);
+  m_title = new QLabel(this);
+  m_title->setVisible(false);
+
+  QGridLayout *mainLay = new QGridLayout();
   mainLay->addWidget(m_combo, 0, 0);
   mainLay->addWidget(m_toolBar, 0, 1);
   mainLay->setColumnStretch(0, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
+
+  m_mainLayout = new QVBoxLayout(this);
+  m_mainLayout->addItem(mainLay);
+  m_mainLayout->addWidget(m_title);
+  m_mainLayout->setMargin(0);
 
   load();
 
@@ -286,11 +297,17 @@ void NetworkWidget::showMenu()
 }
 
 
+void NetworkWidget::signIn()
+{
+  setEditState(EditSignIn);
+}
+
+
 void NetworkWidget::createAccountButton()
 {
   m_sign = new QMenu(this);
 
-  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(edit()));
+  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
   m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(edit()));
   m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(edit()));
 
@@ -349,6 +366,49 @@ void NetworkWidget::retranslateUi()
   m_remove->setText(tr("Remove"));
   m_account->setToolTip(tr("Account"));
   m_actions->setToolTip(tr("Actions"));
+
+  m_signIn->setText(tr("Sign in"));
+  m_signOut->setText(tr("Sign out"));
+  m_signUp->setText(tr("Sign up"));
+}
+
+
+void NetworkWidget::setEditState(EditState state)
+{
+  if (m_editState == state)
+    return;
+
+  if (state != EditNone)
+    setEditState(EditNone);
+
+  if (state == EditSignIn) {
+    if (m_login)
+      return;
+
+    setTitle(tr("Sign in"));
+
+    m_login = new LoginWidget(this);
+    m_mainLayout->addWidget(m_login);
+
+    QTimer::singleShot(0, m_login, SLOT(setFocus()));
+  }
+  else {
+    if (m_login) {
+      m_mainLayout->removeWidget(m_login);
+      m_login->deleteLater();
+    }
+
+    m_title->setVisible(false);
+  }
+
+  m_editState = state;
+}
+
+
+void NetworkWidget::setTitle(const QString &title)
+{
+  m_title->setText(LS("<b>") + title + LS("</b>"));
+  m_title->setVisible(true);
 }
 
 
