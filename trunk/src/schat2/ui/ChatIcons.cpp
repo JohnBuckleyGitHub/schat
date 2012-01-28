@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include <QPainter>
 
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
-
 
 QMap<int, QString> ChatIcons::m_icons;
 
@@ -30,30 +30,30 @@ QMap<int, QString> ChatIcons::m_icons;
  */
 QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
-  QString file = ":/images/channel.png";
+  QString file = LS(":/images/channel.png");
 
   if (channel->type() != SimpleID::ChannelId) {
-    file = ":/images/user";
+    file = LS(":/images/user");
     int gender = channel->gender().value();
     int color  = channel->gender().color();
 
     if (gender == Gender::Unknown) {
-      file += "-unknown";
+      file += LS("-unknown");
     }
     else if (gender == Gender::Ghost) {
-      file += "-ghost";
+      file += LS("-ghost");
     }
     else if (gender == Gender::Bot) {
-      file += "-bot";
+      file += LS("-bot");
     }
     else if (color != Gender::Default) {
-      file += "-" + Gender::colorToString(color);
+      file += LS("-") + Gender::colorToString(color);
     }
 
     if (gender == Gender::Female)
-      file += "-female";
+      file += LS("-female");
 
-    file += ".png";
+    file += LS(".png");
   }
 
   if (options & OfflineStatus && channel->status().value() == Status::Offline && !(options & Statuses))
@@ -113,9 +113,9 @@ QIcon ChatIcons::icon(const QString &file, const QString &overlay)
 QIcon ChatIcons::icon(int name)
 {
   if (!m_icons.contains(name))
-    return QIcon(":/webkit/resources/missingImage.png");
+    return QIcon(LS(":/webkit/resources/missingImage.png"));
 
-  return QIcon(":/images/" + m_icons.value(name) + ".png");
+  return QIcon(LS(":/images/") + m_icons.value(name) + LS(".png"));
 }
 
 
@@ -125,11 +125,11 @@ QIcon ChatIcons::icon(int name)
 QString ChatIcons::overlay(int status)
 {
   if (status == Status::Away || status == Status::AutoAway)
-    return ":/images/away-small.png";
+    return LS(":/images/away-small.png");
   else if (status == Status::DnD)
-    return ":/images/dnd-small.png";
+    return LS(":/images/dnd-small.png");
   else if (status == Status::FreeForChat)
-    return ":/images/ffc-small.png";
+    return LS(":/images/ffc-small.png");
   else
     return QString();
 }
@@ -137,43 +137,46 @@ QString ChatIcons::overlay(int status)
 
 void ChatIcons::init()
 {
-  m_icons[Channel]        = "channel";
-  m_icons[ChannelAlert]   = "channel-alert";
-  m_icons[Gear]           = "gear";
-  m_icons[MainTabMenu]    = "main-tab-menu";
-  m_icons[NetworkError]   = "network-error";
-  m_icons[NetworkOffline] = "offline";
-  m_icons[NetworkOnline]  = "online";
-  m_icons[Connect]        = "plug";
-  m_icons[Disconnect]     = "plug-disconnect";
-  m_icons[Quit]           = "quit";
-  m_icons[Secure]         = "secure";
-  m_icons[Settings]       = "settings";
-  m_icons[Sound]          = "sound";
-  m_icons[SoundMute]      = "sound_mute";
-  m_icons[Users]          = "users";
-  m_icons[SmallLogo]      = "schat16";
-  m_icons[SmallLogoNY]    = "schat16-ny";
-  m_icons[TextBold]       = "text-bold";
-  m_icons[TextItalic]     = "text-italic";
-  m_icons[TextStrike]     = "text-strikethrough";
-  m_icons[TextUnderline]  = "text-underline";
-  m_icons[Send]           = "send";
-  m_icons[Globe]          = "globe";
-  m_icons[Add]            = "add";
-  m_icons[Remove]         = "remove";
-  m_icons[Profile]        = "profile";
-  m_icons[OK]             = "ok";
-  m_icons[InfoBalloon]    = "information-balloon";
-  m_icons[EditClear]      = "edit-clear";
-  m_icons[EditCopy]       = "edit-copy";
-  m_icons[EditCut]        = "edit-cut";
-  m_icons[EditPaste]      = "edit-paste";
-  m_icons[EditSelectAll]  = "edit-select-all";
-  m_icons[Balloon]        = "balloon";
-  m_icons[Slash]          = "slash";
-  m_icons[TopicEdit]      = "topic-edit";
-  m_icons[Key]            = "key";
-  m_icons[ExclamationRed] = "exclamation-red";
-  m_icons[ArrowRight]     = "arrow-right";
+  m_icons[Channel]        = LS("channel");
+  m_icons[ChannelAlert]   = LS("channel-alert");
+  m_icons[Gear]           = LS("gear");
+  m_icons[MainTabMenu]    = LS("main-tab-menu");
+  m_icons[NetworkError]   = LS("network-error");
+  m_icons[NetworkOffline] = LS("offline");
+  m_icons[NetworkOnline]  = LS("online");
+  m_icons[Connect]        = LS("plug");
+  m_icons[Disconnect]     = LS("plug-disconnect");
+  m_icons[Quit]           = LS("quit");
+  m_icons[Secure]         = LS("secure");
+  m_icons[Settings]       = LS("settings");
+  m_icons[Sound]          = LS("sound");
+  m_icons[SoundMute]      = LS("sound_mute");
+  m_icons[Users]          = LS("users");
+  m_icons[SmallLogo]      = LS("schat16");
+  m_icons[SmallLogoNY]    = LS("schat16-ny");
+  m_icons[TextBold]       = LS("text-bold");
+  m_icons[TextItalic]     = LS("text-italic");
+  m_icons[TextStrike]     = LS("text-strikethrough");
+  m_icons[TextUnderline]  = LS("text-underline");
+  m_icons[Send]           = LS("send");
+  m_icons[Globe]          = LS("globe");
+  m_icons[Add]            = LS("add");
+  m_icons[Remove]         = LS("remove");
+  m_icons[Profile]        = LS("profile");
+  m_icons[OK]             = LS("ok");
+  m_icons[InfoBalloon]    = LS("information-balloon");
+  m_icons[EditClear]      = LS("edit-clear");
+  m_icons[EditCopy]       = LS("edit-copy");
+  m_icons[EditCut]        = LS("edit-cut");
+  m_icons[EditPaste]      = LS("edit-paste");
+  m_icons[EditSelectAll]  = LS("edit-select-all");
+  m_icons[Balloon]        = LS("balloon");
+  m_icons[Slash]          = LS("slash");
+  m_icons[TopicEdit]      = LS("topic-edit");
+  m_icons[Key]            = LS("key");
+  m_icons[ExclamationRed] = LS("exclamation-red");
+  m_icons[ArrowRight]     = LS("arrow-right");
+  m_icons[SignIn]         = LS("sign-in");
+  m_icons[SignOut]        = LS("sign-out");
+  m_icons[SignUp]         = LS("sign-up");
 }

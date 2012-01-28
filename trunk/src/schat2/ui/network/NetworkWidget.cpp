@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 
@@ -32,8 +33,9 @@
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
-#include "ui/network/NetworkWidget.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/NetworkWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
@@ -42,24 +44,15 @@ NetworkWidget::NetworkWidget(QWidget *parent)
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
 
-  m_menu = new QMenu(this);
-  connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
-  m_connectAction = m_menu->addAction("", this, SLOT(open()));
-  m_menu->addSeparator();
-  m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
-  m_menu->addSeparator();
-  m_addAction = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), this, SLOT(add()));
-  m_removeAction = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), this, SLOT(remove()));
-
-  m_config = new QToolButton(this);
-  m_config->setIcon(SCHAT_ICON(Gear));
-  m_config->setMenu(m_menu);
-  m_config->setPopupMode(QToolButton::InstantPopup);
+  createActionsButton();
+  createAccountButton();
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
-  m_toolBar->addWidget(m_config);
-  m_toolBar->setStyleSheet(QLatin1String("QToolBar { margin:0px; border:0px; }"));
+  m_toolBar->addWidget(m_actions);
+  m_toolBar->addWidget(m_account);
+  m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
+  m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_combo, 0, 0);
@@ -72,6 +65,9 @@ NetworkWidget::NetworkWidget(QWidget *parent)
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
+
+  connectAction();
 }
 
 
@@ -80,19 +76,19 @@ QAction *NetworkWidget::connectAction()
   int state = m_manager->isSelectedActive();
 
   if (state == 1) {
-    m_connectAction->setIcon(SCHAT_ICON(Disconnect));
-    m_connectAction->setText(tr("Disconnect"));
+    m_connect->setIcon(SCHAT_ICON(Disconnect));
+    m_connect->setText(tr("Disconnect"));
   }
   else if (state == 2) {
-    m_connectAction->setIcon(SCHAT_ICON(Disconnect));
-    m_connectAction->setText(tr("Abort"));
+    m_connect->setIcon(SCHAT_ICON(Disconnect));
+    m_connect->setText(tr("Abort"));
   }
   else {
-    m_connectAction->setIcon(SCHAT_ICON(Connect));
-    m_connectAction->setText(tr("Connect"));
+    m_connect->setIcon(SCHAT_ICON(Connect));
+    m_connect->setText(tr("Connect"));
   }
 
-  return m_connectAction;
+  return m_connect;
 }
 
 
@@ -175,8 +171,8 @@ int NetworkWidget::add(const QString &url)
   if (m_combo->currentIndex() != index)
     m_combo->setCurrentIndex(index);
 
-  m_combo->setFocus();
   m_combo->setEditable(true);
+  QTimer::singleShot(0, m_combo, SLOT(setFocus()));
   return index;
 }
 
@@ -220,6 +216,8 @@ void NetworkWidget::indexChanged(int index)
   }
 
   m_manager->setSelected(id);
+
+  reload();
 }
 
 
@@ -254,6 +252,12 @@ void NetworkWidget::notify(const Notify &notify)
 }
 
 
+void NetworkWidget::reload()
+{
+  connectAction();
+}
+
+
 /*!
  * Удаление сервера.
  */
@@ -279,9 +283,42 @@ void NetworkWidget::showMenu()
     m_edit->setVisible(false);
   else
     m_edit->setVisible(true);
+}
 
-  QByteArray id = m_combo->itemData(index).toByteArray();
-  connectAction();
+
+void NetworkWidget::createAccountButton()
+{
+  m_sign = new QMenu(this);
+
+  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(edit()));
+  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(edit()));
+  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(edit()));
+
+  m_account = new QToolButton(this);
+  m_account->setIcon(SCHAT_ICON(Key));
+  m_account->setMenu(m_sign);
+  m_account->setPopupMode(QToolButton::InstantPopup);
+  m_account->setToolTip(tr("Account"));
+}
+
+
+void NetworkWidget::createActionsButton()
+{
+  m_menu = new QMenu(this);
+
+  m_menu->addSeparator();
+  m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
+  m_menu->addSeparator();
+  m_add = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), this, SLOT(add()));
+  m_remove = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), this, SLOT(remove()));
+
+  m_actions = new QToolButton(this);
+  m_actions->setIcon(SCHAT_ICON(Gear));
+  m_actions->setMenu(m_menu);
+  m_actions->setPopupMode(QToolButton::InstantPopup);
+  m_actions->setToolTip(tr("Actions"));
+
+  connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
 }
 
 
@@ -308,8 +345,10 @@ void NetworkWidget::load()
 void NetworkWidget::retranslateUi()
 {
   m_edit->setText(tr("Edit"));
-  m_addAction->setText(tr("Add"));
-  m_removeAction->setText(tr("Remove"));
+  m_add->setText(tr("Add"));
+  m_remove->setText(tr("Remove"));
+  m_account->setToolTip(tr("Account"));
+  m_actions->setToolTip(tr("Actions"));
 }
 
 
