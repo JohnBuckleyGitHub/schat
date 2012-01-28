@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@
 #include "ChatUrls.h"
 #include "ui/fields/GenderField.h"
 #include "ui/fields/NickEdit.h"
-#include "ui/network/NetworkEditor.h"
+#include "ui/network/NetworkWidget.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 #include "ui/ChatIcons.h"
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
   : QWidget(parent)
-  , m_settings(ChatCore::i()->settings())
+  , m_settings(ChatCore::settings())
   , m_icon(icon)
   , m_id(id)
 {
@@ -48,7 +48,7 @@ AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id,
 
 AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
   : QWidget(parent)
-  , m_settings(ChatCore::i()->settings())
+  , m_settings(ChatCore::settings())
 {
 }
 
@@ -93,7 +93,7 @@ NetworkPage::NetworkPage(QWidget *parent)
   : AbstractSettingsPage(SCHAT_ICON(Globe), "network", parent)
 {
   m_networkLabel = new QLabel(this);
-  m_network = new NetworkEditor(this);
+  m_network = new NetworkWidget(this);
 
   QVBoxLayout *networkLay = new QVBoxLayout;
   networkLay->addWidget(m_network);

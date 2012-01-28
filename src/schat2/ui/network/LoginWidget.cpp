@@ -186,16 +186,18 @@ void LoginWidget::notify(const Notify &notify)
     m_error->setVisible(true);
 
     int status = data.value(LS("status")).toInt();
-    m_error->setToolTip(Notice::status(status));
-
     if (status == Notice::NotFound) {
+      m_error->setToolTip(tr("User does not exist"));
       makeRed(m_nameEdit);
       m_nameEdit->setFocus();
     }
     else if (status == Notice::Forbidden) {
+      m_error->setToolTip(tr("Password is incorrect"));
       makeRed(m_passwordEdit);
       m_passwordEdit->setFocus();
     }
+    else
+      m_error->setToolTip(Notice::status(status));
   }
 }
 
