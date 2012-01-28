@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -70,7 +70,10 @@ public:
     TopicEdit          = 0x5445, ///< "TE"
     Key                = 0x4B65, ///< "Ke"
     ExclamationRed     = 0x4552, ///< "ER"
-    ArrowRight         = 0x4152  ///< "AR"
+    ArrowRight         = 0x4152, ///< "AR"
+    SignIn             = 0x5349, ///< "SI"
+    SignOut            = 0x534F, ///< "SO"
+    SignUp             = 0x5355  ///< "SU"
   };
 
   /// Опции получения иконки канала.

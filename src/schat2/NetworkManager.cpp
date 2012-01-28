@@ -19,6 +19,7 @@
 #include <QFile>
 #include <QDir>
 
+#include "Account.h"
 #include "ChatCore.h"
 #include "ChatHooks.h"
 #include "ChatNotify.h"
@@ -66,11 +67,11 @@ NetworkItem* NetworkItem::item()
   SimpleClient *client = ChatClient::io();
   NetworkItem *item = new NetworkItem(ChatClient::serverId());
 
-  item->m_name = ChatClient::serverName();
-  item->m_url = client->url().toString();
-  item->m_cookie = client->cookie();
-  item->m_userId = client->channelId();
-//  item.m_account = client->user()->account();
+  item->m_name    = ChatClient::serverName();
+  item->m_url     = client->url().toString();
+  item->m_cookie  = client->cookie();
+  item->m_userId  = client->channelId();
+  item->m_account = ChatClient::channel()->account()->name();
 
   if (!item->m_account.isEmpty())
     item->m_authorized = true;

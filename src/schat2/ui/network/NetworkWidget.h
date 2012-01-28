@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,28 +44,36 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  int add(const QString &url = "schat://");
+  int add(const QString &url = QLatin1String("schat://"));
   void edit();
   void indexChanged(int index);
   void notify(const Notify &notify);
+  void reload();
   void remove();
   void showMenu();
 
 private:
+  void createAccountButton();
+  void createActionsButton();
   void load();
   void retranslateUi();
   void updateIndex();
 
   NetworkManager *m_manager; ///< Указатель на менеджер сетевых подключений.
-  QAction *m_addAction;
-  QAction *m_connectAction;
-  QAction *m_edit;
-  QAction *m_removeAction;
-  QByteArray m_editing;     ///< Идентификатор редактируемой сети.
-  QComboBox *m_combo;
-  QMenu *m_menu;
-  QToolBar *m_toolBar;
-  QToolButton *m_config;
+  QAction *m_add;            ///< Действие для добавления сервера.
+  QAction *m_connect;        ///< Действие для подключения или отключения от сервера.
+  QAction *m_edit;           ///< Действие для редактирования текущего подключения.
+  QAction *m_remove;         ///< Действие для удаления сервера.
+  QAction *m_signIn;         ///< Действие для авторизации на сервере.
+  QAction *m_signOut;        ///< Действие для выхода из текущей учётной записи.
+  QAction *m_signUp;         ///< Действие для регистрации на сервере.
+  QByteArray m_editing;      ///< Идентификатор редактируемой сети.
+  QComboBox *m_combo;        ///< Комбобокс выбора серверов.
+  QMenu *m_menu;             ///< Меню дополнительных действий.
+  QMenu *m_sign;             ///< Меню действий над аккаунтом.
+  QToolBar *m_toolBar;       ///< Тулбар для размещения основных действий.
+  QToolButton *m_account;    ///< Кнопка аккаунта.
+  QToolButton *m_actions;    ///< Кнопка дополнительных действий.
 };
 
 #endif /* NETWORKWIDGET_H_ */

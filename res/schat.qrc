@@ -1,8 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.min.css</file>
-  <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
+  <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/ui.css">html/css/ui.min.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/arrow-right.png">images/silk/resultset_next.png</file>
@@ -39,6 +39,9 @@
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
+  <file alias="images/sign-in.png">images/essen/sign-in.png</file>
+  <file alias="images/sign-out.png">images/essen/sign-out.png</file>
+  <file alias="images/sign-up.png">images/essen/sign-up.png</file>
   <file alias="images/slash.png">images/fugue/slash.png</file>
   <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
   <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
