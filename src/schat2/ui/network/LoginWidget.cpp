@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,28 +23,34 @@
 #include <QLineEdit>
 #include <QToolButton>
 
+#include "Account.h"
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "hooks/RegCmds.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "ui/network/LoginWidget.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/LoginWidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
   , m_manager(ChatCore::i()->networks())
 {
-  m_nameLabel = new QLabel(this);
   m_nameEdit = new QLineEdit(this);
+  m_nameLabel = new QLabel(this);
+  m_nameLabel->setBuddy(m_nameEdit);
 
-  m_passwordLabel = new QLabel(this);
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
+  m_passwordLabel = new QLabel(this);
+  m_passwordLabel->setBuddy(m_passwordEdit);
 
   m_login = new QToolButton(this);
-  m_login->setIcon(SCHAT_ICON(Key));
+  m_login->setIcon(SCHAT_ICON(OK));
   m_login->setAutoRaise(true);
 
   m_error = new QToolButton(this);
@@ -65,7 +71,7 @@ LoginWidget::LoginWidget(QWidget *parent)
   mainLay->addWidget(m_login);
   mainLay->addWidget(m_error);
   mainLay->addWidget(m_progress);
-  mainLay->setMargin(4);
+  mainLay->setMargin(0);
 
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(m_nameEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
@@ -85,20 +91,14 @@ LoginWidget::LoginWidget(QWidget *parent)
  */
 bool LoginWidget::canLogIn() const
 {
-  QVariant selected = ChatCore::i()->networks()->selected();
-
-  if (selected.type() != QVariant::ByteArray)
-    return false;
-
-  QByteArray id = selected.toByteArray();
-  if (ChatClient::serverId() != id)
-    return false;
-
   if (ChatClient::state() != ChatClient::Online)
     return false;
 
-//  if (!client->user()->account().isEmpty())
-//    return false;
+  if (ChatClient::serverId() != ChatCore::networks()->selected())
+    return false;
+
+  if (!ChatClient::channel()->account()->name().isEmpty())
+    return false;
 
   return true;
 }
@@ -106,9 +106,9 @@ bool LoginWidget::canLogIn() const
 
 void LoginWidget::retranslateUi()
 {
-  m_nameLabel->setText(tr("Name:"));
-  m_passwordLabel->setText(tr("Password:"));
-  m_login->setToolTip(tr("Log In"));
+  m_nameLabel->setText(tr("&Name:"));
+  m_passwordLabel->setText(tr("&Password:"));
+  m_login->setToolTip(tr("Sign in"));
 }
 
 
@@ -125,6 +125,14 @@ void LoginWidget::reload()
 }
 
 
+void LoginWidget::focusInEvent(QFocusEvent *event)
+{
+  QWidget::focusInEvent(event);
+
+  m_nameEdit->setFocus();
+}
+
+
 void LoginWidget::showEvent(QShowEvent *event)
 {
   m_login->setMaximumHeight(m_passwordEdit->height());
@@ -137,8 +145,11 @@ void LoginWidget::showEvent(QShowEvent *event)
 void LoginWidget::editingFinished()
 {
   Network item = m_manager->item(m_manager->selected());
-  item->setAccount(m_nameEdit->text());
-  item->setPassword(m_passwordEdit->text());
+
+  if (ChatClient::serverId() != item->id()) {
+    item->setAccount(m_nameEdit->text());
+    item->setPassword(m_passwordEdit->text());
+  }
 }
 
 
@@ -148,7 +159,7 @@ void LoginWidget::login()
   m_progress->setVisible(true);
   m_login->setVisible(false);
 
-//  ChatCore::i()->adapter()->login("login", m_nameEdit->text(), m_passwordEdit->text());
+  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), RegCmds::request(LS("login"), m_nameEdit->text(), m_passwordEdit->text()));
 }
 
 
