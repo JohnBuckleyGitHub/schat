@@ -25,6 +25,7 @@
 
 #include "Account.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
@@ -50,8 +51,9 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_passwordLabel->setBuddy(m_passwordEdit);
 
   m_login = new QToolButton(this);
-  m_login->setIcon(SCHAT_ICON(OK));
+  m_login->setIcon(SCHAT_ICON(SignIn));
   m_login->setAutoRaise(true);
+  m_login->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
   m_error = new QToolButton(this);
   m_error->setIcon(SCHAT_ICON(ExclamationRed));
@@ -75,11 +77,14 @@ LoginWidget::LoginWidget(QWidget *parent)
 
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(m_nameEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+  connect(m_nameEdit, SIGNAL(returnPressed()), SLOT(login()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(m_passwordEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+  connect(m_passwordEdit, SIGNAL(returnPressed()), SLOT(login()));
 
   connect(m_login, SIGNAL(clicked()), SLOT(login()));
   connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   textChanged();
   retranslateUi();
@@ -108,7 +113,8 @@ void LoginWidget::retranslateUi()
 {
   m_nameLabel->setText(tr("&Name:"));
   m_passwordLabel->setText(tr("&Password:"));
-  m_login->setToolTip(tr("Sign in"));
+  m_login->setText(tr("Sign in"));
+  m_login->setToolTip(m_login->text());
 }
 
 
@@ -155,6 +161,9 @@ void LoginWidget::editingFinished()
 
 void LoginWidget::login()
 {
+  if (!m_login->isVisible())
+    return;
+
   m_progress->startAnimation();
   m_progress->setVisible(true);
   m_login->setVisible(false);
@@ -163,25 +172,31 @@ void LoginWidget::login()
 }
 
 
-void LoginWidget::notice(const Notice &notice)
+void LoginWidget::notify(const Notify &notify)
 {
-  if (notice.command() != "login.reply")
-    return;
+  if (notify.type() == Notify::QueryError) {
+    QVariantMap data = notify.data().toMap();
+    if (data.value(LS("name")) != LS("account"))
+      return;
 
-  m_progress->setVisible(false);
+    if (data.value(LS("id")) != ChatClient::id())
+      return;
 
-  if (notice.status() == Notice::OK) {
-    reload();
-    return;
+    m_progress->setVisible(false);
+    m_error->setVisible(true);
+
+    int status = data.value(LS("status")).toInt();
+    m_error->setToolTip(Notice::status(status));
+
+    if (status == Notice::NotFound) {
+      makeRed(m_nameEdit);
+      m_nameEdit->setFocus();
+    }
+    else if (status == Notice::Forbidden) {
+      makeRed(m_passwordEdit);
+      m_passwordEdit->setFocus();
+    }
   }
-
-  m_error->setVisible(true);
-  m_error->setToolTip(Notice::status(notice.status()));
-
-  if (notice.status() == Notice::ObjectNotExists)
-    ChatCore::makeRed(m_nameEdit);
-  else if (notice.status() == Notice::Forbidden)
-    ChatCore::makeRed(m_passwordEdit);
 }
 
 
@@ -194,6 +209,19 @@ void LoginWidget::textChanged()
 
   m_error->setVisible(false);
 
-  ChatCore::makeRed(m_nameEdit, false);
-  ChatCore::makeRed(m_passwordEdit, false);
+  makeRed(m_nameEdit, false);
+  makeRed(m_passwordEdit, false);
+}
+
+
+void LoginWidget::makeRed(QWidget *widget, bool red)
+{
+  QPalette palette = widget->palette();
+
+  if (red)
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+
+  widget->setPalette(palette);
 }

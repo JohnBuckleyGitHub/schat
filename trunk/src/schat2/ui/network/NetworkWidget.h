@@ -54,6 +54,7 @@ private slots:
   void notify(const Notify &notify);
   void reload();
   void remove();
+  void showAccountMenu();
   void showMenu();
   void signIn();
 

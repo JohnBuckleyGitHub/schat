@@ -46,7 +46,8 @@ public:
     ShowID           = 0x5349, ///< "SI" Отобразить идентификатор канала.
     ServerRenamed    = 0x5352, ///< "SR" Сервер сменил имя.
     FeedData         = 0x4644, ///< "FD" Полученные данные фида.
-    FeedReply        = 0x4652  ///< "FR" Успешный ответ на запрос к фиду.
+    FeedReply        = 0x4652, ///< "FR" Успешный ответ на запрос к фиду.
+    QueryError       = 0x5145  ///< "QE" Ошибка запроса к фиду.
   };
 
   Notify(int type, const QVariant &data = QVariant())
