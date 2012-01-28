@@ -83,7 +83,6 @@ LoginWidget::LoginWidget(QWidget *parent)
   connect(m_passwordEdit, SIGNAL(returnPressed()), SLOT(login()));
 
   connect(m_login, SIGNAL(clicked()), SLOT(login()));
-  connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   textChanged();

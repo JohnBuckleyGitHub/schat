@@ -39,6 +39,7 @@
 #include "ui/ChatIcons.h"
 #include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkWidget.h"
+#include "ui/network/SignUpWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent)
   : QWidget(parent)
@@ -319,13 +320,19 @@ void NetworkWidget::signIn()
 }
 
 
+void NetworkWidget::signUp()
+{
+  setEditState(EditSignUp);
+}
+
+
 void NetworkWidget::createAccountButton()
 {
   m_sign = new QMenu(this);
 
   m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
   m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(edit()));
-  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(edit()));
+  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(signUp()));
 
   m_account = new QToolButton(this);
   m_account->setIcon(SCHAT_ICON(Key));
@@ -410,10 +417,26 @@ void NetworkWidget::setEditState(EditState state)
 
     QTimer::singleShot(0, m_login, SLOT(setFocus()));
   }
+  else if (state == EditSignUp) {
+    if (m_reg)
+      return;
+
+    setTitle(tr("Sign up"));
+
+    m_reg = new SignUpWidget(this);
+    m_mainLayout->addWidget(m_reg);
+
+    QTimer::singleShot(0, m_reg, SLOT(setFocus()));
+  }
   else {
     if (m_login) {
       m_mainLayout->removeWidget(m_login);
       m_login->deleteLater();
+    }
+
+    if (m_reg) {
+      m_mainLayout->removeWidget(m_reg);
+      m_reg->deleteLater();
     }
 
     m_title->setVisible(false);
