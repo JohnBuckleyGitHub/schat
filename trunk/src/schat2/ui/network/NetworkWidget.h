@@ -59,6 +59,7 @@ private slots:
   void showMenu();
   void signIn();
   void signUp();
+  void signUpDone();
 
 private:
   enum EditState {

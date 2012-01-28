@@ -31,6 +31,7 @@
 #include "client/SimpleClient.h"
 #include "hooks/RegCmds.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "sglobal.h"
@@ -39,7 +40,7 @@
 
 SignUpWidget::SignUpWidget(QWidget *parent)
   : QWidget(parent)
-  , m_manager(ChatCore::i()->networks())
+  , m_manager(ChatCore::networks())
   , m_state(Idle)
 {
   m_nameLabel = new QLabel(this);
@@ -51,6 +52,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
 
   m_questionLabel = new QLabel(this);
   m_question = new QComboBox(this);
+  m_question->addItem("");
   m_question->addItem("");
   m_question->addItem("");
   m_question->addItem("");
@@ -96,15 +98,12 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   mainLay->addLayout(buttonLay, 2, 2);
   mainLay->setMargin(0);
 
-//  setSmall();
-
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_answerEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
-  connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(reload()));
+  connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
 
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
-  connect(ChatClient::io(), SIGNAL(notice(const Notice &)), SLOT(notice(const Notice &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   retranslateUi();
@@ -172,6 +171,7 @@ void SignUpWidget::retranslateUi()
   m_question->setItemText(3, tr("What is the name of your manager at your first job?"));
   m_question->setItemText(4, tr("What was your first phone number?"));
   m_question->setItemText(5, tr("What is your vehicle registration number?"));
+  m_question->setItemText(6, tr("My own question"));
 }
 
 
@@ -186,6 +186,21 @@ void SignUpWidget::focusInEvent(QFocusEvent *event)
 void SignUpWidget::reload()
 {
   setState(Idle);
+}
+
+
+void SignUpWidget::indexChanged(int index)
+{
+  reload();
+
+  if (index == 6) {
+    m_question->setEditable(true);
+    QLineEdit *edit = m_question->lineEdit();
+    if (edit)
+      edit->selectAll();
+  }
+  else
+    m_question->setEditable(false);
 }
 
 
@@ -211,6 +226,21 @@ void SignUpWidget::notify(const Notify &notify)
 
     setState(Error);
   }
+  else if (notify.type() == Notify::FeedReply) {
+    QVariantMap data = notify.data().toMap();
+    if (data.value(LS("name")) != LS("account"))
+      return;
+
+    if (data.value(LS("id")) != ChatClient::id())
+      return;
+
+    if (data.value(LS("data")).toMap().value(LS("action")) != LS("reg"))
+      return;
+
+    m_progress->setVisible(false);
+    m_progress->stopAnimation();
+    emit done();
+  }
 }
 
 
@@ -218,15 +248,10 @@ void SignUpWidget::signUp()
 {
   setState(Progress);
 
-//  QVariantMap map;
-//  map["q"] = QString::number(m_question->currentIndex());
-//  map["a"] = m_answerEdit->text();
-//
-//  QVariantMap json;
-//  json["recovery"] = map;
-
-//  ChatCore::i()->adapter()->login("reg", m_nameEdit->text(), m_passwordEdit->text(), json);
   QVariantMap data = RegCmds::request(LS("reg"), m_nameEdit->text(), m_passwordEdit->text());
+
+  data[LS("q")] = SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId);
+  data[LS("a")] = SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId);
 
   ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
 }

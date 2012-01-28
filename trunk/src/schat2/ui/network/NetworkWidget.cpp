@@ -326,6 +326,12 @@ void NetworkWidget::signUp()
 }
 
 
+void NetworkWidget::signUpDone()
+{
+  setEditState(EditNone);
+}
+
+
 void NetworkWidget::createAccountButton()
 {
   m_sign = new QMenu(this);
@@ -424,6 +430,7 @@ void NetworkWidget::setEditState(EditState state)
     setTitle(tr("Sign up"));
 
     m_reg = new SignUpWidget(this);
+    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
     m_mainLayout->addWidget(m_reg);
 
     QTimer::singleShot(0, m_reg, SLOT(setFocus()));

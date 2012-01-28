@@ -29,7 +29,7 @@
 #ifndef LINEEDIT_H
 #define LINEEDIT_H
 
-#include <qlineedit.h>
+#include <QLineEdit>
 
 class QHBoxLayout;
 
