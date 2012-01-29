@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -105,10 +105,6 @@ void NetworkEditor::reload()
 
   m_tabs->reload();
   m_anonymous->setEnabled(true);
-
-  Network item = m_manager->item(m_manager->selected());
-  m_anonymous->setEnabled(!item->isAuthorized());
-  m_anonymous->setChecked(item->account().isEmpty());
 }
 
 

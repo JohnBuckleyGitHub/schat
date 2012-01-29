@@ -32,14 +32,12 @@
 #include "sglobal.h"
 
 NetworkItem::NetworkItem()
-  : m_authorized(false)
 {
 }
 
 
 NetworkItem::NetworkItem(const QByteArray &id)
-  : m_authorized(false)
-  , m_id(id)
+  : m_id(id)
 {
 }
 
@@ -71,10 +69,6 @@ NetworkItem* NetworkItem::item()
   item->m_url     = client->url().toString();
   item->m_cookie  = client->cookie();
   item->m_userId  = client->channelId();
-  item->m_account = ChatClient::channel()->account()->name();
-
-  if (!item->m_account.isEmpty())
-    item->m_authorized = true;
 
   return item;
 }
@@ -86,14 +80,10 @@ void NetworkItem::read()
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
-  m_account = settings.value("Account").toString();
-  setAuth(settings.value("Auth").toString());
-  m_name = settings.value("Name").toString();
-  m_url  = settings.value("Url").toString();
+  setAuth(settings.value(LS("Auth")).toString());
+  m_name = settings.value(LS("Name")).toString();
+  m_url  = settings.value(LS("Url")).toString();
   settings.endGroup();
-
-  if (!m_account.isEmpty())
-    m_authorized = true;
 }
 
 
@@ -102,17 +92,9 @@ void NetworkItem::write()
   QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
   settings.beginGroup(SimpleID::encode(m_id));
-
-  if (!m_account.isEmpty()) {
-    settings.setValue("Account", m_account);
-    m_authorized = true;
-  }
-  else
-    settings.remove("Account");
-
-  settings.setValue("Auth",    auth());
-  settings.setValue("Name",    m_name);
-  settings.setValue("Url",     m_url);
+  settings.setValue(LS("Auth"),    auth());
+  settings.setValue(LS("Name"),    m_name);
+  settings.setValue(LS("Url"),     m_url);
   settings.endGroup();
 }
 
@@ -159,7 +141,7 @@ bool NetworkManager::isAutoConnect() const
   if (m_invalids)
     return false;
 
-  if (!ChatCore::settings()->value("AutoConnect").toBool())
+  if (!ChatCore::settings()->value(LS("AutoConnect")).toBool())
     return false;
 
   if (ChatClient::channel()->status().value() == Status::Offline)
@@ -192,9 +174,9 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
-  ChatClient::io()->setCookieAuth(ChatCore::settings()->value("Labs/CookieAuth").toBool());
+  ChatClient::io()->setCookieAuth(ChatCore::settings()->value(LS("Labs/CookieAuth")).toBool());
   Network item = m_items.value(id);
-  ChatClient::io()->setAccount(item->account(), item->password());
+//  ChatClient::io()->setAccount(item->account(), item->password());
 
   return ChatClient::io()->openUrl(item->url(), item->cookie());
 }
@@ -254,7 +236,7 @@ QString NetworkManager::root(const QByteArray &id) const
   if (id.isEmpty())
     return QString();
 
-  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + "/networks/" + SimpleID::encode(id);
+  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/networks/") + SimpleID::encode(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
@@ -322,9 +304,6 @@ void NetworkManager::notify(const Notify &notify)
       if (action == LS("login"))
         login(json);
     }
-
-    if (data.value(LS("id")) != ChatClient::id())
-      return;
   }
 }
 
@@ -341,7 +320,7 @@ void NetworkManager::load()
 
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
   Network item(new NetworkItem(m_tmpId));
-  item->setUrl("schat://");
+  item->setUrl(LS("schat://"));
   m_items[m_tmpId] = item;
 
   if (m_networks.data.isEmpty())
@@ -445,7 +424,7 @@ QByteArray NetworkManager::Networks::first()
 void NetworkManager::Networks::read()
 {
   data.clear();
-  QStringList networks = ChatCore::settings()->value("Networks").toStringList();
+  QStringList networks = ChatCore::settings()->value(LS("Networks")).toStringList();
 
   foreach (QString network, networks) {
     QByteArray id = SimpleID::decode(network.toLatin1());
@@ -465,5 +444,5 @@ void NetworkManager::Networks::write()
     out += SimpleID::encode(id);
   }
 
-  ChatCore::settings()->setValue("Networks", out);
+  ChatCore::settings()->setValue(LS("Networks"), out);
 }

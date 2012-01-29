@@ -171,11 +171,8 @@ int NetworkWidget::add(const QString &url)
 
   int index = m_combo->findData(item->id());
   if (index == -1) {
-    if (!url.isEmpty()) {
+    if (!url.isEmpty())
       item->setUrl(url);
-      item->setAccount(QString());
-      item->setPassword(QString());
-    }
 
     m_combo->insertItem(0, SCHAT_ICON(Globe), item->url(), item->id());
     index = 0;
