@@ -39,7 +39,7 @@
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
-  , m_manager(ChatCore::i()->networks())
+  , m_manager(ChatCore::networks())
 {
   m_nameEdit = new QLineEdit(this);
   m_nameLabel = new QLabel(this);
@@ -51,7 +51,7 @@ LoginWidget::LoginWidget(QWidget *parent)
   m_passwordLabel->setBuddy(m_passwordEdit);
 
   m_login = new QToolButton(this);
-  m_login->setIcon(SCHAT_ICON(SignIn));
+  m_login->setIcon(SCHAT_ICON(OK));
   m_login->setAutoRaise(true);
   m_login->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 

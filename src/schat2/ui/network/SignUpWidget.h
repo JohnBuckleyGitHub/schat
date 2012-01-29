@@ -42,7 +42,7 @@ public:
     Error     ///< Ошибка регистрации.
   };
 
-  SignUpWidget(QWidget *parent = 0);
+  SignUpWidget(QWidget *parent = 0, const QString &action = QLatin1String("reg"));
   ~SignUpWidget();
   bool ready() const;
   static bool canSignUp();
@@ -77,6 +77,7 @@ private:
   QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
   QProgressIndicator *m_progress; ///< Прогресс бар.
   QPushButton *m_signUp;
+  QString m_action;               ///< Основное действие "reg" или "reset".
   QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
   WidgetState m_state;            ///< Состояние виджета.
 };

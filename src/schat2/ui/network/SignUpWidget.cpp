@@ -38,9 +38,10 @@
 #include "ui/ChatIcons.h"
 #include "ui/network/SignUpWidget.h"
 
-SignUpWidget::SignUpWidget(QWidget *parent)
+SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   : QWidget(parent)
   , m_manager(ChatCore::networks())
+  , m_action(action)
   , m_state(Idle)
 {
   m_nameLabel = new QLabel(this);
@@ -73,7 +74,7 @@ SignUpWidget::SignUpWidget(QWidget *parent)
   m_progress->setMaximumSize(16, 16);
   m_progress->setVisible(false);
 
-  m_signUp = new QPushButton(SCHAT_ICON(SignUp), tr("Sign up"), this);
+  m_signUp = new QPushButton(SCHAT_ICON(OK), tr("Sign up"), this);
   m_signUp->setEnabled(false);
 
   QHBoxLayout *nameLay = new QHBoxLayout;
@@ -160,10 +161,18 @@ bool SignUpWidget::canSignUp()
 void SignUpWidget::retranslateUi()
 {
   m_nameLabel->setText(tr("Name:"));
-  m_passwordLabel->setText(tr("Password:"));
+
+  if (m_action == LS("reset")) {
+    m_passwordLabel->setText(tr("New password:"));
+    m_signUp->setText(tr("Reset"));
+  }
+  else {
+    m_passwordLabel->setText(tr("Password:"));
+    m_signUp->setText(tr("Sign up"));
+  }
+
   m_questionLabel->setText(tr("Security question:"));
   m_answerLabel->setText(tr("Answer:"));
-  m_signUp->setText(tr("Sign up"));
 
   m_question->setItemText(0, tr("Choose a question ..."));
   m_question->setItemText(1, tr("What is the name of your best friend from childhood?"));
@@ -234,7 +243,7 @@ void SignUpWidget::notify(const Notify &notify)
     if (data.value(LS("id")) != ChatClient::id())
       return;
 
-    if (data.value(LS("data")).toMap().value(LS("action")) != LS("reg"))
+    if (data.value(LS("data")).toMap().value(LS("action")) != m_action)
       return;
 
     m_progress->setVisible(false);
@@ -248,7 +257,7 @@ void SignUpWidget::signUp()
 {
   setState(Progress);
 
-  QVariantMap data = RegCmds::request(LS("reg"), m_nameEdit->text(), m_passwordEdit->text());
+  QVariantMap data = RegCmds::request(m_action, m_nameEdit->text(), m_passwordEdit->text());
 
   data[LS("q")] = SimpleID::encode(SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId));
   data[LS("a")] = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));

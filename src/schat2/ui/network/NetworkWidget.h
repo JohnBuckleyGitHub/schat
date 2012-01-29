@@ -53,6 +53,7 @@ private slots:
   void edit();
   void indexChanged(int index);
   void notify(const Notify &notify);
+  void recovery();
   void reload();
   void remove();
   void showAccountMenu();
@@ -66,7 +67,8 @@ private:
   enum EditState {
     EditNone,
     EditSignIn,
-    EditSignUp
+    EditSignUp,
+    EditRecovery
   };
 
   void createAccountButton();
