@@ -56,7 +56,7 @@ StatusBar::StatusBar(QWidget *parent)
   m_secure->setPixmap(QPixmap(LS(":/images/secure.png")));
 # endif
 
-  m_url = new NetworkWidget(this);
+  m_url = new NetworkWidget(this, true);
   m_url->setMinimumWidth(m_url->width() * 2);
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);

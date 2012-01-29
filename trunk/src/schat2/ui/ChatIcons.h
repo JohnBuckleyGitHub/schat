@@ -73,7 +73,8 @@ public:
     ArrowRight         = 0x4152, ///< "AR"
     SignIn             = 0x5349, ///< "SI"
     SignOut            = 0x534F, ///< "SO"
-    SignUp             = 0x5355  ///< "SU"
+    SignUp             = 0x5355, ///< "SU"
+    Password           = 0x5073  ///< "Ps"
   };
 
   /// Опции получения иконки канала.
